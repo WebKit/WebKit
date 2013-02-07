@@ -1,3 +1,21 @@
+2013-02-07  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Send type details with IMF mask as part of focus gained.
+        https://bugs.webkit.org/show_bug.cgi?id=109086
+
+        Reviewed by Yong Li.
+
+        PR 292609.
+
+        Add masking options based on VKB type to the IMF mask.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::addInputStyleMaskForKeyboardType):
+        (WebKit):
+        (BlackBerry::WebKit::InputHandler::setElementFocused):
+
 2013-02-06  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Refactor renderContents() for cleaner code.

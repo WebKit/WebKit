@@ -899,6 +899,29 @@ void InputHandler::setInputModeEnabled(bool active)
         m_currentFocusElement->document()->frame()->selection()->setFocused(true);
 }
 
+static void addInputStyleMaskForKeyboardType(int64_t& inputMask, VirtualKeyboardType keyboardType)
+{
+    switch (keyboardType) {
+    case VKBTypeUrl:
+        inputMask |= IMF_URL_TYPE;
+        break;
+    case VKBTypePassword:
+        inputMask |= IMF_PASSWORD_TYPE;
+        break;
+    case VKBTypePin:
+        inputMask |= IMF_PIN_TYPE;
+        break;
+    case VKBTypePhone:
+        inputMask |= IMF_PHONE_TYPE;
+        break;
+    case VKBTypeEmail:
+        inputMask |= IMF_EMAIL_TYPE;
+        break;
+    default:
+        break;
+    }
+}
+
 void InputHandler::setElementFocused(Element* element)
 {
     ASSERT(DOMSupport::isTextBasedContentEditableElement(element));
@@ -937,6 +960,8 @@ void InputHandler::setElementFocused(Element* element)
     VirtualKeyboardType keyboardType = keyboardTypeAttribute(element);
     if (keyboardType == VKBTypeNotSet)
         keyboardType = convertInputTypeToVKBType(type);
+
+    addInputStyleMaskForKeyboardType(m_currentFocusElementTextEditMask, keyboardType);
 
     VirtualKeyboardEnterKeyType enterKeyType = keyboardEnterKeyTypeAttribute(element);
 
