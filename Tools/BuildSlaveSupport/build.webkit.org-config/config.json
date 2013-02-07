@@ -333,7 +333,7 @@
                     {
                       "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTestWebKit2Only", "builddir": "efl-linux-64-release-wk2",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["efl-linux-perf-1"],
+                      "triggers": ["efl-linux-64-release-wk2-perf"],
                       "slavenames": ["efl-linux-slave-2"]
                     },
                     {

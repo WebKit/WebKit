@@ -1,3 +1,9 @@
+2013-02-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed typo fix after r142121.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-02-07  Vivek Galatage  <vivek.vg@samsung.com>
 
         [Qt] QtTestBrowser should provide option to enable/disable Javascript
