@@ -31,14 +31,18 @@
 #include "BackgroundHTMLInputStream.h"
 #include "CompactHTMLToken.h"
 #include "HTMLParserOptions.h"
+#include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
+#include <wtf/PassOwnPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/WeakPtr.h>
 
 namespace WebCore {
 
 typedef const void* ParserIdentifier;
 class HTMLDocumentParser;
+class XSSAuditor;
 
 class BackgroundHTMLParser {
     WTF_MAKE_FAST_ALLOCATED;
@@ -47,19 +51,19 @@ public:
     void resumeFrom(const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>, HTMLInputCheckpoint);
     void finish();
 
-    static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser)
+    static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
     {
-        return adoptPtr(new BackgroundHTMLParser(options, parser));
+        return adoptPtr(new BackgroundHTMLParser(options, parser, xssAuditor));
     }
 
-    static void createPartial(ParserIdentifier, const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&);
+    static void createPartial(ParserIdentifier, const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<XSSAuditor>);
     static void stopPartial(ParserIdentifier);
     static void appendPartial(ParserIdentifier, const String& input);
     static void resumeFromPartial(ParserIdentifier, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>, HTMLInputCheckpoint);
     static void finishPartial(ParserIdentifier);
 
 private:
-    BackgroundHTMLParser(const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&);
+    BackgroundHTMLParser(const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<XSSAuditor>);
 
     void markEndOfFile();
     void pumpTokenizer();
@@ -69,11 +73,13 @@ private:
 
     bool m_inForeignContent; // FIXME: We need a stack of foreign content markers.
     BackgroundHTMLInputStream m_input;
+    HTMLSourceTracker m_sourceTracker;
     OwnPtr<HTMLToken> m_token;
     OwnPtr<HTMLTokenizer> m_tokenizer;
     HTMLParserOptions m_options;
     WeakPtr<HTMLDocumentParser> m_parser;
     OwnPtr<CompactHTMLTokenStream> m_pendingTokens;
+    OwnPtr<XSSAuditor> m_xssAuditor;
 };
 
 class ParserMap {

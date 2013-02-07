@@ -160,9 +160,8 @@ static inline String decodeStandardURLEscapeSequences(const String& string, cons
     return decodeEscapeSequences<URLEscapeSequence>(string, encoding);
 }
 
-static String fullyDecodeString(const String& string, const TextResourceDecoder* decoder)
+static String fullyDecodeString(const String& string, const TextEncoding& encoding)
 {
-    const TextEncoding& encoding = decoder ? decoder->encoding() : UTF8Encoding();
     size_t oldWorkingStringLength;
     String workingString = string;
     do {
@@ -179,6 +178,7 @@ XSSAuditor::XSSAuditor()
     , m_xssProtection(XSSProtectionEnabled)
     , m_state(Uninitialized)
     , m_scriptTagNestingLevel(0)
+    , m_encoding(UTF8Encoding())
 {
     // Although tempting to call init() at this point, the various objects
     // we want to reference might not all have been constructed yet.
@@ -202,7 +202,7 @@ void XSSAuditor::init(Document* document)
     if (!m_isEnabled)
         return;
 
-    m_documentURL = document->url();
+    m_documentURL = document->url().copy();
 
     // In theory, the Document could have detached from the Frame after the
     // XSSAuditor was constructed.
@@ -222,8 +222,10 @@ void XSSAuditor::init(Document* document)
         return;
     }
 
-    TextResourceDecoder* decoder = document->decoder();
-    m_decodedURL = fullyDecodeString(m_documentURL.string(), decoder);
+    if (document->decoder())
+        m_encoding = document->decoder()->encoding();
+
+    m_decodedURL = fullyDecodeString(m_documentURL.string(), m_encoding);
     if (m_decodedURL.find(isRequiredForInjection) == notFound)
         m_decodedURL = String();
 
@@ -254,7 +256,7 @@ void XSSAuditor::init(Document* document)
         if (httpBody && !httpBody->isEmpty()) {
             httpBodyAsString = httpBody->flattenToString();
             if (!httpBodyAsString.isEmpty()) {
-                m_decodedHTTPBody = fullyDecodeString(httpBodyAsString, decoder);
+                m_decodedHTTPBody = fullyDecodeString(httpBodyAsString, m_encoding);
                 if (m_decodedHTTPBody.find(isRequiredForInjection) == notFound)
                     m_decodedHTTPBody = String();
                 if (m_decodedHTTPBody.length() >= miniumLengthForSuffixTree)
@@ -270,7 +272,7 @@ void XSSAuditor::init(Document* document)
 
     if (!m_reportURL.isEmpty()) {
         // May need these for reporting later on.
-        m_originalURL = m_documentURL;
+        m_originalURL = m_documentURL.copy();
         m_originalHTTPBody = httpBodyAsString;
     }
 }
@@ -507,7 +509,7 @@ bool XSSAuditor::eraseAttributeIfInjected(const FilterTokenRequest& request, con
 String XSSAuditor::decodedSnippetForName(const FilterTokenRequest& request)
 {
     // Grab a fixed number of characters equal to the length of the token's name plus one (to account for the "<").
-    return fullyDecodeString(request.sourceTracker.sourceForToken(request.token), request.decoder).substring(0, request.token.name().size() + 1);
+    return fullyDecodeString(request.sourceTracker.sourceForToken(request.token), m_encoding).substring(0, request.token.name().size() + 1);
 }
 
 String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request, const HTMLToken::Attribute& attribute, AttributeKind treatment)
@@ -518,7 +520,7 @@ String XSSAuditor::decodedSnippetForAttribute(const FilterTokenRequest& request,
     // FIXME: We should grab one character before the name also.
     int start = attribute.m_nameRange.m_start - request.token.startIndex();
     int end = attribute.m_valueRange.m_end - request.token.startIndex();
-    String decodedSnippet = fullyDecodeString(request.sourceTracker.sourceForToken(request.token).substring(start, end - start), request.decoder);
+    String decodedSnippet = fullyDecodeString(request.sourceTracker.sourceForToken(request.token).substring(start, end - start), m_encoding);
     decodedSnippet.truncate(kMaximumFragmentLengthTarget);
     if (treatment == SrcLikeAttribute) {
         int slashCount = 0;
@@ -626,7 +628,7 @@ String XSSAuditor::decodedSnippetForJavaScript(const FilterTokenRequest& request
             }
         }
 
-        result = fullyDecodeString(string.substring(startPosition, foundPosition - startPosition), request.decoder);
+        result = fullyDecodeString(string.substring(startPosition, foundPosition - startPosition), m_encoding);
         startPosition = foundPosition + 1;
     }
     return result;
@@ -662,6 +664,17 @@ bool XSSAuditor::isLikelySafeResource(const String& url)
 
     KURL resourceURL(m_documentURL, url);
     return (m_documentURL.host() == resourceURL.host() && resourceURL.query().isEmpty());
+}
+
+bool XSSAuditor::isSafeToSendToAnotherThread() const
+{
+    return m_documentURL.isSafeToSendToAnotherThread()
+        && m_originalURL.isSafeToSendToAnotherThread()
+        && m_originalHTTPBody.isSafeToSendToAnotherThread()
+        && m_decodedURL.isSafeToSendToAnotherThread()
+        && m_decodedHTTPBody.isSafeToSendToAnotherThread()
+        && m_cachedDecodedSnippet.isSafeToSendToAnotherThread()
+        && m_reportURL.isSafeToSendToAnotherThread();
 }
 
 } // namespace WebCore

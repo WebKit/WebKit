@@ -30,6 +30,7 @@
 #include "CompactHTMLToken.h"
 #include "ContentSecurityPolicy.h"
 #include "DocumentFragment.h"
+#include "DocumentLoader.h"
 #include "Element.h"
 #include "Frame.h"
 #include "HTMLNames.h"
@@ -368,17 +369,17 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     while (canTakeNextToken(mode, session) && !session.needsYield) {
         if (!isParsingFragment())
-            m_sourceTracker.start(m_input, m_tokenizer.get(), token());
+            m_sourceTracker.start(m_input.current(), m_tokenizer.get(), token());
 
         if (!m_tokenizer->nextToken(m_input.current(), token()))
             break;
 
         if (!isParsingFragment()) {
-            m_sourceTracker.end(m_input, m_tokenizer.get(), token());
+            m_sourceTracker.end(m_input.current(), m_tokenizer.get(), token());
 
             // We do not XSS filter innerHTML, which means we (intentionally) fail
             // http/tests/security/xssAuditor/dom-write-innerHTML.html
-            if (OwnPtr<XSSInfo> xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, document()->decoder(), m_tokenizer->shouldAllowCDATA())))
+            if (OwnPtr<XSSInfo> xssInfo = m_xssAuditor.filterToken(FilterTokenRequest(token(), m_sourceTracker, m_tokenizer->shouldAllowCDATA())))
                 m_xssAuditorDelegate.didBlockScript(*xssInfo);
         }
 
@@ -511,9 +512,12 @@ void HTMLDocumentParser::startBackgroundParser()
     ASSERT(!m_haveBackgroundParser);
     m_haveBackgroundParser = true;
 
-    ParserIdentifier identifier = ParserMap::identifierForParser(this);
     WeakPtr<HTMLDocumentParser> parser = m_weakFactory.createWeakPtr();
-    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::createPartial, identifier, m_options, parser));
+    OwnPtr<XSSAuditor> xssAuditor = adoptPtr(new XSSAuditor);
+    xssAuditor->init(document());
+    ASSERT(xssAuditor->isSafeToSendToAnotherThread());
+    ParserIdentifier identifier = ParserMap::identifierForParser(this);
+    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::createPartial, identifier, m_options, parser, xssAuditor.release()));
 }
 
 void HTMLDocumentParser::stopBackgroundParser()

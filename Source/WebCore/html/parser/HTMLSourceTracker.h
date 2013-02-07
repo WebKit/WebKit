@@ -26,8 +26,8 @@
 #ifndef HTMLSourceTracker_h
 #define HTMLSourceTracker_h
 
-#include "HTMLInputStream.h"
 #include "HTMLToken.h"
+#include "SegmentedString.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -42,8 +42,8 @@ public:
     // FIXME: Once we move "end" into HTMLTokenizer, rename "start" to
     // something that makes it obvious that this method can be called multiple
     // times.
-    void start(const HTMLInputStream&, HTMLTokenizer*, HTMLToken&);
-    void end(const HTMLInputStream&, HTMLTokenizer*, HTMLToken&);
+    void start(SegmentedString&, HTMLTokenizer*, HTMLToken&);
+    void end(SegmentedString&, HTMLTokenizer*, HTMLToken&);
 
     String sourceForToken(const HTMLToken&);
 

@@ -34,7 +34,7 @@ HTMLSourceTracker::HTMLSourceTracker()
 {
 }
 
-void HTMLSourceTracker::start(const HTMLInputStream& input, HTMLTokenizer* tokenizer, HTMLToken& token)
+void HTMLSourceTracker::start(SegmentedString& currentInput, HTMLTokenizer* tokenizer, HTMLToken& token)
 {
     if (token.type() == HTMLTokenTypes::Uninitialized) {
         m_previousSource.clear();
@@ -43,16 +43,16 @@ void HTMLSourceTracker::start(const HTMLInputStream& input, HTMLTokenizer* token
     } else
         m_previousSource.append(m_currentSource);
 
-    m_currentSource = input.current();
+    m_currentSource = currentInput;
     token.setBaseOffset(m_currentSource.numberOfCharactersConsumed() - m_previousSource.length());
 }
 
-void HTMLSourceTracker::end(const HTMLInputStream& input, HTMLTokenizer* tokenizer, HTMLToken& token)
+void HTMLSourceTracker::end(SegmentedString& currentInput, HTMLTokenizer* tokenizer, HTMLToken& token)
 {
     m_cachedSourceForToken = String();
 
     // FIXME: This work should really be done by the HTMLTokenizer.
-    token.end(input.current().numberOfCharactersConsumed() - tokenizer->numberOfBufferedCharacters());
+    token.end(currentInput.numberOfCharactersConsumed() - tokenizer->numberOfBufferedCharacters());
 }
 
 String HTMLSourceTracker::sourceForToken(const HTMLToken& token)

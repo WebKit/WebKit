@@ -36,6 +36,7 @@
 #include "HTMLTokenizer.h"
 #include "MathMLNames.h"
 #include "SVGNames.h"
+#include "XSSAuditor.h"
 #include <wtf/MainThread.h>
 #include <wtf/Vector.h>
 #include <wtf/text/TextPosition.h>
@@ -71,13 +72,14 @@ ParserMap::BackgroundParserMap& ParserMap::backgroundParsers()
     return m_backgroundParsers;
 }
 
-BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser)
+BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
     : m_inForeignContent(false)
     , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(options))
     , m_options(options)
     , m_parser(parser)
     , m_pendingTokens(adoptPtr(new CompactHTMLTokenStream))
+    , m_xssAuditor(xssAuditor)
 {
 }
 
@@ -152,9 +154,20 @@ bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
 
 void BackgroundHTMLParser::pumpTokenizer()
 {
-    while (m_tokenizer->nextToken(m_input.current(), *m_token.get())) {
-        // FIXME: Call m_xssAuditor.filterToken(m_token) and put resulting XSSInfo into CompactHTMLToken.
-        m_pendingTokens->append(CompactHTMLToken(m_token.get(), TextPosition(m_input.current().currentLine(), m_input.current().currentColumn())));
+    while (true) {
+        m_sourceTracker.start(m_input.current(), m_tokenizer.get(), *m_token);
+        if (!m_tokenizer->nextToken(m_input.current(), *m_token.get()))
+            break;
+        m_sourceTracker.end(m_input.current(), m_tokenizer.get(), *m_token);
+
+        {
+            OwnPtr<XSSInfo> xssInfo = m_xssAuditor->filterToken(FilterTokenRequest(*m_token, m_sourceTracker, m_tokenizer->shouldAllowCDATA()));
+            CompactHTMLToken token(m_token.get(), TextPosition(m_input.current().currentLine(), m_input.current().currentColumn()));
+            if (xssInfo)
+                token.setXSSInfo(xssInfo.release());
+            m_pendingTokens->append(token);
+        }
+
         m_token->clear();
 
         if (!simulateTreeBuilder(m_pendingTokens->last()) || m_pendingTokens->size() >= pendingTokenLimit)
@@ -181,10 +194,10 @@ void BackgroundHTMLParser::sendTokensToMainThread()
     m_pendingTokens = adoptPtr(new CompactHTMLTokenStream);
 }
 
-void BackgroundHTMLParser::createPartial(ParserIdentifier identifier, const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser)
+void BackgroundHTMLParser::createPartial(ParserIdentifier identifier, const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
 {
     ASSERT(!parserMap().backgroundParsers().get(identifier));
-    parserMap().backgroundParsers().set(identifier, BackgroundHTMLParser::create(options, parser));
+    parserMap().backgroundParsers().set(identifier, BackgroundHTMLParser::create(options, parser, xssAuditor));
 }
 
 void BackgroundHTMLParser::stopPartial(ParserIdentifier identifier)
