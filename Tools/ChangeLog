@@ -1,3 +1,11 @@
+2013-02-07  Roger Fong  <roger_fong@apple.com>
+
+        Temporary fix for Win EWS bots.
+        Don't build DRT since it has already been built in the build step.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+
 2013-02-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Cleanup command-line defines
