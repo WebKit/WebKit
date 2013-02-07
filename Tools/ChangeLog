@@ -1,3 +1,19 @@
+2013-02-07  Vivek Galatage  <vivek.vg@samsung.com>
+
+        [Qt] QtTestBrowser should provide option to enable/disable Javascript
+        https://bugs.webkit.org/show_bug.cgi?id=107461
+
+        Reviewed by Jocelyn Turcotte.
+
+        Option to enable/disable Javascript would be handy option to test
+        certain functionalities of web pages with/without Javascript.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::createChrome):
+        (LauncherWindow::toggleJavaScriptEnabled):
+        * QtTestBrowser/launcherwindow.h:
+        (LauncherWindow):
+
 2013-02-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Add a WebKit2 Performance bot.

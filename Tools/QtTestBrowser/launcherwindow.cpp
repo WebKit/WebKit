@@ -496,6 +496,10 @@ void LauncherWindow::createChrome()
 #endif
     toggleScrollAnimator->setChecked(false);
 
+    QAction* toggleJavaScriptEnabled = settingsMenu->addAction("Enable Javascript", this, SLOT(toggleJavaScriptEnabled(bool)));
+    toggleJavaScriptEnabled->setCheckable(true);
+    toggleJavaScriptEnabled->setChecked(settings->testAttribute(QWebSettings::JavascriptEnabled));
+
     QAction* toggleInterruptingJavaScripteEnabled = settingsMenu->addAction("Enable interrupting js scripts", this, SLOT(toggleInterruptingJavaScriptEnabled(bool)));
     toggleInterruptingJavaScripteEnabled->setCheckable(true);
     toggleInterruptingJavaScripteEnabled->setChecked(false);
@@ -921,6 +925,11 @@ void LauncherWindow::toggleFrameFlattening(bool toggle)
 {
     m_windowOptions.useFrameFlattening = toggle;
     page()->settings()->setAttribute(QWebSettings::FrameFlatteningEnabled, toggle);
+}
+
+void LauncherWindow::toggleJavaScriptEnabled(bool enable)
+{
+    page()->settings()->setAttribute(QWebSettings::JavascriptEnabled, enable);
 }
 
 void LauncherWindow::toggleInterruptingJavaScriptEnabled(bool enable)

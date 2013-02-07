@@ -160,6 +160,7 @@ protected Q_SLOTS:
     void toggleSpatialNavigation(bool b);
     void toggleFullScreenMode(bool enable);
     void toggleFrameFlattening(bool toggle);
+    void toggleJavaScriptEnabled(bool enable);
     void toggleInterruptingJavaScriptEnabled(bool enable);
     void toggleJavascriptCanOpenWindows(bool enable);
     void toggleAutoLoadImages(bool enable);
