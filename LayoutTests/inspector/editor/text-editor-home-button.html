@@ -1,0 +1,110 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="editor-test.js"></script>
+<script>
+
+function test()
+{
+function foo()
+{
+    return 42;
+}
+    var textEditor = InspectorTest.createTestEditor();
+    textEditor.overrideViewportForTest(0, undefined, 3);
+    textEditor.mimeType = "text/javascript";
+    textEditor.setReadOnly(false);
+    textEditor.element.focus();
+
+    textEditor.setText(foo.toString());
+
+    InspectorTest.addResult(textEditor.text());
+
+    InspectorTest.runTestSuite([
+        function testFirstNonBlankCharacter(next)
+        {
+            var selection = WebInspector.TextRange.createFromLocation(2, 8);
+            textEditor.setSelection(selection);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", []);
+            InspectorTest.addResult(textEditor.selection());
+            next();
+        },
+
+        function testFirstNonBlankCharacterFromWhitespace(next)
+        {
+            var selection = WebInspector.TextRange.createFromLocation(2, 2);
+            textEditor.setSelection(selection);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", []);
+            InspectorTest.addResult(textEditor.selection());
+            next();
+        },
+
+        function testHomeButtonTriggering(next)
+        {
+            var selection = WebInspector.TextRange.createFromLocation(2, 2);
+            textEditor.setSelection(selection);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", []);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", []);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", []);
+            InspectorTest.addResult(textEditor.selection());
+            next();
+        },
+
+        function testHomeButtonDoesNotChangeCursor(next)
+        {
+            var selection = WebInspector.TextRange.createFromLocation(0, 2);
+            textEditor.setSelection(selection);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", []);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", []);
+            InspectorTest.addResult(textEditor.selection());
+            next();
+        },
+
+        function testHomeButtonWithShift(next)
+        {
+            var selection = new WebInspector.TextRange(0, 0, 2, 8);
+            textEditor.setSelection(selection);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", ["shiftKey"]);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", ["shiftKey"]);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", ["shiftKey"]);
+            InspectorTest.addResult(textEditor.selection());
+            next();
+        },
+
+        function testHomeButtonWithShiftInversed(next)
+        {
+            var selection = new WebInspector.TextRange(3, 1, 2, 8);
+            textEditor.setSelection(selection);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", ["shiftKey"]);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", ["shiftKey"]);
+            InspectorTest.addResult(textEditor.selection());
+            eventSender.keyDown("home", ["shiftKey"]);
+            InspectorTest.addResult(textEditor.selection());
+            next();
+        }
+    ]);
+}
+
+</script>
+</head>
+
+<body onload="runTest();">
+<p>
+This test verifies that home button triggers selection between first symbol of the line
+and first non-blank symbol of the line.
+</p>
+
+</body>
+</html>
