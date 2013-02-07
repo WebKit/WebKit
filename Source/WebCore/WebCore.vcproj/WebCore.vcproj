@@ -25542,6 +25542,22 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\SQLTransactionBackend.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\SQLTransactionBackend.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\SQLTransactionBackendSync.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\SQLTransactionBackendSync.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\SQLTransactionCallback.h"
 					>
 				</File>

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,7 +30,7 @@
  */
 
 #include "config.h"
-#include "SQLTransactionSync.h"
+#include "SQLTransactionBackendSync.h"
 
 #if ENABLE(SQL_DATABASE)
 
@@ -40,6 +41,7 @@
 #include "SQLResultSet.h"
 #include "SQLStatementSync.h"
 #include "SQLTransactionClient.h"
+#include "SQLTransactionSync.h"
 #include "SQLTransactionSyncCallback.h"
 #include "SQLValue.h"
 #include "SQLiteTransaction.h"
@@ -50,12 +52,7 @@
 
 namespace WebCore {
 
-PassRefPtr<SQLTransactionSync> SQLTransactionSync::create(DatabaseSync* db, PassRefPtr<SQLTransactionSyncCallback> callback, bool readOnly)
-{
-    return adoptRef(new SQLTransactionSync(db, callback, readOnly));
-}
-
-SQLTransactionSync::SQLTransactionSync(DatabaseSync* db, PassRefPtr<SQLTransactionSyncCallback> callback, bool readOnly)
+SQLTransactionBackendSync::SQLTransactionBackendSync(DatabaseSync* db, PassRefPtr<SQLTransactionSyncCallback> callback, bool readOnly)
     : m_database(db)
     , m_callback(callback)
     , m_readOnly(readOnly)
@@ -66,14 +63,14 @@ SQLTransactionSync::SQLTransactionSync(DatabaseSync* db, PassRefPtr<SQLTransacti
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
 }
 
-SQLTransactionSync::~SQLTransactionSync()
+SQLTransactionBackendSync::~SQLTransactionBackendSync()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
     if (m_sqliteTransaction && m_sqliteTransaction->inProgress())
         rollback();
 }
 
-PassRefPtr<SQLResultSet> SQLTransactionSync::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, ExceptionCode& ec)
+PassRefPtr<SQLResultSet> SQLTransactionBackendSync::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, ExceptionCode& ec)
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
 
@@ -96,9 +93,9 @@ PassRefPtr<SQLResultSet> SQLTransactionSync::executeSQL(const String& sqlStateme
 
     int permissions = DatabaseAuthorizer::ReadWriteMask;
     if (!m_database->databaseContext()->allowDatabaseAccess())
-      permissions |= DatabaseAuthorizer::NoAccessMask;
+        permissions |= DatabaseAuthorizer::NoAccessMask;
     else if (m_readOnly)
-      permissions |= DatabaseAuthorizer::ReadOnlyMask;
+        permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
     SQLStatementSync statement(sqlStatement, arguments, permissions);
 
@@ -132,7 +129,7 @@ PassRefPtr<SQLResultSet> SQLTransactionSync::executeSQL(const String& sqlStateme
     return resultSet.release();
 }
 
-ExceptionCode SQLTransactionSync::begin()
+ExceptionCode SQLTransactionBackendSync::begin()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
     if (!m_database->opened()) {
@@ -160,7 +157,7 @@ ExceptionCode SQLTransactionSync::begin()
         ASSERT(!m_database->sqliteDatabase().transactionInProgress());
         m_database->reportStartTransactionResult(2, SQLException::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_database->setLastErrorMessage("unable to begin transaction",
-                                        m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
+            m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_sqliteTransaction.clear();
         return SQLException::DATABASE_ERR;
     }
@@ -172,20 +169,19 @@ ExceptionCode SQLTransactionSync::begin()
     if (!m_database->getActualVersionForTransaction(actualVersion)) {
         m_database->reportStartTransactionResult(3, SQLException::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_database->setLastErrorMessage("unable to read version",
-                                        m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
+            m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         rollback();
         return SQLException::DATABASE_ERR;
     }
-    m_hasVersionMismatch = !m_database->expectedVersion().isEmpty()
-                           && (m_database->expectedVersion() != actualVersion);
+    m_hasVersionMismatch = !m_database->expectedVersion().isEmpty() && (m_database->expectedVersion() != actualVersion);
     m_database->reportStartTransactionResult(0, -1, 0); // OK
     return 0;
 }
 
-ExceptionCode SQLTransactionSync::execute()
+ExceptionCode SQLTransactionBackendSync::execute()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
-    if (!m_database->opened() || (m_callback && !m_callback->handleEvent(this))) {
+    if (!m_database->opened() || (m_callback && !m_callback->handleEvent(SQLTransactionSync::from(this)))) {
         if (m_database->lastErrorMessage().isEmpty())
             m_database->setLastErrorMessage("failed to execute transaction callback");
         m_callback = 0;
@@ -196,7 +192,7 @@ ExceptionCode SQLTransactionSync::execute()
     return 0;
 }
 
-ExceptionCode SQLTransactionSync::commit()
+ExceptionCode SQLTransactionBackendSync::commit()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
     if (!m_database->opened()) {
@@ -215,7 +211,7 @@ ExceptionCode SQLTransactionSync::commit()
     if (m_sqliteTransaction->inProgress()) {
         m_database->reportCommitTransactionResult(2, SQLException::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_database->setLastErrorMessage("unable to commit transaction",
-                                        m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
+            m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         return SQLException::DATABASE_ERR;
     }
 
@@ -233,7 +229,7 @@ ExceptionCode SQLTransactionSync::commit()
     return 0;
 }
 
-void SQLTransactionSync::rollback()
+void SQLTransactionBackendSync::rollback()
 {
     ASSERT(m_database->scriptExecutionContext()->isContextThread());
     m_database->disableAuthorizer();

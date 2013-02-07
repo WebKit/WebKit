@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 #include "DatabaseBackendAsync.h"
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
-#include "SQLTransaction.h"
+#include "SQLTransactionBackend.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -138,22 +138,22 @@ private:
 class DatabaseBackendAsync::DatabaseTransactionTask : public DatabaseTask {
 public:
     // Transaction task is never synchronous, so no 'synchronizer' parameter.
-    static PassOwnPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransaction> transaction)
+    static PassOwnPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransactionBackend> transaction)
     {
         return adoptPtr(new DatabaseTransactionTask(transaction));
     }
 
-    SQLTransaction* transaction() const { return m_transaction.get(); }
+    SQLTransactionBackend* transaction() const { return m_transaction.get(); }
 
 private:
-    explicit DatabaseTransactionTask(PassRefPtr<SQLTransaction>);
+    explicit DatabaseTransactionTask(PassRefPtr<SQLTransactionBackend>);
 
     virtual void doPerformTask();
 #if !LOG_DISABLED
     virtual const char* debugTaskName() const;
 #endif
 
-    RefPtr<SQLTransaction> m_transaction;
+    RefPtr<SQLTransactionBackend> m_transaction;
 };
 
 class DatabaseBackendAsync::DatabaseTableNamesTask : public DatabaseTask {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -147,7 +147,7 @@ const char* DatabaseBackendAsync::DatabaseCloseTask::debugTaskName() const
 // *** DatabaseTransactionTask ***
 // Starts a transaction that will report its results via a callback.
 
-DatabaseBackendAsync::DatabaseTransactionTask::DatabaseTransactionTask(PassRefPtr<SQLTransaction> transaction)
+DatabaseBackendAsync::DatabaseTransactionTask::DatabaseTransactionTask(PassRefPtr<SQLTransactionBackend> transaction)
     : DatabaseTask(Database::from(transaction->database()), 0)
     , m_transaction(transaction)
 {

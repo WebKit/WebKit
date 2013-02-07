@@ -3736,6 +3736,10 @@
 		97BC6A4E1505F081001B74AC /* SQLStatementSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A0C1505F081001B74AC /* SQLStatementSync.h */; };
 		97BC6A4F1505F081001B74AC /* SQLTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC6A0D1505F081001B74AC /* SQLTransaction.cpp */; };
 		97BC6A501505F081001B74AC /* SQLTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A0E1505F081001B74AC /* SQLTransaction.h */; };
+		FEE1811316C319E800084849 /* SQLTransactionBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */; };
+		FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = FEE1811216C319E800084849 /* SQLTransactionBackend.h */; };
+		FEAD7D8716C339EE00D4670B /* SQLTransactionBackendSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FEAD7D8516C339EE00D4670B /* SQLTransactionBackendSync.cpp */; };
+		FEAD7D8816C339EE00D4670B /* SQLTransactionBackendSync.h in Headers */ = {isa = PBXBuildFile; fileRef = FEAD7D8616C339EE00D4670B /* SQLTransactionBackendSync.h */; };
 		97BC6A521505F081001B74AC /* SQLTransactionCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A101505F081001B74AC /* SQLTransactionCallback.h */; };
 		97BC6A541505F081001B74AC /* SQLTransactionClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC6A121505F081001B74AC /* SQLTransactionClient.cpp */; };
 		97BC6A551505F081001B74AC /* SQLTransactionClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC6A131505F081001B74AC /* SQLTransactionClient.h */; };
@@ -11166,6 +11170,10 @@
 		97BC6A0D1505F081001B74AC /* SQLTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLTransaction.cpp; path = Modules/webdatabase/SQLTransaction.cpp; sourceTree = "<group>"; };
 		97BC6A0E1505F081001B74AC /* SQLTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLTransaction.h; path = Modules/webdatabase/SQLTransaction.h; sourceTree = "<group>"; };
 		97BC6A0F1505F081001B74AC /* SQLTransaction.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SQLTransaction.idl; path = Modules/webdatabase/SQLTransaction.idl; sourceTree = "<group>"; };
+		FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLTransactionBackend.cpp; path = Modules/webdatabase/SQLTransactionBackend.cpp; sourceTree = "<group>"; };
+		FEE1811216C319E800084849 /* SQLTransactionBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLTransactionBackend.h; path = Modules/webdatabase/SQLTransactionBackend.h; sourceTree = "<group>"; };
+		FEAD7D8516C339EE00D4670B /* SQLTransactionBackendSync.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLTransactionBackendSync.cpp; path = Modules/webdatabase/SQLTransactionBackendSync.cpp; sourceTree = "<group>"; };
+		FEAD7D8616C339EE00D4670B /* SQLTransactionBackendSync.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLTransactionBackendSync.h; path = Modules/webdatabase/SQLTransactionBackendSync.h; sourceTree = "<group>"; };
 		97BC6A101505F081001B74AC /* SQLTransactionCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLTransactionCallback.h; path = Modules/webdatabase/SQLTransactionCallback.h; sourceTree = "<group>"; };
 		97BC6A111505F081001B74AC /* SQLTransactionCallback.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SQLTransactionCallback.idl; path = Modules/webdatabase/SQLTransactionCallback.idl; sourceTree = "<group>"; };
 		97BC6A121505F081001B74AC /* SQLTransactionClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SQLTransactionClient.cpp; path = Modules/webdatabase/SQLTransactionClient.cpp; sourceTree = "<group>"; };
@@ -18600,6 +18608,10 @@
 				97BC6A0D1505F081001B74AC /* SQLTransaction.cpp */,
 				97BC6A0E1505F081001B74AC /* SQLTransaction.h */,
 				97BC6A0F1505F081001B74AC /* SQLTransaction.idl */,
+				FEE1811116C319E800084849 /* SQLTransactionBackend.cpp */,
+				FEE1811216C319E800084849 /* SQLTransactionBackend.h */,
+				FEAD7D8516C339EE00D4670B /* SQLTransactionBackendSync.cpp */,
+				FEAD7D8616C339EE00D4670B /* SQLTransactionBackendSync.h */,
 				97BC6A101505F081001B74AC /* SQLTransactionCallback.h */,
 				97BC6A111505F081001B74AC /* SQLTransactionCallback.idl */,
 				97BC6A121505F081001B74AC /* SQLTransactionClient.cpp */,
@@ -25783,6 +25795,8 @@
 				97BC6A4B1505F081001B74AC /* SQLStatementErrorCallback.h in Headers */,
 				97BC6A4E1505F081001B74AC /* SQLStatementSync.h in Headers */,
 				97BC6A501505F081001B74AC /* SQLTransaction.h in Headers */,
+				FEE1811416C319E800084849 /* SQLTransactionBackend.h in Headers */,
+				FEAD7D8816C339EE00D4670B /* SQLTransactionBackendSync.h in Headers */,
 				97BC6A521505F081001B74AC /* SQLTransactionCallback.h in Headers */,
 				97BC6A551505F081001B74AC /* SQLTransactionClient.h in Headers */,
 				97BC6A571505F081001B74AC /* SQLTransactionCoordinator.h in Headers */,
@@ -29063,6 +29077,8 @@
 				97BC6A471505F081001B74AC /* SQLStatement.cpp in Sources */,
 				97BC6A4D1505F081001B74AC /* SQLStatementSync.cpp in Sources */,
 				97BC6A4F1505F081001B74AC /* SQLTransaction.cpp in Sources */,
+				FEE1811316C319E800084849 /* SQLTransactionBackend.cpp in Sources */,
+				FEAD7D8716C339EE00D4670B /* SQLTransactionBackendSync.cpp in Sources */,
 				97BC6A541505F081001B74AC /* SQLTransactionClient.cpp in Sources */,
 				97BC6A561505F081001B74AC /* SQLTransactionCoordinator.cpp in Sources */,
 				97BC6A5A1505F081001B74AC /* SQLTransactionSync.cpp in Sources */,

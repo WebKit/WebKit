@@ -2152,14 +2152,18 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/SQLStatement.h \
 	Source/WebCore/Modules/webdatabase/SQLStatementSync.cpp \
 	Source/WebCore/Modules/webdatabase/SQLStatementSync.h \
+	Source/WebCore/Modules/webdatabase/SQLTransaction.cpp \
+	Source/WebCore/Modules/webdatabase/SQLTransaction.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionBackend.cpp \
+	Source/WebCore/Modules/webdatabase/SQLTransactionBackend.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionBackendSync.cpp \
+	Source/WebCore/Modules/webdatabase/SQLTransactionBackendSync.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionCallback.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionClient.cpp \
 	Source/WebCore/Modules/webdatabase/SQLTransactionClient.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionCoordinator.cpp \
 	Source/WebCore/Modules/webdatabase/SQLTransactionCoordinator.h \
-	Source/WebCore/Modules/webdatabase/SQLTransaction.cpp \
 	Source/WebCore/Modules/webdatabase/SQLTransactionErrorCallback.h \
-	Source/WebCore/Modules/webdatabase/SQLTransaction.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSyncCallback.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSync.cpp \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSync.h \

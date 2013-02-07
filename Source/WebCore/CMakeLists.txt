@@ -973,6 +973,8 @@ set(WebCore_SOURCES
     Modules/webdatabase/SQLStatement.cpp
     Modules/webdatabase/SQLStatementSync.cpp
     Modules/webdatabase/SQLTransaction.cpp
+    Modules/webdatabase/SQLTransactionBackend.cpp
+    Modules/webdatabase/SQLTransactionBackendSync.cpp
     Modules/webdatabase/SQLTransactionClient.cpp
     Modules/webdatabase/SQLTransactionCoordinator.cpp
     Modules/webdatabase/SQLTransactionSync.cpp

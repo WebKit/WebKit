@@ -1899,6 +1899,15 @@
     <ClCompile Include="..\Modules\webdatabase\SQLTransaction.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
+    <ClCompile Include="..\Modules\webdatabase\SQLTransaction.cpp">
+      <Filter>Modules\webdatabase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\webdatabase\SQLTransactionBackend.cpp">
+      <Filter>Modules\webdatabase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Modules\webdatabase\SQLTransactionBackendSync.cpp">
+      <Filter>Modules\webdatabase</Filter>
+    </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionClient.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
@@ -8551,6 +8560,12 @@
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\SQLTransaction.h">
+      <Filter>Modules\webdatabase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\webdatabase\SQLTransactionBackend.h">
+      <Filter>Modules\webdatabase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\webdatabase\SQLTransactionBackendSync.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionCallback.h">

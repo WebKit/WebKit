@@ -95,8 +95,8 @@ protected:
     friend class ChangeVersionWrapper;
     friend class SQLStatement;
     friend class SQLStatementSync;
-    friend class SQLTransactionSync;
-    friend class SQLTransaction;
+    friend class SQLTransactionBackend;
+    friend class SQLTransactionBackendSync;
 
     DatabaseBackend(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion,
         const String& displayName, unsigned long estimatedSize, DatabaseType);

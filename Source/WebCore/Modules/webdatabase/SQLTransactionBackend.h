@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef SQLTransaction_h
-#define SQLTransaction_h
+#ifndef SQLTransactionBackend_h
+#define SQLTransactionBackend_h
 
 #if ENABLE(SQL_DATABASE)
 
@@ -59,15 +59,12 @@ public:
     virtual void handleCommitFailedAfterPostflight(SQLTransaction*) = 0;
 };
 
-class SQLTransaction : public ThreadSafeRefCounted<SQLTransaction> {
+class SQLTransactionBackend : public ThreadSafeRefCounted<SQLTransactionBackend> {
 public:
-    static PassRefPtr<SQLTransaction> create(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
-                                             PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>, bool readOnly = false);
-
-    ~SQLTransaction();
+    ~SQLTransactionBackend();
 
     void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments,
-                    PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, ExceptionCode&);
+        PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, ExceptionCode&);
 
     void lockAcquired();
     bool performNextStep();
@@ -78,10 +75,10 @@ public:
     void notifyDatabaseThreadIsShuttingDown();
 
 private:
-    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
-                   PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
+    SQLTransactionBackend(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
+        PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
-    typedef void (SQLTransaction::*TransactionStepMethod)();
+    typedef void (SQLTransactionBackend::*TransactionStepMethod)();
     TransactionStepMethod m_nextStep;
 
     void enqueueStatement(PassRefPtr<SQLStatement>);
@@ -129,10 +126,12 @@ private:
     Deque<RefPtr<SQLStatement> > m_statementQueue;
 
     OwnPtr<SQLiteTransaction> m_sqliteTransaction;
+
+    friend class SQLTransaction; // FIXME: Remove this once the front-end has been properly isolated.
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // SQLTransaction_h
+#endif // SQLTransactionBackend_h

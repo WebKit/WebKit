@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,8 +29,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SQLTransactionSync_h
-#define SQLTransactionSync_h
+#ifndef SQLTransactionBackendSync_h
+#define SQLTransactionBackendSync_h
 
 #if ENABLE(SQL_DATABASE)
 
@@ -49,11 +50,9 @@ class SQLValue;
 class SQLiteTransaction;
 
 // Instances of this class should be created and used only on the worker's context thread.
-class SQLTransactionSync : public RefCounted<SQLTransactionSync> {
+class SQLTransactionBackendSync : public RefCounted<SQLTransactionBackendSync> {
 public:
-    static PassRefPtr<SQLTransactionSync> create(DatabaseSync*, PassRefPtr<SQLTransactionSyncCallback>, bool readOnly = false);
-
-    ~SQLTransactionSync();
+    ~SQLTransactionBackendSync();
 
     PassRefPtr<SQLResultSet> executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, ExceptionCode&);
 
@@ -66,7 +65,7 @@ public:
     void rollback();
 
 private:
-    SQLTransactionSync(DatabaseSync*, PassRefPtr<SQLTransactionSyncCallback>, bool readOnly);
+    SQLTransactionBackendSync(DatabaseSync*, PassRefPtr<SQLTransactionSyncCallback>, bool readOnly);
 
     RefPtr<DatabaseSync> m_database;
     RefPtr<SQLTransactionSyncCallback> m_callback;
@@ -76,10 +75,12 @@ private:
     bool m_modifiedDatabase;
     OwnPtr<SQLTransactionClient> m_transactionClient;
     OwnPtr<SQLiteTransaction> m_sqliteTransaction;
+
+    friend class SQLTransactionSync; // FIXME: Remove this once the front-end has been properly isolated.
 };
 
 } // namespace WebCore
 
 #endif
 
-#endif // SQLTransactionSync_h
+#endif // SQLTransactionBackendSync_h

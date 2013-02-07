@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -41,29 +42,30 @@
 
 namespace WebCore {
 
-    class SQLTransaction;
+class SQLTransactionBackend;
 
-    class SQLTransactionCoordinator {
-        WTF_MAKE_NONCOPYABLE(SQLTransactionCoordinator); WTF_MAKE_FAST_ALLOCATED;
-    public:
-        SQLTransactionCoordinator() { }
-        void acquireLock(SQLTransaction*);
-        void releaseLock(SQLTransaction*);
-        void shutdown();
-    private:
-        typedef Deque<RefPtr<SQLTransaction> > TransactionsQueue;
-        struct CoordinationInfo {
-            TransactionsQueue pendingTransactions;
-            HashSet<RefPtr<SQLTransaction> > activeReadTransactions;
-            RefPtr<SQLTransaction> activeWriteTransaction;
-        };
-        // Maps database names to information about pending transactions
-        typedef HashMap<String, CoordinationInfo> CoordinationInfoMap;
-        CoordinationInfoMap m_coordinationInfoMap;
-
-        void processPendingTransactions(CoordinationInfo& info);
+class SQLTransactionCoordinator {
+    WTF_MAKE_NONCOPYABLE(SQLTransactionCoordinator); WTF_MAKE_FAST_ALLOCATED;
+public:
+    SQLTransactionCoordinator() { }
+    void acquireLock(SQLTransactionBackend*);
+    void releaseLock(SQLTransactionBackend*);
+    void shutdown();
+private:
+    typedef Deque<RefPtr<SQLTransactionBackend> > TransactionsQueue;
+    struct CoordinationInfo {
+        TransactionsQueue pendingTransactions;
+        HashSet<RefPtr<SQLTransactionBackend> > activeReadTransactions;
+        RefPtr<SQLTransactionBackend> activeWriteTransaction;
     };
-}
+    // Maps database names to information about pending transactions
+    typedef HashMap<String, CoordinationInfo> CoordinationInfoMap;
+    CoordinationInfoMap m_coordinationInfoMap;
+
+    void processPendingTransactions(CoordinationInfo&);
+};
+
+} // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)
 

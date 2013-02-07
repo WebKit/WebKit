@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -44,6 +44,7 @@ namespace WebCore {
 class DatabaseCallback;
 class SecurityOrigin;
 class SQLTransaction;
+class SQLTransactionBackend;
 class SQLTransactionCallback;
 class SQLTransactionClient;
 class SQLTransactionCoordinator;
@@ -79,7 +80,7 @@ public:
     unsigned long long maximumSize() const;
 
     void scheduleTransactionCallback(SQLTransaction*);
-    void scheduleTransactionStep(SQLTransaction*, bool immediately = false);
+    void scheduleTransactionStep(SQLTransactionBackend*, bool immediately = false);
 
     SQLTransactionClient* transactionClient() const;
     SQLTransactionCoordinator* transactionCoordinator() const;

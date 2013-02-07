@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,7 +35,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "Database.h"
-#include "SQLTransaction.h"
+#include "SQLTransactionBackend.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -42,7 +43,7 @@
 
 namespace WebCore {
 
-static String getDatabaseIdentifier(SQLTransaction* transaction)
+static String getDatabaseIdentifier(SQLTransactionBackend* transaction)
 {
     Database* database = transaction->database();
     ASSERT(database);
@@ -54,7 +55,7 @@ void SQLTransactionCoordinator::processPendingTransactions(CoordinationInfo& inf
     if (info.activeWriteTransaction || info.pendingTransactions.isEmpty())
         return;
 
-    RefPtr<SQLTransaction> firstPendingTransaction = info.pendingTransactions.first();
+    RefPtr<SQLTransactionBackend> firstPendingTransaction = info.pendingTransactions.first();
     if (firstPendingTransaction->isReadOnly()) {
         do {
             firstPendingTransaction = info.pendingTransactions.takeFirst();
@@ -68,7 +69,7 @@ void SQLTransactionCoordinator::processPendingTransactions(CoordinationInfo& inf
     }
 }
 
-void SQLTransactionCoordinator::acquireLock(SQLTransaction* transaction)
+void SQLTransactionCoordinator::acquireLock(SQLTransactionBackend* transaction)
 {
     String dbIdentifier = getDatabaseIdentifier(transaction);
 
@@ -83,7 +84,7 @@ void SQLTransactionCoordinator::acquireLock(SQLTransaction* transaction)
     processPendingTransactions(info);
 }
 
-void SQLTransactionCoordinator::releaseLock(SQLTransaction* transaction)
+void SQLTransactionCoordinator::releaseLock(SQLTransactionBackend* transaction)
 {
     if (m_coordinationInfoMap.isEmpty())
         return;
@@ -113,7 +114,7 @@ void SQLTransactionCoordinator::shutdown()
         CoordinationInfo& info = coordinationInfoIterator->value;
         if (info.activeWriteTransaction)
             info.activeWriteTransaction->notifyDatabaseThreadIsShuttingDown();
-        for (HashSet<RefPtr<SQLTransaction> >::iterator activeReadTransactionsIterator =
+        for (HashSet<RefPtr<SQLTransactionBackend> >::iterator activeReadTransactionsIterator =
                      info.activeReadTransactions.begin();
              activeReadTransactionsIterator != info.activeReadTransactions.end();
              ++activeReadTransactionsIterator) {

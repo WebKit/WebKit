@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,7 @@
  */
 
 #include "config.h"
-#include "SQLTransaction.h"
+#include "SQLTransactionBackend.h"
 
 #if ENABLE(SQL_DATABASE)
 
@@ -37,17 +37,18 @@
 #include "DatabaseThread.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
-#include "ScriptExecutionContext.h"
 #include "SQLError.h"
-#include "SQLiteTransaction.h"
 #include "SQLStatement.h"
 #include "SQLStatementCallback.h"
 #include "SQLStatementErrorCallback.h"
+#include "SQLTransaction.h"
 #include "SQLTransactionCallback.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 #include "SQLTransactionErrorCallback.h"
 #include "SQLValue.h"
+#include "SQLiteTransaction.h"
+#include "ScriptExecutionContext.h"
 #include "VoidCallback.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -61,15 +62,10 @@ static const int DefaultQuotaSizeIncrease = 1048576;
 
 namespace WebCore {
 
-PassRefPtr<SQLTransaction> SQLTransaction::create(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-                                                  PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
-{
-    return adoptRef(new SQLTransaction(db, callback, errorCallback, successCallback, wrapper, readOnly));
-}
-
-SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-                               PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
-    : m_nextStep(&SQLTransaction::acquireLock)
+SQLTransactionBackend::SQLTransactionBackend(Database* db, PassRefPtr<SQLTransactionCallback> callback,
+    PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback,
+    PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
+    : m_nextStep(&SQLTransactionBackend::acquireLock)
     , m_executeSqlAllowed(false)
     , m_database(db)
     , m_wrapper(wrapper)
@@ -85,12 +81,12 @@ SQLTransaction::SQLTransaction(Database* db, PassRefPtr<SQLTransactionCallback> 
     ASSERT(m_database);
 }
 
-SQLTransaction::~SQLTransaction()
+SQLTransactionBackend::~SQLTransactionBackend()
 {
     ASSERT(!m_sqliteTransaction);
 }
 
-void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e)
+void SQLTransactionBackend::executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback> callback, PassRefPtr<SQLStatementErrorCallback> callbackError, ExceptionCode& e)
 {
     if (!m_executeSqlAllowed || !m_database->opened()) {
         e = INVALID_STATE_ERR;
@@ -111,43 +107,42 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
     enqueueStatement(statement);
 }
 
-void SQLTransaction::enqueueStatement(PassRefPtr<SQLStatement> statement)
+void SQLTransactionBackend::enqueueStatement(PassRefPtr<SQLStatement> statement)
 {
     MutexLocker locker(m_statementMutex);
     m_statementQueue.append(statement);
 }
 
 #if !LOG_DISABLED
-const char* SQLTransaction::debugStepName(SQLTransaction::TransactionStepMethod step)
+const char* SQLTransactionBackend::debugStepName(SQLTransactionBackend::TransactionStepMethod step)
 {
-    if (step == &SQLTransaction::acquireLock)
+    if (step == &SQLTransactionBackend::acquireLock)
         return "acquireLock";
-    else if (step == &SQLTransaction::openTransactionAndPreflight)
+    if (step == &SQLTransactionBackend::openTransactionAndPreflight)
         return "openTransactionAndPreflight";
-    else if (step == &SQLTransaction::runStatements)
+    if (step == &SQLTransactionBackend::runStatements)
         return "runStatements";
-    else if (step == &SQLTransaction::postflightAndCommit)
+    if (step == &SQLTransactionBackend::postflightAndCommit)
         return "postflightAndCommit";
-    else if (step == &SQLTransaction::cleanupAfterTransactionErrorCallback)
+    if (step == &SQLTransactionBackend::cleanupAfterTransactionErrorCallback)
         return "cleanupAfterTransactionErrorCallback";
-    else if (step == &SQLTransaction::deliverTransactionCallback)
+    if (step == &SQLTransactionBackend::deliverTransactionCallback)
         return "deliverTransactionCallback";
-    else if (step == &SQLTransaction::deliverTransactionErrorCallback)
+    if (step == &SQLTransactionBackend::deliverTransactionErrorCallback)
         return "deliverTransactionErrorCallback";
-    else if (step == &SQLTransaction::deliverStatementCallback)
+    if (step == &SQLTransactionBackend::deliverStatementCallback)
         return "deliverStatementCallback";
-    else if (step == &SQLTransaction::deliverQuotaIncreaseCallback)
+    if (step == &SQLTransactionBackend::deliverQuotaIncreaseCallback)
         return "deliverQuotaIncreaseCallback";
-    else if (step == &SQLTransaction::deliverSuccessCallback)
+    if (step == &SQLTransactionBackend::deliverSuccessCallback)
         return "deliverSuccessCallback";
-    else if (step == &SQLTransaction::cleanupAfterSuccessCallback)
+    if (step == &SQLTransactionBackend::cleanupAfterSuccessCallback)
         return "cleanupAfterSuccessCallback";
-    else
-        return "UNKNOWN";
+    return "UNKNOWN";
 }
 #endif
 
-void SQLTransaction::checkAndHandleClosedOrInterruptedDatabase()
+void SQLTransactionBackend::checkAndHandleClosedOrInterruptedDatabase()
 {
     if (m_database->opened() && !m_database->isInterrupted())
         return;
@@ -178,16 +173,16 @@ void SQLTransaction::checkAndHandleClosedOrInterruptedDatabase()
 }
 
 
-bool SQLTransaction::performNextStep()
+bool SQLTransactionBackend::performNextStep()
 {
     LOG(StorageAPI, "Step %s\n", debugStepName(m_nextStep));
 
-    ASSERT(m_nextStep == &SQLTransaction::acquireLock ||
-           m_nextStep == &SQLTransaction::openTransactionAndPreflight ||
-           m_nextStep == &SQLTransaction::runStatements ||
-           m_nextStep == &SQLTransaction::postflightAndCommit ||
-           m_nextStep == &SQLTransaction::cleanupAfterSuccessCallback ||
-           m_nextStep == &SQLTransaction::cleanupAfterTransactionErrorCallback);
+    ASSERT(m_nextStep == &SQLTransactionBackend::acquireLock
+        || m_nextStep == &SQLTransactionBackend::openTransactionAndPreflight
+        || m_nextStep == &SQLTransactionBackend::runStatements
+        || m_nextStep == &SQLTransactionBackend::postflightAndCommit
+        || m_nextStep == &SQLTransactionBackend::cleanupAfterSuccessCallback
+        || m_nextStep == &SQLTransactionBackend::cleanupAfterTransactionErrorCallback);
 
     checkAndHandleClosedOrInterruptedDatabase();
 
@@ -198,15 +193,15 @@ bool SQLTransaction::performNextStep()
     return !m_nextStep;
 }
 
-void SQLTransaction::performPendingCallback()
+void SQLTransactionBackend::performPendingCallback()
 {
     LOG(StorageAPI, "Callback %s\n", debugStepName(m_nextStep));
 
-    ASSERT(m_nextStep == &SQLTransaction::deliverTransactionCallback ||
-           m_nextStep == &SQLTransaction::deliverTransactionErrorCallback ||
-           m_nextStep == &SQLTransaction::deliverStatementCallback ||
-           m_nextStep == &SQLTransaction::deliverQuotaIncreaseCallback ||
-           m_nextStep == &SQLTransaction::deliverSuccessCallback);
+    ASSERT(m_nextStep == &SQLTransactionBackend::deliverTransactionCallback
+        || m_nextStep == &SQLTransactionBackend::deliverTransactionErrorCallback
+        || m_nextStep == &SQLTransactionBackend::deliverStatementCallback
+        || m_nextStep == &SQLTransactionBackend::deliverQuotaIncreaseCallback
+        || m_nextStep == &SQLTransactionBackend::deliverSuccessCallback);
 
     checkAndHandleClosedOrInterruptedDatabase();
 
@@ -214,7 +209,7 @@ void SQLTransaction::performPendingCallback()
         (this->*m_nextStep)();
 }
 
-void SQLTransaction::notifyDatabaseThreadIsShuttingDown()
+void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()
 {
     ASSERT(currentThread() == database()->databaseContext()->databaseThread()->getThreadID());
 
@@ -224,20 +219,20 @@ void SQLTransaction::notifyDatabaseThreadIsShuttingDown()
     m_sqliteTransaction.clear();
 }
 
-void SQLTransaction::acquireLock()
+void SQLTransactionBackend::acquireLock()
 {
     m_database->transactionCoordinator()->acquireLock(this);
 }
 
-void SQLTransaction::lockAcquired()
+void SQLTransactionBackend::lockAcquired()
 {
     m_lockAcquired = true;
-    m_nextStep = &SQLTransaction::openTransactionAndPreflight;
+    m_nextStep = &SQLTransactionBackend::openTransactionAndPreflight;
     LOG(StorageAPI, "Scheduling openTransactionAndPreflight immediately for transaction %p\n", this);
     m_database->scheduleTransactionStep(this, true);
 }
 
-void SQLTransaction::openTransactionAndPreflight()
+void SQLTransactionBackend::openTransactionAndPreflight()
 {
     ASSERT(!m_database->sqliteDatabase().transactionInProgress());
     ASSERT(m_lockAcquired);
@@ -269,7 +264,7 @@ void SQLTransaction::openTransactionAndPreflight()
         ASSERT(!m_database->sqliteDatabase().transactionInProgress());
         m_database->reportStartTransactionResult(2, SQLError::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to begin transaction",
-                                              m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
+            m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_sqliteTransaction.clear();
         handleTransactionError(false);
         return;
@@ -282,18 +277,17 @@ void SQLTransaction::openTransactionAndPreflight()
     if (!m_database->getActualVersionForTransaction(actualVersion)) {
         m_database->reportStartTransactionResult(3, SQLError::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to read version",
-                                              m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
+            m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         m_database->disableAuthorizer();
         m_sqliteTransaction.clear();
         m_database->enableAuthorizer();
         handleTransactionError(false);
         return;
     }
-    m_hasVersionMismatch = !m_database->expectedVersion().isEmpty()
-                           && (m_database->expectedVersion() != actualVersion);
+    m_hasVersionMismatch = !m_database->expectedVersion().isEmpty() && (m_database->expectedVersion() != actualVersion);
 
     // Transaction Steps 3 - Peform preflight steps, jumping to the error callback if they fail
-    if (m_wrapper && !m_wrapper->performPreflight(this)) {
+    if (m_wrapper && !m_wrapper->performPreflight(SQLTransaction::from(this))) {
         m_database->disableAuthorizer();
         m_sqliteTransaction.clear();
         m_database->enableAuthorizer();
@@ -307,19 +301,19 @@ void SQLTransaction::openTransactionAndPreflight()
     }
 
     // Transaction Step 4 - Invoke the transaction callback with the new SQLTransaction object
-    m_nextStep = &SQLTransaction::deliverTransactionCallback;
+    m_nextStep = &SQLTransactionBackend::deliverTransactionCallback;
     LOG(StorageAPI, "Scheduling deliverTransactionCallback for transaction %p\n", this);
-    m_database->scheduleTransactionCallback(this);
+    m_database->scheduleTransactionCallback(SQLTransaction::from(this));
 }
 
-void SQLTransaction::deliverTransactionCallback()
+void SQLTransactionBackend::deliverTransactionCallback()
 {
     bool shouldDeliverErrorCallback = false;
 
     RefPtr<SQLTransactionCallback> callback = m_callbackWrapper.unwrap();
     if (callback) {
         m_executeSqlAllowed = true;
-        shouldDeliverErrorCallback = !callback->handleEvent(this);
+        shouldDeliverErrorCallback = !callback->handleEvent(SQLTransaction::from(this));
         m_executeSqlAllowed = false;
     }
 
@@ -334,14 +328,14 @@ void SQLTransaction::deliverTransactionCallback()
     m_database->reportStartTransactionResult(0, -1, 0); // OK
 }
 
-void SQLTransaction::scheduleToRunStatements()
+void SQLTransactionBackend::scheduleToRunStatements()
 {
-    m_nextStep = &SQLTransaction::runStatements;
+    m_nextStep = &SQLTransactionBackend::runStatements;
     LOG(StorageAPI, "Scheduling runStatements for transaction %p\n", this);
     m_database->scheduleTransactionStep(this);
 }
 
-void SQLTransaction::runStatements()
+void SQLTransactionBackend::runStatements()
 {
     ASSERT(m_lockAcquired);
 
@@ -360,7 +354,7 @@ void SQLTransaction::runStatements()
             m_database->sqliteDatabase().setMaximumSize(m_database->maximumSize());
         } else {
             // If the current statement has already been run, failed due to quota constraints, and we're not retrying it,
-            // that means it ended in an error.  Handle it now
+            // that means it ended in an error. Handle it now
             if (m_currentStatement && m_currentStatement->lastExecutionFailedDueToQuota()) {
                 handleCurrentStatementError();
                 break;
@@ -372,23 +366,22 @@ void SQLTransaction::runStatements()
     } while (runCurrentStatement());
 
     // If runCurrentStatement() returned false, that means either there was no current statement to run,
-    // or the current statement requires a callback to complete.  In the later case, it also scheduled
+    // or the current statement requires a callback to complete. In the later case, it also scheduled
     // the callback or performed any other additional work so we can return
     if (!m_currentStatement)
         postflightAndCommit();
 }
 
-void SQLTransaction::getNextStatement()
+void SQLTransactionBackend::getNextStatement()
 {
     m_currentStatement = 0;
 
     MutexLocker locker(m_statementMutex);
-    if (!m_statementQueue.isEmpty()) {
+    if (!m_statementQueue.isEmpty())
         m_currentStatement = m_statementQueue.takeFirst();
-    }
 }
 
-bool SQLTransaction::runCurrentStatement()
+bool SQLTransactionBackend::runCurrentStatement()
 {
     if (!m_currentStatement)
         return false;
@@ -407,18 +400,18 @@ bool SQLTransaction::runCurrentStatement()
         }
 
         if (m_currentStatement->hasStatementCallback()) {
-            m_nextStep = &SQLTransaction::deliverStatementCallback;
+            m_nextStep = &SQLTransactionBackend::deliverStatementCallback;
             LOG(StorageAPI, "Scheduling deliverStatementCallback for transaction %p\n", this);
-            m_database->scheduleTransactionCallback(this);
+            m_database->scheduleTransactionCallback(SQLTransaction::from(this));
             return false;
         }
         return true;
     }
 
     if (m_currentStatement->lastExecutionFailedDueToQuota()) {
-        m_nextStep = &SQLTransaction::deliverQuotaIncreaseCallback;
+        m_nextStep = &SQLTransactionBackend::deliverQuotaIncreaseCallback;
         LOG(StorageAPI, "Scheduling deliverQuotaIncreaseCallback for transaction %p\n", this);
-        m_database->scheduleTransactionCallback(this);
+        m_database->scheduleTransactionCallback(SQLTransaction::from(this));
         return false;
     }
 
@@ -427,14 +420,14 @@ bool SQLTransaction::runCurrentStatement()
     return false;
 }
 
-void SQLTransaction::handleCurrentStatementError()
+void SQLTransactionBackend::handleCurrentStatementError()
 {
     // Transaction Steps 6.error - Call the statement's error callback, but if there was no error callback,
     // or the transaction was rolled back, jump to the transaction error callback
     if (m_currentStatement->hasStatementErrorCallback() && !m_sqliteTransaction->wasRolledBackBySqlite()) {
-        m_nextStep = &SQLTransaction::deliverStatementCallback;
+        m_nextStep = &SQLTransactionBackend::deliverStatementCallback;
         LOG(StorageAPI, "Scheduling deliverStatementCallback for transaction %p\n", this);
-        m_database->scheduleTransactionCallback(this);
+        m_database->scheduleTransactionCallback(SQLTransaction::from(this));
     } else {
         m_transactionError = m_currentStatement->sqlError();
         if (!m_transactionError) {
@@ -445,14 +438,14 @@ void SQLTransaction::handleCurrentStatementError()
     }
 }
 
-void SQLTransaction::deliverStatementCallback()
+void SQLTransactionBackend::deliverStatementCallback()
 {
     ASSERT(m_currentStatement);
 
     // Transaction Step 6.6 and 6.3(error) - If the statement callback went wrong, jump to the transaction error callback
     // Otherwise, continue to loop through the statement queue
     m_executeSqlAllowed = true;
-    bool result = m_currentStatement->performCallback(this);
+    bool result = m_currentStatement->performCallback(SQLTransaction::from(this));
     m_executeSqlAllowed = false;
 
     if (result) {
@@ -463,24 +456,24 @@ void SQLTransaction::deliverStatementCallback()
         scheduleToRunStatements();
 }
 
-void SQLTransaction::deliverQuotaIncreaseCallback()
+void SQLTransactionBackend::deliverQuotaIncreaseCallback()
 {
     ASSERT(m_currentStatement);
     ASSERT(!m_shouldRetryCurrentStatement);
 
     m_shouldRetryCurrentStatement = m_database->transactionClient()->didExceedQuota(database());
 
-    m_nextStep = &SQLTransaction::runStatements;
+    m_nextStep = &SQLTransactionBackend::runStatements;
     LOG(StorageAPI, "Scheduling runStatements for transaction %p\n", this);
     m_database->scheduleTransactionStep(this);
 }
 
-void SQLTransaction::postflightAndCommit()
+void SQLTransactionBackend::postflightAndCommit()
 {
     ASSERT(m_lockAcquired);
 
     // Transaction Step 7 - Peform postflight steps, jumping to the error callback if they fail
-    if (m_wrapper && !m_wrapper->performPostflight(this)) {
+    if (m_wrapper && !m_wrapper->performPostflight(SQLTransaction::from(this))) {
         m_transactionError = m_wrapper->sqlError();
         if (!m_transactionError) {
             m_database->reportCommitTransactionResult(3, SQLError::UNKNOWN_ERR, 0);
@@ -500,11 +493,11 @@ void SQLTransaction::postflightAndCommit()
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
         if (m_wrapper)
-            m_wrapper->handleCommitFailedAfterPostflight(this);
+            m_wrapper->handleCommitFailedAfterPostflight(SQLTransaction::from(this));
         m_successCallbackWrapper.clear();
         m_database->reportCommitTransactionResult(4, SQLError::DATABASE_ERR, m_database->sqliteDatabase().lastError());
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "unable to commit transaction",
-                                              m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
+            m_database->sqliteDatabase().lastError(), m_database->sqliteDatabase().lastErrorMsg());
         handleTransactionError(false);
         return;
     }
@@ -524,14 +517,14 @@ void SQLTransaction::postflightAndCommit()
 
     // Transaction Step 10 - Deliver success callback, if there is one
     if (m_successCallbackWrapper.hasCallback()) {
-        m_nextStep = &SQLTransaction::deliverSuccessCallback;
+        m_nextStep = &SQLTransactionBackend::deliverSuccessCallback;
         LOG(StorageAPI, "Scheduling deliverSuccessCallback for transaction %p\n", this);
-        m_database->scheduleTransactionCallback(this);
+        m_database->scheduleTransactionCallback(SQLTransaction::from(this));
     } else
         cleanupAfterSuccessCallback();
 }
 
-void SQLTransaction::deliverSuccessCallback()
+void SQLTransactionBackend::deliverSuccessCallback()
 {
     // Transaction Step 10 - Deliver success callback
     RefPtr<VoidCallback> successCallback = m_successCallbackWrapper.unwrap();
@@ -540,12 +533,12 @@ void SQLTransaction::deliverSuccessCallback()
 
     // Schedule a "post-success callback" step to return control to the database thread in case there
     // are further transactions queued up for this Database
-    m_nextStep = &SQLTransaction::cleanupAfterSuccessCallback;
+    m_nextStep = &SQLTransactionBackend::cleanupAfterSuccessCallback;
     LOG(StorageAPI, "Scheduling cleanupAfterSuccessCallback for transaction %p\n", this);
     m_database->scheduleTransactionStep(this);
 }
 
-void SQLTransaction::cleanupAfterSuccessCallback()
+void SQLTransactionBackend::cleanupAfterSuccessCallback()
 {
     ASSERT(m_lockAcquired);
 
@@ -560,15 +553,15 @@ void SQLTransaction::cleanupAfterSuccessCallback()
     m_database->transactionCoordinator()->releaseLock(this);
 }
 
-void SQLTransaction::handleTransactionError(bool inCallback)
+void SQLTransactionBackend::handleTransactionError(bool inCallback)
 {
     if (m_errorCallbackWrapper.hasCallback()) {
         if (inCallback)
             deliverTransactionErrorCallback();
         else {
-            m_nextStep = &SQLTransaction::deliverTransactionErrorCallback;
+            m_nextStep = &SQLTransactionBackend::deliverTransactionErrorCallback;
             LOG(StorageAPI, "Scheduling deliverTransactionErrorCallback for transaction %p\n", this);
-            m_database->scheduleTransactionCallback(this);
+            m_database->scheduleTransactionCallback(SQLTransaction::from(this));
         }
         return;
     }
@@ -576,15 +569,14 @@ void SQLTransaction::handleTransactionError(bool inCallback)
     // No error callback, so fast-forward to:
     // Transaction Step 12 - Rollback the transaction.
     if (inCallback) {
-        m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;
+        m_nextStep = &SQLTransactionBackend::cleanupAfterTransactionErrorCallback;
         LOG(StorageAPI, "Scheduling cleanupAfterTransactionErrorCallback for transaction %p\n", this);
         m_database->scheduleTransactionStep(this);
-    } else {
+    } else
         cleanupAfterTransactionErrorCallback();
-    }
 }
 
-void SQLTransaction::deliverTransactionErrorCallback()
+void SQLTransactionBackend::deliverTransactionErrorCallback()
 {
     ASSERT(m_transactionError);
 
@@ -594,12 +586,12 @@ void SQLTransaction::deliverTransactionErrorCallback()
     if (errorCallback)
         errorCallback->handleEvent(m_transactionError.get());
 
-    m_nextStep = &SQLTransaction::cleanupAfterTransactionErrorCallback;
+    m_nextStep = &SQLTransactionBackend::cleanupAfterTransactionErrorCallback;
     LOG(StorageAPI, "Scheduling cleanupAfterTransactionErrorCallback for transaction %p\n", this);
     m_database->scheduleTransactionStep(this);
 }
 
-void SQLTransaction::cleanupAfterTransactionErrorCallback()
+void SQLTransactionBackend::cleanupAfterTransactionErrorCallback()
 {
     ASSERT(m_lockAcquired);
 
@@ -619,7 +611,7 @@ void SQLTransaction::cleanupAfterTransactionErrorCallback()
         m_statementQueue.clear();
     }
 
-    // Transaction is complete!  There is no next step
+    // Transaction is complete! There is no next step
     LOG(StorageAPI, "Transaction %p is complete with an error\n", this);
     ASSERT(!m_database->sqliteDatabase().transactionInProgress());
     m_nextStep = 0;

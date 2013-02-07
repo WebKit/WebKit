@@ -1479,6 +1479,8 @@ HEADERS += \
     Modules/webdatabase/SQLStatement.h \
     Modules/webdatabase/SQLStatementSync.h \
     Modules/webdatabase/SQLTransaction.h \
+    Modules/webdatabase/SQLTransactionBackend.h \
+    Modules/webdatabase/SQLTransactionBackendSync.h \
     Modules/webdatabase/SQLTransactionClient.h \
     Modules/webdatabase/SQLTransactionCoordinator.h \
     Modules/webdatabase/SQLTransactionSync.h \
@@ -3054,6 +3056,8 @@ enable?(SQL_DATABASE) {
         Modules/webdatabase/SQLStatement.cpp \
         Modules/webdatabase/SQLStatementSync.cpp \
         Modules/webdatabase/SQLTransaction.cpp \
+        Modules/webdatabase/SQLTransactionBackend.cpp \
+        Modules/webdatabase/SQLTransactionBackendSync.cpp \
         Modules/webdatabase/SQLTransactionClient.cpp \
         Modules/webdatabase/SQLTransactionCoordinator.cpp \
         Modules/webdatabase/SQLTransactionSync.cpp \
