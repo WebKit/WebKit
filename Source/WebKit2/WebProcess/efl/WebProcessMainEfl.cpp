@@ -31,6 +31,8 @@
 #include "ProxyResolverSoup.h"
 #include "WKBase.h"
 #include <Ecore.h>
+#include <Ecore_Evas.h>
+#include <Edje.h>
 #include <Efreet.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/NetworkingContext.h>
@@ -87,6 +89,25 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     }
 #endif
 
+    if (!ecore_evas_init()) {
+#ifdef HAVE_ECORE_X
+        ecore_x_shutdown();
+#endif
+        ecore_shutdown();
+        eina_shutdown();
+        return 1;
+    }
+
+    if (!edje_init()) {
+        ecore_evas_shutdown();
+#ifdef HAVE_ECORE_X
+        ecore_x_shutdown();
+#endif
+        ecore_shutdown();
+        eina_shutdown();
+        return 1;
+    }
+
 #if !GLIB_CHECK_VERSION(2, 35, 0)
     g_type_init();
 #endif
@@ -127,6 +148,8 @@ WK_EXPORT int WebProcessMainEfl(int argc, char* argv[])
     soup_cache_dump(soupCache);
     g_object_unref(soupCache);
 
+    edje_shutdown();
+    ecore_evas_shutdown();
     ecore_x_shutdown();
     ecore_shutdown();
     eina_shutdown();

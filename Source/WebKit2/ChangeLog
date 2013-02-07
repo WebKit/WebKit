@@ -1,3 +1,22 @@
+2013-02-05  Eunmi Lee  <eunmi15.lee@samsung.com> and Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][WK2] Refactoring initialization and shutdown codes of EFL libraries.
+        https://bugs.webkit.org/show_bug.cgi?id=97173
+
+        Reviewed by Kenneth Rohde Christiansen, signed-off by Benjamin Poulain.
+
+        Initialize and shutdown the EFL libraries in the ewk_main.cpp for
+        UIProcess and WebProcessMainEfl.cpp for WebProcess.
+
+        This allows us to shut down the libraries in a proper way, since
+        RunLoop persist until the process exits.
+
+        * UIProcess/API/efl/ewk_main.cpp:
+        (ewk_init):
+        (ewk_shutdown):
+        * WebProcess/efl/WebProcessMainEfl.cpp:
+        (WebKit::WebProcessMainEfl):
+
 2013-02-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix.
