@@ -78,16 +78,16 @@ bool ClipboardBlackBerry::setData(const String& type, const String& text)
     return true;
 }
 
-Vector<String> ClipboardBlackBerry::types() const
+ListHashSet<String> ClipboardBlackBerry::types() const
 {
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
-        return Vector<String>();
+        return ListHashSet<String>();
 
     // We use hardcoded list here since there seems to be no API to get the list.
-    Vector<String> ret;
-    ret.append(ASCIILiteral("text/plain"));
-    ret.append(ASCIILiteral("text/html"));
-    ret.append(ASCIILiteral("text/url"));
+    ListHashSet<String> ret;
+    ret.add("text/plain");
+    ret.add("text/html");
+    ret.add("text/url");
     return ret;
 }
 

@@ -484,24 +484,24 @@ bool ClipboardWin::setData(const String& type, const String& data)
     return false;
 }
 
-static void addMimeTypesForFormat(Vector<String>& results, const FORMATETC& format)
+static void addMimeTypesForFormat(ListHashSet<String>& results, const FORMATETC& format)
 {
     // URL and Text are provided for compatibility with IE's model
     if (format.cfFormat == urlFormat()->cfFormat || format.cfFormat == urlWFormat()->cfFormat) {
-        results.append(ASCIILiteral("URL"));
-        results.append(ASCIILiteral("text/uri-list"));
+        results.add("URL");
+        results.add("text/uri-list");
     }
 
     if (format.cfFormat == plainTextWFormat()->cfFormat || format.cfFormat == plainTextFormat()->cfFormat) {
-        results.append(ASCIILiteral("Text"));
-        results.append(ASCIILiteral("text/plain"));
+        results.add("Text");
+        results.add("text/plain");
     }
 }
 
 // extensions beyond IE's API
-Vector<String> ClipboardWin::types() const
+ListHashSet<String> ClipboardWin::types() const
 { 
-    Vector<String> results;
+    ListHashSet<String> results;
     if (policy() != ClipboardReadable && policy() != ClipboardTypesReadable)
         return results;
 

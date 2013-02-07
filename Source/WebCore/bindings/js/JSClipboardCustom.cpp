@@ -51,13 +51,13 @@ JSValue JSClipboard::types(ExecState* exec) const
 {
     Clipboard* clipboard = impl();
 
-    Vector<String> types = clipboard->types();
+    ListHashSet<String> types = clipboard->types();
     if (types.isEmpty())
         return jsNull();
 
     MarkedArgumentBuffer list;
-    Vector<String>::const_iterator end = types.end();
-    for (Vector<String>::const_iterator it = types.begin(); it != end; ++it)
+    ListHashSet<String>::const_iterator end = types.end();
+    for (ListHashSet<String>::const_iterator it = types.begin(); it != end; ++it)
         list.append(jsStringWithCache(exec, *it));
     return constructArray(exec, 0, globalObject(), list);
 }
