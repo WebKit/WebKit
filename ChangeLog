@@ -1,3 +1,15 @@
+2013-02-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Autotools] Remove uses of Automake FARSTREAM_(CFLAGS|LIBS) variables, USE_FARSTREAM conditional
+        https://bugs.webkit.org/show_bug.cgi?id=109198
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: The USE_FARSTREAM conditional is being removed while the WTF_USE_FARSTREAM
+        define is currently a no-op.
+        * configure.ac: Don't set the Automake conditional as it's currently not needed due
+        to checking for Farstream dependency being removed in r142005.
+
 2013-02-07  Gavin Peters  <gavinp@chromium.org>
 
         Unreviewed, rolling out r142141.

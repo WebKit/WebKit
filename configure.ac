@@ -1042,9 +1042,6 @@ AM_CONDITIONAL([USE_EGL], [test "$enable_egl" = "yes"])
 AM_CONDITIONAL([USE_GLES2], [test "$enable_gles2" = "yes"])
 AM_CONDITIONAL([USE_GLX], [test "$enable_glx" = "yes"])
 
-# Farstream feature conditional.
-AM_CONDITIONAL([USE_FARSTREAM], [test "$have_farstream" = "yes"])
-
 #######################################################################################
 #                                     ATTENTION                                       #
 # Please refer to the following guidelines if you're about to add an Automake         #

@@ -1,3 +1,13 @@
+2013-02-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [Autotools] Remove uses of Automake FARSTREAM_(CFLAGS|LIBS) variables, USE_FARSTREAM conditional
+        https://bugs.webkit.org/show_bug.cgi?id=109198
+
+        Reviewed by Martin Robinson.
+
+        * GNUmakefile.am: Remove the FARSTREAM_(CFLAGS|LIBS) variables, they're
+        not set to anything.
+
 2013-02-07  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [WK2][EFL] Add WKView methods related to background drawing
