@@ -5,9 +5,6 @@ WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS := $(WebCore)/css/CSSValueKeywords.in
 
 webcore_cppflags += \
-	-DWTF_USE_FREETYPE=1 \
-	-DWTF_USE_HARFBUZZ=1 \
-	-DWTF_USE_WEBP=1 \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/src \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include \
 	-I$(srcdir)/Source/ThirdParty/ANGLE/include/GLSLANG \
@@ -114,9 +111,6 @@ webcore_cppflags += \
 
 webcoregtk_cppflags += \
 	-DWEBKITGTK_API_VERSION_STRING=\"@WEBKITGTK_API_VERSION@\" \
-	-DWTF_USE_FREETYPE=1 \
-	-DWTF_USE_HARFBUZZ_NG=1 \
-	-DWTF_USE_SOUP=1 \
 	-I$(srcdir)/Source/WebCore/accessibility/atk \
 	-I$(srcdir)/Source/WebCore/loader/gtk \
 	-I$(srcdir)/Source/WebCore/page/gtk \
@@ -157,12 +151,6 @@ endif # END ENABLE_GAMEPAD
 # ----
 if ENABLE_VIDEO
 feature_defines_overrides += ENABLE_VIDEO=1
-if USE_GSTREAMER
-if ENABLE_DEBUG
-webcore_cppflags += -DGST_DISABLE_DEPRECATED
-endif # END ENABLE_DEBUG
-webcore_cppflags += -DWTF_USE_NATIVE_FULLSCREEN_VIDEO=1
-endif # END USE_GSTREAMER
 else
 feature_defines_overrides += ENABLE_VIDEO=0 ENABLE_VIDEO_TRACK=0
 endif # END ENABLE_VIDEO
@@ -289,10 +277,6 @@ if ENABLE_WEB_AUDIO
 feature_defines_overrides += ENABLE_WEB_AUDIO=1
 else
 feature_defines_overrides += ENABLE_WEB_AUDIO=0
-endif
-
-if USE_WEBAUDIO_GSTREAMER
-webcore_cppflags += -DWTF_USE_WEBAUDIO_GSTREAMER=1
 endif
 
 # ---

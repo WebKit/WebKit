@@ -194,16 +194,6 @@ else
 fi
 AC_LANG_POP(C++)
 
-# pthread (not needed on Windows)
-if test "$os_win32" = "no"; then
-AC_CHECK_HEADERS([pthread.h],
-    AC_DEFINE([HAVE_PTHREAD_H],[1],[Define if pthread exists]),
-    AC_MSG_ERROR([pthread support is required to build WebKit]))
-AC_CHECK_LIB(pthread, pthread_rwlock_init,
-    AC_DEFINE([HAVE_PTHREAD_RWLOCK],[1],[Define if pthread rwlock is present]),
-    AC_MSG_WARN([pthread rwlock support is not available]))
-fi
-
 # Check for libjpeg the way Gtk does it.
 AC_CHECK_LIB(jpeg, jpeg_destroy_decompress, jpeg_ok=yes, jpeg_ok=no AC_MSG_ERROR([JPEG library (libjpeg) not found]))
 if test "$jpeg_ok" = yes; then
@@ -411,7 +401,6 @@ AC_SUBST([ZLIB_LIBS])
 
 GETTEXT_PACKAGE=$PACKAGE-$GTK_API_VERSION
 AC_SUBST(GETTEXT_PACKAGE)
-AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [The gettext catalog name])
 
 PKG_CHECK_MODULES(LIBXML, libxml-2.0 >= $LIBXML_REQUIRED_VERSION)
 AC_SUBST(LIBXML_CFLAGS)
@@ -440,7 +429,6 @@ AC_SUBST(GAIL_LIBS)
 if test "$with_target" = "directfb"; then
     PKG_CHECK_MODULES(CAIRO, cairo-directfb >= $CAIRO_REQUIRED_VERSION)
     PKG_CHECK_MODULES(GTK, gtk+-directfb-2.0 >= $GTK_REQUIRED_VERSION)
-    AC_DEFINE([WTF_PLATFORM_DIRECTFB],[1],[Define if target is DirectFB])
 else
     PKG_CHECK_MODULES(CAIRO, cairo >= $CAIRO_REQUIRED_VERSION)
     PKG_CHECK_MODULES(GTK, gtk+-$GTK_API_VERSION >= $GTK_REQUIRED_VERSION)
@@ -459,7 +447,6 @@ else
 
         AC_SUBST([XT_CFLAGS])
         AC_SUBST([XT_LIBS])
-        AC_DEFINE([WTF_PLATFORM_X11], [1], [Define if target is X11])
    fi
 fi
 AC_SUBST(GTK_CFLAGS)
@@ -739,9 +726,6 @@ case "$with_gstreamer" in
 esac
 
 AC_SUBST([GST_API_VERSION])
-if test "$GST_API_VERSION" = "1.0"; then
-    AC_DEFINE([GST_API_VERSION_1],[1], [Using GStreamer 1.0])
-fi
 
 # Check whether to enable debug features.
 AC_MSG_CHECKING([whether to enable debug features])
@@ -770,7 +754,6 @@ if test "$enable_opcode_stats" = "yes"; then
     if test "$enable_jit" = "yes"; then
         AC_MSG_ERROR([JIT must be disabled for Opcode stats to work.])
     fi
-    AC_DEFINE([ENABLE_OPCODE_STATS], [1], [Define to enable Opcode statistics])
 fi
 
 # GObject Introspection.
@@ -802,7 +785,6 @@ if test "$enable_introspection" = "yes"; then
     G_IR_SCANNER="$($PKG_CONFIG --variable=g_ir_scanner gobject-introspection-1.0)"
     G_IR_COMPILER="$($PKG_CONFIG --variable=g_ir_compiler gobject-introspection-1.0)"
     G_IR_GENERATE="$($PKG_CONFIG --variable=g_ir_generate gobject-introspection-1.0)"
-    AC_DEFINE([ENABLE_INTROSPECTION], [1], [Define to enable GObject introspection support])
 fi
 
 AC_SUBST([G_IR_SCANNER])
@@ -821,10 +803,6 @@ if test "$enable_debug_symbols" = "min"; then
 elif test "$enable_debug_symbols" != "no"; then
     CXXFLAGS="$CXXFLAGS -g"
     CFLAGS="$CFLAGS -g"
-fi
-
-if test "$enable_debug_features" = "no"; then
-    AC_DEFINE([NDEBUG], [1], [Define to disable debugging features])
 fi
 
 # Add the appropriate 'O' level for optimized builds.
@@ -980,9 +958,6 @@ if test "$enable_webkit2" = "yes"; then
     PKG_CHECK_MODULES(GTK_UNIX_PRINTING, gtk+-unix-print-3.0, [have_gtk_unix_printing=yes], [have_gtk_unix_printing=no])
     AC_SUBST(GTK_UNIX_PRINTING_CFLAGS)
     AC_SUBST(GTK_UNIX_PRINTING_LIBS)
-    if test "$have_gtk_unix_printing" = "yes"; then
-        AC_DEFINE([HAVE_GTK_UNIX_PRINTING], [1], [Define if GTK+ UNIX Printing is available])
-    fi
 
     # On some Linux/Unix platforms, shm_* may only be available if linking
     # against librt
@@ -1061,7 +1036,6 @@ AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG_FONTS],[test "$enable_svg_fonts" = "yes"])
 AM_CONDITIONAL([ENABLE_COVERAGE],[test "$enable_coverage" = "yes"])
-AM_CONDITIONAL([ENABLE_FAST_MALLOC],[test "$enable_fast_malloc" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT1],[test "$enable_webkit1" = "yes"])
@@ -1093,6 +1067,132 @@ if test "$enable_webkit2" = "yes"; then
 
     AC_CONFIG_FILES([Source/WebKit2/webkit2gtk-${WEBKITGTK_API_VERSION}.pc:Source/WebKit2/webkit2gtk.pc.in],
         [WEBKITGTK_API_VERSION=$WEBKITGTK_API_VERSION,WEBKITGTK_PC_NAME=$WEBKITGTK_PC_NAME])
+fi
+
+# Configuration flags that are used throughout WebKitGTK+.
+AC_DEFINE([ENABLE_GLIB_SUPPORT], [1], [ ])
+AC_DEFINE([WTF_USE_FREETYPE], [1], [ ])
+AC_DEFINE([WTF_USE_HARFBUZZ], [1], [ ])
+AC_DEFINE([WTF_USE_SOUP], [1], [ ])
+AC_DEFINE([WTF_USE_WEBP], [1], [ ])
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [The gettext catalog name])
+
+if test "$enable_debug_features" = "yes"; then
+    AC_DEFINE([GDK_PIXBUF_DISABLE_DEPRECATED], [1], [ ])
+    AC_DEFINE([GDK_DISABLE_DEPRECATED], [1], [ ])
+    AC_DEFINE([GTK_DISABLE_DEPRECATED], [1], [ ])
+    AC_DEFINE([PANGO_DISABLE_DEPRECATED], [1], [ ])
+else
+    AC_DEFINE([NDEBUG], [1], [Define to disable debugging features])
+fi
+
+if test "$os_win32" = "no"; then
+AC_CHECK_HEADERS([pthread.h],
+    AC_DEFINE([HAVE_PTHREAD_H],[1],[Define if pthread exists]),
+    AC_MSG_ERROR([pthread support is required to build WebKit]))
+AC_CHECK_LIB(pthread, pthread_rwlock_init,
+    AC_DEFINE([HAVE_PTHREAD_RWLOCK],[1],[Define if pthread rwlock is present]),
+    AC_MSG_WARN([pthread rwlock support is not available]))
+fi
+
+if test "$GTK_API_VERSION" = "2.0"; then
+    AC_DEFINE([GTK_API_VERSION_2], [1], [ ])
+fi
+
+if test "$enable_webkit2" = "yes"; then
+    AC_DEFINE([ENABLE_PLUGIN_PROCESS], [1], [ ])
+    if test "$have_gtk_unix_printing" = "yes"; then
+        AC_DEFINE([HAVE_GTK_UNIX_PRINTING], [1], [Define if GTK+ UNIX Printing is available])
+    fi
+fi
+
+if test "$os_win32" = "yes"; then
+    AC_DEFINE([XP_WIN], [1], [ ])
+    AC_DEFINE([UNICODE], [1], [ ])
+    AC_DEFINE([_UNICODE], [1], [ ])
+else
+    AC_DEFINE([XP_UNIX], [1], [ ])
+fi
+
+if test "$with_target" = "x11"; then
+    AC_DEFINE([MOZ_X11], [1], [ ])
+    AC_DEFINE([WTF_PLATFORM_X11], [1], [Define if target is X11])
+fi
+
+if test "$with_unicode_backend" = "icu"; then
+    AC_DEFINE([WTF_USE_ICU_UNICODE], [1], [ ])
+else
+    AC_DEFINE([WTF_USE_GLIB_UNICODE], [1], [ ])
+fi
+
+if test "$enable_fast_malloc" = "no"; then
+    AC_DEFINE([WTF_SYSTEM_MALLOC], [1], [ ])
+fi
+
+if test "$enable_opcode_stats" = "yes"; then
+    AC_DEFINE([ENABLE_OPCODE_STATS], [1], [Define to enable Opcode statistics])
+fi
+
+if test "$enable_introspection" = "yes"; then
+    AC_DEFINE([ENABLE_INTROSPECTION], [1], [Define to enable GObject introspection support])
+fi
+
+if test "$have_gstreamer" = "yes"; then
+    AC_DEFINE([WTF_USE_GSTREAMER], [1], [ ])
+    if test "$enable_debug_features" = "yes"; then
+        AC_DEFINE([GST_DISABLE_DEPRECATED], [1], [ ])
+    fi
+
+    if test "$enable_video" = "yes"; then
+        AC_DEFINE([WTF_USE_NATIVE_FULLSCREEN_VIDEO], [1], [ ])
+    fi
+fi
+
+if test "$GST_API_VERSION" = "1.0"; then
+    AC_DEFINE([GST_API_VERSION_1], [1], [Using GStreamer 1.0])
+fi
+
+if test "$enable_web_audio" = "yes"; then
+    AC_DEFINE([WTF_USE_WEBAUDIO_GSTREAMER], [1], [1])
+fi
+
+if test "$enable_accelerated_compositing" = "yes"; then
+    AC_DEFINE([WTF_USE_ACCELERATED_COMPOSITING], [1], [ ])
+    AC_DEFINE([ENABLE_3D_RENDERING], [1], [ ])
+
+    if test "$with_acceleration_backend" = "none"; then
+        AC_DEFINE([DWTF_USE_TEXTURE_MAPPER], [1], [ ])
+        AC_DEFINE([DWTF_USE_TEXTURE_MAPPER_CAIRO], [1], [ ])
+    fi
+
+    if test "$with_acceleration_backend" = "opengl"; then
+        AC_DEFINE([WTF_USE_TEXTURE_MAPPER], [1], [ ])
+        AC_DEFINE([WTF_USE_TEXTURE_MAPPER_GL], [1], [ ])
+    fi
+
+    if test "$with_acceleration_backend" = "clutter"; then
+        AC_DEFINE([WTF_USE_CLUTTER], [1], [ ])
+    fi
+fi
+
+if test "$with_acceleration_backend" = "opengl"; then
+    AC_DEFINE([WTF_USE_OPENGL], [1], [ ])
+fi
+
+if test "$enable_glx" = "yes"; then
+    AC_DEFINE([WTF_USE_GLX], [1], [ ])
+fi
+
+if test "$enable_egl" = "yes"; then
+    AC_DEFINE([WTF_USE_EGL], [1], [ ])
+fi
+
+if test "$enable_gles2" = "yes"; then
+    AC_DEFINE([WTF_USE_OPENGL_ES_2], [1], [ ])
+fi
+
+if test "$enable_spellcheck" = "yes"; then
+    AC_DEFINE([ENABLE_SPELLCHECK], [1], [ ])
 fi
 
 AC_OUTPUT

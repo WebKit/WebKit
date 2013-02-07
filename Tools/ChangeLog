@@ -1,3 +1,13 @@
+2013-02-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Cleanup command-line defines
+        https://bugs.webkit.org/show_bug.cgi?id=109213
+
+        Reviewed by Xan Lopez.
+
+        * TestWebKitAPI/config.h: Include the autotoolsconfig.h header to pick
+        up defines from autoconf.
+
 2013-02-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         git.svn_revision doesn't fetch the same revision as svn.svn_revision

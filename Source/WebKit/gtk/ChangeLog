@@ -1,3 +1,13 @@
+2013-02-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Cleanup command-line defines
+        https://bugs.webkit.org/show_bug.cgi?id=109213
+
+        Reviewed by Xan Lopez.
+
+        * GNUmakefile.am: Remove references to flags that are now provided
+        by autotoolsconfig.h
+
 2013-02-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Move pauseAnimation/pauseTransition from TestRunner to Internals

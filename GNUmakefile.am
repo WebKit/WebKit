@@ -138,9 +138,15 @@ global_cppflags += \
 	-Wall -W -Wcast-align -Wchar-subscripts -Wreturn-type \
 	-Wformat -Wformat-security -Wno-format-y2k -Wundef \
 	-Wmissing-format-attribute -Wpointer-arith -Wwrite-strings \
-	-Wno-unused-parameter -Wno-parentheses \
-	-fno-exceptions -DENABLE_GLIB_SUPPORT=1
+	-Wno-unused-parameter -Wno-parentheses -fno-exceptions \
+	-DBUILDING_CAIRO__ \
+	-DBUILDING_GTK__
 
+if ENABLE_WEBKIT2
+global_cppflags += \
+	-DBUILDING_WEBKIT2__
+
+endif
 
 global_cxxflags += \
 	-fno-rtti
@@ -154,123 +160,6 @@ endif
 
 if OS_GNU
 version_script = -Wl,--version-script,$(srcdir)/Source/autotools/symbols.filter
-endif
-
-# Extra checks and flags
-global_cppflags += \
-	-DBUILDING_CAIRO__=1 \
-	-DBUILDING_GTK__=1 \
-	-DWTF_CHANGES
-
-if ENABLE_WEBKIT2
-global_cppflags += \
-	-DBUILDING_WEBKIT2__=1
-endif
-
-# For the Gtk port we want to use XP_UNIX both in X11 and Mac
-if TARGET_WIN32
-global_cppflags += \
-	-DXP_WIN
-else
-global_cppflags += \
-	-DXP_UNIX
-endif
-
-# Add MOZ_X11 for X11 targets only
-if TARGET_X11
-global_cppflags += \
-	-DMOZ_X11
-endif
-
-# Use the wide character version of win32 API by default
-if TARGET_WIN32
-global_cppflags += \
-	-DUNICODE \
-	-D_UNICODE
-endif
-
-if USE_ICU_UNICODE
-global_cppflags += \
-	-DWTF_USE_ICU_UNICODE=1
-endif
-
-if USE_GLIB_UNICODE
-global_cppflags += \
-	-DWTF_USE_GLIB_UNICODE=1
-endif
-
-if !ENABLE_FAST_MALLOC
-global_cppflags += \
-	-DUSE_SYSTEM_MALLOC
-endif
-
-if USE_GSTREAMER
-global_cppflags += \
-	-DWTF_USE_GSTREAMER=1
-endif
-
-if USE_ACCELERATED_COMPOSITING
-global_cppflags += \
-	-DWTF_USE_ACCELERATED_COMPOSITING=1 \
-	-DENABLE_3D_RENDERING=1
-endif
-
-if USE_TEXTURE_MAPPER_CAIRO
-global_cppflags += \
-	-DWTF_USE_TEXTURE_MAPPER=1 \
-	-DWTF_USE_TEXTURE_MAPPER_CAIRO=1
-endif
-
-if USE_TEXTURE_MAPPER_GL
-global_cppflags += \
-	-DWTF_USE_TEXTURE_MAPPER=1 \
-	-DWTF_USE_TEXTURE_MAPPER_GL=1
-endif
-
-if USE_CLUTTER
-global_cppflags += \
-	-DWTF_USE_CLUTTER=1
-endif
-
-if USE_GLX
-global_cppflags += \
-	-DWTF_USE_GLX=1
-endif
-
-if USE_EGL
-global_cppflags += \
-	-DWTF_USE_EGL=1
-endif
-
-if USE_GLES2
-global_cppflags += \
-	-DWTF_USE_OPENGL_ES_2=1
-endif
-
-if USE_OPENGL
-global_cppflags += \
-	-DWTF_USE_OPENGL=1
-endif
-
-# ----
-# GTK+ 2.x/3.x support
-# ----
-if GTK_API_VERSION_2
-global_cppflags += \
-	-DGTK_API_VERSION_2=1
-endif
-
-if !ENABLE_DEBUG
-global_cppflags += -DNDEBUG
-else
-global_cppflags += \
-	-DGDK_PIXBUF_DISABLE_DEPRECATED \
-	-DGDK_DISABLE_DEPRECATED \
-	-DGTK_DISABLE_DEPRECATED \
-	-DPANGO_DISABLE_DEPRECATED
-# Might be useful in the future
-#	-DGDK_MULTIHEAD_SAFE \
-#	-DGTK_MULTIHEAD_SAFE
 endif
 
 if ENABLE_COVERAGE

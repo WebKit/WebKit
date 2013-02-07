@@ -1,3 +1,16 @@
+2013-02-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Cleanup command-line defines
+        https://bugs.webkit.org/show_bug.cgi?id=109213
+
+        Reviewed by Xan Lopez.
+
+        * GNUmakefile.am: Remove references to flags that are now provided
+        by autotoolsconfig.h
+        * configure.ac: Add new AC_DEFINE invocations for flags that were
+        before manually appended to the compiler CPPFLAGS and clump all
+        AC_DEFINE invocations together.
+
 2013-02-07  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK][AC] Clutter required version up to 1.12
