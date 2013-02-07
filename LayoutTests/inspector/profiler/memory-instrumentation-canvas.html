@@ -17,7 +17,7 @@ function displayAndRunTest()
 function test()
 {
     var canvasImageBufferExpected = 4000000;
-    InspectorTest.validateMemoryBlockSize(["ProcessPrivateMemory", "Page", "Image"], canvasImageBufferExpected);
+    InspectorTest.validateMemoryBlockSize(["ProcessPrivateMemory", "Image"], canvasImageBufferExpected);
 }
 
 </script>
