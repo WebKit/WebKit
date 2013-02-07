@@ -115,6 +115,20 @@ void CSSToStyleMap::mapFillComposite(CSSPropertyID, FillLayer* layer, CSSValue* 
     layer->setComposite(*primitiveValue);
 }
 
+void CSSToStyleMap::mapFillBlendMode(CSSPropertyID, FillLayer* layer, CSSValue* value)
+{
+    if (value->isInitialValue()) {
+        layer->setBlendMode(FillLayer::initialFillBlendMode(layer->type()));
+        return;
+    }
+
+    if (!value->isPrimitiveValue())
+        return;
+
+    CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+    layer->setBlendMode(*primitiveValue);
+}
+
 void CSSToStyleMap::mapFillOrigin(CSSPropertyID, FillLayer* layer, CSSValue* value)
 {
     if (value->isInitialValue()) {

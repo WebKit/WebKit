@@ -53,6 +53,7 @@ FillLayer::FillLayer(EFillLayerType type)
     , m_repeatY(FillLayer::initialFillRepeatY(type))
     , m_composite(FillLayer::initialFillComposite(type))
     , m_sizeType(SizeNone)
+    , m_blendMode(FillLayer::initialFillBlendMode(type))
     , m_imageSet(false)
     , m_attachmentSet(false)
     , m_clipSet(false)
@@ -65,6 +66,7 @@ FillLayer::FillLayer(EFillLayerType type)
     , m_backgroundXOrigin(LeftEdge)
     , m_backgroundYOrigin(TopEdge)
     , m_compositeSet(type == MaskFillLayer)
+    , m_blendModeSet(false)
     , m_type(type)
 {
 }
@@ -82,6 +84,7 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_repeatY(o.m_repeatY)
     , m_composite(o.m_composite)
     , m_sizeType(o.m_sizeType)
+    , m_blendMode(o.m_blendMode)
     , m_imageSet(o.m_imageSet)
     , m_attachmentSet(o.m_attachmentSet)
     , m_clipSet(o.m_clipSet)
@@ -94,6 +97,7 @@ FillLayer::FillLayer(const FillLayer& o)
     , m_backgroundXOrigin(o.m_backgroundXOrigin)
     , m_backgroundYOrigin(o.m_backgroundYOrigin)
     , m_compositeSet(o.m_compositeSet)
+    , m_blendModeSet(o.m_blendModeSet)
     , m_type(o.m_type)
 {
 }
@@ -120,6 +124,7 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
     m_attachment = o.m_attachment;
     m_clip = o.m_clip;
     m_composite = o.m_composite;
+    m_blendMode = o.m_blendMode;
     m_origin = o.m_origin;
     m_repeatX = o.m_repeatX;
     m_repeatY = o.m_repeatY;
@@ -129,6 +134,7 @@ FillLayer& FillLayer::operator=(const FillLayer& o)
     m_attachmentSet = o.m_attachmentSet;
     m_clipSet = o.m_clipSet;
     m_compositeSet = o.m_compositeSet;
+    m_blendModeSet = o.m_blendModeSet;
     m_originSet = o.m_originSet;
     m_repeatXSet = o.m_repeatXSet;
     m_repeatYSet = o.m_repeatYSet;
@@ -146,8 +152,8 @@ bool FillLayer::operator==(const FillLayer& o) const
     // to propagate patterns into layers.  All layer comparisons happen after values have all been filled in anyway.
     return StyleImage::imagesEquivalent(m_image.get(), o.m_image.get()) && m_xPosition == o.m_xPosition && m_yPosition == o.m_yPosition
             && m_backgroundXOrigin == o.m_backgroundXOrigin && m_backgroundYOrigin == o.m_backgroundYOrigin
-            && m_attachment == o.m_attachment && m_clip == o.m_clip
-            && m_composite == o.m_composite && m_origin == o.m_origin && m_repeatX == o.m_repeatX
+            && m_attachment == o.m_attachment && m_clip == o.m_clip && m_composite == o.m_composite
+            && m_blendModeSet == o.m_blendModeSet && m_origin == o.m_origin && m_repeatX == o.m_repeatX
             && m_repeatY == o.m_repeatY && m_sizeType == o.m_sizeType && m_sizeLength == o.m_sizeLength
             && m_type == o.m_type && ((m_next && o.m_next) ? *m_next == *o.m_next : m_next == o.m_next);
 }
@@ -212,6 +218,17 @@ void FillLayer::fillUnsetProperties()
         // We need to fill in the remaining values with the pattern specified.
         for (FillLayer* pattern = this; curr; curr = curr->next()) {
             curr->m_composite = pattern->m_composite;
+            pattern = pattern->next();
+            if (pattern == curr || !pattern)
+                pattern = this;
+        }
+    }
+
+    for (curr = this; curr && curr->isBlendModeSet(); curr = curr->next()) { }
+    if (curr && curr != this) {
+        // We need to fill in the remaining values with the pattern specified.
+        for (FillLayer* pattern = this; curr; curr = curr->next()) {
+            curr->m_blendMode = pattern->m_blendMode;
             pattern = pattern->next();
             if (pattern == curr || !pattern)
                 pattern = this;

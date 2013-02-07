@@ -76,6 +76,7 @@ public:
     EFillRepeat repeatX() const { return static_cast<EFillRepeat>(m_repeatX); }
     EFillRepeat repeatY() const { return static_cast<EFillRepeat>(m_repeatY); }
     CompositeOperator composite() const { return static_cast<CompositeOperator>(m_composite); }
+    BlendMode blendMode() const { return static_cast<BlendMode>(m_blendMode); }
     LengthSize sizeLength() const { return m_sizeLength; }
     EFillSizeType sizeType() const { return static_cast<EFillSizeType>(m_sizeType); }
     FillSize size() const { return FillSize(static_cast<EFillSizeType>(m_sizeType), m_sizeLength); }
@@ -93,6 +94,7 @@ public:
     bool isRepeatXSet() const { return m_repeatXSet; }
     bool isRepeatYSet() const { return m_repeatYSet; }
     bool isCompositeSet() const { return m_compositeSet; }
+    bool isBlendModeSet() const { return m_blendModeSet; }
     bool isSizeSet() const { return m_sizeType != SizeNone; }
     
     void setImage(PassRefPtr<StyleImage> i) { m_image = i; m_imageSet = true; }
@@ -106,6 +108,7 @@ public:
     void setRepeatX(EFillRepeat r) { m_repeatX = r; m_repeatXSet = true; }
     void setRepeatY(EFillRepeat r) { m_repeatY = r; m_repeatYSet = true; }
     void setComposite(CompositeOperator c) { m_composite = c; m_compositeSet = true; }
+    void setBlendMode(BlendMode b) { m_blendMode = b; m_blendModeSet = true; }
     void setSizeType(EFillSizeType b) { m_sizeType = b; }
     void setSizeLength(LengthSize l) { m_sizeLength = l; }
     void setSize(FillSize f) { m_sizeType = f.type; m_sizeLength = f.size; }
@@ -128,6 +131,7 @@ public:
     void clearRepeatX() { m_repeatXSet = false; }
     void clearRepeatY() { m_repeatYSet = false; }
     void clearComposite() { m_compositeSet = false; }
+    void clearBlendMode() { m_blendModeSet = false; }
     void clearSize() { m_sizeType = SizeNone; }
 
     void setNext(FillLayer* n) { if (m_next != n) { delete m_next; m_next = n; } }
@@ -173,6 +177,7 @@ public:
     static EFillRepeat initialFillRepeatX(EFillLayerType) { return RepeatFill; }
     static EFillRepeat initialFillRepeatY(EFillLayerType) { return RepeatFill; }
     static CompositeOperator initialFillComposite(EFillLayerType) { return CompositeSourceOver; }
+    static BlendMode initialFillBlendMode(EFillLayerType) { return BlendModeNormal; }
     static EFillSizeType initialFillSizeType(EFillLayerType) { return SizeLength; }
     static LengthSize initialFillSizeLength(EFillLayerType) { return LengthSize(); }
     static FillSize initialFillSize(EFillLayerType) { return FillSize(); }
@@ -203,6 +208,7 @@ private:
     unsigned m_repeatY : 3; // EFillRepeat
     unsigned m_composite : 4; // CompositeOperator
     unsigned m_sizeType : 2; // EFillSizeType
+    unsigned m_blendMode : 5; // BlendMode
     
     unsigned m_imageSet : 1;
     unsigned m_attachmentSet : 1;
@@ -216,6 +222,7 @@ private:
     unsigned m_backgroundXOrigin : 2; // BackgroundEdgeOrigin
     unsigned m_backgroundYOrigin : 2; // BackgroundEdgeOrigin
     unsigned m_compositeSet : 1;
+    unsigned m_blendModeSet : 1;
     
     unsigned m_type : 1; // EFillLayerType
 

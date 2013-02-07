@@ -1,0 +1,57 @@
+Test the parsing of the -webkit-background-blend-mode property.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be normal, normal (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be multiply, multiply (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be screen, screen (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be overlay, overlay (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be darken, darken (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be lighten, lighten (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be color-dodge, color-dodge (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be color-burn, color-burn (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be hard-light, hard-light (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be soft-light, soft-light (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be difference, difference (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be exclusion, exclusion (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be hue, hue (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be saturation, saturation (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be color, color (of type string). Was null (of type object).
+PASS cssRule.type is 1
+FAIL declaration.length should be 1. Was 0.
+FAIL declaration.getPropertyValue('-webkit-background-blend-mode') should be luminosity, luminosity (of type string). Was null (of type object).
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
