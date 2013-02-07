@@ -1,3 +1,34 @@
+2013-02-06  Roger Fong  <roger_fong@apple.com>
+
+        VS2010 WinLauncher project, property sheets and resources.
+        https://bugs.webkit.org/show_bug.cgi?id=107037.
+
+        Reviewed by Brent Fulgham.
+
+        * WinLauncher/WinLauncher.vcxproj: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.ico: Copied from WinLauncher/WinLauncher.ico.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.rc: Copied from WinLauncher/WinLauncherLauncher.rc.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj.filters: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncher.vcxproj.user: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherCommon.props: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherDebug.props: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.rc: Copied from WinLauncher/WinLauncher.rc.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.filters: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLib.vcxproj.user: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibDebug.props: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibPostBuild.cmd: Copied from WinLauncher/WinLauncherPostBuild.cmd.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibPreBuild.cmd: Copied from WinLauncher/WinLauncherPreBuild.cmd.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibRelease.props: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibResource.h: Copied from WinLauncher/resource.h.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherPostBuild.cmd: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherPreBuild.cmd: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherRelease.props: Added.
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherResource.h: Copied from WinLauncher/WinLauncherLauncherResource.h.
+        * WinLauncher/WinLauncher.vcxproj/small.ico: Copied from WinLauncher/small.ico.
+
 2013-02-06  Terry Anderson  <tdanderson@chromium.org>
 
         Add support for gesture scroll events that do not propagate to enclosing scrollables
