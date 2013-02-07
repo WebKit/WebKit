@@ -180,13 +180,13 @@ function test()
     // Test for focusin/focusout events.
     moveFocus('divB', 'divC',
               'Move focus from a node to its sibling node. All nodes are outside of shadow boundary.');
-    shouldBe('dispatchedEvent("focusin")', '["divC(@divC)", "divC(@divA)"]');
-    shouldBe('dispatchedEvent("focusout")', '["divB(@divB)", "divB(@divA)"]');
+    shouldBe('dispatchedEvent("focusin")', '["divC(<-divB)(@divC)", "divC(<-divB)(@divA)"]');
+    shouldBe('dispatchedEvent("focusout")', '["divB(<-divC)(@divB)", "divB(<-divC)(@divA)"]');
 
     moveFocus('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
               'Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.');
-    shouldBe('dispatchedEvent("focusin")', '["divL(@divL)", "shadowK(@shadowK)", "shadowK(@divJ)"]');
-    shouldBe('dispatchedEvent("focusout")', '["divH(@divH)", "shadowG(@shadowG)", "shadowF(@shadowF)", "shadowF(@divE)"]');
+    shouldBe('dispatchedEvent("focusin")', '["divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@shadowK)", "shadowK(<-shadowF)(@divJ)"]');
+    shouldBe('dispatchedEvent("focusout")', '["divH(<-shadowK)(@divH)", "shadowG(<-shadowK)(@shadowG)", "shadowF(<-shadowK)(@shadowF)", "shadowF(<-shadowK)(@divE)"]');
 
     // Omitted test cases where either a oldFocusedNode or newFocusedNode is an ancestor of the other.
     // Due to a focus transfer mechanism on shadow hosts, a focused node should be a leaf node in general.

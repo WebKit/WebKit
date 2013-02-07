@@ -1,0 +1,15 @@
+PASS event.relatedTarget is null
+PASS event.relatedTarget is input2
+PASS event.relatedTarget is input1
+PASS event.relatedTarget is input3
+PASS event.relatedTarget is input2
+PASS event.relatedTarget is input4
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Checks that the relatedTarget attribute for FocusEvent objects is being set correctly when focusin/focusout events are dispatched. Press tab four times to dispatch a focusin and focusout event for each of the inputs below.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+   

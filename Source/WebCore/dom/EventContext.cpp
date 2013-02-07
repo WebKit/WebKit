@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Event.h"
+#include "FocusEvent.h"
 #include "MouseEvent.h"
 #include "Node.h"
 
@@ -51,6 +52,8 @@ void EventContext::handleLocalEvents(Event* event) const
     event->setCurrentTarget(m_currentTarget.get());
     if (m_relatedTarget.get() && event->isMouseEvent())
         toMouseEvent(event)->setRelatedTarget(m_relatedTarget.get());
+    else if (m_relatedTarget.get() && event->isFocusEvent())
+        toFocusEvent(event)->setRelatedTarget(m_relatedTarget);
     m_node->handleLocalEvents(event);
 }
 

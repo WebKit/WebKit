@@ -371,6 +371,7 @@ set(WebCore_IDL_FILES
     dom/EventException.idl
     dom/Event.idl
     dom/EventTarget.idl
+    dom/FocusEvent.idl
     dom/HashChangeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
@@ -1186,6 +1187,7 @@ set(WebCore_SOURCES
     dom/EventTarget.cpp
     dom/ExceptionBase.cpp
     dom/ExceptionCodePlaceholder.cpp
+    dom/FocusEvent.cpp
     dom/GenericEventQueue.cpp
     dom/GestureEvent.cpp
     dom/IconURL.cpp

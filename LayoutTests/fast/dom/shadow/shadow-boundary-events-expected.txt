@@ -61,13 +61,13 @@ PASS dispatchedEvent("mouseout") is ["divH(<-shadowK)(@divH)", "shadowG(<-shadow
 
 Move focus from a node to its sibling node. All nodes are outside of shadow boundary.
 Moving focus from divB to divC
-PASS dispatchedEvent("focusin") is ["divC(@divC)", "divC(@divA)"]
-PASS dispatchedEvent("focusout") is ["divB(@divB)", "divB(@divA)"]
+PASS dispatchedEvent("focusin") is ["divC(<-divB)(@divC)", "divC(<-divB)(@divA)"]
+PASS dispatchedEvent("focusout") is ["divB(<-divC)(@divB)", "divB(<-divC)(@divA)"]
 
 Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.
 Moving focus from shadowD/shadowF/shadowG/divH to shadowD/shadowK/divL
-PASS dispatchedEvent("focusin") is ["divL(@divL)", "shadowK(@shadowK)", "shadowK(@divJ)"]
-PASS dispatchedEvent("focusout") is ["divH(@divH)", "shadowG(@shadowG)", "shadowF(@shadowF)", "shadowF(@divE)"]
+PASS dispatchedEvent("focusin") is ["divL(<-shadowF)(@divL)", "shadowK(<-shadowF)(@shadowK)", "shadowK(<-shadowF)(@divJ)"]
+PASS dispatchedEvent("focusout") is ["divH(<-shadowK)(@divH)", "shadowG(<-shadowK)(@shadowG)", "shadowF(<-shadowK)(@shadowF)", "shadowF(<-shadowK)(@divE)"]
 
 Move focus from a node to its sibling node. All nodes are outside of shadow boundary.
 Moving focus from divB to divC

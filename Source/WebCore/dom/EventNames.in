@@ -8,6 +8,7 @@ CloseEvent
 CompositionEvent
 CustomEvent
 ErrorEvent
+FocusEvent
 HashChangeEvent
 KeyboardEvent
 KeyboardEvents interfaceName=KeyboardEvent

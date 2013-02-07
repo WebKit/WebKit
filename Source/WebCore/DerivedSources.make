@@ -235,6 +235,7 @@ BINDING_IDLS = \
     $(WebCore)/dom/EventException.idl \
     $(WebCore)/dom/EventListener.idl \
     $(WebCore)/dom/EventTarget.idl \
+    $(WebCore)/dom/FocusEvent.idl \
     $(WebCore)/dom/HashChangeEvent.idl \
     $(WebCore)/dom/KeyboardEvent.idl \
     $(WebCore)/dom/MessageChannel.idl \

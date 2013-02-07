@@ -1,0 +1,33 @@
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<input id="input1" type="text"></input>
+<input id="input2" type="text"></input>
+<input id="input3" type="text"></input>
+<input id="input4" type="text"></input>
+<script>
+jsTestIsAsync = true;
+
+description("Checks that the relatedTarget attribute for FocusEvent objects is being set correctly when focusin/focusout events are dispatched.  <b>Press tab four times</b> to dispatch a focusin and focusout event for each of the inputs below.");
+
+var input1 = document.getElementById('input1');
+var input2 = document.getElementById('input2');
+var input3 = document.getElementById('input3');
+
+input1.addEventListener("focusin", function(event) { shouldBe('event.relatedTarget', 'null'); });
+input1.addEventListener("focusout", function(event) { shouldBe('event.relatedTarget', 'input2'); });
+input2.addEventListener("focusin", function(event) { shouldBe('event.relatedTarget', 'input1'); });
+input2.addEventListener("focusout", function(event) { shouldBe('event.relatedTarget', 'input3'); });
+input3.addEventListener("focusin", function(event) { shouldBe('event.relatedTarget', 'input2'); });
+input3.addEventListener("focusout", function(event) { shouldBe('event.relatedTarget', 'input4'); finishJSTest(); });
+
+for (var i = 0; i < 4; i++) {
+    eventSender.keyDown('\t');
+}
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

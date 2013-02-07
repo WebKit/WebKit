@@ -5361,6 +5361,10 @@
 		B658FFA21522EF3A00DD5595 /* JSRadioNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = B658FFA01522EF3A00DD5595 /* JSRadioNodeList.h */; };
 		B658FFA51522EFAA00DD5595 /* RadioNodeList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B658FFA31522EFAA00DD5595 /* RadioNodeList.cpp */; };
 		B658FFA61522EFAA00DD5595 /* RadioNodeList.h in Headers */ = {isa = PBXBuildFile; fileRef = B658FFA41522EFAA00DD5595 /* RadioNodeList.h */; };
+		B6D9D23514EABD260090D75E /* FocusEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D9D23314EABD260090D75E /* FocusEvent.h */; };
+		B6D9D23614EABD260090D75E /* FocusEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6D9D23414EABD260090D75E /* FocusEvent.cpp */; };
+		B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = B6D9D27914EAC0860090D75E /* JSFocusEvent.h */; };
+		B6D9D27C14EAC0860090D75E /* JSFocusEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */; };
 		B71FE6DF11091CB300DAEF77 /* PrintContext.h in Headers */ = {isa = PBXBuildFile; fileRef = B776D43A1104525D00BEB0EC /* PrintContext.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		B734B181119B9911006587BD /* FontTranscoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B734B180119B9911006587BD /* FontTranscoder.cpp */; };
 		B734B183119B991D006587BD /* FontTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = B734B182119B991D006587BD /* FontTranscoder.h */; };
@@ -12870,6 +12874,11 @@
 		B658FFA01522EF3A00DD5595 /* JSRadioNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSRadioNodeList.h; sourceTree = "<group>"; };
 		B658FFA31522EFAA00DD5595 /* RadioNodeList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RadioNodeList.cpp; sourceTree = "<group>"; };
 		B658FFA41522EFAA00DD5595 /* RadioNodeList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioNodeList.h; sourceTree = "<group>"; };
+		B6D9D23314EABD260090D75E /* FocusEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FocusEvent.h; sourceTree = "<group>"; };
+		B6D9D23414EABD260090D75E /* FocusEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FocusEvent.cpp; sourceTree = "<group>"; };
+		B6D9D27214EABF030090D75E /* FocusEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FocusEvent.idl; sourceTree = "<group>"; };
+		B6D9D27914EAC0860090D75E /* JSFocusEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFocusEvent.h; sourceTree = "<group>"; };
+		B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFocusEvent.cpp; sourceTree = "<group>"; };
 		B734B180119B9911006587BD /* FontTranscoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FontTranscoder.cpp; path = transcoder/FontTranscoder.cpp; sourceTree = "<group>"; };
 		B734B182119B991D006587BD /* FontTranscoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FontTranscoder.h; path = transcoder/FontTranscoder.h; sourceTree = "<group>"; };
 		B776D43A1104525D00BEB0EC /* PrintContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintContext.h; sourceTree = "<group>"; };
@@ -19558,6 +19567,8 @@
 				BC60D9BE0D2A269A00B9918F /* JSEventException.h */,
 				C6A703325C9D0B6CDCBC4D78 /* JSEventTarget.cpp */,
 				5FC7DC26CFE2563200B85AE5 /* JSEventTarget.h */,
+				B6D9D27A14EAC0860090D75E /* JSFocusEvent.cpp */,
+				B6D9D27914EAC0860090D75E /* JSFocusEvent.h */,
 				8482B74F1198CB6B00BFB005 /* JSHashChangeEvent.cpp */,
 				8482B7501198CB6B00BFB005 /* JSHashChangeEvent.h */,
 				A86629CE09DA2B47009633A5 /* JSKeyboardEvent.cpp */,
@@ -22405,6 +22416,9 @@
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
 				A7CACDB013CE875B00BBBE3F /* ExceptionCodePlaceholder.cpp */,
 				A74BB76A13BDA86300FF7BF0 /* ExceptionCodePlaceholder.h */,
+				B6D9D23414EABD260090D75E /* FocusEvent.cpp */,
+				B6D9D23314EABD260090D75E /* FocusEvent.h */,
+				B6D9D27214EABF030090D75E /* FocusEvent.idl */,
 				A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */,
 				0720B09E14D3323500642955 /* GenericEventQueue.cpp */,
 				0720B09F14D3323500642955 /* GenericEventQueue.h */,
@@ -24204,6 +24218,7 @@
 				D72F6D7A153159A3001EE44E /* FlowThreadController.h in Headers */,
 				14993BE60B2F2B1C0050497F /* FocusController.h in Headers */,
 				062287840B4DB322000C34DF /* FocusDirection.h in Headers */,
+				B6D9D23514EABD260090D75E /* FocusEvent.h in Headers */,
 				B2C3DA610D006CD600EF6F26 /* Font.h in Headers */,
 				BCB92D4F1293550B00C8387F /* FontBaseline.h in Headers */,
 				B2C3DA630D006CD600EF6F26 /* FontCache.h in Headers */,
@@ -24702,6 +24717,7 @@
 				893C47BC1238A0A9002B3D86 /* JSFileWriterCallback.h in Headers */,
 				49EECF03105070C400099FAB /* JSFloat32Array.h in Headers */,
 				6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */,
+				B6D9D27B14EAC0860090D75E /* JSFocusEvent.h in Headers */,
 				FDA15EAC12B03EE1003A583A /* JSGainNode.h in Headers */,
 				FE80DA640E9C4703000D6F75 /* JSGeolocation.h in Headers */,
 				FE80DA660E9C4703000D6F75 /* JSGeoposition.h in Headers */,
@@ -27515,6 +27531,7 @@
 				B275357A0B053814002CE64F /* FloatSizeMac.mm in Sources */,
 				D72F6D79153159A3001EE44E /* FlowThreadController.cpp in Sources */,
 				14993BE50B2F2B1C0050497F /* FocusController.cpp in Sources */,
+				B6D9D23614EABD260090D75E /* FocusEvent.cpp in Sources */,
 				B2C3DA600D006CD600EF6F26 /* Font.cpp in Sources */,
 				B2C3DA620D006CD600EF6F26 /* FontCache.cpp in Sources */,
 				B2AFFC7C0D00A5C10030074D /* FontCacheMac.mm in Sources */,
@@ -28016,6 +28033,7 @@
 				893C47BB1238A0A9002B3D86 /* JSFileWriterCallback.cpp in Sources */,
 				49EECF02105070C400099FAB /* JSFloat32Array.cpp in Sources */,
 				6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */,
+				B6D9D27C14EAC0860090D75E /* JSFocusEvent.cpp in Sources */,
 				FDA15EAB12B03EE1003A583A /* JSGainNode.cpp in Sources */,
 				FE80DA630E9C4703000D6F75 /* JSGeolocation.cpp in Sources */,
 				FE80D7AB0E9C1ED2000D6F75 /* JSGeolocationCustom.cpp in Sources */,
