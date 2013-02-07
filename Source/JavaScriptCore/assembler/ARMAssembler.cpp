@@ -297,8 +297,15 @@ void ARMAssembler::baseIndexTransfer32(DataTransferTypeA transferType, RegisterI
         return;
     }
 
-    add(ARMRegisters::S1, base, op2);
-    dataTransfer32(transferType, srcDst, ARMRegisters::S1, offset);
+    if (offset <= 0xfffff && offset >= -0xfffff) {
+        add(ARMRegisters::S0, base, op2);
+        dataTransfer32(transferType, srcDst, ARMRegisters::S0, offset);
+        return;
+    }
+
+    moveImm(offset, ARMRegisters::S0);
+    add(ARMRegisters::S0, ARMRegisters::S0, op2);
+    dtrUpRegister(transferType, srcDst, base, ARMRegisters::S0);
 }
 
 void ARMAssembler::dataTransfer16(DataTransferTypeB transferType, RegisterID srcDst, RegisterID base, int32_t offset)
@@ -333,8 +340,17 @@ void ARMAssembler::baseIndexTransfer16(DataTransferTypeB transferType, RegisterI
         return;
     }
 
-    add(ARMRegisters::S1, base, lsl(index, scale));
-    dataTransfer16(transferType, srcDst, ARMRegisters::S1, offset);
+    ARMWord op2 = lsl(index, scale);
+
+    if (offset <= 0xffff && offset >= -0xffff) {
+        add(ARMRegisters::S0, base, op2);
+        dataTransfer16(transferType, srcDst, ARMRegisters::S0, offset);
+        return;
+    }
+
+    moveImm(offset, ARMRegisters::S0);
+    add(ARMRegisters::S0, ARMRegisters::S0, op2);
+    halfDtrUpRegister(transferType, srcDst, base, ARMRegisters::S0);
 }
 
 void ARMAssembler::dataTransferFloat(DataTransferTypeFloat transferType, FPRegisterID srcDst, RegisterID base, int32_t offset)

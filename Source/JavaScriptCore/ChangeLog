@@ -1,3 +1,16 @@
+2013-02-07  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        Invalid code is generated for storing constants with baseindex addressing modes on ARM traditional.
+        https://bugs.webkit.org/show_bug.cgi?id=109050
+
+        Reviewed by Oliver Hunt.
+
+        The S! scratch register is reused, but it should contain the constant value.
+
+        * assembler/ARMAssembler.cpp:
+        (JSC::ARMAssembler::baseIndexTransfer32):
+        (JSC::ARMAssembler::baseIndexTransfer16):
+
 2013-02-07  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Use GNU ar's thin archive format for intermediate static libs
