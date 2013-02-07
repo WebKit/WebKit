@@ -95,7 +95,10 @@ IDBCursor::~IDBCursor()
 const String& IDBCursor::direction() const
 {
     IDB_TRACE("IDBCursor::direction");
-    return directionToString(m_direction, ASSERT_NO_EXCEPTION);
+    ExceptionCode ec = 0;
+    const AtomicString& direction = directionToString(m_direction, ec);
+    ASSERT(!ec);
+    return direction;
 }
 
 const ScriptValue& IDBCursor::key() const

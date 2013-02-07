@@ -293,8 +293,11 @@ void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
         return;
 
     float volume = narrowPrecisionToFloat(value().toDouble());
-    if (volume != mediaController()->volume())
-        mediaController()->setVolume(volume, ASSERT_NO_EXCEPTION);
+    if (volume != mediaController()->volume()) {
+        ExceptionCode ec = 0;
+        mediaController()->setVolume(volume, ec);
+        ASSERT(!ec);
+    }
     if (m_clearMutedOnUserInteraction)
         mediaController()->setMuted(false);
 }

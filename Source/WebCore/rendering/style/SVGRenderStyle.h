@@ -26,7 +26,6 @@
 #if ENABLE(SVG)
 #include "CSSValueList.h"
 #include "DataRef.h"
-#include "ExceptionCodePlaceholder.h"
 #include "GraphicsTypes.h"
 #include "Path.h"
 #include "RenderStyleConstants.h"
@@ -98,28 +97,36 @@ public:
     static SVGLength initialBaselineShiftValue()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ASSERT_NO_EXCEPTION);
+        ExceptionCode ec = 0;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ec);
+        ASSERT(!ec);
         return length;
     }
 
     static SVGLength initialKerning()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ASSERT_NO_EXCEPTION);
+        ExceptionCode ec = 0;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ec);
+        ASSERT(!ec);
         return length;
     }
 
     static SVGLength initialStrokeDashOffset()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ASSERT_NO_EXCEPTION);
+        ExceptionCode ec = 0;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 0, ec);
+        ASSERT(!ec);
         return length;
     }
 
     static SVGLength initialStrokeWidth()
     {
         SVGLength length;
-        length.newValueSpecifiedUnits(LengthTypeNumber, 1, ASSERT_NO_EXCEPTION);
+        ExceptionCode ec = 0;
+        length.newValueSpecifiedUnits(LengthTypeNumber, 1, ec);
+        ASSERT(!ec);
         return length;
     }
 

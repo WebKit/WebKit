@@ -1418,8 +1418,10 @@ PassRefPtr<Range> CharacterIterator::range() const
             Node* n = r->startContainer();
             ASSERT(n == r->endContainer());
             int offset = r->startOffset() + m_runOffset;
-            r->setStart(n, offset, ASSERT_NO_EXCEPTION);
-            r->setEnd(n, offset + 1, ASSERT_NO_EXCEPTION);
+            ExceptionCode ec = 0;
+            r->setStart(n, offset, ec);
+            r->setEnd(n, offset + 1, ec);
+            ASSERT(!ec);
         }
     }
     return r.release();
@@ -1524,8 +1526,10 @@ PassRefPtr<Range> BackwardsCharacterIterator::range() const
             Node* n = r->startContainer();
             ASSERT(n == r->endContainer());
             int offset = r->endOffset() - m_runOffset;
-            r->setStart(n, offset - 1, ASSERT_NO_EXCEPTION);
-            r->setEnd(n, offset, ASSERT_NO_EXCEPTION);
+            ExceptionCode ec = 0;
+            r->setStart(n, offset - 1, ec);
+            r->setEnd(n, offset, ec);
+            ASSERT(!ec);
         }
     }
     return r.release();
@@ -2436,8 +2440,11 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
     if (rangeLocation == 0 && rangeLength == 0 && it.atEnd()) {
         textRunRange = it.range();
         
-        resultRange->setStart(textRunRange->startContainer(), 0, ASSERT_NO_EXCEPTION);
-        resultRange->setEnd(textRunRange->startContainer(), 0, ASSERT_NO_EXCEPTION);
+        ExceptionCode ec = 0;
+        resultRange->setStart(textRunRange->startContainer(), 0, ec);
+        ASSERT(!ec);
+        resultRange->setEnd(textRunRange->startContainer(), 0, ec);
+        ASSERT(!ec);
         
         return resultRange.release();
     }
@@ -2459,12 +2466,17 @@ PassRefPtr<Range> TextIterator::rangeFromLocationAndLength(ContainerNode* scope,
                 it.advance();
                 if (!it.atEnd()) {
                     RefPtr<Range> range = it.range();
-                    textRunRange->setEnd(range->startContainer(), range->startOffset(), ASSERT_NO_EXCEPTION);
+                    ExceptionCode ec = 0;
+                    textRunRange->setEnd(range->startContainer(), range->startOffset(), ec);
+                    ASSERT(!ec);
                 } else {
                     Position runStart = textRunRange->startPosition();
                     Position runEnd = VisiblePosition(runStart).next().deepEquivalent();
-                    if (runEnd.isNotNull())
-                        textRunRange->setEnd(runEnd.containerNode(), runEnd.computeOffsetInContainerNode(), ASSERT_NO_EXCEPTION);
+                    if (runEnd.isNotNull()) {
+                        ExceptionCode ec = 0;
+                        textRunRange->setEnd(runEnd.containerNode(), runEnd.computeOffsetInContainerNode(), ec);
+                        ASSERT(!ec);
+                    }
                 }
             }
         }
@@ -2586,8 +2598,11 @@ static inline bool isAllCollapsibleWhitespace(const String& string)
 
 static PassRefPtr<Range> collapsedToBoundary(const Range* range, bool forward)
 {
-    RefPtr<Range> result = range->cloneRange(ASSERT_NO_EXCEPTION);
-    result->collapse(!forward, ASSERT_NO_EXCEPTION);
+    ExceptionCode ec = 0;
+    RefPtr<Range> result = range->cloneRange(ec);
+    ASSERT(!ec);
+    result->collapse(!forward, ec);
+    ASSERT(!ec);
     return result.release();
 }
 

@@ -406,10 +406,12 @@ void TextFieldInputType::updatePlaceholderText()
 {
     if (!supportsPlaceholder())
         return;
+    ExceptionCode ec = 0;
     String placeholderText = element()->strippedPlaceholder();
     if (placeholderText.isEmpty()) {
         if (m_placeholder) {
-            m_placeholder->parentNode()->removeChild(m_placeholder.get(), ASSERT_NO_EXCEPTION);
+            m_placeholder->parentNode()->removeChild(m_placeholder.get(), ec);
+            ASSERT(!ec);
             m_placeholder.clear();
         }
         return;
@@ -417,9 +419,11 @@ void TextFieldInputType::updatePlaceholderText()
     if (!m_placeholder) {
         m_placeholder = HTMLDivElement::create(element()->document());
         m_placeholder->setPseudo(AtomicString("-webkit-input-placeholder", AtomicString::ConstructFromLiteral));
-        element()->userAgentShadowRoot()->insertBefore(m_placeholder, m_container ? m_container->nextSibling() : innerTextElement()->nextSibling(), ASSERT_NO_EXCEPTION);
+        element()->userAgentShadowRoot()->insertBefore(m_placeholder, m_container ? m_container->nextSibling() : innerTextElement()->nextSibling(), ec);
+        ASSERT(!ec);
     }
-    m_placeholder->setInnerText(placeholderText, ASSERT_NO_EXCEPTION);
+    m_placeholder->setInnerText(placeholderText, ec);
+    ASSERT(!ec);
     element()->fixPlaceholderRenderer(m_placeholder.get(), m_container ? m_container.get() : m_innerText.get());
 }
 

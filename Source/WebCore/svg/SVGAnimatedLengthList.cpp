@@ -78,8 +78,11 @@ void SVGAnimatedLengthListAnimator::addAnimatedTypes(SVGAnimatedType* from, SVGA
         return;
 
     SVGLengthContext lengthContext(m_contextElement);
-    for (unsigned i = 0; i < fromLengthListSize; ++i)
-        toLengthList[i].setValue(toLengthList[i].value(lengthContext) + fromLengthList[i].value(lengthContext), lengthContext, ASSERT_NO_EXCEPTION);
+    ExceptionCode ec = 0;
+    for (unsigned i = 0; i < fromLengthListSize; ++i) {
+        toLengthList[i].setValue(toLengthList[i].value(lengthContext) + fromLengthList[i].value(lengthContext), lengthContext, ec);
+        ASSERT(!ec);
+    }
 }
 
 static SVGLengthList parseLengthListFromString(SVGAnimationElement* animationElement, const String& string)
@@ -111,6 +114,7 @@ void SVGAnimatedLengthListAnimator::calculateAnimatedValue(float percentage, uns
     unsigned toAtEndOfDurationListSize = toAtEndOfDurationLengthList.size();
 
     SVGLengthContext lengthContext(m_contextElement);
+    ExceptionCode ec = 0;
     for (unsigned i = 0; i < toLengthListSize; ++i) {
         float animatedNumber = animatedLengthList[i].value(lengthContext);
         SVGLengthType unitType = toLengthList[i].unitType();
@@ -123,7 +127,8 @@ void SVGAnimatedLengthListAnimator::calculateAnimatedValue(float percentage, uns
         float effectiveToAtEnd = i < toAtEndOfDurationListSize ? toAtEndOfDurationLengthList[i].value(lengthContext) : 0;
 
         m_animationElement->animateAdditiveNumber(percentage, repeatCount, effectiveFrom, toLengthList[i].value(lengthContext), effectiveToAtEnd, animatedNumber);
-        animatedLengthList[i].setValue(lengthContext, animatedNumber, m_lengthMode, unitType, ASSERT_NO_EXCEPTION);
+        animatedLengthList[i].setValue(lengthContext, animatedNumber, m_lengthMode, unitType, ec);
+        ASSERT(!ec);
     }
 }
 

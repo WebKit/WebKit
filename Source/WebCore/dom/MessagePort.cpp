@@ -186,7 +186,9 @@ void MessagePort::dispatchMessages()
         OwnPtr<MessagePortArray> ports = MessagePort::entanglePorts(*m_scriptExecutionContext, eventData->channels());
         RefPtr<Event> evt = MessageEvent::create(ports.release(), eventData->message());
 
-        dispatchEvent(evt.release(), ASSERT_NO_EXCEPTION);
+        ExceptionCode ec = 0;
+        dispatchEvent(evt.release(), ec);
+        ASSERT(!ec);
     }
 }
 
@@ -227,7 +229,8 @@ PassOwnPtr<MessagePortChannelArray> MessagePort::disentanglePorts(const MessageP
     // Passed-in ports passed validity checks, so we can disentangle them.
     OwnPtr<MessagePortChannelArray> portArray = adoptPtr(new MessagePortChannelArray(ports->size()));
     for (unsigned int i = 0 ; i < ports->size() ; ++i) {
-        OwnPtr<MessagePortChannel> channel = (*ports)[i]->disentangle(ASSERT_NO_EXCEPTION); // Can't generate exception here if passed above checks.
+        OwnPtr<MessagePortChannel> channel = (*ports)[i]->disentangle(ec);
+        ASSERT(!ec); // Can't generate exception here if passed above checks.
         (*portArray)[i] = channel.release();
     }
     return portArray.release();

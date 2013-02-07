@@ -129,8 +129,10 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 {
     if (index <= 0)
         return VisiblePosition(firstPositionInNode(innerTextElement()), DOWNSTREAM);
+    ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(document());
-    range->selectNodeContents(innerTextElement(), ASSERT_NO_EXCEPTION);
+    range->selectNodeContents(innerTextElement(), ec);
+    ASSERT(!ec);
     CharacterIterator it(range.get());
     it.advance(index - 1);
     return VisiblePosition(it.range()->endPosition(), UPSTREAM);

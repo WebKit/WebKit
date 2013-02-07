@@ -121,7 +121,10 @@ IDBTransaction::~IDBTransaction()
 
 const String& IDBTransaction::mode() const
 {
-    return modeToString(m_mode, ASSERT_NO_EXCEPTION);
+    ExceptionCode ec = 0;
+    const AtomicString& mode = modeToString(m_mode, ec);
+    ASSERT(!ec);
+    return mode;
 }
 
 void IDBTransaction::setError(PassRefPtr<DOMError> error, const String& errorMessage)

@@ -701,7 +701,9 @@ static void prepareClipboardForImageDrag(Frame* source, Clipboard* clipboard, El
 {
     if (node->isContentRichlyEditable()) {
         RefPtr<Range> range = source->document()->createRange();
-        range->selectNode(node, ASSERT_NO_EXCEPTION);
+        ExceptionCode ec = 0;
+        range->selectNode(node, ec);
+        ASSERT(!ec);
         source->selection()->setSelection(VisibleSelection(range.get(), DOWNSTREAM));
     }
     clipboard->declareAndWriteDragImage(node, !linkURL.isEmpty() ? linkURL : imageURL, label, source);
