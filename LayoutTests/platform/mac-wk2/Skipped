@@ -264,6 +264,9 @@ platform/mac/editing/spelling/autocorrection-blockquote-crash.html
 # <rdar://problem/12968605>
 platform/mac/editing/spelling/autocorrection-in-textarea.html
 
+# <rdar://problem/12968012>
+compositing/video/video-background-color.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 
