@@ -534,10 +534,15 @@ static void addMemoryInstrumentationDebugData(MemoryInstrumentationClientImpl* c
     }
 }
 
-void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<InspectorMemoryBlock>& processMemory, RefPtr<InspectorObject>& graph)
+void InspectorMemoryAgent::getProcessMemoryDistributionMap(TypeNameToSizeMap* memoryInfo)
+{
+    getProcessMemoryDistributionImpl(false, memoryInfo);
+}
+
+void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<InspectorMemoryBlock>& processMemory)
 {
     TypeNameToSizeMap memoryInfo;
-    getProcessMemoryDistributionAsMap(reportGraph && *reportGraph, graph, &memoryInfo);
+    getProcessMemoryDistributionImpl(reportGraph && *reportGraph, &memoryInfo);
 
     MemoryUsageStatsGenerator statsGenerator;
     RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
@@ -560,11 +565,11 @@ void InspectorMemoryAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     info.addMember(m_page, "page");
 }
 
-void InspectorMemoryAgent::getProcessMemoryDistributionAsMap(bool reportGraph, RefPtr<InspectorObject>& graph, TypeNameToSizeMap* memoryInfo)
+void InspectorMemoryAgent::getProcessMemoryDistributionImpl(bool reportGraph, TypeNameToSizeMap* memoryInfo)
 {
     OwnPtr<HeapGraphSerializer> graphSerializer;
     if (reportGraph)
-        graphSerializer = adoptPtr(new HeapGraphSerializer());
+        graphSerializer = adoptPtr(new HeapGraphSerializer(m_frontend));
     MemoryInstrumentationClientImpl memoryInstrumentationClient(graphSerializer.get());
     m_inspectorClient->getAllocatedObjects(memoryInstrumentationClient.allocatedObjects());
     MemoryInstrumentationImpl memoryInstrumentation(&memoryInstrumentationClient);
@@ -581,7 +586,7 @@ void InspectorMemoryAgent::getProcessMemoryDistributionAsMap(bool reportGraph, R
     memoryInstrumentation.addRootObject(memoryInstrumentationClient);
     if (graphSerializer) {
         memoryInstrumentation.addRootObject(graphSerializer.get());
-        graph = graphSerializer->serialize();
+        graphSerializer->finish();
     }
 
     m_inspectorClient->dumpUncountedAllocatedObjects(memoryInstrumentationClient.countedObjects());
@@ -596,6 +601,17 @@ InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAge
     , m_inspectorClient(client)
     , m_page(page)
 {
+}
+
+void InspectorMemoryAgent::setFrontend(InspectorFrontend* frontend)
+{
+    ASSERT(!m_frontend);
+    m_frontend = frontend->memory();
+}
+
+void InspectorMemoryAgent::clearFrontend()
+{
+    m_frontend = 0;
 }
 
 } // namespace WebCore

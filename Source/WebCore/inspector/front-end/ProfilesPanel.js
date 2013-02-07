@@ -306,6 +306,7 @@ WebInspector.ProfilesPanel = function()
         this._registerProfileType(new WebInspector.CanvasProfileType());
 
     InspectorBackend.registerProfilerDispatcher(new WebInspector.ProfilerDispatcher(this));
+    InspectorBackend.registerMemoryDispatcher(new WebInspector.MemoryDispatcher(this));
 
     this._createFileSelectorElement();
     this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
@@ -1222,6 +1223,32 @@ WebInspector.ProfilesPanel.prototype = {
     },
 
     __proto__: WebInspector.Panel.prototype
+}
+
+/**
+ * @constructor
+ * @implements {MemoryAgent.Dispatcher}
+ * @param {WebInspector.ProfilesPanel} profilesPanel
+ */
+WebInspector.MemoryDispatcher = function(profilesPanel)
+{
+    this._profilesPanel = profilesPanel;
+}
+
+WebInspector.MemoryDispatcher.prototype = {
+
+    /**
+     * @override
+     * @param {number} uid
+     * @param {string} chunk
+     */
+    addNativeSnapshotChunk: function(chunk)
+    {
+        var profile = this._profilesPanel.findTemporaryProfile(WebInspector.NativeSnapshotProfileType.TypeId);
+        if (!profile)
+            return;
+        profile.addNativeSnapshotChunk(chunk);
+    }
 }
 
 /**

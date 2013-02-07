@@ -35,6 +35,7 @@
 WebInspector.NativeHeapSnapshot = function(profile)
 {
     WebInspector.HeapSnapshot.call(this, profile);
+    this._nodeObjectType = 3;
 }
 
 WebInspector.NativeHeapSnapshot.prototype = {
@@ -88,19 +89,30 @@ WebInspector.NativeHeapSnapshotNode.prototype = {
 
     classIndex: function()
     {
-        var snapshot = this._snapshot;
-        return snapshot._nodes[this.nodeIndex + snapshot._nodeNameOffset];
+        return this._snapshot._nodes[this.nodeIndex + this._snapshot._nodeTypeOffset];
     },
 
     id: function()
     {
-        return this.nodeIndex;
+        return this._snapshot._nodes[this.nodeIndex + this._snapshot._nodeIdOffset];
     },
 
     name: function()
     {
-        var name = this._snapshot._strings[this._snapshot._nodes[this.nodeIndex + 2]];
-        return this.className() + ": " + name;
+        return this._snapshot._strings[this._snapshot._nodes[this.nodeIndex + this._snapshot._nodeNameOffset]];;
+    },
+
+    serialize: function()
+    {
+        return {
+            id: this.id(),
+            name: this.className(),
+            distance: this.distance(),
+            nodeIndex: this.nodeIndex,
+            retainedSize: this.retainedSize(),
+            selfSize: this.selfSize(),
+            type: this._snapshot._nodeObjectType
+       };
     },
 
     isHidden: function()

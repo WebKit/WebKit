@@ -33,6 +33,7 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "InspectorFrontend.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 #include <wtf/MemoryInstrumentation.h>
@@ -49,35 +50,52 @@ class InspectorObject;
 class HeapGraphSerializer {
     WTF_MAKE_NONCOPYABLE(HeapGraphSerializer);
 public:
-    HeapGraphSerializer();
+    explicit HeapGraphSerializer(InspectorFrontend::Memory*);
     ~HeapGraphSerializer();
     void reportNode(const WTF::MemoryObjectInfo&);
     void reportEdge(const void*, const char*, WTF::MemberType);
     void reportLeaf(const WTF::MemoryObjectInfo&, const char*);
     void reportBaseAddress(const void*, const void*);
 
-    PassRefPtr<InspectorObject> serialize();
+    void finish();
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
+    void pushUpdateIfNeeded();
+    void pushUpdate();
+
+    int toNodeId(const void*);
+
     int addString(const String&);
     void addRootNode();
-    void adjutEdgeTargets();
+
+    void reportEdgeImpl(const int toNodeId, const char* name, int memberType);
+    int reportNodeImpl(const WTF::MemoryObjectInfo&, int edgesCount);
+
+    InspectorFrontend::Memory* m_frontend;
 
     typedef HashMap<String, int> StringMap;
     StringMap m_stringToIndex;
-    Vector<String> m_strings;
-    int m_lastReportedEdgeIndex;
+    typedef TypeBuilder::Array<String> Strings;
+    RefPtr<Strings> m_strings;
 
-    typedef HashMap<const void*, int> ObjectToNodeIndex;
-    ObjectToNodeIndex m_objectToNodeIndex;
+    typedef TypeBuilder::Array<int> Edges;
+    RefPtr<Edges> m_edges;
+    int m_nodeEdgesCount;
+    static const size_t s_edgeFieldsCount = 3;
 
-    typedef HashMap<const void*, const void*> BaseToRealAddress;
-    BaseToRealAddress m_baseToRealAddress;
+    typedef TypeBuilder::Array<int> Nodes;
+    RefPtr<Nodes> m_nodes;
+    static const size_t s_nodeFieldsCount = 5;
 
-    Vector<HeapGraphNode> m_nodes;
-    Vector<HeapGraphEdge> m_edges;
+    typedef TypeBuilder::Array<int> BaseToRealNodeIdMap;
+    RefPtr<BaseToRealNodeIdMap> m_baseToRealNodeIdMap;
+    static const size_t s_idMapEntryFieldCount = 2;
+
+    typedef HashMap<const void*, int> Address2NodeId;
+    Address2NodeId m_address2NodeIdMap;
+
     Vector<const void*> m_roots;
 
     size_t m_edgeTypes[WTF::LastMemberTypeEntry];

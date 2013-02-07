@@ -445,8 +445,7 @@ void InspectorController::didProcessTask()
 HashMap<String, size_t> InspectorController::processMemoryDistribution() const
 {
     HashMap<String, size_t> memoryInfo;
-    RefPtr<InspectorObject> graph;
-    m_memoryAgent->getProcessMemoryDistributionAsMap(false, graph, &memoryInfo);
+    m_memoryAgent->getProcessMemoryDistributionMap(&memoryInfo);
     return memoryInfo;
 }
 

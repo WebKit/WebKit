@@ -89,6 +89,16 @@
                     { "name": "name", "type": "string", "description": "Unique name used to identify the component that allocated this block" },
                     { "name": "children", "type": "array", "optional": true, "items": { "$ref": "MemoryBlock" }}
                 ]
+            },
+            {
+                "id": "HeapSnapshotChunk",
+                "type": "object",
+                "properties": [
+                    { "name": "strings", "type": "array", "items": { "type": "string" }, "description": "An array of strings that were found since last update." },
+                    { "name": "nodes", "type": "array", "items": { "type": "integer" }, "description": "An array of nodes that were found since last update." },
+                    { "name": "edges", "type": "array", "items": { "type": "integer" }, "description": "An array of edges that were found since last update." },
+                    { "name": "baseToRealNodeId", "type": "array", "items": { "type": "integer" }, "description": "An array of integers for nodeId remapping. Even nodeId has to be mapped to the following odd nodeId." }
+                ]
             }
         ],
         "commands": [
@@ -113,8 +123,15 @@
                     { "name": "reportGraph", "type": "boolean", "optional": true, "description": "Whether native memory graph should be reported in addition to aggregated statistics." }
                 ],
                 "returns": [
-                    { "name": "distribution", "$ref": "MemoryBlock", "description": "An object describing all memory allocated by the process"},
-                    { "name": "graph", "type": "object", "optional": true, "description": "Native memory graph."}
+                    { "name": "distribution", "$ref": "MemoryBlock", "description": "An object describing all memory allocated by the process"}
+                ]
+            }
+        ],
+        "events": [
+            {
+                "name": "addNativeSnapshotChunk",
+                "parameters": [
+                    { "name": "chunk", "$ref": "HeapSnapshotChunk", "description": "A chunk of the serialized the snapshot." }
                 ]
             }
         ]
