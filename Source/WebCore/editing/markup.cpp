@@ -1042,18 +1042,13 @@ PassRefPtr<DocumentFragment> createFragmentForTransformToFragment(const String& 
 
 static inline void removeElementPreservingChildren(PassRefPtr<DocumentFragment> fragment, HTMLElement* element)
 {
-    ExceptionCode ignoredExceptionCode;
-
     RefPtr<Node> nextChild;
     for (RefPtr<Node> child = element->firstChild(); child; child = nextChild) {
         nextChild = child->nextSibling();
-        element->removeChild(child.get(), ignoredExceptionCode);
-        ASSERT(!ignoredExceptionCode);
-        fragment->insertBefore(child, element, ignoredExceptionCode);
-        ASSERT(!ignoredExceptionCode);
+        element->removeChild(child.get(), ASSERT_NO_EXCEPTION);
+        fragment->insertBefore(child, element, ASSERT_NO_EXCEPTION);
     }
-    fragment->removeChild(element, ignoredExceptionCode);
-    ASSERT(!ignoredExceptionCode);
+    fragment->removeChild(element, ASSERT_NO_EXCEPTION);
 }
 
 PassRefPtr<DocumentFragment> createContextualFragment(const String& markup, HTMLElement* element, FragmentScriptingPermission scriptingPermission, ExceptionCode& ec)
