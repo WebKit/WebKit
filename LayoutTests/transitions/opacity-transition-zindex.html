@@ -47,12 +47,12 @@
       container.style.opacity = 1;
       
       // dump the tree in the middle of the transition
-      if (window.testRunner) {
-        if (testRunner.pauseTransitionAtTimeOnElementWithId)
-          window.setTimeout(function() { testRunner.pauseTransitionAtTimeOnElementWithId("opacity", 2.5, "first"); testRunner.notifyDone(); }, 0);
-        else
-          window.setTimeout(function() { testRunner.notifyDone(); }, 2500);
-      }
+      if (window.testRunner)
+        window.setTimeout(function() {
+          var firstElement = document.getElementById('first');
+          internals.pauseTransitionAtTimeOnElement("opacity", 2.5, first);
+          testRunner.notifyDone();
+        }, 0);
     }
     // FIXME: this should use runTransitionTest().
     window.addEventListener('load', runTest, false);

@@ -183,8 +183,6 @@ TestRunner::TestRunner()
     bindMethod("setTabKeyCyclesThroughElements", &TestRunner::setTabKeyCyclesThroughElements);
     bindMethod("execCommand", &TestRunner::execCommand);
     bindMethod("isCommandEnabled", &TestRunner::isCommandEnabled);
-    bindMethod("pauseAnimationAtTimeOnElementWithId", &TestRunner::pauseAnimationAtTimeOnElementWithId);
-    bindMethod("pauseTransitionAtTimeOnElementWithId", &TestRunner::pauseTransitionAtTimeOnElementWithId);
     bindMethod("elementDoesAutoCompleteForElementWithId", &TestRunner::elementDoesAutoCompleteForElementWithId);
     bindMethod("callShouldCloseOnWebView", &TestRunner::callShouldCloseOnWebView);
     bindMethod("setDomainRelaxationForbiddenForURLScheme", &TestRunner::setDomainRelaxationForbiddenForURLScheme);
@@ -1049,38 +1047,6 @@ void TestRunner::isCommandEnabled(const CppArgumentList& arguments, CppVariant* 
     result->set(rv);
 }
 
-bool TestRunner::pauseAnimationAtTimeOnElementWithId(const WebString& animationName, double time, const WebString& elementId)
-{
-    WebFrame* webFrame = m_webView->mainFrame();
-    if (!webFrame)
-        return false;
-
-    WebAnimationController* controller = webFrame->animationController();
-    if (!controller)
-        return false;
-
-    WebElement element = webFrame->document().getElementById(elementId);
-    if (element.isNull())
-        return false;
-    return controller->pauseAnimationAtTime(element, animationName, time);
-}
-
-bool TestRunner::pauseTransitionAtTimeOnElementWithId(const WebString& propertyName, double time, const WebString& elementId)
-{
-    WebFrame* webFrame = m_webView->mainFrame();
-    if (!webFrame)
-        return false;
-
-    WebAnimationController* controller = webFrame->animationController();
-    if (!controller)
-        return false;
-
-    WebElement element = webFrame->document().getElementById(elementId);
-    if (element.isNull())
-        return false;
-    return controller->pauseTransitionAtTime(element, propertyName, time);
-}
-
 bool TestRunner::elementDoesAutoCompleteForElementWithId(const WebString& elementId)
 {
     WebFrame* webFrame = m_webView->mainFrame();
@@ -1093,28 +1059,6 @@ bool TestRunner::elementDoesAutoCompleteForElementWithId(const WebString& elemen
 
     WebInputElement inputElement = element.to<WebInputElement>();
     return inputElement.autoComplete();
-}
-
-void TestRunner::pauseAnimationAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->set(false);
-    if (arguments.size() > 2 && arguments[0].isString() && arguments[1].isNumber() && arguments[2].isString()) {
-        WebString animationName = cppVariantToWebString(arguments[0]);
-        double time = arguments[1].toDouble();
-        WebString elementId = cppVariantToWebString(arguments[2]);
-        result->set(pauseAnimationAtTimeOnElementWithId(animationName, time, elementId));
-    }
-}
-
-void TestRunner::pauseTransitionAtTimeOnElementWithId(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->set(false);
-    if (arguments.size() > 2 && arguments[0].isString() && arguments[1].isNumber() && arguments[2].isString()) {
-        WebString propertyName = cppVariantToWebString(arguments[0]);
-        double time = arguments[1].toDouble();
-        WebString elementId = cppVariantToWebString(arguments[2]);
-        result->set(pauseTransitionAtTimeOnElementWithId(propertyName, time, elementId));
-    }
 }
 
 void TestRunner::elementDoesAutoCompleteForElementWithId(const CppArgumentList& arguments, CppVariant* result)

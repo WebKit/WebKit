@@ -90,7 +90,8 @@
 
     runAnimationTest(expectedValues, function() {
       if (window.testRunner) {
-          if (testRunner.pauseAnimationAtTimeOnElementWithId("anim5", 0.1, "box5"))
+          var box5Element = document.getElementById('box5');
+          if (internals.pauseAnimationAtTimeOnElement("anim5", 0.1, box5Element))
               result += "FAIL - box5 animation was running<br>";
           else 
               result += "PASS - box5 animation was not running<br>";

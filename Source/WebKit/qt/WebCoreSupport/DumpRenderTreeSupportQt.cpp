@@ -298,49 +298,6 @@ void DumpRenderTreeSupportQt::setValueForUser(const QWebElement& element, const 
     inputElement->setValueForUser(value);
 }
 
-// Pause a given CSS animation or transition on the target node at a specific time.
-// If the animation or transition is already paused, it will update its pause time.
-// This method is only intended to be used for testing the CSS animation and transition system.
-bool DumpRenderTreeSupportQt::pauseAnimation(QWebFrameAdapter *adapter, const QString &animationName, double time, const QString &elementId)
-{
-    Frame* coreFrame = adapter->frame;
-    if (!coreFrame)
-        return false;
-
-    AnimationController* controller = coreFrame->animation();
-    if (!controller)
-        return false;
-
-    Document* doc = coreFrame->document();
-    Q_ASSERT(doc);
-
-    Node* coreNode = doc->getElementById(elementId);
-    if (!coreNode || !coreNode->renderer())
-        return false;
-
-    return controller->pauseAnimationAtTime(coreNode->renderer(), animationName, time);
-}
-
-bool DumpRenderTreeSupportQt::pauseTransitionOfProperty(QWebFrameAdapter *adapter, const QString &propertyName, double time, const QString &elementId)
-{
-    Frame* coreFrame = adapter->frame;
-    if (!coreFrame)
-        return false;
-
-    AnimationController* controller = coreFrame->animation();
-    if (!controller)
-        return false;
-
-    Document* doc = coreFrame->document();
-    Q_ASSERT(doc);
-
-    Node* coreNode = doc->getElementById(elementId);
-    if (!coreNode || !coreNode->renderer())
-        return false;
-
-    return controller->pauseTransitionAtTime(coreNode->renderer(), propertyName, time);
-}
-
 void DumpRenderTreeSupportQt::clearFrameName(QWebFrameAdapter *adapter)
 {
     Frame* coreFrame = adapter->frame;

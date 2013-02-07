@@ -187,8 +187,6 @@ public Q_SLOTS:
     bool isCommandEnabled(const QString& name) const;
     bool findString(const QString&, const QStringList& optionArray);
 
-    bool pauseAnimationAtTimeOnElementWithId(const QString& animationName, double time, const QString& elementId);
-    bool pauseTransitionAtTimeOnElementWithId(const QString& propertyName, double time, const QString& elementId);
     bool elementDoesAutoCompleteForElementWithId(const QString& elementId);
 
     void addOriginAccessWhitelistEntry(const QString& sourceOrigin, const QString& destinationProtocol, const QString& destinationHost, bool allowDestinationSubdomains);

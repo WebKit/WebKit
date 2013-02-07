@@ -24,7 +24,8 @@
 
     function endTest() {
       if (window.testRunner) {
-        var paused = testRunner.pauseTransitionAtTimeOnElementWithId("left", 1.0, "target");
+        var target = document.getElementById('target');
+        var paused = internals.pauseTransitionAtTimeOnElement("left", 1.0, target);
         var result = "";
         if (paused)
           result = "PASS: correctly paused transition";
@@ -47,7 +48,7 @@
    </script>
 </head>
 <body onload="startTest()">
-  <!-- Test for DRT pauseTransitionAtTimeOnElementWithId() API -->
+  <!-- Test for Interals pauseTransitionAtTimeOnElement() API -->
   <div id="target"></div>
   <div id="results"></div>
 

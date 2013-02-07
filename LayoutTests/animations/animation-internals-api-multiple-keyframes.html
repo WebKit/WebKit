@@ -27,11 +27,12 @@
        testRunner.waitUntilDone();
        testRunner.dumpAsText();
      }
-   
+
     function animationStarted()
     {
       if (window.testRunner) {
-        var paused = testRunner.pauseAnimationAtTimeOnElementWithId("anim", 1, "target");
+        var target = document.getElementById('target');
+        var paused = internals.pauseAnimationAtTimeOnElement("anim", 1, target);
         var result;
         if (paused)
           result = "PASS: correctly paused animation";
@@ -41,7 +42,7 @@
         document.getElementById('results').innerText = result;
         testRunner.notifyDone();
       } else
-        document.getElementById('results').innerText = "This test requires DRT";
+        document.getElementById('results').innerText = "This test requires WebCore Internals";
     }
 
     function startTest()
@@ -53,7 +54,7 @@
    </script>
 </head>
 <body onload="startTest()">
-  <!-- Test for DRT pauseAnimationAtTimeOnElementWithId() API on animations with multiple keyframes -->
+  <!-- Test for Internals' pauseAnimationAtTimeOnElement() API on animations with multiple keyframes -->
   <div id="target"></div>
   <div id="results"></div>
 

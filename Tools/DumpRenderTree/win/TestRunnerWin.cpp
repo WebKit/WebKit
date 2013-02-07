@@ -1013,56 +1013,6 @@ void TestRunner::setAppCacheMaximumSize(unsigned long long size)
     printf("ERROR: TestRunner::setAppCacheMaximumSize() not implemented\n");
 }
 
-bool TestRunner::pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId)
-{
-    COMPtr<IDOMDocument> document;
-    if (FAILED(frame->DOMDocument(&document)))
-        return false;
-
-    BSTR idBSTR = JSStringCopyBSTR(elementId);
-    COMPtr<IDOMElement> element;
-    HRESULT hr = document->getElementById(idBSTR, &element);
-    SysFreeString(idBSTR);
-    if (FAILED(hr))
-        return false;
-
-    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
-    if (!framePrivate)
-        return false;
-
-    BSTR nameBSTR = JSStringCopyBSTR(animationName);
-    BOOL wasRunning = FALSE;
-    hr = framePrivate->pauseAnimation(nameBSTR, element.get(), time, &wasRunning);
-    SysFreeString(nameBSTR);
-
-    return SUCCEEDED(hr) && wasRunning;
-}
-
-bool TestRunner::pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId)
-{
-    COMPtr<IDOMDocument> document;
-    if (FAILED(frame->DOMDocument(&document)))
-        return false;
-
-    BSTR idBSTR = JSStringCopyBSTR(elementId);
-    COMPtr<IDOMElement> element;
-    HRESULT hr = document->getElementById(idBSTR, &element);
-    SysFreeString(idBSTR);
-    if (FAILED(hr))
-        return false;
-
-    COMPtr<IWebFramePrivate> framePrivate(Query, frame);
-    if (!framePrivate)
-        return false;
-
-    BSTR nameBSTR = JSStringCopyBSTR(propertyName);
-    BOOL wasRunning = FALSE;
-    hr = framePrivate->pauseTransition(nameBSTR, element.get(), time, &wasRunning);
-    SysFreeString(nameBSTR);
-
-    return SUCCEEDED(hr) && wasRunning;
-}
-
 static _bstr_t bstrT(JSStringRef jsString)
 {
     // The false parameter tells the _bstr_t constructor to adopt the BSTR we pass it.

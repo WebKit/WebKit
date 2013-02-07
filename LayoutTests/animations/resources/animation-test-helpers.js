@@ -18,7 +18,7 @@ Function parameters:
     - the tolerance to use when comparing the effective CSS property value with its expected value
 
     [1] If null is passed, a regular setTimeout() will be used instead to snapshot the animated property in the future,
-    instead of fast forwarding using the pauseAnimationAtTimeOnElementWithId() JS API from DRT
+    instead of fast forwarding using the pauseAnimationAtTimeOnElement() JS API from Internals.
     
     [2] If a single string is passed, it is the id of the element to test. If an array with 2 elements is passed they
     are the ids of 2 elements, whose values are compared for equality. In this case the expected value is ignored
@@ -240,12 +240,12 @@ function checkExpectedValue(expected, index)
         }
     }
 
-    if (animationName && hasPauseAnimationAPI && !testRunner.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId)) {
+    if (animationName && hasPauseAnimationAPI && !internals.pauseAnimationAtTimeOnElement(animationName, time, document.getElementById(elementId))) {
         result += "FAIL - animation \"" + animationName + "\" is not running" + "<br>";
         return;
     }
     
-    if (compareElements && !element2Static && animationName && hasPauseAnimationAPI && !testRunner.pauseAnimationAtTimeOnElementWithId(animationName, time, elementId2)) {
+    if (compareElements && !element2Static && animationName && hasPauseAnimationAPI && !internals.pauseAnimationAtTimeOnElement(animationName, time, document.getElementById(elementId2))) {
         result += "FAIL - animation \"" + animationName + "\" is not running" + "<br>";
         return;
     }
@@ -390,7 +390,7 @@ function startTest(expected, callback)
         var time = expected[i][1];
 
         // We can only use the animation fast-forward mechanism if there's an animation name
-        // and DRT implements pauseAnimationAtTimeOnElementWithId()
+        // and Internals implements pauseAnimationAtTimeOnElement()
         if (animationName && hasPauseAnimationAPI)
             checkExpectedValue(expected, i);
         else {
@@ -412,7 +412,7 @@ var hasPauseAnimationAPI;
 
 function runAnimationTest(expected, callback, event, disablePauseAnimationAPI, doPixelTest)
 {
-    hasPauseAnimationAPI = ('testRunner' in window) && ('pauseAnimationAtTimeOnElementWithId' in testRunner);
+    hasPauseAnimationAPI = 'internals' in window;
     if (disablePauseAnimationAPI)
         hasPauseAnimationAPI = false;
 

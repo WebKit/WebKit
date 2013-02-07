@@ -60,7 +60,8 @@
         if (window.testRunner) {
           testRunner.dumpAsText();
           testRunner.waitUntilDone();
-          if (testRunner.pauseAnimationAtTimeOnElementWithId("bar", 0.5, "box"))
+          var box = document.getElementById('box');
+          if (internals.pauseAnimationAtTimeOnElement("bar", 0.5, box))
               document.getElementById("pre-result").innerHTML = "FAIL: animation is running";
           else
               document.getElementById("pre-result").innerHTML = "PASS: animation is not running";

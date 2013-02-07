@@ -92,16 +92,6 @@ WKArrayRef WKBundleFrameCopyChildFrames(WKBundleFrameRef frameRef)
     return toAPI(toImpl(frameRef)->childFrames().leakRef());    
 }
 
-bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStringRef animationName, WKStringRef elementID, double time)
-{
-    return toImpl(frameRef)->pauseAnimationOnElementWithId(AtomicString(toWTFString(animationName)), toWTFString(elementID), time);
-}
-
-bool WKBundleFramePauseTransitionOnElementWithId(WKBundleFrameRef frameRef, WKStringRef propertyName, WKStringRef elementID, double time)
-{
-    return toImpl(frameRef)->pauseTransitionOnElementWithId(toWTFString(propertyName), toWTFString(elementID), time);
-}
-
 JSGlobalContextRef WKBundleFrameGetJavaScriptContext(WKBundleFrameRef frameRef)
 {
     return toImpl(frameRef)->jsContext();

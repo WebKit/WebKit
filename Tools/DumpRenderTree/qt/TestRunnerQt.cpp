@@ -546,24 +546,6 @@ void TestRunner::setXSSAuditorEnabled(bool enable)
     m_drt->webPage()->settings()->setAttribute(QWebSettings::XSSAuditingEnabled, enable);
 }
 
-bool TestRunner::pauseAnimationAtTimeOnElementWithId(const QString& animationName,
-                                                               double time,
-                                                               const QString& elementId)
-{
-    QWebFrame* frame = m_drt->webPage()->mainFrame();
-    Q_ASSERT(frame);
-    return DumpRenderTreeSupportQt::pauseAnimation(frame->handle(), animationName, time, elementId);
-}
-
-bool TestRunner::pauseTransitionAtTimeOnElementWithId(const QString& propertyName,
-                                                                double time,
-                                                                const QString& elementId)
-{
-    QWebFrame* frame = m_drt->webPage()->mainFrame();
-    Q_ASSERT(frame);
-    return DumpRenderTreeSupportQt::pauseTransitionOfProperty(frame->handle(), propertyName, time, elementId);
-}
-
 void TestRunner::dispatchPendingLoadRequests()
 {
     // FIXME: Implement for testing fix for 6727495

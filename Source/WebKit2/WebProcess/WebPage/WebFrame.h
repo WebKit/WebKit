@@ -115,8 +115,6 @@ public:
     static String counterValue(JSObjectRef element);
     static String markerText(JSObjectRef element);
 
-    bool pauseAnimationOnElementWithId(const AtomicString& animationName, const String& elementID, double time);
-    bool pauseTransitionOnElementWithId(const String& propertyName, const String& elementID, double time);
     String layerTreeAsText() const;
     
     unsigned pendingUnloadCount() const;

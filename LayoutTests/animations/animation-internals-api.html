@@ -20,7 +20,7 @@
         left: 200px;
       }
     }
-         
+
   </style>
 
   <script src="resources/animation-test-helpers.js"></script>
@@ -33,7 +33,8 @@
     function animationStarted()
     {
       if (window.testRunner) {
-        var paused = testRunner.pauseAnimationAtTimeOnElementWithId("bounce", 1.0, "target");
+        var target = document.getElementById('target');
+        var paused = internals.pauseAnimationAtTimeOnElement("bounce", 1.0, target);
         var result = "";
         if (paused)
           result = "PASS: correctly paused animation";
@@ -43,7 +44,7 @@
         document.getElementById('results').innerText = result;
         testRunner.notifyDone();
       } else
-        document.getElementById('results').innerText = "This test requires DRT";
+        document.getElementById('results').innerText = "This test requires WebCore Internals";
     }
 
     function startTest()
@@ -55,7 +56,7 @@
    </script>
 </head>
 <body onload="startTest()">
-  <!-- Test for DRT pauseAnimationAtTimeOnElementWithId() API -->
+  <!-- Test for Internals pauseAnimationAtTimeOnElement() API -->
   <div id="target"></div>
   <div id="results"></div>
 </body>

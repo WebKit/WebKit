@@ -23,8 +23,9 @@
    <script>
     function endTest() {
       if (window.testRunner) {
-        testRunner.pauseTransitionAtTimeOnElementWithId("left", 2.0, "target");
-        var left = window.getComputedStyle(document.getElementById('target')).left;
+        var target = document.getElementById('target');
+        internals.pauseTransitionAtTimeOnElement("left", 2.0, target);
+        var left = window.getComputedStyle(target).left;
         var result = "PASS";
         if (left != "125px") {
           result = "FAIL - expected 125px got " + left;

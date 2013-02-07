@@ -233,10 +233,10 @@ function runTest(expected, usePauseAPI)
         if (tryToPauseTransition === undefined)
           tryToPauseTransition = shouldBeTransitioning;
 
-        // We can only use the transition fast-forward mechanism if DRT implements pauseTransitionAtTimeOnElementWithId()
         if (hasPauseTransitionAPI && usePauseAPI) {
             if (tryToPauseTransition) {
-              if (!testRunner.pauseTransitionAtTimeOnElementWithId(property, time, elementId))
+              var element = document.getElementById(elementId);
+              if (!internals.pauseTransitionAtTimeOnElement(property, time, element))
                 window.console.log("Failed to pause '" + property + "' transition on element '" + elementId + "'");
             }
             checkExpectedValue(expected, i);
@@ -281,7 +281,7 @@ var hasPauseTransitionAPI;
 
 function runTransitionTest(expected, callback, usePauseAPI, doPixelTest)
 {
-    hasPauseTransitionAPI = ('testRunner' in window) && ('pauseTransitionAtTimeOnElementWithId' in testRunner);
+    hasPauseTransitionAPI = 'internals' in window;
     
     if (window.testRunner) {
         if (!doPixelTest)

@@ -99,9 +99,6 @@ public:
     static QVariantList firstRectForCharacterRange(QWebPageAdapter*, int location, int length);
     static void confirmComposition(QWebPageAdapter*, const char* text);
 
-    static bool pauseAnimation(QWebFrameAdapter*, const QString& name, double time, const QString& elementId);
-    static bool pauseTransitionOfProperty(QWebFrameAdapter*, const QString& name, double time, const QString& elementId);
-
     static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme);
     static void setFrameFlatteningEnabled(QWebPageAdapter*, bool);
     static void setCaretBrowsingEnabled(QWebPageAdapter*, bool value);

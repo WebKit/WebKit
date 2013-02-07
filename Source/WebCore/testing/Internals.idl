@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,10 +67,15 @@
     boolean hasSelectorForAttributeInShadow(in Element host, in DOMString attributeName) raises (DOMException);
     boolean hasSelectorForPseudoClassInShadow(in Element host, in DOMString pseudoClass) raises (DOMException);
 
+    // CSS Animation testing.
     unsigned long numberOfActiveAnimations();
     void suspendAnimations(in Document document) raises (DOMException);
     void resumeAnimations(in Document document) raises (DOMException);
+    boolean pauseAnimationAtTimeOnElement(in DOMString animationName, in double pauseTime, in Element element) raises (DOMException);
     boolean pauseAnimationAtTimeOnPseudoElement(in DOMString animationName, in double pauseTime, in Element element, in DOMString pseudoId) raises (DOMException);
+
+    // CSS Transition testing.
+    boolean pauseTransitionAtTimeOnElement(in DOMString propertyName, in double pauseTime, in Element element) raises (DOMException);
     boolean pauseTransitionAtTimeOnPseudoElement(in DOMString property, in double pauseTime, in Element element, in DOMString pseudoId) raises (DOMException);
 
     Node nextSiblingByWalker(in Node node) raises(DOMException);
