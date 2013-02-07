@@ -1,3 +1,10 @@
+2013-02-07  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Patch for testing Win EWS bots.
+
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+
 2013-02-07  Gavin Peters  <gavinp@chromium.org>
 
         Unreviewed, rolling out r142165.

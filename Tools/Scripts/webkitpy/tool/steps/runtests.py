@@ -91,6 +91,8 @@ class RunTests(AbstractStep):
             ])
 
             try:
+                print "BUILD CONFIGURATION";
+                print self._options.build_style;
                 if self._options.build_style == "release":
                     args.append("--release")
                 elif self._options.build_style == "debug":
