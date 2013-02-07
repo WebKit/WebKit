@@ -120,7 +120,7 @@ inspector/styles/vendor-prefixes.html [ WontFix Failure ]
 fast/css/apple-prefix.html [ WontFix Failure ]
 
 # This port doesn't support detecting slow unload handlers.
-fast/dom/Window/slow-unload-handler.html [ WontFix Timeout ]
+fast/dom/Window/slow-unload-handler.html [ WontFix Timeout Failure ]
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html [ WontFix Timeout Failure ]
 
 # Accessibility tests that should never be run for GTK due to be
@@ -1476,6 +1476,8 @@ webkit.org/b/108747 inspector-protocol/page/javascriptDialogEvents.html [ Failur
 webkit.org/b/91665 fast/dynamic/absolute-positioned-to-static-positioned.html [ Failure ]
 webkit.org/b/91665 fast/dynamic/floating-to-non-floating.html [ Failure ]
 webkit.org/b/91665 fast/dynamic/static-positioned-to-absolute-positioned.html [ Failure ]
+
+webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
