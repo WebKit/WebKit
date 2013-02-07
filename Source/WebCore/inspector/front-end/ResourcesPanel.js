@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2007, 2008, 2010 Apple Inc.  All rights reserved.
  * Copyright (C) 2009 Joseph Pecoraro
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -117,7 +118,6 @@ WebInspector.ResourcesPanel = function(database)
 
     WebInspector.domStorageModel.storages().forEach(this._addDOMStorage.bind(this));
     WebInspector.domStorageModel.addEventListener(WebInspector.DOMStorageModel.Events.DOMStorageAdded, this._domStorageAdded, this);
-    WebInspector.domStorageModel.addEventListener(WebInspector.DOMStorageModel.Events.DOMStorageUpdated, this._domStorageUpdated, this);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -469,7 +469,7 @@ WebInspector.ResourcesPanel.prototype = {
         var view;
         view = this._domStorageViews.get(domStorage);
         if (!view) {
-            view = new WebInspector.DOMStorageItemsView(domStorage);
+            view = new WebInspector.DOMStorageItemsView(domStorage, WebInspector.domStorageModel);
             this._domStorageViews.put(domStorage, view);
         }
 
@@ -570,17 +570,6 @@ WebInspector.ResourcesPanel.prototype = {
             }
         }
         database.getTableNames(tableNamesCallback);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _domStorageUpdated: function(event)
-    {
-        var storage = /** @type {WebInspector.DOMStorage}*/ (event.data);
-        var view = this._domStorageViews.get(storage);
-        if (this.visibleView && view === this.visibleView)
-            view.update();
     },
 
     _populateApplicationCacheTree: function()

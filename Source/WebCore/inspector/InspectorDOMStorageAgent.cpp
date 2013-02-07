@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -222,7 +223,7 @@ void InspectorDOMStorageAgent::didUseDOMStorage(StorageArea* storageArea, bool i
         resource->bind(m_frontend);
 }
 
-void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String&, const String&, const String&, StorageType storageType, SecurityOrigin* securityOrigin, Page*)
+void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page*)
 {
     if (!m_frontend || !m_enabled)
         return;
@@ -232,7 +233,14 @@ void InspectorDOMStorageAgent::didDispatchDOMStorageEvent(const String&, const S
     if (id.isEmpty())
         return;
 
-    m_frontend->domstorage()->domStorageUpdated(id);
+    if (key.isNull())
+        m_frontend->domstorage()->domStorageItemsCleared(id);
+    else if (newValue.isNull())
+        m_frontend->domstorage()->domStorageItemRemoved(id, key);
+    else if (oldValue.isNull())
+        m_frontend->domstorage()->domStorageItemAdded(id, key, newValue);
+    else
+        m_frontend->domstorage()->domStorageItemUpdated(id, key, oldValue, newValue);
 }
 
 void InspectorDOMStorageAgent::clearResources()

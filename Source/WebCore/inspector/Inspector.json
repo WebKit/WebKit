@@ -837,22 +837,22 @@
         "commands": [
             {
                 "name": "enable",
-                "description": "Enables console domain, sends the messages collected so far to the client by means of the <code>messageAdded</code> notification." 
+                "description": "Enables console domain, sends the messages collected so far to the client by means of the <code>messageAdded</code> notification."
             },
             {
                 "name": "disable",
-                "description": "Disables console domain, prevents further console messages from being reported to the client." 
+                "description": "Disables console domain, prevents further console messages from being reported to the client."
             },
             {
                 "name": "clearMessages",
-                "description": "Clears console messages collected in the browser." 
+                "description": "Clears console messages collected in the browser."
             },
             {
                 "name": "setMonitoringXHREnabled",
                 "parameters": [
                     { "name": "enabled", "type": "boolean", "description": "Monitoring enabled state." }
                 ],
-                "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued.", 
+                "description": "Toggles monitoring of XMLHttpRequest. If <code>true</code>, console will receive messages upon each XHR issued.",
                 "hidden": true
             },
             {
@@ -1093,7 +1093,7 @@
                 "parameters": [
                     { "name": "cacheDisabled", "type": "boolean", "description": "Cache disabled state." }
                 ],
-                "description": "Toggles ignoring cache for each request. If <code>true</code>, cache will not be used." 
+                "description": "Toggles ignoring cache for each request. If <code>true</code>, cache will not be used."
             }
         ],
         "events": [
@@ -1533,9 +1533,33 @@
                 ]
             },
             {
-                "name": "domStorageUpdated",
+                "name": "domStorageItemsCleared",
                 "parameters": [
                     { "name": "storageId",  "$ref": "StorageId" }
+                ]
+            },
+            {
+                "name": "domStorageItemRemoved",
+                "parameters": [
+                    { "name": "storageId",  "$ref": "StorageId" },
+                    { "name": "key", "type": "string" }
+                ]
+            },
+            {
+                "name": "domStorageItemAdded",
+                "parameters": [
+                    { "name": "storageId",  "$ref": "StorageId" },
+                    { "name": "key", "type": "string" },
+                    { "name": "newValue", "type": "string" }
+                ]
+            },
+            {
+                "name": "domStorageItemUpdated",
+                "parameters": [
+                    { "name": "storageId",  "$ref": "StorageId" },
+                    { "name": "key", "type": "string" },
+                    { "name": "oldValue", "type": "string" },
+                    { "name": "newValue", "type": "string" }
                 ]
             }
         ]
