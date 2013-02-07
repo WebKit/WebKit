@@ -1,3 +1,16 @@
+2013-02-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] configure.ac requires a cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=99272
+
+        Reviewed by Martin Robinson.
+
+        Clean up configure.ac. While there is no strict style guideline determined
+        for this file the changes enforce the usual indentation of four spaces along
+        with line wrapping at 130 characters and grammar fixes/updates.
+
+        * configure.ac:
+
 2013-02-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [CoordinatedGraphics] Use ScrollingCoordinator to track fixed layers
