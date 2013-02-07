@@ -1,3 +1,17 @@
+2013-02-07  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] Reader Mode: Opening two links quickly from reader mode causes browser bad state
+        https://bugs.webkit.org/show_bug.cgi?id=109124
+
+        Reviewed by Yong Li.
+
+        RIM BUG 291246 Internally reviewed by YongLi.
+        Move the WebPageGroupLoadDeferrer object from ChromeClientBlackBerry::createWindow()
+        into WebPageClientImpl::createWindow() to make it more close to its protecting place.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::createWindow):
+
 2013-02-07  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Send type details with IMF mask as part of focus gained.
