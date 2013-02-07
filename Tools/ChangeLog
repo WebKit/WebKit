@@ -1,3 +1,14 @@
+2013-02-07  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Add a WebKit2 Performance bot.
+        https://bugs.webkit.org/show_bug.cgi?id=109188
+
+        Reviewed by Csaba Osztrogonác.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json: Add the
+        efl-linux-perf-1 slave (a 64-bit Release WK2 Perf bot), and make
+        the "EFL Linux 64-bit Release" bot trigger it.
+
 2013-02-07  Xiaobo Wang  <xbwang@torchmobile.com.cn>
 
         [BlackBerry] CHHW - Characters that are using 32 bits encoding get trunked to 16bits

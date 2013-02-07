@@ -74,6 +74,7 @@
                     { "name": "efl-linux-slave-2", "platform": "efl" },
                     { "name": "efl-linux-slave-3", "platform": "efl" },
                     { "name": "efl-linux-slave-4", "platform": "efl" },
+                    { "name": "efl-linux-perf-1", "platform": "efl" },
 
                     { "name": "mips-1", "platform": "qt-mipsel"},
 
@@ -332,6 +333,7 @@
                     {
                       "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTestWebKit2Only", "builddir": "efl-linux-64-release-wk2",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
+                      "triggers": ["efl-linux-perf-1"],
                       "slavenames": ["efl-linux-slave-2"]
                     },
                     {
@@ -343,6 +345,11 @@
                       "name": "EFL Linux 32-bit Release (Build)", "type": "Build", "builddir": "efl-linux-32-release",
                       "platform": "efl", "configuration": "release", "architectures": ["i386"],
                       "slavenames": ["efl-linux-slave-3"]
+                    },
+                    {
+                      "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "efl-linux-64-release-wk2-perf",
+                      "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
+                      "slavenames": ["efl-linux-perf-1"]
                     }
                   ],
 
@@ -428,6 +435,9 @@
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests-wk2",
                       "builderNames": ["GTK Linux 64-bit Release WK2 (Tests)"]
+                    },
+                    { "type": "Triggerable", "name": "efl-linux-64-release-wk2-perf",
+                      "builderNames": ["EFL Linux 64-bit Release WK2 (Perf)"]
                     }
                   ]
 }
