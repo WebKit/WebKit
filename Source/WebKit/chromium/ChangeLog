@@ -1,3 +1,9 @@
+2013-02-07  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.  Rolled DEPS.
+
+        * DEPS:
+
 2013-02-07  David Trainor  <dtrainor@chromium.org>
 
         Add null check to editable in moveCaretSelectionTowardsWindowPoint
