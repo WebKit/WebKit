@@ -1482,6 +1482,8 @@ webkit.org/b/91665 fast/dynamic/static-positioned-to-absolute-positioned.html [ 
 
 webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOnlyFailure ]
 
+webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
