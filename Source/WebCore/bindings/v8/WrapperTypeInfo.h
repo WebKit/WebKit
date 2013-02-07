@@ -51,7 +51,7 @@ namespace WebCore {
     typedef ActiveDOMObject* (*ToActiveDOMObjectFunction)(v8::Handle<v8::Object>);
     typedef EventTarget* (*ToEventTargetFunction)(v8::Handle<v8::Object>);
     typedef void* (*OpaqueRootForGC)(void*, v8::Persistent<v8::Object>, v8::Isolate*);
-    typedef void (*InstallPerContextPrototypePropertiesFunction)(v8::Handle<v8::Object>);
+    typedef void (*InstallPerContextPrototypePropertiesFunction)(v8::Handle<v8::Object>, v8::Isolate*);
 
     enum WrapperTypePrototype {
         WrapperTypeObjectPrototype,
@@ -84,7 +84,7 @@ namespace WebCore {
             return false;
         }
         
-        v8::Persistent<v8::FunctionTemplate> getTemplate(v8::Isolate* isolate = 0) { return getTemplateFunction(isolate); }
+        v8::Persistent<v8::FunctionTemplate> getTemplate(v8::Isolate* isolate) { return getTemplateFunction(isolate); }
         
         void derefObject(void* object)
         {
@@ -92,10 +92,10 @@ namespace WebCore {
                 derefObjectFunction(object);
         }
         
-        void installPerContextPrototypeProperties(v8::Handle<v8::Object> proto)
+        void installPerContextPrototypeProperties(v8::Handle<v8::Object> proto, v8::Isolate* isolate)
         {
             if (installPerContextPrototypePropertiesFunction)
-                installPerContextPrototypePropertiesFunction(proto);
+                installPerContextPrototypePropertiesFunction(proto, isolate);
         }
 
         ActiveDOMObject* toActiveDOMObject(v8::Handle<v8::Object> object)

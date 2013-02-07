@@ -35,8 +35,8 @@ class V8TestNode {
 public:
     static const bool hasDependentLifetime = true;
     static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
-    static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate* = 0);
-    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate* = 0);
+    static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate*);
+    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*);
     static TestNode* toNative(v8::Handle<v8::Object> object)
     {
         return reinterpret_cast<TestNode*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
@@ -47,7 +47,7 @@ public:
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
     static void installPerContextProperties(v8::Handle<v8::Object>, TestNode*, v8::Isolate*) { }
-    static void installPerContextPrototypeProperties(v8::Handle<v8::Object>) { }
+    static void installPerContextPrototypeProperties(v8::Handle<v8::Object>, v8::Isolate*) { }
 private:
     friend v8::Handle<v8::Object> wrap(TestNode*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestNode>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
