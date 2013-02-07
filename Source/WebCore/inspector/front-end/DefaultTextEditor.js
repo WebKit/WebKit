@@ -1397,35 +1397,6 @@ WebInspector.TextEditorMainPanel.prototype = {
         var handleShiftTabKey = this._handleTabKeyPress.bind(this, true);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code)] = handleTabKey;
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code, modifiers.Shift)] = handleShiftTabKey;
-
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Home.code, modifiers.None)] = this._handleHomeKey.bind(this, false);
-        this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Home.code, modifiers.Shift)] = this._handleHomeKey.bind(this, true);
-    },
-
-    /**
-     * @param {boolean} shift
-     */
-    _handleHomeKey: function(shift)
-    {
-        var selection = this.selection();
-
-        var line = this._textModel.line(selection.endLine);
-        var firstNonBlankCharacter = 0;
-        while (firstNonBlankCharacter < line.length) {
-            var char = line.charAt(firstNonBlankCharacter);
-            if (char === " " || char === "\t")
-                ++firstNonBlankCharacter;
-            else
-                break;
-        }
-        if (firstNonBlankCharacter >= line.length || selection.endColumn === firstNonBlankCharacter)
-            return false;
-
-        selection.endColumn = firstNonBlankCharacter;
-        if (!shift)
-            selection = selection.collapseToEnd();
-        this._restoreSelection(selection);
-        return true;
     },
 
     /**
