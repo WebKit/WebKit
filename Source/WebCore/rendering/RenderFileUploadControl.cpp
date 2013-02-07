@@ -89,7 +89,7 @@ void RenderFileUploadControl::updateFromElement()
 
 static int nodeWidth(Node* node)
 {
-    return node ? node->renderBox()->pixelSnappedWidth() : 0;
+    return (node && node->renderBox()) ? node->renderBox()->pixelSnappedWidth() : 0;
 }
 
 int RenderFileUploadControl::maxFilenameWidth() const
@@ -136,10 +136,14 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
             textX = contentLeft + buttonAndIconWidth;
         else
             textX = contentLeft + contentWidth() - buttonAndIconWidth - font.width(textRun);
+
+        LayoutUnit textY = 0;
         // We want to match the button's baseline
-        RenderButton* buttonRenderer = toRenderButton(button->renderer());
         // FIXME: Make this work with transforms.
-        LayoutUnit textY = paintOffset.y() + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
+        if (RenderButton* buttonRenderer = toRenderButton(button->renderer()))
+            textY = paintOffset.y() + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
+        else
+            textY = baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
 
         paintInfo.context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());
         
