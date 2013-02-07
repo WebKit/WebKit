@@ -42,9 +42,7 @@
 #include "WebKit/chromium/public/WebSecurityOrigin.h"
 #include "WebKit/chromium/public/WebTextAffinity.h"
 #include "WebKit/chromium/public/WebTextDirection.h"
-#include "WebTestCommon.h"
 #include <map>
-#include <memory>
 #include <string>
 
 namespace WebKit {
@@ -81,7 +79,7 @@ class WebTestDelegate;
 class WebTestInterfaces;
 class WebTestRunner;
 
-class WEBTESTRUNNER_EXPORT WebTestProxyBase {
+class WebTestProxyBase {
 public:
     void setInterfaces(WebTestInterfaces*);
     void setDelegate(WebTestDelegate*);
@@ -167,7 +165,7 @@ private:
     TestInterfaces* m_testInterfaces;
     WebTestDelegate* m_delegate;
 
-    std::auto_ptr<SpellCheckClient> m_spellcheck;
+    SpellCheckClient* m_spellcheck;
 
     WebKit::WebRect m_paintRect;
     std::map<unsigned, std::string> m_resourceIdentifierMap;

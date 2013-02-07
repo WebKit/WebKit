@@ -83,7 +83,10 @@
             'dependencies': [
                 'TestRunner_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
+                '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit_wtf_support',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit_test_support',
+                '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
+                '<(chromium_src_dir)/webkit/support/webkit_support.gyp:webkit_support',
             ],
             'include_dirs': [
                 '<(chromium_src_dir)',
@@ -103,40 +106,6 @@
                 '<@(test_runner_files)',
             ],
             'conditions': [
-                ['inside_chromium_build == 1', {
-                    'type': '<(component)',
-                    'conditions': [
-                        ['component=="shared_library"', {
-                            'defines': [
-                                'WEBTESTRUNNER_DLL',
-                                'WEBTESTRUNNER_IMPLEMENTATION=1',
-                            ],
-                            'dependencies': [
-                                '<(chromium_src_dir)/base/base.gyp:base',
-                                '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
-                                '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-                            ],
-                            'direct_dependent_settings': {
-                                'defines': [
-                                    'WEBTESTRUNNER_DLL',
-                                ],
-                            },
-                            'export_dependent_settings': [
-                                '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
-                                '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
-                            ],
-                            'msvs_settings': {
-                                'VCLinkerTool': {
-                                    'conditions': [
-                                        ['incremental_chrome_dll==1', {
-                                            'UseLibraryDependencyInputs': 'true',
-                                        }],
-                                    ],
-                                },
-                            },
-                        }],
-                    ],
-                }],
                 ['toolkit_uses_gtk == 1', {
                     'defines': [
                         'WTF_USE_GTK=1',
@@ -226,7 +195,6 @@
                 'TestRunner',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
-                '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit_wtf_support',
                 '<(source_dir)/WTF/WTF.gyp/WTF.gyp:wtf',
                 '<(chromium_src_dir)/base/base.gyp:test_support_base',
                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',

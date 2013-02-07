@@ -40,7 +40,7 @@ namespace WebTestRunner {
 
 void WebPreferences::reset()
 {
-#ifdef __APPLE__
+#if OS(MAC_OS_X)
     cursiveFontFamily = WebString::fromUTF8("Apple Chancery");
     fantasyFontFamily = WebString::fromUTF8("Papyrus");
     WebString serif = WebString::fromUTF8("Times");
@@ -106,7 +106,7 @@ void WebPreferences::reset()
     // LayoutTests/http/tests/local, to access http server.
     allowUniversalAccessFromFileURLs = true;
 
-#ifdef __APPLE__
+#if OS(DARWIN)
     editingBehavior = WebSettings::EditingBehaviorMac;
 #else
     editingBehavior = WebSettings::EditingBehaviorWin;

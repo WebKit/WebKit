@@ -42,11 +42,11 @@
 #include "config.h"
 #include "CppBoundClass.h"
 
-#include "TestCommon.h"
 #include "WebBindings.h"
 #include "WebFrame.h"
-#include <memory>
 #include <public/WebString.h>
+#include <wtf/Assertions.h>
+#include <wtf/OwnPtr.h>
 
 using namespace WebKit;
 using namespace std;
@@ -77,7 +77,7 @@ private:
 
 class GetterPropertyCallback : public CppBoundClass::PropertyCallback {
 public:
-    GetterPropertyCallback(auto_ptr<CppBoundClass::GetterCallback> callback)
+    GetterPropertyCallback(PassOwnPtr<CppBoundClass::GetterCallback> callback)
         : m_callback(callback)
     {
     }
@@ -91,7 +91,7 @@ public:
     virtual bool setValue(const CppVariant& value) { return false; }
 
 private:
-    auto_ptr<CppBoundClass::GetterCallback> m_callback;
+    OwnPtr<CppBoundClass::GetterCallback> m_callback;
 };
 
 }
@@ -209,10 +209,10 @@ bool CppNPObject::setProperty(NPObject* npObj, NPIdentifier ident, const NPVaria
 CppBoundClass::~CppBoundClass()
 {
     for (MethodList::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
-        delete i->second;
+        delete i->value;
 
     for (PropertyList::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
-        delete i->second;
+        delete i->value;
 
     // Unregister ourselves if we were bound to a frame.
     if (m_boundToFrame)
@@ -243,7 +243,7 @@ bool CppBoundClass::invoke(NPIdentifier ident,
         }
         callback = m_fallbackCallback.get();
     } else
-        callback = (*method).second;
+        callback = (*method).value;
 
     // Build a CppArgumentList argument vector from the NPVariants coming in.
     CppArgumentList cppArguments(argumentCount);
@@ -266,7 +266,7 @@ bool CppBoundClass::getProperty(NPIdentifier ident, NPVariant* result) const
     }
 
     CppVariant cppValue;
-    if (!callback->second->getValue(&cppValue))
+    if (!callback->value->getValue(&cppValue))
         return false;
     cppValue.copyToNPVariant(result);
     return true;
@@ -280,7 +280,7 @@ bool CppBoundClass::setProperty(NPIdentifier ident, const NPVariant* value)
 
     CppVariant cppValue;
     cppValue.set(*value);
-    return (*callback).second->setValue(cppValue);
+    return (*callback).value->setValue(cppValue);
 }
 
 void CppBoundClass::bindCallback(const string& name, Callback* callback)
@@ -288,19 +288,19 @@ void CppBoundClass::bindCallback(const string& name, Callback* callback)
     NPIdentifier ident = WebBindings::getStringIdentifier(name.c_str());
     MethodList::iterator oldCallback = m_methods.find(ident);
     if (oldCallback != m_methods.end()) {
-        delete oldCallback->second;
+        delete oldCallback->value;
         if (!callback) {
-            m_methods.erase(oldCallback);
+            m_methods.remove(oldCallback);
             return;
         }
     }
 
-    m_methods[ident] = callback;
+    m_methods.set(ident, callback);
 }
 
-void CppBoundClass::bindGetterCallback(const string& name, auto_ptr<GetterCallback> callback)
+void CppBoundClass::bindGetterCallback(const string& name, PassOwnPtr<GetterCallback> callback)
 {
-    PropertyCallback* propertyCallback = callback.get() ? new GetterPropertyCallback(callback) : 0;
+    PropertyCallback* propertyCallback = callback ? new GetterPropertyCallback(callback) : 0;
     bindProperty(name, propertyCallback);
 }
 
@@ -315,14 +315,14 @@ void CppBoundClass::bindProperty(const string& name, PropertyCallback* callback)
     NPIdentifier ident = WebBindings::getStringIdentifier(name.c_str());
     PropertyList::iterator oldCallback = m_properties.find(ident);
     if (oldCallback != m_properties.end()) {
-        delete oldCallback->second;
+        delete oldCallback->value;
         if (!callback) {
-            m_properties.erase(oldCallback);
+            m_properties.remove(oldCallback);
             return;
         }
     }
 
-    m_properties[ident] = callback;
+    m_properties.set(ident, callback);
 }
 
 bool CppBoundClass::isMethodRegistered(const string& name) const
@@ -344,7 +344,7 @@ CppVariant* CppBoundClass::getAsCppVariant()
         m_selfVariant.set(npObj);
         WebBindings::releaseObject(npObj); // CppVariant takes the reference.
     }
-    WEBKIT_ASSERT(m_selfVariant.isObject());
+    ASSERT(m_selfVariant.isObject());
     return &m_selfVariant;
 }
 

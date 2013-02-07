@@ -26,7 +26,6 @@
 #include "config.h"
 #include "TestPlugin.h"
 
-#include "TestCommon.h"
 #include "WebFrame.h"
 #include "WebInputEvent.h"
 #include "WebKit.h"
@@ -36,9 +35,12 @@
 #include <public/Platform.h>
 #include <public/WebCompositorSupport.h>
 #include <public/WebGraphicsContext3D.h>
+#include <wtf/Assertions.h>
+#include <wtf/PassOwnPtr.h>
+#include <wtf/StringExtras.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
-using namespace std;
 
 namespace WebTestRunner {
 
@@ -97,7 +99,7 @@ const char* pointState(WebTouchPoint::State state)
         return "Unknown";
     }
 
-    WEBKIT_ASSERT_NOT_REACHED();
+    ASSERT_NOT_REACHED();
     return 0;
 }
 
@@ -132,9 +134,12 @@ void printEventDetails(WebTestDelegate* delegate, const WebInputEvent& event)
 
 WebPluginContainer::TouchEventRequestType parseTouchEventRequestType(const WebString& string)
 {
-    if (string == WebString::fromUTF8("raw"))
+    DEFINE_STATIC_LOCAL(const WebString, kPrimitiveRaw, (WebString::fromUTF8("raw")));
+    DEFINE_STATIC_LOCAL(const WebString, kPrimitiveSynthetic, (WebString::fromUTF8("synthetic")));
+
+    if (string == kPrimitiveRaw)
         return WebPluginContainer::TouchEventRequestTypeRaw;
-    if (string == WebString::fromUTF8("synthetic"))
+    if (string == kPrimitiveSynthetic)
         return WebPluginContainer::TouchEventRequestTypeSynthesizedMouse;
     return WebPluginContainer::TouchEventRequestTypeNone;
 }
@@ -163,7 +168,7 @@ TestPlugin::TestPlugin(WebFrame* frame, const WebPluginParams& params, WebTestDe
     static const WebString kAttributeCanProcessDrag = WebString::fromUTF8("can-process-drag");
     static const WebString kAttributePrintUserGestureStatus = WebString::fromUTF8("print-user-gesture-status");
 
-    WEBKIT_ASSERT(params.attributeNames.size() == params.attributeValues.size());
+    ASSERT(params.attributeNames.size() == params.attributeValues.size());
     size_t size = params.attributeNames.size();
     for (size_t i = 0; i < size; ++i) {
         const WebString& attributeName = params.attributeNames[i];
@@ -207,7 +212,7 @@ bool TestPlugin::initialize(WebPluginContainer* container)
     if (!initScene())
         return false;
 
-    m_layer = auto_ptr<WebExternalTextureLayer>(Platform::current()->compositorSupport()->createExternalTextureLayer(this));
+    m_layer = adoptPtr(Platform::current()->compositorSupport()->createExternalTextureLayer(this));
     m_container = container;
     m_container->setWebLayer(m_layer->layer());
     if (m_reRequestTouchEvents) {
@@ -223,7 +228,7 @@ void TestPlugin::destroy()
 {
     if (m_container)
         m_container->setWebLayer(0);
-    m_layer.reset();
+    m_layer.clear();
     destroyScene();
 
     delete m_context;
@@ -270,7 +275,7 @@ TestPlugin::Primitive TestPlugin::parsePrimitive(const WebString& string)
     else if (string == kPrimitiveTriangle)
         primitive = PrimitiveTriangle;
     else
-        WEBKIT_ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
     return primitive;
 }
 
@@ -289,7 +294,7 @@ void TestPlugin::parseColor(const WebString& string, unsigned color[3])
     else if (string == "blue")
         color[2] = 255;
     else
-        WEBKIT_ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
 }
 
 float TestPlugin::parseOpacity(const WebString& string)
@@ -356,14 +361,14 @@ void TestPlugin::destroyScene()
 
 bool TestPlugin::initProgram()
 {
-    const string vertexSource(
+    const CString vertexSource(
         "attribute vec4 position;  \n"
         "void main() {             \n"
         "  gl_Position = position; \n"
         "}                         \n"
     );
 
-    const string fragmentSource(
+    const CString fragmentSource(
         "precision mediump float; \n"
         "uniform vec4 color;      \n"
         "void main() {            \n"
@@ -382,7 +387,7 @@ bool TestPlugin::initProgram()
 
 bool TestPlugin::initPrimitive()
 {
-    WEBKIT_ASSERT(m_scene.primitive == PrimitiveTriangle);
+    ASSERT(m_scene.primitive == PrimitiveTriangle);
 
     m_scene.vbo = m_context->createBuffer();
     if (!m_scene.vbo)
@@ -400,9 +405,9 @@ bool TestPlugin::initPrimitive()
 
 void TestPlugin::drawPrimitive()
 {
-    WEBKIT_ASSERT(m_scene.primitive == PrimitiveTriangle);
-    WEBKIT_ASSERT(m_scene.vbo);
-    WEBKIT_ASSERT(m_scene.program);
+    ASSERT(m_scene.primitive == PrimitiveTriangle);
+    ASSERT(m_scene.vbo);
+    ASSERT(m_scene.program);
 
     m_context->useProgram(m_scene.program);
 
@@ -418,7 +423,7 @@ void TestPlugin::drawPrimitive()
     m_context->drawArrays(GL_TRIANGLES, 0, 3);
 }
 
-unsigned TestPlugin::loadShader(unsigned type, const string& source)
+unsigned TestPlugin::loadShader(unsigned type, const CString& source)
 {
     unsigned shader = m_context->createShader(type);
     if (shader) {
@@ -435,7 +440,7 @@ unsigned TestPlugin::loadShader(unsigned type, const string& source)
     return shader;
 }
 
-unsigned TestPlugin::loadProgram(const string& vertexSource, const string& fragmentSource)
+unsigned TestPlugin::loadProgram(const CString& vertexSource, const CString& fragmentSource)
 {
     unsigned vertexShader = loadShader(GL_VERTEX_SHADER, vertexSource);
     unsigned fragmentShader = loadShader(GL_FRAGMENT_SHADER, fragmentSource);
@@ -528,7 +533,7 @@ bool TestPlugin::handleDragStatusUpdate(WebDragStatus dragStatus, const WebDragD
         dragStatusName = "DragDrop";
         break;
     case WebDragStatusUnknown:
-        WEBKIT_ASSERT_NOT_REACHED();
+        ASSERT_NOT_REACHED();
     }
     m_delegate->printMessage(std::string("Plugin received event: ") + dragStatusName + "\n");
     return false;

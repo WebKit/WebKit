@@ -34,7 +34,6 @@
 #include "Platform/chromium/public/WebString.h"
 #include "Platform/chromium/public/WebURL.h"
 #include "WebKit/chromium/public/WebSettings.h"
-#include "WebTestCommon.h"
 
 namespace WebKit {
 class WebView;
@@ -42,7 +41,7 @@ class WebView;
 
 namespace WebTestRunner {
 
-struct WEBTESTRUNNER_EXPORT WebPreferences {
+struct WebPreferences {
     WebKit::WebString standardFontFamily;
     WebKit::WebString fixedFontFamily;
     WebKit::WebString serifFontFamily;
