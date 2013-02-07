@@ -73,7 +73,7 @@ void DownloadProxyMap::processDidClose()
     }
 
     m_downloads.clear();
-    m_process = nullptr;
+    m_process = 0;
 }
 
 } // namespace WebKit

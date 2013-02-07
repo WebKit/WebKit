@@ -1,3 +1,11 @@
+2013-02-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed build fix.
+
+        * UIProcess/Downloads/DownloadProxyMap.cpp:
+        (WebKit::DownloadProxyMap::processDidClose):
+        m_process can't be initialized nullptr yet. Use 0 instead of nullptr.
+
 2013-02-07  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt][WK2] Fold QtWebPageFindClient into QQuickWebViewPrivate
