@@ -1,3 +1,10 @@
+2013-02-06  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Touchups to VS2010 WebKit solution.
+        Add WinLauncher projects to solution.
+
+        * WebKit.vcxproj/WebKit.sln:
+
 2013-02-05  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Get rid of redundant exports in export definitions file.
