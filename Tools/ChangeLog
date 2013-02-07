@@ -1,3 +1,25 @@
+2013-02-07  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Use GNU ar's thin archive format for intermediate static libs
+        https://bugs.webkit.org/show_bug.cgi?id=109052
+
+        Reviewed by Jocelyn Turcotte.
+
+        With debug builds we exceed the 4GiB limit of GNU ar when creating the WebCore
+        intermediate static library which results in build failure even with a x86_64
+        toolchain (http://sourceware.org/bugzilla/show_bug.cgi?id=14625).
+
+        When using a GNU toolchain we can use the thin archive format for these static
+        libraries which also has the benefit of not copying the object files, thus
+        drastically reducing disk usage and overall compile time.
+
+        Currently qmake does not support GNU ar's thin archive format so for
+        now we need to do the magic in the build system as a stopgap solution.
+
+        * qmake/mkspecs/features/configure.prf:
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/functions.prf:
+
 2013-02-05  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Compile WTF tests of TestWebKitAPI

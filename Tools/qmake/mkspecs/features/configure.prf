@@ -207,6 +207,7 @@ defineTest(finalizeConfigure) {
         log(All-in-one files .............. $$configEnabled(use_all_in_one_files)$$EOL)
         log(GNUmake ....................... $$configEnabled(GNUmake)$$EOL)
         log(Static libs as shared ......... $$configEnabled(force_static_libs_as_shared)$$EOL)
+        log(Static libs as thin archives .. $$configEnabled(gnu_thin_archives)$$EOL)
         log(Production build .............. $$configEnabled(production_build)$$EOL)
         log($$EOL)
 

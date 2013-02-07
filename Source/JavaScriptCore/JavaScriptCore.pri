@@ -33,7 +33,7 @@ INCLUDEPATH += \
     $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR
 
 # Pick up the right version of LLIntAssembly.h
-macx: INCLUDEPATH += $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR/$$activeBuildConfig()
+macx: INCLUDEPATH += $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR/$$targetSubDir()
 
 win32-*: LIBS += -lwinmm
 

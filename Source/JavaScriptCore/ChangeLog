@@ -1,3 +1,17 @@
+2013-02-07  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Use GNU ar's thin archive format for intermediate static libs
+        https://bugs.webkit.org/show_bug.cgi?id=109052
+
+        Reviewed by Jocelyn Turcotte.
+
+        Adjust project files that used activeBuildConfig()
+        to use targetSubDir().
+
+        * JavaScriptCore.pri:
+        * LLIntOffsetsExtractor.pro:
+        * Target.pri:
+
 2013-02-06  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Touchups to VS2010 WebKit solution.

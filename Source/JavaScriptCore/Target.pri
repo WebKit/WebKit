@@ -30,7 +30,7 @@ include(yarr/yarr.pri)
 
 INSTALLDEPS += all
 
-debug_and_release: INCLUDEPATH += $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR/$$activeBuildConfig()
+debug_and_release: INCLUDEPATH += $$JAVASCRIPTCORE_GENERATED_SOURCES_DIR/$$targetSubDir()
 
 SOURCES += \
     API/JSBase.cpp \

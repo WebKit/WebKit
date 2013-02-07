@@ -14,6 +14,7 @@ CONFIG += config_step
 # Avoid it with debug_and_release, it can cause the application to load both the debug and release
 # dependent libraries when using frameworks on Mac.
 !production_build:!debug_and_release:!buildbot:!win*:!build?(webkit2): CONFIG += force_static_libs_as_shared
+!debug_and_release:*-g++*: CONFIG += gnu_thin_archives
 
 # Don't create .prl files for intermediate libraries because their contents get used when linking against
 # them, breaking "-Wl,-whole-archive -lMyIntermediateLib --Wl,-no-whole-archive"
@@ -269,7 +270,14 @@ contains(TEMPLATE, lib) {
     # system already takes care of this for the top level QtWebKit library.
     !qt_install_module:debug_and_release: TARGET = $$qtLibraryTarget($$TARGET)
 
-    isEmpty(DESTDIR): DESTDIR = $$activeBuildConfig()
+    gnu_thin_archives {
+        # Replace the hardcoded archiver command line
+        # options to use GNU ar's thin archive format.
+        AR_COMMAND = $$split(QMAKE_AR, " ")
+        QMAKE_AR = $$member(AR_COMMAND, 0) cruT
+    }
+
+    isEmpty(DESTDIR): DESTDIR = $$targetSubDir()
 
     DEFINES += QT_ASCII_CAST_WARNINGS
 
