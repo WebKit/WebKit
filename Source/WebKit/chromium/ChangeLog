@@ -1,3 +1,14 @@
+2013-02-07  David Trainor  <dtrainor@chromium.org>
+
+        Add null check to editable in moveCaretSelectionTowardsWindowPoint
+        https://bugs.webkit.org/show_bug.cgi?id=108962
+
+        Reviewed by Eric Seidel.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::moveCaretSelectionTowardsWindowPoint):
+        * tests/WebFrameTest.cpp:
+
 2013-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r180752.  Requested by

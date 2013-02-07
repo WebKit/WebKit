@@ -2180,4 +2180,13 @@ TEST_F(WebFrameTest, EmptyDocument)
     webView->close();
 }
 
+TEST_F(WebFrameTest, MoveCaretSelectionTowardsWindowPointWithNoSelection)
+{
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad("about:blank", true);
+    WebFrame* frame = webView->mainFrame();
+
+    // This test passes if this doesn't crash.
+    frame->moveCaretSelectionTowardsWindowPoint(WebPoint(0, 0));
+}
+
 } // namespace

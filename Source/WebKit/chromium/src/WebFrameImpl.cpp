@@ -1412,6 +1412,9 @@ void WebFrameImpl::moveCaretSelectionTowardsWindowPoint(const WebPoint& point)
         unscaledPoint.scale(1 / view()->pageScaleFactor(), 1 / view()->pageScaleFactor());
 
     Element* editable = frame()->selection()->rootEditableElement();
+    if (!editable)
+        return;
+
     IntPoint contentsPoint = frame()->view()->windowToContents(unscaledPoint);
     LayoutPoint localPoint(editable->convertFromPage(contentsPoint));
     VisiblePosition position = editable->renderer()->positionForPoint(localPoint);
