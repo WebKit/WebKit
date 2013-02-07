@@ -1526,7 +1526,30 @@ http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 inspector/profiler/webgl
 fast/images/webgl-teximage2d.html
-webgl
+webgl/conformance/buffers/buffer-bind-test.html
+webgl/conformance/buffers/buffer-data-array-buffer.html
+webgl/conformance/buffers/element-array-buffer-delete-recreate.html
+webgl/conformance/buffers/index-validation-copies-indices.html
+webgl/conformance/buffers/index-validation-crash-with-buffer-sub-data.html
+webgl/conformance/buffers/index-validation-large-buffer.html
+webgl/conformance/buffers/index-validation-verifies-too-many-indices.html
+webgl/conformance/buffers/index-validation-with-resized-buffer.html
+webgl/conformance/buffers/index-validation.html
+webgl/conformance/misc/bad-arguments-test.html
+webgl/conformance/misc/boolean-argument-conversion.html
+webgl/conformance/misc/delayed-drawing.html
+webgl/conformance/misc/error-reporting.html
+webgl/conformance/misc/functions-returning-strings.html
+webgl/conformance/misc/instanceof-test.html
+webgl/conformance/misc/invalid-passed-params.html
+webgl/conformance/misc/is-object.html
+webgl/conformance/misc/null-object-behaviour.html
+webgl/conformance/misc/object-deletion-behaviour.html
+webgl/conformance/misc/shader-precision-format.html
+webgl/conformance/misc/type-conversion-test.html
+webgl/conformance/misc/uninitialized-test.html
+webgl/conformance/misc/webgl-specific.html
+
 
 # Tests that require ENABLE(DOWNLOAD_ATTRIBUTE).
 fast/dom/HTMLAnchorElement/anchor-nodownload.html
