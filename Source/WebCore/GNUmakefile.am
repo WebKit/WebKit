@@ -586,7 +586,7 @@ endif
 # Artificial dependency to try to force a relink of the WebCore libraries
 # When their makefiles change.
 webcore_lib_for_dep = libWebCore.la
-$(webcore_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
+$(webcore_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am $(srcdir)/Source/autotools/symbols.filter
 
 webcoremodules_lib_for_dep = libWebcoreModules.la
 $(webcoremodules_lib_for_dep): $(srcdir)/Source/WebCore/GNUmakefile.am $(srcdir)/Source/WebCore/GNUmakefile.list.am
