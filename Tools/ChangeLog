@@ -1,3 +1,23 @@
+2013-02-06  Terry Anderson  <tdanderson@chromium.org>
+
+        Add support for gesture scroll events that do not propagate to enclosing scrollables
+        https://bugs.webkit.org/show_bug.cgi?id=108849
+
+        Reviewed by Antonio Gomes.
+
+        Modify chromium's DRT EventSender to support the new event type
+        GestureScrollUpdateWithoutPropagation.
+
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::EventSender):
+        (WebTestRunner::EventSender::gestureScrollUpdateWithoutPropagation):
+        (WebTestRunner::EventSender::gestureEvent):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (EventSender):
+        * DumpRenderTree/chromium/TestRunner/src/TestPlugin.cpp:
+        (WebTestRunner::TestPlugin::handleInputEvent):
+
 2013-02-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142032.

@@ -1,3 +1,24 @@
+2013-02-06  Terry Anderson  <tdanderson@chromium.org>
+
+        Add support for gesture scroll events that do not propagate to enclosing scrollables
+        https://bugs.webkit.org/show_bug.cgi?id=108849
+
+        Reviewed by Antonio Gomes.
+
+        Define the new event type GestureScrollUpdateWithoutPropagation.
+
+        * public/WebInputEvent.h:
+        (WebKit::WebInputEvent::isGestureEventType):
+        * src/PageWidgetDelegate.cpp:
+        (WebKit::PageWidgetDelegate::handleInputEvent):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformGestureEventBuilder::PlatformGestureEventBuilder):
+        * src/WebPluginContainerImpl.cpp:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::handleInputEvent):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+
 2013-02-06  Alexandre Elias  <aelias@chromium.org>
 
         Make ScrollView::paint() clip by visibleContentRect

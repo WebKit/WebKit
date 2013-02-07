@@ -487,6 +487,7 @@ bool TestPlugin::handleInputEvent(const WebInputEvent& event, WebCursorInfo& inf
 
     case WebInputEvent::GestureScrollBegin:  eventName = "GestureScrollBegin"; break;
     case WebInputEvent::GestureScrollEnd:    eventName = "GestureScrollEnd"; break;
+    case WebInputEvent::GestureScrollUpdateWithoutPropagation: 
     case WebInputEvent::GestureScrollUpdate: eventName = "GestureScrollUpdate"; break;
     case WebInputEvent::GestureFlingStart:   eventName = "GestureFlingStart"; break;
     case WebInputEvent::GestureFlingCancel:  eventName = "GestureFlingCancel"; break;

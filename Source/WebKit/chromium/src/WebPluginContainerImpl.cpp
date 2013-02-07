@@ -796,7 +796,7 @@ void WebPluginContainerImpl::handleGestureEvent(GestureEvent* event)
         return;
     }
 
-    if (webEvent.type == WebInputEvent::GestureScrollUpdate) {
+    if (webEvent.type == WebInputEvent::GestureScrollUpdate || webEvent.type == WebInputEvent::GestureScrollUpdateWithoutPropagation) {
         if (!m_scrollbarGroup)
             return;
         if (gestureScrollHelper(m_scrollbarGroup.get(), ScrollLeft, ScrollRight, webEvent.data.scrollUpdate.deltaX))
