@@ -22,7 +22,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 44x19
             text run at (0,0) width 44: "Lorem "
           RenderInline {SPAN} at (0,0) size 37x19
-            RenderInline (generated) at (0,0) size 0x0
+            RenderInline (generated) at (0,0) size 0x19
               RenderText at (0,0) size 0x0
             RenderText {#text} at (44,0) size 37x19
               text run at (44,0) width 37: "Ipsum"
@@ -38,7 +38,7 @@ layer at (0,0) size 800x600
           RenderText {#text} at (0,0) size 22x19
             text run at (0,0) width 22: "Lor"
           RenderInline {SPAN} at (0,0) size 59x19
-            RenderInline (generated) at (0,0) size 0x0
+            RenderInline (generated) at (0,0) size 0x19
               RenderText at (0,0) size 0x0
             RenderText {#text} at (22,0) size 59x19
               text run at (22,0) width 59: "em Ipsum"
