@@ -1,6 +1,7 @@
 /*
  * Copyright (C) 2011 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (c) 2012 Hewlett-Packard Development Company, L.P.
+ * Copyright (C) 2013 Digia Plc and/or its subsidiary(-ies).
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,7 +32,6 @@
 #include "QtWebError.h"
 #include "QtWebIconDatabaseClient.h"
 #include "QtWebPageEventHandler.h"
-#include "QtWebPageFindClient.h"
 #include "QtWebPageLoadClient.h"
 #include "QtWebPagePolicyClient.h"
 #include "WebBackForwardList.h"
@@ -85,6 +85,12 @@ static bool s_flickableViewportEnabled = true;
 static const int kAxisLockSampleCount = 5;
 static const qreal kAxisLockVelocityThreshold = 300;
 static const qreal kAxisLockVelocityDirectionThreshold = 50;
+
+static inline QQuickWebViewPrivate* toQQuickWebViewPrivate(const void* clientInfo)
+{
+    ASSERT(clientInfo);
+    return reinterpret_cast<QQuickWebViewPrivate*>(const_cast<void*>(clientInfo));
+}
 
 struct JSCallbackClosure {
     QPointer<QObject> receiver;
@@ -314,7 +320,16 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     QQuickWebPagePrivate* const pageViewPrivate = pageView.data()->d;
     pageViewPrivate->initialize(webPageProxy.get());
 
-    pageFindClient.reset(new QtWebPageFindClient(webPage.get(), q_ptr));
+    {
+        WKPageFindClient findClient;
+        memset(&findClient, 0, sizeof(WKPageFindClient));
+        findClient.version = kWKPageFindClientCurrentVersion;
+        findClient.clientInfo = this;
+        findClient.didFindString = didFindString;
+        findClient.didFailToFindString = didFailToFindString;
+        WKPageSetPageFindClient(webPage.get(), &findClient);
+    }
+
     pageLoadClient.reset(new QtWebPageLoadClient(webPage.get(), q_ptr));
     pagePolicyClient.reset(new QtWebPagePolicyClient(webPage.get(), q_ptr));
     pageUIClient.reset(new QtWebPageUIClient(webPage.get(), q_ptr));
@@ -2073,10 +2088,15 @@ void QQuickWebView::setAllowAnyHTTPSCertificateForLocalHost(bool allow)
     d->m_allowAnyHTTPSCertificateForLocalHost = allow;
 }
 
-void QQuickWebViewPrivate::didFindString(unsigned matchCount)
+void QQuickWebViewPrivate::didFindString(WKPageRef, WKStringRef, unsigned matchCount, const void* clientInfo)
 {
-    Q_Q(QQuickWebView);
+    QQuickWebView* q = toQQuickWebViewPrivate(clientInfo)->q_ptr;
     emit q->experimental()->textFound(matchCount);
+}
+
+void QQuickWebViewPrivate::didFailToFindString(WKPageRef page, WKStringRef string, const void* clientInfo)
+{
+    QQuickWebViewPrivate::didFindString(page, string, 0, clientInfo);
 }
 
 /*!

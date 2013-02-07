@@ -1,3 +1,24 @@
+2013-02-07  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt][WK2] Fold QtWebPageFindClient into QQuickWebViewPrivate
+        https://bugs.webkit.org/show_bug.cgi?id=108920
+
+        Reviewed by Jocelyn Turcotte, signed off for WK2 by Benjamin.
+
+        Employ the pattern suggested by Jocelyn to simply implement the C
+        callbacks directly using static functions.
+
+        * Target.pri:
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (toQQuickWebViewPrivate):
+        (QQuickWebViewPrivate::initialize):
+        (QQuickWebViewPrivate::didFindString):
+        (QQuickWebViewPrivate::didFailToFindString):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+        * UIProcess/qt/QtWebPageFindClient.cpp: Removed.
+        * UIProcess/qt/QtWebPageFindClient.h: Removed.
+
 2013-02-03  Sam Weinig  <sam@webkit.org>
 
         Make CustomProtocolManagerProxy a MessageReceiver
