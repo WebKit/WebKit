@@ -497,12 +497,15 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
     if (maxY > m_boundingBox.maxY())
         return false;
 
+    Vector<ExclusionPolygon::EdgeInterval> overlappingEdges;
+    m_edgeTree.allOverlaps(ExclusionPolygon::EdgeInterval(minLogicalIntervalTop, m_boundingBox.maxY(), 0), overlappingEdges);
+
     float dx = minLogicalIntervalSize.width() / 2;
     float dy = minLogicalIntervalSize.height() / 2;
     Vector<OffsetPolygonEdge> offsetEdges;
 
-    for (unsigned i = 0; i < numberOfEdges(); ++i) {
-        const ExclusionPolygonEdge& edge = edgeAt(i);
+    for (unsigned i = 0; i < overlappingEdges.size(); ++i) {
+        const ExclusionPolygonEdge& edge = *static_cast<ExclusionPolygonEdge*>(overlappingEdges[i].data());
         const FloatPoint& vertex1 = edge.vertex1();
         const FloatPoint& vertex2 = edge.vertex2();
         Vector<OffsetPolygonEdge> offsetEdgePair;
