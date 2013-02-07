@@ -944,6 +944,10 @@ fast/canvas/canvas-quadratic-same-endpoint.html
 # --- Compositing ----
 css3/filters/composited-during-transition-layertree.html
 
+# --- Custom Filters ---
+# This test is currently skipped on Mac for slight color differences, please see the relevant bug: http://webkit.org/b/107487
+webkit.org/b/107487 css3/filters/custom/custom-filter-blend-fractional-destination-alpha.html [ Skip ]
+
 # --- Text ---
 fast/forms/text-control-intrinsic-widths.html
 platform/mac/fast/text/combining-character-sequence-fallback.html

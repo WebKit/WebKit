@@ -276,7 +276,8 @@ void CustomFilterValidatedProgram::rewriteMixFragmentShader()
             mediump vec4 originalColor = texture2D(css_u_texture, css_v_texCoord);
             mediump vec4 multipliedColor = clamp(css_ColorMatrix * originalColor, 0.0, 1.0);
             mediump vec3 blendedColor = css_BlendColor(multipliedColor.rgb, css_MixColor.rgb);
-            gl_FragColor = css_Composite(multipliedColor.rgb, multipliedColor.a, blendedColor.rgb, css_MixColor.a);
+            mediump vec3 weightedColor = (1.0 - multipliedColor.a) * css_MixColor.rgb + multipliedColor.a * blendedColor;
+            gl_FragColor = css_Composite(multipliedColor.rgb, multipliedColor.a, weightedColor.rgb, css_MixColor.a);
         }
     ));
     m_validatedFragmentShader = builder.toString();
