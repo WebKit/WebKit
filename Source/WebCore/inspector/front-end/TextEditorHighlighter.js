@@ -185,15 +185,25 @@ WebInspector.TextEditorHighlighter.prototype = {
 
                 // Highlight line.
                 state.ranges = state.ranges || [];
+                state.braces = state.braces || [];
                 do {
                     var newColumn = this._tokenizer.nextToken(lastHighlightedColumn);
                     var tokenType = this._tokenizer.tokenType;
-                    if (tokenType && lastHighlightedColumn < this._highlightLineLimit)
-                        state.ranges.push({
-                            startColumn: lastHighlightedColumn,
-                            endColumn: newColumn - 1,
-                            token: tokenType
-                        });
+                    if (tokenType && lastHighlightedColumn < this._highlightLineLimit) {
+                        if (tokenType === "brace-start" || tokenType === "brace-end" || tokenType === "block-start" || tokenType === "block-end") {
+                            state.braces.push({
+                                startColumn: lastHighlightedColumn,
+                                endColumn: newColumn - 1,
+                                token: tokenType
+                            });
+                        } else {
+                            state.ranges.push({
+                                startColumn: lastHighlightedColumn,
+                                endColumn: newColumn - 1,
+                                token: tokenType
+                            });
+                        }
+                    }
                     lastHighlightedColumn = newColumn;
                     if (++tokensCount > this._highlightChunkLimit)
                         break;

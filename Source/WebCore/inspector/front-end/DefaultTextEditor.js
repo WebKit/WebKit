@@ -1369,6 +1369,8 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
     this._highlightDescriptors = [];
 
     this._tokenHighlighter = new WebInspector.TextEditorMainPanel.TokenHighlighter(this, textModel);
+    this._braceMatcher = new WebInspector.TextEditorModel.BraceMatcher(textModel);
+    this._braceHighlighter = new WebInspector.TextEditorMainPanel.BraceHighlightController(this, textModel, this._braceMatcher);
 
     this._freeCachedElements();
     this.buildChunks();
@@ -2401,7 +2403,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
         // Unindent after block
         if (editInfo.text === "}" && editInfo.range.isEmpty() && selection.isEmpty() && !this._textModel.line(editInfo.range.endLine).trim()) {
-            var offset = this._closingBlockOffset(editInfo.range, selection);
+            var offset = this._closingBlockOffset(editInfo.range);
             if (offset >= 0) {
                 editInfo.range.startColumn = offset;
                 selection.startColumn = offset + 1;
@@ -2491,30 +2493,15 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     /**
      * @param {WebInspector.TextRange} oldRange
-     * @param {WebInspector.TextRange} selection
      * @return {number}
      */
-    _closingBlockOffset: function(oldRange, selection)
+    _closingBlockOffset: function(oldRange)
     {
-        var nestingLevel = 1;
-        for (var i = oldRange.endLine; i >= 0; --i) {
-            var attribute = this._textModel.getAttribute(i, "highlight");
-            if (!attribute)
-                continue;
-            var ranges = attribute.ranges;
-            for (var j = ranges.length - 1; j >= 0; j--) {
-                var token = ranges[j].token;
-                if (token === "block-start") {
-                    if (!(--nestingLevel)) {
-                        var lineContent = this._textModel.line(i);
-                        return lineContent.length - lineContent.trimLeft().length;
-                    }
-                }
-                if (token === "block-end")
-                    ++nestingLevel;
-            }
-        }
-        return -1;
+        var leftBrace = this._braceMatcher.findLeftCandidate(oldRange.startLine, oldRange.startColumn);
+        if (!leftBrace || leftBrace.token !== "block-start")
+            return -1;
+        var lineContent = this._textModel.line(leftBrace.lineNumber);
+        return lineContent.length - lineContent.trimLeft().length;
     },
 
     /**
@@ -2680,6 +2667,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             this._lastSelection = textRange;
 
         this._tokenHighlighter.handleSelectionChange(textRange);
+        this._braceHighlighter.handleSelectionChange(textRange);
         this._delegate.selectionChanged(textRange);
     },
 
@@ -3356,6 +3344,63 @@ WebInspector.DefaultTextEditor.WordMovementController.prototype = {
 
         this._textEditor.setSelection(newSelection.collapseToEnd());
         return true;
+    }
+}
+
+/**
+ * @constructor
+ * @param {WebInspector.TextEditorMainPanel} textEditor
+ * @param {WebInspector.TextEditorModel} textModel
+ * @param {WebInspector.TextEditorModel.BraceMatcher} braceMatcher
+ */
+WebInspector.TextEditorMainPanel.BraceHighlightController = function(textEditor, textModel, braceMatcher)
+{
+    this._textEditor = textEditor;
+    this._textModel = textModel;
+    this._braceMatcher = braceMatcher;
+    this._highlightDescriptors = [];
+}
+
+WebInspector.TextEditorMainPanel.BraceHighlightController.prototype = {
+    /**
+     * @param {WebInspector.TextRange} selectionRange
+     */
+    handleSelectionChange: function(selectionRange)
+    {
+        if (!selectionRange || !selectionRange.isEmpty()) {
+            this._removeHighlight();
+            return;
+        }
+
+        if (this._highlightedRange && this._highlightedRange.compareTo(selectionRange) === 0)
+            return;
+
+        this._removeHighlight();
+        var lineNumber = selectionRange.startLine;
+        var column = selectionRange.startColumn;
+        var line = this._textModel.line(lineNumber);
+        if (column > 0 && /[)}]/.test(line.charAt(column - 1)))
+            --column;
+
+        var enclosingBraces = this._braceMatcher.enclosingBraces(lineNumber, column);
+        if (!enclosingBraces)
+            return;
+
+        this._highlightedRange = selectionRange;
+        this._highlightDescriptors.push(this._textEditor.highlightRange(WebInspector.TextRange.createFromLocation(enclosingBraces.leftBrace.lineNumber, enclosingBraces.leftBrace.column), "text-editor-brace-match"));
+        this._highlightDescriptors.push(this._textEditor.highlightRange(WebInspector.TextRange.createFromLocation(enclosingBraces.rightBrace.lineNumber, enclosingBraces.rightBrace.column), "text-editor-brace-match"));
+    },
+
+    _removeHighlight: function()
+    {
+        if (!this._highlightDescriptors.length)
+            return;
+
+        for(var i = 0; i < this._highlightDescriptors.length; ++i)
+            this._textEditor.removeHighlight(this._highlightDescriptors[i]);
+
+        this._highlightDescriptors = [];
+        delete this._highlightedRange;
     }
 }
 

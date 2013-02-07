@@ -656,3 +656,156 @@ WebInspector.TextEditorModel.prototype = {
 
     __proto__: WebInspector.Object.prototype
 }
+
+/**
+ * @constructor
+ * @param {WebInspector.TextEditorModel} textModel
+ */
+WebInspector.TextEditorModel.BraceMatcher = function(textModel)
+{
+    this._textModel = textModel;
+}
+
+WebInspector.TextEditorModel.BraceMatcher.prototype = {
+    /**
+     * @param {number} lineNumber
+     * @return {Array.<{startColumn: number, endColumn: number, token: string}>}
+     */
+    _braceRanges: function(lineNumber)
+    {
+        if (lineNumber >= this._textModel.linesCount || lineNumber < 0)
+            return null;
+
+        var attribute = this._textModel.getAttribute(lineNumber, "highlight");
+        if (!attribute)
+            return null;
+        else
+            return attribute.braces;
+    },
+
+    /**
+     * @param {string} braceTokenLeft
+     * @param {string} braceTokenRight
+     * @return {boolean}
+     */
+    _matches: function(braceTokenLeft, braceTokenRight)
+    {
+        return ((braceTokenLeft === "brace-start" && braceTokenRight === "brace-end") || (braceTokenLeft === "block-start" && braceTokenRight === "block-end"));
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @param {number=} maxBraceIteration
+     * @return {?{lineNumber: number, column: number, token: string}}
+     */
+    findLeftCandidate: function(lineNumber, column, maxBraceIteration)
+    {
+        var braces = this._braceRanges(lineNumber);
+        if (!braces)
+            return null;
+
+        var braceIndex = braces.length - 1;
+        while (braceIndex >= 0 && braces[braceIndex].startColumn > column)
+            --braceIndex;
+
+        var brace = braceIndex >= 0 ? braces[braceIndex] : null;
+        if (brace && brace.startColumn === column && (brace.token === "block-end" || brace.token === "brace-end"))
+            --braceIndex;
+
+        var stack = [];
+        maxBraceIteration = maxBraceIteration || Number.MAX_VALUE;
+        while (--maxBraceIteration) {
+            if (braceIndex < 0) {
+                while ((braces = this._braceRanges(--lineNumber)) && !braces.length) {};
+                if (!braces)
+                    return null;
+                braceIndex = braces.length - 1;
+            }
+            brace = braces[braceIndex];
+            if (brace.token === "block-end" || brace.token === "brace-end")
+                stack.push(brace.token);
+            else if (stack.length === 0)
+                return {
+                    lineNumber: lineNumber,
+                    column: brace.startColumn,
+                    token: brace.token
+                };
+            else if (!this._matches(brace.token, stack.pop()))
+                return null;
+
+            --braceIndex;
+        }
+        return null;
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @param {number=} maxBraceIteration
+     * @return {?{lineNumber: number, column: number, token: string}}
+     */
+    findRightCandidate: function(lineNumber, column, maxBraceIteration)
+    {
+        var braces = this._braceRanges(lineNumber);
+        if (!braces)
+            return null;
+
+        var braceIndex = 0;
+        while (braceIndex < braces.length && braces[braceIndex].startColumn < column)
+            ++braceIndex;
+
+        var brace = braceIndex < braces.length ? braces[braceIndex] : null;
+        if (brace && brace.startColumn === column && (brace.token === "block-start" || brace.token === "brace-start"))
+            ++braceIndex;
+
+        var stack = [];
+        maxBraceIteration = maxBraceIteration || Number.MAX_VALUE;
+        while (--maxBraceIteration) {
+            if (braceIndex >= braces.length) {
+                while ((braces = this._braceRanges(++lineNumber)) && !braces.length) {};
+                if (!braces)
+                    return null;
+                braceIndex = 0;
+            }
+            brace = braces[braceIndex];
+            if (brace.token === "block-start" || brace.token === "brace-start")
+                stack.push(brace.token);
+            else if (stack.length === 0)
+                return {
+                    lineNumber: lineNumber,
+                    column: brace.startColumn,
+                    token: brace.token
+                };
+            else if (!this._matches(stack.pop(), brace.token))
+                return null;
+            ++braceIndex;
+        }
+        return null;
+    },
+
+    /**
+     * @param {number} lineNumber
+     * @param {number} column
+     * @param {number=} maxBraceIteration
+     * @return {?{leftBrace: {lineNumber: number, column: number, token: string}, rightBrace: {lineNumber: number, column: number, token: string}}}
+     */
+    enclosingBraces: function(lineNumber, column, maxBraceIteration)
+    {
+        var leftBraceLocation = this.findLeftCandidate(lineNumber, column, maxBraceIteration);
+        if (!leftBraceLocation)
+            return null;
+
+        var rightBraceLocation = this.findRightCandidate(lineNumber, column, maxBraceIteration);
+        if (!rightBraceLocation)
+            return null;
+
+        if (!this._matches(leftBraceLocation.token, rightBraceLocation.token))
+            return null;
+
+        return {
+            leftBrace: leftBraceLocation,
+            rightBrace: rightBraceLocation
+        };
+    },
+}
