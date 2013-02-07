@@ -18,7 +18,7 @@
 #
 
 #if USE(COORDINATED_GRAPHICS)
-messages -> CoordinatedLayerTreeHostProxy LegacyReceiver {
+messages -> CoordinatedLayerTreeHostProxy {
     SetCompositingLayerState(uint32_t id, WebCore::CoordinatedLayerInfo layerInfo)
     SetCompositingLayerChildren(uint32_t id, Vector<uint32_t> children)
 #if ENABLE(CSS_FILTERS)

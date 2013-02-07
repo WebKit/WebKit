@@ -47,7 +47,7 @@ class SurfaceUpdateInfo;
 
 namespace WebKit {
 
-class CoordinatedLayerTreeHostProxy : public WebCore::CoordinatedGraphicsSceneClient {
+class CoordinatedLayerTreeHostProxy : public WebCore::CoordinatedGraphicsSceneClient, public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(CoordinatedLayerTreeHostProxy);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -77,7 +77,6 @@ public:
     void updateImageBacking(WebCore::CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&);
     void clearImageBackingContents(WebCore::CoordinatedImageBackingID);
     void removeImageBacking(WebCore::CoordinatedImageBackingID);
-    void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void didChangeScrollPosition(const WebCore::FloatPoint& position);
 #if USE(GRAPHICS_SURFACE)
     void createCanvas(WebCore::CoordinatedLayerID, const WebCore::IntSize&, const WebCore::GraphicsSurfaceToken&);
@@ -103,6 +102,9 @@ public:
 
 protected:
     void dispatchUpdate(const Function<void()>&);
+
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     DrawingAreaProxy* m_drawingAreaProxy;
     RefPtr<WebCore::CoordinatedGraphicsScene> m_scene;

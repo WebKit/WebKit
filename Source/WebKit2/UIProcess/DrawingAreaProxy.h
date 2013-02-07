@@ -29,20 +29,12 @@
 
 #include "BackingStore.h"
 #include "DrawingAreaInfo.h"
+#include "MessageReceiver.h"
 #include <WebCore/FloatPoint.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/IntSize.h>
 #include <stdint.h>
 #include <wtf/Noncopyable.h>
-
-namespace CoreIPC {
-    class Connection;
-    class MessageDecoder;
-}
-
-namespace WebCore {
-    class TransformationMatrix;
-}
 
 namespace WebKit {
 
@@ -51,15 +43,13 @@ class CoordinatedLayerTreeHostProxy;
 class UpdateInfo;
 class WebPageProxy;
 
-class DrawingAreaProxy {
+class DrawingAreaProxy : public CoreIPC::MessageReceiver {
     WTF_MAKE_NONCOPYABLE(DrawingAreaProxy);
 
 public:
     virtual ~DrawingAreaProxy();
 
     DrawingAreaType type() const { return m_type; }
-
-    void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     virtual void deviceScaleFactorDidChange() = 0;
 
@@ -86,7 +76,6 @@ public:
     virtual WebCore::IntRect contentsRect() const;
     CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy() const { return m_coordinatedLayerTreeHostProxy.get(); }
     virtual void setVisibleContentsRect(const WebCore::FloatRect& /* visibleContentsRect */, const WebCore::FloatPoint& /* trajectoryVector */) { }
-    virtual void didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     WebPageProxy* page() { return m_webPageProxy; }
 #endif
@@ -105,6 +94,9 @@ protected:
 
 private:
     virtual void sizeDidChange() = 0;
+
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     // CoreIPC message handlers.
     // FIXME: These should be pure virtual.

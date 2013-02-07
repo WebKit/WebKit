@@ -26,7 +26,9 @@
 #include "config.h"
 #include "DrawingAreaProxy.h"
 
+#include "DrawingAreaProxyMessages.h"
 #include "WebPageProxy.h"
+#include "WebProcessProxy.h"
 
 #if USE(COORDINATED_GRAPHICS)
 #include "CoordinatedLayerTreeHostProxy.h"
@@ -41,10 +43,12 @@ DrawingAreaProxy::DrawingAreaProxy(DrawingAreaType type, WebPageProxy* webPagePr
     , m_webPageProxy(webPageProxy)
     , m_size(webPageProxy->viewSize())
 {
+    m_webPageProxy->process()->addMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), webPageProxy->pageID(), this);
 }
 
 DrawingAreaProxy::~DrawingAreaProxy()
 {
+    m_webPageProxy->process()->removeMessageReceiver(Messages::DrawingAreaProxy::messageReceiverName(), m_webPageProxy->pageID());
 }
 
 void DrawingAreaProxy::setSize(const IntSize& size, const IntSize& scrollOffset)
@@ -66,10 +70,6 @@ void DrawingAreaProxy::updateViewport()
 WebCore::IntRect DrawingAreaProxy::contentsRect() const
 {
     return IntRect(IntPoint::zero(), m_webPageProxy->viewSize());
-}
-
-void DrawingAreaProxy::didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&)
-{
 }
 #endif
 

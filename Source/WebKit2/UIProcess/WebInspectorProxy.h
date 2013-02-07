@@ -30,7 +30,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "APIObject.h"
-#include "Connection.h"
+#include "MessageReceiver.h"
 #include <wtf/Forward.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -62,7 +62,7 @@ class WebPageGroup;
 class WebPageProxy;
 struct WebPageCreationParameters;
 
-class WebInspectorProxy : public APIObject {
+class WebInspectorProxy : public APIObject, public CoreIPC::MessageReceiver {
 public:
     static const Type APIType = TypeInspector;
 
@@ -116,12 +116,6 @@ public:
     bool isProfilingPage() const { return m_isProfilingPage; }
     void togglePageProfiling();
 
-#if ENABLE(INSPECTOR)
-    // Implemented in generated WebInspectorProxyMessageReceiver.cpp
-    void didReceiveWebInspectorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    void didReceiveSyncWebInspectorProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
-#endif
-
     static bool isInspectorPage(WebPageProxy*);
 
     // Implemented the platform WebInspectorProxy file
@@ -140,6 +134,10 @@ private:
     explicit WebInspectorProxy(WebPageProxy*);
 
     virtual Type type() const { return APIType; }
+
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&) OVERRIDE;
 
     WebPageProxy* platformCreateInspectorPage();
     void platformOpen();

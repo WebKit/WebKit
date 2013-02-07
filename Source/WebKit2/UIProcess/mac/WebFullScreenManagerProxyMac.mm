@@ -31,6 +31,9 @@
 #import "LayerTreeContext.h"
 #import "WKFullScreenWindowController.h"
 #import "WKViewInternal.h"
+#import "WebFullScreenManagerProxyMessages.h"
+#import "WebPageProxy.h"
+#import "WebProcessProxy.h"
 #import <WebCore/IntRect.h>
 
 using namespace WebCore;
@@ -39,6 +42,8 @@ namespace WebKit {
 
 void WebFullScreenManagerProxy::invalidate()
 {
+    m_page->process()->removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page->pageID());
+
     if (!m_webView)
         return;
     

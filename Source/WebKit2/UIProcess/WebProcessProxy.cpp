@@ -401,15 +401,7 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
         return;
     }
 
-    uint64_t pageID = decoder.destinationID();
-    if (!pageID)
-        return;
-
-    WebPageProxy* pageProxy = webPage(pageID);
-    if (!pageProxy)
-        return;
-    
-    pageProxy->didReceiveMessage(connection, decoder);
+    // FIXME: Add unhandled message logging.
 }
 
 void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)
@@ -425,15 +417,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
         return;
     }
 
-    uint64_t pageID = decoder.destinationID();
-    if (!pageID)
-        return;
-    
-    WebPageProxy* pageProxy = webPage(pageID);
-    if (!pageProxy)
-        return;
-    
-    pageProxy->didReceiveSyncMessage(connection, decoder, replyEncoder);
+    // FIXME: Add unhandled message logging.
 }
 
 void WebProcessProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)

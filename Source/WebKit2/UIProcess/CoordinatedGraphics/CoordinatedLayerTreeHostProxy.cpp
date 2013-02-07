@@ -23,6 +23,7 @@
 #include "CoordinatedLayerTreeHostProxy.h"
 
 #include "CoordinatedLayerTreeHostMessages.h"
+#include "CoordinatedLayerTreeHostProxyMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -42,10 +43,12 @@ CoordinatedLayerTreeHostProxy::CoordinatedLayerTreeHostProxy(DrawingAreaProxy* d
     : m_drawingAreaProxy(drawingAreaProxy)
     , m_scene(adoptRef(new CoordinatedGraphicsScene(this)))
 {
+    m_drawingAreaProxy->page()->process()->addMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page()->pageID(), this);
 }
 
 CoordinatedLayerTreeHostProxy::~CoordinatedLayerTreeHostProxy()
 {
+    m_drawingAreaProxy->page()->process()->removeMessageReceiver(Messages::CoordinatedLayerTreeHostProxy::messageReceiverName(), m_drawingAreaProxy->page()->pageID());
     m_scene->detach();
 }
 

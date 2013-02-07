@@ -32,6 +32,7 @@
 #include "WebFramePolicyListenerProxy.h"
 #include "WebFrameProxy.h"
 #include "WebInspectorMessages.h"
+#include "WebInspectorProxyMessages.h"
 #include "WebPageCreationParameters.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
@@ -92,6 +93,7 @@ WebInspectorProxy::WebInspectorProxy(WebPageProxy* page)
     , m_remoteInspectionPageId(0)
 #endif
 {
+    m_page->process()->addMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID(), this);
 }
 
 WebInspectorProxy::~WebInspectorProxy()
@@ -104,6 +106,8 @@ void WebInspectorProxy::invalidate()
     if (m_remoteInspectionPageId)
         WebInspectorServer::shared().unregisterPage(m_remoteInspectionPageId);
 #endif
+
+    m_page->process()->removeMessageReceiver(Messages::WebInspectorProxy::messageReceiverName(), m_page->pageID());
 
     m_page->close();
     didClose();

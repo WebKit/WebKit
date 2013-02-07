@@ -370,18 +370,11 @@ void DrawingAreaProxyImpl::enterAcceleratedCompositingMode(const LayerTreeContex
 }
 
 #if USE(COORDINATED_GRAPHICS)
-void DrawingAreaProxyImpl::didReceiveCoordinatedLayerTreeHostProxyMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)
-{
-    if (m_coordinatedLayerTreeHostProxy)
-        m_coordinatedLayerTreeHostProxy->didReceiveCoordinatedLayerTreeHostProxyMessage(connection, decoder);
-}
-
 void DrawingAreaProxyImpl::setVisibleContentsRect(const WebCore::FloatRect& visibleContentsRect, const WebCore::FloatPoint& trajectoryVector)
 {
     if (m_coordinatedLayerTreeHostProxy)
         m_coordinatedLayerTreeHostProxy->setVisibleContentsRect(visibleContentsRect, trajectoryVector);
 }
-
 #endif
 
 void DrawingAreaProxyImpl::exitAcceleratedCompositingMode()
