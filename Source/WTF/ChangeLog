@@ -1,5 +1,14 @@
 2013-02-07  Benjamin Poulain  <bpoulain@apple.com>
 
+        Fix an incorrect comment from r142163
+
+        Unreviewed.
+
+        * wtf/MainThread.h:
+        I accidentally copied PLATFORM(IOS) instead of USE(WEB_THREAD) for the #ifdef closing.
+
+2013-02-07  Benjamin Poulain  <bpoulain@apple.com>
+
         Upstream iOS isWebThread() and isUIThread()
         https://bugs.webkit.org/show_bug.cgi?id=109130
 
