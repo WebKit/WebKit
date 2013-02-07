@@ -218,7 +218,6 @@ public:
     void informURLChange();
 
     bool isHardwareAccelerated() const { return m_isHardwareAccelerated; }
-    void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
 
     PassRefPtr<cairo_surface_t> takeSnapshot();
 
@@ -310,7 +309,6 @@ private:
     OwnPtr<EwkColorPicker> m_colorPicker;
 #endif
     bool m_isHardwareAccelerated;
-    bool m_setDrawsBackground;
 
     static Evas_Smart_Class parentSmartClass;
 };

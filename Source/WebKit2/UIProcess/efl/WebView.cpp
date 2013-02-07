@@ -64,6 +64,26 @@ void WebView::setThemePath(WKStringRef theme)
     m_webPageProxy->setThemePath(toWTFString(theme).utf8().data());
 }
 
+void WebView::setDrawsBackground(bool drawsBackground)
+{
+    m_webPageProxy->setDrawsBackground(drawsBackground);
+}
+
+bool WebView::drawsBackground() const
+{
+    return m_webPageProxy->drawsBackground();
+}
+
+void WebView::setDrawsTransparentBackground(bool transparentBackground)
+{
+    m_webPageProxy->setDrawsTransparentBackground(transparentBackground);
+}
+
+bool WebView::drawsTransparentBackground() const
+{
+    return m_webPageProxy->drawsTransparentBackground();
+}
+
 void WebView::suspendActiveDOMObjectsAndAnimations()
 {
     m_webPageProxy->suspendActiveDOMObjectsAndAnimations();

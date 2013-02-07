@@ -46,7 +46,13 @@ public:
 
     WKPageRef pageRef() const { return toAPI(m_webPageProxy.get()); }
 
+    void setDrawsBackground(bool);
+    bool drawsBackground() const;
+    void setDrawsTransparentBackground(bool);
+    bool drawsTransparentBackground() const;
+
     void setThemePath(WKStringRef);
+
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
 

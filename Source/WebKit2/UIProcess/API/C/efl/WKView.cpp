@@ -57,6 +57,26 @@ WKPageRef WKViewGetPage(WKViewRef viewRef)
     return toImpl(viewRef)->pageRef();
 }
 
+void WKViewSetDrawsBackground(WKViewRef viewRef, bool flag)
+{
+    toImpl(viewRef)->setDrawsBackground(flag);
+}
+
+bool WKViewGetDrawsBackground(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->drawsBackground();
+}
+
+void WKViewSetDrawsTransparentBackground(WKViewRef viewRef, bool flag)
+{
+    toImpl(viewRef)->setDrawsTransparentBackground(flag);
+}
+
+bool WKViewGetDrawsTransparentBackground(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->drawsTransparentBackground();
+}
+
 void WKViewSetThemePath(WKViewRef viewRef, WKStringRef theme)
 {
     toImpl(viewRef)->setThemePath(theme);

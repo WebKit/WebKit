@@ -44,6 +44,12 @@ WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
 
 WK_EXPORT void WKViewSetThemePath(WKViewRef, WKStringRef);
 
+WK_EXPORT void WKViewSetDrawsBackground(WKViewRef, bool);
+WK_EXPORT bool WKViewGetDrawsBackground(WKViewRef);
+
+WK_EXPORT void WKViewSetDrawsTransparentBackground(WKViewRef, bool);
+WK_EXPORT bool WKViewGetDrawsTransparentBackground(WKViewRef);
+
 WK_EXPORT void WKViewSuspendActiveDOMObjectsAndAnimations(WKViewRef);
 WK_EXPORT void WKViewResumeActiveDOMObjectsAndAnimations(WKViewRef);
 

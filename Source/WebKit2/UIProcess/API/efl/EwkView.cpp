@@ -253,7 +253,6 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
     , m_displayTimer(this, &EwkView::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
     , m_isHardwareAccelerated(true)
-    , m_setDrawsBackground(false)
 {
     ASSERT(m_evasObject);
     ASSERT(m_context);
@@ -549,7 +548,8 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
         return;
 
     scene->setActive(true);
-    scene->setDrawsBackground(m_setDrawsBackground);
+    scene->setDrawsBackground(WKViewGetDrawsBackground(wkView()));
+
     if (m_isHardwareAccelerated) {
         scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
         // sd->image is tied to a native surface. The native surface is in the parent's coordinates,
@@ -1237,8 +1237,8 @@ void EwkView::handleEvasObjectColorSet(Evas_Object* evasObject, int red, int gre
     blue = clampTo(blue, 0, alpha);
 
     evas_object_image_alpha_set(smartData->image, alpha < 255);
-    view->page()->setDrawsBackground(red || green || blue);
-    view->page()->setDrawsTransparentBackground(alpha < 255);
+    WKViewSetDrawsBackground(view->wkView(), red || green || blue);
+    WKViewSetDrawsTransparentBackground(view->wkView(), alpha < 255);
 
     parentSmartClass.color_set(evasObject, red, green, blue, alpha);
 }
