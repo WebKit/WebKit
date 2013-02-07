@@ -1052,8 +1052,10 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     notifyPageThatContentAreaWillPaint();
 
     IntRect documentDirtyRect = rect;
-    IntRect visibleAreaWithoutScrollbars(location(), visibleContentRect(false).size());
-    documentDirtyRect.intersect(visibleAreaWithoutScrollbars);
+    if (!paintsEntireContents()) {
+        IntRect visibleAreaWithoutScrollbars(location(), visibleContentRect(false).size());
+        documentDirtyRect.intersect(visibleAreaWithoutScrollbars);
+    }
 
     if (!documentDirtyRect.isEmpty()) {
         GraphicsContextStateSaver stateSaver(*context);
