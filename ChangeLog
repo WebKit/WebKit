@@ -1,3 +1,11 @@
+2013-02-07  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix after r141196 for 32 bits autotools.
+
+        * Source/autotools/symbols.filter: restore 32 bits version of the
+        WebCore::TextIterator::getLocationAndLengthFromRange(WebCore::Node*,
+        WebCore::Range const*, unsigned int&, unsigned int&) symbol.
+
 2013-02-05  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Compile WTF tests of TestWebKitAPI
