@@ -1,3 +1,15 @@
+2013-02-07  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Do not check enum's casing for WebKit2 C API.
+        https://bugs.webkit.org/show_bug.cgi?id=109128
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add "-readability/enum_casing" for WebKit2 C APIs because we use word
+        which starts with non-capital letter 'k' for types of enums.
+
+        * Scripts/webkitpy/style/checker.py:
+
 2013-02-07  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed warning fix.

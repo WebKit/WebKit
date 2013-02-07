@@ -222,10 +222,13 @@ _PATH_RULES_SPECIFIER = [
     ([# The WebKit2 C API has names with underscores and whitespace-aligned
       # struct members. Also, we allow unnecessary parameter names in
       # WebKit2 APIs because we're matching CF's header style.
+      # Additionally, we use word which starts with non-capital letter 'k'
+      # for types of enums.
       "Source/WebKit2/UIProcess/API/C/",
       "Source/WebKit2/Shared/API/c/",
       "Source/WebKit2/WebProcess/InjectedBundle/API/c/"],
-     ["-readability/naming",
+     ["-readability/enum_casing",
+      "-readability/naming",
       "-readability/parameter_name",
       "-whitespace/declaration"]),
     ([# These files define GObjects, which implies some definitions of
