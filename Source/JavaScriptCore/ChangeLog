@@ -1,3 +1,16 @@
+2013-02-07  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: testapi.mm should use ARC
+        https://bugs.webkit.org/show_bug.cgi?id=107838
+
+        Reviewed by Mark Rowe.
+
+        Removing the changes to the Xcode project file and moving the equivalent flags into 
+        the ToolExecutable xcconfig file.
+
+        * Configurations/ToolExecutable.xcconfig:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-02-07  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows] Unreviewed Visual Studio 2010 build fixes after r142179.
