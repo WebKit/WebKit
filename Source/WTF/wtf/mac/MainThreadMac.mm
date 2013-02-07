@@ -70,6 +70,7 @@ void initializeMainThreadPlatform()
     initializeGCThreads();
 }
 
+#if !USE(WEB_THREAD)
 void initializeMainThreadToProcessMainThreadPlatform()
 {
     if (!pthread_main_np())
@@ -84,6 +85,7 @@ void initializeMainThreadToProcessMainThreadPlatform()
     
     initializeGCThreads();
 }
+#endif // !USE(WEB_THREAD)
 
 static void timerFired(CFRunLoopTimerRef timer, void*)
 {
@@ -132,5 +134,17 @@ bool isMainThread()
     ASSERT(mainThreadPthread);
     return pthread_equal(pthread_self(), mainThreadPthread);
 }
+
+#if USE(WEB_THREAD)
+bool isUIThread()
+{
+    return pthread_main_np();
+}
+
+bool isWebThread()
+{
+    return pthread_equal(pthread_self(), mainThreadPthread);
+}
+#endif // USE(WEB_THREAD)
 
 } // namespace WTF

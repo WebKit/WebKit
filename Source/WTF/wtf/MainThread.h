@@ -51,6 +51,15 @@ WTF_EXPORT_PRIVATE void setMainThreadCallbacksPaused(bool paused);
 
 WTF_EXPORT_PRIVATE bool isMainThread();
 
+#if USE(WEB_THREAD)
+WTF_EXPORT_PRIVATE bool isWebThread();
+WTF_EXPORT_PRIVATE bool isUIThread();
+#else
+inline bool isWebThread() { return isMainThread(); }
+inline bool isUIThread() { return isMainThread(); }
+#endif // PLATFORM(IOS)
+
+
 void initializeGCThreads();
 
 #if ENABLE(PARALLEL_GC)
@@ -68,10 +77,12 @@ void scheduleDispatchFunctionsOnMainThread();
 void dispatchFunctionsFromMainThread();
 
 #if PLATFORM(MAC)
+#if !USE(WEB_THREAD)
 // This version of initializeMainThread sets up the main thread as corresponding
 // to the process's main thread, and not necessarily the thread that calls this
 // function. It should only be used as a legacy aid for Mac WebKit.
 WTF_EXPORT_PRIVATE void initializeMainThreadToProcessMainThread();
+#endif // !USE(WEB_THREAD)
 void initializeMainThreadToProcessMainThreadPlatform();
 #endif
 

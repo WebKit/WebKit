@@ -1,3 +1,28 @@
+2013-02-07  Benjamin Poulain  <bpoulain@apple.com>
+
+        Upstream iOS isWebThread() and isUIThread()
+        https://bugs.webkit.org/show_bug.cgi?id=109130
+
+        Reviewed by Sam Weinig.
+
+        On iOS, it is sometimes necessary to differenciate the thread running WebCore,
+        and the thread running the UI. This patch upstream those functions.
+
+        * wtf/MainThread.cpp:
+        * wtf/MainThread.h:
+        Disable the legacy initializer as it is incorrect when using the WebThread to run WebCore.
+        (WTF::isWebThread):
+        (WTF::isUIThread):
+        Return true when the current thread is the Web/UI thread.
+
+        * wtf/mac/MainThreadMac.mm:
+        (WTF::isUIThread):
+        (WTF::isWebThread):
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicStringTable::create):
+        Use the newly added methods.
+
 2013-02-07  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         [Qt] Fix build without 3D_GRAPHICS

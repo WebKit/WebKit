@@ -127,8 +127,10 @@ static void addExceptionToConsole(ExecState* exec)
 
 + (void)initialize
 {
+#if !USE(WEB_THREAD)
     JSC::initializeThreading();
     WTF::initializeMainThreadToProcessMainThread();
+#endif // !USE(WEB_THREAD)
     WebCoreObjCFinalizeOnMainThread(self);
 }
 

@@ -47,12 +47,14 @@ using namespace WebCore;
 
 + (void)initialize
 {
+#if !USE(WEB_THREAD)
     JSC::initializeThreading();
 #if PLATFORM(QT) && USE(QTKIT)
     WTF::initializeMainThread();
 #else
     WTF::initializeMainThreadToProcessMainThread();
 #endif
+#endif // !USE(WEB_THREAD)
     WebCoreObjCFinalizeOnMainThread(self);
 }
 
