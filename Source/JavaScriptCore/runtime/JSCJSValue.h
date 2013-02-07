@@ -32,6 +32,7 @@
 #include <wtf/HashTraits.h>
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
+#include <wtf/TriState.h>
 
 namespace JSC {
 
@@ -213,6 +214,7 @@ public:
     bool getPrimitiveNumber(ExecState*, double& number, JSValue&);
 
     bool toBoolean(ExecState*) const;
+    TriState pureToBoolean() const;
 
     // toNumber conversion is expected to be side effect free if an exception has
     // been set in the ExecState already.

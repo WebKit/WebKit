@@ -1,3 +1,69 @@
+2013-02-05  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::ByteCodeParser should do surgical constant folding to reduce load on the optimization fixpoint
+        https://bugs.webkit.org/show_bug.cgi?id=109000
+
+        Reviewed by Oliver Hunt.
+        
+        Previously our source parser's ASTBuilder did some surgical constant folding, but it
+        didn't cover some cases.  It was particularly incapable of doing constant folding for
+        cases where we do some minimal loop peeling in the bytecode generator - since it
+        didn't "see" those constants prior to the peeling.  Example:
+
+        for (var i = 0; i < 4; ++i)
+            things;
+
+        This will get peeled just a bit by the bytecode generator, so that the "i < 4" is
+        duplicated both at the top of the loop and the bottom.  This means that we have a
+        constant comparison: "0 < 4", which the bytecode generator emits without any further
+        thought.
+
+        The DFG optimization fixpoint of course folds this and simplifies the CFG 
+        accordingly, but this incurs a compile-time cost.  The purpose of this change is to
+        do some surgical constant folding in the DFG's bytecode parser, so that such
+        constructs reduce load on the CFG simplifier and the optimization fixpoint.  The goal
+        is not to cover all cases, since the DFG CFA and CFG simplifier have a powerful
+        sparse conditional constant propagation that we can always fall back on. Instead the
+        goal is to cover enough cases that for common small functions we don't have to
+        perform such transformations, thereby reducing compile times.
+        
+        This also refactors m_inlineStackEntry->m_inlineCallFrame to be a handy method call
+        and also adds the notion of a TriState-based JSValue::pureToBoolean(). Both of these
+        things are used by the folder.
+        
+        As well, care has been taken to make sure that the bytecode parser only does folding
+        that is statically provable, and that doesn't arise out of speculation. This means
+        we cannot fold on data flow that crosses inlining boundaries. On the other hand, the
+        folding that the bytecode parser uses doesn't require phantoming anything. Such is
+        the trade-off: for anything that we do need phantoming, we defer it to the
+        optimization fixpoint.
+        
+        Slight SunSpider speed-up.
+
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::get):
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::setLocal):
+        (JSC::DFG::ByteCodeParser::flushDirect):
+        (JSC::DFG::ByteCodeParser::flushArgumentsAndCapturedVariables):
+        (JSC::DFG::ByteCodeParser::toInt32):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::inlineCallFrame):
+        (JSC::DFG::ByteCodeParser::currentCodeOrigin):
+        (JSC::DFG::ByteCodeParser::canFold):
+        (JSC::DFG::ByteCodeParser::handleInlining):
+        (JSC::DFG::ByteCodeParser::getScope):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::parseCodeBlock):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::isStronglyProvedConstantIn):
+        (Node):
+        * runtime/JSCJSValue.h:
+        * runtime/JSCJSValueInlines.h:
+        (JSC::JSValue::pureToBoolean):
+        (JSC):
+
 2013-02-07  Zoltan Herczeg  <zherczeg@webkit.org>
 
         Invalid code is generated for storing constants with baseindex addressing modes on ARM traditional.

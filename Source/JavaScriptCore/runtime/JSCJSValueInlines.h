@@ -793,6 +793,17 @@ inline bool JSValue::strictEqual(ExecState* exec, JSValue v1, JSValue v2)
     return strictEqualSlowCaseInline(exec, v1, v2);
 }
 
+inline TriState JSValue::pureToBoolean() const
+{
+    if (isInt32())
+        return asInt32() ? TrueTriState : FalseTriState;
+    if (isDouble())
+        return (asDouble() > 0.0 || asDouble() < 0.0) ? TrueTriState : FalseTriState; // false for NaN
+    if (isCell())
+        return MixedTriState;
+    return isTrue() ? TrueTriState : FalseTriState;
+}
+
 } // namespace JSC
 
 #endif // JSValueInlines_h
