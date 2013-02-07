@@ -305,10 +305,8 @@ String Locale::convertFromLocalizedNumber(const String& localized)
     bool isNegative;
     unsigned startIndex;
     unsigned endIndex;
-    if (!detectSignAndGetDigitRange(input, isNegative, startIndex, endIndex)) {
-        // Input is broken. Returning an invalid number string.
-        return "*";
-    }
+    if (!detectSignAndGetDigitRange(input, isNegative, startIndex, endIndex))
+        return input;
 
     StringBuilder builder;
     builder.reserveCapacity(input.length());
@@ -317,13 +315,12 @@ String Locale::convertFromLocalizedNumber(const String& localized)
     for (unsigned i = startIndex; i < endIndex;) {
         unsigned symbolIndex = matchedDecimalSymbolIndex(input, i);
         if (symbolIndex >= DecimalSymbolsSize)
-            return "*";
+            return input;
         if (symbolIndex == DecimalSeparatorIndex)
             builder.append('.');
-        else if (symbolIndex == GroupSeparatorIndex) {
-            // Ignore group separators.
-
-        } else
+        else if (symbolIndex == GroupSeparatorIndex)
+            return input;
+        else
             builder.append(static_cast<UChar>('0' + symbolIndex));
     }
     return builder.toString();
