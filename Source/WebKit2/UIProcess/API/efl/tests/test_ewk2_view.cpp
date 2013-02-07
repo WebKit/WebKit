@@ -917,7 +917,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_contents_size_changed)
     evas_object_smart_callback_del(webView(), "contents,size,changed", onContentsSizeChanged);
 }
 
-static bool isObtainedPageContents = false;
+static bool obtainedPageContents = false;
 
 static void PageContentsCallback(Ewk_Page_Contents_Type type, const char* data)
 {
@@ -925,14 +925,15 @@ static void PageContentsCallback(Ewk_Page_Contents_Type type, const char* data)
     ASSERT_EQ(EWK_PAGE_CONTENTS_TYPE_MHTML, type);
 
     // The variable data should have below text block.
-    const char lines[] = "<=00h=00t=00m=00l=00>=00<=00h=00e=00a=00d=00>=00<=00m=00e=00t=00a=00 =00c=\r\n"
+    const String expectedMHTML = "\r\n\r\n<=00h=00t=00m=00l=00>=00<=00h=00e=00a=00d=00>=00<=00m=00e=00t=00a=00 =00c=\r\n"
         "=00h=00a=00r=00s=00e=00t=00=3D=00\"=00U=00T=00F=00-=001=006=00L=00E=00\"=00>=\r\n"
         "=00<=00/=00h=00e=00a=00d=00>=00<=00b=00o=00d=00y=00>=00<=00p=00>=00S=00i=00=\r\n"
         "m=00p=00l=00e=00 =00H=00T=00M=00L=00<=00/=00p=00>=00<=00/=00b=00o=00d=00y=\r\n"
-        "=00>=00<=00/=00h=00t=00m=00l=00>=00";
-    ASSERT_EQ(0, strncmp(data + 359, lines, strlen(lines)));
+        "=00>=00<=00/=00h=00t=00m=00l=00>=00\r\n";
 
-    isObtainedPageContents = true;
+    ASSERT_TRUE(String(data).contains(expectedMHTML));
+
+    obtainedPageContents = true;
 }
 
 TEST_F(EWK2UnitTestBase, ewk_view_page_contents_get)
@@ -942,7 +943,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_page_contents_get)
     waitUntilLoadFinished();
 
     ASSERT_TRUE(ewk_view_page_contents_get(webView(), EWK_PAGE_CONTENTS_TYPE_MHTML, PageContentsCallback));
-    while (!isObtainedPageContents)
+    while (!obtainedPageContents)
         ecore_main_loop_iterate();
 }
 
