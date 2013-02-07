@@ -238,6 +238,9 @@ video::-webkit-media-controls-toggle-closed-captions-button {
     margin-right: 7px;
     -webkit-box-ordinal-group: 3; /* between mute and fullscreen */
     border: none !important;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 130 105"><g fill="rgb(224,224,224)"><path d="M98.766,43.224c0-23.163-21.775-41.94-48.637-41.94c-26.859,0-48.635,18.777-48.635,41.94c0,18.266,13.546,33.796,32.444,39.549c1.131,8.356,26.037,24.255,22.864,19.921c-4.462-6.096-5.159-13.183-5.07-17.566C77.85,84.397,98.766,65.923,98.766,43.224z"/><polygon points="128.044,84 100.956,84 114.5,98"/></g></svg>');
+    background-repeat: no-repeat;
+    background-size: 16px 16px;
 }
 
 video::-webkit-media-controls-closed-captions-container {

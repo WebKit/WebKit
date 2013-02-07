@@ -341,8 +341,6 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
         return paintMediaRewindButton(o, paintInfo, r);
     case MediaReturnToRealtimeButtonPart:
         return paintMediaReturnToRealtimeButton(o, paintInfo, r);
-    case MediaToggleClosedCaptionsButtonPart:
-        return paintMediaToggleClosedCaptionsButton(o, paintInfo, r);
     case MediaSliderPart:
         return paintMediaSliderTrack(o, paintInfo, r);
     case MediaSliderThumbPart:

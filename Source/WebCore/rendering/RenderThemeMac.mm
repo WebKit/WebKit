@@ -283,19 +283,6 @@ bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const Pai
     return false;
 }
 
-bool RenderThemeMac::paintMediaToggleClosedCaptionsButton(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
-{
-    Node* node = o->node();
-    if (!node)
-        return false;
-    if (!node->isMediaControlElement())
-        return false;
-
-    LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(mediaControlElementType(node), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
-    return false;
-}
-
 bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     Node* node = o->node();

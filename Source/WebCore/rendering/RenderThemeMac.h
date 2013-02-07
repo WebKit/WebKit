@@ -51,7 +51,6 @@ protected:
     virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaRewindButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaReturnToRealtimeButton(RenderObject*, const PaintInfo&, const IntRect&);
-    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaControlsBackground(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaTimeRemaining(RenderObject*, const PaintInfo&, const IntRect&);

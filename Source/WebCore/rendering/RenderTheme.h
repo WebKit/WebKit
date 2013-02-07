@@ -338,7 +338,6 @@ protected:
     virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaRewindButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaReturnToRealtimeButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
-    virtual bool paintMediaToggleClosedCaptionsButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaControlsBackground(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaCurrentTime(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
     virtual bool paintMediaTimeRemaining(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
