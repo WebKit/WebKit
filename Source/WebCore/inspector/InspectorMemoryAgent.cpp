@@ -600,6 +600,7 @@ InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAge
     : InspectorBaseAgent<InspectorMemoryAgent>("Memory", instrumentingAgents, state)
     , m_inspectorClient(client)
     , m_page(page)
+    , m_frontend(0)
 {
 }
 
