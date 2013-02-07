@@ -33,8 +33,9 @@
 
 #include "Platform/chromium/public/WebString.h"
 #include "Platform/chromium/public/WebVector.h"
-#include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
+#include <vector>
+
+namespace WebTestRunner {
 
 // A mock implementation of a spell-checker used for WebKit tests.
 // This class only implements the minimal functionarities required by WebKit
@@ -70,10 +71,12 @@ private:
     bool initializeIfNeeded();
 
     // A table that consists of misspelled words.
-    Vector<String> m_misspelledWords;
+    std::vector<string16> m_misspelledWords;
 
     // A flag representing whether or not this object is initialized.
     bool m_initialized;
 };
+
+}
 
 #endif // MockSpellCheck_h

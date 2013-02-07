@@ -32,7 +32,9 @@
 #include "WebTask.h"
 
 #include "WebKit.h"
-#include <wtf/Vector.h>
+#include <algorithm>
+
+using namespace std;
 
 namespace WebTestRunner {
 
@@ -48,36 +50,31 @@ WebTask::~WebTask()
         m_taskList->unregisterTask(this);
 }
 
-class WebTaskList::Private : public Vector<WebTask*> {
-};
-
 WebTaskList::WebTaskList()
-    : m_private(new Private)
 {
 }
 
 WebTaskList::~WebTaskList()
 {
     revokeAll();
-    delete m_private;
 }
 
 void WebTaskList::registerTask(WebTask* task)
 {
-    m_private->append(task);
+    m_tasks.push_back(task);
 }
 
 void WebTaskList::unregisterTask(WebTask* task)
 {
-    size_t index = m_private->find(task);
-    if (index != notFound)
-        m_private->remove(index);
+    vector<WebTask*>::iterator iter = find(m_tasks.begin(), m_tasks.end(), task);
+    if (iter != m_tasks.end())
+        m_tasks.erase(iter);
 }
 
 void WebTaskList::revokeAll()
 {
-    while (!m_private->isEmpty())
-        (*m_private)[0]->cancel();
+    while (!m_tasks.empty())
+        m_tasks[0]->cancel();
 }
 
 }

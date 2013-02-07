@@ -31,13 +31,11 @@
 #include "config.h"
 #include "KeyCodeMapping.h"
 
-#include <wtf/UnusedParam.h>
-
 namespace WebTestRunner {
 
 int NativeKeyCodeForWindowsKeyCode(int keysym)
 {
-#if OS(LINUX) && USE(GTK)
+#if defined(__linux__) && USE(GTK)
     // See /usr/share/X11/xkb/keycodes/*
     static const int asciiToKeyCode[] = {
         0,
@@ -240,8 +238,7 @@ int NativeKeyCodeForWindowsKeyCode(int keysym)
         return 0;
     }
 #else
-    UNUSED_PARAM(keysym);
-    return 0;
+    return keysym - keysym;
 #endif
 }
 

@@ -44,11 +44,9 @@
 #define CppBoundClass_h
 
 #include "CppVariant.h"
-#include <wtf/HashMap.h>
-#include <wtf/Noncopyable.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
+#include <map>
+#include <memory>
+#include <vector>
 
 namespace WebKit {
 class WebFrame;
@@ -57,12 +55,11 @@ class WebString;
 
 namespace WebTestRunner {
 
-typedef Vector<CppVariant> CppArgumentList;
+typedef std::vector<CppVariant> CppArgumentList;
 
 // CppBoundClass lets you map Javascript method calls and property accesses
 // directly to C++ method calls and CppVariant* variable access.
 class CppBoundClass {
-    WTF_MAKE_NONCOPYABLE(CppBoundClass);
 public:
     class PropertyCallback {
     public:
@@ -164,7 +161,7 @@ protected:
 
     // Bind Javascript property |name| to the C++ getter callback |callback|.
     // This can be used to create read-only properties.
-    void bindGetterCallback(const std::string&, PassOwnPtr<GetterCallback>);
+    void bindGetterCallback(const std::string&, std::auto_ptr<GetterCallback>);
 
     // A wrapper for BindGetterCallback, to simplify the common case of binding a
     // property on the current object. Though not verified here, the method parameter
@@ -172,8 +169,8 @@ protected:
     template<class T>
     void bindProperty(const std::string& name, void (T::*method)(CppVariant*))
     {
-        OwnPtr<GetterCallback> callback = adoptPtr(new MemberGetterCallback<T>(static_cast<T*>(this), method));
-        bindGetterCallback(name, callback.release());
+        std::auto_ptr<GetterCallback> callback(new MemberGetterCallback<T>(static_cast<T*>(this), method));
+        bindGetterCallback(name, callback);
     }
 
     // Bind the Javascript property called |name| to a CppVariant.
@@ -193,7 +190,7 @@ protected:
     // as it may cause unexpected behaviors (a JavaScript object with a
     // fallback always returns true when checked for a method's
     // existence).
-    void bindFallbackCallback(PassOwnPtr<Callback> fallbackCallback)
+    void bindFallbackCallback(std::auto_ptr<Callback> fallbackCallback)
     {
         m_fallbackCallback = fallbackCallback;
     }
@@ -205,25 +202,24 @@ protected:
     template<class T>
     void bindFallbackMethod(void (T::*method)(const CppArgumentList&, CppVariant*))
     {
-        if (method) {
-            OwnPtr<Callback> callback = adoptPtr(new MemberCallback<T>(static_cast<T*>(this), method));
-            bindFallbackCallback(callback.release());
-        } else
-            bindFallbackCallback(nullptr);
+        if (method)
+            bindFallbackCallback(std::auto_ptr<Callback>(new MemberCallback<T>(static_cast<T*>(this), method)));
+        else
+            bindFallbackCallback(std::auto_ptr<Callback>());
     }
 
     // Some fields are protected because some tests depend on accessing them,
     // but otherwise they should be considered private.
 
-    typedef HashMap<NPIdentifier, PropertyCallback*> PropertyList;
-    typedef HashMap<NPIdentifier, Callback*> MethodList;
+    typedef std::map<NPIdentifier, PropertyCallback*> PropertyList;
+    typedef std::map<NPIdentifier, Callback*> MethodList;
     // These maps associate names with property and method pointers to be
     // exposed to JavaScript.
     PropertyList m_properties;
     MethodList m_methods;
 
     // The callback gets invoked when a call is made to an nonexistent method.
-    OwnPtr<Callback> m_fallbackCallback;
+    std::auto_ptr<Callback> m_fallbackCallback;
 
 private:
     // NPObject callbacks.
@@ -242,6 +238,10 @@ private:
     // True if our np_object has been bound to a WebFrame, in which case it must
     // be unregistered with V8 when we delete it.
     bool m_boundToFrame;
+
+private:
+    CppBoundClass(CppBoundClass&);
+    CppBoundClass& operator=(const CppBoundClass&);
 };
 
 }
