@@ -72,17 +72,22 @@ public:
 
     void setShapeSize(LayoutUnit logicalWidth, LayoutUnit logicalHeight)
     {
-        if (m_logicalWidth == logicalWidth && m_logicalHeight == logicalHeight)
+        if (m_renderer->style()->boxSizing() == CONTENT_BOX) {
+            logicalWidth -= m_renderer->borderAndPaddingLogicalWidth();
+            logicalHeight -= m_renderer->borderAndPaddingLogicalHeight();
+        }
+
+        if (m_shapeLogicalWidth == logicalWidth && m_shapeLogicalHeight == logicalHeight)
             return;
         dirtyShapeSize();
-        m_logicalWidth = logicalWidth;
-        m_logicalHeight = logicalHeight;
+        m_shapeLogicalWidth = logicalWidth;
+        m_shapeLogicalHeight = logicalHeight;
     }
 
-    LayoutUnit shapeLogicalTop() const { return floatLogicalTopToLayoutUnit(computedShape()->shapeLogicalBoundingBox().y()); }
-    LayoutUnit shapeLogicalBottom() const { return floatLogicalBottomToLayoutUnit(computedShape()->shapeLogicalBoundingBox().maxY()); }
-    LayoutUnit shapeLogicalLeft() const { return computedShape()->shapeLogicalBoundingBox().x(); }
-    LayoutUnit shapeLogicalRight() const { return computedShape()->shapeLogicalBoundingBox().y(); }
+    LayoutUnit shapeLogicalTop() const { return floatLogicalTopToLayoutUnit(computedShape()->shapeLogicalBoundingBox().y()) + logicalTopOffset(); }
+    LayoutUnit shapeLogicalBottom() const { return floatLogicalBottomToLayoutUnit(computedShape()->shapeLogicalBoundingBox().maxY()) + logicalTopOffset(); }
+    LayoutUnit shapeLogicalLeft() const { return computedShape()->shapeLogicalBoundingBox().x() + logicalLeftOffset(); }
+    LayoutUnit shapeLogicalRight() const { return computedShape()->shapeLogicalBoundingBox().y() + logicalLeftOffset(); }
     LayoutUnit shapeLogicalWidth() const { return computedShape()->shapeLogicalBoundingBox().width(); }
     LayoutUnit shapeLogicalHeight() const { return computedShape()->shapeLogicalBoundingBox().height(); }
 
@@ -98,11 +103,14 @@ protected:
     LayoutUnit floatLogicalTopToLayoutUnit(float logicalTop) const { return LayoutUnit::fromFloatCeil(logicalTop); }
     LayoutUnit floatLogicalBottomToLayoutUnit(float logicalBottom) const { return LayoutUnit::fromFloatFloor(logicalBottom); }
 
+    LayoutUnit logicalTopOffset() const { return m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderBefore() + m_renderer->paddingBefore() : LayoutUnit(); }
+    LayoutUnit logicalLeftOffset() const { return m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderStart() + m_renderer->paddingStart() : LayoutUnit(); }
+
 private:
     mutable OwnPtr<ExclusionShape> m_shape;
 
-    LayoutUnit m_logicalWidth;
-    LayoutUnit m_logicalHeight;
+    LayoutUnit m_shapeLogicalWidth;
+    LayoutUnit m_shapeLogicalHeight;
     const RenderType* m_renderer;
 };
 }

@@ -63,7 +63,7 @@ public:
         BasicShape* shape = (shapeValue && shapeValue->type() == ExclusionShapeValue::SHAPE) ? shapeValue->shape() : 0;
         return shape && (shape->type() == BasicShape::BASIC_SHAPE_RECTANGLE || shape->type() == BasicShape::BASIC_SHAPE_POLYGON);
     }
-    bool lineOverlapsShapeBounds() const { return m_lineTop < shapeLogicalBottom() && m_lineTop + m_lineHeight >= shapeLogicalTop(); }
+    bool lineOverlapsShapeBounds() const { return logicalLineTop() < shapeLogicalBottom() && logicalLineBottom() >= shapeLogicalTop(); }
 
     bool hasSegments() const
     {
@@ -85,12 +85,13 @@ public:
     }
     bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight);
     bool adjustLogicalLineTop(float minSegmentWidth);
-    LayoutUnit logicalLineTop() const { return m_lineTop; }
+    LayoutUnit logicalLineTop() const { return m_shapeLineTop + logicalTopOffset(); }
+    LayoutUnit logicalLineBottom() const { return m_shapeLineTop + m_lineHeight + logicalTopOffset(); }
 
 private:
     ExclusionShapeInsideInfo(const RenderBlock* renderer) : ExclusionShapeInfo<RenderBlock, &RenderStyle::shapeInside>(renderer) { }
 
-    LayoutUnit m_lineTop;
+    LayoutUnit m_shapeLineTop;
     LayoutUnit m_lineHeight;
 
     SegmentList m_segments;

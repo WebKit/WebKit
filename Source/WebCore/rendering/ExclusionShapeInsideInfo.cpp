@@ -38,13 +38,18 @@ namespace WebCore {
 bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
 {
     ASSERT(lineHeight >= 0);
-    m_lineTop = lineTop;
+    m_shapeLineTop = lineTop - logicalTopOffset();
     m_lineHeight = lineHeight;
     m_segments.clear();
     m_segmentRanges.clear();
 
-    if (lineOverlapsShapeBounds()) {
-        computedShape()->getIncludedIntervals(lineTop, std::min(lineHeight, shapeLogicalBottom() - lineTop), m_segments);
+    if (lineOverlapsShapeBounds())
+        computedShape()->getIncludedIntervals(m_shapeLineTop, std::min(m_lineHeight, shapeLogicalBottom() - lineTop), m_segments);
+
+    LayoutUnit logicalLeftOffset = this->logicalLeftOffset();
+    for (size_t i = 0; i < m_segments.size(); i++) {
+        m_segments[i].logicalLeft += logicalLeftOffset;
+        m_segments[i].logicalRight += logicalLeftOffset;
     }
     return m_segments.size();
 }
@@ -52,14 +57,14 @@ bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, Layout
 bool ExclusionShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
 {
     const ExclusionShape* shape = computedShape();
-    if (!shape || m_lineHeight <= 0 || m_lineTop > shapeLogicalBottom())
+    if (!shape || m_lineHeight <= 0 || logicalLineTop() > shapeLogicalBottom())
         return false;
 
     float floatNewLineTop;
-    if (shape->firstIncludedIntervalLogicalTop(m_lineTop, FloatSize(minSegmentWidth, m_lineHeight), floatNewLineTop)) {
+    if (shape->firstIncludedIntervalLogicalTop(m_shapeLineTop, FloatSize(minSegmentWidth, m_lineHeight), floatNewLineTop)) {
         LayoutUnit newLineTop = floatLogicalTopToLayoutUnit(floatNewLineTop);
-        if (newLineTop > m_lineTop) {
-            m_lineTop = newLineTop;
+        if (newLineTop > m_shapeLineTop) {
+            m_shapeLineTop = newLineTop;
             return true;
         }
     }
