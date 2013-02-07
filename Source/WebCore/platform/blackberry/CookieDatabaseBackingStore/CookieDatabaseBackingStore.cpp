@@ -311,6 +311,23 @@ Vector<ParsedCookie*>* CookieDatabaseBackingStore::invokeGetCookiesWithLimit(uns
     return cookies;
 }
 
+void CookieDatabaseBackingStore::openAndLoadDatabaseSynchronously(const String& cookieJar)
+{
+    CookieLog("CookieBackingStore - loading database into CookieManager immediately");
+
+    if (m_db.isOpen()) {
+        if (isCurrentThread())
+            BlackBerry::Platform::webKitThreadMessageClient()->dispatchSyncMessage(createMethodCallMessage(&CookieManager::getBackingStoreCookies, &cookieManager()));
+        else
+            cookieManager().getBackingStoreCookies();
+    } else {
+        if (isCurrentThread())
+            invokeOpen(cookieJar);
+        else
+            dispatchSyncMessage(createMethodCallMessage(&CookieDatabaseBackingStore::invokeOpen, this, cookieJar));
+    }
+}
+
 void CookieDatabaseBackingStore::sendChangesToDatabaseSynchronously()
 {
     CookieLog("CookieBackingStore - sending to database immediately");

@@ -126,15 +126,9 @@ static bool shouldIgnoreScheme(const String& protocol)
 
 void CookieManager::setCookies(const KURL& url, const String& value, CookieFilter filter)
 {
-    // Dispatch the message because the database cookies are not loaded in memory yet.
-    if (!m_syncedWithDatabase && !m_privateMode) {
-        typedef void (WebCore::CookieManager::*FunctionType)(const KURL&, const String&, CookieFilter);
-
-        BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(
-            BlackBerry::Platform::createMethodCallMessage<FunctionType, CookieManager, const KURL, const String, CookieFilter>(
-                &CookieManager::setCookies, this, url, value, filter));
-        return;
-    }
+    // If the database hasn't been sync-ed at this point, force a sync load
+    if (!m_syncedWithDatabase && !m_privateMode)
+        m_cookieBackingStore->openAndLoadDatabaseSynchronously(cookieJar());
 
     CookieLog("CookieManager - Setting cookies");
     CookieParser parser(url);
@@ -148,14 +142,9 @@ void CookieManager::setCookies(const KURL& url, const String& value, CookieFilte
 
 void CookieManager::setCookies(const KURL& url, const Vector<String>& cookies, CookieFilter filter)
 {
-    // Dispatch the message because the database cookies are not loaded in memory yet.
-    if (!m_syncedWithDatabase && !m_privateMode) {
-        typedef void (WebCore::CookieManager::*FunctionType)(const KURL&, const Vector<String>&, CookieFilter);
-        BlackBerry::Platform::webKitThreadMessageClient()->dispatchMessage(
-            BlackBerry::Platform::createMethodCallMessage<FunctionType, CookieManager, const KURL, const Vector<String>, CookieFilter>(
-                &CookieManager::setCookies, this, url, cookies, filter));
-        return;
-    }
+    // If the database hasn't been sync-ed at this point, force a sync load
+    if (!m_syncedWithDatabase && !m_privateMode)
+        m_cookieBackingStore->openAndLoadDatabaseSynchronously(cookieJar());
 
     CookieLog("CookieManager - Setting cookies");
     CookieParser parser(url);
@@ -168,10 +157,9 @@ void CookieManager::setCookies(const KURL& url, const Vector<String>& cookies, C
 
 String CookieManager::getCookie(const KURL& url, CookieFilter filter) const
 {
-    if (!m_syncedWithDatabase && !m_privateMode) {
-        LOG_ERROR("CookieManager is calling getCookies before database values are loaded.");
-        return String();
-    }
+    // If the database hasn't been sync-ed at this point, force a sync load
+    if (!m_syncedWithDatabase && !m_privateMode)
+        m_cookieBackingStore->openAndLoadDatabaseSynchronously(cookieJar());
 
     Vector<ParsedCookie*> rawCookies;
     rawCookies.reserveInitialCapacity(s_maxCookieCountPerHost);
@@ -198,10 +186,9 @@ String CookieManager::getCookie(const KURL& url, CookieFilter filter) const
 
 String CookieManager::generateHtmlFragmentForCookies()
 {
-    if (!m_syncedWithDatabase && !m_privateMode) {
-        LOG_ERROR("CookieManager is calling generateHtmlFragmentForCookies before database values are loaded.");
-        return String();
-    }
+    // If the database hasn't been sync-ed at this point, force a sync load
+    if (!m_syncedWithDatabase && !m_privateMode)
+        m_cookieBackingStore->openAndLoadDatabaseSynchronously(cookieJar());
 
     CookieLog("CookieManager - generateHtmlFragmentForCookies\n");
 
@@ -238,10 +225,9 @@ String CookieManager::generateHtmlFragmentForCookies()
 
 void CookieManager::getRawCookies(Vector<ParsedCookie*> &stackOfCookies, const KURL& requestURL, CookieFilter filter) const
 {
-    if (!m_syncedWithDatabase && !m_privateMode) {
-        LOG_ERROR("CookieManager is calling getRawCookies before database values are loaded.");
-        return;
-    }
+    // Force a sync load of the database
+    if (!m_syncedWithDatabase && !m_privateMode)
+        m_cookieBackingStore->openAndLoadDatabaseSynchronously(cookieJar());
 
     CookieLog("CookieManager - getRawCookies - processing url with domain - %s & protocol: %s & path: %s\n", requestURL.host().utf8().data(), requestURL.protocol().utf8().data(), requestURL.path().utf8().data());
 

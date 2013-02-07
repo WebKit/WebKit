@@ -59,6 +59,7 @@ public:
     // If a limit is not set, the method will return all cookies in the database
     void getCookiesFromDatabase(Vector<ParsedCookie*>& stackOfCookies, unsigned int limit = 0);
 
+    void openAndLoadDatabaseSynchronously(const String& cookieJar);
     void sendChangesToDatabaseSynchronously();
 
     // MessageClient methods
