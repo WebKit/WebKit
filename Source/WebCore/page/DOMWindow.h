@@ -122,9 +122,6 @@ namespace WebCore {
 
         static FloatRect adjustWindowRect(Page*, const FloatRect& pendingChanges);
 
-        // FIXME: We can remove this function once V8 showModalDialog is changed to use DOMWindow.
-        static void parseModalDialogFeatures(const String&, HashMap<String, String>&);
-
         bool allowPopUp(); // Call on first window, not target window.
         static bool allowPopUp(Frame* firstFrame);
         static bool canShowModalDialog(const Frame*);
