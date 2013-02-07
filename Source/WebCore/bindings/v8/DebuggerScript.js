@@ -93,6 +93,23 @@ DebuggerScript.getInternalProperties = function(value)
     return result;
 }
 
+DebuggerScript.setFunctionVariableValue = function(functionValue, scopeIndex, variableName, newValue)
+{
+    var mirror = MakeMirror(functionValue);
+    if (!mirror.isFunction())
+        throw new Error("Function value has incorrect type");
+    return DebuggerScript._setScopeVariableValue(mirror, scopeIndex, variableName, newValue);
+}
+
+DebuggerScript._setScopeVariableValue = function(scopeHolder, scopeIndex, variableName, newValue)
+{
+    var scopeMirror = scopeHolder.scope(scopeIndex);
+    if (!scopeMirror)
+        throw new Error("Incorrect scope index");
+    scopeMirror.setVariableValue(variableName, newValue);
+    return undefined;
+}
+
 DebuggerScript.getScripts = function(contextData)
 {
     var result = [];
@@ -295,6 +312,11 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         return Debug.LiveEdit.RestartFrame(frameMirror);
     }
 
+    function setVariableValue(scopeNumber, variableName, newValue)
+    {
+        return DebuggerScript._setScopeVariableValue(frameMirror, scopeNumber, variableName, newValue);
+    }
+
     return {
         "sourceID": sourceID,
         "line": location ? location.line : 0,
@@ -305,7 +327,8 @@ DebuggerScript._frameMirrorToJSCallFrame = function(frameMirror, callerFrame)
         "scopeType": scopeType,
         "evaluate": evaluate,
         "caller": callerFrame,
-        "restart": restart
+        "restart": restart,
+        "setVariableValue": setVariableValue
     };
 }
 

@@ -39,6 +39,9 @@
 
     [Custom] void evaluate(in DOMString script);
     [Custom] DOMObject restart();
+    
+    // Only declarative scope (local, with and catch) is accepted. Returns undefined. 
+    [Custom] DOMObject setVariableValue(in int scopeIndex, in DOMString variableName, DOMObject newValue);
 
     readonly attribute JavaScriptCallFrame caller;
     readonly attribute long sourceID;

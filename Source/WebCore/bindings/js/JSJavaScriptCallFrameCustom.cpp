@@ -130,6 +130,13 @@ JSValue JSJavaScriptCallFrame::scopeType(ExecState* exec)
     return jsUndefined();
 }
 
+JSValue JSJavaScriptCallFrame::setVariableValue(JSC::ExecState* exec)
+{
+    // FIXME: implement this. https://bugs.webkit.org/show_bug.cgi?id=107830
+    throwError(exec, createTypeError(exec, "Variable value mutation is not supported"));
+    return jsUndefined();
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)

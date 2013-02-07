@@ -557,6 +557,21 @@ v8::Local<v8::Value> ScriptDebugServer::getInternalProperties(v8::Handle<v8::Obj
     return callDebuggerMethod("getInternalProperties", 1, argv);
 }
 
+v8::Local<v8::Value> ScriptDebugServer::setFunctionVariableValue(v8::Handle<v8::Value> functionValue, int scopeNumber, const String& variableName, v8::Handle<v8::Value> newValue)
+{
+    v8::Local<v8::Context> debuggerContext = v8::Debug::GetDebugContext();
+    if (m_debuggerScript.get().IsEmpty())
+        return *(v8::ThrowException(v8::String::New("Debugging is not enabled.")));
+
+    v8::Handle<v8::Value> argv[] = {
+        functionValue,
+        v8::Handle<v8::Value>(v8::Integer::New(scopeNumber)),
+        v8String(variableName, debuggerContext->GetIsolate()),
+        newValue
+    };
+    return callDebuggerMethod("setFunctionVariableValue", 4, argv);
+}
+
 
 bool ScriptDebugServer::isPaused()
 {

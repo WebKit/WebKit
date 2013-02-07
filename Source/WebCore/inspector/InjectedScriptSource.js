@@ -427,21 +427,13 @@ InjectedScript.prototype = {
             var resolvedArgs = [];
             args = InjectedScriptHost.evaluate(args);
             for (var i = 0; i < args.length; ++i) {
-                objectId = args[i].objectId;
-                if (objectId) {
-                    var parsedArgId = this._parseObjectId(objectId);
-                    if (!parsedArgId || parsedArgId["injectedScriptId"] !== injectedScriptId)
-                        return "Arguments should belong to the same JavaScript world as the target object.";
-
-                    var resolvedArg = this._objectForId(parsedArgId);
-                    if (!this._isDefined(resolvedArg))
-                        return "Could not find object with given id";
-
-                    resolvedArgs.push(resolvedArg);
-                } else if ("value" in args[i])
-                    resolvedArgs.push(args[i].value);
-                else
-                    resolvedArgs.push(undefined);
+                var resolvedCallArgument;
+                try {
+                    resolvedCallArgument = this._resolveCallArgument(args[i]);
+                } catch (e) {
+                    return String(e);
+                }
+                resolvedArgs.push(resolvedCallArgument)
             }
         }
 
@@ -456,6 +448,30 @@ InjectedScript.prototype = {
         } catch (e) {
             return this._createThrownValue(e, objectGroup);
         }
+    },
+    
+    /**
+     * Resolves a value from CallArgument description.
+     * @param {RuntimeAgent.CallArgument} callArgumentJson
+     * @return {*} resolved value
+     * @throw {string} error message
+     */
+    _resolveCallArgument: function(callArgumentJson) {
+        var objectId = callArgumentJson.objectId;
+        if (objectId) {
+            var parsedArgId = this._parseObjectId(objectId);
+            if (!parsedArgId || parsedArgId["injectedScriptId"] !== injectedScriptId)
+                throw "Arguments should belong to the same JavaScript world as the target object.";
+
+            var resolvedArg = this._objectForId(parsedArgId);
+            if (!this._isDefined(resolvedArg))
+                throw "Could not find object with given id";
+
+            return resolvedArg;
+        } else if ("value" in callArgumentJson)
+            return callArgumentJson.value;
+        else
+            return undefined;
     },
 
     /**
@@ -573,6 +589,51 @@ InjectedScript.prototype = {
         if (result === false)
             result = "Restart frame is not supported"; 
         return result;
+    },
+
+    /**
+     * Either callFrameId or functionObjectId must be specified.
+     * @param {Object} topCallFrame
+     * @param {string|boolean} callFrameId or false
+     * @param {string|boolean} functionObjectId or false
+     * @param {integer} scopeNumber
+     * @param {string} variableName
+     * @param {string} newValueJsonString RuntimeAgent.CallArgument structure serialized as string 
+     * @return {string|undefined} undefined if success or an error message 
+     */
+    setVariableValue: function(topCallFrame, callFrameId, functionObjectId, scopeNumber, variableName, newValueJsonString)
+    {   
+        var setter;
+        if (callFrameId) {
+            var callFrame = this._callFrameForId(topCallFrame, callFrameId);
+            if (!callFrame)
+                return "Could not find call frame with given id";
+            setter = callFrame.setVariableValue.bind(callFrame);    
+        } else {
+            var parsedFunctionId = this._parseObjectId(functionObjectId);
+            var func = this._objectForId(parsedFunctionId);
+            if (typeof func !== "function")
+                return "Cannot resolve function by id.";
+            setter = InjectedScriptHost.setFunctionVariableValue.bind(InjectedScriptHost, func); 
+        }
+        var newValueJson;
+        try {
+            newValueJson = InjectedScriptHost.evaluate("(" + newValueJsonString + ")");
+        } catch (e) {
+            return "Failed to parse new value JSON " + newValueJsonString + " : " + e;
+        }
+        var resolvedValue;
+        try {
+            resolvedValue = this._resolveCallArgument(newValueJson);
+        } catch (e) {
+            return String(e);
+        }
+        try {
+            setter(scopeNumber, variableName, resolvedValue);
+        } catch (e) {
+            return "Failed to change variable value: " + e;
+        }
+        return undefined;
     },
 
     /**

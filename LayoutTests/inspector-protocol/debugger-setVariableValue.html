@@ -1,0 +1,181 @@
+<html>
+<head>
+<script type="text/javascript" src="../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+
+function test()
+{
+    // A general-purpose engine for sending a sequence of protocol commands.
+    // The clients provide requests and response handlers, while the engine catches
+    // errors and makes sure that once there's nothing to do completeTest() is called.
+    // @param step is an object with command, params and callback fields 
+    function runRequestSeries(step) {
+        processStep(step);
+
+        function processStep(s) {
+            try {
+                processStepOrFail(s);
+            } catch (e) {
+                InspectorTest.log(e.stack);
+                InspectorTest.completeTest();
+            }
+        }
+        
+        function processStepOrFail(s) {
+            if (!s) {
+                InspectorTest.completeTest();
+                return;
+            }
+            if (!s.command) {
+                // A simple loopback step.
+                var next = s.callback();
+                processStep(next);
+                return;
+            }
+
+            var innerCallback = function(response) {
+                var next;
+                if ("error" in response) {
+                    if (!("errorHandler" in s)) {
+                        // Error message is not logged intentionally, it may be platform-specific.
+                        InspectorTest.log("Protocol command '" + s.command + "' failed");
+                        InspectorTest.completeTest();
+                        return;
+                    }
+                    try {
+                        next = s.errorHandler(response.error);
+                    } catch (e) {
+                        InspectorTest.log(e.stack);
+                        InspectorTest.completeTest();
+                        return;
+                    }
+                } else {
+                    try {
+                        next = s.callback(response.result);
+                    } catch (e) {
+                        InspectorTest.log(e.stack);
+                        InspectorTest.completeTest();
+                        return;
+                    }
+                }
+                processStep(next);
+            }
+            InspectorTest.sendCommand(s.command, s.params, innerCallback);
+        }
+    }
+    
+    var firstStep = { callback: enableDebugger };
+
+    runRequestSeries(firstStep);
+    
+    function enableDebugger() {
+        return { command: "Debugger.enable", params: {}, callback: evalFunction };
+    }
+    
+    // Testing function/closure scopes.
+    
+    function evalFunction(response) {
+        var expression = "(function(p){var r=5;with({year:2013}){return function Closure(q){return p+q+r+year};}})('ttt')";
+        return { command: "Runtime.evaluate", params: {expression: expression}, callback: callbackEvalFunction };
+    }
+    
+    function callbackEvalFunction(result) {
+        var id = result.result.objectId;
+        if (id === undefined)
+            throw new Error("objectId is expected");
+        return createCheckFunctionStepChain(id);
+    }
+
+    function createCheckFunctionStepChain(functionObjectId) {
+        var params = {
+            objectId: functionObjectId,
+            functionDeclaration: "function(){return this(true);}"
+        };
+        return {
+            command: "Runtime.callFunctionOn", params: params, callback: callbackLogClosureEval
+        };
+
+	    function callbackLogClosureEval(result) {
+	        InspectorTest.log("Closure returns: " + JSON.stringify(result.result));
+	        InspectorTest.log(" (expected: 'ttttrue52013')");
+	        
+	        var params = {
+	            functionObjectId: functionObjectId,
+	            scopeNumber: 1,
+	            variableName: "r",
+	            newValue: { value: 4 }
+	        };
+	        return {
+	            command: "Debugger.setVariableValue", params: params, callback: setVariableCallback
+	        };
+	    }
+	    
+	    function setVariableCallback() {
+	        InspectorTest.log("Debugger.setVariableValue OK");
+	        
+	        var params = {
+	            objectId: functionObjectId,
+	            functionDeclaration: "function(){return this(true);}"
+	        };
+	        return {
+	            command: "Runtime.callFunctionOn", params: params, callback: callbackLogClosureEval2
+	        };
+	        
+	    }
+
+	    function callbackLogClosureEval2(result) {
+	        InspectorTest.log("Closure returns: " + JSON.stringify(result.result));
+	        InspectorTest.log(" (expected: 'ttttrue42013')");
+	        
+	        var params = {
+	            // No target is specified
+	            scopeNumber: 1,
+	            variableName: "r",
+	            newValue: { value: 4 }
+	        };
+	        return {
+	            command: "Debugger.setVariableValue", params: params, errorHandler: setVariableErrorCallback3
+	        };
+	    }
+	    
+	    function setVariableErrorCallback3(error) {
+	        InspectorTest.log("Expected error: " + JSON.stringify(error));
+
+	        var params = {
+	            functionObjectId: functionObjectId,
+	            scopeNumber: 100, // Wrong scope number
+	            variableName: "r",
+	            newValue: { value: 4 }
+	        };
+	        return {
+	            command: "Debugger.setVariableValue", params: params, errorHandler: setVariableErrorCallback4
+	        };
+	    }
+	    
+	    function setVariableErrorCallback4(error) {
+	        InspectorTest.log("Expected error");
+
+	        var params = {
+	            functionObjectId: functionObjectId,
+	            scopeNumber: 1,
+	            variableName: "bad", // Wrong variable name
+	            newValue: { value: 4 }
+	        };
+	        return {
+	            command: "Debugger.setVariableValue", params: params, errorHandler: setVariableErrorCallback5
+	        };
+	    }
+	    
+	    function setVariableErrorCallback5(error) {
+	        InspectorTest.log("Expected error");
+	        
+	        // End of test.
+	        return;
+	    }
+    }
+}
+</script>
+</head>
+<body onLoad="runTest();">
+</body>
+</html>

@@ -411,7 +411,7 @@ void InspectorDebuggerAgent::getFunctionDetails(ErrorString* errorString, const 
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(functionId);
     if (injectedScript.hasNoValue()) {
-        *errorString = "Inspected frame has gone";
+        *errorString = "Function object id is obsolete";
         return;
     }
     injectedScript.getFunctionDetails(errorString, functionId, &details);
@@ -578,6 +578,30 @@ void InspectorDebuggerAgent::runScript(ErrorString* errorString, const ScriptId&
 
 void InspectorDebuggerAgent::setOverlayMessage(ErrorString*, const String*)
 {
+}
+
+void InspectorDebuggerAgent::setVariableValue(ErrorString* errorString, const String* callFrameId, const String* functionObjectId, int scopeNumber, const String& variableName, const RefPtr<InspectorObject>& newValue)
+{
+    InjectedScript injectedScript;
+    if (callFrameId) {
+        injectedScript = m_injectedScriptManager->injectedScriptForObjectId(*callFrameId);
+        if (injectedScript.hasNoValue()) {
+            *errorString = "Inspected frame has gone";
+            return;
+        }
+    } else if (functionObjectId) {
+        injectedScript = m_injectedScriptManager->injectedScriptForObjectId(*functionObjectId);
+        if (injectedScript.hasNoValue()) {
+            *errorString = "Function object id cannot be resolved";
+            return;
+        }
+    } else {
+        *errorString = "Either call frame or function object must be specified";
+        return;
+    }
+    String newValueString = newValue->toJSONString();
+
+    injectedScript.setVariableValue(errorString, m_currentCallStack, callFrameId, functionObjectId, scopeNumber, variableName, newValueString);
 }
 
 void InspectorDebuggerAgent::scriptExecutionBlockedByCSP(const String& directiveText)

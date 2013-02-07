@@ -116,6 +116,36 @@ void InjectedScript::restartFrame(ErrorString* errorString, const ScriptValue& c
     *errorString = "Internal error";
 }
 
+void InjectedScript::setVariableValue(ErrorString* errorString, const ScriptValue& callFrames, const String* callFrameIdOpt, const String* functionObjectIdOpt, int scopeNumber, const String& variableName, const String& newValueStr)
+{
+    ScriptFunctionCall function(injectedScriptObject(), "setVariableValue");
+    if (callFrameIdOpt) {
+        function.appendArgument(callFrames);
+        function.appendArgument(*callFrameIdOpt);
+    } else {
+        function.appendArgument(false);
+        function.appendArgument(false);
+    }
+    if (functionObjectIdOpt)
+        function.appendArgument(*functionObjectIdOpt);
+    else
+        function.appendArgument(false);
+    function.appendArgument(scopeNumber);
+    function.appendArgument(variableName);
+    function.appendArgument(newValueStr);
+    RefPtr<InspectorValue> resultValue;
+    makeCall(function, &resultValue);
+    if (!resultValue) {
+        *errorString = "Internal error";
+        return;
+    }
+    if (resultValue->type() == InspectorValue::TypeString) {
+        resultValue->asString(errorString);
+        return;
+    }
+    // Normal return.
+}
+
 void InjectedScript::getFunctionDetails(ErrorString* errorString, const String& functionId, RefPtr<FunctionDetails>* result)
 {
     ScriptFunctionCall function(injectedScriptObject(), "getFunctionDetails");

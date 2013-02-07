@@ -1,0 +1,9 @@
+Closure returns: {"type":"string","value":"ttttrue52013"}
+ (expected: 'ttttrue52013')
+Debugger.setVariableValue OK
+Closure returns: {"type":"string","value":"ttttrue42013"}
+ (expected: 'ttttrue42013')
+Expected error: {"code":-32000,"message":"Either call frame or function object must be specified"}
+Expected error
+Expected error
+

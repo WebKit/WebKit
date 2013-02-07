@@ -321,6 +321,19 @@ v8::Handle<v8::Value> V8InjectedScriptHost::evaluateCallback(const v8::Arguments
     return script->Run();
 }
 
+v8::Handle<v8::Value> V8InjectedScriptHost::setFunctionVariableValueCallback(const v8::Arguments& args)
+{
+    v8::Handle<v8::Value> functionValue = args[0];
+    int scopeIndex = args[1]->Int32Value();
+    String variableName = toWebCoreStringWithUndefinedOrNullCheck(args[2]);
+    v8::Handle<v8::Value> newValue = args[3];
+
+    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
+    ScriptDebugServer& debugServer = host->scriptDebugServer();
+    return debugServer.setFunctionVariableValue(functionValue, scopeIndex, variableName, newValue);
+}
+
+
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

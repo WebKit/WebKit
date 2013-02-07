@@ -134,6 +134,17 @@ v8::Handle<v8::Value> JavaScriptCallFrame::restart()
     return result;
 }
 
+v8::Handle<v8::Value> JavaScriptCallFrame::setVariableValue(int scopeNumber, const String& variableName, v8::Handle<v8::Value> newValue)
+{
+    v8::Handle<v8::Function> setVariableValueFunction = v8::Handle<v8::Function>::Cast(m_callFrame.get()->Get(v8::String::NewSymbol("setVariableValue")));
+    v8::Handle<v8::Value> argv[] = {
+        v8::Handle<v8::Value>(v8::Integer::New(scopeNumber)),
+        v8String(variableName, m_debuggerContext->GetIsolate()),
+        newValue
+    };
+    return setVariableValueFunction->Call(m_callFrame.get(), 3, argv);
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(JAVASCRIPT_DEBUGGER)

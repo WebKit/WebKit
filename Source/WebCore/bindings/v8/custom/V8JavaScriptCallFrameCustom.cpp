@@ -50,6 +50,15 @@ v8::Handle<v8::Value> V8JavaScriptCallFrame::restartCallback(const v8::Arguments
     return impl->restart();
 }
 
+v8::Handle<v8::Value> V8JavaScriptCallFrame::setVariableValueCallback(const v8::Arguments& args)
+{
+    JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(args.Holder());
+    int scopeIndex = args[0]->Int32Value();
+    String variableName = toWebCoreStringWithUndefinedOrNullCheck(args[1]);
+    v8::Handle<v8::Value> newValue = args[2];
+    return impl->setVariableValue(scopeIndex, variableName, newValue);
+}
+
 v8::Handle<v8::Value> V8JavaScriptCallFrame::scopeChainAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(info.Holder());
