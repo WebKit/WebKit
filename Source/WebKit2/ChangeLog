@@ -1,3 +1,16 @@
+2013-02-06  Enrica Casucci  <enrica@apple.com>
+
+        ASSERT(!m_findPageOverlay) in FindController.cpp after r140769.
+        https://bugs.webkit.org/show_bug.cgi?id=109105.
+
+        Reviewed by Tim Horton.
+
+        In r140769 we changed the way the overlay is destroyed,
+        therefore the assert is no longer valid and should be removed.
+
+        * WebProcess/WebPage/FindController.cpp:
+        (WebKit::FindController::updateFindUIAfterPageScroll):
+
 2013-02-06  Anders Carlsson  <andersca@apple.com>
 
         Dispatch storage manager messages to the storage work queue

@@ -164,9 +164,7 @@ void FindController::updateFindUIAfterPageScroll(bool found, const String& strin
         if (m_findPageOverlay) {
             // Get rid of the overlay.
             m_webPage->uninstallPageOverlay(m_findPageOverlay, true);
-        }
-        
-        ASSERT(!m_findPageOverlay);
+        }        
     } else {
         if (!m_findPageOverlay) {
             RefPtr<PageOverlay> findPageOverlay = PageOverlay::create(this);
