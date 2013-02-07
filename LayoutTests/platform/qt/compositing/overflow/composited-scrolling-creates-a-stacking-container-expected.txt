@@ -9,7 +9,7 @@
           (position 28.00 20.00)
           (bounds 202.00 202.00)
           (drawsContent 1)
-          (children 1
+          (children 4
             (GraphicsLayer
               (position 1.00 1.00)
               (bounds 200.00 200.00)
@@ -28,6 +28,21 @@
                   )
                 )
               )
+            )
+            (GraphicsLayer
+              (position 1.00 186.00)
+              (bounds 185.00 15.00)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 186.00 1.00)
+              (bounds 15.00 185.00)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 186.00 186.00)
+              (bounds 15.00 15.00)
+              (drawsContent 1)
             )
           )
         )
