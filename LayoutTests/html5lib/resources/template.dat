@@ -955,3 +955,31 @@
 |         <menu>
 |           <i>
 |             "Foo"
+
+#data
+<body><template></div><div>Foo</div><template></template><tr></tr>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <template>
+|       #document-fragment
+|         <div>
+|           "Foo"
+|         <template>
+|           #document-fragment
+
+#data
+<body><div><template></div><tr><td>Foo</td></tr></template>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <div>
+|       <template>
+|         #document-fragment
+|           <tr>
+|             <td>
+|               "Foo"

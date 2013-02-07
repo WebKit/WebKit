@@ -2278,8 +2278,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
             processTemplateEndTag(token);
             return;
         }
-        setInsertionMode(InBodyMode);
-        processEndTag(token);
+
+        break;
 #else
         ASSERT_NOT_REACHED();
 #endif
