@@ -628,13 +628,13 @@ WebInspector.MemoryBlockViewProperties._initialize = function()
     addBlock("hsl(  0,  0%,  60%)", "ProcessPrivateMemory", "Total");
     addBlock("hsl(  0,  0%,  80%)", "OwnersTypePlaceholder", "OwnersTypePlaceholder");
     addBlock("hsl(  0,  0%,  60%)", "Other", "Other");
-    addBlock("hsl(220, 80%,  70%)", "Image", "Images");
+    addBlock("hsl(220, 80%,  70%)", "Page", "Page structures");
     addBlock("hsl(100, 60%,  50%)", "JSHeap", "JavaScript heap");
     addBlock("hsl( 90, 40%,  80%)", "JSExternalResources", "JavaScript external resources");
-    addBlock("hsl( 90, 60%,  80%)", "CSS", "CSS");
-    addBlock("hsl(  0, 50%,  60%)", "DOM", "DOM");
+    addBlock("hsl( 90, 60%,  80%)", "JSExternalArrays", "JavaScript external arrays");
+    addBlock("hsl( 90, 60%,  80%)", "JSExternalStrings", "JavaScript external strings");
     addBlock("hsl(  0, 80%,  60%)", "WebInspector", "Inspector data");
-    addBlock("hsl( 36, 90%,  50%)", "Resources", "Resources");
+    addBlock("hsl( 36, 90%,  50%)", "MemoryCache", "Memory cache resources");
     addBlock("hsl( 40, 80%,  80%)", "GlyphCache", "Glyph cache resources");
     addBlock("hsl( 35, 80%,  80%)", "DOMStorageCache", "DOM storage cache");
     addBlock("hsl( 60, 80%,  60%)", "RenderTree", "Render tree");

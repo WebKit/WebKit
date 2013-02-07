@@ -36,43 +36,43 @@
 
 namespace WebCore {
 
-MemoryObjectType WebCoreMemoryTypes::Page = "DOM";
-MemoryObjectType WebCoreMemoryTypes::DOM = "DOM";
-MemoryObjectType WebCoreMemoryTypes::CSS = "CSS";
-MemoryObjectType WebCoreMemoryTypes::Binding = "DOM";
-MemoryObjectType WebCoreMemoryTypes::RenderingStructures = "Rendering";
+MemoryObjectType WebCoreMemoryTypes::Page = "Page";
+MemoryObjectType WebCoreMemoryTypes::DOM = "Page.DOM";
+MemoryObjectType WebCoreMemoryTypes::CSS = "Page.CSS";
+MemoryObjectType WebCoreMemoryTypes::Binding = "Page.Binding";
+MemoryObjectType WebCoreMemoryTypes::RenderingStructures = "Page.Rendering.Structures";
 
-MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResource = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceRaw = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceCSS = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceFont = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceImage = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceScript = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceSVG = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "Resources";
-MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "Resources";
+MemoryObjectType WebCoreMemoryTypes::MemoryCacheStructures = "MemoryCache.InternalStructures";
+MemoryObjectType WebCoreMemoryTypes::CachedResource = "MemoryCache.Resource";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceRaw = "MemoryCache.RawResource";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceCSS = "MemoryCache.CSS";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceFont = "MemoryCache.Font";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceImage = "MemoryCache.Image";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceScript = "MemoryCache.Script";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceSVG = "MemoryCache.SVG";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceShader = "MemoryCache.Shader";
+MemoryObjectType WebCoreMemoryTypes::CachedResourceXSLT = "MemoryCache.XSLT";
 
-MemoryObjectType WebCoreMemoryTypes::ExternalStrings = "JSExternalResources";
-MemoryObjectType WebCoreMemoryTypes::ExternalArrays = "JSExternalResources";
+MemoryObjectType WebCoreMemoryTypes::ExternalStrings = "JSExternalResources.Strings";
+MemoryObjectType WebCoreMemoryTypes::ExternalArrays = "JSExternalResources.Arrays";
 
 MemoryObjectType WebCoreMemoryTypes::Inspector = "WebInspector";
-MemoryObjectType WebCoreMemoryTypes::InspectorController = "WebInspector";
-MemoryObjectType WebCoreMemoryTypes::InspectorMemoryAgent = "WebInspector";
-MemoryObjectType WebCoreMemoryTypes::InspectorDOMStorageAgent = "WebInspector";
-MemoryObjectType WebCoreMemoryTypes::InspectorDOMStorageResources = "WebInspector";
-MemoryObjectType WebCoreMemoryTypes::InspectorOverlay = "WebInspector";
-MemoryObjectType WebCoreMemoryTypes::InspectorProfilerAgent = "WebInspector";
-MemoryObjectType WebCoreMemoryTypes::InspectorDebuggerAgent = "WebInspector";
-MemoryObjectType WebCoreMemoryTypes::InspectorResourceAgent = "WebInspector";
+MemoryObjectType WebCoreMemoryTypes::InspectorController = "WebInspector.Controller";
+MemoryObjectType WebCoreMemoryTypes::InspectorMemoryAgent = "WebInspector.MemoryAgent";
+MemoryObjectType WebCoreMemoryTypes::InspectorDOMStorageAgent = "WebInspector.DOMStorageAgent";
+MemoryObjectType WebCoreMemoryTypes::InspectorDOMStorageResources = "WebInspector.DOMStorageAgent.Resources";
+MemoryObjectType WebCoreMemoryTypes::InspectorOverlay = "WebInspector.Overlay";
+MemoryObjectType WebCoreMemoryTypes::InspectorProfilerAgent = "WebInspector.ProfilerAgent";
+MemoryObjectType WebCoreMemoryTypes::InspectorDebuggerAgent = "WebInspector.DebuggerAgent";
+MemoryObjectType WebCoreMemoryTypes::InspectorResourceAgent = "WebInspector.ResourceAgent";
 
 MemoryObjectType WebCoreMemoryTypes::JSHeapUsed = "JSHeap.Used";
 MemoryObjectType WebCoreMemoryTypes::JSHeapUnused = "JSHeap.Unused";
 
 MemoryObjectType WebCoreMemoryTypes::DOMStorageCache = "DOMStorageCache";
 
-MemoryObjectType WebCoreMemoryTypes::RenderTreeUsed = "RenderTree";
-MemoryObjectType WebCoreMemoryTypes::RenderTreeUnused = "RenderTree";
+MemoryObjectType WebCoreMemoryTypes::RenderTreeUsed = "RenderTree.Used";
+MemoryObjectType WebCoreMemoryTypes::RenderTreeUnused = "RenderTree.Unused";
 
 MemoryObjectType WebCoreMemoryTypes::ProcessPrivateMemory = "ProcessPrivateMemory";
 
