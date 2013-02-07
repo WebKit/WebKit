@@ -1,5 +1,13 @@
 2013-02-07  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Unreviewed warning fix.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (BuildAndTestFactory.__init__):
+        (DownloadAndPerfTestWebKit2Factory.__init__):
+
+2013-02-07  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed typo fix after r142121.
 
         * BuildSlaveSupport/build.webkit.org-config/config.json:
