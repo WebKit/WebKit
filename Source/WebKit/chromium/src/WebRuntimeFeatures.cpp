@@ -42,6 +42,20 @@ using namespace WebCore;
 
 namespace WebKit {
 
+// FIXME: Remove native validation message things when we finish implementations
+// of all platforms.
+static bool nativeValidationMessageEnabled = false;
+
+void WebRuntimeFeatures::enableNativeValidationMessage(bool enable)
+{
+    nativeValidationMessageEnabled = enable;
+}
+
+bool WebRuntimeFeatures::isNativeValidationMessageEnabled()
+{
+    return nativeValidationMessageEnabled;
+}
+
 void WebRuntimeFeatures::enableDatabase(bool enable)
 {
 #if ENABLE(SQL_DATABASE)

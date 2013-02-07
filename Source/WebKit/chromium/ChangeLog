@@ -1,3 +1,21 @@
+2013-02-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Add a flag to enable native form validation message
+        https://bugs.webkit.org/show_bug.cgi?id=109134
+
+        Reviewed by Adam Barth.
+
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures): Add enableNativeValidationMessage and
+        isNativeValidationMessageEnabled.
+        * src/WebRuntimeFeatures.cpp:
+        (WebKit): Add nativeValidationMessageEnabled.
+        (WebKit::WebRuntimeFeatures::enableNativeValidationMessage): Added.
+        (WebKit::WebRuntimeFeatures::isNativeValidationMessageEnabled): Addedd.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        Fill Page::PageClients::validationMessageClient if the flag is true.
+
 2013-02-07  Eberhard Graether  <egraether@google.com>
 
         Web Inspector: Add settings checkbox for composited layer borders
