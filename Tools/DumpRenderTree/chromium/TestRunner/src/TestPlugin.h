@@ -28,9 +28,10 @@
 
 #include "WebPlugin.h"
 #include "WebPluginContainer.h"
+#include <memory>
 #include <public/WebExternalTextureLayer.h>
 #include <public/WebExternalTextureLayerClient.h>
-#include <wtf/OwnPtr.h>
+#include <string>
 
 namespace WebTestRunner {
 
@@ -124,8 +125,8 @@ private:
     bool initProgram();
     bool initPrimitive();
     void drawPrimitive();
-    unsigned loadShader(unsigned type, const WTF::CString& source);
-    unsigned loadProgram(const WTF::CString& vertexSource, const WTF::CString& fragmentSource);
+    unsigned loadShader(unsigned type, const std::string& source);
+    unsigned loadProgram(const std::string& vertexSource, const std::string& fragmentSource);
 
     WebKit::WebFrame* m_frame;
     WebTestDelegate* m_delegate;
@@ -136,7 +137,7 @@ private:
     unsigned m_colorTexture;
     unsigned m_framebuffer;
     Scene m_scene;
-    OwnPtr<WebKit::WebExternalTextureLayer> m_layer;
+    std::auto_ptr<WebKit::WebExternalTextureLayer> m_layer;
 
     WebKit::WebPluginContainer::TouchEventRequestType m_touchEventRequest;
     // Requests touch events from the WebPluginContainerImpl multiple times to tickle webkit.org/b/108381

@@ -55,12 +55,12 @@
 #include "WebView.h"
 #include "WebWorkerInfo.h"
 #include "v8/include/v8.h"
+#include <limits>
+#include <memory>
 #include <public/WebData.h>
 #include <public/WebPoint.h>
-#include <wtf/OwnArrayPtr.h>
-#include <wtf/text/WTFString.h>
 
-#if OS(LINUX) || OS(ANDROID)
+#if defined(__linux__) || defined(ANDROID)
 #include "linux/WebFontRendering.h"
 #endif
 
@@ -83,22 +83,20 @@ public:
 
 class InvokeCallbackTask : public WebMethodTask<TestRunner> {
 public:
-    InvokeCallbackTask(TestRunner* object, PassOwnArrayPtr<CppVariant> callbackArguments, uint32_t numberOfArguments)
+    InvokeCallbackTask(TestRunner* object, auto_ptr<CppVariant> callbackArguments)
         : WebMethodTask<TestRunner>(object)
         , m_callbackArguments(callbackArguments)
-        , m_numberOfArguments(numberOfArguments)
     {
     }
 
     virtual void runIfValid()
     {
         CppVariant invokeResult;
-        m_callbackArguments[0].invokeDefault(m_callbackArguments.get(), m_numberOfArguments, invokeResult);
+        m_callbackArguments->invokeDefault(m_callbackArguments.get(), 1, invokeResult);
     }
 
 private:
-    OwnArrayPtr<CppVariant> m_callbackArguments;
-    uint32_t m_numberOfArguments;
+    auto_ptr<CppVariant> m_callbackArguments;
 };
 
 }
@@ -113,7 +111,7 @@ void TestRunner::WorkQueue::processWorkSoon()
     if (m_controller->topLoadingFrame())
         return;
 
-    if (!m_queue.isEmpty()) {
+    if (!m_queue.empty()) {
         // We delay processing queued work to avoid recursion problems.
         m_controller->m_delegate->postTask(new WorkQueueTask(this));
     } else if (!m_controller->m_waitUntilDone)
@@ -123,9 +121,10 @@ void TestRunner::WorkQueue::processWorkSoon()
 void TestRunner::WorkQueue::processWork()
 {
     // Quit doing work once a load is in progress.
-    while (!m_queue.isEmpty()) {
-        bool startedLoad = m_queue.first()->run(m_controller->m_delegate, m_controller->m_webView);
-        delete m_queue.takeFirst();
+    while (!m_queue.empty()) {
+        bool startedLoad = m_queue.front()->run(m_controller->m_delegate, m_controller->m_webView);
+        delete m_queue.front();
+        m_queue.pop_front();
         if (startedLoad)
             return;
     }
@@ -137,8 +136,10 @@ void TestRunner::WorkQueue::processWork()
 void TestRunner::WorkQueue::reset()
 {
     m_frozen = false;
-    while (!m_queue.isEmpty())
-        delete m_queue.takeFirst();
+    while (!m_queue.empty()) {
+        delete m_queue.front();
+        m_queue.pop_front();
+    }
 }
 
 void TestRunner::WorkQueue::addWork(WorkItem* work)
@@ -147,7 +148,7 @@ void TestRunner::WorkQueue::addWork(WorkItem* work)
         delete work;
         return;
     }
-    m_queue.append(work);
+    m_queue.push_back(work);
 }
 
 
@@ -156,8 +157,8 @@ TestRunner::TestRunner()
     , m_workQueue(this)
     , m_delegate(0)
     , m_webView(0)
-    , m_intentClient(adoptPtr(new EmptyWebDeliveredIntentClient))
-    , m_webPermissions(adoptPtr(new WebPermissions))
+    , m_intentClient(new EmptyWebDeliveredIntentClient)
+    , m_webPermissions(new WebPermissions)
 {
     // Initialize the map that associates methods of this class with the names
     // they will use when called by JavaScript. The actual binding of those
@@ -215,13 +216,11 @@ TestRunner::TestRunner()
     bindMethod("setSmartInsertDeleteEnabled", &TestRunner::setSmartInsertDeleteEnabled);
     bindMethod("setSelectTrailingWhitespaceEnabled", &TestRunner::setSelectTrailingWhitespaceEnabled);
     bindMethod("setMockDeviceOrientation", &TestRunner::setMockDeviceOrientation);
-#if ENABLE(POINTER_LOCK)
     bindMethod("didAcquirePointerLock", &TestRunner::didAcquirePointerLock);
     bindMethod("didLosePointerLock", &TestRunner::didLosePointerLock);
     bindMethod("didNotAcquirePointerLock", &TestRunner::didNotAcquirePointerLock);
     bindMethod("setPointerLockWillRespondAsynchronously", &TestRunner::setPointerLockWillRespondAsynchronously);
     bindMethod("setPointerLockWillFailSynchronously", &TestRunner::setPointerLockWillFailSynchronously);
-#endif
 
     // The following modify WebPreferences.
     bindMethod("setUserStyleSheetEnabled", &TestRunner::setUserStyleSheetEnabled);
@@ -273,8 +272,8 @@ TestRunner::TestRunner()
     bindMethod("setWillSendRequestReturnsNull", &TestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &TestRunner::setWillSendRequestReturnsNullOnRedirect);
 
-#if ENABLE(WEB_INTENTS)
     // The following methods interact with the WebTestProxy.
+#if ENABLE_WEB_INTENTS
     bindMethod("sendWebIntentResponse", &TestRunner::sendWebIntentResponse);
     bindMethod("deliverWebIntent", &TestRunner::deliverWebIntent);
 #endif
@@ -294,19 +293,13 @@ TestRunner::TestRunner()
     bindMethod("setGeolocationPermission", &TestRunner::setGeolocationPermission);
     bindMethod("setMockGeolocationPositionUnavailableError", &TestRunner::setMockGeolocationPositionUnavailableError);
     bindMethod("setMockGeolocationPosition", &TestRunner::setMockGeolocationPosition);
-#if ENABLE(NOTIFICATIONS)
     bindMethod("grantWebNotificationPermission", &TestRunner::grantWebNotificationPermission);
     bindMethod("simulateLegacyWebNotificationClick", &TestRunner::simulateLegacyWebNotificationClick);
-#endif
-#if ENABLE(INPUT_SPEECH)
     bindMethod("addMockSpeechInputResult", &TestRunner::addMockSpeechInputResult);
     bindMethod("setMockSpeechInputDumpRect", &TestRunner::setMockSpeechInputDumpRect);
-#endif
-#if ENABLE(SCRIPTED_SPEECH)
     bindMethod("addMockSpeechRecognitionResult", &TestRunner::addMockSpeechRecognitionResult);
     bindMethod("setMockSpeechRecognitionError", &TestRunner::setMockSpeechRecognitionError);
     bindMethod("wasMockSpeechRecognitionAborted", &TestRunner::wasMockSpeechRecognitionAborted);
-#endif
     bindMethod("display", &TestRunner::display);
     bindMethod("displayInvalidatedRegion", &TestRunner::displayInvalidatedRegion);
 
@@ -321,11 +314,9 @@ TestRunner::TestRunner()
 
     // The following are stubs.
     bindMethod("dumpDatabaseCallbacks", &TestRunner::notImplemented);
-#if ENABLE(NOTIFICATIONS)
     bindMethod("denyWebNotificationPermission", &TestRunner::notImplemented);
     bindMethod("removeAllWebNotificationPermissions", &TestRunner::notImplemented);
     bindMethod("simulateWebNotificationClick", &TestRunner::notImplemented);
-#endif
     bindMethod("setIconDatabaseEnabled", &TestRunner::notImplemented);
     bindMethod("setScrollbarPolicy", &TestRunner::notImplemented);
     bindMethod("clearAllApplicationCaches", &TestRunner::notImplemented);
@@ -366,7 +357,7 @@ void TestRunner::reset()
     if (m_webView) {
         m_webView->setZoomLevel(false, 0);
         m_webView->setTabKeyCyclesThroughElements(true);
-#if !OS(DARWIN) && !OS(WINDOWS) // Actually, TOOLKIT_GTK
+#if !defined(__APPLE__) && !defined(WIN32) // Actually, TOOLKIT_GTK
         // (Constants copied because we can't depend on the header that defined
         // them from this file.)
         m_webView->setSelectionColors(0xff1e90ff, 0xff000000, 0xffc8c8c8, 0xff323232);
@@ -381,7 +372,7 @@ void TestRunner::reset()
     m_policyDelegateShouldNotifyDone = false;
 
     WebSecurityPolicy::resetOriginAccessWhitelists();
-#if OS(LINUX) || OS(ANDROID)
+#if defined(__linux__) || defined(ANDROID)
     WebFontRendering::setSubpixelPositioning(false);
 #endif
 
@@ -420,7 +411,7 @@ void TestRunner::reset()
     m_shouldBlockRedirects = false;
     m_willSendRequestShouldReturnNull = false;
     m_smartInsertDeleteEnabled = true;
-#if OS(WINDOWS)
+#ifdef WIN32
     m_selectTrailingWhitespaceEnabled = true;
 #else
     m_selectTrailingWhitespaceEnabled = false;
@@ -636,7 +627,7 @@ WebFrame* TestRunner::topLoadingFrame() const
 
 void TestRunner::policyDelegateDone()
 {
-    ASSERT(m_waitUntilDone);
+    WEBKIT_ASSERT(m_waitUntilDone);
     m_delegate->testFinished();
     m_waitUntilDone = false;
 }
@@ -1331,7 +1322,7 @@ void TestRunner::findString(const CppArgumentList& arguments, CppVariant* result
     WebFindOptions findOptions;
     bool wrapAround = false;
     if (arguments.size() >= 2) {
-        Vector<std::string> optionsArray = arguments[1].toStringVector();
+        vector<string> optionsArray = arguments[1].toStringVector();
         findOptions.matchCase = true;
 
         for (size_t i = 0; i < optionsArray.size(); ++i) {
@@ -1411,7 +1402,7 @@ void TestRunner::selectionAsMarkup(const CppArgumentList& arguments, CppVariant*
 
 void TestRunner::setTextSubpixelPositioning(const CppArgumentList& arguments, CppVariant* result)
 {
-#if OS(LINUX) || OS(ANDROID)
+#if defined(__linux__) || defined(ANDROID)
     // Since FontConfig doesn't provide a variable to control subpixel positioning, we'll fall back
     // to setting it globally for all fonts.
     if (arguments.size() > 0 && arguments[0].isBool())
@@ -1680,7 +1671,7 @@ void TestRunner::overridePreference(const CppArgumentList& arguments, CppVariant
     else if (key == "WebKitShouldRespectImageOrientation")
         prefs->shouldRespectImageOrientation = cppVariantToBool(value);
     else if (key == "WebKitWebAudioEnabled")
-        ASSERT(cppVariantToBool(value));
+        WEBKIT_ASSERT(cppVariantToBool(value));
     else {
         string message("Invalid name for preference: ");
         message.append(key);
@@ -1725,7 +1716,7 @@ void TestRunner::setTouchDragDropEnabled(const CppArgumentList& arguments, CppVa
     result->setNull();
 }
 
-#if ENABLE(WEB_INTENTS)
+#if ENABLE_WEB_INTENTS
 void TestRunner::sendWebIntentResponse(const CppArgumentList& arguments, CppVariant* result)
 {
     v8::HandleScope scope;
@@ -1833,10 +1824,10 @@ void TestRunner::setBackingScaleFactor(const CppArgumentList& arguments, CppVari
     float value = arguments[0].value.doubleValue;
     m_delegate->setDeviceScaleFactor(value);
 
-    OwnArrayPtr<CppVariant> callbackArguments = adoptArrayPtr(new CppVariant[1]);
-    callbackArguments[0].set(arguments[1]);
+    auto_ptr<CppVariant> callbackArguments(new CppVariant());
+    callbackArguments->set(arguments[1]);
     result->setNull();
-    m_delegate->postTask(new InvokeCallbackTask(this, callbackArguments.release(), 1));
+    m_delegate->postTask(new InvokeCallbackTask(this, callbackArguments));
 }
 
 void TestRunner::setPOSIXLocale(const CppArgumentList& arguments, CppVariant* result)
@@ -1877,7 +1868,6 @@ void TestRunner::setMockGeolocationPositionUnavailableError(const CppArgumentLis
     m_delegate->setMockGeolocationPositionUnavailableError(arguments[0].toString());
 }
 
-#if ENABLE(NOTIFICATIONS)
 void TestRunner::grantWebNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 1 || !arguments[0].isString()) {
@@ -1896,9 +1886,7 @@ void TestRunner::simulateLegacyWebNotificationClick(const CppArgumentList& argum
     }
     result->set(m_delegate->simulateLegacyWebNotificationClick(arguments[0].toString()));
 }
-#endif
 
-#if ENABLE(INPUT_SPEECH)
 void TestRunner::addMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1916,9 +1904,7 @@ void TestRunner::setMockSpeechInputDumpRect(const CppArgumentList& arguments, Cp
 
     m_delegate->setMockSpeechInputDumpRect(arguments[0].toBoolean());
 }
-#endif
 
-#if ENABLE(SCRIPTED_SPEECH)
 void TestRunner::addMockSpeechRecognitionResult(const CppArgumentList& arguments, CppVariant* result)
 {
     result->setNull();
@@ -1941,7 +1927,6 @@ void TestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVari
 {
     result->set(m_delegate->wasMockSpeechRecognitionAborted());
 }
-#endif
 
 void TestRunner::display(const CppArgumentList& arguments, CppVariant* result)
 {
@@ -2121,7 +2106,6 @@ void TestRunner::notImplemented(const CppArgumentList&, CppVariant* result)
     result->setNull();
 }
 
-#if ENABLE(POINTER_LOCK)
 void TestRunner::didAcquirePointerLock(const CppArgumentList&, CppVariant* result)
 {
     m_delegate->didAcquirePointerLock();
@@ -2151,6 +2135,5 @@ void TestRunner::setPointerLockWillFailSynchronously(const CppArgumentList&, Cpp
     m_delegate->setPointerLockWillFailSynchronously();
     result->setNull();
 }
-#endif
 
 }

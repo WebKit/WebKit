@@ -1,3 +1,151 @@
+2013-02-07  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] turn TestRunner library into a component build
+        https://bugs.webkit.org/show_bug.cgi?id=108466
+
+        Reviewed by Adam Barth.
+
+        To achieve this, we need to drop all dependencies on WTF.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebPreferences.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTask.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestCommon.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h.
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.cpp:
+        (WebTestRunner::AccessibilityUIElement::AccessibilityUIElement):
+        (WebTestRunner::AccessibilityUIElementList::getOrCreate):
+        (WebTestRunner::AccessibilityUIElementList::createRoot):
+        * DumpRenderTree/chromium/TestRunner/src/AccessibilityUIElementChromium.h:
+        (AccessibilityUIElementList):
+        * DumpRenderTree/chromium/TestRunner/src/CppBoundClass.cpp:
+        (WebTestRunner::CppBoundClass::~CppBoundClass):
+        (WebTestRunner::CppBoundClass::invoke):
+        (WebTestRunner::CppBoundClass::getProperty):
+        (WebTestRunner::CppBoundClass::setProperty):
+        (WebTestRunner::CppBoundClass::bindCallback):
+        (WebTestRunner::CppBoundClass::bindGetterCallback):
+        (WebTestRunner::CppBoundClass::bindProperty):
+        (WebTestRunner::CppBoundClass::getAsCppVariant):
+        * DumpRenderTree/chromium/TestRunner/src/CppBoundClass.h:
+        (WebTestRunner):
+        (CppBoundClass):
+        (WebTestRunner::CppBoundClass::bindProperty):
+        (WebTestRunner::CppBoundClass::bindFallbackCallback):
+        (WebTestRunner::CppBoundClass::bindFallbackMethod):
+        * DumpRenderTree/chromium/TestRunner/src/CppVariant.cpp:
+        (WebTestRunner::CppVariant::toString):
+        (WebTestRunner::CppVariant::toInt32):
+        (WebTestRunner::CppVariant::toDouble):
+        (WebTestRunner::CppVariant::toBoolean):
+        (WebTestRunner::CppVariant::toStringVector):
+        (WebTestRunner::CppVariant::invoke):
+        (WebTestRunner::CppVariant::invokeDefault):
+        * DumpRenderTree/chromium/TestRunner/src/CppVariant.h:
+        (CppVariant):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::EventSender):
+        (WebTestRunner::EventSender::reset):
+        (WebTestRunner::EventSender::mouseDown):
+        (WebTestRunner::EventSender::mouseUp):
+        (WebTestRunner::EventSender::mouseMoveTo):
+        (WebTestRunner::EventSender::keyDown):
+        (WebTestRunner::EventSender::dispatchMessage):
+        (WebTestRunner::EventSender::leapForward):
+        (WebTestRunner::EventSender::replaySavedEvents):
+        (WebTestRunner::makeMenuItemStringsFor):
+        (WebTestRunner::EventSender::contextClick):
+        (WebTestRunner::EventSender::beginDragWithFiles):
+        (WebTestRunner::EventSender::addTouchPoint):
+        (WebTestRunner::EventSender::releaseTouchPoint):
+        (WebTestRunner::EventSender::updateTouchPoint):
+        (WebTestRunner::EventSender::cancelTouchPoint):
+        (WebTestRunner::EventSender::sendCurrentTouchEvent):
+        (WebTestRunner::EventSender::gestureEvent):
+        * DumpRenderTree/chromium/TestRunner/src/KeyCodeMapping.cpp:
+        (WebTestRunner::NativeKeyCodeForWindowsKeyCode):
+        * DumpRenderTree/chromium/TestRunner/src/MockGrammarCheck.cpp:
+        (WebTestRunner::MockGrammarCheck::checkGrammarOfString):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/MockGrammarCheck.h:
+        (WebTestRunner):
+        (MockGrammarCheck):
+        * DumpRenderTree/chromium/TestRunner/src/MockSpellCheck.cpp:
+        (WebTestRunner::MockSpellCheck::spellCheckWord):
+        (WebTestRunner::MockSpellCheck::initializeIfNeeded):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/MockSpellCheck.h:
+        (MockSpellCheck):
+        * DumpRenderTree/chromium/TestRunner/src/SpellCheckClient.cpp:
+        (WebTestRunner::SpellCheckClient::checkTextOfParagraph):
+        (WebTestRunner::SpellCheckClient::finishLastTextCheck):
+        * DumpRenderTree/chromium/TestRunner/src/TestCommon.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h.
+        (isASCIIAlpha):
+        (isNotASCIIAlpha):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h:
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/TestPlugin.cpp:
+        (WebTestRunner::TestPlugin::TestPlugin):
+        (WebTestRunner::TestPlugin::initialize):
+        (WebTestRunner::TestPlugin::destroy):
+        (WebTestRunner::TestPlugin::parsePrimitive):
+        (WebTestRunner::TestPlugin::parseColor):
+        (WebTestRunner::TestPlugin::initProgram):
+        (WebTestRunner::TestPlugin::initPrimitive):
+        (WebTestRunner::TestPlugin::drawPrimitive):
+        (WebTestRunner::TestPlugin::loadShader):
+        (WebTestRunner::TestPlugin::loadProgram):
+        (WebTestRunner::TestPlugin::handleDragStatusUpdate):
+        * DumpRenderTree/chromium/TestRunner/src/TestPlugin.h:
+        (TestPlugin):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::WorkQueue::processWorkSoon):
+        (WebTestRunner::TestRunner::WorkQueue::processWork):
+        (WebTestRunner::TestRunner::WorkQueue::reset):
+        (WebTestRunner::TestRunner::WorkQueue::addWork):
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::policyDelegateDone):
+        (WebTestRunner::TestRunner::findString):
+        (WebTestRunner::TestRunner::setTextSubpixelPositioning):
+        (WebTestRunner::TestRunner::overridePreference):
+        (WebTestRunner::TestRunner::deliverWebIntent):
+        (WebTestRunner::TestRunner::setBackingScaleFactor):
+        (WebTestRunner::TestRunner::simulateLegacyWebNotificationClick):
+        (WebTestRunner::TestRunner::setMockSpeechInputDumpRect):
+        (WebTestRunner::TestRunner::wasMockSpeechRecognitionAborted):
+        (WebTestRunner::TestRunner::setPointerLockWillFailSynchronously):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (WebTestRunner::TestRunner::WorkQueue::isEmpty):
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TextInputController.cpp:
+        (WebTestRunner::TextInputController::markedRange):
+        (WebTestRunner::TextInputController::selectedRange):
+        (WebTestRunner::TextInputController::firstRectForCharacterRange):
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp:
+        (WebTestRunner::WebPreferences::reset):
+        * DumpRenderTree/chromium/TestRunner/src/WebTask.cpp:
+        (WebTestRunner::WebTaskList::~WebTaskList):
+        (WebTestRunner::WebTaskList::registerTask):
+        (WebTestRunner::WebTaskList::unregisterTask):
+        (WebTestRunner::WebTaskList::revokeAll):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestRunner::WebTestInterfaces::WebTestInterfaces):
+        (WebTestRunner::WebTestInterfaces::~WebTestInterfaces):
+        (WebTestRunner::WebTestInterfaces::testInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::~WebTestProxyBase):
+        (WebTestRunner::WebTestProxyBase::spellCheckClient):
+        (WebTestRunner::WebTestProxyBase::registerIntentService):
+        (WebTestRunner::WebTestProxyBase::dispatchIntent):
+        (WebTestRunner::WebTestProxyBase::assignIdentifierToRequest):
+        * DumpRenderTree/chromium/TestRunner/src/config.h: Copied from Tools/DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h.
+
 2013-02-07  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Use GNU ar's thin archive format for intermediate static libs
