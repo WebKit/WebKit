@@ -68,7 +68,49 @@ template<> struct SequenceMemoryInstrumentationTraits<WebCore::CachedResourceCli
 using namespace WTF;
 
 namespace WebCore {
-    
+
+// These response headers are not copied from a revalidated response to the
+// cached response headers. For compatibility, this list is based on Chromium's
+// net/http/http_response_headers.cc.
+const char* const headersToIgnoreAfterRevalidation[] = {
+    "allow",
+    "connection",
+    "etag",
+    "expires",
+    "keep-alive",
+    "last-modified"
+    "proxy-authenticate",
+    "proxy-connection",
+    "trailer",
+    "transfer-encoding",
+    "upgrade",
+    "www-authenticate",
+    "x-frame-options",
+    "x-xss-protection",
+};
+
+// Some header prefixes mean "Don't copy this header from a 304 response.".
+// Rather than listing all the relevant headers, we can consolidate them into
+// this list, also grabbed from Chromium's net/http/http_response_headers.cc.
+const char* const headerPrefixesToIgnoreAfterRevalidation[] = {
+    "content-",
+    "x-content-",
+    "x-webkit-"
+};
+
+static inline bool shouldUpdateHeaderAfterRevalidation(const AtomicString& header)
+{
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(headersToIgnoreAfterRevalidation); i++) {
+        if (header == headersToIgnoreAfterRevalidation[i])
+            return false;
+    }
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(headerPrefixesToIgnoreAfterRevalidation); i++) {
+        if (header.startsWith(headerPrefixesToIgnoreAfterRevalidation[i]))
+            return false;
+    }
+    return true;
+}
+
 static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type type)
 {
     switch (type) {
@@ -728,19 +770,22 @@ void CachedResource::switchClientsToRevalidatedResource()
     }
     m_switchingClientsToRevalidatedResource = false;
 }
-    
+
 void CachedResource::updateResponseAfterRevalidation(const ResourceResponse& validatingResponse)
 {
     m_responseTimestamp = currentTime();
 
-    DEFINE_STATIC_LOCAL(const AtomicString, contentHeaderPrefix, ("content-", AtomicString::ConstructFromLiteral));
     // RFC2616 10.3.5
     // Update cached headers from the 304 response
     const HTTPHeaderMap& newHeaders = validatingResponse.httpHeaderFields();
     HTTPHeaderMap::const_iterator end = newHeaders.end();
     for (HTTPHeaderMap::const_iterator it = newHeaders.begin(); it != end; ++it) {
-        // Don't allow 304 response to update content headers, these can't change but some servers send wrong values.
-        if (it->key.startsWith(contentHeaderPrefix, false))
+        // Entity headers should not be sent by servers when generating a 304
+        // response; misconfigured servers send them anyway. We shouldn't allow
+        // such headers to update the original request. We'll base this on the
+        // list defined by RFC2616 7.1, with a few additions for extension headers
+        // we care about.
+        if (!shouldUpdateHeaderAfterRevalidation(it->key))
             continue;
         m_response.setHTTPHeaderField(it->key, it->value);
     }
