@@ -24,7 +24,6 @@
  */
 
 #import <JavaScriptCore/JavaScriptCore.h>
-#import <wtf/RetainPtr.h>
 
 #if JS_OBJC_API_ENABLED
 

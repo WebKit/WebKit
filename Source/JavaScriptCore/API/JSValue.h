@@ -155,7 +155,7 @@ NS_CLASS_AVAILABLE(10_9, NA)
 - (BOOL)hasProperty:(NSString *)property;
 // This method may be used to create a data or accessor property on an object;
 // this method operates in accordance with the Object.defineProperty method in
-// the JavaScript langauage.
+// the JavaScript language.
 - (void)defineProperty:(NSString *)property descriptor:(id)descriptor;
 
 // Access an indexed property from the value. This method will return the
@@ -180,13 +180,13 @@ NS_CLASS_AVAILABLE(10_9, NA)
 // This method has the same function as the JavaScript operator "instanceof".
 - (BOOL)isInstanceOf:(id)value;
 
-// Call this value as a function passing the specified "this" value and arguments.
+// Call this value as a function passing the specified arguments.
 - (JSValue *)callWithArguments:(NSArray *)arguments;
 // Call this value as a constructor passing the specified arguments.
 - (JSValue *)constructWithArguments:(NSArray *)arguments;
 // Access the property named "method" from this value; call the value resulting
 // from the property access as a function, passing this value as the "this"
-// value, and the specified agruments.
+// value, and the specified arguments.
 - (JSValue *)invokeMethod:(NSString *)method withArguments:(NSArray *)arguments;
 
 // The JSContext that this value originates from.
@@ -195,8 +195,8 @@ NS_CLASS_AVAILABLE(10_9, NA)
 @end
 
 // Objective-C methods exported to JavaScript may have argument and/or return
-// values of struct types if the struct if conversion to and from the struct
-// is supported by JSValue. Support is provided for any types where JSValue
+// values of struct types, provided that conversion to and from the struct is
+// supported by JSValue. Support is provided for any types where JSValue
 // contains both a class method "valueWith<Type>:inContext:", and and instance
 // method "to<Type>" - where the string "<Type>" in these selector names match,
 // with the first argument to the former being of the same struct type as the
@@ -226,7 +226,7 @@ NS_CLASS_AVAILABLE(10_9, NA)
 // Convert a value to type CGRect by reading properties named "x", "y", "width",
 // and "height" from this value, and converting the results to double.
 - (CGRect)toRect;
-// Convert a value to type CGRange by accessing properties named "width" and
+// Convert a value to type CGSize by accessing properties named "width" and
 // "height" from this value converting the results to double.
 - (CGSize)toSize;
 
@@ -241,7 +241,7 @@ NS_CLASS_AVAILABLE(10_9, NA)
 //    object[@"Y"] = v1;          // Assign 'v1' to property "Y" of 'object'.
 //    object[101] = v2;           // Assign 'v2' to index 101 of 'object'.
 //
-// An object key passed as a subscript will be converted to a JavaScipt value,
+// An object key passed as a subscript will be converted to a JavaScript value,
 // and then the value converted to a string used as a property name.
 @interface JSValue(SubscriptSupport)
 

@@ -1,3 +1,24 @@
+2013-02-08  Gavin Barraclough  <barraclough@apple.com>
+
+        Objective-C API for JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=105889
+
+        Reviewed by Joseph Pecoraro
+
+        Following up on review comments, mostly typos.
+
+        * API/JSBlockAdaptor.h:
+        * API/JSBlockAdaptor.mm:
+        (-[JSBlockAdaptor blockFromValue:inContext:withException:]):
+        * API/JSContext.h:
+        * API/JSExport.h:
+        * API/JSValue.h:
+        * API/JSValue.mm:
+        * API/JSWrapperMap.mm:
+        (selectorToPropertyName):
+        (-[JSWrapperMap classInfoForClass:]):
+        (-[JSWrapperMap wrapperForObject:]):
+
 2013-02-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add an experimental gyp build

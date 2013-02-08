@@ -36,7 +36,7 @@
 #import "Operations.h"
 #import "WeakGCMap.h"
 #import <wtf/TCSpinLock.h>
-#import "wtf/Vector.h"
+#import <wtf/Vector.h>
 
 @class JSObjCClassInfo;
 
@@ -74,7 +74,7 @@ static JSClassRef wrapperClass()
 // All semicolons are removed, lowercase letters following a semicolon are capitalized.
 static NSString *selectorToPropertyName(const char* start)
 {
-    // Use 'index' to check for colons, if there are non, this is easy!
+    // Use 'index' to check for colons, if there are none, this is easy!
     const char* firstColon = index(start, ':');
     if (!firstColon)
         return [NSString stringWithUTF8String:start];
@@ -114,9 +114,9 @@ done:
     return result;
 }
 
-// Make an object that is in all ways are completely vanilla JavaScript object,
+// Make an object that is in all ways a completely vanilla JavaScript object,
 // other than that it has a native brand set that will be displayed by the default
-// Object.prototype.toString comversion.
+// Object.prototype.toString conversion.
 static JSValue *createObjectWithCustomBrand(JSContext *context, NSString *brand, JSClassRef parentClass = 0, void* privateData = 0)
 {
     JSClassDefinition definition;
@@ -162,8 +162,8 @@ inline void putNonEnumerable(JSValue *base, NSString *propertyName, JSValue *val
 
 // This method will iterate over the set of required methods in the protocol, and:
 //  * Determine a property name (either via a renameMap or default conversion).
-//  * If an accessorMap is provided, and conatins a this name, store the method in the map.
-//  * Otherwise, if the object doesn't already conatin a property with name, create it.
+//  * If an accessorMap is provided, and contains this name, store the method in the map.
+//  * Otherwise, if the object doesn't already contain a property with name, create it.
 static void copyMethodsToObject(JSContext *context, Class objcClass, Protocol *protocol, BOOL isInstanceMethod, JSValue *object, NSMutableDictionary *accessorMethods = nil)
 {
     NSMutableDictionary *renameMap = createRenameMap(protocol, isInstanceMethod);
@@ -454,7 +454,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     if (JSObjCClassInfo* classInfo = (JSObjCClassInfo*)m_classMap[cls])
         return classInfo;
 
-    // Skip internal classes begining with '_' - just copy link to the parent class's info.
+    // Skip internal classes beginning with '_' - just copy link to the parent class's info.
     if ('_' == *class_getName(cls))
         return m_classMap[cls] = [self classInfoForClass:class_getSuperclass(cls)];
 
@@ -478,7 +478,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     // FIXME: https://bugs.webkit.org/show_bug.cgi?id=105891
     // This general approach to wrapper caching is pretty effective, but there are a couple of problems:
     // (1) For immortal objects JSValues will effectively leak and this results in error output being logged - we should avoid adding associated objects to immortal objects.
-    // (2) A long lived object may rack up many JSValues. When the contexts are released these will unproctect the associated JavaScript objects,
+    // (2) A long lived object may rack up many JSValues. When the contexts are released these will unprotect the associated JavaScript objects,
     //     but still, would probably nicer if we made it so that only one associated object was required, broadcasting object dealloc.
     JSC::ExecState* exec = toJS(contextInternalContext(m_context));
     jsWrapper = toJS(exec, valueInternalValue(wrapper)).toObject(exec);

@@ -33,12 +33,13 @@
 #import "Error.h"
 #import "JSBlockAdaptor.h"
 #import "JSContextInternal.h"
-#import "JSWrapperMap.h"
 #import "JSCJSValue.h"
 #import "JSValueInternal.h"
+#import "JSWrapperMap.h"
 #import "ObjcRuntimeExtras.h"
 #import "Operations.h"
-#import "wtf/OwnPtr.h"
+#import <wtf/OwnPtr.h>
+#import <wtf/RetainPtr.h>
 
 extern "C" {
 id __NSMakeSpecialForwardingCaptureBlock(const char *signature, void (^handler)(NSInvocation *));
@@ -340,7 +341,7 @@ static NSString *buildBlockSignature(NSString *prefix, const char* begin, const 
         }
     } else if (m_signatureWithOffsets && JSValueIsObject(contextRef, argument)) {
         // Check if the argument is a JavaScript function
-        // (and that were able to create a forwarding block for this signature).
+        // (and that we're able to create a forwarding block for this signature).
         JSObjectRef object = JSValueToObject(contextRef, argument, exception);
         if (JSObjectIsFunction(contextRef, object))
             function = object;

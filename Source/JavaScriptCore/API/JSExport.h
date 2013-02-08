@@ -27,7 +27,7 @@
 
 #if JS_OBJC_API_ENABLED
 
-// When an JavaScript value is created from an instance of an Objective-C class
+// When a JavaScript value is created from an instance of an Objective-C class
 // for which no copying conversion is specified a JavaScript wrapper object will
 // be created.
 //
@@ -68,9 +68,13 @@
 //    - (void)bar;
 //    @end
 //
+// Data properties that are created on the prototype or constructor objects have
+// the attributes: writable:true, enumerable:false, configurable:true. Accessor
+// properties have the attributes: enumerable:false and configurable:true.
+//
 // If an instance of MyClass is converted to a JavaScript value, the resulting
 // wrapper object will (via its prototype) export the method "foo" to JavaScript,
-// since the class conforms to the MyClassJavaScriptExports protocol, and this
+// since the class conforms to the MyClassJavaScriptMethods protocol, and this
 // protocol incorporates JSExport. "bar" will not be exported.
 //
 // Properties, arguments, and return values of the following types are
@@ -93,14 +97,14 @@
 //    block types, if a JavaScript Function is passed as an argument, where the
 //    type required is a block with a void return value (and where the block's
 //    arguments are all of supported types), then a special adaptor block
-//    will be created, allowing the the JavaScript function to be used in the
-//    place of a block.
+//    will be created, allowing the JavaScript function to be used in the place
+//    of a block.
 //
 // For any interface that conforms to JSExport the normal copying conversion for
 // built in types will be inhibited - so, for example, if an instance that
-// derives from NSString by conforms to JSExport is passed to valueWithObject:,
-// a wrapper object for the Objective-C object will be returned rather than a
-// JavaScript string primitive.
+// derives from NSString but conforms to JSExport is passed to valueWithObject:
+// then a wrapper object for the Objective-C object will be returned rather than
+// a JavaScript string primitive.
 @protocol JSExport
 @end
 
