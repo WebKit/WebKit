@@ -1,3 +1,14 @@
+2013-02-08  Stephen Chenney  <schenney@chromium.org>
+
+        Remove Skia code suppressions
+
+        Unreviewed enabling of existing optimizations
+
+        Removing all skia_webkit.gyp code suppressions and adding expectations
+        for the failures.
+
+        * skia_webkit.gyp:
+
 2013-02-08  Dan Carney  <dcarney@google.com>
 
         [v8] isolate parameter added to all v8::peristent calls
