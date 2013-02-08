@@ -8,9 +8,7 @@
 
 crbug.com/24182 [ Debug ] css3/flexbox/multiline-justify-content.html [ Pass Slow ]
 webkit.org/b/91666 [ Mac ] editing/input/emacs-ctrl-o.html [ Failure Slow ]
-webkit.org/b/91666 [ Mac ] editing/pasteboard/emacs-ctrl-a-k-y.html [ Failure Slow ]
 webkit.org/b/91666 [ Mac ] editing/pasteboard/emacs-ctrl-k-y-001.html [ Failure Slow ]
-webkit.org/b/91666 [ Mac ] editing/pasteboard/emacs-cntl-y-001.html [ ImageOnlyFailure Slow ]
 webkit.org/b/82097 editing/selection/move-by-word-visually-crash-test-5.html [ Pass Slow ]
 webkit.org/b/79679 platform/chromium/virtual/gpu/fast/canvas/getPutImageDataPairTest.html [ Pass Slow ]
 webkit.org/b/92287 [ Linux Mac Win ] fast/canvas/webgl/context-creation-and-destruction.html [ Pass Timeout Failure ]
@@ -3637,8 +3635,6 @@ webkit.org/b/93568 [ Debug ] http/tests/misc/window-dot-stop.html [ Failure Pass
 # V8 does not support static attributes
 webkit.org/b/93488 fast/notifications/notifications-permission.html [ Skip ]
 
-webkit.org/b/93799 [ Mac ] fast/dom/HTMLMeterElement/meter-optimums.html [ Failure Pass ]
-
 webkit.org/b/93801 [ Mac ] fast/speech/input-appearance-searchandspeech.html [ ImageOnlyFailure Pass ]
 
 # Flaky
@@ -3839,8 +3835,6 @@ webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-alp
 webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-no-alpha.html [ Pass ImageOnlyFailure ]
 webkit.org/b/97816 [ Linux ] platform/chromium/compositing/plugins/webplugin-reflection.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/63899 [ Mac Win Android ] fast/replaced/border-radius-clip-content-edge.html [ Pass ImageOnlyFailure ]
-
 # Started failing on r128793
 webkit.org/b/96953 http/tests/inspector/network/network-xhr-replay.html [ Timeout Crash Pass ]
 
@@ -3924,7 +3918,6 @@ webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
 
-webkit.org/b/23166 [ Android Mac Win ] fast/css/background-clip-radius-values.html [ Pass ImageOnlyFailure ]
 webkit.org/b/23166 ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm [ Pass ImageOnlyFailure ]
 
 webkit.org/b/98699 [ Lion ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Crash ]
@@ -4172,8 +4165,6 @@ webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFa
 webkit.org/b/104727 transforms/3d/hit-testing/backface-hit-test.html [ Pass ImageOnlyFailure ]
 webkit.org/b/104727 transforms/3d/hit-testing/backface-no-transform-hit-test.html [ Pass ImageOnlyFailure ]
 
-webkit.org/b/104616 [ Win Mac ] fast/gradients/css3-linear-angle-gradients.html [ ImageOnlyFailure Pass ]
-
 # Flaky
 webkit.org/b/104283 [ Win Release ] fonts/monospace.html [ Failure Pass ]
 webkit.org/b/104283 [ Mac Debug ] fonts/monospace.html [ ImageOnlyFailure Pass ]
@@ -4199,9 +4190,6 @@ webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/ht
 webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-007.html [ ImageOnlyFailure ]
 
 webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
-
-# schenney Remove ImageOnlyFailure after rebaselining. Actually, remove all.
-webkit.org/b/104834 [ MountainLion ] fast/css/nested-rounded-corners.html [ ImageOnlyFailure Failure Pass ]
 
 webkit.org/b/105595 [ Mac ] svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/47975 [ MountainLion ] fast/block/float/max-width-clear-float-with-overflow-hidden.html [ ImageOnlyFailure ]
@@ -4467,12 +4455,10 @@ Bug(schenney) fast/canvas/canvas-text-alignment.html [ ImageOnlyFailure ]
 Bug(schenney) fast/canvas/fillrect_gradient.html [ ImageOnlyFailure ]
 Bug(schenney) fast/canvas/gradient-add-second-start-end-stop.html [ ImageOnlyFailure ]
 Bug(schenney) fast/clip/overflow-border-radius-fixed-position.html [ ImageOnlyFailure ]
-Bug(schenney) [ Linux ] fast/css/background-clip-radius-values.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/box-shadow-and-border-radius.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/continuationCrash.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/linear-gradient-currentcolor.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/margin-top-bottom-dynamic.html [ ImageOnlyFailure ]
-Bug(schenney) [ Linux Win SnowLeopard Lion ] fast/css/nested-rounded-corners.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/non-standard-checkbox-size.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/rtl-ordering.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/shadow-multiple.html [ ImageOnlyFailure ]
@@ -4484,7 +4470,6 @@ Bug(schenney) fast/dom/HTMLMeterElement/meter-appearances-rating-relevancy.html 
 Bug(schenney) fast/dom/HTMLMeterElement/meter-boundary-values.html [ ImageOnlyFailure ]
 Bug(schenney) fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ ImageOnlyFailure ]
 Bug(schenney) fast/dom/HTMLMeterElement/meter-element.html [ ImageOnlyFailure ]
-Bug(schenney) [ Linux Win ] fast/dom/HTMLMeterElement/meter-optimums.html [ ImageOnlyFailure ]
 Bug(schenney) fast/dom/HTMLMeterElement/meter-styles.html [ ImageOnlyFailure ]
 Bug(schenney) fast/dom/HTMLTableColElement/resize-table-using-col-width.html [ ImageOnlyFailure ]
 Bug(schenney) fast/dom/HTMLTextAreaElement/reset-textarea.html [ ImageOnlyFailure ]
@@ -4554,14 +4539,12 @@ Bug(schenney) fast/forms/targeted-frame-submission.html [ ImageOnlyFailure ]
 Bug(schenney) fast/forms/validation-message-appearance.html [ ImageOnlyFailure ]
 Bug(schenney) fast/forms/zoomed-controls.html [ ImageOnlyFailure ]
 Bug(schenney) fast/frames/frame-set-scaling-rotate.html [ ImageOnlyFailure ]
-Bug(schenney) [ Linux ] fast/frames/iframe-scaling-with-scroll.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/background-clipped.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/border-image-gradient-sides-and-corners.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/border-image-gradient.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/crash-on-zero-radius.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/css3-color-stop-units.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/css3-color-stops.html [ ImageOnlyFailure ]
-Bug(schenney) [ Linux ] fast/gradients/css3-linear-angle-gradients.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/css3-linear-right-angle-gradients.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/css3-radial-gradients.html [ ImageOnlyFailure ]
 Bug(schenney) fast/gradients/css3-radial-gradients2.html [ ImageOnlyFailure ]
@@ -4614,7 +4597,6 @@ Bug(schenney) fast/repaint/shadow-multiple-strict-horizontal.html [ ImageOnlyFai
 Bug(schenney) fast/repaint/shadow-multiple-strict-vertical.html [ ImageOnlyFailure ]
 Bug(schenney) fast/repaint/shadow-multiple-vertical.html [ ImageOnlyFailure ]
 Bug(schenney) fast/repaint/transform-relative-position.html [ ImageOnlyFailure ]
-Bug(schenney) [ Linux ] fast/replaced/border-radius-clip-content-edge.html [ ImageOnlyFailure ]
 Bug(schenney) fast/replaced/replaced-breaking-mixture.html [ ImageOnlyFailure ]
 Bug(schenney) fast/replaced/replaced-breaking.html [ ImageOnlyFailure ]
 Bug(schenney) fast/replaced/three-selects-break.html [ ImageOnlyFailure ]
@@ -4809,7 +4791,6 @@ Bug(schenney) svg/W3C-SVG-1.1/fonts-elem-07-b.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/fonts-glyph-02-t.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/interact-zoom-01-t.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg [ ImageOnlyFailure ]
-Bug(schenney) [ MountainLion SnowLeopard Win ] svg/W3C-SVG-1.1/interact-cursor-01-f.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/linking-a-04-t.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/linking-a-05-t.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/linking-uri-01-b.svg [ ImageOnlyFailure ]
@@ -5363,8 +5344,6 @@ Bug(schenney) editing/pasteboard/displaced-generic-placeholder.html [ ImageOnlyF
 Bug(schenney) editing/pasteboard/displaced-placeholder.html [ ImageOnlyFailure ]
 Bug(schenney) editing/pasteboard/drag-drop-modifies-page.html [ ImageOnlyFailure ]
 Bug(schenney) editing/pasteboard/drop-text-without-selection.html [ ImageOnlyFailure ]
-Bug(schenney) [ Linux Win ] editing/pasteboard/emacs-ctrl-a-k-y.html [ ImageOnlyFailure ]
-Bug(schenney) [ Linux Win ] editing/pasteboard/emacs-ctrl-k-y-001.html [ ImageOnlyFailure ]
 Bug(schenney) editing/pasteboard/input-field-1.html [ ImageOnlyFailure ]
 Bug(schenney) editing/pasteboard/merge-after-delete-1.html [ ImageOnlyFailure ]
 Bug(schenney) editing/pasteboard/merge-after-delete-2.html [ ImageOnlyFailure ]
@@ -5551,7 +5530,6 @@ Bug(schenney) fast/css/focus-ring-multiline.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/focus-ring-outline-color.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/focus-ring-outline-offset.html [ ImageOnlyFailure ]
 Bug(schenney) fast/css/font-face-multiple-faces.html [ ImageOnlyFailure ]
-Bug(schenney) [ Win Linux SnowLeopard Lion ] fast/css/nested-rounded-corners.html [ ImageOnlyFailure ]
 Bug(schenney) fast/dom/52776.html [ ImageOnlyFailure ]
 Bug(schenney) fast/dom/focus-contenteditable.html [ ImageOnlyFailure ]
 Bug(schenney) fast/events/autoscroll.html [ ImageOnlyFailure ]
