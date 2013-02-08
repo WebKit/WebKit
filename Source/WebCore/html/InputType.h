@@ -326,5 +326,4 @@ private:
 };
 
 } // namespace WebCore
-
 #endif

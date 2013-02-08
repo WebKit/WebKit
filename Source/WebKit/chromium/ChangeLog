@@ -1,3 +1,16 @@
+2013-02-08  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Disable ENABLE_INPUT_TYPE_DATETIME
+        https://bugs.webkit.org/show_bug.cgi?id=109272
+
+        Reviewed by Kentaro Hara.
+
+        We enabled this flag for desktop Chromium, but disabled the feature by a
+        runtime flag. We disables the compile flag too because we have no plan
+        to ship it in near future.
+
+        * features.gypi: Remove ENABLE_INPUT_TYPE_DATETIME.
+
 2013-02-08  Stephen Chenney  <schenney@chromium.org>
 
         Remove Skia code suppressions

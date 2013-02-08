@@ -938,6 +938,21 @@ crbug.com/22554 mathml [ Skip ]
 # Chromium disabled web intents
 crbug.com/173194 webintents [ Skip ]
 
+# We disabled INPUT_TYPE_DATETIME.
+webkit.org/b/109272 fast/forms/datetime [ Skip ]
+webkit.org/b/109272 fast/forms/datetime-multiple-fields [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-step-attribute.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-reset-value-after-reload.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-locale-hebrew.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-key-operations.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-with-scroll-bar.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-min-max-attribute.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime-with-step.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/calendar-picker/calendar-picker-datetime.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance.html [ Skip ]
+webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-mouse-operations.html [ Skip ]
+
 # Skipping rules for ANDROID are in platform/chromium-android/TestExpectations.
 
 # -----------------------------------------------------------------
