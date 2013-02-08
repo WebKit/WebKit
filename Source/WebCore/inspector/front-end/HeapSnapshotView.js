@@ -775,7 +775,7 @@ WebInspector.HeapSnapshotProfileType.prototype = {
     buttonClicked: function(profilesPanel)
     {
         profilesPanel.takeHeapSnapshot();
-        return false;
+        return true;
     },
 
     get treeItemTitle()

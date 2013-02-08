@@ -99,13 +99,16 @@ WebInspector.ProfileLauncherView.prototype = {
     _updateControls: function()
     {
         if (this._isProfiling) {
-            this._profileTypeSelectorForm.disabled = true;
             this._controlButton.addStyleClass("running");
             this._controlButton.textContent = WebInspector.UIString("Stop");
         } else {
-            this._profileTypeSelectorForm.disabled = false;
             this._controlButton.removeStyleClass("running");
             this._controlButton.textContent = WebInspector.UIString("Start");
+        }
+        var items = this._profileTypeSelectorForm.elements;
+        for (var i = 0; i < items.length; ++i) {
+            if (items[i].type === "radio")
+                items[i].disabled = this._isProfiling;
         }
     },
 
