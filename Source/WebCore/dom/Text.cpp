@@ -23,6 +23,7 @@
 #include "Text.h"
 
 #include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
 #include "NodeRenderingContext.h"
 #include "RenderCombineText.h"
 #include "RenderText.h"
@@ -156,11 +157,10 @@ PassRefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
 
     RefPtr<Text> protectedThis(this); // Mutation event handlers could cause our last ref to go away
     RefPtr<ContainerNode> parent = parentNode(); // Protect against mutation handlers moving this node during traversal
-    ExceptionCode ignored = 0;
     for (RefPtr<Node> n = startText; n && n != this && n->isTextNode() && n->parentNode() == parent;) {
         RefPtr<Node> nodeToRemove(n.release());
         n = nodeToRemove->nextSibling();
-        parent->removeChild(nodeToRemove.get(), ignored);
+        parent->removeChild(nodeToRemove.get(), IGNORE_EXCEPTION);
     }
 
     if (this != endText) {
@@ -168,17 +168,17 @@ PassRefPtr<Text> Text::replaceWholeText(const String& newText, ExceptionCode&)
         for (RefPtr<Node> n = nextSibling(); n && n != onePastEndText && n->isTextNode() && n->parentNode() == parent;) {
             RefPtr<Node> nodeToRemove(n.release());
             n = nodeToRemove->nextSibling();
-            parent->removeChild(nodeToRemove.get(), ignored);
+            parent->removeChild(nodeToRemove.get(), IGNORE_EXCEPTION);
         }
     }
 
     if (newText.isEmpty()) {
         if (parent && parentNode() == parent)
-            parent->removeChild(this, ignored);
+            parent->removeChild(this, IGNORE_EXCEPTION);
         return 0;
     }
 
-    setData(newText, ignored);
+    setData(newText, IGNORE_EXCEPTION);
     return protectedThis.release();
 }
 

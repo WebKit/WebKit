@@ -58,6 +58,8 @@ inline ExceptionCodePlaceholder::ExceptionCodePlaceholder(ExceptionCode code)
 class IgnorableExceptionCode : public ExceptionCodePlaceholder {
 };
 
+#define IGNORE_EXCEPTION ::WebCore::IgnorableExceptionCode()
+
 #if ASSERT_DISABLED
 
 #define ASSERT_NO_EXCEPTION ::WebCore::IgnorableExceptionCode()

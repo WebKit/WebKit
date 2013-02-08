@@ -34,6 +34,7 @@
 
 #include "InspectorHistory.h"
 
+#include "ExceptionCodePlaceholder.h"
 #include "Node.h"
 
 namespace WebCore {
@@ -103,8 +104,7 @@ bool InspectorHistory::perform(PassOwnPtr<Action> action, ExceptionCode& ec)
 
 void InspectorHistory::markUndoableState()
 {
-    ExceptionCode ec;
-    perform(adoptPtr(new UndoableStateMark()), ec);
+    perform(adoptPtr(new UndoableStateMark()), IGNORE_EXCEPTION);
 }
 
 bool InspectorHistory::undo(ExceptionCode& ec)

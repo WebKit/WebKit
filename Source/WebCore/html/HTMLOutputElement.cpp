@@ -31,6 +31,7 @@
 #include "config.h"
 #include "HTMLOutputElement.h"
 
+#include "ExceptionCodePlaceholder.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
 
@@ -136,9 +137,8 @@ void HTMLOutputElement::setDefaultValue(const String& value)
 void HTMLOutputElement::setTextContentInternal(const String& value)
 {
     ASSERT(!m_isSetTextContentInProgress);
-    ExceptionCode ec;
     m_isSetTextContentInProgress = true;
-    setTextContent(value, ec);
+    setTextContent(value, IGNORE_EXCEPTION);
 }
 
 } // namespace

@@ -28,6 +28,7 @@
 #include "TimeRanges.h"
 
 #include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
 #include <math.h>
 
 using namespace WebCore;
@@ -156,23 +157,21 @@ void TimeRanges::add(float start, float end)
 }
 
 bool TimeRanges::contain(float time) const
-{ 
-    ExceptionCode unused;
+{
     for (unsigned n = 0; n < length(); n++) {
-        if (time >= start(n, unused) && time <= end(n, unused))
+        if (time >= start(n, IGNORE_EXCEPTION) && time <= end(n, IGNORE_EXCEPTION))
             return true;
     }
     return false;
 }
 
 float TimeRanges::nearest(float time) const
-{ 
-    ExceptionCode unused;
+{
     float closest = 0;
     unsigned count = length();
     for (unsigned ndx = 0; ndx < count; ndx++) {
-        float startTime = start(ndx, unused);
-        float endTime = end(ndx, unused);
+        float startTime = start(ndx, IGNORE_EXCEPTION);
+        float endTime = end(ndx, IGNORE_EXCEPTION);
         if (time >= startTime && time <= endTime)
             return time;
         if (fabs(startTime - time) < closest)

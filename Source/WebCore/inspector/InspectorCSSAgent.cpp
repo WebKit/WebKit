@@ -38,6 +38,7 @@
 #include "CSSStyleSheet.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
+#include "ExceptionCodePlaceholder.h"
 #include "HTMLHeadElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
@@ -1164,8 +1165,7 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::CSS::RuleMatch> > InspectorCSSAgent::
         const CSSSelectorList& selectorList = rule->styleRule()->selectorList();
         long index = 0;
         for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector)) {
-            ExceptionCode ec;
-            bool matched = element->webkitMatchesSelector(selector->selectorText(), ec);
+            bool matched = element->webkitMatchesSelector(selector->selectorText(), IGNORE_EXCEPTION);
             if (matched)
                 matchingSelectors->addItem(index);
             ++index;

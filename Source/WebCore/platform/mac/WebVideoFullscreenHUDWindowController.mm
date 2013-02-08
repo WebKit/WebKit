@@ -28,6 +28,7 @@
 
 #import "WebVideoFullscreenHUDWindowController.h"
 
+#import "ExceptionCodePlaceholder.h"
 #import "FloatConversion.h"
 #import <WebCoreSystemInterface.h>
 #import <WebCore/HTMLMediaElement.h>
@@ -469,8 +470,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 {
     if (![_delegate mediaElement])
         return;
-    WebCore::ExceptionCode e;
-    [_delegate mediaElement]->setCurrentTime(currentTime, e);
+    [_delegate mediaElement]->setCurrentTime(currentTime, IGNORE_EXCEPTION);
     [self updateTime];
 }
 
@@ -530,10 +530,9 @@ static NSTextField *createTimeTextField(NSRect frame)
 {
     if (![_delegate mediaElement])
         return;
-    WebCore::ExceptionCode e;
     if ([_delegate mediaElement]->muted())
         [_delegate mediaElement]->setMuted(false);
-    [_delegate mediaElement]->setVolume(volume / [self maxVolume], e);
+    [_delegate mediaElement]->setVolume(volume / [self maxVolume], IGNORE_EXCEPTION);
     [self updateVolume];
 }
 

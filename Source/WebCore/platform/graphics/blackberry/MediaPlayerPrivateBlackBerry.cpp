@@ -25,6 +25,7 @@
 #include "CookieManager.h"
 #include "Credential.h"
 #include "CredentialStorage.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -507,9 +508,8 @@ float MediaPlayerPrivate::percentLoaded()
     float buffered = 0;
     RefPtr<TimeRanges> timeRanges = this->buffered();
     for (unsigned i = 0; i < timeRanges->length(); ++i) {
-        ExceptionCode ignoredException;
-        float start = timeRanges->start(i, ignoredException);
-        float end = timeRanges->end(i, ignoredException);
+        float start = timeRanges->start(i, IGNORE_EXCEPTION);
+        float end = timeRanges->end(i, IGNORE_EXCEPTION);
         buffered += end - start;
     }
 

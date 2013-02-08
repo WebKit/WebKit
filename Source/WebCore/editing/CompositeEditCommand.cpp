@@ -35,6 +35,7 @@
 #include "DocumentFragment.h"
 #include "DocumentMarkerController.h"
 #include "EditorInsertAction.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
@@ -895,8 +896,7 @@ void CompositeEditCommand::removePlaceholderAt(const Position& p)
 PassRefPtr<Node> CompositeEditCommand::insertNewDefaultParagraphElementAt(const Position& position)
 {
     RefPtr<Element> paragraphElement = createDefaultParagraphElement(document());
-    ExceptionCode ec;
-    paragraphElement->appendChild(createBreakElement(document()), ec);
+    paragraphElement->appendChild(createBreakElement(document()), IGNORE_EXCEPTION);
     insertNodeAt(paragraphElement, position);
     return paragraphElement.release();
 }

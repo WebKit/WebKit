@@ -39,6 +39,7 @@
 #include "CachedResourceLoader.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "HTTPHeaderMap.h"
@@ -602,7 +603,6 @@ void InspectorResourceAgent::getResponseBody(ErrorString* errorString, const Str
 void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
 {
     RefPtr<XMLHttpRequest> xhr = XMLHttpRequest::create(m_pageAgent->mainFrame()->document());
-    ExceptionCode code;
     String actualRequestId = requestId;
 
     XHRReplayData* xhrReplayData = m_resourcesData->xhrReplayData(requestId);
@@ -613,11 +613,11 @@ void InspectorResourceAgent::replayXHR(ErrorString*, const String& requestId)
     if (cachedResource)
         memoryCache()->remove(cachedResource);
 
-    xhr->open(xhrReplayData->method(), xhrReplayData->url(), xhrReplayData->async(), code);
+    xhr->open(xhrReplayData->method(), xhrReplayData->url(), xhrReplayData->async(), IGNORE_EXCEPTION);
     HTTPHeaderMap::const_iterator end = xhrReplayData->headers().end();
     for (HTTPHeaderMap::const_iterator it = xhrReplayData->headers().begin(); it!= end; ++it)
-        xhr->setRequestHeader(it->key, it->value, code);
-    xhr->sendFromInspector(xhrReplayData->formData(), code);
+        xhr->setRequestHeader(it->key, it->value, IGNORE_EXCEPTION);
+    xhr->sendFromInspector(xhrReplayData->formData(), IGNORE_EXCEPTION);
 }
 
 void InspectorResourceAgent::canClearBrowserCache(ErrorString*, bool* result)

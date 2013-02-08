@@ -34,6 +34,7 @@
 #import "DocumentLoader.h"
 #import "Editor.h"
 #import "EditorClient.h"
+#import "ExceptionCodePlaceholder.h"
 #import "Frame.h"
 #import "FrameView.h"
 #import "FrameLoaderClient.h"
@@ -149,13 +150,12 @@ PassRefPtr<SharedBuffer> Pasteboard::getDataSelection(Frame* frame, const String
         return SharedBuffer::wrapNSData((NSData *)data.get());
     }
 
-    ExceptionCode ec;
     RefPtr<Range> range = frame->editor()->selectedRange();
-    Node* commonAncestor = range->commonAncestorContainer(ec);
+    Node* commonAncestor = range->commonAncestorContainer(IGNORE_EXCEPTION);
     ASSERT(commonAncestor);
     Node* enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(commonAncestor), HTMLNames::aTag);
     if (enclosingAnchor && comparePositions(firstPositionInOrBeforeNode(range->startPosition().anchorNode()), range->startPosition()) >= 0)
-        range->setStart(enclosingAnchor, 0, ec);
+        range->setStart(enclosingAnchor, 0, IGNORE_EXCEPTION);
     
     NSAttributedString* attributedString = nil;
     RetainPtr<WebHTMLConverter> converter(AdoptNS, [[WebHTMLConverter alloc] initWithDOMRange:kit(range.get())]);
@@ -397,9 +397,8 @@ static PassRefPtr<DocumentFragment> documentFragmentWithImageResource(Frame* fra
     imageElement->setAttribute(HTMLNames::srcAttr, [URL isFileURL] ? [URL absoluteString] : resource->url());
     RefPtr<DocumentFragment> fragment = frame->document()->createDocumentFragment();
     if (fragment) {
-        ExceptionCode ec;
-        fragment->appendChild(imageElement, ec);
-        return fragment.release();       
+        fragment->appendChild(imageElement, IGNORE_EXCEPTION);
+        return fragment.release();
     }
     return 0;
 }
@@ -550,12 +549,11 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
         if ([URLString length] == 0)
             return nil;
         NSString *URLTitleString = [platformStrategies()->pasteboardStrategy()->stringForType(WebURLNamePboardType, m_pasteboardName) precomposedStringWithCanonicalMapping];
-        ExceptionCode ec;
         anchor->setAttribute(HTMLNames::hrefAttr, URLString);
-        anchor->appendChild(document->createTextNode(URLTitleString), ec);
+        anchor->appendChild(document->createTextNode(URLTitleString), IGNORE_EXCEPTION);
         fragment = document->createDocumentFragment();
         if (fragment) {
-            fragment->appendChild(anchor, ec);
+            fragment->appendChild(anchor, IGNORE_EXCEPTION);
             return fragment.release();
         }
     }

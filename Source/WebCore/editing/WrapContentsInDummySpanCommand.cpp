@@ -27,6 +27,7 @@
 #include "WrapContentsInDummySpanCommand.h"
 
 #include "ApplyStyleCommand.h"
+#include "ExceptionCodePlaceholder.h"
 #include "HTMLElement.h"
 
 namespace WebCore {
@@ -43,14 +44,12 @@ void WrapContentsInDummySpanCommand::executeApply()
     Vector<RefPtr<Node> > children;
     for (Node* child = m_element->firstChild(); child; child = child->nextSibling())
         children.append(child);
-    
-    ExceptionCode ec;
-    
+
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
-        m_dummySpan->appendChild(children[i].release(), ec);
-    
-    m_element->appendChild(m_dummySpan.get(), ec);
+        m_dummySpan->appendChild(children[i].release(), IGNORE_EXCEPTION);
+
+    m_element->appendChild(m_dummySpan.get(), IGNORE_EXCEPTION);
 }
 
 void WrapContentsInDummySpanCommand::doApply()
@@ -71,13 +70,11 @@ void WrapContentsInDummySpanCommand::doUnapply()
     for (Node* child = m_dummySpan->firstChild(); child; child = child->nextSibling())
         children.append(child);
 
-    ExceptionCode ec;
-
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
-        m_element->appendChild(children[i].release(), ec);
+        m_element->appendChild(children[i].release(), IGNORE_EXCEPTION);
 
-    m_dummySpan->remove(ec);
+    m_dummySpan->remove(IGNORE_EXCEPTION);
 }
 
 void WrapContentsInDummySpanCommand::doReapply()

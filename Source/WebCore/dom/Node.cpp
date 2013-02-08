@@ -59,6 +59,7 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FocusEvent.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -609,8 +610,7 @@ void Node::normalize()
         if (!text->length()) {
             // Care must be taken to get the next node before removing the current node.
             node = NodeTraversal::nextPostOrder(node.get());
-            ExceptionCode ec;
-            text->remove(ec);
+            text->remove(IGNORE_EXCEPTION);
             continue;
         }
 
@@ -622,17 +622,15 @@ void Node::normalize()
 
             // Remove empty text nodes.
             if (!nextText->length()) {
-                ExceptionCode ec;
-                nextText->remove(ec);
+                nextText->remove(IGNORE_EXCEPTION);
                 continue;
             }
 
             // Both non-empty text nodes. Merge them.
             unsigned offset = text->length();
-            ExceptionCode ec;
-            text->appendData(nextText->data(), ec);
+            text->appendData(nextText->data(), IGNORE_EXCEPTION);
             document()->textNodesMerged(nextText.get(), offset);
-            nextText->remove(ec);
+            nextText->remove(IGNORE_EXCEPTION);
         }
 
         node = NodeTraversal::nextPostOrder(node.get());

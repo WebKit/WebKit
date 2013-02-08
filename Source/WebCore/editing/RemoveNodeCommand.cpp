@@ -26,6 +26,7 @@
 #include "config.h"
 #include "RemoveNodeCommand.h"
 
+#include "ExceptionCodePlaceholder.h"
 #include "Node.h"
 #include <wtf/Assertions.h>
 
@@ -51,8 +52,7 @@ void RemoveNodeCommand::doApply()
     m_parent = parent;
     m_refChild = m_node->nextSibling();
 
-    ExceptionCode ec;
-    m_node->remove(ec);
+    m_node->remove(IGNORE_EXCEPTION);
 }
 
 void RemoveNodeCommand::doUnapply()
@@ -62,8 +62,7 @@ void RemoveNodeCommand::doUnapply()
     if (!parent || !parent->rendererIsEditable())
         return;
 
-    ExceptionCode ec;
-    parent->insertBefore(m_node.get(), refChild.get(), ec);
+    parent->insertBefore(m_node.get(), refChild.get(), IGNORE_EXCEPTION);
 }
 
 #ifndef NDEBUG

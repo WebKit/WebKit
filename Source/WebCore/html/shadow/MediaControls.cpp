@@ -29,6 +29,8 @@
 #if ENABLE(VIDEO)
 #include "MediaControls.h"
 
+#include "ExceptionCodePlaceholder.h"
+
 namespace WebCore {
 
 MediaControls::MediaControls(Document* document)
@@ -217,8 +219,7 @@ void MediaControls::updateCurrentTimeDisplay()
     if (!page)
         return;
 
-    ExceptionCode ec;
-    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsTime(now), ec);
+    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsTime(now), IGNORE_EXCEPTION);
     m_currentTimeDisplay->setCurrentValue(now);
 }
 
@@ -380,8 +381,7 @@ void MediaControls::createTextTrackDisplay()
         m_textDisplayContainer->setMediaController(m_mediaController);
 
     // Insert it before the first controller element so it always displays behind the controls.
-    ExceptionCode ec;
-    insertBefore(textDisplayContainer, m_panel, ec, true);
+    insertBefore(textDisplayContainer, m_panel, IGNORE_EXCEPTION, true);
     textDisplayContainer->createSubtrees(document());
     textDisplayContainer.release();
 }

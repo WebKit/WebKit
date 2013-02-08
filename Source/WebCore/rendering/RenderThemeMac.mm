@@ -21,6 +21,7 @@
 #import "RenderThemeMac.h"
 
 #import "Element.h"
+#import "ExceptionCodePlaceholder.h"
 #import "GraphicsContextCG.h"
 #import "HTMLMediaElement.h"
 #import "LocalCurrentGraphicsContext.h"
@@ -234,8 +235,7 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
         return false;
 
     RefPtr<TimeRanges> timeRanges = mediaElement->buffered();
-    ExceptionCode ignoredException;
-    float timeLoaded = timeRanges->length() ? timeRanges->end(0, ignoredException) : 0;
+    float timeLoaded = timeRanges->length() ? timeRanges->end(0, IGNORE_EXCEPTION) : 0;
     float currentTime = mediaElement->currentTime();
     float duration = mediaElement->duration();
     if (isnan(duration))

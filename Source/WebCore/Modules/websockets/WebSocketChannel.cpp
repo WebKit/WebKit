@@ -37,6 +37,7 @@
 #include "Blob.h"
 #include "CookieJar.h"
 #include "Document.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FileError.h"
 #include "FileReaderLoader.h"
 #include "Frame.h"
@@ -426,8 +427,8 @@ bool WebSocketChannel::processBuffer()
                 InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(m_document, m_identifier, m_handshake->serverHandshakeResponse());
             if (!m_handshake->serverSetCookie().isEmpty()) {
                 if (cookiesEnabled(m_document)) {
-                    ExceptionCode ec; // Exception (for sandboxed documents) ignored.
-                    m_document->setCookie(m_handshake->serverSetCookie(), ec);
+                    // Exception (for sandboxed documents) ignored.
+                    m_document->setCookie(m_handshake->serverSetCookie(), IGNORE_EXCEPTION);
                 }
             }
             // FIXME: handle set-cookie2.

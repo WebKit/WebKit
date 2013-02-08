@@ -26,6 +26,7 @@
 #include "RenderThemeGtk.h"
 
 #include "CSSValueKeywords.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FileList.h"
 #include "FileSystem.h"
 #include "FontDescription.h"
@@ -579,9 +580,8 @@ bool RenderThemeGtk::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
     context->setStrokeStyle(NoStroke);
 
     for (unsigned index = 0; index < timeRanges->length(); ++index) {
-        ExceptionCode ignoredException;
-        float start = timeRanges->start(index, ignoredException);
-        float end = timeRanges->end(index, ignoredException);
+        float start = timeRanges->start(index, IGNORE_EXCEPTION);
+        float end = timeRanges->end(index, IGNORE_EXCEPTION);
         int width = ((end - start) * totalWidth) / mediaDuration;
         IntRect rangeRect;
         if (!index) {

@@ -32,6 +32,7 @@
 
 #include "Chrome.h"
 #include "DOMTokenList.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FloatConversion.h"
 #include "Frame.h"
 #include "HTMLMediaElement.h"
@@ -197,8 +198,7 @@ void MediaControlEmbeddedPanelElement::setPosition(const LayoutPoint& position)
     setInlineStyleProperty(CSSPropertyMarginLeft, 0.0, CSSPrimitiveValue::CSS_PX);
     setInlineStyleProperty(CSSPropertyMarginTop, 0.0, CSSPrimitiveValue::CSS_PX);
 
-    ExceptionCode ignored;
-    classList()->add("dragged", ignored);
+    classList()->add("dragged", IGNORE_EXCEPTION);
 }
 
 void MediaControlEmbeddedPanelElement::resetPosition()
@@ -208,8 +208,7 @@ void MediaControlEmbeddedPanelElement::resetPosition()
     removeInlineStyleProperty(CSSPropertyMarginLeft);
     removeInlineStyleProperty(CSSPropertyMarginTop);
 
-    ExceptionCode ignored;
-    classList()->remove("dragged", ignored);
+    classList()->remove("dragged", IGNORE_EXCEPTION);
 
     m_cumulativeDragOffset.setX(0);
     m_cumulativeDragOffset.setY(0);
@@ -507,10 +506,8 @@ void MediaControlFullscreenTimelineElement::defaultEventHandler(Event* event)
         return;
 
     float time = narrowPrecisionToFloat(value().toDouble());
-    if (event->type() == eventNames().inputEvent && time != mediaController()->currentTime()) {
-        ExceptionCode ec;
-        mediaController()->setCurrentTime(time, ec);
-    }
+    if (event->type() == eventNames().inputEvent && time != mediaController()->currentTime())
+        mediaController()->setCurrentTime(time, IGNORE_EXCEPTION);
 
     RenderSlider* slider = toRenderSlider(renderer());
     if (slider && slider->inDragMode())
@@ -1011,14 +1008,13 @@ void MediaControlsBlackBerry::updateCurrentTimeDisplay()
         return;
 
     // Allow the theme to format the time.
-    ExceptionCode ec;
-    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), ec);
+    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), IGNORE_EXCEPTION);
     m_currentTimeDisplay->setCurrentValue(now);
-    m_fullscreenCurrentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), ec);
+    m_fullscreenCurrentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), IGNORE_EXCEPTION);
     m_fullscreenCurrentTimeDisplay->setCurrentValue(now);
-    m_timeRemainingDisplay->setInnerText(page->theme()->formatMediaControlsRemainingTime(now, duration), ec);
+    m_timeRemainingDisplay->setInnerText(page->theme()->formatMediaControlsRemainingTime(now, duration), IGNORE_EXCEPTION);
     m_timeRemainingDisplay->setCurrentValue(now - duration);
-    m_fullscreenTimeRemainingDisplay->setInnerText(page->theme()->formatMediaControlsRemainingTime(now, duration), ec);
+    m_fullscreenTimeRemainingDisplay->setInnerText(page->theme()->formatMediaControlsRemainingTime(now, duration), IGNORE_EXCEPTION);
     m_fullscreenTimeRemainingDisplay->setCurrentValue(now - duration);
 }
 

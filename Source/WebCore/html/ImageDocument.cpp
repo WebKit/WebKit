@@ -29,6 +29,7 @@
 #include "DocumentLoader.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -192,10 +193,8 @@ PassRefPtr<DocumentParser> ImageDocument::createParser()
 
 void ImageDocument::createDocumentStructure()
 {
-    ExceptionCode ec;
-    
     RefPtr<Element> rootElement = Document::createElement(htmlTag, false);
-    appendChild(rootElement, ec);
+    appendChild(rootElement, IGNORE_EXCEPTION);
     static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
 
     if (frame() && frame()->loader())
@@ -204,7 +203,7 @@ void ImageDocument::createDocumentStructure()
     RefPtr<Element> body = Document::createElement(bodyTag, false);
     body->setAttribute(styleAttr, "margin: 0px;");
     
-    rootElement->appendChild(body, ec);
+    rootElement->appendChild(body, IGNORE_EXCEPTION);
     
     RefPtr<ImageDocumentElement> imageElement = ImageDocumentElement::create(this);
     
@@ -212,7 +211,7 @@ void ImageDocument::createDocumentStructure()
     imageElement->setLoadManually(true);
     imageElement->setSrc(url().string());
     
-    body->appendChild(imageElement, ec);
+    body->appendChild(imageElement, IGNORE_EXCEPTION);
     
     if (shouldShrinkToFit()) {
         // Add event listeners

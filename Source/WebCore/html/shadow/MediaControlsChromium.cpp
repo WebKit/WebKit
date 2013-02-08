@@ -29,6 +29,8 @@
 #if ENABLE(VIDEO)
 #include "MediaControlsChromium.h"
 
+#include "ExceptionCodePlaceholder.h"
+
 using namespace std;
 
 namespace WebCore {
@@ -185,8 +187,7 @@ void MediaControlsChromium::updateCurrentTimeDisplay()
     }
 
     // Allow the theme to format the time.
-    ExceptionCode ec;
-    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), ec);
+    m_currentTimeDisplay->setInnerText(page->theme()->formatMediaControlsCurrentTime(now, duration), IGNORE_EXCEPTION);
     m_currentTimeDisplay->setCurrentValue(now);
 }
 

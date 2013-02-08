@@ -36,6 +36,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FileSystem.h"
 #include "FocusController.h"
 #include "Frame.h"
@@ -591,8 +592,7 @@ void Page::findStringMatchingRanges(const String& target, FindOptions options, i
         indexForSelection = NoMatchBeforeUserSelection;
         RefPtr<Range> selectedRange = frameWithSelection->selection()->selection().firstRange();
         for (size_t i = 0; i < matchRanges->size(); ++i) {
-            ExceptionCode ec;
-            if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges->at(i).get(), ec) < 0) {
+            if (selectedRange->compareBoundaryPoints(Range::START_TO_END, matchRanges->at(i).get(), IGNORE_EXCEPTION) < 0) {
                 indexForSelection = i;
                 break;
             }

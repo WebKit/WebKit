@@ -26,6 +26,7 @@
 #include "PluginDocument.h"
 
 #include "DocumentLoader.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
@@ -67,9 +68,8 @@ private:
 
 void PluginDocumentParser::createDocumentStructure()
 {
-    ExceptionCode ec;
     RefPtr<Element> rootElement = document()->createElement(htmlTag, false);
-    document()->appendChild(rootElement, ec);
+    document()->appendChild(rootElement, IGNORE_EXCEPTION);
     static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
 
     if (document()->frame() && document()->frame()->loader())
@@ -80,7 +80,7 @@ void PluginDocumentParser::createDocumentStructure()
     body->setAttribute(marginheightAttr, "0");
     body->setAttribute(styleAttr, "background-color: rgb(38,38,38)");
 
-    rootElement->appendChild(body, ec);
+    rootElement->appendChild(body, IGNORE_EXCEPTION);
         
     RefPtr<Element> embedElement = document()->createElement(embedTag, false);
         
@@ -98,7 +98,7 @@ void PluginDocumentParser::createDocumentStructure()
 
     static_cast<PluginDocument*>(document())->setPluginNode(m_embedElement);
 
-    body->appendChild(embedElement, ec);    
+    body->appendChild(embedElement, IGNORE_EXCEPTION);
 }
 
 void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)

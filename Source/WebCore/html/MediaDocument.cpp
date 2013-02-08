@@ -30,6 +30,7 @@
 
 #include "DocumentLoader.h"
 #include "EventNames.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "HTMLEmbedElement.h"
@@ -71,9 +72,8 @@ private:
     
 void MediaDocumentParser::createDocumentStructure()
 {
-    ExceptionCode ec;
     RefPtr<Element> rootElement = document()->createElement(htmlTag, false);
-    document()->appendChild(rootElement, ec);
+    document()->appendChild(rootElement, IGNORE_EXCEPTION);
     document()->setCSSTarget(rootElement.get());
     static_cast<HTMLHtmlElement*>(rootElement.get())->insertedByParser();
 
@@ -81,7 +81,7 @@ void MediaDocumentParser::createDocumentStructure()
         document()->frame()->loader()->dispatchDocumentElementAvailable();
         
     RefPtr<Element> body = document()->createElement(bodyTag, false);
-    rootElement->appendChild(body, ec);
+    rootElement->appendChild(body, IGNORE_EXCEPTION);
 
     RefPtr<Element> mediaElement = document()->createElement(videoTag, false);
 
@@ -98,8 +98,8 @@ void MediaDocumentParser::createDocumentStructure()
     if (DocumentLoader* loader = document()->loader())
         source->setType(loader->responseMIMEType());
 
-    m_mediaElement->appendChild(sourceElement, ec);
-    body->appendChild(mediaElement, ec);
+    m_mediaElement->appendChild(sourceElement, IGNORE_EXCEPTION);
+    body->appendChild(mediaElement, IGNORE_EXCEPTION);
 
     Frame* frame = document()->frame();
     if (!frame)
@@ -233,8 +233,7 @@ void MediaDocument::replaceMediaElementTimerFired(Timer<MediaDocument>*)
         if (documentLoader)
             embedElement->setAttribute(typeAttr, documentLoader->writer()->mimeType());
 
-        ExceptionCode ec;
-        videoElement->parentNode()->replaceChild(embedElement, videoElement, ec);
+        videoElement->parentNode()->replaceChild(embedElement, videoElement, IGNORE_EXCEPTION);
     }
 }
 

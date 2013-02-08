@@ -481,8 +481,7 @@ void MediaController::bringElementUpToSpeed(HTMLMediaElement* element)
     // When the user agent is to bring a media element up to speed with its new media controller,
     // it must seek that media element to the MediaController's media controller position relative
     // to the media element's timeline.
-    ExceptionCode ignoredCode = 0;
-    element->seek(currentTime(), ignoredCode);
+    element->seek(currentTime(), IGNORE_EXCEPTION);
 }
 
 bool MediaController::isBlocked() const
@@ -544,12 +543,11 @@ void MediaController::scheduleEvent(const AtomicString& eventName)
 void MediaController::asyncEventTimerFired(Timer<MediaController>*)
 {
     Vector<RefPtr<Event> > pendingEvents;
-    ExceptionCode ec = 0;
-    
+
     m_pendingEvents.swap(pendingEvents);
     size_t count = pendingEvents.size();
     for (size_t index = 0; index < count; ++index)
-        dispatchEvent(pendingEvents[index].release(), ec);
+        dispatchEvent(pendingEvents[index].release(), IGNORE_EXCEPTION);
 }
 
 void MediaController::clearPositionTimerFired(Timer<MediaController>*)

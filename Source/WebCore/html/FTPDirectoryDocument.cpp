@@ -26,6 +26,7 @@
 #if ENABLE(FTPDIR)
 #include "FTPDirectoryDocument.h"
 
+#include "ExceptionCodePlaceholder.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "HTMLTableElement.h"
@@ -109,38 +110,34 @@ FTPDirectoryDocumentParser::FTPDirectoryDocumentParser(HTMLDocument* document)
 
 void FTPDirectoryDocumentParser::appendEntry(const String& filename, const String& size, const String& date, bool isDirectory)
 {
-    ExceptionCode ec;
-
-    RefPtr<Element> rowElement = m_tableElement->insertRow(-1, ec);
-    rowElement->setAttribute("class", "ftpDirectoryEntryRow", ec);
+    RefPtr<Element> rowElement = m_tableElement->insertRow(-1, IGNORE_EXCEPTION);
+    rowElement->setAttribute("class", "ftpDirectoryEntryRow", IGNORE_EXCEPTION);
 
     RefPtr<Element> element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(document(), String(&noBreakSpace, 1)), ec);
+    element->appendChild(Text::create(document(), String(&noBreakSpace, 1)), IGNORE_EXCEPTION);
     if (isDirectory)
-        element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeDirectory", ec);
+        element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeDirectory", IGNORE_EXCEPTION);
     else
-        element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeFile", ec);
-    rowElement->appendChild(element, ec);
+        element->setAttribute("class", "ftpDirectoryIcon ftpDirectoryTypeFile", IGNORE_EXCEPTION);
+    rowElement->appendChild(element, IGNORE_EXCEPTION);
 
     element = createTDForFilename(filename);
-    element->setAttribute("class", "ftpDirectoryFileName", ec);
-    rowElement->appendChild(element, ec);
+    element->setAttribute("class", "ftpDirectoryFileName", IGNORE_EXCEPTION);
+    rowElement->appendChild(element, IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(document(), date), ec);
-    element->setAttribute("class", "ftpDirectoryFileDate", ec);
-    rowElement->appendChild(element, ec);
+    element->appendChild(Text::create(document(), date), IGNORE_EXCEPTION);
+    element->setAttribute("class", "ftpDirectoryFileDate", IGNORE_EXCEPTION);
+    rowElement->appendChild(element, IGNORE_EXCEPTION);
 
     element = document()->createElement(tdTag, false);
-    element->appendChild(Text::create(document(), size), ec);
-    element->setAttribute("class", "ftpDirectoryFileSize", ec);
-    rowElement->appendChild(element, ec);
+    element->appendChild(Text::create(document(), size), IGNORE_EXCEPTION);
+    element->setAttribute("class", "ftpDirectoryFileSize", IGNORE_EXCEPTION);
+    rowElement->appendChild(element, IGNORE_EXCEPTION);
 }
 
 PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String& filename)
 {
-    ExceptionCode ec;
-
     String fullURL = document()->baseURL().string();
     if (fullURL[fullURL.length() - 1] == '/')
         fullURL.append(filename);
@@ -148,11 +145,11 @@ PassRefPtr<Element> FTPDirectoryDocumentParser::createTDForFilename(const String
         fullURL.append("/" + filename);
 
     RefPtr<Element> anchorElement = document()->createElement(aTag, false);
-    anchorElement->setAttribute("href", fullURL, ec);
-    anchorElement->appendChild(Text::create(document(), filename), ec);
+    anchorElement->setAttribute("href", fullURL, IGNORE_EXCEPTION);
+    anchorElement->appendChild(Text::create(document(), filename), IGNORE_EXCEPTION);
 
     RefPtr<Element> tdElement = document()->createElement(tdTag, false);
-    tdElement->appendChild(anchorElement, ec);
+    tdElement->appendChild(anchorElement, IGNORE_EXCEPTION);
 
     return tdElement.release();
 }
@@ -319,16 +316,15 @@ bool FTPDirectoryDocumentParser::loadDocumentTemplate()
     // Otherwise create one manually
     tableElement = document()->createElement(tableTag, false);
     m_tableElement = static_cast<HTMLTableElement*>(tableElement.get());
-    ExceptionCode ec;        
-    m_tableElement->setAttribute("id", "ftpDirectoryTable", ec);
+    m_tableElement->setAttribute("id", "ftpDirectoryTable", IGNORE_EXCEPTION);
 
     // If we didn't find the table element, lets try to append our own to the body
     // If that fails for some reason, cram it on the end of the document as a last
     // ditch effort
     if (Element* body = document()->body())
-        body->appendChild(m_tableElement, ec);
+        body->appendChild(m_tableElement, IGNORE_EXCEPTION);
     else
-        document()->appendChild(m_tableElement, ec);
+        document()->appendChild(m_tableElement, IGNORE_EXCEPTION);
 
     return true;
 }
@@ -341,14 +337,13 @@ void FTPDirectoryDocumentParser::createBasicDocument()
 
     RefPtr<Element> bodyElement = document()->createElement(bodyTag, false);
 
-    ExceptionCode ec;
-    document()->appendChild(bodyElement, ec);
+    document()->appendChild(bodyElement, IGNORE_EXCEPTION);
 
     RefPtr<Element> tableElement = document()->createElement(tableTag, false);
     m_tableElement = static_cast<HTMLTableElement*>(tableElement.get());
-    m_tableElement->setAttribute("id", "ftpDirectoryTable", ec);
+    m_tableElement->setAttribute("id", "ftpDirectoryTable", IGNORE_EXCEPTION);
 
-    bodyElement->appendChild(m_tableElement, ec);
+    bodyElement->appendChild(m_tableElement, IGNORE_EXCEPTION);
 }
 
 void FTPDirectoryDocumentParser::append(const SegmentedString& source)

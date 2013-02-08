@@ -27,6 +27,7 @@
 #include "ElementShadow.h"
 #include "EventListener.h"
 #include "EventNames.h"
+#include "ExceptionCodePlaceholder.h"
 #include "MutationEvent.h"
 #include "NodeRenderingContext.h"
 #include "RenderSVGInline.h"
@@ -165,12 +166,11 @@ void SVGTRefElement::detachTarget()
     m_targetListener->detach();
 
     String emptyContent;
-    ExceptionCode ignore = 0;
 
     ASSERT(shadow());
     Node* container = shadow()->oldestShadowRoot()->firstChild();
     if (container)
-        container->setTextContent(emptyContent, ignore);
+        container->setTextContent(emptyContent, IGNORE_EXCEPTION);
 
     if (!inDocument())
         return;

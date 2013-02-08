@@ -33,6 +33,7 @@
 #include "EditCommand.h"
 #include "EditorClient.h"
 #include "Event.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FloatQuad.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -707,8 +708,7 @@ bool AlternativeTextController::insertDictatedText(const String& text, const Vec
     RefPtr<TextEvent> event = TextEvent::createForDictation(m_frame->document()->domWindow(), text, dictationAlternatives);
     event->setUnderlyingEvent(triggeringEvent);
 
-    ExceptionCode ec;
-    target->dispatchEvent(event, ec);
+    target->dispatchEvent(event, IGNORE_EXCEPTION);
     return event->defaultHandled();
 }
 

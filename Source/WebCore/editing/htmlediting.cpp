@@ -29,6 +29,7 @@
 #include "AXObjectCache.h"
 #include "Document.h"
 #include "Editor.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "HTMLBRElement.h"
 #include "HTMLDivElement.h"
@@ -96,8 +97,7 @@ int comparePositions(const Position& a, const Position& b)
             bias = 1;
     }
 
-    ExceptionCode ec;
-    int result = Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB, ec);
+    int result = Range::compareBoundaryPoints(nodeA, offsetA, nodeB, offsetB, IGNORE_EXCEPTION);
     return result ? result : bias;
 }
 

@@ -32,6 +32,7 @@
 #include "CSSValueKeywords.h"
 #include "CSSValuePool.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableCaptionElement.h"
@@ -128,15 +129,13 @@ PassRefPtr<HTMLElement> HTMLTableElement::createTHead()
     if (HTMLTableSectionElement* existingHead = tHead())
         return existingHead;
     RefPtr<HTMLTableSectionElement> head = HTMLTableSectionElement::create(theadTag, document());
-    ExceptionCode ec;
-    setTHead(head, ec);
+    setTHead(head, IGNORE_EXCEPTION);
     return head.release();
 }
 
 void HTMLTableElement::deleteTHead()
 {
-    ExceptionCode ec;
-    removeChild(tHead(), ec);
+    removeChild(tHead(), IGNORE_EXCEPTION);
 }
 
 PassRefPtr<HTMLElement> HTMLTableElement::createTFoot()
@@ -144,15 +143,13 @@ PassRefPtr<HTMLElement> HTMLTableElement::createTFoot()
     if (HTMLTableSectionElement* existingFoot = tFoot())
         return existingFoot;
     RefPtr<HTMLTableSectionElement> foot = HTMLTableSectionElement::create(tfootTag, document());
-    ExceptionCode ec;
-    setTFoot(foot, ec);
+    setTFoot(foot, IGNORE_EXCEPTION);
     return foot.release();
 }
 
 void HTMLTableElement::deleteTFoot()
 {
-    ExceptionCode ec;
-    removeChild(tFoot(), ec);
+    removeChild(tFoot(), IGNORE_EXCEPTION);
 }
 
 PassRefPtr<HTMLElement> HTMLTableElement::createTBody()
@@ -168,15 +165,13 @@ PassRefPtr<HTMLElement> HTMLTableElement::createCaption()
     if (HTMLTableCaptionElement* existingCaption = caption())
         return existingCaption;
     RefPtr<HTMLTableCaptionElement> caption = HTMLTableCaptionElement::create(captionTag, document());
-    ExceptionCode ec;
-    setCaption(caption, ec);
+    setCaption(caption, IGNORE_EXCEPTION);
     return caption.release();
 }
 
 void HTMLTableElement::deleteCaption()
 {
-    ExceptionCode ec;
-    removeChild(caption(), ec);
+    removeChild(caption(), IGNORE_EXCEPTION);
 }
 
 HTMLTableSectionElement* HTMLTableElement::lastBody() const

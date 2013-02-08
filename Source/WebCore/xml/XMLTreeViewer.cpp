@@ -33,6 +33,7 @@
 
 #include "Document.h"
 #include "Element.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Frame.h"
 #include "Page.h"
 #include "ScriptSourceCode.h"
@@ -78,8 +79,7 @@ void XMLTreeViewer::transformDocumentToTreeView()
 
     String cssString(reinterpret_cast<const char*>(XMLViewer_css), sizeof(XMLViewer_css));
     RefPtr<Text> text = m_document->createTextNode(cssString);
-    ExceptionCode exceptionCode;
-    m_document->getElementById("xml-viewer-style")->appendChild(text, exceptionCode);
+    m_document->getElementById("xml-viewer-style")->appendChild(text, IGNORE_EXCEPTION);
     m_document->styleResolverChanged(RecalcStyleImmediately);
 }
 

@@ -38,6 +38,7 @@
 #include "EditorClient.h"
 #include "Event.h"
 #include "EventHandler.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FormatBlockCommand.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -442,9 +443,8 @@ static bool executeFormatBlock(Frame* frame, Event*, EditorCommandSource, const 
     if (tagName[0] == '<' && tagName[tagName.length() - 1] == '>')
         tagName = tagName.substring(1, tagName.length() - 2);
 
-    ExceptionCode ec;
     String localName, prefix;
-    if (!Document::parseQualifiedName(tagName, prefix, localName, ec))
+    if (!Document::parseQualifiedName(tagName, prefix, localName, IGNORE_EXCEPTION))
         return false;
     QualifiedName qualifiedTagName(prefix, localName, xhtmlNamespaceURI);
 

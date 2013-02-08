@@ -33,6 +33,7 @@
 #include "MediaControlElementTypes.h"
 
 #include "CSSValueKeywords.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FloatConversion.h"
 #include "HTMLNames.h"
 #include "MouseEvent.h"
@@ -263,9 +264,8 @@ float MediaControlSeekButtonElement::nextRate() const
 void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonElement>*)
 {
     if (m_seekType == Skip) {
-        ExceptionCode ec;
         float skipTime = isForwardButton() ? cSkipTime : -cSkipTime;
-        mediaController()->setCurrentTime(mediaController()->currentTime() + skipTime, ec);
+        mediaController()->setCurrentTime(mediaController()->currentTime() + skipTime, IGNORE_EXCEPTION);
     } else
         mediaController()->setPlaybackRate(nextRate());
 }

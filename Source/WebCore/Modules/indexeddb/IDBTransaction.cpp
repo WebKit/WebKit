@@ -30,6 +30,7 @@
 
 #include "EventException.h"
 #include "EventQueue.h"
+#include "ExceptionCodePlaceholder.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
 #include "IDBEventDispatcher.h"
@@ -423,8 +424,7 @@ void IDBTransaction::stop()
     ActiveDOMObject::stop();
     m_contextStopped = true;
 
-    ExceptionCode unused;
-    abort(unused);
+    abort(IGNORE_EXCEPTION);
 }
 
 void IDBTransaction::enqueueEvent(PassRefPtr<Event> event)

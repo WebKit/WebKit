@@ -34,6 +34,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Color.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FileList.h"
 #include "Font.h"
 #include "FontSelector.h"
@@ -790,10 +791,9 @@ bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pain
             p->painter->setBrush(getMediaControlForegroundColor());
 
             // Paint each buffered section
-            ExceptionCode ex;
             for (int i = 0; i < buffered->length(); i++) {
-                float startX = (buffered->start(i, ex) / player->duration()) * 100;
-                float width = ((buffered->end(i, ex) / player->duration()) * 100) - startX;
+                float startX = (buffered->start(i, IGNORE_EXCEPTION) / player->duration()) * 100;
+                float width = ((buffered->end(i, IGNORE_EXCEPTION) / player->duration()) * 100) - startX;
                 p->painter->drawRect(startX, 37, width, 26);
             }
         }

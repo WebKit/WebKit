@@ -43,6 +43,7 @@
 #include "Event.h"
 #include "EventHandler.h"
 #include "EventNames.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FormState.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
@@ -400,12 +401,11 @@ void ContextMenuController::contextMenuItemSelected(ContextMenuItem* item)
         // which may make this difficult to implement. Maybe a special case of text-shadow?
         break;
     case ContextMenuItemTagStartSpeaking: {
-        ExceptionCode ec;
         RefPtr<Range> selectedRange = frame->selection()->toNormalizedRange();
-        if (!selectedRange || selectedRange->collapsed(ec)) {
+        if (!selectedRange || selectedRange->collapsed(IGNORE_EXCEPTION)) {
             Document* document = m_hitTestResult.innerNonSharedNode()->document();
             selectedRange = document->createRange();
-            selectedRange->selectNode(document->documentElement(), ec);
+            selectedRange->selectNode(document->documentElement(), IGNORE_EXCEPTION);
         }
         m_client->speak(plainText(selectedRange.get()));
         break;
