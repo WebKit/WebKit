@@ -691,7 +691,11 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
     
     if (m_canHaveScrollbars || strategy == RulesFromWebContentOnly) {
         hMode = ScrollbarAuto;
-        vMode = ScrollbarAuto;
+        // Seamless documents begin with heights of 0; we special case that here
+        // to correctly render documents that don't need scrollbars.
+        IntSize fullVisibleSize = visibleContentRect(true /*includeScrollbars*/).size();
+        bool isSeamlessDocument = frame() && frame()->document() && frame()->document()->shouldDisplaySeamlesslyWithParent();
+        vMode = (isSeamlessDocument && !fullVisibleSize.height()) ? ScrollbarAlwaysOff : ScrollbarAuto;
     } else {
         hMode = ScrollbarAlwaysOff;
         vMode = ScrollbarAlwaysOff;
