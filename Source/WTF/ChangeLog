@@ -1,3 +1,14 @@
+2013-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add an experimental gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=109003
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * WTF.gyp/WTF.gyp: Filter out MetaAllocator.(cpp/h) from the Chromium
+        build. It's only necessary for GTK+.
+        * WTF.gypi: Add MetaAllocator to the build for WebKitGTK+.
+
 2013-02-06  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: reportBaseAddress needs to be called after the reportNode. So it may reuse the node index for the real address.

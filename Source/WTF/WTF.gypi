@@ -175,6 +175,8 @@
             'wtf/MallocZoneSupport.h',
             'wtf/MediaTime.h',
             'wtf/MediaTime.cpp',
+            'wtf/MetaAllocator.cpp',
+            'wtf/MetaAllocator.h',
             'wtf/NullPtr.cpp',
             'wtf/NumberOfCores.cpp',
             'wtf/NumberOfCores.h',

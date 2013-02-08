@@ -126,6 +126,7 @@
         ['exclude', '(Default|Gtk|Mac|None|Qt|Win|Wx|Efl)\\.(cpp|mm)$'],
         ['exclude', 'wtf/OSRandomSource\\.cpp$'],
         ['exclude', 'wtf/MainThread.cpp$'],
+        ['exclude', 'wtf/MetaAllocator\\.(cpp|h)$'],
       ],
       'direct_dependent_settings': {
         'include_dirs': [

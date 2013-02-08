@@ -1,3 +1,13 @@
+2013-02-08  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add an experimental gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=109003
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * JavaScriptCore.gypi: Update the list of source files to include those
+        necessary for the GTK+ build.
+
 2013-02-08  Andreas Kling  <akling@apple.com>
 
         JSC: Lower minimum PropertyTable size.
