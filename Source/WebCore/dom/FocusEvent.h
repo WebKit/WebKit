@@ -31,6 +31,12 @@
 
 namespace WebCore {
 
+struct FocusEventInit : public UIEventInit {
+    FocusEventInit();
+
+    RefPtr<EventTarget> relatedTarget;
+};
+
 class FocusEvent : public UIEvent {
 public:
     static PassRefPtr<FocusEvent> create()
@@ -43,6 +49,11 @@ public:
         return adoptRef(new FocusEvent(type, canBubble, cancelable, view, detail, relatedTarget));
     }
 
+    static PassRefPtr<FocusEvent> create(const AtomicString& type, const FocusEventInit& initializer)
+    {
+        return adoptRef(new FocusEvent(type, initializer));
+    }
+
     EventTarget* relatedTarget() const { return m_relatedTarget.get(); }
     void setRelatedTarget(PassRefPtr<EventTarget> relatedTarget) { m_relatedTarget = relatedTarget; }
 
@@ -52,6 +63,7 @@ public:
 private:
     FocusEvent();
     FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>, int, PassRefPtr<EventTarget>);
+    FocusEvent(const AtomicString& type, const FocusEventInit&);
 
     RefPtr<EventTarget> m_relatedTarget;
 };

@@ -545,6 +545,7 @@
     attribute CompositionEventConstructor CompositionEvent;
     attribute CustomEventConstructor CustomEvent;
     attribute ErrorEventConstructor ErrorEvent;
+    attribute FocusEventConstructor FocusEvent;
     attribute HashChangeEventConstructor HashChangeEvent;
     attribute KeyboardEventConstructor KeyboardEvent;
     attribute MessageEventConstructor MessageEvent;

@@ -31,6 +31,11 @@
 
 namespace WebCore {
 
+FocusEventInit::FocusEventInit()
+    : relatedTarget(0)
+{
+}
+
 const AtomicString& FocusEvent::interfaceName() const
 {
     return eventNames().interfaceForFocusEvent;
@@ -48,6 +53,12 @@ FocusEvent::FocusEvent()
 FocusEvent::FocusEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view, int detail, PassRefPtr<EventTarget> relatedTarget)
     : UIEvent(type, canBubble, cancelable, view, detail)
     , m_relatedTarget(relatedTarget)
+{
+}
+
+FocusEvent::FocusEvent(const AtomicString& type, const FocusEventInit& initializer)
+    : UIEvent(type, initializer)
+    , m_relatedTarget(initializer.relatedTarget)
 {
 }
 

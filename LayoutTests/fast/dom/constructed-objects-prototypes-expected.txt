@@ -21,6 +21,8 @@ PASS (new inner.ErrorEvent()).isInner is true
 PASS (new inner.ErrorEvent()).constructor.isInner is true
 PASS (new inner.Event()).isInner is true
 PASS (new inner.Event()).constructor.isInner is true
+PASS (new inner.FocusEvent()).isInner is true
+PASS (new inner.FocusEvent()).constructor.isInner is true
 PASS (new inner.FormData()).isInner is true
 PASS (new inner.FormData()).constructor.isInner is true
 PASS (new inner.HashChangeEvent()).isInner is true
