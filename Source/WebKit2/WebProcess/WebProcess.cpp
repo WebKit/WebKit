@@ -770,6 +770,11 @@ bool WebProcess::isPlugInAutoStartOrigin(unsigned plugInOriginHash)
 
 void WebProcess::addPlugInAutoStartOrigin(const String& pageOrigin, unsigned plugInOriginHash)
 {
+    if (pageOrigin.isEmpty()) {
+        LOG(Plugins, "Not adding empty page origin");
+        return;
+    }
+
     if (isPlugInAutoStartOrigin(plugInOriginHash)) {
         LOG(Plugins, "Hash %x already exists as auto-start origin (request for %s)", plugInOriginHash, pageOrigin.utf8().data());
         return;
