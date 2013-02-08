@@ -315,12 +315,14 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     -I$(srcdir)/Source \
 	     -I$(WebKit) \
 	     -I$(GENSOURCES) \
+	     -I$(GENSOURCES_WEBKITDOM) \
 	     -I$(GENSOURCES_WEBKIT) \
 	     -I$(top_builddir)/Source/WebKit/gtk \
 	     -I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
 	     -I$(top_srcdir) \
 	     $(GENSOURCES_WEBKIT)/webkitenumtypes.h \
 	     $(webkitgtk_h_api) \
+	     $(webkitgtk_gdom_built_h_api) \
 	     $(WebKit)/webkit/*.cpp
 
 girdir = $(datadir)/gir-1.0

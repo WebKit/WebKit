@@ -1,3 +1,15 @@
+2013-02-08  Tomas Popela  <tpopela@redhat.com>
+
+        [GTK] Include files from DerivedSources/webkitdom for introspection
+        https://bugs.webkit.org/show_bug.cgi?id=108631
+
+        Reviewed by Martin Robinson.
+
+        Include files from DerivedSources/webkitdom for introspection
+
+        * /Source/WebKit/gtk/GNUmakefile.am:
+        * /Source/WebKit2/GNUmakefile.am:
+
 2013-02-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Split configure.ac into reusable portions

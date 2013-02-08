@@ -238,6 +238,7 @@ WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_AP
 	     -I$(srcdir)/Source \
 	     -I$(WebKit2) \
 	     -I$(GENSOURCES) \
+	     -I$(GENSOURCES_WEBKITDOM) \
 	     -I$(GENSOURCES_WEBKIT2) \
 	     -I$(top_builddir)/Source/WebKit2/UIProcess/API/gtk \
 	     -I$(top_srcdir)/Source/JavaScriptCore/ForwardingHeaders \
@@ -247,6 +248,7 @@ WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_AP
 	     -DWEBKIT2_COMPILATION \
 	     $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h \
 	     $(webkit2gtk_h_api) \
+	     $(webkitgtk_gdom_built_h_api) \
 	     $(WebKit2)/UIProcess/API/gtk/*.cpp
 
 gir2dir = $(datadir)/gir-1.0
