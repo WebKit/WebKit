@@ -194,13 +194,13 @@ function test()
     // Test for focus/blur events. Event listners should be registerd on captureing phase.
     moveFocus('divB', 'divC',
               'Move focus from a node to its sibling node. All nodes are outside of shadow boundary.');
-    shouldBe('dispatchedEvent("focus")', '["divC(@divA)(capturing phase)", "divC(@divC)"]');
-    shouldBe('dispatchedEvent("blur")', '["divB(@divA)(capturing phase)", "divB(@divB)"]');
+    shouldBe('dispatchedEvent("focus")', '["divC(<-divB)(@divA)(capturing phase)", "divC(<-divB)(@divC)"]');
+    shouldBe('dispatchedEvent("blur")', '["divB(<-divC)(@divA)(capturing phase)", "divB(<-divC)(@divB)"]');
 
     moveFocus('shadowD/shadowF/shadowG/divH', 'shadowD/shadowK/divL',
               'Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.');
-    shouldBe('dispatchedEvent("focus")', '["shadowK(@divJ)(capturing phase)", "shadowK(@shadowK)", "divL(@divL)"]');
-    shouldBe('dispatchedEvent("blur")', '["shadowF(@divE)(capturing phase)", "shadowF(@shadowF)", "shadowG(@shadowG)", "divH(@divH)"]');
+    shouldBe('dispatchedEvent("focus")', '["shadowK(<-shadowF)(@divJ)(capturing phase)", "shadowK(<-shadowF)(@shadowK)", "divL(<-shadowF)(@divL)"]');
+    shouldBe('dispatchedEvent("blur")', '["shadowF(<-shadowK)(@divE)(capturing phase)", "shadowF(<-shadowK)(@shadowF)", "shadowG(<-shadowK)(@shadowG)", "divH(<-shadowK)(@divH)"]');
 }
 
 test();

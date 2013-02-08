@@ -71,13 +71,13 @@ PASS dispatchedEvent("focusout") is ["divH(<-shadowK)(@divH)", "shadowG(<-shadow
 
 Move focus from a node to its sibling node. All nodes are outside of shadow boundary.
 Moving focus from divB to divC
-PASS dispatchedEvent("focus") is ["divC(@divA)(capturing phase)", "divC(@divC)"]
-PASS dispatchedEvent("blur") is ["divB(@divA)(capturing phase)", "divB(@divB)"]
+PASS dispatchedEvent("focus") is ["divC(<-divB)(@divA)(capturing phase)", "divC(<-divB)(@divC)"]
+PASS dispatchedEvent("blur") is ["divB(<-divC)(@divA)(capturing phase)", "divB(<-divC)(@divB)"]
 
 Old focused node and new focused node exist in separated subtrees, crossing shadow boundaries. Making sure that an event is not dispatched beyond the lowest common boundary.
 Moving focus from shadowD/shadowF/shadowG/divH to shadowD/shadowK/divL
-PASS dispatchedEvent("focus") is ["shadowK(@divJ)(capturing phase)", "shadowK(@shadowK)", "divL(@divL)"]
-PASS dispatchedEvent("blur") is ["shadowF(@divE)(capturing phase)", "shadowF(@shadowF)", "shadowG(@shadowG)", "divH(@divH)"]
+PASS dispatchedEvent("focus") is ["shadowK(<-shadowF)(@divJ)(capturing phase)", "shadowK(<-shadowF)(@shadowK)", "divL(<-shadowF)(@divL)"]
+PASS dispatchedEvent("blur") is ["shadowF(<-shadowK)(@divE)(capturing phase)", "shadowF(<-shadowK)(@shadowF)", "shadowG(<-shadowK)(@shadowG)", "divH(<-shadowK)(@divH)"]
 PASS successfullyParsed is true
 
 TEST COMPLETE

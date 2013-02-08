@@ -7,7 +7,6 @@
 <input id="input1" type="text"></input>
 <input id="input2" type="text"></input>
 <input id="input3" type="text"></input>
-<input id="input4" type="text"></input>
 <script>
 jsTestIsAsync = true;
 
@@ -17,14 +16,17 @@ var input1 = document.getElementById('input1');
 var input2 = document.getElementById('input2');
 var input3 = document.getElementById('input3');
 
-input1.addEventListener("focusin", function(event) { shouldBe('event.relatedTarget', 'null'); });
+input1.addEventListener("focusin", function(event) { shouldBeNull('event.relatedTarget'); });
 input1.addEventListener("focusout", function(event) { shouldBe('event.relatedTarget', 'input2'); });
+input1.addEventListener("focus", function(event) { shouldBeNull('event.relatedTarget'); });
+input1.addEventListener("blur", function(event) { shouldBe('event.relatedTarget', 'input2'); });
 input2.addEventListener("focusin", function(event) { shouldBe('event.relatedTarget', 'input1'); });
 input2.addEventListener("focusout", function(event) { shouldBe('event.relatedTarget', 'input3'); });
-input3.addEventListener("focusin", function(event) { shouldBe('event.relatedTarget', 'input2'); });
-input3.addEventListener("focusout", function(event) { shouldBe('event.relatedTarget', 'input4'); finishJSTest(); });
+input2.addEventListener("focus", function(event) { shouldBe('event.relatedTarget', 'input1'); });
+input2.addEventListener("blur", function(event) { shouldBe('event.relatedTarget', 'input3'); finishJSTest(); });
 
-for (var i = 0; i < 4; i++) {
+input1.focus();
+for (var i = 0; i < 2; i++) {
     eventSender.keyDown('\t');
 }
 </script>

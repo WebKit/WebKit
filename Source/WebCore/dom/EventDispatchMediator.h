@@ -59,18 +59,18 @@ private:
 
 class FocusEventDispatchMediator : public EventDispatchMediator {
 public:
-    static PassRefPtr<FocusEventDispatchMediator> create(PassRefPtr<Node> oldFocusedNode);
+    static PassRefPtr<FocusEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
 private:
-    explicit FocusEventDispatchMediator(PassRefPtr<Node> oldFocusedNode);
+    FocusEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
     virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
     RefPtr<Node> m_oldFocusedNode;
 };
 
 class BlurEventDispatchMediator : public EventDispatchMediator {
 public:
-    static PassRefPtr<BlurEventDispatchMediator> create(PassRefPtr<Node> newFocusedNode);
+    static PassRefPtr<BlurEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
 private:
-    explicit BlurEventDispatchMediator(PassRefPtr<Node> newFocusedNode);
+    BlurEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
     virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
     RefPtr<Node> m_newFocusedNode;
 };
