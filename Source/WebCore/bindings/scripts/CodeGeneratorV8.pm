@@ -1049,7 +1049,7 @@ END
         push(@implContentDecls, "    if (wrapper.IsEmpty()) {\n");
         push(@implContentDecls, "        wrapper = toV8(result.get(), info.Holder(), info.GetIsolate());\n"); # FIXME: Could use wrap here since the wrapper is empty.
         push(@implContentDecls, "        if (!wrapper.IsEmpty())\n");
-        push(@implContentDecls, "            V8DOMWrapper::setNamedHiddenReference(info.Holder(), \"${attrName}\", wrapper);\n");
+        push(@implContentDecls, "            V8HiddenPropertyName::setNamedHiddenReference(info.Holder(), \"${attrName}\", wrapper);\n");
         push(@implContentDecls, "    }\n");
         push(@implContentDecls, "    return wrapper;\n");
         push(@implContentDecls, "}\n\n");

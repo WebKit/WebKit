@@ -214,7 +214,7 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
         break;
     }
     ASSERT(!extensionObject.IsEmpty());
-    V8DOMWrapper::setNamedHiddenReference(contextObject, referenceName, extensionObject);
+    V8HiddenPropertyName::setNamedHiddenReference(contextObject, referenceName, extensionObject);
     return extensionObject;
 }
 

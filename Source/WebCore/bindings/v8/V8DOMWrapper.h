@@ -62,9 +62,6 @@ namespace WebCore {
 
         static bool isDOMWrapper(v8::Handle<v8::Value>);
         static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
-
-        // FIXME: Why is this function in V8DOMWrapper?
-        static void setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child);
     };
 
     inline void V8DOMWrapper::setNativeInfo(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type, void* object)

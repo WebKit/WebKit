@@ -73,12 +73,6 @@ private:
     v8::Handle<v8::Context> m_context;
 };
 
-void V8DOMWrapper::setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child)
-{
-    ASSERT(name);
-    parent->SetHiddenValue(V8HiddenPropertyName::hiddenReferenceName(name, strlen(name)), child);
-}
-
 v8::Local<v8::Object> V8DOMWrapper::createWrapper(v8::Handle<v8::Object> creationContext, WrapperTypeInfo* type, void* impl, v8::Isolate* isolate)
 {
     V8WrapperInstantiationScope scope(creationContext);

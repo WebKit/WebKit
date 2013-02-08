@@ -48,23 +48,23 @@ namespace WebCore {
     V(toStringString) \
     V(typedArrayHiddenCopyMethod)
 
-    enum V8HiddenPropertyCreationType { NewSymbol, NewString };
+enum V8HiddenPropertyCreationType { NewSymbol, NewString };
 
-    class V8HiddenPropertyName {
-    public:
-        V8HiddenPropertyName() { }
+class V8HiddenPropertyName {
+public:
+    V8HiddenPropertyName() { }
 #define V8_DECLARE_PROPERTY(name) static v8::Handle<v8::String> name();
-        V8_HIDDEN_PROPERTIES(V8_DECLARE_PROPERTY);
+    V8_HIDDEN_PROPERTIES(V8_DECLARE_PROPERTY);
 #undef V8_DECLARE_PROPERTY
 
-        static v8::Handle<v8::String> hiddenReferenceName(const char*, unsigned, V8HiddenPropertyCreationType = NewSymbol);
+    static void setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child);
 
-    private:
-        static v8::Persistent<v8::String> createString(const char* key);
+private:
+    static v8::Persistent<v8::String> createString(const char* key);
 #define V8_DECLARE_FIELD(name) v8::Persistent<v8::String> m_##name;
-        V8_HIDDEN_PROPERTIES(V8_DECLARE_FIELD);
+    V8_HIDDEN_PROPERTIES(V8_DECLARE_FIELD);
 #undef V8_DECLARE_FIELD
-    };
+};
 
 }
 

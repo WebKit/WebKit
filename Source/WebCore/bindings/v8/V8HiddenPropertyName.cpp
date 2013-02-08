@@ -55,7 +55,7 @@ v8::Handle<v8::String> V8HiddenPropertyName::name() \
 
 V8_HIDDEN_PROPERTIES(V8_DEFINE_HIDDEN_PROPERTY);
 
-v8::Handle<v8::String> V8HiddenPropertyName::hiddenReferenceName(const char* name, unsigned length, V8HiddenPropertyCreationType type)
+static v8::Handle<v8::String> hiddenReferenceName(const char* name, unsigned length, V8HiddenPropertyCreationType type = NewSymbol)
 {
     ASSERT(length);
     Vector<char, 64> prefixedName;
@@ -69,6 +69,12 @@ v8::Handle<v8::String> V8HiddenPropertyName::hiddenReferenceName(const char* nam
     }
     ASSERT_NOT_REACHED();
     return v8::Handle<v8::String>();
+}
+
+void V8HiddenPropertyName::setNamedHiddenReference(v8::Handle<v8::Object> parent, const char* name, v8::Handle<v8::Value> child)
+{
+    ASSERT(name);
+    parent->SetHiddenValue(hiddenReferenceName(name, strlen(name)), child);
 }
 
 v8::Persistent<v8::String> V8HiddenPropertyName::createString(const char* key)
