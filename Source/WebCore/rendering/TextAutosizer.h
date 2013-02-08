@@ -67,8 +67,10 @@ private:
     void setMultiplier(RenderObject*, float);
 
     static bool isAutosizingContainer(const RenderObject*);
+    static bool isNarrowDescendant(const RenderBlock*, TextAutosizingClusterInfo* parentClusterInfo);
+    static bool isWiderDescendant(const RenderBlock*, const TextAutosizingClusterInfo* parentClusterInfo);
+    static bool isIndependentDescendant(const RenderBlock*);
     static bool isAutosizingCluster(const RenderBlock*, TextAutosizingClusterInfo* parentClusterInfo);
-    static bool isAutosizingCluster(const RenderObject*);
 
     static bool containerShouldBeAutosized(const RenderBlock* container);
     static bool containerContainsOneOfTags(const RenderBlock* cluster, const Vector<QualifiedName>& tags);
