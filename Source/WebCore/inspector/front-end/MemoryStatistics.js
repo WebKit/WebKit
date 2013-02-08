@@ -80,9 +80,9 @@ WebInspector.MemoryStatistics = function(timelinePanel, model, sidebarWidth)
         return entry.listenerCount;
     }
     this._counterUI = [
-        new WebInspector.CounterUI(this, "Document Count", "Documents: %d", [100,0,0], getDocumentCount),
-        new WebInspector.CounterUI(this, "DOM Node Count", "Nodes: %d", [0,100,0], getNodeCount),
-        new WebInspector.CounterUI(this, "Event Listener Count", "Listeners: %d", [0,0,100], getListenerCount)
+        new WebInspector.DOMCounterUI(this, "Document Count", "Documents: %d", [100,0,0], getDocumentCount),
+        new WebInspector.DOMCounterUI(this, "DOM Node Count", "Nodes: %d", [0,100,0], getNodeCount),
+        new WebInspector.DOMCounterUI(this, "Event Listener Count", "Listeners: %d", [0,0,100], getListenerCount)
     ];
 
     TimelineAgent.setIncludeMemoryDetails(true);
@@ -134,15 +134,56 @@ WebInspector.SwatchCheckbox.prototype = {
 /**
  * @constructor
  */
-WebInspector.CounterUI = function(memoryCountersPane, title, currentValueLabel, rgb, valueGetter)
+WebInspector.CounterUIBase = function(memoryCountersPane, title, graphColor, valueGetter)
 {
     this._memoryCountersPane = memoryCountersPane;
     this.valueGetter = valueGetter;
     var container = memoryCountersPane._memorySidebarView.sidebarElement.createChild("div", "memory-counter-sidebar-info");
-    var swatchColor = "rgb(" + rgb.join(",") + ")";
+    var swatchColor = graphColor;
     this._swatch = new WebInspector.SwatchCheckbox(WebInspector.UIString(title), swatchColor);
     this._swatch.addEventListener(WebInspector.SwatchCheckbox.Events.Changed, this._toggleCounterGraph.bind(this));
     container.appendChild(this._swatch.element);
+
+    this._value = null;
+    this.graphColor =graphColor;
+    this.strokeColor = graphColor;
+    this.graphYValues = [];
+}
+
+WebInspector.CounterUIBase.prototype = {
+    _toggleCounterGraph: function(event)
+    {
+        if (this._swatch.checked)
+            this._value.removeStyleClass("hidden");
+        else
+            this._value.addStyleClass("hidden");
+        this._memoryCountersPane.refresh();
+    },
+
+    updateCurrentValue: function(countersEntry)
+    {
+        this._value.textContent = Number.bytesToString(this.valueGetter(countersEntry));
+    },
+
+    clearCurrentValueAndMarker: function(ctx)
+    {
+        this._value.textContent = "";
+    },
+
+    get visible()
+    {
+        return this._swatch.checked;
+    },
+}
+
+/**
+ * @constructor
+ * @extends {WebInspector.CounterUIBase}
+ */
+WebInspector.DOMCounterUI = function(memoryCountersPane, title, currentValueLabel, rgb, valueGetter)
+{
+    var swatchColor = "rgb(" + rgb.join(",") + ")";
+    WebInspector.CounterUIBase.call(this, memoryCountersPane, title, swatchColor, valueGetter)
     this._range = this._swatch.element.createChild("span");
 
     this._value = memoryCountersPane._currentValuesBar.createChild("span", "memory-counter-value");
@@ -153,16 +194,7 @@ WebInspector.CounterUI = function(memoryCountersPane, title, currentValueLabel, 
     this.graphYValues = [];
 }
 
-WebInspector.CounterUI.prototype = {
-    _toggleCounterGraph: function(event)
-    {
-        if (this._swatch.checked)
-            this._value.removeStyleClass("hidden");
-        else
-            this._value.addStyleClass("hidden");
-        this._memoryCountersPane.refresh();
-    },
-
+WebInspector.DOMCounterUI.prototype = {
     setRange: function(minValue, maxValue)
     {
         this._range.textContent = WebInspector.UIString("[ %d - %d ]", minValue, maxValue);
@@ -177,11 +209,6 @@ WebInspector.CounterUI.prototype = {
     {
         this._value.textContent = "";
         this.restoreImageUnderMarker(ctx);
-    },
-
-    get visible()
-    {
-        return this._swatch.checked;
     },
 
     saveImageUnderMarker: function(ctx, x, y, radius)
@@ -206,7 +233,9 @@ WebInspector.CounterUI.prototype = {
     discardImageUnderMarker: function()
     {
         delete this._imageUnderMarker;
-    }
+    },
+
+    __proto__: WebInspector.CounterUIBase.prototype
 }
 
 
@@ -326,6 +355,11 @@ WebInspector.MemoryStatistics.prototype = {
         delete this._markerXPosition;
 
         var ctx = this._canvas.getContext("2d");
+        this._clearCurrentValueAndMarker(ctx);
+    },
+
+    _clearCurrentValueAndMarker: function(ctx)
+    {
         for (var i = 0; i < this._counterUI.length; i++)
             this._counterUI[i].clearCurrentValueAndMarker(ctx);
     },
@@ -350,10 +384,15 @@ WebInspector.MemoryStatistics.prototype = {
             return;
         var i = this._recordIndexAt(this._markerXPosition);
 
-        for (var j = 0; j < this._counterUI.length; j++)
-            this._counterUI[j].updateCurrentValue(this._counters[i]);
+        this._updateCurrentValue(this._counters[i]);
 
         this._highlightCurrentPositionOnGraphs(this._markerXPosition, i);
+    },
+
+    _updateCurrentValue: function(counterEntry)
+    {
+        for (var j = 0; j < this._counterUI.length; j++)
+            this._counterUI[j].updateCurrentValue(counterEntry);
     },
 
     _recordIndexAt: function(x)
@@ -371,13 +410,23 @@ WebInspector.MemoryStatistics.prototype = {
     _highlightCurrentPositionOnGraphs: function(x, index)
     {
         var ctx = this._canvas.getContext("2d");
+        this._restoreImageUnderMarker(ctx);
+        this._saveImageUnderMarker(ctx, x, index);
+        this._drawMarker(ctx, x, index);
+    },
+
+    _restoreImageUnderMarker: function(ctx)
+    {
         for (var i = 0; i < this._counterUI.length; i++) {
             var counterUI = this._counterUI[i];
             if (!counterUI.visible)
                 continue;
             counterUI.restoreImageUnderMarker(ctx);
         }
+    },
 
+    _saveImageUnderMarker: function(ctx, x, index)
+    {
         const radius = 2;
         for (var i = 0; i < this._counterUI.length; i++) {
             var counterUI = this._counterUI[i];
@@ -386,7 +435,11 @@ WebInspector.MemoryStatistics.prototype = {
             var y = counterUI.graphYValues[index];
             counterUI.saveImageUnderMarker(ctx, x, y, radius);
         }
+    },
 
+    _drawMarker: function(ctx, x, index)
+    {
+        const radius = 2;
         for (var i = 0; i < this._counterUI.length; i++) {
             var counterUI = this._counterUI[i];
             if (!counterUI.visible)
@@ -509,6 +562,11 @@ WebInspector.MemoryStatistics.prototype = {
     _clear: function() {
         var ctx = this._canvas.getContext("2d");
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+        this._discardImageUnderMarker();
+    },
+
+    _discardImageUnderMarker: function()
+    {
         for (var i = 0; i < this._counterUI.length; i++)
             this._counterUI[i].discardImageUnderMarker();
     }
