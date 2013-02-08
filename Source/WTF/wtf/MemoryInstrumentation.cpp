@@ -91,14 +91,18 @@ void MemoryInstrumentation::WrapperBase::processPointer(MemoryInstrumentation* m
 
     const void* realAddress = memoryObjectInfo.reportedPointer();
     ASSERT(realAddress);
-    if (realAddress != m_pointer) {
-        memoryInstrumentation->m_client->reportBaseAddress(m_pointer, realAddress);
-        if (!memoryObjectInfo.firstVisit())
-            return;
+
+    if (memoryObjectInfo.firstVisit()) {
+        memoryInstrumentation->countObjectSize(realAddress, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
+        memoryInstrumentation->m_client->reportNode(memoryObjectInfo);
     }
-    memoryInstrumentation->countObjectSize(realAddress, memoryObjectInfo.objectType(), memoryObjectInfo.objectSize());
-    memoryInstrumentation->m_client->reportNode(memoryObjectInfo);
-    if (!memoryObjectInfo.customAllocation() && !memoryInstrumentation->checkCountedObject(realAddress)) {
+
+    if (realAddress != m_pointer)
+        memoryInstrumentation->m_client->reportBaseAddress(m_pointer, realAddress);
+
+    if (memoryObjectInfo.firstVisit()
+        && !memoryObjectInfo.customAllocation()
+        && !memoryInstrumentation->checkCountedObject(realAddress)) {
 #if DEBUG_POINTER_INSTRUMENTATION
         fputs("Unknown object counted:\n", stderr);
         WTFPrintBacktrace(m_callStack, m_callStackSize);

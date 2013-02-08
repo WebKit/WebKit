@@ -1,3 +1,13 @@
+2013-02-06  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: reportBaseAddress needs to be called after the reportNode. So it may reuse the node index for the real address.
+        https://bugs.webkit.org/show_bug.cgi?id=109051
+
+        Reviewed by Yury Semikhatsky.
+
+        * wtf/MemoryInstrumentation.cpp:
+        (WTF::MemoryInstrumentation::WrapperBase::processPointer):
+
 2013-02-07  David Kilzer  <ddkilzer@apple.com>
 
         Fix #endif comment from r142163 and r142183
