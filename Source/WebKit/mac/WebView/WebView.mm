@@ -819,7 +819,7 @@ static bool shouldRespectPriorityInCSSAttributeSetters()
     [self _preferencesChanged:[self preferences]];
     [[self preferences] _postPreferencesChangedAPINotification];
 
-    memoryPressureHandler().install();
+    memoryPressureHandler().initialize();
 
     if (!WebKitLinkedOnOrAfter(WEBKIT_FIRST_VERSION_WITH_LOCAL_RESOURCE_SECURITY_RESTRICTION)) {
         // Originally, we allowed all local loads.
@@ -6734,7 +6734,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 void WebInstallMemoryPressureHandler(void)
 {
-    memoryPressureHandler().install();
+    memoryPressureHandler().initialize();
 }
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED == 1050

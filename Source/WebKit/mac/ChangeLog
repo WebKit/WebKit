@@ -1,3 +1,17 @@
+2013-02-06  Gavin Barraclough  <barraclough@apple.com>
+
+        PluginProcess should quit immediately if idle in response to low-memory notifications
+        https://bugs.webkit.org/show_bug.cgi?id=109103
+        <rdar://problem/12679827>
+
+        Reviewed by Darin Adler.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:]):
+            - MemoryPressureHandler::install is now called via MemoryPressureHandler::initialize.
+        (WebInstallMemoryPressureHandler):
+            - MemoryPressureHandler::install is now called via MemoryPressureHandler::initialize.
+
 2013-02-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Move pauseAnimation/pauseTransition from TestRunner to Internals

@@ -244,7 +244,7 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 
     platformInitializeWebProcess(parameters, decoder);
 
-    memoryPressureHandler().install();
+    memoryPressureHandler().initialize();
 
     RefPtr<APIObject> injectedBundleInitializationUserData;
     InjectedBundleUserMessageDecoder messageDecoder(injectedBundleInitializationUserData);

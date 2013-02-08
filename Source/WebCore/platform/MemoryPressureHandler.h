@@ -31,25 +31,35 @@
 
 namespace WebCore {
 
+typedef void (*LowMemoryHandler)(bool critical);
+
 class MemoryPressureHandler {
     WTF_MAKE_FAST_ALLOCATED;
 public:
     friend MemoryPressureHandler& memoryPressureHandler();
 
+    void initialize(LowMemoryHandler handler = releaseMemory)
+    {
+        ASSERT(!m_installed);
+        m_lowMemoryHandler = handler;
+        install();
+    }
+
+private:
     void install();
     void uninstall();
 
     void holdOff(unsigned);
 
-private:
     MemoryPressureHandler();
     ~MemoryPressureHandler();
 
     void respondToMemoryPressure();
-    void releaseMemory(bool critical);
+    static void releaseMemory(bool critical);
 
     bool m_installed;
     time_t m_lastRespondTime;
+    LowMemoryHandler m_lowMemoryHandler;
 };
  
 // Function to obtain the global memory pressure object.
