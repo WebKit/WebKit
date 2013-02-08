@@ -5,8 +5,10 @@
 <script>
 description('Test that MutationObservers operate in Shadow DOM');
 
-function doTest() {
-    function mutate(elt) {
+function doTest()
+{
+    function mutate(elt)
+    {
         elt.setAttribute('data-foo', 'bar');
         elt.insertBefore(document.createTextNode('hello'), elt.firstChild);
         elt.firstChild.textContent = 'goodbye';
@@ -14,37 +16,30 @@ function doTest() {
     }
 
     var shadowRoot = internals.shadowRoot(document.querySelector('input'));
-    var observer = new WebKitMutationObserver(function(mutations) {
-        window.mutations = mutations;
-    });
+    var observer = new WebKitMutationObserver(function() { });
 
     observer.observe(shadowRoot.firstChild, {attributes: true, childList: true, characterData: true, subtree: true});
     mutate(shadowRoot.firstChild);
 
-    setTimeout(function() {
-        debug('Mutations in shadow DOM should have been observed:');
-        shouldBe('mutations.length', '4');
-        shouldBe('mutations[0].type', '"attributes"');
-        shouldBe('mutations[1].type', '"childList"');
-        shouldBe('mutations[2].type', '"characterData"');
-        shouldBe('mutations[3].type', '"childList"');
-        observer.disconnect();
+    window.mutations = observer.takeRecords();
+    debug('Mutations in shadow DOM should have been observed:');
+    shouldBe('mutations.length', '4');
+    shouldBe('mutations[0].type', '"attributes"');
+    shouldBe('mutations[1].type', '"childList"');
+    shouldBe('mutations[2].type', '"characterData"');
+    shouldBe('mutations[3].type', '"childList"');
+    observer.disconnect();
 
-        window.mutations = null;
-        observer.observe(document, {attributes: true, childList: true, characterData: true, subtree: true});
-        mutate(shadowRoot.firstChild);
-        setTimeout(function() {
-            debug('\nObserving from outside shadow DOM should not see mutations in the shadow:');
-            shouldBeNull('mutations');
-            finishJSTest();
-        }, 0);
-    }, 0);
+    window.mutations = observer.takeRecords();
+    observer.observe(document, {attributes: true, childList: true, characterData: true, subtree: true});
+    mutate(shadowRoot.firstChild);    
+    debug('\nObserving from outside shadow DOM should not see mutations in the shadow:');
+    shouldBe('mutations.length', '0');
 }
 
-if (window.internals) {
+if (window.internals)
     doTest();
-    window.jsTestIsAsync = true;
-} else
+else
     testFailed('This test only runs in DRT');
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

@@ -11,7 +11,7 @@ PASS mutations[2].type is "characterData"
 PASS mutations[3].type is "childList"
 
 Observing from outside shadow DOM should not see mutations in the shadow:
-PASS mutations is null
+PASS mutations.length is 0
 PASS successfullyParsed is true
 
 TEST COMPLETE

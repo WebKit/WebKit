@@ -105,6 +105,16 @@ void ContainerNode::takeAllChildrenFrom(ContainerNode* oldParent)
 {
     NodeVector children;
     getChildNodes(oldParent, children);
+
+    if (oldParent->document()->hasMutationObserversOfType(MutationObserver::ChildList)) {
+        ChildListMutationScope mutation(oldParent);
+        for (unsigned i = 0; i < children.size(); ++i)
+            mutation.willRemoveChild(children[i].get());
+    }
+
+    // FIXME: We need to do notifyMutationObserversNodeWillDetach() for each child,
+    // probably inside removeDetachedChildrenInContainer.
+
     oldParent->removeDetachedChildren();
 
     for (unsigned i = 0; i < children.size(); ++i) {
@@ -342,6 +352,8 @@ void ContainerNode::parserInsertBefore(PassRefPtr<Node> newChild, Node* nextChil
 
     newChild->updateAncestorConnectedSubframeCountForInsertion();
 
+    ChildListMutationScope(this).childAdded(newChild.get());
+
     childrenChanged(true, newChild->previousSibling(), nextChild, 1);
     ChildNodeInsertionNotifier(this).notify(newChild.get());
 }
@@ -565,6 +577,9 @@ void ContainerNode::parserRemoveChild(Node* oldChild)
 
     oldChild->updateAncestorConnectedSubframeCountForRemoval();
 
+    ChildListMutationScope(this).willRemoveChild(oldChild);
+    oldChild->notifyMutationObserversNodeWillDetach();
+
     removeBetween(prev, next, oldChild);
 
     childrenChanged(true, prev, next, -1);
@@ -715,6 +730,8 @@ void ContainerNode::parserAppendChild(PassRefPtr<Node> newChild)
     }
 
     newChild->updateAncestorConnectedSubframeCountForInsertion();
+
+    ChildListMutationScope(this).childAdded(newChild.get());
 
     childrenChanged(true, last, 0, 1);
     ChildNodeInsertionNotifier(this).notify(newChild.get());
