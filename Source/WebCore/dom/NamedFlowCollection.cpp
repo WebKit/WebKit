@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-NamedFlowCollection::NamedFlowCollection(Document* doc)
-    : m_document(doc)
+NamedFlowCollection::NamedFlowCollection(Document* document)
+    : ContextDestructionObserver(document)
 {
 }
 
@@ -81,7 +81,7 @@ PassRefPtr<WebKitNamedFlow> NamedFlowCollection::ensureFlowWithName(const String
     RefPtr<WebKitNamedFlow> newFlow = WebKitNamedFlow::create(this, flowName);
     m_namedFlows.add(newFlow.get());
 
-    InspectorInstrumentation::didCreateNamedFlow(m_document, newFlow.get());
+    InspectorInstrumentation::didCreateNamedFlow(document(), newFlow.get());
 
     return newFlow.release();
 }
@@ -89,21 +89,24 @@ PassRefPtr<WebKitNamedFlow> NamedFlowCollection::ensureFlowWithName(const String
 void NamedFlowCollection::discardNamedFlow(WebKitNamedFlow* namedFlow)
 {
     // The document is not valid anymore so the collection will be destroyed anyway.
-    if (!m_document)
+    if (!document())
         return;
 
     ASSERT(namedFlow->flowState() == WebKitNamedFlow::FlowStateNull);
     ASSERT(m_namedFlows.contains(namedFlow));
 
-    InspectorInstrumentation::willRemoveNamedFlow(m_document, namedFlow);
+    InspectorInstrumentation::willRemoveNamedFlow(document(), namedFlow);
 
     m_namedFlows.remove(namedFlow);
 }
 
-void NamedFlowCollection::documentDestroyed()
+Document* NamedFlowCollection::document() const
 {
-    m_document = 0;
+    ScriptExecutionContext* context = ContextDestructionObserver::scriptExecutionContext();
+    ASSERT(!context || context->isDocument());
+    return static_cast<Document*>(context);
 }
+
 PassRefPtr<DOMNamedFlowCollection> NamedFlowCollection::createCSSOMSnapshot()
 {
     Vector<WebKitNamedFlow*> createdFlows;

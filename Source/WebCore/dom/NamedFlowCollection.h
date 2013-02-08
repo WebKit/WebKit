@@ -30,6 +30,7 @@
 #ifndef NamedFlowCollection_h
 #define NamedFlowCollection_h
 
+#include "ContextDestructionObserver.h"
 #include "WebKitNamedFlow.h"
 #include <wtf/Forward.h>
 #include <wtf/ListHashSet.h>
@@ -42,7 +43,7 @@ namespace WebCore {
 class Document;
 class DOMNamedFlowCollection;
 
-class NamedFlowCollection : public RefCounted<NamedFlowCollection> {
+class NamedFlowCollection : public RefCounted<NamedFlowCollection>, public ContextDestructionObserver {
 public:
     static PassRefPtr<NamedFlowCollection> create(Document* doc) { return adoptRef(new NamedFlowCollection(doc)); }
 
@@ -52,9 +53,7 @@ public:
 
     void discardNamedFlow(WebKitNamedFlow*);
 
-    void documentDestroyed();
-
-    Document* document() const { return m_document; }
+    Document* document() const;
 
     virtual ~NamedFlowCollection() { }
 
@@ -68,7 +67,6 @@ private:
 
     explicit NamedFlowCollection(Document*);
 
-    Document* m_document;
     NamedFlowSet m_namedFlows;
 };
 

@@ -621,9 +621,6 @@ Document::~Document()
 
     m_styleSheetCollection.clear();
 
-    if (m_namedFlows)
-        m_namedFlows->documentDestroyed();
-
     if (m_elemSheet)
         m_elemSheet->clearOwnerNode();
 
