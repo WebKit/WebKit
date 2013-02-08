@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
 #include "DateTimeLocalInputType.h"
 
 #include "DateComponents.h"
@@ -36,8 +37,6 @@
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
 #include <wtf/PassOwnPtr.h>
-
-#if ENABLE(INPUT_TYPE_DATETIMELOCAL)
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFieldsState.h"

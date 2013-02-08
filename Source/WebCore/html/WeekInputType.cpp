@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(INPUT_TYPE_WEEK)
 #include "WeekInputType.h"
 
 #include "DateComponents.h"
@@ -36,8 +37,6 @@
 #include "HTMLNames.h"
 #include "InputTypeNames.h"
 #include <wtf/PassOwnPtr.h>
-
-#if ENABLE(INPUT_TYPE_WEEK)
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFieldsState.h"

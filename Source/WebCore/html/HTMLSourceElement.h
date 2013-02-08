@@ -27,7 +27,6 @@
 #define HTMLSourceElement_h
 
 #if ENABLE(VIDEO)
-
 #include "HTMLElement.h"
 #include "Timer.h"
 

@@ -24,9 +24,8 @@
  */
 
 #include "config.h"
-#include "HTMLDialogElement.h"
-
 #if ENABLE(DIALOG_ELEMENT)
+#include "HTMLDialogElement.h"
 
 #include "ExceptionCode.h"
 #include "RenderDialog.h"

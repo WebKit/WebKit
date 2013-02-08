@@ -19,9 +19,9 @@
  */
 
 #include "config.h"
+#if ENABLE(METER_ELEMENT)
 #include "RenderMeter.h"
 
-#if ENABLE(METER_ELEMENT)
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "RenderTheme.h"

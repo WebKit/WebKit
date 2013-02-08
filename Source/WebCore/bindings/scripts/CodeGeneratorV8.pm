@@ -3258,9 +3258,9 @@ sub GenerateHeaderContentHeader
 
     my @headerContentHeader = split("\r", $headerTemplate);
 
-    push(@headerContentHeader, "\n#if ${conditionalString}\n") if $conditionalString;
-    push(@headerContentHeader, "\n#ifndef ${v8InterfaceName}" . "_h");
-    push(@headerContentHeader, "\n#define ${v8InterfaceName}" . "_h\n\n");
+    push(@headerContentHeader, "\n#ifndef ${v8InterfaceName}" . "_h\n");
+    push(@headerContentHeader, "#define ${v8InterfaceName}" . "_h\n\n");
+    push(@headerContentHeader, "#if ${conditionalString}\n") if $conditionalString;
     return @headerContentHeader;
 }
 
@@ -3273,8 +3273,8 @@ sub GenerateImplementationContentHeader
     my @implContentHeader = split("\r", $headerTemplate);
 
     push(@implContentHeader, "\n#include \"config.h\"\n");
+    push(@implContentHeader, "#if ${conditionalString}\n") if $conditionalString;
     push(@implContentHeader, "#include \"${v8InterfaceName}.h\"\n\n");
-    push(@implContentHeader, "#if ${conditionalString}\n\n") if $conditionalString;
     return @implContentHeader;
 }
 

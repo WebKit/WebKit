@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(INPUT_TYPE_COLOR)
 #include "ColorInputType.h"
 
 #include "CSSPropertyNames.h"
@@ -45,11 +46,8 @@
 #include "RenderView.h"
 #include "ScriptController.h"
 #include "ShadowRoot.h"
-
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
-
-#if ENABLE(INPUT_TYPE_COLOR)
 
 namespace WebCore {
 

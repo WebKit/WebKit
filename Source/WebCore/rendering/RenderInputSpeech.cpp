@@ -29,9 +29,8 @@
  */
 
 #include "config.h"
-#include "RenderInputSpeech.h"
-
 #if ENABLE(INPUT_SPEECH)
+#include "RenderInputSpeech.h"
 
 #include "GraphicsContext.h"
 #include "HTMLNames.h"

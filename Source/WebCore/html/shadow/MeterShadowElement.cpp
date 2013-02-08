@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
+#if ENABLE(METER_ELEMENT)
 #include "MeterShadowElement.h"
 
-#if ENABLE(METER_ELEMENT)
 #include "CSSPropertyNames.h"
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"

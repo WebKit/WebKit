@@ -31,9 +31,9 @@
 #ifndef BaseMultipleFieldsDateAndTimeInputType_h
 #define BaseMultipleFieldsDateAndTimeInputType_h
 
+#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "BaseDateAndTimeInputType.h"
 
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeEditElement.h"
 #include "PickerIndicatorElement.h"
 #include "SpinButtonElement.h"
@@ -114,4 +114,4 @@ private:
 } // namespace WebCore
 
 #endif
-#endif // TimeInputType_h
+#endif // BaseMultipleFieldsDateAndTimeInputType_h

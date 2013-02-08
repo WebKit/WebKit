@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #if ENABLE(VIDEO)
 #include "HTMLSourceElement.h"
 

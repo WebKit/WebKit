@@ -18,11 +18,10 @@
     Boston, MA 02111-1307, USA.
 */
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
-
 #ifndef V8TestInterface_h
 #define V8TestInterface_h
 
+#if ENABLE(Condition1) || ENABLE(Condition2)
 #include "TestInterface.h"
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"

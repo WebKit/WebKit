@@ -29,6 +29,7 @@
  */
 
 #include "config.h"
+#if ENABLE(INPUT_TYPE_MONTH)
 #include "MonthInputType.h"
 
 #include "DateComponents.h"
@@ -39,8 +40,6 @@
 #include <wtf/DateMath.h>
 #include <wtf/MathExtras.h>
 #include <wtf/PassOwnPtr.h>
-
-#if ENABLE(INPUT_TYPE_MONTH)
 
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "DateTimeFieldsState.h"

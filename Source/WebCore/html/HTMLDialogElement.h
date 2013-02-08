@@ -27,7 +27,6 @@
 #define HTMLDialogElement_h
 
 #if ENABLE(DIALOG_ELEMENT)
-
 #include "HTMLElement.h"
 
 namespace WebCore {

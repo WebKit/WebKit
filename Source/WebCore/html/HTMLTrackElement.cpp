@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-
 #if ENABLE(VIDEO_TRACK)
 #include "HTMLTrackElement.h"
 
@@ -36,8 +35,8 @@
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptCallStack.h"
 #include "ScriptEventListener.h"
-using namespace std;
 
+using namespace std;
 
 namespace WebCore {
 

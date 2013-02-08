@@ -19,9 +19,9 @@
  */
 
 #include "config.h"
+#if ENABLE(METER_ELEMENT)
 #include "HTMLMeterElement.h"
 
-#if ENABLE(METER_ELEMENT)
 #include "Attribute.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"

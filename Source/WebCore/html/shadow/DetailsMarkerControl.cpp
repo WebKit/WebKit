@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
+#if ENABLE(DETAILS_ELEMENT)
 #include "DetailsMarkerControl.h"
 
-#if ENABLE(DETAILS_ELEMENT)
 #include "HTMLNames.h"
 #include "HTMLSummaryElement.h"
 #include "RenderDetailsMarker.h"

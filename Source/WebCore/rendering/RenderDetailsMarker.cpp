@@ -19,9 +19,9 @@
  */
 
 #include "config.h"
+#if ENABLE(DETAILS_ELEMENT) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "RenderDetailsMarker.h"
 
-#if ENABLE(DETAILS_ELEMENT) || ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 #include "Element.h"
 #include "GraphicsContext.h"
 #include "HTMLNames.h"

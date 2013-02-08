@@ -31,10 +31,9 @@
 #ifndef DateTimeInputType_h
 #define DateTimeInputType_h
 
-#include "BaseDateAndTimeInputType.h"
-
 #if ENABLE(INPUT_TYPE_DATETIME)
 #include "BaseChooserOnlyDateAndTimeInputType.h"
+#include "BaseDateAndTimeInputType.h"
 #include "BaseMultipleFieldsDateAndTimeInputType.h"
 
 namespace WebCore {

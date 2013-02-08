@@ -19,9 +19,8 @@
 */
 
 #include "config.h"
-#include "V8TestSerializedScriptValueInterface.h"
-
 #if ENABLE(Condition1) || ENABLE(Condition2)
+#include "V8TestSerializedScriptValueInterface.h"
 
 #include "BindingState.h"
 #include "ContextFeatures.h"

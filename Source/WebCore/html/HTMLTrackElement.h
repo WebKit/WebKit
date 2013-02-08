@@ -27,7 +27,6 @@
 #define HTMLTrackElement_h
 
 #if ENABLE(VIDEO_TRACK)
-
 #include "HTMLElement.h"
 #include "LoadableTextTrack.h"
 #include "TextTrack.h"

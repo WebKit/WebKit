@@ -19,9 +19,9 @@
  */
 
 #include "config.h"
+#if ENABLE(PROGRESS_ELEMENT)
 #include "RenderProgress.h"
 
-#if ENABLE(PROGRESS_ELEMENT)
 #include "HTMLNames.h"
 #include "HTMLProgressElement.h"
 #include "PaintInfo.h"

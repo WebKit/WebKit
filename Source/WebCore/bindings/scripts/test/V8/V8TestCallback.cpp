@@ -19,9 +19,8 @@
 */
 
 #include "config.h"
-#include "V8TestCallback.h"
-
 #if ENABLE(SQL_DATABASE)
+#include "V8TestCallback.h"
 
 #include "ScriptExecutionContext.h"
 #include "V8Binding.h"

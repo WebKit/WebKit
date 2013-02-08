@@ -29,9 +29,9 @@
  */
 
 #include "config.h"
+#if ENABLE(INPUT_TYPE_DATE)
 #include "DateInputType.h"
 
-#if ENABLE(INPUT_TYPE_DATE)
 #include "DateComponents.h"
 #include "DateTimeFieldsState.h"
 #include "HTMLInputElement.h"

@@ -18,11 +18,10 @@
     Boston, MA 02111-1307, USA.
 */
 
-#if ENABLE(Condition1) || ENABLE(Condition2)
-
 #ifndef V8TestSerializedScriptValueInterface_h
 #define V8TestSerializedScriptValueInterface_h
 
+#if ENABLE(Condition1) || ENABLE(Condition2)
 #include "TestSerializedScriptValueInterface.h"
 #include "V8Binding.h"
 #include "V8DOMWrapper.h"

@@ -28,7 +28,6 @@
 #define HTMLAudioElement_h
 
 #if ENABLE(VIDEO)
-
 #include "HTMLMediaElement.h"
 
 namespace WebCore {

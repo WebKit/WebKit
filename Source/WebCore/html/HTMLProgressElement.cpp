@@ -19,9 +19,9 @@
  */
 
 #include "config.h"
+#if ENABLE(PROGRESS_ELEMENT)
 #include "HTMLProgressElement.h"
 
-#if ENABLE(PROGRESS_ELEMENT)
 #include "Attribute.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"

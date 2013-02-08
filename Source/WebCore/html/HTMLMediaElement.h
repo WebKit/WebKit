@@ -27,7 +27,6 @@
 #define HTMLMediaElement_h
 
 #if ENABLE(VIDEO)
-
 #include "HTMLElement.h"
 #include "ActiveDOMObject.h"
 #include "GenericEventQueue.h"

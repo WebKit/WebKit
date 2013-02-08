@@ -30,9 +30,9 @@
  */
 
 #include "config.h"
+#if ENABLE(DATALIST_ELEMENT)
 #include "HTMLDataListElement.h"
 
-#if ENABLE(DATALIST_ELEMENT)
 #include "FeatureObserver.h"
 #include "HTMLNames.h"
 #include "IdTargetObserverRegistry.h"
