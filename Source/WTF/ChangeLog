@@ -1,3 +1,10 @@
+2013-02-07  David Kilzer  <ddkilzer@apple.com>
+
+        Fix #endif comment from r142163 and r142183
+
+        * wtf/MainThread.h:
+        (WTF): s/PLATFORM/USE/
+
 2013-02-07  Benjamin Poulain  <bpoulain@apple.com>
 
         Fix an incorrect comment from r142163

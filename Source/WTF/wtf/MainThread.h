@@ -57,7 +57,7 @@ WTF_EXPORT_PRIVATE bool isUIThread();
 #else
 inline bool isWebThread() { return isMainThread(); }
 inline bool isUIThread() { return isMainThread(); }
-#endif // PLATFORM(WEB_THREAD)
+#endif // USE(WEB_THREAD)
 
 void initializeGCThreads();
 
