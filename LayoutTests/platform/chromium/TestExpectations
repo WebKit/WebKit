@@ -4277,7 +4277,7 @@ crbug.com/169602 fast/backgrounds/background-opaque-clipped-gradients.html [ Ima
 crbug.com/169602 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
 crbug.com/169602 fast/backgrounds/gradient-background-shadow.html [ ImageOnlyFailure ]
 
-webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure ]
+webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Crash ]
 webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure ]
 webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure Pass ]
@@ -4355,5 +4355,7 @@ webkit.org/b/108876 [ Linux ] media/track/track-cues-cuechange.html [ Slow ]
 webkit.org/b/108876 [ Linux ] media/track/track-cues-enter-exit.html [ Slow ]
 
 webkit.org/b/108912 inspector-protocol/heap-profiler/heap-snapshot-with-detached-dom-tree.html [ Pass Failure ]
+
+webkit.org/b/109283 [ MountainLion ] fast/regions/selecting-text-through-different-region-flows.html [ ImageOnlyFailure ]
 
 webkit.org/b/109262 [ Debug SnowLeopard ] fast/table/table-cell-before-after-content-around-table-row.html [ Crash Pass ]
