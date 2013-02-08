@@ -34,59 +34,55 @@
 
 namespace WebCore {
 
-    class FloatRect;
+class FloatRect;
 
-    struct WindowFeatures {
-        // FIXME: We can delete this constructor once V8 showModalDialog is changed to use DOMWindow.
-        WindowFeatures()
-            : xSet(false)
-            , ySet(false)
-            , widthSet(false)
-            , heightSet(false)
-            , menuBarVisible(true)
-            , statusBarVisible(true)
-            , toolBarVisible(true)
-            , locationBarVisible(true)
-            , scrollbarsVisible(true)
-            , resizable(true)
-            , fullscreen(false)
-            , dialog(false)
-        {
-        }
+struct WindowFeatures {
+    WindowFeatures()
+        : xSet(false)
+        , ySet(false)
+        , widthSet(false)
+        , heightSet(false)
+        , menuBarVisible(true)
+        , statusBarVisible(true)
+        , toolBarVisible(true)
+        , locationBarVisible(true)
+        , scrollbarsVisible(true)
+        , resizable(true)
+        , fullscreen(false)
+        , dialog(false)
+    {
+    }
+    explicit WindowFeatures(const String& windowFeaturesString);
+    WindowFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect);
 
-        explicit WindowFeatures(const String& windowFeaturesString);
-        WindowFeatures(const String& dialogFeaturesString, const FloatRect& screenAvailableRect);
+    float x;
+    bool xSet;
+    float y;
+    bool ySet;
+    float width;
+    bool widthSet;
+    float height;
+    bool heightSet;
 
-        float x;
-        bool xSet;
-        float y;
-        bool ySet;
-        float width;
-        bool widthSet;
-        float height;
-        bool heightSet;
+    bool menuBarVisible;
+    bool statusBarVisible;
+    bool toolBarVisible;
+    bool locationBarVisible;
+    bool scrollbarsVisible;
+    bool resizable;
 
-        bool menuBarVisible;
-        bool statusBarVisible;
-        bool toolBarVisible;
-        bool locationBarVisible;
-        bool scrollbarsVisible;
-        bool resizable;
+    bool fullscreen;
+    bool dialog;
 
-        bool fullscreen;
-        bool dialog;
+    Vector<String> additionalFeatures;
 
-        Vector<String> additionalFeatures;
-
-        // FIXME: We can make these functions private non-member functions once V8 showModalDialog is changed to use DOMWindow.
-        typedef HashMap<String, String> DialogFeaturesMap;
-        static void parseDialogFeatures(const String&, HashMap<String, String>&);
-        static bool boolFeature(const DialogFeaturesMap&, const char* key, bool defaultValue = false);
-        static float floatFeature(const DialogFeaturesMap&, const char* key, float min, float max, float defaultValue);
-
-    private:
-        void setWindowFeature(const String& keyString, const String& valueString);
-    };
+private:
+    typedef HashMap<String, String> DialogFeaturesMap;
+    static void parseDialogFeatures(const String&, HashMap<String, String>&);
+    static bool boolFeature(const DialogFeaturesMap&, const char* key, bool defaultValue = false);
+    static float floatFeature(const DialogFeaturesMap&, const char* key, float min, float max, float defaultValue);
+    void setWindowFeature(const String& keyString, const String& valueString);
+};
 
 } // namespace WebCore
 
