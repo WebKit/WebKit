@@ -4198,7 +4198,8 @@ webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-
 
 webkit.org/b/103667 [ Linux ] fast/ruby/position-after.html [ ImageOnlyFailure ]
 
-webkit.org/b/104834 [ MountainLion ] fast/css/nested-rounded-corners.html [ Failure Pass ]
+# schenney Remove ImageOnlyFailure after rebaselining. Actually, remove all.
+webkit.org/b/104834 [ MountainLion ] fast/css/nested-rounded-corners.html [ ImageOnlyFailure Failure Pass ]
 
 webkit.org/b/105595 [ Mac ] svg/text/alt-glyph-for-surrogate-pair.svg [ ImageOnlyFailure ]
 webkit.org/b/47975 [ MountainLion ] fast/block/float/max-width-clear-float-with-overflow-hidden.html [ ImageOnlyFailure ]
