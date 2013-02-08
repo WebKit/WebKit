@@ -2348,7 +2348,8 @@ void BackingStorePrivate::setCurrentBackingStoreOwner(WebPage* webPage)
         BackingStorePrivate::s_currentBackingStoreOwner->d->m_backingStore->d->resetTiles();
 
     BackingStorePrivate::s_currentBackingStoreOwner = webPage;
-    webPage->backingStore()->d->updateSuspendScreenUpdateState(); // depends on isActive()
+    if (webPage)
+        webPage->backingStore()->d->updateSuspendScreenUpdateState(); // depends on isActive()
 }
 
 bool BackingStorePrivate::isActive() const

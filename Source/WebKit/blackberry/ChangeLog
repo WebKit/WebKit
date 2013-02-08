@@ -1,3 +1,13 @@
+2013-02-07  Charles Wei  <charles.wei@torchmobile.com.cn>
+
+        webpage needs null check in BackingStore::setCurrentBackingStoreOwner
+        https://bugs.webkit.org/show_bug.cgi?id=109253
+
+        Reviewed by George Staikos.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::setCurrentBackingStoreOwner):
+
 2013-02-07  Mary Wu  <mary.wu@torchmobile.com.cn>
 
         [BlackBerry] Enable non-video element enter/exit fullscreen.
