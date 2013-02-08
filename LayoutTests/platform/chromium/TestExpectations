@@ -1239,7 +1239,8 @@ crbug.com/62433 [ Win ] fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 webkit.org/b/106126 [ Win ] svg/overflow/overflow-on-inner-svg-element.svg [ Failure Pass ]
 webkit.org/b/106126 [ Win ] svg/dom/css-transforms.xhtml [ Failure Pass ]
 webkit.org/b/106126 [ Win ] svg/custom/feComponentTransfer-Table.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/106126 [ Win ] svg/custom/embedding-external-svgs.xhtml [ Failure Pass ]
+# schenney Uncomment when done
+# webkit.org/b/106126 [ Win ] svg/custom/embedding-external-svgs.xhtml [ Failure Pass ]
 
 #
 # New in WebKit r52559
@@ -4955,6 +4956,7 @@ Bug(schenney) svg/custom/object-sizing-explicit-width.xhtml [ ImageOnlyFailure ]
 Bug(schenney) svg/custom/object-sizing-no-width-height-change-content-box-size.xhtml [ ImageOnlyFailure ]
 Bug(schenney) svg/custom/object-sizing-no-width-height.xhtml [ ImageOnlyFailure ]
 Bug(schenney) svg/custom/pattern-referencing-preserve-aspect-ratio.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/custom/pointer-events-text.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/custom/radialGradient-focal-radius.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/custom/recursive-gradient.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/custom/relative-sized-content-with-resources.xhtml [ ImageOnlyFailure ]
