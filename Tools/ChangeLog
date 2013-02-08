@@ -1,3 +1,11 @@
+2013-02-08  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Update my entries in the watchlist
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-02-08  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] copy normalizeLayoutTestURL code to TestRunner library
