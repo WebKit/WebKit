@@ -1,3 +1,27 @@
+2013-02-07  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Split configure.ac into reusable portions
+        https://bugs.webkit.org/show_bug.cgi?id=109246
+
+        Reviewed by Philippe Normand.
+
+        Split up configure.ac into sections based on different "phases"
+        of configuration. This should make it easier to find what you are
+        looking for as well as creating a "right" place to put things.
+        A nice side effect of this is that we can share the different
+        modules with a gyp build.
+
+        * Source/autotools/CheckSystemAndBasicDependencies.m4: Added.
+        * Source/autotools/FindDependencies.m4: Added.
+        * Source/autotools/PrintBuildConfiguration.m4: Added.
+        * Source/autotools/ReadCommandLineArguments.m4: Added.
+        * Source/autotools/SetupAutoconfHeader.m4: Added.
+        * Source/autotools/SetupAutomake.m4: Added.
+        * Source/autotools/SetupCompilerFlags.m4: Added.
+        * Source/autotools/SetupLibtool.m4: Added.
+        * Source/autotools/Versions.m4: Added.
+        * configure.ac:
+
 2013-02-07  David Farler  <dfarler@apple.com>
 
         Makefiles should work for arbitrary SDKs and architectures on Apple ports
