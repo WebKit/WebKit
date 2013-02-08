@@ -1,3 +1,15 @@
+2013-02-07  KwangYong Choi  <ky0.choi@samsung.com>
+
+        Fix build warning after r142017
+        https://bugs.webkit.org/show_bug.cgi?id=109119
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use UNUSED_PARAM macro to fix -Wunused-parameter build warning.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getPluginPath):
+
 2013-02-07  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Cleanup command-line defines

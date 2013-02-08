@@ -1255,6 +1255,8 @@ void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString
 #if PLATFORM(MAC)
     PluginModuleLoadPolicy currentPluginLoadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
     pluginLoadPolicy = m_uiClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, documentURLString, currentPluginLoadPolicy);
+#else
+    UNUSED_PARAM(documentURLString);
 #endif
 
     if (pluginLoadPolicy != PluginModuleLoadNormally)
