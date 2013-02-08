@@ -1,3 +1,13 @@
+2013-02-07  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [EFL][WK2] Remove dead code after r142169
+        https://bugs.webkit.org/show_bug.cgi?id=109251
+
+        Reviewed by Benjamin Poulain.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::contentsSizeChanged):
+
 2013-02-06  Gavin Barraclough  <barraclough@apple.com>
 
         PluginProcess should quit immediately if idle in response to low-memory notifications

@@ -454,8 +454,6 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
     }
 
     m_page->send(Messages::WebPageProxy::DidChangeContentsSize(m_page->size()));
-#elif PLATFORM(EFL)
-    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
 #endif
 
     m_page->drawingArea()->mainFrameContentSizeChanged(size);
