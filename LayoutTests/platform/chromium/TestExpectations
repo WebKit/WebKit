@@ -2356,8 +2356,9 @@ crbug.com/143479 platform/gtk/accessibility/aria-table-hierarchy.html [ Failure 
 crbug.com/143476 fast/js/date-parse-test.html [ Failure ]
 
 # Vertical text needs to be implemented in platforms other than OS X.
-crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
-crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
+# schenney Remove ImageOnlyFailure form these after rebaselining
+crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ImageOnlyFailure ]
+crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ImageOnlyFailure ]
 crbug.com/65877 [ Android Linux Win ] fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 crbug.com/65877 [ Linux ] fast/writing-mode/broken-ideographic-font.html [ Failure ]
 #BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
@@ -3049,8 +3050,6 @@ webkit.org/b/78159 [ Debug ] platform/chromium/virtual/softwarecompositing/ifram
 
 # Tests Error.stack behavior. We aren't consistent with JSC and do not intend to become so.
 fast/js/stack-trace.html [ WontFix ]
-
-webkit.org/b/69210 [ SnowLeopard ] fast/inline/continuation-outlines-with-layers-2.html [ Failure ]
 
 webkit.org/b/106064 [ Android ] fast/inline/continuation-outlines-with-layers.html [ ImageOnlyFailure ]
 
@@ -4806,7 +4805,8 @@ Bug(schenney) svg/W3C-SVG-1.1/fonts-elem-04-b.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/fonts-elem-07-b.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/fonts-glyph-02-t.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/interact-zoom-01-t.svg [ ImageOnlyFailure ]
-Bug(schenney) svg/W3C-SVG-1.1/linking-a-04-t.svg [ ImageOnlyFailure ]
+Bug(schenney) svg/W3C-SVG-1.1-SE/interact-pointer-03-t.svg [ ImageOnlyFailure ]
+Bug(schenney) [ Mac Win ] svg/W3C-SVG-1.1/interact-cursor-01-f.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/linking-a-05-t.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/linking-uri-01-b.svg [ ImageOnlyFailure ]
 Bug(schenney) svg/W3C-SVG-1.1/linking-uri-02-b.svg [ ImageOnlyFailure ]
@@ -5611,14 +5611,6 @@ Bug(schenney) platform/chromium/compositing/plugins/webplugin-alpha.html [ Image
 Bug(schenney) platform/chromium/compositing/plugins/webplugin-no-alpha.html [ ImageOnlyFailure ]
 Bug(schenney) platform/chromium/compositing/plugins/webplugin-reflection.html [ ImageOnlyFailure ]
 Bug(schenney) platform/chromium/fast/repaint/fixed-layout-360x240.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/rubberbanding/custom-scrollbars-ne.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/rubberbanding/custom-scrollbars-nw.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/rubberbanding/custom-scrollbars-se.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/rubberbanding/custom-scrollbars-sw.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/rubberbanding/overhang-ne.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/rubberbanding/overhang-nw.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/rubberbanding/overhang-se.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/rubberbanding/overhang-sw.html [ ImageOnlyFailure ]
 Bug(schenney) platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
 Bug(schenney) platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
 Bug(schenney) svg/batik/text/textOnPath.svg [ ImageOnlyFailure ]
@@ -5636,3 +5628,7 @@ Bug(schenney) fast/events/mouseout-on-window.html [ Failure ]
 Bug(schenney) platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
 Bug(schenney) platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch.html [ Failure ]
 Bug(schenney) platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-overlay-with-touch.html [ Failure ]
+Bug(schenney) [ Win SnowLeopard ] fast/repaint/background-scaling.html [ ImageOnlyFailure ]
+Bug(schenney) [ Win SnowLeopard ] fast/repaint/scale-page-shrink.html [ ImageOnlyFailure ]
+
+
