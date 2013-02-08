@@ -55,6 +55,121 @@
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
 
+
+// How does a SQLTransaction work?
+// ==============================
+// The SQLTransaction is a state machine that executes a series of states / steps.
+//
+// ths State Transition Graph at a glance:
+// ======================================
+//
+//    Backend (works with SQLiteDatabase)          .   Frontend (works with Script)
+//    ===================================          .   ============================
+//   ,--> State 0: [initial state]                 .
+//   | ^     v                                     .
+//   | |  State 1: [acquireLock]                   .
+//   | |     v                                     .
+//   | |  State 2: [openTransactionAndPreflight] ----------------------------------------------------.
+//   | |     |                                     .                                                 |
+//   | |     `---------------------------------------> State 3: [deliverTransactionCallback] -----.  |
+//   | |                                           .      |                                       v  v
+//   | |     ,--------------------------------------------'     State 10: [deliverTransactionErrorCallback] +
+//   | |     |                                     .                                              ^  ^  ^   |
+//   | |     v                                     .                                              |  |  |   |
+//   | |  State 4: [runStatements] ---------------------------------------------------------------'  |  |   |
+//   | |     |        ^  ^ |  ^ |                  .                                                 |  |   |
+//   | |     |--------'  | |  | `--------------------> State 8: [deliverStatementCallback] +---------'  |   |
+//   | |     |           | |  `------------------------------------------------------------'            |   |
+//   | |     |           | `-------------------------> State 9: [deliverQuotaIncreaseCallback] +        |   |
+//   | |     |            `--------------------------------------------------------------------'        |   |
+//   | |     v                                     .                                                    |   |
+//   | |  State 5: [postflightAndCommit] --+------------------------------------------------------------'   |
+//   | |                                   |---------> State 6: [deliverSuccessCallback] +                  |
+//   | |     ,-----------------------------'       .                                     |                  |
+//   | |     v                                     .                                     |                  |
+//   | |  State 7: [cleanupAfterSuccessCallback] <---------------------------------------'                  |
+//   | `-----'                                     .                                                        |
+//   `------------------------------------------------------------------------------------------------------'
+//                                                 .
+//
+// the States and State Transitions:
+// ================================
+// Executed in the back-end:
+//     State 0: [initial state]
+//     - On scheduled transaction, goto [acquireLock].
+//
+//     State 1: [acquireLock]
+//     - acquire lock.
+//     - on "lock" acquisition, goto [openTransactionAndPreflight].
+//
+//     State 2: [openTransactionAndPreflight]
+//     - Sets up an SQLiteTransaction.
+//     - begin the SQLiteTransaction.
+//     - call the SQLTransactionWrapper preflight if available.
+//     - schedule script callback.
+//     - on error (see handleTransactionError), goto [deliverTransactionErrorCallback].
+//     - goto [deliverTransactionCallback].
+//
+// Executed in the front-end:
+//     State 3: [deliverTransactionCallback]
+//     - invoke the script function callback() if available.
+//     - on error, goto [deliverTransactionErrorCallback].
+//     - goto [runStatements].
+//
+// Executed in the back-end:
+//     State 4: [runStatements]
+//     - while there are statements {
+//         - run a statement.
+//         - if statementCallback is available, goto [deliverStatementCallback].
+//         - on error,
+//           goto [deliverQuotaIncreaseCallback], or
+//           goto [deliverStatementCallback] (see handleCurrentStatementError), or
+//           goto [deliverTransactionErrorCallback].
+//       }
+//     - goto [postflightAndCommit].
+//
+//     State 5: [postflightAndCommit]
+//     - call the SQLTransactionWrapper postflight if available.
+//     - commit the SQLiteTansaction.
+//     - on error, goto [deliverTransactionErrorCallback] (see handleTransactionError).
+//     - if successCallback is available, goto [deliverSuccessCallback].
+//       else goto [cleanupAfterSuccessCallback].
+//
+// Executed in the front-end:
+//     State 6: [deliverSuccessCallback]
+//     - invoke the script function successCallback() if available.
+//     - goto [cleanupAfterSuccessCallback].
+//
+// Executed in the back-end:
+//     State 7: [cleanupAfterSuccessCallback]
+//     - clean the SQLiteTransaction.
+//     - release lock.
+//     - goto [initial state].
+//
+// Other states:
+// Executed in the front-end:
+//     State 8: [deliverStatementCallback]
+//     - invoke script statement callback (assume available).
+//     - on error (see handleTransactionError),
+//       goto [deliverTransactionErrorCallback].
+//     - goto [runStatements].
+//
+//     State 9: [deliverQuotaIncreaseCallback]
+//     - give client a chance to increase the quota.
+//     - goto [runStatements].
+//
+//     State 10: [deliverTransactionErrorCallback]
+//     - invoke the script function errorCallback if available.
+//     - goto [cleanupAfterTransactionErrorCallback].
+//
+// Executed in the back-end:
+//     State 11: [cleanupAfterTransactionErrorCallback]
+//     - rollback and clear SQLiteTransaction.
+//     - clear statements.
+//     - release lock.
+//     - goto [initial state].
+
+
 // There's no way of knowing exactly how much more space will be required when a statement hits the quota limit.
 // For now, we'll arbitrarily choose currentQuota + 1mb.
 // In the future we decide to track if a size increase wasn't enough, and ask for larger-and-larger increases until its enough.
