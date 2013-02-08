@@ -19,7 +19,7 @@ xcuserdata
 .gdb_history
 tags
 *~
-*.swp
+.*.sw[a-p]
 
 # For best performance, place rules for deep paths in the parent directory.
 # For example: instead of placing Source/WebKit/chromium/WebKit.xcodeproj here,
