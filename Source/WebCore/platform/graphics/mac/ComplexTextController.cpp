@@ -423,8 +423,21 @@ unsigned ComplexTextController::indexOfCurrentRun(unsigned& leftmostGlyph)
         return m_currentRun;
     }
 
+    if (m_runIndices.isEmpty()) {
+        unsigned firstRun = 0;
+        unsigned firstRunOffset = stringBegin(*m_complexTextRuns[0]);
+        for (unsigned i = 1; i < runCount; ++i) {
+            unsigned offset = stringBegin(*m_complexTextRuns[i]);
+            if (offset < firstRunOffset) {
+                firstRun = i;
+                firstRunOffset = offset;
+            }
+        }
+        m_runIndices.uncheckedAppend(firstRun);
+    }
+
     while (m_runIndices.size() <= m_currentRun) {
-        unsigned offset = m_runIndices.isEmpty() ? 0 : stringEnd(*m_complexTextRuns[m_runIndices.last()]);
+        unsigned offset = stringEnd(*m_complexTextRuns[m_runIndices.last()]);
 
         for (unsigned i = 0; i < runCount; ++i) {
             if (offset == stringBegin(*m_complexTextRuns[i])) {
