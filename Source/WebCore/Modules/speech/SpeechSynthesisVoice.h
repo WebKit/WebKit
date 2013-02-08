@@ -28,6 +28,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "PlatformSpeechSynthesisVoice.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/WTFString.h>
@@ -36,22 +37,18 @@ namespace WebCore {
 
 class SpeechSynthesisVoice : public RefCounted<SpeechSynthesisVoice> {
 public:
-    static PassRefPtr<SpeechSynthesisVoice> create(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
+    static PassRefPtr<SpeechSynthesisVoice> create(PassRefPtr<PlatformSpeechSynthesisVoice>);
     
-    const String& voiceURI() const { return m_voiceURI; }
-    const String& name() const { return m_name; }
-    const String& lang() const { return m_lang; }
-    bool localService() const { return m_localService; }
-    bool isDefault() const { return m_default; }
+    const String& voiceURI() const { return m_platformVoice->voiceURI(); }
+    const String& name() const { return m_platformVoice->name(); }
+    const String& lang() const { return m_platformVoice->lang(); }
+    bool localService() const { return m_platformVoice->localService(); }
+    bool isDefault() const { return m_platformVoice->isDefault(); }
     
 private:
-    SpeechSynthesisVoice(const String& voiceURI, const String& name, const String& lang, bool localService, bool isDefault);
+    explicit SpeechSynthesisVoice(PassRefPtr<PlatformSpeechSynthesisVoice>);
     
-    String m_voiceURI;
-    String m_name;
-    String m_lang;
-    bool m_localService;
-    bool m_default;
+    RefPtr<PlatformSpeechSynthesisVoice> m_platformVoice;
 };
 
 } // namespace WebCore

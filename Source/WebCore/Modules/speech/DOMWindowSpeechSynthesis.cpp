@@ -55,7 +55,7 @@ const char* DOMWindowSpeechSynthesis::supplementName()
 // static
 DOMWindowSpeechSynthesis* DOMWindowSpeechSynthesis::from(DOMWindow* window)
 {
-    DOMWindowSpeechSynthesis* supplement = static_cast<DOMWindowSpeechSynthesis*>(Supplement<DOMWindow>::from(window, upplementName()));
+    DOMWindowSpeechSynthesis* supplement = static_cast<DOMWindowSpeechSynthesis*>(Supplement<DOMWindow>::from(window, supplementName()));
     if (!supplement) {
         supplement = new DOMWindowSpeechSynthesis(window);
         provideTo(window, supplementName(), adoptPtr(supplement));

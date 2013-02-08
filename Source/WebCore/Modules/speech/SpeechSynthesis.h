@@ -28,18 +28,20 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "PlatformSpeechSynthesisUtterance.h"
+#include "PlatformSpeechSynthesizer.h"
 #include "SpeechSynthesisVoice.h"
-
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
     
+class PlatformSpeechSynthesizerClient;
 class SpeechSynthesisUtterance;
 class SpeechSynthesisVoice;
     
-class SpeechSynthesis : public RefCounted<SpeechSynthesis> {
+class SpeechSynthesis : public PlatformSpeechSynthesizerClient, public RefCounted<SpeechSynthesis> {
 public:
     static PassRefPtr<SpeechSynthesis> create();
     
@@ -52,12 +54,17 @@ public:
     void pause();
     void resume();
     
-    const Vector<RefPtr<SpeechSynthesisVoice> >& getVoices() { return m_voiceList; };
+    const Vector<RefPtr<SpeechSynthesisVoice> >& getVoices();
     
 private:
     SpeechSynthesis();
     
-    void initializeVoiceList();
+    virtual void voicesDidChange();
+    virtual void didStartSpeaking(PlatformSpeechSynthesisUtterance*) { };
+    virtual void didFinishSpeaking(PlatformSpeechSynthesisUtterance*) { };
+    virtual void speakingErrorOccurred(PlatformSpeechSynthesisUtterance*) { };
+
+    PlatformSpeechSynthesizer m_platformSpeechSynthesizer;
     Vector<RefPtr<SpeechSynthesisVoice> > m_voiceList;
 };
     

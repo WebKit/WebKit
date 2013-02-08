@@ -749,9 +749,16 @@
 		2917B566147349950052C9D0 /* LayerFlushSchedulerMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2917B565147349950052C9D0 /* LayerFlushSchedulerMac.cpp */; };
 		2919A1E916B3376600787213 /* ContentFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2919A1E816B3376600787213 /* ContentFilter.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2919A1EB16B3378900787213 /* ContentFilterMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2919A1EA16B3378900787213 /* ContentFilterMac.mm */; };
+		2934940A16C02C0700901318 /* PlatformSpeechSynthesisVoice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2527CC9316BF92EC009DDAC0 /* PlatformSpeechSynthesisVoice.cpp */; };
+		2934940B16C02C0A00901318 /* PlatformSpeechSynthesisUtterance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2527CC9516BF95DD009DDAC0 /* PlatformSpeechSynthesisUtterance.cpp */; };
 		293EAE1F1356B2FE0067ACF9 /* RuntimeApplicationChecks.h in Headers */ = {isa = PBXBuildFile; fileRef = 293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		293EAE211356B32E0067ACF9 /* RuntimeApplicationChecks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */; };
 		29489FC712C00F0300D83F0F /* AccessibilityScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = 29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */; };
+		297BE3D516C03C08003316BD /* PlatformSpeechSynthesisUtterance.h in Headers */ = {isa = PBXBuildFile; fileRef = 2527CC9116BF8BA1009DDAC0 /* PlatformSpeechSynthesisUtterance.h */; };
+		297BE3D616C03C0B003316BD /* PlatformSpeechSynthesisVoice.h in Headers */ = {isa = PBXBuildFile; fileRef = 2527CC9216BF90B4009DDAC0 /* PlatformSpeechSynthesisVoice.h */; };
+		297BE3D716C03C0E003316BD /* PlatformSpeechSynthesizer.h in Headers */ = {isa = PBXBuildFile; fileRef = 29E4D8DF16B0940F00C84704 /* PlatformSpeechSynthesizer.h */; };
+		297BE3D816C03CCE003316BD /* PlatformSpeechSynthesizerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 29E4D8E016B0959800C84704 /* PlatformSpeechSynthesizerMac.mm */; };
+		297BE3DA16C043D8003316BD /* PlatformSpeechSynthesizer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 297BE3D916C043D8003316BD /* PlatformSpeechSynthesizer.cpp */; };
 		29A309AC1561C99B00BBD8E5 /* RunLoopCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A309AB1561C99B00BBD8E5 /* RunLoopCF.cpp */; };
 		29A309B01561CAC400BBD8E5 /* VisitedLinks.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 29A309AE1561CAC400BBD8E5 /* VisitedLinks.cpp */; };
 		29A309B11561CAC400BBD8E5 /* VisitedLinks.h in Headers */ = {isa = PBXBuildFile; fileRef = 29A309AF1561CAC400BBD8E5 /* VisitedLinks.h */; };
@@ -4646,7 +4653,6 @@
 		AA2A5AD516A4861400975A25 /* SpeechSynthesis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2A5ABD16A485D500975A25 /* SpeechSynthesis.cpp */; };
 		AA2A5AD616A4861600975A25 /* DOMWindowSpeechSynthesis.h in Headers */ = {isa = PBXBuildFile; fileRef = AA2A5AB916A485D500975A25 /* DOMWindowSpeechSynthesis.h */; };
 		AA2A5AD716A4861A00975A25 /* DOMWindowSpeechSynthesis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA2A5AB816A485D500975A25 /* DOMWindowSpeechSynthesis.cpp */; };
-		AA2A5AD816A4861D00975A25 /* SpeechSynthesisMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA2A5ABC16A485D500975A25 /* SpeechSynthesisMac.mm */; };
 		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
 		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
 		AA73183E159255B900A93E6E /* InjectedScriptCanvasModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */; };
@@ -8022,6 +8028,10 @@
 		24D912BC13CA9A9700D21915 /* SVGGlyphRefElement.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SVGGlyphRefElement.idl; sourceTree = "<group>"; };
 		24F54EAA101FE914000AE741 /* ApplicationCacheHost.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ApplicationCacheHost.cpp; sourceTree = "<group>"; };
 		24F54EAB101FE914000AE741 /* ApplicationCacheHost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationCacheHost.h; sourceTree = "<group>"; };
+		2527CC9116BF8BA1009DDAC0 /* PlatformSpeechSynthesisUtterance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformSpeechSynthesisUtterance.h; sourceTree = "<group>"; };
+		2527CC9216BF90B4009DDAC0 /* PlatformSpeechSynthesisVoice.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformSpeechSynthesisVoice.h; sourceTree = "<group>"; };
+		2527CC9316BF92EC009DDAC0 /* PlatformSpeechSynthesisVoice.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformSpeechSynthesisVoice.cpp; sourceTree = "<group>"; };
+		2527CC9516BF95DD009DDAC0 /* PlatformSpeechSynthesisUtterance.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformSpeechSynthesisUtterance.cpp; sourceTree = "<group>"; };
 		2542F4D81166C25A00E89A86 /* UserGestureIndicator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UserGestureIndicator.cpp; sourceTree = "<group>"; };
 		2542F4D91166C25A00E89A86 /* UserGestureIndicator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserGestureIndicator.h; sourceTree = "<group>"; };
 		265541371489811C000DFC5D /* KeyEventCodesIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KeyEventCodesIOS.h; path = ios/KeyEventCodesIOS.h; sourceTree = "<group>"; };
@@ -8044,6 +8054,7 @@
 		293EAE1E1356B2FE0067ACF9 /* RuntimeApplicationChecks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuntimeApplicationChecks.h; sourceTree = "<group>"; };
 		293EAE201356B32E0067ACF9 /* RuntimeApplicationChecks.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuntimeApplicationChecks.cpp; sourceTree = "<group>"; };
 		29489FC512C00F0300D83F0F /* AccessibilityScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityScrollView.h; sourceTree = "<group>"; };
+		297BE3D916C043D8003316BD /* PlatformSpeechSynthesizer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformSpeechSynthesizer.cpp; sourceTree = "<group>"; };
 		2981CA9D131822EC00D12F2A /* AccessibilityARIAGrid.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGrid.cpp; sourceTree = "<group>"; };
 		2981CA9E131822EC00D12F2A /* AccessibilityARIAGridCell.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGridCell.cpp; sourceTree = "<group>"; };
 		2981CA9F131822EC00D12F2A /* AccessibilityARIAGridRow.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityARIAGridRow.cpp; sourceTree = "<group>"; };
@@ -8091,6 +8102,8 @@
 		29ACB213143E7498006BCA5F /* AccessibilityMockObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccessibilityMockObject.cpp; sourceTree = "<group>"; };
 		29D7BCF51444AF580070619C /* AccessibilitySpinButton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AccessibilitySpinButton.cpp; path = accessibility/AccessibilitySpinButton.cpp; sourceTree = SOURCE_ROOT; };
 		29D7BCF91444AF7D0070619C /* AccessibilitySpinButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilitySpinButton.h; sourceTree = "<group>"; };
+		29E4D8DF16B0940F00C84704 /* PlatformSpeechSynthesizer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PlatformSpeechSynthesizer.h; sourceTree = "<group>"; };
+		29E4D8E016B0959800C84704 /* PlatformSpeechSynthesizerMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PlatformSpeechSynthesizerMac.mm; sourceTree = "<group>"; };
 		2B42359F15250F6000DBBCD8 /* RenderSVGEllipse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGEllipse.cpp; sourceTree = "<group>"; };
 		2B4235A015250F6000DBBCD8 /* RenderSVGEllipse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGEllipse.h; sourceTree = "<group>"; };
 		2BE8E2C612A589EC00FAD550 /* HTMLMetaCharsetParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLMetaCharsetParser.h; path = parser/HTMLMetaCharsetParser.h; sourceTree = "<group>"; };
@@ -11988,7 +12001,6 @@
 		AA2A5AB816A485D500975A25 /* DOMWindowSpeechSynthesis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = DOMWindowSpeechSynthesis.cpp; path = Modules/speech/DOMWindowSpeechSynthesis.cpp; sourceTree = "<group>"; };
 		AA2A5AB916A485D500975A25 /* DOMWindowSpeechSynthesis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DOMWindowSpeechSynthesis.h; path = Modules/speech/DOMWindowSpeechSynthesis.h; sourceTree = "<group>"; };
 		AA2A5ABA16A485D500975A25 /* DOMWindowSpeechSynthesis.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = DOMWindowSpeechSynthesis.idl; path = Modules/speech/DOMWindowSpeechSynthesis.idl; sourceTree = "<group>"; };
-		AA2A5ABC16A485D500975A25 /* SpeechSynthesisMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; path = SpeechSynthesisMac.mm; sourceTree = "<group>"; };
 		AA2A5ABD16A485D500975A25 /* SpeechSynthesis.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SpeechSynthesis.cpp; path = Modules/speech/SpeechSynthesis.cpp; sourceTree = "<group>"; };
 		AA2A5ABE16A485D500975A25 /* SpeechSynthesis.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = SpeechSynthesis.h; path = Modules/speech/SpeechSynthesis.h; sourceTree = "<group>"; };
 		AA2A5ABF16A485D500975A25 /* SpeechSynthesis.idl */ = {isa = PBXFileReference; lastKnownFileType = text; name = SpeechSynthesis.idl; path = Modules/speech/SpeechSynthesis.idl; sourceTree = "<group>"; };
@@ -16159,6 +16171,7 @@
 				BCAA486D14A052530088FAC4 /* PlatformEventFactoryMac.mm */,
 				C5F765BA14E1ECF4006C899B /* PlatformPasteboardMac.mm */,
 				BC94D1070C274F88006BC617 /* PlatformScreenMac.mm */,
+				29E4D8E016B0959800C84704 /* PlatformSpeechSynthesizerMac.mm */,
 				D39D006C11F8E308006041F2 /* PopupMenuMac.h */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
 				E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */,
@@ -19758,7 +19771,6 @@
 		AA2A5AB716A485A400975A25 /* speech */ = {
 			isa = PBXGroup;
 			children = (
-				AA2A5ABB16A485D500975A25 /* mac */,
 				AA2A5AB816A485D500975A25 /* DOMWindowSpeechSynthesis.cpp */,
 				AA2A5AB916A485D500975A25 /* DOMWindowSpeechSynthesis.h */,
 				AA2A5ABA16A485D500975A25 /* DOMWindowSpeechSynthesis.idl */,
@@ -19776,15 +19788,6 @@
 				AA2A5AC816A485D500975A25 /* SpeechSynthesisVoice.idl */,
 			);
 			name = speech;
-			sourceTree = "<group>";
-		};
-		AA2A5ABB16A485D500975A25 /* mac */ = {
-			isa = PBXGroup;
-			children = (
-				AA2A5ABC16A485D500975A25 /* SpeechSynthesisMac.mm */,
-			);
-			name = mac;
-			path = Modules/speech/mac;
 			sourceTree = "<group>";
 		};
 		AA7FEE9B16A491A1004C0C33 /* Speech */ = {
@@ -21486,6 +21489,12 @@
 				935C476709AC4D4300A6AAB4 /* PlatformMouseEvent.h */,
 				C5BAC16F14E30E4700008837 /* PlatformPasteboard.h */,
 				BCEC01D60C274EB4009F4EC9 /* PlatformScreen.h */,
+				297BE3D916C043D8003316BD /* PlatformSpeechSynthesizer.cpp */,
+				29E4D8DF16B0940F00C84704 /* PlatformSpeechSynthesizer.h */,
+				2527CC9316BF92EC009DDAC0 /* PlatformSpeechSynthesisVoice.cpp */,
+				2527CC9216BF90B4009DDAC0 /* PlatformSpeechSynthesisVoice.h */,
+				2527CC9516BF95DD009DDAC0 /* PlatformSpeechSynthesisUtterance.cpp */,
+				2527CC9116BF8BA1009DDAC0 /* PlatformSpeechSynthesisUtterance.h */,
 				1AD8F81A11CAB9E900E93E54 /* PlatformStrategies.cpp */,
 				1AD8F81911CAB9E900E93E54 /* PlatformStrategies.h */,
 				935C476A09AC4D4F00A6AAB4 /* PlatformWheelEvent.h */,
@@ -25399,6 +25408,9 @@
 				935C476909AC4D4300A6AAB4 /* PlatformMouseEvent.h in Headers */,
 				C598905814E9C29900E8D18B /* PlatformPasteboard.h in Headers */,
 				BCEC01D70C274EB4009F4EC9 /* PlatformScreen.h in Headers */,
+				297BE3D516C03C08003316BD /* PlatformSpeechSynthesisUtterance.h in Headers */,
+				297BE3D616C03C0B003316BD /* PlatformSpeechSynthesisVoice.h in Headers */,
+				297BE3D716C03C0E003316BD /* PlatformSpeechSynthesizer.h in Headers */,
 				1AD8F81B11CAB9E900E93E54 /* PlatformStrategies.h in Headers */,
 				935C476B09AC4D4F00A6AAB4 /* PlatformWheelEvent.h in Headers */,
 				31D591B316697A6C00E6BF02 /* PlugInClient.h in Headers */,
@@ -28750,6 +28762,10 @@
 				41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */,
 				C598902E14E9B0F800E8D18B /* PlatformPasteboardMac.mm in Sources */,
 				BC94D1080C274F88006BC617 /* PlatformScreenMac.mm in Sources */,
+				2934940A16C02C0700901318 /* PlatformSpeechSynthesisVoice.cpp in Sources */,
+				2934940B16C02C0A00901318 /* PlatformSpeechSynthesisUtterance.cpp in Sources */,
+				297BE3D816C03CCE003316BD /* PlatformSpeechSynthesizerMac.mm in Sources */,
+				297BE3DA16C043D8003316BD /* PlatformSpeechSynthesizer.cpp in Sources */,
 				1AD8F81C11CAB9E900E93E54 /* PlatformStrategies.cpp in Sources */,
 				A9C6E4F30D745E48006442E9 /* PluginData.cpp in Sources */,
 				97205ABB1239292700B17380 /* PluginDocument.cpp in Sources */,
@@ -29056,7 +29072,6 @@
 				75415C29129A9920003AD669 /* SpeechInputResultList.cpp in Sources */,
 				AA2A5AD516A4861400975A25 /* SpeechSynthesis.cpp in Sources */,
 				AA2A5AD316A4860D00975A25 /* SpeechSynthesisEvent.cpp in Sources */,
-				AA2A5AD816A4861D00975A25 /* SpeechSynthesisMac.mm in Sources */,
 				AA2A5AD116A4860700975A25 /* SpeechSynthesisUtterance.cpp in Sources */,
 				AA2A5ACD16A485FA00975A25 /* SpeechSynthesisVoice.cpp in Sources */,
 				A78FE13B12366B1000ACE8D0 /* SpellChecker.cpp in Sources */,

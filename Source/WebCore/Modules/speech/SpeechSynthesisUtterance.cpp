@@ -37,8 +37,9 @@ PassRefPtr<SpeechSynthesisUtterance> SpeechSynthesisUtterance::create(ScriptExec
 
 SpeechSynthesisUtterance::SpeechSynthesisUtterance(ScriptExecutionContext* context, const String& text)
     : ContextDestructionObserver(context)
-    , m_text(text)
+    , m_platformUtterance(PlatformSpeechSynthesisUtterance(this))
 {
+    m_platformUtterance.setText(text);
 }
     
 ScriptExecutionContext* SpeechSynthesisUtterance::scriptExecutionContext() const

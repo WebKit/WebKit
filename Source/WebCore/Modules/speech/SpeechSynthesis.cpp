@@ -28,6 +28,10 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "PlatformSpeechSynthesis.h"
+#include "PlatformSpeechSynthesisVoice.h"
+#include "SpeechSynthesisUtterance.h"
+
 namespace WebCore {
     
 PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
@@ -36,10 +40,61 @@ PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
 }
     
 SpeechSynthesis::SpeechSynthesis()
+    : m_platformSpeechSynthesizer(PlatformSpeechSynthesizer(this))
 {
-    initializeVoiceList();
+}
+    
+void SpeechSynthesis::voicesDidChange()
+{
+    m_voiceList.clear();
+}
+    
+const Vector<RefPtr<SpeechSynthesisVoice> >& SpeechSynthesis::getVoices()
+{
+    if (m_voiceList.size())
+        return m_voiceList;
+    
+    // If the voiceList is empty, that's the cue to get the voices from the platform again.
+    const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& platformVoices = m_platformSpeechSynthesizer.voiceList();
+    size_t voiceCount = platformVoices.size();
+    for (size_t k = 0; k < voiceCount; k++)
+        m_voiceList.append(SpeechSynthesisVoice::create(platformVoices[k]));
+
+    return m_voiceList;
 }
 
+bool SpeechSynthesis::pending() const
+{
+    return false;
+}
+
+bool SpeechSynthesis::speaking() const
+{
+    return false;
+}
+
+bool SpeechSynthesis::paused() const
+{
+    return false;
+}
+
+void SpeechSynthesis::speak(SpeechSynthesisUtterance* utterance)
+{
+    m_platformSpeechSynthesizer.speak(utterance->platformUtterance());
+}
+
+void SpeechSynthesis::cancel()
+{
+}
+
+void SpeechSynthesis::pause()
+{
+}
+
+void SpeechSynthesis::resume()
+{
+}
+    
 } // namespace WebCore
 
 #endif // ENABLE(INPUT_SPEECH)
