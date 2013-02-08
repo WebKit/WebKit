@@ -1455,7 +1455,7 @@ crbug.com/174268 webgl/conformance/attribs/gl-vertex-attrib-zero-issues.html [ S
 
 webkit.org/b/108901 webgl/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
 webkit.org/b/109114 webgl/conformance/context/context-release-upon-reload.html [ Pass Timeout ]
-webkit.org/b/109114 webgl/conformance/context/context-release-with-workers.html [ Pass Timeout ]
+webkit.org/b/109114 webgl/conformance/context/context-release-with-workers.html [ Pass Timeout Crash ]
 
 # -----------------------------------------------------------------
 # Other failures
@@ -4358,6 +4358,9 @@ webkit.org/b/108912 inspector-protocol/heap-profiler/heap-snapshot-with-detached
 webkit.org/b/109283 [ MountainLion ] fast/regions/selecting-text-through-different-region-flows.html [ ImageOnlyFailure ]
 
 webkit.org/b/109262 [ Debug SnowLeopard ] fast/table/table-cell-before-after-content-around-table-row.html [ Crash Pass ]
+
+webkit.org/b/109312 [ Win ] fast/canvas/canvas-drawImage-shadow.html [ Pass Failure ]
+webkit.org/b/109312 [ Win ] platform/chromium/virtual/gpu/fast/canvas/canvas-drawImage-shadow.html [ Pass Failure ]
 
 # These are all in preparation for the Skia roll
 Bug(schenney) fast/forms/001.html [ ImageOnlyFailure ]
