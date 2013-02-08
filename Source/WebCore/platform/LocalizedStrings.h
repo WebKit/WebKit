@@ -270,6 +270,9 @@ namespace WebCore {
     String textTrackNoLabelText();
 #endif
 
+    String snapshottedPlugInLabelTitle();
+    String snapshottedPlugInLabelSubtitle();
+
 #if !PLATFORM(CHROMIUM)
 #define WEB_UI_STRING(string, description) WebCore::localizedString(string)
 #define WEB_UI_STRING_KEY(string, key, description) WebCore::localizedString(key)
