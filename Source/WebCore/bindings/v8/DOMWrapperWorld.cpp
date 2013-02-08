@@ -67,13 +67,11 @@ DOMWrapperWorld* mainThreadNormalWorld()
     return cachedNormalWorld.get();
 }
 
-#ifndef NDEBUG
 void DOMWrapperWorld::assertContextHasCorrectPrototype(v8::Handle<v8::Context> context)
 {
     ASSERT(isMainThread());
     ASSERT(V8DOMWrapper::isWrapperOfType(toInnerGlobalObject(context), &V8DOMWindow::info));
 }
-#endif
 
 static void isolatedWorldWeakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> object, void* parameter)
 {

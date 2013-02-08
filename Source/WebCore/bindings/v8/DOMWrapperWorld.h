@@ -60,14 +60,11 @@ public:
 
     void makeContextWeak(v8::Handle<v8::Context>);
     void setIsolatedWorldField(v8::Handle<v8::Context>);
-#ifndef NDEBUG
+
     static void assertContextHasCorrectPrototype(v8::Handle<v8::Context>);
-#endif
     static DOMWrapperWorld* isolated(v8::Handle<v8::Context> context)
     {
-#ifndef NDEBUG
         assertContextHasCorrectPrototype(context);
-#endif
         return static_cast<DOMWrapperWorld*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWorld));
     }
 
