@@ -1,3 +1,25 @@
+2013-02-08  Adam Barth  <abarth@webkit.org>
+
+        Use WeakPtrs to communicate between the HTMLDocumentParser and the BackgroundHTMLParser
+        https://bugs.webkit.org/show_bug.cgi?id=107190
+
+        Reviewed by Eric Seidel.
+
+        Add the ability to create an unbound weak reference. This facility lets
+        you start sending messages to a WeakPtr on another thread before the
+        object backing the WeakPtr has actually been created.
+
+        * wtf/WeakPtr.h:
+        (WTF::WeakReference::createUnbound):
+        (WTF::WeakReference::bindTo):
+        (WeakReference):
+        (WTF::WeakReference::WeakReference):
+        (WTF::WeakPtr::WeakPtr):
+        (WeakPtr):
+        (WTF::WeakPtrFactory::WeakPtrFactory):
+        (WeakPtrFactory):
+        (WTF::WeakPtrFactory::revokeAll):
+
 2013-02-08  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add an experimental gyp build

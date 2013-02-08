@@ -301,9 +301,8 @@ void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwn
     m_weakFactory.revokeAll();
     m_speculations.clear();
 
-    ParserIdentifier identifier = ParserMap::identifierForParser(this);
-    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::resumeFromPartial,
-        identifier, m_weakFactory.createWeakPtr(), token, tokenizer, m_currentChunk->checkpoint));
+    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::resumeFrom,
+        m_backgroundParser, m_weakFactory.createWeakPtr(), token, tokenizer, m_currentChunk->checkpoint));
 }
 
 void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk> chunk)
@@ -512,12 +511,14 @@ void HTMLDocumentParser::startBackgroundParser()
     ASSERT(!m_haveBackgroundParser);
     m_haveBackgroundParser = true;
 
+    RefPtr<WeakReference<BackgroundHTMLParser> > reference = WeakReference<BackgroundHTMLParser>::createUnbound();
+    m_backgroundParser = WeakPtr<BackgroundHTMLParser>(reference);
+
     WeakPtr<HTMLDocumentParser> parser = m_weakFactory.createWeakPtr();
     OwnPtr<XSSAuditor> xssAuditor = adoptPtr(new XSSAuditor);
     xssAuditor->init(document());
     ASSERT(xssAuditor->isSafeToSendToAnotherThread());
-    ParserIdentifier identifier = ParserMap::identifierForParser(this);
-    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::createPartial, identifier, m_options, parser, xssAuditor.release()));
+    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::create, reference.release(), m_options, parser, xssAuditor.release()));
 }
 
 void HTMLDocumentParser::stopBackgroundParser()
@@ -526,8 +527,7 @@ void HTMLDocumentParser::stopBackgroundParser()
     ASSERT(m_haveBackgroundParser);
     m_haveBackgroundParser = false;
 
-    ParserIdentifier identifier = ParserMap::identifierForParser(this);
-    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::stopPartial, identifier));
+    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::stop, m_backgroundParser));
     m_weakFactory.revokeAll();
 }
 
@@ -543,9 +543,8 @@ void HTMLDocumentParser::append(const SegmentedString& source)
         if (!m_haveBackgroundParser)
             startBackgroundParser();
 
-        ParserIdentifier identifier = ParserMap::identifierForParser(this);
-        const Closure& appendPartial = bind(&BackgroundHTMLParser::appendPartial, identifier, source.toString().isolatedCopy());
-        HTMLParserThread::shared()->postTask(appendPartial);
+        HTMLParserThread::shared()->postTask(bind(
+            &BackgroundHTMLParser::append, m_backgroundParser, source.toString().isolatedCopy()));
         return;
     }
 #endif
@@ -645,7 +644,7 @@ void HTMLDocumentParser::finish()
     // a background parser. In those cases, we ignore shouldUseThreading()
     // and fall through to the non-threading case.
     if (m_haveBackgroundParser) {
-        HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::finishPartial, ParserMap::identifierForParser(this)));
+        HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::finish, m_backgroundParser));
         return;
     }
     if (shouldUseThreading() && !wasCreatedByScript()) {

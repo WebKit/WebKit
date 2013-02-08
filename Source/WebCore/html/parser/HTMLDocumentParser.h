@@ -46,6 +46,7 @@
 
 namespace WebCore {
 
+class BackgroundHTMLParser;
 class CompactHTMLToken;
 class Document;
 class DocumentFragment;
@@ -182,6 +183,7 @@ private:
     OwnPtr<ParsedChunk> m_currentChunk;
     Deque<OwnPtr<ParsedChunk> > m_speculations;
     WeakPtrFactory<HTMLDocumentParser> m_weakFactory;
+    WeakPtr<BackgroundHTMLParser> m_backgroundParser;
 #endif
 
     bool m_endWasDelayed;

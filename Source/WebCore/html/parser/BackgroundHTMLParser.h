@@ -47,23 +47,19 @@ class XSSAuditor;
 class BackgroundHTMLParser {
     WTF_MAKE_FAST_ALLOCATED;
 public:
+    static void create(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
+    {
+        new BackgroundHTMLParser(reference, options, parser, xssAuditor);
+        // Caller must free by calling stop().
+    }
+
     void append(const String&);
     void resumeFrom(const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>, HTMLInputCheckpoint);
     void finish();
-
-    static PassOwnPtr<BackgroundHTMLParser> create(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
-    {
-        return adoptPtr(new BackgroundHTMLParser(options, parser, xssAuditor));
-    }
-
-    static void createPartial(ParserIdentifier, const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<XSSAuditor>);
-    static void stopPartial(ParserIdentifier);
-    static void appendPartial(ParserIdentifier, const String& input);
-    static void resumeFromPartial(ParserIdentifier, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>, HTMLInputCheckpoint);
-    static void finishPartial(ParserIdentifier);
+    void stop();
 
 private:
-    BackgroundHTMLParser(const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<XSSAuditor>);
+    BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> >, const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<XSSAuditor>);
 
     void markEndOfFile();
     void pumpTokenizer();
@@ -72,6 +68,7 @@ private:
     void sendTokensToMainThread();
 
     bool m_inForeignContent; // FIXME: We need a stack of foreign content markers.
+    WeakPtrFactory<BackgroundHTMLParser> m_weakFactory;
     BackgroundHTMLInputStream m_input;
     HTMLSourceTracker m_sourceTracker;
     OwnPtr<HTMLToken> m_token;
@@ -81,23 +78,6 @@ private:
     OwnPtr<CompactHTMLTokenStream> m_pendingTokens;
     OwnPtr<XSSAuditor> m_xssAuditor;
 };
-
-class ParserMap {
-public:
-    static ParserIdentifier identifierForParser(HTMLDocumentParser* parser)
-    {
-        return reinterpret_cast<ParserIdentifier>(parser);
-    }
-
-    typedef HashMap<ParserIdentifier, OwnPtr<BackgroundHTMLParser> > BackgroundParserMap;
-
-    BackgroundParserMap& backgroundParsers();
-
-private:
-    BackgroundParserMap m_backgroundParsers;
-};
-
-ParserMap& parserMap();
 
 }
 

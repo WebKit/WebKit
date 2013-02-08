@@ -58,22 +58,9 @@ static void checkThatTokensAreSafeToSendToAnotherThread(const CompactHTMLTokenSt
 // FIXME: Tune this constant based on a benchmark. The current value was choosen arbitrarily.
 static const size_t pendingTokenLimit = 4000;
 
-ParserMap& parserMap()
-{
-    // This initialization assumes that this will be initialize on the main thread before
-    // any parser thread is started.
-    static ParserMap* sParserMap = new ParserMap;
-    return *sParserMap;
-}
-
-ParserMap::BackgroundParserMap& ParserMap::backgroundParsers()
-{
-    ASSERT(HTMLParserThread::shared()->threadId() == currentThread());
-    return m_backgroundParsers;
-}
-
-BackgroundHTMLParser::BackgroundHTMLParser(const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
+BackgroundHTMLParser::BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
     : m_inForeignContent(false)
+    , m_weakFactory(reference, this)
     , m_token(adoptPtr(new HTMLToken))
     , m_tokenizer(HTMLTokenizer::create(options))
     , m_options(options)
@@ -102,6 +89,11 @@ void BackgroundHTMLParser::finish()
 {
     markEndOfFile();
     pumpTokenizer();
+}
+
+void BackgroundHTMLParser::stop()
+{
+    delete this;
 }
 
 void BackgroundHTMLParser::markEndOfFile()
@@ -192,36 +184,6 @@ void BackgroundHTMLParser::sendTokensToMainThread()
     callOnMainThread(bind(&HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser, m_parser, chunk.release()));
 
     m_pendingTokens = adoptPtr(new CompactHTMLTokenStream);
-}
-
-void BackgroundHTMLParser::createPartial(ParserIdentifier identifier, const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
-{
-    ASSERT(!parserMap().backgroundParsers().get(identifier));
-    parserMap().backgroundParsers().set(identifier, BackgroundHTMLParser::create(options, parser, xssAuditor));
-}
-
-void BackgroundHTMLParser::stopPartial(ParserIdentifier identifier)
-{
-    parserMap().backgroundParsers().remove(identifier);
-}
-
-void BackgroundHTMLParser::appendPartial(ParserIdentifier identifier, const String& input)
-{
-    ASSERT(!input.impl() || input.impl()->hasOneRef() || input.isEmpty());
-    if (BackgroundHTMLParser* parser = parserMap().backgroundParsers().get(identifier))
-        parser->append(input);
-}
-
-void BackgroundHTMLParser::resumeFromPartial(ParserIdentifier identifier, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<HTMLToken> token, PassOwnPtr<HTMLTokenizer> tokenizer, HTMLInputCheckpoint checkpoint)
-{
-    if (BackgroundHTMLParser* backgroundParser = parserMap().backgroundParsers().get(identifier))
-        backgroundParser->resumeFrom(parser, token, tokenizer, checkpoint);
-}
-
-void BackgroundHTMLParser::finishPartial(ParserIdentifier identifier)
-{
-    if (BackgroundHTMLParser* parser = parserMap().backgroundParsers().get(identifier))
-        parser->finish();
 }
 
 }
