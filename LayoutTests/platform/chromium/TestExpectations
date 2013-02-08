@@ -109,8 +109,7 @@ webkit.org/b/90488 [ Debug ] http/tests/inspector-enabled [ Pass Slow ]
 webkit.org/b/90488 [ Win Mac Debug ] inspector/styles/styles-computed-trace.html [ Timeout ]
 
 # Chromium r163873 slowed down these tests
-# schenney return to Pass Slow
-webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Pass Slow ImageOnlyFailure ]
+webkit.org/b/100287 [ Linux Win Mac ] compositing/culling/filter-occlusion-blur-large.html [ Pass Slow  ]
 webkit.org/b/66989 transforms/3d/point-mapping/3d-point-mapping-deep.html [ Failure ImageOnlyFailure Slow ]
 
 # The test has been timing out since landed in r130587.
@@ -2371,9 +2370,8 @@ crbug.com/143479 platform/gtk/accessibility/aria-table-hierarchy.html [ Failure 
 crbug.com/143476 fast/js/date-parse-test.html [ Failure ]
 
 # Vertical text needs to be implemented in platforms other than OS X.
-# schenney Remove ImageOnlyFailure form these after rebaselining
-crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ImageOnlyFailure ]
-crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ImageOnlyFailure ]
+crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-lr.html [ Failure Pass ]
+crbug.com/65877 fast/writing-mode/japanese-ruby-vertical-rl.html [ Failure Pass ]
 crbug.com/65877 [ Android Linux Win ] fast/writing-mode/japanese-ruby-horizontal-bt.html [ Failure Pass ]
 crbug.com/65877 [ Linux ] fast/writing-mode/broken-ideographic-font.html [ Failure ]
 #BUGCR65877 LINUX ANDROID WIN : fast/writing-mode/broken-ideograph-small-caps.html = IMAGE
@@ -3814,7 +3812,6 @@ crbug.com/146401 [ Android ] css3/filters/custom/filter-fallback-to-software.htm
 crbug.com/146401 [ Android ] fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]
 
 webkit.org/b/96441 [ Win Android Debug ] fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
-webkit.org/b/96441 [ Linux ] platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
 webkit.org/b/96441 [ Win ] platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure Timeout Pass ]
 webkit.org/b/96441 [ Win7 ] platform/chromium/virtual/gpu/fast/hidpi/image-set-as-background.html [ Timeout Pass ]
 
@@ -4161,7 +4158,6 @@ webkit.org/b/103721 [ Mac Win Linux ] compositing/geometry/vertical-scroll-compo
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/load-video-in-reflection.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-anchor-point.html [ ImageOnlyFailure ]
 webkit.org/b/103721 [ Mac Win Linux ] compositing/reflections/nested-reflection-animated.html [ ImageOnlyFailure ]
-webkit.org/b/103721 [ Mac Win Linux ] platform/chromium/compositing/huge-layer-rotated.html [ ImageOnlyFailure ]
 
 # New tests added in r136492 that do not work in chromium
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-iterations.html [ Failure Pass ]
@@ -4363,33 +4359,6 @@ webkit.org/b/109312 [ Win ] fast/canvas/canvas-drawImage-shadow.html [ Pass Fail
 webkit.org/b/109312 [ Win ] platform/chromium/virtual/gpu/fast/canvas/canvas-drawImage-shadow.html [ Pass Failure ]
 
 # These are all in preparation for the Skia roll
-Bug(schenney) platform/chromium/compositing/accelerated-drawing/alpha.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/compositing/accelerated-drawing/svg-filters.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/compositing/filters/background-filter-blur-off-axis.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/compositing/filters/background-filter-blur-outsets.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/compositing/filters/background-filter-blur.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/compositing/plugins/webplugin-alpha.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/compositing/plugins/webplugin-no-alpha.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/compositing/plugins/webplugin-reflection.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/fast/forms/color/color-suggestion-picker-appearance.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/fast/forms/color/color-suggestion-picker-one-row-appearance.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/fast/forms/color/color-suggestion-picker-two-row-appearance.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/fast/forms/color/color-suggestion-picker-with-scrollbar-appearance.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/fast/repaint/fixed-layout-360x240.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/fast/text/text-stroke-with-border.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch-toggle.html [ Failure ]
-Bug(schenney) platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-auto-with-touch.html [ Failure ]
-Bug(schenney) platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-overlay-with-touch.html [ Failure ]
-Bug(schenney) platform/chromium/virtual/gpu/compositedscrolling/overflow/theme-affects-visual-overflow.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/gpu/fast/canvas/arc360.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/gpu/fast/canvas/canvas-text-alignment.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/gpu/fast/canvas/fillrect_gradient.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/gpu/fast/canvas/gradient-add-second-start-end-stop.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/gpu/fast/hidpi/focus-rings.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/gpu/fast/hidpi/video-controls-in-hidpi.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/softwarecompositing/overflow/theme-affects-visual-overflow.html [ ImageOnlyFailure ]
-Bug(schenney) platform/chromium/virtual/softwarecompositing/video/video-controls-layer-creation.html [ ImageOnlyFailure ]
 Bug(schenney) svg/as-background-image/background-image-tiled.html [ ImageOnlyFailure ]
 Bug(schenney) svg/as-background-image/svg-as-background-1.html [ ImageOnlyFailure ]
 Bug(schenney) svg/as-background-image/svg-as-background-2.html [ ImageOnlyFailure ]
