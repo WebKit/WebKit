@@ -4354,3 +4354,5 @@ webkit.org/b/108876 [ Linux ] media/track/track-cues-cuechange.html [ Slow ]
 webkit.org/b/108876 [ Linux ] media/track/track-cues-enter-exit.html [ Slow ]
 
 webkit.org/b/108912 inspector-protocol/heap-profiler/heap-snapshot-with-detached-dom-tree.html [ Pass Failure ]
+
+webkit.org/b/109262 [ Debug SnowLeopard ] fast/table/table-cell-before-after-content-around-table-row.html [ Crash Pass ]
