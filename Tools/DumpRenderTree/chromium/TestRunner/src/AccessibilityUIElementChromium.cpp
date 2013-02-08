@@ -31,13 +31,12 @@
 #include "config.h"
 #include "AccessibilityUIElementChromium.h"
 
+#include "TestCommon.h"
 #include "WebAccessibilityObject.h"
 #include <public/WebCString.h>
 #include <public/WebPoint.h>
 #include <public/WebRect.h>
 #include <public/WebString.h>
-#include <wtf/Assertions.h>
-#include <wtf/StringExtras.h>
 
 using namespace WebKit;
 using namespace std;
@@ -368,7 +367,7 @@ AccessibilityUIElement::AccessibilityUIElement(const WebAccessibilityObject& obj
     , m_factory(factory)
 {
 
-    ASSERT(factory);
+    WEBKIT_ASSERT(factory);
 
     //
     // Properties
@@ -1025,14 +1024,14 @@ AccessibilityUIElement* AccessibilityUIElementList::getOrCreate(const WebAccessi
     }
 
     AccessibilityUIElement* element = new AccessibilityUIElement(object, this);
-    m_elements.append(element);
+    m_elements.push_back(element);
     return element;
 }
 
 AccessibilityUIElement* AccessibilityUIElementList::createRoot(const WebAccessibilityObject& object)
 {
     AccessibilityUIElement* element = new RootAccessibilityUIElement(object, this);
-    m_elements.append(element);
+    m_elements.push_back(element);
     return element;
 }
 

@@ -31,13 +31,16 @@
 #ifndef WebTask_h
 #define WebTask_h
 
+#include "WebTestCommon.h"
+#include <vector>
+
 namespace WebTestRunner {
 
 class WebTaskList;
 
 // WebTask represents a task which can run by WebTestDelegate::postTask() or
 // WebTestDelegate::postDelayedTask().
-class WebTask {
+class WEBTESTRUNNER_EXPORT WebTask {
 public:
     explicit WebTask(WebTaskList*);
     virtual ~WebTask();
@@ -51,7 +54,7 @@ protected:
     WebTaskList* m_taskList;
 };
 
-class WebTaskList {
+class WEBTESTRUNNER_EXPORT WebTaskList {
 public:
     WebTaskList();
     ~WebTaskList();
@@ -60,8 +63,7 @@ public:
     void revokeAll();
 
 private:
-    class Private;
-    Private* m_private;
+    std::vector<WebTask*> m_tasks;
 };
 
 // A task containing an object pointer of class T. Derived classes should

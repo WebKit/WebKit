@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,45 +28,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTestInterfaces_h
-#define WebTestInterfaces_h
+#ifndef TestCommon_h
+#define TestCommon_h
 
-#include "WebTestCommon.h"
-#include <memory>
+#include <base/compiler_specific.h>
+#include <public/WebCommon.h>
+#include <stdio.h>
 
-namespace WebKit {
-class WebFrame;
-class WebView;
-}
-
-namespace WebTestRunner {
-
-class TestInterfaces;
-class WebTestDelegate;
-class WebTestRunner;
-
-class WEBTESTRUNNER_EXPORT WebTestInterfaces {
-public:
-    WebTestInterfaces();
-    ~WebTestInterfaces();
-
-    void setWebView(WebKit::WebView*);
-    void setDelegate(WebTestDelegate*);
-    void bindTo(WebKit::WebFrame*);
-    void resetAll();
-    void setTestIsRunning(bool);
-
-    WebKit::WebView* webView() const;
-    WebTestRunner* testRunner();
-
-#if WEBTESTRUNNER_IMPLEMENTATION
-    TestInterfaces* testInterfaces();
+#if defined(WIN32)
+#define snprintf(str, size, ...) _snprintf_s(str, size, size, __VA_ARGS__)
 #endif
 
-private:
-    std::auto_ptr<TestInterfaces> m_interfaces;
-};
+inline bool isASCIIAlpha(char ch) { return (ch | 0x20) >= 'a' && (ch | 0x20) <= 'z'; }
 
-}
+inline bool isNotASCIIAlpha(char ch) { return !isASCIIAlpha(ch); }
 
-#endif // WebTestInterfaces_h
+#endif // TestCommon_h
