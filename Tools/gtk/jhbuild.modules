@@ -33,8 +33,8 @@
       href="ftp://ftp.gnu.org/gnu/"/>
   <repository type="git" name="github.com"
       href="git://github.com"/>
-  <repository type="tarball" name="sourceware.org"
-      href="ftp://sourceware.org"/>
+  <repository type="tarball" name="sourceware.org-mirror"
+      href="ftp://mirrors.kernel.org/sources.redhat.com"/>
   <repository type="tarball" name="ftp.gnome.org"
       href="http://ftp.gnome.org"/>
   <repository type="git" name="git.gnome.org"
@@ -100,8 +100,8 @@
  </autotools>
 
   <autotools id="libffi" autogen-sh="configure">
-    <branch module="/pub/libffi/libffi-3.0.10.tar.gz" version="3.0.10"
-             repo="sourceware.org"
+    <branch module="/libffi/libffi-3.0.10.tar.gz" version="3.0.10"
+             repo="sourceware.org-mirror"
              hash="sha256:f01eb9027e9eb56aeaeef636649877756d475d714ef8b47f627f65bc5f3b492f"
              md5sum="79390673f5d07a8fb342bc09b5055b6f"/>
   </autotools>

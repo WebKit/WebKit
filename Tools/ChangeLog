@@ -1,3 +1,15 @@
+2013-02-07  Zan Dobersek  <zdobersek@igalia.com>
+
+        Use a mirror for the sourceware.org repo used in jhbuild
+
+        Unreviewed.
+
+        The ftp://sourceware.org site is down, causing errors when running jhbuild
+        and subsequently failing complete builds on the builders. Use the mirrors.kernel.org
+        mirror to get sources for the desired libffi dependency.
+
+        * gtk/jhbuild.modules:
+
 2013-02-07  David Farler  <dfarler@apple.com>
 
         Makefiles should work for arbitrary SDKs and architectures on Apple ports
