@@ -1201,6 +1201,8 @@ css3/filters/custom/filter-repaint-custom-rotated.html
 css3/filters/custom/filter-repaint-custom.html
 css3/filters/custom-with-at-rule-syntax/parsing-custom-function-invalid.html
 css3/filters/custom-with-at-rule-syntax/parsing-custom-function-valid.html
+css3/filters/custom-with-at-rule-syntax/parsing-at-rule-invalid.html
+css3/filters/custom-with-at-rule-syntax/parsing-at-rule-valid.html
 
 # The following tests need further investigation:
 # https://bugs.webkit.org/show_bug.cgi?id=101531
@@ -1885,6 +1887,9 @@ fast/spatial-navigation/snav-media-elements.html
 fast/layers/no-clipping-overflow-hidden-added-after-transform.html
 fast/layers/no-clipping-overflow-hidden-added-after-transition.html
 fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html
+
+# [Qt] New fast/forms/number/number-l10n-input.html test fails after r142122.
+webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Skip ]
 
 # ============================================================================= #
 # failing security tests
