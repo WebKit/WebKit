@@ -189,6 +189,24 @@ static WindowMap& windowMap()
 }
 #endif
 
+static void NSException_release(id, SEL)
+{
+    // Do nothing.
+}
+
+void NetscapePlugin::platformPreInitialize()
+{
+    if (m_pluginModule->pluginQuirks().contains(PluginQuirks::LeakAllThrownNSExceptions)) {
+        // Patch -[NSException release] to not release the object.
+        static dispatch_once_t once;
+        dispatch_once(&once, ^{
+            Class exceptionClass = [NSException class];
+            Method exceptionReleaseMethod = class_getInstanceMethod(exceptionClass, @selector(release));
+            class_replaceMethod(exceptionClass, @selector(release), reinterpret_cast<IMP>(NSException_release), method_getTypeEncoding(exceptionReleaseMethod));
+        });
+    }
+}
+
 bool NetscapePlugin::platformPostInitialize()
 {
     if (m_drawingModel == static_cast<NPDrawingModel>(-1)) {

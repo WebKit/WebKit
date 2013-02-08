@@ -630,6 +630,8 @@ bool NetscapePlugin::initialize(const Parameters& parameters)
     m_layerHostingMode = parameters.layerHostingMode;
 #endif
 
+    platformPreInitialize();
+
     NetscapePlugin* previousNPPNewPlugin = currentNPPNewPlugin;
     
     m_inNPPNew = true;

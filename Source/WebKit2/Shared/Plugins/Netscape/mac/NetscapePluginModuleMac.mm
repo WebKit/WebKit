@@ -481,6 +481,9 @@ void NetscapePluginModule::determineQuirks()
 
         // Flash returns a retained Core Animation layer.
         m_pluginQuirks.add(PluginQuirks::ReturnsRetainedCoreAnimationLayer);
+
+        // Flash has a bug where NSExceptions can be released too early.
+        m_pluginQuirks.add(PluginQuirks::LeakAllThrownNSExceptions);
     }
 
     if (plugin.bundleIdentifier == "com.microsoft.SilverlightPlugin") {

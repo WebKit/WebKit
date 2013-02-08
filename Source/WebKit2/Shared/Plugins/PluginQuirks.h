@@ -68,6 +68,10 @@ public:
         // which is enabled if it doesn't find Version/3 in the user-agent.
         AppendVersion3UserAgent,
 
+        // Whether all thrown NSExceptions should be leaked.
+        // <rdar://problem/13003470> Adobe Flash has a bug where exceptions are released too early.
+        LeakAllThrownNSExceptions,
+
 #ifndef NP_NO_QUICKDRAW
         // Allow the plug-in to use the QuickDraw drawing model, since we know that the plug-in
         // will never paint or receive events. Used by the AppleConnect plug-in.

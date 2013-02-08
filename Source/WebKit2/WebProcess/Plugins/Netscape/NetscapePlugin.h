@@ -152,6 +152,7 @@ private:
 
     const char* userAgent();
 
+    void platformPreInitialize();
     bool platformPostInitialize();
     void platformDestroy();
     bool platformInvalidate(const WebCore::IntRect&);

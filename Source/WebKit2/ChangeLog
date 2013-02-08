@@ -1,3 +1,33 @@
+2013-02-07  Anders Carlsson  <andersca@apple.com>
+
+        Work around a bug in Flash where NSException objects can be released too early
+        https://bugs.webkit.org/show_bug.cgi?id=109242
+        <rdar://problem/13003470>
+
+        Reviewed by Darin Adler.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        Set the new plug-in quirk.
+
+        * Shared/Plugins/PluginQuirks.h:
+        Add a new plug-in quirk.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::initialize):
+        Call platformPreInitialize.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (NetscapePlugin):
+        Add platformPreInitialize.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NSException_release):
+        Add new empty function.
+
+        (WebKit::NetscapePlugin::platformPreInitialize):
+        Patch -[NSException release] to be a no-op.
+
 2013-02-08  Dean Jackson  <dino@apple.com>
 
         Do not register autostart for plugins from file:// (or nowhere)
