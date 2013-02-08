@@ -1725,7 +1725,6 @@ fast/text/international/bidi-LDB-2-CSS.html
 fast/text/international/bidi-control-chars-treated-as-ZWS.html
 fast/text/international/bidi-european-terminators.html
 fast/text/international/bidi-explicit-embedding.html
-fast/text/international/bidi-ignored-for-first-child-inline.html
 fast/text/international/bidi-innertext.html
 fast/text/international/bidi-linebreak-001.html
 fast/text/international/bidi-linebreak-002.html
@@ -2623,5 +2622,3 @@ webkit.org/b/91665 fast/dynamic/absolute-positioned-to-static-positioned.html [ 
 webkit.org/b/91665 fast/dynamic/floating-to-non-floating.html [ Skip ]
 webkit.org/b/91665 fast/dynamic/static-positioned-to-absolute-positioned.html [ Skip ]
 
-# Rebaseline required after https://webkit.org/b/95772
-webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.html [ Failure ]
