@@ -248,6 +248,10 @@ bool NetscapePlugin::platformPostInitializeWindowless()
     return true;
 }
 
+void NetscapePlugin::platformPreInitialize()
+{
+}
+
 bool NetscapePlugin::platformPostInitialize()
 {
 #if PLATFORM(GTK)
