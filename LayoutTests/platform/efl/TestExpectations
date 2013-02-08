@@ -18,7 +18,12 @@
 
 # 3. FLAKY TESTS
 
-# 4. FAILING TESTS
+# 4. PASSING TESTS WITH INCORRECT EXPECTATIONS
+#    * Test cases that are passing with their generated incorrect expectations.
+#    * It should be checked if the test fails. Remove the line if the test result is correct
+#      otherwise update with new incorrect one.
+
+# 5. FAILING TESTS
 #    * Interim failures that are moved here for further investigation as a result of daily
 #      gardening. They should be analysed quickly and either resolved or moved to 1).
 #    * Remaining failures that are moved here until further investigation after
@@ -834,6 +839,34 @@ webkit.org/b/107024 compositing/self-painting-layers2.html [ Pass Failure ]
 webkit.org/b/107024 compositing/video-page-visibility.html [ Pass Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
+# PASSING TESTS WITH INCORRECT EXPECTATIONS
+#////////////////////////////////////////////////////////////////////////////////////////
+
+# Regression from r133898
+Bug(EFL) fast/forms/basic-textareas-quirks.html [ Pass ]
+Bug(EFL) fast/forms/input-disabled-color.html [ Pass ]
+Bug(EFL) fast/forms/input-readonly-dimmed.html [ Pass ]
+
+# Test 2 in below test is failing.
+webkit.org/b/94877 fast/forms/listbox-hit-test-zoomed.html [ Pass ]
+
+# Intrusive theming overrides collide with style-related LayoutTests.
+webkit.org/b/85877 fast/forms/menulist-narrow-width.html [ Pass ]
+webkit.org/b/85877 fast/forms/menulist-style-color.html [ Pass ]
+webkit.org/b/85877 fast/forms/select-baseline.html [ Pass ]
+webkit.org/b/85877 fast/forms/select-style.html [ Pass ]
+
+# EFL port needs Pasteboard implementation, needs baselines.
+webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Pass ]
+
+# Cancel mark in search field is not working.
+webkit.org/b/94880 fast/forms/search-cancel-button-style-sharing.html [ Pass ]
+webkit.org/b/94880 fast/forms/search-rtl.html [ Pass ]
+
+# Controls are not zoomed.
+webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1071,7 +1104,6 @@ webkit.org/b/84338 editing/pasteboard/smart-paste-007.html [ Missing ]
 webkit.org/b/84338 editing/pasteboard/smart-paste-008.html [ Missing ]
 webkit.org/b/84338 editing/pasteboard/styled-element-markup.html [ Missing ]
 webkit.org/b/84338 editing/pasteboard/undoable-fragment-removes.html [ Missing ]
-webkit.org/b/84338 fast/forms/plaintext-mode-2.html [ Missing ]
 
 # EFL port is missing Clipboard implementation.
 Bug(EFL) editing/pasteboard/crash-accessing-clipboardData-types.html [ Failure ]
@@ -1530,19 +1562,6 @@ webkit.org/b/94341 inspector/timeline/timeline-decode-resize.html [ Failure ]
 # Fails after r126350
 webkit.org/b/94788 media/track/track-cue-rendering-snap-to-lines-not-set.html [ Failure ]
 
-# Intrusive theming overrides collide with style-related LayoutTests.
-webkit.org/b/85877 fast/forms/menulist-narrow-width.html [ Missing ]
-webkit.org/b/85877 fast/forms/select-baseline.html [ Missing ]
-webkit.org/b/85877 fast/forms/menulist-style-color.html [ Missing ]
-webkit.org/b/85877 fast/forms/select-style.html [ Missing ]
-
-# Test 2 in below test is failing.
-webkit.org/b/94877 fast/forms/listbox-hit-test-zoomed.html [ Missing ]
-
-# Cancel mark in search field is not working.
-webkit.org/b/94880 fast/forms/search-cancel-button-style-sharing.html [ Missing ]
-webkit.org/b/94880 fast/forms/search-rtl.html [ Missing ]
-
 # Asserts in MessagePort::contextDestroyed, but the assert usually gets attributed to later tests. 
 webkit.org/b/94458 fast/events/message-port-constructor-for-deleted-document.html
 
@@ -1652,9 +1671,6 @@ Bug(EFL) editing/selection/caret-rtl-2.html [ Failure Pass ]
 Bug(EFL) fast/css/hover-update.html [ Failure Pass ]
 Bug(EFL) fast/dynamic/012.html [ Failure ]
 Bug(EFL) fast/dynamic/layer-hit-test-crash.html [ Failure ]
-Bug(EFL) fast/forms/basic-textareas-quirks.html [ Missing ]
-Bug(EFL) fast/forms/input-disabled-color.html [ Missing ]
-Bug(EFL) fast/forms/input-readonly-dimmed.html [ Missing ]
 Bug(EFL) fast/forms/input-text-scroll-left-on-blur.html [ Missing ]
 Bug(EFL) fast/layers/layer-visibility-sublayer.html [ Failure ]
 Bug(EFL) fast/layers/layer-visibility.html [ Failure ]
@@ -1703,8 +1719,6 @@ webkit.org/b/102100 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure 
 webkit.org/b/102190 compositing/overflow/updating-scrolling-content.html [ Failure ]
 
 webkit.org/b/102364 compositing/overflow/scrolling-without-painting.html [ Failure ]
-
-webkit.org/b/102367 fast/forms/zoomed-controls.html [ ImageOnlyFailure Missing ]
 
 webkit.org/b/102493 fast/events/mouse-cursor.html [ Failure ]
 

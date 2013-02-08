@@ -14,7 +14,12 @@
 
 # 3. FLAKY TESTS
 
-# 4. FAILING TESTS
+# 4. PASSING TESTS WITH INCORRECT EXPECTATIONS
+#    * Test cases that are passing with their generated incorrect expectations.
+#    * It should be checked if the test fails. Remove the line if the test result is correct
+#      otherwise update with new incorrect one.
+
+# 5. FAILING TESTS
 #    * Interim failures that are moved here for further investigation as a result of daily
 #      gardening. They should be analysed quickly and either resolved or moved to 1).
 #    * Remaining failures that are moved here until further investigation after
@@ -75,6 +80,10 @@ editing/selection/doubleclick-whitespace-img-crash.html [ Failure Pass ]
 webkit.org/b/96642 loader/go-back-to-different-window-size.html [ Failure Pass ]
  
 webkit.org/b/96977 [ Release ] perf/nested-combined-selectors.html [ Failure Pass ]
+
+#////////////////////////////////////////////////////////////////////////////////////////
+# PASSING TESTS WITH INCORRECT EXPECTATIONS
+#////////////////////////////////////////////////////////////////////////////////////////
  
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS

@@ -17,7 +17,12 @@
 
 # 4. FLAKY TESTS
 
-# 5. FAILING TESTS
+# 5. PASSING TESTS WITH INCORRECT EXPECTATIONS
+#    * Test cases that are passing with their generated incorrect expectations.
+#    * It should be checked if the test fails. Remove the line if the test result is correct
+#      otherwise update with new incorrect one.
+
+# 6. FAILING TESTS
 #    * Interim failures that are moved here for further investigation as a result of daily
 #      gardening. They should be analysed quickly and either resolved or moved to 1).
 #    * Remaining failures that are moved here until further investigation after
@@ -231,6 +236,10 @@ webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-100.html [ Crash Pass ]
 webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-110.html [ Crash Pass ]
 webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-120.html [ Crash Pass ]
 
+#////////////////////////////////////////////////////////////////////////////////////////
+# PASSING TESTS WITH INCORRECT EXPECTATIONS
+#////////////////////////////////////////////////////////////////////////////////////////
+ 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
