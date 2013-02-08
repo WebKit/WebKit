@@ -419,7 +419,7 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     UNUSED_PARAM(storedCredentials);
 
     WebCoreSynchronousLoader syncLoader(error, response, data, request.httpUserAgent());
-    ResourceHandle handle(request, &syncLoader, true, false, context);
+    ResourceHandle handle(context, request, &syncLoader, true, false);
 
     handle.setSynchronousInternetHandle(syncLoader.internetHandle());
     handle.start();
