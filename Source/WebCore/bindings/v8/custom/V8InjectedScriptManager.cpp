@@ -49,7 +49,7 @@ static void WeakReferenceCallback(v8::Isolate* isolate, v8::Persistent<v8::Value
 {
     InjectedScriptHost* nativeObject = static_cast<InjectedScriptHost*>(parameter);
     nativeObject->deref();
-    object.Dispose();
+    object.Dispose(isolate);
     object.Clear();
 }
 
@@ -69,7 +69,7 @@ static v8::Local<v8::Object> createInjectedScriptHostV8Wrapper(InjectedScriptHos
     // Create a weak reference to the v8 wrapper of InspectorBackend to deref
     // InspectorBackend when the wrapper is garbage collected.
     host->ref();
-    v8::Persistent<v8::Object> weakHandle = v8::Persistent<v8::Object>::New(instance);
+    v8::Persistent<v8::Object> weakHandle = v8::Persistent<v8::Object>::New(isolate, instance);
     weakHandle.MakeWeak(isolate, host, &WeakReferenceCallback);
     return instance;
 }

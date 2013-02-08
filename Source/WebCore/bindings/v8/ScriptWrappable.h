@@ -49,7 +49,7 @@ public:
     void setWrapper(v8::Handle<v8::Object> wrapper, v8::Isolate* isolate, const WrapperConfiguration& configuration)
     {
         ASSERT(m_maskedWrapper.IsEmpty());
-        v8::Persistent<v8::Object> persistent = v8::Persistent<v8::Object>::New(wrapper);
+        v8::Persistent<v8::Object> persistent = v8::Persistent<v8::Object>::New(isolate, wrapper);
         configuration.configureWrapper(persistent, isolate);
         persistent.MakeWeak(isolate, this, weakCallback);
         m_maskedWrapper = maskOrUnmaskPointer(*persistent);
@@ -62,11 +62,11 @@ public:
     }
 
 private:
-    inline void disposeWrapper(v8::Persistent<v8::Value> value)
+    inline void disposeWrapper(v8::Persistent<v8::Value> value, v8::Isolate* isolate)
     {
         ASSERT(!m_maskedWrapper.IsEmpty());
         ASSERT(*value == maskOrUnmaskPointer(*m_maskedWrapper));
-        value.Dispose();
+        value.Dispose(isolate);
         m_maskedWrapper.Clear();
     }
 
@@ -85,7 +85,7 @@ private:
         ASSERT(value->IsObject());
         v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
         ASSERT(key->wrapper() == wrapper);
-        key->disposeWrapper(value);
+        key->disposeWrapper(value, isolate);
 
         // Note: |object| might not be equal to |key|, e.g., if ScriptWrappable isn't a left-most base class.
         void* object = toNative(wrapper);

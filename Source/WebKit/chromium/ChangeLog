@@ -1,3 +1,12 @@
+2013-02-08  Dan Carney  <dcarney@google.com>
+
+        [v8] isolate parameter added to all v8::peristent calls
+        https://bugs.webkit.org/show_bug.cgi?id=109268
+
+        Reviewed by Kentaro Hara.
+
+        * tests/WebFrameTest.cpp:
+
 2013-02-07  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-Android] Disable input[type=datetime]

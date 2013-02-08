@@ -798,7 +798,7 @@ sub GenerateDomainSafeFunctionGetter
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
+    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), $newTemplateString);
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate()));
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
@@ -807,7 +807,7 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
     }
     ${interfaceName}* imp = ${v8InterfaceName}::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
-        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New($newTemplateString);
+        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), $newTemplateString);
         return sharedTemplate->GetFunction();
     }
 
@@ -2207,7 +2207,7 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}Constructor::GetTemplate(
     result->SetClassName(v8::String::NewSymbol("${interfaceName}"));
     result->Inherit(${v8InterfaceName}::GetTemplate(isolate));
 
-    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
+    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, result);
     return cachedTemplate;
 }
 
@@ -3104,7 +3104,7 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetRawTemplate(v8::Isol
         return result->value;
 
     v8::HandleScope handleScope;
-    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate();
+    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate(isolate);
     data->rawTemplateMap().add(&info, templ);
     return templ;
 }
@@ -3222,7 +3222,7 @@ v8::Persistent<v8::ObjectTemplate> V8DOMWindow::GetShadowObjectTemplate(v8::Isol
 {
     static v8::Persistent<v8::ObjectTemplate> V8DOMWindowShadowObjectCache;
     if (V8DOMWindowShadowObjectCache.IsEmpty()) {
-        V8DOMWindowShadowObjectCache = v8::Persistent<v8::ObjectTemplate>::New(v8::ObjectTemplate::New());
+        V8DOMWindowShadowObjectCache = v8::Persistent<v8::ObjectTemplate>::New(isolate, v8::ObjectTemplate::New());
         ConfigureShadowObjectTemplate(V8DOMWindowShadowObjectCache, isolate);
     }
     return V8DOMWindowShadowObjectCache;

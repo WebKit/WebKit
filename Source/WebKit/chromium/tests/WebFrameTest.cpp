@@ -987,15 +987,15 @@ public:
     struct Notification {
     public:
         Notification(WebFrame* frame, v8::Handle<v8::Context> context, int worldId)
-            : frame(frame) ,
-              context(v8::Persistent<v8::Context>::New(context)),
-              worldId(worldId)
+            : frame(frame)
+            , context(v8::Persistent<v8::Context>::New(context->GetIsolate(), context))
+            , worldId(worldId)
         {
         }
 
         ~Notification()
         {
-            context.Dispose();
+            context.Dispose(context->GetIsolate());
         }
 
         bool Equals(Notification* other)

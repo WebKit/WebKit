@@ -73,7 +73,7 @@ void V8HiddenPropertyName::setNamedHiddenReference(v8::Handle<v8::Object> parent
 v8::Persistent<v8::String> V8HiddenPropertyName::createString(const char* key)
 {
     v8::HandleScope scope;
-    return v8::Persistent<v8::String>::New(v8::String::NewSymbol(key));
+    return v8::Persistent<v8::String>::New(v8::Isolate::GetCurrent(), v8::String::NewSymbol(key));
 }
 
 }  // namespace WebCore

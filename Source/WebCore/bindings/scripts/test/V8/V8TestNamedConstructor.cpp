@@ -112,7 +112,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTempl
     result->SetClassName(v8::String::NewSymbol("TestNamedConstructor"));
     result->Inherit(V8TestNamedConstructor::GetTemplate(isolate));
 
-    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(result);
+    cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, result);
     return cachedTemplate;
 }
 
@@ -140,7 +140,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructor::GetRawTemplate(v8::
         return result->value;
 
     v8::HandleScope handleScope;
-    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate();
+    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate(isolate);
     data->rawTemplateMap().add(&info, templ);
     return templ;
 }

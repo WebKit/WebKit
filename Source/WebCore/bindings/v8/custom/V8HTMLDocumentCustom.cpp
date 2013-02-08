@@ -56,7 +56,7 @@ v8::Local<v8::Object> V8HTMLDocument::wrapInShadowObject(v8::Local<v8::Object> w
 {
     DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, shadowTemplate, ());
     if (shadowTemplate.IsEmpty()) {
-        shadowTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
+        shadowTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New());
         if (shadowTemplate.IsEmpty())
             return v8::Local<v8::Object>();
         shadowTemplate->SetClassName(v8::String::NewSymbol("HTMLDocument"));

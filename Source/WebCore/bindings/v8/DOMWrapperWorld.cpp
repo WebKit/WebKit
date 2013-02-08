@@ -75,7 +75,7 @@ void DOMWrapperWorld::assertContextHasCorrectPrototype(v8::Handle<v8::Context> c
 
 static void isolatedWorldWeakCallback(v8::Isolate* isolate, v8::Persistent<v8::Value> object, void* parameter)
 {
-    object.Dispose();
+    object.Dispose(isolate);
     object.Clear();
     static_cast<DOMWrapperWorld*>(parameter)->deref();
 }
@@ -84,7 +84,8 @@ void DOMWrapperWorld::makeContextWeak(v8::Handle<v8::Context> context)
 {
     ASSERT(isIsolatedWorld());
     ASSERT(isolated(context) == this);
-    v8::Persistent<v8::Context>::New(context).MakeWeak(context->GetIsolate(), this, isolatedWorldWeakCallback);
+    v8::Isolate* isolate = context->GetIsolate();
+    v8::Persistent<v8::Context>::New(isolate, context).MakeWeak(isolate, this, isolatedWorldWeakCallback);
     // Matching deref is in weak callback.
     this->ref();
 }

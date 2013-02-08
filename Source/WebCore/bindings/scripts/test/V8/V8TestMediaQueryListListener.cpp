@@ -106,7 +106,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListener::GetRawTemplat
         return result->value;
 
     v8::HandleScope handleScope;
-    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate();
+    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate(isolate);
     data->rawTemplateMap().add(&info, templ);
     return templ;
 }

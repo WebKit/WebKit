@@ -421,7 +421,7 @@ namespace WebCore {
         return isfinite(value) ? v8::Date::New(value) : v8NullWithCheck(isolate);
     }
 
-    v8::Persistent<v8::FunctionTemplate> createRawTemplate();
+    v8::Persistent<v8::FunctionTemplate> createRawTemplate(v8::Isolate*);
 
     PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value>, v8::Isolate*);
     PassRefPtr<XPathNSResolver> toXPathNSResolver(v8::Handle<v8::Value>, v8::Isolate*);

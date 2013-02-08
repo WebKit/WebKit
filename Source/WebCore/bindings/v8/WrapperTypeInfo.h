@@ -150,7 +150,7 @@ namespace WebCore {
 
         void configureWrapper(v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate) const
         {
-            wrapper.SetWrapperClassId(classId);
+            wrapper.SetWrapperClassId(isolate, classId);
             if (lifetime == Independent)
                 wrapper.MarkIndependent(isolate);
         }

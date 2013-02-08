@@ -43,7 +43,7 @@ public:
     ScopedPersistent() { }
 
     explicit ScopedPersistent(v8::Handle<T> handle)
-        : m_handle(v8::Persistent<T>::New(handle))
+        : m_handle(v8::Persistent<T>::New(v8::Isolate::GetCurrent(), handle))
     {
     }
 
@@ -60,7 +60,7 @@ public:
     void set(v8::Handle<T> handle)
     {
         clear();
-        m_handle = v8::Persistent<T>::New(handle);
+        m_handle = v8::Persistent<T>::New(v8::Isolate::GetCurrent(), handle);
     }
 
     void adopt(v8::Persistent<T> handle)
@@ -74,7 +74,7 @@ public:
     {
         if (m_handle.IsEmpty())
             return;
-        m_handle.Dispose();
+        m_handle.Dispose(v8::Isolate::GetCurrent());
         m_handle.Clear();
     }
 

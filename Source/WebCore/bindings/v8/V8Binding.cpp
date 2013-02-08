@@ -174,11 +174,11 @@ uint32_t toUInt32(v8::Handle<v8::Value> value, bool& ok)
     return uintValue->Value();
 }
 
-v8::Persistent<v8::FunctionTemplate> createRawTemplate()
+v8::Persistent<v8::FunctionTemplate> createRawTemplate(v8::Isolate* isolate)
 {
     v8::HandleScope scope;
     v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(V8ObjectConstructor::isValidConstructorMode);
-    return v8::Persistent<v8::FunctionTemplate>::New(result);
+    return v8::Persistent<v8::FunctionTemplate>::New(isolate, result);
 }        
 
 PassRefPtr<DOMStringList> toDOMStringList(v8::Handle<v8::Value> value, v8::Isolate* isolate)

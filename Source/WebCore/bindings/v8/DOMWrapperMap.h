@@ -70,7 +70,7 @@ public:
         for (typename MapType::iterator it = m_map.begin(); it != m_map.end(); ++it) {
             v8::Persistent<v8::Object> wrapper = it->value;
             toWrapperTypeInfo(wrapper)->derefObject(it->key);
-            wrapper.Dispose();
+            wrapper.Dispose(m_isolate);
             wrapper.Clear();
         }
         m_map.clear();

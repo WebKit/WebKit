@@ -195,7 +195,7 @@ public:
 
         ASSERT(V8DOMWrapper::maybeDOMWrapper(value));
 
-        if (value.IsIndependent())
+        if (value.IsIndependent(m_isolate))
             return;
 
         WrapperTypeInfo* type = toWrapperTypeInfo(wrapper);
@@ -223,7 +223,7 @@ public:
         if (classId == v8DOMNodeClassId) {
             UNUSED_PARAM(m_isolate);
             ASSERT(V8Node::HasInstance(wrapper, m_isolate));
-            ASSERT(!wrapper.IsIndependent());
+            ASSERT(!wrapper.IsIndependent(m_isolate));
 
             Node* node = static_cast<Node*>(object);
 
@@ -254,7 +254,7 @@ private:
 // m_edenNodes stores nodes that have wrappers that have been created since the last minor/major GC.
 Vector<Node*>* V8GCController::m_edenNodes = 0;
 
-static void gcTree(Node* startNode)
+static void gcTree(v8::Isolate* isolate, Node* startNode)
 {
     Vector<v8::Persistent<v8::Value>, initialNodeVectorSize> newSpaceWrappers;
 
@@ -299,7 +299,7 @@ static void gcTree(Node* startNode)
     // stored in newSpaceWrappers and are expected to exist in the new space of V8.
     // We report those wrappers to V8 as an object group.
     for (size_t i = 0; i < newSpaceWrappers.size(); i++)
-        newSpaceWrappers[i].MarkPartiallyDependent();
+        newSpaceWrappers[i].MarkPartiallyDependent(isolate);
     if (newSpaceWrappers.size() > 0)
         v8::V8::AddObjectGroup(&newSpaceWrappers[0], newSpaceWrappers.size());
 }
@@ -326,8 +326,10 @@ void V8GCController::didCreateWrapperForNode(Node* node)
 
 void V8GCController::gcPrologue(v8::GCType type, v8::GCCallbackFlags flags)
 {
+    // It would be nice if the GC callbacks passed the Isolate directly....
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
     if (type == v8::kGCTypeScavenge)
-        minorGCPrologue();
+        minorGCPrologue(isolate);
     else if (type == v8::kGCTypeMarkSweepCompact)
         majorGCPrologue();
 
@@ -337,7 +339,7 @@ void V8GCController::gcPrologue(v8::GCType type, v8::GCCallbackFlags flags)
     }
 }
 
-void V8GCController::minorGCPrologue()
+void V8GCController::minorGCPrologue(v8::Isolate* isolate)
 {
     TRACE_EVENT_BEGIN0("v8", "GC");
 
@@ -345,7 +347,7 @@ void V8GCController::minorGCPrologue()
         for (size_t i = 0; i < m_edenNodes->size(); i++) {
             ASSERT(!m_edenNodes->at(i)->wrapper().IsEmpty());
             if (m_edenNodes->at(i)->isV8CollectableDuringMinorGC()) // This branch is just for performance.
-                gcTree(m_edenNodes->at(i));
+                gcTree(isolate, m_edenNodes->at(i));
         }
     }
 }

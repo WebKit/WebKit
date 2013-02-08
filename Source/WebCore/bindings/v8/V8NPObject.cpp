@@ -200,7 +200,7 @@ private:
     {
         MapType::iterator it = m_map.find(key);
         ASSERT(it != m_map.end());
-        it->value.Dispose();
+        it->value.Dispose(m_isolate);
         it->value.Clear();
         m_map.remove(it);
     }
@@ -250,7 +250,7 @@ static v8::Handle<v8::Value> npObjectGetProperty(v8::Local<v8::Object> self, NPI
             // Create a new template.
             v8::Local<v8::FunctionTemplate> temp = v8::FunctionTemplate::New();
             temp->SetCallHandler(npObjectMethodHandler, key);
-            functionTemplate = v8::Persistent<v8::FunctionTemplate>::New(temp);
+            functionTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, temp);
             V8NPTemplateMap::sharedInstance(isolate).set(id, functionTemplate);
         }
 
@@ -428,8 +428,9 @@ v8::Local<v8::Object> createV8ObjectForNPObject(NPObject* object, NPObject* root
     // FIXME: we should create a Wrapper type as a subclass of JSObject. It has two internal fields, field 0 is the wrapped
     // pointer, and field 1 is the type. There should be an api function that returns unused type id. The same Wrapper type
     // can be used by DOM bindings.
+    v8::Isolate* isolate = v8::Isolate::GetCurrent();
     if (npObjectDesc.IsEmpty()) {
-        npObjectDesc = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New());
+        npObjectDesc = v8::Persistent<v8::FunctionTemplate>::New(isolate, v8::FunctionTemplate::New());
         npObjectDesc->InstanceTemplate()->SetInternalFieldCount(npObjectInternalFieldCount);
         npObjectDesc->InstanceTemplate()->SetNamedPropertyHandler(npObjectNamedPropertyGetter, npObjectNamedPropertySetter, npObjectQueryProperty, 0, npObjectNamedPropertyEnumerator);
         npObjectDesc->InstanceTemplate()->SetIndexedPropertyHandler(npObjectIndexedPropertyGetter, npObjectIndexedPropertySetter, 0, 0, npObjectIndexedPropertyEnumerator);

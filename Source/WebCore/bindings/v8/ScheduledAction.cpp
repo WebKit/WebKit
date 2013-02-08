@@ -54,15 +54,16 @@ ScheduledAction::ScheduledAction(v8::Handle<v8::Context> context, v8::Handle<v8:
     , m_function(function)
     , m_code(String(), KURL(), TextPosition::belowRangePosition())
 {
+    v8::Isolate* isolate = m_context->GetIsolate();
     m_args.reserveCapacity(argc);
     for (int i = 0; i < argc; ++i)
-        m_args.append(v8::Persistent<v8::Value>::New(argv[i]));
+        m_args.append(v8::Persistent<v8::Value>::New(isolate, argv[i]));
 }
 
 ScheduledAction::~ScheduledAction()
 {
     for (size_t i = 0; i < m_args.size(); ++i) {
-        m_args[i].Dispose();
+        m_args[i].Dispose(m_context->GetIsolate());
         m_args[i].Clear();
     }
 }
