@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script>
+document.addEventListener("DOMFocusOut", function() {
+    holder.removeChild(willBeRemoved);
+    willBeDisabled.disabled = true;
+}, false);
+
+function test() {
+    description("document.activeElement should return a valid and focusable element.");
+    shouldNotBe("document.activeElement", "willBeDisabled");
+    shouldBeEqualToString("document.activeElement.id", "body");
+    holder.removeChild(willBeDisabled);	
+    isSuccessfullyParsed();
+}
+</script>
+<body id=body onload="test()">
+<div id=holder>
+<input autofocus id=willBeRemoved>
+<input autofocus id=willBeDisabled>
+</div>
+</body>
