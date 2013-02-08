@@ -1,3 +1,15 @@
+2013-02-08  Harald Alvestrand  <hta@google.com>
+
+        Fix and test for missing return
+
+        RTCPeerConnection.getStats() fails when remote stats are instantiated.
+        https://bugs.webkit.org/show_bug.cgi?id=109292
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (MockWebRTCPeerConnectionHandler::getStats):
+
 2013-02-08  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Removing the deprecated WebMediaStreamDescriptor and WebMediaStreamComponent shims

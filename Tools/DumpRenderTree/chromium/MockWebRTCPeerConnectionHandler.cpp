@@ -282,6 +282,8 @@ void MockWebRTCPeerConnectionHandler::getStats(const WebRTCStatsRequest& request
             reportIndex = response.addReport();
             response.addElement(reportIndex, true, currentDate);
             response.addStatistic(reportIndex, true, "type", "video");
+            // We add an empty remote report element.
+            response.addElement(reportIndex, false, currentDate);
         }
     }
     postTask(new RTCStatsRequestSucceededTask(this, request, response));

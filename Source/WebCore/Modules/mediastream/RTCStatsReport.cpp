@@ -44,6 +44,7 @@ void RTCStatsReport::addElement(bool isLocal, double timestamp)
     if (isLocal) {
         ASSERT(!m_local);
         m_local = RTCStatsElement::create(timestamp);
+        return;
     }
     ASSERT(!m_remote);
     m_remote = RTCStatsElement::create(timestamp);
