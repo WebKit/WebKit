@@ -43,45 +43,6 @@
         "hidden": true,
         "types": [
             {
-                "id": "NodeCount",
-                "type": "object",
-                "properties": [
-                    { "name": "nodeName", "type": "string" },
-                    { "name": "count", "type": "integer" }
-                ],
-                "description": "Number of nodes with given name."
-            },
-            {
-                "id": "ListenerCount",
-                "type": "object",
-                "properties": [
-                    { "name": "type", "type": "string" },
-                    { "name": "count", "type": "integer" }
-                ],
-                "description": "Number of JS event listeners by event type."
-            },
-            {
-                "id": "StringStatistics",
-                "type": "object",
-                "properties": [
-                    { "name": "dom", "type": "integer" },
-                    { "name": "js", "type": "integer" },
-                    { "name": "shared", "type": "integer" }
-                ],
-                "description": "Character data statistics for the page."
-            },
-            {
-                "id": "DOMGroup",
-                "type": "object",
-                "properties": [
-                    { "name": "size", "type": "integer" },
-                    { "name": "title", "type": "string" },
-                    { "name": "documentURI", "type": "string", "optional": true },
-                    { "name": "nodeCount", "type": "array", "items": { "$ref": "NodeCount" }},
-                    { "name": "listenerCount", "type": "array", "items": { "$ref": "ListenerCount" }}
-                ]
-            },
-            {
                 "id": "MemoryBlock",
                 "type": "object",
                 "properties": [
@@ -102,13 +63,6 @@
             }
         ],
         "commands": [
-            {
-                "name": "getDOMNodeCount",
-                "returns": [
-                    { "name": "domGroups", "type": "array", "items": { "$ref": "DOMGroup" }},
-                    { "name": "strings", "$ref": "StringStatistics" }
-                ]
-            },
             {
                 "name": "getDOMCounters",
                 "returns": [
