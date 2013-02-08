@@ -1,3 +1,18 @@
+2013-02-07  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-Android] Disable input[type=datetime]
+        https://bugs.webkit.org/show_bug.cgi?id=107614
+
+        Reviewed by Kentaro Hara.
+
+        Reason:
+        http://lists.webkit.org/pipermail/webkit-dev/2013-January/023404.html
+
+        * features.gypi:
+        Disable ENABLE_INPUT_TYPE_DATETIME because of a wrong UI.
+        We enable it for non-Android ports but the runtime flag for it is
+        disabled by default. The runtime flag is enabled only in DumpRenderTree.
+
 2013-02-07  Terry Anderson  <tdanderson@chromium.org>
 
         [chromium] Flings should not bubble up to enclosing scrollables when main-thread touch scrolling

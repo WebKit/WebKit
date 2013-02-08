@@ -1841,6 +1841,8 @@ webkit.org/b/98781 [ Android ] fast/block/float/shrink-to-avoid-float-complexity
 # [Chromium-Android] getComputedStyle for scrolling returns "visible" instead of "scroll" in some cases
 webkit.org/b/98782 [ Android ] fast/css/getComputedStyle/computed-style-select-overflow.html [ Failure ]
 
+# [Chromium-Android] Disable <input type=datetime> implementation.
+crbug.com/164561 [ Android ] fast/forms/datetime/ [ Failure Pass ]
 # [Chromium-Android] No <input type=week> implementation.
 crbug.com/135938 [ Android ] fast/forms/week/ [ Failure Pass ]
 
