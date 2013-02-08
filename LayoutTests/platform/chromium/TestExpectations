@@ -1438,6 +1438,8 @@ webkit.org/b/75276 [ Android ] fast/repaint/shadow-multiple-strict-vertical.html
 crbug.com/174268 webgl/conformance/attribs/gl-vertex-attrib-zero-issues.html [ Skip ]
 
 webkit.org/b/108901 webgl/conformance/attribs/gl-vertexattribpointer.html [ Slow ]
+webkit.org/b/109114 webgl/conformance/context/context-release-upon-reload.html [ Pass Timeout ]
+webkit.org/b/109114 webgl/conformance/context/context-release-with-workers.html [ Pass Timeout ]
 
 # -----------------------------------------------------------------
 # Other failures
