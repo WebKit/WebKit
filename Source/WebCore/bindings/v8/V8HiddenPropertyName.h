@@ -48,8 +48,6 @@ namespace WebCore {
     V(toStringString) \
     V(typedArrayHiddenCopyMethod)
 
-enum V8HiddenPropertyCreationType { NewSymbol, NewString };
-
 class V8HiddenPropertyName {
 public:
     V8HiddenPropertyName() { }
