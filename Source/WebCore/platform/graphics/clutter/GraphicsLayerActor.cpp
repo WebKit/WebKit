@@ -1,5 +1,5 @@
 /*
- * Copyright 2011, 2012 Collabora Limited
+ * Copyright 2011, 2012, 2013 Collabora Limited
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -46,10 +46,6 @@ struct _GraphicsLayerActorPrivate {
     PlatformClutterLayerClient* layerClient;
 
     gboolean drawsContent;
-
-    float anchorX;
-    float anchorY;
-    float anchorZ;
 
     float scrollX;
     float scrollY;
@@ -212,24 +208,26 @@ static void graphicsLayerActorApplyTransform(ClutterActor* actor, CoglMatrix* ma
 
     CLUTTER_ACTOR_CLASS(graphics_layer_actor_parent_class)->apply_transform(actor, matrix);
 
-    float width = clutter_actor_get_width(actor);
-    float height = clutter_actor_get_height(actor);
-    if (width <= 1.0 || height <= 1.0)
-        return;
-
-    float pivotX, pivotY;
-    pivotX = width * priv->anchorX;
-    pivotY = height * priv->anchorY;
-
     if (priv->matrix) {
-        CoglMatrix* localMatrix;
+        float width = 0, height = 0;
+        clutter_actor_get_size(actor, &width, &height);
+        if (width <= 1.0 || height <= 1.0)
+            return;
+
+        // The pivot of actor is a normalized value, so we need an actual anchor position
+        // in actor's local coordinate system for translating.
+        float anchorX = 0, anchorY = 0, anchorZ = 0;
+        graphicsLayerActorGetAnchorPoint(GRAPHICS_LAYER_ACTOR(actor), &anchorX, &anchorY, &anchorZ);
+        anchorX *= width;
+        anchorY *= height;
+
         // CSS3 tranform-style can be changed on the fly, 
         // so we have to copy priv->matrix in order to recover z-axis. 
-        localMatrix = cogl_matrix_copy(priv->matrix);
+        CoglMatrix* localMatrix = cogl_matrix_copy(priv->matrix);
 
-        cogl_matrix_translate(matrix, pivotX, pivotY, priv->anchorZ);
+        cogl_matrix_translate(matrix, anchorX, anchorY, anchorZ);
         cogl_matrix_multiply(matrix, matrix, localMatrix);
-        cogl_matrix_translate(matrix, -pivotX, -pivotY, -priv->anchorZ);
+        cogl_matrix_translate(matrix, -anchorX, -anchorY, -anchorZ);
         cogl_matrix_free(localMatrix);
     }
 }
@@ -238,8 +236,7 @@ static void graphicsLayerActorPaint(ClutterActor* actor)
 {
     GraphicsLayerActor* graphicsLayer = GRAPHICS_LAYER_ACTOR(actor);
 
-    GList* list;
-    for (list = graphicsLayer->children; list; list = list->next) {
+    for (GList* list = graphicsLayer->children; list; list = list->next) {
         ClutterActor* child = CLUTTER_ACTOR(list->data);
         clutter_actor_paint(child);
     }
@@ -247,8 +244,6 @@ static void graphicsLayerActorPaint(ClutterActor* actor)
 
 static gboolean graphicsLayerActorDraw(ClutterCanvas* texture, cairo_t* cr, gint width, gint height, GraphicsLayerActor* layer)
 {
-    ClutterActor* actor = CLUTTER_ACTOR(layer);
-
     if (!width || !height)
         return FALSE;
 
@@ -266,7 +261,7 @@ static gboolean graphicsLayerActorDraw(ClutterCanvas* texture, cairo_t* cr, gint
     }
 
     if (priv->layerType == GraphicsLayerClutter::LayerTypeWebLayer)
-        drawLayerContents(actor, context);
+        drawLayerContents(CLUTTER_ACTOR(layer), context);
 
     return TRUE;
 }
@@ -287,25 +282,19 @@ static void graphicsLayerActorUpdateTexture(GraphicsLayerActor* layer)
 {
     GraphicsLayerActorPrivate* priv = layer->priv;
     ASSERT(priv->layerType != GraphicsLayerClutter::LayerTypeVideoLayer);
-    ClutterContent* canvas;
-    canvas = clutter_actor_get_content(CLUTTER_ACTOR(layer));
 
-    // Nothing needs a texture, remove the one we have, if any.
-    if (!priv->drawsContent && !priv->surface) {
-        if (!canvas)
-            return;
-
-        g_signal_handlers_disconnect_by_func(canvas, reinterpret_cast<void*>(graphicsLayerActorDraw), layer);
-        g_object_unref(canvas);
+    ClutterActor* actor = CLUTTER_ACTOR(layer);
+    ClutterContent* canvas = clutter_actor_get_content(actor);
+    if (canvas) {
+        // Nothing needs a texture, remove the one we have, if any.
+        if (!priv->drawsContent && !priv->surface) {
+            g_signal_handlers_disconnect_by_func(canvas, reinterpret_cast<void*>(graphicsLayerActorDraw), layer);
+            g_object_unref(canvas);
+        }
         return;
     }
 
-    // We need a texture, but already have one!
-    if (canvas)
-        return;
-
-    // We need a texture, so create it.
-    ClutterActor* actor = CLUTTER_ACTOR(layer);
+    // We should have a texture, so create one.
     int width = ceilf(clutter_actor_get_width(actor));
     int height = ceilf(clutter_actor_get_height(actor));
 
@@ -325,8 +314,8 @@ static void drawLayerContents(ClutterActor* actor, GraphicsContext& context)
     if (!priv->drawsContent || !priv->layerClient)
         return;
 
-    float width = clutter_actor_get_width(actor);
-    float height = clutter_actor_get_height(actor);
+    int width = static_cast<int>(clutter_actor_get_width(actor));
+    int height = static_cast<int>(clutter_actor_get_height(actor));
     IntRect clip(0, 0, width, height);
 
     // Apply the painted content to the layer.
@@ -337,9 +326,7 @@ static void drawLayerContents(ClutterActor* actor, GraphicsContext& context)
 GraphicsLayerActor* graphicsLayerActorNew(GraphicsLayerClutter::LayerType type)
 {
     GraphicsLayerActor* layer = GRAPHICS_LAYER_ACTOR(g_object_new(GRAPHICS_LAYER_TYPE_ACTOR, 0));
-    GraphicsLayerActorPrivate* priv = layer->priv;
-
-    priv->layerType = type;
+    layer->priv->layerType = type;
 
     return layer;
 }
@@ -387,8 +374,7 @@ void graphicsLayerActorSetSurface(GraphicsLayerActor* layer, cairo_surface_t* su
 
 void graphicsLayerActorInvalidateRectangle(GraphicsLayerActor* layer, const FloatRect& dirtyRect)
 {
-    ClutterContent* canvas;
-    canvas = clutter_actor_get_content(CLUTTER_ACTOR(layer));
+    ClutterContent* canvas = clutter_actor_get_content(CLUTTER_ACTOR(layer));
     if (!canvas)
         return;
 
@@ -398,34 +384,26 @@ void graphicsLayerActorInvalidateRectangle(GraphicsLayerActor* layer, const Floa
 
 void graphicsLayerActorSetTransform(GraphicsLayerActor* layer, const CoglMatrix* matrix) 
 {
-    GraphicsLayerActorPrivate* priv = layer->priv;
+    bool needToRedraw = false;
 
+    GraphicsLayerActorPrivate* priv = layer->priv;
     if (priv->matrix) {
         cogl_matrix_free(priv->matrix);
-        priv->matrix = 0;
-        clutter_actor_queue_redraw(CLUTTER_ACTOR(layer));
+        needToRedraw = true;
     }
 
-    CoglMatrix identity;
-    cogl_matrix_init_identity(&identity);
-    if (cogl_matrix_equal((CoglMatrix*)&identity, (CoglMatrix*)matrix))
-        return;
+    if (!cogl_matrix_is_identity(matrix)) {
+        priv->matrix = cogl_matrix_copy(matrix);
+        needToRedraw = true;
+    } else
+        priv->matrix = 0;
 
-    if (priv->matrix)
-        cogl_matrix_free(priv->matrix);
-
-    priv->matrix = cogl_matrix_copy(matrix);
-    clutter_actor_queue_redraw(CLUTTER_ACTOR(layer));
+    if (needToRedraw)
+        clutter_actor_queue_redraw(CLUTTER_ACTOR(layer));
 }
 
 void graphicsLayerActorSetAnchorPoint(GraphicsLayerActor* layer, float x, float y, float z)
 {
-    GraphicsLayerActorPrivate* priv = layer->priv;
-
-    priv->anchorX = x;
-    priv->anchorY = y;
-    priv->anchorZ = z;
-
     ClutterActor* actor = CLUTTER_ACTOR(layer);
     clutter_actor_set_pivot_point(actor, x, y);
     clutter_actor_set_pivot_point_z(actor, z);
@@ -433,24 +411,20 @@ void graphicsLayerActorSetAnchorPoint(GraphicsLayerActor* layer, float x, float 
 
 void graphicsLayerActorGetAnchorPoint(GraphicsLayerActor* layer, float* x, float* y, float* z)
 {
-    GraphicsLayerActorPrivate* priv = layer->priv;
-    if (x)
-        *x = priv->anchorX;
+    ASSERT(x && y);
 
-    if (y)
-        *y = priv->anchorY;
-
+    ClutterActor* actor = CLUTTER_ACTOR(layer);
+    clutter_actor_get_pivot_point(actor, x, y);
     if (z)
-        *z = priv->anchorZ;
+        *z = clutter_actor_get_pivot_point_z(actor);
 }
 
 void graphicsLayerActorSetScrollPosition(GraphicsLayerActor* layer, float x, float y)
 {
-    GraphicsLayerActorPrivate* priv = layer->priv;
-
     if (x > 0 || y > 0)
         return;
 
+    GraphicsLayerActorPrivate* priv = layer->priv;
     priv->scrollX = x;
     priv->scrollY = y;
 

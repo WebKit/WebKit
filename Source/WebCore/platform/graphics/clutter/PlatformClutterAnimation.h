@@ -161,4 +161,4 @@ private:
 
 #endif // USE(ACCELERATED_COMPOSITING)
 
-#endif // PlatformCAAnimation_h
+#endif // PlatformClutterAnimation_h
