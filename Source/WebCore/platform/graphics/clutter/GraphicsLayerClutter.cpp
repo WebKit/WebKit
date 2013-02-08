@@ -494,21 +494,10 @@ void GraphicsLayerClutter::commitLayerChangesBeforeSublayers(float pageScaleFact
 
 void GraphicsLayerClutter::updateGeometry(float pageScaleFactor, const FloatPoint& positionRelativeToBase)
 {
-    FloatPoint scaledPosition;
-    FloatPoint3D scaledAnchorPoint;
-    FloatSize scaledSize;
-
-    // FIXME: Need to support scaling
-    scaledPosition = m_position;
-    scaledAnchorPoint = m_anchorPoint;
-    scaledSize = m_size;
-
-    FloatRect adjustedBounds(m_boundsOrigin , scaledSize);
-    FloatPoint adjustedPosition(scaledPosition.x() + scaledAnchorPoint.x() * scaledSize.width(), scaledPosition.y() + scaledAnchorPoint.y() * scaledSize.height());
-
-    clutter_actor_set_size(CLUTTER_ACTOR(m_layer.get()), adjustedBounds.width(), adjustedBounds.height());
-    clutter_actor_set_position(CLUTTER_ACTOR(m_layer.get()), adjustedPosition.x(), adjustedPosition.y());
-    graphicsLayerActorSetAnchorPoint(m_layer.get(), scaledAnchorPoint.x(), scaledAnchorPoint.y(), scaledAnchorPoint.z());
+    // FIXME: Need to support page scaling.
+    clutter_actor_set_position(CLUTTER_ACTOR(m_layer.get()), m_position.x(), m_position.y());
+    clutter_actor_set_size(CLUTTER_ACTOR(m_layer.get()), m_size.width(), m_size.height());
+    graphicsLayerActorSetAnchorPoint(m_layer.get(), m_anchorPoint.x(), m_anchorPoint.y(), m_anchorPoint.z());
 }
 
 // Each GraphicsLayer has the corresponding layer in the platform port.
