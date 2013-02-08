@@ -1,3 +1,26 @@
+2013-02-08  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] copy normalizeLayoutTestURL code to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=109269
+
+        Reviewed by Kent Tamura.
+
+        The method doesn't have any external dependencies, so there's no reason
+        it should be on the delegate. It's still required by TestShell, however,
+        by making a copy, we can avoid implementing this in content shell.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestDelegate):
+        * DumpRenderTree/chromium/TestRunner/src/WebPermissions.cpp:
+        (WebTestRunner::WebPermissions::allowImage):
+        (WebTestRunner::WebPermissions::allowScriptFromSource):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::windowCount):
+        * DumpRenderTree/chromium/TestShell.h:
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-02-08  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL] Make the Performance bot also build WebKit.

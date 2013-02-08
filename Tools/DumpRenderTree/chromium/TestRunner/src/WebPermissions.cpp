@@ -35,7 +35,35 @@
 #include <public/WebCString.h>
 #include <public/WebURL.h>
 
+using namespace std;
+
 namespace WebTestRunner {
+
+namespace {
+
+const char layoutTestsPattern[] = "/LayoutTests/";
+const string::size_type layoutTestsPatternSize = sizeof(layoutTestsPattern) - 1;
+const char fileUrlPattern[] = "file:/";
+const char fileTestPrefix[] = "(file test):";
+const char dataUrlPattern[] = "data:";
+const string::size_type dataUrlPatternSize = sizeof(dataUrlPattern) - 1;
+
+string normalizeLayoutTestURL(const string& url)
+{
+    string result = url;
+    size_t pos;
+    if (!url.find(fileUrlPattern) && ((pos = url.find(layoutTestsPattern)) != string::npos)) {
+        // adjust file URLs to match upstream results.
+        result.replace(0, pos + layoutTestsPatternSize, fileTestPrefix);
+    } else if (!url.find(dataUrlPattern)) {
+        // URL-escape data URLs to match results upstream.
+        string path = url.substr(dataUrlPatternSize);
+        result.replace(dataUrlPatternSize, url.length(), path);
+    }
+    return result;
+}
+
+}
 
 WebPermissions::WebPermissions()
     : m_delegate(0)
@@ -51,7 +79,7 @@ bool WebPermissions::allowImage(WebKit::WebFrame*, bool enabledPerSettings, cons
 {
     bool allowed = enabledPerSettings && m_imagesAllowed;
     if (m_dumpCallbacks && m_delegate)
-        m_delegate->printMessage(std::string("PERMISSION CLIENT: allowImage(") + m_delegate->normalizeLayoutTestURL(imageURL.spec()) + "): " + (allowed ? "true" : "false") + "\n");
+        m_delegate->printMessage(std::string("PERMISSION CLIENT: allowImage(") + normalizeLayoutTestURL(imageURL.spec()) + "): " + (allowed ? "true" : "false") + "\n");
     return allowed;
 }
 
@@ -59,7 +87,7 @@ bool WebPermissions::allowScriptFromSource(WebKit::WebFrame*, bool enabledPerSet
 {
     bool allowed = enabledPerSettings && m_scriptsAllowed;
     if (m_dumpCallbacks && m_delegate)
-        m_delegate->printMessage(std::string("PERMISSION CLIENT: allowScriptFromSource(") + m_delegate->normalizeLayoutTestURL(scriptURL.spec()) + "): " + (allowed ? "true" : "false") + "\n");
+        m_delegate->printMessage(std::string("PERMISSION CLIENT: allowScriptFromSource(") + normalizeLayoutTestURL(scriptURL.spec()) + "): " + (allowed ? "true" : "false") + "\n");
     return allowed;
 }
 

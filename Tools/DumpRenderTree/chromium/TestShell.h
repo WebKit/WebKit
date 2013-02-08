@@ -178,10 +178,6 @@ public:
     typedef Vector<WebViewHost*> WindowList;
     WindowList windowList() const { return m_windowList; }
 
-    // Returns a string representation of an URL's spec that does not depend on
-    // the location of the layout test in the file system.
-    std::string normalizeLayoutTestURL(const std::string&);
-
 private:
     WebViewHost* createNewWindow(const WebKit::WebURL&, DRTDevToolsAgent*, WebTestRunner::WebTestInterfaces*);
     void createMainWindow();

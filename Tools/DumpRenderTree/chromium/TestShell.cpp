@@ -825,8 +825,3 @@ int TestShell::windowCount()
 {
     return m_windowList.size();
 }
-
-string TestShell::normalizeLayoutTestURL(const string& url)
-{
-    return normalizeLayoutTestURLInternal(url);
-}
