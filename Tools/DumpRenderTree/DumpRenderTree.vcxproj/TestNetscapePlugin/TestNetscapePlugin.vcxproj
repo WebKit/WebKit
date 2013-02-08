@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\TestNetscapePlugIn\main.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\PluginObject.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\PluginTest.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\TestObject.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\DocumentOpenInDestroyStream.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\EvaluateJSAfterRemovingPluginElement.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\FormValue.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\GetURLNotifyWithURLThatFailsToLoad.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\GetURLWithJavaScriptURL.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\GetURLWithJavaScriptURLDestroyingPlugin.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\GetUserAgentWithNullNPPFromNPPNew.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\LogNPPSetWindow.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPDeallocateCalledBeforeNPShutdown.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPPNewFails.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPPSetWindowCalledDuringDestruction.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPRuntimeCallsWithNullNPP.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NPRuntimeRemoveProperty.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\NullNPPGetValuePointer.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PassDifferentNPPStruct.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PluginScriptableNPObjectInvokeDefault.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PluginScriptableObjectOverridesAllProperties.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\PrivateBrowsing.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\CallJSThatDestroysPlugin.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\DrawsGradient.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\DumpWindowRect.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\GetValueNetscapeWindow.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\NPNInvalidateRectInvalidatesWindow.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\WindowGeometryInitializedBeforeSetWindow.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\WindowlessPaintRectCoordinates.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\Tests\win\WindowRegionIsSetToClipRect.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\win\WindowedPluginTest.cpp" />
+    <ClCompile Include="..\..\TestNetscapePlugIn\win\WindowGeometryTest.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\TestNetscapePlugIn\PluginObject.h" />
+    <ClInclude Include="..\..\TestNetscapePlugIn\PluginTest.h" />
+    <ClInclude Include="..\..\TestNetscapePlugIn\TestObject.h" />
+    <ClInclude Include="..\..\TestNetscapePlugIn\win\WindowedPluginTest.h" />
+    <ClInclude Include="..\..\TestNetscapePlugIn\win\WindowGeometryTest.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TestNetscapePlugin.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TestNetscapePlugin.rc" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{C0737398-3565-439E-A2B8-AB2BE4D5430C}</ProjectGuid>
+    <RootNamespace>TestNetscapePlugin</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="TestNetscapePluginRelease.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="TestNetscapePluginDebug.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
