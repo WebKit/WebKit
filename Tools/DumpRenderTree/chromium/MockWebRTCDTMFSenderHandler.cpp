@@ -57,7 +57,7 @@ private:
 
 /////////////////////
 
-MockWebRTCDTMFSenderHandler::MockWebRTCDTMFSenderHandler(const WebMediaStreamComponent& track)
+MockWebRTCDTMFSenderHandler::MockWebRTCDTMFSenderHandler(const WebMediaStreamTrack& track)
     : m_client(0)
     , m_track(track)
 {

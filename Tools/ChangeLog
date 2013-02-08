@@ -1,3 +1,17 @@
+2013-02-08  Tommy Widenflycht  <tommyw@google.com>
+
+        MediaStream API: Removing the deprecated WebMediaStreamDescriptor and WebMediaStreamComponent shims
+        https://bugs.webkit.org/show_bug.cgi?id=109296
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/MockWebRTCDTMFSenderHandler.cpp:
+        (MockWebRTCDTMFSenderHandler::MockWebRTCDTMFSenderHandler):
+        * DumpRenderTree/chromium/MockWebRTCDTMFSenderHandler.h:
+        (MockWebRTCDTMFSenderHandler):
+        * DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp:
+        (MockWebRTCPeerConnectionHandler::createDTMFSender):
+
 2013-02-08  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Update my entries in the watchlist

@@ -27,13 +27,13 @@
 #define MockWebRTCDTMFSenderHandler_h
 
 #include "WebTask.h"
-#include <public/WebMediaStreamComponent.h>
+#include <public/WebMediaStreamTrack.h>
 #include <public/WebRTCDTMFSenderHandler.h>
 #include <public/WebString.h>
 
 class MockWebRTCDTMFSenderHandler : public WebKit::WebRTCDTMFSenderHandler {
 public:
-    MockWebRTCDTMFSenderHandler(const WebKit::WebMediaStreamComponent&);
+    explicit MockWebRTCDTMFSenderHandler(const WebKit::WebMediaStreamTrack&);
 
     virtual void setClient(WebKit::WebRTCDTMFSenderHandlerClient*) OVERRIDE;
 
@@ -50,7 +50,7 @@ private:
     MockWebRTCDTMFSenderHandler();
 
     WebKit::WebRTCDTMFSenderHandlerClient* m_client;
-    WebKit::WebMediaStreamComponent m_track;
+    WebKit::WebMediaStreamTrack m_track;
     WebKit::WebString m_toneBuffer;
     WebTestRunner::WebTaskList m_taskList;
 };

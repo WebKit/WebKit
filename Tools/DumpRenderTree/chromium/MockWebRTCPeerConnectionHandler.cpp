@@ -294,7 +294,7 @@ WebRTCDataChannelHandler* MockWebRTCPeerConnectionHandler::createDataChannel(con
     return new MockWebRTCDataChannelHandler(label, reliable);
 }
 
-WebRTCDTMFSenderHandler* MockWebRTCPeerConnectionHandler::createDTMFSender(const WebMediaStreamComponent& track)
+WebRTCDTMFSenderHandler* MockWebRTCPeerConnectionHandler::createDTMFSender(const WebMediaStreamTrack& track)
 {
     return new MockWebRTCDTMFSenderHandler(track);
 }
