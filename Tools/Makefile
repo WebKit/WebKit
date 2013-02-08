@@ -1,5 +1,11 @@
 MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 
+ifneq (,$(findstring iphoneos,$(SDKROOT)))
+	MODULES = ../Source/ThirdParty/gtest/xcode
+else ifneq (,$(findstring iphonesimulator,$(SDKROOT)))
+	MODULES = DumpRenderTree ../Source/ThirdParty/gtest/xcode
+endif
+
 all:
 	@for dir in $(MODULES); do ${MAKE} $@ -C $$dir; exit_status=$$?; \
 	if [ $$exit_status -ne 0 ]; then exit $$exit_status; fi; done

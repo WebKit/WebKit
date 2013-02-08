@@ -1,5 +1,15 @@
 SCRIPTS_PATH ?= ../Tools/Scripts
-XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()'` $(ARGS)
+
+XCODE_OPTIONS = `perl -I$(SCRIPTS_PATH) -Mwebkitdirs -e 'print XcodeOptionString()' -- $(BUILD_WEBKIT_OPTIONS)` $(ARGS)
+
+ifneq (,$(SDKROOT))
+	XCODE_OPTIONS += SDKROOT=$(SDKROOT)
+endif
+
+ifneq (,$(ARCHS))
+	XCODE_OPTIONS += ARCHS="$(ARCHS)"
+	XCODE_OPTIONS += ONLY_ACTIVE_ARCH=NO
+endif
 
 DEFAULT_VERBOSITY := $(shell defaults read org.webkit.BuildConfiguration BuildTranscriptVerbosity 2>/dev/null || echo "default")
 VERBOSITY ?= $(DEFAULT_VERBOSITY)

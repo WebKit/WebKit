@@ -1,3 +1,13 @@
+2013-02-07  David Farler  <dfarler@apple.com>
+
+        Makefiles should work for arbitrary SDKs and architectures on Apple ports
+        https://bugs.webkit.org/show_bug.cgi?id=107863
+
+        Reviewed by Mark Rowe.
+
+        * DumpRenderTree/Makefile: SDKROOT=iphone* => -target All-iOS
+        * Makefile: Only build some projects for iOS
+
 2013-02-07  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Another temporary EWS bot fix. It'll totally work this time.
