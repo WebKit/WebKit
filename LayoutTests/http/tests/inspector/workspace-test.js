@@ -4,8 +4,7 @@ InspectorTest.testWorkspace;
 InspectorTest.createWorkspace = function()
 {
     InspectorTest.testWorkspace = new WebInspector.Workspace();
-    InspectorTest.testNetworkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(InspectorTest.testWorkspace);
-    InspectorTest.testWorkspace.addProject(WebInspector.projectNames.Network, InspectorTest.testNetworkWorkspaceProvider);
+    InspectorTest.testNetworkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(InspectorTest.testWorkspace, WebInspector.projectTypes.Network);
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, InspectorTest._defaultUISourceCodeProviderEventHandler);
 }

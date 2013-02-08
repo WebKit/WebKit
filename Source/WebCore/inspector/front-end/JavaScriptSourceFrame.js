@@ -234,7 +234,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     _supportsEnabledBreakpointsWhileEditing: function()
     {
-        return this._uiSourceCode.project().name() === WebInspector.projectNames.Snippets;
+        return this._uiSourceCode.project().type() === WebInspector.projectTypes.Snippets;
     },
 
     _restoreBreakpointsAfterEditing: function()

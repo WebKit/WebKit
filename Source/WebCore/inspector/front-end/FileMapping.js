@@ -91,8 +91,7 @@ WebInspector.FileMapping.prototype = {
      */
     uriForURL: function(url)
     {
-        // FIXME: FileMapping should be network project aware. It should return correct uri for network project uiSourceCodes.
-        return this._innerURIForURL(url) || url;
+        return this._innerURIForURL(url) || WebInspector.SimpleWorkspaceProvider.uriForURL(url, WebInspector.projectTypes.Network);
     },
     
     /**

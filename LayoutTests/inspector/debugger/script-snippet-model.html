@@ -15,8 +15,7 @@ function test()
     WebInspector.experimentsSettings.snippetsSupport = {};
     WebInspector.experimentsSettings.snippetsSupport.isEnabled = function() { return true; };
     var workspace = new WebInspector.Workspace();
-    var snippetWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace);
-    workspace.addProject(WebInspector.projectNames.Snippets, snippetWorkspaceProvider);
+    var snippetWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Snippets);
     var workspaceController = new WebInspector.WorkspaceController(workspace);
     WebInspector.scriptSnippetModel = new WebInspector.ScriptSnippetModel(workspace, snippetWorkspaceProvider);
     InspectorTest.runDebuggerTestSuite([

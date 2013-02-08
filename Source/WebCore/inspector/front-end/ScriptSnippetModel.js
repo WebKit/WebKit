@@ -46,8 +46,7 @@ WebInspector.ScriptSnippetModel = function(workspace)
     this._snippetStorage = new WebInspector.SnippetStorage("script", "Script snippet #");
     this._lastSnippetEvaluationIndexSetting = WebInspector.settings.createSetting("lastSnippetEvaluationIndex", 0);
     this._snippetScriptMapping = new WebInspector.SnippetScriptMapping(this);
-    this._workspaceProvider = new WebInspector.SimpleWorkspaceProvider(this._workspace);
-    workspace.addProject(WebInspector.projectNames.Snippets, this._workspaceProvider);
+    this._workspaceProvider = new WebInspector.SimpleWorkspaceProvider(this._workspace, WebInspector.projectTypes.Snippets);
     this.reset();
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 }
@@ -83,7 +82,7 @@ WebInspector.ScriptSnippetModel.prototype = {
      */
     _addScriptSnippet: function(snippet)
     {
-        var uiSourceCode = this._workspaceProvider.addFile(snippet.name, snippet.name, new WebInspector.SnippetContentProvider(snippet), true);
+        var uiSourceCode = this._workspaceProvider.addFileForURL(snippet.name, new WebInspector.SnippetContentProvider(snippet), true);
         var scriptFile = new WebInspector.SnippetScriptFile(this, uiSourceCode);
         uiSourceCode.setScriptFile(scriptFile);
         this._snippetIdForUISourceCode.put(uiSourceCode, snippet.id);

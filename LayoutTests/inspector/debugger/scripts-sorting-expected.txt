@@ -13,7 +13,7 @@ Dumping ScriptsNavigator 'Scripts' tab:
 Dumping ScriptsNavigator 'Content scripts' tab:
   extension-name
     folder
-  *Non*URL*path
+  *Another*Non*URL*path
 Dumping ScriptsNavigator 'Scripts' tab:
   bar.com
     foo/path
@@ -41,5 +41,5 @@ Dumping ScriptsNavigator 'Content scripts' tab:
     folder
       baz.js
     bar.js
-  *Non*URL*path
+  *Another*Non*URL*path
 

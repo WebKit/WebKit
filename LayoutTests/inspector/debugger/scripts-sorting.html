@@ -11,28 +11,22 @@ function test()
     WebInspector.showPanel("scripts");
 
     var navigator = new WebInspector.ScriptsNavigator();
-
-    var MockProject = function() {}
-    MockProject.prototype.name = function()
-    {
-        return "network";
-    }
+    var workspace = new WebInspector.Workspace();
+    var workspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Network);
 
     var uiSourceCodes = [];
     function addUISourceCode(url, isContentScript)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(new MockProject(), url, url, url, WebInspector.resourceTypes.Script, null);
-        uiSourceCode.isContentScript = isContentScript;
+        var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "", "text/javascript");
+        var uiSourceCode = workspaceProvider.addFileForURL(url, contentProvider, false, isContentScript);
         navigator.addUISourceCode(uiSourceCode);
         uiSourceCodes.push(uiSourceCode);
     }
 
-    function dumpScriptsList(noReveal)
+    function dumpScriptsList()
     {
         InspectorTest.addResult("");
         InspectorTest.dumpScriptsNavigator(navigator);
-        if (noReveal)
-            return;
         for (var i = 0; i < uiSourceCodes.length; ++i)
             navigator.revealUISourceCode(uiSourceCodes[i]);
         InspectorTest.dumpScriptsNavigator(navigator);
@@ -65,7 +59,7 @@ function test()
         "extension-schema://extension-name/folder/baz.js" ];
     for (var i = 0; i < extensions.length; ++i)
         addUISourceCode(extensions[i], true);
-    addUISourceCode("*Non*URL*path", true);
+    addUISourceCode("*Another*Non*URL*path", true);
     dumpScriptsList();
     InspectorTest.completeTest();
 }

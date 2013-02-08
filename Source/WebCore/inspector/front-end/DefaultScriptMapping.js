@@ -35,9 +35,7 @@
  */
 WebInspector.DefaultScriptMapping = function(workspace)
 {
-    this._workspace = workspace;
-    this._workspaceProvider = new WebInspector.SimpleWorkspaceProvider(this._workspace);
-    workspace.addProject(WebInspector.projectNames.Debugger, this._workspaceProvider);
+    this._workspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Debugger);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
     this._debuggerReset();
 }
@@ -76,9 +74,7 @@ WebInspector.DefaultScriptMapping.prototype = {
     addScript: function(script)
     {
         var contentProvider = script.isInlineScript() ? new WebInspector.ConcatenatedScriptsContentProvider([script]) : script;
-        var uri = "debugger:" + WebInspector.SimpleWorkspaceProvider.uriForURL(script.sourceURL);
-        var uniqueURI = this._workspaceProvider.uniqueURI(uri);
-        var uiSourceCode = this._workspaceProvider.addFile(uniqueURI, script.sourceURL, contentProvider, false, script.isContentScript);
+        var uiSourceCode = this._workspaceProvider.addUniqueFileForURL(script.sourceURL, contentProvider, false, script.isContentScript);
 
         this._uiSourceCodeForScriptId[script.scriptId] = uiSourceCode;
         this._scriptIdForUISourceCode.put(uiSourceCode, script.scriptId);

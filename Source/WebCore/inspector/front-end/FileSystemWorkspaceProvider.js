@@ -33,6 +33,7 @@
  * @implements {WebInspector.WorkspaceProvider}
  * @extends {WebInspector.Object}
  * @param {WebInspector.IsolatedFileSystemModel} isolatedFileSystemModel
+ * @param {string} fileSystemPath
  */
 WebInspector.FileSystemWorkspaceProvider = function(isolatedFileSystemModel, fileSystemPath)
 {
@@ -45,6 +46,14 @@ WebInspector.FileSystemWorkspaceProvider = function(isolatedFileSystemModel, fil
 WebInspector.FileSystemWorkspaceProvider._scriptExtensions = ["js", "java", "cc", "cpp", "h", "cs", "py", "php"].keySet();
 
 WebInspector.FileSystemWorkspaceProvider.prototype = {
+    /**
+     * @return {string}
+     */
+    type: function()
+    {
+        return WebInspector.projectTypes.FileSystem;
+    },
+
     /**
      * @param {string} uri
      * @param {function(?string,boolean,string)} callback

@@ -442,7 +442,7 @@ WebInspector.ExtensionServer.prototype = {
             if (!resources[contentProvider.contentURL()])
                 resources[contentProvider.contentURL()] = this._makeResource(contentProvider);
         }
-        var uiSourceCodes = WebInspector.workspace.project(WebInspector.projectNames.Network).uiSourceCodes();
+        var uiSourceCodes = WebInspector.workspace.project(WebInspector.projectTypes.Network).uiSourceCodes();
         uiSourceCodes.forEach(pushResourceData.bind(this));
         WebInspector.resourceTreeModel.forAllResources(pushResourceData.bind(this));
         return Object.values(resources);

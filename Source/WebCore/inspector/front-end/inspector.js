@@ -439,8 +439,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.isolatedFileSystemDispatcher = new WebInspector.IsolatedFileSystemDispatcher(this.isolatedFileSystemModel);
     this.fileMapping = new WebInspector.FileMapping(this.isolatedFileSystemModel.mapping());
 
-    this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace);
-    this.workspace.addProject(WebInspector.projectNames.Network, this.networkWorkspaceProvider);
+    this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace, WebInspector.projectTypes.Network);
     new WebInspector.NetworkUISourceCodeProvider(this.networkWorkspaceProvider);
 
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel, this.workspace);

@@ -163,9 +163,7 @@ function test()
         breakpointManager._debuggerModel._addScript(url, url);
         InspectorTest.addResult("  Adding temporary UISourceCode: " + url + ")");
         var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "", "text/javascript");
-        var uri = "debugger:" + WebInspector.SimpleWorkspaceProvider.uriForURL(url);
-        var uniqueURI = breakpointManager._debuggerWorkspaceProvider.uniqueURI(uri);
-        var uiSourceCode = breakpointManager._debuggerWorkspaceProvider.addFile(uniqueURI, url, contentProvider, false);
+        var uiSourceCode = breakpointManager._debuggerWorkspaceProvider.addUniqueFileForURL(url, contentProvider, true);
         uiSourceCode.setSourceMapping(defaultMapping);
         uiSourceCodes[url] = uiSourceCode;
         return uiSourceCode;
@@ -193,12 +191,8 @@ function test()
         var debuggerModel = new DebuggerModelMock(sourceMapping);
         var workspace = new WebInspector.Workspace();
         var breakpointManager = new WebInspector.BreakpointManager(setting, debuggerModel, workspace);
-
-        breakpointManager._networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace);
-        workspace.addProject("network", breakpointManager._networkWorkspaceProvider);
-        breakpointManager._debuggerWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace);
-        workspace.addProject("debugger", breakpointManager._debuggerWorkspaceProvider);
-
+        breakpointManager._networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Network);
+        breakpointManager._debuggerWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Debugger);
         breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointAdded, breakpointAdded);
         breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointRemoved, breakpointRemoved);
         InspectorTest.addResult("  Created breakpoints manager");

@@ -32,26 +32,40 @@
  * @constructor
  * @implements {WebInspector.WorkspaceProvider}
  * @extends {WebInspector.Object}
+ * @param {WebInspector.Workspace} workspace
+ * @param {string} type
  */
-WebInspector.SimpleWorkspaceProvider = function(workspace)
+WebInspector.SimpleWorkspaceProvider = function(workspace, type)
 {
     this._workspace = workspace;
+    this._type = type;
     /** @type {Object.<string, WebInspector.ContentProvider>} */
     this._contentProviders = {};
     this._lastUniqueSuffix = 0;
+    this._workspace.addProject(this._type, this);
 }
 
 /**
  * @param {string} url
+ * @param {string} type
  * @return {string}
  */
-WebInspector.SimpleWorkspaceProvider.uriForURL = function(url)
+WebInspector.SimpleWorkspaceProvider.uriForURL = function(url, type)
 {
-    var uri = url;
+    var uriTypePrefix = type !== WebInspector.projectTypes.Network ? (type + ":") : "";
+    var uri = uriTypePrefix + url;
     return uri;
 },
 
 WebInspector.SimpleWorkspaceProvider.prototype = {
+    /**
+     * @return {string}
+     */
+    type: function()
+    {
+        return this._type;
+    },
+
     /**
      * @param {string} uri
      * @param {function(?string,boolean,string)} callback
@@ -84,20 +98,15 @@ WebInspector.SimpleWorkspaceProvider.prototype = {
         contentProvider.searchInContent(query, caseSensitive, isRegex, callback);
     },
 
-    /**
-     * @param {string} uri
+   /**
      * @param {string} url
      * @param {WebInspector.ContentProvider} contentProvider
      * @param {boolean} isEditable
      * @param {boolean=} isContentScript
      */
-    addFile: function(uri, url, contentProvider, isEditable, isContentScript)
+    addFileForURL: function(url, contentProvider, isEditable, isContentScript)
     {
-        console.assert(!this._contentProviders[uri]);
-        var fileDescriptor = new WebInspector.FileDescriptor(uri, url, url, contentProvider.contentType(), isEditable, isContentScript);
-        this._contentProviders[uri] = contentProvider;
-        this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileAdded, fileDescriptor);
-        return this._workspace.uiSourceCodeForURI(uri);
+        return this._innerAddFileForURL(url, contentProvider, isEditable, false, isContentScript);
     },
 
     /**
@@ -106,10 +115,27 @@ WebInspector.SimpleWorkspaceProvider.prototype = {
      * @param {boolean} isEditable
      * @param {boolean=} isContentScript
      */
-    addFileForURL: function(url, contentProvider, isEditable, isContentScript)
+    addUniqueFileForURL: function(url, contentProvider, isEditable, isContentScript)
     {
-        var uri = WebInspector.SimpleWorkspaceProvider.uriForURL(url);
-        return this.addFile(uri, url, contentProvider, isEditable, isContentScript);
+        return this._innerAddFileForURL(url, contentProvider, isEditable, true, isContentScript);
+    },
+
+    /**
+     * @param {string} url
+     * @param {WebInspector.ContentProvider} contentProvider
+     * @param {boolean} isEditable
+     * @param {boolean=} isContentScript
+     */
+    _innerAddFileForURL: function(url, contentProvider, isEditable, forceUnique, isContentScript)
+    {
+        var uri = WebInspector.SimpleWorkspaceProvider.uriForURL(url, this._type);
+        if (forceUnique)
+            uri = this._uniqueURI(uri);
+        console.assert(!this._contentProviders[uri]);
+        var fileDescriptor = new WebInspector.FileDescriptor(uri, url, url, contentProvider.contentType(), isEditable, isContentScript);
+        this._contentProviders[uri] = contentProvider;
+        this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileAdded, fileDescriptor);
+        return this._workspace.uiSourceCodeForURI(uri);
     },
 
     /**
@@ -125,7 +151,7 @@ WebInspector.SimpleWorkspaceProvider.prototype = {
      * @param {string} uri
      * @return {string}
      */
-    uniqueURI: function(uri)
+    _uniqueURI: function(uri)
     {
         var uniqueURI = uri;
         while (this._contentProviders[uniqueURI])

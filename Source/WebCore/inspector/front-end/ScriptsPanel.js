@@ -239,7 +239,6 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (this._toggleFormatSourceButton.toggled)
             uiSourceCode.setFormatted(true);
-        var projectName = uiSourceCode.project().name();
         if (uiSourceCode.project().isServiceProject())
             return;
         this._navigator.addUISourceCode(uiSourceCode);
@@ -361,7 +360,7 @@ WebInspector.ScriptsPanel.prototype = {
         var project = event.data;
         var uiSourceCodes = project.uiSourceCodes();
         this._removeUISourceCodes(uiSourceCodes);
-        if (project.name() === WebInspector.projectNames.Network)
+        if (project.type() === WebInspector.projectTypes.Network)
             this._editorContainer.reset();
     },
 
@@ -386,12 +385,11 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (WebInspector.debuggerModel.debuggerEnabled() && anchor.uiSourceCode)
             return true;
-        var uiSourceCodes = this._workspace.project(WebInspector.projectNames.Network).uiSourceCodes();
-        for (var i = 0; i < uiSourceCodes.length; ++i) {
-            if (uiSourceCodes[i].originURL() === anchor.href) {
-                anchor.uiSourceCode = uiSourceCodes[i];
-                return true;
-            }
+        var uri = WebInspector.fileMapping.uriForURL(anchor.href);
+        var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+        if (uiSourceCode) {
+            anchor.uiSourceCode = uiSourceCode;
+            return true;
         }
         return false;
     },
@@ -455,7 +453,7 @@ WebInspector.ScriptsPanel.prototype = {
         var sourceFrame;
         switch (uiSourceCode.contentType()) {
         case WebInspector.resourceTypes.Script:
-            if (uiSourceCode.project().name() === WebInspector.projectNames.Snippets)
+            if (uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
                 sourceFrame = new WebInspector.SnippetJavaScriptSourceFrame(this, uiSourceCode);
             else
                 sourceFrame = new WebInspector.JavaScriptSourceFrame(this, uiSourceCode);
@@ -1034,7 +1032,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data.uiSourceCode);
         var name = /** @type {string} */ (event.data.name);
-        if (!uiSourceCode.project().name() === WebInspector.projectNames.Snippets)
+        if (!uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
             return;
         WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, name);
     },

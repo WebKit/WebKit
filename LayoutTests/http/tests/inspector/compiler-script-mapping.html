@@ -310,8 +310,7 @@ function test()
             WebInspector.settings.sourceMapsEnabled.set(true);
             WebInspector.debuggerModel._reset();
             var workspace = new WebInspector.Workspace();
-            var networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace);
-            workspace.addProject(WebInspector.projectNames.Network, networkWorkspaceProvider);
+            var networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Network);
             var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping(workspace, networkWorkspaceProvider);
 
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");

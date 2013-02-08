@@ -10,19 +10,16 @@ function test()
     WebInspector._isMac = false;
 
     WebInspector.showPanel("scripts");
-    var navigator = new WebInspector.ScriptsNavigator();
 
-    var MockProject = function() {}
-    MockProject.prototype.name = function()
-    {
-        return "network";
-    }
+    var navigator = new WebInspector.ScriptsNavigator();
+    var workspace = new WebInspector.Workspace();
+    var workspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Network);
 
     var uiSourceCodes = [];
     function addUISourceCode(url, isContentScript)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(new MockProject(), url, url, url, WebInspector.resourceTypes.Script, null);
-        uiSourceCode.isContentScript = isContentScript;
+        var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "", "text/javascript");
+        var uiSourceCode = workspaceProvider.addFileForURL(url, contentProvider, false, isContentScript);
         navigator.addUISourceCode(uiSourceCode);
         uiSourceCodes.push(uiSourceCode);
     }

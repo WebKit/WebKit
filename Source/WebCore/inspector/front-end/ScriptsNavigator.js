@@ -84,7 +84,7 @@ WebInspector.ScriptsNavigator.prototype = {
     {
         if (uiSourceCode.isContentScript)
             return this._contentScriptsView;
-        else if (uiSourceCode.project().name() === WebInspector.projectNames.Snippets)
+        else if (uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
             return this._snippetsView;
         else
             return this._scriptsView;
@@ -114,7 +114,7 @@ WebInspector.ScriptsNavigator.prototype = {
         this._navigatorViewForUISourceCode(uiSourceCode).revealUISourceCode(uiSourceCode);
         if (uiSourceCode.isContentScript)
             this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ContentScriptsTab);
-        else if (uiSourceCode.project().name() === WebInspector.projectNames.Snippets)
+        else if (uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
             this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.SnippetsTab);
         else
             this._tabbedPane.selectTab(WebInspector.ScriptsNavigator.ScriptsTab);
@@ -210,7 +210,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     _handleEvaluateSnippet: function(uiSourceCode)
     {
-        if (!uiSourceCode.project().name() === WebInspector.projectNames.Snippets)
+        if (!uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
             return;
         WebInspector.scriptSnippetModel.evaluateScriptSnippet(uiSourceCode);
     },
@@ -228,7 +228,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     _handleRemoveSnippet: function(uiSourceCode)
     {
-        if (!uiSourceCode.project().name() === WebInspector.projectNames.Snippets)
+        if (!uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
             return;
         WebInspector.scriptSnippetModel.deleteScriptSnippet(uiSourceCode);
     },

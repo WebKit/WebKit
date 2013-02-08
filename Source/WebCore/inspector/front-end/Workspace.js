@@ -79,6 +79,11 @@ WebInspector.WorkspaceProvider.Events = {
 
 WebInspector.WorkspaceProvider.prototype = {
     /**
+     * @return {string}
+     */
+    type: function() { },
+
+    /**
      * @param {string} uri
      * @param {function(?string,boolean,string)} callback
      */
@@ -148,11 +153,19 @@ WebInspector.Project.prototype = {
     },
 
     /**
+     * @return {string}
+     */
+    type: function()
+    {
+        return this._workspaceProvider.type();
+    },
+
+    /**
      * @return {boolean}
      */
     isServiceProject: function()
     {
-        return this._name === WebInspector.projectNames.Debugger || this._name === WebInspector.projectNames.LiveEdit;
+        return this._workspaceProvider.type() === WebInspector.projectTypes.Debugger || this._workspaceProvider.type() === WebInspector.projectTypes.LiveEdit;
     },
 
     _fileAdded: function(event)
@@ -254,12 +267,13 @@ WebInspector.Project.prototype = {
     }
 }
 
-WebInspector.projectNames = {
+WebInspector.projectTypes = {
     Debugger: "debugger",
     LiveEdit: "liveedit",
     Compiler: "compiler",
     Network: "network",
-    Snippets: "snippets"
+    Snippets: "snippets",
+    FileSystem: "filesystem"
 }
 
 /**
@@ -285,7 +299,14 @@ WebInspector.Workspace.prototype = {
      */
     uiSourceCodeForOriginURL: function(originURL)
     {
-        return this._projects[WebInspector.projectNames.Network].uiSourceCodeForOriginURL(originURL);
+        var networkProjects = this.projectsForType(WebInspector.projectTypes.Network)
+        for (var i = 0; i < networkProjects.length; ++i) {
+            var project = networkProjects[i];
+            var uiSourceCode = project.uiSourceCodeForOriginURL(originURL);
+            if (uiSourceCode)
+                return uiSourceCode;
+        }
+        return null;
     },
 
     /**
@@ -301,6 +322,21 @@ WebInspector.Workspace.prototype = {
                 return uiSourceCode;
         }
         return null;
+    },
+
+    /**
+     * @param {string} type
+     * @return {Array.<WebInspector.UISourceCode>}
+     */
+    uiSourceCodesForProjectType: function(type)
+    {
+        var result = [];
+        for (var projectName in this._projects) {
+            var project = this._projects[projectName];
+            if (project.type() === type)
+                result = result.concat(project.uiSourceCodes());
+        }
+        return result;
     },
 
     /**
@@ -341,6 +377,19 @@ WebInspector.Workspace.prototype = {
     projects: function()
     {
         return Object.values(this._projects);
+    },
+
+    /**
+     * @param {string} type
+     * @return {Array.<WebInspector.Project>}
+     */
+    projectsForType: function(type)
+    {
+        function filterByType(project)
+        {
+            return project.type() === type;
+        }
+        return this.projects().filter(filterByType);
     },
 
     /**
