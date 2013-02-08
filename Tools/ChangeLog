@@ -1,5 +1,14 @@
 2013-02-07  Zan Dobersek  <zdobersek@igalia.com>
 
+        Unreviewed followup to r142232.
+
+        Work around a bug in jhbuild that was incorrectly composing the source
+        package URL by adjusting slightly the repository and module paths.
+
+        * gtk/jhbuild.modules:
+
+2013-02-07  Zan Dobersek  <zdobersek@igalia.com>
+
         Use a mirror for the sourceware.org repo used in jhbuild
 
         Unreviewed.
