@@ -85,7 +85,6 @@ WebInspector.SidebarPane.prototype = {
 
     /**
      * @param {function()} callback
-     * @return {boolean}
      */
     _setExpandCallback: function(callback)
     {
