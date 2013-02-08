@@ -333,7 +333,6 @@
                     {
                       "name": "EFL Linux 64-bit Release WK2", "type": "BuildAndTestWebKit2Only", "builddir": "efl-linux-64-release-wk2",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
-                      "triggers": ["efl-linux-64-release-wk2-perf"],
                       "slavenames": ["efl-linux-slave-2"]
                     },
                     {
@@ -347,7 +346,7 @@
                       "slavenames": ["efl-linux-slave-3"]
                     },
                     {
-                      "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "DownloadAndPerfTestWebKit2", "builddir": "efl-linux-64-release-wk2-perf",
+                      "name": "EFL Linux 64-bit Release WK2 (Perf)", "type": "BuildAndPerfTestWebKit2", "builddir": "efl-linux-64-release-wk2-perf",
                       "platform": "efl", "configuration": "release", "architectures": ["x86_64"],
                       "slavenames": ["efl-linux-perf-1"]
                     }
@@ -362,6 +361,7 @@
                                        "Chromium Win Release", "Chromium Mac Release", "Chromium Linux Release",
                                        "Chromium Android Release",
                                        "EFL Linux 64-bit Release", "EFL Linux 64-bit Release WK2", "EFL Linux 32-bit Release (Build)", "EFL Linux 64-bit Debug WK2",
+                                       "EFL Linux 64-bit Release WK2 (Perf)",
                                        "WinCairo Release", "WinCE Release (Build)"]
                     },
                     { "type": "PlatformSpecificScheduler", "platform": "mac-lion", "branch": "trunk", "treeStableTimer": 45.0,
@@ -435,9 +435,6 @@
                     },
                     { "type": "Triggerable", "name": "gtk-linux-64-release-tests-wk2",
                       "builderNames": ["GTK Linux 64-bit Release WK2 (Tests)"]
-                    },
-                    { "type": "Triggerable", "name": "efl-linux-64-release-wk2-perf",
-                      "builderNames": ["EFL Linux 64-bit Release WK2 (Perf)"]
                     }
                   ]
 }

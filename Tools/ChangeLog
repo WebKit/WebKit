@@ -1,3 +1,21 @@
+2013-02-08  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL] Make the Performance bot also build WebKit.
+        https://bugs.webkit.org/show_bug.cgi?id=109273
+
+        Reviewed by Philippe Normand.
+
+        There has not been much benefit in fetching binaries compiled by
+        another bot; it makes the build bot take 6 to 7 minutes to upload
+        the binaries to build.webkit.org, we need to manually override
+        LD_LIBRARY_PATH to find the compiled libraries and still have
+        other path-related problems.
+
+        Since we have enough horsepower in the perf bot, let's experiment
+        with building WebKit there instead.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-02-07  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] turn TestRunner library into a component build
