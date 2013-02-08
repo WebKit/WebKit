@@ -232,9 +232,6 @@ WebInspector.NativeSnapshotNode.prototype = {
     __proto__: WebInspector.DataGridNode.prototype
 }
 
-
-
-
 /**
  * @constructor
  * @extends {WebInspector.ProfileType}

@@ -69,7 +69,7 @@ HeapGraphSerializer::~HeapGraphSerializer()
 
 void HeapGraphSerializer::pushUpdateIfNeeded()
 {
-    static const size_t chunkSize = 100;
+    static const size_t chunkSize = 10000;
     static const size_t averageEdgesPerNode = 5;
 
     if (m_strings->length() <= chunkSize
@@ -174,7 +174,7 @@ int HeapGraphSerializer::addString(const String& string)
 {
     if (string.isEmpty())
         return 0;
-    StringMap::AddResult result = m_stringToIndex.add(string, m_stringToIndex.size() + 1);
+    StringMap::AddResult result = m_stringToIndex.add(string.left(256), m_stringToIndex.size() + 1);
     if (result.isNewEntry)
         m_strings->addItem(string);
     return result.iterator->value;
