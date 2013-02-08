@@ -1,5 +1,11 @@
 2013-02-07  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Corrections the exports definition file.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
+2013-02-07  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. More VS2010 WebKit solution touchups.
         Make WebKitExports.def.in be treated as a custom build file so that changes to it cause the exports to be rebuilt.
 

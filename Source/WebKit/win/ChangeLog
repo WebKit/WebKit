@@ -1,3 +1,9 @@
+2013-02-07  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Corrections the exports definition file.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-02-05  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed build fix.
