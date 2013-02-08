@@ -1329,4 +1329,4 @@ webkit.org/b/108257 [ Debug ] compositing/overflow/automatically-opt-into-compos
 webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.html [ Failure ]
 
 # Crashing after https://webkit.org/b/105667
-webkit.org/b/109232 inspector/debugger/debugger-reload-on-pause.html [ Crash ]
+webkit.org/b/109232 [ Debug ] inspector/debugger/debugger-reload-on-pause.html [ Crash ]
