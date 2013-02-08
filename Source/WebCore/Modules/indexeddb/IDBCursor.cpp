@@ -95,10 +95,7 @@ IDBCursor::~IDBCursor()
 const String& IDBCursor::direction() const
 {
     IDB_TRACE("IDBCursor::direction");
-    ExceptionCode ec = 0;
-    const AtomicString& direction = directionToString(m_direction, ec);
-    ASSERT(!ec);
-    return direction;
+    return directionToString(m_direction, ASSERT_NO_EXCEPTION);
 }
 
 const ScriptValue& IDBCursor::key() const
@@ -157,6 +154,7 @@ PassRefPtr<IDBRequest> IDBCursor::update(ScriptState* state, ScriptValue& value,
 
 void IDBCursor::advance(long long count, ExceptionCode& ec)
 {
+    ec = 0;
     IDB_TRACE("IDBCursor::advance");
     if (!m_gotValue) {
         ec = IDBDatabaseException::InvalidStateError;
@@ -189,6 +187,7 @@ void IDBCursor::continueFunction(ScriptExecutionContext* context, const ScriptVa
 
 void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 {
+    ec = 0;
     IDB_TRACE("IDBCursor::continue");
     if (key && !key->isValid()) {
         ec = IDBDatabaseException::DataError;
@@ -230,6 +229,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 
 PassRefPtr<IDBRequest> IDBCursor::deleteFunction(ScriptExecutionContext* context, ExceptionCode& ec)
 {
+    ec = 0;
     IDB_TRACE("IDBCursor::delete");
     if (!m_transaction->isActive()) {
         ec = IDBDatabaseException::TransactionInactiveError;

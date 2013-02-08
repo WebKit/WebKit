@@ -322,9 +322,7 @@ private:
         EventTarget* target = event->target();
         IDBRequest* request = static_cast<IDBRequest*>(target);
 
-        ExceptionCode ec = 0;
-        RefPtr<IDBAny> cursorAny = request->result(ec);
-        ASSERT(!ec);
+        RefPtr<IDBAny> cursorAny = request->result(ASSERT_NO_EXCEPTION);
         RefPtr<IDBCursorWithValue> cursor;
         if (cursorAny->type() == IDBAny::IDBCursorWithValueType)
             cursor = cursorAny->idbCursorWithValue();
@@ -332,8 +330,7 @@ private:
         Vector<int64_t, 1> indexIds;
         indexIds.append(m_indexMetadata.id);
         if (cursor) {
-            cursor->continueFunction(static_cast<IDBKey*>(0), ec);
-            ASSERT(!ec);
+            cursor->continueFunction(static_cast<IDBKey*>(0), ASSERT_NO_EXCEPTION);
 
             RefPtr<IDBKey> primaryKey = cursor->idbPrimaryKey();
             ScriptValue value = cursor->value();
