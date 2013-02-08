@@ -1,3 +1,19 @@
+2013-02-07  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] Flings should not bubble up to enclosing scrollables when main-thread touch scrolling
+        https://bugs.webkit.org/show_bug.cgi?id=108719
+
+        Reviewed by Eric Seidel.
+
+        In the event of a main-thread touch fling, dispatch a series of
+        GestureScrollUpdateWithoutPropagation events defined in
+        https://bugs.webkit.org/show_bug.cgi?id=108849 (instead of
+        GestureScrollUpdate events) so that the fling does not
+        propagate to enclosing scrollables.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::scrollBy):
+
 2013-02-07  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Add a flag to enable native form validation message

@@ -676,7 +676,7 @@ void WebViewImpl::scrollBy(const WebPoint& delta)
     } else {
         WebGestureEvent syntheticGestureEvent;
 
-        syntheticGestureEvent.type = WebInputEvent::GestureScrollUpdate;
+        syntheticGestureEvent.type = WebInputEvent::GestureScrollUpdateWithoutPropagation;
         syntheticGestureEvent.data.scrollUpdate.deltaX = delta.x;
         syntheticGestureEvent.data.scrollUpdate.deltaY = delta.y;
         syntheticGestureEvent.x = m_positionOnFlingStart.x;
