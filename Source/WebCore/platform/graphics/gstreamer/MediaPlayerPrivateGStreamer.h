@@ -89,8 +89,6 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateGStreamerBase {
             void sourceChanged();
             GstElement* audioSink() const;
 
-            static KURL convertPlaybinURL(const gchar* uri);
-
         private:
             MediaPlayerPrivateGStreamer(MediaPlayer*);
 
@@ -98,8 +96,6 @@ class MediaPlayerPrivateGStreamer : public MediaPlayerPrivateGStreamerBase {
 
             static void getSupportedTypes(HashSet<String>&);
             static MediaPlayer::SupportsType supportsType(const String& type, const String& codecs, const KURL&);
-
-            void setPlaybinURL(KURL&);
 
             static bool isAvailable();
 

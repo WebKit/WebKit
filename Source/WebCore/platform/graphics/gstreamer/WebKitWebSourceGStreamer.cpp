@@ -27,7 +27,6 @@
 #include "GRefPtrGStreamer.h"
 #include "GStreamerVersioning.h"
 #include "MediaPlayer.h"
-#include "MediaPlayerPrivateGStreamer.h"
 #include "NetworkingContext.h"
 #include "NotImplemented.h"
 #include "ResourceHandleClient.h"
@@ -578,7 +577,7 @@ static GstURIType webKitWebSrcUriGetType(GType)
 
 const gchar* const* webKitWebSrcGetProtocols(GType)
 {
-    static const char* const protocols[] = {"webkit+http", "webkit+https", 0 };
+    static const char* protocols[] = {"http", "https", 0 };
     return protocols;
 }
 
@@ -603,7 +602,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri, GEr
     if (!uri)
         return TRUE;
 
-    KURL url = WebCore::MediaPlayerPrivateGStreamer::convertPlaybinURL(uri);
+    KURL url(KURL(), uri);
 
     if (!url.isValid() || !url.protocolIsInHTTPFamily()) {
         g_set_error(error, GST_URI_ERROR, GST_URI_ERROR_BAD_URI, "Invalid URI '%s'", uri);
@@ -622,7 +621,7 @@ static GstURIType webKitWebSrcUriGetType(void)
 
 static gchar** webKitWebSrcGetProtocols(void)
 {
-    static gchar* protocols[] = {(gchar*) "webkit+http", (gchar*) "webkit+https", 0 };
+    static gchar* protocols[] = {(gchar*) "http", (gchar*) "https", 0 };
     return protocols;
 }
 
@@ -647,7 +646,7 @@ static gboolean webKitWebSrcSetUri(GstURIHandler* handler, const gchar* uri)
     if (!uri)
         return TRUE;
 
-    KURL url = WebCore::MediaPlayerPrivateGStreamer::convertPlaybinURL(uri);
+    KURL url(KURL(), uri);
 
     if (!url.isValid() || !url.protocolIsInHTTPFamily()) {
         GST_ERROR_OBJECT(src, "Invalid URI '%s'", uri);

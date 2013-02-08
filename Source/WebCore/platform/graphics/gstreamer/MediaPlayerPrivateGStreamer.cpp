@@ -218,36 +218,17 @@ MediaPlayerPrivateGStreamer::~MediaPlayerPrivateGStreamer()
         g_source_remove(m_audioTimerHandler);
 }
 
-KURL MediaPlayerPrivateGStreamer::convertPlaybinURL(const gchar* uri)
-{
-    KURL url(KURL(), uri);
-
-    ASSERT(url.protocol().substring(0, 7) == "webkit+");
-    url.setProtocol(url.protocol().substring(7));
-    return url;
-}
-
-void MediaPlayerPrivateGStreamer::setPlaybinURL(KURL& url)
-{
-    // Clean out everything after file:// url path.
-    if (url.isLocalFile()) {
-        url.setQuery(String());
-        url.removeFragmentIdentifier();
-    }
-
-    m_url = url;
-
-    if (url.protocolIsInHTTPFamily())
-        url.setProtocol("webkit+" + url.protocol());
-
-    LOG_MEDIA_MESSAGE("Load %s", url.string().utf8().data());
-    g_object_set(m_playBin.get(), "uri", url.string().utf8().data(), NULL);
-}
-
 void MediaPlayerPrivateGStreamer::load(const String& url)
 {
     if (!initializeGStreamerAndRegisterWebKitElements())
         return;
+
+    KURL kurl(KURL(), url);
+    String cleanUrl(url);
+
+    // Clean out everything after file:// url path.
+    if (kurl.isLocalFile())
+        cleanUrl = cleanUrl.substring(0, kurl.pathEnd());
 
     if (!m_playBin) {
         createGSTPlayBin();
@@ -256,8 +237,10 @@ void MediaPlayerPrivateGStreamer::load(const String& url)
 
     ASSERT(m_playBin);
 
-    KURL kurl(KURL(), url);
-    setPlaybinURL(kurl);
+    m_url = KURL(KURL(), cleanUrl);
+    g_object_set(m_playBin.get(), "uri", cleanUrl.utf8().data(), NULL);
+
+    LOG_MEDIA_MESSAGE("Load %s", cleanUrl.utf8().data());
 
     if (m_preload == MediaPlayer::None) {
         LOG_MEDIA_MESSAGE("Delaying load.");
@@ -1201,13 +1184,20 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
         // though. We need to take the base of the current url and
         // append the value of new-location to it.
 
+        gchar* currentLocation = 0;
+        g_object_get(m_playBin.get(), "uri", &currentLocation, NULL);
+
+        KURL currentUrl(KURL(), currentLocation);
+        g_free(currentLocation);
+
         KURL newUrl;
+
         if (gst_uri_is_valid(newLocation))
             newUrl = KURL(KURL(), newLocation);
         else
-            newUrl = KURL(KURL(), m_url.baseAsString() + newLocation);
+            newUrl = KURL(KURL(), currentUrl.baseAsString() + newLocation);
 
-        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(m_url);
+        RefPtr<SecurityOrigin> securityOrigin = SecurityOrigin::create(currentUrl);
         if (securityOrigin->canRequest(newUrl)) {
             LOG_MEDIA_MESSAGE("New media url: %s", newUrl.string().utf8().data());
 
@@ -1225,7 +1215,7 @@ bool MediaPlayerPrivateGStreamer::loadNextLocation()
             gst_element_get_state(m_playBin.get(), &state, 0, 0);
             if (state <= GST_STATE_READY) {
                 // Set the new uri and start playing.
-                setPlaybinURL(newUrl);
+                g_object_set(m_playBin.get(), "uri", newUrl.string().utf8().data(), NULL);
                 gst_element_set_state(m_playBin.get(), GST_STATE_PLAYING);
                 return true;
             }
