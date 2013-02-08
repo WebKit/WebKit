@@ -27,6 +27,7 @@
 #include "CSSHelper.h"
 #include "CSSPrimitiveValue.h"
 #include "ExceptionCode.h"
+#include "ExceptionCodePlaceholder.h"
 #include "FloatConversion.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -132,9 +133,7 @@ SVGLength::SVGLength(const SVGLengthContext& context, float value, SVGLengthMode
     : m_valueInSpecifiedUnits(0)
     , m_unit(storeUnit(mode, unitType))
 {
-    ExceptionCode ec = 0;
-    setValue(value, context, ec);
-    ASSERT(!ec);
+    setValue(value, context, ASSERT_NO_EXCEPTION);
 }
 
 SVGLength::SVGLength(const SVGLength& other)
@@ -209,6 +208,7 @@ void SVGLength::setValue(float value, const SVGLengthContext& context, Exception
     if (extractType(m_unit) == LengthTypePercentage)
         value = value / 100;
 
+    ec = 0;
     float convertedValue = context.convertValueFromUserUnits(value, extractMode(m_unit), extractType(m_unit), ec);
     if (!ec)
         m_valueInSpecifiedUnits = convertedValue;

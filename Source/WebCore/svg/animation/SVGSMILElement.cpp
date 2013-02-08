@@ -202,10 +202,8 @@ static inline QualifiedName constructQualifiedName(const SVGElement* svgElement,
     
     String prefix;
     String localName;
-    ExceptionCode ec = 0;
-    if (!Document::parseQualifiedName(attributeName, prefix, localName, ec))
+    if (!Document::parseQualifiedName(attributeName, prefix, localName, ASSERT_NO_EXCEPTION))
         return anyQName();
-    ASSERT(!ec);
     
     String namespaceURI = svgElement->lookupNamespaceURI(prefix);    
     if (namespaceURI.isEmpty())
