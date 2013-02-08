@@ -1,63 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script>
-if (window.testRunner)
-     testRunner.dumpEditingCallbacks();
-</script>
 <style>
 body { width: 600px; }
 
-#footNote > * {
+#footNote {
     -webkit-flow-into: footNote;
     display: block;
+    font-size: 13px;
 }
+
 #footNoteRegion { -webkit-flow-from: footNote; }
-
-#content {
-    -webkit-flow-into: content;
-    border-bottom: 1px solid black;
-    padding-bottom: 5px;
-}
-
+#content { -webkit-flow-into: content; }
 #region { -webkit-flow-from: content; }
-
-#footNote::before {
-    counter-increment: footnote-reference;
-    content: counter(footnote-reference);
-}
-
-#footNote > * > *:first-child::before {
-    counter-increment: footnote;
-    content: counter(footnote);
-}
-
-#footNote > * > *::before, #footNote::before {
-    position: relative;
-    top: -0.5em;
-    font-size: 80%;
-}
-
-#footNote {
-    font-size: 12px;
-    line-height: 1em;
-    font-weight: bold;
-}
 </style>
 </head>
 <body>
+
 <div id="region"></div>
 <div id="footNoteRegion"></div>
-
 <div id="content">
-    <h1>Selecting text through different CSS-Region flows</h1>
-    <div contenteditable="true" id="contentText">
-        This text contains a footnote as a nested region what is diplayed below the article.<span id="footNote">
-        <span><span></span>This is a footnote. Footnotes can be quite long and go over several lines. This footnote
+    <h1 style="margin-top: 0px">Selecting text through different CSS-Region flows</h1>
+    <div id="contentText">
+        This text contains a footnote as a nested region what is diplayed below the article. (1) <span id="footNote">
+        <span><span></span>(1) This is a footnote. Footnotes can be quite long and go over several lines. This footnote
         is nested inside the text above and displayed here with the help of css-regions.</span></span> If you start selecting
         text from this article until somewhere in the footnote and then click somewhere, the selection should be cleared.
     </div>
 </div>
+
 <script>
 if (window.testRunner) {
     // We are positioning the mouse to the center of the contentText and start holding the mouse down
