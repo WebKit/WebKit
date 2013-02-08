@@ -6,15 +6,17 @@
 
 function test()
 {
+    var MockProject = function() {}
+    MockProject.prototype.requestFileContent = function(uri, callback)
+    {
+        InspectorTest.addResult("Content is requested from SourceCodeProvider.");
+        setTimeout(callback.bind(null, "var x = 0;", false, "text/javascript"), 0);
+    }
+
     InspectorTest.runTestSuite([
         function testUISourceCode(next)
         {
-            var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, "uri", "originURL", "url", WebInspector.resourceTypes.Script, true);
-            WebInspector.workspace.requestFileContent = function(path, callback)
-            {
-                InspectorTest.addResult("Content is requested from SourceCodeProvider.");
-                setTimeout(callback.bind(null, "var x = 0;", false, "text/javascript"), 0);
-            }
+            var uiSourceCode = new WebInspector.UISourceCode(new MockProject(), "uri", "originURL", "url", WebInspector.resourceTypes.Script, true);
             function didRequestContent(callNumber, content, contentEncoded, mimeType)
             {
                 InspectorTest.addResult("Callback " + callNumber + " is invoked.");

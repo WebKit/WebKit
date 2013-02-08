@@ -21,11 +21,11 @@ function test()
     {
         var workspace = new WebInspector.Workspace();
         var networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace);
-        workspace.addProject(WebInspector.projectNames.Network, networkWorkspaceProvider);
+        var project = workspace.addProject(WebInspector.projectNames.Network, networkWorkspaceProvider);
 
         workspace.debuggerWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace);
         workspace.addProject(WebInspector.projectNames.Debugger, workspace.debuggerWorkspaceProvider);
-        workspace.requestFileContent = function(uiSourceCode, callback)
+        project.requestFileContent = function(uiSourceCode, callback)
         {
             InspectorTest.addResult("Source requested for " + uiSourceCode.originURL());
             callback("");

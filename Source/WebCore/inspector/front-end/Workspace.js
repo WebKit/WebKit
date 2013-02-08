@@ -163,7 +163,7 @@ WebInspector.Project.prototype = {
             // FIXME: Implement
             return;
         }
-        uiSourceCode = new WebInspector.UISourceCode(this._workspace, fileDescriptor.uri, fileDescriptor.originURL, fileDescriptor.url, fileDescriptor.contentType, fileDescriptor.isEditable);
+        uiSourceCode = new WebInspector.UISourceCode(this, fileDescriptor.uri, fileDescriptor.originURL, fileDescriptor.url, fileDescriptor.contentType, fileDescriptor.isEditable);
         uiSourceCode.isContentScript = fileDescriptor.isContentScript;
         this._uiSourceCodesForURI[uiSourceCode.uri()] = uiSourceCode;
         this._workspace.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
@@ -217,34 +217,35 @@ WebInspector.Project.prototype = {
     },
 
     /**
-     * @param {string} uri
+     * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {function(?string,boolean,string)} callback
      */
-    requestFileContent: function(uri, callback)
+    requestFileContent: function(uiSourceCode, callback)
     {
-        this._workspaceProvider.requestFileContent(uri, callback);
+        this._workspaceProvider.requestFileContent(uiSourceCode.uri(), callback);
     },
 
     /**
-     * @param {string} uri
+     * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {string} newContent
      * @param {function(?string)} callback
      */
-    setFileContent: function(uri, newContent, callback)
+    setFileContent: function(uiSourceCode, newContent, callback)
     {
-        this._workspaceProvider.setFileContent(uri, newContent, callback);
+        this._workspaceProvider.setFileContent(uiSourceCode.uri(), newContent, callback);
+        this._workspace.dispatchEventToListeners(WebInspector.Workspace.Events.UISourceCodeContentCommitted, { uiSourceCode: uiSourceCode, content: newContent });
     },
 
     /**
-     * @param {string} uri
+     * @param {WebInspector.UISourceCode} uiSourceCode
      * @param {string} query
      * @param {boolean} caseSensitive
      * @param {boolean} isRegex
      * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
      */
-    searchInFileContent: function(uri, query, caseSensitive, isRegex, callback)
+    searchInFileContent: function(uiSourceCode, query, caseSensitive, isRegex, callback)
     {
-        this._workspaceProvider.searchInFileContent(uri, query, caseSensitive, isRegex, callback);
+        this._workspaceProvider.searchInFileContent(uiSourceCode.uri(), query, caseSensitive, isRegex, callback);
     },
 
     dispose: function()
@@ -366,40 +367,6 @@ WebInspector.Workspace.prototype = {
                 return project;
         }
         return null;
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {function(?string,boolean,string)} callback
-     */
-    requestFileContent: function(uiSourceCode, callback)
-    {
-        var project = this.projectForUISourceCode(uiSourceCode);
-        project.requestFileContent(uiSourceCode.uri(), callback);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {string} newContent
-     * @param {function(?string)} callback
-     */
-    setFileContent: function(uiSourceCode, newContent, callback)
-    {
-        var project = this.projectForUISourceCode(uiSourceCode);
-        project.setFileContent(uiSourceCode.uri(), newContent, callback);
-    },
-
-    /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     * @param {string} query
-     * @param {boolean} caseSensitive
-     * @param {boolean} isRegex
-     * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
-     */
-    searchInFileContent: function(uiSourceCode, query, caseSensitive, isRegex, callback)
-    {
-        var project = this.projectForUISourceCode(uiSourceCode);
-        project.searchInFileContent(uiSourceCode.uri(), query, caseSensitive, isRegex, callback);
     },
 
     __proto__: WebInspector.Object.prototype

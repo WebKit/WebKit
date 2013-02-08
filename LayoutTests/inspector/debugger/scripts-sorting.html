@@ -21,11 +21,7 @@ function test()
     var uiSourceCodes = [];
     function addUISourceCode(url, isContentScript)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(WebInspector.workspace, url, url, url, WebInspector.resourceTypes.Script, null);
-        uiSourceCode.project = function()
-        {
-            return new MockProject();
-        }
+        var uiSourceCode = new WebInspector.UISourceCode(new MockProject(), url, url, url, WebInspector.resourceTypes.Script, null);
         uiSourceCode.isContentScript = isContentScript;
         navigator.addUISourceCode(uiSourceCode);
         uiSourceCodes.push(uiSourceCode);

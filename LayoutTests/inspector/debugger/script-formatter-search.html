@@ -21,7 +21,7 @@ var test = function()
     function didShowScriptSource(frame)
     {
         scriptSource = frame._uiSourceCode;
-        InspectorTest.addSniffer(scriptSource._workspace, "requestFileContent", requestContentSniffer);
+        InspectorTest.addSniffer(scriptSource._project, "requestFileContent", requestContentSniffer);
         scriptSource.searchInContent("magic-string", true, false, dump1);
     }
 
