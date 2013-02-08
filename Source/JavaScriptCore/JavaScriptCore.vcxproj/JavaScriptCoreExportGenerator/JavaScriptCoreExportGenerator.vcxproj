@@ -59,7 +59,9 @@
     <None Include="JavaScriptCoreExportGeneratorBuildCmd.cmd" />
     <None Include="JavaScriptCoreExportGeneratorPostBuild.cmd" />
     <None Include="JavaScriptCoreExportGeneratorPreBuild.cmd" />
-    <None Include="JavaScriptCoreExports.def.in" />
+    <CustomBuild Include="JavaScriptCoreExports.def.in">
+      <FileType>Document</FileType>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="$(ConfigurationBuildDir)\obj\JavaScriptCoreExportGenerator\DerivedSources\JavaScriptCoreExportGenerator.cpp" />

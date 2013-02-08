@@ -1,3 +1,12 @@
+2013-02-07  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. More VS2010 WebKit solution touchups.
+        Make JavaScriptCoreExports.def.in be treated as a custom build file so that changes to it cause the exports to be rebuilt.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGenerator.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGenerator.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-02-07  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: testapi.mm should use ARC

@@ -1,3 +1,10 @@
+2013-02-07  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. More VS2010 WebKit solution touchups.
+        Move an ignored warning from a project to common properties.
+
+        * win/tools/vsprops/common.props:
+
 2013-02-06  Mike West  <mkwst@chromium.org>
 
         Add an ENABLE_NOSNIFF feature flag.

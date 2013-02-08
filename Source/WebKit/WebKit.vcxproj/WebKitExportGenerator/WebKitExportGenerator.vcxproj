@@ -56,7 +56,9 @@
     <Link />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="WebKitExports.def.in" />
+    <CustomBuild Include="WebKitExports.def.in">
+      <FileType>Document</FileType>
+    </CustomBuild>
     <None Include="WebKitExportGeneratorBuildCmd.cmd" />
     <None Include="WebKitExportGeneratorPostBuild.cmd" />
     <None Include="WebKitExportGeneratorPreBuild.cmd">
