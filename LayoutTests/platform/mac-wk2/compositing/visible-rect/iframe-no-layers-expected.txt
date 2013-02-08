@@ -5,7 +5,6 @@
   (children 1
     (GraphicsLayer
       (bounds 1508.00 1516.00)
-      (contentsOpaque 1)
       (drawsContent 1)
       (visible rect 0.00, 0.00 285.00 x 135.00)
       (children 1
