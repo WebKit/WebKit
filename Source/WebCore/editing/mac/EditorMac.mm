@@ -153,11 +153,8 @@ const SimpleFontData* Editor::fontForSelection(bool& hasMultipleFonts) const
         if (style)
             result = style->font().primaryFont();
 
-        if (nodeToRemove) {
-            ExceptionCode ec;
-            nodeToRemove->remove(ec);
-            ASSERT(!ec);
-        }
+        if (nodeToRemove)
+            nodeToRemove->remove(ASSERT_NO_EXCEPTION);
 
         return result;
     }
@@ -242,11 +239,8 @@ NSDictionary* Editor::fontAttributesForSelectionStart() const
     if (decoration & UNDERLINE)
         [result setObject:[NSNumber numberWithInt:NSUnderlineStyleSingle] forKey:NSUnderlineStyleAttributeName];
 
-    if (nodeToRemove) {
-        ExceptionCode ec = 0;
-        nodeToRemove->remove(ec);
-        ASSERT(ec == 0);
-    }
+    if (nodeToRemove)
+        nodeToRemove->remove(ASSERT_NO_EXCEPTION);
 
     return result;
 }

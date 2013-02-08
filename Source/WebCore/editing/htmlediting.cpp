@@ -939,9 +939,7 @@ PassRefPtr<Element> createTabSpanElement(Document* document, PassRefPtr<Node> pr
     if (!tabTextNode)
         tabTextNode = document->createEditingTextNode("\t");
 
-    ExceptionCode ec = 0;
-    spanElement->appendChild(tabTextNode.release(), ec);
-    ASSERT(ec == 0);
+    spanElement->appendChild(tabTextNode.release(), ASSERT_NO_EXCEPTION);
 
     return spanElement.release();
 }

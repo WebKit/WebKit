@@ -266,11 +266,8 @@ static unsigned verticalScrollDistance(Frame* frame)
 
 static RefPtr<Range> unionDOMRanges(Range* a, Range* b)
 {
-    ExceptionCode ec = 0;
-    Range* start = a->compareBoundaryPoints(Range::START_TO_START, b, ec) <= 0 ? a : b;
-    ASSERT(!ec);
-    Range* end = a->compareBoundaryPoints(Range::END_TO_END, b, ec) <= 0 ? b : a;
-    ASSERT(!ec);
+    Range* start = a->compareBoundaryPoints(Range::START_TO_START, b, ASSERT_NO_EXCEPTION) <= 0 ? a : b;
+    Range* end = a->compareBoundaryPoints(Range::END_TO_END, b, ASSERT_NO_EXCEPTION) <= 0 ? b : a;
 
     return Range::create(a->ownerDocument(), start->startContainer(), start->startOffset(), end->endContainer(), end->endOffset());
 }

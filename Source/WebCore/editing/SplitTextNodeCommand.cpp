@@ -75,12 +75,10 @@ void SplitTextNodeCommand::doUnapply()
 
     String prefixText = m_text1->data();
 
-    ExceptionCode ec = 0;
-    m_text2->insertData(0, prefixText, ec);
-    ASSERT(!ec);
+    m_text2->insertData(0, prefixText, ASSERT_NO_EXCEPTION);
 
     document()->markers()->copyMarkers(m_text1.get(), 0, prefixText.length(), m_text2.get(), 0);
-    m_text1->remove(ec);
+    m_text1->remove(ASSERT_NO_EXCEPTION);
 }
 
 void SplitTextNodeCommand::doReapply()
