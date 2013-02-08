@@ -4,11 +4,15 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS div.offsetWidth is 52
-PASS div.offsetWidth is 20
-PASS div.offsetWidth is 12
+PASS div.offsetWidth is within 1 of 20
+PASS computedTop is within 1 of 170
+PASS div.offsetWidth is within 1 of 12
+PASS computedTop is within 1 of 200
 PASS div.offsetWidth is 52
-PASS div.offsetWidth is 20
-PASS div.offsetWidth is 12
+PASS div.offsetWidth is within 1 of 20
+PASS computedTop is within 1 of 170
+PASS div.offsetWidth is within 1 of 12
+PASS computedTop is within 1 of 200
 PASS successfullyParsed is true
 
 TEST COMPLETE

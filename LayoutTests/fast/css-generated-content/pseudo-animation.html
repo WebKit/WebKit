@@ -7,10 +7,12 @@
   from {
     width: 50px;
     height: 50px;
+    top: 50px;
   }
   to {
     width: 10px;
     height: 10px;
+    top: 200px;
   }
 }
 
@@ -18,10 +20,12 @@
   from {
     width: 50px;
     height: 50px;
+    top: 50px;
   }
   to {
     width: 10px;
     height: 10px;
+    top: 200px;
   }
 }
 
@@ -31,10 +35,12 @@
     display: block;
     height: 50px;
     width: 50px;
+    position: relative;
 }
 
 #after.animate:after,
 #before.animate:before {
+    top: 200px;
     width: 10px;
     height: 10px;
     -webkit-animation: example 2s;
@@ -64,6 +70,14 @@ description('Animations on :before and :after pseudo elements should run');
 if (window.testRunner)
     testRunner.dumpAsText();
 
+function getPseudoComputedTop(id)
+{
+    return Math.round(parseFloat(getComputedStyle(document.getElementById(id), ':' + id).top));
+}
+
+// FIXME: This test should be modified so subpixel doesn't cause off by one
+// below and it no longer needs shouldBeCloseTo.
+
 function testAnimation(id)
 {
     var div = document.getElementById(id);
@@ -72,19 +86,27 @@ function testAnimation(id)
     shouldBe('div.offsetWidth', '52');
     if (window.internals) {
         internals.pauseAnimationAtTimeOnPseudoElement('example', 1.0, div, id);
-        shouldBe('div.offsetWidth', '20');
+        shouldBeCloseTo('div.offsetWidth', 20, 1);
+        computedTop = getPseudoComputedTop(id);
+        shouldBeCloseTo('computedTop', 170, 1);
         internals.pauseAnimationAtTimeOnPseudoElement('example', 2.0, div, id);
-        shouldBe('div.offsetWidth', '12');
+        shouldBeCloseTo('div.offsetWidth', 12, 1);
+        computedTop = getPseudoComputedTop(id);
+        shouldBeCloseTo('computedTop', 200, 1);
     } else {
         // This will be flaky, but it's a reasonable approximation for testing
         // in a browser instead of DRT.
         setTimeout(function() {
             window.div = div;
-            shouldBe('div.offsetWidth', '20');
+            shouldBeCloseTo('div.offsetWidth', 20, 1);
+            computedTop = getPseudoComputedTop(id);
+            shouldBeCloseTo('computedTop', 170, 1);
         }, 1000);
         setTimeout(function() {
             window.div = div;
-            shouldBe('div.offsetWidth', '12');
+            shouldBeCloseTo('div.offsetWidth', 12, 1);
+            computedTop = getPseudoComputedTop(id);
+            shouldBeCloseTo('computedTop', 200, 1);
         }, 2000);
     }
 }

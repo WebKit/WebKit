@@ -240,7 +240,6 @@ inline PseudoElement* ElementRareData::pseudoElement(PseudoId pseudoId) const
     case AFTER:
         return m_generatedAfter.get();
     default:
-        ASSERT_NOT_REACHED();
         return 0;
     }
 }

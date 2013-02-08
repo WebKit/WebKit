@@ -51,6 +51,7 @@
 #include "FontValue.h"
 #include "HTMLFrameOwnerElement.h"
 #include "Pair.h"
+#include "PseudoElement.h"
 #include "Rect.h"
 #include "RenderBox.h"
 #include "RenderStyle.h"
@@ -1510,17 +1511,28 @@ static bool isLayoutDependentProperty(CSSPropertyID propertyID)
     }
 }
 
+Node* CSSComputedStyleDeclaration::styledNode() const
+{
+    if (!m_node)
+        return 0;
+    if (m_node->isElementNode()) {
+        if (PseudoElement* element = toElement(m_node.get())->pseudoElement(m_pseudoElementSpecifier))
+            return element;
+    }
+    return m_node.get();
+}
+
 PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropertyID propertyID, EUpdateLayout updateLayout) const
 {
-    Node* node = m_node.get();
-    if (!node)
+    Node* styledNode = this->styledNode();
+    if (!styledNode)
         return 0;
 
     if (updateLayout) {
-        Document* document = m_node->document();
+        Document* document = styledNode->document();
         // FIXME: Some of these cases could be narrowed down or optimized better.
         bool forceFullLayout = isLayoutDependentProperty(propertyID)
-            || node->isInShadowTree()
+            || styledNode->isInShadowTree()
             || (document->styleResolverIfExists() && document->styleResolverIfExists()->hasViewportDependentMediaQueries() && document->ownerElement())
             || document->seamlessParentIFrame();
 
@@ -1528,31 +1540,32 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             document->updateLayoutIgnorePendingStylesheets();
         else {
             bool needsStyleRecalc = document->hasPendingForcedStyleRecalc();
-            for (Node* n = m_node.get(); n && !needsStyleRecalc; n = n->parentNode())
+            for (Node* n = styledNode; n && !needsStyleRecalc; n = n->parentNode())
                 needsStyleRecalc = n->needsStyleRecalc();
             if (needsStyleRecalc)
                 document->updateStyleIfNeeded();
         }
+
+        // The style recalc could have caused the styled node to be discarded or replaced
+        // if it was a PseudoElement so we need to update it.
+        styledNode = this->styledNode();
     }
 
-    RenderObject* renderer = node->renderer();
+    RenderObject* renderer = styledNode->renderer();
 
     RefPtr<RenderStyle> style;
     if (renderer && renderer->isComposited() && AnimationController::supportsAcceleratedAnimationOfProperty(propertyID)) {
         AnimationUpdateBlock animationUpdateBlock(renderer->animation());
         style = renderer->animation()->getAnimatedStyleForRenderer(renderer);
-        if (m_pseudoElementSpecifier) {
+        if (m_pseudoElementSpecifier && !styledNode->isPseudoElement()) {
             // FIXME: This cached pseudo style will only exist if the animation has been run at least once.
             style = style->getCachedPseudoStyle(m_pseudoElementSpecifier);
         }
     } else
-        style = node->computedStyle(m_pseudoElementSpecifier);
+        style = styledNode->computedStyle(styledNode->isPseudoElement() ? NOPSEUDO : m_pseudoElementSpecifier);
 
     if (!style)
         return 0;
-
-    if (node->isElementNode() && (m_pseudoElementSpecifier == BEFORE || m_pseudoElementSpecifier == AFTER))
-        renderer = toElement(node)->pseudoElementRenderer(m_pseudoElementSpecifier);
 
     propertyID = CSSProperty::resolveDirectionAwareProperty(propertyID, style->direction(), style->writingMode());
 
@@ -1838,8 +1851,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return cssValuePool().createValue(style->alignItems());
         case CSSPropertyWebkitAlignSelf:
             if (style->alignSelf() == AlignAuto) {
-                if (m_node && m_node->parentNode() && m_node->parentNode()->computedStyle())
-                    return cssValuePool().createValue(m_node->parentNode()->computedStyle()->alignItems());
+                Node* parent = styledNode->parentNode();
+                if (parent && parent->computedStyle())
+                    return cssValuePool().createValue(parent->computedStyle()->alignItems());
                 return cssValuePool().createValue(AlignStretch);
             }
             return cssValuePool().createValue(style->alignSelf());

@@ -1991,6 +1991,9 @@ void Element::setMinimumSizeForResizing(const LayoutSize& size)
 
 RenderStyle* Element::computedStyle(PseudoId pseudoElementSpecifier)
 {
+    if (PseudoElement* element = pseudoElement(pseudoElementSpecifier))
+        return element->computedStyle();
+
     // FIXME: Find and use the renderer from the pseudo element instead of the actual element so that the 'length'
     // properties, which are only known by the renderer because it did the layout, will be correct and so that the
     // values returned for the ":selection" pseudo-element will be correct.
