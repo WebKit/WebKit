@@ -1,3 +1,29 @@
+2013-02-07  Mary Wu  <mary.wu@torchmobile.com.cn>
+
+        [BlackBerry] Enable non-video element enter/exit fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=108314
+
+        Reviewed by Antonio Gomes.
+
+        Webkit support non-video element (like div) to enter/exit
+        fullscreen. We should pass this capability in blackberry porting.
+
+        RIM PR 256370, internally reviewed by Max Feil.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::clearDocumentData):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPage::notifyFullScreenVideoExited):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullscreenForNode):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullscreenForNode):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::enterFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::exitFullScreenForElement):
+        (BlackBerry::WebKit::WebPagePrivate::adjustFullScreenElementDimensionsIfNeeded):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-02-07  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Fix all flicker caused by empty/incomplete geometries.
