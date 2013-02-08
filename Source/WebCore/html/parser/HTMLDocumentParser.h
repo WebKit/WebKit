@@ -129,6 +129,7 @@ private:
 #if ENABLE(THREADED_HTML_PARSER)
     void startBackgroundParser();
     void stopBackgroundParser();
+    void checkForSpeculationFailure();
     void didFailSpeculation(PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>);
     void processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
 #endif

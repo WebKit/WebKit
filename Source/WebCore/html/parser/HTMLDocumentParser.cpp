@@ -287,6 +287,15 @@ void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<Pa
     processParsedChunkFromBackgroundParser(chunk);
 }
 
+void HTMLDocumentParser::checkForSpeculationFailure()
+{
+    if (!m_tokenizer)
+        return;
+    // FIXME: If the tokenizer is in the same state as when we started this function,
+    // then we haven't necessarily failed our speculation.
+    didFailSpeculation(m_token.release(), m_tokenizer.release());
+}
+
 void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwnPtr<HTMLTokenizer> tokenizer)
 {
     m_weakFactory.revokeAll();
@@ -305,7 +314,6 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
-    ASSERT(!m_currentChunk);
     m_currentChunk = chunk;
     OwnPtr<CompactHTMLTokenStream> tokens = m_currentChunk->tokens.release();
 
@@ -341,7 +349,8 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
         }
     }
 
-    m_currentChunk.clear();
+    checkForSpeculationFailure();
+
     InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
 }
 
@@ -482,15 +491,6 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
     excludedLineNumberSource.setExcludeLineNumbers();
     m_input.insertAtCurrentInsertionPoint(excludedLineNumberSource);
     pumpTokenizerIfPossible(ForceSynchronous);
-
-#if ENABLE(THREADED_HTML_PARSER)
-    if (!inPumpSession() && m_haveBackgroundParser) {
-        // FIXME: If the tokenizer is in the same state as when we started this function,
-        // then we haven't necessarily failed our speculation.
-        didFailSpeculation(m_token.release(), m_tokenizer.release());
-        return;
-    }
-#endif
 
     if (isWaitingForScripts()) {
         // Check the document.write() output with a separate preload scanner as
@@ -714,7 +714,9 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
     ASSERT(!isWaitingForScripts());
 
 #if ENABLE(THREADED_HTML_PARSER)
-    if (shouldUseThreading()) {
+    if (m_haveBackgroundParser) {
+        checkForSpeculationFailure();
+
         while (!m_speculations.isEmpty()) {
             processParsedChunkFromBackgroundParser(m_speculations.takeFirst());
             if (isWaitingForScripts() || isStopped())
