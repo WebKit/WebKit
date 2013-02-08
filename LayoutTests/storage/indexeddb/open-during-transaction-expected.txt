@@ -14,7 +14,7 @@ database preparation complete
 starting transaction
 state = 'starting'
 trans = dbc1.transaction('storeName', 'readwrite')
-trans.objectStore('storeName').put('value', 'key')
+the transaction is kept alive with a series of puts until opens are complete
 
 trying to open the same database
 openreq2 = indexedDB.open(dbname)
@@ -26,12 +26,13 @@ openreq2.onsuccess
 PASS state is "starting"
 state = 'open2complete'
 
-transaction complete
-PASS state is "open2complete"
-
 openreq3.onsuccess
 PASS state is "open2complete"
 state = 'open3complete'
+
+transaction complete
+PASS state is "open3complete"
+
 PASS successfullyParsed is true
 
 TEST COMPLETE

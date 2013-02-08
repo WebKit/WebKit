@@ -21,13 +21,24 @@ function startTransaction()
     debug("starting transaction");
     evalAndLog("state = 'starting'");
     evalAndLog("trans = dbc1.transaction('storeName', 'readwrite')");
-    evalAndLog("trans.objectStore('storeName').put('value', 'key')");
+
+    debug("the transaction is kept alive with a series of puts until opens are complete");
+    (function keepAlive() {
+        // Don't log, since this may run an arbitrary number of times.
+        if (state !== 'open3complete') {
+            var request = trans.objectStore('storeName').put('value', 'key');
+            request.onerror = unexpectedErrorCallback;
+            request.onsuccess = keepAlive;
+        }
+    }());
+
     trans.onabort = unexpectedAbortCallback;
     trans.onerror = unexpectedErrorCallback;
     trans.oncomplete = function (e) {
         debug("transaction complete");
-        shouldBeEqualToString("state", "open2complete");
+        shouldBeEqualToString("state", "open3complete");
         debug("");
+        finishJSTest();
     };
 
     debug("");
@@ -44,7 +55,7 @@ function tryOpens()
         shouldBeEqualToString("state", "starting");
         evalAndLog("state = 'open2complete'");
         debug("");
-    }
+    };
     debug("");
 
     debug("trying to open a different database");
@@ -54,7 +65,7 @@ function tryOpens()
         debug("openreq3.onsuccess");
         shouldBeEqualToString("state", "open2complete");
         evalAndLog("state = 'open3complete'");
-        finishJSTest();
-    }
+        debug("");
+    };
     debug("");
 }
