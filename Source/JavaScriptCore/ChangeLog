@@ -1,3 +1,17 @@
+2013-02-08  Andreas Kling  <akling@apple.com>
+
+        JSC: Lower minimum PropertyTable size.
+        <http://webkit.org/b/109247>
+
+        Reviewed by Darin Adler.
+
+        Lower the minimum table size for PropertyTable from 16 to 8.
+        3.32 MB progression on Membuster3 (a ~13% reduction in memory used by PropertyTables.)
+
+        * runtime/PropertyMapHashTable.h:
+        (PropertyTable):
+        (JSC::PropertyTable::sizeForCapacity):
+
 2013-02-07  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. More VS2010 WebKit solution touchups.

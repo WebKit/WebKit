@@ -234,7 +234,7 @@ private:
     unsigned m_deletedCount;
     OwnPtr< Vector<PropertyOffset> > m_deletedOffsets;
 
-    static const unsigned MinimumTableSize = 16;
+    static const unsigned MinimumTableSize = 8;
     static const unsigned EmptyEntryIndex = 0;
 };
 
@@ -587,7 +587,7 @@ inline size_t PropertyTable::dataSize()
 
 inline unsigned PropertyTable::sizeForCapacity(unsigned capacity)
 {
-    if (capacity < 8)
+    if (capacity < MinimumTableSize / 2)
         return MinimumTableSize;
     return nextPowerOf2(capacity + 1) * 2;
 }
