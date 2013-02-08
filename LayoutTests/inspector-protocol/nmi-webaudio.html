@@ -72,8 +72,7 @@ function test()
         if ("error" in messageObject)
             InspectorTest.log(messageObject.error.message);
         else
-            receivedSizeMoreThan(messageObject, ["Page", "Audio"], 15000000);
-            receivedSizeMoreThan(messageObject, ["Page", "Audio", "SharedData"], 15000000);
+            receivedSizeMoreThan(messageObject, ["Audio"], 15000000);
 
         InspectorTest.completeTest();
     }
