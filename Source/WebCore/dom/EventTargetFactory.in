@@ -14,6 +14,7 @@ IDBRequest conditional=INDEXED_DATABASE
 IDBTransaction conditional=INDEXED_DATABASE
 ScriptProcessorNode conditional=WEB_AUDIO
 LocalMediaStream conditional=MEDIA_STREAM
+MediaKeySession conditional=ENCRYPTED_MEDIA_V2
 MediaController conditional=VIDEO
 MediaSource conditional=MEDIA_SOURCE
 MediaStream conditional=MEDIA_STREAM

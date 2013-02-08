@@ -248,4 +248,6 @@
     ArrayBuffer serializeObject(in SerializedScriptValue obj);
 
     void setUsesOverlayScrollbars(in boolean enabled);
+
+    [Conditional=ENCRYPTED_MEDIA_V2] void initializeMockCDM();
 };

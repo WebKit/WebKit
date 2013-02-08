@@ -1,3 +1,14 @@
+2013-02-08  Jer Noble  <jer.noble@apple.com>
+
+        Bring WebKit up to speed with latest Encrypted Media spec.
+        https://bugs.webkit.org/show_bug.cgi?id=97037
+
+        Reviewed by Eric Carlson.
+
+        Define the ENABLE_ENCRYPTED_MEDIA_V2 setting.
+
+        * wtf/Platform.h:
+
 2013-02-08  Adam Barth  <abarth@webkit.org>
 
         Use WeakPtrs to communicate between the HTMLDocumentParser and the BackgroundHTMLParser

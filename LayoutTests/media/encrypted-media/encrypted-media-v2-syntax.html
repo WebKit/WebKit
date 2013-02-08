@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MediaKeys</title>
+        <script src=../video-test.js></script>
+        <script>
+            function stringToUint8Array(str)
+            {
+                var arr=[];
+                for(var i=0,j=str.length;i<j;++i)
+                  arr[i]=str.charCodeAt(i);
+                return new Uint8Array(arr);
+            }
+
+            var mediaKeys;
+            var mediaKeySession;
+            var initData = stringToUint8Array('mock');
+
+            function runTest() 
+            {
+                // Initialize the MockCDM. It supports the key system 'com.apple.mock', the 
+                // mime type 'video/mock'. It requires init data to begin with 'mock', and
+                // keys to begin with 'key'.
+                if (internals)
+                    internals.initializeMockCDM();
+
+                consoleWrite("Test MediaKeys.");
+                testExpected('typeof window.MediaKeys', 'object');
+                testException('new MediaKeys("")', "DOMException.INVALID_ACCESS_ERR");
+                testException('new MediaKeys("unsupported")', "DOMException.NOT_SUPPORTED_ERR");
+                run('mediaKeys = new MediaKeys("com.webcore.mock")');
+                testExpected('mediaKeys.keySystem', 'com.webcore.mock');
+                testExpected('typeof mediaKeys.createSession', 'function');
+                testException('mediaKeys.createSession("", new Uint8Array(1))', "DOMException.INVALID_ACCESS_ERR");
+                testException('mediaKeys.createSession("unsupported/type")', "DOMException.NOT_SUPPORTED_ERR");
+                consoleWrite("");
+
+                consoleWrite("Test MediaKeySession.");
+                run('mediaKeySession = mediaKeys.createSession("video/mock", initData)');
+                testExpected('typeof mediaKeySession', 'object');
+                testExpected('typeof mediaKeySession.addEventListener', 'function');
+                testExpected('typeof mediaKeySession.addKey', 'function');
+                testExpected('mediaKeySession.error', null);
+                testExpected('mediaKeySession.keySystem', 'com.webcore.mock');
+                testExpected('mediaKeySession.sessionId', null, '!=');
+                testExpected('mediaKeySession.onwebkitkeyadded', null);
+                testExpected('mediaKeySession.onwebkitkeyerror', null);
+                testExpected('mediaKeySession.onwebkitkeymessage', null);
+                testException('mediaKeySession.addKey(null)', "DOMException.INVALID_ACCESS_ERR");
+                endTest();
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>This tests the basic API of MediaKeys and MediaKeySession.</p>
+    </body>
+</html>

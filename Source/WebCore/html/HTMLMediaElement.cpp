@@ -125,6 +125,11 @@
 #include "MediaStreamRegistry.h"
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+#include "MediaKeyNeededEvent.h"
+#include "MediaKeys.h"
+#endif
+
 using namespace std;
 
 namespace WebCore {
@@ -1966,6 +1971,25 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, const String& keySyste
 }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+void HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
+{
+    MediaKeyNeededEventInit initializer;
+    initializer.initData = initData;
+    initializer.bubbles = false;
+    initializer.cancelable = false;
+
+    RefPtr<Event> event = MediaKeyNeededEvent::create(eventNames().webkitneedkeyEvent, initializer);
+    event->setTarget(this);
+    m_asyncEventQueue->enqueueEvent(event.release());
+}
+
+void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys)
+{
+    m_mediaKeys = mediaKeys;
+}
+#endif
+
 void HTMLMediaElement::progressEventTimerFired(Timer<HTMLMediaElement>*)
 {
     ASSERT(m_player);
@@ -2471,6 +2495,14 @@ void HTMLMediaElement::setSourceState(const String& state)
 #if ENABLE(ENCRYPTED_MEDIA)
 void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, PassRefPtr<Uint8Array> initData, ExceptionCode& ec)
 {
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    static bool firstTime = true;
+    if (firstTime && context() && context()->scriptExecutionContext()) {
+        context()->scriptExecutionContext()->addConsoleMessage(JSMessageSource, WarningMessageLevel, "'HTMLMediaElement.webkitGenerateKeyRequest()' is deprecated.  Use 'MediaKeys.createSession()' instead.");
+        firstTime = false;
+    }
+#endif
+
     if (keySystem.isEmpty()) {
         ec = SYNTAX_ERR;
         return;
@@ -2499,6 +2531,14 @@ void HTMLMediaElement::webkitGenerateKeyRequest(const String& keySystem, Excepti
 
 void HTMLMediaElement::webkitAddKey(const String& keySystem, PassRefPtr<Uint8Array> key, PassRefPtr<Uint8Array> initData, const String& sessionId, ExceptionCode& ec)
 {
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    static bool firstTime = true;
+    if (firstTime && context() && context()->scriptExecutionContext()) {
+        context()->scriptExecutionContext()->addConsoleMessage(JSMessageSource, WarningMessageLevel, "'HTMLMediaElement.webkitAddKey()' is deprecated.  Use 'MediaKeySession.addKey()' instead.");
+        firstTime = false;
+    }
+#endif
+
     if (keySystem.isEmpty()) {
         ec = SYNTAX_ERR;
         return;

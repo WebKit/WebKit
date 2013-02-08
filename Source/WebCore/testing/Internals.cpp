@@ -126,6 +126,11 @@
 #include "RenderLayerBacking.h"
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+#include "CDM.h"
+#include "MockCDM.h"
+#endif
+
 namespace WebCore {
 
 #if ENABLE(PAGE_POPUP)
@@ -1931,5 +1936,12 @@ void Internals::setUsesOverlayScrollbars(bool enabled)
 {
     WebCore::Settings::setUsesOverlayScrollbars(enabled);
 }
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+void Internals::initializeMockCDM()
+{
+    CDM::registerCDMFactory(MockCDM::create, MockCDM::supportsKeySytem);
+}
+#endif
 
 }

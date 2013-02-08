@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MediaKeys</title>
+        <script src=../video-test.js></script>
+        <script>
+            function stringToUint8Array(str)
+            {
+                var arr=[];
+                for(var i=0,j=str.length;i<j;++i)
+                  arr[i]=str.charCodeAt(i);
+                return new Uint8Array(arr);
+            }
+
+            var mediaKeys;
+            var mediaKeySession;
+            var initData = stringToUint8Array('mock');
+            var invalidKey = stringToUint8Array('invalid');
+            var validKey = stringToUint8Array('key');
+
+            function runTest() 
+            {
+                // Initialize the MockCDM. It supports the key system 'com.apple.mock', the 
+                // mime type 'video/mock'. It requires init data to begin with 'mock', and
+                // keys to begin with 'key'.
+                if (internals)
+                    internals.initializeMockCDM();
+
+                run('mediaKeys = new MediaKeys("com.webcore.mock")');
+                run('mediaKeySession = mediaKeys.createSession("video/mock", initData)');
+                waitForEvent('webkitkeymessage', keyMessage, false, false, mediaKeySession);
+                waitForEvent('webkitkeyerror', keyError, false, false, mediaKeySession);
+                waitForEvent('webkitkeyadded', null, true, false, mediaKeySession);
+            }
+
+            function keyMessage(event)
+            {
+                run('mediaKeySession.addKey(invalidKey)');
+            }
+
+            function keyError(event)
+            {
+                run('mediaKeySession.addKey(validKey)');
+            }
+        </script>
+    </head>
+    <body onload="runTest()">
+        <p>This tests the events created by MediaKeys.</p>
+</html>

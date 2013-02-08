@@ -26,7 +26,7 @@
 #ifndef MediaKeyError_h
 #define MediaKeyError_h
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -35,7 +35,7 @@ namespace WebCore {
 
 class MediaKeyError : public RefCounted<MediaKeyError> {
 public:
-    enum Code {
+    enum {
         MEDIA_KEYERR_UNKNOWN = 1,
         MEDIA_KEYERR_CLIENT,
         MEDIA_KEYERR_SERVICE,
@@ -43,15 +43,18 @@ public:
         MEDIA_KEYERR_HARDWARECHANGE,
         MEDIA_KEYERR_DOMAIN
     };
+    typedef unsigned short Code;
 
-    static PassRefPtr<MediaKeyError> create(Code code) { return adoptRef(new MediaKeyError(code)); }
+    static PassRefPtr<MediaKeyError> create(Code code, unsigned long systemCode = 0) { return adoptRef(new MediaKeyError(code, systemCode)); }
 
     Code code() const { return m_code; }
+    unsigned long systemCode() { return m_systemCode; }
 
 private:
-    explicit MediaKeyError(Code code) : m_code(code) { }
+    explicit MediaKeyError(Code code, unsigned long systemCode) : m_code(code), m_systemCode(systemCode) { }
 
     Code m_code;
+    unsigned long m_systemCode;
 };
 
 } // namespace WebCore

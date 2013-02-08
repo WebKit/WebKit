@@ -1,3 +1,14 @@
+2013-02-08  Jer Noble  <jer.noble@apple.com>
+
+        Bring WebKit up to speed with latest Encrypted Media spec.
+        https://bugs.webkit.org/show_bug.cgi?id=97037
+
+        Reviewed by Eric Carlson.
+
+        Define the ENABLE_ENCRYPTED_MEDIA_V2 setting.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-08  Gavin Barraclough  <barraclough@apple.com>
 
         Objective-C API for JavaScriptCore

@@ -280,6 +280,10 @@ public:
 
     String getCurrentCursorInfo(Document*, ExceptionCode&);
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    void initializeMockCDM();
+#endif
+
 private:
     explicit Internals(Document*);
     Document* contextDocument() const;

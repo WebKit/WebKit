@@ -295,7 +295,7 @@ static MediaPlayerFactory* bestMediaEngineForTypeAndCodecs(const String& type, c
                 current = 0;
             continue;
         }
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
         MediaPlayer::SupportsType engineSupport = engines[ndx]->supportsTypeAndCodecs(type, codecs, keySystem, url);
 #else
         UNUSED_PARAM(keySystem);
@@ -784,7 +784,7 @@ MediaPlayer::SupportsType MediaPlayer::supportsType(const ContentType& contentTy
     UNUSED_PARAM(client);
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
     return engine->supportsTypeAndCodecs(type, typeCodecs, system, url);
 #else
     ASSERT(system.isEmpty());
@@ -1078,6 +1078,14 @@ bool MediaPlayer::keyNeeded(const String& keySystem, const String& sessionId, co
     if (m_mediaPlayerClient)
         return m_mediaPlayerClient->mediaPlayerKeyNeeded(this, keySystem, sessionId, initData, initDataLength);
     return false;
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+void MediaPlayer::keyNeeded(Uint8Array* initData)
+{
+    if (m_mediaPlayerClient)
+        m_mediaPlayerClient->mediaPlayerKeyNeeded(this, initData);
 }
 #endif
 

@@ -45,7 +45,9 @@ attribute DOMString preload;
 readonly attribute TimeRanges buffered;
 void load();
 #if defined(ENABLE_ENCRYPTED_MEDIA) && ENABLE_ENCRYPTED_MEDIA
-DOMString canPlayType(in [Optional=DefaultIsUndefined] DOMString type, in [Optional=DefaultIsUndefined, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem);
+    DOMString canPlayType(in [Optional=DefaultIsUndefined] DOMString type, in [Optional=DefaultIsUndefined, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem);
+#elif defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2
+    DOMString canPlayType(in [Optional=DefaultIsUndefined] DOMString type, in [Optional=DefaultIsUndefined, TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem);
 #else
 DOMString canPlayType(in [Optional=DefaultIsUndefined] DOMString type);
 #endif
@@ -101,10 +103,13 @@ readonly attribute [Conditional=MEDIA_STATISTICS] unsigned long webkitVideoDecod
 [V8EnabledAtRuntime=encryptedMedia] void webkitCancelKeyRequest(in [TreatNullAs=NullString, TreatUndefinedAs=NullString] DOMString keySystem, in [Optional=DefaultIsNullString] DOMString sessionId)
     raises (DOMException);
 
-[V8EnabledAtRuntime=encryptedMedia] attribute EventListener onwebkitkeyadded;
-attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyerror;
-attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeymessage;
-attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitneedkey;
+    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyadded;
+    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeyerror;
+    attribute [V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitkeymessage;
+#endif
+    attribute [Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2, V8EnabledAtRuntime=encryptedMedia] EventListener onwebkitneedkey;
+#if defined(ENABLE_ENCRYPTED_MEDIA_V2) && ENABLE_ENCRYPTED_MEDIA_V2
+    attribute [V8EnabledAtRuntime=encryptedMedia] MediaKeys mediaKeys;
 #endif
 
 #if defined(ENABLE_VIDEO_TRACK) && ENABLE_VIDEO_TRACK

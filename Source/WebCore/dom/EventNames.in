@@ -52,5 +52,7 @@ DeviceOrientationEvent conditional=DEVICE_ORIENTATION
 DeviceProximityEvent conditional=PROXIMITY_EVENTS
 OrientationEvent interfaceName=Event, conditional=ORIENTATION_EVENTS
 MediaKeyEvent conditional=ENCRYPTED_MEDIA
+MediaKeyMessageEvent conditional=ENCRYPTED_MEDIA_V2
+MediaKeyNeededEvent conditional=ENCRYPTED_MEDIA_V2
 TrackEvent conditional=VIDEO_TRACK
 AutocompleteErrorEvent conditional=REQUEST_AUTOCOMPLETE

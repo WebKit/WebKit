@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-[
-    Conditional=ENCRYPTED_MEDIA,
+interface [
+    Conditional=ENCRYPTED_MEDIA|ENCRYPTED_MEDIA_V2,
     V8EnabledAtRuntime=encryptedMedia, 
     ImplementationLacksVTable
-] interface MediaKeyError {
+] MediaKeyError {
     const unsigned short MEDIA_KEYERR_UNKNOWN = 1;
     const unsigned short MEDIA_KEYERR_CLIENT = 2;
     const unsigned short MEDIA_KEYERR_SERVICE = 3;
@@ -35,4 +35,5 @@
     const unsigned short MEDIA_KEYERR_HARDWARECHANGE = 5;
     const unsigned short MEDIA_KEYERR_DOMAIN = 6;
     readonly attribute unsigned short code;
+    [Conditional=ENCRYPTED_MEDIA_V2] readonly attribute unsigned long systemCode;
 };

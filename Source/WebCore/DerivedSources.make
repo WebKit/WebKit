@@ -28,6 +28,7 @@
 
 VPATH = \
     $(WebCore) \
+	$(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
@@ -62,6 +63,10 @@ VPATH = \
 #
 
 BINDING_IDLS = \
+    $(WebCore)/Modules/encryptedmedia/MediaKeyMessageEvent.idl \
+    $(WebCore)/Modules/encryptedmedia/MediaKeyNeededEvent.idl \
+    $(WebCore)/Modules/encryptedmedia/MediaKeySession.idl \
+    $(WebCore)/Modules/encryptedmedia/MediaKeys.idl \
     $(WebCore)/Modules/filesystem/DOMFileSystem.idl \
     $(WebCore)/Modules/filesystem/DOMFileSystemSync.idl \
     $(WebCore)/Modules/filesystem/DOMWindowFileSystem.idl \
@@ -366,8 +371,8 @@ BINDING_IDLS = \
     $(WebCore)/html/ImageData.idl \
     $(WebCore)/html/MediaController.idl \
     $(WebCore)/html/MediaError.idl \
-	$(WebCore)/html/MediaKeyError.idl \
-	$(WebCore)/html/MediaKeyEvent.idl \
+    $(WebCore)/html/MediaKeyError.idl \
+    $(WebCore)/html/MediaKeyEvent.idl \
     $(WebCore)/html/MicroDataItemValue.idl \
     $(WebCore)/html/RadioNodeList.idl \
     $(WebCore)/html/TextMetrics.idl \
@@ -839,6 +844,10 @@ ifeq ($(findstring ENABLE_DETAILS_ELEMENT,$(FEATURE_DEFINES)), ENABLE_DETAILS_EL
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_DETAILS_ELEMENT=1
 endif
 
+ifeq ($(findstring ENABLE_ENCRYPTED_MEDIA_V2,$(FEATURE_DEFINES)), ENABLE_ENCRYPTED_MEDIA_V2)
+	HTML_FLAGS := $(HTML_FLAGS) ENABLE_ENCRYPTED_MEDIA_V2=1
+endif
+
 ifeq ($(findstring ENABLE_METER_ELEMENT,$(FEATURE_DEFINES)), ENABLE_METER_ELEMENT)
     HTML_FLAGS := $(HTML_FLAGS) ENABLE_METER_ELEMENT=1
 endif
@@ -963,6 +972,7 @@ preprocess_idls_script = perl $(addprefix -I $(WebCore)/, $(sort $(dir $(1)))) $
 
 IDL_INCLUDES = \
     $(WebCore)/Modules/battery \
+	$(WebCore)/Modules/encryptedmedia \
     $(WebCore)/Modules/filesystem \
     $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \

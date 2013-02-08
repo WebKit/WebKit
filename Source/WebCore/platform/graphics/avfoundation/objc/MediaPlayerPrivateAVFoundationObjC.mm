@@ -194,7 +194,7 @@ PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateAVFoundationObjC::crea
 void MediaPlayerPrivateAVFoundationObjC::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
         registrar(create, getSupportedTypes, extendedSupportsType, 0, 0, 0);
 #else
         registrar(create, getSupportedTypes, supportsType, 0, 0, 0);
@@ -206,7 +206,7 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_objcObserver(AdoptNS, [[WebCoreAVFMovieObserver alloc] initWithCallback:this])
     , m_videoFrameHasDrawn(false)
     , m_haveCheckedPlayability(false)
-#if ENABLE(ENCRYPTED_MEDIA)
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     , m_loaderDelegate(AdoptNS, [[WebCoreAVFLoaderDelegate alloc] initWithCallback:this])
 #endif
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
@@ -815,7 +815,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateAVFoundationObjC::supportsType(const
     return [AVURLAsset isPlayableExtendedMIMEType:typeString] ? MediaPlayer::IsSupported : MediaPlayer::MayBeSupported;;
 }
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
 static bool keySystemIsSupported(const String& keySystem)
 {
     if (equalIgnoringCase(keySystem, "com.apple.lskd") || equalIgnoringCase(keySystem, "com.apple.lskd.1_0"))

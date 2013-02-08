@@ -190,7 +190,7 @@ PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateQTKit::create(MediaPla
 void MediaPlayerPrivateQTKit::registerMediaEngine(MediaEngineRegistrar registrar)
 {
     if (isAvailable())
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
         registrar(create, getSupportedTypes, extendedSupportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite);
 #else
         registrar(create, getSupportedTypes, supportsType, getSitesInMediaCache, clearMediaCache, clearMediaCacheForSite);
@@ -1552,7 +1552,7 @@ MediaPlayer::SupportsType MediaPlayerPrivateQTKit::supportsType(const String& ty
     return MediaPlayer::IsNotSupported;
 }
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
 MediaPlayer::SupportsType MediaPlayerPrivateQTKit::extendedSupportsType(const String& type, const String& codecs, const String& keySystem, const KURL& url)
 {
     // QTKit does not support any encrytped media, so return IsNotSupported if the keySystem is non-NULL:
