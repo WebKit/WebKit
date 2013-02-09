@@ -61,23 +61,23 @@ private:
 
     explicit TextAutosizer(Document*);
 
-    void processCluster(TextAutosizingClusterInfo*, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
-    void processContainer(float multiplier, RenderBlock* container, TextAutosizingClusterInfo*, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
+    void processCluster(TextAutosizingClusterInfo&, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
+    void processContainer(float multiplier, RenderBlock* container, TextAutosizingClusterInfo&, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
 
     void setMultiplier(RenderObject*, float);
 
     static bool isAutosizingContainer(const RenderObject*);
-    static bool isNarrowDescendant(const RenderBlock*, TextAutosizingClusterInfo* parentClusterInfo);
-    static bool isWiderDescendant(const RenderBlock*, const TextAutosizingClusterInfo* parentClusterInfo);
+    static bool isNarrowDescendant(const RenderBlock*, TextAutosizingClusterInfo& parentClusterInfo);
+    static bool isWiderDescendant(const RenderBlock*, const TextAutosizingClusterInfo& parentClusterInfo);
     static bool isIndependentDescendant(const RenderBlock*);
-    static bool isAutosizingCluster(const RenderBlock*, TextAutosizingClusterInfo* parentClusterInfo);
+    static bool isAutosizingCluster(const RenderBlock*, TextAutosizingClusterInfo& parentClusterInfo);
 
     static bool containerShouldBeAutosized(const RenderBlock* container);
     static bool containerContainsOneOfTags(const RenderBlock* cluster, const Vector<QualifiedName>& tags);
     static bool containerIsRowOfLinks(const RenderObject* container);
     static bool contentHeightIsConstrained(const RenderBlock* container);
-    static bool clusterShouldBeAutosized(TextAutosizingClusterInfo*, float blockWidth);
-    static void measureDescendantTextWidth(const RenderBlock* container, TextAutosizingClusterInfo*, float minTextWidth, float& textWidth);
+    static bool clusterShouldBeAutosized(TextAutosizingClusterInfo&, float blockWidth);
+    static void measureDescendantTextWidth(const RenderBlock* container, TextAutosizingClusterInfo&, float minTextWidth, float& textWidth);
 
     // Use to traverse the tree of descendants, excluding descendants of containers (but returning the containers themselves).
     static RenderObject* nextInPreOrderSkippingDescendantsOfContainers(const RenderObject*, const RenderObject* stayWithin);
