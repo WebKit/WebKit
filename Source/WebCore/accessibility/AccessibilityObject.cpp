@@ -74,7 +74,7 @@ AccessibilityObject::AccessibilityObject()
     : m_id(0)
     , m_haveChildren(false)
     , m_role(UnknownRole)
-    , m_cachedIsIgnoredValue(DefaultBehavior)
+    , m_lastKnownIsIgnoredValue(DefaultBehavior)
 #if PLATFORM(GTK) || (PLATFORM(EFL) && HAVE(ACCESSIBILITY))
     , m_wrapper(0)
 #elif PLATFORM(CHROMIUM)
@@ -1782,25 +1782,25 @@ void AccessibilityObject::scrollToGlobalPoint(const IntPoint& globalPoint) const
     }
 }
 
-bool AccessibilityObject::cachedIsIgnoredValue()
+bool AccessibilityObject::lastKnownIsIgnoredValue()
 {
-    if (m_cachedIsIgnoredValue == DefaultBehavior)
-        m_cachedIsIgnoredValue = accessibilityIsIgnored() ? IgnoreObject : IncludeObject;
+    if (m_lastKnownIsIgnoredValue == DefaultBehavior)
+        m_lastKnownIsIgnoredValue = accessibilityIsIgnored() ? IgnoreObject : IncludeObject;
 
-    return m_cachedIsIgnoredValue == IgnoreObject;
+    return m_lastKnownIsIgnoredValue == IgnoreObject;
 }
 
-void AccessibilityObject::setCachedIsIgnoredValue(bool isIgnored)
+void AccessibilityObject::setLastKnownIsIgnoredValue(bool isIgnored)
 {
-    m_cachedIsIgnoredValue = isIgnored ? IgnoreObject : IncludeObject;
+    m_lastKnownIsIgnoredValue = isIgnored ? IgnoreObject : IncludeObject;
 }
 
 void AccessibilityObject::notifyIfIgnoredValueChanged()
 {
     bool isIgnored = accessibilityIsIgnored();
-    if (cachedIsIgnoredValue() != isIgnored) {
+    if (lastKnownIsIgnoredValue() != isIgnored) {
         axObjectCache()->childrenChanged(parentObject());
-        setCachedIsIgnoredValue(isIgnored);
+        setLastKnownIsIgnoredValue(isIgnored);
     }
 }
 

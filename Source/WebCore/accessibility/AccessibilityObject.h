@@ -748,8 +748,8 @@ public:
     // Scroll this object to a given point in global coordinates of the top-level window.
     virtual void scrollToGlobalPoint(const IntPoint&) const;
 
-    bool cachedIsIgnoredValue();
-    void setCachedIsIgnoredValue(bool);
+    bool lastKnownIsIgnoredValue();
+    void setLastKnownIsIgnoredValue(bool);
 
     // Fires a children changed notification on the parent if the isIgnored value changed.
     void notifyIfIgnoredValueChanged();
@@ -832,7 +832,7 @@ protected:
     AccessibilityChildrenVector m_children;
     mutable bool m_haveChildren;
     AccessibilityRole m_role;
-    AccessibilityObjectInclusion m_cachedIsIgnoredValue;
+    AccessibilityObjectInclusion m_lastKnownIsIgnoredValue;
     
     // If this object itself scrolls, return its ScrollableArea.
     virtual ScrollableArea* getScrollableAreaIfScrollable() const { return 0; }

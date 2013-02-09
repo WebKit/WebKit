@@ -368,7 +368,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(Node* node)
     m_objects.set(newObj->axObjectID(), newObj);
     newObj->init();
     attachWrapper(newObj.get());
-    newObj->setCachedIsIgnoredValue(newObj->accessibilityIsIgnored());
+    newObj->setLastKnownIsIgnoredValue(newObj->accessibilityIsIgnored());
 
     return newObj.get();
 }
@@ -392,7 +392,7 @@ AccessibilityObject* AXObjectCache::getOrCreate(RenderObject* renderer)
     m_objects.set(newObj->axObjectID(), newObj);
     newObj->init();
     attachWrapper(newObj.get());
-    newObj->setCachedIsIgnoredValue(newObj->accessibilityIsIgnored());
+    newObj->setLastKnownIsIgnoredValue(newObj->accessibilityIsIgnored());
 
     return newObj.get();
 }
@@ -617,7 +617,7 @@ void AXObjectCache::childrenChanged(AccessibilityObject* obj)
 
     obj->childrenChanged();
 
-    if (obj->parentObjectIfExists() && obj->cachedIsIgnoredValue() != obj->accessibilityIsIgnored())
+    if (obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())
         childrenChanged(obj->parentObject());
 }
     
