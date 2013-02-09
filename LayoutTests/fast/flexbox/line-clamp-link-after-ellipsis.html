@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<style>
+span#container {
+    display: inline-block; /* clamp the width of the enclosing P to its contents */
+}
+
+div#flexbox {
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    display: -webkit-box;
+    overflow-y: hidden;
+}
+</style>
+</head>
+<body>
+<span id="container">
+    <div id="flexbox">line one<br>line two<a id="link" href="#" onclick="this.textContent='clicked'">not clicked</a></div>
+</span>
+<script>
+description('Test that links painted after the ellipsis of a flexbox using -webkit-line-clamp is hit-testable.');
+
+var divRect = document.getElementById("flexbox").getBoundingClientRect();
+var aRect = document.getElementById("link").getBoundingClientRect();
+var clickX = divRect.left + divRect.width - (aRect.width / 2);
+var clickY = divRect.top + divRect.height  - (aRect.height / 2);
+
+if (window.eventSender) {
+    eventSender.mouseMoveTo(clickX, clickY);
+    eventSender.mouseDown();
+    eventSender.mouseUp();
+}
+
+shouldBeEqualToString("document.getElementsByTagName('a')[0].textContent", "clicked");
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

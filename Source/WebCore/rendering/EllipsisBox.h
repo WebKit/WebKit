@@ -49,6 +49,7 @@ private:
     virtual int height() const { return m_height; }
     virtual RenderObject::SelectionState selectionState() { return m_selectionState; }
     void paintSelection(GraphicsContext*, const LayoutPoint&, RenderStyle*, const Font&);
+    InlineBox* markupBox() const;
 
     bool m_shouldPaintMarkupBox;
     int m_height;
