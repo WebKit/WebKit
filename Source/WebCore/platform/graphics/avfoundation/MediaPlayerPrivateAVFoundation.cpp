@@ -701,6 +701,7 @@ static const char* notificationName(MediaPlayerPrivateAVFoundation::Notification
 #define DEFINE_TYPE_STRING_CASE(type) case MediaPlayerPrivateAVFoundation::Notification::type: return #type;
     switch (notification.type()) {
         FOR_EACH_MEDIAPLAYERPRIVATEAVFOUNDATION_NOTIFICATION_TYPE(DEFINE_TYPE_STRING_CASE)
+        default: return "";
     }
 #undef DEFINE_TYPE_STRING_CASE
 }
