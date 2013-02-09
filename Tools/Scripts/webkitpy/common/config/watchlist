@@ -294,8 +294,10 @@
                         r"|Source/WebCore/rendering/svg",
         },
         "WebInspectorAPI": {
-            "filename": r"Source/WebCore/inspector/*.json"
-                        r"|Source/WebCore/inspector/*.idl",
+            "filename": r"Source/WebCore/inspector/InjectedScriptSource.js"
+                        r"|Source/WebCore/inspector/.+\.json"
+                        r"|Source/WebCore/inspector/.+\.idl"
+                        r"|Source/WebCore/page/Console.idl",
         },
         "WebSocket": {
             "filename": r"Source/WebCore/Modules/websockets"

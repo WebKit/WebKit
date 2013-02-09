@@ -1,3 +1,12 @@
+2013-02-07  Timothy Hatcher  <timothy@apple.com>
+
+        Fix the WebInspectorAPI watch list.
+
+        Reviewed by Joseph Pecoraro.
+
+        * Scripts/webkitpy/common/config/watchlist: Fix the regrexs.
+        Added InjectedScriptSource.js and Console.idl.
+
 2013-02-08  Roger Fong  <roger_fong@apple.com>
 
         DumpRenderTree, ImageDiff and TestNetscapePlugin projects, property sheets and resources for VS2010 solution.
