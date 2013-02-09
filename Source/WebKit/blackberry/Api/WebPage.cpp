@@ -2416,6 +2416,9 @@ void WebPagePrivate::updateCursor()
         m_lastMouseEvent.altKey() ? 0 : KEYMOD_ALT;
 
     BlackBerry::Platform::MouseEvent event(buttonMask, buttonMask, mapToTransformed(m_lastMouseEvent.position()), mapToTransformed(m_lastMouseEvent.globalPosition()), 0, modifiers,  0);
+
+    // We have added document viewport position and document content position as members of the mouse event, when we create the event, we should initial them as well.
+    event.populateDocumentPosition(m_lastMouseEvent.position(), mapFromTransformedViewportToTransformedContents(m_lastMouseEvent.position()));
     m_webPage->mouseEvent(event);
 }
 
