@@ -31,6 +31,8 @@
 
 namespace WebCore {
 
+class Node;
+
 struct FocusEventInit : public UIEventInit {
     FocusEventInit();
 
@@ -73,6 +75,42 @@ inline FocusEvent* toFocusEvent(Event* event)
     ASSERT(event && event->isFocusEvent());
     return static_cast<FocusEvent*>(event);
 }
+
+class FocusEventDispatchMediator : public EventDispatchMediator {
+public:
+    static PassRefPtr<FocusEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+private:
+    FocusEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    RefPtr<Node> m_oldFocusedNode;
+};
+
+class BlurEventDispatchMediator : public EventDispatchMediator {
+public:
+    static PassRefPtr<BlurEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+private:
+    BlurEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    RefPtr<Node> m_newFocusedNode;
+};
+
+class FocusInEventDispatchMediator : public EventDispatchMediator {
+public:
+    static PassRefPtr<FocusInEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+private:
+    explicit FocusInEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    RefPtr<Node> m_oldFocusedNode;
+};
+
+class FocusOutEventDispatchMediator : public EventDispatchMediator {
+public:
+    static PassRefPtr<FocusOutEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+private:
+    explicit FocusOutEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
+    RefPtr<Node> m_newFocusedNode;
+};
 
 } // namespace WebCore
 

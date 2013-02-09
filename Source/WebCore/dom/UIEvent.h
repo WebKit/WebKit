@@ -84,24 +84,6 @@ private:
     int m_detail;
 };
 
-class FocusInEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<FocusInEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
-private:
-    explicit FocusInEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
-    RefPtr<Node> m_oldFocusedNode;
-};
-
-class FocusOutEventDispatchMediator : public EventDispatchMediator {
-public:
-    static PassRefPtr<FocusOutEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
-private:
-    explicit FocusOutEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
-    virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
-    RefPtr<Node> m_newFocusedNode;
-};
-
 } // namespace WebCore
 
 #endif // UIEvent_h
