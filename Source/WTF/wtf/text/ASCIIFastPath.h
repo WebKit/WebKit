@@ -138,9 +138,8 @@ inline void copyLCharsFromUCharSource(LChar* destination, const UChar* source, s
     if (length >= (2 * memoryAccessSize) - 1) {
         // Prefix: align dst on 64 bits.
         const uintptr_t memoryAccessMask = memoryAccessSize - 1;
-        do {
+        while (!isAlignedTo<memoryAccessMask>(destination))
             *destination++ = static_cast<LChar>(*source++);
-        } while (!isAlignedTo<memoryAccessMask>(destination));
 
         // Vector interleaved unpack, we only store the lower 8 bits.
         const uintptr_t lengthLeft = end - destination;

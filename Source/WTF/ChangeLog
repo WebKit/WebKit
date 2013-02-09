@@ -1,3 +1,16 @@
+2013-02-08  Michael Saboff  <msaboff@apple.com>
+
+        ARM_NEON Inline Assembly for copyLCharsFromUCharSource() inefficient for aligned destinations
+        https://bugs.webkit.org/show_bug.cgi?id=109335
+
+        Reviewed by Filip Pizlo.
+
+        Change a "do while" to a "while" so that we don't copy single characters to align the 
+        destination when it is already aligned.
+
+        * wtf/text/ASCIIFastPath.h:
+        (WTF::copyLCharsFromUCharSource):
+
 2013-02-08  Jer Noble  <jer.noble@apple.com>
 
         Bring WebKit up to speed with latest Encrypted Media spec.
