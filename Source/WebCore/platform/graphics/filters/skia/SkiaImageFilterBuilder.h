@@ -37,6 +37,7 @@ class FilterOperations;
 class SkiaImageFilterBuilder {
 public:
     SkiaImageFilterBuilder();
+    ~SkiaImageFilterBuilder();
 
     SkImageFilter* build(FilterEffect*);
     SkImageFilter* build(const FilterOperations&);

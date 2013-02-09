@@ -92,8 +92,8 @@ bool FEBlend::platformApplySkia()
 
 SkImageFilter* FEBlend::createImageFilter(SkiaImageFilterBuilder* builder)
 {
-    SkImageFilter* foreground = builder->build(inputEffect(0));
-    SkImageFilter* background = builder->build(inputEffect(1));
+    SkAutoTUnref<SkImageFilter> foreground(builder->build(inputEffect(0)));
+    SkAutoTUnref<SkImageFilter> background(builder->build(inputEffect(1)));
     SkBlendImageFilter::Mode mode = toSkiaMode(m_mode);
     return new SkBlendImageFilter(mode, background, foreground);
 }

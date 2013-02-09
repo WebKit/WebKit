@@ -60,7 +60,7 @@ bool FEComponentTransfer::platformApplySkia()
 
 SkImageFilter* FEComponentTransfer::createImageFilter(SkiaImageFilterBuilder* builder)
 {
-    SkImageFilter* input = builder->build(inputEffect(0));
+    SkAutoTUnref<SkImageFilter> input(builder->build(inputEffect(0)));
 
     unsigned char rValues[256], gValues[256], bValues[256], aValues[256];
     getValues(rValues, gValues, bValues, aValues);

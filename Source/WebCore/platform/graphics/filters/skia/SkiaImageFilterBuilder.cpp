@@ -165,23 +165,31 @@ SkiaImageFilterBuilder::SkiaImageFilterBuilder()
 {
 }
 
+SkiaImageFilterBuilder::~SkiaImageFilterBuilder()
+{
+    for (FilterBuilderHashMap::iterator it = m_map.begin(); it != m_map.end(); ++it)
+        SkSafeUnref(it->value);
+}
+
 SkImageFilter* SkiaImageFilterBuilder::build(FilterEffect* effect)
 {
     if (!effect)
         return 0;
 
+    SkImageFilter* filter = 0;
     FilterBuilderHashMap::iterator it = m_map.find(effect);
     if (it != m_map.end())
-        return it->value;
-
-    SkImageFilter* filter = effect->createImageFilter(this);
-    m_map.set(effect, filter);
+        filter = it->value;
+    else if ((filter = effect->createImageFilter(this)))
+        m_map.set(effect, filter);
+    // The hash map has a ref, so we return a new ref for the caller.
+    SkSafeRef(filter);
     return filter;
 }
 
 SkImageFilter* SkiaImageFilterBuilder::build(const FilterOperations& operations)
 {
-    SkImageFilter* filter = 0;
+    SkAutoTUnref<SkImageFilter> filter;
     SkScalar matrix[20];
     for (size_t i = 0; i < operations.size(); ++i) {
         const FilterOperation& op = *operations.at(i);
@@ -189,65 +197,65 @@ SkImageFilter* SkiaImageFilterBuilder::build(const FilterOperations& operations)
         case FilterOperation::REFERENCE: {
             FilterEffect* filterEffect = static_cast<const ReferenceFilterOperation*>(&op)->filterEffect();
             // FIXME: hook up parent filter to image source
-            filter = SkiaImageFilterBuilder::build(filterEffect);
+            filter.reset(SkiaImageFilterBuilder::build(filterEffect));
             break;
         }
         case FilterOperation::GRAYSCALE: {
             float amount = static_cast<const BasicColorMatrixFilterOperation*>(&op)->amount();
             getGrayscaleMatrix(1 - amount, matrix);
-            filter = createMatrixImageFilter(matrix, filter);
+            filter.reset(createMatrixImageFilter(matrix, filter));
             break;
         }
         case FilterOperation::SEPIA: {
             float amount = static_cast<const BasicColorMatrixFilterOperation*>(&op)->amount();
             getSepiaMatrix(1 - amount, matrix);
-            filter = createMatrixImageFilter(matrix, filter);
+            filter.reset(createMatrixImageFilter(matrix, filter));
             break;
         }
         case FilterOperation::SATURATE: {
             float amount = static_cast<const BasicColorMatrixFilterOperation*>(&op)->amount();
             getSaturateMatrix(amount, matrix);
-            filter = createMatrixImageFilter(matrix, filter);
+            filter.reset(createMatrixImageFilter(matrix, filter));
             break;
         }
         case FilterOperation::HUE_ROTATE: {
             float amount = static_cast<const BasicColorMatrixFilterOperation*>(&op)->amount();
             getHueRotateMatrix(amount, matrix);
-            filter = createMatrixImageFilter(matrix, filter);
+            filter.reset(createMatrixImageFilter(matrix, filter));
             break;
         }
         case FilterOperation::INVERT: {
             float amount = static_cast<const BasicComponentTransferFilterOperation*>(&op)->amount();
             getInvertMatrix(amount, matrix);
-            filter = createMatrixImageFilter(matrix, filter);
+            filter.reset(createMatrixImageFilter(matrix, filter));
             break;
         }
         case FilterOperation::OPACITY: {
             float amount = static_cast<const BasicComponentTransferFilterOperation*>(&op)->amount();
             getOpacityMatrix(amount, matrix);
-            filter = createMatrixImageFilter(matrix, filter);
+            filter.reset(createMatrixImageFilter(matrix, filter));
             break;
         }
         case FilterOperation::BRIGHTNESS: {
             float amount = static_cast<const BasicComponentTransferFilterOperation*>(&op)->amount();
             getBrightnessMatrix(amount, matrix);
-            filter = createMatrixImageFilter(matrix, filter);
+            filter.reset(createMatrixImageFilter(matrix, filter));
             break;
         }
         case FilterOperation::CONTRAST: {
             float amount = static_cast<const BasicComponentTransferFilterOperation*>(&op)->amount();
             getContrastMatrix(amount, matrix);
-            filter = createMatrixImageFilter(matrix, filter);
+            filter.reset(createMatrixImageFilter(matrix, filter));
             break;
         }
         case FilterOperation::BLUR: {
             float pixelRadius = static_cast<const BlurFilterOperation*>(&op)->stdDeviation().getFloatValue();
-            filter = new SkBlurImageFilter(pixelRadius, pixelRadius, filter);
+            filter.reset(new SkBlurImageFilter(pixelRadius, pixelRadius, filter));
             break;
         }
         case FilterOperation::DROP_SHADOW: {
             const DropShadowFilterOperation* drop = static_cast<const DropShadowFilterOperation*>(&op);
-            filter = new DropShadowImageFilter(SkIntToScalar(drop->x()), SkIntToScalar(drop->y()), SkIntToScalar(drop->stdDeviation()), drop->color().rgb(), filter);
+            filter.reset(new DropShadowImageFilter(SkIntToScalar(drop->x()), SkIntToScalar(drop->y()), SkIntToScalar(drop->stdDeviation()), drop->color().rgb(), filter));
             break;
         }
 #if ENABLE(CSS_SHADERS)
@@ -260,7 +268,7 @@ SkImageFilter* SkiaImageFilterBuilder::build(const FilterOperations& operations)
             break;
         }
     }
-    return filter;
+    return filter.detach();
 }
 
 };
