@@ -563,11 +563,6 @@ KURL KURL::copy() const
     return result;
 }
 
-bool KURL::hasPath() const
-{
-    return m_pathEnd != m_portEnd;
-}
-
 String KURL::lastPathComponent() const
 {
     if (!hasPath())

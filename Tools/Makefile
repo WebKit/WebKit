@@ -1,9 +1,9 @@
 MODULES = DumpRenderTree WebKitTestRunner MiniBrowser ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 
 ifneq (,$(findstring iphoneos,$(SDKROOT)))
-	MODULES = ../Source/ThirdParty/gtest/xcode
+	MODULES = ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 else ifneq (,$(findstring iphonesimulator,$(SDKROOT)))
-	MODULES = DumpRenderTree ../Source/ThirdParty/gtest/xcode
+	MODULES = DumpRenderTree ../Source/ThirdParty/gtest/xcode TestWebKitAPI
 endif
 
 all:

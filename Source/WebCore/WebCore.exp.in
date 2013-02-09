@@ -2475,7 +2475,6 @@ __ZN7WebCore16ScriptController20windowScriptNPObjectEv
 __ZN7WebCore16ScriptController29cleanupScriptObjectsForPluginEPv
 __ZN7WebCore17HTMLPlugInElement11getNPObjectEv
 __ZNK7WebCore14SecurityOrigin9canAccessEPKS0_
-__ZNK7WebCore4KURL7hasPathEv
 #endif
 
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
@@ -2724,6 +2723,7 @@ __ZN7WebCore12WorkerThread17workerThreadCountEv
 
 #if USE(WTFURL)
 __ZNK7WebCore4KURL6stringEv
+__ZNK7WebCore4KURL7hasPathEv
 __ZNK7WebCore4KURL7hasPortEv
 __ZNK7WebCore4KURL7isEmptyEv
 __ZNK7WebCore4KURL6isNullEv

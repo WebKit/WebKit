@@ -353,6 +353,11 @@ inline bool KURL::isValid() const
     return m_isValid;
 }
 
+inline bool KURL::hasPath() const
+{
+    return m_pathEnd != m_portEnd;
+}
+
 inline bool KURL::hasPort() const
 {
     return m_hostEnd < m_portEnd;

@@ -1,3 +1,26 @@
+2013-02-09  David Farler  <dfarler@apple.com>
+
+        Make TestWebKitAPI work for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=108978
+
+        Reviewed by David Kilzer.
+
+        * Makefile: Added TestWebKitAPI to iOS MODULES list.
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        - Include FeatureDefines
+        - Removed VALID_ARCHS
+        - Removed FRAMEWORK_SEARCH_PATHS - allows building against other SDKs
+        - Excluded source files per platform
+        * TestWebKitAPI/Configurations/TestWebKitAPI.xcconfig:
+        - framework and library switches per platform
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        - Remove explicit framework and library linking (moved to xcconfigs)
+        - Added iOS main.mm
+        * TestWebKitAPI/config.h:
+        - Guard importing Cocoa.h and WebKit2_C.h on iOS
+        * TestWebKitAPI/ios/mainIOS.mm: Copied from Tools/TestWebKitAPI/mac/main.mm.
+        * TestWebKitAPI/mac/mainMac.mm: Renamed from Tools/TestWebKitAPI/mac/main.mm.
+
 2013-02-09  Justin Schuh  <jschuh@chromium.org>
 
         [CHROMIUM] Suppress c4267 build warnings for Win64 tests
