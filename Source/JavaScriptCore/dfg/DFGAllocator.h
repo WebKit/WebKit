@@ -30,6 +30,7 @@
 
 #if ENABLE(DFG_JIT)
 
+#include "DFGCommon.h"
 #include <wtf/PageAllocationAligned.h>
 #include <wtf/StdLibExtras.h>
 
@@ -196,6 +197,9 @@ void* Allocator<T>::allocateSlow()
 {
     ASSERT(!m_freeListHead);
     ASSERT(!m_bumpRemaining);
+    
+    if (logCompilationChanges())
+        dataLog("Allocating another allocator region.\n");
     
     PageAllocationAligned allocation = PageAllocationAligned::allocate(Region::size(), Region::size(), OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation))

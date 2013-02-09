@@ -146,6 +146,15 @@ inline bool verboseCompilationEnabled()
 #endif
 }
 
+inline bool logCompilationChanges()
+{
+#if DFG_ENABLE(DEBUG_VERBOSE)
+    return true;
+#else
+    return verboseCompilationEnabled() || Options::logCompilationChanges();
+#endif
+}
+
 inline bool shouldDumpGraphAtEachPhase()
 {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -157,7 +166,11 @@ inline bool shouldDumpGraphAtEachPhase()
 
 inline bool validationEnabled()
 {
+#if !ASSERT_DISABLED
+    return true;
+#else
     return Options::validateGraph() || Options::validateGraphAtEachPhase();
+#endif
 }
 
 enum SpillRegistersMode { NeedToSpill, DontSpill };
@@ -166,7 +179,72 @@ enum NoResultTag { NoResult };
 
 enum OptimizationFixpointState { BeforeFixpoint, FixpointNotConverged, FixpointConverged };
 
+// Describes the form you can expect the entire graph to be in.
+enum GraphForm {
+    // LoadStore form means that basic blocks may freely use GetLocal, SetLocal,
+    // GetLocalUnlinked, and Flush for accessing local variables and indicating
+    // where their live ranges ought to be. Data flow between local accesses is
+    // implicit. Liveness is only explicit at block heads (variablesAtHead).
+    // This is only used by the DFG simplifier and is only preserved by same.
+    //
+    // For example, LoadStore form gives no easy way to determine which SetLocal's
+    // flow into a GetLocal. As well, LoadStore form implies no restrictions on
+    // redundancy: you can freely emit multiple GetLocals, or multiple SetLocals
+    // (or any combination thereof) to the same local in the same block. LoadStore
+    // form does not require basic blocks to declare how they affect or use locals,
+    // other than implicitly by using the local ops and by preserving
+    // variablesAtHead. Finally, LoadStore allows flexibility in how liveness of
+    // locals is extended; for example you can replace a GetLocal with a Phantom
+    // and so long as the Phantom retains the GetLocal's children (i.e. the Phi
+    // most likely) then it implies that the local is still live but that it need
+    // not be stored to the stack necessarily. This implies that Phantom can
+    // reference nodes that have no result, as long as those nodes are valid
+    // GetLocal children (i.e. Phi, SetLocal, SetArgument).
+    //
+    // LoadStore form also implies that Phis need not have children. By default,
+    // they end up having no children if you enter LoadStore using the canonical
+    // way (call Graph::dethread).
+    //
+    // LoadStore form is suitable for CFG transformations, as well as strength
+    // reduction, folding, and CSE.
+    LoadStore,
+    
+    // ThreadedCPS form means that basic blocks list up-front which locals they
+    // expect to be live at the head, and which locals they make available at the
+    // tail. ThreadedCPS form also implies that:
+    //
+    // - GetLocals and SetLocals to uncaptured variables are not redundant within
+    //   a basic block.
+    //
+    // - All GetLocals and Flushes are linked directly to the last access point
+    //   of the variable, which must not be another GetLocal if the variable is
+    //   uncaptured.
+    //
+    // - Phantom(Phi) is not legal, but PhantomLocal is.
+    //
+    // ThreadedCPS form is suitable for data flow analysis (CFA, prediction
+    // propagation), register allocation, and code generation.
+    ThreadedCPS
+};
+
+// Describes the state of the UnionFind structure of VariableAccessData's.
+enum UnificationState {
+    // BasicBlock-local accesses to variables are appropriately unified with each other.
+    LocallyUnified,
+    
+    // Unification has been performed globally.
+    GloballyUnified
+};
+
 } } // namespace JSC::DFG
+
+namespace WTF {
+
+void printInternal(PrintStream&, JSC::DFG::OptimizationFixpointState);
+void printInternal(PrintStream&, JSC::DFG::GraphForm);
+void printInternal(PrintStream&, JSC::DFG::UnificationState);
+
+} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
 

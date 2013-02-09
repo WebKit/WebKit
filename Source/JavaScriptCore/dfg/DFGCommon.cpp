@@ -39,5 +39,57 @@ void NodePointerTraits::dump(Node* value, PrintStream& out)
 
 } } // namespace JSC::DFG
 
+namespace WTF {
+
+void printInternal(PrintStream& out, JSC::DFG::OptimizationFixpointState state)
+{
+    switch (state) {
+    case JSC::DFG::BeforeFixpoint:
+        out.print("BeforeFixpoint");
+        break;
+    case JSC::DFG::FixpointNotConverged:
+        out.print("FixpointNotConverged");
+        break;
+    case JSC::DFG::FixpointConverged:
+        out.print("FixpointConverged");
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void printInternal(PrintStream& out, JSC::DFG::GraphForm form)
+{
+    switch (form) {
+    case JSC::DFG::LoadStore:
+        out.print("LoadStore");
+        break;
+    case JSC::DFG::ThreadedCPS:
+        out.print("ThreadedCPS");
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void printInternal(PrintStream& out, JSC::DFG::UnificationState state)
+{
+    switch (state) {
+    case JSC::DFG::LocallyUnified:
+        out.print("LocallyUnified");
+        break;
+    case JSC::DFG::GloballyUnified:
+        out.print("GloballyUnified");
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+} // namespace WTF
+
 #endif // ENABLE(DFG_JIT)
 

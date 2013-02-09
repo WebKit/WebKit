@@ -323,63 +323,37 @@ private:
             if (!value)
                 continue;
                 
-            if (node->op() == GetLocal) {
-                Node* previousLocalAccess = 0;
-                if (block->variablesAtHead.operand(node->local()) == node
-                    && node->child1()->op() == Phi) {
-                    // We expect this to be the common case.
-                    ASSERT(block->isInPhis(node->child1().node()));
-                    previousLocalAccess = node->child1().node();
-                    block->variablesAtHead.operand(node->local()) = previousLocalAccess;
-                } else {
-                    ASSERT(indexInBlock > 0);
-                    // Must search for the previous access to this local.
-                    for (BlockIndex subIndexInBlock = indexInBlock; subIndexInBlock--;) {
-                        Node* subNode = block->at(subIndexInBlock);
-                        if (!subNode->shouldGenerate())
-                            continue;
-                        if (!subNode->hasVariableAccessData())
-                            continue;
-                        if (subNode->local() != node->local())
-                            continue;
-                        // The two must have been unified.
-                        ASSERT(subNode->variableAccessData() == node->variableAccessData());
-                        previousLocalAccess = subNode;
-                        break;
-                    }
-                    if (!previousLocalAccess) {
-                        // The previous access must have been a Phi.
-                        for (BlockIndex phiIndexInBlock = block->phis.size(); phiIndexInBlock--;) {
-                            Node* phiNode = block->phis[phiIndexInBlock];
-                            if (!phiNode->shouldGenerate())
-                                continue;
-                            if (phiNode->local() != node->local())
-                                continue;
-                            // The two must have been unified.
-                            ASSERT(phiNode->variableAccessData() == node->variableAccessData());
-                            previousLocalAccess = phiNode;
-                            break;
-                        }
-                        ASSERT(previousLocalAccess);
-                    }
-                }
-                    
-                ASSERT(previousLocalAccess);
-                
-                Node* tailNode = block->variablesAtTail.operand(node->local());
-                if (tailNode == node)
-                    block->variablesAtTail.operand(node->local()) = previousLocalAccess;
-                else {
-                    ASSERT(
-                        tailNode->op() == Flush
-                        || tailNode->op() == SetLocal
-                        || isCapturedAtOrAfter(block, indexInBlock, node->local()));
-                }
-            }
-            
             CodeOrigin codeOrigin = node->codeOrigin;
             AdjacencyList children = node->children;
-                
+            
+            if (node->op() == GetLocal) {
+                if (m_graph.m_form != LoadStore) {
+                    VariableAccessData* variable = node->variableAccessData();
+                    Node* phi = node->child1().node();
+                    if (phi->op() == Phi
+                        && block->variablesAtHead.operand(variable->local()) == phi
+                        && block->variablesAtTail.operand(variable->local()) == node) {
+                        
+                        // Keep the graph threaded for easy cases. This is improves compile
+                        // times. It would be correct to just dethread here.
+                        
+                        m_graph.convertToConstant(node, value);
+                        Node* phantom = m_insertionSet.insertNode(
+                            indexInBlock, DontRefChildren, DontRefNode, SpecNone, PhantomLocal, 
+                            codeOrigin, OpInfo(variable), phi);
+                        block->variablesAtHead.operand(variable->local()) = phantom;
+                        block->variablesAtTail.operand(variable->local()) = phantom;
+                        
+                        changed = true;
+                        
+                        continue;
+                    }
+                    
+                    m_graph.dethread();
+                }
+            } else
+                ASSERT(!node->hasVariableAccessData());
+            
             m_graph.convertToConstant(node, value);
             m_insertionSet.insertNode(
                 indexInBlock, DontRefChildren, DontRefNode, SpecNone, Phantom, codeOrigin, children);

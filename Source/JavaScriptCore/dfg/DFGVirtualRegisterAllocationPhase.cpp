@@ -68,11 +68,20 @@ public:
                 needsNewLine = true;
 #endif
         
-                if (!node->shouldGenerate() || node->op() == Phi || node->op() == Flush)
+                if (!node->shouldGenerate())
                     continue;
                 
-                if (node->op() == GetLocal)
+                switch (node->op()) {
+                case Phi:
+                case Flush:
+                case PhantomLocal:
+                    continue;
+                case GetLocal:
                     ASSERT(!node->child1()->hasResult());
+                    break;
+                default:
+                    break;
+                }
                 
                 // First, call use on all of the current node's children, then
                 // allocate a VirtualRegister for this node. We do so in this

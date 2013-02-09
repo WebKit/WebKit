@@ -49,6 +49,8 @@ public:
     
     bool run()
     {
+        ASSERT(m_graph.m_form == ThreadedCPS);
+        
         for (unsigned i = m_graph.m_variableAccessData.size(); i--;) {
             VariableAccessData* variable = &m_graph.m_variableAccessData[i];
             if (!variable->isRoot())

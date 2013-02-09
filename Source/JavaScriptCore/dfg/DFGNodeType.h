@@ -63,6 +63,7 @@ namespace JSC { namespace DFG {
     macro(Nop, NodeDoesNotExit) \
     macro(Phi, NodeDoesNotExit | NodeRelevantToOSR) \
     macro(Flush, NodeMustGenerate | NodeDoesNotExit) \
+    macro(PhantomLocal, NodeMustGenerate | NodeDoesNotExit) \
     \
     /* Get the value of a local variable, without linking into the VariableAccessData */\
     /* network. This is only valid for variable accesses whose predictions originated */\

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "config.h"
-#include "DFGPhase.h"
+#ifndef DFGCPSRethreadingPhase_h
+#define DFGCPSRethreadingPhase_h
+
+#include <wtf/Platform.h>
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGValidate.h"
-
 namespace JSC { namespace DFG {
 
-void Phase::beginPhase()
-{
-    if (!shouldDumpGraphAtEachPhase())
-        return;
-    dataLog("Beginning DFG phase ", m_name, ".\n");
-    dataLog("Before ", m_name, ":\n");
-    m_graph.dump();
-}
+class Graph;
 
-void Phase::endPhase()
-{
-    if (!Options::validateGraphAtEachPhase())
-        return;
-    validate(m_graph, DumpGraph);
-}
+// CPS Rethreading:
+//
+// Takes a graph in which there are arbitrary GetLocals/SetLocals with no connections
+// between them. Removes redundant ones in the case of uncaptured variables. Connects
+// all of them with Phi functions to represent live ranges.
+
+bool performCPSRethreading(Graph&);
 
 } } // namespace JSC::DFG
 
 #endif // ENABLE(DFG_JIT)
+
+#endif // DFGCPSRethreadingPhase_h
+

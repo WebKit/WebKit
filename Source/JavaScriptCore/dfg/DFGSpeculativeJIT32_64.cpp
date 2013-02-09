@@ -5142,6 +5142,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
 
     case Phantom:
+    case PhantomLocal:
         // This is a no-op.
         noResult(node);
         break;

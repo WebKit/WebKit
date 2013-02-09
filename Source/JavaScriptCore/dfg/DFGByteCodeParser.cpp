@@ -289,64 +289,33 @@ private:
         Node* node = m_currentBlock->variablesAtTail.local(operand);
         bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
         
+        // This has two goals: 1) link together variable access datas, and 2)
+        // try to avoid creating redundant GetLocals. (1) is required for
+        // correctness - no other phase will ensure that block-local variable
+        // access data unification is done correctly. (2) is purely opportunistic
+        // and is meant as an compile-time optimization only.
+        
+        VariableAccessData* variable;
+        
         if (node) {
-            if (node->op() == Flush) {
-                // Two possibilities: either the block wants the local to be live
-                // but has not loaded its value, or it has loaded its value, in
-                // which case we're done.
-                node = node->child1().node();
-                if (node->op() == Phi) {
-                    VariableAccessData* variableAccessData = node->variableAccessData();
-                    variableAccessData->mergeIsCaptured(isCaptured);
-                    node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), node));
-                    m_currentBlock->variablesAtTail.local(operand) = node;
-                    return node;
-                } else
-                    ASSERT(node->op() == SetLocal);
-            }
+            variable = node->variableAccessData();
+            variable->mergeIsCaptured(isCaptured);
             
-            ASSERT(node->op() != Flush);
-
-            node->variableAccessData()->mergeIsCaptured(isCaptured);
-                
-            if (isCaptured) {
-                // We wish to use the same variable access data as the previous access,
-                // but for all other purposes we want to issue a load since for all we
-                // know, at this stage of compilation, the local has been clobbered.
-                
-                // Make sure we link to the Phi node, not to the GetLocal.
-                if (node->op() == GetLocal)
-                    node = node->child1().node();
-                else
-                    ASSERT(node->op() == SetLocal);
-                
-                ASSERT(node->op() == SetLocal || node->op() == Phi);
-                
-                Node* newGetLocal = injectLazyOperandSpeculation(
-                    addToGraph(GetLocal, OpInfo(node->variableAccessData()), node));
-                m_currentBlock->variablesAtTail.local(operand) = newGetLocal;
-                return newGetLocal;
-            }
-            
-            if (node->op() == GetLocal)
+            switch (node->op()) {
+            case GetLocal:
                 return node;
-            ASSERT(node->op() == SetLocal);
-            return node->child1().node();
+            case SetLocal:
+                return node->child1().node();
+            default:
+                break;
+            }
+        } else {
+            m_preservedVars.set(operand);
+            variable = newVariableAccessData(operand, isCaptured);
         }
-
-        // Check for reads of temporaries from prior blocks,
-        // expand m_preservedVars to cover these.
-        m_preservedVars.set(operand);
         
-        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
-        
-        Node* phi = addToGraph(Phi, OpInfo(variableAccessData));
-        m_localPhiStack.append(PhiStackEntry(m_currentBlock, phi, operand));
-        node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), phi));
+        node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variable)));
         m_currentBlock->variablesAtTail.local(operand) = node;
-        
-        m_currentBlock->variablesAtHead.setLocalFirstTime(operand, node);
-        
         return node;
     }
     void setLocal(unsigned operand, Node* value, SetMode setMode = NormalSet)
@@ -375,61 +344,25 @@ private:
         Node* node = m_currentBlock->variablesAtTail.argument(argument);
         bool isCaptured = m_codeBlock->isCaptured(operand);
 
+        VariableAccessData* variable;
+        
         if (node) {
-            if (node->op() == Flush) {
-                // Two possibilities: either the block wants the local to be live
-                // but has not loaded its value, or it has loaded its value, in
-                // which case we're done.
-                node = node->child1().node();
-                if (node->op() == Phi) {
-                    VariableAccessData* variableAccessData = node->variableAccessData();
-                    variableAccessData->mergeIsCaptured(isCaptured);
-                    node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), node));
-                    m_currentBlock->variablesAtTail.argument(argument) = node;
-                    return node;
-                } else
-                    ASSERT(node->op() == SetLocal || node->op() == SetArgument);
-            }
+            variable = node->variableAccessData();
+            variable->mergeIsCaptured(isCaptured);
             
-            ASSERT(node->op() != Flush);
-            
-            node->variableAccessData()->mergeIsCaptured(isCaptured);
-            
-            if (node->op() == SetArgument) {
-                // We're getting an argument in the first basic block; link
-                // the GetLocal to the SetArgument.
-                ASSERT(node->local() == static_cast<VirtualRegister>(operand));
-                VariableAccessData* variable = node->variableAccessData();
-                node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variable), node));
-                m_currentBlock->variablesAtTail.argument(argument) = node;
+            switch (node->op()) {
+            case GetLocal:
                 return node;
+            case SetLocal:
+                return node->child1().node();
+            default:
+                break;
             }
-            
-            if (isCaptured) {
-                if (node->op() == GetLocal)
-                    node = node->child1().node();
-                else
-                    ASSERT(node->op() == SetLocal || node->op() == SetArgument);
-                ASSERT(node->op() == SetLocal || node->op() == SetArgument || node->op() == Phi);
-                return injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(node->variableAccessData()), node));
-            }
-            
-            if (node->op() == GetLocal)
-                return node;
-            
-            ASSERT(node->op() == SetLocal);
-            return node->child1().node();
-        }
+        } else
+            variable = newVariableAccessData(operand, isCaptured);
         
-        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
-
-        Node* phi = addToGraph(Phi, OpInfo(variableAccessData));
-        m_argumentPhiStack.append(PhiStackEntry(m_currentBlock, phi, argument));
-        node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variableAccessData), phi));
+        node = injectLazyOperandSpeculation(addToGraph(GetLocal, OpInfo(variable)));
         m_currentBlock->variablesAtTail.argument(argument) = node;
-        
-        m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, node);
-        
         return node;
     }
     void setArgument(int operand, Node* value, SetMode setMode = NormalSet)
@@ -495,63 +428,27 @@ private:
     
     void flushDirect(int operand, ArgumentPosition* argumentPosition)
     {
-        // FIXME: This should check if the same operand had already been flushed to
-        // some other local variable.
-        
         bool isCaptured = m_codeBlock->isCaptured(operand, inlineCallFrame());
         
         ASSERT(operand < FirstConstantRegisterIndex);
         
-        Node* node;
-        int index;
-        if (operandIsArgument(operand)) {
-            index = operandToArgument(operand);
-            node = m_currentBlock->variablesAtTail.argument(index);
-        } else {
-            index = operand;
-            node = m_currentBlock->variablesAtTail.local(index);
+        if (!operandIsArgument(operand))
             m_preservedVars.set(operand);
-        }
+        
+        Node* node = m_currentBlock->variablesAtTail.operand(operand);
+        
+        VariableAccessData* variable;
         
         if (node) {
-            switch (node->op()) {
-            case Flush:
-                node = node->child1().node();
-                break;
-            case GetLocal:
-                node = node->child1().node();
-                break;
-            default:
-                break;
-            }
-            
-            ASSERT(node->op() != Flush && node->op() != GetLocal);
-            
-            // Emit a Flush regardless of whether we already flushed it.
-            // This gives us guidance to see that the variable also needs to be flushed
-            // for arguments, even if it already had to be flushed for other reasons.
-            VariableAccessData* variableAccessData = node->variableAccessData();
-            variableAccessData->mergeIsCaptured(isCaptured);
-            addToGraph(Flush, OpInfo(variableAccessData), node);
-            if (argumentPosition)
-                argumentPosition->addVariable(variableAccessData);
-            return;
-        }
+            variable = node->variableAccessData();
+            variable->mergeIsCaptured(isCaptured);
+        } else
+            variable = newVariableAccessData(operand, isCaptured);
         
-        VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
-        Node* phi = addToGraph(Phi, OpInfo(variableAccessData));
-        node = addToGraph(Flush, OpInfo(variableAccessData), phi);
-        if (operandIsArgument(operand)) {
-            m_argumentPhiStack.append(PhiStackEntry(m_currentBlock, phi, index));
-            m_currentBlock->variablesAtTail.argument(index) = node;
-            m_currentBlock->variablesAtHead.setArgumentFirstTime(index, node);
-        } else {
-            m_localPhiStack.append(PhiStackEntry(m_currentBlock, phi, index));
-            m_currentBlock->variablesAtTail.local(index) = node;
-            m_currentBlock->variablesAtHead.setLocalFirstTime(index, node);
-        }
+        node = addToGraph(Flush, OpInfo(variable));
+        m_currentBlock->variablesAtTail.operand(operand) = node;
         if (argumentPosition)
-            argumentPosition->addVariable(variableAccessData);
+            argumentPosition->addVariable(variable);
     }
     
     void flushArgumentsAndCapturedVariables()
@@ -2040,7 +1937,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
             Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
             m_graph.m_arguments[argument] = setArgument;
-            m_currentBlock->variablesAtHead.setArgumentFirstTime(argument, setArgument);
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
         }
     }
@@ -2799,6 +2695,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 } else if (state == FalseTriState) {
                     // Emit a placeholder for this bytecode operation but otherwise
                     // just fall through.
+                    addToGraph(Phantom);
                     NEXT_OPCODE(op_jtrue);
                 }
             }
@@ -2818,6 +2715,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 } else if (state == TrueTriState) {
                     // Emit a placeholder for this bytecode operation but otherwise
                     // just fall through.
+                    addToGraph(Phantom);
                     NEXT_OPCODE(op_jfalse);
                 }
             }
@@ -2858,6 +2756,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     } else {
                         // Emit a placeholder for this bytecode operation but otherwise
                         // just fall through.
+                        addToGraph(Phantom);
                         NEXT_OPCODE(op_jless);
                     }
                 }
@@ -2884,6 +2783,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     } else {
                         // Emit a placeholder for this bytecode operation but otherwise
                         // just fall through.
+                        addToGraph(Phantom);
                         NEXT_OPCODE(op_jlesseq);
                     }
                 }
@@ -2910,6 +2810,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     } else {
                         // Emit a placeholder for this bytecode operation but otherwise
                         // just fall through.
+                        addToGraph(Phantom);
                         NEXT_OPCODE(op_jgreater);
                     }
                 }
@@ -2936,6 +2837,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     } else {
                         // Emit a placeholder for this bytecode operation but otherwise
                         // just fall through.
+                        addToGraph(Phantom);
                         NEXT_OPCODE(op_jgreatereq);
                     }
                 }
@@ -2958,6 +2860,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     if (a < b) {
                         // Emit a placeholder for this bytecode operation but otherwise
                         // just fall through.
+                        addToGraph(Phantom);
                         NEXT_OPCODE(op_jnless);
                     } else {
                         addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
@@ -2983,6 +2886,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     if (a <= b) {
                         // Emit a placeholder for this bytecode operation but otherwise
                         // just fall through.
+                        addToGraph(Phantom);
                         NEXT_OPCODE(op_jnlesseq);
                     } else {
                         addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
@@ -3008,6 +2912,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     if (a > b) {
                         // Emit a placeholder for this bytecode operation but otherwise
                         // just fall through.
+                        addToGraph(Phantom);
                         NEXT_OPCODE(op_jngreater);
                     } else {
                         addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
@@ -3033,6 +2938,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     if (a >= b) {
                         // Emit a placeholder for this bytecode operation but otherwise
                         // just fall through.
+                        addToGraph(Phantom);
                         NEXT_OPCODE(op_jngreatereq);
                     } else {
                         addToGraph(Jump, OpInfo(m_currentIndex + relativeOffset));
@@ -3405,151 +3311,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             // should have caught it.
             RELEASE_ASSERT_NOT_REACHED();
             return false;
-        }
-    }
-}
-
-template<ByteCodeParser::PhiStackType stackType>
-void ByteCodeParser::processPhiStack()
-{
-    Vector<PhiStackEntry, 16>& phiStack = (stackType == ArgumentPhiStack) ? m_argumentPhiStack : m_localPhiStack;
-    
-    while (!phiStack.isEmpty()) {
-        PhiStackEntry entry = phiStack.last();
-        phiStack.removeLast();
-        
-        if (!entry.m_block->isReachable)
-            continue;
-        
-        PredecessorList& predecessors = entry.m_block->m_predecessors;
-        unsigned varNo = entry.m_varNo;
-        VariableAccessData* dataForPhi = entry.m_phi->variableAccessData();
-
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("   Handling phi entry for var %u, phi @%u.\n", entry.m_varNo, entry.m_phi);
-#endif
-        
-        for (size_t i = 0; i < predecessors.size(); ++i) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("     Dealing with predecessor block %u.\n", predecessors[i]);
-#endif
-            
-            BasicBlock* predecessorBlock = m_graph.m_blocks[predecessors[i]].get();
-
-            Node*& var = (stackType == ArgumentPhiStack) ? predecessorBlock->variablesAtTail.argument(varNo) : predecessorBlock->variablesAtTail.local(varNo);
-            
-            Node* valueInPredecessor = var;
-            if (!valueInPredecessor) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Did not find node, adding phi.\n");
-#endif
-
-                valueInPredecessor = insertPhiNode(OpInfo(newVariableAccessData(stackType == ArgumentPhiStack ? argumentToOperand(varNo) : static_cast<int>(varNo), false)), predecessorBlock);
-                var = valueInPredecessor;
-                if (stackType == ArgumentPhiStack)
-                    predecessorBlock->variablesAtHead.setArgumentFirstTime(varNo, valueInPredecessor);
-                else
-                    predecessorBlock->variablesAtHead.setLocalFirstTime(varNo, valueInPredecessor);
-                phiStack.append(PhiStackEntry(predecessorBlock, valueInPredecessor, varNo));
-            } else if (valueInPredecessor->op() == GetLocal) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Found GetLocal @%u.\n", valueInPredecessor->index());
-#endif
-
-                // We want to ensure that the VariableAccessDatas are identical between the
-                // GetLocal and its block-local Phi. Strictly speaking we only need the two
-                // to be unified. But for efficiency, we want the code that creates GetLocals
-                // and Phis to try to reuse VariableAccessDatas as much as possible.
-                ASSERT(valueInPredecessor->variableAccessData() == valueInPredecessor->child1()->variableAccessData());
-                
-                valueInPredecessor = valueInPredecessor->child1().node();
-            } else {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Found @%u.\n", valueInPredecessor->index());
-#endif
-            }
-            ASSERT(
-                valueInPredecessor->op() == SetLocal
-                || valueInPredecessor->op() == Phi
-                || valueInPredecessor->op() == Flush
-                || (valueInPredecessor->op() == SetArgument && stackType == ArgumentPhiStack));
-            
-            VariableAccessData* dataForPredecessor = valueInPredecessor->variableAccessData();
-            
-            dataForPredecessor->unify(dataForPhi);
-
-            Node* phiNode = entry.m_phi;
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("      Ref count of @%u = %u.\n", phiNode->index(), phiNode->refCount());
-#endif
-            if (phiNode->refCount()) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Reffing @%u.\n", valueInPredecessor);
-#endif
-                m_graph.ref(valueInPredecessor);
-            }
-
-            if (!phiNode->child1()) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Setting @%u->child1 = @%u.\n", phiNode->index(), valueInPredecessor);
-#endif
-                phiNode->children.setChild1(Edge(valueInPredecessor));
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Children of @%u: ", phiNode->index());
-                phiNode->dumpChildren(WTF::dataFile());
-                dataLogF(".\n");
-#endif
-                continue;
-            }
-            if (!phiNode->child2()) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Setting @%u->child2 = @%u.\n", phiNode->index(), valueInPredecessor);
-#endif
-                phiNode->children.setChild2(Edge(valueInPredecessor));
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Children of @%u: ", phiNode->index());
-                phiNode->dumpChildren(WTF::dataFile());
-                dataLogF(".\n");
-#endif
-                continue;
-            }
-            if (!phiNode->child3()) {
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Setting @%u->child3 = @%u.\n", phiNode->index(), valueInPredecessor);
-#endif
-                phiNode->children.setChild3(Edge(valueInPredecessor));
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-                dataLogF("      Children of @%u: ", phiNode->index());
-                phiNode->dumpChildren(WTF::dataFile());
-                dataLogF(".\n");
-#endif
-                continue;
-            }
-            
-            Node* newPhi = insertPhiNode(OpInfo(dataForPhi), entry.m_block);
-            
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("      Splitting @%u, created @%u.\n", phiNode->index(), newPhi->index());
-#endif
-
-            if (phiNode->refCount())
-                m_graph.ref(newPhi);
-
-            newPhi->children = phiNode->children;
-
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("      Children of @%u: ", newPhi->index());
-            newPhi->dumpChildren(WTF::dataFile());
-            dataLogF(".\n");
-#endif
-
-            phiNode->children.initialize(newPhi, valueInPredecessor, 0);
-
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("      Children of @%u: ", phiNode->index());
-            phiNode->dumpChildren(WTF::dataFile());
-            dataLogF(".\n");
-#endif
         }
     }
 }
@@ -3936,40 +3697,25 @@ bool ByteCodeParser::parse()
     dataLogF("Processing local variable phis.\n");
 #endif
     
-    m_currentProfilingIndex = m_currentIndex;
+    ASSERT(m_preservedVars.size());
+    size_t numberOfLocals = 0;
+    for (size_t i = m_preservedVars.size(); i--;) {
+        if (m_preservedVars.quickGet(i)) {
+            numberOfLocals = i + 1;
+            break;
+        }
+    }
     
-    processPhiStack<LocalPhiStack>();
-#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-    dataLogF("Processing argument phis.\n");
-#endif
-    processPhiStack<ArgumentPhiStack>();
-
     for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
         BasicBlock* block = m_graph.m_blocks[blockIndex].get();
         ASSERT(block);
-        if (!block->isReachable)
+        if (!block->isReachable) {
             m_graph.m_blocks[blockIndex].clear();
-    }
-    
-    fixVariableAccessPredictions();
-    
-    for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
-        BasicBlock* block = m_graph.m_blocks[blockIndex].get();
-        if (!block)
             continue;
-        if (!block->isOSRTarget)
-            continue;
-        if (block->bytecodeBegin != m_graph.m_osrEntryBytecodeIndex)
-            continue;
-        for (size_t i = 0; i < m_graph.m_mustHandleValues.size(); ++i) {
-            Node* node = block->variablesAtHead.operand(
-                m_graph.m_mustHandleValues.operandForIndex(i));
-            if (!node)
-                continue;
-            ASSERT(node->hasLocal());
-            node->variableAccessData()->predict(
-                speculationFromValue(m_graph.m_mustHandleValues[i]));
         }
+        
+        block->variablesAtHead.ensureLocals(numberOfLocals);
+        block->variablesAtTail.ensureLocals(numberOfLocals);
     }
     
     m_graph.m_preservedVars = m_preservedVars;

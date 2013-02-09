@@ -1787,6 +1787,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case Phi:
     case Flush:
+    case PhantomLocal:
         node->setCanExit(false);
         break;
             
@@ -1913,6 +1914,7 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         switch (node->op()) {
         case Phi:
         case SetArgument:
+        case PhantomLocal:
         case Flush:
             // The block transfers the value from head to tail.
             source = inVariable;

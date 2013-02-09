@@ -212,7 +212,13 @@ void JSValue::dump(PrintStream& out) const
         out.printf("Double: %08x:%08x, %lf", u.asTwoInt32s[1], u.asTwoInt32s[0], asDouble());
 #endif
     } else if (isCell()) {
-        if (asCell()->inherits(&Structure::s_info)) {
+        if (asCell()->inherits(&JSString::s_info)) {
+            JSString* string = jsCast<JSString*>(asCell());
+            out.print("String: ");
+            if (string->isRope())
+                out.print("(rope) ");
+            out.print(string->tryGetValue());
+        } else if (asCell()->inherits(&Structure::s_info)) {
             Structure* structure = jsCast<Structure*>(asCell());
             out.print(
                 "Structure: ", RawPointer(structure), ": ", structure->classInfo()->className,

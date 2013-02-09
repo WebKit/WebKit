@@ -73,7 +73,7 @@ template<typename PhaseType>
 bool runAndLog(PhaseType& phase)
 {
     bool result = phase.run();
-    if (Options::dumpGraphAtEachPhase())
+    if (result && logCompilationChanges())
         dataLogF("Phase %s changed the IR.\n", phase.name());
     return result;
 }

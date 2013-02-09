@@ -239,7 +239,7 @@ public:
                 }
                     
                 case GetLocal:
-                case Phi: {
+                case Phi: /* FIXME: https://bugs.webkit.org/show_bug.cgi?id=108555 */ {
                     VariableAccessData* variableAccessData = node->variableAccessData();
                     if (variableAccessData->isCaptured())
                         break;
@@ -507,6 +507,7 @@ public:
                     m_graph.deref(node->child1());
                     node->children.child1() = Edge();
                     node->setOpAndDefaultFlags(GetMyArgumentsLength);
+                    node->ref(); // This is a must-generate node.
                     changed = true;
                     --indexInBlock; // Force reconsideration of this op noew that it's a GetMyArgumentsLength.
                     break;
@@ -635,8 +636,10 @@ public:
             insertionSet.execute(block);
         }
         
-        if (changed)
-            m_graph.collectGarbage();
+        if (changed) {
+            m_graph.dethread();
+            m_graph.m_form = LoadStore;
+        }
         
         return changed;
     }

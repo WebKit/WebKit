@@ -166,6 +166,8 @@ namespace JSC {
         static void visitChildren(JSCell*, SlotVisitor&);
 
     protected:
+        friend class JSValue;
+        
         bool isRope() const { return m_value.isNull(); }
         bool is8Bit() const { return m_flags & Is8Bit; }
         void setIs8Bit(bool flag)

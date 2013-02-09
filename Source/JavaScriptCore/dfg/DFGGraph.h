@@ -80,7 +80,7 @@ enum AddSpeculationMode {
     SpeculateIntegerButAlwaysWatchOverflow,
     SpeculateInteger
 };
-    
+
 
 //
 // === Graph ===
@@ -167,6 +167,40 @@ public:
     void clearAndDerefChild2(Node* node) { clearAndDerefChild(node, 1); }
     void clearAndDerefChild3(Node* node) { clearAndDerefChild(node, 2); }
     
+    void performSubstitution(Node* node)
+    {
+        bool shouldGenerate = node->shouldGenerate();
+        if (node->flags() & NodeHasVarArgs) {
+            for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++)
+                performSubstitutionForEdge(m_varArgChildren[childIdx], shouldGenerate);
+        } else {
+            performSubstitutionForEdge(node->children.child1(), shouldGenerate);
+            performSubstitutionForEdge(node->children.child2(), shouldGenerate);
+            performSubstitutionForEdge(node->children.child3(), shouldGenerate);
+        }
+    }
+    
+    void performSubstitutionForEdge(Edge& child, bool addRef)
+    {
+        // Check if this operand is actually unused.
+        if (!child)
+            return;
+        
+        // Check if there is any replacement.
+        Node* replacement = child->replacement;
+        if (!replacement)
+            return;
+        
+        child.setNode(replacement);
+        
+        // There is definitely a replacement. Assert that the replacement does not
+        // have a replacement.
+        ASSERT(!child->replacement);
+        
+        if (addRef)
+            ref(child);
+    }
+    
 #define DFG_DEFINE_ADD_NODE(templatePre, templatePost, typeParams, valueParamsComma, valueParams, valueArgs) \
     templatePre typeParams templatePost Node* addNode(RefChildrenMode refChildrenMode, RefNodeMode refNodeMode, SpeculatedType type valueParamsComma valueParams) \
     { \
@@ -183,6 +217,8 @@ public:
     DFG_VARIADIC_TEMPLATE_FUNCTION(DFG_DEFINE_ADD_NODE)
 #undef DFG_DEFINE_ADD_NODE
 
+    void dethread();
+    
     // Call this if you've modified the reference counts of nodes that deal with
     // local variables. This is necessary because local variable references can form
     // cycles, and hence reference counting is not enough. This will reset the
@@ -191,6 +227,10 @@ public:
     
     void convertToConstant(Node* node, unsigned constantNumber)
     {
+        if (node->op() == GetLocal)
+            dethread();
+        else
+            ASSERT(!node->hasVariableAccessData());
         node->convertToConstant(constantNumber);
     }
     
@@ -350,8 +390,6 @@ public:
     }
 
     static const char *opName(NodeType);
-    
-    void predictArgumentTypes();
     
     StructureSet* addStructureSet(const StructureSet& structureSet)
     {
@@ -718,6 +756,8 @@ public:
     Operands<JSValue> m_mustHandleValues;
     
     OptimizationFixpointState m_fixpointState;
+    GraphForm m_form;
+    UnificationState m_unificationState;
 private:
     
     void handleSuccessor(Vector<BlockIndex, 16>& worklist, BlockIndex blockIndex, BlockIndex successorIndex);

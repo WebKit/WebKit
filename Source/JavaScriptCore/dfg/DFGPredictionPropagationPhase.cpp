@@ -43,6 +43,9 @@ public:
     
     bool run()
     {
+        ASSERT(m_graph.m_form == ThreadedCPS);
+        ASSERT(m_graph.m_unificationState == GloballyUnified);
+        
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         m_count = 0;
 #endif
@@ -812,6 +815,7 @@ private:
         case InlineStart:
         case Nop:
         case CountExecution:
+        case PhantomLocal:
             break;
             
         case LastNodeType:

@@ -195,6 +195,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGCapabilities.h \
 	Source/JavaScriptCore/dfg/DFGCFAPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGCFAPhase.h \
+	Source/JavaScriptCore/dfg/DFGCPSRethreadingPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGCPSRethreadingPhase.h \
 	Source/JavaScriptCore/dfg/DFGCommon.cpp \
 	Source/JavaScriptCore/dfg/DFGCommon.h \
 	Source/JavaScriptCore/dfg/DFGConstantFoldingPhase.cpp \
@@ -249,6 +251,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGPhase.h \
 	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGPredictionPropagationPhase.h \
+	Source/JavaScriptCore/dfg/DFGPredictionInjectionPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGPredictionInjectionPhase.h \
 	Source/JavaScriptCore/dfg/DFGRegisterBank.h \
 	Source/JavaScriptCore/dfg/DFGRegisterSet.h \
 	Source/JavaScriptCore/dfg/DFGRepatch.cpp \
@@ -266,6 +270,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGStructureCheckHoistingPhase.h \
 	Source/JavaScriptCore/dfg/DFGThunks.cpp \
 	Source/JavaScriptCore/dfg/DFGThunks.h \
+	Source/JavaScriptCore/dfg/DFGUnificationPhase.cpp \
+	Source/JavaScriptCore/dfg/DFGUnificationPhase.h \
 	Source/JavaScriptCore/dfg/DFGValueRecoveryOverride.h \
 	Source/JavaScriptCore/dfg/DFGValueSource.cpp \
 	Source/JavaScriptCore/dfg/DFGValueSource.h \

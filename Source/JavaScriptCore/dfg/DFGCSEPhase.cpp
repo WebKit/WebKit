@@ -974,27 +974,6 @@ private:
         return result;
     }
     
-    void performSubstitution(Edge& child, bool addRef = true)
-    {
-        // Check if this operand is actually unused.
-        if (!child)
-            return;
-        
-        // Check if there is any replacement.
-        Node* replacement = child->replacement;
-        if (!replacement)
-            return;
-        
-        child.setNode(replacement);
-        
-        // There is definitely a replacement. Assert that the replacement does not
-        // have a replacement.
-        ASSERT(!child->replacement);
-        
-        if (addRef)
-            m_graph.ref(child);
-    }
-    
     void eliminateIrrelevantPhantomChildren(Node* node)
     {
         ASSERT(node->op() == Phantom);
@@ -1072,21 +1051,12 @@ private:
     
     void performNodeCSE(Node* node)
     {
-        bool shouldGenerate = node->shouldGenerate();
-
-        if (node->flags() & NodeHasVarArgs) {
-            for (unsigned childIdx = node->firstChild(); childIdx < node->firstChild() + node->numChildren(); childIdx++)
-                performSubstitution(m_graph.m_varArgChildren[childIdx], shouldGenerate);
-        } else {
-            performSubstitution(node->children.child1(), shouldGenerate);
-            performSubstitution(node->children.child2(), shouldGenerate);
-            performSubstitution(node->children.child3(), shouldGenerate);
-        }
+        m_graph.performSubstitution(node);
         
         if (node->op() == SetLocal)
             node->child1()->mergeFlags(NodeRelevantToOSR);
         
-        if (!shouldGenerate)
+        if (!node->shouldGenerate())
             return;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -1162,26 +1132,16 @@ private:
             Node* phi = node->child1().node();
             if (!setReplacement(possibleReplacement))
                 break;
-            // If the GetLocal we replaced used to refer to a SetLocal, then it now
-            // should refer to the child of the SetLocal instead.
-            if (phi->op() == SetLocal) {
-                ASSERT(node->child1() == phi);
-                m_graph.changeEdge(node->children.child1(), phi->child1());
+            
+            m_graph.dethread();
+            
+            // If we replace a GetLocal with a GetLocalUnlinked, then turn the GetLocalUnlinked
+            // into a GetLocal.
+            if (relevantLocalOp->op() == GetLocalUnlinked) {
+                relevantLocalOp->convertToGetLocal(variableAccessData, phi);
+                m_graph.ref(phi);
             }
-            Node* oldTail = m_currentBlock->variablesAtTail.operand(
-                variableAccessData->local());
-            if (oldTail == node) {
-                m_currentBlock->variablesAtTail.operand(variableAccessData->local()) =
-                    relevantLocalOp;
-                
-                // Maintain graph integrity: since we're replacing a GetLocal with a GetLocalUnlinked,
-                // make sure that the GetLocalUnlinked is now linked.
-                if (relevantLocalOp->op() == GetLocalUnlinked) {
-                    relevantLocalOp->setOp(GetLocal);
-                    relevantLocalOp->children.child1() = Edge(phi);
-                    m_graph.ref(phi);
-                }
-            }
+
             m_changed = true;
             break;
         }
@@ -1235,9 +1195,7 @@ private:
             m_graph.clearAndDerefChild1(node);
             node->children.child1() = Edge(dataNode);
             m_graph.ref(dataNode);
-            Node* oldTail = m_currentBlock->variablesAtTail.operand(local);
-            if (oldTail == node)
-                m_currentBlock->variablesAtTail.operand(local) = replacement;
+            m_graph.dethread();
             m_changed = true;
             break;
         }

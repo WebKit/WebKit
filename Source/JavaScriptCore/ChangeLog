@@ -1,3 +1,158 @@
+2013-02-08  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should allow phases to break Phi's and then have one phase to rebuild them
+        https://bugs.webkit.org/show_bug.cgi?id=108414
+
+        Reviewed by Mark Hahnenberg.
+        
+        Introduces two new DFG forms: LoadStore and ThreadedCPS. These are described in
+        detail in DFGCommon.h.
+        
+        Consequently, DFG phases no longer have to worry about preserving data flow
+        links between basic blocks. It is generally always safe to request that the
+        graph be dethreaded (Graph::dethread), which brings it into LoadStore form, where
+        the data flow is implicit. In this form, only liveness-at-head needs to be
+        preserved.
+        
+        All of the machinery for "threading" the graph to introduce data flow between
+        blocks is now moved out of the bytecode parser and into the CPSRethreadingPhase.
+        All phases that previously did this maintenance themselves now just rely on
+        being able to dethread the graph. The one exception is the structure check
+        hoising phase, which operates over a threaded graph and preserves it, for the
+        sake of performance.
+        
+        Also moved two other things into their own phases: unification (previously found
+        in the parser) and prediction injection (previously found in various places).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * bytecode/Operands.h:
+        (Operands):
+        (JSC::Operands::sizeFor):
+        (JSC::Operands::atFor):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+        * dfg/DFGAllocator.h:
+        (JSC::DFG::::allocateSlow):
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGBasicBlockInlines.h:
+        (DFG):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::getLocal):
+        (JSC::DFG::ByteCodeParser::getArgument):
+        (JSC::DFG::ByteCodeParser::flushDirect):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (DFG):
+        (JSC::DFG::ByteCodeParser::parse):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::killUnreachable):
+        (JSC::DFG::CFGSimplificationPhase::keepOperandAlive):
+        (CFGSimplificationPhase):
+        (JSC::DFG::CFGSimplificationPhase::fixJettisonedPredecessors):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCPSRethreadingPhase.cpp: Added.
+        (DFG):
+        (CPSRethreadingPhase):
+        (JSC::DFG::CPSRethreadingPhase::CPSRethreadingPhase):
+        (JSC::DFG::CPSRethreadingPhase::run):
+        (JSC::DFG::CPSRethreadingPhase::freeUnnecessaryNodes):
+        (JSC::DFG::CPSRethreadingPhase::clearVariablesAtHeadAndTail):
+        (JSC::DFG::CPSRethreadingPhase::addPhiSilently):
+        (JSC::DFG::CPSRethreadingPhase::addPhi):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeGetLocal):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeSetLocal):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeFlushOrPhantomLocalFor):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeFlushOrPhantomLocal):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeSetArgument):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlock):
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeLocalsInBlocks):
+        (JSC::DFG::CPSRethreadingPhase::propagatePhis):
+        (JSC::DFG::CPSRethreadingPhase::PhiStackEntry::PhiStackEntry):
+        (PhiStackEntry):
+        (JSC::DFG::CPSRethreadingPhase::phiStackFor):
+        (JSC::DFG::performCPSRethreading):
+        * dfg/DFGCPSRethreadingPhase.h: Added.
+        (DFG):
+        * dfg/DFGCSEPhase.cpp:
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCommon.cpp:
+        (WTF):
+        (WTF::printInternal):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::logCompilationChanges):
+        (DFG):
+        (WTF):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGGraph.cpp:
+        (JSC::DFG::Graph::Graph):
+        (JSC::DFG::Graph::dump):
+        (JSC::DFG::Graph::dethread):
+        (JSC::DFG::Graph::collectGarbage):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::performSubstitution):
+        (Graph):
+        (JSC::DFG::Graph::performSubstitutionForEdge):
+        (JSC::DFG::Graph::convertToConstant):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::convertToPhantomLocal):
+        (Node):
+        (JSC::DFG::Node::convertToGetLocal):
+        (JSC::DFG::Node::hasVariableAccessData):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPhase.cpp:
+        (JSC::DFG::Phase::beginPhase):
+        * dfg/DFGPhase.h:
+        (JSC::DFG::runAndLog):
+        * dfg/DFGPredictionInjectionPhase.cpp: Added.
+        (DFG):
+        (PredictionInjectionPhase):
+        (JSC::DFG::PredictionInjectionPhase::PredictionInjectionPhase):
+        (JSC::DFG::PredictionInjectionPhase::run):
+        (JSC::DFG::performPredictionInjection):
+        * dfg/DFGPredictionInjectionPhase.h: Added.
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::run):
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * dfg/DFGUnificationPhase.cpp: Added.
+        (DFG):
+        (UnificationPhase):
+        (JSC::DFG::UnificationPhase::UnificationPhase):
+        (JSC::DFG::UnificationPhase::run):
+        (JSC::DFG::performUnification):
+        * dfg/DFGUnificationPhase.h: Added.
+        (DFG):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::validate):
+        (JSC::DFG::Validate::dumpGraphIfAppropriate):
+        * dfg/DFGVirtualRegisterAllocationPhase.cpp:
+        (JSC::DFG::VirtualRegisterAllocationPhase::run):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::setUpCall):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::dump):
+        * runtime/JSString.h:
+        (JSString):
+        * runtime/Options.h:
+        (JSC):
+
 2013-02-08  Jer Noble  <jer.noble@apple.com>
 
         Bring WebKit up to speed with latest Encrypted Media spec.
