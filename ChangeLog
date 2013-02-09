@@ -1,5 +1,14 @@
 2013-02-08  Dean Jackson  <dino@apple.com>
 
+        Only a fool would cut and paste from a terminal showing truncated git logs.
+        I am that fool.
+
+        Export the full symbol for InlineBox::nodeAtPoint.
+
+        * Source/autotools/symbols.filter:
+
+2013-02-08  Dean Jackson  <dino@apple.com>
+
         Snapshotted plug-in should use shadow root
         https://bugs.webkit.org/show_bug.cgi?id=108284
 
