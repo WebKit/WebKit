@@ -46,7 +46,8 @@
 #endif
 
 namespace WebCore {
-    class KURL;
+class KURL;
+struct PluginInfo;
 };
 
 namespace WebKit {
@@ -57,7 +58,7 @@ class WebContext;
 class WebPageGroup;
 struct WebNavigationDataStore;
 
-class WebProcessProxy : public ThreadSafeRefCounted<WebProcessProxy>, public ChildProcessProxy, ResponsivenessTimer::Client, CoreIPC::Connection::QueueClient {
+class WebProcessProxy : public ThreadSafeRefCounted<WebProcessProxy>, public ChildProcessProxy, ResponsivenessTimer::Client {
 public:
     typedef HashMap<uint64_t, RefPtr<WebBackForwardListItem> > WebBackForwardListItemMap;
     typedef HashMap<uint64_t, RefPtr<WebFrameProxy> > WebFrameProxyMap;
@@ -135,9 +136,7 @@ private:
 
     // Plugins
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void getPlugins(CoreIPC::Connection*, uint64_t requestID, bool refresh);
-    void handleGetPlugins(uint64_t requestID, bool refresh);
-    void sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<WebCore::PluginInfo> >);
+    void getPlugins(bool refresh, Vector<WebCore::PluginInfo>& plugins);
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, uint32_t processType, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
@@ -159,10 +158,6 @@ private:
     virtual void didClose(CoreIPC::Connection*) OVERRIDE;
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
 
-    // CoreIPC::Connection::QueueClient
-    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&) OVERRIDE;
-    virtual void didCloseOnConnectionWorkQueue(CoreIPC::Connection*) OVERRIDE;
-
     // ResponsivenessTimer::Client
     void didBecomeUnresponsive(ResponsivenessTimer*) OVERRIDE;
     void interactionOccurredWhileUnresponsive(ResponsivenessTimer*) OVERRIDE;
@@ -180,7 +175,6 @@ private:
     // Implemented in generated WebProcessProxyMessageReceiver.cpp
     void didReceiveWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     void didReceiveSyncWebProcessProxyMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
-    void didReceiveWebProcessProxyMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&);
 
     ResponsivenessTimer m_responsivenessTimer;
     

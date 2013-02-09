@@ -56,9 +56,6 @@ messages -> WebProcess LegacyReceiver {
     DestroyPrivateBrowsingSession()
 
     # Plug-ins.
-#if ENABLE(NETSCAPE_PLUGIN_API)
-    DidGetPlugins(uint64_t requestID, Vector<WebCore::PluginInfo> plugins) DispatchOnConnectionQueue
-#endif
 #if ENABLE(NETSCAPE_PLUGIN_API) && !ENABLE(PLUGIN_PROCESS)
     GetSitesWithPluginData(Vector<WTF::String> pluginPaths, uint64_t callbackID)
     ClearPluginSiteData(Vector<WTF::String> pluginPaths, Vector<WTF::String> sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)

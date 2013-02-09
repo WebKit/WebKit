@@ -271,23 +271,6 @@ void WebPlatformStrategies::getPluginInfo(const WebCore::Page*, Vector<WebCore::
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-static BlockingResponseMap<Vector<WebCore::PluginInfo> >& responseMap()
-{
-    AtomicallyInitializedStatic(BlockingResponseMap<Vector<WebCore::PluginInfo> >&, responseMap = *new BlockingResponseMap<Vector<WebCore::PluginInfo> >);
-    return responseMap;
-}
-
-void handleDidGetPlugins(uint64_t requestID, const Vector<WebCore::PluginInfo>& plugins)
-{
-    responseMap().didReceiveResponse(requestID, adoptPtr(new Vector<WebCore::PluginInfo>(plugins)));
-}
-
-static uint64_t generateRequestID()
-{
-    static int uniqueID;
-    return atomicIncrement(&uniqueID);
-}
-
 void WebPlatformStrategies::populatePluginCache()
 {
     if (m_pluginCacheIsPopulated)
@@ -296,11 +279,9 @@ void WebPlatformStrategies::populatePluginCache()
     ASSERT(m_cachedPlugins.isEmpty());
     
     // FIXME: Should we do something in case of error here?
-    uint64_t requestID = generateRequestID();
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::GetPlugins(requestID, m_shouldRefreshPlugins), 0);
+    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::GetPlugins(m_shouldRefreshPlugins), Messages::WebProcessProxy::GetPlugins::Reply(m_cachedPlugins), 0))
+        return;
 
-    m_cachedPlugins = *responseMap().waitForResponse(requestID);
-    
     m_shouldRefreshPlugins = false;
     m_pluginCacheIsPopulated = true;
 }
