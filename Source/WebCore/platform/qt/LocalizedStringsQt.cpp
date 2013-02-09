@@ -723,18 +723,6 @@ String validationMessageBadInputForNumberText()
     return validationMessageTypeMismatchText();
 }
 
-String snapshottedPlugInLabelTitle()
-{
-    notImplemented();
-    return String();
-}
-
-String snapshottedPlugInLabelSubtitle()
-{
-    notImplemented();
-    return String();
-}
-
 String localizedString(const char* key)
 {
     return String::fromUTF8(key, strlen(key));

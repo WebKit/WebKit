@@ -40,13 +40,14 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "Path.h"
-#include "RenderView.h"
 #include "SourceGraphic.h"
 
 namespace WebCore {
 
 static const int autoStartPlugInSizeThresholdWidth = 1;
 static const int autoStartPlugInSizeThresholdHeight = 1;
+static const int startLabelPadding = 10; // Label should be 10px from edge of box.
+static const int startLabelInset = 20; // But the label is inset from its box also. FIXME: This will be removed when we go to a ShadowDOM approach.
 static const double showLabelAfterMouseOverDelay = 1;
 static const double showLabelAutomaticallyDelay = 3;
 static const int snapshotLabelBlurRadius = 5;
@@ -99,7 +100,7 @@ void RenderSnapshottedPlugInBlurFilter::apply()
 #endif
 
 RenderSnapshottedPlugIn::RenderSnapshottedPlugIn(HTMLPlugInImageElement* element)
-    : RenderBlock(element)
+    : RenderEmbeddedObject(element)
     , m_snapshotResource(RenderImageResource::create())
     , m_shouldShowLabel(false)
     , m_shouldShowLabelAutomatically(false)
@@ -144,17 +145,28 @@ void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
 
 void RenderSnapshottedPlugIn::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    if (paintInfo.phase == PaintPhaseBlockBackground && plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
-        if (m_shouldShowLabel)
-            paintSnapshotWithLabel(paintInfo, paintOffset);
-        else
-            paintSnapshot(paintInfo, paintOffset);
+    if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
+        RenderReplaced::paint(paintInfo, paintOffset);
+        return;
     }
 
-    RenderBlock::paint(paintInfo, paintOffset);
+    RenderEmbeddedObject::paint(paintInfo, paintOffset);
 }
 
-void RenderSnapshottedPlugIn::paintSnapshotImage(Image* image, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderSnapshottedPlugIn::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    if (plugInImageElement()->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick) {
+        if (m_shouldShowLabel)
+            paintReplacedSnapshotWithLabel(paintInfo, paintOffset);
+        else
+            paintReplacedSnapshot(paintInfo, paintOffset);
+        return;
+    }
+
+    RenderEmbeddedObject::paintReplaced(paintInfo, paintOffset);
+}
+
+void RenderSnapshottedPlugIn::paintSnapshot(Image* image, PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     LayoutUnit cWidth = contentWidth();
     LayoutUnit cHeight = contentHeight();
@@ -168,7 +180,7 @@ void RenderSnapshottedPlugIn::paintSnapshotImage(Image* image, PaintInfo& paintI
 #endif
 
     LayoutSize contentSize(cWidth, cHeight);
-    LayoutPoint contentLocation = location() + paintOffset;
+    LayoutPoint contentLocation = paintOffset;
     contentLocation.move(borderLeft() + paddingLeft(), borderTop() + paddingTop());
 
     LayoutRect rect(contentLocation, contentSize);
@@ -180,13 +192,31 @@ void RenderSnapshottedPlugIn::paintSnapshotImage(Image* image, PaintInfo& paintI
     context->drawImage(image, style()->colorSpace(), alignedRect, CompositeSourceOver, shouldRespectImageOrientation(), useLowQualityScaling);
 }
 
-void RenderSnapshottedPlugIn::paintSnapshot(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderSnapshottedPlugIn::paintReplacedSnapshot(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     RefPtr<Image> image = m_snapshotResource->image();
     if (!image || image->isNull())
         return;
 
-    paintSnapshotImage(image.get(), paintInfo, paintOffset);
+    paintSnapshot(image.get(), paintInfo, paintOffset);
+}
+
+Image* RenderSnapshottedPlugIn::startLabelImage(LabelSize size) const
+{
+    static Image* labelImages[2] = { 0, 0 };
+    static bool initializedImages[2] = { false, false };
+
+    int arrayIndex = static_cast<int>(size);
+    if (labelImages[arrayIndex])
+        return labelImages[arrayIndex];
+    if (initializedImages[arrayIndex])
+        return 0;
+
+    if (document()->page()) {
+        labelImages[arrayIndex] = document()->page()->chrome()->client()->plugInStartLabelImage(size).leakRef();
+        initializedImages[arrayIndex] = true;
+    }
+    return labelImages[arrayIndex];
 }
 
 #if ENABLE(FILTERS)
@@ -208,7 +238,7 @@ static PassRefPtr<Image> snapshottedPluginImageForLabelDisplay(PassRefPtr<Image>
 }
 #endif
 
-void RenderSnapshottedPlugIn::paintSnapshotWithLabel(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderSnapshottedPlugIn::paintReplacedSnapshotWithLabel(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (contentBoxRect().isEmpty())
         return;
@@ -217,26 +247,43 @@ void RenderSnapshottedPlugIn::paintSnapshotWithLabel(PaintInfo& paintInfo, const
         return;
 
     m_showedLabelOnce = true;
-    LayoutRect labelRect;
+    LayoutRect rect = contentBoxRect();
+    LayoutRect labelRect = tryToFitStartLabel(LabelSizeLarge, rect);
+    LabelSize size = NoLabel;
+    if (!labelRect.isEmpty())
+        size = LabelSizeLarge;
+    else {
+        labelRect = tryToFitStartLabel(LabelSizeSmall, rect);
+        if (!labelRect.isEmpty())
+            size = LabelSizeSmall;
+        else
+            return;
+    }
+
+    Image* labelImage = startLabelImage(size);
+    if (!labelImage)
+        return;
 
     RefPtr<Image> snapshotImage = m_snapshotResource->image();
     if (!snapshotImage || snapshotImage->isNull())
         return;
 
 #if ENABLE(FILTERS)
-    // FIXME: Temporarily disabling the blur behind the label.
-    // https://bugs.webkit.org/show_bug.cgi?id=108368
-    if (!labelRect.isEmpty()) {
-        RefPtr<Image> blurredSnapshotImage = m_snapshotResourceForLabel->image();
-        if (!blurredSnapshotImage || blurredSnapshotImage->isNull()) {
-            blurredSnapshotImage = snapshottedPluginImageForLabelDisplay(snapshotImage, labelRect);
-            m_snapshotResourceForLabel->setCachedImage(new CachedImage(blurredSnapshotImage.get()));
-        }
-        snapshotImage = blurredSnapshotImage;
+    RefPtr<Image> blurredSnapshotImage = m_snapshotResourceForLabel->image();
+    if (!blurredSnapshotImage || blurredSnapshotImage->isNull()) {
+        blurredSnapshotImage = snapshottedPluginImageForLabelDisplay(snapshotImage, labelRect);
+        m_snapshotResourceForLabel->setCachedImage(new CachedImage(blurredSnapshotImage.get()));
     }
+    snapshotImage = blurredSnapshotImage;
 #endif
 
-    paintSnapshotImage(snapshotImage.get(), paintInfo, paintOffset);
+    paintSnapshot(snapshotImage.get(), paintInfo, paintOffset);
+
+    // Remember that the labelRect includes the label inset, so we need to adjust for it.
+    paintInfo.context->drawImage(labelImage, ColorSpaceDeviceRGB,
+                                 IntRect(roundedIntPoint(paintOffset + labelRect.location() - IntSize(startLabelInset, startLabelInset)),
+                                         roundedIntSize(labelRect.size() + IntSize(2 * startLabelInset, 2 * startLabelInset))),
+                                 labelImage->rect());
 }
 
 void RenderSnapshottedPlugIn::repaintLabel()
@@ -262,7 +309,7 @@ CursorDirective RenderSnapshottedPlugIn::getCursor(const LayoutPoint& point, Cur
         overrideCursor = handCursor();
         return SetCursor;
     }
-    return RenderBlock::getCursor(point, overrideCursor);
+    return RenderEmbeddedObject::getCursor(point, overrideCursor);
 }
 
 void RenderSnapshottedPlugIn::handleEvent(Event* event)
@@ -278,6 +325,12 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
 
         plugInImageElement()->setDisplayState(HTMLPlugInElement::PlayingWithPendingMouseClick);
         plugInImageElement()->userDidClickSnapshot(mouseEvent);
+
+        if (widget()) {
+            if (Frame* frame = document()->frame())
+                frame->loader()->client()->recreatePlugin(widget());
+            repaint();
+        }
         event->setDefaultHandled();
     } else if (event->type() == eventNames().mousedownEvent) {
         if (mouseEvent->button() != LeftButton)
@@ -303,6 +356,27 @@ void RenderSnapshottedPlugIn::handleEvent(Event* event)
             resetDelayTimer(ShouldShowAutomatically);
         event->setDefaultHandled();
     }
+}
+
+LayoutRect RenderSnapshottedPlugIn::tryToFitStartLabel(LabelSize size, const LayoutRect& contentBox) const
+{
+    Image* labelImage = startLabelImage(size);
+    if (!labelImage)
+        return LayoutRect();
+
+    // Assume that the labelImage has been provided to match our device scale.
+    float scaleFactor = 1;
+    if (document()->page())
+        scaleFactor = document()->page()->deviceScaleFactor();
+    IntSize labelImageSize = labelImage->size();
+    labelImageSize.scale(1 / (scaleFactor ? scaleFactor : 1));
+
+    LayoutSize labelSize = labelImageSize - LayoutSize(2 * startLabelInset, 2 * startLabelInset);
+    LayoutRect candidateRect(contentBox.maxXMinYCorner() + LayoutSize(-startLabelPadding, startLabelPadding) + LayoutSize(-labelSize.width(), 0), labelSize);
+    // The minimum allowed content box size is the label image placed in the center of the box, surrounded by startLabelPadding.
+    if (candidateRect.x() < startLabelPadding || candidateRect.maxY() > contentBox.height() - startLabelPadding)
+        return LayoutRect();
+    return candidateRect;
 }
 
 void RenderSnapshottedPlugIn::resetDelayTimer(ShowReason reason)

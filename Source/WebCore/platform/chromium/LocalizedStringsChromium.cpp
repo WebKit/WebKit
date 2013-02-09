@@ -416,8 +416,6 @@ String contextMenuItemTagEnterVideoFullscreen() { return String(); }
 String contextMenuItemTagMediaPlay() { return String(); }
 String contextMenuItemTagMediaPause() { return String(); }
 String contextMenuItemTagMediaMute() { return String(); }
-String snapshottedPlugInLabelTitle() { return String(); }
-String snapshottedPlugInLabelSubtitle() { return String(); }
 
 #if ENABLE(VIDEO_TRACK)
 String textTrackClosedCaptionsText() { return String(); }

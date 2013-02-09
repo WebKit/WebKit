@@ -1,3 +1,7 @@
+2013-02-08  Dean Jackson  <dino@apple.com>
+
+        Rolling out r142333 and r142337 which broke Mac Release builds.
+
 2013-02-08  Anders Carlsson  <andersca@apple.com>
 
         Move plug-in enumeration back to the main thread
