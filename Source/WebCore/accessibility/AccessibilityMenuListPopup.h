@@ -41,7 +41,6 @@ public:
 
     virtual bool isEnabled() const;
     virtual bool isOffScreen() const;
-    virtual bool accessibilityIsIgnored() const;
 
     void didUpdateActiveOption(int optionIndex);
 
@@ -58,6 +57,7 @@ private:
     virtual bool press() const;
     virtual void addChildren();
     virtual void childrenChanged();
+    virtual bool computeAccessibilityIsIgnored() const;
 
     AccessibilityMenuListOption* menuListOptionAccessibilityObject(HTMLElement*) const;
 };

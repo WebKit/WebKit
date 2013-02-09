@@ -52,7 +52,7 @@ public:
 private:
     LayoutRect m_headerRect;
     
-    virtual bool accessibilityIsIgnored() const;
+    virtual bool computeAccessibilityIsIgnored() const;
 }; 
     
 } // namespace WebCore 

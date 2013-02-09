@@ -42,7 +42,7 @@ PassRefPtr<AccessibilityProgressIndicator> AccessibilityProgressIndicator::creat
     return adoptRef(new AccessibilityProgressIndicator(renderer));
 }
 
-bool AccessibilityProgressIndicator::accessibilityIsIgnored() const
+bool AccessibilityProgressIndicator::computeAccessibilityIsIgnored() const
 {
     return accessibilityIsIgnoredBase() == IgnoreObject;
 }

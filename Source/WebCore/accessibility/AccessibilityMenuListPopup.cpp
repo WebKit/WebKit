@@ -62,7 +62,7 @@ bool AccessibilityMenuListPopup::isEnabled() const
     return m_parent->isEnabled();
 }
 
-bool AccessibilityMenuListPopup::accessibilityIsIgnored() const
+bool AccessibilityMenuListPopup::computeAccessibilityIsIgnored() const
 {
     return accessibilityPlatformIncludesObject() != IncludeObject;
 }

@@ -389,7 +389,7 @@ bool AccessibilityNodeObject::canHaveChildren() const
     }
 }
 
-bool AccessibilityNodeObject::accessibilityIsIgnored() const
+bool AccessibilityNodeObject::computeAccessibilityIsIgnored() const
 {
 #ifndef NDEBUG
     // Double-check that an AccessibilityObject is never accessed before

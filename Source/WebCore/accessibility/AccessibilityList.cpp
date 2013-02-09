@@ -53,7 +53,7 @@ PassRefPtr<AccessibilityList> AccessibilityList::create(RenderObject* renderer)
     return adoptRef(new AccessibilityList(renderer));
 }
 
-bool AccessibilityList::accessibilityIsIgnored() const
+bool AccessibilityList::computeAccessibilityIsIgnored() const
 {
     AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
     if (decision == IncludeObject)

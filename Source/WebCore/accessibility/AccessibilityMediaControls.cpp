@@ -173,7 +173,7 @@ String AccessibilityMediaControl::helpText() const
     return localizedMediaControlElementHelpText(controlTypeName());
 }
 
-bool AccessibilityMediaControl::accessibilityIsIgnored() const
+bool AccessibilityMediaControl::computeAccessibilityIsIgnored() const
 {
     if (!m_renderer || !m_renderer->style() || m_renderer->style()->visibility() != VISIBLE || controlType() == MediaTimelineContainer)
         return true;
@@ -300,7 +300,7 @@ PassRefPtr<AccessibilityObject> AccessibilityMediaTimeDisplay::create(RenderObje
     return adoptRef(new AccessibilityMediaTimeDisplay(renderer));
 }
 
-bool AccessibilityMediaTimeDisplay::accessibilityIsIgnored() const
+bool AccessibilityMediaTimeDisplay::computeAccessibilityIsIgnored() const
 {
     if (!m_renderer || !m_renderer->style() || m_renderer->style()->visibility() != VISIBLE)
         return true;

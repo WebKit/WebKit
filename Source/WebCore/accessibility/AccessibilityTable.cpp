@@ -592,7 +592,7 @@ AccessibilityRole AccessibilityTable::roleValue() const
     return TableRole;
 }
     
-bool AccessibilityTable::accessibilityIsIgnored() const
+bool AccessibilityTable::computeAccessibilityIsIgnored() const
 {
     AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
     if (decision == IncludeObject)
@@ -601,7 +601,7 @@ bool AccessibilityTable::accessibilityIsIgnored() const
         return true;
     
     if (!isAccessibilityTable())
-        return AccessibilityRenderObject::accessibilityIsIgnored();
+        return AccessibilityRenderObject::computeAccessibilityIsIgnored();
         
     return false;
 }

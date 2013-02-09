@@ -58,8 +58,6 @@ public:
     virtual AccessibilityRole roleValue() const;
     virtual bool isAriaTable() const { return false; }
     
-    virtual bool accessibilityIsIgnored() const;
-    
     virtual void addChildren();
     virtual void clearChildren();
     
@@ -92,6 +90,7 @@ protected:
 
     bool hasARIARole() const;
     bool isTableExposableThroughAccessibility() const;
+    virtual bool computeAccessibilityIsIgnored() const;
 };
     
 inline AccessibilityTable* toAccessibilityTable(AccessibilityObject* object)

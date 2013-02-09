@@ -152,7 +152,7 @@ AccessibilityObject* AccessibilityTableColumn::headerObjectForSection(RenderTabl
     return axObjectCache()->getOrCreate(cell);
 }
     
-bool AccessibilityTableColumn::accessibilityIsIgnored() const
+bool AccessibilityTableColumn::computeAccessibilityIsIgnored() const
 {
     if (!m_parent)
         return true;

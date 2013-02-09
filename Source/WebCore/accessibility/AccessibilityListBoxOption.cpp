@@ -120,7 +120,7 @@ LayoutRect AccessibilityListBoxOption::elementRect() const
     return rect;
 }
 
-bool AccessibilityListBoxOption::accessibilityIsIgnored() const
+bool AccessibilityListBoxOption::computeAccessibilityIsIgnored() const
 {
     if (!m_optionElement)
         return true;

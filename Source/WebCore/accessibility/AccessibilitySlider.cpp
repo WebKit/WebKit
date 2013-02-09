@@ -113,7 +113,7 @@ AccessibilityObject* AccessibilitySlider::elementAccessibilityHitTest(const IntP
     return axObjectCache()->getOrCreate(m_renderer);
 }
 
-bool AccessibilitySlider::accessibilityIsIgnored() const
+bool AccessibilitySlider::computeAccessibilityIsIgnored() const
 {
     AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
     if (decision == IncludeObject)
@@ -178,7 +178,7 @@ LayoutRect AccessibilitySliderThumb::elementRect() const
     return sliderThumbElementOf(sliderRenderer->node())->boundingBox();
 }
 
-bool AccessibilitySliderThumb::accessibilityIsIgnored() const
+bool AccessibilitySliderThumb::computeAccessibilityIsIgnored() const
 {
     AccessibilityObjectInclusion decision = accessibilityPlatformIncludesObject();
     if (decision == IncludeObject)

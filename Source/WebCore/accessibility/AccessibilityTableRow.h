@@ -42,7 +42,6 @@ public:
     virtual ~AccessibilityTableRow();
     
     virtual bool isTableRow() const;
-    virtual bool accessibilityIsIgnored() const;
 
     // retrieves the "row" header (a th tag in the rightmost column)
     virtual AccessibilityObject* headerObject();
@@ -62,6 +61,7 @@ private:
     int m_rowIndex;
     
     virtual AccessibilityObject* observableObject() const;
+    virtual bool computeAccessibilityIsIgnored() const;
 }; 
    
 } // namespace WebCore 

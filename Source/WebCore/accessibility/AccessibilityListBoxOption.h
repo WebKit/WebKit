@@ -51,7 +51,6 @@ public:
     void setHTMLElement(HTMLElement* element) { m_optionElement = element; }
     
     virtual AccessibilityRole roleValue() const { return ListBoxOptionRole; }
-    virtual bool accessibilityIsIgnored() const;
     virtual bool isSelected() const;
     virtual bool isEnabled() const;
     virtual bool isSelectedOptionActive() const;
@@ -73,6 +72,7 @@ private:
     int listBoxOptionIndex() const;
     IntRect listBoxOptionRect() const;
     AccessibilityObject* listBoxOptionAccessibilityObject(HTMLElement*) const;
+    virtual bool computeAccessibilityIsIgnored() const;
 };
     
 } // namespace WebCore 

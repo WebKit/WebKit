@@ -144,7 +144,7 @@ void AccessibilityScrollView::clearChildren()
     m_horizontalScrollbar = 0;
 }
 
-bool AccessibilityScrollView::accessibilityIsIgnored() const
+bool AccessibilityScrollView::computeAccessibilityIsIgnored() const
 {
     AccessibilityObject* webArea = webAreaObject();
     if (!webArea)

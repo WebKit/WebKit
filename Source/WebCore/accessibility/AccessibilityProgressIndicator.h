@@ -45,7 +45,7 @@ private:
     explicit AccessibilityProgressIndicator(RenderProgress*);
 
     HTMLProgressElement* element() const;
-    virtual bool accessibilityIsIgnored() const;
+    virtual bool computeAccessibilityIsIgnored() const;
 };
 
 

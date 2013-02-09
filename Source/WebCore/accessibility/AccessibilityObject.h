@@ -485,7 +485,7 @@ public:
     
     virtual Node* node() const { return 0; }
     virtual RenderObject* renderer() const { return 0; }
-    virtual bool accessibilityIsIgnored() const  { return true; }
+    virtual bool accessibilityIsIgnored() const;
 
     int blockquoteLevel() const;
     virtual int headingLevel() const { return 0; }
@@ -833,7 +833,9 @@ protected:
     mutable bool m_haveChildren;
     AccessibilityRole m_role;
     AccessibilityObjectInclusion m_lastKnownIsIgnoredValue;
-    
+
+    virtual bool computeAccessibilityIsIgnored() const { return true; }
+
     // If this object itself scrolls, return its ScrollableArea.
     virtual ScrollableArea* getScrollableAreaIfScrollable() const { return 0; }
     virtual void scrollTo(const IntPoint&) const { }

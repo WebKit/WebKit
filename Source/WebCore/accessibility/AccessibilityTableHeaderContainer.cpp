@@ -55,7 +55,7 @@ LayoutRect AccessibilityTableHeaderContainer::elementRect() const
     return m_headerRect;
 }
 
-bool AccessibilityTableHeaderContainer::accessibilityIsIgnored() const
+bool AccessibilityTableHeaderContainer::computeAccessibilityIsIgnored() const
 {
     if (!m_parent)
         return true;

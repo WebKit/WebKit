@@ -86,7 +86,7 @@ AccessibilityObject* AccessibilityTableRow::observableObject() const
     return parentTable();
 }
     
-bool AccessibilityTableRow::accessibilityIsIgnored() const
+bool AccessibilityTableRow::computeAccessibilityIsIgnored() const
 {    
     AccessibilityObjectInclusion decision = accessibilityIsIgnoredBase();
     if (decision == IncludeObject)
@@ -95,7 +95,7 @@ bool AccessibilityTableRow::accessibilityIsIgnored() const
         return true;
     
     if (!isTableRow())
-        return AccessibilityRenderObject::accessibilityIsIgnored();
+        return AccessibilityRenderObject::computeAccessibilityIsIgnored();
 
     return false;
 }

@@ -53,8 +53,8 @@ public:
     bool isDescriptionList() const;
 
     virtual AccessibilityRole roleValue() const { return ListRole; }
-    virtual bool accessibilityIsIgnored() const;
-    
+private:
+    virtual bool computeAccessibilityIsIgnored() const;
 };
     
 } // namespace WebCore
