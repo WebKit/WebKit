@@ -53,7 +53,7 @@
     {
         window.setTimeout(function() {
             if (window.eventSender)
-                eventSender.scalePageBy(2.3, 2.3);
+                eventSender.scalePageBy(2.3, 0, 0);
 
             if (window.testRunner) {
                 document.getElementById('results').textContent = window.internals.scrollingStateTreeAsText(document) + '\n' +

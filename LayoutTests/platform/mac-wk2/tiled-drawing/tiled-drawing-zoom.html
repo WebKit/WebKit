@@ -9,7 +9,7 @@
         function doTest()
         {
             if (window.eventSender)
-                eventSender.scalePageBy(2.3, 2.3);
+                eventSender.scalePageBy(2.3, 0, 0);
 
             if (window.internals) {
                 document.getElementById('layers').innerText = internals.layerTreeAsText(document,
