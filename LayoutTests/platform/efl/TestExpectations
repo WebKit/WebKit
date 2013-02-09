@@ -1882,5 +1882,3 @@ webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ 
 webkit.org/b/108370 editing/spelling/spelling-with-underscore-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
 
-# Rebaseline required after https://webkit.org/b/95772
-webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.html [ Failure ]
