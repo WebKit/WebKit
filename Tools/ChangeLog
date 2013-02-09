@@ -1,3 +1,12 @@
+2013-02-09  Nico Weber  <thakis@chromium.org>
+
+        Add myself as a reviewer. (Yay!!!!!)
+        https://bugs.webkit.org/show_bug.cgi?id=109110
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Move workerThreadCount from TestRunner to WebCore Internals
