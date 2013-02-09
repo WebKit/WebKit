@@ -72,9 +72,9 @@ void WebTestInterfaces::setTestIsRunning(bool running)
     m_interfaces->setTestIsRunning(running);
 }
 
-WebView* WebTestInterfaces::webView() const
+void WebTestInterfaces::configureForTestWithURL(const WebURL& testURL, bool generatePixels)
 {
-    return m_interfaces->webView();
+    m_interfaces->configureForTestWithURL(testURL, generatePixels);
 }
 
 WebTestRunner* WebTestInterfaces::testRunner()

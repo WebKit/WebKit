@@ -36,6 +36,7 @@
 
 namespace WebKit {
 class WebFrame;
+class WebURL;
 class WebView;
 }
 
@@ -55,8 +56,8 @@ public:
     void bindTo(WebKit::WebFrame*);
     void resetAll();
     void setTestIsRunning(bool);
+    void configureForTestWithURL(const WebKit::WebURL&, bool generatePixels);
 
-    WebKit::WebView* webView() const;
     WebTestRunner* testRunner();
 
 #if WEBTESTRUNNER_IMPLEMENTATION

@@ -37,10 +37,11 @@
 #include "TestRunner.h"
 #include "TextInputController.h"
 #include <public/WebString.h>
+#include <public/WebURL.h>
+#include <string>
 
-using WebKit::WebFrame;
-using WebKit::WebString;
-using WebKit::WebView;
+using namespace WebKit;
+using namespace std;
 
 namespace WebTestRunner {
 
@@ -110,6 +111,20 @@ void TestInterfaces::resetAll()
 void TestInterfaces::setTestIsRunning(bool running)
 {
     m_testRunner->setTestIsRunning(running);
+}
+
+void TestInterfaces::configureForTestWithURL(const WebURL& testURL, bool generatePixels)
+{
+    string spec = GURL(testURL).spec();
+    m_testRunner->setShouldGeneratePixelResults(generatePixels);
+    if (spec.find("loading/") != string::npos)
+        m_testRunner->setShouldDumpFrameLoadCallbacks(true);
+    if (spec.find("/dumpAsText/") != string::npos) {
+        m_testRunner->setShouldDumpAsText(true);
+        m_testRunner->setShouldGeneratePixelResults(false);
+    }
+    if (spec.find("/inspector/") != string::npos)
+        m_testRunner->showDevTools();
 }
 
 AccessibilityController* TestInterfaces::accessibilityController()

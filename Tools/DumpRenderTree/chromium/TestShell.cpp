@@ -263,12 +263,7 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
     m_testInterfaces->setTestIsRunning(true);
     m_params = params;
     string testUrl = m_params.testUrl.spec();
-
-    m_testInterfaces->testRunner()->setShouldGeneratePixelResults(shouldDumpPixels);
-
-    if (testUrl.find("loading/") != string::npos
-        || testUrl.find("loading\\") != string::npos)
-        m_testInterfaces->testRunner()->setShouldDumpFrameLoadCallbacks(true);
+    m_testInterfaces->configureForTestWithURL(m_params.testUrl, shouldDumpPixels);
 
     if (testUrl.find("compositing/") != string::npos || testUrl.find("compositing\\") != string::npos) {
         if (!m_softwareCompositingEnabled)
@@ -278,16 +273,6 @@ void TestShell::runFileTest(const TestParams& params, bool shouldDumpPixels)
         m_prefs.mockScrollbarsEnabled = true;
         m_prefs.applyTo(m_webView);
     }
-
-    if (testUrl.find("/dumpAsText/") != string::npos
-        || testUrl.find("\\dumpAsText\\") != string::npos) {
-        m_testInterfaces->testRunner()->setShouldDumpAsText(true);
-        m_testInterfaces->testRunner()->setShouldGeneratePixelResults(false);
-    }
-
-    if (testUrl.find("/inspector/") != string::npos
-        || testUrl.find("\\inspector\\") != string::npos)
-        showDevTools();
 
     if (m_dumpWhenFinished)
         m_printer.handleTestHeader(testUrl.c_str());

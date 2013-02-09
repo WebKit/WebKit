@@ -41,14 +41,11 @@ namespace WebTestRunner {
 class WebTestRunner {
 public:
     virtual bool shouldDumpAsText() const = 0;
-    virtual void setShouldDumpAsText(bool) = 0;
     virtual bool shouldGeneratePixelResults() const = 0;
-    virtual void setShouldGeneratePixelResults(bool) = 0;
     virtual bool shouldDumpChildFrameScrollPositions() const = 0;
     virtual bool shouldDumpChildFramesAsText() const = 0;
     virtual bool shouldDumpAsAudio() const = 0;
     virtual const WebKit::WebArrayBufferView* audioData() const = 0;
-    virtual void setShouldDumpFrameLoadCallbacks(bool) = 0;
     virtual WebKit::WebPermissionClient* webPermissions() const = 0;
     virtual bool shouldDumpBackForwardList() const = 0;
     virtual bool shouldDumpSelectionRect() const = 0;

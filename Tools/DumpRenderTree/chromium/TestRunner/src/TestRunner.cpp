@@ -658,6 +658,11 @@ bool TestRunner::isSelectTrailingWhitespaceEnabled() const
     return m_selectTrailingWhitespaceEnabled;
 }
 
+void TestRunner::showDevTools()
+{
+    m_delegate->showDevTools();
+}
+
 void TestRunner::waitUntilDone(const CppArgumentList&, CppVariant* result)
 {
     if (!m_delegate->isBeingDebugged())
@@ -1704,7 +1709,7 @@ void TestRunner::deliverWebIntent(const CppArgumentList& arguments, CppVariant* 
 
 void TestRunner::showWebInspector(const CppArgumentList&, CppVariant* result)
 {
-    m_delegate->showDevTools();
+    showDevTools();
     result->setNull();
 }
 

@@ -73,14 +73,11 @@ public:
 
     // WebTestRunner implementation.
     virtual bool shouldDumpAsText() const OVERRIDE;
-    virtual void setShouldDumpAsText(bool) OVERRIDE;
     virtual bool shouldGeneratePixelResults() const OVERRIDE;
-    virtual void setShouldGeneratePixelResults(bool) OVERRIDE;
     virtual bool shouldDumpChildFrameScrollPositions() const OVERRIDE;
     virtual bool shouldDumpChildFramesAsText() const OVERRIDE;
     virtual bool shouldDumpAsAudio() const OVERRIDE;
     virtual const WebKit::WebArrayBufferView* audioData() const OVERRIDE;
-    virtual void setShouldDumpFrameLoadCallbacks(bool) OVERRIDE;
     virtual WebKit::WebPermissionClient* webPermissions() const OVERRIDE;
     virtual bool shouldDumpBackForwardList() const OVERRIDE;
     virtual bool shouldDumpSelectionRect() const OVERRIDE;
@@ -89,6 +86,10 @@ public:
     virtual bool isPrinting() const OVERRIDE;
 
     // Methods used by WebTestProxyBase.
+    void showDevTools();
+    void setShouldDumpAsText(bool);
+    void setShouldGeneratePixelResults(bool);
+    void setShouldDumpFrameLoadCallbacks(bool);
     bool shouldDumpEditingCallbacks() const;
     bool shouldDumpFrameLoadCallbacks() const;
     bool shouldDumpUserGestureInFrameLoadCallbacks() const;
