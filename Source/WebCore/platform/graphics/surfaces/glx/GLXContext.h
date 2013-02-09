@@ -45,7 +45,6 @@ public:
 
 private:
     void freeResources();
-    Display* m_display;
 };
 
 }

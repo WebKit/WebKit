@@ -33,13 +33,11 @@ namespace WebCore {
 EGLWindowTransportSurface::EGLWindowTransportSurface()
     : GLPlatformSurface()
 {
-    m_nativeResource = adoptPtr(new NativeOffScreenWindow());
-    m_configSelector = adoptPtr(new EGLConfigSelector(m_nativeResource->nativeSharedDisplay()));
+    m_configSelector = adoptPtr(new EGLConfigSelector(NativeWrapper::nativeDisplay()));
     m_sharedDisplay = m_configSelector->display();
 
     if (m_sharedDisplay == EGL_NO_DISPLAY) {
         m_configSelector = nullptr;
-        m_nativeResource = nullptr;
         return;
     }
 
@@ -57,7 +55,7 @@ EGLWindowTransportSurface::EGLWindowTransportSurface()
         return;
     }
 
-    m_nativeResource->createOffScreenWindow(&m_bufferHandle, visualId);
+    NativeWrapper::createOffScreenWindow(&m_bufferHandle, visualId);
 
     if (!m_bufferHandle) {
         destroy();
@@ -104,7 +102,7 @@ void EGLWindowTransportSurface::swapBuffers()
 void EGLWindowTransportSurface::destroy()
 {
     GLPlatformSurface::destroy();
-    m_nativeResource->destroyWindow(m_bufferHandle);
+    NativeWrapper::destroyWindow(m_bufferHandle);
     freeEGLResources();
     m_bufferHandle = 0;
 }
@@ -128,7 +126,7 @@ void EGLWindowTransportSurface::freeEGLResources()
 void EGLWindowTransportSurface::setGeometry(const IntRect& newRect)
 {
     GLPlatformSurface::setGeometry(newRect);
-    m_nativeResource->reSizeWindow(newRect, m_bufferHandle);
+    NativeWrapper::resizeWindow(newRect, m_bufferHandle);
 }
 
 }

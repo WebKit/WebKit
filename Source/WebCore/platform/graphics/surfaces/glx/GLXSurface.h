@@ -30,7 +30,7 @@
 
 #include "GLPlatformSurface.h"
 #include "GLXConfigSelector.h"
-#include "X11WindowResources.h"
+#include "X11Helper.h"
 
 namespace WebCore {
 
@@ -47,7 +47,6 @@ public:
 
 private:
     void initialize();
-    OwnPtr<X11OffScreenWindow> m_nativeResource;
     OwnPtr<GLXConfigSelector> m_configSelector;
 };
 #endif
@@ -64,7 +63,6 @@ public:
 private:
     void initialize();
     void freeResources();
-    OwnPtr<X11OffScreenWindow> m_nativeResource;
     OwnPtr<GLXConfigSelector> m_configSelector;
 };
 

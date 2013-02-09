@@ -36,15 +36,8 @@ static const int pbufferAttributes[] = { GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGH
 GLXTransportSurface::GLXTransportSurface()
     : GLPlatformSurface()
 {
-    m_nativeResource = adoptPtr(new X11OffScreenWindow());
-    m_sharedDisplay = m_nativeResource->nativeSharedDisplay();
-
-    if (!m_sharedDisplay) {
-        m_nativeResource = nullptr;
-        return;
-    }
-
-    m_configSelector = adoptPtr(new GLXConfigSelector(m_sharedDisplay, m_nativeResource->isXRenderExtensionSupported()));
+    m_sharedDisplay = X11Helper::nativeDisplay();
+    m_configSelector = adoptPtr(new GLXConfigSelector());
     OwnPtrX11<XVisualInfo> visInfo(m_configSelector->visualInfo());
 
     if (!visInfo.get()) {
@@ -52,7 +45,7 @@ GLXTransportSurface::GLXTransportSurface()
         return;
     }
 
-    m_nativeResource->createOffScreenWindow(&m_bufferHandle, *visInfo.get());
+    X11Helper::createOffScreenWindow(&m_bufferHandle, *visInfo.get());
 
     if (!m_bufferHandle) {
         destroy();
@@ -74,7 +67,7 @@ PlatformSurfaceConfig GLXTransportSurface::configuration()
 void GLXTransportSurface::setGeometry(const IntRect& newRect)
 {
     GLPlatformSurface::setGeometry(newRect);
-    m_nativeResource->reSizeWindow(newRect, m_drawable);
+    X11Helper::resizeWindow(newRect, m_drawable);
     // Force resize of GL surface after window resize.
     glXSwapBuffers(sharedDisplay(), m_drawable);
 }
@@ -99,7 +92,7 @@ void GLXTransportSurface::destroy()
     GLPlatformSurface::destroy();
 
     if (m_bufferHandle) {
-        m_nativeResource->destroyWindow(m_bufferHandle);
+        X11Helper::destroyWindow(m_bufferHandle);
         m_bufferHandle = 0;
         m_drawable = 0;
     }
@@ -121,15 +114,9 @@ GLXPBuffer::~GLXPBuffer()
 
 void GLXPBuffer::initialize()
 {
-    m_nativeResource = adoptPtr(new X11OffScreenWindow());
-    m_sharedDisplay = m_nativeResource->nativeSharedDisplay();
+    m_sharedDisplay = X11Helper::nativeDisplay();
 
-    if (!m_sharedDisplay) {
-        m_nativeResource = nullptr;
-        return;
-    }
-
-    m_configSelector = adoptPtr(new GLXConfigSelector(m_sharedDisplay, m_nativeResource->isXRenderExtensionSupported()));
+    m_configSelector = adoptPtr(new GLXConfigSelector());
     GLXFBConfig config = m_configSelector->pBufferContextConfig();
 
     if (!config) {

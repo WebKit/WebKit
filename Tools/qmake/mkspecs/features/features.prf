@@ -138,7 +138,7 @@ defineTest(detectFeatures) {
     use?(3d_graphics) {
         mac: WEBKIT_CONFIG += use_graphics_surface
         win32:contains(QT_CONFIG, opengles2): WEBKIT_CONFIG += use_graphics_surface
-        linux-*:contains(WEBKIT_CONFIG, have_glx):contains(WEBKIT_CONFIG, have_xcomposite):contains(WEBKIT_CONFIG, have_xrender): WEBKIT_CONFIG += use_graphics_surface
+        linux-*:contains(WEBKIT_CONFIG, have_glx):contains(WEBKIT_CONFIG, have_xcomposite):contains(WEBKIT_CONFIG, have_xrender): WEBKIT_CONFIG += use_graphics_surface use_glx
     }
 
     # Slider Touch is sensible to use when compiling WebKit2

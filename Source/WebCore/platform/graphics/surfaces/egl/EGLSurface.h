@@ -31,13 +31,13 @@
 #include "EGLConfigSelector.h"
 #include "GLPlatformSurface.h"
 
-#include <glx/X11WindowResources.h>
+#include <glx/X11Helper.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
-typedef X11OffScreenWindow NativeOffScreenWindow;
+typedef X11Helper NativeWrapper;
 
 // Contents of the surface are backed by native window.
 class EGLWindowTransportSurface : public GLPlatformSurface {
@@ -52,7 +52,6 @@ public:
 
 private:
     void freeEGLResources();
-    OwnPtr<NativeOffScreenWindow> m_nativeResource;
     OwnPtr<EGLConfigSelector> m_configSelector;
 };
 
