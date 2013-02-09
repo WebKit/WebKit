@@ -437,6 +437,22 @@ void MediaPlayerPrivateAVFoundationObjC::createAVPlayerItem()
     if (m_avPlayer)
         [m_avPlayer.get() replaceCurrentItemWithPlayerItem:m_avPlayerItem.get()];
 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    const NSTimeInterval legibleOutputAdvanceInterval = 2;
+
+    m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:[NSArray array]]);
+    [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
+
+    // We enabled automatic media selection because we want alternate audio tracks to be enabled/disabled automatically,
+    // but set the selected legible track to nil so text tracks will not be automatically configured.
+    [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:[m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible]];
+
+    [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
+    [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:legibleOutputAdvanceInterval];
+    [m_legibleOutput.get() setTextStylingResolution:AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly];
+    [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
+#endif
+
     setDelayCallbacks(false);
 }
 
@@ -595,8 +611,12 @@ void MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(bool closedCap
     if (!metaDataAvailable())
         return;
 
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    UNUSED_PARAM(closedCaptionsVisible);
+#else
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::setClosedCaptionsVisible(%p) - setting to %s", this, boolString(closedCaptionsVisible));
     [m_avPlayer.get() setClosedCaptionDisplayEnabled:closedCaptionsVisible];
+#endif
 }
 
 void MediaPlayerPrivateAVFoundationObjC::updateRate()
@@ -904,24 +924,6 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     if (!m_avAsset)
         return;
 
-#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-    const NSTimeInterval legibleOutputAdvanceInterval = 2;
-
-    if (m_avPlayerItem && !m_legibleOutput) {
-        m_legibleOutput = adoptNS([[AVPlayerItemLegibleOutput alloc] initWithMediaSubtypesForNativeRepresentation:[NSArray array]]);
-        [m_legibleOutput.get() setSuppressesPlayerRendering:YES];
-
-        // We enabled automatic media selection because we want alternate audio tracks to be enabled/disabled automatically,
-        // but set the selected legible track to nil so text tracks will not be automatically configured.
-        [m_avPlayerItem.get() selectMediaOption:nil inMediaSelectionGroup:[m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible]];
-
-        [m_legibleOutput.get() setDelegate:m_objcObserver.get() queue:dispatch_get_main_queue()];
-        [m_legibleOutput.get() setAdvanceIntervalForDelegateInvocation:legibleOutputAdvanceInterval];
-        [m_legibleOutput.get() setTextStylingResolution:AVPlayerItemLegibleOutputTextStylingResolutionSourceAndRulesOnly];
-        [m_avPlayerItem.get() addOutput:m_legibleOutput.get()];
-    }
-#endif
-
     bool hasCaptions = false;
 
     // This is called whenever the tracks collection changes so cache hasVideo and hasAudio since we are
@@ -931,7 +933,9 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
         // prior to becoming ready to play.
         setHasVideo([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicVisual] count]);
         setHasAudio([[m_avAsset.get() tracksWithMediaCharacteristic:AVMediaCharacteristicAudible] count]);
+#if !HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
         hasCaptions = [[m_avAsset.get() tracksWithMediaType:AVMediaTypeClosedCaption] count];
+#endif
     } else {
         bool hasVideo = false;
         bool hasAudio = false;
@@ -943,8 +947,10 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
                     hasVideo = true;
                 else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeAudio])
                     hasAudio = true;
+#if !HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
                 else if ([[assetTrack mediaType] isEqualToString:AVMediaTypeClosedCaption])
                     hasCaptions = true;
+#endif
             }
         }
         setHasVideo(hasVideo);
@@ -952,7 +958,7 @@ void MediaPlayerPrivateAVFoundationObjC::tracksChanged()
     }
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-    if (!hasCaptions) {
+    if (!hasCaptions && m_legibleOutput) {
         AVMediaSelectionGroupType *legibleGroup = [m_avAsset.get() mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicLegible];
         hasCaptions = [[AVMediaSelectionGroup playableMediaSelectionOptionsFromArray:[legibleGroup options]] count];
     }
