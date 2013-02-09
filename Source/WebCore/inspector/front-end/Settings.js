@@ -111,6 +111,7 @@ WebInspector.Settings = function()
     this.deviceOrientationOverride = this.createSetting("deviceOrientationOverride", "");
     this.showHeapSnapshotObjectsHiddenProperties = this.createSetting("showHeaSnapshotObjectsHiddenProperties", false);
     this.showNativeSnapshotUninstrumentedSize = this.createSetting("showNativeSnapshotUninstrumentedSize", false);
+    this.showWhitespaceInEditor = this.createSetting("showWhitespaceInEditor", false);
     this.searchInContentScripts = this.createSetting("searchInContentScripts", false);
     this.textEditorIndent = this.createSetting("textEditorIndent", "    ");
     this.lastDockState = this.createSetting("lastDockState", "");

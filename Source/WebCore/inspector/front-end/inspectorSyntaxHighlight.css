@@ -70,6 +70,31 @@
     color: black;
 }
 
+.webkit-whitespace-1::before {
+    content: "·";
+}
+
+.webkit-whitespace-2::before {
+    content: "··";
+}
+
+.webkit-whitespace-4::before {
+    content: "····";
+}
+
+.webkit-whitespace-8::before {
+    content: "········";
+}
+
+.webkit-whitespace-16::before {
+    content: "················";
+}
+
+.webkit-whitespace::before {
+    position: absolute;
+    color: rgb(175, 175, 175);
+}
+
 .webkit-html-comment {
     /* Keep this in sync with view-source.css (.webkit-html-comment) */
     color: rgb(35, 110, 37);

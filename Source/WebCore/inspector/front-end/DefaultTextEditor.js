@@ -1364,6 +1364,9 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
     this.element.addEventListener("textInput", this._handleTextInput.bind(this), false);
     this.element.addEventListener("cut", this._handleCut.bind(this), false);
 
+    this._showWhitespace = WebInspector.settings.showWhitespaceInEditor.get();
+    this._handleShowWhitespaceInEditorChange = this._handleShowWhitespaceInEditorChange.bind(this);
+
     this._container.addEventListener("focus", this._handleFocused.bind(this), false);
 
     this._highlightDescriptors = [];
@@ -1376,6 +1379,14 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
     this.buildChunks();
     this._registerShortcuts();
 }
+
+WebInspector.TextEditorMainPanel._ConsecutiveWhitespaceChars = {
+    1: " ",
+    2: "  ",
+    4: "    ",
+    8: "        ",
+    16: "                "
+};
 
 WebInspector.TextEditorMainPanel.prototype = {
     _registerShortcuts: function()
@@ -1397,6 +1408,21 @@ WebInspector.TextEditorMainPanel.prototype = {
         var handleShiftTabKey = this._handleTabKeyPress.bind(this, true);
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code)] = handleTabKey;
         this._shortcuts[WebInspector.KeyboardShortcut.makeKey(keys.Tab.code, modifiers.Shift)] = handleShiftTabKey;
+    },
+
+    _handleShowWhitespaceInEditorChange: function()
+    {
+        this._showWhitespace = WebInspector.settings.showWhitespaceInEditor.get();
+        var visibleFrom = this.scrollTop();
+        var visibleTo = visibleFrom + this.clientHeight();
+
+        if (!visibleTo)
+            return;
+
+        var result = this.findVisibleChunks(visibleFrom, visibleTo);
+        var startLine = this._textChunks[result.start].startLine;
+        var endLine = this._textChunks[result.end - 1].startLine + this._textChunks[result.end - 1].linesCount;
+        this._paintLines(startLine, endLine + 1);
     },
 
     /**
@@ -1474,6 +1500,8 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     wasShown: function()
     {
+        WebInspector.settings.showWhitespaceInEditor.addChangeListener(this._handleShowWhitespaceInEditorChange);
+
         this._boundSelectionChangeListener = this._handleSelectionChange.bind(this);
         document.addEventListener("selectionchange", this._boundSelectionChangeListener, false);
 
@@ -1483,6 +1511,8 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     willHide: function()
     {
+        WebInspector.settings.showWhitespaceInEditor.removeChangeListener(this._handleShowWhitespaceInEditorChange);
+
         document.removeEventListener("selectionchange", this._boundSelectionChangeListener, false);
         delete this._boundSelectionChangeListener;
 
@@ -1970,8 +2000,9 @@ WebInspector.TextEditorMainPanel.prototype = {
      * @param {Element} lineRow
      * @param {string} line
      * @param {Array.<{startColumn: number, endColumn: number, token: ?string}>} ranges
+     * @param {boolean=} splitWhitespaceSequences
      */
-    _renderRanges: function(lineRow, line, ranges)
+    _renderRanges: function(lineRow, line, ranges, splitWhitespaceSequences)
     {
         var decorationsElement = lineRow.decorationsElement;
 
@@ -1993,16 +2024,33 @@ WebInspector.TextEditorMainPanel.prototype = {
         for(var i = 0; i < ranges.length; i++) {
             var rangeStart = ranges[i].startColumn;
             var rangeEnd = ranges[i].endColumn;
-            var cssClass = ranges[i].token ? "webkit-" + ranges[i].token : "";
 
             if (plainTextStart < rangeStart) {
                 this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, rangeStart));
             }
-            this._insertSpanBefore(lineRow, decorationsElement, line.substring(rangeStart, rangeEnd + 1), cssClass);
+
+            if (splitWhitespaceSequences && ranges[i].token === "whitespace")
+                this._renderWhitespaceCharsWithFixedSizeSpans(lineRow, decorationsElement, rangeEnd - rangeStart + 1);
+            else
+                this._insertSpanBefore(lineRow, decorationsElement, line.substring(rangeStart, rangeEnd + 1), ranges[i].token ? "webkit-" + ranges[i].token : "");
             plainTextStart = rangeEnd + 1;
         }
         if (plainTextStart < line.length) {
             this._insertTextNodeBefore(lineRow, decorationsElement, line.substring(plainTextStart, line.length));
+        }
+    },
+
+    /**
+     * @param {Element} lineRow
+     * @param {Element} decorationsElement
+     * @param {number} length
+     */
+    _renderWhitespaceCharsWithFixedSizeSpans: function(lineRow, decorationsElement, length)
+    {
+        for (var whitespaceLength = 16; whitespaceLength > 0; whitespaceLength >>= 1) {
+            var cssClass = "webkit-whitespace webkit-whitespace-" + whitespaceLength;
+            for (; length >= whitespaceLength; length -= whitespaceLength)
+                this._insertSpanBefore(lineRow, decorationsElement, WebInspector.TextEditorMainPanel._ConsecutiveWhitespaceChars[whitespaceLength], cssClass);
         }
     },
 
@@ -2022,7 +2070,7 @@ WebInspector.TextEditorMainPanel.prototype = {
 
             var line = this._textModel.line(lineNumber);
             var ranges = syntaxHighlight.ranges;
-            this._renderRanges(lineRow, line, ranges);
+            this._renderRanges(lineRow, line, ranges, this._showWhitespace);
 
             if (overlayHighlight)
                 for(var i = 0; i < overlayHighlight.length; ++i)

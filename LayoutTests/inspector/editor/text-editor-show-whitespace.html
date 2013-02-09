@@ -1,0 +1,38 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="editor-test.js"></script>
+<script>
+function test()
+{
+function foo(a, b) {
+    // spaces in comment
+    a = "string with spaces";
+    a = 2;               a = 3;
+}
+
+    WebInspector.settings.showWhitespaceInEditor.set(false);
+    var textEditor = InspectorTest.createTestEditor();
+    textEditor.overrideViewportForTest(0, undefined, 3);
+    textEditor.mimeType = "text/javascript";
+    textEditor.setText(foo.toString());
+    InspectorTest.addResult("Actual text:");
+    InspectorTest.addResult(textEditor.text());
+    InspectorTest.addResult("========== Editor HTML showWhitespaceInEditor OFF ==========");
+    InspectorTest.dumpEditorHTML(textEditor, true);
+    WebInspector.settings.showWhitespaceInEditor.set(true);
+    InspectorTest.addResult("========== Editor HTML after setting showWhitespaceInEditor ON ==========");
+    InspectorTest.dumpEditorHTML(textEditor, true);
+    InspectorTest.completeTest();
+}
+
+</script>
+</head>
+
+<body onload="runTest();">
+<p>
+This test checks how text editor splits whitespace sequences to highlight them if the appropriate
+setting is set up.
+</p>
+</body>
+</html>
