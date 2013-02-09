@@ -1,3 +1,9 @@
+2013-02-09  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, another GTK+ build fix after r142343.
+
+        * Source/autotools/symbols.filter: Expose the InlineBox delete operator.
+
 2013-02-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Move workerThreadCount from TestRunner to WebCore Internals
