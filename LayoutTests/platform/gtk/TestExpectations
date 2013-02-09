@@ -1486,6 +1486,8 @@ webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOn
 
 webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Failure ]
 
+webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
