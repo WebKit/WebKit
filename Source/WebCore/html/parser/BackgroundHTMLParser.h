@@ -58,6 +58,8 @@ public:
     void finish();
     void stop();
 
+    void forcePlaintextForTextDocument();
+
 private:
     BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> >, const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<XSSAuditor>);
 

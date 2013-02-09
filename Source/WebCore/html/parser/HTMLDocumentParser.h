@@ -101,6 +101,8 @@ protected:
 
     HTMLTreeBuilder* treeBuilder() const { return m_treeBuilder.get(); }
 
+    void forcePlaintextForTextDocument();
+
 private:
     static PassRefPtr<HTMLDocumentParser> create(DocumentFragment* fragment, Element* contextElement, FragmentScriptingPermission permission)
     {

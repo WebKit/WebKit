@@ -355,6 +355,21 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
 
 #endif // ENABLE(THREADED_HTML_PARSER)
 
+void HTMLDocumentParser::forcePlaintextForTextDocument()
+{
+#if ENABLE(THREADED_HTML_PARSER)
+    if (shouldUseThreading()) {
+        // This method is called before any data is appended, so we have to start
+        // the background parser ourselves.
+        if (!m_haveBackgroundParser)
+            startBackgroundParser();
+
+        HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::forcePlaintextForTextDocument, m_backgroundParser));
+    } else
+#endif
+        m_tokenizer->setState(HTMLTokenizerState::PLAINTEXTState);
+}
+
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
     ASSERT(!isStopped());

@@ -96,6 +96,14 @@ void BackgroundHTMLParser::stop()
     delete this;
 }
 
+void BackgroundHTMLParser::forcePlaintextForTextDocument()
+{
+    // This is only used by the TextDocumentParser (a subclass of HTMLDocumentParser)
+    // to force us into the PLAINTEXT state w/o using a <plaintext> tag.
+    // The TextDocumentParser uses a <pre> tag for historical/compatibility reasons.
+    m_tokenizer->setState(HTMLTokenizerState::PLAINTEXTState);
+}
+
 void BackgroundHTMLParser::markEndOfFile()
 {
     // FIXME: This should use InputStreamPreprocessor::endOfFileMarker
