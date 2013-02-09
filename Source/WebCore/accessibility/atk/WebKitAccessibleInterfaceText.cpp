@@ -480,7 +480,6 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     // We need to find the exact start and end positions in the
     // selected node that intersects the selection, to later on get
     // the right values for the effective start and end offsets.
-    ExceptionCode ec = 0;
     Position nodeRangeStart;
     Position nodeRangeEnd;
     Node* node = coreObject->node();
@@ -491,7 +490,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     // nodeRangeStart to that position, otherwise to the selection's
     // start position (it would belong to the node anyway).
     Node* firstLeafNode = node->firstDescendant();
-    if (selRange->isPointInRange(firstLeafNode, 0, ec))
+    if (selRange->isPointInRange(firstLeafNode, 0, IGNORE_EXCEPTION))
         nodeRangeStart = firstPositionInOrBeforeNode(firstLeafNode);
     else
         nodeRangeStart = selRange->startPosition();
@@ -501,7 +500,7 @@ static void getSelectionOffsetsForObject(AccessibilityObject* coreObject, Visibl
     // nodeRangeEnd to that position, otherwise to the selection's
     // end position (it would belong to the node anyway).
     Node* lastLeafNode = node->lastDescendant();
-    if (selRange->isPointInRange(lastLeafNode, lastOffsetInNode(lastLeafNode), ec))
+    if (selRange->isPointInRange(lastLeafNode, lastOffsetInNode(lastLeafNode), IGNORE_EXCEPTION))
         nodeRangeEnd = lastPositionInOrAfterNode(lastLeafNode);
     else
         nodeRangeEnd = selRange->endPosition();

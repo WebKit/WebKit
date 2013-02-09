@@ -54,8 +54,7 @@ void SplitTextNodeCommand::doApply()
     if (!parent || !parent->rendererIsEditable())
         return;
 
-    ExceptionCode ec = 0;
-    String prefixText = m_text2->substringData(0, m_offset, ec);
+    String prefixText = m_text2->substringData(0, m_offset, IGNORE_EXCEPTION);
     if (prefixText.isEmpty())
         return;
 

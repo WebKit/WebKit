@@ -261,11 +261,10 @@ void RangeInputType::createShadowSubtree()
     Document* document = element()->document();
     RefPtr<HTMLDivElement> track = HTMLDivElement::create(document);
     track->setPseudo(AtomicString("-webkit-slider-runnable-track", AtomicString::ConstructFromLiteral));
-    ExceptionCode ec = 0;
-    track->appendChild(SliderThumbElement::create(document), ec);
+    track->appendChild(SliderThumbElement::create(document), IGNORE_EXCEPTION);
     RefPtr<HTMLElement> container = SliderContainerElement::create(document);
-    container->appendChild(track.release(), ec);
-    element()->userAgentShadowRoot()->appendChild(container.release(), ec);
+    container->appendChild(track.release(), IGNORE_EXCEPTION);
+    element()->userAgentShadowRoot()->appendChild(container.release(), IGNORE_EXCEPTION);
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const

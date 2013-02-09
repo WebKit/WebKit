@@ -397,11 +397,10 @@ void DOMSelection::addRange(Range* r)
     }
 
     RefPtr<Range> range = selection->selection().toNormalizedRange();
-    ExceptionCode ec = 0;
-    if (r->compareBoundaryPoints(Range::START_TO_START, range.get(), ec) == -1) {
+    if (r->compareBoundaryPoints(Range::START_TO_START, range.get(), IGNORE_EXCEPTION) == -1) {
         // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
-        if (r->compareBoundaryPoints(Range::START_TO_END, range.get(), ec) > -1) {
-            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), ec) == -1)
+        if (r->compareBoundaryPoints(Range::START_TO_END, range.get(), IGNORE_EXCEPTION) > -1) {
+            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), IGNORE_EXCEPTION) == -1)
                 // The original range and r intersect.
                 selection->setSelection(VisibleSelection(r->startPosition(), range->endPosition(), DOWNSTREAM));
             else
@@ -410,8 +409,9 @@ void DOMSelection::addRange(Range* r)
         }
     } else {
         // We don't support discontiguous selection. We don't do anything if r and range don't intersect.
+        ExceptionCode ec = 0;
         if (r->compareBoundaryPoints(Range::END_TO_START, range.get(), ec) < 1 && !ec) {
-            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), ec) == -1)
+            if (r->compareBoundaryPoints(Range::END_TO_END, range.get(), IGNORE_EXCEPTION) == -1)
                 // The original range contains r.
                 selection->setSelection(VisibleSelection(range.get()));
             else

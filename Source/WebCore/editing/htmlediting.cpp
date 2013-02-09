@@ -558,8 +558,7 @@ PassRefPtr<Range> extendRangeToWrappingNodes(PassRefPtr<Range> range, const Rang
     ASSERT(range);
     ASSERT(maximumRange);
 
-    ExceptionCode ec = 0;
-    Node* ancestor = range->commonAncestorContainer(ec);// find the cloeset common ancestor
+    Node* ancestor = range->commonAncestorContainer(IGNORE_EXCEPTION); // Find the closest common ancestor.
     Node* highestNode = 0;
     // traverse through ancestors as long as they are contained within the range, content-editable, and below rootNode (could be =0).
     while (ancestor && ancestor->rendererIsEditable() && isNodeVisiblyContainedWithin(ancestor, maximumRange) && ancestor != rootNode) {
@@ -572,7 +571,7 @@ PassRefPtr<Range> extendRangeToWrappingNodes(PassRefPtr<Range> range, const Rang
 
     // Create new range with the highest editable node contained within the range
     RefPtr<Range> extendedRange = Range::create(range->ownerDocument());
-    extendedRange->selectNode(highestNode, ec);
+    extendedRange->selectNode(highestNode, IGNORE_EXCEPTION);
     return extendedRange.release();
 }
 
@@ -1134,8 +1133,7 @@ bool isNodeVisiblyContainedWithin(Node* node, const Range* selectedRange)
     ASSERT(node);
     ASSERT(selectedRange);
     // If the node is inside the range, then it surely is contained within
-    ExceptionCode ec = 0;
-    if (selectedRange->compareNode(node, ec) == Range::NODE_INSIDE)
+    if (selectedRange->compareNode(node, IGNORE_EXCEPTION) == Range::NODE_INSIDE)
         return true;
 
     bool startIsVisuallySame = visiblePositionBeforeNode(node) == selectedRange->startPosition();

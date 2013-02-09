@@ -1223,8 +1223,7 @@ PassRefPtr<EditingStyle> EditingStyle::styleAtSelectionStart(const VisibleSelect
     // and find the background color of the common ancestor.
     if (shouldUseBackgroundColorInEffect && (selection.isRange() || hasTransparentBackgroundColor(style->m_mutableStyle.get()))) {
         RefPtr<Range> range(selection.toNormalizedRange());
-        ExceptionCode ec = 0;
-        if (PassRefPtr<CSSValue> value = backgroundColorInEffect(range->commonAncestorContainer(ec)))
+        if (PassRefPtr<CSSValue> value = backgroundColorInEffect(range->commonAncestorContainer(IGNORE_EXCEPTION)))
             style->setProperty(CSSPropertyBackgroundColor, value->cssText());
     }
 

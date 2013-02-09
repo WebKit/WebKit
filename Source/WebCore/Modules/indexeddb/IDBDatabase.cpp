@@ -262,9 +262,8 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
 
 void IDBDatabase::forceClose()
 {
-    ExceptionCode ec = 0;
     for (TransactionMap::const_iterator::Values it = m_transactions.begin().values(), end = m_transactions.end().values(); it != end; ++it)
-        (*it)->abort(ec);
+        (*it)->abort(IGNORE_EXCEPTION);
     this->close();
 }
 

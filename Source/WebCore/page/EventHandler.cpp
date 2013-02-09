@@ -2260,10 +2260,9 @@ bool EventHandler::dispatchMouseEvent(const AtomicString& eventType, Node* targe
                 // node on mouse down if it's selected and inside a focused node. It will be
                 // focused if the user does a mouseup over it, however, because the mouseup
                 // will set a selection inside it, which will call setFocuseNodeIfNeeded.
-                ExceptionCode ec = 0;
                 Node* n = node->isShadowRoot() ? toShadowRoot(node)->host() : node;
                 if (m_frame->selection()->isRange()
-                    && m_frame->selection()->toNormalizedRange()->compareNode(n, ec) == Range::NODE_INSIDE
+                    && m_frame->selection()->toNormalizedRange()->compareNode(n, IGNORE_EXCEPTION) == Range::NODE_INSIDE
                     && n->isDescendantOf(m_frame->document()->focusedNode()))
                     return true;
                     
@@ -3991,8 +3990,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
                 TouchEvent::create(effectiveTouches.get(), targetTouches.get(), changedTouches[state].m_touches.get(),
                                    stateName, touchEventTarget->toNode()->document()->defaultView(),
                                    0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
-            ExceptionCode ec = 0;
-            touchEventTarget->dispatchEvent(touchEvent.get(), ec);
+            touchEventTarget->dispatchEvent(touchEvent.get(), IGNORE_EXCEPTION);
             swallowedEvent = swallowedEvent || touchEvent->defaultPrevented() || touchEvent->defaultHandled();
         }
     }

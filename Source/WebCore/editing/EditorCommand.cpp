@@ -214,8 +214,7 @@ static bool expandSelectionToGranularity(Frame* frame, TextGranularity granulari
     RefPtr<Range> newRange = selection.toNormalizedRange();
     if (!newRange)
         return false;
-    ExceptionCode ec = 0;
-    if (newRange->collapsed(ec))
+    if (newRange->collapsed(IGNORE_EXCEPTION))
         return false;
     RefPtr<Range> oldRange = frame->selection()->selection().toNormalizedRange();
     EAffinity affinity = frame->selection()->affinity();

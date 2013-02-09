@@ -47,17 +47,15 @@ void MergeIdenticalElementsCommand::doApply()
 
     m_atChild = m_element2->firstChild();
 
-    ExceptionCode ec = 0;
-
     Vector<RefPtr<Node> > children;
     for (Node* child = m_element1->firstChild(); child; child = child->nextSibling())
         children.append(child);
 
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
-        m_element2->insertBefore(children[i].release(), m_atChild.get(), ec);
+        m_element2->insertBefore(children[i].release(), m_atChild.get(), IGNORE_EXCEPTION);
 
-    m_element1->remove(ec);
+    m_element1->remove(IGNORE_EXCEPTION);
 }
 
 void MergeIdenticalElementsCommand::doUnapply()

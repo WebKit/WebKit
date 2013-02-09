@@ -239,13 +239,12 @@ void TextTrackList::scheduleAddTrackEvent(PassRefPtr<TextTrack> track)
 void TextTrackList::asyncEventTimerFired(Timer<TextTrackList>*)
 {
     Vector<RefPtr<Event> > pendingEvents;
-    ExceptionCode ec = 0;
 
     ++m_dispatchingEvents;
     m_pendingEvents.swap(pendingEvents);
     size_t count = pendingEvents.size();
     for (size_t index = 0; index < count; ++index)
-        dispatchEvent(pendingEvents[index].release(), ec);
+        dispatchEvent(pendingEvents[index].release(), IGNORE_EXCEPTION);
     --m_dispatchingEvents;
 }
 

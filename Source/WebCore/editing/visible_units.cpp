@@ -539,10 +539,9 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
     Vector<UChar, 1024> string;
     unsigned prefixLength = 0;
 
-    ExceptionCode ec = 0;
     if (requiresContextForWordBoundary(c.characterAfter())) {
         RefPtr<Range> backwardsScanRange(d->createRange());
-        backwardsScanRange->setEnd(start.deprecatedNode(), start.deprecatedEditingOffset(), ec);
+        backwardsScanRange->setEnd(start.deprecatedNode(), start.deprecatedEditingOffset(), IGNORE_EXCEPTION);
         SimplifiedBackwardsTextIterator backwardsIterator(backwardsScanRange.get());
         while (!backwardsIterator.atEnd()) {
             const UChar* characters = backwardsIterator.characters();
@@ -556,8 +555,8 @@ static VisiblePosition nextBoundary(const VisiblePosition& c, BoundarySearchFunc
         }
     }
 
-    searchRange->selectNodeContents(boundary, ec);
-    searchRange->setStart(start.deprecatedNode(), start.deprecatedEditingOffset(), ec);
+    searchRange->selectNodeContents(boundary, IGNORE_EXCEPTION);
+    searchRange->setStart(start.deprecatedNode(), start.deprecatedEditingOffset(), IGNORE_EXCEPTION);
     TextIterator it(searchRange.get(), TextIteratorEmitsCharactersBetweenAllVisiblePositions);
     unsigned next = 0;
     bool inTextSecurityMode = start.deprecatedNode() && start.deprecatedNode()->renderer() && start.deprecatedNode()->renderer()->style()->textSecurity() != TSNONE;

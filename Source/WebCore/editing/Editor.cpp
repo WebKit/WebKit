@@ -263,8 +263,7 @@ bool Editor::canDeleteRange(Range* range) const
     if (!startContainer->rendererIsEditable() || !endContainer->rendererIsEditable())
         return false;
 
-    ExceptionCode ec;
-    if (range->collapsed(ec)) {
+    if (range->collapsed(IGNORE_EXCEPTION)) {
         VisiblePosition start(range->startPosition(), DOWNSTREAM);
         VisiblePosition previous = start.previous();
         // FIXME: We sometimes allow deletions at the start of editable roots, like when the caret is in an empty list item.
@@ -345,8 +344,7 @@ void Editor::pasteAsPlainText(const String& pastingText, bool smartReplace)
     Node* target = findEventTargetFromSelection();
     if (!target)
         return;
-    ExceptionCode ec = 0;
-    target->dispatchEvent(TextEvent::createForPlainTextPaste(m_frame->document()->domWindow(), pastingText, smartReplace), ec);
+    target->dispatchEvent(TextEvent::createForPlainTextPaste(m_frame->document()->domWindow(), pastingText, smartReplace), IGNORE_EXCEPTION);
 }
 
 void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool smartReplace, bool matchStyle)
@@ -354,8 +352,7 @@ void Editor::pasteAsFragment(PassRefPtr<DocumentFragment> pastingFragment, bool 
     Node* target = findEventTargetFromSelection();
     if (!target)
         return;
-    ExceptionCode ec = 0;
-    target->dispatchEvent(TextEvent::createForFragmentPaste(m_frame->document()->domWindow(), pastingFragment, smartReplace, matchStyle), ec);
+    target->dispatchEvent(TextEvent::createForFragmentPaste(m_frame->document()->domWindow(), pastingFragment, smartReplace, matchStyle), IGNORE_EXCEPTION);
 }
 
 void Editor::pasteAsPlainTextBypassingDHTML()
@@ -439,8 +436,7 @@ PassRefPtr<Range> Editor::selectedRange()
 
 bool Editor::shouldDeleteRange(Range* range) const
 {
-    ExceptionCode ec;
-    if (!range || range->collapsed(ec))
+    if (!range || range->collapsed(IGNORE_EXCEPTION))
         return false;
     
     if (!canDeleteRange(range))
@@ -650,9 +646,8 @@ bool Editor::dispatchCPPEvent(const AtomicString &eventType, ClipboardAccessPoli
     
     RefPtr<Clipboard> clipboard = newGeneralClipboard(policy, m_frame);
 
-    ExceptionCode ec = 0;
     RefPtr<Event> evt = ClipboardEvent::create(eventType, true, true, clipboard);
-    target->dispatchEvent(evt, ec);
+    target->dispatchEvent(evt, IGNORE_EXCEPTION);
     bool noDefaultProcessing = evt->defaultPrevented();
     if (noDefaultProcessing && policy == ClipboardWritable) {
         Pasteboard* pasteboard = Pasteboard::generalPasteboard();
@@ -1415,8 +1410,7 @@ void Editor::setComposition(const String& text, SetCompositionMode mode)
     Node* target = m_frame->document()->focusedNode();
     if (target) {
         RefPtr<CompositionEvent> event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->document()->domWindow(), text);
-        ExceptionCode ec = 0;
-        target->dispatchEvent(event, ec);
+        target->dispatchEvent(event, IGNORE_EXCEPTION);
     }
 
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
@@ -1486,9 +1480,8 @@ void Editor::setComposition(const String& text, const Vector<CompositionUnderlin
             else
               event = CompositionEvent::create(eventNames().compositionendEvent, m_frame->document()->domWindow(), text);
         }
-        ExceptionCode ec = 0;
         if (event.get())
-            target->dispatchEvent(event, ec);
+            target->dispatchEvent(event, IGNORE_EXCEPTION);
     }
 
     // If text is empty, then delete the old composition here.  If text is non-empty, InsertTextCommand::input
@@ -1565,8 +1558,6 @@ void Editor::learnSpelling()
 
 void Editor::advanceToNextMisspelling(bool startBeforeSelection)
 {
-    ExceptionCode ec = 0;
-
     // The basic approach is to search in two phases - from the selection end to the end of the doc, and
     // then we wrap and search from the doc start to (approximately) where we started.
     
@@ -1600,14 +1591,14 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             return;
         
         Position rangeCompliantPosition = position.parentAnchoredEquivalent();
-        spellingSearchRange->setStart(rangeCompliantPosition.deprecatedNode(), rangeCompliantPosition.deprecatedEditingOffset(), ec);
+        spellingSearchRange->setStart(rangeCompliantPosition.deprecatedNode(), rangeCompliantPosition.deprecatedEditingOffset(), IGNORE_EXCEPTION);
         startedWithSelection = false; // won't need to wrap
     }
     
     // topNode defines the whole range we want to operate on 
     Node* topNode = highestEditableRoot(position);
     // FIXME: lastOffsetForEditing() is wrong here if editingIgnoresContent(highestEditableRoot()) returns true (e.g. a <table>)
-    spellingSearchRange->setEnd(topNode, lastOffsetForEditing(topNode), ec);
+    spellingSearchRange->setEnd(topNode, lastOffsetForEditing(topNode), IGNORE_EXCEPTION);
 
     // If spellingSearchRange starts in the middle of a word, advance to the next word so we start checking
     // at a word boundary. Going back by one char and then forward by a word does the trick.
@@ -1618,7 +1609,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         // else we were already at the start of the editable node
     }
 
-    if (spellingSearchRange->collapsed(ec))
+    if (spellingSearchRange->collapsed(IGNORE_EXCEPTION))
         return; // nothing to search in
     
     // Get the spell checker if it is available
@@ -1643,7 +1634,7 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     String foundItem;
     RefPtr<Range> firstMisspellingRange;
     if (unifiedTextCheckerEnabled()) {
-        grammarSearchRange = spellingSearchRange->cloneRange(ec);
+        grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
         foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
         if (isSpelling) {
             misspelledWord = foundItem;
@@ -1656,12 +1647,12 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
         misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
 #if USE(GRAMMAR_CHECKING)
-        grammarSearchRange = spellingSearchRange->cloneRange(ec);
+        grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
         if (!misspelledWord.isEmpty()) {
             // Stop looking at start of next misspelled word
             CharacterIterator chars(grammarSearchRange.get());
             chars.advance(misspellingOffset);
-            grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), ec);
+            grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
         }
     
         if (isGrammarCheckingEnabled())
@@ -1672,12 +1663,12 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
     // If we found neither bad grammar nor a misspelled word, wrap and try again (but don't bother if we started at the beginning of the
     // block rather than at a selection).
     if (startedWithSelection && !misspelledWord && !badGrammarPhrase) {
-        spellingSearchRange->setStart(topNode, 0, ec);
+        spellingSearchRange->setStart(topNode, 0, IGNORE_EXCEPTION);
         // going until the end of the very first chunk we tested is far enough
-        spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, ec);
+        spellingSearchRange->setEnd(searchEndNodeAfterWrap, searchEndOffsetAfterWrap, IGNORE_EXCEPTION);
         
         if (unifiedTextCheckerEnabled()) {
-            grammarSearchRange = spellingSearchRange->cloneRange(ec);
+            grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
             foundItem = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspellingOrBadGrammar(isGrammarCheckingEnabled(), isSpelling, foundOffset, grammarDetail);
             if (isSpelling) {
                 misspelledWord = foundItem;
@@ -1690,12 +1681,12 @@ void Editor::advanceToNextMisspelling(bool startBeforeSelection)
             misspelledWord = TextCheckingHelper(client(), spellingSearchRange).findFirstMisspelling(misspellingOffset, false, firstMisspellingRange);
 
 #if USE(GRAMMAR_CHECKING)
-            grammarSearchRange = spellingSearchRange->cloneRange(ec);
+            grammarSearchRange = spellingSearchRange->cloneRange(IGNORE_EXCEPTION);
             if (!misspelledWord.isEmpty()) {
                 // Stop looking at start of next misspelled word
                 CharacterIterator chars(grammarSearchRange.get());
                 chars.advance(misspellingOffset);
-                grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), ec);
+                grammarSearchRange->setEnd(chars.range()->startContainer(), chars.range()->startOffset(), IGNORE_EXCEPTION);
             }
 
             if (isGrammarCheckingEnabled())
@@ -2794,8 +2785,7 @@ static bool isFrameInRange(Frame* frame, Range* range)
     bool inRange = false;
     for (HTMLFrameOwnerElement* ownerElement = frame->ownerElement(); ownerElement; ownerElement = ownerElement->document()->ownerElement()) {
         if (ownerElement->document() == range->ownerDocument()) {
-            ExceptionCode ec = 0;
-            inRange = range->intersectsNode(ownerElement, ec);
+            inRange = range->intersectsNode(ownerElement, IGNORE_EXCEPTION);
             break;
         }
     }

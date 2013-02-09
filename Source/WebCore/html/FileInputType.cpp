@@ -302,8 +302,7 @@ bool FileInputType::isFileUpload() const
 void FileInputType::createShadowSubtree()
 {
     ASSERT(element()->shadow());
-    ExceptionCode ec = 0;
-    element()->userAgentShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), ec);
+    element()->userAgentShadowRoot()->appendChild(element()->multiple() ? UploadButtonElement::createForMultiple(element()->document()): UploadButtonElement::create(element()->document()), IGNORE_EXCEPTION);
 }
 
 void FileInputType::disabledAttributeChanged()

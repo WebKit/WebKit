@@ -498,8 +498,7 @@ bool FileContentRequest::didGetFile(File* file)
     m_reader->setOnload(this);
     m_reader->setOnerror(this);
 
-    ExceptionCode ec = 0;
-    m_reader->readAsArrayBuffer(blob.get(), ec);
+    m_reader->readAsArrayBuffer(blob.get(), IGNORE_EXCEPTION);
     return true;
 }
 

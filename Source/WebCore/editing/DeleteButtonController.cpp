@@ -320,9 +320,8 @@ void DeleteButtonController::hide()
     m_outlineElement = 0;
     m_buttonElement = 0;
 
-    ExceptionCode ec = 0;
     if (m_containerElement && m_containerElement->parentNode())
-        m_containerElement->parentNode()->removeChild(m_containerElement.get(), ec);
+        m_containerElement->parentNode()->removeChild(m_containerElement.get(), IGNORE_EXCEPTION);
 
     if (m_target) {
         if (m_wasStaticPositioned)

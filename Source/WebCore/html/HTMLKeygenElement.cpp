@@ -75,14 +75,13 @@ inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Docume
     getSupportedKeySizes(keys);
 
     RefPtr<HTMLSelectElement> select = KeygenSelectElement::create(document);
-    ExceptionCode ec = 0;
     for (size_t i = 0; i < keys.size(); ++i) {
         RefPtr<HTMLOptionElement> option = HTMLOptionElement::create(document);
-        select->appendChild(option, ec);
-        option->appendChild(Text::create(document, keys[i]), ec);
+        select->appendChild(option, IGNORE_EXCEPTION);
+        option->appendChild(Text::create(document, keys[i]), IGNORE_EXCEPTION);
     }
 
-    ensureUserAgentShadowRoot()->appendChild(select, ec);
+    ensureUserAgentShadowRoot()->appendChild(select, IGNORE_EXCEPTION);
 }
 
 PassRefPtr<HTMLKeygenElement> HTMLKeygenElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)

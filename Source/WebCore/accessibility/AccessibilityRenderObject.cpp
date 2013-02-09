@@ -1392,10 +1392,9 @@ PlainTextRange AccessibilityRenderObject::ariaSelectedTextRange() const
     if (!node)
         return PlainTextRange();
     
-    ExceptionCode ec = 0;
     VisibleSelection visibleSelection = selection();
     RefPtr<Range> currentSelectionRange = visibleSelection.toNormalizedRange();
-    if (!currentSelectionRange || !currentSelectionRange->intersectsNode(node, ec))
+    if (!currentSelectionRange || !currentSelectionRange->intersectsNode(node, IGNORE_EXCEPTION))
         return PlainTextRange();
     
     int start = indexForVisiblePosition(visibleSelection.start());
@@ -1864,9 +1863,8 @@ VisiblePosition AccessibilityRenderObject::visiblePositionForIndex(int index) co
     if (index <= 0)
         return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
     
-    ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(m_renderer->document());
-    range->selectNodeContents(node, ec);
+    range->selectNodeContents(node, IGNORE_EXCEPTION);
     CharacterIterator it(range.get());
     it.advance(index - 1);
     return VisiblePosition(Position(it.range()->endContainer(), it.range()->endOffset(), Position::PositionIsOffsetInAnchor), UPSTREAM);
@@ -1890,10 +1888,9 @@ int AccessibilityRenderObject::indexForVisiblePosition(const VisiblePosition& po
     if (indexPosition.isNull() || highestEditableRoot(indexPosition, HasEditableAXRole) != node)
         return 0;
     
-    ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(m_renderer->document());
-    range->setStart(node, 0, ec);
-    range->setEnd(indexPosition, ec);
+    range->setStart(node, 0, IGNORE_EXCEPTION);
+    range->setEnd(indexPosition, IGNORE_EXCEPTION);
 
 #if PLATFORM(GTK)
     // We need to consider replaced elements for GTK, as they will be

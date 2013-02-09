@@ -101,8 +101,7 @@ static void findMisspellings(TextCheckerClient* client, const UChar* text, int s
 
 static PassRefPtr<Range> expandToParagraphBoundary(PassRefPtr<Range> range)
 {
-    ExceptionCode ec = 0;
-    RefPtr<Range> paragraphRange = range->cloneRange(ec);
+    RefPtr<Range> paragraphRange = range->cloneRange(IGNORE_EXCEPTION);
     setStart(paragraphRange.get(), startOfParagraph(range->startPosition()));
     setEnd(paragraphRange.get(), endOfParagraph(range->endPosition()));
     return paragraphRange;
@@ -298,7 +297,6 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
     String firstFoundItem;
     String misspelledWord;
     String badGrammarPhrase;
-    ExceptionCode ec = 0;
     
     // Initialize out parameters; these will be updated if we find something to return.
     outIsSpelling = true;
@@ -311,7 +309,7 @@ String TextCheckingHelper::findFirstMisspellingOrBadGrammar(bool checkGrammar, b
     // Expand the search range to encompass entire paragraphs, since text checking needs that much context.
     // Determine the character offset from the start of the paragraph to the start of the original search range,
     // since we will want to ignore results in this area.
-    RefPtr<Range> paragraphRange = m_range->cloneRange(ec);
+    RefPtr<Range> paragraphRange = m_range->cloneRange(IGNORE_EXCEPTION);
     setStart(paragraphRange.get(), startOfParagraph(m_range->startPosition()));
     int totalRangeLength = TextIterator::rangeLength(paragraphRange.get());
     setEnd(paragraphRange.get(), endOfParagraph(m_range->startPosition()));
@@ -527,8 +525,7 @@ bool TextCheckingHelper::isUngrammatical(Vector<String>& guessesVector) const
     if (!m_client)
         return false;
 
-    ExceptionCode ec;
-    if (!m_range || m_range->collapsed(ec))
+    if (!m_range || m_range->collapsed(IGNORE_EXCEPTION))
         return false;
     
     // Returns true only if the passed range exactly corresponds to a bad grammar detail range. This is analogous
@@ -573,11 +570,10 @@ Vector<String> TextCheckingHelper::guessesForMisspelledOrUngrammaticalRange(bool
         return Vector<String>();
 
     Vector<String> guesses;
-    ExceptionCode ec;
     misspelled = false;
     ungrammatical = false;
     
-    if (!m_client || !m_range || m_range->collapsed(ec))
+    if (!m_client || !m_range || m_range->collapsed(IGNORE_EXCEPTION))
         return guesses;
 
     // Expand the range to encompass entire paragraphs, since text checking needs that much context.

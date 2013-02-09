@@ -877,8 +877,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         unsigned keyURISize = keyURI.length() * sizeof(UChar);
         RefPtr<ArrayBuffer> initDataBuffer = ArrayBuffer::create(4 + keyURISize, 1);
         RefPtr<DataView> initDataView = DataView::create(initDataBuffer, 0, initDataBuffer->byteLength());
-        ExceptionCode ec = 0;
-        initDataView->setUint32(0, keyURISize, true, ec);
+        initDataView->setUint32(0, keyURISize, true, IGNORE_EXCEPTION);
 
         RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, 4, keyURI.length());
         keyURIArray->setRange(keyURI.characters(), keyURI.length() / sizeof(unsigned char), 0);

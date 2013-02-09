@@ -99,11 +99,10 @@ void HTMLTitleElement::setText(const String &value)
 {
     RefPtr<Node> protectFromMutationEvents(this);
 
-    ExceptionCode ec = 0;
     int numChildren = childNodeCount();
     
     if (numChildren == 1 && firstChild()->isTextNode())
-        toText(firstChild())->setData(value, ec);
+        toText(firstChild())->setData(value, IGNORE_EXCEPTION);
     else {
         // We make a copy here because entity of "value" argument can be Document::m_title,
         // which goes empty during removeChildren() invocation below,
@@ -113,7 +112,7 @@ void HTMLTitleElement::setText(const String &value)
         if (numChildren > 0)
             removeChildren();
 
-        appendChild(document()->createTextNode(valueCopy.impl()), ec);
+        appendChild(document()->createTextNode(valueCopy.impl()), IGNORE_EXCEPTION);
     }
 }
 

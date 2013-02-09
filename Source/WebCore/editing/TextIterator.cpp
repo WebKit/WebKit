@@ -2601,8 +2601,7 @@ static size_t findPlainText(CharacterIterator& it, const String& target, FindOpt
     if (buffer.needsMoreContext()) {
         RefPtr<Range> startRange = it.range();
         RefPtr<Range> beforeStartRange = startRange->ownerDocument()->createRange();
-        ExceptionCode ec = 0;
-        beforeStartRange->setEnd(startRange->startContainer(), startRange->startOffset(), ec);
+        beforeStartRange->setEnd(startRange->startContainer(), startRange->startOffset(), IGNORE_EXCEPTION);
         for (SimplifiedBackwardsTextIterator backwardsIterator(beforeStartRange.get()); !backwardsIterator.atEnd(); backwardsIterator.advance()) {
             buffer.prependContext(backwardsIterator.characters(), backwardsIterator.length());
             if (!buffer.needsMoreContext())

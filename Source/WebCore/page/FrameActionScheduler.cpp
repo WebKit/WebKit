@@ -27,6 +27,7 @@
 #include "FrameActionScheduler.h"
 
 #include "Event.h"
+#include "ExceptionCodePlaceholder.h"
 #include "Node.h"
 #include <wtf/Vector.h>
 
@@ -43,9 +44,8 @@ public:
     virtual void fire()
     {
         // Only dispatch events to nodes that are in the document
-        ExceptionCode ec = 0;
         if (m_eventTarget->inDocument())
-            m_eventTarget->dispatchEvent(m_event, ec);
+            m_eventTarget->dispatchEvent(m_event, IGNORE_EXCEPTION);
     }
 
 private:

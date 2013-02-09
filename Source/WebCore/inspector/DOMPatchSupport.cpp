@@ -99,8 +99,7 @@ void DOMPatchSupport::patchDocument(const String& markup)
     OwnPtr<Digest> oldInfo = createDigest(m_document->documentElement(), 0);
     OwnPtr<Digest> newInfo = createDigest(newDocument->documentElement(), &m_unusedNodesMap);
 
-    ExceptionCode ec = 0;
-    if (!innerPatchNode(oldInfo.get(), newInfo.get(), ec)) {
+    if (!innerPatchNode(oldInfo.get(), newInfo.get(), IGNORE_EXCEPTION)) {
         // Fall back to rewrite.
         m_document->write(markup);
         m_document->close();

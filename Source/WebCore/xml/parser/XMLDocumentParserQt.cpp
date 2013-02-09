@@ -403,9 +403,8 @@ void XMLDocumentParser::parse()
                 QString entity = m_stream.name().toString();
                 if (!m_leafTextNode)
                     enterText();
-                ExceptionCode ec = 0;
                 // qDebug()<<" ------- adding entity "<<str;
-                m_leafTextNode->appendData(decodeNamedEntity(entity), ec);
+                m_leafTextNode->appendData(decodeNamedEntity(entity), IGNORE_EXCEPTION);
             }
             break;
         }
@@ -427,14 +426,13 @@ void XMLDocumentParser::parse()
 void XMLDocumentParser::startDocument()
 {
     initializeParserContext();
-    ExceptionCode ec = 0;
 
     if (!m_parsingFragment) {
-        document()->setXMLStandalone(m_stream.isStandaloneDocument(), ec);
+        document()->setXMLStandalone(m_stream.isStandaloneDocument(), IGNORE_EXCEPTION);
 
         QStringRef version = m_stream.documentVersion();
         if (!version.isEmpty())
-            document()->setXMLVersion(version, ec);
+            document()->setXMLVersion(version, IGNORE_EXCEPTION);
         QStringRef encoding = m_stream.documentEncoding();
         if (!encoding.isEmpty())
             document()->setXMLEncoding(encoding);
@@ -564,8 +562,7 @@ void XMLDocumentParser::parseCharacters()
 {
     if (!m_leafTextNode)
         enterText();
-    ExceptionCode ec = 0;
-    m_leafTextNode->appendData(m_stream.text(), ec);
+    m_leafTextNode->appendData(m_stream.text(), IGNORE_EXCEPTION);
 }
 
 void XMLDocumentParser::parseProcessingInstruction()

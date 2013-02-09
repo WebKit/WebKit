@@ -86,17 +86,15 @@ void SplitElementCommand::doUnapply()
 
     RefPtr<Node> refChild = m_element2->firstChild();
 
-    ExceptionCode ec = 0;
-
     size_t size = children.size();
     for (size_t i = 0; i < size; ++i)
-        m_element2->insertBefore(children[i].get(), refChild.get(), ec);
+        m_element2->insertBefore(children[i].get(), refChild.get(), IGNORE_EXCEPTION);
 
     // Recover the id attribute of the original element.
     if (m_element1->hasAttribute(HTMLNames::idAttr))
         m_element2->setAttribute(HTMLNames::idAttr, m_element1->getAttribute(HTMLNames::idAttr));
 
-    m_element1->remove(ec);
+    m_element1->remove(IGNORE_EXCEPTION);
 }
 
 void SplitElementCommand::doReapply()
