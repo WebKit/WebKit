@@ -137,6 +137,8 @@ private:
     void processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
 #endif
 
+    Document* contextForParsingSession();
+
     enum SynchronousMode {
         AllowYield,
         ForceSynchronous,

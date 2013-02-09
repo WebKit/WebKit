@@ -478,9 +478,8 @@ bool DocumentLoader::isLoadingInAPISense() const
             return true;
         if (m_cachedResourceLoader->requestCount())
             return true;
-        if (DocumentParser* parser = doc->parser())
-            if (parser->processingData())
-                return true;
+        if (doc->hasActiveParser())
+            return true;
     }
     return frameLoader()->subframeIsLoading();
 }

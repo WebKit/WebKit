@@ -1168,6 +1168,10 @@ public:
     void adjustFloatQuadsForScrollAndAbsoluteZoomAndFrameScale(Vector<FloatQuad>&, RenderObject*);
     void adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect&, RenderObject*);
 
+    bool hasActiveParser();
+    void incrementActiveParserCount() { ++m_activeParserCount; }
+    void decrementActiveParserCount();
+
     void setContextFeatures(PassRefPtr<ContextFeatures>);
     ContextFeatures* contextFeatures() { return m_contextFeatures.get(); }
 
@@ -1307,6 +1311,7 @@ private:
 
     RefPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
+    unsigned m_activeParserCount;
     RefPtr<ContextFeatures> m_contextFeatures;
 
     bool m_wellFormed;

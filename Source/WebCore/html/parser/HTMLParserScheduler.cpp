@@ -61,6 +61,38 @@ static int parserChunkSize(Page* page)
     return defaultParserChunkSize;
 }
 
+ActiveParserSession::ActiveParserSession(Document* document)
+    : m_document(document)
+{
+    if (!m_document)
+        return;
+    m_document->incrementActiveParserCount();
+}
+
+ActiveParserSession::~ActiveParserSession()
+{
+    if (!m_document)
+        return;
+    m_document->decrementActiveParserCount();
+}
+
+PumpSession::PumpSession(unsigned& nestingLevel, Document* document)
+    : NestingLevelIncrementer(nestingLevel)
+    , ActiveParserSession(document)
+    // Setting processedTokens to INT_MAX causes us to check for yields
+    // after any token during any parse where yielding is allowed.
+    // At that time we'll initialize startTime.
+    , processedTokens(INT_MAX)
+    , startTime(0)
+    , needsYield(false)
+    , didSeeScript(false)
+{
+}
+
+PumpSession::~PumpSession()
+{
+}
+
 HTMLParserScheduler::HTMLParserScheduler(HTMLDocumentParser* parser)
     : m_parser(parser)
     , m_parserTimeLimit(parserTimeLimit(m_parser->document()->page()))

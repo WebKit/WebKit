@@ -313,6 +313,8 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
+    ActiveParserSession session(contextForParsingSession());
+
     m_currentChunk = chunk;
     OwnPtr<CompactHTMLTokenStream> tokens = m_currentChunk->tokens.release();
 
@@ -370,6 +372,15 @@ void HTMLDocumentParser::forcePlaintextForTextDocument()
         m_tokenizer->setState(HTMLTokenizerState::PLAINTEXTState);
 }
 
+Document* HTMLDocumentParser::contextForParsingSession()
+{
+    // The parsing session should interact with the document only when parsing
+    // non-fragments. Otherwise, we might delay the load event mistakenly.
+    if (isParsingFragment())
+        return 0;
+    return document();
+}
+
 void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 {
     ASSERT(!isStopped());
@@ -379,7 +390,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
 
     ASSERT(!shouldUseThreading() || mode == ForceSynchronous);
 
-    PumpSession session(m_pumpSessionNestingLevel);
+    PumpSession session(m_pumpSessionNestingLevel, contextForParsingSession());
 
     // We tell the InspectorInstrumentation about every pump, even if we
     // end up pumping nothing.  It can filter out empty pumps itself.
