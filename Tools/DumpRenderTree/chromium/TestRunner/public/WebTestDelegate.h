@@ -40,7 +40,6 @@ namespace WebKit {
 class WebDeviceOrientation;
 class WebGamepads;
 class WebIntentRequest;
-struct WebContextMenuData;
 struct WebRect;
 struct WebURLError;
 }
@@ -52,10 +51,8 @@ class WebTask;
 
 class WebTestDelegate {
 public:
-    virtual void clearContextMenuData() = 0;
     virtual void clearEditCommand() = 0;
     virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const = 0;
     virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
     virtual void printMessage(const std::string& message) = 0;
 

@@ -236,7 +236,6 @@ bool WebViewHost::runModalPromptDialog(WebFrame* frame, const WebString& message
 
 void WebViewHost::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
 {
-    m_lastContextMenuData = adoptPtr(new WebContextMenuData(contextMenuData));
 }
 
 void WebViewHost::didUpdateLayout()
@@ -637,16 +636,6 @@ bool WebViewHost::willCheckAndDispatchMessageEvent(WebFrame* sourceFrame, WebFra
 }
 
 // WebTestDelegate ------------------------------------------------------------
-
-WebContextMenuData* WebViewHost::lastContextMenuData() const
-{
-    return m_lastContextMenuData.get();
-}
-
-void WebViewHost::clearContextMenuData()
-{
-    m_lastContextMenuData.clear();
-}
 
 void WebViewHost::setEditCommand(const string& name, const string& value)
 {

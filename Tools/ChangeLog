@@ -1,5 +1,33 @@
 2013-02-09  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] move context menu data tracking to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=109313
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebKit):
+        (WebTestDelegate):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestRunner::WebTestProxy::showContextMenu):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::setContextMenuData):
+        (WebTestRunner::EventSender::contextClick):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (WebKit):
+        (EventSender):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::showContextMenu):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::showContextMenu):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
+2013-02-09  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] move methods that change initial testRunner state to TestRunner library
         https://bugs.webkit.org/show_bug.cgi?id=109043
 

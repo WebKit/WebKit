@@ -67,6 +67,7 @@ class WebURLRequest;
 class WebURLResponse;
 class WebView;
 struct WebConsoleMessage;
+struct WebContextMenuData;
 struct WebPluginParams;
 struct WebPoint;
 struct WebSize;
@@ -127,6 +128,7 @@ protected:
     void didStopLoading();
     bool isSmartInsertDeleteEnabled();
     bool isSelectTrailingWhitespaceEnabled();
+    void showContextMenu(WebKit::WebFrame*, const WebKit::WebContextMenuData&);
 
     void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
     void didCancelClientRedirect(WebKit::WebFrame*);
@@ -328,6 +330,11 @@ public:
     virtual bool isSelectTrailingWhitespaceEnabled()
     {
         return WebTestProxyBase::isSelectTrailingWhitespaceEnabled();
+    }
+    void showContextMenu(WebKit::WebFrame* frame, const WebKit::WebContextMenuData& contextMenuData)
+    {
+        WebTestProxyBase::showContextMenu(frame, contextMenuData);
+        Base::showContextMenu(frame, contextMenuData);
     }
 
     // WebFrameClient implementation.

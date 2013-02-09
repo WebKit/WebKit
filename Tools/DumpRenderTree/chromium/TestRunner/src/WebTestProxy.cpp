@@ -627,6 +627,11 @@ bool WebTestProxyBase::isSelectTrailingWhitespaceEnabled()
     return m_testInterfaces->testRunner()->isSelectTrailingWhitespaceEnabled();
 }
 
+void WebTestProxyBase::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
+{
+    m_testInterfaces->eventSender()->setContextMenuData(contextMenuData);
+}
+
 void WebTestProxyBase::willPerformClientRedirect(WebFrame* frame, const WebURL&, const WebURL& to, double, double)
 {
     if (m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {

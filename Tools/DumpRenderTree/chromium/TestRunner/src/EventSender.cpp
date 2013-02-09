@@ -319,6 +319,11 @@ EventSender::EventSender()
 #endif
 }
 
+void EventSender::setContextMenuData(const WebContextMenuData& contextMenuData)
+{
+    m_lastContextMenuData = auto_ptr<WebContextMenuData>(new WebContextMenuData(contextMenuData));
+}
+
 void EventSender::reset()
 {
     // The test should have finished a drag and the mouse button state.
@@ -849,7 +854,7 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
 
     // Clears last context menu data because we need to know if the context menu be requested 
     // after following mouse events.
-    m_delegate->clearContextMenuData();
+    m_lastContextMenuData.reset();
 
     // Generate right mouse down and up.
     WebMouseEvent event;
@@ -867,8 +872,7 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
     pressedButton = WebMouseEvent::ButtonNone;
 #endif
 
-    WebContextMenuData* lastContextMenu = m_delegate->lastContextMenuData();
-    result->set(WebBindings::makeStringArray(makeMenuItemStringsFor(lastContextMenu, m_delegate)));
+    result->set(WebBindings::makeStringArray(makeMenuItemStringsFor(m_lastContextMenuData.get(), m_delegate)));
 }
 
 class MouseDownTask: public WebMethodTask<EventSender> {

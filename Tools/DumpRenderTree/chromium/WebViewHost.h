@@ -109,8 +109,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
 #endif
 
     // WebTestDelegate.
-    virtual WebKit::WebContextMenuData* lastContextMenuData() const OVERRIDE;
-    virtual void clearContextMenuData() OVERRIDE;
     virtual void setEditCommand(const std::string& name, const std::string& value) OVERRIDE;
     virtual void clearEditCommand() OVERRIDE;
     virtual void setGamepadData(const WebKit::WebGamepads&) OVERRIDE;
