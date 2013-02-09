@@ -3563,6 +3563,8 @@ void WebPageProxy::processDidCrash()
 {
     ASSERT(m_pageClient);
 
+    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+
     m_isValid = false;
     m_isPageSuspended = false;
 
@@ -3678,8 +3680,6 @@ void WebPageProxy::processDidCrash()
     dismissCorrectionPanel(ReasonForDismissingAlternativeTextIgnored);
     m_pageClient->dismissDictionaryLookupPanel();
 #endif
-
-    m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
 }
 
 WebPageCreationParameters WebPageProxy::creationParameters() const
