@@ -95,7 +95,7 @@ IDBCursor::~IDBCursor()
 const String& IDBCursor::direction() const
 {
     IDB_TRACE("IDBCursor::direction");
-    return directionToString(m_direction, ASSERT_NO_EXCEPTION);
+    return directionToString(m_direction);
 }
 
 const ScriptValue& IDBCursor::key() const
@@ -313,7 +313,7 @@ IDBCursor::Direction IDBCursor::stringToDirection(const String& directionString,
     return IDBCursor::NEXT;
 }
 
-const AtomicString& IDBCursor::directionToString(unsigned short direction, ExceptionCode& ec)
+const AtomicString& IDBCursor::directionToString(unsigned short direction)
 {
     switch (direction) {
     case IDBCursor::NEXT:
@@ -329,7 +329,7 @@ const AtomicString& IDBCursor::directionToString(unsigned short direction, Excep
         return IDBCursor::directionPrevUnique();
 
     default:
-        ec = TypeError;
+        ASSERT_NOT_REACHED();
         return IDBCursor::directionNext();
     }
 }
