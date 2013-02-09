@@ -1,3 +1,14 @@
+2013-02-09  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add a link to EFL perf bot on build.webkit.org
+        https://bugs.webkit.org/show_bug.cgi?id=109342
+
+        Reviewed by Gyuyoung Kim.
+
+        Added.
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html:
+
 2013-02-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed. Update my IRC nickname in committers.py.
