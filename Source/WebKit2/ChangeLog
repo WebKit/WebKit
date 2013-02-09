@@ -1,5 +1,21 @@
 2013-02-08  Dean Jackson  <dino@apple.com>
 
+        Remove use of plugInStartLabelImage
+        https://bugs.webkit.org/show_bug.cgi?id=108273
+
+        Reviewed by Simon Fraser.
+
+        Remove any use of plugInStartLabelImage. While there, implement plugInStartLabelTitle
+        and plugInStartLabelSubtitle to return the values from the client.
+        implement them.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h: Remove callback and entry from client structure.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp: Remove plugInStartLabelImage.
+        (WebKit::InjectedBundlePageUIClient::plugInStartLabelTitle): Ask the client bundle for value.
+        (WebKit::InjectedBundlePageUIClient::plugInStartLabelSubtitle): Ditto.
+
+2013-02-08  Dean Jackson  <dino@apple.com>
+
         Snapshotted plug-in should use shadow root
         https://bugs.webkit.org/show_bug.cgi?id=108284
 
