@@ -11,15 +11,15 @@ if (window.testRunner) {
 function runTests()
 {
     if (window.testRunner)
-        log("PASS: workerThreadCount = " + testRunner.workerThreadCount);
+        log("PASS: workerThreadCount = " + internals.workerThreadCount);
     var worker = createWorker();
     worker.postMessage("ping");
     worker.onmessage = function(event) {
         if (window.testRunner) {
-            if (testRunner.workerThreadCount == 1)
+            if (internals.workerThreadCount == 1)
                 log("PASS: Worker thread created");
             else
-                log("FAIL: After thread creation: testRunner.workerThreadCount = " + testRunner.workerThreadCount);
+                log("FAIL: After thread creation: internals.workerThreadCount = " + internals.workerThreadCount);
         }
 
         // Shutdown the worker.

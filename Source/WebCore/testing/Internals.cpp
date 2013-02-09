@@ -87,6 +87,7 @@
 #include "TreeScope.h"
 #include "TypeConversions.h"
 #include "ViewportArguments.h"
+#include "WorkerThread.h"
 #include <wtf/text/StringBuffer.h>
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -281,6 +282,15 @@ InternalSettings* Internals::settings() const
     if (!page)
         return 0;
     return InternalSettings::from(page);
+}
+
+unsigned Internals::workerThreadCount() const
+{
+#if ENABLE(WORKERS)
+    return WorkerThread::workerThreadCount();
+#else
+    return 0;
+#endif
 }
 
 String Internals::address(Node* node)

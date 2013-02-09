@@ -58,7 +58,6 @@
 #include <TextIterator.h>
 #include <bindings/js/GCController.h>
 #include <history/HistoryItem.h>
-#include <workers/WorkerThread.h>
 #include <wtf/HashMap.h>
 #include <wtf/UnusedParam.h>
 
@@ -437,15 +436,6 @@ void DumpRenderTreeSupportEfl::garbageCollectorCollectOnAlternateThread(bool wai
 size_t DumpRenderTreeSupportEfl::javaScriptObjectsCount()
 {
     return WebCore::JSDOMWindow::commonJSGlobalData()->heap.objectCount();
-}
-
-unsigned DumpRenderTreeSupportEfl::workerThreadCount()
-{
-#if ENABLE(WORKERS)
-    return WebCore::WorkerThread::workerThreadCount();
-#else
-    return 0;
-#endif
 }
 
 void DumpRenderTreeSupportEfl::setDeadDecodedDataDeletionInterval(double interval)

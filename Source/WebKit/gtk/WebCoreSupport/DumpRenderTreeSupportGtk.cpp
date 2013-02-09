@@ -68,7 +68,6 @@
 #include "Settings.h"
 #include "TextIterator.h"
 #include "WebKitAccessibleWrapperAtk.h"
-#include "WorkerThread.h"
 #include "webkitglobalsprivate.h"
 #include "webkitwebframe.h"
 #include "webkitwebframeprivate.h"
@@ -530,15 +529,6 @@ void DumpRenderTreeSupportGtk::clearOpener(WebKitWebFrame* frame)
     Frame* coreFrame = core(frame);
     if (coreFrame)
         coreFrame->loader()->setOpener(0);
-}
-
-unsigned int DumpRenderTreeSupportGtk::workerThreadCount()
-{
-#if ENABLE(WORKERS)
-    return WebCore::WorkerThread::workerThreadCount();
-#else
-    return 0;
-#endif
 }
 
 bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* targetString, WebKitFindOptions findOptions)

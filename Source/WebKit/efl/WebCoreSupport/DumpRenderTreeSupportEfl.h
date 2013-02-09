@@ -95,7 +95,6 @@ public:
     static void garbageCollectorCollect();
     static void garbageCollectorCollectOnAlternateThread(bool waitUntilDone);
     static size_t javaScriptObjectsCount();
-    static unsigned workerThreadCount();
 
     static void setDeadDecodedDataDeletionInterval(double);
 

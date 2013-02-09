@@ -36,7 +36,7 @@ function waitUntilThreadCountMatches(callback, count)
         return;
     }
 
-    if (testRunner.workerThreadCount == count) {
+    if (internals.workerThreadCount == count) {
         // Worker threads have exited.
         callback();
     } else {

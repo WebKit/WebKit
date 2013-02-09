@@ -42,7 +42,6 @@
 #include <JavaScriptCore/JSContextRef.h>
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValueRef.h>
-#include <WebCore/AnimationController.h>
 #include <WebCore/ArchiveResource.h>
 #include <WebCore/CSSComputedStyleDeclaration.h>
 #include <WebCore/Chrome.h>

@@ -1,3 +1,12 @@
+2013-02-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Move workerThreadCount from TestRunner to WebCore Internals
+        https://bugs.webkit.org/show_bug.cgi?id=109239
+
+        Reviewed by Darin Adler.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-02-07  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Corrections the exports definition file.

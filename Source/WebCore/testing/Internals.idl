@@ -172,6 +172,7 @@
     boolean isPageBoxVisible(in Document document, in long pageNumber) raises (DOMException);
 
     readonly attribute InternalSettings settings;
+    readonly attribute unsigned long workerThreadCount;
 
     // Flags for layerTreeAsText.
     const unsigned short LAYER_TREE_INCLUDES_VISIBLE_RECTS = 1;

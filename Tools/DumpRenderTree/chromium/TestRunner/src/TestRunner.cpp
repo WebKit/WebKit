@@ -53,7 +53,6 @@
 #include "WebTask.h"
 #include "WebTestDelegate.h"
 #include "WebView.h"
-#include "WebWorkerInfo.h"
 #include "v8/include/v8.h"
 #include <limits>
 #include <memory>
@@ -302,7 +301,6 @@ TestRunner::TestRunner()
     bindMethod("displayInvalidatedRegion", &TestRunner::displayInvalidatedRegion);
 
     // Properties.
-    bindProperty("workerThreadCount", &TestRunner::workerThreadCount);
     bindProperty("globalFlag", &m_globalFlag);
     bindProperty("titleTextDirection", &m_titleTextDirection);
     bindProperty("platformName", &m_platformName);
@@ -1983,11 +1981,6 @@ void TestRunner::dumpResourceResponseMIMETypes(const CppArgumentList&, CppVarian
 {
     m_dumpResourceResponseMIMETypes = true;
     result->setNull();
-}
-
-void TestRunner::workerThreadCount(CppVariant* result)
-{
-    result->set(static_cast<int>(WebWorkerInfo::dedicatedWorkerCount()));
 }
 
 // Need these conversions because the format of the value for booleans

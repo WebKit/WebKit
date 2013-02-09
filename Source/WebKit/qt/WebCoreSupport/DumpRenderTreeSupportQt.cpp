@@ -77,7 +77,6 @@
 #include "TextIterator.h"
 #include "ThirdPartyCookiesQt.h"
 #include "WebCoreTestSupport.h"
-#include "WorkerThread.h"
 #include "qt_runtime.h"
 #include "qwebelement.h"
 #include "qwebhistory.h"
@@ -207,15 +206,6 @@ void DumpRenderTreeSupportQt::overwritePluginDirectories()
 
     db->setPluginDirectories(paths);
     db->refresh();
-}
-
-int DumpRenderTreeSupportQt::workerThreadCount()
-{
-#if ENABLE(WORKERS)
-    return WebCore::WorkerThread::workerThreadCount();
-#else
-    return 0;
-#endif
 }
 
 void DumpRenderTreeSupportQt::setDumpRenderTreeModeEnabled(bool b)

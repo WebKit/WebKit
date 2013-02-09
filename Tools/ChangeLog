@@ -1,3 +1,32 @@
+2013-02-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Move workerThreadCount from TestRunner to WebCore Internals
+        https://bugs.webkit.org/show_bug.cgi?id=109239
+
+        Reviewed by Darin Adler.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticValues):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::webHistoryItemCount):
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        * DumpRenderTree/wx/TestRunnerWx.cpp:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+
 2013-02-08  Dean Jackson  <dino@apple.com>
 
         Remove use of plugInStartLabelImage

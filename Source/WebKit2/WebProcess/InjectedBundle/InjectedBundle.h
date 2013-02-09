@@ -168,8 +168,6 @@ public:
 
     static bool isProcessingUserGesture();
 
-    static size_t workerThreadCount();
-
     void setTabKeyCyclesThroughElements(WebPage*, bool enabled);
     void setSerialLoadingEnabled(bool);
     void setShadowDOMEnabled(bool);

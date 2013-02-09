@@ -42,7 +42,6 @@
 #include "Settings.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
-#include "WorkerThread.h"
 
 #include <JavaScriptCore/APICast.h>
 #include <SharedPointer.h>
@@ -339,15 +338,6 @@ void TestRunner::setWindowIsKey(bool windowIsKey)
 {
     m_windowIsKey = windowIsKey;
     notImplemented();
-}
-
-unsigned TestRunner::workerThreadCount() const
-{
-#if ENABLE_WORKERS
-    return WebCore::WorkerThread::workerThreadCount();
-#else
-    return 0;
-#endif
 }
 
 void TestRunner::removeAllVisitedLinks()

@@ -225,17 +225,6 @@ size_t TestRunner::webHistoryItemCount()
     return count;
 }
 
-unsigned TestRunner::workerThreadCount() const
-{
-    COMPtr<IWebWorkersPrivate> workers;
-    if (FAILED(WebKitCreateInstance(CLSID_WebWorkersPrivate, 0, __uuidof(workers), reinterpret_cast<void**>(&workers))))
-        return 0;
-    unsigned count;
-    if (FAILED(workers->workerThreadCount(&count)))
-        return 0;
-    return count;
-}
-
 JSRetainPtr<JSStringRef> TestRunner::platformName() const
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));

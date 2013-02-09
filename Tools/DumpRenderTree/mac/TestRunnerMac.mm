@@ -73,7 +73,6 @@
 #import <WebKit/WebTypesInternal.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebWorkersPrivate.h>
 #import <wtf/CurrentTime.h>
 #import <wtf/HashMap.h>
 #import <wtf/RetainPtr.h>
@@ -297,11 +296,6 @@ int TestRunner::numberOfPendingGeolocationPermissionRequests()
 size_t TestRunner::webHistoryItemCount()
 {
     return [[[WebHistory optionalSharedHistory] allItems] count];
-}
-
-unsigned TestRunner::workerThreadCount() const
-{
-    return [WebWorkersPrivate workerThreadCount];
 }
 
 JSRetainPtr<JSStringRef> TestRunner::platformName() const

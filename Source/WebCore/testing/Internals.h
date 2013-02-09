@@ -206,6 +206,7 @@ public:
     static const char* internalsId;
 
     InternalSettings* settings() const;
+    unsigned workerThreadCount() const;
 
     void setBatteryStatus(Document*, const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode&);
 

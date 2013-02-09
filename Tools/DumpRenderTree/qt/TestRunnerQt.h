@@ -56,7 +56,6 @@ class DumpRenderTree;
 class TestRunner : public QObject {
     Q_OBJECT
     Q_PROPERTY(int webHistoryItemCount READ webHistoryItemCount)
-    Q_PROPERTY(int workerThreadCount READ workerThreadCount)
     Q_PROPERTY(bool globalFlag READ globalFlag WRITE setGlobalFlag)
 public:
     TestRunner(WebCore::DumpRenderTree*);
@@ -212,7 +211,6 @@ public Q_SLOTS:
     void setUserStyleSheetLocation(const QString& url);
     void setUserStyleSheetEnabled(bool);
     void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const QString& scheme);
-    int workerThreadCount();
     bool callShouldCloseOnWebView();
     // For now, this is a no-op. This may change depending on outcome of
     // https://bugs.webkit.org/show_bug.cgi?id=33333

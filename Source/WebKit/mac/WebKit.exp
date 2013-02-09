@@ -40,7 +40,6 @@
 .objc_class_name_WebURLsWithTitles
 .objc_class_name_WebUserContentURLPattern
 .objc_class_name_WebView
-.objc_class_name_WebWorkersPrivate
 _HIWebViewCreate
 _HIWebViewGetWebView
 _WebActionButtonKey

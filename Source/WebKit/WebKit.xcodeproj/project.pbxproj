@@ -85,8 +85,6 @@
 		3ABB3C7A1309C3B500E93D94 /* WebStorageTrackerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 3ABB3C781309C3B500E93D94 /* WebStorageTrackerClient.h */; };
 		3ABB3C7B1309C3B500E93D94 /* WebStorageTrackerClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3ABB3C791309C3B500E93D94 /* WebStorageTrackerClient.mm */; };
 		3AE15D5012DBDED4009323C8 /* WebStorageManagerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AE15D4F12DBDED4009323C8 /* WebStorageManagerInternal.h */; };
-		41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F4484D10338E8C0030E55E /* WebWorkersPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 41F4484E10338E8C0030E55E /* WebWorkersPrivate.mm */; };
 		44BB8B141241A022001E3A22 /* WebArchiveInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 44BB8B131241A022001E3A22 /* WebArchiveInternal.h */; };
 		4BF99F900AE050BC00815C2B /* WebEditorClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */; settings = {ATTRIBUTES = (); }; };
 		4BF99F910AE050BC00815C2B /* WebEditorClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BF99F8F0AE050BC00815C2B /* WebEditorClient.mm */; };
@@ -481,8 +479,6 @@
 		3ABB3C781309C3B500E93D94 /* WebStorageTrackerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebStorageTrackerClient.h; sourceTree = "<group>"; };
 		3ABB3C791309C3B500E93D94 /* WebStorageTrackerClient.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebStorageTrackerClient.mm; sourceTree = "<group>"; };
 		3AE15D4F12DBDED4009323C8 /* WebStorageManagerInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebStorageManagerInternal.h; sourceTree = "<group>"; };
-		41F4484D10338E8C0030E55E /* WebWorkersPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebWorkersPrivate.h; path = mac/Workers/WebWorkersPrivate.h; sourceTree = "<group>"; };
-		41F4484E10338E8C0030E55E /* WebWorkersPrivate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebWorkersPrivate.mm; path = mac/Workers/WebWorkersPrivate.mm; sourceTree = "<group>"; };
 		449098B90F8F82DF0076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
 		44BB8B131241A022001E3A22 /* WebArchiveInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebArchiveInternal.h; sourceTree = "<group>"; };
 		4BF99F8E0AE050BC00815C2B /* WebEditorClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebEditorClient.h; sourceTree = "<group>"; };
@@ -801,7 +797,6 @@
 				F5B36B400281DE87018635CB /* WebCoreSupport */,
 				9C7CABBB0190A37C0ECA16EA /* WebView */,
 				1C68F63F095B5F9C00C2984E /* WebInspector */,
-				41F4484C10338E570030E55E /* Workers */,
 				F7EBEE5903F9DB2203CA0DE6 /* Carbon */,
 				089C1665FE841158C02AAC07 /* Resources */,
 				0867D69AFE84028FC02AAC07 /* Frameworks and Libraries */,
@@ -1032,15 +1027,6 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 			usesTabs = 0;
-		};
-		41F4484C10338E570030E55E /* Workers */ = {
-			isa = PBXGroup;
-			children = (
-				41F4484D10338E8C0030E55E /* WebWorkersPrivate.h */,
-				41F4484E10338E8C0030E55E /* WebWorkersPrivate.mm */,
-			);
-			name = Workers;
-			sourceTree = "<group>";
 		};
 		511F3FC30CECC7E200852565 /* Storage */ = {
 			isa = PBXGroup;
@@ -1628,7 +1614,6 @@
 				BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */,
 				9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */,
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
-				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2002,7 +1987,6 @@
 				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
-				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

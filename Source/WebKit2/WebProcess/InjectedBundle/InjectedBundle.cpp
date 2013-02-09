@@ -69,7 +69,6 @@
 #include <WebCore/SecurityPolicy.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
-#include <WebCore/WorkerThread.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
@@ -577,15 +576,6 @@ void InjectedBundle::didReceiveMessage(const String& messageName, APIObject* mes
 void InjectedBundle::didReceiveMessageToPage(WebPage* page, const String& messageName, APIObject* messageBody)
 {
     m_client.didReceiveMessageToPage(this, page, messageName, messageBody);
-}
-
-size_t InjectedBundle::workerThreadCount()
-{
-#if ENABLE(WORKERS)
-    return WebCore::WorkerThread::workerThreadCount();
-#else
-    return 0;
-#endif
 }
 
 void InjectedBundle::setUserStyleSheetLocation(WebPageGroupProxy* pageGroup, const String& location)

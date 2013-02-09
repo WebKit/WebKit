@@ -127,11 +127,6 @@ size_t TestRunner::webHistoryItemCount()
             webkit_web_back_forward_list_get_forward_length(list);
 }
 
-unsigned TestRunner::workerThreadCount() const
-{
-    return DumpRenderTreeSupportGtk::workerThreadCount();
-}
-
 JSRetainPtr<JSStringRef> TestRunner::platformName() const
 {
     JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("gtk"));

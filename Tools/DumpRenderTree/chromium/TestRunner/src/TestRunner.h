@@ -481,10 +481,6 @@ private:
     void display(const CppArgumentList&, CppVariant*);
     void displayInvalidatedRegion(const CppArgumentList&, CppVariant*);
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Properties
-    void workerThreadCount(CppVariant*);
-
     //////////////////////////////////////////////////////////////////////////
     // Fallback and stub methods
 

@@ -125,7 +125,6 @@ public:
 
     void waitForPolicyDelegate();
     size_t webHistoryItemCount();
-    unsigned workerThreadCount() const;
     int windowCount();
     
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)

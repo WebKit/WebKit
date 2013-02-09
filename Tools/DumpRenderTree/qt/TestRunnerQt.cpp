@@ -701,11 +701,6 @@ void TestRunner::setDomainRelaxationForbiddenForURLScheme(bool forbidden, const 
     DumpRenderTreeSupportQt::setDomainRelaxationForbiddenForURLScheme(forbidden, scheme);
 }
 
-int TestRunner::workerThreadCount()
-{
-    return DumpRenderTreeSupportQt::workerThreadCount();
-}
-
 bool TestRunner::callShouldCloseOnWebView()
 {
     return DumpRenderTreeSupportQt::shouldClose(m_drt->mainFrameAdapter());

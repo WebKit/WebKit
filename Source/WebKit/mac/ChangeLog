@@ -1,3 +1,16 @@
+2013-02-08  Benjamin Poulain  <bpoulain@apple.com>
+
+        Move workerThreadCount from TestRunner to WebCore Internals
+        https://bugs.webkit.org/show_bug.cgi?id=109239
+
+        Reviewed by Darin Adler.
+
+        Get rid of WebWorkersPrivate, which was only needed for DRT.
+
+        * WebKit.exp:
+        * Workers/WebWorkersPrivate.h: Removed.
+        * Workers/WebWorkersPrivate.mm: Removed.
+
 2013-02-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142212.

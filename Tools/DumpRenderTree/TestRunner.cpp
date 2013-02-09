@@ -1932,12 +1932,6 @@ static JSValueRef getWebHistoryItemCountCallback(JSContextRef context, JSObjectR
     return JSValueMakeNumber(context, controller->webHistoryItemCount());
 }
 
-static JSValueRef getWorkerThreadCountCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
-{
-    TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
-    return JSValueMakeNumber(context, controller->workerThreadCount());
-}
-
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
 static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
 {
@@ -2127,7 +2121,6 @@ JSStaticValue* TestRunner::staticValues()
     static JSStaticValue staticValues[] = {
         { "globalFlag", getGlobalFlagCallback, setGlobalFlagCallback, kJSPropertyAttributeNone },
         { "webHistoryItemCount", getWebHistoryItemCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
-        { "workerThreadCount", getWorkerThreadCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
         { "platformName", getPlatformNameCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
 #endif

@@ -17,7 +17,7 @@ var worker;
 function startWorker()
 {
     if (window.testRunner)
-        log("PASS: workerThreadCount = " + testRunner.workerThreadCount);
+        log("PASS: workerThreadCount = " + internals.workerThreadCount);
     worker = new Worker('resources/worker-close.js');
 }
 

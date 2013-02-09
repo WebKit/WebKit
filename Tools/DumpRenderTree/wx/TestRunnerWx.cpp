@@ -304,12 +304,6 @@ void TestRunner::setAppCacheMaximumSize(unsigned long long size)
     // FIXME: implement
 }
 
-unsigned TestRunner::workerThreadCount() const
-{
-    // FIXME: implement
-    return 0;
-}
-
 void TestRunner::setSelectTrailingWhitespaceEnabled(bool flag)
 {
     // FIXME: implement

@@ -17,10 +17,10 @@ function runTests()
     worker.postMessage("ping");
     worker.onmessage = function(event) {
         if (window.testRunner) {
-            if (testRunner.workerThreadCount == 1)
+            if (internals.workerThreadCount == 1)
                 testPassed("Orphaned worker thread created.");
             else
-                testFailed("After thread creation: testRunner.workerThreadCount = " + testRunner.workerThreadCount);
+                testFailed("After thread creation: internals.workerThreadCount = " + internals.workerThreadCount);
         }
 
         // Orphan our worker (no more references to it) and wait for it to exit.
@@ -40,10 +40,10 @@ function orphanedWorkerExited()
     worker.postMessage("ping");
     worker.onmessage = function(event) {
         if (window.testRunner) {
-            if (testRunner.workerThreadCount == 1)
+            if (internals.workerThreadCount == 1)
                 testPassed("Orphaned timeout worker thread created.");
             else
-                testFailed("After thread creation: testRunner.workerThreadCount = " + testRunner.workerThreadCount);
+                testFailed("After thread creation: internals.workerThreadCount = " + internals.workerThreadCount);
         }
         // Send a message that starts up an async operation, to make sure the thread exits when it completes.
         // FIXME: Disabled for now - re-enable when bug 28702 is fixed.

@@ -569,11 +569,6 @@ static void callTestRunnerCallback(unsigned index)
     JSValueUnprotect(context, callback);
 }
 
-unsigned TestRunner::workerThreadCount()
-{
-    return WKBundleGetWorkerThreadCount(InjectedBundle::shared().bundle());
-}
-
 void TestRunner::addChromeInputField(JSValueRef callback)
 {
     cacheTestRunnerCallback(AddChromeInputFieldCallbackID, callback);
