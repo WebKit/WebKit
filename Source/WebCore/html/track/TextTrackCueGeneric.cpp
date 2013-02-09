@@ -80,6 +80,12 @@ void TextTrackCueGenericBoxElement::applyCSSProperties(const IntSize& videoSize)
             setInlineStyleProperty(CSSPropertyHeight, size,  CSSPrimitiveValue::CSS_PERCENTAGE);
     }
 
+    if (cue->foregroundColor().isValid())
+        setInlineStyleProperty(CSSPropertyColor, cue->foregroundColor().serialized());
+    
+    if (cue->backgroundColor().isValid())
+        cue->element()->setInlineStyleProperty(CSSPropertyBackgroundColor, cue->backgroundColor().serialized());
+
     if (cue->getWritingDirection() == TextTrackCue::Horizontal)
         setInlineStyleProperty(CSSPropertyHeight, CSSValueAuto);
     else
@@ -141,6 +147,10 @@ bool TextTrackCueGeneric::operator==(const TextTrackCue& cue) const
     if (m_fontSizeMultiplier != other->fontSizeMultiplier())
         return false;
     if (m_fontName != other->fontName())
+        return false;
+    if (m_foregroundColor != other->foregroundColor())
+        return false;
+    if (m_backgroundColor != other->backgroundColor())
         return false;
 
     return TextTrackCue::operator==(cue);

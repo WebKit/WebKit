@@ -1,0 +1,16 @@
+Test that style to all cues is applied correctly.
+EVENT(canplaythrough)
+
+** Check initial in-band track states
+RUN(inbandTrack1 = video.textTracks[0])
+EXPECTED (video.textTracks.length == '1') OK
+EXPECTED (inbandTrack1.language == 'en') OK
+EXPECTED (inbandTrack1.kind == 'captions') OK
+RUN(video.play())
+EVENT(seeked)
+
+** Test current cue colors
+EXPECTED (getComputedStyle(cueDisplayElement).color == 'rgb(255, 255, 255)') OK
+EXPECTED (getComputedStyle(cueNode).backgroundColor == 'rgb(0, 0, 0)') OK
+END OF TEST
+

@@ -35,6 +35,7 @@
 #if ENABLE(VIDEO_TRACK)
 
 #include "EventTarget.h"
+#include "HTMLDivElement.h"
 #include "HTMLElement.h"
 #include "TextTrack.h"
 #include <wtf/PassOwnPtr.h>
@@ -43,7 +44,6 @@
 namespace WebCore {
 
 class DocumentFragment;
-class HTMLDivElement;
 class ScriptExecutionContext;
 class TextTrack;
 class TextTrackCue;
@@ -141,6 +141,8 @@ public:
     void setIsActive(bool);
 
     PassRefPtr<TextTrackCueBox> getDisplayTree(const IntSize& videoSize);
+    PassRefPtr<HTMLDivElement> element() const { return m_allDocumentNodes; }
+
     void updateDisplayTree(float);
     void removeDisplayTree();
     void markFutureAndPastNodes(ContainerNode*, double, double);

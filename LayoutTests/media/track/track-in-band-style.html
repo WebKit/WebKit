@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script src=../media-file.js></script>
+        <script src=../video-test.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+
+                function seeked()
+                {
+                    consoleWrite("<br><i>** Test current cue colors<" + "/i>");
+
+                    cueDisplayElement = textTrackDisplayElement(video, 'display', 0);
+                    testExpected("getComputedStyle(cueDisplayElement).color", "rgb(255, 255, 255)");
+
+                    cueNode = textTrackDisplayElement(video, 'all-nodes');
+                    testExpected("getComputedStyle(cueNode).backgroundColor", "rgb(0, 0, 0)");
+
+                    endTest();
+                }
+
+                function canplaythrough()
+                {
+                    consoleWrite("<br><i>** Check initial in-band track states<" + "/i>");
+                    run("inbandTrack1 = video.textTracks[0]");
+                    testExpected("video.textTracks.length", 1);
+                    testExpected("inbandTrack1.language", "en");
+                    testExpected("inbandTrack1.kind", "captions");
+                    inbandTrack1.mode = 'showing';
+                    run("video.play()");
+                    setTimeout(function() { video.pause(); video.currentTime = 0.3; }, 1500);
+                }
+
+            function loaded()
+            {
+                consoleWrite("Test that style to all cues is applied correctly.");
+                findMediaElement();
+                video.src = '../content/counting-captioned.mov';
+                waitForEvent('seeked', seeked);
+                waitForEvent('canplaythrough', canplaythrough);
+            }
+
+        </script>
+    </head>
+    <body onload="loaded()">
+        <video controls >
+        </video>
+    </body>
+</html>

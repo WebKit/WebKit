@@ -28,7 +28,7 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "HTMLElement.h"
+#include "Color.h"
 #include "TextTrackCue.h"
 #include <wtf/RefCounted.h>
 
@@ -62,6 +62,12 @@ public:
     String fontName() const { return m_fontName; }
     void setFontName(String name) { m_fontName = name; }
 
+    Color foregroundColor() const { return m_foregroundColor; }
+    void setForegroundColor(RGBA32 color) { m_foregroundColor.setRGB(color); }
+    
+    Color backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(RGBA32 color) { m_backgroundColor.setRGB(color); }
+
     virtual bool operator==(const TextTrackCue&) const OVERRIDE;
     virtual bool operator!=(const TextTrackCue& cue) const OVERRIDE
     {
@@ -73,6 +79,8 @@ public:
 private:
     TextTrackCueGeneric(ScriptExecutionContext*, double start, double end, const String&);
     
+    Color m_foregroundColor;
+    Color m_backgroundColor;
     double m_baseFontSizeRelativeToVideoHeight;
     double m_fontSizeMultiplier;
     String m_fontName;

@@ -57,6 +57,8 @@ SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextVerticalLayout_RightToLeft, CFStrin
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight, CFStringRef)
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_RelativeFontSize, CFStringRef)
 SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_FontFamilyName, CFStringRef)
+SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_ForegroundColorARGB, CFStringRef)
+SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_BackgroundColorARGB, CFStringRef)
 
 #define kCMTextMarkupAttribute_Alignment getkCMTextMarkupAttribute_Alignment()
 #define kCMTextMarkupAlignmentType_Start getkCMTextMarkupAlignmentType_Start()
@@ -74,6 +76,8 @@ SOFT_LINK_POINTER_OPTIONAL(CoreMedia, kCMTextMarkupAttribute_FontFamilyName, CFS
 #define kCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight getkCMTextMarkupAttribute_BaseFontSizePercentageRelativeToVideoHeight()
 #define kCMTextMarkupAttribute_RelativeFontSize getkCMTextMarkupAttribute_RelativeFontSize()
 #define kCMTextMarkupAttribute_FontFamilyName getkCMTextMarkupAttribute_FontFamilyName()
+#define kCMTextMarkupAttribute_ForegroundColorARGB getkCMTextMarkupAttribute_ForegroundColorARGB()
+#define kCMTextMarkupAttribute_BackgroundColorARGB getkCMTextMarkupAttribute_BackgroundColorARGB()
 
 using namespace std;
 
@@ -90,6 +94,26 @@ InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(MediaPlayerPrivateAVFoundat
 InbandTextTrackPrivateAVF::~InbandTextTrackPrivateAVF()
 {
     disconnect();
+}
+
+static bool makeRGBA32FromARGBCFArray(CFArrayRef colorArray, RGBA32& color)
+{
+    if (CFArrayGetCount(colorArray) < 4)
+        return false;
+
+    float componentArray[4];
+    for (int i = 0; i < 4; i++) {
+        CFNumberRef value = static_cast<CFNumberRef>(CFArrayGetValueAtIndex(colorArray, i));
+        if (CFGetTypeID(value) != CFNumberGetTypeID())
+            return false;
+
+        float component;
+        CFNumberGetValue(value, kCFNumberFloatType, &component);
+        componentArray[i] = component;
+    }
+
+    color = makeRGBA32FromFloats(componentArray[1] * 255, componentArray[2] * 255, componentArray[3] * 255, componentArray[0] * 255);
+    return true;
 }
 
 void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attributedString, GenericCueData* cueData)
@@ -266,6 +290,28 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
                 
                 cueData->setFontName(valueString);
                 continue;
+            }
+            
+            if (CFStringCompare(key, kCMTextMarkupAttribute_ForegroundColorARGB, 0) == kCFCompareEqualTo) {
+                CFArrayRef arrayValue = static_cast<CFArrayRef>(value);
+                if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
+                    continue;
+                
+                RGBA32 color;
+                if (!makeRGBA32FromARGBCFArray(arrayValue, color))
+                    continue;
+                cueData->setForegroundColor(color);
+            }
+            
+            if (CFStringCompare(key, kCMTextMarkupAttribute_BackgroundColorARGB, 0) == kCFCompareEqualTo) {
+                CFArrayRef arrayValue = static_cast<CFArrayRef>(value);
+                if (CFGetTypeID(arrayValue) != CFArrayGetTypeID())
+                    continue;
+                
+                RGBA32 color;
+                if (!makeRGBA32FromARGBCFArray(arrayValue, color))
+                    continue;
+                cueData->setBackgroundColor(color);
             }
         }
 

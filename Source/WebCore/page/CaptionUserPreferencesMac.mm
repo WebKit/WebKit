@@ -36,15 +36,17 @@
 #import "KURL.h"
 #import "Language.h"
 #import "LocalizedStrings.h"
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-#import "MediaAccessibility/MediaAccessibility.h"
-#endif
+#import "Logging.h"
 #import "PageGroup.h"
 #import "SoftLinking.h"
 #import "TextTrackCue.h"
 #import "UserStyleSheetTypes.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringBuilder.h>
+
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#import "MediaAccessibility/MediaAccessibility.h"
+#endif
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 
@@ -114,13 +116,13 @@ void CaptionUserPreferencesMac::registerForCaptionPreferencesChangedCallbacks(Ca
 
     if (!kMAXCaptionAppearanceSettingsChangedNotification)
         return;
-    
+
     if (!m_listeningForPreferenceChanges) {
         m_listeningForPreferenceChanges = true;
         CFNotificationCenterAddObserver (CFNotificationCenterGetLocalCenter(), this, userCaptionPreferencesChangedNotificationCallback, kMAXCaptionAppearanceSettingsChangedNotification, NULL, CFNotificationSuspensionBehaviorCoalesce);
-        updateCaptionStyleSheetOveride();
     }
     
+    updateCaptionStyleSheetOveride();
     m_captionPreferenceChangeListeners.add(listener);
 }
 
@@ -148,10 +150,7 @@ String CaptionUserPreferencesMac::captionsWindowCSS() const
     StringBuilder builder;
     builder.append(windowStyle);
     builder.append(getPropertyNameString(CSSPropertyPadding));
-    builder.append(": .2em");
-    if (behavior == kMACaptionAppearanceBehaviorUseValue)
-        builder.append(" !important");
-    builder.append(';');
+    builder.append(": .4em !important;");
     
     return builder.toString();
 }
@@ -367,6 +366,8 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
 
         captionsOverrideStyleSheet.append('}');
     }
+
+    LOG(Media, "CaptionUserPreferencesMac::captionsStyleSheetOverrideSetting sytle to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
 
     return captionsOverrideStyleSheet.toString();
 }

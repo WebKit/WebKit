@@ -26,6 +26,7 @@
 #ifndef InbandTextTrackPrivateClient_h
 #define InbandTextTrackPrivateClient_h
 
+#include "Color.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/text/WTFString.h>
 
@@ -89,7 +90,13 @@ public:
 
     double relativeFontSize() const { return m_relativeFontSize; }
     void setRelativeFontSize(double relativeFontSize) { m_relativeFontSize = relativeFontSize; }
-    
+
+    Color foregroundColor() const { return m_foregroundColor; }
+    void setForegroundColor(RGBA32 color) { m_foregroundColor.setRGB(color); }
+
+    Color backgroundColor() const { return m_backgroundColor; }
+    void setBackgroundColor(RGBA32 color) { m_backgroundColor.setRGB(color); }
+
 private:
     double m_startTime;
     double m_endTime;
@@ -102,6 +109,8 @@ private:
     String m_fontName;
     double m_baseFontSize;
     double m_relativeFontSize;
+    Color m_foregroundColor;
+    Color m_backgroundColor;
 };
 
 class InbandTextTrackPrivateClient {
