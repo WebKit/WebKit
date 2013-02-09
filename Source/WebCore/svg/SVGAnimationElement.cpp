@@ -385,6 +385,10 @@ void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
     ASSERT(valuesCount >= 1);
     if (valuesCount == 1)
         return;
+
+    // FIXME, webkit.org/b/109010: m_keyTimes should not be modified in this function.
+    m_keyTimes.clear();
+
     Vector<float> keyTimesForPaced;
     float totalDistance = 0;
     keyTimesForPaced.append(0);
@@ -405,7 +409,7 @@ void SVGAnimationElement::calculateKeyTimesForCalcModePaced()
     keyTimesForPaced[keyTimesForPaced.size() - 1] = 1;
 
     // Use key times calculated based on pacing instead of the user provided ones.
-    m_keyTimes.swap(keyTimesForPaced);
+    m_keyTimes = keyTimesForPaced;
 }
 
 static inline double solveEpsilon(double duration) { return 1 / (200 * duration); }
