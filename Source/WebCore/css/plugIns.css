@@ -22,5 +22,74 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* plug-ins */
-p{} /*Needed by Windows because it doesn't like empty files*/
+/*
+ * This is the UA StyleSheet for <object> and <embed> elements.
+ *
+ * Such elements, when snapshotted (paused), will contain a ShadowRoot
+ * with the following structure:
+ *
+ * <object>
+ *   #ShadowRoot
+ *     <div class="snapshot-container">
+ *       <div class="snapshot-overlay"></div> <!-- e.g. for dimming content -->
+ *         <div class="snapshot-label">
+ *           <div class="snapshot-title">Snapshotted Plug-In</div>
+ *           <div class="snapshot-subtitle">Click to restart</div>
+ *         </div>
+ *       </div>
+ *     </div>
+ *
+ */
+
+object::-webkit-snapshotted-plugin-content,
+embed::-webkit-snapshotted-plugin-content
+{
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+}
+
+object::-webkit-snapshotted-plugin-content *,
+embed::-webkit-snapshotted-plugin-content *
+{
+    -webkit-user-select: none;
+}
+
+object::-webkit-snapshotted-plugin-content .snapshot-container,
+embed::-webkit-snapshotted-plugin-content .snapshot-container
+{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-overlay,
+embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-overlay
+{
+    display: none;
+}
+
+object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label,
+embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label
+{
+    position: absolute;
+    background-color: white;
+    color: black;
+    margin: 1em;
+    padding: 0.25em 2em;
+    text-align: center;
+}
+
+object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-title,
+embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-title
+{
+    font-weight: bold;
+}
+
+object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-subtitle,
+embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-subtitle
+{
+    font-style: italic;
+    color: #444;
+}

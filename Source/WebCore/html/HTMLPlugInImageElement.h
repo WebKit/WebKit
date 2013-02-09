@@ -25,11 +25,13 @@
 
 #include "RenderStyle.h"
 #include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
 class HTMLImageLoader;
 class FrameLoader;
+class Image;
 class MouseEvent;
 class Widget;
 
@@ -37,7 +39,7 @@ enum PluginCreationOption {
     CreateAnyWidgetType,
     CreateOnlyNonNetscapePlugins,
 };
-    
+
 enum PreferPlugInsForImagesOption {
     ShouldPreferPlugInsForImages,
     ShouldNotPreferPlugInsForImages
@@ -92,22 +94,31 @@ protected:
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool willRecalcStyle(StyleChange);
-    
+
+    void didAddUserAgentShadowRoot(ShadowRoot*) OVERRIDE;
+
     virtual void finishParsingChildren();
 
     void updateWidgetIfNecessary();
     virtual bool useFallbackContent() const { return false; }
-    
+
     virtual void updateSnapshot(PassRefPtr<Image>) OVERRIDE;
     virtual void dispatchPendingMouseClick() OVERRIDE;
     void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>*);
 
+    void swapRendererTimerFired(Timer<HTMLPlugInImageElement>*);
+
+    void setShouldShowSnapshotLabelAutomatically() { m_shouldShowSnapshotLabelAutomatically = true; }
+
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;
     bool m_needsDocumentActivationCallbacks;
+    bool m_shouldShowSnapshotLabelAutomatically;
     RefPtr<RenderStyle> m_customStyleForPageCache;
     RefPtr<MouseEvent> m_pendingClickEventFromSnapshot;
     DeferrableOneShotTimer<HTMLPlugInImageElement> m_simulatedMouseClickTimer;
+    Timer<HTMLPlugInImageElement> m_swapRendererTimer;
+    RefPtr<Image> m_snapshotImage;
 };
 
 } // namespace WebCore

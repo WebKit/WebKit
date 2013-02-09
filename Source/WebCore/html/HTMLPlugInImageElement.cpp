@@ -21,16 +21,20 @@
 #include "config.h"
 #include "HTMLPlugInImageElement.h"
 
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "FrameView.h"
+#include "HTMLDivElement.h"
 #include "HTMLImageLoader.h"
-#include "HTMLNames.h"
 #include "Image.h"
+#include "LocalizedStrings.h"
 #include "Logging.h"
 #include "MouseEvent.h"
 #include "NodeRenderStyle.h"
+#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PlugInClient.h"
 #include "PlugInOriginHash.h"
@@ -41,9 +45,13 @@
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "ShadowRoot.h"
 #include "StyleResolver.h"
+#include "Text.h"
 
 namespace WebCore {
+
+using namespace HTMLNames;
 
 static const int autoStartPlugInSizeThresholdWidth = 1;
 static const int autoStartPlugInSizeThresholdHeight = 1;
@@ -61,7 +69,9 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_needsWidgetUpdate(!createdByParser)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
+    , m_shouldShowSnapshotLabelAutomatically(false)
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
+    , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
 {
     setHasCustomCallbacks();
 }
@@ -132,27 +142,34 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
         m_needsDocumentActivationCallbacks = true;
         document()->registerForPageCacheSuspensionCallbacks(this);
     }
-    
+
+    if (displayState() == DisplayingSnapshot) {
+        RenderSnapshottedPlugIn* renderSnapshottedPlugIn = new (arena) RenderSnapshottedPlugIn(this);
+        renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage);
+        if (m_shouldShowSnapshotLabelAutomatically)
+            renderSnapshottedPlugIn->setShouldShowLabelAutomatically();
+        return renderSnapshottedPlugIn;
+    }
+
     // Fallback content breaks the DOM->Renderer class relationship of this
     // class and all superclasses because createObject won't necessarily
     // return a RenderEmbeddedObject, RenderPart or even RenderWidget.
     if (useFallbackContent())
         return RenderObject::createObject(this, style);
+
     if (isImageType()) {
         RenderImage* image = new (arena) RenderImage(this);
         image->setImageResource(RenderImageResource::create());
         return image;
     }
 
-    if (document()->page() && document()->page()->settings()->plugInSnapshottingEnabled())
-        return new (arena) RenderSnapshottedPlugIn(this);
     return new (arena) RenderEmbeddedObject(this);
 }
 
 bool HTMLPlugInImageElement::willRecalcStyle(StyleChange)
 {
     // FIXME: Why is this necessary?  Manual re-attach is almost always wrong.
-    if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType())
+    if (!useFallbackContent() && needsWidgetUpdate() && renderer() && !isImageType() && (displayState() != DisplayingSnapshot))
         reattach();
     return true;
 }
@@ -258,11 +275,72 @@ void HTMLPlugInImageElement::updateWidgetCallback(Node* n, unsigned)
 
 void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
 {
-    if (displayState() > DisplayingSnapshot || !renderer()->isSnapshottedPlugIn())
+    if (displayState() > DisplayingSnapshot)
         return;
 
-    toRenderSnapshottedPlugIn(renderer())->updateSnapshot(image);
+    m_snapshotImage = image;
+    if (renderer()->isSnapshottedPlugIn()) {
+        toRenderSnapshottedPlugIn(renderer())->updateSnapshot(image);
+        return;
+    }
+
     setDisplayState(DisplayingSnapshot);
+    m_swapRendererTimer.startOneShot(0);
+}
+
+void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
+{
+    Document* doc = document();
+
+    RefPtr<Element> shadowContainer = HTMLDivElement::create(doc);
+    shadowContainer->setPseudo(AtomicString("-webkit-snapshotted-plugin-content", AtomicString::ConstructFromLiteral));
+
+    RefPtr<Element> container = HTMLDivElement::create(doc);
+    container->setAttribute(classAttr, AtomicString("snapshot-container", AtomicString::ConstructFromLiteral));
+
+    RefPtr<Element> overlay = HTMLDivElement::create(doc);
+    overlay->setAttribute(classAttr, AtomicString("snapshot-overlay", AtomicString::ConstructFromLiteral));
+    container->appendChild(overlay, ASSERT_NO_EXCEPTION);
+
+    RefPtr<Element> label = HTMLDivElement::create(doc);
+    label->setAttribute(classAttr, AtomicString("snapshot-label", AtomicString::ConstructFromLiteral));
+
+    String titleText = snapshottedPlugInLabelTitle();
+    String subtitleText = snapshottedPlugInLabelSubtitle();
+    if (document()->page()) {
+        String clientTitleText = document()->page()->chrome()->client()->plugInStartLabelTitle();
+        if (!clientTitleText.isEmpty())
+            titleText = clientTitleText;
+        String clientSubtitleText = document()->page()->chrome()->client()->plugInStartLabelSubtitle();
+        if (!clientSubtitleText.isEmpty())
+            subtitleText = clientSubtitleText;
+    }
+
+    RefPtr<Element> title = HTMLDivElement::create(doc);
+    title->setAttribute(classAttr, AtomicString("snapshot-title", AtomicString::ConstructFromLiteral));
+    title->appendChild(doc->createTextNode(titleText), ASSERT_NO_EXCEPTION);
+    label->appendChild(title, ASSERT_NO_EXCEPTION);
+
+    RefPtr<Element> subTitle = HTMLDivElement::create(doc);
+    subTitle->setAttribute(classAttr, AtomicString("snapshot-subtitle", AtomicString::ConstructFromLiteral));
+    subTitle->appendChild(doc->createTextNode(subtitleText), ASSERT_NO_EXCEPTION);
+    label->appendChild(subTitle, ASSERT_NO_EXCEPTION);
+
+    container->appendChild(label, ASSERT_NO_EXCEPTION);
+
+    shadowContainer->appendChild(container, ASSERT_NO_EXCEPTION);
+    root->appendChild(shadowContainer, ASSERT_NO_EXCEPTION);
+}
+
+void HTMLPlugInImageElement::swapRendererTimerFired(Timer<HTMLPlugInImageElement>*)
+{
+    ASSERT(displayState() == DisplayingSnapshot);
+    if (userAgentShadowRoot())
+        return;
+
+    // Create a shadow root, which will trigger the code to add a snapshot container
+    // and reattach, thus making a new Renderer.
+    ensureUserAgentShadowRoot();
 }
 
 void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
@@ -270,6 +348,8 @@ void HTMLPlugInImageElement::userDidClickSnapshot(PassRefPtr<MouseEvent> event)
     m_pendingClickEventFromSnapshot = event;
     if (document()->page() && !SchemeRegistry::shouldTreatURLSchemeAsLocal(document()->page()->mainFrame()->document()->baseURL().protocol()))
         document()->page()->plugInClient()->addAutoStartOrigin(document()->page()->mainFrame()->document()->baseURL().host(), m_plugInOriginHash);
+
+    reattach();
 }
 
 void HTMLPlugInImageElement::dispatchPendingMouseClick()
@@ -319,16 +399,12 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    if (!renderer()->isSnapshottedPlugIn()) {
-        LOG(Plugins, "%p Renderer is not snapshotted plugin, set to play", this);
-        return;
-    }
     if (ScriptController::processingUserGesture()) {
         LOG(Plugins, "%p Script is processing user gesture, set to play", this);
         return;
     }
 
-    LayoutRect rect = toRenderSnapshottedPlugIn(renderer())->contentBoxRect();
+    LayoutRect rect = toRenderEmbeddedObject(renderer())->contentBoxRect();
     int width = rect.width();
     int height = rect.height();
     if (!width || !height || (width <= autoStartPlugInSizeThresholdWidth && height <= autoStartPlugInSizeThresholdHeight)) {
@@ -351,10 +427,13 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     }
 
     if (shouldPlugInShowLabelAutomatically(document()->page()->mainFrame()->view()->contentsSize(), this))
-        toRenderSnapshottedPlugIn(renderer())->setShouldShowLabelAutomatically();
+        setShouldShowSnapshotLabelAutomatically();
 
     LOG(Plugins, "%p Plug-in hash %x is %dx%d, origin is not auto-start, set to wait for snapshot", this, m_plugInOriginHash, width, height);
-    setDisplayState(WaitingForSnapshot);
+    // We may have got to this point by restarting a snapshotted plug-in, in which case we don't want to
+    // reset the display state.
+    if (displayState() != PlayingWithPendingMouseClick)
+        setDisplayState(WaitingForSnapshot);
 }
 
 void HTMLPlugInImageElement::subframeLoaderDidCreatePlugIn(const Widget* widget)

@@ -1,3 +1,17 @@
+2013-02-08  Dean Jackson  <dino@apple.com>
+
+        Snapshotted plug-in should use shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=108284
+
+        Reviewed by Simon Fraser.
+
+        We no longer have any need for plugInStartLabelImage.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp: Remove plugInStartLabelImage.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Ditto.
+
 2013-02-08  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [WK2] Fix the build on !Mac after r142314.
