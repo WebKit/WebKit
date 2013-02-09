@@ -1,3 +1,9 @@
+2013-02-09  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed. Update my IRC nickname in committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-09  David Farler  <dfarler@apple.com>
 
         build-webkit: document sdk, debug, release, device, and simulator options
