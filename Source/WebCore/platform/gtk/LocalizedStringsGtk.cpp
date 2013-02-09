@@ -774,4 +774,14 @@ String textTrackNoLabelText()
 }
 #endif
 
+String snapshottedPlugInLabelTitle()
+{
+    return String::fromUTF8(C_("Snapshotted Plug-In", "Title of the label to show on a snapshotted plug-in"));
+}
+
+String snapshottedPlugInLabelSubtitle()
+{
+    return String::fromUTF8(C_("Click to restart", "Subtitle of the label to show on a snapshotted plug-in"));
+}
+
 }
