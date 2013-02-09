@@ -24,6 +24,7 @@
 #include "GraphicsLayerClient.h"
 #include "Image.h"
 #include "TextureMapperLayer.h"
+#include "TextureMapperTiledBackingStore.h"
 #include "Timer.h"
 
 namespace WebCore {

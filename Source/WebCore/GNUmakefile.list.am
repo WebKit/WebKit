@@ -6483,7 +6483,13 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/TextureMapperImageBuffer.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperLayer.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperLayer.h \
-	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
+	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperSurfaceBackingStore.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperTile.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperTile.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperTiledBackingStore.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperTiledBackingStore.h
 endif  # END USE_TEXTURE_MAPPER_CAIRO
 
 if USE_TEXTURE_MAPPER_GL
@@ -6508,7 +6514,13 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/texmap/TextureMapperImageBuffer.h \
 	Source/WebCore/platform/graphics/texmap/TextureMapperLayer.cpp \
 	Source/WebCore/platform/graphics/texmap/TextureMapperLayer.h \
-	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h
+	Source/WebCore/platform/graphics/texmap/TextureMapperPlatformLayer.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperSurfaceBackingStore.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperTile.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperTile.h \
+	Source/WebCore/platform/graphics/texmap/TextureMapperTiledBackingStore.cpp \
+	Source/WebCore/platform/graphics/texmap/TextureMapperTiledBackingStore.h
 endif  # END USE_TEXTURE_MAPPER_GL
 endif  # USE_ACCELERATED_COMPOSITING
 

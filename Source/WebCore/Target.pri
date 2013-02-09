@@ -30,7 +30,6 @@ SOURCES += \
     Modules/geolocation/Geolocation.cpp \
     Modules/geolocation/GeolocationController.cpp \
     Modules/geolocation/NavigatorGeolocation.cpp \
-    \
     Modules/webdatabase/DOMWindowWebDatabase.cpp \
     Modules/webdatabase/Database.cpp \
     Modules/webdatabase/DatabaseAuthorizer.cpp \
@@ -39,7 +38,6 @@ SOURCES += \
     Modules/webdatabase/DatabaseServer.cpp \
     Modules/webdatabase/DatabaseSync.cpp \
     Modules/webdatabase/WorkerContextWebDatabase.cpp \
-    \
     accessibility/AccessibilityImageMapLink.cpp \
     accessibility/AccessibilityMediaControls.cpp \
     accessibility/AccessibilityMenuList.cpp \
@@ -2270,6 +2268,9 @@ HEADERS += \
     platform/graphics/texmap/TextureMapperImageBuffer.h \
     platform/graphics/texmap/TextureMapperLayer.h \
     platform/graphics/texmap/TextureMapperPlatformLayer.h \
+    platform/graphics/texmap/TextureMapperSurfaceBackingStore.h \
+    platform/graphics/texmap/TextureMapperTile.h \
+    platform/graphics/texmap/TextureMapperTiledBackingStore.h \
     platform/graphics/Tile.h \
     platform/graphics/TiledBackingStore.h \
     platform/graphics/TiledBackingStoreClient.h \
@@ -2904,6 +2905,9 @@ SOURCES += \
     platform/graphics/texmap/TextureMapperBackingStore.cpp \
     platform/graphics/texmap/TextureMapperImageBuffer.cpp \
     platform/graphics/texmap/TextureMapperLayer.cpp \
+    platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp \
+    platform/graphics/texmap/TextureMapperTile.cpp \
+    platform/graphics/texmap/TextureMapperTiledBackingStore.cpp \
     platform/network/DNSResolveQueue.cpp \
     platform/network/MIMESniffing.cpp \
     platform/network/qt/CookieJarQt.cpp \

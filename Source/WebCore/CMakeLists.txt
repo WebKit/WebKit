@@ -2016,6 +2016,9 @@ set(WebCore_SOURCES
     platform/graphics/texmap/TextureMapperBackingStore.cpp
     platform/graphics/texmap/TextureMapperImageBuffer.cpp
     platform/graphics/texmap/TextureMapperLayer.cpp
+    platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp
+    platform/graphics/texmap/TextureMapperTile.cpp
+    platform/graphics/texmap/TextureMapperTiledBackingStore.cpp
 
     platform/graphics/transforms/AffineTransform.cpp
     platform/graphics/transforms/Matrix3DTransformOperation.cpp

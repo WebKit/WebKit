@@ -38,6 +38,10 @@
 #include <wtf/ThreadingPrimitives.h>
 #include <wtf/Vector.h>
 
+#if USE(GRAPHICS_SURFACE)
+#include "TextureMapperSurfaceBackingStore.h"
+#endif
+
 namespace WebCore {
 
 class CoordinatedBackingStore;

@@ -24,6 +24,7 @@
 
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
+#include "TextureMapperTile.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 
