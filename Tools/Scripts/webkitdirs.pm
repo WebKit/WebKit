@@ -590,13 +590,13 @@ sub determinePassedConfiguration
 
     for my $i (0 .. $#ARGV) {
         my $opt = $ARGV[$i];
-        if ($opt =~ /^--debug$/i || $opt =~ /^--devel/i) {
+        if ($opt =~ /^--debug$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Debug";
             $passedConfiguration .= "_Cairo_CFLite" if (isWinCairo() && isCygwin());
             return;
         }
-        if ($opt =~ /^--release$/i || $opt =~ /^--deploy/i) {
+        if ($opt =~ /^--release$/i) {
             splice(@ARGV, $i, 1);
             $passedConfiguration = "Release";
             $passedConfiguration .= "_Cairo_CFLite" if (isWinCairo() && isCygwin());

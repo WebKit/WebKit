@@ -108,7 +108,11 @@ my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                            Show this help message
   --clean                           Cleanup the build directory
-  --debug                           Compile in debug mode
+  --debug                           Compile with Debug configuration
+  --release                         Compile with Release configuration
+  --sdk=<sdk>                       Use a specific Xcode SDK (iOS and Mac only)
+  --device                          Use the current iphoneos.internal SDK (iOS only)
+  --simulator                       Use the current iphonesimulator SDK (iOS only)
   --gyp                             Use GYP-generated project files
   --coverage                        Enable Code Coverage support (Mac only)
 
