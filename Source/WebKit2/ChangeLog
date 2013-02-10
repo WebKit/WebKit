@@ -1,3 +1,23 @@
+2013-02-10  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, rolling out r142343.
+        http://trac.webkit.org/changeset/142343
+        https://bugs.webkit.org/show_bug.cgi?id=108284
+
+        It might make inspector/profiler/selector-profiler-url.html
+        crashy.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::plugInStartLabelImage):
+        (WebKit):
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+        (InjectedBundlePageUIClient):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::plugInStartLabelImage):
+        (WebKit):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+
 2013-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
         [WebKit2][Gtk] Remove the fullscreen manager proxy message receiver upon invalidating

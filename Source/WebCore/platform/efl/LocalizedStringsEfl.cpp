@@ -610,15 +610,4 @@ String textTrackNoLabelText()
 }
 #endif
 
-String snapshottedPlugInLabelTitle()
-{
-    return String("Snapshotted Plug-In");
-}
-
-String snapshottedPlugInLabelSubtitle()
-{
-    return String("Click to restart");
-}
-
-
 }
