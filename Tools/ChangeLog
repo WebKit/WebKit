@@ -1,5 +1,10 @@
 2013-02-10  Tim Horton  <timothy_horton@apple.com>
 
+        Unreviewed attempted build fix for Gtk after r142412
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+
+2013-02-10  Tim Horton  <timothy_horton@apple.com>
+
         WKTR should propagate view creation options to opened windows
         https://bugs.webkit.org/show_bug.cgi?id=109381
 

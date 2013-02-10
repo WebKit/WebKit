@@ -28,6 +28,7 @@
 #include "config.h"
 #include "PlatformWebView.h"
 
+#include <WebKit2/WKDictionary.h>
 #include <WebKit2/WKViewPrivate.h>
 #include <gtk/gtk.h>
 
