@@ -59,7 +59,7 @@ struct SameSizeAsRenderText : public RenderObject {
     uint32_t bitfields : 16;
     float widths[4];
     String text;
-    void* pointers[3];
+    void* pointers[2];
 };
 
 COMPILE_ASSERT(sizeof(RenderText) == sizeof(SameSizeAsRenderText), RenderText_should_stay_small);
@@ -156,11 +156,6 @@ RenderText::RenderText(Node* node, PassRefPtr<StringImpl> str)
     if (node && node->isDocumentNode())
         setDocumentForAnonymous(static_cast<Document*>(node));
 
-    m_is8Bit = m_text.is8Bit();
-    if (is8Bit())
-        m_data.characters8 = m_text.characters8();
-    else
-        m_data.characters16 = m_text.characters16();
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
     setIsText();
@@ -1427,11 +1422,6 @@ void RenderText::setTextInternal(PassRefPtr<StringImpl> text)
     ASSERT(m_text);
     ASSERT(!isBR() || (textLength() == 1 && m_text[0] == '\n'));
 
-    m_is8Bit = m_text.is8Bit();
-    if (is8Bit())
-        m_data.characters8 = m_text.characters8();
-    else
-        m_data.characters16 = m_text.characters16();
     m_isAllASCII = m_text.containsOnlyASCII();
     m_canUseSimpleFontCodePath = computeCanUseSimpleFontCodePath();
 }
