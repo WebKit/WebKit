@@ -38,6 +38,7 @@
 #define EventSender_h
 
 #include "CppBoundClass.h"
+#include "WebContextMenuData.h"
 #include "WebDragOperation.h"
 #include "WebInputEvent.h"
 #include "WebTask.h"
@@ -47,7 +48,6 @@
 namespace WebKit {
 class WebDragData;
 class WebView;
-struct WebContextMenuData;
 }
 
 namespace WebTestRunner {

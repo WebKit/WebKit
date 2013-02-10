@@ -1,3 +1,11 @@
+2013-02-10  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Build fix for r142371
+        https://bugs.webkit.org/show_bug.cgi?id=109313
+
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (WebKit):
+
 2013-02-10  Zan Dobersek  <zdobersek@igalia.com>
 
         gtkdoc-scangobj throwing warnings when using Clang, causes generate-gtkdoc to fail
