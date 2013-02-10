@@ -33,6 +33,10 @@ using namespace WebCore;
 
 namespace WebKit {
 
+void NetscapePlugin::platformPreInitialize()
+{
+}
+
 bool NetscapePlugin::platformPostInitialize()
 {
     return false;
