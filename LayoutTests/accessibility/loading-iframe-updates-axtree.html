@@ -11,9 +11,7 @@
         description("This tests that if an iframe loads new content after its accessibility object has already been accessed, the iframe accessibility object's descendants are the new scroll area and web area, not the old deleted ones.");
 
         if (window.accessibilityController) {
-            window.root = accessibilityController.rootElement;
-            window.body = root.childAtIndex(0);
-            window.iframe = body.childAtIndex(1).childAtIndex(0);
+            window.iframe = accessibilityController.accessibleElementById('iframe');
             window.scrollarea = iframe.childAtIndex(0);
             window.subwebarea = scrollarea.childAtIndex(0);
         }
@@ -21,7 +19,7 @@
         window.iframeElement = document.getElementById("iframe");
         iframeElement.addEventListener("load", function() {
             if (window.accessibilityController) {
-                window.newIframe = body.childAtIndex(1).childAtIndex(0);
+                window.newIframe = accessibilityController.accessibleElementById('iframe');
                 window.newScrollarea = newIframe.childAtIndex(0);
                 window.newSubwebarea = newScrollarea.childAtIndex(0);
 
@@ -53,7 +51,7 @@
 
 <p>Before</p>
 
-<iframe id="iframe"></iframe>
+<iframe id="iframe" role="group"></iframe>
 
 <p>After</p>
 

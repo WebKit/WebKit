@@ -616,9 +616,6 @@ void AXObjectCache::childrenChanged(AccessibilityObject* obj)
         return;
 
     obj->childrenChanged();
-
-    if (obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())
-        childrenChanged(obj->parentObject());
 }
     
 void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
@@ -630,6 +627,9 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
     unsigned i = 0, count = m_notificationsToPost.size();
     for (i = 0; i < count; ++i) {
         AccessibilityObject* obj = m_notificationsToPost[i].first.get();
+        if (!obj->axObjectID())
+            continue;
+
 #ifndef NDEBUG
         // Make sure none of the render views are in the process of being layed out.
         // Notifications should only be sent after the renderer has finished
@@ -641,7 +641,11 @@ void AXObjectCache::notificationPostTimerFired(Timer<AXObjectCache>*)
         }
 #endif
         
-        postPlatformNotification(obj, m_notificationsToPost[i].second);
+        AXNotification notification = m_notificationsToPost[i].second;
+        postPlatformNotification(obj, notification);
+
+        if (notification == AXChildrenChanged && obj->parentObjectIfExists() && obj->lastKnownIsIgnoredValue() != obj->accessibilityIsIgnored())
+            childrenChanged(obj->parentObject());
     }
     
     m_notificationsToPost.clear();
