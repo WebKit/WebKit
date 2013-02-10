@@ -3,6 +3,16 @@
         Make TestWebKitAPI work for iOS
         https://bugs.webkit.org/show_bug.cgi?id=108978
 
+        Reviewed by Joseph Pecoraro.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        Added back FRAMEWORK_SEARCH_PATHS for Lion builds.
+
+2013-02-09  David Farler  <dfarler@apple.com>
+
+        Make TestWebKitAPI work for iOS
+        https://bugs.webkit.org/show_bug.cgi?id=108978
+
         Reviewed by David Kilzer.
 
         * Makefile: Added TestWebKitAPI to iOS MODULES list.
