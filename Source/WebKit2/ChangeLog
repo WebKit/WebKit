@@ -1,3 +1,13 @@
+2013-02-10  Anders Carlsson  <andersca@apple.com>
+
+        Add back code that was accidentally removed when moving plug-in enumeration back to the main thread
+        https://bugs.webkit.org/show_bug.cgi?id=109379
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::getPlugins):
+
 2013-02-10  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r142347.

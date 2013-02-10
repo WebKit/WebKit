@@ -306,11 +306,20 @@ void WebProcessProxy::getPlugins(bool refresh, Vector<PluginInfo>& plugins)
     Vector<PluginModuleInfo> pluginModules = m_context->pluginInfoStore().plugins();
     for (size_t i = 0; i < pluginModules.size(); ++i)
         plugins.append(pluginModules[i].info);
+
+#if PLATFORM(MAC)
+    // Add built-in PDF last, so that it's not used when a real plug-in is installed.
+    if (!m_context->omitPDFSupport()) {
+#if ENABLE(PDFKIT_PLUGIN)
+        plugins.append(PDFPlugin::pluginInfo());
+#endif
+        plugins.append(SimplePDFPlugin::pluginInfo());
+    }
+#endif
 }
 #endif // ENABLE(NETSCAPE_PLUGIN_API)
 
 #if ENABLE(PLUGIN_PROCESS)
-
 void WebProcessProxy::getPluginProcessConnection(const String& pluginPath, uint32_t processType, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
     PluginProcessManager::shared().getPluginProcessConnection(m_context->pluginInfoStore(), pluginPath, static_cast<PluginProcess::Type>(processType), reply);
