@@ -1,3 +1,18 @@
+2013-02-09  Andreas Kling  <akling@apple.com>
+
+        Shrink-wrap UnlinkedCodeBlock members.
+        <http://webkit.org/b/109368>
+
+        Reviewed by Oliver Hunt.
+
+        Rearrange the members of UnlinkedCodeBlock to avoid unnecessary padding on 64-bit.
+        Knocks ~600 KB off of the Membuster3 peak.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::UnlinkedCodeBlock::UnlinkedCodeBlock):
+        * bytecode/UnlinkedCodeBlock.h:
+        (UnlinkedCodeBlock):
+
 2013-02-08  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should allow phases to break Phi's and then have one phase to rebuild them
