@@ -102,16 +102,37 @@ CaptionUserPreferencesMac::~CaptionUserPreferencesMac()
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 bool CaptionUserPreferencesMac::userPrefersCaptions() const
 {
+    if (!MediaAccessibilityLibrary())
+        return CaptionUserPreferences::userPrefersCaptions();
+
     return MACaptionAppearanceGetShowCaptions(kMACaptionAppearanceDomainUser);
 }
 
 void CaptionUserPreferencesMac::setUserPrefersCaptions(bool preference)
 {
+    if (!MediaAccessibilityLibrary()) {
+        CaptionUserPreferences::setUserPrefersCaptions(preference);
+        return;
+    }
+
     MACaptionAppearanceSetShowCaptions(kMACaptionAppearanceDomainUser, preference);
+}
+
+bool CaptionUserPreferencesMac::userHasCaptionPreferences() const
+{
+    if (!MediaAccessibilityLibrary())
+        return CaptionUserPreferences::userHasCaptionPreferences();
+
+    return !MediaAccessibilityLibrary();
 }
 
 void CaptionUserPreferencesMac::registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
 {
+    if (!MediaAccessibilityLibrary()) {
+        CaptionUserPreferences::registerForCaptionPreferencesChangedCallbacks(listener);
+        return;
+    }
+
     ASSERT(!m_captionPreferenceChangeListeners.contains(listener));
 
     if (!kMAXCaptionAppearanceSettingsChangedNotification)
@@ -128,6 +149,11 @@ void CaptionUserPreferencesMac::registerForCaptionPreferencesChangedCallbacks(Ca
 
 void CaptionUserPreferencesMac::unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
 {
+    if (!MediaAccessibilityLibrary()) {
+        CaptionUserPreferences::unregisterForCaptionPreferencesChangedCallbacks(listener);
+        return;
+    }
+
     if (kMAXCaptionAppearanceSettingsChangedNotification)
         m_captionPreferenceChangeListeners.remove(listener);
 }
@@ -332,6 +358,9 @@ String CaptionUserPreferencesMac::captionsDefaultFontCSS() const
 
 String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
 {
+    if (!MediaAccessibilityLibrary())
+        return CaptionUserPreferences::captionsStyleSheetOverride();
+
     StringBuilder captionsOverrideStyleSheet;
 
     String background = captionsBackgroundCSS();
@@ -374,6 +403,9 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
 
 float CaptionUserPreferencesMac::captionFontSizeScale(bool& important) const
 {
+    if (!MediaAccessibilityLibrary())
+        return CaptionUserPreferences::captionFontSizeScale(important);
+
     MACaptionAppearanceBehavior behavior;
     CGFloat characterScale = CaptionUserPreferences::captionFontSizeScale(important);
     CGFloat scaleAdjustment = MACaptionAppearanceGetRelativeCharacterSize(kMACaptionAppearanceDomainUser, &behavior);
@@ -417,6 +449,11 @@ void CaptionUserPreferencesMac::updateCaptionStyleSheetOveride()
 
 void CaptionUserPreferencesMac::setPreferredLanguage(String language) const
 {
+    if (!MediaAccessibilityLibrary()) {
+        CaptionUserPreferences::setPreferredLanguage(language);
+        return;
+    }
+
     MACaptionAppearanceAddSelectedLanguage(kMACaptionAppearanceDomainUser, language.createCFString().get());
 }
 
@@ -425,6 +462,9 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
     Vector<String> override = userPreferredLanguagesOverride();
     if (!override.isEmpty())
         return override;
+
+    if (!MediaAccessibilityLibrary())
+        return CaptionUserPreferences::preferredLanguages();
 
     RetainPtr<CFArrayRef> languages(AdoptCF, MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
     CFIndex languageCount = CFArrayGetCount(languages.get());

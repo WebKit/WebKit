@@ -43,7 +43,7 @@ public:
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
     virtual bool userPrefersCaptions() const OVERRIDE;
     virtual void setUserPrefersCaptions(bool) OVERRIDE;
-    virtual bool userHasCaptionPreferences() const OVERRIDE { return true; }
+    virtual bool userHasCaptionPreferences() const OVERRIDE;
     virtual float captionFontSizeScale(bool&) const OVERRIDE;
     virtual String captionsStyleSheetOverride() const OVERRIDE;
     virtual void registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
