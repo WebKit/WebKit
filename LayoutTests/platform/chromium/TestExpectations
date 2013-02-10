@@ -2173,7 +2173,6 @@ crbug.com/148638  [ Android ] fast/repaint/list-marker.html [ Failure ImageOnlyF
 crbug.com/148638  [ Android ] svg/hixie/perf/001.xml [ Failure ImageOnlyFailure ]
 crbug.com/148638  [ Android ] svg/hixie/perf/002.xml [ Failure ImageOnlyFailure ]
 crbug.com/148638  [ Android ] svg/transforms/text-with-pattern-inside-transformed-html.xhtml [ Failure ImageOnlyFailure ]
-crbug.com/148638  [ Mac ] svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Pass Timeout ]
 crbug.com/148638  [ Mac ] svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Pass Timeout ImageOnlyFailure ]
 crbug.com/148638  [ Android ] svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ Failure ImageOnlyFailure ]
  
