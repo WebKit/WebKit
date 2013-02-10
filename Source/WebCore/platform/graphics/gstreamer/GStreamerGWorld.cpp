@@ -92,6 +92,14 @@ GStreamerGWorld::~GStreamerGWorld()
 {
     exitFullscreen();
 
+    GRefPtr<GstBus> bus = webkitGstPipelineGetBus(GST_PIPELINE(m_pipeline));
+    g_signal_handlers_disconnect_by_func(bus.get(), reinterpret_cast<gpointer>(gstGWorldSyncMessageCallback), this);
+#ifndef GST_API_VERSION_1
+    gst_bus_set_sync_handler(bus.get(), 0, this);
+#else
+    gst_bus_set_sync_handler(bus.get(), 0, this, 0);
+#endif
+
     m_pipeline = 0;
 }
 

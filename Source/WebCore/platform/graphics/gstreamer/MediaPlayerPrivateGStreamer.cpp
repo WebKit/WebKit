@@ -40,6 +40,12 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
+#ifdef GST_API_VERSION_1
+#include <gst/audio/streamvolume.h>
+#else
+#include <gst/interfaces/streamvolume.h>
+#endif
+
 // GstPlayFlags flags from playbin2. It is the policy of GStreamer to
 // not publicly expose element-specific enums. That's why this
 // GstPlayFlags enum has been copied here.

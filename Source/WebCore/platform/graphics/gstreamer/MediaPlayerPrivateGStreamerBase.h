@@ -27,20 +27,13 @@
 #include "GRefPtrGStreamer.h"
 #include "MediaPlayerPrivate.h"
 
-#include <glib.h>
-#include <gst/gst.h>
 #include <wtf/Forward.h>
 
-#ifdef GST_API_VERSION_1
-#include <gst/audio/streamvolume.h>
-#else
-#include <gst/interfaces/streamvolume.h>
-#endif
-
-typedef struct _WebKitVideoSink WebKitVideoSink;
 typedef struct _GstBuffer GstBuffer;
-typedef struct _GstMessage GstMessage;
 typedef struct _GstElement GstElement;
+typedef struct _GstMessage GstMessage;
+typedef struct _GstStreamVolume GstStreamVolume;
+typedef struct _WebKitVideoSink WebKitVideoSink;
 
 namespace WebCore {
 
@@ -119,9 +112,11 @@ protected:
     RefPtr<GStreamerGWorld> m_gstGWorld;
     OwnPtr<FullscreenVideoControllerGStreamer> m_fullscreenVideoController;
 #endif
-    guint m_volumeTimerHandler;
-    guint m_muteTimerHandler;
-    guint m_repaintHandler;
+    unsigned long m_volumeTimerHandler;
+    unsigned long m_muteTimerHandler;
+    unsigned long m_repaintHandler;
+    unsigned long m_volumeSignalHandler;
+    unsigned long m_muteSignalHandler;
     GRefPtr<GstPad> m_videoSinkPad;
     mutable IntSize m_videoSize;
 };

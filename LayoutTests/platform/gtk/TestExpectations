@@ -530,9 +530,6 @@ webkit.org/b/107377 storage/indexeddb/mozilla/create-index-unique.html [ Crash P
 webkit.org/b/107377 storage/indexeddb/objectstore-basics.html [ Crash Pass ]
 webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Crash Failure ]
 
-webkit.org/b/108682 [ Debug ] media/video-controls-fullscreen-volume.html [ Crash ]
-webkit.org/b/108682 [ Debug ] media/video-controls-visible-exiting-fullscreen.html [ Crash ]
-webkit.org/b/108682 [ Debug ] media/video-src.html [ Crash ]
 
 webkit.org/b/108927 http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html [ Crash Pass ]
 

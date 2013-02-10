@@ -45,6 +45,12 @@
 #include <gst/video/video.h>
 #include <wtf/text/CString.h>
 
+#ifdef GST_API_VERSION_1
+#include <gst/audio/streamvolume.h>
+#else
+#include <gst/interfaces/streamvolume.h>
+#endif
+
 GST_DEBUG_CATEGORY_STATIC(webkit_media_player_debug);
 #define GST_CAT_DEFAULT webkit_media_player_debug
 
@@ -120,6 +126,16 @@ MediaPlayerPrivateGStreamerBase::~MediaPlayerPrivateGStreamerBase()
 
     if (m_volumeTimerHandler)
         g_source_remove(m_volumeTimerHandler);
+
+    if (m_volumeSignalHandler) {
+        g_signal_handler_disconnect(m_volumeElement.get(), m_volumeSignalHandler);
+        m_volumeSignalHandler = 0;
+    }
+
+    if (m_muteSignalHandler) {
+        g_signal_handler_disconnect(m_volumeElement.get(), m_muteSignalHandler);
+        m_muteSignalHandler = 0;
+    }
 
 #if USE(NATIVE_FULLSCREEN_VIDEO)
     if (m_fullscreenVideoController)
@@ -465,8 +481,8 @@ void MediaPlayerPrivateGStreamerBase::setStreamVolumeElement(GstStreamVolume* vo
 
     g_object_set(m_volumeElement.get(), "mute", m_player->muted(), "volume", m_player->volume(), NULL);
 
-    g_signal_connect(m_volumeElement.get(), "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
-    g_signal_connect(m_volumeElement.get(), "notify::mute", G_CALLBACK(mediaPlayerPrivateMuteChangedCallback), this);
+    m_volumeSignalHandler = g_signal_connect(m_volumeElement.get(), "notify::volume", G_CALLBACK(mediaPlayerPrivateVolumeChangedCallback), this);
+    m_muteSignalHandler = g_signal_connect(m_volumeElement.get(), "notify::mute", G_CALLBACK(mediaPlayerPrivateMuteChangedCallback), this);
 }
 
 unsigned MediaPlayerPrivateGStreamerBase::decodedFrameCount() const
