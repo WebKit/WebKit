@@ -221,21 +221,6 @@ webkit.org/b/108355 fast/js/caller-property.html [ Crash Pass ]
 webkit.org/b/108355 storage/websql/close-during-stress-test.html [ Crash Pass ]
 webkit.org/b/108355 storage/websql/sql-error-codes.html [ Crash Pass ]
 
-webkit.org/b/108058 [ Debug ] fast/dom/DOMImplementation/createDocument-with-used-doctype.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-10.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-20.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-30.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-40.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-50.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-60.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-70.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-80.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-90.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-100.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-110.html [ Crash Pass ]
-webkit.org/b/108058 [ Debug ] fast/encoding/parser-tests-120.html [ Crash Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
 #////////////////////////////////////////////////////////////////////////////////////////
