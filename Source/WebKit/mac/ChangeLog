@@ -1,3 +1,11 @@
+2013-02-10  Dan Bernstein  <mitz@apple.com>
+
+        Added *.pdf to EXCLUDED_SOURCE_FILE_NAMES_iphoneos.
+
+        Rubber-stamped by Anders Carlsson.
+
+        * Configurations/WebKit.xcconfig:
+
 2013-02-10  Jae Hyun Park  <jae.park08@gmail.com>
 
         Rename ENABLE(GLIB_SUPPORT) to USE(GLIB)
