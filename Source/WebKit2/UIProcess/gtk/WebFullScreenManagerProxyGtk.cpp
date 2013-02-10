@@ -35,6 +35,7 @@ namespace WebKit {
 
 void WebFullScreenManagerProxy::invalidate()
 {
+    m_page->process()->removeMessageReceiver(Messages::WebFullScreenManagerProxy::messageReceiverName(), m_page->pageID());
     m_webView = 0;
 }
 

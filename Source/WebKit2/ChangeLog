@@ -1,3 +1,16 @@
+2013-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        [WebKit2][Gtk] Remove the fullscreen manager proxy message receiver upon invalidating
+        https://bugs.webkit.org/show_bug.cgi?id=109352
+
+        Reviewed by Sam Weinig.
+
+        As added for the Mac port in r142160 due to the changes in the same revision, remove
+        the fullscreen manager proxy as a message receiver. Also fixes a failing unit test.
+
+        * UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp:
+        (WebKit::WebFullScreenManagerProxy::invalidate):
+
 2013-02-10  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         [WK2] Fix build on PLUGIN_ARCHITECTURE(UNSUPPORTED) after r142314
