@@ -1,5 +1,17 @@
 2013-02-10  Laszlo Gombos  <l.gombos@samsung.com>
 
+        Consolidate the way WTF_USE_PTHREADS is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=108191
+
+        Reviewed by Benjamin Poulain.
+
+        Define WTF_USE_PTHREADS to 1 on all OS(UNIX) environments.
+
+        * WTF.gyp/WTF.gyp: Remove duplicated definition of WTF_USE_PTHREADS.
+        * wtf/Platform.h:
+
+2013-02-10  Laszlo Gombos  <l.gombos@samsung.com>
+
         Refactor the way HAVE_XXX macros are set
         https://bugs.webkit.org/show_bug.cgi?id=108132
 

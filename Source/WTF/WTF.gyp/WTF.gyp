@@ -83,11 +83,6 @@
               'WTF_USE_NEW_THEME=1',
             ],
           }],
-          ['os_posix == 1 and OS != "mac"', {
-            'defines': [
-              'WTF_USE_PTHREADS=1',
-            ],
-          }],
         ],
       },
     },

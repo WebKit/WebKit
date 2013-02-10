@@ -31,7 +31,6 @@ set(WTF_USE_SOUP 1)
 
 add_definitions(-DWTF_USE_GLIB=1)
 add_definitions(-DWTF_USE_SOUP=1)
-add_definitions(-DWTF_USE_PTHREADS=1)
 add_definitions(-DWTF_USE_ICU_UNICODE=1)
 add_definitions(-DWTF_USE_CAIRO=1)
 
