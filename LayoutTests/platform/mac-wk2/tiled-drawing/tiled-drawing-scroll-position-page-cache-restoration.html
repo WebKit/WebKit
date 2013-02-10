@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.setCanOpenWindows();
+            testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        }
+
+        window.finishedTest = function (layerTree)
+        {   
+            document.getElementById('layers').innerText = layerTree;
+            testRunner.notifyDone();
+        }
+
+        function doTest()
+        {
+            window.open("resources/scroll-and-load-page.html");
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<pre id="layers">Layer tree goes here</p>
+</body>
+</html>

@@ -1037,6 +1037,9 @@ void FrameView::layout(bool allowSubtree)
     // Protect the view from being deleted during layout (in recalcStyle)
     RefPtr<FrameView> protector(this);
 
+    // Every scroll that happens during layout is programmatic.
+    TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
+
     bool inChildFrameLayoutWithFrameFlattening = isInChildFrameWithFrameFlattening();
 
     if (inChildFrameLayoutWithFrameFlattening) {
