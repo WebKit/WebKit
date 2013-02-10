@@ -67,13 +67,14 @@ class WebRTCPeerConnectionHandlerClient;
 class WebSandboxSupport;
 class WebSocketStreamHandle;
 class WebStorageNamespace;
+class WebUnitTestSupport;
 class WebThemeEngine;
 class WebThread;
 class WebURL;
 class WebURLLoader;
 class WebWorkerRunLoop;
-struct WebLocalizedString;
 struct WebFloatPoint;
+struct WebLocalizedString;
 struct WebSize;
 
 class Platform {
@@ -358,6 +359,13 @@ public:
 
     // Callable from a background WebKit thread.
     virtual void callOnMainThread(void (*func)(void*), void* context) { }
+
+
+    // Testing -------------------------------------------------------------
+
+#define HAVE_WEBUNITTESTSUPPORT 1
+    // Get a pointer to testing support interfaces. Will not be available in production builds.
+    virtual WebUnitTestSupport* unitTestSupport() { return 0; }
 
 
     // Tracing -------------------------------------------------------------
