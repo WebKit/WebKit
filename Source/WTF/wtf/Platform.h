@@ -678,8 +678,17 @@
 #endif /* !defined(HAVE_ACCESSIBILITY) */
 
 #if OS(UNIX)
+#define HAVE_ERRNO_H 1
+#define HAVE_MMAP 1   
 #define HAVE_SIGNAL_H 1
+#define HAVE_STRINGS_H 1
+#define HAVE_SYS_PARAM_H 1
+#define HAVE_SYS_TIME_H 1 
 #define WTF_USE_OS_RANDOMNESS 1
+#endif /* OS(UNIX) */
+
+#if OS(UNIX) && !OS(ANDROID) && !OS(QNX)
+#define HAVE_LANGINFO_H 1
 #endif
 
 #if (OS(FREEBSD) || OS(OPENBSD)) && !defined(__GLIBC__)
@@ -708,13 +717,7 @@
 
 #if OS(DARWIN)
 
-#define HAVE_ERRNO_H 1
-#define HAVE_LANGINFO_H 1
-#define HAVE_MMAP 1
 #define HAVE_MERGESORT 1
-#define HAVE_STRINGS_H 1
-#define HAVE_SYS_PARAM_H 1
-#define HAVE_SYS_TIME_H 1
 #define HAVE_SYS_TIMEB_H 1
 #define WTF_USE_ACCELERATE 1
 
@@ -722,60 +725,32 @@
 
 #define HAVE_DISPATCH_H 1
 #define HAVE_HOSTED_CORE_ANIMATION 1
+#define HAVE_MADV_FREE 1
+#define HAVE_PTHREAD_SETNAME_NP 1
 
 #if !PLATFORM(IOS)
 #define HAVE_MADV_FREE_REUSE 1
-#define HAVE_MADV_FREE 1
-#define HAVE_PTHREAD_SETNAME_NP 1
-#endif
+#endif /* !PLATFORM(IOS) */
 
-#endif
+#endif /* PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060 */
 
-#if PLATFORM(IOS)
-#define HAVE_MADV_FREE 1
-#define HAVE_PTHREAD_SETNAME_NP 1
-#endif
+#endif /* OS(DARWIN) */
 
-#elif OS(WINDOWS)
-
-#if !OS(WINCE)
+#if OS(WINDOWS) && !OS(WINCE)
 #define HAVE_SYS_TIMEB_H 1
 #define HAVE_ALIGNED_MALLOC 1
 #define HAVE_ISDEBUGGERPRESENT 1
 #endif
+
+#if OS(WINDOWS)
 #define HAVE_VIRTUALALLOC 1
 #define WTF_USE_OS_RANDOMNESS 1
+#endif
 
-#elif OS(QNX)
-
-#define HAVE_ERRNO_H 1
-#define HAVE_MMAP 1
+#if OS(QNX)
 #define HAVE_MADV_FREE_REUSE 1
 #define HAVE_MADV_FREE 1
-#define HAVE_STRINGS_H 1
-#define HAVE_SYS_PARAM_H 1
-#define HAVE_SYS_TIME_H 1
 #define WTF_USE_PTHREADS 1
-
-#elif OS(ANDROID)
-
-#define HAVE_ERRNO_H 1
-#define HAVE_MMAP 1
-#define HAVE_STRINGS_H 1
-#define HAVE_SYS_PARAM_H 1
-#define HAVE_SYS_TIME_H 1
-
-#else
-
-/* FIXME: is this actually used or do other platforms generate their own config.h? */
-
-#define HAVE_ERRNO_H 1
-#define HAVE_LANGINFO_H 1
-#define HAVE_MMAP 1
-#define HAVE_STRINGS_H 1
-#define HAVE_SYS_PARAM_H 1
-#define HAVE_SYS_TIME_H 1
-
 #endif
 
 /* ENABLE macro defaults */

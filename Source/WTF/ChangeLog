@@ -1,3 +1,16 @@
+2013-02-10  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Refactor the way HAVE_XXX macros are set
+        https://bugs.webkit.org/show_bug.cgi?id=108132
+
+        Reviewed by Benjamin Poulain.
+
+        OS(WINDOWS) and OS(UNIX) are so broadly defined that for each
+        builds exactly one of them is enabled. Use this assumption to
+        cleanup Platform.h.
+
+        * wtf/Platform.h:
+
 2013-02-10  Jae Hyun Park  <jae.park08@gmail.com>
 
         Rename ENABLE(GLIB_SUPPORT) to USE(GLIB)
