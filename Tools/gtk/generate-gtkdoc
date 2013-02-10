@@ -172,6 +172,10 @@ cflags = os.environ.get('CFLAGS', '')
 cflags += ' -DGLIB_VERSION_MIN_REQUIRED=GLIB_VERSION_2_32'
 os.environ['CFLAGS'] = cflags
 
+# Clang can be noisy, throwing unnecessary warnings for unused arguments.
+if os.environ.get('CC') == "clang":
+    os.environ['CFLAGS'] += ' -Qunused-arguments'
+
 saw_webkit1_warnings = saw_webkit2_warnings = False
 
 pkg_config_path = common.build_path('Source', 'WebKit', 'gtk', 'webkitgtk-3.0.pc')

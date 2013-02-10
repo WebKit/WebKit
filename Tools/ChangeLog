@@ -1,3 +1,17 @@
+2013-02-10  Zan Dobersek  <zdobersek@igalia.com>
+
+        gtkdoc-scangobj throwing warnings when using Clang, causes generate-gtkdoc to fail
+        https://bugs.webkit.org/show_bug.cgi?id=109315
+
+        Reviewed by Philippe Normand.
+
+        * GNUmakefile.am: Define the CC environment variable to the CC compiler that the whole
+        project was configured to use. This ensures both the regular build and the gtkdoc-scangobj
+        program use the same compiler.
+        * gtk/generate-gtkdoc: Add '-Qunused-arguments' to the CFLAGS in case we're using Clang. This
+        forces Clang to suppress unused arguments warnings that can unnecessarily cause generate-gtkdoc
+        script to fail.
+
 2013-02-09  David Farler  <dfarler@apple.com>
 
         Make TestWebKitAPI work for iOS

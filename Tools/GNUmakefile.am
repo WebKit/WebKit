@@ -321,7 +321,7 @@ docs-build.stamp: \
 	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-docs.sgml \
 	Source/WebKit2/UIProcess/API/gtk/docs/webkit2gtk-sections.txt
-	$(srcdir)/Tools/gtk/generate-gtkdoc
+	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
 	@touch docs-build.stamp
 else
 docs-build.stamp: \
@@ -329,7 +329,7 @@ docs-build.stamp: \
 	Source/WebKit/gtk/docs/webkitenvironment.xml \
 	Source/WebKit/gtk/docs/webkitgtk-docs.sgml \
 	Source/WebKit/gtk/docs/webkitgtk-sections.txt
-	$(srcdir)/Tools/gtk/generate-gtkdoc
+	CC=$(CC) $(srcdir)/Tools/gtk/generate-gtkdoc
 	@touch docs-build.stamp
 endif
 
