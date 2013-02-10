@@ -73,10 +73,10 @@ TextureMapperShaderProgram::TextureMapperShaderProgram(PassRefPtr<GraphicsContex
 void TextureMapperShaderProgram::setMatrix(GC3Duint location, const TransformationMatrix& matrix)
 {
     GC3Dfloat matrixAsFloats[] = {
-        matrix.m11(), matrix.m12(), matrix.m13(), matrix.m14(),
-        matrix.m21(), matrix.m22(), matrix.m23(), matrix.m24(),
-        matrix.m31(), matrix.m32(), matrix.m33(), matrix.m34(),
-        matrix.m41(), matrix.m42(), matrix.m43(), matrix.m44()
+        GC3Dfloat(matrix.m11()), GC3Dfloat(matrix.m12()), GC3Dfloat(matrix.m13()), GC3Dfloat(matrix.m14()),
+        GC3Dfloat(matrix.m21()), GC3Dfloat(matrix.m22()), GC3Dfloat(matrix.m23()), GC3Dfloat(matrix.m24()),
+        GC3Dfloat(matrix.m31()), GC3Dfloat(matrix.m32()), GC3Dfloat(matrix.m33()), GC3Dfloat(matrix.m34()),
+        GC3Dfloat(matrix.m41()), GC3Dfloat(matrix.m42()), GC3Dfloat(matrix.m43()), GC3Dfloat(matrix.m44())
     };
 
     m_context->uniformMatrix4fv(location, 1, false, matrixAsFloats);
