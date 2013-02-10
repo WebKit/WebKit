@@ -1,3 +1,10 @@
+2013-02-10  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r181645.  Requested by
+        "James Robinson" <jamesr@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-02-09  Stephen Chenney  <schenney@chromium.org>
 
         Unreviewed.  Rolled Chromium DEPS to last-known good revision. Really this time.
