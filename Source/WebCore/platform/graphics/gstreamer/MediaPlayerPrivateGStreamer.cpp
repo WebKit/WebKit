@@ -541,9 +541,9 @@ void MediaPlayerPrivateGStreamer::setRate(float rate)
 
     LOG_MEDIA_MESSAGE("Set Rate to %f", rate);
     if (rate > 0) {
-        // Mute the sound if the playback rate is too extreme.
-        // TODO: in other cases we should perform pitch adjustments.
-        mute = (bool) (rate < 0.8 || rate > 2);
+        // Mute the sound if the playback rate is too extreme and
+        // audio pitch is not adjusted.
+        mute = (!m_preservesPitch && (rate < 0.8 || rate > 2));
         start = currentPosition;
         end = GST_CLOCK_TIME_NONE;
     } else {
