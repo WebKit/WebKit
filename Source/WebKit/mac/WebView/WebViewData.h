@@ -188,7 +188,7 @@ private:
     WebFullScreenController *newFullscreenController;
 #endif
 
-#if ENABLE(GLIB_SUPPORT)
+#if USE(GLIB)
     CFRunLoopObserverRef glibRunLoopObserver;
 #endif
     id<WebGeolocationProvider> _geolocationProvider;

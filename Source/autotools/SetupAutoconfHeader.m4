@@ -1,5 +1,5 @@
 # Configuration flags that are used throughout WebKitGTK+.
-AC_DEFINE([ENABLE_GLIB_SUPPORT], [1], [ ])
+AC_DEFINE([WTF_USE_GLIB], [1], [ ])
 AC_DEFINE([WTF_USE_FREETYPE], [1], [ ])
 AC_DEFINE([WTF_USE_HARFBUZZ], [1], [ ])
 AC_DEFINE([WTF_USE_SOUP], [1], [ ])

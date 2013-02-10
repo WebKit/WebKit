@@ -21,7 +21,7 @@ mac {
 }
 
 linux-*:use?(GSTREAMER) {
-    DEFINES += ENABLE_GLIB_SUPPORT=1
+    DEFINES += WTF_USE_GLIB=1
     PKGCONFIG += glib-2.0 gio-2.0
 }
 

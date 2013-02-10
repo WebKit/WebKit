@@ -1121,7 +1121,7 @@
 #define ENABLE_THREADING_GENERIC 1
 #endif
 
-#if ENABLE(GLIB_SUPPORT)
+#if USE(GLIB)
 #include <wtf/gobject/GTypedefs.h>
 #endif
 

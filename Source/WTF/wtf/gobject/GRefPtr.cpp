@@ -19,7 +19,7 @@
 #include "config.h"
 #include "GRefPtr.h"
 
-#if ENABLE(GLIB_SUPPORT)
+#if USE(GLIB)
 
 #include <glib.h>
 
@@ -166,4 +166,4 @@ template <> void derefGPtr(GByteArray* ptr)
 
 } // namespace WTF
 
-#endif // ENABLE(GLIB_SUPPORT)
+#endif // USE(GLIB)

@@ -105,7 +105,7 @@ OBJC_CLASS NSTextAlternatives;
 - (void)_scheduleCompositingLayerFlush;
 #endif
 
-#if ENABLE(GLIB_SUPPORT)
+#if USE(GLIB)
 - (void)_scheduleGlibContextIterations;
 #endif
 

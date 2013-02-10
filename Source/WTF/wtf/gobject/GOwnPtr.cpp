@@ -19,7 +19,7 @@
 #include "config.h"
 #include "GOwnPtr.h"
 
-#if ENABLE(GLIB_SUPPORT)
+#if USE(GLIB)
 
 #include <gio/gio.h>
 #include <glib.h>
@@ -68,4 +68,4 @@ template <> void freeOwnedGPtr<GKeyFile>(GKeyFile* ptr)
 
 } // namespace WTF
 
-#endif // ENABLE(GLIB_SUPPORT)
+#endif // USE(GLIB)

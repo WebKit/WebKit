@@ -29,7 +29,7 @@ find_package(LibSoup 2.39.4.1 REQUIRED)
 
 set(WTF_USE_SOUP 1)
 
-add_definitions(-DENABLE_GLIB_SUPPORT=1)
+add_definitions(-DWTF_USE_GLIB=1)
 add_definitions(-DWTF_USE_SOUP=1)
 add_definitions(-DWTF_USE_PTHREADS=1)
 add_definitions(-DWTF_USE_ICU_UNICODE=1)

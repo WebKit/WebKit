@@ -23,7 +23,7 @@
 #ifndef WTF_GRefPtr_h
 #define WTF_GRefPtr_h
 
-#if ENABLE(GLIB_SUPPORT)
+#if USE(GLIB)
 
 #include <wtf/AlwaysInline.h>
 #include <wtf/RefPtr.h>
@@ -233,6 +233,6 @@ template <typename T> inline void derefGPtr(T* ptr)
 using WTF::GRefPtr;
 using WTF::adoptGRef;
 
-#endif // ENABLE(GLIB_SUPPORT)
+#endif // USE(GLIB)
 
 #endif // WTF_GRefPtr_h

@@ -5,7 +5,7 @@
     'library_version': '3.0',
     'javascriptcore_soname_version': '0.13.8',
     'default_defines': [
-      'ENABLE_GLIB_SUPPORT=1',
+      'WTF_USE_GLIB=1',
       'BUILDING_CAIRO__=1',
       'BUILDING_GTK__=1',
       'WTF_CHANGES',
