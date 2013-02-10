@@ -1,3 +1,12 @@
+2013-02-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ gyp build
+
+        * JavaScriptCore.gypi: Update the source list to accurately
+        reflect what's in the repository and remove the offsets extractor
+        from the list of JavaScriptCore files. It's only used to build
+        the extractor binary.
+
 2013-02-09  Andreas Kling  <akling@apple.com>
 
         Shrink-wrap UnlinkedCodeBlock members.
