@@ -1,5 +1,16 @@
 2013-02-10  Kent Tamura  <tkent@chromium.org>
 
+        Unreviewed, rolling out r142347.
+        http://trac.webkit.org/changeset/142347
+        https://bugs.webkit.org/show_bug.cgi?id=108273
+
+        Because a depending change r142343 was rolled out.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+
+2013-02-10  Kent Tamura  <tkent@chromium.org>
+
         [Chromium] Build fix for r142371
         https://bugs.webkit.org/show_bug.cgi?id=109313
 
