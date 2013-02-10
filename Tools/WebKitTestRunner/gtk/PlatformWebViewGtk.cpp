@@ -37,6 +37,7 @@ PlatformWebView::PlatformWebView(WKContextRef context, WKPageGroupRef pageGroup,
     : m_view(WKViewCreate(context, pageGroup))
     , m_window(gtk_window_new(GTK_WINDOW_POPUP))
     , m_windowIsKey(true)
+    , m_options(options)
 {
     gtk_container_add(GTK_CONTAINER(m_window), GTK_WIDGET(m_view));
 

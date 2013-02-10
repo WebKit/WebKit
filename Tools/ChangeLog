@@ -1,3 +1,26 @@
+2013-02-10  Tim Horton  <timothy_horton@apple.com>
+
+        WKTR should propagate view creation options to opened windows
+        https://bugs.webkit.org/show_bug.cgi?id=109381
+
+        Reviewed by Simon Fraser.
+
+        * WebKitTestRunner/PlatformWebView.h:
+        (WTR::PlatformWebView::options):
+        Add storage and a getter for PlatformWebView's creation options dictionary.
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        Propagate creation options from parent to child PlatformWebView when creating subwindows.
+        * WebKitTestRunner/efl/PlatformWebViewEfl.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView):
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+        Store creation options on the PlatformWebView.
+
 2013-02-10  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, rolling out r142347.

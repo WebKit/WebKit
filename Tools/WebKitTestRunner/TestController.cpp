@@ -180,9 +180,11 @@ int TestController::getCustomTimeout()
     return m_timeout;
 }
 
-WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void*)
+WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WKDictionaryRef, WKEventModifiers, WKEventMouseButton, const void* clientInfo)
 {
-    PlatformWebView* view = new PlatformWebView(WKPageGetContext(oldPage), WKPageGetPageGroup(oldPage));
+    PlatformWebView* parentView = static_cast<PlatformWebView*>(const_cast<void*>(clientInfo));
+
+    PlatformWebView* view = new PlatformWebView(WKPageGetContext(oldPage), WKPageGetPageGroup(oldPage), parentView->options());
     WKPageRef newPage = view->page();
 
     view->resizeTo(800, 600);

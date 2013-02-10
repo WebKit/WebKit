@@ -79,6 +79,7 @@ private:
 
 PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGroupRef, WKDictionaryRef options)
     : m_windowIsKey(true)
+    , m_options(options)
     , m_modalEventLoop(0)
 {
     WKRetainPtr<WKStringRef> useFixedLayoutKey(AdoptWK, WKStringCreateWithUTF8CString("UseFixedLayout"));
