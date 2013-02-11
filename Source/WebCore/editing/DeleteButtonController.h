@@ -41,9 +41,6 @@ class DeleteButtonController {
 public:
     explicit DeleteButtonController(Frame*);
 
-    static const char* const containerElementIdentifier;
-
-    HTMLElement* target() const { return m_target.get(); }
     HTMLElement* containerElement() const { return m_containerElement.get(); }
 
     void respondToChangedSelection(const VisibleSelection& oldSelection);
@@ -53,7 +50,6 @@ public:
     void show(HTMLElement*);
     void hide();
 
-    bool enabled() const { return (m_disableStack == 0); }
     void enable();
     void disable();
 
@@ -62,8 +58,10 @@ public:
 private:
     static const char* const buttonElementIdentifier;
     static const char* const outlineElementIdentifier;
+    static const char* const containerElementIdentifier;
 
     void createDeletionUI();
+    bool enabled() const { return (!m_disableStack); }
 
     Frame* m_frame;
     RefPtr<HTMLElement> m_target;

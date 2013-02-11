@@ -38,6 +38,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+#if ENABLE(DELETION_UI)
+
 inline DeleteButton::DeleteButton(Document* document)
     : HTMLImageElement(imgTag, document)
 {
@@ -58,5 +60,6 @@ void DeleteButton::defaultEventHandler(Event* event)
 
     HTMLImageElement::defaultEventHandler(event);
 }
+#endif
 
 } // namespace

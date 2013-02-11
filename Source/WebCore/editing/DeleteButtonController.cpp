@@ -51,6 +51,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
+#if ENABLE(DELETION_UI)
+
 const char* const DeleteButtonController::containerElementIdentifier = "WebKit-Editing-Delete-Container";
 const char* const DeleteButtonController::buttonElementIdentifier = "WebKit-Editing-Delete-Button";
 const char* const DeleteButtonController::outlineElementIdentifier = "WebKit-Editing-Delete-Outline";
@@ -391,5 +393,6 @@ void DeleteButtonController::deleteTarget()
     applyCommand(RemoveTargetCommand::create(m_frame->document(), m_target));
     m_frame->selection()->setSelection(VisiblePosition(pos));
 }
+#endif
 
 } // namespace WebCore

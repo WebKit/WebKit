@@ -1183,6 +1183,7 @@ bool isNonTableCellHTMLBlockElement(const Node* node)
         || node->hasTagName(h5Tag);
 }
 
+#if ENABLE(DELETION_UI)
 PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
 {
     if (!range)
@@ -1237,7 +1238,8 @@ VisibleSelection avoidIntersectionWithNode(const VisibleSelection& selection, No
 
     return updatedSelection;
 }
-
+#endif
+    
 Position adjustedSelectionStartForStyleComputation(const VisibleSelection& selection)
 {
     // This function is used by range style computations to avoid bugs like:

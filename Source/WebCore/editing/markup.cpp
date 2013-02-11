@@ -39,7 +39,9 @@
 #include "CSSValueKeywords.h"
 #include "ChildListMutationScope.h"
 #include "ContextFeatures.h"
+#if ENABLE(DELETION_UI)
 #include "DeleteButtonController.h"
+#endif
 #include "DocumentFragment.h"
 #include "DocumentType.h"
 #include "Editor.h"
@@ -555,14 +557,18 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
 
     // Disable the delete button so it's elements are not serialized into the markup,
     // but make sure neither endpoint is inside the delete user interface.
+    RefPtr<Range> updatedRange;
+#if ENABLE(DELETION_UI)
     Frame* frame = document->frame();
     DeleteButtonController* deleteButton = frame ? frame->editor()->deleteButtonController() : 0;
-    RefPtr<Range> updatedRange = avoidIntersectionWithNode(range, deleteButton ? deleteButton->containerElement() : 0);
+    updatedRange = avoidIntersectionWithNode(range, deleteButton ? deleteButton->containerElement() : 0);
     if (!updatedRange)
         return "";
-
     if (deleteButton)
         deleteButton->disable();
+#else
+    updatedRange = Range::create(range->ownerDocument(), range->startContainer(), range->startOffset(), range->endContainer(), range->endOffset());
+#endif
 
     bool collapsed = updatedRange->collapsed(ASSERT_NO_EXCEPTION);
     if (collapsed)
@@ -587,8 +593,10 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     VisiblePosition visibleEnd(updatedRange->endPosition(), VP_DEFAULT_AFFINITY);
     if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleStart)) {
         if (visibleStart == visibleEnd.previous()) {
+#if ENABLE(DELETION_UI)
             if (deleteButton)
                 deleteButton->enable();
+#endif
             return interchangeNewlineString;
         }
 
@@ -596,8 +604,10 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         startNode = visibleStart.next().deepEquivalent().deprecatedNode();
 
         if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0, ASSERT_NO_EXCEPTION) >= 0) {
+#if ENABLE(DELETION_UI)
             if (deleteButton)
                 deleteButton->enable();
+#endif
             return interchangeNewlineString;
         }
     }
@@ -645,9 +655,10 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleEnd.previous()))
         accumulator.appendString(interchangeNewlineString);
 
+#if ENABLE(DELETION_UI)
     if (deleteButton)
         deleteButton->enable();
-
+#endif
     return accumulator.takeResults();
 }
 
@@ -756,12 +767,13 @@ String createMarkup(const Node* node, EChildrenOnly childrenOnly, Vector<Node*>*
         return "";
 
     HTMLElement* deleteButtonContainerElement = 0;
+#if ENABLE(DELETION_UI)
     if (Frame* frame = node->document()->frame()) {
         deleteButtonContainerElement = frame->editor()->deleteButtonController()->containerElement();
         if (node->isDescendantOf(deleteButtonContainerElement))
             return "";
     }
-
+#endif
     MarkupAccumulator accumulator(nodes, shouldResolveURLs);
     return accumulator.serializeNodes(const_cast<Node*>(node), deleteButtonContainerElement, childrenOnly, tagNamesToSkip);
 }
@@ -897,10 +909,11 @@ PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const V
     if (!document)
         return 0;
 
+#if ENABLE(DELETION_UI)
     // disable the delete button so it's elements are not serialized into the markup
     if (document->frame())
         document->frame()->editor()->deleteButtonController()->disable();
-
+#endif
     RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
 
     size_t size = nodes.size();
@@ -910,9 +923,10 @@ PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const V
         fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);
     }
 
+#if ENABLE(DELETION_UI)
     if (document->frame())
         document->frame()->editor()->deleteButtonController()->enable();
-
+#endif
     return fragment.release();
 }
 

@@ -1,3 +1,15 @@
+2013-02-11  Enrica Casucci  <enrica@apple.com>
+
+        Add ENABLE_DELETION_UI to control the use of the deletion UI.
+        https://bugs.webkit.org/show_bug.cgi?id=109463.
+        
+        ENABLE_DELETION_UI is set to 1 by default for
+        all ports. It is explicitly enabled for MAC and disabled for iOS.
+
+        Reviewed by Ryosuke Niwa.
+
+        * wtf/Platform.h:
+
 2013-02-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL] Stop using smart pointers for Ecore_Timer

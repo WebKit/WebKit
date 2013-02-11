@@ -28,7 +28,6 @@
 
 #include "AutoTableLayout.h"
 #include "CollapsedBorderValue.h"
-#include "DeleteButtonController.h"
 #include "Document.h"
 #include "FixedTableLayout.h"
 #include "FrameView.h"

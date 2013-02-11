@@ -50,7 +50,9 @@ namespace WebCore {
 
 class Clipboard;
 class CompositeEditCommand;
+#if ENABLE(DELETION_UI)
 class DeleteButtonController;
+#endif
 class EditCommand;
 class EditCommandComposition;
 class EditorClient;
@@ -94,7 +96,9 @@ public:
     TextCheckerClient* textChecker() const;
 
     Frame* frame() const { return m_frame; }
+#if ENABLE(DELETION_UI)
     DeleteButtonController* deleteButtonController() const { return m_deleteButtonController.get(); }
+#endif
     CompositeEditCommand* lastEditCommand() { return m_lastEditCommand.get(); }
 
     void handleKeyboardEvent(KeyboardEvent*);
@@ -403,7 +407,9 @@ public:
 private:
     virtual void willDetachPage() OVERRIDE;
 
+#if ENABLE(DELETION_UI)
     OwnPtr<DeleteButtonController> m_deleteButtonController;
+#endif
     RefPtr<CompositeEditCommand> m_lastEditCommand;
     RefPtr<Node> m_removedAnchor;
     RefPtr<Text> m_compositionNode;

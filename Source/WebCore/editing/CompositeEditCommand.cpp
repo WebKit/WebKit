@@ -28,7 +28,9 @@
 
 #include "AppendNodeCommand.h"
 #include "ApplyStyleCommand.h"
+#if ENABLE(DELETION_UI)
 #include "DeleteButtonController.h"
+#endif
 #include "DeleteFromTextNodeCommand.h"
 #include "DeleteSelectionCommand.h"
 #include "Document.h"
@@ -100,14 +102,17 @@ void EditCommandComposition::unapply()
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
-    
+
+#if ENABLE(DELETION_UI)
     DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
     deleteButtonController->disable();
+#endif
     size_t size = m_commands.size();
     for (size_t i = size; i != 0; --i)
         m_commands[i - 1]->doUnapply();
+#if ENABLE(DELETION_UI)
     deleteButtonController->enable();
-    
+#endif
     frame->editor()->unappliedEditing(this);
 }
 
@@ -122,12 +127,16 @@ void EditCommandComposition::reapply()
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
     
+#if ENABLE(DELETION_UI)
     DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
     deleteButtonController->disable();
+#endif
     size_t size = m_commands.size();
     for (size_t i = 0; i != size; ++i)
         m_commands[i]->doReapply();
+#if ENABLE(DELETION_UI)
     deleteButtonController->enable();
+#endif
     
     frame->editor()->reappliedEditing(this);
 }
@@ -201,10 +210,14 @@ void CompositeEditCommand::apply()
     ASSERT(frame);
     {
         EventQueueScope scope;
+#if ENABLE(DELETION_UI)
         DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
         deleteButtonController->disable();
+#endif
         doApply();
+#if ENABLE(DELETION_UI)
         deleteButtonController->enable();
+#endif
     }
 
     // Only need to call appliedEditing for top-level commands,
