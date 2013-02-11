@@ -42,8 +42,7 @@
 
 namespace WebCore {
 
-static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
-static const char* const HeapProfileType = "HEAP";
+static const char* const UserInitiatedProfileNameHeap = "org.webkit.profiles.user-initiated";
 
 PassOwnPtr<InspectorHeapProfilerAgent> InspectorHeapProfilerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager)
 {
@@ -181,7 +180,7 @@ void InspectorHeapProfilerAgent::takeHeapSnapshot(ErrorString*, const bool* repo
         int m_totalWork;
     };
 
-    String title = makeString(UserInitiatedProfileName, '.', String::number(m_nextUserInitiatedHeapSnapshotNumber));
+    String title = makeString(UserInitiatedProfileNameHeap, '.', String::number(m_nextUserInitiatedHeapSnapshotNumber));
     ++m_nextUserInitiatedHeapSnapshotNumber;
 
     HeapSnapshotProgress progress(reportProgress && *reportProgress ? m_frontend : 0);
