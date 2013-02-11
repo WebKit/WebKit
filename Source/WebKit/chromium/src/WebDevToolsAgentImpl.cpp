@@ -778,7 +778,7 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
         || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kProfiler_startCmd]
         || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kProfiler_stopCmd]
         || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kProfiler_getCPUProfileCmd]
-        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kProfiler_getHeapSnapshotCmd];
+        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kHeapProfiler_getHeapSnapshotCmd];
 }
 
 void WebDevToolsAgent::processPendingMessages()

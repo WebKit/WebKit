@@ -41,6 +41,7 @@
 #include "InspectorConsoleAgent.h"
 #include "InspectorFrontend.h"
 #include "InspectorFrontendChannel.h"
+#include "InspectorHeapProfilerAgent.h"
 #include "InspectorProfilerAgent.h"
 #include "InspectorState.h"
 #include "InspectorStateClient.h"
@@ -110,6 +111,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
     m_agents.append(debuggerAgent.release());
 
     m_agents.append(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent.get(), workerContext, m_state.get(), m_injectedScriptManager.get()));
+    m_agents.append(InspectorHeapProfilerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get()));
 #endif
     m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), 0, m_state.get(), InspectorTimelineAgent::WorkerInspector, 0));
     m_agents.append(consoleAgent.release());

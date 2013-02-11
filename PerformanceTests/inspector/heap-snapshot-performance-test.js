@@ -27,7 +27,7 @@ function test()
         var testName = /([^\/]+)\.html$/.exec(WebInspector.inspectedPageURL)[1];
         var fullTimerCookie = timer.start("full-summary-snapshot-time");
         var backendTimerCookie = timer.start("take-snapshot");
-        ProfilerAgent.takeHeapSnapshot(step0);
+        HeapProfilerAgent.takeHeapSnapshot(step0);
 
         function step0()
         {
@@ -59,7 +59,7 @@ function test()
             timer.finish(changeViewTimerCookie);
             timer.finish(fullTimerCookie);
             clearTimerCookie = timer.start("clear-snapshot");
-            ProfilerAgent.clearProfiles(done);
+            HeapProfilerAgent.clearProfiles(done);
             WebInspector.panels.profiles._reset();
         }
 

@@ -5692,6 +5692,9 @@
     <ClCompile Include="..\inspector\InspectorFrontendHost.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="..\inspector\InspectorHeapProfilerAgent.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\inspector\InspectorHistory.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -8370,6 +8373,7 @@
     <ClInclude Include="..\inspector\InspectorFrontendClient.h" />
     <ClInclude Include="..\inspector\InspectorFrontendClientLocal.h" />
     <ClInclude Include="..\inspector\InspectorFrontendHost.h" />
+    <ClInclude Include="..\inspector\InspectorHeapProfilerAgent.h" />
     <ClInclude Include="..\inspector\InspectorHistory.h" />
     <ClInclude Include="..\inspector\InspectorIndexedDBAgent.h" />
     <ClInclude Include="..\inspector\InspectorInputAgent.h" />

@@ -134,7 +134,7 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
     },
 
     /**
-     * @param {ProfilerAgent.HeapSnapshotObjectId} heapSnapshotObjectId
+     * @param {HeapProfilerAgent.HeapSnapshotObjectId} heapSnapshotObjectId
      */
     highlightObjectByHeapSnapshotId: function(heapSnapshotObjectId)
     {
@@ -528,7 +528,7 @@ WebInspector.HeapSnapshotConstructorsDataGrid.prototype = {
 
     /**
      * @override
-     * @param {ProfilerAgent.HeapSnapshotObjectId} id
+     * @param {HeapProfilerAgent.HeapSnapshotObjectId} id
      */
     highlightObjectByHeapSnapshotId: function(id)
     {
@@ -734,7 +734,7 @@ WebInspector.HeapSnapshotDominatorsDataGrid.prototype = {
 
     /**
      * @override
-     * @param {ProfilerAgent.HeapSnapshotObjectId} id
+     * @param {HeapProfilerAgent.HeapSnapshotObjectId} id
      */
     highlightObjectByHeapSnapshotId: function(id)
     {

@@ -60,7 +60,7 @@ function test()
 
     function iFrameNavigated(messageObject) {
         InspectorTest.log("PASS: IFrame was navigated to resources/blank.html");
-        InspectorTest.sendCommand('Profiler.collectGarbage', {}, function() { } );
+        InspectorTest.sendCommand('HeapProfiler.collectGarbage', {}, function() { } );
         InspectorTest.log("Action: Run GC and check Page.Audio data size");
         InspectorTest.sendCommand('Memory.getProcessMemoryDistribution', {}, noAudioSharedData);
     }

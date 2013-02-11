@@ -17,7 +17,7 @@ function test()
     var partSize = sourceStringified.length >> 3;
 
     function injectMockProfile(overrideGetProfile, callback) {
-        var dispatcher = InspectorBackend._domainDispatchers["Profiler"];
+        var dispatcher = InspectorBackend._domainDispatchers["HeapProfiler"];
         var panel = WebInspector.panels.profiles;
         panel._reset();
 
@@ -39,12 +39,12 @@ function test()
         function snapshotLoaded()
         {
             if (overrideGetProfile)
-                InspectorTest.override(ProfilerAgent, "getHeapSnapshot", getHeapSnapshotMock);
+                InspectorTest.override(HeapProfilerAgent, "getHeapSnapshot", getHeapSnapshotMock);
             callback(profileHeader);
         }
         InspectorTest.addSniffer(profileHeader, "_snapshotReceived", snapshotLoaded);
 
-        InspectorTest.override(ProfilerAgent, "getHeapSnapshot", getHeapSnapshotMock);
+        InspectorTest.override(HeapProfilerAgent, "getHeapSnapshot", getHeapSnapshotMock);
         panel.showProfile(profileHeader);
     }
 

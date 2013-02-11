@@ -1878,6 +1878,8 @@
             'inspector/InspectorFrontendClientLocal.cpp',
             'inspector/InspectorFrontendHost.cpp',
             'inspector/InspectorFrontendHost.h',
+            'inspector/InspectorHeapProfilerAgent.cpp',
+            'inspector/InspectorHeapProfilerAgent.h',
             'inspector/InspectorHistory.cpp',
             'inspector/InspectorHistory.h',
             'inspector/InspectorIndexedDBAgent.cpp',

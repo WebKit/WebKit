@@ -49,6 +49,7 @@ class InspectorDOMStorageAgent;
 class InspectorDatabaseAgent;
 class InspectorDebuggerAgent;
 class InspectorFileSystemAgent;
+class InspectorHeapProfilerAgent;
 class InspectorLayerTreeAgent;
 class InspectorPageAgent;
 class InspectorProfilerAgent;
@@ -127,6 +128,9 @@ public:
 
     InspectorProfilerAgent* inspectorProfilerAgent() const { return m_inspectorProfilerAgent; }
     void setInspectorProfilerAgent(InspectorProfilerAgent* agent) { m_inspectorProfilerAgent = agent; }
+
+    InspectorHeapProfilerAgent* inspectorHeapProfilerAgent() const { return m_inspectorHeapProfilerAgent; }
+    void setInspectorHeapProfilerAgent(InspectorHeapProfilerAgent* agent) { m_inspectorHeapProfilerAgent = agent; }
 #endif
 
 #if ENABLE(WORKERS)
@@ -170,6 +174,7 @@ private:
     PageDebuggerAgent* m_pageDebuggerAgent;
     InspectorDOMDebuggerAgent* m_inspectorDOMDebuggerAgent;
     InspectorProfilerAgent* m_inspectorProfilerAgent;
+    InspectorHeapProfilerAgent* m_inspectorHeapProfilerAgent;
 #endif
 #if ENABLE(WORKERS)
     InspectorWorkerAgent* m_inspectorWorkerAgent;

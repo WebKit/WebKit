@@ -465,7 +465,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
                 else
                     callback(WebInspector.RemoteObject.fromPrimitiveValue(WebInspector.UIString("Not available")));
             }
-            ProfilerAgent.getObjectByHeapObjectId(String(this.snapshotNodeId), objectGroupName, formatResult);
+            HeapProfilerAgent.getObjectByHeapObjectId(String(this.snapshotNodeId), objectGroupName, formatResult);
         }
     },
 

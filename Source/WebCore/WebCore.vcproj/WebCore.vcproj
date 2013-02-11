@@ -76051,6 +76051,30 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\InspectorHeapProfilerAgent.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\inspector\InspectorHeapProfilerAgent.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\InspectorHistory.cpp"
 				>
 				<FileConfiguration

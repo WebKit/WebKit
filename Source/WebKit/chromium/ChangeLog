@@ -1,3 +1,19 @@
+2013-02-11  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Split Profiler domain in protocol into Profiler and HeapProfiler
+        https://bugs.webkit.org/show_bug.cgi?id=108653
+
+        Reviewed by Yury Semikhatsky.
+
+        Currently CPU and heap profilers share the same domain 'Profiler' in the protocol.
+        In fact these two profile types have not too much in common. So put each into its own domain.
+        It should also help when Profiles panel gets split into several tools.
+        This is the phase 1 which adds InspectorHeapProfilerAgent but doesn't
+        change the original InspectorProfilerAgent.
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgent::shouldInterruptForMessage):
+
 2013-02-11  Abhishek Arya  <inferno@chromium.org>
 
         Add ASSERT_WITH_SECURITY_IMPLICATION to detect out of bounds access

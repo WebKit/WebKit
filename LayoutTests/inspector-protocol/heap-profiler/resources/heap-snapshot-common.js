@@ -9,10 +9,10 @@ InspectorTest.importScript("../../../../../Source/WebCore/inspector/front-end/JS
 
 InspectorTest.takeHeapSnapshot = function(callback)
 {
-    InspectorTest.eventHandler["Profiler.addProfileHeader"] = function(messageObject)
+    InspectorTest.eventHandler["HeapProfiler.addProfileHeader"] = function(messageObject)
     {
         var profileId = messageObject["params"]["header"]["uid"];
-        InspectorTest.sendCommand("Profiler.getHeapSnapshot", { "uid": profileId }, didGetHeapSnapshot);
+        InspectorTest.sendCommand("HeapProfiler.getHeapSnapshot", { "uid": profileId }, didGetHeapSnapshot);
 
         function didGetHeapSnapshot(messageObject)
         {
@@ -22,12 +22,12 @@ InspectorTest.takeHeapSnapshot = function(callback)
     }
 
     var chunks = [];
-    InspectorTest.eventHandler["Profiler.addHeapSnapshotChunk"] = function(messageObject)
+    InspectorTest.eventHandler["HeapProfiler.addHeapSnapshotChunk"] = function(messageObject)
     {
         chunks.push(messageObject["params"]["chunk"]);
     }
 
-    InspectorTest.eventHandler["Profiler.finishHeapSnapshot"] = function(messageObject)
+    InspectorTest.eventHandler["HeapProfiler.finishHeapSnapshot"] = function(messageObject)
     {
         var serializedSnapshot = chunks.join("");
         var parsed = JSON.parse(serializedSnapshot);
@@ -35,5 +35,5 @@ InspectorTest.takeHeapSnapshot = function(callback)
         callback(snapshot);
     }
 
-    InspectorTest.sendCommand("Profiler.takeHeapSnapshot", {});
+    InspectorTest.sendCommand("HeapProfiler.takeHeapSnapshot", {});
 }

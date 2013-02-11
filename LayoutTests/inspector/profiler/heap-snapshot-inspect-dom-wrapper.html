@@ -14,7 +14,7 @@ function handleLoad()
 function test()
 {
     WebInspector.showPanel("profiles");
-    ProfilerAgent.takeHeapSnapshot(step0);
+    HeapProfilerAgent.takeHeapSnapshot(step0);
 
     function step0()
     {
@@ -42,7 +42,7 @@ function test()
                 bodyWrapperIds.push(it.node.id);
         }
         for (var i = 0; i < bodyWrapperIds.length; i++)
-            ProfilerAgent.getObjectByHeapObjectId(bodyWrapperIds[i], undefined, didGetObjectByHeapObjectId);
+            HeapProfilerAgent.getObjectByHeapObjectId(bodyWrapperIds[i], undefined, didGetObjectByHeapObjectId);
 
         var resolvedObjectsCount = 0;
         var remoteObjects = [];
@@ -69,7 +69,7 @@ function test()
             if (++didGetOwnPropertiesCount !== remoteObjects.length)
                 return;
 
-            ProfilerAgent.clearProfiles(done);
+            HeapProfilerAgent.clearProfiles(done);
             WebInspector.panels.profiles._reset();
         }
     }
