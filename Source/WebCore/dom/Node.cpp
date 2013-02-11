@@ -1106,23 +1106,9 @@ void Node::detach()
     detachingNode = this;
 #endif
 
-    if (renderer()) {
+    if (renderer())
         renderer()->destroyAndCleanupAnonymousWrappers();
-#ifndef NDEBUG
-        for (Node* node = this; node; node = NodeTraversal::next(node, this)) {
-            RenderObject* renderer = node->renderer();
-            // RenderFlowThread and the top layer remove elements from the regular tree
-            // hierarchy. They will be cleaned up when we call detach on them.
-#if ENABLE(DIALOG_ELEMENT)
-            ASSERT(!renderer || renderer->inRenderFlowThread() || (renderer->enclosingLayer()->isInTopLayerSubtree()));
-#else
-            ASSERT(!renderer || renderer->inRenderFlowThread());
-#endif
-        }
-#endif
-    }
-
-    ASSERT(!renderer());
+    setRenderer(0);
 
     Document* doc = document();
     if (isUserActionElement()) {

@@ -2391,11 +2391,6 @@ void RenderObject::willBeDestroyed()
     if (AXObjectCache::accessibilityEnabled())
         document()->axObjectCache()->remove(this);
 
-    // Continuation and first-letter can generate several renderers associated with a single node.
-    // We only want to clear the node's renderer if we are the associated renderer.
-    if (node() && node()->renderer() == this)
-        node()->setRenderer(0);
-
 #ifndef NDEBUG
     if (!documentBeingDestroyed() && view() && view()->hasRenderNamedFlowThreads()) {
         // After remove, the object and the associated information should not be in any flow thread.
@@ -2527,18 +2522,6 @@ void RenderObject::destroyAndCleanupAnonymousWrappers()
 
         if (destroyRootParent->firstChild() != this || destroyRootParent->lastChild() != this)
             break;
-    }
-
-    // We repaint, so that the area exposed when this object disappears gets repainted properly.
-    // FIXME: A RenderObject with RenderLayer should probably repaint through it as getting the
-    // repaint rects is O(1) through a RenderLayer (assuming it's up-to-date).
-    if (destroyRoot->everHadLayout()) {
-        if (destroyRoot->isBody())
-            destroyRoot->view()->repaint();
-        else {
-            destroyRoot->repaint();
-            destroyRoot->repaintOverhangingFloats(true);
-        }
     }
 
     destroyRoot->destroy();

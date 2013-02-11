@@ -41,10 +41,13 @@ void RenderObjectChildList::destroyLeftoverChildren()
         if (firstChild()->isListMarker() || (firstChild()->style()->styleType() == FIRST_LETTER && !firstChild()->isText()))
             firstChild()->remove();  // List markers are owned by their enclosing list and so don't get destroyed by this container. Similarly, first letters are destroyed by their remaining text fragment.
         else if (firstChild()->isRunIn() && firstChild()->node()) {
+            firstChild()->node()->setRenderer(0);
             firstChild()->node()->setNeedsStyleRecalc();
             firstChild()->destroy();
         } else {
             // Destroy any anonymous children remaining in the render tree, as well as implicit (shadow) DOM elements like those used in the engine-based text fields.
+            if (firstChild()->node())
+                firstChild()->node()->setRenderer(0);
             firstChild()->destroy();
         }
     }
@@ -58,11 +61,14 @@ RenderObject* RenderObjectChildList::removeChildNode(RenderObject* owner, Render
         toRenderBox(oldChild)->removeFloatingOrPositionedChildFromBlockLists();
 
     // So that we'll get the appropriate dirty bit set (either that a normal flow child got yanked or
-    // that a positioned child got yanked).
+    // that a positioned child got yanked). We also repaint, so that the area exposed when the child
+    // disappears gets repainted properly.
     if (!owner->documentBeingDestroyed() && notifyRenderer && oldChild->everHadLayout()) {
         oldChild->setNeedsLayoutAndPrefWidthsRecalc();
         // We only repaint |oldChild| if we have a RenderLayer as its visual overflow may not be tracked by its parent.
-        if (oldChild->hasLayer())
+        if (oldChild->isBody())
+            owner->view()->repaint();
+        else
             oldChild->repaint();
     }
 
