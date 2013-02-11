@@ -1,3 +1,21 @@
+2013-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG TypeOf implementation should have its backend code aligned to what the CFA does
+        https://bugs.webkit.org/show_bug.cgi?id=109385
+
+        Reviewed by Sam Weinig.
+        
+        The problem was that if we ended up trying to constant fold, but didn't succeed
+        because of prediction mismatches, then we would also fail to do filtration.
+        
+        Rearranged the control flow in the CFA to fix that.
+        
+        As far as I know, this is asymptomatic - it's sort of OK for the CFA to prove less
+        things, which is what the bug was.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+
 2013-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142491.

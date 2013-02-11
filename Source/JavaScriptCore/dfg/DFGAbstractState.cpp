@@ -760,15 +760,15 @@ bool AbstractState::execute(unsigned indexInBlock)
                 m_foundConstants = true;
                 break;
             }
-        } else {
-            Node* childNode = node->child1().node();
-            if (isCellSpeculation(childNode->prediction())) {
-                if (isStringSpeculation(childNode->prediction()))
-                    forNode(childNode).filter(SpecString);
-                else
-                    forNode(childNode).filter(SpecCell);
-                node->setCanExit(true);
-            }
+        }
+        
+        Node* childNode = node->child1().node();
+        if (isCellSpeculation(childNode->prediction())) {
+            if (isStringSpeculation(childNode->prediction()))
+                forNode(childNode).filter(SpecString);
+            else
+                forNode(childNode).filter(SpecCell);
+            node->setCanExit(true);
         }
         forNode(node).set(SpecString);
         break;
