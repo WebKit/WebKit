@@ -1,3 +1,9 @@
+2013-02-11  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed WK2 buildfix after r142518.
+
+        * DerivedSources.pri:
+
 2013-02-11  Gavin Barraclough  <barraclough@apple.com>
 
         PluginProcess should quit immediately if idle in response to low-memory notifications
