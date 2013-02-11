@@ -102,7 +102,9 @@ void PlatformWebView::focus()
     // In a few cases, an iframe might receive focus from JavaScript and Evas is not aware of it at all
     // (WebCoreSupport::focusedFrameChanged() does not emit any notification). We then manually remove the
     // focus from the view to make the call give focus to evas_object_focus_set(..., true) to be effectful.
-    evas_object_focus_set(WKViewGetEvasObject(m_view), WKPageGetFocusedFrame(page()) == WKPageGetMainFrame(page()));
+    if (WKPageGetFocusedFrame(page()) != WKPageGetMainFrame(page()))
+        evas_object_focus_set(evasObject, false);
+    evas_object_focus_set(evasObject, true);
 }
 
 WKRect PlatformWebView::windowFrame()
