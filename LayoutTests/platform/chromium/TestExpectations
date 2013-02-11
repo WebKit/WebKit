@@ -3646,7 +3646,7 @@ webkit.org/b/93565 [ Debug ] fast/dom/Document/document-reopen.html [ Failure Pa
 webkit.org/b/93566 [ Debug ] fast/parser/iframe-sets-parent-to-javascript-url.html [ Failure Pass ]
 webkit.org/b/93567 [ Debug ] fast/parser/javascript-url-compat-mode.html [ Failure Pass ]
 webkit.org/b/93569 [ Debug ] http/tests/navigation/lockedhistory-iframe.html [ Failure Pass Timeout ]
-webkit.org/b/93568 [ Debug ] http/tests/misc/window-dot-stop.html [ Failure Pass ]
+webkit.org/b/93568 [ Debug ] http/tests/misc/window-dot-stop.html [ Failure Pass Timeout ]
 
 # V8 does not support static attributes
 webkit.org/b/93488 fast/notifications/notifications-permission.html [ Skip ]
