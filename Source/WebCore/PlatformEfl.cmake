@@ -165,6 +165,7 @@ list(APPEND WebCore_SOURCES
 
     platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
     platform/text/enchant/TextCheckerEnchant.cpp
+    platform/text/LocaleICU.cpp
     platform/text/TextBreakIteratorICU.cpp
     platform/text/TextCodecICU.cpp
     platform/text/TextEncodingDetectorICU.cpp

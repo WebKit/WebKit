@@ -96,6 +96,7 @@ list(APPEND WebCore_SOURCES
     platform/graphics/wince/SharedBitmap.cpp
     platform/graphics/wince/SimpleFontDataWince.cpp
 
+    platform/text/LocaleNone.cpp
     platform/text/TextEncodingDetectorNone.cpp
 
     platform/text/wchar/TextBreakIteratorWchar.cpp
