@@ -106,6 +106,7 @@ Programs_DumpRenderTree_CPPFLAGS = \
 	$(global_cppflags) \
 	-DTOP_LEVEL_DIR=\"${shell pwd}/${srcdir}\" \
 	-I$(srcdir)/Tools/DumpRenderTree \
+	-I$(srcdir)/Tools/DumpRenderTree/atk \
 	-I$(srcdir)/Tools/DumpRenderTree/cairo \
 	-I$(srcdir)/Tools/DumpRenderTree/gtk \
 	-I$(srcdir)/Source/WebKit/gtk \
@@ -145,10 +146,12 @@ Programs_DumpRenderTree_SOURCES = \
 	Tools/DumpRenderTree/WorkQueue.h \
 	Tools/DumpRenderTree/WorkQueueItem.h \
 	Tools/DumpRenderTree/config.h \
+	Tools/DumpRenderTree/atk/AccessibilityCallbacks.h \
+	Tools/DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp \
+    	Tools/DumpRenderTree/atk/AccessibilityControllerAtk.cpp \
+	Tools/DumpRenderTree/atk/AccessibilityUIElementAtk.cpp \
 	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.cpp \
 	Tools/DumpRenderTree/cairo/PixelDumpSupportCairo.h \
-	Tools/DumpRenderTree/gtk/AccessibilityCallbacks.h \
-	Tools/DumpRenderTree/gtk/AccessibilityCallbacks.cpp \
 	Tools/DumpRenderTree/gtk/AccessibilityControllerGtk.cpp \
 	Tools/DumpRenderTree/gtk/AccessibilityUIElementGtk.cpp \
 	Tools/DumpRenderTree/gtk/DumpRenderTree.cpp \

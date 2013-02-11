@@ -29,12 +29,22 @@
 #include "config.h"
 #include "AccessibilityCallbacks.h"
 
+#if HAVE(ACCESSIBILITY)
+
 #include "AccessibilityController.h"
 #include "DumpRenderTree.h"
-#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
-#include <gtk/gtk.h>
-#include <webkit/webkit.h>
+#include <atk/atk.h>
 #include <wtf/gobject/GOwnPtr.h>
+
+#if PLATFORM(GTK)
+#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
+#include <webkit/webkit.h>
+#endif
+
+#if PLATFORM(EFL)
+#include "DumpRenderTreeChrome.h"
+#include "WebCoreSupport/DumpRenderTreeSupportEfl.h"
+#endif
 
 static guint stateChangeListenerId = 0;
 static guint focusEventListenerId = 0;
@@ -61,14 +71,10 @@ static void printAccessibilityEvent(AtkObject* accessible, const gchar* signalNa
         objectName = "(No name)";
 
     GOwnPtr<gchar> signalNameAndValue(signalValue ? g_strdup_printf("%s = %s", signalName, signalValue) : g_strdup(signalName));
-    printf("Accessibility object emitted \"%s\" / Name: \"%s\" / Role: %d\n",
-           signalNameAndValue.get(), objectName, objectRole);
+    printf("Accessibility object emitted \"%s\" / Name: \"%s\" / Role: %d\n", signalNameAndValue.get(), objectName, objectRole);
 }
 
-static gboolean axObjectEventListener(GSignalInvocationHint *signalHint,
-                                      guint numParamValues,
-                                      const GValue *paramValues,
-                                      gpointer data)
+static gboolean axObjectEventListener(GSignalInvocationHint *signalHint, guint numParamValues, const GValue *paramValues, gpointer data)
 {
     // At least we should receive the instance emitting the signal.
     if (numParamValues < 1)
@@ -78,25 +84,25 @@ static gboolean axObjectEventListener(GSignalInvocationHint *signalHint,
     if (!accessible || !ATK_IS_OBJECT(accessible))
         return TRUE;
 
-    GSignalQuery signal_query;
+    GSignalQuery signalQuery;
     GOwnPtr<gchar> signalName;
     GOwnPtr<gchar> signalValue;
 
-    g_signal_query(signalHint->signal_id, &signal_query);
+    g_signal_query(signalHint->signal_id, &signalQuery);
 
-    if (!g_strcmp0(signal_query.signal_name, "state-change")) {
+    if (!g_strcmp0(signalQuery.signal_name, "state-change")) {
         signalName.set(g_strdup_printf("state-change:%s", g_value_get_string(&paramValues[1])));
         signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[2])));
-    } else if (!g_strcmp0(signal_query.signal_name, "focus-event")) {
+    } else if (!g_strcmp0(signalQuery.signal_name, "focus-event")) {
         signalName.set(g_strdup("focus-event"));
         signalValue.set(g_strdup_printf("%d", g_value_get_boolean(&paramValues[1])));
-    } else if (!g_strcmp0(signal_query.signal_name, "children-changed")) {
+    } else if (!g_strcmp0(signalQuery.signal_name, "children-changed")) {
         signalName.set(g_strdup("children-changed"));
         signalValue.set(g_strdup_printf("%d", g_value_get_uint(&paramValues[1])));
-    } else if (!g_strcmp0(signal_query.signal_name, "property-change")) {
+    } else if (!g_strcmp0(signalQuery.signal_name, "property-change"))
         signalName.set(g_strdup_printf("property-change:%s", g_quark_to_string(signalHint->detail)));
-    } else
-        signalName.set(g_strdup(signal_query.signal_name));
+    else
+        signalName.set(g_strdup(signalQuery.signal_name));
 
     printAccessibilityEvent(accessible, signalName.get(), signalValue.get());
 
@@ -110,15 +116,19 @@ void connectAccessibilityCallbacks()
 
     // Ensure that accessibility is initialized for the WebView by querying for
     // the root accessible object, which will create the full hierarchy.
+#if PLATFORM(GTK)
     DumpRenderTreeSupportGtk::getRootAccessibleElement(mainFrame);
+#elif PLATFORM(EFL)
+    DumpRenderTreeSupportEfl::rootAccessibleElement(browser->mainFrame());
+#endif
 
     // Add global listeners for AtkObject's signals.
-    stateChangeListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:state-change");
-    focusEventListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:focus-event");
-    activeDescendantChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:active-descendant-changed");
-    childrenChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:children-changed");
-    propertyChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:property-change");
-    visibleDataChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "Gtk:AtkObject:visible-data-changed");
+    stateChangeListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:state-change");
+    focusEventListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:focus-event");
+    activeDescendantChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:active-descendant-changed");
+    childrenChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:children-changed");
+    propertyChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:property-change");
+    visibleDataChangedListenerId = atk_add_global_event_listener(axObjectEventListener, "ATK:AtkObject:visible-data-changed");
 
     // Ensure the Atk interface types are registered, otherwise
     // the AtkDocument signal handlers below won't get registered.
@@ -157,3 +167,4 @@ void disconnectAccessibilityCallbacks()
     }
 }
 
+#endif

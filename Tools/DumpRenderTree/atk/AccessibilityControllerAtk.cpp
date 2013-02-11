@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2009, 2010 Apple Inc. All Rights Reserved.
  * Copyright (C) 2009 Jan Michael Alonzo
  *
  * Redistribution and use in source and binary forms, with or without
@@ -21,30 +21,71 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "config.h"
+#include "AccessibilityController.h"
+
+#if HAVE(ACCESSIBILITY)
+
+#include "AccessibilityCallbacks.h"
 #include "AccessibilityUIElement.h"
+#include "DumpRenderTree.h"
 
-#include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
-#include <JavaScriptCore/JSStringRef.h>
 #include <atk/atk.h>
-#include <gtk/gtk.h>
-#include <wtf/Assertions.h>
-#include <wtf/gobject/GOwnPtr.h>
-#include <wtf/gobject/GRefPtr.h>
-#include <wtf/text/WTFString.h>
-#include <wtf/unicode/CharacterNames.h>
 
-JSStringRef AccessibilityUIElement::helpText() const
+static bool loggingAccessibilityEvents = false;
+
+AccessibilityController::AccessibilityController()
 {
-    if (!m_element)
-        return JSStringCreateWithCharacters(0, 0);
-
-    ASSERT(ATK_IS_OBJECT(m_element));
-
-    CString helpText = DumpRenderTreeSupportGtk::accessibilityHelpText(ATK_OBJECT(m_element));
-    GOwnPtr<gchar> axHelpText(g_strdup_printf("AXHelp: %s", helpText.data()));
-    return JSStringCreateWithUTF8CString(axHelpText.get());
 }
+
+AccessibilityController::~AccessibilityController()
+{
+}
+
+AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
+{
+    // FIXME: implement
+    return 0;
+}
+
+
+void AccessibilityController::setLogFocusEvents(bool)
+{
+}
+
+void AccessibilityController::setLogScrollingStartEvents(bool)
+{
+}
+
+void AccessibilityController::setLogValueChangeEvents(bool)
+{
+}
+
+void AccessibilityController::setLogAccessibilityEvents(bool logAccessibilityEvents)
+{
+    if (logAccessibilityEvents == loggingAccessibilityEvents)
+        return;
+
+    if (!logAccessibilityEvents) {
+        disconnectAccessibilityCallbacks();
+        loggingAccessibilityEvents = false;
+        return;
+    }
+
+    connectAccessibilityCallbacks();
+    loggingAccessibilityEvents = true;
+}
+
+bool AccessibilityController::addNotificationListener(JSObjectRef)
+{
+    return false;
+}
+
+void AccessibilityController::removeNotificationListener()
+{
+}
+
+#endif

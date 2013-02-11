@@ -1,4 +1,5 @@
 set(DumpRenderTree_SOURCES
+    ${TOOLS_DIR}/DumpRenderTree/atk/AccessibilityCallbacksAtk.cpp
     ${TOOLS_DIR}/DumpRenderTree/DumpRenderTreeCommon.cpp
     ${TOOLS_DIR}/DumpRenderTree/CyclicRedundancyCheck.cpp
     ${TOOLS_DIR}/DumpRenderTree/GCController.cpp
@@ -88,6 +89,7 @@ set(DumpRenderTree_INCLUDE_DIRECTORIES
     ${JAVASCRIPTCORE_DIR}/runtime
     ${JAVASCRIPTCORE_DIR}/ForwardingHeaders
     ${TOOLS_DIR}/DumpRenderTree
+    ${TOOLS_DIR}/DumpRenderTree/atk
     ${TOOLS_DIR}/DumpRenderTree/cairo
     ${TOOLS_DIR}/DumpRenderTree/efl
     ${WTF_DIR}

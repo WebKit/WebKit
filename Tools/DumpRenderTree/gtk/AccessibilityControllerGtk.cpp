@@ -37,40 +37,6 @@
 #include <webkit/webkit.h>
 #include <wtf/gobject/GOwnPtr.h>
 
-static bool loggingAccessibilityEvents = false;
-
-AccessibilityController::AccessibilityController()
-{
-}
-
-AccessibilityController::~AccessibilityController()
-{
-}
-
-AccessibilityUIElement AccessibilityController::elementAtPoint(int x, int y)
-{
-    // FIXME: implement
-    return 0;
-}
-
-AccessibilityUIElement AccessibilityController::focusedElement()
-{
-    AtkObject* accessible =  DumpRenderTreeSupportGtk::getFocusedAccessibleElement(mainFrame);
-    if (!accessible)
-        return 0;
-
-    return AccessibilityUIElement(accessible);
-}
-
-AccessibilityUIElement AccessibilityController::rootElement()
-{
-    AtkObject* accessible = DumpRenderTreeSupportGtk::getRootAccessibleElement(mainFrame);
-    if (!accessible)
-        return 0;
-
-    return AccessibilityUIElement(accessible);
-}
-
 static AtkObject* childElementById(AtkObject* parent, const char* id)
 {
     if (!ATK_IS_OBJECT(parent))
@@ -96,6 +62,24 @@ static AtkObject* childElementById(AtkObject* parent, const char* id)
     return 0;
 }
 
+AccessibilityUIElement AccessibilityController::focusedElement()
+{
+    AtkObject* accessible =  DumpRenderTreeSupportGtk::getFocusedAccessibleElement(mainFrame);
+    if (!accessible)
+        return 0;
+
+    return AccessibilityUIElement(accessible);
+}
+
+AccessibilityUIElement AccessibilityController::rootElement()
+{
+    AtkObject* accessible = DumpRenderTreeSupportGtk::getRootAccessibleElement(mainFrame);
+    if (!accessible)
+        return 0;
+
+    return AccessibilityUIElement(accessible);
+}
+
 AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRef id)
 {
     AtkObject* root = DumpRenderTreeSupportGtk::getRootAccessibleElement(mainFrame);
@@ -112,40 +96,4 @@ AccessibilityUIElement AccessibilityController::accessibleElementById(JSStringRe
 
     return 0;
 
-}
-
-void AccessibilityController::setLogFocusEvents(bool)
-{
-}
-
-void AccessibilityController::setLogScrollingStartEvents(bool)
-{
-}
-
-void AccessibilityController::setLogValueChangeEvents(bool)
-{
-}
-
-void AccessibilityController::setLogAccessibilityEvents(bool logAccessibilityEvents)
-{
-    if (logAccessibilityEvents == loggingAccessibilityEvents)
-        return;
-
-    if (!logAccessibilityEvents) {
-        disconnectAccessibilityCallbacks();
-        loggingAccessibilityEvents = false;
-        return;
-    }
-
-    connectAccessibilityCallbacks();
-    loggingAccessibilityEvents = true;
-}
-
-bool AccessibilityController::addNotificationListener(JSObjectRef)
-{
-    return false;
-}
-
-void AccessibilityController::removeNotificationListener()
-{
 }
