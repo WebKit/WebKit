@@ -30,28 +30,46 @@
 
 /**
  * @constructor
- * @implements {WebInspector.WorkspaceProvider}
+ * @implements {WebInspector.ProjectDelegate}
  * @extends {WebInspector.Object}
  * @param {WebInspector.IsolatedFileSystemModel} isolatedFileSystemModel
+ * @param {string} fileSystemId
  * @param {string} fileSystemPath
  */
-WebInspector.FileSystemWorkspaceProvider = function(isolatedFileSystemModel, fileSystemPath)
+WebInspector.FileSystemProjectDelegate = function(isolatedFileSystemModel, fileSystemId, fileSystemPath)
 {
     this._isolatedFileSystemModel = isolatedFileSystemModel;
+    this._fileSystemId = fileSystemId;
     this._fileSystemPath = fileSystemPath;
     this._files = {};
     this._populate();
 }
 
-WebInspector.FileSystemWorkspaceProvider._scriptExtensions = ["js", "java", "cc", "cpp", "h", "cs", "py", "php"].keySet();
+WebInspector.FileSystemProjectDelegate._scriptExtensions = ["js", "java", "cc", "cpp", "h", "cs", "py", "php"].keySet();
 
-WebInspector.FileSystemWorkspaceProvider.prototype = {
+WebInspector.FileSystemProjectDelegate.prototype = {
+    /**
+     * @return {string}
+     */
+    id: function()
+    {
+        return this._fileSystemId;
+    },
+
     /**
      * @return {string}
      */
     type: function()
     {
         return WebInspector.projectTypes.FileSystem;
+    },
+
+    /**
+     * @return {string}
+     */
+    displayName: function()
+    {
+        return this._fileSystemPath.substr(this._fileSystemPath.lastIndexOf("/") + 1);
     },
 
     /**
@@ -129,7 +147,7 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
         if (extensionIndex !== -1)
             extension = fileName.substring(extensionIndex + 1);
         var contentType = WebInspector.resourceTypes.Other;
-        if (WebInspector.FileSystemWorkspaceProvider._scriptExtensions[extension])
+        if (WebInspector.FileSystemProjectDelegate._scriptExtensions[extension])
             return WebInspector.resourceTypes.Script;
         if (extension === "css")
             return WebInspector.resourceTypes.Stylesheet;
@@ -161,8 +179,8 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
     {
         if (!this._files[this._fileSystemPath])
             this._files[this._fileSystemPath] = {};
-        this._files[this._fileSystemPath][fileDescriptor.uri] = true;
-        this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileAdded, fileDescriptor);
+        this._files[this._fileSystemPath][fileDescriptor.path] = true;
+        this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileAdded, fileDescriptor);
     },
 
     /**
@@ -173,21 +191,21 @@ WebInspector.FileSystemWorkspaceProvider.prototype = {
         delete this._files[this._fileSystemPath][uri];
         if (Object.keys(this._files[this._fileSystemPath]).length === 0)
             delete this._files[this._fileSystemPath];
-        this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.FileRemoved, uri);
+        this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileRemoved, uri);
     },
 
     reset: function()
     {
-        this.dispatchEventToListeners(WebInspector.WorkspaceProvider.Events.Reset, null);
+        this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.Reset, null);
     },
     
     __proto__: WebInspector.Object.prototype
 }
 
 /**
- * @type {?WebInspector.FileSystemWorkspaceProvider}
+ * @type {?WebInspector.FileSystemProjectDelegate}
  */
-WebInspector.fileSystemWorkspaceProvider = null;
+WebInspector.fileSystemProjectDelegate = null;
 
 /**
  * @constructor

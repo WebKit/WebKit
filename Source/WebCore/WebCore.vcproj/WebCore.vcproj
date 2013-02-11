@@ -77162,7 +77162,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\FileSystemWorkspaceProvider.js"
+					RelativePath="..\inspector\front-end\FileSystemProjectDelegate.js"
 					>
 				</File>
 				<File

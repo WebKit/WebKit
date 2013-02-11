@@ -109,7 +109,7 @@ WebInspector.IsolatedFileSystemModel.prototype = {
         this._fileSystems[fileSystemPath] = fileSystem;
         var fileSystemId = this._fileSystemMapping.addFileSystemMapping(fileSystemPath);
         console.assert(!this._workspace.project(fileSystemId));
-        this._workspace.addProject(fileSystemId, new WebInspector.FileSystemWorkspaceProvider(this, fileSystemPath));
+        this._workspace.addProject(new WebInspector.FileSystemProjectDelegate(this, fileSystemId, fileSystemPath));
     },
 
     /**

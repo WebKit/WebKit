@@ -34,15 +34,15 @@
  * @extends {WebInspector.Object}
  * @implements {WebInspector.ContentProvider}
  * @param {WebInspector.Project} project
- * @param {string} uri
+ * @param {string} path
  * @param {string} url
  * @param {WebInspector.ResourceType} contentType
  * @param {boolean} isEditable
  */
-WebInspector.UISourceCode = function(project, uri, originURL, url, contentType, isEditable)
+WebInspector.UISourceCode = function(project, path, originURL, url, contentType, isEditable)
 {
     this._project = project;
-    this._uri = uri;
+    this._path = path;
     this._originURL = originURL;
     this._url = url;
     this._parsedURL = new WebInspector.ParsedURL(originURL);
@@ -93,9 +93,17 @@ WebInspector.UISourceCode.prototype = {
     /**
      * @return {string}
      */
+    path: function()
+    {
+        return this._path;
+    },
+
+    /**
+     * @return {string}
+     */
     uri: function()
     {
-        return this._uri;
+        return this._path;
     },
 
     /**
