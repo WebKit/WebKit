@@ -1,3 +1,17 @@
+2013-02-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Don't generate documentation if building neither WebKit1 nor WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=109420
+
+        Reviewed by Philippe Normand.
+
+        Don't generate the GTK documentation if neither of the WebKit1 and WebKit2
+        layers was built. This just results in unnecessary errors being spewed out
+        by the gtkdoc utilities.
+
+        * Scripts/webkitdirs.pm:
+        (buildAutotoolsProject):
+
 2013-02-11  Antoine Quint  <graouts@apple.com>
 
         Unreviewed change to add myself to the Inspector IDLs watchlist.
