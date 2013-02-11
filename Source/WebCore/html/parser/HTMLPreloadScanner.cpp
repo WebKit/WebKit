@@ -53,9 +53,9 @@ static bool isStartOrEndTag(const HTMLToken& token)
     return token.type() == HTMLTokenTypes::EndTag || isStartTag(token);
 }
 
-class PreloadTask {
+class StartTagScanner {
 public:
-    explicit PreloadTask(const AtomicString& tagName, const HTMLToken::AttributeList& attributes)
+    explicit StartTagScanner(const AtomicString& tagName, const HTMLToken::AttributeList& attributes)
         : m_tagName(tagName)
         , m_linkIsStyleSheet(false)
         , m_linkMediaAttributeIsScreen(true)
@@ -69,8 +69,7 @@ public:
         if (m_tagName != imgTag
             && m_tagName != inputTag
             && m_tagName != linkTag
-            && m_tagName != scriptTag
-            && m_tagName != baseTag)
+            && m_tagName != scriptTag)
             return;
 
         for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
@@ -299,8 +298,8 @@ void HTMLPreloadScanner::processToken(const HTMLToken& token, Vector<OwnPtr<Prel
     if (processPossibleBaseTag(tagName, token))
         return;
 
-    PreloadTask task(tagName, token.attributes());
-    OwnPtr<PreloadRequest> request =  task.createPreloadRequest(m_predictedBaseElementURL);
+    StartTagScanner scanner(tagName, token.attributes());
+    OwnPtr<PreloadRequest> request =  scanner.createPreloadRequest(m_predictedBaseElementURL);
     if (request)
         requests.append(request.release());
 }
