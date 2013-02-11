@@ -105,7 +105,8 @@ static inline bool isEndTagBufferingState(HTMLTokenizerState::State state)
 #define HTML_SWITCH_TO(stateName) SWITCH_TO(HTMLTokenizerState, stateName)
 
 HTMLTokenizer::HTMLTokenizer(const HTMLParserOptions& options)
-    : m_options(options)
+    : m_inputStreamPreprocessor(this)
+    , m_options(options)
 {
     reset();
 }
@@ -113,16 +114,6 @@ HTMLTokenizer::HTMLTokenizer(const HTMLParserOptions& options)
 HTMLTokenizer::~HTMLTokenizer()
 {
 }
-
-template<>
-inline bool MarkupTokenizerBase<HTMLToken, HTMLTokenizerState>::shouldSkipNullCharacters() const
-{
-    return !m_forceNullCharacterReplacement
-        && (m_state == HTMLTokenizerState::DataState
-            || m_state == HTMLTokenizerState::RCDATAState
-            || m_state == HTMLTokenizerState::RAWTEXTState);
-}
-
 
 void HTMLTokenizer::reset()
 {

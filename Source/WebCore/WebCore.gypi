@@ -2670,7 +2670,6 @@
             'workers/chromium/WorkerContextProxyChromium.cpp',
             'workers/chromium/WorkerContextProxyChromium.h',
             'xml/parser/CharacterReferenceParserInlines.h',
-            'xml/parser/MarkupTokenizerBase.h',
             'xml/parser/MarkupTokenizerInlines.h',
             'xml/parser/XMLDocumentParser.cpp',
             'xml/parser/XMLDocumentParser.h',

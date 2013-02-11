@@ -29,7 +29,7 @@
 
 #include "HTMLParserOptions.h"
 #include "HTMLToken.h"
-#include "MarkupTokenizerBase.h"
+#include "InputStreamPreprocessor.h"
 #include "SegmentedString.h"
 
 namespace WebCore {
@@ -115,7 +115,7 @@ public:
     };
 };
 
-class HTMLTokenizer : public MarkupTokenizerBase<HTMLToken, HTMLTokenizerState> {
+class HTMLTokenizer {
     WTF_MAKE_NONCOPYABLE(HTMLTokenizer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -124,11 +124,14 @@ public:
 
     void reset();
 
+    // FIXME: HTMLTokenizerState::State should just be moved back into this class.
+    typedef HTMLTokenizerState::State State;
+
 #if ENABLE(THREADED_HTML_PARSER)
 
     struct Checkpoint {
         HTMLParserOptions options;
-        HTMLTokenizerState::State state;
+        State state;
         UChar additionalAllowedCharacter;
         bool skipNextNewLine;
         bool forceNullCharacterReplacement;
@@ -191,26 +194,58 @@ public:
     bool shouldAllowCDATA() const { return m_shouldAllowCDATA; }
     void setShouldAllowCDATA(bool value) { m_shouldAllowCDATA = value; }
 
+    State state() const { return m_state; }
+    void setState(State state) { m_state = state; }
+
+    inline bool shouldSkipNullCharacters() const
+    {
+        return !m_forceNullCharacterReplacement
+            && (m_state == HTMLTokenizerState::DataState
+                || m_state == HTMLTokenizerState::RCDATAState
+                || m_state == HTMLTokenizerState::RAWTEXTState);
+    }
+
 private:
     explicit HTMLTokenizer(const HTMLParserOptions&);
 
     inline bool processEntity(SegmentedString&);
 
     inline void parseError();
-    
-    inline bool emitAndResumeIn(SegmentedString& source, HTMLTokenizerState::State state)
+
+    inline void bufferCharacter(UChar character)
     {
-        saveEndTagNameIfNeeded();
-        return MarkupTokenizerBase<HTMLToken, HTMLTokenizerState>::emitAndResumeIn(source, state);
-    }
-    
-    inline bool emitAndReconsumeIn(SegmentedString& source, HTMLTokenizerState::State state)
-    {
-        saveEndTagNameIfNeeded();
-        return MarkupTokenizerBase<HTMLToken, HTMLTokenizerState>::emitAndReconsumeIn(source, state);
+        ASSERT(character != kEndOfFileMarker);
+        m_token->ensureIsCharacterToken();
+        m_token->appendToCharacter(character);
     }
 
-    inline bool flushEmitAndResumeIn(SegmentedString&, HTMLTokenizerState::State);
+    inline bool emitAndResumeIn(SegmentedString& source, State state)
+    {
+        saveEndTagNameIfNeeded();
+        m_state = state;
+        source.advanceAndUpdateLineNumber();
+        return true;
+    }
+    
+    inline bool emitAndReconsumeIn(SegmentedString& source, State state)
+    {
+        saveEndTagNameIfNeeded();
+        m_state = state;
+        return true;
+    }
+
+    inline bool emitEndOfFile(SegmentedString& source)
+    {
+        if (haveBufferedCharacterToken())
+            return true;
+        m_state = HTMLTokenizerState::DataState;
+        source.advanceAndUpdateLineNumber();
+        m_token->clear();
+        m_token->makeEndOfFile();
+        return true;
+    }
+
+    inline bool flushEmitAndResumeIn(SegmentedString&, State);
 
     // Return whether we need to emit a character token before dealing with
     // the buffered end tag.
@@ -230,9 +265,27 @@ private:
     }
     inline bool isAppropriateEndTag();
 
-    Vector<UChar, 32> m_appropriateEndTagName;
 
+    inline bool haveBufferedCharacterToken()
+    {
+        return m_token->type() == HTMLToken::Type::Character;
+    }
+
+    State m_state;
+    bool m_forceNullCharacterReplacement;
     bool m_shouldAllowCDATA;
+
+    // m_token is owned by the caller. If nextToken is not on the stack,
+    // this member might be pointing to unallocated memory.
+    HTMLToken* m_token;
+
+    // http://www.whatwg.org/specs/web-apps/current-work/#additional-allowed-character
+    UChar m_additionalAllowedCharacter;
+
+    // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
+    InputStreamPreprocessor<HTMLTokenizer> m_inputStreamPreprocessor;
+
+    Vector<UChar, 32> m_appropriateEndTagName;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#temporary-buffer
     Vector<LChar, 32> m_temporaryBuffer;

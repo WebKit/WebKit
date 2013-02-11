@@ -49090,10 +49090,6 @@
 				Name="parser"
 				>
 				<File
-					RelativePath="..\xml\parser\MarkupTokenizerBase.h"
-					>
-				</File>
-				<File
 					RelativePath="..\xml\parser\MarkupTokenizerInlines.h"
 					>
 				</File>
