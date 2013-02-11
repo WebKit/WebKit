@@ -2603,6 +2603,7 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 # https://bugs.webkit.org/show_bug.cgi?id=106883
 inspector/editor/text-editor-formatter.html
 inspector/editor/text-editor-word-jumps.html
+inspector/editor/text-editor-home-button.html
 
 # [Qt] REGRESSION(r141634) test failing
 webkit.org/b/108813 compositing/visibility/visibility-image-layers-dynamic.html [ Skip ]
