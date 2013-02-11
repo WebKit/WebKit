@@ -35,6 +35,7 @@
 #include "CodeBlock.h"
 #include "LLIntCLoop.h"
 #include "LLIntSlowPaths.h"
+#include "Operations.h"
 #include "VMInspector.h"
 #include <wtf/Assertions.h>
 #include <wtf/MathExtras.h>
