@@ -11,9 +11,10 @@ Evaluate: {"str":"foo","num":42} (exception: undefined)
 RUNNING TEST: extension_testEvalStatement
 Evaluate: 0 (exception: undefined)
 RUNNING TEST: extension_testEvalStringifyingLoopFailed
-Evaluate: "Object has too long reference chain(must not be longer than 1000)" (exception: true)
+log: Extension server error: Inspector protocol error: Object has too long reference chain(must not be longer than 1000)
+Evaluate: undefined (exception: {"code":"E_PROTOCOLERROR","description":"Inspector protocol error: %s","details":["Object has too long reference chain(must not be longer than 1000)"],"isError":true})
 RUNNING TEST: extension_testEvalThrows
-Evaluate: "testExceptionString" (exception: true)
+Evaluate: undefined (exception: {"isException":true,"value":"testExceptionString"})
 RUNNING TEST: extension_testEvalUndefined
 Evaluate: undefined (exception: undefined)
 RUNNING TEST: extension_testWithStringifyOverridden

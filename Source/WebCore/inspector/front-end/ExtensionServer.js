@@ -329,16 +329,12 @@ WebInspector.ExtensionServer.prototype = {
          */
         function callback(error, resultPayload, wasThrown)
         {
-            var result = {};
-            if (error) {
-                result.isException = true;
-                result.value = error.toString();
-            }  else if (wasThrown) {
-                result.isException = true;
-                result.value = resultPayload.description;
-            } else {
-                result.value = resultPayload.value;
-            }
+            if (error)
+                result = this._status.E_PROTOCOLERROR(error.toString());
+            else if (wasThrown)
+                result = { isException: true, value: resultPayload.description };
+            else
+                result = { value: resultPayload.value };
       
             this._dispatchCallback(message.requestId, port, result);
         }
@@ -819,6 +815,7 @@ WebInspector.ExtensionStatus = function()
     this.E_BADARGTYPE = makeStatus.bind(null, "E_BADARGTYPE", "Invalid type for argument %s: got %s, expected %s");
     this.E_NOTFOUND = makeStatus.bind(null, "E_NOTFOUND", "Object not found: %s");
     this.E_NOTSUPPORTED = makeStatus.bind(null, "E_NOTSUPPORTED", "Object does not support requested operation: %s");
+    this.E_PROTOCOLERROR = makeStatus.bind(null, "E_PROTOCOLERROR", "Inspector protocol error: %s");
     this.E_FAILED = makeStatus.bind(null, "E_FAILED", "Operation failed: %s");
 }
 

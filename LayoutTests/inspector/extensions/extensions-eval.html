@@ -51,9 +51,10 @@ function extension_testEvalThrows(nextTest)
     webInspector.inspectedWindow.eval("throw('testExceptionString')", callbackAndNextTest(extension_onEval, nextTest));
 }
 
-function extension_onEval(value, isException)
+function extension_onEval(value, status)
 {
-    output("Evaluate: " + JSON.stringify(value) + " (exception: " + isException + ")");
+    var exceptionString = typeof status === "undefined" ? "undefined" : JSON.stringify(status);
+    output("Evaluate: " + JSON.stringify(value) + " (exception: " + exceptionString + ")");
 }
 
 </script>
