@@ -162,11 +162,6 @@ private:
     {
         object->setWrapper(wrapper, isolate, configuration);
     }
-    static void setWrapperInObject(Node* object, v8::Persistent<v8::Object> wrapper, v8::Isolate* isolate, const WrapperConfiguration& configuration)
-    {
-        object->setWrapper(wrapper, isolate, configuration);
-        V8GCController::didCreateWrapperForNode(object);
-    }
 
     Type m_type;
     DOMWrapperMap<void> m_wrapperMap;
