@@ -1,3 +1,32 @@
+2013-02-10  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG CompareEq(a, null) and CompareStrictEq(a, const) are unsound with respect to constant folding
+        https://bugs.webkit.org/show_bug.cgi?id=109387
+
+        Reviewed by Oliver Hunt.
+        
+        Lock in the decision to use a non-speculative constant comparison as early as possible
+        and don't let the CFA change it by folding constants. This might be a performance
+        penalty on some really weird code (FWIW, I haven't seen this on benchmarks), but on
+        the other hand it completely side-steps the unsoundness that the bug speaks of.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::isConstantForCompareStrictEq):
+        (ByteCodeParser):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed fix after r13954 for !ENABLE(JIT) builds.

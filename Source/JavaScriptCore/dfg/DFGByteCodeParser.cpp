@@ -684,6 +684,14 @@ private:
         return node->isStronglyProvedConstantIn(inlineCallFrame());
     }
     
+    bool isConstantForCompareStrictEq(Node* node)
+    {
+        if (!node->isConstant())
+            return false;
+        JSValue value = valueOfJSConstant(node);
+        return value.isBoolean() || value.isUndefinedOrNull();
+    }
+    
     // These methods create a node and add it to the graph. If nodes of this type are
     // 'mustGenerate' then the node  will implicitly be ref'ed to ensure generation.
     Node* addToGraph(NodeType op, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
@@ -2418,7 +2426,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_eq_null: {
             Node* value = get(currentInstruction[2].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(CompareEq, value, constantNull()));
+            set(currentInstruction[1].u.operand, addToGraph(CompareEqConstant, value, constantNull()));
             NEXT_OPCODE(op_eq_null);
         }
 
@@ -2434,7 +2442,12 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     NEXT_OPCODE(op_stricteq);
                 }
             }
-            set(currentInstruction[1].u.operand, addToGraph(CompareStrictEq, op1, op2));
+            if (isConstantForCompareStrictEq(op1))
+                set(currentInstruction[1].u.operand, addToGraph(CompareStrictEqConstant, op2, op1));
+            else if (isConstantForCompareStrictEq(op2))
+                set(currentInstruction[1].u.operand, addToGraph(CompareStrictEqConstant, op1, op2));
+            else
+                set(currentInstruction[1].u.operand, addToGraph(CompareStrictEq, op1, op2));
             NEXT_OPCODE(op_stricteq);
         }
 
@@ -2456,7 +2469,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
 
         case op_neq_null: {
             Node* value = get(currentInstruction[2].u.operand);
-            set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEq, value, constantNull())));
+            set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareEqConstant, value, constantNull())));
             NEXT_OPCODE(op_neq_null);
         }
 
@@ -2472,7 +2485,14 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                     NEXT_OPCODE(op_stricteq);
                 }
             }
-            set(currentInstruction[1].u.operand, addToGraph(LogicalNot, addToGraph(CompareStrictEq, op1, op2)));
+            Node* invertedResult;
+            if (isConstantForCompareStrictEq(op1))
+                invertedResult = addToGraph(CompareStrictEqConstant, op2, op1);
+            else if (isConstantForCompareStrictEq(op2))
+                invertedResult = addToGraph(CompareStrictEqConstant, op1, op2);
+            else
+                invertedResult = addToGraph(CompareStrictEq, op1, op2);
+            set(currentInstruction[1].u.operand, addToGraph(LogicalNot, invertedResult));
             NEXT_OPCODE(op_nstricteq);
         }
 
@@ -2726,7 +2746,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_jeq_null: {
             unsigned relativeOffset = currentInstruction[2].u.operand;
             Node* value = get(currentInstruction[1].u.operand);
-            Node* condition = addToGraph(CompareEq, value, constantNull());
+            Node* condition = addToGraph(CompareEqConstant, value, constantNull());
             addToGraph(Branch, OpInfo(m_currentIndex + relativeOffset), OpInfo(m_currentIndex + OPCODE_LENGTH(op_jeq_null)), condition);
             LAST_OPCODE(op_jeq_null);
         }
@@ -2734,7 +2754,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         case op_jneq_null: {
             unsigned relativeOffset = currentInstruction[2].u.operand;
             Node* value = get(currentInstruction[1].u.operand);
-            Node* condition = addToGraph(CompareEq, value, constantNull());
+            Node* condition = addToGraph(CompareEqConstant, value, constantNull());
             addToGraph(Branch, OpInfo(m_currentIndex + OPCODE_LENGTH(op_jneq_null)), OpInfo(m_currentIndex + relativeOffset), condition);
             LAST_OPCODE(op_jneq_null);
         }

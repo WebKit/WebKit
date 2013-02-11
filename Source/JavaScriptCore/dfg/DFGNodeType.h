@@ -186,7 +186,9 @@ namespace JSC { namespace DFG {
     macro(CompareGreater, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
     macro(CompareGreaterEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
     macro(CompareEq, NodeResultBoolean | NodeMustGenerate | NodeMightClobber) \
+    macro(CompareEqConstant, NodeResultBoolean | NodeMustGenerate) \
     macro(CompareStrictEq, NodeResultBoolean) \
+    macro(CompareStrictEqConstant, NodeResultBoolean) \
     \
     /* Calls. */\
     macro(Call, NodeResultJS | NodeMustGenerate | NodeHasVarArgs | NodeClobbersWorld) \
