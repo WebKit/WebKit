@@ -26,10 +26,11 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
- * @param {function(WebInspector.DataGridNode, string, string, string)=} editCallback
- * @param {function(WebInspector.DataGridNode)=} deleteCallback
+ * @param {?function(WebInspector.DataGridNode, string, string, string)=} editCallback
+ * @param {?function(WebInspector.DataGridNode)=} deleteCallback
+ * @param {?function()=} refreshCallback
  */
-WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
+WebInspector.DataGrid = function(columns, editCallback, deleteCallback, refreshCallback)
 {
     WebInspector.View.call(this);
     this.registerRequiredCSS("dataGrid.css");
@@ -52,12 +53,11 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback)
 
     // FIXME: Add a createCallback which is different from editCallback and has different
     // behavior when creating a new node.
-    if (editCallback) {
+    if (editCallback)
         this._dataTable.addEventListener("dblclick", this._ondblclick.bind(this), false);
-        this._editCallback = editCallback;
-    }
-    if (deleteCallback)
-        this._deleteCallback = deleteCallback;
+    this._editCallback = editCallback;
+    this._deleteCallback = deleteCallback;
+    this._refreshCallback = refreshCallback;
 
     this.aligned = {};
 
@@ -258,16 +258,6 @@ WebInspector.DataGrid.prototype = {
     rootNode: function()
     {
         return this._rootNode;
-    },
-
-    get refreshCallback()
-    {
-        return this._refreshCallback;
-    },
-
-    set refreshCallback(refreshCallback)
-    {
-        this._refreshCallback = refreshCallback;
     },
 
     _ondblclick: function(event)

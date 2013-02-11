@@ -349,6 +349,14 @@ WebInspector.Cookie.prototype = {
     addAttribute: function(key, value)
     {
         this._attributes[key.toLowerCase()] = value;
+    },
+
+    /**
+     * @param {function(?Protocol.Error)=} callback
+     */
+    remove: function(callback)
+    {
+        PageAgent.deleteCookie(this.name(), (this.secure() ? "https://" : "http://") + this.domain() + this.path(), callback);
     }
 }
 

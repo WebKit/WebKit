@@ -32,13 +32,15 @@
  * @constructor
  * @extends {WebInspector.View}
  * @param {boolean} expandable
- * @param {function(!WebInspector.Cookie)=} deleteCallback
  * @param {function()=} refreshCallback
  */
-WebInspector.CookiesTable = function(expandable, deleteCallback, refreshCallback)
+WebInspector.CookiesTable = function(expandable, refreshCallback)
 {
     WebInspector.View.call(this);
     this.element.className = "fill";
+
+    var readOnly = expandable;
+    this._refreshCallback = refreshCallback;
 
     var columns = {name: {}, value: {}, domain: {}, path: {}, expires: {}, size: {}, httpOnly: {}, secure: {}};
     columns.name.title = WebInspector.UIString("Name");
@@ -71,9 +73,8 @@ WebInspector.CookiesTable = function(expandable, deleteCallback, refreshCallback
     columns.secure.sortable = true;
     columns.secure.width = "7%";
 
-    this._dataGrid = new WebInspector.DataGrid(columns, undefined, deleteCallback ? this._onDeleteFromGrid.bind(this, deleteCallback) : undefined);
+    this._dataGrid = new WebInspector.DataGrid(columns, null, readOnly ? null : this._onDeleteCookie.bind(this), refreshCallback);
     this._dataGrid.addEventListener("sorting changed", this._rebuildTable, this);
-    this._dataGrid.refreshCallback = refreshCallback;
 
     this._nextSelectedCookie = /** @type {?WebInspector.Cookie} */ (null);
 
@@ -241,13 +242,15 @@ WebInspector.CookiesTable.prototype = {
         return node;
     },
 
-    _onDeleteFromGrid: function(deleteCallback, node)
+    _onDeleteCookie: function(node)
     {
         var cookie = node.cookie;
         var neighbour = node.traverseNextNode() || node.traversePreviousNode();
         if (neighbour)
             this._nextSelectedCookie = neighbour.cookie;
-        deleteCallback(cookie);
+        cookie.remove();
+        if (this._refreshCallback)
+            this._refreshCallback();
     },
 
     __proto__: WebInspector.View.prototype

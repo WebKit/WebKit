@@ -92,7 +92,7 @@ WebInspector.CookieItemsView.prototype = {
         }
 
         if (!this._cookiesTable)
-            this._cookiesTable = isAdvanced ? new WebInspector.CookiesTable(false, this._deleteCookie.bind(this), this._update.bind(this)) : new WebInspector.SimpleCookiesTable();
+            this._cookiesTable = isAdvanced ? new WebInspector.CookiesTable(false, this._update.bind(this)) : new WebInspector.SimpleCookiesTable();
 
         this._cookiesTable.setCookies(this._cookies);
         this._emptyView.detach();
@@ -138,20 +138,13 @@ WebInspector.CookieItemsView.prototype = {
         return cookies;
     },
 
-    /**
-     * @param {!WebInspector.Cookie} cookie
-     */
-    _deleteCookie: function(cookie)
-    {
-        PageAgent.deleteCookie(cookie.name(), (cookie.secure() ? "https://" : "http://") + cookie.domain() + cookie.path());
-        this._update();
-    },
-
     _deleteButtonClicked: function()
     {
         var selectedCookie = this._cookiesTable.selectedCookie();
-        if (selectedCookie)
-            this._deleteCookie(selectedCookie);
+        if (selectedCookie) {
+            selectedCookie.remove();
+            this._update();
+        }
     },
 
     _refreshButtonClicked: function(event)
