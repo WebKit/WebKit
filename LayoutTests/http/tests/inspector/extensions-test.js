@@ -12,26 +12,33 @@ function extensionFunctions()
 var initialize_ExtensionsTest = function()
 {
 
-InspectorTest._replyToExtension = function(port, data)
+window.buildPlatformExtensionAPI = function(extensionInfo)
 {
-    port.postMessage({ response: data });
+    function platformExtensionAPI(coreAPI)
+    {
+        window.webInspector = coreAPI;
+        window._extensionServerForTests = extensionServer;
+    }
+    return platformExtensionAPI.toString();
 }
 
-function onMessage(event)
+InspectorTest._replyToExtension = function(requestId, port)
 {
-    if (typeof event.data !== "object" || !event.data.expression)
-        return;
-    if (event.ports && event.ports[0])
-        var reply = InspectorTest._replyToExtension.bind(null, event.ports[0]); // reply() is intended to be used by the code being evaluated.
+    WebInspector.extensionServer._dispatchCallback(requestId, port);
+}
+
+function onEvaluate(message, port)
+{
+    var reply = WebInspector.extensionServer._dispatchCallback.bind(WebInspector.extensionServer, message.requestId, port);
     try {
-        var result = eval(event.data.expression);
+        eval(message.expression);
     } catch (e) {
-        InspectorTest.addResult("Exception while running: " + event.data.expression + "\n" + (e.stack || e));
+        InspectorTest.addResult("Exception while running: " + message.expression + "\n" + (e.stack || e));
         InspectorTest.completeTest();
     }
 }
 
-window.addEventListener("message", InspectorTest.safeWrap(onMessage), false);
+WebInspector.extensionServer._registerHandler("evaluateForTestInFrontEnd", onEvaluate);
 
 InspectorTest.showPanel = function(panelId)
 {

@@ -45,18 +45,7 @@ function dumpArray(result)
 
 function evaluateOnFrontend(expression, callback)
 {
-    function callbackWrapper(event)
-    {
-        channel.port1.removeEventListener("message", callbackWrapper, false);
-        callback(event.data.response);
-    }
-    var channel = new MessageChannel();
-    channel.port1.start();
-    if (callback)
-        channel.port1.addEventListener("message", callbackWrapper, false);
-    webInspector.inspectedWindow.eval("", function() {
-        top.postMessage({ expression: expression }, [ channel.port2 ], "*");
-    });
+    window._extensionServerForTests.sendRequest({ command: "evaluateForTestInFrontEnd", expression: expression }, callback);
 }
 
 function output(message)

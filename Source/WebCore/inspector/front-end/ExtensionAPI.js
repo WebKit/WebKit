@@ -863,7 +863,8 @@ var Request = declareInterfaceClass(RequestImpl);
 var Resource = declareInterfaceClass(ResourceImpl);
 var Timeline = declareInterfaceClass(TimelineImpl);
 
-var extensionServer = new ExtensionServerClient();
+// Closure variable defined by the glue below.
+extensionServer = new ExtensionServerClient();
 
 return new InspectorExtensionAPI();
 }
@@ -882,6 +883,7 @@ function buildPlatformExtensionAPI(extensionInfo)
 function buildExtensionAPIInjectedScript(extensionInfo)
 {
     return "(function(injectedScriptHost, inspectedWindow, injectedScriptId){ " +
+        "var extensionServer;" +
         defineCommonExtensionSymbols.toString() + ";" +
         injectedExtensionAPI.toString() + ";" +
         buildPlatformExtensionAPI(extensionInfo) + ";" +

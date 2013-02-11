@@ -61,9 +61,7 @@ function extension_testAudits(nextTest)
         pendingOutput.sort().forEach(output);
         nextTest();
     }
-    webInspector.inspectedWindow.eval("", function() {
-        extension_runAudits(auditsDone);
-    });
+    extension_runAudits(auditsDone);
 }
 
 </script>
