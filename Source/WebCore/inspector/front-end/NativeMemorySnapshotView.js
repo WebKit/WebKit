@@ -495,7 +495,6 @@ WebInspector.NativeMemoryProfileType.prototype = {
         /**
          * @param {?string} error
          * @param {?MemoryAgent.MemoryBlock} memoryBlock
-         * @param {?Object=} graph
          */
         function didReceiveMemorySnapshot(error, memoryBlock)
         {
@@ -673,7 +672,6 @@ WebInspector.NativeMemoryBarChart.prototype = {
         /**
          * @param {?string} error
          * @param {?MemoryAgent.MemoryBlock} memoryBlock
-         * @param {?Object=} graph
          */
         function didReceiveMemorySnapshot(error, memoryBlock)
         {

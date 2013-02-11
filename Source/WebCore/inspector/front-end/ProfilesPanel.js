@@ -1243,8 +1243,7 @@ WebInspector.MemoryDispatcher.prototype = {
 
     /**
      * @override
-     * @param {number} uid
-     * @param {string} chunk
+     * @param {MemoryAgent.HeapSnapshotChunk} chunk
      */
     addNativeSnapshotChunk: function(chunk)
     {
