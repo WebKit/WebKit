@@ -63,7 +63,7 @@ public:
     int startOffset(ExceptionCode&) const;
     Node* endContainer(ExceptionCode&) const;
     int endOffset(ExceptionCode&) const;
-    bool collapsed(ExceptionCode& = ASSERT_NO_EXCEPTION) const;
+    bool collapsed(ExceptionCode&) const;
 
     Node* commonAncestorContainer(ExceptionCode&) const;
     static Node* commonAncestorContainer(Node* containerA, Node* containerB);
