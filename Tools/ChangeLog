@@ -1,3 +1,17 @@
+2013-02-11  Mike Lattanzio  <mlattanzio@rim.com>
+
+        [BlackBerry] Add graphics subdirectory to include path.
+        https://bugs.webkit.org/show_bug.cgi?id=109437
+
+        Reviewed by Rob Buis.
+
+        Add browser/platform/graphics to include path.
+
+        Internal review by Jeff Rogers.
+
+        * Scripts/webkitdirs.pm:
+        (blackberryCMakeArguments):
+
 2013-02-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WKTR] Regression(r141836) fast/dom/Window/mozilla-focus-blur.html started failing
