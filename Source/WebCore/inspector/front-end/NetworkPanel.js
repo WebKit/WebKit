@@ -2378,10 +2378,10 @@ WebInspector.NetworkDataGridNode.SizeComparator = function(a, b)
     if (a._request.cached && !b._request.cached)
         return -1;
 
-    if (a._request.resourceSize === b._request.resourceSize)
+    if (a._request.transferSize === b._request.transferSize)
         return 0;
 
-    return a._request.resourceSize - b._request.resourceSize;
+    return a._request.transferSize - b._request.transferSize;
 }
 
 WebInspector.NetworkDataGridNode.InitiatorComparator = function(a, b)
