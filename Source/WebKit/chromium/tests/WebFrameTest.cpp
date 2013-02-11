@@ -32,6 +32,7 @@
 
 #include "WebFrame.h"
 
+#include "DocumentMarkerController.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameTestHelpers.h"
@@ -57,6 +58,9 @@
 #include "WebSecurityOrigin.h"
 #include "WebSecurityPolicy.h"
 #include "WebSettings.h"
+#include "WebSpellCheckClient.h"
+#include "WebTextCheckingCompletion.h"
+#include "WebTextCheckingResult.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
 #include "v8.h"
@@ -69,6 +73,9 @@
 #include <wtf/Forward.h>
 
 using namespace WebKit;
+using WebCore::Document;
+using WebCore::DocumentMarker;
+using WebCore::Element;
 using WebCore::FloatRect;
 using WebCore::Range;
 using WebKit::URLTestHelpers::toKURL;
@@ -2231,6 +2238,56 @@ TEST_F(WebFrameTest, MoveCaretSelectionTowardsWindowPointWithNoSelection)
 
     // This test passes if this doesn't crash.
     frame->moveCaretSelectionTowardsWindowPoint(WebPoint(0, 0));
+}
+
+class SpellCheckClient : public WebSpellCheckClient {
+public:
+    SpellCheckClient() : m_numberOfTimesChecked(0) { }
+    virtual ~SpellCheckClient() { }
+    virtual void requestCheckingOfText(const WebKit::WebString&, WebKit::WebTextCheckingCompletion* completion) OVERRIDE
+    {
+        ++m_numberOfTimesChecked;
+        Vector<WebTextCheckingResult> results;
+        const int misspellingStartOffset = 1;
+        const int misspellingLength = 8;
+        results.append(WebTextCheckingResult(WebTextCheckingTypeSpelling, misspellingStartOffset, misspellingLength, WebString()));
+        completion->didFinishCheckingText(results);
+    }
+    int numberOfTimesChecked() const { return m_numberOfTimesChecked; }
+private:
+    int m_numberOfTimesChecked;
+};
+
+TEST_F(WebFrameTest, ReplaceMisspelledRange)
+{
+    m_webView = FrameTestHelpers::createWebViewAndLoad("data:text/html,<div id=\"data\" contentEditable></div>");
+    SpellCheckClient spellcheck;
+    m_webView->setSpellCheckClient(&spellcheck);
+
+    WebFrameImpl* frame = static_cast<WebFrameImpl*>(m_webView->mainFrame());
+    Document* document = frame->frame()->document();
+    Element* element = document->getElementById("data");
+
+    frame->frame()->settings()->setAsynchronousSpellCheckingEnabled(true);
+    frame->frame()->settings()->setUnifiedTextCheckerEnabled(true);
+    frame->frame()->settings()->setEditingBehaviorType(WebCore::EditingWindowsBehavior);
+
+    element->focus();
+    document->execCommand("InsertText", false, "_wellcome_.");
+
+    const int allTextBeginOffset = 0;
+    const int allTextLength = 11;
+    frame->selectRange(WebRange::fromDocumentRange(frame, allTextBeginOffset, allTextLength));
+    RefPtr<Range> selectionRange = frame->frame()->selection()->toNormalizedRange();
+
+    EXPECT_EQ(1, spellcheck.numberOfTimesChecked());
+    EXPECT_EQ(1U, document->markers()->markersInRange(selectionRange.get(), DocumentMarker::Spelling).size());
+
+    frame->replaceMisspelledRange("welcome");
+    EXPECT_EQ("_welcome_.", std::string(frame->contentAsText(std::numeric_limits<size_t>::max()).utf8().data()));
+
+    m_webView->close();
+    m_webView = 0;
 }
 
 } // namespace

@@ -1,3 +1,21 @@
+2013-02-11  Rouslan Solomakhin  <rouslan@chromium.org>
+
+        [Chromium] Replace correct misspelled range in WebKit::WebFrameImpl::replaceMisspelledRange
+        https://bugs.webkit.org/show_bug.cgi?id=108513
+
+        Reviewed by Tony Chang.
+
+        WebKit::WebFrameImpl::replaceMisspelledRange is going to be used by Chromium instead of
+        WebKit::WebFrameImpl::replaceSelection for correcting misspellings. The current implementation
+        of WebKit::WebFrameImpl::replaceMisspelledRange sometimes replaces the wrong range. This change
+        uses Range::create instead of TextIterator::rangeFromLocationAndLength to select the correct
+        range. This change also disables smart replace in WebKit::WebFrameImpl::replaceMisspelledRange
+        to avoid introducing spaces around misspellings.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::replaceMisspelledRange): Replace correct misspelled range.
+        * tests/WebFrameTest.cpp: Add unit test for WebKit::WebFrameImpl::replaceMisspelledRange method.
+
 2013-02-11  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Split Profiler domain in protocol into Profiler and HeapProfiler

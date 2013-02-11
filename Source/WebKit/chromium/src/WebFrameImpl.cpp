@@ -1310,11 +1310,13 @@ void WebFrameImpl::replaceMisspelledRange(const WebString& text)
     Vector<DocumentMarker*> markers = frame()->document()->markers()->markersInRange(caretRange.get(), DocumentMarker::Spelling | DocumentMarker::Grammar);
     if (markers.size() < 1 || markers[0]->startOffset() >= markers[0]->endOffset())
         return;
-    RefPtr<Range> markerRange = TextIterator::rangeFromLocationAndLength(frame()->selection()->rootEditableElementOrDocumentElement(), markers[0]->startOffset(), markers[0]->endOffset() - markers[0]->startOffset());
-    if (!markerRange.get() || !frame()->selection()->shouldChangeSelection(markerRange.get()))
+    RefPtr<Range> markerRange = Range::create(caretRange->ownerDocument(), caretRange->startContainer(), markers[0]->startOffset(), caretRange->endContainer(), markers[0]->endOffset());
+    if (!markerRange)
+        return;
+    if (!frame()->selection()->shouldChangeSelection(markerRange.get()))
         return;
     frame()->selection()->setSelection(markerRange.get(), CharacterGranularity);
-    frame()->editor()->replaceSelectionWithText(text, false, true);
+    frame()->editor()->replaceSelectionWithText(text, false, false);
 }
 
 bool WebFrameImpl::hasSelection() const
