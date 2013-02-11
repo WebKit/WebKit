@@ -28,7 +28,7 @@ function foo()
     function homeButton(shift)
     {
         var key = WebInspector.isMac() ? "leftArrow" : "home";
-        var modifiers = WebInspector.isMac() ? ["meta"] : [];
+        var modifiers = WebInspector.isMac() ? ["metaKey"] : [];
         if (shift)
             modifiers.push("shiftKey");
         eventSender.keyDown(key, modifiers);

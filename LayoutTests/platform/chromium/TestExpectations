@@ -4365,3 +4365,5 @@ webkit.org/b/109312 [ Win ] platform/chromium/virtual/gpu/fast/canvas/canvas-dra
 webkit.org/b/97037 media/encrypted-media/encrypted-media-v2-events.html [ Timeout ]
 webkit.org/b/97037 media/encrypted-media/encrypted-media-v2-syntax.html [ Timeout ]
 
+webkit.org/b/109416 [ Mac ] inspector/editor/text-editor-home-button.html [ Failure ]
+
