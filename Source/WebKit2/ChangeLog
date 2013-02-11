@@ -1,3 +1,18 @@
+2013-02-11  Dean Jackson  <dino@apple.com>
+
+        Snapshotted plug-in should use shadow root
+        https://bugs.webkit.org/show_bug.cgi?id=108284
+
+        Reviewed by Simon Fraser.
+
+        Take three of this commit - after rollout in r142400 and r142405.
+        We no longer have any need for plugInStartLabelImage.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp: Remove plugInStartLabelImage.
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h: Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp: Ditto.
+        * WebProcess/WebCoreSupport/WebChromeClient.h: Ditto.
+
 2013-02-11  Anders Carlsson  <andersca@apple.com>
 
         The plug-in process connection manager doesn't need to be heap allocated

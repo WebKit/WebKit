@@ -201,10 +201,10 @@ void HTMLPlugInElement::defaultEventHandler(Event* event)
             toRenderEmbeddedObject(r)->handleUnavailablePluginIndicatorEvent(event);
             return;
         }
-        if (r->isSnapshottedPlugIn() && displayState() < PlayingWithPendingMouseClick) {
-            toRenderSnapshottedPlugIn(r)->handleEvent(event);
-            return;
-        }
+    } else if (r && r->isSnapshottedPlugIn() && displayState() < PlayingWithPendingMouseClick) {
+        toRenderSnapshottedPlugIn(r)->handleEvent(event);
+        HTMLFrameOwnerElement::defaultEventHandler(event);
+        return;
     }
 
     if (!r || !r->isWidget())
