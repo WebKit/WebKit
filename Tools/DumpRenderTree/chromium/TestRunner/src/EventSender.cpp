@@ -319,6 +319,10 @@ EventSender::EventSender()
 #endif
 }
 
+EventSender::~EventSender()
+{
+}
+
 void EventSender::setContextMenuData(const WebContextMenuData& contextMenuData)
 {
     m_lastContextMenuData = auto_ptr<WebContextMenuData>(new WebContextMenuData(contextMenuData));

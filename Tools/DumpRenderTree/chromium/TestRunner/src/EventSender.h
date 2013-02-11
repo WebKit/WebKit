@@ -38,7 +38,6 @@
 #define EventSender_h
 
 #include "CppBoundClass.h"
-#include "WebContextMenuData.h"
 #include "WebDragOperation.h"
 #include "WebInputEvent.h"
 #include "WebTask.h"
@@ -48,6 +47,7 @@
 namespace WebKit {
 class WebDragData;
 class WebView;
+struct WebContextMenuData;
 }
 
 namespace WebTestRunner {
@@ -57,6 +57,7 @@ class WebTestDelegate;
 class EventSender : public CppBoundClass {
 public:
     EventSender();
+    ~EventSender();
 
     void setDelegate(WebTestDelegate* delegate) { m_delegate = delegate; }
     void setWebView(WebKit::WebView* webView) { m_webView = webView; }

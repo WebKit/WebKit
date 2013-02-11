@@ -1,3 +1,21 @@
+2013-02-11  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] add a destructor to EventSender
+        https://bugs.webkit.org/show_bug.cgi?id=109401
+
+        Reviewed by Kentaro Hara.
+
+        Otherwise, the compiler will automatically generate a destructor, for
+        which we need to unnecessarily include WebContextMenuData.h in the
+        header.
+
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.cpp:
+        (WebTestRunner):
+        (WebTestRunner::EventSender::~EventSender):
+        * DumpRenderTree/chromium/TestRunner/src/EventSender.h:
+        (WebKit):
+        (EventSender):
+
 2013-02-10  Tim Horton  <timothy_horton@apple.com>
 
         Unreviewed attempted build fix for Gtk after r142412
