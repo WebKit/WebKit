@@ -655,7 +655,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         Node* child = node->child1().node();
         if (isBooleanSpeculation(child->prediction()))
             speculateBooleanUnary(node);
-        else if (child->shouldSpeculateNonStringCellOrOther()) {
+        else if (child->shouldSpeculateObjectOrOther()) {
             node->setCanExit(true);
             forNode(child).filter((SpecCell & ~SpecString) | SpecOther);
         } else if (child->shouldSpeculateInteger())
@@ -847,19 +847,19 @@ bool AbstractState::execute(unsigned indexInBlock)
                 node->setCanExit(false);
                 break;
             } 
-            if (left->shouldSpeculateNonStringCell() && right->shouldSpeculateNonStringCellOrOther()) {
+            if (left->shouldSpeculateObject() && right->shouldSpeculateObjectOrOther()) {
                 node->setCanExit(true);
                 forNode(left).filter(SpecCell & ~SpecString);
                 forNode(right).filter((SpecCell & ~SpecString) | SpecOther);
                 break;
             }
-            if (left->shouldSpeculateNonStringCellOrOther() && right->shouldSpeculateNonStringCell()) {
+            if (left->shouldSpeculateObjectOrOther() && right->shouldSpeculateObject()) {
                 node->setCanExit(true);
                 forNode(left).filter((SpecCell & ~SpecString) | SpecOther);
                 forNode(right).filter(SpecCell & ~SpecString);
                 break;
             }
-            if (left->shouldSpeculateNonStringCell() && right->shouldSpeculateNonStringCell()) {
+            if (left->shouldSpeculateObject() && right->shouldSpeculateObject()) {
                 node->setCanExit(true);
                 forNode(left).filter(SpecCell & ~SpecString);
                 forNode(right).filter(SpecCell & ~SpecString);
@@ -911,7 +911,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             node->setCanExit(false);
             break;
         }
-        if (leftNode->shouldSpeculateNonStringCell() && rightNode->shouldSpeculateNonStringCell()) {
+        if (leftNode->shouldSpeculateObject() && rightNode->shouldSpeculateObject()) {
             node->setCanExit(true);
             forNode(leftNode).filter((SpecCell & ~SpecString) | SpecOther);
             forNode(rightNode).filter((SpecCell & ~SpecString) | SpecOther);
@@ -1202,7 +1202,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         // the branch.
         if (child->shouldSpeculateBoolean())
             speculateBooleanUnary(node);
-        else if (child->shouldSpeculateNonStringCellOrOther()) {
+        else if (child->shouldSpeculateObjectOrOther()) {
             node->setCanExit(true);
             forNode(child).filter((SpecCell & ~SpecString) | SpecOther);
         } else if (child->shouldSpeculateInteger())

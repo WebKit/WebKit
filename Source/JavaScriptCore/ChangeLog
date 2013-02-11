@@ -1,3 +1,46 @@
+2013-02-11  Filip Pizlo  <fpizlo@apple.com>
+
+        NonStringCell and Object are practically the same thing for the purpose of speculation
+        https://bugs.webkit.org/show_bug.cgi?id=109492
+
+        Reviewed by Mark Hahnenberg.
+        
+        Removed isNonStringCellSpeculation, and made all callers use isObjectSpeculation.
+        
+        Changed isNonStringCellOrOtherSpeculation to be isObjectOrOtherSpeculation.
+        
+        I believe this is correct because even weird object types like JSNotAnObject end up
+        being "objects" from the standpoint of our typesystem. Anyway, the assumption that
+        "is cell but not a string" equates to "object" is an assumption that is already made
+        in other places in the system so there's little value in being paranoid about it.
+
+        * bytecode/SpeculatedType.h:
+        (JSC::isObjectSpeculation):
+        (JSC::isObjectOrOtherSpeculation):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGNode.h:
+        (Node):
+        (JSC::DFG::Node::shouldSpeculateObjectOrOther):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CompareEq(a, null) and CompareStrictEq(a, const) are unsound with respect to constant folding

@@ -1782,7 +1782,7 @@ void SpeculativeJIT::compileValueAdd(Node* node)
     jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
 }
 
-void SpeculativeJIT::compileNonStringCellOrOtherLogicalNot(Edge nodeUse, bool needSpeculationCheck)
+void SpeculativeJIT::compileObjectOrOtherLogicalNot(Edge nodeUse, bool needSpeculationCheck)
 {
     JSValueOperand value(this, nodeUse);
     GPRTemporary resultPayload(this);
@@ -1860,9 +1860,9 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
         booleanResult(result.gpr(), node);
         return;
     }
-    if (node->child1()->shouldSpeculateNonStringCellOrOther()) {
-        compileNonStringCellOrOtherLogicalNot(node->child1(), 
-            !isNonStringCellOrOtherSpeculation(m_state.forNode(node->child1()).m_type));
+    if (node->child1()->shouldSpeculateObjectOrOther()) {
+        compileObjectOrOtherLogicalNot(node->child1(), 
+            !isObjectOrOtherSpeculation(m_state.forNode(node->child1()).m_type));
         return;
     }
     if (node->child1()->shouldSpeculateInteger()) {
@@ -1905,7 +1905,7 @@ void SpeculativeJIT::compileLogicalNot(Node* node)
     booleanResult(resultPayloadGPR, node, UseChildrenCalledExplicitly);
 }
 
-void SpeculativeJIT::emitNonStringCellOrOtherBranch(Edge nodeUse, BlockIndex taken, BlockIndex notTaken, bool needSpeculationCheck)
+void SpeculativeJIT::emitObjectOrOtherBranch(Edge nodeUse, BlockIndex taken, BlockIndex notTaken, bool needSpeculationCheck)
 {
     JSValueOperand value(this, nodeUse);
     GPRTemporary scratch(this);
@@ -1984,9 +1984,9 @@ void SpeculativeJIT::emitBranch(Node* node)
         return;
     }
     
-    if (node->child1()->shouldSpeculateNonStringCellOrOther()) {
-        emitNonStringCellOrOtherBranch(node->child1(), taken, notTaken, 
-            !isNonStringCellOrOtherSpeculation(m_state.forNode(node->child1()).m_type));
+    if (node->child1()->shouldSpeculateObjectOrOther()) {
+        emitObjectOrOtherBranch(node->child1(), taken, notTaken, 
+            !isObjectOrOtherSpeculation(m_state.forNode(node->child1()).m_type));
         return;
     }
     
@@ -4609,7 +4609,7 @@ void SpeculativeJIT::compile(Node* node)
         if (node->child1()->shouldSpeculateCell())
             speculationCheck(BadType, JSValueRegs(tagGPR, payloadGPR), node->child1(), isNotCell);
 
-        if (!node->child1()->shouldSpeculateNonStringCell()) {
+        if (!node->child1()->shouldSpeculateObject()) {
             m_jit.loadPtr(JITCompiler::Address(payloadGPR, JSCell::structureOffset()), tempGPR);
             JITCompiler::Jump notString = m_jit.branch8(JITCompiler::NotEqual, JITCompiler::Address(tempGPR, Structure::typeInfoTypeOffset()), TrustedImm32(StringType));
             if (node->child1()->shouldSpeculateString())

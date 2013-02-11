@@ -1596,11 +1596,11 @@ bool SpeculativeJIT::compilePeepHoleBranch(Node* node, MacroAssembler::Relationa
                 nonSpeculativePeepholeBranch(node, branchNode, condition, operation);
                 return true;
             }
-            if (node->child1()->shouldSpeculateNonStringCell() && node->child2()->shouldSpeculateNonStringCellOrOther())
+            if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObjectOrOther())
                 compilePeepHoleObjectToObjectOrOtherEquality(node->child1(), node->child2(), branchNode);
-            else if (node->child1()->shouldSpeculateNonStringCellOrOther() && node->child2()->shouldSpeculateNonStringCell())
+            else if (node->child1()->shouldSpeculateObjectOrOther() && node->child2()->shouldSpeculateObject())
                 compilePeepHoleObjectToObjectOrOtherEquality(node->child2(), node->child1(), branchNode);
-            else if (node->child1()->shouldSpeculateNonStringCell() && node->child2()->shouldSpeculateNonStringCell())
+            else if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject())
                 compilePeepHoleObjectEquality(node, branchNode);
             else {
                 nonSpeculativePeepholeBranch(node, branchNode, condition, operation);
@@ -3366,17 +3366,17 @@ bool SpeculativeJIT::compare(Node* node, MacroAssembler::RelationalCondition con
             return false;
         }
         
-        if (node->child1()->shouldSpeculateNonStringCell() && node->child2()->shouldSpeculateNonStringCellOrOther()) {
+        if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObjectOrOther()) {
             compileObjectToObjectOrOtherEquality(node->child1(), node->child2());
             return false;
         }
         
-        if (node->child1()->shouldSpeculateNonStringCellOrOther() && node->child2()->shouldSpeculateNonStringCell()) {
+        if (node->child1()->shouldSpeculateObjectOrOther() && node->child2()->shouldSpeculateObject()) {
             compileObjectToObjectOrOtherEquality(node->child2(), node->child1());
             return false;
         }
 
-        if (node->child1()->shouldSpeculateNonStringCell() && node->child2()->shouldSpeculateNonStringCell()) {
+        if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
             compileObjectEquality(node);
             return false;
         }
@@ -3492,7 +3492,7 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
     
     if (node->child1()->shouldSpeculateString() || node->child2()->shouldSpeculateString())
         return nonSpeculativeStrictEq(node);
-    if (node->child1()->shouldSpeculateNonStringCell() && node->child2()->shouldSpeculateNonStringCell()) {
+    if (node->child1()->shouldSpeculateObject() && node->child2()->shouldSpeculateObject()) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
             Node* branchNode = m_jit.graph().m_blocks[m_block]->at(branchIndexInBlock);

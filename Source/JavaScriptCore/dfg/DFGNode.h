@@ -1092,16 +1092,6 @@ struct Node {
         return isFinalObjectSpeculation(prediction());
     }
     
-    bool shouldSpeculateNonStringCell()
-    {
-        return isNonStringCellSpeculation(prediction());
-    }
-
-    bool shouldSpeculateNonStringCellOrOther()
-    {
-        return isNonStringCellOrOtherSpeculation(prediction());
-    }
-
     bool shouldSpeculateFinalObjectOrOther()
     {
         return isFinalObjectOrOtherSpeculation(prediction());
@@ -1172,6 +1162,11 @@ struct Node {
         return isObjectSpeculation(prediction());
     }
     
+    bool shouldSpeculateObjectOrOther()
+    {
+        return isObjectOrOtherSpeculation(prediction());
+    }
+
     bool shouldSpeculateCell()
     {
         return isCellSpeculation(prediction());

@@ -2041,9 +2041,9 @@ public:
     void compileObjectEquality(Node*);
     void compileObjectToObjectOrOtherEquality(Edge leftChild, Edge rightChild);
     void compileValueAdd(Node*);
-    void compileNonStringCellOrOtherLogicalNot(Edge value, bool needSpeculationCheck);
+    void compileObjectOrOtherLogicalNot(Edge value, bool needSpeculationCheck);
     void compileLogicalNot(Node*);
-    void emitNonStringCellOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken, bool needSpeculationCheck);
+    void emitObjectOrOtherBranch(Edge value, BlockIndex taken, BlockIndex notTaken, bool needSpeculationCheck);
     void emitBranch(Node*);
     
     void compileIntegerCompare(Node*, MacroAssembler::RelationalCondition);
