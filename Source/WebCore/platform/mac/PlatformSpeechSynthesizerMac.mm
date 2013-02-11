@@ -26,10 +26,10 @@
 #include "config.h"
 #include "PlatformSpeechSynthesizer.h"
 
-#include "PlatformSpeechSynthesisVoice.h"
 #include "PlatformSpeechSynthesisUtterance.h"
+#include "PlatformSpeechSynthesisVoice.h"
 #include <AppKit/NSSpeechSynthesizer.h>
-#include <WTF/RetainPtr.h>
+#include <wtf/RetainPtr.h>
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
