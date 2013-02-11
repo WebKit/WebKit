@@ -1,3 +1,12 @@
+2013-02-10  Dirk Schulze  <dschulze@adobe.com>
+
+        Add adobe.com to team.html
+        https://bugs.webkit.org/show_bug.cgi?id=109396
+
+        Reviewed by Laszlo Gombos.
+
+        * team.html:
+
 2013-02-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         Add sisa.samsung.com to team.html
