@@ -39,12 +39,12 @@ WebInspector.CompilerScriptMapping = function(workspace, networkWorkspaceProvide
     this._workspace = workspace;
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
     this._networkWorkspaceProvider = networkWorkspaceProvider;
-    /** @type {Object.<string, WebInspector.PositionBasedSourceMap>} */
+    /** @type {Object.<string, WebInspector.SourceMap>} */
     this._sourceMapForSourceMapURL = {};
-    /** @type {Object.<string, WebInspector.PositionBasedSourceMap>} */
+    /** @type {Object.<string, WebInspector.SourceMap>} */
     this._sourceMapForScriptId = {};
     this._scriptForSourceMap = new Map();
-    /** @type {Object.<string, WebInspector.PositionBasedSourceMap>} */
+    /** @type {Object.<string, WebInspector.SourceMap>} */
     this._sourceMapForURL = {};
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.GlobalObjectCleared, this._debuggerReset, this);
 }
@@ -61,7 +61,7 @@ WebInspector.CompilerScriptMapping.prototype = {
         var lineNumber = debuggerModelLocation.lineNumber;
         var columnNumber = debuggerModelLocation.columnNumber || 0;
         var entry = sourceMap.findEntry(lineNumber, columnNumber);
-        if (entry.length === 2)
+        if (!entry || entry.length === 2)
             return null;
         var url = entry[2];
         var uri = WebInspector.fileMapping.uriForURL(url);
@@ -152,7 +152,7 @@ WebInspector.CompilerScriptMapping.prototype = {
 
     /**
      * @param {WebInspector.Script} script
-     * @return {?WebInspector.PositionBasedSourceMap}
+     * @return {?WebInspector.SourceMap}
      */
     loadSourceMapForScript: function(script)
     {
@@ -166,23 +166,13 @@ WebInspector.CompilerScriptMapping.prototype = {
         var sourceMapURL = WebInspector.ParsedURL.completeURL(scriptURL, script.sourceMapURL);
         if (!sourceMapURL)
             return null;
-
         var sourceMap = this._sourceMapForSourceMapURL[sourceMapURL];
         if (sourceMap)
             return sourceMap;
 
-        try {
-            // FIXME: make sendRequest async.
-            var response = InspectorFrontendHost.loadResourceSynchronously(sourceMapURL);
-            if (response.slice(0, 3) === ")]}")
-                response = response.substring(response.indexOf('\n'));
-            var payload = /** @type {SourceMapV3} */ (JSON.parse(response));
-            var baseURL = sourceMapURL.startsWith("data:") ? scriptURL : sourceMapURL;
-            sourceMap = new WebInspector.PositionBasedSourceMap(baseURL, payload);
-        } catch(e) {
-            console.error(e.message);
+        sourceMap = WebInspector.SourceMap.load(sourceMapURL, scriptURL);
+        if (!sourceMap)
             return null;
-        }
         this._sourceMapForSourceMapURL[sourceMapURL] = sourceMap;
         return sourceMap;
     },

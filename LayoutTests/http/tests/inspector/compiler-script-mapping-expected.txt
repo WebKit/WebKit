@@ -1,4 +1,4 @@
-Tests PositionBasedSourceMap and CompilerScriptMapping.
+Tests SourceMap and CompilerScriptMapping.
 
 
 Running: testSimpleMap

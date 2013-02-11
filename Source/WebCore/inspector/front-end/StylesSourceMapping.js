@@ -31,10 +31,12 @@
 /**
  * @constructor
  * @implements {WebInspector.SourceMapping}
+ * @param {WebInspector.CSSStyleModel} cssModel
  * @param {WebInspector.Workspace} workspace
  */
-WebInspector.StylesSourceMapping = function(workspace)
+WebInspector.StylesSourceMapping = function(cssModel, workspace)
 {
+    this._cssModel = cssModel;
     this._workspace = workspace;
     this._workspace.addEventListener(WebInspector.Workspace.Events.ProjectWillReset, this._projectWillReset, this);
     this._workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAddedToWorkspace, this);
@@ -100,7 +102,7 @@ WebInspector.StylesSourceMapping.prototype = {
         uiSourceCode.setSourceMapping(this);
         var styleFile = new WebInspector.StyleFile(uiSourceCode);
         uiSourceCode.setStyleFile(styleFile);
-        WebInspector.cssModel.setSourceMapping(uiSourceCode.url, this);
+        this._cssModel.setSourceMapping(uiSourceCode.url, this);
     },
 
     _projectWillReset: function(event)

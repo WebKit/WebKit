@@ -1,0 +1,90 @@
+<html>
+<head>
+<script src="inspector-test.js"></script>
+<script src="debugger-test.js"></script>
+<script src="workspace-test.js"></script>
+
+<script>
+
+function test()
+{
+    InspectorTest.createWorkspace();
+    var cssModel = new WebInspector.CSSStyleModel(InspectorTest.testWorkspace);
+    var mapping = new WebInspector.SASSSourceMapping(cssModel, InspectorTest.testWorkspace, InspectorTest.testNetworkWorkspaceProvider);
+    var stylesSourceMapping = new WebInspector.StylesSourceMapping(cssModel, InspectorTest.testWorkspace);
+
+    InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(cssUISourceCodeAdded);
+    InspectorTest.addMockUISourceCodeToWorkspace("http://localhost:8000/inspector/resources/example.css", WebInspector.resourceTypes.Stylesheet, "");
+    var event = { data: createMockStyleSheetResource("http://localhost:8000/inspector/resources/example.css", "text/css",
+        "/* Comment */\n" +
+        "a {\n" +
+        "  foo: bar;\n" +
+        "  /* SOME COMMENT */\n" +
+        "  font-size: 12px; }\n\n" +
+        "/*@ sourceMappingURL=example.css.map */") };
+    stylesSourceMapping._resourceAdded(event);
+    mapping._resourceAdded(event);
+    afterStyleSheetAdded();
+
+    function createMockStyleSheetResource(url, mimeType, content)
+    {
+        const documentURL = "http://localhost:8000/inspector/stylesheet-source-mapping.html";
+        const frame = WebInspector.resourceTreeModel.mainFrame;
+        var resource = new WebInspector.Resource(null, url, documentURL, frame.id, frame.loaderId, WebInspector.resourceTypes.Stylesheet, mimeType);
+        resource.requestContent = function(callback)
+        {
+            callback(content, false, mimeType);
+        }
+        return resource;
+    }
+
+
+    function cssUISourceCodeAdded(uiSourceCode)
+    {
+        InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(scssUISourceCodeAdded);
+    }
+
+    function scssUISourceCodeAdded(uiSourceCode)
+    {
+    }
+
+    function rawLocationToUILocation(line, column, url)
+    {
+        return cssModel.rawLocationToUILocation(new WebInspector.CSSLocation("http://localhost:8000/inspector/resources/example.css", line, column));
+    }
+
+    function afterStyleSheetAdded()
+    {
+        var cssUISourceCode = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("http://localhost:8000/inspector/resources/example.css");
+        var scssUISourceCode = InspectorTest.testWorkspace.uiSourceCodeForOriginURL("http://localhost:8000/inspector/resources/example.scss");
+
+        InspectorTest.checkUILocation(cssUISourceCode, 0, 3, rawLocationToUILocation(0, 3));
+        InspectorTest.checkUILocation(scssUISourceCode, 1, 0, rawLocationToUILocation(1, 0));
+        InspectorTest.checkUILocation(scssUISourceCode, 2, 2, rawLocationToUILocation(2, 4));
+        InspectorTest.checkUILocation(scssUISourceCode, 2, 5, rawLocationToUILocation(2, 6));
+        InspectorTest.checkUILocation(scssUISourceCode, 2, 7, rawLocationToUILocation(2, 9));
+        InspectorTest.checkUILocation(scssUISourceCode, 2, 10, rawLocationToUILocation(3, 7));
+        InspectorTest.checkUILocation(scssUISourceCode, 4, 2, rawLocationToUILocation(4, 8));
+        InspectorTest.checkUILocation(scssUISourceCode, 4, 2, rawLocationToUILocation(4, 10));
+        InspectorTest.checkUILocation(scssUISourceCode, 4, 11, rawLocationToUILocation(4, 11));
+        InspectorTest.checkUILocation(scssUISourceCode, 4, 13, rawLocationToUILocation(4, 15));
+        InspectorTest.checkUILocation(scssUISourceCode, 4, 17, rawLocationToUILocation(4, 20));
+        scssUISourceCode.requestContent(didRequestContent);
+
+        function didRequestContent(content, contentEncoded, mimeType)
+        {
+            InspectorTest.assertEquals(0, content.indexOf("/* Comment */"));
+            InspectorTest.addResult("PASS");
+            InspectorTest.completeTest();
+        }
+    }
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>Tests SourceMap and StyleSheetMapping.</p>
+</body>
+</html>

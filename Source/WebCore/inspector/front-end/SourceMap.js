@@ -45,10 +45,34 @@ WebInspector.SourceMap = function(sourceMappingURL, payload)
     }
 
     this._sourceMappingURL = sourceMappingURL;
+    this._reverseMappingsBySourceURL = {};
     this._mappings = [];
     this._sources = {};
     this._sourceContentByURL = {};
     this._parseMappingPayload(payload);
+}
+
+/**
+ * @param {string} sourceMapURL
+ * @param {string} compiledURL
+ * @return {WebInspector.SourceMap}
+ */
+WebInspector.SourceMap.load = function(sourceMapURL, compiledURL)
+{
+    try {
+        // FIXME: make sendRequest async.
+        var response = InspectorFrontendHost.loadResourceSynchronously(sourceMapURL);
+        if (!response)
+            return null;
+        if (response.slice(0, 3) === ")]}")
+            response = response.substring(response.indexOf('\n'));
+        var payload = /** @type {SourceMapV3} */ (JSON.parse(response));
+        var baseURL = sourceMapURL.startsWith("data:") ? compiledURL : sourceMapURL;
+        return new WebInspector.SourceMap(baseURL, payload);
+    } catch(e) {
+        console.error(e.message);
+        return null;
+    }
 }
 
 WebInspector.SourceMap.prototype = {
@@ -92,9 +116,49 @@ WebInspector.SourceMap.prototype = {
     },
 
     /**
-     * @param {SourceMapV3} map
-     * @param {number} lineNumber
-     * @param {number} columnNumber
+     * @param {number} lineNumber in compiled resource
+     * @param {number} columnNumber in compiled resource
+     * @return {?Array}
+     */
+    findEntry: function(lineNumber, columnNumber)
+    {
+        var first = 0;
+        var count = this._mappings.length;
+        while (count > 1) {
+          var step = count >> 1;
+          var middle = first + step;
+          var mapping = this._mappings[middle];
+          if (lineNumber < mapping[0] || (lineNumber === mapping[0] && columnNumber < mapping[1]))
+              count = step;
+          else {
+              first = middle;
+              count -= step;
+          }
+        }
+        var entry = this._mappings[first];
+        if (!first && entry && (lineNumber < entry[0] || (lineNumber === entry[0] && columnNumber < entry[1])))
+            return null;
+        return entry;
+    },
+
+    /**
+     * @param {string} sourceURL of the originating resource
+     * @param {number} lineNumber in the originating resource
+     * @return {Array}
+     */
+    findEntryReversed: function(sourceURL, lineNumber)
+    {
+        var mappings = this._reverseMappingsBySourceURL[sourceURL];
+        for ( ; lineNumber < mappings.length; ++lineNumber) {
+            var mapping = mappings[lineNumber];
+            if (mapping)
+                return mapping;
+        }
+        return this._mappings[0];
+    },
+
+    /**
+     * @override
      */
     _parseMap: function(map, lineNumber, columnNumber)
     {
@@ -150,6 +214,19 @@ WebInspector.SourceMap.prototype = {
                 nameIndex += this._decodeVLQ(stringCharIterator);
 
             this._mappings.push([lineNumber, columnNumber, sourceURL, sourceLineNumber, sourceColumnNumber]);
+        }
+
+        for (var i = 0; i < this._mappings.length; ++i) {
+            var mapping = this._mappings[i];
+            var url = mapping[2];
+            if (!url)
+                continue;
+            if (!this._reverseMappingsBySourceURL[url])
+                this._reverseMappingsBySourceURL[url] = [];
+            var reverseMappings = this._reverseMappingsBySourceURL[url];
+            var sourceLine = mapping[3];
+            if (!reverseMappings[sourceLine])
+                reverseMappings[sourceLine] = [mapping[0], mapping[1]];
         }
     },
 
@@ -222,169 +299,4 @@ WebInspector.SourceMap.StringCharIterator.prototype = {
     {
         return this._position < this._string.length;
     }
-}
-
-/**
- * @constructor
- * @extends WebInspector.SourceMap
- * @param {string} sourceMappingURL
- * @param {SourceMapV3} payload
- */
-WebInspector.PositionBasedSourceMap = function(sourceMappingURL, payload)
-{
-    this._reverseMappingsBySourceURL = {};
-    WebInspector.SourceMap.call(this, sourceMappingURL, payload);
-}
-
-WebInspector.PositionBasedSourceMap.prototype = {
-    /**
-     * @param {number} lineNumber in compiled resource
-     * @param {number} columnNumber in compiled resource
-     */
-    findEntry: function(lineNumber, columnNumber)
-    {
-        var first = 0;
-        var count = this._mappings.length;
-        while (count > 1) {
-          var step = count >> 1;
-          var middle = first + step;
-          var mapping = this._mappings[middle];
-          if (lineNumber < mapping[0] || (lineNumber == mapping[0] && columnNumber < mapping[1]))
-              count = step;
-          else {
-              first = middle;
-              count -= step;
-          }
-        }
-        return this._mappings[first];
-    },
-
-    /**
-     * @param {string} sourceURL of the originating resource
-     * @param {number} lineNumber in the originating resource
-     * @return {Array}
-     */
-    findEntryReversed: function(sourceURL, lineNumber)
-    {
-        var mappings = this._reverseMappingsBySourceURL[sourceURL];
-        for ( ; lineNumber < mappings.length; ++lineNumber) {
-            var mapping = mappings[lineNumber];
-            if (mapping)
-                return mapping;
-        }
-        return this._mappings[0];
-    },
-
-    /**
-     * @override
-     */
-    _parseMap: function(map, lineNumber, columnNumber)
-    {
-        WebInspector.SourceMap.prototype._parseMap.call(this, map, lineNumber, columnNumber);
-
-        for (var i = 0; i < this._mappings.length; ++i) {
-            var mapping = this._mappings[i];
-            var url = mapping[2];
-            if (!url)
-                continue;
-            if (!this._reverseMappingsBySourceURL[url])
-                this._reverseMappingsBySourceURL[url] = [];
-            var reverseMappings = this._reverseMappingsBySourceURL[url];
-            var sourceLine = mapping[3];
-            if (!reverseMappings[sourceLine])
-                reverseMappings[sourceLine] = [mapping[0], mapping[1]];
-        }
-    },
-
-    __proto__: WebInspector.SourceMap.prototype
-}
-
-/**
- * @constructor
- * @extends WebInspector.SourceMap
- * @param {string} sourceMappingURL
- * @param {SourceMapV3} payload
- */
-WebInspector.RangeBasedSourceMap = function(sourceMappingURL, payload)
-{
-    WebInspector.SourceMap.call(this, sourceMappingURL, payload);
-
-    // Empty mappings should not normally be found in a range-based map.
-    function callback(value)
-    {
-        return !!value[2];
-    }
-    this._mappings = this._mappings.filter(callback);
-}
-
-WebInspector.RangeBasedSourceMap.MappingComparator = function(a, b)
-{
-    if (a[0] !== b[0])
-        return a[0] - b[0];
-    return a[1] - b[1];
-}
-
-WebInspector.RangeBasedSourceMap.prototype = {
-    /**
-     * @param {number} lineNumber in the compiled resource
-     * @param {number} columnNumber in the compiled resource
-     * @return {?WebInspector.RangeBasedSourceMap.SourceRange}
-     */
-    findSourceRange: function(lineNumber, columnNumber)
-    {
-        var comparator = WebInspector.RangeBasedSourceMap.MappingComparator;
-        var lookupEntry = [lineNumber, columnNumber];
-        var index = binarySearch(lookupEntry, this._mappings, comparator);
-        if (index >= 0) {
-            if (index % 2) {
-                // Range end hit. Check if there's a following range that starts from the same position.
-                if (index + 1 >= this._mappings.length || comparator(lookupEntry, this._mappings[index + 1]))
-                    return null;
-                return this._rangeForStartIndex(index + 1);
-            }
-
-            return this._rangeForStartIndex(index);
-        }
-
-        index = -(index + 1);
-        if ((index % 2) && comparator(lookupEntry, this._mappings[index - 1]) >= 0 && comparator(lookupEntry, this._mappings[index]) <= 0)
-            return this._rangeForStartIndex(index - 1);
-
-        return null;
-    },
-
-    /**
-     * @param {number} index
-     * @return {?WebInspector.RangeBasedSourceMap.SourceRange}
-     */
-    _rangeForStartIndex: function(index)
-    {
-        var startEntry = this._mappings[index];
-        var endEntry = this._mappings[index + 1];
-        if (startEntry[2] !== endEntry[2]) {
-            console.error("Mismatched source URLs in adjacent range-based sourcemap entries: %s vs %s", JSON.stringify(startEntry), JSON.stringify(endEntry));
-            return null;
-        }
-
-        return new WebInspector.RangeBasedSourceMap.SourceRange(startEntry[2], startEntry[3], startEntry[4], endEntry[3], endEntry[4]);
-    },
-
-    __proto__: WebInspector.SourceMap.prototype
-}
-
-/**
- * @constructor
- * @param {string} url
- * @param {number} startLine
- * @param {number} startColumn
- * @param {number} endLine
- * @param {number} endColumn
- */
-WebInspector.RangeBasedSourceMap.SourceRange = function(url, startLine, startColumn, endLine, endColumn)
-{
-    this.url = url;
-    this.startLine = startLine;
-    this.endLine = endLine;
-    this.startColumn = startColumn;
-    this.endColumn = endColumn;
 }

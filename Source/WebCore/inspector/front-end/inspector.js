@@ -413,7 +413,9 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     InspectorBackend.registerInspectorDispatcher(this);
 
-    this.cssModel = new WebInspector.CSSStyleModel();
+    this.workspace = new WebInspector.Workspace();
+
+    this.cssModel = new WebInspector.CSSStyleModel(this.workspace);
     this.timelineManager = new WebInspector.TimelineManager();
     this.userAgentSupport = new WebInspector.UserAgentSupport();
 
@@ -432,7 +434,6 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     this.openAnchorLocationRegistry = new WebInspector.HandlerRegistry(openAnchorLocationSetting);
     this.openAnchorLocationRegistry.registerHandler(autoselectPanel, function() { return false; });
 
-    this.workspace = new WebInspector.Workspace();
     this.workspaceController = new WebInspector.WorkspaceController(this.workspace);
 
     this.isolatedFileSystemModel = new WebInspector.IsolatedFileSystemModel(this.workspace);
@@ -449,9 +450,9 @@ WebInspector._doLoadedDoneWithCapabilities = function()
     new WebInspector.DebuggerScriptMapping(this.workspace, this.networkWorkspaceProvider);
     this.liveEditSupport = new WebInspector.LiveEditSupport(this.workspace);
     this.styleContentBinding = new WebInspector.StyleContentBinding(this.cssModel);
-    new WebInspector.StylesSourceMapping(this.workspace);
+    new WebInspector.StylesSourceMapping(this.cssModel, this.workspace);
     if (WebInspector.experimentsSettings.sass.isEnabled())
-        new WebInspector.SASSSourceMapping(this.workspace, this.networkWorkspaceProvider);
+        new WebInspector.SASSSourceMapping(this.cssModel, this.workspace, this.networkWorkspaceProvider);
 
     new WebInspector.PresentationConsoleMessageHelper(this.workspace);
 
