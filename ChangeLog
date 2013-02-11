@@ -1,3 +1,8 @@
+2013-02-11  Zan Dobersek  <zdobersek@igalia.com>
+
+        * Source/WebCore: Modified property svn:ignore, adding GNUmakefile.features.am
+        to the list of paths to be ignored.
+
 2013-02-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         Consolidate the way WTF_USE_PTHREADS is enabled
