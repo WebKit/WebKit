@@ -68,7 +68,7 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
         break;
     case HTMLTokenTypes::StartTag:
         m_attributes.reserveInitialCapacity(token->attributes().size());
-        for (Vector<AttributeBase>::const_iterator it = token->attributes().begin(); it != token->attributes().end(); ++it)
+        for (Vector<HTMLToken::Attribute>::const_iterator it = token->attributes().begin(); it != token->attributes().end(); ++it)
             m_attributes.append(CompactAttribute(String(it->m_name.data(), it->m_name.size()), String(it->m_value.data(), it->m_value.size())));
         // Fall through!
     case HTMLTokenTypes::EndTag:

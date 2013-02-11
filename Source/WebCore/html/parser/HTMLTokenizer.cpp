@@ -49,7 +49,7 @@ using namespace HTMLNames;
 
 // This has to go in a .cpp file, as the linker doesn't like it being included more than once.
 // We don't have an HTMLToken.cpp though, so this is the next best place.
-QualifiedName AtomicHTMLToken::nameForAttribute(const AttributeBase& attribute) const
+QualifiedName AtomicHTMLToken::nameForAttribute(const HTMLToken::Attribute& attribute) const
 {
     return QualifiedName(nullAtom, AtomicString(attribute.m_name.data(), attribute.m_name.size()), nullAtom);
 }

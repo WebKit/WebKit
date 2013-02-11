@@ -45,27 +45,26 @@ static inline Attribute* findAttributeInVector(Vector<Attribute>& attributes, co
     return 0;
 }
 
-class AttributeBase {
-public:
-    class Range {
-    public:
-        int m_start;
-        int m_end;
-    };
-
-    Range m_nameRange;
-    Range m_valueRange;
-    WTF::Vector<UChar, 32> m_name;
-    WTF::Vector<UChar, 32> m_value;
-};
-
-template<typename TypeSet, typename AttributeType = AttributeBase>
+template<typename TypeSet>
 class MarkupTokenBase {
     WTF_MAKE_NONCOPYABLE(MarkupTokenBase);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     typedef TypeSet Type;
-    typedef AttributeType Attribute;
+
+    class Attribute {
+    public:
+        class Range {
+        public:
+            int m_start;
+            int m_end;
+        };
+
+        Range m_nameRange;
+        Range m_valueRange;
+        WTF::Vector<UChar, 32> m_name;
+        WTF::Vector<UChar, 32> m_value;
+    };
 
     typedef WTF::Vector<Attribute, 10> AttributeList;
     typedef WTF::Vector<UChar, 1024> DataVector;
