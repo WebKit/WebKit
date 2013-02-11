@@ -1,3 +1,17 @@
+2013-02-11  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL] Stop using smart pointers for Ecore_Timer
+        https://bugs.webkit.org/show_bug.cgi?id=109409
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Remove support in OwnPtr for EFL's Ecore_Timer. It is a bad idea to use
+        OwnPtr for Ecore_Timer because the timer handle may become invalid.
+
+        * wtf/OwnPtrCommon.h:
+        (WTF):
+        * wtf/efl/OwnPtrEfl.cpp:
+
 2013-02-11  Abhishek Arya  <inferno@chromium.org>
 
         Add ASSERT_WITH_SECURITY_IMPLICATION to detect out of bounds access

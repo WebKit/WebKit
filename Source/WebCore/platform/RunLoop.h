@@ -105,7 +105,7 @@ public:
         gboolean m_isRepeating;
 #elif PLATFORM(EFL)
         static bool timerFired(void* data);
-        OwnPtr<Ecore_Timer> m_timer;
+        Ecore_Timer* m_timer;
         bool m_isRepeating;
 #endif
     };

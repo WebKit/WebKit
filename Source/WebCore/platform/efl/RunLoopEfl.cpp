@@ -86,7 +86,8 @@ void RunLoop::wakeUp()
 }
 
 RunLoop::TimerBase::TimerBase(RunLoop*)
-    : m_isRepeating(false)
+    : m_timer(0)
+    , m_isRepeating(false)
 {
 }
 
@@ -102,7 +103,7 @@ bool RunLoop::TimerBase::timerFired(void* data)
     timer->fired();
 
     if (!timer->m_isRepeating) {
-        timer->m_timer = nullptr;
+        timer->m_timer = 0;
         return ECORE_CALLBACK_CANCEL;
     }
 
@@ -111,13 +112,20 @@ bool RunLoop::TimerBase::timerFired(void* data)
 
 void RunLoop::TimerBase::start(double nextFireInterval, bool repeat)
 {
+    if (isActive())
+        stop();
+
     m_isRepeating = repeat;
-    m_timer = adoptPtr(ecore_timer_add(nextFireInterval, reinterpret_cast<Ecore_Task_Cb>(timerFired), this));
+    ASSERT(!m_timer);
+    m_timer = ecore_timer_add(nextFireInterval, reinterpret_cast<Ecore_Task_Cb>(timerFired), this);
 }
 
 void RunLoop::TimerBase::stop()
 {
-    m_timer = nullptr;
+    if (m_timer) {
+        ecore_timer_del(m_timer);
+        m_timer = 0;
+    }
 }
 
 bool RunLoop::TimerBase::isActive() const

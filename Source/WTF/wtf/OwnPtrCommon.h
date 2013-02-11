@@ -45,10 +45,8 @@ typedef struct _Ecore_Pipe Ecore_Pipe;
 typedef struct _Eina_Hash Eina_Hash;
 typedef struct _Eina_Module Eina_Module;
 #if USE(EO)
-typedef struct _Eo Ecore_Timer;
 typedef struct _Eo Evas_Object;
 #else
-typedef struct _Ecore_Timer Ecore_Timer;
 typedef struct _Evas_Object Evas_Object;
 #endif
 #if USE(ACCELERATED_COMPOSITING)
@@ -79,7 +77,6 @@ namespace WTF {
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Evas*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_IMF_Context*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Pipe*);
-    WTF_EXPORT_PRIVATE void deleteOwnedPtr(Ecore_Timer*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Eina_Hash*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Eina_Module*);
     WTF_EXPORT_PRIVATE void deleteOwnedPtr(Evas_Object*);
