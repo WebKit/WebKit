@@ -1111,7 +1111,6 @@ private:
         case GetScopeRegisters:
         case GetScope:
         case TypeOf:
-        case CompareEqConstant:
             setReplacement(pureCSE(node));
             break;
             

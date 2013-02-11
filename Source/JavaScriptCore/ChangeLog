@@ -1,3 +1,26 @@
+2013-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r142491.
+        http://trac.webkit.org/changeset/142491
+        https://bugs.webkit.org/show_bug.cgi?id=109470
+
+        broke the 32 bit build (Requested by jessieberlin on #webkit).
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-02-10  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CompareEq(a, null) and CompareStrictEq(a, const) are unsound with respect to constant folding

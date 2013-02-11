@@ -778,8 +778,7 @@ bool AbstractState::execute(unsigned indexInBlock)
     case CompareLessEq:
     case CompareGreater:
     case CompareGreaterEq:
-    case CompareEq:
-    case CompareEqConstant: {
+    case CompareEq: {
         bool constantWasSet = false;
 
         JSValue leftConst = forNode(node->child1()).value();
@@ -810,7 +809,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             }
         }
         
-        if (!constantWasSet && (node->op() == CompareEqConstant || node->op() == CompareEq)) {
+        if (!constantWasSet && node->op() == CompareEq) {
             SpeculatedType leftType = forNode(node->child1()).m_type;
             SpeculatedType rightType = forNode(node->child2()).m_type;
             if ((isInt32Speculation(leftType) && isOtherSpeculation(rightType))
@@ -826,12 +825,6 @@ bool AbstractState::execute(unsigned indexInBlock)
         
         forNode(node).set(SpecBoolean);
         
-        if (node->op() == CompareEqConstant) {
-            // We can exit if we haven't fired the MasqueradesAsUndefind watchpoint yet.
-            node->setCanExit(m_codeBlock->globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
-            break;
-        }
-        
         Node* left = node->child1().node();
         Node* right = node->child2().node();
         SpeculatedType filter;
@@ -843,6 +836,13 @@ bool AbstractState::execute(unsigned indexInBlock)
             filter = SpecNumber;
             checker = isNumberSpeculation;
         } else if (node->op() == CompareEq) {
+            if ((m_graph.isConstant(left) && m_graph.valueOfJSConstant(left).isNull())
+                || (m_graph.isConstant(right) && m_graph.valueOfJSConstant(right).isNull())) {
+                // We can exit if we haven't fired the MasqueradesAsUndefind watchpoint yet.
+                node->setCanExit(m_codeBlock->globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid());
+                break;
+            }
+            
             if (left->shouldSpeculateString() || right->shouldSpeculateString()) {
                 node->setCanExit(false);
                 break;
@@ -882,8 +882,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
     }
             
-    case CompareStrictEq:
-    case CompareStrictEqConstant: {
+    case CompareStrictEq: {
         Node* leftNode = node->child1().node();
         Node* rightNode = node->child2().node();
         JSValue left = forNode(leftNode).value();
@@ -895,9 +894,19 @@ bool AbstractState::execute(unsigned indexInBlock)
             break;
         }
         forNode(node).set(SpecBoolean);
-        if (node->op() == CompareStrictEqConstant) {
-            node->setCanExit(false);
-            break;
+        if (m_graph.isJSConstant(leftNode)) {
+            JSValue value = m_graph.valueOfJSConstant(leftNode);
+            if (!value.isNumber() && !value.isString()) {
+                node->setCanExit(false);
+                break;
+            }
+        }
+        if (m_graph.isJSConstant(rightNode)) {
+            JSValue value = m_graph.valueOfJSConstant(rightNode);
+            if (!value.isNumber() && !value.isString()) {
+                node->setCanExit(false);
+                break;
+            }
         }
         if (Node::shouldSpeculateInteger(leftNode, rightNode)) {
             speculateInt32Binary(node);

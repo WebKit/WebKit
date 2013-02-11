@@ -2513,20 +2513,19 @@ void SpeculativeJIT::compile(Node* node)
         if (compare(node, JITCompiler::GreaterThanOrEqual, JITCompiler::DoubleGreaterThanOrEqual, operationCompareGreaterEq))
             return;
         break;
-        
-    case CompareEqConstant:
-        ASSERT(isNullConstant(node->child2().node()));
-        if (nonSpeculativeCompareNull(node, node->child1()))
-            return;
-        break;
 
     case CompareEq:
+        if (isNullConstant(node->child1().node())) {
+            if (nonSpeculativeCompareNull(node, node->child2()))
+                return;
+            break;
+        }
+        if (isNullConstant(node->child2().node())) {
+            if (nonSpeculativeCompareNull(node, node->child1()))
+                return;
+            break;
+        }
         if (compare(node, JITCompiler::Equal, JITCompiler::DoubleEqual, operationCompareEq))
-            return;
-        break;
-
-    case CompareStrictEqConstant:
-        if (compileStrictEqForConstant(node, node->child1(), valueOfJSConstant(node->child2().node())))
             return;
         break;
 
