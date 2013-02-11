@@ -35,13 +35,14 @@
 #include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebView.h"
+#include <public/Platform.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
 #include <public/WebURLRequest.h>
 #include <public/WebURLResponse.h>
+#include <public/WebUnitTestSupport.h>
 
 #include <gtest/gtest.h>
-#include <webkit/support/webkit_support.h>
 
 using namespace WebKit;
 using WebKit::URLTestHelpers::toKURL;
@@ -70,7 +71,7 @@ protected:
 
     virtual void TearDown()
     {
-        webkit_support::UnregisterAllMockedURLs();
+        Platform::current()->unitTestSupport()->unregisterAllMockedURLs();
         m_webView->close();
     }
 
@@ -86,7 +87,7 @@ protected:
         urlRequest.setURL(url);
         m_webView->mainFrame()->loadRequest(urlRequest);
         // Make sure any pending request get served.
-        webkit_support::ServeAsynchronousMockedRequests();
+        Platform::current()->unitTestSupport()->serveAsynchronousMockedRequests();
     }
 
     static bool webVectorContains(const WebVector<WebURL>& vector, const char* url)

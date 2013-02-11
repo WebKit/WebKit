@@ -46,7 +46,9 @@
 #include "WebView.h"
 #include "WebViewImpl.h"
 #include <gtest/gtest.h>
-#include <webkit/support/webkit_support.h>
+#include <public/Platform.h>
+#include <public/WebThread.h>
+#include <public/WebUnitTestSupport.h>
 
 using namespace WebKit;
 
@@ -61,7 +63,7 @@ public:
 
     virtual void TearDown()
     {
-        webkit_support::UnregisterAllMockedURLs();
+        Platform::current()->unitTestSupport()->unregisterAllMockedURLs();
     }
 
 protected:
@@ -91,7 +93,7 @@ TEST_F(WebPluginContainerTest, WindowToLocalPointTest)
     webView->settings()->setPluginsEnabled(true);
     webView->resize(WebSize(300, 300));
     webView->layout();
-    webkit_support::RunAllPendingMessages();
+    FrameTestHelpers::runPendingTasks();
 
     WebPluginContainer* pluginContainerOne = getWebPluginContainer(webView, WebString::fromUTF8("translated-plugin"));
     ASSERT(pluginContainerOne);

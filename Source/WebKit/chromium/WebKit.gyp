@@ -653,27 +653,7 @@
                                 # We should not include files depending on webkit_support.
                                 # These tests depend on webkit_support and
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
-                                'tests/AssociatedURLLoaderTest.cpp',
-                                'tests/EventListenerTest.cpp',
-                                'tests/FakeWebPlugin.cpp',
-                                'tests/FrameTestHelpers.cpp',
-                                'tests/IDBBindingUtilitiesTest.cpp',
-                                'tests/IDBRequestTest.cpp',
                                 'tests/LevelDBTest.cpp',
-                                'tests/ListenerLeakTest.cpp',
-                                'tests/LinkHighlightTest.cpp',
-                                'tests/PopupMenuTest.cpp',
-                                'tests/PrerenderingTest.cpp',
-                                'tests/RenderTableCellTest.cpp',
-                                'tests/RenderTableRowTest.cpp',
-                                'tests/ScrollingCoordinatorChromiumTest.cpp',
-                                'tests/URLTestHelpers.cpp',
-                                'tests/WebFrameTest.cpp',
-                                'tests/WebImageTest.cpp',
-                                'tests/WebPageNewSerializerTest.cpp',
-                                'tests/WebPageSerializerTest.cpp',
-                                'tests/WebPluginContainerTest.cpp',
-                                'tests/WebViewTest.cpp',
                             ],
                             'conditions': [
                                 ['OS=="win" or OS=="mac"', {

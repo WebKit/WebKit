@@ -35,16 +35,18 @@
 #include "WebFrameClient.h"
 #include "WebURLLoaderOptions.h"
 #include "WebView.h"
+#include <public/Platform.h>
 #include <public/WebString.h>
+#include <public/WebThread.h>
 #include <public/WebURL.h>
 #include <public/WebURLLoader.h>
 #include <public/WebURLLoaderClient.h>
 #include <public/WebURLRequest.h>
 #include <public/WebURLResponse.h>
+#include <public/WebUnitTestSupport.h>
 #include <wtf/text/WTFString.h>
 
 #include <gtest/gtest.h>
-#include <webkit/support/webkit_support.h>
 
 using namespace WebKit;
 using WebKit::URLTestHelpers::toKURL;
@@ -77,7 +79,7 @@ public:
         ,  m_runningMessageLoop(false)
     {
         // Reuse one of the test files from WebFrameTest.
-        std::string filePath = std::string(webkit_support::GetWebKitRootDir().utf8().data());
+        std::string filePath = std::string(Platform::current()->unitTestSupport()->webKitRootDir().utf8().data());
         filePath += "/Source/WebKit/chromium/tests/data/iframes_test.html";
         m_frameFilePath = WebString::fromUTF8(filePath.c_str());
     }
@@ -92,7 +94,7 @@ public:
         WebURLResponse response;
         response.initialize();
         response.setMIMEType("text/html");
-        webkit_support::RegisterMockedURL(url, response, m_frameFilePath);
+        Platform::current()->unitTestSupport()->registerMockedURL(url, response, m_frameFilePath);
 
         WebURLRequest request;
         request.initialize();
@@ -100,18 +102,18 @@ public:
         m_webView->mainFrame()->loadRequest(request);
         serveRequests();
 
-        webkit_support::UnregisterMockedURL(url);
+        Platform::current()->unitTestSupport()->unregisterMockedURL(url);
     }
 
     void TearDown()
     {
-        webkit_support::UnregisterAllMockedURLs();
+        Platform::current()->unitTestSupport()->unregisterAllMockedURLs();
         m_webView->close();
     }
 
     void serveRequests()
     {
-        webkit_support::ServeAsynchronousMockedRequests();
+        Platform::current()->unitTestSupport()->serveAsynchronousMockedRequests();
     }
 
     WebURLLoader* createAssociatedURLLoader(const WebURLLoaderOptions options = WebURLLoaderOptions())
@@ -177,7 +179,7 @@ public:
         EXPECT_EQ(m_expectedLoader, loader);
         if (m_runningMessageLoop) {
             m_runningMessageLoop = false;
-            webkit_support::QuitMessageLoop();
+            Platform::current()->currentThread()->exitRunLoop();
         }
     }
 
@@ -218,7 +220,7 @@ public:
         EXPECT_FALSE(m_didFail);
         // Allow the loader to return the error.
         m_runningMessageLoop = true;
-        webkit_support::RunMessageLoop();
+        Platform::current()->currentThread()->enterRunLoop();
         EXPECT_TRUE(m_didFail);
         EXPECT_FALSE(m_didReceiveResponse);
     }
@@ -244,7 +246,7 @@ public:
         if (exposed)
             m_expectedResponse.addHTTPHeaderField("access-control-expose-headers", headerNameString);
         m_expectedResponse.addHTTPHeaderField(headerNameString, "foo");
-        webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+        Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedResponse, m_frameFilePath);
 
         WebURLLoaderOptions options;
         options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
@@ -291,7 +293,7 @@ TEST_F(AssociatedURLLoaderTest, SameOriginSuccess)
     m_expectedResponse = WebURLResponse();
     m_expectedResponse.initialize();
     m_expectedResponse.setMIMEType("text/html");
-    webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedResponse, m_frameFilePath);
 
     m_expectedLoader = createAssociatedURLLoader();
     EXPECT_TRUE(m_expectedLoader);
@@ -325,7 +327,7 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginSuccess)
     m_expectedResponse = WebURLResponse();
     m_expectedResponse.initialize();
     m_expectedResponse.setMIMEType("text/html");
-    webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedResponse, m_frameFilePath);
 
     WebURLLoaderOptions options;
     options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyAllow;
@@ -351,7 +353,7 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginWithAccessControlSuccess)
     m_expectedResponse.initialize();
     m_expectedResponse.setMIMEType("text/html");
     m_expectedResponse.addHTTPHeaderField("access-control-allow-origin", "*");
-    webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedResponse, m_frameFilePath);
 
     WebURLLoaderOptions options;
     options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
@@ -377,7 +379,7 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginWithAccessControlFailure)
     m_expectedResponse.initialize();
     m_expectedResponse.setMIMEType("text/html");
     m_expectedResponse.addHTTPHeaderField("access-control-allow-origin", "*");
-    webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedResponse, m_frameFilePath);
 
     WebURLLoaderOptions options;
     // Send credentials. This will cause the CORS checks to fail, because credentials can't be
@@ -412,7 +414,7 @@ TEST_F(AssociatedURLLoaderTest, RedirectSuccess)
     m_expectedRedirectResponse.setMIMEType("text/html");
     m_expectedRedirectResponse.setHTTPStatusCode(301);
     m_expectedRedirectResponse.setHTTPHeaderField("Location", redirect);
-    webkit_support::RegisterMockedURL(url, m_expectedRedirectResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedRedirectResponse, m_frameFilePath);
 
     m_expectedNewRequest = WebURLRequest();
     m_expectedNewRequest.initialize();
@@ -421,7 +423,7 @@ TEST_F(AssociatedURLLoaderTest, RedirectSuccess)
     m_expectedResponse = WebURLResponse();
     m_expectedResponse.initialize();
     m_expectedResponse.setMIMEType("text/html");
-    webkit_support::RegisterMockedURL(redirectURL, m_expectedResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(redirectURL, m_expectedResponse, m_frameFilePath);
 
     m_expectedLoader = createAssociatedURLLoader();
     EXPECT_TRUE(m_expectedLoader);
@@ -450,7 +452,7 @@ TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlFailure)
     m_expectedRedirectResponse.setMIMEType("text/html");
     m_expectedRedirectResponse.setHTTPStatusCode(301);
     m_expectedRedirectResponse.setHTTPHeaderField("Location", redirect);
-    webkit_support::RegisterMockedURL(url, m_expectedRedirectResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedRedirectResponse, m_frameFilePath);
 
     WebURLLoaderOptions options;
     options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
@@ -483,7 +485,7 @@ TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlSuccess)
     m_expectedRedirectResponse.setHTTPStatusCode(301);
     m_expectedRedirectResponse.setHTTPHeaderField("Location", redirect);
     m_expectedRedirectResponse.addHTTPHeaderField("access-control-allow-origin", "*");
-    webkit_support::RegisterMockedURL(url, m_expectedRedirectResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedRedirectResponse, m_frameFilePath);
 
     m_expectedNewRequest = WebURLRequest();
     m_expectedNewRequest.initialize();
@@ -493,7 +495,7 @@ TEST_F(AssociatedURLLoaderTest, RedirectCrossOriginWithAccessControlSuccess)
     m_expectedResponse.initialize();
     m_expectedResponse.setMIMEType("text/html");
     m_expectedResponse.addHTTPHeaderField("access-control-allow-origin", "*");
-    webkit_support::RegisterMockedURL(redirectURL, m_expectedResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(redirectURL, m_expectedResponse, m_frameFilePath);
 
     WebURLLoaderOptions options;
     options.crossOriginRequestPolicy = WebURLLoaderOptions::CrossOriginRequestPolicyUseAccessControl;
@@ -600,7 +602,7 @@ TEST_F(AssociatedURLLoaderTest, CrossOriginHeaderAllowResponseHeaders)
     m_expectedResponse.setMIMEType("text/html");
     m_expectedResponse.addHTTPHeaderField("Access-Control-Allow-Origin", "*");
     m_expectedResponse.addHTTPHeaderField(headerNameString, "foo");
-    webkit_support::RegisterMockedURL(url, m_expectedResponse, m_frameFilePath);
+    Platform::current()->unitTestSupport()->registerMockedURL(url, m_expectedResponse, m_frameFilePath);
 
     WebURLLoaderOptions options;
     options.exposeAllResponseHeaders = true; // This turns off response whitelisting.

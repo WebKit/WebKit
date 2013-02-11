@@ -30,6 +30,7 @@
 
 #include "config.h"
 
+#include "FrameTestHelpers.h"
 #include "URLTestHelpers.h"
 #include "WebFrame.h"
 #include "WebFrameClient.h"
@@ -37,15 +38,17 @@
 #include "WebScriptSource.h"
 #include "WebSettings.h"
 #include "WebView.h"
+#include <gtest/gtest.h>
+#include <public/Platform.h>
 #include <public/WebString.h>
+#include <public/WebThread.h>
 #include <public/WebURL.h>
 #include <public/WebURLRequest.h>
 #include <public/WebURLResponse.h>
-
-#include <gtest/gtest.h>
-#include <webkit/support/webkit_support.h>
+#include <public/WebUnitTestSupport.h>
 
 using namespace WebKit;
+using WebKit::FrameTestHelpers::runPendingTasks;
 using WebKit::URLTestHelpers::toKURL;
 using WebKit::URLTestHelpers::registerMockedURLLoad;
 
@@ -109,7 +112,7 @@ protected:
 
     virtual void TearDown()
     {
-        webkit_support::UnregisterAllMockedURLs();
+        Platform::current()->unitTestSupport()->unregisterAllMockedURLs();
         m_webView->close();
     }
 
@@ -138,11 +141,11 @@ protected:
         urlRequest.setURL(url);
         m_webView->mainFrame()->loadRequest(urlRequest);
         // Make sure any pending request get served.
-        webkit_support::ServeAsynchronousMockedRequests();
+        Platform::current()->unitTestSupport()->serveAsynchronousMockedRequests();
         // Some requests get delayed, run the timer.
-        webkit_support::RunAllPendingMessages();
+        runPendingTasks();
         // Server the delayed resources.
-        webkit_support::ServeAsynchronousMockedRequests();
+        Platform::current()->unitTestSupport()->serveAsynchronousMockedRequests();
     }
 
     const WebString& htmlMimeType() const { return m_htmlMimeType; }

@@ -41,7 +41,8 @@
 #include "WebScriptSource.h"
 #include "WebView.h"
 #include <gtest/gtest.h>
-#include <webkit/support/webkit_support.h>
+#include <public/Platform.h>
+#include <public/WebUnitTestSupport.h>
 
 using namespace WebKit;
 
@@ -86,7 +87,7 @@ public:
     virtual void TearDown() OVERRIDE
     {
         m_webView->close();
-        webkit_support::UnregisterAllMockedURLs();
+        Platform::current()->unitTestSupport()->unregisterAllMockedURLs();
     }
 
     WebFrame* mainFrame() const

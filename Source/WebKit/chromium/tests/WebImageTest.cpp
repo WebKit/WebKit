@@ -35,9 +35,10 @@
 #include "FileSystem.h"
 #include "SharedBuffer.h"
 #include <gtest/gtest.h>
+#include <public/Platform.h>
 #include <public/WebData.h>
 #include <public/WebSize.h>
-#include <webkit/support/webkit_support.h>
+#include <public/WebUnitTestSupport.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -46,7 +47,7 @@ namespace {
 
 static PassRefPtr<SharedBuffer> readFile(const char* fileName)
 {
-    String filePath = webkit_support::GetWebKitRootDir();
+    String filePath = Platform::current()->unitTestSupport()->webKitRootDir();
     filePath.append("/Source/WebKit/chromium/tests/data/");
     filePath.append(fileName);
 

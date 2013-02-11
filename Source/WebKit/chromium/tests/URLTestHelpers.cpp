@@ -31,10 +31,11 @@
 #include "config.h"
 #include "URLTestHelpers.h"
 
+#include <public/Platform.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
 #include <public/WebURLResponse.h>
-#include <webkit/support/webkit_support.h>
+#include <public/WebUnitTestSupport.h>
 
 namespace WebKit {
 namespace URLTestHelpers {
@@ -59,12 +60,12 @@ void registerMockedURLLoad(const WebURL& fullURL, const WebString& fileName, con
     response.setHTTPStatusCode(200);
 
     // Physical file path for the mock = <webkitRootDir> + relativeBaseDirectory + fileName.
-    std::string filePath = std::string(webkit_support::GetWebKitRootDir().utf8().data());
+    std::string filePath = std::string(Platform::current()->unitTestSupport()->webKitRootDir().utf8().data());
     filePath.append("/Source/WebKit/chromium/tests/data/");
     filePath.append(std::string(relativeBaseDirectory.utf8().data()));
     filePath.append(std::string(fileName.utf8().data()));
 
-    webkit_support::RegisterMockedURL(fullURL, response, WebString::fromUTF8(filePath.c_str()));
+    Platform::current()->unitTestSupport()->registerMockedURL(fullURL, response, WebString::fromUTF8(filePath.c_str()));
 }
 
 } // namespace URLTestHelpers

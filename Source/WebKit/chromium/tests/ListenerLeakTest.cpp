@@ -34,9 +34,10 @@
 #include "URLTestHelpers.h"
 #include "WebView.h"
 #include <gtest/gtest.h>
+#include <public/Platform.h>
+#include <public/WebUnitTestSupport.h>
 #include <v8/include/v8-profiler.h>
 #include <v8/include/v8.h>
-#include <webkit/support/webkit_support.h>
 
 using namespace WebKit;
 
@@ -99,7 +100,7 @@ public:
     {
         if (m_webView)
             m_webView->close();
-        webkit_support::UnregisterAllMockedURLs();
+        Platform::current()->unitTestSupport()->unregisterAllMockedURLs();
     }
 
 protected:
