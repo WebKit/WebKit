@@ -147,6 +147,7 @@ public:
     virtual void inputSelectionChanged(unsigned selectionStart, unsigned selectionEnd) = 0;
     virtual void inputLearnText(wchar_t* text, int length) = 0;
 
+    virtual void showFormControls(bool visible, bool previousActive = false, bool nextActive = false) = 0;
     virtual void showVirtualKeyboard(bool) = 0;
 
     virtual void requestSpellingCheckingOptions(imf_sp_text_t&, const BlackBerry::Platform::IntRect& documentCaretRect, const BlackBerry::Platform::IntSize& screenOffset, const bool shouldMoveDialog) = 0;

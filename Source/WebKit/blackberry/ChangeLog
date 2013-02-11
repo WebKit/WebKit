@@ -1,3 +1,26 @@
+2013-02-11  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Add form navigation control state tracking.
+        https://bugs.webkit.org/show_bug.cgi?id=109300
+
+        Reviewed by Rob Buis.
+
+        Add form navigation control state tracking.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::focusNextField):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::focusPreviousField):
+        (BlackBerry::WebKit::WebPage::submitForm):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::InputHandler):
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2013-02-09  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Set mouse document position for mouse event in updateCursor.

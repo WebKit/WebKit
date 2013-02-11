@@ -97,6 +97,10 @@ public:
 
     void setInputValue(const WTF::String&);
 
+    void focusNextField();
+    void focusPreviousField();
+    void submitForm();
+
     void setDelayKeyboardVisibilityChange(bool value);
     void processPendingKeyboardVisibilityChange();
 
@@ -215,11 +219,17 @@ private:
     bool shouldSpellCheckElement(const WebCore::Element*) const;
     bool didSpellCheckWord() const { return m_didSpellCheckWord; }
 
+    void updateFormState();
+
     bool shouldNotifyWebView(const Platform::KeyboardEvent&);
 
     WebPagePrivate* m_webPage;
 
     RefPtr<WebCore::Element> m_currentFocusElement;
+    RefPtr<WebCore::Element> m_previousFocusableTextElement;
+    RefPtr<WebCore::Element> m_nextFocusableTextElement;
+
+    bool m_hasSubmitButton;
     bool m_inputModeEnabled;
 
     bool m_processingChange;

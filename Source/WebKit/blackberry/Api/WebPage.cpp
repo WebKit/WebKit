@@ -2633,6 +2633,21 @@ void WebPage::assignFocus(Platform::FocusDirection direction)
     d->assignFocus(direction);
 }
 
+void WebPage::focusNextField()
+{
+    d->m_inputHandler->focusNextField();
+}
+
+void WebPage::focusPreviousField()
+{
+    d->m_inputHandler->focusPreviousField();
+}
+
+void WebPage::submitForm()
+{
+    d->m_inputHandler->submitForm();
+}
+
 Platform::IntRect WebPagePrivate::focusNodeRect()
 {
     Frame* frame = focusedOrMainFrame();

@@ -212,6 +212,10 @@ public:
 
     void setFocused(bool);
 
+    void focusNextField();
+    void focusPreviousField();
+    void submitForm();
+
     void clearBrowsingData();
     void clearHistory();
     void clearCookies();
