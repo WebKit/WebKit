@@ -162,9 +162,6 @@ WebProcess::WebProcess()
     , m_usesNetworkProcess(false)
     , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
 #endif
-#if ENABLE(PLUGIN_PROCESS)
-    , m_pluginProcessConnectionManager(new PluginProcessConnectionManager)
-#endif
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif
@@ -445,7 +442,7 @@ DownloadManager& WebProcess::downloadManager()
 #if ENABLE(PLUGIN_PROCESS)
 PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 {
-    return *m_pluginProcessConnectionManager;
+    return m_pluginProcessConnectionManager;
 }
 #endif
 
@@ -984,7 +981,7 @@ WebResourceLoadScheduler& WebProcess::webResourceLoadScheduler()
 #if ENABLE(PLUGIN_PROCESS)
 void WebProcess::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t processType)
 {
-    m_pluginProcessConnectionManager->pluginProcessCrashed(pluginPath, static_cast<PluginProcess::Type>(processType));
+    m_pluginProcessConnectionManager.pluginProcessCrashed(pluginPath, static_cast<PluginProcess::Type>(processType));
 }
 #endif
 

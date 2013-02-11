@@ -30,6 +30,7 @@
 #include "ChildProcess.h"
 #include "DownloadManager.h"
 #include "EventDispatcher.h"
+#include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
@@ -90,10 +91,6 @@ class NetworkProcessConnection;
 
 #if ENABLE(NETWORK_PROCESS)
 class WebResourceLoadScheduler;
-#endif
-
-#if ENABLE(PLUGIN_PROCESS)
-class PluginProcessConnectionManager;
 #endif
 
 class WebProcess : public ChildProcess, private CoreIPC::Connection::QueueClient, private DownloadManager::Client {
@@ -336,7 +333,7 @@ private:
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)
-    PluginProcessConnectionManager* m_pluginProcessConnectionManager;
+    PluginProcessConnectionManager m_pluginProcessConnectionManager;
 #endif
 
 #if USE(SOUP)

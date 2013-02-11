@@ -1,3 +1,18 @@
+2013-02-11  Anders Carlsson  <andersca@apple.com>
+
+        The plug-in process connection manager doesn't need to be heap allocated
+        https://bugs.webkit.org/show_bug.cgi?id=109479
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+        (WebKit::WebProcess::pluginProcessConnectionManager):
+        (WebKit::WebProcess::pluginProcessCrashed):
+        * WebProcess/WebProcess.h:
+        (WebKit):
+        (WebProcess):
+
 2013-02-11  Tony Chang  <tony@chromium.org>
 
         Move setFrameFlatteningEnabled from layoutTestController to window.internals.settings
