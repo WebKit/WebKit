@@ -174,6 +174,8 @@ private:
     void removeBackingStoreIfNeeded(GraphicsLayer*);
     void resetBackingStoreSizeToLayerSize(GraphicsLayer*);
 
+    void updateFPS(const FloatPoint&, const TransformationMatrix& = TransformationMatrix());
+
     FloatSize m_contentsSize;
     FloatRect m_visibleContentsRect;
 
@@ -224,6 +226,12 @@ private:
     typedef HashMap<int, RefPtr<CustomFilterProgram> > CustomFilterProgramMap;
     CustomFilterProgramMap m_customFilterPrograms;
 #endif
+
+    bool m_isShowingFPS;
+    double m_fpsInterval;
+    double m_fpsTimestamp;
+    int m_lastFPS;
+    int m_frameCount;
 };
 
 } // namespace WebCore
