@@ -204,8 +204,6 @@ void WebPage::resetSettings()
 
     DumpRenderTreeSupportQt::setSeamlessIFramesEnabled(true);
 
-    DumpRenderTreeSupportQt::setMinimumTimerInterval(handle(), DumpRenderTreeSupportQt::defaultMinimumTimerInterval());
-
     DumpRenderTreeSupportQt::resetInternalsObject(mainFrame()->handle());
 
     m_pendingGeolocationRequests.clear();

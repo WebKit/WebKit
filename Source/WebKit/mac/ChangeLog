@@ -1,3 +1,13 @@
+2013-02-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Kill TestRunner::setMinimumTimerInterval; implement the feature with InternalSettings
+        https://bugs.webkit.org/show_bug.cgi?id=109349
+
+        Reviewed by Sam Weinig.
+
+        * WebView/WebView.mm:
+        * WebView/WebViewPrivate.h:
+
 2013-02-10  Dan Bernstein  <mitz@apple.com>
 
         Added *.pdf to EXCLUDED_SOURCE_FILE_NAMES_iphoneos.

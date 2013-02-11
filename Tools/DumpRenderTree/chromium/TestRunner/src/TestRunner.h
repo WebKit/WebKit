@@ -308,7 +308,6 @@ private:
     // Changes asynchronous spellchecking flag on the settings.
     void setAsynchronousSpellCheckingEnabled(const CppArgumentList&, CppVariant*);
 
-    void setMinimumTimerInterval(const CppArgumentList&, CppVariant*);
     void setTouchDragDropEnabled(const CppArgumentList&, CppVariant*);
 
     ///////////////////////////////////////////////////////////////////////////

@@ -264,11 +264,6 @@ WKArrayRef WKBundleCopyOriginsWithApplicationCache(WKBundleRef bundleRef)
     return toAPI(origins.release().leakRef());
 }
 
-void WKBundleSetMinimumTimerInterval(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, double seconds)
-{
-    toImpl(bundleRef)->setMinimumTimerInterval(toImpl(pageGroupRef), seconds);
-}
-
 WKDataRef WKBundleCreateWKDataFromUInt8Array(WKBundleRef bundle, JSContextRef context, JSValueRef data)
 {
     RefPtr<WebData> webData = toImpl(bundle)->createWebDataFromUint8Array(context, data);

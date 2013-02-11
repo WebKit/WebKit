@@ -1069,11 +1069,6 @@ void TestRunner::setSerializeHTTPLoads(bool serialize)
     [WebView _setLoadResourcesSerially:serialize];
 }
 
-void TestRunner::setMinimumTimerInterval(double minimumTimerInterval)
-{
-    [[mainFrame webView] _setMinimumTimerInterval:minimumTimerInterval];
-}
-
 void TestRunner::setTextDirection(JSStringRef directionName)
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060

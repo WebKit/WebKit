@@ -231,7 +231,6 @@ TestRunner::TestRunner()
     bindMethod("overridePreference", &TestRunner::overridePreference);
     bindMethod("setPluginsEnabled", &TestRunner::setPluginsEnabled);
     bindMethod("setAsynchronousSpellCheckingEnabled", &TestRunner::setAsynchronousSpellCheckingEnabled);
-    bindMethod("setMinimumTimerInterval", &TestRunner::setMinimumTimerInterval);
     bindMethod("setTouchDragDropEnabled", &TestRunner::setTouchDragDropEnabled);
 
     // The following modify the state of the TestRunner.
@@ -1640,15 +1639,6 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(const CppArgumentList& argu
 {
     if (arguments.size() > 0 && arguments[0].isBool()) {
         m_delegate->preferences()->asynchronousSpellCheckingEnabled = cppVariantToBool(arguments[0]);
-        m_delegate->applyPreferences();
-    }
-    result->setNull();
-}
-
-void TestRunner::setMinimumTimerInterval(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isNumber()) {
-        m_delegate->preferences()->minimumTimerInterval = arguments[0].toDouble();
         m_delegate->applyPreferences();
     }
     result->setNull();

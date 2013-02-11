@@ -104,7 +104,6 @@ struct WEBTESTRUNNER_EXPORT WebPreferences {
     bool cssCustomFilterEnabled;
     bool shouldRespectImageOrientation;
     bool asynchronousSpellCheckingEnabled;
-    double minimumTimerInterval;
     bool touchDragDropEnabled;
 
     WebPreferences() { reset(); }

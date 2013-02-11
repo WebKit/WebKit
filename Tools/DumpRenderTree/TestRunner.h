@@ -344,8 +344,6 @@ public:
     static const unsigned maxViewWidth;
     static const unsigned maxViewHeight;
 
-    void setMinimumTimerInterval(double);
-
     void setTextDirection(JSStringRef);
     const std::string& titleTextDirection() const { return m_titleTextDirection; }
     void setTitleTextDirection(const std::string& direction) { m_titleTextDirection = direction; }

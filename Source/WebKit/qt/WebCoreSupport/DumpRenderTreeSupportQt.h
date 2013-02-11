@@ -182,9 +182,6 @@ public:
     static void addURLToRedirect(const QString& origin, const QString& destination);
     static QStringList contextMenu(QWebPageAdapter*);
 
-    static double defaultMinimumTimerInterval(); // Not really tied to WebView
-    static void setMinimumTimerInterval(QWebPageAdapter*, double);
-
     static QUrl mediaContentUrlByElementId(QWebFrameAdapter*, const QString& elementId);
     static void setAlternateHtml(QWebFrameAdapter*, const QString& html, const QUrl& baseUrl, const QUrl& failingUrl);
 

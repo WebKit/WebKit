@@ -497,11 +497,6 @@ void TestRunner::setSerializeHTTPLoads(bool)
     // FIXME: Implement.
 }
 
-void TestRunner::setMinimumTimerInterval(double interval)
-{
-
-}
-
 void TestRunner::syncLocalStorage()
 {
     // FIXME: Implement.

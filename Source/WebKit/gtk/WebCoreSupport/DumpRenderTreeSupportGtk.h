@@ -78,8 +78,6 @@ public:
     static void executeCoreCommandByName(WebKitWebView*, const gchar* name, const gchar* value);
     static bool isCommandEnabled(WebKitWebView*, const gchar* name);
     static bool findString(WebKitWebView*, const gchar*, WebKitFindOptions);
-    static double defaultMinimumTimerInterval(); // Not really tied to WebView
-    static void setMinimumTimerInterval(WebKitWebView*, double);
     static void rectangleForSelection(WebKitWebFrame*, cairo_rectangle_int_t*);
     static void scalePageBy(WebKitWebView*, float, float, float);
     static void setDefersLoading(WebKitWebView*, bool);

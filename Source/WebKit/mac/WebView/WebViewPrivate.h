@@ -620,23 +620,6 @@ Could be worth adding to the API.
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag wrap:(BOOL)wrapFlag startInSelection:(BOOL)startInSelection;
 
 /*!
-    @method defaultMinimumTimerInterval
-    @discussion Should consider moving this to the public API.
-    @result Returns the default minimum timer interval.
-*/
-+ (double)_defaultMinimumTimerInterval;
-
-/*!
-    @method setMinimumTimerInterval:
-    @discussion Sets the minimum interval for DOMTimers in this WebView. This method is
-    exposed here in the Mac port rather than through WebPreferences (which generally
-    governs Settings) because this value is something adjusted at run time, not set
-    globally via "defaults write". Should consider adding this to the public API.
-    @param intervalInSeconds The new minimum timer interval, in seconds.
-*/
-- (void)_setMinimumTimerInterval:(double)intervalInSeconds;
-
-/*!
     @method _HTTPPipeliningEnabled
     @abstract Checks the HTTP pipelining status.
     @discussion Defaults to NO.

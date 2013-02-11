@@ -868,11 +868,6 @@ void TestRunner::addURLToRedirect(const QString& origin, const QString& destinat
     DumpRenderTreeSupportQt::addURLToRedirect(origin, destination);
 }
 
-void TestRunner::setMinimumTimerInterval(double minimumTimerInterval)
-{
-    DumpRenderTreeSupportQt::setMinimumTimerInterval(m_drt->pageAdapter(), minimumTimerInterval);
-}
-
 void TestRunner::originsWithLocalStorage()
 {
     // FIXME: Implement.

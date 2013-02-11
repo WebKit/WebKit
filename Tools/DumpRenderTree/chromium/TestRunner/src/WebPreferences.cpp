@@ -131,7 +131,6 @@ void WebPreferences::reset()
     cssCustomFilterEnabled = false;
     shouldRespectImageOrientation = false;
     asynchronousSpellCheckingEnabled = false;
-    minimumTimerInterval = 0.010; // 10 milliseconds.
     touchDragDropEnabled = false;
 }
 
@@ -202,7 +201,6 @@ void WebPreferences::applyTo(WebView* webView)
     settings->setMockScrollbarsEnabled(mockScrollbarsEnabled);
     settings->setShouldRespectImageOrientation(shouldRespectImageOrientation);
     settings->setAsynchronousSpellCheckingEnabled(asynchronousSpellCheckingEnabled);
-    settings->setMinimumTimerInterval(minimumTimerInterval);
     settings->setTouchDragDropEnabled(touchDragDropEnabled);
 
     // Fixed values.

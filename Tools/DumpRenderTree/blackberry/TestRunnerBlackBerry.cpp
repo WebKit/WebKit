@@ -573,11 +573,6 @@ void TestRunner::setSerializeHTTPLoads(bool)
     notImplemented();
 }
 
-void TestRunner::setMinimumTimerInterval(double)
-{
-    notImplemented();
-}
-
 void TestRunner::setTextDirection(JSStringRef)
 {
     notImplemented();

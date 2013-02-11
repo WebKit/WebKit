@@ -3073,17 +3073,6 @@ static Vector<String> toStringVector(NSArray* patterns)
     resourceLoadScheduler()->setSerialLoadingEnabled(serialize);
 }
 
-+ (double)_defaultMinimumTimerInterval
-{
-    return Settings::defaultMinDOMTimerInterval();
-}
-
-- (void)_setMinimumTimerInterval:(double)intervalInSeconds
-{
-    if (_private->page)
-        _private->page->settings()->setMinDOMTimerInterval(intervalInSeconds);
-}
-
 + (BOOL)_HTTPPipeliningEnabled
 {
     return ResourceRequest::httpPipeliningEnabled();

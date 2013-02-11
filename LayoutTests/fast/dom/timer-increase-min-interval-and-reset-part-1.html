@@ -17,7 +17,7 @@ function runTest() {
     testRunner.dumpAsText();
 
     // Make timers run no more often than twice a second.
-    testRunner.setMinimumTimerInterval(0.5);
+    internals.settings.setMinimumTimerInterval(0.5);
 
     // Part 2 of this test (which will likely be executed immediately
     // after this one by the harness) verifies that the minimum timer

@@ -34,7 +34,7 @@ function runTest() {
     testRunner.waitUntilDone();
 
     // Make timers run no more often than twice a second.
-    testRunner.setMinimumTimerInterval(0.5);
+    internals.settings.setMinimumTimerInterval(0.5);
 
     setTimeout(slowTimeoutHandler, 1000);
     setTimeout(fastTimeoutHandler, 1);

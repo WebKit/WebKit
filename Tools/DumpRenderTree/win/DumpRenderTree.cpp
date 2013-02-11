@@ -907,10 +907,6 @@ static void resetWebViewToConsistentStateBeforeTesting()
     if (!webViewPrivate)
         return;
 
-    double minimumInterval = 0;
-    if (SUCCEEDED(webViewPrivate->defaultMinimumTimerInterval(&minimumInterval)))
-        webViewPrivate->setMinimumTimerInterval(minimumInterval);
-
     HWND viewWindow;
     if (SUCCEEDED(webViewPrivate->viewWindow(reinterpret_cast<OLE_HANDLE*>(&viewWindow))) && viewWindow)
         SetFocus(viewWindow);

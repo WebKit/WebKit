@@ -1059,7 +1059,6 @@ void WebViewHost::reset()
 
     if (m_webWidget) {
         webView()->mainFrame()->setName(WebString());
-        webView()->settings()->setMinimumTimerInterval(webkit_support::GetForegroundTabTimerInterval());
     }
 }
 

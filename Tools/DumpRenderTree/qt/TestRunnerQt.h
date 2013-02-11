@@ -257,8 +257,6 @@ public Q_SLOTS:
     void evaluateScriptInIsolatedWorldAndReturnValue(int worldID, const QString& script);
     void evaluateScriptInIsolatedWorld(int worldID, const QString& script);
     void addUserStyleSheet(const QString& sourceCode);
-
-    void setMinimumTimerInterval(double);
     
     void originsWithLocalStorage();
     void deleteAllLocalStorage();

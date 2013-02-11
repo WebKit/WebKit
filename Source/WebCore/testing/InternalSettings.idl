@@ -58,4 +58,5 @@
     [Conditional=VIDEO_TRACK] boolean shouldDisplayTrackKind(in DOMString trackKind) raises (DOMException);
     void setStorageBlockingPolicy(in DOMString policy) raises(DOMException);
     void setImagesEnabled(in boolean enabled) raises(DOMException);
+    void setMinimumTimerInterval(in double intervalInSeconds) raises(DOMException);
 };

@@ -1253,19 +1253,6 @@ void TestRunner::deleteLocalStorageForOrigin(JSStringRef URL)
     // FIXME: Implement.
 }
 
-void TestRunner::setMinimumTimerInterval(double minimumTimerInterval)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebViewPrivate> viewPrivate(Query, webView);
-    if (!viewPrivate)
-        return;
-
-    viewPrivate->setMinimumTimerInterval(minimumTimerInterval);
-}
-
 void TestRunner::setTextDirection(JSStringRef direction)
 {
     COMPtr<IWebFramePrivate> framePrivate(Query, frame);

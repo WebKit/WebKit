@@ -536,16 +536,6 @@ bool DumpRenderTreeSupportGtk::findString(WebKitWebView* webView, const gchar* t
     return core(webView)->findString(String::fromUTF8(targetString), findOptions);
 }
 
-double DumpRenderTreeSupportGtk::defaultMinimumTimerInterval()
-{
-    return Settings::defaultMinDOMTimerInterval();
-}
-
-void DumpRenderTreeSupportGtk::setMinimumTimerInterval(WebKitWebView* webView, double interval)
-{
-    core(webView)->settings()->setMinDOMTimerInterval(interval);
-}
-
 CString DumpRenderTreeSupportGtk::accessibilityHelpText(AtkObject* axObject)
 {
     if (!axObject || !WEBKIT_IS_ACCESSIBLE(axObject))

@@ -797,20 +797,6 @@ QStringList DumpRenderTreeSupportQt::contextMenu(QWebPageAdapter* page)
     return page->menuActionsAsText();
 }
 
-double DumpRenderTreeSupportQt::defaultMinimumTimerInterval()
-{
-    return Settings::defaultMinDOMTimerInterval();
-}
-
-void DumpRenderTreeSupportQt::setMinimumTimerInterval(QWebPageAdapter* adapter, double interval)
-{
-    Page* corePage = adapter->page;
-    if (!corePage)
-        return;
-
-    corePage->settings()->setMinDOMTimerInterval(interval);
-}
-
 bool DumpRenderTreeSupportQt::thirdPartyCookiePolicyAllows(QWebPageAdapter *adapter, const QUrl& url, const QUrl& firstPartyUrl)
 {
     Page* corePage = adapter->page;
