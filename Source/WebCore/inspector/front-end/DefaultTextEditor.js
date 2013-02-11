@@ -3218,9 +3218,6 @@ WebInspector.TextEditorMainPanel.TokenHighlighter = function(mainPanel, textMode
     this._textModel = textModel;
 }
 
-WebInspector.TextEditorMainPanel.TokenHighlighter._NonWordCharRegex = /[^a-zA-Z0-9_]/;
-WebInspector.TextEditorMainPanel.TokenHighlighter._WordRegex = /^[a-zA-Z0-9_]+$/;
-
 WebInspector.TextEditorMainPanel.TokenHighlighter.prototype = {
     /**
      * @param {WebInspector.TextRange} range
@@ -3287,12 +3284,10 @@ WebInspector.TextEditorMainPanel.TokenHighlighter.prototype = {
      */
     _isWord: function(range, selectedText)
     {
-        const NonWordChar = WebInspector.TextEditorMainPanel.TokenHighlighter._NonWordCharRegex;
-        const WordRegex = WebInspector.TextEditorMainPanel.TokenHighlighter._WordRegex;
         var line = this._textModel.line(range.startLine);
-        var leftBound = range.startColumn === 0 || NonWordChar.test(line.charAt(range.startColumn - 1));
-        var rightBound = range.endColumn === line.length || NonWordChar.test(line.charAt(range.endColumn));
-        return leftBound && rightBound && WordRegex.test(selectedText);
+        var leftBound = range.startColumn === 0 || !WebInspector.TextUtils.isWordChar(line.charAt(range.startColumn - 1));
+        var rightBound = range.endColumn === line.length || !WebInspector.TextUtils.isWordChar(line.charAt(range.endColumn));
+        return leftBound && rightBound && WebInspector.TextUtils.isWord(selectedText);
     }
 }
 
@@ -3332,24 +3327,8 @@ WebInspector.DefaultTextEditor.WordMovementController.prototype = {
      */
     _rangeForCtrlArrowMove: function(selection, direction)
     {
-        /**
-         * @param {string} char
-         */
-        function isStopChar(char)
-        {
-            return (char > " " && char < "0") ||
-                (char > "9" && char < "A") ||
-                (char > "Z" && char < "a") ||
-                (char > "z" && char <= "~");
-        }
-
-        /**
-         * @param {string} char
-         */
-        function isSpaceChar(char)
-        {
-            return char === "\t" || char === "\r" || char === "\n" || char === " ";
-        }
+        const isStopChar = WebInspector.TextUtils.isStopChar;
+        const isSpaceChar = WebInspector.TextUtils.isSpaceChar;
 
         var lineNumber = selection.endLine;
         var column = selection.endColumn;
@@ -3461,7 +3440,7 @@ WebInspector.TextEditorMainPanel.BraceHighlightController.prototype = {
         var lineNumber = selectionRange.startLine;
         var column = selectionRange.startColumn;
         var line = this._textModel.line(lineNumber);
-        if (column > 0 && /[)}]/.test(line.charAt(column - 1)))
+        if (column > 0 && WebInspector.TextUtils.isBraceChar(line.charAt(column - 1)))
             --column;
 
         var enclosingBraces = this._braceMatcher.enclosingBraces(lineNumber, column);

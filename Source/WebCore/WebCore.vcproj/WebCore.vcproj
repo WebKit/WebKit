@@ -77778,6 +77778,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\TextUtils.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TimelineFrameController.js"
 					>
 				</File>

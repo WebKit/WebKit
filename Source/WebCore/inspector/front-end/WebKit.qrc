@@ -204,6 +204,7 @@
     <file>TextEditorHighlighter.js</file>
     <file>TextEditorModel.js</file>
     <file>TextPrompt.js</file>
+    <file>TextUtils.js</file>
     <file>TimelineFrameController.js</file>
     <file>TimelineManager.js</file>
     <file>TimelineModel.js</file>

@@ -5302,6 +5302,7 @@
             'inspector/front-end/TextEditorHighlighter.js',
             'inspector/front-end/TextEditorModel.js',
             'inspector/front-end/TextPrompt.js',
+            'inspector/front-end/TextUtils.js',
             'inspector/front-end/TimelineGrid.js',
             'inspector/front-end/TimelineManager.js',
             'inspector/front-end/TimelinePanelDescriptor.js',

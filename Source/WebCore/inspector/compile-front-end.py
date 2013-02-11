@@ -156,6 +156,7 @@ modules = [
             "TextEditorHighlighter.js",
             "TextEditorModel.js",
             "TextPrompt.js",
+            "TextUtils.js",
             "TimelineGrid.js",
             "Toolbar.js",
             "UIUtils.js",
