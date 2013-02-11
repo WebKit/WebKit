@@ -1,3 +1,15 @@
+2013-02-11  Bruno de Oliveira Abinader  <bruno.abinader@basyskom.com>
+
+        Add basysKom to domainAffiliations in team.html
+        https://bugs.webkit.org/show_bug.cgi?id=109306
+
+        Reviewed by Laszlo Gombos.
+
+        Register basysKom as contributing company in
+        http://www.webkit.org/team.html.
+
+        * team.html:
+
 2013-02-11  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         Add intel.com to team.html
