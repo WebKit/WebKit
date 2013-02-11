@@ -89,6 +89,10 @@ void WebNotificationManagerProxy::derefWebContextSupplement()
 void WebNotificationManagerProxy::populateCopyOfNotificationPermissions(HashMap<String, bool>& permissions)
 {
     RefPtr<ImmutableDictionary> knownPermissions = m_provider.notificationPermissions();
+
+    if (!knownPermissions)
+        return;
+
     permissions.clear();
     RefPtr<ImmutableArray> knownOrigins = knownPermissions->keys();
     for (size_t i = 0; i < knownOrigins->size(); ++i) {

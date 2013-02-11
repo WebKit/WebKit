@@ -1,3 +1,15 @@
+2013-02-11  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [WK2][Notifications] Missing early return in populateCopyOfNotificationPermissions
+        https://bugs.webkit.org/show_bug.cgi?id=108459
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/Notifications/WebNotificationManagerProxy.cpp:
+        (WebKit::WebNotificationManagerProxy::populateCopyOfNotificationPermissions):
+        Providers might return 0 and we will end up with a null-pointer dereference.
+        Early check against this.
+
 2013-02-10  Sam Weinig  <sam@webkit.org>
 
         Make the Plug-in XPCService build work even when building in Xcode
