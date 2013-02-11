@@ -1,3 +1,21 @@
+2013-02-11  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] Set mouse document position for mouse event in DRT.
+        https://bugs.webkit.org/show_bug.cgi?id=109094.
+
+        Reviewed by Rob Buis.
+
+        RIM PR 246976.
+        Internally Reviewed by Nima Ghanavatian & Genevieve Mak.
+
+        Set mouse document position when we create mouse event in DRT.
+
+        * DumpRenderTree/blackberry/EventSender.cpp:
+        (setMouseEventDocumentPos):
+        (mouseDownCallback):
+        (mouseUpCallback):
+        (mouseMoveToCallback):
+
 2013-02-11  Mike Lattanzio  <mlattanzio@rim.com>
 
         [BlackBerry] Add graphics subdirectory to include path.

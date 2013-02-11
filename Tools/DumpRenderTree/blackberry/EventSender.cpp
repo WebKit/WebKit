@@ -26,6 +26,7 @@
 #include "DumpRenderTreeSupport.h"
 #include "IntPoint.h"
 #include "NotImplemented.h"
+#include "WebKitThreadViewportAccessor.h"
 #include "WebPage.h"
 
 #include <BlackBerryPlatformKeyboardEvent.h>
@@ -70,17 +71,34 @@ static JSValueRef contextClickCallback(JSContextRef context, JSObjectRef functio
     return JSValueMakeUndefined(context);
 }
 
+void setMouseEventDocumentPos(BlackBerry::Platform::MouseEvent &event, const BlackBerry::WebKit::WebPage* page)
+{
+    // We have added document viewport position and document content position as members of the mouse event, when we create the event, we should initialize them as well.
+    BlackBerry::Platform::ViewportAccessor* viewportAccessor = page->webkitThreadViewportAccessor();
+    IntPoint documentContentPos = viewportAccessor->roundToDocumentFromPixelContents(BlackBerry::Platform::FloatPoint(viewportAccessor->pixelContentsFromViewport(lastMousePosition)));
+    IntPoint documentViewportMousePos = viewportAccessor->roundToDocumentFromPixelContents(BlackBerry::Platform::FloatPoint(lastMousePosition));
+    event.populateDocumentPosition(documentViewportMousePos, documentContentPos);
+}
+
 static JSValueRef mouseDownCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     BlackBerry::WebKit::WebPage* page = BlackBerry::WebKit::DumpRenderTree::currentInstance()->page();
-    page->mouseEvent(BlackBerry::Platform::MouseEvent(BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, 0, lastMousePosition, IntPoint::zero(), 0, 0, 0));
+    BlackBerry::Platform::MouseEvent event(BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, 0, lastMousePosition, IntPoint::zero(), 0, 0, 0);
+
+    setMouseEventDocumentPos(event, page);
+
+    page->mouseEvent(event);
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef mouseUpCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     BlackBerry::WebKit::WebPage* page = BlackBerry::WebKit::DumpRenderTree::currentInstance()->page();
-    page->mouseEvent(BlackBerry::Platform::MouseEvent(0, BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, lastMousePosition, IntPoint::zero(), 0, 0, 0));
+    BlackBerry::Platform::MouseEvent event(0, BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, lastMousePosition, IntPoint::zero(), 0, 0, 0);
+
+    setMouseEventDocumentPos(event, page);
+
+    page->mouseEvent(event);
     return JSValueMakeUndefined(context);
 }
 
@@ -96,8 +114,11 @@ static JSValueRef mouseMoveToCallback(JSContextRef context, JSObjectRef function
 
     lastMousePosition = IntPoint(x, y);
     BlackBerry::WebKit::WebPage* page = BlackBerry::WebKit::DumpRenderTree::currentInstance()->page();
-    page->mouseEvent(BlackBerry::Platform::MouseEvent(BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, lastMousePosition, IntPoint::zero(), 0, 0, 0));
+    BlackBerry::Platform::MouseEvent event(BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, BlackBerry::Platform::MouseEvent::ScreenLeftMouseButton, lastMousePosition, IntPoint::zero(), 0, 0, 0);
 
+    setMouseEventDocumentPos(event, page);
+
+    page->mouseEvent(event);
 
     return JSValueMakeUndefined(context);
 }
