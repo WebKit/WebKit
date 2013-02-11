@@ -79,7 +79,6 @@ public:
     void setScrollingStateTree(ScrollingStateTree* tree) { m_scrollingStateTree = tree; }
 
     ScrollingNodeID scrollingNodeID() const { return m_nodeID; }
-    void setScrollingNodeID(ScrollingNodeID nodeID) { m_nodeID = nodeID; }
 
     ScrollingStateNode* parent() const { return m_parent; }
     void setParent(ScrollingStateNode* parent) { m_parent = parent; }

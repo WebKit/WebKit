@@ -107,6 +107,10 @@ void ScrollingCoordinatorMac::frameViewLayoutUpdated(FrameView* frameView)
     ASSERT(isMainThread());
     ASSERT(m_page);
 
+    // If there isn't a root node yet, don't do anything. We'll be called again after creating one.
+    if (!m_scrollingStateTree->rootStateNode())
+        return;
+
     // Compute the region of the page that we can't do fast scrolling for. This currently includes
     // all scrollable areas, such as subframes, overflow divs and list boxes. We need to do this even if the
     // frame view whose layout was updated is not the main frame.

@@ -159,10 +159,10 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
         // root node.
         ScrollingNodeID nodeID = stateNode->scrollingNodeID();
         if (!stateNode->parent()) {
-            // This is the root node.
-            if (!m_rootNode)
-                m_rootNode = ScrollingTreeScrollingNode::create(this, nodeID);
+            // This is the root node. Nuke the node map.
+            m_nodeMap.clear();
 
+            m_rootNode = ScrollingTreeScrollingNode::create(this, nodeID);
             m_nodeMap.set(nodeID, m_rootNode.get());
             m_rootNode->update(stateNode);
         } else {

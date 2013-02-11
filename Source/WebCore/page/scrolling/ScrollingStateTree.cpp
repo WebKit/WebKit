@@ -41,8 +41,7 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::create()
 }
 
 ScrollingStateTree::ScrollingStateTree()
-    : m_rootStateNode(ScrollingStateScrollingNode::create(this, 0))
-    , m_hasChangedProperties(false)
+    : m_hasChangedProperties(false)
 {
 }
 
@@ -70,7 +69,7 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         // If we're resetting the root node, we should clear the HashMap and destroy the current children.
         clear();
 
-        rootStateNode()->setScrollingNodeID(newNodeID);
+        setRootStateNode(ScrollingStateScrollingNode::create(this, newNodeID));
         newNode = rootStateNode();
     } else {
         ScrollingStateNode* parent = stateNodeForID(parentID);
@@ -120,6 +119,7 @@ void ScrollingStateTree::detachNode(ScrollingNodeID nodeID)
 void ScrollingStateTree::clear()
 {
     removeNode(rootStateNode());
+    m_stateNodeMap.clear();
 }
 
 PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
@@ -140,6 +140,15 @@ PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
 
 void ScrollingStateTree::removeNode(ScrollingStateNode* node)
 {
+    if (!node)
+        return;
+
+    if (node == m_rootStateNode) {
+        didRemoveNode(node->scrollingNodeID());
+        m_rootStateNode = nullptr;
+        return;
+    }
+
     ASSERT(m_rootStateNode);
     m_rootStateNode->removeChild(node);
 
