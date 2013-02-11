@@ -26,6 +26,8 @@
 	<true/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>WebKitEntryPoint</key>
+	<string>NetworkServiceInitializer</string>
 	<key>LSUIElement</key>
 	<true/>
 	<key>XPCService</key>

@@ -124,7 +124,7 @@ static bool shouldUseXPC()
         return [value boolValue];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    return false;
+    return true;
 #else
     return false;
 #endif

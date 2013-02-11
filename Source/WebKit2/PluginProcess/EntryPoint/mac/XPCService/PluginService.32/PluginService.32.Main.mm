@@ -25,7 +25,6 @@
 
 #if defined(__i386__)
 
-#define WEBKIT_XPC_SERVICE_INITIALIZER PluginServiceInitializer
 #include "XPCServiceBootstrapper.h"
 
 using namespace WebKit;

@@ -23,7 +23,6 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define WEBKIT_XPC_SERVICE_INITIALIZER PluginServiceInitializer
 #include "XPCServiceBootstrapper.Development.h"
 
 using namespace WebKit;

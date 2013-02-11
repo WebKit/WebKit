@@ -26,14 +26,8 @@
 #ifndef XPCServiceBootstrapper_h
 #define XPCServiceBootstrapper_h
 
-#if !defined(WEBKIT_XPC_SERVICE_INITIALIZER)
-#error WEBKIT_XPC_SERVICE_INITIALIZER must be defined.
-#endif
-
+#import <CoreFoundation/CoreFoundation.h>
 #import <xpc/xpc.h>
-
-// Forward declare the specified initializer.
-extern "C" void WEBKIT_XPC_SERVICE_INITIALIZER(xpc_connection_t, xpc_object_t);
 
 namespace WebKit {
 
@@ -51,12 +45,22 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
             assert(type == XPC_TYPE_DICTIONARY);
 
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "bootstrap")) {
+                CFBundleRef webKit2Bundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit2"));
+                CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
+
+                typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t);
+                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKit2Bundle, entryPointFunctionName));
+                if (!initializerFunctionPtr) {
+                    NSLog(@"Unable to find entry point in WebKit2.framework with name: %@", (NSString *)entryPointFunctionName);
+                    exit(EXIT_FAILURE);
+                }
+
                 xpc_object_t reply = xpc_dictionary_create_reply(event);
                 xpc_dictionary_set_string(reply, "message-name", "process-finished-launching");
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
                 xpc_release(reply);
 
-                WEBKIT_XPC_SERVICE_INITIALIZER(peer, event);
+                initializerFunctionPtr(peer, event);
             }
         }
     });

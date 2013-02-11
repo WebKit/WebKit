@@ -1,3 +1,49 @@
+2013-02-10  Sam Weinig  <sam@webkit.org>
+
+        Make the Plug-in XPCService build work even when building in Xcode
+        <rdar://problem/13011186>
+        https://bugs.webkit.org/show_bug.cgi?id=109392
+
+        Reviewed by Anders Carlsson.
+
+        * Configurations/DebugRelease.xcconfig:
+        Add a DEBUG_OR_RELEASE variable to test against.
+        * Configurations/PluginService.32.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+        In non-production builds, don't link against WebKit2, so that we don't get warnings about WebKit2.framework
+        not containing the right architectures. This is ok, as these services are not used in non-production builds.
+
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/Info.plist:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/NetworkServiceMain.Development.mm:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/Info.plist:
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/NetworkServiceMain.mm:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32/Info.plist:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32/PluginService.32.Main.mm:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64/Info.plist:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64/PluginService.64.Main.mm:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/PluginService.Development.Main.mm:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/WebContentServiceMain.Development.mm:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/WebContentServiceMain.mm:
+        Switch off the the old idiom of defining a macro for the initializer function, and instead set
+        it in the Info.plist, so the XPCServiceBootstrapper can grab it.
+
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.Development.h:
+        (WebKit::XPCServiceEventHandler):
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.h:
+        (WebKit::XPCServiceEventHandler):
+        Get the entry point from the bundle, rather than the macro. This is not only a bit less gross,
+        but also allows us to build without having linked against WebKit2.framework.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        Re-enable using XPC for plug-ins.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Update project.
+
 2013-02-10  Anders Carlsson  <andersca@apple.com>
 
         Add back code that was accidentally removed when moving plug-in enumeration back to the main thread

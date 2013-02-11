@@ -26,3 +26,14 @@
 ARCHS = i386;
 PRODUCT_NAME = com.apple.WebKit.Plugin.32;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32/Info.plist;
+
+// Since this service is only used in production builds, in debug and release builds
+// we don't link against WebKit2, to avoid linking errors due to not having a WebKit2
+// of the right architecture.
+
+FRAMEWORK_LDFLAGS = -framework Foundation $(FRAMEWORK_LDFLAGS_$(DEBUG_OR_RELEASE));
+FRAMEWORK_LDFLAGS_ = -framework WebKit2;
+FRAMEWORK_LDFLAGS_NO = -framework WebKit2;
+FRAMEWORK_LDFLAGS_YES = ;
+
+OTHER_LDFLAGS = $(FRAMEWORK_LDFLAGS) $(OTHER_LDFLAGS);

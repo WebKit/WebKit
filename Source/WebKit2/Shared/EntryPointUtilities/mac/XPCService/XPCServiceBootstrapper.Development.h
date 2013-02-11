@@ -26,10 +26,6 @@
 #ifndef XPCServiceBootstrapper_Development_h
 #define XPCServiceBootstrapper_Development_h
 
-#if !defined(WEBKIT_XPC_SERVICE_INITIALIZER)
-#error WEBKIT_XPC_SERVICE_INITIALIZER must be defined.
-#endif
-
 #import <crt_externs.h>
 #import <dlfcn.h>
 #import <mach-o/dyld.h>
@@ -37,9 +33,6 @@
 #import <stdio.h>
 #import <stdlib.h>
 #import <xpc/xpc.h>
-
-#define STRINGIZE(exp) #exp
-#define STRINGIZE_VALUE_OF(exp) STRINGIZE(exp)
 
 namespace WebKit {
 
@@ -114,10 +107,13 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                     exit(EXIT_FAILURE);
                 }
 
+                CFBundleRef webKit2Bundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit2"));
+                CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
+
                 typedef void (*InitializerFunction)(xpc_connection_t, xpc_object_t);
-                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(dlsym(frameworkLibrary, STRINGIZE_VALUE_OF(WEBKIT_XPC_SERVICE_INITIALIZER)));
+                InitializerFunction initializerFunctionPtr = reinterpret_cast<InitializerFunction>(CFBundleGetFunctionPointerForName(webKit2Bundle, entryPointFunctionName));
                 if (!initializerFunctionPtr) {
-                    NSLog(@"Unable to find entry point in WebKit2.framework loaded from path: %s (Error: %s)", xpc_dictionary_get_string(event, "framework-executable-path"), dlerror());
+                    NSLog(@"Unable to find entry point in WebKit2.framework with name: %@", (NSString *)entryPointFunctionName);
                     exit(EXIT_FAILURE);
                 }
 
