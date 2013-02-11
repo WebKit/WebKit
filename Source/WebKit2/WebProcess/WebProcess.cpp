@@ -30,6 +30,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "Logging.h"
+#include "PluginProcessConnectionManagerMessages.h"
 #include "StatisticsData.h"
 #include "WebApplicationCacheManager.h"
 #include "WebConnectionToUIProcess.h"
@@ -633,10 +634,12 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringR
 
 void WebProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
-    if (decoder->messageReceiverName() == Messages::WebProcess::messageReceiverName()) {
-        didReceiveWebProcessMessageOnConnectionWorkQueue(connection, decoder);
+#if ENABLE(PLUGIN_PROCESS)
+    if (decoder->messageReceiverName() == Messages::PluginProcessConnectionManager::messageReceiverName()) {
+        m_pluginProcessConnectionManager.didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(ChildProcess::connection(), decoder);
         return;
     }
+#endif
 }
 
 void WebProcess::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
@@ -974,14 +977,6 @@ void WebProcess::networkProcessConnectionClosed(NetworkProcessConnection* connec
 WebResourceLoadScheduler& WebProcess::webResourceLoadScheduler()
 {
     return *m_webResourceLoadScheduler;
-}
-
-#endif
-
-#if ENABLE(PLUGIN_PROCESS)
-void WebProcess::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t processType)
-{
-    m_pluginProcessConnectionManager.pluginProcessCrashed(pluginPath, static_cast<PluginProcess::Type>(processType));
 }
 #endif
 

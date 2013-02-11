@@ -63,10 +63,6 @@ messages -> WebProcess LegacyReceiver {
     DidAddPlugInAutoStartOrigin(uint32_t hash, double expirationTime)
     ResetPlugInAutoStartOrigins(HashMap<uint32_t,double> hashes)
 
-#if ENABLE(PLUGIN_PROCESS)
-    PluginProcessCrashed(String pluginProcess, uint32_t processType) DispatchOnConnectionQueue
-#endif
-
     void StartMemorySampler(WebKit::SandboxExtension::Handle sampleLogFileHandle, WTF::String sampleLogFilePath, double interval);
     void StopMemorySampler();
 

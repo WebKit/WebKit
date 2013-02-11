@@ -55,10 +55,12 @@ public:
     PluginProcessConnection* getPluginProcessConnection(const String& pluginPath, PluginProcess::Type);
     void removePluginProcessConnection(PluginProcessConnection*);
 
-    // Called on the web process connection work queue.
-    void pluginProcessCrashed(const String& pluginPath, PluginProcess::Type);
+    void didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&);
 
 private:
+    // Called on the web process connection work queue.
+    void pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t opaquePluginType);
+
     Vector<RefPtr<PluginProcessConnection> > m_pluginProcessConnections;
 
     Mutex m_pathsAndConnectionsMutex;

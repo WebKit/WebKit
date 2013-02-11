@@ -28,13 +28,13 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "PluginProcessConnectionManagerMessages.h"
 #include "PluginProcessCreationParameters.h"
 #include "PluginProcessManager.h"
 #include "PluginProcessMessages.h"
 #include "WebContext.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPluginSiteDataManager.h"
-#include "WebProcessMessages.h"
 #include "WebProcessProxy.h"
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RunLoop.h>
@@ -174,7 +174,7 @@ void PluginProcessProxy::didClose(CoreIPC::Connection*)
 
     const Vector<WebContext*>& contexts = WebContext::allContexts();
     for (size_t i = 0; i < contexts.size(); ++i)
-        contexts[i]->sendToAllProcesses(Messages::WebProcess::PluginProcessCrashed(m_pluginInfo.path, m_processType));
+        contexts[i]->sendToAllProcesses(Messages::PluginProcessConnectionManager::PluginProcessCrashed(m_pluginInfo.path, m_processType));
 
     // This will cause us to be deleted.
     pluginProcessCrashedOrFailedToLaunch();

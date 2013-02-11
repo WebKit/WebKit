@@ -72,6 +72,7 @@ MESSAGE_RECEIVERS = \
     PluginControllerProxy \
     PluginProcess \
     PluginProcessConnection \
+    PluginProcessConnectionManager \
     PluginProcessProxy \
     PluginProxy \
     SharedWorkerProcess \

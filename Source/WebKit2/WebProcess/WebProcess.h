@@ -226,10 +226,6 @@ private:
     void clearPluginSiteData(const Vector<String>& pluginPaths, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
 #endif
 
-#if ENABLE(PLUGIN_PROCESS)
-    void pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t processType);
-#endif
-
     void startMemorySampler(const SandboxExtension::Handle&, const String&, const double);
     void stopMemorySampler();
 
@@ -274,7 +270,6 @@ private:
 
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
-    void didReceiveWebProcessMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&);
 
     RefPtr<WebConnectionToUIProcess> m_webConnection;
 

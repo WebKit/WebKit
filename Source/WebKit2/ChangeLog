@@ -1,3 +1,28 @@
+2013-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Move the PluginProcessCrashed message to PluginProcessConnectionManager
+        https://bugs.webkit.org/show_bug.cgi?id=109493
+
+        Reviewed by Andreas Kling.
+
+        This is in preparation for making PluginProcessConnectionManager a connection queue client.
+
+        * DerivedSources.make:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didClose):
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::pluginProcessCrashed):
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        (PluginProcessConnectionManager):
+        * WebProcess/Plugins/PluginProcessConnectionManager.messages.in: Added.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveMessageOnConnectionWorkQueue):
+        (WebKit::WebProcess::webResourceLoadScheduler):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+        * WebProcess/WebProcess.messages.in:
+
 2013-02-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Kill TestRunner::setMinimumTimerInterval; implement the feature with InternalSettings
