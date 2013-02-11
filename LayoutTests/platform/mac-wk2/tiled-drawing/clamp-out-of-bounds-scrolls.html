@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <style>
+        body {
+            width: 5000px;
+            height: 5000px;
+        }
+    </style>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        function logScrollAttempt(x, y)
+        {
+            window.scrollTo(x, y);
+
+            if (window.internals)
+                document.getElementById('scrollingTree').innerText += "Attempted scroll to " + x + ", " + y + "\n" + window.internals.scrollingStateTreeAsText(document) + "\n";
+        }
+
+        function doTest()
+        {
+            // These scrolls should clamp to 0, 0.
+            logScrollAttempt(-5000, 0);
+            logScrollAttempt(0, -5000);
+            logScrollAttempt(-5000, -5000);
+
+            // These scrolls should clamp to the bottom/right edges.
+            logScrollAttempt(10000, 0);
+            logScrollAttempt(0, 10000);
+            logScrollAttempt(10000, 10000);
+        }
+        window.addEventListener('load', doTest, false);
+    </script>
+</head>
+<body>
+<pre id="scrollingTree"></pre>
+</body>
+</html>

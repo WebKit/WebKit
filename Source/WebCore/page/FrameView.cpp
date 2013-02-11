@@ -1781,10 +1781,15 @@ void FrameView::setScrollPosition(const IntPoint& scrollPoint)
     TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     m_maintainScrollPositionAnchor = 0;
 
-    if (requestScrollPositionUpdate(scrollPoint))
+    IntPoint newScrollPosition = adjustScrollPositionWithinRange(scrollPoint);
+
+    if (newScrollPosition == scrollPosition())
         return;
 
-    ScrollView::setScrollPosition(scrollPoint);
+    if (requestScrollPositionUpdate(newScrollPosition))
+        return;
+
+    ScrollView::setScrollPosition(newScrollPosition);
 }
 
 void FrameView::delegatesScrollingDidChange()
