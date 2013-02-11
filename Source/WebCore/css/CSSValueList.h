@@ -60,6 +60,8 @@ public:
     PassRefPtr<CSSValueList> copy();
 
     String customCssText() const;
+    bool equals(const CSSValueList&) const;
+    bool equals(const CSSValue&) const;
 #if ENABLE(CSS_VARIABLES)
     String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
 #endif

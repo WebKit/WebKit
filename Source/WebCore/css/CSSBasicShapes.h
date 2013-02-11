@@ -49,6 +49,7 @@ public:
 
     virtual Type type() const = 0;
     virtual String cssText() const = 0;
+    virtual bool equals(const CSSBasicShape&) const = 0;
 
 #if ENABLE(CSS_VARIABLES)
     virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const = 0;
@@ -82,6 +83,7 @@ public:
 
     virtual Type type() const { return CSS_BASIC_SHAPE_RECTANGLE; }
     virtual String cssText() const;
+    virtual bool equals(const CSSBasicShape&) const;
 
 #if ENABLE(CSS_VARIABLES)
     virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
@@ -113,6 +115,7 @@ public:
 
     virtual Type type() const { return CSS_BASIC_SHAPE_CIRCLE; }
     virtual String cssText() const;
+    virtual bool equals(const CSSBasicShape&) const;
 
 #if ENABLE(CSS_VARIABLES)
     virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
@@ -143,6 +146,7 @@ public:
 
     virtual Type type() const { return CSS_BASIC_SHAPE_ELLIPSE; }
     virtual String cssText() const;
+    virtual bool equals(const CSSBasicShape&) const;
 
 #if ENABLE(CSS_VARIABLES)
     virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
@@ -177,7 +181,7 @@ public:
 
     virtual Type type() const { return CSS_BASIC_SHAPE_POLYGON; }
     virtual String cssText() const;
-
+    virtual bool equals(const CSSBasicShape&) const;
 #if ENABLE(CSS_VARIABLES)
     virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const;
     virtual bool hasVariableReference() const;

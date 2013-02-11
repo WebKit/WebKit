@@ -316,6 +316,8 @@ public:
     PassRefPtr<CSSPrimitiveValue> cloneForCSSOM() const;
     void setCSSOMSafe() { m_isCSSOMSafe = true; }
 
+    bool equals(const CSSPrimitiveValue&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:

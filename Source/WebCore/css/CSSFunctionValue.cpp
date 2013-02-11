@@ -59,6 +59,11 @@ String CSSFunctionValue::customCssText() const
     return result.toString();
 }
 
+bool CSSFunctionValue::equals(const CSSFunctionValue& other) const
+{
+    return m_name == other.m_name && compareCSSValuePtr(m_args, other.m_args);
+}
+
 void CSSFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);

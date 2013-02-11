@@ -75,6 +75,8 @@ public:
     
     PassRefPtr<SVGColor> cloneForCSSOM() const;
 
+    bool equals(const SVGColor&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 protected:

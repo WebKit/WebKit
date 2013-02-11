@@ -56,6 +56,8 @@ public:
         return generateCSSString(first()->cssText(), second()->cssText());
     }
 
+    bool equals(const Pair& other) const { return compareCSSValuePtr(m_first, other.m_first) && compareCSSValuePtr(m_second, other.m_second); }
+
 #if ENABLE(CSS_VARIABLES)
     String serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
     {

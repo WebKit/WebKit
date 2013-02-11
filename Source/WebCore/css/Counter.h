@@ -42,6 +42,13 @@ public:
     void setIdentifier(PassRefPtr<CSSPrimitiveValue> identifier) { m_identifier = identifier; }
     void setListStyle(PassRefPtr<CSSPrimitiveValue> listStyle) { m_listStyle = listStyle; }
     void setSeparator(PassRefPtr<CSSPrimitiveValue> separator) { m_separator = separator; }
+
+    bool equals(const Counter& other) const
+    {
+        return identifier() == other.identifier()
+            && listStyle() == other.listStyle()
+            && separator() == other.separator();
+    }
     
     PassRefPtr<Counter> cloneForCSSOM() const
     {

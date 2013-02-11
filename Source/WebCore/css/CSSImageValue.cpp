@@ -93,6 +93,11 @@ bool CSSImageValue::hasFailedOrCanceledSubresources() const
     return cachedResource->loadFailedOrCanceled();
 }
 
+bool CSSImageValue::equals(const CSSImageValue& other) const
+{
+    return m_url == other.m_url;
+}
+
 String CSSImageValue::customCssText() const
 {
     return "url(" + quoteCSSURLIfNeeded(m_url) + ")";

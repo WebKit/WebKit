@@ -47,6 +47,8 @@ public:
 
     String customCssText() const;
 
+    bool equals(const CSSFunctionValue&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:

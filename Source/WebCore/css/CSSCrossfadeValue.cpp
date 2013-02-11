@@ -229,4 +229,11 @@ bool CSSCrossfadeValue::hasFailedOrCanceledSubresources() const
     return false;
 }
 
+bool CSSCrossfadeValue::equals(const CSSCrossfadeValue& other) const
+{
+    return compareCSSValuePtr(m_fromValue, other.m_fromValue)
+        && compareCSSValuePtr(m_toValue, other.m_toValue)
+        && compareCSSValuePtr(m_percentageValue, other.m_percentageValue);
+}
+
 } // namespace WebCore

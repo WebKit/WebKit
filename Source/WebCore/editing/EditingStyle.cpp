@@ -245,9 +245,7 @@ bool HTMLAttributeEquivalent::valueIsPresentInStyle(Element* element, StylePrope
     RefPtr<CSSValue> value = attributeValueAsCSSValue(element);
     RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(m_propertyID);
     
-    // FIXME: This is very inefficient way of comparing values
-    // but we can't string compare attribute value and CSS property value.
-    return value && styleValue && value->cssText() == styleValue->cssText();
+    return compareCSSValuePtr(value, styleValue);
 }
 
 void HTMLAttributeEquivalent::addToStyle(Element* element, EditingStyle* style) const

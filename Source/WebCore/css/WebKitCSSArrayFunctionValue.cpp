@@ -56,6 +56,11 @@ PassRefPtr<WebKitCSSArrayFunctionValue> WebKitCSSArrayFunctionValue::cloneForCSS
     return adoptRef(new WebKitCSSArrayFunctionValue(*this));
 }
 
+bool WebKitCSSArrayFunctionValue::equals(const WebKitCSSArrayFunctionValue& other) const
+{
+    return CSSValueList::equals(other);
+}
+
 void WebKitCSSArrayFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);

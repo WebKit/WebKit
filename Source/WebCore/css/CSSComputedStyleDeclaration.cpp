@@ -2648,7 +2648,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             const CSSPropertyID properties[3] = { CSSPropertyBorderRight, CSSPropertyBorderBottom,
                                         CSSPropertyBorderLeft };
             for (size_t i = 0; i < WTF_ARRAY_LENGTH(properties); ++i) {
-                if (value->cssText() !=  getPropertyCSSValue(properties[i], DoNotUpdateLayout)->cssText())
+                if (!compareCSSValuePtr<CSSValue>(value, getPropertyCSSValue(properties[i], DoNotUpdateLayout)))
                     return 0;
             }
             return value.release();
@@ -2872,7 +2872,7 @@ bool CSSComputedStyleDeclaration::cssPropertyMatches(const StylePropertySet::Pro
         }
     }
     RefPtr<CSSValue> value = getPropertyCSSValue(property.id());
-    return value && value->cssText() == property.value()->cssText();
+    return value && property.value() && value->equals(*property.value());
 }
 
 PassRefPtr<StylePropertySet> CSSComputedStyleDeclaration::copy() const
@@ -2908,9 +2908,9 @@ PassRefPtr<CSSValueList> CSSComputedStyleDeclaration::getCSSPropertyValuesForSid
     if (!topValue || !rightValue || !bottomValue || !leftValue)
         return 0;
 
-    bool showLeft = rightValue->cssText() != leftValue->cssText();
-    bool showBottom = (topValue->cssText() != bottomValue->cssText()) || showLeft;
-    bool showRight = (topValue->cssText() != rightValue->cssText()) || showBottom;
+    bool showLeft = !compareCSSValuePtr(rightValue, leftValue);
+    bool showBottom = !compareCSSValuePtr(topValue, bottomValue) || showLeft;
+    bool showRight = !compareCSSValuePtr(topValue, rightValue) || showBottom;
 
     list->append(topValue);
     if (showRight)

@@ -65,6 +65,16 @@ String FontValue::customCssText() const
     return result.toString();
 }
 
+bool FontValue::equals(const FontValue& other) const
+{
+    return compareCSSValuePtr(style, other.style)
+        && compareCSSValuePtr(variant, other.variant)
+        && compareCSSValuePtr(weight, other.weight)
+        && compareCSSValuePtr(size, other.size)
+        && compareCSSValuePtr(lineHeight, other.lineHeight)
+        && compareCSSValuePtr(family, other.family);
+}
+
 void FontValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);

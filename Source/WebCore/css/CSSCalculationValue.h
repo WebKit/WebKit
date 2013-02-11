@@ -60,7 +60,11 @@ enum CalculationCategory {
     
 class CSSCalcExpressionNode : public RefCounted<CSSCalcExpressionNode> {
 public:
-    
+    enum Type {
+        CssCalcPrimitiveValue = 1,
+        CssCalcBinaryOperation
+    };
+
     virtual ~CSSCalcExpressionNode() = 0;
     virtual bool isZero() const = 0;
     virtual PassOwnPtr<CalcExpressionNode> toCalcValue(RenderStyle*, RenderStyle* rootStyle, double zoom = 1.0) const = 0;    
@@ -71,9 +75,10 @@ public:
     virtual String serializeResolvingVariables(const HashMap<AtomicString, String>&) const = 0;
     virtual bool hasVariableReference() const = 0;
 #endif
-
+    virtual bool equals(const CSSCalcExpressionNode& other) const { return m_category == other.m_category && m_isInteger == other.m_isInteger; }
     virtual void reportMemoryUsage(MemoryObjectInfo*) const = 0;
-    
+    virtual Type type() const = 0;
+
     CalculationCategory category() const { return m_category; }    
     bool isInteger() const { return m_isInteger; }
     
@@ -104,6 +109,7 @@ public:
     double computeLengthPx(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false) const;
         
     String customCssText() const;
+    bool equals(const CSSCalcValue&) const;
 #if ENABLE(CSS_VARIABLES)
     String customSerializeResolvingVariables(const HashMap<AtomicString, String>&) const;
     bool hasVariableReference() const;

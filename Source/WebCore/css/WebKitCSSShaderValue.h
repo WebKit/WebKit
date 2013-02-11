@@ -50,6 +50,8 @@ public:
 
     String customCssText() const;
 
+    bool equals(const WebKitCSSShaderValue&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:

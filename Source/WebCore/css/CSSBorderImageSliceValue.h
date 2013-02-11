@@ -45,6 +45,8 @@ public:
 
     Quad* slices() { return m_slices ? m_slices->getQuadValue() : 0; }
 
+    bool equals(const CSSBorderImageSliceValue&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
     // These four values are used to make "cuts" in the border image. They can be numbers

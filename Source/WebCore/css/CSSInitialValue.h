@@ -41,6 +41,8 @@ public:
 
     bool isImplicit() const { return m_isImplicit; }
 
+    bool equals(const CSSInitialValue&) const { return true; }
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:

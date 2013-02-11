@@ -217,6 +217,12 @@ void CSSCursorImageValue::removeReferencedElement(SVGElement* element)
 }
 #endif
 
+bool CSSCursorImageValue::equals(const CSSCursorImageValue& other) const
+{
+    return m_hasHotSpot ? other.m_hasHotSpot && m_hotSpot == other.m_hotSpot : !other.m_hasHotSpot
+        && compareCSSValuePtr(m_imageValue, other.m_imageValue);
+}
+
 void CSSCursorImageValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);

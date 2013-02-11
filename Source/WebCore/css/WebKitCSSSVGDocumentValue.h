@@ -44,6 +44,7 @@ public:
     String customCssText() const;
     const String& url() const { return m_url; }
     bool loadRequested() const { return m_loadRequested; }
+    bool equals(const WebKitCSSSVGDocumentValue&) const;
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 

@@ -1274,6 +1274,83 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
     return result;
 }
 
+bool CSSPrimitiveValue::equals(const CSSPrimitiveValue& other) const
+{
+    if (m_primitiveUnitType != other.m_primitiveUnitType)
+        return false;
+
+    switch (m_primitiveUnitType) {
+    case CSS_UNKNOWN:
+        return false;
+    case CSS_NUMBER:
+    case CSS_PARSER_INTEGER:
+    case CSS_PERCENTAGE:
+    case CSS_EMS:
+    case CSS_EXS:
+    case CSS_REMS:
+    case CSS_PX:
+    case CSS_CM:
+#if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
+    case CSS_DPPX:
+    case CSS_DPI:
+    case CSS_DPCM:
+#endif
+    case CSS_MM:
+    case CSS_IN:
+    case CSS_PT:
+    case CSS_PC:
+    case CSS_DEG:
+    case CSS_RAD:
+    case CSS_GRAD:
+    case CSS_MS:
+    case CSS_S:
+    case CSS_HZ:
+    case CSS_KHZ:
+    case CSS_TURN:
+    case CSS_VW:
+    case CSS_VH:
+    case CSS_VMIN:
+    case CSS_DIMENSION:
+        return m_value.num == other.m_value.num;
+    case CSS_IDENT:
+        return valueOrPropertyName(m_value.ident) == valueOrPropertyName(other.m_value.ident);
+    case CSS_STRING:
+    case CSS_URI:
+    case CSS_ATTR:
+    case CSS_COUNTER_NAME:
+    case CSS_PARSER_IDENTIFIER:
+    case CSS_PARSER_HEXCOLOR:
+#if ENABLE(CSS_VARIABLES)
+    case CSS_VARIABLE_NAME:
+#endif
+        return equal(m_value.string, other.m_value.string);
+    case CSS_COUNTER:
+        return m_value.counter && other.m_value.counter && m_value.counter->equals(*other.m_value.counter);
+    case CSS_RECT:
+        return m_value.rect && other.m_value.rect && m_value.rect->equals(*other.m_value.rect);
+    case CSS_QUAD:
+        return m_value.quad && other.m_value.quad && m_value.quad->equals(*other.m_value.quad);
+    case CSS_RGBCOLOR:
+        return m_value.rgbcolor == other.m_value.rgbcolor;
+    case CSS_PAIR:
+        return m_value.pair && other.m_value.pair && m_value.pair->equals(*other.m_value.pair);
+#if ENABLE(DASHBOARD_SUPPORT)
+    case CSS_DASHBOARD_REGION: {
+        DashboardRegion* region = getDashboardRegionValue();
+        DashboardRegion* otherRegion = other.getDashboardRegionValue();
+        return region ? otherRegion && region->equals(*otherRegion) : !otherRegion;
+    }
+#endif
+    case CSS_PARSER_OPERATOR:
+        return m_value.ident == other.m_value.ident;
+    case CSS_CALC:
+        return m_value.calc && other.m_value.calc && m_value.calc->equals(*other.m_value.calc);
+    case CSS_SHAPE:
+        return m_value.shape && other.m_value.shape && m_value.shape->equals(*other.m_value.shape);
+    }
+    return false;
+}
+
 void CSSPrimitiveValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);

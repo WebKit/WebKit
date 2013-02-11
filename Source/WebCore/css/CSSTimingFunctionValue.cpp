@@ -50,6 +50,12 @@ String CSSCubicBezierTimingFunctionValue::customCssText() const
         + String::number(m_y2) + ")";
 }
 
+bool CSSCubicBezierTimingFunctionValue::equals(const CSSCubicBezierTimingFunctionValue& other) const
+{
+    return m_x1 == other.m_x1 && m_x2 == other.m_x2 && m_y1 == other.m_y1 && m_y2 == other.m_y2;
+}
+
+
 void CSSCubicBezierTimingFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
@@ -59,6 +65,12 @@ String CSSStepsTimingFunctionValue::customCssText() const
 {
     return "steps(" + String::number(m_steps) + ", " + (m_stepAtStart ? "start" : "end") + ')';
 }
+
+bool CSSStepsTimingFunctionValue::equals(const CSSStepsTimingFunctionValue& other) const
+{
+    return m_steps == other.m_steps && m_stepAtStart == other.m_stepAtStart;
+}
+
 
 void CSSStepsTimingFunctionValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {

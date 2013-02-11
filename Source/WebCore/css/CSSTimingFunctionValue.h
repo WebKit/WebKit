@@ -40,6 +40,8 @@ public:
 
     String customCssText() const;
 
+    bool equals(const CSSLinearTimingFunctionValue&) const { return true; }
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
@@ -62,6 +64,8 @@ public:
     double y1() const { return m_y1; }
     double x2() const { return m_x2; }
     double y2() const { return m_y2; }
+
+    bool equals(const CSSCubicBezierTimingFunctionValue&) const;
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
@@ -92,6 +96,8 @@ public:
     bool stepAtStart() const { return m_stepAtStart; }
 
     String customCssText() const;
+
+    bool equals(const CSSStepsTimingFunctionValue&) const;
 
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 

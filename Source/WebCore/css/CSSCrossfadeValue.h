@@ -66,6 +66,8 @@ public:
 
     bool hasFailedOrCanceledSubresources() const;
 
+    bool equals(const CSSCrossfadeValue&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:

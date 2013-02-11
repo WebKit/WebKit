@@ -79,6 +79,16 @@ String ShadowValue::customCssText() const
     return text.toString();
 }
 
+bool ShadowValue::equals(const ShadowValue& other) const
+{
+    return compareCSSValuePtr(color, other.color)
+        && compareCSSValuePtr(x, other.x)
+        && compareCSSValuePtr(y, other.y)
+        && compareCSSValuePtr(blur, other.blur)
+        && compareCSSValuePtr(spread, other.spread)
+        && compareCSSValuePtr(style, other.style);
+}
+
 void ShadowValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);

@@ -104,6 +104,11 @@ CachedFont* CSSFontFaceSrcValue::cachedFont(Document* document)
     return m_cachedFont.get();
 }
 
+bool CSSFontFaceSrcValue::equals(const CSSFontFaceSrcValue& other) const
+{
+    return m_isLocal == other.m_isLocal && m_format == other.m_format && m_resource == other.m_resource;
+}
+
 void CSSFontFaceSrcValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);

@@ -50,6 +50,8 @@ public:
 
     bool hasFailedOrCanceledSubresources() const;
 
+    bool equals(const CSSImageValue&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
     bool knownToBeOpaque(const RenderObject*) const;

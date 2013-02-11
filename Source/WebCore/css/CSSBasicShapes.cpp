@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include "CSSBasicShapes.h"
+#include "CSSPrimitiveValueMappings.h"
 
 #include <wtf/text/StringBuilder.h>
 
@@ -74,6 +75,20 @@ String CSSBasicShapeRectangle::cssText() const
         m_radiusY.get() ? m_radiusY->cssText() : String());
 }
 
+bool CSSBasicShapeRectangle::equals(const CSSBasicShape& shape) const
+{
+    if (shape.type() != CSS_BASIC_SHAPE_RECTANGLE)
+        return false;
+
+    const CSSBasicShapeRectangle& other = static_cast<const CSSBasicShapeRectangle&>(shape);
+    return compareCSSValuePtr(m_x, other.m_x)
+        && compareCSSValuePtr(m_y, other.m_y)
+        && compareCSSValuePtr(m_width, other.m_width)
+        && compareCSSValuePtr(m_height, other.m_height)
+        && compareCSSValuePtr(m_radiusX, other.m_radiusX)
+        && compareCSSValuePtr(m_radiusY, other.m_radiusY);
+}
+
 #if ENABLE(CSS_VARIABLES)
 String CSSBasicShapeRectangle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
 {
@@ -106,6 +121,17 @@ String CSSBasicShapeCircle::cssText() const
     return buildCircleString(m_centerX->cssText(), m_centerY->cssText(), m_radius->cssText());
 }
 
+bool CSSBasicShapeCircle::equals(const CSSBasicShape& shape) const
+{
+    if (shape.type() != CSS_BASIC_SHAPE_CIRCLE)
+        return false;
+
+    const CSSBasicShapeCircle& other = static_cast<const CSSBasicShapeCircle&>(shape);
+    return compareCSSValuePtr(m_centerX, other.m_centerX)
+        && compareCSSValuePtr(m_centerY, other.m_centerY)
+        && compareCSSValuePtr(m_radius, other.m_radius);
+}
+
 #if ENABLE(CSS_VARIABLES)
 String CSSBasicShapeCircle::serializeResolvingVariables(const HashMap<AtomicString, String>& variables) const
 {
@@ -130,6 +156,18 @@ static String buildEllipseString(const String& x, const String& y, const String&
 String CSSBasicShapeEllipse::cssText() const
 {
     return buildEllipseString(m_centerX->cssText(), m_centerY->cssText(), m_radiusX->cssText(), m_radiusY->cssText());
+}
+
+bool CSSBasicShapeEllipse::equals(const CSSBasicShape& shape) const
+{
+    if (shape.type() != CSS_BASIC_SHAPE_ELLIPSE)
+        return false;
+
+    const CSSBasicShapeEllipse& other = static_cast<const CSSBasicShapeEllipse&>(shape);
+    return compareCSSValuePtr(m_centerX, other.m_centerX)
+        && compareCSSValuePtr(m_centerY, other.m_centerY)
+        && compareCSSValuePtr(m_radiusX, other.m_radiusX)
+        && compareCSSValuePtr(m_radiusY, other.m_radiusY);
 }
 
 #if ENABLE(CSS_VARIABLES)
@@ -197,6 +235,15 @@ String CSSBasicShapePolygon::cssText() const
         points.append(m_values.at(i)->cssText());
 
     return buildPolygonString(m_windRule, points);
+}
+
+bool CSSBasicShapePolygon::equals(const CSSBasicShape& shape) const
+{
+    if (shape.type() != CSS_BASIC_SHAPE_POLYGON)
+        return false;
+
+    const CSSBasicShapePolygon& rhs = static_cast<const CSSBasicShapePolygon&>(shape);
+    return compareCSSValueVector<CSSPrimitiveValue>(m_values, rhs.m_values);
 }
 
 #if ENABLE(CSS_VARIABLES)

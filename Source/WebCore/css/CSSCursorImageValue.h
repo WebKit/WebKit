@@ -59,6 +59,8 @@ public:
     void removeReferencedElement(SVGElement*);
 #endif
 
+    bool equals(const CSSCursorImageValue&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:

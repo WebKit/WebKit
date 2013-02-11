@@ -55,10 +55,9 @@ CSSValueList::CSSValueList(CSSParserValueList* parserValues)
 bool CSSValueList::removeAll(CSSValue* val)
 {
     bool found = false;
-    // FIXME: we should be implementing operator== to CSSValue and its derived classes
-    // to make comparison more flexible and fast.
     for (size_t index = 0; index < m_values.size(); index++) {
-        if (m_values.at(index)->cssText() == val->cssText()) {
+        RefPtr<CSSValue>& value = m_values.at(index);
+        if (value && val && value->equals(*val)) {
             m_values.remove(index);
             found = true;
         }
@@ -69,10 +68,9 @@ bool CSSValueList::removeAll(CSSValue* val)
 
 bool CSSValueList::hasValue(CSSValue* val) const
 {
-    // FIXME: we should be implementing operator== to CSSValue and its derived classes
-    // to make comparison more flexible and fast.
     for (size_t index = 0; index < m_values.size(); index++) {
-        if (m_values.at(index)->cssText() == val->cssText())
+        const RefPtr<CSSValue>& value = m_values.at(index);
+        if (value && val && value->equals(*val))
             return true;
     }
     return false;
@@ -125,6 +123,20 @@ String CSSValueList::customCssText() const
     }
 
     return result.toString();
+}
+
+bool CSSValueList::equals(const CSSValueList& other) const
+{
+    return m_valueListSeparator == other.m_valueListSeparator && compareCSSValueVector<CSSValue>(m_values, other.m_values);
+}
+
+bool CSSValueList::equals(const CSSValue& other) const
+{
+    if (m_values.size() != 1)
+        return false;
+
+    const RefPtr<CSSValue>& value = m_values[0];
+    return value && value->equals(other);
 }
 
 #if ENABLE(CSS_VARIABLES)

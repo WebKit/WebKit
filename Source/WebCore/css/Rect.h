@@ -39,6 +39,14 @@ public:
     void setBottom(PassRefPtr<CSSPrimitiveValue> bottom) { m_bottom = bottom; }
     void setLeft(PassRefPtr<CSSPrimitiveValue> left) { m_left = left; }
 
+    bool equals(const RectBase& other) const
+    {
+        return compareCSSValuePtr(m_top, other.m_top)
+            && compareCSSValuePtr(m_right, other.m_right)
+            && compareCSSValuePtr(m_left, other.m_left)
+            && compareCSSValuePtr(m_bottom, other.m_bottom);
+    }
+
 #if ENABLE(CSS_VARIABLES)
     bool hasVariableReference() const
     {

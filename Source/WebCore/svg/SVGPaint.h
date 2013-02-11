@@ -95,6 +95,8 @@ public:
 
     PassRefPtr<SVGPaint> cloneForCSSOM() const;
 
+    bool equals(const SVGPaint&) const;
+
     void reportDescendantMemoryUsage(MemoryObjectInfo*) const;
 
 private:
