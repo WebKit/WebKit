@@ -36,6 +36,7 @@
 #include "PluginProcessCreationParameters.h"
 #include "PluginProcessProxyMessages.h"
 #include "WebProcessConnection.h"
+#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/RunLoop.h>
 
@@ -85,10 +86,20 @@ PluginProcess::~PluginProcess()
 {
 }
 
+void PluginProcess::lowMemoryHandler(bool critical)
+{
+    UNUSED_PARAM(critical);
+    if (shared().shouldTerminate())
+        shared().terminate();
+}
+
 void PluginProcess::initializeProcess(const ChildProcessInitializationParameters& parameters)
 {
     m_pluginPath = parameters.extraInitializationData.get("plugin-path");
     platformInitializeProcess(parameters);
+
+    memoryPressureHandler().setLowMemoryHandler(lowMemoryHandler);
+    memoryPressureHandler().install();
 }
 
 void PluginProcess::removeWebProcessConnection(WebProcessConnection* webProcessConnection)
@@ -125,9 +136,7 @@ NetscapePluginModule* PluginProcess::netscapePluginModule()
 
 bool PluginProcess::shouldTerminate()
 {
-    ASSERT(m_webProcessConnections.isEmpty());
-
-    return true;
+    return m_webProcessConnections.isEmpty();
 }
 
 void PluginProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)

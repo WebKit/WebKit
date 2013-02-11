@@ -108,6 +108,8 @@ private:
     // The Mach port used for accelerated compositing.
     mach_port_t m_compositingRenderServerPort;
 #endif
+
+    static void lowMemoryHandler(bool critical);
 };
 
 } // namespace WebKit

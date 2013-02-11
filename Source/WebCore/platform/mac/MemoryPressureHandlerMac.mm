@@ -134,7 +134,7 @@ void MemoryPressureHandler::respondToMemoryPressure()
 
     double startTime = monotonicallyIncreasingTime();
 
-    releaseMemory(false);
+    m_lowMemoryHandler(false);
 
     unsigned holdOffTime = (monotonicallyIncreasingTime() - startTime) * s_holdOffMultiplier;
 

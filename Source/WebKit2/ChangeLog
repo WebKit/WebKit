@@ -1,3 +1,26 @@
+2013-02-11  Gavin Barraclough  <barraclough@apple.com>
+
+        PluginProcess should quit immediately if idle in response to low-memory notifications
+        https://bugs.webkit.org/show_bug.cgi?id=109103
+        <rdar://problem/12679827>
+
+        Reviewed by Brady Eidson.
+
+        PluginProcess now installs a MemoryPressureHandler for the process, providing
+        a custom callback which will call terminate if appropriate (if the plugin is not
+        currently in use).
+
+        * PluginProcess/PluginProcess.cpp:
+        (WebKit::PluginProcess::lowMemoryHandler):
+            - Custom callback to terminate if appropriate.
+        (WebKit::PluginProcess::initializeProcess):
+            - Install the MemoryPressureHandler.
+        (WebKit::PluginProcess::shouldTerminate):
+            - This method now also needs to be callable in situations where it might return false.
+        * PluginProcess/PluginProcess.h:
+        (PluginProcess):
+            - Added declaration for lowMemoryHandler.
+
 2013-02-11  Anders Carlsson  <andersca@apple.com>
 
         Move the PluginProcessCrashed message to PluginProcessConnectionManager
