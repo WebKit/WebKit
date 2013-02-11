@@ -418,6 +418,20 @@ webkit.org/b/98410 media/context-menu-actions.html [ Failure ]
 
 webkit.org/b/102201 fast/dom/Window/open-window-min-size.html [ Failure ]
 
+# Regression(r142112): Several compositing tests started failing.
+webkit.org/b/109431 compositing/iframes/iframe-composited-scrolling.html [ Failure ]
+webkit.org/b/109431 compositing/layer-creation/fixed-position-in-view-dynamic.html [ Failure ]
+webkit.org/b/109431 compositing/layer-creation/fixed-position-out-of-view-dynamic.html [ Failure ]
+webkit.org/b/109431 compositing/layer-creation/fixed-position-out-of-view-scroll-reason.html [ Failure ]
+webkit.org/b/109431 compositing/layer-creation/no-compositing-for-fixed-position-under-transform.html [ Failure ]
+
+# Several new Khronos WebGL conformance tests are failing on WK2 EFL.
+webkit.org/b/109435 webgl/conformance/canvas/texture-bindings-unaffected-on-resize.html [ Failure ]
+webkit.org/b/109435 webgl/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
+webkit.org/b/109435 webgl/conformance/context/premultiplyalpha-test.html [ Failure ]
+webkit.org/b/109435 webgl/conformance/renderbuffers/framebuffer-state-restoration.html [ Failure ]
+webkit.org/b/109435 webgl/conformance/textures/texture-size-cube-maps.html [ Failure ]
+
 # Likely failing because of an old version of libsoup in the jhbuild.
 webkit.org/b/106407 http/tests/loading/basic-auth-resend-wrong-credentials.html [ Failure ]
 webkit.org/b/106407 http/tests/security/401-logout/401-logout.php [ Failure ]
