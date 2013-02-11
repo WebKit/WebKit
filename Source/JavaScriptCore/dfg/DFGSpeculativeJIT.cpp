@@ -3460,23 +3460,6 @@ bool SpeculativeJIT::compileStrictEqForConstant(Node* node, Edge value, JSValue 
 
 bool SpeculativeJIT::compileStrictEq(Node* node)
 {
-    // 1) If either operand is a constant and that constant is not a double, integer,
-    //    or string, then do a JSValue comparison.
-    
-    if (isJSConstant(node->child1().node())) {
-        JSValue value = valueOfJSConstant(node->child1().node());
-        if (!value.isNumber() && !value.isString())
-            return compileStrictEqForConstant(node, node->child2(), value);
-    }
-    
-    if (isJSConstant(node->child2().node())) {
-        JSValue value = valueOfJSConstant(node->child2().node());
-        if (!value.isNumber() && !value.isString())
-            return compileStrictEqForConstant(node, node->child1(), value);
-    }
-    
-    // 2) If the operands are predicted integer, do an integer comparison.
-    
     if (Node::shouldSpeculateInteger(node->child1().node(), node->child2().node())) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
         if (branchIndexInBlock != UINT_MAX) {
@@ -3491,8 +3474,6 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         compileIntegerCompare(node, MacroAssembler::Equal);
         return false;
     }
-    
-    // 3) If the operands are predicted double, do a double comparison.
     
     if (Node::shouldSpeculateNumber(node->child1().node(), node->child2().node())) {
         unsigned branchIndexInBlock = detectPeepHoleBranch();
@@ -3525,8 +3506,6 @@ bool SpeculativeJIT::compileStrictEq(Node* node)
         compileObjectEquality(node);
         return false;
     }
-    
-    // 5) Fall back to non-speculative strict equality.
     
     return nonSpeculativeStrictEq(node);
 }
