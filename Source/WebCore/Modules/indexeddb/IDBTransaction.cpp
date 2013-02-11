@@ -332,7 +332,7 @@ bool IDBTransaction::hasPendingActivity() const
     // FIXME: In an ideal world, we should return true as long as anyone has a or can
     //        get a handle to us or any child request object and any of those have
     //        event listeners. This is  in order to handle user generated events properly.
-    return m_hasPendingActivity || ActiveDOMObject::hasPendingActivity();
+    return m_hasPendingActivity;
 }
 
 IDBTransaction::Mode IDBTransaction::stringToMode(const String& modeString, ScriptExecutionContext* context, ExceptionCode& ec)

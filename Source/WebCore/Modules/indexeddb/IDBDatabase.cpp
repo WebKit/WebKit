@@ -354,6 +354,13 @@ int64_t IDBDatabase::findObjectStoreId(const String& name) const
     return IDBObjectStoreMetadata::InvalidId;
 }
 
+bool IDBDatabase::hasPendingActivity() const
+{
+    // The script wrapper must not be collected before the object is closed or
+    // we can't fire a "versionchange" event to let script manually close the connection.
+    return !m_closePending && !m_eventTargetData.eventListenerMap.isEmpty();
+}
+
 void IDBDatabase::stop()
 {
     ActiveDOMObject::stop();

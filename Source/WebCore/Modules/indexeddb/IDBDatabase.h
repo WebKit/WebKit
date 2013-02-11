@@ -82,6 +82,7 @@ public:
     virtual void onComplete(int64_t);
 
     // ActiveDOMObject
+    virtual bool hasPendingActivity() const OVERRIDE;
     virtual void stop() OVERRIDE;
 
     // EventTarget
