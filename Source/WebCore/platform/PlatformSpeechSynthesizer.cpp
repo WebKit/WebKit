@@ -33,6 +33,7 @@ namespace WebCore {
 PlatformSpeechSynthesizer::PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient* client)
     : m_speechSynthesizerClient(client)
 {
+    initializeVoiceList();
 }
     
 } // namespace WebCore

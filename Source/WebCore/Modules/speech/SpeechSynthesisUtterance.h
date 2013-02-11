@@ -58,6 +58,9 @@ public:
     float pitch() const { return m_platformUtterance.pitch(); }
     void setPitch(float pitch) { m_platformUtterance.setPitch(pitch); }
 
+    double startTime() const { return m_platformUtterance.startTime(); }
+    void setStartTime(double startTime) { m_platformUtterance.setStartTime(startTime); }
+    
     DEFINE_ATTRIBUTE_EVENT_LISTENER(start);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(end);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);

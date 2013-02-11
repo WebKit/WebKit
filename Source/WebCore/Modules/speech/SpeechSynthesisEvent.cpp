@@ -35,10 +35,23 @@ PassRefPtr<SpeechSynthesisEvent> SpeechSynthesisEvent::create()
     return adoptRef(new SpeechSynthesisEvent());
 }
 
+PassRefPtr<SpeechSynthesisEvent> SpeechSynthesisEvent::create(const AtomicString& type, unsigned long charIndex, float elapsedTime, const String& name)
+{
+    return adoptRef(new SpeechSynthesisEvent(type, charIndex, elapsedTime, name));
+}
+
 SpeechSynthesisEvent::SpeechSynthesisEvent()
 {
 }
 
+SpeechSynthesisEvent::SpeechSynthesisEvent(const AtomicString& type, unsigned long charIndex, float elapsedTime, const String& name)
+    : Event(type, false, false)
+    , m_charIndex(charIndex)
+    , m_elapsedTime(elapsedTime)
+    , m_name(name)
+{
+}
+    
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

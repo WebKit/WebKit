@@ -52,15 +52,23 @@ public:
     const String& voiceURI() const { return m_voiceURI; }
     void setVoiceURI(const String& voiceURI) { m_voiceURI = voiceURI; }
     
+    // Range = [0, 1] where 1 is the default.
     float volume() const { return m_volume; }
-    void setVolume(float volume) { m_volume = volume; }
+    void setVolume(float volume) { m_volume = std::max(std::min(1.0f, volume), 0.0f); }
     
+    // Range = [0.1, 10] where 1 is the default.
     float rate() const { return m_rate; }
-    void setRate(float rate) { m_rate = rate; }
+    void setRate(float rate) { m_rate = std::max(std::min(10.0f, rate), 0.1f); }
     
+    // Range = [0, 2] where 1 is the default.
     float pitch() const { return m_pitch; }
-    void setPitch(float pitch) { m_pitch = pitch; }
+    void setPitch(float pitch) { m_pitch = std::max(std::min(2.0f, pitch), 0.0f); }
 
+    double startTime() const { return m_startTime; }
+    void setStartTime(double startTime) { m_startTime = startTime; }
+    
+    PlatformSpeechSynthesisUtteranceClient* client() const { return m_client; }
+    
 private:
     PlatformSpeechSynthesisUtteranceClient* m_client;
     String m_text;
@@ -69,6 +77,7 @@ private:
     float m_volume;
     float m_rate;
     float m_pitch;
+    double m_startTime;
 };
     
 } // namespace WebCore

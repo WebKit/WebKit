@@ -36,14 +36,18 @@ namespace WebCore {
 class SpeechSynthesisEvent : public Event {
 public:
     static PassRefPtr<SpeechSynthesisEvent> create();
+    static PassRefPtr<SpeechSynthesisEvent> create(const AtomicString& type, unsigned long charIndex, float elapsedTime, const String& name);
     
     unsigned long charIndex() const { return m_charIndex; }
     float elapsedTime() const { return m_elapsedTime; }
     const String& name() const { return m_name; }
     
+    virtual const AtomicString& interfaceName() const { return eventNames().interfaceForSpeechSynthesisEvent; }
+    
 private:
     SpeechSynthesisEvent();
-    
+    SpeechSynthesisEvent(const AtomicString& type, unsigned long charIndex, float elapsedTime, const String& name);
+
     unsigned long m_charIndex;
     float m_elapsedTime;
     String m_name;

@@ -26,10 +26,15 @@
 #ifndef PlatformSpeechSynthesizer_h
 #define PlatformSpeechSynthesizer_h
 
+#if ENABLE(SPEECH_SYNTHESIS)
+
 #include "PlatformSpeechSynthesisVoice.h"
 #include <wtf/Vector.h>
 
-#if ENABLE(SPEECH_SYNTHESIS)
+#if PLATFORM(MAC)
+#include <wtf/RetainPtr.h>
+OBJC_CLASS WebSpeechSynthesisWrapper;
+#endif
 
 namespace WebCore {
     
@@ -37,9 +42,9 @@ class PlatformSpeechSynthesisUtterance;
 
 class PlatformSpeechSynthesizerClient {
 public:
-    virtual void didStartSpeaking(PlatformSpeechSynthesisUtterance*) = 0;
-    virtual void didFinishSpeaking(PlatformSpeechSynthesisUtterance*) = 0;
-    virtual void speakingErrorOccurred(PlatformSpeechSynthesisUtterance*) = 0;
+    virtual void didStartSpeaking(const PlatformSpeechSynthesisUtterance*) = 0;
+    virtual void didFinishSpeaking(const PlatformSpeechSynthesisUtterance*) = 0;
+    virtual void speakingErrorOccurred(const PlatformSpeechSynthesisUtterance*) = 0;
     
     virtual void voicesDidChange() = 0;
 protected:
@@ -53,11 +58,17 @@ public:
     const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& voiceList() const { return m_voiceList; }
     void speak(const PlatformSpeechSynthesisUtterance&);
     
+    PlatformSpeechSynthesizerClient* client() const { return m_speechSynthesizerClient; }
+    
 private:
     PlatformSpeechSynthesizerClient* m_speechSynthesizerClient;
     Vector<RefPtr<PlatformSpeechSynthesisVoice> > m_voiceList;
     
     void initializeVoiceList();
+    
+#if PLATFORM(MAC)
+    RetainPtr<WebSpeechSynthesisWrapper> m_platformSpeechWrapper;
+#endif
 };
     
 } // namespace WebCore

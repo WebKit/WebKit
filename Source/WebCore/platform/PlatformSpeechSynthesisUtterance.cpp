@@ -32,6 +32,9 @@ namespace WebCore {
     
 PlatformSpeechSynthesisUtterance::PlatformSpeechSynthesisUtterance(PlatformSpeechSynthesisUtteranceClient* client)
     : m_client(client)
+    , m_volume(1.0f)
+    , m_rate(1.0f)
+    , m_pitch(1.0f)
 {
 }
     

@@ -29,8 +29,105 @@
 #include "PlatformSpeechSynthesisVoice.h"
 #include "PlatformSpeechSynthesisUtterance.h"
 #include <AppKit/NSSpeechSynthesizer.h>
+#include <WTF/RetainPtr.h>
 
 #if ENABLE(SPEECH_SYNTHESIS)
+
+@interface WebSpeechSynthesisWrapper : NSObject<NSSpeechSynthesizerDelegate>
+{
+    WebCore::PlatformSpeechSynthesizer* m_synthesizerObject;
+    // Hold a Ref to the utterance so that it won't disappear until the synth is done with it.
+    const WebCore::PlatformSpeechSynthesisUtterance* m_utterance;
+    
+    RetainPtr<NSSpeechSynthesizer> m_synthesizer;
+}
+
+- (WebSpeechSynthesisWrapper *)initWithSpeechSynthesizer:(WebCore::PlatformSpeechSynthesizer *)synthesizer;
+- (void)speakUtterance:(const WebCore::PlatformSpeechSynthesisUtterance *)utterance;
+
+@end
+
+@implementation WebSpeechSynthesisWrapper
+
+- (WebSpeechSynthesisWrapper *)initWithSpeechSynthesizer:(WebCore::PlatformSpeechSynthesizer *)synthesizer
+{
+    if (!(self = [super init]))
+        return nil;
+    
+    m_synthesizerObject = synthesizer;
+    return self;
+}
+
+// NSSpeechSynthesizer expects a Words per Minute (WPM) rate. There is no preset default
+// but they recommend that normal speaking is 180-220 WPM
+- (float)convertRateToWPM:(float)rate
+{
+    // We'll say 200 WPM is the default 1x value.
+    return 200.0f * rate;
+}
+
+- (void)speakUtterance:(const WebCore::PlatformSpeechSynthesisUtterance *)utterance
+{
+    // When speak is called we should not have an existing speech utterance outstanding.
+    ASSERT(!m_utterance);
+    ASSERT(utterance);
+    
+    if (!m_synthesizer) {
+        m_synthesizer = [[NSSpeechSynthesizer alloc] initWithVoice:nil];
+        [m_synthesizer setDelegate:self];
+    }
+    
+    // Find if we should use a specific voice based on the voiceURI in utterance.
+    // Otherwise, find the voice that matches the language. The Mac doesn't have a default voice per language, so the first
+    // one will have to do.
+    Vector<RefPtr<WebCore::PlatformSpeechSynthesisVoice> > voiceList = m_synthesizerObject->voiceList();
+    size_t voiceListSize = voiceList.size();
+    
+    WebCore::PlatformSpeechSynthesisVoice *utteranceVoiceByURI = 0;
+    WebCore::PlatformSpeechSynthesisVoice *utteranceVoiceByLanguage = 0;
+    for (size_t k = 0; k < voiceListSize; k++) {
+        if (utterance->voiceURI() == voiceList[k]->voiceURI()) {
+            utteranceVoiceByURI = voiceList[k].get();
+            break;
+        } else if (!utteranceVoiceByLanguage && equalIgnoringCase(utterance->lang(), voiceList[k]->lang())) {
+            utteranceVoiceByLanguage = voiceList[k].get();
+            
+            // If there was no voiceURI specified, then once we find a language we're good to go.
+            if (utterance->voiceURI().isEmpty())
+                break;
+        }
+    }
+    
+    if (utteranceVoiceByURI)
+        [m_synthesizer setVoice:utteranceVoiceByURI->voiceURI()];
+    else if (utteranceVoiceByLanguage)
+        [m_synthesizer setVoice:utteranceVoiceByLanguage->voiceURI()];
+    else
+        [m_synthesizer setVoice:[NSSpeechSynthesizer defaultVoice]];
+    
+    [m_synthesizer setRate:[self convertRateToWPM:utterance->rate()]];
+    [m_synthesizer setVolume:utterance->volume()];
+    
+    m_utterance = utterance;
+    [m_synthesizer startSpeakingString:utterance->text()];
+    m_synthesizerObject->client()->didStartSpeaking(utterance);
+}
+
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking
+{
+    UNUSED_PARAM(sender);
+    
+    // Clear the m_utterance variable in case finish speaking kicks off a new speaking job immediately.
+    const WebCore::PlatformSpeechSynthesisUtterance* utterance = m_utterance;
+    m_utterance = 0;
+    
+    if (finishedSpeaking)
+        m_synthesizerObject->client()->didFinishSpeaking(utterance);
+    else
+        m_synthesizerObject->client()->speakingErrorOccurred(utterance);
+}
+
+@end
 
 namespace WebCore {
 
@@ -56,8 +153,12 @@ void PlatformSpeechSynthesizer::initializeVoiceList()
     }
 }
     
-void PlatformSpeechSynthesizer::speak(const PlatformSpeechSynthesisUtterance&)
+void PlatformSpeechSynthesizer::speak(const PlatformSpeechSynthesisUtterance& utterance)
 {
+    if (!m_platformSpeechWrapper)
+        m_platformSpeechWrapper.adoptNS([[WebSpeechSynthesisWrapper alloc] initWithSpeechSynthesizer:this]);
+    
+    [m_platformSpeechWrapper.get() speakUtterance:&utterance];
 }
 
 } // namespace WebCore

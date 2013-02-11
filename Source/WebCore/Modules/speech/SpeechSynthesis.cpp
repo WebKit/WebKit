@@ -30,7 +30,9 @@
 
 #include "PlatformSpeechSynthesis.h"
 #include "PlatformSpeechSynthesisVoice.h"
+#include "SpeechSynthesisEvent.h"
 #include "SpeechSynthesisUtterance.h"
+#include <WTF/CurrentTime.h>
 
 namespace WebCore {
     
@@ -41,6 +43,7 @@ PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
     
 SpeechSynthesis::SpeechSynthesis()
     : m_platformSpeechSynthesizer(PlatformSpeechSynthesizer(this))
+    , m_currentSpeechUtterance(0)
 {
 }
     
@@ -63,12 +66,14 @@ const Vector<RefPtr<SpeechSynthesisVoice> >& SpeechSynthesis::getVoices()
     return m_voiceList;
 }
 
-bool SpeechSynthesis::pending() const
+bool SpeechSynthesis::speaking() const
 {
-    return false;
+    // If we have a current speech utterance, then that means we're assumed to be in a speaking state.
+    // This state is independent of whether the utterance happens to be paused.
+    return m_currentSpeechUtterance;
 }
 
-bool SpeechSynthesis::speaking() const
+bool SpeechSynthesis::pending() const
 {
     return false;
 }
@@ -78,9 +83,21 @@ bool SpeechSynthesis::paused() const
     return false;
 }
 
+void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance* utterance)
+{
+    ASSERT(!m_currentSpeechUtterance);
+    utterance->setStartTime(monotonicallyIncreasingTime());
+    m_currentSpeechUtterance = utterance;
+    m_platformSpeechSynthesizer.speak(utterance->platformUtterance());
+}
+
 void SpeechSynthesis::speak(SpeechSynthesisUtterance* utterance)
 {
-    m_platformSpeechSynthesizer.speak(utterance->platformUtterance());
+    m_utteranceQueue.append(utterance);
+    
+    // If the queue was empty, speak this immediately and add it to the queue.
+    if (m_utteranceQueue.size() == 1)
+        startSpeakingImmediately(utterance);
 }
 
 void SpeechSynthesis::cancel()
@@ -93,6 +110,44 @@ void SpeechSynthesis::pause()
 
 void SpeechSynthesis::resume()
 {
+}
+
+void SpeechSynthesis::fireEvent(const AtomicString& type, SpeechSynthesisUtterance* utterance, unsigned long charIndex, const String& name)
+{
+    utterance->dispatchEvent(SpeechSynthesisEvent::create(type, charIndex, (currentTime() - utterance->startTime()), name));
+}
+    
+void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance* utterance, bool errorOccurred)
+{
+    ASSERT(utterance);
+    ASSERT(m_currentSpeechUtterance);
+    m_currentSpeechUtterance = 0;
+
+    fireEvent(errorOccurred ? eventNames().errorEvent : eventNames().endEvent, utterance, 0, String());
+
+    RefPtr<SpeechSynthesisUtterance> firstUtterance = m_utteranceQueue.first();
+    ASSERT(firstUtterance == utterance);
+    if (firstUtterance == utterance)
+        m_utteranceQueue.removeFirst();
+
+    // Start the next job if there is one pending.
+    if (!m_utteranceQueue.isEmpty())
+        startSpeakingImmediately(m_utteranceQueue.first().get());
+}
+
+void SpeechSynthesis::didStartSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
+{
+    fireEvent(eventNames().startEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
+}
+
+void SpeechSynthesis::didFinishSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
+{
+    handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance*>(utterance->client()), false);
+}
+    
+void SpeechSynthesis::speakingErrorOccurred(const PlatformSpeechSynthesisUtterance* utterance)
+{
+    handleSpeakingCompleted(static_cast<SpeechSynthesisUtterance*>(utterance->client()), true);
 }
     
 } // namespace WebCore
