@@ -73,3 +73,7 @@ color: rgba(255, 0, 0, 5)
   hsl: hsl(0, 100%, 50%)
   hsla: hsla(0, 100%, 50%, 1)
 
+Running: testInvalidColors
+
+SUCCESS: parsed invalid color none to null
+

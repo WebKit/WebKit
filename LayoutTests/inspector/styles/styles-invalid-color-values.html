@@ -17,6 +17,11 @@ function test()
         // Each of these has their alpha clipped [0.0, 1.0].
         'rgba(255, 0, 0, -5)', // clipped to rgba(255,0,0,0)
         'rgba(255, 0, 0, 5)',  // clipped to rgba(255,0,0,1)
+        ];
+
+    var invalidColors = [
+        // An invalid color, eg a value for a shorthand like 'border' which can have a color
+        'none',
     ];
 
     InspectorTest.runTestSuite([
@@ -26,16 +31,32 @@ function test()
                 dumpColorRepresentationsForColor(colors[i]);
             next();
         },
+        function testInvalidColors(next)
+        {
+            for (var i = 0; i < invalidColors.length; ++i)
+                dumpErrorsForInvalidColor(invalidColors[i]);
+            next();
+        },
     ]);
+
+    function dumpErrorsForInvalidColor(colorString) 
+    {
+        var color = WebInspector.Color.parse(colorString);
+        if (!color) {
+            InspectorTest.addResult("");
+            InspectorTest.addResult("SUCCESS: parsed invalid color " + colorString + " to null");
+            return;
+        } else {
+            InspectorTest.addResult("");
+            InspectorTest.addResult("FAIL: invalid color " + colorString + " did not parse to to null");
+        }
+    }
 
     function dumpColorRepresentationsForColor(colorString)
     {
-        try {
-            var color = new WebInspector.Color(colorString);
-        } catch (e) {
-            InspectorTest.addResult("FAIL: Error parsing color '" + colorString + "'.");
+        var color = WebInspector.Color.parse(colorString);
+        if (!color)
             return;
-        }
 
         InspectorTest.addResult("");
         InspectorTest.addResult("color: " + colorString);

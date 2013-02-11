@@ -281,7 +281,7 @@ WebInspector.Spectrum.prototype = {
         var colorValue = color.toString(this.outputColorFormat);
         if (!colorValue)
             colorValue = color.toString(); // this.outputColorFormat can be invalid for current color (e.g. "nickname").
-        return new WebInspector.Color(colorValue);
+        return WebInspector.Color.parse(colorValue);
     },
 
     get outputColorFormat()

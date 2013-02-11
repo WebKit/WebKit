@@ -28,25 +28,30 @@
  */
 
 /**
- * @constructor
+ * Don't call directly, use WebInspector.Color.parse(). 
+ * @constructor 
  */
 WebInspector.Color = function(str)
 {
     this.value = str;
-    this._parse();
 }
 
+WebInspector.Color.parse = function(str)
+{
+    var maybeColor = new WebInspector.Color(str);
+    return maybeColor._parse() ? maybeColor : null;
+}
 /**
  * @param {number=} a
  */
 WebInspector.Color.fromRGBA = function(r, g, b, a)
 {
-    return new WebInspector.Color("rgba(" + r + "," + g + "," + b + "," + (typeof a === "undefined" ? 1 : a) + ")");
+    return WebInspector.Color.parse("rgba(" + r + "," + g + "," + b + "," + (typeof a === "undefined" ? 1 : a) + ")");
 }
 
 WebInspector.Color.fromRGB = function(r, g, b)
 {
-    return new WebInspector.Color("rgb(" + r + "," + g + "," + b + ")");
+    return WebInspector.Color.parse("rgb(" + r + "," + g + "," + b + ")");
 }
 
 WebInspector.Color.prototype = {
@@ -206,7 +211,7 @@ WebInspector.Color.prototype = {
                 return this.nickname;
         }
 
-        throw "invalid color format";
+        return "invalid color format: " + format;
     },
 
     /**
@@ -432,7 +437,7 @@ WebInspector.Color.prototype = {
             this.hsla = set[1];
             this.nickname = set[2];
             this.alpha = set[0][3];
-            return;
+            return true;
         }
 
         // Simple - #hex, rgb(), nickname, hsl()
@@ -461,7 +466,7 @@ WebInspector.Color.prototype = {
                     this.format = "nickname";
                     this.hex = WebInspector.Color.Nicknames[nickname];
                 } else // unknown name
-                    throw "unknown color name";
+                    return false;
             } else if (match[4]) { // hsl
                 this.format = "hsl";
                 var hsl = match[4].replace(/%/g, "").split(/\s*,\s*/);
@@ -479,7 +484,7 @@ WebInspector.Color.prototype = {
                 this.nickname = set[2];
             }
 
-            return;
+            return true;
         }
 
         // Advanced - rgba(), hsla()
@@ -499,11 +504,11 @@ WebInspector.Color.prototype = {
                 this.rgba = this._hslaToRGBA(this.hsla, this.alpha);
             }
 
-            return;
+            return true;
         }
 
         // Could not parse as a valid color
-        throw "could not parse color";
+        return false;
     }
 }
 
