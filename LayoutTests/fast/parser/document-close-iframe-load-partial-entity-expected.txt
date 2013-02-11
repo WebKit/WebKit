@@ -1,0 +1,2 @@
+ALERT: This test passes if the text "&g" appears below.
+&g

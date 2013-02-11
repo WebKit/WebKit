@@ -162,12 +162,16 @@ void HTMLDocumentParser::prepareToStopParsing()
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
 
-#if ENABLE(THREADED_HTML_PARSER)
     // NOTE: This pump should only ever emit buffered character tokens,
     // so ForceSynchronous vs. AllowYield should be meaningless.
-    if (!m_haveBackgroundParser)
-#endif
+#if ENABLE(THREADED_HTML_PARSER)
+    if (m_tokenizer) {
+        ASSERT(!m_haveBackgroundParser);
         pumpTokenizerIfPossible(ForceSynchronous);
+    }
+#else
+    pumpTokenizerIfPossible(ForceSynchronous);
+#endif
 
     if (isStopped())
         return;
@@ -388,7 +392,8 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     ASSERT(!isScheduledForResume());
     // ASSERT that this object is both attached to the Document and protected.
     ASSERT(refCount() >= 2);
-
+    ASSERT(m_tokenizer);
+    ASSERT(m_token);
     ASSERT(!shouldUseThreading() || mode == ForceSynchronous);
 
     PumpSession session(m_pumpSessionNestingLevel, contextForParsingSession());
