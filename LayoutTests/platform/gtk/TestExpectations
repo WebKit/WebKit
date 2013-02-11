@@ -530,8 +530,8 @@ webkit.org/b/107377 storage/indexeddb/objectstore-basics.html [ Crash Pass ]
 webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Crash Failure ]
 
 webkit.org/b/108682 [ Debug ] media/video-controls-fullscreen-volume.html [ Crash ]
-webkit.org/b/108682 [ Debug ] media/video-controls-visible-exiting-fullscreen.html [ Crash ]
-webkit.org/b/108682 [ Debug ] media/video-src.html [ Crash ] 
+webkit.org/b/108682 [ Debug ] media/video-controls-visible-exiting-fullscreen.html [ Crash Pass ]
+webkit.org/b/108682 [ Debug ] media/video-src.html [ Crash Pass ] 
 
 webkit.org/b/108927 http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-found.html [ Crash Pass ]
 
@@ -1341,7 +1341,6 @@ webkit.org/b/50740 [ Debug ] editing/spelling/spellcheck-queue.html [ Failure ]
 webkit.org/b/90775 fast/dom/shadow/focus-navigation.html [ Failure ]
 webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-with-placeholder.html [ ImageOnlyFailure ]
-webkit.org/b/97468 fast/dom/shadow/shadowdom-for-textarea-without-shadow.html [ ImageOnlyFailure ]
 
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-complex-shadow.html [ ImageOnlyFailure ]
 webkit.org/b/90860 fast/dom/shadow/shadowdom-for-object-without-shadow.html [ ImageOnlyFailure ]
@@ -1398,9 +1397,6 @@ webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Failure ]
 webkit.org/b/108508 fast/canvas/canvas-path-constructors.html [ Failure ]
 webkit.org/b/108508 fast/canvas/canvas-currentPath-crash.html [ Failure ]
 
-# volume is reset when mediaelement.src is modified
-webkit.org/b/103893 media/video-volume.html [ Failure ]
-
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
 
 webkit.org/b/104680 http/tests/security/xss-DENIED-xml-external-entity.xhtml [ Failure ]
@@ -1414,9 +1410,6 @@ webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
-
-webkit.org/b/106015 fast/css-generated-content/pseudo-animation.html [ Failure ]
-webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure ]
 
 webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 
