@@ -56,7 +56,6 @@ interface TestRunner {
     void setXSSAuditorEnabled(in boolean value);
     void setAllowUniversalAccessFromFileURLs(in boolean value);
     void setAllowFileAccessFromFileURLs(in boolean value);
-    void setFrameFlatteningEnabled(in boolean value);
     void setPluginsEnabled(in boolean value);
     void setJavaScriptCanAccessClipboard(in boolean value);
     void setPrivateBrowsingEnabled(in boolean value);

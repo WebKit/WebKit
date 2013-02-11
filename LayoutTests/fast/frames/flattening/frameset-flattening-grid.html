@@ -3,8 +3,8 @@
     <script type="text/javascript">
     function test()
     {
-        if (window.testRunner)
-            testRunner.setFrameFlatteningEnabled(true);
+        if (window.internals)
+            internals.settings.setFrameFlatteningEnabled(true);
         // Force synchronous layout.
         document.body.offsetHeight;
     }

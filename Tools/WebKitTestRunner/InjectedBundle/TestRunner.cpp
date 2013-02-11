@@ -350,11 +350,6 @@ void TestRunner::setAllowFileAccessFromFileURLs(bool enabled)
     WKBundleSetAllowFileAccessFromFileURLs(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
 }
 
-void TestRunner::setFrameFlatteningEnabled(bool enabled)
-{
-    WKBundleSetFrameFlatteningEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
-}
-
 void TestRunner::setPluginsEnabled(bool enabled)
 {
     WKBundleSetPluginsEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);

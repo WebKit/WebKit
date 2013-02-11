@@ -453,11 +453,6 @@ bool TestRunner::callShouldCloseOnWebView()
     return false;
 }
 
-void TestRunner::setFrameFlatteningEnabled(bool enable)
-{
-    BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->settings()->setFrameFlatteningEnabled(enable);
-}
-
 void TestRunner::setSpatialNavigationEnabled(bool enable)
 {
     notImplemented();

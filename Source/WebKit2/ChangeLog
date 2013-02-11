@@ -1,3 +1,13 @@
+2013-02-11  Tony Chang  <tony@chromium.org>
+
+        Move setFrameFlatteningEnabled from layoutTestController to window.internals.settings
+        https://bugs.webkit.org/show_bug.cgi?id=87149
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::overrideBoolPreferenceForTestRunner): Add setFrameFlatteningEnabled to the list of overridable values.
+
 2013-02-11  Claudio Saavedra  <csaavedra@igalia.com>
 
         [WK2][Notifications] Missing early return in populateCopyOfNotificationPermissions

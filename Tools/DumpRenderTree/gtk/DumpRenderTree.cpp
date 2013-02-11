@@ -445,7 +445,6 @@ static void resetDefaultsToConsistentValues()
                  "html5-local-storage-database-path", localStoragePath.get(),
                  "enable-xss-auditor", FALSE,
                  "enable-spatial-navigation", FALSE,
-                 "enable-frame-flattening", FALSE,
                  "javascript-can-access-clipboard", TRUE,
                  "javascript-can-open-windows-automatically", TRUE,
                  "enable-offline-web-application-cache", TRUE,

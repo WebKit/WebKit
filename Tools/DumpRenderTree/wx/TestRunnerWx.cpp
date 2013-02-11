@@ -184,11 +184,6 @@ void TestRunner::setXSSAuditorEnabled(bool enabled)
     // FIXME: implement
 }
 
-void TestRunner::setFrameFlatteningEnabled(bool enabled)
-{
-    // FIXME: implement
-}
-
 void TestRunner::setAllowUniversalAccessFromFileURLs(bool enabled)
 {
     // FIXME: implement

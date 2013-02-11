@@ -4,9 +4,9 @@
 
         function test()
         {
-            if (window.testRunner) {
+            if (window.testRunner && window.internals) {
                 testRunner.dumpAsText();
-                testRunner.setFrameFlatteningEnabled(true);
+                internals.settings.setFrameFlatteningEnabled(true);
             }
 
             // Force synchronous layout.

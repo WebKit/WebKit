@@ -100,7 +100,6 @@ public:
     void setXSSAuditorEnabled(bool);
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);
-    void setFrameFlatteningEnabled(bool);
     void setPluginsEnabled(bool);
     void setJavaScriptCanAccessClipboard(bool);
     void setPrivateBrowsingEnabled(bool);

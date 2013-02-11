@@ -159,7 +159,6 @@ public Q_SLOTS:
     void closeWebInspector();
     void evaluateInWebInspector(long callId, const QString& script);
     void removeAllVisitedLinks();
-    void setFrameFlatteningEnabled(bool);
     void setAllowUniversalAccessFromFileURLs(bool enable);
     void setAllowFileAccessFromFileURLs(bool enable);
     void setAppCacheMaximumSize(unsigned long long quota);

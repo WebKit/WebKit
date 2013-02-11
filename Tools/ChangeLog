@@ -1,3 +1,40 @@
+2013-02-11  Tony Chang  <tony@chromium.org>
+
+        Move setFrameFlatteningEnabled from layoutTestController to window.internals.settings
+        https://bugs.webkit.org/show_bug.cgi?id=87149
+
+        Reviewed by Simon Fraser.
+
+        Remove testRunner.setFrameFlatteningEnabled from DRT and WTR. WebKit API
+        methods are left because there may be users of it. Add a test for Apple Mac
+        to ensure that the API for the preference still works using overridePreference.
+
+        * DumpRenderTree/TestRunner.cpp:
+        (TestRunner::staticFunctions):
+        * DumpRenderTree/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/blackberry/DumpRenderTree.cpp:
+        (BlackBerry::WebKit::DumpRenderTree::resetToConsistentStateBeforeTesting):
+        * DumpRenderTree/blackberry/TestRunnerBlackBerry.cpp:
+        * DumpRenderTree/efl/TestRunnerEfl.cpp:
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/gtk/TestRunnerGtk.cpp:
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::resetSettings):
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunner):
+        * DumpRenderTree/win/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues):
+        * DumpRenderTree/win/TestRunnerWin.cpp:
+        * DumpRenderTree/wx/TestRunnerWx.cpp:
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        (TestRunner):
+
 2013-02-11  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Windows 7 Debug mode build fix.

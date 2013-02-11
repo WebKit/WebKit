@@ -14,8 +14,8 @@ if (window.internals) {
 } else if (window.console && console.warn) {
     console.warn("This test depends on the Text Autosizing setting being true, so run it in DumpRenderTree, or manually enable Text Autosizing, and either use a mobile device with 320px device-width (like Nexus S or iPhone), or define HACK_FORCE_TEXT_AUTOSIZING_ON_DESKTOP.");
 }
-if (window.testRunner)
-    testRunner.setFrameFlatteningEnabled(true);
+if (window.internals)
+    internals.settings.setFrameFlatteningEnabled(true);
 </script>
 
 </head>

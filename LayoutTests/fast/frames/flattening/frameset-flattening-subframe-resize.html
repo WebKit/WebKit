@@ -1,9 +1,9 @@
 <html>
 <head>
     <script type="text/javascript">
-        if (window.testRunner) {
+        if (window.testRunner && window.internals) {
             testRunner.waitUntilDone();
-            testRunner.setFrameFlatteningEnabled(true);
+            internals.settings.setFrameFlatteningEnabled(true);
         }
 
         function test()

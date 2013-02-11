@@ -202,6 +202,7 @@ void InjectedBundle::overrideBoolPreferenceForTestRunner(WebPageGroupProxy* page
     macro(WebKitCanvasUsesAcceleratedDrawing, CanvasUsesAcceleratedDrawing, canvasUsesAcceleratedDrawing) \
     macro(WebKitCSSCustomFilterEnabled, CSSCustomFilterEnabled, cssCustomFilterEnabled) \
     macro(WebKitCSSGridLayoutEnabled, CSSGridLayoutEnabled, cssGridLayoutEnabled) \
+    macro(WebKitFrameFlatteningEnabled, FrameFlatteningEnabled, frameFlatteningEnabled) \
     macro(WebKitJavaEnabled, JavaEnabled, javaEnabled) \
     macro(WebKitJavaScriptEnabled, ScriptEnabled, javaScriptEnabled) \
     macro(WebKitLoadSiteIconsKey, LoadsSiteIconsIgnoringImageLoadingSetting, loadsSiteIconsIgnoringImageLoadingPreference) \

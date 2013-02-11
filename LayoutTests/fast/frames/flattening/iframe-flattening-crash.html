@@ -1,10 +1,10 @@
 <html>
 <head>
     <script type="text/javascript">
-        if (window.testRunner) {
+        if (window.testRunner && window.internals) {
             testRunner.dumpAsText();
             testRunner.waitUntilDone();
-            testRunner.setFrameFlatteningEnabled(true);
+            internals.settings.setFrameFlatteningEnabled(true);
         }
     </script>
 </head>
@@ -20,7 +20,7 @@
             if (window.testRunner)
                 testRunner.notifyDone();
             if (window.testRunner)
-                testRunner.setFrameFlatteningEnabled(true);
+                internals.settings.setFrameFlatteningEnabled(true);
         }
     </script>
     <body onresize='test2();'>

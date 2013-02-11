@@ -813,7 +813,7 @@ fast/dom/Element/id-in-deletebutton.html [ WontFix ]
 fast/fast-mobile-scrolling/fixed-position-element.html [ WontFix ]
 fast/fast-mobile-scrolling/no-fixed-position-elements.html [ WontFix ]
 
-# Tests for frameset flattening. Relevant only on mobile browsers.
+# Tests for frameset flattening which is not used by Chromium.
 fast/frames/flattening [ WontFix ]
 fast/text-autosizing/narrow-iframe-flattened.html [ WontFix ]
 http/tests/misc/iframe-flattening-3level-nesting-with-blocking-resource.html [ WontFix ]

@@ -116,7 +116,6 @@ public:
     void setValueForUser(JSContextRef, JSValueRef nodeObject, JSStringRef value);
     void setViewModeMediaFeature(JSStringRef);
     void setXSSAuditorEnabled(bool flag);
-    void setFrameFlatteningEnabled(bool);
     void setSpatialNavigationEnabled(bool);
     void setScrollbarPolicy(JSStringRef orientation, JSStringRef policy);
     void startSpeechInput(JSContextRef inputElement);

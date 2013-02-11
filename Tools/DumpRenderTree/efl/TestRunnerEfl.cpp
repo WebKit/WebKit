@@ -318,11 +318,6 @@ void TestRunner::setXSSAuditorEnabled(bool flag)
     ewk_view_setting_enable_xss_auditor_set(browser->mainView(), flag);
 }
 
-void TestRunner::setFrameFlatteningEnabled(bool flag)
-{
-    ewk_view_setting_enable_frame_flattening_set(browser->mainView(), flag);
-}
-
 void TestRunner::setSpatialNavigationEnabled(bool flag)
 {
     ewk_view_setting_spatial_navigation_set(browser->mainView(), flag);

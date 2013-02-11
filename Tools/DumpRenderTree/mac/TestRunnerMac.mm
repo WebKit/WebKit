@@ -547,11 +547,6 @@ void TestRunner::setXSSAuditorEnabled(bool enabled)
     [[[mainFrame webView] preferences] setXSSAuditorEnabled:enabled];
 }
 
-void TestRunner::setFrameFlatteningEnabled(bool enabled)
-{
-    [[[mainFrame webView] preferences] setFrameFlatteningEnabled:enabled];
-}
-
 void TestRunner::setSpatialNavigationEnabled(bool enabled)
 {
     [[[mainFrame webView] preferences] setSpatialNavigationEnabled:enabled];

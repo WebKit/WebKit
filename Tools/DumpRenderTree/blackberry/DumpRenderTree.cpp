@@ -319,7 +319,6 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const String& url, cons
     settings->setSansSerifFontFamily("Arial");
     settings->setStandardFontFamily("Times");
     settings->setXSSAuditorEnabled(false);
-    settings->setFrameFlatteningEnabled(false);
     settings->setMaximumPagesInCache(0);
     settings->setPluginsEnabled(true);
 
