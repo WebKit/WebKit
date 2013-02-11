@@ -33,8 +33,6 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "MarkupTokenBase.h"
-
 namespace WebCore {
 
 class WebVTTTokenTypes {
@@ -49,40 +47,88 @@ public:
     };
 };
 
-class WebVTTToken : public MarkupTokenBase<WebVTTTokenTypes> {
+class WebVTTToken {
+    WTF_MAKE_NONCOPYABLE(WebVTTToken);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    typedef WebVTTTokenTypes Type;
+    typedef WTF::Vector<UChar, 1024> DataVector; // FIXME: Is this too large for WebVTT?
+
+    WebVTTToken() { clear(); }
+
     void appendToName(UChar character)
     {
         ASSERT(m_type == WebVTTTokenTypes::StartTag || m_type == WebVTTTokenTypes::EndTag);
-        MarkupTokenBase<WebVTTTokenTypes>::appendToName(character);
+        ASSERT(character);
+        m_data.append(character);
     }
-    
+
+    Type::Type type() const { return m_type; }
+
     const DataVector& name() const
     {
-        return MarkupTokenBase<WebVTTTokenTypes>::name();
+        return m_data;
     }
-    
+
     const DataVector& characters() const
     {
         ASSERT(m_type == Type::Character || m_type == Type::TimestampTag);
         return m_data;
     }
-    
+
+    // Starting a character token works slightly differently than starting
+    // other types of tokens because we want to save a per-character branch.
+    void ensureIsCharacterToken()
+    {
+        ASSERT(m_type == Type::Uninitialized || m_type == Type::Character);
+        m_type = Type::Character;
+    }
+
+    void appendToCharacter(char character)
+    {
+        ASSERT(m_type == Type::Character);
+        m_data.append(character);
+    }
+
+    void appendToCharacter(UChar character)
+    {
+        ASSERT(m_type == Type::Character);
+        m_data.append(character);
+    }
+
+    void appendToCharacter(const Vector<LChar, 32>& characters)
+    {
+        ASSERT(m_type == Type::Character);
+        m_data.appendVector(characters);
+    }
+
     void beginEmptyStartTag()
     {
         ASSERT(m_type == Type::Uninitialized);
         m_type = Type::StartTag;
-        m_currentAttribute = 0;
-        m_attributes.clear();
         m_data.clear();
     }
  
+    void beginStartTag(UChar character)
+    {
+        ASSERT(character);
+        ASSERT(m_type == Type::Uninitialized);
+        m_type = Type::StartTag;
+        m_data.append(character);
+    }
+
+    void beginEndTag(LChar character)
+    {
+        ASSERT(m_type == Type::Uninitialized);
+        m_type = Type::EndTag;
+        m_data.append(character);
+    }
+
     void beginTimestampTag(UChar character)
     {
         ASSERT(character);
         ASSERT(m_type == Type::Uninitialized);
         m_type = Type::TimestampTag;
-        m_selfClosing = true;
         m_data.append(character);
     }
     
@@ -129,13 +175,20 @@ public:
     {
         return m_annotation;
     }
+
+    void makeEndOfFile()
+    {
+        ASSERT(m_type == Type::Uninitialized);
+        m_type = Type::EndOfFile;
+    }
     
     void clear()
     {
+        m_type = Type::Uninitialized;
+        m_data.clear();
         m_annotation.clear();
         m_classes.clear();
         m_currentBuffer.clear();
-        MarkupTokenBase<WebVTTTokenTypes>::clear();
     }
 
 private:
@@ -146,6 +199,8 @@ private:
         m_currentBuffer.append(character);
     }
 
+    Type::Type m_type;
+    DataVector m_data;
     DataVector m_annotation;
     DataVector m_classes;
     DataVector m_currentBuffer;
