@@ -151,9 +151,10 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
     // Find the ScrollingTreeNode associated with the current stateNode using the shared ID and our HashMap.
     ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->scrollingNodeID());
 
+    ScrollingTreeNode* node;
     if (it != m_nodeMap.end()) {
-        ScrollingTreeNode* node = it->value;
-        node->update(stateNode);
+        node = it->value;
+        node->updateBeforeChildren(stateNode);
     } else {
         // If the node isn't found, it's either new and needs to be added to the tree, or there is a new ID for our
         // root node.
@@ -164,7 +165,8 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
 
             m_rootNode = ScrollingTreeScrollingNode::create(this, nodeID);
             m_nodeMap.set(nodeID, m_rootNode.get());
-            m_rootNode->update(stateNode);
+            m_rootNode->updateBeforeChildren(stateNode);
+            node = m_rootNode.get();
         } else {
             OwnPtr<ScrollingTreeNode> newNode;
             if (stateNode->isScrollingNode())
@@ -176,8 +178,8 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
             else
                 ASSERT_NOT_REACHED();
 
-            ScrollingTreeNode* newNodeRawPtr = newNode.get();
-            m_nodeMap.set(nodeID, newNodeRawPtr);
+            node = newNode.get();
+            m_nodeMap.set(nodeID, node);
             ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->parent()->scrollingNodeID());
             ASSERT(it != m_nodeMap.end());
             if (it != m_nodeMap.end()) {
@@ -185,7 +187,7 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
                 newNode->setParent(parent);
                 parent->appendChild(newNode.release());
             }
-            newNodeRawPtr->update(stateNode);
+            node->updateBeforeChildren(stateNode);
         }
     }
 
@@ -197,6 +199,8 @@ void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
     size_t size = stateNodeChildren->size();
     for (size_t i = 0; i < size; ++i)
         updateTreeFromStateNode(stateNodeChildren->at(i).get());
+    
+    node->updateAfterChildren(stateNode);
 }
 
 void ScrollingTree::removeDestroyedNodes(ScrollingStateTree* stateTree)

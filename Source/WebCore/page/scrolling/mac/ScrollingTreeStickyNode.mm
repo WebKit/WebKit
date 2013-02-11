@@ -47,7 +47,7 @@ ScrollingTreeStickyNode::~ScrollingTreeStickyNode()
 {
 }
 
-void ScrollingTreeStickyNode::update(ScrollingStateNode* stateNode)
+void ScrollingTreeStickyNode::updateBeforeChildren(ScrollingStateNode* stateNode)
 {
     ScrollingStateStickyNode* stickyStateNode = toScrollingStateStickyNode(stateNode);
 

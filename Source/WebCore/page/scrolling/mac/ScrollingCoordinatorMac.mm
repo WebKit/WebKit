@@ -361,6 +361,7 @@ void ScrollingCoordinatorMac::updateViewportConstrainedNode(ScrollingNodeID node
         break;
     }
     }
+    scheduleTreeStateCommit();
 }
 
 void ScrollingCoordinatorMac::scheduleTreeStateCommit()

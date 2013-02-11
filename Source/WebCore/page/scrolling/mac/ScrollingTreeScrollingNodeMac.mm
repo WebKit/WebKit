@@ -65,9 +65,9 @@ ScrollingTreeScrollingNodeMac::~ScrollingTreeScrollingNodeMac()
         CFRunLoopTimerInvalidate(m_snapRubberbandTimer.get());
 }
 
-void ScrollingTreeScrollingNodeMac::update(ScrollingStateNode* stateNode)
+void ScrollingTreeScrollingNodeMac::updateBeforeChildren(ScrollingStateNode* stateNode)
 {
-    ScrollingTreeScrollingNode::update(stateNode);
+    ScrollingTreeScrollingNode::updateBeforeChildren(stateNode);
     ScrollingStateScrollingNode* scrollingStateNode = toScrollingStateScrollingNode(stateNode);
 
     if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
@@ -75,12 +75,6 @@ void ScrollingTreeScrollingNodeMac::update(ScrollingStateNode* stateNode)
 
     if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::CounterScrollingLayer))
         m_counterScrollingLayer = scrollingStateNode->counterScrollingPlatformLayer();
-
-    if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
-        setScrollPosition(scrollingStateNode->requestedScrollPosition());
-
-    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer) || scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ContentsSize) || scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ViewportRect))
-        updateMainFramePinState(scrollPosition());
 
     if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ShouldUpdateScrollLayerPositionOnMainThread)) {
         unsigned mainThreadScrollingReasons = this->shouldUpdateScrollLayerPositionOnMainThread();
@@ -104,6 +98,20 @@ void ScrollingTreeScrollingNodeMac::update(ScrollingStateNode* stateNode)
         if (scrollingTree()->scrollingPerformanceLoggingEnabled())
             logWheelEventHandlerCountChanged(scrollingStateNode->wheelEventHandlerCount());
     }
+}
+
+void ScrollingTreeScrollingNodeMac::updateAfterChildren(ScrollingStateNode* stateNode)
+{
+    ScrollingTreeScrollingNode::updateAfterChildren(stateNode);
+
+    ScrollingStateScrollingNode* scrollingStateNode = toScrollingStateScrollingNode(stateNode);
+
+    // Update the scroll position after child nodes have been updated, because they need to have updated their constraints before any scrolling happens.
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::RequestedScrollPosition))
+        setScrollPosition(scrollingStateNode->requestedScrollPosition());
+
+    if (scrollingStateNode->hasChangedProperty(ScrollingStateNode::ScrollLayer) || scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ContentsSize) || scrollingStateNode->hasChangedProperty(ScrollingStateScrollingNode::ViewportRect))
+        updateMainFramePinState(scrollPosition());
 }
 
 void ScrollingTreeScrollingNodeMac::handleWheelEvent(const PlatformWheelEvent& wheelEvent)

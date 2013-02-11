@@ -1775,6 +1775,9 @@ void FrameView::scrollElementToRect(Element* element, const IntRect& rect)
 
 void FrameView::setScrollPosition(const IntPoint& scrollPoint)
 {
+    if (scrollPoint == scrollPosition())
+        return;
+
     TemporaryChange<bool> changeInProgrammaticScroll(m_inProgrammaticScroll, true);
     m_maintainScrollPositionAnchor = 0;
 

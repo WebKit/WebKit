@@ -49,7 +49,7 @@ ScrollingTreeScrollingNode::~ScrollingTreeScrollingNode()
 {
 }
 
-void ScrollingTreeScrollingNode::update(ScrollingStateNode* stateNode)
+void ScrollingTreeScrollingNode::updateBeforeChildren(ScrollingStateNode* stateNode)
 {
     ScrollingStateScrollingNode* state = toScrollingStateScrollingNode(stateNode);
 

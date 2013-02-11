@@ -47,7 +47,7 @@ ScrollingTreeFixedNode::~ScrollingTreeFixedNode()
 {
 }
 
-void ScrollingTreeFixedNode::update(ScrollingStateNode* stateNode)
+void ScrollingTreeFixedNode::updateBeforeChildren(ScrollingStateNode* stateNode)
 {
     ScrollingStateFixedNode* fixedStateNode = toScrollingStateFixedNode(stateNode);
 

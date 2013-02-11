@@ -47,7 +47,7 @@ public:
 private:
     ScrollingTreeFixedNode(ScrollingTree*, ScrollingNodeID);
 
-    virtual void update(ScrollingStateNode*) OVERRIDE;
+    virtual void updateBeforeChildren(ScrollingStateNode*) OVERRIDE;
     virtual void parentScrollPositionDidChange(const IntRect& viewportRect, const FloatSize& cumulativeDelta) OVERRIDE;
 
     FixedPositionViewportConstraints m_constraints;

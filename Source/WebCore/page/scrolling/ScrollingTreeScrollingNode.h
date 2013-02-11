@@ -45,7 +45,7 @@ public:
     static PassOwnPtr<ScrollingTreeScrollingNode> create(ScrollingTree*, ScrollingNodeID);
     virtual ~ScrollingTreeScrollingNode();
 
-    virtual void update(ScrollingStateNode*) OVERRIDE;
+    virtual void updateBeforeChildren(ScrollingStateNode*) OVERRIDE;
 
     // FIXME: We should implement this when we support ScrollingTreeScrollingNodes as children.
     virtual void parentScrollPositionDidChange(const IntRect& /*viewportRect*/, const FloatSize& /*cumulativeDelta*/) OVERRIDE { }
