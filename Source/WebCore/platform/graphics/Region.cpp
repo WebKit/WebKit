@@ -312,7 +312,7 @@ Region::Shape::SegmentIterator Region::Shape::segments_end(SpanIterator it) cons
     ASSERT(it + 1 < m_spans.data() + m_spans.size());
     size_t segmentIndex = (it + 1)->segmentIndex;
 
-    ASSERT(segmentIndex <= m_segments.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(segmentIndex <= m_segments.size());
     return m_segments.data() + segmentIndex;
 }
 

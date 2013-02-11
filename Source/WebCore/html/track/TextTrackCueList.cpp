@@ -85,8 +85,8 @@ bool TextTrackCueList::add(PassRefPtr<TextTrackCue> cue)
 
 bool TextTrackCueList::add(PassRefPtr<TextTrackCue> prpCue, size_t start, size_t end)
 {
-    ASSERT(start <= m_list.size());
-    ASSERT(end <= m_list.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(start <= m_list.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(end <= m_list.size());
 
     // Maintain text track cue order:
     // http://www.whatwg.org/specs/web-apps/current-work/#text-track-cue-order

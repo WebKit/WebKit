@@ -293,12 +293,12 @@ unsigned SharedBuffer::getSomeData(const char*& someData, unsigned position) con
     }
 
     if (hasPlatformData() || m_purgeableBuffer) {
-        ASSERT(position < size());
+        ASSERT_WITH_SECURITY_IMPLICATION(position < size());
         someData = data() + position;
         return totalSize - position;
     }
 
-    ASSERT(position < m_size);
+    ASSERT_WITH_SECURITY_IMPLICATION(position < m_size);
     unsigned consecutiveSize = m_buffer.size();
     if (position < consecutiveSize) {
         someData = m_buffer.data() + position;

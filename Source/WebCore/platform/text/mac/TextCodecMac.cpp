@@ -140,7 +140,7 @@ OSStatus TextCodecMac::decode(const unsigned char* inputBuffer, int inputBufferL
         // Finish converting a partial character that's in our buffer.
         
         // First, fill the partial character buffer with as many bytes as are available.
-        ASSERT(m_numBufferedBytes < sizeof(m_bufferedBytes));
+        ASSERT_WITH_SECURITY_IMPLICATION(m_numBufferedBytes < sizeof(m_bufferedBytes));
         const int spaceInBuffer = sizeof(m_bufferedBytes) - m_numBufferedBytes;
         const int bytesToPutInBuffer = min(spaceInBuffer, inputBufferLength);
         ASSERT(bytesToPutInBuffer != 0);

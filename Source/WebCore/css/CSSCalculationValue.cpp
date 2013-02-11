@@ -488,7 +488,7 @@ private:
                 return false;
         }
 
-        ASSERT(*index <= tokens->size());
+        ASSERT_WITH_SECURITY_IMPLICATION(*index <= tokens->size());
         return true;
     }
 
@@ -515,7 +515,7 @@ private:
                 return false;
         }
 
-        ASSERT(*index <= tokens->size());
+        ASSERT_WITH_SECURITY_IMPLICATION(*index <= tokens->size());
         return true;
     }
 

@@ -396,7 +396,7 @@ bool WebSocketChannel::appendToBuffer(const char* data, size_t len)
 
 void WebSocketChannel::skipBuffer(size_t len)
 {
-    ASSERT(len <= m_buffer.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(len <= m_buffer.size());
     memmove(m_buffer.data(), m_buffer.data() + len, m_buffer.size() - len);
     m_buffer.resize(m_buffer.size() - len);
 }

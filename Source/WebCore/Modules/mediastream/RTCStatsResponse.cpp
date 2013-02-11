@@ -47,13 +47,13 @@ size_t RTCStatsResponse::addReport()
 
 void RTCStatsResponse::addElement(size_t report, bool isLocal, double timestamp)
 {
-    ASSERT(report >= 0 && report < m_result.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(report >= 0 && report < m_result.size());
     m_result[report]->addElement(isLocal, timestamp);
 }
 
 void RTCStatsResponse::addStatistic(size_t report, bool isLocal, String name, String value)
 {
-    ASSERT(report >= 0 && report < m_result.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(report >= 0 && report < m_result.size());
     m_result[report]->addStatistic(isLocal, name, value);
 }
 

@@ -255,7 +255,7 @@ namespace WTF {
 
         void ensureSegment(size_t segmentIndex, size_t size)
         {
-            ASSERT(segmentIndex <= m_segments.size());
+            ASSERT_WITH_SECURITY_IMPLICATION(segmentIndex <= m_segments.size());
             if (segmentIndex == m_segments.size())
                 m_segments.append(new Segment);
             m_segments[segmentIndex]->grow(size);

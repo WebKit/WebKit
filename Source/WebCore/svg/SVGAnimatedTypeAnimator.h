@@ -262,7 +262,7 @@ private:
 
         SVGElementAnimatedPropertyList::const_iterator end = animatedTypes.end();
         for (SVGElementAnimatedPropertyList::const_iterator it = animatedTypes.begin(); it != end; ++it) {
-            ASSERT(whichProperty < it->properties.size());
+            ASSERT_WITH_SECURITY_IMPLICATION(whichProperty < it->properties.size());
             AnimValType* property = castAnimatedPropertyToActualType<AnimValType>(it->properties[whichProperty].get());
 
             switch (action) {

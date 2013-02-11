@@ -316,7 +316,7 @@ String TextCodecUTF8::decode(const char* bytes, size_t length, bool flush, bool 
                 character = nonCharacter;
             else {
                 if (count > end - source) {
-                    ASSERT(end - source < static_cast<ptrdiff_t>(sizeof(m_partialSequence)));
+                    ASSERT_WITH_SECURITY_IMPLICATION(end - source < static_cast<ptrdiff_t>(sizeof(m_partialSequence)));
                     ASSERT(!m_partialSequenceSize);
                     m_partialSequenceSize = end - source;
                     memcpy(m_partialSequence, source, m_partialSequenceSize);
@@ -393,7 +393,7 @@ upConvertTo16Bit:
                 character = nonCharacter;
             else {
                 if (count > end - source) {
-                    ASSERT(end - source < static_cast<ptrdiff_t>(sizeof(m_partialSequence)));
+                    ASSERT_WITH_SECURITY_IMPLICATION(end - source < static_cast<ptrdiff_t>(sizeof(m_partialSequence)));
                     ASSERT(!m_partialSequenceSize);
                     m_partialSequenceSize = end - source;
                     memcpy(m_partialSequence, source, m_partialSequenceSize);

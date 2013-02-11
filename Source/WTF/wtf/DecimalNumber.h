@@ -57,7 +57,7 @@ public:
         ASSERT(isfinite(d));
         dtoaRoundSF(m_significand, d, significantFigures, m_sign, m_exponent, m_precision);
 
-        ASSERT(significantFigures && significantFigures <= sizeof(DtoaBuffer));
+        ASSERT_WITH_SECURITY_IMPLICATION(significantFigures && significantFigures <= sizeof(DtoaBuffer));
         while (m_precision < significantFigures)
             m_significand[m_precision++] = '0';
 
@@ -72,7 +72,7 @@ public:
         dtoaRoundDP(m_significand, d, decimalPlaces, m_sign, m_exponent, m_precision);
 
         unsigned significantFigures = 1 + m_exponent + decimalPlaces;
-        ASSERT(significantFigures && significantFigures <= sizeof(DtoaBuffer));
+        ASSERT_WITH_SECURITY_IMPLICATION(significantFigures && significantFigures <= sizeof(DtoaBuffer));
         while (m_precision < significantFigures)
             m_significand[m_precision++] = '0';
 

@@ -93,7 +93,7 @@ IntRect FilterEffect::drawingRegionOfInputImage(const IntRect& srcRect) const
 
 FilterEffect* FilterEffect::inputEffect(unsigned number) const
 {
-    ASSERT(number < m_inputEffects.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(number < m_inputEffects.size());
     return m_inputEffects.at(number).get();
 }
 

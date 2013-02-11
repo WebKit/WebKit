@@ -238,7 +238,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                         }
                         haveGlyphs |= fill(pageToFill, from, to - from, buffer + from * (start < 0x10000 ? 1 : 2), (to - from) * (start < 0x10000 ? 1 : 2), range.fontData().get());
                         if (scratchPage) {
-                            ASSERT(to <=  static_cast<int>(GlyphPage::size));
+                            ASSERT_WITH_SECURITY_IMPLICATION(to <=  static_cast<int>(GlyphPage::size));
                             for (int j = from; j < to; j++) {
                                 if (!m_page->glyphAt(j) && pageToFill->glyphAt(j))
                                     m_page->setGlyphDataForIndex(j, pageToFill->glyphDataForIndex(j));

@@ -50,7 +50,7 @@ StringPrintStream::~StringPrintStream()
 
 void StringPrintStream::vprintf(const char* format, va_list argList)
 {
-    ASSERT(m_next < m_size);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_next < m_size);
     ASSERT(!m_buffer[m_next]);
     
     va_list firstPassArgList;
@@ -82,7 +82,7 @@ void StringPrintStream::vprintf(const char* format, va_list argList)
     
     m_next += numberOfBytesNotIncludingTerminatorThatWereWritten;
     
-    ASSERT(m_next < m_size);
+    ASSERT_WITH_SECURITY_IMPLICATION(m_next < m_size);
     ASSERT(!m_buffer[m_next]);
 }
 

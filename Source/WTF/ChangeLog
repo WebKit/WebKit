@@ -1,3 +1,27 @@
+2013-02-11  Abhishek Arya  <inferno@chromium.org>
+
+        Add ASSERT_WITH_SECURITY_IMPLICATION to detect out of bounds access
+        https://bugs.webkit.org/show_bug.cgi?id=108981
+
+        Reviewed by Eric Seidel.
+
+        * wtf/BitVector.h:
+        (WTF::BitVector::quickGet):
+        (WTF::BitVector::quickSet):
+        (WTF::BitVector::quickClear):
+        * wtf/DecimalNumber.h:
+        (WTF::DecimalNumber::DecimalNumber):
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVector::ensureSegment):
+        * wtf/StringPrintStream.cpp:
+        (WTF::StringPrintStream::vprintf):
+        * wtf/Vector.h:
+        (WTF::::insert):
+        (WTF::::remove):
+        * wtf/dtoa/utils.h:
+        (WTF::double_conversion::StringBuilder::SetPosition):
+        (WTF::double_conversion::StringBuilder::AddSubstring):
+
 2013-02-10  Laszlo Gombos  <l.gombos@samsung.com>
 
         Consolidate the way WTF_USE_PTHREADS is enabled

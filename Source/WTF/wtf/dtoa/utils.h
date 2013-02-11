@@ -202,7 +202,7 @@ namespace double_conversion {
         void SetPosition(int position)
         {
             ASSERT(!is_finalized());
-            ASSERT(position < size());
+            ASSERT_WITH_SECURITY_IMPLICATION(position < size());
             position_ = position;
         }
         
@@ -228,7 +228,7 @@ namespace double_conversion {
         // builder. The input string must have enough characters.
         void AddSubstring(const char* s, int n) {
             ASSERT(!is_finalized() && position_ + n < buffer_.length());
-            ASSERT(static_cast<size_t>(n) <= strlen(s));
+            ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(n) <= strlen(s));
             memcpy(&buffer_[position_], s, n * kCharSize);
             position_ += n;
         }

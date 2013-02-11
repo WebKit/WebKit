@@ -69,19 +69,19 @@ unsigned AutofillPopupMenuClient::getSuggestionsCount() const
 
 WebString AutofillPopupMenuClient::getSuggestion(unsigned listIndex) const
 {
-    ASSERT(listIndex < m_names.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(listIndex < m_names.size());
     return m_names[listIndex];
 }
 
 WebString AutofillPopupMenuClient::getLabel(unsigned listIndex) const
 {
-    ASSERT(listIndex < m_labels.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(listIndex < m_labels.size());
     return m_labels[listIndex];
 }
 
 WebString AutofillPopupMenuClient::getIcon(unsigned listIndex) const
 {
-    ASSERT(listIndex < m_icons.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(listIndex < m_icons.size());
     return m_icons[listIndex];
 }
 
@@ -90,7 +90,7 @@ void AutofillPopupMenuClient::removeSuggestionAtIndex(unsigned listIndex)
     if (!canRemoveSuggestionAtIndex(listIndex))
         return;
 
-    ASSERT(listIndex < m_names.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(listIndex < m_names.size());
 
     m_names.remove(listIndex);
     m_labels.remove(listIndex);
@@ -109,7 +109,7 @@ void AutofillPopupMenuClient::valueChanged(unsigned listIndex, bool fireEvents)
     if (!webView)
         return;
 
-    ASSERT(listIndex < m_names.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(listIndex < m_names.size());
 
     if (m_useLegacyBehavior) {
         for (size_t i = 0; i < m_itemIDs.size(); ++i) {
@@ -134,7 +134,7 @@ void AutofillPopupMenuClient::selectionChanged(unsigned listIndex, bool fireEven
     if (!webView)
         return;
 
-    ASSERT(listIndex < m_names.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(listIndex < m_names.size());
 
     webView->autofillClient()->didSelectAutofillSuggestion(WebNode(getTextField()),
                                                            m_names[listIndex],

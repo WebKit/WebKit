@@ -431,7 +431,7 @@ unsigned SVGAnimationElement::calculateKeyTimesIndex(float percent) const
 float SVGAnimationElement::calculatePercentForSpline(float percent, unsigned splineIndex) const
 {
     ASSERT(calcMode() == CalcModeSpline);
-    ASSERT(splineIndex < m_keySplines.size());
+    ASSERT_WITH_SECURITY_IMPLICATION(splineIndex < m_keySplines.size());
     UnitBezier bezier = m_keySplines[splineIndex];
     SMILTime duration = simpleDuration();
     if (!duration.isFinite())

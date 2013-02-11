@@ -183,7 +183,7 @@ void FEComponentTransfer::getValues(unsigned char rValues[256], unsigned char gV
     TransferType callEffect[] = {identity, identity, table, discrete, linear, gamma};
 
     for (unsigned channel = 0; channel < 4; channel++) {
-        ASSERT(static_cast<size_t>(transferFunction[channel].type) < WTF_ARRAY_LENGTH(callEffect));
+        ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(transferFunction[channel].type) < WTF_ARRAY_LENGTH(callEffect));
         (*callEffect[transferFunction[channel].type])(tables[channel], transferFunction[channel]);
     }
 }

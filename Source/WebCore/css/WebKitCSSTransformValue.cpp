@@ -62,7 +62,7 @@ const char* const transformNamePrefixes[] = {
 static inline String transformValueToCssString(WebKitCSSTransformValue::TransformOperationType operation, const String& value)
 {
     if (operation != WebKitCSSTransformValue::UnknownTransformOperation) {
-        ASSERT(static_cast<size_t>(operation) < WTF_ARRAY_LENGTH(transformNamePrefixes));
+        ASSERT_WITH_SECURITY_IMPLICATION(static_cast<size_t>(operation) < WTF_ARRAY_LENGTH(transformNamePrefixes));
         return makeString(transformNamePrefixes[operation], value, ')');
     }
     return String();

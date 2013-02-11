@@ -58,7 +58,7 @@ DateTimeSymbolicFieldElement::DateTimeSymbolicFieldElement(Document* document, F
 {
     ASSERT(!symbols.isEmpty());
     ASSERT(m_minimumIndex >= 0);
-    ASSERT(m_maximumIndex < static_cast<int>(m_symbols.size()));
+    ASSERT_WITH_SECURITY_IMPLICATION(m_maximumIndex < static_cast<int>(m_symbols.size()));
     ASSERT(m_minimumIndex <= m_maximumIndex);
 }
 

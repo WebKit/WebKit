@@ -2274,7 +2274,7 @@ nextMatch:
     }
 
     size_t matchedLength = usearch_getMatchedLength(searcher);
-    ASSERT(matchStart + matchedLength <= size);
+    ASSERT_WITH_SECURITY_IMPLICATION(matchStart + matchedLength <= size);
 
     // If this match is "bad", move on to the next match.
     if (isBadMatch(m_buffer.data() + matchStart, matchedLength) || ((m_options & AtWordStarts) && !isWordStartMatch(matchStart, matchedLength))) {
