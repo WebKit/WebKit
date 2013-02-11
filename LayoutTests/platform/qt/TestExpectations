@@ -1890,6 +1890,9 @@ fast/layers/no-clipping-overflow-hidden-hardware-acceleration.html
 # [Qt] New fast/forms/number/number-l10n-input.html test fails after r142122.
 webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Skip ]
 
+# [Qt] New fast/flexbox/line-clamp-link-after-ellipsis.html layout test is failing since r142335.
+webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
