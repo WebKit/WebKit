@@ -1,3 +1,14 @@
+2013-02-11  Brent Fulgham  <bfulgham@webkit.org>
+
+        Rename Visual Studio solution folders to avoid conflicts with project names
+        https://bugs.webkit.org/show_bug.cgi?id=109484
+
+        Reviewed by Tim Horton.
+
+        * WebKit.vcxproj/WebKit.sln: Rename several solution folders (e.g.,
+        WTF, WebCore, WebKit, JavaScriptCore) so that they do not conflict
+        with projects using the same name.
+
 2013-02-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Move workerThreadCount from TestRunner to WebCore Internals

@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WTF", "WTF", "{7F982CAD-225B-4FCE-9937-3B72C14D968D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WTF Projects", "WTF Projects", "{7F982CAD-225B-4FCE-9937-3B72C14D968D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JavaScriptCore", "JavaScriptCore", "{F9F5E7FE-5C5F-4CE9-8665-A84633F49E12}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "JavaScriptCore Projects", "JavaScriptCore Projects", "{F9F5E7FE-5C5F-4CE9-8665-A84633F49E12}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebCore", "WebCore", "{4A894588-A951-4E76-A085-50E10304DC40}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebCore Projects", "WebCore Projects", "{4A894588-A951-4E76-A085-50E10304DC40}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebKit", "WebKit", "{39286F46-BA75-4997-8065-1909090A60F0}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebKit Projects", "WebKit Projects", "{39286F46-BA75-4997-8065-1909090A60F0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Interfaces", "Interfaces\Interfaces.vcxproj", "{1659B1B6-F2A3-46B3-AE02-FE65B4A607EB}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -97,7 +97,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JavaScriptCoreExportGenerat
 		{9221744B-5715-4F56-9590-42F7AB23DD8B} = {9221744B-5715-4F56-9590-42F7AB23DD8B}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinLauncher", "WinLauncher", "{20A8616C-E56B-4649-A910-8E97751DE145}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinLauncher Projects", "WinLauncher Projects", "{20A8616C-E56B-4649-A910-8E97751DE145}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncherLib", "..\..\..\Tools\WinLauncher\WinLauncher.vcxproj\WinLauncherLib.vcxproj", "{114FCA11-216B-4C8C-957E-30A75AE80443}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -109,7 +109,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinLauncher", "..\..\..\Too
 		{114FCA11-216B-4C8C-957E-30A75AE80443} = {114FCA11-216B-4C8C-957E-30A75AE80443}
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DumpRenderTree", "DumpRenderTree", "{3D4C8B23-9375-4A7C-869C-7CC262C42F9F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DumpRenderTree Projects", "DumpRenderTree Projects", "{3D4C8B23-9375-4A7C-869C-7CC262C42F9F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WebCoreTestSupport", "..\..\WebCore\WebCore.vcxproj\WebCoreTestSupport.vcxproj", "{83414B15-1C0D-490B-990E-03F4D49170E4}"
 	ProjectSection(ProjectDependencies) = postProject
