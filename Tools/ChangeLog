@@ -1,3 +1,9 @@
+2013-02-11  Antoine Quint  <graouts@apple.com>
+
+        Unreviewed change to add myself to the Inspector IDLs watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-02-11  Krzysztof Czech  <k.czech@samsung.com>
 
         [GTK][EFL] Shares WebKit-GTK's DumpRenderTree accessibility implementation with other Webkit ports
