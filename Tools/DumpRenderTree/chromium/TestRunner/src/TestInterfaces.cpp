@@ -36,6 +36,7 @@
 #include "GamepadController.h"
 #include "TestRunner.h"
 #include "TextInputController.h"
+#include "WebCache.h"
 #include <public/WebString.h>
 #include <public/WebURL.h>
 #include <string>
@@ -106,6 +107,7 @@ void TestInterfaces::resetAll()
     m_gamepadController->reset();
     // m_textInputController doesn't have any state to reset.
     m_testRunner->reset();
+    WebCache::clear();
 }
 
 void TestInterfaces::setTestIsRunning(bool running)

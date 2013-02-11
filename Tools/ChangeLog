@@ -1,5 +1,17 @@
 2013-02-11  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] clear the webcache from within the TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=109405
+
+        Reviewed by Kentaro Hara.
+
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::resetAll):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::resetTestController):
+
+2013-02-11  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] add a destructor to EventSender
         https://bugs.webkit.org/show_bug.cgi?id=109401
 
