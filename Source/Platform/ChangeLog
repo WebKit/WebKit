@@ -1,3 +1,19 @@
+2013-02-10  Florin Malita  <fmalita@chromium.org>
+
+        [Chromium] FilterTypeSaturatingBrightness enum
+        https://bugs.webkit.org/show_bug.cgi?id=109380
+
+        Introduce a new WebFilterOperation::FilterType enum (FilterTypeSaturatingBrightness)
+        to support existing interntal clients which rely on the current saturating brightness
+        behavior (in preparation of switching to the new brightness implementation).
+
+        Reviewed by James Robinson.
+
+        * chromium/public/WebFilterOperation.h:
+        (WebKit::WebFilterOperation::amount):
+        (WebKit::WebFilterOperation::createSaturatingBrightnessFilter):
+        (WebKit::WebFilterOperation::setAmount):
+
 2013-02-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Enable more of webkit_unit_tests in component builds

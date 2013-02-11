@@ -49,6 +49,7 @@ public:
         FilterTypeDropShadow,
         FilterTypeColorMatrix,
         FilterTypeZoom,
+        FilterTypeSaturatingBrightness, // Not used in CSS/SVG.
     };
 
     FilterType type() const { return m_type; }
@@ -65,7 +66,8 @@ public:
                    || m_type == FilterTypeOpacity
                    || m_type == FilterTypeBlur
                    || m_type == FilterTypeDropShadow
-                   || m_type == FilterTypeZoom);
+                   || m_type == FilterTypeZoom
+                   || m_type == FilterTypeSaturatingBrightness);
         return m_amount;
     }
     WebPoint dropShadowOffset() const
@@ -102,6 +104,7 @@ public:
     static WebFilterOperation createDropShadowFilter(WebPoint offset, float stdDeviation, WebColor color) { return WebFilterOperation(FilterTypeDropShadow, offset, stdDeviation, color); }
     static WebFilterOperation createColorMatrixFilter(SkScalar matrix[20]) { return WebFilterOperation(FilterTypeColorMatrix, matrix); }
     static WebFilterOperation createZoomFilter(WebRect rect, int inset) { return WebFilterOperation(FilterTypeZoom, rect, inset); }
+    static WebFilterOperation createSaturatingBrightnessFilter(float amount) { return WebFilterOperation(FilterTypeSaturatingBrightness, amount); }
 
     bool equals(const WebFilterOperation& other) const;
 
@@ -120,7 +123,8 @@ public:
                    || m_type == FilterTypeOpacity
                    || m_type == FilterTypeBlur
                    || m_type == FilterTypeDropShadow
-                   || m_type == FilterTypeZoom);
+                   || m_type == FilterTypeZoom
+                   || m_type == FilterTypeSaturatingBrightness);
         m_amount = amount;
     }
     void setDropShadowOffset(WebPoint offset)
