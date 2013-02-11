@@ -1017,6 +1017,8 @@ webkit.org/b/83260 fast/text/international/embed-bidi-style-in-isolate-crash.htm
 
 webkit.org/b/105005 [ Debug ] fast/css/variables/case-insensitive.html [ Pass Crash ]
 
+webkit.org/b/109415 editing/spelling/spellcheck-async.html [ Pass Failure ]
+
 # ResourceRequest needs to support setTimeoutInterval
 webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html [ Skip ]
 webkit.org/b/98397 http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-abortedonmain.html [ Skip ]
