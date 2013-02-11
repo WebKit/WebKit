@@ -34,12 +34,12 @@
 #include <wtf/gobject/GOwnPtr.h>
 #include "IntSize.h"
 #include "NotImplemented.h"
+#include <wtf/MathExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 #include <glib/gi18n-lib.h>
 #include <gtk/gtk.h>
-#include <math.h>
 
 namespace WebCore {
 
@@ -626,7 +626,7 @@ String localizedMediaTimeDescription(float time)
     if (!isfinite(time))
         return String::fromUTF8(_("indefinite time"));
 
-    int seconds = (int)fabsf(time);
+    int seconds = static_cast<int>(abs(time));
     int days = seconds / (60 * 60 * 24);
     int hours = seconds / (60 * 60);
     int minutes = (seconds / 60) % 60;
