@@ -425,7 +425,7 @@ public:
     void updateBlendMode();
 #endif
 
-    const LayoutSize& offsetForInFlowPosition() const { return m_offsetForInFlowPosition; }
+    const LayoutSize& paintOffset() const { return m_paintOffset; }
 
     void clearClipRectsIncludingDescendants(ClipRectsType typeToClear = AllClipRectTypes);
     void clearClipRects(ClipRectsType typeToClear = AllClipRectTypes);
@@ -1124,8 +1124,8 @@ protected:
     LayoutRect m_repaintRect; // Cached repaint rects. Used by layout.
     LayoutRect m_outlineBox;
 
-    // Our current relative position offset.
-    LayoutSize m_offsetForInFlowPosition;
+    // Paint time offset only, it is used for properly paint relative / sticky positioned elements and exclusion boxes on floats.
+    LayoutSize m_paintOffset;
 
     // Our (x,y) coordinates are in our parent layer's coordinate space.
     LayoutPoint m_topLeft;

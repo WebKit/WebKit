@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <style>
+      #top {
+        position: relative;
+        width: 200px;
+        height: 100px;
+        color: yellow;
+        font: 10px/1 Ahem, sans-serif;
+      }
+      #shape {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        background-color: blue;
+      }
+      #float {
+        width: 100px;
+        height: 100px;
+        float: right;
+      }
+      #bottom {
+        background-color: green;
+        width: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=106927">Bug 106927</a>: [CSS Exclusions] Handle shape-outside changing a float's overhang behavior</h1>
+    <h2>You should see a yellow square to the left of a blue square, with the blue square covering the text in the yellow area. The lower green rectangle should have text wrapping around a square area on the right as if there is a float there. You should not see any red.</h2>
+    <div id="top">
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      XXXXXXXXXX<span style="color: red">XXXXXXXXXX</span>
+      <div id="shape">
+      </div>
+    </div>
+    <div id="bottom">
+      <div id="float">
+     </div>
+     The float is defined here, but the shape pushes it into the above div. Note that the exclusion behavior stays with the shape and not with the float.
+    </div>
+  </body>
+</html>
+

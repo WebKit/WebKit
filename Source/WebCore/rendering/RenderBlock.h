@@ -689,14 +689,7 @@ private:
 #endif
     };
 
-    // When a float has shape outside, it needs to be handled differently at
-    // paint time and at layout time, since the coordinates of the shape
-    // (affecting layout) and the coordinates of the float itself (affecting
-    // where the content of the float is) can be in different places. This enum
-    // is used to change behavior based on that state.
-    enum FloatRenderingState { FloatLayout, FloatPaint };
-
-    LayoutPoint flipFloatForWritingModeForChild(const FloatingObject*, const LayoutPoint&, FloatRenderingState = FloatLayout) const;
+    LayoutPoint flipFloatForWritingModeForChild(const FloatingObject*, const LayoutPoint&) const;
 
     LayoutUnit logicalTopForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->y() : child->x(); }
     LayoutUnit logicalBottomForFloat(const FloatingObject* child) const { return isHorizontalWritingMode() ? child->maxY() : child->maxX(); }
@@ -738,13 +731,12 @@ private:
             child->setHeight(logicalWidth);
     }
 
-    LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child, FloatRenderingState renderingState = FloatLayout) const
+    LayoutUnit xPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
 #if ENABLE(CSS_EXCLUSIONS)
         ExclusionShapeOutsideInfo *shapeOutside = child->renderer()->exclusionShapeOutsideInfo();
-        if (renderingState == FloatPaint && shapeOutside)
-            return child->x() - (isHorizontalWritingMode() ? shapeOutside->shapeLogicalLeft() : shapeOutside->shapeLogicalTop());
-        // FIXME: Bug 106928 This needs to properly handle the margin for floats with shape-outside for non-paint time.
+        if (shapeOutside)
+            return child->x();
 #endif
 
         if (isHorizontalWritingMode())
@@ -753,13 +745,12 @@ private:
             return child->x() + marginBeforeForChild(child->renderer());
     }
         
-    LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child, FloatRenderingState renderingState = FloatLayout) const
+    LayoutUnit yPositionForFloatIncludingMargin(const FloatingObject* child) const
     {
 #if ENABLE(CSS_EXCLUSIONS)
         ExclusionShapeOutsideInfo *shapeOutside = child->renderer()->exclusionShapeOutsideInfo();
-        if (renderingState == FloatPaint && shapeOutside)
-            return child->y() - (isHorizontalWritingMode() ? shapeOutside->shapeLogicalTop() : shapeOutside->shapeLogicalLeft());
-        // FIXME: Bug 106928 This needs to properly handle the margin for floats with shape-outside.
+        if (shapeOutside)
+            return child->y();
 #endif
 
         if (isHorizontalWritingMode())

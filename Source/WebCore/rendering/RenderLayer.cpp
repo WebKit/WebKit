@@ -1185,13 +1185,13 @@ bool RenderLayer::updateLayerPosition()
     }
     
     bool positionOrOffsetChanged = false;
-    if (renderer()->isInFlowPositioned()) {
-        LayoutSize newOffset = toRenderBoxModelObject(renderer())->offsetForInFlowPosition();
-        positionOrOffsetChanged = newOffset != m_offsetForInFlowPosition;
-        m_offsetForInFlowPosition = newOffset;
-        localPoint.move(m_offsetForInFlowPosition);
+    if (renderer()->hasPaintOffset()) {
+        LayoutSize newOffset = toRenderBoxModelObject(renderer())->paintOffset();
+        positionOrOffsetChanged = newOffset != m_paintOffset;
+        m_paintOffset = newOffset;
+        localPoint.move(m_paintOffset);
     } else {
-        m_offsetForInFlowPosition = LayoutSize();
+        m_paintOffset = LayoutSize();
     }
 
     // FIXME: We'd really like to just get rid of the concept of a layer rectangle and rely on the renderers.
@@ -4599,7 +4599,7 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
         clipRects.setPosClipRect(clipRects.fixedClipRect());
         clipRects.setOverflowClipRect(clipRects.fixedClipRect());
         clipRects.setFixed(true);
-    } else if (renderer()->style()->hasInFlowPosition())
+    } else if (renderer()->style()->hasPaintOffset())
         clipRects.setPosClipRect(clipRects.overflowClipRect());
     else if (renderer()->style()->position() == AbsolutePosition)
         clipRects.setOverflowClipRect(clipRects.posClipRect());

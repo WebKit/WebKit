@@ -33,6 +33,7 @@
 #if ENABLE(CSS_EXCLUSIONS)
 
 #include "ExclusionShapeInfo.h"
+#include "LayoutSize.h"
 
 namespace WebCore {
 
@@ -40,6 +41,11 @@ class RenderBox;
 
 class ExclusionShapeOutsideInfo : public ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside>, public MappedInfo<RenderBox, ExclusionShapeOutsideInfo> {
 public:
+    LayoutSize shapeLogicalOffset() const
+    {
+        return LayoutSize(shapeLogicalLeft(), shapeLogicalTop());
+    }
+
     static PassOwnPtr<ExclusionShapeOutsideInfo> createInfo(const RenderBox* renderer) { return adoptPtr(new ExclusionShapeOutsideInfo(renderer)); }
     static bool isEnabledFor(const RenderBox*);
 private:
