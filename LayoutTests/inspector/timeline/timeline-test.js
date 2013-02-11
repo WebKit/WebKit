@@ -69,7 +69,7 @@ InspectorTest.stopTimeline = function(callback)
     TimelineAgent.stop(didStop);
 };
 
-InspectorTest.performActionsAndPrint = function(actions, typeName, includeTimeStamps)
+InspectorTest.evaluateWithTimeline = function(actions, doneCallback)
 {
     InspectorTest.startTimeline(step1);
     function step1()
@@ -79,10 +79,14 @@ InspectorTest.performActionsAndPrint = function(actions, typeName, includeTimeSt
 
     function step2()
     {
-        InspectorTest.stopTimeline(step3);
+        InspectorTest.stopTimeline(doneCallback);
     }
 
-    function step3()
+}
+
+InspectorTest.performActionsAndPrint = function(actions, typeName, includeTimeStamps)
+{
+    function callback()
     {
         InspectorTest.printTimelineRecords(typeName);
         if (includeTimeStamps) {
@@ -91,6 +95,7 @@ InspectorTest.performActionsAndPrint = function(actions, typeName, includeTimeSt
         }
         InspectorTest.completeTest();
     }
+    InspectorTest.evaluateWithTimeline(actions, callback)
 };
 
 InspectorTest.printTimelineRecords = function(typeName, formatter)
@@ -155,6 +160,21 @@ InspectorTest._timelineAgentTypeToString = function(numericType)
     }
     return undefined;
 };
+
+InspectorTest.findPresentationRecord = function(type)
+{
+    var result;
+    function findByType(record)
+    {
+        if (record.type !== type)
+            return false;
+        result = record;
+        return true;
+    }
+    var records = WebInspector.panel("timeline")._rootRecord().children;
+    WebInspector.TimelinePresentationModel.forAllRecords(records, findByType);
+    return result;
+}
 
 InspectorTest.FakeFileReader = function(input, delegate, callback)
 {

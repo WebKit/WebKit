@@ -1,0 +1,50 @@
+<html>
+<style>
+.test { height: 20px; }
+</style>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="timeline-test.js"></script>
+<script>
+
+function invalidateStyle()
+{
+    var element = document.getElementById("test");
+    element.className = "test";
+}
+
+function forceLayout()
+{
+    var element = document.getElementById("test");
+    var unused = element.offsetHeight;
+}
+
+function performActions()
+{
+    invalidateStyle();
+    forceLayout();
+}
+
+function test()
+{
+    InspectorTest.evaluateWithTimeline("performActions()", onTimelineRecorded);
+    function onTimelineRecorded()
+    {
+        var layoutRecord = InspectorTest.findPresentationRecord("Layout");
+        InspectorTest.addResult("layout invalidated: " + layoutRecord.callSiteStackTrace[0].functionName);
+        InspectorTest.addResult("layout forced: " + layoutRecord.stackTrace[0].functionName);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that Layout record has correct locations of layout being invalidated and forced.
+</p>
+<div id="test"></div>
+
+</body>
+</html>

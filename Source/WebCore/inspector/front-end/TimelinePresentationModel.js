@@ -265,7 +265,7 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._timeRecordStack = [];
         this._frames = [];
         this._minimumRecordTime = -1;
-        this._lastInvalidateLayout = {};
+        this._layoutInvalidateStack = {};
         this._lastScheduleStyleRecalculation = {};
     },
 
@@ -636,16 +636,27 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         break;
 
     case recordTypes.InvalidateLayout:
-        presentationModel._lastInvalidateLayout[this.frameId] = this;
+        // Consider style recalculation as a reason for layout invalidation,
+        // but only if we had no earlier layout invalidation records.
+        var styleRecalcStack;
+        if (!presentationModel._layoutInvalidateStack[this.frameId]) {
+            for (var outerRecord = parentRecord; outerRecord; outerRecord = record.parent) {
+                if (outerRecord.type === recordTypes.RecalculateStyles) {
+                    styleRecalcStack = outerRecord.callSiteStackTrace;
+                    break;
+                }
+            }
+        }
+        presentationModel._layoutInvalidateStack[this.frameId] = styleRecalcStack || this.stackTrace;
         break;
 
     case recordTypes.Layout:
-        var invalidateLayoutRecord = presentationModel._lastInvalidateLayout[this.frameId];
-        if (invalidateLayoutRecord)
-            this.callSiteStackTrace = invalidateLayoutRecord.stackTrace || invalidateLayoutRecord.callSiteStackTrace;
+        var layoutInvalidateStack = presentationModel._layoutInvalidateStack[this.frameId];
+        if (layoutInvalidateStack)
+            this.callSiteStackTrace = layoutInvalidateStack;
         if (this.stackTrace)
             this.setHasWarning();
-        presentationModel._lastInvalidateLayout[this.frameId] = null;
+        presentationModel._layoutInvalidateStack[this.frameId] = null;
         break;
     }
 }
