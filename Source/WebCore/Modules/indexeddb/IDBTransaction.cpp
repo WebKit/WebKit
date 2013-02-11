@@ -305,6 +305,7 @@ void IDBTransaction::onAbort(PassRefPtr<IDBDatabaseError> prpError)
         for (IDBObjectStoreMetadataMap::iterator it = m_objectStoreCleanupMap.begin(); it != m_objectStoreCleanupMap.end(); ++it)
             it->key->setMetadata(it->value);
         m_database->setMetadata(m_previousMetadata);
+        m_database->close();
     }
     m_objectStoreCleanupMap.clear();
     closeOpenCursors();

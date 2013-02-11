@@ -75,9 +75,7 @@ function testSetVersionAbort()
     request.onblocked = connection2Blocked;
     request.onsuccess = unexpectedSuccessCallback;
     request.onupgradeneeded = createAnotherIndex;
-    // FIXME: addData is only able to continue with the test because of
-    // http://wkb.ug/102298.
-    request.onerror = addData;
+    request.onerror = openAgain;
 }
 
 function connection2Blocked()
@@ -120,8 +118,21 @@ function checkMetadata()
 var testDate = new Date("August 25, 1991 20:57:08");
 var testDateB = new Date("Wed Jan 05 2011 15:54:49");
 
-function addData()
+function openAgain()
 {
+    preamble();
+    request = evalAndLog('indexedDB.open(dbname)');
+    request.onerror = unexpectedErrorCallback;
+    request.onblocked = unexpectedBlockedCallback;
+    request.onupgradeneeded = unexpectedUpgradeNeededCallback;
+    request.onsuccess = addData;
+}
+
+function addData(evt)
+{
+    preamble(evt);
+    evalAndLog("db = event.target.result");
+
     var transaction = evalAndLog("transaction = db.transaction(['storeName'], 'readwrite')");
     transaction.onabort = unexpectedAbortCallback;
     self.store = evalAndLog("store = transaction.objectStore('storeName')");

@@ -80,6 +80,12 @@ PASS [Worker] store.indexNames[1] is undefined.
 PASS [Worker] store.indexNames[100] is undefined.
 PASS [Worker] store.indexNames.item(1) is null
 PASS [Worker] store.indexNames.item(100) is null
+[Worker] 
+[Worker] openAgain():
+[Worker] indexedDB.open(dbname)
+[Worker] 
+[Worker] addData():
+[Worker] db = event.target.result
 [Worker] transaction = db.transaction(['storeName'], 'readwrite')
 [Worker] store = transaction.objectStore('storeName')
 [Worker] Try to insert data with a Date key:

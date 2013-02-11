@@ -92,8 +92,6 @@ function verifyPutThenCreate()
     debug("");
     debug("Verify that uniqueness constraints are enforced when index is created after puts:");
 
-    debug("FIXME: Script shouldn't have to explicitly close connection after it failed to open. http://wkbug.com/102298");
-    evalAndLog("connection.close()");
     request = evalAndLog("indexedDB.open(dbname, 3)");
     request.onerror = verifyPutThenCreateThenPut;
     request.onblocked = unexpectedBlockedCallback;
