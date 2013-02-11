@@ -59,13 +59,7 @@ public:
     }
 
     template <typename T>
-    T* nextEntryInLinkedList(T** address) const
-    {
-        T** output = (*this)(address);
-        if (!output)
-            return 0;
-        return *output;
-    }
+    T* nextEntryInHardenedLinkedList(T** address, uintptr_t entropy) const;
 };
 
 } // namespace WTF

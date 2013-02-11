@@ -78,6 +78,8 @@
 #include "FastMalloc.h"
 
 #include "Assertions.h"
+#include "CurrentTime.h"
+
 #include <limits>
 #if OS(WINDOWS)
 #include <windows.h>
@@ -102,7 +104,7 @@
 
 // Harden the pointers stored in the TCMalloc linked lists
 #if COMPILER(GCC)
-#define ENABLE_TCMALLOC_HARDENING 0
+#define ENABLE_TCMALLOC_HARDENING 1
 #endif
 
 // Use a background thread to periodically scavenge memory to release back to the system
@@ -520,13 +522,41 @@ namespace WTF {
  */
 static const char kLLHardeningMask = 0;
 enum {
-    MaskAddrShift = 8,
-    MaskKeyShift = 4
+    MaskKeyShift = 13
 };
-#define ROTATE_VALUE(value, amount) (((value) >> (amount)) | ((value) << (sizeof(value) * 8 - (amount))))
-#define XOR_MASK_PTR_WITH_KEY(ptr, key) (reinterpret_cast<typeof(ptr)>(reinterpret_cast<uintptr_t>(ptr)^ROTATE_VALUE(reinterpret_cast<uintptr_t>(key), MaskKeyShift)^ROTATE_VALUE(reinterpret_cast<uintptr_t>(&kLLHardeningMask), MaskAddrShift)))
+
+template <unsigned> struct EntropySource;
+template <> struct EntropySource<4> {
+    static uint32_t value()
+    {
+#if OS(DARWIN)
+        return arc4random();
 #else
-#define XOR_MASK_PTR_WITH_KEY(ptr, key) (ptr)
+        return static_cast<uint32_t>(static_cast<uintptr_t>(currentTime() * 10000) ^ reinterpret_cast<uintptr_t>(&kLLHardeningMask));
+#endif
+    }
+};
+
+template <> struct EntropySource<8> {
+    static uint64_t value()
+    {
+        return EntropySource<4>::value() | (static_cast<uint64_t>(EntropySource<4>::value()) << 32);
+    }
+};
+
+static ALWAYS_INLINE uintptr_t internalEntropyValue() {
+    static uintptr_t value = EntropySource<sizeof(uintptr_t)>::value();
+    ASSERT(value);
+    return value;
+}
+
+#define HARDENING_ENTROPY internalEntropyValue()
+#define ROTATE_VALUE(value, amount) (((value) >> (amount)) | ((value) << (sizeof(value) * 8 - (amount))))
+#define XOR_MASK_PTR_WITH_KEY(ptr, key, entropy) (reinterpret_cast<typeof(ptr)>(reinterpret_cast<uintptr_t>(ptr)^(ROTATE_VALUE(reinterpret_cast<uintptr_t>(key), MaskKeyShift)^entropy)))
+
+#else
+#define XOR_MASK_PTR_WITH_KEY(ptr, key, entropy) (((void)entropy), ((void)key), ptr)
+#define HARDENING_ENTROPY 0
 #endif
 
 
@@ -662,12 +692,40 @@ static size_t class_to_size[kNumClasses];
 // Mapping from size class to number of pages to allocate at a time
 static size_t class_to_pages[kNumClasses];
 
+// Hardened singly linked list.  We make this a class to allow compiler to
+// statically prevent mismatching hardened and non-hardened list
+class HardenedSLL {
+public:
+    static ALWAYS_INLINE HardenedSLL create(void* value)
+    {
+        HardenedSLL result;
+        result.m_value = value;
+        return result;
+    }
+
+    static ALWAYS_INLINE HardenedSLL null()
+    {
+        HardenedSLL result;
+        result.m_value = 0;
+        return result;
+    }
+
+    ALWAYS_INLINE void setValue(void* value) { m_value = value; }
+    ALWAYS_INLINE void* value() const { return m_value; }
+    ALWAYS_INLINE bool operator!() const { return !m_value; }
+    typedef void* (HardenedSLL::*UnspecifiedBoolType);
+    ALWAYS_INLINE operator UnspecifiedBoolType() const { return m_value ? &HardenedSLL::m_value : 0; }
+
+private:
+    void* m_value;
+};
+
 // TransferCache is used to cache transfers of num_objects_to_move[size_class]
 // back and forth between thread caches and the central cache for a given size
 // class.
 struct TCEntry {
-  void *head;  // Head of chain of objects.
-  void *tail;  // Tail of chain of objects.
+  HardenedSLL head;  // Head of chain of objects.
+  HardenedSLL tail;  // Tail of chain of objects.
 };
 // A central cache freelist can have anywhere from 0 to kNumTransferEntries
 // slots to put link list chains into.  To keep memory usage bounded the total
@@ -692,63 +750,61 @@ static inline int LgFloor(size_t n) {
   return log;
 }
 
-// Some very basic linked list functions for dealing with using void * as
-// storage.
-
-static inline void *SLL_Next(void *t) {
-  return XOR_MASK_PTR_WITH_KEY(*(reinterpret_cast<void**>(t)), t);
+// Functions for using our simple hardened singly linked list
+static ALWAYS_INLINE HardenedSLL SLL_Next(HardenedSLL t, uintptr_t entropy) {
+    return HardenedSLL::create(XOR_MASK_PTR_WITH_KEY(*(reinterpret_cast<void**>(t.value())), t.value(), entropy));
 }
 
-static inline void SLL_SetNext(void *t, void *n) {
-  *(reinterpret_cast<void**>(t)) = XOR_MASK_PTR_WITH_KEY(n, t);
+static ALWAYS_INLINE void SLL_SetNext(HardenedSLL t, HardenedSLL n, uintptr_t entropy) {
+    *(reinterpret_cast<void**>(t.value())) = XOR_MASK_PTR_WITH_KEY(n.value(), t.value(), entropy);
 }
 
-static inline void SLL_Push(void **list, void *element) {
-  SLL_SetNext(element, *list);
+static ALWAYS_INLINE void SLL_Push(HardenedSLL* list, HardenedSLL element, uintptr_t entropy) {
+  SLL_SetNext(element, *list, entropy);
   *list = element;
 }
 
-static inline void *SLL_Pop(void **list) {
-  void *result = *list;
-  *list = SLL_Next(*list);
+static ALWAYS_INLINE HardenedSLL SLL_Pop(HardenedSLL *list, uintptr_t entropy) {
+  HardenedSLL result = *list;
+  *list = SLL_Next(*list, entropy);
   return result;
 }
-
 
 // Remove N elements from a linked list to which head points.  head will be
 // modified to point to the new head.  start and end will point to the first
 // and last nodes of the range.  Note that end will point to NULL after this
 // function is called.
-static inline void SLL_PopRange(void **head, int N, void **start, void **end) {
+
+static ALWAYS_INLINE void SLL_PopRange(HardenedSLL* head, int N, HardenedSLL *start, HardenedSLL *end, uintptr_t entropy) {
   if (N == 0) {
-    *start = NULL;
-    *end = NULL;
+    *start = HardenedSLL::null();
+    *end = HardenedSLL::null();
     return;
   }
 
-  void *tmp = *head;
+  HardenedSLL tmp = *head;
   for (int i = 1; i < N; ++i) {
-    tmp = SLL_Next(tmp);
+    tmp = SLL_Next(tmp, entropy);
   }
 
   *start = *head;
   *end = tmp;
-  *head = SLL_Next(tmp);
+  *head = SLL_Next(tmp, entropy);
   // Unlink range from list.
-  SLL_SetNext(tmp, NULL);
+  SLL_SetNext(tmp, HardenedSLL::null(), entropy);
 }
 
-static inline void SLL_PushRange(void **head, void *start, void *end) {
+static ALWAYS_INLINE void SLL_PushRange(HardenedSLL *head, HardenedSLL start, HardenedSLL end, uintptr_t entropy) {
   if (!start) return;
-  SLL_SetNext(end, *head);
+  SLL_SetNext(end, *head, entropy);
   *head = start;
 }
 
-static inline size_t SLL_Size(void *head) {
+static ALWAYS_INLINE size_t SLL_Size(HardenedSLL head, uintptr_t entropy) {
   int count = 0;
   while (head) {
     count++;
-    head = SLL_Next(head);
+    head = SLL_Next(head, entropy);
   }
   return count;
 }
@@ -942,30 +998,32 @@ class PageHeapAllocator {
   size_t free_avail_;
 
   // Linked list of all regions allocated by this allocator
-  void* allocated_regions_;
+  HardenedSLL allocated_regions_;
 
   // Free list of already carved objects
-  void* free_list_;
+  HardenedSLL free_list_;
 
   // Number of allocated but unfreed objects
   int inuse_;
+  uintptr_t entropy_;
 
  public:
-  void Init() {
+  void Init(uintptr_t entropy) {
     ASSERT(kAlignedSize <= kAllocIncrement);
     inuse_ = 0;
-    allocated_regions_ = 0;
+    allocated_regions_ = HardenedSLL::null();
     free_area_ = NULL;
     free_avail_ = 0;
-    free_list_ = NULL;
+    free_list_.setValue(NULL);
+    entropy_ = entropy;
   }
 
   T* New() {
     // Consult free list
     void* result;
-    if (free_list_ != NULL) {
-      result = free_list_;
-      free_list_ = *(reinterpret_cast<void**>(result));
+    if (free_list_) {
+      result = free_list_.value();
+      free_list_ = SLL_Next(free_list_, entropy_);
     } else {
       if (free_avail_ < kAlignedSize) {
         // Need more room
@@ -973,8 +1031,9 @@ class PageHeapAllocator {
         if (!new_allocation)
           CRASH();
 
-        *reinterpret_cast_ptr<void**>(new_allocation) = allocated_regions_;
-        allocated_regions_ = new_allocation;
+        HardenedSLL new_head = HardenedSLL::create(new_allocation);
+        SLL_SetNext(new_head, allocated_regions_, entropy_);
+        allocated_regions_ = new_head;
         free_area_ = new_allocation + kAlignedSize;
         free_avail_ = kAllocIncrement - kAlignedSize;
       }
@@ -987,8 +1046,9 @@ class PageHeapAllocator {
   }
 
   void Delete(T* p) {
-    *(reinterpret_cast<void**>(p)) = free_list_;
-    free_list_ = p;
+    HardenedSLL new_head = HardenedSLL::create(p);
+    SLL_SetNext(new_head, free_list_, entropy_);
+    free_list_ = new_head;
     inuse_--;
   }
 
@@ -998,8 +1058,8 @@ class PageHeapAllocator {
   template <class Recorder>
   void recordAdministrativeRegions(Recorder& recorder, const RemoteMemoryReader& reader)
   {
-      for (void* adminAllocation = allocated_regions_; adminAllocation; adminAllocation = reader.nextEntryInLinkedList(reinterpret_cast<void**>(adminAllocation)))
-          recorder.recordRegion(reinterpret_cast<vm_address_t>(adminAllocation), kAllocIncrement);
+      for (HardenedSLL adminAllocation = allocated_regions_; adminAllocation; adminAllocation.setValue(reader.nextEntryInHardenedLinkedList(reinterpret_cast<void**>(adminAllocation.value()), entropy_)))
+          recorder.recordRegion(reinterpret_cast<vm_address_t>(adminAllocation.value()), kAllocIncrement);
   }
 #endif
 };
@@ -1040,16 +1100,17 @@ static size_t AllocationSize(size_t bytes) {
 struct Span {
   PageID        start;          // Starting page number
   Length        length;         // Number of pages in span
-  Span* next() const { return XOR_MASK_PTR_WITH_KEY(m_next, this); }
-  Span* prev() const { return XOR_MASK_PTR_WITH_KEY(m_prev, this); }
-  void setNext(Span* next) { m_next = XOR_MASK_PTR_WITH_KEY(next, this); }
-  void setPrev(Span* prev) { m_prev = XOR_MASK_PTR_WITH_KEY(prev, this); }
+  Span* next(uintptr_t entropy) const { return XOR_MASK_PTR_WITH_KEY(m_next, this, entropy); }
+  Span* remoteNext(const Span* remoteSpanPointer, uintptr_t entropy) const { return XOR_MASK_PTR_WITH_KEY(m_next, remoteSpanPointer, entropy); }
+  Span* prev(uintptr_t entropy) const { return XOR_MASK_PTR_WITH_KEY(m_prev, this, entropy); }
+  void setNext(Span* next, uintptr_t entropy) { m_next = XOR_MASK_PTR_WITH_KEY(next, this, entropy); }
+  void setPrev(Span* prev, uintptr_t entropy) { m_prev = XOR_MASK_PTR_WITH_KEY(prev, this, entropy); }
 
 private:
   Span*         m_next;           // Used when in link list
   Span*         m_prev;           // Used when in link list
 public:
-  void*         objects;        // Linked list of free objects
+  HardenedSLL    objects;        // Linked list of free objects
   unsigned int  free : 1;       // Is the span free
 #ifndef NO_TCMALLOC_SAMPLES
   unsigned int  sample : 1;     // Sampled object?
@@ -1105,25 +1166,25 @@ static inline void DeleteSpan(Span* span) {
 // Doubly linked list of spans.
 // -------------------------------------------------------------------------
 
-static inline void DLL_Init(Span* list) {
-  list->setNext(list);
-  list->setPrev(list);
+static inline void DLL_Init(Span* list, uintptr_t entropy) {
+  list->setNext(list, entropy);
+  list->setPrev(list, entropy);
 }
 
-static inline void DLL_Remove(Span* span) {
-  span->prev()->setNext(span->next());
-  span->next()->setPrev(span->prev());
-  span->setPrev(NULL);
-  span->setNext(NULL);
+static inline void DLL_Remove(Span* span, uintptr_t entropy) {
+  span->prev(entropy)->setNext(span->next(entropy), entropy);
+  span->next(entropy)->setPrev(span->prev(entropy), entropy);
+  span->setPrev(NULL, entropy);
+  span->setNext(NULL, entropy);
 }
 
-static ALWAYS_INLINE bool DLL_IsEmpty(const Span* list) {
-  return list->next() == list;
+static ALWAYS_INLINE bool DLL_IsEmpty(const Span* list, uintptr_t entropy) {
+  return list->next(entropy) == list;
 }
 
-static int DLL_Length(const Span* list) {
+static int DLL_Length(const Span* list, uintptr_t entropy) {
   int result = 0;
-  for (Span* s = list->next(); s != list; s = s->next()) {
+  for (Span* s = list->next(entropy); s != list; s = s->next(entropy)) {
     result++;
   }
   return result;
@@ -1139,13 +1200,11 @@ static void DLL_Print(const char* label, const Span* list) {
 }
 #endif
 
-static inline void DLL_Prepend(Span* list, Span* span) {
-  ASSERT(span->next() == NULL);
-  ASSERT(span->prev() == NULL);
-  span->setNext(list->next());
-  span->setPrev(list);
-  list->next()->setPrev(span);
-  list->setNext(span);
+static inline void DLL_Prepend(Span* list, Span* span, uintptr_t entropy) {
+  span->setNext(list->next(entropy), entropy);
+  span->setPrev(list, entropy);
+  list->next(entropy)->setPrev(span, entropy);
+  list->setNext(span, entropy);
 }
 
 //-------------------------------------------------------------------
@@ -1154,16 +1213,16 @@ static inline void DLL_Prepend(Span* list, Span* span) {
 
 class TCMalloc_Central_FreeList {
  public:
-  void Init(size_t cl);
+  void Init(size_t cl, uintptr_t entropy);
 
   // These methods all do internal locking.
 
   // Insert the specified range into the central freelist.  N is the number of
   // elements in the range.
-  void InsertRange(void *start, void *end, int N);
+  void InsertRange(HardenedSLL start, HardenedSLL end, int N);
 
   // Returns the actual number of fetched elements into N.
-  void RemoveRange(void **start, void **end, int *N);
+  void RemoveRange(HardenedSLL* start, HardenedSLL* end, int *N);
 
   // Returns the number of free objects in cache.
   size_t length() {
@@ -1181,43 +1240,50 @@ class TCMalloc_Central_FreeList {
   template <class Finder, class Reader>
   void enumerateFreeObjects(Finder& finder, const Reader& reader, TCMalloc_Central_FreeList* remoteCentralFreeList)
   {
-    for (Span* span = &empty_; span && span != &empty_; span = (span->next() ? reader(span->next()) : 0))
-      ASSERT(!span->objects);
+    {
+      static const ptrdiff_t emptyOffset = reinterpret_cast<const char*>(&empty_) - reinterpret_cast<const char*>(this);
+      Span* remoteEmpty = reinterpret_cast<Span*>(reinterpret_cast<char*>(remoteCentralFreeList) + emptyOffset);
+      Span* remoteSpan = nonempty_.remoteNext(remoteEmpty, entropy_);
+      for (Span* span = reader(remoteEmpty); span && span != &empty_; remoteSpan = span->remoteNext(remoteSpan, entropy_), span = (remoteSpan ? reader(remoteSpan) : 0))
+        ASSERT(!span->objects);
+    }
 
     ASSERT(!nonempty_.objects);
     static const ptrdiff_t nonemptyOffset = reinterpret_cast<const char*>(&nonempty_) - reinterpret_cast<const char*>(this);
 
     Span* remoteNonempty = reinterpret_cast<Span*>(reinterpret_cast<char*>(remoteCentralFreeList) + nonemptyOffset);
-    Span* remoteSpan = nonempty_.next();
+    Span* remoteSpan = nonempty_.remoteNext(remoteNonempty, entropy_);
 
-    for (Span* span = reader(remoteSpan); span && remoteSpan != remoteNonempty; remoteSpan = span->next(), span = (span->next() ? reader(span->next()) : 0)) {
-      for (void* nextObject = span->objects; nextObject; nextObject = reader.nextEntryInLinkedList(reinterpret_cast<void**>(nextObject)))
-        finder.visit(nextObject);
+    for (Span* span = reader(remoteSpan); span && remoteSpan != remoteNonempty; remoteSpan = span->remoteNext(remoteSpan, entropy_), span = (remoteSpan ? reader(remoteSpan) : 0)) {
+      for (HardenedSLL nextObject = span->objects; nextObject; nextObject.setValue(reader.nextEntryInHardenedLinkedList(reinterpret_cast<void**>(nextObject.value()), entropy_))) {
+        finder.visit(nextObject.value());
+      }
     }
   }
 #endif
 
+  uintptr_t entropy() const { return entropy_; }
  private:
   // REQUIRES: lock_ is held
   // Remove object from cache and return.
   // Return NULL if no free entries in cache.
-  void* FetchFromSpans();
+  HardenedSLL FetchFromSpans();
 
   // REQUIRES: lock_ is held
   // Remove object from cache and return.  Fetches
   // from pageheap if cache is empty.  Only returns
   // NULL on allocation failure.
-  void* FetchFromSpansSafe();
+  HardenedSLL FetchFromSpansSafe();
 
   // REQUIRES: lock_ is held
   // Release a linked list of objects to spans.
   // May temporarily release lock_.
-  void ReleaseListToSpans(void *start);
+  void ReleaseListToSpans(HardenedSLL start);
 
   // REQUIRES: lock_ is held
   // Release an object to spans.
   // May temporarily release lock_.
-  ALWAYS_INLINE void ReleaseToSpans(void* object);
+  ALWAYS_INLINE void ReleaseToSpans(HardenedSLL object);
 
   // REQUIRES: lock_ is held
   // Populate cache by fetching from the page heap.
@@ -1268,6 +1334,7 @@ class TCMalloc_Central_FreeList {
   // adaptive value that is increased if there is lots of traffic
   // on a given size class.
   int32_t cache_size_;
+  uintptr_t entropy_;
 };
 
 #if COMPILER(CLANG) && defined(__has_warning)
@@ -1586,6 +1653,9 @@ class TCMalloc_PageHeap {
   // Number of pages kept in free lists
   uintptr_t free_pages_;
 
+  // Used for hardening
+  uintptr_t entropy_;
+
   // Bytes allocated from system
   uint64_t system_bytes_;
 
@@ -1678,6 +1748,7 @@ void TCMalloc_PageHeap::init()
   pagemap_cache_ = PageMapCache(0);
   free_pages_ = 0;
   system_bytes_ = 0;
+  entropy_ = HARDENING_ENTROPY;
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
   free_committed_pages_ = 0;
@@ -1688,11 +1759,11 @@ void TCMalloc_PageHeap::init()
   // Start scavenging at kMaxPages list
   scavenge_index_ = kMaxPages-1;
   COMPILE_ASSERT(kNumClasses <= (1 << PageMapCache::kValuebits), valuebits);
-  DLL_Init(&large_.normal);
-  DLL_Init(&large_.returned);
+  DLL_Init(&large_.normal, entropy_);
+  DLL_Init(&large_.returned, entropy_);
   for (size_t i = 0; i < kMaxPages; i++) {
-    DLL_Init(&free_[i].normal);
-    DLL_Init(&free_[i].returned);
+    DLL_Init(&free_[i].normal, entropy_);
+    DLL_Init(&free_[i].returned, entropy_);
   }
 
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
@@ -1837,11 +1908,11 @@ void TCMalloc_PageHeap::scavenge()
             SpanList* slist = (static_cast<size_t>(i) == kMaxPages) ? &large_ : &free_[i];
             // If the span size is bigger than kMinSpanListsWithSpans pages return all the spans in the list, else return all but 1 span.  
             // Return only 50% of a spanlist at a time so spans of size 1 are not the only ones left.
-            size_t length = DLL_Length(&slist->normal);
+            size_t length = DLL_Length(&slist->normal, entropy_);
             size_t numSpansToReturn = (i > kMinSpanListsWithSpans) ? length : length / 2;
-            for (int j = 0; static_cast<size_t>(j) < numSpansToReturn && !DLL_IsEmpty(&slist->normal) && free_committed_pages_ > targetPageCount; j++) {
-                Span* s = slist->normal.prev();
-                DLL_Remove(s);
+            for (int j = 0; static_cast<size_t>(j) < numSpansToReturn && !DLL_IsEmpty(&slist->normal, entropy_) && free_committed_pages_ > targetPageCount; j++) {
+                Span* s = slist->normal.prev(entropy_);
+                DLL_Remove(s, entropy_);
                 ASSERT(!s->decommitted);
                 if (!s->decommitted) {
                     TCMalloc_SystemRelease(reinterpret_cast<void*>(s->start << kPageShift),
@@ -1850,7 +1921,7 @@ void TCMalloc_PageHeap::scavenge()
                     free_committed_pages_ -= s->length;
                     s->decommitted = true;
                 }
-                DLL_Prepend(&slist->returned, s);
+                DLL_Prepend(&slist->returned, s, entropy_);
             }
         }
 
@@ -1877,10 +1948,10 @@ inline Span* TCMalloc_PageHeap::New(Length n) {
   for (Length s = n; s < kMaxPages; s++) {
     Span* ll = NULL;
     bool released = false;
-    if (!DLL_IsEmpty(&free_[s].normal)) {
+    if (!DLL_IsEmpty(&free_[s].normal, entropy_)) {
       // Found normal span
       ll = &free_[s].normal;
-    } else if (!DLL_IsEmpty(&free_[s].returned)) {
+    } else if (!DLL_IsEmpty(&free_[s].returned, entropy_)) {
       // Found returned span; reallocate it
       ll = &free_[s].returned;
       released = true;
@@ -1889,7 +1960,7 @@ inline Span* TCMalloc_PageHeap::New(Length n) {
       continue;
     }
 
-    Span* result = ll->next();
+    Span* result = ll->next(entropy_);
     Carve(result, n, released);
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
     // The newly allocated memory is from a span that's in the normal span list (already committed).  Update the
@@ -1926,9 +1997,9 @@ Span* TCMalloc_PageHeap::AllocLarge(Length n) {
   Span *best = NULL;
 
   // Search through normal list
-  for (Span* span = large_.normal.next();
+  for (Span* span = large_.normal.next(entropy_);
        span != &large_.normal;
-       span = span->next()) {
+       span = span->next(entropy_)) {
     if (span->length >= n) {
       if ((best == NULL)
           || (span->length < best->length)
@@ -1940,9 +2011,9 @@ Span* TCMalloc_PageHeap::AllocLarge(Length n) {
   }
 
   // Search through released list in case it has a better fit
-  for (Span* span = large_.returned.next();
+  for (Span* span = large_.returned.next(entropy_);
        span != &large_.returned;
-       span = span->next()) {
+       span = span->next(entropy_)) {
     if (span->length >= n) {
       if ((best == NULL)
           || (span->length < best->length)
@@ -1989,7 +2060,7 @@ Span* TCMalloc_PageHeap::Split(Span* span, Length n) {
 
 inline void TCMalloc_PageHeap::Carve(Span* span, Length n, bool released) {
   ASSERT(n > 0);
-  DLL_Remove(span);
+  DLL_Remove(span, entropy_);
   span->free = 0;
   Event(span, 'A', n);
 
@@ -2015,7 +2086,7 @@ inline void TCMalloc_PageHeap::Carve(Span* span, Length n, bool released) {
     // Place leftover span on appropriate free list
     SpanList* listpair = (static_cast<size_t>(extra) < kMaxPages) ? &free_[extra] : &large_;
     Span* dst = &listpair->normal;
-    DLL_Prepend(dst, leftover);
+    DLL_Prepend(dst, leftover, entropy_);
 
     span->length = n;
     pagemap_.set(span->start + n - 1, span);
@@ -2065,7 +2136,7 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
         neighboringCommittedSpansLength += len;
 #endif
     mergeDecommittedStates(span, prev);
-    DLL_Remove(prev);
+    DLL_Remove(prev, entropy_);
     DeleteSpan(prev);
     span->start -= len;
     span->length += len;
@@ -2082,7 +2153,7 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
         neighboringCommittedSpansLength += len;
 #endif
     mergeDecommittedStates(span, next);
-    DLL_Remove(next);
+    DLL_Remove(next, entropy_);
     DeleteSpan(next);
     span->length += len;
     pagemap_.set(span->start + span->length - 1, span);
@@ -2093,14 +2164,14 @@ inline void TCMalloc_PageHeap::Delete(Span* span) {
   span->free = 1;
   if (span->decommitted) {
     if (span->length < kMaxPages)
-      DLL_Prepend(&free_[span->length].returned, span);
+      DLL_Prepend(&free_[span->length].returned, span, entropy_);
     else
-      DLL_Prepend(&large_.returned, span);
+      DLL_Prepend(&large_.returned, span, entropy_);
   } else {
     if (span->length < kMaxPages)
-      DLL_Prepend(&free_[span->length].normal, span);
+      DLL_Prepend(&free_[span->length].normal, span, entropy_);
     else
-      DLL_Prepend(&large_.normal, span);
+      DLL_Prepend(&large_.normal, span, entropy_);
   }
   free_pages_ += n;
 
@@ -2189,12 +2260,12 @@ void TCMalloc_PageHeap::RegisterSizeClass(Span* span, size_t sc) {
 size_t TCMalloc_PageHeap::ReturnedBytes() const {
     size_t result = 0;
     for (unsigned s = 0; s < kMaxPages; s++) {
-        const int r_length = DLL_Length(&free_[s].returned);
+        const int r_length = DLL_Length(&free_[s].returned, entropy_);
         unsigned r_pages = s * r_length;
         result += r_pages << kPageShift;
     }
     
-    for (Span* s = large_.returned.next(); s != &large_.returned; s = s->next())
+    for (Span* s = large_.returned.next(entropy_); s != &large_.returned; s = s->next(entropy_))
         result += s->length << kPageShift;
     return result;
 }
@@ -2321,8 +2392,8 @@ bool TCMalloc_PageHeap::Check() {
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
   size_t totalFreeCommitted = 0;
 #endif
-  ASSERT(free_[0].normal.next() == &free_[0].normal);
-  ASSERT(free_[0].returned.next() == &free_[0].returned);
+  ASSERT(free_[0].normal.next(entropy_) == &free_[0].normal);
+  ASSERT(free_[0].returned.next(entropy_) == &free_[0].returned);
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
   totalFreeCommitted = CheckList(&large_.normal, kMaxPages, 1000000000, false);
 #else
@@ -2350,7 +2421,7 @@ size_t TCMalloc_PageHeap::CheckList(Span*, Length, Length, bool) {
 #else
 size_t TCMalloc_PageHeap::CheckList(Span* list, Length min_pages, Length max_pages, bool decommitted) {
   size_t freeCount = 0;
-  for (Span* s = list->next(); s != list; s = s->next()) {
+  for (Span* s = list->next(entropy_); s != list; s = s->next(entropy_)) {
     CHECK_CONDITION(s->free);
     CHECK_CONDITION(s->length >= min_pages);
     CHECK_CONDITION(s->length <= max_pages);
@@ -2370,12 +2441,12 @@ void TCMalloc_PageHeap::ReleaseFreeList(Span* list, Span* returned) {
   size_t freePageReduction = 0;
 #endif
 
-  while (!DLL_IsEmpty(list)) {
-    Span* s = list->prev();
+  while (!DLL_IsEmpty(list, entropy_)) {
+    Span* s = list->prev(entropy_);
 
-    DLL_Remove(s);
+    DLL_Remove(s, entropy_);
     s->decommitted = true;
-    DLL_Prepend(returned, s);
+    DLL_Prepend(returned, s, entropy_);
     TCMalloc_SystemRelease(reinterpret_cast<void*>(s->start << kPageShift),
                            static_cast<size_t>(s->length << kPageShift));
 #if USE_BACKGROUND_THREAD_TO_SCAVENGE_MEMORY
@@ -2404,15 +2475,20 @@ void TCMalloc_PageHeap::ReleaseFreePages() {
 
 class TCMalloc_ThreadCache_FreeList {
  private:
-  void*    list_;       // Linked list of nodes
+  HardenedSLL list_;       // Linked list of nodes
   uint16_t length_;     // Current length
   uint16_t lowater_;    // Low water mark for list length
+  uintptr_t entropy_;   // Entropy source for hardening
 
  public:
-  void Init() {
-    list_ = NULL;
+  void Init(uintptr_t entropy) {
+    list_.setValue(NULL);
     length_ = 0;
     lowater_ = 0;
+    entropy_ = entropy;
+#if ENABLE(TCMALLOC_HARDENING)
+    ASSERT(entropy_);
+#endif
   }
 
   // Return current length of list
@@ -2422,43 +2498,43 @@ class TCMalloc_ThreadCache_FreeList {
 
   // Is list empty?
   bool empty() const {
-    return list_ == NULL;
+    return !list_;
   }
 
   // Low-water mark management
   int lowwatermark() const { return lowater_; }
   void clear_lowwatermark() { lowater_ = length_; }
 
-  ALWAYS_INLINE void Push(void* ptr) {
-    SLL_Push(&list_, ptr);
+  ALWAYS_INLINE void Push(HardenedSLL ptr) {
+    SLL_Push(&list_, ptr, entropy_);
     length_++;
   }
 
-  void PushRange(int N, void *start, void *end) {
-    SLL_PushRange(&list_, start, end);
+  void PushRange(int N, HardenedSLL start, HardenedSLL end) {
+    SLL_PushRange(&list_, start, end, entropy_);
     length_ = length_ + static_cast<uint16_t>(N);
   }
 
-  void PopRange(int N, void **start, void **end) {
-    SLL_PopRange(&list_, N, start, end);
+  void PopRange(int N, HardenedSLL* start, HardenedSLL* end) {
+    SLL_PopRange(&list_, N, start, end, entropy_);
     ASSERT(length_ >= N);
     length_ = length_ - static_cast<uint16_t>(N);
     if (length_ < lowater_) lowater_ = length_;
   }
 
   ALWAYS_INLINE void* Pop() {
-    ASSERT(list_ != NULL);
+    ASSERT(list_);
     length_--;
     if (length_ < lowater_) lowater_ = length_;
-    return SLL_Pop(&list_);
+    return SLL_Pop(&list_, entropy_).value();
   }
 
 #ifdef WTF_CHANGES
   template <class Finder, class Reader>
   void enumerateFreeObjects(Finder& finder, const Reader& reader)
   {
-      for (void* nextObject = list_; nextObject; nextObject = reader.nextEntryInLinkedList(reinterpret_cast<void**>(nextObject)))
-          finder.visit(nextObject);
+      for (HardenedSLL nextObject = list_; nextObject; nextObject.setValue(reader.nextEntryInHardenedLinkedList(reinterpret_cast<void**>(nextObject.value()), entropy_)))
+          finder.visit(nextObject.value());
   }
 #endif
 };
@@ -2485,8 +2561,10 @@ class TCMalloc_ThreadCache {
   uint32_t      rnd_;                   // Cheap random number generator
   size_t        bytes_until_sample_;    // Bytes until we sample next
 
+  uintptr_t     entropy_;               // Entropy value used for hardening
+
   // Allocate a new heap. REQUIRES: pageheap_lock is held.
-  static inline TCMalloc_ThreadCache* NewHeap(ThreadIdentifier tid);
+  static inline TCMalloc_ThreadCache* NewHeap(ThreadIdentifier tid, uintptr_t entropy);
 
   // Use only as pthread thread-specific destructor function.
   static void DestroyThreadCache(void* ptr);
@@ -2495,7 +2573,7 @@ class TCMalloc_ThreadCache {
   TCMalloc_ThreadCache* next_;
   TCMalloc_ThreadCache* prev_;
 
-  void Init(ThreadIdentifier tid);
+  void Init(ThreadIdentifier tid, uintptr_t entropy);
   void Cleanup();
 
   // Accessors (mostly just for printing stats)
@@ -2505,7 +2583,7 @@ class TCMalloc_ThreadCache {
   size_t Size() const { return size_; }
 
   ALWAYS_INLINE void* Allocate(size_t size);
-  void Deallocate(void* ptr, size_t size_class);
+  void Deallocate(HardenedSLL ptr, size_t size_class);
 
   ALWAYS_INLINE void FetchFromCentralCache(size_t cl, size_t allocationSize);
   void ReleaseToCentralCache(size_t cl, int N);
@@ -2703,11 +2781,15 @@ static volatile size_t per_thread_cache_size = kMaxThreadCacheSize;
 // Central cache implementation
 //-------------------------------------------------------------------
 
-void TCMalloc_Central_FreeList::Init(size_t cl) {
+void TCMalloc_Central_FreeList::Init(size_t cl, uintptr_t entropy) {
   lock_.Init();
   size_class_ = cl;
-  DLL_Init(&empty_);
-  DLL_Init(&nonempty_);
+  entropy_ = entropy;
+#if ENABLE(TCMALLOC_HARDENING)
+  ASSERT(entropy_);
+#endif
+  DLL_Init(&empty_, entropy_);
+  DLL_Init(&nonempty_, entropy_);
   counter_ = 0;
 
   cache_size_ = 1;
@@ -2715,24 +2797,24 @@ void TCMalloc_Central_FreeList::Init(size_t cl) {
   ASSERT(cache_size_ <= kNumTransferEntries);
 }
 
-void TCMalloc_Central_FreeList::ReleaseListToSpans(void* start) {
+void TCMalloc_Central_FreeList::ReleaseListToSpans(HardenedSLL start) {
   while (start) {
-    void *next = SLL_Next(start);
+    HardenedSLL next = SLL_Next(start, entropy_);
     ReleaseToSpans(start);
     start = next;
   }
 }
 
-ALWAYS_INLINE void TCMalloc_Central_FreeList::ReleaseToSpans(void* object) {
-  const PageID p = reinterpret_cast<uintptr_t>(object) >> kPageShift;
+ALWAYS_INLINE void TCMalloc_Central_FreeList::ReleaseToSpans(HardenedSLL object) {
+  const PageID p = reinterpret_cast<uintptr_t>(object.value()) >> kPageShift;
   Span* span = pageheap->GetDescriptor(p);
   ASSERT(span != NULL);
   ASSERT(span->refcount > 0);
 
   // If span is empty, move it to non-empty list
-  if (span->objects == NULL) {
-    DLL_Remove(span);
-    DLL_Prepend(&nonempty_, span);
+  if (!span->objects) {
+    DLL_Remove(span, entropy_);
+    DLL_Prepend(&nonempty_, span, entropy_);
     Event(span, 'N', 0);
   }
 
@@ -2740,8 +2822,8 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::ReleaseToSpans(void* object) {
   if (false) {
     // Check that object does not occur in list
     unsigned got = 0;
-    for (void* p = span->objects; p != NULL; p = *((void**) p)) {
-      ASSERT(p != object);
+    for (HardenedSLL p = span->objects; !p; SLL_Next(p, entropy_)) {
+      ASSERT(p.value() != object.value());
       got++;
     }
     ASSERT(got + span->refcount ==
@@ -2753,7 +2835,7 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::ReleaseToSpans(void* object) {
   if (span->refcount == 0) {
     Event(span, '#', 0);
     counter_ -= (span->length<<kPageShift) / ByteSizeForClass(span->sizeclass);
-    DLL_Remove(span);
+    DLL_Remove(span, entropy_);
 
     // Release central list lock while operating on pageheap
     lock_.Unlock();
@@ -2763,8 +2845,8 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::ReleaseToSpans(void* object) {
     }
     lock_.Lock();
   } else {
-    *(reinterpret_cast<void**>(object)) = span->objects;
-    span->objects = object;
+    SLL_SetNext(object, span->objects, entropy_);
+    span->objects.setValue(object.value());
   }
 }
 
@@ -2838,7 +2920,7 @@ bool TCMalloc_Central_FreeList::ShrinkCache(int locked_size_class, bool force) {
   return true;
 }
 
-void TCMalloc_Central_FreeList::InsertRange(void *start, void *end, int N) {
+void TCMalloc_Central_FreeList::InsertRange(HardenedSLL start, HardenedSLL end, int N) {
   SpinLockHolder h(&lock_);
   if (N == num_objects_to_move[size_class_] &&
     MakeCacheSpace()) {
@@ -2853,7 +2935,7 @@ void TCMalloc_Central_FreeList::InsertRange(void *start, void *end, int N) {
   ReleaseListToSpans(start);
 }
 
-void TCMalloc_Central_FreeList::RemoveRange(void **start, void **end, int *N) {
+void TCMalloc_Central_FreeList::RemoveRange(HardenedSLL* start, HardenedSLL* end, int *N) {
   int num = *N;
   ASSERT(num > 0);
 
@@ -2868,21 +2950,21 @@ void TCMalloc_Central_FreeList::RemoveRange(void **start, void **end, int *N) {
   }
 
   // TODO: Prefetch multiple TCEntries?
-  void *tail = FetchFromSpansSafe();
+  HardenedSLL tail = FetchFromSpansSafe();
   if (!tail) {
     // We are completely out of memory.
-    *start = *end = NULL;
+    *start = *end = HardenedSLL::null();
     *N = 0;
     return;
   }
 
-  SLL_SetNext(tail, NULL);
-  void *head = tail;
+  SLL_SetNext(tail, HardenedSLL::null(), entropy_);
+  HardenedSLL head = tail;
   int count = 1;
   while (count < num) {
-    void *t = FetchFromSpans();
+    HardenedSLL t = FetchFromSpans();
     if (!t) break;
-    SLL_Push(&head, t);
+    SLL_Push(&head, t, entropy_);
     count++;
   }
   *start = head;
@@ -2891,8 +2973,8 @@ void TCMalloc_Central_FreeList::RemoveRange(void **start, void **end, int *N) {
 }
 
 
-void* TCMalloc_Central_FreeList::FetchFromSpansSafe() {
-  void *t = FetchFromSpans();
+HardenedSLL TCMalloc_Central_FreeList::FetchFromSpansSafe() {
+  HardenedSLL t = FetchFromSpans();
   if (!t) {
     Populate();
     t = FetchFromSpans();
@@ -2900,19 +2982,19 @@ void* TCMalloc_Central_FreeList::FetchFromSpansSafe() {
   return t;
 }
 
-void* TCMalloc_Central_FreeList::FetchFromSpans() {
-  if (DLL_IsEmpty(&nonempty_)) return NULL;
-  Span* span = nonempty_.next();
+HardenedSLL TCMalloc_Central_FreeList::FetchFromSpans() {
+  if (DLL_IsEmpty(&nonempty_, entropy_)) return HardenedSLL::null();
+  Span* span = nonempty_.next(entropy_);
 
-  ASSERT(span->objects != NULL);
+  ASSERT(span->objects);
   ASSERT_SPAN_COMMITTED(span);
   span->refcount++;
-  void* result = span->objects;
-  span->objects = *(reinterpret_cast<void**>(result));
-  if (span->objects == NULL) {
+  HardenedSLL result = span->objects;
+  span->objects = SLL_Next(result, entropy_);
+  if (!span->objects) {
     // Move to empty list
-    DLL_Remove(span);
-    DLL_Prepend(&empty_, span);
+    DLL_Remove(span, entropy_);
+    DLL_Prepend(&empty_, span, entropy_);
     Event(span, 'E', 0);
   }
   counter_--;
@@ -2953,25 +3035,27 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::Populate() {
 
   // Split the block into pieces and add to the free-list
   // TODO: coloring of objects to avoid cache conflicts?
-  void** tail = &span->objects;
-  char* ptr = reinterpret_cast<char*>(span->start << kPageShift);
-  char* limit = ptr + (npages << kPageShift);
+  HardenedSLL head = HardenedSLL::null();
+  char* start = reinterpret_cast<char*>(span->start << kPageShift);
   const size_t size = ByteSizeForClass(size_class_);
+  char* ptr = start + (npages << kPageShift) - ((npages << kPageShift) % size);
   int num = 0;
-  char* nptr;
-  while ((nptr = ptr + size) <= limit) {
-    *tail = ptr;
-    tail = reinterpret_cast_ptr<void**>(ptr);
-    ptr = nptr;
+  while (ptr > start) {
+    ptr -= size;
+    HardenedSLL node = HardenedSLL::create(ptr);
+    SLL_SetNext(node, head, entropy_);
+    head = node;
     num++;
   }
-  ASSERT(ptr <= limit);
-  *tail = NULL;
+  ASSERT(ptr == start);
+  ASSERT(ptr == head.value());
+  span->objects = head;
+  ASSERT(span->objects.value() == head.value());
   span->refcount = 0; // No sub-object in use yet
 
   // Add span to list of non-empty spans
   lock_.Lock();
-  DLL_Prepend(&nonempty_, span);
+  DLL_Prepend(&nonempty_, span, entropy_);
   counter_ += num;
 }
 
@@ -2989,14 +3073,18 @@ inline bool TCMalloc_ThreadCache::SampleAllocation(size_t k) {
   }
 }
 
-void TCMalloc_ThreadCache::Init(ThreadIdentifier tid) {
+void TCMalloc_ThreadCache::Init(ThreadIdentifier tid, uintptr_t entropy) {
   size_ = 0;
   next_ = NULL;
   prev_ = NULL;
   tid_  = tid;
   in_setspecific_ = false;
+  entropy_ = entropy;
+#if ENABLE(TCMALLOC_HARDENING)
+  ASSERT(entropy_);
+#endif
   for (size_t cl = 0; cl < kNumClasses; ++cl) {
-    list_[cl].Init();
+    list_[cl].Init(entropy_);
   }
 
   // Initialize RNG -- run it for a bit to get to good values
@@ -3029,7 +3117,7 @@ ALWAYS_INLINE void* TCMalloc_ThreadCache::Allocate(size_t size) {
   return list->Pop();
 }
 
-inline void TCMalloc_ThreadCache::Deallocate(void* ptr, size_t cl) {
+inline void TCMalloc_ThreadCache::Deallocate(HardenedSLL ptr, size_t cl) {
   size_ += ByteSizeForClass(cl);
   FreeList* list = &list_[cl];
   list->Push(ptr);
@@ -3043,7 +3131,7 @@ inline void TCMalloc_ThreadCache::Deallocate(void* ptr, size_t cl) {
 // Remove some objects of class "cl" from central cache and add to thread heap
 ALWAYS_INLINE void TCMalloc_ThreadCache::FetchFromCentralCache(size_t cl, size_t allocationSize) {
   int fetch_count = num_objects_to_move[cl];
-  void *start, *end;
+  HardenedSLL start, end;
   central_cache[cl].RemoveRange(&start, &end, &fetch_count);
   list_[cl].PushRange(fetch_count, start, end);
   size_ += allocationSize * fetch_count;
@@ -3060,12 +3148,12 @@ inline void TCMalloc_ThreadCache::ReleaseToCentralCache(size_t cl, int N) {
   // TODO: Use the same format internally in the thread caches?
   int batch_size = num_objects_to_move[cl];
   while (N > batch_size) {
-    void *tail, *head;
+    HardenedSLL tail, head;
     src->PopRange(batch_size, &head, &tail);
     central_cache[cl].InsertRange(head, tail, batch_size);
     N -= batch_size;
   }
-  void *tail, *head;
+  HardenedSLL tail, head;
   src->PopRange(N, &head, &tail);
   central_cache[cl].InsertRange(head, tail, N);
 }
@@ -3150,18 +3238,19 @@ void TCMalloc_ThreadCache::InitModule() {
   // object declared below.
   SpinLockHolder h(&pageheap_lock);
   if (!phinited) {
+    uintptr_t entropy = HARDENING_ENTROPY;
 #ifdef WTF_CHANGES
     InitTSD();
 #endif
     InitSizeClasses();
-    threadheap_allocator.Init();
-    span_allocator.Init();
+    threadheap_allocator.Init(entropy);
+    span_allocator.Init(entropy);
     span_allocator.New(); // Reduce cache conflicts
     span_allocator.New(); // Reduce cache conflicts
-    stacktrace_allocator.Init();
-    DLL_Init(&sampled_objects);
+    stacktrace_allocator.Init(entropy);
+    DLL_Init(&sampled_objects, entropy);
     for (size_t i = 0; i < kNumClasses; ++i) {
-      central_cache[i].Init(i);
+      central_cache[i].Init(i, entropy);
     }
     pageheap->init();
     phinited = 1;
@@ -3171,10 +3260,10 @@ void TCMalloc_ThreadCache::InitModule() {
   }
 }
 
-inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::NewHeap(ThreadIdentifier tid) {
+inline TCMalloc_ThreadCache* TCMalloc_ThreadCache::NewHeap(ThreadIdentifier tid, uintptr_t entropy) {
   // Create the heap and add it to the linked list
   TCMalloc_ThreadCache *heap = threadheap_allocator.New();
-  heap->Init(tid);
+  heap->Init(tid, entropy);
   heap->next_ = thread_heaps;
   heap->prev_ = NULL;
   if (thread_heaps != NULL) thread_heaps->prev_ = heap;
@@ -3288,7 +3377,7 @@ TCMalloc_ThreadCache* TCMalloc_ThreadCache::CreateCacheIfNecessary() {
       }
     }
 
-    if (heap == NULL) heap = NewHeap(me);
+    if (heap == NULL) heap = NewHeap(me, HARDENING_ENTROPY);
   }
 
   // We call pthread_setspecific() outside the lock because it may
@@ -3790,11 +3879,11 @@ static ALWAYS_INLINE void do_free(void* ptr) {
 #endif
     TCMalloc_ThreadCache* heap = TCMalloc_ThreadCache::GetCacheIfPresent();
     if (heap != NULL) {
-      heap->Deallocate(ptr, cl);
+      heap->Deallocate(HardenedSLL::create(ptr), cl);
     } else {
       // Delete directly into central cache
-      SLL_SetNext(ptr, NULL);
-      central_cache[cl].InsertRange(ptr, ptr, 1);
+      SLL_SetNext(HardenedSLL::create(ptr), HardenedSLL::null(), central_cache[cl].entropy());
+      central_cache[cl].InsertRange(HardenedSLL::create(ptr), HardenedSLL::create(ptr), 1);
     }
   } else {
     SpinLockHolder h(&pageheap_lock);
@@ -4437,8 +4526,8 @@ size_t fastMallocSize(const void* ptr)
     if (!span || span->free)
         return 0;
 
-    for (void* free = span->objects; free != NULL; free = *((void**) free)) {
-        if (ptr == free)
+    for (HardenedSLL free = span->objects; free; free = SLL_Next(free, HARDENING_ENTROPY)) {
+        if (ptr == free.value())
             return 0;
     }
 
@@ -4450,6 +4539,18 @@ size_t fastMallocSize(const void* ptr)
 }
 
 #if OS(DARWIN)
+
+template <typename T>
+T* RemoteMemoryReader::nextEntryInHardenedLinkedList(T** remoteAddress, uintptr_t entropy) const
+{
+    T** localAddress = (*this)(remoteAddress);
+    if (!localAddress)
+        return 0;
+    T* hardenedNext = *localAddress;
+    if (!hardenedNext || hardenedNext == (void*)entropy)
+        return 0;
+    return XOR_MASK_PTR_WITH_KEY(hardenedNext, remoteAddress, entropy);
+}
 
 class FreeObjectFinder {
     const RemoteMemoryReader& m_reader;
@@ -4479,12 +4580,18 @@ public:
 class PageMapFreeObjectFinder {
     const RemoteMemoryReader& m_reader;
     FreeObjectFinder& m_freeObjectFinder;
+    uintptr_t m_entropy;
 
 public:
-    PageMapFreeObjectFinder(const RemoteMemoryReader& reader, FreeObjectFinder& freeObjectFinder)
+    PageMapFreeObjectFinder(const RemoteMemoryReader& reader, FreeObjectFinder& freeObjectFinder, uintptr_t entropy)
         : m_reader(reader)
         , m_freeObjectFinder(freeObjectFinder)
-    { }
+        , m_entropy(entropy)
+    {
+#if ENABLE(TCMALLOC_HARDENING)
+        ASSERT(m_entropy);
+#endif
+    }
 
     int visit(void* ptr) const
     {
@@ -4500,8 +4607,8 @@ public:
             m_freeObjectFinder.visit(ptr);
         } else if (span->sizeclass) {
             // Walk the free list of the small-object span, keeping track of each object seen
-            for (void* nextObject = span->objects; nextObject; nextObject = m_reader.nextEntryInLinkedList(reinterpret_cast<void**>(nextObject)))
-                m_freeObjectFinder.visit(nextObject);
+            for (HardenedSLL nextObject = span->objects; nextObject; nextObject.setValue(m_reader.nextEntryInHardenedLinkedList(reinterpret_cast<void**>(nextObject.value()), m_entropy)))
+                m_freeObjectFinder.visit(nextObject.value());
         }
         return span->length;
     }
@@ -4535,15 +4642,7 @@ public:
 
     void recordPendingRegions()
     {
-        Span* lastSpan = m_coalescedSpans[m_coalescedSpans.size() - 1];
-        vm_range_t ptrRange = { m_coalescedSpans[0]->start << kPageShift, 0 };
-        ptrRange.size = (lastSpan->start << kPageShift) - ptrRange.address + (lastSpan->length * kPageSize);
-
-        // Mark the memory region the spans represent as a candidate for containing pointers
-        if (m_typeMask & MALLOC_PTR_REGION_RANGE_TYPE)
-            (*m_recorder)(m_task, m_context, MALLOC_PTR_REGION_RANGE_TYPE, &ptrRange, 1);
-
-        if (!(m_typeMask & MALLOC_PTR_IN_USE_RANGE_TYPE)) {
+        if (!(m_typeMask & (MALLOC_PTR_IN_USE_RANGE_TYPE | MALLOC_PTR_REGION_RANGE_TYPE))) {
             m_coalescedSpans.clear();
             return;
         }
@@ -4573,7 +4672,7 @@ public:
             }
         }
 
-        (*m_recorder)(m_task, m_context, MALLOC_PTR_IN_USE_RANGE_TYPE, allocatedPointers.data(), allocatedPointers.size());
+        (*m_recorder)(m_task, m_context, m_typeMask & (MALLOC_PTR_IN_USE_RANGE_TYPE | MALLOC_PTR_REGION_RANGE_TYPE), allocatedPointers.data(), allocatedPointers.size());
 
         m_coalescedSpans.clear();
     }
@@ -4674,7 +4773,7 @@ kern_return_t FastMallocZone::enumerate(task_t task, void* context, unsigned typ
     finder.findFreeObjects(centralCaches, kNumClasses, mzone->m_centralCaches);
 
     TCMalloc_PageHeap::PageMap* pageMap = &pageHeap->pagemap_;
-    PageMapFreeObjectFinder pageMapFinder(memoryReader, finder);
+    PageMapFreeObjectFinder pageMapFinder(memoryReader, finder, pageHeap->entropy_);
     pageMap->visitValues(pageMapFinder, memoryReader);
 
     PageMapMemoryUsageRecorder usageRecorder(task, context, typeMask, recorder, memoryReader, finder);

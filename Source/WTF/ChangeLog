@@ -1,3 +1,101 @@
+2013-02-08  Oliver Hunt  <oliver@apple.com>
+
+        Harden FastMalloc (again)
+        https://bugs.webkit.org/show_bug.cgi?id=109334
+
+        Reviewed by Mark Hahnenberg.
+
+        Re-implement hardening of linked lists in TCMalloc.
+
+        In order to keep heap introspection working, we need to thread the
+        heap entropy manually as the introspection process can't use the
+        address of a global in determining the mask.  Given we now have to
+        thread a value through anyway, I've stopped relying on ASLR for entropy
+        and am simply using arc4random() on darwin, and time + ASLR everywhere
+        else.
+
+        I've also made an explicit struct type for the FastMalloc singly linked
+        lists, as it seemed like the only way to reliably distinguish between
+        void*'s that were lists vs. void* that were not.  This also made it
+        somewhat easier to reason about things across processes.
+
+        Verified that all the introspection tools work as expected.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::internalEntropyValue):
+        (WTF):
+        (HardenedSLL):
+        (WTF::HardenedSLL::create):
+        (WTF::HardenedSLL::null):
+        (WTF::HardenedSLL::setValue):
+        (WTF::HardenedSLL::value):
+        (WTF::HardenedSLL::operator!):
+        (WTF::HardenedSLL::operator UnspecifiedBoolType):
+        (TCEntry):
+        (WTF::SLL_Next):
+        (WTF::SLL_SetNext):
+        (WTF::SLL_Push):
+        (WTF::SLL_Pop):
+        (WTF::SLL_PopRange):
+        (WTF::SLL_PushRange):
+        (WTF::SLL_Size):
+        (PageHeapAllocator):
+        (WTF::PageHeapAllocator::Init):
+        (WTF::PageHeapAllocator::New):
+        (WTF::PageHeapAllocator::Delete):
+        (WTF::PageHeapAllocator::recordAdministrativeRegions):
+        (WTF::Span::next):
+        (WTF::Span::remoteNext):
+        (WTF::Span::prev):
+        (WTF::Span::setNext):
+        (WTF::Span::setPrev):
+        (Span):
+        (WTF::DLL_Init):
+        (WTF::DLL_Remove):
+        (WTF::DLL_IsEmpty):
+        (WTF::DLL_Length):
+        (WTF::DLL_Prepend):
+        (TCMalloc_Central_FreeList):
+        (WTF::TCMalloc_Central_FreeList::enumerateFreeObjects):
+        (WTF::TCMalloc_Central_FreeList::entropy):
+        (TCMalloc_PageHeap):
+        (WTF::TCMalloc_PageHeap::init):
+        (WTF::TCMalloc_PageHeap::scavenge):
+        (WTF::TCMalloc_PageHeap::New):
+        (WTF::TCMalloc_PageHeap::AllocLarge):
+        (WTF::TCMalloc_PageHeap::Carve):
+        (WTF::TCMalloc_PageHeap::Delete):
+        (WTF::TCMalloc_PageHeap::ReturnedBytes):
+        (WTF::TCMalloc_PageHeap::Check):
+        (WTF::TCMalloc_PageHeap::CheckList):
+        (WTF::TCMalloc_PageHeap::ReleaseFreeList):
+        (TCMalloc_ThreadCache_FreeList):
+        (WTF::TCMalloc_ThreadCache_FreeList::Init):
+        (WTF::TCMalloc_ThreadCache_FreeList::empty):
+        (WTF::TCMalloc_ThreadCache_FreeList::Push):
+        (WTF::TCMalloc_ThreadCache_FreeList::PushRange):
+        (WTF::TCMalloc_ThreadCache_FreeList::PopRange):
+        (WTF::TCMalloc_ThreadCache_FreeList::Pop):
+        (WTF::TCMalloc_ThreadCache_FreeList::enumerateFreeObjects):
+        (TCMalloc_ThreadCache):
+        (WTF::TCMalloc_Central_FreeList::Init):
+        (WTF::TCMalloc_Central_FreeList::ReleaseListToSpans):
+        (WTF::TCMalloc_Central_FreeList::ReleaseToSpans):
+        (WTF::TCMalloc_Central_FreeList::InsertRange):
+        (WTF::TCMalloc_Central_FreeList::RemoveRange):
+        (WTF::TCMalloc_Central_FreeList::FetchFromSpansSafe):
+        (WTF::TCMalloc_Central_FreeList::FetchFromSpans):
+        (WTF::TCMalloc_Central_FreeList::Populate):
+        (WTF::TCMalloc_ThreadCache::Init):
+        (WTF::TCMalloc_ThreadCache::Deallocate):
+        (WTF::TCMalloc_ThreadCache::FetchFromCentralCache):
+        (WTF::TCMalloc_ThreadCache::ReleaseToCentralCache):
+        (WTF::TCMalloc_ThreadCache::InitModule):
+        (WTF::TCMalloc_ThreadCache::NewHeap):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+        * wtf/MallocZoneSupport.h:
+        (RemoteMemoryReader):
+
 2013-02-11  Enrica Casucci  <enrica@apple.com>
 
         Add ENABLE_DELETION_UI to control the use of the deletion UI.
