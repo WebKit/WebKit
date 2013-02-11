@@ -24,9 +24,14 @@
  */
  
 #include "config.h"
-#include "ScrollingStateTree.h"
 
 #if ENABLE(THREADED_SCROLLING)
+
+#include "ScrollingStateTree.h"
+
+#include "ScrollingStateFixedNode.h"
+#include "ScrollingStateScrollingNode.h"
+#include "ScrollingStateStickyNode.h"
 
 namespace WebCore {
 
@@ -43,6 +48,78 @@ ScrollingStateTree::ScrollingStateTree()
 
 ScrollingStateTree::~ScrollingStateTree()
 {
+}
+
+ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, ScrollingNodeID newNodeID, ScrollingNodeID parentID)
+{
+    ASSERT(newNodeID);
+
+    if (ScrollingStateNode* node = stateNodeForID(newNodeID)) {
+        ScrollingStateNode* parent = stateNodeForID(parentID);
+        if (!parent)
+            return newNodeID;
+        if (node->parent() == parent)
+            return newNodeID;
+
+        // The node is being re-parented. To do that, we'll remove it, and then re-create a new node.
+        removeNode(node);
+    }
+
+    ScrollingStateNode* newNode;
+    if (!parentID) {
+        // If we're resetting the root node, we should clear the HashMap and destroy the current children.
+        clear();
+
+        rootStateNode()->setScrollingNodeID(newNodeID);
+        newNode = rootStateNode();
+    } else {
+        ScrollingStateNode* parent = stateNodeForID(parentID);
+        switch (nodeType) {
+        case FixedNode: {
+            OwnPtr<ScrollingStateFixedNode> fixedNode = ScrollingStateFixedNode::create(this, newNodeID);
+            newNode = fixedNode.get();
+            parent->appendChild(fixedNode.release());
+            break;
+        }
+        case StickyNode: {
+            OwnPtr<ScrollingStateStickyNode> stickyNode = ScrollingStateStickyNode::create(this, newNodeID);
+            newNode = stickyNode.get();
+            parent->appendChild(stickyNode.release());
+            break;
+        }
+        case ScrollingNode: {
+            // FIXME: We currently only support child nodes that are fixed.
+            ASSERT_NOT_REACHED();
+            OwnPtr<ScrollingStateScrollingNode> scrollingNode = ScrollingStateScrollingNode::create(this, newNodeID);
+            newNode = scrollingNode.get();
+            parent->appendChild(scrollingNode.release());
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+
+    m_stateNodeMap.set(newNodeID, newNode);
+    return newNodeID;
+}
+
+void ScrollingStateTree::detachNode(ScrollingNodeID nodeID)
+{
+    if (!nodeID)
+        return;
+
+    // The node may not be found if clearStateTree() was recently called.
+    ScrollingStateNode* node = m_stateNodeMap.take(nodeID);
+    if (!node)
+        return;
+
+    removeNode(node);
+}
+
+void ScrollingStateTree::clear()
+{
+    removeNode(rootStateNode());
 }
 
 PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
@@ -65,12 +142,30 @@ void ScrollingStateTree::removeNode(ScrollingStateNode* node)
 {
     ASSERT(m_rootStateNode);
     m_rootStateNode->removeChild(node);
+
+    // ScrollingStateTree::removeNode() will destroy children, so we have to make sure we remove those children
+    // from the HashMap.
+    size_t size = m_nodesRemovedSinceLastCommit.size();
+    for (size_t i = 0; i < size; ++i)
+        m_stateNodeMap.remove(m_nodesRemovedSinceLastCommit[i]);
 }
 
 void ScrollingStateTree::didRemoveNode(ScrollingNodeID nodeID)
 {
     m_nodesRemovedSinceLastCommit.append(nodeID);
     m_hasChangedProperties = true;
+}
+
+ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLayerID)
+{
+    if (!scrollLayerID)
+        return 0;
+
+    HashMap<ScrollingNodeID, ScrollingStateNode*>::const_iterator it = m_stateNodeMap.find(scrollLayerID);
+    if (it == m_stateNodeMap.end())
+        return 0;
+
+    return it->value;
 }
 
 } // namespace WebCore

@@ -40,28 +40,24 @@ namespace WebCore {
 // will be informed and will schedule a timer that will clone the new state tree and send it over to
 // the scrolling thread, avoiding locking. 
 
-// FIXME: Right now the scrolling thread only ever looks at the root node. In the future, it should
-// look at the whole tree and build a ScrollingTree that mimics the ScrollingStateTree.
-
-// FIXME: Right now there is only one type of ScrollingStateNode, which is the ScrollingStateScrollingNode.
-// It is currently used for the main frame, but in the future it should be able to be used for subframes
-// and overflow areas. In the future, more classes will inherit from ScrollingStateNode, such as
-// ScrollingStateFixedNode and ScrollingStateStickyNode for fixed position objects and sticky positoned
-// objects, respectively.
-
 class ScrollingStateTree {
+    friend class ScrollingStateNode;
 public:
+    
     static PassOwnPtr<ScrollingStateTree> create();
     ~ScrollingStateTree();
 
     ScrollingStateScrollingNode* rootStateNode() const { return m_rootStateNode.get(); }
+    ScrollingStateNode* stateNodeForID(ScrollingNodeID);
+
+    ScrollingNodeID attachNode(ScrollingNodeType, ScrollingNodeID, ScrollingNodeID parentID);
+    void detachNode(ScrollingNodeID);
+    void clear();
+    
+    const Vector<ScrollingNodeID>& removedNodes() const { return m_nodesRemovedSinceLastCommit; }
 
     // Copies the current tree state and clears the changed properties mask in the original.
     PassOwnPtr<ScrollingStateTree> commit();
-
-    void removeNode(ScrollingStateNode*);
-    void didRemoveNode(ScrollingNodeID);
-    const Vector<ScrollingNodeID>& removedNodes() const { return m_nodesRemovedSinceLastCommit; }
 
     void setHasChangedProperties(bool changedProperties) { m_hasChangedProperties = changedProperties; }
     bool hasChangedProperties() const { return m_hasChangedProperties; }
@@ -70,9 +66,12 @@ private:
     ScrollingStateTree();
 
     void setRootStateNode(PassOwnPtr<ScrollingStateScrollingNode> rootStateNode) { m_rootStateNode = rootStateNode; }
+    void removeNode(ScrollingStateNode*);
+    void didRemoveNode(ScrollingNodeID);
 
     PassOwnPtr<ScrollingStateTree> clone();
 
+    HashMap<ScrollingNodeID, ScrollingStateNode*> m_stateNodeMap;
     OwnPtr<ScrollingStateScrollingNode> m_rootStateNode;
     Vector<ScrollingNodeID> m_nodesRemovedSinceLastCommit;
     bool m_hasChangedProperties;
