@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google, Inc. All Rights Reserved.
+ * Copyright (C) 2013 Google, Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,9 +26,9 @@
 #ifndef HTMLToken_h
 #define HTMLToken_h
 
+#include "Attribute.h"
 #include "CompactHTMLToken.h"
 #include "HTMLTokenTypes.h"
-#include "MarkupTokenBase.h"
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -52,19 +52,109 @@ public:
     bool m_forceQuirks;
 };
 
-class HTMLToken : public MarkupTokenBase<HTMLTokenTypes> {
+static inline Attribute* findAttributeInVector(Vector<Attribute>& attributes, const QualifiedName& name)
+{
+    for (unsigned i = 0; i < attributes.size(); ++i) {
+        if (attributes.at(i).name().matches(name))
+            return &attributes.at(i);
+    }
+    return 0;
+}
+
+class HTMLToken {
+    WTF_MAKE_NONCOPYABLE(HTMLToken);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    void appendToName(UChar character)
+    typedef HTMLTokenTypes Type;
+
+    class Attribute {
+    public:
+        class Range {
+        public:
+            int m_start;
+            int m_end;
+        };
+
+        Range m_nameRange;
+        Range m_valueRange;
+        WTF::Vector<UChar, 32> m_name;
+        WTF::Vector<UChar, 32> m_value;
+    };
+
+    typedef WTF::Vector<Attribute, 10> AttributeList;
+    typedef WTF::Vector<UChar, 1024> DataVector;
+
+    HTMLToken() { clear(); }
+
+    void clear()
     {
-        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE);
-        MarkupTokenBase<HTMLTokenTypes>::appendToName(character);
+        m_type = Type::Uninitialized;
+        m_range.m_start = 0;
+        m_range.m_end = 0;
+        m_baseOffset = 0;
+        m_data.clear();
+        m_orAllData = 0;
+    }
+
+    bool isUninitialized() { return m_type == HTMLTokenTypes::Uninitialized; }
+    HTMLTokenTypes::Type type() const { return m_type; }
+
+    void makeEndOfFile()
+    {
+        ASSERT(m_type == HTMLTokenTypes::Uninitialized);
+        m_type = HTMLTokenTypes::EndOfFile;
+    }
+
+    /* Range and offset methods exposed for HTMLSourceTracker and HTMLViewSourceParser */
+    int startIndex() const { return m_range.m_start; }
+    int endIndex() const { return m_range.m_end; }
+
+    void setBaseOffset(int offset)
+    {
+        m_baseOffset = offset;
+    }
+
+    void end(int endOffset)
+    {
+        m_range.m_end = endOffset - m_baseOffset;
+    }
+
+    const DataVector& data() const
+    {
+        ASSERT(m_type == HTMLTokenTypes::Character || m_type == HTMLTokenTypes::Comment || m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        return m_data;
+    }
+
+    bool isAll8BitData() const
+    {
+        return (m_orAllData <= 0xff);
     }
 
     const DataVector& name() const
     {
         ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE);
-        return MarkupTokenBase<HTMLTokenTypes>::name();
+        return m_data;
     }
+
+    void appendToName(UChar character)
+    {
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE);
+        ASSERT(character);
+        m_data.append(character);
+        m_orAllData |= character;
+    }
+
+    // FIXME: Rename this to copyNameAsString().
+    String nameString() const
+    {
+        if (!m_data.size())
+            return emptyString();
+        if (isAll8BitData())
+            return String::make8BitFrom16BitSource(m_data.data(), m_data.size());
+        return String(m_data.data(), m_data.size());
+    }
+
+    /* DOCTYPE Tokens */
 
     bool forceQuirks() const
     {
@@ -142,7 +232,210 @@ public:
         return m_doctypeData.release();
     }
 
+    /* Start/End Tag Tokens */
+
+    bool selfClosing() const
+    {
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        return m_selfClosing;
+    }
+
+    void setSelfClosing()
+    {
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        m_selfClosing = true;
+    }
+
+    void beginStartTag(UChar character)
+    {
+        ASSERT(character);
+        ASSERT(m_type == HTMLTokenTypes::Uninitialized);
+        m_type = HTMLTokenTypes::StartTag;
+        m_selfClosing = false;
+        m_currentAttribute = 0;
+        m_attributes.clear();
+
+        m_data.append(character);
+        m_orAllData |= character;
+    }
+
+    void beginEndTag(LChar character)
+    {
+        ASSERT(m_type == HTMLTokenTypes::Uninitialized);
+        m_type = HTMLTokenTypes::EndTag;
+        m_selfClosing = false;
+        m_currentAttribute = 0;
+        m_attributes.clear();
+
+        m_data.append(character);
+    }
+
+    void beginEndTag(const Vector<LChar, 32>& characters)
+    {
+        ASSERT(m_type == HTMLTokenTypes::Uninitialized);
+        m_type = HTMLTokenTypes::EndTag;
+        m_selfClosing = false;
+        m_currentAttribute = 0;
+        m_attributes.clear();
+
+        m_data.appendVector(characters);
+    }
+
+    void addNewAttribute()
+    {
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        m_attributes.grow(m_attributes.size() + 1);
+        m_currentAttribute = &m_attributes.last();
+#ifndef NDEBUG
+        m_currentAttribute->m_nameRange.m_start = 0;
+        m_currentAttribute->m_nameRange.m_end = 0;
+        m_currentAttribute->m_valueRange.m_start = 0;
+        m_currentAttribute->m_valueRange.m_end = 0;
+#endif
+    }
+
+    void beginAttributeName(int offset)
+    {
+        m_currentAttribute->m_nameRange.m_start = offset - m_baseOffset;
+    }
+
+    void endAttributeName(int offset)
+    {
+        int index = offset - m_baseOffset;
+        m_currentAttribute->m_nameRange.m_end = index;
+        m_currentAttribute->m_valueRange.m_start = index;
+        m_currentAttribute->m_valueRange.m_end = index;
+    }
+
+    void beginAttributeValue(int offset)
+    {
+        m_currentAttribute->m_valueRange.m_start = offset - m_baseOffset;
+#ifndef NDEBUG
+        m_currentAttribute->m_valueRange.m_end = 0;
+#endif
+    }
+
+    void endAttributeValue(int offset)
+    {
+        m_currentAttribute->m_valueRange.m_end = offset - m_baseOffset;
+    }
+
+    void appendToAttributeName(UChar character)
+    {
+        ASSERT(character);
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        // FIXME: We should be able to add the following ASSERT once we fix
+        // https://bugs.webkit.org/show_bug.cgi?id=62971
+        //   ASSERT(m_currentAttribute->m_nameRange.m_start);
+        m_currentAttribute->m_name.append(character);
+    }
+
+    void appendToAttributeValue(UChar character)
+    {
+        ASSERT(character);
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        ASSERT(m_currentAttribute->m_valueRange.m_start);
+        m_currentAttribute->m_value.append(character);
+    }
+
+    void appendToAttributeValue(size_t i, const String& value)
+    {
+        ASSERT(!value.isEmpty());
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        m_attributes[i].m_value.append(value.characters(), value.length());
+    }
+
+    const AttributeList& attributes() const
+    {
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        return m_attributes;
+    }
+
+    // Used by the XSSAuditor to nuke XSS-laden attributes.
+    void eraseValueOfAttribute(size_t i)
+    {
+        ASSERT(m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag);
+        m_attributes[i].m_value.clear();
+    }
+
+    /* Character Tokens */
+
+    // Starting a character token works slightly differently than starting
+    // other types of tokens because we want to save a per-character branch.
+    void ensureIsCharacterToken()
+    {
+        ASSERT(m_type == HTMLTokenTypes::Uninitialized || m_type == HTMLTokenTypes::Character);
+        m_type = HTMLTokenTypes::Character;
+    }
+
+    const DataVector& characters() const
+    {
+        ASSERT(m_type == HTMLTokenTypes::Character);
+        return m_data;
+    }
+
+    void appendToCharacter(char character)
+    {
+        ASSERT(m_type == HTMLTokenTypes::Character);
+        m_data.append(character);
+    }
+
+    void appendToCharacter(UChar character)
+    {
+        ASSERT(m_type == HTMLTokenTypes::Character);
+        m_data.append(character);
+        m_orAllData |= character;
+    }
+
+    void appendToCharacter(const Vector<LChar, 32>& characters)
+    {
+        ASSERT(m_type == HTMLTokenTypes::Character);
+        m_data.appendVector(characters);
+    }
+
+    /* Comment Tokens */
+
+    const DataVector& comment() const
+    {
+        ASSERT(m_type == HTMLTokenTypes::Comment);
+        return m_data;
+    }
+
+    void beginComment()
+    {
+        ASSERT(m_type == HTMLTokenTypes::Uninitialized);
+        m_type = HTMLTokenTypes::Comment;
+    }
+
+    void appendToComment(UChar character)
+    {
+        ASSERT(character);
+        ASSERT(m_type == HTMLTokenTypes::Comment);
+        m_data.append(character);
+        m_orAllData |= character;
+    }
+
+    void eraseCharacters()
+    {
+        ASSERT(m_type == HTMLTokenTypes::Character);
+        m_data.clear();
+        m_orAllData = 0;
+    }
+
 private:
+    HTMLTokenTypes::Type m_type;
+    Attribute::Range m_range; // Always starts at zero.
+    int m_baseOffset;
+    DataVector m_data;
+    UChar m_orAllData;
+
+    // For StartTag and EndTag
+    bool m_selfClosing;
+    AttributeList m_attributes;
+
+    // A pointer into m_attributes used during lexing.
+    Attribute* m_currentAttribute;
+
     // For DOCTYPE
     OwnPtr<DoctypeData> m_doctypeData;
 };

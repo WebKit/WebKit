@@ -26,9 +26,6 @@
 #ifndef HTMLTokenTypes_h
 #define HTMLTokenTypes_h
 
-#include "MarkupTokenBase.h"
-#include <wtf/Noncopyable.h>
-
 namespace WebCore {
 
 class HTMLTokenTypes {

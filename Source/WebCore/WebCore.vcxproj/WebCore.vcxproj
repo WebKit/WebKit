@@ -7513,7 +7513,6 @@
     <ClInclude Include="..\xml\XSLTExtensions.h" />
     <ClInclude Include="..\xml\XSLTProcessor.h" />
     <ClInclude Include="..\xml\XSLTUnicodeSort.h" />
-    <ClInclude Include="..\xml\parser\MarkupTokenBase.h" />
     <ClInclude Include="..\xml\parser\MarkupTokenizerBase.h" />
     <ClInclude Include="..\xml\parser\MarkupTokenizerInlines.h" />
     <ClInclude Include="..\xml\parser\XMLDocumentParser.h" />

@@ -28,6 +28,7 @@
 
 #include "HTMLToken.h"
 #include "HTTPParsers.h"
+#include "KURL.h"
 #include "SuffixTree.h"
 #include "TextEncoding.h"
 #include <wtf/PassOwnPtr.h>
