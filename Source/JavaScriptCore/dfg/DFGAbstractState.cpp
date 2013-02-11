@@ -2010,7 +2010,7 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
     case Jump: {
         ASSERT(basicBlock->cfaBranchDirection == InvalidBranchDirection);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("        Merging to block #%u.\n", terminal.takenBlockIndex());
+        dataLogF("        Merging to block #%u.\n", terminal->takenBlockIndex());
 #endif
         return merge(basicBlock, graph.m_blocks[terminal->takenBlockIndex()].get());
     }
@@ -2024,7 +2024,7 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
         if (basicBlock->cfaBranchDirection != TakeFalse)
             changed |= merge(basicBlock, graph.m_blocks[terminal->takenBlockIndex()].get());
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("        Merging to block #%u.\n", terminal.notTakenBlockIndex());
+        dataLogF("        Merging to block #%u.\n", terminal->notTakenBlockIndex());
 #endif
         if (basicBlock->cfaBranchDirection != TakeTrue)
             changed |= merge(basicBlock, graph.m_blocks[terminal->notTakenBlockIndex()].get());

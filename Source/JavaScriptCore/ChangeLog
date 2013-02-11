@@ -1,3 +1,22 @@
+2013-02-11  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        JSC build failing with verbose debug mode
+        https://bugs.webkit.org/show_bug.cgi?id=109441
+
+        Reviewed by Darin Adler.
+
+        Fixing some verbose messages which caused build errors.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::mergeToSuccessors):
+        * dfg/DFGCFAPhase.cpp:
+        (JSC::DFG::CFAPhase::performBlockCFA):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::eliminate):
+        * dfg/DFGPredictionInjectionPhase.cpp:
+        (JSC::DFG::PredictionInjectionPhase::run):
+
 2013-02-10  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the GTK+ gyp build

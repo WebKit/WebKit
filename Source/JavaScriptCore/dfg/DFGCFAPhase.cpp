@@ -92,7 +92,7 @@ private:
             if (!node->shouldGenerate())
                 continue;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-            dataLogF("      %s @%u: ", Graph::opName(m_graph[nodeIndex].op()), node->index());
+            dataLogF("      %s @%u: ", Graph::opName(node->op()), node->index());
             m_state.dump(WTF::dataFile());
             dataLogF("\n");
 #endif

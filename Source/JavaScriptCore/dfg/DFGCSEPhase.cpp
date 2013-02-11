@@ -1006,7 +1006,7 @@ private:
             return false;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("   Replacing @%u -> @%u", m_compileNode->index(), replacement->index());
+        dataLogF("   Replacing @%u -> @%u", m_currentNode->index(), replacement->index());
 #endif
         
         m_currentNode->setOpAndDefaultFlags(Phantom);
@@ -1024,7 +1024,7 @@ private:
     void eliminate()
     {
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
-        dataLogF("   Eliminating @%u", m_compileIndex);
+        dataLogF("   Eliminating @%u", m_currentNode->index());
 #endif
         
         ASSERT(m_currentNode->refCount() == 1);
