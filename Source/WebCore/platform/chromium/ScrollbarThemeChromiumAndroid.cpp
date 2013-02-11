@@ -37,8 +37,8 @@ using namespace std;
 
 namespace WebCore {
 
-static const int scrollbarWidth = 8;
-static const int scrollbarMargin = 5;
+static const int scrollbarWidth = 3;
+static const int scrollbarMargin = 4;
 
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
@@ -104,37 +104,6 @@ IntRect ScrollbarThemeChromiumAndroid::trackRect(ScrollbarThemeClient* scrollbar
     return rect;
 }
 
-static void fillSmoothEdgedRect(GraphicsContext* context, const IntRect& rect, const Color& color)
-{
-    Color halfColor(color.red(), color.green(), color.blue(), color.alpha() / 2);
-
-    IntRect topRect = rect;
-    topRect.inflateX(-1);
-    topRect.setHeight(1);
-    context->fillRect(topRect, halfColor, ColorSpaceDeviceRGB);
-
-    IntRect leftRect = rect;
-    leftRect.inflateY(-1);
-    leftRect.setWidth(1);
-    context->fillRect(leftRect, halfColor, ColorSpaceDeviceRGB);
-
-    IntRect centerRect = rect;
-    centerRect.inflate(-1);
-    context->fillRect(centerRect, color, ColorSpaceDeviceRGB);
-
-    IntRect rightRect = rect;
-    rightRect.inflateY(-1);
-    rightRect.setX(centerRect.maxX());
-    rightRect.setWidth(1);
-    context->fillRect(rightRect, halfColor, ColorSpaceDeviceRGB);
-
-    IntRect bottomRect = rect;
-    bottomRect.inflateX(-1);
-    bottomRect.setY(centerRect.maxY());
-    bottomRect.setHeight(1);
-    context->fillRect(bottomRect, halfColor, ColorSpaceDeviceRGB);
-}
-
 void ScrollbarThemeChromiumAndroid::paintThumb(GraphicsContext* context, ScrollbarThemeClient* scrollbar, const IntRect& rect)
 {
     IntRect thumbRect = rect;
@@ -142,7 +111,7 @@ void ScrollbarThemeChromiumAndroid::paintThumb(GraphicsContext* context, Scrollb
         thumbRect.setHeight(thumbRect.height() - scrollbarMargin);
     else
         thumbRect.setWidth(thumbRect.width() - scrollbarMargin);
-    fillSmoothEdgedRect(context, thumbRect, Color(128, 128, 128, 128));
+    context->fillRect(thumbRect, Color(128, 128, 128, 128), ColorSpaceDeviceRGB);
 }
 
 } // namespace WebCore
