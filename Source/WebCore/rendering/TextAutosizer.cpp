@@ -37,6 +37,7 @@
 
 #include <algorithm>
 #include <wtf/StdLibExtras.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -47,6 +48,7 @@ struct TextAutosizingWindowInfo {
     IntSize minLayoutSize;
 };
 
+// Represents cluster related data. Instances should not persist between calls to processSubtree.
 struct TextAutosizingClusterInfo {
     explicit TextAutosizingClusterInfo(RenderBlock* root)
         : root(root)
@@ -61,6 +63,10 @@ struct TextAutosizingClusterInfo {
     // Upper limit on the difference between the width of the cluster's block containing all
     // text and that of a narrow child before the child becomes a separate cluster.
     float maxAllowedDifferenceFromTextWidth;
+
+    // Descendants of the cluster that are narrower than the block containing all text and must be
+    // processed together.
+    Vector<TextAutosizingClusterInfo> narrowDescendants;
 };
 
 
@@ -150,6 +156,12 @@ void TextAutosizer::processCluster(TextAutosizingClusterInfo& clusterInfo, Rende
     }
 
     processContainer(multiplier, container, clusterInfo, subtreeRoot, windowInfo);
+
+    Vector<TextAutosizingClusterInfo>& narrowDescendants = clusterInfo.narrowDescendants;
+    for (size_t i = 0; i < narrowDescendants.size(); ++i) {
+        TextAutosizingClusterInfo& descendantClusterInfo = narrowDescendants[i];
+        processCluster(descendantClusterInfo, descendantClusterInfo.root, descendantClusterInfo.root, windowInfo);
+    }
 }
 
 void TextAutosizer::processContainer(float multiplier, RenderBlock* container, TextAutosizingClusterInfo& clusterInfo, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
@@ -168,9 +180,13 @@ void TextAutosizer::processContainer(float multiplier, RenderBlock* container, T
             // FIXME: Increase list marker size proportionately.
         } else if (isAutosizingContainer(descendant)) {
             RenderBlock* descendantBlock = toRenderBlock(descendant);
-            if (isAutosizingCluster(descendantBlock, clusterInfo)) {
-                TextAutosizingClusterInfo descendantClusterInfo(descendantBlock);
+            TextAutosizingClusterInfo descendantClusterInfo(descendantBlock);
+            if (isWiderDescendant(descendantBlock, clusterInfo) || isIndependentDescendant(descendantBlock))
                 processCluster(descendantClusterInfo, descendantBlock, descendantBlock, windowInfo);
+            else if (isNarrowDescendant(descendantBlock, clusterInfo)) {
+                // Narrow descendants are processed together later to be able to apply the same multiplier
+                // to each of them if necessary.
+                clusterInfo.narrowDescendants.append(descendantClusterInfo);
             } else
                 processContainer(multiplier, descendantBlock, clusterInfo, descendantBlock, windowInfo);
         }
