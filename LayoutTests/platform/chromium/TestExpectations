@@ -1076,8 +1076,6 @@ webkit.org/b/82894 [ Debug ] inspector/profiler/heap-snapshot-inspect-dom-wrappe
 webkit.org/b/60109 [ Win Linux Mac Release ] inspector/elements/edit-dom-actions.html [ Pass Slow ]
 webkit.org/b/60109 [ Win Mac Debug ] inspector/elements/edit-dom-actions.html [ Skip ]
 
-webkit.org/b/109391 fast/frames/seamless/seamless-inherited-origin.html [ Failure ]
-
 webkit.org/b/90488 [ Mac Debug ] inspector/elements/edit-style-attribute.html [ Pass Timeout ]
 
 webkit.org/b/74654 http/tests/inspector/network/network-worker.html
@@ -4357,7 +4355,6 @@ webkit.org/b/108912 inspector-protocol/heap-profiler/heap-snapshot-with-detached
 webkit.org/b/109283 [ MountainLion ] fast/regions/selecting-text-through-different-region-flows.html [ ImageOnlyFailure ]
 
 webkit.org/b/109262 [ Debug SnowLeopard ] fast/table/table-cell-before-after-content-around-table-row.html [ Crash Pass ]
-webkit.org/b/109376 [ Debug ] fast/frames/seamless/seamless-inherited-origin.html [ Failure ]
 webkit.org/b/109312 [ Win ] fast/canvas/canvas-drawImage-shadow.html [ Pass Failure ]
 webkit.org/b/109312 [ Win ] platform/chromium/virtual/gpu/fast/canvas/canvas-drawImage-shadow.html [ Pass Failure ]
 
