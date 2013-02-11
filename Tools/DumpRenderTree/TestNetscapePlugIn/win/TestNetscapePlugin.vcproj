@@ -390,10 +390,6 @@
 			Name="Tests"
 			>
 			<File
-				RelativePath=".\CallJSThatDestroysPlugin.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\Tests\DocumentOpenInDestroyStream.cpp"
 				>
 			</File>
@@ -436,7 +432,7 @@
 			<File
 				RelativePath="..\Tests\NPRuntimeCallsWithNullNPP.cpp"
 				>
-			</File>            
+			</File>
 			<File
 				RelativePath="..\Tests\NPRuntimeObjectFromDestroyedPlugin.cpp"
 				>
@@ -468,6 +464,10 @@
 			<Filter
 				Name="win"
 				>
+				<File
+					RelativePath="..\Tests\win\CallJSThatDestroysPlugin.cpp"
+					>
+				</File>
 				<File
 					RelativePath="..\Tests\win\DrawsGradient.cpp"
 					>

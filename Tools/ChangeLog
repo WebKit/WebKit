@@ -1,3 +1,9 @@
+2013-02-11  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Windows 7 Debug mode build fix.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+
 2013-02-11  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] Set mouse document position for mouse event in DRT.
