@@ -44,7 +44,7 @@ v8::Handle<v8::Object> wrap(SVGDocument* impl, v8::Handle<v8::Object> creationCo
     v8::Handle<v8::Object> wrapper = V8SVGDocument::createWrapper(impl, creationContext, isolate);
     if (wrapper.IsEmpty())
         return wrapper;
-    if (!worldForEnteredContextIfIsolated()) {
+    if (!worldForEnteredContext()) {
         if (Frame* frame = impl->frame())
             frame->script()->windowShell(mainThreadNormalWorld())->updateDocumentWrapper(wrapper);
     }

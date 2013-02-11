@@ -63,7 +63,7 @@ WorldContextHandle::WorldContextHandle(WorldToUse worldToUse)
     }
 #endif
 
-    if (DOMWrapperWorld::isolated(context)) {
+    if (DOMWrapperWorld::getWorld(context)) {
         m_context = SharedPersistent<v8::Context>::create(context);
         return;
     }

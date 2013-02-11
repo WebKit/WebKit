@@ -437,13 +437,12 @@ namespace WebCore {
     // a context, if the window is currently being displayed in the Frame.
     Frame* toFrameIfNotDetached(v8::Handle<v8::Context>);
 
-    // FIXME: Rename this method to worldForEnteredContext().
-    inline DOMWrapperWorld* worldForEnteredContextIfIsolated()
+    inline DOMWrapperWorld* worldForEnteredContext()
     {
         v8::Handle<v8::Context> context = v8::Context::GetEntered();
         if (context.IsEmpty())
             return 0;
-        return DOMWrapperWorld::isolated(context);
+        return DOMWrapperWorld::getWorld(context);
     }
 
     // This is a slightly different version of worldForEnteredContext().
