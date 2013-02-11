@@ -92,6 +92,7 @@
 
 .webkit-whitespace::before {
     position: absolute;
+    pointer-events: none;
     color: rgb(175, 175, 175);
 }
 
