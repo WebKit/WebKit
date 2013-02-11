@@ -12612,6 +12612,9 @@
     <ClInclude Include="..\html\parser\HTMLViewSourceParser.h">
       <Filter>html\parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\parser\InputStreamPreprocessor.h">
+      <Filter>html\parser</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\parser\NestingLevelIncrementer.h">
       <Filter>html\parser</Filter>
     </ClInclude>

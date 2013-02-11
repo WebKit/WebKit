@@ -7953,6 +7953,7 @@
     <ClInclude Include="..\html\parser\HTMLTokenTypes.h" />
     <ClInclude Include="..\html\parser\HTMLTreeBuilder.h" />
     <ClInclude Include="..\html\parser\HTMLViewSourceParser.h" />
+    <ClInclude Include="..\html\parser\InputStreamPreprocessor.h" />
     <ClInclude Include="..\html\parser\NestingLevelIncrementer.h" />
     <ClInclude Include="..\html\parser\TextDocumentParser.h" />
     <ClInclude Include="..\html\parser\TextViewSourceParser.h" />

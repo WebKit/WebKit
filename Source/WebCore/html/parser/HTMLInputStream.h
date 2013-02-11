@@ -26,6 +26,7 @@
 #ifndef HTMLInputStream_h
 #define HTMLInputStream_h
 
+#include "InputStreamPreprocessor.h"
 #include "SegmentedString.h"
 
 namespace WebCore {
@@ -72,10 +73,7 @@ public:
 
     void markEndOfFile()
     {
-        // FIXME: This should use InputStreamPreprocessor::endOfFileMarker
-        // once InputStreamPreprocessor is split off into its own header.
-        static const LChar endOfFileMarker = 0;
-        m_last->append(SegmentedString(String(&endOfFileMarker, 1)));
+        m_last->append(SegmentedString(String(&kEndOfFileMarker, 1)));
         m_last->close();
     }
 

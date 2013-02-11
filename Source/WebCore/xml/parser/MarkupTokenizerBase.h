@@ -28,8 +28,7 @@
 #ifndef MarkupTokenizerBase_h
 #define MarkupTokenizerBase_h
 
-#include "SegmentedString.h"
-#include <wtf/Noncopyable.h>
+#include "InputStreamPreprocessor.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/AtomicString.h>
@@ -55,102 +54,11 @@ public:
     inline bool shouldSkipNullCharacters() const;
 
 protected:
-    // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
-    class InputStreamPreprocessor {
-        WTF_MAKE_NONCOPYABLE(InputStreamPreprocessor);
-    public:
-        InputStreamPreprocessor(MarkupTokenizerBase<Token, State>* tokenizer)
-            : m_tokenizer(tokenizer)
-        {
-            reset();
-        }
-
-        ALWAYS_INLINE UChar nextInputCharacter() const { return m_nextInputCharacter; }
-
-        // Returns whether we succeeded in peeking at the next character.
-        // The only way we can fail to peek is if there are no more
-        // characters in |source| (after collapsing \r\n, etc).
-        ALWAYS_INLINE bool peek(SegmentedString& source)
-        {
-        PeekAgain:
-            m_nextInputCharacter = source.currentChar();
-
-            // Every branch in this function is expensive, so we have a
-            // fast-reject branch for characters that don't require special
-            // handling. Please run the parser benchmark whenever you touch
-            // this function. It's very hot.
-            static const UChar specialCharacterMask = '\n' | '\r' | '\0';
-            if (m_nextInputCharacter & ~specialCharacterMask) {
-                m_skipNextNewLine = false;
-                return true;
-            }
-
-            if (m_nextInputCharacter == '\n' && m_skipNextNewLine) {
-                m_skipNextNewLine = false;
-                source.advancePastNewlineAndUpdateLineNumber();
-                if (source.isEmpty())
-                    return false;
-                m_nextInputCharacter = source.currentChar();
-            }
-            if (m_nextInputCharacter == '\r') {
-                m_nextInputCharacter = '\n';
-                m_skipNextNewLine = true;
-            } else {
-                m_skipNextNewLine = false;
-                // FIXME: The spec indicates that the surrogate pair range as well as
-                // a number of specific character values are parse errors and should be replaced
-                // by the replacement character. We suspect this is a problem with the spec as doing
-                // that filtering breaks surrogate pair handling and causes us not to match Minefield.
-                if (m_nextInputCharacter == '\0' && !shouldTreatNullAsEndOfFileMarker(source)) {
-                    if (m_tokenizer->shouldSkipNullCharacters()) {
-                        source.advancePastNonNewline();
-                        if (source.isEmpty())
-                            return false;
-                        goto PeekAgain;
-                    }
-                    m_nextInputCharacter = 0xFFFD;
-                }
-            }
-            return true;
-        }
-
-        // Returns whether there are more characters in |source| after advancing.
-        ALWAYS_INLINE bool advance(SegmentedString& source)
-        {
-            source.advanceAndUpdateLineNumber();
-            if (source.isEmpty())
-                return false;
-            return peek(source);
-        }
-
-        bool skipNextNewLine() const { return m_skipNextNewLine; }
-
-        void reset(bool skipNextNewLine = false)
-        {
-            m_nextInputCharacter = '\0';
-            m_skipNextNewLine = skipNextNewLine;
-        }
-
-        static const UChar endOfFileMarker = 0;
-
-    private:
-        bool shouldTreatNullAsEndOfFileMarker(SegmentedString& source) const
-        {
-            return source.isClosed() && source.length() == 1;
-        }
-
-        MarkupTokenizerBase<Token, State>* m_tokenizer;
-
-        // http://www.whatwg.org/specs/web-apps/current-work/#next-input-character
-        UChar m_nextInputCharacter;
-        bool m_skipNextNewLine;
-    };
-
     MarkupTokenizerBase() : m_inputStreamPreprocessor(this) { reset(); }
 
     inline void bufferCharacter(UChar character)
     {
-        ASSERT(character != InputStreamPreprocessor::endOfFileMarker);
+        ASSERT(character != kEndOfFileMarker);
         m_token->ensureIsCharacterToken();
         m_token->appendToCharacter(character);
     }
@@ -206,7 +114,7 @@ protected:
     UChar m_additionalAllowedCharacter;
 
     // http://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
-    InputStreamPreprocessor m_inputStreamPreprocessor;
+    InputStreamPreprocessor<MarkupTokenizerBase<Token, State> > m_inputStreamPreprocessor;
 };
 
 }

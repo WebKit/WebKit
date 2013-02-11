@@ -33,9 +33,9 @@
 
 #if ENABLE(VIDEO_TRACK)
 
-#include "MarkupTokenizerBase.h"
-#include "SegmentedString.h"
+#include "InputStreamPreprocessor.h"
 #include "WebVTTToken.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -54,20 +54,62 @@ public:
     };
 };
 
-class WebVTTTokenizer : MarkupTokenizerBase<WebVTTToken, WebVTTTokenizerState> {
+class WebVTTTokenizer {
     WTF_MAKE_NONCOPYABLE(WebVTTTokenizer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
     static PassOwnPtr<WebVTTTokenizer> create() { return adoptPtr(new WebVTTTokenizer); }
 
+    typedef WebVTTTokenizerState State;
+
     void reset();
     
     bool nextToken(SegmentedString&, WebVTTToken&);
 
+    inline bool haveBufferedCharacterToken()
+    {
+        return m_token->type() == WebVTTToken::Type::Character;
+    }
+
+    inline void bufferCharacter(UChar character)
+    {
+        ASSERT(character != kEndOfFileMarker);
+        m_token->ensureIsCharacterToken();
+        m_token->appendToCharacter(character);
+    }
+
+    inline bool emitAndResumeIn(SegmentedString& source, State::State state)
+    {
+        m_state = state;
+        source.advanceAndUpdateLineNumber();
+        return true;
+    }
+
+    inline bool emitEndOfFile(SegmentedString& source)
+    {
+        if (haveBufferedCharacterToken())
+            return true;
+        m_state = State::DataState;
+        source.advanceAndUpdateLineNumber();
+        m_token->clear();
+        m_token->makeEndOfFile();
+        return true;
+    }
+
+    bool shouldSkipNullCharacters() const { return true; }
+
 private:
     WebVTTTokenizer();
-    
+
+    // m_token is owned by the caller. If nextToken is not on the stack,
+    // this member might be pointing to unallocated memory.
+    WebVTTToken* m_token;
+    WebVTTTokenizerState::State m_state;
+
     Vector<LChar, 32> m_buffer;
+
+    // ://www.whatwg.org/specs/web-apps/current-work/#preprocessing-the-input-stream
+    InputStreamPreprocessor<WebVTTTokenizer> m_inputStreamPreprocessor;
 };
 
 }

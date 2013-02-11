@@ -65010,6 +65010,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\InputStreamPreprocessor.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\NestingLevelIncrementer.h"
 					>
 				</File>

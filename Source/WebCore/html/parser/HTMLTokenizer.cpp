@@ -253,7 +253,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
                 return true;
             }
             HTML_ADVANCE_TO(TagOpenState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker)
+        } else if (cc == kEndOfFileMarker)
             return emitEndOfFile(source);
         else {
             bufferCharacter(cc);
@@ -274,7 +274,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             HTML_ADVANCE_TO(CharacterReferenceInRCDATAState);
         else if (cc == '<')
             HTML_ADVANCE_TO(RCDATALessThanSignState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker)
+        else if (cc == kEndOfFileMarker)
             return emitEndOfFile(source);
         else {
             bufferCharacter(cc);
@@ -293,7 +293,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     HTML_BEGIN_STATE(RAWTEXTState) {
         if (cc == '<')
             HTML_ADVANCE_TO(RAWTEXTLessThanSignState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker)
+        else if (cc == kEndOfFileMarker)
             return emitEndOfFile(source);
         else {
             bufferCharacter(cc);
@@ -305,7 +305,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     HTML_BEGIN_STATE(ScriptDataState) {
         if (cc == '<')
             HTML_ADVANCE_TO(ScriptDataLessThanSignState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker)
+        else if (cc == kEndOfFileMarker)
             return emitEndOfFile(source);
         else {
             bufferCharacter(cc);
@@ -315,10 +315,9 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     END_STATE()
 
     HTML_BEGIN_STATE(PLAINTEXTState) {
-        if (cc == InputStreamPreprocessor::endOfFileMarker)
+        if (cc == kEndOfFileMarker)
             return emitEndOfFile(source);
-        else
-            bufferCharacter(cc);
+        bufferCharacter(cc);
         HTML_ADVANCE_TO(PLAINTEXTState);
     }
     END_STATE()
@@ -360,7 +359,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '>') {
             parseError();
             HTML_ADVANCE_TO(DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             bufferCharacter('<');
             bufferCharacter('/');
@@ -384,7 +383,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         else if (isASCIIUpper(cc)) {
             m_token->appendToName(toLowerCase(cc));
             HTML_ADVANCE_TO(TagNameState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -617,7 +616,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             HTML_ADVANCE_TO(ScriptDataEscapedDashState);
         } else if (cc == '<')
             HTML_ADVANCE_TO(ScriptDataEscapedLessThanSignState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -633,7 +632,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             HTML_ADVANCE_TO(ScriptDataEscapedDashDashState);
         } else if (cc == '<')
             HTML_ADVANCE_TO(ScriptDataEscapedLessThanSignState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -652,7 +651,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         else if (cc == '>') {
             bufferCharacter(cc);
             HTML_ADVANCE_TO(ScriptDataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -766,7 +765,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '<') {
             bufferCharacter(cc);
             HTML_ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -783,7 +782,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '<') {
             bufferCharacter(cc);
             HTML_ADVANCE_TO(ScriptDataDoubleEscapedLessThanSignState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -803,7 +802,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '>') {
             bufferCharacter(cc);
             HTML_ADVANCE_TO(ScriptDataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -857,7 +856,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             m_token->beginAttributeName(source.numberOfCharactersConsumed());
             m_token->appendToAttributeName(toLowerCase(cc));
             HTML_ADVANCE_TO(AttributeNameState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -890,7 +889,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (isASCIIUpper(cc)) {
             m_token->appendToAttributeName(toLowerCase(cc));
             HTML_ADVANCE_TO(AttributeNameState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->endAttributeName(source.numberOfCharactersConsumed());
             HTML_RECONSUME_IN(DataState);
@@ -919,7 +918,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             m_token->beginAttributeName(source.numberOfCharactersConsumed());
             m_token->appendToAttributeName(toLowerCase(cc));
             HTML_ADVANCE_TO(AttributeNameState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -948,7 +947,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '>') {
             parseError();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -968,7 +967,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '&') {
             m_additionalAllowedCharacter = '"';
             HTML_ADVANCE_TO(CharacterReferenceInAttributeValueState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->endAttributeValue(source.numberOfCharactersConsumed());
             HTML_RECONSUME_IN(DataState);
@@ -986,7 +985,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '&') {
             m_additionalAllowedCharacter = '\'';
             HTML_ADVANCE_TO(CharacterReferenceInAttributeValueState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->endAttributeValue(source.numberOfCharactersConsumed());
             HTML_RECONSUME_IN(DataState);
@@ -1007,7 +1006,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '>') {
             m_token->endAttributeValue(source.numberOfCharactersConsumed());
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->endAttributeValue(source.numberOfCharactersConsumed());
             HTML_RECONSUME_IN(DataState);
@@ -1057,7 +1056,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
         else if (m_options.usePreHTML5ParserQuirks && cc == '<')
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -1071,7 +1070,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         if (cc == '>') {
             m_token->setSelfClosing();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             HTML_RECONSUME_IN(DataState);
         } else {
@@ -1090,7 +1089,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     HTML_BEGIN_STATE(ContinueBogusCommentState) {
         if (cc == '>')
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker)
+        else if (cc == kEndOfFileMarker)
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
         else {
             m_token->appendToComment(cc);
@@ -1138,7 +1137,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         else if (cc == '>') {
             parseError();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
         } else {
@@ -1154,7 +1153,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         else if (cc == '>') {
             parseError();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
         } else {
@@ -1168,7 +1167,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     HTML_BEGIN_STATE(CommentState) {
         if (cc == '-')
             HTML_ADVANCE_TO(CommentEndDashState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
         } else {
@@ -1181,7 +1180,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     HTML_BEGIN_STATE(CommentEndDashState) {
         if (cc == '-')
             HTML_ADVANCE_TO(CommentEndState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
         } else {
@@ -1202,7 +1201,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->appendToComment('-');
             HTML_ADVANCE_TO(CommentEndState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
         } else {
@@ -1223,7 +1222,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             HTML_ADVANCE_TO(CommentEndDashState);
         } else if (cc == '>')
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
         } else {
@@ -1239,7 +1238,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     HTML_BEGIN_STATE(DOCTYPEState) {
         if (isTokenizerWhitespace(cc))
             HTML_ADVANCE_TO(BeforeDOCTYPENameState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->beginDOCTYPE();
             m_token->setForceQuirks();
@@ -1262,7 +1261,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             m_token->beginDOCTYPE();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->beginDOCTYPE();
             m_token->setForceQuirks();
@@ -1282,7 +1281,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         else if (isASCIIUpper(cc)) {
             m_token->appendToName(toLowerCase(cc));
             HTML_ADVANCE_TO(DOCTYPENameState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1298,7 +1297,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             HTML_ADVANCE_TO(AfterDOCTYPENameState);
         if (cc == '>')
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1342,7 +1341,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1367,7 +1366,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1386,7 +1385,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1404,7 +1403,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1428,7 +1427,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setSystemIdentifierToEmptyString();
             HTML_ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1451,7 +1450,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         } else if (cc == '\'') {
             m_token->setSystemIdentifierToEmptyString();
             HTML_ADVANCE_TO(DOCTYPESystemIdentifierSingleQuotedState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1478,7 +1477,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1503,7 +1502,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1522,7 +1521,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1540,7 +1539,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             parseError();
             m_token->setForceQuirks();
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        } else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        } else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1556,7 +1555,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
             HTML_ADVANCE_TO(AfterDOCTYPESystemIdentifierState);
         else if (cc == '>')
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker) {
+        else if (cc == kEndOfFileMarker) {
             parseError();
             m_token->setForceQuirks();
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
@@ -1570,7 +1569,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     HTML_BEGIN_STATE(BogusDOCTYPEState) {
         if (cc == '>')
             return emitAndResumeIn(source, HTMLTokenizerState::DataState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker)
+        else if (cc == kEndOfFileMarker)
             return emitAndReconsumeIn(source, HTMLTokenizerState::DataState);
         HTML_ADVANCE_TO(BogusDOCTYPEState);
     }
@@ -1579,7 +1578,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
     HTML_BEGIN_STATE(CDATASectionState) {
         if (cc == ']')
             HTML_ADVANCE_TO(CDATASectionRightSquareBracketState);
-        else if (cc == InputStreamPreprocessor::endOfFileMarker)
+        else if (cc == kEndOfFileMarker)
             HTML_RECONSUME_IN(DataState);
         else {
             bufferCharacter(cc);

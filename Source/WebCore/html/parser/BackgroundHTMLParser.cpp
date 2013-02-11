@@ -106,12 +106,8 @@ void BackgroundHTMLParser::forcePlaintextForTextDocument()
 
 void BackgroundHTMLParser::markEndOfFile()
 {
-    // FIXME: This should use InputStreamPreprocessor::endOfFileMarker
-    // once InputStreamPreprocessor is split off into its own header.
-    const LChar endOfFileMarker = 0;
-
     ASSERT(!m_input.current().isClosed());
-    m_input.append(String(&endOfFileMarker, 1));
+    m_input.append(String(&kEndOfFileMarker, 1));
     m_input.close();
 }
 
