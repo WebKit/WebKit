@@ -66,6 +66,10 @@ webkit.org/b/102651 [ Debug ] networkinformation/updates.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/add-listener-from-callback.html [ Crash ]
 webkit.org/b/102651 [ Debug ] networkinformation/basic-operation.html [ Crash ]
 
+# WebGL test cases crashing in WebCore::GraphicsContext3D::readPixels().
+webkit.org/b/109417 webgl/conformance/textures/texture-attachment-formats.html [ Crash ]
+webkit.org/b/109417 webgl/conformance/misc/type-conversion-test.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
