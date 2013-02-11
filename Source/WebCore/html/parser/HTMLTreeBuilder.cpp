@@ -969,11 +969,33 @@ void HTMLTreeBuilder::processTemplateEndTag(AtomicHTMLToken* token)
     m_templateInsertionModes.removeLast();
     resetInsertionModeAppropriately();
 }
+
+bool HTMLTreeBuilder::popAllTemplatesForEndOfFile()
+{
+    if (m_templateInsertionModes.isEmpty())
+        return false;
+
+    while (!m_templateInsertionModes.isEmpty()) {
+        if (m_tree.currentIsRootNode())
+            return false;
+        if (m_tree.currentNode()->hasTagName(templateTag))
+            m_templateInsertionModes.removeLast();
+        m_tree.openElements()->pop();
+    }
+
+    resetInsertionModeAppropriately();
+    return true;
+}
 #endif
 
 bool HTMLTreeBuilder::processColgroupEndTagForInColumnGroup()
 {
-    if (m_tree.currentIsRootNode() || m_tree.currentNode()->hasTagName(templateTag)) {
+    bool ignoreFakeEndTag = m_tree.currentIsRootNode();
+#if ENABLE(TEMPLATE_ELEMENT)
+    ignoreFakeEndTag = ignoreFakeEndTag || m_tree.currentNode()->hasTagName(templateTag);
+#endif
+
+    if (ignoreFakeEndTag) {
         ASSERT(isParsingFragmentOrTemplateContents());
         // FIXME: parse error
         return false;
@@ -2501,9 +2523,6 @@ void HTMLTreeBuilder::processCharacterBufferForInBody(ExternalCharacterTokenBuff
 void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
 {
     ASSERT(token->type() == HTMLTokenTypes::EndOfFile);
-#if ENABLE(TEMPLATE_ELEMENT)
-    m_templateInsertionModes.clear();
-#endif
     switch (insertionMode()) {
     case InitialMode:
         ASSERT(insertionMode() == InitialMode);
@@ -2536,6 +2555,12 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
         ASSERT(insertionMode() == InBodyMode || insertionMode() == InCellMode || insertionMode() == InCaptionMode || insertionMode() == InRowMode);
 #endif
         notImplemented(); // Emit parse error based on what elements are still open.
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (popAllTemplatesForEndOfFile()) {
+            processEndOfFile(token);
+            return;
+        }
+#endif
         break;
     case AfterBodyMode:
     case AfterAfterBodyMode:
@@ -2550,26 +2575,34 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
     case AfterAfterFramesetMode:
         ASSERT(insertionMode() == AfterFramesetMode || insertionMode() == AfterAfterFramesetMode);
         break;
-    case InFramesetMode:
-    case InTableMode:
-    case InTableBodyMode:
-    case InSelectInTableMode:
-    case InSelectMode:
-        ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode || insertionMode() == InTableMode || insertionMode() == InFramesetMode || insertionMode() == InTableBodyMode);
-        if (m_tree.currentNode() != m_tree.openElements()->rootNode())
-            parseError(token);
-        break;
     case InColumnGroupMode:
         if (m_tree.currentIsRootNode()) {
             ASSERT(isParsingFragment());
             return; // FIXME: Should we break here instead of returning?
         }
-        if (!processColgroupEndTagForInColumnGroup()) {
-            ASSERT(isParsingFragmentOrTemplateContents());
-            return; // FIXME: Should we break here instead of returning?
+#if ENABLE(TEMPLATE_ELEMENT)
+        ASSERT(m_tree.currentNode()->hasTagName(colgroupTag));
+#else
+        ASSERT(m_tree.currentNode()->hasTagName(colgroupTag) || m_tree.currentNode()->hasTagName(templateTag));
+#endif
+        processColgroupEndTagForInColumnGroup();
+        // Fall through
+    case InFramesetMode:
+    case InTableMode:
+    case InTableBodyMode:
+    case InSelectInTableMode:
+    case InSelectMode:
+        ASSERT(insertionMode() == InSelectMode || insertionMode() == InSelectInTableMode || insertionMode() == InTableMode || insertionMode() == InFramesetMode || insertionMode() == InTableBodyMode || insertionMode() == InColumnGroupMode);
+        if (m_tree.currentNode() != m_tree.openElements()->rootNode())
+            parseError(token);
+
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (popAllTemplatesForEndOfFile()) {
+            processEndOfFile(token);
+            return;
         }
-        processEndOfFile(token);
-        return;
+#endif
+        break;
     case InTableTextMode:
         defaultForInTableText();
         processEndOfFile(token);
@@ -2584,15 +2617,16 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken* token)
         processEndOfFile(token);
         return;
     case TemplateContentsMode:
-        if (m_tree.currentIsRootNode()) {
-            ASSERT(isParsingFragment());
-            break;
-        }
+#if ENABLE(TEMPLATE_ELEMENT)
         parseError(token);
-        m_tree.openElements()->pop();
-        resetInsertionModeAppropriately();
-        processEndOfFile(token);
-        return;
+        if (popAllTemplatesForEndOfFile()) {
+            processEndOfFile(token);
+            return;
+        }
+        break;
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }
     ASSERT(m_tree.currentNode());
     m_tree.openElements()->popAll();

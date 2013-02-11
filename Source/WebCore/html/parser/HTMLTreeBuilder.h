@@ -195,6 +195,7 @@ private:
 #if ENABLE(TEMPLATE_ELEMENT)
     void processTemplateStartTag(AtomicHTMLToken*);
     void processTemplateEndTag(AtomicHTMLToken*);
+    bool popAllTemplatesForEndOfFile();
 #endif
 
     class FragmentParsingContext {

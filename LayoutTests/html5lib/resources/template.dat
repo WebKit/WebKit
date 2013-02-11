@@ -983,3 +983,211 @@
 |           <tr>
 |             <td>
 |               "Foo"
+
+#data
+<template></figcaption><sub><table></table>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <sub>
+|           <table>
+|   <body>
+
+#data
+<template><template>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|   <body>
+
+#data
+<template><div>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <div>
+|   <body>
+
+#data
+<template><template><div>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <div>
+|   <body>
+
+#data
+<template><template><table>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <table>
+|   <body>
+
+#data
+<template><template><tbody>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <tbody>
+|   <body>
+
+#data
+<template><template><tr>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <tr>
+|   <body>
+
+#data
+<template><template><td>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <td>
+|   <body>
+
+#data
+<template><template><caption>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <caption>
+|   <body>
+
+#data
+<template><template><colgroup>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <colgroup>
+|   <body>
+
+#data
+<template><template><col>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <col>
+|   <body>
+
+#data
+<template><template><tbody><select>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <tbody>
+|             <select>
+|   <body>
+
+#data
+<template><template><table>Foo
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <table>
+|             "Foo"
+|   <body>
+
+#data
+<template><template><frame>
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <frame>
+|   <body>
+
+#data
+<template><template><script>var i
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <script>
+|               "var i"
+|   <body>
+
+#data
+<template><template><style>var i
+#errors
+#document
+| <html>
+|   <head>
+|     <template>
+|       #document-fragment
+|         <template>
+|           #document-fragment
+|             <style>
+|               "var i"
+|   <body>
