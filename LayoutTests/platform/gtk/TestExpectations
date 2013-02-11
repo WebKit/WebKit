@@ -322,6 +322,7 @@ webkit.org/b/99027 fast/css/image-set-parsing-invalid.html [ Pass ]
 webkit.org/b/99027 fast/css/image-set-setting.html [ Failure ]
 webkit.org/b/99027 fast/css/cursor-parsing-image-set.html [ Failure ]
 webkit.org/b/99027 fast/events/mouse-cursor-image-set.html [ Timeout ]
+webkit.org/b/99027 cssom/cssvalue-comparison.html [ Failure ]
 
 # For now, Web Audio API is disabled
 webkit.org/b/67187 webaudio [ Skip ]
