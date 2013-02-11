@@ -216,7 +216,8 @@
 #define WTF_ARM_ARCH_VERSION 6
 
 #elif defined(__ARM_ARCH_7A__) \
-    || defined(__ARM_ARCH_7R__)
+    || defined(__ARM_ARCH_7R__) \
+    || defined(__ARM_ARCH_7S__)
 #define WTF_ARM_ARCH_VERSION 7
 
 /* RVCT sets _TARGET_ARCH_ARM */
@@ -254,8 +255,9 @@
 #elif defined(__ARM_ARCH_6T2__) \
     || defined(__ARM_ARCH_7__) \
     || defined(__ARM_ARCH_7A__) \
+    || defined(__ARM_ARCH_7M__) \
     || defined(__ARM_ARCH_7R__) \
-    || defined(__ARM_ARCH_7M__)
+    || defined(__ARM_ARCH_7S__)
 #define WTF_THUMB_ARCH_VERSION 4
 
 /* RVCT sets __TARGET_ARCH_THUMB */
@@ -603,6 +605,8 @@
 
 #if PLATFORM(IOS)
 #define ENABLE_CONTEXT_MENUS 0
+#define ENABLE_DASHBOARD_SUPPORT 0
+#define ENABLE_DELETION_UI 0
 #define ENABLE_DRAG_SUPPORT 0
 #define ENABLE_GEOLOCATION 1
 #define ENABLE_ICONDATABASE 0
@@ -611,25 +615,15 @@
 #define ENABLE_ORIENTATION_EVENTS 1
 #define ENABLE_REPAINT_THROTTLING 1
 #define ENABLE_WEB_ARCHIVE 1
-#define ENABLE_DELETION_UI 0
+#define ENABLE_WEBGL 1
 #define HAVE_READLINE 1
+#define WTF_USE_APPKIT 0
 #define WTF_USE_CF 1
 #define WTF_USE_CFNETWORK 1
 #define WTF_USE_NETWORK_CFDATA_ARRAY_CALLBACK 1
-#define WTF_USE_WEB_THREAD 1
-
-#if PLATFORM(IOS_SIMULATOR)
-    #define ENABLE_JIT 0
-    #define ENABLE_YARR_JIT 0
-#else
-    #define ENABLE_JIT 1
-    #define ENABLE_LLINT 1
-    #define ENABLE_YARR_JIT 1
-#endif
-
-#define WTF_USE_APPKIT 0
 #define WTF_USE_SECURITY_FRAMEWORK 0
-#endif
+#define WTF_USE_WEB_THREAD 1
+#endif /* PLATFORM(IOS) */
 
 #if PLATFORM(WIN) && !OS(WINCE)
 #define WTF_USE_CF 1
@@ -720,11 +714,11 @@
 #if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
 
 #define HAVE_DISPATCH_H 1
-#define HAVE_HOSTED_CORE_ANIMATION 1
 #define HAVE_MADV_FREE 1
 #define HAVE_PTHREAD_SETNAME_NP 1
 
 #if !PLATFORM(IOS)
+#define HAVE_HOSTED_CORE_ANIMATION 1
 #define HAVE_MADV_FREE_REUSE 1
 #endif /* !PLATFORM(IOS) */
 
@@ -1136,7 +1130,7 @@
 #define WTF_USE_AVFOUNDATION 1
 #endif
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
+#if (PLATFORM(IOS) && __IPHONE_OS_VERSION_MIN_REQUIRED >= 60000) || (PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1080)
 #define WTF_USE_COREMEDIA 1
 #endif
 

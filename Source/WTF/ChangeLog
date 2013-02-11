@@ -1,3 +1,19 @@
+2013-02-11  David Kilzer  <ddkilzer@apple.com>
+
+        [iOS] Upstream changes to Platform.h
+        <http://webkit.org/b/109459>
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/Platform.h:
+        - Changes for armv7s.
+        - Add ENABLE() definitions for DASHBOARD_SUPPORT and WEBGL.
+        - Re-sort ENABLE() and USE() macros.
+        - Remove ENABLE() macros for JIT, LLINT and YARR_JIT to enable
+          on iOS Simulator.  They are already defined below.
+        - Turn off HAVE(HOSTED_CORE_ANIMATION) for iOS.
+        - Turn on USE(COREMEDIA) for iOS 6.0 and later.
+
 2013-02-08  Oliver Hunt  <oliver@apple.com>
 
         Harden FastMalloc (again)
