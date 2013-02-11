@@ -2810,16 +2810,15 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
     Node* originalEndContainer = searchRange->endContainer();
     int originalEndOffset = searchRange->endOffset();
 
-    ExceptionCode exception = 0;
     unsigned matchCount = 0;
     do {
         RefPtr<Range> resultRange(findPlainText(searchRange.get(), target, options & ~Backwards));
-        if (resultRange->collapsed(exception)) {
+        if (resultRange->collapsed(IGNORE_EXCEPTION)) {
             if (!resultRange->startContainer()->isInShadowTree())
                 break;
 
-            searchRange->setStartAfter(resultRange->startContainer()->shadowHost(), exception);
-            searchRange->setEnd(originalEndContainer, originalEndOffset, exception);
+            searchRange->setStartAfter(resultRange->startContainer()->shadowHost(), IGNORE_EXCEPTION);
+            searchRange->setEnd(originalEndContainer, originalEndOffset, IGNORE_EXCEPTION);
             continue;
         }
 
@@ -2838,11 +2837,11 @@ unsigned Editor::countMatchesForText(const String& target, Range* range, FindOpt
         // result range. There is no need to use a VisiblePosition here,
         // since findPlainText will use a TextIterator to go over the visible
         // text nodes. 
-        searchRange->setStart(resultRange->endContainer(exception), resultRange->endOffset(exception), exception);
+        searchRange->setStart(resultRange->endContainer(IGNORE_EXCEPTION), resultRange->endOffset(IGNORE_EXCEPTION), IGNORE_EXCEPTION);
 
         Node* shadowTreeRoot = searchRange->shadowRoot();
-        if (searchRange->collapsed(exception) && shadowTreeRoot)
-            searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), exception);
+        if (searchRange->collapsed(IGNORE_EXCEPTION) && shadowTreeRoot)
+            searchRange->setEnd(shadowTreeRoot, shadowTreeRoot->childNodeCount(), IGNORE_EXCEPTION);
     } while (true);
 
     if (markMatches || matches) {
