@@ -369,8 +369,10 @@ bool CSSValue::equals(const CSSValue& other) const
         case WebKitCSSSVGDocumentClass:
             return compareCSSValues<WebKitCSSSVGDocumentValue>(*this, other);
 #endif
+        default:
+            ASSERT_NOT_REACHED();
+            return false;
         }
-        ASSERT_NOT_REACHED();
     } else if (m_classType == ValueListClass && other.m_classType != ValueListClass)
         return static_cast<const CSSValueList*>(this)->equals(other);
     else if (m_classType != ValueListClass && other.m_classType == ValueListClass)
