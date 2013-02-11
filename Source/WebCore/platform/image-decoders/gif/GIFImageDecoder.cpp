@@ -87,8 +87,8 @@ size_t GIFImageDecoder::frameCount()
         GIFImageReader reader(0);
         reader.read((const unsigned char*)m_data->data(), m_data->size(), GIFFrameCountQuery, static_cast<unsigned>(-1));
         m_alreadyScannedThisDataForFrameCount = true;
-        m_frameBufferCache.resize(reader.images_count);
-        for (int i = 0; i < reader.images_count; ++i)
+        m_frameBufferCache.resize(reader.imagesCount());
+        for (int i = 0; i < reader.imagesCount(); ++i)
             m_frameBufferCache[i].setPremultiplyAlpha(m_premultiplyAlpha);
     }
 
@@ -116,8 +116,8 @@ int GIFImageDecoder::repetitionCount() const
     // should continue to treat it as a "loop once" animation.  We don't need
     // special code here either, because in this case we'll never change
     // |m_repetitionCount| from its default value.
-    if (m_reader && (m_reader->loop_count != cLoopCountNotSeen))
-        m_repetitionCount = m_reader->loop_count;
+    if (m_reader && (m_reader->loopCount() != cLoopCountNotSeen))
+        m_repetitionCount = m_reader->loopCount();
     return m_repetitionCount;
 }
 
@@ -198,29 +198,29 @@ void GIFImageDecoder::decodingHalted(unsigned bytesLeft)
 
 bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, unsigned repeatCount, bool writeTransparentPixels)
 {
-    const GIFFrameReader* frameReader = m_reader->frame_reader;
+    const GIFFrameContext* frameContext = m_reader->frameContext();
     // The pixel data and coordinates supplied to us are relative to the frame's
     // origin within the entire image size, i.e.
-    // (frameReader->x_offset, frameReader->y_offset).  There is no guarantee
-    // that (rowEnd - rowBuffer) == (size().width() - frameReader->x_offset), so
+    // (frameContext->xOffset, frameContext->yOffset). There is no guarantee
+    // that (rowEnd - rowBuffer) == (size().width() - frameContext->xOffset), so
     // we must ensure we don't run off the end of either the source data or the
     // row's X-coordinates.
-    int xBegin = upperBoundScaledX(frameReader->x_offset);
-    int yBegin = upperBoundScaledY(frameReader->y_offset + rowNumber);
-    int xEnd = lowerBoundScaledX(std::min(static_cast<int>(frameReader->x_offset + (rowEnd - rowBuffer)), size().width()) - 1, xBegin + 1) + 1;
-    int yEnd = lowerBoundScaledY(std::min(static_cast<int>(frameReader->y_offset + rowNumber + repeatCount), size().height()) - 1, yBegin + 1) + 1;
+    int xBegin = upperBoundScaledX(frameContext->xOffset);
+    int yBegin = upperBoundScaledY(frameContext->yOffset + rowNumber);
+    int xEnd = lowerBoundScaledX(std::min(static_cast<int>(frameContext->xOffset + (rowEnd - rowBuffer)), size().width()) - 1, xBegin + 1) + 1;
+    int yEnd = lowerBoundScaledY(std::min(static_cast<int>(frameContext->yOffset + rowNumber + repeatCount), size().height()) - 1, yBegin + 1) + 1;
     if (!rowBuffer || (xBegin < 0) || (yBegin < 0) || (xEnd <= xBegin) || (yEnd <= yBegin))
         return true;
 
     // Get the colormap.
     const unsigned char* colorMap;
     unsigned colorMapSize;
-    if (frameReader->is_local_colormap_defined) {
-        colorMap = frameReader->local_colormap;
-        colorMapSize = (unsigned)frameReader->local_colormap_size;
+    if (frameContext->isLocalColormapDefined) {
+        colorMap = frameContext->localColormap;
+        colorMapSize = (unsigned)frameContext->localColormapSize;
     } else {
-        colorMap = m_reader->global_colormap;
-        colorMapSize = m_reader->global_colormap_size;
+        colorMap = m_reader->globalColormap();
+        colorMapSize = m_reader->globalColormapSize();
     }
     if (!colorMap)
         return true;
@@ -233,8 +233,8 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuff
     ImageFrame::PixelData* currentAddress = buffer.getAddr(xBegin, yBegin);
     // Write one row's worth of data into the frame.  
     for (int x = xBegin; x < xEnd; ++x) {
-        const unsigned char sourceValue = *(rowBuffer + (m_scaled ? m_scaledColumns[x] : x) - frameReader->x_offset);
-        if ((!frameReader->is_transparent || (sourceValue != frameReader->tpixel)) && (sourceValue < colorMapSize)) {
+        const unsigned char sourceValue = *(rowBuffer + (m_scaled ? m_scaledColumns[x] : x) - frameContext->xOffset);
+        if ((!frameContext->isTransparent || (sourceValue != frameContext->tpixel)) && (sourceValue < colorMapSize)) {
             const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
             buffer.setRGBA(currentAddress, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);
         } else {
@@ -331,14 +331,14 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
 bool GIFImageDecoder::initFrameBuffer(unsigned frameIndex)
 {
     // Initialize the frame rect in our buffer.
-    const GIFFrameReader* frameReader = m_reader->frame_reader;
-    IntRect frameRect(frameReader->x_offset, frameReader->y_offset, frameReader->width, frameReader->height);
+    const GIFFrameContext* frameContext = m_reader->frameContext();
+    IntRect frameRect(frameContext->xOffset, frameContext->yOffset, frameContext->width, frameContext->height);
 
     // Make sure the frameRect doesn't extend outside the buffer.
     if (frameRect.maxX() > size().width())
-        frameRect.setWidth(size().width() - frameReader->x_offset);
+        frameRect.setWidth(size().width() - frameContext->xOffset);
     if (frameRect.maxY() > size().height())
-        frameRect.setHeight(size().height() - frameReader->y_offset);
+        frameRect.setHeight(size().height() - frameContext->yOffset);
 
     ImageFrame* const buffer = &m_frameBufferCache[frameIndex];
     int left = upperBoundScaledX(frameRect.x());
