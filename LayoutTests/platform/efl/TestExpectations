@@ -1806,6 +1806,9 @@ webkit.org/b/105535 inspector-protocol/nmi-webaudio-leak-test.html [ Failure ]
 # Enable when support drag-and-drop autoscrolling
 webkit.org/b/39725 fast/events/drag-and-drop-autoscroll.html [ Skip ]
 
+# New test added in r142335 that is failing on EFL, Qt and GTK.
+webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
+
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
