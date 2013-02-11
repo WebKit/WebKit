@@ -394,6 +394,8 @@ EXPORTS
         ?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVKURL@2@@Z
         ?nonFastScrollableRects@Page@WebCore@@QAE?AV?$PassRefPtr@VClientRectList@WebCore@@@WTF@@PBVFrame@2@@Z
         ?numberOfActiveAnimations@AnimationController@WebCore@@QBEIPAVDocument@2@@Z
+        ?minDOMTimerInterval@Settings@WebCore@@QAENXZ
+        ?setMinDOMTimerInterval@Settings@WebCore@@QAEXN@Z
 
 #if ENABLE(WORKERS)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ

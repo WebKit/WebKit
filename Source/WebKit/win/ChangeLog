@@ -1,3 +1,9 @@
+2013-02-11  Benjamin Poulain  <benjamin@webkit.org>
+
+        Build fix for Windows after r142509
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-02-08  Benjamin Poulain  <bpoulain@apple.com>
 
         Move workerThreadCount from TestRunner to WebCore Internals
