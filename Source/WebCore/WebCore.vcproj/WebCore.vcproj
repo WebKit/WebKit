@@ -64946,6 +64946,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\html\parser\HTMLResourcePreloader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\parser\HTMLResourcePreloader.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\HTMLScriptRunner.cpp"
 					>
 				</File>

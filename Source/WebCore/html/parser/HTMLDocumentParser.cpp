@@ -87,6 +87,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
 #if ENABLE(THREADED_HTML_PARSER)
     , m_weakFactory(this)
 #endif
+    , m_preloader(adoptPtr(new HTMLResourcePreloader(document)))
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
     , m_pumpSessionNestingLevel(0)
@@ -434,10 +435,10 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     if (isWaitingForScripts()) {
         ASSERT(m_tokenizer->state() == HTMLTokenizerState::DataState);
         if (!m_preloadScanner) {
-            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(document(), m_options));
+            m_preloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url()));
             m_preloadScanner->appendToEnd(m_input.current());
         }
-        m_preloadScanner->scan();
+        m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL());
     }
 
     InspectorInstrumentation::didWriteHTML(cookie, m_input.current().currentLine().zeroBasedInt());
@@ -521,9 +522,9 @@ void HTMLDocumentParser::insert(const SegmentedString& source)
         // Check the document.write() output with a separate preload scanner as
         // the main scanner can't deal with insertions.
         if (!m_insertionPreloadScanner)
-            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(document(), m_options));
+            m_insertionPreloadScanner = adoptPtr(new HTMLPreloadScanner(m_options, document()->url()));
         m_insertionPreloadScanner->appendToEnd(source);
-        m_insertionPreloadScanner->scan();
+        m_insertionPreloadScanner->scan(m_preloader.get(), document()->baseElementURL());
     }
 
     endIfDelayed();
@@ -587,7 +588,7 @@ void HTMLDocumentParser::append(const SegmentedString& source)
         } else {
             m_preloadScanner->appendToEnd(source);
             if (isWaitingForScripts())
-                m_preloadScanner->scan();
+                m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL());
         }
     }
 
@@ -774,7 +775,7 @@ void HTMLDocumentParser::appendCurrentInputStreamToPreloadScannerAndScan()
 {
     ASSERT(m_preloadScanner);
     m_preloadScanner->appendToEnd(m_input.current());
-    m_preloadScanner->scan();
+    m_preloadScanner->scan(m_preloader.get(), document()->baseElementURL());
 }
 
 void HTMLDocumentParser::notifyFinished(CachedResource* cachedResource)

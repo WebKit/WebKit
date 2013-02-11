@@ -56,6 +56,7 @@ class HTMLTokenizer;
 class HTMLScriptRunner;
 class HTMLTreeBuilder;
 class HTMLPreloadScanner;
+class HTMLResourcePreloader;
 class ScriptController;
 class ScriptSourceCode;
 
@@ -189,6 +190,7 @@ private:
     WeakPtrFactory<HTMLDocumentParser> m_weakFactory;
     WeakPtr<BackgroundHTMLParser> m_backgroundParser;
 #endif
+    OwnPtr<HTMLResourcePreloader> m_preloader;
 
     bool m_endWasDelayed;
     bool m_haveBackgroundParser;

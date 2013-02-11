@@ -740,6 +740,7 @@ SOURCES += \
     html/parser/HTMLParserScheduler.cpp \
     html/parser/HTMLParserThread.cpp \
     html/parser/HTMLPreloadScanner.cpp \
+    html/parser/HTMLResourcePreloader.cpp \
     html/parser/HTMLScriptRunner.cpp \
     html/parser/HTMLSourceTracker.cpp \
     html/parser/HTMLTokenizer.cpp \
@@ -1925,6 +1926,7 @@ HEADERS += \
     html/parser/HTMLFormattingElementList.h \
     html/parser/HTMLParserScheduler.h \
     html/parser/HTMLPreloadScanner.h \
+    html/parser/HTMLResourcePreloader.h \
     html/parser/HTMLScriptRunner.h \
     html/parser/HTMLScriptRunnerHost.h \
     html/parser/HTMLToken.h \

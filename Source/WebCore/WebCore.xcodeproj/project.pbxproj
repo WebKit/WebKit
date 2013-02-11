@@ -4416,6 +4416,8 @@
 		A8D065AE0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */; };
 		A8D06B390A265DCD005E7203 /* HTMLNames.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = A8D06B370A265DCD005E7203 /* HTMLNames.h */; settings = {ATTRIBUTES = (); }; };
 		A8D06B3A0A265DCD005E7203 /* HTMLNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D06B380A265DCD005E7203 /* HTMLNames.cpp */; };
+		A8D223FD16B52E4E00157288 /* HTMLResourcePreloader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8D223FB16B52E4E00157288 /* HTMLResourcePreloader.cpp */; };
+		A8D223FE16B52E4E00157288 /* HTMLResourcePreloader.h in Headers */ = {isa = PBXBuildFile; fileRef = A8D223FC16B52E4E00157288 /* HTMLResourcePreloader.h */; };
 		A8DF3FCE097FA0FC0052981B /* HTMLFormControlsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC6097FA0FB0052981B /* HTMLFormControlsCollection.h */; };
 		A8DF3FCF097FA0FC0052981B /* HTMLFormControlsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8DF3FC7097FA0FB0052981B /* HTMLFormControlsCollection.cpp */; };
 		A8DF3FD0097FA0FC0052981B /* HTMLCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -11777,6 +11779,8 @@
 		A8D065AD0A2446CD005E7203 /* JSHTMLFormElementCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLFormElementCustom.cpp; sourceTree = "<group>"; };
 		A8D06B370A265DCD005E7203 /* HTMLNames.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLNames.h; sourceTree = "<group>"; };
 		A8D06B380A265DCD005E7203 /* HTMLNames.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLNames.cpp; sourceTree = "<group>"; };
+		A8D223FB16B52E4E00157288 /* HTMLResourcePreloader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLResourcePreloader.cpp; path = parser/HTMLResourcePreloader.cpp; sourceTree = "<group>"; };
+		A8D223FC16B52E4E00157288 /* HTMLResourcePreloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLResourcePreloader.h; path = parser/HTMLResourcePreloader.h; sourceTree = "<group>"; };
 		A8DF3FC6097FA0FB0052981B /* HTMLFormControlsCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLFormControlsCollection.h; sourceTree = "<group>"; };
 		A8DF3FC7097FA0FB0052981B /* HTMLFormControlsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormControlsCollection.cpp; sourceTree = "<group>"; };
 		A8DF3FC8097FA0FB0052981B /* HTMLCollection.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HTMLCollection.h; sourceTree = "<group>"; };
@@ -18722,6 +18726,8 @@
 				974187D116A7932200FA77A7 /* HTMLParserThread.h */,
 				977B3859122883E900B81FF8 /* HTMLPreloadScanner.cpp */,
 				977B385A122883E900B81FF8 /* HTMLPreloadScanner.h */,
+				A8D223FB16B52E4E00157288 /* HTMLResourcePreloader.cpp */,
+				A8D223FC16B52E4E00157288 /* HTMLResourcePreloader.h */,
 				977B385B122883E900B81FF8 /* HTMLScriptRunner.cpp */,
 				977B385C122883E900B81FF8 /* HTMLScriptRunner.h */,
 				977B385D122883E900B81FF8 /* HTMLScriptRunnerHost.h */,
@@ -24505,6 +24511,7 @@
 				A43BF5991149290A00C643CA /* HTMLProgressElement.h in Headers */,
 				033A6A7C147E07D200509B36 /* HTMLPropertiesCollection.h in Headers */,
 				A8CFF7A30A156978000A4234 /* HTMLQuoteElement.h in Headers */,
+				A8D223FE16B52E4E00157288 /* HTMLResourcePreloader.h in Headers */,
 				A871DC250A15205700B12A68 /* HTMLScriptElement.h in Headers */,
 				977B3875122883E900B81FF8 /* HTMLScriptRunner.h in Headers */,
 				977B3876122883E900B81FF8 /* HTMLScriptRunnerHost.h in Headers */,
@@ -27802,6 +27809,7 @@
 				A43BF5981149290A00C643CA /* HTMLProgressElement.cpp in Sources */,
 				033A6A7E147E07E700509B36 /* HTMLPropertiesCollection.cpp in Sources */,
 				A8CFF7A50A156978000A4234 /* HTMLQuoteElement.cpp in Sources */,
+				A8D223FD16B52E4E00157288 /* HTMLResourcePreloader.cpp in Sources */,
 				A871DC220A15205700B12A68 /* HTMLScriptElement.cpp in Sources */,
 				977B3874122883E900B81FF8 /* HTMLScriptRunner.cpp in Sources */,
 				A81369D9097374F600D74463 /* HTMLSelectElement.cpp in Sources */,

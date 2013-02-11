@@ -4891,6 +4891,7 @@
     <ClCompile Include="..\html\parser\HTMLParserScheduler.cpp" />
     <ClCompile Include="..\html\parser\HTMLParserThread.cpp" />
     <ClCompile Include="..\html\parser\HTMLPreloadScanner.cpp" />
+    <ClCompile Include="..\html\parser\HTMLResourcePreloader.cpp" />
     <ClCompile Include="..\html\parser\HTMLScriptRunner.cpp" />
     <ClCompile Include="..\html\parser\HTMLSourceTracker.cpp" />
     <ClCompile Include="..\html\parser\HTMLTokenizer.cpp" />
@@ -7939,6 +7940,7 @@
     <ClInclude Include="..\html\parser\HTMLParserScheduler.h" />
     <ClInclude Include="..\html\parser\HTMLParserThread.h" />
     <ClInclude Include="..\html\parser\HTMLPreloadScanner.h" />
+    <ClInclude Include="..\html\parser\HTMLResourcePreloader.h" />
     <ClInclude Include="..\html\parser\HTMLScriptRunner.h" />
     <ClInclude Include="..\html\parser\HTMLScriptRunnerHost.h" />
     <ClInclude Include="..\html\parser\HTMLSourceTracker.h" />

@@ -26,6 +26,7 @@
 #ifndef CachedResourceRequest_h
 #define CachedResourceRequest_h
 
+#include "Element.h"
 #include "ResourceLoadPriority.h"
 #include "ResourceLoaderOptions.h"
 #include "ResourceRequest.h"
@@ -34,7 +35,6 @@
 
 namespace WebCore {
 class Document;
-class Element;
 
 class CachedResourceRequest {
 public:

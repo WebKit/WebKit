@@ -32,15 +32,16 @@
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
-#include "Document.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLToken.h"
+#include <wtf/Functional.h>
+#include <wtf/MainThread.h>
 
 namespace WebCore {
 
-CSSPreloadScanner::CSSPreloadScanner(Document* document)
+CSSPreloadScanner::CSSPreloadScanner()
     : m_state(Initial)
-    , m_document(document)
+    , m_requests(0)
 {
 }
 
@@ -51,11 +52,13 @@ void CSSPreloadScanner::reset()
     m_ruleValue.clear();
 }
 
-void CSSPreloadScanner::scan(const HTMLToken& token)
+void CSSPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
 {
+    m_requests = &requests;
     const HTMLToken::DataVector& characters = token.characters();
     for (HTMLToken::DataVector::const_iterator iter = characters.begin(); iter != characters.end() && m_state != DoneParsingImportRules; ++iter)
         tokenize(*iter);
+    m_requests = 0;
 }
 
 inline void CSSPreloadScanner::tokenize(UChar c)
@@ -193,11 +196,13 @@ static String parseCSSStringOrURL(const UChar* characters, size_t length)
 void CSSPreloadScanner::emitRule()
 {
     if (equalIgnoringCase("import", m_rule.characters(), m_rule.length())) {
-        String value = parseCSSStringOrURL(m_ruleValue.characters(), m_ruleValue.length());
-        if (!value.isEmpty()) {
-            CachedResourceRequest request(ResourceRequest(m_document->completeURL(value)));
-            request.setInitiator(cachedResourceRequestInitiators().css);
-            m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, request, String());
+        String url = parseCSSStringOrURL(m_ruleValue.characters(), m_ruleValue.length());
+        if (!url.isEmpty()) {
+            KURL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScaner via scan()!
+            OwnPtr<PreloadRequest> request = PreloadRequest::create(
+                cachedResourceRequestInitiators().css, url, baseElementURL, CachedResource::CSSStyleSheet);
+            // FIXME: Should this be including the charset in the preload request?
+            m_requests->append(request.release());
         }
         m_state = Initial;
     } else if (equalIgnoringCase("charset", m_rule.characters(), m_rule.length()))

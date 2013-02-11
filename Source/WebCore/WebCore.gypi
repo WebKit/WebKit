@@ -3409,6 +3409,8 @@
             'html/parser/HTMLParserThread.h',
             'html/parser/HTMLPreloadScanner.cpp',
             'html/parser/HTMLPreloadScanner.h',
+            'html/parser/HTMLResourcePreloader.cpp',
+            'html/parser/HTMLResourcePreloader.h',
             'html/parser/HTMLScriptRunner.cpp',
             'html/parser/HTMLScriptRunner.h',
             'html/parser/HTMLScriptRunnerHost.h',

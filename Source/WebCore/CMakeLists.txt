@@ -1563,6 +1563,7 @@ set(WebCore_SOURCES
     html/parser/HTMLFormattingElementList.cpp
     html/parser/HTMLMetaCharsetParser.cpp
     html/parser/HTMLPreloadScanner.cpp
+    html/parser/HTMLResourcePreloader.cpp
     html/parser/HTMLScriptRunner.cpp
     html/parser/HTMLSourceTracker.cpp
     html/parser/HTMLTokenizer.cpp
