@@ -1184,10 +1184,16 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
 
 bool RenderText::isAllCollapsibleWhitespace()
 {
-    int length = textLength();
-    const UChar* text = characters();
-    for (int i = 0; i < length; i++) {
-        if (!style()->isCollapsibleWhiteSpace(text[i]))
+    unsigned length = textLength();
+    if (is8Bit()) {
+        for (unsigned i = 0; i < length; ++i) {
+            if (!style()->isCollapsibleWhiteSpace(characters8()[i]))
+                return false;
+        }
+        return true;
+    }
+    for (unsigned i = 0; i < length; ++i) {
+        if (!style()->isCollapsibleWhiteSpace(characters16()[i]))
             return false;
     }
     return true;
