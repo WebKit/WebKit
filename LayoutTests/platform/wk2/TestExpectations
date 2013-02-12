@@ -177,8 +177,8 @@ platform/mac/fast/text/justified-text-rect.html
 # WebKitTestRunner needs to support needsDeletionUI mechanism to show deletion UI
 # <https://bugs.webkit.org/show_bug.cgi?id=42535>
 fast/dom/Element/id-in-deletebutton.html
-editing/deleting/5408255.html
-editing/deleting/deletionUI-single-instance.html
+platform/mac/editing/deleting/deletionUI-click-on-delete-button.html
+platform/mac/editing/deleting/deletionUI-single-instance.html
 platform/mac/editing/deleting/deletionUI-borders.html
 platform/mac/editing/deleting/deletionUI-differing-background.html
 platform/mac/editing/deleting/deletionUI-minimum-size.html

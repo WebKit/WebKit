@@ -571,8 +571,6 @@ fast/table/frame-and-rules.html
 fast/table/giantCellspacing.html
 
 # Not investigated yet
-editing/deleting/5408255.html
-editing/deleting/deletionUI-single-instance.html
 editing/pasteboard/input-field-1.html
 editing/selection/contains-boundaries.html
 editing/undo/5378473.html

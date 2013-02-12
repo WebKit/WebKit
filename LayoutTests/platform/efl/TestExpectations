@@ -1432,10 +1432,6 @@ webkit.org/b/83704 media/event-attributes.html [ Failure ]
 # EFL's LayoutTestController does not implement setAutomaticLinkDetectionEnabled
 webkit.org/b/85463 editing/inserting/typing-space-to-trigger-smart-link.html
 
-# Missing deletebutton controller implementation.
-webkit.org/b/86615 editing/deleting/5408255.html [ Failure ]
-webkit.org/b/86615 editing/deleting/regional-indicators.html [ Failure ]
-
 # Tests failing due to rounding problems in colors inside pixman
 webkit.org/b/49964 fast/canvas/canvas-fillPath-shadow.html [ Failure ]
 
