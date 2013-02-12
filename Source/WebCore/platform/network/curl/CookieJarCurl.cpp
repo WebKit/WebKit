@@ -19,6 +19,8 @@
 
 #include "Cookie.h"
 #include "KURL.h"
+#include "ResourceHandleManager.h"
+
 #include <wtf/HashMap.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
@@ -30,6 +32,30 @@ static HashMap<String, String> cookieJar;
 void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& url, const String& value)
 {
     cookieJar.set(url.string(), value);
+
+    CURL* curl = curl_easy_init();
+
+    if (!curl)
+        return;
+
+    const char* cookieJarFileName = ResourceHandleManager::sharedInstance()->getCookieJarFileName();
+    CURLSH* curlsh = ResourceHandleManager::sharedInstance()->getCurlShareHandle();
+
+    curl_easy_setopt(curl, CURLOPT_COOKIEJAR, cookieJarFileName);
+    curl_easy_setopt(curl, CURLOPT_COOKIEFILE, cookieJarFileName);
+    curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
+
+    String cookie("Set-Cookie: ");
+    if (value.is8Bit())
+        cookie.append(value);
+    else
+        cookie.append(String::make8BitFrom16BitSource(value.characters16(), value.length()));
+
+    CString strCookie(reinterpret_cast<const char*>(cookie.characters8()), cookie.length());
+
+    curl_easy_setopt(curl, CURLOPT_COOKIELIST, strCookie.data());
+
+    curl_easy_cleanup(curl);
 }
 
 String cookiesForDOM(const NetworkStorageSession&, const KURL&, const KURL& url)

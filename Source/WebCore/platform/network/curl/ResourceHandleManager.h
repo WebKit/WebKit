@@ -56,7 +56,11 @@ public:
     static ResourceHandleManager* sharedInstance();
     void add(ResourceHandle*);
     void cancel(ResourceHandle*);
+
+    CURLSH* getCurlShareHandle() const;
+
     void setCookieJarFileName(const char* cookieJarFileName);
+    const char* getCookieJarFileName() const;
 
     void dispatchSynchronousJob(ResourceHandle*);
 
