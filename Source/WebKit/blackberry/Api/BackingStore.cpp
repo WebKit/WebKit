@@ -205,6 +205,7 @@ bool BackingStoreGeometry::isTileCorrespondingToBuffer(TileIndex index, TileBuff
 BackingStorePrivate::BackingStorePrivate()
     : m_suspendScreenUpdateCounterWebKitThread(0)
     , m_suspendBackingStoreUpdates(0)
+    , m_suspendGeometryUpdates(0)
     , m_resumeOperation(BackingStore::None)
     , m_suspendScreenUpdatesWebKitThread(true)
     , m_suspendScreenUpdatesUserInterfaceThread(true)
@@ -301,6 +302,18 @@ void BackingStorePrivate::suspendBackingStoreUpdates()
     atomic_add(&m_suspendBackingStoreUpdates, 1);
 }
 
+void BackingStorePrivate::suspendGeometryUpdates()
+{
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+
+    if (m_suspendGeometryUpdates) {
+        BBLOG(Platform::LogLevelInfo,
+            "Backingstore geometry already suspended, increasing suspend counter.");
+    }
+
+    ++m_suspendGeometryUpdates;
+}
+
 void BackingStorePrivate::suspendScreenUpdates()
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
@@ -336,6 +349,29 @@ void BackingStorePrivate::resumeBackingStoreUpdates()
         setTileMatrixNeedsUpdate();
 
     atomic_sub(&m_suspendBackingStoreUpdates, 1);
+
+    dispatchRenderJob();
+}
+
+
+void BackingStorePrivate::resumeGeometryUpdates()
+{
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+
+    ASSERT(m_suspendGeometryUpdates >= 1);
+    if (m_suspendGeometryUpdates < 1) {
+        Platform::logAlways(Platform::LogLevelCritical,
+            "Call mismatch: Backingstore geometry hasn't been suspended, therefore won't resume!");
+        return;
+    }
+
+    // Set a flag indicating that we're about to resume geometry updates and
+    // the tile matrix should be updated as a consequence by the first render
+    // job that happens after this resumption of geometry updates.
+    if (m_suspendGeometryUpdates == 1)
+        setTileMatrixNeedsUpdate();
+
+    --m_suspendGeometryUpdates;
 
     dispatchRenderJob();
 }
@@ -767,7 +803,7 @@ void BackingStorePrivate::setBackingStoreRect(const Platform::IntRect& backingSt
         return;
     }
 
-    if (m_suspendBackingStoreUpdates)
+    if (m_suspendBackingStoreUpdates || m_suspendGeometryUpdates)
         return;
 
     Platform::IntRect oldBackingStoreRect = frontState()->backingStoreRect();
@@ -2420,6 +2456,16 @@ void BackingStore::suspendBackingStoreUpdates()
 void BackingStore::resumeBackingStoreUpdates()
 {
     d->resumeBackingStoreUpdates();
+}
+
+void BackingStore::suspendGeometryUpdates()
+{
+    d->suspendGeometryUpdates();
+}
+
+void BackingStore::resumeGeometryUpdates()
+{
+    d->resumeGeometryUpdates();
 }
 
 void BackingStore::suspendScreenUpdates()

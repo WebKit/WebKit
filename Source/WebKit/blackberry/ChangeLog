@@ -1,3 +1,34 @@
+2013-02-12  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] CSS animations stop running during zoom
+        https://bugs.webkit.org/show_bug.cgi?id=109606
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jakob Petsovits.
+
+        Internal PR 286160.
+        New BackingStore API for suspending/resuming geometry updates.
+
+        This is needed because we want to allow render jobs to continue during
+        zoom, but we don't want to allow geometry updates during zoom.
+
+        Prevent scroll/zoom render jobs from being added to the queue if
+        the tile is outside the expanded content rect.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendGeometryUpdates):
+        (WebKit):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeGeometryUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::setBackingStoreRect):
+        (BlackBerry::WebKit::BackingStore::suspendGeometryUpdates):
+        (BlackBerry::WebKit::BackingStore::resumeGeometryUpdates):
+        * Api/BackingStore.h:
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::addToScrollZoomQueue):
+
 2013-02-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove remaining traces of Web Intents

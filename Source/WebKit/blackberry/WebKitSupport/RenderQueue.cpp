@@ -344,9 +344,21 @@ void RenderQueue::addToRegularQueue(const Platform::IntRectRegion& region)
 
 void RenderQueue::addToScrollZoomQueue(const TileIndexList& addedTiles, TileIndexList* alreadyQueuedTiles)
 {
+    Platform::IntRect contentsRect = m_parent->expandedContentsRect();
     for (size_t i = 0; i < addedTiles.size(); ++i) {
         if (alreadyQueuedTiles->contains(addedTiles[i]))
             continue;
+
+        Platform::IntRect tileRect(m_parent->frontState()->originOfTile(addedTiles[i]), m_parent->tileSize());
+        if (!contentsRect.intersects(tileRect)) {
+#if DEBUG_RENDER_QUEUE
+                Platform::logAlways(Platform::LogLevelCritical,
+                    "RenderQueue::addToScrollZoomQueue tile at %s outside of expanded contents rect %s, ignoring.",
+                    tileRect.toString().c_str(),
+                    contentsRect.toString().c_str());
+#endif
+            continue;
+        }
 
 #if DEBUG_RENDER_QUEUE
         Platform::logAlways(Platform::LogLevelCritical,

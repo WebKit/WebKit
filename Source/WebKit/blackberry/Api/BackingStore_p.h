@@ -135,6 +135,12 @@ public:
     // Resumes all backingstore updates so that rendering to the backingstore is enabled.
     void resumeBackingStoreUpdates();
 
+    // Suspends all backingstore geometry updates.
+    void suspendGeometryUpdates();
+
+    // Resumes all backingstore geometry updates.
+    void resumeGeometryUpdates();
+
     // Suspends all screen updates so that 'blitVisibleContents' is disabled.
     void suspendScreenUpdates();
 
@@ -345,6 +351,7 @@ public:
 
     unsigned m_suspendScreenUpdateCounterWebKitThread;
     unsigned m_suspendBackingStoreUpdates;
+    unsigned m_suspendGeometryUpdates;
     BackingStore::ResumeUpdateOperation m_resumeOperation;
 
     bool m_suspendScreenUpdatesWebKitThread;

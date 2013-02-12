@@ -61,6 +61,9 @@ public:
     void suspendBackingStoreUpdates();
     void resumeBackingStoreUpdates();
 
+    void suspendGeometryUpdates();
+    void resumeGeometryUpdates();
+
     void suspendScreenUpdates();
     void resumeScreenUpdates(BackingStore::ResumeUpdateOperation);
 
