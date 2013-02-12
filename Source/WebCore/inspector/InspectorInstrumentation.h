@@ -970,9 +970,14 @@ inline void InspectorInstrumentation::didEvaluateScript(const InspectorInstrumen
 
 inline void InspectorInstrumentation::scriptsEnabled(Page* page, bool isEnabled)
 {
+#if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         return scriptsEnabledImpl(instrumentingAgents, isEnabled);
+#else
+    UNUSED_PARAM(page);
+    UNUSED_PARAM(isEnabled);
+#endif
 }
 
 inline void InspectorInstrumentation::didCreateIsolatedContext(Frame* frame, ScriptState* scriptState, SecurityOrigin* origin)
