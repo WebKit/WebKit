@@ -876,7 +876,7 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEven
     UNUSED_PARAM(event);
     UNUSED_PARAM(window);
     UNUSED_PARAM(node);
-    UNUSED_PARAM(ancestors);
+    UNUSED_PARAM(eventPath);
 #endif
     return InspectorInstrumentationCookie();
 }
