@@ -473,8 +473,10 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
         }
     }
 
+    CFIndex languageCount = 0;
     RetainPtr<CFArrayRef> languages(AdoptCF, MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
-    CFIndex languageCount = CFArrayGetCount(languages.get());
+    if (languages)
+        languageCount = CFArrayGetCount(languages.get());
 
     if (!languageCount)
         return CaptionUserPreferences::preferredLanguages();
