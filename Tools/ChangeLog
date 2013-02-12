@@ -1,3 +1,12 @@
+2013-02-12  Raymond Toy  <rtoy@google.com>
+
+        Add alias
+        https://bugs.webkit.org/show_bug.cgi?id=109621
+
+        No review needed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-12  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move text dump generation to TestRunner library
