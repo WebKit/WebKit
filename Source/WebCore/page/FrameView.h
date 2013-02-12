@@ -38,11 +38,9 @@
 
 namespace WebCore {
 
-class Color;
 class Element;
 class Event;
 class FloatSize;
-class Frame;
 class FrameActionScheduler;
 class KURL;
 class Node;
@@ -78,6 +76,8 @@ public:
 
     Frame* frame() const { return m_frame.get(); }
     void clearFrame();
+
+    RenderView* renderView() const { return m_frame ? m_frame->contentRenderer() : 0; }
 
     int mapFromLayoutToCSSUnits(LayoutUnit);
     LayoutUnit mapFromCSSToLayoutUnits(int);
