@@ -103,6 +103,31 @@ String eventListenerHandlerBody(Document* document, EventListener* listener)
     return toWebCoreStringWithNullCheck(function);
 }
 
+ScriptValue eventListenerHandler(Document* document, EventListener* listener)
+{
+    if (listener->type() != EventListener::JSEventListenerType)
+        return ScriptValue();
+
+    v8::HandleScope scope;
+    V8AbstractEventListener* v8Listener = static_cast<V8AbstractEventListener*>(listener);
+    v8::Handle<v8::Context> context = toV8Context(document, v8Listener->worldContext());
+    v8::Context::Scope contextScope(context);
+    v8::Handle<v8::Object> function = v8Listener->getListenerObject(document);
+    if (function.IsEmpty())
+        return ScriptValue();
+    return ScriptValue(function);
+}
+
+ScriptState* eventListenerHandlerScriptState(Frame* frame, EventListener* listener)
+{
+    if (listener->type() != EventListener::JSEventListenerType)
+        return 0;
+    V8AbstractEventListener* v8Listener = static_cast<V8AbstractEventListener*>(listener);
+    v8::HandleScope scope;
+    v8::Handle<v8::Context> v8Context = v8Listener->worldContext().adjustedContext(frame->script());
+    return ScriptState::forContext(*v8Context);
+}
+
 bool eventListenerHandlerLocation(Document* document, EventListener* listener, String& sourceName, String& scriptId, int& lineNumber)
 {
     if (listener->type() != EventListener::JSEventListenerType)

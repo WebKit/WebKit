@@ -119,7 +119,7 @@ WebInspector.EventListenersSidebarPane.prototype = {
         }
 
         if (node)
-            node.eventListeners(callback);
+            node.eventListeners(WebInspector.EventListenersSidebarPane._objectGroupName, callback);
         this._selectedNode = node;
     },
 
@@ -202,6 +202,10 @@ WebInspector.EventListenerBar.prototype = {
                 properties.push(WebInspector.RemoteObjectProperty.fromPrimitiveValue("isAttribute", this.eventListener.isAttribute));
             if (nodeObject)
                 properties.push(new WebInspector.RemoteObjectProperty("node", nodeObject));
+            if (typeof this.eventListener.handler !== "undefined") {
+                var remoteObject = WebInspector.RemoteObject.fromPayload(this.eventListener.handler);
+                properties.push(new WebInspector.RemoteObjectProperty("handler", remoteObject));
+            }
             if (typeof this.eventListener.handlerBody !== "undefined")
                 properties.push(WebInspector.RemoteObjectProperty.fromPrimitiveValue("listenerBody", this.eventListener.handlerBody));
             if (this.eventListener.sourceName)

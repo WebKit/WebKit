@@ -762,7 +762,7 @@ void InspectorDOMAgent::setNodeValue(ErrorString* errorString, int nodeId, const
     m_domEditor->replaceWholeText(toText(node), value, errorString);
 }
 
-void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int nodeId, RefPtr<TypeBuilder::Array<TypeBuilder::DOM::EventListener> >& listenersArray)
+void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int nodeId, const String* objectGroup, RefPtr<TypeBuilder::Array<TypeBuilder::DOM::EventListener> >& listenersArray)
 {
     listenersArray = TypeBuilder::Array<TypeBuilder::DOM::EventListener>::create();
     Node* node = assertNode(errorString, nodeId);
@@ -779,7 +779,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int n
         for (size_t j = 0; j < vector.size(); ++j) {
             const RegisteredEventListener& listener = vector[j];
             if (listener.useCapture)
-                listenersArray->addItem(buildObjectForEventListener(listener, info.eventType, info.node));
+                listenersArray->addItem(buildObjectForEventListener(listener, info.eventType, info.node, objectGroup));
         }
     }
 
@@ -790,7 +790,7 @@ void InspectorDOMAgent::getEventListenersForNode(ErrorString* errorString, int n
         for (size_t j = 0; j < vector.size(); ++j) {
             const RegisteredEventListener& listener = vector[j];
             if (!listener.useCapture)
-                listenersArray->addItem(buildObjectForEventListener(listener, info.eventType, info.node));
+                listenersArray->addItem(buildObjectForEventListener(listener, info.eventType, info.node, objectGroup));
         }
     }
 }
@@ -1376,15 +1376,32 @@ PassRefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > InspectorDOMAgent::build
     return children.release();
 }
 
-PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node)
+PassRefPtr<TypeBuilder::DOM::EventListener> InspectorDOMAgent::buildObjectForEventListener(const RegisteredEventListener& registeredEventListener, const AtomicString& eventType, Node* node, const String* objectGroupId)
 {
     RefPtr<EventListener> eventListener = registeredEventListener.listener;
+    Document* document = node->document();
     RefPtr<TypeBuilder::DOM::EventListener> value = TypeBuilder::DOM::EventListener::create()
         .setType(eventType)
         .setUseCapture(registeredEventListener.useCapture)
         .setIsAttribute(eventListener->isAttribute())
         .setNodeId(pushNodePathToFrontend(node))
-        .setHandlerBody(eventListenerHandlerBody(node->document(), eventListener.get()));
+        .setHandlerBody(eventListenerHandlerBody(document, eventListener.get()));
+    if (objectGroupId) {
+        ScriptValue functionValue = eventListenerHandler(document, eventListener.get());
+        if (!functionValue.hasNoValue()) {
+            Frame* frame = document->frame();
+            if (frame) {
+                ScriptState* scriptState = eventListenerHandlerScriptState(frame, eventListener.get());
+                if (scriptState) {
+                    InjectedScript injectedScript = m_injectedScriptManager->injectedScriptFor(scriptState);
+                    if (!injectedScript.hasNoValue()) {
+                        RefPtr<TypeBuilder::Runtime::RemoteObject> valueJson = injectedScript.wrapObject(functionValue, *objectGroupId, true);
+                        value->setHandler(valueJson);
+                    }
+                }
+            }
+        }
+    }
     String sourceName;
     String scriptId;
     int lineNumber;

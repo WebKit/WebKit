@@ -106,6 +106,31 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     return jsFunction->toString(scriptState)->value(scriptState);
 }
 
+ScriptValue eventListenerHandler(Document* document, EventListener* eventListener)
+{
+    const JSEventListener* jsListener = JSEventListener::cast(eventListener);
+    ASSERT(jsListener);
+    if (!jsListener)
+        return ScriptValue();
+    JSLockHolder lock(jsListener->isolatedWorld()->globalData());
+    JSC::JSObject* jsFunction = jsListener->jsFunction(document);
+    if (!jsFunction)
+        return ScriptValue();
+    return ScriptValue(*jsListener->isolatedWorld()->globalData(), jsFunction);
+}
+
+ScriptState* eventListenerHandlerScriptState(Frame* frame, EventListener* eventListener)
+{
+    const JSEventListener* jsListener = JSEventListener::cast(eventListener);
+    ASSERT(jsListener);
+    if (!jsListener)
+        return 0;
+    if (!frame->script()->canExecuteScripts(NotAboutToExecuteScript))
+        return 0;
+    DOMWrapperWorld* world = jsListener->isolatedWorld();
+    return frame->script()->globalObject(world)->globalExec();
+}
+
 bool eventListenerHandlerLocation(Document* document, EventListener* eventListener, String& sourceName, String& scriptId, int& lineNumber)
 {
     const JSEventListener* jsListener = JSEventListener::cast(eventListener);

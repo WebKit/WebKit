@@ -363,11 +363,12 @@ WebInspector.DOMNode.prototype = {
     },
 
     /**
+     * @param {string} objectGroupId
      * @param {function(?Protocol.Error)=} callback
      */
-    eventListeners: function(callback)
+    eventListeners: function(objectGroupId, callback)
     {
-        DOMAgent.getEventListenersForNode(this.id, callback);
+        DOMAgent.getEventListenersForNode(this.id, objectGroupId, callback);
     },
 
     /**

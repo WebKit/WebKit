@@ -4,6 +4,7 @@ Tests event listeners output in the Elements sidebar panel when the listeners ar
 
 ======== click ========
 [expanded] body event-listeners-about-blank.html:9
+    handler: function f() {}
     isAttribute: false
     lineNumber: 9
     listenerBody: function f() {}
@@ -14,6 +15,7 @@ Tests event listeners output in the Elements sidebar panel when the listeners ar
 
 ======== hover ========
 [expanded] div#div-in-iframe event-listeners-about-blank.html:9
+    handler: function f() {}
     isAttribute: false
     lineNumber: 9
     listenerBody: function f() {}
