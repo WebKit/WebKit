@@ -45,15 +45,10 @@ class WorkerContext;
 
 class ScheduledAction {
 public:
-    ScheduledAction(v8::Handle<v8::Context>, v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[]);
-
-    ScheduledAction(v8::Handle<v8::Context> context, const String& code, const KURL& url = KURL())
-        : m_context(context)
-        , m_code(code, url)
-    {
-    }
-
+    ScheduledAction(v8::Handle<v8::Context>, v8::Handle<v8::Function>, int argc, v8::Handle<v8::Value> argv[], v8::Isolate*);
+    ScheduledAction(v8::Handle<v8::Context>, const String&, const KURL&, v8::Isolate*);
     ~ScheduledAction();
+
     void execute(ScriptExecutionContext*);
 
 private:
@@ -66,6 +61,7 @@ private:
     ScopedPersistent<v8::Function> m_function;
     Vector<v8::Persistent<v8::Value> > m_args;
     ScriptSourceCode m_code;
+    v8::Isolate* m_isolate;
 };
 
 } // namespace WebCore

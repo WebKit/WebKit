@@ -49,21 +49,28 @@
 
 namespace WebCore {
 
-ScheduledAction::ScheduledAction(v8::Handle<v8::Context> context, v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[])
+ScheduledAction::ScheduledAction(v8::Handle<v8::Context> context, v8::Handle<v8::Function> function, int argc, v8::Handle<v8::Value> argv[], v8::Isolate* isolate)
     : m_context(context)
     , m_function(function)
     , m_code(String(), KURL(), TextPosition::belowRangePosition())
+    , m_isolate(isolate)
 {
-    v8::Isolate* isolate = m_context->GetIsolate();
     m_args.reserveCapacity(argc);
     for (int i = 0; i < argc; ++i)
-        m_args.append(v8::Persistent<v8::Value>::New(isolate, argv[i]));
+        m_args.append(v8::Persistent<v8::Value>::New(m_isolate, argv[i]));
+}
+
+ScheduledAction::ScheduledAction(v8::Handle<v8::Context> context, const String& code, const KURL& url, v8::Isolate* isolate)
+    : m_context(context)
+    , m_code(code, url)
+    , m_isolate(isolate)
+{
 }
 
 ScheduledAction::~ScheduledAction()
 {
     for (size_t i = 0; i < m_args.size(); ++i) {
-        m_args[i].Dispose(m_context->GetIsolate());
+        m_args[i].Dispose(m_isolate);
         m_args[i].Clear();
     }
 }

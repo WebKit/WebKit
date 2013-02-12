@@ -70,7 +70,7 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
                 return v8Integer(0, args.GetIsolate());
         }
         WTF::String stringFunction = toWebCoreString(function);
-        timerId = DOMTimer::install(workerContext, adoptPtr(new ScheduledAction(v8Context, stringFunction, workerContext->url())), timeout, singleShot);
+        timerId = DOMTimer::install(workerContext, adoptPtr(new ScheduledAction(v8Context, stringFunction, workerContext->url(), args.GetIsolate())), timeout, singleShot);
     } else if (function->IsFunction()) {
         size_t paramCount = argumentCount >= 2 ? argumentCount - 2 : 0;
         v8::Local<v8::Value>* params = 0;
@@ -80,7 +80,7 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
                 params[i] = args[i+2];
         }
         // ScheduledAction takes ownership of actual params and releases them in its destructor.
-        OwnPtr<ScheduledAction> action = adoptPtr(new ScheduledAction(v8Context, v8::Handle<v8::Function>::Cast(function), paramCount, params));
+        OwnPtr<ScheduledAction> action = adoptPtr(new ScheduledAction(v8Context, v8::Handle<v8::Function>::Cast(function), paramCount, params, args.GetIsolate()));
         // FIXME: We should use a OwnArrayPtr for params.
         delete [] params;
         timerId = DOMTimer::install(workerContext, action.release(), timeout, singleShot);
