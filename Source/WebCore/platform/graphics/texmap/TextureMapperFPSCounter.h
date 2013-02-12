@@ -1,6 +1,7 @@
 /*
     Copyright (C) 2012 Nokia Corporation and/or its subsidiary(-ies)
     Copyright (C) 2012, 2013 Company 100, Inc.
+    Copyright (C) 2012, 2013 basysKom GmbH
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
