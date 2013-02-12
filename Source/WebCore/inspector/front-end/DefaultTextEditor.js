@@ -1364,8 +1364,7 @@ WebInspector.TextEditorMainPanel = function(delegate, textModel, url, syncScroll
     this.element.addEventListener("textInput", this._handleTextInput.bind(this), false);
     this.element.addEventListener("cut", this._handleCut.bind(this), false);
 
-    this._showWhitespace = WebInspector.settings.showWhitespaceInEditor.get();
-    this._handleShowWhitespaceInEditorChange = this._handleShowWhitespaceInEditorChange.bind(this);
+    this._showWhitespace = WebInspector.experimentsSettings.showWhitespaceInEditor.isEnabled();
 
     this._container.addEventListener("focus", this._handleFocused.bind(this), false);
 
@@ -1439,21 +1438,6 @@ WebInspector.TextEditorMainPanel.prototype = {
             selection = selection.collapseToEnd();
         this._restoreSelection(selection);
         return true;
-    },
-
-    _handleShowWhitespaceInEditorChange: function()
-    {
-        this._showWhitespace = WebInspector.settings.showWhitespaceInEditor.get();
-        var visibleFrom = this.scrollTop();
-        var visibleTo = visibleFrom + this.clientHeight();
-
-        if (!visibleTo)
-            return;
-
-        var result = this.findVisibleChunks(visibleFrom, visibleTo);
-        var startLine = this._textChunks[result.start].startLine;
-        var endLine = this._textChunks[result.end - 1].startLine + this._textChunks[result.end - 1].linesCount;
-        this._paintLines(startLine, endLine + 1);
     },
 
     /**
@@ -1531,8 +1515,6 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     wasShown: function()
     {
-        WebInspector.settings.showWhitespaceInEditor.addChangeListener(this._handleShowWhitespaceInEditorChange);
-
         this._boundSelectionChangeListener = this._handleSelectionChange.bind(this);
         document.addEventListener("selectionchange", this._boundSelectionChangeListener, false);
 
@@ -1542,8 +1524,6 @@ WebInspector.TextEditorMainPanel.prototype = {
 
     willHide: function()
     {
-        WebInspector.settings.showWhitespaceInEditor.removeChangeListener(this._handleShowWhitespaceInEditorChange);
-
         document.removeEventListener("selectionchange", this._boundSelectionChangeListener, false);
         delete this._boundSelectionChangeListener;
 

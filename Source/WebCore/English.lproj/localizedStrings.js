@@ -390,7 +390,6 @@ localizedStrings["Show rulers"] = "Show rulers";
 localizedStrings["Show Shadow DOM"] = "Show Shadow DOM";
 localizedStrings["Show times as percentages."] = "Show times as percentages.";
 localizedStrings["Show total and self times as percentages."] = "Show total and self times as percentages.";
-localizedStrings["Show whitespace"] = "Show whitespace";
 localizedStrings["Size"] = "Size";
 localizedStrings["Snapshot %d"] = "Snapshot %d";
 localizedStrings["End Time"] = "End Time";
