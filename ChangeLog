@@ -1,3 +1,17 @@
+2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
+
+        Remove ENABLE_XHR_RESPONSE_BLOB handling from various build systems
+        https://bugs.webkit.org/show_bug.cgi?id=109481
+
+        Reviewed by Daniel Bates.
+
+        The ENABLE_XHR_RESPONSE_BLOB feature define was removed from the code
+        back in r120574. There are still occurrences of it in various build systems
+        which should all be removed as they are useless.
+
+        * Source/cmake/OptionsBlackBerry.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2013-02-11  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] Track language selection should be sticky
