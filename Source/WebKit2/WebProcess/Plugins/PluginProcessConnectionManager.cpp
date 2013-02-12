@@ -31,6 +31,7 @@
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
 #include "PluginProcessConnection.h"
+#include "PluginProcessConnectionManagerMessages.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebProcess.h"
 #include "WebProcessProxyMessages.h"
@@ -99,6 +100,18 @@ void PluginProcessConnectionManager::removePluginProcessConnection(PluginProcess
     }
 
     m_pluginProcessConnections.remove(vectorIndex);
+}
+
+void PluginProcessConnectionManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
+{
+    if (decoder->messageReceiverName() == Messages::PluginProcessConnectionManager::messageReceiverName()) {
+        didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(ChildProcess::connection(), decoder);
+        return;
+    }
+}
+
+void PluginProcessConnectionManager::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
+{
 }
 
 void PluginProcessConnectionManager::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t opaquePluginType)

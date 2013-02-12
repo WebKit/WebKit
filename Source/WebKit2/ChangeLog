@@ -1,3 +1,21 @@
+2013-02-11  Anders Carlsson  <andersca@apple.com>
+
+        PluginProcessConnectionManager should be a QueueClient
+        https://bugs.webkit.org/show_bug.cgi?id=109496
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::didReceiveMessageOnConnectionWorkQueue):
+        (WebKit):
+        (WebKit::PluginProcessConnectionManager::didCloseOnConnectionWorkQueue):
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        (PluginProcessConnectionManager):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+        * WebProcess/WebProcess.h:
+        (WebProcess):
+
 2013-02-11  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed WK2 buildfix after r142518.

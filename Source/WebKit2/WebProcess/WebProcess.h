@@ -93,7 +93,7 @@ class NetworkProcessConnection;
 class WebResourceLoadScheduler;
 #endif
 
-class WebProcess : public ChildProcess, private CoreIPC::Connection::QueueClient, private DownloadManager::Client {
+class WebProcess : public ChildProcess, private DownloadManager::Client {
 public:
     static WebProcess& shared();
 
@@ -263,10 +263,6 @@ private:
     virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>&);
     virtual void didClose(CoreIPC::Connection*);
     virtual void didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringReference messageReceiverName, CoreIPC::StringReference messageName) OVERRIDE;
-
-    // CoreIPC::Connection::QueueClient
-    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&) OVERRIDE;
-    virtual void didCloseOnConnectionWorkQueue(CoreIPC::Connection*) OVERRIDE;
 
     // Implemented in generated WebProcessMessageReceiver.cpp
     void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);

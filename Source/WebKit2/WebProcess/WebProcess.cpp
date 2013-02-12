@@ -30,7 +30,6 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "Logging.h"
-#include "PluginProcessConnectionManagerMessages.h"
 #include "StatisticsData.h"
 #include "WebApplicationCacheManager.h"
 #include "WebConnectionToUIProcess.h"
@@ -207,7 +206,10 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
 
     connection->setShouldExitOnSyncMessageSendFailure(true);
     connection->addQueueClient(&m_eventDispatcher);
-    connection->addQueueClient(this);
+
+#if ENABLE(PLUGIN_PROCESS)
+    connection->addQueueClient(&m_pluginProcessConnectionManager);
+#endif
 
 #if USE(SECURITY_FRAMEWORK)
     connection->addQueueClient(&SecItemShim::shared());
