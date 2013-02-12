@@ -2258,7 +2258,13 @@ private:
     int m_numberOfTimesChecked;
 };
 
-TEST_F(WebFrameTest, ReplaceMisspelledRange)
+#if OS(ANDROID)
+// Crashes on Android. http://webkit.org/b/109548
+#define MAYBE_ReplaceMisspelledRange DISABLED_ReplaceMisspelledRange
+#else
+#define MAYBE_ReplaceMisspelledRange ReplaceMisspelledRange
+#endif
+TEST_F(WebFrameTest, MAYBE_ReplaceMisspelledRange)
 {
     m_webView = FrameTestHelpers::createWebViewAndLoad("data:text/html,<div id=\"data\" contentEditable></div>");
     SpellCheckClient spellcheck;

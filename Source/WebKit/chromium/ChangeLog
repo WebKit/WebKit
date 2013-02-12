@@ -1,3 +1,12 @@
+2013-02-12  Jochen Eisinger  <jochen@chromium.org>
+
+        Disabling WebFrameTest.ReplaceMisspelledRange on Android because it crashes
+        https://bugs.webkit.org/show_bug.cgi?id=109548
+
+        Unreviewed gardening.
+
+        * tests/WebFrameTest.cpp:
+
 2013-02-11  James Robinson  <jamesr@chromium.org>
 
         [Chromium] Get rid of WebAnimationController
