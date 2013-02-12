@@ -33,7 +33,6 @@
 #include "config.h"
 #include "TestRunner.h"
 
-#include "WebAnimationController.h"
 #include "WebBindings.h"
 #include "WebDeviceOrientation.h"
 #include "WebDocument.h"

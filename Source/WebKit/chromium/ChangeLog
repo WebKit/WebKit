@@ -1,5 +1,21 @@
 2013-02-11  James Robinson  <jamesr@chromium.org>
 
+        [Chromium] Get rid of WebAnimationController
+        https://bugs.webkit.org/show_bug.cgi?id=109235
+
+        Reviewed by Benjamin Poulain.
+
+        * public/WebAnimationController.h: Removed.
+        * public/WebFrame.h:
+        (WebFrame):
+        * src/WebAnimationControllerImpl.cpp: Removed.
+        * src/WebAnimationControllerImpl.h: Removed.
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
+2013-02-11  James Robinson  <jamesr@chromium.org>
+
         [chromium] Add WebUnitTestSupport::createLayerTreeViewForTesting for webkit_unit_tests
         https://bugs.webkit.org/show_bug.cgi?id=109403
 

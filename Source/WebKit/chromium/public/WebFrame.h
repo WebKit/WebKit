@@ -55,7 +55,6 @@ template <class T> class Local;
 
 namespace WebKit {
 
-class WebAnimationController;
 class WebData;
 class WebDataSource;
 class WebDocument;
@@ -219,8 +218,6 @@ public:
     // Content ------------------------------------------------------------
 
     virtual WebDocument document() const = 0;
-
-    virtual WebAnimationController* animationController() = 0;
 
     virtual WebPerformance performance() const = 0;
 

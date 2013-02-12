@@ -152,7 +152,6 @@
 #include "V8DirectoryEntry.h"
 #include "V8FileEntry.h"
 #include "V8GCController.h"
-#include "WebAnimationControllerImpl.h"
 #include "WebConsoleMessage.h"
 #include "WebDOMEvent.h"
 #include "WebDOMEventListener.h"
@@ -759,11 +758,6 @@ WebDocument WebFrameImpl::document() const
     if (!frame() || !frame()->document())
         return WebDocument();
     return WebDocument(frame()->document());
-}
-
-WebAnimationController* WebFrameImpl::animationController()
-{
-    return &m_animationController;
 }
 
 WebPerformance WebFrameImpl::performance() const
@@ -2170,7 +2164,6 @@ WebFrameImpl::WebFrameImpl(WebFrameClient* client)
     , m_nextInvalidateAfter(0)
     , m_findMatchMarkersVersion(0)
     , m_findMatchRectsAreValid(false)
-    , m_animationController(this)
     , m_identifier(generateFrameIdentifier())
     , m_inSameDocumentHistoryLoad(false)
 {
