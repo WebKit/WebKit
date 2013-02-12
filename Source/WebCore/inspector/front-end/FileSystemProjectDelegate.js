@@ -390,30 +390,6 @@ WebInspector.FileSystemUtils.setFileContent = function(isolatedFileSystemModel, 
 }
 
 /**
- * @param {DirectoryEntry} root
- * @param {Array.<string>} folders
- * @param {Object} flags
- * @param {function(DirectoryEntry)} callback
- */
-WebInspector.FileSystemUtils._getDirectory = function(root, folders, flags, callback)
-{
-    while (folders[0] == "." || folders[0] == "")
-        folders = folders.slice(1);
-    if (!folders.length)
-        callback(root);
-    else
-        root.getDirectory(folders[0], flags, innerCallback, WebInspector.FileSystemUtils.errorHandler);
-
-    /**
-     * @param {DirectoryEntry} dirEntry
-     */
-    function innerCallback(dirEntry)
-    {
-        WebInspector.FileSystemUtils._getDirectory(dirEntry, folders.slice(1), flags, callback);
-    }
-}
-
-/**
  * @param {DirectoryEntry} dirEntry
  * @param {function(Array.<FileEntry>)} callback
  */
@@ -447,8 +423,7 @@ WebInspector.FileSystemUtils._readDirectory = function(dirEntry, callback)
  */
 WebInspector.FileSystemUtils._requestEntries = function(fileSystem, path, callback)
 {
-    var folders = path.split("/");
-    WebInspector.FileSystemUtils._getDirectory(fileSystem.root, folders, null, innerCallback);
+    fileSystem.root.getDirectory(path, null, innerCallback, WebInspector.FileSystemUtils.errorHandler);
 
     function innerCallback(dirEntry)
     {
