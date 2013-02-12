@@ -169,22 +169,6 @@ static Divisor bestDivisor(Platform::IntSize size, int tileWidth, int tileHeight
     return bestDivisor;
 }
 
-struct BackingStoreMutexLocker {
-    BackingStoreMutexLocker(BackingStorePrivate* backingStorePrivate)
-        : m_backingStorePrivate(backingStorePrivate)
-    {
-        m_backingStorePrivate->lockBackingStore();
-    }
-
-    ~BackingStoreMutexLocker()
-    {
-        m_backingStorePrivate->unlockBackingStore();
-    }
-
-private:
-    BackingStorePrivate* m_backingStorePrivate;
-};
-
 Platform::IntRect BackingStoreGeometry::backingStoreRect() const
 {
     return Platform::IntRect(backingStoreOffset(), backingStoreSize());
@@ -222,13 +206,6 @@ BackingStorePrivate::BackingStorePrivate()
     , m_preferredTileMatrixDimension(Vertical)
 {
     m_frontState = reinterpret_cast<unsigned>(new BackingStoreGeometry);
-
-    // Need a recursive mutex to achieve a global lock.
-    pthread_mutexattr_t attr;
-    pthread_mutexattr_init(&attr);
-    pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&m_mutex, &attr);
-    pthread_mutexattr_destroy(&attr);
 }
 
 BackingStorePrivate::~BackingStorePrivate()
@@ -236,8 +213,6 @@ BackingStorePrivate::~BackingStorePrivate()
     BackingStoreGeometry* front = reinterpret_cast<BackingStoreGeometry*>(m_frontState);
     delete front;
     m_frontState = 0;
-
-    pthread_mutex_destroy(&m_mutex);
 }
 
 void BackingStorePrivate::instrumentBeginFrame()
@@ -263,16 +238,12 @@ void BackingStorePrivate::suspendBackingStoreUpdates()
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
 
-    // We still use atomic values here because the UI thread can use it in
-    // setScrollingOrZooming() (through shouldPerformRegularRenderJobs()).
-    // FIXME: Once that one respects thread boundaries properly, switch to
-    // regular increment/decrement operations.
-    if (atomic_add_value(&m_suspendBackingStoreUpdates, 0)) {
+    if (m_suspendBackingStoreUpdates) {
         BBLOG(Platform::LogLevelInfo,
             "Backingstore already suspended, increasing suspend counter.");
     }
 
-    atomic_add(&m_suspendBackingStoreUpdates, 1);
+    ++m_suspendBackingStoreUpdates;
 }
 
 void BackingStorePrivate::suspendGeometryUpdates()
@@ -307,9 +278,8 @@ void BackingStorePrivate::resumeBackingStoreUpdates()
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
 
-    unsigned currentValue = atomic_add_value(&m_suspendBackingStoreUpdates, 0);
-    ASSERT(currentValue >= 1);
-    if (currentValue < 1) {
+    ASSERT(m_suspendBackingStoreUpdates >= 1);
+    if (m_suspendBackingStoreUpdates < 1) {
         Platform::logAlways(Platform::LogLevelCritical,
             "Call mismatch: Backingstore hasn't been suspended, therefore won't resume!");
         return;
@@ -318,10 +288,10 @@ void BackingStorePrivate::resumeBackingStoreUpdates()
     // Set a flag indicating that we're about to resume backingstore updates and
     // the tile matrix should be updated as a consequence by the first render
     // job that happens after this resumption of backingstore updates.
-    if (currentValue == 1)
+    if (m_suspendBackingStoreUpdates == 1)
         setTileMatrixNeedsUpdate();
 
-    atomic_sub(&m_suspendBackingStoreUpdates, 1);
+    --m_suspendBackingStoreUpdates;
 
     dispatchRenderJob();
 }
@@ -2098,16 +2068,18 @@ void BackingStorePrivate::clearWindow(const Platform::IntRect& rect,
 
 bool BackingStorePrivate::isScrollingOrZooming() const
 {
-    BackingStoreMutexLocker locker(const_cast<BackingStorePrivate*>(this));
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
     return m_isScrollingOrZooming;
 }
 
 void BackingStorePrivate::setScrollingOrZooming(bool scrollingOrZooming, bool shouldBlit)
 {
-    {
-        BackingStoreMutexLocker locker(this);
-        m_isScrollingOrZooming = scrollingOrZooming;
-    }
+    ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
+
+    if (m_isScrollingOrZooming == scrollingOrZooming)
+        return;
+
+    m_isScrollingOrZooming = scrollingOrZooming;
 
 #if !ENABLE_REPAINTONSCROLL
     m_suspendRenderJobs = scrollingOrZooming; // Suspend the rendering of everything.
@@ -2129,16 +2101,6 @@ void BackingStorePrivate::setScrollingOrZooming(bool scrollingOrZooming, bool sh
 #endif
     if (!scrollingOrZooming && shouldPerformRegularRenderJobs())
         dispatchRenderJob();
-}
-
-void BackingStorePrivate::lockBackingStore()
-{
-    pthread_mutex_lock(&m_mutex);
-}
-
-void BackingStorePrivate::unlockBackingStore()
-{
-    pthread_mutex_unlock(&m_mutex);
 }
 
 BackingStoreGeometry* BackingStorePrivate::frontState() const

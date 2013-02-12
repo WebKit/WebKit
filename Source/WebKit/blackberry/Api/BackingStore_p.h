@@ -289,9 +289,6 @@ public:
     bool isScrollingOrZooming() const;
     void setScrollingOrZooming(bool scrollingOrZooming, bool shouldBlit = true);
 
-    void lockBackingStore();
-    void unlockBackingStore();
-
     BackingStoreGeometry* frontState() const;
     void adoptAsFrontState(BackingStoreGeometry* newFrontState);
 
@@ -333,8 +330,6 @@ public:
     TileMatrixDirection m_preferredTileMatrixDimension;
 
     Platform::IntRect m_visibleTileBufferRect;
-
-    pthread_mutex_t m_mutex;
 
 #if USE(ACCELERATED_COMPOSITING)
     mutable bool m_needsDrawLayersOnCommit; // Not thread safe, WebKit thread only

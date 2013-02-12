@@ -1,5 +1,28 @@
 2013-02-12  Jakob Petsovits  <jpetsovits@rim.com>
 
+        [BlackBerry] Assume setScrollingOrZooming() to be called on the WebKit thread.
+        https://bugs.webkit.org/show_bug.cgi?id=109614
+        Internal PR 294513
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        With this further simplification of threading assumptions,
+        we can get rid of atomic integer access as well as the
+        backing store mutex which was otherwise unused.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::~BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::suspendBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeBackingStoreUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::isScrollingOrZooming):
+        (BlackBerry::WebKit::BackingStorePrivate::setScrollingOrZooming):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+
+2013-02-12  Jakob Petsovits  <jpetsovits@rim.com>
+
         [BlackBerry] Eliminate the direct rendering option.
         https://bugs.webkit.org/show_bug.cgi?id=109608
         RIM PR 293298
