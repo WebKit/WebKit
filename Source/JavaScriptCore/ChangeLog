@@ -1,3 +1,9 @@
+2013-02-12  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the gyp build of JavaScriptCore.
+
+        * JavaScriptCore.gypi: Added some missing DFG files to the source list.
+
 2013-02-12  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142387.
