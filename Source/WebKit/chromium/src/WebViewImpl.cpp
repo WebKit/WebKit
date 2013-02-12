@@ -755,12 +755,19 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         // Don't trigger a disambiguation popup on sites designed for mobile devices.
         // Instead, assume that the page has been designed with big enough buttons and links.
         if (event.data.tap.width > 0 && !shouldDisableDesktopWorkarounds()) {
-            IntRect boundingBox(event.x - event.data.tap.width / 2, event.y - event.data.tap.height / 2, event.data.tap.width, event.data.tap.height);
+            // FIXME: didTapMultipleTargets should just take a rect instead of
+            // an event.
+            WebGestureEvent scaledEvent;
+            scaledEvent.x = event.x / pageScaleFactor();
+            scaledEvent.y = event.y / pageScaleFactor();
+            scaledEvent.data.tap.width = event.data.tap.width / pageScaleFactor();
+            scaledEvent.data.tap.height = event.data.tap.height / pageScaleFactor();
+            IntRect boundingBox(scaledEvent.x - scaledEvent.data.tap.width / 2, scaledEvent.y - scaledEvent.data.tap.height / 2, scaledEvent.data.tap.width, scaledEvent.data.tap.height);
             Vector<IntRect> goodTargets;
             findGoodTouchTargets(boundingBox, mainFrameImpl()->frame(), goodTargets);
             // FIXME: replace touch adjustment code when numberOfGoodTargets == 1?
             // Single candidate case is currently handled by: https://bugs.webkit.org/show_bug.cgi?id=85101
-            if (goodTargets.size() >= 2 && m_client && m_client->didTapMultipleTargets(event, goodTargets)) {
+            if (goodTargets.size() >= 2 && m_client && m_client->didTapMultipleTargets(scaledEvent, goodTargets)) {
                 eventSwallowed = true;
                 eventCancelled = true;
                 break;
@@ -1354,6 +1361,7 @@ void WebViewImpl::hasTouchEventHandlers(bool hasTouchHandlers)
 
 bool WebViewImpl::hasTouchEventHandlersAt(const WebPoint& point)
 {
+    // FIXME: Implement this. Note that the point must be divided by pageScaleFactor.
     return true;
 }
 
@@ -2083,26 +2091,7 @@ bool WebViewImpl::handleInputEvent(const WebInputEvent& inputEvent)
         return true;
     }
 
-    const WebInputEvent* inputEventTransformed = &inputEvent;
-    if (m_page->settings()->applyPageScaleFactorInCompositor()) {
-        WebMouseEvent mouseEvent;
-        WebGestureEvent gestureEvent;
-        if (WebInputEvent::isMouseEventType(inputEvent.type)) {
-            mouseEvent = *static_cast<const WebMouseEvent*>(&inputEvent);
-            mouseEvent.x = mouseEvent.x / pageScaleFactor();
-            mouseEvent.y = mouseEvent.y / pageScaleFactor();
-            inputEventTransformed = static_cast<const WebInputEvent*>(&mouseEvent);
-        } else if (WebInputEvent::isGestureEventType(inputEvent.type)) {
-            gestureEvent = *static_cast<const WebGestureEvent*>(&inputEvent);
-            gestureEvent.x = gestureEvent.x / pageScaleFactor();
-            gestureEvent.y = gestureEvent.y / pageScaleFactor();
-            gestureEvent.data.tap.width /= pageScaleFactor();
-            gestureEvent.data.tap.height /= pageScaleFactor();
-            inputEventTransformed = static_cast<const WebInputEvent*>(&gestureEvent);
-        }
-    }
-
-    return PageWidgetDelegate::handleInputEvent(m_page.get(), *this, *inputEventTransformed);
+    return PageWidgetDelegate::handleInputEvent(m_page.get(), *this, inputEvent);
 }
 
 void WebViewImpl::mouseCaptureLost()

@@ -407,23 +407,23 @@ public:
     union {
         struct {
             int tapCount;
-            int width;
-            int height;
+            float width;
+            float height;
         } tap;
 
         struct {
-            int width;
-            int height;
+            float width;
+            float height;
         } tapDown;
 
         struct {
-            int width;
-            int height;
+            float width;
+            float height;
         } longPress;
 
         struct {
-            int firstFingerWidth;
-            int firstFingerHeight;
+            float firstFingerWidth;
+            float firstFingerHeight;
         } twoFingerTap;
 
         struct {
@@ -443,7 +443,7 @@ public:
         struct {
             float scale;
         } pinchUpdate;
-    } data; 
+    } data;
 
     WebGestureEvent(unsigned sizeParam = sizeof(WebGestureEvent))
         : WebInputEvent(sizeParam)
@@ -452,7 +452,7 @@ public:
         , globalX(0)
         , globalY(0)
     {
-      memset(&data, 0, sizeof(data)); 
+        memset(&data, 0, sizeof(data));
     }
 };
 
