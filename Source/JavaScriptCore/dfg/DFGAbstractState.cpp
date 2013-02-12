@@ -914,8 +914,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         }
         if (leftNode->shouldSpeculateObject() && rightNode->shouldSpeculateObject()) {
             node->setCanExit(true);
-            forNode(leftNode).filter((SpecCell & ~SpecString) | SpecOther);
-            forNode(rightNode).filter((SpecCell & ~SpecString) | SpecOther);
+            forNode(leftNode).filter(SpecObjectMask);
+            forNode(rightNode).filter(SpecObjectMask);
             break;
         }
         node->setCanExit(false);
