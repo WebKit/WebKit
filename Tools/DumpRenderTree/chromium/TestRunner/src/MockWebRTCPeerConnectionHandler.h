@@ -31,8 +31,7 @@
 #ifndef MockWebRTCPeerConnectionHandler_h
 #define MockWebRTCPeerConnectionHandler_h
 
-#if ENABLE(MEDIA_STREAM)
-
+#include "TestCommon.h"
 #include "WebTask.h"
 #include <public/WebRTCPeerConnectionHandler.h>
 #include <public/WebRTCSessionDescription.h>
@@ -43,9 +42,13 @@ namespace WebKit {
 class WebRTCPeerConnectionHandlerClient;
 };
 
+namespace WebTestRunner {
+
+class TestInterfaces;
+
 class MockWebRTCPeerConnectionHandler : public WebKit::WebRTCPeerConnectionHandler {
 public:
-    explicit MockWebRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*);
+    MockWebRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*, TestInterfaces*);
 
     virtual bool initialize(const WebKit::WebRTCConfiguration&, const WebKit::WebMediaConstraints&) OVERRIDE;
 
@@ -65,20 +68,21 @@ public:
     virtual void stop() OVERRIDE;
 
     // WebTask related methods
-    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
+    WebTaskList* taskList() { return &m_taskList; }
 
 private:
     MockWebRTCPeerConnectionHandler() { }
 
     WebKit::WebRTCPeerConnectionHandlerClient* m_client;
     bool m_stopped;
-    WebTestRunner::WebTaskList m_taskList;
+    WebTaskList m_taskList;
     WebKit::WebRTCSessionDescription m_localDescription;
     WebKit::WebRTCSessionDescription m_remoteDescription;
     int m_streamCount;
+    TestInterfaces* m_interfaces;
 };
 
-#endif // ENABLE(MEDIA_STREAM)
+}
 
 #endif // MockWebRTCPeerConnectionHandler_h
 

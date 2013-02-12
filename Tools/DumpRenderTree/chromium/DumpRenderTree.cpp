@@ -87,6 +87,9 @@ public:
     {
         webkit_support::TearDownTestEnvironment();
     }
+
+    MockWebKitPlatformSupport* mockPlatform() { return m_mockPlatform.get(); }
+
 private:
     OwnPtr<MockWebKitPlatformSupport> m_mockPlatform;
 };
@@ -252,7 +255,7 @@ int main(int argc, char* argv[])
             // 0x20000000ms is big enough for the purpose to avoid timeout in debugging.
             shell.setLayoutTestTimeout(0x20000000);
         }
-        shell.initialize();
+        shell.initialize(testEnvironment.mockPlatform());
         if (serverMode && !tests.size()) {
 #if OS(ANDROID)
             // Send a signal to host to indicate DRT is ready to process commands.

@@ -25,13 +25,18 @@
 #ifndef MockWebRTCDataChannelHandler_h
 #define MockWebRTCDataChannelHandler_h
 
+#include "TestCommon.h"
 #include "WebTask.h"
 #include <public/WebRTCDataChannelHandler.h>
 #include <public/WebString.h>
 
+namespace WebTestRunner {
+
+class WebTestDelegate;
+
 class MockWebRTCDataChannelHandler : public WebKit::WebRTCDataChannelHandler {
 public:
-    MockWebRTCDataChannelHandler(WebKit::WebString label, bool reliable);
+    MockWebRTCDataChannelHandler(WebKit::WebString label, bool reliable, WebTestDelegate*);
 
     virtual void setClient(WebKit::WebRTCDataChannelHandlerClient*) OVERRIDE;
     virtual WebKit::WebString label() OVERRIDE { return m_label; }
@@ -42,7 +47,7 @@ public:
     virtual void close() OVERRIDE;
 
     // WebTask related methods
-    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
+    WebTaskList* taskList() { return &m_taskList; }
 
 private:
     MockWebRTCDataChannelHandler();
@@ -50,7 +55,10 @@ private:
     WebKit::WebRTCDataChannelHandlerClient* m_client;
     WebKit::WebString m_label;
     bool m_reliable;
-    WebTestRunner::WebTaskList m_taskList;
+    WebTaskList m_taskList;
+    WebTestDelegate* m_delegate;
 };
+
+}
 
 #endif // MockWebRTCDataChannelHandler_h

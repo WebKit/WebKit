@@ -23,16 +23,15 @@
  */
 
 #include "config.h"
-#if ENABLE(MEDIA_STREAM)
-
 #include "MockWebRTCDataChannelHandler.h"
 
-#include "Task.h"
+#include "WebTestDelegate.h"
 #include <assert.h>
 #include <public/WebRTCDataChannelHandlerClient.h>
 
 using namespace WebKit;
-using namespace WebTestRunner;
+
+namespace WebTestRunner {
 
 class DataChannelReadyStateTask : public WebMethodTask<MockWebRTCDataChannelHandler> {
 public:
@@ -55,10 +54,11 @@ private:
 
 /////////////////////
 
-MockWebRTCDataChannelHandler::MockWebRTCDataChannelHandler(WebString label, bool reliable)
+MockWebRTCDataChannelHandler::MockWebRTCDataChannelHandler(WebString label, bool reliable, WebTestDelegate* delegate)
     : m_client(0)
     , m_label(label)
     , m_reliable(reliable)
+    , m_delegate(delegate)
 {
 }
 
@@ -66,7 +66,7 @@ void MockWebRTCDataChannelHandler::setClient(WebRTCDataChannelHandlerClient* cli
 {
     m_client = client;
     if (m_client)
-        postTask(new DataChannelReadyStateTask(this, m_client, WebRTCDataChannelHandlerClient::ReadyStateOpen));
+        m_delegate->postTask(new DataChannelReadyStateTask(this, m_client, WebRTCDataChannelHandlerClient::ReadyStateOpen));
 }
 
 unsigned long MockWebRTCDataChannelHandler::bufferedAmount()
@@ -91,7 +91,7 @@ bool MockWebRTCDataChannelHandler::sendRawData(const char* data, size_t size)
 void MockWebRTCDataChannelHandler::close()
 {
     assert(m_client);
-    postTask(new DataChannelReadyStateTask(this, m_client, WebRTCDataChannelHandlerClient::ReadyStateClosed));
+    m_delegate->postTask(new DataChannelReadyStateTask(this, m_client, WebRTCDataChannelHandlerClient::ReadyStateClosed));
 }
 
-#endif // ENABLE(MEDIA_STREAM)
+}

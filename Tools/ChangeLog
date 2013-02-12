@@ -1,3 +1,152 @@
+2013-02-12  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move webrtc mocks to testrunner library
+        https://bugs.webkit.org/show_bug.cgi?id=109041
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (WebKitSupportTestEnvironment):
+        (WebKitSupportTestEnvironment::mockPlatform):
+        (main):
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.cpp:
+        (MockWebKitPlatformSupport::setInterfaces):
+        (MockWebKitPlatformSupport::createMediaStreamCenter):
+        (MockWebKitPlatformSupport::createRTCPeerConnectionHandler):
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.h:
+        (WebTestRunner):
+        (MockWebKitPlatformSupport):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h:
+        (WebKit):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxy::showContextMenu):
+        (WebTestRunner::WebTestProxy::userMediaClient):
+        * DumpRenderTree/chromium/TestRunner/src/MockConstraints.cpp: Renamed from Tools/DumpRenderTree/chromium/MockConstraints.cpp.
+        (WebTestRunner::MockConstraints::verifyConstraints):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/MockConstraints.h: Renamed from Tools/DumpRenderTree/chromium/MockConstraints.h.
+        (WebKit):
+        (WebTestRunner):
+        (MockConstraints):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebMediaStreamCenter.cpp: Renamed from Tools/DumpRenderTree/chromium/MockWebMediaStreamCenter.cpp.
+        (WebTestRunner):
+        (WebTestRunner::MockWebMediaStreamCenter::MockWebMediaStreamCenter):
+        (WebTestRunner::MockWebMediaStreamCenter::queryMediaStreamSources):
+        (WebTestRunner::MockWebMediaStreamCenter::didEnableMediaStreamTrack):
+        (WebTestRunner::MockWebMediaStreamCenter::didDisableMediaStreamTrack):
+        (WebTestRunner::MockWebMediaStreamCenter::didAddMediaStreamTrack):
+        (WebTestRunner::MockWebMediaStreamCenter::didRemoveMediaStreamTrack):
+        (WebTestRunner::MockWebMediaStreamCenter::didStopLocalMediaStream):
+        (MockWebAudioDestinationConsumer):
+        (WebTestRunner::MockWebAudioDestinationConsumer::~MockWebAudioDestinationConsumer):
+        (WebTestRunner::MockWebMediaStreamCenter::didCreateMediaStream):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebMediaStreamCenter.h: Renamed from Tools/DumpRenderTree/chromium/MockWebMediaStreamCenter.h.
+        (WebKit):
+        (WebTestRunner):
+        (MockWebMediaStreamCenter):
+        (WebTestRunner::MockWebMediaStreamCenter::MockWebMediaStreamCenter):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebRTCDTMFSenderHandler.cpp: Renamed from Tools/DumpRenderTree/chromium/MockWebRTCDTMFSenderHandler.cpp.
+        (WebTestRunner):
+        (DTMFSenderToneTask):
+        (WebTestRunner::DTMFSenderToneTask::DTMFSenderToneTask):
+        (WebTestRunner::MockWebRTCDTMFSenderHandler::MockWebRTCDTMFSenderHandler):
+        (WebTestRunner::MockWebRTCDTMFSenderHandler::setClient):
+        (WebTestRunner::MockWebRTCDTMFSenderHandler::currentToneBuffer):
+        (WebTestRunner::MockWebRTCDTMFSenderHandler::canInsertDTMF):
+        (WebTestRunner::MockWebRTCDTMFSenderHandler::insertDTMF):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebRTCDTMFSenderHandler.h: Renamed from Tools/DumpRenderTree/chromium/MockWebRTCDTMFSenderHandler.h.
+        (WebTestRunner):
+        (MockWebRTCDTMFSenderHandler):
+        (WebTestRunner::MockWebRTCDTMFSenderHandler::taskList):
+        (WebTestRunner::MockWebRTCDTMFSenderHandler::clearToneBuffer):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebRTCDataChannelHandler.cpp: Renamed from Tools/DumpRenderTree/chromium/MockWebRTCDataChannelHandler.cpp.
+        (WebTestRunner):
+        (DataChannelReadyStateTask):
+        (WebTestRunner::DataChannelReadyStateTask::DataChannelReadyStateTask):
+        (WebTestRunner::MockWebRTCDataChannelHandler::MockWebRTCDataChannelHandler):
+        (WebTestRunner::MockWebRTCDataChannelHandler::setClient):
+        (WebTestRunner::MockWebRTCDataChannelHandler::bufferedAmount):
+        (WebTestRunner::MockWebRTCDataChannelHandler::sendStringData):
+        (WebTestRunner::MockWebRTCDataChannelHandler::sendRawData):
+        (WebTestRunner::MockWebRTCDataChannelHandler::close):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebRTCDataChannelHandler.h: Renamed from Tools/DumpRenderTree/chromium/MockWebRTCDataChannelHandler.h.
+        (WebTestRunner):
+        (MockWebRTCDataChannelHandler):
+        (WebTestRunner::MockWebRTCDataChannelHandler::taskList):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebRTCPeerConnectionHandler.cpp: Renamed from Tools/DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.cpp.
+        (WebTestRunner):
+        (RTCSessionDescriptionRequestSuccededTask):
+        (WebTestRunner::RTCSessionDescriptionRequestSuccededTask::RTCSessionDescriptionRequestSuccededTask):
+        (RTCSessionDescriptionRequestFailedTask):
+        (WebTestRunner::RTCSessionDescriptionRequestFailedTask::RTCSessionDescriptionRequestFailedTask):
+        (RTCStatsRequestSucceededTask):
+        (WebTestRunner::RTCStatsRequestSucceededTask::RTCStatsRequestSucceededTask):
+        (RTCVoidRequestTask):
+        (WebTestRunner::RTCVoidRequestTask::RTCVoidRequestTask):
+        (RTCPeerConnectionStateTask):
+        (WebTestRunner::RTCPeerConnectionStateTask::RTCPeerConnectionStateTask):
+        (RemoteDataChannelTask):
+        (WebTestRunner::RemoteDataChannelTask::RemoteDataChannelTask):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::initialize):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::createOffer):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::createAnswer):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::setLocalDescription):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::setRemoteDescription):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::localDescription):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::remoteDescription):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::updateICE):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::addICECandidate):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::addStream):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::removeStream):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::getStats):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::createDataChannel):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::createDTMFSender):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::stop):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebRTCPeerConnectionHandler.h: Renamed from Tools/DumpRenderTree/chromium/MockWebRTCPeerConnectionHandler.h.
+        (WebKit):
+        (WebTestRunner):
+        (MockWebRTCPeerConnectionHandler):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::taskList):
+        (WebTestRunner::MockWebRTCPeerConnectionHandler::MockWebRTCPeerConnectionHandler):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::TestInterfaces):
+        (WebTestRunner::TestInterfaces::setDelegate):
+        (WebTestRunner::TestInterfaces::delegate):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h:
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestRunner::WebTestInterfaces::createMediaStreamCenter):
+        (WebTestRunner):
+        (WebTestRunner::WebTestInterfaces::createWebRTCPeerConnectionHandler):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::userMediaClient):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebUserMediaClientMock.cpp: Renamed from Tools/DumpRenderTree/chromium/WebUserMediaClientMock.cpp.
+        (WebTestRunner):
+        (UserMediaRequestTask):
+        (WebTestRunner::UserMediaRequestTask::UserMediaRequestTask):
+        (MockExtraData):
+        (WebTestRunner::WebUserMediaClientMock::WebUserMediaClientMock):
+        (WebTestRunner::WebUserMediaClientMock::requestUserMedia):
+        (WebTestRunner::WebUserMediaClientMock::cancelUserMediaRequest):
+        * DumpRenderTree/chromium/TestRunner/src/WebUserMediaClientMock.h: Renamed from Tools/DumpRenderTree/chromium/WebUserMediaClientMock.h.
+        (WebTestRunner):
+        (WebUserMediaClientMock):
+        (WebTestRunner::WebUserMediaClientMock::~WebUserMediaClientMock):
+        (WebTestRunner::WebUserMediaClientMock::taskList):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-02-11  Timothy Loh  <timloh@chromium.com>
 
         webkit-patch upload regenerates the WebCore ChangeLog every time it's called

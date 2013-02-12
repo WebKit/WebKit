@@ -31,33 +31,33 @@
 #ifndef WebUserMediaClientMock_h
 #define WebUserMediaClientMock_h
 
-#if ENABLE(MEDIA_STREAM)
-
+#include "TestCommon.h"
 #include "WebTask.h"
 #include "WebUserMediaClient.h"
-#include "webkit/support/test_media_stream_client.h"
 #include <public/WebCommon.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
-#include <wtf/PassOwnPtr.h>
+
+namespace WebTestRunner {
+
+class WebTestDelegate;
 
 class WebUserMediaClientMock : public WebKit::WebUserMediaClient {
 public:
-    static PassOwnPtr<WebUserMediaClientMock> create();
+    explicit WebUserMediaClientMock(WebTestDelegate*);
     ~WebUserMediaClientMock() { }
 
     virtual void requestUserMedia(const WebKit::WebUserMediaRequest&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&, const WebKit::WebVector<WebKit::WebMediaStreamSource>&) OVERRIDE;
     virtual void cancelUserMediaRequest(const WebKit::WebUserMediaRequest&);
 
     // Task related methods
-    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
+    WebTaskList* taskList() { return &m_taskList; }
 
 private:
-    WebUserMediaClientMock() { }
-
-    WebTestRunner::WebTaskList m_taskList;
+    WebTaskList m_taskList;
+    WebTestDelegate* m_delegate;
 };
 
-#endif // ENABLE(MEDIA_STREAM)
+}
 
 #endif // WebUserMediaClientMock_h

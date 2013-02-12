@@ -63,6 +63,7 @@ class WebString;
 class WebURL;
 class WebURLRequest;
 class WebURLResponse;
+class WebUserMediaClient;
 class WebView;
 struct WebConsoleMessage;
 struct WebContextMenuData;
@@ -79,6 +80,7 @@ class TestInterfaces;
 class WebTestDelegate;
 class WebTestInterfaces;
 class WebTestRunner;
+class WebUserMediaClientMock;
 
 class WEBTESTRUNNER_EXPORT WebTestProxyBase {
 public:
@@ -125,6 +127,7 @@ protected:
     bool isSmartInsertDeleteEnabled();
     bool isSelectTrailingWhitespaceEnabled();
     void showContextMenu(WebKit::WebFrame*, const WebKit::WebContextMenuData&);
+    WebKit::WebUserMediaClient* userMediaClient();
     void printPage(WebKit::WebFrame*);
 
     void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
@@ -167,6 +170,7 @@ private:
     WebTestDelegate* m_delegate;
 
     std::auto_ptr<SpellCheckClient> m_spellcheck;
+    std::auto_ptr<WebUserMediaClientMock> m_userMediaClient;
 
     WebKit::WebRect m_paintRect;
     std::map<unsigned, std::string> m_resourceIdentifierMap;
@@ -322,6 +326,10 @@ public:
     {
         WebTestProxyBase::showContextMenu(frame, contextMenuData);
         Base::showContextMenu(frame, contextMenuData);
+    }
+    virtual WebKit::WebUserMediaClient* userMediaClient()
+    {
+        return WebTestProxyBase::userMediaClient();
     }
     virtual void printPage(WebKit::WebFrame* frame)
     {

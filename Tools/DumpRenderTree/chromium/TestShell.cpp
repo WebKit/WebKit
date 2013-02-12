@@ -33,6 +33,7 @@
 
 #include "DRTDevToolsAgent.h"
 #include "DRTDevToolsClient.h"
+#include "MockWebKitPlatformSupport.h"
 #include "MockWebPrerenderingSupport.h"
 #include "WebArrayBufferView.h"
 #include "WebDataSource.h"
@@ -158,9 +159,10 @@ TestShell::TestShell()
     m_timeout = 30 * 1000;
 }
 
-void TestShell::initialize()
+void TestShell::initialize(MockWebKitPlatformSupport* platformSupport)
 {
     m_testInterfaces = adoptPtr(new WebTestInterfaces());
+    platformSupport->setInterfaces(m_testInterfaces.get());
     m_devToolsTestInterfaces = adoptPtr(new WebTestInterfaces());
 #if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
     m_notificationPresenter = adoptPtr(new NotificationPresenter(this));

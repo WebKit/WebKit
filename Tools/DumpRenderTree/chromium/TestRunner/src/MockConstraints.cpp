@@ -28,32 +28,52 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockWebMediaStreamCenter_h
-#define MockWebMediaStreamCenter_h
+#include "config.h"
+#include "MockConstraints.h"
 
-#if ENABLE(MEDIA_STREAM)
-#include <public/WebMediaStreamCenter.h>
+#include <public/WebMediaConstraints.h>
 
-namespace WebKit {
-class WebMediaStreamCenterClient;
-};
+using namespace WebKit;
 
-class MockWebMediaStreamCenter : public WebKit::WebMediaStreamCenter {
-public:
-    explicit MockWebMediaStreamCenter(WebKit::WebMediaStreamCenterClient*);
+namespace WebTestRunner {
 
-    virtual void queryMediaStreamSources(const WebKit::WebMediaStreamSourcesRequest&) OVERRIDE;
-    virtual void didEnableMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
-    virtual void didDisableMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
-    virtual bool didAddMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
-    virtual bool didRemoveMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
-    virtual void didStopLocalMediaStream(const WebKit::WebMediaStream&) OVERRIDE;
-    virtual void didCreateMediaStream(WebKit::WebMediaStream&) OVERRIDE;
+namespace {
 
-private:
-    MockWebMediaStreamCenter() { }
-};
+bool isSupported(const WebString& constraint)
+{
+    return constraint == "valid_and_supported_1" || constraint == "valid_and_supported_2";
+}
 
-#endif // ENABLE(MEDIA_STREAM)
-#endif // MockWebMediaStreamCenter_h
+bool isValid(const WebString& constraint)
+{
+    return isSupported(constraint) || constraint == "valid_but_unsupported_1" || constraint == "valid_but_unsupported_2";
+}
 
+}
+
+bool MockConstraints::verifyConstraints(const WebMediaConstraints& constraints)
+{
+    WebVector<WebMediaConstraint> mandatoryConstraints;
+    constraints.getMandatoryConstraints(mandatoryConstraints);
+    if (mandatoryConstraints.size()) {
+        for (size_t i = 0; i < mandatoryConstraints.size(); ++i) {
+            const WebMediaConstraint& curr = mandatoryConstraints[i];
+            if (!isSupported(curr.m_name) || curr.m_value != "1")
+                return false;
+        }
+    }
+
+    WebVector<WebMediaConstraint> optionalConstraints;
+    constraints.getOptionalConstraints(optionalConstraints);
+    if (optionalConstraints.size()) {
+        for (size_t i = 0; i < optionalConstraints.size(); ++i) {
+            const WebMediaConstraint& curr = optionalConstraints[i];
+            if (!isValid(curr.m_name) || curr.m_value != "0")
+                return false;
+        }
+    }
+
+    return true;
+}
+
+}

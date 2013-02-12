@@ -56,6 +56,7 @@ class DRTDevToolsAgent;
 class DRTDevToolsCallArgs;
 class DRTDevToolsClient;
 class MockWebPrerenderingSupport;
+class MockWebKitPlatformSupport;
 
 struct TestParams {
     bool dumpTree;
@@ -77,7 +78,7 @@ public:
     TestShell();
     ~TestShell();
 
-    void initialize();
+    void initialize(MockWebKitPlatformSupport*);
 
     // The main WebView.
     WebKit::WebView* webView() const { return m_webView; }

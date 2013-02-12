@@ -36,6 +36,10 @@
 
 namespace WebKit {
 class WebFrame;
+class WebMediaStreamCenter;
+class WebMediaStreamCenterClient;
+class WebRTCPeerConnectionHandler;
+class WebRTCPeerConnectionHandlerClient;
 class WebURL;
 class WebView;
 }
@@ -59,6 +63,9 @@ public:
     void configureForTestWithURL(const WebKit::WebURL&, bool generatePixels);
 
     WebTestRunner* testRunner();
+
+    WebKit::WebMediaStreamCenter* createMediaStreamCenter(WebKit::WebMediaStreamCenterClient*);
+    WebKit::WebRTCPeerConnectionHandler* createWebRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*);
 
 #if WEBTESTRUNNER_IMPLEMENTATION
     TestInterfaces* testInterfaces();

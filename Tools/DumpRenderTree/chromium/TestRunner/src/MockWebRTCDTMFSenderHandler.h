@@ -26,14 +26,19 @@
 #ifndef MockWebRTCDTMFSenderHandler_h
 #define MockWebRTCDTMFSenderHandler_h
 
+#include "TestCommon.h"
 #include "WebTask.h"
 #include <public/WebMediaStreamTrack.h>
 #include <public/WebRTCDTMFSenderHandler.h>
 #include <public/WebString.h>
 
+namespace WebTestRunner {
+
+class WebTestDelegate;
+
 class MockWebRTCDTMFSenderHandler : public WebKit::WebRTCDTMFSenderHandler {
 public:
-    explicit MockWebRTCDTMFSenderHandler(const WebKit::WebMediaStreamTrack&);
+    MockWebRTCDTMFSenderHandler(const WebKit::WebMediaStreamTrack&, WebTestDelegate*);
 
     virtual void setClient(WebKit::WebRTCDTMFSenderHandlerClient*) OVERRIDE;
 
@@ -43,7 +48,7 @@ public:
     virtual bool insertDTMF(const WebKit::WebString& tones, long duration, long interToneGap) OVERRIDE;
 
     // WebTask related methods
-    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
+    WebTaskList* taskList() { return &m_taskList; }
     void clearToneBuffer() { m_toneBuffer.reset(); }
 
 private:
@@ -52,7 +57,10 @@ private:
     WebKit::WebRTCDTMFSenderHandlerClient* m_client;
     WebKit::WebMediaStreamTrack m_track;
     WebKit::WebString m_toneBuffer;
-    WebTestRunner::WebTaskList m_taskList;
+    WebTaskList m_taskList;
+    WebTestDelegate* m_delegate;
 };
+
+}
 
 #endif // MockWebRTCDTMFSenderHandler_h

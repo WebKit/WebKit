@@ -64,6 +64,7 @@ public:
     EventSender* eventSender();
     TestRunner* testRunner();
     WebKit::WebView* webView();
+    WebTestDelegate* delegate();
 
 
 private:
@@ -73,6 +74,7 @@ private:
     std::auto_ptr<TextInputController> m_textInputController;
     std::auto_ptr<TestRunner> m_testRunner;
     WebKit::WebView* m_webView;
+    WebTestDelegate* m_delegate;
 };
 
 }

@@ -53,6 +53,7 @@ TestInterfaces::TestInterfaces()
     , m_textInputController(new TextInputController())
     , m_testRunner(new TestRunner())
     , m_webView(0)
+    , m_delegate(0)
 {
 }
 
@@ -88,6 +89,7 @@ void TestInterfaces::setDelegate(WebTestDelegate* delegate)
     m_gamepadController->setDelegate(delegate);
     // m_textInputController doesn't depend on WebTestDelegate.
     m_testRunner->setDelegate(delegate);
+    m_delegate = delegate;
 }
 
 void TestInterfaces::bindTo(WebFrame* frame)
@@ -147,6 +149,11 @@ TestRunner* TestInterfaces::testRunner()
 WebView* TestInterfaces::webView()
 {
     return m_webView;
+}
+
+WebTestDelegate* TestInterfaces::delegate()
+{
+    return m_delegate;
 }
 
 }

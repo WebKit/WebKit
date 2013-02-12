@@ -52,6 +52,7 @@
 #include "WebTestDelegate.h"
 #include "WebTestInterfaces.h"
 #include "WebTestRunner.h"
+#include "WebUserMediaClientMock.h"
 #include "WebView.h"
 #include <public/WebCString.h>
 #include <public/WebURLError.h>
@@ -593,6 +594,13 @@ bool WebTestProxyBase::isSelectTrailingWhitespaceEnabled()
 void WebTestProxyBase::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
 {
     m_testInterfaces->eventSender()->setContextMenuData(contextMenuData);
+}
+
+WebUserMediaClient* WebTestProxyBase::userMediaClient()
+{
+    if (!m_userMediaClient.get())
+        m_userMediaClient = auto_ptr<WebUserMediaClientMock>(new WebUserMediaClientMock(m_delegate));
+    return m_userMediaClient.get();
 }
 
 // Simulate a print by going into print mode and then exit straight away.

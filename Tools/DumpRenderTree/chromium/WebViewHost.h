@@ -48,7 +48,6 @@ class MockWebSpeechInputController;
 class MockWebSpeechRecognizer;
 class SkCanvas;
 class TestShell;
-class WebUserMediaClientMock;
 
 namespace WebKit {
 class WebFrame;
@@ -216,9 +215,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebSpeechRecognizer* speechRecognizer() OVERRIDE;
 #endif
     virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient() OVERRIDE;
-#if ENABLE(MEDIA_STREAM)
-    virtual WebKit::WebUserMediaClient* userMediaClient();
-#endif
 
     // WebKit::WebWidgetClient
     virtual void didAutoResize(const WebKit::WebSize& newSize);
@@ -312,7 +308,6 @@ private:
     void discardBackingStore();
 
 #if ENABLE(MEDIA_STREAM)
-    WebUserMediaClientMock* userMediaClientMock();
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
 #endif
 
@@ -364,7 +359,6 @@ private:
 #endif
 
 #if ENABLE(MEDIA_STREAM)
-    OwnPtr<WebUserMediaClientMock> m_userMediaClientMock;
     OwnPtr<webkit_support::TestMediaStreamClient> m_testMediaStreamClient;
 #endif
 

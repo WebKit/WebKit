@@ -29,23 +29,21 @@
  */
 
 #include "config.h"
-#if ENABLE(MEDIA_STREAM)
-
 #include "WebUserMediaClientMock.h"
 
 #include "MockConstraints.h"
-#include "Task.h"
 #include "WebDocument.h"
 #include "WebMediaStreamRegistry.h"
+#include "WebTestDelegate.h"
 #include "WebUserMediaRequest.h"
 #include <public/WebMediaConstraints.h>
 #include <public/WebMediaStream.h>
 #include <public/WebMediaStreamSource.h>
 #include <public/WebVector.h>
-#include <wtf/Assertions.h>
 
 using namespace WebKit;
-using namespace WebTestRunner;
+
+namespace WebTestRunner {
 
 class UserMediaRequestTask : public WebMethodTask<WebUserMediaClientMock> {
 public:
@@ -76,29 +74,29 @@ public:
     int foo;
 };
 
-PassOwnPtr<WebUserMediaClientMock> WebUserMediaClientMock::create()
+WebUserMediaClientMock::WebUserMediaClientMock(WebTestDelegate* delegate)
+    : m_delegate(delegate)
 {
-    return adoptPtr(new WebUserMediaClientMock());
 }
 
 void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamRequest, const WebVector<WebMediaStreamSource>& audioSourcesVector, const WebVector<WebMediaStreamSource>& videoSourcesVector)
 {
-    ASSERT(!streamRequest.isNull());
+    WEBKIT_ASSERT(!streamRequest.isNull());
     WebUserMediaRequest request = streamRequest;
 
     if (request.ownerDocument().isNull() || !request.ownerDocument().frame()) {
-        postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
+        m_delegate->postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
         return;
     }
 
     WebMediaConstraints constraints = request.audioConstraints();
     if (!constraints.isNull() && !MockConstraints::verifyConstraints(constraints)) {
-        postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
+        m_delegate->postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
         return;
     }
     constraints = request.videoConstraints();
     if (!constraints.isNull() && !MockConstraints::verifyConstraints(constraints)) {
-        postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
+        m_delegate->postTask(new UserMediaRequestTask(this, request, WebMediaStream()));
         return;
     }
 
@@ -118,11 +116,11 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
 
     stream.setExtraData(new MockExtraData());
 
-    postTask(new UserMediaRequestTask(this, request, stream));
+    m_delegate->postTask(new UserMediaRequestTask(this, request, stream));
 }
 
 void WebUserMediaClientMock::cancelUserMediaRequest(const WebUserMediaRequest&)
 {
 }
 
-#endif // ENABLE(MEDIA_STREAM)
+}

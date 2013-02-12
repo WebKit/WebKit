@@ -24,17 +24,16 @@
  */
 
 #include "config.h"
-#if ENABLE(MEDIA_STREAM)
-
 #include "MockWebRTCDTMFSenderHandler.h"
 
-#include "Task.h"
+#include "WebTestDelegate.h"
 #include <assert.h>
 #include <public/WebMediaStreamSource.h>
 #include <public/WebRTCDTMFSenderHandlerClient.h>
 
 using namespace WebKit;
-using namespace WebTestRunner;
+
+namespace WebTestRunner {
 
 class DTMFSenderToneTask : public WebMethodTask<MockWebRTCDTMFSenderHandler> {
 public:
@@ -57,9 +56,10 @@ private:
 
 /////////////////////
 
-MockWebRTCDTMFSenderHandler::MockWebRTCDTMFSenderHandler(const WebMediaStreamTrack& track)
+MockWebRTCDTMFSenderHandler::MockWebRTCDTMFSenderHandler(const WebMediaStreamTrack& track, WebTestDelegate* delegate)
     : m_client(0)
     , m_track(track)
+    , m_delegate(delegate)
 {
 }
 
@@ -86,9 +86,9 @@ bool MockWebRTCDTMFSenderHandler::insertDTMF(const WebString& tones, long durati
         return false;
 
     m_toneBuffer = tones;
-    postTask(new DTMFSenderToneTask(this, m_client));
-    postTask(new DTMFSenderToneTask(this, m_client));
+    m_delegate->postTask(new DTMFSenderToneTask(this, m_client));
+    m_delegate->postTask(new DTMFSenderToneTask(this, m_client));
     return true;
 }
 
-#endif // ENABLE(MEDIA_STREAM)
+}

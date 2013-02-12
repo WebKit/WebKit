@@ -28,22 +28,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MockConstraints_h
-#define MockConstraints_h
+#ifndef MockWebMediaStreamCenter_h
+#define MockWebMediaStreamCenter_h
 
-#if ENABLE(MEDIA_STREAM)
+#include "TestCommon.h"
+#include <public/WebMediaStreamCenter.h>
 
 namespace WebKit {
-class WebMediaConstraints;
+class WebMediaStreamCenterClient;
+};
+
+namespace WebTestRunner {
+
+class MockWebMediaStreamCenter : public WebKit::WebMediaStreamCenter {
+public:
+    explicit MockWebMediaStreamCenter(WebKit::WebMediaStreamCenterClient*);
+
+    virtual void queryMediaStreamSources(const WebKit::WebMediaStreamSourcesRequest&) OVERRIDE;
+    virtual void didEnableMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual void didDisableMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual bool didAddMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual bool didRemoveMediaStreamTrack(const WebKit::WebMediaStream&, const WebKit::WebMediaStreamTrack&) OVERRIDE;
+    virtual void didStopLocalMediaStream(const WebKit::WebMediaStream&) OVERRIDE;
+    virtual void didCreateMediaStream(WebKit::WebMediaStream&) OVERRIDE;
+
+private:
+    MockWebMediaStreamCenter() { }
+};
+
 }
 
-namespace MockConstraints {
-
-bool verifyConstraints(const WebKit::WebMediaConstraints&);
-
-} // namespace MockConstraints
-
-#endif // ENABLE(MEDIA_STREAM)
-
-#endif // MockConstraints_h
+#endif // MockWebMediaStreamCenter_h
 

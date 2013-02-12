@@ -31,6 +31,8 @@
 #include "config.h"
 #include "WebTestInterfaces.h"
 
+#include "MockWebMediaStreamCenter.h"
+#include "MockWebRTCPeerConnectionHandler.h"
 #include "TestInterfaces.h"
 #include "TestRunner.h"
 
@@ -85,6 +87,16 @@ WebTestRunner* WebTestInterfaces::testRunner()
 TestInterfaces* WebTestInterfaces::testInterfaces()
 {
     return m_interfaces.get();
+}
+
+WebMediaStreamCenter* WebTestInterfaces::createMediaStreamCenter(WebMediaStreamCenterClient* client)
+{
+    return new MockWebMediaStreamCenter(client);
+}
+
+WebRTCPeerConnectionHandler* WebTestInterfaces::createWebRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
+{
+    return new MockWebRTCPeerConnectionHandler(client, m_interfaces.get());
 }
 
 }

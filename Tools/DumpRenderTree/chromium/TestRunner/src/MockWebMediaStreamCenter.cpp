@@ -29,8 +29,6 @@
  */
 
 #include "config.h"
-#if ENABLE(MEDIA_STREAM)
-
 #include "MockWebMediaStreamCenter.h"
 
 #include <public/WebAudioDestinationConsumer.h>
@@ -42,6 +40,8 @@
 #include <public/WebVector.h>
 
 using namespace WebKit;
+
+namespace WebTestRunner {
 
 MockWebMediaStreamCenter::MockWebMediaStreamCenter(WebMediaStreamCenterClient* client)
 {
@@ -66,12 +66,12 @@ void MockWebMediaStreamCenter::didDisableMediaStreamTrack(const WebMediaStream&,
 bool MockWebMediaStreamCenter::didAddMediaStreamTrack(const WebMediaStream&, const WebMediaStreamTrack&)
 {
     return true;
-};
+}
 
 bool MockWebMediaStreamCenter::didRemoveMediaStreamTrack(const WebMediaStream&, const WebMediaStreamTrack&)
 {
     return true;
-};
+}
 
 void MockWebMediaStreamCenter::didStopLocalMediaStream(const WebMediaStream& stream)
 {
@@ -108,4 +108,4 @@ void MockWebMediaStreamCenter::didCreateMediaStream(WebMediaStream& stream)
     }
 }
 
-#endif // ENABLE(MEDIA_STREAM)
+}

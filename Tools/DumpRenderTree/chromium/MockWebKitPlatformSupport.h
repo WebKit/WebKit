@@ -35,11 +35,16 @@
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
+namespace WebTestRunner {
+class WebTestInterfaces;
+}
+
 class MockWebKitPlatformSupport : public WebKit::Platform {
 public:
     static PassOwnPtr<MockWebKitPlatformSupport> create();
     ~MockWebKitPlatformSupport();
 
+    void setInterfaces(WebTestRunner::WebTestInterfaces*);
     virtual void cryptographicallyRandomValues(unsigned char* buffer, size_t length) OVERRIDE;
 
 #if ENABLE(MEDIA_STREAM)
@@ -49,6 +54,8 @@ public:
 
 private:
     MockWebKitPlatformSupport();
+
+    WebTestRunner::WebTestInterfaces* m_interfaces;
 
 #if ENABLE(MEDIA_STREAM)
     OwnPtr<WebKit::WebMediaStreamCenter> m_mockMediaStreamCenter;

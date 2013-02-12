@@ -28,52 +28,21 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#if ENABLE(MEDIA_STREAM)
+#ifndef MockConstraints_h
+#define MockConstraints_h
 
-#include "MockConstraints.h"
-
-#include <public/WebMediaConstraints.h>
-
-using namespace WebKit;
-
-namespace MockConstraints {
-
-static bool isSupported(const WebString& constraint)
-{
-    return constraint == "valid_and_supported_1" || constraint == "valid_and_supported_2";
+namespace WebKit {
+class WebMediaConstraints;
 }
 
-static bool isValid(const WebString& constraint)
-{
-    return isSupported(constraint) || constraint == "valid_but_unsupported_1" || constraint == "valid_but_unsupported_2";
+namespace WebTestRunner {
+
+class MockConstraints {
+public:
+    static bool verifyConstraints(const WebKit::WebMediaConstraints&);
+};
+
 }
 
-bool verifyConstraints(const WebMediaConstraints& constraints)
-{
-    WebVector<WebMediaConstraint> mandatoryConstraints;
-    constraints.getMandatoryConstraints(mandatoryConstraints);
-    if (mandatoryConstraints.size()) {
-        for (size_t i = 0; i < mandatoryConstraints.size(); ++i) {
-            const WebMediaConstraint& curr = mandatoryConstraints[i];
-            if (!isSupported(curr.m_name) || curr.m_value != "1")
-                return false;
-        }
-    }
+#endif // MockConstraints_h
 
-    WebVector<WebMediaConstraint> optionalConstraints;
-    constraints.getOptionalConstraints(optionalConstraints);
-    if (optionalConstraints.size()) {
-        for (size_t i = 0; i < optionalConstraints.size(); ++i) {
-            const WebMediaConstraint& curr = optionalConstraints[i];
-            if (!isValid(curr.m_name) || curr.m_value != "0")
-                return false;
-        }
-    }
-
-    return true;
-}
-
-} // namespace MockConstraints
-
-#endif // ENABLE(MEDIA_STREAM)

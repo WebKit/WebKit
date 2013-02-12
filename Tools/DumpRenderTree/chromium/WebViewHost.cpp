@@ -58,7 +58,6 @@
 #include "WebScreenInfo.h"
 #include "WebSerializedScriptValue.h"
 #include "WebStorageNamespace.h"
-#include "WebUserMediaClientMock.h"
 #include "WebView.h"
 #include "WebWindowFeatures.h"
 #include "skia/ext/platform_canvas.h"
@@ -319,20 +318,6 @@ WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
 {
     return deviceOrientationClientMock();
 }
-
-#if ENABLE(MEDIA_STREAM)
-WebUserMediaClient* WebViewHost::userMediaClient()
-{
-    return userMediaClientMock();
-}
-
-WebUserMediaClientMock* WebViewHost::userMediaClientMock()
-{
-    if (!m_userMediaClientMock.get())
-        m_userMediaClientMock = WebUserMediaClientMock::create();
-    return m_userMediaClientMock.get();
-}
-#endif
 
 // WebWidgetClient -----------------------------------------------------------
 

@@ -239,6 +239,10 @@ webkit.org/b/92942 fast/events/constructors/device-proximity-event-constructor.h
 # Missing support in DRT for Geolocation's Coordinate attributes.
 webkit.org/b/98212 fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
 
+# Disable until chromium side of getCurrentTimeMillisecond is fixed.
+Bug(jochen) fast/mediastream/RTCPeerConnection-statsSelector.html [ Failure ]
+Bug(jochen) fast/mediastream/RTCPeerConnection-stats.html [ Failure ]
+
 # -----------------------------------------------------------------
 # WONTFIX TESTS
 # -----------------------------------------------------------------

@@ -31,12 +31,13 @@
 #include "config.h"
 #include "MockWebKitPlatformSupport.h"
 
-#include "MockWebMediaStreamCenter.h"
-#include "MockWebRTCPeerConnectionHandler.h"
+#include "WebTestInterfaces.h"
+#include <public/WebMediaStreamCenter.h>
 #include <wtf/Assertions.h>
 #include <wtf/PassOwnPtr.h>
 
 using namespace WebKit;
+using namespace WebTestRunner;
 
 PassOwnPtr<MockWebKitPlatformSupport> MockWebKitPlatformSupport::create()
 {
@@ -51,6 +52,11 @@ MockWebKitPlatformSupport::~MockWebKitPlatformSupport()
 {
 }
 
+void MockWebKitPlatformSupport::setInterfaces(WebTestInterfaces* interfaces)
+{
+    m_interfaces = interfaces;
+}
+
 void MockWebKitPlatformSupport::cryptographicallyRandomValues(unsigned char*, size_t)
 {
     CRASH();
@@ -59,14 +65,18 @@ void MockWebKitPlatformSupport::cryptographicallyRandomValues(unsigned char*, si
 #if ENABLE(MEDIA_STREAM)
 WebMediaStreamCenter* MockWebKitPlatformSupport::createMediaStreamCenter(WebMediaStreamCenterClient* client)
 {
+    ASSERT(m_interfaces);
+
     if (!m_mockMediaStreamCenter)
-        m_mockMediaStreamCenter = adoptPtr(new MockWebMediaStreamCenter(client));
+        m_mockMediaStreamCenter = adoptPtr(m_interfaces->createMediaStreamCenter(client));
 
     return m_mockMediaStreamCenter.get();
 }
 
 WebRTCPeerConnectionHandler* MockWebKitPlatformSupport::createRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
 {
-    return new MockWebRTCPeerConnectionHandler(client);
+    ASSERT(m_interfaces);
+
+    return m_interfaces->createWebRTCPeerConnectionHandler(client);
 }
 #endif // ENABLE(MEDIA_STREAM)
