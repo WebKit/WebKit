@@ -1,3 +1,13 @@
+2013-02-12  Jessie Berlin  <jberlin@apple.com>
+
+        Build fix after r142540 and r142518
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue):
+        This function was added to the header in r142518 but not implemented in that revision.
+        It wasn't a problem until r142540 started using it.
+        Add a stub implementation for it.
+
 2013-02-11  Brady Eidson  <beidson@apple.com>
 
         Make PluginProcessProxy a ChildProcessProxy.

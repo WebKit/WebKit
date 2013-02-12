@@ -114,6 +114,10 @@ void PluginProcessConnectionManager::didCloseOnConnectionWorkQueue(CoreIPC::Conn
 {
 }
 
+void PluginProcessConnectionManager::didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&)
+{
+}
+
 void PluginProcessConnectionManager::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t opaquePluginType)
 {
     MutexLocker locker(m_pathsAndConnectionsMutex);
