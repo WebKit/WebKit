@@ -943,6 +943,7 @@ struct Node {
         switch (op()) {
         case SetLocal:
         case Int32ToDouble:
+        case ForwardInt32ToDouble:
         case ValueToInt32:
         case UInt32ToNumber:
         case DoubleAsInt32:

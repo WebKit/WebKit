@@ -236,6 +236,8 @@ enum UnificationState {
     GloballyUnified
 };
 
+enum SpeculationDirection { ForwardSpeculation, BackwardSpeculation };
+
 } } // namespace JSC::DFG
 
 namespace WTF {

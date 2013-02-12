@@ -1,5 +1,51 @@
 2013-02-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Strange bug in DFG OSR in JSC
+        https://bugs.webkit.org/show_bug.cgi?id=109491
+
+        Reviewed by Mark Hahnenberg.
+        
+        Int32ToDouble was being injected after a side-effecting operation and before a SetLocal. Anytime we
+        inject something just before a SetLocal we should be aware that the previous operation may have been
+        a side-effect associated with the current code origin. Hence, we should use a forward exit.
+        Int32ToDouble does not do forward exits by default.
+        
+        This patch adds a forward-exiting form of Int32ToDouble, for use in SetLocal Int32ToDouble injections.
+        Changed the CSE and other things to treat these nodes identically, but for the exit strategy to be
+        distinct (Int32ToDouble -> backward, ForwardInt32ToDouble -> forward). The use of the NodeType for
+        signaling exit direction is not "great" but it's what we use in other places already (like
+        ForwardCheckStructure).
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::int32ToDoubleCSE):
+        (CSEPhase):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCommon.h:
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::convertLastOSRExitToForward):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+
+2013-02-11  Filip Pizlo  <fpizlo@apple.com>
+
         NonStringCell and Object are practically the same thing for the purpose of speculation
         https://bugs.webkit.org/show_bug.cgi?id=109492
 

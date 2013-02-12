@@ -243,6 +243,7 @@ void VariableEventStream::reconstruct(
                         continue;
                     switch (node->op()) {
                     case Int32ToDouble:
+                    case ForwardInt32ToDouble:
                         int32ToDoubleID = id;
                         break;
                     case ValueToInt32:

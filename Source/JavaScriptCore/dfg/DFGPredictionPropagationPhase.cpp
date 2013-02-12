@@ -727,6 +727,7 @@ private:
         case PutByValAlias:
         case GetArrayLength:
         case Int32ToDouble:
+        case ForwardInt32ToDouble:
         case DoubleAsInt32:
         case GetLocalUnlinked:
         case GetMyArgumentsLength:

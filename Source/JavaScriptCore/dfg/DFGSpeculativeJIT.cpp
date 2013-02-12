@@ -234,7 +234,7 @@ void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecov
     Node* setLocal = m_jit.graph().m_blocks[m_block]->at(setLocalIndexInBlock);
     bool hadInt32ToDouble = false;
     
-    if (setLocal->op() == Int32ToDouble) {
+    if (setLocal->op() == ForwardInt32ToDouble) {
         setLocal = m_jit.graph().m_blocks[m_block]->at(++setLocalIndexInBlock);
         hadInt32ToDouble = true;
     }
@@ -2395,9 +2395,16 @@ void SpeculativeJIT::compileInt32ToDouble(Node* node)
         MacroAssembler::AboveOrEqual, op1GPR, GPRInfo::tagTypeNumberRegister);
     
     if (!isNumberSpeculation(m_state.forNode(node->child1()).m_type)) {
-        speculationCheck(
-            BadType, JSValueRegs(op1GPR), node->child1(),
-            m_jit.branchTest64(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister));
+        if (node->op() == ForwardInt32ToDouble) {
+            forwardSpeculationCheck(
+                BadType, JSValueRegs(op1GPR), node->child1().node(),
+                m_jit.branchTest64(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister),
+                ValueRecovery::inGPR(op1GPR, DataFormatJS));
+        } else {
+            speculationCheck(
+                BadType, JSValueRegs(op1GPR), node->child1(),
+                m_jit.branchTest64(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister));
+        }
     }
     
     m_jit.move(op1GPR, tempGPR);
@@ -2419,9 +2426,16 @@ void SpeculativeJIT::compileInt32ToDouble(Node* node)
         MacroAssembler::Equal, op1TagGPR, TrustedImm32(JSValue::Int32Tag));
     
     if (!isNumberSpeculation(m_state.forNode(node->child1()).m_type)) {
-        speculationCheck(
-            BadType, JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(),
-            m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)));
+        if (node->op() == ForwardInt32ToDouble) {
+            forwardSpeculationCheck(
+                BadType, JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1().node(),
+                m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)),
+                ValueRecovery::inPair(op1TagGPR, op1PayloadGPR));
+        } else {
+            speculationCheck(
+                BadType, JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(),
+                m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)));
+        }
     }
     
     unboxDouble(op1TagGPR, op1PayloadGPR, resultFPR, tempFPR);

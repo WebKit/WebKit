@@ -54,7 +54,6 @@ class SpeculateCellOperand;
 class SpeculateBooleanOperand;
 
 enum GeneratedOperandType { GeneratedOperandTypeUnknown, GeneratedOperandInteger, GeneratedOperandDouble, GeneratedOperandJSValue};
-enum SpeculationDirection { ForwardSpeculation, BackwardSpeculation };
 
 // === SpeculativeJIT ===
 //

@@ -126,6 +126,27 @@ private:
         return 0;
     }
     
+    Node* int32ToDoubleCSE(Node* node)
+    {
+        for (unsigned i = m_indexInBlock; i--;) {
+            Node* otherNode = m_currentBlock->at(i);
+            if (otherNode == node->child1())
+                return 0;
+            if (!otherNode->shouldGenerate())
+                continue;
+            switch (otherNode->op()) {
+            case Int32ToDouble:
+            case ForwardInt32ToDouble:
+                if (otherNode->child1() == node->child1())
+                    return otherNode;
+                break;
+            default:
+                break;
+            }
+        }
+        return 0;
+    }
+    
     Node* constantCSE(Node* node)
     {
         for (unsigned i = endIndexForPureCSE(); i--;) {
@@ -1097,7 +1118,6 @@ private:
         case ArithSqrt:
         case StringCharAt:
         case StringCharCodeAt:
-        case Int32ToDouble:
         case IsUndefined:
         case IsBoolean:
         case IsNumber:
@@ -1113,6 +1133,11 @@ private:
         case TypeOf:
         case CompareEqConstant:
             setReplacement(pureCSE(node));
+            break;
+            
+        case Int32ToDouble:
+        case ForwardInt32ToDouble:
+            setReplacement(int32ToDoubleCSE(node));
             break;
             
         case GetCallee:

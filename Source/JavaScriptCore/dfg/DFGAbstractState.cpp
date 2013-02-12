@@ -436,7 +436,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         break;
     }
         
-    case Int32ToDouble: {
+    case Int32ToDouble:
+    case ForwardInt32ToDouble: {
         JSValue child = forNode(node->child1()).value();
         if (child && child.isNumber()
             && trySetConstant(node, JSValue(JSValue::EncodeAsDouble, child.asNumber()))) {

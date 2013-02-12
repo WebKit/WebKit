@@ -2342,7 +2342,8 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
         
-    case Int32ToDouble: {
+    case Int32ToDouble:
+    case ForwardInt32ToDouble: {
         compileInt32ToDouble(node);
         break;
     }
