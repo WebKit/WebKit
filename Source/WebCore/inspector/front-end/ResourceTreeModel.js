@@ -625,6 +625,11 @@ WebInspector.PageDispatcher.prototype = {
 
     javascriptDialogClosed: function()
     {
+    },
+
+    scriptsEnabled: function(isEnabled)
+    {
+        WebInspector.settings.javaScriptDisabled.set(!isEnabled);
     }
 }
 

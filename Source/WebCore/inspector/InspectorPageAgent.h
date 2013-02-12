@@ -156,6 +156,7 @@ public:
     void didLayout();
     void didScroll();
     void didRecalculateStyle();
+    void scriptsEnabled(bool isEnabled);
 
     // Inspector Controller API
     virtual void setFrontend(InspectorFrontend*);
@@ -205,6 +206,7 @@ private:
     bool m_enabled;
     bool m_isFirstLayoutAfterOnLoad;
     bool m_geolocationOverridden;
+    bool m_ignoreScriptsEnabledNotification;
     RefPtr<GeolocationPosition> m_geolocationPosition;
     RefPtr<GeolocationPosition> m_platformGeolocationPosition;
     RefPtr<DeviceOrientationData> m_deviceOrientation;

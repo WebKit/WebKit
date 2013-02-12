@@ -337,6 +337,7 @@ InspectorPageAgent::InspectorPageAgent(InstrumentingAgents* instrumentingAgents,
     , m_enabled(false)
     , m_isFirstLayoutAfterOnLoad(false)
     , m_geolocationOverridden(false)
+    , m_ignoreScriptsEnabledNotification(false)
 {
 }
 
@@ -812,8 +813,11 @@ void InspectorPageAgent::setScriptExecutionDisabled(ErrorString*, bool value)
         return;
 
     Settings* settings = mainFrame()->settings();
-    if (settings)
+    if (settings) {
+        m_ignoreScriptsEnabledNotification = true;
         settings->setScriptEnabled(!value);
+        m_ignoreScriptsEnabledNotification = false;
+    }
 }
 
 void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
@@ -1027,6 +1031,14 @@ void InspectorPageAgent::didRecalculateStyle()
 {
     if (m_enabled)
         m_overlay->update();
+}
+
+void InspectorPageAgent::scriptsEnabled(bool isEnabled)
+{
+    if (m_ignoreScriptsEnabledNotification)
+        return;
+
+    m_frontend->scriptsEnabled(isEnabled);
 }
 
 PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)

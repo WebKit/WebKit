@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+function enableJavaScriptForPage()
+{
+    if (window.testRunner)
+        testRunner.overridePreference("WebKitJavaScriptEnabled", true);
+}
+
+function disableJavaScriptForPage()
+{
+    if (window.testRunner)
+        testRunner.overridePreference("WebKitJavaScriptEnabled", false);
+}
+
+function completeTest()
+{
+    if (window.testRunner)
+        testRunner.notifyDone();
+}
+
+function test()
+{
+    function scriptsEnabled(isEnabled)
+    {
+        InspectorTest.addResult("PageDispatcher.scriptsEnabled should be invoked with isEnabled=" + isEnabled);
+    }
+
+    function disableJavaScriptTest()
+    {
+        InspectorTest.addResult("running disableJavaScriptTest...");
+        InspectorTest.evaluateInPage("disableJavaScriptForPage();", enableJavaScriptTest);
+    }
+
+    function enableJavaScriptTest()
+    {
+        InspectorTest.addResult("running enableJavaScriptTest...");
+        InspectorTest.evaluateInPage("enableJavaScriptForPage();", finish);
+    }
+
+    function finish()
+    {
+        InspectorTest.completeTest();
+        InspectorTest.addResult("Finished verification.")
+        InspectorTest.evaluateInPage("completeTest();");
+    }
+
+    InspectorTest.addSniffer(WebInspector.PageDispatcher.prototype, "scriptsEnabled", scriptsEnabled, true);
+    InspectorTest.addResult("Registered PageDispatcher.scriptsEnabled()");
+    disableJavaScriptTest();
+}
+</script>
+</head>
+
+<body onload="runTest()">
+<p>Tests that whenever Script Execution state is changed outside inspector, its notified to the Inspector front-end.</p>
+</body>
+</html>
+

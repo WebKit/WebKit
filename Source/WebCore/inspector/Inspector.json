@@ -559,6 +559,14 @@
                 "name": "javascriptDialogClosed",
                 "description": "Fired when a JavaScript initiated dialog (alert, confirm, prompt, or onbeforeunload) has been closed.",
                 "hidden": true
+            },
+            {
+                "name": "scriptsEnabled",
+                "description": "Fired when the JavaScript is enabled/disabled on the page",
+                "parameters": [
+                    { "name": "isEnabled", "type": "boolean", "description": "Whether script execution is enabled or disabled on the page." }
+                ],
+                "hidden": true
             }
         ]
     },

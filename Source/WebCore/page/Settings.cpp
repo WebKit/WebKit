@@ -37,6 +37,7 @@
 #include "FrameView.h"
 #include "HTMLMediaElement.h"
 #include "HistoryItem.h"
+#include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageCache.h"
 #include "ResourceHandle.h"
@@ -415,6 +416,7 @@ void Settings::imageLoadingSettingsTimerFired(Timer<Settings>*)
 void Settings::setScriptEnabled(bool isScriptEnabled)
 {
     m_isScriptEnabled = isScriptEnabled;
+    InspectorInstrumentation::scriptsEnabled(m_page, m_isScriptEnabled);
 }
 
 void Settings::setJavaEnabled(bool isJavaEnabled)
