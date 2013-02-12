@@ -50,7 +50,7 @@ TransformState& TransformState::operator=(const TransformState& other)
     return *this;
 }
 
-void TransformState::translateTransform(const IntSize& offset)
+void TransformState::translateTransform(const LayoutSize& offset)
 {
     if (m_direction == ApplyTransformDirection)
         m_accumulatedTransform->translateRight(offset.width(), offset.height());
@@ -58,9 +58,9 @@ void TransformState::translateTransform(const IntSize& offset)
         m_accumulatedTransform->translate(offset.width(), offset.height());
 }
 
-void TransformState::translateMappedCoordinates(const IntSize& offset)
+void TransformState::translateMappedCoordinates(const LayoutSize& offset)
 {
-    IntSize adjustedOffset = (m_direction == ApplyTransformDirection) ? offset : -offset;
+    LayoutSize adjustedOffset = (m_direction == ApplyTransformDirection) ? offset : -offset;
     if (m_mapPoint)
         m_lastPlanarPoint.move(adjustedOffset);
     if (m_mapQuad)
@@ -75,21 +75,21 @@ void TransformState::move(const LayoutSize& offset, TransformAccumulation accumu
         applyAccumulatedOffset();
         if (m_accumulatingTransform && m_accumulatedTransform) {
             // If we're accumulating into an existing transform, apply the translation.
-            translateTransform(roundedIntSize(offset));
+            translateTransform(offset);
 
             // Then flatten if necessary.
             if (accumulate == FlattenTransform)
                 flatten();
         } else
             // Just move the point and/or quad.
-            translateMappedCoordinates(roundedIntSize(offset));
+            translateMappedCoordinates(offset);
     }
     m_accumulatingTransform = accumulate == AccumulateTransform;
 }
 
 void TransformState::applyAccumulatedOffset()
 {
-    IntSize offset = roundedIntSize(m_accumulatedOffset);
+    LayoutSize offset = m_accumulatedOffset;
     m_accumulatedOffset = LayoutSize();
     if (!offset.isZero()) {
         if (m_accumulatedTransform) {

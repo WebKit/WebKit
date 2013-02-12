@@ -158,24 +158,24 @@ PASS y is 40
 
 Test 11
 PASS x is 158
-FAIL y should be 356. Was 377.
+PASS y is 376
 Round Trip of (0,0)
 PASS x is 0
 PASS y is 0
 PASS x is 174
-FAIL y should be 374. Was 395.
+PASS y is 394
 Round Trip of (5,40)
 PASS x is 5
 PASS y is 40
 
 Test 12
 PASS x is 168
-FAIL y should be 429. Was 452.
+PASS y is 451
 Round Trip of (0,0)
 PASS x is 0
 PASS y is 0
 PASS x is 184
-FAIL y should be 447. Was 470.
+PASS y is 469
 Round Trip of (5,40)
 PASS x is 5
 PASS y is 40

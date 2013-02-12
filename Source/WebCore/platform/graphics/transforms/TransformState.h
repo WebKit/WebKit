@@ -101,8 +101,8 @@ public:
     FloatQuad mappedQuad(bool* wasClamped = 0) const;
 
 private:
-    void translateTransform(const IntSize&);
-    void translateMappedCoordinates(const IntSize&);
+    void translateTransform(const LayoutSize&);
+    void translateMappedCoordinates(const LayoutSize&);
     void flattenWithTransform(const TransformationMatrix&, bool* wasClamped);
     void applyAccumulatedOffset();
     
