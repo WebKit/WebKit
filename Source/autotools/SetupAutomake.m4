@@ -53,7 +53,7 @@ AM_CONDITIONAL([USE_GLES2], [test "$enable_gles2" = "yes"])
 AM_CONDITIONAL([USE_GLX], [test "$enable_glx" = "yes"])
 
 # WebKit feature conditionals.
-AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug_features" = "yes"])
+AM_CONDITIONAL([ENABLE_DEBUG],[test "$enable_debug" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBGL],[test "$enable_webgl" = "yes"])
 AM_CONDITIONAL([ENABLE_GAMEPAD],[test "$enable_gamepad" = "yes"])
 AM_CONDITIONAL([ENABLE_XSLT],[test "$enable_xslt" = "yes"])

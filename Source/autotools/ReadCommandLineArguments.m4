@@ -214,19 +214,6 @@ AC_ARG_ENABLE(accelerated_compositing,
     [enable_accelerated_compositing="auto"])
 AC_MSG_RESULT([$enable_accelerated_compositing])
 
-AC_MSG_CHECKING([whether to enable debug features])
-AC_ARG_ENABLE(debug_features,
-    AC_HELP_STRING([--enable-debug-features], [enable debug features default=no, default=yes for debug builds]),
-    [],
-    [
-        if test "$enable_debug" = "yes"; then
-            enable_debug_features="yes";
-        else
-             enable_debug_features="no";
-         fi
-    ])
-AC_MSG_RESULT([$enable_debug_features])
-
 AC_MSG_CHECKING([whether to enable JIT compilation])
 AC_ARG_ENABLE(jit, AS_HELP_STRING([--enable-jit], [Enable JIT compilation (default: autodetect)]))
 AC_MSG_RESULT([$enable_jit])

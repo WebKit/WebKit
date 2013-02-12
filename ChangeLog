@@ -1,3 +1,18 @@
+2013-02-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the enable-debug-feature configuration option
+        https://bugs.webkit.org/show_bug.cgi?id=109539
+
+        Reviewed by Philippe Normand.
+
+        Remove the --enable-debug-feature option from configuration. It doesn't
+        do anything that --enable-debug doesn't.
+
+        * Source/autotools/PrintBuildConfiguration.m4: Remove references to --enable-debug-features.
+        * Source/autotools/ReadCommandLineArguments.m4: Ditto.
+        * Source/autotools/SetupAutoconfHeader.m4: Ditto.
+        * Source/autotools/SetupAutomake.m4: Ditto.
+
 2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove ENABLE_XHR_RESPONSE_BLOB handling from various build systems

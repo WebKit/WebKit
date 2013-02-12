@@ -6,13 +6,13 @@ AC_DEFINE([WTF_USE_SOUP], [1], [ ])
 AC_DEFINE([WTF_USE_WEBP], [1], [ ])
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [The gettext catalog name])
 
-if test "$enable_debug_features" = "yes"; then
+if test "$enable_debug" = "yes"; then
     AC_DEFINE([GDK_PIXBUF_DISABLE_DEPRECATED], [1], [ ])
     AC_DEFINE([GDK_DISABLE_DEPRECATED], [1], [ ])
     AC_DEFINE([GTK_DISABLE_DEPRECATED], [1], [ ])
     AC_DEFINE([PANGO_DISABLE_DEPRECATED], [1], [ ])
 else
-    AC_DEFINE([NDEBUG], [1], [Define to disable debugging features])
+    AC_DEFINE([NDEBUG], [1], [Define to disable debugging])
 fi
 
 if test "$os_win32" = "no"; then
@@ -68,7 +68,7 @@ fi
 
 if test "$have_gstreamer" = "yes"; then
     AC_DEFINE([WTF_USE_GSTREAMER], [1], [ ])
-    if test "$enable_debug_features" = "yes"; then
+    if test "$enable_debug" = "yes"; then
         AC_DEFINE([GST_DISABLE_DEPRECATED], [1], [ ])
     fi
 

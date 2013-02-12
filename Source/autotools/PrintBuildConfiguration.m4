@@ -6,7 +6,6 @@ WebKit was configured with the following options:
 Build configuration:
  Enable debugging (slow)                                  : $enable_debug
  Compile with debug symbols (slow)                        : $enable_debug_symbols
- Enable debug features (slow)                             : $enable_debug_features
  Enable GCC build optimization                            : $enable_optimizations
  Code coverage support                                    : $enable_coverage
  Unicode backend                                          : $with_unicode_backend
