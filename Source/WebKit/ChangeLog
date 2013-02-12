@@ -1,3 +1,14 @@
+2013-02-11  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        Build fix: r142549 broke EFL build
+        https://bugs.webkit.org/show_bug.cgi?id=109527
+
+        Reviewed by Kentaro Hara.
+
+        Build fix.
+
+        * CMakeLists.txt:
+
 2013-02-11  Brent Fulgham  <bfulgham@webkit.org>
 
         Rename Visual Studio solution folders to avoid conflicts with project names

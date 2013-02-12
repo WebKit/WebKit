@@ -5,7 +5,6 @@ set(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/Modules/gamepad"
     "${WEBCORE_DIR}/Modules/geolocation"
     "${WEBCORE_DIR}/Modules/indexeddb"
-    "${WEBCORE_DIR}/Modules/intents"
     "${WEBCORE_DIR}/Modules/mediasource"
     "${WEBCORE_DIR}/Modules/mediastream"
     "${WEBCORE_DIR}/Modules/navigatorcontentutils"
@@ -117,7 +116,6 @@ set(WebCore_IDL_INCLUDES
     Modules/gamepad
     Modules/geolocation
     Modules/indexeddb
-    Modules/intents
     Modules/mediastream
     Modules/networkinfo
     Modules/notifications
@@ -202,12 +200,6 @@ set(WebCore_IDL_FILES
     Modules/indexeddb/IDBTransaction.idl
     Modules/indexeddb/IDBVersionChangeEvent.idl
     Modules/indexeddb/WorkerContextIndexedDatabase.idl
-
-    Modules/intents/DeliveredIntent.idl
-    Modules/intents/DOMWindowIntents.idl
-    Modules/intents/Intent.idl
-    Modules/intents/IntentResultCallback.idl
-    Modules/intents/NavigatorIntents.idl
 
     Modules/mediasource/MediaSource.idl
     Modules/mediasource/SourceBuffer.idl
@@ -458,7 +450,6 @@ set(WebCore_IDL_FILES
     html/HTMLHtmlElement.idl
     html/HTMLIFrameElement.idl
     html/HTMLImageElement.idl
-    html/HTMLIntentElement.idl
     html/HTMLInputElement.idl
     html/HTMLKeygenElement.idl
     html/HTMLLabelElement.idl
@@ -848,12 +839,6 @@ set(WebCore_SOURCES
     Modules/indexeddb/IDBVersionChangeEvent.cpp
     Modules/indexeddb/PageGroupIndexedDatabase.cpp
     Modules/indexeddb/WorkerContextIndexedDatabase.cpp
-
-    Modules/intents/DOMWindowIntents.cpp
-    Modules/intents/DeliveredIntent.cpp
-    Modules/intents/Intent.cpp
-    Modules/intents/IntentRequest.cpp
-    Modules/intents/NavigatorIntents.cpp
 
     Modules/mediasource/MediaSource.cpp
     Modules/mediasource/SourceBuffer.cpp
@@ -1420,7 +1405,6 @@ set(WebCore_SOURCES
     html/HTMLIFrameElement.cpp
     html/HTMLImageElement.cpp
     html/HTMLImageLoader.cpp
-    html/HTMLIntentElement.cpp
     html/HTMLInputElement.cpp
     html/HTMLKeygenElement.cpp
     html/HTMLLIElement.cpp
