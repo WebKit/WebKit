@@ -1,5 +1,17 @@
 2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        Remove unnecessary variables from FeatureList.pm
+        https://bugs.webkit.org/show_bug.cgi?id=109558
+
+        Reviewed by Daniel Bates.
+
+        A small cleanup, removing unused variables for which the related configuration
+        options were already removed.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
+2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove ENABLE_XHR_RESPONSE_BLOB handling from various build systems
         https://bugs.webkit.org/show_bug.cgi?id=109481
 
