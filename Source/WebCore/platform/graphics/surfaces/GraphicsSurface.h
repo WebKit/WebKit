@@ -73,7 +73,6 @@ public:
     typedef int LockOptions;
 
     Flags flags() const { return m_flags; }
-    PlatformGraphicsSurface platformSurface() const { return m_platformSurface; }
     IntSize size() const;
 
     static PassRefPtr<GraphicsSurface> create(const IntSize&, Flags, const PlatformGraphicsContext3D shareContext = 0);
@@ -119,8 +118,6 @@ private:
 #endif
 
 private:
-    PlatformGraphicsSurface m_platformSurface;
-    uint32_t m_texture;
     uint32_t m_fbo;
     GraphicsSurfacePrivate* m_private;
 };

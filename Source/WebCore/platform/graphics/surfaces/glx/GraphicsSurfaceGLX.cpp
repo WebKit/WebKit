@@ -73,6 +73,7 @@ struct GraphicsSurfacePrivate {
         , m_detachedContext(0)
         , m_detachedSurface(0)
         , m_isReceiver(false)
+        , m_texture(0)
     {
         GLXContext shareContextObject = 0;
 
@@ -107,6 +108,7 @@ struct GraphicsSurfacePrivate {
         , m_detachedContext(0)
         , m_detachedSurface(0)
         , m_isReceiver(true)
+        , m_texture(0)
     {
         m_configSelector = adoptPtr(new GLXConfigSelector());
     }
@@ -190,10 +192,17 @@ struct GraphicsSurfacePrivate {
 
     void swapBuffers()
     {
-        // The buffers are being switched on the writing side, the reading side just reads
-        // whatever texture the XWindow contains.
-        if (m_isReceiver)
+        if (isReceiver()) {
+            if (isMesaGLX() && textureID()) {
+                glBindTexture(GL_TEXTURE_2D, textureID());
+                // Mesa doesn't re-bind texture to the front buffer on glXSwapBufer
+                // Manually release previous lock and rebind texture to surface to ensure frame updates.
+                pGlXReleaseTexImageEXT(display(), glxPixmap(), GLX_FRONT_EXT);
+                pGlXBindTexImageEXT(display(), glxPixmap(), GLX_FRONT_EXT, 0);
+            }
+
             return;
+        }
 
         GLXContext glContext = glXGetCurrentContext();
 
@@ -261,9 +270,37 @@ struct GraphicsSurfacePrivate {
 
     TextureMapperGL::Flags flags() const { return m_flags; }
 
+    Window surface() const { return m_surface; }
+
+    GLuint textureID() const
+    {
+        if (m_texture) 
+            return m_texture;
+
+        GLXPixmap pixmap = glxPixmap();
+        if (!pixmap)
+            return 0;
+
+        GLuint texture;
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_2D, texture);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        pGlXBindTexImageEXT(display(), pixmap, GLX_FRONT_EXT, 0);
+        const_cast<GraphicsSurfacePrivate*>(this)->m_texture = texture;
+
+        return texture;
+    }
 private:
     void clear()
     {
+        if (m_texture) {
+            pGlXReleaseTexImageEXT(display(), glxPixmap(), GLX_FRONT_EXT);
+            glDeleteTextures(1, &m_texture);
+        }
+
         if (m_glxPixmap) {
             glXDestroyPixmap(display(), m_glxPixmap);
             m_glxPixmap = 0;
@@ -300,6 +337,7 @@ private:
     OwnPtr<GLXConfigSelector> m_configSelector;
     bool m_isReceiver;
     TextureMapperGL::Flags m_flags;
+    GLuint m_texture;
 };
 
 static bool resolveGLMethods()
@@ -322,26 +360,12 @@ static bool resolveGLMethods()
 
 GraphicsSurfaceToken GraphicsSurface::platformExport()
 {
-    return GraphicsSurfaceToken(m_platformSurface);
+    return GraphicsSurfaceToken(m_private->surface());
 }
 
 uint32_t GraphicsSurface::platformGetTextureID()
 {
-    if (!m_texture) {
-        GLXPixmap pixmap = m_private->glxPixmap();
-        if (!pixmap)
-            return 0;
-
-        glGenTextures(1, &m_texture);
-        glBindTexture(GL_TEXTURE_2D, m_texture);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        pGlXBindTexImageEXT(m_private->display(), pixmap, GLX_FRONT_EXT, 0);
-    }
-
-    return m_texture;
+    return m_private->textureID();
 }
 
 void GraphicsSurface::platformCopyToGLTexture(uint32_t /*target*/, uint32_t /*id*/, const IntRect& /*targetRect*/, const IntPoint& /*offset*/)
@@ -376,17 +400,6 @@ uint32_t GraphicsSurface::platformFrontBuffer() const
 
 uint32_t GraphicsSurface::platformSwapBuffers()
 {
-    if (m_private->isReceiver()) {
-        if (isMesaGLX() && platformGetTextureID()) {
-            glBindTexture(GL_TEXTURE_2D, platformGetTextureID());
-            // Mesa doesn't re-bind texture to the front buffer on glXSwapBufer
-            // Manually release previous lock and rebind texture to surface to get frame update.
-            pGlXReleaseTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT);
-            pGlXBindTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT, 0);
-        }
-        return 0;
-    }
-
     m_private->swapBuffers();
     return 0;
 }
@@ -410,7 +423,7 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformCreate(const IntSize& size,
     if (!resolveGLMethods())
         return PassRefPtr<GraphicsSurface>();
 
-    surface->m_platformSurface = surface->m_private->createSurface(size);
+    surface->m_private->createSurface(size);
 
     return surface;
 }
@@ -424,9 +437,8 @@ PassRefPtr<GraphicsSurface> GraphicsSurface::platformImport(const IntSize& size,
         return PassRefPtr<GraphicsSurface>();
 
     RefPtr<GraphicsSurface> surface = adoptRef(new GraphicsSurface(size, flags));
-    surface->m_platformSurface = token.frontBufferHandle;
 
-    surface->m_private = new GraphicsSurfacePrivate(surface->m_platformSurface);
+    surface->m_private = new GraphicsSurfacePrivate(token.frontBufferHandle);
     if (!resolveGLMethods())
         return PassRefPtr<GraphicsSurface>();
 
@@ -446,11 +458,6 @@ void GraphicsSurface::platformUnlock()
 
 void GraphicsSurface::platformDestroy()
 {
-    if (m_texture) {
-        pGlXReleaseTexImageEXT(m_private->display(), m_private->glxPixmap(), GLX_FRONT_EXT);
-        glDeleteTextures(1, &m_texture);
-    }
-
     delete m_private;
     m_private = 0;
 }
