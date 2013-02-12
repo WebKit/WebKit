@@ -249,7 +249,7 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
     if (isStopped())
         return false;
 
-    ASSERT(!shouldUseThreading() || mode == ForceSynchronous);
+    ASSERT(!m_haveBackgroundParser || mode == ForceSynchronous);
 
     if (isWaitingForScripts()) {
         if (mode == AllowYield)
@@ -312,7 +312,10 @@ void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwn
     checkpoint->token = token;
     checkpoint->tokenizer = tokenizer;
     checkpoint->inputCheckpoint = m_currentChunk->checkpoint;
+    checkpoint->unparsedInput = m_input.current().toString().isolatedCopy();
+    m_input.current().clear();
 
+    ASSERT(checkpoint->unparsedInput.isSafeToSendToAnotherThread());
     HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::resumeFrom, m_backgroundParser, checkpoint.release()));
 }
 
@@ -400,7 +403,7 @@ void HTMLDocumentParser::pumpTokenizer(SynchronousMode mode)
     ASSERT(refCount() >= 2);
     ASSERT(m_tokenizer);
     ASSERT(m_token);
-    ASSERT(!shouldUseThreading() || mode == ForceSynchronous);
+    ASSERT(!m_haveBackgroundParser || mode == ForceSynchronous);
 
     PumpSession session(m_pumpSessionNestingLevel, contextForParsingSession());
 
@@ -671,20 +674,17 @@ void HTMLDocumentParser::finish()
     // makes sense to call any methods on DocumentParser once it's been stopped.
     // However, FrameLoader::stop calls DocumentParser::finish unconditionally.
 
-    // We're not going to get any more data off the network, so we tell the
-    // input stream we've reached the end of file. finish() can be called more
-    // than once, if the first time does not call end().
-    if (!m_input.haveSeenEndOfFile())
-        m_input.markEndOfFile();
-
 #if ENABLE(THREADED_HTML_PARSER)
     // Empty documents never got an append() call, and thus have never started
     // a background parser. In those cases, we ignore shouldUseThreading()
     // and fall through to the non-threading case.
     if (m_haveBackgroundParser) {
+        if (!m_input.haveSeenEndOfFile())
+            m_input.closeWithoutMarkingEndOfFile();
         HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::finish, m_backgroundParser));
         return;
     }
+
     if (shouldUseThreading() && !wasCreatedByScript()) {
         ASSERT(!m_tokenizer && !m_token);
         // We're finishing before receiving any data. Rather than booting up
@@ -694,6 +694,12 @@ void HTMLDocumentParser::finish()
         m_tokenizer = HTMLTokenizer::create(m_options);
     }
 #endif
+
+    // We're not going to get any more data off the network, so we tell the
+    // input stream we've reached the end of file. finish() can be called more
+    // than once, if the first time does not call end().
+    if (!m_input.haveSeenEndOfFile())
+        m_input.markEndOfFile();
 
     attemptToEnd();
 }

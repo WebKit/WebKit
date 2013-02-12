@@ -53,18 +53,28 @@ HTMLInputCheckpoint BackgroundHTMLInputStream::createCheckpoint()
     return checkpoint;
 }
 
-void BackgroundHTMLInputStream::rewindTo(HTMLInputCheckpoint checkpointIndex)
+void BackgroundHTMLInputStream::rewindTo(HTMLInputCheckpoint checkpointIndex, const String& unparsedInput)
 {
+    ASSERT(checkpointIndex < m_checkpoints.size()); // If this ASSERT fires, checkpointIndex is invalid.
     const Checkpoint& checkpoint = m_checkpoints[checkpointIndex];
 
     bool isClosed = m_current.isClosed();
 
     m_current = checkpoint.input;
+
     for (size_t i = checkpoint.numberOfSegmentsAlreadyAppended; i < m_segments.size(); ++i)
         m_current.append(SegmentedString(m_segments[i]));
 
+    if (!unparsedInput.isEmpty())
+        m_current.prepend(SegmentedString(unparsedInput));
+
     if (isClosed && !m_current.isClosed())
         m_current.close();
+
+    // FIXME: We should be able to actively invalidate all the outstanding checkpoints
+    // by clearing m_segments and m_checkpoints, but that causes
+    // fast/tokenizer/write-before-load.html to hit the ASSERT at the beginning of
+    // this function.
 }
 
 }

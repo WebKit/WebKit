@@ -77,6 +77,11 @@ public:
         m_last->close();
     }
 
+    void closeWithoutMarkingEndOfFile()
+    {
+        m_last->close();
+    }
+
     bool haveSeenEndOfFile() const
     {
         return m_last->isClosed();

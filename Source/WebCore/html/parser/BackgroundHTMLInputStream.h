@@ -46,8 +46,10 @@ public:
 
     SegmentedString& current() { return m_current; }
 
+    // An HTMLInputCheckpoint is valid until the next call to rewindTo, at which
+    // point all outstanding checkpoints are invalidated.
     HTMLInputCheckpoint createCheckpoint();
-    void rewindTo(HTMLInputCheckpoint);
+    void rewindTo(HTMLInputCheckpoint, const String& unparsedInput);
 
 private:
     struct Checkpoint {

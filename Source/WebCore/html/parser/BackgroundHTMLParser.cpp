@@ -81,7 +81,7 @@ void BackgroundHTMLParser::resumeFrom(PassOwnPtr<Checkpoint> checkpoint)
     m_parser = checkpoint->parser;
     m_token = checkpoint->token.release();
     m_tokenizer = checkpoint->tokenizer.release();
-    m_input.rewindTo(checkpoint->inputCheckpoint);
+    m_input.rewindTo(checkpoint->inputCheckpoint, checkpoint->unparsedInput);
     pumpTokenizer();
 }
 

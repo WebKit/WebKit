@@ -58,6 +58,7 @@ public:
         OwnPtr<HTMLToken> token;
         OwnPtr<HTMLTokenizer> tokenizer;
         HTMLInputCheckpoint inputCheckpoint;
+        String unparsedInput;
     };
 
     void append(const String&);
