@@ -230,6 +230,7 @@ HEADERS += \
     UIProcess/Plugins/PluginProcessManager.h \
     UIProcess/ProcessModel.h \
     UIProcess/ResponsivenessTimer.h \
+    UIProcess/StatisticsRequest.h \
     UIProcess/Storage/StorageManager.h \
     UIProcess/TextChecker.h \
     UIProcess/VisitedLinkProvider.h \
@@ -579,6 +580,7 @@ SOURCES += \
     UIProcess/Plugins/qt/PluginProcessProxyQt.cpp \
     UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp \
     UIProcess/ResponsivenessTimer.cpp \
+    UIProcess/StatisticsRequest.cpp \
     UIProcess/Storage/StorageManager.cpp \
     UIProcess/VisitedLinkProvider.cpp \
     UIProcess/WebApplicationCacheManagerProxy.cpp \

@@ -43,7 +43,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
+void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
 {
 #if PLATFORM(EFL) && !defined(NDEBUG)
     const char* commandPrefix = getenv("PLUGIN_PROCESS_COMMAND_PREFIX");

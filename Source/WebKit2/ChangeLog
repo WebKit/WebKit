@@ -1,3 +1,17 @@
+2013-02-12  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Unreviewed trivial buildfix after r142630 and r142651.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didFinishLaunching):
+        * UIProcess/Plugins/qt/PluginProcessProxyQt.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+        * UIProcess/Plugins/unix/PluginProcessProxyUnix.cpp:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+
 2013-02-12  Anders Carlsson  <andersca@apple.com>
 
         Change the queue client base class to be private everywhere
