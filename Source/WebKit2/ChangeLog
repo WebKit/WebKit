@@ -1,3 +1,14 @@
+2013-02-11  Tim Horton  <timothy_horton@apple.com>
+
+        [WK2] setMinimumLayoutWidth should bail if there's no WebProcess
+        https://bugs.webkit.org/show_bug.cgi?id=109512
+        <rdar://problem/13093627>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::setMinimumLayoutWidth):
+
 2013-02-11  Anders Carlsson  <andersca@apple.com>
 
         PluginProcessConnectionManager should be a QueueClient
