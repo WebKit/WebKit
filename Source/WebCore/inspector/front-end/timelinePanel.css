@@ -543,7 +543,7 @@
     border-right: 1px solid #AAA;
 }
 
-#memory-graphs-canvas-container .resources-dividers {
+#memory-graphs-canvas-container.dom-counters .resources-dividers {
     top: 15px;
 }
 
@@ -683,4 +683,8 @@
 
 .image-container {
     padding: 0;
+}
+
+.memory-category-value {
+    float: right;
 }

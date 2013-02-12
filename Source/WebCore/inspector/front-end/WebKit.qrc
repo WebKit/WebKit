@@ -114,6 +114,7 @@
     <file>MetricsSidebarPane.js</file>
     <file>NativeBreakpointsSidebarPane.js</file>
     <file>NativeHeapSnapshot.js</file>
+    <file>NativeMemoryGraph.js</file>
     <file>NativeMemorySnapshotView.js</file>
     <file>NavigatorOverlayController.js</file>
     <file>NavigatorView.js</file>

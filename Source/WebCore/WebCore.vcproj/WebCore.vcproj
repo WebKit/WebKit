@@ -77330,6 +77330,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\MemoryStatistics.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\MetricsSidebarPane.js"
 					>
 				</File>
@@ -77339,6 +77343,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\NativeHeapSnapshot.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\NativeMemoryGraph.js"
 					>
 				</File>
 				<File

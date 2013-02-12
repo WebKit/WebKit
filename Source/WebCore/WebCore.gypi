@@ -5392,6 +5392,7 @@
         ],
         'webinspector_timeline_js_files': [
             'inspector/front-end/MemoryStatistics.js',
+            'inspector/front-end/NativeMemoryGraph.js',
             'inspector/front-end/TimelineFrameController.js',
             'inspector/front-end/TimelineModel.js',
             'inspector/front-end/TimelinePresentationModel.js',

@@ -51,8 +51,7 @@ WebInspector.MemoryStatistics = function(timelinePanel, model, sidebarWidth)
 
     this._canvasContainer = this._memorySidebarView.mainElement;
     this._canvasContainer.id = "memory-graphs-canvas-container";
-    this._currentValuesBar = this._canvasContainer.createChild("div");
-    this._currentValuesBar.id = "counter-values-bar";
+    this._createCurrentValuesBar();
     this._canvas = this._canvasContainer.createChild("canvas");
     this._canvas.id = "memory-counters-graph";
     this._lastMarkerXPosition = 0;
@@ -67,23 +66,7 @@ WebInspector.MemoryStatistics = function(timelinePanel, model, sidebarWidth)
 
     // Populate sidebar
     this._memorySidebarView.sidebarElement.createChild("div", "sidebar-tree sidebar-tree-section").textContent = WebInspector.UIString("COUNTERS");
-    function getDocumentCount(entry)
-    {
-        return entry.documentCount;
-    }
-    function getNodeCount(entry)
-    {
-        return entry.nodeCount;
-    }
-    function getListenerCount(entry)
-    {
-        return entry.listenerCount;
-    }
-    this._counterUI = [
-        new WebInspector.DOMCounterUI(this, "Document Count", "Documents: %d", [100,0,0], getDocumentCount),
-        new WebInspector.DOMCounterUI(this, "DOM Node Count", "Nodes: %d", [0,100,0], getNodeCount),
-        new WebInspector.DOMCounterUI(this, "Event Listener Count", "Listeners: %d", [0,0,100], getListenerCount)
-    ];
+    this._counterUI = this._createCounterUIList();
 
     TimelineAgent.setIncludeMemoryDetails(true);
 }
@@ -240,6 +223,34 @@ WebInspector.DOMCounterUI.prototype = {
 
 
 WebInspector.MemoryStatistics.prototype = {
+    _createCurrentValuesBar: function()
+    {
+        this._currentValuesBar = this._canvasContainer.createChild("div");
+        this._currentValuesBar.id = "counter-values-bar";
+        this._canvasContainer.addStyleClass("dom-counters");
+    },
+
+    _createCounterUIList: function()
+    {
+        function getDocumentCount(entry)
+        {
+            return entry.documentCount;
+        }
+        function getNodeCount(entry)
+        {
+            return entry.nodeCount;
+        }
+        function getListenerCount(entry)
+        {
+            return entry.listenerCount;
+        }
+        return [
+            new WebInspector.DOMCounterUI(this, "Document Count", "Documents: %d", [100,0,0], getDocumentCount),
+            new WebInspector.DOMCounterUI(this, "DOM Node Count", "Nodes: %d", [0,100,0], getNodeCount),
+            new WebInspector.DOMCounterUI(this, "Event Listener Count", "Listeners: %d", [0,0,100], getListenerCount)
+        ];
+    },
+
     _onRecordsCleared: function()
     {
         this._counters = [];
@@ -274,12 +285,17 @@ WebInspector.MemoryStatistics.prototype = {
         this._ignoreSidebarResize = false;
     },
 
+    _canvasHeight: function()
+    {
+        return this._canvasContainer.offsetHeight - this._currentValuesBar.offsetHeight;
+    },
+
     _updateSize: function()
     {
         var width = this._mainTimelineGrid.dividersElement.offsetWidth + 1;
         this._canvasContainer.style.width = width + "px";
 
-        var height = this._canvasContainer.offsetHeight - this._currentValuesBar.offsetHeight;
+        var height = this._canvasHeight();
         this._canvas.width = width;
         this._canvas.height = height;
     },
@@ -411,7 +427,6 @@ WebInspector.MemoryStatistics.prototype = {
     {
         var ctx = this._canvas.getContext("2d");
         this._restoreImageUnderMarker(ctx);
-        this._saveImageUnderMarker(ctx, x, index);
         this._drawMarker(ctx, x, index);
     },
 
@@ -439,6 +454,7 @@ WebInspector.MemoryStatistics.prototype = {
 
     _drawMarker: function(ctx, x, index)
     {
+        this._saveImageUnderMarker(ctx, x, index);
         const radius = 2;
         for (var i = 0; i < this._counterUI.length; i++) {
             var counterUI = this._counterUI[i];

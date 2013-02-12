@@ -278,6 +278,7 @@ modules = [
         "dependencies": ["components"],
         "sources": [
             "MemoryStatistics.js",
+            "NativeMemoryGraph.js",
             "TimelineModel.js",
             "TimelineOverviewPane.js",
             "TimelinePanel.js",

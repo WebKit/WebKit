@@ -30,6 +30,7 @@
  */
 
 importScript("MemoryStatistics.js");
+importScript("NativeMemoryGraph.js");
 importScript("TimelineModel.js");
 importScript("TimelineOverviewPane.js");
 importScript("TimelinePresentationModel.js");
