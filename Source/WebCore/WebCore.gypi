@@ -5277,6 +5277,7 @@
             'inspector/front-end/SplitView.js',
             'inspector/front-end/StatusBarButton.js',
             'inspector/front-end/StylesSourceMapping.js',
+            'inspector/front-end/SuggestBox.js',
             'inspector/front-end/TabbedPane.js',
             'inspector/front-end/TestController.js',
             'inspector/front-end/TextEditor.js',

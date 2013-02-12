@@ -151,6 +151,7 @@ modules = [
             "SplitView.js",
             "SidebarView.js",
             "StatusBarButton.js",
+            "SuggestBox.js",
             "TabbedPane.js",
             "TextEditor.js",
             "TextEditorHighlighter.js",

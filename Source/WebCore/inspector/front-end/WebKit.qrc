@@ -197,6 +197,7 @@
     <file>StyleSheetOutlineDialog.js</file>
     <file>StylesSourceMapping.js</file>
     <file>StylesSidebarPane.js</file>
+    <file>SuggestBox.js</file>
     <file>TabbedEditorContainer.js</file>
     <file>TabbedPane.js</file>
     <file>TestController.js</file>
