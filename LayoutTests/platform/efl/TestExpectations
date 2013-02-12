@@ -376,9 +376,6 @@ webkit.org/b/83898 fast/exclusions
 webkit.org/b/85465 css3/filters [ Skip ]
 webkit.org/b/85465 compositing/filters [ Skip ]
 
-# Web Intents are no longer supported.
-Bug(EFL) webintents [ WontFix ]
-
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 
