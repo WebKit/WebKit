@@ -58,7 +58,7 @@ enum EventDispatchContinuation {
 class EventRelatedTargetAdjuster {
 public:
     EventRelatedTargetAdjuster(PassRefPtr<Node>, PassRefPtr<Node> relatedTarget);
-    void adjust(Vector<EventContext, 32>&);
+    void adjust(EventPath&);
 private:
     typedef HashMap<TreeScope*, EventTarget*> RelatedTargetMap;
     EventTarget* findRelatedTarget(TreeScope*);
@@ -84,7 +84,7 @@ private:
 
     EventDispatchBehavior determineDispatchBehavior(Event*, ShadowRoot*, EventTarget*);
 
-    void ensureEventAncestors(Event*);
+    void ensureEventPath(Event*);
     const EventContext* topEventContext();
 
     EventDispatchContinuation dispatchEventPreProcess(PassRefPtr<Event>, void*& preDispatchEventHandlerResult);
@@ -93,10 +93,10 @@ private:
     EventDispatchContinuation dispatchEventAtBubbling(PassRefPtr<Event>, WindowEventContext&);
     void dispatchEventPostProcess(PassRefPtr<Event>, void* preDispatchEventHandlerResult);
 
-    Vector<EventContext, 32> m_ancestors;
+    EventPath m_eventPath;
     RefPtr<Node> m_node;
     RefPtr<FrameView> m_view;
-    bool m_ancestorsInitialized;
+    bool m_eventPathInitialized;
 #ifndef NDEBUG
     bool m_eventDispatched;
 #endif

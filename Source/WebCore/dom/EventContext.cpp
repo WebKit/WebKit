@@ -40,21 +40,50 @@ EventContext::EventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> curren
     : m_node(node)
     , m_currentTarget(currentTarget)
     , m_target(target)
-    , m_relatedTarget(0)
 {
     ASSERT(m_node);
     ASSERT(!isUnreachableNode(m_target.get()));
+}
+
+EventContext::~EventContext()
+{
 }
 
 void EventContext::handleLocalEvents(Event* event) const
 {
     event->setTarget(m_target.get());
     event->setCurrentTarget(m_currentTarget.get());
+    m_node->handleLocalEvents(event);
+}
+
+bool EventContext::isMouseOrFocusEventContext() const
+{
+    return false;
+}
+
+MouseOrFocusEventContext::MouseOrFocusEventContext(PassRefPtr<Node> node, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target)
+    : EventContext(node, currentTarget, target)
+    , m_relatedTarget(0)
+{
+}
+
+MouseOrFocusEventContext::~MouseOrFocusEventContext()
+{
+}
+
+void MouseOrFocusEventContext::handleLocalEvents(Event* event) const
+{
+    ASSERT(event->isMouseEvent() || event->isFocusEvent());
     if (m_relatedTarget.get() && event->isMouseEvent())
         toMouseEvent(event)->setRelatedTarget(m_relatedTarget.get());
     else if (m_relatedTarget.get() && event->isFocusEvent())
-        toFocusEvent(event)->setRelatedTarget(m_relatedTarget);
-    m_node->handleLocalEvents(event);
+        toFocusEvent(event)->setRelatedTarget(m_relatedTarget.get());
+    EventContext::handleLocalEvents(event);
+}
+
+bool MouseOrFocusEventContext::isMouseOrFocusEventContext() const
+{
+    return true;
 }
 
 }

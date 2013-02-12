@@ -40,15 +40,15 @@ class EventContext {
 public:
     // FIXME: Use ContainerNode instead of Node.
     EventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
+    virtual ~EventContext();
 
-    Node* node() const;
-    EventTarget* target() const;
-    EventTarget* relatedTarget() const;
-    bool currentTargetSameAsTarget() const;
-    void handleLocalEvents(Event*) const;
-    void setRelatedTarget(PassRefPtr<EventTarget>);
+    Node* node() const { return m_node.get(); }
+    EventTarget* target() const { return m_target.get(); }
+    bool currentTargetSameAsTarget() const { return m_currentTarget.get() == m_target.get(); }
+    virtual void handleLocalEvents(Event*) const;
+    virtual bool isMouseOrFocusEventContext() const;
 
-private:
+protected:
 #ifndef NDEBUG
     bool isUnreachableNode(EventTarget*);
     bool isReachable(Node*);
@@ -56,34 +56,22 @@ private:
     RefPtr<Node> m_node;
     RefPtr<EventTarget> m_currentTarget;
     RefPtr<EventTarget> m_target;
-    RefPtr<EventTarget> m_relatedTarget;
 };
 
-inline Node* EventContext::node() const
-{
-    return m_node.get();
-}
+typedef Vector<OwnPtr<EventContext>, 32> EventPath;
 
-inline EventTarget* EventContext::target() const
-{
-    return m_target.get();
-}
+class MouseOrFocusEventContext : public EventContext {
+public:
+    MouseOrFocusEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
+    virtual ~MouseOrFocusEventContext();
+    EventTarget* relatedTarget() const { return m_relatedTarget.get(); }
+    void setRelatedTarget(PassRefPtr<EventTarget>);
+    virtual void handleLocalEvents(Event*) const OVERRIDE;
+    virtual bool isMouseOrFocusEventContext() const OVERRIDE;
 
-inline bool EventContext::currentTargetSameAsTarget() const
-{
-    return m_currentTarget.get() == m_target.get();
-}
-
-inline EventTarget* EventContext::relatedTarget() const
-{
-    return m_relatedTarget.get();
-}
-
-inline void EventContext::setRelatedTarget(PassRefPtr<EventTarget> relatedTarget)
-{
-    ASSERT(!isUnreachableNode(relatedTarget.get()));
-    m_relatedTarget = relatedTarget;
-}
+private:
+    RefPtr<EventTarget> m_relatedTarget;
+};
 
 #ifndef NDEBUG
 inline bool EventContext::isUnreachableNode(EventTarget* target)
@@ -103,6 +91,12 @@ inline bool EventContext::isReachable(Node* target)
     return false;
 }
 #endif
+
+inline void MouseOrFocusEventContext::setRelatedTarget(PassRefPtr<EventTarget> relatedTarget)
+{
+    ASSERT(!isUnreachableNode(relatedTarget.get()));
+    m_relatedTarget = relatedTarget;
+}
 
 }
 

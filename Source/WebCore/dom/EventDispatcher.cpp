@@ -60,7 +60,7 @@ EventRelatedTargetAdjuster::EventRelatedTargetAdjuster(PassRefPtr<Node> node, Pa
     ASSERT(m_relatedTarget);
 }
 
-void EventRelatedTargetAdjuster::adjust(Vector<EventContext, 32>& ancestors)
+void EventRelatedTargetAdjuster::adjust(EventPath& eventPath)
 {
     // Synthetic mouse events can have a relatedTarget which is identical to the target.
     bool targetIsIdenticalToToRelatedTarget = (m_node.get() == m_relatedTarget.get());
@@ -86,24 +86,26 @@ void EventRelatedTargetAdjuster::adjust(Vector<EventContext, 32>& ancestors)
 
     lastTreeScope = 0;
     EventTarget* adjustedRelatedTarget = 0;
-    for (Vector<EventContext, 32>::iterator iter = ancestors.begin(); iter < ancestors.end(); ++iter) {
-        TreeScope* scope = iter->node()->treeScope();
+    for (EventPath::iterator iter = eventPath.begin(); iter < eventPath.end(); ++iter) {
+        ASSERT((*iter)->isMouseOrFocusEventContext());
+        MouseOrFocusEventContext* mosueOrFocusEventContext = static_cast<MouseOrFocusEventContext*>(iter->get());
+        TreeScope* scope = mosueOrFocusEventContext->node()->treeScope();
         if (scope == lastTreeScope) {
             // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
-            iter->setRelatedTarget(adjustedRelatedTarget);
+            mosueOrFocusEventContext->setRelatedTarget(adjustedRelatedTarget);
         } else {
             adjustedRelatedTarget = findRelatedTarget(scope);
-            iter->setRelatedTarget(adjustedRelatedTarget);
+            mosueOrFocusEventContext->setRelatedTarget(adjustedRelatedTarget);
         }
         lastTreeScope = scope;
         if (targetIsIdenticalToToRelatedTarget) {
-            if (m_node->treeScope()->rootNode() == iter->node()) {
-                ancestors.shrink(iter + 1 - ancestors.begin());
+            if (m_node->treeScope()->rootNode() == mosueOrFocusEventContext->node()) {
+                eventPath.shrink(iter + 1 - eventPath.begin());
                 break;
             }
-        } else if (iter->target() == adjustedRelatedTarget) {
+        } else if (mosueOrFocusEventContext->target() == adjustedRelatedTarget) {
             // Event dispatching should be stopped here.
-            ancestors.shrink(iter - ancestors.begin());
+            eventPath.shrink(iter - eventPath.begin());
             break;
         }
     }
@@ -169,13 +171,13 @@ void EventDispatcher::adjustRelatedTarget(Event* event, PassRefPtr<EventTarget> 
         return;
     if (!m_node.get())
         return;
-    ensureEventAncestors(event);
-    EventRelatedTargetAdjuster(m_node, relatedTarget.release()).adjust(m_ancestors);
+    ensureEventPath(event);
+    EventRelatedTargetAdjuster(m_node, relatedTarget.release()).adjust(m_eventPath);
 }
 
 EventDispatcher::EventDispatcher(Node* node)
     : m_node(node)
-    , m_ancestorsInitialized(false)
+    , m_eventPathInitialized(false)
 #ifndef NDEBUG
     , m_eventDispatched(false)
 #endif
@@ -184,13 +186,14 @@ EventDispatcher::EventDispatcher(Node* node)
     m_view = node->document()->view();
 }
 
-void EventDispatcher::ensureEventAncestors(Event* event)
+void EventDispatcher::ensureEventPath(Event* event)
 {
-    if (m_ancestorsInitialized)
+    if (m_eventPathInitialized)
         return;
-    m_ancestorsInitialized = true;
+    m_eventPathInitialized = true;
     bool inDocument = m_node->inDocument();
     bool isSVGElement = m_node->isSVGElement();
+    bool isMouseOrFocusEvent = event->isMouseEvent() || event->isFocusEvent();
     Vector<EventTarget*, 32> targetStack;
     for (AncestorChainWalker walker(m_node.get()); walker.get(); walker.parent()) {
         Node* node = walker.get();
@@ -198,7 +201,10 @@ void EventDispatcher::ensureEventAncestors(Event* event)
             targetStack.append(eventTargetRespectingTargetRules(node));
         else if (walker.crossingInsertionPoint())
             targetStack.append(targetStack.last());
-        m_ancestors.append(EventContext(node, eventTargetRespectingTargetRules(node), targetStack.last()));
+        if (isMouseOrFocusEvent)
+            m_eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
+        else
+            m_eventPath.append(adoptPtr(new EventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
         if (!inDocument)
             return;
         if (!node->isShadowRoot())
@@ -260,9 +266,9 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event->target());
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
-    ensureEventAncestors(event.get());
+    ensureEventPath(event.get());
     WindowEventContext windowEventContext(event.get(), m_node.get(), topEventContext());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(m_node->document(), *event, windowEventContext.window(), m_node.get(), m_ancestors);
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(m_node->document(), *event, windowEventContext.window(), m_node.get(), m_eventPath);
 
     void* preDispatchEventHandlerResult;
     if (dispatchEventPreProcess(event, preDispatchEventHandlerResult) == ContinueDispatching)
@@ -284,7 +290,7 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventPreProcess(PassRe
 {
     // Give the target node a chance to do some work before DOM event handlers get a crack.
     preDispatchEventHandlerResult = m_node->preDispatchEventHandler(event.get());
-    return (m_ancestors.isEmpty() || event->propagationStopped()) ? DoneDispatching : ContinueDispatching;
+    return (m_eventPath.isEmpty() || event->propagationStopped()) ? DoneDispatching : ContinueDispatching;
 }
 
 inline EventDispatchContinuation EventDispatcher::dispatchEventAtCapturing(PassRefPtr<Event> event, WindowEventContext& windowEventContext)
@@ -295,8 +301,8 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtCapturing(PassR
     if (windowEventContext.handleLocalEvents(event.get()) && event->propagationStopped())
         return DoneDispatching;
 
-    for (size_t i = m_ancestors.size() - 1; i > 0; --i) {
-        const EventContext& eventContext = m_ancestors[i];
+    for (size_t i = m_eventPath.size() - 1; i > 0; --i) {
+        const EventContext& eventContext = *m_eventPath[i];
         if (eventContext.currentTargetSameAsTarget()) {
             if (event->bubbles())
                 continue;
@@ -314,7 +320,7 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtCapturing(PassR
 inline EventDispatchContinuation EventDispatcher::dispatchEventAtTarget(PassRefPtr<Event> event)
 {
     event->setEventPhase(Event::AT_TARGET);
-    m_ancestors[0].handleLocalEvents(event.get());
+    m_eventPath[0]->handleLocalEvents(event.get());
     return event->propagationStopped() ? DoneDispatching : ContinueDispatching;
 }
 
@@ -324,9 +330,9 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtBubbling(PassRe
         // Trigger bubbling event handlers, starting at the bottom and working our way up.
         event->setEventPhase(Event::BUBBLING_PHASE);
 
-        size_t size = m_ancestors.size();
+        size_t size = m_eventPath.size();
         for (size_t i = 1; i < size; ++i) {
-            const EventContext& eventContext = m_ancestors[i];
+            const EventContext& eventContext = *m_eventPath[i];
             if (eventContext.currentTargetSameAsTarget())
                 event->setEventPhase(Event::AT_TARGET);
             else
@@ -361,9 +367,9 @@ inline void EventDispatcher::dispatchEventPostProcess(PassRefPtr<Event> event, v
         // For bubbling events, call default event handlers on the same targets in the
         // same order as the bubbling phase.
         if (event->bubbles()) {
-            size_t size = m_ancestors.size();
+            size_t size = m_eventPath.size();
             for (size_t i = 1; i < size; ++i) {
-                m_ancestors[i].node()->defaultEventHandler(event.get());
+                m_eventPath[i]->node()->defaultEventHandler(event.get());
                 ASSERT(!event->defaultPrevented());
                 if (event->defaultHandled())
                     return;
@@ -374,7 +380,7 @@ inline void EventDispatcher::dispatchEventPostProcess(PassRefPtr<Event> event, v
 
 const EventContext* EventDispatcher::topEventContext()
 {
-    return m_ancestors.isEmpty() ? 0 : &m_ancestors.last();
+    return m_eventPath.isEmpty() ? 0 : m_eventPath.last().get();
 }
 
 static inline bool inTheSameScope(ShadowRoot* shadowRoot, EventTarget* target)

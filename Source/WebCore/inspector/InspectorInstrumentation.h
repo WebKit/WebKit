@@ -35,6 +35,7 @@
 #include "ConsoleAPITypes.h"
 #include "ConsoleTypes.h"
 #include "Element.h"
+#include "EventContext.h"
 #include "Frame.h"
 #include "HitTestResult.h"
 #include "Page.h"
@@ -143,7 +144,7 @@ public:
     static void didCallFunction(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchXHRReadyStateChangeEvent(ScriptExecutionContext*, XMLHttpRequest*);
     static void didDispatchXHRReadyStateChangeEvent(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willDispatchEvent(Document*, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors);
+    static InspectorInstrumentationCookie willDispatchEvent(Document*, const Event&, DOMWindow*, Node*, const EventPath&);
     static void didDispatchEvent(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willHandleEvent(ScriptExecutionContext*, Event*);
     static void didHandleEvent(const InspectorInstrumentationCookie&);
@@ -347,7 +348,7 @@ private:
     static void didCallFunctionImpl(const InspectorInstrumentationCookie&);
     static InspectorInstrumentationCookie willDispatchXHRReadyStateChangeEventImpl(InstrumentingAgents*, XMLHttpRequest*, ScriptExecutionContext*);
     static void didDispatchXHRReadyStateChangeEventImpl(const InspectorInstrumentationCookie&);
-    static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents*, const Event&, DOMWindow*, Node*, const Vector<EventContext>& ancestors, Document*);
+    static InspectorInstrumentationCookie willDispatchEventImpl(InstrumentingAgents*, const Event&, DOMWindow*, Node*, const EventPath&, Document*);
     static InspectorInstrumentationCookie willHandleEventImpl(InstrumentingAgents*, Event*);
     static void didHandleEventImpl(const InspectorInstrumentationCookie&);
     static void didDispatchEventImpl(const InspectorInstrumentationCookie&);
@@ -864,12 +865,12 @@ inline void InspectorInstrumentation::didDispatchXHRReadyStateChangeEvent(const 
 #endif
 }
 
-inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEvent(Document* document, const Event& event, DOMWindow* window, Node* node, const Vector<EventContext>& ancestors)
+inline InspectorInstrumentationCookie InspectorInstrumentation::willDispatchEvent(Document* document, const Event& event, DOMWindow* window, Node* node, const EventPath& eventPath)
 {
 #if ENABLE(INSPECTOR)
     FAST_RETURN_IF_NO_FRONTENDS(InspectorInstrumentationCookie());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        return willDispatchEventImpl(instrumentingAgents, event, window, node, ancestors, document);
+        return willDispatchEventImpl(instrumentingAgents, event, window, node, eventPath, document);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(event);
