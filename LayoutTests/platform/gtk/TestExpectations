@@ -311,14 +311,6 @@ webkit.org/b/99025 fast/dom/HTMLAnchorElement/anchor-download-unset.html [ Pass 
 # CSS Filters is disabled
 webkit.org/b/99026 css3/filters [ Skip ]
 
-# CSS image-set support not yet enabled (needs ENABLE_CSS_IMAGE_SET).
-webkit.org/b/99027 fast/css/image-set-parsing.html [ Failure ]
-webkit.org/b/99027 fast/css/image-set-parsing-invalid.html [ Pass ]
-webkit.org/b/99027 fast/css/image-set-setting.html [ Failure ]
-webkit.org/b/99027 fast/css/cursor-parsing-image-set.html [ Failure ]
-webkit.org/b/99027 fast/events/mouse-cursor-image-set.html [ Timeout ]
-webkit.org/b/99027 cssom/cssvalue-comparison.html [ Failure ]
-
 # For now, Web Audio API is disabled
 webkit.org/b/67187 webaudio [ Skip ]
 webkit.org/b/67187 webkit.org/b/102258 inspector-protocol/nmi-webaudio.html [ Skip ]
@@ -1469,6 +1461,9 @@ webkit.org/b/108973 fast/css/negative-text-indent-in-inline-block.html [ ImageOn
 webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Failure ]
 
 webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
+
+webkit.org/b/109469 fast/css/cursor-parsing-image-set.html [ Failure ]
+webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

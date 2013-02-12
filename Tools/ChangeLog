@@ -1,5 +1,16 @@
 2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Enable CSS image-set support in development builds
+        https://bugs.webkit.org/show_bug.cgi?id=109475
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitperl/FeatureList.pm: Add the configuration option for the feature.
+        Note that the Mac port also enables the feature but does so in Platform.h as the feature
+        is also enabled for the iOS port which can't at the moment be detected via webkitperl.
+
+2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
+
         [GTK] Enable DOM4 events constructors in development builds
         https://bugs.webkit.org/show_bug.cgi?id=109471
 
