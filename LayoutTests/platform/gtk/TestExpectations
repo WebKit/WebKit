@@ -380,10 +380,6 @@ webkit.org/b/94792 fast/sub-pixel [ Skip ]
 webkit.org/b/79203 fast/mediastream [ Skip ]
 webkit.org/b/79203 fast/events/constructors/media-stream-event-constructor.html [ Skip ]
 
-# CSS Variables are not yet enabled.
-webkit.org/b/99057 fast/css/variables [ Skip ]
-webkit.org/b/99057 inspector/styles/variables [ Skip ]
-
 # No CORS support for media elements is implemented yet.
 webkit.org/b/99037 http/tests/security/video-cross-origin-readback.html [ Failure ]
 
