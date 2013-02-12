@@ -564,6 +564,9 @@ http/tests/security/video-cross-origin-readback.html
 # https://bugs.webkit.org/show_bug.cgi?id=85558
 http/tests/security/contentSecurityPolicy/1.1
 
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+http/tests/security/contentTypeOptions
+
 # Unexpected redirection happens.
 http/tests/loading/redirect-methods.html
 

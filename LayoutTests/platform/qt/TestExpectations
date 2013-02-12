@@ -482,6 +482,9 @@ webkit.org/b/61138 http/tests/w3c/webperf/submission/Intel/resource-timing
 # Missing eventSender.scheduleAsynchronousKeyDown() implementation
 fast/dom/MutationObserver/inline-event-listener.html
 
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+http/tests/security/contentTypeOptions
+
 # =========================================================================== #
 #       Drag and Drop Support in DRT.                                         #
 # =========================================================================== #

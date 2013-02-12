@@ -53,6 +53,13 @@ typedef enum {
     ContentDispositionOther
 } ContentDispositionType;
 
+#if ENABLE(NOSNIFF)
+enum ContentTypeOptionsDisposition {
+    ContentTypeOptionsNone,
+    ContentTypeOptionsNosniff
+};
+#endif
+
 ContentDispositionType contentDispositionType(const String&);
 bool isRFC2616Token(const String&);
 bool parseHTTPRefresh(const String& refresh, bool fromHttpEquivMeta, double& delay, String& url);
@@ -66,6 +73,10 @@ String extractReasonPhraseFromHTTPStatusLine(const String&);
 
 // -1 could be set to one of the return parameters to indicate the value is not specified.
 bool parseRange(const String&, long long& rangeOffset, long long& rangeEnd, long long& rangeSuffixLength);
+
+#if ENABLE(NOSNIFF)
+ContentTypeOptionsDisposition parseContentTypeOptionsHeader(const String& header);
+#endif
 
 // Parsing Complete HTTP Messages.
 enum HTTPVersion { Unknown, HTTP_1_0, HTTP_1_1 };

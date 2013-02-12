@@ -58,6 +58,9 @@ fast/css/image-set-parsing-invalid.html
 fast/css/cursor-parsing-image-set.html
 fast/events/mouse-cursor-image-set.html
 
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+http/tests/security/contentTypeOptions
+
 # https://bugs.webkit.org/show_bug.cgi?id=77645
 css3/filters/filtered-compositing-descendant.html
 

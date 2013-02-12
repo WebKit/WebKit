@@ -2522,6 +2522,9 @@ fast/multicol/span/clone-flexbox.html
 # https://bugs.webkit.org/show_bug.cgi?id=85558
 http/tests/security/contentSecurityPolicy/1.1
 
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+http/tests/security/contentTypeOptions
+
 # Skip tests in fast/text/shaping
 fast/text/shaping
 

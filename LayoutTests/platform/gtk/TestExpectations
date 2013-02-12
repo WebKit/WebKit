@@ -118,6 +118,9 @@ webkit.org/b/103547 fast/xsl/xslt-xhtml-template.xml [ Skip ]
 webkit.org/b/103547 fast/xpath/xpath-template-element.html [ Skip ]
 webkit.org/b/103547 fast/xsl/xslt-processor-template.html [ Skip ]
 
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
+
 # These test -apple- and -khtml- prefixed CSS properties, which we don't support.
 inspector/styles/vendor-prefixes.html [ WontFix Failure ]
 fast/css/apple-prefix.html [ WontFix Failure ]

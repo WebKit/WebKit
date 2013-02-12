@@ -49,12 +49,16 @@ namespace WebCore {
         virtual void setEncoding(const String&);
         virtual String encoding() const;
         virtual void data(PassRefPtr<ResourceBuffer> data, bool allDataReceived);
+        String mimeType() const;
 
         virtual void destroyDecodedData();
 #if USE(JSC)        
         // Allows JSC to cache additional information about the source.
         JSC::SourceProviderCache* sourceProviderCache() const;
         void sourceProviderCacheSizeChanged(int delta);
+#endif
+#if ENABLE(NOSNIFF)
+        bool mimeTypeAllowedByNosniff() const;
 #endif
 
         virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;

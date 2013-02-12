@@ -429,6 +429,15 @@ XSSProtectionDisposition parseXSSProtectionHeader(const String& header, String& 
     }
 }
 
+#if ENABLE(NOSNIFF)
+ContentTypeOptionsDisposition parseContentTypeOptionsHeader(const String& header)
+{
+    if (header.stripWhiteSpace().lower() == "nosniff")
+        return ContentTypeOptionsNosniff;
+    return ContentTypeOptionsNone;
+}
+#endif
+
 String extractReasonPhraseFromHTTPStatusLine(const String& statusLine)
 {
     size_t spacePos = statusLine.find(' ');

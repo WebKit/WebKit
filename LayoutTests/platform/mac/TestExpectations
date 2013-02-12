@@ -198,6 +198,9 @@ fast/forms/week
 # ENABLE_GAMEPAD not enabled.
 gamepad/
 
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+http/tests/security/contentTypeOptions
+
 # Speech input is not yet enabled.
 fast/speech
 

@@ -27,9 +27,11 @@
 #include "config.h"
 #include "CachedScript.h"
 
-#include "MemoryCache.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
+#include "HTTPParsers.h"
+#include "MIMETypeRegistry.h"
+#include "MemoryCache.h"
 #include "ResourceBuffer.h"
 #include "TextResourceDecoder.h"
 #include "WebCoreMemoryInstrumentation.h"
@@ -63,6 +65,11 @@ void CachedScript::setEncoding(const String& chs)
 String CachedScript::encoding() const
 {
     return m_decoder->encoding().name();
+}
+
+String CachedScript::mimeType() const
+{
+    return extractMIMETypeFromMediaType(m_response.httpHeaderField("Content-Type")).lower();
 }
 
 const String& CachedScript::script()
@@ -116,6 +123,13 @@ JSC::SourceProviderCache* CachedScript::sourceProviderCache() const
 void CachedScript::sourceProviderCacheSizeChanged(int delta)
 {
     setDecodedSize(decodedSize() + delta);
+}
+#endif
+
+#if ENABLE(NOSNIFF)
+bool CachedScript::mimeTypeAllowedByNosniff() const
+{
+    return !parseContentTypeOptionsHeader(m_response.httpHeaderField("X-Content-Type-Options")) == ContentTypeOptionsNosniff || MIMETypeRegistry::isSupportedJavaScriptMIMEType(mimeType());
 }
 #endif
 

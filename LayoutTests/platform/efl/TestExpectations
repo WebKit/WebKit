@@ -307,6 +307,9 @@ fast/text/unicode-variation-selector.html
 fast/forms/file/input-file-entries.html
 http/tests/security/contentSecurityPolicy/filesystem-urls-match-self.html
 
+# X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
+http/tests/security/contentTypeOptions
+
 # Transparent image being produced
 fast/frames/transparent-scrollbar.html
 
