@@ -201,7 +201,7 @@ my @features = (
       define => "ENABLE_CSS_IMAGE_RESOLUTION", default => (isBlackBerry() || isGtk()), value => \$cssImageResolutionSupport },
 
     { option => "css-image-set", desc => "Toggle CSS image-set support",
-      define => "ENABLE_CSS_IMAGE_SET", default => isGtk(), value => \$cssImageSetSupport },
+      define => "ENABLE_CSS_IMAGE_SET", default => (isEfl() || isGtk()), value => \$cssImageSetSupport },
 
     { option => "css-regions", desc => "Toggle CSS Regions support",
       define => "ENABLE_CSS_REGIONS", default => 1, value => \$cssRegionsSupport },
