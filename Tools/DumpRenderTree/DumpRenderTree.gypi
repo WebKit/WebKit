@@ -79,6 +79,7 @@
             'chromium/TestRunner/src/MockWebRTCPeerConnectionHandler.h',
             'chromium/TestRunner/src/SpellCheckClient.cpp',
             'chromium/TestRunner/src/SpellCheckClient.h',
+            'chromium/TestRunner/src/TestCommon.cpp',
             'chromium/TestRunner/src/TestCommon.h',
             'chromium/TestRunner/src/TestInterfaces.cpp',
             'chromium/TestRunner/src/TestInterfaces.h',

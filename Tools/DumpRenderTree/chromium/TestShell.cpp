@@ -44,7 +44,6 @@
 #include "WebIDBFactory.h"
 #include "WebTestingSupport.h"
 #include "WebRuntimeFeatures.h"
-#include "WebScriptController.h"
 #include "WebSettings.h"
 #include "WebTestProxy.h"
 #include "WebTestRunner.h"
@@ -392,182 +391,14 @@ void TestShell::testTimedOut()
     testFinished(webViewHost());
 }
 
-static string dumpDocumentText(WebFrame* frame)
-{
-    // We use the document element's text instead of the body text here because
-    // not all documents have a body, such as XML documents.
-    WebElement documentElement = frame->document().documentElement();
-    if (documentElement.isNull())
-        return string();
-    return documentElement.innerText().utf8();
-}
-
-static string dumpFramesAsText(WebFrame* frame, bool recursive)
-{
-    string result;
-
-    // Add header for all but the main frame. Skip empty frames.
-    if (frame->parent() && !frame->document().documentElement().isNull()) {
-        result.append("\n--------\nFrame: '");
-        result.append(frame->uniqueName().utf8().data());
-        result.append("'\n--------\n");
-    }
-
-    result.append(dumpDocumentText(frame));
-    result.append("\n");
-
-    if (recursive) {
-        for (WebFrame* child = frame->firstChild(); child; child = child->nextSibling())
-            result.append(dumpFramesAsText(child, recursive));
-    }
-
-    return result;
-}
-
-static string dumpFramesAsPrintedText(WebFrame* frame, bool recursive)
-{
-    string result;
-
-    // Cannot do printed format for anything other than HTML
-    if (!frame->document().isHTMLDocument())
-        return string();
-
-    // Add header for all but the main frame. Skip empty frames.
-    if (frame->parent() && !frame->document().documentElement().isNull()) {
-        result.append("\n--------\nFrame: '");
-        result.append(frame->uniqueName().utf8().data());
-        result.append("'\n--------\n");
-    }
-
-    result.append(frame->renderTreeAsText(WebFrame::RenderAsTextPrinting).utf8());
-    result.append("\n");
-
-    if (recursive) {
-        for (WebFrame* child = frame->firstChild(); child; child = child->nextSibling())
-            result.append(dumpFramesAsPrintedText(child, recursive));
-    }
-
-    return result;
-}
-
-static void dumpFrameScrollPosition(WebFrame* frame, bool recursive)
-{
-    WebSize offset = frame->scrollOffset();
-    if (offset.width > 0 || offset.height > 0) {
-        if (frame->parent())
-            printf("frame '%s' ", frame->uniqueName().utf8().data());
-        printf("scrolled to %d,%d\n", offset.width, offset.height);
-    }
-
-    if (!recursive)
-        return;
-    for (WebFrame* child = frame->firstChild(); child; child = child->nextSibling())
-        dumpFrameScrollPosition(child, recursive);
-}
-
-struct ToLower {
-    char16 operator()(char16 c) { return tolower(c); }
-};
-
-// FIXME: Eliminate std::transform(), std::vector, and std::sort().
-
-// Returns True if item1 < item2.
-static bool HistoryItemCompareLess(const WebHistoryItem& item1, const WebHistoryItem& item2)
-{
-    string16 target1 = item1.target();
-    string16 target2 = item2.target();
-    std::transform(target1.begin(), target1.end(), target1.begin(), ToLower());
-    std::transform(target2.begin(), target2.end(), target2.begin(), ToLower());
-    return target1 < target2;
-}
-
-static string normalizeLayoutTestURLInternal(const string& url)
-{
-    string result = url;
-    size_t pos;
-    if (!url.find(fileUrlPattern) && ((pos = url.find(layoutTestsPattern)) != string::npos)) {
-        // adjust file URLs to match upstream results.
-        result.replace(0, pos + layoutTestsPatternSize, fileTestPrefix);
-    } else if (!url.find(dataUrlPattern)) {
-        // URL-escape data URLs to match results upstream.
-        string path = url.substr(dataUrlPatternSize);
-        result.replace(dataUrlPatternSize, url.length(), path);
-    }
-    return result;
-}
-
-static string dumpHistoryItem(const WebHistoryItem& item, int indent, bool isCurrent)
-{
-    string result;
-
-    if (isCurrent) {
-        result.append("curr->");
-        result.append(indent - 6, ' '); // 6 == "curr->".length()
-    } else
-        result.append(indent, ' ');
-
-    string url = normalizeLayoutTestURLInternal(item.urlString().utf8());
-    result.append(url);
-    if (!item.target().isEmpty()) {
-        result.append(" (in frame \"");
-        result.append(item.target().utf8());
-        result.append("\")");
-    }
-    if (item.isTargetItem())
-        result.append("  **nav target**");
-    result.append("\n");
-
-    const WebVector<WebHistoryItem>& children = item.children();
-    if (!children.isEmpty()) {
-        // Must sort to eliminate arbitrary result ordering which defeats
-        // reproducible testing.
-        // FIXME: WebVector should probably just be a std::vector!!
-        std::vector<WebHistoryItem> sortedChildren;
-        for (size_t i = 0; i < children.size(); ++i)
-            sortedChildren.push_back(children[i]);
-        std::sort(sortedChildren.begin(), sortedChildren.end(), HistoryItemCompareLess);
-        for (size_t i = 0; i < sortedChildren.size(); ++i)
-            result += dumpHistoryItem(sortedChildren[i], indent + 4, false);
-    }
-
-    return result;
-}
-
-static void dumpBackForwardList(const TestNavigationController& navigationController, string& result)
-{
-    result.append("\n============== Back Forward List ==============\n");
-    for (int index = 0; index < navigationController.entryCount(); ++index) {
-        int currentIndex = navigationController.lastCommittedEntryIndex();
-        WebHistoryItem historyItem = navigationController.entryAtIndex(index)->contentState();
-        if (historyItem.isNull()) {
-            historyItem.initialize();
-            historyItem.setURLString(navigationController.entryAtIndex(index)->URL().spec().utf16());
-        }
-        result.append(dumpHistoryItem(historyItem, 8, index == currentIndex));
-    }
-    result.append("===============================================\n");
-}
-
-string TestShell::dumpAllBackForwardLists()
-{
-    string result;
-    for (unsigned i = 0; i < m_windowList.size(); ++i)
-        dumpBackForwardList(*m_windowList[i]->navigationController(), result);
-    return result;
-}
-
 void TestShell::dump()
 {
-    WebScriptController::flushConsoleMessages();
-
     // Dump the requested representation.
     WebFrame* frame = m_webView->mainFrame();
     if (!frame)
         return;
-    bool shouldDumpAsText = m_testInterfaces->testRunner()->shouldDumpAsText();
     bool shouldDumpAsAudio = m_testInterfaces->testRunner()->shouldDumpAsAudio();
     bool shouldGeneratePixelResults = m_testInterfaces->testRunner()->shouldGeneratePixelResults();
-    bool shouldDumpAsPrinted = m_testInterfaces->testRunner()->isPrinting();
     bool dumpedAnything = false;
 
     if (shouldDumpAsAudio) {
@@ -584,33 +415,9 @@ void TestShell::dump()
     if (m_params.dumpTree) {
         dumpedAnything = true;
         m_printer.handleTextHeader();
-        // Text output: the test page can request different types of output
-        // which we handle here.
-        if (!shouldDumpAsText) {
-            // Plain text pages should be dumped as text
-            string mimeType = frame->dataSource()->response().mimeType().utf8();
-            if (mimeType == "text/plain") {
-                shouldDumpAsText = true;
-                shouldGeneratePixelResults = false;
-            }
-        }
-        if (shouldDumpAsText) {
-            bool recursive = m_testInterfaces->testRunner()->shouldDumpChildFramesAsText();
-            string dataUtf8 = shouldDumpAsPrinted ? dumpFramesAsPrintedText(frame, recursive) : dumpFramesAsText(frame, recursive);
-            if (fwrite(dataUtf8.c_str(), 1, dataUtf8.size(), stdout) != dataUtf8.size())
-                FATAL("Short write to stdout, disk full?\n");
-        } else {
-          WebFrame::RenderAsTextControls renderTextBehavior = WebFrame::RenderAsTextNormal;
-            if (shouldDumpAsPrinted)
-                renderTextBehavior |= WebFrame::RenderAsTextPrinting;
-            if (m_params.debugRenderTree)
-                renderTextBehavior |= WebFrame::RenderAsTextDebug;
-            printf("%s", frame->renderTreeAsText(renderTextBehavior).utf8().data());
-            bool recursive = m_testInterfaces->testRunner()->shouldDumpChildFrameScrollPositions();
-            dumpFrameScrollPosition(frame, recursive);
-        }
-        if (m_testInterfaces->testRunner()->shouldDumpBackForwardList())
-            printf("%s", dumpAllBackForwardLists().c_str());
+        string dataUtf8 = m_webViewHost->proxy()->captureTree(m_params.debugRenderTree);
+        if (fwrite(dataUtf8.c_str(), 1, dataUtf8.size(), stdout) != dataUtf8.size())
+            FATAL("Short write to stdout, disk full?\n");
     }
     if (dumpedAnything && m_params.printSeparators)
         m_printer.handleTextFooter();
@@ -809,4 +616,25 @@ void TestShell::closeRemainingWindows()
 int TestShell::windowCount()
 {
     return m_windowList.size();
+}
+
+void TestShell::captureHistoryForWindow(size_t windowIndex, WebVector<WebHistoryItem>* history, size_t* currentEntryIndex)
+{
+    ASSERT(history);
+    ASSERT(currentEntryIndex);
+    if (windowIndex >= m_windowList.size())
+        return;
+    TestNavigationController& navigationController = *m_windowList[windowIndex]->navigationController();
+    size_t entryCount = navigationController.entryCount();
+    WebVector<WebHistoryItem> result(entryCount);
+    *currentEntryIndex = navigationController.lastCommittedEntryIndex();
+    for (size_t index = 0; index < entryCount; ++index) {
+        WebHistoryItem historyItem = navigationController.entryAtIndex(index)->contentState();
+        if (historyItem.isNull()) {
+            historyItem.initialize();
+            historyItem.setURLString(navigationController.entryAtIndex(index)->URL().spec().utf16());
+        }
+        result[index] = historyItem;
+    }
+    history->swap(result);
 }

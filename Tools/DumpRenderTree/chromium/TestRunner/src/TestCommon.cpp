@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,28 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebTestRunner_h
-#define WebTestRunner_h
+#include "config.h"
+#include "TestCommon.h"
 
-namespace WebKit {
-class WebArrayBufferView;
-class WebPermissionClient;
-}
+using namespace std;
 
 namespace WebTestRunner {
 
-class WebTestRunner {
-public:
-    virtual bool shouldGeneratePixelResults() = 0;
-    virtual bool shouldDumpAsAudio() const = 0;
-    virtual const WebKit::WebArrayBufferView* audioData() const = 0;
-    virtual WebKit::WebPermissionClient* webPermissions() const = 0;
-    virtual bool shouldDumpSelectionRect() const = 0;
-    virtual bool testRepaint() const = 0;
-    virtual bool sweepHorizontally() const = 0;
-    virtual bool isPrinting() const = 0;
-};
+namespace {
+
+const char layoutTestsPattern[] = "/LayoutTests/";
+const string::size_type layoutTestsPatternSize = sizeof(layoutTestsPattern) - 1;
+const char fileUrlPattern[] = "file:/";
+const char fileTestPrefix[] = "(file test):";
+const char dataUrlPattern[] = "data:";
+const string::size_type dataUrlPatternSize = sizeof(dataUrlPattern) - 1;
 
 }
 
-#endif // WebTestRunner_h
+string normalizeLayoutTestURL(const string& url)
+{
+    string result = url;
+    size_t pos;
+    if (!url.find(fileUrlPattern) && ((pos = url.find(layoutTestsPattern)) != string::npos)) {
+        // adjust file URLs to match upstream results.
+        result.replace(0, pos + layoutTestsPatternSize, fileTestPrefix);
+    } else if (!url.find(dataUrlPattern)) {
+        // URL-escape data URLs to match results upstream.
+        string path = url.substr(dataUrlPatternSize);
+        result.replace(dataUrlPatternSize, url.length(), path);
+    }
+    return result;
+}
+
+}

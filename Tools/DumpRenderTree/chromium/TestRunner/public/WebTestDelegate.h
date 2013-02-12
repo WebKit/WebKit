@@ -39,6 +39,7 @@
 namespace WebKit {
 class WebDeviceOrientation;
 class WebGamepads;
+class WebHistoryItem;
 struct WebRect;
 struct WebURLError;
 }
@@ -113,6 +114,7 @@ public:
     virtual void reload() { }
     virtual void loadURLForFrame(const WebKit::WebURL&, const std::string&) { }
     virtual bool allowExternalPages() { return false; }
+    virtual void captureHistoryForWindow(size_t windowIndex, WebKit::WebVector<WebKit::WebHistoryItem>* history, size_t* currentEntryIndex) { }
 };
 
 }

@@ -923,6 +923,11 @@ bool WebViewHost::allowExternalPages()
     return m_shell->allowExternalPages();
 }
 
+void WebViewHost::captureHistoryForWindow(size_t windowIndex, WebVector<WebHistoryItem>* history, size_t* currentEntryIndex)
+{
+    m_shell->captureHistoryForWindow(windowIndex, history, currentEntryIndex);
+}
+
 // Public functions -----------------------------------------------------------
 
 WebViewHost::WebViewHost(TestShell* shell)

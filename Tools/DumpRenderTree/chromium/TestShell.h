@@ -165,6 +165,7 @@ public:
     void closeWindow(WebViewHost*);
     void closeRemainingWindows();
     int windowCount();
+    void captureHistoryForWindow(size_t windowIndex, WebKit::WebVector<WebKit::WebHistoryItem>*, size_t* currentEntryIndex);
     static void resizeWindowForTest(WebViewHost*, const WebKit::WebURL&);
 
     void showDevTools();

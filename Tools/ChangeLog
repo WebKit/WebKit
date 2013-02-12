@@ -1,3 +1,42 @@
+2013-02-12  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move text dump generation to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=109575
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebKit):
+        (WebTestRunner::WebTestDelegate::captureHistoryForWindow):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestCommon.cpp: Copied from Tools/DumpRenderTree/chromium/TestRunner/src/TestCommon.h.
+        (WebTestRunner::normalizeLayoutTestURL):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestCommon.h:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::checkResponseMimeType):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::shouldDumpAsText):
+        (WebTestRunner::TestRunner::shouldGeneratePixelResults):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebPermissions.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::captureTree):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::dump):
+        (TestShell::captureHistoryForWindow):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::captureHistoryForWindow):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2013-02-12  Jessie Berlin  <jberlin@apple.com>
 
         Rollout r142618, it broke all the Mac builds.

@@ -94,6 +94,8 @@ public:
     void setPaintRect(const WebKit::WebRect&);
     WebKit::WebRect paintRect() const;
 
+    std::string captureTree(bool debugRenderTree);
+
     void setLogConsoleOutput(bool enabled);
 
 protected:

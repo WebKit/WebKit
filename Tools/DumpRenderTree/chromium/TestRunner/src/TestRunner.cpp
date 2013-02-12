@@ -34,6 +34,7 @@
 #include "TestRunner.h"
 
 #include "WebBindings.h"
+#include "WebDataSource.h"
 #include "WebDeviceOrientation.h"
 #include "WebDocument.h"
 #include "WebElement.h"
@@ -55,6 +56,7 @@
 #include <memory>
 #include <public/WebData.h>
 #include <public/WebPoint.h>
+#include <public/WebURLResponse.h>
 
 #if defined(__linux__) || defined(ANDROID)
 #include "linux/WebFontRendering.h"
@@ -425,8 +427,22 @@ bool TestRunner::shouldDumpEditingCallbacks() const
     return m_dumpEditingCallbacks;
 }
 
-bool TestRunner::shouldDumpAsText() const
+void TestRunner::checkResponseMimeType()
 {
+    // Text output: the test page can request different types of output
+    // which we handle here.
+    if (!m_dumpAsText) {
+        string mimeType = m_webView->mainFrame()->dataSource()->response().mimeType().utf8();
+        if (mimeType == "text/plain") {
+            m_dumpAsText = true;
+            m_generatePixelResults = false;
+        }
+    }
+}
+
+bool TestRunner::shouldDumpAsText()
+{
+    checkResponseMimeType();
     return m_dumpAsText;
 }
 
@@ -435,8 +451,9 @@ void TestRunner::setShouldDumpAsText(bool value)
     m_dumpAsText = value;
 }
 
-bool TestRunner::shouldGeneratePixelResults() const
+bool TestRunner::shouldGeneratePixelResults()
 {
+    checkResponseMimeType();
     return m_generatePixelResults;
 }
 

@@ -43,17 +43,21 @@
 #include "WebCachedURLRequest.h"
 #include "WebConsoleMessage.h"
 #include "WebDataSource.h"
+#include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFrame.h"
+#include "WebHistoryItem.h"
 #include "WebNode.h"
 #include "WebPluginParams.h"
 #include "WebPrintParams.h"
 #include "WebRange.h"
+#include "WebScriptController.h"
 #include "WebTestDelegate.h"
 #include "WebTestInterfaces.h"
 #include "WebTestRunner.h"
 #include "WebUserMediaClientMock.h"
 #include "WebView.h"
+#include <cctype>
 #include <public/WebCString.h>
 #include <public/WebURLError.h>
 #include <public/WebURLRequest.h>
@@ -254,6 +258,156 @@ const char* webNavigationTypeToString(WebNavigationType type)
     return illegalString;
 }
 
+string dumpDocumentText(WebFrame* frame)
+{
+    // We use the document element's text instead of the body text here because
+    // not all documents have a body, such as XML documents.
+    WebElement documentElement = frame->document().documentElement();
+    if (documentElement.isNull())
+        return string();
+    return documentElement.innerText().utf8();
+}
+
+string dumpFramesAsText(WebFrame* frame, bool recursive)
+{
+    string result;
+
+    // Add header for all but the main frame. Skip empty frames.
+    if (frame->parent() && !frame->document().documentElement().isNull()) {
+        result.append("\n--------\nFrame: '");
+        result.append(frame->uniqueName().utf8().data());
+        result.append("'\n--------\n");
+    }
+
+    result.append(dumpDocumentText(frame));
+    result.append("\n");
+
+    if (recursive) {
+        for (WebFrame* child = frame->firstChild(); child; child = child->nextSibling())
+            result.append(dumpFramesAsText(child, recursive));
+    }
+
+    return result;
+}
+
+string dumpFramesAsPrintedText(WebFrame* frame, bool recursive)
+{
+    string result;
+
+    // Cannot do printed format for anything other than HTML
+    if (!frame->document().isHTMLDocument())
+        return string();
+
+    // Add header for all but the main frame. Skip empty frames.
+    if (frame->parent() && !frame->document().documentElement().isNull()) {
+        result.append("\n--------\nFrame: '");
+        result.append(frame->uniqueName().utf8().data());
+        result.append("'\n--------\n");
+    }
+
+    result.append(frame->renderTreeAsText(WebFrame::RenderAsTextPrinting).utf8());
+    result.append("\n");
+
+    if (recursive) {
+        for (WebFrame* child = frame->firstChild(); child; child = child->nextSibling())
+            result.append(dumpFramesAsPrintedText(child, recursive));
+    }
+
+    return result;
+}
+
+string dumpFrameScrollPosition(WebFrame* frame, bool recursive)
+{
+    string result;
+    WebSize offset = frame->scrollOffset();
+    if (offset.width > 0 || offset.height > 0) {
+        if (frame->parent())
+            result = string("frame '") + frame->uniqueName().utf8().data() + "' ";
+        char data[100];
+        snprintf(data, sizeof(data), "scrolled to %d,%d\n", offset.width, offset.height);
+        result += data;
+    }
+
+    if (!recursive)
+        return result;
+    for (WebFrame* child = frame->firstChild(); child; child = child->nextSibling())
+        result += dumpFrameScrollPosition(child, recursive);
+    return result;
+}
+
+struct ToLower {
+    char16 operator()(char16 c) { return tolower(c); }
+};
+
+// Returns True if item1 < item2.
+bool HistoryItemCompareLess(const WebHistoryItem& item1, const WebHistoryItem& item2)
+{
+    string16 target1 = item1.target();
+    string16 target2 = item2.target();
+    std::transform(target1.begin(), target1.end(), target1.begin(), ToLower());
+    std::transform(target2.begin(), target2.end(), target2.begin(), ToLower());
+    return target1 < target2;
+}
+
+string dumpHistoryItem(const WebHistoryItem& item, int indent, bool isCurrent)
+{
+    string result;
+
+    if (isCurrent) {
+        result.append("curr->");
+        result.append(indent - 6, ' '); // 6 == "curr->".length()
+    } else
+        result.append(indent, ' ');
+
+    string url = normalizeLayoutTestURL(item.urlString().utf8());
+    result.append(url);
+    if (!item.target().isEmpty()) {
+        result.append(" (in frame \"");
+        result.append(item.target().utf8());
+        result.append("\")");
+    }
+    if (item.isTargetItem())
+        result.append("  **nav target**");
+    result.append("\n");
+
+    const WebVector<WebHistoryItem>& children = item.children();
+    if (!children.isEmpty()) {
+        // Must sort to eliminate arbitrary result ordering which defeats
+        // reproducible testing.
+        // FIXME: WebVector should probably just be a std::vector!!
+        std::vector<WebHistoryItem> sortedChildren;
+        for (size_t i = 0; i < children.size(); ++i)
+            sortedChildren.push_back(children[i]);
+        std::sort(sortedChildren.begin(), sortedChildren.end(), HistoryItemCompareLess);
+        for (size_t i = 0; i < sortedChildren.size(); ++i)
+            result += dumpHistoryItem(sortedChildren[i], indent + 4, false);
+    }
+
+    return result;
+}
+
+void dumpBackForwardList(const WebVector<WebHistoryItem>& history, size_t currentEntryIndex, string& result)
+{
+    result.append("\n============== Back Forward List ==============\n");
+    for (int index = 0; index < history.size(); ++index)
+        result.append(dumpHistoryItem(history[index], 8, index == currentEntryIndex));
+    result.append("===============================================\n");
+}
+
+string dumpAllBackForwardLists(WebTestDelegate* delegate)
+{
+    string result;
+    unsigned windowCount = delegate->windowCount();
+    fprintf(stderr, "windowCount = %d\n", windowCount);
+    for (unsigned i = 0; i < windowCount; ++i) {
+        size_t currentEntryIndex = 0;
+        WebVector<WebHistoryItem> history;
+        delegate->captureHistoryForWindow(i, &history, &currentEntryIndex);
+        dumpBackForwardList(history, currentEntryIndex, result);
+    }
+    return result;
+}
+
 }
 
 WebTestProxyBase::WebTestProxyBase()
@@ -299,6 +453,34 @@ void WebTestProxyBase::setPaintRect(const WebRect& rect)
 WebRect WebTestProxyBase::paintRect() const
 {
     return m_paintRect;
+}
+
+string WebTestProxyBase::captureTree(bool debugRenderTree)
+{
+    WebScriptController::flushConsoleMessages();
+
+    bool shouldDumpAsText = m_testInterfaces->testRunner()->shouldDumpAsText();
+    bool shouldDumpAsPrinted = m_testInterfaces->testRunner()->isPrinting();
+    WebFrame* frame = m_testInterfaces->webView()->mainFrame();
+    string dataUtf8;
+    if (shouldDumpAsText) {
+        bool recursive = m_testInterfaces->testRunner()->shouldDumpChildFramesAsText();
+        dataUtf8 = shouldDumpAsPrinted ? dumpFramesAsPrintedText(frame, recursive) : dumpFramesAsText(frame, recursive);
+    } else {
+        bool recursive = m_testInterfaces->testRunner()->shouldDumpChildFrameScrollPositions();
+        WebFrame::RenderAsTextControls renderTextBehavior = WebFrame::RenderAsTextNormal;
+        if (shouldDumpAsPrinted)
+            renderTextBehavior |= WebFrame::RenderAsTextPrinting;
+        if (debugRenderTree)
+            renderTextBehavior |= WebFrame::RenderAsTextDebug;
+        dataUtf8 = frame->renderTreeAsText(renderTextBehavior).utf8();
+        dataUtf8 += dumpFrameScrollPosition(frame, recursive);
+    }
+
+    if (m_testInterfaces->testRunner()->shouldDumpBackForwardList())
+        dataUtf8 += dumpAllBackForwardLists(m_delegate);
+
+    return dataUtf8;
 }
 
 void WebTestProxyBase::setLogConsoleOutput(bool enabled)

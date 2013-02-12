@@ -71,20 +71,20 @@ public:
     void setTestIsRunning(bool);
 
     // WebTestRunner implementation.
-    virtual bool shouldDumpAsText() const OVERRIDE;
-    virtual bool shouldGeneratePixelResults() const OVERRIDE;
-    virtual bool shouldDumpChildFrameScrollPositions() const OVERRIDE;
-    virtual bool shouldDumpChildFramesAsText() const OVERRIDE;
+    virtual bool shouldGeneratePixelResults() OVERRIDE;
     virtual bool shouldDumpAsAudio() const OVERRIDE;
     virtual const WebKit::WebArrayBufferView* audioData() const OVERRIDE;
     virtual WebKit::WebPermissionClient* webPermissions() const OVERRIDE;
-    virtual bool shouldDumpBackForwardList() const OVERRIDE;
     virtual bool shouldDumpSelectionRect() const OVERRIDE;
     virtual bool testRepaint() const OVERRIDE;
     virtual bool sweepHorizontally() const OVERRIDE;
     virtual bool isPrinting() const OVERRIDE;
 
     // Methods used by WebTestProxyBase.
+    bool shouldDumpAsText();
+    bool shouldDumpBackForwardList() const;
+    bool shouldDumpChildFrameScrollPositions() const;
+    bool shouldDumpChildFramesAsText() const;
     void showDevTools();
     void setShouldDumpAsText(bool);
     void setShouldGeneratePixelResults(bool);
@@ -486,6 +486,7 @@ private:
 
     ///////////////////////////////////////////////////////////////////////////
     // Internal helpers
+    void checkResponseMimeType();
     void completeNotifyDone(bool isTimeout);
     class NotifyDoneTimedOutTask: public WebMethodTask<TestRunner> {
     public:
