@@ -862,6 +862,11 @@ function YearMonthController(picker) {
     this.picker = picker;
 }
 
+YearMonthController.LeftPointingTriangle = "<svg width='4' height='7'><polygon points='0,3.5 4,7 4,0' style='fill:#6e6e6e;' /></svg>";
+YearMonthController.LeftPointingDoubleTriangle = "<svg width='9' height='7'><polygon points='0,3.5 4,7 4,0' style='fill:#6e6e6e;' /><polygon points='5,3.5 9,7 9,0' style='fill:#6e6e6e;' /></svg>";
+YearMonthController.RightPointingTriangle = "<svg width='4' height='7'><polygon points='0,7 0,0, 4,3.5' style='fill:#6e6e6e;' /></svg>";
+YearMonthController.RightPointingDoubleTriangle = "<svg width='9' height='7'><polygon points='4,3.5 0,7 0,0' style='fill:#6e6e6e;' /><polygon points='9,3.5 5,7 5,0' style='fill:#6e6e6e;' /></svg>";
+
 /**
  * @param {!Element} element
  */
@@ -936,12 +941,12 @@ YearMonthController.prototype._attachLeftButtonsTo = function(parent) {
     }
 
     this._left2 = createElement("button", ClassNames.YearMonthButton);
-    this._left2.innerHTML = "<svg width='9' height='7'><polygon points='0,3.5 4,7 4,0' style='fill:#6e6e6e;' /><polygon points='5,3.5 9,7 9,0' style='fill:#6e6e6e;' /></svg>";
+    this._left2.innerHTML = global.params.isLocaleRTL ? YearMonthController.RightPointingDoubleTriangle : YearMonthController.LeftPointingDoubleTriangle;
     this._left2.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._left2);
 
     this._left1 = createElement("button", ClassNames.YearMonthButton);
-    this._left1.innerHTML = "<svg width='4' height='7'><polygon points='0,3.5 4,7 4,0' style='fill:#6e6e6e;' /></svg>";
+    this._left1.innerHTML = global.params.isLocaleRTL ? YearMonthController.RightPointingTriangle : YearMonthController.LeftPointingTriangle;
     this._left1.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._left1);
 };
@@ -953,12 +958,12 @@ YearMonthController.prototype._attachRightButtonsTo = function(parent) {
     var container = createElement("div", ClassNames.YearMonthButtonRight);
     parent.appendChild(container);
     this._right1 = createElement("button", ClassNames.YearMonthButton);
-    this._right1.innerHTML = "<svg width='4' height='7'><polygon points='0,7 0,0, 4,3.5' style='fill:#6e6e6e;' /></svg>";
+    this._right1.innerHTML = global.params.isLocaleRTL ? YearMonthController.LeftPointingTriangle : YearMonthController.RightPointingTriangle;
     this._right1.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._right1);
 
     this._right2 = createElement("button", ClassNames.YearMonthButton);
-    this._right2.innerHTML = "<svg width='9' height='7'><polygon points='4,3.5 0,7 0,0' style='fill:#6e6e6e;' /><polygon points='9,3.5 5,7 5,0' style='fill:#6e6e6e;' /></svg>";
+    this._right2.innerHTML = global.params.isLocaleRTL ? YearMonthController.LeftPointingDoubleTriangle : YearMonthController.RightPointingDoubleTriangle;
     this._right2.addEventListener("click", this._handleButtonClick.bind(this), false);
     container.appendChild(this._right2);
 

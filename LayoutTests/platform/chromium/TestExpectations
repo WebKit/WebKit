@@ -4242,6 +4242,7 @@ webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/calendar-picker
 webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
 webkit.org/b/109136 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-required.html [ ImageOnlyFailure Pass Missing ]
 webkit.org/b/109136 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-required-ar.html [ ImageOnlyFailure Pass Missing ]
+webkit.org/b/109158 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ar.html [ ImageOnlyFailure Pass Missing ]
 
 # Rebaseline after currentPath
 webkit.org/b/108246 fast/canvas/canvas-currentPath.html [ Failure ]

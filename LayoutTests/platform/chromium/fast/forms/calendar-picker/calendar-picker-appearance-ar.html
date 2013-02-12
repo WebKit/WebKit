@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+window.enablePixelTesting = true;
+if (window.internals)
+    internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
+</script>
+<script src="../../../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../../../fast/forms/resources/picker-common.js"></script>
+<script src="resources/calendar-picker-common.js"></script>
+</head>
+<body>
+<input type=date id=date value="1800-05-12" lang="ar-AE">
+
+<p id="description" style="opacity: 0"></p>
+<div id="console" style="opacity: 0"></div>
+
+<script>
+openPicker(document.getElementById('date'), finishJSTest);
+</script>
+<script src="../../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

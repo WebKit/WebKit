@@ -141,7 +141,7 @@ body {
 }
 
 .year-month-button-left .year-month-button {
-    margin-right: 4px;
+    -webkit-margin-end: 4px;
 }
 
 .year-month-button-right {
@@ -149,7 +149,7 @@ body {
 }
 
 .year-month-button-right .year-month-button {
-    margin-left: 4px;
+    -webkit-margin-start: 4px;
 }
 
 .days-area-container {
@@ -272,7 +272,7 @@ body {
 }
 
 .today-clear-area .today-button {
-    margin-right: 8px;
+    -webkit-margin-end: 8px;
 }
 
 .today-clear-area {
