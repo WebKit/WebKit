@@ -1,3 +1,11 @@
+2013-02-11  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13196331> NetworkProcess deny mach-lookup com.apple.PowerManagement.control
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+
 2013-02-11  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: Make CoordinatedGraphicsScene not know contents size.
