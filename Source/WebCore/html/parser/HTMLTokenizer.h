@@ -227,7 +227,7 @@ private:
         return true;
     }
     
-    inline bool emitAndReconsumeIn(SegmentedString& source, State state)
+    inline bool emitAndReconsumeIn(SegmentedString&, State state)
     {
         saveEndTagNameIfNeeded();
         m_state = state;
