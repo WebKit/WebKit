@@ -233,19 +233,8 @@ void WebPageCompositorPrivate::animationFrameChanged()
         return;
     }
 
-    if (backingStore->d->shouldDirectRenderingToWindow()) {
-        if (backingStore->d->isDirectRenderingAnimationMessageScheduled())
-            return; // don't send new messages as long as we haven't rerendered
-
-        using namespace BlackBerry::Platform;
-
-        backingStore->d->setDirectRenderingAnimationMessageScheduled();
-        webKitThreadMessageClient()->dispatchMessage(createMethodCallMessage(&BackingStorePrivate::renderAndBlitVisibleContentsImmediately, backingStore->d));
-        return;
-    }
-
     if (!m_webPage->needsOneShotDrawingSynchronization())
-        m_webPage->blitVisibleContents();
+        backingStore->blitVisibleContents();
 }
 
 void WebPageCompositorPrivate::compositorDestroyed()

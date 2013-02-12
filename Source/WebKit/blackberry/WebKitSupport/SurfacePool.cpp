@@ -86,7 +86,7 @@ void SurfacePool::initialize(const Platform::IntSize& tileSize)
     }
 
     if (!m_numberOfFrontBuffers)
-        return; // we only use direct rendering when 0 tiles are specified.
+        return; // We completely disable tile rendering when 0 tiles are specified.
 
     const unsigned numberOfBackBuffers = Platform::Settings::instance()->numberOfBackingStoreBackBuffers();
     const unsigned numberOfPoolTiles = m_numberOfFrontBuffers + numberOfBackBuffers; // back buffer

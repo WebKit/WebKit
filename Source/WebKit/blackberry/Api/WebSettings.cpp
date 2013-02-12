@@ -40,7 +40,6 @@ DEFINE_STATIC_LOCAL(String, BlackBerryApplyDeviceScaleFactorInCompositor, (ASCII
 DEFINE_STATIC_LOCAL(String, BlackBerryAsynchronousSpellChecking, (ASCIILiteral("BlackBerryAsynchronousSpellChecking")));
 DEFINE_STATIC_LOCAL(String, BlackBerryBackgroundColor, (ASCIILiteral("BlackBerryBackgroundColor")));
 DEFINE_STATIC_LOCAL(String, BlackBerryCookiesEnabled, (ASCIILiteral("BlackBerryCookiesEnabled")));
-DEFINE_STATIC_LOCAL(String, BlackBerryDirectRenderingToWindowEnabled, (ASCIILiteral("BlackBerryDirectRenderingToWindowEnabled")));
 DEFINE_STATIC_LOCAL(String, BlackBerryDrawBorderWhileLoadingImages, (ASCIILiteral("BlackBerryDrawBorderWhileLoadingImages")));
 DEFINE_STATIC_LOCAL(String, BlackBerryEmailModeEnabled, (ASCIIliteral("BlackBerryEmailModeEnabled")));
 DEFINE_STATIC_LOCAL(String, BlackBerryGetFocusNodeContextEnabled, (ASCIILiteral("BlackBerryGetFocusNodeContextEnabled")));
@@ -742,16 +741,6 @@ bool WebSettings::isFrameFlatteningEnabled() const
 void WebSettings::setFrameFlatteningEnabled(bool enable)
 {
     m_private->setBoolean(WebKitFrameFlatteningEnabled, enable);
-}
-
-bool WebSettings::isDirectRenderingToWindowEnabled() const
-{
-    return m_private->getBoolean(BlackBerryDirectRenderingToWindowEnabled);
-}
-
-void WebSettings::setDirectRenderingToWindowEnabled(bool enable)
-{
-    m_private->setBoolean(BlackBerryDirectRenderingToWindowEnabled, enable);
 }
 
 bool WebSettings::isBackingStoreEnabled() const

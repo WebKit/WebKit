@@ -421,7 +421,6 @@ public:
     void releaseLayerResourcesCompositingThread();
     void suspendRootLayerCommit();
     void resumeRootLayerCommit();
-    void blitVisibleContents();
 
     void scheduleCompositingRun();
 #endif

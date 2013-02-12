@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2009, 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -3567,10 +3567,7 @@ void WebPagePrivate::resumeBackingStore()
 {
     ASSERT(m_webPage->isVisible());
 
-    bool directRendering = m_backingStore->d->shouldDirectRenderingToWindow();
-    if (!m_backingStore->d->isActive()
-        || shouldResetTilesWhenShown()
-        || directRendering) {
+    if (!m_backingStore->d->isActive() || shouldResetTilesWhenShown()) {
         BackingStorePrivate::setCurrentBackingStoreOwner(m_webPage);
 
         // If we're OpenGL compositing, switching to accel comp drawing of the root layer
@@ -3648,10 +3645,6 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
         setShouldResetTilesWhenShown(true);
 
     bool hasPendingOrientation = m_pendingOrientation != -1;
-
-    // The window buffers might have been recreated, cleared, moved, etc., so:
-    m_backingStore->d->windowFrontBufferState()->clearBlittedRegion();
-    m_backingStore->d->windowBackBufferState()->clearBlittedRegion();
 
     IntSize viewportSizeBefore = actualVisibleSize();
     FloatPoint centerOfVisibleContentsRect = this->centerOfVisibleContentsRect();
@@ -3806,20 +3799,10 @@ void WebPagePrivate::setViewportSize(const IntSize& transformedActualVisibleSize
     // Try and zoom here with clamping on.
     // FIXME: Determine why the above comment says "clamping on", yet we
     //   don't set enforceScaleClamping to true.
-    // FIXME: Determine why ensureContentVisible() is only called for !success
-    //   in the direct-rendering case, but in all cases otherwise. Chances are
-    //   one of these is incorrect and we can unify two branches into one.
-    if (m_backingStore->d->shouldDirectRenderingToWindow()) {
-        bool success = zoomAboutPoint(scale, anchor, false /* enforceScaleClamping */, true /* forceRendering */);
-        if (!success && ensureFocusElementVisible)
-            ensureContentVisible(!newVisibleRectContainsOldVisibleRect);
-
-    } else if (zoomAboutPoint(scale, anchor, false /*enforceScaleClamping*/, true /*forceRendering*/)) {
+    if (zoomAboutPoint(scale, anchor, false /*enforceScaleClamping*/, true /*forceRendering*/)) {
         if (ensureFocusElementVisible)
             ensureContentVisible(!newVisibleRectContainsOldVisibleRect);
-
     } else {
-
         // Suspend all updates to the backingstore.
         m_backingStore->d->suspendBackingStoreUpdates();
 
@@ -5607,24 +5590,15 @@ void WebPagePrivate::rootLayerCommitTimerFired(Timer<WebPagePrivate>*)
     // backing store, doing a one shot drawing synchronization with the
     // backing store is never necessary, because the backing store draws
     // nothing.
-    if (!compositorDrawsRootLayer()) {
-        // If we are doing direct rendering and have a single rendering target,
-        // committing is equivalent to a one shot drawing synchronization.
-        // We need to re-render the web page, re-render the layers, and
-        // then blit them on top of the re-rendered web page.
-        if (m_backingStore->d->isOpenGLCompositing() && m_backingStore->d->shouldDirectRenderingToWindow())
-            setNeedsOneShotDrawingSynchronization();
-
-        if (needsOneShotDrawingSynchronization()) {
+    if (!compositorDrawsRootLayer() && needsOneShotDrawingSynchronization()) {
 #if DEBUG_AC_COMMIT
-            Platform::logAlways(Platform::LogLevelCritical,
-                "%s: OneShotDrawingSynchronization code path!",
-                WTF_PRETTY_FUNCTION);
+        Platform::logAlways(Platform::LogLevelCritical,
+            "%s: OneShotDrawingSynchronization code path!",
+            WTF_PRETTY_FUNCTION);
 #endif
-            const IntRect windowRect = IntRect(IntPoint::zero(), viewportSize());
-            m_backingStore->d->repaint(windowRect, true /*contentChanged*/, true /*immediate*/);
-            return;
-        }
+        const IntRect windowRect = IntRect(IntPoint::zero(), viewportSize());
+        m_backingStore->d->repaint(windowRect, true /*contentChanged*/, true /*immediate*/);
+        return;
     }
 
     commitRootLayerIfNeeded();
@@ -6051,14 +6025,6 @@ void WebPage::setJavaScriptCanAccessClipboard(bool enabled)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void WebPagePrivate::blitVisibleContents()
-{
-    if (m_backingStore->d->shouldDirectRenderingToWindow())
-        return;
-
-    m_backingStore->d->blitVisibleContents();
-}
-
 void WebPagePrivate::scheduleCompositingRun()
 {
     if (WebPageCompositorClient* compositorClient = compositor()->client()) {
@@ -6067,9 +6033,8 @@ void WebPagePrivate::scheduleCompositingRun()
         return;
     }
 
-    blitVisibleContents();
+    m_backingStore->d->blitVisibleContents();
 }
-
 #endif
 
 void WebPage::setWebGLEnabled(bool enabled)

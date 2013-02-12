@@ -214,9 +214,6 @@ public:
     bool isFrameFlatteningEnabled() const;
     void setFrameFlatteningEnabled(bool);
 
-    bool isDirectRenderingToWindowEnabled() const;
-    void setDirectRenderingToWindowEnabled(bool);
-
     unsigned maxPluginInstances() const;
     void setMaxPluginInstances(unsigned num);
 

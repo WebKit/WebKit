@@ -76,8 +76,6 @@ public:
     bool hasBlitJobs() const;
     void blitOnIdle();
 
-    bool isDirectRenderingToWindow() const;
-
     void acquireBackingStoreMemory();
     void releaseOwnedBackingStoreMemory();
 

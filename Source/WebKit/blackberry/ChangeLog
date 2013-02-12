@@ -1,3 +1,55 @@
+2013-02-12  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Eliminate the direct rendering option.
+        https://bugs.webkit.org/show_bug.cgi?id=109608
+        RIM PR 293298
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Arvid Nilsson.
+
+        It added a lot of complexity and we're not going to use it anymore.
+        This patch removes direct rendering functionality from
+        WebKit/blackberry together with the assumption that blitting on the
+        WebKit thread is possible or acceptable. It now isn't anymore.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::BackingStorePrivate):
+        (BlackBerry::WebKit::BackingStorePrivate::resumeScreenUpdates):
+        (BlackBerry::WebKit::BackingStorePrivate::updateSuspendScreenUpdateState):
+        (BlackBerry::WebKit::BackingStorePrivate::slowScroll):
+        (BlackBerry::WebKit::BackingStorePrivate::scroll):
+        (BlackBerry::WebKit::BackingStorePrivate::shouldPerformRenderJobs):
+        (BlackBerry::WebKit::BackingStorePrivate::render):
+        (BlackBerry::WebKit::BackingStorePrivate::renderAndBlitImmediately):
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        (BlackBerry::WebKit::BackingStorePrivate::blitToWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::fillWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::invalidateWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::clearWindow):
+        (BlackBerry::WebKit::BackingStorePrivate::setScrollingOrZooming):
+        (BlackBerry::WebKit::BackingStorePrivate::didRenderContent):
+        * Api/BackingStore.h:
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::resumeBackingStore):
+        (BlackBerry::WebKit::WebPagePrivate::setViewportSize):
+        (BlackBerry::WebKit::WebPagePrivate::rootLayerCommitTimerFired):
+        (WebKit):
+        (BlackBerry::WebKit::WebPagePrivate::scheduleCompositingRun):
+        * Api/WebPageCompositor.cpp:
+        (BlackBerry::WebKit::WebPageCompositorPrivate::animationFrameChanged):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebSettings.cpp:
+        (WebKit):
+        * Api/WebSettings.h:
+        * WebKitSupport/RenderQueue.cpp:
+        (BlackBerry::WebKit::RenderQueue::renderRegularRenderJobs):
+        (BlackBerry::WebKit::RenderQueue::renderScrollZoomJobs):
+        * WebKitSupport/SurfacePool.cpp:
+        (BlackBerry::WebKit::SurfacePool::initialize):
+
 2013-02-12  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] CSS animations stop running during zoom
