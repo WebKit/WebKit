@@ -84,8 +84,7 @@ public:
 #elif USE(CAIRO)
     void paintToGraphicsContext(cairo_t*);
 #endif
-    void setContentsSize(const FloatSize&);
-    void setVisibleContentsRect(const FloatRect&);
+    void setScrollPosition(const FloatPoint&);
 #if USE(GRAPHICS_SURFACE)
     void createCanvas(CoordinatedLayerID, const IntSize&, PassRefPtr<GraphicsSurface>);
     void syncCanvas(CoordinatedLayerID, uint32_t frontBuffer);
@@ -175,9 +174,6 @@ private:
 
     void updateFPS(const FloatPoint&, const TransformationMatrix& = TransformationMatrix());
 
-    FloatSize m_contentsSize;
-    FloatRect m_visibleContentsRect;
-
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!
     Vector<Function<void()> > m_renderQueue;
     Mutex m_renderQueueMutex;
@@ -212,6 +208,7 @@ private:
     typedef HashMap<CoordinatedLayerID, GraphicsLayer*> LayerRawPtrMap;
     LayerRawPtrMap m_fixedLayers;
     CoordinatedLayerID m_rootLayerID;
+    FloatPoint m_scrollPosition;
     FloatPoint m_renderedContentsScrollPosition;
     bool m_animationsLocked;
 #if ENABLE(REQUEST_ANIMATION_FRAME)

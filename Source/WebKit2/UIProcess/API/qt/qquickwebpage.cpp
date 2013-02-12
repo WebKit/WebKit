@@ -175,9 +175,6 @@ void QQuickWebPagePrivate::updateSize()
 {
     QSizeF scaledSize = contentsSize * contentsScale;
 
-    if (coordinatedLayerTreeHostProxy())
-        coordinatedLayerTreeHostProxy()->setContentsSize(WebCore::FloatSize(contentsSize));
-
     q->setSize(scaledSize);
 
     if (viewportItem->experimental()->flickableViewportEnabled()) {

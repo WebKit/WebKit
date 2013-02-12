@@ -345,12 +345,6 @@ void QRawWebView::setSize(const QSize& size)
 
     if (d->m_webPageProxy->useFixedLayout())
         d->m_webPageProxy->setViewportSize(size);
-    else {
-        WebKit::CoordinatedLayerTreeHostProxy* coordinator = drawingArea->coordinatedLayerTreeHostProxy();
-        if (!coordinator)
-            return;
-        coordinator->setContentsSize(WebCore::FloatSize(size.width(), size.height()));
-    }
 
     d->m_size = size;
 

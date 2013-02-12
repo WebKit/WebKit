@@ -68,7 +68,6 @@ void PageViewportControllerClientEfl::updateViewportSize()
 
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)
 {
-    drawingArea()->coordinatedLayerTreeHostProxy()->setContentsSize(contentsSize);
     m_view->scheduleUpdateDisplay();
 }
 

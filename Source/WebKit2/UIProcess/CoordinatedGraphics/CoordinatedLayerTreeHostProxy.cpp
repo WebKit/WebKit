@@ -163,11 +163,6 @@ void CoordinatedLayerTreeHostProxy::removeImageBacking(CoordinatedImageBackingID
     dispatchUpdate(bind(&CoordinatedGraphicsScene::removeImageBacking, m_scene.get(), imageID));
 }
 
-void CoordinatedLayerTreeHostProxy::setContentsSize(const FloatSize& contentsSize)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setContentsSize, m_scene.get(), contentsSize));
-}
-
 void CoordinatedLayerTreeHostProxy::setLayerAnimations(CoordinatedLayerID id, const GraphicsLayerAnimations& animations)
 {
     dispatchUpdate(bind(&CoordinatedGraphicsScene::setLayerAnimations, m_scene.get(), id, animations));
@@ -181,7 +176,7 @@ void CoordinatedLayerTreeHostProxy::setAnimationsLocked(bool locked)
 void CoordinatedLayerTreeHostProxy::setVisibleContentsRect(const FloatRect& rect, const FloatPoint& trajectoryVector)
 {
     // Inform the renderer to adjust viewport-fixed layers.
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setVisibleContentsRect, m_scene.get(), rect));
+    dispatchUpdate(bind(&CoordinatedGraphicsScene::setScrollPosition, m_scene.get(), rect.location()));
 
     if (rect == m_lastSentVisibleRect && trajectoryVector == m_lastSentTrajectoryVector)
         return;

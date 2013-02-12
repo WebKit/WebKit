@@ -71,9 +71,7 @@ void PageClientLegacyImpl::didChangeViewportProperties(const WebCore::ViewportAt
 
 void PageClientLegacyImpl::didChangeContentsSize(const WebCore::IntSize& size)
 {
-    m_view->page()->drawingArea()->coordinatedLayerTreeHostProxy()->setContentsSize(FloatSize(size.width(), size.height()));
     m_view->scheduleUpdateDisplay();
-
     m_view->smartCallback<ContentsSizeChanged>().call(size);
 }
 

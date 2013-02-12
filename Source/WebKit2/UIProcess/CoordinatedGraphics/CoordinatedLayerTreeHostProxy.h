@@ -65,7 +65,6 @@ public:
     void createCompositingLayers(const Vector<WebCore::CoordinatedLayerID>&);
     void deleteCompositingLayers(const Vector<WebCore::CoordinatedLayerID>&);
     void setRootCompositingLayer(WebCore::CoordinatedLayerID);
-    void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint& trajectoryVector);
     void didRenderFrame(const WebCore::FloatPoint& scrollPosition, const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
     void createTileForLayer(WebCore::CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const WebCore::SurfaceUpdateInfo&);

@@ -52,16 +52,6 @@ void CoordinatedGraphicsScene::dispatchOnMainThread(const Function<void()>& func
         callOnMainThread(function);
 }
 
-static FloatPoint boundedScrollPosition(const FloatPoint& scrollPosition, const FloatRect& visibleContentRect, const FloatSize& contentSize)
-{
-    float scrollPositionX = std::max(scrollPosition.x(), 0.0f);
-    scrollPositionX = std::min(scrollPositionX, contentSize.width() - visibleContentRect.width());
-
-    float scrollPositionY = std::max(scrollPosition.y(), 0.0f);
-    scrollPositionY = std::min(scrollPositionY, contentSize.height() - visibleContentRect.height());
-    return FloatPoint(scrollPositionX, scrollPositionY);
-}
-
 static bool layerShouldHaveBackingStore(GraphicsLayer* layer)
 {
     return layer->drawsContent() && layer->contentsAreVisible() && !layer->size().isEmpty();
@@ -198,14 +188,9 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(cairo_t* painter)
     m_textureMapper->setGraphicsContext(0);
 }
 
-void CoordinatedGraphicsScene::setContentsSize(const FloatSize& contentsSize)
+void CoordinatedGraphicsScene::setScrollPosition(const FloatPoint& scrollPosition)
 {
-    m_contentsSize = contentsSize;
-}
-
-void CoordinatedGraphicsScene::setVisibleContentsRect(const FloatRect& rect)
-{
-    m_visibleContentsRect = rect;
+    m_scrollPosition = scrollPosition;
 }
 
 void CoordinatedGraphicsScene::updateViewport()
@@ -223,9 +208,7 @@ void CoordinatedGraphicsScene::adjustPositionForFixedLayers()
     // Fixed layer positions are updated by the web process when we update the visible contents rect / scroll position.
     // If we want those layers to follow accurately the viewport when we move between the web process updates, we have to offset
     // them by the delta between the current position and the position of the viewport used for the last layout.
-    FloatPoint scrollPosition = boundedScrollPosition(m_visibleContentsRect.location(), m_visibleContentsRect, m_contentsSize);
-    FloatPoint renderedScrollPosition = boundedScrollPosition(m_renderedContentsScrollPosition, m_visibleContentsRect, m_contentsSize);
-    FloatSize delta = scrollPosition - renderedScrollPosition;
+    FloatSize delta = m_scrollPosition - m_renderedContentsScrollPosition;
 
     LayerRawPtrMap::iterator end = m_fixedLayers.end();
     for (LayerRawPtrMap::iterator it = m_fixedLayers.begin(); it != end; ++it)
