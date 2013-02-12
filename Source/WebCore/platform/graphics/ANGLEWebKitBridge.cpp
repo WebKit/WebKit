@@ -32,9 +32,16 @@
 
 namespace WebCore {
 
-inline static int getValidationResultValue(const ShHandle compiler, ShShaderInfo shaderInfo)
+// Temporary typedef to support an incompatible change in the ANGLE API.
+#if !defined(ANGLE_SH_VERSION) || ANGLE_SH_VERSION < 108
+typedef int ANGLEGetInfoType;
+#else
+typedef size_t ANGLEGetInfoType;
+#endif
+
+inline static ANGLEGetInfoType getValidationResultValue(const ShHandle compiler, ShShaderInfo shaderInfo)
 {
-    int value = -1;
+    ANGLEGetInfoType value = 0;
     ShGetInfo(compiler, shaderInfo, &value);
     return value;
 }
@@ -55,15 +62,13 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
         return false;
     }
 
-    int numSymbols = getValidationResultValue(compiler, symbolType);
-    if (numSymbols < 0)
-        return false;
+    ANGLEGetInfoType numSymbols = getValidationResultValue(compiler, symbolType);
 
-    int maxNameLength = getValidationResultValue(compiler, symbolMaxNameLengthType);
+    ANGLEGetInfoType maxNameLength = getValidationResultValue(compiler, symbolMaxNameLengthType);
     if (maxNameLength <= 1)
         return false;
 
-    int maxMappedNameLength = getValidationResultValue(compiler, SH_MAPPED_NAME_MAX_LENGTH);
+    ANGLEGetInfoType maxMappedNameLength = getValidationResultValue(compiler, SH_MAPPED_NAME_MAX_LENGTH);
     if (maxMappedNameLength <= 1)
         return false;
 
@@ -71,9 +76,9 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
     Vector<char, 256> nameBuffer(maxNameLength);
     Vector<char, 256> mappedNameBuffer(maxMappedNameLength);
     
-    for (int i = 0; i < numSymbols; ++i) {
+    for (ANGLEGetInfoType i = 0; i < numSymbols; ++i) {
         ANGLEShaderSymbol symbol;
-        int nameLength = -1;
+        ANGLEGetInfoType nameLength = 0;
         switch (symbolType) {
         case SH_ACTIVE_ATTRIBUTES:
             symbol.symbolType = SHADER_SYMBOL_TYPE_ATTRIBUTE;
@@ -87,7 +92,7 @@ static bool getSymbolInfo(ShHandle compiler, ShShaderInfo symbolType, Vector<ANG
             ASSERT_NOT_REACHED();
             return false;
         }
-        if (nameLength <= 0)
+        if (!nameLength)
             return false;
         
         // The ShGetActive* calls above are guaranteed to produce null-terminated strings for
