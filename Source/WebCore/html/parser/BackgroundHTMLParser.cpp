@@ -101,7 +101,7 @@ void BackgroundHTMLParser::forcePlaintextForTextDocument()
     // This is only used by the TextDocumentParser (a subclass of HTMLDocumentParser)
     // to force us into the PLAINTEXT state w/o using a <plaintext> tag.
     // The TextDocumentParser uses a <pre> tag for historical/compatibility reasons.
-    m_tokenizer->setState(HTMLTokenizerState::PLAINTEXTState);
+    m_tokenizer->setState(HTMLTokenizer::PLAINTEXTState);
 }
 
 void BackgroundHTMLParser::markEndOfFile()
@@ -121,18 +121,18 @@ bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
 
         // FIXME: This is just a copy of Tokenizer::updateStateFor which uses threadSafeMatches.
         if (threadSafeMatch(tagName, textareaTag) || threadSafeMatch(tagName, titleTag))
-            m_tokenizer->setState(HTMLTokenizerState::RCDATAState);
+            m_tokenizer->setState(HTMLTokenizer::RCDATAState);
         else if (threadSafeMatch(tagName, plaintextTag))
-            m_tokenizer->setState(HTMLTokenizerState::PLAINTEXTState);
+            m_tokenizer->setState(HTMLTokenizer::PLAINTEXTState);
         else if (threadSafeMatch(tagName, scriptTag))
-            m_tokenizer->setState(HTMLTokenizerState::ScriptDataState);
+            m_tokenizer->setState(HTMLTokenizer::ScriptDataState);
         else if (threadSafeMatch(tagName, styleTag)
             || threadSafeMatch(tagName, iframeTag)
             || threadSafeMatch(tagName, xmpTag)
             || (threadSafeMatch(tagName, noembedTag) && m_options.pluginsEnabled)
             || threadSafeMatch(tagName, noframesTag)
             || (threadSafeMatch(tagName, noscriptTag) && m_options.scriptEnabled))
-            m_tokenizer->setState(HTMLTokenizerState::RAWTEXTState);
+            m_tokenizer->setState(HTMLTokenizer::RAWTEXTState);
     }
 
     if (token.type() == HTMLTokenTypes::EndTag) {

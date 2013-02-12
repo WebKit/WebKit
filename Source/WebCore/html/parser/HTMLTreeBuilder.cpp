@@ -743,7 +743,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         processFakePEndTagIfPInButtonScope();
         m_tree.insertHTMLElement(token);
         if (m_parser->tokenizer())
-            m_parser->tokenizer()->setState(HTMLTokenizerState::PLAINTEXTState);
+            m_parser->tokenizer()->setState(HTMLTokenizer::PLAINTEXTState);
         return;
     }
     if (token->name() == buttonTag) {
@@ -854,7 +854,7 @@ void HTMLTreeBuilder::processStartTagForInBody(AtomicHTMLToken* token)
         m_tree.insertHTMLElement(token);
         m_shouldSkipLeadingNewline = true;
         if (m_parser->tokenizer())
-            m_parser->tokenizer()->setState(HTMLTokenizerState::RCDATAState);
+            m_parser->tokenizer()->setState(HTMLTokenizer::RCDATAState);
         m_originalInsertionMode = m_insertionMode;
         m_framesetOk = false;
         setInsertionMode(TextMode);
@@ -2194,8 +2194,8 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken* token)
                 // self-closing script tag was encountered and pre-HTML5 parser
                 // quirks are enabled. We must set the tokenizer's state to
                 // DataState explicitly if the tokenizer didn't have a chance to.
-                ASSERT(m_parser->tokenizer()->state() == HTMLTokenizerState::DataState || m_options.usePreHTML5ParserQuirks || m_options.useThreading);
-                m_parser->tokenizer()->setState(HTMLTokenizerState::DataState);
+                ASSERT(m_parser->tokenizer()->state() == HTMLTokenizer::DataState || m_options.usePreHTML5ParserQuirks || m_options.useThreading);
+                m_parser->tokenizer()->setState(HTMLTokenizer::DataState);
             }
             return;
         }
@@ -2747,7 +2747,7 @@ void HTMLTreeBuilder::processGenericRCDATAStartTag(AtomicHTMLToken* token)
     ASSERT(token->type() == HTMLTokenTypes::StartTag);
     m_tree.insertHTMLElement(token);
     if (m_parser->tokenizer())
-        m_parser->tokenizer()->setState(HTMLTokenizerState::RCDATAState);
+        m_parser->tokenizer()->setState(HTMLTokenizer::RCDATAState);
     m_originalInsertionMode = m_insertionMode;
     setInsertionMode(TextMode);
 }
@@ -2757,7 +2757,7 @@ void HTMLTreeBuilder::processGenericRawTextStartTag(AtomicHTMLToken* token)
     ASSERT(token->type() == HTMLTokenTypes::StartTag);
     m_tree.insertHTMLElement(token);
     if (m_parser->tokenizer())
-        m_parser->tokenizer()->setState(HTMLTokenizerState::RAWTEXTState);
+        m_parser->tokenizer()->setState(HTMLTokenizer::RAWTEXTState);
     m_originalInsertionMode = m_insertionMode;
     setInsertionMode(TextMode);
 }
@@ -2767,7 +2767,7 @@ void HTMLTreeBuilder::processScriptStartTag(AtomicHTMLToken* token)
     ASSERT(token->type() == HTMLTokenTypes::StartTag);
     m_tree.insertScriptElement(token);
     if (m_parser->tokenizer())
-        m_parser->tokenizer()->setState(HTMLTokenizerState::ScriptDataState);
+        m_parser->tokenizer()->setState(HTMLTokenizer::ScriptDataState);
     m_originalInsertionMode = m_insertionMode;
 
     TextPosition position = m_parser->textPosition();

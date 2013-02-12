@@ -34,8 +34,15 @@
 
 namespace WebCore {
 
-class HTMLTokenizerState {
+class HTMLTokenizer {
+    WTF_MAKE_NONCOPYABLE(HTMLTokenizer);
+    WTF_MAKE_FAST_ALLOCATED;
 public:
+    static PassOwnPtr<HTMLTokenizer> create(const HTMLParserOptions& options) { return adoptPtr(new HTMLTokenizer(options)); }
+    ~HTMLTokenizer();
+
+    void reset();
+
     enum State {
         DataState,
         CharacterReferenceInDataState,
@@ -113,19 +120,6 @@ public:
         CDATASectionRightSquareBracketState,
         CDATASectionDoubleRightSquareBracketState,
     };
-};
-
-class HTMLTokenizer {
-    WTF_MAKE_NONCOPYABLE(HTMLTokenizer);
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    static PassOwnPtr<HTMLTokenizer> create(const HTMLParserOptions& options) { return adoptPtr(new HTMLTokenizer(options)); }
-    ~HTMLTokenizer();
-
-    void reset();
-
-    // FIXME: HTMLTokenizerState::State should just be moved back into this class.
-    typedef HTMLTokenizerState::State State;
 
 #if ENABLE(THREADED_HTML_PARSER)
 
@@ -200,9 +194,9 @@ public:
     inline bool shouldSkipNullCharacters() const
     {
         return !m_forceNullCharacterReplacement
-            && (m_state == HTMLTokenizerState::DataState
-                || m_state == HTMLTokenizerState::RCDATAState
-                || m_state == HTMLTokenizerState::RAWTEXTState);
+            && (m_state == HTMLTokenizer::DataState
+                || m_state == HTMLTokenizer::RCDATAState
+                || m_state == HTMLTokenizer::RAWTEXTState);
     }
 
 private:
@@ -238,7 +232,7 @@ private:
     {
         if (haveBufferedCharacterToken())
             return true;
-        m_state = HTMLTokenizerState::DataState;
+        m_state = HTMLTokenizer::DataState;
         source.advanceAndUpdateLineNumber();
         m_token->clear();
         m_token->makeEndOfFile();
