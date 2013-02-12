@@ -29,6 +29,8 @@
     </dependencies>
   </metamodule>
 
+  <include href="jhbuild-optional.modules"/>
+
   <repository type="tarball" name="ftp.gnu.org"
       href="ftp://ftp.gnu.org/gnu/"/>
   <repository type="git" name="github.com"

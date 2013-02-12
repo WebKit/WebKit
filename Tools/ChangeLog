@@ -1,3 +1,17 @@
+2013-02-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add an optional moduleset with hard to get packages (including libsecret)
+        https://bugs.webkit.org/show_bug.cgi?id=109195
+
+        Reviewed by Philippe Normand.
+
+        Add an optional moduleset that includes libsecret. This moduleset will
+        be used to install some annoyingly hard to obtain dependencies on older
+        distributions.
+
+        * gtk/jhbuild-optional.modules: Added.
+        * gtk/jhbuild.modules: Add a reference to the new moduleset file.
+
 2013-02-12  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: reportLeaf method doesn't report the leaf node properly.
