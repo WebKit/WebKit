@@ -1,3 +1,38 @@
+2013-02-11  Huang Dongsung  <luxtella@company100.net>
+
+        Coordinated Graphics: remove the DidChangeScrollPosition message.
+        https://bugs.webkit.org/show_bug.cgi?id=108051
+
+        Reviewed by Noam Rosenthal.
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        Currently, we use the DidChangeScrollPosition message to send the scroll
+        position that WebCore used in this frame to UI Process. We had to have
+        some member variables for the DidChangeScrollPosition message.
+        However, we can send a scroll position via the DidRenderFrame message,
+        because CoordinatedGraphicsScene::m_renderedContentsScrollPosition is
+        updated at the moment of flushing. So we can remove the
+        DidChangeScrollPosition message and some redundant member variables.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::didRenderFrame):
+        (WebKit):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (CoordinatedLayerTreeHostProxy):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in:
+          Remove the DidChangeScrollPosition message.
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+          Send a scroll position via the DidChangeScrollPosition message.
+        (WebKit::CoordinatedLayerTreeHost::syncLayerState):
+          Don't send a scroll position because flushPendingLayerChanges() does
+          that. In addition, it is weird to check if we must send a scroll
+          position at the moment of sending the SyncLayerState message of every
+          layers.
+        (WebKit::CoordinatedLayerTreeHost::setVisibleContentsRect):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+
 2013-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable delete button controller on non-Mac ports and delete EditorClient::shouldShowDeleteInterface

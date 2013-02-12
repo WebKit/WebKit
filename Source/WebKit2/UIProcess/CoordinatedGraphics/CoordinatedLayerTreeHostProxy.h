@@ -67,7 +67,7 @@ public:
     void setRootCompositingLayer(WebCore::CoordinatedLayerID);
     void setContentsSize(const WebCore::FloatSize&);
     void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint& trajectoryVector);
-    void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
+    void didRenderFrame(const WebCore::FloatPoint& scrollPosition, const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect);
     void createTileForLayer(WebCore::CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const WebCore::SurfaceUpdateInfo&);
     void updateTileForLayer(WebCore::CoordinatedLayerID, uint32_t tileID, const WebCore::IntRect&, const WebCore::SurfaceUpdateInfo&);
     void removeTileForLayer(WebCore::CoordinatedLayerID, uint32_t tileID);
@@ -77,7 +77,6 @@ public:
     void updateImageBacking(WebCore::CoordinatedImageBackingID, const WebCoordinatedSurface::Handle&);
     void clearImageBackingContents(WebCore::CoordinatedImageBackingID);
     void removeImageBacking(WebCore::CoordinatedImageBackingID);
-    void didChangeScrollPosition(const WebCore::FloatPoint& position);
 #if USE(GRAPHICS_SURFACE)
     void createCanvas(WebCore::CoordinatedLayerID, const WebCore::IntSize&, const WebCore::GraphicsSurfaceToken&);
     void syncCanvas(WebCore::CoordinatedLayerID, uint32_t frontBuffer);

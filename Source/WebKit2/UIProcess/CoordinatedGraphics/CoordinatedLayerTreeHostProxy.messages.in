@@ -40,8 +40,7 @@ messages -> CoordinatedLayerTreeHostProxy {
     UpdateImageBacking(uint64_t imageID, WebKit::WebCoordinatedSurface::Handle handle)
     ClearImageBackingContents(uint64_t imageID)
     RemoveImageBacking(uint64_t imageID)
-    DidRenderFrame(WebCore::IntSize contentsSize, WebCore::IntRect coveredRect)
-    DidChangeScrollPosition(WebCore::FloatPoint position)
+    DidRenderFrame(WebCore::FloatPoint scrollPosition, WebCore::IntSize contentsSize, WebCore::IntRect coveredRect)
     SetLayerAnimations(uint32_t id, WebCore::GraphicsLayerAnimations animations)
     SetAnimationsLocked(bool locked)
 

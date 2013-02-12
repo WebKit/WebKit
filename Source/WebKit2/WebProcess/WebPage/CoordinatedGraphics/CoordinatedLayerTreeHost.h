@@ -200,7 +200,6 @@ private:
     bool m_waitingForUIProcess;
     bool m_isSuspended;
     WebCore::FloatRect m_visibleContentsRect;
-    bool m_shouldSendScrollPositionUpdate;
 
     LayerTreeContext m_layerTreeContext;
     bool m_shouldSyncFrame;

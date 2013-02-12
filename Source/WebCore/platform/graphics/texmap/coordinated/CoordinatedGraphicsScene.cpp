@@ -232,11 +232,6 @@ void CoordinatedGraphicsScene::adjustPositionForFixedLayers()
         toTextureMapperLayer(it->value)->setScrollPositionDeltaIfNeeded(delta);
 }
 
-void CoordinatedGraphicsScene::didChangeScrollPosition(const FloatPoint& position)
-{
-    m_pendingRenderedContentsScrollPosition = position;
-}
-
 #if USE(GRAPHICS_SURFACE)
 void CoordinatedGraphicsScene::createCanvas(CoordinatedLayerID id, const IntSize&, PassRefPtr<GraphicsSurface> surface)
 {
@@ -573,9 +568,9 @@ void CoordinatedGraphicsScene::commitPendingBackingStoreOperations()
     m_backingStoresWithPendingBuffers.clear();
 }
 
-void CoordinatedGraphicsScene::flushLayerChanges()
+void CoordinatedGraphicsScene::flushLayerChanges(const FloatPoint& scrollPosition)
 {
-    m_renderedContentsScrollPosition = m_pendingRenderedContentsScrollPosition;
+    m_renderedContentsScrollPosition = scrollPosition;
 
     // Since the frame has now been rendered, we can safely unlock the animations until the next layout.
     setAnimationsLocked(false);

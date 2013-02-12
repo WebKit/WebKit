@@ -131,9 +131,9 @@ void CoordinatedLayerTreeHostProxy::createCustomFilterProgram(int id, const Cust
 }
 #endif
 
-void CoordinatedLayerTreeHostProxy::didRenderFrame(const IntSize& contentsSize, const IntRect& coveredRect)
+void CoordinatedLayerTreeHostProxy::didRenderFrame(const FloatPoint& scrollPosition, const IntSize& contentsSize, const IntRect& coveredRect)
 {
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::flushLayerChanges, m_scene.get()));
+    dispatchUpdate(bind(&CoordinatedGraphicsScene::flushLayerChanges, m_scene.get(), scrollPosition));
     updateViewport();
 #if USE(TILED_BACKING_STORE)
     m_drawingAreaProxy->page()->didRenderFrame(contentsSize, coveredRect);
@@ -208,11 +208,6 @@ void CoordinatedLayerTreeHostProxy::animationFrameReady()
     m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::AnimationFrameReady(), m_drawingAreaProxy->page()->pageID());
 }
 #endif
-
-void CoordinatedLayerTreeHostProxy::didChangeScrollPosition(const FloatPoint& position)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::didChangeScrollPosition, m_scene.get(), position));
-}
 
 #if USE(GRAPHICS_SURFACE)
 void CoordinatedLayerTreeHostProxy::createCanvas(CoordinatedLayerID id, const IntSize& canvasSize, const GraphicsSurfaceToken& token)

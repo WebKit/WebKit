@@ -86,7 +86,6 @@ public:
 #endif
     void setContentsSize(const FloatSize&);
     void setVisibleContentsRect(const FloatRect&);
-    void didChangeScrollPosition(const FloatPoint& position);
 #if USE(GRAPHICS_SURFACE)
     void createCanvas(CoordinatedLayerID, const IntSize&, PassRefPtr<GraphicsSurface>);
     void syncCanvas(CoordinatedLayerID, uint32_t frontBuffer);
@@ -121,7 +120,7 @@ public:
     void updateTile(CoordinatedLayerID, uint32_t tileID, const TileUpdate&);
     void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>);
     void removeUpdateAtlas(uint32_t atlasID);
-    void flushLayerChanges();
+    void flushLayerChanges(const FloatPoint& scrollPosition);
     void createImageBacking(CoordinatedImageBackingID);
     void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
     void clearImageBackingContents(CoordinatedImageBackingID);
@@ -214,7 +213,6 @@ private:
     LayerRawPtrMap m_fixedLayers;
     CoordinatedLayerID m_rootLayerID;
     FloatPoint m_renderedContentsScrollPosition;
-    FloatPoint m_pendingRenderedContentsScrollPosition;
     bool m_animationsLocked;
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     bool m_animationFrameRequested;
