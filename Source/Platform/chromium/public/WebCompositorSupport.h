@@ -69,6 +69,9 @@ public:
     // after shutdown.
     virtual void shutdown() { }
 
+    // May return 0 if initialization fails.
+    virtual WebLayerTreeView* createLayerTreeView(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&) { return 0; }
+
     // Creates an output surface for the compositor backed by a 3d context.
     virtual WebCompositorOutputSurface* createOutputSurfaceFor3D(WebKit::WebGraphicsContext3D*) { return 0; }
 
@@ -103,13 +106,6 @@ public:
     virtual WebTransformAnimationCurve* createTransformAnimationCurve() { return 0; }
 
     virtual WebTransformOperations* createTransformOperations() { return 0; }
-
-
-    // Testing ------------------------------------------------------
-
-    // DEPRECATED
-    // May return 0 if initialization fails.
-    virtual WebLayerTreeView* createLayerTreeView(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&) { return 0; }
 
 protected:
     virtual ~WebCompositorSupport() { }

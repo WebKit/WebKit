@@ -1,3 +1,17 @@
+2013-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r142568.
+        http://trac.webkit.org/changeset/142568
+        https://bugs.webkit.org/show_bug.cgi?id=109541
+
+        Broke the build, won't compile. (Requested by alancutter on
+        #webkit).
+
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKit::GraphicsLayerChromiumTest::GraphicsLayerChromiumTest):
+        * tests/ScrollingCoordinatorChromiumTest.cpp:
+        (WebKit::FakeWebViewClient::initializeLayerTreeView):
+
 2013-02-11  James Robinson  <jamesr@chromium.org>
 
         [chromium] Add WebUnitTestSupport::createLayerTreeViewForTesting for webkit_unit_tests

@@ -59,9 +59,8 @@ public:
 
     virtual void initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
     {
-        m_layerTreeView = adoptPtr(Platform::current()->unitTestSupport()->createLayerTreeViewForTesting(WebUnitTestSupport::TestViewTypeUnitTest));
+        m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(client, rootLayer, settings));
         ASSERT(m_layerTreeView);
-        m_layerTreeView->setRootLayer(rootLayer);
     }
 
     virtual WebLayerTreeView* layerTreeView()
