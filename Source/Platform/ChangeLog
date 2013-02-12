@@ -1,3 +1,21 @@
+2013-02-11  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Add WebUnitTestSupport::createLayerTreeViewForTesting for webkit_unit_tests
+        https://bugs.webkit.org/show_bug.cgi?id=109403
+
+        Reviewed by Adam Barth.
+
+        webkit_unit_tests that need compositing support need only a simple WebLayerTreeView implementation, not the full
+        thing.
+
+        * chromium/public/WebCompositorSupport.h:
+        (WebCompositorSupport):
+        (WebKit::WebCompositorSupport::createLayerTreeView):
+        * chromium/public/WebUnitTestSupport.h:
+        (WebKit):
+        (WebUnitTestSupport):
+        (WebKit::WebUnitTestSupport::createLayerTreeViewForTesting):
+
 2013-02-10  Florin Malita  <fmalita@chromium.org>
 
         [Chromium] FilterTypeSaturatingBrightness enum
