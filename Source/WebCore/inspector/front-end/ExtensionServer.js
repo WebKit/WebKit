@@ -329,6 +329,7 @@ WebInspector.ExtensionServer.prototype = {
          */
         function callback(error, resultPayload, wasThrown)
         {
+            var result;
             if (error)
                 result = this._status.E_PROTOCOLERROR(error.toString());
             else if (wasThrown)

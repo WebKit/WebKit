@@ -277,6 +277,8 @@ function Resource() {}
 /** @constructor */
 function Timeline() {}
 
+var extensionServer;
+
 /** @type {string} */
 Location.prototype.origin = "";
 
