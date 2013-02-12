@@ -1,3 +1,10 @@
+2013-02-11  Oliver Hunt  <oliver@apple.com>
+
+        Build fix.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::TCMalloc_PageHeap::IncrementalScavenge):
+
 2013-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable delete button controller on non-Mac ports and delete EditorClient::shouldShowDeleteInterface

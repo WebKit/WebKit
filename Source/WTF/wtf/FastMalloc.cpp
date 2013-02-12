@@ -2212,17 +2212,18 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
 
   // Find index of free list to scavenge
   size_t index = scavenge_index_ + 1;
+  uintptr_t entropy = entropy_;
   for (size_t i = 0; i < kMaxPages+1; i++) {
     if (index > kMaxPages) index = 0;
     SpanList* slist = (index == kMaxPages) ? &large_ : &free_[index];
-    if (!DLL_IsEmpty(&slist->normal)) {
+    if (!DLL_IsEmpty(&slist->normal, entropy)) {
       // Release the last span on the normal portion of this list
-      Span* s = slist->normal.prev();
-      DLL_Remove(s);
+      Span* s = slist->normal.prev(entropy);
+      DLL_Remove(s, entropy_);
       TCMalloc_SystemRelease(reinterpret_cast<void*>(s->start << kPageShift),
                              static_cast<size_t>(s->length << kPageShift));
       s->decommitted = true;
-      DLL_Prepend(&slist->returned, s);
+      DLL_Prepend(&slist->returned, s, entropy);
 
 #if PLATFORM(IOS)
       scavenge_counter_ = std::max<size_t>(16UL, std::min<size_t>(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
@@ -2230,7 +2231,7 @@ void TCMalloc_PageHeap::IncrementalScavenge(Length n) {
       scavenge_counter_ = std::max<size_t>(64UL, std::min<size_t>(kDefaultReleaseDelay, kDefaultReleaseDelay - (free_pages_ / kDefaultReleaseDelay)));
 #endif
 
-      if (index == kMaxPages && !DLL_IsEmpty(&slist->normal))
+      if (index == kMaxPages && !DLL_IsEmpty(&slist->normal, entropy))
         scavenge_index_ = index - 1;
       else
         scavenge_index_ = index;
