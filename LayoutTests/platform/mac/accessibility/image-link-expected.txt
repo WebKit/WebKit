@@ -9,7 +9,7 @@ AXRoleDescription: link
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXLink: 'Delicious cake'>
-AXSize: NSSize: {280, 213}
+AXSize: NSSize: {280, 214}
 AXTitle: Delicious cake
 AXDescription: 
 AXValue: 
@@ -36,7 +36,7 @@ AXRoleDescription: image
 AXChildren: <array of size 0>
 AXHelp: 
 AXParent: <AXImage>
-AXSize: NSSize: {280, 209}
+AXSize: NSSize: {280, 210}
 AXTitle: 
 AXDescription: Delicious cake
 AXValue: 
