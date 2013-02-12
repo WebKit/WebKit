@@ -92,6 +92,9 @@ public:
         virtual ~Client() { }
     };
 
+    class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
+    };
+
     class QueueClient {
     public:
         virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, OwnPtr<MessageDecoder>&) = 0;
@@ -165,6 +168,9 @@ public:
     typedef void (*DidCloseOnConnectionWorkQueueCallback)(Connection*);
     void setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback);
 
+    void addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue*, WorkQueueMessageReceiver*);
+    void removeWorkQueueMessageReceiver(StringReference messageReceiverName);
+
     void addQueueClient(QueueClient*);
     void removeQueueClient(QueueClient*);
 
@@ -206,6 +212,9 @@ private:
     void processIncomingMessage(PassOwnPtr<MessageDecoder>);
     void processIncomingSyncReply(PassOwnPtr<MessageDecoder>);
 
+    void addWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName, WorkQueue*, WorkQueueMessageReceiver*);
+    void removeWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName);
+
     void addQueueClientOnWorkQueue(QueueClient*);
     void removeQueueClientOnWorkQueue(QueueClient*);
     
@@ -239,6 +248,8 @@ private:
     WebCore::RunLoop* m_clientRunLoop;
 
     Vector<QueueClient*> m_connectionQueueClients;
+
+    HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver> > > m_workQueueMessageReceivers;
 
     unsigned m_inDispatchMessageCount;
     unsigned m_inDispatchMessageMarkedDispatchWhenWaitingForSyncReplyCount;

@@ -269,6 +269,33 @@ void Connection::removeQueueClient(QueueClient* queueClient)
     m_connectionQueue->dispatch(WTF::bind(&Connection::removeQueueClientOnWorkQueue, this, queueClient));
 }
 
+void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue* workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
+{
+    ASSERT(RunLoop::current() == m_clientRunLoop);
+    ASSERT(!m_isConnected);
+
+    m_connectionQueue->dispatch(bind(&Connection::addWorkQueueMessageReceiverOnConnectionWorkQueue, this, messageReceiverName, RefPtr<WorkQueue>(workQueue), RefPtr<WorkQueueMessageReceiver>(workQueueMessageReceiver)));
+}
+
+void Connection::removeWorkQueueMessageReceiver(StringReference messageReceiverName)
+{
+    ASSERT(RunLoop::current() == m_clientRunLoop);
+
+    m_connectionQueue->dispatch(bind(&Connection::removeWorkQueueMessageReceiverOnConnectionWorkQueue, this, messageReceiverName));
+}
+
+void Connection::addWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName, WorkQueue* workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
+{
+    ASSERT(!m_workQueueMessageReceivers.contains(messageReceiverName));
+    m_workQueueMessageReceivers.add(messageReceiverName, std::make_pair(workQueue, workQueueMessageReceiver));
+}
+
+void Connection::removeWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName)
+{
+    ASSERT(m_workQueueMessageReceivers.contains(messageReceiverName));
+    m_workQueueMessageReceivers.remove(messageReceiverName);
+}
+
 void Connection::addQueueClientOnWorkQueue(QueueClient* queueClient)
 {
     ASSERT(!m_connectionQueueClients.contains(queueClient));

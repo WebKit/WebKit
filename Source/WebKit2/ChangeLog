@@ -1,3 +1,19 @@
+2013-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Introduce a WorkQueueMessageReceiver class as a replacement for QueueClient
+        https://bugs.webkit.org/show_bug.cgi?id=109612
+
+        Reviewed by Andreas Kling.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::addWorkQueueMessageReceiver):
+        (CoreIPC):
+        (CoreIPC::Connection::removeWorkQueueMessageReceiver):
+        (CoreIPC::Connection::addWorkQueueMessageReceiverOnConnectionWorkQueue):
+        (CoreIPC::Connection::removeWorkQueueMessageReceiverOnConnectionWorkQueue):
+        * Platform/CoreIPC/Connection.h:
+        (Connection):
+
 2013-02-12  Csaba Osztrogonác  <ossy@webkit.org>
 
         Typo fix after r142663.
