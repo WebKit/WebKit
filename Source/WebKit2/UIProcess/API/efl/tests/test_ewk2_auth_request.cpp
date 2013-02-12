@@ -33,10 +33,11 @@ using namespace EWK2UnitTest;
 
 extern EWK2UnitTestEnvironment* environment;
 
-static const char TEST_USERNAME[] = "username";
-static const char TEST_PASSWORD[] = "password";
-static const char EXPECTED_AUTHORIZATION[] = "Basic dXNlcm5hbWU6cGFzc3dvcmQ="; // Base64 encoding of "username:password".
-static const char INDEX_HTML_STRING[] =
+static const char testUsername[] = "username";
+static const char testPassword[] = "password";
+static const char expectedSuccessTitle[] = "EFLWebKit2 Authentication test";
+static const char expectedAuthorization[] = "Basic dXNlcm5hbWU6cGFzc3dvcmQ="; // Base64 encoding of "username:password".
+static const char indexHTMLString[] =
     "<html>"
     "<head><title>EFLWebKit2 Authentication test</title></head>"
     "<body></body></html>";
@@ -51,10 +52,10 @@ static void serverCallback(SoupServer*, SoupMessage* message, const char* path, 
     if (!strcmp(path, "/index.html")) {
         const char* authorization = soup_message_headers_get_one(message->request_headers, "Authorization");
         // Require authentication
-        if (authorization && !strcmp(authorization, EXPECTED_AUTHORIZATION)) {
+        if (authorization && !strcmp(authorization, expectedAuthorization)) {
             // Successful authentication.
             soup_message_set_status(message, SOUP_STATUS_OK);
-            soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, INDEX_HTML_STRING, strlen(INDEX_HTML_STRING));
+            soup_message_body_append(message->response_body, SOUP_MEMORY_COPY, indexHTMLString, strlen(indexHTMLString));
         } else {
             // No (valid) authorization header provided by the client, request authentication.
             soup_message_set_status(message, SOUP_STATUS_UNAUTHORIZED);
@@ -97,11 +98,11 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_success)
     EXPECT_STREQ("127.0.0.1", ewk_auth_request_host_get(authenticationRequest));
     EXPECT_FALSE(ewk_auth_request_retrying_get(authenticationRequest));
 
-    ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, TEST_USERNAME, TEST_PASSWORD));
+    ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, testUsername, testPassword));
 
     ewk_object_unref(authenticationRequest);
 
-    ASSERT_TRUE(waitUntilTitleChangedTo("EFLWebKit2 Authentication test"));
+    ASSERT_TRUE(waitUntilTitleChangedTo(expectedSuccessTitle));
 }
 
 TEST_F(EWK2UnitTestBase, ewk_auth_request_failure_then_success)
@@ -123,7 +124,7 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_failure_then_success)
     EXPECT_STREQ("127.0.0.1", ewk_auth_request_host_get(authenticationRequest));
     EXPECT_FALSE(ewk_auth_request_retrying_get(authenticationRequest));
 
-    ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, TEST_USERNAME, "wrongpassword"));
+    ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, testUsername, "wrongpassword"));
 
     ewk_object_unref(authenticationRequest);
     authenticationRequest = 0;
@@ -138,25 +139,19 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_failure_then_success)
     EXPECT_TRUE(ewk_auth_request_retrying_get(authenticationRequest));
 
     // Now provide the right password.
-    ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, TEST_USERNAME, TEST_PASSWORD));
+    ASSERT_TRUE(ewk_auth_request_authenticate(authenticationRequest, testUsername, testPassword));
 
     ewk_object_unref(authenticationRequest);
 
-    ASSERT_TRUE(waitUntilTitleChangedTo("EFLWebKit2 Authentication test"));
+    ASSERT_TRUE(waitUntilTitleChangedTo(expectedSuccessTitle));
 }
 
-static void onResourceLoadResponse(void* userData, Evas_Object*, void* eventInfo)
+static void onLoadFinished(void* userData, Evas_Object*, void*)
 {
-    int* statusCode = static_cast<int*>(userData);
-    ASSERT_TRUE(statusCode);
+    bool* isFinished = static_cast<bool*>(userData);
+    ASSERT_TRUE(isFinished);
 
-    Ewk_Resource_Load_Response* response = static_cast<Ewk_Resource_Load_Response*>(eventInfo);
-    ASSERT_TRUE(response);
-
-    if (!ewk_resource_main_resource_get(response->resource))
-        return;
-
-    *statusCode = ewk_url_response_status_code_get(response->response);
+    *isFinished = true;
 }
 
 TEST_F(EWK2UnitTestBase, ewk_auth_request_cancel)
@@ -179,17 +174,16 @@ TEST_F(EWK2UnitTestBase, ewk_auth_request_cancel)
     EXPECT_STREQ("127.0.0.1", ewk_auth_request_host_get(authenticationRequest));
     EXPECT_FALSE(ewk_auth_request_retrying_get(authenticationRequest));
 
-    int statusCode = 0;
-    evas_object_smart_callback_add(webView(), "resource,request,response", onResourceLoadResponse, &statusCode);
+    bool isFinished = false;
+    evas_object_smart_callback_add(webView(), "load,finished", onLoadFinished, &isFinished);
 
     // Will attempt to continue without authentication by default.
     ewk_object_unref(authenticationRequest);
 
-    while (!statusCode)
+    while (!isFinished)
         ecore_main_loop_iterate();
 
-    // We should get a "402 Unauthorized" error.
-    EXPECT_EQ(SOUP_STATUS_UNAUTHORIZED, statusCode);
+    ASSERT_STRNE(expectedSuccessTitle, ewk_view_title_get(webView()));
 
-    evas_object_smart_callback_del(webView(), "resource,request,response", onResourceLoadResponse);
+    evas_object_smart_callback_del(webView(), "load,finished", onLoadFinished);
 }

@@ -1,3 +1,24 @@
+2013-02-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Reenable ewk_auth_request API tests
+        https://bugs.webkit.org/show_bug.cgi?id=108451
+
+        Reviewed by Benjamin Poulain.
+
+        ewk_auth_request API tests were temporarily disabled after
+        the C API for resource loading was removed from WebKit2.
+        This patches updates the tests so that they no longer rely
+        on the resource loading events and renables them.
+
+        This patch also corrects the naming of the static variables
+        in the test to follow more closely the WebKit coding style.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/tests/test_ewk2_auth_request.cpp:
+        (serverCallback):
+        (TEST_F):
+        (onLoadFinished):
+
 2013-02-12  Anders Carlsson  <andersca@apple.com>
 
         Introduce a WorkQueueMessageReceiver class as a replacement for QueueClient
