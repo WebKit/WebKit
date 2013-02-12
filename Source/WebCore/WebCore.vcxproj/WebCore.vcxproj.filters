@@ -12531,6 +12531,9 @@
     <ClInclude Include="..\html\WeekInputType.h">
       <Filter>html</Filter>
     </ClInclude>
+    <ClInclude Include="..\html\parser\AtomicHTMLToken.h">
+      <Filter>html\parser</Filter>
+    </ClInclude>
     <ClInclude Include="..\html\parser\BackgroundHTMLParser.h">
       <Filter>html\parser</Filter>
     </ClInclude>
@@ -12595,9 +12598,6 @@
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\HTMLTokenizer.h">
-      <Filter>html\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\html\parser\HTMLTokenTypes.h">
       <Filter>html\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\html\parser\HTMLTreeBuilder.h">

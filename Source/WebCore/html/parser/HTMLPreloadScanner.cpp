@@ -45,12 +45,12 @@ using namespace HTMLNames;
 
 static bool isStartTag(const HTMLToken& token)
 {
-    return token.type() == HTMLTokenTypes::StartTag;
+    return token.type() == HTMLToken::StartTag;
 }
 
 static bool isStartOrEndTag(const HTMLToken& token)
 {
-    return token.type() == HTMLTokenTypes::EndTag || isStartTag(token);
+    return token.type() == HTMLToken::EndTag || isStartTag(token);
 }
 
 class StartTagScanner {
@@ -279,7 +279,7 @@ void HTMLPreloadScanner::processToken(const HTMLToken& token, Vector<OwnPtr<Prel
 {
     // <style> is the only place we search for urls in non-start/end-tag tokens.
     if (m_inStyle) {
-        if (token.type() != HTMLTokenTypes::Character)
+        if (token.type() != HTMLToken::Character)
             return;
         return m_cssScanner.scan(token, requests);
     }

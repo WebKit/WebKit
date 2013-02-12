@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HTMLDocumentParser.h"
 
+#include "AtomicHTMLToken.h"
 #include "BackgroundHTMLParser.h"
 #include "CompactHTMLToken.h"
 #include "ContentSecurityPolicy.h"
@@ -348,7 +349,7 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
             break;
         }
 
-        if (it->type() == HTMLTokenTypes::EndOfFile) {
+        if (it->type() == HTMLToken::EndOfFile) {
             ASSERT(it + 1 == tokens->end()); // The EOF is assumed to be the last token of this bunch.
             prepareToStopParsing();
             break;
@@ -463,7 +464,7 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
     // FIXME: Stop clearing the rawToken once we start running the parser off
     // the main thread or once we stop allowing synchronous JavaScript
     // execution from parseAttribute.
-    if (rawToken.type() != HTMLTokenTypes::Character)
+    if (rawToken.type() != HTMLToken::Character)
         rawToken.clear();
 
     m_treeBuilder->constructTree(token.get());
@@ -475,7 +476,7 @@ void HTMLDocumentParser::constructTreeFromHTMLToken(HTMLToken& rawToken)
     token->clearExternalCharacters();
 
     if (!rawToken.isUninitialized()) {
-        ASSERT(rawToken.type() == HTMLTokenTypes::Character);
+        ASSERT(rawToken.type() == HTMLToken::Character);
         rawToken.clear();
     }
 }

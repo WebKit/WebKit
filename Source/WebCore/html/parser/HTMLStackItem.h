@@ -26,9 +26,9 @@
 #ifndef HTMLStackItem_h
 #define HTMLStackItem_h
 
+#include "AtomicHTMLToken.h"
 #include "Element.h"
 #include "HTMLNames.h"
-#include "HTMLToken.h"
 #include "MathMLNames.h"
 #include "SVGNames.h"
 
@@ -208,12 +208,12 @@ private:
             // Create a fake token for a document fragment node. This looks ugly but required for performance
             // because we want to use m_token->name() in localName(), hasLocalName() and hasTagName() without
             // checking m_isDocumentFragmentNode flag.
-            m_token = AtomicHTMLToken::create(HTMLTokenTypes::StartTag, nullAtom);
+            m_token = AtomicHTMLToken::create(HTMLToken::StartTag, nullAtom);
             m_isDocumentFragmentNode = true;
             break;
         case ItemForContextElement:
             // Create a fake token for a context element for the same reason as above.
-            m_token = AtomicHTMLToken::create(HTMLTokenTypes::StartTag, m_node->localName());
+            m_token = AtomicHTMLToken::create(HTMLToken::StartTag, m_node->localName());
             m_namespaceURI = m_node->namespaceURI();
             m_isDocumentFragmentNode = false;
             break;

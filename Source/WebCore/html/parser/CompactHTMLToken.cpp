@@ -51,10 +51,10 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
     , m_textPosition(textPosition)
 {
     switch (m_type) {
-    case HTMLTokenTypes::Uninitialized:
+    case HTMLToken::Uninitialized:
         ASSERT_NOT_REACHED();
         break;
-    case HTMLTokenTypes::DOCTYPE: {
+    case HTMLToken::DOCTYPE: {
         m_data = String(token->name().data(), token->name().size());
         // There is only 1 DOCTYPE token per document, so to avoid increasing the
         // size of CompactHTMLToken, we just use the m_attributes vector.
@@ -64,18 +64,18 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
         m_doctypeForcesQuirks = token->forceQuirks();
         break;
     }
-    case HTMLTokenTypes::EndOfFile:
+    case HTMLToken::EndOfFile:
         break;
-    case HTMLTokenTypes::StartTag:
+    case HTMLToken::StartTag:
         m_attributes.reserveInitialCapacity(token->attributes().size());
         for (Vector<HTMLToken::Attribute>::const_iterator it = token->attributes().begin(); it != token->attributes().end(); ++it)
             m_attributes.append(CompactAttribute(String(it->m_name.data(), it->m_name.size()), String(it->m_value.data(), it->m_value.size())));
         // Fall through!
-    case HTMLTokenTypes::EndTag:
+    case HTMLToken::EndTag:
         m_selfClosing = token->selfClosing();
         // Fall through!
-    case HTMLTokenTypes::Comment:
-    case HTMLTokenTypes::Character:
+    case HTMLToken::Comment:
+    case HTMLToken::Character:
         if (token->isAll8BitData()) {
             m_data = String::make8BitFrom16BitSource(token->data().data(), token->data().size());
             m_isAll8BitData = true;

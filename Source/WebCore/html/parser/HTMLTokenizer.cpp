@@ -56,12 +56,12 @@ QualifiedName AtomicHTMLToken::nameForAttribute(const HTMLToken::Attribute& attr
 
 bool AtomicHTMLToken::usesName() const
 {
-    return m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag || m_type == HTMLTokenTypes::DOCTYPE;
+    return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag || m_type == HTMLToken::DOCTYPE;
 }
 
 bool AtomicHTMLToken::usesAttributes() const
 {
-    return m_type == HTMLTokenTypes::StartTag || m_type == HTMLTokenTypes::EndTag;
+    return m_type == HTMLToken::StartTag || m_type == HTMLToken::EndTag;
 }
 
 static inline UChar toLowerCase(UChar cc)
@@ -178,9 +178,9 @@ inline bool HTMLTokenizer::processEntity(SegmentedString& source)
 
 bool HTMLTokenizer::flushBufferedEndTag(SegmentedString& source)
 {
-    ASSERT(m_token->type() == HTMLTokenTypes::Character || m_token->type() == HTMLTokenTypes::Uninitialized);
+    ASSERT(m_token->type() == HTMLToken::Character || m_token->type() == HTMLToken::Uninitialized);
     source.advanceAndUpdateLineNumber();
-    if (m_token->type() == HTMLTokenTypes::Character)
+    if (m_token->type() == HTMLToken::Character)
         return true;
     m_token->beginEndTag(m_bufferedEndTagName);
     m_bufferedEndTagName.clear();
@@ -212,7 +212,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
 {
     // If we have a token in progress, then we're supposed to be called back
     // with the same token so we can finish it.
-    ASSERT(!m_token || m_token == &token || token.type() == HTMLTokenTypes::Uninitialized);
+    ASSERT(!m_token || m_token == &token || token.type() == HTMLToken::Uninitialized);
     m_token = &token;
 
     if (!m_bufferedEndTagName.isEmpty() && !isEndTagBufferingState(m_state)) {
@@ -238,7 +238,7 @@ bool HTMLTokenizer::nextToken(SegmentedString& source, HTMLToken& token)
         if (cc == '&')
             HTML_ADVANCE_TO(CharacterReferenceInDataState);
         else if (cc == '<') {
-            if (m_token->type() == HTMLTokenTypes::Character) {
+            if (m_token->type() == HTMLToken::Character) {
                 // We have a bunch of character tokens queued up that we
                 // are emitting lazily here.
                 return true;

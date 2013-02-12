@@ -7925,6 +7925,7 @@
     <ClInclude Include="..\html\ValidityState.h" />
     <ClInclude Include="..\html\VoidCallback.h" />
     <ClInclude Include="..\html\WeekInputType.h" />
+    <ClInclude Include="..\html\parser\AtomicHTMLToken.h" />
     <ClInclude Include="..\html\parser\BackgroundHTMLParser.h" />
     <ClInclude Include="..\html\parser\CompactHTMLToken.h" />
     <ClInclude Include="..\html\parser\CSSPreloadScanner.h" />
@@ -7948,7 +7949,6 @@
     <ClInclude Include="..\html\parser\HTMLStackItem.h" />
     <ClInclude Include="..\html\parser\HTMLToken.h" />
     <ClInclude Include="..\html\parser\HTMLTokenizer.h" />
-    <ClInclude Include="..\html\parser\HTMLTokenTypes.h" />
     <ClInclude Include="..\html\parser\HTMLTreeBuilder.h" />
     <ClInclude Include="..\html\parser\HTMLViewSourceParser.h" />
     <ClInclude Include="..\html\parser\InputStreamPreprocessor.h" />

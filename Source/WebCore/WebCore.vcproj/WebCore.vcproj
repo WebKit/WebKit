@@ -64806,6 +64806,10 @@
 				Name="parser"
 				>
 				<File
+					RelativePath="..\html\parser\AtomicHTMLToken.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\parser\BackgroundHTMLInputStream.cpp"
 					>
 				</File>
@@ -64979,10 +64983,6 @@
 				</File>
 				<File
 					RelativePath="..\html\parser\HTMLTokenizer.h"
-					>
-				</File>
-				<File
-					RelativePath="..\html\parser\HTMLTokenTypes.h"
 					>
 				</File>
 				<File

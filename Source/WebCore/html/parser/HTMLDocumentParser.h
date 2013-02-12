@@ -28,6 +28,7 @@
 
 #include "BackgroundHTMLInputStream.h"
 #include "CachedResourceClient.h"
+#include "CompactHTMLToken.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLInputStream.h"
 #include "HTMLParserOptions.h"

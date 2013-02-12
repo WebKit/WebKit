@@ -253,8 +253,8 @@ private:
 
     inline void saveEndTagNameIfNeeded()
     {
-        ASSERT(m_token->type() != HTMLTokenTypes::Uninitialized);
-        if (m_token->type() == HTMLTokenTypes::StartTag)
+        ASSERT(m_token->type() != HTMLToken::Uninitialized);
+        if (m_token->type() == HTMLToken::StartTag)
             m_appropriateEndTagName = m_token->name();
     }
     inline bool isAppropriateEndTag();
@@ -262,7 +262,7 @@ private:
 
     inline bool haveBufferedCharacterToken()
     {
-        return m_token->type() == HTMLToken::Type::Character;
+        return m_token->type() == HTMLToken::Character;
     }
 
     State m_state;

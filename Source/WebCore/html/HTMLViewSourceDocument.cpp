@@ -99,24 +99,24 @@ void HTMLViewSourceDocument::addSource(const String& source, HTMLToken& token)
         createContainingTable();
 
     switch (token.type()) {
-    case HTMLTokenTypes::Uninitialized:
+    case HTMLToken::Uninitialized:
         ASSERT_NOT_REACHED();
         break;
-    case HTMLTokenTypes::DOCTYPE:
+    case HTMLToken::DOCTYPE:
         processDoctypeToken(source, token);
         break;
-    case HTMLTokenTypes::EndOfFile:
+    case HTMLToken::EndOfFile:
         if (!m_tbody->hasChildNodes())
             addLine(String());
         break;
-    case HTMLTokenTypes::StartTag:
-    case HTMLTokenTypes::EndTag:
+    case HTMLToken::StartTag:
+    case HTMLToken::EndTag:
         processTagToken(source, token);
         break;
-    case HTMLTokenTypes::Comment:
+    case HTMLToken::Comment:
         processCommentToken(source, token);
         break;
-    case HTMLTokenTypes::Character:
+    case HTMLToken::Character:
         processCharacterToken(source, token);
         break;
     }

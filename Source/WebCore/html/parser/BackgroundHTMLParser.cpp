@@ -113,7 +113,7 @@ void BackgroundHTMLParser::markEndOfFile()
 
 bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
 {
-    if (token.type() == HTMLTokenTypes::StartTag) {
+    if (token.type() == HTMLToken::StartTag) {
         const String& tagName = token.data();
         if (threadSafeMatch(tagName, SVGNames::svgTag)
             || threadSafeMatch(tagName, MathMLNames::mathTag))
@@ -135,7 +135,7 @@ bool BackgroundHTMLParser::simulateTreeBuilder(const CompactHTMLToken& token)
             m_tokenizer->setState(HTMLTokenizer::RAWTEXTState);
     }
 
-    if (token.type() == HTMLTokenTypes::EndTag) {
+    if (token.type() == HTMLToken::EndTag) {
         const String& tagName = token.data();
         if (threadSafeMatch(tagName, SVGNames::svgTag) || threadSafeMatch(tagName, MathMLNames::mathTag))
             m_inForeignContent = false;

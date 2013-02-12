@@ -284,12 +284,12 @@ PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
         return nullptr;
 
     bool didBlockScript = false;
-    if (request.token.type() == HTMLTokenTypes::StartTag)
+    if (request.token.type() == HTMLToken::StartTag)
         didBlockScript = filterStartToken(request);
     else if (m_scriptTagNestingLevel) {
-        if (request.token.type() == HTMLTokenTypes::Character)
+        if (request.token.type() == HTMLToken::Character)
             didBlockScript = filterCharacterToken(request);
-        else if (request.token.type() == HTMLTokenTypes::EndTag)
+        else if (request.token.type() == HTMLToken::EndTag)
             filterEndToken(request);
     }
 
@@ -356,7 +356,7 @@ bool XSSAuditor::filterCharacterToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterScriptToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, scriptTag));
 
     m_cachedDecodedSnippet = decodedSnippetForName(request);
@@ -372,7 +372,7 @@ bool XSSAuditor::filterScriptToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterObjectToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, objectTag));
 
     bool didBlockScript = false;
@@ -386,7 +386,7 @@ bool XSSAuditor::filterObjectToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterParamToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, paramTag));
 
     size_t indexOfNameAttribute;
@@ -404,7 +404,7 @@ bool XSSAuditor::filterParamToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterEmbedToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, embedTag));
 
     bool didBlockScript = false;
@@ -418,7 +418,7 @@ bool XSSAuditor::filterEmbedToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterAppletToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, appletTag));
 
     bool didBlockScript = false;
@@ -431,7 +431,7 @@ bool XSSAuditor::filterAppletToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterIframeToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, iframeTag));
 
     bool didBlockScript = false;
@@ -444,7 +444,7 @@ bool XSSAuditor::filterIframeToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterMetaToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, metaTag));
 
     return eraseAttributeIfInjected(request, http_equivAttr);
@@ -452,7 +452,7 @@ bool XSSAuditor::filterMetaToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterBaseToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, baseTag));
 
     return eraseAttributeIfInjected(request, hrefAttr);
@@ -460,7 +460,7 @@ bool XSSAuditor::filterBaseToken(const FilterTokenRequest& request)
 
 bool XSSAuditor::filterFormToken(const FilterTokenRequest& request)
 {
-    ASSERT(request.token.type() == HTMLTokenTypes::StartTag);
+    ASSERT(request.token.type() == HTMLToken::StartTag);
     ASSERT(hasName(request.token, formTag));
 
     return eraseAttributeIfInjected(request, actionAttr, blankURL().string());
