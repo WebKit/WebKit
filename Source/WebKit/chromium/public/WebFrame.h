@@ -58,13 +58,11 @@ namespace WebKit {
 class WebAnimationController;
 class WebData;
 class WebDataSource;
-class WebDeliveredIntentClient;
 class WebDocument;
 class WebElement;
 class WebFormElement;
 class WebHistoryItem;
 class WebInputElement;
-class WebIntent;
 class WebPerformance;
 class WebRange;
 class WebSecurityOrigin;
@@ -632,14 +630,6 @@ public:
     virtual void dispatchMessageEventWithOriginCheck(
         const WebSecurityOrigin& intendedTargetOrigin,
         const WebDOMEvent&) = 0;
-
-
-    // Web Intents ---------------------------------------------------------
-
-    // Called on a target service page to deliver an intent to the window.
-    // The ports are any transferred ports that accompany the intent as a result
-    // of MessagePort transfer.
-    virtual void deliverIntent(const WebIntent&, WebMessagePortChannelArray* ports, WebDeliveredIntentClient*) = 0;
 
 
     // Utility -------------------------------------------------------------

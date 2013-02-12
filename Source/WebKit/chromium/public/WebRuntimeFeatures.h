@@ -164,9 +164,6 @@ public:
     WEBKIT_EXPORT static void enableSeamlessIFrames(bool);
     WEBKIT_EXPORT static bool areSeamlessIFramesEnabled();
 
-    WEBKIT_EXPORT static void enableWebIntents(bool);
-    WEBKIT_EXPORT static bool isWebIntentsEnabled();
-
     // If the flag is set, we use WebViewClient::showValidationMessage and
     // hideVlidationMessage for interactive form validation.
     WEBKIT_EXPORT static void enableNativeValidationMessage(bool);

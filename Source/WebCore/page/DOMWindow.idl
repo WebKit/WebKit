@@ -508,8 +508,6 @@
     [Conditional=VIDEO, V8EnabledAtRuntime] attribute HTMLSourceElementConstructor HTMLSourceElement;
     [Conditional=VIDEO, V8EnabledAtRuntime] attribute MediaControllerConstructor MediaController;
 
-    [Conditional=WEB_INTENTS_TAG] attribute HTMLIntentElementConstructor HTMLIntentElement;
-
     attribute CanvasPatternConstructor CanvasPattern;
     attribute CanvasGradientConstructor CanvasGradient;
     attribute CanvasRenderingContext2DConstructor CanvasRenderingContext2D;

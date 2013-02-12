@@ -228,16 +228,6 @@
           'ENABLE_OPENTYPE_VERTICAL=1',
         ],
       }],
-      ['enable_web_intents==1', {
-        'feature_defines': [
-          'ENABLE_WEB_INTENTS=1',
-        ],
-      }],
-      ['enable_web_intents_tag==1', {
-        'feature_defines': [
-          'ENABLE_WEB_INTENTS_TAG=1',
-        ],
-      }],
       ['OS=="mac"', {
         'feature_defines': [
           'ENABLE_RUBBER_BANDING=1',

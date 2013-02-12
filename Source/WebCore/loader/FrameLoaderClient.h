@@ -82,9 +82,6 @@ namespace WebCore {
 #endif
     class HTMLPlugInElement;
     class IntSize;
-#if ENABLE(WEB_INTENTS)
-    class IntentRequest;
-#endif
     class KURL;
     class MainResourceLoader;
     class MessageEvent;
@@ -342,13 +339,6 @@ namespace WebCore {
         virtual bool willCheckAndDispatchMessageEvent(SecurityOrigin* /*target*/, MessageEvent*) const { return false; }
 
         virtual void didChangeName(const String&) { }
-
-#if ENABLE(WEB_INTENTS)
-        virtual void dispatchIntent(PassRefPtr<IntentRequest>) = 0;
-#endif
-#if ENABLE(WEB_INTENTS_TAG)
-        virtual void registerIntentService(const String&, const String&, const KURL&, const String&, const String&) { }
-#endif
 
         virtual void dispatchWillOpenSocketStream(SocketStreamHandle*) { }
 

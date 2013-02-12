@@ -1,3 +1,39 @@
+2013-02-11  Nico Weber  <thakis@chromium.org>
+
+        Remove web intents code
+        https://bugs.webkit.org/show_bug.cgi?id=109501
+
+        Reviewed by Eric Seidel.
+
+        See thread "Removing ENABLE(WEB_INTENTS) code" on webkit-dev.
+
+        * WebKit.gyp:
+        * features.gypi:
+        * public/WebDeliveredIntentClient.h: Removed.
+        * public/WebFrame.h:
+        (WebKit):
+        (WebFrame):
+        * public/WebFrameClient.h:
+        (WebKit):
+        * public/WebIntent.h: Removed.
+        * public/WebIntentRequest.h: Removed.
+        * public/WebIntentServiceInfo.h: Removed.
+        * public/WebRuntimeFeatures.h:
+        (WebRuntimeFeatures):
+        * src/DeliveredIntentClientImpl.cpp: Removed.
+        * src/DeliveredIntentClientImpl.h: Removed.
+        * src/FrameLoaderClientImpl.cpp:
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+        * src/WebFrameImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebKit):
+        (WebFrameImpl):
+        * src/WebIntent.cpp: Removed.
+        * src/WebIntentRequest.cpp: Removed.
+        * src/WebIntentServiceInfo.cpp: Removed.
+        * src/WebRuntimeFeatures.cpp:
+
 2013-02-11  Florin Malita  <fmalita@chromium.org>
 
         Unreviewed.  Rolled Chromium DEPS to r181770.

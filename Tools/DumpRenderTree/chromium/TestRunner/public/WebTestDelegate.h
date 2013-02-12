@@ -39,7 +39,6 @@
 namespace WebKit {
 class WebDeviceOrientation;
 class WebGamepads;
-class WebIntentRequest;
 struct WebRect;
 struct WebURLError;
 }
@@ -72,8 +71,6 @@ public:
     virtual WebKit::WebURL rewriteLayoutTestsURL(const std::string&) { return WebKit::WebURL(); }
     virtual WebPreferences* preferences() { return 0; }
     virtual void applyPreferences() { };
-    virtual void setCurrentWebIntentRequest(const WebKit::WebIntentRequest&) { };
-    virtual WebKit::WebIntentRequest* currentWebIntentRequest() { return 0; }
     virtual std::string makeURLErrorDescription(const WebKit::WebURLError&) { return std::string(); }
     virtual void setClientWindowRect(const WebKit::WebRect&) { }
     virtual void showDevTools() { }

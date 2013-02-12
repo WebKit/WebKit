@@ -40,10 +40,6 @@
 #include "ColorChooser.h"
 #endif
 
-#if ENABLE(WEB_INTENTS) 
-#include "IntentRequest.h" 
-#endif 
-
 namespace WebCore {
 
 void fillWithEmptyClients(Page::PageClients& pageClients)
@@ -166,12 +162,6 @@ PassRefPtr<FrameNetworkingContext> EmptyFrameLoaderClient::createNetworkingConte
 {
     return PassRefPtr<FrameNetworkingContext>();
 }
-
-#if ENABLE(WEB_INTENTS)
-void EmptyFrameLoaderClient::dispatchIntent(PassRefPtr<IntentRequest>)
-{
-}
-#endif
 
 void EmptyTextCheckerClient::requestCheckingOfString(PassRefPtr<TextCheckingRequest>)
 {

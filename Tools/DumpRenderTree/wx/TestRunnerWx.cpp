@@ -564,16 +564,6 @@ void TestRunner::setAutomaticLinkDetectionEnabled(bool)
     // FIXME: Implement this.
 }
 
-void TestRunner::sendWebIntentResponse(JSStringRef)
-{
-    // FIXME: Implement this.
-}
-
-void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
-{
-    // FIXME: Implement this.
-}
-
 void TestRunner::setStorageDatabaseIdleInterval(double)
 {
     // FIXME: Implement this.

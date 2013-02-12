@@ -699,22 +699,4 @@ bool WebRuntimeFeatures::isRequestAutocompleteEnabled()
 #endif
 }
 
-void WebRuntimeFeatures::enableWebIntents(bool enable)
-{
-#if ENABLE(WEB_INTENTS)
-    RuntimeEnabledFeatures::setWebIntentsEnabled(enable);
-#else
-    UNUSED_PARAM(enable);
-#endif
-}
-
-bool WebRuntimeFeatures::isWebIntentsEnabled()
-{
-#if ENABLE(WEB_INTENTS)
-    return RuntimeEnabledFeatures::webkitStartActivityEnabled();
-#else
-    return false;
-#endif
-}
-
 } // namespace WebKit

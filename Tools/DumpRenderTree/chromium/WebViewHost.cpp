@@ -704,18 +704,6 @@ void WebViewHost::applyPreferences()
     m_shell->applyPreferences();
 }
 
-#if ENABLE(WEB_INTENTS)
-void WebViewHost::setCurrentWebIntentRequest(const WebIntentRequest& request)
-{
-    m_currentRequest = request;
-}
-
-WebIntentRequest* WebViewHost::currentWebIntentRequest()
-{
-    return &m_currentRequest;
-}
-#endif
-
 std::string WebViewHost::makeURLErrorDescription(const WebKit::WebURLError& error)
 {
     return webkit_support::MakeURLErrorDescription(error);

@@ -56,7 +56,6 @@
       '../Modules/filesystem/chromium',
       '../Modules/gamepad',
       '../Modules/geolocation',
-      '../Modules/intents',
       '../Modules/indexeddb',
       '../Modules/indexeddb/chromium',
       '../Modules/mediasource',
@@ -1180,7 +1179,6 @@
             'generator_include_dirs': [
               '--include', '../Modules/filesystem',
               '--include', '../Modules/indexeddb',
-              '--include', '../Modules/intents',
               '--include', '../Modules/mediasource',
               '--include', '../Modules/mediastream',
               '--include', '../Modules/navigatorcontentutils',

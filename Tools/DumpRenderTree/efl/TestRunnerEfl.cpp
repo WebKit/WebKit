@@ -871,20 +871,6 @@ void TestRunner::setAutomaticLinkDetectionEnabled(bool)
     notImplemented();
 }
 
-void TestRunner::sendWebIntentResponse(JSStringRef)
-{
-    // No plan to support Web Intents. The feature will likely
-    // be removed from WebKit.
-    notImplemented();
-}
-
-void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
-{
-    // No plan to support Web Intents. The feature will likely
-    // be removed from WebKit.
-    notImplemented();
-}
-
 void TestRunner::setStorageDatabaseIdleInterval(double)
 {
     notImplemented();

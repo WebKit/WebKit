@@ -56,9 +56,6 @@ class WebDataSource;
 class WebDOMEvent;
 class WebFormElement;
 class WebFrame;
-class WebIntent;
-class WebIntentRequest;
-class WebIntentServiceInfo;
 class WebMediaPlayer;
 class WebMediaPlayerClient;
 class WebNode;
@@ -398,15 +395,6 @@ public:
         WebFrame*, WebStorageQuotaType,
         unsigned long long newQuotaInBytes,
         WebStorageQuotaCallbacks*) { }
-
-    // Web Intents ---------------------------------------------------
-
-    // Register a service to handle Web Intents.
-    virtual void registerIntentService(WebFrame*, const WebIntentServiceInfo&) { }
-
-    // Start a Web Intents activity. The callee uses the |WebIntentRequest|
-    // object to coordinate replies to the intent invocation.
-    virtual void dispatchIntent(WebFrame*, const WebIntentRequest&) { }
 
     // WebSocket -----------------------------------------------------
 

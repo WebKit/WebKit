@@ -1134,16 +1134,6 @@ void TestRunner::setPageVisibility(const char* newVisibility)
         [webView _setVisibilityState:WebPageVisibilityStatePreview isInitialState:NO];
 }
 
-void TestRunner::sendWebIntentResponse(JSStringRef)
-{
-    // FIXME: Implement.
-}
-
-void TestRunner::deliverWebIntent(JSStringRef, JSStringRef, JSStringRef)
-{
-    // FIXME: Implement.
-}
-
 void TestRunner::grantWebNotificationPermission(JSStringRef jsOrigin)
 {
     RetainPtr<CFStringRef> cfOrigin(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, jsOrigin));

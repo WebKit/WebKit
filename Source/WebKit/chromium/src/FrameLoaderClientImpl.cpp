@@ -47,7 +47,6 @@
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
 #include "HitTestResult.h"
-#include "IntentRequest.h"
 #include "MIMETypeRegistry.h"
 #include "MessageEvent.h"
 #include "MouseEvent.h"
@@ -73,8 +72,6 @@
 #include "WebFormElement.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
-#include "WebIntentRequest.h"
-#include "WebIntentServiceInfo.h"
 #include "WebNode.h"
 #include "WebPermissionClient.h"
 #include "WebPlugin.h"
@@ -1641,28 +1638,6 @@ void FrameLoaderClientImpl::didChangeName(const String& name)
         return;
     m_webFrame->client()->didChangeName(m_webFrame, name);
 }
-
-#if ENABLE(WEB_INTENTS_TAG)
-void FrameLoaderClientImpl::registerIntentService(
-        const String& action,
-        const String& type,
-        const KURL& href,
-        const String& title,
-        const String& disposition) {
-    if (!m_webFrame->client())
-        return;
-
-    WebIntentServiceInfo service(action, type, href, title, disposition);
-    m_webFrame->client()->registerIntentService(m_webFrame, service);
-}
-#endif
-
-#if ENABLE(WEB_INTENTS)
-void FrameLoaderClientImpl::dispatchIntent(PassRefPtr<WebCore::IntentRequest> intentRequest)
-{
-    m_webFrame->client()->dispatchIntent(webFrame(), intentRequest);
-}
-#endif
 
 void FrameLoaderClientImpl::dispatchWillOpenSocketStream(SocketStreamHandle* handle)
 {

@@ -56,7 +56,6 @@ public:
     bool callShouldCloseOnWebView();
     JSStringRef copyDecodedHostName(JSStringRef name);
     JSStringRef copyEncodedHostName(JSStringRef name);
-    void deliverWebIntent(JSStringRef action, JSStringRef type, JSStringRef data);
     void dispatchPendingLoadRequests();
     void display();
     void displayInvalidatedRegion();
@@ -81,7 +80,6 @@ public:
     void queueNonLoadingScript(JSStringRef script);
     void queueReload();
     void removeAllVisitedLinks();
-    void sendWebIntentResponse(JSStringRef response);
     void setAcceptsEditing(bool);
     void setAllowUniversalAccessFromFileURLs(bool);
     void setAllowFileAccessFromFileURLs(bool);

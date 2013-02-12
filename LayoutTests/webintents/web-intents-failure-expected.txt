@@ -1,7 +1,0 @@
-Received Web Intent: action=action1 type=mime/type1
-PASS successfullyParsed is true
-
-TEST COMPLETE
-* sent intent
-* got failure: ERROR
-

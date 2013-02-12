@@ -54,8 +54,6 @@ class WebDataSource;
 class WebDragData;
 class WebFrame;
 class WebImage;
-class WebIntentRequest;
-class WebIntentServiceInfo;
 class WebNode;
 class WebPlugin;
 class WebRange;
@@ -120,8 +118,6 @@ protected:
     void didChangeSelection(bool isEmptySelection);
     void didChangeContents();
     void didEndEditing();
-    void registerIntentService(WebKit::WebFrame*, const WebKit::WebIntentServiceInfo&);
-    void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest&);
     bool createView(WebKit::WebFrame* creator, const WebKit::WebURLRequest&, const WebKit::WebWindowFeatures&, const WebKit::WebString& frameName, WebKit::WebNavigationPolicy);
     WebKit::WebPlugin* createPlugin(WebKit::WebFrame*, const WebKit::WebPluginParams&);
     void setStatusText(const WebKit::WebString&);
@@ -289,16 +285,6 @@ public:
     {
         WebTestProxyBase::didEndEditing();
         Base::didEndEditing();
-    }
-    virtual void registerIntentService(WebKit::WebFrame* frame, const WebKit::WebIntentServiceInfo& service)
-    {
-        WebTestProxyBase::registerIntentService(frame, service);
-        Base::registerIntentService(frame, service);
-    }
-    virtual void dispatchIntent(WebKit::WebFrame* source, const WebKit::WebIntentRequest& request)
-    {
-        WebTestProxyBase::dispatchIntent(source, request);
-        Base::dispatchIntent(source, request);
     }
     virtual WebKit::WebView* createView(WebKit::WebFrame* creator, const WebKit::WebURLRequest& request, const WebKit::WebWindowFeatures& features, const WebKit::WebString& frameName, WebKit::WebNavigationPolicy policy)
     {

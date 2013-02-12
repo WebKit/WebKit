@@ -45,9 +45,6 @@
 #include "WebDataSource.h"
 #include "WebElement.h"
 #include "WebFrame.h"
-#include "WebIntent.h"
-#include "WebIntentRequest.h"
-#include "WebIntentServiceInfo.h"
 #include "WebNode.h"
 #include "WebPluginParams.h"
 #include "WebRange.h"
@@ -551,41 +548,6 @@ void WebTestProxyBase::didEndEditing()
 {
     if (m_testInterfaces->testRunner()->shouldDumpEditingCallbacks())
         m_delegate->printMessage("EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification\n");
-}
-
-void WebTestProxyBase::registerIntentService(WebFrame*, const WebIntentServiceInfo& service)
-{
-#if ENABLE_WEB_INTENTS
-    m_delegate->printMessage(string("Registered Web Intent Service: action=") + service.action().utf8().data() + " type=" + service.type().utf8().data() + " title=" + service.title().utf8().data() + " url=" + service.url().spec().data() + " disposition=" + service.disposition().utf8().data() + "\n");
-#endif
-}
-
-void WebTestProxyBase::dispatchIntent(WebFrame* source, const WebIntentRequest& request)
-{
-#if ENABLE_WEB_INTENTS
-    m_delegate->printMessage(string("Received Web Intent: action=") + request.intent().action().utf8().data() + " type=" + request.intent().type().utf8().data() + "\n");
-    WebMessagePortChannelArray* ports = request.intent().messagePortChannelsRelease();
-    m_delegate->setCurrentWebIntentRequest(request);
-    if (ports) {
-        char data[100];
-        snprintf(data, sizeof(data), "Have %d ports\n", static_cast<int>(ports->size()));
-        m_delegate->printMessage(data);
-        for (size_t i = 0; i < ports->size(); ++i)
-            (*ports)[i]->destroy();
-        delete ports;
-    }
-
-    if (!request.intent().service().isEmpty())
-        m_delegate->printMessage(string("Explicit intent service: ") + request.intent().service().spec().data() + "\n");
-
-    WebVector<WebString> extras = request.intent().extrasNames();
-    for (size_t i = 0; i < extras.size(); ++i)
-        m_delegate->printMessage(string("Extras[") + extras[i].utf8().data() + "] = " + request.intent().extrasValue(extras[i]).utf8().data() + "\n");
-
-    WebVector<WebURL> suggestions = request.intent().suggestions();
-    for (size_t i = 0; i < suggestions.size(); ++i)
-        m_delegate->printMessage(string("Have suggestion ") + suggestions[i].spec().data() + "\n");
-#endif
 }
 
 bool WebTestProxyBase::createView(WebFrame*, const WebURLRequest& request, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)

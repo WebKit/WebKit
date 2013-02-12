@@ -977,7 +977,6 @@ IDL_INCLUDES = \
     $(WebCore)/Modules/gamepad \
     $(WebCore)/Modules/geolocation \
     $(WebCore)/Modules/indexeddb \
-    $(WebCore)/Modules/intents \
     $(WebCore)/Modules/mediasource \
     $(WebCore)/Modules/mediastream \
     $(WebCore)/Modules/networkinfo \

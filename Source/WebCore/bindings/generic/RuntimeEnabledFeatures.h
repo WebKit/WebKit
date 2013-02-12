@@ -269,13 +269,6 @@ public:
     static void setRequestAutocompleteEnabled(bool isEnabled) { isRequestAutocompleteEnabled = isEnabled; }
 #endif
 
-#if ENABLE(WEB_INTENTS)
-    static bool webkitStartActivityEnabled() { return isWebIntentsEnabled; }
-    static bool webkitIntentEnabled() { return isWebIntentsEnabled; }
-    static bool webKitIntentEnabled() { return isWebIntentsEnabled; }
-    static void setWebIntentsEnabled(bool isEnabled) { isWebIntentsEnabled = isEnabled; }
-#endif
-
 private:
     // Never instantiate.
     RuntimeEnabledFeatures() { }
@@ -383,10 +376,6 @@ private:
 
 #if ENABLE(IFRAME_SEAMLESS)
     static bool areSeamlessIFramesEnabled;
-#endif
-
-#if ENABLE(WEB_INTENTS)
-    static bool isWebIntentsEnabled;
 #endif
 
 };

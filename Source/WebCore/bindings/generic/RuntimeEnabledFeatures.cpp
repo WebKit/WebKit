@@ -237,8 +237,4 @@ bool RuntimeEnabledFeatures::areExperimentalContentSecurityPolicyFeaturesEnabled
 bool RuntimeEnabledFeatures::areSeamlessIFramesEnabled = false;
 #endif
 
-#if ENABLE(WEB_INTENTS)
-bool RuntimeEnabledFeatures::isWebIntentsEnabled = true;
-#endif
-
 } // namespace WebCore
