@@ -50,6 +50,11 @@ PluginProcessConnectionManager::~PluginProcessConnectionManager()
 {
 }
 
+void PluginProcessConnectionManager::initializeConnection(CoreIPC::Connection* connection)
+{
+    connection->addQueueClient(this);
+}
+
 PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnection(const String& pluginPath, PluginProcess::Type processType)
 {
     for (size_t i = 0; i < m_pluginProcessConnections.size(); ++i) {

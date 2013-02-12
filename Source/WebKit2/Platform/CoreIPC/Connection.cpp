@@ -256,11 +256,16 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
 
 void Connection::addQueueClient(QueueClient* queueClient)
 {
+    ASSERT(RunLoop::current() == m_clientRunLoop);
+    ASSERT(!m_isConnected);
+
     m_connectionQueue->dispatch(WTF::bind(&Connection::addQueueClientOnWorkQueue, this, queueClient));
 }
 
 void Connection::removeQueueClient(QueueClient* queueClient)
 {
+    ASSERT(RunLoop::current() == m_clientRunLoop);
+
     m_connectionQueue->dispatch(WTF::bind(&Connection::removeQueueClientOnWorkQueue, this, queueClient));
 }
 

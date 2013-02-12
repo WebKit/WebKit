@@ -1,3 +1,55 @@
+2013-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Change the queue client base class to be private everywhere
+        https://bugs.webkit.org/show_bug.cgi?id=109604
+
+        Reviewed by Andreas Kling.
+
+        Move connection queue client registration inside of the respective queue client classes.
+
+        Also, it's too late to add queue clients in ChildProcessProxy::didFinishLaunching, so do this in
+        ChildProcessProxy::connectionWillOpen instead.
+        
+        Finally, assert that queue clients are only being added and removed from the client thread.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::initializeConnection):
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::addQueueClient):
+        (CoreIPC::Connection::removeQueueClient):
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::initializeConnection):
+        (WebKit):
+        * Shared/mac/SecItemShim.h:
+        (SecItemShim):
+        * UIProcess/Network/NetworkProcessProxy.cpp:
+        (WebKit::NetworkProcessProxy::connectionWillOpen):
+        (WebKit):
+        (WebKit::NetworkProcessProxy::connectionWillClose):
+        (WebKit::NetworkProcessProxy::didFinishLaunching):
+        * UIProcess/Network/NetworkProcessProxy.h:
+        (NetworkProcessProxy):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionWillOpen):
+        (WebKit::WebProcessProxy::didFinishLaunching):
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::initializeConnection):
+        (WebKit):
+        * UIProcess/mac/SecItemShimProxy.h:
+        (SecItemShimProxy):
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::initializeConnection):
+        (WebKit):
+        * WebProcess/Plugins/PluginProcessConnectionManager.h:
+        (PluginProcessConnectionManager):
+        * WebProcess/WebPage/EventDispatcher.cpp:
+        (WebKit::EventDispatcher::initializeConnection):
+        (WebKit):
+        * WebProcess/WebPage/EventDispatcher.h:
+        (EventDispatcher):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeConnection):
+
 2013-02-12  Brady Eidson  <beidson@apple.com>
 
         Add WKContext API to retrieve basic network process statistics

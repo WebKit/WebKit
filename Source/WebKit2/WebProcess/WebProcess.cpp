@@ -205,14 +205,15 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
     ChildProcess::initializeConnection(connection);
 
     connection->setShouldExitOnSyncMessageSendFailure(true);
-    connection->addQueueClient(&m_eventDispatcher);
+
+    m_eventDispatcher.initializeConnection(connection);
 
 #if ENABLE(PLUGIN_PROCESS)
-    connection->addQueueClient(&m_pluginProcessConnectionManager);
+    m_pluginProcessConnectionManager.initializeConnection(connection);
 #endif
 
 #if USE(SECURITY_FRAMEWORK)
-    connection->addQueueClient(&SecItemShim::shared());
+    SecItemShim::shared().initializeConnection(connection);
 #endif
 
     m_webConnection = WebConnectionToUIProcess::create(this);

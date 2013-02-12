@@ -34,10 +34,12 @@ namespace WebKit {
 
 class SecItemRequestData;
 
-class SecItemShimProxy : public CoreIPC::Connection::QueueClient {
+class SecItemShimProxy : private CoreIPC::Connection::QueueClient {
 WTF_MAKE_NONCOPYABLE(SecItemShimProxy);
 public:
     static SecItemShimProxy& shared();
+
+    void initializeConnection(CoreIPC::Connection*);
 
 private:
     SecItemShimProxy();

@@ -46,7 +46,7 @@ class WebWheelEvent;
 class WebGestureEvent;
 #endif
 
-class EventDispatcher : public CoreIPC::Connection::QueueClient {
+class EventDispatcher : private CoreIPC::Connection::QueueClient {
     WTF_MAKE_NONCOPYABLE(EventDispatcher);
 
 public:
@@ -57,6 +57,8 @@ public:
     void addScrollingTreeForPage(WebPage*);
     void removeScrollingTreeForPage(WebPage*);
 #endif
+
+    void initializeConnection(CoreIPC::Connection*);
 
 private:
     // CoreIPC::Connection::QueueClient

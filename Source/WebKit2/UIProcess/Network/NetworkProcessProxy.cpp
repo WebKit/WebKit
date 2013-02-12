@@ -72,6 +72,17 @@ void NetworkProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launc
     platformGetLaunchOptions(launchOptions);
 }
 
+void NetworkProcessProxy::connectionWillOpen(CoreIPC::Connection* connection)
+{
+#if USE(SECURITY_FRAMEWORK)
+    SecItemShimProxy::shared().initializeConnection(connection);
+#endif
+}
+
+void NetworkProcessProxy::connectionWillClose(CoreIPC::Connection*)
+{
+}
+
 void NetworkProcessProxy::getNetworkProcessConnection(PassRefPtr<Messages::WebProcessProxy::GetNetworkProcessConnection::DelayedReply> reply)
 {
     m_pendingConnectionReplies.append(reply);
@@ -167,10 +178,6 @@ void NetworkProcessProxy::didReceiveAuthenticationChallenge(uint64_t pageID, uin
 void NetworkProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Connection::Identifier connectionIdentifier)
 {
     ChildProcessProxy::didFinishLaunching(launcher, connectionIdentifier);
-
-#if USE(SECURITY_FRAMEWORK)
-    connection()->addQueueClient(&SecItemShimProxy::shared());
-#endif
 
     if (CoreIPC::Connection::identifierIsNull(connectionIdentifier)) {
         // FIXME: Do better cleanup here.

@@ -64,9 +64,12 @@ public:
 private:
     NetworkProcessProxy(WebContext*);
 
+    // ChildProcessProxy
     virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
-    void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
+    virtual void connectionWillOpen(CoreIPC::Connection*) OVERRIDE;
+    virtual void connectionWillClose(CoreIPC::Connection*) OVERRIDE;
 
+    void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&);
     void networkProcessCrashedOrFailedToLaunch();
 
     // CoreIPC::Connection::Client

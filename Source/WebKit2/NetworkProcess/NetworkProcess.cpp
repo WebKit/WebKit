@@ -165,7 +165,7 @@ void NetworkProcess::initializeConnection(CoreIPC::Connection* connection)
     ChildProcess::initializeConnection(connection);
 
 #if USE(SECURITY_FRAMEWORK)
-    connection->addQueueClient(&SecItemShim::shared());
+    SecItemShim::shared().initializeConnection(connection);
 #endif
 }
 

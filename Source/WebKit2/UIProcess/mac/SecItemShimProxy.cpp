@@ -46,6 +46,11 @@ SecItemShimProxy::SecItemShimProxy()
 {
 }
 
+void SecItemShimProxy::initializeConnection(CoreIPC::Connection* connection)
+{
+    connection->addQueueClient(this);
+}
+
 static void handleSecItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
 {
     SecItemResponseData response;

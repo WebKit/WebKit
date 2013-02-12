@@ -132,6 +132,11 @@ void SecItemShim::initialize(ChildProcess* process)
     func(callbacks);
 }
 
+void SecItemShim::initializeConnection(CoreIPC::Connection* connection)
+{
+    connection->addQueueClient(this);
+}
+
 void SecItemShim::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
     if (decoder->messageReceiverName() == Messages::SecItemShim::messageReceiverName()) {

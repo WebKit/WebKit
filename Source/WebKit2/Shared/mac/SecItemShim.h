@@ -35,12 +35,13 @@ namespace WebKit {
 class ChildProcess;
 class SecItemResponseData;
 
-class SecItemShim : public CoreIPC::Connection::QueueClient {
+class SecItemShim : private CoreIPC::Connection::QueueClient {
 WTF_MAKE_NONCOPYABLE(SecItemShim);
 public:
     static SecItemShim& shared();
 
     void initialize(ChildProcess*);
+    void initializeConnection(CoreIPC::Connection*);
 
 private:
     SecItemShim();

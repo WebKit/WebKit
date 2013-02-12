@@ -38,19 +38,17 @@
 
 // Manages plug-in process connections for the given web process.
 
-namespace CoreIPC {
-    class Connection;
-}
-
 namespace WebKit {
 
 class PluginProcessConnection;
         
-class PluginProcessConnectionManager : public CoreIPC::Connection::QueueClient {
+class PluginProcessConnectionManager : private CoreIPC::Connection::QueueClient {
     WTF_MAKE_NONCOPYABLE(PluginProcessConnectionManager);
 public:
     PluginProcessConnectionManager();
     ~PluginProcessConnectionManager();
+
+    void initializeConnection(CoreIPC::Connection*);
 
     PluginProcessConnection* getPluginProcessConnection(const String& pluginPath, PluginProcess::Type);
     void removePluginProcessConnection(PluginProcessConnection*);

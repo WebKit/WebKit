@@ -73,6 +73,11 @@ void EventDispatcher::removeScrollingTreeForPage(WebPage* webPage)
 }
 #endif
 
+void EventDispatcher::initializeConnection(CoreIPC::Connection* connection)
+{
+    connection->addQueueClient(this);
+}
+
 void EventDispatcher::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
     if (decoder->messageReceiverName() == Messages::EventDispatcher::messageReceiverName()) {
