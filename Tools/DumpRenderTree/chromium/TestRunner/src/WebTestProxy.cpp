@@ -389,7 +389,7 @@ string dumpHistoryItem(const WebHistoryItem& item, int indent, bool isCurrent)
 void dumpBackForwardList(const WebVector<WebHistoryItem>& history, size_t currentEntryIndex, string& result)
 {
     result.append("\n============== Back Forward List ==============\n");
-    for (int index = 0; index < history.size(); ++index)
+    for (size_t index = 0; index < history.size(); ++index)
         result.append(dumpHistoryItem(history[index], 8, index == currentEntryIndex));
     result.append("===============================================\n");
 }
