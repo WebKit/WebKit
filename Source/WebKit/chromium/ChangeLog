@@ -1,3 +1,18 @@
+2013-02-12  Joshua Bell  <jsbell@chromium.org>
+
+        [Chromium] IndexedDB/Worker crash during shutdown
+        https://bugs.webkit.org/show_bug.cgi?id=109467
+
+        Reviewed by Tony Chang.
+
+        If the message queue has already been terminated, don't bother scheduling
+        a new error event that will never be delivered. Speculative fix for the
+        issue, which only repros in multiprocess ports and so far only on some
+        platforms.
+
+        * src/IDBFactoryBackendProxy.cpp:
+        (WebKit::IDBFactoryBackendProxy::allowIndexedDB): Early exit.
+
 2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove ENABLE_XHR_RESPONSE_BLOB handling from various build systems

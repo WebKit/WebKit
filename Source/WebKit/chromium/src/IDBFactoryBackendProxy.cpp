@@ -182,9 +182,9 @@ bool IDBFactoryBackendProxy::allowIndexedDB(ScriptExecutionContext* context, con
         // Either the bridge returns, or the queue gets terminated.
         if (runLoop.runInMode(workerContext, mode) == MessageQueueTerminated) {
             bridge->cancel();
-            allowed = false;
-        } else
-            allowed = bridge->result();
+            return false;
+        }
+        allowed = bridge->result();
     }
 
     if (!allowed)
