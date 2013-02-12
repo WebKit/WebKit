@@ -132,6 +132,11 @@
 #include "MockCDM.h"
 #endif
 
+#if ENABLE(VIDEO_TRACK)
+#include "CaptionUserPreferences.h"
+#include "PageGroup.h"
+#endif
+
 namespace WebCore {
 
 #if ENABLE(PAGE_POPUP)
@@ -254,11 +259,18 @@ void Internals::resetToConsistentState(Page* page)
     if (page->inspectorController())
         page->inspectorController()->setProfilerEnabled(false);
 #endif
+#if ENABLE(VIDEO_TRACK)
+    page->group().captionPreferences()->setTestingMode(false);
+#endif
 }
 
 Internals::Internals(Document* document)
     : ContextDestructionObserver(document)
 {
+#if ENABLE(VIDEO_TRACK)
+    if (document && document->page())
+        document->page()->group().captionPreferences()->setTestingMode(true);
+#endif
 }
 
 Document* Internals::contextDocument() const

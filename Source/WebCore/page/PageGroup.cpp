@@ -428,33 +428,6 @@ CaptionUserPreferences* PageGroup::captionPreferences()
 
     return m_captionPreferences.get();
 }
-    
-void PageGroup::registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
-{
-    captionPreferences()->registerForCaptionPreferencesChangedCallbacks(listener);
-}
-
-void PageGroup::unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
-{
-    if (!m_captionPreferences)
-        return;
-    captionPreferences()->unregisterForCaptionPreferencesChangedCallbacks(listener);
-}
-    
-bool PageGroup::userPrefersCaptions()
-{
-    return captionPreferences()->userPrefersCaptions();
-}
-
-bool PageGroup::userHasCaptionPreferences()
-{
-    return captionPreferences()->userPrefersCaptions();
-}
-
-float PageGroup::captionFontSizeScale(bool& important)
-{
-    return captionPreferences()->captionFontSizeScale(important);
-}
 
 #endif
 

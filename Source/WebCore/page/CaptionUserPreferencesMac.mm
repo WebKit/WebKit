@@ -102,7 +102,7 @@ CaptionUserPreferencesMac::~CaptionUserPreferencesMac()
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 bool CaptionUserPreferencesMac::userPrefersCaptions() const
 {
-    if (!MediaAccessibilityLibrary())
+    if (testingMode() || !MediaAccessibilityLibrary())
         return CaptionUserPreferences::userPrefersCaptions();
 
     return MACaptionAppearanceGetShowCaptions(kMACaptionAppearanceDomainUser);
@@ -110,7 +110,7 @@ bool CaptionUserPreferencesMac::userPrefersCaptions() const
 
 void CaptionUserPreferencesMac::setUserPrefersCaptions(bool preference)
 {
-    if (!MediaAccessibilityLibrary()) {
+    if (testingMode() || !MediaAccessibilityLibrary()) {
         CaptionUserPreferences::setUserPrefersCaptions(preference);
         return;
     }
@@ -120,16 +120,16 @@ void CaptionUserPreferencesMac::setUserPrefersCaptions(bool preference)
 
 bool CaptionUserPreferencesMac::userHasCaptionPreferences() const
 {
-    if (!MediaAccessibilityLibrary())
+    if (testingMode() || !MediaAccessibilityLibrary())
         return CaptionUserPreferences::userHasCaptionPreferences();
 
-    return !MediaAccessibilityLibrary();
+    return true;
 }
 
-void CaptionUserPreferencesMac::registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
+void CaptionUserPreferencesMac::registerForPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
 {
     if (!MediaAccessibilityLibrary()) {
-        CaptionUserPreferences::registerForCaptionPreferencesChangedCallbacks(listener);
+        CaptionUserPreferences::registerForPreferencesChangedCallbacks(listener);
         return;
     }
 
@@ -147,10 +147,10 @@ void CaptionUserPreferencesMac::registerForCaptionPreferencesChangedCallbacks(Ca
     m_captionPreferenceChangeListeners.add(listener);
 }
 
-void CaptionUserPreferencesMac::unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
+void CaptionUserPreferencesMac::unregisterForPreferencesChangedCallbacks(CaptionPreferencesChangedListener* listener)
 {
     if (!MediaAccessibilityLibrary()) {
-        CaptionUserPreferences::unregisterForCaptionPreferencesChangedCallbacks(listener);
+        CaptionUserPreferences::unregisterForPreferencesChangedCallbacks(listener);
         return;
     }
 
@@ -358,7 +358,7 @@ String CaptionUserPreferencesMac::captionsDefaultFontCSS() const
 
 String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
 {
-    if (!MediaAccessibilityLibrary())
+    if (testingMode() || !MediaAccessibilityLibrary())
         return CaptionUserPreferences::captionsStyleSheetOverride();
 
     StringBuilder captionsOverrideStyleSheet;
@@ -403,7 +403,7 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
 
 float CaptionUserPreferencesMac::captionFontSizeScale(bool& important) const
 {
-    if (!MediaAccessibilityLibrary())
+    if (testingMode() || !MediaAccessibilityLibrary())
         return CaptionUserPreferences::captionFontSizeScale(important);
 
     MACaptionAppearanceBehavior behavior;
@@ -447,9 +447,9 @@ void CaptionUserPreferencesMac::updateCaptionStyleSheetOveride()
              Vector<String>(), InjectInAllFrames, UserStyleAuthorLevel, InjectInExistingDocuments);
 }
 
-void CaptionUserPreferencesMac::setPreferredLanguage(String language) const
+void CaptionUserPreferencesMac::setPreferredLanguage(String language)
 {
-    if (!MediaAccessibilityLibrary()) {
+    if (testingMode() || !MediaAccessibilityLibrary()) {
         CaptionUserPreferences::setPreferredLanguage(language);
         return;
     }
@@ -459,12 +459,19 @@ void CaptionUserPreferencesMac::setPreferredLanguage(String language) const
 
 Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
 {
-    Vector<String> override = userPreferredLanguagesOverride();
-    if (!override.isEmpty())
-        return override;
-
-    if (!MediaAccessibilityLibrary())
+    if (testingMode() || !MediaAccessibilityLibrary())
         return CaptionUserPreferences::preferredLanguages();
+
+    Vector<String> platformLanguages = platformUserPreferredLanguages();
+    Vector<String> override = userPreferredLanguagesOverride();
+    if (!override.isEmpty()) {
+        if (platformLanguages.size() != override.size())
+            return override;
+        for (size_t i = 0; i < override.size(); i++) {
+            if (override[i] != platformLanguages[i])
+                return override;
+        }
+    }
 
     RetainPtr<CFArrayRef> languages(AdoptCF, MACaptionAppearanceCopySelectedLanguages(kMACaptionAppearanceDomainUser));
     CFIndex languageCount = CFArrayGetCount(languages.get());
@@ -472,9 +479,12 @@ Vector<String> CaptionUserPreferencesMac::preferredLanguages() const
     if (!languageCount)
         return CaptionUserPreferences::preferredLanguages();
 
-    Vector<String> userPreferredLanguages(languageCount);
+    Vector<String> userPreferredLanguages;
+    userPreferredLanguages.reserveCapacity(languageCount + platformLanguages.size());
     for (CFIndex i = 0; i < languageCount; i++)
         userPreferredLanguages.append(static_cast<CFStringRef>(CFArrayGetValueAtIndex(languages.get(), i)));
+
+    userPreferredLanguages.append(platformLanguages);
 
     return userPreferredLanguages;
 }

@@ -2523,6 +2523,7 @@ media/track/track-cue-rendering-snap-to-lines-not-set.html
 media/track/track-cue-rendering-vertical.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=106477
+media/track/track-user-preferences.html
 media/video-controls-captions-trackmenu-localized.html
 media/video-controls-captions-trackmenu-sorted.html
 media/video-controls-captions-trackmenu.html

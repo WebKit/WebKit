@@ -24,7 +24,6 @@
 				BCAE9DFD160C0AB000A33217 /* PBXTargetDependency */,
 				BC8283D516B4C01F00A278FE /* PBXTargetDependency */,
 				BC8283D716B4C02200A278FE /* PBXTargetDependency */,
-				BCCDE2D616C88DAA00D90310 /* PBXTargetDependency */,
 				BC82844616B4FF6600A278FE /* PBXTargetDependency */,
 				BC82844816B4FF6F00A278FE /* PBXTargetDependency */,
 			);
@@ -231,8 +230,6 @@
 		1AB16AEE164B41E400290D62 /* RemoteGraphicsLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB16AEC164B41E400290D62 /* RemoteGraphicsLayer.h */; };
 		1AB31A9616BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB31A9416BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp */; };
 		1AB31A9716BC688100F6DBC9 /* StorageManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB31A9516BC688100F6DBC9 /* StorageManagerMessages.h */; };
-		1AB779CC16C9A12600E2CE41 /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB779CA16C9A12600E2CE41 /* PluginProcessConnectionManagerMessageReceiver.cpp */; };
-		1AB779CD16C9A12600E2CE41 /* PluginProcessConnectionManagerMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB779CB16C9A12600E2CE41 /* PluginProcessConnectionManagerMessages.h */; };
 		1AB7D4CA1288AAA700CFD08C /* DownloadProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */; };
 		1AB7D4CB1288AAA700CFD08C /* DownloadProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */; };
 		1AB7D6191288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1AB7D6171288B9D900CFD08C /* DownloadProxyMessageReceiver.cpp */; };
@@ -816,10 +813,14 @@
 		BC8283D816B4DB2A00A278FE /* NetworkServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283A416B4BD9100A278FE /* NetworkServiceMain.mm */; };
 		BC8283D916B4DB2E00A278FE /* NetworkServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283A716B4BD9100A278FE /* NetworkServiceMain.Development.mm */; };
 		BC8283DA16B4DB9300A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
+		BC8283FA16B4FDDE00A278FE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8283B216B4BF7700A278FE /* Foundation.framework */; };
+		BC82842016B4FDF600A278FE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8283B216B4BF7700A278FE /* Foundation.framework */; };
 		BC82843316B4FE1400A278FE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC8283B216B4BF7700A278FE /* Foundation.framework */; };
 		BC82844916B5004200A278FE /* PluginService.32.Main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283E516B4F8E200A278FE /* PluginService.32.Main.mm */; };
 		BC82844B16B5004D00A278FE /* PluginService.64.Main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283EB16B4F8E200A278FE /* PluginService.64.Main.mm */; };
 		BC82844D16B5081C00A278FE /* PluginServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */; };
+		BC82844E16B5089400A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
+		BC82844F16B5089800A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BC8452A71162C80900CAB9B5 /* DrawingArea.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8452A51162C80900CAB9B5 /* DrawingArea.cpp */; };
 		BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8452A61162C80900CAB9B5 /* DrawingArea.h */; };
 		BC84EB1812A7100C0083F2DA /* WebPreferencesMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC84EB1712A7100C0083F2DA /* WebPreferencesMac.mm */; };
@@ -1210,13 +1211,6 @@
 			remoteGlobalIDString = BCAE9DE8160C097400A33217;
 			remoteInfo = WebProcessServiceForWebKitDevelopment;
 		};
-		BCCDE2D516C88DAA00D90310 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BC8283F816B4FDDE00A278FE;
-			remoteInfo = Plugin.32;
-		};
 		BCDE093513272496001259FB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1528,9 +1522,6 @@
 		1AB31A9316BC65AB00F6DBC9 /* StorageManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageManager.messages.in; sourceTree = "<group>"; };
 		1AB31A9416BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		1AB31A9516BC688100F6DBC9 /* StorageManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageManagerMessages.h; sourceTree = "<group>"; };
-		1AB779C916C99E6400E2CE41 /* PluginProcessConnectionManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PluginProcessConnectionManager.messages.in; sourceTree = "<group>"; };
-		1AB779CA16C9A12600E2CE41 /* PluginProcessConnectionManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PluginProcessConnectionManagerMessageReceiver.cpp; path = PluginProcessConnectionManagerMessageReceiver.cpp; sourceTree = "<group>"; };
-		1AB779CB16C9A12600E2CE41 /* PluginProcessConnectionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginProcessConnectionManagerMessages.h; path = PluginProcessConnectionManagerMessages.h; sourceTree = "<group>"; };
 		1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxy.h; sourceTree = "<group>"; };
 		1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxy.cpp; sourceTree = "<group>"; };
 		1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DownloadProxy.messages.in; sourceTree = "<group>"; };
@@ -2582,6 +2573,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC8283FA16B4FDDE00A278FE /* Foundation.framework in Frameworks */,
+				BC82844E16B5089400A278FE /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2589,6 +2582,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC82842016B4FDF600A278FE /* Foundation.framework in Frameworks */,
+				BC82844F16B5089800A278FE /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2838,7 +2833,6 @@
 				1A2BB6CC14117A5F000F35D4 /* PluginProcessConnection.messages.in */,
 				1A0EC90E124C0AF5007EF4A5 /* PluginProcessConnectionManager.cpp */,
 				1A0EC90D124C0AF5007EF4A5 /* PluginProcessConnectionManager.h */,
-				1AB779C916C99E6400E2CE41 /* PluginProcessConnectionManager.messages.in */,
 				1A043DC0124FF87500FFBFB5 /* PluginProxy.cpp */,
 				1A043DBF124FF87500FFBFB5 /* PluginProxy.h */,
 				1A8EFA5B1252B7CE00F7067F /* PluginProxy.messages.in */,
@@ -4634,8 +4628,6 @@
 				1A2D8438127F65D5001EB962 /* NPObjectMessageReceiverMessages.h */,
 				1A8EF96C1252AF6B00F7067F /* PluginControllerProxyMessageReceiver.cpp */,
 				1A8EF96D1252AF6B00F7067F /* PluginControllerProxyMessages.h */,
-				1AB779CA16C9A12600E2CE41 /* PluginProcessConnectionManagerMessageReceiver.cpp */,
-				1AB779CB16C9A12600E2CE41 /* PluginProcessConnectionManagerMessages.h */,
 				1A2BB6CE14117B4D000F35D4 /* PluginProcessConnectionMessageReceiver.cpp */,
 				1A2BB6CF14117B4D000F35D4 /* PluginProcessConnectionMessages.h */,
 				1A0EC6BD124BBD9B007EF4A5 /* PluginProcessMessageReceiver.cpp */,
@@ -5250,7 +5242,6 @@
 				BCBAAD0B14560A430053F82F /* WKBrowsingContextLoadDelegate.h in Headers */,
 				BC204EEF11C83EC8008F3375 /* WKBundle.h in Headers */,
 				BC204EF011C83EC8008F3375 /* WKBundleAPICast.h in Headers */,
-				1AB779CD16C9A12600E2CE41 /* PluginProcessConnectionManagerMessages.h in Headers */,
 				935EEB9F127761AC003322B8 /* WKBundleBackForwardList.h in Headers */,
 				935EEB9B1277617C003322B8 /* WKBundleBackForwardListItem.h in Headers */,
 				51EFC1CF1524E62500C9A938 /* WKBundleDOMWindowExtension.h in Headers */,
@@ -6456,7 +6447,6 @@
 				1C8E293A12761E5B00BC7BD0 /* WKInspector.cpp in Sources */,
 				51A9E10A1315CD18009E7031 /* WKKeyValueStorageManager.cpp in Sources */,
 				33D3A3B51339600B00709BE4 /* WKMediaCacheManager.cpp in Sources */,
-				1AB779CC16C9A12600E2CE41 /* PluginProcessConnectionManagerMessageReceiver.cpp in Sources */,
 				BC4075FD124FF0270068F20A /* WKMutableArray.cpp in Sources */,
 				BC4075FF124FF0270068F20A /* WKMutableDictionary.cpp in Sources */,
 				BCF69FAA1176D1CB00471A52 /* WKNavigationData.cpp in Sources */,
@@ -6635,11 +6625,6 @@
 			isa = PBXTargetDependency;
 			target = BCAE9DE8160C097400A33217 /* WebContent.Development */;
 			targetProxy = BCAE9DFC160C0AB000A33217 /* PBXContainerItemProxy */;
-		};
-		BCCDE2D616C88DAA00D90310 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BC8283F816B4FDDE00A278FE /* Plugin.32 */;
-			targetProxy = BCCDE2D516C88DAA00D90310 /* PBXContainerItemProxy */;
 		};
 		BCDE093413272496001259FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;

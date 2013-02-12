@@ -742,9 +742,6 @@ void MediaControlClosedCaptionsTrackListElement::defaultEventHandler(Event* even
 {
 #if ENABLE(VIDEO_TRACK)
     if (event->type() == eventNames().clickEvent) {
-        // FIXME: Add modifier key for exclusivity override.
-        // http://webkit.org/b/103361
-
         Node* target = event->target()->toNode();
         if (!target || !target->isElementNode())
             return;
@@ -1329,7 +1326,7 @@ void MediaControlTextTrackContainerElement::updateSizes(bool forceUpdate)
     float smallestDimension = std::min(m_videoDisplaySize.size().height(), m_videoDisplaySize.size().width());
 
     bool important;
-    float fontSize = smallestDimension * (document()->page()->group().captionFontSizeScale(important));
+    float fontSize = smallestDimension * (document()->page()->group().captionPreferences()->captionFontSizeScale(important));
     if (fontSize != m_fontSize) {
         m_fontSize = fontSize;
         setInlineStyleProperty(CSSPropertyFontSize, String::number(fontSize) + "px", important);

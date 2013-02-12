@@ -500,6 +500,12 @@ void MediaControlsApple::closedCaptionTracksChanged()
 {
     if (m_closedCaptionsTrackList)
         m_closedCaptionsTrackList->resetTrackListMenu();
+    if (m_toggleClosedCaptionsButton) {
+        if (m_mediaController->hasClosedCaptions())
+            m_toggleClosedCaptionsButton->show();
+        else
+            m_toggleClosedCaptionsButton->hide();
+    }
 }
 
 }

@@ -109,11 +109,6 @@ namespace WebCore {
         GroupSettings* groupSettings() const { return m_groupSettings.get(); }
 
 #if ENABLE(VIDEO_TRACK)
-        bool userPrefersCaptions();
-        bool userHasCaptionPreferences();
-        float captionFontSizeScale(bool&);
-        void registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*);
-        void unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*);
         CaptionUserPreferences* captionPreferences();
 #endif
 
@@ -122,7 +117,7 @@ namespace WebCore {
 
         void addVisitedLink(LinkHash stringHash);
         void invalidatedInjectedStyleSheetCacheInAllFrames();
-  
+
         String m_name;
 
         HashSet<Page*> m_pages;

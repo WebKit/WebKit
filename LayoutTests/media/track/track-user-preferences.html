@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Selecting from a list of tracks</title>
+        <script src="../media-controls.js"></script>
+        <script src="../media-file.js"></script>
+        <script src="../video-test.js"></script>
+        <script src="../trackmenu-test.js"></script>
+        <script>
+            var timer = null;
+            var expectedLanguage;
+            var testStage = 0;
+            var captionsButtonCoordinates;
+
+            function showCaptionMenu()
+            {
+                captionsButtonCoordinates = mediaControlsButtonCoordinates(video, "toggle-closed-captions-button");
+                consoleWrite("- show captions menu.");
+                eventSender.mouseMoveTo(captionsButtonCoordinates[0], captionsButtonCoordinates[1]);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+                timer = setTimeout(nextStep, 100);
+            }
+
+            function trackMenuList()
+            {
+                var trackListElement = getTrackListElement();
+                if (!trackListElement)
+                    return;
+
+                // Track list should have a <ul> with <li> children (One of them is "Off").
+                var trackList = trackListElement.querySelector("ul");
+                if (!trackList) {
+                    failTest("Could not find a child ul element in track list menu");
+                    return;
+                }
+                var trackListItems = trackList.querySelectorAll("li");
+                if (!trackListItems) {
+                    failTest("Could not find child li elements in track list menu");
+                    return;
+                }
+
+                return trackListItems;
+            }
+
+            function selectCaptionMenuItem(index)
+            {
+                consoleWrite("- click on menu item " + index + ".");
+                var trackListItems = trackMenuList();
+                var selectedTrackItem = trackListItems[index];
+                var boundingRect = selectedTrackItem.getBoundingClientRect();
+                var x = boundingRect.left + boundingRect.width / 2;
+                var y = boundingRect.top + boundingRect.height / 2;
+                eventSender.mouseMoveTo(x, y);
+                eventSender.mouseDown();
+                eventSender.mouseUp();
+            }
+
+            function trackLoaded()
+            {
+                consoleWrite("EVENT(load)");
+                testExpected("event.target.srclang", expectedLanguage);
+                testExpected("event.target.readyState", HTMLTrackElement.LOADED);
+
+                timer = setTimeout(nextStep, 200);
+            }
+
+            function createTrackElement(language, isDefault)
+            {
+                var track = document.createElement('track');
+                track.setAttribute('kind', "captions");
+                track.src = 'data:text/vtt,'+encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nCaption 1\n");
+                track.setAttribute('srclang', language);
+                track.setAttribute('onload', 'trackLoaded()');
+                if (isDefault)
+                    track.setAttribute('default', 'default');
+                video.appendChild(track);
+            }
+
+            function createTrackElements(languages, defaultIndex)
+            {
+                var tracks = document.querySelectorAll('track');
+                for (var ndx = 0; ndx < tracks.length; ++ndx)
+                    video.removeChild(tracks[ndx]);
+
+                consoleWrite("- creating tracks for: [" + languages + "].");
+                for (var ndx = 0; ndx < languages.length; ++ndx)
+                    createTrackElement(languages[ndx], ndx == defaultIndex);
+            }
+
+            function nextStep()
+            {
+                ++testStage;
+                switch (testStage) {
+                case 1:
+                    consoleWrite("<br>Test 1: track selected because of 'default' attribute");
+                    createTrackElements(['en', 'fr', 'no'], 1);
+                    expectedLanguage = 'fr';
+                    break;
+
+                case 2:
+                    consoleWrite("<br>Test 2: track selected because of original user preferred language");
+                    createTrackElements(['fr', 'en', 'no']);
+                    expectedLanguage = 'no';
+                    break;
+
+                case 3:
+                    consoleWrite("<br>Test 3: preferred language changed by selecting track from menu");
+                    showCaptionMenu();
+                    break;
+
+                case 4:
+                    selectCaptionMenuItem(2);
+                    testExpected("video.textTracks[0].mode", "showing");
+                    testExpected("video.textTracks[0].language", "fr");
+                    expectedLanguage = 'fr';
+                    createTrackElements([ 'no', 'fr', 'en']);
+                    break;
+
+                case 5:
+                    consoleWrite("<br>Test 4: turning captions off from menu disables captions");
+                    showCaptionMenu();
+                    break;
+
+                case 6:
+                    selectCaptionMenuItem(0);
+                    createTrackElements([ 'ru', 'jp', 'en']);
+                    timer = setTimeout(nextStep, 250);
+                    break;
+
+                case 7:
+                    for (var ndx = 0; ndx < video.textTracks.length; ++ndx)
+                        testExpected("video.textTracks[" + ndx + "].mode", "disabled");
+
+                    consoleWrite("");
+                    endTest();
+                    return;
+                }
+            }
+
+            function start()
+            {
+                findMediaElement();
+                video.src = findMediaFile('video', '../content/test');
+                video.addEventListener('canplaythrough', nextStep);
+                consoleWrite("<br>Set user languages to: ['no', 'es-ES', 'en', 'fr'].");
+                internals.setUserPreferredLanguages(['no', 'es-ES', 'en', 'fr']);
+            }
+        </script>
+    </head>
+
+    <body onload="start()">
+        <p>Test track user preferences.</p>
+        <video width="500" height="300" controls>
+        </video>
+    </body>
+</html>

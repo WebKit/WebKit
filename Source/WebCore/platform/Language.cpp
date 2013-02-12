@@ -139,10 +139,8 @@ static String bestMatchingLanguage(const String& language, const Vector<String>&
     return emptyString();
 }
 
-String preferredLanguageFromList(const Vector<String>& languageList)
+String preferredLanguageFromList(const Vector<String>& languageList, const Vector<String> preferredLanguages)
 {
-    Vector<String> preferredLanguages = userPreferredLanguages();
-
     for (size_t i = 0; i < preferredLanguages.size(); ++i) {
         String bestMatch = bestMatchingLanguage(canonicalLanguageIdentifier(preferredLanguages[i]), languageList);
 

@@ -41,15 +41,15 @@ public:
     virtual ~CaptionUserPreferencesMac();
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    virtual bool userHasCaptionPreferences() const OVERRIDE;
     virtual bool userPrefersCaptions() const OVERRIDE;
     virtual void setUserPrefersCaptions(bool) OVERRIDE;
-    virtual bool userHasCaptionPreferences() const OVERRIDE;
     virtual float captionFontSizeScale(bool&) const OVERRIDE;
     virtual String captionsStyleSheetOverride() const OVERRIDE;
-    virtual void registerForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
-    virtual void unregisterForCaptionPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
+    virtual void registerForPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
+    virtual void unregisterForPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
 
-    virtual void setPreferredLanguage(String) const OVERRIDE;
+    virtual void setPreferredLanguage(String) OVERRIDE;
     virtual Vector<String> preferredLanguages() const OVERRIDE;
 
     void captionPreferencesChanged();

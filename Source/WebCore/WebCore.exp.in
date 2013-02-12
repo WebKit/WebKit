@@ -2772,3 +2772,7 @@ __ZN7WebCore22RuntimeEnabledFeatures25areSeamlessIFramesEnabledE
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 __ZN7WebCore3CDM18registerCDMFactoryEPFN3WTF10PassOwnPtrINS_19CDMPrivateInterfaceEEEPS0_EPFbRKNS1_6StringEE
 #endif
+
+#if ENABLE(VIDEO_TRACK)
+__ZN7WebCore9PageGroup18captionPreferencesEv
+#endif

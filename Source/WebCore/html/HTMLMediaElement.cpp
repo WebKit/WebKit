@@ -317,9 +317,9 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
 
 #if ENABLE(VIDEO_TRACK)
     if (document->page()) {
-        PageGroup& group = document->page()->group();
-        if (group.userHasCaptionPreferences())
-            m_disableCaptions = !group.userPrefersCaptions();
+        CaptionUserPreferences* captionPreferences = document->page()->group().captionPreferences();
+        if (captionPreferences->userHasCaptionPreferences())
+            m_disableCaptions = !captionPreferences->userPrefersCaptions();
     }
 #endif
 }
@@ -591,7 +591,7 @@ void HTMLMediaElement::attach()
 
 #if ENABLE(VIDEO_TRACK)
     if (document()->page())
-        document()->page()->group().registerForCaptionPreferencesChangedCallbacks(this);
+        document()->page()->group().captionPreferences()->registerForPreferencesChangedCallbacks(this);
 #endif
 }
 
@@ -599,7 +599,7 @@ void HTMLMediaElement::detach()
 {
 #if ENABLE(VIDEO_TRACK)
     if (document()->page())
-        document()->page()->group().unregisterForCaptionPreferencesChangedCallbacks(this);
+        document()->page()->group().captionPreferences()->unregisterForPreferencesChangedCallbacks(this);
 #endif
     HTMLElement::detach();
 }
@@ -2992,8 +2992,8 @@ bool HTMLMediaElement::userPrefersCaptions() const
     if (!page)
         return false;
 
-    PageGroup& group = page->group();
-    return group.userHasCaptionPreferences() && group.userPrefersCaptions();
+    CaptionUserPreferences* captionPreferences = page->group().captionPreferences();
+    return captionPreferences->userHasCaptionPreferences() && captionPreferences->userPrefersCaptions();
 }
 
 bool HTMLMediaElement::userIsInterestedInThisTrackKind(String kind) const
@@ -3019,15 +3019,15 @@ void HTMLMediaElement::configureTextTrackGroup(const TrackGroup& group) const
     ASSERT(group.tracks.size());
 
     String bestMatchingLanguage;
-    if (group.hasSrcLang) {
-        Vector<String> languages;
-        languages.reserveInitialCapacity(group.tracks.size());
+    if (group.hasSrcLang && document()->page()) {
+        Vector<String> trackLanguages;
+        trackLanguages.reserveInitialCapacity(group.tracks.size());
         for (size_t i = 0; i < group.tracks.size(); ++i) {
             String srcLanguage = group.tracks[i]->language();
             if (srcLanguage.length())
-                languages.append(srcLanguage);
+                trackLanguages.append(srcLanguage);
         }
-        bestMatchingLanguage = preferredLanguageFromList(languages);
+        bestMatchingLanguage = preferredLanguageFromList(trackLanguages, document()->page()->group().captionPreferences()->preferredLanguages());
     }
 
     // First, find the track in the group that should be enabled (if any).
@@ -3085,10 +3085,17 @@ void HTMLMediaElement::toggleTrackAtIndex(int index, bool exclusive)
     if (!trackList || !trackList->length())
         return;
 
+    CaptionUserPreferences* captionPreferences = document()->page() ? document()->page()->group().captionPreferences() : 0;
+    if (captionPreferences)
+        captionPreferences->setUserPrefersCaptions(index != textTracksOffIndex());
+
     for (int i = 0, length = trackList->length(); i < length; ++i) {
         TextTrack* track = trackList->item(i);
-        if (i == index)
+        if (i == index) {
             track->setMode(TextTrack::showingKeyword());
+            if (captionPreferences && track->language().length())
+                captionPreferences->setPreferredLanguage(track->language());
+        }
         else if (exclusive || index == HTMLMediaElement::textTracksOffIndex())
             track->setMode(TextTrack::disabledKeyword());
     }

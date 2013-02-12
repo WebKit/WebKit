@@ -267,6 +267,8 @@ _ZN6WebKit22WebGtkExtensionManager6sharedEv;
 _ZN7WebCore28InspectorFrontendClientLocal11isUnderTestEv;
 _ZN7WebCore7Element16createShadowRootERi;
 _ZNK7WebCore4KURL6stringEv;
+_ZN7WebCore9PageGroup18captionPreferencesEv;
+_ZN7WebCore4Page9initGroupEv;
 
 local:
 _Z*;
