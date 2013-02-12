@@ -162,7 +162,7 @@ private:
     void createLayer(CoordinatedLayerID);
     void deleteLayer(CoordinatedLayerID);
 
-    void assignImageBackingToLayer(GraphicsLayer*, CoordinatedImageBackingID);
+    void assignImageBackingToLayer(CoordinatedLayerID, GraphicsLayer*, CoordinatedImageBackingID);
     void removeReleasedImageBackingsIfNeeded();
     void ensureRootLayer();
     void commitPendingBackingStoreOperations();

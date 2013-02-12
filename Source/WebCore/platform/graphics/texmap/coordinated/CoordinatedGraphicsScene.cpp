@@ -344,7 +344,7 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
     else
         m_fixedLayers.remove(id);
 
-    assignImageBackingToLayer(layer, layerInfo.imageID);
+    assignImageBackingToLayer(id, layer, layerInfo.imageID);
     prepareContentBackingStore(layer);
 
     // Never make the root layer clip.
@@ -526,8 +526,13 @@ void CoordinatedGraphicsScene::removeImageBacking(CoordinatedImageBackingID imag
     m_releasedImageBackings.append(m_imageBackings.take(imageID));
 }
 
-void CoordinatedGraphicsScene::assignImageBackingToLayer(GraphicsLayer* layer, CoordinatedImageBackingID imageID)
+void CoordinatedGraphicsScene::assignImageBackingToLayer(CoordinatedLayerID id, GraphicsLayer* layer, CoordinatedImageBackingID imageID)
 {
+#if USE(GRAPHICS_SURFACE)
+    if (m_surfaceBackingStores.contains(id))
+        return;
+#endif
+
     if (imageID == InvalidCoordinatedImageBackingID) {
         layer->setContentsToMedia(0);
         return;
