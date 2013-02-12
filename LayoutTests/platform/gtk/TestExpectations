@@ -150,11 +150,6 @@ webkit.org/b/98925 fast/viewport/viewport-legacy-ordering-6.html [ Skip ]
 webkit.org/b/98925 fast/viewport/viewport-legacy-xhtmlmp-remove-and-add.html [ Skip ]
 webkit.org/b/98925 fast/viewport/viewport-legacy-xhtmlmp.html [ Skip ]
 
-# Deletion UI is a Mail-ism. We don't need to worry about this (via Chromium).
-editing/deleting/deletionUI-single-instance.html [ WontFix Missing ]
-# This passes while it's marked as a WontFix - check it.
-fast/dom/Element/id-in-deletebutton.html [ WontFix Pass ]
-
 # WebKitGTK+ uses different keyboard accelerators than Safari (via Chromium).
 fast/events/option-tab.html [ WontFix Failure ]
 

@@ -258,7 +258,6 @@ fast/dom/Document/CaretRangeFromPoint/basic.html
 fast/dom/Document/CaretRangeFromPoint/hittest-relative-to-viewport.html
 fast/dom/Element/class-attribute-whitespace.html 
 fast/dom/Element/getBoundingClientRect.html
-fast/dom/Element/id-in-deletebutton.html 
 fast/dom/Element/null-offset-parent.html 
 fast/dom/HTMLDocument/frameless-location-bugzilla10837.html 
 fast/dom/HTMLElement/bdo.html 
