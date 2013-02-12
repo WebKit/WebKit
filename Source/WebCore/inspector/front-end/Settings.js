@@ -123,11 +123,6 @@ WebInspector.Settings = function()
     this.workerInspectorWidth = this.createSetting("workerInspectorWidth", 600);
     this.workerInspectorHeight = this.createSetting("workerInspectorHeight", 600);
     this.messageURLFilters = this.createSetting("messageURLFilters", {});
-
-    // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
-    // periodical breakpoints duplication leading to inspector slowness.
-    if (this.breakpoints.get().length > 500000)
-        this.breakpoints.set([]);
 }
 
 WebInspector.Settings.prototype = {
@@ -348,6 +343,56 @@ WebInspector.Experiment.prototype = {
     enableForTest: function()
     {
         this._experimentsSettings._enableForTest(this._name);
+    }
+}
+
+/**
+ * @constructor
+ */
+WebInspector.VersionController = function()
+{
+}
+
+WebInspector.VersionController.currentVersion = 1;
+
+WebInspector.VersionController.prototype = {
+    updateVersion: function()
+    {
+        var versionSetting = WebInspector.settings.createSetting("inspectorVersion", 0);
+        var currentVersion = WebInspector.VersionController.currentVersion;
+        var oldVersion = versionSetting.get();
+        var methodsToRun = this._methodsToRunToUpdateVersion(oldVersion, currentVersion);
+        for (var i = 0; i < methodsToRun.length; ++i)
+            this[methodsToRun[i]].call(this);
+        versionSetting.set(currentVersion);
+    },
+
+    /**
+     * @param {number} oldVersion
+     * @param {number} currentVersion
+     */
+    _methodsToRunToUpdateVersion: function(oldVersion, currentVersion)
+    {
+        var result = [];
+        for (var i = oldVersion; i < currentVersion; ++i)
+            result.push("_updateVersionFrom" + i + "To" + (i + 1));
+        return result;
+    },
+
+    _updateVersionFrom0To1: function()
+    {
+        this._clearBreakpointsWhenTooMany(WebInspector.settings.breakpoints);
+    },
+
+    /**
+     * @param {WebInspector.Setting} breakpointsSetting
+     */
+    _clearBreakpointsWhenTooMany: function(breakpointsSetting)
+    {
+        // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
+        // periodical breakpoints duplication leading to inspector slowness.
+        if (breakpointsSetting.get().length > 500000)
+            breakpointsSetting.set([]);
     }
 }
 

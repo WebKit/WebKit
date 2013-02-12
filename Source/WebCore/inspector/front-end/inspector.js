@@ -381,6 +381,8 @@ WebInspector.doLoadedDone = function()
 
 WebInspector._doLoadedDoneWithCapabilities = function()
 {
+    new WebInspector.VersionController().updateVersion();
+
     WebInspector.shortcutsScreen = new WebInspector.ShortcutsScreen();
     this._registerShortcuts();
 

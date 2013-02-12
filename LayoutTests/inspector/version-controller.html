@@ -1,0 +1,82 @@
+<html>
+<head>
+<script src="../http/tests/inspector/inspector-test.js"></script>
+<script>
+function test()
+{
+    var MockSetting = function(value)
+    {
+        this._value = value;
+    };
+    var value;
+    MockSetting.prototype = {
+        get: function() {
+            return this._value;
+        },
+
+        set: function(value) {
+            this._value = value;
+        }
+    }
+
+    function createBreakpoint(uiSourceCodeId, lineNumber, condition, enabled)
+    {
+        return { sourceFileId: uiSourceCodeId, lineNumber: lineNumber, condition: condition, enabled: enabled };
+    }
+
+    InspectorTest.runTestSuite([
+        function testMethodsToRunToUpdateVersion(next)
+        {
+            function runVersionControllerTest(oldVersion, currentVersion)
+            {
+                InspectorTest.addResult("Testing methods to run to upgrade from " + oldVersion + " to " + currentVersion + ".");
+                var versionController = new WebInspector.VersionController();
+                var methodsToRun = versionController._methodsToRunToUpdateVersion(oldVersion, currentVersion);
+                InspectorTest.addResult("Methods to run: " + JSON.stringify(methodsToRun));
+                InspectorTest.addResult("");
+            }
+
+            runVersionControllerTest(0, 0);
+            runVersionControllerTest(0, 1);
+            runVersionControllerTest(0, 2);
+            runVersionControllerTest(0, 3);
+            runVersionControllerTest(1, 1);
+            runVersionControllerTest(1, 2);
+            runVersionControllerTest(1, 3);
+            runVersionControllerTest(2, 2);
+            runVersionControllerTest(2, 3);
+            next();
+        },
+
+        function testClearBreakpointsWhenTooMany(next)
+        {
+            function runClearBreakpointsTest(breakpointsCount)
+            {
+                InspectorTest.addResult("Starting test with " + breakpointsCount + " breakpoints.");
+                var versionController = new WebInspector.VersionController();
+                var serializedBreakpoints = [];
+                for (var i = 0; i < breakpointsCount; ++i)
+                    serializedBreakpoints.push(createBreakpoint("file" + i + ".js", i % 10, "", true));
+                var breakpointsSetting = new MockSetting(serializedBreakpoints);
+                versionController._clearBreakpointsWhenTooMany(breakpointsSetting);
+                InspectorTest.addResult("Number of breakpoints left in the setting after the test: " + breakpointsSetting.get().length + ".");
+                InspectorTest.addResult("");
+            }
+
+            runClearBreakpointsTest(0);
+            runClearBreakpointsTest(1);
+            runClearBreakpointsTest(2);
+            runClearBreakpointsTest(499999);
+            runClearBreakpointsTest(500000);
+            runClearBreakpointsTest(500001);
+            runClearBreakpointsTest(1000000);
+            next();
+        }
+    ]);
+}
+</script>
+</head>
+<body onload="runTest()">
+<p>Tests inspector version controller.</p>
+</body>
+</html>
