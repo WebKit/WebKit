@@ -361,7 +361,6 @@ Bug(EFL) http/tests/xmlhttprequest/default-content-type-dashboard.html
 webkit.org/b/35824 http/tests/cookies/third-party-cookie-relaxing.html
 
 # Deletion UI is a Mail-ism. We don't need to wory about this. (via Chromium)
-Bug(EFL) editing/deleting/deletionUI-single-instance.html
 Bug(EFL) fast/dom/Element/id-in-deletebutton.html
 
 # This test is out-dated since r95899.
