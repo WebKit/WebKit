@@ -1,3 +1,18 @@
+2013-02-12  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: reportLeaf method doesn't report the leaf node properly.
+        https://bugs.webkit.org/show_bug.cgi?id=109554
+
+        In some cases leaves have no pointer. As example when we report a leaf via addPrivateBuffer.
+        This patch has new set of tests for HeapGraphSerializer.
+
+        Reviewed by Yury Semikhatsky.
+
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/HeapGraphSerializerTest.cpp: Added.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed followup to r142606, the EFL port also enables the CSS image-set
