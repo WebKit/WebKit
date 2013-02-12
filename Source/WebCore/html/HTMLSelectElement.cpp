@@ -373,9 +373,6 @@ void HTMLSelectElement::childrenChanged(bool changedByParser, Node* beforeChange
     setNeedsValidityCheck();
 
     HTMLFormControlElementWithState::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
-    
-    if (AXObjectCache::accessibilityEnabled() && renderer())
-        renderer()->document()->axObjectCache()->childrenChanged(this);
 }
 
 void HTMLSelectElement::optionElementChildrenChanged()
@@ -724,6 +721,9 @@ void HTMLSelectElement::setRecalcListItems()
     }
     if (!inDocument())
         invalidateSelectedItems();
+    
+    if (AXObjectCache::accessibilityEnabled() && renderer())
+        renderer()->document()->axObjectCache()->childrenChanged(this);
 }
 
 void HTMLSelectElement::recalcListItems(bool updateSelectedStates) const
