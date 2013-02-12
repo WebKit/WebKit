@@ -48,13 +48,10 @@ class TimerHeapReference;
 // Then we set a single shared system timer to fire at that time.
 //
 // When a timer's "next fire time" changes, we need to move it around in the priority queue.
-
-// Simple accessors to thread-specific data.
-static Vector<TimerBase*>& timerHeap()
+static Vector<TimerBase*>& threadGlobalTimerHeap()
 {
     return threadGlobalData().threadTimers().timerHeap();
 }
-
 // ----------------
 
 class TimerHeapPointer {
@@ -85,7 +82,7 @@ inline TimerHeapReference TimerHeapPointer::operator*() const
 inline TimerHeapReference& TimerHeapReference::operator=(TimerBase* timer)
 {
     m_reference = timer;
-    Vector<TimerBase*>& heap = timerHeap();
+    Vector<TimerBase*>& heap = timer->timerHeap();
     if (&m_reference >= heap.data() && &m_reference < heap.data() + heap.size())
         timer->m_heapIndex = &m_reference - heap.data();
     return *this;
@@ -131,10 +128,10 @@ public:
 private:
     void checkConsistency(ptrdiff_t offset = 0) const
     {
-        ASSERT(m_pointer >= timerHeap().data());
-        ASSERT(m_pointer <= timerHeap().data() + timerHeap().size());
-        ASSERT_UNUSED(offset, m_pointer + offset >= timerHeap().data());
-        ASSERT_UNUSED(offset, m_pointer + offset <= timerHeap().data() + timerHeap().size());
+        ASSERT(m_pointer >= threadGlobalTimerHeap().data());
+        ASSERT(m_pointer <= threadGlobalTimerHeap().data() + threadGlobalTimerHeap().size());
+        ASSERT_UNUSED(offset, m_pointer + offset >= threadGlobalTimerHeap().data());
+        ASSERT_UNUSED(offset, m_pointer + offset <= threadGlobalTimerHeap().data() + threadGlobalTimerHeap().size());
     }
 
     friend bool operator==(TimerHeapIterator, TimerHeapIterator);
@@ -195,6 +192,7 @@ TimerBase::TimerBase()
     , m_unalignedNextFireTime(0)
     , m_repeatInterval(0)
     , m_heapIndex(-1)
+    , m_cachedThreadGlobalTimerHeap(0)
 #ifndef NDEBUG
     , m_thread(currentThread())
 #endif
@@ -238,6 +236,7 @@ double TimerBase::nextFireInterval() const
 
 inline void TimerBase::checkHeapIndex() const
 {
+    ASSERT(timerHeap() == threadGlobalTimerHeap());
     ASSERT(!timerHeap().isEmpty());
     ASSERT(m_heapIndex >= 0);
     ASSERT(m_heapIndex < static_cast<int>(timerHeap().size()));
@@ -319,6 +318,10 @@ void TimerBase::setNextFireTime(double newUnalignedTime)
 
     if (m_unalignedNextFireTime != newUnalignedTime)
         m_unalignedNextFireTime = newUnalignedTime;
+
+    // Accessing thread global data is slow. Cache the heap pointer.
+    if (!m_cachedThreadGlobalTimerHeap)
+        m_cachedThreadGlobalTimerHeap = &threadGlobalTimerHeap();
 
     // Keep heap valid while changing the next-fire time.
     double oldTime = m_nextFireTime;
