@@ -76,12 +76,12 @@ void BackgroundHTMLParser::append(const String& input)
     pumpTokenizer();
 }
 
-void BackgroundHTMLParser::resumeFrom(const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<HTMLToken> token, PassOwnPtr<HTMLTokenizer> tokenizer, HTMLInputCheckpoint checkpoint)
+void BackgroundHTMLParser::resumeFrom(PassOwnPtr<Checkpoint> checkpoint)
 {
-    m_parser = parser;
-    m_token = token;
-    m_tokenizer = tokenizer;
-    m_input.rewindTo(checkpoint);
+    m_parser = checkpoint->parser;
+    m_token = checkpoint->token.release();
+    m_tokenizer = checkpoint->tokenizer.release();
+    m_input.rewindTo(checkpoint->inputCheckpoint);
     pumpTokenizer();
 }
 

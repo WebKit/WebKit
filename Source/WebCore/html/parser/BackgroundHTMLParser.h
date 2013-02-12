@@ -53,8 +53,15 @@ public:
         // Caller must free by calling stop().
     }
 
+    struct Checkpoint {
+        WeakPtr<HTMLDocumentParser> parser;
+        OwnPtr<HTMLToken> token;
+        OwnPtr<HTMLTokenizer> tokenizer;
+        HTMLInputCheckpoint inputCheckpoint;
+    };
+
     void append(const String&);
-    void resumeFrom(const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>, HTMLInputCheckpoint);
+    void resumeFrom(PassOwnPtr<Checkpoint>);
     void finish();
     void stop();
 

@@ -307,8 +307,13 @@ void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwn
     m_weakFactory.revokeAll();
     m_speculations.clear();
 
-    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::resumeFrom,
-        m_backgroundParser, m_weakFactory.createWeakPtr(), token, tokenizer, m_currentChunk->checkpoint));
+    OwnPtr<BackgroundHTMLParser::Checkpoint> checkpoint = adoptPtr(new BackgroundHTMLParser::Checkpoint);
+    checkpoint->parser = m_weakFactory.createWeakPtr();
+    checkpoint->token = token;
+    checkpoint->tokenizer = tokenizer;
+    checkpoint->inputCheckpoint = m_currentChunk->checkpoint;
+
+    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::resumeFrom, m_backgroundParser, checkpoint.release()));
 }
 
 void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk> chunk)
