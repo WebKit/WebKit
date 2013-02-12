@@ -31,7 +31,6 @@
 {
     'variables': {
         'TestWebKitAPI_files': [
-            'Tests/WebCore/HeapGraphSerializerTest.cpp',
             'Tests/WebCore/LayoutUnit.cpp',
             'Tests/WTF/AtomicString.cpp',
             'Tests/WTF/CheckedArithmeticOperations.cpp',

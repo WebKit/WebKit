@@ -1,3 +1,12 @@
+2013-02-12  Jessie Berlin  <jberlin@apple.com>
+
+        Rollout r142618, it broke all the Mac builds.
+
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebCore/HeapGraphSerializerTest.cpp: Removed.
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2013-02-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Fix Chromium compilation after r142618.

@@ -43,16 +43,15 @@
 
 namespace WebCore {
 
-HeapGraphSerializer::HeapGraphSerializer(Client* client)
-    : m_client(client)
+HeapGraphSerializer::HeapGraphSerializer(InspectorFrontend::Memory* frontend)
+    : m_frontend(frontend)
     , m_strings(Strings::create())
     , m_edges(Edges::create())
     , m_nodeEdgesCount(0)
     , m_nodes(Nodes::create())
     , m_baseToRealNodeIdMap(BaseToRealNodeIdMap::create())
-    , m_leafCount(0)
 {
-    ASSERT(m_client);
+    ASSERT(m_frontend);
     m_strings->addItem(String()); // An empty string with 0 index.
 
     memset(m_edgeTypes, 0, sizeof(m_edgeTypes));
@@ -92,7 +91,7 @@ void HeapGraphSerializer::pushUpdate()
         .setEdges(m_edges.release())
         .setBaseToRealNodeId(m_baseToRealNodeIdMap.release());
 
-    m_client->addNativeSnapshotChunk(chunk.release());
+    m_frontend->addNativeSnapshotChunk(chunk);
 
     m_strings = Strings::create();
     m_edges = Edges::create();
@@ -102,7 +101,6 @@ void HeapGraphSerializer::pushUpdate()
 
 void HeapGraphSerializer::reportNode(const WTF::MemoryObjectInfo& info)
 {
-    ASSERT(info.reportedPointer());
     reportNodeImpl(info, m_nodeEdgesCount);
     m_nodeEdgesCount = 0;
     if (info.isRoot())
@@ -184,10 +182,8 @@ int HeapGraphSerializer::addString(const String& string)
 
 int HeapGraphSerializer::toNodeId(const void* to)
 {
-    if (!to)
-        return s_firstNodeId + m_address2NodeIdMap.size() + m_leafCount++;
-
-    Address2NodeId::AddResult result = m_address2NodeIdMap.add(to, s_firstNodeId + m_leafCount + m_address2NodeIdMap.size());
+    ASSERT(to);
+    Address2NodeId::AddResult result = m_address2NodeIdMap.add(to, m_address2NodeIdMap.size());
     return result.iterator->value;
 }
 
@@ -198,7 +194,7 @@ void HeapGraphSerializer::addRootNode()
 
     m_nodes->addItem(addString("Root"));
     m_nodes->addItem(0);
-    m_nodes->addItem(s_firstNodeId + m_address2NodeIdMap.size() + m_leafCount);
+    m_nodes->addItem(m_address2NodeIdMap.size());
     m_nodes->addItem(0);
     m_nodes->addItem(m_roots.size());
 }

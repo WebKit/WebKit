@@ -416,10 +416,6 @@
 					</File>
 				</Filter>
 				<File
-					RelativePath="..\Tests\WebCore\HeapGraphGeneratorTest.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\Tests\WebCore\LayoutUnit.cpp"
 					>
 				</File>
