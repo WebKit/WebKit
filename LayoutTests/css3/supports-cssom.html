@@ -16,9 +16,25 @@
 
     @supports  ((  (     padding: 0)    and (display: none)) or (display: rainbow))  {
         dfn { width:0; }
+
         @supports (width: 0) {
             br { height:0; }
         }
+
+        /* Rules with syntax errors should be ignored. */
+        @supports (display: none);
+        @supports (display: none)) ;
+        @supports;
+        @supports ;
+        @supports (display: none)) {}
+        @supports (display: )) {}
+        @supports ((display: none) and {}
+        @supports (display: none) {}
+        );
+        @supports ((display: none) and ;
+        @supports (display: none) {}
+        );
+
         ol { display:none; }
     }
 

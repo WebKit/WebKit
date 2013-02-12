@@ -10861,12 +10861,7 @@ StyleRuleBase* CSSParser::createSupportsRule(bool conditionIsSupported, RuleList
 {
     m_allowImportRules = m_allowNamespaceDeclarations = false;
 
-    ASSERT(!m_supportsRuleDataStack->isEmpty());
-    RefPtr<CSSRuleSourceData> data = m_supportsRuleDataStack->last();
-    m_supportsRuleDataStack->removeLast();
-    if (m_supportsRuleDataStack->isEmpty())
-        m_supportsRuleDataStack.clear();
-
+    RefPtr<CSSRuleSourceData> data = popSupportsRuleData();
     RefPtr<StyleRuleSupports> rule;
     String conditionText;
     unsigned conditionOffset = data->ruleHeaderRange.start + 9;
@@ -10903,13 +10898,22 @@ void CSSParser::markSupportsRuleHeaderStart()
 
 void CSSParser::markSupportsRuleHeaderEnd()
 {
-    ASSERT(!m_supportsRuleDataStack->isEmpty());
+    ASSERT(m_supportsRuleDataStack && !m_supportsRuleDataStack->isEmpty());
 
     if (is8BitSource())
         m_supportsRuleDataStack->last()->ruleHeaderRange.end = tokenStart<LChar>() - m_dataStart8.get();
     else
         m_supportsRuleDataStack->last()->ruleHeaderRange.end = tokenStart<UChar>() - m_dataStart16.get();
 }
+
+PassRefPtr<CSSRuleSourceData> CSSParser::popSupportsRuleData()
+{
+    ASSERT(m_supportsRuleDataStack && !m_supportsRuleDataStack->isEmpty());
+    RefPtr<CSSRuleSourceData> data = m_supportsRuleDataStack->last();
+    m_supportsRuleDataStack->removeLast();
+    return data.release();
+}
+
 #endif
 
 CSSParser::RuleList* CSSParser::createRuleList()

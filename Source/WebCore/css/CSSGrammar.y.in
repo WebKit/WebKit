@@ -249,6 +249,7 @@ static inline int cssyyerror(void*, const char*)
 %type <boolean> supports_conjunction
 %type <boolean> supports_disjunction
 %type <boolean> supports_declaration_condition
+%type <boolean> supports_error
 #endif
 
 %type <string> keyframe_name
@@ -692,7 +693,15 @@ supports:
     before_supports_rule SUPPORTS_SYM maybe_space supports_condition at_supports_rule_header_end '{' at_rule_body_start maybe_space block_rule_list save_block {
         $$ = parser->createSupportsRule($4, $9);
     }
+    | before_supports_rule SUPPORTS_SYM supports_error {
+        parser->popRuleData();
+        parser->popSupportsRuleData();
+    }
     ;
+
+supports_error:
+    error ';'
+    | error invalid_block
 
 before_supports_rule:
     /* empty */ {
@@ -744,6 +753,7 @@ supports_condition_in_parens:
         $$ = $3;
     }
     | supports_declaration_condition
+    | '(' error ')'
     ;
 
 supports_declaration_condition:

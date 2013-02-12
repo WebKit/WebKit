@@ -172,6 +172,57 @@
             #t36 { content: "FAIL" }
         }
     }
+
+    /* Invalid syntax error recovery */
+
+    @supports (display: none);
+    @supports (display: none) and ( (display: none) ) {
+        #t37 { content: "APPLIED" }
+    }
+
+    @supports (display: none)) ;
+    @supports (display: none) {
+        #t38 { content: "APPLIED" }
+    }
+
+    @supports;
+    @supports (display: none) {
+        #t39 { content: "APPLIED" }
+    }
+
+    @supports ;
+    @supports (display: none) {
+        #t40 { content: "APPLIED" }
+    }
+
+    @supports (display: none)) {
+        #t41 { content: "FAIL" }
+    }
+    @supports (display: none) {
+        #t41 { content: "APPLIED" }
+    }
+
+    @supports (display: )) {
+        #t42 { content: "FAIL" }
+    }
+    @supports (display: none) {
+        #t42 { content: "APPLIED" }
+    }
+
+    @supports ((display: none) and {
+        #t43 { content: "FAIL" }
+    }
+    @supports (display: none) {
+        #t43 { content: "FAIL" }
+    }
+    );
+
+    @supports ((display: none) and ;
+    @supports (display: none) {
+        #t44 { content: "FAIL" }
+    }
+    );
+
 </style>
 </head>
 <body>
@@ -179,8 +230,8 @@
 
 <script>
     description("Test the @supports rule.");
-    var numTests = 37;
-    var untouchedTests = [1, 3, 5, 8, 12, 13, 14, 18, 28, 29, 34, 36]; // Tests whose content shouldn't change from the UNTOUCHED default.
+    var numTests = 45;
+    var untouchedTests = [1, 3, 5, 8, 12, 13, 14, 18, 28, 29, 34, 36, 43, 44]; // Tests whose content shouldn't change from the UNTOUCHED default.
 
     var container = document.getElementById("test_container");
     for (var i=0; i < numTests; i++) {
