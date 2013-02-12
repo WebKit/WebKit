@@ -1,3 +1,18 @@
+2013-02-12  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r142576): WK1 build fails when ENABLE(DELETION_UI) is off
+        <https://bugs.webkit.org/show_bug.cgi?id=109534>
+
+        Fixes the following build failure:
+
+            WebEditorClient.mm:243:23: error: out-of-line definition of 'shouldShowDeleteInterface' does not match any declaration in 'WebEditorClient'
+            bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* element)
+                                  ^~~~~~~~~~~~~~~~~~~~~~~~~
+
+        * WebCoreSupport/WebEditorClient.mm:
+        (WebEditorClient::shouldShowDeleteInterface): Protect with
+        ENABLE(DELETION_UI) macro.
+
 2013-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable delete button controller on non-Mac ports and delete EditorClient::shouldShowDeleteInterface
