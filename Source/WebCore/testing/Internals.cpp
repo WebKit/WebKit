@@ -259,7 +259,7 @@ void Internals::resetToConsistentState(Page* page)
     if (page->inspectorController())
         page->inspectorController()->setProfilerEnabled(false);
 #endif
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
     page->group().captionPreferences()->setTestingMode(false);
 #endif
 }
@@ -267,7 +267,7 @@ void Internals::resetToConsistentState(Page* page)
 Internals::Internals(Document* document)
     : ContextDestructionObserver(document)
 {
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO_TRACK) && !PLATFORM(WIN)
     if (document && document->page())
         document->page()->group().captionPreferences()->setTestingMode(true);
 #endif
