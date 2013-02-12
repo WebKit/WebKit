@@ -24,7 +24,8 @@
 
 [
     IndexedGetter,
-    JSGenerateToJSObject
+    JSGenerateToJSObject,
+    V8SkipVTableValidation
 ] interface DOMSettableTokenList : DOMTokenList {
     attribute DOMString value;
 };
