@@ -54,7 +54,6 @@ public:
     virtual void pageDestroyed();
     virtual void frameWillDetachPage(WebCore::Frame*) OVERRIDE;
 
-    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
     virtual bool smartInsertDeleteEnabled();
     virtual bool isSelectTrailingWhitespaceEnabled();
     virtual bool isContinuousSpellCheckingEnabled();

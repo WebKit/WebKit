@@ -301,9 +301,6 @@ void WebEditorClient::webViewDidChangeTypingStyle(WebNotification* /*notificatio
 void WebEditorClient::webViewDidChangeSelection(WebNotification* /*notification*/)
 {  notImplemented(); }
 
-bool WebEditorClient::shouldShowDeleteInterface(HTMLElement* /*element*/)
-{ notImplemented(); return false; }
-
 bool WebEditorClient::smartInsertDeleteEnabled(void)
 { 
     BOOL enabled = FALSE; 

@@ -92,15 +92,6 @@ void EditorClientImpl::frameWillDetachPage(WebCore::Frame* frame)
 {
 }
 
-bool EditorClientImpl::shouldShowDeleteInterface(HTMLElement* elem)
-{
-    // Normally, we don't care to show WebCore's deletion UI, so we only enable
-    // it if in testing mode and the test specifically requests it by using this
-    // magic class name.
-    return layoutTestMode()
-           && elem->getAttribute(HTMLNames::classAttr) == "needsDeletionUI";
-}
-
 bool EditorClientImpl::smartInsertDeleteEnabled()
 {
     if (m_webView->client())

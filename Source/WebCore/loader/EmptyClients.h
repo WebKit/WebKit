@@ -412,7 +412,6 @@ public:
     virtual void frameWillDetachPage(Frame*) { }
 
     virtual bool shouldDeleteRange(Range*) { return false; }
-    virtual bool shouldShowDeleteInterface(HTMLElement*) { return false; }
     virtual bool smartInsertDeleteEnabled() { return false; }
     virtual bool isSelectTrailingWhitespaceEnabled() { return false; }
     virtual bool isContinuousSpellCheckingEnabled() { return false; }
@@ -479,6 +478,7 @@ public:
     virtual void lowercaseWord() { }
     virtual void capitalizeWord() { }
 #endif
+
 #if USE(AUTOMATIC_TEXT_REPLACEMENT)
     virtual void showSubstitutionsPanel(bool) { }
     virtual bool substitutionsPanelIsShowing() { return false; }
@@ -494,6 +494,11 @@ public:
     virtual bool isAutomaticSpellingCorrectionEnabled() { return false; }
     virtual void toggleAutomaticSpellingCorrection() { }
 #endif
+
+#if ENABLE(DELETION_UI)
+    virtual bool shouldShowDeleteInterface(HTMLElement*) { return false; }
+#endif
+
 #if PLATFORM(GTK)
     virtual bool shouldShowUnicodeMenu() { return false; }
 #endif

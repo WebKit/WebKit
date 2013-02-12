@@ -2647,6 +2647,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
         webkit_marshal_BOOLEAN__STRING_OBJECT_ENUM, G_TYPE_BOOLEAN,
         3, G_TYPE_STRING, WEBKIT_TYPE_DOM_RANGE, WEBKIT_TYPE_INSERT_ACTION);
 
+    // Only exists for GTK+ API compatbiility.
     webkit_web_view_signals[SHOULD_DELETE_RANGE] = g_signal_new("should-delete-range", G_TYPE_FROM_CLASS(webViewClass),
         static_cast<GSignalFlags>(G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION),
         G_STRUCT_OFFSET(WebKitWebViewClass, should_allow_editing_action), g_signal_accumulator_first_wins, 0,

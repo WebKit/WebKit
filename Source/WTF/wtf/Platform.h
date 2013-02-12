@@ -781,7 +781,7 @@
 #endif
 
 #if !defined(ENABLE_DELETION_UI)
-#define ENABLE_DELETION_UI 1
+#define ENABLE_DELETION_UI 0
 #endif
 
 #if !defined(ENABLE_NETSCAPE_PLUGIN_API)

@@ -53,7 +53,6 @@ public:
     virtual bool isSelectTrailingWhitespaceEnabled() OVERRIDE;
 
     virtual bool shouldDeleteRange(WebCore::Range*) OVERRIDE;
-    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) OVERRIDE;
 
     virtual bool shouldBeginEditing(WebCore::Range*) OVERRIDE;
     virtual bool shouldEndEditing(WebCore::Range*) OVERRIDE;
@@ -98,6 +97,10 @@ public:
     virtual void toggleAutomaticTextReplacement() OVERRIDE;
     virtual bool isAutomaticSpellingCorrectionEnabled() OVERRIDE;
     virtual void toggleAutomaticSpellingCorrection() OVERRIDE;
+#endif
+
+#if ENABLE(DELETION_UI)
+    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) OVERRIDE;
 #endif
 
     TextCheckerClient* textChecker() OVERRIDE { return this; }

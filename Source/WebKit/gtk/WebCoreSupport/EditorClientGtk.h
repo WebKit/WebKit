@@ -74,7 +74,6 @@ class EditorClient : public WebCore::EditorClient {
         virtual void frameWillDetachPage(WebCore::Frame*) { }
 
         virtual bool shouldDeleteRange(WebCore::Range*);
-        virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
         virtual bool smartInsertDeleteEnabled();
         void setSmartInsertDeleteEnabled(bool);
         virtual bool isSelectTrailingWhitespaceEnabled();

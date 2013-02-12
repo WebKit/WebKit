@@ -94,14 +94,6 @@ bool EditorClient::shouldDeleteRange(Range* range)
     return accept;
 }
 
-bool EditorClient::shouldShowDeleteInterface(HTMLElement* element)
-{
-    gboolean accept = FALSE;
-    GRefPtr<WebKitDOMHTMLElement> kitElement(adoptGRef(kit(element)));
-    g_signal_emit_by_name(m_webView, "should-show-delete-interface-for-element", kitElement.get(), &accept);
-    return accept;
-}
-
 bool EditorClient::isContinuousSpellCheckingEnabled()
 {
     WebKitWebSettings* settings = webkit_web_view_get_settings(m_webView);

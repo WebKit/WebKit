@@ -63,7 +63,6 @@ public:
     virtual void respondToChangedContents();
     virtual void respondToChangedSelection(WebCore::Frame*);
 
-    bool shouldShowDeleteInterface(WebCore::HTMLElement*);
     bool shouldDeleteRange(WebCore::Range*);
 
     bool shouldInsertNode(WebCore::Node*, WebCore::Range* replacingRange, WebCore::EditorInsertAction);

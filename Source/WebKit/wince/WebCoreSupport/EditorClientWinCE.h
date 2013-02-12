@@ -41,7 +41,6 @@ public:
     virtual void frameWillDetachPage(WebCore::Frame*) { }
 
     virtual bool shouldDeleteRange(WebCore::Range*);
-    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
     virtual bool smartInsertDeleteEnabled();
     virtual bool isSelectTrailingWhitespaceEnabled();
     virtual bool isContinuousSpellCheckingEnabled();

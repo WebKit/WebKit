@@ -60,11 +60,6 @@ bool EditorClientEfl::shouldDeleteRange(Range* range)
     return true;
 }
 
-bool EditorClientEfl::shouldShowDeleteInterface(HTMLElement*)
-{
-    return false;
-}
-
 bool EditorClientEfl::isContinuousSpellCheckingEnabled()
 {
     notImplemented();

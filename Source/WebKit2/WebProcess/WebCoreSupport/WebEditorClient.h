@@ -45,7 +45,6 @@ private:
     virtual void frameWillDetachPage(WebCore::Frame*) OVERRIDE { }
 
     virtual bool shouldDeleteRange(WebCore::Range*) OVERRIDE;
-    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) OVERRIDE;
     virtual bool smartInsertDeleteEnabled() OVERRIDE;
     virtual bool isSelectTrailingWhitespaceEnabled() OVERRIDE;
     virtual bool isContinuousSpellCheckingEnabled() OVERRIDE;
@@ -121,6 +120,10 @@ private:
     virtual void toggleAutomaticTextReplacement() OVERRIDE;
     virtual bool isAutomaticSpellingCorrectionEnabled() OVERRIDE;
     virtual void toggleAutomaticSpellingCorrection() OVERRIDE;
+#endif
+
+#if ENABLE(DELETION_UI)
+    virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*) OVERRIDE;
 #endif
 
 #if PLATFORM(GTK)

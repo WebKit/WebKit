@@ -67,12 +67,6 @@ bool EditorClientBlackBerry::shouldDeleteRange(Range* range)
     return true;
 }
 
-bool EditorClientBlackBerry::shouldShowDeleteInterface(HTMLElement*)
-{
-    notImplemented();
-    return false;
-}
-
 bool EditorClientBlackBerry::smartInsertDeleteEnabled()
 {
     notImplemented();

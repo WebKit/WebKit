@@ -1,3 +1,14 @@
+2013-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable delete button controller on non-Mac ports and delete EditorClient::shouldShowDeleteInterface
+        https://bugs.webkit.org/show_bug.cgi?id=109534
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/WebEditorClient.cpp:
+        * WebCoreSupport/WebEditorClient.h:
+        (WebEditorClient):
+
 2013-02-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Build fix for Windows after r142509

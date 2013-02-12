@@ -474,11 +474,6 @@ bool Editor::shouldInsertText(const String& text, Range* range, EditorInsertActi
     return client() && client()->shouldInsertText(text, range, action);
 }
 
-bool Editor::shouldShowDeleteInterface(HTMLElement* element) const
-{
-    return client() && client()->shouldShowDeleteInterface(element);
-}
-
 void Editor::notifyComponentsOnChangedSelection(const VisibleSelection& oldSelection, FrameSelection::SetSelectionOptions options)
 {
     if (client())

@@ -136,7 +136,6 @@ public:
 
     bool shouldInsertFragment(PassRefPtr<DocumentFragment>, PassRefPtr<Range>, EditorInsertAction);
     bool shouldInsertText(const String&, Range*, EditorInsertAction) const;
-    bool shouldShowDeleteInterface(HTMLElement*) const;
     bool shouldDeleteRange(Range*) const;
     bool shouldApplyStyle(StylePropertySet*, Range*);
 

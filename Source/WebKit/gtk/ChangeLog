@@ -1,3 +1,17 @@
+2013-02-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Disable delete button controller on non-Mac ports and delete EditorClient::shouldShowDeleteInterface
+        https://bugs.webkit.org/show_bug.cgi?id=109534
+
+        Reviewed by Anders Carlsson.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit):
+        * WebCoreSupport/EditorClientGtk.h:
+        (EditorClient):
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_class_init):
+
 2013-02-11  Benjamin Poulain  <benjamin@webkit.org>
 
         Kill TestRunner::setMinimumTimerInterval; implement the feature with InternalSettings

@@ -147,12 +147,6 @@ bool EditorClientWx::shouldDeleteRange(Range*)
     return true;
 }
 
-bool EditorClientWx::shouldShowDeleteInterface(HTMLElement*)
-{
-    notImplemented();
-    return false;
-}
-
 bool EditorClientWx::smartInsertDeleteEnabled()
 {
     notImplemented();

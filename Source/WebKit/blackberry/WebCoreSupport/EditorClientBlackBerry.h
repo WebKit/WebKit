@@ -39,7 +39,6 @@ public:
     virtual void pageDestroyed();
     virtual void frameWillDetachPage(Frame*) { }
     virtual bool shouldDeleteRange(Range*);
-    virtual bool shouldShowDeleteInterface(HTMLElement*);
     virtual bool smartInsertDeleteEnabled();
     virtual bool isSelectTrailingWhitespaceEnabled();
     virtual bool isContinuousSpellCheckingEnabled();

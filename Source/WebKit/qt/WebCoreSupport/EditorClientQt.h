@@ -48,7 +48,6 @@ public:
     virtual void frameWillDetachPage(Frame*) { }
     
     virtual bool shouldDeleteRange(Range*);
-    virtual bool shouldShowDeleteInterface(HTMLElement*);
     virtual bool smartInsertDeleteEnabled(); 
     virtual void toggleSmartInsertDelete();
     virtual bool isSelectTrailingWhitespaceEnabled(); 

@@ -55,11 +55,6 @@ bool EditorClientWinCE::shouldDeleteRange(Range*)
     return true;
 }
 
-bool EditorClientWinCE::shouldShowDeleteInterface(HTMLElement*)
-{
-    return false;
-}
-
 bool EditorClientWinCE::isContinuousSpellCheckingEnabled()
 {
     notImplemented();
