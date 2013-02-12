@@ -1,3 +1,16 @@
+2013-02-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove remaining traces of Web Intents
+        https://bugs.webkit.org/show_bug.cgi?id=109586
+
+        Reviewed by Eric Seidel.
+
+        Remove references to Web Intents from CMake files as the functionality
+        was removed in r142549.
+
+        * Source/cmake/WebKitFeatures.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2013-02-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the enable-debug-feature configuration option

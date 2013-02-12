@@ -1,3 +1,15 @@
+2013-02-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Remove remaining traces of Web Intents
+        https://bugs.webkit.org/show_bug.cgi?id=109586
+
+        Reviewed by Eric Seidel.
+
+        Remove remaining traces of Web Intents from Blackberry port
+        configuration as the functionality was removed in r142549.
+
+        * WebCoreSupport/AboutDataEnableFeatures.in:
+
 2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
         Remove ENABLE_XHR_RESPONSE_BLOB handling from various build systems
