@@ -152,6 +152,8 @@ webkit2_built_sources += \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessages.h \
 	DerivedSources/WebKit2/PluginControllerProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/PluginControllerProxyMessages.h \
+	DerivedSources/WebKit2/PluginProcessConnectionManagerMessageReceiver.cpp \
+	DerivedSources/WebKit2/PluginProcessConnectionManagerMessages.h \
 	DerivedSources/WebKit2/PluginProcessConnectionMessageReceiver.cpp \
 	DerivedSources/WebKit2/PluginProcessConnectionMessages.h \
 	DerivedSources/WebKit2/PluginProcessMessageReceiver.cpp \
