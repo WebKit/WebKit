@@ -1324,10 +1324,10 @@ RenderBox* FrameView::embeddedContentBox() const
     return 0;
 }
 
-void FrameView::addWidgetToUpdate(RenderEmbeddedObject* object)
+void FrameView::addWidgetToUpdate(RenderObject* object)
 {
     if (!m_widgetUpdateSet)
-        m_widgetUpdateSet = adoptPtr(new RenderEmbeddedObjectSet);
+        m_widgetUpdateSet = adoptPtr(new RenderObjectSet);
 
     // Tell the DOM element that it needs a widget update.
     Node* node = object->node();
@@ -1339,7 +1339,7 @@ void FrameView::addWidgetToUpdate(RenderEmbeddedObject* object)
     m_widgetUpdateSet->add(object);
 }
 
-void FrameView::removeWidgetToUpdate(RenderEmbeddedObject* object)
+void FrameView::removeWidgetToUpdate(RenderObject* object)
 {
     if (!m_widgetUpdateSet)
         return;
@@ -2443,7 +2443,7 @@ void FrameView::scrollToAnchor()
     m_maintainScrollPositionAnchor = anchorNode;
 }
 
-void FrameView::updateWidget(RenderEmbeddedObject* object)
+void FrameView::updateWidget(RenderObject* object)
 {
     ASSERT(!object->node() || object->node()->isElementNode());
     Element* ownerElement = static_cast<Element*>(object->node());
@@ -2453,28 +2453,36 @@ void FrameView::updateWidget(RenderEmbeddedObject* object)
     if (!ownerElement)
         return;
 
-    // No need to update if it's already crashed or known to be missing.
-    if (object->showsUnavailablePluginIndicator())
-        return;
+    if (object->isEmbeddedObject()) {
+        RenderEmbeddedObject* embeddedObject = static_cast<RenderEmbeddedObject*>(object);
+        // No need to update if it's already crashed or known to be missing.
+        if (embeddedObject->showsUnavailablePluginIndicator())
+            return;
 
-    // FIXME: This could turn into a real virtual dispatch if we defined
-    // updateWidget(PluginCreationOption) on HTMLElement.
-    if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag) || ownerElement->hasTagName(appletTag)) {
-        HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(ownerElement);
-        if (pluginElement->needsWidgetUpdate())
-            pluginElement->updateWidget(CreateAnyWidgetType);
-    }
-    // FIXME: It is not clear that Media elements need or want this updateWidget() call.
+        // FIXME: This could turn into a real virtual dispatch if we defined
+        // updateWidget(PluginCreationOption) on HTMLElement.
+        if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag) || ownerElement->hasTagName(appletTag)) {
+            HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(ownerElement);
+            if (pluginElement->needsWidgetUpdate())
+                pluginElement->updateWidget(CreateAnyWidgetType);
+        }
+        // FIXME: It is not clear that Media elements need or want this updateWidget() call.
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    else if (ownerElement->isMediaElement())
-        static_cast<HTMLMediaElement*>(ownerElement)->updateWidget(CreateAnyWidgetType);
+        else if (ownerElement->isMediaElement())
+            static_cast<HTMLMediaElement*>(ownerElement)->updateWidget(CreateAnyWidgetType);
 #endif
-    else
-        ASSERT_NOT_REACHED();
+        else
+            ASSERT_NOT_REACHED();
 
-    // Caution: it's possible the object was destroyed again, since loading a
-    // plugin may run any arbitrary javascript.
-    object->updateWidgetPosition();
+        // Caution: it's possible the object was destroyed again, since loading a
+        // plugin may run any arbitrary JavaScript.
+        embeddedObject->updateWidgetPosition();
+    } else if (object->isSnapshottedPlugIn()) {
+        if (ownerElement->hasTagName(objectTag) || ownerElement->hasTagName(embedTag)) {
+            HTMLPlugInImageElement* pluginElement = static_cast<HTMLPlugInImageElement*>(ownerElement);
+            pluginElement->updateSnapshotInfo();
+        }
+    }
 }
 
 bool FrameView::updateWidgets()
@@ -2484,24 +2492,33 @@ bool FrameView::updateWidgets()
     
     size_t size = m_widgetUpdateSet->size();
 
-    Vector<RenderEmbeddedObject*> objects;
-    objects.reserveCapacity(size);
+    Vector<RenderObject*> objects;
+    objects.reserveInitialCapacity(size);
 
-    RenderEmbeddedObjectSet::const_iterator end = m_widgetUpdateSet->end();
-    for (RenderEmbeddedObjectSet::const_iterator it = m_widgetUpdateSet->begin(); it != end; ++it) {
-        objects.uncheckedAppend(*it);
-        (*it)->ref();
+    RenderObjectSet::const_iterator end = m_widgetUpdateSet->end();
+    for (RenderObjectSet::const_iterator it = m_widgetUpdateSet->begin(); it != end; ++it) {
+        RenderObject* object = *it;
+        objects.uncheckedAppend(object);
+        if (object->isEmbeddedObject()) {
+            RenderEmbeddedObject* embeddedObject = static_cast<RenderEmbeddedObject*>(object);
+            embeddedObject->ref();
+        }
     }
 
     for (size_t i = 0; i < size; ++i) {
-        RenderEmbeddedObject* object = objects[i];
+        RenderObject* object = objects[i];
         updateWidget(object);
         m_widgetUpdateSet->remove(object);
     }
 
     RenderArena* arena = m_frame->document()->renderArena();
-    for (size_t i = 0; i < size; ++i)
-        objects[i]->deref(arena);
+    for (size_t i = 0; i < size; ++i) {
+        RenderObject* object = objects[i];
+        if (object->isEmbeddedObject()) {
+            RenderEmbeddedObject* embeddedObject = static_cast<RenderEmbeddedObject*>(object);
+            embeddedObject->deref(arena);
+        }
+    }
     
     return m_widgetUpdateSet->isEmpty();
 }

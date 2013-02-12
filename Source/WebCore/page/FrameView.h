@@ -254,8 +254,8 @@ public:
     bool safeToPropagateScrollToParent() const { return m_safeToPropagateScrollToParent; }
     void setSafeToPropagateScrollToParent(bool isSafe) { m_safeToPropagateScrollToParent = isSafe; }
 
-    void addWidgetToUpdate(RenderEmbeddedObject*);
-    void removeWidgetToUpdate(RenderEmbeddedObject*);
+    void addWidgetToUpdate(RenderObject*);
+    void removeWidgetToUpdate(RenderObject*);
 
     virtual void paintContents(GraphicsContext*, const IntRect& damageRect);
     void setPaintBehavior(PaintBehavior);
@@ -470,7 +470,7 @@ private:
     double adjustedDeferredRepaintDelay() const;
 
     bool updateWidgets();
-    void updateWidget(RenderEmbeddedObject*);
+    void updateWidget(RenderObject*);
     void scrollToAnchor();
     void scrollPositionChanged();
 
@@ -493,8 +493,8 @@ private:
     LayoutSize m_size;
     LayoutSize m_margins;
     
-    typedef HashSet<RenderEmbeddedObject*> RenderEmbeddedObjectSet;
-    OwnPtr<RenderEmbeddedObjectSet> m_widgetUpdateSet;
+    typedef HashSet<RenderObject*> RenderObjectSet;
+    OwnPtr<RenderObjectSet> m_widgetUpdateSet;
     RefPtr<Frame> m_frame;
 
     bool m_doFullRepaint;

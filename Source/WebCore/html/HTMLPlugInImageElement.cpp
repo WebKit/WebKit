@@ -53,10 +53,14 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const int autoStartPlugInSizeThresholdWidth = 1;
-static const int autoStartPlugInSizeThresholdHeight = 1;
-static const int autoShowLabelSizeThresholdWidth = 400;
-static const int autoShowLabelSizeThresholdHeight = 300;
+static const int autoStartPlugInSizeDimensionThreshold = 1;
+static const int autoShowLabelSizeWidthThreshold = 400;
+static const int autoShowLabelSizeHeightThreshold = 300;
+
+static const int sizingTinyDimensionThreshold = 40;
+static const int sizingSmallWidthThreshold = 250;
+static const int sizingMediumWidthThreshold = 600;
+
 // This delay should not exceed the snapshot delay in PluginView.cpp
 static const double simulatedMouseClickTimerDelay = .75;
 
@@ -288,6 +292,48 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
     m_swapRendererTimer.startOneShot(0);
 }
 
+static AtomicString classNameForShadowRootSize(const IntSize& viewContentsSize, const Node* node)
+{
+    DEFINE_STATIC_LOCAL(const AtomicString, plugInTinySizeClassName, ("tiny", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, plugInSmallSizeClassName, ("small", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, plugInMediumSizeClassName, ("medium", AtomicString::ConstructFromLiteral));
+    DEFINE_STATIC_LOCAL(const AtomicString, plugInLargeSizeClassName, ("large", AtomicString::ConstructFromLiteral));
+
+    LayoutRect plugInClipRect = node->renderer()->absoluteClippedOverflowRect();
+    LayoutRect viewContentsRect(LayoutPoint::zero(), LayoutSize(viewContentsSize));
+    if (!viewContentsRect.contains(plugInClipRect)) {
+        LOG(Plugins, "%p Plug-in rect: (%d %d, %d %d) not contained in document of size %d %d", node, plugInClipRect.pixelSnappedX(), plugInClipRect.pixelSnappedY(), plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight(), viewContentsSize.width(), viewContentsSize.height());
+        return nullAtom;
+    }
+
+    if (plugInClipRect.pixelSnappedWidth() < sizingTinyDimensionThreshold || plugInClipRect.pixelSnappedHeight() < sizingTinyDimensionThreshold) {
+        LOG(Plugins, "%p Tiny Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
+        return plugInTinySizeClassName;
+    }
+
+    if (plugInClipRect.pixelSnappedWidth() < sizingSmallWidthThreshold) {
+        LOG(Plugins, "%p Small Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
+        return plugInSmallSizeClassName;
+    }
+
+    if (plugInClipRect.pixelSnappedWidth() < sizingMediumWidthThreshold) {
+        LOG(Plugins, "%p Medium Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
+        return plugInMediumSizeClassName;
+    }
+
+    return plugInLargeSizeClassName;
+}
+
+void HTMLPlugInImageElement::updateSnapshotInfo()
+{
+    ShadowRoot* root = userAgentShadowRoot();
+    if (!root)
+        return;
+
+    Element* shadowContainer = static_cast<Element*>(root->firstChild());
+    shadowContainer->setAttribute(classAttr, classNameForShadowRootSize(document()->page()->mainFrame()->view()->contentsSize(), this));   
+}
+
 void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 {
     Document* doc = document();
@@ -378,8 +424,8 @@ static bool shouldPlugInShowLabelAutomatically(const IntSize& viewContentsSize, 
         return false;
     }
 
-    if (plugInClipRect.pixelSnappedWidth() < autoShowLabelSizeThresholdWidth
-        || plugInClipRect.pixelSnappedHeight() < autoShowLabelSizeThresholdHeight) {
+    if (plugInClipRect.pixelSnappedWidth() < autoShowLabelSizeWidthThreshold
+        || plugInClipRect.pixelSnappedHeight() < autoShowLabelSizeHeightThreshold) {
         LOG(Plugins, "%p Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
         return false;
     }
@@ -407,7 +453,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     LayoutRect rect = toRenderEmbeddedObject(renderer())->contentBoxRect();
     int width = rect.width();
     int height = rect.height();
-    if (!width || !height || (width <= autoStartPlugInSizeThresholdWidth && height <= autoStartPlugInSizeThresholdHeight)) {
+    if (!width || !height || (width <= autoStartPlugInSizeDimensionThreshold && height <= autoStartPlugInSizeDimensionThreshold)) {
         LOG(Plugins, "%p Plug-in is %dx%d, set to play", this, width, height);
         return;
     }

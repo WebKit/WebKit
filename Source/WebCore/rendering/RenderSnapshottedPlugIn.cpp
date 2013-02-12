@@ -125,6 +125,21 @@ HTMLPlugInImageElement* RenderSnapshottedPlugIn::plugInImageElement() const
     return static_cast<HTMLPlugInImageElement*>(node());
 }
 
+void RenderSnapshottedPlugIn::layout()
+{
+    StackStats::LayoutCheckPoint layoutCheckPoint;
+    LayoutSize oldSize = contentBoxRect().size();
+
+    RenderBlock::layout();
+
+    LayoutSize newSize = contentBoxRect().size();
+    if (newSize == oldSize)
+        return;
+
+    if (document()->view())
+        document()->view()->addWidgetToUpdate(this);
+}
+
 void RenderSnapshottedPlugIn::updateSnapshot(PassRefPtr<Image> image)
 {
     // Zero-size plugins will have no image.

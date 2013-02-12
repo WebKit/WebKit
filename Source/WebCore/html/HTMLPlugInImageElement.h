@@ -63,6 +63,7 @@ public:
     void setNeedsWidgetUpdate(bool needsWidgetUpdate) { m_needsWidgetUpdate = needsWidgetUpdate; }
 
     void userDidClickSnapshot(PassRefPtr<MouseEvent>);
+    void updateSnapshotInfo();
 
     // Plug-in URL might not be the same as url() with overriding parameters.
     void subframeLoaderWillCreatePlugIn(const KURL& plugInURL);

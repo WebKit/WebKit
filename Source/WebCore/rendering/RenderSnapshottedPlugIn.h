@@ -59,6 +59,8 @@ private:
     void paintSnapshotImage(Image*, PaintInfo&, const LayoutPoint&);
     void repaintLabel();
 
+    virtual void layout() OVERRIDE;
+
     enum ShowReason {
         UserMousedOver,
         ShouldShowAutomatically
