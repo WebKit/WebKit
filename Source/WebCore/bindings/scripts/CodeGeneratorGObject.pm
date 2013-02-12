@@ -248,6 +248,12 @@ sub SkipFunction {
         return 1;
     }
 
+    # This is for DataTransferItemList.idl add(File) method
+    if ($functionName eq "webkit_dom_data_transfer_item_list_add" &&
+        @{$function->parameters} == 1) {
+        return 1;
+    }
+
     if ($function->signature->name eq "timeEnd") {
         return 1;
     }
