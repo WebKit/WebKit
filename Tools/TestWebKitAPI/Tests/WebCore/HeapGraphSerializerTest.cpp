@@ -63,7 +63,7 @@ public:
 
         m_id2index.clear();
 
-        for (int index = 0; index < m_nodes->length(); index += s_nodeFieldCount)
+        for (unsigned index = 0; index < m_nodes->length(); index += s_nodeFieldCount)
             m_id2index.add(intValue(m_nodes.get(), index + s_idOffset), index);
     }
 
@@ -147,7 +147,7 @@ private:
         int edgeCount = intValue(m_nodes.get(), nodeIndex + s_edgeCountOffset);
 
         printf("%s\n", nodeString.utf8().data());
-        for (unsigned i = 0; i < edgeCount; ++i) {
+        for (int i = 0; i < edgeCount; ++i) {
             String edgeText = edgeToString(i + processedEdgesCount);
             printf("\thas %s\n", edgeText.utf8().data());
         }

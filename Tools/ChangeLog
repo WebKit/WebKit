@@ -1,3 +1,10 @@
+2013-02-12  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Fix Chromium compilation after r142618.
+
+        * TestWebKitAPI/Tests/WebCore/HeapGraphSerializerTest.cpp:
+        (TestWebKitAPI::HeapGraphReceiver::printNode):
+
 2013-02-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add an optional moduleset with hard to get packages (including libsecret)
