@@ -1,3 +1,12 @@
+2013-02-12  Anders Carlsson  <andersca@apple.com>
+
+        Build fix.
+
+        Add back the files to the Xcode project that were removed in r142580.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+
 2013-02-12  Jessie Berlin  <jberlin@apple.com>
 
         Build fix after r142540 and r142518
