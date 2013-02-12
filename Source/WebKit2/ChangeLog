@@ -1,3 +1,26 @@
+2013-02-11  Brady Eidson  <beidson@apple.com>
+
+        Make PluginProcessProxy a ChildProcessProxy.
+        https://bugs.webkit.org/show_bug.cgi?id=109513
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/ChildProcessProxy.h: Inherit from ThreadSafeRefCounted.
+        * UIProcess/Network/NetworkProcessProxy.h: Don't inherit from RefCounted.
+        * UIProcess/WebProcessProxy.h: Don't inherit from ThreadSafeRefCounted
+        * UIProcess/Plugins/PluginProcessProxy.h: Don't inherit from RefCounted, do inherit from ChildProcessProxy
+
+        Rely on ChildProcessProxy for process launcher management and launch options:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        (WebKit::PluginProcessProxy::getLaunchOptions):
+        (WebKit::PluginProcessProxy::getPluginProcessConnection):
+        (WebKit::PluginProcessProxy::getSitesWithData):
+        (WebKit::PluginProcessProxy::clearSiteData):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::platformGetLaunchOptions):
+        (WebKit::PluginProcessProxy::getPluginProcessSerialNumber):
+
 2013-02-11  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13196331> NetworkProcess deny mach-lookup com.apple.PowerManagement.control

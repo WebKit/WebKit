@@ -66,16 +66,17 @@ PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManage
 #endif
     , m_processType(processType)
 {
-    ProcessLauncher::LaunchOptions launchOptions;
-    launchOptions.processType = ProcessLauncher::PluginProcess;
-
-    platformInitializeLaunchOptions(launchOptions, pluginInfo);
-
-    m_processLauncher = ProcessLauncher::create(this, launchOptions);
+    connect();
 }
 
 PluginProcessProxy::~PluginProcessProxy()
 {
+}
+
+void PluginProcessProxy::getLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions)
+{
+    launchOptions.processType = ProcessLauncher::PluginProcess;
+    platformGetLaunchOptions(launchOptions, m_pluginInfo);
 }
 
 // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
@@ -84,7 +85,7 @@ void PluginProcessProxy::getPluginProcessConnection(PassRefPtr<Messages::WebProc
 {
     m_pendingConnectionReplies.append(reply);
 
-    if (m_processLauncher->isLaunching()) {
+    if (isLaunching()) {
         m_numPendingConnectionRequests++;
         return;
     }
@@ -99,7 +100,7 @@ void PluginProcessProxy::getSitesWithData(WebPluginSiteDataManager* webPluginSit
     ASSERT(!m_pendingGetSitesReplies.contains(callbackID));
     m_pendingGetSitesReplies.set(callbackID, webPluginSiteDataManager);
 
-    if (m_processLauncher->isLaunching()) {
+    if (isLaunching()) {
         m_pendingGetSitesRequests.append(callbackID);
         return;
     }
@@ -113,7 +114,7 @@ void PluginProcessProxy::clearSiteData(WebPluginSiteDataManager* webPluginSiteDa
     ASSERT(!m_pendingClearSiteDataReplies.contains(callbackID));
     m_pendingClearSiteDataReplies.set(callbackID, webPluginSiteDataManager);
 
-    if (m_processLauncher->isLaunching()) {
+    if (isLaunching()) {
         ClearSiteDataRequest request;
         request.sites = sites;
         request.flags = flags;
@@ -125,11 +126,6 @@ void PluginProcessProxy::clearSiteData(WebPluginSiteDataManager* webPluginSiteDa
 
     // Ask the plug-in process to clear the site data.
     m_connection->send(Messages::PluginProcess::ClearSiteData(sites, flags, maxAgeInSeconds, callbackID), 0);
-}
-
-void PluginProcessProxy::terminate()
-{
-     m_processLauncher->terminateProcess();
 }
 
 void PluginProcessProxy::pluginProcessCrashedOrFailedToLaunch()

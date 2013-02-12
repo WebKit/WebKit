@@ -48,7 +48,7 @@ class DownloadProxyMap;
 class WebContext;
 struct NetworkProcessCreationParameters;
 
-class NetworkProcessProxy : public RefCounted<NetworkProcessProxy>, public ChildProcessProxy {
+class NetworkProcessProxy : public ChildProcessProxy {
 public:
     static PassRefPtr<NetworkProcessProxy> create(WebContext*);
     ~NetworkProcessProxy();

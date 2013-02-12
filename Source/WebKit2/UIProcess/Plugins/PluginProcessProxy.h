@@ -28,6 +28,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
+#include "ChildProcessProxy.h"
 #include "Connection.h"
 #include "PluginModuleInfo.h"
 #include "PluginProcess.h"
@@ -61,7 +62,7 @@ struct RawPluginMetaData {
 };
 #endif
 
-class PluginProcessProxy : public RefCounted<PluginProcessProxy>, CoreIPC::Connection::Client, ProcessLauncher::Client {
+class PluginProcessProxy : public ChildProcessProxy {
 public:
     static PassRefPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginModuleInfo&, PluginProcess::Type);
     ~PluginProcessProxy();
@@ -77,9 +78,6 @@ public:
 
     // Asks the plug-in process to clear the data for the given sites.
     void clearSiteData(WebPluginSiteDataManager*, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID);
-
-    // Terminates the plug-in process.
-    void terminate();
 
     bool isValid() const { return m_connection; }
 
@@ -101,6 +99,9 @@ public:
 
 private:
     PluginProcessProxy(PluginProcessManager*, const PluginModuleInfo&, PluginProcess::Type);
+
+    virtual void getLaunchOptions(ProcessLauncher::LaunchOptions&) OVERRIDE;
+    void platformGetLaunchOptions(ProcessLauncher::LaunchOptions&, const PluginModuleInfo&);
 
     void pluginProcessCrashedOrFailedToLaunch();
 
@@ -134,7 +135,6 @@ private:
     void applicationDidBecomeActive();
 #endif
 
-    static void platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions&, const PluginModuleInfo& pluginInfo);
     void platformInitializePluginProcess(PluginProcessCreationParameters& parameters);
 
     // The plug-in host process manager.
@@ -145,9 +145,6 @@ private:
 
     // The connection to the plug-in host process.
     RefPtr<CoreIPC::Connection> m_connection;
-
-    // The process launcher for the plug-in host process.
-    RefPtr<ProcessLauncher> m_processLauncher;
 
     Deque<RefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> > m_pendingConnectionReplies;
 

@@ -30,9 +30,11 @@
 #include "MessageReceiverMap.h"
 #include "ProcessLauncher.h"
 
+#include <wtf/ThreadSafeRefCounted.h>
+
 namespace WebKit {
 
-class ChildProcessProxy : ProcessLauncher::Client, public CoreIPC::Connection::Client {
+class ChildProcessProxy : ProcessLauncher::Client, public CoreIPC::Connection::Client, public ThreadSafeRefCounted<ChildProcessProxy> {
     WTF_MAKE_NONCOPYABLE(ChildProcessProxy);
 
 public:

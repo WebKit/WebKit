@@ -131,7 +131,7 @@ static bool shouldUseXPC()
 }
 #endif
 
-void PluginProcessProxy::platformInitializeLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
+void PluginProcessProxy::platformGetLaunchOptions(ProcessLauncher::LaunchOptions& launchOptions, const PluginModuleInfo& pluginInfo)
 {
     launchOptions.architecture = pluginInfo.pluginArchitecture;
     launchOptions.executableHeap = PluginProcessProxy::pluginNeedsExecutableHeap(pluginInfo);
@@ -162,7 +162,7 @@ void PluginProcessProxy::platformInitializePluginProcess(PluginProcessCreationPa
 
 bool PluginProcessProxy::getPluginProcessSerialNumber(ProcessSerialNumber& pluginProcessSerialNumber)
 {
-    pid_t pluginProcessPID = m_processLauncher->processIdentifier();
+    pid_t pluginProcessPID = processIdentifier();
 #if COMPILER(CLANG)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
