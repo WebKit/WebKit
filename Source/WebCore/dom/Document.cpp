@@ -5771,12 +5771,15 @@ void Document::adjustFloatRectForScrollAndAbsoluteZoomAndFrameScale(FloatRect& r
 
 bool Document::hasActiveParser()
 {
-    return m_parser && m_parser->processingData();
+    return m_activeParserCount || (m_parser && m_parser->processingData());
 }
 
 void Document::decrementActiveParserCount()
 {
     --m_activeParserCount;
+    if (!frame())
+        return;
+    frame()->loader()->checkLoadComplete();
 }
 
 void Document::setContextFeatures(PassRefPtr<ContextFeatures> features)
