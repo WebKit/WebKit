@@ -1,3 +1,10 @@
+2013-02-11  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r181787.  Requested by
+        thakis_ via sheriffbot.
+
+        * DEPS:
+
 2013-02-11  Nico Weber  <thakis@chromium.org>
 
         Remove web intents code
