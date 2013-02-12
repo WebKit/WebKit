@@ -509,8 +509,16 @@ void DateTimeEditElement::focusIfNoFocus()
     focusOnNextFocusableField(0);
 }
 
-void DateTimeEditElement::focusByOwner()
+void DateTimeEditElement::focusByOwner(Node* oldFocusedNode)
 {
+    if (oldFocusedNode && oldFocusedNode->isElementNode() && toElement(oldFocusedNode)->isDateTimeFieldElement()) {
+        DateTimeFieldElement* oldFocusedField = static_cast<DateTimeFieldElement*>(oldFocusedNode);
+        size_t index = fieldIndexOf(*oldFocusedField);
+        if (index != invalidFieldIndex && oldFocusedField->isFocusable()) {
+            oldFocusedField->focus();
+            return;
+        }
+    }
     focusOnNextFocusableField(0);
 }
 

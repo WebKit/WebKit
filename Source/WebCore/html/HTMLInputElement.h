@@ -280,7 +280,6 @@ public:
 
     virtual void blur() OVERRIDE;
     void defaultBlur();
-    virtual void focus(bool restorePreviousSelection = true, FocusDirection = FocusDirectionNone) OVERRIDE;
 
     virtual const AtomicString& name() const OVERRIDE;
 
@@ -378,7 +377,7 @@ private:
     virtual void updatePlaceholderText();
     virtual bool isEmptyValue() const OVERRIDE { return innerTextValue().isEmpty(); }
     virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
-    virtual void handleFocusEvent(FocusDirection) OVERRIDE;
+    virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection) OVERRIDE;
     virtual void handleBlurEvent();
 
     virtual bool isOptionalFormControl() const { return !isRequiredFormControl(); }

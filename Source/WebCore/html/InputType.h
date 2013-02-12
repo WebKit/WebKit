@@ -204,7 +204,7 @@ public:
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
     virtual bool shouldUseInputMethod() const;
-    virtual void handleFocusEvent(FocusDirection);
+    virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection);
     virtual void handleBlurEvent();
     virtual void accessKeyAction(bool sendMouseEvents);
     virtual bool canBeSuccessfulSubmitButton();
@@ -214,7 +214,6 @@ public:
 #endif
 
     virtual void blur();
-    virtual bool willCancelFocus(bool restorePreviousSelection, FocusDirection);
 
     // Shadow tree handling
 

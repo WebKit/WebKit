@@ -81,9 +81,8 @@ private:
     virtual void createShadowSubtree() OVERRIDE FINAL;
     virtual void destroyShadowSubtree() OVERRIDE FINAL;
     virtual void disabledAttributeChanged() OVERRIDE FINAL;
-    virtual bool willCancelFocus(bool restorePreviousSelection, FocusDirection) OVERRIDE;
     virtual void forwardEvent(Event*) OVERRIDE FINAL;
-    virtual void handleFocusEvent(FocusDirection) OVERRIDE;
+    virtual void handleFocusEvent(Node* oldFocusedNode, FocusDirection) OVERRIDE;
     virtual void handleKeydownEvent(KeyboardEvent*) OVERRIDE FINAL;
     virtual bool hasBadInput() const OVERRIDE;
     virtual bool hasCustomFocusLogic() const OVERRIDE FINAL;

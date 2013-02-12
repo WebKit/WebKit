@@ -89,7 +89,9 @@ public:
     void disabledStateChanged();
     Element* fieldsWrapperElement() const;
     void focusIfNoFocus();
-    void focusByOwner();
+    // If oldFocusedNode is one of sub-fields, focus on it. Otherwise focus on
+    // the first sub-field.
+    void focusByOwner(Node* oldFocusedNode = 0);
     bool hasFocusedField();
     void readOnlyStateChanged();
     void removeEditControlOwner() { m_editControlOwner = 0; }

@@ -241,18 +241,15 @@ void BaseMultipleFieldsDateAndTimeInputType::destroyShadowSubtree()
     BaseDateAndTimeInputType::destroyShadowSubtree();
 }
 
-bool BaseMultipleFieldsDateAndTimeInputType::willCancelFocus(bool restorePreviousSelection, FocusDirection direction)
-{
-    return direction == FocusDirectionNone && m_dateTimeEditElement && m_dateTimeEditElement->hasFocusedField();
-}
-
-void BaseMultipleFieldsDateAndTimeInputType::handleFocusEvent(FocusDirection direction)
+void BaseMultipleFieldsDateAndTimeInputType::handleFocusEvent(Node* oldFocusedNode, FocusDirection direction)
 {
     if (!m_dateTimeEditElement)
         return;
     if (direction == FocusDirectionBackward) {
         if (element()->document()->page())
             element()->document()->page()->focusController()->advanceFocus(direction, 0);
+    } else if (direction == FocusDirectionNone) {
+        m_dateTimeEditElement->focusByOwner(oldFocusedNode);
     } else
         m_dateTimeEditElement->focusByOwner();
 }

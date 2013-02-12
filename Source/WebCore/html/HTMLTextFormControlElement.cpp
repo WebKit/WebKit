@@ -88,7 +88,7 @@ void HTMLTextFormControlElement::dispatchFocusEvent(PassRefPtr<Node> oldFocusedN
 {
     if (supportsPlaceholder())
         updatePlaceholderVisibility(false);
-    handleFocusEvent(direction);
+    handleFocusEvent(oldFocusedNode.get(), direction);
     HTMLFormControlElementWithState::dispatchFocusEvent(oldFocusedNode, direction);
 }
 
