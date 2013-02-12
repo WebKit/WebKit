@@ -37,7 +37,7 @@ function extension_testOnSelectionChanged(nextTest)
         nextTest();
     }
     webInspector.panels.elements.onSelectionChanged.addListener(onSelectionChanged);
-    webInspector.inspectedWindow.eval("inspect(document.body.children[0])");
+    webInspector.inspectedWindow.eval("inspect(document.body.children[0]), 0");
 }
 
 function extension_testOnRequestFinished(nextTest)
