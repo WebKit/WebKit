@@ -1,0 +1,65 @@
+<html>
+<head>
+<script src="../inspector/inspector-test.js"></script>
+<script>
+function throwException() {
+    throw 2013;
+}
+
+function baz()
+{
+    throwException();
+}
+
+function bar(callback)
+{
+    callback()
+}
+
+function foo()
+{
+    bar(baz.bind(this));
+}
+
+
+function handleLoaded()
+{
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+    setTimeout(showInspectorAndRunTest, 0);
+    foo();
+}
+
+
+function showInspectorAndRunTest()
+{
+    if (window.testRunner)
+        testRunner.showWebInspector();
+    runTest();
+}
+
+function test()
+{
+    if (WebInspector.console.messages.length !== 1)
+        InspectorTest.addResult("FAIL: found too many console messages: " + WebInspector.console.messages.length);
+
+    var message = WebInspector.console.messages[0];
+    var stack = message.stackTrace;
+    if (stack)
+        InspectorTest.addResult("FAIL: found message with stack trace");
+    else
+        InspectorTest.addResult("SUCCESS: message doesn't have stack trace");
+
+    InspectorTest.addResult("TEST COMPLETE.");
+    InspectorTest.completeTest();
+}
+
+</script>
+
+</head>
+<body onload="handleLoaded()">
+<p>
+Tests that console will NOT contain stack trace for exception thrown when inspector front-end was closed. <a href="https://bugs.webkit.org/show_bug.cgi?id=109427">Bug 109427.</a>
+</p>
+</body>
+</html>

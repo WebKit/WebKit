@@ -1,0 +1,6 @@
+CONSOLE MESSAGE: 2013
+Tests that console will NOT contain stack trace for exception thrown when inspector front-end was closed. Bug 109427.
+
+SUCCESS: message doesn't have stack trace
+TEST COMPLETE.
+
