@@ -77,10 +77,27 @@ WebInspector.TextUtils = {
      * @param {string} char
      * @return {boolean}
      */
+    isOpeningBraceChar: function(char)
+    {
+        return char === "(" || char === "{";
+    },
+
+    /**
+     * @param {string} char
+     * @return {boolean}
+     */
+    isClosingBraceChar: function(char)
+    {
+        return char === ")" || char === "}";
+    },
+
+    /**
+     * @param {string} char
+     * @return {boolean}
+     */
     isBraceChar: function(char)
     {
-        return char === "(" || char === ")" ||
-            char === "{" || char === "}";
+        return WebInspector.TextUtils.isOpeningBraceChar(char) || WebInspector.TextUtils.isClosingBraceChar(char);
     }
 }
 

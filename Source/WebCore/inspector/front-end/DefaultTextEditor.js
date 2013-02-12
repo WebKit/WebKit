@@ -3404,6 +3404,27 @@ WebInspector.TextEditorMainPanel.BraceHighlightController = function(textEditor,
 
 WebInspector.TextEditorMainPanel.BraceHighlightController.prototype = {
     /**
+     * @param {string} line
+     * @param {number} column
+     * @return {number}
+     */
+    activeBraceColumnForCursorPosition: function(line, column)
+    {
+        var char = line.charAt(column);
+        if (WebInspector.TextUtils.isOpeningBraceChar(char))
+            return column;
+
+        var previousChar = line.charAt(column - 1);
+        if (WebInspector.TextUtils.isBraceChar(previousChar))
+            return column - 1;
+
+        if (WebInspector.TextUtils.isBraceChar(char))
+            return column;
+        else
+            return -1;
+    },
+
+    /**
      * @param {WebInspector.TextRange} selectionRange
      */
     handleSelectionChange: function(selectionRange)
@@ -3420,8 +3441,9 @@ WebInspector.TextEditorMainPanel.BraceHighlightController.prototype = {
         var lineNumber = selectionRange.startLine;
         var column = selectionRange.startColumn;
         var line = this._textModel.line(lineNumber);
-        if (column > 0 && WebInspector.TextUtils.isBraceChar(line.charAt(column - 1)))
-            --column;
+        column = this.activeBraceColumnForCursorPosition(line, column);
+        if (column < 0)
+            return;
 
         var enclosingBraces = this._braceMatcher.enclosingBraces(lineNumber, column);
         if (!enclosingBraces)
