@@ -1,3 +1,26 @@
+2013-02-11  Oliver Hunt  <oliver@apple.com>
+
+        Make JSC API more NULL tolerant
+        https://bugs.webkit.org/show_bug.cgi?id=109515
+
+        Reviewed by Mark Hahnenberg.
+
+        We do so much marshalling for the C API these days anyway that a single null
+        check isn't a performance issue.  Yet the existing "null is unsafe" behaviour
+        leads to crashes in embedding applications whenever there's an untested code
+        path, so it seems having defined behaviour is superior.
+
+        * API/APICast.h:
+        (toJS):
+        (toJSForGC):
+        * API/JSObjectRef.cpp:
+        (JSObjectIsFunction):
+        (JSObjectCallAsFunction):
+        (JSObjectIsConstructor):
+        (JSObjectCallAsConstructor):
+        * API/tests/testapi.c:
+        (main):
+
 2013-02-11  Filip Pizlo  <fpizlo@apple.com>
 
         Unreviewed, adding a FIXME to remind ourselves of a bug.

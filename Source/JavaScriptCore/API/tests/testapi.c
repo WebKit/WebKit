@@ -1128,6 +1128,7 @@ int main(int argc, char* argv[])
     free(buffer);
     JSValueRef jsCFEmptyStringWithCharacters = JSValueMakeString(context, jsCFEmptyIStringWithCharacters);
 
+    ASSERT(JSValueGetType(context, NULL) == kJSTypeNull);
     ASSERT(JSValueGetType(context, jsUndefined) == kJSTypeUndefined);
     ASSERT(JSValueGetType(context, jsNull) == kJSTypeNull);
     ASSERT(JSValueGetType(context, jsTrue) == kJSTypeBoolean);
@@ -1141,6 +1142,17 @@ int main(int argc, char* argv[])
     ASSERT(JSValueGetType(context, jsCFStringWithCharacters) == kJSTypeString);
     ASSERT(JSValueGetType(context, jsCFEmptyString) == kJSTypeString);
     ASSERT(JSValueGetType(context, jsCFEmptyStringWithCharacters) == kJSTypeString);
+
+    ASSERT(!JSValueIsBoolean(context, NULL));
+    ASSERT(!JSValueIsObject(context, NULL));
+    ASSERT(!JSValueIsString(context, NULL));
+    ASSERT(!JSValueIsNumber(context, NULL));
+    ASSERT(!JSValueIsUndefined(context, NULL));
+    ASSERT(JSValueIsNull(context, NULL));
+    ASSERT(!JSObjectCallAsFunction(context, NULL, NULL, 0, NULL, NULL));
+    ASSERT(!JSObjectCallAsConstructor(context, NULL, 0, NULL, NULL));
+    ASSERT(!JSObjectIsConstructor(context, NULL));
+    ASSERT(!JSObjectIsFunction(context, NULL));
 
     JSStringRef nullString = JSStringCreateWithUTF8CString(0);
     const JSChar* characters = JSStringGetCharactersPtr(nullString);

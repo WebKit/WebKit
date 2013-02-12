@@ -63,23 +63,24 @@ inline JSC::ExecState* toJS(JSGlobalContextRef c)
 inline JSC::JSValue toJS(JSC::ExecState* exec, JSValueRef v)
 {
     ASSERT_UNUSED(exec, exec);
-    ASSERT(v);
 #if USE(JSVALUE32_64)
     JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
     if (!jsCell)
-        return JSC::JSValue();
+        return JSC::jsNull();
     if (jsCell->isAPIValueWrapper())
         return JSC::jsCast<JSC::JSAPIValueWrapper*>(jsCell)->value();
     return jsCell;
 #else
-    return JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
+    JSC::JSValue result = JSC::JSValue::decode(reinterpret_cast<JSC::EncodedJSValue>(const_cast<OpaqueJSValue*>(v)));
+    if (!result)
+        return JSC::jsNull();
+    return result;
 #endif
 }
 
 inline JSC::JSValue toJSForGC(JSC::ExecState* exec, JSValueRef v)
 {
     ASSERT_UNUSED(exec, exec);
-    ASSERT(v);
 #if USE(JSVALUE32_64)
     JSC::JSCell* jsCell = reinterpret_cast<JSC::JSCell*>(const_cast<OpaqueJSValue*>(v));
     if (!jsCell)
