@@ -569,10 +569,6 @@ Bug(EFL) svg/custom/image-with-prefix-in-webarchive.svg
 # The EFL port uses different keyboard accelerators than Safari (via Chromium).
 Bug(EFL) fast/events/option-tab.html
 
-# These tests are valid for ports where RenderTheme::shouldShowPlaceholderWhenFocused() returns true.
-Bug(EFL) fast/forms/input-placeholder-paint-order.html [ Missing ]
-Bug(EFL) fast/forms/textarea/textarea-placeholder-paint-order.html [ Missing ]
-
 # Implementing copy{En,De}codedHostName only to test them does not make sense
 webkit.org/b/86080 fast/encoding/idn-security.html [ Skip ]
 
