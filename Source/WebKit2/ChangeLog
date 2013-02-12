@@ -1,5 +1,11 @@
 2013-02-12  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Typo fix after r142663.
+
+        * GNUmakefile.list.am:
+
+2013-02-12  Csaba Osztrogonác  <ossy@webkit.org>
+
         [WK2] Unreviewed trivial buildfix after r142630 and r142651.
 
         * CMakeLists.txt:
