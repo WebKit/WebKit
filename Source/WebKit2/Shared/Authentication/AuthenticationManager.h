@@ -62,6 +62,8 @@ public:
     void useCredentialForChallenge(uint64_t challengeID, const WebCore::Credential&, const PlatformCertificateInfo&);
     void continueWithoutCredentialForChallenge(uint64_t challengeID);
     void cancelChallenge(uint64_t challengeID);
+    
+    uint64_t outstandingAuthenticationChallengeCount() const { return m_challenges.size(); }
 
 private:
     // CoreIPC::MessageReceiver

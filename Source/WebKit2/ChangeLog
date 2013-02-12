@@ -1,3 +1,69 @@
+2013-02-12  Brady Eidson  <beidson@apple.com>
+
+        Add WKContext API to retrieve basic network process statistics
+        https://bugs.webkit.org/show_bug.cgi?id=109329
+
+        Reviewed by Sam Weinig.
+
+        This patch adds a WKContextGetStatisticsWithOptions which allows the client to ask for
+        certain types of statistics.
+
+        It also expands the "get statistics" callback mechanism to allow for a statistics request 
+        to be answered by multiple child processes.
+
+        That mechanism still has some rough edges but will eventually allow for getting statistics
+        from multiple web processes, as well.
+
+        * NetworkProcess/HostRecord.cpp:
+        (WebKit::HostRecord::pendingRequestCount):
+        (WebKit::HostRecord::activeLoadCount):
+        * NetworkProcess/HostRecord.h:
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::getNetworkProcessStatistics):
+        * NetworkProcess/NetworkProcess.h:
+        * NetworkProcess/NetworkProcess.messages.in:
+
+        * NetworkProcess/NetworkResourceLoadScheduler.cpp:
+        (WebKit::NetworkResourceLoadScheduler::hostsPendingCount):
+        (WebKit::NetworkResourceLoadScheduler::loadsPendingCount):
+        (WebKit::NetworkResourceLoadScheduler::hostsActiveCount):
+        (WebKit::NetworkResourceLoadScheduler::loadsActiveCount):
+        * NetworkProcess/NetworkResourceLoadScheduler.h:
+
+        * Shared/Authentication/AuthenticationManager.h:
+        (WebKit::AuthenticationManager::outstandingAuthenticationChallengeCount):
+        * Shared/Downloads/DownloadManager.h:
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextGetStatistics):
+        (WKContextGetStatisticsWithOptions):
+        * UIProcess/API/C/WKContext.h:
+
+        * UIProcess/StatisticsRequest.cpp: Added.
+        (WebKit::StatisticsRequest::StatisticsRequest):
+        (WebKit::StatisticsRequest::~StatisticsRequest):
+        (WebKit::StatisticsRequest::addOutstandingRequest):
+        (WebKit::addToDictionaryFromHashMap):
+        (WebKit::createDictionaryFromHashMap):
+        (WebKit::StatisticsRequest::completedRequest):
+        * UIProcess/StatisticsRequest.h: Added.
+        (WebKit::StatisticsRequest::create):
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::networkingProcessConnection):
+        (WebKit::WebContext::getStatistics):
+        (WebKit::WebContext::requestWebContentStatistics):
+        (WebKit::WebContext::requestNetworkingStatistics):
+        (WebKit::WebContext::didGetStatistics):
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContext.messages.in:
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::getWebCoreStatistics):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-02-12  Anders Carlsson  <andersca@apple.com>
 
         Build fix.

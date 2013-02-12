@@ -57,7 +57,13 @@ public:
 
     void receivedRedirect(SchedulableLoader*, const WebCore::KURL& redirectURL);
     void servePendingRequests(WebCore::ResourceLoadPriority = WebCore::ResourceLoadPriorityVeryLow);
-    
+
+    // For NetworkProcess statistics reporting.
+    uint64_t hostsPendingCount() const;
+    uint64_t loadsPendingCount() const;
+    uint64_t hostsActiveCount() const;
+    uint64_t loadsActiveCount() const;
+
 private:
     enum CreateHostPolicy {
         CreateIfNotFound,

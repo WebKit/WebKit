@@ -35,6 +35,7 @@
 #include "PlugInAutoStartProvider.h"
 #include "PluginInfoStore.h"
 #include "ProcessModel.h"
+#include "StatisticsRequest.h"
 #include "StorageManager.h"
 #include "VisitedLinkProvider.h"
 #include "WebContextClient.h"
@@ -242,8 +243,9 @@ public:
     // Defaults to false.
     void setHTTPPipeliningEnabled(bool);
     bool httpPipeliningEnabled() const;
+
+    void getStatistics(uint32_t statisticsMask, PassRefPtr<DictionaryCallback>);
     
-    void getWebCoreStatistics(PassRefPtr<DictionaryCallback>);
     void garbageCollectJavaScriptObjects();
     void setJavaScriptGarbageCollectorTimerEnabled(bool flag);
 
@@ -300,6 +302,9 @@ private:
 
     WebProcessProxy* createNewWebProcess();
 
+    void requestWebContentStatistics(StatisticsRequest*);
+    void requestNetworkingStatistics(StatisticsRequest*);
+
 #if ENABLE(NETWORK_PROCESS)
     void platformInitializeNetworkProcess(NetworkProcessCreationParameters&);
 #endif
@@ -327,7 +332,7 @@ private:
     void dummy(bool&);
 #endif
 
-    void didGetWebCoreStatistics(const StatisticsData&, uint64_t callbackID);
+    void didGetStatistics(const StatisticsData&, uint64_t callbackID);
         
     // Implemented in generated WebContextMessageReceiver.cpp
     void didReceiveWebContextMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
@@ -453,6 +458,7 @@ private:
 #endif
     
     HashMap<uint64_t, RefPtr<DictionaryCallback> > m_dictionaryCallbacks;
+    HashMap<uint64_t, RefPtr<StatisticsRequest> > m_statisticsRequests;
 
 #if PLATFORM(MAC)
     bool m_processSuppressionEnabled;

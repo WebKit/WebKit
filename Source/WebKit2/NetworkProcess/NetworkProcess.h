@@ -107,6 +107,8 @@ private:
 
     void allowSpecificHTTPSCertificateForHost(const PlatformCertificateInfo&, const String& host);
 
+    void getNetworkProcessStatistics(uint64_t callbackID);
+
     // Platform Helpers
     void platformSetCacheModel(CacheModel);
 

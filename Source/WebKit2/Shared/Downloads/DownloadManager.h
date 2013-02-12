@@ -69,6 +69,7 @@ public:
 
     void downloadFinished(Download*);
     bool isDownloading() const { return !m_downloads.isEmpty(); }
+    uint64_t activeDownloadCount() const { return m_downloads.size(); }
 
     void didCreateDownload();
     void didDestroyDownload();

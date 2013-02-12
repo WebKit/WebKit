@@ -25,7 +25,7 @@ messages -> WebContext LegacyReceiver {
     # Visited link provider messages.
     AddVisitedLinkHash(uint64_t linkHash)
 
-    DidGetWebCoreStatistics(WebKit::StatisticsData statisticsData, uint64_t callbackID)
+    DidGetStatistics(WebKit::StatisticsData statisticsData, uint64_t callbackID)
 
 #if PLATFORM(MAC)
     # Pasteboard messages.

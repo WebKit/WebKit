@@ -58,6 +58,9 @@ public:
     bool hasRequests() const;
     void servePendingRequests(WebCore::ResourceLoadPriority);
 
+    uint64_t pendingRequestCount() const;
+    uint64_t activeLoadCount() const;
+
 private:
     HostRecord(const String& name, int maxRequestsInFlight);
 

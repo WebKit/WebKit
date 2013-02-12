@@ -303,9 +303,14 @@ CoreIPC::Connection* WebContext::networkingProcessConnection()
 {
     switch (m_processModel) {
     case ProcessModelSharedSecondaryProcess:
+#if ENABLE(NETWORK_PROCESS)
+        if (m_usesNetworkProcess)
+            return m_networkProcess->connection();
+#endif
         return m_processes[0]->connection();
     case ProcessModelMultipleSecondaryProcesses:
 #if ENABLE(NETWORK_PROCESS)
+        ASSERT(m_usesNetworkProcess);
         return m_networkProcess->connection();
 #else
         break;
@@ -1071,32 +1076,56 @@ bool WebContext::httpPipeliningEnabled() const
 #endif
 }
 
-void WebContext::getWebCoreStatistics(PassRefPtr<DictionaryCallback> callback)
+void WebContext::getStatistics(uint32_t statisticsMask, PassRefPtr<DictionaryCallback> callback)
+{
+    if (!statisticsMask) {
+        callback->invalidate();
+        return;
+    }
+
+    RefPtr<StatisticsRequest> request = StatisticsRequest::create(callback);
+
+    if (statisticsMask & StatisticsRequestTypeWebContent)
+        requestWebContentStatistics(request.get());
+    
+    if (statisticsMask & StatisticsRequestTypeNetworking)
+        requestNetworkingStatistics(request.get());
+}
+
+void WebContext::requestWebContentStatistics(StatisticsRequest* request)
 {
     if (m_processModel == ProcessModelSharedSecondaryProcess) {
-        if (m_processes.isEmpty()) {
-            callback->invalidate();
+        if (m_processes.isEmpty())
             return;
-        }
         
-        uint64_t callbackID = callback->callbackID();
-        m_dictionaryCallbacks.set(callbackID, callback.get());
-        m_processes[0]->send(Messages::WebProcess::GetWebCoreStatistics(callbackID), 0);
+        uint64_t requestID = request->addOutstandingRequest();
+        m_statisticsRequests.set(requestID, request);
+        m_processes[0]->send(Messages::WebProcess::GetWebCoreStatistics(requestID), 0);
 
     } else {
-        // FIXME (Multi-WebProcess): <rdar://problem/12239483> Make downloading work.
-        callback->invalidate();
+        // FIXME (Multi-WebProcess) <rdar://problem/13200059>: Make getting statistics from multiple WebProcesses work.
     }
 }
 
-static PassRefPtr<MutableDictionary> createDictionaryFromHashMap(const HashMap<String, uint64_t>& map)
+void WebContext::requestNetworkingStatistics(StatisticsRequest* request)
 {
-    RefPtr<MutableDictionary> result = MutableDictionary::create();
-    HashMap<String, uint64_t>::const_iterator end = map.end();
-    for (HashMap<String, uint64_t>::const_iterator it = map.begin(); it != end; ++it)
-        result->set(it->key, RefPtr<WebUInt64>(WebUInt64::create(it->value)).get());
-    
-    return result;
+    bool networkProcessUnavailable;
+#if ENABLE(NETWORK_PROCESS)
+    networkProcessUnavailable = !m_usesNetworkProcess || !m_networkProcess;
+#else
+    networkProcessUnavailable = true;
+#endif
+
+    if (networkProcessUnavailable) {
+        LOG_ERROR("Attempt to get NetworkProcess statistics but the NetworkProcess is unavailable");
+        return;
+    }
+
+#if ENABLE(NETWORK_PROCESS)
+    uint64_t requestID = request->addOutstandingRequest();
+    m_statisticsRequests.set(requestID, request);
+    m_networkProcess->send(Messages::NetworkProcess::GetNetworkProcessStatistics(requestID), 0);
+#endif
 }
 
 #if !PLATFORM(MAC)
@@ -1105,25 +1134,15 @@ void WebContext::dummy(bool&)
 }
 #endif
 
-void WebContext::didGetWebCoreStatistics(const StatisticsData& statisticsData, uint64_t callbackID)
+void WebContext::didGetStatistics(const StatisticsData& statisticsData, uint64_t requestID)
 {
-    RefPtr<DictionaryCallback> callback = m_dictionaryCallbacks.take(callbackID);
-    if (!callback) {
-        // FIXME: Log error or assert.
+    RefPtr<StatisticsRequest> request = m_statisticsRequests.take(requestID);
+    if (!request) {
+        LOG_ERROR("Cannot report networking statistics.");
         return;
     }
 
-    RefPtr<MutableDictionary> statistics = createDictionaryFromHashMap(statisticsData.statisticsNumbers);
-    statistics->set("JavaScriptProtectedObjectTypeCounts", createDictionaryFromHashMap(statisticsData.javaScriptProtectedObjectTypeCounts).get());
-    statistics->set("JavaScriptObjectTypeCounts", createDictionaryFromHashMap(statisticsData.javaScriptObjectTypeCounts).get());
-    
-    size_t cacheStatisticsCount = statisticsData.webCoreCacheStatistics.size();
-    Vector<RefPtr<APIObject> > cacheStatisticsVector(cacheStatisticsCount);
-    for (size_t i = 0; i < cacheStatisticsCount; ++i)
-        cacheStatisticsVector[i] = createDictionaryFromHashMap(statisticsData.webCoreCacheStatistics[i]);
-    statistics->set("WebCoreCacheStatistics", ImmutableArray::adopt(cacheStatisticsVector).get());
-    
-    callback->performCallbackWithReturnValue(statistics.get());
+    request->completedRequest(requestID, statisticsData);
 }
     
 void WebContext::garbageCollectJavaScriptObjects()

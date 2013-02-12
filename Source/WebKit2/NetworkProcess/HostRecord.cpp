@@ -115,6 +115,21 @@ bool HostRecord::hasRequests() const
     return false;
 }
 
+uint64_t HostRecord::pendingRequestCount() const
+{
+    uint64_t count = 0;
+
+    for (unsigned p = 0; p <= ResourceLoadPriorityHighest; p++)
+        count += m_loadersPending[p].size();
+
+    return count;
+}
+
+uint64_t HostRecord::activeLoadCount() const
+{
+    return m_loadersInProgress.size();
+}
+
 void HostRecord::servePendingRequestsForQueue(LoaderQueue& queue, ResourceLoadPriority priority)
 {
     while (!queue.isEmpty()) {

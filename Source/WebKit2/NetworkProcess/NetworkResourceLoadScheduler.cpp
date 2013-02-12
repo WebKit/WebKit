@@ -4,7 +4,8 @@
 #include "HostRecord.h"
 #include "Logging.h"
 #include "NetworkConnectionToWebProcess.h"
-#include "NetworkProcessconnectionMessages.h"
+#include "NetworkProcess.h"
+#include "NetworkProcessConnectionMessages.h"
 #include "NetworkResourceLoadParameters.h"
 #include "NetworkResourceLoader.h"
 #include "SyncNetworkResourceLoader.h"
@@ -172,6 +173,57 @@ void NetworkResourceLoadScheduler::scheduleRemoveLoader(SchedulableLoader* loade
         removeScheduledLoadersCalled = true;
         callOnMainThread(NetworkResourceLoadScheduler::removeScheduledLoaders, this);
     }
+}
+
+uint64_t NetworkResourceLoadScheduler::hostsPendingCount() const
+{
+    uint64_t count = m_nonHTTPProtocolHost->pendingRequestCount() ? 1 : 0;
+
+    HostMap::const_iterator end = m_hosts.end();
+    for (HostMap::const_iterator i = m_hosts.begin(); i != end; ++i) {
+        if (i->value->pendingRequestCount())
+            ++count;
+    }
+
+    return count;
+}
+
+uint64_t NetworkResourceLoadScheduler::loadsPendingCount() const
+{
+    uint64_t count = m_nonHTTPProtocolHost->pendingRequestCount();
+
+    HostMap::const_iterator end = m_hosts.end();
+    for (HostMap::const_iterator i = m_hosts.begin(); i != end; ++i)
+        count += i->value->pendingRequestCount();
+
+    return count;
+}
+
+uint64_t NetworkResourceLoadScheduler::hostsActiveCount() const
+{
+    uint64_t count = 0;
+
+    if (m_nonHTTPProtocolHost->activeLoadCount())
+        count = 1;
+
+    HostMap::const_iterator end = m_hosts.end();
+    for (HostMap::const_iterator i = m_hosts.begin(); i != end; ++i) {
+        if (i->value->activeLoadCount())
+            ++count;
+    }
+
+    return count;
+}
+
+uint64_t NetworkResourceLoadScheduler::loadsActiveCount() const
+{
+    uint64_t count = m_nonHTTPProtocolHost->activeLoadCount();
+
+    HostMap::const_iterator end = m_hosts.end();
+    for (HostMap::const_iterator i = m_hosts.begin(); i != end; ++i)
+        count += i->value->activeLoadCount();
+
+    return count;
 }
 
 } // namespace WebKit

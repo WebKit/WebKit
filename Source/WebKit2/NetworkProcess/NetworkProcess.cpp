@@ -37,6 +37,8 @@
 #include "NetworkProcessCreationParameters.h"
 #include "NetworkProcessProxyMessages.h"
 #include "RemoteNetworkingContext.h"
+#include "StatisticsData.h"
+#include "WebContextMessages.h"
 #include "WebCookieManager.h"
 #include <WebCore/InitializeLogging.h>
 #include <WebCore/ResourceRequest.h>
@@ -214,6 +216,22 @@ void NetworkProcess::setCacheModel(uint32_t cm)
         m_cacheModel = cacheModel;
         platformSetCacheModel(cacheModel);
     }
+}
+
+void NetworkProcess::getNetworkProcessStatistics(uint64_t callbackID)
+{
+    NetworkResourceLoadScheduler& scheduler = NetworkProcess::shared().networkResourceLoadScheduler();
+
+    StatisticsData data;
+
+    data.statisticsNumbers.set("HostsPendingCount", scheduler.hostsPendingCount());
+    data.statisticsNumbers.set("HostsActiveCount", scheduler.hostsActiveCount());
+    data.statisticsNumbers.set("LoadsPendingCount", scheduler.loadsPendingCount());
+    data.statisticsNumbers.set("LoadsActiveCount", scheduler.loadsActiveCount());
+    data.statisticsNumbers.set("DownloadsActiveCount", shared().downloadManager().activeDownloadCount());
+    data.statisticsNumbers.set("OutstandingAuthenticationChallengesCount", shared().authenticationManager().outstandingAuthenticationChallengeCount());
+
+    parentProcessConnection()->send(Messages::WebContext::DidGetStatistics(data, callbackID), 0);
 }
 
 #if !PLATFORM(MAC)
