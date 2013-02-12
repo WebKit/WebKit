@@ -848,22 +848,22 @@ bool AbstractState::execute(unsigned indexInBlock)
                 node->setCanExit(false);
                 break;
             } 
+            if (left->shouldSpeculateObject() && right->shouldSpeculateObject()) {
+                node->setCanExit(true);
+                forNode(left).filter(SpecObjectMask);
+                forNode(right).filter(SpecObjectMask);
+                break;
+            }
             if (left->shouldSpeculateObject() && right->shouldSpeculateObjectOrOther()) {
                 node->setCanExit(true);
-                forNode(left).filter(SpecCell & ~SpecString);
-                forNode(right).filter((SpecCell & ~SpecString) | SpecOther);
+                forNode(left).filter(SpecObjectMask);
+                forNode(right).filter(SpecObjectMask | SpecOther);
                 break;
             }
             if (left->shouldSpeculateObjectOrOther() && right->shouldSpeculateObject()) {
                 node->setCanExit(true);
-                forNode(left).filter((SpecCell & ~SpecString) | SpecOther);
-                forNode(right).filter(SpecCell & ~SpecString);
-                break;
-            }
-            if (left->shouldSpeculateObject() && right->shouldSpeculateObject()) {
-                node->setCanExit(true);
-                forNode(left).filter(SpecCell & ~SpecString);
-                forNode(right).filter(SpecCell & ~SpecString);
+                forNode(left).filter(SpecObjectMask | SpecOther);
+                forNode(right).filter(SpecObjectMask);
                 break;
             }
  
