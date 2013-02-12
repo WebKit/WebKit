@@ -122,6 +122,7 @@ void TextureMapperLayerClientQt::renderCompositedLayers(GraphicsContext* context
     m_textureMapper->beginPainting();
     m_textureMapper->beginClip(matrix, clip);
     m_rootTextureMapperLayer->paint();
+    m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get(), IntPoint::zero(), matrix);
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
 }

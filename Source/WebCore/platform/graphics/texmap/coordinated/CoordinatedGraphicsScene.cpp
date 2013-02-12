@@ -32,7 +32,6 @@
 #include "TextureMapperLayer.h"
 #include <OpenGLShims.h>
 #include <wtf/Atomics.h>
-#include <wtf/CurrentTime.h>
 #include <wtf/MainThread.h>
 
 #if ENABLE(CSS_SHADERS)
@@ -67,21 +66,8 @@ CoordinatedGraphicsScene::CoordinatedGraphicsScene(CoordinatedGraphicsSceneClien
 #endif
     , m_backgroundColor(Color::white)
     , m_setDrawsBackground(false)
-    , m_isShowingFPS(false)
-    , m_fpsInterval(0)
-    , m_fpsTimestamp(0)
-    , m_lastFPS(0)
-    , m_frameCount(0)
 {
     ASSERT(isMainThread());
-
-    String showFPSEnvironment = getenv("WEBKIT_SHOW_FPS");
-    bool ok = false;
-    m_fpsInterval = showFPSEnvironment.toDouble(&ok);
-    if (ok && m_fpsInterval) {
-        m_isShowingFPS = true;
-        m_fpsTimestamp = WTF::currentTime();
-    }
 }
 
 CoordinatedGraphicsScene::~CoordinatedGraphicsScene()
@@ -128,8 +114,7 @@ void CoordinatedGraphicsScene::paintToCurrentGLContext(const TransformationMatri
     }
 
     layer->paint();
-    if (m_isShowingFPS)
-        updateFPS(clipRect.location(), matrix);
+    m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get(), clipRect.location(), matrix);
     m_textureMapper->endClip();
     m_textureMapper->endPainting();
 
@@ -182,8 +167,7 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(cairo_t* painter)
         m_textureMapper->drawSolidColor(clipRect, TransformationMatrix(), m_backgroundColor);
 
     layer->paint();
-    if (m_isShowingFPS)
-        updateFPS(clipRect.location());
+    m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get(), clipRect.location());
     m_textureMapper->endPainting();
     m_textureMapper->setGraphicsContext(0);
 }
@@ -693,20 +677,6 @@ void CoordinatedGraphicsScene::setActive(bool active)
 void CoordinatedGraphicsScene::setBackgroundColor(const Color& color)
 {
     m_backgroundColor = color;
-}
-
-void CoordinatedGraphicsScene::updateFPS(const FloatPoint& location, const TransformationMatrix& matrix)
-{
-    m_frameCount++;
-    double delta = WTF::currentTime() - m_fpsTimestamp;
-    if (delta >= m_fpsInterval) {
-        m_lastFPS = int(m_frameCount / delta);
-        m_frameCount = 0;
-        m_fpsTimestamp += delta;
-    }
-
-    // FIXME: drawRepaintCounter() should save a texture and re-use whenever possible.
-    m_textureMapper->drawRepaintCounter(m_lastFPS, Color::black, location, matrix);
 }
 
 } // namespace WebCore

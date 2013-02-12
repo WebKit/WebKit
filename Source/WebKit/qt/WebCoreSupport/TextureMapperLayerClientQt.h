@@ -25,6 +25,7 @@ class QWebFrameAdapter;
 
 #include "GraphicsLayer.h"
 #include "TextureMapper.h"
+#include "TextureMapperFPSCounter.h"
 #include "Timer.h"
 #include <wtf/OwnPtr.h>
 
@@ -53,6 +54,7 @@ private:
     Timer<TextureMapperLayerClientQt> m_syncTimer;
     WebCore::TextureMapperLayer* m_rootTextureMapperLayer;
     OwnPtr<WebCore::TextureMapper> m_textureMapper;
+    WebCore::TextureMapperFPSCounter m_fpsCounter;
 };
 #endif
 

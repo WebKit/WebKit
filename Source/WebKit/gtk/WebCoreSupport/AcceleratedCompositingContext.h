@@ -34,6 +34,7 @@
 #if USE(TEXTURE_MAPPER_GL)
 #include "GLContext.h"
 #include "RedirectedXCompositeWindow.h"
+#include "TextureMapperFPSCounter.h"
 #endif
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -88,6 +89,7 @@ private:
     double m_lastFlushTime;
     double m_redrawPendingTime;
     bool m_needsExtraFlush;
+    WebCore::TextureMapperFPSCounter m_fpsCounter;
 
     void layerFlushTimerFired();
     void stopAnyPendingLayerFlush();

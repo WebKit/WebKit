@@ -170,7 +170,7 @@ void TextureMapperImageBuffer::drawBorder(const Color&, float /* borderWidth */,
     notImplemented();
 }
 
-void TextureMapperImageBuffer::drawRepaintCounter(int /* repaintCount */, const Color&, const FloatPoint&, const TransformationMatrix&)
+void TextureMapperImageBuffer::drawNumber(int /* number */, const Color&, const FloatPoint&, const TransformationMatrix&)
 {
     notImplemented();
 }

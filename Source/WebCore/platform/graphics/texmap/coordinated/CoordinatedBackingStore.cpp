@@ -169,7 +169,7 @@ void CoordinatedBackingStore::drawRepaintCounter(TextureMapper* textureMapper, i
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     CoordinatedBackingStoreTileMap::iterator end = m_tiles.end();
     for (CoordinatedBackingStoreTileMap::iterator it = m_tiles.begin(); it != end; ++it)
-        textureMapper->drawRepaintCounter(repaintCount, borderColor, it->value.rect().location(), adjustedTransform);
+        textureMapper->drawNumber(repaintCount, borderColor, it->value.rect().location(), adjustedTransform);
 }
 
 void CoordinatedBackingStore::commitTileOperations(TextureMapper* textureMapper)

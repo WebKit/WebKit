@@ -89,6 +89,7 @@ void AcceleratedCompositingContext::renderLayers()
 
     m_textureMapper->beginPainting();
     m_rootTextureMapperLayer->paint();
+    m_fpsCounter.updateFPSAndDisplay(m_textureMapper.get());
     m_textureMapper->endPainting();
 }
 

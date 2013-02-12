@@ -66,7 +66,7 @@ void TextureMapperTiledBackingStore::drawRepaintCounter(TextureMapper* textureMa
 {
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     for (size_t i = 0; i < m_tiles.size(); ++i)
-        textureMapper->drawRepaintCounter(repaintCount, borderColor, m_tiles[i].rect().location(), adjustedTransform);
+        textureMapper->drawNumber(repaintCount, borderColor, m_tiles[i].rect().location(), adjustedTransform);
 }
 
 void TextureMapperTiledBackingStore::createOrDestroyTilesIfNeeded(const FloatSize& size, const IntSize& tileSize, bool hasAlpha)

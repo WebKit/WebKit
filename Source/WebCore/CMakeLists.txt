@@ -2001,6 +2001,7 @@ set(WebCore_SOURCES
     platform/graphics/texmap/coordinated/UpdateAtlas.cpp
     platform/graphics/texmap/TextureMapper.cpp
     platform/graphics/texmap/TextureMapperBackingStore.cpp
+    platform/graphics/texmap/TextureMapperFPSCounter.cpp
     platform/graphics/texmap/TextureMapperImageBuffer.cpp
     platform/graphics/texmap/TextureMapperLayer.cpp
     platform/graphics/texmap/TextureMapperSurfaceBackingStore.cpp

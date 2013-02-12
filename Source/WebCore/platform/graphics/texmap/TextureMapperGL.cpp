@@ -321,11 +321,12 @@ void TextureMapperGL::drawBorder(const Color& color, float width, const FloatRec
     draw(targetRect, modelViewMatrix, program.get(), GraphicsContext3D::LINE_LOOP, color.hasAlpha() ? ShouldBlend : 0);
 }
 
-void TextureMapperGL::drawRepaintCounter(int repaintCount, const Color& color, const FloatPoint& targetPoint, const TransformationMatrix& modelViewMatrix)
+// FIXME: drawNumber() should save a number texture-atlas and re-use whenever possible.
+void TextureMapperGL::drawNumber(int number, const Color& color, const FloatPoint& targetPoint, const TransformationMatrix& modelViewMatrix)
 {
     int pointSize = 8;
 #if PLATFORM(QT)
-    QString counterString = QString::number(repaintCount);
+    QString counterString = QString::number(number);
 
     QFont font(QString::fromLatin1("Monospace"), pointSize, QFont::Bold);
     font.setStyleHint(QFont::TypeWriter);
@@ -351,7 +352,7 @@ void TextureMapperGL::drawRepaintCounter(int repaintCount, const Color& color, c
     drawTexture(*texture, targetRect, modelViewMatrix, 1.0f, 0, AllEdges);
 
 #elif USE(CAIRO)
-    CString counterString = String::number(repaintCount).ascii();
+    CString counterString = String::number(number).ascii();
     // cairo_text_extents() requires a cairo_t, so dimensions need to be guesstimated.
     int width = counterString.length() * pointSize * 1.2;
     int height = pointSize * 1.5;
@@ -385,7 +386,7 @@ void TextureMapperGL::drawRepaintCounter(int repaintCount, const Color& color, c
     cairo_destroy(cr);
 
 #else
-    UNUSED_PARAM(repaintCount);
+    UNUSED_PARAM(number);
     UNUSED_PARAM(pointSize);
     UNUSED_PARAM(targetPoint);
     UNUSED_PARAM(modelViewMatrix);

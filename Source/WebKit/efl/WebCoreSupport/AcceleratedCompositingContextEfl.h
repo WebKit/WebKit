@@ -25,6 +25,7 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER_GL)
 
+#include "TextureMapperFPSCounter.h"
 #include "ewk_private.h"
 
 namespace WebCore {
@@ -56,6 +57,7 @@ private:
     TextureMapperLayer* m_rootTextureMapperLayer;
 
     RefPtr<GraphicsContext3D> m_context3D;
+    TextureMapperFPSCounter m_fpsCounter;
 };
 
 } // namespace WebCore

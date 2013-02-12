@@ -32,6 +32,7 @@
 #include "RunLoop.h"
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
+#include "TextureMapperFPSCounter.h"
 #include "Timer.h"
 #include <wtf/Functional.h>
 #include <wtf/HashSet.h>
@@ -172,8 +173,6 @@ private:
     void removeBackingStoreIfNeeded(GraphicsLayer*);
     void resetBackingStoreSizeToLayerSize(GraphicsLayer*);
 
-    void updateFPS(const FloatPoint&, const TransformationMatrix& = TransformationMatrix());
-
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!
     Vector<Function<void()> > m_renderQueue;
     Mutex m_renderQueueMutex;
@@ -222,11 +221,7 @@ private:
     CustomFilterProgramMap m_customFilterPrograms;
 #endif
 
-    bool m_isShowingFPS;
-    double m_fpsInterval;
-    double m_fpsTimestamp;
-    int m_lastFPS;
-    int m_frameCount;
+    TextureMapperFPSCounter m_fpsCounter;
 };
 
 } // namespace WebCore
