@@ -86,6 +86,9 @@ WebInspector.FileSystemProjectDelegate.prototype = {
         }
         WebInspector.FileSystemUtils.requestFileContent(this._isolatedFileSystemModel, this._fileSystemPath, filePath, innerCallback.bind(this));
         
+        /**
+         * @param {?string} content
+         */
         function innerCallback(content)
         {
             var contentType = this._contentTypeForPath(filePath);
@@ -128,7 +131,7 @@ WebInspector.FileSystemProjectDelegate.prototype = {
         function contentCallback(content, base64Encoded, mimeType)
         {
             var result = [];
-            if (content)
+            if (content !== null)
                 result = WebInspector.ContentProvider.performSearchInContent(content, query, caseSensitive, isRegex);
             callback(result);
         }
@@ -214,7 +217,7 @@ WebInspector.FileSystemUtils = function()
 {
 }
 
-WebInspector.FileSystemUtils.errorHandler = function(error)
+WebInspector.FileSystemUtils.errorMessage = function(error)
 {
     var msg;
     switch (error.code) {
@@ -238,7 +241,7 @@ WebInspector.FileSystemUtils.errorHandler = function(error)
         break;
     };
 
-    console.error("File system error: " + msg);
+    return "File system error: " + msg;
 }
 
 /**
@@ -296,19 +299,20 @@ WebInspector.FileSystemUtils.requestFilesRecursive = function(isolatedFileSystem
  * @param {WebInspector.IsolatedFileSystemModel} isolatedFileSystemModel
  * @param {string} fileSystemPath
  * @param {string} path
- * @param {function(string)} callback
+ * @param {function(?string)} callback
  */
 WebInspector.FileSystemUtils.requestFileContent = function(isolatedFileSystemModel, fileSystemPath, path, callback)
 {
     WebInspector.FileSystemUtils.requestFileSystem(isolatedFileSystemModel, fileSystemPath, fileSystemLoaded);
 
     var fileSystem;
+    
     /**
      * @param {DOMFileSystem} fs
      */
     function fileSystemLoaded(fs)
     {
-        fs.root.getFile(path, null, fileEntryLoaded, WebInspector.FileSystemUtils.errorHandler);
+        fs.root.getFile(path, null, fileEntryLoaded, errorHandler);
     }
 
     /**
@@ -316,7 +320,7 @@ WebInspector.FileSystemUtils.requestFileContent = function(isolatedFileSystemMod
      */
     function fileEntryLoaded(entry)
     {
-        entry.file(fileLoaded, WebInspector.FileSystemUtils.errorHandler);
+        entry.file(fileLoaded, errorHandler);
     }
 
     /**
@@ -336,6 +340,13 @@ WebInspector.FileSystemUtils.requestFileContent = function(isolatedFileSystemMod
     {
         callback(/** @type {string} */ (this.result));
     }
+
+    function errorHandler(error)
+    {
+        var errorMessage = WebInspector.FileSystemUtils.errorMessage(error);
+        console.error(errorMessage + " when getting content for file '" + (fileSystemPath + "/" + path) + "'");
+        callback(null);
+    }
 }
 
 /**
@@ -350,12 +361,13 @@ WebInspector.FileSystemUtils.setFileContent = function(isolatedFileSystemModel, 
     WebInspector.FileSystemUtils.requestFileSystem(isolatedFileSystemModel, fileSystemPath, fileSystemLoaded);
 
     var fileSystem;
+
     /**
      * @param {DOMFileSystem} fs
      */
     function fileSystemLoaded(fs)
     {
-        fs.root.getFile(path, null, fileEntryLoaded, WebInspector.FileSystemUtils.errorHandler);
+        fs.root.getFile(path, null, fileEntryLoaded, errorHandler);
     }
 
     /**
@@ -363,7 +375,7 @@ WebInspector.FileSystemUtils.setFileContent = function(isolatedFileSystemModel, 
      */
     function fileEntryLoaded(entry)
     {
-        entry.createWriter(fileWriterCreated, WebInspector.FileSystemUtils.errorHandler);
+        entry.createWriter(fileWriterCreated, errorHandler);
     }
 
     /**
@@ -371,7 +383,7 @@ WebInspector.FileSystemUtils.setFileContent = function(isolatedFileSystemModel, 
      */
     function fileWriterCreated(fileWriter)
     {
-        fileWriter.onerror = WebInspector.FileSystemUtils.errorHandler;
+        fileWriter.onerror = errorHandler;
         fileWriter.onwriteend = fileTruncated;
         fileWriter.truncate(0);
 
@@ -385,6 +397,13 @@ WebInspector.FileSystemUtils.setFileContent = function(isolatedFileSystemModel, 
 
     function writerEnd()
     {
+        callback();
+    }
+
+    function errorHandler(error)
+    {
+        var errorMessage = WebInspector.FileSystemUtils.errorMessage(error);
+        console.error(errorMessage + " when setting content for file '" + (fileSystemPath + "/" + path) + "'");
         callback();
     }
 }
@@ -404,7 +423,7 @@ WebInspector.FileSystemUtils._readDirectory = function(dirEntry, callback)
             callback(entries.sort());
         else {
             entries = entries.concat(toArray(results));
-            dirReader.readEntries(innerCallback, WebInspector.FileSystemUtils.errorHandler);
+            dirReader.readEntries(innerCallback, errorHandler);
         }
     }
 
@@ -413,7 +432,14 @@ WebInspector.FileSystemUtils._readDirectory = function(dirEntry, callback)
         return Array.prototype.slice.call(list || [], 0);
     }    
 
-    dirReader.readEntries(innerCallback, WebInspector.FileSystemUtils.errorHandler);
+    dirReader.readEntries(innerCallback, errorHandler);
+
+    function errorHandler(error)
+    {
+        var errorMessage = WebInspector.FileSystemUtils.errorMessage(error);
+        console.error(errorMessage + " when reading directory '" + dirEntry.fullPath + "'");
+        callback([]);
+    }
 }
 
 /**
@@ -423,13 +449,17 @@ WebInspector.FileSystemUtils._readDirectory = function(dirEntry, callback)
  */
 WebInspector.FileSystemUtils._requestEntries = function(fileSystem, path, callback)
 {
-    fileSystem.root.getDirectory(path, null, innerCallback, WebInspector.FileSystemUtils.errorHandler);
+    fileSystem.root.getDirectory(path, null, innerCallback, errorHandler);
 
     function innerCallback(dirEntry)
     {
         WebInspector.FileSystemUtils._readDirectory(dirEntry, callback)
     }
-}
 
-WebInspector.FileSystemUtils.prototype = {
+    function errorHandler(error)
+    {
+        var errorMessage = WebInspector.FileSystemUtils.errorMessage(error);
+        console.error(errorMessage + " when requesting entry '" + path + "'");
+        callback([]);
+    }
 }
