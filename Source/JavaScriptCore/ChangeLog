@@ -1,5 +1,13 @@
 2013-02-11  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, adding a FIXME to remind ourselves of a bug.
+        https://bugs.webkit.org/show_bug.cgi?id=109487
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileStrictEqForConstant):
+
+2013-02-11  Filip Pizlo  <fpizlo@apple.com>
+
         Strange bug in DFG OSR in JSC
         https://bugs.webkit.org/show_bug.cgi?id=109491
 
