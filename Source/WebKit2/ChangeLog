@@ -1,3 +1,11 @@
+2013-02-11  Anders Carlsson  <andersca@apple.com>
+
+        Fix build.
+
+        * WebProcess/Plugins/PluginProcessConnectionManager.cpp:
+        (WebKit::PluginProcessConnectionManager::didReceiveMessageOnConnectionWorkQueue):
+        * WebProcess/WebProcess.cpp:
+
 2013-02-11  Seulgi Kim  <seulgikim@company100.net>
 
         [GTK] Build fix.

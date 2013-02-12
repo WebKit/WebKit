@@ -105,7 +105,7 @@ void PluginProcessConnectionManager::removePluginProcessConnection(PluginProcess
 void PluginProcessConnectionManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
 {
     if (decoder->messageReceiverName() == Messages::PluginProcessConnectionManager::messageReceiverName()) {
-        didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(ChildProcess::connection(), decoder);
+        didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(connection, decoder);
         return;
     }
 }

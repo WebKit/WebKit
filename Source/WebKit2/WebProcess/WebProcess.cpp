@@ -634,20 +634,6 @@ void WebProcess::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::StringR
     // we'll let it slide.
 }
 
-void WebProcess::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
-{
-#if ENABLE(PLUGIN_PROCESS)
-    if (decoder->messageReceiverName() == Messages::PluginProcessConnectionManager::messageReceiverName()) {
-        m_pluginProcessConnectionManager.didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(ChildProcess::connection(), decoder);
-        return;
-    }
-#endif
-}
-
-void WebProcess::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
-{
-}
-
 WebFrame* WebProcess::webFrame(uint64_t frameID) const
 {
     return m_frameMap.get(frameID);
