@@ -1319,12 +1319,3 @@ void WebViewHost::displayRepaintMask()
 {
     canvas()->drawARGB(167, 0, 0, 0);
 }
-
-// Simulate a print by going into print mode and then exit straight away.
-void WebViewHost::printPage(WebKit::WebFrame* frame)
-{
-    WebSize pageSizeInPixels = webWidget()->size();
-    WebPrintParams printParams(pageSizeInPixels);
-    frame->printBegin(printParams);
-    frame->printEnd();
-}

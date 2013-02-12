@@ -47,6 +47,7 @@
 #include "WebFrame.h"
 #include "WebNode.h"
 #include "WebPluginParams.h"
+#include "WebPrintParams.h"
 #include "WebRange.h"
 #include "WebTestDelegate.h"
 #include "WebTestInterfaces.h"
@@ -592,6 +593,15 @@ bool WebTestProxyBase::isSelectTrailingWhitespaceEnabled()
 void WebTestProxyBase::showContextMenu(WebFrame*, const WebContextMenuData& contextMenuData)
 {
     m_testInterfaces->eventSender()->setContextMenuData(contextMenuData);
+}
+
+// Simulate a print by going into print mode and then exit straight away.
+void WebTestProxyBase::printPage(WebFrame* frame)
+{
+    WebSize pageSizeInPixels = m_testInterfaces->webView()->size();
+    WebPrintParams printParams(pageSizeInPixels);
+    frame->printBegin(printParams);
+    frame->printEnd();
 }
 
 void WebTestProxyBase::willPerformClientRedirect(WebFrame* frame, const WebURL&, const WebURL& to, double, double)

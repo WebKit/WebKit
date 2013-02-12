@@ -1,3 +1,19 @@
+2013-02-11  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move printPage() implementation to testRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=109436
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebTestRunner::WebTestProxy::showContextMenu):
+        (WebTestRunner::WebTestProxy::printPage):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::printPage):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2013-02-11  James Robinson  <jamesr@chromium.org>
 
         [Chromium] Get rid of WebAnimationController

@@ -125,6 +125,7 @@ protected:
     bool isSmartInsertDeleteEnabled();
     bool isSelectTrailingWhitespaceEnabled();
     void showContextMenu(WebKit::WebFrame*, const WebKit::WebContextMenuData&);
+    void printPage(WebKit::WebFrame*);
 
     void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
     void didCancelClientRedirect(WebKit::WebFrame*);
@@ -317,10 +318,14 @@ public:
     {
         return WebTestProxyBase::isSelectTrailingWhitespaceEnabled();
     }
-    void showContextMenu(WebKit::WebFrame* frame, const WebKit::WebContextMenuData& contextMenuData)
+    virtual void showContextMenu(WebKit::WebFrame* frame, const WebKit::WebContextMenuData& contextMenuData)
     {
         WebTestProxyBase::showContextMenu(frame, contextMenuData);
         Base::showContextMenu(frame, contextMenuData);
+    }
+    virtual void printPage(WebKit::WebFrame* frame)
+    {
+        WebTestProxyBase::printPage(frame);
     }
 
     // WebFrameClient implementation.

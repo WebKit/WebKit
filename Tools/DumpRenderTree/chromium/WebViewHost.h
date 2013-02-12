@@ -219,7 +219,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
 #if ENABLE(MEDIA_STREAM)
     virtual WebKit::WebUserMediaClient* userMediaClient();
 #endif
-    virtual void printPage(WebKit::WebFrame*);
 
     // WebKit::WebWidgetClient
     virtual void didAutoResize(const WebKit::WebSize& newSize);
