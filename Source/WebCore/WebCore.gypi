@@ -1539,6 +1539,8 @@
             'css/CSSVariableValue.h',
             'css/Counter.h',
             'css/DashboardRegion.h',
+            'css/DocumentRuleSets.cpp',
+            'css/DocumentRuleSets.h',
             'css/FontFeatureValue.cpp',
             'css/FontFeatureValue.h',
             'css/FontValue.cpp',

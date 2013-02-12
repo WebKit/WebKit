@@ -259,16 +259,10 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     if (m_rootDefaultStyle && view)
         m_medium = adoptPtr(new MediaQueryEvaluator(view->mediaType(), view->frame(), m_rootDefaultStyle.get()));
 
-    resetAuthorStyle();
+    m_ruleSets.resetAuthorStyle();
 
     DocumentStyleSheetCollection* styleSheetCollection = document->styleSheetCollection();
-    OwnPtr<RuleSet> tempUserStyle = RuleSet::create();
-    if (CSSStyleSheet* pageUserSheet = styleSheetCollection->pageUserSheet())
-        tempUserStyle->addRulesFromSheet(pageUserSheet->contents(), *m_medium, this);
-    collectRulesFromUserStyleSheets(styleSheetCollection->injectedUserStyleSheets(), *tempUserStyle);
-    collectRulesFromUserStyleSheets(styleSheetCollection->documentUserStyleSheets(), *tempUserStyle);
-    if (tempUserStyle->m_ruleCount > 0 || tempUserStyle->m_pageRules.size() > 0)
-        m_userStyle = tempUserStyle.release();
+    m_ruleSets.initUserStyle(styleSheetCollection, *m_medium, *this);
 
 #if ENABLE(SVG_FONTS)
     if (document->svgExtensions()) {
@@ -282,56 +276,9 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     appendAuthorStyleSheets(0, styleSheetCollection->activeAuthorStyleSheets());
 }
 
-void StyleResolver::collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet> >& userSheets, RuleSet& userStyle)
-{
-    for (unsigned i = 0; i < userSheets.size(); ++i) {
-        ASSERT(userSheets[i]->contents()->isUserStyleSheet());
-        userStyle.addRulesFromSheet(userSheets[i]->contents(), *m_medium, this);
-    }
-}
-
-static PassOwnPtr<RuleSet> makeRuleSet(const Vector<RuleFeature>& rules)
-{
-    size_t size = rules.size();
-    if (!size)
-        return nullptr;
-    OwnPtr<RuleSet> ruleSet = RuleSet::create();
-    for (size_t i = 0; i < size; ++i)
-        ruleSet->addRule(rules[i].rule, rules[i].selectorIndex, rules[i].hasDocumentSecurityOrigin ? RuleHasDocumentSecurityOrigin : RuleHasNoSpecialState);
-    ruleSet->shrinkToFit();
-    return ruleSet.release();
-}
-
-void StyleResolver::resetAuthorStyle()
-{
-    m_authorStyle = RuleSet::create();
-    m_authorStyle->disableAutoShrinkToFit();
-}
-
 void StyleResolver::appendAuthorStyleSheets(unsigned firstNew, const Vector<RefPtr<CSSStyleSheet> >& styleSheets)
 {
-    // This handles sheets added to the end of the stylesheet list only. In other cases the style resolver
-    // needs to be reconstructed. To handle insertions too the rule order numbers would need to be updated.
-    unsigned size = styleSheets.size();
-    for (unsigned i = firstNew; i < size; ++i) {
-        CSSStyleSheet* cssSheet = styleSheets[i].get();
-        ASSERT(!cssSheet->disabled());
-        if (cssSheet->mediaQueries() && !m_medium->eval(cssSheet->mediaQueries(), this))
-            continue;
-        StyleSheetContents* sheet = cssSheet->contents();
-#if ENABLE(STYLE_SCOPED) || ENABLE(SHADOW_DOM)
-        if (const ContainerNode* scope = StyleScopeResolver::scopeFor(cssSheet)) {
-            ensureScopeResolver()->ensureRuleSetFor(scope)->addRulesFromSheet(sheet, *m_medium, this, scope);
-            continue;
-        }
-#endif
-
-        m_authorStyle->addRulesFromSheet(sheet, *m_medium, this);
-        m_inspectorCSSOMWrappers.collectFromStyleSheetIfNeeded(cssSheet);
-    }
-    m_authorStyle->shrinkToFit();
-    collectFeatures();
-    
+    m_ruleSets.appendAuthorStyleSheets(firstNew, styleSheets, m_medium.get(), m_inspectorCSSOMWrappers, document()->isViewSource(), this);
     if (document()->renderer() && document()->renderer()->style())
         document()->renderer()->style()->font().update(fontSelector());
 
@@ -639,7 +586,7 @@ void StyleResolver::matchAuthorRules(MatchResult& result, bool includeEmptyRules
         return;
 
     // Match global author rules.
-    MatchRequest matchRequest(m_authorStyle.get(), includeEmptyRules);
+    MatchRequest matchRequest(m_ruleSets.authorStyle(), includeEmptyRules);
     RuleRange ruleRange = result.ranges.authorRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
     collectMatchingRulesForRegion(matchRequest, ruleRange);
@@ -650,13 +597,13 @@ void StyleResolver::matchAuthorRules(MatchResult& result, bool includeEmptyRules
 
 void StyleResolver::matchUserRules(MatchResult& result, bool includeEmptyRules)
 {
-    if (!m_userStyle)
+    if (!m_ruleSets.userStyle())
         return;
     
     m_state.matchedRules.clear();
 
     result.ranges.lastUserRule = result.matchedProperties.size() - 1;
-    MatchRequest matchRequest(m_userStyle.get(), includeEmptyRules);
+    MatchRequest matchRequest(m_ruleSets.userStyle(), includeEmptyRules);
     RuleRange ruleRange = result.ranges.userRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
     collectMatchingRulesForRegion(matchRequest, ruleRange);
@@ -792,7 +739,7 @@ void StyleResolver::matchAllRules(MatchResult& result, bool includeSMILPropertie
 bool StyleResolver::classNamesAffectedByRules(const SpaceSplitString& classNames) const
 {
     for (unsigned i = 0; i < classNames.size(); ++i) {
-        if (m_features.classesInRules.contains(classNames[i].impl()))
+        if (m_ruleSets.features().classesInRules.contains(classNames[i].impl()))
             return true;
     }
     return false;
@@ -867,7 +814,7 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
     if (p->isSVGElement() && static_cast<SVGElement*>(p)->animatedSMILStyleProperties())
         return 0;
 #endif
-    if (p->hasID() && m_features.idsInRules.contains(p->idForStyleResolution().impl()))
+    if (p->hasID() && m_ruleSets.features().idsInRules.contains(p->idForStyleResolution().impl()))
         return 0;
 
     RenderStyle* parentStyle = p->renderStyle();
@@ -1049,7 +996,7 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
     if (element->additionalPresentationAttributeStyle() != state.styledElement->additionalPresentationAttributeStyle())
         return false;
 
-    if (element->hasID() && m_features.idsInRules.contains(element->idForStyleResolution().impl()))
+    if (element->hasID() && m_ruleSets.features().idsInRules.contains(element->idForStyleResolution().impl()))
         return false;
     if (element->hasScopedHTMLStyleChild())
         return false;
@@ -1132,7 +1079,7 @@ RenderStyle* StyleResolver::locateSharedStyle()
         return 0;
 #endif
     // Ids stop style sharing if they show up in the stylesheets.
-    if (state.styledElement->hasID() && m_features.idsInRules.contains(state.styledElement->idForStyleResolution().impl()))
+    if (state.styledElement->hasID() && m_ruleSets.features().idsInRules.contains(state.styledElement->idForStyleResolution().impl()))
         return 0;
     if (parentElementPreventsSharing(state.element->parentElement()))
         return 0;
@@ -1164,10 +1111,10 @@ RenderStyle* StyleResolver::locateSharedStyle()
         return 0;
 
     // Can't share if sibling rules apply. This is checked at the end as it should rarely fail.
-    if (styleSharingCandidateMatchesRuleSet(m_siblingRuleSet.get()))
+    if (styleSharingCandidateMatchesRuleSet(m_ruleSets.sibling()))
         return 0;
     // Can't share if attribute rules apply.
-    if (styleSharingCandidateMatchesRuleSet(m_uncommonAttributeRuleSet.get()))
+    if (styleSharingCandidateMatchesRuleSet(m_ruleSets.uncommonAttribute()))
         return 0;
     // Can't share if @host @-rules apply.
     if (styleSharingCandidateMatchesHostRules())
@@ -1436,7 +1383,7 @@ PassRefPtr<RenderStyle> StyleResolver::styleForElement(Element* element, RenderS
     bool needsCollection = false;
     CSSDefaultStyleSheets::ensureDefaultStyleSheetsForElement(element, needsCollection);
     if (needsCollection)
-        collectFeatures();
+        m_ruleSets.collectFeatures(document()->isViewSource(), m_scopeResolver.get());
 
     MatchResult matchResult;
     if (matchingBehavior == MatchOnlyUserAgentRules)
@@ -1637,9 +1584,9 @@ PassRefPtr<RenderStyle> StyleResolver::styleForPage(int pageIndex)
     
     MatchResult result;
     matchPageRules(result, CSSDefaultStyleSheets::defaultPrintStyle, isLeft, isFirst, page);
-    matchPageRules(result, m_userStyle.get(), isLeft, isFirst, page);
+    matchPageRules(result, m_ruleSets.userStyle(), isLeft, isFirst, page);
     // Only consider the global author RuleSet for @page rules, as per the HTML5 spec.
-    matchPageRules(result, m_authorStyle.get(), isLeft, isFirst, page);
+    matchPageRules(result, m_ruleSets.authorStyle(), isLeft, isFirst, page);
     m_state.lineHeightValue = 0;
     bool inheritedOnly = false;
 #if ENABLE(CSS_VARIABLES)
@@ -2009,18 +1956,18 @@ bool StyleResolver::checkRegionStyle(Element* regionElement)
     // FIXME (BUG 72472): We don't add @-webkit-region rules of scoped style sheets for the moment,
     // so all region rules are global by default. Verify whether that can stand or needs changing.
 
-    unsigned rulesSize = m_authorStyle->m_regionSelectorsAndRuleSets.size();
+    unsigned rulesSize = m_ruleSets.authorStyle()->m_regionSelectorsAndRuleSets.size();
     for (unsigned i = 0; i < rulesSize; ++i) {
-        ASSERT(m_authorStyle->m_regionSelectorsAndRuleSets.at(i).ruleSet.get());
-        if (checkRegionSelector(m_authorStyle->m_regionSelectorsAndRuleSets.at(i).selector, regionElement))
+        ASSERT(m_ruleSets.authorStyle()->m_regionSelectorsAndRuleSets.at(i).ruleSet.get());
+        if (checkRegionSelector(m_ruleSets.authorStyle()->m_regionSelectorsAndRuleSets.at(i).selector, regionElement))
             return true;
     }
 
-    if (m_userStyle) {
-        rulesSize = m_userStyle->m_regionSelectorsAndRuleSets.size();
+    if (m_ruleSets.userStyle()) {
+        rulesSize = m_ruleSets.userStyle()->m_regionSelectorsAndRuleSets.size();
         for (unsigned i = 0; i < rulesSize; ++i) {
-            ASSERT(m_userStyle->m_regionSelectorsAndRuleSets.at(i).ruleSet.get());
-            if (checkRegionSelector(m_userStyle->m_regionSelectorsAndRuleSets.at(i).selector, regionElement))
+            ASSERT(m_ruleSets.userStyle()->m_regionSelectorsAndRuleSets.at(i).ruleSet.get());
+            if (checkRegionSelector(m_ruleSets.userStyle()->m_regionSelectorsAndRuleSets.at(i).selector, regionElement))
                 return true;
         }
     }
@@ -2884,7 +2831,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
                     state.style->setContent(value.isNull() ? emptyAtom : value.impl(), didSet);
                     didSet = true;
                     // register the fact that the attribute value affects the style
-                    m_features.attrsInRules.add(attr.localName().impl());
+                    m_ruleSets.features().attrsInRules.add(attr.localName().impl());
                 } else if (contentValue->isCounter()) {
                     Counter* counterValue = contentValue->getCounterValue();
                     EListStyleType listStyleType = NoneListStyle;
@@ -5166,28 +5113,6 @@ void StyleResolver::loadPendingResources()
 #endif
 }
 
-void StyleResolver::collectFeatures()
-{
-    m_features.clear();
-    // Collect all ids and rules using sibling selectors (:first-child and similar)
-    // in the current set of stylesheets. Style sharing code uses this information to reject
-    // sharing candidates.
-    if (CSSDefaultStyleSheets::defaultStyle)
-        m_features.add(CSSDefaultStyleSheets::defaultStyle->features());
-    if (m_authorStyle)
-        m_features.add(m_authorStyle->features());
-    if (document()->isViewSource())
-        m_features.add(CSSDefaultStyleSheets::viewSourceStyle()->features());
-
-    if (m_scopeResolver)
-        m_scopeResolver->collectFeaturesTo(m_features);
-    if (m_userStyle)
-        m_features.add(m_userStyle->features());
-
-    m_siblingRuleSet = makeRuleSet(m_features.siblingRules);
-    m_uncommonAttributeRuleSet = makeRuleSet(m_features.uncommonAttributeRules);
-}
-
 void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
@@ -5212,11 +5137,7 @@ void MediaQueryResult::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 void StyleResolver::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_authorStyle, "authorStyle");
-    info.addMember(m_userStyle, "userStyle");
-    info.addMember(m_features, "features");
-    info.addMember(m_siblingRuleSet, "siblingRuleSet");
-    info.addMember(m_uncommonAttributeRuleSet, "uncommonAttributeRuleSet");
+    info.addMember(m_ruleSets, "ruleSets");
     info.addMember(m_keyframesRuleMap, "keyframesRuleMap");
     info.addMember(m_matchedPropertiesCache, "matchedPropertiesCache");
     info.addMember(m_matchedPropertiesCacheSweepTimer, "matchedPropertiesCacheSweepTimer");
