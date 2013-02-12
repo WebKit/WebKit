@@ -139,9 +139,9 @@ inline bool checkTagValue(const Element* element, const CSSSelector* selector)
 
 }
 
-inline bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selector, const Element* element, VisitedMatchType visitedMatchType) const
+bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selector, const Element* element, SelectorChecker::VisitedMatchType visitedMatchType)
 {
-    ASSERT(isFastCheckableSelector(selector));
+    ASSERT(SelectorChecker::isFastCheckableSelector(selector));
 
     switch (selector->m_match) {
     case CSSSelector::Tag:
@@ -161,7 +161,7 @@ inline bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selec
     return false;
 }
 
-bool SelectorChecker::fastCheck(const CSSSelector* selector, const Element* element) const
+bool SelectorChecker::fastCheck(const CSSSelector* selector, const Element* element)
 {
     ASSERT(fastCheckRightmostSelector(selector, element, VisitedMatchEnabled));
 
@@ -999,7 +999,7 @@ bool SelectorChecker::checkScrollbarPseudoClass(Document* document, const CSSSel
     }
 }
 
-bool SelectorChecker::commonPseudoClassSelectorMatches(const Element* element, const CSSSelector* selector, VisitedMatchType visitedMatchType) const
+bool SelectorChecker::commonPseudoClassSelectorMatches(const Element* element, const CSSSelector* selector, VisitedMatchType visitedMatchType)
 {
     ASSERT(isCommonPseudoClassSelector(selector));
     switch (selector->pseudoType()) {
@@ -1064,6 +1064,13 @@ unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)
 bool SelectorChecker::isFrameFocused(const Element* element)
 {
     return element->document()->frame() && element->document()->frame()->selection()->isFocusedAndActive();
+}
+
+bool SelectorChecker::matchesFocusPseudoClass(const Element* element)
+{
+    if (InspectorInstrumentation::forcePseudoState(const_cast<Element*>(element), CSSSelector::PseudoFocus))
+        return true;
+    return element->focused() && isFrameFocused(element);
 }
 
 template

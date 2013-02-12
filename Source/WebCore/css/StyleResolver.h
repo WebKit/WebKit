@@ -443,6 +443,7 @@ public:
         , elementLinkState(NotInsideLink)
         , distributedToInsertionPoint(false)
         , elementAffectedByClassRules(false)
+        , mode(SelectorChecker::ResolvingStyle)
         , applyPropertyToRegularStyle(true)
         , applyPropertyToVisitedLinkStyle(false)
 #if ENABLE(CSS_SHADERS)
@@ -475,6 +476,8 @@ public:
         bool elementAffectedByClassRules;
 
         PseudoId dynamicPseudo;
+
+        SelectorChecker::Mode mode;
 
         // A buffer used to hold the set of matched rules for an element,
         // and a temporary buffer used for merge sorting.
@@ -567,11 +570,6 @@ private:
     RefPtr<RenderStyle> m_rootDefaultStyle;
 
     Document* m_document;
-    // FIXME: Make SelectorChecker an on-stack object and
-    // move selectorChecker.mode() to State.
-    // selectorChecker.stringParsing() can be replaced with
-    // !document.inQuirksMode().
-    SelectorChecker m_selectorChecker;
     SelectorFilter m_selectorFilter;
 
     bool m_matchAuthorAndUserStyles;

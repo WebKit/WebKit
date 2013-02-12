@@ -82,7 +82,7 @@ public:
     bool checkOne(const SelectorCheckingContext&, const SiblingTraversalStrategy&) const;
 
     static bool isFastCheckableSelector(const CSSSelector*);
-    bool fastCheck(const CSSSelector*, const Element*) const;
+    static bool fastCheck(const CSSSelector*, const Element*);
 
     bool strictParsing() const { return m_strictParsing; }
 
@@ -91,7 +91,7 @@ public:
 
     static bool tagMatches(const Element*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
-    bool matchesFocusPseudoClass(const Element*) const;
+    static bool matchesFocusPseudoClass(const Element*);
     static bool fastCheckRightmostAttributeSelector(const Element*, const CSSSelector*);
     static bool checkExactAttribute(const Element*, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value);
 
@@ -100,10 +100,11 @@ public:
 
 private:
     bool checkScrollbarPseudoClass(Document*, const CSSSelector*) const;
+
     static bool isFrameFocused(const Element*);
 
-    bool fastCheckRightmostSelector(const CSSSelector*, const Element*, VisitedMatchType) const;
-    bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*, VisitedMatchType) const;
+    static bool fastCheckRightmostSelector(const CSSSelector*, const Element*, VisitedMatchType);
+    static bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*, VisitedMatchType);
 
     bool m_strictParsing;
     bool m_documentIsHTML;
@@ -119,13 +120,6 @@ inline bool SelectorChecker::isCommonPseudoClassSelector(const CSSSelector* sele
         || pseudoType == CSSSelector::PseudoAnyLink
         || pseudoType == CSSSelector::PseudoVisited
         || pseudoType == CSSSelector::PseudoFocus;
-}
-
-inline bool SelectorChecker::matchesFocusPseudoClass(const Element* element) const
-{
-    if (InspectorInstrumentation::forcePseudoState(const_cast<Element*>(element), CSSSelector::PseudoFocus))
-        return true;
-    return element->focused() && isFrameFocused(element);
 }
 
 inline bool SelectorChecker::tagMatches(const Element* element, const QualifiedName& tagQName)

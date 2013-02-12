@@ -228,7 +228,6 @@ StyleResolver::StyleResolver(Document* document, bool matchAuthorAndUserStyles)
     : m_matchedPropertiesCacheAdditionsSinceLastSweep(0)
     , m_matchedPropertiesCacheSweepTimer(this, &StyleResolver::sweepMatchedPropertiesCache)
     , m_document(document)
-    , m_selectorChecker(document)
     , m_matchAuthorAndUserStyles(matchAuthorAndUserStyles)
     , m_fontSelector(CSSFontSelector::create(document))
 #if ENABLE(CSS_DEVICE_ADAPTATION)
@@ -458,7 +457,7 @@ void StyleResolver::collectMatchingRules(const MatchRequest& matchRequest, RuleR
 
     if (element->isLink())
         collectMatchingRulesForList(matchRequest.ruleSet->linkPseudoClassRules(), matchRequest, ruleRange);
-    if (m_selectorChecker.matchesFocusPseudoClass(element))
+    if (SelectorChecker::matchesFocusPseudoClass(element))
         collectMatchingRulesForList(matchRequest.ruleSet->focusPseudoClassRules(), matchRequest, ruleRange);
     collectMatchingRulesForList(matchRequest.ruleSet->tagRules(element->localName().impl()), matchRequest, ruleRange);
     collectMatchingRulesForList(matchRequest.ruleSet->universalRules(), matchRequest, ruleRange);
@@ -488,7 +487,7 @@ void StyleResolver::sortAndTransferMatchedRules(MatchResult& result)
 
     sortMatchedRules();
 
-    if (m_selectorChecker.mode() == SelectorChecker::CollectingRules) {
+    if (state.mode == SelectorChecker::CollectingRules) {
         if (!state.ruleList)
             state.ruleList = StaticCSSRuleList::create();
         for (unsigned i = 0; i < state.matchedRules.size(); ++i)
@@ -655,7 +654,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, c
             // If we're matching normal rules, set a pseudo bit if
             // we really just matched a pseudo-element.
             if (state.dynamicPseudo != NOPSEUDO && state.pseudoStyle == NOPSEUDO) {
-                if (m_selectorChecker.mode() == SelectorChecker::CollectingRules) {
+                if (state.mode == SelectorChecker::CollectingRules) {
                     InspectorInstrumentation::didMatchRule(cookie, false);
                     continue;
                 }
@@ -851,11 +850,11 @@ bool StyleResolver::styleSharingCandidateMatchesRuleSet(RuleSet* ruleSet)
         return false;
     m_state.matchedRules.clear();
 
-    m_selectorChecker.setMode(SelectorChecker::SharingRules);
+    m_state.mode = SelectorChecker::SharingRules;
     int firstRuleIndex = -1, lastRuleIndex = -1;
     RuleRange ruleRange(firstRuleIndex, lastRuleIndex);
     collectMatchingRules(MatchRequest(ruleSet), ruleRange);
-    m_selectorChecker.setMode(SelectorChecker::ResolvingStyle);
+    m_state.mode = SelectorChecker::ResolvingStyle;
     if (m_state.matchedRules.isEmpty())
         return false;
     m_state.matchedRules.clear();
@@ -1137,7 +1136,7 @@ void StyleResolver::matchUARules(MatchResult& result)
     matchUARules(result, userAgentStyleSheet);
 
     // In quirks mode, we match rules from the quirks user agent sheet.
-    if (!m_selectorChecker.strictParsing())
+    if (document()->inQuirksMode())
         matchUARules(result, CSSDefaultStyleSheets::defaultQuirksStyle);
 
     // If document uses view source styles (in view source mode or in xml viewer mode), then we match rules from the view source style sheet.
@@ -1729,7 +1728,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
         // property.
         // Sites also commonly use display:inline/block on <td>s and <table>s. In quirks mode we force
         // these tags to retain their display types.
-        if (!m_selectorChecker.strictParsing() && e) {
+        if (document()->inQuirksMode() && e) {
             if (e->hasTagName(tdTag)) {
                 style->setDisplay(TABLE_CELL);
                 style->setFloating(NoFloat);
@@ -1776,7 +1775,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
         // Absolute/fixed positioned elements, floating elements and the document element need block-like outside display.
         if (style->hasOutOfFlowPosition() || style->isFloating() || (e && e->document()->documentElement() == e))
-            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_selectorChecker.strictParsing()));
+            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), !document()->inQuirksMode()));
 
         // FIXME: Don't support this mutation for pseudo styles like first-letter or first-line, since it's not completely
         // clear how that should work.
@@ -1806,7 +1805,7 @@ void StyleResolver::adjustRenderStyle(RenderStyle* style, RenderStyle* parentSty
 
         if (isDisplayFlexibleBox(parentStyle->display())) {
             style->setFloating(NoFloat);
-            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), m_selectorChecker.strictParsing()));
+            style->setDisplay(equivalentBlockDisplay(style->display(), style->isFloating(), !document()->inQuirksMode()));
         }
 
 #if ENABLE(DIALOG_ELEMENT)
@@ -2025,7 +2024,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
     if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
 
-    m_selectorChecker.setMode(SelectorChecker::CollectingRules);
+    m_state.mode = SelectorChecker::CollectingRules;
 
     initElement(e);
     initForStyleResolve(e, 0, pseudoId);
@@ -2049,7 +2048,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
         m_state.sameOriginOnly = false;
     }
 
-    m_selectorChecker.setMode(SelectorChecker::ResolvingStyle);
+    m_state.mode = SelectorChecker::ResolvingStyle;
 
     return m_state.ruleList.release();
 }
@@ -2074,15 +2073,17 @@ inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const Container
         if (!SelectorChecker::fastCheckRightmostAttributeSelector(state.element, ruleData.selector()))
             return false;
 
-        return m_selectorChecker.fastCheck(ruleData.selector(), state.element);
+        return SelectorChecker::fastCheck(ruleData.selector(), state.element);
     }
 
     // Slow path.
+    SelectorChecker selectorChecker(document());
+    selectorChecker.setMode(state.mode);
     SelectorChecker::SelectorCheckingContext context(ruleData.selector(), state.element, SelectorChecker::VisitedMatchEnabled);
     context.elementStyle = state.style.get();
     context.scope = scope;
     context.pseudoStyle = state.pseudoStyle;
-    SelectorChecker::Match match = m_selectorChecker.match(context, state.dynamicPseudo, DOMSiblingTraversalStrategy());
+    SelectorChecker::Match match = selectorChecker.match(context, state.dynamicPseudo, DOMSiblingTraversalStrategy());
     if (match != SelectorChecker::SelectorMatches)
         return false;
     if (state.pseudoStyle != NOPSEUDO && state.pseudoStyle != state.dynamicPseudo)
@@ -2097,8 +2098,9 @@ bool StyleResolver::checkRegionSelector(const CSSSelector* regionSelector, Eleme
 
     m_state.pseudoStyle = NOPSEUDO;
 
+    SelectorChecker selectorChecker(document());
     for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
-        if (m_selectorChecker.matches(s, regionElement))
+        if (selectorChecker.matches(s, regionElement))
             return true;
 
     return false;
