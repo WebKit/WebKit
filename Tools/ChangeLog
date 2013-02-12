@@ -1,5 +1,14 @@
 2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
 
+        [GTK] Enable DOM4 events constructors in development builds
+        https://bugs.webkit.org/show_bug.cgi?id=109471
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/webkitperl/FeatureList.pm: Enable the feature for the GTK port as well.
+
+2013-02-12  Zan Dobersek  <zdobersek@igalia.com>
+
         Remove unnecessary variables from FeatureList.pm
         https://bugs.webkit.org/show_bug.cgi?id=109558
 
