@@ -309,7 +309,7 @@ void RenderSVGResourceFilter::postApplyResource(RenderObject* object, GraphicsCo
         // Always true if filterData is just built (filterData->state == FilterData::Built).
         if (!lastEffect->hasResult()) {
             filterData->state = FilterData::Applying;
-            lastEffect->apply();
+            lastEffect->applyAll();
             lastEffect->correctFilterResultIfNeeded();
             lastEffect->transformResultColorSpace(ColorSpaceDeviceRGB);
         }

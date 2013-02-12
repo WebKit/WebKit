@@ -44,17 +44,19 @@ namespace WebCore {
 class FilterContextOpenCL {
 public:
     FilterContextOpenCL()
-        : m_deviceId(0)
+        : m_inError(false)
+        , m_deviceId(0)
         , m_deviceContext(0)
         , m_commandQueue(0)
+        , m_transformColorSpaceWasCompiled(false)
         , m_transformColorSpaceProgram(0)
         , m_transformColorSpaceKernel(0)
-        , m_colorMatrixCompileStatus(openclNotCompiledYet)
+        , m_colorMatrixWasCompiled(false)
         , m_colorMatrixProgram(0)
         , m_matrixOperation(0)
         , m_saturateAndHueRotateOperation(0)
         , m_luminanceOperation(0)
-        , m_turbulenceCompileStatus(openclNotCompiledYet)
+        , m_turbulenceWasCompiled(false)
         , m_turbulenceProgram(0)
         , m_turbulenceOperation(0)
     {
@@ -67,7 +69,17 @@ public:
     cl_context deviceContext() { return m_deviceContext; }
     cl_command_queue commandQueue() { return m_commandQueue; }
 
+    inline void setInError(bool errorCode = true) { m_inError = errorCode; }
+    inline bool inError() { return m_inError; }
+    inline bool isFailed(bool);
+    inline bool isResourceAllocationFailed(bool);
+
+    void freeResources();
+    void destroyContext();
+
     OpenCLHandle createOpenCLImage(IntSize);
+
+    inline bool compileTransformColorSpaceProgram();
     void openCLTransformColorSpace(OpenCLHandle&, IntRect, ColorSpace, ColorSpace);
 
     inline bool compileFEColorMatrix();
@@ -84,7 +96,8 @@ private:
             RunKernel(FilterContextOpenCL* context, cl_kernel kernel, size_t width, size_t height)
                 : m_context(context)
                 , m_kernel(kernel)
-                , index(0)
+                , m_index(0)
+                , m_error(context->inError())
             {
                 m_globalSize[0] = width;
                 m_globalSize[1] = height;
@@ -92,73 +105,102 @@ private:
 
             void addArgument(OpenCLHandle handle)
             {
-                clSetKernelArg(m_kernel, index++, sizeof(OpenCLHandle), handle.handleAddress());
+                if (!m_error)
+                    m_error = clSetKernelArg(m_kernel, m_index++, sizeof(OpenCLHandle), handle.handleAddress());
             }
 
             void addArgument(cl_int value)
             {
-                clSetKernelArg(m_kernel, index++, sizeof(cl_int), reinterpret_cast<void*>(&value));
+                if (!m_error)
+                    m_error = clSetKernelArg(m_kernel, m_index++, sizeof(cl_int), reinterpret_cast<void*>(&value));
             }
 
             void addArgument(cl_float value)
             {
-                clSetKernelArg(m_kernel, index++, sizeof(cl_float), reinterpret_cast<void*>(&value));
+                if (!m_error)
+                    m_error = clSetKernelArg(m_kernel, m_index++, sizeof(cl_float), reinterpret_cast<void*>(&value));
             }
 
             void addArgument(cl_sampler handle)
             {
-                clSetKernelArg(m_kernel, index++, sizeof(cl_sampler), reinterpret_cast<void*>(&handle));
+                if (!m_error)
+                    m_error = clSetKernelArg(m_kernel, m_index++, sizeof(cl_sampler), reinterpret_cast<void*>(&handle));
             }
 
             OpenCLHandle addArgument(void* buffer, int size)
             {
-                OpenCLHandle handle(clCreateBuffer(m_context->deviceContext(), CL_MEM_READ_ONLY, size, 0, 0));
-                clEnqueueWriteBuffer(m_context->commandQueue(), handle, CL_TRUE, 0, size, buffer, 0, 0, 0);
-                clSetKernelArg(m_kernel, index++, sizeof(OpenCLHandle), handle.handleAddress());
-                return handle;
+                if (m_error)
+                    return 0;
+                OpenCLHandle handle(clCreateBuffer(m_context->deviceContext(), CL_MEM_READ_ONLY, size, 0, &m_error));
+                if (m_error)
+                    return 0;
+                m_error = clEnqueueWriteBuffer(m_context->commandQueue(), handle, CL_TRUE, 0, size, buffer, 0, 0, 0);
+                if (m_error)
+                    return 0;
+                m_error = clSetKernelArg(m_kernel, m_index++, sizeof(OpenCLHandle), handle.handleAddress());
+                return !m_error ? handle : 0;
             }
 
             void run()
             {
-                clFinish(m_context->m_commandQueue);
-                clEnqueueNDRangeKernel(m_context->m_commandQueue, m_kernel, 2, 0, m_globalSize, 0, 0, 0, 0);
+                if (m_context->isFailed(m_error))
+                    return;
+
+                m_error = clFinish(m_context->m_commandQueue);
+                if (!m_error)
+                    m_error = clEnqueueNDRangeKernel(m_context->m_commandQueue, m_kernel, 2, 0, m_globalSize, 0, 0, 0, 0);
+                m_context->isFailed(m_error);
             }
 
             FilterContextOpenCL* m_context;
             cl_kernel m_kernel;
             size_t m_globalSize[2];
-            int index;
+            int m_index;
+            int m_error;
         };
 
-    enum OpenCLCompileStatus {
-        openclNotCompiledYet,
-        openclCompileFailed,
-        openclCompileSuccessful
-    };
-
-    static cl_program compileProgram(const char*);
+    cl_program compileProgram(const char*);
     static inline cl_kernel kernelByName(cl_program program, const char* name) { return clCreateKernel(program, name, 0); }
+
+    static inline void freeResource(cl_kernel&);
+    static inline void freeResource(cl_program&);
 
     static FilterContextOpenCL* m_context;
     static int m_alreadyInitialized;
+    bool m_inError;
 
     cl_device_id m_deviceId;
     cl_context m_deviceContext;
     cl_command_queue m_commandQueue;
 
+    bool m_transformColorSpaceWasCompiled;
     cl_program m_transformColorSpaceProgram;
     cl_kernel m_transformColorSpaceKernel;
 
-    OpenCLCompileStatus m_colorMatrixCompileStatus;
+    bool m_colorMatrixWasCompiled;
     cl_program m_colorMatrixProgram;
     cl_kernel m_matrixOperation;
     cl_kernel m_saturateAndHueRotateOperation; 
     cl_kernel m_luminanceOperation;
 
-    OpenCLCompileStatus m_turbulenceCompileStatus;
+    bool m_turbulenceWasCompiled;
     cl_program m_turbulenceProgram;
     cl_kernel m_turbulenceOperation;
 };
+
+inline bool FilterContextOpenCL::isFailed(bool value)
+{
+    if (value)
+        setInError();
+    return value;
+}
+
+inline bool FilterContextOpenCL::isResourceAllocationFailed(bool value)
+{
+    if (!value)
+        setInError();
+    return !value;
+}
 
 } // namespace WebCore
 

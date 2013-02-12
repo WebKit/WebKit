@@ -97,6 +97,24 @@ FilterEffect* FilterEffect::inputEffect(unsigned number) const
     return m_inputEffects.at(number).get();
 }
 
+#if ENABLE(OPENCL)
+void FilterEffect::applyAll()
+{
+    if (hasResult())
+        return;
+    FilterContextOpenCL* context = FilterContextOpenCL::context();
+    if (context) {
+        apply();
+        if (!context->inError())
+            return;
+        clearResultsRecursive();
+        context->destroyContext();
+    }
+    // Software code path.
+    apply();
+}
+#endif
+
 void FilterEffect::apply()
 {
     if (hasResult())
@@ -223,6 +241,18 @@ void FilterEffect::clearResult()
 #endif
 }
 
+void FilterEffect::clearResultsRecursive()
+{
+    // Clear all results, regardless that the current effect has
+    // a result. Can be used if an effect is in an erroneous state.
+    if (hasResult())
+        clearResult();
+
+    unsigned size = m_inputEffects.size();
+    for (unsigned i = 0; i < size; ++i)
+        m_inputEffects.at(i).get()->clearResultsRecursive();
+}
+
 ImageBuffer* FilterEffect::asImageBuffer()
 {
     if (!hasResult())
@@ -248,13 +278,19 @@ ImageBuffer* FilterEffect::openCLImageToImageBuffer()
     FilterContextOpenCL* context = FilterContextOpenCL::context();
     ASSERT(context);
 
+    if (context->inError())
+        return 0;
+
     size_t origin[3] = { 0, 0, 0 };
     size_t region[3] = { m_absolutePaintRect.width(), m_absolutePaintRect.height(), 1 };
 
     RefPtr<Uint8ClampedArray> destinationPixelArray = Uint8ClampedArray::create(m_absolutePaintRect.width() * m_absolutePaintRect.height() * 4);
 
-    clFinish(context->commandQueue());
-    clEnqueueReadImage(context->commandQueue(), m_openCLImageResult, CL_TRUE, origin, region, 0, 0, destinationPixelArray->data(), 0, 0, 0);
+    if (context->isFailed(clFinish(context->commandQueue())))
+        return 0;
+
+    if (context->isFailed(clEnqueueReadImage(context->commandQueue(), m_openCLImageResult, CL_TRUE, origin, region, 0, 0, destinationPixelArray->data(), 0, 0, 0)))
+        return 0;
 
     m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size());
     IntRect destinationRect(IntPoint(), m_absolutePaintRect.size());
@@ -426,15 +462,23 @@ Uint8ClampedArray* FilterEffect::createPremultipliedImageResult()
 #if ENABLE(OPENCL)
 OpenCLHandle FilterEffect::createOpenCLImageResult(uint8_t* source)
 {
+    FilterContextOpenCL* context = FilterContextOpenCL::context();
+    ASSERT(context);
+
+    if (context->inError())
+        return 0;
+
     ASSERT(!hasResult());
     cl_image_format clImageFormat;
     clImageFormat.image_channel_order = CL_RGBA;
     clImageFormat.image_channel_data_type = CL_UNORM_INT8;
 
-    FilterContextOpenCL* context = FilterContextOpenCL::context();
-    ASSERT(context);
+    int errorCode = 0;
     m_openCLImageResult = clCreateImage2D(context->deviceContext(), CL_MEM_READ_WRITE | (source ? CL_MEM_COPY_HOST_PTR : 0),
-        &clImageFormat, m_absolutePaintRect.width(), m_absolutePaintRect.height(), 0, source, 0);
+        &clImageFormat, m_absolutePaintRect.width(), m_absolutePaintRect.height(), 0, source, &errorCode);
+    if (context->isFailed(errorCode))
+        return 0;
+
     return m_openCLImageResult;
 }
 #endif
@@ -450,17 +494,17 @@ void FilterEffect::transformResultColorSpace(ColorSpace dstColorSpace)
 
 #if ENABLE(OPENCL)
     if (openCLImage()) {
+        if (m_imageBufferResult)
+            m_imageBufferResult.clear();
         FilterContextOpenCL* context = FilterContextOpenCL::context();
         ASSERT(context);
         context->openCLTransformColorSpace(m_openCLImageResult, absolutePaintRect(), m_resultColorSpace, dstColorSpace);
-        if (m_imageBufferResult)
-            m_imageBufferResult.clear();
     } else {
 #endif
 
-    // FIXME: We can avoid this potentially unnecessary ImageBuffer conversion by adding
-    // color space transform support for the {pre,un}multiplied arrays.
-    asImageBuffer()->transformColorSpace(m_resultColorSpace, dstColorSpace);
+        // FIXME: We can avoid this potentially unnecessary ImageBuffer conversion by adding
+        // color space transform support for the {pre,un}multiplied arrays.
+        asImageBuffer()->transformColorSpace(m_resultColorSpace, dstColorSpace);
 
 #if ENABLE(OPENCL)
     }

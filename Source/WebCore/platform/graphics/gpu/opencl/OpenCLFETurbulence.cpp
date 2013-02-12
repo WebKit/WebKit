@@ -169,19 +169,16 @@ __kernel void Turbulence(__write_only image2d_t destination, __constant float *t
 
 inline bool FilterContextOpenCL::compileFETurbulence()
 {
-    if (m_turbulenceCompileStatus != openclNotCompiledYet)
-        return m_turbulenceCompileStatus == openclCompileSuccessful;
+    if (m_turbulenceWasCompiled || inError())
+        return !inError();
 
-    m_turbulenceCompileStatus = openclCompileFailed;
-    m_turbulenceProgram = compileProgram(turbulenceKernelProgram);
-    if (!m_turbulenceProgram)
-        return false;
-    m_turbulenceOperation = kernelByName(m_turbulenceProgram, "Turbulence");
-    if (!m_turbulenceOperation)
-        return false;
+    m_turbulenceWasCompiled = true;
 
-    m_turbulenceCompileStatus = openclCompileSuccessful;
-    return openclCompileSuccessful;
+    if (isResourceAllocationFailed((m_turbulenceProgram = compileProgram(turbulenceKernelProgram))))
+        return false;
+    if (isResourceAllocationFailed((m_turbulenceOperation = kernelByName(m_turbulenceProgram, "Turbulence"))))
+        return false;
+    return true;
 }
 
 inline void FilterContextOpenCL::applyFETurbulence(OpenCLHandle destination,
@@ -224,8 +221,11 @@ inline void FilterContextOpenCL::applyFETurbulence(OpenCLHandle destination,
 bool FETurbulence::platformApplyOpenCL()
 {
     FilterContextOpenCL* context = FilterContextOpenCL::context();
-    if (!context || !context->compileFETurbulence())
+    if (!context)
         return false;
+
+    if (!context->compileFETurbulence())
+        return true;
 
     OpenCLHandle destination = createOpenCLImageResult();
 

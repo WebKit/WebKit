@@ -68,26 +68,22 @@ __kernel void luminance(__write_only image2d_t destination, __read_only image2d_
 
 inline bool FilterContextOpenCL::compileFEColorMatrix()
 {
-    if (m_colorMatrixCompileStatus != openclNotCompiledYet)
-        return m_colorMatrixCompileStatus == openclCompileSuccessful;
+    if (m_colorMatrixWasCompiled || inError())
+        return !inError();
 
-    m_colorMatrixCompileStatus = openclCompileFailed;
-    m_colorMatrixProgram = compileProgram(colorMatrixKernelProgram);
-    if (!m_colorMatrixProgram)
-        return false;
+    m_colorMatrixWasCompiled = true;
 
-    m_matrixOperation = kernelByName(m_colorMatrixProgram, "matrix");
-    if (!m_matrixOperation)
+    if (isResourceAllocationFailed((m_colorMatrixProgram = compileProgram(colorMatrixKernelProgram))))
         return false;
-    m_saturateAndHueRotateOperation = kernelByName(m_colorMatrixProgram, "saturateAndHueRotate");
-    if (!m_saturateAndHueRotateOperation)
+    if (isResourceAllocationFailed((m_matrixOperation = kernelByName(m_colorMatrixProgram, "matrix"))))
         return false;
-    m_luminanceOperation = kernelByName(m_colorMatrixProgram, "luminance");
-    if (!m_luminanceOperation)
+    if (isResourceAllocationFailed((m_saturateAndHueRotateOperation = kernelByName(m_colorMatrixProgram, "saturateAndHueRotate"))))
         return false;
-
-    m_colorMatrixCompileStatus = openclCompileSuccessful;
-    return openclCompileSuccessful;
+    if (isResourceAllocationFailed((m_saturateAndHueRotateOperation = kernelByName(m_colorMatrixProgram, "saturateAndHueRotate"))))
+        return false;
+    if (isResourceAllocationFailed((m_luminanceOperation = kernelByName(m_colorMatrixProgram, "luminance"))))
+        return false;
+    return true;
 }
 
 inline void FilterContextOpenCL::applyFEColorMatrix(OpenCLHandle destination, IntSize destinationSize, OpenCLHandle source, IntPoint relativeSourceLocation, float* values, int type)
@@ -130,8 +126,11 @@ inline void FilterContextOpenCL::applyFEColorMatrix(OpenCLHandle destination, In
 bool FEColorMatrix::platformApplyOpenCL()
 {
     FilterContextOpenCL* context = FilterContextOpenCL::context();
-    if (!context || !context->compileFEColorMatrix())
+    if (!context)
         return false;
+
+    if (!context->compileFEColorMatrix())
+        return true;
 
     FilterEffect* in = inputEffect(0);
     OpenCLHandle source = in->openCLImage();

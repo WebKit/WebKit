@@ -68,6 +68,8 @@ public:
     virtual ~FilterEffect();
 
     void clearResult();
+    void clearResultsRecursive();
+
     ImageBuffer* asImageBuffer();
     PassRefPtr<Uint8ClampedArray> asUnmultipliedImage(const IntRect&);
     PassRefPtr<Uint8ClampedArray> asPremultipliedImage(const IntRect&);
@@ -109,7 +111,12 @@ public:
     void setMaxEffectRect(const FloatRect& maxEffectRect) { m_maxEffectRect = maxEffectRect; } 
 
     void apply();
-    
+#if ENABLE(OPENCL)
+    void applyAll();
+#else
+    inline void applyAll() { apply(); }
+#endif
+
     // Correct any invalid pixels, if necessary, in the result of a filter operation.
     // This method is used to ensure valid pixel values on filter inputs and the final result.
     // Only the arithmetic composite filter ever needs to perform correction.
