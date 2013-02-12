@@ -42,7 +42,7 @@ class CommandsTest(TestCase):
         options.obsolete_patches = True
         options.open_bug = True
         options.port = 'MOCK port'
-        options.prepare_changelogs = True
+        options.update_changelogs = False
         options.quiet = True
         options.reviewer = 'MOCK reviewer'
         command.bind_to_tool(tool)

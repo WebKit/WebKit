@@ -49,7 +49,6 @@ class Options(object):
     obsolete_patches = make_option("--no-obsolete", action="store_false", dest="obsolete_patches", default=True, help="Do not obsolete old patches before posting this one.")
     open_bug = make_option("--open-bug", action="store_true", dest="open_bug", default=False, help="Opens the associated bug in a browser.")
     parent_command = make_option("--parent-command", action="store", dest="parent_command", default=None, help="(Internal) The command that spawned this instance.")
-    prepare_changelogs = make_option("--no-prepare-changelogs", action="store_false", dest="prepare_changelogs", default=True, help="Don't prepare (create and/or update) ChangeLogs.")
     quiet = make_option("--quiet", action="store_true", dest="quiet", default=False, help="Produce less console output.")
     request_commit = make_option("--request-commit", action="store_true", dest="request_commit", default=False, help="Mark the patch as needing auto-commit after review.")
     review = make_option("--no-review", action="store_false", dest="review", default=True, help="Do not mark the patch for review.")
@@ -57,4 +56,5 @@ class Options(object):
     suggest_reviewers = make_option("--suggest-reviewers", action="store_true", default=False, help="Offer to CC appropriate reviewers.")
     test = make_option("--test", action="store_true", dest="test", default=False, help="Run run-webkit-tests before committing.")
     update = make_option("--no-update", action="store_false", dest="update", default=True, help="Don't update the working directory.")
+    update_changelogs = make_option("--update-changelogs", action="store_true", dest="update_changelogs", default=False, help="Update existing ChangeLog entries with new date, bug description, and touched files/functions.")
     changelog_count = make_option("--changelog-count", action="store", type="int", dest="changelog_count", help="Number of changelogs to parse.")

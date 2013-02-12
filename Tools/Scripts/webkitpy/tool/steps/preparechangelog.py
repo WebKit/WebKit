@@ -45,7 +45,7 @@ class PrepareChangeLog(AbstractStep):
             Options.quiet,
             Options.email,
             Options.git_commit,
-            Options.prepare_changelogs,
+            Options.update_changelogs,
         ]
 
     def _ensure_bug_url(self, state):
@@ -102,11 +102,10 @@ class PrepareChangeLog(AbstractStep):
         return final_entry + "\n"
 
     def run(self, state):
-        if not self._options.prepare_changelogs:
-            return
-
         if self.cached_lookup(state, "changelogs"):
             self._ensure_bug_url(state)
+            if not self._options.update_changelogs:
+                return
 
         args = self._tool.deprecated_port().prepare_changelog_command()
         if state.get("bug_id"):
