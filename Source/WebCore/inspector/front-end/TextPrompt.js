@@ -371,8 +371,7 @@ WebInspector.TextPrompt.prototype = {
             return;
 
         var selectionRange = selection.getRangeAt(0);
-        var wordPrefixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, this._completionStopCharacters, this._element, "backward");
-        var isEmptyInput = wordPrefixRange.collapsed;
+        var isEmptyInput = selectionRange.commonAncestorContainer === this._element; // this._element has no child Text nodes.
 
         var shouldExit;
 
@@ -396,6 +395,7 @@ WebInspector.TextPrompt.prototype = {
             return;
         }
 
+        var wordPrefixRange = selectionRange.startContainer.rangeOfWord(selectionRange.startOffset, this._completionStopCharacters, this._element, "backward");
         this._waitingForCompletions = true;
         this._loadCompletions(this.proxyElement, wordPrefixRange, force, this._completionsReady.bind(this, selection, auto, wordPrefixRange, !!reverse));
     },
