@@ -129,7 +129,6 @@ bool WebFrameProxy::isDisplayingPDFDocument() const
 
 void WebFrameProxy::didStartProvisionalLoad(const String& url)
 {
-    ASSERT(m_loadState == LoadStateFinished);
     ASSERT(m_provisionalURL.isEmpty());
     m_loadState = LoadStateProvisional;
     m_provisionalURL = url;

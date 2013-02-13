@@ -1,3 +1,22 @@
+2013-02-13  Adam Barth  <abarth@webkit.org>
+
+        Remove bogus ASSERT in WebFrameProxy::didStartProvisionalLoad
+        https://bugs.webkit.org/show_bug.cgi?id=109733
+
+        Reviewed by Sam Weinig.
+
+        After http://trac.webkit.org/changeset/142555, this ASSERT is
+        triggering on these tests:
+
+        fast/dom/window-load-crash.html
+        fast/frames/seamless/seamless-hyperlink-named.html
+        fast/frames/seamless/seamless-hyperlink.html
+
+        The ASSERT appears to be bogus. This patch removes it.
+
+        * UIProcess/WebFrameProxy.cpp:
+        (WebKit::WebFrameProxy::didStartProvisionalLoad):
+
 2013-02-13  Sam Weinig  <sam@webkit.org>
 
         Consolidate main functions in WebKit2 now that they are all identical
