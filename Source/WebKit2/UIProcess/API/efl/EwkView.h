@@ -52,6 +52,8 @@
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
 
+typedef struct _cairo_surface cairo_surface_t;
+
 namespace WebKit {
 class ContextMenuClientEfl;
 class FindClientEfl;
@@ -77,9 +79,10 @@ class VibrationClientEfl;
 namespace WebCore {
 class AffineTransform;
 class Color;
+class CoordinatedGraphicsScene;
 class Cursor;
 class IntSize;
-class CoordinatedGraphicsScene;
+class TransformationMatrix;
 }
 
 class EwkContext;
@@ -123,16 +126,25 @@ public:
     EwkBackForwardList* backForwardList() { return m_backForwardList.get(); }
     EwkWindowFeatures* windowFeatures();
 
-    WebCore::IntSize size() const;
     bool isFocused() const;
     bool isVisible() const;
 
     void setDeviceScaleFactor(float scale);
     float deviceScaleFactor() const;
 
+    void setSize(const WebCore::IntSize&);
+    WebCore::IntSize size() const { return m_size; }
+
+    void setUserViewportTransform(const WebCore::TransformationMatrix& transform) { m_userViewportTransform = transform; }
+    WebCore::TransformationMatrix userViewportTransform() const { return m_userViewportTransform; }
+
+    // FIXME: Convert to TransformationMatrix.
     WebCore::AffineTransform transformToScene() const;
     WebCore::AffineTransform transformFromScene() const;
     WebCore::AffineTransform transformToScreen() const;
+
+    void paintToCurrentGLContext();
+    void paintToCairoSurface(cairo_surface_t*);
 
     const char* url() const { return m_url; }
     const char* faviconURL() const { return m_faviconURL; }
@@ -164,7 +176,7 @@ public:
     WKRect windowGeometry() const;
     void setWindowGeometry(const WKRect&);
 
-    bool createGLSurface(const WebCore::IntSize& viewSize);
+    bool createGLSurface();
     bool enterAcceleratedCompositingMode();
     bool exitAcceleratedCompositingMode();
     void setNeedsSurfaceResize() { m_pendingSurfaceResize = true; }
@@ -179,7 +191,7 @@ public:
 
     void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
     void closePopupMenu();
-    
+
     void showContextMenu(WebKit::WebContextMenuProxyEfl*, const WebCore::IntPoint& position, const Vector<WebKit::WebContextMenuItemData>& items);
     void hideContextMenu();
 
@@ -207,8 +219,6 @@ public:
 
     // FIXME: needs refactoring (split callback invoke)
     void informURLChange();
-
-    bool isHardwareAccelerated() const { return m_isHardwareAccelerated; }
 
     PassRefPtr<cairo_surface_t> takeSnapshot();
 
@@ -259,6 +269,8 @@ private:
     OwnPtr<Evas_GL> m_evasGL;
     OwnPtr<WebKit::EvasGLContext> m_evasGLContext;
     OwnPtr<WebKit::EvasGLSurface> m_evasGLSurface;
+    WebCore::IntSize m_size;
+    WebCore::TransformationMatrix m_userViewportTransform;
     bool m_pendingSurfaceResize;
     OwnPtr<WebKit::PageClientBase> m_pageClient;
     RefPtr<WebKit::WebView> m_webView;
@@ -294,7 +306,7 @@ private:
 #if ENABLE(INPUT_TYPE_COLOR)
     OwnPtr<EwkColorPicker> m_colorPicker;
 #endif
-    bool m_isHardwareAccelerated;
+    bool m_isAccelerated;
 
     static Evas_Smart_Class parentSmartClass;
 };

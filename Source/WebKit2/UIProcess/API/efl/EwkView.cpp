@@ -69,6 +69,7 @@
 #include <WebCore/CairoUtilitiesEfl.h>
 #include <WebCore/CoordinatedGraphicsScene.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/TransformationMatrix.h>
 #include <WebKit2/WKImageCairo.h>
 #include <wtf/MathExtras.h>
 
@@ -247,14 +248,26 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
 #endif
     , m_displayTimer(this, &EwkView::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
-    , m_isHardwareAccelerated(true)
+    , m_isAccelerated(true)
 {
     ASSERT(m_evasObject);
     ASSERT(m_context);
 
+    m_evasGL = adoptPtr(evas_gl_new(evas_object_evas_get(m_evasObject)));
+    if (m_evasGL)
+        m_evasGLContext = EvasGLContext::create(m_evasGL.get());
+
+    if (!m_evasGLContext) {
+        WARN("Failed to create Evas_GL, falling back to software mode.");
+        m_isAccelerated = false;
+    }
+
     WKViewInitialize(wkView());
 
-    WKPageSetUseFixedLayout(wkPage(), behavior == DefaultBehavior);
+    if (behavior == DefaultBehavior) {
+        coordinatedGraphicsScene()->setActive(true);
+        WKPageSetUseFixedLayout(wkPage(), true);
+    }
 
     WKPageGroupRef wkPageGroup = WKPageGetPageGroup(wkPage());
     WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
@@ -443,24 +456,32 @@ float EwkView::deviceScaleFactor() const
     return WKPageGetBackingScaleFactor(wkPage());
 }
 
+void EwkView::setSize(const IntSize& size)
+{
+    m_size = size;
+
+    DrawingAreaProxy* drawingArea = page()->drawingArea();
+    if (!drawingArea)
+        return;
+
+    drawingArea->setSize(m_size, IntSize());
+    pageClient()->updateViewportSize();
+}
+
 AffineTransform EwkView::transformFromScene() const
 {
-    AffineTransform transform;
-
-    // Note that we apply both page and device scale factors.
-    transform.scale(1 / pageScaleFactor());
-    transform.scale(1 / deviceScaleFactor());
-    transform.translate(pagePosition().x(), pagePosition().y());
-
-    Ewk_View_Smart_Data* sd = smartData();
-    transform.translate(-sd->view.x, -sd->view.y);
-
-    return transform;
+    return transformToScene().inverse();
 }
 
 AffineTransform EwkView::transformToScene() const
 {
-    return transformFromScene().inverse();
+    TransformationMatrix transform = userViewportTransform();
+
+    transform.translate(-pagePosition().x(), -pagePosition().y());
+    transform.scale(deviceScaleFactor());
+    transform.scale(pageScaleFactor());
+
+    return transform.toAffineTransform();
 }
 
 AffineTransform EwkView::transformToScreen() const
@@ -514,56 +535,67 @@ inline Ewk_View_Smart_Data* EwkView::smartData() const
     return toSmartData(m_evasObject);
 }
 
+void EwkView::paintToCurrentGLContext()
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    // FIXME: We need to clean up this code as it is split over CoordGfx and Page.
+    scene->setDrawsBackground(WKViewGetDrawsBackground(wkView()));
+
+    FloatRect viewport = userViewportTransform().mapRect(IntRect(IntPoint(), size()));
+    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
+}
+
+void EwkView::paintToCairoSurface(cairo_surface_t* surface)
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    RefPtr<cairo_t> graphicsContext = adoptRef(cairo_create(surface));
+
+    cairo_translate(graphicsContext.get(), - pagePosition().x(), - pagePosition().y());
+    cairo_scale(graphicsContext.get(), pageScaleFactor(), pageScaleFactor());
+    cairo_scale(graphicsContext.get(), deviceScaleFactor(), deviceScaleFactor());
+
+    scene->paintToGraphicsContext(graphicsContext.get());
+}
+
 void EwkView::displayTimerFired(Timer<EwkView>*)
 {
     Ewk_View_Smart_Data* sd = smartData();
 
     if (m_pendingSurfaceResize) {
         // Create a GL surface here so that Evas has no chance of painting to an empty GL surface.
-        if (!createGLSurface(IntSize(sd->view.w, sd->view.h)))
+        if (!createGLSurface())
             return;
 
         m_pendingSurfaceResize = false;
     }
 
-    evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
-
-    // We are supposed to clip to the actual viewport, nothing less.
-    IntRect viewport(sd->view.x, sd->view.y, sd->view.w, sd->view.h);
-
-    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
-    if (!scene)
-        return;
-
-    scene->setActive(true);
-    scene->setDrawsBackground(WKViewGetDrawsBackground(wkView()));
-
-    if (m_isHardwareAccelerated) {
-        scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
-        // sd->image is tied to a native surface. The native surface is in the parent's coordinates,
-        // so we need to account for the viewport position when calling evas_object_image_data_update_add.
-        evas_object_image_data_update_add(sd->image, viewport.x(), viewport.y(), viewport.width(), viewport.height());
-    } else {
+    if (!m_isAccelerated) {
         RefPtr<cairo_surface_t> surface = createSurfaceForImage(sd->image);
         if (!surface)
             return;
 
-        RefPtr<cairo_t> graphicsContext = adoptRef(cairo_create(surface.get()));
-        cairo_translate(graphicsContext.get(), - pagePosition().x(), - pagePosition().y());
-        cairo_scale(graphicsContext.get(), pageScaleFactor(), pageScaleFactor());
-        cairo_scale(graphicsContext.get(), deviceScaleFactor(), deviceScaleFactor());
-        scene->paintToGraphicsContext(graphicsContext.get());
-        evas_object_image_data_update_add(sd->image, 0, 0, viewport.width(), viewport.height());
+        paintToCairoSurface(surface.get());
+        evas_object_image_data_update_add(sd->image, 0, 0, sd->view.w, sd->view.h);
+        return;
     }
+
+    evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
+
+    paintToCurrentGLContext();
+
+    // sd->image is tied to a native surface, which is in the parent's coordinates.
+    evas_object_image_data_update_add(sd->image, sd->view.x, sd->view.y, sd->view.w, sd->view.h);
 }
 
 void EwkView::scheduleUpdateDisplay()
 {
-    // Coordinated graphices needs to schedule an full update, not
-    // repainting of a region. Update in the event loop.
-    Ewk_View_Smart_Data* sd = smartData();
-    // Guard for zero sized viewport.
-    if (!(sd->view.w && sd->view.h))
+    if (size().isEmpty())
         return;
 
     if (!m_displayTimer.isActive())
@@ -634,13 +666,6 @@ void EwkView::setImageData(void* imageData, const IntSize& size)
     evas_object_resize(sd->image, size.width(), size.height());
     evas_object_image_size_set(sd->image, size.width(), size.height());
     evas_object_image_data_copy_set(sd->image, imageData);
-}
-
-IntSize EwkView::size() const
-{
-    int width, height;
-    evas_object_geometry_get(m_evasObject, 0, 0, &width, &height);
-    return IntSize(width, height);
 }
 
 bool EwkView::isFocused() const
@@ -766,32 +791,12 @@ void EwkView::informIconChange()
     smartCallback<IconChanged>().call();
 }
 
-bool EwkView::createGLSurface(const IntSize& viewSize)
+bool EwkView::createGLSurface()
 {
-    if (!m_isHardwareAccelerated)
+    if (!m_isAccelerated)
         return true;
 
-    if (!m_evasGL) {
-        Evas* evas = evas_object_evas_get(m_evasObject);
-        m_evasGL = adoptPtr(evas_gl_new(evas));
-        if (!m_evasGL) {
-            WARN("Failed to create Evas_GL, falling back to software mode.");
-            m_isHardwareAccelerated = false;
-            return false;
-        }
-    }
-
-    if (!m_evasGLContext) {
-        m_evasGLContext = EvasGLContext::create(m_evasGL.get());
-        if (!m_evasGLContext) {
-            WARN("Failed to create GLContext.");
-            return false;
-        }
-    }
-
-    Ewk_View_Smart_Data* sd = smartData();
-
-    Evas_GL_Config evasGLConfig = {
+    static Evas_GL_Config evasGLConfig = {
         EVAS_GL_RGBA_8888,
         EVAS_GL_DEPTH_BIT_8,
         EVAS_GL_STENCIL_NONE,
@@ -799,19 +804,21 @@ bool EwkView::createGLSurface(const IntSize& viewSize)
         EVAS_GL_MULTISAMPLE_NONE
     };
 
-    // Replaces if non-null, and frees existing surface after (OwnPtr).
-    m_evasGLSurface = EvasGLSurface::create(m_evasGL.get(), &evasGLConfig, viewSize);
+    // Recreate to current size: Replaces if non-null, and frees existing surface after (OwnPtr).
+    m_evasGLSurface = EvasGLSurface::create(m_evasGL.get(), &evasGLConfig, size());
     if (!m_evasGLSurface)
         return false;
 
     Evas_Native_Surface nativeSurface;
     evas_gl_native_surface_get(m_evasGL.get(), m_evasGLSurface->surface(), &nativeSurface);
-    evas_object_image_native_surface_set(sd->image, &nativeSurface);
+    evas_object_image_native_surface_set(smartData()->image, &nativeSurface);
 
     evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
 
     Evas_GL_API* gl = evas_gl_api_get(m_evasGL.get());
-    gl->glViewport(0, 0, viewSize.width() + sd->view.x, viewSize.height() + sd->view.y);
+
+    IntPoint boundsEnd = userViewportTransform().mapPoint(IntPoint(size()));
+    gl->glViewport(0, 0, boundsEnd.x(), boundsEnd.y());
     gl->glClearColor(1.0, 1.0, 1.0, 0);
     gl->glClear(GL_COLOR_BUFFER_BIT);
 
@@ -820,16 +827,15 @@ bool EwkView::createGLSurface(const IntSize& viewSize)
 
 bool EwkView::enterAcceleratedCompositingMode()
 {
-    coordinatedGraphicsScene()->setActive(true);
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return false;
 
-    if (!m_isHardwareAccelerated)
-        return true;
+    scene->setActive(true);
 
-    if (!m_evasGLSurface) {
-        if (!createGLSurface(size())) {
-            WARN("Failed to create GLSurface.");
-            return false;
-        }
+    if (m_isAccelerated && !m_evasGLSurface && !createGLSurface()) {
+        WARN("Failed to create GLSurface.");
+        return false;
     }
 
     return true;
@@ -837,6 +843,11 @@ bool EwkView::enterAcceleratedCompositingMode()
 
 bool EwkView::exitAcceleratedCompositingMode()
 {
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return false;
+
+    scene->setActive(false);
     return true;
 }
 
@@ -1148,8 +1159,7 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
     Ewk_View_Smart_Data* smartData = toSmartData(evasObject);
     ASSERT(smartData);
 
-    EwkView* view = toEwkView(smartData);
-    ASSERT(view);
+    EwkView* self = toEwkView(smartData);
 
     smartData->changed.any = false;
 
@@ -1161,6 +1171,8 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         smartData->view.x = x;
         smartData->view.y = y;
         evas_object_move(smartData->image, x, y);
+
+        self->setUserViewportTransform(TransformationMatrix().translate(x, y));
     }
 
     if (smartData->changed.size) {
@@ -1168,11 +1180,8 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         smartData->view.w = width;
         smartData->view.h = height;
 
-        if (view->page()->drawingArea())
-            view->page()->drawingArea()->setSize(IntSize(width, height), IntSize());
-
-        view->setNeedsSurfaceResize();
-        view->pageClient()->updateViewportSize();
+        self->setSize(IntSize(width, height));
+        self->setNeedsSurfaceResize();
     }
 }
 
@@ -1337,7 +1346,7 @@ PassRefPtr<cairo_surface_t> EwkView::takeSnapshot()
         ecore_main_loop_iterate();
 
     Ewk_View_Smart_Data* sd = smartData();
-    if (!m_isHardwareAccelerated) {
+    if (!m_isAccelerated) {
         RefPtr<cairo_surface_t> snapshot = createSurfaceForImage(sd->image);
         // Resume all animations.
         WKViewResumeActiveDOMObjectsAndAnimations(wkView());

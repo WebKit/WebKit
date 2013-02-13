@@ -1,3 +1,73 @@
+2013-02-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
+
+        [WK2][EFL] Cleanup of graphics related code in EwkView
+        https://bugs.webkit.org/show_bug.cgi?id=109377
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+
+            Initialize the evasGL dependencies here and
+            set m_isAccelerated to false if this fails.
+
+            Set the coordinated graphics scene as active
+            when using fixed layout.
+
+        (EwkView::setSize):
+
+            Add a method to set the size and user-viewport
+            transform from the outside. The idea is moving
+            this to our pure WK C API in the future.
+
+        (EwkView::transformFromScene):
+        (EwkView::transformToScene):
+
+            Update the transform methods to use the user-
+            viewport transform.
+
+        (EwkView::paintToCurrentGLContext):
+        (EwkView::paintToCairoSurface):
+
+            Add methods to paint to either the current GL context
+            or to a given cairo_surface_t (for software fallback
+            cases).
+
+        (EwkView::displayTimerFired):
+
+            Clean up and use the two above methods.
+
+        (EwkView::scheduleUpdateDisplay):
+
+            Use the new size() methods instead of using the 
+            smart-object data directly.
+
+        (EwkView::createGLSurface):
+
+            Make this method use size() to query the surface size
+            and avoid creating the context (done in ctor now).
+            Also avoid using the smart-object data directly.
+
+        (EwkView::enterAcceleratedCompositingMode):
+        (EwkView::exitAcceleratedCompositingMode):
+
+            Turn on/off the use of the coord. graphics scene.
+
+        (EwkView::handleEvasObjectCalculate):
+
+            Use the new setSize and setUserViewportTransform.
+
+        (EwkView::takeSnapshot):
+        * UIProcess/API/efl/EwkView.h:
+        (WebCore):
+        (EwkView):
+        (EwkView::size):
+        (EwkView::setUserViewportTransform):
+        (EwkView::userViewportTransform):
+
+            Add the new method definitions and rename isHardwareAccelerated
+            to isAccelerated which fits better with the naming in WebCore.
+
 2013-02-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Introduce WKViewClient C API
