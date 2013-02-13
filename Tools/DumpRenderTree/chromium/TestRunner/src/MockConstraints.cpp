@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE_WEBRTC
 #include "MockConstraints.h"
 
 #include <public/WebMediaConstraints.h>
@@ -77,3 +79,5 @@ bool MockConstraints::verifyConstraints(const WebMediaConstraints& constraints)
 }
 
 }
+
+#endif // ENABLE_WEBRTC

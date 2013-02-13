@@ -780,9 +780,13 @@ void WebTestProxyBase::showContextMenu(WebFrame*, const WebContextMenuData& cont
 
 WebUserMediaClient* WebTestProxyBase::userMediaClient()
 {
+#if ENABLE_WEBRTC
     if (!m_userMediaClient.get())
         m_userMediaClient = auto_ptr<WebUserMediaClientMock>(new WebUserMediaClientMock(m_delegate));
     return m_userMediaClient.get();
+#else
+    return 0;
+#endif // ENABLE_WEBRTC
 }
 
 // Simulate a print by going into print mode and then exit straight away.

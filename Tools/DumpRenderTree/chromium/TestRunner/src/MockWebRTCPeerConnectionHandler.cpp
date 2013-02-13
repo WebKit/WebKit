@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE_WEBRTC
 #include "MockWebRTCPeerConnectionHandler.h"
 
 #include "MockConstraints.h"
@@ -309,3 +311,5 @@ void MockWebRTCPeerConnectionHandler::stop()
 }
 
 }
+
+#endif // ENABLE_WEBRTC

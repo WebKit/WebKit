@@ -89,6 +89,7 @@ TestInterfaces* WebTestInterfaces::testInterfaces()
     return m_interfaces.get();
 }
 
+#if ENABLE_WEBRTC
 WebMediaStreamCenter* WebTestInterfaces::createMediaStreamCenter(WebMediaStreamCenterClient* client)
 {
     return new MockWebMediaStreamCenter(client);
@@ -98,5 +99,6 @@ WebRTCPeerConnectionHandler* WebTestInterfaces::createWebRTCPeerConnectionHandle
 {
     return new MockWebRTCPeerConnectionHandler(client, m_interfaces.get());
 }
+#endif // ENABLE_WEBRTC
 
 }

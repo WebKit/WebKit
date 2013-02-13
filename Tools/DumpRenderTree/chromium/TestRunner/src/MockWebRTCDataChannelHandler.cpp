@@ -23,6 +23,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE_WEBRTC
 #include "MockWebRTCDataChannelHandler.h"
 
 #include "WebTestDelegate.h"
@@ -95,3 +97,5 @@ void MockWebRTCDataChannelHandler::close()
 }
 
 }
+
+#endif // ENABLE_WEBRTC

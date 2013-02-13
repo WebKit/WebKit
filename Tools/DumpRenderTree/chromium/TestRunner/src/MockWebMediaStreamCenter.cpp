@@ -29,6 +29,8 @@
  */
 
 #include "config.h"
+
+#if ENABLE_WEBRTC
 #include "MockWebMediaStreamCenter.h"
 
 #include <public/WebAudioDestinationConsumer.h>
@@ -109,3 +111,5 @@ void MockWebMediaStreamCenter::didCreateMediaStream(WebMediaStream& stream)
 }
 
 }
+
+#endif // ENABLE_WEBRTC
