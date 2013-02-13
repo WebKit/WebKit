@@ -70,23 +70,29 @@ PASS circle1.transform.baseVal.replaceItem('aString', 0) threw exception TypeErr
 PASS circle1.transform.baseVal.replaceItem(circle1, 0) threw exception TypeError: Type error.
 PASS circle1.transform.baseVal.replaceItem(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0), 0) is circle1.transform.baseVal.getItem(0)
-PASS circle1.transform.baseVal.numberOfItems is 3
+PASS circle1.transform.baseVal.numberOfItems is 4
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_ROTATE matrix=[0.0 1.0 -1.0 0.0 0.0 0.0]"
-PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
-PASS dumpTransform(circle1.transform.baseVal.getItem(2)) is "type=SVG_TRANSFORM_SKEWX matrix=[1.0 0.0 1.0 1.0 0.0 0.0]"
-PASS circle1.getAttribute('transform') is "rotate(90) translate(10 10) skewX(45)"
+PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
+PASS dumpTransform(circle1.transform.baseVal.getItem(2)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
+PASS dumpTransform(circle1.transform.baseVal.getItem(3)) is "type=SVG_TRANSFORM_SKEWX matrix=[1.0 0.0 1.0 1.0 0.0 0.0]"
+PASS circle1.getAttribute('transform') is "rotate(90) scale(2 2) translate(10 10) skewX(45)"
 PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0), 'aString') is circle1.transform.baseVal.getItem(0)
-PASS circle1.transform.baseVal.numberOfItems is 2
+PASS circle1.transform.baseVal.numberOfItems is 4
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_ROTATE matrix=[0.0 1.0 -1.0 0.0 0.0 0.0]"
-PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_SKEWX matrix=[1.0 0.0 1.0 1.0 0.0 0.0]"
-PASS circle1.getAttribute('transform') is "rotate(90) skewX(45)"
+PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
+PASS dumpTransform(circle1.transform.baseVal.getItem(2)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
+PASS dumpTransform(circle1.transform.baseVal.getItem(3)) is "type=SVG_TRANSFORM_SKEWX matrix=[1.0 0.0 1.0 1.0 0.0 0.0]"
+PASS circle1.getAttribute('transform') is "rotate(90) scale(2 2) translate(10 10) skewX(45)"
 PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0), circle1) is circle1.transform.baseVal.getItem(0)
-PASS circle1.transform.baseVal.numberOfItems is 1
+PASS circle1.transform.baseVal.numberOfItems is 4
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_ROTATE matrix=[0.0 1.0 -1.0 0.0 0.0 0.0]"
-PASS circle1.getAttribute('transform') is "rotate(90)"
-PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0), null) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS circle1.transform.baseVal.numberOfItems is 0
-PASS circle1.getAttribute('transform') is ""
+PASS dumpTransform(circle1.transform.baseVal.getItem(1)) is "type=SVG_TRANSFORM_SCALE matrix=[2.0 0.0 0.0 2.0 0.0 0.0]"
+PASS dumpTransform(circle1.transform.baseVal.getItem(2)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
+PASS dumpTransform(circle1.transform.baseVal.getItem(3)) is "type=SVG_TRANSFORM_SKEWX matrix=[1.0 0.0 1.0 1.0 0.0 0.0]"
+PASS circle1.getAttribute('transform') is "rotate(90) scale(2 2) translate(10 10) skewX(45)"
+PASS circle1.transform.baseVal.replaceItem(circle1.transform.baseVal.getItem(0), null) is circle1.transform.baseVal.getItem(0)
+PASS circle1.transform.baseVal.numberOfItems is 4
+PASS circle1.getAttribute('transform') is "rotate(90) scale(2 2) translate(10 10) skewX(45)"
 
 Set transform='rotate(90) scale(2 2) translate(10 10) skewX(45)' for circle1
 PASS circle1.setAttribute('transform', 'rotate(90) scale(2 2) translate(10 10) skewX(45)') is undefined.

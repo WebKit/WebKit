@@ -41,24 +41,28 @@ public:
         return adoptRef(new SVGPathSegListPropertyTearOff(animatedProperty, role, pathSegRole, values, wrappers));
     }
 
-    int removeItemFromList(const ListItemType& removeItem, bool shouldSynchronizeWrappers)
+    int findItem(const ListItemType& item) const
     {
         ASSERT(m_values);
+
         unsigned size = m_values->size();
-        for (unsigned i = 0; i < size; ++i) {
-            ListItemType& item = m_values->at(i);
-            if (item != removeItem)
-                continue;
-
-            m_values->remove(i);
-
-            if (shouldSynchronizeWrappers)
-                commitChange();
-
-            return i;
+        for (size_t i = 0; i < size; ++i) {
+            if (item == m_values->at(i))
+                return i;
         }
 
         return -1;
+    }
+
+    void removeItemFromList(size_t itemIndex, bool shouldSynchronizeWrappers)
+    {
+        ASSERT(m_values);
+        ASSERT_WITH_SECURITY_IMPLICATION(itemIndex < m_values->size());
+
+        m_values->remove(itemIndex);
+
+        if (shouldSynchronizeWrappers)
+            commitChange();
     }
 
     // SVGList API
@@ -149,10 +153,11 @@ private:
         m_values->commitChange(m_animatedProperty->contextElement(), listModification);
     }
 
-    virtual void processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify);
-    virtual void processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*)
+    virtual bool processIncomingListItemValue(const ListItemType& newItem, unsigned* indexToModify) OVERRIDE;
+    virtual bool processIncomingListItemWrapper(RefPtr<ListItemTearOff>&, unsigned*)
     {
         ASSERT_NOT_REACHED();
+        return true;
     }
 
 private:

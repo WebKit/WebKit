@@ -14,6 +14,9 @@
 <![CDATA[
     description("This is a test of the simple SVGPointList API parts.");
 
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
     // Extend String prototype, to offer a function, that formats the points attribute in the same way across browsers
     String.prototype.formatPointsAttribute = function() {
         return this.replace(/,/g, " "); // Remove Firefox commas
@@ -129,26 +132,32 @@
     shouldBeEqualToString("poly1.getAttribute('points').formatPointsAttribute()", "0 0 100 0 100 100 0 100");
 
     shouldBeEqualToString("dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), 0))", "x=0 y=0");
-    shouldBe("poly1.points.numberOfItems", "3");
+    shouldBe("poly1.points.numberOfItems", "4");
     shouldBeEqualToString("dumpPoint(poly1.points.getItem(0))", "x=0 y=0");
-    shouldBeEqualToString("dumpPoint(poly1.points.getItem(1))", "x=100 y=100");
-    shouldBeEqualToString("dumpPoint(poly1.points.getItem(2))", "x=0 y=100");
-    shouldBeEqualToString("poly1.getAttribute('points').formatPointsAttribute()", "0 0 100 100 0 100");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(1))", "x=100 y=0");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(2))", "x=100 y=100");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(3))", "x=0 y=100");
+    shouldBeEqualToString("poly1.getAttribute('points').formatPointsAttribute()", "0 0 100 0 100 100 0 100");
 
     shouldBeEqualToString("dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), 'aString'))", "x=0 y=0");
-    shouldBe("poly1.points.numberOfItems", "2");
+    shouldBe("poly1.points.numberOfItems", "4");
     shouldBeEqualToString("dumpPoint(poly1.points.getItem(0))", "x=0 y=0");
-    shouldBeEqualToString("dumpPoint(poly1.points.getItem(1))", "x=0 y=100");
-    shouldBeEqualToString("poly1.getAttribute('points').formatPointsAttribute()", "0 0 0 100");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(1))", "x=100 y=0");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(2))", "x=100 y=100");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(3))", "x=0 y=100");
+    shouldBeEqualToString("poly1.getAttribute('points').formatPointsAttribute()", "0 0 100 0 100 100 0 100");
 
     shouldBeEqualToString("dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), poly1))", "x=0 y=0");
-    shouldBe("poly1.points.numberOfItems", "1");
+    shouldBe("poly1.points.numberOfItems", "4");
     shouldBeEqualToString("dumpPoint(poly1.points.getItem(0))", "x=0 y=0");
-    shouldBeEqualToString("poly1.getAttribute('points').formatPointsAttribute()", "0 0");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(1))", "x=100 y=0");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(2))", "x=100 y=100");
+    shouldBeEqualToString("dumpPoint(poly1.points.getItem(3))", "x=0 y=100");
+    shouldBeEqualToString("poly1.getAttribute('points').formatPointsAttribute()", "0 0 100 0 100 100 0 100");
 
-    shouldThrow("poly1.points.replaceItem(poly1.points.getItem(0), null)");
-    shouldBe("poly1.points.numberOfItems", "0");
-    shouldBeEqualToString("poly1.getAttribute('points')", "");
+    shouldBeEqualToString("dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), null))", "x=0 y=0");
+    shouldBe("poly1.points.numberOfItems", "4");
+    shouldBeEqualToString("poly1.getAttribute('points')", "0 0 100 0 100 100 0 100");
 
     debug("");
     debug("Reset points attribute to 0 0 100 0 100 100 0 100");

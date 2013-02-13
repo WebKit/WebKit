@@ -93,23 +93,29 @@ PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
 PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
 PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
 PASS dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), 0)) is "x=0 y=0"
-PASS poly1.points.numberOfItems is 3
+PASS poly1.points.numberOfItems is 4
 PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
-PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=100"
-PASS dumpPoint(poly1.points.getItem(2)) is "x=0 y=100"
-PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 100 0 100"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
 PASS dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), 'aString')) is "x=0 y=0"
-PASS poly1.points.numberOfItems is 2
+PASS poly1.points.numberOfItems is 4
 PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
-PASS dumpPoint(poly1.points.getItem(1)) is "x=0 y=100"
-PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 0 100"
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
 PASS dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), poly1)) is "x=0 y=0"
-PASS poly1.points.numberOfItems is 1
+PASS poly1.points.numberOfItems is 4
 PASS dumpPoint(poly1.points.getItem(0)) is "x=0 y=0"
-PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0"
-PASS poly1.points.replaceItem(poly1.points.getItem(0), null) threw exception Error: IndexSizeError: DOM Exception 1.
-PASS poly1.points.numberOfItems is 0
-PASS poly1.getAttribute('points') is ""
+PASS dumpPoint(poly1.points.getItem(1)) is "x=100 y=0"
+PASS dumpPoint(poly1.points.getItem(2)) is "x=100 y=100"
+PASS dumpPoint(poly1.points.getItem(3)) is "x=0 y=100"
+PASS poly1.getAttribute('points').formatPointsAttribute() is "0 0 100 0 100 100 0 100"
+PASS dumpPoint(poly1.points.replaceItem(poly1.points.getItem(0), null)) is "x=0 y=0"
+PASS poly1.points.numberOfItems is 4
+PASS poly1.getAttribute('points') is "0 0 100 0 100 100 0 100"
 
 Reset points attribute to 0 0 100 0 100 100 0 100
 PASS poly1.setAttribute('points', '0 0 100 0 100 100 0 100') is undefined.

@@ -56,12 +56,19 @@ public:
 
     virtual bool isAnimatedListTearOff() const { return true; }
 
-    int removeItemFromList(SVGProperty* property, bool shouldSynchronizeWrappers)
+    int findItem(SVGProperty* property) const
     {
         // This should ever be called for our baseVal, as animVal can't modify the list.
         // It's safe to cast to ListPropertyTearOff here as all classes inheriting from us supply their own removeItemFromList() method.
         typedef SVGPropertyTearOff<typename SVGPropertyTraits<PropertyType>::ListItemType> ListItemTearOff;
-        return static_cast<ListPropertyTearOff*>(m_baseVal.get())->removeItemFromList(static_cast<ListItemTearOff*>(property), shouldSynchronizeWrappers);
+        return static_cast<ListPropertyTearOff*>(m_baseVal.get())->findItem(static_cast<ListItemTearOff*>(property));
+    }
+
+    void removeItemFromList(size_t itemIndex, bool shouldSynchronizeWrappers)
+    {
+        // This should ever be called for our baseVal, as animVal can't modify the list.
+        // It's safe to cast to ListPropertyTearOff here as all classes inheriting from us supply their own removeItemFromList() method.
+        static_cast<ListPropertyTearOff*>(m_baseVal.get())->removeItemFromList(itemIndex, shouldSynchronizeWrappers);
     }
 
     void detachListWrappers(unsigned newListSize)
