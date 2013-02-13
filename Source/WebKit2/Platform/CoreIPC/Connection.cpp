@@ -254,21 +254,6 @@ void Connection::setShouldExitOnSyncMessageSendFailure(bool shouldExitOnSyncMess
     m_shouldExitOnSyncMessageSendFailure = shouldExitOnSyncMessageSendFailure;
 }
 
-void Connection::addQueueClient(QueueClient* queueClient)
-{
-    ASSERT(RunLoop::current() == m_clientRunLoop);
-    ASSERT(!m_isConnected);
-
-    m_connectionQueue->dispatch(WTF::bind(&Connection::addQueueClientOnWorkQueue, this, queueClient));
-}
-
-void Connection::removeQueueClient(QueueClient* queueClient)
-{
-    ASSERT(RunLoop::current() == m_clientRunLoop);
-
-    m_connectionQueue->dispatch(WTF::bind(&Connection::removeQueueClientOnWorkQueue, this, queueClient));
-}
-
 void Connection::addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue* workQueue, WorkQueueMessageReceiver* workQueueMessageReceiver)
 {
     ASSERT(RunLoop::current() == m_clientRunLoop);
@@ -304,19 +289,6 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
     ASSERT(!decoder->isSyncMessage());
 
     workQueueMessageReceiver->didReceiveMessage(this, *decoder);
-}
-
-void Connection::addQueueClientOnWorkQueue(QueueClient* queueClient)
-{
-    ASSERT(!m_connectionQueueClients.contains(queueClient));
-    m_connectionQueueClients.append(queueClient);
-}
-
-void Connection::removeQueueClientOnWorkQueue(QueueClient* queueClient)
-{
-    size_t index = m_connectionQueueClients.find(queueClient);
-    ASSERT(index != notFound);
-    m_connectionQueueClients.remove(index);
 }
 
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
@@ -648,15 +620,6 @@ void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
         return;
     }
 
-    // Hand off the message to the connection queue clients.
-    for (size_t i = 0; i < m_connectionQueueClients.size(); ++i) {
-        m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, message);
-        if (!message) {
-            // A connection queue client handled the message, our work here is done.
-            return;
-        }
-    }
-
     enqueueIncomingMessage(message.release());
 }
 
@@ -682,9 +645,6 @@ void Connection::connectionDidClose()
         for (SecondaryThreadPendingSyncReplyMap::iterator iter = m_secondaryThreadPendingSyncReplyMap.begin(); iter != m_secondaryThreadPendingSyncReplyMap.end(); ++iter)
             iter->value->semaphore.signal();
     }
-
-    for (size_t i = 0; i < m_connectionQueueClients.size(); ++i)
-        m_connectionQueueClients[i]->didCloseOnConnectionWorkQueue(this);
 
     if (m_didCloseOnConnectionWorkQueueCallback)
         m_didCloseOnConnectionWorkQueueCallback(this);

@@ -95,15 +95,6 @@ public:
     class WorkQueueMessageReceiver : public MessageReceiver, public ThreadSafeRefCounted<WorkQueueMessageReceiver> {
     };
 
-    class QueueClient {
-    public:
-        virtual void didReceiveMessageOnConnectionWorkQueue(Connection*, OwnPtr<MessageDecoder>&) = 0;
-        virtual void didCloseOnConnectionWorkQueue(Connection*) = 0;
-
-    protected:
-        virtual ~QueueClient() { }
-    };
-
 #if OS(DARWIN)
     struct Identifier {
         Identifier()
@@ -171,9 +162,6 @@ public:
     void addWorkQueueMessageReceiver(StringReference messageReceiverName, WorkQueue*, WorkQueueMessageReceiver*);
     void removeWorkQueueMessageReceiver(StringReference messageReceiverName);
 
-    void addQueueClient(QueueClient*);
-    void removeQueueClient(QueueClient*);
-
     bool open();
     void invalidate();
     void markCurrentlyDispatchedMessageAsInvalid();
@@ -216,9 +204,6 @@ private:
     void removeWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName);
     void dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver*, MessageDecoder*);
 
-    void addQueueClientOnWorkQueue(QueueClient*);
-    void removeQueueClientOnWorkQueue(QueueClient*);
-    
     bool canSendOutgoingMessages() const;
     bool platformCanSendOutgoingMessages() const;
     void sendOutgoingMessages();
@@ -247,8 +232,6 @@ private:
     bool m_isConnected;
     RefPtr<WorkQueue> m_connectionQueue;
     WebCore::RunLoop* m_clientRunLoop;
-
-    Vector<QueueClient*> m_connectionQueueClients;
 
     HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver> > > m_workQueueMessageReceivers;
 
