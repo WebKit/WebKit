@@ -27,6 +27,7 @@
 #include "WebProcess.h"
 
 #include "AuthenticationManager.h"
+#include "EventDispatcher.h"
 #include "InjectedBundle.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "Logging.h"
@@ -137,7 +138,8 @@ WebProcess& WebProcess::shared()
 }
 
 WebProcess::WebProcess()
-    : m_inDidClose(false)
+    : m_eventDispatcher(EventDispatcher::create())
+    , m_inDidClose(false)
     , m_shouldTrackVisitedLinks(true)
     , m_hasSetCacheModel(false)
     , m_cacheModel(CacheModelDocumentViewer)
@@ -208,7 +210,7 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
 
     connection->setShouldExitOnSyncMessageSendFailure(true);
 
-    m_eventDispatcher.initializeConnection(connection);
+    m_eventDispatcher->initializeConnection(connection);
 
 #if ENABLE(PLUGIN_PROCESS)
     m_pluginProcessConnectionManager->initializeConnection(connection);

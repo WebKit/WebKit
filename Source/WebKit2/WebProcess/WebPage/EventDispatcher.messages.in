@@ -20,11 +20,11 @@
 # OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-messages -> EventDispatcher LegacyReceiver {
-    WheelEvent(uint64_t pageID, WebKit::WebWheelEvent event, bool canGoBack, bool canGoForward) DispatchOnConnectionQueue
+messages -> EventDispatcher {
+    WheelEvent(uint64_t pageID, WebKit::WebWheelEvent event, bool canGoBack, bool canGoForward)
 
 #if ENABLE(GESTURE_EVENTS)
-    GestureEvent(uint64_t pageID, WebKit::WebGestureEvent event) DispatchOnConnectionQueue
+    GestureEvent(uint64_t pageID, WebKit::WebGestureEvent event)
 #endif
 
 }

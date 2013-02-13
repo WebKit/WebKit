@@ -29,7 +29,6 @@
 #include "CacheModel.h"
 #include "ChildProcess.h"
 #include "DownloadManager.h"
-#include "EventDispatcher.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
@@ -72,6 +71,7 @@ namespace WebCore {
 namespace WebKit {
 
 class DownloadManager;
+class EventDispatcher;
 class InjectedBundle;
 class PluginProcessConnectionManager;
 class WebConnectionToUIProcess;
@@ -165,7 +165,7 @@ public:
     PluginProcessConnectionManager& pluginProcessConnectionManager();
 #endif
 
-    EventDispatcher& eventDispatcher() { return m_eventDispatcher; }
+    EventDispatcher& eventDispatcher() { return *m_eventDispatcher; }
 
 #if ENABLE(NETWORK_PROCESS)
     NetworkProcessConnection* networkConnection();
@@ -270,7 +270,7 @@ private:
     HashMap<uint64_t, RefPtr<WebPageGroupProxy> > m_pageGroupMap;
     RefPtr<InjectedBundle> m_injectedBundle;
 
-    EventDispatcher m_eventDispatcher;
+    RefPtr<EventDispatcher> m_eventDispatcher;
 
     bool m_inDidClose;
 
