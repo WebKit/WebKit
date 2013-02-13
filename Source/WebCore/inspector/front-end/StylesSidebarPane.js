@@ -1771,7 +1771,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 colorSwatch.setColorString(text);
                 colorSwatch.element.addEventListener("click", swatchClick, false);
 
-                var scrollerElement = hasSpectrum ? self._parentPane._computedStylePane.element.parentElement : null;
+                var scrollerElement;
 
                 function spectrumChanged(e)
                 {
@@ -1785,7 +1785,8 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
                 function spectrumHidden(event)
                 {
-                    scrollerElement.removeEventListener("scroll", repositionSpectrum, false);
+                    if (scrollerElement)
+                        scrollerElement.removeEventListener("scroll", repositionSpectrum, false);
                     var commitEdit = event.data;
                     var propertyText = !commitEdit && self.originalPropertyText ? self.originalPropertyText : (nameElement.textContent + ": " + valueElement.textContent);
                     self.applyStyleText(propertyText, true, true, false);
@@ -1817,7 +1818,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
                             spectrum.addEventListener(WebInspector.Spectrum.Events.ColorChanged, spectrumChanged);
                             spectrumHelper.addEventListener(WebInspector.SpectrumPopupHelper.Events.Hidden, spectrumHidden);
 
-                            scrollerElement.addEventListener("scroll", repositionSpectrum, false);
+                            scrollerElement = colorSwatch.element.enclosingNodeOrSelfWithClass("scroll-target");
+                            if (scrollerElement)
+                                scrollerElement.addEventListener("scroll", repositionSpectrum, false);
+                            else
+                                console.error("Unable to handle color picker scrolling");
                         }
                     }
                     e.consume(true);
