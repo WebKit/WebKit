@@ -37,7 +37,7 @@ namespace WebKit {
 struct SecurityOriginData;
 class WebProcessProxy;
 
-class StorageManager : public ThreadSafeRefCounted<StorageManager>, private CoreIPC::Connection::QueueClient {
+class StorageManager : public CoreIPC::Connection::WorkQueueMessageReceiver {
 public:
     static PassRefPtr<StorageManager> create();
     ~StorageManager();
@@ -48,17 +48,12 @@ public:
 private:
     StorageManager();
 
-    // CoreIPC::Connection::QueueClient
-    virtual void didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&) OVERRIDE;
-    virtual void didCloseOnConnectionWorkQueue(CoreIPC::Connection*) OVERRIDE;
-
-    void didReceiveStorageManagerMessageOnConnectionWorkQueue(CoreIPC::Connection*, OwnPtr<CoreIPC::MessageDecoder>&);
+    // CoreIPC::Connection::WorkQueueMessageReceiver.
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     // Message handlers.
-    void createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&);
-    void destroyStorageArea(CoreIPC::Connection*, uint64_t storageAreaID);
-
-    void dispatchMessageOnStorageManagerQueue(CoreIPC::Connection*, CoreIPC::MessageDecoder*);
+    void createStorageArea(uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&);
+    void destroyStorageArea(uint64_t storageAreaID);
 
     RefPtr<WorkQueue> m_queue;
 };

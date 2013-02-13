@@ -1,5 +1,21 @@
 2013-02-13  Anders Carlsson  <andersca@apple.com>
 
+        StorageManager should be a WorkQueueMessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=109741
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::processWillOpenConnection):
+        (WebKit::StorageManager::processWillCloseConnection):
+        (WebKit::StorageManager::createStorageArea):
+        (WebKit::StorageManager::destroyStorageArea):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/Storage/StorageManager.messages.in:
+
+2013-02-13  Anders Carlsson  <andersca@apple.com>
+
         EventDispatcher should be a WorkQueueMessageReceiver
         https://bugs.webkit.org/show_bug.cgi?id=109736
 
