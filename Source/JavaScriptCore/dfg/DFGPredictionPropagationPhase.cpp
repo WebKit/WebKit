@@ -592,8 +592,8 @@ private:
         case ConvertThis: {
             SpeculatedType prediction = node->child1()->prediction();
             if (prediction) {
-                if (prediction & ~SpecObjectMask) {
-                    prediction &= SpecObjectMask;
+                if (prediction & ~SpecObject) {
+                    prediction &= SpecObject;
                     prediction = mergeSpeculations(prediction, SpecObjectOther);
                 }
                 changed |= mergePrediction(prediction);
@@ -688,16 +688,16 @@ private:
             if (child) {
                 if (isObjectSpeculation(child)) {
                     // I'd love to fold this case into the case below, but I can't, because
-                    // removing SpecObjectMask from something that only has an object
+                    // removing SpecObject from something that only has an object
                     // prediction and nothing else means we have an ill-formed SpeculatedType
                     // (strong predict-none). This should be killed once we remove all traces
                     // of static (aka weak) predictions.
                     changed |= mergePrediction(SpecString);
-                } else if (child & SpecObjectMask) {
+                } else if (child & SpecObject) {
                     // Objects get turned into strings. So if the input has hints of objectness,
                     // the output will have hinsts of stringiness.
                     changed |= mergePrediction(
-                        mergeSpeculations(child & ~SpecObjectMask, SpecString));
+                        mergeSpeculations(child & ~SpecObject, SpecString));
                 } else
                     changed |= mergePrediction(child);
             }

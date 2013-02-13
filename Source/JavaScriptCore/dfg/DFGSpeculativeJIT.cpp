@@ -1501,7 +1501,7 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
     
     if (m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
         m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
-        if (m_state.forNode(node->child1()).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), node->child1(), 
                 m_jit.branchPtr(
@@ -1509,7 +1509,7 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
                     MacroAssembler::Address(op1GPR, JSCell::structureOffset()), 
                     MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
         }
-        if (m_state.forNode(node->child2()).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(node->child2()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op2GPR), node->child2(),
                 m_jit.branchPtr(
@@ -1522,7 +1522,7 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
         GPRReg structureGPR = structure.gpr();
 
         m_jit.loadPtr(MacroAssembler::Address(op1GPR, JSCell::structureOffset()), structureGPR);
-        if (m_state.forNode(node->child1()).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), node->child1(),
                 m_jit.branchPtr(
@@ -1537,7 +1537,7 @@ void SpeculativeJIT::compilePeepHoleObjectEquality(Node* node, Node* branchNode)
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
 
         m_jit.loadPtr(MacroAssembler::Address(op2GPR, JSCell::structureOffset()), structureGPR);
-        if (m_state.forNode(node->child2()).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(node->child2()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op2GPR), node->child2(),
                 m_jit.branchPtr(

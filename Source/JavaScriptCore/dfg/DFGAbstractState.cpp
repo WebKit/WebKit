@@ -850,20 +850,20 @@ bool AbstractState::execute(unsigned indexInBlock)
             } 
             if (left->shouldSpeculateObject() && right->shouldSpeculateObject()) {
                 node->setCanExit(true);
-                forNode(left).filter(SpecObjectMask);
-                forNode(right).filter(SpecObjectMask);
+                forNode(left).filter(SpecObject);
+                forNode(right).filter(SpecObject);
                 break;
             }
             if (left->shouldSpeculateObject() && right->shouldSpeculateObjectOrOther()) {
                 node->setCanExit(true);
-                forNode(left).filter(SpecObjectMask);
-                forNode(right).filter(SpecObjectMask | SpecOther);
+                forNode(left).filter(SpecObject);
+                forNode(right).filter(SpecObject | SpecOther);
                 break;
             }
             if (left->shouldSpeculateObjectOrOther() && right->shouldSpeculateObject()) {
                 node->setCanExit(true);
-                forNode(left).filter(SpecObjectMask | SpecOther);
-                forNode(right).filter(SpecObjectMask);
+                forNode(left).filter(SpecObject | SpecOther);
+                forNode(right).filter(SpecObject);
                 break;
             }
  
@@ -914,8 +914,8 @@ bool AbstractState::execute(unsigned indexInBlock)
         }
         if (leftNode->shouldSpeculateObject() && rightNode->shouldSpeculateObject()) {
             node->setCanExit(true);
-            forNode(leftNode).filter(SpecObjectMask);
-            forNode(rightNode).filter(SpecObjectMask);
+            forNode(leftNode).filter(SpecObject);
+            forNode(rightNode).filter(SpecObject);
             break;
         }
         node->setCanExit(false);
@@ -1331,7 +1331,7 @@ bool AbstractState::execute(unsigned indexInBlock)
         }
         
         if (isObjectSpeculation(child->prediction())) {
-            source.filter(SpecObjectMask);
+            source.filter(SpecObject);
             destination = source;
             break;
         }

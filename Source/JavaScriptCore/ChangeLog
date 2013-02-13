@@ -1,5 +1,33 @@
 2013-02-12  Filip Pizlo  <fpizlo@apple.com>
 
+        Renamed SpecObjectMask to SpecObject.
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        "SpecObjectMask" is a weird name considering that a bunch of the other speculated
+        types are also masks, but don't have "Mask" in the name.
+
+        * bytecode/SpeculatedType.h:
+        (JSC):
+        (JSC::isObjectSpeculation):
+        (JSC::isObjectOrOtherSpeculation):
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectEquality):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+
+2013-02-12  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CFA doesn't filter precisely enough for CompareStrictEq
         https://bugs.webkit.org/show_bug.cgi?id=109618
 

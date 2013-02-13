@@ -53,7 +53,7 @@ static const SpeculatedType SpecMyArguments       = 0x00002000; // It's definite
 static const SpeculatedType SpecForeignArguments  = 0x00004000; // It's definitely an Arguments object, and it's definitely not mine.
 static const SpeculatedType SpecArguments         = 0x00006000; // It's definitely an Arguments object.
 static const SpeculatedType SpecObjectOther       = 0x00008000; // It's definitely an object but not JSFinalObject, JSArray, or JSFunction.
-static const SpeculatedType SpecObjectMask        = 0x0000ffff; // Bitmask used for testing for any kind of object prediction.
+static const SpeculatedType SpecObject            = 0x0000ffff; // Bitmask used for testing for any kind of object prediction.
 static const SpeculatedType SpecString            = 0x00010000; // It's definitely a JSString.
 static const SpeculatedType SpecCellOther         = 0x00020000; // It's definitely a JSCell but not a subclass of JSObject and definitely not a JSString.
 static const SpeculatedType SpecCell              = 0x0003ffff; // It's definitely a JSCell.
@@ -85,12 +85,12 @@ inline bool isCellSpeculation(SpeculatedType value)
 
 inline bool isObjectSpeculation(SpeculatedType value)
 {
-    return !!(value & SpecObjectMask) && !(value & ~SpecObjectMask);
+    return !!(value & SpecObject) && !(value & ~SpecObject);
 }
 
 inline bool isObjectOrOtherSpeculation(SpeculatedType value)
 {
-    return !!(value & (SpecObjectMask | SpecOther)) && !(value & ~(SpecObjectMask | SpecOther));
+    return !!(value & (SpecObject | SpecOther)) && !(value & ~(SpecObject | SpecOther));
 }
 
 inline bool isFinalObjectSpeculation(SpeculatedType value)

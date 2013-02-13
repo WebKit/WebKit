@@ -1491,7 +1491,7 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
     
     if (m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
         m_jit.graph().globalObjectFor(node->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint()); 
-        if (m_state.forNode(node->child1()).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), node->child1(), 
                 m_jit.branchPtr(
@@ -1499,7 +1499,7 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
                     MacroAssembler::Address(op1GPR, JSCell::structureOffset()), 
                     MacroAssembler::TrustedImmPtr(m_jit.globalData()->stringStructure.get())));
         }
-        if (m_state.forNode(node->child2()).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(node->child2()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op2GPR), node->child2(), 
                 m_jit.branchPtr(
@@ -1512,7 +1512,7 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
         GPRReg structureGPR = structure.gpr();
 
         m_jit.loadPtr(MacroAssembler::Address(op1GPR, JSCell::structureOffset()), structureGPR);
-        if (m_state.forNode(node->child1()).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(node->child1()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), node->child1(), 
                 m_jit.branchPtr(
@@ -1527,7 +1527,7 @@ void SpeculativeJIT::compileObjectEquality(Node* node)
                 MacroAssembler::TrustedImm32(MasqueradesAsUndefined)));
 
         m_jit.loadPtr(MacroAssembler::Address(op2GPR, JSCell::structureOffset()), structureGPR);
-        if (m_state.forNode(node->child2()).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(node->child2()).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op2GPR), node->child2(), 
                 m_jit.branchPtr(
@@ -1568,7 +1568,7 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     
     if (m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) { 
         m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
-        if (m_state.forNode(leftChild).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(leftChild).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), leftChild, 
                 m_jit.branchPtr(
@@ -1581,7 +1581,7 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
         GPRReg structureGPR = structure.gpr();
 
         m_jit.loadPtr(MacroAssembler::Address(op1GPR, JSCell::structureOffset()), structureGPR);
-        if (m_state.forNode(leftChild).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(leftChild).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), leftChild, 
                 m_jit.branchPtr(
@@ -1605,7 +1605,7 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
     // We know that within this branch, rightChild must be a cell.
     if (m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) { 
         m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
-        if ((m_state.forNode(rightChild).m_type & SpecCell) & ~SpecObjectMask) {
+        if ((m_state.forNode(rightChild).m_type & SpecCell) & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueRegs(op2TagGPR, op2PayloadGPR), rightChild, 
                 m_jit.branchPtr(
@@ -1618,7 +1618,7 @@ void SpeculativeJIT::compileObjectToObjectOrOtherEquality(Edge leftChild, Edge r
         GPRReg structureGPR = structure.gpr();
 
         m_jit.loadPtr(MacroAssembler::Address(op2PayloadGPR, JSCell::structureOffset()), structureGPR);
-        if ((m_state.forNode(rightChild).m_type & SpecCell) & ~SpecObjectMask) {
+        if ((m_state.forNode(rightChild).m_type & SpecCell) & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueRegs(op2TagGPR, op2PayloadGPR), rightChild, 
                 m_jit.branchPtr(
@@ -1680,7 +1680,7 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     
     if (m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
         m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
-        if (m_state.forNode(leftChild).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(leftChild).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), leftChild,
                 m_jit.branchPtr(
@@ -1693,7 +1693,7 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
         GPRReg structureGPR = structure.gpr();
 
         m_jit.loadPtr(MacroAssembler::Address(op1GPR, JSCell::structureOffset()), structureGPR);
-        if (m_state.forNode(leftChild).m_type & ~SpecObjectMask) {
+        if (m_state.forNode(leftChild).m_type & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueSource::unboxedCell(op1GPR), leftChild,
                 m_jit.branchPtr(
@@ -1716,7 +1716,7 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
     // We know that within this branch, rightChild must be a cell.
     if (m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->isStillValid()) {
         m_jit.graph().globalObjectFor(m_currentNode->codeOrigin)->masqueradesAsUndefinedWatchpoint()->add(speculationWatchpoint());
-        if ((m_state.forNode(rightChild).m_type & SpecCell) & ~SpecObjectMask) {
+        if ((m_state.forNode(rightChild).m_type & SpecCell) & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueRegs(op2TagGPR, op2PayloadGPR), rightChild,
                 m_jit.branchPtr(
@@ -1729,7 +1729,7 @@ void SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality(Edge leftChild
         GPRReg structureGPR = structure.gpr();
 
         m_jit.loadPtr(MacroAssembler::Address(op2PayloadGPR, JSCell::structureOffset()), structureGPR);
-        if ((m_state.forNode(rightChild).m_type & SpecCell) & ~SpecObjectMask) {
+        if ((m_state.forNode(rightChild).m_type & SpecCell) & ~SpecObject) {
             speculationCheck(
                 BadType, JSValueRegs(op2TagGPR, op2PayloadGPR), rightChild,
                 m_jit.branchPtr(
