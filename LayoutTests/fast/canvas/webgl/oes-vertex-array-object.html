@@ -33,6 +33,9 @@ description("This test verifies the functionality of the OES_vertex_array_object
 
 debug("");
 
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("canvas");
 var gl = create3DContext(canvas);
@@ -590,8 +593,7 @@ function runArrayBufferBindTests() {
 
 debug("");
 successfullyParsed = true;
+isSuccessfullyParsed();
 </script>
-<script src="../../resources/js-test-post.js"></script>
-
 </body>
 </html>
