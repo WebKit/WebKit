@@ -90,6 +90,10 @@ AccessibilityObject::~AccessibilityObject()
 
 void AccessibilityObject::detach()
 {
+    // Clear any children and call detachFromParent on them so that
+    // no children are left with dangling pointers to their parent.
+    clearChildren();
+
 #if HAVE(ACCESSIBILITY) && PLATFORM(CHROMIUM)
     m_detached = true;
 #elif HAVE(ACCESSIBILITY)
