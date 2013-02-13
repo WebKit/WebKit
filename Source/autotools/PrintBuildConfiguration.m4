@@ -34,7 +34,6 @@ Features:
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
  GDK target                                               : $with_target
- GStreamer version                                        : $with_gstreamer
  Introspection support                                    : $enable_introspection
  Generate documentation                                   : $enable_gtk_doc
 "

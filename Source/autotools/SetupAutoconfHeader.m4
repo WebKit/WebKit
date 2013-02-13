@@ -5,6 +5,7 @@ AC_DEFINE([WTF_USE_HARFBUZZ], [1], [ ])
 AC_DEFINE([WTF_USE_SOUP], [1], [ ])
 AC_DEFINE([WTF_USE_WEBP], [1], [ ])
 AC_DEFINE([WTF_USE_ICU_UNICODE], [1], [ ])
+AC_DEFINE([GST_API_VERSION_1], [1], [Using GStreamer 1.0])
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [The gettext catalog name])
 
 if test "$enable_debug" = "yes"; then
@@ -61,7 +62,7 @@ if test "$enable_introspection" = "yes"; then
     AC_DEFINE([ENABLE_INTROSPECTION], [1], [Define to enable GObject introspection support])
 fi
 
-if test "$have_gstreamer" = "yes"; then
+if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
     AC_DEFINE([WTF_USE_GSTREAMER], [1], [ ])
     if test "$enable_debug" = "yes"; then
         AC_DEFINE([GST_DISABLE_DEPRECATED], [1], [ ])
@@ -71,8 +72,6 @@ if test "$have_gstreamer" = "yes"; then
         AC_DEFINE([WTF_USE_NATIVE_FULLSCREEN_VIDEO], [1], [ ])
     fi
 fi
-
-AC_DEFINE([GST_API_VERSION_1], [1], [Using GStreamer 1.0])
 
 if test "$enable_web_audio" = "yes"; then
     AC_DEFINE([WTF_USE_WEBAUDIO_GSTREAMER], [1], [1])

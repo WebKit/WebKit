@@ -1,5 +1,13 @@
 2013-02-13  Martin Robinson  <mrobinson@igalia.com>
 
+        Try once again to fix the build after r142756
+
+        * Source/autotools/PrintBuildConfiguration.m4: Do not try to print the GStreamer version
+        in the build output.
+        * Source/autotools/SetupAutoconfHeader.m4: Remove the last reference to have_gstreamer.
+
+2013-02-13  Martin Robinson  <mrobinson@igalia.com>
+
         Try to fix the build after r142756
 
         * Source/autotools/SetupAutomake.m4: Instead of using the (now gone) have_gstreamer
