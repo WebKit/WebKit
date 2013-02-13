@@ -61,6 +61,7 @@ class PageClientBase;
 class PageLoadClientEfl;
 class PagePolicyClientEfl;
 class PageUIClientEfl;
+class ViewClientEfl;
 class WebContextMenuItemData;
 class WebContextMenuProxyEfl;
 class WebPageGroup;
@@ -267,6 +268,7 @@ private:
     OwnPtr<WebKit::ContextMenuClientEfl> m_contextMenuClient;
     OwnPtr<WebKit::FindClientEfl> m_findClient;
     OwnPtr<WebKit::FormClientEfl> m_formClient;
+    OwnPtr<WebKit::ViewClientEfl> m_viewClient;
 #if ENABLE(VIBRATION)
     OwnPtr<WebKit::VibrationClientEfl> m_vibrationClient;
 #endif

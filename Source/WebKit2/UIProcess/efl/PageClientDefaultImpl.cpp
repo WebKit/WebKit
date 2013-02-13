@@ -81,7 +81,7 @@ void PageClientDefaultImpl::didChangeContentsSize(const WebCore::IntSize& size)
 {
     ASSERT(m_pageViewportController);
     m_pageViewportController->didChangeContentsSize(size);
-    m_view->smartCallback<ContentsSizeChanged>().call(size);
+    view()->didChangeContentsSize(size);
 }
 
 void PageClientDefaultImpl::pageDidRequestScroll(const IntPoint& position)

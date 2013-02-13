@@ -34,6 +34,8 @@ class EwkView;
 
 namespace WebKit {
 
+class WebView;
+
 class PageClientBase : public PageClient {
 public:
     virtual ~PageClientBase();
@@ -42,7 +44,7 @@ public:
     virtual void updateViewportSize() = 0;
     virtual void didChangeContentsSize(const WebCore::IntSize&) = 0;
 
-    EwkView* view() const;
+    WebView* view();
 
 protected:
     explicit PageClientBase(EwkView*);
@@ -112,7 +114,7 @@ protected:
     virtual void pageTransitionViewportReady() = 0;
 
 protected:
-    EwkView* m_view;
+    EwkView* m_view; // FIXME: Should be a WebView when possible.
     DefaultUndoController m_undoController;
 };
 

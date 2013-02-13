@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Intel Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,29 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebView_h
-#define WebView_h
-
-#include "APIObject.h"
-#include "PageClient.h"
-#include "WebContext.h"
-#include "WebPageGroup.h"
-#include "WebPageProxy.h"
-#include "WebPreferences.h"
+#include "config.h"
 #include "WebViewClient.h"
+
+#include "WKAPICast.h"
+
+using namespace WebCore;
 
 namespace WebKit {
 
-class WebView : public APIObject {
-public:
-    static const Type APIType = TypeView;
+void WebViewClient::viewNeedsDisplay(WebView* view, const IntRect& area)
+{
+    if (!m_client.viewNeedsDisplay)
+        return;
 
-    WebView(WebContext*, PageClient*, WebPageGroup*, Evas_Object*);
-    virtual ~WebView();
-
-    void initialize();
-
-    WKPageRef pageRef() const { return toAPI(m_webPageProxy.get()); }
-
-    void setDrawsBackground(bool);
-    bool drawsBackground() const;
-    void setDrawsTransparentBackground(bool);
-    bool drawsTransparentBackground() const;
-
-    void setThemePath(WKStringRef);
-
-    void suspendActiveDOMObjectsAndAnimations();
-    void resumeActiveDOMObjectsAndAnimations();
-
-    // View client.
-    void initializeClient(const WKViewClient*);
-    void setViewNeedsDisplay(const WebCore::IntRect&);
-    void didChangeContentsSize(const WebCore::IntSize&);
-
-    // FIXME: Remove when possible.
-    Evas_Object* evasObject() { return m_evasObject; }
-    WebPageProxy* page() { return m_webPageProxy.get(); }
-
-private:
-    virtual Type type() const { return APIType; }
-
-    WebViewClient m_client;
-    RefPtr<WebPageProxy> m_webPageProxy;
-    Evas_Object* m_evasObject;
-};
-
+    m_client.viewNeedsDisplay(toAPI(view), toAPI(area), m_client.clientInfo);
 }
 
-#endif
+void WebViewClient::didChangeContentsSize(WebView* view, const IntSize& size)
+{
+    if (!m_client.didChangeContentsSize)
+        return;
+
+    m_client.didChangeContentsSize(toAPI(view), toAPI(size), m_client.clientInfo);
+}
+
+} // namespace WebKit

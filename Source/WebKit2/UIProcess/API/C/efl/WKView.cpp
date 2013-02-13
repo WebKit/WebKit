@@ -52,6 +52,11 @@ void WKViewInitialize(WKViewRef viewRef)
     toImpl(viewRef)->initialize();
 }
 
+void WKViewSetViewClient(WKViewRef viewRef, const WKViewClient* client)
+{
+    toImpl(viewRef)->initializeClient(client);
+}
+
 WKPageRef WKViewGetPage(WKViewRef viewRef)
 {
     return toImpl(viewRef)->pageRef();

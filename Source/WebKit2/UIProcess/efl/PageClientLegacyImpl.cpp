@@ -71,8 +71,7 @@ void PageClientLegacyImpl::didChangeViewportProperties(const WebCore::ViewportAt
 
 void PageClientLegacyImpl::didChangeContentsSize(const WebCore::IntSize& size)
 {
-    m_view->scheduleUpdateDisplay();
-    m_view->smartCallback<ContentsSizeChanged>().call(size);
+    view()->didChangeContentsSize(size);
 }
 
 void PageClientLegacyImpl::pageDidRequestScroll(const IntPoint& position)

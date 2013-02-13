@@ -99,6 +99,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/RequestManagerClientEfl.cpp
     UIProcess/efl/TextCheckerEfl.cpp
     UIProcess/efl/VibrationClientEfl.cpp
+    UIProcess/efl/ViewClientEfl.cpp
     UIProcess/efl/WebContextEfl.cpp
     UIProcess/efl/WebContextMenuProxyEfl.cpp
     UIProcess/efl/WebFullScreenManagerProxyEfl.cpp
@@ -108,6 +109,7 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebPreferencesEfl.cpp
     UIProcess/efl/WebProcessProxyEfl.cpp
     UIProcess/efl/WebView.cpp
+    UIProcess/efl/WebViewClient.cpp
 
     UIProcess/InspectorServer/efl/WebInspectorServerEfl.cpp
     UIProcess/InspectorServer/soup/WebSocketServerSoup.cpp

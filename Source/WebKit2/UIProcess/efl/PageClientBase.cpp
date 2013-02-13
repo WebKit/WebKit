@@ -61,9 +61,11 @@ PageClientBase::~PageClientBase()
 {
 }
 
-EwkView* PageClientBase::view() const
+WebView* PageClientBase::view()
 {
-    return m_view;
+    // FIXME: This is temporary. In the future, m_view should be
+    // a WebView instead of an EwkView.
+    return toImpl(m_view->wkView());
 }
 
 // PageClient
@@ -73,9 +75,9 @@ PassOwnPtr<DrawingAreaProxy> PageClientBase::createDrawingAreaProxy()
     return drawingArea.release();
 }
 
-void PageClientBase::setViewNeedsDisplay(const WebCore::IntRect&)
+void PageClientBase::setViewNeedsDisplay(const WebCore::IntRect& area)
 {
-    m_view->scheduleUpdateDisplay();
+    view()->setViewNeedsDisplay(area);
 }
 
 void PageClientBase::displayView()

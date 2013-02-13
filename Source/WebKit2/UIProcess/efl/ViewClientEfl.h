@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 Intel Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,57 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebView_h
-#define WebView_h
+#ifndef ViewClientEfl_h
+#define ViewClientEfl_h
 
-#include "APIObject.h"
-#include "PageClient.h"
-#include "WebContext.h"
-#include "WebPageGroup.h"
-#include "WebPageProxy.h"
-#include "WebPreferences.h"
-#include "WebViewClient.h"
+#include <WebKit2/WKBase.h>
+#include <WebKit2/WKGeometry.h>
+#include <wtf/PassOwnPtr.h>
+
+class EwkView;
 
 namespace WebKit {
 
-class WebView : public APIObject {
+class ViewClientEfl {
 public:
-    static const Type APIType = TypeView;
+    static PassOwnPtr<ViewClientEfl> create(EwkView* view)
+    {
+        return adoptPtr(new ViewClientEfl(view));
+    }
 
-    WebView(WebContext*, PageClient*, WebPageGroup*, Evas_Object*);
-    virtual ~WebView();
-
-    void initialize();
-
-    WKPageRef pageRef() const { return toAPI(m_webPageProxy.get()); }
-
-    void setDrawsBackground(bool);
-    bool drawsBackground() const;
-    void setDrawsTransparentBackground(bool);
-    bool drawsTransparentBackground() const;
-
-    void setThemePath(WKStringRef);
-
-    void suspendActiveDOMObjectsAndAnimations();
-    void resumeActiveDOMObjectsAndAnimations();
-
-    // View client.
-    void initializeClient(const WKViewClient*);
-    void setViewNeedsDisplay(const WebCore::IntRect&);
-    void didChangeContentsSize(const WebCore::IntSize&);
-
-    // FIXME: Remove when possible.
-    Evas_Object* evasObject() { return m_evasObject; }
-    WebPageProxy* page() { return m_webPageProxy.get(); }
+    ~ViewClientEfl();
 
 private:
-    virtual Type type() const { return APIType; }
+    explicit ViewClientEfl(EwkView*);
 
-    WebViewClient m_client;
-    RefPtr<WebPageProxy> m_webPageProxy;
-    Evas_Object* m_evasObject;
+    static EwkView* toEwkView(const void* clientInfo);
+    static void viewNeedsDisplay(WKViewRef, WKRect area, const void* clientInfo);
+    static void didChangeContentsSize(WKViewRef, WKSize, const void* clientInfo);
+
+    EwkView* m_view;
 };
 
-}
+} // namespace WebKit
 
-#endif
+#endif // ViewClientEfl_h

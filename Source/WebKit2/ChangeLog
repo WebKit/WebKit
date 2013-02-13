@@ -1,3 +1,74 @@
+2013-02-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Introduce WKViewClient C API
+        https://bugs.webkit.org/show_bug.cgi?id=109559
+
+        Reviewed by Anders Carlsson.
+
+        This patch introduces the WKViewClient C API for EFL's WKView. The purpose of
+        this new C API is to eventually remove the interdependency between EFL's
+        PageClient and EwkView. When completed, PageClient should only interact with
+        WebView and not be aware of EwkView so that we have a clean separation between
+        internal WebKit2 classes and our EFL Ewk API implementation.
+
+        This patch is only a first step towards this goal as there is a lot of work
+        to do to achieve complete separation between EwkView and PageClient. The purpose
+        of this patch is to introduce the needed architecture which will later be
+        extended by introducing new WKViewClient callbacks.
+
+        * PlatformEfl.cmake: Add new ViewClientEfl.cpp and WebViewClient.cpp to EFL's CMake
+        configuration.
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewSetViewClient):
+        * UIProcess/API/C/efl/WKView.h: Introduce new WKViewClient C API.
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView): Initialize ViewClientEfl.
+        * UIProcess/API/efl/EwkView.h: Add new ViewClientEfl member.
+        (WebKit):
+        (EwkView):
+        * UIProcess/API/efl/EwkViewCallbacks.h: Update ContentsSizeChanged smart callback to
+        accept a WKSize in parameter instead of an IntRect.
+        * UIProcess/efl/PageClientBase.cpp: Start calling WKViewClient callbacks instead of
+        interacting directly with EwkView to avoid violating API layering.
+        (WebKit::PageClientBase::view):
+        (WebKit::PageClientBase::setViewNeedsDisplay):
+        * UIProcess/efl/PageClientBase.h:
+        (WebKit):
+        (PageClientBase):
+        * UIProcess/efl/PageClientDefaultImpl.cpp: Start calling WKViewClient callbacks instead of
+        interacting directly with EwkView to avoid violating API layering.
+        (WebKit::PageClientDefaultImpl::didChangeContentsSize):
+        * UIProcess/efl/PageClientLegacyImpl.cpp: Start calling WKViewClient callbacks instead of
+        interacting directly with EwkView to avoid violating API layering.
+        (WebKit::PageClientLegacyImpl::didChangeContentsSize):
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit):
+        (WebKit::ViewClientEfl::toEwkView):
+        (WebKit::ViewClientEfl::viewNeedsDisplay):
+        (WebKit::ViewClientEfl::didChangeContentsSize):
+        (WebKit::ViewClientEfl::ViewClientEfl):
+        (WebKit::ViewClientEfl::~ViewClientEfl):
+        * UIProcess/efl/ViewClientEfl.h: Introduce new ViewClientEfl which handles WKViewClient callbacks
+        and interacts with EwkView.
+        (WebKit):
+        (ViewClientEfl):
+        (WebKit::ViewClientEfl::create):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::initializeClient):
+        (WebKit):
+        (WebKit::WebView::setViewNeedsDisplay):
+        (WebKit::WebView::didChangeContentsSize):
+        * UIProcess/efl/WebView.h: Add new WebViewClient member and corresponding methods to interact
+        with it.
+        (WebView):
+        * UIProcess/efl/WebViewClient.cpp:
+        (WebKit):
+        (WebKit::WebViewClient::viewNeedsDisplay):
+        (WebKit::WebViewClient::didChangeContentsSize):
+        * UIProcess/efl/WebViewClient.h: Add new WebViewClient APIClient for WKViewClient.
+        (WebCore):
+        (WebKit):
+
 2013-02-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL][WTR] Regression(r141836): WTR crashes on exit

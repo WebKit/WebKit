@@ -37,6 +37,7 @@
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
 #include "SnapshotImageGL.h"
+#include "ViewClientEfl.h"
 #include "WKDictionary.h"
 #include "WKGeometry.h"
 #include "WKNumber.h"
@@ -232,6 +233,7 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
     , m_contextMenuClient(ContextMenuClientEfl::create(this))
     , m_findClient(FindClientEfl::create(this))
     , m_formClient(FormClientEfl::create(this))
+    , m_viewClient(ViewClientEfl::create(this))
 #if ENABLE(VIBRATION)
     , m_vibrationClient(VibrationClientEfl::create(this))
 #endif

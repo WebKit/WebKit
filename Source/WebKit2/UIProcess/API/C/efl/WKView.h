@@ -21,6 +21,7 @@
 #define WKView_h
 
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKGeometry.h>
 
 #if USE(EO)
 typedef struct _Eo Evas;
@@ -34,11 +35,27 @@ typedef struct _Evas_Object Evas_Object;
 extern "C" {
 #endif
 
+typedef void (*WKViewViewNeedsDisplayCallback)(WKViewRef view, WKRect area, const void* clientInfo);
+typedef void (*WKViewPageDidChangeContentsSizeCallback)(WKViewRef view, WKSize size, const void* clientInfo);
+
+struct WKViewClient {
+    int                                              version;
+    const void*                                      clientInfo;
+
+    // Version 0
+    WKViewViewNeedsDisplayCallback                   viewNeedsDisplay;
+    WKViewPageDidChangeContentsSizeCallback          didChangeContentsSize;
+};
+typedef struct WKViewClient WKViewClient;
+
+enum { kWKViewClientCurrentVersion = 0 };
+
 WK_EXPORT WKViewRef WKViewCreate(Evas* canvas, WKContextRef context, WKPageGroupRef pageGroup);
 
 WK_EXPORT WKViewRef WKViewCreateWithFixedLayout(Evas* canvas, WKContextRef context, WKPageGroupRef pageGroup);
 
 WK_EXPORT void WKViewInitialize(WKViewRef);
+WK_EXPORT void WKViewSetViewClient(WKViewRef, const WKViewClient*);
 
 WK_EXPORT WKPageRef WKViewGetPage(WKViewRef);
 
