@@ -45,8 +45,12 @@ int main(int argc, char** argv)
     if (!ewk_init())
         return 1;
 
-    // Prefer the not installed web and plugin processes.
-    WTR::TestController controller(argc, const_cast<const char**>(argv));
+    {
+        // Test controller has own ptr containing WebView and WebView must be deleted
+        // before its evas object is deleted. Call of ewk_shutdown() leads to evas objects deletion.
+
+        WTR::TestController controller(argc, const_cast<const char**>(argv));
+    }
 
     ewk_shutdown();
 

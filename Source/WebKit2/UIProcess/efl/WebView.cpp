@@ -51,6 +51,9 @@ WebView::WebView(WebContext* context, PageClient* pageClient, WebPageGroup* page
 
 WebView::~WebView()
 {
+    if (m_webPageProxy->isClosed())
+        return;
+
     m_webPageProxy->close();
 }
 

@@ -1,3 +1,23 @@
+2013-02-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL][WTR] Regression(r141836): WTR crashes on exit
+        https://bugs.webkit.org/show_bug.cgi?id=109456
+
+        Reviewed by Anders Carlsson.
+
+        WebView instance must not live longer than EwkView, as EwkView owns
+        objects that page proxy refers to, doing otherwise leads to a crash.
+
+        Test controller has own ptr containing WebView. Invoking of ewk_shutdown()
+        leads to evas objects deletion. So, the problem was that test controller was
+        deleted after ewk_shutdown() had been called in main() function causing
+        crashes on WTR exit.
+
+        The patch introduces a scope for test controller so that it is deleted first.
+
+        * WebKitTestRunner/efl/main.cpp:
+        (main):
+
 2013-02-13  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: reportLeaf method doesn't report the leaf node properly.
