@@ -2296,12 +2296,8 @@ sub GenerateSingleBatchedAttribute
         if ($constructorType !~ /Constructor$/ || $attribute->signature->extendedAttributes->{"V8CustomConstructor"} || $attribute->signature->extendedAttributes->{"CustomConstructor"}) {
             AddToImplIncludes("V8${constructorType}.h", $attribute->signature->extendedAttributes->{"Conditional"});
         }
-        if ($customAccessor) {
-            $getter = "V8${customAccessor}AccessorGetter";
-        } else {
-            $data = "&V8${constructorType}::info";
-            $getter = "${interfaceName}V8Internal::${interfaceName}ConstructorGetter";
-        }
+        $data = "&V8${constructorType}::info";
+        $getter = "${interfaceName}V8Internal::${interfaceName}ConstructorGetter";
         $setter = "${interfaceName}V8Internal::${interfaceName}ReplaceableAttrSetter";
     } else {
         # Default Getter and Setter
