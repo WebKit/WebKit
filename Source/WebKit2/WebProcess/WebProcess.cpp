@@ -165,7 +165,9 @@ WebProcess::WebProcess()
     , m_usesNetworkProcess(false)
     , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
 #endif
+#if ENABLE(PLUGIN_PROCESS)
     , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
+#endif
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif

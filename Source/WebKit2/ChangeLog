@@ -1,5 +1,12 @@
 2013-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more buildfix for !ENABLE(PLUGIN_PROCESS) platforms.
+
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::WebProcess):
+
+2013-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed Qt-Mac and Qt-Win buildfix after r142768.
 
         * WebProcess/WebProcess.h:
