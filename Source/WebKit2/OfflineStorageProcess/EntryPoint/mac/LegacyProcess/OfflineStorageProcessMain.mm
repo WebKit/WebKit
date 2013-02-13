@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "ChildProcessMain.h"
+#import "ChildProcessEntryPoint.h"
 #import "OfflineStorageProcess.h"
 #import "WKBase.h"
 

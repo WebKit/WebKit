@@ -23,10 +23,12 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XPCServiceBootstrapper_h
-#define XPCServiceBootstrapper_h
-
-#import <CoreFoundation/CoreFoundation.h>
+#import <crt_externs.h>
+#import <dlfcn.h>
+#import <mach-o/dyld.h>
+#import <spawn.h> 
+#import <stdio.h>
+#import <stdlib.h>
 #import <xpc/xpc.h>
 
 namespace WebKit {
@@ -44,7 +46,64 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
         } else {
             assert(type == XPC_TYPE_DICTIONARY);
 
+            if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "re-exec")) {
+                posix_spawnattr_t attr;
+                posix_spawnattr_init(&attr);
+
+                short flags = 0;
+
+                // We just want to set the process state, not actually launch a new process,
+                // so we are going to use the darwin extension to posix_spawn POSIX_SPAWN_SETEXEC
+                // to act like a more full featured exec.
+                flags |= POSIX_SPAWN_SETEXEC;
+
+                sigset_t signalMaskSet;
+                sigemptyset(&signalMaskSet);
+                posix_spawnattr_setsigmask(&attr, &signalMaskSet);
+                flags |= POSIX_SPAWN_SETSIGMASK;
+
+                static const int allowExecutableHeapFlag = 0x2000;
+                if (xpc_dictionary_get_bool(event, "executable-heap"))
+                    flags |= allowExecutableHeapFlag;
+
+                posix_spawnattr_setflags(&attr, flags);
+
+                cpu_type_t cpuTypes[] = { (cpu_type_t)xpc_dictionary_get_uint64(event, "architecture") };
+                size_t outCount = 0;
+                posix_spawnattr_setbinpref_np(&attr, 1, cpuTypes, &outCount);
+
+                char path[4 * PATH_MAX];
+                uint32_t pathLength = sizeof(path);
+                _NSGetExecutablePath(path, &pathLength);
+
+                char** argv = *_NSGetArgv();
+                const char* programName = argv[0];
+                const char* args[] = { programName, 0 };
+
+                xpc_object_t environmentArray = xpc_dictionary_get_value(event, "environment");
+                size_t numberOfEnvironmentVariables = xpc_array_get_count(environmentArray);
+
+                const char** environment = (const char**)malloc(numberOfEnvironmentVariables * sizeof(char*) + 1);
+                for (size_t i = 0; i < numberOfEnvironmentVariables; ++i)
+                    environment[i] = xpc_array_get_string(environmentArray, i);
+                environment[numberOfEnvironmentVariables] = 0;
+
+                pid_t processIdentifier = 0;
+                posix_spawn(&processIdentifier, path, 0, &attr, const_cast<char**>(args), const_cast<char**>(environment));
+
+                posix_spawnattr_destroy(&attr);
+
+                NSLog(@"Unable to re-exec for path: %s", path);
+                exit(EXIT_FAILURE);
+            }
+
             if (!strcmp(xpc_dictionary_get_string(event, "message-name"), "bootstrap")) {
+                static void* frameworkLibrary = dlopen(xpc_dictionary_get_string(event, "framework-executable-path"), RTLD_NOW);
+                if (!frameworkLibrary) {
+                    NSLog(@"Unable to load WebKit2.framework at path: %s (Error: %s)", xpc_dictionary_get_string(event, "framework-executable-path"), dlerror());
+                    exit(EXIT_FAILURE);
+                }
+
                 CFBundleRef webKit2Bundle = CFBundleGetBundleWithIdentifier(CFSTR("com.apple.WebKit2"));
                 CFStringRef entryPointFunctionName = (CFStringRef)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
 
@@ -60,6 +119,9 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
                 xpc_connection_send_message(xpc_dictionary_get_remote_connection(event), reply);
                 xpc_release(reply);
 
+                dup2(xpc_dictionary_dup_fd(event, "stdout"), STDOUT_FILENO);
+                dup2(xpc_dictionary_dup_fd(event, "stderr"), STDERR_FILENO);
+
                 initializerFunctionPtr(peer, event);
             }
         }
@@ -68,6 +130,12 @@ static void XPCServiceEventHandler(xpc_connection_t peer)
     xpc_connection_resume(peer);
 }
 
-} // namespace WebKit
+} // namespace WebKit;
 
-#endif // XPCServiceBootstrapper_h
+using namespace WebKit;
+
+int main(int argc, char** argv)
+{
+    xpc_main(XPCServiceEventHandler);
+    return 0;
+}

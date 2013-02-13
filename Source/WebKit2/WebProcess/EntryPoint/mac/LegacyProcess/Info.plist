@@ -28,5 +28,7 @@
 	<true/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>WebKitEntryPoint</key>
+	<string>WebContentProcessMain</string>
 </dict>
 </plist>

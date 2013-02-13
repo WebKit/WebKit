@@ -24,7 +24,6 @@
 #include "BaseTarget.xcconfig"
 
 GCC_ENABLE_OBJC_GC = NO;
-PRODUCT_NAME = com.apple.WebKit.$(TARGET_NAME:rfc1034identifier);
 INSTALL_PATH = $(WEBKIT2_FRAMEWORKS_DIR)/WebKit2.framework/Versions/A/XPCServices;
 
 APP_ICON = $(APP_ICON_$(CONFIGURATION));

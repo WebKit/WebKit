@@ -27,7 +27,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#import "ChildProcessMain.h"
+#import "ChildProcessEntryPoint.h"
 #import "NetworkProcess.h"
 #import "WKBase.h"
 

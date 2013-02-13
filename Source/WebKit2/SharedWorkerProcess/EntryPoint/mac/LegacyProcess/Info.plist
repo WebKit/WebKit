@@ -26,5 +26,7 @@
 	<true/>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>WebKitEntryPoint</key>
+	<string>SharedWorkerProcessMain</string>
 </dict>
 </plist>

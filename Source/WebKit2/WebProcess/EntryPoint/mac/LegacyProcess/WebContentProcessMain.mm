@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#import "ChildProcessMain.h"
+#import "ChildProcessEntryPoint.h"
 #import "EnvironmentUtilities.h"
 #import "EnvironmentVariables.h"
 #import "StringUtilities.h"

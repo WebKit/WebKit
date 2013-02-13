@@ -23,8 +23,8 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ChildProcessMain_h
-#define ChildProcessMain_h
+#ifndef ChildProcessEntryPoint_h
+#define ChildProcessEntryPoint_h
 
 #import "ChildProcess.h"
 #import "CommandLine.h"
@@ -106,4 +106,4 @@ int ChildProcessMain(int argc, char** argv)
 
 } // namespace WebKit
 
-#endif // ChildProcessMain_h
+#endif // ChildProcessEntryPoint_h

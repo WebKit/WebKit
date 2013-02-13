@@ -23,78 +23,59 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "ChildProcessMain.h"
-
-#import <mach/mach_error.h>
-#import <servers/bootstrap.h>
+#import <Foundation/Foundation.h>
+#import <dlfcn.h>
 #import <stdio.h>
-#import <wtf/RetainPtr.h>
-#import <wtf/text/CString.h>
-
-#define SHOW_CRASH_REPORTER 1
+#import <stdlib.h>
+#import <sys/event.h>
+#import <unistd.h>
 
 namespace WebKit {
 
-ChildProcessMainDelegate::~ChildProcessMainDelegate()
+static void closeUnusedFileDescriptors()
 {
+    int numFDs = getdtablesize();
+
+    // Close all file descriptors except stdin, stdout and stderr.
+    for (int fd = 3; fd < numFDs; ++fd) {
+        // Check if this is a kqueue file descriptor. If it is, we don't want to close it because it has
+        // been created by initializing libdispatch from a global initializer. See <rdar://problem/9828476> for more details.
+        struct timespec timeSpec = { 0, 0 };
+        if (!kevent(fd, 0, 0, 0, 0, &timeSpec))
+            continue;
+
+        close(fd);
+    }
 }
 
-void ChildProcessMainDelegate::installSignalHandlers()
-{
-#if !SHOW_CRASH_REPORTER
-    // Installs signal handlers that exit on a crash so that CrashReporter does not show up.
-    signal(SIGILL, _exit);
-    signal(SIGFPE, _exit);
-    signal(SIGBUS, _exit);
-    signal(SIGSEGV, _exit);
-#endif
-}
+typedef int (*BootstrapMainFunction)(int argc, char** argv);
 
-void ChildProcessMainDelegate::doPreInitializationWork()
+static int BootstrapMain(int argc, char** argv)
 {
-}
+    closeUnusedFileDescriptors();
 
-bool ChildProcessMainDelegate::getConnectionIdentifier(CoreIPC::Connection::Identifier& identifier)
-{
-    String serviceName = m_commandLine["servicename"];
-    if (serviceName.isEmpty())
-        return false;
-    
-    mach_port_t serverPort;
-    kern_return_t kr = bootstrap_look_up(bootstrap_port, serviceName.utf8().data(), &serverPort);
-    if (kr) {
-        WTFLogAlways("bootstrap_look_up result: %s (%x)\n", mach_error_string(kr), kr);
-        return false;
+    if (argc < 2)
+        return EXIT_FAILURE;
+
+    static void* frameworkLibrary = dlopen(argv[1], RTLD_NOW);
+    if (!frameworkLibrary) {
+        NSLog(@"Unable to load WebKit2.framework: %s\n", dlerror());
+        return EXIT_FAILURE;
     }
 
-    identifier = serverPort;
-    return true;
-}
+    NSString *entryPointFunctionName = (NSString *)CFBundleGetValueForInfoDictionaryKey(CFBundleGetMainBundle(), CFSTR("WebKitEntryPoint"));
+    BootstrapMainFunction bootstrapMainFunction = reinterpret_cast<BootstrapMainFunction>(dlsym(frameworkLibrary, [entryPointFunctionName UTF8String]));
+    if (!bootstrapMainFunction) {
+        NSLog(@"Unable to find entry point '%s' in WebKit2.framework: %s\n", [entryPointFunctionName UTF8String], dlerror());
+        return EXIT_FAILURE;
+    }
 
-bool ChildProcessMainDelegate::getClientIdentifier(String& clientIdentifier)
-{
-    clientIdentifier = m_commandLine["client-identifier"];
-    if (clientIdentifier.isEmpty())
-        return false;
-    return true;
-}
-
-bool ChildProcessMainDelegate::getClientProcessName(String& clientProcessName)
-{
-    clientProcessName = m_commandLine["ui-process-name"];
-    if (clientProcessName.isEmpty())
-        return false;
-    return true;
-}
-
-bool ChildProcessMainDelegate::getExtraInitializationData(HashMap<String, String>&)
-{
-    return true;
-}
-
-void ChildProcessMainDelegate::doPostRunWork()
-{
+    return bootstrapMainFunction(argc, argv);
 }
 
 } // namespace WebKit
+
+int main(int argc, char** argv)
+{
+    return WebKit::BootstrapMain(argc, argv);
+}

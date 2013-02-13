@@ -27,7 +27,7 @@
 
 #if ENABLE(SHARED_WORKER_PROCESS)
 
-#import "ChildProcessMain.h"
+#import "ChildProcessEntryPoint.h"
 #import "SharedWorkerProcess.h"
 #import "WKBase.h"
 

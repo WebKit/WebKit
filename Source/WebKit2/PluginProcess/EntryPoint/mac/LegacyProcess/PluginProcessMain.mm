@@ -27,7 +27,7 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-#import "ChildProcessMain.h"
+#import "ChildProcessEntryPoint.h"
 #import "EnvironmentUtilities.h"
 #import "NetscapePluginModule.h"
 #import "PluginProcess.h"

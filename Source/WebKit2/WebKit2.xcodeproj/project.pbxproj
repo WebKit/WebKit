@@ -774,6 +774,25 @@
 		BC59548915C7868500FD1E3E /* WebKit2.h in Headers */ = {isa = PBXBuildFile; fileRef = BC59548815C7868500FD1E3E /* WebKit2.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BC597075116591D000551FCA /* ProcessModel.h in Headers */ = {isa = PBXBuildFile; fileRef = BC597074116591D000551FCA /* ProcessModel.h */; };
 		BC5C75C814954DA600BC4775 /* WKConnectionInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */; };
+		BC5D24A116CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
+		BC5D24A216CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
+		BC5D24A316CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
+		BC5D24A416CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
+		BC5D24A516CC3B9E007D5461 /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */; };
+		BC5D24A716CC3D5D007D5461 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
+		BC5D24A816CC3D5E007D5461 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
+		BC5D24A916CC3D5F007D5461 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
+		BC5D24AA16CC3D5F007D5461 /* XPCServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */; };
+		BC5D24AB16CC3D62007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
+		BC5D24AC16CC3D63007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
+		BC5D24AD16CC3D64007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
+		BC5D24AE16CC3D65007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
+		BC5D24AF16CC3D66007D5461 /* XPCServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839616B47EC400A278FE /* XPCServiceMain.mm */; };
+		BC5D24B116CC3F36007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
+		BC5D24B316CC3F3F007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
+		BC5D24B516CC3F46007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
+		BC5D24B616CC3F4D007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
+		BC5D24B716CC3F5D007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60C57A1240A546008C5E29 /* WKBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */; };
 		BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64696D11DBE603006455B0 /* ImmutableArray.cpp */; };
@@ -804,22 +823,15 @@
 		BC8147D512F66D31007B2C32 /* InjectedBundleNavigationAction.h in Headers */ = {isa = PBXBuildFile; fileRef = BC8147D312F66D31007B2C32 /* InjectedBundleNavigationAction.h */; };
 		BC8147D612F66D31007B2C32 /* InjectedBundleNavigationAction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC8147D412F66D31007B2C32 /* InjectedBundleNavigationAction.cpp */; };
 		BC82836516B354F600A278FE /* WebContentProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82836416B354F600A278FE /* WebContentProcessMain.mm */; };
-		BC82837616B3674B00A278FE /* WebContentProcessMainBootstrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC82837416B3674B00A278FE /* WebContentProcessMainBootstrapper.cpp */; };
-		BC82837A16B36A4F00A278FE /* ChildProcessMain.h in Headers */ = {isa = PBXBuildFile; fileRef = BC82837816B36A4F00A278FE /* ChildProcessMain.h */; };
-		BC82837B16B36A4F00A278FE /* ChildProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82837916B36A4F00A278FE /* ChildProcessMain.mm */; };
+		BC82837A16B36A4F00A278FE /* ChildProcessEntryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BC82837816B36A4F00A278FE /* ChildProcessEntryPoint.h */; };
+		BC82837B16B36A4F00A278FE /* ChildProcessEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82837916B36A4F00A278FE /* ChildProcessEntryPoint.mm */; };
 		BC82838416B45DA500A278FE /* NetworkProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82838116B45DA500A278FE /* NetworkProcessMain.mm */; };
-		BC82838516B45DB700A278FE /* NetworkProcessMainBootstrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC82838016B45DA500A278FE /* NetworkProcessMainBootstrapper.cpp */; };
-		BC82838B16B45EFF00A278FE /* PluginProcessMainBootstrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC82838916B45EF200A278FE /* PluginProcessMainBootstrapper.cpp */; };
 		BC82838C16B45F0700A278FE /* PluginProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82838A16B45EF200A278FE /* PluginProcessMain.mm */; };
-		BC82839416B4608000A278FE /* SharedWorkerProcessMainBootstrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC82839216B4607B00A278FE /* SharedWorkerProcessMainBootstrapper.cpp */; };
 		BC82839516B4608300A278FE /* SharedWorkerProcessMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839316B4607B00A278FE /* SharedWorkerProcessMain.mm */; };
 		BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */; };
 		BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283A816B4BD9100A278FE /* NetworkServiceEntryPoint.mm */; };
-		BC8283D816B4DB2A00A278FE /* NetworkServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283A416B4BD9100A278FE /* NetworkServiceMain.mm */; };
-		BC8283D916B4DB2E00A278FE /* NetworkServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283A716B4BD9100A278FE /* NetworkServiceMain.Development.mm */; };
 		BC8283DA16B4DB9300A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BC82844916B5004200A278FE /* PluginService.32.Main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283E516B4F8E200A278FE /* PluginService.32.Main.mm */; };
-		BC82844B16B5004D00A278FE /* PluginService.64.Main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283EB16B4F8E200A278FE /* PluginService.64.Main.mm */; };
 		BC82844D16B5081C00A278FE /* PluginServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */; };
 		BC82844E16B5089400A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BC82844F16B5089800A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
@@ -879,11 +891,8 @@
 		BCA8C6B011E3C08700812FB7 /* InjectedBundlePageUIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA8C6AE11E3C08700812FB7 /* InjectedBundlePageUIClient.h */; };
 		BCAC111F12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAC111D12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.h */; };
 		BCAC112012C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAC111E12C92C1F00B08EEE /* WebDatabaseManagerProxyClient.cpp */; };
-		BCACC44916B24D3200B6E092 /* WebContentServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCACC44116B24CAA00B6E092 /* WebContentServiceMain.mm */; };
-		BCACC44A16B24D3600B6E092 /* WebContentServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCACC44416B24CAA00B6E092 /* WebContentServiceMain.Development.mm */; };
 		BCAE9E08160C1C0700A33217 /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BCAE9E09160C233B00A33217 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
-		BCAF35BC16CA1E2400D4E9FC /* OfflineStorageProcessMainBootstrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35B916CA1E2400D4E9FC /* OfflineStorageProcessMainBootstrapper.cpp */; };
 		BCAF35D516CA212400D4E9FC /* OfflineStorageProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35D116CA212400D4E9FC /* OfflineStorageProcessMac.mm */; };
 		BCAF35D716CA212400D4E9FC /* OfflineStorageProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35D216CA212400D4E9FC /* OfflineStorageProcess.cpp */; };
 		BCAF35D916CA212400D4E9FC /* OfflineStorageProcess.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAF35D316CA212400D4E9FC /* OfflineStorageProcess.h */; };
@@ -893,8 +902,6 @@
 		BCAF35E816CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35E616CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp */; };
 		BCAF35E916CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35E616CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp */; };
 		BCAF35EA16CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = BCAF35E716CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h */; };
-		BCAF361316CA26B800D4E9FC /* OfflineStorageServiceMain.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35C016CA1F9D00D4E9FC /* OfflineStorageServiceMain.mm */; };
-		BCAF361416CA26BB00D4E9FC /* OfflineStorageServiceMain.Development.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCAF35C316CA1F9D00D4E9FC /* OfflineStorageServiceMain.Development.mm */; };
 		BCAF361B16CA285400D4E9FC /* OfflineStorageProcess.app in CopyFiles */ = {isa = PBXBuildFile; fileRef = BCAF359A16CA1D5700D4E9FC /* OfflineStorageProcess.app */; };
 		BCAF361C16CA286700D4E9FC /* com.apple.WebKit.OfflineStorage.sb in Resources */ = {isa = PBXBuildFile; fileRef = BCAF361516CA274000D4E9FC /* com.apple.WebKit.OfflineStorage.sb */; };
 		BCAF361D16CA28C100D4E9FC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
@@ -940,7 +947,6 @@
 		BCBD3914125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBD3912125BB1A800D2C29F /* WebPageProxyMessageReceiver.cpp */; };
 		BCBD3915125BB1A800D2C29F /* WebPageProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD3913125BB1A800D2C29F /* WebPageProxyMessages.h */; };
 		BCBD3C3B125BFA7A00D2C29F /* StringPairVector.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */; };
-		BCBECDC316B5CEB100047A1A /* PluginService.Development.Main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBECDC116B5CE0D00047A1A /* PluginService.Development.Main.mm */; };
 		BCBECDE716B6416800047A1A /* XPCServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBECDE516B6416700047A1A /* XPCServiceEntryPoint.mm */; };
 		BCBECDE816B6416800047A1A /* XPCServiceEntryPoint.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */; };
 		BCC43ABA127B95DC00317F16 /* PlatformPopupMenuData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCC43AB8127B95DC00317F16 /* PlatformPopupMenuData.cpp */; };
@@ -1263,13 +1269,6 @@
 			remoteGlobalIDString = 8DC2EF4F0486A6940098B216;
 			remoteInfo = WebKit2;
 		};
-		BCCDE2D516C88DAA00D90310 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = BC8283F816B4FDDE00A278FE;
-			remoteInfo = Plugin.32;
-		};
 		BCDE093513272496001259FB /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -1511,8 +1510,8 @@
 		1A6FBD2611E69BC200DB1371 /* NetscapePlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NetscapePlugin.h; sourceTree = "<group>"; };
 		1A6FBD2711E69BC200DB1371 /* NetscapePlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetscapePlugin.cpp; sourceTree = "<group>"; };
 		1A7865B616CAC6FD00ACE83A /* PluginProcessConnectionManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PluginProcessConnectionManager.messages.in; sourceTree = "<group>"; };
-		1A7865B716CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PluginProcessConnectionManagerMessageReceiver.cpp; path = PluginProcessConnectionManagerMessageReceiver.cpp; sourceTree = "<group>"; };
-		1A7865B816CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PluginProcessConnectionManagerMessages.h; path = PluginProcessConnectionManagerMessages.h; sourceTree = "<group>"; };
+		1A7865B716CAC71500ACE83A /* PluginProcessConnectionManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessConnectionManagerMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A7865B816CAC71500ACE83A /* PluginProcessConnectionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnectionManagerMessages.h; sourceTree = "<group>"; };
 		1A7C6CD81378950800B9C04D /* EnvironmentVariables.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnvironmentVariables.cpp; sourceTree = "<group>"; };
 		1A7C6CD91378950800B9C04D /* EnvironmentVariables.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnvironmentVariables.h; sourceTree = "<group>"; };
 		1A8EF4C91252403700F7067F /* PluginControllerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginControllerProxy.h; sourceTree = "<group>"; };
@@ -1585,9 +1584,6 @@
 		1AB31A9316BC65AB00F6DBC9 /* StorageManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageManager.messages.in; sourceTree = "<group>"; };
 		1AB31A9416BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageManagerMessageReceiver.cpp; sourceTree = "<group>"; };
 		1AB31A9516BC688100F6DBC9 /* StorageManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageManagerMessages.h; sourceTree = "<group>"; };
-		1AB779C916C99E6400E2CE41 /* PluginProcessConnectionManager.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = PluginProcessConnectionManager.messages.in; sourceTree = "<group>"; };
-		1AB779CA16C9A12600E2CE41 /* PluginProcessConnectionManagerMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessConnectionManagerMessageReceiver.cpp; sourceTree = "<group>"; };
-		1AB779CB16C9A12600E2CE41 /* PluginProcessConnectionManagerMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginProcessConnectionManagerMessages.h; sourceTree = "<group>"; };
 		1AB7D4C81288AAA700CFD08C /* DownloadProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DownloadProxy.h; sourceTree = "<group>"; };
 		1AB7D4C91288AAA700CFD08C /* DownloadProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DownloadProxy.cpp; sourceTree = "<group>"; };
 		1AB7D5E91288B8C000CFD08C /* DownloadProxy.messages.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DownloadProxy.messages.in; sourceTree = "<group>"; };
@@ -1941,7 +1937,7 @@
 		5D51845413BCF9CC00C7FF4A /* APIClientTraits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIClientTraits.h; sourceTree = "<group>"; };
 		5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerEnvironmentExtractor.h; sourceTree = "<group>"; };
 		5DA6ED091490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DynamicLinkerEnvironmentExtractor.mm; sourceTree = "<group>"; };
-		5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebProcess.xcconfig; sourceTree = "<group>"; };
+		5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = WebContentProcess.xcconfig; sourceTree = "<group>"; };
 		5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = BaseTarget.xcconfig; sourceTree = "<group>"; };
 		6546A82913000164000CEB1C /* InjectedBundlePageResourceLoadClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageResourceLoadClient.cpp; sourceTree = "<group>"; };
 		6546A82A13000164000CEB1C /* InjectedBundlePageResourceLoadClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageResourceLoadClient.h; sourceTree = "<group>"; };
@@ -2188,6 +2184,8 @@
 		BC59548815C7868500FD1E3E /* WebKit2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKit2.h; sourceTree = "<group>"; };
 		BC597074116591D000551FCA /* ProcessModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProcessModel.h; sourceTree = "<group>"; };
 		BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKConnectionInternal.h; sourceTree = "<group>"; };
+		BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessMain.mm; sourceTree = "<group>"; };
+		BC5D24B816CC40BB007D5461 /* BaseLegacyProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseLegacyProcess.xcconfig; sourceTree = "<group>"; };
 		BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRangeHandle.h; sourceTree = "<group>"; };
 		BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleRangeHandle.cpp; sourceTree = "<group>"; };
 		BC64696D11DBE603006455B0 /* ImmutableArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableArray.cpp; sourceTree = "<group>"; };
@@ -2219,26 +2217,19 @@
 		BC8147D412F66D31007B2C32 /* InjectedBundleNavigationAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundleNavigationAction.cpp; sourceTree = "<group>"; };
 		BC82836416B354F600A278FE /* WebContentProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentProcessMain.mm; sourceTree = "<group>"; };
 		BC82837316B35AF900A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC82837416B3674B00A278FE /* WebContentProcessMainBootstrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebContentProcessMainBootstrapper.cpp; sourceTree = "<group>"; };
-		BC82837716B367F800A278FE /* ChildProcessMainBootstrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessMainBootstrapper.h; sourceTree = "<group>"; };
-		BC82837816B36A4F00A278FE /* ChildProcessMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessMain.h; sourceTree = "<group>"; };
-		BC82837916B36A4F00A278FE /* ChildProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessMain.mm; sourceTree = "<group>"; };
+		BC82837816B36A4F00A278FE /* ChildProcessEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessEntryPoint.h; sourceTree = "<group>"; };
+		BC82837916B36A4F00A278FE /* ChildProcessEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessEntryPoint.mm; sourceTree = "<group>"; };
 		BC82837F16B45DA500A278FE /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC82838016B45DA500A278FE /* NetworkProcessMainBootstrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NetworkProcessMainBootstrapper.cpp; sourceTree = "<group>"; };
 		BC82838116B45DA500A278FE /* NetworkProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkProcessMain.mm; sourceTree = "<group>"; };
-		BC82838916B45EF200A278FE /* PluginProcessMainBootstrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = PluginProcessMainBootstrapper.cpp; sourceTree = "<group>"; };
 		BC82838A16B45EF200A278FE /* PluginProcessMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginProcessMain.mm; sourceTree = "<group>"; };
 		BC82838D16B45FA600A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC82839116B4600D00A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC82839216B4607B00A278FE /* SharedWorkerProcessMainBootstrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SharedWorkerProcessMainBootstrapper.cpp; sourceTree = "<group>"; };
 		BC82839316B4607B00A278FE /* SharedWorkerProcessMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = SharedWorkerProcessMain.mm; sourceTree = "<group>"; };
-		BC82839616B47EC400A278FE /* XPCServiceBootstrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCServiceBootstrapper.h; sourceTree = "<group>"; };
-		BC82839716B480F600A278FE /* XPCServiceBootstrapper.Development.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPCServiceBootstrapper.Development.h; sourceTree = "<group>"; };
+		BC82839616B47EC400A278FE /* XPCServiceMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceMain.mm; sourceTree = "<group>"; };
+		BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceMain.Development.mm; sourceTree = "<group>"; };
 		BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283A316B4BD9100A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC8283A416B4BD9100A278FE /* NetworkServiceMain.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkServiceMain.mm; sourceTree = "<group>"; };
 		BC8283A616B4BD9100A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC8283A716B4BD9100A278FE /* NetworkServiceMain.Development.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkServiceMain.Development.mm; sourceTree = "<group>"; };
 		BC8283A816B4BD9100A278FE /* NetworkServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = NetworkServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283AA16B4BEAD00A278FE /* NetworkService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkService.Development.xcconfig; sourceTree = "<group>"; };
 		BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkService.xcconfig; sourceTree = "<group>"; };
@@ -2247,7 +2238,6 @@
 		BC8283E416B4F8E200A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC8283E516B4F8E200A278FE /* PluginService.32.Main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginService.32.Main.mm; sourceTree = "<group>"; };
 		BC8283EA16B4F8E200A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC8283EB16B4F8E200A278FE /* PluginService.64.Main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginService.64.Main.mm; sourceTree = "<group>"; };
 		BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283F216B4FC5300A278FE /* PluginService.32.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.32.xcconfig; sourceTree = "<group>"; };
 		BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.64.xcconfig; sourceTree = "<group>"; };
@@ -2312,18 +2302,13 @@
 		BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.xcconfig; sourceTree = "<group>"; };
 		BCACC40F16B0B8A800B6E092 /* WebContentService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WebContentService.Development.xcconfig; sourceTree = "<group>"; };
 		BCACC44016B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCACC44116B24CAA00B6E092 /* WebContentServiceMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceMain.mm; sourceTree = "<group>"; };
 		BCACC44316B24CAA00B6E092 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCACC44416B24CAA00B6E092 /* WebContentServiceMain.Development.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContentServiceMain.Development.mm; sourceTree = "<group>"; };
 		BCAE9DE9160C097400A33217 /* com.apple.WebKit.WebContent.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.WebContent.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCAF359A16CA1D5700D4E9FC /* OfflineStorageProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfflineStorageProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCAF35B716CA1E2400D4E9FC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BCAF35B816CA1E2400D4E9FC /* OfflineStorageProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OfflineStorageProcessMain.mm; sourceTree = "<group>"; };
-		BCAF35B916CA1E2400D4E9FC /* OfflineStorageProcessMainBootstrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineStorageProcessMainBootstrapper.cpp; sourceTree = "<group>"; };
 		BCAF35BF16CA1F9D00D4E9FC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCAF35C016CA1F9D00D4E9FC /* OfflineStorageServiceMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OfflineStorageServiceMain.mm; sourceTree = "<group>"; };
 		BCAF35C216CA1F9D00D4E9FC /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCAF35C316CA1F9D00D4E9FC /* OfflineStorageServiceMain.Development.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OfflineStorageServiceMain.Development.mm; sourceTree = "<group>"; };
 		BCAF35C416CA1F9D00D4E9FC /* OfflineStorageServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OfflineStorageServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BCAF35CA16CA204300D4E9FC /* OfflineStorageProcess.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OfflineStorageProcess.xcconfig; sourceTree = "<group>"; };
 		BCAF35CB16CA204300D4E9FC /* OfflineStorageService.Development.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = OfflineStorageService.Development.xcconfig; sourceTree = "<group>"; };
@@ -2374,7 +2359,6 @@
 		BCBD3913125BB1A800D2C29F /* WebPageProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebPageProxyMessages.h; sourceTree = "<group>"; };
 		BCBD3C3A125BFA7A00D2C29F /* StringPairVector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StringPairVector.h; sourceTree = "<group>"; };
 		BCBECDC016B5CE0D00047A1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BCBECDC116B5CE0D00047A1A /* PluginService.Development.Main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginService.Development.Main.mm; sourceTree = "<group>"; };
 		BCBECDC216B5CE2A00047A1A /* PluginService.Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.Development.xcconfig; sourceTree = "<group>"; };
 		BCBECDE516B6416700047A1A /* XPCServiceEntryPoint.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = XPCServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XPCServiceEntryPoint.h; sourceTree = "<group>"; };
@@ -2638,6 +2622,30 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BC5D24B016CC3F28007D5461 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC5D24B116CC3F36007D5461 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC5D24B216CC3F3B007D5461 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC5D24B316CC3F3F007D5461 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BC5D24B416CC3F43007D5461 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BC5D24B516CC3F46007D5461 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BC8283AE16B4BF7700A278FE /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -2659,7 +2667,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC8283FA16B4FDDE00A278FE /* Foundation.framework in Frameworks */,
 				BC82844E16B5089400A278FE /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2668,7 +2675,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC82842016B4FDF600A278FE /* Foundation.framework in Frameworks */,
 				BC82844F16B5089800A278FE /* WebKit2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2693,6 +2699,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC5D24B716CC3F5D007D5461 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2726,6 +2733,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC5D24B616CC3F4D007D5461 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2900,6 +2908,7 @@
 			isa = PBXGroup;
 			children = (
 				1A4F976A100E7B6600637A18 /* Base.xcconfig */,
+				BC5D24B816CC40BB007D5461 /* BaseLegacyProcess.xcconfig */,
 				5DAD73F1116FF90C00EE5396 /* BaseTarget.xcconfig */,
 				BCACC40D16B0B7BE00B6E092 /* BaseXPCService.xcconfig */,
 				1A4F976B100E7B6600637A18 /* DebugRelease.xcconfig */,
@@ -2917,10 +2926,10 @@
 				E13A8A4B16287A1B00392929 /* SharedWorkerProcess.xcconfig */,
 				5183B3931379F85C00E8754E /* Shim.xcconfig */,
 				1A4F976E100E7B6600637A18 /* Version.xcconfig */,
+				5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */,
 				BCACC40F16B0B8A800B6E092 /* WebContentService.Development.xcconfig */,
 				BCACC40E16B0B8A800B6E092 /* WebContentService.xcconfig */,
 				BCB86F4B116AAACD00CE20B7 /* WebKit2.xcconfig */,
-				5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -4320,9 +4329,9 @@
 		BC82836A16B3587900A278FE /* LegacyProcess */ = {
 			isa = PBXGroup;
 			children = (
-				BC82837816B36A4F00A278FE /* ChildProcessMain.h */,
-				BC82837916B36A4F00A278FE /* ChildProcessMain.mm */,
-				BC82837716B367F800A278FE /* ChildProcessMainBootstrapper.h */,
+				BC82837816B36A4F00A278FE /* ChildProcessEntryPoint.h */,
+				BC82837916B36A4F00A278FE /* ChildProcessEntryPoint.mm */,
+				BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */,
 			);
 			name = LegacyProcess;
 			path = mac/LegacyProcess;
@@ -4331,8 +4340,8 @@
 		BC82836B16B3587900A278FE /* XPCService */ = {
 			isa = PBXGroup;
 			children = (
-				BC82839716B480F600A278FE /* XPCServiceBootstrapper.Development.h */,
-				BC82839616B47EC400A278FE /* XPCServiceBootstrapper.h */,
+				BC82839716B480F600A278FE /* XPCServiceMain.Development.mm */,
+				BC82839616B47EC400A278FE /* XPCServiceMain.mm */,
 				BCBECDE616B6416700047A1A /* XPCServiceEntryPoint.h */,
 				BCBECDE516B6416700047A1A /* XPCServiceEntryPoint.mm */,
 			);
@@ -4355,7 +4364,6 @@
 			children = (
 				BC82837F16B45DA500A278FE /* Info.plist */,
 				BC82838116B45DA500A278FE /* NetworkProcessMain.mm */,
-				BC82838016B45DA500A278FE /* NetworkProcessMainBootstrapper.cpp */,
 			);
 			name = LegacyProcess;
 			path = mac/LegacyProcess;
@@ -4375,7 +4383,6 @@
 			children = (
 				BC82838D16B45FA600A278FE /* Info.plist */,
 				BC82838A16B45EF200A278FE /* PluginProcessMain.mm */,
-				BC82838916B45EF200A278FE /* PluginProcessMainBootstrapper.cpp */,
 			);
 			name = LegacyProcess;
 			path = mac/LegacyProcess;
@@ -4394,7 +4401,6 @@
 			children = (
 				BC82839116B4600D00A278FE /* Info.plist */,
 				BC82839316B4607B00A278FE /* SharedWorkerProcessMain.mm */,
-				BC82839216B4607B00A278FE /* SharedWorkerProcessMainBootstrapper.cpp */,
 			);
 			name = LegacyProcess;
 			path = mac/LegacyProcess;
@@ -4415,7 +4421,6 @@
 			isa = PBXGroup;
 			children = (
 				BC8283A316B4BD9100A278FE /* Info.plist */,
-				BC8283A416B4BD9100A278FE /* NetworkServiceMain.mm */,
 			);
 			path = NetworkService;
 			sourceTree = "<group>";
@@ -4424,7 +4429,6 @@
 			isa = PBXGroup;
 			children = (
 				BC8283A616B4BD9100A278FE /* Info.plist */,
-				BC8283A716B4BD9100A278FE /* NetworkServiceMain.Development.mm */,
 			);
 			path = NetworkService.Development;
 			sourceTree = "<group>";
@@ -4454,7 +4458,6 @@
 			isa = PBXGroup;
 			children = (
 				BC8283EA16B4F8E200A278FE /* Info.plist */,
-				BC8283EB16B4F8E200A278FE /* PluginService.64.Main.mm */,
 			);
 			path = PluginService.64;
 			sourceTree = "<group>";
@@ -4517,7 +4520,6 @@
 			children = (
 				BC82837316B35AF900A278FE /* Info.plist */,
 				BC82836416B354F600A278FE /* WebContentProcessMain.mm */,
-				BC82837416B3674B00A278FE /* WebContentProcessMainBootstrapper.cpp */,
 			);
 			name = LegacyProcess;
 			path = mac/LegacyProcess;
@@ -4538,7 +4540,6 @@
 			isa = PBXGroup;
 			children = (
 				BCACC44016B24CAA00B6E092 /* Info.plist */,
-				BCACC44116B24CAA00B6E092 /* WebContentServiceMain.mm */,
 			);
 			path = WebContentService;
 			sourceTree = "<group>";
@@ -4547,7 +4548,6 @@
 			isa = PBXGroup;
 			children = (
 				BCACC44316B24CAA00B6E092 /* Info.plist */,
-				BCACC44416B24CAA00B6E092 /* WebContentServiceMain.Development.mm */,
 			);
 			path = WebContentService.Development;
 			sourceTree = "<group>";
@@ -4578,7 +4578,6 @@
 			children = (
 				BCAF35B716CA1E2400D4E9FC /* Info.plist */,
 				BCAF35B816CA1E2400D4E9FC /* OfflineStorageProcessMain.mm */,
-				BCAF35B916CA1E2400D4E9FC /* OfflineStorageProcessMainBootstrapper.cpp */,
 			);
 			name = LegacyProcess;
 			path = mac/LegacyProcess;
@@ -4599,7 +4598,6 @@
 			isa = PBXGroup;
 			children = (
 				BCAF35BF16CA1F9D00D4E9FC /* Info.plist */,
-				BCAF35C016CA1F9D00D4E9FC /* OfflineStorageServiceMain.mm */,
 			);
 			path = OfflineStorageService;
 			sourceTree = "<group>";
@@ -4608,7 +4606,6 @@
 			isa = PBXGroup;
 			children = (
 				BCAF35C216CA1F9D00D4E9FC /* Info.plist */,
-				BCAF35C316CA1F9D00D4E9FC /* OfflineStorageServiceMain.Development.mm */,
 			);
 			path = OfflineStorageService.Development;
 			sourceTree = "<group>";
@@ -4652,7 +4649,6 @@
 			isa = PBXGroup;
 			children = (
 				BCBECDC016B5CE0D00047A1A /* Info.plist */,
-				BCBECDC116B5CE0D00047A1A /* PluginService.Development.Main.mm */,
 			);
 			path = PluginService.Development;
 			sourceTree = "<group>";
@@ -5054,7 +5050,7 @@
 				BC3065FA1259344E00E71278 /* CacheModel.h in Headers */,
 				1AA2E51D12E4C05E00BC4966 /* CGUtilities.h in Headers */,
 				1A2D956F12848564001EB962 /* ChildProcess.h in Headers */,
-				BC82837A16B36A4F00A278FE /* ChildProcessMain.h in Headers */,
+				BC82837A16B36A4F00A278FE /* ChildProcessEntryPoint.h in Headers */,
 				E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */,
 				1A6F9F9011E13EFC00DB1371 /* CommandLine.h in Headers */,
 				37C4E9F6131C6E7E0029BD5A /* config.h in Headers */,
@@ -5566,6 +5562,7 @@
 				1A50DB1A110A3BDC000D3FE5 /* Resources */,
 				1A50DB1B110A3BDC000D3FE5 /* Sources */,
 				5183B38F1379F56800E8754E /* Copy Sec Item Shim */,
+				BC5D24B016CC3F28007D5461 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -5619,6 +5616,7 @@
 				510CC80A1613C79900D03ED3 /* Sources */,
 				510CC80C1613C79900D03ED3 /* Resources */,
 				E1790900169BB4D3006904C7 /* Copy Sec Item Shim */,
+				BC5D24B416CC3F43007D5461 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -5836,6 +5834,7 @@
 				BCDE093A13272496001259FB /* Sources */,
 				BCDE093C13272496001259FB /* Copy Plug-in Process Shim */,
 				E14E99FA14D879DB001D221F /* Add Entitlements */,
+				BC5D24B216CC3F3B007D5461 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -6204,7 +6203,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC82837616B3674B00A278FE /* WebContentProcessMainBootstrapper.cpp in Sources */,
+				BC5D24A116CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6228,7 +6227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC82838516B45DB700A278FE /* NetworkProcessMainBootstrapper.cpp in Sources */,
+				BC5D24A316CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6257,7 +6256,7 @@
 				1AA2E51E12E4C05E00BC4966 /* CGUtilities.cpp in Sources */,
 				1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */,
 				9F54F88F16488E87007DF81A /* ChildProcessMac.mm in Sources */,
-				BC82837B16B36A4F00A278FE /* ChildProcessMain.mm in Sources */,
+				BC82837B16B36A4F00A278FE /* ChildProcessEntryPoint.mm in Sources */,
 				E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */,
 				1A2A4B0E1586A2240090C9E9 /* ColorSpaceData.mm in Sources */,
 				1A6F9FB711E1408500DB1371 /* CommandLineMac.cpp in Sources */,
@@ -6773,7 +6772,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCACC44916B24D3200B6E092 /* WebContentServiceMain.mm in Sources */,
+				BC5D24AF16CC3D66007D5461 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6781,7 +6780,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC8283D816B4DB2A00A278FE /* NetworkServiceMain.mm in Sources */,
+				BC5D24AE16CC3D65007D5461 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6789,7 +6788,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC8283D916B4DB2E00A278FE /* NetworkServiceMain.Development.mm in Sources */,
+				BC5D24A816CC3D5E007D5461 /* XPCServiceMain.Development.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6798,6 +6797,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				BC82844916B5004200A278FE /* PluginService.32.Main.mm in Sources */,
+				BC5D24AC16CC3D63007D5461 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6805,7 +6805,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC82844B16B5004D00A278FE /* PluginService.64.Main.mm in Sources */,
+				BC5D24AB16CC3D62007D5461 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6813,7 +6813,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCBECDC316B5CEB100047A1A /* PluginService.Development.Main.mm in Sources */,
+				BC5D24AA16CC3D5F007D5461 /* XPCServiceMain.Development.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6821,7 +6821,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCACC44A16B24D3600B6E092 /* WebContentServiceMain.Development.mm in Sources */,
+				BC5D24A716CC3D5D007D5461 /* XPCServiceMain.Development.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6829,8 +6829,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCAF35BC16CA1E2400D4E9FC /* OfflineStorageProcessMainBootstrapper.cpp in Sources */,
 				BCAF35E916CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */,
+				BC5D24A516CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6838,7 +6838,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCAF361316CA26B800D4E9FC /* OfflineStorageServiceMain.mm in Sources */,
+				BC5D24AD16CC3D64007D5461 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6846,7 +6846,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BCAF361416CA26BB00D4E9FC /* OfflineStorageServiceMain.Development.mm in Sources */,
+				BC5D24A916CC3D5F007D5461 /* XPCServiceMain.Development.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6854,7 +6854,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC82838B16B45EFF00A278FE /* PluginProcessMainBootstrapper.cpp in Sources */,
+				BC5D24A216CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6862,7 +6862,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC82839416B4608000A278FE /* SharedWorkerProcessMainBootstrapper.cpp in Sources */,
+				BC5D24A416CC3B9E007D5461 /* ChildProcessMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6949,11 +6949,6 @@
 			target = 8DC2EF4F0486A6940098B216 /* WebKit2 */;
 			targetProxy = BCAF362316CA295F00D4E9FC /* PBXContainerItemProxy */;
 		};
-		BCCDE2D616C88DAA00D90310 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = BC8283F816B4FDDE00A278FE /* Plugin.32 */;
-			targetProxy = BCCDE2D516C88DAA00D90310 /* PBXContainerItemProxy */;
-		};
 		BCDE093413272496001259FB /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 1AC25FAF12A48EA700BD2671 /* PluginProcessShim */;
@@ -6995,14 +6990,14 @@
 /* Begin XCBuildConfiguration section */
 		1A50DB21110A3BDD000D3FE5 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
+			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		1A50DB22110A3BDD000D3FE5 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
+			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -7169,7 +7164,7 @@
 		};
 		5D22D69E11A7534600BF30E5 /* Production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebProcess.xcconfig */;
+			baseConfigurationReference = 5DAD7294116FF70B00EE5396 /* WebContentProcess.xcconfig */;
 			buildSettings = {
 			};
 			name = Production;
@@ -7606,6 +7601,7 @@
 				BCAF35B116CA1D5700D4E9FC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
 		};
 		BCAF35FC16CA263800D4E9FC /* Build configuration list for PBXNativeTarget "OfflineStorage" */ = {
 			isa = XCConfigurationList;
@@ -7615,6 +7611,7 @@
 				BCAF35FF16CA263800D4E9FC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
 		};
 		BCAF360F16CA266900D4E9FC /* Build configuration list for PBXNativeTarget "OfflineStorage.Development" */ = {
 			isa = XCConfigurationList;
@@ -7624,6 +7621,7 @@
 				BCAF361216CA266900D4E9FC /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Production;
 		};
 		BCDE093E13272496001259FB /* Build configuration list for PBXNativeTarget "PluginProcess" */ = {
 			isa = XCConfigurationList;

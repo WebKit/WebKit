@@ -1,3 +1,57 @@
+2013-02-13  Sam Weinig  <sam@webkit.org>
+
+        Consolidate main functions in WebKit2 now that they are all identical
+        https://bugs.webkit.org/show_bug.cgi?id=109748
+
+        Reviewed by Anders Carlsson.
+
+        - Consolidates all the LegacyProcess main functions into ChildProcessMain.mm
+        - Consolidates all the XPCService main functions into XPCServiceMain.mm and XPCServiceMain.Development.mm
+        - Rename existing ChildProcessMain.h/mm to ChildProcessEntryPoint.h/mm to match the XPCService ones.
+        - Switch LegacyProcess to use the "entry point in the plist" idiom, instead of hard coding each one, again
+          matching the XPCService.
+
+        * Configurations/BaseLegacyProcess.xcconfig: Add base configuration to hold common legacy process options.
+        * Configurations/BaseXPCService.xcconfig:
+        * Configurations/NetworkProcess.xcconfig:
+        * Configurations/OfflineStorageProcess.xcconfig:
+        * Configurations/PluginProcess.xcconfig:
+        * Configurations/SharedWorkerProcess.xcconfig:
+        * Configurations/WebContentProcess.xcconfig: Renamed form  WebProcess.xcconfig.
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/NetworkProcessMain.mm:
+        * NetworkProcess/EntryPoint/mac/LegacyProcess/NetworkProcessMainBootstrapper.cpp: Removed.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService.Development/NetworkServiceMain.Development.mm: Removed.
+        * NetworkProcess/EntryPoint/mac/XPCService/NetworkService/NetworkServiceMain.mm: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess/OfflineStorageProcessMain.mm:
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess/OfflineStorageProcessMainBootstrapper.cpp: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService.Development/OfflineStorageServiceMain.Development.mm: Removed.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService/OfflineStorageServiceMain.mm: Removed.
+        * PluginProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMain.mm:
+        * PluginProcess/EntryPoint/mac/LegacyProcess/PluginProcessMainBootstrapper.cpp: Removed.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64/PluginService.64.Main.mm: Removed.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/PluginService.Development.Main.mm: Removed.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.h: 
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessEntryPoint.mm: 
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.h: Removed.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMain.mm: Replaced.
+        * Shared/EntryPointUtilities/mac/LegacyProcess/ChildProcessMainBootstrapper.h: Removed.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.Development.h: Removed.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceBootstrapper.h: Removed.
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.Development.mm:
+        * Shared/EntryPointUtilities/mac/XPCService/XPCServiceMain.mm:
+        * SharedWorkerProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * SharedWorkerProcess/EntryPoint/mac/LegacyProcess/SharedWorkerProcessMain.mm:
+        * SharedWorkerProcess/EntryPoint/mac/LegacyProcess/SharedWorkerProcessMainBootstrapper.cpp: Removed.
+        * WebProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMain.mm:
+        * WebProcess/EntryPoint/mac/LegacyProcess/WebContentProcessMainBootstrapper.cpp: Removed.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/WebContentServiceMain.Development.mm: Removed.
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/WebContentServiceMain.mm: Removed.
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-02-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Stop using WebString in ewk_cookie_manager, ewk_form_submission_request and ewk_text_checker

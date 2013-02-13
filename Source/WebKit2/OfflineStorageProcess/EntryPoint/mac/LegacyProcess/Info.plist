@@ -28,5 +28,7 @@
 	<string>NSApplication</string>
 	<key>CFBundleIconFile</key>
 	<string>${APP_ICON}</string>
+	<key>WebKitEntryPoint</key>
+	<string>OfflineStorageProcessMain</string>
 </dict>
 </plist>
