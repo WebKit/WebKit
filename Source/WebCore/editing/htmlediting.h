@@ -192,9 +192,6 @@ VisiblePosition visiblePositionForIndex(int index, ContainerNode* scope);
 
 PassRefPtr<Range> createRange(PassRefPtr<Document>, const VisiblePosition& start, const VisiblePosition& end, ExceptionCode&);
 PassRefPtr<Range> extendRangeToWrappingNodes(PassRefPtr<Range> rangeToExtend, const Range* maximumRange, const Node* rootNode);
-#if ENABLE(DELETION_UI)
-PassRefPtr<Range> avoidIntersectionWithNode(const Range*, Node*);
-#endif
 
 // -------------------------------------------------------------------------
 // HTMLElement
@@ -237,9 +234,6 @@ bool canMergeLists(Element* firstList, Element* secondList);
 // -------------------------------------------------------------------------
 
 // Functions returning VisibleSelection
-#if ENABLE(DELETION_UI)
-VisibleSelection avoidIntersectionWithNode(const VisibleSelection&, Node*);
-#endif
 VisibleSelection selectionForParagraphIteration(const VisibleSelection&);
 
 Position adjustedSelectionStartForStyleComputation(const VisibleSelection&);

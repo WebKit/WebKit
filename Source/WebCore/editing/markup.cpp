@@ -544,38 +544,20 @@ static Node* highestAncestorToWrapMarkup(const Range* range, EAnnotateForInterch
 
 // FIXME: Shouldn't we omit style info when annotate == DoNotAnnotateForInterchange? 
 // FIXME: At least, annotation and style info should probably not be included in range.markupString()
-String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
+static String createMarkupInternal(Document* document, const Range* range, const Range* updatedRange, Vector<Node*>* nodes,
+    EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
 {
+    ASSERT(document);
+    ASSERT(range);
+    ASSERT(updatedRange);
     DEFINE_STATIC_LOCAL(const String, interchangeNewlineString, (ASCIILiteral("<br class=\"" AppleInterchangeNewline "\">")));
-
-    if (!range)
-        return "";
-
-    Document* document = range->ownerDocument();
-    if (!document)
-        return "";
-
-    // Disable the delete button so it's elements are not serialized into the markup,
-    // but make sure neither endpoint is inside the delete user interface.
-    RefPtr<Range> updatedRange;
-#if ENABLE(DELETION_UI)
-    Frame* frame = document->frame();
-    DeleteButtonController* deleteButton = frame ? frame->editor()->deleteButtonController() : 0;
-    updatedRange = avoidIntersectionWithNode(range, deleteButton ? deleteButton->containerElement() : 0);
-    if (!updatedRange)
-        return "";
-    if (deleteButton)
-        deleteButton->disable();
-#else
-    updatedRange = Range::create(range->ownerDocument(), range->startContainer(), range->startOffset(), range->endContainer(), range->endOffset());
-#endif
 
     bool collapsed = updatedRange->collapsed(ASSERT_NO_EXCEPTION);
     if (collapsed)
-        return "";
+        return emptyString();
     Node* commonAncestor = updatedRange->commonAncestorContainer(ASSERT_NO_EXCEPTION);
     if (!commonAncestor)
-        return "";
+        return emptyString();
 
     document->updateLayoutIgnorePendingStylesheets();
 
@@ -584,32 +566,22 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     // FIXME: Do this for all fully selected blocks, not just the body.
     if (body && areRangesEqual(VisibleSelection::selectionFromContentsOfNode(body).toNormalizedRange().get(), range))
         fullySelectedRoot = body;
-    Node* specialCommonAncestor = highestAncestorToWrapMarkup(updatedRange.get(), shouldAnnotate);
-    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, updatedRange.get(), specialCommonAncestor);
+    Node* specialCommonAncestor = highestAncestorToWrapMarkup(updatedRange, shouldAnnotate);
+    StyledMarkupAccumulator accumulator(nodes, shouldResolveURLs, shouldAnnotate, updatedRange, specialCommonAncestor);
     Node* pastEnd = updatedRange->pastLastNode();
 
     Node* startNode = updatedRange->firstNode();
     VisiblePosition visibleStart(updatedRange->startPosition(), VP_DEFAULT_AFFINITY);
     VisiblePosition visibleEnd(updatedRange->endPosition(), VP_DEFAULT_AFFINITY);
     if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleStart)) {
-        if (visibleStart == visibleEnd.previous()) {
-#if ENABLE(DELETION_UI)
-            if (deleteButton)
-                deleteButton->enable();
-#endif
+        if (visibleStart == visibleEnd.previous())
             return interchangeNewlineString;
-        }
 
         accumulator.appendString(interchangeNewlineString);
         startNode = visibleStart.next().deepEquivalent().deprecatedNode();
 
-        if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0, ASSERT_NO_EXCEPTION) >= 0) {
-#if ENABLE(DELETION_UI)
-            if (deleteButton)
-                deleteButton->enable();
-#endif
+        if (pastEnd && Range::compareBoundaryPoints(startNode, 0, pastEnd, 0, ASSERT_NO_EXCEPTION) >= 0)
             return interchangeNewlineString;
-        }
     }
 
     Node* lastClosed = accumulator.serializeNodes(startNode, pastEnd);
@@ -655,11 +627,37 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     if (shouldAnnotate == AnnotateForInterchange && needInterchangeNewlineAfter(visibleEnd.previous()))
         accumulator.appendString(interchangeNewlineString);
 
-#if ENABLE(DELETION_UI)
-    if (deleteButton)
-        deleteButton->enable();
-#endif
     return accumulator.takeResults();
+}
+
+String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterchange shouldAnnotate, bool convertBlocksToInlines, EAbsoluteURLs shouldResolveURLs)
+{
+    if (!range)
+        return emptyString();
+
+    Document* document = range->ownerDocument();
+    if (!document)
+        return emptyString();
+
+    // Disable the delete button so it's elements are not serialized into the markup,
+    // but make sure neither endpoint is inside the delete user interface.
+#if ENABLE(DELETION_UI)
+    Frame* frame = document->frame();
+    if (DeleteButtonController* deleteButton = frame ? frame->editor()->deleteButtonController() : 0) {
+        RefPtr<Range> updatedRange = frame->editor()->avoidIntersectionWithDeleteButtonController(range);
+        if (!updatedRange)
+            return emptyString();
+
+        deleteButton->disable();
+
+        String result = createMarkupInternal(document, range, updatedRange.get(), nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
+
+        deleteButton->enable();
+
+        return result;
+    }
+#endif
+    return createMarkupInternal(document, range, range, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
 }
 
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const String& markup, const String& baseURL, FragmentScriptingPermission scriptingPermission)

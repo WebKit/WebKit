@@ -1182,63 +1182,6 @@ bool isNonTableCellHTMLBlockElement(const Node* node)
         || node->hasTagName(h4Tag)
         || node->hasTagName(h5Tag);
 }
-
-#if ENABLE(DELETION_UI)
-PassRefPtr<Range> avoidIntersectionWithNode(const Range* range, Node* node)
-{
-    if (!range)
-        return 0;
-
-    Document* document = range->ownerDocument();
-
-    Node* startContainer = range->startContainer();
-    int startOffset = range->startOffset();
-    Node* endContainer = range->endContainer();
-    int endOffset = range->endOffset();
-
-    if (!startContainer)
-        return 0;
-
-    ASSERT(endContainer);
-
-    if (startContainer == node || startContainer->isDescendantOf(node)) {
-        ASSERT(node->parentNode());
-        startContainer = node->parentNode();
-        startOffset = node->nodeIndex();
-    }
-    if (endContainer == node || endContainer->isDescendantOf(node)) {
-        ASSERT(node->parentNode());
-        endContainer = node->parentNode();
-        endOffset = node->nodeIndex();
-    }
-
-    return Range::create(document, startContainer, startOffset, endContainer, endOffset);
-}
-
-VisibleSelection avoidIntersectionWithNode(const VisibleSelection& selection, Node* node)
-{
-    if (selection.isNone())
-        return VisibleSelection(selection);
-
-    VisibleSelection updatedSelection(selection);
-    Node* base = selection.base().deprecatedNode();
-    Node* extent = selection.extent().deprecatedNode();
-    ASSERT(base);
-    ASSERT(extent);
-
-    if (base == node || base->isDescendantOf(node)) {
-        ASSERT(node->parentNode());
-        updatedSelection.setBase(positionInParentBeforeNode(node));
-    }
-
-    if (extent == node || extent->isDescendantOf(node)) {
-        ASSERT(node->parentNode());
-        updatedSelection.setExtent(positionInParentBeforeNode(node));
-    }
-
-    return updatedSelection;
-}
-#endif
     
 Position adjustedSelectionStartForStyleComputation(const VisibleSelection& selection)
 {
