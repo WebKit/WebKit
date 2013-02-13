@@ -1907,9 +1907,9 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
             ASSERT((opLength - 1) > 3);
+            instructions[i + opLength - 1] = profile;
 #endif
             instructions[i + 3].u.resolveOperations = &m_resolveOperations[pc[i + 3].u.operand];
-            instructions[i + opLength - 1] = profile;
             break;
         }
         case op_resolve_with_base:
