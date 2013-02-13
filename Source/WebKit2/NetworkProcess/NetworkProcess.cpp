@@ -112,7 +112,7 @@ void NetworkProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, Core
 
 void NetworkProcess::didClose(CoreIPC::Connection*)
 {
-    // The UIProcess just crashed.
+    // The UIProcess just exited.
     RunLoop::current()->stop();
 }
 

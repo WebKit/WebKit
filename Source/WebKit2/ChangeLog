@@ -1,3 +1,12 @@
+2013-02-12  Brady Eidson  <beidson@apple.com>
+
+        Update a comment in NetworkProcess to be more accurate.
+
+        Rubberstamped by Sam Weinig.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        (WebKit::NetworkProcess::didClose):
+
 2013-02-12  Anders Carlsson  <andersca@apple.com>
 
         SecItemShim should be a WorkQueueMessageReceiver
