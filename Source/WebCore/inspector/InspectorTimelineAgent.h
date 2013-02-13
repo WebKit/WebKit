@@ -48,6 +48,7 @@ class Event;
 class Frame;
 class InspectorClient;
 class InspectorFrontend;
+class InspectorMemoryAgent;
 class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
@@ -67,9 +68,9 @@ class InspectorTimelineAgent
 public:
     enum InspectorType { PageInspector, WorkerInspector };
 
-    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* state, InspectorType type, InspectorClient* client)
+    static PassOwnPtr<InspectorTimelineAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorMemoryAgent* memoryAgent, InspectorCompositeState* state, InspectorType type, InspectorClient* client)
     {
-        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, pageAgent, state, type, client));
+        return adoptPtr(new InspectorTimelineAgent(instrumentingAgents, pageAgent, memoryAgent, state, type, client));
     }
 
     ~InspectorTimelineAgent();
@@ -80,7 +81,8 @@ public:
 
     virtual void start(ErrorString*, const int* maxCallStackDepth);
     virtual void stop(ErrorString*);
-    virtual void setIncludeMemoryDetails(ErrorString*, bool);
+    virtual void setIncludeDomCounters(ErrorString*, bool);
+    virtual void setIncludeNativeMemoryStatistics(ErrorString*, bool);
     virtual void canMonitorMainThread(ErrorString*, bool*);
     virtual void supportsFrameInstrumentation(ErrorString*, bool*);
 
@@ -179,10 +181,11 @@ private:
         size_t usedHeapSizeAtStart;
     };
         
-    InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorCompositeState*, InspectorType, InspectorClient*);
+    InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorMemoryAgent*, InspectorCompositeState*, InspectorType, InspectorClient*);
 
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasLowLevelDetails = false);
-    void setHeapSizeStatistics(InspectorObject* record);
+    void setDOMCounters(InspectorObject* record);
+    void setNativeHeapStatistics(InspectorObject* record);
 
     void didCompleteCurrentRecord(const String& type);
     void commitFrameRecord();
@@ -197,6 +200,7 @@ private:
     double timestampFromMicroseconds(double microseconds);
 
     InspectorPageAgent* m_pageAgent;
+    InspectorMemoryAgent* m_memoryAgent;
 
     InspectorFrontend::Timeline* m_frontend;
     double m_timestampOffset;

@@ -76,7 +76,10 @@ WebInspector.TimelinePanel = function()
     this._timelineMemorySplitter.id = "timeline-memory-splitter";
     WebInspector.installDragHandle(this._timelineMemorySplitter, this._startSplitterDragging.bind(this), this._splitterDragging.bind(this), this._endSplitterDragging.bind(this), "ns-resize");
     this._timelineMemorySplitter.addStyleClass("hidden");
-    this._memoryStatistics = new WebInspector.MemoryStatistics(this, this._model, this.splitView.sidebarWidth());
+    if (WebInspector.experimentsSettings.nativeMemoryTimeline.isEnabled())
+        this._memoryStatistics = new WebInspector.NativeMemoryGraph(this, this._model, this.splitView.sidebarWidth());
+    else
+        this._memoryStatistics = new WebInspector.MemoryStatistics(this, this._model, this.splitView.sidebarWidth());
     WebInspector.settings.memoryCounterGraphsHeight = WebInspector.settings.createSetting("memoryCounterGraphsHeight", 150);
 
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);

@@ -125,7 +125,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     m_memoryAgent = memoryAgentPtr.get();
     m_agents.append(memoryAgentPtr.release());
 
-    m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), pageAgent, m_state.get(), InspectorTimelineAgent::PageInspector,
+    m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), pageAgent, m_memoryAgent, m_state.get(), InspectorTimelineAgent::PageInspector,
        inspectorClient));
     m_agents.append(InspectorApplicationCacheAgent::create(m_instrumentingAgents.get(), m_state.get(), pageAgent));
 

@@ -2621,12 +2621,20 @@
                 "description": "Stops capturing instrumentation events."
             },
             {
-                "name": "setIncludeMemoryDetails",
+                "name": "setIncludeDomCounters",
                 "parameters": [
-                    { "name": "enabled", "type": "boolean", "description": "True to start collecting DOM counters." }
+                    { "name": "enabled", "type": "boolean", "description": "Whether DOM counters data should be included into timeline events." }
                 ],
                 "hidden": true,
-                "description": "Starts calculating various DOM statistics and sending them as part of timeline events."
+                "description": "Controls if DOM counters should be send as part of timeline events."
+            },
+            {
+                "name": "setIncludeNativeMemoryStatistics",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "Whether native memory usage statistics should be reported as part of timeline events." }
+                ],
+                "hidden": true,
+                "description": "Controls whether statistics on native memory usage is sent with timeline events."
             },
             {
                 "name": "supportsFrameInstrumentation",

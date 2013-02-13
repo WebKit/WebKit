@@ -42,10 +42,12 @@
 #include "InspectorCounters.h"
 #include "InspectorFrontend.h"
 #include "InspectorInstrumentation.h"
+#include "InspectorMemoryAgent.h"
 #include "InspectorPageAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
+#include "MemoryUsageSupport.h"
 #include "RenderObject.h"
 #include "RenderView.h"
 #include "ResourceRequest.h"
@@ -59,7 +61,8 @@ namespace WebCore {
 namespace TimelineAgentState {
 static const char timelineAgentEnabled[] = "timelineAgentEnabled";
 static const char timelineMaxCallStackDepth[] = "timelineMaxCallStackDepth";
-static const char includeMemoryDetails[] = "includeMemoryDetails";
+static const char includeDomCounters[] = "includeDomCounters";
+static const char includeNativeMemoryStatistics[] = "includeNativeMemoryStatistics";
 }
 
 // Must be kept in sync with WebInspector.TimelineModel.RecordType in TimelineModel.js
@@ -187,9 +190,14 @@ void InspectorTimelineAgent::stop(ErrorString*)
     m_state->setBoolean(TimelineAgentState::timelineAgentEnabled, false);
 }
 
-void InspectorTimelineAgent::setIncludeMemoryDetails(ErrorString*, bool value)
+void InspectorTimelineAgent::setIncludeDomCounters(ErrorString*, bool value)
 {
-    m_state->setBoolean(TimelineAgentState::includeMemoryDetails, value);
+    m_state->setBoolean(TimelineAgentState::includeDomCounters, value);
+}
+
+void InspectorTimelineAgent::setIncludeNativeMemoryStatistics(ErrorString*, bool value)
+{
+    m_state->setBoolean(TimelineAgentState::includeNativeMemoryStatistics, value);
 }
 
 void InspectorTimelineAgent::canMonitorMainThread(ErrorString*, bool* result)
@@ -497,8 +505,10 @@ void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject
     record->setString("type", type);
     if (!frameId.isEmpty())
         record->setString("frameId", frameId);
-    if (type != program)
-        setHeapSizeStatistics(record.get());
+    if (type == program)
+        setNativeHeapStatistics(record.get());
+    else
+        setDOMCounters(record.get());
 
     if (m_recordStack.isEmpty()) {
         // FIXME: runtimeCast is a hack. We do it because we can't build TimelineEvent directly now.
@@ -517,17 +527,35 @@ static size_t getUsedHeapSize()
     return info.usedJSHeapSize;
 }
 
-void InspectorTimelineAgent::setHeapSizeStatistics(InspectorObject* record)
+void InspectorTimelineAgent::setDOMCounters(InspectorObject* record)
 {
     record->setNumber("usedHeapSize", getUsedHeapSize());
 
-    if (m_state->getBoolean(TimelineAgentState::includeMemoryDetails)) {
+    if (m_state->getBoolean(TimelineAgentState::includeDomCounters)) {
         RefPtr<InspectorObject> counters = InspectorObject::create();
         counters->setNumber("nodes", (m_inspectorType == PageInspector) ? InspectorCounters::counterValue(InspectorCounters::NodeCounter) : 0);
         counters->setNumber("documents", (m_inspectorType == PageInspector) ? InspectorCounters::counterValue(InspectorCounters::DocumentCounter) : 0);
         counters->setNumber("jsEventListeners", ThreadLocalInspectorCounters::current().counterValue(ThreadLocalInspectorCounters::JSEventListenerCounter));
         record->setObject("counters", counters.release());
     }
+}
+
+void InspectorTimelineAgent::setNativeHeapStatistics(InspectorObject* record)
+{
+    if (!m_memoryAgent)
+        return;
+    if (!m_state->getBoolean(TimelineAgentState::includeNativeMemoryStatistics))
+        return;
+    HashMap<String, size_t> map;
+    m_memoryAgent->getProcessMemoryDistributionMap(&map);
+    RefPtr<InspectorObject> stats = InspectorObject::create();
+    for (HashMap<String, size_t>::iterator it = map.begin(); it != map.end(); ++it)
+        stats->setNumber(it->key, it->value);
+    size_t privateBytes = 0;
+    size_t sharedBytes = 0;
+    MemoryUsageSupport::processMemorySizesInBytes(&privateBytes, &sharedBytes);
+    stats->setNumber("PrivateBytes", privateBytes);
+    record->setObject("nativeHeapStatistics", stats.release());
 }
 
 void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
@@ -554,9 +582,10 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
     }
 }
 
-InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* state, InspectorType type, InspectorClient* client)
+InspectorTimelineAgent::InspectorTimelineAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorMemoryAgent* memoryAgent, InspectorCompositeState* state, InspectorType type, InspectorClient* client)
     : InspectorBaseAgent<InspectorTimelineAgent>("Timeline", instrumentingAgents, state)
     , m_pageAgent(pageAgent)
+    , m_memoryAgent(memoryAgent)
     , m_frontend(0)
     , m_timestampOffset(0)
     , m_id(1)

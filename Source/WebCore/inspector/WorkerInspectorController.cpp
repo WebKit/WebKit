@@ -113,7 +113,7 @@ WorkerInspectorController::WorkerInspectorController(WorkerContext* workerContex
     m_agents.append(InspectorProfilerAgent::create(m_instrumentingAgents.get(), consoleAgent.get(), workerContext, m_state.get(), m_injectedScriptManager.get()));
     m_agents.append(InspectorHeapProfilerAgent::create(m_instrumentingAgents.get(), m_state.get(), m_injectedScriptManager.get()));
 #endif
-    m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), 0, m_state.get(), InspectorTimelineAgent::WorkerInspector, 0));
+    m_agents.append(InspectorTimelineAgent::create(m_instrumentingAgents.get(), 0, 0, m_state.get(), InspectorTimelineAgent::WorkerInspector, 0));
     m_agents.append(consoleAgent.release());
 
     m_injectedScriptManager->injectedScriptHost()->init(0

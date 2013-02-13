@@ -38,6 +38,7 @@
 WebInspector.NativeMemoryGraph = function(timelinePanel, model, sidebarWidth)
 {
     WebInspector.MemoryStatistics.call(this, timelinePanel, model, sidebarWidth);
+    TimelineAgent.setIncludeNativeMemoryStatistics(true);
 }
 
 /**
@@ -136,10 +137,7 @@ WebInspector.NativeMemoryGraph.prototype = {
         var statistics = this._counters;
         function addStatistics(record)
         {
-            var counters = record["counters"];
-            if (!counters)
-                return;
-            var nativeCounters = counters["native"];
+            var nativeCounters = record["nativeHeapStatistics"];
             if (!nativeCounters)
                 return;
 

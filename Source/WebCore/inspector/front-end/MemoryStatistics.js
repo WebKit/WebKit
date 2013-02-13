@@ -68,7 +68,7 @@ WebInspector.MemoryStatistics = function(timelinePanel, model, sidebarWidth)
     this._memorySidebarView.sidebarElement.createChild("div", "sidebar-tree sidebar-tree-section").textContent = WebInspector.UIString("COUNTERS");
     this._counterUI = this._createCounterUIList();
 
-    TimelineAgent.setIncludeMemoryDetails(true);
+    TimelineAgent.setIncludeDomCounters(true);
 }
 
 /**
