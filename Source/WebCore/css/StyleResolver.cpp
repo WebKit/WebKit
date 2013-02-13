@@ -907,7 +907,7 @@ bool StyleResolver::canShareStyleWithControl(StyledElement* element) const
     if (!thisInputElement || !otherInputElement)
         return false;
 
-    if (thisInputElement->attributeData() != otherInputElement->attributeData()) {
+    if (thisInputElement->elementData() != otherInputElement->elementData()) {
         if (thisInputElement->fastGetAttribute(typeAttr) != otherInputElement->fastGetAttribute(typeAttr))
             return false;
         if (thisInputElement->fastGetAttribute(readonlyAttr) != otherInputElement->fastGetAttribute(readonlyAttr))
@@ -957,7 +957,7 @@ static inline bool elementHasDirectionAuto(Element* element)
 bool StyleResolver::sharingCandidateHasIdenticalStyleAffectingAttributes(StyledElement* sharingCandidate) const
 {
     const State& state = m_state;
-    if (state.element()->attributeData() == sharingCandidate->attributeData())
+    if (state.element()->elementData() == sharingCandidate->elementData())
         return true;
     if (state.element()->fastGetAttribute(XMLNames::langAttr) != sharingCandidate->fastGetAttribute(XMLNames::langAttr))
         return false;

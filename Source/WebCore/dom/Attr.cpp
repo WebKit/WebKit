@@ -210,7 +210,7 @@ const AtomicString& Attr::value() const
 Attribute& Attr::elementAttribute()
 {
     ASSERT(m_element);
-    ASSERT(m_element->attributeData());
+    ASSERT(m_element->elementData());
     return *m_element->getAttributeItem(qualifiedName());
 }
 

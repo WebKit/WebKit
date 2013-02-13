@@ -43,20 +43,20 @@ class DOMTokenList;
 class Element;
 class ElementRareData;
 class ElementShadow;
-class ImmutableElementAttributeData;
+class ShareableElementData;
 class IntSize;
 class Locale;
-class MutableElementAttributeData;
+class UniqueElementData;
 class PseudoElement;
 class RenderRegion;
 class ShadowRoot;
 class StylePropertySet;
 
-class ElementAttributeData : public RefCounted<ElementAttributeData> {
+class ElementData : public RefCounted<ElementData> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ElementAttributeData> create();
-    static PassRefPtr<ElementAttributeData> createImmutable(const Vector<Attribute>&);
+    static PassRefPtr<ElementData> createUnique();
+    static PassRefPtr<ElementData> createShareableWithAttributes(const Vector<Attribute>&);
 
     // Override RefCounted's deref() to ensure operator delete is called on
     // the appropriate subclass type.
@@ -91,19 +91,19 @@ public:
     bool hasID() const { return !m_idForStyleResolution.isNull(); }
     bool hasClass() const { return !m_classNames.isNull(); }
 
-    bool isEquivalent(const ElementAttributeData* other) const;
+    bool isEquivalent(const ElementData* other) const;
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
-    bool isMutable() const { return m_isMutable; }
+    bool isUnique() const { return m_isUnique; }
     const Attribute* immutableAttributeArray() const;
 
 protected:
-    ElementAttributeData();
-    ElementAttributeData(unsigned arraySize);
-    ElementAttributeData(const ElementAttributeData&, bool isMutable);
+    ElementData();
+    ElementData(unsigned arraySize);
+    ElementData(const ElementData&, bool isUnique);
 
-    unsigned m_isMutable : 1;
+    unsigned m_isUnique : 1;
     unsigned m_arraySize : 28;
     mutable unsigned m_presentationAttributeStyleIsDirty : 1;
     mutable unsigned m_styleAttributeIsDirty : 1;
@@ -118,8 +118,8 @@ protected:
 private:
     friend class Element;
     friend class StyledElement;
-    friend class ImmutableElementAttributeData;
-    friend class MutableElementAttributeData;
+    friend class ShareableElementData;
+    friend class UniqueElementData;
 #if ENABLE(SVG)
     friend class SVGElement;
 #endif
@@ -128,27 +128,27 @@ private:
     const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
-    PassRefPtr<ElementAttributeData> makeMutableCopy() const;
-    PassRefPtr<ElementAttributeData> makeImmutableCopy() const;
+    PassRefPtr<ElementData> makeUniqueCopy() const;
+    PassRefPtr<ElementData> makeShareableCopy() const;
 
     Vector<Attribute, 4>& mutableAttributeVector();
     const Vector<Attribute, 4>& mutableAttributeVector() const;
 };
 
-class ImmutableElementAttributeData : public ElementAttributeData {
+class ShareableElementData : public ElementData {
 public:
-    ImmutableElementAttributeData(const Vector<Attribute>&);
-    ImmutableElementAttributeData(const MutableElementAttributeData&);
-    ~ImmutableElementAttributeData();
+    ShareableElementData(const Vector<Attribute>&);
+    ShareableElementData(const UniqueElementData&);
+    ~ShareableElementData();
 
     void* m_attributeArray;
 };
 
-class MutableElementAttributeData : public ElementAttributeData {
+class UniqueElementData : public ElementData {
 public:
-    MutableElementAttributeData();
-    MutableElementAttributeData(const ImmutableElementAttributeData&);
-    MutableElementAttributeData(const MutableElementAttributeData&);
+    UniqueElementData();
+    UniqueElementData(const ShareableElementData&);
+    UniqueElementData(const UniqueElementData&);
 
     mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
     Vector<Attribute, 4> m_attributeVector;
@@ -286,8 +286,8 @@ public:
     const Attribute* attributeItem(unsigned index) const;
     const Attribute* getAttributeItem(const QualifiedName&) const;
     Attribute* getAttributeItem(const QualifiedName&);
-    size_t getAttributeItemIndex(const QualifiedName& name) const { return attributeData()->getAttributeItemIndex(name); }
-    size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return attributeData()->getAttributeItemIndex(name, shouldIgnoreAttributeCase); }
+    size_t getAttributeItemIndex(const QualifiedName& name) const { return elementData()->getAttributeItemIndex(name); }
+    size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return elementData()->getAttributeItemIndex(name, shouldIgnoreAttributeCase); }
 
     void scrollIntoView(bool alignToTop = true);
     void scrollIntoViewIfNeeded(bool centerIfNeeded = true);
@@ -371,10 +371,10 @@ public:
     // Only called by the parser immediately after element construction.
     void parserSetAttributes(const Vector<Attribute>&, FragmentScriptingPermission);
 
-    const ElementAttributeData* attributeData() const { return m_attributeData.get(); }
-    ElementAttributeData* mutableAttributeData();
-    const ElementAttributeData* updatedAttributeData() const;
-    const ElementAttributeData* ensureUpdatedAttributeData() const;
+    const ElementData* elementData() const { return m_elementData.get(); }
+    ElementData* ensureUniqueElementData();
+    const ElementData* elementDataWithSynchronizedAttributes() const;
+    const ElementData* ensureElementDataWithSynchronizedAttributes() const;
 
     // Clones attributes only.
     void cloneAttributesFromElement(const Element&);
@@ -705,7 +705,7 @@ private:
 
     void unregisterNamedFlowContentNode();
 
-    void createMutableAttributeData();
+    void createUniqueElementData();
 
     bool shouldInvalidateDistributionWhenAttributeChanged(ElementShadow*, const QualifiedName&, const AtomicString&);
 
@@ -717,7 +717,7 @@ private:
 
     void createRendererIfNeeded();
 
-    RefPtr<ElementAttributeData> m_attributeData;
+    RefPtr<ElementData> m_elementData;
 };
     
 inline Element* toElement(Node* node)
@@ -777,18 +777,18 @@ inline Element* Element::nextElementSibling() const
     return static_cast<Element*>(n);
 }
 
-inline const ElementAttributeData* Element::updatedAttributeData() const
+inline const ElementData* Element::elementDataWithSynchronizedAttributes() const
 {
     updateInvalidAttributes();
-    return attributeData();
+    return elementData();
 }
 
-inline const ElementAttributeData* Element::ensureUpdatedAttributeData() const
+inline const ElementData* Element::ensureElementDataWithSynchronizedAttributes() const
 {
     updateInvalidAttributes();
-    if (attributeData())
-        return attributeData();
-    return const_cast<Element*>(this)->mutableAttributeData();
+    if (elementData())
+        return elementData();
+    return const_cast<Element*>(this)->ensureUniqueElementData();
 }
 
 inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
@@ -831,13 +831,13 @@ inline void Element::updateId(TreeScope* scope, const AtomicString& oldId, const
 inline bool Element::fastHasAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
-    return attributeData() && getAttributeItem(name);
+    return elementData() && getAttributeItem(name);
 }
 
 inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) const
 {
     ASSERT(fastAttributeLookupAllowed(name));
-    if (attributeData()) {
+    if (elementData()) {
         if (const Attribute* attribute = getAttributeItem(name))
             return attribute->value();
     }
@@ -846,13 +846,13 @@ inline const AtomicString& Element::fastGetAttribute(const QualifiedName& name) 
 
 inline bool Element::hasAttributesWithoutUpdate() const
 {
-    return attributeData() && !attributeData()->isEmpty();
+    return elementData() && !elementData()->isEmpty();
 }
 
 inline const AtomicString& Element::idForStyleResolution() const
 {
     ASSERT(hasID());
-    return attributeData()->idForStyleResolution();
+    return elementData()->idForStyleResolution();
 }
 
 inline bool Element::isIdAttributeName(const QualifiedName& attributeName) const
@@ -882,63 +882,63 @@ inline void Element::setIdAttribute(const AtomicString& value)
 inline const SpaceSplitString& Element::classNames() const
 {
     ASSERT(hasClass());
-    ASSERT(attributeData());
-    return attributeData()->classNames();
+    ASSERT(elementData());
+    return elementData()->classNames();
 }
 
 inline size_t Element::attributeCount() const
 {
-    ASSERT(attributeData());
-    return attributeData()->length();
+    ASSERT(elementData());
+    return elementData()->length();
 }
 
 inline const Attribute* Element::attributeItem(unsigned index) const
 {
-    ASSERT(attributeData());
-    return attributeData()->attributeItem(index);
+    ASSERT(elementData());
+    return elementData()->attributeItem(index);
 }
 
 inline const Attribute* Element::getAttributeItem(const QualifiedName& name) const
 {
-    ASSERT(attributeData());
-    return attributeData()->getAttributeItem(name);
+    ASSERT(elementData());
+    return elementData()->getAttributeItem(name);
 }
 
 inline Attribute* Element::getAttributeItem(const QualifiedName& name)
 {
-    ASSERT(attributeData());
-    return mutableAttributeData()->getAttributeItem(name);
+    ASSERT(elementData());
+    return ensureUniqueElementData()->getAttributeItem(name);
 }
 
 inline void Element::updateInvalidAttributes() const
 {
-    if (!attributeData())
+    if (!elementData())
         return;
 
-    if (attributeData()->m_styleAttributeIsDirty)
+    if (elementData()->m_styleAttributeIsDirty)
         updateStyleAttribute();
 
 #if ENABLE(SVG)
-    if (attributeData()->m_animatedSVGAttributesAreDirty)
+    if (elementData()->m_animatedSVGAttributesAreDirty)
         updateAnimatedSVGAttribute(anyQName());
 #endif
 }
 
 inline bool Element::hasID() const
 {
-    return attributeData() && attributeData()->hasID();
+    return elementData() && elementData()->hasID();
 }
 
 inline bool Element::hasClass() const
 {
-    return attributeData() && attributeData()->hasClass();
+    return elementData() && elementData()->hasClass();
 }
 
-inline ElementAttributeData* Element::mutableAttributeData()
+inline ElementData* Element::ensureUniqueElementData()
 {
-    if (!attributeData() || !attributeData()->isMutable())
-        createMutableAttributeData();
-    return m_attributeData.get();
+    if (!elementData() || !elementData()->isUnique())
+        createUniqueElementData();
+    return m_elementData.get();
 }
 
 // Put here to make them inline.
@@ -975,39 +975,39 @@ inline bool isShadowHost(const Node* node)
 {
     return node && node->isElementNode() && toElement(node)->shadow();
 }
-inline Vector<Attribute, 4>& ElementAttributeData::mutableAttributeVector()
+inline Vector<Attribute, 4>& ElementData::mutableAttributeVector()
 {
-    ASSERT(m_isMutable);
-    return static_cast<MutableElementAttributeData*>(this)->m_attributeVector;
+    ASSERT(m_isUnique);
+    return static_cast<UniqueElementData*>(this)->m_attributeVector;
 }
 
-inline const Vector<Attribute, 4>& ElementAttributeData::mutableAttributeVector() const
+inline const Vector<Attribute, 4>& ElementData::mutableAttributeVector() const
 {
-    ASSERT(m_isMutable);
-    return static_cast<const MutableElementAttributeData*>(this)->m_attributeVector;
+    ASSERT(m_isUnique);
+    return static_cast<const UniqueElementData*>(this)->m_attributeVector;
 }
 
-inline const Attribute* ElementAttributeData::immutableAttributeArray() const
+inline const Attribute* ElementData::immutableAttributeArray() const
 {
-    ASSERT(!m_isMutable);
-    return reinterpret_cast<const Attribute*>(&static_cast<const ImmutableElementAttributeData*>(this)->m_attributeArray);
+    ASSERT(!m_isUnique);
+    return reinterpret_cast<const Attribute*>(&static_cast<const ShareableElementData*>(this)->m_attributeArray);
 }
 
-inline size_t ElementAttributeData::length() const
+inline size_t ElementData::length() const
 {
-    if (isMutable())
+    if (isUnique())
         return mutableAttributeVector().size();
     return m_arraySize;
 }
 
-inline const StylePropertySet* ElementAttributeData::presentationAttributeStyle() const
+inline const StylePropertySet* ElementData::presentationAttributeStyle() const
 {
-    if (!m_isMutable)
+    if (!m_isUnique)
         return 0;
-    return static_cast<const MutableElementAttributeData*>(this)->m_presentationAttributeStyle.get();
+    return static_cast<const UniqueElementData*>(this)->m_presentationAttributeStyle.get();
 }
 
-inline Attribute* ElementAttributeData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase)
+inline Attribute* ElementData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase)
 {
     size_t index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
     if (index != notFound)
@@ -1015,7 +1015,7 @@ inline Attribute* ElementAttributeData::getAttributeItem(const AtomicString& nam
     return 0;
 }
 
-inline const Attribute* ElementAttributeData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+inline const Attribute* ElementData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     size_t index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
     if (index != notFound)
@@ -1023,7 +1023,7 @@ inline const Attribute* ElementAttributeData::getAttributeItem(const AtomicStrin
     return 0;
 }
 
-inline size_t ElementAttributeData::getAttributeItemIndex(const QualifiedName& name) const
+inline size_t ElementData::getAttributeItemIndex(const QualifiedName& name) const
 {
     for (unsigned i = 0; i < length(); ++i) {
         if (attributeItem(i)->name().matches(name))
@@ -1034,7 +1034,7 @@ inline size_t ElementAttributeData::getAttributeItemIndex(const QualifiedName& n
 
 // We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
 // can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
-inline size_t ElementAttributeData::getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+inline size_t ElementData::getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const
 {
     unsigned len = length();
     bool doSlowCheck = shouldIgnoreAttributeCase;
@@ -1054,7 +1054,7 @@ inline size_t ElementAttributeData::getAttributeItemIndex(const AtomicString& na
     return notFound;
 }
 
-inline const Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& name) const
+inline const Attribute* ElementData::getAttributeItem(const QualifiedName& name) const
 {
     for (unsigned i = 0; i < length(); ++i) {
         if (attributeItem(i)->name().matches(name))
@@ -1063,7 +1063,7 @@ inline const Attribute* ElementAttributeData::getAttributeItem(const QualifiedNa
     return 0;
 }
 
-inline Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& name)
+inline Attribute* ElementData::getAttributeItem(const QualifiedName& name)
 {
     for (unsigned i = 0; i < length(); ++i) {
         if (attributeItem(i)->name().matches(name))
@@ -1072,15 +1072,15 @@ inline Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& na
     return 0;
 }
 
-inline const Attribute* ElementAttributeData::attributeItem(unsigned index) const
+inline const Attribute* ElementData::attributeItem(unsigned index) const
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < length());
-    if (m_isMutable)
+    if (m_isUnique)
         return &mutableAttributeVector().at(index);
     return &immutableAttributeArray()[index];
 }
 
-inline Attribute* ElementAttributeData::attributeItem(unsigned index)
+inline Attribute* ElementData::attributeItem(unsigned index)
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < length());
     return &mutableAttributeVector().at(index);

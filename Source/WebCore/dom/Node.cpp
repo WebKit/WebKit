@@ -205,11 +205,11 @@ void Node::dumpStatistics()
                 if (!result.isNewEntry)
                     result.iterator->value++;
 
-                if (ElementAttributeData* attributeData = element->attributeData()) {
-                    attributes += attributeData->length();
+                if (ElementData* elementData = element->elementData()) {
+                    attributes += elementData->length();
                     ++elementsWithAttributeStorage;
-                    for (unsigned i = 0; i < attributeData->length(); ++i) {
-                        Attribute* attr = attributeData->attributeItem(i);
+                    for (unsigned i = 0; i < elementData->length(); ++i) {
+                        Attribute* attr = elementData->attributeItem(i);
                         if (attr->attr())
                             ++attributesWithAttr;
                     }
@@ -296,7 +296,7 @@ void Node::dumpStatistics()
     printf("Attributes:\n");
     printf("  Number of Attributes (non-Node and Node): %zu [%zu]\n", attributes, sizeof(Attribute));
     printf("  Number of Attributes with an Attr: %zu\n", attributesWithAttr);
-    printf("  Number of Elements with attribute storage: %zu [%zu]\n", elementsWithAttributeStorage, sizeof(ElementAttributeData));
+    printf("  Number of Elements with attribute storage: %zu [%zu]\n", elementsWithAttributeStorage, sizeof(ElementData));
     printf("  Number of Elements with RareData: %zu\n", elementsWithRareData);
     printf("  Number of Elements with NamedNodeMap: %zu [%zu]\n", elementsWithNamedNodeMap, sizeof(NamedNodeMap));
 #endif
@@ -1753,7 +1753,7 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
     if (attr1 && attr2 && start1 == start2 && start1) {
         // We are comparing two attributes on the same node. Crawl our attribute map and see which one we hit first.
         Element* owner1 = attr1->ownerElement();
-        owner1->updatedAttributeData(); // Force update invalid attributes.
+        owner1->elementDataWithSynchronizedAttributes(); // Force update invalid attributes.
         unsigned length = owner1->attributeCount();
         for (unsigned i = 0; i < length; ++i) {
             // If neither of the two determining nodes is a child node and nodeType is the same for both determining nodes, then an 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -34,21 +34,21 @@
 namespace WebCore {
 
 class Attribute;
-class ElementAttributeData;
-class ImmutableElementAttributeDataCacheEntry;
+class ElementData;
+class ShareableElementDataCacheEntry;
 
 class DocumentSharedObjectPool {
 public:
     static PassOwnPtr<DocumentSharedObjectPool> create() { return adoptPtr(new DocumentSharedObjectPool); }
     ~DocumentSharedObjectPool();
 
-    PassRefPtr<ElementAttributeData> cachedImmutableElementAttributeData(const Vector<Attribute>&);
+    PassRefPtr<ElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
 
 private:
     DocumentSharedObjectPool();
 
-    typedef HashMap<unsigned, OwnPtr<ImmutableElementAttributeDataCacheEntry>, AlreadyHashed> ImmutableElementAttributeDataCache;
-    ImmutableElementAttributeDataCache m_immutableElementAttributeDataCache;
+    typedef HashMap<unsigned, OwnPtr<ShareableElementDataCacheEntry>, AlreadyHashed> ShareableElementDataCache;
+    ShareableElementDataCache m_shareableElementDataCache;
 };
 
 }
