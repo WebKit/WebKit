@@ -283,7 +283,8 @@ void HTMLPreloadScanner::processToken(const HTMLToken& token, Vector<OwnPtr<Prel
     if (m_inStyle) {
         if (token.type() != HTMLToken::Character)
             return;
-        return m_cssScanner.scan(token, requests);
+        const HTMLToken::DataVector& characters = token.characters();
+        return m_cssScanner.scan(characters.begin(), characters.end(), requests);
     }
     if (!isStartOrEndTag(token))
         return;

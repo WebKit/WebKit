@@ -28,20 +28,18 @@
 #include "config.h"
 #include "CSSPreloadScanner.h"
 
-#include "CachedCSSStyleSheet.h"
-#include "CachedResourceLoader.h"
-#include "CachedResourceRequest.h"
 #include "CachedResourceRequestInitiators.h"
 #include "HTMLParserIdioms.h"
-#include "HTMLToken.h"
-#include <wtf/Functional.h>
-#include <wtf/MainThread.h>
 
 namespace WebCore {
 
 CSSPreloadScanner::CSSPreloadScanner()
     : m_state(Initial)
     , m_requests(0)
+{
+}
+
+CSSPreloadScanner::~CSSPreloadScanner()
 {
 }
 
@@ -52,12 +50,19 @@ void CSSPreloadScanner::reset()
     m_ruleValue.clear();
 }
 
-void CSSPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
+void CSSPreloadScanner::scan(const UChar* begin, const UChar* end, Vector<OwnPtr<PreloadRequest> >& requests)
 {
     m_requests = &requests;
-    const HTMLToken::DataVector& characters = token.characters();
-    for (HTMLToken::DataVector::const_iterator iter = characters.begin(); iter != characters.end() && m_state != DoneParsingImportRules; ++iter)
-        tokenize(*iter);
+    for (const UChar* it = begin; it != end && m_state != DoneParsingImportRules; ++it)
+        tokenize(*it);
+    m_requests = 0;
+}
+
+void CSSPreloadScanner::scan(const LChar* begin, const LChar* end, Vector<OwnPtr<PreloadRequest> >& requests)
+{
+    m_requests = &requests;
+    for (const LChar* it = begin; it != end && m_state != DoneParsingImportRules; ++it)
+        tokenize(*it);
     m_requests = 0;
 }
 
