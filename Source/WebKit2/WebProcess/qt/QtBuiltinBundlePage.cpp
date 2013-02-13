@@ -76,8 +76,6 @@ QtBuiltinBundlePage::QtBuiltinBundlePage(QtBuiltinBundle* bundle, WKBundlePageRe
         0, // willDestroyGlobalObjectForDOMWindowExtension
         0, // didFinishProgress
         0, // shouldForceUniversalAccessFromLocalURL
-        0, // didReceiveIntentForFrame
-        0, // registerIntentServiceForFrame
         0, // didLayout
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);

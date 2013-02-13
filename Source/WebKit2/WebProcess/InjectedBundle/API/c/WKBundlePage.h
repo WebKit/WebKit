@@ -149,16 +149,11 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidFinishProgressCallback                                   didFinishProgress;
     WKBundlePageShouldForceUniversalAccessFromLocalURLCallback              shouldForceUniversalAccessFromLocalURL;
 
-    // Version 3
-    void *                                                                  didReceiveIntentForFrame_unavailable;
-    void *                                                                  registerIntentServiceForFrame_unavailable;
-
-    // Version 4
     WKBundlePageDidLayoutCallback                                           didLayout;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
-enum { kWKBundlePageLoaderClientCurrentVersion = 4 };
+enum { kWKBundlePageLoaderClientCurrentVersion = 2 };
 
 enum {
     WKBundlePagePolicyActionPassThrough,

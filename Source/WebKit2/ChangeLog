@@ -1,3 +1,22 @@
+2013-02-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        [WK2] Remove web intents callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=109654
+
+        Reviewed by Benjamin Poulain.
+
+        Web intents was removed by r142549.
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIClientTraits.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+
 2013-02-12  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [WK2] Page reloading will crash UIProcess after WebProcess was killed

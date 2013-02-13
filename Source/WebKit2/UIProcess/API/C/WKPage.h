@@ -124,15 +124,11 @@ struct WKPageLoaderClient {
     WKPageCallback                                                      interactionOccurredWhileProcessUnresponsive;
     WKPagePluginDidFailCallback                                         pluginDidFail;
 
-    // Version 2
-    void                                                                (*didReceiveIntentForFrame_unavailable)(void);
-    void                                                                (*registerIntentServiceForFrame_unavailable)(void);
-
     WKPageDidLayoutCallback                                             didLayout;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
-enum { kWKPageLoaderClientCurrentVersion = 2 };
+enum { kWKPageLoaderClientCurrentVersion = 1 };
 
 // Policy Client.
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);

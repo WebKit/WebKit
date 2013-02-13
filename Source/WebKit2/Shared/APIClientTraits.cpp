@@ -39,8 +39,6 @@ const size_t APIClientTraits<WKBundleClient>::interfaceSizesByVersion[] = {
 const size_t APIClientTraits<WKBundlePageLoaderClient>::interfaceSizesByVersion[] = {
     offsetof(WKBundlePageLoaderClient, didLayoutForFrame),
     offsetof(WKBundlePageLoaderClient, didFinishProgress),
-    offsetof(WKBundlePageLoaderClient, didReceiveIntentForFrame_unavailable),
-    offsetof(WKBundlePageLoaderClient, registerIntentServiceForFrame_unavailable),
     sizeof(WKBundlePageLoaderClient)
 };
 
@@ -62,7 +60,6 @@ const size_t APIClientTraits<WKPageContextMenuClient>::interfaceSizesByVersion[]
 
 const size_t APIClientTraits<WKPageLoaderClient>::interfaceSizesByVersion[] = {
     offsetof(WKPageLoaderClient, didDetectXSSForFrame),
-    offsetof(WKPageLoaderClient, didReceiveIntentForFrame_unavailable),
     sizeof(WKPageLoaderClient)
 };
 
