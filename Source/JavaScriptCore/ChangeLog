@@ -1,3 +1,16 @@
+2013-02-13  Filip Pizlo  <fpizlo@apple.com>
+
+        ForwardInt32ToDouble is not in DFG::MinifiedNode's list of relevant node types
+        https://bugs.webkit.org/show_bug.cgi?id=109726
+
+        Reviewed by Gavin Barraclough.
+        
+        This is asymptomatic because ForwardInt32ToDouble is only used in SetLocals, in
+        which case the value is already stored to the stack.  Still, we should fix this.
+
+        * dfg/DFGMinifiedNode.h:
+        (JSC::DFG::belongsInMinifiedGraph):
+
 2013-02-12  Filip Pizlo  <fpizlo@apple.com>
 
         DFG LogicalNot/Branch peephole removal and inversion ignores the possibility of things exiting
