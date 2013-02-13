@@ -214,6 +214,7 @@ private:
 
     void addWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName, WorkQueue*, WorkQueueMessageReceiver*);
     void removeWorkQueueMessageReceiverOnConnectionWorkQueue(StringReference messageReceiverName);
+    void dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver*, MessageDecoder*);
 
     void addQueueClientOnWorkQueue(QueueClient*);
     void removeQueueClientOnWorkQueue(QueueClient*);

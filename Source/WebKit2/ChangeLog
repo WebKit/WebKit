@@ -1,3 +1,36 @@
+2013-02-12  Anders Carlsson  <andersca@apple.com>
+
+        SecItemShim should be a WorkQueueMessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=109636
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        Add a helper function for dispatching a work queue message receiver message.
+
+        (CoreIPC::Connection::processIncomingMessage):
+        Check if there are any work queue message receivers registered for this message.
+
+        * Shared/mac/SecItemShim.cpp:
+        (WebKit::SecItemShim::shared):
+        Use dispatch_once instead of the AtomicallyInitializedStatic macro.
+
+        (WebKit::SecItemShim::SecItemShim):
+        Initialize the queue.
+
+        (WebKit::SecItemShim::secItemResponse):
+        Remove the connection parameter.
+
+        (WebKit::SecItemShim::initializeConnection):
+        Register the shim object as a work queue message receiver.
+
+        * Shared/mac/SecItemShim.h:
+        Inherit from WorkQueueMessageReceiver.
+
+        * Shared/mac/SecItemShim.messages.in:
+        Remove LegacyReceiver and DispatchOnConnectionQueue.
+
 2013-02-12  Sam Weinig  <sam@webkit.org>
 
         Make Plug-in XPC services "join existing sessions"

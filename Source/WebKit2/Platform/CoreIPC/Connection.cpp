@@ -296,6 +296,16 @@ void Connection::removeWorkQueueMessageReceiverOnConnectionWorkQueue(StringRefer
     m_workQueueMessageReceivers.remove(messageReceiverName);
 }
 
+void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceiver* workQueueMessageReceiver, MessageDecoder* incomingMessageDecoder)
+{
+    OwnPtr<MessageDecoder> decoder = adoptPtr(incomingMessageDecoder);
+
+    // FIXME: Handle sync messages.
+    ASSERT(!decoder->isSyncMessage());
+
+    workQueueMessageReceiver->didReceiveMessage(this, *decoder);
+}
+
 void Connection::addQueueClientOnWorkQueue(QueueClient* queueClient)
 {
     ASSERT(!m_connectionQueueClients.contains(queueClient));
@@ -631,6 +641,13 @@ void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
         }
     }
 
+    // Check if any work queue message receivers are interested in this message.
+    HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver> > >::const_iterator it = m_workQueueMessageReceivers.find(message->messageReceiverName());
+    if (it != m_workQueueMessageReceivers.end()) {
+        it->value.first->dispatch(bind(&Connection::dispatchWorkQueueMessageReceiverMessage, this, it->value.second, message.release().leakPtr()));
+        return;
+    }
+
     // Hand off the message to the connection queue clients.
     for (size_t i = 0; i < m_connectionQueueClients.size(); ++i) {
         m_connectionQueueClients[i]->didReceiveMessageOnConnectionWorkQueue(this, message);
@@ -681,7 +698,6 @@ void Connection::dispatchConnectionDidClose()
     // then the client will be null here.
     if (!m_client)
         return;
-
 
     // Because we define a connection as being "valid" based on wheter it has a null client, we null out
     // the client before calling didClose here. Otherwise, sendSync will try to send a message to the connection and
