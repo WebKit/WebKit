@@ -64,71 +64,67 @@ FocusEvent::FocusEvent(const AtomicString& type, const FocusEventInit& initializ
 {
 }
 
-PassRefPtr<FocusEventDispatchMediator> FocusEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent, PassRefPtr<Node> oldFocusedNode)
+PassRefPtr<FocusEventDispatchMediator> FocusEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent)
 {
-    return adoptRef(new FocusEventDispatchMediator(focusEvent, oldFocusedNode));
+    return adoptRef(new FocusEventDispatchMediator(focusEvent));
 }
 
-FocusEventDispatchMediator::FocusEventDispatchMediator(PassRefPtr<FocusEvent> focusEvent, PassRefPtr<Node> oldFocusedNode)
+FocusEventDispatchMediator::FocusEventDispatchMediator(PassRefPtr<FocusEvent> focusEvent)
     : EventDispatchMediator(focusEvent)
-    , m_oldFocusedNode(oldFocusedNode)
 {
 }
 
 bool FocusEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    dispatcher->adjustRelatedTarget(event(), m_oldFocusedNode);
+    dispatcher->adjustRelatedTarget(event(), event()->relatedTarget());
     return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 
-PassRefPtr<BlurEventDispatchMediator> BlurEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent, PassRefPtr<Node> newFocusedNode)
+PassRefPtr<BlurEventDispatchMediator> BlurEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent)
 {
-    return adoptRef(new BlurEventDispatchMediator(focusEvent, newFocusedNode));
+    return adoptRef(new BlurEventDispatchMediator(focusEvent));
 }
 
-BlurEventDispatchMediator::BlurEventDispatchMediator(PassRefPtr<FocusEvent> focusEvent, PassRefPtr<Node> newFocusedNode)
+BlurEventDispatchMediator::BlurEventDispatchMediator(PassRefPtr<FocusEvent> focusEvent)
     : EventDispatchMediator(focusEvent)
-    , m_newFocusedNode(newFocusedNode)
 {
 }
 
 bool BlurEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    dispatcher->adjustRelatedTarget(event(), m_newFocusedNode);
+    dispatcher->adjustRelatedTarget(event(), event()->relatedTarget());
     return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 
-PassRefPtr<FocusInEventDispatchMediator> FocusInEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent, PassRefPtr<Node> oldFocusedNode)
+PassRefPtr<FocusInEventDispatchMediator> FocusInEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent)
 {
-    return adoptRef(new FocusInEventDispatchMediator(focusEvent, oldFocusedNode));
+    return adoptRef(new FocusInEventDispatchMediator(focusEvent));
 }
 
-FocusInEventDispatchMediator::FocusInEventDispatchMediator(PassRefPtr<FocusEvent> focusEvent, PassRefPtr<Node> oldFocusedNode)
+FocusInEventDispatchMediator::FocusInEventDispatchMediator(PassRefPtr<FocusEvent> focusEvent)
     : EventDispatchMediator(focusEvent)
-    , m_oldFocusedNode(oldFocusedNode)
 {
 }
 
 bool FocusInEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    dispatcher->adjustRelatedTarget(event(), m_oldFocusedNode);
+    dispatcher->adjustRelatedTarget(event(), event()->relatedTarget());
     return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 
-PassRefPtr<FocusOutEventDispatchMediator> FocusOutEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent, PassRefPtr<Node> newFocusedNode)
+PassRefPtr<FocusOutEventDispatchMediator> FocusOutEventDispatchMediator::create(PassRefPtr<FocusEvent> focusEvent)
 {
-    return adoptRef(new FocusOutEventDispatchMediator(focusEvent, newFocusedNode));
+    return adoptRef(new FocusOutEventDispatchMediator(focusEvent));
 }
 
-FocusOutEventDispatchMediator::FocusOutEventDispatchMediator(PassRefPtr<FocusEvent> focusEvent, PassRefPtr<Node> newFocusedNode)
+FocusOutEventDispatchMediator::FocusOutEventDispatchMediator(PassRefPtr<FocusEvent> focusEvent)
     : EventDispatchMediator(focusEvent)
-    , m_newFocusedNode(newFocusedNode)
 {
 }
 
 bool FocusOutEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    dispatcher->adjustRelatedTarget(event(), m_newFocusedNode);
+    dispatcher->adjustRelatedTarget(event(), event()->relatedTarget());
     return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 

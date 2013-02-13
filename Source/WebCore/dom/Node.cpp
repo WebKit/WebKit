@@ -2341,20 +2341,14 @@ void Node::dispatchFocusInEvent(const AtomicString& eventType, PassRefPtr<Node> 
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(eventType == eventNames().focusinEvent || eventType == eventNames().DOMFocusInEvent);
-    // FIXME: We should pass oldFocusedNode to FocusEvent::create() and
-    // remove oldFocusedNode from FocusInEventDispatchMediator::create().
-    // See https://bugs.webkit.org/show_bug.cgi?id=109261
-    dispatchScopedEventDispatchMediator(FocusInEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, 0), oldFocusedNode));
+    dispatchScopedEventDispatchMediator(FocusInEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, oldFocusedNode)));
 }
 
 void Node::dispatchFocusOutEvent(const AtomicString& eventType, PassRefPtr<Node> newFocusedNode)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(eventType == eventNames().focusoutEvent || eventType == eventNames().DOMFocusOutEvent);
-    // FIXME: We should pass newFocusedNode to FocusEvent::create() and
-    // remove newFocusedNode from FocusOutEventDispatchMediator::create().
-    // See https://bugs.webkit.org/show_bug.cgi?id=109261
-    dispatchScopedEventDispatchMediator(FocusOutEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, 0), newFocusedNode));
+    dispatchScopedEventDispatchMediator(FocusOutEventDispatchMediator::create(FocusEvent::create(eventType, true, false, document()->defaultView(), 0, newFocusedNode)));
 }
 
 bool Node::dispatchDOMActivateEvent(int detail, PassRefPtr<Event> underlyingEvent)
@@ -2413,11 +2407,8 @@ void Node::dispatchFocusEvent(PassRefPtr<Node> oldFocusedNode, FocusDirection)
     if (document()->page())
         document()->page()->chrome()->client()->elementDidFocus(this);
 
-    // FIXME: We should pass oldFocusedNode to FocusEvent::create() and
-    // remove oldFocusedNode from FocusEventDispatchMediator::create().
-    // See https://bugs.webkit.org/show_bug.cgi?id=109261
-    RefPtr<FocusEvent> event = FocusEvent::create(eventNames().focusEvent, false, false, document()->defaultView(), 0, 0);
-    EventDispatcher::dispatchEvent(this, FocusEventDispatchMediator::create(event.release(), oldFocusedNode));
+    RefPtr<FocusEvent> event = FocusEvent::create(eventNames().focusEvent, false, false, document()->defaultView(), 0, oldFocusedNode);
+    EventDispatcher::dispatchEvent(this, FocusEventDispatchMediator::create(event.release()));
 }
 
 void Node::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
@@ -2425,11 +2416,8 @@ void Node::dispatchBlurEvent(PassRefPtr<Node> newFocusedNode)
     if (document()->page())
         document()->page()->chrome()->client()->elementDidBlur(this);
 
-    // FIXME: We should pass newFocusedNode to FocusEvent::create() and
-    // remove newFocusedNode from BlurEventDispatchMediator::create().
-    // See https://bugs.webkit.org/show_bug.cgi?id=109261
-    RefPtr<FocusEvent> event = FocusEvent::create(eventNames().blurEvent, false, false, document()->defaultView(), 0, 0);
-    EventDispatcher::dispatchEvent(this, BlurEventDispatchMediator::create(event.release(), newFocusedNode));
+    RefPtr<FocusEvent> event = FocusEvent::create(eventNames().blurEvent, false, false, document()->defaultView(), 0, newFocusedNode);
+    EventDispatcher::dispatchEvent(this, BlurEventDispatchMediator::create(event.release()));
 }
 
 void Node::dispatchChangeEvent()
