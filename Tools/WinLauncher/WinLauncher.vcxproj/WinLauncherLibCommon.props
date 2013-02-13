@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..;$(ConfigurationBuildDir)\include\WebKit;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\WebCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\JavaScriptCore;$(ConfigurationBuildDir)\obj\WebKit\DerivedSources;$(WebKit_Libraries)\Include;$(WebKit_Libraries)\Include\private;$(WebKit_Libraries)\Include\WebCore;$(WebKit_Libraries)\Include\WebCore\ForwardingHeaders;$(WebKit_Libraries)\Include\JavaScriptCore;$(IntDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..;$(ConfigurationBuildDir)\include\WebKit;$(ConfigurationBuildDir)\Include\private;$(ConfigurationBuildDir)\Include;$(ConfigurationBuildDir)\Include\WebCore;$(ConfigurationBuildDir)\Include\WebCore\ForwardingHeaders;$(ConfigurationBuildDir)\Include\JavaScriptCore;$(ConfigurationBuildDir)\obj\WebKit\DerivedSources;$(WebKit_Libraries)\Include;$(WebKit_Libraries)\Include\private;$(WebKit_Libraries)\Include\WebCore;$(WebKit_Libraries)\Include\WebCore\ForwardingHeaders;$(WebKit_Libraries)\Include\JavaScriptCore;$(IntDir)Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>StdAfx.h</PrecompiledHeaderFile>
     </ClCompile>

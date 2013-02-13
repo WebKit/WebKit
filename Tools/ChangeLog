@@ -1,3 +1,14 @@
+2013-02-13  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Unreviewed VS2010 fix to add $(ConfigurationBuildDir)/private
+        to include paths, to match VS2005 build behavior.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree/DumpRenderTreeLauncherCommon.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/ImageDiff/ImageDiffLauncherCommon.props:
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginCommon.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherCommon.props:
+        * WinLauncher/WinLauncher.vcxproj/WinLauncherLibCommon.props:
+
 2013-02-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142736.
