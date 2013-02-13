@@ -1,37 +1,19 @@
 {
   'includes': [
-    'Configuration.gypi',
     '../../../WTF/WTF.gypi',
   ],
+  'target_defaults' : {
+      'cflags' : [ '<@(global_cflags)', ],
+      'defines': [ '<@(global_defines)' ],
+  },
   'targets': [
-    {
-      'target_name': 'glib',
-      'type': 'none',
-      'variables': {
-        'glib_packages': 'gmodule-2.0 gobject-2.0 gthread-2.0 gio-2.0',
-      },
-      'direct_dependent_settings': {
-         'cflags': [ '<!@(pkg-config --cflags <(glib_packages))', ],
-         'link_settings': {
-           'ldflags': [ '<!@(pkg-config --libs-only-L --libs-only-other <(glib_packages))', ],
-           'libraries': [ '<!@(pkg-config --libs-only-l <(glib_packages))', ],
-         },
-       },
-    },
-    {
-      'target_name': 'icu',
-      'type': 'none',
-      'direct_dependent_settings': {
-        'cflags': [ '<!@(icu-config --cppflags)', ],
-        'link_settings': {
-          'ldflags': [ '<!@(icu-config --ldflags-libsonly)', ],
-        },
-       },
-    },
     {
       'target_name': 'wtf',
       'type': 'static_library',
-      'dependencies': [ 'glib', 'icu' ],
+      'dependencies': [
+        'Dependencies.gyp:glib',
+        'Dependencies.gyp:icu',
+       ],
       'include_dirs': [
         '<(Source)/WTF',
         '<(Source)/WTF/wtf',
@@ -53,15 +35,19 @@
         ['exclude', 'wtf/unicode/wchar'],
         ['exclude', '(Default|Wchar|Mac|None|Qt|Win|Wx|Efl)\\.(cpp|mm)$'],
       ],
-      'direct_dependent_settings': {
+      'cflags' : [ '-fPIC', ],
+      'all_dependent_settings': {
+        'cflags' : [
+          '<(global_cflags)',
+         ],
         'include_dirs': [
           '<(Source)/WTF',
           '<(Source)/WTF/wtf',
         ],
+      },
+      'direct_dependent_settings': {
         'ldflags': [ '-pthread' ],
       },
-      'cflags': [ '-fPIC' ],
-      'defines': [ '<@(default_defines)' ],
     },
   ]
 }

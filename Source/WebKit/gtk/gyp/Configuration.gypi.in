@@ -1,0 +1,37 @@
+{
+  'variables': {
+    # This is the top of the WebKit source relative to the build
+    # directory. This should be changed if you move your build directory
+    # relative to the source directory after running autogen.sh.
+    'toplevel_directory': '@TOPLEVEL_DIRECTORY@',
+
+    # Source is <toplevel>/Source, but relative to the actual .gyp files.
+    'Source': '../../..',
+
+    'api_version': '@WEBKITGTK_API_VERSION@',
+
+    # TODO: Currently this is calculated by libtool, but we could move
+    # the calculation to autoconf, which would allow us to use it here.
+    'javascriptcore_soname_version': '0.13.8',
+
+    'global_defines': [
+      'BUILDING_CAIRO__=1',
+      'BUILDING_GTK__=1',
+      'BUILDING_WEBKIT=1',
+      'HAVE_CONFIG_H',
+    ],
+
+    # We pass this as a cflag instead of an include so that we can point to
+    # the build directory without actually knowing it. Normally gyp expands
+    # '.' in the target 'includes' list relative to the gyp file that it's
+    # used in. We want the '.' to be relative to the build directory.
+    'global_cflags': [
+      '-I.',
+    ],
+
+    'UNICODE_CFLAGS': '@UNICODE_CFLAGS@',
+    'UNICODE_LIBS': '@UNICODE_LIBS@',
+    'GLIB_CFLAGS': '@GLIB_CFLAGS@',
+    'GLIB_LIBS': '@GLIB_LIBS@',
+  }
+}

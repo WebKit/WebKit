@@ -1,6 +1,5 @@
 {
   'includes': [
-    'Configuration.gypi',
     '../../../JavaScriptCore/JavaScriptCore.gypi',
   ],
   'variables': {
@@ -28,13 +27,15 @@
       '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore',
     ],
   },
+  'target_defaults' : {
+      'cflags' : [ '<@(global_cflags)', ],
+      'defines': [ '<@(global_defines)' ],
+  },
   'targets': [
     {
       'target_name': 'LLIntOffsetExtractor',
         'dependencies': [
           'WTF.gyp:wtf',
-          'WTF.gyp:glib',
-          'WTF.gyp:icu'
         ],
         'type': 'executable',
       'sources': [
@@ -42,7 +43,6 @@
         '<@(llintoffsetextractor_files)',
       ],
       'include_dirs': [ '<@(javascriptcore_includes)' ],
-      'defines': [ '<@(default_defines)' ],
       'actions': [
         {
           'action_name': 'llint_desired_offsets',
@@ -68,11 +68,14 @@
         'type': 'shared_library',
         'dependencies': [
           'WTF.gyp:wtf',
-          'LLIntOffsetExtractor'
+          'LLIntOffsetExtractor',
+          'Dependencies.gyp:glib',
+          'Dependencies.gyp:icu',
         ],
-        'include_dirs': [ '<@(javascriptcore_includes)' ],
         'product_extension': 'so.<@(javascriptcore_soname_version)',
-        'product_name': 'javascriptcoregtk-<@(library_version)',
+        'product_name': 'javascriptcoregtk-<@(api_version)',
+        'cflags': [ '-fPIC', ],
+        'include_dirs': [ '<@(javascriptcore_includes)' ],
         'sources': [
           '<@(javascriptcore_yarr_files)',
           '<@(javascriptcore_derived_source_files)',
@@ -89,8 +92,6 @@
             '<(Source)/WTF/wtf',
           ],
         },
-        'defines': [ '<@(default_defines)' ],
-        'cflags': [ '-fPIC' ],
       'actions': [
         {
           'action_name': 'Generate Derived Sources',
@@ -123,15 +124,13 @@
         'type': 'executable',
         'sources': [ '<@(jsc_files)' ],
         'include_dirs': [ '<@(javascriptcore_includes)' ],
-        'defines': [ '<@(default_defines)' ],
     },
     {
       'target_name': 'minidom',
         'dependencies': [ 'libjavascriptcoregtk' ],
         'type': 'executable',
         'sources': [ '<@(minidom_files)' ],
-        'include_dirs': [ '<@(javascriptcore_includes)' ],
-        'defines': [ '<@(default_defines)' ],
+        'include_dirs': [ '<@(javascriptcore_includes)', ],
     },
   ]
 }

@@ -1,3 +1,35 @@
+2013-02-12  Martin Robinson  <mrobinson@igalia.com>
+
+        2013-02-10  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Connect the gyp build to autoconf
+        https://bugs.webkit.org/show_bug.cgi?id=109360
+
+        Reviewed by Dirk Pranke.
+
+        Move Configuration.gypi to Configuration.gypi.in and allow autoconf to
+        fill in variables during a configuration phase. Also add some scripts
+        to support connecting autoconf up to the gyp build. This allows us
+        to have a very autotools-esque experience.
+
+        * gyp/Configuration.gypi: Removed.
+        * gyp/Configuration.gypi.in: Added. Fleshed out Configuration.gypi to include
+        dependency CFLAGS and LIBS directly from configure. Due to the way we are
+        generating the gyp build now, we also need to include an absolute path to
+        the build directory. Fixing bugs in gyp should allow us to avoid this in the
+        future.
+        * gyp/Dependencies.gyp: Added this file which holds external dependency targets.
+        We could consider auto-generating this at some point.
+        * gyp/JavaScriptCore.gyp: Remove references to the old Configuration.gypi.
+        It's now included via the command-line -I flag. Update to support the new
+        s/default/global/g terminology for variables.
+        * gyp/WTF.gyp: Remove the dependency targets as this is now handled entirely
+        by autoconf.
+        * gyp/autogen.sh: Added. Set up the build directory and kick off autoconf.
+        * gyp/configure.ac: Added. An autoconf build that re-uses much of our
+        existing autoconf setup.
+        * gyp/run-gyp: Added. Script for invoking gyp for out-of-tree builds.
+
 2013-02-12  Huang Dongsung  <luxtella@company100.net>
 
         [TexMap] Apply frames-per-second debug counter to WK1.
