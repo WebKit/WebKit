@@ -5115,6 +5115,8 @@
             'svg/graphics/SVGImageChromeClient.h',
             'svg/graphics/SVGImage.cpp',
             'svg/graphics/SVGImage.h',
+            'svg/graphics/SVGImageForContainer.h',
+            'svg/graphics/SVGImageForContainer.cpp',
             'svg/graphics/filters/SVGFEImage.cpp',
             'svg/graphics/filters/SVGFEImage.h',
             'svg/graphics/filters/SVGFilter.cpp',

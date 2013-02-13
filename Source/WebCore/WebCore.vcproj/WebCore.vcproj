@@ -74625,6 +74625,14 @@
 					RelativePath="..\svg\graphics\SVGImageChromeClient.h"
 					>
 				</File>
+				<File
+					RelativePath="..\svg\graphics\SVGImageForContainer.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\svg\graphics\SVGImageForContainer.h"
+					>
+				</File>
 				<Filter
 					Name="filters"
 					>

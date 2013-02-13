@@ -29,50 +29,27 @@
 #include "Page.h"
 #include "RenderSVGRoot.h"
 #include "SVGImage.h"
+#include "SVGImageForContainer.h"
 
 namespace WebCore {
 
-static const int timeToKeepCachedBitmapsAfterLastUseInSeconds = 30;
-
 SVGImageCache::SVGImageCache(SVGImage* svgImage)
     : m_svgImage(svgImage)
-    , m_redrawTimer(this, &SVGImageCache::redrawTimerFired)
-    , m_cacheClearTimer(this, &SVGImageCache::cacheClearTimerFired, timeToKeepCachedBitmapsAfterLastUseInSeconds)
 {
     ASSERT(m_svgImage);
 }
 
 SVGImageCache::~SVGImageCache()
 {
-    m_sizeAndScalesMap.clear();
-    clearBitmapCache();
-}
-
-void SVGImageCache::clearBitmapCache()
-{
-    ImageDataMap::iterator end = m_imageDataMap.end();
-    for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it) {
-        // Checks if the client (it->key) is still valid. The client should remove itself from this
-        // cache before its end of life, otherwise the following ASSERT will crash on pure virtual
-        // function call or a general crash.
-        ASSERT(it->key->resourceClientType() == CachedImageClient::expectedType());
-        delete it->value.buffer;
-    }
-
-    m_imageDataMap.clear();
+    m_imageForContainerMap.clear();
 }
 
 void SVGImageCache::removeClientFromCache(const CachedImageClient* client)
 {
     ASSERT(client);
-    m_sizeAndScalesMap.remove(client);
 
-    ImageDataMap::iterator it = m_imageDataMap.find(client);
-    if (it == m_imageDataMap.end())
-        return;
-
-    delete it->value.buffer;
-    m_imageDataMap.remove(it);
+    if (m_imageForContainerMap.contains(client))
+        m_imageForContainerMap.remove(client);
 }
 
 void SVGImageCache::setContainerSizeForRenderer(const CachedImageClient* client, const IntSize& containerSize, float containerZoom)
@@ -82,135 +59,58 @@ void SVGImageCache::setContainerSizeForRenderer(const CachedImageClient* client,
 
     FloatSize containerSizeWithoutZoom(containerSize);
     containerSizeWithoutZoom.scale(1 / containerZoom);
-    m_sizeAndScalesMap.set(client, SizeAndScales(containerSizeWithoutZoom, containerZoom));
+
+    ImageForContainerMap::iterator imageIt = m_imageForContainerMap.find(client);
+    if (imageIt == m_imageForContainerMap.end()) {
+        RefPtr<SVGImageForContainer> image = SVGImageForContainer::create(m_svgImage, containerSizeWithoutZoom, 1, containerZoom);
+        m_imageForContainerMap.set(client, image);
+    } else {
+        imageIt->value->setSize(containerSizeWithoutZoom);
+        imageIt->value->setZoom(containerZoom);
+    }
 }
 
 IntSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
 {
     IntSize imageSize = m_svgImage->size();
-
     if (!renderer)
         return imageSize;
-    SizeAndScalesMap::const_iterator it = m_sizeAndScalesMap.find(renderer);
-    if (it == m_sizeAndScalesMap.end())
+
+    ImageForContainerMap::const_iterator it = m_imageForContainerMap.find(renderer);
+    if (it == m_imageForContainerMap.end())
         return imageSize;
 
-    SizeAndScales sizeAndScales = it->value;
-    if (!sizeAndScales.size.isEmpty()) {
-        float scale = sizeAndScales.scale;
-        if (!scale) {
-            Page* page = renderer->document()->page();
-            scale = page->deviceScaleFactor() * page->pageScaleFactor();
-        }
-
-        imageSize.setWidth(scale * sizeAndScales.size.width());
-        imageSize.setHeight(scale * sizeAndScales.size.height());
+    RefPtr<SVGImageForContainer> image = it->value;
+    FloatSize size = image->containerSize();
+    if (!size.isEmpty()) {
+        size.scale(image->zoom());
+        imageSize.setWidth(size.width());
+        imageSize.setHeight(size.height());
     }
+
     return imageSize;
 }
 
-void SVGImageCache::imageContentChanged()
-{
-    ImageDataMap::iterator end = m_imageDataMap.end();
-    for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it)
-        it->value.imageNeedsUpdate = true;
-
-    // Always redraw on a timer because this method may be invoked from destructors of things we are intending to draw.
-    if (!m_redrawTimer.isActive())
-        m_redrawTimer.startOneShot(0);
-}
-
-void SVGImageCache::redraw()
-{
-    ImageDataMap::iterator end = m_imageDataMap.end();
-    for (ImageDataMap::iterator it = m_imageDataMap.begin(); it != end; ++it) {
-        ImageData& data = it->value;
-        if (!data.imageNeedsUpdate)
-            continue;
-        // If the content changed we redraw using our existing ImageBuffer.
-        ASSERT(data.buffer);
-        ASSERT(data.image);
-        m_svgImage->drawSVGToImageBuffer(data.buffer, data.sizeAndScales.size, data.sizeAndScales.zoom * data.sizeAndScales.scale, SVGImage::ClearImageBuffer);
-        data.image = data.buffer->copyImage(CopyBackingStore);
-        data.imageNeedsUpdate = false;
-    }
-    ASSERT(m_svgImage->imageObserver());
-    m_svgImage->imageObserver()->animationAdvanced(m_svgImage);
-}
-
-void SVGImageCache::redrawTimerFired(Timer<SVGImageCache>*)
-{
-    // We have no guarantee that the frame does not require layout when the timer fired.
-    // So be sure to check again in case it is still not safe to run redraw.
-    FrameView* frameView = m_svgImage->frameView();
-    if (frameView && (frameView->needsLayout() || frameView->isInLayout())) {
-        if (!m_redrawTimer.isActive())
-            m_redrawTimer.startOneShot(0);
-    } else
-       redraw();
-}
-
-void SVGImageCache::cacheClearTimerFired(DeferrableOneShotTimer<SVGImageCache>*)
-{
-    clearBitmapCache();
-}
-
-Image* SVGImageCache::lookupOrCreateBitmapImageForRenderer(const RenderObject* renderer)
+// FIXME: This doesn't take into account the animation timeline so animations will not
+// restart on page load, nor will two animations in different pages have different timelines.
+Image* SVGImageCache::imageForRenderer(const RenderObject* renderer)
 {
     if (!renderer)
         return Image::nullImage();
 
-    const CachedImageClient* client = renderer;
-
     // The cache needs to know the size of the renderer before querying an image for it.
-    SizeAndScalesMap::iterator sizeIt = m_sizeAndScalesMap.find(renderer);
-    if (sizeIt == m_sizeAndScalesMap.end())
+    ImageForContainerMap::iterator it = m_imageForContainerMap.find(renderer);
+    if (it == m_imageForContainerMap.end())
         return Image::nullImage();
 
-    FloatSize size = sizeIt->value.size;
-    float zoom = sizeIt->value.zoom;
-    float scale = sizeIt->value.scale;
+    RefPtr<SVGImageForContainer> image = it->value;
+    ASSERT(!image->containerSize().isEmpty());
 
-    // FIXME (85335): This needs to take CSS transform scale into account as well.
+    // FIXME: Set the page scale in setContainerSizeForRenderer instead of looking it up here.
     Page* page = renderer->document()->page();
-    if (!scale)
-        scale = page->deviceScaleFactor() * page->pageScaleFactor();
+    image->setPageScale(page->deviceScaleFactor() * page->pageScaleFactor());
 
-    ASSERT(!size.isEmpty());
-
-    // (Re)schedule the oneshot timer to throw out all the cached ImageBuffers if they remain unused for too long.
-    m_cacheClearTimer.restart();
-
-    // Lookup image for client in cache and eventually update it.
-    ImageDataMap::iterator it = m_imageDataMap.find(client);
-    if (it != m_imageDataMap.end()) {
-        ImageData& data = it->value;
-
-        // Common case: image size & zoom remained the same.
-        if (data.sizeAndScales.size == size && data.sizeAndScales.zoom == zoom && data.sizeAndScales.scale == scale)
-            return data.image.get();
-
-        // If the image size for the client changed, we have to delete the buffer, remove the item from the cache and recreate it.
-        delete data.buffer;
-        m_imageDataMap.remove(it);
-    }
-
-    FloatSize scaledSize(size);
-    scaledSize.scale(scale * zoom);
-
-    // Create and cache new image and image buffer at requested size.
-    OwnPtr<ImageBuffer> newBuffer = ImageBuffer::create(expandedIntSize(scaledSize), 1);
-    if (!newBuffer)
-        return Image::nullImage();
-
-    m_svgImage->drawSVGToImageBuffer(newBuffer.get(), size, scale * zoom, SVGImage::DontClearImageBuffer);
-
-    RefPtr<Image> newImage = newBuffer->copyImage(CopyBackingStore);
-    Image* newImagePtr = newImage.get();
-    ASSERT(newImagePtr);
-
-    m_imageDataMap.add(client, ImageData(newBuffer.leakPtr(), newImage.release(), SizeAndScales(size, zoom, scale)));
-    return newImagePtr;
+    return image.get();
 }
 
 } // namespace WebCore

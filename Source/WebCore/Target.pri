@@ -2653,6 +2653,7 @@ HEADERS += \
     svg/graphics/filters/SVGFilter.h \
     svg/graphics/SVGImage.h \
     svg/graphics/SVGImageCache.h \
+    svg/graphics/SVGImageForContainer.h \
     svg/properties/SVGAttributeToPropertyMap.h \
     svg/properties/SVGAnimatedEnumerationPropertyTearOff.h \
     svg/properties/SVGAnimatedListPropertyTearOff.h \
@@ -3774,6 +3775,7 @@ enable?(SVG) {
         svg/graphics/filters/SVGFilterBuilder.cpp \
         svg/graphics/SVGImage.cpp \
         svg/graphics/SVGImageCache.cpp \
+        svg/graphics/SVGImageForContainer.cpp \
         svg/properties/SVGAttributeToPropertyMap.cpp \
         svg/properties/SVGPathSegListPropertyTearOff.cpp \
         svg/SVGDocumentExtensions.cpp \

@@ -24,7 +24,6 @@
 #include "FloatSize.h"
 #include "Image.h"
 #include "IntSize.h"
-#include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -35,6 +34,7 @@ class CachedImage;
 class CachedImageClient;
 class ImageBuffer;
 class SVGImage;
+class SVGImageForContainer;
 class RenderObject;
 
 class SVGImageCache {
@@ -47,77 +47,20 @@ public:
         return adoptPtr(new SVGImageCache(image));
     }
 
-    struct SizeAndScales {
-        SizeAndScales()
-            : zoom(1)
-            , scale(0)
-        {
-        }
-
-        SizeAndScales(const FloatSize& newSize, float newZoom, float newScale)
-            : size(newSize)
-            , zoom(newZoom)
-            , scale(newScale)
-        {
-        }
-
-        SizeAndScales(const FloatSize& newSize, float newZoom)
-            : size(newSize)
-            , zoom(newZoom)
-            , scale(0)
-        {
-        }
-
-        FloatSize size; // This is the container size without zoom.
-        float zoom;
-        float scale; // A scale of 0 indicates that the default scale should be used.
-    };
-
     void removeClientFromCache(const CachedImageClient*);
 
     void setContainerSizeForRenderer(const CachedImageClient*, const IntSize&, float);
     IntSize imageSizeForRenderer(const RenderObject*) const;
 
-    Image* lookupOrCreateBitmapImageForRenderer(const RenderObject*);
-    void imageContentChanged();
+    Image* imageForRenderer(const RenderObject*);
 
 private:
     SVGImageCache(SVGImage*);
-    void redraw();
-    void redrawTimerFired(Timer<SVGImageCache>*);
-    void cacheClearTimerFired(DeferrableOneShotTimer<SVGImageCache>*);
-    void clearBitmapCache();
 
-    struct ImageData {
-        ImageData()
-            : imageNeedsUpdate(false)
-            , buffer(0)
-        {
-        }
-
-        ImageData(ImageBuffer* newBuffer, PassRefPtr<Image> newImage, const SizeAndScales& newSizeAndScales)
-            : imageNeedsUpdate(false)
-            , sizeAndScales(newSizeAndScales)
-            , buffer(newBuffer)
-            , image(newImage)
-        {
-        }
-
-        bool imageNeedsUpdate;
-        SizeAndScales sizeAndScales;
-
-        ImageBuffer* buffer;
-        RefPtr<Image> image;
-    };
-
-    typedef HashMap<const CachedImageClient*, SizeAndScales> SizeAndScalesMap;
-    typedef HashMap<const CachedImageClient*, ImageData> ImageDataMap;
+    typedef HashMap<const CachedImageClient*, RefPtr<SVGImageForContainer> > ImageForContainerMap;
 
     SVGImage* m_svgImage;
-    SizeAndScalesMap m_sizeAndScalesMap;
-    ImageDataMap m_imageDataMap;
-    Timer<SVGImageCache> m_redrawTimer;
-    DeferrableOneShotTimer<SVGImageCache> m_cacheClearTimer;
+    ImageForContainerMap m_imageForContainerMap;
 };
 
 } // namespace WebCore

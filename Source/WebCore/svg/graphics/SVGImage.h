@@ -38,6 +38,7 @@ class ImageBuffer;
 class Page;
 class RenderBox;
 class SVGImageChromeClient;
+class SVGImageForContainer;
 
 class SVGImage : public Image {
 public:
@@ -46,12 +47,6 @@ public:
         return adoptRef(new SVGImage(observer));
     }
 
-    enum ShouldClearBuffer {
-        ClearImageBuffer,
-        DontClearImageBuffer
-    };
-
-    void drawSVGToImageBuffer(ImageBuffer*, const FloatSize&, float, ShouldClearBuffer);
     RenderBox* embeddedContentBox() const;
     FrameView* frameView() const;
 
@@ -61,10 +56,16 @@ public:
     virtual bool hasRelativeWidth() const;
     virtual bool hasRelativeHeight() const;
 
+    virtual void startAnimation(bool /*catchUpIfNecessary*/ = true) OVERRIDE;
+    virtual void stopAnimation() OVERRIDE;
+    virtual void resetAnimation() OVERRIDE;
+
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
     friend class SVGImageChromeClient;
+    friend class SVGImageForContainer;
+
     virtual ~SVGImage();
 
     virtual String filenameExtension() const;
@@ -87,12 +88,12 @@ private:
 
     SVGImage(ImageObserver*);
     virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
-
-    virtual NativeImagePtr nativeImageForCurrentFrame();
+    void drawForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode);
+    void drawPatternForContainer(GraphicsContext*, const FloatSize, float, float, const FloatRect&, const AffineTransform&,
+        const FloatPoint&, ColorSpace, CompositeOperator, const FloatRect&);
 
     OwnPtr<SVGImageChromeClient> m_chromeClient;
     OwnPtr<Page> m_page;
-    RefPtr<Image> m_frameCache;
 };
 }
 

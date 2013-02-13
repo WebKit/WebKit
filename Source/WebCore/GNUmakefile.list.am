@@ -4925,6 +4925,8 @@ webcore_svg_sources += \
 	Source/WebCore/svg/graphics/SVGImageCache.cpp \
 	Source/WebCore/svg/graphics/SVGImageCache.h \
 	Source/WebCore/svg/graphics/SVGImageChromeClient.h \
+	Source/WebCore/svg/graphics/SVGImageForContainer.cpp \
+	Source/WebCore/svg/graphics/SVGImageForContainer.h \
 	Source/WebCore/svg/graphics/SVGImage.cpp \
 	Source/WebCore/svg/graphics/SVGImage.h \
 	Source/WebCore/svg/LinearGradientAttributes.h \

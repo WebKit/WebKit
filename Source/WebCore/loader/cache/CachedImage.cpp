@@ -164,7 +164,7 @@ inline Image* CachedImage::lookupOrCreateImageForRenderer(const RenderObject* re
         return 0;
     if (!m_image->isSVGImage())
         return m_image.get();
-    Image* useImage = m_svgImageCache->lookupOrCreateBitmapImageForRenderer(renderer);
+    Image* useImage = m_svgImageCache->imageForRenderer(renderer);
     if (useImage == Image::nullImage())
         return m_image.get();
     return useImage;
@@ -215,6 +215,7 @@ void CachedImage::setContainerSizeForRenderer(const CachedImageClient* renderer,
     if (containerSize.isEmpty())
         return;
     ASSERT(renderer);
+    ASSERT(containerZoom);
     if (!m_image) {
         m_pendingContainerSizeRequests.set(renderer, SizeAndZoom(containerSize, containerZoom));
         return;
@@ -312,9 +313,6 @@ void CachedImage::checkShouldPaintBrokenImage()
 void CachedImage::clear()
 {
     destroyDecodedData();
-#if ENABLE(SVG)
-    m_svgImageCache.clear();
-#endif
     clearImage();
     m_pendingContainerSizeRequests.clear();
     setEncodedSize(0);
@@ -484,13 +482,6 @@ void CachedImage::changedInRect(const Image* image, const IntRect& rect)
 {
     if (!image || image != m_image)
         return;
-#if ENABLE(SVG)
-    // We have to update the cached ImageBuffers if the underlying content changed.
-    if (image->isSVGImage()) {
-        m_svgImageCache->imageContentChanged();
-        return;
-    }
-#endif
     notifyObservers(&rect);
 }
 

@@ -2494,6 +2494,7 @@ set(WebCore_SOURCES
 
     svg/graphics/SVGImage.cpp
     svg/graphics/SVGImageCache.cpp
+    svg/graphics/SVGImageForContainer.cpp
 
     svg/graphics/filters/SVGFEImage.cpp
     svg/graphics/filters/SVGFilter.cpp
