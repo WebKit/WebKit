@@ -1,3 +1,17 @@
+2013-02-13  Eric Seidel  <eric@webkit.org>
+
+        Don't copy Vector<UChar> when passing to new String methods from bug 109617
+        https://bugs.webkit.org/show_bug.cgi?id=109708
+
+        Reviewed by Tony Gentilcore.
+
+        Thanks for the catch Darin.
+
+        * wtf/text/AtomicString.h:
+        (WTF::AtomicString::AtomicString):
+        * wtf/text/StringImpl.h:
+        (WTF::StringImpl::create8BitIfPossible):
+
 2013-02-13  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove remaining dead code from the GLib unicode backend

@@ -50,7 +50,7 @@ public:
     AtomicString(const UChar* s) : m_string(add(s)) { }
 
     template<size_t inlineCapacity>
-    explicit AtomicString(Vector<UChar, inlineCapacity> characters)
+    explicit AtomicString(const Vector<UChar, inlineCapacity>& characters)
         : m_string(add(characters.data(), characters.size()))
     {
     }
