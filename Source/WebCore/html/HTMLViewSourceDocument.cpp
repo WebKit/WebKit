@@ -135,7 +135,7 @@ void HTMLViewSourceDocument::processTagToken(const String& source, HTMLToken& to
 {
     m_current = addSpanWithClassName("webkit-html-tag");
 
-    AtomicString tagName(token.name().data(), token.name().size());
+    AtomicString tagName(token.name());
 
     unsigned index = 0;
     HTMLToken::AttributeList::const_iterator iter = token.attributes().begin();
@@ -147,19 +147,19 @@ void HTMLViewSourceDocument::processTagToken(const String& source, HTMLToken& to
             break;
         }
 
-        AtomicString name(iter->m_name.data(), iter->m_name.size());
-        String value = StringImpl::create8BitIfPossible(iter->m_value.data(), iter->m_value.size()); 
+        AtomicString name(iter->name);
+        String value = StringImpl::create8BitIfPossible(iter->value);
 
-        index = addRange(source, index, iter->m_nameRange.m_start - token.startIndex(), "");
-        index = addRange(source, index, iter->m_nameRange.m_end - token.startIndex(), "webkit-html-attribute-name");
+        index = addRange(source, index, iter->nameRange.start - token.startIndex(), "");
+        index = addRange(source, index, iter->nameRange.end - token.startIndex(), "webkit-html-attribute-name");
 
         if (tagName == baseTag && name == hrefAttr)
             m_current = addBase(value);
 
-        index = addRange(source, index, iter->m_valueRange.m_start - token.startIndex(), "");
+        index = addRange(source, index, iter->valueRange.start - token.startIndex(), "");
 
         bool isLink = name == srcAttr || name == hrefAttr;
-        index = addRange(source, index, iter->m_valueRange.m_end - token.startIndex(), "webkit-html-attribute-value", isLink, tagName == aTag, value);
+        index = addRange(source, index, iter->valueRange.end - token.startIndex(), "webkit-html-attribute-value", isLink, tagName == aTag, value);
 
         ++iter;
     }

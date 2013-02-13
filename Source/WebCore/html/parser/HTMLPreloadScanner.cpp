@@ -74,8 +74,8 @@ public:
 
         for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
              iter != attributes.end(); ++iter) {
-            AtomicString attributeName(iter->m_name.data(), iter->m_name.size());
-            String attributeValue = StringImpl::create8BitIfPossible(iter->m_value.data(), iter->m_value.size());
+            AtomicString attributeName(iter->name);
+            String attributeValue = StringImpl::create8BitIfPossible(iter->value);
 
             if (attributeName == charsetAttr)
                 m_charset = attributeValue;
@@ -219,7 +219,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const KURL& star
     // All other functions are passed a token.
     while (m_tokenizer->nextToken(m_source, m_token)) {
         if (isStartTag(m_token))
-            m_tokenizer->updateStateFor(AtomicString(m_token.name().data(), m_token.name().size()));
+            m_tokenizer->updateStateFor(AtomicString(m_token.name()));
         processToken(m_token, requests);
         m_token.clear();
     }
@@ -263,9 +263,9 @@ bool HTMLPreloadScanner::processPossibleBaseTag(const AtomicString& tagName, con
             return true;
 
         for (HTMLToken::AttributeList::const_iterator iter = token.attributes().begin(); iter != token.attributes().end(); ++iter) {
-            AtomicString attributeName(iter->m_name.data(), iter->m_name.size());
+            AtomicString attributeName(iter->name);
             if (attributeName == hrefAttr) {
-                String hrefValue = StringImpl::create8BitIfPossible(iter->m_value.data(), iter->m_value.size());
+                String hrefValue = StringImpl::create8BitIfPossible(iter->value);
                 m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefValue));
                 break;
             }
@@ -286,7 +286,7 @@ void HTMLPreloadScanner::processToken(const HTMLToken& token, Vector<OwnPtr<Prel
     if (!isStartOrEndTag(token))
         return;
 
-    AtomicString tagName(token.name().data(), token.name().size());
+    AtomicString tagName(token.name());
 #if ENABLE(TEMPLATE_ELEMENT)
     if (processPossibleTemplateTag(tagName, token))
         return;

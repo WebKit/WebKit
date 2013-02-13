@@ -78,9 +78,7 @@ void HTMLViewSourceParser::updateTokenizerState()
     // FIXME: The tokenizer should do this work for us.
     if (m_token.type() != HTMLToken::StartTag)
         return;
-
-    AtomicString tagName(m_token.name().data(), m_token.name().size());
-    m_tokenizer->updateStateFor(tagName);
+    m_tokenizer->updateStateFor(AtomicString(m_token.name()));
 }
 
 void HTMLViewSourceParser::finish()

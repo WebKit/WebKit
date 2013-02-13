@@ -51,7 +51,7 @@ using namespace HTMLNames;
 // We don't have an HTMLToken.cpp though, so this is the next best place.
 QualifiedName AtomicHTMLToken::nameForAttribute(const HTMLToken::Attribute& attribute) const
 {
-    return QualifiedName(nullAtom, AtomicString(attribute.m_name.data(), attribute.m_name.size()), nullAtom);
+    return QualifiedName(nullAtom, AtomicString(attribute.name), nullAtom);
 }
 
 bool AtomicHTMLToken::usesName() const

@@ -124,14 +124,14 @@ public:
     }
 
     // FIXME: Distinguish between a missing public identifer and an empty one.
-    WTF::Vector<UChar>& publicIdentifier() const
+    Vector<UChar>& publicIdentifier() const
     {
         ASSERT(m_type == HTMLToken::DOCTYPE);
         return m_doctypeData->m_publicIdentifier;
     }
 
     // FIXME: Distinguish between a missing system identifer and an empty one.
-    WTF::Vector<UChar>& systemIdentifier() const
+    Vector<UChar>& systemIdentifier() const
     {
         ASSERT(m_type == HTMLToken::DOCTYPE);
         return m_doctypeData->m_systemIdentifier;
@@ -153,7 +153,7 @@ private:
             ASSERT_NOT_REACHED();
             break;
         case HTMLToken::DOCTYPE:
-            m_name = AtomicString(token.nameString());
+            m_name = AtomicString(token.nameString()); // FIXME: Should be AtomicString(token.name()) to avoid mallocing every time.
             m_doctypeData = token.releaseDoctypeData();
             break;
         case HTMLToken::EndOfFile:
@@ -161,15 +161,15 @@ private:
         case HTMLToken::StartTag:
         case HTMLToken::EndTag: {
             m_selfClosing = token.selfClosing();
-            m_name = AtomicString(token.nameString());
+            m_name = AtomicString(token.nameString()); // FIXME: Should be AtomicString(token.name()) to avoid mallocing every time.
             initializeAttributes(token.attributes());
             break;
         }
         case HTMLToken::Comment:
             if (token.isAll8BitData())
-                m_data = String::make8BitFrom16BitSource(token.comment().data(), token.comment().size());
+                m_data = String::make8BitFrom16BitSource(token.comment());
             else
-                m_data = String(token.comment().data(), token.comment().size());
+                m_data = String(token.comment());
             break;
         case HTMLToken::Character:
             m_externalCharacters = token.characters().data();
@@ -192,9 +192,9 @@ private:
             m_name = token.data();
             m_doctypeData = adoptPtr(new DoctypeData());
             m_doctypeData->m_hasPublicIdentifier = true;
-            m_doctypeData->m_publicIdentifier.append(token.publicIdentifier().characters(), token.publicIdentifier().length());
+            append(m_doctypeData->m_publicIdentifier, token.publicIdentifier());
             m_doctypeData->m_hasSystemIdentifier = true;
-            m_doctypeData->m_systemIdentifier.append(token.systemIdentifier().characters(), token.systemIdentifier().length());
+            append(m_doctypeData->m_systemIdentifier, token.systemIdentifier());
             m_doctypeData->m_forceQuirks = token.doctypeForcesQuirks();
             break;
         case HTMLToken::EndOfFile:
@@ -206,7 +206,7 @@ private:
             // Fall through!
         case HTMLToken::EndTag:
             m_selfClosing = token.selfClosing();
-            m_name = AtomicString(token.data());
+            m_name = token.data();
             break;
         case HTMLToken::Comment:
             m_data = token.data();
@@ -288,17 +288,17 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
     m_attributes.reserveInitialCapacity(size);
     for (size_t i = 0; i < size; ++i) {
         const HTMLToken::Attribute& attribute = attributes[i];
-        if (attribute.m_name.isEmpty())
+        if (attribute.name.isEmpty())
             continue;
 
         // FIXME: We should be able to add the following ASSERT once we fix
         // https://bugs.webkit.org/show_bug.cgi?id=62971
-        //   ASSERT(attribute.m_nameRange.m_start);
-        ASSERT(attribute.m_nameRange.m_end);
-        ASSERT(attribute.m_valueRange.m_start);
-        ASSERT(attribute.m_valueRange.m_end);
+        //   ASSERT(attribute.nameRange.start);
+        ASSERT(attribute.nameRange.end);
+        ASSERT(attribute.valueRange.start);
+        ASSERT(attribute.valueRange.end);
 
-        AtomicString value(attribute.m_value.data(), attribute.m_value.size());
+        AtomicString value(attribute.value);
         const QualifiedName& name = nameForAttribute(attribute);
         if (!findAttributeInVector(m_attributes, name))
             m_attributes.append(Attribute(name, value));

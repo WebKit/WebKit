@@ -78,14 +78,14 @@ public:
     public:
         class Range {
         public:
-            int m_start;
-            int m_end;
+            int start;
+            int end;
         };
 
-        Range m_nameRange;
-        Range m_valueRange;
-        WTF::Vector<UChar, 32> m_name;
-        WTF::Vector<UChar, 32> m_value;
+        Range nameRange;
+        Range valueRange;
+        Vector<UChar, 32> name;
+        Vector<UChar, 32> value;
     };
 
     typedef WTF::Vector<Attribute, 10> AttributeList;
@@ -96,8 +96,8 @@ public:
     void clear()
     {
         m_type = Uninitialized;
-        m_range.m_start = 0;
-        m_range.m_end = 0;
+        m_range.start = 0;
+        m_range.end = 0;
         m_baseOffset = 0;
         m_data.clear();
         m_orAllData = 0;
@@ -113,8 +113,8 @@ public:
     }
 
     /* Range and offset methods exposed for HTMLSourceTracker and HTMLViewSourceParser */
-    int startIndex() const { return m_range.m_start; }
-    int endIndex() const { return m_range.m_end; }
+    int startIndex() const { return m_range.start; }
+    int endIndex() const { return m_range.end; }
 
     void setBaseOffset(int offset)
     {
@@ -123,7 +123,7 @@ public:
 
     void end(int endOffset)
     {
-        m_range.m_end = endOffset - m_baseOffset;
+        m_range.end = endOffset - m_baseOffset;
     }
 
     const DataVector& data() const
@@ -158,7 +158,7 @@ public:
             return emptyString();
         if (isAll8BitData())
             return String::make8BitFrom16BitSource(m_data.data(), m_data.size());
-        return String(m_data.data(), m_data.size());
+        return String(m_data);
     }
 
     /* DOCTYPE Tokens */
@@ -294,37 +294,37 @@ public:
         m_attributes.grow(m_attributes.size() + 1);
         m_currentAttribute = &m_attributes.last();
 #ifndef NDEBUG
-        m_currentAttribute->m_nameRange.m_start = 0;
-        m_currentAttribute->m_nameRange.m_end = 0;
-        m_currentAttribute->m_valueRange.m_start = 0;
-        m_currentAttribute->m_valueRange.m_end = 0;
+        m_currentAttribute->nameRange.start = 0;
+        m_currentAttribute->nameRange.end = 0;
+        m_currentAttribute->valueRange.start = 0;
+        m_currentAttribute->valueRange.end = 0;
 #endif
     }
 
     void beginAttributeName(int offset)
     {
-        m_currentAttribute->m_nameRange.m_start = offset - m_baseOffset;
+        m_currentAttribute->nameRange.start = offset - m_baseOffset;
     }
 
     void endAttributeName(int offset)
     {
         int index = offset - m_baseOffset;
-        m_currentAttribute->m_nameRange.m_end = index;
-        m_currentAttribute->m_valueRange.m_start = index;
-        m_currentAttribute->m_valueRange.m_end = index;
+        m_currentAttribute->nameRange.end = index;
+        m_currentAttribute->valueRange.start = index;
+        m_currentAttribute->valueRange.end = index;
     }
 
     void beginAttributeValue(int offset)
     {
-        m_currentAttribute->m_valueRange.m_start = offset - m_baseOffset;
+        m_currentAttribute->valueRange.start = offset - m_baseOffset;
 #ifndef NDEBUG
-        m_currentAttribute->m_valueRange.m_end = 0;
+        m_currentAttribute->valueRange.end = 0;
 #endif
     }
 
     void endAttributeValue(int offset)
     {
-        m_currentAttribute->m_valueRange.m_end = offset - m_baseOffset;
+        m_currentAttribute->valueRange.end = offset - m_baseOffset;
     }
 
     void appendToAttributeName(UChar character)
@@ -333,23 +333,23 @@ public:
         ASSERT(m_type == StartTag || m_type == EndTag);
         // FIXME: We should be able to add the following ASSERT once we fix
         // https://bugs.webkit.org/show_bug.cgi?id=62971
-        //   ASSERT(m_currentAttribute->m_nameRange.m_start);
-        m_currentAttribute->m_name.append(character);
+        //   ASSERT(m_currentAttribute->nameRange.start);
+        m_currentAttribute->name.append(character);
     }
 
     void appendToAttributeValue(UChar character)
     {
         ASSERT(character);
         ASSERT(m_type == StartTag || m_type == EndTag);
-        ASSERT(m_currentAttribute->m_valueRange.m_start);
-        m_currentAttribute->m_value.append(character);
+        ASSERT(m_currentAttribute->valueRange.start);
+        m_currentAttribute->value.append(character);
     }
 
     void appendToAttributeValue(size_t i, const String& value)
     {
         ASSERT(!value.isEmpty());
         ASSERT(m_type == StartTag || m_type == EndTag);
-        m_attributes[i].m_value.append(value.characters(), value.length());
+        append(m_attributes[i].value, value);
     }
 
     const AttributeList& attributes() const
@@ -362,7 +362,7 @@ public:
     void eraseValueOfAttribute(size_t i)
     {
         ASSERT(m_type == StartTag || m_type == EndTag);
-        m_attributes[i].m_value.clear();
+        m_attributes[i].value.clear();
     }
 
     /* Character Tokens */

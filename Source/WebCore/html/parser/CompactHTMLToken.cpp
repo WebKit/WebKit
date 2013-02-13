@@ -55,12 +55,10 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
         ASSERT_NOT_REACHED();
         break;
     case HTMLToken::DOCTYPE: {
-        m_data = String(token->name().data(), token->name().size());
+        m_data = String(token->name());
         // There is only 1 DOCTYPE token per document, so to avoid increasing the
         // size of CompactHTMLToken, we just use the m_attributes vector.
-        String publicIdentifier(token->publicIdentifier().data(), token->publicIdentifier().size());
-        String systemIdentifier(token->systemIdentifier().data(), token->systemIdentifier().size());
-        m_attributes.append(CompactAttribute(publicIdentifier, systemIdentifier));
+        m_attributes.append(CompactAttribute(String(token->publicIdentifier()), String(token->systemIdentifier())));
         m_doctypeForcesQuirks = token->forceQuirks();
         break;
     }
@@ -68,8 +66,9 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
         break;
     case HTMLToken::StartTag:
         m_attributes.reserveInitialCapacity(token->attributes().size());
+        // FIXME: Attribute names and values should be 8bit when possible.
         for (Vector<HTMLToken::Attribute>::const_iterator it = token->attributes().begin(); it != token->attributes().end(); ++it)
-            m_attributes.append(CompactAttribute(String(it->m_name.data(), it->m_name.size()), String(it->m_value.data(), it->m_value.size())));
+            m_attributes.append(CompactAttribute(String(it->name), String(it->value)));
         // Fall through!
     case HTMLToken::EndTag:
         m_selfClosing = token->selfClosing();
@@ -77,10 +76,10 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
     case HTMLToken::Comment:
     case HTMLToken::Character:
         if (token->isAll8BitData()) {
-            m_data = String::make8BitFrom16BitSource(token->data().data(), token->data().size());
+            m_data = String::make8BitFrom16BitSource(token->data());
             m_isAll8BitData = true;
         } else
-            m_data = String(token->data().data(), token->data().size());
+            m_data = String(token->data());
         break;
     default:
         ASSERT_NOT_REACHED();
