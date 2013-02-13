@@ -102,6 +102,7 @@ public:
     PassRefPtr<Range> avoidIntersectionWithDeleteButtonController(const Range*) const;
     VisibleSelection avoidIntersectionWithDeleteButtonController(const VisibleSelection&) const;
 #else
+    PassRefPtr<Range> avoidIntersectionWithDeleteButtonController(Range* range) const { return range; }
     VisibleSelection avoidIntersectionWithDeleteButtonController(const VisibleSelection& selection) const { return selection; }
 #endif
 
