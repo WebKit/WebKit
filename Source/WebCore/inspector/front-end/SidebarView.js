@@ -46,7 +46,6 @@ WebInspector.SidebarView = function(sidebarPosition, sidebarWidthSettingName, de
 
     this._sidebarPosition = sidebarPosition || WebInspector.SidebarView.SidebarPosition.Start;
     this.setSecondIsSidebar(this._sidebarPosition === WebInspector.SidebarView.SidebarPosition.End);
-    this._updateSidebarElementStyle();
 }
 
 WebInspector.SidebarView.EventTypes = {
@@ -76,38 +75,6 @@ WebInspector.SidebarView.prototype = {
     get sidebarElement()
     {
         return this.isSidebarSecond() ? this.secondElement() : this.firstElement();
-    },
-
-    _updateSidebarElementStyle: function()
-    {
-        this.sidebarElement.removeStyleClass("split-view-sidebar-left");
-        this.sidebarElement.removeStyleClass("split-view-sidebar-right");
-        this.sidebarElement.removeStyleClass("split-view-sidebar-top");
-        this.sidebarElement.removeStyleClass("split-view-sidebar-bottom");
-
-        if (this._sidebarPosition === WebInspector.SidebarView.SidebarPosition.Start) {
-            if (this.isVertical())
-                this.sidebarElement.addStyleClass("split-view-sidebar-left");
-            else
-                this.sidebarElement.addStyleClass("split-view-sidebar-top");
-        } else {
-            if (this.isVertical())
-                this.sidebarElement.addStyleClass("split-view-sidebar-right");
-            else
-                this.sidebarElement.addStyleClass("split-view-sidebar-bottom");
-        }
-    },
-
-    /**
-     * @param {boolean} isVertical
-     */
-    setVertical: function(isVertical)
-    {
-        if (this.isVertical() === isVertical)
-            return;
-
-        WebInspector.SplitView.prototype.setVertical.call(this, isVertical);
-        this._updateSidebarElementStyle();
     },
 
     /**

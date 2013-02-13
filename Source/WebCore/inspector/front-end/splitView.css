@@ -41,49 +41,70 @@
     cursor: default;
 }
 
-.split-view-contents.split-view-contents-vertical {
+.split-view-contents.maximized {
+    width: 100%;
+    height: 100%;
+}
+
+.split-view-vertical .split-view-contents {
     top: 0;
     bottom: 0;
 }
 
-.split-view-contents.split-view-contents-horizontal {
+.split-view-vertical .split-view-contents-first {
+    left: 0;
+}
+
+.split-view-vertical .split-view-contents-first.maximized {
+    right: 0;
+}
+
+.split-view-vertical .split-view-contents-second {
+    right: 0;
+}
+
+.split-view-vertical .split-view-contents-second.maximized {
+    left: 0;
+}
+
+.split-view-horizontal .split-view-contents {
     left: 0;
     right: 0;
 }
 
-.split-view-sidebar-left {
+.split-view-horizontal .split-view-contents-first {
+    top: 0;
+}
+
+.split-view-horizontal .split-view-contents-first.maximized {
+    bottom: 0;
+}
+
+.split-view-horizontal .split-view-contents-second {
+    bottom: 0;
+}
+
+.split-view-horizontal .split-view-contents-second.maximized {
+    top: 0;
+}
+
+.split-view-vertical .split-view-sidebar.split-view-contents-first:not(.maximized) {
     border-right: 1px solid rgb(64%, 64%, 64%);
 }
 
-.split-view-sidebar-left.maximized {
-    border-right: none;
-}
-
-.split-view-sidebar-right {
+.split-view-vertical .split-view-sidebar.split-view-contents-second:not(.maximized) {
     border-left: 1px solid rgb(64%, 64%, 64%);
 }
 
-.split-view-sidebar-right.maximized {
-    border-right: none;
-}
-
-.split-view-sidebar-top {
+.split-view-horizontal .split-view-sidebar.split-view-contents-first:not(.maximized) {
     border-bottom: 1px solid rgb(64%, 64%, 64%);
 }
 
-.split-view-sidebar-top.maximized {
-    border-bottom: none;
-}
-
-.split-view-sidebar-bottom {
+.split-view-horizontal .split-view-sidebar.split-view-contents-second:not(.maximized) {
     border-top: 1px solid rgb(64%, 64%, 64%);
 }
 
-.split-view-sidebar-bottom.maximized {
-    border-top: none;
-}
-
-.split-view-resizer.split-view-resizer-vertical {
+.split-view-vertical .split-view-resizer {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -92,7 +113,7 @@
     cursor: ew-resize;
 }
 
-.split-view-resizer.split-view-resizer-horizontal {
+.split-view-horizontal .split-view-resizer {
     position: absolute;
     left: 0;
     right: 0;

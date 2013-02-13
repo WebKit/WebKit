@@ -45,7 +45,7 @@
     bottom: auto;
 }
 
-.timeline .split-view-resizer {
+.timeline.split-view-vertical .split-view-resizer {
     top: 20px;
 }
 
@@ -166,7 +166,7 @@
     overflow-x: hidden;
 }
 
-#timeline-container .split-view-sidebar-left {
+#timeline-container .split-view-sidebar {
     z-index: 1;
 }
 

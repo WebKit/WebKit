@@ -27,8 +27,7 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-.css-named-flow-collections-view .split-view-sidebar-left {
-    border-right: 1px solid rgb(163, 163, 163);
+.css-named-flow-collections-view .split-view-sidebar {
     overflow-x: hidden;
 }
 
@@ -46,7 +45,7 @@
     width: 100%;
 }
 
-.css-named-flow-collections-view .split-view-sidebar-left .sidebar-content {
+.css-named-flow-collections-view .split-view-sidebar .sidebar-content {
     bottom: 0px;
     left: 0px;
     padding: 0px;
@@ -55,7 +54,7 @@
     top: 23px;
 }
 
-.css-named-flow-collections-view .split-view-sidebar-left .selection {
+.css-named-flow-collections-view .split-view-sidebar .selection {
     margin-left: -12px;
     z-index: 0;
 }
@@ -64,7 +63,7 @@
     position: relative;
 }
 
-.css-named-flow-collections-view .split-view-sidebar-left .named-flow-overflow::before, .css-named-flow-collections-view .region-empty:before, .css-named-flow-collections-view .region-fit::before, .css-named-flow-collections-view .region-overset::before {
+.css-named-flow-collections-view .split-view-sidebar .named-flow-overflow::before, .css-named-flow-collections-view .region-empty:before, .css-named-flow-collections-view .region-fit::before, .css-named-flow-collections-view .region-overset::before {
     cursor: default;
     float: left;
     height: 10px;
@@ -75,7 +74,7 @@
     z-index: 1;
 }
 
-.css-named-flow-collections-view .split-view-sidebar-left .named-flow-overflow::before {
+.css-named-flow-collections-view .split-view-sidebar .named-flow-overflow::before {
     content: url(Images/namedFlowOverflow.png);
     margin: 2px 3px 0px -13px;
 }

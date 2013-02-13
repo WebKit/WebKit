@@ -59,8 +59,10 @@ WebInspector.TimelinePanel = function()
     this.element.addEventListener("contextmenu", this._contextMenu.bind(this), false);
     this.element.tabIndex = 0;
 
+    this.element.addStyleClass("split-view-vertical");
+
     this._sidebarBackgroundElement = document.createElement("div");
-    this._sidebarBackgroundElement.className = "sidebar split-view-sidebar-left timeline-sidebar-background";
+    this._sidebarBackgroundElement.className = "sidebar split-view-sidebar split-view-contents-first timeline-sidebar-background";
     this.element.appendChild(this._sidebarBackgroundElement);
 
     this.createSidebarViewWithTree();
