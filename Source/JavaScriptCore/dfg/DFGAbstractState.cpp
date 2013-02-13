@@ -1205,7 +1205,7 @@ bool AbstractState::execute(unsigned indexInBlock)
             speculateBooleanUnary(node);
         else if (child->shouldSpeculateObjectOrOther()) {
             node->setCanExit(true);
-            forNode(child).filter((SpecCell & ~SpecString) | SpecOther);
+            forNode(child).filter(SpecObject | SpecOther);
         } else if (child->shouldSpeculateInteger())
             speculateInt32Unary(node);
         else if (child->shouldSpeculateNumber())

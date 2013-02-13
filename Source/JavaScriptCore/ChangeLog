@@ -1,5 +1,14 @@
 2013-02-13  Filip Pizlo  <fpizlo@apple.com>
 
+        Change another use of (SpecCell & ~SpecString) to SpecObject.
+
+        Reviewed by Mark Hahnenberg.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+
+2013-02-13  Filip Pizlo  <fpizlo@apple.com>
+
         ForwardInt32ToDouble is not in DFG::MinifiedNode's list of relevant node types
         https://bugs.webkit.org/show_bug.cgi?id=109726
 
