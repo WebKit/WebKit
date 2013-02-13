@@ -1431,6 +1431,13 @@ bool RenderLayerBacking::isSimpleContainerCompositingLayer() const
 
 static bool hasVisibleNonCompositingDescendant(RenderLayer* parent)
 {
+    // FIXME: We shouldn't be called with a stale z-order lists. See bug 85512.
+    parent->updateLayerListsIfNeeded();
+
+#if !ASSERT_DISABLED
+    LayerListMutationDetector mutationChecker(parent);
+#endif
+
     if (Vector<RenderLayer*>* normalFlowList = parent->normalFlowList()) {
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
@@ -1473,13 +1480,6 @@ static bool hasVisibleNonCompositingDescendant(RenderLayer* parent)
 // Conservative test for having no rendered children.
 bool RenderLayerBacking::hasVisibleNonCompositingDescendantLayers() const
 {
-    // FIXME: We shouldn't be called with a stale z-order lists. See bug 85512.
-    m_owningLayer->updateLayerListsIfNeeded();
-
-#if !ASSERT_DISABLED
-    LayerListMutationDetector mutationChecker(m_owningLayer);
-#endif
-
     return hasVisibleNonCompositingDescendant(m_owningLayer);
 }
 
