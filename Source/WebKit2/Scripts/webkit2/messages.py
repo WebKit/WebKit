@@ -24,6 +24,7 @@ import collections
 import re
 from webkit2 import parser
 
+WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 DELAYED_ATTRIBUTE = 'Delayed'
 DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE = 'DispatchOnConnectionQueue'
@@ -315,9 +316,13 @@ def connection_work_queue_message_statement(receiver, message):
 
 def async_message_statement(receiver, message):
     dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
+
     dispatch_function = 'handleMessage'
     if message.has_attribute(VARIADIC_ATTRIBUTE):
         dispatch_function += 'Variadic'
+
+    if message.has_attribute(WANTS_CONNECTION_ATTRIBUTE):
+        dispatch_function_args.insert(0, 'connection')
 
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
@@ -552,7 +557,7 @@ def generate_message_handler(file):
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
             result.append('void %s::didReceive%sMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name, receiver.name))
         else:
-            result.append('void %s::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name))
+            result.append('void %s::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder)\n' % (receiver.name))
 
         result.append('{\n')
         result += [async_message_statement(receiver, message) for message in async_messages]

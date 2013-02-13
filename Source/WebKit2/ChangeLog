@@ -1,3 +1,38 @@
+2013-02-13  Anders Carlsson  <andersca@apple.com>
+
+        Make SecItemShimProxy be a WorkQueueMessageReceiver
+        https://bugs.webkit.org/show_bug.cgi?id=109719
+
+        Reviewed by Sam Weinig.
+
+        This adds a WantsConnection message attribute to be used for messages whose handlers
+        should take the connection the message was delivered to.
+        
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessage):
+        Add new handleMessage overload.
+        
+        * Scripts/webkit2/messages.py:
+        (async_message_statement):
+        (generate_message_handler):
+        Handle the WantsMessage attribute.
+
+        * UIProcess/mac/SecItemShimProxy.cpp:
+        (WebKit::SecItemShimProxy::shared):
+        Use dispatch_once and adoptRef.
+
+        (WebKit::SecItemShimProxy::SecItemShimProxy):
+        Initialize the queue.
+
+        (WebKit::SecItemShimProxy::initializeConnection):
+        Add the proxy as a work queue message receiver.
+
+        (WebKit::SecItemShimProxy::secItemRequest):
+        This no longer needs to call out to a dispatch queue, it's already on a queue.
+
+        * UIProcess/mac/SecItemShimProxy.messages.in:
+        This doesn't need to be a legacy receiver. Also, add the WantsConnection message.
+
 2013-02-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142736.

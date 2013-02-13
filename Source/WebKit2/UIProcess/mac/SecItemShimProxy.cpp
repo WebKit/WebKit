@@ -38,20 +38,25 @@ namespace WebKit {
 
 SecItemShimProxy& SecItemShimProxy::shared()
 {
-    AtomicallyInitializedStatic(SecItemShimProxy*, proxy = new SecItemShimProxy);
+    static SecItemShimProxy* proxy;
+    static dispatch_once_t once;
+    dispatch_once(&once, ^{
+        proxy = adoptRef(new SecItemShimProxy).leakRef();
+    });
     return *proxy;
 }
 
 SecItemShimProxy::SecItemShimProxy()
+    : m_queue(WorkQueue::create("com.apple.WebKit.SecItemShimProxy"))
 {
 }
 
 void SecItemShimProxy::initializeConnection(CoreIPC::Connection* connection)
 {
-    connection->addQueueClient(this);
+    connection->addWorkQueueMessageReceiver(Messages::SecItemShimProxy::messageReceiverName(), m_queue.get(), this);
 }
 
-static void handleSecItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
+void SecItemShimProxy::secItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
 {
     SecItemResponseData response;
 
@@ -88,39 +93,6 @@ static void handleSecItemRequest(CoreIPC::Connection* connection, uint64_t reque
     }
 
     connection->send(Messages::SecItemShim::SecItemResponse(requestID, response), 0);
-}
-
-static void dispatchFunctionOnQueue(dispatch_queue_t queue, const Function<void ()>& function)
-{
-#if COMPILER(CLANG)
-    dispatch_async(queue, function);
-#else
-    Function<void ()>* functionPtr = new Function<void ()>(function);
-    dispatch_async(queue, ^{
-        (*functionPtr)();
-        delete functionPtr;
-    });
-#endif
-}
-
-void SecItemShimProxy::secItemRequest(CoreIPC::Connection* connection, uint64_t requestID, const SecItemRequestData& request)
-{
-    // Since we don't want the connection work queue to be held up, we do all
-    // keychain interaction work on a global dispatch queue.
-    dispatch_queue_t keychainWorkQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    dispatchFunctionOnQueue(keychainWorkQueue, bind(handleSecItemRequest, RefPtr<CoreIPC::Connection>(connection), requestID, request));
-}
-
-void SecItemShimProxy::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
-{
-    if (decoder->messageReceiverName() == Messages::SecItemShimProxy::messageReceiverName()) {
-        didReceiveSecItemShimProxyMessageOnConnectionWorkQueue(connection, decoder);
-        return;
-    }
-}
-
-void SecItemShimProxy::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
-{
 }
 
 } // namespace WebKit
