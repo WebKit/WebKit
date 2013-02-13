@@ -1,3 +1,35 @@
+2013-02-13  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Stop using WebString in ewk_cookie_manager, ewk_form_submission_request and ewk_text_checker
+        https://bugs.webkit.org/show_bug.cgi?id=108794
+
+        Reviewed by Alexey Proskuryakov.
+
+        Stop using WebString in ewk_cookie_manager, ewk_form_submission_request
+        and ewk_text_checker as it is internal C++ API. WKString and
+        WKEinaSharedString are used instead.
+
+        * UIProcess/API/cpp/efl/WKEinaSharedString.cpp:
+        (WKEinaSharedString::leakString): Add leakString() method to
+        WKEinaSharedString so that we can conveniently convert a WKString to a
+        Eina shared string and take ownership of it.
+        * UIProcess/API/cpp/efl/WKEinaSharedString.h:
+        * UIProcess/API/efl/ewk_cookie_manager.cpp:
+        (getHostnamesWithCookiesCallback):
+        * UIProcess/API/efl/ewk_form_submission_request.cpp:
+        (EwkFormSubmissionRequest::copyFieldValue):
+        (ewk_form_submission_request_field_names_get):
+        (ewk_form_submission_request_field_value_get):
+        * UIProcess/API/efl/ewk_form_submission_request_private.h:
+        (EwkFormSubmissionRequest):
+        * UIProcess/API/efl/ewk_text_checker.cpp:
+        (checkSpellingOfString):
+        (guessesForWord):
+        (learnWord):
+        (ignoreWord):
+        * UIProcess/API/efl/tests/test_ewk2_eina_shared_string.cpp:
+        (TEST_F): Add API test for new WKEinaSharedString::leakString() method.
+
 2013-02-13  Anders Carlsson  <andersca@apple.com>
 
         Remove Connection::QueueClient

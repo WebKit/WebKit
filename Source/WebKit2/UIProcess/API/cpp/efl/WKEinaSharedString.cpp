@@ -112,3 +112,11 @@ WKEinaSharedString WKEinaSharedString::adopt(Eina_Stringshare* string)
     sharedString.m_string = static_cast<const char*>(string);
     return sharedString;
 }
+
+Eina_Stringshare* WKEinaSharedString::leakString()
+{
+    Eina_Stringshare* sharedString = m_string;
+    m_string = 0;
+
+    return sharedString;
+}

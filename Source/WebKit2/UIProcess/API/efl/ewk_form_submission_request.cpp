@@ -31,7 +31,6 @@
 #include "WKBase.h"
 #include "WKString.h"
 #include "ewk_form_submission_request_private.h"
-#include <wtf/text/CString.h>
 
 using namespace WebKit;
 
@@ -48,13 +47,13 @@ EwkFormSubmissionRequest::~EwkFormSubmissionRequest()
         WKFormSubmissionListenerContinue(m_wkListener.get());
 }
 
-String EwkFormSubmissionRequest::fieldValue(const String& fieldName) const
+Eina_Stringshare* EwkFormSubmissionRequest::copyFieldValue(const char* fieldName) const
 {
     ASSERT(fieldName);
-    WKRetainPtr<WKStringRef> wkFieldName = adoptWK(toCopiedAPI(fieldName));
+    WKRetainPtr<WKStringRef> wkFieldName = adoptWK(WKStringCreateWithUTF8CString(fieldName));
     WKStringRef wkValue = static_cast<WKStringRef>(WKDictionaryGetItemForKey(m_wkValues.get(), wkFieldName.get()));
 
-    return wkValue ? toImpl(wkValue)->string() : String();
+    return WKEinaSharedString(wkValue).leakString();
 }
 
 WKRetainPtr<WKArrayRef> EwkFormSubmissionRequest::fieldNames() const
@@ -72,16 +71,16 @@ Eina_List* ewk_form_submission_request_field_names_get(Ewk_Form_Submission_Reque
 {
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkFormSubmissionRequest, request, impl, 0);
 
-    Eina_List* names = 0;
+    Eina_List* fieldNames = 0;
 
-    WKRetainPtr<WKArrayRef> wkKeys = impl->fieldNames();
-    const size_t numKeys = WKArrayGetSize(wkKeys.get());
+    WKRetainPtr<WKArrayRef> wkFieldNames = impl->fieldNames();
+    const size_t numKeys = WKArrayGetSize(wkFieldNames.get());
     for (size_t i = 0; i < numKeys; ++i) {
-        WKStringRef wkKey = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkKeys.get(), i));
-        names = eina_list_append(names, eina_stringshare_add(toImpl(wkKey)->string().utf8().data()));
+        WKStringRef wkFieldName = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkFieldNames.get(), i));
+        fieldNames = eina_list_append(fieldNames, WKEinaSharedString(wkFieldName).leakString());
     }
 
-    return names;
+    return fieldNames;
 }
 
 const char* ewk_form_submission_request_field_value_get(Ewk_Form_Submission_Request* request, const char* name)
@@ -89,9 +88,7 @@ const char* ewk_form_submission_request_field_value_get(Ewk_Form_Submission_Requ
     EWK_OBJ_GET_IMPL_OR_RETURN(EwkFormSubmissionRequest, request, impl, 0);
     EINA_SAFETY_ON_NULL_RETURN_VAL(name, 0);
 
-    String value = impl->fieldValue(String::fromUTF8(name));
-
-    return value.isNull() ?  0 : eina_stringshare_add(value.utf8().data());
+    return impl->copyFieldValue(name);
 }
 
 Eina_Bool ewk_form_submission_request_submit(Ewk_Form_Submission_Request* request)

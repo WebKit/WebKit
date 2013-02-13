@@ -31,17 +31,16 @@
 
 #include "TextCheckerEnchant.h"
 #include "WKAPICast.h"
+#include "WKEinaSharedString.h"
 #include "WKMutableArray.h"
 #include "WKRetainPtr.h"
 #include "WKString.h"
 #include "WKTextChecker.h"
 #include "WebPageProxy.h"
-#include "WebString.h"
 #include "ewk_settings.h"
 #include "ewk_text_checker_private.h"
 #include <Eina.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/text/CString.h>
 
 using namespace WebCore;
 using namespace WebKit;
@@ -99,9 +98,9 @@ static void closeSpellDocumentWithTag(uint64_t tag, const void*)
 static void checkSpellingOfString(uint64_t tag, WKStringRef text, int32_t* misspellingLocation, int32_t* misspellingLength, const void*)
 {
     if (clientCallbacks().string_spelling_check)
-        clientCallbacks().string_spelling_check(tag, toImpl(text)->string().utf8().data(), misspellingLocation, misspellingLength);
+        clientCallbacks().string_spelling_check(tag, WKEinaSharedString(text), misspellingLocation, misspellingLength);
     else
-        textCheckerEnchant()->checkSpellingOfString(toImpl(text)->string(), *misspellingLocation, *misspellingLength);
+        textCheckerEnchant()->checkSpellingOfString(toWTFString(text), *misspellingLocation, *misspellingLength);
 }
 
 static WKArrayRef guessesForWord(uint64_t tag, WKStringRef word, const void*)
@@ -109,7 +108,7 @@ static WKArrayRef guessesForWord(uint64_t tag, WKStringRef word, const void*)
     WKMutableArrayRef suggestionsForWord = WKMutableArrayCreate();
 
     if (clientCallbacks().word_guesses_get) {
-        Eina_List* list = clientCallbacks().word_guesses_get(tag, toImpl(word)->string().utf8().data());
+        Eina_List* list = clientCallbacks().word_guesses_get(tag, WKEinaSharedString(word));
         void* item;
 
         EINA_LIST_FREE(list, item) {
@@ -118,7 +117,7 @@ static WKArrayRef guessesForWord(uint64_t tag, WKStringRef word, const void*)
             free(item);
         }
     } else {
-        const Vector<String>& guesses = textCheckerEnchant()->getGuessesForWord(toImpl(word)->string());
+        const Vector<String>& guesses = textCheckerEnchant()->getGuessesForWord(toWTFString(word));
         size_t numberOfGuesses = guesses.size();
         for (size_t i = 0; i < numberOfGuesses; ++i) {
             WKRetainPtr<WKStringRef> suggestion(AdoptWK, WKStringCreateWithUTF8CString(guesses[i].utf8().data()));
@@ -132,17 +131,17 @@ static WKArrayRef guessesForWord(uint64_t tag, WKStringRef word, const void*)
 static void learnWord(uint64_t tag, WKStringRef word, const void*)
 {
     if (clientCallbacks().word_learn)
-        clientCallbacks().word_learn(tag, toImpl(word)->string().utf8().data());
+        clientCallbacks().word_learn(tag, WKEinaSharedString(word));
     else
-        textCheckerEnchant()->learnWord(toImpl(word)->string());
+        textCheckerEnchant()->learnWord(toWTFString(word));
 }
 
 static void ignoreWord(uint64_t tag, WKStringRef word, const void*)
 {
     if (clientCallbacks().word_ignore)
-        clientCallbacks().word_ignore(tag, toImpl(word)->string().utf8().data());
+        clientCallbacks().word_ignore(tag, WKEinaSharedString(word));
     else
-        textCheckerEnchant()->ignoreWord(toImpl(word)->string());
+        textCheckerEnchant()->ignoreWord(toWTFString(word));
 }
 
 namespace Ewk_Text_Checker {

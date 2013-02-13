@@ -46,6 +46,8 @@ public:
 
     ~WKEinaSharedString();
 
+    Eina_Stringshare* leakString();
+
     WKEinaSharedString& operator=(const WKEinaSharedString& other);
     WKEinaSharedString& operator=(const char* str);
 

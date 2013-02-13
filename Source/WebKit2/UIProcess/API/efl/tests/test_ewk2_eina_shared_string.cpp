@@ -124,3 +124,17 @@ TEST_F(EWK2UnitTestBase, assignmentOperators)
     string = string; // Check that self-assignment does not break WKEinaSharedString internal data.
     checkString(string, anotherTestString);
 }
+
+TEST_F(EWK2UnitTestBase, leakString)
+{
+    WKEinaSharedString string;
+
+    string = testString;
+    checkString(string, testString);
+
+    Eina_Stringshare* leakedString = string.leakString();
+    checkString(string, 0);
+    ASSERT_STREQ(leakedString, testString);
+
+    eina_stringshare_del(leakedString);
+}

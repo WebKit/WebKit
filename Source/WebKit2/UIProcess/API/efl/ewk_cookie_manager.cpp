@@ -34,8 +34,6 @@
 #include "ewk_error_private.h"
 #include "ewk_private.h"
 #include <wtf/OwnPtr.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 using namespace WebKit;
 
@@ -194,10 +192,9 @@ static void getHostnamesWithCookiesCallback(WKArrayRef wkHostnames, WKErrorRef w
     const size_t hostnameCount = WKArrayGetSize(wkHostnames);
     for (size_t i = 0; i < hostnameCount; ++i) {
         WKStringRef wkHostname = static_cast<WKStringRef>(WKArrayGetItemAtIndex(wkHostnames, i));
-        String hostname = toImpl(wkHostname)->string();
-        if (hostname.isEmpty())
+        if (WKStringIsEmpty(wkHostname))
             continue;
-        hostnames = eina_list_append(hostnames, eina_stringshare_add(hostname.utf8().data()));
+        hostnames = eina_list_append(hostnames, WKEinaSharedString(wkHostname).leakString());
     }
 
     callbackData->callback(hostnames, ewkError.get(), callbackData->userData);
