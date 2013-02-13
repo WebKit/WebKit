@@ -330,31 +330,11 @@ void InspectorMemoryAgent::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo)
     info.addMember(m_page, "page");
 }
 
-namespace {
-
-class FrontendWrapper : public HeapGraphSerializer::Client {
-public:
-    explicit FrontendWrapper(InspectorFrontend::Memory* frontend) : m_frontend(frontend) { }
-    virtual void addNativeSnapshotChunk(PassRefPtr<TypeBuilder::Memory::HeapSnapshotChunk> heapSnapshotChunk) OVERRIDE
-    {
-        m_frontend->addNativeSnapshotChunk(heapSnapshotChunk);
-    }
-private:
-    InspectorFrontend::Memory* m_frontend;
-};
-
-}
-
 void InspectorMemoryAgent::getProcessMemoryDistributionImpl(bool reportGraph, TypeNameToSizeMap* memoryInfo)
 {
     OwnPtr<HeapGraphSerializer> graphSerializer;
-    OwnPtr<FrontendWrapper> frontendWrapper;
-
-    if (reportGraph) {
-        frontendWrapper = adoptPtr(new FrontendWrapper(m_frontend));
-        graphSerializer = adoptPtr(new HeapGraphSerializer(frontendWrapper.get()));
-    }
-
+    if (reportGraph)
+        graphSerializer = adoptPtr(new HeapGraphSerializer(m_frontend));
     MemoryInstrumentationClientImpl memoryInstrumentationClient(graphSerializer.get());
     m_inspectorClient->getAllocatedObjects(memoryInstrumentationClient.allocatedObjects());
     MemoryInstrumentationImpl memoryInstrumentation(&memoryInstrumentationClient);
@@ -372,8 +352,6 @@ void InspectorMemoryAgent::getProcessMemoryDistributionImpl(bool reportGraph, Ty
     if (graphSerializer) {
         memoryInstrumentation.addRootObject(graphSerializer.get());
         graphSerializer->finish();
-        graphSerializer.release(); // Release it earlier than frontendWrapper
-        frontendWrapper.release();
     }
 
     m_inspectorClient->dumpUncountedAllocatedObjects(memoryInstrumentationClient.countedObjects());

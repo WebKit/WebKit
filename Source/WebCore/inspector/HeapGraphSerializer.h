@@ -43,17 +43,14 @@
 
 namespace WebCore {
 
+class HeapGraphEdge;
+class HeapGraphNode;
+class InspectorObject;
+
 class HeapGraphSerializer {
     WTF_MAKE_NONCOPYABLE(HeapGraphSerializer);
 public:
-
-    class Client {
-    public:
-        virtual ~Client() { }
-        virtual void addNativeSnapshotChunk(PassRefPtr<TypeBuilder::Memory::HeapSnapshotChunk>) = 0;
-    };
-
-    explicit HeapGraphSerializer(Client*);
+    explicit HeapGraphSerializer(InspectorFrontend::Memory*);
     ~HeapGraphSerializer();
     void reportNode(const WTF::MemoryObjectInfo&);
     void reportEdge(const void*, const char*, WTF::MemberType);
@@ -76,7 +73,7 @@ private:
     void reportEdgeImpl(const int toNodeId, const char* name, int memberType);
     int reportNodeImpl(const WTF::MemoryObjectInfo&, int edgesCount);
 
-    Client* m_client;
+    InspectorFrontend::Memory* m_frontend;
 
     typedef HashMap<String, int> StringMap;
     StringMap m_stringToIndex;
@@ -103,9 +100,6 @@ private:
 
     size_t m_edgeTypes[WTF::LastMemberTypeEntry];
     int m_unknownClassNameId;
-    int m_leafCount;
-
-    static const int s_firstNodeId = 1;
 };
 
 } // namespace WebCore
