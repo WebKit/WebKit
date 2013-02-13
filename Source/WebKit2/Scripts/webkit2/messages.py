@@ -188,6 +188,7 @@ def struct_or_class(namespace, type):
         'WebKit::DrawingAreaInfo',
         'WebKit::EditorState',
         'WebKit::NetworkProcessCreationParameters',
+        'WebKit::OfflineStorageProcessCreationParameters',
         'WebKit::PlatformPopupMenuData',
         'WebKit::PluginCreationParameters',
         'WebKit::PluginProcessCreationParameters',

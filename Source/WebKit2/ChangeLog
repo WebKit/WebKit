@@ -1,3 +1,52 @@
+2013-02-12  Sam Weinig  <sam@webkit.org>
+
+        Add skeleton of the OfflineStorageProcess
+        https://bugs.webkit.org/show_bug.cgi?id=109615
+
+        Reviewed by Anders Carlsson.
+
+        This adds the skeleton of a new process to contain Database and Local Storage
+        backends in (hence, offline storage). We're adding a new process, rather than
+        using the Network or UIProcesses, to allow us to tightly sandbox these activities
+        away from networking and full filesystem access.
+
+        * Configurations/OfflineStorageProcess.xcconfig: Added.
+        * Configurations/OfflineStorageService.Development.xcconfig: Added.
+        * Configurations/OfflineStorageService.xcconfig: Added.
+        * DerivedSources.make:
+        * OfflineStorageProcess: Added.
+        * OfflineStorageProcess/EntryPoint: Added.
+        * OfflineStorageProcess/EntryPoint/mac: Added.
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess: Added.
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess/Info.plist: Added.
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess/OfflineStorageProcessMain.mm: Added.
+        * OfflineStorageProcess/EntryPoint/mac/LegacyProcess/OfflineStorageProcessMainBootstrapper.cpp: Added.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService: Added.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService: Added.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService.Development: Added.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService.Development/Info.plist: Added.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService.Development/OfflineStorageServiceMain.Development.mm: Added.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService/Info.plist: Added.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageService/OfflineStorageServiceMain.mm: Added.
+        * OfflineStorageProcess/EntryPoint/mac/XPCService/OfflineStorageServiceEntryPoint.mm: Added.
+        * OfflineStorageProcess/OfflineStorageProcess.cpp: Added.
+        * OfflineStorageProcess/OfflineStorageProcess.h: Added.
+        * OfflineStorageProcess/OfflineStorageProcess.messages.in: Added.
+        * OfflineStorageProcess/mac: Added.
+        * OfflineStorageProcess/mac/OfflineStorageProcessMac.mm: Added.
+        (WebKit::OfflineStorageProcess::initializeProcessName):
+        (WebKit::OfflineStorageProcess::initializeSandbox):
+        * OfflineStorageProcess/mac/com.apple.WebKit.OfflineStorage.sb: Added.
+        * Shared/OfflineStorage: Added.
+        * Shared/OfflineStorage/OfflineStorageProcessCreationParameters.cpp: Added.
+        * Shared/OfflineStorage/OfflineStorageProcessCreationParameters.h: Added.
+
+        * Scripts/webkit2/messages.py:
+        (struct_or_class):
+        Added OfflineStorageProcessCreationParameters.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-02-12  Jinwoo Song  <jinwoo7.song@samsung.com>
 
         [EFL][WK2] Fix build warning after r142579
