@@ -1,3 +1,23 @@
+2013-02-13  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Fix scaling in WebViewImpl::handleGestureEvent
+        https://bugs.webkit.org/show_bug.cgi?id=109671
+
+        Reviewed by James Robinson.
+
+        My last patch broke a bunch of things in handleGestureEvent that
+        assumed the event came in scaled, most notably tap highlight and
+        double-tap zoom. Switch those to PlatformGestureEvent.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit::WebViewImpl::bestTapNode):
+        (WebKit::WebViewImpl::enableTapHighlight):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/LinkHighlightTest.cpp:
+        (WebCore::TEST):
+
 2013-02-13  Eberhard Graether  <egraether@google.com>
 
         chromium: remove CompositorHUDFontAtlas

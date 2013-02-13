@@ -696,6 +696,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
     bool eventSwallowed = false;
     bool eventCancelled = false; // for disambiguation
 
+    PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
+
     // Handle link highlighting outside the main switch to avoid getting lost in the
     // complicated set of cases handled below.
     switch (event.type) {
@@ -703,7 +705,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         // Queue a highlight animation, then hand off to regular handler.
 #if OS(LINUX)
         if (settingsImpl()->gestureTapHighlightEnabled())
-            enableTouchHighlight(event);
+            enableTapHighlight(platformEvent);
 #endif
         break;
     case WebInputEvent::GestureTapCancel:
@@ -721,8 +723,8 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         if (mainFrameImpl()->frame()->eventHandler()->isScrollbarHandlingGestures())
             break;
         m_client->cancelScheduledContentIntents();
-        m_positionOnFlingStart = WebPoint(event.x, event.y);
-        m_globalPositionOnFlingStart = WebPoint(event.globalX, event.globalY);
+        m_positionOnFlingStart = platformEvent.position();
+        m_globalPositionOnFlingStart = platformEvent.globalPosition();
         m_flingModifier = event.modifiers;
         m_flingSourceDevice = event.sourceDevice;
         OwnPtr<WebGestureCurve> flingCurve = adoptPtr(Platform::current()->createFlingAnimationCurve(event.sourceDevice, WebFloatPoint(event.data.flingStart.velocityX, event.data.flingStart.velocityY), WebSize()));
@@ -741,7 +743,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         break;
     case WebInputEvent::GestureTap: {
         m_client->cancelScheduledContentIntents();
-        if (detectContentOnTouch(WebPoint(event.x, event.y))) {
+        if (detectContentOnTouch(platformEvent.position())) {
             eventSwallowed = true;
             break;
         }
@@ -756,7 +758,7 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         if (event.data.tap.width > 0 && !shouldDisableDesktopWorkarounds()) {
             // FIXME: didTapMultipleTargets should just take a rect instead of
             // an event.
-            WebGestureEvent scaledEvent;
+            WebGestureEvent scaledEvent = event;
             scaledEvent.x = event.x / pageScaleFactor();
             scaledEvent.y = event.y / pageScaleFactor();
             scaledEvent.data.tap.width = event.data.tap.width / pageScaleFactor();
@@ -773,7 +775,6 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
             }
         }
 
-        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
 
         if (m_selectPopup && m_selectPopup == selectPopup) {
@@ -795,7 +796,6 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
         m_client->cancelScheduledContentIntents();
         m_page->contextMenuController()->clearContextMenu();
         m_contextMenuAllowed = true;
-        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
         m_contextMenuAllowed = false;
 
@@ -803,14 +803,13 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
     }
     case WebInputEvent::GestureTapDown: {
         m_client->cancelScheduledContentIntents();
-        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
         break;
     }
     case WebInputEvent::GestureDoubleTap:
         if (m_webSettings->doubleTapToZoomEnabled() && m_minimumPageScaleFactor != m_maximumPageScaleFactor) {
             m_client->cancelScheduledContentIntents();
-            animateZoomAroundPoint(WebPoint(event.x, event.y), DoubleTap);
+            animateZoomAroundPoint(platformEvent.position(), DoubleTap);
             eventSwallowed = true;
             break;
         }
@@ -823,7 +822,6 @@ bool WebViewImpl::handleGestureEvent(const WebGestureEvent& event)
     case WebInputEvent::GestureTapCancel:
     case WebInputEvent::GesturePinchEnd:
     case WebInputEvent::GesturePinchUpdate: {
-        PlatformGestureEventBuilder platformEvent(mainFrameImpl()->frameView(), event);
         eventSwallowed = mainFrameImpl()->frame()->eventHandler()->handleGestureEvent(platformEvent);
         break;
     }
@@ -1270,17 +1268,16 @@ static bool invokesHandCursor(Node* node, bool shiftKey, Frame* frame)
         || (cursor == CURSOR_AUTO && frame->eventHandler()->useHandCursor(node, node->isLink(), shiftKey));
 }
 
-Node* WebViewImpl::bestTouchLinkNode(const WebGestureEvent& touchEvent)
+Node* WebViewImpl::bestTapNode(const PlatformGestureEvent& tapEvent)
 {
     if (!m_page || !m_page->mainFrame())
         return 0;
 
     Node* bestTouchNode = 0;
 
-    IntSize touchEventSearchRegionSize(touchEvent.data.tapDown.width / 2, touchEvent.data.tapDown.height / 2);
-    IntPoint touchEventLocation(touchEvent.x, touchEvent.y);
+    IntPoint touchEventLocation(tapEvent.position());
 #if ENABLE(TOUCH_ADJUSTMENT)
-    m_page->mainFrame()->eventHandler()->adjustGesturePosition(PlatformGestureEventBuilder(mainFrameImpl()->frameView(), touchEvent), touchEventLocation);
+    m_page->mainFrame()->eventHandler()->adjustGesturePosition(tapEvent, touchEventLocation);
 #endif
 
     IntPoint hitTestPoint = m_page->mainFrame()->view()->windowToContents(touchEventLocation);
@@ -1290,23 +1287,22 @@ Node* WebViewImpl::bestTouchLinkNode(const WebGestureEvent& touchEvent)
 
     // Make sure our highlight candidate uses a hand cursor as a heuristic to
     // choose appropriate targets.
-    bool shiftKey = touchEvent.modifiers & WebGestureEvent::ShiftKey;
-    while (bestTouchNode && !invokesHandCursor(bestTouchNode, shiftKey, m_page->mainFrame()))
+    while (bestTouchNode && !invokesHandCursor(bestTouchNode, false, m_page->mainFrame()))
         bestTouchNode = bestTouchNode->parentNode();
 
     // We should pick the largest enclosing node with hand cursor set.
-    while (bestTouchNode && bestTouchNode->parentNode() && invokesHandCursor(bestTouchNode->parentNode(), shiftKey, m_page->mainFrame()))
+    while (bestTouchNode && bestTouchNode->parentNode() && invokesHandCursor(bestTouchNode->parentNode(), false, m_page->mainFrame()))
         bestTouchNode = bestTouchNode->parentNode();
 
     return bestTouchNode;
 }
 
-void WebViewImpl::enableTouchHighlight(const WebGestureEvent& touchEvent)
+void WebViewImpl::enableTapHighlight(const PlatformGestureEvent& tapEvent)
 {
     // Always clear any existing highlight when this is invoked, even if we don't get a new target to highlight.
     m_linkHighlight.clear();
 
-    Node* touchNode = bestTouchLinkNode(touchEvent);
+    Node* touchNode = bestTapNode(tapEvent);
 
     if (!touchNode || !touchNode->renderer() || !touchNode->renderer()->enclosingLayer())
         return;
