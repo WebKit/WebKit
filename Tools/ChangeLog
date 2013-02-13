@@ -1,3 +1,19 @@
+2013-02-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r142736.
+        http://trac.webkit.org/changeset/142736
+        https://bugs.webkit.org/show_bug.cgi?id=109716
+
+        Broke ABI, nightly builds crash on launch (Requested by ap on
+        #webkit).
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+
 2013-02-13  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL][WTR] Regression(r141836): WTR crashes on exit

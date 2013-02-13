@@ -1,3 +1,22 @@
+2013-02-13  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r142736.
+        http://trac.webkit.org/changeset/142736
+        https://bugs.webkit.org/show_bug.cgi?id=109716
+
+        Broke ABI, nightly builds crash on launch (Requested by ap on
+        #webkit).
+
+        * Shared/APIClientTraits.cpp:
+        (WebKit):
+        * Shared/APIClientTraits.h:
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/API/gtk/WebKitLoaderClient.cpp:
+        (attachLoaderClientToView):
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        * WebProcess/qt/QtBuiltinBundlePage.cpp:
+        (WebKit::QtBuiltinBundlePage::QtBuiltinBundlePage):
+
 2013-02-13  Kenneth Rohde Christiansen  <kenneth@webkit.org>
 
         [WK2][EFL] Cleanup of graphics related code in EwkView

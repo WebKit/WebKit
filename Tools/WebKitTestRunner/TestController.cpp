@@ -465,6 +465,8 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // willGoToBackForwardListItem
         0, // interactionOccurredWhileProcessUnresponsive
         0, // pluginDidFail
+        0, // didReceiveIntentForFrame
+        0, // registerIntentServiceForFrame
         0, // didLayout
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
