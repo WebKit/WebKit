@@ -1,3 +1,19 @@
+2013-02-13  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove support for compiling with GStreamer 0.10
+        https://bugs.webkit.org/show_bug.cgi?id=109593
+
+        Reviewed by Philippe Normand.
+
+        Remove support for building WebKitGTK+ with GStreamer 0.10. We
+        can simplify things greatly because we don't have to worry any
+        longer about selecting one GStreamer API set.
+
+        * Source/autotools/FindDependencies.m4:
+        * Source/autotools/ReadCommandLineArguments.m4:
+        * Source/autotools/SetupAutoconfHeader.m4:
+        * Source/autotools/Versions.m4:
+
 2013-02-12  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Remove the GLib unicode backend

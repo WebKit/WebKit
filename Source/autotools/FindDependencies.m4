@@ -313,34 +313,6 @@ if test "$enable_svg_fonts" = "yes" && test "$enable_svg" = "no"; then
     enable_svg=yes
 fi
 
-if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
-    if test "$with_gstreamer" = "auto"; then
-        gstreamer_modules="gstreamer-1.0 >= gstreamer_1_0_required_version gstreamer-app-1.0 gstreamer-audio-1.0
-            gstreamer-fft-1.0 gstreamer-base-1.0 gstreamer-pbutils-1.0
-            gstreamer-plugins-base-1.0 >= gstreamer_1_0_plugins_base_required_version gstreamer-video-1.0";
-        PKG_CHECK_MODULES([GSTREAMER_1_0], [$gstreamer_modules], [with_gstreamer=1.0], [with_gstreamer=0.10])
-        AC_MSG_NOTICE([Selected GStreamer $with_gstreamer])
-    fi
-else
-    if test "$with_gstreamer" != "auto"; then
-        AC_MSG_WARN([You have specified GStreamer $with_gstreamer version but it will not be used
-            because neither HTML5 Video nor Web Audio are enabled])
-    fi
-fi
-
-case "$with_gstreamer" in
-    0.10) GSTREAMER_REQUIRED_VERSION=gstreamer_0_10_required_version
-        GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=gstreamer_0_10_plugins_base_required_version
-        GST_API_VERSION=0.10
-        ;;
-    1.0) GSTREAMER_REQUIRED_VERSION=gstreamer_1_0_required_version
-        GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION=gstreamer_1_0_plugins_base_required_version
-        GST_API_VERSION=1.0
-        ;;
-esac
-
-AC_SUBST([GST_API_VERSION])
-
 if test "$enable_opcode_stats" = "yes"; then
     if test "$enable_jit" = "yes"; then
         AC_MSG_ERROR([JIT must be disabled for Opcode stats to work.])
@@ -438,16 +410,16 @@ if test "$os_win32" = "no"; then
     AC_SUBST([XRENDER_LIBS])
 fi
 
-# Check if Gstreamer is available.
 if test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"; then
-    gstreamer_modules="gstreamer-$GST_API_VERSION >= $GSTREAMER_REQUIRED_VERSION gstreamer-app-$GST_API_VERSION
-        gstreamer-audio-$GST_API_VERSION gstreamer-fft-$GST_API_VERSION gstreamer-base-$GST_API_VERSION
-        gstreamer-pbutils-$GST_API_VERSION gstreamer-plugins-base-$GST_API_VERSION >= $GSTREAMER_PLUGINS_BASE_REQUIRED_VERSION
-        gstreamer-video-$GST_API_VERSION";
-    if test "$GST_API_VERSION" != "1.0"; then
-        gstreamer_modules="$gstreamer_modules gstreamer-interfaces-$GST_API_VERSION";
-    fi
-    PKG_CHECK_MODULES([GSTREAMER], [$gstreamer_modules], [have_gstreamer=yes])
+    PKG_CHECK_MODULES([GSTREAMER], [
+        gstreamer-1.0 >= gstreamer_required_version
+        gstreamer-plugins-base-1.0 >= gstreamer_plugins_base_required_version
+        gstreamer-app-1.0
+        gstreamer-audio-1.0,
+        gstreamer-fft-1.0,
+        gstreamer-base-1.0,
+        gstreamer-pbutils-1.0,
+        gstreamer-video-1.0])
     AC_SUBST([GSTREAMER_CFLAGS])
     AC_SUBST([GSTREAMER_LIBS])
 fi

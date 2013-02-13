@@ -168,18 +168,6 @@ AC_ARG_ENABLE(debug_symbols,
     ])
 AC_MSG_RESULT([$enable_debug_symbols])
 
-AC_MSG_CHECKING([the GStreamer version to use])
-AC_ARG_WITH([gstreamer],
-    AS_HELP_STRING([--with-gstreamer=1.0|0.10|auto], [the GStreamer version to use (default: auto, tries 1.0 first, 0.10 is fallback)]),
-    [
-        case "$with_gstreamer" in
-            0.10|1.0|auto) ;;
-            *) AC_MSG_ERROR([invalid GStreamer version specified]) ;;
-        esac
-    ],
-    [with_gstreamer=auto])
-AC_MSG_RESULT([$with_gstreamer])
-
 AC_MSG_CHECKING([which GPU acceleration backend to use])
 AC_ARG_WITH(acceleration_backend,
     AC_HELP_STRING([--with-acceleration-backend=@<:@opengl/clutter/none@:>@],

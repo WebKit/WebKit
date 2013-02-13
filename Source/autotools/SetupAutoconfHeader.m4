@@ -72,9 +72,7 @@ if test "$have_gstreamer" = "yes"; then
     fi
 fi
 
-if test "$GST_API_VERSION" = "1.0"; then
-    AC_DEFINE([GST_API_VERSION_1], [1], [Using GStreamer 1.0])
-fi
+AC_DEFINE([GST_API_VERSION_1], [1], [Using GStreamer 1.0])
 
 if test "$enable_web_audio" = "yes"; then
     AC_DEFINE([WTF_USE_WEBAUDIO_GSTREAMER], [1], [1])

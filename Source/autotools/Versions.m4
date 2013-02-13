@@ -28,9 +28,7 @@ m4_define([libsoup_required_version], [2.40.0])
 m4_define([libxml_required_version], [2.6])
 m4_define([pango_required_version], [1.21.0])
 
-m4_define([gstreamer_0_10_required_version], [0.10])
-m4_define([gstreamer_0_10_plugins_base_required_version], [0.10.30])
-m4_define([gstreamer_1_0_required_version], [1.0.3])
-m4_define([gstreamer_1_0_plugins_base_required_version], [1.0.3])
+m4_define([gstreamer_required_version], [1.0.3])
+m4_define([gstreamer_plugins_base_required_version], [1.0.3])
 
 m4_define([gobject_introspection_required], [0.9.5])
