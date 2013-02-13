@@ -350,15 +350,6 @@ void handleMessage(Connection* connection, MessageDecoder& decoder, C* object, M
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageOnConnectionQueue(Connection* connection, MessageDecoder& decoder, C* object, MF function)
-{
-    typename T::DecodeType::ValueType arguments;
-    if (!decoder.decode(arguments))
-        return;
-    callMemberFunction(connection, arguments, object, function);
-}
-
-template<typename T, typename C, typename MF>
 void handleMessageVariadic(MessageDecoder& decoder, C* object, MF function)
 {
     typename T::DecodeType::ValueType arguments;

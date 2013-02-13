@@ -66,11 +66,10 @@ messages -> WebPage LegacyReceiver {
 
     CreatePlugin(uint64_t pluginInstanceID, WebKit::Plugin::Parameters parameters) -> (bool result)
     RunJavaScriptAlert(uint64_t frameID, WTF::String message) -> ()
-    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins) DispatchOnConnectionQueue
+    GetPlugins(bool refresh) -> (Vector<WebCore::PluginInfo> plugins)
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::Connection::Handle connectionHandle) Delayed
 
-    TestMultipleAttributes() -> () DispatchOnConnectionQueue Delayed
-    TestConnectionQueue(uint64_t pluginID) DispatchOnConnectionQueue
+    TestMultipleAttributes() -> () WantsConnection Delayed
 
     TestParameterAttributes([AttributeOne AttributeTwo] uint64_t foo, double bar, [AttributeThree] double baz)
 
@@ -195,13 +194,6 @@ _expected_results = {
             'parameters': (
             ),
             'reply_parameters': (
-            ),
-            'conditions': (None),
-        },
-        {
-            'name': 'TestConnectionQueue',
-            'parameters': (
-                ('uint64_t', 'pluginID'),
             ),
             'conditions': (None),
         },
@@ -511,18 +503,6 @@ struct TestMultipleAttributes : CoreIPC::Arguments0 {
     typedef CoreIPC::Arguments0 DecodeType;
 };
 
-struct TestConnectionQueue : CoreIPC::Arguments1<uint64_t> {
-    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
-    static CoreIPC::StringReference name() { return CoreIPC::StringReference("TestConnectionQueue"); }
-    static const bool isSync = false;
-
-    typedef CoreIPC::Arguments1<uint64_t> DecodeType;
-    explicit TestConnectionQueue(uint64_t pluginID)
-        : CoreIPC::Arguments1<uint64_t>(pluginID)
-    {
-    }
-};
-
 struct TestParameterAttributes : CoreIPC::Arguments3<uint64_t, double, double> {
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
     static CoreIPC::StringReference name() { return CoreIPC::StringReference("TestParameterAttributes"); }
@@ -703,22 +683,6 @@ bool TestMultipleAttributes::DelayedReply::send()
 
 namespace WebKit {
 
-void WebPage::didReceiveWebPageMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
-{
-#if COMPILER(MSVC)
-#pragma warning(push)
-#pragma warning(disable: 4065)
-#endif
-    if (decoder->messageName() == Messages::WebPage::TestConnectionQueue::name()) {
-        CoreIPC::handleMessageOnConnectionQueue<Messages::WebPage::TestConnectionQueue>(connection, *decoder, this, &WebPage::testConnectionQueue);
-        decoder = nullptr;
-        return;
-    }
-#if COMPILER(MSVC)
-#pragma warning(pop)
-#endif
-}
-
 void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder& decoder)
 {
     if (decoder.messageName() == Messages::WebPage::LoadURL::name()) {
@@ -786,8 +750,16 @@ void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, Core
         CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(decoder, *replyEncoder, this, &WebPage::runJavaScriptAlert);
         return;
     }
+    if (decoder.messageName() == Messages::WebPage::GetPlugins::name()) {
+        CoreIPC::handleMessage<Messages::WebPage::GetPlugins>(decoder, *replyEncoder, this, &WebPage::getPlugins);
+        return;
+    }
     if (decoder.messageName() == Messages::WebPage::GetPluginProcessConnection::name()) {
         CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, decoder, replyEncoder, this, &WebPage::getPluginProcessConnection);
+        return;
+    }
+    if (decoder.messageName() == Messages::WebPage::TestMultipleAttributes::name()) {
+        CoreIPC::handleMessageDelayed<Messages::WebPage::TestMultipleAttributes>(connection, decoder, replyEncoder, this, &WebPage::testMultipleAttributes);
         return;
     }
 #if PLATFORM(MAC)

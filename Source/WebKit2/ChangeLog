@@ -1,5 +1,19 @@
 2013-02-13  Anders Carlsson  <andersca@apple.com>
 
+        Remove support for the DispatchOnConnectionQueue message attribute
+        https://bugs.webkit.org/show_bug.cgi?id=109743
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC):
+        * Scripts/webkit2/messages.py:
+        (handler_function):
+        (generate_message_handler):
+        * Scripts/webkit2/messages_unittest.py:
+
+2013-02-13  Anders Carlsson  <andersca@apple.com>
+
         StorageManager should be a WorkQueueMessageReceiver
         https://bugs.webkit.org/show_bug.cgi?id=109741
 

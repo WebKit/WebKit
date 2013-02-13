@@ -27,7 +27,6 @@ from webkit2 import parser
 WANTS_CONNECTION_ATTRIBUTE = 'WantsConnection'
 LEGACY_RECEIVER_ATTRIBUTE = 'LegacyReceiver'
 DELAYED_ATTRIBUTE = 'Delayed'
-DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE = 'DispatchOnConnectionQueue'
 VARIADIC_ATTRIBUTE = 'Variadic'
 
 _license_header = """/*
@@ -304,16 +303,6 @@ def handler_function(receiver, message):
     return '%s::%s' % (receiver.name, message.name[0].lower() + message.name[1:])
 
 
-def connection_work_queue_message_statement(receiver, message):
-    dispatch_function_args = ['connection', '*decoder', 'this', '&%s' % handler_function(receiver, message)]
-    result = []
-    result.append('    if (decoder->messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-    result.append('        CoreIPC::handleMessageOnConnectionQueue<Messages::%s::%s>(%s);\n' % (receiver.name, message.name, ', '.join(dispatch_function_args)))
-    result.append('        decoder = nullptr;\n')
-    result.append('        return;\n')
-    result.append('    }\n')
-    return surround_in_condition(''.join(result), message.condition)
-
 def async_message_statement(receiver, message):
     dispatch_function_args = ['decoder', 'this', '&%s' % handler_function(receiver, message)]
 
@@ -524,34 +513,13 @@ def generate_message_handler(file):
 
     result.append('namespace WebKit {\n\n')
 
-    async_dispatch_on_connection_queue_messages = []
-    sync_dispatch_on_connection_queue_messages = []
     async_messages = []
     sync_messages = []
     for message in receiver.messages:
         if message.reply_parameters is not None:
-            if message.has_attribute(DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE):
-                sync_dispatch_on_connection_queue_messages.append(message)
-            else:
-                sync_messages.append(message)
+            sync_messages.append(message)
         else:
-            if message.has_attribute(DISPATCH_ON_CONNECTION_QUEUE_ATTRIBUTE):
-                async_dispatch_on_connection_queue_messages.append(message)
-            else:
-                async_messages.append(message)
-
-    if async_dispatch_on_connection_queue_messages:
-        result.append('void %s::didReceive%sMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)\n' % (receiver.name, receiver.name))
-        result.append('{\n')
-        result.append('#if COMPILER(MSVC)\n')
-        result.append('#pragma warning(push)\n')
-        result.append('#pragma warning(disable: 4065)\n')
-        result.append('#endif\n')
-        result += [connection_work_queue_message_statement(receiver, message) for message in async_dispatch_on_connection_queue_messages]
-        result.append('#if COMPILER(MSVC)\n')
-        result.append('#pragma warning(pop)\n')
-        result.append('#endif\n')
-        result.append('}\n\n')
+            async_messages.append(message)
 
     if async_messages:
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
