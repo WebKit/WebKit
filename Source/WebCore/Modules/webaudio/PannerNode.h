@@ -154,6 +154,9 @@ private:
     float m_lastGain;
 
     unsigned m_connectionCount;
+
+    // Synchronize process() and setPanningModel() which can change the panner.
+    mutable Mutex m_pannerLock;
 };
 
 } // namespace WebCore
