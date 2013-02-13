@@ -59,6 +59,7 @@ namespace WebCore {
         Vector<TimerBase*> m_timerHeap;
         SharedTimer* m_sharedTimer; // External object, can be a run loop on a worker thread. Normally set/reset by worker thread.
         bool m_firingTimers; // Reentrancy guard.
+        double m_pendingSharedTimerFireTime;
     };
 
 }

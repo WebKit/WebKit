@@ -54,6 +54,7 @@ static MainThreadSharedTimer* mainThreadSharedTimer()
 ThreadTimers::ThreadTimers()
     : m_sharedTimer(0)
     , m_firingTimers(false)
+    , m_pendingSharedTimerFireTime(0)
 {
     if (isMainThread())
         setSharedTimer(mainThreadSharedTimer());
@@ -66,6 +67,7 @@ void ThreadTimers::setSharedTimer(SharedTimer* sharedTimer)
     if (m_sharedTimer) {
         m_sharedTimer->setFiredFunction(0);
         m_sharedTimer->stop();
+        m_pendingSharedTimerFireTime = 0;
     }
     
     m_sharedTimer = sharedTimer;
@@ -81,10 +83,20 @@ void ThreadTimers::updateSharedTimer()
     if (!m_sharedTimer)
         return;
         
-    if (m_firingTimers || m_timerHeap.isEmpty())
+    if (m_firingTimers || m_timerHeap.isEmpty()) {
+        m_pendingSharedTimerFireTime = 0;
         m_sharedTimer->stop();
-    else
-        m_sharedTimer->setFireInterval(max(m_timerHeap.first()->m_nextFireTime - monotonicallyIncreasingTime(), 0.0));
+    } else {
+        double nextFireTime = m_timerHeap.first()->m_nextFireTime;
+        double currentMonotonicTime = monotonicallyIncreasingTime();
+        if (m_pendingSharedTimerFireTime) {
+            // No need to restart the timer if both the pending fire time and the new fire time are in the past.
+            if (m_pendingSharedTimerFireTime <= currentMonotonicTime && nextFireTime <= currentMonotonicTime)
+                return;
+        } 
+        m_pendingSharedTimerFireTime = nextFireTime;
+        m_sharedTimer->setFireInterval(max(nextFireTime - currentMonotonicTime, 0.0));
+    }
 }
 
 void ThreadTimers::sharedTimerFired()
@@ -99,6 +111,7 @@ void ThreadTimers::sharedTimerFiredInternal()
     if (m_firingTimers)
         return;
     m_firingTimers = true;
+    m_pendingSharedTimerFireTime = 0;
 
     double fireTime = monotonicallyIncreasingTime();
     double timeToQuit = fireTime + maxDurationOfFiringTimers;
