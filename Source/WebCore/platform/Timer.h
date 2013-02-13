@@ -73,6 +73,9 @@ private:
 
     bool inHeap() const { return m_heapIndex != -1; }
 
+    bool hasValidHeapPosition() const;
+    void updateHeapIfNeeded(double oldTime);
+
     void heapDecreaseKey();
     void heapDelete();
     void heapDeleteMin();
@@ -81,8 +84,7 @@ private:
     void heapPop();
     void heapPopMin();
 
-    const Vector<TimerBase*>& timerHeap() const { ASSERT(m_cachedThreadGlobalTimerHeap); return *m_cachedThreadGlobalTimerHeap; }
-    Vector<TimerBase*>& timerHeap() { ASSERT(m_cachedThreadGlobalTimerHeap); return *m_cachedThreadGlobalTimerHeap; }
+    Vector<TimerBase*>& timerHeap() const { ASSERT(m_cachedThreadGlobalTimerHeap); return *m_cachedThreadGlobalTimerHeap; }
 
     double m_nextFireTime; // 0 if inactive
     double m_unalignedNextFireTime; // m_nextFireTime not considering alignment interval

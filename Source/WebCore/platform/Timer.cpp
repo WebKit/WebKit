@@ -167,10 +167,10 @@ inline ptrdiff_t operator-(TimerHeapIterator a, TimerHeapIterator b) { return a.
 
 class TimerHeapLessThanFunction {
 public:
-    bool operator()(TimerBase*, TimerBase*) const;
+    bool operator()(const TimerBase*, const TimerBase*) const;
 };
 
-inline bool TimerHeapLessThanFunction::operator()(TimerBase* a, TimerBase* b) const
+inline bool TimerHeapLessThanFunction::operator()(const TimerBase* a, const TimerBase* b) const
 {
     // The comparisons below are "backwards" because the heap puts the largest 
     // element first and we want the lowest time to be the first one in the heap.
@@ -312,6 +312,58 @@ void TimerBase::heapPopMin()
     ASSERT(this == timerHeap().last());
 }
 
+static inline bool parentHeapPropertyHolds(const TimerBase* current, const Vector<TimerBase*>& heap, unsigned currentIndex)
+{
+    if (!currentIndex)
+        return true;
+    unsigned parentIndex = (currentIndex - 1) / 2;
+    TimerHeapLessThanFunction compareHeapPosition;
+    return compareHeapPosition(current, heap[parentIndex]);
+}
+
+static inline bool childHeapPropertyHolds(const TimerBase* current, const Vector<TimerBase*>& heap, unsigned childIndex)
+{
+    if (childIndex >= heap.size())
+        return true;
+    TimerHeapLessThanFunction compareHeapPosition;
+    return compareHeapPosition(heap[childIndex], current);
+}
+
+bool TimerBase::hasValidHeapPosition() const
+{
+    ASSERT(m_nextFireTime);
+    if (!inHeap())
+        return false;
+    // Check if the heap property still holds with the new fire time. If it does we don't need to do anything.
+    // This assumes that the STL heap is a standard binary heap. In an unlikely event it is not, the assertions
+    // in updateHeapIfNeeded() will get hit.
+    const Vector<TimerBase*>& heap = timerHeap();
+    if (!parentHeapPropertyHolds(this, heap, m_heapIndex))
+        return false;
+    unsigned childIndex1 = 2 * m_heapIndex + 1;
+    unsigned childIndex2 = childIndex1 + 1;
+    return childHeapPropertyHolds(this, heap, childIndex1) && childHeapPropertyHolds(this, heap, childIndex2);
+}
+
+void TimerBase::updateHeapIfNeeded(double oldTime)
+{
+    if (m_nextFireTime && hasValidHeapPosition())
+        return;
+#ifndef NDEBUG
+    int oldHeapIndex = m_heapIndex;
+#endif
+    if (!oldTime)
+        heapInsert();
+    else if (!m_nextFireTime)
+        heapDelete();
+    else if (m_nextFireTime < oldTime)
+        heapDecreaseKey();
+    else
+        heapIncreaseKey();
+    ASSERT(m_heapIndex != oldHeapIndex);
+    ASSERT(!inHeap() || hasValidHeapPosition());
+}
+
 void TimerBase::setNextFireTime(double newUnalignedTime)
 {
     ASSERT(m_thread == currentThread());
@@ -333,14 +385,7 @@ void TimerBase::setNextFireTime(double newUnalignedTime)
 
         bool wasFirstTimerInHeap = m_heapIndex == 0;
 
-        if (oldTime == 0)
-            heapInsert();
-        else if (newTime == 0)
-            heapDelete();
-        else if (newTime < oldTime)
-            heapDecreaseKey();
-        else
-            heapIncreaseKey();
+        updateHeapIfNeeded(oldTime);
 
         bool isFirstTimerInHeap = m_heapIndex == 0;
 
