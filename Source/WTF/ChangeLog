@@ -1,3 +1,33 @@
+2013-02-12  Eric Seidel  <eric@webkit.org>
+
+        Teach more WTF string classes about vectors with inline capacity
+        https://bugs.webkit.org/show_bug.cgi?id=109617
+
+        Reviewed by Benjamin Poulain.
+
+        The HTML and WebVTT parsers use constructions like:
+        AtomicString name(m_name.data(), m_name.size())
+        all over the place because they use inline capacity
+        on the parse vectors for performance.
+
+        This change just add the necessary template variants
+        to the related String constructors/methods in WTF so that
+        this parser code can just pass the vector directly instead.
+
+        I'll do the actual parser cleanups in follow-up patches to keep things simple.
+
+        * wtf/text/AtomicString.h:
+        (AtomicString):
+        (WTF::AtomicString::AtomicString):
+        * wtf/text/StringImpl.h:
+        (StringImpl):
+        (WTF::StringImpl::create8BitIfPossible):
+        * wtf/text/WTFString.h:
+        (String):
+        (WTF::String::make8BitFrom16BitSource):
+        (WTF):
+        (WTF::append):
+
 2013-02-11  Oliver Hunt  <oliver@apple.com>
 
         Build fix.

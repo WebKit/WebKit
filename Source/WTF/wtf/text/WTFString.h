@@ -433,6 +433,12 @@ public:
 #endif
 
     WTF_EXPORT_STRING_API static String make8BitFrom16BitSource(const UChar*, size_t);
+    template<size_t inlineCapacity>
+    static String make8BitFrom16BitSource(const Vector<UChar, inlineCapacity>& buffer)
+    {
+        return make8BitFrom16BitSource(buffer.data(), buffer.size());
+    }
+
     WTF_EXPORT_STRING_API static String make16BitFrom8BitSource(const LChar*, size_t);
 
     // String::fromUTF8 will return a null string if
@@ -601,7 +607,8 @@ inline bool codePointCompareLessThan(const String& a, const String& b)
     return codePointCompare(a.impl(), b.impl()) < 0;
 }
 
-inline void append(Vector<UChar>& vector, const String& string)
+template<size_t inlineCapacity>
+inline void append(Vector<UChar, inlineCapacity>& vector, const String& string)
 {
     vector.append(string.characters(), string.length());
 }

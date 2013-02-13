@@ -48,6 +48,13 @@ public:
     AtomicString(const UChar* s, unsigned length) : m_string(add(s, length)) { }
     AtomicString(const UChar* s, unsigned length, unsigned existingHash) : m_string(add(s, length, existingHash)) { }
     AtomicString(const UChar* s) : m_string(add(s)) { }
+
+    template<size_t inlineCapacity>
+    explicit AtomicString(Vector<UChar, inlineCapacity> characters)
+        : m_string(add(characters.data(), characters.size()))
+    {
+    }
+
     ATOMICSTRING_CONVERSION AtomicString(StringImpl* imp) : m_string(add(imp)) { }
     AtomicString(AtomicStringImpl* imp) : m_string(imp) { }
     ATOMICSTRING_CONVERSION AtomicString(const String& s) : m_string(add(s.impl())) { }
@@ -58,6 +65,7 @@ public:
         : m_string(addFromLiteralData(characters, length))
     {
     }
+
     template<unsigned charactersCount>
     ALWAYS_INLINE AtomicString(const char (&characters)[charactersCount], ConstructFromLiteralTag)
         : m_string(addFromLiteralData(characters, charactersCount - 1))
