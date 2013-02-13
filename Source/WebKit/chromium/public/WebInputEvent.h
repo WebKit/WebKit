@@ -367,6 +367,9 @@ public:
     float wheelTicksX;
     float wheelTicksY;
 
+    float accelerationRatioX;
+    float accelerationRatioY;
+
     // See comment at the top of the file for why an int is used here.
     int scrollByPage;
 
@@ -381,6 +384,8 @@ public:
         , deltaY(0.0f)
         , wheelTicksX(0.0f)
         , wheelTicksY(0.0f)
+        , accelerationRatioX(1.0f)
+        , accelerationRatioY(1.0f)
         , scrollByPage(false)
         , hasPreciseScrollingDeltas(false)
         , phase(PhaseNone)
