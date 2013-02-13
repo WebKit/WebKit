@@ -438,6 +438,11 @@ bool VertexPair::overlapsRect(const FloatRect& rect) const
     return false;
 }
 
+static inline bool isReflexVertex(const FloatPoint& prevVertex, const FloatPoint& vertex, const FloatPoint& nextVertex)
+{
+    return leftSide(prevVertex, nextVertex, vertex) < 0;
+}
+
 bool VertexPair::intersection(const VertexPair& other, FloatPoint& point) const
 {
     // See: http://paulbourke.net/geometry/pointlineplane/, "Intersection point of two lines in 2 dimensions"
@@ -506,21 +511,33 @@ bool ExclusionPolygon::firstIncludedIntervalLogicalTop(float minLogicalIntervalT
 
     for (unsigned i = 0; i < overlappingEdges.size(); ++i) {
         const ExclusionPolygonEdge& edge = *static_cast<ExclusionPolygonEdge*>(overlappingEdges[i].data());
+        const FloatPoint& vertex0 = edge.previousEdge().vertex1();
         const FloatPoint& vertex1 = edge.vertex1();
         const FloatPoint& vertex2 = edge.vertex2();
-        Vector<OffsetPolygonEdge> offsetEdgePair;
+        Vector<OffsetPolygonEdge> offsetEdgeBuffer;
 
         if (vertex2.y() > vertex1.y() ? vertex2.x() >= vertex1.x() : vertex1.x() >= vertex2.x()) {
-            offsetEdgePair.append(OffsetPolygonEdge(edge, FloatSize(dx, -dy)));
-            offsetEdgePair.append(OffsetPolygonEdge(edge, FloatSize(-dx, dy)));
+            offsetEdgeBuffer.append(OffsetPolygonEdge(edge, FloatSize(dx, -dy)));
+            offsetEdgeBuffer.append(OffsetPolygonEdge(edge, FloatSize(-dx, dy)));
         } else {
-            offsetEdgePair.append(OffsetPolygonEdge(edge, FloatSize(dx, dy)));
-            offsetEdgePair.append(OffsetPolygonEdge(edge, FloatSize(-dx, -dy)));
+            offsetEdgeBuffer.append(OffsetPolygonEdge(edge, FloatSize(dx, dy)));
+            offsetEdgeBuffer.append(OffsetPolygonEdge(edge, FloatSize(-dx, -dy)));
         }
 
-        for (unsigned j = 0; j < offsetEdgePair.size(); ++j)
-            if (offsetEdgePair[j].maxY() >= minY)
-                offsetEdges.append(offsetEdgePair[j]);
+        if (isReflexVertex(vertex0, vertex1, vertex2)) {
+            if (vertex2.x() <= vertex1.x() && vertex0.x() <= vertex1.x())
+                offsetEdgeBuffer.append(OffsetPolygonEdge(vertex1, FloatSize(dx, -dy), FloatSize(dx, dy)));
+            else if (vertex2.x() >= vertex1.x() && vertex0.x() >= vertex1.x())
+                offsetEdgeBuffer.append(OffsetPolygonEdge(vertex1, FloatSize(-dx, -dy), FloatSize(-dx, dy)));
+            if (vertex2.y() <= vertex1.y() && vertex0.y() <= vertex1.y())
+                offsetEdgeBuffer.append(OffsetPolygonEdge(vertex1, FloatSize(-dx, dy), FloatSize(dx, dy)));
+            else if (vertex2.y() >= vertex1.y() && vertex0.y() >= vertex1.y())
+                offsetEdgeBuffer.append(OffsetPolygonEdge(vertex1, FloatSize(-dx, -dy), FloatSize(dx, -dy)));
+        }
+
+        for (unsigned j = 0; j < offsetEdgeBuffer.size(); ++j)
+            if (offsetEdgeBuffer[j].maxY() >= minY)
+                offsetEdges.append(offsetEdgeBuffer[j]);
     }
 
     offsetEdges.append(OffsetPolygonEdge(*this, minLogicalIntervalTop, FloatSize(0, dy)));

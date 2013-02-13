@@ -165,21 +165,28 @@ public:
     {
     }
 
+    OffsetPolygonEdge(const FloatPoint& reflexVertex, const FloatSize& offset1, const FloatSize& offset2)
+        : m_vertex1(reflexVertex + offset1)
+        , m_vertex2(reflexVertex + offset2)
+        , m_edgeIndex(-1)
+    {
+    }
+
     OffsetPolygonEdge(const ExclusionPolygon& polygon, float minLogicalIntervalTop, const FloatSize& offset)
         : m_vertex1(FloatPoint(polygon.shapeLogicalBoundingBox().x(), minLogicalIntervalTop) + offset)
         , m_vertex2(FloatPoint(polygon.shapeLogicalBoundingBox().maxX(), minLogicalIntervalTop) + offset)
-        , m_edgeIndex(polygon.numberOfEdges())
+        , m_edgeIndex(-1)
     {
     }
 
     virtual const FloatPoint& vertex1() const OVERRIDE { return m_vertex1; }
     virtual const FloatPoint& vertex2() const OVERRIDE { return m_vertex2; }
-    unsigned edgeIndex() const { return m_edgeIndex; }
+    int edgeIndex() const { return m_edgeIndex; }
 
 private:
     FloatPoint m_vertex1;
     FloatPoint m_vertex2;
-    unsigned m_edgeIndex;
+    int m_edgeIndex;
 };
 
 } // namespace WebCore
