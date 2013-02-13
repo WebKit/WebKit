@@ -680,6 +680,11 @@ webkit.org/b/105542 fast/canvas/canvas-blend-solid.html [ Skip ]
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# Asserting after r142555.
+webkit.org/b/109682 fast/dom/window-load-crash.html [ Crash ]
+webkit.org/b/109682 fast/frames/seamless/seamless-hyperlink-named.html [ Crash ]
+webkit.org/b/109682 fast/frames/seamless/seamless-hyperlink.html [ Crash ]
+
 # Sometimes hit !m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction assertion.
 webkit.org/b/105299 webaudio/javascriptaudionode.html [ Crash ]
 webkit.org/b/105299 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Crash ]
