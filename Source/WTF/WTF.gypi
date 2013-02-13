@@ -255,8 +255,6 @@
             'wtf/unicode/ScriptCodesFromICU.h',
             'wtf/unicode/UTF8.cpp',
             'wtf/unicode/UnicodeMacrosFromICU.h',
-            'wtf/unicode/glib/UnicodeGLib.cpp',
-            'wtf/unicode/glib/UnicodeGLib.h',
             'wtf/unicode/icu/CollatorICU.cpp',
             'wtf/unicode/wchar/UnicodeWchar.cpp',
             'wtf/unicode/wchar/UnicodeWchar.h',

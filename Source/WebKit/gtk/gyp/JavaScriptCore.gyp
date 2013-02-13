@@ -69,7 +69,6 @@
         'dependencies': [
           'WTF.gyp:wtf',
           'LLIntOffsetExtractor',
-          'Dependencies.gyp:glib',
           'Dependencies.gyp:icu',
         ],
         'product_extension': 'so.<@(javascriptcore_soname_version)',

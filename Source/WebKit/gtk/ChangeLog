@@ -1,3 +1,15 @@
+2013-02-13  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed Chromium gyp-file cleanup after glib backend removal.
+        https://bugs.webkit.org/show_bug.cgi?id=109672
+
+        Removed references to GLib unicode backend:
+
+        * gyp/Configuration.gypi.in:
+        * gyp/Dependencies.gyp:
+        * gyp/JavaScriptCore.gyp:
+        * gyp/WTF.gyp:
+
 2013-02-12  Martin Robinson  <mrobinson@igalia.com>
 
         2013-02-10  Martin Robinson  <mrobinson@igalia.com>
