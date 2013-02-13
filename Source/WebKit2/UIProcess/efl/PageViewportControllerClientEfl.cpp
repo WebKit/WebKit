@@ -68,6 +68,7 @@ void PageViewportControllerClientEfl::updateViewportSize()
 
 void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)
 {
+    UNUSED_PARAM(contentsSize);
     m_view->scheduleUpdateDisplay();
 }
 
