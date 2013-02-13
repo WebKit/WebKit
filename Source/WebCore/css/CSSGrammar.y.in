@@ -111,6 +111,9 @@ static inline int cssyyerror(void*, const char*)
 %token WEBKIT_SELECTOR_SYM
 %token WEBKIT_REGION_RULE_SYM
 %token WEBKIT_VIEWPORT_RULE_SYM
+#if ENABLE_CSS3_CONDITIONAL_RULES
+%token WEBKIT_SUPPORTS_CONDITION_SYM
+#endif
 #if ENABLE_CSS_SHADERS
 %token WEBKIT_FILTER_RULE_SYM
 #endif
@@ -312,6 +315,9 @@ stylesheet:
   | webkit_mediaquery maybe_space
   | webkit_selector maybe_space
   | webkit_keyframe_rule maybe_space
+#if ENABLE_CSS3_CONDITIONAL_RULES
+  | webkit_supports_condition maybe_space
+#endif
   ;
 
 webkit_rule:
@@ -358,6 +364,14 @@ webkit_selector:
         }
     }
 ;
+
+#if ENABLE_CSS3_CONDITIONAL_RULES
+webkit_supports_condition:
+    WEBKIT_SUPPORTS_CONDITION_SYM '{' maybe_space supports_condition '}' {
+        parser->m_supportsCondition = $4;
+    }
+;
+#endif
 
 maybe_space:
     /* empty */ %prec UNIMPORTANT_TOK

@@ -262,6 +262,10 @@ sub SkipFunction {
         return 1;
     }
 
+    if ($function->signature->name eq "supports" && @{$function->parameters} == 1) {
+        return 1;
+    }
+
     # Skip functions that have ["Callback"] parameters, because this
     # code generator doesn't know how to auto-generate callbacks.
     # Skip functions that have "MediaQueryListListener" or sequence<T> parameters, because this

@@ -305,6 +305,7 @@ SOURCES += \
     css/CSSValue.cpp \
     css/CSSValueList.cpp \
     css/CSSValuePool.cpp \
+    css/DOMWindowCSS.cpp \
     css/DocumentRuleSets.cpp \
     css/FontFeatureValue.cpp \
     css/FontValue.cpp \
@@ -1538,6 +1539,7 @@ HEADERS += \
     css/CSSValueList.h \
     css/CSSValuePool.h \
     css/CSSVariableValue.h \
+    css/DOMWindowCSS.h \
     css/FontFeatureValue.h \
     css/FontValue.h \
     css/LengthFunctions.h \

@@ -193,6 +193,7 @@ BINDING_IDLS = \
     $(WebCore)/css/CSSValue.idl \
     $(WebCore)/css/CSSValueList.idl \
     $(WebCore)/css/Counter.idl \
+    $(WebCore)/css/DOMWindowCSS.idl \
     $(WebCore)/css/MediaList.idl \
     $(WebCore)/css/MediaQueryList.idl \
     $(WebCore)/css/MediaQueryListListener.idl \

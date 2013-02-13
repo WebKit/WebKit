@@ -318,6 +318,7 @@ set(WebCore_IDL_FILES
     css/CSSSupportsRule.idl
     css/CSSValue.idl
     css/CSSValueList.idl
+    css/DOMWindowCSS.idl
     css/MediaList.idl
     css/MediaQueryList.idl
     css/RGBColor.idl
@@ -1063,6 +1064,7 @@ set(WebCore_SOURCES
     css/CSSValue.cpp
     css/CSSValueList.cpp
     css/CSSValuePool.cpp
+    css/DOMWindowCSS.cpp
     css/DocumentRuleSets.cpp
     css/FontFeatureValue.cpp
     css/FontValue.cpp

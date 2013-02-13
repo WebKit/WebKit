@@ -221,6 +221,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSDOMURL.h \
 	DerivedSources/WebCore/JSDOMWindow.cpp \
 	DerivedSources/WebCore/JSDOMWindow.h \
+	DerivedSources/WebCore/JSDOMWindowCSS.cpp \
+	DerivedSources/WebCore/JSDOMWindowCSS.h \
 	DerivedSources/WebCore/JSDynamicsCompressorNode.h \
 	DerivedSources/WebCore/JSDynamicsCompressorNode.cpp \
 	DerivedSources/WebCore/JSElement.cpp \
@@ -1340,6 +1342,7 @@ dom_binding_idls += \
 	$(WebCore)/css/CSSValue.idl \
 	$(WebCore)/css/CSSValueList.idl \
 	$(WebCore)/css/Counter.idl \
+	$(WebCore)/css/DOMWindowCSS.idl \
 	$(WebCore)/css/MediaList.idl \
 	$(WebCore)/css/MediaQueryList.idl \
 	$(WebCore)/css/RGBColor.idl \
@@ -2636,6 +2639,8 @@ webcore_sources += \
 	Source/WebCore/css/CSSValuePool.cpp \
 	Source/WebCore/css/CSSValuePool.h \
 	Source/WebCore/css/CSSVariableValue.h \
+	Source/WebCore/css/DOMWindowCSS.cpp \
+	Source/WebCore/css/DOMWindowCSS.h \
 	Source/WebCore/css/DashboardRegion.h \
 	Source/WebCore/css/DocumentRuleSets.cpp \
 	Source/WebCore/css/DocumentRuleSets.h \

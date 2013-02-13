@@ -69,6 +69,7 @@
 #include "CSSValue.cpp"
 #include "CSSValueList.cpp"
 #include "CSSValuePool.cpp"
+#include "DOMWindowCSS.cpp"
 #include "DocumentRuleSets.cpp"
 #include "InspectorCSSOMWrappers.cpp"
 #include "RuleFeature.cpp"

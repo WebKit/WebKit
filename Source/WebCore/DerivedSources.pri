@@ -202,6 +202,7 @@ IDL_BINDINGS += \
     $$PWD/css/CSSSupportsRule.idl \
     $$PWD/css/CSSValue.idl \
     $$PWD/css/CSSValueList.idl \
+    $$PWD/css/DOMWindowCSS.idl \
     $$PWD/css/MediaList.idl \
     $$PWD/css/MediaQueryList.idl \
     $$PWD/css/Rect.idl \

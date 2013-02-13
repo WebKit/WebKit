@@ -43,6 +43,7 @@
 #include "DOMTimer.h"
 #include "DOMTokenList.h"
 #include "DOMURL.h"
+#include "DOMWindowCSS.h"
 #include "DOMWindowExtension.h"
 #include "DOMWindowNotifications.h"
 #include "DeviceMotionController.h"
@@ -1563,6 +1564,15 @@ void DOMWindow::cancelAnimationFrame(int id)
 {
     if (Document* d = document())
         d->cancelAnimationFrame(id);
+}
+#endif
+
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+DOMWindowCSS* DOMWindow::css()
+{
+    if (!m_css)
+        m_css = DOMWindowCSS::create();
+    return m_css.get();
 }
 #endif
 

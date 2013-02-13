@@ -69,6 +69,7 @@ namespace WebCore {
     class Storage;
     class StyleMedia;
     class WebKitPoint;
+    class DOMWindowCSS;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     class RequestAnimationFrameCallback;
@@ -265,6 +266,10 @@ namespace WebCore {
         void cancelAnimationFrame(int id);
 #endif
 
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        DOMWindowCSS* css();
+#endif
+
         // Events
         // EventTarget API
         virtual bool addEventListener(const AtomicString& eventType, PassRefPtr<EventListener>, bool useCapture);
@@ -456,6 +461,10 @@ namespace WebCore {
 
 #if ENABLE(WEB_TIMING)
         mutable RefPtr<Performance> m_performance;
+#endif
+
+#if ENABLE(CSS3_CONDITIONAL_RULES)
+        mutable RefPtr<DOMWindowCSS> m_css;
 #endif
     };
 

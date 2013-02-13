@@ -219,6 +219,8 @@
     DOMString btoa(in [TreatNullAs=NullString,Optional=DefaultIsUndefined] DOMString string)
         raises(DOMException);
 
+    attribute [Replaceable,Conditional=CSS3_CONDITIONAL_RULES] DOMWindowCSS CSS;
+
     // Events
     attribute EventListener onabort;
     attribute EventListener onbeforeunload;

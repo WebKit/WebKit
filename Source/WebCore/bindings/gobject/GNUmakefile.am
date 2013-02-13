@@ -57,6 +57,8 @@ webkitgtk_gdom_built_sources += \
 	DerivedSources/webkitdom/WebKitDOMDOMTokenList.cpp \
 	DerivedSources/webkitdom/WebKitDOMDOMTokenListPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMDOMWindow.cpp \
+	DerivedSources/webkitdom/WebKitDOMDOMWindowCSS.cpp \
+	DerivedSources/webkitdom/WebKitDOMDOMWindowCSSPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMDOMWindowPrivate.h \
 	DerivedSources/webkitdom/WebKitDOMElement.cpp \
 	DerivedSources/webkitdom/WebKitDOMElementPrivate.h \
@@ -393,6 +395,7 @@ webkitgtk_gdom_built_h_api += \
 	DerivedSources/webkitdom/WebKitDOMBarInfo.h \
 	DerivedSources/webkitdom/WebKitDOMConsole.h \
 	DerivedSources/webkitdom/WebKitDOMCustom.h \
+	DerivedSources/webkitdom/WebKitDOMDOMWindowCSS.h \
 	DerivedSources/webkitdom/WebKitDOMDOMWindow.h \
 	DerivedSources/webkitdom/WebKitDOMDOMSelection.h \
 	DerivedSources/webkitdom/WebKitDOMEventTarget.h \

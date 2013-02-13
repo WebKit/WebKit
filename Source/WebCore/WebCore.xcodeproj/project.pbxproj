@@ -6523,6 +6523,10 @@
 		FCD8832B16A49F8200962227 /* DOMCSSSupportsRule.mm in Sources */ = {isa = PBXBuildFile; fileRef = FCD8832916A49F8200962227 /* DOMCSSSupportsRule.mm */; };
 		FCD8832C16A49FB000962227 /* DOMCSSSupportsRule.h in Copy Generated Headers */ = {isa = PBXBuildFile; fileRef = FCD8832816A49F8200962227 /* DOMCSSSupportsRule.h */; };
 		FCEBBAAB16A4967A00FA20A6 /* DOMCSSSupportsRuleInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = FCEBBAAA16A4967A00FA20A6 /* DOMCSSSupportsRuleInternal.h */; };
+		FC9A0F74164094CF003D6B8D /* DOMWindowCSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC9A0F71164094CF003D6B8D /* DOMWindowCSS.cpp */; };
+		FC9A0F75164094CF003D6B8D /* DOMWindowCSS.h in Headers */ = {isa = PBXBuildFile; fileRef = FC9A0F72164094CF003D6B8D /* DOMWindowCSS.h */; };
+		FC9E0E4D16419C1E00392BE3 /* JSDOMWindowCSS.h in Headers */ = {isa = PBXBuildFile; fileRef = FC9E0E4B16419C1E00392BE3 /* JSDOMWindowCSS.h */; };
+		FC9E0E5116419C7F00392BE3 /* JSDOMWindowCSS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC9E0E4A16419C1E00392BE3 /* JSDOMWindowCSS.cpp */; };
 		FD00D7A414A3F61900734011 /* SincResampler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD00D7A214A3F61900734011 /* SincResampler.cpp */; };
 		FD00D7A514A3F61900734011 /* SincResampler.h in Headers */ = {isa = PBXBuildFile; fileRef = FD00D7A314A3F61900734011 /* SincResampler.h */; };
 		FD06DFA5134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */; };
@@ -14218,6 +14222,11 @@
 		FCD8832816A49F8200962227 /* DOMCSSSupportsRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSSupportsRule.h; sourceTree = "<group>"; };
 		FCD8832916A49F8200962227 /* DOMCSSSupportsRule.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMCSSSupportsRule.mm; sourceTree = "<group>"; };
 		FCEBBAAA16A4967A00FA20A6 /* DOMCSSSupportsRuleInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMCSSSupportsRuleInternal.h; sourceTree = "<group>"; };
+		FC9A0F71164094CF003D6B8D /* DOMWindowCSS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DOMWindowCSS.cpp; sourceTree = "<group>"; };
+		FC9A0F72164094CF003D6B8D /* DOMWindowCSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMWindowCSS.h; sourceTree = "<group>"; };
+		FC9A0F73164094CF003D6B8D /* DOMWindowCSS.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DOMWindowCSS.idl; sourceTree = "<group>"; };
+		FC9E0E4A16419C1E00392BE3 /* JSDOMWindowCSS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMWindowCSS.cpp; sourceTree = "<group>"; };
+		FC9E0E4B16419C1E00392BE3 /* JSDOMWindowCSS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMWindowCSS.h; sourceTree = "<group>"; };
 		FCEBCD711623A7910029965E /* CSSGrammar.y.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = CSSGrammar.y.in; sourceTree = "<group>"; };
 		FCEBCD721623A7910029965E /* CSSGrammar.y.includes */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.yacc; path = CSSGrammar.y.includes; sourceTree = "<group>"; };
 		FD00D7A214A3F61900734011 /* SincResampler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SincResampler.cpp; sourceTree = "<group>"; };
@@ -19497,6 +19506,8 @@
 				14CF78A509F58CD800EB3665 /* JSCSSValue.h */,
 				A8D05FA90A23B30F005E7203 /* JSCSSValueList.cpp */,
 				A8D05FAA0A23B30F005E7203 /* JSCSSValueList.h */,
+				FC9E0E4A16419C1E00392BE3 /* JSDOMWindowCSS.cpp */,
+				FC9E0E4B16419C1E00392BE3 /* JSDOMWindowCSS.h */,
 				BC3C39B40C0D3D8D005F4D7A /* JSMediaList.cpp */,
 				BC3C39B50C0D3D8D005F4D7A /* JSMediaList.h */,
 				D3A94A42122DC40F00A37BBC /* JSMediaQueryList.cpp */,
@@ -21961,6 +21972,9 @@
 				4A4F48A716B0DFC000EDBB29 /* DocumentRuleSets.cpp */,
 				4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */,
 				4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */,
+				FC9A0F71164094CF003D6B8D /* DOMWindowCSS.cpp */,
+				FC9A0F72164094CF003D6B8D /* DOMWindowCSS.h */,
+				FC9A0F73164094CF003D6B8D /* DOMWindowCSS.idl */,
 				4A6E9FC213C17D1D0046A7F8 /* FontFeatureValue.h */,
 				A80E6CC70A1989CA007FB8C5 /* FontValue.cpp */,
 				A80E6CC30A1989CA007FB8C5 /* FontValue.h */,
@@ -24162,6 +24176,7 @@
 				85C7F5E70AAFBAFB004014DD /* DOMWheelEvent.h in Headers */,
 				85989DD10ACC8BBD00A0BC51 /* DOMWheelEventInternal.h in Headers */,
 				1403B99709EB13AF00797C7F /* DOMWindow.h in Headers */,
+				FC9A0F75164094CF003D6B8D /* DOMWindowCSS.h in Headers */,
 				51FA2D78152132B300C1BA0B /* DOMWindowExtension.h in Headers */,
 				9712A5AE15004EDA0048AF10 /* DOMWindowIndexedDatabase.h in Headers */,
 				97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */,
@@ -24788,6 +24803,7 @@
 				7694563D1214D97C0007CBAE /* JSDOMTokenList.h in Headers */,
 				2E37E00612DBC5A400A6B233 /* JSDOMURL.h in Headers */,
 				BC6932740D7E293900AE44D1 /* JSDOMWindowBase.h in Headers */,
+				FC9E0E4D16419C1E00392BE3 /* JSDOMWindowCSS.h in Headers */,
 				652FBBBC0DE27CB60001D386 /* JSDOMWindowCustom.h in Headers */,
 				BCBFB53D0DCD29CF0019B3E5 /* JSDOMWindowShell.h in Headers */,
 				65E0E9441133C89F00B4CB10 /* JSDOMWrapper.h in Headers */,
@@ -27511,6 +27527,7 @@
 				31C0FF4D0E4CEFDD007D6FE5 /* DOMWebKitTransitionEvent.mm in Sources */,
 				85C7F5E80AAFBAFB004014DD /* DOMWheelEvent.mm in Sources */,
 				1403B99809EB13AF00797C7F /* DOMWindow.cpp in Sources */,
+				FC9A0F74164094CF003D6B8D /* DOMWindowCSS.cpp in Sources */,
 				517FBA1E151AB17C00B57959 /* DOMWindowExtension.cpp in Sources */,
 				9712A5AD15004EDA0048AF10 /* DOMWindowIndexedDatabase.cpp in Sources */,
 				97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */,
@@ -28103,6 +28120,7 @@
 				2E37E00512DBC5A400A6B233 /* JSDOMURL.cpp in Sources */,
 				1403BA0C09EB18C700797C7F /* JSDOMWindow.cpp in Sources */,
 				BC6932730D7E293900AE44D1 /* JSDOMWindowBase.cpp in Sources */,
+				FC9E0E5116419C7F00392BE3 /* JSDOMWindowCSS.cpp in Sources */,
 				BCD9C2620C17AA67005C90A2 /* JSDOMWindowCustom.cpp in Sources */,
 				BCBFB53C0DCD29CF0019B3E5 /* JSDOMWindowShell.cpp in Sources */,
 				A80A9423149F225E00989291 /* JSDOMWindowWebAudioCustom.cpp in Sources */,
