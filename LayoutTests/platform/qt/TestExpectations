@@ -1354,6 +1354,7 @@ fast/repaint/moving-shadow-on-path.html
 ietestcenter/css3/valuesandunits/units-010.htm
 inspector/audits/audits-panel-functional.html
 http/tests/inspector-enabled/console-clear-arguments-on-frame-navigation.html
+http/tests/inspector-enabled/console-clear-arguments-on-frame-remove.html
 svg/W3C-SVG-1.1/paths-data-03-f.svg
 svg/css/stars-with-shadow.html
 svg/custom/use-on-symbol-inside-pattern.svg
@@ -2101,6 +2102,10 @@ svg/W3C-SVG-1.1/struct-image-06-t.svg
 http/tests/loading/preload-slow-loading.php
 http/tests/security/contentSecurityPolicy/media-src-allowed.html
 http/tests/security/contentSecurityPolicy/media-src-blocked.html
+
+# [Qt] Migrate to Ubuntu 12.04. Maybe rebaseline needed.
+css2.1/t0805-c5519-brdr-r-01-e.html
+css2.1/t0905-c5525-fltblck-00-d-ag.html
 
 # [Qt]fast/events/remove-target-in-mouseup* tests fail
 # https://bugs.webkit.org/show_bug.cgi?id=60833
