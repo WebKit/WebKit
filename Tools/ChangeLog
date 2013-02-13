@@ -1,3 +1,16 @@
+2013-02-11  Brent Fulgham  <bfulgham@webkit.org>
+
+        Update WebKitDirs.pm for new Windows paths
+        https://bugs.webkit.org/show_bug.cgi?id=107714
+
+        Reviewed by Daniel Bates.
+
+        * Scripts/webkitdirs.pm: For each existing Windows environment
+        variable, also include creation of the 'new' variables. The
+        'old' variables will be removed in a future update.
+        (windowsSourceSourceDir): New helper routine to return the
+        actual 'Source' folder of the WebKit source tree.
+
 2013-02-12  Alec Flett  <alecflett@chromium.org>
 
         Fix signedness in WebTestProxy
