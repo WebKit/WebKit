@@ -44,6 +44,17 @@
     -webkit-grid-auto-flow: row;
 }
 
+/* This rule makes sure the container is smaller than any grid items to avoid distributing any extra logical space to them. */
+.constrainedContainer {
+    width: 10px;
+    height: 10px;
+}
+
+.unconstrainedContainer {
+    width: 1000px;
+    height: 1000px;
+}
+
 .verticalRL {
     -webkit-writing-mode: vertical-rl;
 }

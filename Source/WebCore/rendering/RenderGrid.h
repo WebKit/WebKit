@@ -67,6 +67,7 @@ private:
     const GridTrackSize& gridTrackSize(TrackSizingDirection, size_t);
     size_t maximumIndexInDirection(TrackSizingDirection) const;
 
+    LayoutUnit logicalContentHeightForChild(RenderBox*, Vector<GridTrack>&);
     LayoutUnit minContentForChild(RenderBox*, TrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutUnit maxContentForChild(RenderBox*, TrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutPoint findChildLogicalPosition(RenderBox*, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks);

@@ -287,6 +287,22 @@ size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
     return maximumIndex;
 }
 
+LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox* child, Vector<GridTrack>& columnTracks)
+{
+    // FIXME: We shouldn't force a layout every time this function is called but
+    // 1) Return computeLogicalHeight's value if it's available. Unfortunately computeLogicalHeight
+    // doesn't return if the logical height is available so would need to be changed.
+    // 2) Relayout if the column track's used breadth changed OR the logical height is unavailable.
+    if (!child->needsLayout())
+        child->setNeedsLayout(true, MarkOnlyThis);
+
+    size_t columnTrack = resolveGridPosition(ForColumns, child);
+    child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
+    child->clearOverrideContainingBlockContentLogicalHeight();
+    child->layout();
+    return child->logicalHeight();
+}
+
 LayoutUnit RenderGrid::minContentForChild(RenderBox* child, TrackSizingDirection direction, Vector<GridTrack>& columnTracks)
 {
     bool hasOrthogonalWritingMode = child->isHorizontalWritingMode() != isHorizontalWritingMode();
@@ -300,13 +316,7 @@ LayoutUnit RenderGrid::minContentForChild(RenderBox* child, TrackSizingDirection
         return child->minPreferredLogicalWidth();
     }
 
-    if (child->needsLayout()) {
-        size_t columnTrack = resolveGridPosition(ForColumns, child);
-        child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
-        child->clearOverrideContainingBlockContentLogicalHeight();
-        child->layout();
-    }
-    return child->logicalHeight();
+    return logicalContentHeightForChild(child, columnTracks);
 }
 
 LayoutUnit RenderGrid::maxContentForChild(RenderBox* child, TrackSizingDirection direction, Vector<GridTrack>& columnTracks)
@@ -322,13 +332,7 @@ LayoutUnit RenderGrid::maxContentForChild(RenderBox* child, TrackSizingDirection
         return child->maxPreferredLogicalWidth();
     }
 
-    if (child->needsLayout()) {
-        size_t columnTrack = resolveGridPosition(ForColumns, child);
-        child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
-        child->clearOverrideContainingBlockContentLogicalHeight();
-        child->layout();
-    }
-    return child->logicalHeight();
+    return logicalContentHeightForChild(child, columnTracks);
 }
 
 void RenderGrid::resolveContentBasedTrackSizingFunctions(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, LayoutUnit& availableLogicalSpace)
@@ -359,9 +363,10 @@ void RenderGrid::resolveContentBasedTrackSizingFunctions(TrackSizingDirection di
 
         if (maxTrackBreadth.isMaxContent())
             resolveContentBasedTrackSizingFunctionsForItems(direction, columnTracks, rowTracks, i, &RenderGrid::maxContentForChild, &GridTrack::maxBreadthIfNotInfinite, &GridTrack::growMaxBreadth);
-    }
 
-    // FIXME: The spec says to update maxBreadth if it is Infinity.
+        if (track.m_maxBreadth == infinity)
+            track.m_maxBreadth = track.m_usedBreadth;
+    }
 }
 
 void RenderGrid::resolveContentBasedTrackSizingFunctionsForItems(TrackSizingDirection direction, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, size_t i, SizingFunction sizingFunction, AccumulatorGetter trackGetter, AccumulatorGrowFunction trackGrowthFunction)
@@ -391,29 +396,30 @@ void RenderGrid::distributeSpaceToTracks(Vector<GridTrack*>& tracks, Vector<Grid
     std::sort(tracks.begin(), tracks.end(), sortByGridTrackGrowthPotential);
 
     size_t tracksSize = tracks.size();
+    Vector<LayoutUnit> updatedTrackBreadths(tracksSize);
+
     for (size_t i = 0; i < tracksSize; ++i) {
         GridTrack& track = *tracks[i];
         LayoutUnit availableLogicalSpaceShare = availableLogicalSpace / (tracksSize - i);
-        // We never shrink the used breadth by clamping the difference between max and used breadth. The spec uses
-        // 2 extra-variables and 2 extra iterations to ensure that we always grow our tracks (thus never going below
-        // min-track). If we decide to follow it to the letter, we should remove this clamping.
-        LayoutUnit growthShare = std::min(availableLogicalSpaceShare, std::max(LayoutUnit(0), track.m_maxBreadth - (track.*trackGetter)()));
-        (track.*trackGrowthFunction)(growthShare);
+        LayoutUnit trackBreadth = (tracks[i]->*trackGetter)();
+        LayoutUnit growthShare = std::min(availableLogicalSpaceShare, track.m_maxBreadth - trackBreadth);
+        updatedTrackBreadths[i] = trackBreadth + growthShare;
         availableLogicalSpace -= growthShare;
     }
 
-    if (availableLogicalSpace <= 0)
-        return;
+    if (availableLogicalSpace > 0 && tracksForGrowthAboveMaxBreadth) {
+        tracksSize = tracksForGrowthAboveMaxBreadth->size();
+        for (size_t i = 0; i < tracksSize; ++i) {
+            LayoutUnit growthShare = availableLogicalSpace / (tracksSize - i);
+            updatedTrackBreadths[i] += growthShare;
+            availableLogicalSpace -= growthShare;
+        }
+    }
 
-    if (!tracksForGrowthAboveMaxBreadth)
-        return;
-
-    tracksSize = tracksForGrowthAboveMaxBreadth->size();
     for (size_t i = 0; i < tracksSize; ++i) {
-        GridTrack& track = *tracksForGrowthAboveMaxBreadth->at(i);
-        LayoutUnit growthShare = availableLogicalSpace / (tracksSize - i);
-        (track.*trackGrowthFunction)(growthShare);
-        availableLogicalSpace -= growthShare;
+        LayoutUnit growth = updatedTrackBreadths[i] - (tracks[i]->*trackGetter)();
+        if (growth >= 0)
+            (tracks[i]->*trackGrowthFunction)(growth);
     }
 }
 
@@ -450,6 +456,8 @@ void RenderGrid::layoutGridItems()
         LayoutUnit oldOverrideContainingBlockContentLogicalWidth = child->hasOverrideContainingBlockLogicalWidth() ? child->overrideContainingBlockContentLogicalWidth() : LayoutUnit();
         LayoutUnit oldOverrideContainingBlockContentLogicalHeight = child->hasOverrideContainingBlockLogicalHeight() ? child->overrideContainingBlockContentLogicalHeight() : LayoutUnit();
 
+        // FIXME: For children in a content sized track, we clear the overrideContainingBlockContentLogicalHeight
+        // in minContentForChild / maxContentForChild which means that we will always relayout the child.
         if (oldOverrideContainingBlockContentLogicalWidth != columnTracks[columnTrack].m_usedBreadth || oldOverrideContainingBlockContentLogicalHeight != rowTracks[rowTrack].m_usedBreadth)
             child->setNeedsLayout(true, MarkOnlyThis);
 
