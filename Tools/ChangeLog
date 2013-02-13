@@ -1,3 +1,21 @@
+2013-02-12  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [WK2] Page reloading will crash UIProcess after WebProcess was killed
+        https://bugs.webkit.org/show_bug.cgi?id=109305
+
+        Reviewed by Benjamin Poulain.
+
+        Adding a new test to simulate the case of WebProcess crash followed by a trying
+        to load a new page.
+
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/ReloadPageAfterCrash.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::didFinishLoad):
+        (TestWebKitAPI::TEST):
+
 2013-02-11  Brent Fulgham  <bfulgham@webkit.org>
 
         Update WebKitDirs.pm for new Windows paths

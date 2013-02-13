@@ -69,6 +69,7 @@ set(test_webkit2_api_BINARIES
     LoadAlternateHTMLStringWithNonDirectoryURL
     LoadCanceledNoServerRedirectCallback
     MouseMoveAfterCrash
+    ReloadPageAfterCrash
     NewFirstVisuallyNonEmptyLayout
     NewFirstVisuallyNonEmptyLayoutFails
     NewFirstVisuallyNonEmptyLayoutForImages

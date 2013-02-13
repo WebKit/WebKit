@@ -1,3 +1,21 @@
+2013-02-12  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [WK2] Page reloading will crash UIProcess after WebProcess was killed
+        https://bugs.webkit.org/show_bug.cgi?id=109305
+
+        Reviewed by Benjamin Poulain.
+
+        Re-initialize the pointer to a WebInspectorProxy object before calling
+        initializeWebPage().
+
+        When the WebProcess crashes, WebPageProxy::processDidCrash() will
+        set WebInspectorProxy pointer to null, which later is accessed by
+        initializeWebPage(). This patch avoids a crash scenario where
+        calls into a null pointer would be made.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::reattachToWebProcess):
+
 2013-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Enable PAGE_VISIBILITY_API

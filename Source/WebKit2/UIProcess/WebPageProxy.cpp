@@ -396,17 +396,17 @@ void WebPageProxy::reattachToWebProcess()
     m_process->addExistingWebPage(this, m_pageID);
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
 
-    initializeWebPage();
-
-    m_pageClient->didRelaunchProcess();
-    m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
-
 #if ENABLE(INSPECTOR)
     m_inspector = WebInspectorProxy::create(this);
 #endif
 #if ENABLE(FULLSCREEN_API)
     m_fullScreenManager = WebFullScreenManagerProxy::create(this);
 #endif
+
+    initializeWebPage();
+
+    m_pageClient->didRelaunchProcess();
+    m_drawingArea->waitForBackingStoreUpdateOnNextPaint();
 }
 
 void WebPageProxy::reattachToWebProcessWithItem(WebBackForwardListItem* item)
