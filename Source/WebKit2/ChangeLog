@@ -1,3 +1,10 @@
+2013-02-13  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed Qt-Mac and Qt-Win buildfix after r142768.
+
+        * WebProcess/WebProcess.h:
+        (WebKit):
+
 2013-02-13  Adam Barth  <abarth@webkit.org>
 
         Remove bogus ASSERT in WebFrameProxy::didStartProvisionalLoad
