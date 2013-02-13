@@ -31,25 +31,25 @@ Methods to run: ["_updateVersionFrom2To3"]
 
 
 Running: testClearBreakpointsWhenTooMany
-Starting test with 0 breakpoints.
+Starting test with 0 breakpoints and 500 allowed at max.
 Number of breakpoints left in the setting after the test: 0.
 
-Starting test with 1 breakpoints.
+Starting test with 1 breakpoints and 500 allowed at max.
 Number of breakpoints left in the setting after the test: 1.
 
-Starting test with 2 breakpoints.
+Starting test with 2 breakpoints and 500 allowed at max.
 Number of breakpoints left in the setting after the test: 2.
 
-Starting test with 499999 breakpoints.
-Number of breakpoints left in the setting after the test: 499999.
+Starting test with 499 breakpoints and 500 allowed at max.
+Number of breakpoints left in the setting after the test: 499.
 
-Starting test with 500000 breakpoints.
-Number of breakpoints left in the setting after the test: 500000.
+Starting test with 500 breakpoints and 500 allowed at max.
+Number of breakpoints left in the setting after the test: 500.
 
-Starting test with 500001 breakpoints.
+Starting test with 501 breakpoints and 500 allowed at max.
 Number of breakpoints left in the setting after the test: 0.
 
-Starting test with 1000000 breakpoints.
+Starting test with 1000 breakpoints and 500 allowed at max.
 Number of breakpoints left in the setting after the test: 0.
 
 

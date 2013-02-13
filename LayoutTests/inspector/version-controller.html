@@ -50,26 +50,26 @@ function test()
 
         function testClearBreakpointsWhenTooMany(next)
         {
-            function runClearBreakpointsTest(breakpointsCount)
+            function runClearBreakpointsTest(breakpointsCount, maxBreakpointsCount)
             {
-                InspectorTest.addResult("Starting test with " + breakpointsCount + " breakpoints.");
+                InspectorTest.addResult("Starting test with " + breakpointsCount + " breakpoints and " + maxBreakpointsCount + " allowed at max.");
                 var versionController = new WebInspector.VersionController();
                 var serializedBreakpoints = [];
                 for (var i = 0; i < breakpointsCount; ++i)
                     serializedBreakpoints.push(createBreakpoint("file" + i + ".js", i % 10, "", true));
                 var breakpointsSetting = new MockSetting(serializedBreakpoints);
-                versionController._clearBreakpointsWhenTooMany(breakpointsSetting);
+                versionController._clearBreakpointsWhenTooMany(breakpointsSetting, maxBreakpointsCount);
                 InspectorTest.addResult("Number of breakpoints left in the setting after the test: " + breakpointsSetting.get().length + ".");
                 InspectorTest.addResult("");
             }
 
-            runClearBreakpointsTest(0);
-            runClearBreakpointsTest(1);
-            runClearBreakpointsTest(2);
-            runClearBreakpointsTest(499999);
-            runClearBreakpointsTest(500000);
-            runClearBreakpointsTest(500001);
-            runClearBreakpointsTest(1000000);
+            runClearBreakpointsTest(0, 500);
+            runClearBreakpointsTest(1, 500);
+            runClearBreakpointsTest(2, 500);
+            runClearBreakpointsTest(499, 500);
+            runClearBreakpointsTest(500, 500);
+            runClearBreakpointsTest(501, 500);
+            runClearBreakpointsTest(1000, 500);
             next();
         }
     ]);

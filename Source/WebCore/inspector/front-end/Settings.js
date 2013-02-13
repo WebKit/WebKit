@@ -381,17 +381,18 @@ WebInspector.VersionController.prototype = {
 
     _updateVersionFrom0To1: function()
     {
-        this._clearBreakpointsWhenTooMany(WebInspector.settings.breakpoints);
+        this._clearBreakpointsWhenTooMany(WebInspector.settings.breakpoints, 500000);
     },
 
     /**
      * @param {WebInspector.Setting} breakpointsSetting
+     * @param {number} maxBreakpointsCount
      */
-    _clearBreakpointsWhenTooMany: function(breakpointsSetting)
+    _clearBreakpointsWhenTooMany: function(breakpointsSetting, maxBreakpointsCount)
     {
         // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
         // periodical breakpoints duplication leading to inspector slowness.
-        if (breakpointsSetting.get().length > 500000)
+        if (breakpointsSetting.get().length > maxBreakpointsCount)
             breakpointsSetting.set([]);
     }
 }
