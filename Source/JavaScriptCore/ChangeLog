@@ -1,3 +1,13 @@
+2013-02-13  Zoltan Herczeg  <zherczeg@webkit.org>
+
+        replaceWithJump should not decrease the offset by 1 on ARM traditional.
+        https://bugs.webkit.org/show_bug.cgi?id=109689
+
+        Reviewed by Zoltan Herczeg.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::replaceWithJump):
+
 2013-02-12  Joseph Pecoraro  <pecoraro@apple.com>
 
         [iOS] Enable PAGE_VISIBILITY_API

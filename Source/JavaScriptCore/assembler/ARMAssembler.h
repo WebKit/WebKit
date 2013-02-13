@@ -904,7 +904,7 @@ namespace JSC {
 
         static void replaceWithJump(void* instructionStart, void* to)
         {
-            ARMWord* instruction = reinterpret_cast<ARMWord*>(instructionStart) - 1;
+            ARMWord* instruction = reinterpret_cast<ARMWord*>(instructionStart);
             intptr_t difference = reinterpret_cast<intptr_t>(to) - (reinterpret_cast<intptr_t>(instruction) + DefaultPrefetchOffset * sizeof(ARMWord));
 
             if (!(difference & 1)) {
