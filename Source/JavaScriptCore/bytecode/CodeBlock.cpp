@@ -1872,12 +1872,20 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
 #endif
+        case op_resolve_base:
         case op_resolve_base_to_global:
         case op_resolve_base_to_global_dynamic:
         case op_resolve_base_to_scope:
         case op_resolve_base_to_scope_with_top_scope_check: {
             instructions[i + 4].u.resolveOperations = &m_resolveOperations[pc[i + 4].u.operand];
             instructions[i + 5].u.putToBaseOperation = &m_putToBaseOperations[pc[i + 5].u.operand];
+#if ENABLE(DFG_JIT)
+            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ASSERT(profile->m_bytecodeOffset == -1);
+            profile->m_bytecodeOffset = i;
+            ASSERT((opLength - 1) > 5);
+            instructions[i + opLength - 1] = profile;
+#endif
             break;
         }
         case op_resolve_global_property:
@@ -1894,23 +1902,27 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
             break;
         }
         case op_resolve: {
+#if ENABLE(DFG_JIT)
             ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
             ASSERT(profile->m_bytecodeOffset == -1);
             profile->m_bytecodeOffset = i;
+            ASSERT((opLength - 1) > 3);
+#endif
             instructions[i + 3].u.resolveOperations = &m_resolveOperations[pc[i + 3].u.operand];
             instructions[i + opLength - 1] = profile;
             break;
         }
-        case op_resolve_base:
         case op_resolve_with_base:
         case op_resolve_with_this: {
-            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
-            ASSERT(profile->m_bytecodeOffset == -1);
-            profile->m_bytecodeOffset = i;
             instructions[i + 4].u.resolveOperations = &m_resolveOperations[pc[i + 4].u.operand];
             if (pc[i].u.opcode != op_resolve_with_this)
                 instructions[i + 5].u.putToBaseOperation = &m_putToBaseOperations[pc[i + 5].u.operand];
+#if ENABLE(DFG_JIT)
+            ValueProfile* profile = &m_valueProfiles[pc[i + opLength - 1].u.operand];
+            ASSERT(profile->m_bytecodeOffset == -1);
+            profile->m_bytecodeOffset = i;
             instructions[i + opLength - 1] = profile;
+#endif
             break;
         }
         case op_new_object: {

@@ -1,3 +1,13 @@
+2013-02-13  Oliver Hunt  <oliver@apple.com>
+
+        Build fix.
+
+        Rearranged the code somewhat to reduce the number of
+        DFG related ifdefs.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+
 2013-02-13  Filip Pizlo  <fpizlo@apple.com>
 
         ForwardInt32ToDouble is not in DFG::MinifiedNode's list of relevant node types
