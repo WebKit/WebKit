@@ -555,7 +555,7 @@ WebInspector.TextPrompt.prototype = {
     /**
      * @param {string} completionText
      * @param {boolean=} isIntermediateSuggestion
-     * @param {Range} originalPrefixRange
+     * @param {Range=} originalPrefixRange
      */
     _applySuggestion: function(completionText, isIntermediateSuggestion, originalPrefixRange)
     {
