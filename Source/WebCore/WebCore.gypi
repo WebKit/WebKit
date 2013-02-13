@@ -2808,7 +2808,6 @@
             'dom/DocumentType.cpp',
             'dom/ElementShadow.cpp',
             'dom/Element.cpp',
-            'dom/ElementAttributeData.cpp',
             'dom/ElementRareData.cpp',
             'dom/ElementRareData.h',
             'dom/Entity.h',

@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,28 +25,134 @@
 #ifndef Element_h
 #define Element_h
 
+#include "Attribute.h"
 #include "CollectionType.h"
 #include "Document.h"
-#include "ElementAttributeData.h"
 #include "FragmentScriptingPermission.h"
 #include "HTMLNames.h"
 #include "ScrollTypes.h"
+#include "SpaceSplitString.h"
 
 namespace WebCore {
 
 class Attr;
-class Attribute;
 class ClientRect;
 class ClientRectList;
 class DOMStringMap;
 class DOMTokenList;
+class Element;
 class ElementRareData;
 class ElementShadow;
+class ImmutableElementAttributeData;
 class IntSize;
 class Locale;
+class MutableElementAttributeData;
 class PseudoElement;
 class RenderRegion;
 class ShadowRoot;
+class StylePropertySet;
+
+class ElementAttributeData : public RefCounted<ElementAttributeData> {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    static PassRefPtr<ElementAttributeData> create();
+    static PassRefPtr<ElementAttributeData> createImmutable(const Vector<Attribute>&);
+
+    // Override RefCounted's deref() to ensure operator delete is called on
+    // the appropriate subclass type.
+    void deref();
+
+    void clearClass() const { m_classNames.clear(); }
+    void setClass(const AtomicString& className, bool shouldFoldCase) const { m_classNames.set(className, shouldFoldCase); }
+    const SpaceSplitString& classNames() const { return m_classNames; }
+
+    const AtomicString& idForStyleResolution() const { return m_idForStyleResolution; }
+    void setIdForStyleResolution(const AtomicString& newId) const { m_idForStyleResolution = newId; }
+
+    const StylePropertySet* inlineStyle() const { return m_inlineStyle.get(); }
+
+    const StylePropertySet* presentationAttributeStyle() const;
+    void setPresentationAttributeStyle(PassRefPtr<StylePropertySet>) const;
+
+    size_t length() const;
+    bool isEmpty() const { return !length(); }
+
+    const Attribute* attributeItem(unsigned index) const;
+    const Attribute* getAttributeItem(const QualifiedName&) const;
+    Attribute* attributeItem(unsigned index);
+    Attribute* getAttributeItem(const QualifiedName&);
+    size_t getAttributeItemIndex(const QualifiedName&) const;
+    size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+
+    // These functions do no error checking.
+    void addAttribute(const Attribute&);
+    void removeAttribute(size_t index);
+
+    bool hasID() const { return !m_idForStyleResolution.isNull(); }
+    bool hasClass() const { return !m_classNames.isNull(); }
+
+    bool isEquivalent(const ElementAttributeData* other) const;
+
+    void reportMemoryUsage(MemoryObjectInfo*) const;
+
+    bool isMutable() const { return m_isMutable; }
+    const Attribute* immutableAttributeArray() const;
+
+protected:
+    ElementAttributeData();
+    ElementAttributeData(unsigned arraySize);
+    ElementAttributeData(const ElementAttributeData&, bool isMutable);
+
+    unsigned m_isMutable : 1;
+    unsigned m_arraySize : 28;
+    mutable unsigned m_presentationAttributeStyleIsDirty : 1;
+    mutable unsigned m_styleAttributeIsDirty : 1;
+#if ENABLE(SVG)
+    mutable unsigned m_animatedSVGAttributesAreDirty : 1;
+#endif
+
+    mutable RefPtr<StylePropertySet> m_inlineStyle;
+    mutable SpaceSplitString m_classNames;
+    mutable AtomicString m_idForStyleResolution;
+
+private:
+    friend class Element;
+    friend class StyledElement;
+    friend class ImmutableElementAttributeData;
+    friend class MutableElementAttributeData;
+#if ENABLE(SVG)
+    friend class SVGElement;
+#endif
+
+    Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase);
+    const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+    size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
+
+    PassRefPtr<ElementAttributeData> makeMutableCopy() const;
+    PassRefPtr<ElementAttributeData> makeImmutableCopy() const;
+
+    Vector<Attribute, 4>& mutableAttributeVector();
+    const Vector<Attribute, 4>& mutableAttributeVector() const;
+};
+
+class ImmutableElementAttributeData : public ElementAttributeData {
+public:
+    ImmutableElementAttributeData(const Vector<Attribute>&);
+    ImmutableElementAttributeData(const MutableElementAttributeData&);
+    ~ImmutableElementAttributeData();
+
+    void* m_attributeArray;
+};
+
+class MutableElementAttributeData : public ElementAttributeData {
+public:
+    MutableElementAttributeData();
+    MutableElementAttributeData(const ImmutableElementAttributeData&);
+    MutableElementAttributeData(const MutableElementAttributeData&);
+
+    mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
+    Vector<Attribute, 4> m_attributeVector;
+};
 
 enum AffectedSelectorType {
     AffectedSelectorChecked = 1,
@@ -876,6 +982,116 @@ inline void Node::removedFrom(ContainerNode* insertionPoint)
 inline bool isShadowHost(const Node* node)
 {
     return node && node->isElementNode() && toElement(node)->shadow();
+}
+inline Vector<Attribute, 4>& ElementAttributeData::mutableAttributeVector()
+{
+    ASSERT(m_isMutable);
+    return static_cast<MutableElementAttributeData*>(this)->m_attributeVector;
+}
+
+inline const Vector<Attribute, 4>& ElementAttributeData::mutableAttributeVector() const
+{
+    ASSERT(m_isMutable);
+    return static_cast<const MutableElementAttributeData*>(this)->m_attributeVector;
+}
+
+inline const Attribute* ElementAttributeData::immutableAttributeArray() const
+{
+    ASSERT(!m_isMutable);
+    return reinterpret_cast<const Attribute*>(&static_cast<const ImmutableElementAttributeData*>(this)->m_attributeArray);
+}
+
+inline size_t ElementAttributeData::length() const
+{
+    if (isMutable())
+        return mutableAttributeVector().size();
+    return m_arraySize;
+}
+
+inline const StylePropertySet* ElementAttributeData::presentationAttributeStyle() const
+{
+    if (!m_isMutable)
+        return 0;
+    return static_cast<const MutableElementAttributeData*>(this)->m_presentationAttributeStyle.get();
+}
+
+inline Attribute* ElementAttributeData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase)
+{
+    size_t index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
+    if (index != notFound)
+        return attributeItem(index);
+    return 0;
+}
+
+inline const Attribute* ElementAttributeData::getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+{
+    size_t index = getAttributeItemIndex(name, shouldIgnoreAttributeCase);
+    if (index != notFound)
+        return attributeItem(index);
+    return 0;
+}
+
+inline size_t ElementAttributeData::getAttributeItemIndex(const QualifiedName& name) const
+{
+    for (unsigned i = 0; i < length(); ++i) {
+        if (attributeItem(i)->name().matches(name))
+            return i;
+    }
+    return notFound;
+}
+
+// We use a boolean parameter instead of calling shouldIgnoreAttributeCase so that the caller
+// can tune the behavior (hasAttribute is case sensitive whereas getAttribute is not).
+inline size_t ElementAttributeData::getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const
+{
+    unsigned len = length();
+    bool doSlowCheck = shouldIgnoreAttributeCase;
+
+    // Optimize for the case where the attribute exists and its name exactly matches.
+    for (unsigned i = 0; i < len; ++i) {
+        const Attribute* attribute = attributeItem(i);
+        if (!attribute->name().hasPrefix()) {
+            if (name == attribute->localName())
+                return i;
+        } else
+            doSlowCheck = true;
+    }
+
+    if (doSlowCheck)
+        return getAttributeItemIndexSlowCase(name, shouldIgnoreAttributeCase);
+    return notFound;
+}
+
+inline const Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& name) const
+{
+    for (unsigned i = 0; i < length(); ++i) {
+        if (attributeItem(i)->name().matches(name))
+            return attributeItem(i);
+    }
+    return 0;
+}
+
+inline Attribute* ElementAttributeData::getAttributeItem(const QualifiedName& name)
+{
+    for (unsigned i = 0; i < length(); ++i) {
+        if (attributeItem(i)->name().matches(name))
+            return attributeItem(i);
+    }
+    return 0;
+}
+
+inline const Attribute* ElementAttributeData::attributeItem(unsigned index) const
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
+    if (m_isMutable)
+        return &mutableAttributeVector().at(index);
+    return &immutableAttributeArray()[index];
+}
+
+inline Attribute* ElementAttributeData::attributeItem(unsigned index)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
+    return &mutableAttributeVector().at(index);
 }
 
 } // namespace

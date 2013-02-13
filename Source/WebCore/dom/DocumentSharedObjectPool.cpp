@@ -27,8 +27,7 @@
 #include "config.h"
 #include "DocumentSharedObjectPool.h"
 
-#include "Attribute.h"
-#include "ElementAttributeData.h"
+#include "Element.h"
 
 namespace WebCore {
 

@@ -398,7 +398,6 @@ SOURCES += \
     dom/DOMStringMap.cpp \
     dom/DatasetDOMStringMap.cpp \
     dom/Element.cpp \
-    dom/ElementAttributeData.cpp \
     dom/ElementRareData.cpp \
     dom/ElementShadow.cpp \
     dom/EntityReference.cpp \
@@ -1624,7 +1623,6 @@ HEADERS += \
     dom/DatasetDOMStringMap.h \
     dom/Element.h \
     dom/ElementShadow.h \
-    dom/ElementAttributeData.h \
     dom/Entity.h \
     dom/EntityReference.h \
     dom/Event.h \

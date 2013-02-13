@@ -1161,7 +1161,6 @@ set(WebCore_SOURCES
     dom/DocumentStyleSheetCollection.cpp
     dom/DocumentType.cpp
     dom/Element.cpp
-    dom/ElementAttributeData.cpp
     dom/ElementRareData.cpp
     dom/ElementShadow.cpp
     dom/EntityReference.cpp

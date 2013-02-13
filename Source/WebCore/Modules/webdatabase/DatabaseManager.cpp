@@ -38,6 +38,7 @@
 #include "DatabaseContext.h"
 #include "DatabaseSync.h"
 #include "DatabaseTask.h"
+#include "ExceptionCode.h"
 #include "InspectorDatabaseInstrumentation.h"
 #include "Logging.h"
 #include "ScriptController.h"

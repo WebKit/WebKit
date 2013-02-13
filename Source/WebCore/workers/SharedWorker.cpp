@@ -35,6 +35,7 @@
 
 #include "SharedWorker.h"
 
+#include "ExceptionCode.h"
 #include "FeatureObserver.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
