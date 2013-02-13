@@ -331,15 +331,6 @@ void RenderBoxModelObject::willBeDestroyed()
     // A continuation of this RenderObject should be destroyed at subclasses.
     ASSERT(!continuation());
 
-    if (isPositioned()) {
-        if (RenderView* view = this->view()) {
-            if (FrameView* frameView = view->frameView()) {
-                if (style()->hasViewportConstrainedPosition())
-                    frameView->removeViewportConstrainedObject(this);
-            }
-        }
-    }
-
     // If this is a first-letter object with a remaining text fragment then the
     // entry needs to be cleared from the map.
     if (firstLetterRemainingText())
