@@ -1,3 +1,15 @@
+2013-02-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] window.open passes height and width parameters even if not defined in a page
+        https://bugs.webkit.org/show_bug.cgi?id=107705
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Do not resize window when default size is requested.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::setWindowRect):
+
 2013-02-13  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed Chromium gyp-file cleanup after glib backend removal.

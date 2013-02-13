@@ -142,7 +142,8 @@ void ChromeClient::setWindowRect(const FloatRect& rect)
     GtkWidget* window = gtk_widget_get_toplevel(GTK_WIDGET(m_webView));
     if (widgetIsOnscreenToplevelWindow(window)) {
         gtk_window_move(GTK_WINDOW(window), intrect.x(), intrect.y());
-        gtk_window_resize(GTK_WINDOW(window), intrect.width(), intrect.height());
+        if (!intrect.isEmpty())
+            gtk_window_resize(GTK_WINDOW(window), intrect.width(), intrect.height());
     }
 }
 
