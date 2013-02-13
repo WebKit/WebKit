@@ -23,7 +23,6 @@ crbug.com/24182 [ SnowLeopard Debug ] fast/frames/frameset-frameborder-boolean-v
 crbug.com/24182 [ Debug ] fast/frames/valid.html [ Pass Slow ]
 webkit.org/b/77184 [ Debug ] fast/js/dfg-double-vote-fuzz.html [ Pass Slow ]
 webkit.org/b/92948 [ Debug ] fast/js/dfg-osr-entry-hoisted-clobbered-structure-check.html [ Pass Timeout ]
-webkit.org/b/74787 [ Debug ] fast/js/dfg-poison-fuzz.html [ Pass Slow ]
 crbug.com/24182 fast/js/regexp-overflow.html [ Pass Slow ]
 crbug.com/24182 [ SnowLeopard Debug ] fast/js/repeat-cached-vm-reentry.html [ Pass Timeout ]
 crbug.com/24182 [ Debug ] fast/js/toString-and-valueOf-override.html [ Failure Timeout ]

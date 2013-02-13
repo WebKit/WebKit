@@ -609,7 +609,6 @@ Bug(_qt_slow) [ Debug ] editing/selection/dump-as-markup.html [ Pass Slow ]
 Bug(_qt_slow) [ Debug ] fast/js/array-sort-modifying-tostring.html [ Pass Timeout ]
 Bug(_qt_slow) [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Pass Slow ]
 Bug(_qt_slow) [ Debug ] fast/js/dfg-inline-function-dot-caller.html [ Pass Slow ]
-Bug(_qt_slow) [ Debug ] fast/js/dfg-poison-fuzz.html [ Pass Slow ]
 
 webkit.org/b/62662 [ Debug ] inspector/cookie-parser.html [ Crash Pass ]
 
