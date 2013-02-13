@@ -30,7 +30,6 @@
 #include "ChildProcess.h"
 #include "DownloadManager.h"
 #include "EventDispatcher.h"
-#include "PluginProcessConnectionManager.h"
 #include "ResourceCachesToClear.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
@@ -74,6 +73,7 @@ namespace WebKit {
 
 class DownloadManager;
 class InjectedBundle;
+class PluginProcessConnectionManager;
 class WebConnectionToUIProcess;
 class WebFrame;
 class WebIconDatabaseProxy;
@@ -87,9 +87,6 @@ struct WebProcessCreationParameters;
 
 #if ENABLE(NETWORK_PROCESS)
 class NetworkProcessConnection;
-#endif
-
-#if ENABLE(NETWORK_PROCESS)
 class WebResourceLoadScheduler;
 #endif
 
@@ -324,7 +321,7 @@ private:
 #endif
 
 #if ENABLE(PLUGIN_PROCESS)
-    PluginProcessConnectionManager m_pluginProcessConnectionManager;
+    RefPtr<PluginProcessConnectionManager> m_pluginProcessConnectionManager;
 #endif
 
 #if USE(SOUP)

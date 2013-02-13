@@ -42,7 +42,13 @@
 
 namespace WebKit {
 
+PassRefPtr<PluginProcessConnectionManager> PluginProcessConnectionManager::create()
+{
+    return adoptRef(new PluginProcessConnectionManager);
+}
+
 PluginProcessConnectionManager::PluginProcessConnectionManager()
+    : m_queue(WorkQueue::create("com.apple.WebKit.PluginProcessConnectionManager"))
 {
 }
 
@@ -52,7 +58,7 @@ PluginProcessConnectionManager::~PluginProcessConnectionManager()
 
 void PluginProcessConnectionManager::initializeConnection(CoreIPC::Connection* connection)
 {
-    connection->addQueueClient(this);
+    connection->addWorkQueueMessageReceiver(Messages::PluginProcessConnectionManager::messageReceiverName(), m_queue.get(), this);
 }
 
 PluginProcessConnection* PluginProcessConnectionManager::getPluginProcessConnection(const String& pluginPath, PluginProcess::Type processType)
@@ -107,19 +113,7 @@ void PluginProcessConnectionManager::removePluginProcessConnection(PluginProcess
     m_pluginProcessConnections.remove(vectorIndex);
 }
 
-void PluginProcessConnectionManager::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* connection, OwnPtr<CoreIPC::MessageDecoder>& decoder)
-{
-    if (decoder->messageReceiverName() == Messages::PluginProcessConnectionManager::messageReceiverName()) {
-        didReceivePluginProcessConnectionManagerMessageOnConnectionWorkQueue(connection, decoder);
-        return;
-    }
-}
-
-void PluginProcessConnectionManager::didCloseOnConnectionWorkQueue(CoreIPC::Connection*)
-{
-}
-
-void PluginProcessConnectionManager::pluginProcessCrashed(CoreIPC::Connection*, const String& pluginPath, uint32_t opaquePluginType)
+void PluginProcessConnectionManager::pluginProcessCrashed(const String& pluginPath, uint32_t opaquePluginType)
 {
     MutexLocker locker(m_pathsAndConnectionsMutex);
     CoreIPC::Connection* connection = m_pathsAndConnections.get(std::make_pair(pluginPath, static_cast<PluginProcess::Type>(opaquePluginType))).get();

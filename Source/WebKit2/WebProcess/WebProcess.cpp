@@ -30,6 +30,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleUserMessageCoders.h"
 #include "Logging.h"
+#include "PluginProcessConnectionManager.h"
 #include "StatisticsData.h"
 #include "WebApplicationCacheManager.h"
 #include "WebConnectionToUIProcess.h"
@@ -165,6 +166,7 @@ WebProcess::WebProcess()
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif
+    , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
@@ -209,7 +211,7 @@ void WebProcess::initializeConnection(CoreIPC::Connection* connection)
     m_eventDispatcher.initializeConnection(connection);
 
 #if ENABLE(PLUGIN_PROCESS)
-    m_pluginProcessConnectionManager.initializeConnection(connection);
+    m_pluginProcessConnectionManager->initializeConnection(connection);
 #endif
 
 #if USE(SECURITY_FRAMEWORK)
@@ -446,7 +448,7 @@ DownloadManager& WebProcess::downloadManager()
 #if ENABLE(PLUGIN_PROCESS)
 PluginProcessConnectionManager& WebProcess::pluginProcessConnectionManager()
 {
-    return m_pluginProcessConnectionManager;
+    return *m_pluginProcessConnectionManager;
 }
 #endif
 

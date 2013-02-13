@@ -22,8 +22,8 @@
 
 #if ENABLE(PLUGIN_PROCESS)
 
-messages -> PluginProcessConnectionManager LegacyReceiver {
-    PluginProcessCrashed(WTF::String pluginPath, uint32_t processType) DispatchOnConnectionQueue
+messages -> PluginProcessConnectionManager {
+    PluginProcessCrashed(WTF::String pluginPath, uint32_t processType)
 }
 
 #endif
