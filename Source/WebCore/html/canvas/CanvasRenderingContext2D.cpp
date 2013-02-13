@@ -2175,7 +2175,7 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         return;
     if (!isfinite(x) | !isfinite(y))
         return;
-    if (useMaxWidth && !isfinite(maxWidth))
+    if (useMaxWidth && (!isfinite(maxWidth) || maxWidth <= 0))
         return;
 
     // If gradient size is zero, then paint nothing.

@@ -1,0 +1,11 @@
+Series of tests to ensure that strokeText() does not display any text when maxWidth is invalid.
+
+On success, you will see no "FAIL" messages, followed by "TEST COMPLETE".
+
+
+Test canvas.strokeText() with maxWidth zero
+Test canvas.strokeText() with maxWidth -1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
