@@ -41,7 +41,6 @@
 #include "Color.h"
 #include "ColorSpace.h"
 #include "CompositionUnderlineVectorBuilder.h"
-#include "CompositorHUDFontAtlas.h"
 #include "ContextFeaturesClientImpl.h"
 #include "ContextMenu.h"
 #include "ContextMenuController.h"
@@ -4257,12 +4256,6 @@ void WebViewImpl::scheduleComposite()
 
     ASSERT(!Platform::current()->compositorSupport()->isThreadingEnabled());
     m_client->scheduleComposite();
-}
-
-void WebViewImpl::createFontAtlas(SkBitmap& bitmap, WebRect asciiToRectTable[128], int& fontHeight)
-{
-    TRACE_EVENT0("webkit", "WebViewImpl::loadFontAtlas");
-    bitmap = WebCore::CompositorHUDFontAtlas::generateFontAtlas(asciiToRectTable, fontHeight);
 }
 
 void WebViewImpl::updateLayerTreeViewport()

@@ -93,11 +93,6 @@ public:
     // internally schedule a compositing pass when needed.
     virtual void scheduleComposite() = 0;
 
-    // Creates a font atlas to use for debug visualizations. The atlas is a bitmap
-    // containing glyph data, a table of ASCII character values to a subrectangle
-    // of the atlas representing the corresponding glyph, and the glyph height.
-    virtual void createFontAtlas(SkBitmap&, WebRect asciiToRectTable[128], int& fontHeight) { }
-
 protected:
     virtual ~WebLayerTreeViewClient() { }
 };

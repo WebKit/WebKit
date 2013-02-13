@@ -1,3 +1,17 @@
+2013-02-13  Eberhard Graether  <egraether@google.com>
+
+        chromium: remove CompositorHUDFontAtlas
+        https://bugs.webkit.org/show_bug.cgi?id=109328
+
+        Reviewed by James Robinson.
+
+        After switching the HudLayer to use skia's font rendering the
+        CompositorHUDFontAtlas has become obsolete. This change removes
+        this class and the related WebLayerTreeView API.
+
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebLayerTreeViewClient):
+
 2013-02-13  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Use the source id when creating new tracks

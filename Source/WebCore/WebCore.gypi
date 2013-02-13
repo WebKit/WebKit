@@ -3882,8 +3882,6 @@
             'platform/graphics/chromium/Canvas2DLayerBridge.h',
             'platform/graphics/chromium/Canvas2DLayerManager.cpp',
             'platform/graphics/chromium/Canvas2DLayerManager.h',
-            'platform/graphics/chromium/CompositorHUDFontAtlas.cpp',
-            'platform/graphics/chromium/CompositorHUDFontAtlas.h',
             'platform/graphics/chromium/CrossProcessFontLoading.h',
             'platform/graphics/chromium/CrossProcessFontLoading.mm',
             'platform/graphics/chromium/DeferredImageDecoder.cpp',
