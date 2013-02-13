@@ -28,7 +28,7 @@ AM_CONDITIONAL([TARGET_QUARTZ], [test "$with_target" = "quartz"])
 AM_CONDITIONAL([TARGET_DIRECTFB], [test "$with_target" = "directfb"])
 
 # GStreamer feature conditionals.
-AM_CONDITIONAL([USE_GSTREAMER], [test "$have_gstreamer" = "yes"])
+AM_CONDITIONAL([USE_GSTREAMER], [test "$enable_video" = "yes" || test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([USE_WEBAUDIO_GSTREAMER], [test "$enable_web_audio" = "yes"])
 
 # ATSPI2 conditional.

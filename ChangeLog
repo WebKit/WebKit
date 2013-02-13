@@ -1,3 +1,10 @@
+2013-02-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the build after r142756
+
+        * Source/autotools/SetupAutomake.m4: Instead of using the (now gone) have_gstreamer
+        variable, activate GStreamer if either web audio or web video is enabled.
+
 2013-02-13  Xianzhu Wang  <wangxianzhu@chromium.org>
 
         Heap-use-after-free in WebCore::ScrollingCoordinator::hasVisibleSlowRepaintViewportConstrainedObjects.
