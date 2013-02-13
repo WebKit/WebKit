@@ -489,6 +489,14 @@ public:
         // We don't need to mark the end of the run because this is implicit: it is either endOfLine or the end of the
         // isolate, when we call createBidiRunsForLine it will stop at whichever comes first.
         addPlaceholderRunForIsolatedInline(resolver, obj, pos);
+        // FIXME: Inline isolates don't work properly with collapsing whitespace, see webkit.org/b/109624
+        // For now, if we enter an isolate between midpoints, we increment our current midpoint or else
+        // we'll leave the isolate and ignore the content that follows.
+        MidpointState<InlineIterator>& midpointState = resolver.midpointState();
+        if (midpointState.betweenMidpoints && midpointState.midpoints[midpointState.currentMidpoint].object() == obj) {
+            midpointState.betweenMidpoints = false;
+            ++midpointState.currentMidpoint;
+        }
     }
 
 private:
