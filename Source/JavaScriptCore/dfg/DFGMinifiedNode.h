@@ -102,6 +102,7 @@ private:
         switch (type) {
         case ValueToInt32:
         case Int32ToDouble:
+        case ForwardInt32ToDouble:
         case UInt32ToNumber:
         case DoubleAsInt32:
             return true;
