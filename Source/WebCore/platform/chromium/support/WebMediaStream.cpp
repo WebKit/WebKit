@@ -94,22 +94,22 @@ void WebMediaStream::setExtraData(ExtraData* extraData)
     m_private->setExtraData(adoptRef(new ExtraDataContainer(extraData)));
 }
 
-void WebMediaStream::audioSources(WebVector<WebMediaStreamTrack>& webSources) const
+void WebMediaStream::audioTracks(WebVector<WebMediaStreamTrack>& webTracks) const
 {
-    size_t numberOfSources = m_private->numberOfAudioComponents();
-    WebVector<WebMediaStreamTrack> result(numberOfSources);
-    for (size_t i = 0; i < numberOfSources; ++i)
+    size_t numberOfTracks = m_private->numberOfAudioComponents();
+    WebVector<WebMediaStreamTrack> result(numberOfTracks);
+    for (size_t i = 0; i < numberOfTracks; ++i)
         result[i] = m_private->audioComponent(i);
-    webSources.swap(result);
+    webTracks.swap(result);
 }
 
-void WebMediaStream::videoSources(WebVector<WebMediaStreamTrack>& webSources) const
+void WebMediaStream::videoTracks(WebVector<WebMediaStreamTrack>& webTracks) const
 {
-    size_t numberOfSources = m_private->numberOfVideoComponents();
-    WebVector<WebMediaStreamTrack> result(numberOfSources);
-    for (size_t i = 0; i < numberOfSources; ++i)
+    size_t numberOfTracks = m_private->numberOfVideoComponents();
+    WebVector<WebMediaStreamTrack> result(numberOfTracks);
+    for (size_t i = 0; i < numberOfTracks; ++i)
         result[i] = m_private->videoComponent(i);
-    webSources.swap(result);
+    webTracks.swap(result);
 }
 
 WebMediaStream& WebMediaStream::operator=(const PassRefPtr<WebCore::MediaStreamDescriptor>& mediaStreamDescriptor)
@@ -130,14 +130,28 @@ WebMediaStream::operator WebCore::MediaStreamDescriptor*() const
 
 void WebMediaStream::initialize(const WebString& label, const WebVector<WebMediaStreamSource>& audioSources, const WebVector<WebMediaStreamSource>& videoSources)
 {
-    MediaStreamSourceVector audio, video;
+    MediaStreamComponentVector audio, video;
     for (size_t i = 0; i < audioSources.size(); ++i) {
-        MediaStreamSource* curr = audioSources[i];
-        audio.append(curr);
+        MediaStreamSource* source = audioSources[i];
+        audio.append(MediaStreamComponent::create(source->id(), source));
     }
     for (size_t i = 0; i < videoSources.size(); ++i) {
-        MediaStreamSource* curr = videoSources[i];
-        video.append(curr);
+        MediaStreamSource* source = videoSources[i];
+        video.append(MediaStreamComponent::create(source->id(), source));
+    }
+    m_private = MediaStreamDescriptor::create(label, audio, video);
+}
+
+void WebMediaStream::initialize(const WebString& label, const WebVector<WebMediaStreamTrack>& audioTracks, const WebVector<WebMediaStreamTrack>& videoTracks)
+{
+    MediaStreamComponentVector audio, video;
+    for (size_t i = 0; i < audioTracks.size(); ++i) {
+        MediaStreamComponent* component = audioTracks[i];
+        audio.append(component);
+    }
+    for (size_t i = 0; i < videoTracks.size(); ++i) {
+        MediaStreamComponent* component = videoTracks[i];
+        video.append(component);
     }
     m_private = MediaStreamDescriptor::create(label, audio, video);
 }

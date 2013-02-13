@@ -44,12 +44,17 @@ class MediaStreamComponent : public RefCounted<MediaStreamComponent> {
 public:
     static PassRefPtr<MediaStreamComponent> create(PassRefPtr<MediaStreamSource> source)
     {
-        return adoptRef(new MediaStreamComponent(0, source));
+        return adoptRef(new MediaStreamComponent(createCanonicalUUIDString(), 0, source));
+    }
+
+    static PassRefPtr<MediaStreamComponent> create(const String& id, PassRefPtr<MediaStreamSource> source)
+    {
+        return adoptRef(new MediaStreamComponent(id, 0, source));
     }
 
     static PassRefPtr<MediaStreamComponent> create(MediaStreamDescriptor* stream, PassRefPtr<MediaStreamSource> source)
     {
-        return adoptRef(new MediaStreamComponent(stream, source));
+        return adoptRef(new MediaStreamComponent(createCanonicalUUIDString(), stream, source));
     }
 
     MediaStreamDescriptor* stream() const { return m_stream; }
@@ -62,12 +67,13 @@ public:
     void setEnabled(bool enabled) { m_enabled = enabled; }
 
 private:
-    MediaStreamComponent(MediaStreamDescriptor* stream, PassRefPtr<MediaStreamSource> source)
+    MediaStreamComponent(const String& id, MediaStreamDescriptor* stream, PassRefPtr<MediaStreamSource> source)
         : m_stream(stream)
         , m_source(source)
-        , m_id(createCanonicalUUIDString())
+        , m_id(id)
         , m_enabled(true)
     {
+        ASSERT(m_id.length());
     }
 
     MediaStreamDescriptor* m_stream;
@@ -75,6 +81,8 @@ private:
     String m_id;
     bool m_enabled;
 };
+
+typedef Vector<RefPtr<MediaStreamComponent> > MediaStreamComponentVector;
 
 } // namespace WebCore
 

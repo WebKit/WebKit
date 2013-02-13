@@ -59,6 +59,11 @@ void WebMediaStreamTrack::initialize(const WebMediaStreamSource& source)
     m_private = MediaStreamComponent::create(source);
 }
 
+void WebMediaStreamTrack::initialize(const WebString& id, const WebMediaStreamSource& source)
+{
+    m_private = MediaStreamComponent::create(id, source);
+}
+
 void WebMediaStreamTrack::reset()
 {
     m_private.reset();

@@ -61,6 +61,11 @@ public:
         return adoptRef(new MediaStreamDescriptor(id, audioSources, videoSources));
     }
 
+    static PassRefPtr<MediaStreamDescriptor> create(const String& id, const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents)
+    {
+        return adoptRef(new MediaStreamDescriptor(id, audioComponents, videoComponents));
+    }
+
     MediaStreamDescriptorClient* client() const { return m_client; }
     void setClient(MediaStreamDescriptorClient* client) { m_client = client; }
 
@@ -98,11 +103,28 @@ private:
         , m_id(id)
         , m_ended(false)
     {
+        ASSERT(m_id.length());
         for (size_t i = 0; i < audioSources.size(); i++)
             m_audioComponents.append(MediaStreamComponent::create(this, audioSources[i]));
 
         for (size_t i = 0; i < videoSources.size(); i++)
             m_videoComponents.append(MediaStreamComponent::create(this, videoSources[i]));
+    }
+
+    MediaStreamDescriptor(const String& id, const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents)
+        : m_client(0)
+        , m_id(id)
+        , m_ended(false)
+    {
+        ASSERT(m_id.length());
+        for (MediaStreamComponentVector::const_iterator iter = audioComponents.begin(); iter != audioComponents.end(); ++iter) {
+            (*iter)->setStream(this);
+            m_audioComponents.append((*iter));
+        }
+        for (MediaStreamComponentVector::const_iterator iter = videoComponents.begin(); iter != videoComponents.end(); ++iter) {
+            (*iter)->setStream(this);
+            m_videoComponents.append((*iter));
+        }
     }
 
     MediaStreamDescriptorClient* m_client;
