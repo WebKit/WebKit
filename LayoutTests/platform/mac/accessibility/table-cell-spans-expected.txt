@@ -43,7 +43,7 @@ AXRoleDescription: cell
 AXChildren: <array of size 3>
 AXHelp: 
 AXParent: <AXCell>
-AXSize: NSSize: {246, 78}
+AXSize: NSSize: {247, 78}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -72,7 +72,7 @@ AXRoleDescription: cell
 AXChildren: <array of size 2>
 AXHelp: 
 AXParent: <AXCell>
-AXSize: NSSize: {123, 60}
+AXSize: NSSize: {124, 60}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -101,7 +101,7 @@ AXRoleDescription: cell
 AXChildren: <array of size 2>
 AXHelp: 
 AXParent: <AXCell>
-AXSize: NSSize: {123, 60}
+AXSize: NSSize: {124, 60}
 AXTitle: 
 AXDescription: 
 AXValue: 
@@ -130,7 +130,7 @@ AXRoleDescription: cell
 AXChildren: <array of size 1>
 AXHelp: 
 AXParent: <AXCell>
-AXSize: NSSize: {123, 30}
+AXSize: NSSize: {124, 30}
 AXTitle: 
 AXDescription: 
 AXValue: 

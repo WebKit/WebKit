@@ -16,7 +16,7 @@ AXRoleDescription: cell
 AXChildren: <array of size 3>
 AXHelp: 
 AXParent: <AXCell>
-AXSize: NSSize: {143, 66}
+AXSize: NSSize: {144, 66}
 AXTitle: 
 AXDescription: 
 AXValue: 
