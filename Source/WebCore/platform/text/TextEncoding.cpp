@@ -37,9 +37,6 @@
 
 #if USE(ICU_UNICODE)
 #include <unicode/unorm.h>
-#elif USE(GLIB_UNICODE)
-#include <glib.h>
-#include <wtf/gobject/GOwnPtr.h>
 #endif
 
 namespace WebCore {
@@ -104,22 +101,6 @@ CString TextEncoding::encode(const UChar* characters, size_t length, Unencodable
         sourceLength = normalizedLength;
     }
     return newTextCodec(*this)->encode(source, sourceLength, handling);
-#elif USE(GLIB_UNICODE)
-    GOwnPtr<char> UTF8Source;
-    UTF8Source.set(g_utf16_to_utf8(characters, length, 0, 0, 0));
-    if (!UTF8Source) {
-        // If conversion to UTF-8 failed, try with the string without normalization
-        return newTextCodec(*this)->encode(characters, length, handling);
-    }
-
-    GOwnPtr<char> UTF8Normalized;
-    UTF8Normalized.set(g_utf8_normalize(UTF8Source.get(), -1, G_NORMALIZE_NFC));
-
-    long UTF16Length;
-    GOwnPtr<UChar> UTF16Normalized;
-    UTF16Normalized.set(g_utf8_to_utf16(UTF8Normalized.get(), -1, 0, &UTF16Length, 0));
-
-    return newTextCodec(*this)->encode(UTF16Normalized.get(), UTF16Length, handling);
 #elif OS(WINDOWS) && USE(WCHAR_UNICODE)
     // normalization will be done by Windows CE API
     OwnPtr<TextCodec> textCodec = newTextCodec(*this);

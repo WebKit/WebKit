@@ -30,8 +30,6 @@ typedef unsigned char LChar;
 
 #if USE(ICU_UNICODE)
 #include <wtf/unicode/icu/UnicodeIcu.h>
-#elif USE(GLIB_UNICODE)
-#include <wtf/unicode/glib/UnicodeGLib.h>
 #elif USE(WCHAR_UNICODE)
 #include <wtf/unicode/wchar/UnicodeWchar.h>
 #else
