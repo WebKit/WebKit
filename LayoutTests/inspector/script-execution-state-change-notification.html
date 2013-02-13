@@ -15,12 +15,6 @@ function disableJavaScriptForPage()
         testRunner.overridePreference("WebKitJavaScriptEnabled", false);
 }
 
-function completeTest()
-{
-    if (window.testRunner)
-        testRunner.notifyDone();
-}
-
 function test()
 {
     function scriptsEnabled(isEnabled)
@@ -42,9 +36,8 @@ function test()
 
     function finish()
     {
-        InspectorTest.completeTest();
         InspectorTest.addResult("Finished verification.")
-        InspectorTest.evaluateInPage("completeTest();");
+        InspectorTest.completeTest();
     }
 
     InspectorTest.addSniffer(WebInspector.PageDispatcher.prototype, "scriptsEnabled", scriptsEnabled, true);
