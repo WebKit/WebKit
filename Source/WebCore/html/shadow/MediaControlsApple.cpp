@@ -274,6 +274,18 @@ void MediaControlsApple::setMediaController(MediaControllerInterface* controller
         m_closedCaptionsContainer->setMediaController(controller);
 }
 
+void MediaControlsApple::defaultEventHandler(Event* event)
+{
+    if (event->type() == eventNames().clickEvent) {
+        if (m_closedCaptionsContainer && m_closedCaptionsContainer->isShowing()) {
+            m_closedCaptionsContainer->hide();
+            event->setDefaultHandled();
+        }
+    }
+
+    MediaControls::defaultEventHandler(event);
+}
+
 void MediaControlsApple::hide()
 {
     MediaControls::hide();

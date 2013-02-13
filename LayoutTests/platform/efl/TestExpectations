@@ -1720,6 +1720,7 @@ webkit.org/b/102493 fast/events/mouse-cursor.html [ Failure ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Skip ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu-hide-on-click.html [ Skip ]
 webkit.org/b/101670 media/track/track-user-preferences.html [ Skip ]
 
 # Fails until we enable the Resource Timing API.

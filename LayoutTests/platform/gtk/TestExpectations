@@ -754,6 +754,7 @@ Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-localized.html [ Skip ]
+webkit.org/b/101670 media/video-controls-captions-trackmenu-hide-on-click.html [ Skip ]
 webkit.org/b/101670 media/track/track-user-preferences.html [ Skip ]
 
 webkit.org/b/107194 storage/indexeddb/database-quota.html [ Timeout ]
