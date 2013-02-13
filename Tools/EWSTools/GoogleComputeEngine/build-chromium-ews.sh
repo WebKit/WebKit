@@ -42,7 +42,7 @@ read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
 
 PROJECT=google.com:webkit
 ZONE=$(bash findzone.sh $PROJECT)
-IMAGE=projects/google/images/ubuntu-10-04-v20120621
+IMAGE=projects/google/global/images/ubuntu-10-04-v20120621
 MACHINE_TYPE=n1-standard-4-d
 
 gcutil --project=$PROJECT addinstance $BOT_ID --machine_type=$MACHINE_TYPE --image=$IMAGE --zone=$ZONE --wait_until_running

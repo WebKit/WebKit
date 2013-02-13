@@ -42,7 +42,7 @@ read -s -p "sheriffbot IRC Password: " IRC_PASSWORD && echo
 
 PROJECT=google.com:webkit
 ZONE=$(bash findzone.sh $PROJECT)
-IMAGE=projects/google/images/ubuntu-10-04-v20120621
+IMAGE=projects/google/global/images/ubuntu-10-04-v20120621
 MACHINE_TYPE=n1-standard-4-d
 
 gcutil --project=$PROJECT addinstance $BOT_ID --machine_type=$MACHINE_TYPE --image=$IMAGE --zone=$ZONE --wait_until_running
@@ -61,7 +61,7 @@ gcutil --project=$PROJECT ssh $BOT_ID "
     bash build-boot-cmd.sh \"\\
 screen -t fq ./start-queue.sh feeder-queue $BOT_ID 10
 screen -t sq ./start-queue.sh style-queue $BOT_ID 10
-screen -t sb ./start-queue.sh sheriff-bot $BOT_ID 180 --irc-password=$IRC_PASSWORD\"
+screen -t sb ./start-queue.sh -p \\\"--irc-password=$IRC_PASSWORD\\\" sheriff-bot $BOT_ID 180\" &&
     bash boot.sh
 "
 

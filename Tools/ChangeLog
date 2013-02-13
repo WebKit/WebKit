@@ -1,3 +1,21 @@
+2013-02-13  Alan Cutter  <alancutter@chromium.org>
+
+        cr-linux debug should use clang and maybe be a components build
+        https://bugs.webkit.org/show_bug.cgi?id=108512
+
+        Reviewed by Adam Barth.
+
+        Modified GCE cr-linux-debug-ews bot build scripts to configure clang over gcc for build performance.
+        Build bots will update clang with each bot cycle.
+        Updated GCE image paths to suit gcutil 1.6.1.
+
+        * EWSTools/GoogleComputeEngine/build-chromium-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh:
+        * EWSTools/GoogleComputeEngine/build-cr-linux-debug-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-feeder-style-sheriffbot.sh:
+        * EWSTools/configure-clang-linux.sh: Copied from Tools/EWSTools/GoogleComputeEngine/build-chromium-ews.sh.
+        * EWSTools/start-queue.sh:
+
 2013-02-13  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142747.

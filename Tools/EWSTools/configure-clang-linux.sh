@@ -11,9 +11,6 @@
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,39 +25,10 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if [[ $# -ne 1 ]];then
-echo "Usage: build-commit-queue.sh BOT_NUMBER"
-exit 1
+    echo "Usage: configure-clang-linux.sh QUEUE_TYPE"
+    exit 1
 fi
 
-CWD="$(pwd)"
-cd "$(dirname "$0")"
-
-QUEUE_TYPE=commit-queue
-BOT_ID=gce-cq-$1
-BUGZILLA_USERNAME=webkit.review.bot@gmail.com
-read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
-SVN_USERNAME=commit-queue@webkit.org
-read -s -p "Subversion Password: " SVN_PASSWORD && echo
-
-PROJECT=google.com:webkit
-ZONE=$(bash findzone.sh $PROJECT)
-IMAGE=projects/google/global/images/ubuntu-10-04-v20120621
-MACHINE_TYPE=n1-standard-4-d
-
-gcutil --project=$PROJECT addinstance $BOT_ID --machine_type=$MACHINE_TYPE --image=$IMAGE --zone=$ZONE --wait_until_running
-
-echo "Sleeping for 30s to let the server spin up ssh..."
-sleep 30
-
-gcutil --project=$PROJECT ssh $BOT_ID "
-    sudo apt-get install subversion -y &&
-    svn checkout http://svn.webkit.org/repository/webkit/trunk/Tools/EWSTools tools &&
-    cd tools &&
-    bash configure-svn-auth.sh $SVN_USERNAME $SVN_PASSWORD &&
-    bash build-vm.sh &&
-    bash build-repo.sh $QUEUE_TYPE $BUGZILLA_USERNAME $BUGZILLA_PASSWORD &&
-    bash build-boot-cmd.sh \"screen -t kr ./start-queue.sh $QUEUE_TYPE $BOT_ID 10\" &&
-    bash boot.sh
-"
-
-cd "$CWD"
+bash /mnt/git/$QUEUE_TYPE/Source/WebKit/chromium/tools/clang/scripts/update.sh
+export builddir_name=llvm
+export GYP_DEFINES='clang=1'

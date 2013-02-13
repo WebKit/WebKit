@@ -42,7 +42,7 @@ read -s -p "Bugzilla Password: " BUGZILLA_PASSWORD && echo
 
 PROJECT=google.com:webkit
 ZONE=$(bash findzone.sh $PROJECT)
-IMAGE=projects/google/images/ubuntu-10-04-v20120621
+IMAGE=projects/google/global/images/ubuntu-10-04-v20120621
 MACHINE_TYPE=n1-standard-4-d
 
 gcutil --project=$PROJECT addinstance $BOT_ID --machine_type=$MACHINE_TYPE --image=$IMAGE --zone=$ZONE --wait_until_running
@@ -56,7 +56,8 @@ gcutil --project=$PROJECT ssh $BOT_ID "
     cd tools &&
     bash build-vm.sh &&
     bash build-repo.sh $QUEUE_TYPE $BUGZILLA_USERNAME $BUGZILLA_PASSWORD &&
-    bash build-boot-cmd.sh \"screen -t kr ./start-queue.sh $QUEUE_TYPE $BOT_ID 10\" &&
+    bash build-boot-cmd.sh \"\\
+screen -t kr ./start-queue.sh -r \\\"configure-clang-linux.sh $QUEUE_TYPE\\\" $QUEUE_TYPE $BOT_ID 10\" &&
     bash boot.sh
 "
 
