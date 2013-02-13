@@ -392,7 +392,7 @@ void graphicsLayerActorSetTransform(GraphicsLayerActor* layer, const CoglMatrix*
         needToRedraw = true;
     }
 
-    if (!cogl_matrix_is_identity(matrix)) {
+    if (matrix && !cogl_matrix_is_identity(matrix)) {
         priv->matrix = cogl_matrix_copy(matrix);
         needToRedraw = true;
     } else

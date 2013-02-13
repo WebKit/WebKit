@@ -50,6 +50,14 @@ static void timelineStartedCallback(ClutterTimeline*, PlatformClutterAnimation* 
     animation->animationDidStart();
 }
 
+static String toClutterActorPropertyString(const PlatformClutterAnimation::ValueFunctionType valueFunctionType)
+{
+    // ClutterActor doesn't have 'scale' and 'translate' properties. So we should support
+    // 'scale' and 'translate' ValueFunctionType by combination of existing property animations. 
+    const char* clutterActorProperty[] = { "NoProperty", "rotation-angle-x", "rotation-angle-y", "rotation-angle-z", "scale-x", "scale-y", "scale-z", "NoProperty", "translation-x", "translation-y", "translation-z", "NoProperty" }; 
+    return clutterActorProperty[valueFunctionType];
+}
+
 static ClutterAnimationMode toClutterAnimationMode(const TimingFunction* timingFunction)
 {
     ASSERT(timingFunction);
@@ -124,7 +132,7 @@ PlatformClutterAnimation::~PlatformClutterAnimation()
 
 bool PlatformClutterAnimation::supportsValueFunction()
 {
-    return false;
+    return true;
 }
 
 double PlatformClutterAnimation::beginTime() const
@@ -140,16 +148,12 @@ void PlatformClutterAnimation::setBeginTime(double value)
 
 double PlatformClutterAnimation::duration() const
 {
-    ASSERT(m_type == Basic);
-
     double duration = clutter_timeline_get_duration(CLUTTER_TIMELINE(m_animation.get()));
     return duration / 1000;
 }
 
 void PlatformClutterAnimation::setDuration(double value)
 {
-    ASSERT(m_type == Basic);
-
     // Clutter Animation sets the duration time in milliseconds.
     gint duration = value * 1000;
     clutter_timeline_set_duration(CLUTTER_TIMELINE(m_animation.get()), duration);
@@ -245,24 +249,28 @@ void PlatformClutterAnimation::setAdditive(bool value)
 {
     if (m_additive == value)
         return;
+
     m_additive = value;
 }
 
 PlatformClutterAnimation::ValueFunctionType PlatformClutterAnimation::valueFunction() const
 {
-    notImplemented();
-    return NoValueFunction;
+    return m_valueFunctionType;
 }
 
 void PlatformClutterAnimation::setValueFunction(ValueFunctionType value)
 {
-    notImplemented();
+    if (m_valueFunctionType == value)
+        return;
+
+    m_valueFunctionType = value;
 }
 
 void PlatformClutterAnimation::setFromValue(float value)
 {
-    if (m_fromValue == value)
+    if (animationType() != Basic || m_fromValue == value)
         return;
+
     m_fromValue = value;
 }
 
@@ -273,7 +281,10 @@ void PlatformClutterAnimation::setFromValue(const WebCore::TransformationMatrix&
 
 void PlatformClutterAnimation::setFromValue(const FloatPoint3D& value)
 {
-    notImplemented();
+    if (animationType() != Basic || m_fromValue3D == value)
+        return;
+
+    m_fromValue3D = value;
 }
 
 void PlatformClutterAnimation::setFromValue(const WebCore::Color& value)
@@ -288,8 +299,9 @@ void PlatformClutterAnimation::copyFromValueFrom(const PlatformClutterAnimation*
 
 void PlatformClutterAnimation::setToValue(float value)
 {
-    if (m_toValue == value)
+    if (animationType() != Basic || m_toValue == value)
         return;
+
     m_toValue = value;
 }
 
@@ -300,7 +312,10 @@ void PlatformClutterAnimation::setToValue(const WebCore::TransformationMatrix& v
 
 void PlatformClutterAnimation::setToValue(const FloatPoint3D& value)
 {
-    notImplemented();
+    if (animationType() != Basic || m_toValue3D == value)
+        return;
+
+    m_toValue3D = value;
 }
 
 void PlatformClutterAnimation::setToValue(const WebCore::Color& value)
@@ -372,17 +387,67 @@ void PlatformClutterAnimation::animationDidStart()
 ClutterTimeline* PlatformClutterAnimation::timeline() const
 {
     ASSERT(m_animation);
-    ASSERT(m_type == Basic);
     return CLUTTER_TIMELINE(m_animation.get());
+}
+
+void PlatformClutterAnimation::addClutterTransitionForProperty(const String& property, const unsigned fromValue, const unsigned toValue)
+{
+    ASSERT(property != "NoProperty");
+
+    GRefPtr<ClutterTransition> transition = adoptGRef(clutter_property_transition_new(property.utf8().data()));
+    clutter_transition_set_from(transition.get(), G_TYPE_UINT, fromValue);
+    clutter_transition_set_to(transition.get(), G_TYPE_UINT, toValue);
+
+    clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
+}
+
+void PlatformClutterAnimation::addClutterTransitionForProperty(const String& property, const float fromValue, const float toValue)
+{
+    ASSERT(property != "NoProperty");
+
+    GRefPtr<ClutterTransition> transition = adoptGRef(clutter_property_transition_new(property.utf8().data()));
+    clutter_transition_set_from(transition.get(), G_TYPE_FLOAT, fromValue);
+    clutter_transition_set_to(transition.get(), G_TYPE_FLOAT, toValue);
+
+    clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
 }
 
 void PlatformClutterAnimation::addOpacityTransition()
 {
-    GRefPtr<ClutterTransition> transition = adoptGRef(clutter_property_transition_new("opacity"));
-    clutter_transition_set_from(transition.get(), G_TYPE_UINT, static_cast<guint8>(255 * m_fromValue));
-    clutter_transition_set_to(transition.get(), G_TYPE_UINT, static_cast<guint8>(255 * m_toValue));
+    addClutterTransitionForProperty(String("opacity"), static_cast<unsigned>(255 * m_fromValue), static_cast<unsigned>(255 * m_toValue));
+}
 
-    clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
+void PlatformClutterAnimation::addTransformTransition()
+{
+    switch (m_valueFunctionType) {
+    case RotateX:
+    case RotateY:
+    case RotateZ:
+        addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), rad2deg(m_fromValue), rad2deg(m_toValue));
+        break;
+    case ScaleX:
+    case ScaleY:
+    case ScaleZ:
+    case TranslateX:
+    case TranslateY:
+    case TranslateZ:
+        addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValue, m_toValue);
+        break;
+    case Scale:
+        addClutterTransitionForProperty(String("scale-x"), m_fromValue3D.x(), m_toValue3D.x());
+        addClutterTransitionForProperty(String("scale-y"), m_fromValue3D.y(), m_toValue3D.y());
+        break;
+    case Translate:
+        addClutterTransitionForProperty(String("translation-x"), m_fromValue3D.x(), m_toValue3D.x());
+        addClutterTransitionForProperty(String("translation-y"), m_fromValue3D.x(), m_toValue3D.y());
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+    }
+
+    // If clutter covers valueFunction type animations, we should release keeping transform matrix.
+    // Otherwise, the transformation is applied twice unexpectedly. See graphicsLayerActorApplyTransform.
+    graphicsLayerActorSetTransform(GRAPHICS_LAYER_ACTOR(m_layer.get()), 0);
 }
 
 void PlatformClutterAnimation::addAnimationForKey(GraphicsLayerActor* platformLayer, const String& key)
@@ -390,10 +455,12 @@ void PlatformClutterAnimation::addAnimationForKey(GraphicsLayerActor* platformLa
     ASSERT(animationType() == Basic);
     ASSERT(!g_object_get_data(G_OBJECT(platformLayer), key.utf8().data()));
 
+    m_layer = CLUTTER_ACTOR(platformLayer);
+
     if (m_animatedPropertyType == Opacity)
         addOpacityTransition();
     else if (m_animatedPropertyType == Transform)
-        ASSERT_NOT_REACHED();
+        addTransformTransition();
     else if (m_animatedPropertyType == BackgroundColor)
         ASSERT_NOT_REACHED();
     else
@@ -405,8 +472,6 @@ void PlatformClutterAnimation::addAnimationForKey(GraphicsLayerActor* platformLa
 
     g_signal_connect(clutterTimeline, "started", G_CALLBACK(timelineStartedCallback), this);
     g_object_set_data(G_OBJECT(platformLayer), key.utf8().data(), this);
-
-    m_layer = CLUTTER_ACTOR(platformLayer);
 
     clutter_actor_add_transition(m_layer.get(), key.utf8().data(), CLUTTER_TRANSITION(m_animation.get()));
 }

@@ -119,6 +119,8 @@ private:
     bool setTransformAnimationEndpoints(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
     bool setTransformAnimationKeyframes(const KeyframeValueList&, const Animation*, PlatformClutterAnimation*, int functionIndex, TransformOperation::OperationType, bool isMatrixAnimation, const IntSize& boxSize);
 
+    bool appendToUncommittedAnimations(const KeyframeValueList&, const TransformOperations*, const Animation*, const String& animationName, const IntSize& boxSize, int animationIndex, double timeOffset, bool isMatrixAnimation);
+
     enum LayerChange {
         NoChange = 0,
         NameChanged = 1 << 1,

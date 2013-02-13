@@ -138,7 +138,11 @@ private:
     ClutterTimeline* timeline() const;
     AnimatedPropertyType stringToAnimatedPropertyType(const String& keyPath) const;
 
+    void addClutterTransitionForProperty(const String& property, const unsigned fromValue, const unsigned toValue);
+    void addClutterTransitionForProperty(const String& property, const float fromValue, const float toValue);
+
     void addOpacityTransition();
+    void addTransformTransition();
 
     AnimationType m_type;
     AnimatedPropertyType m_animatedPropertyType;
@@ -150,6 +154,9 @@ private:
 
     float m_fromValue;
     float m_toValue;
+
+    FloatPoint3D m_fromValue3D;
+    FloatPoint3D m_toValue3D;
 
     float m_repeatCount;
 
