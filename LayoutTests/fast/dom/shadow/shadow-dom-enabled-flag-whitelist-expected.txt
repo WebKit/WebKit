@@ -1,0 +1,10 @@
+Ensure that setShadowDOMEnabled() is only allowed for a set of tests.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS window.internals.settings.setShadowDOMEnabled(false) threw exception Error: InvalidAccessError: DOM Exception 15.
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

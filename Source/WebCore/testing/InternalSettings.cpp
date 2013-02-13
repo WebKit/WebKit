@@ -195,10 +195,22 @@ void InternalSettings::setMockScrollbarsEnabled(bool enabled, ExceptionCode& ec)
     settings()->setMockScrollbarsEnabled(enabled);
 }
 
+static bool urlIsWhitelistedForSetShadowDOMEnabled(const String& url)
+{
+    // This check is just for preventing fuzzers from crashing because of unintended API calls.
+    // You can list your test if needed.
+    return notFound != url.find("fast/dom/shadow/content-shadow-unknown.html")
+        || notFound != url.find("fast/dom/shadow/insertion-points-with-shadow-disabled.html");
+}
+
 void InternalSettings::setShadowDOMEnabled(bool enabled, ExceptionCode& ec)
 {
+    if (!urlIsWhitelistedForSetShadowDOMEnabled(page()->mainFrame()->document()->url().string())) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+
 #if ENABLE(SHADOW_DOM)
-    UNUSED_PARAM(ec);
     RuntimeEnabledFeatures::setShadowDOMEnabled(enabled);
 #else
     // Even SHADOW_DOM is off, InternalSettings allows setShadowDOMEnabled(false) to

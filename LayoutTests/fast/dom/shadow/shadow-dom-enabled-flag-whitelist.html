@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<script>
+description("Ensure that setShadowDOMEnabled() is only allowed for a set of tests.")
+shouldThrow("window.internals.settings.setShadowDOMEnabled(false)", "'Error: InvalidAccessError: DOM Exception 15'");
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
