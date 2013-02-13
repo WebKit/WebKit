@@ -5977,6 +5977,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/SystemTime.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.h \
 	Source/WebCore/platform/text/enchant/TextCheckerEnchant.cpp \
+	Source/WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp \
 	Source/WebCore/platform/text/BidiContext.cpp \
 	Source/WebCore/platform/text/BidiContext.h \
 	Source/WebCore/platform/text/BidiResolver.h \
@@ -6007,6 +6008,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/text/TextBoundaries.cpp \
 	Source/WebCore/platform/text/TextBoundaries.h \
 	Source/WebCore/platform/text/TextBreakIterator.cpp \
+	Source/WebCore/platform/text/TextBreakIteratorICU.cpp \
+	Source/WebCore/platform/text/TextBreakIteratorInternalICU.h \
 	Source/WebCore/platform/text/TextBreakIterator.h \
 	Source/WebCore/platform/text/TextCheckerClient.h \
 	Source/WebCore/platform/text/TextChecking.h \
@@ -6021,6 +6024,8 @@ webcore_platform_sources += \
 	Source/WebCore/platform/text/TextCodecUTF16.h \
 	Source/WebCore/platform/text/TextCodecUTF8.cpp \
 	Source/WebCore/platform/text/TextCodecUTF8.h \
+	Source/WebCore/platform/text/TextCodecICU.cpp \
+	Source/WebCore/platform/text/TextCodecICU.h \
 	Source/WebCore/platform/text/TextDirection.h \
 	Source/WebCore/platform/text/TextEncoding.cpp \
 	Source/WebCore/platform/text/TextEncodingDetector.h \
@@ -6262,28 +6267,6 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/OpenGLShims.cpp \
 	Source/WebCore/platform/graphics/OpenGLShims.h
 endif # END USE_GLES2
-
-# ----
-# icu unicode backend
-# ----
-if USE_ICU_UNICODE
-webcore_sources += \
-	Source/WebCore/platform/text/TextCodecICU.cpp \
-	Source/WebCore/platform/text/TextCodecICU.h \
-	Source/WebCore/platform/text/TextBreakIteratorICU.cpp \
-	Source/WebCore/platform/text/TextBreakIteratorInternalICU.h \
-	Source/WebCore/platform/text/gtk/TextBreakIteratorInternalICUGtk.cpp
-endif
-
-# ----
-# glib unicode backend
-# ----
-if USE_GLIB_UNICODE
-webcore_sources += \
-	Source/WebCore/platform/text/gtk/TextCodecGtk.cpp \
-	Source/WebCore/platform/text/gtk/TextCodecGtk.h \
-	Source/WebCore/platform/text/gtk/TextBreakIteratorGtk.cpp
-endif
 
 if USE_GSTREAMER
 webcoregtk_sources += \

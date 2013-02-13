@@ -57,19 +57,6 @@ AC_ARG_WITH(target,
     [with_target="x11"])
 AC_MSG_RESULT([$with_target])
 
-AC_MSG_CHECKING([which Unicode backend to use])
-AC_ARG_WITH(unicode_backend, 
-    AC_HELP_STRING([--with-unicode-backend=@<:@icu/glib@:>@],
-        [Select Unicode backend (WARNING: the glib-based backend is slow, and incomplete) [default=icu]]),
-    [
-        case "$with_unicodebackend" in
-            icu|glib) ;;
-            *) AC_MSG_ERROR([Invalid Unicode backend: must be icu or glib.]) ;;
-         esac
-    ],
-    [with_unicode_backend="icu"])
-AC_MSG_RESULT([$with_unicode_backend])
-
 AC_MSG_CHECKING([whether to enable spellcheck support])
 AC_ARG_ENABLE([spellcheck],
     [AS_HELP_STRING([--enable-spellcheck],[enable support for spellcheck])],

@@ -1,3 +1,17 @@
+2013-02-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the GLib unicode backend
+        https://bugs.webkit.org/show_bug.cgi?id=109627
+
+        Reviewed by Benjamin Poulain.
+
+        Remove references to the GLib unicode backend from configuration.
+
+        * Source/autotools/FindDependencies.m4:
+        * Source/autotools/ReadCommandLineArguments.m4:
+        * Source/autotools/SetupAutoconfHeader.m4:
+        * Source/autotools/SetupAutomake.m4:
+
 2013-02-12  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Remove remaining traces of Web Intents

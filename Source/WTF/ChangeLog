@@ -1,3 +1,16 @@
+2013-02-12  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Remove the GLib unicode backend
+        https://bugs.webkit.org/show_bug.cgi?id=109627
+
+        Reviewed by Benjamin Poulain.
+
+        Remove references to the GLib unicode backend from WTF.
+
+        * GNUmakefile.list.am: Remove GLib unicode files from the source list.
+        * wtf/unicode/glib/UnicodeGLib.cpp: Removed.
+        * wtf/unicode/glib/UnicodeGLib.h: Removed.
+
 2013-02-12  Takeshi Yoshino  <tyoshino@google.com>
 
         Remove unnecessary and confusing includes from StreamBuffer.h.

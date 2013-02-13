@@ -106,34 +106,28 @@ GLIB_COMPILE_RESOURCES=`$PKG_CONFIG --variable glib_compile_resources gio-2.0`
 AC_SUBST(GLIB_COMPILE_RESOURCES)
 GLIB_GSETTINGS
 
-if test "$with_unicode_backend" = "icu"; then
-    # TODO: use pkg-config (after CFLAGS in their .pc files are cleaned up).
-    case "$host" in
-        *-*-darwin*)
-            UNICODE_CFLAGS="-I$srcdir/Source/JavaScriptCore/icu -I$srcdir/Source/WebCore/icu"
-            UNICODE_LIBS="-licucore"
-            ;;
-        *-*-mingw*)
-            UNICODE_CFLAGS=""
-            UNICODE_LIBS="-licui18n -licuuc"
-            ;;
-        *)
-            AC_PATH_PROG(icu_config, icu-config, no)
-            if test "$icu_config" = "no"; then
-                AC_MSG_ERROR([Cannot find icu-config. The ICU library is needed.])
-            fi
+# TODO: use pkg-config (after CFLAGS in their .pc files are cleaned up).
+case "$host" in
+    *-*-darwin*)
+        UNICODE_CFLAGS="-I$srcdir/Source/JavaScriptCore/icu -I$srcdir/Source/WebCore/icu"
+        UNICODE_LIBS="-licucore"
+        ;;
+    *-*-mingw*)
+        UNICODE_CFLAGS=""
+        UNICODE_LIBS="-licui18n -licuuc"
+        ;;
+    *)
+        AC_PATH_PROG(icu_config, icu-config, no)
+        if test "$icu_config" = "no"; then
+            AC_MSG_ERROR([Cannot find icu-config. The ICU library is needed.])
+        fi
 
-            # We don't use --cflags as this gives us a lot of things that we don't necessarily want,
-            # like debugging and optimization flags. See man (1) icu-config for more info.
-            UNICODE_CFLAGS=`$icu_config --cppflags`
-            UNICODE_LIBS=`$icu_config --ldflags-libsonly`
-            ;;
-    esac
-fi
-
-if test "$with_unicode_backend" = "glib"; then
-    PKG_CHECK_MODULES([UNICODE], [glib-2.0 pango >= pango_required_version])
-fi
+        # We don't use --cflags as this gives us a lot of things that we don't necessarily want,
+        # like debugging and optimization flags. See man (1) icu-config for more info.
+        UNICODE_CFLAGS=`$icu_config --cppflags`
+        UNICODE_LIBS=`$icu_config --ldflags-libsonly`
+        ;;
+esac
 
 AC_SUBST([UNICODE_CFLAGS])
 AC_SUBST([UNICODE_LIBS])

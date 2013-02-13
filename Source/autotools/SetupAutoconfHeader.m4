@@ -4,6 +4,7 @@ AC_DEFINE([WTF_USE_FREETYPE], [1], [ ])
 AC_DEFINE([WTF_USE_HARFBUZZ], [1], [ ])
 AC_DEFINE([WTF_USE_SOUP], [1], [ ])
 AC_DEFINE([WTF_USE_WEBP], [1], [ ])
+AC_DEFINE([WTF_USE_ICU_UNICODE], [1], [ ])
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE", [The gettext catalog name])
 
 if test "$enable_debug" = "yes"; then
@@ -46,12 +47,6 @@ fi
 if test "$with_target" = "x11"; then
     AC_DEFINE([MOZ_X11], [1], [ ])
     AC_DEFINE([WTF_PLATFORM_X11], [1], [Define if target is X11])
-fi
-
-if test "$with_unicode_backend" = "icu"; then
-    AC_DEFINE([WTF_USE_ICU_UNICODE], [1], [ ])
-else
-    AC_DEFINE([WTF_USE_GLIB_UNICODE], [1], [ ])
 fi
 
 if test "$enable_fast_malloc" = "no"; then
