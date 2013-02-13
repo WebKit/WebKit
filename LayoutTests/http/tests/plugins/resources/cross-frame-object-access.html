@@ -14,11 +14,14 @@ function checkLocationObject(l)
         return false;
     }
 
-    if (l.href) {
-        debug('could access top.location.href');
-        return false;
+    try {
+        if (l.href) {
+            debug('could access top.location.href');
+            return false;
+        }
+    } catch (e) {
+        return true;
     }
-    
     return true;
 }
 

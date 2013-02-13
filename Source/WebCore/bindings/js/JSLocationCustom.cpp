@@ -81,7 +81,9 @@ bool JSLocation::getOwnPropertySlotDelegate(ExecState* exec, PropertyName proper
     // but for now we have decided not to, partly because it seems silly to return "[Object Location]" in
     // such cases when normally the string form of Location would be the URL.
 
+    // FIXME: Move this message into the exception once http://wkbug.com/98050 is fixed.
     printErrorMessageForFrame(frame, message);
+    setDOMException(exec, SECURITY_ERR);
     slot.setUndefined();
     return true;
 }
