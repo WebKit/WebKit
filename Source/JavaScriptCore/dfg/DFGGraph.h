@@ -60,19 +60,19 @@ struct StorageAccessData {
 
 struct ResolveGlobalData {
     unsigned identifierNumber;
-    unsigned resolveOperationsIndex;
-    unsigned putToBaseOperationIndex;
+    ResolveOperations* resolveOperations;
+    PutToBaseOperation* putToBaseOperation;
     unsigned resolvePropertyIndex;
 };
 
 struct ResolveOperationData {
     unsigned identifierNumber;
-    unsigned resolveOperationsIndex;
-    unsigned putToBaseOperationIndex;
+    ResolveOperations* resolveOperations;
+    PutToBaseOperation* putToBaseOperation;
 };
 
 struct PutToBaseOperationData {
-    unsigned putToBaseOperationIndex;
+    PutToBaseOperation* putToBaseOperation;
 };
 
 enum AddSpeculationMode {

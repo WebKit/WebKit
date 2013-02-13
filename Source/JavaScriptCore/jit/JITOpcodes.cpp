@@ -1230,7 +1230,7 @@ void JIT::emit_op_put_to_base(Instruction* currentInstruction)
     int id = currentInstruction[2].u.operand;
     int value = currentInstruction[3].u.operand;
 
-    PutToBaseOperation* operation = m_codeBlock->putToBaseOperation(currentInstruction[4].u.operand);
+    PutToBaseOperation* operation = currentInstruction[4].u.putToBaseOperation;
     switch (operation->m_kind) {
     case PutToBaseOperation::GlobalVariablePutChecked:
         addSlowCase(branchTest8(NonZero, AbsoluteAddress(operation->m_predicatePointer)));
@@ -1522,42 +1522,42 @@ void JIT::emitSlow_link_resolve_operations(ResolveOperations* resolveOperations,
 
 void JIT::emit_op_resolve(Instruction* currentInstruction)
 {
-    ResolveOperations* operations = m_codeBlock->resolveOperations(currentInstruction[3].u.operand);
+    ResolveOperations* operations = currentInstruction[3].u.resolveOperations;
     int dst = currentInstruction[1].u.operand;
     emit_resolve_operations(operations, 0, &dst);
 }
 
 void JIT::emitSlow_op_resolve(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    ResolveOperations* operations = m_codeBlock->resolveOperations(currentInstruction[3].u.operand);
+    ResolveOperations* operations = currentInstruction[3].u.resolveOperations;
     emitSlow_link_resolve_operations(operations, iter);
     JITStubCall stubCall(this, cti_op_resolve);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->resolveOperations(currentInstruction[3].u.operand)));
+    stubCall.addArgument(TrustedImmPtr(currentInstruction[3].u.resolveOperations));
     stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_resolve_base(Instruction* currentInstruction)
 {
-    ResolveOperations* operations = m_codeBlock->resolveOperations(currentInstruction[4].u.operand);
+    ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
     int dst = currentInstruction[1].u.operand;
     emit_resolve_operations(operations, &dst, 0);
 }
 
 void JIT::emitSlow_op_resolve_base(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    ResolveOperations* operations = m_codeBlock->resolveOperations(currentInstruction[4].u.operand);
+    ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
     emitSlow_link_resolve_operations(operations, iter);
     JITStubCall stubCall(this, currentInstruction[3].u.operand ? cti_op_resolve_base_strict_put : cti_op_resolve_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[2].u.operand)));
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->resolveOperations(currentInstruction[4].u.operand)));
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->putToBaseOperation(currentInstruction[5].u.operand)));
+    stubCall.addArgument(TrustedImmPtr(currentInstruction[4].u.resolveOperations));
+    stubCall.addArgument(TrustedImmPtr(currentInstruction[5].u.putToBaseOperation));
     stubCall.callWithValueProfiling(currentInstruction[1].u.operand);
 }
 
 void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
 {
-    ResolveOperations* operations = m_codeBlock->resolveOperations(currentInstruction[4].u.operand);
+    ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
     int base = currentInstruction[1].u.operand;
     int value = currentInstruction[2].u.operand;
     emit_resolve_operations(operations, &base, &value);
@@ -1565,19 +1565,19 @@ void JIT::emit_op_resolve_with_base(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_resolve_with_base(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    ResolveOperations* operations = m_codeBlock->resolveOperations(currentInstruction[4].u.operand);
+    ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
     emitSlow_link_resolve_operations(operations, iter);
     JITStubCall stubCall(this, cti_op_resolve_with_base);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->resolveOperations(currentInstruction[4].u.operand)));
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->putToBaseOperation(currentInstruction[5].u.operand)));
+    stubCall.addArgument(TrustedImmPtr(currentInstruction[4].u.resolveOperations));
+    stubCall.addArgument(TrustedImmPtr(currentInstruction[5].u.putToBaseOperation));
     stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
 void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
 {
-    ResolveOperations* operations = m_codeBlock->resolveOperations(currentInstruction[4].u.operand);
+    ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
     int base = currentInstruction[1].u.operand;
     int value = currentInstruction[2].u.operand;
     emit_resolve_operations(operations, &base, &value);
@@ -1585,12 +1585,12 @@ void JIT::emit_op_resolve_with_this(Instruction* currentInstruction)
 
 void JIT::emitSlow_op_resolve_with_this(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
 {
-    ResolveOperations* operations = m_codeBlock->resolveOperations(currentInstruction[4].u.operand);
+    ResolveOperations* operations = currentInstruction[4].u.resolveOperations;
     emitSlow_link_resolve_operations(operations, iter);
     JITStubCall stubCall(this, cti_op_resolve_with_this);
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(currentInstruction[3].u.operand)));
     stubCall.addArgument(TrustedImm32(currentInstruction[1].u.operand));
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->resolveOperations(currentInstruction[4].u.operand)));
+    stubCall.addArgument(TrustedImmPtr(currentInstruction[4].u.resolveOperations));
     stubCall.callWithValueProfiling(currentInstruction[2].u.operand);
 }
 
@@ -1599,9 +1599,8 @@ void JIT::emitSlow_op_put_to_base(Instruction* currentInstruction, Vector<SlowCa
     int base = currentInstruction[1].u.operand;
     int id = currentInstruction[2].u.operand;
     int value = currentInstruction[3].u.operand;
-    int operation = currentInstruction[4].u.operand;
 
-    PutToBaseOperation* putToBaseOperation = m_codeBlock->putToBaseOperation(currentInstruction[4].u.operand);
+    PutToBaseOperation* putToBaseOperation = currentInstruction[4].u.putToBaseOperation;
     switch (putToBaseOperation->m_kind) {
     case PutToBaseOperation::VariablePut:
         return;
@@ -1629,7 +1628,7 @@ void JIT::emitSlow_op_put_to_base(Instruction* currentInstruction, Vector<SlowCa
     stubCall.addArgument(TrustedImm32(base));
     stubCall.addArgument(TrustedImmPtr(&m_codeBlock->identifier(id)));
     stubCall.addArgument(TrustedImm32(value));
-    stubCall.addArgument(TrustedImmPtr(m_codeBlock->putToBaseOperation(operation)));
+    stubCall.addArgument(TrustedImmPtr(putToBaseOperation));
     stubCall.call();
 }
 

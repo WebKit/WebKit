@@ -525,11 +525,8 @@ _llint_op_in:
     dispatch(4)
 
 macro getPutToBaseOperationField(scratch, scratch1, fieldOffset, fieldGetter)
-    loadisFromInstruction(4, scratch)
-    mulp sizeof PutToBaseOperation, scratch, scratch
-    loadp CodeBlock[cfr], scratch1
-    loadp VectorBufferOffset + CodeBlock::m_putToBaseOperations[scratch1], scratch1
-    fieldGetter(fieldOffset[scratch1, scratch, 1])
+    loadpFromInstruction(4, scratch)
+    fieldGetter(fieldOffset[scratch])
 end
 
 macro moveJSValueFromRegisterWithoutProfiling(value, destBuffer, destOffsetReg)
@@ -577,12 +574,9 @@ _llint_op_put_to_base:
     callSlowPath(_llint_slow_path_put_to_base)
     dispatch(5)
 
-macro getResolveOperation(resolveOperationIndex, dest, scratch)
-    loadisFromInstruction(resolveOperationIndex, dest)
-    mulp sizeof ResolveOperations, dest, dest
-    loadp CodeBlock[cfr], scratch
-    loadp VectorBufferOffset + CodeBlock::m_resolveOperations[scratch], scratch
-    loadp VectorBufferOffset[scratch, dest, 1], dest
+macro getResolveOperation(resolveOperationIndex, dest)
+    loadpFromInstruction(resolveOperationIndex, dest)
+    loadp VectorBufferOffset[dest], dest
 end
 
 macro getScope(loadInitialScope, scopeCount, dest, scratch)
@@ -645,7 +639,7 @@ end
 
 _llint_op_resolve_global_property:
     traceExecution()
-    getResolveOperation(3, t0, t1)
+    getResolveOperation(3, t0)
     loadp CodeBlock[cfr], t1
     loadp CodeBlock::m_globalObject[t1], t1
     loadp ResolveOperation::m_structure[t0], t2
@@ -664,7 +658,7 @@ _llint_op_resolve_global_property:
 
 _llint_op_resolve_global_var:
     traceExecution()
-    getResolveOperation(3, t0, t1)
+    getResolveOperation(3, t0)
     loadp ResolveOperation::m_registerAddress[t0], t0
     loadisFromInstruction(1, t1)
     moveJSValueFromSlot(t0, cfr, t1, 4, t3)
@@ -686,13 +680,13 @@ end
 
 _llint_op_resolve_scoped_var:
     traceExecution()
-    getResolveOperation(3, t0, t1)
+    getResolveOperation(3, t0)
     resolveScopedVarBody(t0)
     dispatch(5)
     
 _llint_op_resolve_scoped_var_on_top_scope:
     traceExecution()
-    getResolveOperation(3, t0, t1)
+    getResolveOperation(3, t0)
 
     # Load destination index
     loadisFromInstruction(1, t3)
@@ -709,7 +703,7 @@ _llint_op_resolve_scoped_var_on_top_scope:
 
 _llint_op_resolve_scoped_var_with_top_scope_check:
     traceExecution()
-    getResolveOperation(3, t0, t1)
+    getResolveOperation(3, t0)
     # First ResolveOperation tells us what register to check
     loadis ResolveOperation::m_activationRegister[t0], t1
 
@@ -736,7 +730,7 @@ _llint_op_resolve_scoped_var_with_top_scope_check:
 _llint_op_resolve:
 .llint_op_resolve_local:
     traceExecution()
-    getResolveOperation(3, t0, t1)
+    getResolveOperation(3, t0)
     btpz t0, .noInstructions
     loadis ResolveOperation::m_operation[t0], t1
     bineq t1, ResolveOperationSkipScopes, .notSkipScopes
@@ -772,7 +766,7 @@ _llint_op_resolve_base_to_global_dynamic:
 
 _llint_op_resolve_base_to_scope:
     traceExecution()
-    getResolveOperation(4, t0, t1)
+    getResolveOperation(4, t0)
     # First ResolveOperation is to skip scope chain nodes
     getScope(macro(dest)
                  loadp ScopeChain + PayloadOffset[cfr], dest
@@ -789,7 +783,7 @@ _llint_op_resolve_base_to_scope:
 
 _llint_op_resolve_base_to_scope_with_top_scope_check:
     traceExecution()
-    getResolveOperation(4, t0, t1)
+    getResolveOperation(4, t0)
     # First ResolveOperation tells us what register to check
     loadis ResolveOperation::m_activationRegister[t0], t1
 
@@ -827,7 +821,7 @@ _llint_op_ensure_property_exists:
 
 macro interpretResolveWithBase(opcodeLength, slowPath)
     traceExecution()
-    getResolveOperation(4, t0, t1)
+    getResolveOperation(4, t0)
     btpz t0, .slowPath
 
     loadp ScopeChain[cfr], t3

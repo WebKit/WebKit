@@ -569,16 +569,6 @@ public:
         return &m_jit.codeBlock()->identifier(index);
     }
 
-    ResolveOperations* resolveOperations(unsigned index)
-    {
-        return m_jit.codeBlock()->resolveOperations(index);
-    }
-
-    PutToBaseOperation* putToBaseOperation(unsigned index)
-    {
-        return m_jit.codeBlock()->putToBaseOperation(index);
-    }
-
     // Spill all VirtualRegisters back to the JSStack.
     void flushRegisters()
     {

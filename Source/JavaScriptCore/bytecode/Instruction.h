@@ -33,6 +33,7 @@
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "PropertySlot.h"
+#include "ResolveOperation.h"
 #include "SpecialPointer.h"
 #include "Structure.h"
 #include "StructureChain.h"
@@ -220,6 +221,8 @@ namespace JSC {
             ObjectAllocationProfile* objectAllocationProfile;
             void* pointer;
             bool* predicatePointer;
+            ResolveOperations* resolveOperations;
+            PutToBaseOperation* putToBaseOperation;
         } u;
         
     private:

@@ -1325,7 +1325,7 @@ void JIT::emit_op_put_to_base(Instruction* currentInstruction)
     int id = currentInstruction[2].u.operand;
     int value = currentInstruction[3].u.operand;
 
-    PutToBaseOperation* operation = m_codeBlock->putToBaseOperation(currentInstruction[4].u.operand);
+    PutToBaseOperation* operation = currentInstruction[4].u.putToBaseOperation;
 
 
     switch (operation->m_kind) {

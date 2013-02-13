@@ -1,3 +1,53 @@
+2013-02-13  Oliver Hunt  <oliver@apple.com>
+
+        Remove unnecessary indirection to non-local variable access operations
+        https://bugs.webkit.org/show_bug.cgi?id=109724
+
+        Reviewed by Filip Pizlo.
+
+        Linked bytecode now stores a direct pointer to the resolve operation
+        vectors, so the interpreter no longer needs a bunch of indirection to
+        to perform non-local lookup.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/Instruction.h:
+        * dfg/DFGByteCodeParser.cpp:
+        (ByteCodeParser):
+        (InlineStackEntry):
+        (JSC::DFG::ByteCodeParser::parseResolveOperations):
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (JSC::DFG::ByteCodeParser::InlineStackEntry::InlineStackEntry):
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canInlineOpcode):
+        * dfg/DFGGraph.h:
+        (ResolveGlobalData):
+        (ResolveOperationData):
+        (PutToBaseOperationData):
+        * dfg/DFGSpeculativeJIT.h:
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_put_to_base):
+        (JSC::JIT::emit_op_resolve):
+        (JSC::JIT::emitSlow_op_resolve):
+        (JSC::JIT::emit_op_resolve_base):
+        (JSC::JIT::emitSlow_op_resolve_base):
+        (JSC::JIT::emit_op_resolve_with_base):
+        (JSC::JIT::emitSlow_op_resolve_with_base):
+        (JSC::JIT::emit_op_resolve_with_this):
+        (JSC::JIT::emitSlow_op_resolve_with_this):
+        (JSC::JIT::emitSlow_op_put_to_base):
+        * jit/JITOpcodes32_64.cpp:
+        (JSC::JIT::emit_op_put_to_base):
+        * llint/LLIntSlowPaths.cpp:
+        (JSC::LLInt::LLINT_SLOW_PATH_DECL):
+        * llint/LowLevelInterpreter.asm:
+
 2013-02-13  Zoltan Herczeg  <zherczeg@webkit.org>
 
         replaceWithJump should not decrease the offset by 1 on ARM traditional.

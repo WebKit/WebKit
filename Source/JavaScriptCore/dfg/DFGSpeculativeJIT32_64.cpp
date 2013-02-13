@@ -4712,7 +4712,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolve, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex));
+        callOperation(operationResolve, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), data.resolveOperations);
         jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
         break;
     }
@@ -4722,7 +4722,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolveBase, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex), putToBaseOperation(data.putToBaseOperationIndex));
+        callOperation(operationResolveBase, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
         jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
         break;
     }
@@ -4732,7 +4732,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRResult resultPayload(this);
         GPRResult2 resultTag(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolveBaseStrictPut, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex), putToBaseOperation(data.putToBaseOperationIndex));
+        callOperation(operationResolveBaseStrictPut, resultTag.gpr(), resultPayload.gpr(), identifier(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
         jsValueResult(resultTag.gpr(), resultPayload.gpr(), node);
         break;
     }
@@ -4749,7 +4749,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg resultPayloadGPR = resultPayload.gpr();
 
         ResolveGlobalData& data = m_jit.graph().m_resolveGlobalData[node->resolveGlobalDataIndex()];
-        ResolveOperation* resolveOperationAddress = &(m_jit.codeBlock()->resolveOperations(data.resolveOperationsIndex)->data()[data.resolvePropertyIndex]);
+        ResolveOperation* resolveOperationAddress = &(data.resolveOperations->data()[data.resolvePropertyIndex]);
 
         // Check Structure of global object
         m_jit.move(JITCompiler::TrustedImmPtr(m_jit.globalObjectFor(node->codeOrigin)), globalObjectGPR);

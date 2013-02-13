@@ -4622,7 +4622,7 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRResult result(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolve, result.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex));
+        callOperation(operationResolve, result.gpr(), identifier(data.identifierNumber), data.resolveOperations);
         jsValueResult(result.gpr(), node);
         break;
     }
@@ -4631,7 +4631,7 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRResult result(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolveBase, result.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex), putToBaseOperation(data.putToBaseOperationIndex));
+        callOperation(operationResolveBase, result.gpr(), identifier(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
         jsValueResult(result.gpr(), node);
         break;
     }
@@ -4640,7 +4640,7 @@ void SpeculativeJIT::compile(Node* node)
         flushRegisters();
         GPRResult result(this);
         ResolveOperationData& data = m_jit.graph().m_resolveOperationsData[node->resolveOperationsDataIndex()];
-        callOperation(operationResolveBaseStrictPut, result.gpr(), identifier(data.identifierNumber), resolveOperations(data.resolveOperationsIndex), putToBaseOperation(data.putToBaseOperationIndex));
+        callOperation(operationResolveBaseStrictPut, result.gpr(), identifier(data.identifierNumber), data.resolveOperations, data.putToBaseOperation);
         jsValueResult(result.gpr(), node);
         break;
     }
@@ -4655,7 +4655,7 @@ void SpeculativeJIT::compile(Node* node)
         GPRReg resultGPR = result.gpr();
 
         ResolveGlobalData& data = m_jit.graph().m_resolveGlobalData[node->resolveGlobalDataIndex()];
-        ResolveOperation* resolveOperationAddress = &(m_jit.codeBlock()->resolveOperations(data.resolveOperationsIndex)->data()[data.resolvePropertyIndex]);
+        ResolveOperation* resolveOperationAddress = &(data.resolveOperations->data()[data.resolvePropertyIndex]);
 
         // Check Structure of global object
         m_jit.move(JITCompiler::TrustedImmPtr(m_jit.globalObjectFor(node->codeOrigin)), globalObjectGPR);

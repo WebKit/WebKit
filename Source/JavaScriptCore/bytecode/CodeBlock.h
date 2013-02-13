@@ -211,30 +211,6 @@ namespace JSC {
         int lineNumberForBytecodeOffset(unsigned bytecodeOffset);
         void expressionRangeForBytecodeOffset(unsigned bytecodeOffset, int& divot, int& startOffset, int& endOffset);
 
-        uint32_t addResolve()
-        {
-            m_resolveOperations.grow(m_resolveOperations.size() + 1);
-            return m_resolveOperations.size() - 1;
-        }
-        uint32_t addPutToBase()
-        {
-            m_putToBaseOperations.append(PutToBaseOperation(isStrictMode()));
-            return m_putToBaseOperations.size() - 1;
-        }
-
-        ResolveOperations* resolveOperations(uint32_t i)
-        {
-            return &m_resolveOperations[i];
-        }
-
-        PutToBaseOperation* putToBaseOperation(uint32_t i)
-        {
-            return &m_putToBaseOperations[i];
-        }
-
-        size_t numberOfResolveOperations() const { return m_resolveOperations.size(); }
-        size_t numberOfPutToBaseOperations() const { return m_putToBaseOperations.size(); }
-
 #if ENABLE(JIT)
 
         StructureStubInfo& getStubInfo(ReturnAddressPtr returnAddress)
@@ -882,22 +858,8 @@ namespace JSC {
         ALWAYS_INLINE bool isConstantRegisterIndex(int index) const { return index >= FirstConstantRegisterIndex; }
         ALWAYS_INLINE JSValue getConstant(int index) const { return m_constantRegisters[index - FirstConstantRegisterIndex].get(); }
 
-        unsigned addFunctionDecl(FunctionExecutable* n)
-        {
-            unsigned size = m_functionDecls.size();
-            m_functionDecls.append(WriteBarrier<FunctionExecutable>());
-            m_functionDecls.last().set(m_globalObject->globalData(), m_ownerExecutable.get(), n);
-            return size;
-        }
         FunctionExecutable* functionDecl(int index) { return m_functionDecls[index].get(); }
         int numberOfFunctionDecls() { return m_functionDecls.size(); }
-        unsigned addFunctionExpr(FunctionExecutable* n)
-        {
-            unsigned size = m_functionExprs.size();
-            m_functionExprs.append(WriteBarrier<FunctionExecutable>());
-            m_functionExprs.last().set(m_globalObject->globalData(), m_ownerExecutable.get(), n);
-            return size;
-        }
         FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
 
         RegExp* regexp(int index) const { return m_unlinkedCode->regexp(index); }
