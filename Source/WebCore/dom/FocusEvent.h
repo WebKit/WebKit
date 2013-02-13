@@ -78,36 +78,40 @@ inline FocusEvent* toFocusEvent(Event* event)
 
 class FocusEventDispatchMediator : public EventDispatchMediator {
 public:
-    static PassRefPtr<FocusEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+    static PassRefPtr<FocusEventDispatchMediator> create(PassRefPtr<FocusEvent>, PassRefPtr<Node> oldFocusedNode);
 private:
-    FocusEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+    FocusEventDispatchMediator(PassRefPtr<FocusEvent>, PassRefPtr<Node> oldFocusedNode);
+    FocusEvent* event() const { return static_cast<FocusEvent*>(EventDispatchMediator::event()); }
     virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
     RefPtr<Node> m_oldFocusedNode;
 };
 
 class BlurEventDispatchMediator : public EventDispatchMediator {
 public:
-    static PassRefPtr<BlurEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+    static PassRefPtr<BlurEventDispatchMediator> create(PassRefPtr<FocusEvent>, PassRefPtr<Node> newFocusedNode);
 private:
-    BlurEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+    BlurEventDispatchMediator(PassRefPtr<FocusEvent>, PassRefPtr<Node> newFocusedNode);
+    FocusEvent* event() const { return static_cast<FocusEvent*>(EventDispatchMediator::event()); }
     virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
     RefPtr<Node> m_newFocusedNode;
 };
 
 class FocusInEventDispatchMediator : public EventDispatchMediator {
 public:
-    static PassRefPtr<FocusInEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+    static PassRefPtr<FocusInEventDispatchMediator> create(PassRefPtr<FocusEvent>, PassRefPtr<Node> oldFocusedNode);
 private:
-    explicit FocusInEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> oldFocusedNode);
+    FocusInEventDispatchMediator(PassRefPtr<FocusEvent>, PassRefPtr<Node> oldFocusedNode);
+    FocusEvent* event() const { return static_cast<FocusEvent*>(EventDispatchMediator::event()); }
     virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
     RefPtr<Node> m_oldFocusedNode;
 };
 
 class FocusOutEventDispatchMediator : public EventDispatchMediator {
 public:
-    static PassRefPtr<FocusOutEventDispatchMediator> create(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+    static PassRefPtr<FocusOutEventDispatchMediator> create(PassRefPtr<FocusEvent>, PassRefPtr<Node> newFocusedNode);
 private:
-    explicit FocusOutEventDispatchMediator(PassRefPtr<Event>, PassRefPtr<Node> newFocusedNode);
+    FocusOutEventDispatchMediator(PassRefPtr<FocusEvent>, PassRefPtr<Node> newFocusedNode);
+    FocusEvent* event() const { return static_cast<FocusEvent*>(EventDispatchMediator::event()); }
     virtual bool dispatchEvent(EventDispatcher*) const OVERRIDE;
     RefPtr<Node> m_newFocusedNode;
 };
