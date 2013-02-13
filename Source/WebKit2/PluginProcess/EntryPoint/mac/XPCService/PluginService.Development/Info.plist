@@ -36,6 +36,8 @@
 		<string>Application</string>
 		<key>RunLoopType</key>
 		<string>_NSApplicationMain</string>
+		<key>JoinExistingSession</key>
+		<true/>
 		<key>_MultipleInstances</key>
 		<true/>
 	</dict>
