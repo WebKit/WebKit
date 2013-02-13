@@ -247,6 +247,7 @@ void ScrollingCoordinatorMac::clearStateTree()
 
 void ScrollingCoordinatorMac::ensureRootStateNodeForFrameView(FrameView* frameView)
 {
+    ASSERT(frameView->scrollLayerID());
     attachToStateTree(ScrollingNode, frameView->scrollLayerID(), 0);
 }
 
@@ -408,7 +409,10 @@ void ScrollingCoordinatorMac::commitTreeState()
 
 String ScrollingCoordinatorMac::scrollingStateTreeAsText() const
 {
-    return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText();
+    if (m_scrollingStateTree->rootStateNode())
+        return m_scrollingStateTree->rootStateNode()->scrollingStateTreeAsText();
+
+    return String();
 }
 
 } // namespace WebCore

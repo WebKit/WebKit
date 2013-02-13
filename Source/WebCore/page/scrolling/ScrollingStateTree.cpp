@@ -124,9 +124,10 @@ void ScrollingStateTree::clear()
 
 PassOwnPtr<ScrollingStateTree> ScrollingStateTree::commit()
 {
-    // This function clones and resets the current state tree, but leaves the tree structure intact. 
+    // This function clones and resets the current state tree, but leaves the tree structure intact.
     OwnPtr<ScrollingStateTree> treeStateClone = ScrollingStateTree::create();
-    treeStateClone->setRootStateNode(static_pointer_cast<ScrollingStateScrollingNode>(m_rootStateNode->cloneAndReset()));
+    if (m_rootStateNode)
+        treeStateClone->setRootStateNode(static_pointer_cast<ScrollingStateScrollingNode>(m_rootStateNode->cloneAndReset()));
 
     // Copy the IDs of the nodes that have been removed since the last commit into the clone.
     treeStateClone->m_nodesRemovedSinceLastCommit.swap(m_nodesRemovedSinceLastCommit);

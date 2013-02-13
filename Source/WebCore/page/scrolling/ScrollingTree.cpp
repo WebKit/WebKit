@@ -99,8 +99,9 @@ void ScrollingTree::updateBackForwardState(bool canGoBack, bool canGoForward)
 void ScrollingTree::handleWheelEvent(const PlatformWheelEvent& wheelEvent)
 {
     ASSERT(ScrollingThread::isCurrentThread());
-
-    m_rootNode->handleWheelEvent(wheelEvent);
+    
+    if (m_rootNode)
+        m_rootNode->handleWheelEvent(wheelEvent);
 }
 
 static void derefScrollingCoordinator(ScrollingCoordinator* scrollingCoordinator)
@@ -128,7 +129,10 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
     ASSERT(ScrollingThread::isCurrentThread());
 
     ScrollingStateScrollingNode* rootNode = scrollingStateTree->rootStateNode();
-    if (rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount) || rootNode->hasChangedProperty(ScrollingStateScrollingNode::NonFastScrollableRegion) || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer)) {
+    if (rootNode
+        && (rootNode->hasChangedProperty(ScrollingStateScrollingNode::WheelEventHandlerCount)
+            || rootNode->hasChangedProperty(ScrollingStateScrollingNode::NonFastScrollableRegion)
+            || rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))) {
         MutexLocker lock(m_mutex);
 
         if (rootNode->hasChangedProperty(ScrollingStateNode::ScrollLayer))
@@ -139,7 +143,8 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
             m_nonFastScrollableRegion = scrollingStateTree->rootStateNode()->nonFastScrollableRegion();
     }
     
-    TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, rootNode->requestedScrollPositionRepresentsProgrammaticScroll());
+    bool scrollRequestIsProgammatic = rootNode ? rootNode->requestedScrollPositionRepresentsProgrammaticScroll() : false;
+    TemporaryChange<bool> changeHandlingProgrammaticScroll(m_isHandlingProgrammaticScroll, scrollRequestIsProgammatic);
 
     removeDestroyedNodes(scrollingStateTree.get());
     updateTreeFromStateNode(rootNode);
@@ -147,6 +152,12 @@ void ScrollingTree::commitNewTreeState(PassOwnPtr<ScrollingStateTree> scrollingS
 
 void ScrollingTree::updateTreeFromStateNode(ScrollingStateNode* stateNode)
 {
+    if (!stateNode) {
+        m_nodeMap.clear();
+        m_rootNode = nullptr;
+        return;
+    }
+    
     // This fuction recurses through the ScrollingStateTree and updates the corresponding ScrollingTreeNodes.
     // Find the ScrollingTreeNode associated with the current stateNode using the shared ID and our HashMap.
     ScrollingTreeNodeMap::const_iterator it = m_nodeMap.find(stateNode->scrollingNodeID());

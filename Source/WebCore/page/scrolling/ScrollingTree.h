@@ -131,10 +131,6 @@ private:
     bool m_scrollingPerformanceLoggingEnabled;
     
     bool m_isHandlingProgrammaticScroll;
-
-#if PLATFORM(MAC)
-    RetainPtr<CALayer> m_debugInfoLayer;
-#endif
 };
 
 } // namespace WebCore
