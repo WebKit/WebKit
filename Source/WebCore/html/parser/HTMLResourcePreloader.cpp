@@ -31,24 +31,12 @@
 
 namespace WebCore {
 
-static bool isStringSafeToSendToAnotherThread(const String& string)
-{
-    StringImpl* impl = string.impl();
-    if (!impl)
-        return true;
-    if (impl->hasOneRef())
-        return true;
-    if (string.isEmpty())
-        return true;
-    return false;
-}
-
 bool PreloadRequest::isSafeToSendToAnotherThread() const
 {
-    return isStringSafeToSendToAnotherThread(m_initiator)
-        && isStringSafeToSendToAnotherThread(m_charset)
-        && isStringSafeToSendToAnotherThread(m_resourceURL)
-        && isStringSafeToSendToAnotherThread(m_baseURL.string());
+    return m_initiator.isSafeToSendToAnotherThread()
+        && m_charset.isSafeToSendToAnotherThread()
+        && m_resourceURL.isSafeToSendToAnotherThread()
+        && m_baseURL.isSafeToSendToAnotherThread();
 }
 
 KURL PreloadRequest::completeURL(Document* document)

@@ -37,6 +37,7 @@ public:
     {
         return adoptPtr(new PreloadRequest(initiator, resourceURL, baseURL, resourceType));
     }
+
     bool isSafeToSendToAnotherThread() const;
 
     CachedResourceRequest resourceRequest(Document*);
@@ -53,7 +54,8 @@ private:
         , m_baseURL(baseURL)
         , m_resourceType(resourceType)
         , m_crossOriginModeAllowsCookies(false)
-    { }
+    {
+    }
 
     KURL completeURL(Document*);
 
@@ -71,7 +73,8 @@ public:
     explicit HTMLResourcePreloader(Document* document)
         : m_document(document)
         , m_weakFactory(this)
-    { }
+    {
+    }
 
     void preload(PassOwnPtr<PreloadRequest>);
 

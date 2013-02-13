@@ -55,7 +55,7 @@ static bool isStartOrEndTag(const HTMLToken& token)
 
 class StartTagScanner {
 public:
-    explicit StartTagScanner(const AtomicString& tagName, const HTMLToken::AttributeList& attributes)
+    StartTagScanner(const AtomicString& tagName, const HTMLToken::AttributeList& attributes)
         : m_tagName(tagName)
         , m_linkIsStyleSheet(false)
         , m_linkMediaAttributeIsScreen(true)
@@ -245,34 +245,36 @@ bool HTMLPreloadScanner::processPossibleTemplateTag(const AtomicString& tagName,
 bool HTMLPreloadScanner::processPossibleStyleTag(const AtomicString& tagName, const HTMLToken& token)
 {
     ASSERT(isStartOrEndTag(token));
-    if (tagName == styleTag) {
-        m_inStyle = isStartTag(token);
-        if (!m_inStyle)
-            m_cssScanner.reset();
-        return true;
-    }
-    return false;
+    if (tagName != styleTag)
+        return false;
+
+    m_inStyle = isStartTag(token);
+
+    if (!m_inStyle)
+        m_cssScanner.reset();
+
+    return true;
 }
 
 bool HTMLPreloadScanner::processPossibleBaseTag(const AtomicString& tagName, const HTMLToken& token)
 {
     ASSERT(isStartTag(token));
-    if (tagName == baseTag) {
-        // The first <base> element is the one that wins.
-        if (!m_predictedBaseElementURL.isEmpty())
-            return true;
+    if (tagName != baseTag)
+        return false;
 
-        for (HTMLToken::AttributeList::const_iterator iter = token.attributes().begin(); iter != token.attributes().end(); ++iter) {
-            AtomicString attributeName(iter->name);
-            if (attributeName == hrefAttr) {
-                String hrefValue = StringImpl::create8BitIfPossible(iter->value);
-                m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefValue));
-                break;
-            }
-        }
+    // The first <base> element is the one that wins.
+    if (!m_predictedBaseElementURL.isEmpty())
         return true;
+
+    for (HTMLToken::AttributeList::const_iterator iter = token.attributes().begin(); iter != token.attributes().end(); ++iter) {
+        AtomicString attributeName(iter->name);
+        if (attributeName == hrefAttr) {
+            String hrefValue = StringImpl::create8BitIfPossible(iter->value);
+            m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefValue));
+            break;
+        }
     }
-    return false;
+    return true;
 }
 
 void HTMLPreloadScanner::processToken(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
