@@ -1,3 +1,9 @@
+2013-02-12  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix for VS2010 WebKit solution.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-02-11  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         Build fix: r142549 broke EFL build
