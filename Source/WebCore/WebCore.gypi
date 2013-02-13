@@ -2074,6 +2074,7 @@
             'page/AutoscrollController.h',
             'page/BarInfo.cpp',
             'page/BarInfo.h',
+            'page/CaptionUserPreferences.cpp',
             'page/Chrome.cpp',
             'page/Console.cpp',
             'page/ContentSecurityPolicy.cpp',

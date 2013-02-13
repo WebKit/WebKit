@@ -3,29 +3,40 @@ Test track user preferences.
 
 Set user languages to: ['no', 'es-ES', 'en', 'fr'].
 
-Test 1: track selected because of 'default' attribute
+Test 1: 'no' track selected because of user preferred language
 - creating tracks for: [en,fr,no].
-EVENT(load)
-EXPECTED (event.target.srclang == 'fr') OK
-EXPECTED (event.target.readyState == '2') OK
-
-Test 2: track selected because of original user preferred language
-- creating tracks for: [fr,en,no].
 EVENT(load)
 EXPECTED (event.target.srclang == 'no') OK
 EXPECTED (event.target.readyState == '2') OK
 
-Test 3: preferred language changed by selecting track from menu
+Test 2: 'no' track still selected because of language, overriding 'default' attribute
+- creating tracks for: [fr,en,no].
+-- 'en' track marked as default.
+EVENT(load)
+EXPECTED (event.target.srclang == 'no') OK
+EXPECTED (event.target.readyState == '2') OK
+
+Test 3: select 'fr' track from menu
 - show captions menu.
+EXPECTED (trackMenuItems[1].className == '') OK
+EXPECTED (trackMenuItems[2].className == '') OK
+EXPECTED (trackMenuItems[3].className == 'selected') OK
 - click on menu item 2.
-EXPECTED (video.textTracks[0].mode == 'showing') OK
-EXPECTED (video.textTracks[0].language == 'fr') OK
-- creating tracks for: [no,fr,en].
 EVENT(load)
 EXPECTED (event.target.srclang == 'fr') OK
 EXPECTED (event.target.readyState == '2') OK
+EXPECTED (video.textTracks[0].mode == 'showing') OK
+EXPECTED (video.textTracks[0].language == 'fr') OK
 
-Test 4: turning captions off from menu disables captions
+Test 4: preferred language was changed to 'fr' by selecting track from menu
+- creating tracks for: [ru,en,fr].
+EVENT(load)
+EXPECTED (event.target.srclang == 'fr') OK
+EXPECTED (event.target.readyState == '2') OK
+EXPECTED (video.textTracks[2].mode == 'showing') OK
+EXPECTED (video.textTracks[2].language == 'fr') OK
+
+Test 5: turning captions off from menu disables caption selection
 - show captions menu.
 - click on menu item 0.
 - creating tracks for: [ru,jp,en].

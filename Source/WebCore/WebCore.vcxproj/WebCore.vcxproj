@@ -1996,6 +1996,7 @@
     <ClCompile Include="..\page\animation\AnimationController.cpp" />
     <ClCompile Include="..\page\AutoscrollController.cpp" />
     <ClCompile Include="..\page\BarInfo.cpp" />
+    <ClCompile Include="..\page\CaptionUserPreferences.cpp" />
     <ClCompile Include="..\page\Chrome.cpp" />
     <ClCompile Include="..\page\animation\CompositeAnimation.cpp" />
     <ClCompile Include="..\page\Console.cpp" />

@@ -1747,6 +1747,7 @@ set(WebCore_SOURCES
 
     page/AutoscrollController.cpp
     page/BarInfo.cpp
+    page/CaptionUserPreferences.cpp
     page/Chrome.cpp
     page/Console.cpp
     page/ContentSecurityPolicy.cpp

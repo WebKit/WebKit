@@ -4102,6 +4102,7 @@ webcore_sources += \
 	Source/WebCore/page/AutoscrollController.h \
 	Source/WebCore/page/BarInfo.cpp \
 	Source/WebCore/page/BarInfo.h \
+	Source/WebCore/page/CaptionUserPreferences.cpp \
 	Source/WebCore/page/CaptionUserPreferences.h \
 	Source/WebCore/page/Chrome.cpp \
 	Source/WebCore/page/Chrome.h \

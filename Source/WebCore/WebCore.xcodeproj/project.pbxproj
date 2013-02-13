@@ -103,6 +103,7 @@
 		0720B0A114D3323500642955 /* GenericEventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 0720B09F14D3323500642955 /* GenericEventQueue.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0720B0A114D3323500642957 /* GestureEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 0720B09F14D3323500642957 /* GestureEvent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		072C8B11131C518600A4FCE9 /* MediaPlayerPrivateAVFoundation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 076F0D0912B8192700C26AA4 /* MediaPlayerPrivateAVFoundation.cpp */; };
+		072CA86116CB4DC3008AE131 /* CaptionUserPreferences.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */; };
 		0735EE6A0F40C5E4004A2604 /* MediaPlayerProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0753860214489E9800B78452 /* CachedTextTrack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0753860014489E9800B78452 /* CachedTextTrack.cpp */; };
 		0753860314489E9800B78452 /* CachedTextTrack.h in Headers */ = {isa = PBXBuildFile; fileRef = 0753860114489E9800B78452 /* CachedTextTrack.h */; };
@@ -7357,6 +7358,7 @@
 		0720B09F14D3323500642955 /* GenericEventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericEventQueue.h; sourceTree = "<group>"; };
 		0720B09F14D3323500642956 /* GestureEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GestureEvent.cpp; sourceTree = "<group>"; };
 		0720B09F14D3323500642957 /* GestureEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GestureEvent.h; sourceTree = "<group>"; };
+		072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CaptionUserPreferences.cpp; sourceTree = "<group>"; };
 		0735EE690F40C5E4004A2604 /* MediaPlayerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPlayerProxy.h; sourceTree = "<group>"; };
 		0753860014489E9800B78452 /* CachedTextTrack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedTextTrack.cpp; sourceTree = "<group>"; };
 		0753860114489E9800B78452 /* CachedTextTrack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedTextTrack.h; sourceTree = "<group>"; };
@@ -16301,6 +16303,7 @@
 				BC124EE40C2641CD009E2349 /* BarInfo.cpp */,
 				BC124EE50C2641CD009E2349 /* BarInfo.h */,
 				BC124EE60C2641CD009E2349 /* BarInfo.idl */,
+				072CA86016CB4DC3008AE131 /* CaptionUserPreferences.cpp */,
 				079D0867162F20E800DB8658 /* CaptionUserPreferences.h */,
 				079D0869162F21F900DB8658 /* CaptionUserPreferencesMac.h */,
 				079D086A162F21F900DB8658 /* CaptionUserPreferencesMac.mm */,
@@ -29384,6 +29387,7 @@
 				08F859D41463F9CD0067D933 /* SVGImageCache.cpp in Sources */,
 				08F859D41463F9CD0067D934 /* SVGImageForContainer.cpp in Sources */,
 				B2227A2C0D00BF220071B782 /* SVGImageElement.cpp in Sources */,
+				072CA86116CB4DC3008AE131 /* CaptionUserPreferences.cpp in Sources */,
 				B28C6A290D00C44800334AA4 /* SVGImageLoader.cpp in Sources */,
 				B2227A2F0D00BF220071B782 /* SVGLangSpace.cpp in Sources */,
 				B2227A320D00BF220071B782 /* SVGLength.cpp in Sources */,

@@ -253,7 +253,7 @@ public:
 
     void configureTextTrackGroupForLanguage(const TrackGroup&) const;
     void configureTextTracks();
-    void configureTextTrackGroup(const TrackGroup&) const;
+    void configureTextTrackGroup(const TrackGroup&);
 
     void toggleTrackAtIndex(int index, bool exclusive = true);
     static int textTracksOffIndex() { return -1; }
@@ -691,6 +691,7 @@ private:
 #if ENABLE(VIDEO_TRACK)
     bool m_tracksAreReady : 1;
     bool m_haveVisibleTextTrack : 1;
+    bool m_processingPreferenceChange : 1;
     float m_lastTextTrackUpdateTime;
 
     RefPtr<TextTrackList> m_textTracks;

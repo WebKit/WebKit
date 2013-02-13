@@ -11,6 +11,7 @@
             var expectedLanguage;
             var testStage = 0;
             var captionsButtonCoordinates;
+            var trackMenuItems;
 
             function showCaptionMenu()
             {
@@ -24,7 +25,7 @@
 
             function trackMenuList()
             {
-                var trackListElement = getTrackListElement();
+                trackListElement = getTrackListElement();
                 if (!trackListElement)
                     return;
 
@@ -46,8 +47,8 @@
             function selectCaptionMenuItem(index)
             {
                 consoleWrite("- click on menu item " + index + ".");
-                var trackListItems = trackMenuList();
-                var selectedTrackItem = trackListItems[index];
+                var trackMenuItems = trackMenuList();
+                var selectedTrackItem = trackMenuItems[index];
                 var boundingRect = selectedTrackItem.getBoundingClientRect();
                 var x = boundingRect.left + boundingRect.width / 2;
                 var y = boundingRect.top + boundingRect.height / 2;
@@ -72,8 +73,10 @@
                 track.src = 'data:text/vtt,'+encodeURIComponent("WEBVTT\n\n00:00:00.000 --> 00:00:01.000\nCaption 1\n");
                 track.setAttribute('srclang', language);
                 track.setAttribute('onload', 'trackLoaded()');
-                if (isDefault)
+                if (isDefault) {
+                    consoleWrite("-- '" + language + "' track marked as default.");
                     track.setAttribute('default', 'default');
+                }
                 video.appendChild(track);
             }
 
@@ -93,42 +96,59 @@
                 ++testStage;
                 switch (testStage) {
                 case 1:
-                    consoleWrite("<br>Test 1: track selected because of 'default' attribute");
-                    createTrackElements(['en', 'fr', 'no'], 1);
-                    expectedLanguage = 'fr';
+                    consoleWrite("<br>Test 1: 'no' track selected because of user preferred language");
+                    createTrackElements(['en', 'fr', 'no']);
+                    expectedLanguage = 'no';
                     break;
 
                 case 2:
-                    consoleWrite("<br>Test 2: track selected because of original user preferred language");
-                    createTrackElements(['fr', 'en', 'no']);
+                    consoleWrite("<br>Test 2: 'no' track still selected because of language, overriding 'default' attribute");
+                    createTrackElements(['fr', 'en', 'no'], 1);
                     expectedLanguage = 'no';
                     break;
 
                 case 3:
-                    consoleWrite("<br>Test 3: preferred language changed by selecting track from menu");
+                    // Clear the debug setting so it isn't considered in the track selection logic
+                    internals.settings.setShouldDisplayTrackKind('Captions', false);
+
+                    consoleWrite("<br>Test 3: select 'fr' track from menu");
                     showCaptionMenu();
                     break;
 
                 case 4:
+                    trackMenuItems = trackMenuList();
+                    testExpected("trackMenuItems[1].className", "");
+                    testExpected("trackMenuItems[2].className", "");
+                    testExpected("trackMenuItems[3].className", "selected");
+
                     selectCaptionMenuItem(2);
-                    testExpected("video.textTracks[0].mode", "showing");
-                    testExpected("video.textTracks[0].language", "fr");
                     expectedLanguage = 'fr';
-                    createTrackElements([ 'no', 'fr', 'en']);
                     break;
 
                 case 5:
-                    consoleWrite("<br>Test 4: turning captions off from menu disables captions");
-                    showCaptionMenu();
+                    testExpected("video.textTracks[0].mode", "showing");
+                    testExpected("video.textTracks[0].language", "fr");
+
+                    consoleWrite("<br>Test 4: preferred language was changed to 'fr' by selecting track from menu");
+                    createTrackElements(['ru', 'en', 'fr']);
+                    expectedLanguage = 'fr';
                     break;
 
                 case 6:
-                    selectCaptionMenuItem(0);
-                    createTrackElements([ 'ru', 'jp', 'en']);
-                    timer = setTimeout(nextStep, 250);
+                    testExpected("video.textTracks[2].mode", "showing");
+                    testExpected("video.textTracks[2].language", "fr");
+
+                    consoleWrite("<br>Test 5: turning captions off from menu disables caption selection");
+                    showCaptionMenu();
                     break;
 
                 case 7:
+                    selectCaptionMenuItem(0);
+                    createTrackElements([ 'ru', 'jp', 'en']);
+                    timer = setTimeout(nextStep, 100);
+                    break;
+
+                case 8:
                     for (var ndx = 0; ndx < video.textTracks.length; ++ndx)
                         testExpected("video.textTracks[" + ndx + "].mode", "disabled");
 
@@ -145,6 +165,7 @@
                 video.addEventListener('canplaythrough', nextStep);
                 consoleWrite("<br>Set user languages to: ['no', 'es-ES', 'en', 'fr'].");
                 internals.setUserPreferredLanguages(['no', 'es-ES', 'en', 'fr']);
+                internals.settings.setShouldDisplayTrackKind('Captions', true);
             }
         </script>
     </head>

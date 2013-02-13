@@ -46,13 +46,13 @@ public:
     virtual void setUserPrefersCaptions(bool) OVERRIDE;
     virtual float captionFontSizeScale(bool&) const OVERRIDE;
     virtual String captionsStyleSheetOverride() const OVERRIDE;
+
     virtual void registerForPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
-    virtual void unregisterForPreferencesChangedCallbacks(CaptionPreferencesChangedListener*) OVERRIDE;
 
     virtual void setPreferredLanguage(String) OVERRIDE;
     virtual Vector<String> preferredLanguages() const OVERRIDE;
 
-    void captionPreferencesChanged();
+    virtual void captionPreferencesChanged() OVERRIDE;
 #endif
 
     virtual String displayNameForTrack(TextTrack*) const OVERRIDE;
@@ -74,7 +74,6 @@ private:
 
     void updateCaptionStyleSheetOveride();
 
-    HashSet<CaptionPreferencesChangedListener*> m_captionPreferenceChangeListeners;
     bool m_listeningForPreferenceChanges;
 #endif
 };

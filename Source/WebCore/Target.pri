@@ -907,6 +907,7 @@ SOURCES += \
     page/animation/KeyframeAnimation.cpp \
     page/AutoscrollController.cpp \
     page/BarInfo.cpp \
+    page/CaptionUserPreferences.cpp \
     page/Chrome.cpp \
     page/Console.cpp \
     page/ContentSecurityPolicy.cpp \
@@ -2091,6 +2092,7 @@ HEADERS += \
     page/AdjustViewSizeOrNot.h \
     page/AutoscrollController.h \
     page/BarInfo.h \
+    page/CaptionUserPreferences.h \
     page/Chrome.h \
     page/Console.h \
     page/ConsoleTypes.h \
