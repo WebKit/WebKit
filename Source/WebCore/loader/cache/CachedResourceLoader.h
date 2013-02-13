@@ -112,7 +112,7 @@ public:
 
     bool shouldDeferImageLoad(const KURL&) const;
     
-    CachePolicy cachePolicy() const;
+    CachePolicy cachePolicy(CachedResource::Type) const;
     
     Frame* frame() const; // Can be null
     Document* document() const { return m_document; } // Can be null

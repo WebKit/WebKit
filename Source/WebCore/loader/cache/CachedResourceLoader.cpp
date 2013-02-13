@@ -584,7 +584,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Use;
     
     // CachePolicyHistoryBuffer uses the cache no matter what.
-    if (cachePolicy() == CachePolicyHistoryBuffer)
+    if (cachePolicy(type) == CachePolicyHistoryBuffer)
         return Use;
 
     // Don't reuse resources with Cache-control: no-store.
@@ -609,7 +609,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Use;
 
     // CachePolicyReload always reloads
-    if (cachePolicy() == CachePolicyReload) {
+    if (cachePolicy(type) == CachePolicyReload) {
         LOG(ResourceLoading, "CachedResourceLoader::determineRevalidationPolicy reloading due to CachePolicyReload.");
         return Reload;
     }
@@ -625,7 +625,7 @@ CachedResourceLoader::RevalidationPolicy CachedResourceLoader::determineRevalida
         return Use;
 
     // Check if the cache headers requires us to revalidate (cache expiration for example).
-    if (existingResource->mustRevalidateDueToCacheHeaders(cachePolicy())) {
+    if (existingResource->mustRevalidateDueToCacheHeaders(cachePolicy(type))) {
         // See if the resource has usable ETag or Last-modified headers.
         if (existingResource->canUseCacheValidator())
             return Revalidate;
@@ -701,9 +701,17 @@ void CachedResourceLoader::reloadImagesIfNotDeferred()
     }
 }
 
-CachePolicy CachedResourceLoader::cachePolicy() const
+CachePolicy CachedResourceLoader::cachePolicy(CachedResource::Type type) const
 {
-    return frame() ? frame()->loader()->subresourceCachePolicy() : CachePolicyVerify;
+    if (!frame())
+        return CachePolicyVerify;
+
+    if (type != CachedResource::MainResource)
+        return frame()->loader()->subresourceCachePolicy();
+    
+    if (frame()->loader()->loadType() == FrameLoadTypeReloadFromOrigin || frame()->loader()->loadType() == FrameLoadTypeReload)
+        return CachePolicyReload;
+    return CachePolicyVerify;
 }
 
 void CachedResourceLoader::removeCachedResource(CachedResource* resource) const

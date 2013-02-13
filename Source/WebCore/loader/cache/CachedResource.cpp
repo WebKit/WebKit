@@ -325,8 +325,8 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, const Reso
         const String& lastModified = resourceToRevalidate->response().httpHeaderField("Last-Modified");
         const String& eTag = resourceToRevalidate->response().httpHeaderField("ETag");
         if (!lastModified.isEmpty() || !eTag.isEmpty()) {
-            ASSERT(cachedResourceLoader->cachePolicy() != CachePolicyReload);
-            if (cachedResourceLoader->cachePolicy() == CachePolicyRevalidate)
+            ASSERT(cachedResourceLoader->cachePolicy(type()) != CachePolicyReload);
+            if (cachedResourceLoader->cachePolicy(type()) == CachePolicyRevalidate)
                 m_resourceRequest.setHTTPHeaderField("Cache-Control", "max-age=0");
             if (!lastModified.isEmpty())
                 m_resourceRequest.setHTTPHeaderField("If-Modified-Since", lastModified);
