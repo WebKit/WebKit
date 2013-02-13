@@ -206,9 +206,6 @@ webkit.org/b/62698 batterystatus
 # Network Information API is not supported yet in the chromium port.
 webkit.org/b/73528 networkinformation
 
-# The intent tag is not yet enabled.
-webkit.org/b/75123 webintents/intent-tag.html
-
 # CSS image-resolution is not yet enabled.
 webkit.org/b/85262 fast/css/image-resolution
 
@@ -935,9 +932,6 @@ fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 
 # Chromium disabled MATHML
 crbug.com/22554 mathml [ Skip ]
-
-# Chromium disabled web intents
-crbug.com/173194 webintents [ Skip ]
 
 # We disabled INPUT_TYPE_DATETIME.
 webkit.org/b/109272 fast/forms/datetime [ Skip ]

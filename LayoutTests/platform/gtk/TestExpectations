@@ -351,9 +351,6 @@ webkit.org/b/99031 java [ Skip ]
 # Directory upload is not enabled.
 webkit.org/b/99032 fast/forms/file/input-file-directory-upload.html [ Timeout ]
 
-# Web Intents is not yet enabled.
-webkit.org/b/99035 webintents [ Skip ]
-
 # Pointer Lock is not implemented.
 webkit.org/b/99036 pointer-lock [ Skip ]
 # As well as testing fullscreen functionality, these tests also utilize the pointer lock feature.

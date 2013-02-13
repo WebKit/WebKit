@@ -2148,9 +2148,6 @@ fast/events/platform-wheelevent-paging-y-in-non-scrolling-page.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-div.html
 fast/events/platform-wheelevent-paging-y-in-scrolling-page.html
 
-# Web Intents is not yet enabled.
-webintents/
-
 # Pointer Lock is not implemented.
 pointer-lock/
 http/tests/pointer-lock/

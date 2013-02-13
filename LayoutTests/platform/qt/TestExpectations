@@ -399,9 +399,6 @@ http/tests/multipart
 fast/hidpi
 svg/as-image/image-respects-deviceScaleFactor.html
 
-# Web Intents is not yet enabled.
-webintents/
-
 # Pointer Lock is not implemented.
 pointer-lock/
 http/tests/pointer-lock/
