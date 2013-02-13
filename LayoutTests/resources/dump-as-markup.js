@@ -222,7 +222,7 @@ Markup._get = function(node, depth, shadowRootList)
         if (shadowRootList && internals.address(node) in shadowRootList)
           str += "<shadow:root>";
         else
-          str += "#document-fragment";
+          str += "content";
     }
 
     if (node.namespaceURI = 'http://www.w3.org/1999/xhtml' && node.tagName == 'TEMPLATE')

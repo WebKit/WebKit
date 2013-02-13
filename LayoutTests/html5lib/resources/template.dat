@@ -6,7 +6,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         "Hello"
 
 #data
@@ -16,7 +16,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         "Hello"
 |   <body>
 
@@ -27,7 +27,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |   <body>
 |     <div>
 
@@ -38,7 +38,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         "Hello"
 |   <body>
 
@@ -49,7 +49,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <div>
 |   <body>
 
@@ -62,7 +62,7 @@
 |   <body>
 |     <div>
 |       <template>
-|         #document-fragment
+|         content
 |           <div>
 |             <span>
 |       <b>
@@ -76,7 +76,7 @@
 |   <body>
 |     <div>
 |       <template>
-|         #document-fragment
+|         content
 |           "Hello"
 
 #data
@@ -97,7 +97,7 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 
 #data
 <table><template></template></div>
@@ -108,7 +108,7 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 
 #data
 <table><div><template></template></div>
@@ -119,7 +119,7 @@
 |   <body>
 |     <div>
 |       <template>
-|         #document-fragment
+|         content
 |     <table>
 
 #data
@@ -132,7 +132,7 @@
 |     <div>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 
 #data
 <table>   <template></template></table>
@@ -144,7 +144,7 @@
 |     <table>
 |       "   "
 |       <template>
-|         #document-fragment
+|         content
 
 #data
 <table><tbody><template></template></tbody>
@@ -156,7 +156,7 @@
 |     <table>
 |       <tbody>
 |         <template>
-|           #document-fragment
+|           content
 
 #data
 <table><tbody><template></tbody></template>
@@ -168,7 +168,7 @@
 |     <table>
 |       <tbody>
 |         <template>
-|           #document-fragment
+|           content
 
 #data
 <table><tbody><template></template></tbody></table>
@@ -180,7 +180,7 @@
 |     <table>
 |       <tbody>
 |         <template>
-|           #document-fragment
+|           content
 
 #data
 <table><thead><template></template></thead>
@@ -192,7 +192,7 @@
 |     <table>
 |       <thead>
 |         <template>
-|           #document-fragment
+|           content
 
 #data
 <table><tfoot><template></template></tfoot>
@@ -204,7 +204,7 @@
 |     <table>
 |       <tfoot>
 |         <template>
-|           #document-fragment
+|           content
 
 #data
 <select><template></template></select>
@@ -215,7 +215,7 @@
 |   <body>
 |     <select>
 |       <template>
-|         #document-fragment
+|         content
 
 #data
 <select><template><option></option></template></select>
@@ -226,7 +226,7 @@
 |   <body>
 |     <select>
 |       <template>
-|         #document-fragment
+|         content
 |           <option>
 
 #data
@@ -236,7 +236,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <option>
 |         <option>
 |   <body>
@@ -250,7 +250,7 @@
 |   <body>
 |     <select>
 |       <template>
-|         #document-fragment
+|         content
 |       <option>
 
 #data
@@ -263,7 +263,7 @@
 |     <select>
 |       <option>
 |         <template>
-|           #document-fragment
+|           content
 
 #data
 <select><template>
@@ -274,7 +274,7 @@
 |   <body>
 |     <select>
 |       <template>
-|         #document-fragment
+|         content
 
 #data
 <select><option></option><template>
@@ -286,7 +286,7 @@
 |     <select>
 |       <option>
 |       <template>
-|         #document-fragment
+|         content
 
 #data
 <select><option></option><template><option>
@@ -298,7 +298,7 @@
 |     <select>
 |       <option>
 |       <template>
-|         #document-fragment
+|         content
 |           <option>
 
 #data
@@ -311,7 +311,7 @@
 |     <table>
 |       <thead>
 |         <template>
-|           #document-fragment
+|           content
 |             <td>
 
 #data
@@ -323,7 +323,7 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 |           <thead>
 
 #data
@@ -335,7 +335,7 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 |           <td>
 |             <div>
 
@@ -348,7 +348,7 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 |           <thead>
 
 #data
@@ -361,7 +361,7 @@
 |     <table>
 |       <thead>
 |         <template>
-|           #document-fragment
+|           content
 |             <tr>
 
 #data
@@ -373,7 +373,7 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 |           <tr>
 
 #data
@@ -387,7 +387,7 @@
 |       <tbody>
 |         <tr>
 |           <template>
-|             #document-fragment
+|             content
 |               <td>
 
 #data
@@ -399,10 +399,10 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 |           <tr>
 |             <template>
-|               #document-fragment
+|               content
 |                 <td>
 
 #data
@@ -414,10 +414,10 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 |           <tr>
 |             <template>
-|               #document-fragment
+|               content
 |                 <td>
 
 #data
@@ -429,7 +429,7 @@
 |   <body>
 |     <table>
 |       <template>
-|         #document-fragment
+|         content
 |           <td>
 
 #data
@@ -440,7 +440,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <td>
 
 #data
@@ -451,9 +451,9 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <tr>
 |         <td>
 
@@ -467,7 +467,7 @@
 |     <table>
 |       <colgroup>
 |         <template>
-|           #document-fragment
+|           content
 |             <col>
 
 #data
@@ -478,7 +478,7 @@
 |   <head>
 |   <frameset>
 |     <template>
-|       #document-fragment
+|       content
 |         <frame>
 
 #data
@@ -488,7 +488,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <frame>
 |         <frame>
 |   <body>
@@ -500,7 +500,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <div>
 |           <span>
 |         <span>
@@ -514,7 +514,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <div>
 |           <span>
 |         <span>
@@ -527,7 +527,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <script>
 |           "var i = 1;"
 |         <td>
@@ -540,7 +540,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <tr>
 |         <div>
 
@@ -552,7 +552,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <tr>
 |         <tr>
 |           <td>
@@ -565,7 +565,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <td>
 |         <td>
 
@@ -578,7 +578,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <td>
 |         <td>
 
@@ -590,7 +590,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <td>
 |         <td>
 
@@ -602,7 +602,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <td>
 |         <td>
 
@@ -614,7 +614,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <td>
 |         <td>
 
@@ -626,7 +626,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <tr>
 |         <tr>
 
@@ -638,7 +638,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <tr>
 |         <tr>
 
@@ -650,7 +650,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <tr>
 |         <tr>
 
@@ -662,7 +662,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <thead>
 |         <caption>
 |         <tbody>
@@ -675,7 +675,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <thead>
 |         <tbody>
 
@@ -687,7 +687,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <div>
 
 #data
@@ -698,7 +698,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <em>
 |           "Hello"
 
@@ -710,7 +710,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <!-- comment -->
 
 #data
@@ -721,7 +721,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <style>
 |         <td>
 
@@ -733,7 +733,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <meta>
 |         <td>
 
@@ -745,7 +745,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <link>
 |         <td>
 
@@ -757,9 +757,9 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <tr>
 |         <td>
 
@@ -773,7 +773,7 @@
 |     <table>
 |       <colgroup>
 |         <template>
-|           #document-fragment
+|           content
 |             <col>
 
 #data
@@ -785,7 +785,7 @@
 |   <body>
 |     a="b"
 |     <template>
-|       #document-fragment
+|       content
 |         <div>
 |         <div>
 
@@ -797,7 +797,7 @@
 |   a="b"
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <div>
 |           <span>
 |   <body>
@@ -810,7 +810,7 @@
 |   a="b"
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <col>
 |         <col>
 |   <body>
@@ -823,7 +823,7 @@
 |   a="b"
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <frame>
 |         <frame>
 |   <body>
@@ -836,10 +836,10 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <tr>
 |         <template>
-|           #document-fragment
+|           content
 |         <tr>
 |           <td>
 
@@ -851,10 +851,10 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <thead>
 |         <template>
-|           #document-fragment
+|           content
 |             <tr>
 |         <tbody>
 |           <tr>
@@ -868,12 +868,12 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <b>
 |               <template>
-|                 #document-fragment
+|                 content
 |         "text"
 
 #data
@@ -884,7 +884,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <col>
 
 #data
@@ -895,7 +895,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <col>
 
 #data
@@ -906,7 +906,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <col>
 
 #data
@@ -917,7 +917,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <col>
 
 #data
@@ -928,7 +928,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <col>
 
 #data
@@ -939,7 +939,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <col>
 
 #data
@@ -950,7 +950,7 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <i>
 |         <menu>
 |           <i>
@@ -964,11 +964,11 @@
 |   <head>
 |   <body>
 |     <template>
-|       #document-fragment
+|       content
 |         <div>
 |           "Foo"
 |         <template>
-|           #document-fragment
+|           content
 
 #data
 <body><div><template></div><tr><td>Foo</td></tr></template>
@@ -979,7 +979,7 @@
 |   <body>
 |     <div>
 |       <template>
-|         #document-fragment
+|         content
 |           <tr>
 |             <td>
 |               "Foo"
@@ -991,7 +991,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <sub>
 |           <table>
 |   <body>
@@ -1003,9 +1003,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |   <body>
 
 #data
@@ -1015,7 +1015,7 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <div>
 |   <body>
 
@@ -1026,9 +1026,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <div>
 |   <body>
 
@@ -1039,9 +1039,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <table>
 |   <body>
 
@@ -1052,9 +1052,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <tbody>
 |   <body>
 
@@ -1065,9 +1065,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <tr>
 |   <body>
 
@@ -1078,9 +1078,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <td>
 |   <body>
 
@@ -1091,9 +1091,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <caption>
 |   <body>
 
@@ -1104,9 +1104,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <colgroup>
 |   <body>
 
@@ -1117,9 +1117,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <col>
 |   <body>
 
@@ -1130,9 +1130,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <tbody>
 |             <select>
 |   <body>
@@ -1144,9 +1144,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <table>
 |             "Foo"
 |   <body>
@@ -1158,9 +1158,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <frame>
 |   <body>
 
@@ -1171,9 +1171,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <script>
 |               "var i"
 |   <body>
@@ -1185,9 +1185,9 @@
 | <html>
 |   <head>
 |     <template>
-|       #document-fragment
+|       content
 |         <template>
-|           #document-fragment
+|           content
 |             <style>
 |               "var i"
 |   <body>
