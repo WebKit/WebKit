@@ -43,6 +43,7 @@
 #include "WebView.h"
 #include "WebViewClient.h"
 
+#include <functional>
 #include <gtest/gtest.h>
 #include <list>
 #include <public/Platform.h>

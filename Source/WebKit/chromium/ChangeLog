@@ -1,3 +1,10 @@
+2013-02-12  Yoshifumi Inoue  <yosin@chromium.org>
+
+        Unreviewed. Build fix for Chromium-Win.
+        Add #include <functional> for std::bind1st.
+
+        * tests/PrerenderingTest.cpp:
+
 2013-02-12  Joshua Bell  <jsbell@chromium.org>
 
         [Chromium] IndexedDB/Worker crash during shutdown
