@@ -35,7 +35,6 @@
 #include "HTMLPropertiesCollection.h"
 
 #include "DOMSettableTokenList.h"
-#include "DOMStringList.h"
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Node.h"
@@ -122,7 +121,7 @@ void HTMLPropertiesCollection::updateNameCache() const
         for (HTMLElement* element = virtualItemAfter(refElement, 0); element; element = virtualItemAfter(refElement, element)) {
             DOMSettableTokenList* itemProperty = element->itemProp();
             for (unsigned propertyIndex = 0; propertyIndex < itemProperty->length(); ++propertyIndex)
-                updatePropertyCache(element, itemProperty->item(propertyIndex));
+                updatePropertyCache(itemProperty->item(propertyIndex));
         }
     }
 
