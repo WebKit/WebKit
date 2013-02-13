@@ -225,6 +225,49 @@ void FilterContextOpenCL::openCLTransformColorSpace(OpenCLHandle& source, IntRec
     source = destination;
 }
 
+static const char* fillKernelProgram =
+PROGRAM_STR(
+__kernel void fill(__write_only image2d_t destination, float r, float g, float b, float a)
+{
+    float4 sourcePixel = (float4)(r, g, b, a);
+    write_imagef(destination, (int2)(get_global_id(0), get_global_id(1)), sourcePixel);
+}
+);
+
+inline bool FilterContextOpenCL::compileFill()
+{
+    if (m_fillWasCompiled || inError())
+        return !inError();
+
+    m_fillWasCompiled = true;
+
+    if (isResourceAllocationFailed((m_fillProgram = compileProgram(fillKernelProgram))))
+        return false;
+    if (isResourceAllocationFailed((m_fill = kernelByName(m_fillProgram, "fill"))))
+        return false;
+    return true;
+}
+
+void FilterContextOpenCL::fill(cl_mem image, IntSize imageSize, Color color)
+{
+    if (!m_context || inError())
+        return;
+
+    compileFill();
+
+    float r, g, b, a;
+
+    color.getRGBA(r, g, b, a);
+
+    RunKernel kernel(this, m_fill, imageSize.width(), imageSize.height());
+    kernel.addArgument(image);
+    kernel.addArgument(r);
+    kernel.addArgument(g);
+    kernel.addArgument(b);
+    kernel.addArgument(a);
+    kernel.run();
+}
+
 cl_program FilterContextOpenCL::compileProgram(const char* source)
 {
     cl_program program;

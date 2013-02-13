@@ -51,6 +51,9 @@ public:
         , m_transformColorSpaceWasCompiled(false)
         , m_transformColorSpaceProgram(0)
         , m_transformColorSpaceKernel(0)
+        , m_fillWasCompiled(false)
+        , m_fillProgram(0)
+        , m_fill(0)
         , m_colorMatrixWasCompiled(false)
         , m_colorMatrixProgram(0)
         , m_matrixOperation(0)
@@ -78,6 +81,9 @@ public:
     void destroyContext();
 
     OpenCLHandle createOpenCLImage(IntSize);
+
+    inline bool compileFill();
+    void fill(cl_mem, IntSize, Color);
 
     inline bool compileTransformColorSpaceProgram();
     void openCLTransformColorSpace(OpenCLHandle&, IntRect, ColorSpace, ColorSpace);
@@ -176,6 +182,10 @@ private:
     bool m_transformColorSpaceWasCompiled;
     cl_program m_transformColorSpaceProgram;
     cl_kernel m_transformColorSpaceKernel;
+
+    bool m_fillWasCompiled;
+    cl_program m_fillProgram;
+    cl_kernel m_fill;
 
     bool m_colorMatrixWasCompiled;
     cl_program m_colorMatrixProgram;

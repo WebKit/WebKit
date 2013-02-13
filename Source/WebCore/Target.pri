@@ -4219,6 +4219,7 @@ contains(DEFINES, ENABLE_OPENCL=1) {
     SOURCES += \
         platform/graphics/gpu/opencl/FilterContextOpenCL.cpp \
         platform/graphics/gpu/opencl/OpenCLFEColorMatrix.cpp \
+        platform/graphics/gpu/opencl/OpenCLFEFlood.cpp \
         platform/graphics/gpu/opencl/OpenCLFESourceAlpha.cpp \
         platform/graphics/gpu/opencl/OpenCLFESourceGraphic.cpp \
         platform/graphics/gpu/opencl/OpenCLFETurbulence.cpp
