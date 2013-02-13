@@ -921,19 +921,15 @@ void Element::classAttributeChanged(const AtomicString& newClassString)
     bool shouldInvalidateStyle = false;
 
     if (classStringHasClassName(newClassString)) {
-        const ElementAttributeData* attributeData = ensureAttributeData();
         const bool shouldFoldCase = document()->inQuirksMode();
-        const SpaceSplitString oldClasses = attributeData->classNames();
-
-        attributeData->setClass(newClassString, shouldFoldCase);
-
-        const SpaceSplitString& newClasses = attributeData->classNames();
+        const SpaceSplitString oldClasses = attributeData()->classNames();
+        attributeData()->setClass(newClassString, shouldFoldCase);
+        const SpaceSplitString& newClasses = attributeData()->classNames();
         shouldInvalidateStyle = testShouldInvalidateStyle && checkSelectorForClassChange(oldClasses, newClasses, *styleResolver);
-    } else if (const ElementAttributeData* attributeData = this->attributeData()) {
-        const SpaceSplitString& oldClasses = attributeData->classNames();
+    } else {
+        const SpaceSplitString& oldClasses = attributeData()->classNames();
         shouldInvalidateStyle = testShouldInvalidateStyle && checkSelectorForClassChange(oldClasses, *styleResolver);
-
-        attributeData->clearClass();
+        attributeData()->clearClass();
     }
 
     if (hasRareData())
@@ -962,14 +958,13 @@ bool Element::shouldInvalidateDistributionWhenAttributeChanged(ElementShadow* el
     if (name == HTMLNames::classAttr) {
         const AtomicString& newClassString = newValue;
         if (classStringHasClassName(newClassString)) {
-            const ElementAttributeData* attributeData = ensureAttributeData();
             const bool shouldFoldCase = document()->inQuirksMode();
-            const SpaceSplitString& oldClasses = attributeData->classNames();
+            const SpaceSplitString& oldClasses = attributeData()->classNames();
             const SpaceSplitString newClasses(newClassString, shouldFoldCase);
             if (checkSelectorForClassChange(oldClasses, newClasses, featureSet))
                 return true;
-        } else if (const ElementAttributeData* attributeData = this->attributeData()) {
-            const SpaceSplitString& oldClasses = attributeData->classNames();
+        } else {
+            const SpaceSplitString& oldClasses = attributeData()->classNames();
             if (checkSelectorForClassChange(oldClasses, featureSet))
                 return true;
         }

@@ -373,7 +373,6 @@ public:
 
     const ElementAttributeData* attributeData() const { return m_attributeData.get(); }
     ElementAttributeData* mutableAttributeData();
-    const ElementAttributeData* ensureAttributeData();
     const ElementAttributeData* updatedAttributeData() const;
     const ElementAttributeData* ensureUpdatedAttributeData() const;
 
@@ -782,13 +781,6 @@ inline const ElementAttributeData* Element::updatedAttributeData() const
 {
     updateInvalidAttributes();
     return attributeData();
-}
-
-inline const ElementAttributeData* Element::ensureAttributeData()
-{
-    if (attributeData())
-        return attributeData();
-    return mutableAttributeData();
 }
 
 inline const ElementAttributeData* Element::ensureUpdatedAttributeData() const

@@ -79,7 +79,7 @@ public:
 
     virtual AffineTransform* supplementalTransform() { return 0; }
 
-    void invalidateSVGAttributes() { ensureAttributeData()->m_animatedSVGAttributesAreDirty = true; }
+    void invalidateSVGAttributes() { mutableAttributeData()->m_animatedSVGAttributesAreDirty = true; }
 
     const HashSet<SVGElementInstance*>& instancesForElement() const;
 
