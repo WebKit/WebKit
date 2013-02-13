@@ -155,7 +155,7 @@ void ThreadableBlobRegistry::unregisterBlobURL(const KURL&)
 {
 }
 
-PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const KURL& url)
+PassRefPtr<SecurityOrigin> ThreadableBlobRegistry::getCachedOrigin(const KURL&)
 {
     return 0;
 }

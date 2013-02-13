@@ -84,6 +84,8 @@ static PassRefPtr<SecurityOrigin> getCachedOrigin(const KURL& url)
 #if ENABLE(BLOB)
     if (url.protocolIs("blob"))
         return ThreadableBlobRegistry::getCachedOrigin(url);
+#else
+    UNUSED_PARAM(url);
 #endif
     return 0;
 }
