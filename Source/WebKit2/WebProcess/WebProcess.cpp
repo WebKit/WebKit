@@ -163,10 +163,10 @@ WebProcess::WebProcess()
     , m_usesNetworkProcess(false)
     , m_webResourceLoadScheduler(new WebResourceLoadScheduler)
 #endif
+    , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 #if USE(SOUP)
     , m_soupRequestManager(this)
 #endif
-    , m_pluginProcessConnectionManager(PluginProcessConnectionManager::create())
 {
 #if USE(PLATFORM_STRATEGIES)
     // Initialize our platform strategies.
