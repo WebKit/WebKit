@@ -93,7 +93,7 @@ double MediaSource::duration() const
 
 void MediaSource::setDuration(double duration, ExceptionCode& ec)
 {
-    if (duration < 0.0 || isnan(duration)) {
+    if (duration < 0.0 || std::isnan(duration)) {
         ec = INVALID_ACCESS_ERR;
         return;
     }

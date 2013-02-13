@@ -1250,13 +1250,13 @@ void WebGLRenderingContext::clearColor(GC3Dfloat r, GC3Dfloat g, GC3Dfloat b, GC
 {
     if (isContextLost())
         return;
-    if (isnan(r))
+    if (std::isnan(r))
         r = 0;
-    if (isnan(g))
+    if (std::isnan(g))
         g = 0;
-    if (isnan(b))
+    if (std::isnan(b))
         b = 0;
-    if (isnan(a))
+    if (std::isnan(a))
         a = 1;
     m_clearColor[0] = r;
     m_clearColor[1] = g;

@@ -52,7 +52,7 @@ static void setEnableHighAccuracy(PositionOptions* options, const bool& enableHi
 static void setTimeout(PositionOptions* options, const double& timeout)
 {
     // If the value is positive infinity, there's nothing to do.
-    if (!(isinf(timeout) && (timeout > 0))) {
+    if (!(std::isinf(timeout) && (timeout > 0))) {
         // Wrap to int32 and force non-negative to match behavior of window.setTimeout.
         options->setTimeout(max(0, static_cast<int>(timeout)));
     }
@@ -60,7 +60,7 @@ static void setTimeout(PositionOptions* options, const double& timeout)
 
 static void setMaximumAge(PositionOptions* options, const double& maximumAge)
 {
-    if (isinf(maximumAge) && (maximumAge > 0)) {
+    if (std::isinf(maximumAge) && (maximumAge > 0)) {
         // If the value is positive infinity, clear maximumAge.
         options->clearMaximumAge();
     } else {

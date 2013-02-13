@@ -41,9 +41,9 @@ EncodedJSValue JSC_HOST_CALL JSWebKitPointConstructor::constructJSWebKitPoint(Ex
     if (exec->argumentCount() >= 2) {
         x = static_cast<float>(exec->argument(0).toNumber(exec));
         y = static_cast<float>(exec->argument(1).toNumber(exec));
-        if (isnan(x))
+        if (std::isnan(x))
             x = 0;
-        if (isnan(y))
+        if (std::isnan(y))
             y = 0;
     }
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), WebKitPoint::create(x, y))));

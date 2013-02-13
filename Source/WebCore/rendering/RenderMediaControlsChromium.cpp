@@ -214,13 +214,13 @@ static bool paintMediaSlider(RenderObject* object, const PaintInfo& paintInfo, c
     RefPtr<TimeRanges> bufferedTimeRanges = mediaElement->buffered();
     float duration = mediaElement->duration();
     float currentTime = mediaElement->currentTime();
-    if (isnan(duration) || isinf(duration) || !duration || isnan(currentTime))
+    if (std::isnan(duration) || std::isinf(duration) || !duration || std::isnan(currentTime))
         return true;
 
     for (unsigned i = 0; i < bufferedTimeRanges->length(); ++i) {
         float start = bufferedTimeRanges->start(i, ASSERT_NO_EXCEPTION);
         float end = bufferedTimeRanges->end(i, ASSERT_NO_EXCEPTION);
-        if (isnan(start) || isnan(end) || start > currentTime || end < currentTime)
+        if (std::isnan(start) || std::isnan(end) || start > currentTime || end < currentTime)
             continue;
         int startPosition = int(start * rect.width() / duration);
         int currentPosition = int(currentTime * rect.width() / duration);
@@ -279,7 +279,7 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
 
     // Calculate volume position for white background rectangle.
     float volume = mediaElement->volume();
-    if (isnan(volume) || volume < 0)
+    if (std::isnan(volume) || volume < 0)
         return true;
     if (volume > 1)
         volume = 1;

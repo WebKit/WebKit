@@ -136,7 +136,7 @@ float MediaController::duration() const
     float maxDuration = 0;
     for (size_t index = 0; index < m_mediaElements.size(); ++index) {
         float duration = m_mediaElements[index]->duration();
-        if (isnan(duration))
+        if (std::isnan(duration))
             continue;
         maxDuration = max(maxDuration, duration);
     }

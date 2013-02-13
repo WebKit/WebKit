@@ -240,7 +240,7 @@ float Length::nonNanCalculatedValue(int maxValue) const
 {
     ASSERT(isCalculated());
     float result = calculationValue()->evaluate(maxValue);
-    if (isnan(result))
+    if (std::isnan(result))
         return 0;
     return result;
 }

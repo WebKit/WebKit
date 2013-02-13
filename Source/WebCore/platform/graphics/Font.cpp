@@ -211,7 +211,7 @@ float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFo
     bool hasKerningOrLigatures = typesettingFeatures() & (Kerning | Ligatures);
     bool hasWordSpacingOrLetterSpacing = wordSpacing() | letterSpacing();
     float* cacheEntry = m_fontFallbackList->widthCache().add(run, std::numeric_limits<float>::quiet_NaN(), hasKerningOrLigatures, hasWordSpacingOrLetterSpacing, glyphOverflow);
-    if (cacheEntry && !isnan(*cacheEntry))
+    if (cacheEntry && !std::isnan(*cacheEntry))
         return *cacheEntry;
 
     float result;

@@ -58,7 +58,7 @@ void AudioParam::setValue(float value)
 {
     // Check against JavaScript giving us bogus floating-point values.
     // Don't ASSERT, since this can happen if somebody writes bad JS.
-    if (!isnan(value) && !isinf(value))
+    if (!std::isnan(value) && !std::isinf(value))
         m_value = value;
 }
 

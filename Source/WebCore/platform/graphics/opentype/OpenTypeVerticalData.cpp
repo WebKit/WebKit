@@ -533,7 +533,7 @@ void OpenTypeVerticalData::getVerticalTranslationsForGlyphs(const SimpleFontData
                 outXYArray[1] = -vertOriginYFUnit * sizePerUnit;
                 continue;
             }
-            if (isnan(defaultVertOriginY))
+            if (std::isnan(defaultVertOriginY))
                 defaultVertOriginY = -m_defaultVertOriginY * sizePerUnit;
             outXYArray[1] = defaultVertOriginY;
             continue;

@@ -61,7 +61,7 @@ void DateInstance::destroy(JSCell* cell)
 const GregorianDateTime* DateInstance::calculateGregorianDateTime(ExecState* exec) const
 {
     double milli = internalNumber();
-    if (isnan(milli))
+    if (std::isnan(milli))
         return 0;
 
     if (!m_data)
@@ -77,7 +77,7 @@ const GregorianDateTime* DateInstance::calculateGregorianDateTime(ExecState* exe
 const GregorianDateTime* DateInstance::calculateGregorianDateTimeUTC(ExecState* exec) const
 {
     double milli = internalNumber();
-    if (isnan(milli))
+    if (std::isnan(milli))
         return 0;
 
     if (!m_data)

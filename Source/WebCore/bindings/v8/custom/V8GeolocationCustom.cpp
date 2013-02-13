@@ -88,7 +88,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> va
         }
         double timeoutDouble = timeoutNumber->Value();
         // If the value is positive infinity, there's nothing to do.
-        if (!(isinf(timeoutDouble) && timeoutDouble > 0)) {
+        if (!(std::isinf(timeoutDouble) && timeoutDouble > 0)) {
             v8::Local<v8::Int32> timeoutInt32 = timeoutValue->ToInt32();
             if (timeoutInt32.IsEmpty()) {
                 succeeded = false;
@@ -111,7 +111,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> va
             return 0;
         }
         double maximumAgeDouble = maximumAgeNumber->Value();
-        if (isinf(maximumAgeDouble) && maximumAgeDouble > 0) {
+        if (std::isinf(maximumAgeDouble) && maximumAgeDouble > 0) {
             // If the value is positive infinity, clear maximumAge.
             options->clearMaximumAge();
         } else {

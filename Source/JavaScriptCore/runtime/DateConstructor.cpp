@@ -199,13 +199,13 @@ static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState* exec)
         exec->argument(6).toNumber(exec)
     };
     int n = exec->argumentCount();
-    if (isnan(doubleArguments[0])
-            || isnan(doubleArguments[1])
-            || (n >= 3 && isnan(doubleArguments[2]))
-            || (n >= 4 && isnan(doubleArguments[3]))
-            || (n >= 5 && isnan(doubleArguments[4]))
-            || (n >= 6 && isnan(doubleArguments[5]))
-            || (n >= 7 && isnan(doubleArguments[6])))
+    if (std::isnan(doubleArguments[0])
+        || std::isnan(doubleArguments[1])
+        || (n >= 3 && std::isnan(doubleArguments[2]))
+        || (n >= 4 && std::isnan(doubleArguments[3]))
+        || (n >= 5 && std::isnan(doubleArguments[4]))
+        || (n >= 6 && std::isnan(doubleArguments[5]))
+        || (n >= 7 && std::isnan(doubleArguments[6])))
         return JSValue::encode(jsNaN());
 
     GregorianDateTime t;

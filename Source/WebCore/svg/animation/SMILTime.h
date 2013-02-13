@@ -36,7 +36,7 @@ namespace WebCore {
 class SMILTime {
 public:
     SMILTime() : m_time(0) { }
-    SMILTime(double time) : m_time(time) { ASSERT(!isnan(time)); }
+    SMILTime(double time) : m_time(time) { ASSERT(!std::isnan(time)); }
     SMILTime(const SMILTime& o) : m_time(o.m_time) { }
     
     static SMILTime unresolved() { return unresolvedValue; }

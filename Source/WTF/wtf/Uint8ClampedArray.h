@@ -99,7 +99,7 @@ void Uint8ClampedArray::set(unsigned index, double value)
 {
     if (index >= m_length)
         return;
-    if (isnan(value) || value < 0)
+    if (std::isnan(value) || value < 0)
         value = 0;
     else if (value > 255)
         value = 255;

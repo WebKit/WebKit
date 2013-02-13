@@ -560,7 +560,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState* exec)
 
 EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
 {
-    return JSValue::encode(jsBoolean(isnan(exec->argument(0).toNumber(exec))));
+    return JSValue::encode(jsBoolean(std::isnan(exec->argument(0).toNumber(exec))));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState* exec)

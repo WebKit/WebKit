@@ -1043,15 +1043,15 @@ TEST_F(DecimalTest, ToDouble)
     EXPECT_EQ(1e+308, encode(1, 308, Positive).toDouble());
     EXPECT_EQ(1e-307, encode(1, -307, Positive).toDouble());
 
-    EXPECT_TRUE(isinf(encode(1, 1000, Positive).toDouble()));
+    EXPECT_TRUE(std::isinf(encode(1, 1000, Positive).toDouble()));
     EXPECT_EQ(0.0, encode(1, -1000, Positive).toDouble());
 }
 
 TEST_F(DecimalTest, ToDoubleSpecialValues)
 {
-    EXPECT_TRUE(isinf(Decimal::infinity(Decimal::Positive).toDouble()));
-    EXPECT_TRUE(isinf(Decimal::infinity(Decimal::Negative).toDouble()));
-    EXPECT_TRUE(isnan(Decimal::nan().toDouble()));
+    EXPECT_TRUE(std::isinf(Decimal::infinity(Decimal::Positive).toDouble()));
+    EXPECT_TRUE(std::isinf(Decimal::infinity(Decimal::Negative).toDouble()));
+    EXPECT_TRUE(std::isnan(Decimal::nan().toDouble()));
 }
 
 TEST_F(DecimalTest, ToString)

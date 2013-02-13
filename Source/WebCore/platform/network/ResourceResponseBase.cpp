@@ -341,7 +341,7 @@ void ResourceResponseBase::parseCacheControlDirectives() const
             else if (equalIgnoringCase(directives[i].first, mustRevalidateDirective))
                 m_cacheControlContainsMustRevalidate = true;
             else if (equalIgnoringCase(directives[i].first, maxAgeDirective)) {
-                if (!isnan(m_cacheControlMaxAge)) {
+                if (!std::isnan(m_cacheControlMaxAge)) {
                     // First max-age directive wins if there are multiple ones.
                     continue;
                 }

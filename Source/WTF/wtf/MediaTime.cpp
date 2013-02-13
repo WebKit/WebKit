@@ -83,7 +83,7 @@ MediaTime MediaTime::createWithFloat(float floatTime, int32_t timeScale)
 {
     if (floatTime != floatTime)
         return invalidTime();
-    if (isinf(floatTime))
+    if (std::isinf(floatTime))
         return signbit(floatTime) ? negativeInfiniteTime() : positiveInfiniteTime();
     if (floatTime > numeric_limits<int64_t>::max())
         return positiveInfiniteTime();
@@ -99,7 +99,7 @@ MediaTime MediaTime::createWithDouble(double doubleTime, int32_t timeScale)
 {
     if (doubleTime != doubleTime)
         return invalidTime();
-    if (isinf(doubleTime))
+    if (std::isinf(doubleTime))
         return signbit(doubleTime) ? negativeInfiniteTime() : positiveInfiniteTime();
     if (doubleTime > numeric_limits<int64_t>::max())
         return positiveInfiniteTime();

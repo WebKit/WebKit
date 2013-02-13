@@ -286,9 +286,9 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
         // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
         // Fix gremlins.
-        if (isnan(m_detectorAverage))
+        if (std::isnan(m_detectorAverage))
             m_detectorAverage = 1;
-        if (isinf(m_detectorAverage))
+        if (std::isinf(m_detectorAverage))
             m_detectorAverage = 1;
 
         float desiredGain = m_detectorAverage;
@@ -314,9 +314,9 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
             m_maxAttackCompressionDiffDb = -1;
 
             // Fix gremlins.
-            if (isnan(compressionDiffDb))
+            if (std::isnan(compressionDiffDb))
                 compressionDiffDb = -1;
-            if (isinf(compressionDiffDb))
+            if (std::isinf(compressionDiffDb))
                 compressionDiffDb = -1;
 
             // Adaptive release - higher compression (lower compressionDiffDb)  releases faster.
@@ -342,9 +342,9 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
             // Attack mode - compressionDiffDb should be positive dB
 
             // Fix gremlins.
-            if (isnan(compressionDiffDb))
+            if (std::isnan(compressionDiffDb))
                 compressionDiffDb = 1;
-            if (isinf(compressionDiffDb))
+            if (std::isinf(compressionDiffDb))
                 compressionDiffDb = 1;
 
             // As long as we're still in attack mode, use a rate based off
@@ -410,9 +410,9 @@ void DynamicsCompressorKernel::process(float* sourceChannels[],
                 detectorAverage = min(1.0f, detectorAverage);
 
                 // Fix gremlins.
-                if (isnan(detectorAverage))
+                if (std::isnan(detectorAverage))
                     detectorAverage = 1;
-                if (isinf(detectorAverage))
+                if (std::isinf(detectorAverage))
                     detectorAverage = 1;
 
                 // Exponential approach to desired gain.

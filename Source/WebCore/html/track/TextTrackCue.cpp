@@ -277,7 +277,7 @@ void TextTrackCue::setId(const String& id)
 void TextTrackCue::setStartTime(double value, ExceptionCode& ec)
 {
     // NaN, Infinity and -Infinity values should trigger a TypeError.
-    if (isinf(value) || isnan(value)) {
+    if (std::isinf(value) || std::isnan(value)) {
         ec = TypeError;
         return;
     }
@@ -294,7 +294,7 @@ void TextTrackCue::setStartTime(double value, ExceptionCode& ec)
 void TextTrackCue::setEndTime(double value, ExceptionCode& ec)
 {
     // NaN, Infinity and -Infinity values should trigger a TypeError.
-    if (isinf(value) || isnan(value)) {
+    if (std::isinf(value) || std::isnan(value)) {
         ec = TypeError;
         return;
     }

@@ -866,7 +866,7 @@ static JSValueRef setAppCacheMaximumSizeCallback(JSContextRef context, JSObjectR
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     double size = JSValueToNumber(context, arguments[0], NULL);
-    if (!isnan(size))
+    if (!std::isnan(size))
         controller->setAppCacheMaximumSize(static_cast<unsigned long long>(size));
         
     return JSValueMakeUndefined(context);
@@ -881,7 +881,7 @@ static JSValueRef setApplicationCacheOriginQuotaCallback(JSContextRef context, J
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     double size = JSValueToNumber(context, arguments[0], NULL);
-    if (!isnan(size))
+    if (!std::isnan(size))
         controller->setApplicationCacheOriginQuota(static_cast<unsigned long long>(size));
 
     return JSValueMakeUndefined(context);
@@ -990,7 +990,7 @@ static JSValueRef setDatabaseQuotaCallback(JSContextRef context, JSObjectRef fun
     TestRunner* controller = static_cast<TestRunner*>(JSObjectGetPrivate(thisObject));
 
     double quota = JSValueToNumber(context, arguments[0], NULL);
-    if (!isnan(quota))
+    if (!std::isnan(quota))
         controller->setDatabaseQuota(static_cast<unsigned long long>(quota));
         
     return JSValueMakeUndefined(context);

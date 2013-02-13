@@ -120,7 +120,7 @@ void V8HTMLOptionsCollection::lengthAccessorSetter(v8::Local<v8::String> name, v
     double v = value->NumberValue();
     unsigned newLength = 0;
     ExceptionCode ec = 0;
-    if (!isnan(v) && !isinf(v)) {
+    if (!std::isnan(v) && !std::isinf(v)) {
         if (v < 0.0)
             ec = INDEX_SIZE_ERR;
         else if (v > static_cast<double>(UINT_MAX))

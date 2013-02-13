@@ -46,12 +46,12 @@ v8::Handle<v8::Value> V8WebKitPoint::constructorCallbackCustom(const v8::Argumen
     if (args.Length() > 1) {
         if (!args[0]->IsUndefined()) {
             x = toFloat(args[0]);
-            if (isnan(x))
+            if (std::isnan(x))
                 x = 0;
         }
         if (!args[1]->IsUndefined()) {
             y = toFloat(args[1]);
-            if (isnan(y))
+            if (std::isnan(y))
                 y = 0;
         }
     }

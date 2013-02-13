@@ -120,7 +120,7 @@ int toInt32(v8::Handle<v8::Value> value, bool& ok)
     
     // Does the value convert to nan or to an infinity?
     double numberValue = numberObject->Value();
-    if (isnan(numberValue) || isinf(numberValue)) {
+    if (std::isnan(numberValue) || std::isinf(numberValue)) {
         ok = false;
         return 0;
     }
@@ -159,7 +159,7 @@ uint32_t toUInt32(v8::Handle<v8::Value> value, bool& ok)
 
     // Does the value convert to nan or to an infinity?
     double numberValue = numberObject->Value();
-    if (isnan(numberValue) || isinf(numberValue)) {
+    if (std::isnan(numberValue) || std::isinf(numberValue)) {
         ok = false;
         return 0;
     }

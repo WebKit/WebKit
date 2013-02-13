@@ -73,7 +73,7 @@ static float calculateNormalizationScale(AudioBus* response)
     power = sqrt(power / (numberOfChannels * length));
 
     // Protect against accidental overload
-    if (isinf(power) || isnan(power) || power < MinPower)
+    if (std::isinf(power) || std::isnan(power) || power < MinPower)
         power = MinPower;
 
     float scale = 1 / power;

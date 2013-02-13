@@ -2437,7 +2437,7 @@ sub GenerateImplementation
         push(@implContent, "    ASSERT_GC_OBJECT_INHERITS(this, &s_info);\n");
         push(@implContent, "    double result = static_cast<$interfaceName*>(impl())->item(index);\n");
         # jsNumber conversion doesn't suppress signalling NaNs, so enforce that here.
-        push(@implContent, "    if (isnan(result))\n");
+        push(@implContent, "    if (std::isnan(result))\n");
         push(@implContent, "        return jsNaN();\n");
         push(@implContent, "    return JSValue(result);\n");
         push(@implContent, "}\n\n");
@@ -2712,7 +2712,7 @@ sub GenerateParametersCheck
             push(@$outputArray, "    double $nativeValue = exec->argument($argsIndex).toNumber(exec);\n");
             push(@$outputArray, "    if (exec->hadException())\n");
             push(@$outputArray, "        return JSValue::encode(jsUndefined());\n\n");
-            push(@$outputArray, "    if (!isnan($nativeValue))\n");
+            push(@$outputArray, "    if (!std::isnan($nativeValue))\n");
             push(@$outputArray, "        $name = clampTo<$argType>($nativeValue);\n\n");
         } elsif ($parameter->isVariadic) {
             my $nativeElementType;

@@ -224,7 +224,7 @@ float WindowFeatures::floatFeature(const DialogFeaturesMap& features, const char
     // return the number 0 and false for ok. But "0q" should yield the minimum rather than the default.
     bool ok;
     double parsedNumber = it->value.toDouble(&ok);
-    if ((parsedNumber == 0 && !ok) || isnan(parsedNumber))
+    if ((!parsedNumber && !ok) || std::isnan(parsedNumber))
         return defaultValue;
     if (parsedNumber < min || max <= min)
         return min;

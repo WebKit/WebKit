@@ -445,7 +445,7 @@ double AudioBufferSourceNode::totalPitchRate()
         totalRate = 1; // zero rate is considered illegal
     totalRate = min(MaxRate, totalRate);
     
-    bool isTotalRateValid = !isnan(totalRate) && !isinf(totalRate);
+    bool isTotalRateValid = !std::isnan(totalRate) && !std::isinf(totalRate);
     ASSERT(isTotalRateValid);
     if (!isTotalRateValid)
         totalRate = 1.0;

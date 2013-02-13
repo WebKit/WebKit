@@ -174,7 +174,7 @@ JSValue JS##name##Array::getByIndex(ExecState*, unsigned index)\
 {\
     ASSERT_GC_OBJECT_INHERITS(this, &s_info);\
     type result = m_impl->item(index);\
-    if (isnan((double)result))\
+    if (std::isnan((double)result))\
         return jsNaN();\
     return JSValue(result);\
 }\

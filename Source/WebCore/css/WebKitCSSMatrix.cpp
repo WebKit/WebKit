@@ -108,53 +108,53 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::inverse(ExceptionCode& ec) const
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::translate(double x, double y, double z) const
 {
-    if (isnan(x))
+    if (std::isnan(x))
         x = 0;
-    if (isnan(y))
+    if (std::isnan(y))
         y = 0;
-    if (isnan(z))
+    if (std::isnan(z))
         z = 0;
     return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).translate3d(x, y, z));
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::scale(double scaleX, double scaleY, double scaleZ) const
 {
-    if (isnan(scaleX))
+    if (std::isnan(scaleX))
         scaleX = 1;
-    if (isnan(scaleY))
+    if (std::isnan(scaleY))
         scaleY = scaleX;
-    if (isnan(scaleZ))
+    if (std::isnan(scaleZ))
         scaleZ = 1;
     return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).scale3d(scaleX, scaleY, scaleZ));
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotate(double rotX, double rotY, double rotZ) const
 {
-    if (isnan(rotX))
+    if (std::isnan(rotX))
         rotX = 0;
 
-    if (isnan(rotY) && isnan(rotZ)) {
+    if (std::isnan(rotY) && std::isnan(rotZ)) {
         rotZ = rotX;
         rotX = 0;
         rotY = 0;
     }
 
-    if (isnan(rotY))
+    if (std::isnan(rotY))
         rotY = 0;
-    if (isnan(rotZ))
+    if (std::isnan(rotZ))
         rotZ = 0;
     return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).rotate3d(rotX, rotY, rotZ));
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotateAxisAngle(double x, double y, double z, double angle) const
 {
-    if (isnan(x))
+    if (std::isnan(x))
         x = 0;
-    if (isnan(y))
+    if (std::isnan(y))
         y = 0;
-    if (isnan(z))
+    if (std::isnan(z))
         z = 0;
-    if (isnan(angle))
+    if (std::isnan(angle))
         angle = 0;
     if (x == 0 && y == 0 && z == 0)
         z = 1;
@@ -163,14 +163,14 @@ PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::rotateAxisAngle(double x, double y,
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::skewX(double angle) const
 {
-    if (isnan(angle))
+    if (std::isnan(angle))
         angle = 0;
     return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).skewX(angle));
 }
 
 PassRefPtr<WebKitCSSMatrix> WebKitCSSMatrix::skewY(double angle) const
 {
-    if (isnan(angle))
+    if (std::isnan(angle))
         angle = 0;
     return WebKitCSSMatrix::create(TransformationMatrix(m_matrix).skewY(angle));
 }

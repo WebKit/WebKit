@@ -2783,7 +2783,7 @@ float HTMLMediaElement::percentLoaded() const
         return 0;
     float duration = m_player->duration();
 
-    if (!duration || isinf(duration))
+    if (!duration || std::isinf(duration))
         return 0;
 
     float buffered = 0;
@@ -3414,7 +3414,7 @@ void HTMLMediaElement::mediaPlayerTimeChanged(MediaPlayer*)
     
     // When the current playback position reaches the end of the media resource when the direction of
     // playback is forwards, then the user agent must follow these steps:
-    if (!isnan(dur) && dur && now >= dur && m_playbackRate > 0) {
+    if (!std::isnan(dur) && dur && now >= dur && m_playbackRate > 0) {
         // If the media element has a loop attribute specified and does not have a current media controller,
         if (loop() && !m_mediaController) {
             m_sentEndEvent = false;
@@ -3670,7 +3670,7 @@ bool HTMLMediaElement::couldPlayIfEnoughData() const
 bool HTMLMediaElement::endedPlayback() const
 {
     float dur = duration();
-    if (!m_player || isnan(dur))
+    if (!m_player || std::isnan(dur))
         return false;
 
     // 4.8.10.8 Playing the media resource

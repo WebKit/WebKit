@@ -1637,11 +1637,11 @@ static v8::Handle<v8::Value> classMethodWithClampCallback(const v8::Arguments& a
     TestObj* imp = V8TestObj::toNative(args.Holder());
     unsigned short objArgsShort = 0;
     V8TRYCATCH(double, objArgsShortNativeValue, args[0]->NumberValue());
-    if (!isnan(objArgsShortNativeValue))
+    if (!std::isnan(objArgsShortNativeValue))
         objArgsShort = clampTo<unsigned short>(objArgsShortNativeValue);
     unsigned long objArgsLong = 0;
     V8TRYCATCH(double, objArgsLongNativeValue, args[1]->NumberValue());
-    if (!isnan(objArgsLongNativeValue))
+    if (!std::isnan(objArgsLongNativeValue))
         objArgsLong = clampTo<unsigned long>(objArgsLongNativeValue);
     imp->classMethodWithClamp(objArgsShort, objArgsLong);
     return v8Undefined();

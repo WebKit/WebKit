@@ -110,7 +110,7 @@ void AudioResampler::process(AudioSourceProvider* provider, AudioBus* destinatio
 
 void AudioResampler::setRate(double rate)
 {
-    if (isnan(rate) || isinf(rate) || rate <= 0.0)
+    if (std::isnan(rate) || std::isinf(rate) || rate <= 0.0)
         return;
     
     m_rate = min(AudioResampler::MaxRate, rate);

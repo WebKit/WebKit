@@ -224,7 +224,7 @@ void TextTrack::addCue(PassRefPtr<TextTrackCue> prpCue)
     RefPtr<TextTrackCue> cue = prpCue;
 
     // TODO(93143): Add spec-compliant behavior for negative time values.
-    if (isnan(cue->startTime()) || isnan(cue->endTime()) || cue->startTime() < 0 || cue->endTime() < 0)
+    if (std::isnan(cue->startTime()) || std::isnan(cue->endTime()) || cue->startTime() < 0 || cue->endTime() < 0)
         return;
 
     // 4.8.10.12.5 Text track API

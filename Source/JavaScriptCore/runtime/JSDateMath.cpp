@@ -196,7 +196,7 @@ static double getDSTOffset(ExecState* exec, double ms, double utcOffset)
 double getUTCOffset(ExecState* exec)
 {
     double utcOffset = exec->globalData().cachedUTCOffset;
-    if (!isnan(utcOffset))
+    if (!std::isnan(utcOffset))
         return utcOffset;
     exec->globalData().cachedUTCOffset = calculateUTCOffset();
     return exec->globalData().cachedUTCOffset;
@@ -247,7 +247,7 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
     bool haveTZ;
     int offset;
     double ms = WTF::parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
-    if (isnan(ms))
+    if (std::isnan(ms))
         return QNaN;
 
     // fall back to local timezone
@@ -264,7 +264,7 @@ double parseDate(ExecState* exec, const String& date)
     if (date == exec->globalData().cachedDateString)
         return exec->globalData().cachedDateStringValue;
     double value = parseES5DateFromNullTerminatedCharacters(date.utf8().data());
-    if (isnan(value))
+    if (std::isnan(value))
         value = parseDateFromNullTerminatedCharacters(exec, date.utf8().data());
     exec->globalData().cachedDateString = date;
     exec->globalData().cachedDateStringValue = value;

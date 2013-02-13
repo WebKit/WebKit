@@ -398,7 +398,7 @@ def cloopEmitUnaryOperation(operands, type, operator)
 end
 
 def cloopEmitCompareDoubleWithNaNCheckAndBranch(operands, condition)
-    $asm.putc "if (isnan(#{operands[0].clValue(:double)}) || isnan(#{operands[1].clValue(:double)})"
+    $asm.putc "if (std::isnan(#{operands[0].clValue(:double)}) || isnan(#{operands[1].clValue(:double)})"
     $asm.putc "    || (#{operands[0].clValue(:double)} #{condition} #{operands[1].clValue(:double)}))"
     $asm.putc "    goto #{operands[2].cLabel};"
 end

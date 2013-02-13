@@ -834,7 +834,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetMilliSeconds(ExecState* exec)
 
     DateInstance* thisDateObj = asDateInstance(thisValue); 
     double milli = thisDateObj->internalNumber();
-    if (isnan(milli))
+    if (std::isnan(milli))
         return JSValue::encode(jsNaN());
 
     double secs = floor(milli / msPerSecond);
@@ -850,7 +850,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncGetUTCMilliseconds(ExecState* exec)
 
     DateInstance* thisDateObj = asDateInstance(thisValue); 
     double milli = thisDateObj->internalNumber();
-    if (isnan(milli))
+    if (std::isnan(milli))
         return JSValue::encode(jsNaN());
 
     double secs = floor(milli / msPerSecond);
@@ -895,7 +895,7 @@ static EncodedJSValue setNewValueFromTimeArgs(ExecState* exec, int numArgsToUse,
     DateInstance* thisDateObj = asDateInstance(thisValue);
     double milli = thisDateObj->internalNumber();
     
-    if (!exec->argumentCount() || isnan(milli)) {
+    if (!exec->argumentCount() || std::isnan(milli)) {
         JSValue result = jsNaN();
         thisDateObj->setInternalValue(exec->globalData(), result);
         return JSValue::encode(result);
@@ -940,7 +940,7 @@ static EncodedJSValue setNewValueFromDateArgs(ExecState* exec, int numArgsToUse,
     double ms = 0; 
 
     GregorianDateTime gregorianDateTime; 
-    if (numArgsToUse == 3 && isnan(milli)) 
+    if (numArgsToUse == 3 && std::isnan(milli)) 
         msToGregorianDateTime(exec, 0, true, gregorianDateTime); 
     else { 
         ms = milli - floor(milli / msPerSecond) * msPerSecond; 
@@ -1064,7 +1064,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     double ms = 0;
 
     GregorianDateTime gregorianDateTime;
-    if (isnan(milli))
+    if (std::isnan(milli))
         // Based on ECMA 262 B.2.5 (setYear)
         // the time must be reset to +0 if it is NaN.
         msToGregorianDateTime(exec, 0, true, gregorianDateTime);

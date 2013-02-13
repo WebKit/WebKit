@@ -336,7 +336,7 @@ bool safeUnitDivide(float numerator, float denominator, float& ratio)
     if (!numerator || !denominator || numerator >= denominator)
         return false;
     float r = numerator / denominator;
-    if (isnan(r))
+    if (std::isnan(r))
         return false;
     ASSERT(r >= 0 && r < 1);
     if (!r) // catch underflow if numerator <<<< denominator
@@ -359,7 +359,7 @@ int findUnitQuadRoots(float a, float b, float c, float roots[2])
         return safeUnitDivide(-c, b, roots[0]) ? 1 : 0;
 
     float discriminant = b*b - 4*a*c;
-    if (discriminant < 0 || isnan(discriminant)) // complex roots
+    if (discriminant < 0 || std::isnan(discriminant)) // complex roots
         return 0;
     discriminant = sqrtf(discriminant);
 

@@ -957,7 +957,7 @@ float MediaPlayerPrivateQTKit::maxTimeSeekable() const
         return 0;
 
     // infinite duration means live stream
-    if (isinf(duration()))
+    if (std::isinf(duration()))
         return 0;
 
     return wkQTMovieMaxTimeSeekable(m_qtMovie.get());

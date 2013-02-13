@@ -1,3 +1,48 @@
+2013-02-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        The 'global isinf/isnan' compiler quirk required when using clang with libstdc++
+        https://bugs.webkit.org/show_bug.cgi?id=109325
+
+        Reviewed by Anders Carlsson.
+
+        Prefix calls to the isinf and isnan methods with std::, declaring we want to use the
+        two methods as they're provided by the C++ standard library being used.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeNumber):
+        * JSCTypedArrayStubs.h:
+        (JSC):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitLoad):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::constantNaN):
+        * offlineasm/cloop.rb:
+        * runtime/DateConstructor.cpp:
+        (JSC::dateUTC): Also include an opportunistic style fix.
+        * runtime/DateInstance.cpp:
+        (JSC::DateInstance::calculateGregorianDateTime):
+        (JSC::DateInstance::calculateGregorianDateTimeUTC):
+        * runtime/DatePrototype.cpp:
+        (JSC::dateProtoFuncGetMilliSeconds):
+        (JSC::dateProtoFuncGetUTCMilliseconds):
+        (JSC::setNewValueFromTimeArgs):
+        (JSC::setNewValueFromDateArgs):
+        (JSC::dateProtoFuncSetYear):
+        * runtime/JSCJSValue.cpp:
+        (JSC::JSValue::toInteger):
+        * runtime/JSDateMath.cpp:
+        (JSC::getUTCOffset):
+        (JSC::parseDateFromNullTerminatedCharacters):
+        (JSC::parseDate):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncIsNaN):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+        (JSC::mathProtoFuncPow):
+        * runtime/PropertyDescriptor.cpp:
+        (JSC::sameValue):
+
 2013-02-13  Filip Pizlo  <fpizlo@apple.com>
 
         Change another use of (SpecCell & ~SpecString) to SpecObject.

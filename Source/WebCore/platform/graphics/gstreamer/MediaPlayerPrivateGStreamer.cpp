@@ -587,7 +587,7 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateGStreamer::buffered() const
 
 #if GST_CHECK_VERSION(0, 10, 31)
     float mediaDuration(duration());
-    if (!mediaDuration || isinf(mediaDuration))
+    if (!mediaDuration || std::isinf(mediaDuration))
         return timeRanges.release();
 
     GstQuery* query = gst_query_new_buffering(GST_FORMAT_PERCENT);
@@ -805,7 +805,7 @@ float MediaPlayerPrivateGStreamer::maxTimeSeekable() const
 
     LOG_MEDIA_MESSAGE("maxTimeSeekable");
     // infinite duration means live stream
-    if (isinf(duration()))
+    if (std::isinf(duration()))
         return 0.0f;
 
     return duration();
@@ -1278,15 +1278,15 @@ void MediaPlayerPrivateGStreamer::cacheDuration()
         // Don't set m_mediaDurationKnown yet if the pipeline is not
         // paused. This allows duration() query to fail at least once
         // before playback starts and duration becomes known.
-        if (!isinf(newDuration))
+        if (!std::isinf(newDuration))
             m_mediaDuration = newDuration;
     } else {
-        m_mediaDurationKnown = !isinf(newDuration);
+        m_mediaDurationKnown = !std::isinf(newDuration);
         if (m_mediaDurationKnown)
             m_mediaDuration = newDuration;
     }
 
-    if (!isinf(newDuration))
+    if (!std::isinf(newDuration))
         m_mediaDuration = newDuration;
 }
 

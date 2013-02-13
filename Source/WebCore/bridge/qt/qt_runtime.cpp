@@ -322,7 +322,7 @@ QVariant convertValueToQVariant(JSContextRef context, JSValueRef value, QMetaTyp
 
     // check magic pointer values before dereferencing value
     if (JSValueIsNumber(context, value)
-        && isnan(JSValueToNumber(context, value, exception))) {
+        && std::isnan(JSValueToNumber(context, value, exception))) {
         if (distance)
             *distance = -1;
         return QVariant();

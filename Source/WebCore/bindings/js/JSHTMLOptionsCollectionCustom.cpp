@@ -74,7 +74,7 @@ void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
     ExceptionCode ec = 0;
     unsigned newLength = 0;
     double lengthValue = value.toNumber(exec);
-    if (!isnan(lengthValue) && !isinf(lengthValue)) {
+    if (!std::isnan(lengthValue) && !std::isinf(lengthValue)) {
         if (lengthValue < 0.0)
             ec = INDEX_SIZE_ERR;
         else if (lengthValue > static_cast<double>(UINT_MAX))

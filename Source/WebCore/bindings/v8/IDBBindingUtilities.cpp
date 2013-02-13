@@ -75,11 +75,11 @@ static const size_t maximumDepth = 2000;
 
 static PassRefPtr<IDBKey> createIDBKeyFromValue(v8::Handle<v8::Value> value, Vector<v8::Handle<v8::Array> >& stack)
 {
-    if (value->IsNumber() && !isnan(value->NumberValue()))
+    if (value->IsNumber() && !std::isnan(value->NumberValue()))
         return IDBKey::createNumber(value->NumberValue());
     if (value->IsString())
         return IDBKey::createString(toWebCoreString(value));
-    if (value->IsDate() && !isnan(value->NumberValue()))
+    if (value->IsDate() && !std::isnan(value->NumberValue()))
         return IDBKey::createDate(value->NumberValue());
     if (value->IsArray()) {
         v8::Handle<v8::Array> array = v8::Handle<v8::Array>::Cast(value);

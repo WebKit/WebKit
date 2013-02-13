@@ -88,12 +88,17 @@ inline double wtf_ceil(double x) { return copysign(ceil(x), x); }
 #ifndef isfinite
 inline bool isfinite(double x) { return finite(x) && !isnand(x); }
 #endif
-#ifndef isinf
-inline bool isinf(double x) { return !finite(x) && !isnand(x); }
-#endif
 #ifndef signbit
 inline bool signbit(double x) { return copysign(1.0, x) < 0; }
 #endif
+
+namespace std {
+
+#ifndef isinf
+inline bool isinf(double x) { return !finite(x) && !isnand(x); }
+#endif
+
+} // namespace std
 
 #endif
 
@@ -159,8 +164,13 @@ inline float log2f(float num)
 inline long long abs(long long num) { return _abs64(num); }
 #endif
 
+namespace std {
+
 inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
 inline bool isnan(double num) { return !!_isnan(num); }
+
+} // namespace std
+
 inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
 
 inline double nextafter(double x, double y) { return _nextafter(x, y); }
@@ -193,7 +203,7 @@ inline double wtf_atan2(double x, double y)
 }
 
 // Work around a bug in the Microsoft CRT, where fmod(x, +-infinity) yields NaN instead of x.
-inline double wtf_fmod(double x, double y) { return (!isinf(x) && isinf(y)) ? x : fmod(x, y); }
+inline double wtf_fmod(double x, double y) { return (!std::isinf(x) && std::isinf(y)) ? x : fmod(x, y); }
 
 // Work around a bug in the Microsoft CRT, where pow(NaN, 0) yields NaN instead of 1.
 inline double wtf_pow(double x, double y) { return y == 0 ? 1 : pow(x, y); }
@@ -331,27 +341,7 @@ template<typename T> inline T timesThreePlusOneDividedByTwo(T value)
 
 #if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(SOLARIS)
 using std::isfinite;
-#if !COMPILER_QUIRK(GCC11_GLOBAL_ISINF_ISNAN)
-using std::isinf;
-using std::isnan;
-#endif
 using std::signbit;
-#endif
-
-#if COMPILER_QUIRK(GCC11_GLOBAL_ISINF_ISNAN)
-// A workaround to avoid conflicting declarations of isinf and isnan when compiling with GCC in C++11 mode.
-namespace std {
-    inline bool wtf_isinf(float f) { return std::isinf(f); }
-    inline bool wtf_isinf(double d) { return std::isinf(d); }
-    inline bool wtf_isnan(float f) { return std::isnan(f); }
-    inline bool wtf_isnan(double d) { return std::isnan(d); }
-};
-
-using std::wtf_isinf;
-using std::wtf_isnan;
-
-#define isinf(x) wtf_isinf(x)
-#define isnan(x) wtf_isnan(x)
 #endif
 
 #ifndef UINT64_C
@@ -367,7 +357,7 @@ inline double wtf_pow(double x, double y)
 {
     // MinGW-w64 has a custom implementation for pow.
     // This handles certain special cases that are different.
-    if ((x == 0.0 || isinf(x)) && isfinite(y)) {
+    if ((x == 0.0 || std::isinf(x)) && isfinite(y)) {
         double f;
         if (modf(y, &f) != 0.0)
             return ((x == 0.0) ^ (y > 0.0)) ? std::numeric_limits<double>::infinity() : 0.0;
@@ -409,7 +399,7 @@ inline void decomposeDouble(double number, bool& sign, int32_t& exponent, uint64
 // Calculate d % 2^{64}.
 inline void doubleToInteger(double d, unsigned long long& value)
 {
-    if (isnan(d) || isinf(d))
+    if (std::isnan(d) || std::isinf(d))
         value = 0;
     else {
         // -2^{64} < fmodValue < 2^{64}.

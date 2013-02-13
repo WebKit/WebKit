@@ -65,7 +65,7 @@ void AudioParamTimeline::setValueCurveAtTime(Float32Array* curve, float time, fl
 
 static bool isValidNumber(float x)
 {
-    return !isnan(x) && !isinf(x);
+    return !std::isnan(x) && !std::isinf(x);
 }
 
 void AudioParamTimeline::insertEvent(const ParamEvent& event)

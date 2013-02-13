@@ -238,7 +238,7 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
     float timeLoaded = timeRanges->length() ? timeRanges->end(0, IGNORE_EXCEPTION) : 0;
     float currentTime = mediaElement->currentTime();
     float duration = mediaElement->duration();
-    if (isnan(duration))
+    if (std::isnan(duration))
         duration = 0;
 
     ContextContainer cgContextContainer(paintInfo.context);

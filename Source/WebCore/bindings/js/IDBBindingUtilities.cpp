@@ -110,11 +110,11 @@ static const size_t maximumDepth = 2000;
 
 static PassRefPtr<IDBKey> createIDBKeyFromValue(ExecState* exec, JSValue value, Vector<JSArray*>& stack)
 {
-    if (value.isNumber() && !isnan(value.toNumber(exec)))
+    if (value.isNumber() && !std::isnan(value.toNumber(exec)))
         return IDBKey::createNumber(value.toNumber(exec));
     if (value.isString())
         return IDBKey::createString(value.toString(exec)->value(exec));
-    if (value.inherits(&DateInstance::s_info) && !isnan(valueToDate(exec, value)))
+    if (value.inherits(&DateInstance::s_info) && !std::isnan(valueToDate(exec, value)))
         return IDBKey::createDate(valueToDate(exec, value));
     if (value.isObject()) {
         JSObject* object = asObject(value);

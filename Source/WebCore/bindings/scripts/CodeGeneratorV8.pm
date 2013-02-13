@@ -1749,7 +1749,7 @@ sub GenerateParametersCheck
                 my $paramType = $parameter->type;
                 $parameterCheckString .= "    $paramType $parameterName = 0;\n";
                 $parameterCheckString .= "    V8TRYCATCH(double, $nativeValue, args[$paramIndex]->NumberValue());\n";
-                $parameterCheckString .= "    if (!isnan($nativeValue))\n";
+                $parameterCheckString .= "    if (!std::isnan($nativeValue))\n";
                 $parameterCheckString .= "        $parameterName = clampTo<$paramType>($nativeValue);\n";
         } elsif ($parameter->type eq "SerializedScriptValue") {
             AddToImplIncludes("SerializedScriptValue.h");

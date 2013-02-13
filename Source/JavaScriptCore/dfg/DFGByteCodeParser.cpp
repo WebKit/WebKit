@@ -656,7 +656,7 @@ private:
 
         // m_constantNaN must refer to an entry in the CodeBlock's constant pool that has the value nan.
         ASSERT(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).isDouble());
-        ASSERT(isnan(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).asDouble()));
+        ASSERT(std::isnan(m_codeBlock->getConstant(FirstConstantRegisterIndex + m_constantNaN).asDouble()));
         return getJSConstant(m_constantNaN);
     }
     

@@ -1,3 +1,31 @@
+2013-02-13  Zan Dobersek  <zdobersek@igalia.com>
+
+        The 'global isinf/isnan' compiler quirk required when using clang with libstdc++
+        https://bugs.webkit.org/show_bug.cgi?id=109325
+
+        Reviewed by Anders Carlsson.
+
+        Prefix calls to the isinf and isnan methods with std::, declaring we want to use the
+        two methods as they're provided by the C++ standard library being used.
+
+        * wtf/Compiler.h: Remove the global isinf/isnan compiler quirk definitions. They're not required anymore.
+        * wtf/DateMath.cpp: Move the workaround for isinf on Solaris into the std namespace. Ditto for isinf and isnan
+        when using MSVC. Stop bringing the isinf and isnan methods into the global scope when using other configurations.
+        (WTF::parseDateFromNullTerminatedCharacters):
+        * wtf/IntegralTypedArrayBase.h:
+        (WTF::IntegralTypedArrayBase::set):
+        * wtf/MathExtras.h:
+        (std):
+        (std::isinf):
+        (wtf_fmod):
+        (wtf_pow):
+        (doubleToInteger):
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::createWithFloat):
+        (WTF::MediaTime::createWithDouble):
+        * wtf/Uint8ClampedArray.h:
+        (WTF::Uint8ClampedArray::set):
+
 2013-02-13  Eric Seidel  <eric@webkit.org>
 
         Don't copy Vector<UChar> when passing to new String methods from bug 109617

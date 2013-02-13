@@ -500,14 +500,14 @@ Value FunSubstring::evaluate() const
 {
     String s = arg(0)->evaluate().toString();
     double doublePos = arg(1)->evaluate().toNumber();
-    if (isnan(doublePos))
+    if (std::isnan(doublePos))
         return "";
     long pos = static_cast<long>(FunRound::round(doublePos));
     bool haveLength = argCount() == 3;
     long len = -1;
     if (haveLength) {
         double doubleLen = arg(2)->evaluate().toNumber();
-        if (isnan(doubleLen))
+        if (std::isnan(doubleLen))
             return "";
         len = static_cast<long>(FunRound::round(doubleLen));
     }
@@ -656,7 +656,7 @@ Value FunCeiling::evaluate() const
 
 double FunRound::round(double val)
 {
-    if (!isnan(val) && !isinf(val)) {
+    if (!std::isnan(val) && !std::isinf(val)) {
         if (signbit(val) && val >= -0.5)
             val *= 0; // negative zero
         else

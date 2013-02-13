@@ -46,7 +46,7 @@ double JSValue::toInteger(ExecState* exec) const
     if (isInt32())
         return asInt32();
     double d = toNumber(exec);
-    return isnan(d) ? 0.0 : trunc(d);
+    return std::isnan(d) ? 0.0 : trunc(d);
 }
 
 double JSValue::toIntegerPreserveNaN(ExecState* exec) const

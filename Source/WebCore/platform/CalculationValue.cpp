@@ -65,7 +65,7 @@ float CalculationValue::evaluate(float maxValue) const
     float result = m_value->evaluate(maxValue);
     // FIXME calc https://webkit.org/b/80411 : result is NaN when there is a division 
     // by zero which isn't found at parse time. 
-    if (isnan(result))
+    if (std::isnan(result))
         return 0;
     return m_isNonNegative && result < 0 ? 0 : result;
 }
