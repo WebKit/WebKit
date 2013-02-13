@@ -1,3 +1,19 @@
+2013-02-12  Takeshi Yoshino  <tyoshino@google.com>
+
+        Remove unnecessary and confusing includes from StreamBuffer.h.
+        https://bugs.webkit.org/show_bug.cgi?id=109652
+
+        Reviewed by Benjamin Poulain.
+
+        StreamBuffer.h is using OwnPtr for storing Vectors into a Deque.
+        FixedArray.h and PassOwnPtr.h are included but not used.
+
+        VectorTraits defines how to move OwnPtr in Vector. It's done by memcpy.
+        So, there's no need for PassOwnPtr (Deque<PassOwnPtr<Vector<char> > >
+        is even slower).
+
+        * wtf/StreamBuffer.h:
+
 2013-02-12  Eric Seidel  <eric@webkit.org>
 
         Teach more WTF string classes about vectors with inline capacity
