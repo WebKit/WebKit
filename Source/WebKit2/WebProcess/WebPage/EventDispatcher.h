@@ -78,8 +78,11 @@ private:
 
 #if ENABLE(THREADED_SCROLLING)
     void sendDidReceiveEvent(uint64_t pageID, const WebEvent&, bool didHandleEvent);
+#endif
 
     RefPtr<WorkQueue> m_queue;
+
+#if ENABLE(THREADED_SCROLLING)
     Mutex m_scrollingTreesMutex;
     HashMap<uint64_t, RefPtr<WebCore::ScrollingTree> > m_scrollingTrees;
 #endif
