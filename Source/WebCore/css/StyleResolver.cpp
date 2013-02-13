@@ -2077,8 +2077,7 @@ inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const Container
     }
 
     // Slow path.
-    SelectorChecker selectorChecker(document());
-    selectorChecker.setMode(state.mode);
+    SelectorChecker selectorChecker(document(), state.mode);
     SelectorChecker::SelectorCheckingContext context(ruleData.selector(), state.element, SelectorChecker::VisitedMatchEnabled);
     context.elementStyle = state.style.get();
     context.scope = scope;
@@ -2098,7 +2097,7 @@ bool StyleResolver::checkRegionSelector(const CSSSelector* regionSelector, Eleme
 
     m_state.pseudoStyle = NOPSEUDO;
 
-    SelectorChecker selectorChecker(document());
+    SelectorChecker selectorChecker(document(), SelectorChecker::ResolvingStyle);
     for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
         if (selectorChecker.matches(s, regionElement))
             return true;

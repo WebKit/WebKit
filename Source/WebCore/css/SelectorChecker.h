@@ -44,11 +44,10 @@ class RenderStyle;
 class SelectorChecker {
     WTF_MAKE_NONCOPYABLE(SelectorChecker);
 public:
-    explicit SelectorChecker(Document*);
-
     enum Match { SelectorMatches, SelectorFailsLocally, SelectorFailsAllSiblings, SelectorFailsCompletely };
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules };
+    explicit SelectorChecker(Document*, Mode);
 
     struct SelectorCheckingContext {
         // Initial selector constructor
@@ -87,7 +86,6 @@ public:
     bool strictParsing() const { return m_strictParsing; }
 
     Mode mode() const { return m_mode; }
-    void setMode(Mode mode) { m_mode = mode; }
 
     static bool tagMatches(const Element*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);

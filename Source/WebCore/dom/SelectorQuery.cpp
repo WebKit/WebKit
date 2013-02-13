@@ -152,21 +152,19 @@ SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
 
 bool SelectorQuery::matches(Element* element) const
 {
-    SelectorChecker selectorChecker(element->document());
+    SelectorChecker selectorChecker(element->document(), SelectorChecker::ResolvingStyle);
     return m_selectors.matches(selectorChecker, element);
 }
 
 PassRefPtr<NodeList> SelectorQuery::queryAll(Node* rootNode) const
 {
-    SelectorChecker selectorChecker(rootNode->document());
-    selectorChecker.setMode(SelectorChecker::QueryingRules);
+    SelectorChecker selectorChecker(rootNode->document(), SelectorChecker::QueryingRules);
     return m_selectors.queryAll(selectorChecker, rootNode);
 }
 
 PassRefPtr<Element> SelectorQuery::queryFirst(Node* rootNode) const
 {
-    SelectorChecker selectorChecker(rootNode->document());
-    selectorChecker.setMode(SelectorChecker::QueryingRules);
+    SelectorChecker selectorChecker(rootNode->document(), SelectorChecker::QueryingRules);
     return m_selectors.queryFirst(selectorChecker, rootNode);
 }
 

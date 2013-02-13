@@ -36,9 +36,8 @@
 namespace WebCore {
 
 ContentSelectorChecker::ContentSelectorChecker(Document* document)
-    : m_selectorChecker(document)
+    : m_selectorChecker(document, SelectorChecker::CollectingRules)
 {
-    m_selectorChecker.setMode(SelectorChecker::CollectingRules);
 }
 
 bool ContentSelectorChecker::checkContentSelector(const CSSSelector* selector, const Vector<RefPtr<Node> >& siblings, int nth) const
