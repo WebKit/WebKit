@@ -1,5 +1,14 @@
 2013-02-12  Roger Fong  <roger_fong@apple.com>
 
+        Add TestWebKitAPI, gtest-md and record-memory projects to VS2010 WebKit solution.
+        https://bugs.webkit.org/show_bug.cgi?id=107034.
+
+        Reviewed by Brent Fulgham.
+
+        * WebKit.vcxproj/WebKit.sln:
+
+2013-02-12  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Build fix for VS2010 WebKit solution.
 
         * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:

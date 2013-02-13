@@ -1,3 +1,23 @@
+2013-02-12  Roger Fong  <roger_fong@apple.com>
+
+        TestWebKitAPI and record-memory projects and property sheets for VS2010.
+        https://bugs.webkit.org/show_bug.cgi?id=107034
+
+        Reviewed by Brent Fulgham.
+
+        * TestWebKitAPI/TestWebKitAPI.vcxproj: Added.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj: Added.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters: Added.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIPostBuild.cmd: Copied from Tools/TestWebKitAPI/win/TestWebKitAPIPostBuild.cmd.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPIPreBuild.cmd: Copied from Tools/TestWebKitAPI/win/TestWebKitAPIPreBuild.cmd.
+        * win/record-memory: Added.
+        * win/record-memory/main.cpp: Copied from Tools/record-memory-win/main.cpp.
+        * win/record-memory/record-memory.vcxproj: Added.
+        * win/record-memory/record-memory.vcxproj.filters: Added.
+        * win/record-memory/record-memoryCommon.props: Added.
+        * win/record-memory/record-memoryDebug.props: Added.
+        * win/record-memory/record-memoryRelease.props: Added.
+
 2013-02-13  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Use the source id when creating new tracks

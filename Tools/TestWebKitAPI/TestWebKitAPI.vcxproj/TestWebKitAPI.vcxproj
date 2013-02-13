@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AF94D13A-36C1-45FF-9B0B-EB5D3FF6F43D}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>TestWebKitAPI</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="TestWebKitAPIDebug.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="TestWebKitAPIRelease.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+    </ClCompile>
+    <Link />
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\Test.h" />
+    <ClInclude Include="..\TestsController.h" />
+    <ClInclude Include="..\win\HostWindow.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\TestsController.cpp" />
+    <ClCompile Include="..\Tests\WebCore\LayoutUnit.cpp" />
+    <ClCompile Include="..\Tests\WebCore\win\BitmapImage.cpp" />
+    <ClCompile Include="..\Tests\WebKit\win\WebViewDestruction.cpp" />
+    <ClCompile Include="..\Tests\WTF\cf\RetainPtr.cpp" />
+    <ClCompile Include="..\Tests\WTF\cf\RetainPtrHashing.cpp" />
+    <ClCompile Include="..\Tests\WTF\CheckedArithmeticOperations.cpp" />
+    <ClCompile Include="..\Tests\WTF\Functional.cpp" />
+    <ClCompile Include="..\Tests\WTF\HashMap.cpp" />
+    <ClCompile Include="..\Tests\WTF\MathExtras.cpp" />
+    <ClCompile Include="..\Tests\WTF\MediaTime.cpp" />
+    <ClCompile Include="..\Tests\WTF\SaturatedArithmeticOperations.cpp" />
+    <ClCompile Include="..\Tests\WTF\StringOperators.cpp" />
+    <ClCompile Include="..\Tests\WTF\Vector.cpp" />
+    <ClCompile Include="..\Tests\WTF\VectorBasic.cpp" />
+    <ClCompile Include="..\Tests\WTF\VectorReverse.cpp" />
+    <ClCompile Include="..\win\HostWindow.cpp" />
+    <ClCompile Include="..\win\main.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

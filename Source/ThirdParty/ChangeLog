@@ -1,3 +1,13 @@
+2013-02-12  Roger Fong  <roger_fong@apple.com>
+
+        Add gtest-md VS2010 project files.
+        https://bugs.webkit.org/show_bug.cgi?id=107034.
+
+        Reviewed by Brent Fulgham.
+
+        * gtest/msvc/gtest-md.vcxproj: Added.
+        * gtest/msvc/gtest-md.vcxproj.filters: Added.
+
 2013-02-05  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Compile WTF tests of TestWebKitAPI
