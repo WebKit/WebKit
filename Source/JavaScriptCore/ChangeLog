@@ -1,3 +1,15 @@
+2013-02-12  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG LogicalNot/Branch peephole removal and inversion ignores the possibility of things exiting
+        https://bugs.webkit.org/show_bug.cgi?id=109489
+
+        Reviewed by Mark Hahnenberg.
+        
+        If things can exit between the LogicalNot and the Branch then don't peephole.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
 2013-02-13  Oliver Hunt  <oliver@apple.com>
 
         Remove unnecessary indirection to non-local variable access operations

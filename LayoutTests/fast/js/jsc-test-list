@@ -89,6 +89,7 @@ fast/js/dfg-array-pop-value-clearing
 fast/js/dfg-array-push-bad-time
 fast/js/dfg-array-push-slow-put
 fast/js/dfg-bool-to-int32-reuse
+fast/js/dfg-branch-logical-not-peephole-around-osr-exit
 fast/js/dfg-branch-not-fail
 fast/js/dfg-cfa-merge-with-dead-use-at-tail
 fast/js/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local
