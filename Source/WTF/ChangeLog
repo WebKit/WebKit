@@ -1,3 +1,29 @@
+2013-02-14  Eric Seidel  <eric@webkit.org>
+
+        REGRESSION(r142712): attribute values show up as "(null)" instead of null with the threaded parser
+        https://bugs.webkit.org/show_bug.cgi?id=109784
+
+        Reviewed by Benjamin Poulain.
+
+        When I changed many callsites to use the (existing) String(Vector) constructor
+        I inadvertantly made those callsites convert empty vectors to null strings
+        instead of empty strings (like String(UChar,size_t) does).
+
+        This is due to an oddity/bug in our Vector implementation where data()
+        will be 0 if the Vector is empty, but only if it doesn't have inline capacity.
+        https://bugs.webkit.org/show_bug.cgi?id=109792
+
+        This changes String(Vector) to exactly match the behavior of String(vector.data(), vector.size()).
+
+        This regression was easily detectable with the threaded parser, because we use String
+        instead of AtomicString in our CompactToken (used to send the Token data
+        between threads). The main-thread parser path uses AtomicHTMLToken which
+        uses AtomicString(Vector) and does not have this bug.
+
+        * wtf/text/WTFString.h:
+        (String):
+        (WTF::String::String):
+
 2013-02-13  Zan Dobersek  <zdobersek@igalia.com>
 
         The 'global isinf/isnan' compiler quirk required when using clang with libstdc++
