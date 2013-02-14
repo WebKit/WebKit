@@ -55,9 +55,6 @@ class StylePropertySet;
 class ElementData : public RefCounted<ElementData> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<ElementData> createUnique();
-    static PassRefPtr<ElementData> createShareableWithAttributes(const Vector<Attribute>&);
-
     // Override RefCounted's deref() to ensure operator delete is called on
     // the appropriate subclass type.
     void deref();
@@ -72,7 +69,6 @@ public:
     const StylePropertySet* inlineStyle() const { return m_inlineStyle.get(); }
 
     const StylePropertySet* presentationAttributeStyle() const;
-    void setPresentationAttributeStyle(PassRefPtr<StylePropertySet>) const;
 
     size_t length() const;
     bool isEmpty() const { return !length(); }
@@ -128,8 +124,7 @@ private:
     const Attribute* getAttributeItem(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
     size_t getAttributeItemIndexSlowCase(const AtomicString& name, bool shouldIgnoreAttributeCase) const;
 
-    PassRefPtr<ElementData> makeUniqueCopy() const;
-    PassRefPtr<ElementData> makeShareableCopy() const;
+    PassRefPtr<UniqueElementData> makeUniqueCopy() const;
 
     Vector<Attribute, 4>& mutableAttributeVector();
     const Vector<Attribute, 4>& mutableAttributeVector() const;
@@ -137,8 +132,10 @@ private:
 
 class ShareableElementData : public ElementData {
 public:
-    ShareableElementData(const Vector<Attribute>&);
-    ShareableElementData(const UniqueElementData&);
+    static PassRefPtr<ShareableElementData> createWithAttributes(const Vector<Attribute>&);
+
+    explicit ShareableElementData(const Vector<Attribute>&);
+    explicit ShareableElementData(const UniqueElementData&);
     ~ShareableElementData();
 
     void* m_attributeArray;
@@ -146,9 +143,12 @@ public:
 
 class UniqueElementData : public ElementData {
 public:
+    static PassRefPtr<UniqueElementData> create();
+    PassRefPtr<ShareableElementData> makeShareableCopy() const;
+
     UniqueElementData();
-    UniqueElementData(const ShareableElementData&);
-    UniqueElementData(const UniqueElementData&);
+    explicit UniqueElementData(const ShareableElementData&);
+    explicit UniqueElementData(const UniqueElementData&);
 
     mutable RefPtr<StylePropertySet> m_presentationAttributeStyle;
     Vector<Attribute, 4> m_attributeVector;
@@ -372,9 +372,9 @@ public:
     void parserSetAttributes(const Vector<Attribute>&, FragmentScriptingPermission);
 
     const ElementData* elementData() const { return m_elementData.get(); }
-    ElementData* ensureUniqueElementData();
     const ElementData* elementDataWithSynchronizedAttributes() const;
     const ElementData* ensureElementDataWithSynchronizedAttributes() const;
+    UniqueElementData* ensureUniqueElementData();
 
     // Clones attributes only.
     void cloneAttributesFromElement(const Element&);
@@ -934,11 +934,11 @@ inline bool Element::hasClass() const
     return elementData() && elementData()->hasClass();
 }
 
-inline ElementData* Element::ensureUniqueElementData()
+inline UniqueElementData* Element::ensureUniqueElementData()
 {
     if (!elementData() || !elementData()->isUnique())
         createUniqueElementData();
-    return m_elementData.get();
+    return static_cast<UniqueElementData*>(m_elementData.get());
 }
 
 // Put here to make them inline.

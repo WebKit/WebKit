@@ -34,7 +34,7 @@
 namespace WebCore {
 
 class Attribute;
-class ElementData;
+class ShareableElementData;
 class ShareableElementDataCacheEntry;
 
 class DocumentSharedObjectPool {
@@ -42,7 +42,7 @@ public:
     static PassOwnPtr<DocumentSharedObjectPool> create() { return adoptPtr(new DocumentSharedObjectPool); }
     ~DocumentSharedObjectPool();
 
-    PassRefPtr<ElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
+    PassRefPtr<ShareableElementData> cachedShareableElementDataWithAttributes(const Vector<Attribute>&);
 
 private:
     DocumentSharedObjectPool();

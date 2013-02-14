@@ -57,16 +57,16 @@ private:
 
 class ShareableElementDataCacheEntry {
 public:
-    ShareableElementDataCacheEntry(const ShareableElementDataCacheKey& k, PassRefPtr<ElementData> v)
+    ShareableElementDataCacheEntry(const ShareableElementDataCacheKey& k, PassRefPtr<ShareableElementData> v)
         : key(k)
         , value(v)
     { }
 
     ShareableElementDataCacheKey key;
-    RefPtr<ElementData> value;
+    RefPtr<ShareableElementData> value;
 };
 
-PassRefPtr<ElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(const Vector<Attribute>& attributes)
+PassRefPtr<ShareableElementData> DocumentSharedObjectPool::cachedShareableElementDataWithAttributes(const Vector<Attribute>& attributes)
 {
     ASSERT(!attributes.isEmpty());
 
@@ -77,11 +77,11 @@ PassRefPtr<ElementData> DocumentSharedObjectPool::cachedShareableElementDataWith
     if (cacheIterator->value && cacheIterator->value->key != cacheKey)
         cacheHash = 0;
 
-    RefPtr<ElementData> elementData;
+    RefPtr<ShareableElementData> elementData;
     if (cacheHash && cacheIterator->value)
         elementData = cacheIterator->value->value;
     else
-        elementData = ElementData::createShareableWithAttributes(attributes);
+        elementData = ShareableElementData::createWithAttributes(attributes);
 
     if (!cacheHash || cacheIterator->value)
         return elementData.release();

@@ -1022,7 +1022,7 @@ void Element::parserSetAttributes(const Vector<Attribute>& attributeVector, Frag
     if (document() && document()->sharedObjectPool())
         m_elementData = document()->sharedObjectPool()->cachedShareableElementDataWithAttributes(filteredAttributes);
     else
-        m_elementData = ElementData::createShareableWithAttributes(filteredAttributes);
+        m_elementData = ShareableElementData::createWithAttributes(filteredAttributes);
 
     // Iterate over the set of attributes we already have on the stack in case
     // attributeChanged mutates m_elementData.
@@ -1687,7 +1687,7 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     }
 
     updateInvalidAttributes();
-    ElementData* elementData = ensureUniqueElementData();
+    UniqueElementData* elementData = ensureUniqueElementData();
 
     size_t index = elementData->getAttributeItemIndex(attrNode->qualifiedName());
     if (index != notFound) {
@@ -1765,7 +1765,7 @@ void Element::removeAttributeInternal(size_t index, SynchronizationOfLazyAttribu
 {
     ASSERT_WITH_SECURITY_IMPLICATION(index < attributeCount());
 
-    ElementData* elementData = ensureUniqueElementData();
+    UniqueElementData* elementData = ensureUniqueElementData();
 
     QualifiedName name = elementData->attributeItem(index)->name();
     AtomicString valueBeingRemoved = elementData->attributeItem(index)->value();
@@ -2767,7 +2767,7 @@ void Element::cloneAttributesFromElement(const Element& other)
     if (other.m_elementData->isUnique()
         && !other.m_elementData->presentationAttributeStyle()
         && (!other.m_elementData->inlineStyle() || !other.m_elementData->inlineStyle()->hasCSSOMWrapper()))
-        const_cast<Element&>(other).m_elementData = other.m_elementData->makeShareableCopy();
+        const_cast<Element&>(other).m_elementData = static_cast<const UniqueElementData*>(other.m_elementData.get())->makeShareableCopy();
 
     if (!other.m_elementData->isUnique())
         m_elementData = other.m_elementData;
@@ -2789,9 +2789,11 @@ void Element::cloneDataFromElement(const Element& other)
 void Element::createUniqueElementData()
 {
     if (!m_elementData)
-        m_elementData = ElementData::createUnique();
-    else
-        m_elementData = m_elementData->makeUniqueCopy();
+        m_elementData = UniqueElementData::create();
+    else {
+        ASSERT(!m_elementData->isUnique());
+        m_elementData = static_cast<ShareableElementData*>(m_elementData.get())->makeUniqueCopy();
+    }
 }
 
 void Element::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
@@ -2864,13 +2866,13 @@ static size_t sizeForShareableElementDataWithAttributeCount(unsigned count)
     return sizeof(ShareableElementData) - sizeof(void*) + sizeof(Attribute) * count;
 }
 
-PassRefPtr<ElementData> ElementData::createShareableWithAttributes(const Vector<Attribute>& attributes)
+PassRefPtr<ShareableElementData> ShareableElementData::createWithAttributes(const Vector<Attribute>& attributes)
 {
     void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(attributes.size()));
     return adoptRef(new (slot) ShareableElementData(attributes));
 }
 
-PassRefPtr<ElementData> ElementData::createUnique()
+PassRefPtr<UniqueElementData> UniqueElementData::create()
 {
     return adoptRef(new UniqueElementData);
 }
@@ -2940,24 +2942,17 @@ UniqueElementData::UniqueElementData(const ShareableElementData& other)
         m_attributeVector.uncheckedAppend(other.immutableAttributeArray()[i]);
 }
 
-PassRefPtr<ElementData> ElementData::makeUniqueCopy() const
+PassRefPtr<UniqueElementData> ElementData::makeUniqueCopy() const
 {
     if (isUnique())
         return adoptRef(new UniqueElementData(static_cast<const UniqueElementData&>(*this)));
     return adoptRef(new UniqueElementData(static_cast<const ShareableElementData&>(*this)));
 }
 
-PassRefPtr<ElementData> ElementData::makeShareableCopy() const
+PassRefPtr<ShareableElementData> UniqueElementData::makeShareableCopy() const
 {
-    ASSERT(isUnique());
     void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(mutableAttributeVector().size()));
-    return adoptRef(new (slot) ShareableElementData(static_cast<const UniqueElementData&>(*this)));
-}
-
-void ElementData::setPresentationAttributeStyle(PassRefPtr<StylePropertySet> style) const
-{
-    ASSERT(m_isUnique);
-    static_cast<const UniqueElementData*>(this)->m_presentationAttributeStyle = style;
+    return adoptRef(new (slot) ShareableElementData(*this));
 }
 
 void ElementData::addAttribute(const Attribute& attribute)

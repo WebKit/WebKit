@@ -341,10 +341,10 @@ void StyledElement::rebuildPresentationAttributeStyle()
     }
 
     // ShareableElementData doesn't store presentation attribute style, so make sure we have a UniqueElementData.
-    ElementData* elementData = ensureUniqueElementData();
+    UniqueElementData* elementData = ensureUniqueElementData();
 
     elementData->m_presentationAttributeStyleIsDirty = false;
-    elementData->setPresentationAttributeStyle(style->isEmpty() ? 0 : style);
+    elementData->m_presentationAttributeStyle = style->isEmpty() ? 0 : style;
 
     if (!cacheHash || cacheIterator->value)
         return;
