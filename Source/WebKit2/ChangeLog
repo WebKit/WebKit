@@ -1,3 +1,12 @@
+2013-02-13  David Farler  <dfarler@apple.com>
+
+        Make WebKit2 Derived Sources work with SDK identifiers too
+        https://bugs.webkit.org/show_bug.cgi?id=109763
+
+        Reviewed by David Kilzer.
+
+        * WebKit2.xcodeproj/project.pbxproj: Pass SDKROOT=${SDKROOT} to DerivedSources.make
+
 2013-02-13  Csaba Osztrogonác  <ossy@webkit.org>
 
         One more buildfix for !ENABLE(PLUGIN_PROCESS) platforms.
