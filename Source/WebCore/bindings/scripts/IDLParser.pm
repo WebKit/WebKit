@@ -48,7 +48,7 @@ struct( domInterface => {
     functions => '@',    # List of 'domFunction'
     attributes => '@',    # List of 'domAttribute'    
     extendedAttributes => '$', # Extended attributes
-    constructors => '@', # Constructor
+    constructors => '@', # Constructors, list of 'domFunction'
     isException => '$', # Used for exception interfaces
 });
 
@@ -97,6 +97,14 @@ struct( Token => {
     type => '$', # type of token
     value => '$' # value of token
 });
+
+struct( Typedef => {
+    extendedAttributes => '$', # Extended attributes
+    type => '$', # Type of data
+});
+
+# Maps 'typedef name' -> Typedef
+my %typedefs = ();
 
 sub new {
     my $class = shift;
@@ -147,6 +155,19 @@ sub assertUnexpectedToken
         $msg .= " IDLParser.pm:" . $line;
     }
     die $msg;
+}
+
+sub assertNoExtendedAttributesInTypedef
+{
+    my $self = shift;
+    my $name = shift;
+    my $line = shift;
+    my $typedef = $typedefs{$name};
+    my $msg = "Unexpected extendedAttributeList in typedef \"$name\" at " . $self->{Line};
+    if (defined ($line)) {
+        $msg .= " IDLParser.pm:" . $line;
+    }
+    die $msg if %{$typedef->extendedAttributes};
 }
 
 sub Parse
@@ -322,7 +343,71 @@ sub parseDefinitions
             push(@definitions, $definition);
         }
     }
+    $self->applyTypedefs(\@definitions);
     return \@definitions;
+}
+
+sub applyTypedefs
+{
+    my $self = shift;
+    my $definitions = shift;
+   
+    if (!%typedefs) {
+        return;
+    }
+    foreach my $definition (@$definitions) {
+        if (ref($definition) eq "domInterface") {
+            foreach my $constant (@{$definition->constants}) {
+                if (exists $typedefs{$constant->type}) {
+                    my $typedef = $typedefs{$constant->type};
+                    $self->assertNoExtendedAttributesInTypedef($constant->type, __LINE__);
+                    $constant->type($typedef->type);
+                }
+            }
+            foreach my $attribute (@{$definition->attributes}) {
+                $self->applyTypedefsForSignature($attribute->signature);
+            }
+            foreach my $function (@{$definition->functions}, @{$definition->constructors}) {
+                $self->applyTypedefsForSignature($function->signature);
+                foreach my $signature (@{$function->parameters}) {
+                    $self->applyTypedefsForSignature($signature);
+                }
+            }
+        }
+    }
+}
+
+sub applyTypedefsForSignature
+{
+    my $self = shift;
+    my $signature = shift;
+
+    if (!defined ($signature->type)) {
+        return;
+    }
+
+    my $type = $signature->type;
+    $type =~ s/[\?\[\]]+$//g;
+    my $typeSuffix = $signature->type;
+    $typeSuffix =~ s/^[^\?\[\]]+//g;
+    if (exists $typedefs{$type}) {
+        my $typedef = $typedefs{$type};
+        $signature->type($typedef->type . $typeSuffix);
+        copyExtendedAttributes($signature->extendedAttributes, $typedef->extendedAttributes);
+    }
+
+    # Handle union types, sequences and etc.
+    foreach my $name (%typedefs) {
+        if (!exists $typedefs{$name}) {
+            next;
+        }
+        my $typedef = $typedefs{$name};
+        my $regex = '\\b' . $name . '\\b';
+        my $replacement = $typedef->type;
+        my $type = $signature->type;
+        $type =~ s/($regex)/$replacement/g;
+        $signature->type($type);
+    }
 }
 
 sub parseDefinition
@@ -726,14 +811,20 @@ sub parseTypedef
 {
     my $self = shift;
     my $extendedAttributeList = shift;
+    die "Extended attributes are not applicable to typedefs themselves: " . $self->{Line} if %{$extendedAttributeList};
 
     my $next = $self->nextToken();
     if ($next->value() eq "typedef") {
         $self->assertTokenValue($self->getToken(), "typedef", __LINE__);
-        $self->parseExtendedAttributeList();
-        $self->parseType();
-        $self->assertTokenType($self->getToken(), IdentifierToken);
+        my $typedef = Typedef->new();
+        $typedef->extendedAttributes($self->parseExtendedAttributeListAllowEmpty());
+        $typedef->type($self->parseType());
+        my $nameToken = $self->getToken();
+        $self->assertTokenType($nameToken, IdentifierToken);
         $self->assertTokenValue($self->getToken(), ";", __LINE__);
+        my $name = $nameToken->value();
+        die "typedef redefinition for " . $name . " at " . $self->{Line} if exists $typedefs{$name};
+        $typedefs{$name} = $typedef;
         return;
     }
     $self->assertUnexpectedToken($next->value(), __LINE__);
@@ -1803,7 +1894,7 @@ sub parseUnrestrictedFloatType
     my $next = $self->nextToken();
     if ($next->value() eq "unrestricted") {
         $self->assertTokenValue($self->getToken(), "unrestricted", __LINE__);
-        return "unrestricted" . $self->parseFloatType();
+        return "unrestricted " . $self->parseFloatType();
     }
     if ($next->value() =~ /$nextUnrestrictedFloatType_1/) {
         return $self->parseFloatType();

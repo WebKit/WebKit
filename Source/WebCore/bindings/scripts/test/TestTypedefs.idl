@@ -1,0 +1,81 @@
+/*
+ * Copyright (C) 2013 Google Inc. All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are
+ * met:
+ *
+ *     * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above
+ * copyright notice, this list of conditions and the following disclaimer
+ * in the documentation and/or other materials provided with the
+ * distribution.
+ *     * Neither the name of Google Inc. nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+// This IDL file is for testing the bindings code generator and for tracking
+// changes in its ouput.
+
+[
+    Constructor(in STRING hello, in TEST_CALLBACK testCallback),
+] interface TestTypedefs {
+    attribute ULONGLONG unsignedLongLongAttr;
+
+    [Immutable] attribute SCRIPT_VALUE immutableSerializedScriptValue;
+    
+    static readonly attribute T TestSubObj;
+
+    [StrictTypeChecking] void func(in [Optional] ARRAY_OF_LONGS x);
+
+    void multiTransferList(in [TransferList=tx] SCRIPT_VALUE first, in [Optional] ARRAY tx, in [Optional] TRANSFER_TXX_SCRIPT_VALUE second, in [Optional] ARRAY txx);
+
+    void setShadow(in DOUBLE width, in DOUBLE height, in float blur, in [StrictTypeChecking] OPTIONAL_STRING color, in [Optional] DOUBLE alpha);
+
+    ULONGLONG methodWithSequenceArg(in sequence<SCRIPT_VALUE> sequenceArg);
+
+    void nullableArrayArg(in ARRAY_OF_STRINGS? arrayArg);
+
+    void funcWithClamp(in ULONGLONG_CLAMP arg1, in [Optional] ULONGLONG_CLAMP arg2);
+
+    [Immutable] SVGPOINT immutablePointFunction();
+
+    ARRAY_OF_STRINGS stringArrayFunction(in ARRAY_OF_STRINGS values) raises(E);
+    STRING[] stringArrayFunction2(in STRING[] values) raises(E);
+
+    // Exceptions
+    void methodWithException() raises(E);
+    attribute long attrWithGetterException getter raises(E);
+    attribute long attrWithSetterException setter raises(E);
+    attribute DOMString stringAttrWithGetterException getter raises(E);
+    attribute DOMString stringAttrWithSetterException setter raises(E);
+};
+
+typedef float                      DOUBLE;
+typedef unsigned long long         ULONGLONG;
+typedef [Clamp] unsigned long long ULONGLONG_CLAMP;
+typedef SerializedScriptValue      SCRIPT_VALUE;
+typedef long[]                     ARRAY_OF_LONGS;
+typedef SVGPoint                   SVGPOINT;
+typedef DOMString                  STRING;
+typedef [Optional] DOMString       OPTIONAL_STRING;
+typedef DOMString[]                ARRAY_OF_STRINGS;
+typedef [Callback] TestCallback    TEST_CALLBACK;
+typedef TestSubObjConstructor      T;
+typedef Array                      ARRAY;
+typedef DOMException               E;
+typedef [TransferList=txx] SerializedScriptValue TRANSFER_TXX_SCRIPT_VALUE;
