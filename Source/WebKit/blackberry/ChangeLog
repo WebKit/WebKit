@@ -1,3 +1,19 @@
+2013-02-14  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Update keyboard event details to match platform details.
+        https://bugs.webkit.org/show_bug.cgi?id=109693
+
+        Reviewed by Yong Li.
+
+        PR 220170.
+
+        Update keyboard event details.
+
+        Reviewed Internally by Nima Ghanavatian and Gen Mak.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::keyEvent):
+
 2013-02-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: expose did{Begin,Cancel}Frame() and {will,did}Composite() on WebDebToolsAgent

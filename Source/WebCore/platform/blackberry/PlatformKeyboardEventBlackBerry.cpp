@@ -111,9 +111,9 @@ static String keyIdentifierForBlackBerryCharacter(unsigned character)
     }
 }
 
-static int windowsKeyCodeForBlackBerryCharacter(unsigned character)
+static int windowsKeyCodeForBlackBerryKeycode(unsigned keycode)
 {
-    switch (character) {
+    switch (keycode) {
     case KEYCODE_RETURN:
     case KEYCODE_KP_ENTER:
         return VK_RETURN; // (0D) Return key
@@ -439,9 +439,9 @@ static inline PlatformKeyboardEvent::Type toWebCorePlatformKeyboardEventType(con
 }
 
 PlatformKeyboardEvent::PlatformKeyboardEvent(const BlackBerry::Platform::KeyboardEvent& event)
-    : PlatformEvent(toWebCorePlatformKeyboardEventType(event.type()), event.shiftActive() || (event.character() == KEYCODE_BACK_TAB), event.ctrlActive(), event.altActive(), false, currentTime())
+    : PlatformEvent(toWebCorePlatformKeyboardEventType(event.type()), event.shiftActive() || (event.character() == KEYCODE_BACK_TAB), event.ctrlActive(), event.altActive(), event.metaActive(), currentTime())
     , m_keyIdentifier(keyIdentifierForBlackBerryCharacter(event.character()))
-    , m_windowsVirtualKeyCode(windowsKeyCodeForBlackBerryCharacter(event.character()))
+    , m_windowsVirtualKeyCode(windowsKeyCodeForBlackBerryKeycode(event.keycode() ? event.keycode() : event.character())) // if keycode isn't valid, use character as it's unconverted.
     , m_autoRepeat(false)
     , m_isKeypad(false)
     , m_unmodifiedCharacter(event.character())

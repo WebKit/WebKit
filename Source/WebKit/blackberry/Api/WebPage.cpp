@@ -4334,7 +4334,8 @@ bool WebPage::keyEvent(const Platform::KeyboardEvent& keyboardEvent)
 
     bool handled = d->m_inputHandler->handleKeyboardInput(keyboardEvent);
 
-    if (!handled && keyboardEvent.type() == Platform::KeyboardEvent::KeyDown && !d->m_inputHandler->isInputMode()) {
+    // This is hotkey handling and perhaps doesn't belong here.
+    if (!handled && keyboardEvent.type() == Platform::KeyboardEvent::KeyDown && !d->m_inputHandler->isInputMode() && !keyboardEvent.modifiers()) {
         IntPoint previousPos = d->scrollPosition();
         handleScrolling(keyboardEvent.character(), d);
         handled = previousPos != d->scrollPosition();
