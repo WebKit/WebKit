@@ -1,3 +1,9 @@
+2013-02-14  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, chromium roll 182150 -> 182448
+
+        * DEPS:
+
 2013-02-14  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move PlatformMessagePortChannel to WebCore
