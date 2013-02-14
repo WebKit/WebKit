@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void V8BiquadFilterNode::typeAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8BiquadFilterNode::typeAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     BiquadFilterNode* imp = V8BiquadFilterNode::toNative(info.Holder());
 

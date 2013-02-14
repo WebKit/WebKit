@@ -31,7 +31,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Coordinates::altitudeAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8Coordinates::altitudeAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
@@ -40,7 +40,7 @@ v8::Handle<v8::Value> V8Coordinates::altitudeAccessorGetter(v8::Local<v8::String
     return v8::Number::New(imp->altitude());
 }
 
-v8::Handle<v8::Value> V8Coordinates::altitudeAccuracyAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8Coordinates::altitudeAccuracyAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
@@ -49,7 +49,7 @@ v8::Handle<v8::Value> V8Coordinates::altitudeAccuracyAccessorGetter(v8::Local<v8
     return v8::Number::New(imp->altitudeAccuracy());
 }
 
-v8::Handle<v8::Value> V8Coordinates::headingAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8Coordinates::headingAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);
@@ -58,7 +58,7 @@ v8::Handle<v8::Value> V8Coordinates::headingAccessorGetter(v8::Local<v8::String>
     return v8::Number::New(imp->heading());
 }
 
-v8::Handle<v8::Value> V8Coordinates::speedAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8Coordinates::speedAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     Coordinates* imp = V8Coordinates::toNative(holder);

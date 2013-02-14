@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Clipboard::typesAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8Clipboard::typesAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     Clipboard* clipboard = V8Clipboard::toNative(info.Holder());
 

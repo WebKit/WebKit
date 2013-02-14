@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8WebKitAnimation::iterationCountAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8WebKitAnimation::iterationCountAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     WebKitAnimation* imp = V8WebKitAnimation::toNative(holder);

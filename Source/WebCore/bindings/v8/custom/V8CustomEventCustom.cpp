@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8CustomEvent::detailAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8CustomEvent::detailAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     CustomEvent* imp = V8CustomEvent::toNative(info.Holder());
     RefPtr<SerializedScriptValue> serialized = imp->serializedScriptValue();

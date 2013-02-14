@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8FileReader::resultAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8FileReader::resultAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     FileReader* imp = V8FileReader::toNative(holder);

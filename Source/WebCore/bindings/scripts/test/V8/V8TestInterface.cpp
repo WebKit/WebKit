@@ -133,7 +133,7 @@ static void supplementalStr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 
 static v8::Handle<v8::Value> supplementalStr3AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-        return V8TestInterface::supplementalStr3AccessorGetter(name, info);
+        return V8TestInterface::supplementalStr3AttrGetterCustom(name, info);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -142,7 +142,7 @@ static v8::Handle<v8::Value> supplementalStr3AttrGetter(v8::Local<v8::String> na
 
 static void supplementalStr3AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-        V8TestInterface::supplementalStr3AccessorSetter(name, value, info);
+        V8TestInterface::supplementalStr3AttrSetterCustom(name, value, info);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)

@@ -70,13 +70,13 @@ static PassRefPtr<CanvasStyle> toCanvasStyle(v8::Handle<v8::Value> value, v8::Is
     return 0;
 }
 
-v8::Handle<v8::Value> V8CanvasRenderingContext2D::strokeStyleAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::strokeStyleAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8CanvasRenderingContext2D::toNative(info.Holder());
     return toV8Object(impl->strokeStyle(), info.Holder(), info.GetIsolate());
 }
 
-void V8CanvasRenderingContext2D::strokeStyleAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8CanvasRenderingContext2D::strokeStyleAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8CanvasRenderingContext2D::toNative(info.Holder());
     if (value->IsString())
@@ -85,13 +85,13 @@ void V8CanvasRenderingContext2D::strokeStyleAccessorSetter(v8::Local<v8::String>
         impl->setStrokeStyle(toCanvasStyle(value, info.GetIsolate()));
 }
 
-v8::Handle<v8::Value> V8CanvasRenderingContext2D::fillStyleAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8CanvasRenderingContext2D::fillStyleAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8CanvasRenderingContext2D::toNative(info.Holder());
     return toV8Object(impl->fillStyle(), info.Holder(), info.GetIsolate());
 }
 
-void V8CanvasRenderingContext2D::fillStyleAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8CanvasRenderingContext2D::fillStyleAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     CanvasRenderingContext2D* impl = V8CanvasRenderingContext2D::toNative(info.Holder());
     if (value->IsString())

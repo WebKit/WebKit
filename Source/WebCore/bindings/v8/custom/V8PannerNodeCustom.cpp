@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void V8PannerNode::panningModelAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8PannerNode::panningModelAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     PannerNode* imp = V8PannerNode::toNative(info.Holder());
 
@@ -60,7 +60,7 @@ void V8PannerNode::panningModelAccessorSetter(v8::Local<v8::String> name, v8::Lo
     throwError(v8TypeError, "Illegal panningModel", info.GetIsolate());
 }
 
-void V8PannerNode::distanceModelAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8PannerNode::distanceModelAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     PannerNode* imp = V8PannerNode::toNative(info.Holder());
 

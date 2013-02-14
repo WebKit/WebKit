@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Event::dataTransferAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8Event::dataTransferAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     Event* event = V8Event::toNative(info.Holder());
 
@@ -52,7 +52,7 @@ v8::Handle<v8::Value> V8Event::dataTransferAccessorGetter(v8::Local<v8::String> 
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8Event::clipboardDataAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8Event::clipboardDataAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     Event* event = V8Event::toNative(info.Holder());
 

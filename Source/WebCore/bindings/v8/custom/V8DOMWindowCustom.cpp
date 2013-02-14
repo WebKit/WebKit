@@ -144,7 +144,7 @@ v8::Handle<v8::Value> WindowSetTimeoutImpl(const v8::Arguments& args, bool singl
     return v8Integer(id, args.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8DOMWindow::eventAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(info.GetIsolate()));
     if (holder.IsEmpty())
@@ -166,7 +166,7 @@ v8::Handle<v8::Value> V8DOMWindow::eventAccessorGetter(v8::Local<v8::String> nam
     return jsEvent;
 }
 
-void V8DOMWindow::eventAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8DOMWindow::eventAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(info.GetIsolate()));
     if (holder.IsEmpty())
@@ -185,7 +185,7 @@ void V8DOMWindow::eventAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::
     context->Global()->SetHiddenValue(eventSymbol, value);
 }
 
-void V8DOMWindow::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8DOMWindow::locationAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     DOMWindow* imp = V8DOMWindow::toNative(info.Holder());
     BindingState* state = BindingState::instance();
@@ -202,7 +202,7 @@ void V8DOMWindow::locationAccessorSetter(v8::Local<v8::String> name, v8::Local<v
         location->setHref(toWebCoreString(value), active, first);
 }
 
-void V8DOMWindow::openerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8DOMWindow::openerAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     DOMWindow* imp = V8DOMWindow::toNative(info.Holder());
 

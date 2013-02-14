@@ -425,14 +425,14 @@ END
         if (HasCustomGetter($attrExt) && !$attrExt->{"ImplementedBy"}) {
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
-    static v8::Handle<v8::Value> ${name}AccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);
+    static v8::Handle<v8::Value> ${name}AttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo&);
 END
             push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
         if (HasCustomSetter($attrExt) && !$attrExt->{"ImplementedBy"}) {
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
-    static void ${name}AccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);
+    static void ${name}AttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);
 END
             push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
@@ -729,13 +729,13 @@ sub GenerateHeaderCustomCall
         push(@headerContent, "    static v8::Handle<v8::Value> callAsFunctionCallback(const v8::Arguments&);\n");
     }
     if ($interface->name eq "Event") {
-        push(@headerContent, "    static v8::Handle<v8::Value> dataTransferAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
-        push(@headerContent, "    static void valueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);\n");
+        push(@headerContent, "    static v8::Handle<v8::Value> dataTransferAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
+        push(@headerContent, "    static void valueAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);\n");
     }
     if ($interface->name eq "Location") {
-        push(@headerContent, "    static v8::Handle<v8::Value> assignAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
-        push(@headerContent, "    static v8::Handle<v8::Value> reloadAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
-        push(@headerContent, "    static v8::Handle<v8::Value> replaceAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
+        push(@headerContent, "    static v8::Handle<v8::Value> assignAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
+        push(@headerContent, "    static v8::Handle<v8::Value> reloadAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
+        push(@headerContent, "    static v8::Handle<v8::Value> replaceAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo&);\n");
     }
 }
 
@@ -900,7 +900,7 @@ END
 
     if (HasCustomGetter($attrExt)) {
         push(@implContentDecls, <<END);
-        return ${v8InterfaceName}::${attrName}AccessorGetter(name, info);
+        return ${v8InterfaceName}::${attrName}AttrGetterCustom(name, info);
 }
 
 END
@@ -1186,7 +1186,7 @@ sub GenerateNormalAttrSetter
 
     if (HasCustomSetter($attrExt)) {
         push(@implContentDecls, <<END);
-        ${v8InterfaceName}::${attrName}AccessorSetter(name, value, info);
+        ${v8InterfaceName}::${attrName}AttrSetterCustom(name, value, info);
 }
 
 END
@@ -3089,9 +3089,9 @@ END
 
     // For security reasons, these functions are on the instance instead
     // of on the prototype object to ensure that they cannot be overwritten.
-    instance->SetAccessor(v8::String::NewSymbol("reload"), V8Location::reloadAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-    instance->SetAccessor(v8::String::NewSymbol("replace"), V8Location::replaceAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
-    instance->SetAccessor(v8::String::NewSymbol("assign"), V8Location::assignAccessorGetter, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8::String::NewSymbol("reload"), V8Location::reloadAttrGetterCustom, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8::String::NewSymbol("replace"), V8Location::replaceAttrGetterCustom, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
+    instance->SetAccessor(v8::String::NewSymbol("assign"), V8Location::assignAttrGetterCustom, 0, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly));
 END
     }
 

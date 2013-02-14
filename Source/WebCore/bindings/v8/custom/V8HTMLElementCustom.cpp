@@ -47,13 +47,13 @@ v8::Handle<v8::Object> wrap(HTMLElement* impl, v8::Handle<v8::Object> creationCo
 }
 
 #if ENABLE(MICRODATA)
-v8::Handle<v8::Value> V8HTMLElement::itemValueAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8HTMLElement::itemValueAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     HTMLElement* impl = V8HTMLElement::toNative(info.Holder());
     return toV8Fast(impl->itemValue().get(), info, impl);
 }
 
-void V8HTMLElement::itemValueAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8HTMLElement::itemValueAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     HTMLElement* impl = V8HTMLElement::toNative(info.Holder());
     ExceptionCode ec = 0;

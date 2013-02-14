@@ -33,7 +33,7 @@
 
 namespace WebCore {
 
-void V8HTMLMediaElement::controllerAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8HTMLMediaElement::controllerAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     HTMLMediaElement* imp = V8HTMLMediaElement::toNative(info.Holder());
     MediaController* controller = 0;

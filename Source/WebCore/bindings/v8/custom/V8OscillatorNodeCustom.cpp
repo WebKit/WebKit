@@ -34,7 +34,7 @@
 
 namespace WebCore {
 
-void V8OscillatorNode::typeAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8OscillatorNode::typeAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     OscillatorNode* imp = V8OscillatorNode::toNative(holder);

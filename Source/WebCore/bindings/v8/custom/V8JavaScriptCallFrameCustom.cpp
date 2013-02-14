@@ -59,7 +59,7 @@ v8::Handle<v8::Value> V8JavaScriptCallFrame::setVariableValueCallback(const v8::
     return impl->setVariableValue(scopeIndex, variableName, newValue);
 }
 
-v8::Handle<v8::Value> V8JavaScriptCallFrame::scopeChainAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8JavaScriptCallFrame::scopeChainAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(info.Holder());
     return impl->scopeChain();
@@ -72,13 +72,13 @@ v8::Handle<v8::Value> V8JavaScriptCallFrame::scopeTypeCallback(const v8::Argumen
     return v8::Int32::New(impl->scopeType(scopeIndex));
 }
 
-v8::Handle<v8::Value> V8JavaScriptCallFrame::thisObjectAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8JavaScriptCallFrame::thisObjectAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(info.Holder());
     return impl->thisObject();
 }
 
-v8::Handle<v8::Value> V8JavaScriptCallFrame::typeAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8JavaScriptCallFrame::typeAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return v8::String::NewSymbol("function");
 }

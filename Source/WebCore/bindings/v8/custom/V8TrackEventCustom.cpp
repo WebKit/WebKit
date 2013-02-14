@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8TrackEvent::trackAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8TrackEvent::trackAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TrackEvent* trackEvent = V8TrackEvent::toNative(info.Holder());
     TrackBase* track = trackEvent->track();

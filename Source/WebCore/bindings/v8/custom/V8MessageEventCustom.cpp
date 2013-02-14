@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8MessageEvent::dataAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     MessageEvent* event = V8MessageEvent::toNative(info.Holder());
 
@@ -86,7 +86,7 @@ v8::Handle<v8::Value> V8MessageEvent::dataAccessorGetter(v8::Local<v8::String> n
     return result;
 }
 
-v8::Handle<v8::Value> V8MessageEvent::portsAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8MessageEvent::portsAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     MessageEvent* event = V8MessageEvent::toNative(info.Holder());
 

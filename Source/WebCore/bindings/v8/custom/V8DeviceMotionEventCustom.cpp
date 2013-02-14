@@ -121,7 +121,7 @@ RefPtr<DeviceMotionData::RotationRate> readRotationRateArgument(v8::Local<v8::Va
 
 } // namespace
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
@@ -130,7 +130,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationAccessorGetter(v8::Local<
     return createAccelerationObject(imp->deviceMotionData()->acceleration(), info.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationIncludingGravityAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationIncludingGravityAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
@@ -139,7 +139,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::accelerationIncludingGravityAccessorG
     return createAccelerationObject(imp->deviceMotionData()->accelerationIncludingGravity(), info.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::rotationRateAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8DeviceMotionEvent::rotationRateAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);
@@ -148,7 +148,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::rotationRateAccessorGetter(v8::Local<
     return createRotationRateObject(imp->deviceMotionData()->rotationRate(), info.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAccessorGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.Holder();
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(holder);

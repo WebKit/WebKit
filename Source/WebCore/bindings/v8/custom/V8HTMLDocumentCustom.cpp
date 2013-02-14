@@ -159,7 +159,7 @@ v8::Handle<v8::Value> V8HTMLDocument::openCallback(const v8::Arguments& args)
     return args.Holder();
 }
 
-void V8HTMLDocument::allAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8HTMLDocument::allAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     // Just emulate a normal JS behaviour---install a property on this.
     info.This()->ForceSet(name, value);

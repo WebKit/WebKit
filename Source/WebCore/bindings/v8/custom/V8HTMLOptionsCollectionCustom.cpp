@@ -114,7 +114,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallback(const v8::Arguments& 
     return v8::Undefined();
 }
 
-void V8HTMLOptionsCollection::lengthAccessorSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+void V8HTMLOptionsCollection::lengthAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(info.Holder());
     double v = value->NumberValue();
