@@ -90,8 +90,11 @@ public:
     virtual void textFieldDidChange(const WebInputElement&) { }
     virtual void textFieldDidReceiveKeyDown(const WebInputElement&, const WebKeyboardEvent&) { }
 
+    // Informs the client whether or not any subsequent text changes should be ignored.
+    virtual void setIgnoreTextChanges(bool ignore) { }
+
 protected:
-    ~WebAutofillClient() { }
+    virtual ~WebAutofillClient() { }
 };
 
 } // namespace WebKit

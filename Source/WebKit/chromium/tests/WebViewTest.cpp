@@ -37,6 +37,7 @@
 #include "FrameView.h"
 #include "HTMLDocument.h"
 #include "URLTestHelpers.h"
+#include "WebAutofillClient.h"
 #include "WebContentDetectionResult.h"
 #include "WebDocument.h"
 #include "WebElement.h"
@@ -717,6 +718,98 @@ TEST_F(WebViewTest, SelectionOnReadOnlyInput)
     EXPECT_EQ(location, 0UL);
     EXPECT_EQ(length, testWord.length());
 
+    webView->close();
+}
+
+class MockAutofillClient : public WebAutofillClient {
+public:
+    MockAutofillClient()
+        : m_ignoreTextChanges(false)
+        , m_textChangesWhileIgnored(0)
+        , m_textChangesWhileNotIgnored(0) { }
+
+    virtual ~MockAutofillClient() { }
+
+    virtual void setIgnoreTextChanges(bool ignore) OVERRIDE { m_ignoreTextChanges = ignore; }
+    virtual void textFieldDidChange(const WebInputElement&) OVERRIDE
+    {
+        if (m_ignoreTextChanges)
+            ++m_textChangesWhileIgnored;
+        else
+            ++m_textChangesWhileNotIgnored;
+    }
+
+    void clearChangeCounts()
+    {
+        m_textChangesWhileIgnored = 0;
+        m_textChangesWhileNotIgnored = 0;
+    }
+
+    int textChangesWhileIgnored() { return m_textChangesWhileIgnored; }
+    int textChangesWhileNotIgnored() { return m_textChangesWhileNotIgnored; }
+
+private:
+    bool m_ignoreTextChanges;
+    int m_textChangesWhileIgnored;
+    int m_textChangesWhileNotIgnored;
+};
+
+
+TEST_F(WebViewTest, LosingFocusDoesNotTriggerAutofillTextChange)
+{
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("input_field_populated.html"));
+    MockAutofillClient client;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_populated.html");
+    webView->setAutofillClient(&client);
+    webView->setInitialFocus(false);
+
+    // Set up a composition that needs to be committed.
+    WebVector<WebCompositionUnderline> emptyUnderlines;
+    webView->setEditableSelectionOffsets(4, 10);
+    webView->setCompositionFromExistingText(8, 12, emptyUnderlines);
+    WebTextInputInfo info = webView->textInputInfo();
+    EXPECT_EQ(4, info.selectionStart);
+    EXPECT_EQ(10, info.selectionEnd);
+    EXPECT_EQ(8, info.compositionStart);
+    EXPECT_EQ(12, info.compositionEnd);
+
+    // Clear the focus and track that the subsequent composition commit does not trigger a
+    // text changed notification for autofill.
+    client.clearChangeCounts();
+    webView->setFocus(false);
+    EXPECT_EQ(1, client.textChangesWhileIgnored());
+    EXPECT_EQ(0, client.textChangesWhileNotIgnored());
+
+    webView->setAutofillClient(0);
+    webView->close();
+}
+
+TEST_F(WebViewTest, ConfirmCompositionTriggersAutofillTextChange)
+{
+    URLTestHelpers::registerMockedURLFromBaseURL(WebString::fromUTF8(m_baseURL.c_str()), WebString::fromUTF8("input_field_populated.html"));
+    MockAutofillClient client;
+    WebView* webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "input_field_populated.html");
+    webView->setAutofillClient(&client);
+    webView->setInitialFocus(false);
+
+    // Set up a composition that needs to be committed.
+    std::string compositionText("testingtext");
+
+    WebVector<WebCompositionUnderline> emptyUnderlines;
+    webView->setComposition(WebString::fromUTF8(compositionText.c_str()), emptyUnderlines, 0, compositionText.length());
+
+    WebTextInputInfo info = webView->textInputInfo();
+    EXPECT_EQ(0, info.selectionStart);
+    EXPECT_EQ((int) compositionText.length(), info.selectionEnd);
+    EXPECT_EQ(0, info.compositionStart);
+    EXPECT_EQ((int) compositionText.length(), info.compositionEnd);
+
+    client.clearChangeCounts();
+    webView->confirmComposition();
+    EXPECT_EQ(0, client.textChangesWhileIgnored());
+    EXPECT_EQ(1, client.textChangesWhileNotIgnored());
+
+    webView->setAutofillClient(0);
     webView->close();
 }
 

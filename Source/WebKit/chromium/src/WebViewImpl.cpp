@@ -2153,8 +2153,15 @@ void WebViewImpl::setFocus(bool enable)
         if (focusedFrame) {
             // Finish an ongoing composition to delete the composition node.
             Editor* editor = focusedFrame->editor();
-            if (editor && editor->hasComposition())
+            if (editor && editor->hasComposition()) {
+                if (m_autofillClient)
+                    m_autofillClient->setIgnoreTextChanges(true);
+
                 editor->confirmComposition();
+
+                if (m_autofillClient)
+                    m_autofillClient->setIgnoreTextChanges(false);
+            }
             m_imeAcceptEvents = false;
         }
     }
