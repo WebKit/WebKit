@@ -1,3 +1,22 @@
+2013-02-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [EFL][jhbuild] Silence GSettings-related warning.
+        https://bugs.webkit.org/show_bug.cgi?id=109749
+
+        Reviewed by Martin Robinson.
+
+        Apply the same change done to the GTK+ port in r109127; this
+        silences the warnings printed by glib about the memory GSettings
+        backend being used.
+
+        Not only does this make the bots (as well as manual runs of, say,
+        WebKitTestRunner) much more silent, but it also removes an stderr
+        line (which run-perf-tests considers as a failure).
+
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort.setup_environ_for_server): Explicitly set the
+        GSETTINGS_BACKEND environment variable to "memory".
+
 2013-02-14  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move mock notification presenter to TestRunner library
