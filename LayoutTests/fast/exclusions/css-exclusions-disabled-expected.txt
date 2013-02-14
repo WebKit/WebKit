@@ -14,7 +14,7 @@ PASS testComputedStyle("-webkit-wrap-through", "none") is "wrap"
 PASS testInlineStyle("-webkit-shape-outside", "circle(10px, 10px, 10px)") is null
 PASS testComputedStyle("-webkit-shape-outside", "circle(10px, 10px, 10px)") is "auto"
 PASS testInlineStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)") is null
-PASS testComputedStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)") is "auto"
+PASS testComputedStyle("-webkit-shape-inside", "circle(10px, 10px, 10px)") is "outside-shape"
 PASS successfullyParsed is true
 
 TEST COMPLETE

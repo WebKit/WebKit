@@ -52,7 +52,7 @@ function test(value, expected) {
 function negative_test(value) {
     var unevaledString = '"' + value.replace(/\\/g, "\\\\").replace(/"/g, "\"").replace(/\n/g, "\\n").replace(/\r/g, "\\r") + '"';
     shouldBeEqualToString('testCSSText(' + unevaledString + ')', '');
-    shouldBeEqualToString('testComputedStyle(' + unevaledString + ')', 'auto');
+    shouldBeEqualToString('testComputedStyle(' + unevaledString + ')', 'outside-shape');
 }
 
 // positive tests
@@ -73,10 +73,10 @@ test("polygon(nonzero, 10px 20px, 30px 40px, 40px 50px)", "polygon(nonzero, 10px
 
 shouldBeEqualToString('testNotInherited("auto", "rectangle(10px, 20px, 30px, 40px)")', "parent: auto, child: rectangle(10px, 20px, 30px, 40px)");
 shouldBeEqualToString('testNotInherited("outside-shape", "rectangle(10px, 20px, 30px, 40px)")', "parent: outside-shape, child: rectangle(10px, 20px, 30px, 40px)");
-shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "initial")', "parent: rectangle(10px, 20px, 30px, 40px), child: auto");
-shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "")', "parent: rectangle(10px, 20px, 30px, 40px), child: auto");
+shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "initial")', "parent: rectangle(10px, 20px, 30px, 40px), child: outside-shape");
+shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "")', "parent: rectangle(10px, 20px, 30px, 40px), child: outside-shape");
 shouldBeEqualToString('testNotInherited("rectangle(10px, 20px, 30px, 40px)", "inherit")', "parent: rectangle(10px, 20px, 30px, 40px), child: rectangle(10px, 20px, 30px, 40px)");
-shouldBeEqualToString('testNotInherited("", "inherit")', "parent: auto, child: auto");
+shouldBeEqualToString('testNotInherited("", "inherit")', "parent: outside-shape, child: outside-shape");
 shouldBeEqualToString('testNotInherited("auto", "inherit")', "parent: auto, child: auto");
 
 // negative tests

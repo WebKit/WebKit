@@ -1428,7 +1428,7 @@ public:
     }
     ExclusionShapeValue* shapeOutside() const { return rareNonInheritedData->m_shapeOutside.get(); }
 
-    static ExclusionShapeValue* initialShapeInside() { return 0; }
+    static ExclusionShapeValue* initialShapeInside();
     static ExclusionShapeValue* initialShapeOutside() { return 0; }
 
     void setClipPath(PassRefPtr<ClipPathOperation> operation)
