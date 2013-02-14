@@ -1,3 +1,31 @@
+2013-02-14  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Add a setting to control scaling content to fit viewport
+        https://bugs.webkit.org/show_bug.cgi?id=109584
+
+        Adds a setting called 'initializeAtMinimumPageScale'. By default,
+        it is set to 'true' which corresponds to Chrome on Android behavior--
+        adjust the page scale to make the content fit into the viewport
+        by width. When set to false, the setting instructs ChromeClientImpl to
+        set page scale to 1.0, unless the scale value is set by the page
+        in the viewport meta-tag.
+
+        Reviewed by Adam Barth.
+
+        * public/WebSettings.h:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::dispatchViewportPropertiesDidChange):
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::WebSettingsImpl):
+        (WebKit::WebSettingsImpl::setInitializeAtMinimumPageScale):
+        (WebKit):
+        * src/WebSettingsImpl.h:
+        (WebSettingsImpl):
+        (WebKit::WebSettingsImpl::initializeAtMinimumPageScale):
+        * tests/WebFrameTest.cpp:
+        * tests/data/viewport-2x-initial-scale.html: Added.
+        * tests/data/viewport-auto-initial-scale.html: Added.
+
 2013-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142808.

@@ -352,6 +352,48 @@ TEST_F(WebFrameTest, FixedLayoutInitializeAtMinimumPageScale)
     EXPECT_EQ(userPinchPageScaleFactor, m_webView->pageScaleFactor());
 }
 
+TEST_F(WebFrameTest, setInitializeAtMinimumPageScaleToFalse)
+{
+    registerMockedHttpURLLoad("viewport-auto-initial-scale.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+
+    m_webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "viewport-auto-initial-scale.html", true, 0, &client);
+    m_webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    m_webView->settings()->setApplyPageScaleFactorInCompositor(true);
+    m_webView->enableFixedLayoutMode(true);
+    m_webView->settings()->setViewportEnabled(true);
+    m_webView->settings()->setInitializeAtMinimumPageScale(false);
+    m_webView->resize(WebSize(viewportWidth, viewportHeight));
+
+    // The page must be displayed at 100% zoom.
+    EXPECT_EQ(1.0f, m_webView->pageScaleFactor());
+}
+
+TEST_F(WebFrameTest, PageViewportInitialScaleOverridesInitializeAtMinimumScale)
+{
+    registerMockedHttpURLLoad("viewport-2x-initial-scale.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+
+    m_webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "viewport-2x-initial-scale.html", true, 0, &client);
+    m_webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    m_webView->settings()->setApplyPageScaleFactorInCompositor(true);
+    m_webView->enableFixedLayoutMode(true);
+    m_webView->settings()->setViewportEnabled(true);
+    m_webView->settings()->setInitializeAtMinimumPageScale(false);
+    m_webView->resize(WebSize(viewportWidth, viewportHeight));
+
+    // The page must be displayed at 200% zoom, as specified in its viewport meta tag.
+    EXPECT_EQ(2.0f, m_webView->pageScaleFactor());
+}
+
 TEST_F(WebFrameTest, ScaleFactorShouldNotOscillate)
 {
     registerMockedHttpURLLoad("scale_oscillate.html");

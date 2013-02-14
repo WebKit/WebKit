@@ -666,6 +666,8 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
         computed.maximumScale = max(computed.maximumScale, m_webView->maxPageScaleFactor);
         computed.userScalable = true;
     }
+    if (arguments.zoom == ViewportArguments::ValueAuto && !m_webView->settingsImpl()->initializeAtMinimumPageScale())
+        computed.initialScale = 1.0f;
     if (!m_webView->settingsImpl()->applyDeviceScaleFactorInCompositor())
         computed.initialScale *= deviceScaleFactor;
 

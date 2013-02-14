@@ -54,6 +54,7 @@ WebSettingsImpl::WebSettingsImpl(Settings* settings)
     , m_renderVSyncEnabled(true)
     , m_renderVSyncNotificationEnabled(false)
     , m_viewportEnabled(false)
+    , m_initializeAtMinimumPageScale(true)
     , m_gestureTapHighlightEnabled(true)
     , m_autoZoomFocusedNodeToLegibleScale(false)
     , m_deferredImageDecodingEnabled(false)
@@ -205,6 +206,11 @@ void WebSettingsImpl::setLoadsImagesAutomatically(bool loadsImagesAutomatically)
 void WebSettingsImpl::setImagesEnabled(bool enabled)
 {
     m_settings->setImagesEnabled(enabled);
+}
+
+void WebSettingsImpl::setInitializeAtMinimumPageScale(bool enabled)
+{
+    m_initializeAtMinimumPageScale = enabled;
 }
 
 void WebSettingsImpl::setPluginsEnabled(bool enabled)
