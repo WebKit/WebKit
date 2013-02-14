@@ -61,7 +61,9 @@ private:
 
     explicit TextAutosizer(Document*);
 
+    void processClusterInternal(TextAutosizingClusterInfo&, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&, float textWidth, bool shouldBeAutosized);
     void processCluster(TextAutosizingClusterInfo&, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
+    void processCompositeCluster(Vector<TextAutosizingClusterInfo>&, const TextAutosizingWindowInfo&);
     void processContainer(float multiplier, RenderBlock* container, TextAutosizingClusterInfo&, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
 
     void setMultiplier(RenderObject*, float);
@@ -77,6 +79,7 @@ private:
     static bool containerIsRowOfLinks(const RenderObject* container);
     static bool contentHeightIsConstrained(const RenderBlock* container);
     static bool clusterShouldBeAutosized(TextAutosizingClusterInfo&, float blockWidth);
+    static bool compositeClusterShouldBeAutosized(Vector<TextAutosizingClusterInfo>&, float blockWidth);
     static void measureDescendantTextWidth(const RenderBlock* container, TextAutosizingClusterInfo&, float minTextWidth, float& textWidth);
 
     // Use to traverse the tree of descendants, excluding descendants of containers (but returning the containers themselves).
