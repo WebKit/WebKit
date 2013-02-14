@@ -1415,3 +1415,5 @@ webkit.org/b/109232 [ Debug ] inspector/debugger/debugger-reload-on-pause.html [
 
 # Mac fails cursor change test for unknown reasons
 webkit.org/b/103857 fast/events/mouse-cursor-change.html
+
+webkit.org/b/109869 media/media-captions.html [ Crash ]
