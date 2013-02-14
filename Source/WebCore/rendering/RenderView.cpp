@@ -36,6 +36,7 @@
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderNamedFlowThread.h"
+#include "RenderQuote.h"
 #include "RenderSelectionInfo.h"
 #include "RenderWidget.h"
 #include "RenderWidgetProtector.h"
@@ -1066,6 +1067,18 @@ RenderBlock::IntervalArena* RenderView::intervalArena()
     if (!m_intervalArena)
         m_intervalArena = IntervalArena::create();
     return m_intervalArena.get();
+}
+
+void RenderView::markQuoteContainingBlocksForLayoutIfNeeded()
+{
+    for (RenderQuote* quote = m_renderQuoteHead; quote; quote = quote->next()) {
+        if (!quote->needsLayout())
+            continue;
+        // Can't use markContainingBlocksForLayout because it would abort as soon
+        // as it sees a parent that already thinks it needs layout.
+        for (RenderObject* renderer = quote->parent(); renderer; renderer = renderer->parent())
+            renderer->setChildNeedsLayout(true, MarkOnlyThis);
+    }
 }
 
 void RenderView::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

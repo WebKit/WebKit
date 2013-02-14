@@ -230,6 +230,11 @@ public:
     void removeRenderCounter() { ASSERT(m_renderCounterCount > 0); m_renderCounterCount--; }
     bool hasRenderCounters() { return m_renderCounterCount; }
 
+    // FIXME: This is a hack until we have proper pre layout tasks to handle quote attachment.
+    // See RenderQuote::updateDepth for more details about what this is a workaround for.
+    // See: https://bugs.webkit.org/show_bug.cgi?id=109628
+    void markQuoteContainingBlocksForLayoutIfNeeded();
+
 protected:
     virtual void mapLocalToContainer(const RenderLayerModelObject* repaintContainer, TransformState&, MapCoordinatesFlags = ApplyContainerFlip, bool* wasFixed = 0) const OVERRIDE;
     virtual const RenderObject* pushMappingToContainer(const RenderLayerModelObject* ancestorToStopAt, RenderGeometryMap&) const OVERRIDE;

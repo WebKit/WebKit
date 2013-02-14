@@ -38,6 +38,8 @@ public:
     void attachQuote();
     void detachQuote();
 
+    RenderQuote* next() { return m_next; }
+
 private:
     virtual void willBeDestroyed() OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return "RenderQuote"; };
