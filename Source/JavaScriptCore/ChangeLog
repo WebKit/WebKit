@@ -1,3 +1,10 @@
+2013-02-14  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, set svn:eol-style CRLF for .sln files.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Modified property svn:eol-style.
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln: Modified property svn:eol-style.
+
 2013-02-14  David Kilzer  <ddkilzer@apple.com>
 
         [Mac] Clean up WARNING_CFLAGS
@@ -9,6 +16,9 @@
         * Configurations/Base.xcconfig: Use
         GCC_WARN_64_TO_32_BIT_CONVERSION to enable and disable
         -Wshorten-64-to-32 rather than WARNING_CFLAGS.
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Modified property svn:eol-style.
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln: Modified property svn:eol-style.
 
 2013-02-13  Anders Carlsson  <andersca@apple.com>
 

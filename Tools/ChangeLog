@@ -1,3 +1,12 @@
+2013-02-14  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, set svn:eol-style CRLF for .sln files.
+
+        * CLWrapper/CLWrapper.sln: Modified property svn:eol-style.
+        * DumpRenderTree/DumpRenderTree.sln: Modified property svn:eol-style.
+        * MIDLWrapper/MIDLWrapper.sln: Modified property svn:eol-style.
+        * WebKitTestRunner/WebKitTestRunner.sln: Modified property svn:eol-style.
+
 2013-02-14  Zan Dobersek  <zdobersek@igalia.com>
 
         [GTK] Errors when building WebKit2 with Clang
@@ -8,6 +17,11 @@
         * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp:
         (WTR::PlatformWebView::resizeTo): Cast the width and height parameters to the integer
         type when constructing the GtkAllocation.
+
+        * CLWrapper/CLWrapper.sln: Modified property svn:eol-style.
+        * DumpRenderTree/DumpRenderTree.sln: Modified property svn:eol-style.
+        * MIDLWrapper/MIDLWrapper.sln: Modified property svn:eol-style.
+        * WebKitTestRunner/WebKitTestRunner.sln: Modified property svn:eol-style.
 
 2013-02-14  Roger Fong  <roger_fong@apple.com>
 
