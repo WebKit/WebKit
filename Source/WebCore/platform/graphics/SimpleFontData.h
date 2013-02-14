@@ -208,7 +208,6 @@ public:
         UNUSED_PARAM(advances);
         UNUSED_PARAM(glyphCount);
         UNUSED_PARAM(typesettingFeatures);
-        ASSERT_NOT_REACHED();
         return false;
 #else
     wkCTFontTransformOptions options = (typesettingFeatures & Kerning ? wkCTFontTransformApplyPositioning : 0) | (typesettingFeatures & Ligatures ? wkCTFontTransformApplyShaping : 0);
