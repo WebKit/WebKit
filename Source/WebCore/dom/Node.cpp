@@ -2577,8 +2577,8 @@ void Node::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     ScriptWrappable::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_parentOrShadowHostNode, "parentOrShadowHostNode");
     info.addMember(m_treeScope, "treeScope");
-    info.addMember(m_next, "next");
-    info.addMember(m_previous, "previous");
+    info.ignoreMember(m_next);
+    info.ignoreMember(m_previous);
     info.addMember(this->renderer(), "renderer");
     if (hasRareData()) {
         if (isElementNode())

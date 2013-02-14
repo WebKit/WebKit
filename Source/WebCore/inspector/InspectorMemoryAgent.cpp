@@ -233,6 +233,9 @@ public:
         if (node->document() && node->document()->frame() && m_page != node->document()->frame()->page())
             return;
 
+        while (Node* parentNode = node->parentNode())
+            node = parentNode;
+
         m_memoryInstrumentation.addRootObject(node);
     }
 

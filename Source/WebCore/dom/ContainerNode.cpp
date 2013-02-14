@@ -1077,8 +1077,14 @@ void ContainerNode::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::DOM);
     Node::reportMemoryUsage(memoryObjectInfo);
-    info.addMember(m_firstChild, "firstChild");
-    info.addMember(m_lastChild, "lastChild");
+    info.ignoreMember(m_firstChild);
+    info.ignoreMember(m_lastChild);
+
+    // Report child nodes as direct members to make them look like a tree in the snapshot.
+    NodeVector children;
+    getChildNodes(const_cast<ContainerNode*>(this), children);
+    for (size_t i = 0; i < children.size(); ++i)
+        info.addMember(children[i], "child");
 }
 
 static void dispatchChildInsertionEvents(Node* child)
