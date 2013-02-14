@@ -74,16 +74,20 @@ WebInspector.FileSystemProjectDelegate.prototype = {
 
     /**
      * @param {string} uri
+     * @return {string}
+     */
+    _filePathForURI: function(uri)
+    {
+        return uri.substr(uri.indexOf("/") + 1);
+    },
+
+    /**
+     * @param {string} uri
      * @param {function(?string,boolean,string)} callback
      */
     requestFileContent: function(uri, callback)
     {
-        var filePath = this._isolatedFileSystemModel.mapping().fileForURI(this._fileSystemPath, uri);
-        if (!filePath) {
-            console.error("No matching file for uri: " + uri);
-            callback(null, false, WebInspector.resourceTypes.Other.canonicalMimeType());
-            return;
-        }
+        var filePath = this._filePathForURI(uri);
         WebInspector.FileSystemUtils.requestFileContent(this._isolatedFileSystemModel, this._fileSystemPath, filePath, innerCallback.bind(this));
         
         /**
@@ -103,12 +107,7 @@ WebInspector.FileSystemProjectDelegate.prototype = {
      */
     setFileContent: function(uri, newContent, callback)
     {
-        var filePath = this._isolatedFileSystemModel.mapping().fileForURI(this._fileSystemPath, uri);
-        if (!filePath) {
-            console.error("No matching file for uri: " + uri);
-            callback("");
-            return;
-        }
+        var filePath = this._filePathForURI(uri);
         WebInspector.FileSystemUtils.setFileContent(this._isolatedFileSystemModel, this._fileSystemPath, filePath, newContent, callback.bind(this, ""));
     },
 
@@ -166,7 +165,7 @@ WebInspector.FileSystemProjectDelegate.prototype = {
         function filesLoaded(files)
         {
             for (var i = 0; i < files.length; ++i) {
-                var uri = this._isolatedFileSystemModel.mapping().uriForFile(this._fileSystemPath, files[i]);
+                var uri = this.id() + files[i];
                 var contentType = this._contentTypeForPath(files[i]);
                 var url = WebInspector.fileMapping.urlForURI(uri);
                 var fileDescriptor = new WebInspector.FileDescriptor(uri, "file://" + this._fileSystemPath + files[i], url, contentType, true);

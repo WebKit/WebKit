@@ -1,136 +1,78 @@
 Tests FileSystemMapping
 
 Testing file system mapping.
-    file system pathes:
+    file system paths:
     uriPrefixForPathPrefix:
-    uriForFile:
-    fileForURI:
 
 Adding file system /home/username/projects/foo
 Testing file system mapping.
-    file system pathes:
+    file system paths:
      - /home/username/projects/foo(id = 0@foo)
     uriPrefixForPathPrefix:
         /home/username/projects/foo => 0@foo/
         /home/username/projects/foo => 0@foo/
-    uriForFile:
-        /home/username/projects/foo, /foo.txt => 0@foo/foo.txt
-        /home/username/projects/foo, /src/foo.cpp => 0@foo/src/foo.cpp
-    fileForURI:
-        /home/username/projects/foo, 0@foo/foo.txt => /foo.txt
-        /home/username/projects/foo, 0@foo/src/foo.cpp => /src/foo.cpp
 
 Adding file system /home/username/projects/bar
 Testing file system mapping.
-    file system pathes:
+    file system paths:
      - /home/username/projects/foo(id = 0@foo)
      - /home/username/projects/bar(id = 1@bar)
     uriPrefixForPathPrefix:
         /home/username/projects/foo => 0@foo/
+        /home/username/projects/bar => 1@bar/
         /home/username/projects/foo => 0@foo/
         /home/username/projects/bar => 1@bar/
-        /home/username/projects/bar => 1@bar/
-    uriForFile:
-        /home/username/projects/foo, /foo.txt => 0@foo/foo.txt
-        /home/username/projects/foo, /src/foo.cpp => 0@foo/src/foo.cpp
-        /home/username/projects/bar, /bar.txt => 1@bar/bar.txt
-        /home/username/projects/bar, /src/bar.cpp => 1@bar/src/bar.cpp
-    fileForURI:
-        /home/username/projects/foo, 0@foo/foo.txt => /foo.txt
-        /home/username/projects/foo, 0@foo/src/foo.cpp => /src/foo.cpp
-        /home/username/projects/bar, 1@bar/bar.txt => /bar.txt
-        /home/username/projects/bar, 1@bar/src/bar.cpp => /src/bar.cpp
 
 Adding file system /www/site1
 Testing file system mapping.
-    file system pathes:
+    file system paths:
      - /home/username/projects/foo(id = 0@foo)
      - /home/username/projects/bar(id = 1@bar)
      - /www/site1(id = 2@site1)
     uriPrefixForPathPrefix:
         /home/username/projects/foo => 0@foo/
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
         /home/username/projects/bar => 1@bar/
         /www/site1 => 2@site1/
-    uriForFile:
-        /home/username/projects/foo, /foo.txt => 0@foo/foo.txt
-        /home/username/projects/foo, /src/foo.cpp => 0@foo/src/foo.cpp
-        /home/username/projects/bar, /bar.txt => 1@bar/bar.txt
-        /home/username/projects/bar, /src/bar.cpp => 1@bar/src/bar.cpp
-        /www/site1, /site1.txt => 2@site1/site1.txt
-    fileForURI:
-        /home/username/projects/foo, 0@foo/foo.txt => /foo.txt
-        /home/username/projects/foo, 0@foo/src/foo.cpp => /src/foo.cpp
-        /home/username/projects/bar, 1@bar/bar.txt => /bar.txt
-        /home/username/projects/bar, 1@bar/src/bar.cpp => /src/bar.cpp
-        /www/site1, 2@site1/site1.txt => /site1.txt
+        /home/username/projects/foo => 0@foo/
+        /home/username/projects/bar => 1@bar/
+        /www/site1 => 2@site1/
 
 Creating another file system mapping.
 Testing file system mapping.
-    file system pathes:
+    file system paths:
      - /home/username/projects/foo(id = 0@foo)
      - /home/username/projects/bar(id = 1@bar)
      - /www/site1(id = 2@site1)
     uriPrefixForPathPrefix:
         /home/username/projects/foo => 0@foo/
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
         /home/username/projects/bar => 1@bar/
         /www/site1 => 2@site1/
-    uriForFile:
-        /home/username/projects/foo, /foo.txt => 0@foo/foo.txt
-        /home/username/projects/foo, /src/foo.cpp => 0@foo/src/foo.cpp
-        /home/username/projects/bar, /bar.txt => 1@bar/bar.txt
-        /home/username/projects/bar, /src/bar.cpp => 1@bar/src/bar.cpp
-        /www/site1, /site1.txt => 2@site1/site1.txt
-    fileForURI:
-        /home/username/projects/foo, 0@foo/foo.txt => /foo.txt
-        /home/username/projects/foo, 0@foo/src/foo.cpp => /src/foo.cpp
-        /home/username/projects/bar, 1@bar/bar.txt => /bar.txt
-        /home/username/projects/bar, 1@bar/src/bar.cpp => /src/bar.cpp
-        /www/site1, 2@site1/site1.txt => /site1.txt
+        /home/username/projects/foo => 0@foo/
+        /home/username/projects/bar => 1@bar/
+        /www/site1 => 2@site1/
 
 Removing file system /www/site1
 Testing file system mapping.
-    file system pathes:
+    file system paths:
      - /home/username/projects/foo(id = 0@foo)
      - /home/username/projects/bar(id = 1@bar)
     uriPrefixForPathPrefix:
         /home/username/projects/foo => 0@foo/
+        /home/username/projects/bar => 1@bar/
         /home/username/projects/foo => 0@foo/
         /home/username/projects/bar => 1@bar/
-        /home/username/projects/bar => 1@bar/
-    uriForFile:
-        /home/username/projects/foo, /foo.txt => 0@foo/foo.txt
-        /home/username/projects/foo, /src/foo.cpp => 0@foo/src/foo.cpp
-        /home/username/projects/bar, /bar.txt => 1@bar/bar.txt
-        /home/username/projects/bar, /src/bar.cpp => 1@bar/src/bar.cpp
-    fileForURI:
-        /home/username/projects/foo, 0@foo/foo.txt => /foo.txt
-        /home/username/projects/foo, 0@foo/src/foo.cpp => /src/foo.cpp
-        /home/username/projects/bar, 1@bar/bar.txt => /bar.txt
-        /home/username/projects/bar, 1@bar/src/bar.cpp => /src/bar.cpp
 
 Removing file system /home/username/projects/foo
 Testing file system mapping.
-    file system pathes:
+    file system paths:
      - /home/username/projects/bar(id = 1@bar)
     uriPrefixForPathPrefix:
         /home/username/projects/bar => 1@bar/
         /home/username/projects/bar => 1@bar/
-    uriForFile:
-        /home/username/projects/bar, /bar.txt => 1@bar/bar.txt
-        /home/username/projects/bar, /src/bar.cpp => 1@bar/src/bar.cpp
-    fileForURI:
-        /home/username/projects/bar, 1@bar/bar.txt => /bar.txt
-        /home/username/projects/bar, 1@bar/src/bar.cpp => /src/bar.cpp
 
 Removing file system /home/username/projects/bar
 Testing file system mapping.
-    file system pathes:
+    file system paths:
     uriPrefixForPathPrefix:
-    uriForFile:
-    fileForURI:
 
 

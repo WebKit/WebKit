@@ -40,20 +40,6 @@ WebInspector.FileSystemMapping.prototype = {
     fileSystemPaths: function() { },
 
     /**
-     * @param {string} fileSystemPath
-     * @param {string} uri
-     * @return {?string}
-     */
-    fileForURI: function(fileSystemPath, uri) { },
-
-    /**
-     * @param {string} fileSystemPath
-     * @param {string} filePath
-     * @return {?string}
-     */
-    uriForFile: function(fileSystemPath, filePath) { },
-
-    /**
      * @param {string} pathPrefix
      * @return {?string}
      */
@@ -160,35 +146,6 @@ WebInspector.FileSystemMappingImpl.prototype = {
         return Object.values(this._fileSystemPaths);
     },
 
-    /**
-     * @param {string} fileSystemPath
-     * @param {string} uri
-     * @return {?string}
-     */
-    fileForURI: function(fileSystemPath, uri)
-    {
-        var indexOfSlash = uri.indexOf("/");
-        var uriId = uri.substr(0, indexOfSlash);
-        var id = this._fileSystemIds[fileSystemPath]
-        if (!uriId || uriId !== id)
-            return null;
-        var filePath = uri.substr(indexOfSlash);
-        return filePath;
-    },
-
-    /**
-     * @param {string} fileSystemPath
-     * @param {string} filePath
-     * @return {?string}
-     */
-    uriForFile: function(fileSystemPath, filePath)
-    {
-        var id = this._fileSystemIds[fileSystemPath];
-        if (!id)
-            return null;
-        return id + filePath;
-    },
-    
     /**
      * @param {string} pathPrefix
      * @return {?string}
