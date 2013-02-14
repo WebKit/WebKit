@@ -1,3 +1,13 @@
+2013-02-13  David Farler  <dfarler@apple.com>
+
+        TestWebKitAPI fails to build for iphonesimulator: 'CFNetwork/CFNetworkDefs.h' file not found
+        https://bugs.webkit.org/show_bug.cgi?id=109766
+
+        Reviewed by David Kilzer.
+
+        * TestWebKitAPI/Configurations/Base.xcconfig:
+        - Don't search Mac OS X header search paths when building on iOS
+
 2013-02-13  Zan Dobersek  <zdobersek@igalia.com>
 
         The 'global isinf/isnan' compiler quirk required when using clang with libstdc++
