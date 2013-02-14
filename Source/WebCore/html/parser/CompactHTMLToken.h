@@ -39,6 +39,7 @@
 
 namespace WebCore {
 
+class QualifiedName;
 class XSSInfo;
 
 class CompactAttribute {
@@ -69,6 +70,7 @@ public:
     bool selfClosing() const { return m_selfClosing; }
     bool isAll8BitData() const { return m_isAll8BitData; }
     const Vector<CompactAttribute>& attributes() const { return m_attributes; }
+    const CompactAttribute* getAttributeItem(const QualifiedName&) const;
     const TextPosition& textPosition() const { return m_textPosition; }
 
     // There is only 1 DOCTYPE token per document, so to avoid increasing the

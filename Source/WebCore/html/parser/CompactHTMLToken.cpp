@@ -29,7 +29,9 @@
 
 #include "CompactHTMLToken.h"
 
+#include "HTMLParserIdioms.h"
 #include "HTMLToken.h"
+#include "QualifiedName.h"
 #include "XSSAuditorDelegate.h"
 
 namespace WebCore {
@@ -98,6 +100,15 @@ CompactHTMLToken::CompactHTMLToken(const CompactHTMLToken& other)
 {
     if (other.m_xssInfo)
         m_xssInfo = adoptPtr(new XSSInfo(*other.m_xssInfo));
+}
+
+const CompactAttribute* CompactHTMLToken::getAttributeItem(const QualifiedName& name) const
+{
+    for (unsigned i = 0; i < m_attributes.size(); ++i) {
+        if (threadSafeMatch(m_attributes.at(i).name(), name))
+            return &m_attributes.at(i);
+    }
+    return 0;
 }
 
 bool CompactHTMLToken::isSafeToSendToAnotherThread() const

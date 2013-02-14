@@ -157,3 +157,39 @@ table
 select
 #document
 | <option>
+
+#data
+<svg><foreignObject><div>foo</div><plaintext></foreignObject></svg><div>bar</div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg foreignObject>
+|         <div>
+|           "foo"
+|         <plaintext>
+|           "</foreignObject></svg><div>bar</div>"
+
+#data
+<svg><foreignObject></foreignObject><title></svg>foo
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <svg svg>
+|       <svg foreignObject>
+|       <svg title>
+|     "foo"
+
+#data
+</foreignObject><plaintext><div>foo</div>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <plaintext>
+|       "<div>foo</div>"
