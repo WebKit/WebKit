@@ -500,6 +500,16 @@ static void stringAttrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, 
     return;
 }
 
+static v8::Handle<v8::Value> customAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+        return V8TestObj::customAttrAccessorGetter(name, info);
+}
+
+static void customAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+        V8TestObj::customAttrAccessorSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> withScriptStateAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -1917,7 +1927,7 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     // Attribute 'stringAttrWithSetterException' (Type: 'attribute' ExtAttr: '')
     {"stringAttrWithSetterException", TestObjV8Internal::stringAttrWithSetterExceptionAttrGetter, TestObjV8Internal::stringAttrWithSetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'customAttr' (Type: 'attribute' ExtAttr: 'Custom')
-    {"customAttr", V8TestObj::customAttrAccessorGetter, V8TestObj::customAttrAccessorSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"customAttr", TestObjV8Internal::customAttrAttrGetter, TestObjV8Internal::customAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptStateAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
     {"withScriptStateAttribute", TestObjV8Internal::withScriptStateAttributeAttrGetter, TestObjV8Internal::withScriptStateAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptExecutionContextAttribute' (Type: 'attribute' ExtAttr: 'CallWith')

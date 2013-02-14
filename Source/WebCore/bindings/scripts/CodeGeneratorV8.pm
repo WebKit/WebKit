@@ -898,6 +898,16 @@ static v8::Handle<v8::Value> ${attrName}AttrGetter(v8::Local<v8::String> name, c
 END
     push(@implContentDecls, GenerateFeatureObservation($attrExt->{"V8MeasureAs"}));
 
+    if (HasCustomGetter($attrExt)) {
+        push(@implContentDecls, <<END);
+        return ${v8InterfaceName}::${attrName}AccessorGetter(name, info);
+}
+
+END
+        push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
+        return;
+    }
+
     if ($svgNativeType) {
         my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($interfaceName);
         if ($svgWrappedNativeType =~ /List/) {
@@ -1173,6 +1183,16 @@ sub GenerateNormalAttrSetter
 
     push(@implContentDecls, "static void ${attrName}AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n{\n");
     push(@implContentDecls, GenerateFeatureObservation($attribute->signature->extendedAttributes->{"V8MeasureAs"}));
+
+    if (HasCustomSetter($attrExt)) {
+        push(@implContentDecls, <<END);
+        ${v8InterfaceName}::${attrName}AccessorSetter(name, value, info);
+}
+
+END
+        push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
+        return;
+    }
 
     # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
     # interface type, then if the incoming value does not implement that interface, a TypeError is
@@ -2304,16 +2324,8 @@ sub GenerateSingleBatchedAttribute
         $getter = "${interfaceName}V8Internal::${attrName}AttrGetter";
         $setter = "${interfaceName}V8Internal::${attrName}AttrSetter";
 
-        if ($attrExt->{"Replaceable"}) {
+        if (!HasCustomSetter($attrExt) && $attrExt->{"Replaceable"}) {
             $setter = "${interfaceName}V8Internal::${interfaceName}ReplaceableAttrSetter";
-        }
-
-        if (HasCustomSetter($attrExt)) {
-            $setter = "V8${customAccessor}AccessorSetter";
-        }
-
-        if (HasCustomGetter($attrExt)) {
-            $getter = "V8${customAccessor}AccessorGetter";
         }
     }
 
@@ -2712,13 +2724,11 @@ END
             AddToImplIncludes("SerializedScriptValue.h");
         }
 
-        if (!HasCustomGetter($attrExt)) {
-            GenerateNormalAttrGetter($attribute, $interface);
-        }
+        GenerateNormalAttrGetter($attribute, $interface);
 
-        if ($attrExt->{"Replaceable"}) {
+        if (!HasCustomSetter($attrExt) && $attrExt->{"Replaceable"}) {
             $hasReplaceable = 1;
-        } elsif (!HasCustomSetter($attrExt) && !IsReadonly($attribute)) {
+        } elsif (!IsReadonly($attribute)) {
             GenerateNormalAttrSetter($attribute, $interface);
         }
     }
