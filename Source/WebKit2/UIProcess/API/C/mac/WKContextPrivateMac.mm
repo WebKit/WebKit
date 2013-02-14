@@ -23,11 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WKContextPrivateMac.h"
+#import "config.h"
+#import "WKContextPrivateMac.h"
 
-#include "WKAPICast.h"
-#include "WebContext.h"
+#import "WKAPICast.h"
+#import "WKStringCF.h"
+#import "WebContext.h"
+#import <WebKitSystemInterface.h>
+#import <wtf/RetainPtr.h>
 
 using namespace WebKit;
 
@@ -39,4 +42,9 @@ bool WKContextGetProcessSuppressionEnabled(WKContextRef contextRef)
 void WKContextSetProcessSuppressionEnabled(WKContextRef contextRef, bool enabled)
 {
     toImpl(contextRef)->setProcessSuppressionEnabled(enabled);
+}
+
+bool WKContextIsPlugInUpdateAvailable(WKContextRef context, WKStringRef plugInBundleIdentifier)
+{
+    return WKIsPluginUpdateAvailable((NSString *)adoptCF(WKStringCopyCFString(kCFAllocatorDefault, plugInBundleIdentifier)).get());
 }

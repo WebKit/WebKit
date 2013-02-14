@@ -1,3 +1,17 @@
+2013-02-14  Anders Carlsson  <andersca@apple.com>
+
+        Add WKContextIsPlugInUpdateAvailable
+        https://bugs.webkit.org/show_bug.cgi?id=109862
+        <rdar://problem/13173140>
+
+        Reviewed by Sam Weinig.
+
+        Roll WebKitSystemInterface DEPS.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-02-13  Roger Fong  <roger_fong@apple.com>
 
         Move all .props files from WebKitLibraries folder to WebKit Source folder.

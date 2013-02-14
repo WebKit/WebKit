@@ -90,6 +90,7 @@ AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
 
 BOOL WKShouldBlockPlugin(NSString *bundleIdentifier, NSString *bundleVersionString);
+BOOL WKIsPluginUpdateAvailable(NSString *bundleIdentifier);
 
 // Remote Accessibility API.
 void WKAXRegisterRemoteApp(void);
