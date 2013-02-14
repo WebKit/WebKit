@@ -1,3 +1,15 @@
+2013-02-14  David Kilzer  <ddkilzer@apple.com>
+
+        [Mac] Clean up WARNING_CFLAGS
+        <http://webkit.org/b/109747>
+        <rdar://problem/13208373>
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Use
+        GCC_WARN_64_TO_32_BIT_CONVERSION to enable and disable
+        -Wshorten-64-to-32 rather than WARNING_CFLAGS.
+
 2013-02-13  Anders Carlsson  <andersca@apple.com>
 
         Better build fix.

@@ -45,6 +45,13 @@ GCC_PRECOMPILE_PREFIX_HEADER = YES;
 GCC_THREADSAFE_STATICS = NO;
 GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+// FIXME: <http://webkit.org/b/109846> WebCore should build with -Wshorten-64-to-32
+GCC_WARN_64_TO_32_BIT_CONVERSION = $(GCC_WARN_64_TO_32_BIT_CONVERSION_$(CURRENT_ARCH));
+GCC_WARN_64_TO_32_BIT_CONVERSION_ = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION_armv7 = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION_armv7s = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION_i386 = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION_x86_64 = NO;
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -56,16 +63,7 @@ VALID_ARCHS = $(VALID_ARCHS_$(PLATFORM_NAME));
 VALID_ARCHS_iphoneos = $(ARCHS_STANDARD_32_BIT);
 VALID_ARCHS_iphonesimulator = $(ARCHS_STANDARD_32_BIT);
 VALID_ARCHS_macosx = i386 ppc x86_64 ppc64;
-WARNING_CFLAGS_BASE = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare;
-WARNING_CFLAGS = $(WARNING_CFLAGS_$(PLATFORM_NAME));
-WARNING_CFLAGS_iphoneos = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_iphonesimulator = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_macosx = $(WARNING_CFLAGS_macosx_$(CURRENT_ARCH));
-WARNING_CFLAGS_macosx_ = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_macosx_i386 = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_macosx_ppc = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-// FIXME: WebCore 64-bit builds should build with -Wshorten-64-to-32
-WARNING_CFLAGS_macosx_x86_64 = $(WARNING_CFLAGS_BASE);
+WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare;
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
 

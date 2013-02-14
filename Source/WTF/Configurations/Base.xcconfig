@@ -50,6 +50,13 @@ GCC_STRICT_ALIASING = YES;
 GCC_THREADSAFE_STATICS = NO;
 GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+// FIXME: <http://webkit.org/b/107093> WTF should build with -Wshorten-64-to-32
+GCC_WARN_64_TO_32_BIT_CONVERSION = $(GCC_WARN_64_TO_32_BIT_CONVERSION_$(CURRENT_ARCH));
+GCC_WARN_64_TO_32_BIT_CONVERSION_ = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION_armv7 = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION_armv7s = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION_i386 = YES;
+GCC_WARN_64_TO_32_BIT_CONVERSION_x86_64 = NO;
 GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
 GCC_WARN_ABOUT_MISSING_NEWLINE = YES;
 GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -57,16 +64,7 @@ GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES;
 GCC_WARN_SIGN_COMPARE = YES;
 LINKER_DISPLAYS_MANGLED_NAMES = YES;
 PREBINDING = NO;
-WARNING_CFLAGS_BASE = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare;
-WARNING_CFLAGS = $(WARNING_CFLAGS_$(PLATFORM_NAME));
-WARNING_CFLAGS_iphoneos = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_iphonesimulator = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_macosx = $(WARNING_CFLAGS_macosx_$(CURRENT_ARCH));
-WARNING_CFLAGS_macosx_ = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_macosx_i386 = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-WARNING_CFLAGS_macosx_ppc = $(WARNING_CFLAGS_BASE) -Wshorten-64-to-32;
-// FIXME: JavaScriptCore 64-bit builds should build with -Wshorten-64-to-32
-WARNING_CFLAGS_macosx_x86_64 = $(WARNING_CFLAGS_BASE);
+WARNING_CFLAGS = -Wall -Wextra -Wcast-qual -Wchar-subscripts -Wextra-tokens -Wformat=2 -Winit-self -Wmissing-format-attribute -Wmissing-noreturn -Wpacked -Wpointer-arith -Wredundant-decls -Wundef -Wwrite-strings -Wexit-time-destructors -Wglobal-constructors -Wtautological-compare;
 HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/$(INSTALL_PATH_PREFIX)/usr/local/include $(DSTROOT)/$(INSTALL_PATH_PREFIX)/usr/local/include icu $(HEADER_SEARCH_PATHS);
 
 TARGET_MAC_OS_X_VERSION_MAJOR = $(MAC_OS_X_VERSION_MAJOR);
