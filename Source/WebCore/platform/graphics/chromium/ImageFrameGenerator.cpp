@@ -48,6 +48,7 @@ skia::ImageOperations::ResizeMethod resizeMethod()
 ImageFrameGenerator::ImageFrameGenerator(const SkISize& fullSize, PassRefPtr<SharedBuffer> data, bool allDataReceived)
     : m_fullSize(fullSize)
     , m_decodeFailedAndEmpty(false)
+    , m_hasAlpha(true)
 {
     setData(data.get(), allDataReceived);
 }
@@ -211,9 +212,19 @@ PassOwnPtr<ScaledImageFragment> ImageFrameGenerator::decode(ImageDecoder** decod
 
     bool isComplete = frame->status() == ImageFrame::FrameComplete;
     SkBitmap fullSizeBitmap = frame->getSkBitmap();
+    {
+        MutexLocker lock(m_alphaMutex);
+        m_hasAlpha = !fullSizeBitmap.isOpaque();
+    }
     ASSERT(fullSizeBitmap.width() == m_fullSize.width() && fullSizeBitmap.height() == m_fullSize.height());
 
     return ScaledImageFragment::create(m_fullSize, fullSizeBitmap, isComplete);
+}
+
+bool ImageFrameGenerator::hasAlpha()
+{
+    MutexLocker lock(m_alphaMutex);
+    return m_hasAlpha;
 }
 
 } // namespace WebCore

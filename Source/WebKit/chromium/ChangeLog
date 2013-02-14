@@ -1,3 +1,21 @@
+2013-02-14  Min Qin  <qinmin@chromium.org>
+
+        Passing alpha to DeferredImageDecoder once decoding completes
+        https://bugs.webkit.org/show_bug.cgi?id=108892
+
+        Reviewed by Stephen White.
+
+        Add test to check that alpha value is passed from the decoder to ImageFrameGenerator.
+
+        * tests/ImageFrameGeneratorTest.cpp:
+        (WebCore::MockImageDecoderFactory::create):
+        (WebCore::TEST_F):
+        * tests/MockImageDecoder.h:
+        (WebCore::MockImageDecoder::MockImageDecoder):
+        (WebCore::MockImageDecoder::setFrameHasAlpha):
+        (MockImageDecoder):
+        (WebCore::MockImageDecoder::frameHasAlphaAtIndex):
+
 2013-02-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: expose did{Begin,Cancel}Frame() and {will,did}Composite() on WebDebToolsAgent

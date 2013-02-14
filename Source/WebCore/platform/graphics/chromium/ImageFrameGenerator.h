@@ -67,6 +67,8 @@ public:
 
     void setImageDecoderFactoryForTesting(PassOwnPtr<ImageDecoderFactory> factory) { m_imageDecoderFactory = factory; }
 
+    bool hasAlpha();
+
 private:
     // These methods are called while m_decodeMutex is locked.
     const ScaledImageFragment* tryToLockCompleteCache(const SkISize& scaledSize);
@@ -80,12 +82,16 @@ private:
     SkISize m_fullSize;
     ThreadSafeDataTransport m_data;
     bool m_decodeFailedAndEmpty;
+    bool m_hasAlpha;
     DiscardablePixelRefAllocator m_allocator;
 
     OwnPtr<ImageDecoderFactory> m_imageDecoderFactory;
 
     // Prevents multiple decode operations on the same data.
     Mutex m_decodeMutex;
+
+    // Protect concurrent access to m_hasAlpha.
+    Mutex m_alphaMutex;
 };
 
 } // namespace WebCore

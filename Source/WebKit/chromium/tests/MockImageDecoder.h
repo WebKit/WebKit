@@ -59,6 +59,8 @@ public:
         return true;
     }
 
+    virtual void setFrameHasAlpha(bool hasAlpha) { m_frameBufferCache[0].setHasAlpha(hasAlpha); }
+
     virtual String filenameExtension() const
     {
         return "mock";
