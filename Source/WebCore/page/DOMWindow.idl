@@ -180,9 +180,7 @@
 
     // cross-document messaging
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [DoNotCheckSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin)
-        raises(DOMException);
-    [DoNotCheckSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin, in Array messagePorts)
+    [DoNotCheckSecurity, Custom] void postMessage(in SerializedScriptValue message, in DOMString targetOrigin, in [Optional] Array messagePorts)
         raises(DOMException);
 #else
     // There's no good way to expose an array via the ObjC bindings, so for now just allow passing in a single port.

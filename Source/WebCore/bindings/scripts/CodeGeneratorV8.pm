@@ -398,7 +398,7 @@ END
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
-    static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments&);
+    static v8::Handle<v8::Value> ${name}CallbackCustom(const v8::Arguments&);
 END
             push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
@@ -791,8 +791,7 @@ sub GenerateDomainSafeFunctionGetter
         $signature = "v8::Local<v8::Signature>()";
     }
 
-    my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
-    my $newTemplateString = "v8::FunctionTemplate::New($callback, v8Undefined(), $signature)";
+    my $newTemplateString = "v8::FunctionTemplate::New(${interfaceName}V8Internal::${funcName}Callback, v8Undefined(), $signature)";
 
     AddToImplIncludes("Frame.h");
     push(@implContentDecls, <<END);
@@ -1370,37 +1369,35 @@ END
     push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
 }
 
-sub GetFunctionTemplateCallbackName
-{
-    my $function = shift;
-    my $interfaceName = shift;
-
-    my $name = $function->signature->name;
-
-    if (HasCustomMethod($function->signature->extendedAttributes)) {
-        return "V8${interfaceName}::${name}Callback";
-    } else {
-        return "${interfaceName}V8Internal::${name}Callback";
-    }
-}
-
 sub GenerateEventListenerCallback
 {
     my $interfaceName = shift;
     my $requiresHiddenDependency = shift;
-    my $functionName = shift;
-    my $lookupType = ($functionName eq "add") ? "OrCreate" : "Only";
-    my $passRefPtrHandling = ($functionName eq "add") ? "" : ".get()";
-    my $hiddenDependencyAction = ($functionName eq "add") ? "create" : "remove";
+    my $function = shift;
+    my $name = $function->signature->name;
+    my $lookupType = ($name eq "addEventListener") ? "OrCreate" : "Only";
+    my $passRefPtrHandling = ($name eq "addEventListener") ? "" : ".get()";
+    my $hiddenDependencyAction = ($name eq "addEventListener") ? "create" : "remove";
 
     AddToImplIncludes("V8EventListenerList.h");
     push(@implContentDecls, <<END);
-static v8::Handle<v8::Value> ${functionName}EventListenerCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
 {
+END
+    if (HasCustomMethod($function->signature->extendedAttributes)) {
+        push(@implContentDecls, <<END);
+    return V8${interfaceName}::${name}CallbackCustom(args);
+}
+
+END
+        return;
+    }
+
+    push(@implContentDecls, <<END);
     RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFind${lookupType});
     if (listener) {
         V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithNullCheck>, stringResource, args[0]);
-        V8${interfaceName}::toNative(args.Holder())->${functionName}EventListener(stringResource, listener${passRefPtrHandling}, args[2]->BooleanValue());
+        V8${interfaceName}::toNative(args.Holder())->${name}(stringResource, listener${passRefPtrHandling}, args[2]->BooleanValue());
 END
     if ($requiresHiddenDependency) {
         push(@implContentDecls, <<END);
@@ -1543,10 +1540,10 @@ sub GenerateFunctionCallback
     # but they are extremely consistent across the various interfaces that take event listeners,
     # so we can generate them as a "special case".
     if ($name eq "addEventListener") {
-        GenerateEventListenerCallback($interfaceName, !$codeGenerator->InheritsInterface($interface, "Node"), "add");
+        GenerateEventListenerCallback($interfaceName, !$codeGenerator->InheritsInterface($interface, "Node"), $function);
         return;
     } elsif ($name eq "removeEventListener") {
-        GenerateEventListenerCallback($interfaceName, !$codeGenerator->InheritsInterface($interface, "Node"), "remove");
+        GenerateEventListenerCallback($interfaceName, !$codeGenerator->InheritsInterface($interface, "Node"), $function);
         return;
     }
 
@@ -1557,6 +1554,17 @@ static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
 {
 END
     push(@implContentDecls, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
+
+    if (HasCustomMethod($function->signature->extendedAttributes)) {
+        $name = $function->signature->name;
+        push(@implContentDecls, <<END);
+    return ${v8InterfaceName}::${name}CallbackCustom(args);
+}
+
+END
+        push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
+        return;
+    }
 
     push(@implContentDecls, GenerateArgumentsCountCheck($function, $interface));
 
@@ -2428,9 +2436,6 @@ END
         push(@implContent, "\n    // Custom Signature '$name'\n", CreateCustomSignature($function));
     }
 
-    # Normal function call is a template
-    my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
-
     if ($property_attributes eq "v8::DontDelete") {
         $property_attributes = "";
     } else {
@@ -2443,9 +2448,7 @@ END
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-
-    push(@implContent, "    ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New($callback, v8Undefined(), ${signature})$property_attributes);\n");
-
+    push(@implContent, "    ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}Callback, v8Undefined(), ${signature})$property_attributes);\n");
     push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
 }
 
@@ -2767,12 +2770,9 @@ END
     my $needsDomainSafeFunctionSetter = 0;
     # Generate methods for functions.
     foreach my $function (@{$interface->functions}) {
-        my $isCustom = HasCustomMethod($function->signature->extendedAttributes);
-        if (!$isCustom) {
-            GenerateFunctionCallback($function, $interface);
-            if ($function->{overloadIndex} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
-                GenerateOverloadedFunctionCallback($function, $interface);
-            }
+        GenerateFunctionCallback($function, $interface);
+        if ($function->{overloadIndex} > 1 && $function->{overloadIndex} == @{$function->{overloads}}) {
+            GenerateOverloadedFunctionCallback($function, $interface);
         }
 
         if ($function->signature->name eq "item") {
@@ -2791,7 +2791,7 @@ END
         # generate an access getter that returns different function objects
         # for different calling context.
         if (($interface->extendedAttributes->{"CheckSecurity"} || ($interfaceName eq "DOMWindow")) && $function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
-            if (!$isCustom || $function->{overloadIndex} == 1) {
+            if (!HasCustomMethod($function->signature->extendedAttributes) || $function->{overloadIndex} == 1) {
                 GenerateDomainSafeFunctionGetter($function, $interfaceName);
                 $needsDomainSafeFunctionSetter = 1;
             }
@@ -2860,11 +2860,10 @@ END
             push(@implContent, "static const V8DOMConfiguration::BatchedCallback ${v8InterfaceName}Callbacks[] = {\n");
         }
         my $name = $function->signature->name;
-        my $callback = GetFunctionTemplateCallbackName($function, $interfaceName);
         my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, <<END);
-    {"$name", $callback},
+    {"$name", ${interfaceName}V8Internal::${name}Callback},
 END
         push(@implContent, "#endif\n") if $conditionalString;
         $num_callbacks++;
@@ -3185,9 +3184,8 @@ END
             push(@implContent, "\n#if ${conditionalString}\n") if $conditionalString;
             push(@implContent, "    if (context && context->isDocument() && ${enableFunction}(static_cast<Document*>(context))) {\n");
             my $name = $runtimeFunc->signature->name;
-            my $callback = GetFunctionTemplateCallbackName($runtimeFunc, $interfaceName);
             push(@implContent, <<END);
-        proto->Set(v8::String::NewSymbol("${name}"), v8::FunctionTemplate::New(${callback}, v8Undefined(), defaultSignature)->GetFunction());
+        proto->Set(v8::String::NewSymbol("${name}"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}Callback, v8Undefined(), defaultSignature)->GetFunction());
 END
             push(@implContent, "    }\n");
             push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;

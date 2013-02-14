@@ -70,18 +70,6 @@
 
     [Custom] void send()
         raises(DOMException);
-    [Custom] void send(in ArrayBuffer data) // FIXME: this should be eventually deprecated.
-        raises(DOMException);
-    [Custom] void send(in ArrayBufferView data)
-        raises(DOMException);
-    [Conditional=BLOB, Custom] void send(in Blob data)
-        raises(DOMException);
-    [Custom] void send(in Document data)
-        raises(DOMException);
-    [Custom] void send(in [StrictTypeChecking] DOMString data)
-        raises(DOMException);
-    [Custom] void send(in DOMFormData data)
-        raises(DOMException);
 
     void abort();
 

@@ -1118,6 +1118,17 @@ static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& ar
     return setDOMException(ec, args.GetIsolate());
 }
 
+static v8::Handle<v8::Value> customMethodCallback(const v8::Arguments& args)
+{
+    FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::CustomTestFeature);
+    return V8TestObj::customMethodCallbackCustom(args);
+}
+
+static v8::Handle<v8::Value> customMethodWithArgsCallback(const v8::Arguments& args)
+{
+    return V8TestObj::customMethodWithArgsCallbackCustom(args);
+}
+
 static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
 {
     RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFindOrCreate);
@@ -1599,6 +1610,11 @@ static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments
     return v8Integer(TestObj::classMethodWithOptional(arg), args.GetIsolate());
 }
 
+static v8::Handle<v8::Value> classMethod2Callback(const v8::Arguments& args)
+{
+    return V8TestObj::classMethod2CallbackCustom(args);
+}
+
 #if ENABLE(Condition1)
 
 static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& args)
@@ -2006,8 +2022,8 @@ static const V8DOMConfiguration::BatchedCallback V8TestObjCallbacks[] = {
     {"serializedValue", TestObjV8Internal::serializedValueCallback},
     {"optionsObject", TestObjV8Internal::optionsObjectCallback},
     {"methodWithException", TestObjV8Internal::methodWithExceptionCallback},
-    {"customMethod", V8TestObj::customMethodCallback},
-    {"customMethodWithArgs", V8TestObj::customMethodWithArgsCallback},
+    {"customMethod", TestObjV8Internal::customMethodCallback},
+    {"customMethodWithArgs", TestObjV8Internal::customMethodWithArgsCallback},
     {"addEventListener", TestObjV8Internal::addEventListenerCallback},
     {"removeEventListener", TestObjV8Internal::removeEventListenerCallback},
     {"withScriptStateVoid", TestObjV8Internal::withScriptStateVoidCallback},
@@ -2163,7 +2179,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     proto->Set(v8::String::NewSymbol("methodThatRequiresAllArgsAndThrows"), v8::FunctionTemplate::New(TestObjV8Internal::methodThatRequiresAllArgsAndThrowsCallback, v8Undefined(), methodThatRequiresAllArgsAndThrowsSignature));
     desc->Set(v8::String::NewSymbol("classMethod"), v8::FunctionTemplate::New(TestObjV8Internal::classMethodCallback, v8Undefined(), v8::Local<v8::Signature>()));
     desc->Set(v8::String::NewSymbol("classMethodWithOptional"), v8::FunctionTemplate::New(TestObjV8Internal::classMethodWithOptionalCallback, v8Undefined(), v8::Local<v8::Signature>()));
-    desc->Set(v8::String::NewSymbol("classMethod2"), v8::FunctionTemplate::New(V8TestObj::classMethod2Callback, v8Undefined(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::NewSymbol("classMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::classMethod2Callback, v8Undefined(), v8::Local<v8::Signature>()));
 #if ENABLE(Condition1)
     desc->Set(v8::String::NewSymbol("overloadedMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::overloadedMethod1Callback, v8Undefined(), v8::Local<v8::Signature>()));
 #endif // ENABLE(Condition1)

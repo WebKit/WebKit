@@ -205,6 +205,15 @@ static v8::Handle<v8::Value> supplementalMethod2Callback(const v8::Arguments& ar
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
+static v8::Handle<v8::Value> supplementalMethod3Callback(const v8::Arguments& args)
+{
+    return V8TestInterface::supplementalMethod3CallbackCustom(args);
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
 static v8::Handle<v8::Value> supplementalMethod4Callback(const v8::Arguments& args)
 {
     TestSupplemental::supplementalMethod4();
@@ -247,7 +256,7 @@ static const V8DOMConfiguration::BatchedCallback V8TestInterfaceCallbacks[] = {
     {"supplementalMethod1", TestInterfaceV8Internal::supplementalMethod1Callback},
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    {"supplementalMethod3", V8TestInterface::supplementalMethod3Callback},
+    {"supplementalMethod3", TestInterfaceV8Internal::supplementalMethod3Callback},
 #endif
 };
 
