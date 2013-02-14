@@ -48,6 +48,10 @@ function runTest() {
     try {
         var mergernode = context.createChannelMerger();
         testPassed("AudioChannelMerger created successfully with empty parameter.");
+        if (mergernode.toString().indexOf("ChannelMergerNode") > -1)
+            testPassed("ChannelMergerNode Object is available.");
+        else
+            testFailed("ChannelMergerNode Object is not available.");
     } catch(e) {
         testFailed("Failed to create AudioChannelMerger with empty parameter.");
     }

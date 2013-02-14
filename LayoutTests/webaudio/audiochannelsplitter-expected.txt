@@ -9,6 +9,7 @@ PASS AudioChannelSplitter has 32 outputs when it is created with numberOfOutputs
 PASS AudioChannelSplitter has one input.
 PASS AudioChannelSplitter created successfully with empty parameter.
 PASS AudioChannelSplitter has 6 outputs when it is created with empty parameter.
+PASS ChannelSplitterNode Object is available.
 PASS Correctly exchanged left and right channels.
 PASS successfullyParsed is true
 

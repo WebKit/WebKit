@@ -120,6 +120,11 @@ function runTest() {
             testPassed("AudioChannelSplitter has 6 outputs when it is created with empty parameter.");
         else
             testFailed("AudioChannelSplitter should have 6 outputs when it is created with empty parameter.");
+
+        if (splitternode.toString().indexOf("ChannelSplitterNode") > -1)
+            testPassed("ChannelSplitterNode Object is available.");
+        else
+            testFailed("ChannelSplitterNode Object is not available.");
     } catch(e) {
         testFailed("Failed to create AudioChannelSplitter with empty parameter.");
     }

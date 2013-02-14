@@ -6,6 +6,7 @@ PASS Exception was thrown for numberOfInputs <= 0.
 PASS Exception was thrown for numberOfInputs >= 32.
 PASS AudioChannelMerger created successfully with numberOfInputs = 32.
 PASS AudioChannelMerger created successfully with empty parameter.
+PASS ChannelMergerNode Object is available.
 PASS successfullyParsed is true
 
 TEST COMPLETE

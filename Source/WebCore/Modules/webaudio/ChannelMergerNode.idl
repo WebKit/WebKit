@@ -27,6 +27,7 @@
  */
 
 [
-    Conditional=WEB_AUDIO
+    Conditional=WEB_AUDIO,
+    JSGenerateToJSObject
 ] interface ChannelMergerNode : AudioNode {
 };
