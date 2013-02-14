@@ -354,8 +354,19 @@ void NetworkJob::notifyAuthReceived(NetworkRequest::AuthType authType, NetworkRe
         }
         storeCredentials();
     }
-    if (result != AuthResultSuccess)
-        m_newJobWithCredentialsStarted = sendRequestWithCredentials(serverType, scheme, realm, requireCredentials);
+    if (result != AuthResultSuccess) {
+        switch (sendRequestWithCredentials(serverType, scheme, realm, requireCredentials)) {
+        case SendRequestSucceeded:
+            m_newJobWithCredentialsStarted = true;
+            break;
+        case SendRequestCancelled:
+            streamFailedToGetCredentials(authType, authProtocol, authScheme);
+            // fall through
+        case SendRequestWaiting:
+            m_newJobWithCredentialsStarted = false;
+            break;
+        }
+    }
 }
 
 void NetworkJob::notifyStringHeaderReceived(const String& key, const String& value)
@@ -778,15 +789,15 @@ bool NetworkJob::handleFTPHeader(const String& header)
     return true;
 }
 
-bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, ProtectionSpaceAuthenticationScheme scheme, const String& realm, bool requireCredentials)
+NetworkJob::SendRequestResult NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, ProtectionSpaceAuthenticationScheme scheme, const String& realm, bool requireCredentials)
 {
     ASSERT(m_handle);
     if (!m_handle)
-        return false;
+        return SendRequestCancelled;
 
     KURL newURL = m_response.url();
     if (!newURL.isValid())
-        return false;
+        return SendRequestCancelled;
 
     // IMPORTANT: if a new source of credentials is added to this method, be sure to handle it in
     // purgeCredentials as well!
@@ -845,7 +856,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
             // and parsed, so if we cancel the authentication challenge when loading the main
             // resource, we should also cancel loading the favicon when it starts to
             // load. If not we will receive another challenge which may confuse the user.
-            return false;
+            return SendRequestCancelled;
         }
 
         // CredentialStore is empty. Ask the user via dialog.
@@ -863,10 +874,10 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
         // Before asking the user for credentials, we check if the URL contains that.
         if (username.isEmpty() && password.isEmpty()) {
             if (m_handle->firstRequest().targetType() != ResourceRequest::TargetIsMainFrame && BlackBerry::Platform::Settings::instance()->isChromeProcess())
-                return false;
+                return SendRequestCancelled;
 
             if (!m_frame || !m_frame->page())
-                return false;
+                return SendRequestCancelled;
 
             // DO overwrite any existing credentials with the empty credential
             updateCurrentWebChallenge(AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError()));
@@ -876,7 +887,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
 
             AuthenticationChallengeManager::instance()->authenticationChallenge(newURL, protectionSpace,
                 Credential(), this, m_frame->page()->chrome()->client()->platformPageClient());
-            return false;
+            return SendRequestWaiting;
         }
 
         credential = Credential(username, password, CredentialPersistenceForSession);
@@ -885,7 +896,7 @@ bool NetworkJob::sendRequestWithCredentials(ProtectionSpaceServerType type, Prot
     }
 
     notifyChallengeResult(newURL, protectionSpace, AuthenticationChallengeSuccess, credential);
-    return m_newJobWithCredentialsStarted;
+    return m_newJobWithCredentialsStarted ? SendRequestSucceeded : SendRequestCancelled;
 }
 
 void NetworkJob::storeCredentials()
@@ -999,8 +1010,14 @@ void NetworkJob::notifyChallengeResult(const KURL& url, const ProtectionSpace& p
         updateDeferLoadingCount(-1);
     }
 
-    if (result != AuthenticationChallengeSuccess)
+    if (result != AuthenticationChallengeSuccess) {
+        NetworkRequest::AuthType authType;
+        NetworkRequest::AuthProtocol authProtocol;
+        NetworkRequest::AuthScheme authScheme;
+        protectionSpaceToPlatformAuth(protectionSpace, authType, authProtocol, authScheme);
+        streamFailedToGetCredentials(authType, authProtocol, authScheme);
         return;
+    }
 
     updateCurrentWebChallenge(AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError()), /* allowOverwrite */ false);
 

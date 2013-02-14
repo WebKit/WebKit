@@ -138,7 +138,12 @@ private:
 
     // The server needs authentication credentials. Search in the CredentialStorage
     // or prompt the user via dialog, then resend the request with the credentials.
-    bool sendRequestWithCredentials(ProtectionSpaceServerType, ProtectionSpaceAuthenticationScheme, const String& realm, bool requireCredentials = true);
+    enum SendRequestResult {
+        SendRequestSucceeded,
+        SendRequestCancelled,
+        SendRequestWaiting
+    };
+    SendRequestResult sendRequestWithCredentials(ProtectionSpaceServerType, ProtectionSpaceAuthenticationScheme, const String& realm, bool requireCredentials = true);
 
     void storeCredentials();
     void storeCredentials(AuthenticationChallenge&);

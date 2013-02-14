@@ -57,18 +57,9 @@ bool NetworkManager::startJob(int playerId, PassRefPtr<ResourceHandle> job, cons
     return startJob(playerId, page->groupName(), job, request, streamFactory, frame, defersLoading ? 1 : 0);
 }
 
-static void setAuthCredentials(NetworkRequest& platformRequest, const AuthenticationChallenge& challenge)
+void protectionSpaceToPlatformAuth(const ProtectionSpace& protectionSpace, NetworkRequest::AuthType& authType, NetworkRequest::AuthProtocol& authProtocol, NetworkRequest::AuthScheme& authScheme)
 {
-    if (challenge.isNull())
-        return;
-
-    Credential credential = challenge.proposedCredential();
-    const ProtectionSpace& protectionSpace = challenge.protectionSpace();
-
-    String username = credential.user();
-    String password = credential.password();
-
-    NetworkRequest::AuthScheme authScheme = NetworkRequest::AuthSchemeNone;
+    authScheme = NetworkRequest::AuthSchemeNone;
     switch (protectionSpace.authenticationScheme()) {
     case ProtectionSpaceAuthenticationSchemeDefault:
         authScheme = NetworkRequest::AuthSchemeDefault;
@@ -90,8 +81,8 @@ static void setAuthCredentials(NetworkRequest& platformRequest, const Authentica
         break;
     }
 
-    NetworkRequest::AuthType authType = NetworkRequest::AuthTypeNone;
-    NetworkRequest::AuthProtocol authProtocol = NetworkRequest::AuthProtocolNone;
+    authType = NetworkRequest::AuthTypeNone;
+    authProtocol = NetworkRequest::AuthProtocolNone;
     switch (protectionSpace.serverType()) {
     case ProtectionSpaceServerHTTP:
         authType = NetworkRequest::AuthTypeHost;
@@ -125,6 +116,23 @@ static void setAuthCredentials(NetworkRequest& platformRequest, const Authentica
         ASSERT_NOT_REACHED();
         break;
     }
+}
+
+static void setAuthCredentials(NetworkRequest& platformRequest, const AuthenticationChallenge& challenge)
+{
+    if (challenge.isNull())
+        return;
+
+    Credential credential = challenge.proposedCredential();
+    const ProtectionSpace& protectionSpace = challenge.protectionSpace();
+
+    String username = credential.user();
+    String password = credential.password();
+
+    NetworkRequest::AuthType authType;
+    NetworkRequest::AuthProtocol authProtocol;
+    NetworkRequest::AuthScheme authScheme;
+    protectionSpaceToPlatformAuth(protectionSpace, authType, authProtocol, authScheme);
 
     if (authType != NetworkRequest::AuthTypeNone && authProtocol != NetworkRequest::AuthProtocolNone && authScheme != NetworkRequest::AuthSchemeNone)
         platformRequest.setCredentials(authType, authProtocol, authScheme, username.utf8().data(), password.utf8().data());
