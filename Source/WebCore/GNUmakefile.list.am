@@ -1302,10 +1302,10 @@ dom_binding_idls += \
 	$(WebCore)/Modules/webaudio/MediaStreamAudioSourceNode.idl \
 	$(WebCore)/Modules/webaudio/OfflineAudioContext.idl \
 	$(WebCore)/Modules/webaudio/OfflineAudioCompletionEvent.idl \
-    $(WebCore)/Modules/webaudio/OscillatorNode.idl \
+	$(WebCore)/Modules/webaudio/OscillatorNode.idl \
 	$(WebCore)/Modules/webaudio/AnalyserNode.idl \
 	$(WebCore)/Modules/webaudio/WaveShaperNode.idl \
-    $(WebCore)/Modules/webaudio/WaveTable.idl \
+	$(WebCore)/Modules/webaudio/WaveTable.idl \
 	$(WebCore)/Modules/webdatabase/DOMWindowWebDatabase.idl \
 	$(WebCore)/Modules/webdatabase/Database.idl \
 	$(WebCore)/Modules/webdatabase/DatabaseCallback.idl \
@@ -1355,7 +1355,7 @@ dom_binding_idls += \
 	$(WebCore)/css/WebKitCSSKeyframeRule.idl \
 	$(WebCore)/css/WebKitCSSKeyframesRule.idl \
 	$(WebCore)/css/WebKitCSSMatrix.idl \
-    $(WebCore)/css/WebKitCSSMixFunctionValue.idl \
+	$(WebCore)/css/WebKitCSSMixFunctionValue.idl \
 	$(WebCore)/css/WebKitCSSRegionRule.idl \
 	$(WebCore)/css/WebKitCSSTransformValue.idl \
 	$(WebCore)/css/WebKitCSSViewportRule.idl \
@@ -1887,7 +1887,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/indexeddb/IDBFactoryBackendInterface.h \
 	Source/WebCore/Modules/indexeddb/IDBFactory.cpp \
 	Source/WebCore/Modules/indexeddb/IDBFactory.h \
-    Source/WebCore/Modules/indexeddb/IDBHistograms.h \
+	Source/WebCore/Modules/indexeddb/IDBHistograms.h \
 	Source/WebCore/Modules/indexeddb/IDBIndex.cpp \
 	Source/WebCore/Modules/indexeddb/IDBIndex.h \
 	Source/WebCore/Modules/indexeddb/IDBKey.cpp \
@@ -2684,8 +2684,8 @@ webcore_sources += \
 	Source/WebCore/css/RuleSet.h \
 	Source/WebCore/css/SelectorChecker.cpp \
 	Source/WebCore/css/SelectorChecker.h \
-    Source/WebCore/css/SelectorFilter.cpp \
-    Source/WebCore/css/SelectorFilter.h \
+	Source/WebCore/css/SelectorFilter.cpp \
+	Source/WebCore/css/SelectorFilter.h \
 	Source/WebCore/css/ShadowValue.cpp \
 	Source/WebCore/css/ShadowValue.h \
 	Source/WebCore/css/SiblingTraversalStrategies.h \
@@ -2827,8 +2827,8 @@ webcore_sources += \
 	Source/WebCore/dom/DocumentParser.h \
 	Source/WebCore/dom/DocumentSharedObjectPool.cpp \
 	Source/WebCore/dom/DocumentSharedObjectPool.h \
-    Source/WebCore/dom/DocumentStyleSheetCollection.cpp \
-    Source/WebCore/dom/DocumentStyleSheetCollection.h \
+	Source/WebCore/dom/DocumentStyleSheetCollection.cpp \
+	Source/WebCore/dom/DocumentStyleSheetCollection.h \
 	Source/WebCore/dom/DocumentTiming.h \
 	Source/WebCore/dom/DocumentType.cpp \
 	Source/WebCore/dom/DocumentType.h \
@@ -2838,7 +2838,7 @@ webcore_sources += \
 	Source/WebCore/dom/DOMError.h \
 	Source/WebCore/dom/DOMImplementation.cpp \
 	Source/WebCore/dom/DOMImplementation.h \
-    Source/WebCore/dom/DOMNamedFlowCollection.cpp \
+	Source/WebCore/dom/DOMNamedFlowCollection.cpp \
 	Source/WebCore/dom/DOMNamedFlowCollection.h \
 	Source/WebCore/dom/DOMStringList.cpp \
 	Source/WebCore/dom/DOMStringList.h \
@@ -2948,8 +2948,8 @@ webcore_sources += \
 	Source/WebCore/dom/NodeRenderingTraversal.h \
 	Source/WebCore/dom/NodeRenderingTraversal.cpp \
 	Source/WebCore/dom/NodeRenderStyle.h \
-    Source/WebCore/dom/NodeTraversal.cpp \
-    Source/WebCore/dom/NodeTraversal.h \
+	Source/WebCore/dom/NodeTraversal.cpp \
+	Source/WebCore/dom/NodeTraversal.h \
 	Source/WebCore/dom/NodeWithIndex.h \
 	Source/WebCore/dom/Notation.cpp \
 	Source/WebCore/dom/Notation.h \
@@ -4031,8 +4031,8 @@ webcore_sources += \
 	Source/WebCore/loader/LoaderStrategy.h \
 	Source/WebCore/loader/MainResourceLoader.cpp \
 	Source/WebCore/loader/MainResourceLoader.h \
-    Source/WebCore/loader/MixedContentChecker.cpp \
-    Source/WebCore/loader/MixedContentChecker.h \
+	Source/WebCore/loader/MixedContentChecker.cpp \
+	Source/WebCore/loader/MixedContentChecker.h \
 	Source/WebCore/loader/NavigationAction.cpp \
 	Source/WebCore/loader/NavigationAction.h \
 	Source/WebCore/loader/NetscapePlugInStreamLoader.cpp \
@@ -4173,7 +4173,7 @@ webcore_sources += \
 	Source/WebCore/page/GroupSettings.h \
 	Source/WebCore/page/History.cpp \
 	Source/WebCore/page/History.h \
-    Source/WebCore/page/LayoutMilestones.h \
+	Source/WebCore/page/LayoutMilestones.h \
 	Source/WebCore/page/Location.cpp \
 	Source/WebCore/page/Location.h \
 	Source/WebCore/page/MediaCanStartListener.h \
