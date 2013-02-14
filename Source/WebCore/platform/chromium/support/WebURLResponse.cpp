@@ -255,13 +255,8 @@ void WebURLResponse::addHTTPHeaderField(const WebString& name, const WebString& 
 {
     if (name.isNull() || value.isNull())
         return;
-    // FIXME: Add an addHTTPHeaderField method to ResourceResponse.
-    const HTTPHeaderMap& map = m_private->m_resourceResponse->httpHeaderFields();
-    String valueStr(value);
-    HTTPHeaderMap::AddResult result =
-        const_cast<HTTPHeaderMap*>(&map)->add(name, valueStr);
-    if (!result.isNewEntry)
-        result.iterator->value.append(", " + valueStr);
+
+    m_private->m_resourceResponse->addHTTPHeaderField(name, value);
 }
 
 void WebURLResponse::clearHTTPHeaderField(const WebString& name)

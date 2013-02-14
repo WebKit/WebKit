@@ -86,19 +86,8 @@ void ResourceResponse::updateFromSoupMessageHeaders(const SoupMessageHeaders* me
     m_httpHeaderFields.clear();
 
     soup_message_headers_iter_init(&headersIter, headers);
-    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue)) {
-        String headerNameString = String::fromUTF8WithLatin1Fallback(headerName, strlen(headerName));
-        HTTPHeaderMap::const_iterator it = m_httpHeaderFields.find(headerNameString);
-        if (it == m_httpHeaderFields.end() || (it != m_httpHeaderFields.end() && it->value.isEmpty()))
-            m_httpHeaderFields.set(headerNameString, String::fromUTF8WithLatin1Fallback(headerValue, strlen(headerValue)));
-        else {
-            StringBuilder builder;
-            builder.append(it->value);
-            builder.appendLiteral(", ");
-            builder.append(String::fromUTF8WithLatin1Fallback(headerValue, strlen(headerValue)));
-            m_httpHeaderFields.set(headerNameString, builder.toString());
-        }
-    }
+    while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
+        addHTTPHeaderField(String::fromUTF8WithLatin1Fallback(headerName, strlen(headerName)), String::fromUTF8WithLatin1Fallback(headerValue, strlen(headerValue)));
 
     String contentType;
     const char* officialType = soup_message_headers_get_one(headers, "Content-Type");

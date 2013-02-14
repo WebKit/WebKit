@@ -81,6 +81,7 @@ public:
     String httpHeaderField(const AtomicString& name) const;
     String httpHeaderField(const char* name) const;
     void setHTTPHeaderField(const AtomicString& name, const String& value);
+    void addHTTPHeaderField(const AtomicString& name, const String& value);
     const HTTPHeaderMap& httpHeaderFields() const;
 
     bool isMultipart() const { return mimeType() == "multipart/x-mixed-replace"; }
@@ -169,6 +170,7 @@ protected:
 private:
     const ResourceResponse& asResourceResponse() const;
     void parseCacheControlDirectives() const;
+    void updateHeaderParsedState(const AtomicString& name);
 
     mutable bool m_haveParsedCacheControlHeader : 1;
     mutable bool m_haveParsedAgeHeader : 1;
