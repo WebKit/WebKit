@@ -77190,6 +77190,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\DOMCountersGraph.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\DOMExtension.js"
 					>
 				</File>

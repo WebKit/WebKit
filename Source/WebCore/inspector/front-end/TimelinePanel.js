@@ -30,6 +30,7 @@
  */
 
 importScript("MemoryStatistics.js");
+importScript("DOMCountersGraph.js");
 importScript("NativeMemoryGraph.js");
 importScript("TimelineModel.js");
 importScript("TimelineOverviewPane.js");
@@ -79,7 +80,7 @@ WebInspector.TimelinePanel = function()
     if (WebInspector.experimentsSettings.nativeMemoryTimeline.isEnabled())
         this._memoryStatistics = new WebInspector.NativeMemoryGraph(this, this._model, this.splitView.sidebarWidth());
     else
-        this._memoryStatistics = new WebInspector.MemoryStatistics(this, this._model, this.splitView.sidebarWidth());
+        this._memoryStatistics = new WebInspector.DOMCountersGraph(this, this._model, this.splitView.sidebarWidth());
     WebInspector.settings.memoryCounterGraphsHeight = WebInspector.settings.createSetting("memoryCounterGraphsHeight", 150);
 
     var itemsTreeElement = new WebInspector.SidebarSectionTreeElement(WebInspector.UIString("RECORDS"), {}, true);

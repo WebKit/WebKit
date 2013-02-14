@@ -5180,6 +5180,7 @@
             'inspector/front-end/Dialog.js',
             'inspector/front-end/DOMAgent.js',
             'inspector/front-end/DOMBreakpointsSidebarPane.js',
+            'inspector/front-end/DOMCountersGraph.js',
             'inspector/front-end/DOMExtension.js',
             'inspector/front-end/DOMPresentationUtils.js',
             'inspector/front-end/DOMStorage.js',

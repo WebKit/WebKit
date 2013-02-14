@@ -277,6 +277,7 @@ modules = [
         "name": "timeline",
         "dependencies": ["components"],
         "sources": [
+            "DOMCountersGraph.js",
             "MemoryStatistics.js",
             "NativeMemoryGraph.js",
             "TimelineModel.js",

@@ -43,7 +43,21 @@ WebInspector.NativeMemoryGraph = function(timelinePanel, model, sidebarWidth)
 
 /**
  * @constructor
+ * @extends {WebInspector.MemoryStatistics.Counter}
+ */
+WebInspector.NativeMemoryGraph.Counter = function(time, nativeCounters)
+{
+    WebInspector.MemoryStatistics.Counter.call(this, time);
+    this.nativeCounters = nativeCounters;
+}
+
+/**
+ * @constructor
  * @extends {WebInspector.CounterUIBase}
+ * @param {WebInspector.NativeMemoryGraph} memoryCountersPane
+ * @param {string} title
+ * @param {Array.<number>} hsl
+ * @param {function(WebInspector.NativeMemoryGraph.Counter):number} valueGetter
  */
 WebInspector.NativeMemoryCounterUI = function(memoryCountersPane, title, hsl, valueGetter)
 {
@@ -149,21 +163,17 @@ WebInspector.NativeMemoryGraph.prototype = {
             }
             nativeCounters["Other"] = nativeCounters["PrivateBytes"] - knownSize;
 
-            statistics.push({
-                time: record.endTime || record.startTime,
-                nativeCounters: nativeCounters
-            });
+            statistics.push(new WebInspector.NativeMemoryGraph.Counter(
+                record.endTime || record.startTime,
+                nativeCounters
+            ));
         }
         WebInspector.TimelinePresentationModel.forAllRecords([event.data], null, addStatistics);
     },
 
     _draw: function()
     {
-        this._calculateVisibleIndexes();
-        this._calculateXValues();
-        this._clear();
-
-        this._setVerticalClip(10, this._canvas.height - 20);
+        WebInspector.MemoryStatistics.prototype._draw.call(this);
 
         var maxValue = this._maxCounterValue();
         this._resetTotalValues();

@@ -54,6 +54,7 @@
     <file>DirectoryContentView.js</file>
     <file>DOMAgent.js</file>
     <file>DOMBreakpointsSidebarPane.js</file>
+    <file>DOMCountersGraph.js</file>
     <file>DOMExtension.js</file>
     <file>DOMPresentationUtils.js</file>
     <file>DOMStorage.js</file>
