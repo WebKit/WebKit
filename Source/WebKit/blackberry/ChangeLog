@@ -7,6 +7,23 @@
 
         PR 220170.
 
+        When re-creating the Platform::Keyboard event ensure
+        all values are updated.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+
+2013-02-14  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Update keyboard event details to match platform details.
+        https://bugs.webkit.org/show_bug.cgi?id=109693
+
+        Reviewed by Yong Li.
+
+        PR 220170.
+
         Update keyboard event details.
 
         Reviewed Internally by Nima Ghanavatian and Gen Mak.
