@@ -54,7 +54,6 @@ static inline bool shouldForwardUserGesture(int interval, int nestingLevel)
 
 DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> action, int interval, bool singleShot)
     : SuspendableTimer(context)
-    , m_timeoutId(context->newUniqueID())
     , m_nestingLevel(timerNestingLevel + 1)
     , m_action(action)
     , m_originalInterval(interval)
@@ -62,7 +61,10 @@ DOMTimer::DOMTimer(ScriptExecutionContext* context, PassOwnPtr<ScheduledAction> 
     if (shouldForwardUserGesture(interval, m_nestingLevel))
         m_userGestureToken = UserGestureIndicator::currentToken();
 
-    context->addTimeout(m_timeoutId, this);
+    // Keep asking for the next id until we're given one that we don't already have.
+    do {
+        m_timeoutId = context->circularSequentialID();
+    } while (!context->addTimeout(m_timeoutId, this));
 
     double intervalMilliseconds = intervalClampedToMinimum(interval, context->minimumTimerInterval());
     if (singleShot)

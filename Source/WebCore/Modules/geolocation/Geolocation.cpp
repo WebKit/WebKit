@@ -173,13 +173,15 @@ void Geolocation::GeoNotifier::timerFired(Timer<GeoNotifier>*)
     m_geolocation->requestTimedOut(this);
 }
 
-void Geolocation::Watchers::set(int id, PassRefPtr<GeoNotifier> prpNotifier)
+bool Geolocation::Watchers::add(int id, PassRefPtr<GeoNotifier> prpNotifier)
 {
     ASSERT(id > 0);
     RefPtr<GeoNotifier> notifier = prpNotifier;
 
-    m_idToNotifierMap.set(id, notifier.get());
+    if (!m_idToNotifierMap.add(id, notifier.get()).isNewEntry)
+        return false;
     m_notifierToIdMap.set(notifier.release(), id);
+    return true;
 }
 
 Geolocation::GeoNotifier* Geolocation::Watchers::find(int id)
@@ -307,8 +309,11 @@ int Geolocation::watchPosition(PassRefPtr<PositionCallback> successCallback, Pas
     RefPtr<GeoNotifier> notifier = GeoNotifier::create(this, successCallback, errorCallback, options);
     startRequest(notifier.get());
 
-    int watchID = m_scriptExecutionContext->newUniqueID();
-    m_watchers.set(watchID, notifier.release());
+    int watchID;
+    // Keep asking for the next id until we're given one that we don't already have.
+    do {
+        watchID = m_scriptExecutionContext->circularSequentialID();
+    } while (!m_watchers.add(watchID, notifier));
     return watchID;
 }
 

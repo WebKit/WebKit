@@ -112,7 +112,7 @@ private:
 
     class Watchers {
     public:
-        void set(int id, PassRefPtr<GeoNotifier>);
+        bool add(int id, PassRefPtr<GeoNotifier>);
         GeoNotifier* find(int id);
         void remove(int id);
         void remove(GeoNotifier*);

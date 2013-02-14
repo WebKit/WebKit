@@ -145,10 +145,10 @@ public:
 
     virtual void postTask(PassOwnPtr<Task>) = 0; // Executes the task on context's thread asynchronously.
 
-    // Creates a unique id for setTimeout, setInterval or navigator.geolocation.watchPosition.
-    int newUniqueID();
+    // Gets the next id in a circular sequence from 1 to 2^31-1.
+    int circularSequentialID();
 
-    void addTimeout(int timeoutId, DOMTimer* timer) { ASSERT(!m_timeouts.contains(timeoutId)); m_timeouts.set(timeoutId, timer); }
+    bool addTimeout(int timeoutId, DOMTimer* timer) { return m_timeouts.add(timeoutId, timer).isNewEntry; }
     void removeTimeout(int timeoutId) { m_timeouts.remove(timeoutId); }
     DOMTimer* findTimeout(int timeoutId) { return m_timeouts.get(timeoutId); }
 
@@ -216,7 +216,7 @@ private:
     bool m_iteratingActiveDOMObjects;
     bool m_inDestructor;
 
-    int m_sequentialID;
+    int m_circularSequentialID;
     typedef HashMap<int, DOMTimer*> TimeoutMap;
     TimeoutMap m_timeouts;
 

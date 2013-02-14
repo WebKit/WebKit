@@ -37,6 +37,6 @@
                                 in [Optional] PositionErrorCallback errorCallback,
                                 in [Optional] PositionOptions options);
 
-    void clearWatch(in long watchId);
+    void clearWatch(in long watchID);
 };
 

@@ -103,7 +103,7 @@ void ScriptExecutionContext::AddConsoleMessageTask::performTask(ScriptExecutionC
 ScriptExecutionContext::ScriptExecutionContext()
     : m_iteratingActiveDOMObjects(false)
     , m_inDestructor(false)
-    , m_sequentialID(0)
+    , m_circularSequentialID(0)
     , m_inDispatchErrorEvent(false)
     , m_activeDOMObjectsAreSuspended(false)
     , m_reasonForSuspendingActiveDOMObjects(static_cast<ActiveDOMObject::ReasonForSuspension>(-1))
@@ -349,14 +349,12 @@ bool ScriptExecutionContext::dispatchErrorEvent(const String& errorMessage, int 
     return errorEvent->defaultPrevented();
 }
 
-int ScriptExecutionContext::newUniqueID()
+int ScriptExecutionContext::circularSequentialID()
 {
-    ++m_sequentialID;
-    // FIXME: We prevent wraparound from becoming negative with a simple solution which
-    // ensures the result has a correct range, but without fully guaranteeing uniqueness.
-    if (m_sequentialID <= 0)
-        m_sequentialID = 1;
-    return m_sequentialID;
+    ++m_circularSequentialID;
+    if (m_circularSequentialID <= 0)
+        m_circularSequentialID = 1;
+    return m_circularSequentialID;
 }
 
 #if ENABLE(BLOB)
