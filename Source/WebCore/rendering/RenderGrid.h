@@ -50,12 +50,14 @@ private:
 
     LayoutUnit computePreferredTrackWidth(const Length&, size_t) const;
 
+    class GridIterator;
     enum TrackSizingDirection { ForColumns, ForRows };
     void computedUsedBreadthOfGridTracks(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks);
     LayoutUnit computeUsedBreadthOfMinLength(TrackSizingDirection, const Length&) const;
     LayoutUnit computeUsedBreadthOfMaxLength(TrackSizingDirection, const Length&) const;
     LayoutUnit computeUsedBreadthOfSpecifiedLength(TrackSizingDirection, const Length&) const;
     void resolveContentBasedTrackSizingFunctions(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, LayoutUnit& availableLogicalSpace);
+    void placeItemsOnGrid();
     void layoutGridItems();
 
     typedef LayoutUnit (RenderGrid::* SizingFunction)(RenderBox*, TrackSizingDirection, Vector<GridTrack>&);
@@ -77,6 +79,11 @@ private:
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(TrackSizingDirection, const Vector<GridTrack>&);
 #endif
+
+    size_t gridColumnCount() const { return m_grid.isEmpty() ? 0 : m_grid[0].size(); }
+    size_t gridRowCount() const { return m_grid.size(); }
+
+    Vector<Vector<Vector<RenderBox*, 1> > > m_grid;
 };
 
 } // namespace WebCore
