@@ -29,35 +29,46 @@
  */
 
 #include "config.h"
-#include "NotificationPresenter.h"
 
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+#if ENABLE_NOTIFICATIONS
+#include "NotificationPresenter.h"
 
 #include "WebKit.h"
 #include "WebNotification.h"
 #include "WebNotificationPermissionCallback.h"
 #include "WebSecurityOrigin.h"
+#include "WebTestDelegate.h"
 #include "googleurl/src/gurl.h"
 #include <public/Platform.h>
 #include <public/WebString.h>
 #include <public/WebURL.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 using namespace WebKit;
+using namespace std;
 
-static WebString identifierForNotification(const WebNotification& notification)
+namespace WebTestRunner {
+
+namespace {
+
+WebString identifierForNotification(const WebNotification& notification)
 {
     if (notification.isHTML())
         return notification.url().spec().utf16();
     return notification.title();
 }
 
-static void deferredDisplayDispatch(void* context)
+void deferredDisplayDispatch(void* context)
 {
     WebNotification* notification = static_cast<WebNotification*>(context);
     notification->dispatchDisplayEvent();
     delete notification;
+}
+
+}
+
+NotificationPresenter::NotificationPresenter()
+    : m_delegate(0)
+{
 }
 
 NotificationPresenter::~NotificationPresenter()
@@ -66,16 +77,16 @@ NotificationPresenter::~NotificationPresenter()
 
 void NotificationPresenter::grantPermission(const WebString& origin)
 {
-    m_allowedOrigins.add(WTF::String(origin.data(), origin.length()));
+    m_allowedOrigins.insert(origin.utf8());
 }
 
 bool NotificationPresenter::simulateClick(const WebString& title)
 {
-    WTF::String id(title.data(), title.length());
+    string id(title.utf8());
     if (m_activeNotifications.find(id) == m_activeNotifications.end())
         return false;
-    
-    const WebNotification& notification = m_activeNotifications.find(id)->value;
+
+    const WebNotification& notification = m_activeNotifications.find(id)->second;
     WebNotification eventTarget(notification);
     eventTarget.dispatchClickEvent();
     return true;
@@ -86,30 +97,29 @@ bool NotificationPresenter::show(const WebNotification& notification)
 {
     WebString identifier = identifierForNotification(notification);
     if (!notification.replaceId().isEmpty()) {
-        WTF::String replaceId(notification.replaceId().data(), notification.replaceId().length());
+        string replaceId(notification.replaceId().utf8());
         if (m_replacements.find(replaceId) != m_replacements.end())
-            printf("REPLACING NOTIFICATION %s\n",
-                   m_replacements.find(replaceId)->value.utf8().data());
+            m_delegate->printMessage(string("REPLACING NOTIFICATION ") + m_replacements.find(replaceId)->second + "\n");
 
-        m_replacements.set(replaceId, WTF::String(identifier.data(), identifier.length()));
+        m_replacements[replaceId] = identifier.utf8();
     }
 
-    if (notification.isHTML()) {
-        printf("DESKTOP NOTIFICATION: contents at %s\n",
-               notification.url().spec().data());
-    } else {
-        printf("DESKTOP NOTIFICATION:%s icon %s, title %s, text %s\n",
-               notification.direction() == WebTextDirectionRightToLeft ? "(RTL)" : "",
-               notification.iconURL().isEmpty() ? "" :
-               notification.iconURL().spec().data(),
-               notification.title().isEmpty() ? "" :
-               notification.title().utf8().data(),
-               notification.body().isEmpty() ? "" :
-               notification.body().utf8().data());
+    if (notification.isHTML())
+        m_delegate->printMessage(string("DESKTOP NOTIFICATION: contents at ") + string(notification.url().spec()) + "\n");
+    else {
+        m_delegate->printMessage("DESKTOP NOTIFICATION:");
+        m_delegate->printMessage(notification.direction() == WebTextDirectionRightToLeft ? "(RTL)" : "");
+        m_delegate->printMessage(" icon ");
+        m_delegate->printMessage(notification.iconURL().isEmpty() ? "" : notification.iconURL().spec().data());
+        m_delegate->printMessage(", title ");
+        m_delegate->printMessage(notification.title().isEmpty() ? "" : notification.title().utf8().data());
+        m_delegate->printMessage(", text ");
+        m_delegate->printMessage(notification.body().isEmpty() ? "" : notification.body().utf8().data());
+        m_delegate->printMessage("\n");
     }
 
-    WTF::String id(identifier.data(), identifier.length());
-    m_activeNotifications.set(id, notification);
+    string id(identifier.utf8());
+    m_activeNotifications[id] = notification;
 
     Platform::current()->callOnMainThread(deferredDisplayDispatch, new WebNotification(notification));
     return true;
@@ -118,26 +128,26 @@ bool NotificationPresenter::show(const WebNotification& notification)
 void NotificationPresenter::cancel(const WebNotification& notification)
 {
     WebString identifier = identifierForNotification(notification);
-    printf("DESKTOP NOTIFICATION CLOSED: %s\n", identifier.utf8().data());
+    m_delegate->printMessage(string("DESKTOP NOTIFICATION CLOSED: ") + string(identifier.utf8()) + "\n");
     WebNotification eventTarget(notification);
     eventTarget.dispatchCloseEvent(false);
 
-    WTF::String id(identifier.data(), identifier.length());
-    m_activeNotifications.remove(id);
+    string id(identifier.utf8());
+    m_activeNotifications.erase(id);
 }
 
 void NotificationPresenter::objectDestroyed(const WebKit::WebNotification& notification)
 {
     WebString identifier = identifierForNotification(notification);
-    WTF::String id(identifier.data(), identifier.length());
-    m_activeNotifications.remove(id);
+    string id(identifier.utf8());
+    m_activeNotifications.erase(id);
 }
 
 WebNotificationPresenter::Permission NotificationPresenter::checkPermission(const WebSecurityOrigin& origin)
 {
     // Check with the layout test controller
     WebString originString = origin.toString();
-    bool allowed = m_allowedOrigins.find(WTF::String(originString.data(), originString.length())) != m_allowedOrigins.end();
+    bool allowed = m_allowedOrigins.find(string(originString.utf8())) != m_allowedOrigins.end();
     return allowed ? WebNotificationPresenter::PermissionAllowed
         : WebNotificationPresenter::PermissionDenied;
 }
@@ -146,9 +156,10 @@ void NotificationPresenter::requestPermission(
     const WebSecurityOrigin& origin,
     WebNotificationPermissionCallback* callback)
 {
-    printf("DESKTOP NOTIFICATION PERMISSION REQUESTED: %s\n",
-           origin.toString().utf8().data());
+    m_delegate->printMessage("DESKTOP NOTIFICATION PERMISSION REQUESTED: " + string(origin.toString().utf8()) + "\n");
     callback->permissionRequestComplete();
 }
 
-#endif // ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
+}
+
+#endif // ENABLE_NOTIFICATIONS

@@ -798,6 +798,15 @@ void WebTestProxyBase::printPage(WebFrame* frame)
     frame->printEnd();
 }
 
+WebNotificationPresenter* WebTestProxyBase::notificationPresenter()
+{
+#if ENABLE_NOTIFICATIONS
+    return m_testInterfaces->testRunner()->notificationPresenter();
+#else
+    return 0;
+#endif
+}
+
 void WebTestProxyBase::willPerformClientRedirect(WebFrame* frame, const WebURL&, const WebURL& to, double, double)
 {
     if (m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {

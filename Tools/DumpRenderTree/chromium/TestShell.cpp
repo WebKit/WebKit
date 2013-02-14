@@ -163,9 +163,6 @@ void TestShell::initialize(MockWebKitPlatformSupport* platformSupport)
     m_testInterfaces = adoptPtr(new WebTestInterfaces());
     platformSupport->setInterfaces(m_testInterfaces.get());
     m_devToolsTestInterfaces = adoptPtr(new WebTestInterfaces());
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_notificationPresenter = adoptPtr(new NotificationPresenter(this));
-#endif
 #if ENABLE(LINK_PRERENDER)
     m_prerenderingSupport = adoptPtr(new MockWebPrerenderingSupport());
 #endif
@@ -309,9 +306,6 @@ void TestShell::resetTestController()
     m_testInterfaces->resetAll();
     m_devToolsTestInterfaces->resetAll();
     m_webViewHost->reset();
-#if ENABLE(NOTIFICATIONS) || ENABLE(LEGACY_NOTIFICATIONS)
-    m_notificationPresenter->reset();
-#endif
 #if OS(ANDROID)
     webkit_support::ReleaseMediaResources();
 #endif

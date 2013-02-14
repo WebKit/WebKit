@@ -144,10 +144,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setGeolocationPermission(bool) OVERRIDE;
     virtual void setMockGeolocationPosition(double, double, double) OVERRIDE;
     virtual void setMockGeolocationPositionUnavailableError(const std::string&) OVERRIDE;
-#if ENABLE(NOTIFICATIONS)
-    virtual void grantWebNotificationPermission(const std::string&) OVERRIDE;
-    virtual bool simulateLegacyWebNotificationClick(const std::string&) OVERRIDE;
-#endif
 #if ENABLE(INPUT_SPEECH)
     virtual void addMockSpeechInputResult(const std::string&, double, const std::string&) OVERRIDE;
     virtual void setMockSpeechInputDumpRect(bool) OVERRIDE;
@@ -205,9 +201,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void navigateBackForwardSoon(int offset);
     virtual int historyBackListCount();
     virtual int historyForwardListCount();
-#if ENABLE(NOTIFICATIONS)
-    virtual WebKit::WebNotificationPresenter* notificationPresenter();
-#endif
     virtual WebKit::WebGeolocationClient* geolocationClient();
 #if ENABLE(INPUT_SPEECH)
     virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);

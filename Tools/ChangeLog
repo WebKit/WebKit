@@ -1,3 +1,55 @@
+2013-02-14  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move mock notification presenter to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=109706
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestRunner::WebTestProxy::notificationPresenter):
+        * DumpRenderTree/chromium/TestRunner/src/NotificationPresenter.cpp: Renamed from Tools/DumpRenderTree/chromium/NotificationPresenter.cpp.
+        (WebTestRunner::NotificationPresenter::NotificationPresenter):
+        (WebTestRunner):
+        (WebTestRunner::NotificationPresenter::~NotificationPresenter):
+        (WebTestRunner::NotificationPresenter::grantPermission):
+        (WebTestRunner::NotificationPresenter::simulateClick):
+        (WebTestRunner::NotificationPresenter::show):
+        (WebTestRunner::NotificationPresenter::cancel):
+        (WebTestRunner::NotificationPresenter::objectDestroyed):
+        (WebTestRunner::NotificationPresenter::checkPermission):
+        (WebTestRunner::NotificationPresenter::requestPermission):
+        * DumpRenderTree/chromium/TestRunner/src/NotificationPresenter.h: Renamed from Tools/DumpRenderTree/chromium/NotificationPresenter.h.
+        (WebTestRunner):
+        (NotificationPresenter):
+        (WebTestRunner::NotificationPresenter::setDelegate):
+        (WebTestRunner::NotificationPresenter::reset):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::setDelegate):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::notificationPresenter):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::grantWebNotificationPermission):
+        (WebTestRunner::TestRunner::simulateLegacyWebNotificationClick):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (WebKit):
+        (WebTestRunner):
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::notificationPresenter):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        (TestShell::resetTestController):
+        * DumpRenderTree/chromium/TestShell.h:
+        (WebKit):
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2013-02-13  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Add separate DumpRenderTree VS2010 solution file.

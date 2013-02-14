@@ -272,13 +272,6 @@ int WebViewHost::historyForwardListCount()
     return navigationController()->entryCount() - currentIndex - 1;
 }
 
-#if ENABLE(NOTIFICATIONS)
-WebNotificationPresenter* WebViewHost::notificationPresenter()
-{
-    return m_shell->notificationPresenter();
-}
-#endif
-
 WebKit::WebGeolocationClient* WebViewHost::geolocationClient()
 {
     return geolocationClientMock();
@@ -819,18 +812,6 @@ void WebViewHost::setMockGeolocationPositionUnavailableError(const std::string& 
     for (size_t i = 0; i < windowList.size(); i++)
         windowList[i]->geolocationClientMock()->setPositionUnavailableError(WebString::fromUTF8(message));
 }
-
-#if ENABLE(NOTIFICATIONS)
-void WebViewHost::grantWebNotificationPermission(const std::string& origin)
-{
-    m_shell->notificationPresenter()->grantPermission(WebString::fromUTF8(origin));
-}
-
-bool WebViewHost::simulateLegacyWebNotificationClick(const std::string& notificationIdentifier)
-{
-    return m_shell->notificationPresenter()->simulateClick(WebString::fromUTF8(notificationIdentifier));
-}
-#endif
 
 #if ENABLE(INPUT_SPEECH)
 void WebViewHost::addMockSpeechInputResult(const std::string& result, double confidence, const std::string& language)

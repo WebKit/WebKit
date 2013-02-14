@@ -47,12 +47,14 @@
 
 namespace WebKit {
 class WebArrayBufferView;
+class WebNotificationPresenter;
 class WebPermissionClient;
 class WebView;
 }
 
 namespace WebTestRunner {
 
+class NotificationPresenter;
 class WebPermissions;
 class WebTestDelegate;
 
@@ -116,6 +118,9 @@ public:
     bool shouldInterceptPostMessage() const;
     bool isSmartInsertDeleteEnabled() const;
     bool isSelectTrailingWhitespaceEnabled() const;
+#if ENABLE_NOTIFICATIONS
+    WebKit::WebNotificationPresenter* notificationPresenter() const;
+#endif
 
     // A single item in the work queue.
     class WorkItem {
@@ -456,10 +461,12 @@ private:
     void setMockGeolocationPosition(const CppArgumentList&, CppVariant*);
     void setMockGeolocationPositionUnavailableError(const CppArgumentList&, CppVariant*);
 
+#if ENABLE_NOTIFICATIONS
     // Grants permission for desktop notifications to an origin
     void grantWebNotificationPermission(const CppArgumentList&, CppVariant*);
     // Simulates a click on a desktop notification.
     void simulateLegacyWebNotificationClick(const CppArgumentList&, CppVariant*);
+#endif
 
     // Speech input related functions.
     void addMockSpeechInputResult(const CppArgumentList&, CppVariant*);
@@ -660,6 +667,10 @@ private:
 
     // WebPermissionClient mock object.
     std::auto_ptr<WebPermissions> m_webPermissions;
+
+#if ENABLE_NOTIFICATIONS
+    std::auto_ptr<NotificationPresenter> m_notificationPresenter;
+#endif
 };
 
 }

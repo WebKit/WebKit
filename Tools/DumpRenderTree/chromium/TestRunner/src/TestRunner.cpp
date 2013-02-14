@@ -33,6 +33,7 @@
 #include "config.h"
 #include "TestRunner.h"
 
+#include "NotificationPresenter.h"
 #include "WebBindings.h"
 #include "WebDataSource.h"
 #include "WebDeviceOrientation.h"
@@ -146,6 +147,9 @@ TestRunner::TestRunner()
     , m_delegate(0)
     , m_webView(0)
     , m_webPermissions(new WebPermissions)
+#if ENABLE_NOTIFICATIONS
+    , m_notificationPresenter(new NotificationPresenter)
+#endif
 {
     // Initialize the map that associates methods of this class with the names
     // they will use when called by JavaScript. The actual binding of those
@@ -272,8 +276,10 @@ TestRunner::TestRunner()
     bindMethod("setGeolocationPermission", &TestRunner::setGeolocationPermission);
     bindMethod("setMockGeolocationPositionUnavailableError", &TestRunner::setMockGeolocationPositionUnavailableError);
     bindMethod("setMockGeolocationPosition", &TestRunner::setMockGeolocationPosition);
+#if ENABLE_NOTIFICATIONS
     bindMethod("grantWebNotificationPermission", &TestRunner::grantWebNotificationPermission);
     bindMethod("simulateLegacyWebNotificationClick", &TestRunner::simulateLegacyWebNotificationClick);
+#endif
     bindMethod("addMockSpeechInputResult", &TestRunner::addMockSpeechInputResult);
     bindMethod("setMockSpeechInputDumpRect", &TestRunner::setMockSpeechInputDumpRect);
     bindMethod("addMockSpeechRecognitionResult", &TestRunner::addMockSpeechRecognitionResult);
@@ -328,6 +334,9 @@ void TestRunner::setDelegate(WebTestDelegate* delegate)
 {
     m_delegate = delegate;
     m_webPermissions->setDelegate(delegate);
+#if ENABLE_NOTIFICATIONS
+    m_notificationPresenter->setDelegate(delegate);
+#endif
 }
 
 void TestRunner::reset()
@@ -406,6 +415,10 @@ void TestRunner::reset()
     m_userStyleSheetLocation = WebURL();
 
     m_webPermissions->reset();
+
+#if ENABLE_NOTIFICATIONS
+    m_notificationPresenter->reset();
+#endif
 
     m_taskList.revokeAll();
     m_workQueue.reset();
@@ -654,6 +667,13 @@ bool TestRunner::isSelectTrailingWhitespaceEnabled() const
 {
     return m_selectTrailingWhitespaceEnabled;
 }
+
+#if ENABLE_NOTIFICATIONS
+WebNotificationPresenter* TestRunner::notificationPresenter() const
+{
+    return m_notificationPresenter.get();
+}
+#endif
 
 void TestRunner::showDevTools()
 {
@@ -1759,13 +1779,14 @@ void TestRunner::setMockGeolocationPositionUnavailableError(const CppArgumentLis
     m_delegate->setMockGeolocationPositionUnavailableError(arguments[0].toString());
 }
 
+#if ENABLE_NOTIFICATIONS
 void TestRunner::grantWebNotificationPermission(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() != 1 || !arguments[0].isString()) {
         result->set(false);
         return;
     }
-    m_delegate->grantWebNotificationPermission(arguments[0].toString());
+    m_notificationPresenter->grantPermission(WebString::fromUTF8(arguments[0].toString()));
     result->set(true);
 }
 
@@ -1775,8 +1796,9 @@ void TestRunner::simulateLegacyWebNotificationClick(const CppArgumentList& argum
         result->set(false);
         return;
     }
-    result->set(m_delegate->simulateLegacyWebNotificationClick(arguments[0].toString()));
+    result->set(m_notificationPresenter->simulateClick(WebString::fromUTF8(arguments[0].toString())));
 }
+#endif
 
 void TestRunner::addMockSpeechInputResult(const CppArgumentList& arguments, CppVariant* result)
 {

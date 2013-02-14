@@ -33,23 +33,26 @@
 
 #include "WebNotification.h"
 #include "WebNotificationPresenter.h"
-#include <wtf/HashMap.h>
-#include <wtf/HashSet.h>
-#include <wtf/text/StringHash.h>
-#include <wtf/text/WTFString.h>
+#include <map>
+#include <set>
+#include <string>
 
-class TestShell;
+namespace WebTestRunner {
 
-// A class that implements WebNotificationPresenter for DRT.
+class WebTestDelegate;
+
+// A class that implements WebNotificationPresenter for the TestRunner library.
 class NotificationPresenter : public WebKit::WebNotificationPresenter {
 public:
-    explicit NotificationPresenter(TestShell*) { }
+    NotificationPresenter();
     virtual ~NotificationPresenter();
 
-    // Called by the DRTTestRunner to simulate a user granting permission.
+    void setDelegate(WebTestDelegate* delegate) { m_delegate = delegate; }
+
+    // Called by the TestRunner to simulate a user granting permission.
     void grantPermission(const WebKit::WebString& origin);
 
-    // Called by the DRTTestRunner to simulate a user clicking on a notification.
+    // Called by the TestRunner to simulate a user clicking on a notification.
     bool simulateClick(const WebKit::WebString& notificationIdentifier);
 
     // WebKit::WebNotificationPresenter interface
@@ -62,14 +65,18 @@ public:
     void reset() { m_allowedOrigins.clear(); }
 
 private:
+    WebTestDelegate* m_delegate;
+
     // Set of allowed origins.
-    HashSet<WTF::String> m_allowedOrigins;
+    std::set<std::string> m_allowedOrigins;
 
     // Map of active notifications.
-    HashMap<WTF::String, WebKit::WebNotification> m_activeNotifications;
+    std::map<std::string, WebKit::WebNotification> m_activeNotifications;
 
     // Map of active replacement IDs to the titles of those notifications
-    HashMap<WTF::String, WTF::String> m_replacements;
+    std::map<std::string, std::string> m_replacements;
 };
+
+}
 
 #endif // NotificationPresenter_h
