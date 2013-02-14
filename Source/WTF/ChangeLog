@@ -1,5 +1,25 @@
 2013-02-14  Eric Seidel  <eric@webkit.org>
 
+        String(Vector) behaves differently from String(vector.data(), vector.size()) for vectors with inline capacity in the size=0 case
+        https://bugs.webkit.org/show_bug.cgi?id=109784
+
+        Reviewed by Darin Adler.
+
+        This makes String(Vector) never return null strings.
+        Which matches behavior of String(UChar*, size_t)
+        for vectors with inlineCapacity, but differs from
+        String(UChar*, size_t) in the no-inlineCapacity case.
+
+        This incidentally will fix a behavioral regression
+        in the html threaded parser which came from converting
+        many String(UChar*, size_t) callsites to using String(Vector).
+
+        * wtf/text/WTFString.h:
+        (String):
+        (WTF::String::String):
+
+2013-02-14  Eric Seidel  <eric@webkit.org>
+
         REGRESSION(r142712): attribute values show up as "(null)" instead of null with the threaded parser
         https://bugs.webkit.org/show_bug.cgi?id=109784
 
