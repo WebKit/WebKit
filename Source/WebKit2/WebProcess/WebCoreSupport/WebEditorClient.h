@@ -127,8 +127,8 @@ private:
 #endif
 
 #if PLATFORM(GTK)
-    bool executePendingEditorCommands(WebCore::Frame*, Vector<WTF::String>, bool) OVERRIDE;
-    void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&) OVERRIDE;
+    bool executePendingEditorCommands(WebCore::Frame*, Vector<WTF::String>, bool);
+    void getEditorCommandsForKeyEvent(const WebCore::KeyboardEvent*, Vector<WTF::String>&);
 #endif
 #if PLATFORM(GTK) || PLATFORM(QT)
     void updateGlobalSelection(WebCore::Frame*);

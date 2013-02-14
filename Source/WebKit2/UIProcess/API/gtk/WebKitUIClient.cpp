@@ -126,7 +126,8 @@ static WKRect getWindowFrame(WKPageRef page, const void* clientInfo)
 static void setWindowFrame(WKPageRef page, WKRect frame, const void* clientInfo)
 {
     WebKitWindowProperties* windowProperties = webkit_web_view_get_window_properties(WEBKIT_WEB_VIEW(clientInfo));
-    GdkRectangle geometry = { frame.origin.x, frame.origin.y, frame.size.width, frame.size.height };
+    GdkRectangle geometry = { static_cast<int>(frame.origin.x), static_cast<int>(frame.origin.y),
+        static_cast<int>(frame.size.width), static_cast<int>(frame.size.height) };
     webkitWindowPropertiesSetGeometry(windowProperties, &geometry);
 }
 

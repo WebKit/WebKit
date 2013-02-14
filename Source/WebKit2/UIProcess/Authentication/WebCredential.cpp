@@ -40,6 +40,10 @@ WebCredential::WebCredential(WebCertificateInfo* certificateInfo)
 {
 }
 
+WebCredential::~WebCredential()
+{
+}
+
 WebCertificateInfo* WebCredential::certificateInfo()
 {
     return m_certificateInfo.get();

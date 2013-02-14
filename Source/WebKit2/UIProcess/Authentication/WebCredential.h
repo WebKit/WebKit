@@ -39,6 +39,8 @@ class WebCertificateInfo;
 
 class WebCredential : public APIObject {
 public:
+    ~WebCredential();
+
     static const Type APIType = TypeCredential;
 
     static PassRefPtr<WebCredential> create(const WebCore::Credential& credential)

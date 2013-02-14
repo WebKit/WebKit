@@ -1,3 +1,18 @@
+2013-02-14  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Errors when building WebKit2 with Clang
+        https://bugs.webkit.org/show_bug.cgi?id=109603
+
+        Reviewed by Alexey Proskuryakov.
+
+        * UIProcess/API/gtk/WebKitUIClient.cpp:
+        (setWindowFrame): Cast the position parameters to the integer type when constructing the GdkRectangle.
+        * UIProcess/Authentication/WebCredential.cpp: Add an empty implementation of the newly specified destructor.
+        * UIProcess/Authentication/WebCredential.h: Work around the incomplete WebCertificateInfo type errors thrown in the inline
+        RefPtr destructor of the m_certificateInfo class member by defining a destructor in the class.
+        * WebProcess/WebCoreSupport/WebEditorClient.h: The GTK-specific methods are not virtual and as such cannot be overriden.
+        The OVERRIDE keywords are thus unnecessary.
+
 2013-02-14  David Kilzer  <ddkilzer@apple.com>
 
         [Mac] Clean up WARNING_CFLAGS
