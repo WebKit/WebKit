@@ -1,4 +1,4 @@
-layer at (0,0) size 960x2063
+layer at (0,0) size 982x2063
   RenderView at (0,0) size 785x585
 layer at (0,0) size 785x2063
   RenderBlock {HTML} at (0,0) size 785x2063
@@ -12,7 +12,7 @@ layer at (0,0) size 785x2063
           text run at (0,0) width 506: "percentage height images in DIV with no height (red) in a DIV with no height (green)"
       RenderBlock {DIV} at (32,737) size 657x657 [border: (3px dotted #008000)]
         RenderBlock {DIV} at (35,35) size 587x587 [border: (1px solid #FF0000)]
-          RenderImage {IMG} at (1,1) size 860x585
+          RenderImage {IMG} at (1,1) size 882x585
           RenderText {#text} at (0,0) size 0x0
       RenderBlock {P} at (0,1426) size 721x20
         RenderText {#text} at (0,0) size 443x19

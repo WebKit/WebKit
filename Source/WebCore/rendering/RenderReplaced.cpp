@@ -439,32 +439,36 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
     return computeReplacedLogicalHeightRespectingMinMaxHeight(intrinsicLogicalHeight());
 }
 
-LayoutUnit RenderReplaced::computeMaxPreferredLogicalWidth() const
+void RenderReplaced::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    Length logicalWidth = style()->logicalWidth();
-
     // We cannot resolve any percent logical width here as the available logical
     // width may not be set on our containing block.
-    if (logicalWidth.isPercent())
-        return intrinsicLogicalWidth();
-
-    return computeReplacedLogicalWidth(ComputePreferred);
+    minLogicalWidth = maxLogicalWidth = style()->logicalWidth().isPercent() ? intrinsicLogicalWidth() : computeReplacedLogicalWidth(ComputePreferred);
 }
 
 void RenderReplaced::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
-    m_maxPreferredLogicalWidth = computeMaxPreferredLogicalWidth() + borderAndPadding;
+    computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
-    if (style()->maxWidth().isFixed())
-        m_maxPreferredLogicalWidth = min<LayoutUnit>(m_maxPreferredLogicalWidth, style()->maxWidth().value() + (style()->boxSizing() == CONTENT_BOX ? borderAndPadding : LayoutUnit()));
-
-    if (hasRelativeDimensions())
+    RenderStyle* styleToUse = style();
+    if (styleToUse->logicalWidth().isPercent() || styleToUse->logicalMaxWidth().isPercent() || hasRelativeIntrinsicLogicalWidth())
         m_minPreferredLogicalWidth = 0;
-    else
-        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth;
+
+    if (styleToUse->logicalMinWidth().isFixed() && styleToUse->logicalMinWidth().value() > 0) {
+        m_maxPreferredLogicalWidth = max(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMinWidth().value()));
+        m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMinWidth().value()));
+    }
+    
+    if (styleToUse->logicalMaxWidth().isFixed()) {
+        m_maxPreferredLogicalWidth = min(m_maxPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMaxWidth().value()));
+        m_minPreferredLogicalWidth = min(m_minPreferredLogicalWidth, adjustContentBoxLogicalWidthForBoxSizing(styleToUse->logicalMaxWidth().value()));
+    }
+
+    LayoutUnit borderAndPadding = borderAndPaddingLogicalWidth();
+    m_minPreferredLogicalWidth += borderAndPadding;
+    m_maxPreferredLogicalWidth += borderAndPadding;
 
     setPreferredLogicalWidthsDirty(false);
 }

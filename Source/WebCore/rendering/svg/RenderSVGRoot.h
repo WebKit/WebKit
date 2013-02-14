@@ -58,8 +58,9 @@ public:
     IntSize containerSize() const { return m_containerSize; }
     void setContainerSize(const IntSize& containerSize) { m_containerSize = containerSize; }
 
-    virtual bool hasRelativeDimensions() const;
-    virtual bool hasRelativeLogicalHeight() const;
+    virtual bool hasRelativeDimensions() const OVERRIDE;
+    virtual bool hasRelativeIntrinsicLogicalWidth() const OVERRIDE;
+    virtual bool hasRelativeLogicalHeight() const OVERRIDE;
 
     // localToBorderBoxTransform maps local SVG viewport coordinates to local CSS box coordinates.  
     const AffineTransform& localToBorderBoxTransform() const { return m_localToBorderBoxTransform; }
