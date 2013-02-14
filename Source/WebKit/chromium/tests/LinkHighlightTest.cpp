@@ -27,15 +27,12 @@
 #include "LinkHighlight.h"
 
 #include "FrameTestHelpers.h"
-#include "FrameView.h"
 #include "IntRect.h"
 #include "Node.h"
 #include "URLTestHelpers.h"
 #include "WebCompositorInitializer.h"
 #include "WebFrame.h"
-#include "WebFrameImpl.h"
 #include "WebInputEvent.h"
-#include "WebInputEventConversion.h"
 #include "WebViewImpl.h"
 #include <gtest/gtest.h>
 #include <public/WebContentLayer.h>
@@ -69,27 +66,16 @@ TEST(LinkHighlightTest, verifyWebViewImplIntegration)
     // The coordinates below are linked to absolute positions in the referenced .html file.
     touchEvent.x = 20;
     touchEvent.y = 20;
-
-    {
-        PlatformGestureEventBuilder platformEvent(webViewImpl->mainFrameImpl()->frameView(), touchEvent);
-        Node* touchNode = webViewImpl->bestTapNode(platformEvent);
-        ASSERT_TRUE(touchNode);
-    }
+    Node* touchNode = webViewImpl->bestTouchLinkNode(touchEvent);
+    ASSERT_TRUE(touchNode);
 
     touchEvent.y = 40;
-    {
-        PlatformGestureEventBuilder platformEvent(webViewImpl->mainFrameImpl()->frameView(), touchEvent);
-        EXPECT_FALSE(webViewImpl->bestTapNode(platformEvent));
-    }
+    EXPECT_FALSE(webViewImpl->bestTouchLinkNode(touchEvent));
 
     touchEvent.y = 20;
     // Shouldn't crash.
 
-    {
-        PlatformGestureEventBuilder platformEvent(webViewImpl->mainFrameImpl()->frameView(), touchEvent);
-        webViewImpl->enableTapHighlight(platformEvent);
-    }
-
+    webViewImpl->enableTouchHighlight(touchEvent);
     EXPECT_TRUE(webViewImpl->linkHighlight());
     EXPECT_TRUE(webViewImpl->linkHighlight()->contentLayer());
     EXPECT_TRUE(webViewImpl->linkHighlight()->clipLayer());
@@ -97,26 +83,16 @@ TEST(LinkHighlightTest, verifyWebViewImplIntegration)
     // Find a target inside a scrollable div
 
     touchEvent.y = 100;
-    {
-        PlatformGestureEventBuilder platformEvent(webViewImpl->mainFrameImpl()->frameView(), touchEvent);
-        webViewImpl->enableTapHighlight(platformEvent);
-    }
-
+    webViewImpl->enableTouchHighlight(touchEvent);
     ASSERT_TRUE(webViewImpl->linkHighlight());
 
     // Don't highlight if no "hand cursor"
     touchEvent.y = 220; // An A-link with cross-hair cursor.
-    {
-        PlatformGestureEventBuilder platformEvent(webViewImpl->mainFrameImpl()->frameView(), touchEvent);
-        webViewImpl->enableTapHighlight(platformEvent);
-    }
+    webViewImpl->enableTouchHighlight(touchEvent);
     ASSERT_FALSE(webViewImpl->linkHighlight());
 
     touchEvent.y = 260; // A text input box.
-    {
-        PlatformGestureEventBuilder platformEvent(webViewImpl->mainFrameImpl()->frameView(), touchEvent);
-        webViewImpl->enableTapHighlight(platformEvent);
-    }
+    webViewImpl->enableTouchHighlight(touchEvent);
     ASSERT_FALSE(webViewImpl->linkHighlight());
 
     webViewImpl->close();

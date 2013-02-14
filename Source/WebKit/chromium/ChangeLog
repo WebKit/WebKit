@@ -1,5 +1,23 @@
 2013-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r142808.
+        http://trac.webkit.org/changeset/142808
+        https://bugs.webkit.org/show_bug.cgi?id=109816
+
+        Crashes on chromium webkit canary bots (Requested by atwilson_
+        on #webkit).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::handleGestureEvent):
+        (WebKit::WebViewImpl::bestTouchLinkNode):
+        (WebKit::WebViewImpl::enableTouchHighlight):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        * tests/LinkHighlightTest.cpp:
+        (WebCore::TEST):
+
+2013-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed, rolling out r142841.
         http://trac.webkit.org/changeset/142841
         https://bugs.webkit.org/show_bug.cgi?id=109791
