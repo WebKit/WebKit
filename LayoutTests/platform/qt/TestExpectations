@@ -636,12 +636,6 @@ http/tests/history/back-with-fragment-change.php
 # https://bugs.webkit.org/show_bug.cgi?id=62741
 http/tests/appcache/video.html
 
-# [Qt] New tests introduced in r84742 fail
-# https://bugs.webkit.org/show_bug.cgi?id=59334
-http/tests/misc/will-send-request-returns-null-on-redirect.html
-http/tests/security/XFrameOptions/x-frame-options-deny.html
-http/tests/security/XFrameOptions/x-frame-options-parent-same-origin-deny.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=56691
 http/tests/inspector/network/network-size-chunked.html
 http/tests/inspector/network/network-size-sync.html
