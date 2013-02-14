@@ -29,10 +29,13 @@
 #if ENABLE(CSS_FILTERS)
 
 #include "FilterOperation.h"
+#include "IntRectExtent.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
+
+typedef IntRectExtent FilterOutsets;
 
 class FilterOperations {
     WTF_MAKE_FAST_ALLOCATED;
@@ -63,7 +66,7 @@ public:
     bool operationsMatch(const FilterOperations&) const;
 
     bool hasOutsets() const;
-    void getOutsets(int& top, int& right, int& bottom, int& left) const;
+    FilterOutsets outsets() const;
 
     bool hasFilterThatAffectsOpacity() const;
     bool hasFilterThatMovesPixels() const;

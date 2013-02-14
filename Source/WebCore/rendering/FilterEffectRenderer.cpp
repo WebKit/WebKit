@@ -102,11 +102,7 @@ static PassRefPtr<FECustomFilter> createCustomFilterEffect(Filter* filter, Docum
 #endif
 
 FilterEffectRenderer::FilterEffectRenderer()
-    : m_topOutset(0)
-    , m_rightOutset(0)
-    , m_bottomOutset(0)
-    , m_leftOutset(0)
-    , m_graphicsBufferAttached(false)
+    : m_graphicsBufferAttached(false)
     , m_hasFilterThatMovesPixels(false)
 #if ENABLE(CSS_SHADERS)
     , m_hasCustomShaderFilter(false)
@@ -196,7 +192,7 @@ bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations&
 #endif
     m_hasFilterThatMovesPixels = operations.hasFilterThatMovesPixels();
     if (m_hasFilterThatMovesPixels)
-        operations.getOutsets(m_topOutset, m_rightOutset, m_bottomOutset, m_leftOutset);
+        m_outsets = operations.outsets();
     
     // Keep the old effects on the stack until we've created the new effects.
     // New FECustomFilters can reuse cached resources from old FECustomFilters.
@@ -439,8 +435,8 @@ LayoutRect FilterEffectRenderer::computeSourceImageRectForDirtyRect(const Layout
     if (hasFilterThatMovesPixels()) {
         // Note that the outsets are reversed here because we are going backwards -> we have the dirty rect and
         // need to find out what is the rectangle that might influence the result inside that dirty rect.
-        rectForRepaint.move(-m_rightOutset, -m_bottomOutset);
-        rectForRepaint.expand(m_leftOutset + m_rightOutset, m_topOutset + m_bottomOutset);
+        rectForRepaint.move(-m_outsets.right(), -m_outsets.bottom());
+        rectForRepaint.expand(m_outsets.left() + m_outsets.right(), m_outsets.top() + m_outsets.bottom());
     }
     rectForRepaint.intersect(filterBoxRect);
     return rectForRepaint;

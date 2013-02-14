@@ -34,6 +34,7 @@
 #include "FloatRect.h"
 #include "GraphicsContext.h"
 #include "ImageBuffer.h"
+#include "IntRectExtent.h"
 #include "LayoutRect.h"
 #include "SVGFilterBuilder.h"
 #include "SourceGraphic.h"
@@ -140,11 +141,8 @@ private:
     FilterEffectList m_effects;
     RefPtr<SourceGraphic> m_sourceGraphic;
     
-    int m_topOutset;
-    int m_rightOutset;
-    int m_bottomOutset;
-    int m_leftOutset;
-    
+    IntRectExtent m_outsets;
+
     bool m_graphicsBufferAttached;
     bool m_hasFilterThatMovesPixels;
 #if ENABLE(CSS_SHADERS)

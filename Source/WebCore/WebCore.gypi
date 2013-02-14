@@ -4685,6 +4685,7 @@
             'platform/graphics/FloatRect.cpp',
             'platform/graphics/FloatSize.cpp',
             'platform/graphics/IntRect.cpp',
+            'platform/graphics/IntRectExtent.h',
             'platform/graphics/LayoutRect.cpp',
             'platform/graphics/Region.cpp',
             'platform/graphics/transforms/TransformationMatrix.cpp',

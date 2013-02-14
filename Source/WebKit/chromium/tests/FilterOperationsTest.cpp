@@ -40,13 +40,11 @@ TEST(FilterOperationsTest, getOutsetsBlur)
     FilterOperations ops;
     ops.operations().append(BlurFilterOperation::create(Length(20.0, WebCore::Fixed), FilterOperation::BLUR));
     EXPECT_TRUE(ops.hasOutsets());
-    int top, right, bottom, left;
-    top = right = bottom = left = 0;
-    ops.getOutsets(top, right, bottom, left);
-    EXPECT_EQ(57, top);
-    EXPECT_EQ(57, right);
-    EXPECT_EQ(57, bottom);
-    EXPECT_EQ(57, left);
+    FilterOutsets outsets = ops.outsets();
+    EXPECT_EQ(57, outsets.top());
+    EXPECT_EQ(57, outsets.right());
+    EXPECT_EQ(57, outsets.bottom());
+    EXPECT_EQ(57, outsets.left());
 }
 
 TEST(FilterOperationsTest, getOutsetsDropShadow)
@@ -54,13 +52,11 @@ TEST(FilterOperationsTest, getOutsetsDropShadow)
     FilterOperations ops;
     ops.operations().append(DropShadowFilterOperation::create(IntPoint(3, 8), 20, Color(1, 2, 3), FilterOperation::DROP_SHADOW));
     EXPECT_TRUE(ops.hasOutsets());
-    int top, right, bottom, left;
-    top = right = bottom = left = 0;
-    ops.getOutsets(top, right, bottom, left);
-    EXPECT_EQ(49, top);
-    EXPECT_EQ(60, right);
-    EXPECT_EQ(65, bottom);
-    EXPECT_EQ(54, left);
+    FilterOutsets outsets = ops.outsets();
+    EXPECT_EQ(49, outsets.top());
+    EXPECT_EQ(60, outsets.right());
+    EXPECT_EQ(65, outsets.bottom());
+    EXPECT_EQ(54, outsets.left());
 }
 
 TEST(WebFilterOperationsTest, getOutsetsBlur)

@@ -184,14 +184,10 @@ IntRect TextureMapperLayer::intermediateSurfaceRect(const TransformationMatrix& 
 
 #if ENABLE(CSS_FILTERS)
     if (m_currentFilters.hasOutsets()) {
-        int leftOutset;
-        int topOutset;
-        int bottomOutset;
-        int rightOutset;
-        m_currentFilters.getOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
+        FilterOutsets outsets = m_currentFilters.outsets();
         IntRect unfilteredTargetRect(rect);
-        rect.move(std::max(0, -leftOutset), std::max(0, -topOutset));
-        rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
+        rect.move(std::max(0, -outsets.left()), std::max(0, -outsets.top()));
+        rect.expand(outsets.left() + outsets.right(), outsets.top() + outsets.bottom());
         rect.unite(unfilteredTargetRect);
     }
 #endif

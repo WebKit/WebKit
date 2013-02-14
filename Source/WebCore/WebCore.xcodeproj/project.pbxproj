@@ -3868,6 +3868,7 @@
 		A29532CF15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A29532CD15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp */; };
 		A29532D015DD5E1700469EBC /* CustomFilterValidatedProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = A29532CE15DD5E1700469EBC /* CustomFilterValidatedProgram.h */; };
 		A2B2AE7C16375EE500CFA50B /* CustomFilterConstants.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B2AE7B16375EE500CFA50B /* CustomFilterConstants.h */; };
+		A2B9217316C5CC420041DCD9 /* IntRectExtent.h in Headers */ = {isa = PBXBuildFile; fileRef = A2B9217216C5CC420041DCD9 /* IntRectExtent.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A2E8AE3016A48E1C006BB3AA /* WebKitCSSFilterRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2E8AE2E16A48E1C006BB3AA /* WebKitCSSFilterRule.cpp */; };
 		A2E8AE3116A48E1C006BB3AA /* WebKitCSSFilterRule.h in Headers */ = {isa = PBXBuildFile; fileRef = A2E8AE2F16A48E1C006BB3AA /* WebKitCSSFilterRule.h */; };
 		A2E8AE3716A49840006BB3AA /* JSWebKitCSSFilterRule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A2E8AE3516A49840006BB3AA /* JSWebKitCSSFilterRule.cpp */; };
@@ -11348,6 +11349,7 @@
 		A29532CD15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CustomFilterValidatedProgram.cpp; path = filters/CustomFilterValidatedProgram.cpp; sourceTree = "<group>"; };
 		A29532CE15DD5E1700469EBC /* CustomFilterValidatedProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterValidatedProgram.h; path = filters/CustomFilterValidatedProgram.h; sourceTree = "<group>"; };
 		A2B2AE7B16375EE500CFA50B /* CustomFilterConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CustomFilterConstants.h; path = filters/CustomFilterConstants.h; sourceTree = "<group>"; };
+		A2B9217216C5CC420041DCD9 /* IntRectExtent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IntRectExtent.h; sourceTree = "<group>"; };
 		A2E8AE2E16A48E1C006BB3AA /* WebKitCSSFilterRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebKitCSSFilterRule.cpp; sourceTree = "<group>"; };
 		A2E8AE2F16A48E1C006BB3AA /* WebKitCSSFilterRule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebKitCSSFilterRule.h; sourceTree = "<group>"; };
 		A2E8AE3516A49840006BB3AA /* JSWebKitCSSFilterRule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebKitCSSFilterRule.cpp; sourceTree = "<group>"; };
@@ -20632,6 +20634,7 @@
 				E462A4A0113E71BE004A4220 /* IntPointHash.h */,
 				B27535450B053814002CE64F /* IntRect.cpp */,
 				B27535460B053814002CE64F /* IntRect.h */,
+				A2B9217216C5CC420041DCD9 /* IntRectExtent.h */,
 				E134F5AA12EE343F004EC58D /* IntRectHash.h */,
 				B27535470B053814002CE64F /* IntSize.h */,
 				B27535480B053814002CE64F /* IntSizeHash.h */,
@@ -24713,6 +24716,7 @@
 				E462A4A1113E71BE004A4220 /* IntPointHash.h in Headers */,
 				B27535740B053814002CE64F /* IntRect.h in Headers */,
 				E134F5AB12EE343F004EC58D /* IntRectHash.h in Headers */,
+				A2B9217316C5CC420041DCD9 /* IntRectExtent.h in Headers */,
 				B27535750B053814002CE64F /* IntSize.h in Headers */,
 				B27535760B053814002CE64F /* IntSizeHash.h in Headers */,
 				1C81BA0A0E97348300266E07 /* JavaScriptCallFrame.h in Headers */,

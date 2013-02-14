@@ -409,20 +409,8 @@ public:
     }
 
 #if ENABLE(CSS_FILTERS)
-    void getFilterOutsets(int& top, int& right, int& bottom, int& left) const
-    {
-        if (hasFilter())
-            filter().getOutsets(top, right, bottom, left);
-        else {
-            top = 0;
-            right = 0;
-            bottom = 0;
-            left = 0;
-        }
-    }
     bool hasFilterOutsets() const { return hasFilter() && filter().hasOutsets(); }
-#else
-    bool hasFilterOutsets() const { return false; }
+    FilterOutsets filterOutsets() const { return hasFilter() ? filter().outsets() : FilterOutsets(); }
 #endif
 
     Order rtlOrdering() const { return static_cast<Order>(inherited_flags.m_rtlOrdering); }

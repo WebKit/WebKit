@@ -1367,28 +1367,13 @@ RenderLayer* RenderLayer::enclosingFilterRepaintLayer() const
     return 0;
 }
 
-static inline void expandRectForFilterOutsets(LayoutRect& rect, const RenderLayerModelObject* renderer)
-{
-    ASSERT(renderer);
-    if (!renderer->style()->hasFilterOutsets())
-        return;
-
-    int topOutset;
-    int rightOutset;
-    int bottomOutset;
-    int leftOutset;
-    renderer->style()->getFilterOutsets(topOutset, rightOutset, bottomOutset, leftOutset);
-    rect.move(-leftOutset, -topOutset);
-    rect.expand(leftOutset + rightOutset, topOutset + bottomOutset);
-}
-
 void RenderLayer::setFilterBackendNeedsRepaintingInRect(const LayoutRect& rect, bool immediate)
 {
     if (rect.isEmpty())
         return;
     
     LayoutRect rectForRepaint = rect;
-    expandRectForFilterOutsets(rectForRepaint, renderer());
+    renderer()->style()->filterOutsets().expandRect(rectForRepaint);
 
     RenderLayerFilterInfo* filterInfo = this->filterInfo();
     ASSERT(filterInfo);
@@ -1557,7 +1542,7 @@ static LayoutRect transparencyClipBox(const RenderLayer* layer, const RenderLaye
         LayoutRect clipRect = layer->boundingBox(layer);
         expandClipRectForDescendantsAndReflection(clipRect, layer, layer, paintBehavior);
 #if ENABLE(CSS_FILTERS)
-        expandRectForFilterOutsets(clipRect, layer->renderer());
+        layer->renderer()->style()->filterOutsets().expandRect(clipRect);
 #endif
         return transform.mapRect(clipRect);
     }
@@ -1565,7 +1550,7 @@ static LayoutRect transparencyClipBox(const RenderLayer* layer, const RenderLaye
     LayoutRect clipRect = layer->boundingBox(rootLayer);
     expandClipRectForDescendantsAndReflection(clipRect, layer, rootLayer, paintBehavior);
 #if ENABLE(CSS_FILTERS)
-    expandRectForFilterOutsets(clipRect, layer->renderer());
+    layer->renderer()->style()->filterOutsets().expandRect(clipRect);
 #endif
     return clipRect;
 }
@@ -5012,7 +4997,7 @@ IntRect RenderLayer::calculateLayerBounds(const RenderLayer* ancestorLayer, cons
     // filtered areas with the outsets if we know that the filter is going to render in hardware.
     // https://bugs.webkit.org/show_bug.cgi?id=81239
     if (flags & IncludeLayerFilterOutsets)
-        expandRectForFilterOutsets(unionBounds, renderer);
+        renderer->style()->filterOutsets().expandRect(unionBounds);
 #endif
 
     if ((flags & IncludeSelfTransform) && paintsWithTransform(PaintBehaviorNormal)) {

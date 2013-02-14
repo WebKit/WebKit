@@ -118,32 +118,30 @@ bool FilterOperations::hasOutsets() const
     return false;
 }
 
-void FilterOperations::getOutsets(int& top, int& right, int& bottom, int& left) const
+FilterOutsets FilterOperations::outsets() const
 {
-    top = 0;
-    right = 0;
-    bottom = 0;
-    left = 0;
+    FilterOutsets totalOutsets;
     for (size_t i = 0; i < m_operations.size(); ++i) {
         FilterOperation* filterOperation = m_operations.at(i).get();
         switch (filterOperation->getOperationType()) {
         case FilterOperation::BLUR: {
             BlurFilterOperation* blurOperation = static_cast<BlurFilterOperation*>(filterOperation);
             float stdDeviation = floatValueForLength(blurOperation->stdDeviation(), 0);
-            IntSize outset = outsetSizeForBlur(stdDeviation);
-            top += outset.height();
-            right += outset.width();
-            bottom += outset.height();
-            left += outset.width();
+            IntSize outsetSize = outsetSizeForBlur(stdDeviation);
+            FilterOutsets outsets(outsetSize.height(), outsetSize.width(), outsetSize.height(), outsetSize.width());
+            totalOutsets += outsets;
             break;
         }
         case FilterOperation::DROP_SHADOW: {
             DropShadowFilterOperation* dropShadowOperation = static_cast<DropShadowFilterOperation*>(filterOperation);
-            IntSize outset = outsetSizeForBlur(dropShadowOperation->stdDeviation());
-            top += std::max(0, outset.height() - dropShadowOperation->y());
-            right += std::max(0, outset.width() + dropShadowOperation->x());
-            bottom += std::max(0, outset.height() + dropShadowOperation->y());
-            left += std::max(0, outset.width() - dropShadowOperation->x());
+            IntSize outsetSize = outsetSizeForBlur(dropShadowOperation->stdDeviation());
+            FilterOutsets outsets(
+                std::max(0, outsetSize.height() - dropShadowOperation->y()),
+                std::max(0, outsetSize.width() + dropShadowOperation->x()),
+                std::max(0, outsetSize.height() + dropShadowOperation->y()),
+                std::max(0, outsetSize.width() - dropShadowOperation->x())
+            );
+            totalOutsets += outsets;
             break;
         }
 #if ENABLE(CSS_SHADERS)
@@ -158,6 +156,7 @@ void FilterOperations::getOutsets(int& top, int& right, int& bottom, int& left) 
             break;
         }
     }
+    return totalOutsets;
 }
 
 bool FilterOperations::hasFilterThatAffectsOpacity() const

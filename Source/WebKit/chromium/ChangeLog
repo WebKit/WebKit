@@ -1,3 +1,15 @@
+2013-02-13  Max Vujovic  <mvujovic@adobe.com>
+
+        [CSS Filters] Refactor filter outsets into a class
+        https://bugs.webkit.org/show_bug.cgi?id=109330
+
+        Update FilterOperations unit tests to use new interface for getting filter outsets.
+
+        Reviewed by Dean Jackson.
+
+        * tests/FilterOperationsTest.cpp:
+        (WebKit::TEST):
+
 2013-02-13  Zan Dobersek  <zdobersek@igalia.com>
 
         The 'global isinf/isnan' compiler quirk required when using clang with libstdc++
