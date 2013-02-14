@@ -71,6 +71,8 @@ enum IDBBackingStoreErrorSource {
     GetNewDatabaseId,
     GetNewVersionNumber,
     CreateIDBDatabaseMetaData,
+    DeleteDatabase,
+    TransactionCommit,
     IDBLevelDBBackingStoreInternalErrorMax,
 };
 
@@ -587,7 +589,11 @@ bool IDBBackingStore::deleteDatabase(const String& name)
     const Vector<char> key = DatabaseNameKey::encode(m_identifier, name);
     transaction->remove(key);
 
-    return transaction->commit();
+    if (!transaction->commit()) {
+        INTERNAL_WRITE_ERROR(DeleteDatabase);
+        return false;
+    }
+    return true;
 }
 
 static bool checkObjectStoreAndMetaDataType(const LevelDBIterator* it, const Vector<char>& stopKey, int64_t objectStoreId, int64_t metaDataType)
@@ -1843,6 +1849,8 @@ bool IDBBackingStore::Transaction::commit()
     ASSERT(m_transaction);
     bool result = m_transaction->commit();
     m_transaction.clear();
+    if (!result)
+        INTERNAL_WRITE_ERROR(TransactionCommit);
     return result;
 }
 
