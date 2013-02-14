@@ -75,7 +75,11 @@ WebInspector.displayNameForURL = function(url)
             return url.substring(index);
     }
 
-    return parsedURL ? url.trimURL(parsedURL.host) : url;
+    if (!parsedURL)
+        return url;
+
+    var displayName = url.trimURL(parsedURL.host);
+    return displayName === "/" ? parsedURL.host + "/" : displayName;
 }
 
 /**

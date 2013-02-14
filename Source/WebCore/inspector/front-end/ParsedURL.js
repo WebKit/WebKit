@@ -152,8 +152,8 @@ WebInspector.ParsedURL.prototype = {
             return this.url;
 
         this._displayName = this.lastPathComponent;
-        if (!this._displayName)
-            this._displayName = this.host;
+        if (!this._displayName && this.host)
+            this._displayName = this.host + "/";
         if (!this._displayName && this.url)
             this._displayName = this.url.trimURL(WebInspector.inspectedPageDomain ? WebInspector.inspectedPageDomain : "");
         if (this._displayName === "/")
