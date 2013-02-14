@@ -1057,7 +1057,7 @@ PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Fra
         frameObject->setName(name);
     }
     // FIXME: Make this field non-optional. https://bugs.webkit.org/show_bug.cgi?id=80857
-    frameObject->setSecurityOrigin(frame->document()->securityOrigin()->toString());
+    frameObject->setSecurityOrigin(frame->document()->securityOrigin()->toRawString());
 
     return frameObject;
 }

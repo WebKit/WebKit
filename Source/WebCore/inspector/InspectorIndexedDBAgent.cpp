@@ -658,7 +658,7 @@ void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* errorStr
         requestCallback->sendFailure("Could not obtain database names.");
         return;
     }
-    idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(requestCallback, document->securityOrigin()->toString()), false);
+    idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(requestCallback, document->securityOrigin()->toRawString()), false);
 }
 
 void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, const String& frameId, const String& databaseName, PassRefPtr<RequestDatabaseCallback> requestCallback)

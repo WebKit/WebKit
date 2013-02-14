@@ -86,7 +86,7 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* 
     if (m_injectedScriptForOrigin.isEmpty())
         return;
 
-    String origin = frame->document()->securityOrigin()->toString();
+    String origin = frame->document()->securityOrigin()->toRawString();
     String script = m_injectedScriptForOrigin.get(origin);
     if (!script.isEmpty())
         m_injectedScriptManager->injectScript(script, mainWorldScriptState(frame));
