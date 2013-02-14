@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"> </script>
+</head>
+<body>
+<p>HTMLCollection namedItem Method</p>
+<pre id="console"></pre>
+<script type="text/javascript">
+var form = document.createElement('form');
+document.body.appendChild(form);
+shouldBeNull('form.elements.namedItem("any")');
+successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

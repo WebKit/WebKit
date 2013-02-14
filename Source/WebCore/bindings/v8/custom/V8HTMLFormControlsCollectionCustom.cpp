@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8HTMLFormControlsCollection::namedItemCallback(const v8::
     v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args);
 
     if (result.IsEmpty())
-        return v8::Undefined(args.GetIsolate());
+        return v8Null(args.GetIsolate());
 
     return result;
 }

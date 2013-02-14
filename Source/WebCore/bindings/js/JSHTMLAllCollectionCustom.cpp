@@ -46,7 +46,7 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLAllCollection* collection, P
     collection->impl()->namedItems(propertyNameToAtomicString(propertyName), namedItems);
 
     if (namedItems.isEmpty())
-        return jsUndefined();
+        return jsNull();
     if (namedItems.size() == 1)
         return toJS(exec, collection->globalObject(), namedItems[0].get());
 

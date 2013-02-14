@@ -97,7 +97,7 @@ v8::Handle<v8::Value> V8HTMLAllCollection::namedItemCallback(const v8::Arguments
     v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args);
 
     if (result.IsEmpty())
-        return v8::Undefined();
+        return v8Null(args.GetIsolate());
 
     return result;
 }
