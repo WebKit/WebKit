@@ -1,5 +1,59 @@
 2013-02-14  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, set svn:eol-style native for .sln, .vcproj, and .vsprops files.
+        https://bugs.webkit.org/show_bug.cgi?id=96934
+
+        * CLWrapper/CLWrapper.sln: Modified property svn:eol-style.
+        * DumpRenderTree/DumpRenderTree.sln: Modified property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeLauncherCommon.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeLauncherDebug.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeLauncherDebugAll.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeLauncherDebugCairoCFLite.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeLauncherProduction.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeLauncherRelease.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/DumpRenderTreeLauncherReleaseCairoCFLite.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffLauncherCommon.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffLauncherDebug.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffLauncherDebugAll.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffLauncherDebugCairoCFLite.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffLauncherProduction.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffLauncherRelease.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffLauncherReleaseCairoCFLite.vsprops: Added property svn:eol-style.
+        * DumpRenderTree/win/ImageDiffWinCairoCommon.vsprops: Added property svn:eol-style.
+        * MIDLWrapper/MIDLWrapper.sln: Modified property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserLauncherCommon.vsprops: Added property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserLauncherDebug.vsprops: Added property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserLauncherDebugAll.vsprops: Added property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserLauncherDebugCairoCFLite.vsprops: Added property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserLauncherProduction.vsprops: Added property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserLauncherRelease.vsprops: Added property svn:eol-style.
+        * MiniBrowser/Configurations/MiniBrowserLauncherReleaseCairoCFLite.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPICFNetwork.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPIDebug.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPIDebugAll.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPIDebugCairoCFLite.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPIInjectedBundleCommon.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPIRelease.vsprops: Added property svn:eol-style.
+        * TestWebKitAPI/Configurations/TestWebKitAPIReleaseCairoCFLite.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/Configurations/WebKitTestRunnerCoreGraphics.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/WebKitTestRunner.sln: Modified property svn:eol-style.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherCommon.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebug.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebugAll.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherDebugCairoCFLite.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherProduction.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherRelease.vsprops: Added property svn:eol-style.
+        * WebKitTestRunner/win/WebKitTestRunnerLauncherReleaseCairoCFLite.vsprops: Added property svn:eol-style.
+        * WinLauncher/WinLauncherLauncherCommon.vsprops: Added property svn:eol-style.
+        * WinLauncher/WinLauncherLauncherDebug.vsprops: Added property svn:eol-style.
+        * WinLauncher/WinLauncherLauncherDebugAll.vsprops: Added property svn:eol-style.
+        * WinLauncher/WinLauncherLauncherDebugCairoCFLite.vsprops: Added property svn:eol-style.
+        * WinLauncher/WinLauncherLauncherProduction.vsprops: Added property svn:eol-style.
+        * WinLauncher/WinLauncherLauncherRelease.vsprops: Added property svn:eol-style.
+        * WinLauncher/WinLauncherLauncherReleaseCairoCFLite.vsprops: Added property svn:eol-style.
+
+2013-02-14  Tony Chang  <tony@chromium.org>
+
         Unreviewed, set svn:eol-style CRLF for .sln files.
 
         * CLWrapper/CLWrapper.sln: Modified property svn:eol-style.

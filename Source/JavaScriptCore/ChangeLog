@@ -1,5 +1,21 @@
 2013-02-14  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, set svn:eol-style native for .sln, .vcproj, and .vsprops files.
+        https://bugs.webkit.org/show_bug.cgi?id=96934
+
+        * JavaScriptCore.vcproj/JavaScriptCore.sln: Modified property svn:eol-style.
+        * JavaScriptCore.vcproj/JavaScriptCoreSubmit.sln: Modified property svn:eol-style.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpCommon.vsprops: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebug.vsprops: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebugAll.vsprops: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpDebugCairoCFLite.vsprops: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpProduction.vsprops: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpRelease.vsprops: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpReleaseCairoCFLite.vsprops: Added property svn:eol-style.
+        * JavaScriptCore.vcproj/testRegExp/testRegExpReleasePGO.vsprops: Added property svn:eol-style.
+
+2013-02-14  Tony Chang  <tony@chromium.org>
+
         Unreviewed, set svn:eol-style CRLF for .sln files.
 
         * JavaScriptCore.vcproj/JavaScriptCore.sln: Modified property svn:eol-style.
