@@ -1,5 +1,15 @@
 2013-02-14  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, rolling out r142901.
+        http://trac.webkit.org/changeset/142901
+
+        r182258 introduces a dependency on chrome.gyp that breaks the win
+        build. Rolling back to r182150 until I can work up a workaround.
+
+        * DEPS:
+
+2013-02-14  Dirk Pranke  <dpranke@chromium.org>
+
         Unreviewed, chromium roll 182150 -> 182448
 
         * DEPS:
