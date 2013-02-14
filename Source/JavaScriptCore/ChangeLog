@@ -1,3 +1,11 @@
+2013-02-13  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix.
+
+        * API/tests/testapi.c:
+        (assertEqualsAsNumber):
+        (main):
+
 2013-02-13  Oliver Hunt  <oliver@apple.com>
 
         Yet another build fix

@@ -69,7 +69,7 @@ static void assertEqualsAsNumber(JSValueRef value, double expectedValue)
     // FIXME <rdar://4668451> - On i386 the isnan(double) macro tries to map to the isnan(float) function,
     // causing a build break with -Wshorten-64-to-32 enabled.  The issue is known by the appropriate team.
     // After that's resolved, we can remove these casts
-    if (number != expectedValue && !(isnan((float)number) && isnan((float)expectedValue))) {
+    if (number != expectedValue && !(std::isnan((float)number) && std::isnan((float)expectedValue))) {
         fprintf(stderr, "assertEqualsAsNumber failed: %p, %lf\n", value, expectedValue);
         failed = 1;
     }
@@ -1321,7 +1321,7 @@ int main(int argc, char* argv[])
     // FIXME <rdar://4668451> - On i386 the isnan(double) macro tries to map to the isnan(float) function,
     // causing a build break with -Wshorten-64-to-32 enabled.  The issue is known by the appropriate team.
     // After that's resolved, we can remove these casts
-    ASSERT(isnan((float)JSValueToNumber(context, jsObjectNoProto, &exception)));
+    ASSERT(std::isnan((float)JSValueToNumber(context, jsObjectNoProto, &exception)));
     ASSERT(exception);
 
     exception = NULL;
