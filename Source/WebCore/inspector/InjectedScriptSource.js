@@ -596,7 +596,7 @@ InjectedScript.prototype = {
      * @param {Object} topCallFrame
      * @param {string|boolean} callFrameId or false
      * @param {string|boolean} functionObjectId or false
-     * @param {integer} scopeNumber
+     * @param {number} scopeNumber
      * @param {string} variableName
      * @param {string} newValueJsonString RuntimeAgent.CallArgument structure serialized as string 
      * @return {string|undefined} undefined if success or an error message 
@@ -605,12 +605,12 @@ InjectedScript.prototype = {
     {   
         var setter;
         if (callFrameId) {
-            var callFrame = this._callFrameForId(topCallFrame, callFrameId);
+            var callFrame = this._callFrameForId(topCallFrame, String(callFrameId));
             if (!callFrame)
                 return "Could not find call frame with given id";
             setter = callFrame.setVariableValue.bind(callFrame);    
         } else {
-            var parsedFunctionId = this._parseObjectId(functionObjectId);
+            var parsedFunctionId = this._parseObjectId(String(functionObjectId));
             var func = this._objectForId(parsedFunctionId);
             if (typeof func !== "function")
                 return "Cannot resolve function by id.";

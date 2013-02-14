@@ -580,7 +580,7 @@ void InspectorDebuggerAgent::setOverlayMessage(ErrorString*, const String*)
 {
 }
 
-void InspectorDebuggerAgent::setVariableValue(ErrorString* errorString, const String* callFrameId, const String* functionObjectId, int scopeNumber, const String& variableName, const RefPtr<InspectorObject>& newValue)
+void InspectorDebuggerAgent::setVariableValue(ErrorString* errorString, int scopeNumber, const String& variableName, const RefPtr<InspectorObject>& newValue, const String* callFrameId, const String* functionObjectId)
 {
     InjectedScript injectedScript;
     if (callFrameId) {
