@@ -74,6 +74,7 @@
 #include <public/WebThread.h>
 #include <public/WebURLRequest.h>
 #include <public/WebURLResponse.h>
+#include <public/WebUnitTestSupport.h>
 
 #include <wtf/Assertions.h>
 #include <wtf/OwnArrayPtr.h>
@@ -128,6 +129,7 @@ WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
 
 WebCompositorOutputSurface* WebViewHost::createOutputSurface()
 {
+    // FIXME: Remove when the WebLayerTreeView is provided by WebUnitTestSupport.
     if (!webView())
         return 0;
 
@@ -330,9 +332,18 @@ void WebViewHost::didAutoResize(const WebSize& newSize)
 
 void WebViewHost::initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
 {
-    m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(client, rootLayer, settings));
-    if (m_layerTreeView)
-        m_layerTreeView->setSurfaceReady();
+    if (m_shell->softwareCompositingEnabled())
+        m_layerTreeView = adoptPtr(Platform::current()->unitTestSupport()->createLayerTreeViewForTesting(WebUnitTestSupport::TestViewTypeLayoutTestSoftware, client));
+    else
+        m_layerTreeView = adoptPtr(Platform::current()->unitTestSupport()->createLayerTreeViewForTesting(WebUnitTestSupport::TestViewTypeLayoutTest3d, client));
+
+    // FIXME: Remove this path when the unitTestSupport version is implemented in chromium land.
+    if (!m_layerTreeView)
+        m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(client, rootLayer, settings));
+
+    ASSERT(m_layerTreeView);
+    m_layerTreeView->setRootLayer(rootLayer);
+    m_layerTreeView->setSurfaceReady();
 }
 
 WebLayerTreeView* WebViewHost::layerTreeView()

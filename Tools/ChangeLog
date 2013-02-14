@@ -1,3 +1,14 @@
+2013-02-12  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Request WebLayerTreeView for DumpRenderTree via explicit testing path
+        https://bugs.webkit.org/show_bug.cgi?id=109634
+
+        Reviewed by Adrienne Walker.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createOutputSurface):
+        (WebViewHost::initializeLayerTreeView):
+
 2013-02-13  David Farler  <dfarler@apple.com>
 
         TestWebKitAPI fails to build for iphonesimulator: 'CFNetwork/CFNetworkDefs.h' file not found
