@@ -88,6 +88,7 @@ static inline bool isValidCSSUnitTypeForDoubleConversion(CSSPrimitiveValue::Unit
     case CSSPrimitiveValue::CSS_PX:
     case CSSPrimitiveValue::CSS_RAD:
     case CSSPrimitiveValue::CSS_REMS:
+    case CSSPrimitiveValue::CSS_CHS:
     case CSSPrimitiveValue::CSS_S:
     case CSSPrimitiveValue::CSS_TURN:
     case CSSPrimitiveValue::CSS_VW:
@@ -425,6 +426,7 @@ void CSSPrimitiveValue::cleanup()
     case CSS_EMS:
     case CSS_EXS:
     case CSS_REMS:
+    case CSS_CHS:
     case CSS_PX:
     case CSS_CM:
     case CSS_MM:
@@ -544,6 +546,9 @@ double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* r
                 factor = computingFontSize ? rootStyle->fontDescription().specifiedSize() : rootStyle->fontDescription().computedSize();
             else
                 factor = 1.0;
+            break;
+        case CSS_CHS:
+            factor = style->fontMetrics().zeroWidth();
             break;
         case CSS_PX:
             factor = 1.0;
@@ -902,6 +907,9 @@ String CSSPrimitiveValue::customCssText() const
         case CSS_REMS:
             text = formatNumber(m_value.num, "rem");
             break;
+        case CSS_CHS:
+            text = formatNumber(m_value.num, "ch");
+            break;
         case CSS_PX:
             text = formatNumber(m_value.num, "px");
             break;
@@ -1229,6 +1237,7 @@ PassRefPtr<CSSPrimitiveValue> CSSPrimitiveValue::cloneForCSSOM() const
     case CSS_EMS:
     case CSS_EXS:
     case CSS_REMS:
+    case CSS_CHS:
     case CSS_PX:
     case CSS_CM:
     case CSS_MM:

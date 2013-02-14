@@ -62,9 +62,9 @@ static inline int cssyyerror(void*, const char*)
 %}
 
 #if ENABLE_SHADOW_DOM
-%expect 67
+%expect 68
 #else
-%expect 66
+%expect 67
 #endif
 
 %nonassoc LOWEST_PREC
@@ -151,6 +151,7 @@ static inline int cssyyerror(void*, const char*)
 #endif
 
 %token <number> REMS
+%token <number> CHS
 %token <number> QEMS
 %token <number> EMS
 %token <number> EXS
@@ -1751,6 +1752,7 @@ unary_term:
       if (parser->m_styleSheet)
           parser->m_styleSheet->parserSetUsesRemUnits(true);
   }
+  | CHS maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_CHS; }
   | VW maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VW; }
   | VH maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VH; }
   | VMIN maybe_space { $$.id = 0; $$.fValue = $1; $$.unit = CSSPrimitiveValue::CSS_VMIN; }

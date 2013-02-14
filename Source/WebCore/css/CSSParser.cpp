@@ -1601,6 +1601,7 @@ bool CSSParser::validUnit(CSSParserValue* value, Units unitflags, CSSParserMode 
     case CSSParserValue::Q_EMS:
     case CSSPrimitiveValue::CSS_EMS:
     case CSSPrimitiveValue::CSS_REMS:
+    case CSSPrimitiveValue::CSS_CHS:
     case CSSPrimitiveValue::CSS_EXS:
     case CSSPrimitiveValue::CSS_PX:
     case CSSPrimitiveValue::CSS_CM:
@@ -1656,12 +1657,12 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::createPrimitiveNumericValue(CSSP
 
 #if ENABLE(CSS_IMAGE_RESOLUTION) || ENABLE(RESOLUTION_MEDIA_QUERY)
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
-        || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
+        || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_CHS)
         || (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMAX)
         || (value->unit >= CSSPrimitiveValue::CSS_DPPX && value->unit <= CSSPrimitiveValue::CSS_DPCM));
 #else
     ASSERT((value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
-        || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
+        || (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_CHS)
         || (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMAX));
 #endif
     return cssValuePool().createValue(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));
@@ -1718,7 +1719,7 @@ inline PassRefPtr<CSSPrimitiveValue> CSSParser::parseValidPrimitive(int identifi
         return createPrimitiveStringValue(value);
     if (value->unit >= CSSPrimitiveValue::CSS_NUMBER && value->unit <= CSSPrimitiveValue::CSS_KHZ)
         return createPrimitiveNumericValue(value);
-    if (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_REMS)
+    if (value->unit >= CSSPrimitiveValue::CSS_TURN && value->unit <= CSSPrimitiveValue::CSS_CHS)
         return createPrimitiveNumericValue(value);
     if (value->unit >= CSSPrimitiveValue::CSS_VW && value->unit <= CSSPrimitiveValue::CSS_VMAX)
         return createPrimitiveNumericValue(value);
@@ -9913,6 +9914,8 @@ inline void CSSParser::detectNumberToken(CharacterType* type, int length)
     case 'c':
         if (length == 2 && isASCIIAlphaCaselessEqual(type[1], 'm'))
             m_token = CMS;
+        else if (length == 2 && isASCIIAlphaCaselessEqual(type[1], 'h'))
+            m_token = CHS;
         return;
 
     case 'd':

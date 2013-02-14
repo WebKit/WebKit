@@ -114,6 +114,7 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
     case CSSPrimitiveValue::CSS_VMAX:
     case CSSPrimitiveValue::CSS_TURN:
     case CSSPrimitiveValue::CSS_REMS:
+    case CSSPrimitiveValue::CSS_CHS:
         return CSSPrimitiveValue::create(fValue, primitiveUnit);
     case CSSPrimitiveValue::CSS_UNKNOWN:
     case CSSPrimitiveValue::CSS_DIMENSION:

@@ -67,6 +67,7 @@ static CalculationCategory unitCategory(CSSPrimitiveValue::UnitTypes type)
     case CSSPrimitiveValue::CSS_PT:
     case CSSPrimitiveValue::CSS_PC:
     case CSSPrimitiveValue::CSS_REMS:
+    case CSSPrimitiveValue::CSS_CHS:
         return CalcLength;
 #if ENABLE(CSS_VARIABLES)
     case CSSPrimitiveValue::CSS_VARIABLE_NAME:

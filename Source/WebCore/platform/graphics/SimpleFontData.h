@@ -160,6 +160,8 @@ public:
     Glyph zeroWidthSpaceGlyph() const { return m_zeroWidthSpaceGlyph; }
     void setZeroWidthSpaceGlyph(Glyph spaceGlyph) { m_zeroWidthSpaceGlyph = spaceGlyph; }
     bool isZeroWidthSpaceGlyph(Glyph glyph) const { return glyph == m_zeroWidthSpaceGlyph && glyph; }
+    Glyph zeroGlyph() const { return m_zeroGlyph; }
+    void setZeroGlyph(Glyph zeroGlyph) { m_zeroGlyph = zeroGlyph; }
 
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
     virtual bool containsCharacters(const UChar*, int length) const;
@@ -280,6 +282,7 @@ private:
     
     Glyph m_spaceGlyph;
     float m_spaceWidth;
+    Glyph m_zeroGlyph;
     float m_adjustedSpaceWidth;
 
     Glyph m_zeroWidthSpaceGlyph;

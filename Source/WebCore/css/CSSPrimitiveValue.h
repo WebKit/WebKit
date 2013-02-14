@@ -116,22 +116,23 @@ public:
         // These are from CSS3 Values and Units, but that isn't a finished standard yet
         CSS_TURN = 107,
         CSS_REMS = 108,
+        CSS_CHS = 109,
 
         // This is used internally for counter names (as opposed to counter values)
-        CSS_COUNTER_NAME = 109,
+        CSS_COUNTER_NAME = 110,
 
         // This is used by the CSS Exclusions draft
-        CSS_SHAPE = 110,
+        CSS_SHAPE = 111,
 
         // Used by border images.
-        CSS_QUAD = 111,
+        CSS_QUAD = 112,
 
-        CSS_CALC = 112,
-        CSS_CALC_PERCENTAGE_WITH_NUMBER = 113,
-        CSS_CALC_PERCENTAGE_WITH_LENGTH = 114,
+        CSS_CALC = 113,
+        CSS_CALC_PERCENTAGE_WITH_NUMBER = 114,
+        CSS_CALC_PERCENTAGE_WITH_LENGTH = 115,
 
 #if ENABLE(CSS_VARIABLES)
-        CSS_VARIABLE_NAME = 115,
+        CSS_VARIABLE_NAME = 116,
 #endif
     };
 
@@ -162,13 +163,16 @@ public:
     bool isFontIndependentLength() const { return m_primitiveUnitType >= CSS_PX && m_primitiveUnitType <= CSS_PC; }
     bool isFontRelativeLength() const
     {
-        return m_primitiveUnitType == CSS_EMS || m_primitiveUnitType == CSS_EXS || m_primitiveUnitType == CSS_REMS;
+        return m_primitiveUnitType == CSS_EMS
+            || m_primitiveUnitType == CSS_EXS
+            || m_primitiveUnitType == CSS_REMS
+            || m_primitiveUnitType == CSS_CHS;
     }
     bool isIdent() const { return m_primitiveUnitType == CSS_IDENT; }
     bool isLength() const
     {
         unsigned short type = primitiveType();
-        return (type >= CSS_EMS && type <= CSS_PC) || type == CSS_REMS;
+        return (type >= CSS_EMS && type <= CSS_PC) || type == CSS_REMS || type == CSS_CHS;
     }
     bool isNumber() const { return primitiveType() == CSS_NUMBER; }
     bool isPercentage() const { return primitiveType() == CSS_PERCENTAGE; }

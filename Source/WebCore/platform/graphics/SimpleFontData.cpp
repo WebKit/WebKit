@@ -113,6 +113,7 @@ void SimpleFontData::platformGlyphInit()
         LOG_ERROR("Failed to get glyph page zero.");
         m_spaceGlyph = 0;
         m_spaceWidth = 0;
+        m_zeroGlyph = 0;
         m_adjustedSpaceWidth = 0;
         determinePitch();
         m_zeroWidthSpaceGlyph = 0;
@@ -129,6 +130,8 @@ void SimpleFontData::platformGlyphInit()
     m_spaceGlyph = glyphPageZero->glyphDataForCharacter(' ').glyph;
     float width = widthForGlyph(m_spaceGlyph);
     m_spaceWidth = width;
+    m_zeroGlyph = glyphPageZero->glyphDataForCharacter('0').glyph;
+    m_fontMetrics.setZeroWidth(widthForGlyph(m_zeroGlyph));
     determinePitch();
     m_adjustedSpaceWidth = m_treatAsFixedPitch ? ceilf(width) : roundf(width);
 
