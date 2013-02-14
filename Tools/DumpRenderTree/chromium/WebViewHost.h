@@ -88,12 +88,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     void reset();
     void setPendingExtraData(PassOwnPtr<TestShellExtraData>);
 
-    void paintRect(const WebKit::WebRect&);
-    void paintInvalidatedRegion();
-    void paintPagesWithBoundaries();
-    SkCanvas* canvas();
-    void displayRepaintMask();
-
     TestNavigationController* navigationController() { return m_navigationController.get(); }
 
     void closeWidget();
@@ -153,8 +147,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setMockSpeechRecognitionError(const std::string&, const std::string&) OVERRIDE;
     virtual bool wasMockSpeechRecognitionAborted() OVERRIDE;
 #endif
-    virtual void display() OVERRIDE;
-    virtual void displayInvalidatedRegion() OVERRIDE;
     virtual void testFinished() OVERRIDE;
     virtual void testTimedOut() OVERRIDE;
     virtual bool isBeingDebugged() OVERRIDE;
@@ -298,8 +290,6 @@ private:
     void printFrameDescription(WebKit::WebFrame*);
 
     bool hasWindow() const { return m_hasWindow; }
-    void resetScrollRect();
-    void discardBackingStore();
 
 #if ENABLE(MEDIA_STREAM)
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
@@ -333,10 +323,6 @@ private:
     std::string m_editCommandName;
     std::string m_editCommandValue;
 
-    // Painting.
-    OwnPtr<SkCanvas> m_canvas;
-    WebKit::WebRect m_paintRect;
-    bool m_isPainting;
 
     OwnPtr<WebKit::WebContextMenuData> m_lastContextMenuData;
 

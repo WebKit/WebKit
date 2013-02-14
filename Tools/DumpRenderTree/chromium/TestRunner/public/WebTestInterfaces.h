@@ -48,6 +48,7 @@ namespace WebTestRunner {
 
 class TestInterfaces;
 class WebTestDelegate;
+class WebTestProxyBase;
 class WebTestRunner;
 
 class WEBTESTRUNNER_EXPORT WebTestInterfaces {
@@ -55,7 +56,7 @@ public:
     WebTestInterfaces();
     ~WebTestInterfaces();
 
-    void setWebView(WebKit::WebView*);
+    void setWebView(WebKit::WebView*, WebTestProxyBase*);
     void setDelegate(WebTestDelegate*);
     void bindTo(WebKit::WebFrame*);
     void resetAll();

@@ -57,6 +57,8 @@
 #include "WebTestRunner.h"
 #include "WebUserMediaClientMock.h"
 #include "WebView.h"
+// FIXME: Including platform_canvas.h here is a layering violation.
+#include "skia/ext/platform_canvas.h"
 #include <cctype>
 #include <public/WebCString.h>
 #include <public/WebURLError.h>
@@ -436,6 +438,8 @@ void WebTestProxyBase::setDelegate(WebTestDelegate* delegate)
 void WebTestProxyBase::reset()
 {
     m_paintRect = WebRect();
+    m_canvas.reset();
+    m_isPainting = false;
     m_resourceIdentifierMap.clear();
     m_logConsoleOutput = true;
 }
@@ -443,16 +447,6 @@ void WebTestProxyBase::reset()
 WebSpellCheckClient* WebTestProxyBase::spellCheckClient() const
 {
     return m_spellcheck.get();
-}
-
-void WebTestProxyBase::setPaintRect(const WebRect& rect)
-{
-    m_paintRect = rect;
-}
-
-WebRect WebTestProxyBase::paintRect() const
-{
-    return m_paintRect;
 }
 
 string WebTestProxyBase::captureTree(bool debugRenderTree)
@@ -483,9 +477,162 @@ string WebTestProxyBase::captureTree(bool debugRenderTree)
     return dataUtf8;
 }
 
+SkCanvas* WebTestProxyBase::capturePixels()
+{
+    m_testInterfaces->webView()->layout();
+    if (m_testInterfaces->testRunner()->testRepaint()) {
+        WebSize viewSize = m_testInterfaces->webView()->size();
+        int width = viewSize.width;
+        int height = viewSize.height;
+        if (m_testInterfaces->testRunner()->sweepHorizontally()) {
+            for (WebRect column(0, 0, 1, height); column.x < width; column.x++)
+                paintRect(column);
+        } else {
+            for (WebRect line(0, 0, width, 1); line.y < height; line.y++)
+                paintRect(line);
+        }
+    } else if (m_testInterfaces->testRunner()->isPrinting())
+        paintPagesWithBoundaries();
+    else
+        paintInvalidatedRegion();
+
+    // See if we need to draw the selection bounds rect. Selection bounds
+    // rect is the rect enclosing the (possibly transformed) selection.
+    // The rect should be drawn after everything is laid out and painted.
+    if (m_testInterfaces->testRunner()->shouldDumpSelectionRect()) {
+        // If there is a selection rect - draw a red 1px border enclosing rect
+        WebRect wr = m_testInterfaces->webView()->mainFrame()->selectionBoundsRect();
+        if (!wr.isEmpty()) {
+            // Render a red rectangle bounding selection rect
+            SkPaint paint;
+            paint.setColor(0xFFFF0000); // Fully opaque red
+            paint.setStyle(SkPaint::kStroke_Style);
+            paint.setFlags(SkPaint::kAntiAlias_Flag);
+            paint.setStrokeWidth(1.0f);
+            SkIRect rect; // Bounding rect
+            rect.set(wr.x, wr.y, wr.x + wr.width, wr.y + wr.height);
+            canvas()->drawIRect(rect, paint);
+        }
+    }
+
+    return canvas();
+}
+
 void WebTestProxyBase::setLogConsoleOutput(bool enabled)
 {
     m_logConsoleOutput = enabled;
+}
+
+void WebTestProxyBase::paintRect(const WebRect& rect)
+{
+    WEBKIT_ASSERT(!m_isPainting);
+    WEBKIT_ASSERT(canvas());
+    m_isPainting = true;
+    float deviceScaleFactor = m_testInterfaces->webView()->deviceScaleFactor();
+    int scaledX = static_cast<int>(static_cast<float>(rect.x) * deviceScaleFactor);
+    int scaledY = static_cast<int>(static_cast<float>(rect.y) * deviceScaleFactor);
+    int scaledWidth = static_cast<int>(ceil(static_cast<float>(rect.width) * deviceScaleFactor));
+    int scaledHeight = static_cast<int>(ceil(static_cast<float>(rect.height) * deviceScaleFactor));
+    WebRect deviceRect(scaledX, scaledY, scaledWidth, scaledHeight);
+    m_testInterfaces->webView()->paint(canvas(), deviceRect);
+    m_isPainting = false;
+}
+
+void WebTestProxyBase::paintInvalidatedRegion()
+{
+    m_testInterfaces->webView()->animate(0.0);
+    m_testInterfaces->webView()->layout();
+    WebSize widgetSize = m_testInterfaces->webView()->size();
+    WebRect clientRect(0, 0, widgetSize.width, widgetSize.height);
+
+    // Paint the canvas if necessary. Allow painting to generate extra rects
+    // for the first two calls. This is necessary because some WebCore rendering
+    // objects update their layout only when painted.
+    // Store the total area painted in total_paint. Then tell the gdk window
+    // to update that area after we're done painting it.
+    for (int i = 0; i < 3; ++i) {
+        // rect = intersect(m_paintRect , clientRect)
+        WebRect damageRect = m_paintRect;
+        int left = max(damageRect.x, clientRect.x);
+        int top = max(damageRect.y, clientRect.y);
+        int right = min(damageRect.x + damageRect.width, clientRect.x + clientRect.width);
+        int bottom = min(damageRect.y + damageRect.height, clientRect.y + clientRect.height);
+        WebRect rect;
+        if (left < right && top < bottom)
+            rect = WebRect(left, top, right - left, bottom - top);
+
+        m_paintRect = WebRect();
+        if (rect.isEmpty())
+            continue;
+        paintRect(rect);
+    }
+    WEBKIT_ASSERT(m_paintRect.isEmpty());
+}
+
+void WebTestProxyBase::paintPagesWithBoundaries()
+{
+    WEBKIT_ASSERT(!m_isPainting);
+    WEBKIT_ASSERT(canvas());
+    m_isPainting = true;
+
+    WebSize pageSizeInPixels = m_testInterfaces->webView()->size();
+    WebFrame* webFrame = m_testInterfaces->webView()->mainFrame();
+
+    int pageCount = webFrame->printBegin(pageSizeInPixels);
+    int totalHeight = pageCount * (pageSizeInPixels.height + 1) - 1;
+
+    SkCanvas* testCanvas = skia::TryCreateBitmapCanvas(pageSizeInPixels.width, totalHeight, true);
+    if (testCanvas) {
+        discardBackingStore();
+        m_canvas.reset(testCanvas);
+    } else {
+        webFrame->printEnd();
+        return;
+    }
+
+    webFrame->printPagesWithBoundaries(canvas(), pageSizeInPixels);
+    webFrame->printEnd();
+
+    m_isPainting = false;
+}
+
+SkCanvas* WebTestProxyBase::canvas()
+{
+    if (m_canvas.get())
+        return m_canvas.get();
+    WebSize widgetSize = m_testInterfaces->webView()->size();
+    float deviceScaleFactor = m_testInterfaces->webView()->deviceScaleFactor();
+    int scaledWidth = static_cast<int>(ceil(static_cast<float>(widgetSize.width) * deviceScaleFactor));
+    int scaledHeight = static_cast<int>(ceil(static_cast<float>(widgetSize.height) * deviceScaleFactor));
+    m_canvas.reset(skia::CreateBitmapCanvas(scaledWidth, scaledHeight, true));
+    return m_canvas.get();
+}
+
+// Paints the entire canvas a semi-transparent black (grayish). This is used
+// by the layout tests in fast/repaint. The alpha value matches upstream.
+void WebTestProxyBase::displayRepaintMask()
+{
+    canvas()->drawARGB(167, 0, 0, 0);
+}
+
+void WebTestProxyBase::display()
+{
+    const WebKit::WebSize& size = m_testInterfaces->webView()->size();
+    WebRect rect(0, 0, size.width, size.height);
+    m_paintRect = rect;
+    paintInvalidatedRegion();
+    displayRepaintMask();
+}
+
+void WebTestProxyBase::displayInvalidatedRegion()
+{
+    paintInvalidatedRegion();
+    displayRepaintMask();
+}
+
+void WebTestProxyBase::discardBackingStore()
+{
+    m_canvas.reset();
 }
 
 void WebTestProxyBase::didInvalidateRect(const WebRect& rect)
@@ -527,6 +674,7 @@ void WebTestProxyBase::show(WebNavigationPolicy)
 void WebTestProxyBase::setWindowRect(const WebRect& rect)
 {
     scheduleComposite();
+    discardBackingStore();
 }
 
 void WebTestProxyBase::didAutoResize(const WebSize&)
@@ -782,7 +930,7 @@ WebUserMediaClient* WebTestProxyBase::userMediaClient()
 {
 #if ENABLE_WEBRTC
     if (!m_userMediaClient.get())
-        m_userMediaClient = auto_ptr<WebUserMediaClientMock>(new WebUserMediaClientMock(m_delegate));
+        m_userMediaClient.reset(new WebUserMediaClientMock(m_delegate));
     return m_userMediaClient.get();
 #else
     return 0;

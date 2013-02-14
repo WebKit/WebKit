@@ -44,10 +44,6 @@ public:
     virtual bool shouldDumpAsAudio() const = 0;
     virtual const WebKit::WebArrayBufferView* audioData() const = 0;
     virtual WebKit::WebPermissionClient* webPermissions() const = 0;
-    virtual bool shouldDumpSelectionRect() const = 0;
-    virtual bool testRepaint() const = 0;
-    virtual bool sweepHorizontally() const = 0;
-    virtual bool isPrinting() const = 0;
 };
 
 }

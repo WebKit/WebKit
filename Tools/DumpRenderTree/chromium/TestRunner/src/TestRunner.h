@@ -57,6 +57,7 @@ namespace WebTestRunner {
 class NotificationPresenter;
 class WebPermissions;
 class WebTestDelegate;
+class WebTestProxyBase;
 
 class TestRunner : public WebTestRunner, public CppBoundClass {
 public:
@@ -64,7 +65,7 @@ public:
     virtual ~TestRunner();
 
     void setDelegate(WebTestDelegate*);
-    void setWebView(WebKit::WebView* webView) { m_webView = webView; }
+    void setWebView(WebKit::WebView*, WebTestProxyBase*);
 
     void reset();
 
@@ -77,12 +78,12 @@ public:
     virtual bool shouldDumpAsAudio() const OVERRIDE;
     virtual const WebKit::WebArrayBufferView* audioData() const OVERRIDE;
     virtual WebKit::WebPermissionClient* webPermissions() const OVERRIDE;
-    virtual bool shouldDumpSelectionRect() const OVERRIDE;
-    virtual bool testRepaint() const OVERRIDE;
-    virtual bool sweepHorizontally() const OVERRIDE;
-    virtual bool isPrinting() const OVERRIDE;
 
     // Methods used by WebTestProxyBase.
+    bool shouldDumpSelectionRect() const;
+    bool testRepaint() const;
+    bool sweepHorizontally() const;
+    bool isPrinting() const;
     bool shouldDumpAsText();
     bool shouldDumpBackForwardList() const;
     bool shouldDumpChildFrameScrollPositions() const;
@@ -661,6 +662,7 @@ private:
 
     WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;
+    WebTestProxyBase* m_proxy;
 
     // This is non-0 IFF a load is in progress.
     WebKit::WebFrame* m_topLoadingFrame;

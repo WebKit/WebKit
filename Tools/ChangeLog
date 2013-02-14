@@ -1,3 +1,63 @@
+2013-02-14  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move pixel generation logic to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=109686
+
+        Reviewed by Stephen White.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestInterfaces.h:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestRunner.h:
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::~TestInterfaces):
+        (WebTestRunner::TestInterfaces::setWebView):
+        (WebTestRunner::TestInterfaces::proxy):
+        (WebTestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h:
+        (WebTestRunner):
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::setWebView):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::setBackingScaleFactor):
+        (WebTestRunner::TestRunner::display):
+        (WebTestRunner::TestRunner::displayInvalidatedRegion):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (WebTestRunner):
+        (TestRunner):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestInterfaces.cpp:
+        (WebTestRunner::WebTestInterfaces::setWebView):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::reset):
+        (WebTestRunner::WebTestProxyBase::capturePixels):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::paintRect):
+        (WebTestRunner::WebTestProxyBase::paintInvalidatedRegion):
+        (WebTestRunner::WebTestProxyBase::paintPagesWithBoundaries):
+        (WebTestRunner::WebTestProxyBase::canvas):
+        (WebTestRunner::WebTestProxyBase::displayRepaintMask):
+        (WebTestRunner::WebTestProxyBase::display):
+        (WebTestRunner::WebTestProxyBase::displayInvalidatedRegion):
+        (WebTestRunner::WebTestProxyBase::discardBackingStore):
+        (WebTestRunner::WebTestProxyBase::setWindowRect):
+        (WebTestRunner::WebTestProxyBase::userMediaClient):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::createMainWindow):
+        (TestShell::~TestShell):
+        (TestShell::showDevTools):
+        (TestShell::closeDevTools):
+        (TestShell::dump):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::setWindowRect):
+        (WebViewHost::setDeviceScaleFactor):
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-02-14  Tony Chang  <tony@chromium.org>
 
         Unreviewed, set svn:eol-style native for .sln, .vcproj, and .vsprops files.

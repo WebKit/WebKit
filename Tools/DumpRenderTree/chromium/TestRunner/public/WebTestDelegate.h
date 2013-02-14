@@ -99,8 +99,6 @@ public:
     virtual void addMockSpeechRecognitionResult(const std::string&, double) { }
     virtual void setMockSpeechRecognitionError(const std::string&, const std::string&) { }
     virtual bool wasMockSpeechRecognitionAborted() { return false; }
-    virtual void display() { }
-    virtual void displayInvalidatedRegion() { }
     virtual void testFinished() { }
     virtual void testTimedOut() { }
     virtual bool isBeingDebugged() { return false; }

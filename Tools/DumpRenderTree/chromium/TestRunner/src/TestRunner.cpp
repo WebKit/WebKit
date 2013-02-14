@@ -51,6 +51,7 @@
 #include "WebSurroundingText.h"
 #include "WebTask.h"
 #include "WebTestDelegate.h"
+#include "WebTestProxy.h"
 #include "WebView.h"
 #include "v8/include/v8.h"
 #include <limits>
@@ -337,6 +338,12 @@ void TestRunner::setDelegate(WebTestDelegate* delegate)
 #if ENABLE_NOTIFICATIONS
     m_notificationPresenter->setDelegate(delegate);
 #endif
+}
+
+void TestRunner::setWebView(WebView* webView, WebTestProxyBase* proxy)
+{
+    m_webView = webView;
+    m_proxy = proxy;
 }
 
 void TestRunner::reset()
@@ -1734,6 +1741,7 @@ void TestRunner::setBackingScaleFactor(const CppArgumentList& arguments, CppVari
 
     float value = arguments[0].value.doubleValue;
     m_delegate->setDeviceScaleFactor(value);
+    m_proxy->discardBackingStore();
 
     auto_ptr<CppVariant> callbackArguments(new CppVariant());
     callbackArguments->set(arguments[1]);
@@ -1843,13 +1851,13 @@ void TestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVari
 
 void TestRunner::display(const CppArgumentList& arguments, CppVariant* result)
 {
-    m_delegate->display();
+    m_proxy->display();
     result->setNull();
 }
 
 void TestRunner::displayInvalidatedRegion(const CppArgumentList& arguments, CppVariant* result)
 {
-    m_delegate->displayInvalidatedRegion();
+    m_proxy->displayInvalidatedRegion();
     result->setNull();
 }
 

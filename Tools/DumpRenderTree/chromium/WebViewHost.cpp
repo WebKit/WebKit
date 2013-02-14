@@ -60,7 +60,6 @@
 #include "WebStorageNamespace.h"
 #include "WebView.h"
 #include "WebWindowFeatures.h"
-#include "skia/ext/platform_canvas.h"
 #include "webkit/support/test_media_stream_client.h"
 #include "webkit/support/webkit_support.h"
 #include <cctype>
@@ -462,7 +461,6 @@ void WebViewHost::setWindowRect(const WebRect& rect)
         m_windowRect.height = 1 + border2;
     int width = m_windowRect.width - border2;
     int height = m_windowRect.height - border2;
-    discardBackingStore();
     webWidget()->resize(WebSize(width, height));
 }
 
@@ -715,7 +713,6 @@ void WebViewHost::setDatabaseQuota(int quota)
 void WebViewHost::setDeviceScaleFactor(float deviceScaleFactor)
 {
     webView()->setDeviceScaleFactor(deviceScaleFactor);
-    discardBackingStore();
 }
 
 void WebViewHost::setFocus(bool focused)
@@ -830,21 +827,6 @@ bool WebViewHost::wasMockSpeechRecognitionAborted()
     return m_mockSpeechRecognizer->wasAborted();
 }
 #endif
-
-void WebViewHost::display()
-{
-    const WebKit::WebSize& size = webView()->size();
-    WebRect rect(0, 0, size.width, size.height);
-    proxy()->setPaintRect(rect);
-    paintInvalidatedRegion();
-    displayRepaintMask();
-}
-
-void WebViewHost::displayInvalidatedRegion()
-{
-    paintInvalidatedRegion();
-    displayRepaintMask();
-}
 
 void WebViewHost::testFinished()
 {
@@ -989,8 +971,6 @@ void WebViewHost::reset()
     m_lastPageIdUpdated = -1;
     m_hasWindow = false;
     m_inModalLoop = false;
-    m_isPainting = false;
-    m_canvas.clear();
 #if ENABLE(POINTER_LOCK)
     m_pointerLocked = false;
     m_pointerLockPlannedResult = PointerLockWillSucceed;
@@ -1184,109 +1164,3 @@ webkit_support::TestMediaStreamClient* WebViewHost::testMediaStreamClient()
     return m_testMediaStreamClient.get();
 }
 #endif
-
-// Painting functions ---------------------------------------------------------
-
-void WebViewHost::paintRect(const WebRect& rect)
-{
-    ASSERT(!m_isPainting);
-    ASSERT(canvas());
-    m_isPainting = true;
-    float deviceScaleFactor = webView()->deviceScaleFactor();
-    int scaledX = static_cast<int>(static_cast<float>(rect.x) * deviceScaleFactor);
-    int scaledY = static_cast<int>(static_cast<float>(rect.y) * deviceScaleFactor);
-    int scaledWidth = static_cast<int>(ceil(static_cast<float>(rect.width) * deviceScaleFactor));
-    int scaledHeight = static_cast<int>(ceil(static_cast<float>(rect.height) * deviceScaleFactor));
-    WebRect deviceRect(scaledX, scaledY, scaledWidth, scaledHeight);
-    webWidget()->paint(canvas(), deviceRect);
-    m_isPainting = false;
-}
-
-void WebViewHost::paintInvalidatedRegion()
-{
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    webWidget()->animate(0.0);
-#endif
-    webWidget()->layout();
-    WebSize widgetSize = webWidget()->size();
-    WebRect clientRect(0, 0, widgetSize.width, widgetSize.height);
-
-    // Paint the canvas if necessary. Allow painting to generate extra rects
-    // for the first two calls. This is necessary because some WebCore rendering
-    // objects update their layout only when painted.
-    // Store the total area painted in total_paint. Then tell the gdk window
-    // to update that area after we're done painting it.
-    for (int i = 0; i < 3; ++i) {
-        // rect = intersect(proxy()->paintRect() , clientRect)
-        WebRect damageRect = proxy()->paintRect();
-        int left = max(damageRect.x, clientRect.x);
-        int top = max(damageRect.y, clientRect.y);
-        int right = min(damageRect.x + damageRect.width, clientRect.x + clientRect.width);
-        int bottom = min(damageRect.y + damageRect.height, clientRect.y + clientRect.height);
-        WebRect rect;
-        if (left < right && top < bottom)
-            rect = WebRect(left, top, right - left, bottom - top);
-
-        proxy()->setPaintRect(WebRect());
-        if (rect.isEmpty())
-            continue;
-        paintRect(rect);
-    }
-    ASSERT(proxy()->paintRect().isEmpty());
-}
-
-void WebViewHost::paintPagesWithBoundaries()
-{
-    ASSERT(!m_isPainting);
-    ASSERT(canvas());
-    m_isPainting = true;
-
-    WebSize pageSizeInPixels = webWidget()->size();
-    WebFrame* webFrame = webView()->mainFrame();
-
-    int pageCount = webFrame->printBegin(pageSizeInPixels);
-    int totalHeight = pageCount * (pageSizeInPixels.height + 1) - 1;
-
-    SkCanvas* testCanvas = skia::TryCreateBitmapCanvas(pageSizeInPixels.width, totalHeight, true);
-    if (testCanvas) {
-        discardBackingStore();
-        m_canvas = adoptPtr(testCanvas);
-    } else {
-        webFrame->printEnd();
-        return;
-    }
-
-    webFrame->printPagesWithBoundaries(canvas(), pageSizeInPixels);
-    webFrame->printEnd();
-
-    m_isPainting = false;
-}
-
-SkCanvas* WebViewHost::canvas()
-{
-    if (m_canvas)
-        return m_canvas.get();
-    WebSize widgetSize = webWidget()->size();
-    float deviceScaleFactor = webView()->deviceScaleFactor();
-    int scaledWidth = static_cast<int>(ceil(static_cast<float>(widgetSize.width) * deviceScaleFactor));
-    int scaledHeight = static_cast<int>(ceil(static_cast<float>(widgetSize.height) * deviceScaleFactor));
-    resetScrollRect();
-    m_canvas = adoptPtr(skia::CreateBitmapCanvas(scaledWidth, scaledHeight, true));
-    return m_canvas.get();
-}
-
-void WebViewHost::resetScrollRect()
-{
-}
-
-void WebViewHost::discardBackingStore()
-{
-    m_canvas.clear();
-}
-
-// Paints the entire canvas a semi-transparent black (grayish). This is used
-// by the layout tests in fast/repaint. The alpha value matches upstream.
-void WebViewHost::displayRepaintMask()
-{
-    canvas()->drawARGB(167, 0, 0, 0);
-}

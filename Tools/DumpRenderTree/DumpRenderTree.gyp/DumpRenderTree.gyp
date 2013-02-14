@@ -114,6 +114,7 @@
                             'dependencies': [
                                 '<(chromium_src_dir)/base/base.gyp:base',
                                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
+                                '<(chromium_src_dir)/skia/skia.gyp:skia',
                                 '<(chromium_src_dir)/v8/tools/gyp/v8.gyp:v8',
                             ],
                             'direct_dependent_settings': {

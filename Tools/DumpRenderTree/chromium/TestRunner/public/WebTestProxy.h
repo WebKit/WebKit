@@ -74,6 +74,8 @@ struct WebSize;
 struct WebWindowFeatures;
 }
 
+class SkCanvas;
+
 namespace WebTestRunner {
 
 class SpellCheckClient;
@@ -92,12 +94,14 @@ public:
 
     WebKit::WebSpellCheckClient *spellCheckClient() const;
 
-    void setPaintRect(const WebKit::WebRect&);
-    WebKit::WebRect paintRect() const;
-
     std::string captureTree(bool debugRenderTree);
+    SkCanvas* capturePixels();
 
     void setLogConsoleOutput(bool enabled);
+
+    void display();
+    void displayInvalidatedRegion();
+    void discardBackingStore();
 
 protected:
     WebTestProxyBase();
@@ -169,6 +173,11 @@ protected:
 
 private:
     void locationChangeDone(WebKit::WebFrame*);
+    void paintRect(const WebKit::WebRect&);
+    void paintInvalidatedRegion();
+    void paintPagesWithBoundaries();
+    SkCanvas* canvas();
+    void displayRepaintMask();
 
     TestInterfaces* m_testInterfaces;
     WebTestDelegate* m_delegate;
@@ -176,7 +185,10 @@ private:
     std::auto_ptr<SpellCheckClient> m_spellcheck;
     std::auto_ptr<WebUserMediaClientMock> m_userMediaClient;
 
+    // Painting.
+    std::auto_ptr<SkCanvas> m_canvas;
     WebKit::WebRect m_paintRect;
+    bool m_isPainting;
     std::map<unsigned, std::string> m_resourceIdentifierMap;
 
     bool m_logConsoleOutput;

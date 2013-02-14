@@ -47,13 +47,14 @@ class GamepadController;
 class TestRunner;
 class TextInputController;
 class WebTestDelegate;
+class WebTestProxyBase;
 
 class TestInterfaces {
 public:
     TestInterfaces();
     ~TestInterfaces();
 
-    void setWebView(WebKit::WebView*);
+    void setWebView(WebKit::WebView*, WebTestProxyBase*);
     void setDelegate(WebTestDelegate*);
     void bindTo(WebKit::WebFrame*);
     void resetAll();
@@ -65,6 +66,7 @@ public:
     TestRunner* testRunner();
     WebKit::WebView* webView();
     WebTestDelegate* delegate();
+    WebTestProxyBase* proxy();
 
 
 private:
@@ -75,6 +77,7 @@ private:
     std::auto_ptr<TestRunner> m_testRunner;
     WebKit::WebView* m_webView;
     WebTestDelegate* m_delegate;
+    WebTestProxyBase* m_proxy;
 };
 
 }

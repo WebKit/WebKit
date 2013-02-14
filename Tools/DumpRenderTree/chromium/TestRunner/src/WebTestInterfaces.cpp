@@ -49,9 +49,9 @@ WebTestInterfaces::~WebTestInterfaces()
 {
 }
 
-void WebTestInterfaces::setWebView(WebView* webView)
+void WebTestInterfaces::setWebView(WebView* webView, WebTestProxyBase* proxy)
 {
-    m_interfaces->setWebView(webView);
+    m_interfaces->setWebView(webView, proxy);
 }
 
 void WebTestInterfaces::setDelegate(WebTestDelegate* delegate)

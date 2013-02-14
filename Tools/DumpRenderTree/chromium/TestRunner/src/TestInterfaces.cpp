@@ -63,7 +63,7 @@ TestInterfaces::~TestInterfaces()
     m_eventSender->setWebView(0);
     // m_gamepadController doesn't depend on WebView.
     m_textInputController->setWebView(0);
-    m_testRunner->setWebView(0);
+    m_testRunner->setWebView(0, 0);
 
     m_accessibilityController->setDelegate(0);
     m_eventSender->setDelegate(0);
@@ -72,14 +72,15 @@ TestInterfaces::~TestInterfaces()
     m_testRunner->setDelegate(0);
 }
 
-void TestInterfaces::setWebView(WebView* webView)
+void TestInterfaces::setWebView(WebView* webView, WebTestProxyBase* proxy)
 {
     m_webView = webView;
+    m_proxy = proxy;
     m_accessibilityController->setWebView(webView);
     m_eventSender->setWebView(webView);
     // m_gamepadController doesn't depend on WebView.
     m_textInputController->setWebView(webView);
-    m_testRunner->setWebView(webView);
+    m_testRunner->setWebView(webView, proxy);
 }
 
 void TestInterfaces::setDelegate(WebTestDelegate* delegate)
@@ -154,6 +155,11 @@ WebView* TestInterfaces::webView()
 WebTestDelegate* TestInterfaces::delegate()
 {
     return m_delegate;
+}
+
+WebTestProxyBase* TestInterfaces::proxy()
+{
+    return m_proxy;
 }
 
 }
