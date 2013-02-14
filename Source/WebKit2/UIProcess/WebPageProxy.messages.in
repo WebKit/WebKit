@@ -142,7 +142,7 @@ messages -> WebPageProxy {
     DidFinishLoadingDataForCustomRepresentation(WTF::String suggestedFilename, CoreIPC::DataReference data)
 
     # Forms messages
-    WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WebKit::StringPairVector textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
+    WillSubmitForm(uint64_t frameID, uint64_t sourceFrameID, WTF::Vector<std::pair<WTF::String, WTF::String> > textFieldValues, uint64_t listenerID, WebKit::InjectedBundleUserMessageEncoder userData) Variadic
 
     # Callback messages
     VoidCallback(uint64_t callbackID)

@@ -35,7 +35,6 @@
 #include "InjectedBundleUserMessageCoders.h"
 #include "PlatformCertificateInfo.h"
 #include "PluginView.h"
-#include "StringPairVector.h"
 #include "WebBackForwardListProxy.h"
 #include "WebContextMessages.h"
 #include "WebCoreArgumentCoders.h"
@@ -759,9 +758,8 @@ void WebFrameLoaderClient::dispatchWillSubmitForm(FramePolicyFunction function, 
 
 
     uint64_t listenerID = m_frame->setUpPolicyListener(function);
-    StringPairVector valuesVector(values);
 
-    webPage->send(Messages::WebPageProxy::WillSubmitForm(m_frame->frameID(), sourceFrame->frameID(), valuesVector, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
+    webPage->send(Messages::WebPageProxy::WillSubmitForm(m_frame->frameID(), sourceFrame->frameID(), values, listenerID, InjectedBundleUserMessageEncoder(userData.get())));
 }
 
 void WebFrameLoaderClient::revertToProvisionalState(DocumentLoader*)
