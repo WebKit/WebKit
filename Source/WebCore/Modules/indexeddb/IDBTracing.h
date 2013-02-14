@@ -38,7 +38,8 @@
 
 #else
 
-#define IDB_TRACE(a) ((void)0)
+#include "Logging.h"
+#define IDB_TRACE(a) LOG(StorageAPI, a)
 
 #endif //  PLATFORM(CHROMIUM)
 
