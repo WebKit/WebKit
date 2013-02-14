@@ -605,7 +605,7 @@ WebInspector.StylesSidebarPane.prototype = {
                 editable = true;
 
             if (computedStyle)
-                var section = new WebInspector.ComputedStylePropertiesSection(this, styleRule, usedProperties);
+                var section = new WebInspector.ComputedStylePropertiesSection(this._computedStylePane, styleRule, usedProperties);
             else {
                 var section = new WebInspector.StylePropertiesSection(this, styleRule, editable, styleRule.isInherited, lastWasSeparator);
                 section._markSelectorMatches();
@@ -1353,7 +1353,7 @@ WebInspector.StylePropertiesSection.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.PropertiesSection}
- * @param {!WebInspector.StylesSidebarPane} parentPane
+ * @param {!WebInspector.ComputedStyleSidebarPane} parentPane
  * @param {!Object} styleRule
  * @param {!Object.<string, boolean>} usedProperties
  */
