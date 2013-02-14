@@ -2008,7 +2008,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             Length marginRight = style->marginRight();
             if (marginRight.isFixed() || !renderer || !renderer->isBox())
                 return zoomAdjustedPixelValueForLength(marginRight, style.get());
-            int value;
+            float value;
             if (marginRight.isPercent() || marginRight.isViewportPercentage())
                 // RenderBox gives a marginRight() that is the distance between the right-edge of the child box
                 // and the right-edge of the containing box, when display == BLOCK. Let's calculate the absolute
