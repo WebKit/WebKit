@@ -194,7 +194,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    virtual void mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) { }
+    virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*) { return false; }
 #endif
     
     virtual String mediaPlayerReferrer() const { return String(); }
@@ -435,7 +435,7 @@ public:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    void keyNeeded(Uint8Array* initData);
+    bool keyNeeded(Uint8Array* initData);
 #endif
 
     String referrer() const;

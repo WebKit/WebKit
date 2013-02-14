@@ -455,7 +455,7 @@ private:
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-    virtual void mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*);
+    virtual bool mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array*);
 #endif
 
     virtual String mediaPlayerReferrer() const OVERRIDE;

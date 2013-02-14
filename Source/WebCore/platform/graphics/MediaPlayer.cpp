@@ -1082,10 +1082,11 @@ bool MediaPlayer::keyNeeded(const String& keySystem, const String& sessionId, co
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
-void MediaPlayer::keyNeeded(Uint8Array* initData)
+bool MediaPlayer::keyNeeded(Uint8Array* initData)
 {
     if (m_mediaPlayerClient)
-        m_mediaPlayerClient->mediaPlayerKeyNeeded(this, initData);
+        return m_mediaPlayerClient->mediaPlayerKeyNeeded(this, initData);
+    return false;
 }
 #endif
 
