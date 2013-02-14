@@ -36,7 +36,7 @@ interface [
     readonly attribute DOMString sessionId;
 
     // session operations
-    void addKey(in Uint8Array key)
+    void update(in Uint8Array key)
         raises(DOMException);
     void close();
     

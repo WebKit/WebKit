@@ -60,7 +60,7 @@ public:
     MediaKeys* keys() const { return m_keys; }
 
     void generateKeyRequest(const String& mimeType, Uint8Array* initData);
-    void addKey(Uint8Array* key, ExceptionCode&);
+    void update(Uint8Array* key, ExceptionCode&);
     void close();
 
     using RefCounted<MediaKeySession>::ref;

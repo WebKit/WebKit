@@ -138,7 +138,7 @@ void MediaKeySession::keyRequestTimerFired(Timer<MediaKeySession>*)
     }
 }
 
-void MediaKeySession::addKey(Uint8Array* key, ExceptionCode& ec)
+void MediaKeySession::update(Uint8Array* key, ExceptionCode& ec)
 {
     // From <http://dvcs.w3.org/hg/html-media/raw-file/tip/encrypted-media/encrypted-media.html#dom-addkey>:
     // The addKey(key) method must run the following steps:
@@ -165,7 +165,7 @@ void MediaKeySession::addKeyTimerFired(Timer<MediaKeySession>*)
         unsigned short errorCode = 0;
         unsigned long systemCode = 0;
 
-        // NOTE: Continued from step 2. of MediaKeySession::addKey()
+        // NOTE: Continued from step 2. of MediaKeySession::update()
         // 2.1. Let cdm be the cdm loaded in the MediaKeys constructor.
         // NOTE: This is m_session.
         // 2.2. Let 'did store key' be false.
@@ -173,7 +173,7 @@ void MediaKeySession::addKeyTimerFired(Timer<MediaKeySession>*)
         // 2.3. Let 'next message' be null.
         RefPtr<Uint8Array> nextMessage;
         // 2.4. Use cdm to handle key.
-        didStoreKey = m_session->addKey(pendingKey.get(), nextMessage, errorCode, systemCode);
+        didStoreKey = m_session->update(pendingKey.get(), nextMessage, errorCode, systemCode);
         // 2.5. If did store key is true and the media element is waiting for a key, queue a task to attempt to resume playback.
         // TODO: Find and restart the media element
 

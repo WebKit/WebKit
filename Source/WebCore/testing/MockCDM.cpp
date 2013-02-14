@@ -42,7 +42,7 @@ public:
     virtual const String& sessionId() OVERRIDE { return m_sessionId; }
     virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) OVERRIDE;
     virtual void releaseKeys() OVERRIDE;
-    virtual bool addKey(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) OVERRIDE;
+    virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) OVERRIDE;
 
 protected:
     MockCDMSession();
@@ -128,7 +128,7 @@ void MockCDMSession::releaseKeys()
     // no-op
 }
 
-bool MockCDMSession::addKey(Uint8Array* key, RefPtr<Uint8Array>&, unsigned short& errorCode, unsigned long&)
+bool MockCDMSession::update(Uint8Array* key, RefPtr<Uint8Array>&, unsigned short& errorCode, unsigned long&)
 {
     for (unsigned i = 0; i < keyPrefix()->length(); ++i) {
         if (i >= key->length() || key->item(i) != keyPrefix()->item(i)) {

@@ -39,14 +39,14 @@
                 run('mediaKeySession = mediaKeys.createSession("video/mock", initData)');
                 testExpected('typeof mediaKeySession', 'object');
                 testExpected('typeof mediaKeySession.addEventListener', 'function');
-                testExpected('typeof mediaKeySession.addKey', 'function');
+                testExpected('typeof mediaKeySession.update', 'function');
                 testExpected('mediaKeySession.error', null);
                 testExpected('mediaKeySession.keySystem', 'com.webcore.mock');
                 testExpected('mediaKeySession.sessionId', null, '!=');
                 testExpected('mediaKeySession.onwebkitkeyadded', null);
                 testExpected('mediaKeySession.onwebkitkeyerror', null);
                 testExpected('mediaKeySession.onwebkitkeymessage', null);
-                testException('mediaKeySession.addKey(null)', "DOMException.INVALID_ACCESS_ERR");
+                testException('mediaKeySession.update(null)', "DOMException.INVALID_ACCESS_ERR");
                 endTest();
             }
         </script>
