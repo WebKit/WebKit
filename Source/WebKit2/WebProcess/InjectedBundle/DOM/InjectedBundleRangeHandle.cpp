@@ -26,6 +26,8 @@
 #include "config.h"
 #include "InjectedBundleRangeHandle.h"
 
+#include <JavaScriptCore/APICast.h>
+#include <WebCore/JSRange.h>
 #include <WebCore/Range.h>
 #include <wtf/HashMap.h>
 
@@ -39,6 +41,12 @@ static DOMHandleCache& domHandleCache()
 {
     DEFINE_STATIC_LOCAL(DOMHandleCache, cache, ());
     return cache;
+}
+
+PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(JSContextRef, JSObjectRef object)
+{
+    Range* range = toRange(toJS(object));
+    return getOrCreate(range);
 }
 
 PassRefPtr<InjectedBundleRangeHandle> InjectedBundleRangeHandle::getOrCreate(Range* range)

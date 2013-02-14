@@ -1,3 +1,26 @@
+2013-02-14  Sam Weinig  <sam@webkit.org>
+
+        Add conversions between ObjC and C DOM wrappers
+        <rdar://problem/13205468>
+        https://bugs.webkit.org/show_bug.cgi?id=109851
+
+        Reviewed by Anders Carlsson.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandle.cpp:
+        (WKBundleRangeHandleCreate):
+        * WebProcess/InjectedBundle/API/c/WKBundleRangeHandlePrivate.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMNode.mm:
+        (-[WKDOMNode _copyBundleNodeHandleRef]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMNodePrivate.h: Added.
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        (-[WKDOMRange _copyBundleRangeHandleRef]):
+        * WebProcess/InjectedBundle/API/mac/WKDOMRangePrivate.h: Added.
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.cpp:
+        (WebKit::InjectedBundleRangeHandle::getOrCreate):
+        * WebProcess/InjectedBundle/DOM/InjectedBundleRangeHandle.h:
+        (InjectedBundleRangeHandle):
+
 2013-02-13  Anders Carlsson  <andersca@apple.com>
 
         Remove StringPairVector

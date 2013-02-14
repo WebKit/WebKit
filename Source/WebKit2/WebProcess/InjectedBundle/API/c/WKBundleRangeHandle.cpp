@@ -25,6 +25,7 @@
 
 #include "config.h"
 #include "WKBundleRangeHandle.h"
+#include "WKBundleRangeHandlePrivate.h"
 
 #include "InjectedBundleRangeHandle.h"
 #include "WKAPICast.h"
@@ -35,4 +36,10 @@ using namespace WebKit;
 WKTypeID WKBundleRangeHandleGetTypeID()
 {
     return toAPI(InjectedBundleRangeHandle::APIType);
+}
+
+WKBundleRangeHandleRef WKBundleRangeHandleCreate(JSContextRef contextRef, JSObjectRef objectRef)
+{
+    RefPtr<InjectedBundleRangeHandle> rangeHandle = InjectedBundleRangeHandle::getOrCreate(contextRef, objectRef);
+    return toAPI(rangeHandle.release().leakRef());
 }

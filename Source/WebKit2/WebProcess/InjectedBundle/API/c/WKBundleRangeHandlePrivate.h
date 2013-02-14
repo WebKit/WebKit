@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,42 +23,20 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef InjectedBundleRangeHandle_h
-#define InjectedBundleRangeHandle_h
+#ifndef WKBundleRangeHandlePrivate_h
+#define WKBundleRangeHandlePrivate_h
 
-#include "APIObject.h"
-#include <JavaScriptCore/JSBase.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefPtr.h>
+#include <JavaScriptCore/JavaScript.h>
+#include <WebKit2/WKBase.h>
 
-namespace WebCore {
-    class Range;
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+WK_EXPORT WKBundleRangeHandleRef WKBundleRangeHandleCreate(JSContextRef context, JSObjectRef object);
+
+#ifdef __cplusplus
 }
+#endif
 
-namespace WebKit {
-
-class InjectedBundleScriptWorld;
-
-class InjectedBundleRangeHandle : public APIObject {
-public:
-    static const Type APIType = TypeBundleRangeHandle;
-
-    static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(JSContextRef, JSObjectRef);
-    static PassRefPtr<InjectedBundleRangeHandle> getOrCreate(WebCore::Range*);
-
-    virtual ~InjectedBundleRangeHandle();
-
-    WebCore::Range* coreRange() const;
-
-private:
-    static PassRefPtr<InjectedBundleRangeHandle> create(WebCore::Range*);
-    InjectedBundleRangeHandle(WebCore::Range*);
-
-    virtual Type type() const { return APIType; }
-
-    RefPtr<WebCore::Range> m_range;
-};
-
-} // namespace WebKit
-
-#endif // InjectedBundleRangeHandle_h
+#endif // WKBundleRangeHandlePrivate_h

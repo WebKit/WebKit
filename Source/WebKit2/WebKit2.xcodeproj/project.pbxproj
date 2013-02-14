@@ -793,6 +793,9 @@
 		BC5D24B516CC3F46007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC5D24B616CC3F4D007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
 		BC5D24B716CC3F5D007D5461 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BC3DE46815A91763008D26FC /* Foundation.framework */; };
+		BC5D24C216CD706D007D5461 /* WKDOMNodePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C116CD706D007D5461 /* WKDOMNodePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5D24C516CD7088007D5461 /* WKDOMRangePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C416CD7088007D5461 /* WKDOMRangePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC5D24C616CD73C5007D5461 /* WKBundleRangeHandlePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60C5791240A546008C5E29 /* WKBundleRangeHandle.h in Headers */ = {isa = PBXBuildFile; fileRef = BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC60C57A1240A546008C5E29 /* WKBundleRangeHandle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */; };
 		BC64696F11DBE603006455B0 /* ImmutableArray.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC64696D11DBE603006455B0 /* ImmutableArray.cpp */; };
@@ -2186,6 +2189,9 @@
 		BC5C75C614954DA600BC4775 /* WKConnectionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKConnectionInternal.h; sourceTree = "<group>"; };
 		BC5D249F16CC3B9E007D5461 /* ChildProcessMain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ChildProcessMain.mm; sourceTree = "<group>"; };
 		BC5D24B816CC40BB007D5461 /* BaseLegacyProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = BaseLegacyProcess.xcconfig; sourceTree = "<group>"; };
+		BC5D24C116CD706D007D5461 /* WKDOMNodePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMNodePrivate.h; sourceTree = "<group>"; };
+		BC5D24C416CD7088007D5461 /* WKDOMRangePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKDOMRangePrivate.h; sourceTree = "<group>"; };
+		BC5D24C616CD73C5007D5461 /* WKBundleRangeHandlePrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRangeHandlePrivate.h; sourceTree = "<group>"; };
 		BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKBundleRangeHandle.h; sourceTree = "<group>"; };
 		BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKBundleRangeHandle.cpp; sourceTree = "<group>"; };
 		BC64696D11DBE603006455B0 /* ImmutableArray.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImmutableArray.cpp; sourceTree = "<group>"; };
@@ -3651,8 +3657,10 @@
 				BC017D0416260FF4007054F5 /* WKDOMInternals.mm */,
 				BC017D0516260FF4007054F5 /* WKDOMNode.h */,
 				BC017D0616260FF4007054F5 /* WKDOMNode.mm */,
+				BC5D24C116CD706D007D5461 /* WKDOMNodePrivate.h */,
 				BC39C4341626366F008BC689 /* WKDOMRange.h */,
 				BC39C4331626366F008BC689 /* WKDOMRange.mm */,
+				BC5D24C416CD7088007D5461 /* WKDOMRangePrivate.h */,
 				293EBEA91627D9C9005F89F1 /* WKDOMText.h */,
 				293EBEAA1627D9C9005F89F1 /* WKDOMText.mm */,
 				BC017D1F16263308007054F5 /* WKDOMTextIterator.h */,
@@ -4249,6 +4257,7 @@
 				BCF049E511FE20F600F86A58 /* WKBundlePrivate.h */,
 				BC60C5781240A546008C5E29 /* WKBundleRangeHandle.cpp */,
 				BC60C5771240A546008C5E29 /* WKBundleRangeHandle.h */,
+				BC5D24C616CD73C5007D5461 /* WKBundleRangeHandlePrivate.h */,
 				BC14DF9C120B635F00826C0C /* WKBundleScriptWorld.cpp */,
 				BC14DF9D120B635F00826C0C /* WKBundleScriptWorld.h */,
 			);
@@ -5549,6 +5558,9 @@
 				BCAF35E416CA24DA00D4E9FC /* OfflineStorageProcessMessages.h in Headers */,
 				BCAF35EA16CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.h in Headers */,
 				514BDED316C98EDD00E4E25E /* StatisticsRequest.h in Headers */,
+				BC5D24C216CD706D007D5461 /* WKDOMNodePrivate.h in Headers */,
+				BC5D24C516CD7088007D5461 /* WKDOMRangePrivate.h in Headers */,
+				BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
