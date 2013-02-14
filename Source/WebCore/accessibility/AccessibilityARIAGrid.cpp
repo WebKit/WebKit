@@ -49,16 +49,6 @@ AccessibilityARIAGrid::~AccessibilityARIAGrid()
 {
 }
 
-void AccessibilityARIAGrid::init()
-{
-    AccessibilityTable::init();
-#if ACCESSIBILITY_TABLES
-    m_isAccessibilityTable = true;
-#else
-    m_isAccessibilityTable = false;
-#endif
-}
-
 PassRefPtr<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* renderer)
 {
     return adoptRef(new AccessibilityARIAGrid(renderer));

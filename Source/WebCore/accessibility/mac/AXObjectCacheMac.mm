@@ -77,12 +77,8 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
                 macNotification = NSAccessibilityFocusedUIElementChangedNotification;                
             break;
         case AXAutocorrectionOccured:
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1070
             macNotification = @"AXAutocorrectionOccurred";
             break;
-#else
-            return;
-#endif
         case AXFocusedUIElementChanged:
             macNotification = NSAccessibilityFocusedUIElementChangedNotification;
             break;
@@ -113,14 +109,12 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
         case AXRowCountChanged:
             macNotification = NSAccessibilityRowCountChangedNotification;
             break;
-#if PLATFORM(IOS) || __MAC_OS_X_VERSION_MIN_REQUIRED >= 1060
         case AXRowExpanded:
             macNotification = NSAccessibilityRowExpandedNotification;
             break;
         case AXRowCollapsed:
             macNotification = NSAccessibilityRowCollapsedNotification;
             break;
-#endif
             // Does not exist on Mac.
         case AXCheckedStateChanged:
         default:

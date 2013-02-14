@@ -61,13 +61,8 @@ bool AccessibilityList::computeAccessibilityIsIgnored() const
     if (decision == IgnoreObject)
         return true;
     
-    // lists don't appear on tiger/leopard on the mac
-#if ACCESSIBILITY_LISTS
     return false;
-#else
-    return true;
-#endif
-}    
+}
     
 bool AccessibilityList::isUnorderedList() const
 {

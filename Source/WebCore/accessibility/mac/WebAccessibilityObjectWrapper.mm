@@ -1593,11 +1593,7 @@ static const AccessibilityRoleMap& createAccessibilityRoleMap()
         { HeadingRole, @"AXHeading" },
         { ListBoxRole, NSAccessibilityListRole },
         { ListBoxOptionRole, NSAccessibilityStaticTextRole },
-#if ACCESSIBILITY_TABLES
         { CellRole, NSAccessibilityCellRole },
-#else
-        { CellRole, NSAccessibilityGroupRole },
-#endif
         { TableHeaderContainerRole, NSAccessibilityGroupRole },
         { RowHeaderRole, NSAccessibilityGroupRole },
         { DefinitionRole, NSAccessibilityGroupRole },

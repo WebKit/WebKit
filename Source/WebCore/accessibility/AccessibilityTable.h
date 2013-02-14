@@ -32,12 +32,6 @@
 #include "AccessibilityRenderObject.h"
 #include <wtf/Forward.h>
 
-#if PLATFORM(MAC) && !PLATFORM(IOS) && __MAC_OS_X_VERSION_MIN_REQUIRED == 1050
-#define ACCESSIBILITY_TABLES 0
-#else
-#define ACCESSIBILITY_TABLES 1
-#endif
-
 namespace WebCore {
 
 class AccessibilityTableCell;
@@ -86,10 +80,10 @@ protected:
     AccessibilityChildrenVector m_columns;
 
     RefPtr<AccessibilityObject> m_headerContainer;
-    mutable bool m_isAccessibilityTable;
+    bool m_isAccessibilityTable;
 
     bool hasARIARole() const;
-    bool isTableExposableThroughAccessibility() const;
+    virtual bool isTableExposableThroughAccessibility() const;
     virtual bool computeAccessibilityIsIgnored() const;
 };
     
