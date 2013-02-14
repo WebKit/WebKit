@@ -44,7 +44,7 @@ static JSValue getNamedItems(ExecState* exec, JSHTMLOptionsCollection* collectio
     collection->impl()->namedItems(name, namedItems);
 
     if (namedItems.isEmpty())
-        return jsNull();
+        return jsUndefined();
     if (namedItems.size() == 1)
         return toJS(exec, collection->globalObject(), namedItems[0].get());
 
@@ -65,7 +65,8 @@ JSValue JSHTMLOptionsCollection::nameGetter(ExecState* exec, JSValue slotBase, P
 
 JSValue JSHTMLOptionsCollection::namedItem(ExecState* exec)
 {
-    return getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
+    JSValue value = getNamedItems(exec, this, Identifier(exec, exec->argument(0).toString(exec)->value(exec)));
+    return value.isUndefined() ? jsNull() : value;
 }
 
 void JSHTMLOptionsCollection::setLength(ExecState* exec, JSValue value)
