@@ -81,6 +81,7 @@
       '../css',
       '../dom',
       '../dom/default',
+      '../dom/default/chromium',
       '../editing',
       '../fileapi',
       '../history',

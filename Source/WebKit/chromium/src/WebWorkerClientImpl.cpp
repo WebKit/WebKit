@@ -55,7 +55,7 @@
 #include <wtf/Threading.h>
 
 #include "FrameLoaderClientImpl.h"
-#include "PlatformMessagePortChannel.h"
+#include "PlatformMessagePortChannelChromium.h"
 #include "WebFileSystemCallbacks.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"

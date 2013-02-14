@@ -398,8 +398,6 @@
                 'src/PageOverlayList.h',
                 'src/PageWidgetDelegate.cpp',
                 'src/PageWidgetDelegate.h',
-                'src/PlatformMessagePortChannel.cpp',
-                'src/PlatformMessagePortChannel.h',
                 'src/ScrollbarGroup.cpp',
                 'src/ScrollbarGroup.h',
                 'src/SharedWorkerRepository.cpp',

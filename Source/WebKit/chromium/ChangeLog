@@ -1,3 +1,21 @@
+2013-02-14  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move PlatformMessagePortChannel to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=109845
+
+        Reviewed by Adam Barth.
+
+        Part of a larger refactoring series; see tracking bug 106829.
+
+        * WebKit.gyp:
+        * src/PlatformMessagePortChannel.cpp: Removed.
+        * src/PlatformMessagePortChannel.h: Removed.
+        * src/SharedWorkerRepository.cpp:
+        * src/WebDOMMessageEvent.cpp:
+        * src/WebFrameImpl.cpp:
+        * src/WebSharedWorkerImpl.cpp:
+        * src/WebWorkerClientImpl.cpp:
+
 2013-02-14  Min Qin  <qinmin@chromium.org>
 
         Passing alpha to DeferredImageDecoder once decoding completes

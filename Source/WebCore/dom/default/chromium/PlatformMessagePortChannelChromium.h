@@ -28,8 +28,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef PlatformMessagePortChannel_h
-#define PlatformMessagePortChannel_h
+#ifndef PlatformMessagePortChannelChromium_h
+#define PlatformMessagePortChannelChromium_h
 
 
 #include "MessagePortChannel.h"
@@ -47,7 +47,7 @@ class MessagePort;
 
 // PlatformMessagePortChannel is a platform-dependent interface to the remote side of a message channel.
 class PlatformMessagePortChannel : public ThreadSafeRefCounted<PlatformMessagePortChannel>,
-                                   public WebKit::WebMessagePortChannelClient {
+    public WebKit::WebMessagePortChannelClient {
 public:
     static void createChannel(PassRefPtr<MessagePort>, PassRefPtr<MessagePort>);
     static PassRefPtr<PlatformMessagePortChannel> create();
@@ -59,7 +59,7 @@ public:
     void postMessageToRemote(PassOwnPtr<MessagePortChannel::EventData>);
     bool tryGetMessageFromRemote(OwnPtr<MessagePortChannel::EventData>&);
     void close();
-    bool isConnectedTo(MessagePort* port);
+    bool isConnectedTo(MessagePort*);
     bool hasPendingActivity();
 
     // Releases ownership of the contained web channel.
@@ -90,4 +90,4 @@ private:
 
 } // namespace WebCore
 
-#endif // PlatformMessagePortChannel_h
+#endif // PlatformMessagePortChannelChromium_h

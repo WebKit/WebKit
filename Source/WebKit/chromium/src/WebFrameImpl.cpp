@@ -119,7 +119,7 @@
 #include "Page.h"
 #include "PageOverlay.h"
 #include "Performance.h"
-#include "PlatformMessagePortChannel.h"
+#include "PlatformMessagePortChannelChromium.h"
 #include "PluginDocument.h"
 #include "PrintContext.h"
 #include "RenderBox.h"

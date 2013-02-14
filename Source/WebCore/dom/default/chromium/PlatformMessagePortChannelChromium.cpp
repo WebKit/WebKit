@@ -29,7 +29,7 @@
  */
 
 #include "config.h"
-#include "PlatformMessagePortChannel.h"
+#include "PlatformMessagePortChannelChromium.h"
 
 #include "MessagePort.h"
 #include "ScriptExecutionContext.h"
@@ -38,8 +38,6 @@
 #include <public/Platform.h>
 #include <public/WebMessagePortChannel.h>
 #include <public/WebString.h>
-
-using namespace WebKit;
 
 namespace WebCore {
 
@@ -112,7 +110,7 @@ PassRefPtr<PlatformMessagePortChannel> PlatformMessagePortChannel::create()
 }
 
 PassRefPtr<PlatformMessagePortChannel> PlatformMessagePortChannel::create(
-    WebMessagePortChannel* channel)
+    WebKit::WebMessagePortChannel* channel)
 {
     return adoptRef(new PlatformMessagePortChannel(channel));
 }
@@ -126,7 +124,7 @@ PlatformMessagePortChannel::PlatformMessagePortChannel()
         m_webChannel->setClient(this);
 }
 
-PlatformMessagePortChannel::PlatformMessagePortChannel(WebMessagePortChannel* channel)
+PlatformMessagePortChannel::PlatformMessagePortChannel(WebKit::WebMessagePortChannel* channel)
     : m_localPort(0)
     , m_webChannel(channel)
 {
@@ -178,13 +176,13 @@ void PlatformMessagePortChannel::postMessageToRemote(PassOwnPtr<MessagePortChann
     if (!m_localPort || !m_webChannel)
         return;
 
-    WebString messageString = message->message()->toWireString();
-    OwnPtr<WebCore::MessagePortChannelArray> channels = message->channels();
-    WebMessagePortChannelArray* webChannels = 0;
+    WebKit::WebString messageString = message->message()->toWireString();
+    OwnPtr<MessagePortChannelArray> channels = message->channels();
+    WebKit::WebMessagePortChannelArray* webChannels = 0;
     if (channels && channels->size()) {
-        webChannels = new WebMessagePortChannelArray(channels->size());
+        webChannels = new WebKit::WebMessagePortChannelArray(channels->size());
         for (size_t i = 0; i < channels->size(); ++i) {
-            WebCore::PlatformMessagePortChannel* platformChannel = (*channels)[i]->channel();
+            PlatformMessagePortChannel* platformChannel = (*channels)[i]->channel();
             (*webChannels)[i] = platformChannel->webChannelRelease();
             (*webChannels)[i]->setClient(0);
         }
@@ -197,8 +195,8 @@ bool PlatformMessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChann
     if (!m_webChannel)
         return false;
 
-    WebString message;
-    WebMessagePortChannelArray webChannels;
+    WebKit::WebString message;
+    WebKit::WebMessagePortChannelArray webChannels;
     bool rv = m_webChannel->tryGetMessage(&message, webChannels);
     if (rv) {
         OwnPtr<MessagePortChannelArray> channels;
@@ -220,7 +218,7 @@ bool PlatformMessagePortChannel::tryGetMessageFromRemote(OwnPtr<MessagePortChann
 void PlatformMessagePortChannel::close()
 {
     MutexLocker lock(m_mutex);
-    // Disentangle ourselves from the other end.  We still maintain a reference to m_webChannel,
+    // Disentangle ourselves from the other end. We still maintain a reference to m_webChannel,
     // since previously-existing messages should still be delivered.
     m_localPort = 0;
     m_entangledChannel = 0;
@@ -247,9 +245,9 @@ void PlatformMessagePortChannel::setEntangledChannel(PassRefPtr<PlatformMessageP
     m_entangledChannel = remote;
 }
 
-WebMessagePortChannel* PlatformMessagePortChannel::webChannelRelease()
+WebKit::WebMessagePortChannel* PlatformMessagePortChannel::webChannelRelease()
 {
-    WebMessagePortChannel* rv = m_webChannel;
+    WebKit::WebMessagePortChannel* rv = m_webChannel;
     m_webChannel = 0;
     return rv;
 }

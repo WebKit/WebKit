@@ -40,7 +40,7 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MessagePortChannel.h"
-#include "PlatformMessagePortChannel.h"
+#include "PlatformMessagePortChannelChromium.h"
 #include "ScriptExecutionContext.h"
 #include "SharedWorker.h"
 #include "WebContentSecurityPolicy.h"

@@ -2996,6 +2996,8 @@
             'dom/WindowEventContext.h',
             'dom/default/PlatformMessagePortChannel.cpp',
             'dom/default/PlatformMessagePortChannel.h',
+            'dom/default/chromium/PlatformMessagePortChannelChromium.cpp',
+            'dom/default/chromium/PlatformMessagePortChannelChromium.h',
         ],
         'webcore_html_files': [
             'html/BaseButtonInputType.cpp',
