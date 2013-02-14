@@ -24,6 +24,7 @@
 #define DocumentRuleSets_h
 
 #include "RuleFeature.h"
+#include "RuleSet.h"
 
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -35,10 +36,22 @@ class CSSStyleRule;
 class CSSStyleSheet;
 class DocumentStyleSheetCollection;
 class InspectorCSSOMWrappers;
+class MatchRequest;
 class MediaQueryEvaluator;
 class RuleSet;
-class StyleResolver;
 class StyleScopeResolver;
+
+#if ENABLE(SHADOW_DOM)
+class ShadowDistributedRules {
+public:
+    void addRule(StyleRule*, size_t selectorIndex, ContainerNode* scope, AddRuleFlags);
+    void collectMatchRequests(bool includeEmptyRules, Vector<MatchRequest>&);
+    void clear() { m_shadowDistributedRuleSetMap.clear(); }
+private:
+    typedef HashMap<const ContainerNode*, OwnPtr<RuleSet> > ShadowDistributedRuleSetMap;
+    ShadowDistributedRuleSetMap m_shadowDistributedRuleSetMap;
+};
+#endif
 
 class DocumentRuleSets {
 public:
@@ -57,6 +70,9 @@ public:
 
     void collectFeatures(bool isViewSource, StyleScopeResolver*);
     void reportMemoryUsage(MemoryObjectInfo*) const;
+#if ENABLE(SHADOW_DOM)
+    ShadowDistributedRules& shadowDistributedRules() { return m_shadowDistributedRules; }
+#endif
 
 private:
     void collectRulesFromUserStyleSheets(const Vector<RefPtr<CSSStyleSheet> >&, RuleSet& userStyle, const MediaQueryEvaluator&, StyleResolver&);
@@ -65,6 +81,9 @@ private:
     RuleFeatureSet m_features;
     OwnPtr<RuleSet> m_siblingRuleSet;
     OwnPtr<RuleSet> m_uncommonAttributeRuleSet;
+#if ENABLE(SHADOW_DOM)
+    ShadowDistributedRules m_shadowDistributedRules;
+#endif
 };
 
 } // namespace WebCore

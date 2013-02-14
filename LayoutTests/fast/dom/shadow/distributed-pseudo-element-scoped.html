@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<div id="sandbox"></div>
+<script>
+var shadowStyle = document.createElement('style');
+shadowStyle.innerHTML = 'content::-webkit-distributed(div) { color: green; }';
+shadowStyle.setAttribute('scoped', true);
+
+var sandbox = document.getElementById('sandbox');
+sandbox.appendChild(
+    createDOM('div', {'id': 'host'},
+              createShadowRoot(
+                  createDOM('content', {'select': '#host-child1'}),
+                  createDOM('div', {},
+                            createDOM('content', {'select': '#host-child2'}),
+                            shadowStyle)),
+              createDOM('div', {'id': 'host-child1'},
+                        document.createTextNode('normal')),
+              createDOM('div', {'id': 'host-child2'},
+                        document.createTextNode('green'))));
+</script>
+</body>
+</html>

@@ -61,7 +61,11 @@ static inline int cssyyerror(void*, const char*)
 
 %}
 
+#if ENABLE_SHADOW_DOM
+%expect 67
+#else
 %expect 66
+#endif
 
 %nonassoc LOWEST_PREC
 
@@ -184,6 +188,7 @@ static inline int cssyyerror(void*, const char*)
 %token <string> CUEFUNCTION
 #endif
 %token <string> NOTFUNCTION
+%token <string> DISTRIBUTEDFUNCTION
 %token <string> CALCFUNCTION
 %token <string> MINFUNCTION
 %token <string> MAXFUNCTION
@@ -1203,12 +1208,12 @@ simple_selector:
     | element_name specifier_list {
         $$ = $2;
         if ($$)
-            parser->updateSpecifiersWithElementName(nullAtom, $1, $$);
+            $$ = parser->rewriteSpecifiersWithElementName(nullAtom, $1, $$);
     }
     | specifier_list {
         $$ = $1;
         if ($$)
-            parser->updateSpecifiersWithNamespaceIfNeeded($$);
+            $$ = parser->rewriteSpecifiersWithNamespaceIfNeeded($$);
     }
     | namespace_selector element_name {
         $$ = parser->createFloatingSelectorWithTagName(parser->determineNameInNamespace($1, $2));
@@ -1216,12 +1221,12 @@ simple_selector:
     | namespace_selector element_name specifier_list {
         $$ = $3;
         if ($$)
-            parser->updateSpecifiersWithElementName($1, $2, $$);
+            $$ = parser->rewriteSpecifiersWithElementName($1, $2, $$);
     }
     | namespace_selector specifier_list {
         $$ = $2;
         if ($$)
-            parser->updateSpecifiersWithElementName($1, starAtom, $$);
+            $$ = parser->rewriteSpecifiersWithElementName($1, starAtom, $$);
     }
   ;
 
@@ -1266,7 +1271,7 @@ specifier_list:
         if (!$2)
             $$ = 0;
         else if ($1)
-            $$ = parser->updateSpecifiers($1, $2);
+            $$ = parser->rewriteSpecifiers($1, $2);
     }
     | specifier_list error {
         $$ = 0;
@@ -1411,6 +1416,19 @@ pseudo:
                 $$ = 0;
         } else
             $$ = 0;
+    }
+#endif
+#if ENABLE_SHADOW_DOM
+    | ':' ':' DISTRIBUTEDFUNCTION maybe_space selector maybe_space ')' {
+        if (!$5)
+            $$ = 0;
+        else {
+            $$ = parser->createFloatingSelector();
+            $$->setMatch(CSSSelector::PseudoElement);
+            $$->setFunctionArgumentSelector($5);
+            $3.lower();
+            $$->setValue($3);
+        }
     }
 #endif
     // use by :-webkit-any.

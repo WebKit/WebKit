@@ -48,6 +48,7 @@ public:
     enum VisitedMatchType { VisitedMatchDisabled, VisitedMatchEnabled };
     enum Mode { ResolvingStyle = 0, CollectingRules, QueryingRules, SharingRules };
     explicit SelectorChecker(Document*, Mode);
+    enum BehaviorAtBoundary { DoesNotCrossBoundary, CrossesBoundary };
 
     struct SelectorCheckingContext {
         // Initial selector constructor
@@ -61,6 +62,7 @@ public:
             , isSubSelector(false)
             , hasScrollbarPseudo(false)
             , hasSelectionPseudo(false)
+            , behaviorAtBoundary(DoesNotCrossBoundary)
         { }
 
         const CSSSelector* selector;
@@ -72,6 +74,7 @@ public:
         bool isSubSelector;
         bool hasScrollbarPseudo;
         bool hasSelectionPseudo;
+        BehaviorAtBoundary behaviorAtBoundary;
     };
 
     bool matches(const CSSSelector*, Element*, bool isFastCheckableSelector = false) const;

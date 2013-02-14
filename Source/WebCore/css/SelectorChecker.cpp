@@ -41,6 +41,7 @@
 #include "HTMLOptionElement.h"
 #include "HTMLProgressElement.h"
 #include "HTMLStyleElement.h"
+#include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -281,8 +282,13 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
 
     // Prepare next selector
     const CSSSelector* historySelector = context.selector->tagHistory();
-    if (!historySelector)
+    if (!historySelector) {
+        if (context.behaviorAtBoundary == CrossesBoundary) {
+            ASSERT(context.scope);
+            return context.scope->contains(context.element) ? SelectorMatches : SelectorFailsLocally;
+        }
         return SelectorMatches;
+    }
 
     SelectorCheckingContext nextContext(context);
     nextContext.selector = historySelector;
@@ -379,6 +385,24 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
             nextContext.elementStyle = 0;
             return match(nextContext, ignoreDynamicPseudo, siblingTraversalStrategy);
         }
+#if ENABLE(SHADOW_DOM)
+    case CSSSelector::ShadowDistributed:
+        {
+            Vector<InsertionPoint*, 8> insertionPoints;
+            for (Element* element = context.element; element; element = element->parentElement()) {
+                insertionPoints.clear();
+                collectInsertionPointsWhereNodeIsDistributed(element, insertionPoints);
+                for (size_t i = 0; i < insertionPoints.size(); ++i) {
+                    nextContext.element = insertionPoints[i];
+                    nextContext.isSubSelector = false;
+                    nextContext.elementStyle = 0;
+                    if (match(nextContext, ignoreDynamicPseudo, siblingTraversalStrategy) == SelectorMatches)
+                        return SelectorMatches;
+                }
+            }
+            return SelectorFailsCompletely;
+        }
+#endif
     }
 
     ASSERT_NOT_REACHED();

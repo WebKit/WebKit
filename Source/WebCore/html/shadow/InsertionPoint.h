@@ -161,6 +161,8 @@ inline ElementShadow* shadowOfParentForDistribution(const Node* node)
 
 InsertionPoint* resolveReprojection(const Node*);
 
+void collectInsertionPointsWhereNodeIsDistributed(const Node*, Vector<InsertionPoint*, 8>& results);
+
 } // namespace WebCore
 
 #endif // InsertionPoint_h

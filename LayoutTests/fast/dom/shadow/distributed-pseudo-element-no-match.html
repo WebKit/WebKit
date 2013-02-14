@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="resources/shadow-dom.js"></script>
+</head>
+<body>
+<div id="sandbox"></div>
+<script>
+var shadowStyle = document.createElement('style');
+shadowStyle.innerHTML = 'this-does-not-match::-webkit-distributed(div) { color: green; }'
+    + 'p::-webkit-distributed(div) { color: green; }'
+    + 'div::-webkit-distributed(div) { color: green; }';
+
+var sandbox = document.getElementById('sandbox');
+sandbox.appendChild(
+    createDOM('div', {'id': 'host'},
+              createShadowRoot(
+                  shadowStyle,
+                  createDOM('p', {},
+                           document.createTextNode('normal')),
+                  createDOM('div', {},
+                            createDOM('content'))),
+              createDOM('div', {'id': 'host-child'},
+                        document.createTextNode('normal'))));
+</script>
+</body>
+</html>

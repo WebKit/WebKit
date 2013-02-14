@@ -478,7 +478,8 @@ void StyleResolver::collectMatchingRules(const MatchRequest& matchRequest, RuleR
     TreeScope* treeScope = element->treeScope();
     if (!MatchingUARulesScope::isMatchingUARules()
         && !treeScope->applyAuthorStyles()
-        && (!matchRequest.scope || matchRequest.scope->treeScope() != treeScope))
+        && (!matchRequest.scope || matchRequest.scope->treeScope() != treeScope)
+        && matchRequest.behaviorAtBoundary == SelectorChecker::DoesNotCrossBoundary)
         return;
 
     // We need to collect the rules for id, class, tag, and everything else into a buffer and
@@ -623,6 +624,13 @@ void StyleResolver::matchAuthorRules(MatchResult& result, bool includeEmptyRules
     RuleRange ruleRange = result.ranges.authorRuleRange();
     collectMatchingRules(matchRequest, ruleRange);
     collectMatchingRulesForRegion(matchRequest, ruleRange);
+#if ENABLE(SHADOW_DOM)
+    Vector<MatchRequest> matchRequests;
+    m_ruleSets.shadowDistributedRules().collectMatchRequests(includeEmptyRules, matchRequests);
+    for (size_t i = 0; i < matchRequests.size(); ++i)
+        collectMatchingRules(matchRequests[i], ruleRange);
+#endif
+
     sortAndTransferMatchedRules(result);
 
     matchScopedAuthorRules(result, includeEmptyRules);
@@ -663,7 +671,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, c
     State& state = m_state;
     // In some cases we may end up looking up style for random elements in the middle of a recursive tree resolve.
     // Ancestor identifier filter won't be up-to-date in that case and we can't use the fast path.
-    bool canUseFastReject = m_selectorFilter.parentStackIsConsistent(state.parentNode());
+    bool canUseFastReject = m_selectorFilter.parentStackIsConsistent(state.parentNode()) && matchRequest.behaviorAtBoundary == SelectorChecker::DoesNotCrossBoundary;
 
     unsigned size = rules->size();
     for (unsigned i = 0; i < size; ++i) {
@@ -674,7 +682,7 @@ void StyleResolver::collectMatchingRulesForList(const Vector<RuleData>* rules, c
         StyleRule* rule = ruleData.rule();
         InspectorInstrumentationCookie cookie = InspectorInstrumentation::willMatchRule(document(), rule, this);
         PseudoId dynamicPseudo = NOPSEUDO;
-        if (ruleMatches(ruleData, matchRequest.scope, dynamicPseudo)) {
+        if (ruleMatches(ruleData, matchRequest.scope, dynamicPseudo, matchRequest.behaviorAtBoundary)) {
             // If the rule has no properties to apply, then ignore it in the non-debug mode.
             const StylePropertySet* properties = rule->properties();
             if (!properties || (properties->isEmpty() && !matchRequest.includeEmptyRules)) {
@@ -2075,7 +2083,7 @@ PassRefPtr<CSSRuleList> StyleResolver::pseudoStyleRulesForElement(Element* e, Ps
     return m_state.takeRuleList();
 }
 
-inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const ContainerNode* scope, PseudoId& dynamicPseudo)
+inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const ContainerNode* scope, PseudoId& dynamicPseudo, SelectorChecker::BehaviorAtBoundary behaviorAtBoundary)
 {
     State& state = m_state;
 
@@ -2103,6 +2111,7 @@ inline bool StyleResolver::ruleMatches(const RuleData& ruleData, const Container
     context.elementStyle = state.style();
     context.scope = scope;
     context.pseudoStyle = state.pseudoStyle();
+    context.behaviorAtBoundary = behaviorAtBoundary;
     SelectorChecker::Match match = selectorChecker.match(context, dynamicPseudo, DOMSiblingTraversalStrategy());
     if (match != SelectorChecker::SelectorMatches)
         return false;

@@ -211,6 +211,20 @@ bool CSSSelectorList::hasInvalidSelector() const
     return forEachSelector(functor, this);
 }
 
+#if ENABLE(SHADOW_DOM)
+class SelectorHasShadowDistributed {
+public:
+    bool operator()(const CSSSelector* selector)
+    {
+        return selector->isShadowDistributed();
+    }
+};
 
+bool CSSSelectorList::hasShadowDistributedAt(size_t index) const
+{
+    SelectorHasShadowDistributed functor;
+    return forEachTagSelector(functor, selectorAt(index));
+}
+#endif
 
 } // namespace WebCore

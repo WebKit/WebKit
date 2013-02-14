@@ -229,4 +229,28 @@ InsertionPoint* resolveReprojection(const Node* projectedNode)
     return insertionPoint;
 }
 
+void collectInsertionPointsWhereNodeIsDistributed(const Node* node, Vector<InsertionPoint*, 8>& results)
+{
+    const Node* current = node;
+    while (true) {
+        if (ElementShadow* shadow = shadowOfParentForDistribution(current)) {
+            if (ShadowRoot* root = current->containingShadowRoot())
+                ContentDistributor::ensureDistribution(root);
+            if (InsertionPoint* insertedTo = shadow->distributor().findInsertionPointFor(node)) {
+                current = insertedTo;
+                results.append(insertedTo);
+                continue;
+            }
+        }
+        if (Node* parent = parentNodeForDistribution(current)) {
+            if (InsertionPoint* insertedTo = parent->isShadowRoot() ? ScopeContentDistribution::assignedTo(toShadowRoot(parent)) : 0) {
+                current = insertedTo;
+                results.append(insertedTo);
+                continue;
+            }
+        }
+        return;
+    }
+}
+
 } // namespace WebCore

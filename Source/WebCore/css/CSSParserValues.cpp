@@ -147,6 +147,9 @@ PassRefPtr<CSSValue> CSSParserValue::createCSSValue()
 
 CSSParserSelector::CSSParserSelector()
     : m_selector(adoptPtr(fastNew<CSSSelector>()))
+#if ENABLE(SHADOW_DOM)
+    , m_functionArgumentSelector(0)
+#endif
 {
 }
 

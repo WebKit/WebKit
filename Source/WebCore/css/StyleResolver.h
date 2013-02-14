@@ -136,6 +136,19 @@ enum RuleMatchingBehavior {
     MatchOnlyUserAgentRules,
 };
 
+class MatchRequest {
+public:
+    MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false, const ContainerNode* scope = 0, SelectorChecker::BehaviorAtBoundary behaviorAtBoundary = SelectorChecker::DoesNotCrossBoundary)
+        : ruleSet(ruleSet)
+        , includeEmptyRules(includeEmptyRules)
+        , scope(scope)
+        , behaviorAtBoundary(behaviorAtBoundary) { }
+    const RuleSet* ruleSet;
+    const bool includeEmptyRules;
+    const ContainerNode* scope;
+    const SelectorChecker::BehaviorAtBoundary behaviorAtBoundary;
+};
+
 // This class selects a RenderStyle for a given element based on a collection of stylesheets.
 class StyleResolver {
     WTF_MAKE_NONCOPYABLE(StyleResolver); WTF_MAKE_FAST_ALLOCATED;
@@ -347,16 +360,6 @@ private:
         bool isCacheable;
     };
 
-    struct MatchRequest {
-        MatchRequest(RuleSet* ruleSet, bool includeEmptyRules = false, const ContainerNode* scope = 0)
-            : ruleSet(ruleSet)
-            , includeEmptyRules(includeEmptyRules)
-            , scope(scope) { }
-        const RuleSet* ruleSet;
-        const bool includeEmptyRules;
-        const ContainerNode* scope;
-    };
-
     static void addMatchedProperties(MatchResult&, const StylePropertySet* properties, StyleRule* = 0, unsigned linkMatchType = SelectorChecker::MatchAll, PropertyWhitelistType = PropertyWhitelistNone);
     void addElementStyleProperties(MatchResult&, const StylePropertySet*, bool isCacheable = true);
 
@@ -376,7 +379,7 @@ private:
     void sortMatchedRules();
     void sortAndTransferMatchedRules(MatchResult&);
 
-    bool ruleMatches(const RuleData&, const ContainerNode* scope, PseudoId&);
+    bool ruleMatches(const RuleData&, const ContainerNode* scope, PseudoId&, SelectorChecker::BehaviorAtBoundary = SelectorChecker::DoesNotCrossBoundary);
     bool checkRegionSelector(const CSSSelector* regionSelector, Element* regionElement);
     void applyMatchedProperties(const MatchResult&, const Element*);
     enum StyleApplicationPass {

@@ -243,6 +243,9 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
 #if ENABLE(IFRAME_SEAMLESS)
     case PseudoSeamlessDocument:
 #endif
+#if ENABLE(SHADOW_DOM)
+    case PseudoDistributed:
+#endif
         return NOPSEUDO;
     case PseudoNotParsed:
         ASSERT_NOT_REACHED();
@@ -333,6 +336,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(IFRAME_SEAMLESS)
     DEFINE_STATIC_LOCAL(AtomicString, seamlessDocument, ("-webkit-seamless-document", AtomicString::ConstructFromLiteral));
 #endif
+#if ENABLE(SHADOW_DOM)
+    DEFINE_STATIC_LOCAL(AtomicString, distributed, ("-webkit-distributed(", AtomicString::ConstructFromLiteral));
+#endif
     DEFINE_STATIC_LOCAL(AtomicString, inRange, ("in-range", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(AtomicString, outOfRange, ("out-of-range", AtomicString::ConstructFromLiteral));
 
@@ -416,6 +422,9 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(IFRAME_SEAMLESS)
         nameToPseudoType->set(seamlessDocument.impl(), CSSSelector::PseudoSeamlessDocument);
 #endif
+#if ENABLE(SHADOW_DOM)
+        nameToPseudoType->set(distributed.impl(), CSSSelector::PseudoDistributed);
+#endif
         nameToPseudoType->set(inRange.impl(), CSSSelector::PseudoInRange);
         nameToPseudoType->set(outOfRange.impl(), CSSSelector::PseudoOutOfRange);
     }
@@ -466,6 +475,9 @@ void CSSSelector::extractPseudoType() const
     case PseudoFirstLetter:
     case PseudoFirstLine:
         compat = true;
+#if ENABLE(SHADOW_DOM)
+    case PseudoDistributed:
+#endif
     case PseudoResizer:
     case PseudoScrollbar:
     case PseudoScrollbarCorner:
@@ -707,6 +719,10 @@ String CSSSelector::selectorText() const
             ASSERT_NOT_REACHED();
         case CSSSelector::ShadowDescendant:
             return tagHistoryText + str.toString();
+#if ENABLE(SHADOW_DOM)
+        case CSSSelector::ShadowDistributed:
+            return tagHistoryText + "::-webkit-distributed(" + str.toString() + ")";
+#endif
         }
     }
 
