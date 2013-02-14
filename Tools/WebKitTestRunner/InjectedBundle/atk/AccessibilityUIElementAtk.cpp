@@ -871,8 +871,10 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::cellForColumnAndRow(u
     if (!m_element || !ATK_IS_TABLE(m_element))
         return 0;
 
-    AtkObject* foundCell = atk_table_ref_at(ATK_TABLE(m_element), row, col);
-    return foundCell ? AccessibilityUIElement::create(foundCell) : 0;
+    // Adopt the AtkObject representing the cell because
+    // at_table_ref_at() transfers full ownership.
+    GRefPtr<AtkObject> foundCell = adoptGRef(atk_table_ref_at(ATK_TABLE(m_element), row, col));
+    return foundCell ? AccessibilityUIElement::create(foundCell.get()) : 0;
 }
 
 PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::horizontalScrollbar() const

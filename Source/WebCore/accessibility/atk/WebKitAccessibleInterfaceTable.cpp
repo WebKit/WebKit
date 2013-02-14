@@ -94,7 +94,14 @@ static AtkObject* webkitAccessibleTableRefAt(AtkTable* table, gint row, gint col
     AccessibilityTableCell* axCell = cell(table, row, column);
     if (!axCell)
         return 0;
-    return axCell->wrapper();
+
+    AtkObject* cell = axCell->wrapper();
+    if (!cell)
+        return 0;
+
+    // This method transfers full ownership over the returned
+    // AtkObject, so an extra reference is needed here.
+    return ATK_OBJECT(g_object_ref(cell));
 }
 
 static gint webkitAccessibleTableGetIndexAt(AtkTable* table, gint row, gint column)

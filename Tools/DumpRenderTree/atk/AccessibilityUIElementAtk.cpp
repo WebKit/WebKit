@@ -774,8 +774,10 @@ AccessibilityUIElement AccessibilityUIElement::cellForColumnAndRow(unsigned colu
 
     ASSERT(ATK_IS_TABLE(m_element));
 
-    AtkObject* foundCell = atk_table_ref_at(ATK_TABLE(m_element), row, column);
-    return foundCell ? AccessibilityUIElement(foundCell) : 0;
+    // Adopt the AtkObject representing the cell because
+    // at_table_ref_at() transfers full ownership.
+    GRefPtr<AtkObject> foundCell = adoptGRef(atk_table_ref_at(ATK_TABLE(m_element), row, column));
+    return foundCell ? AccessibilityUIElement(foundCell.get()) : 0;
 }
 
 JSStringRef AccessibilityUIElement::selectedTextRange()

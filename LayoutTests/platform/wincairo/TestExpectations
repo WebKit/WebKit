@@ -1168,6 +1168,7 @@ accessibility/spinbutton-value.html
 accessibility/svg-remote-element.html
 accessibility/table-attributes.html
 accessibility/table-cell-spans.html
+accessibility/table-cell-for-column-and-row-crash.html
 accessibility/table-cells.html
 accessibility/table-detection.html
 accessibility/table-modification-crash.html
