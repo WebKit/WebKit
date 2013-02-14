@@ -1,3 +1,17 @@
+2013-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r142841.
+        http://trac.webkit.org/changeset/142841
+        https://bugs.webkit.org/show_bug.cgi?id=109791
+
+        Caused webkit_unit_tests to crash on chromium bots. (Requested
+        by atwilson_ on #webkit).
+
+        * tests/GraphicsLayerChromiumTest.cpp:
+        (WebKit::GraphicsLayerChromiumTest::GraphicsLayerChromiumTest):
+        * tests/ScrollingCoordinatorChromiumTest.cpp:
+        (WebKit::FakeWebViewClient::initializeLayerTreeView):
+
 2013-02-13  Max Vujovic  <mvujovic@adobe.com>
 
         [CSS Filters] Refactor filter outsets into a class

@@ -62,7 +62,7 @@ public:
         Platform::current()->compositorSupport()->initialize(0);
         m_graphicsLayer = adoptPtr(new GraphicsLayerChromium(&m_client));
         m_platformLayer = m_graphicsLayer->platformLayer();
-        m_layerTreeView = adoptPtr(Platform::current()->unitTestSupport()->createLayerTreeViewForTesting(WebUnitTestSupport::TestViewTypeUnitTest, 0));
+        m_layerTreeView = adoptPtr(Platform::current()->unitTestSupport()->createLayerTreeViewForTesting(WebUnitTestSupport::TestViewTypeUnitTest));
         ASSERT(m_layerTreeView);
         m_layerTreeView->setRootLayer(*m_platformLayer);
         m_layerTreeView->setViewportSize(WebSize(1, 1), WebSize(1, 1));

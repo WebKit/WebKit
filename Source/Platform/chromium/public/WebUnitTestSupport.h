@@ -32,7 +32,6 @@
 namespace WebKit {
 
 class WebLayerTreeView;
-class WebLayerTreeViewClient;
 class WebURL;
 class WebURLResponse;
 struct WebURLError;
@@ -63,11 +62,9 @@ public:
 #define HAVE_CREATELAYERTREEVIEWFORTESTING 1
     enum TestViewType {
         TestViewTypeUnitTest,
-        TestViewTypeLayoutTestSoftware,
-        TestViewTypeLayoutTest3d,
+        TestViewTypeLayoutTest
     };
-    virtual WebLayerTreeView* createLayerTreeViewForTesting(TestViewType, WebLayerTreeViewClient*) { return 0; }
-    virtual WebLayerTreeView* createLayerTreeViewForTesting(TestViewType) { return 0; }
+    virtual WebLayerTreeView* createLayerTreeViewForTesting(TestViewType type) { return 0; }
 };
 
 }

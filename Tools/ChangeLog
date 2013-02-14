@@ -1,3 +1,16 @@
+2013-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r142841.
+        http://trac.webkit.org/changeset/142841
+        https://bugs.webkit.org/show_bug.cgi?id=109791
+
+        Caused webkit_unit_tests to crash on chromium bots. (Requested
+        by atwilson_ on #webkit).
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createOutputSurface):
+        (WebViewHost::initializeLayerTreeView):
+
 2013-02-13  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][jhbuild] Silence GSettings-related warning.
