@@ -73,6 +73,8 @@ messages -> WebPage LegacyReceiver {
 
     TestParameterAttributes([AttributeOne AttributeTwo] uint64_t foo, double bar, [AttributeThree] double baz)
 
+    TemplateTest(WTF::HashMap<String, std::pair<String, uint64_t> > a)
+
 #if PLATFORM(MAC)
     DidCreateWebProcessConnection(CoreIPC::MachPort connectionIdentifier)
 #endif
@@ -207,6 +209,13 @@ _expected_results = {
             'conditions': (None),
         },
         {
+            'name': 'TemplateTest',
+            'parameters': (
+                ('WTF::HashMap<String, std::pair<String, uint64_t> >', 'a'),
+            ),
+            'conditions': (None),
+        },
+        {
             'name': 'DidCreateWebProcessConnection',
             'parameters': (
                 ('CoreIPC::MachPort', 'connectionIdentifier'),
@@ -312,6 +321,8 @@ _expected_header = """/*
 #include "StringReference.h"
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/PluginData.h>
+#include <utility>
+#include <wtf/HashMap.h>
 #include <wtf/ThreadSafeRefCounted.h>
 #include <wtf/Vector.h>
 
@@ -515,6 +526,18 @@ struct TestParameterAttributes : CoreIPC::Arguments3<uint64_t, double, double> {
     }
 };
 
+struct TemplateTest : CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t> >&> {
+    static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
+    static CoreIPC::StringReference name() { return CoreIPC::StringReference("TemplateTest"); }
+    static const bool isSync = false;
+
+    typedef CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t> >&> DecodeType;
+    explicit TemplateTest(const WTF::HashMap<String, std::pair<String, uint64_t> >& a)
+        : CoreIPC::Arguments1<const WTF::HashMap<String, std::pair<String, uint64_t> >&>(a)
+    {
+    }
+};
+
 #if PLATFORM(MAC)
 struct DidCreateWebProcessConnection : CoreIPC::Arguments1<const CoreIPC::MachPort&> {
     static CoreIPC::StringReference receiverName() { return messageReceiverName(); }
@@ -631,6 +654,8 @@ _expected_receiver_implementation = """/*
 #include <WebCore/KeyboardEvent.h>
 #endif
 #include <WebCore/PluginData.h>
+#include <utility>
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
@@ -717,6 +742,10 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageDec
     }
     if (decoder.messageName() == Messages::WebPage::TestParameterAttributes::name()) {
         CoreIPC::handleMessage<Messages::WebPage::TestParameterAttributes>(decoder, this, &WebPage::testParameterAttributes);
+        return;
+    }
+    if (decoder.messageName() == Messages::WebPage::TemplateTest::name()) {
+        CoreIPC::handleMessage<Messages::WebPage::TemplateTest>(decoder, this, &WebPage::templateTest);
         return;
     }
 #if PLATFORM(MAC)

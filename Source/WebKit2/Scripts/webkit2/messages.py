@@ -336,12 +336,36 @@ def sync_message_statement(receiver, message):
     return surround_in_condition(''.join(result), message.condition)
 
 
+def class_template_headers(template_string):
+    template_string = template_string.strip()
+
+    class_template_types = {
+        # FIXME: Remove the unprefixed versions.
+        'Vector': {'headers': ['<wtf/Vector.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'HashMap': {'headers': ['<wtf/HashMap.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+
+        'WTF::Vector': {'headers': ['<wtf/Vector.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'WTF::HashMap': {'headers': ['<wtf/HashMap.h>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+        'std::pair': {'headers': ['<utility>'], 'argument_coder_headers': ['"ArgumentCoders.h"']},
+    }
+
+    match = re.match('(?P<template_name>.+?)<(?P<parameter_string>.+)>', template_string)
+    if not match:
+        return {'header_infos':[], 'types':[template_string]}
+    header_infos = [class_template_types[match.groupdict()['template_name']]]
+    types = []
+
+    for parameter in parser.split_parameters_string(match.groupdict()['parameter_string']):
+        parameter_header_infos_and_types = class_template_headers(parameter)
+
+        header_infos += parameter_header_infos_and_types['header_infos'];
+        types += parameter_header_infos_and_types['types']
+
+    return {'header_infos':header_infos, 'types':types}
+
+
 def argument_coder_headers_for_type(type):
-    # Check for Vector.
-    match = re.search(r'Vector<(.+)>', type)
-    if match:
-        element_type = match.groups()[0].strip()
-        return ['"ArgumentCoders.h"'] + argument_coder_headers_for_type(element_type)
+    header_infos_and_types = class_template_headers(type)
 
     special_cases = {
         'WTF::String': '"ArgumentCoders.h"',
@@ -349,24 +373,25 @@ def argument_coder_headers_for_type(type):
         'WebKit::WebContextUserMessageEncoder': '"WebContextUserMessageCoders.h"',
     }
 
-    if type in special_cases:
-        return [special_cases[type]]
+    headers = []
+    for header_info in header_infos_and_types['header_infos']:
+        headers += header_info['argument_coder_headers']
 
-    split = type.split('::')
-    if len(split) < 2:
-        return []
-    if split[0] == 'WebCore':
-        return ['"WebCoreArgumentCoders.h"']
+    for type in header_infos_and_types['types']:
+        if type in special_cases:
+            headers.append(special_cases[type])
+            continue
 
-    return []
+        split = type.split('::')
+        if len(split) < 2:
+            continue
+        if split[0] == 'WebCore':
+            headers.append('"WebCoreArgumentCoders.h"')
 
+    return headers
 
 def headers_for_type(type):
-    # Check for Vector.
-    match = re.search(r'Vector<(.+)>', type)
-    if match:
-        element_type = match.groups()[0].strip()
-        return ['<wtf/Vector.h>'] + headers_for_type(element_type)
+    header_infos_and_types = class_template_headers(type)
 
     special_cases = {
         'WTF::String': ['<wtf/text/WTFString.h>'],
@@ -388,18 +413,28 @@ def headers_for_type(type):
         'WebKit::WebTouchEvent': ['"WebEvent.h"'],
         'WebKit::WebWheelEvent': ['"WebEvent.h"'],
     }
-    if type in special_cases:
-        return special_cases[type]
 
-    # We assume that we must include a header for a type iff it has a scope
-    # resolution operator (::).
-    split = type.split('::')
-    if len(split) < 2:
-        return []
-    if split[0] == 'WebKit' or split[0] == 'CoreIPC':
-        return ['"%s.h"' % split[1]]
-    return ['<%s/%s.h>' % tuple(split)]
+    headers = []
+    for header_info in header_infos_and_types['header_infos']:
+        headers += header_info['headers']
 
+    for type in header_infos_and_types['types']:
+        if type in special_cases:
+            headers += special_cases[type]
+            continue
+
+        # We assume that we must include a header for a type iff it has a scope
+        # resolution operator (::).
+        split = type.split('::')
+        if len(split) < 2:
+            continue
+
+        if split[0] == 'WebKit' or split[0] == 'CoreIPC':
+            headers.append('"%s.h"' % split[1])
+        else:
+            headers.append('<%s/%s.h>' % tuple(split))
+
+    return headers
 
 def generate_message_handler(file):
     receiver = parser.parse(file)
