@@ -9,17 +9,73 @@ Text before edit:
 
 Text after edit:
 1
-	2
+	|2
 3
 
 Text after undo:
 1
-2
+|2
 3
 
 Text after redo:
 1
-	2
+>	<2
 3
+
+
+Running: testConsecutiveCharactersAndNewLines
+Text before edit:
+function foo()
+{
+
+}
+
+Text after edit:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after first undo:
+function foo()
+{
+    bar();
+    baz();|
+}
+
+Text after second undo:
+function foo()
+{
+    bar();|
+}
+
+Text after third undo:
+function foo()
+{
+|
+}
+
+Text after first redo:
+function foo()
+{
+    bar()>;<
+}
+
+Text after second redo:
+function foo()
+{
+    bar();
+    baz()>;<
+}
+
+Text after third redo:
+function foo()
+{
+    bar();
+    baz();
+    foo()>;<
+}
 
 
