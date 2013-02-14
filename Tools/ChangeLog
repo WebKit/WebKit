@@ -1,3 +1,10 @@
+2013-02-13  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add separate DumpRenderTree VS2010 solution file.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj: Added property svn:ignore.
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree.sln: Added.
+
 2013-02-12  James Robinson  <jamesr@chromium.org>
 
         [chromium] Request WebLayerTreeView for DumpRenderTree via explicit testing path
