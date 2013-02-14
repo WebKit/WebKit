@@ -479,18 +479,6 @@ void InspectorInstrumentation::didFireTimerImpl(const InspectorInstrumentationCo
         timelineAgent->didFireTimer();
 }
 
-void InspectorInstrumentation::didBeginFrameImpl(InstrumentingAgents* instrumentingAgents)
-{
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didBeginFrame();
-}
-
-void InspectorInstrumentation::didCancelFrameImpl(InstrumentingAgents* instrumentingAgents)
-{
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didCancelFrame();
-}
-
 void InspectorInstrumentation::didInvalidateLayoutImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
@@ -561,18 +549,6 @@ void InspectorInstrumentation::didScrollLayerImpl(InstrumentingAgents* instrumen
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didScroll();
-}
-
-void InspectorInstrumentation::willCompositeImpl(InstrumentingAgents* instrumentingAgents)
-{
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->willComposite();
-}
-
-void InspectorInstrumentation::didCompositeImpl(InstrumentingAgents* instrumentingAgents)
-{
-    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
-        timelineAgent->didComposite();
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willRecalculateStyleImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)

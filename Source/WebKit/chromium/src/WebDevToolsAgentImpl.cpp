@@ -426,6 +426,30 @@ void WebDevToolsAgentImpl::didNavigate()
     ClientMessageLoopAdapter::didNavigate();
 }
 
+void WebDevToolsAgentImpl::didBeginFrame()
+{
+    if (InspectorController* ic = inspectorController())
+        ic->didBeginFrame();
+}
+
+void WebDevToolsAgentImpl::didCancelFrame()
+{
+    if (InspectorController* ic = inspectorController())
+        ic->didCancelFrame();
+}
+
+void WebDevToolsAgentImpl::willComposite()
+{
+    if (InspectorController* ic = inspectorController())
+        ic->willComposite();
+}
+
+void WebDevToolsAgentImpl::didComposite()
+{
+    if (InspectorController* ic = inspectorController())
+        ic->didComposite();
+}
+
 void WebDevToolsAgentImpl::didCreateScriptContext(WebFrameImpl* webframe, int worldId)
 {
     // Skip non main world contexts.

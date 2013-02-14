@@ -1783,12 +1783,14 @@ void WebViewImpl::didExitFullScreen()
 
 void WebViewImpl::instrumentBeginFrame()
 {
-    InspectorInstrumentation::didBeginFrame(m_page.get());
+    if (m_devToolsAgent)
+        m_devToolsAgent->didBeginFrame();
 }
 
 void WebViewImpl::instrumentCancelFrame()
 {
-    InspectorInstrumentation::didCancelFrame(m_page.get());
+    if (m_devToolsAgent)
+        m_devToolsAgent->didCancelFrame();
 }
 
 #if ENABLE(BATTERY_STATUS)
@@ -1822,7 +1824,8 @@ void WebViewImpl::willBeginFrame()
 
 void WebViewImpl::didBeginFrame()
 {
-    InspectorInstrumentation::didComposite(m_page.get());
+    if (m_devToolsAgent)
+        m_devToolsAgent->didComposite();
 
     if (m_continuousPaintingEnabled)
         ContinuousPainter::setNeedsDisplayRecursive(m_rootGraphicsLayer, m_pageOverlays.get());
@@ -4206,7 +4209,8 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
 
 void WebViewImpl::willCommit()
 {
-    InspectorInstrumentation::willComposite(m_page.get());
+    if (m_devToolsAgent)
+        m_devToolsAgent->willComposite();
 }
 
 void WebViewImpl::didCommit()

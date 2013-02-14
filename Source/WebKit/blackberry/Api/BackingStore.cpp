@@ -217,12 +217,16 @@ BackingStorePrivate::~BackingStorePrivate()
 
 void BackingStorePrivate::instrumentBeginFrame()
 {
-    WebCore::InspectorInstrumentation::didBeginFrame(WebPagePrivate::core(m_webPage));
+#if ENABLE(INSPECTOR)
+    WebPagePrivate::core(m_webPage)->inspectorController()->instrumentBeginFrame();
+#endif
 }
 
 void BackingStorePrivate::instrumentCancelFrame()
 {
-    WebCore::InspectorInstrumentation::didCancelFrame(WebPagePrivate::core(m_webPage));
+#if ENABLE(INSPECTOR)
+    WebPagePrivate::core(m_webPage)->inspectorController()->instrumentCancelFrame();
+#endif
 }
 
 bool BackingStorePrivate::isOpenGLCompositing() const

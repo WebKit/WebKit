@@ -1,3 +1,16 @@
+2013-02-08  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: expose did{Begin,Cancel}Frame() and {will,did}Composite() on WebDebToolsAgent
+        https://bugs.webkit.org/show_bug.cgi?id=109192
+
+        Reviewed by Pavel Feldman.
+
+        - invoke frame instrumentation methods on InspectorController, not on InspectorInstrumentation.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::instrumentBeginFrame):
+        (BlackBerry::WebKit::BackingStorePrivate::instrumentCancelFrame):
+
 2013-02-12  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Assume setScrollingOrZooming() to be called on the WebKit thread.

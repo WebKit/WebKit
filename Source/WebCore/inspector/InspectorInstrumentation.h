@@ -156,8 +156,6 @@ public:
     static void didCreateIsolatedContext(Frame*, ScriptState*, SecurityOrigin*);
     static InspectorInstrumentationCookie willFireTimer(ScriptExecutionContext*, int timerId);
     static void didFireTimer(const InspectorInstrumentationCookie&);
-    static void didBeginFrame(Page*);
-    static void didCancelFrame(Page*);
     static void didInvalidateLayout(Frame*);
     static InspectorInstrumentationCookie willLayout(Frame*);
     static void didLayout(const InspectorInstrumentationCookie&, RenderObject*);
@@ -361,8 +359,6 @@ private:
     static void didCreateIsolatedContextImpl(InstrumentingAgents*, Frame*, ScriptState*, SecurityOrigin*);
     static InspectorInstrumentationCookie willFireTimerImpl(InstrumentingAgents*, int timerId, ScriptExecutionContext*);
     static void didFireTimerImpl(const InspectorInstrumentationCookie&);
-    static void didBeginFrameImpl(InstrumentingAgents*);
-    static void didCancelFrameImpl(InstrumentingAgents*);
     static void didInvalidateLayoutImpl(InstrumentingAgents*, Frame*);
     static InspectorInstrumentationCookie willLayoutImpl(InstrumentingAgents*, Frame*);
     static void didLayoutImpl(const InspectorInstrumentationCookie&, RenderObject*);
@@ -373,8 +369,6 @@ private:
     static void didScrollLayerImpl(InstrumentingAgents*);
     static InspectorInstrumentationCookie willPaintImpl(InstrumentingAgents*, Frame*);
     static void didPaintImpl(const InspectorInstrumentationCookie&, GraphicsContext*, const LayoutRect&);
-    static void willCompositeImpl(InstrumentingAgents*);
-    static void didCompositeImpl(InstrumentingAgents*);
     static InspectorInstrumentationCookie willRecalculateStyleImpl(InstrumentingAgents*, Frame*);
     static void didRecalculateStyleImpl(const InspectorInstrumentationCookie&);
     static void didScheduleStyleRecalculationImpl(InstrumentingAgents*, Document*);
@@ -1017,28 +1011,6 @@ inline void InspectorInstrumentation::didFireTimer(const InspectorInstrumentatio
 #endif
 }
 
-inline void InspectorInstrumentation::didBeginFrame(Page* page)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        didBeginFrameImpl(instrumentingAgents);
-#else
-    UNUSED_PARAM(page);
-#endif
-}
-
-inline void InspectorInstrumentation::didCancelFrame(Page* page)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        didCancelFrameImpl(instrumentingAgents);
-#else
-    UNUSED_PARAM(page);
-#endif
-}
-
 inline void InspectorInstrumentation::didInvalidateLayout(Frame* frame)
 {
 #if ENABLE(INSPECTOR)
@@ -1153,28 +1125,6 @@ inline void InspectorInstrumentation::didScrollLayer(Frame* frame)
         didScrollLayerImpl(instrumentingAgents);
 #else
     UNUSED_PARAM(frame);
-#endif
-}
-
-inline void InspectorInstrumentation::willComposite(Page* page)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        willCompositeImpl(instrumentingAgents);
-#else
-    UNUSED_PARAM(page);
-#endif
-}
-
-inline void InspectorInstrumentation::didComposite(Page* page)
-{
-#if ENABLE(INSPECTOR)
-    FAST_RETURN_IF_NO_FRONTENDS(void());
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        didCompositeImpl(instrumentingAgents);
-#else
-    UNUSED_PARAM(page);
 #endif
 }
 

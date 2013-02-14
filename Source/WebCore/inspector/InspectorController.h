@@ -125,6 +125,11 @@ public:
     void willProcessTask();
     void didProcessTask();
 
+    void didBeginFrame();
+    void didCancelFrame();
+    void willComposite();
+    void didComposite();
+
     HashMap<String, size_t> processMemoryDistribution() const;
 
 private:

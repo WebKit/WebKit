@@ -1390,12 +1390,18 @@ PassRefPtr<NodeList> Internals::nodesFromRect(Document* document, int x, int y, 
 
 void Internals::emitInspectorDidBeginFrame()
 {
-    InspectorInstrumentation::didBeginFrame(contextDocument()->frame()->page());
+#if ENABLE(INSPECTOR)
+    InspectorController* inspectorController = contextDocument()->frame()->page()->inspectorController();
+    inspectorController->didBeginFrame();
+#endif
 }
 
 void Internals::emitInspectorDidCancelFrame()
 {
-    InspectorInstrumentation::didCancelFrame(contextDocument()->frame()->page());
+#if ENABLE(INSPECTOR)
+    InspectorController* inspectorController = contextDocument()->frame()->page()->inspectorController();
+    inspectorController->didCancelFrame();
+#endif
 }
 
 void Internals::setBatteryStatus(Document* document, const String& eventType, bool charging, double chargingTime, double dischargingTime, double level, ExceptionCode& ec)
