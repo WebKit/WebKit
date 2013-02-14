@@ -243,6 +243,7 @@ ScriptExecutionContext* RTCDataChannel::scriptExecutionContext() const
 void RTCDataChannel::stop()
 {
     m_stopped = true;
+    m_readyState = ReadyStateClosed;
     m_handler->setClient(0);
     m_scriptExecutionContext = 0;
 }
