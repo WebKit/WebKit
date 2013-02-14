@@ -516,11 +516,11 @@ void HTMLInputElement::updateType()
 
     if (didRespectHeightAndWidth != m_inputType->shouldRespectHeightAndWidthAttributes()) {
         ASSERT(elementData());
-        if (Attribute* height = getAttributeItem(heightAttr))
+        if (const Attribute* height = getAttributeItem(heightAttr))
             attributeChanged(heightAttr, height->value());
-        if (Attribute* width = getAttributeItem(widthAttr))
+        if (const Attribute* width = getAttributeItem(widthAttr))
             attributeChanged(widthAttr, width->value());
-        if (Attribute* align = getAttributeItem(alignAttr))
+        if (const Attribute* align = getAttributeItem(alignAttr))
             attributeChanged(alignAttr, align->value());
     }
 

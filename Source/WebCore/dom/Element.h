@@ -285,7 +285,6 @@ public:
     size_t attributeCount() const;
     const Attribute* attributeItem(unsigned index) const;
     const Attribute* getAttributeItem(const QualifiedName&) const;
-    Attribute* getAttributeItem(const QualifiedName&);
     size_t getAttributeItemIndex(const QualifiedName& name) const { return elementData()->getAttributeItemIndex(name); }
     size_t getAttributeItemIndex(const AtomicString& name, bool shouldIgnoreAttributeCase) const { return elementData()->getAttributeItemIndex(name, shouldIgnoreAttributeCase); }
 
@@ -902,12 +901,6 @@ inline const Attribute* Element::getAttributeItem(const QualifiedName& name) con
 {
     ASSERT(elementData());
     return elementData()->getAttributeItem(name);
-}
-
-inline Attribute* Element::getAttributeItem(const QualifiedName& name)
-{
-    ASSERT(elementData());
-    return ensureUniqueElementData()->getAttributeItem(name);
 }
 
 inline void Element::updateInvalidAttributes() const

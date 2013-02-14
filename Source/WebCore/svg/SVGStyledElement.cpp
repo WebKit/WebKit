@@ -400,7 +400,7 @@ PassRefPtr<CSSValue> SVGStyledElement::getPresentationAttribute(const String& na
         return 0;
 
     QualifiedName attributeName(nullAtom, name, nullAtom);
-    Attribute* attr = getAttributeItem(attributeName);
+    const Attribute* attr = getAttributeItem(attributeName);
     if (!attr)
         return 0;
 

@@ -211,7 +211,7 @@ Attribute& Attr::elementAttribute()
 {
     ASSERT(m_element);
     ASSERT(m_element->elementData());
-    return *m_element->getAttributeItem(qualifiedName());
+    return *m_element->ensureUniqueElementData()->getAttributeItem(qualifiedName());
 }
 
 void Attr::detachFromElementWithValue(const AtomicString& value)
