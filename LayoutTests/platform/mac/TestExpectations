@@ -990,6 +990,7 @@ webgl/conformance/glsl/misc/shader-with-global-variable-precision-mismatch.html 
 webgl/conformance/glsl/misc/shader-with-short-circuiting-operators.html [ Skip ]
 webgl/conformance/glsl/variables/gl-pointcoord.html [ Skip ]
 webgl/conformance/glsl/misc/shaders-with-varyings.html [ Skip ]
+webgl/conformance/limits/gl-max-texture-dimensions.html [ Skip ]
 webgl/conformance/more/conformance/quickCheckAPI-A.html [ Skip ]
 webgl/conformance/more/conformance/quickCheckAPI-B1.html [ Skip ]
 webgl/conformance/more/conformance/quickCheckAPI-B2.html [ Skip ]
