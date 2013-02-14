@@ -393,6 +393,7 @@ void CoordinatedGraphicsScene::prepareContentBackingStore(GraphicsLayer* graphic
     }
 
     createBackingStoreIfNeeded(graphicsLayer);
+    resetBackingStoreSizeToLayerSize(graphicsLayer);
 }
 
 void CoordinatedGraphicsScene::createBackingStoreIfNeeded(GraphicsLayer* graphicsLayer)
@@ -401,7 +402,6 @@ void CoordinatedGraphicsScene::createBackingStoreIfNeeded(GraphicsLayer* graphic
         return;
 
     RefPtr<CoordinatedBackingStore> backingStore(CoordinatedBackingStore::create());
-    backingStore->setSize(graphicsLayer->size());
     m_backingStores.add(graphicsLayer, backingStore);
     toGraphicsLayerTextureMapper(graphicsLayer)->setBackingStore(backingStore);
 }
@@ -420,6 +420,7 @@ void CoordinatedGraphicsScene::resetBackingStoreSizeToLayerSize(GraphicsLayer* g
     RefPtr<CoordinatedBackingStore> backingStore = m_backingStores.get(graphicsLayer);
     ASSERT(backingStore);
     backingStore->setSize(graphicsLayer->size());
+    m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
 void CoordinatedGraphicsScene::createTile(CoordinatedLayerID layerID, uint32_t tileID, float scale)
@@ -428,7 +429,6 @@ void CoordinatedGraphicsScene::createTile(CoordinatedLayerID layerID, uint32_t t
     RefPtr<CoordinatedBackingStore> backingStore = m_backingStores.get(layer);
     ASSERT(backingStore);
     backingStore->createTile(tileID, scale);
-    resetBackingStoreSizeToLayerSize(layer);
 }
 
 void CoordinatedGraphicsScene::removeTile(CoordinatedLayerID layerID, uint32_t tileID)
@@ -439,7 +439,6 @@ void CoordinatedGraphicsScene::removeTile(CoordinatedLayerID layerID, uint32_t t
         return;
 
     backingStore->removeTile(tileID);
-    resetBackingStoreSizeToLayerSize(layer);
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
@@ -453,7 +452,6 @@ void CoordinatedGraphicsScene::updateTile(CoordinatedLayerID layerID, uint32_t t
     ASSERT(it != m_surfaces.end());
 
     backingStore->updateTile(tileID, update.sourceRect, update.tileRect, it->value, update.offset);
-    resetBackingStoreSizeToLayerSize(layer);
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 

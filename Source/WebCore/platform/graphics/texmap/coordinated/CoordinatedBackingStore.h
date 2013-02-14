@@ -77,6 +77,8 @@ private:
     typedef HashMap<uint32_t, CoordinatedBackingStoreTile> CoordinatedBackingStoreTileMap;
     CoordinatedBackingStoreTileMap m_tiles;
     HashSet<uint32_t> m_tilesToRemove;
+    // FIXME: m_pendingSize should be removed after the following bug is fixed: https://bugs.webkit.org/show_bug.cgi?id=108294
+    FloatSize m_pendingSize;
     FloatSize m_size;
     float m_scale;
 };
