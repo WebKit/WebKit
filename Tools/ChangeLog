@@ -1,3 +1,11 @@
+2013-02-14  Roger Fong  <roger_fong@apple.com>
+
+        Add eol-style=native to solution files. Add a new solution file.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/DumpRenderTree.sln: Added property svn:eol-style.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj: Added property svn:eol-style. Modified property svn:ignore.
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.sln: Added.
+
 2013-02-14  Mario Sanchez Prada  <mario.prada@samsung.com>
 
         [GTK] Missing call to g_object_ref while retrieving accessible table cells
