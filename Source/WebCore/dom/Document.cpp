@@ -1884,9 +1884,6 @@ void Document::updateLayout()
 
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    if (renderView())
-        renderView()->markQuoteContainingBlocksForLayoutIfNeeded();
-
     // Only do a layout if changes have occurred that make it necessary.      
     if (frameView && renderer() && (frameView->layoutPending() || renderer()->needsLayout()))
         frameView->layout();
@@ -2439,10 +2436,7 @@ void Document::implicitClose()
     m_overMinimumLayoutThreshold = true;
     if (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) {
         updateStyleIfNeeded();
-
-        if (renderView())
-            renderView()->markQuoteContainingBlocksForLayoutIfNeeded();
-
+        
         // Always do a layout after loading if needed.
         if (view() && renderObject && (!renderObject->firstChild() || renderObject->needsLayout()))
             view()->layout();
