@@ -1,3 +1,14 @@
+2013-02-13  Dean Jackson  <dino@apple.com>
+
+        PlugIn Autostart should expire in 30 days, not half a day
+        https://bugs.webkit.org/show_bug.cgi?id=109767
+
+        Reviewed by Brian Weinstein.
+
+        We forgot to multiply by 60 seconds in a minute.
+
+        * UIProcess/Plugins/PlugInAutoStartProvider.cpp:
+
 2013-02-13  Anders Carlsson  <andersca@apple.com>
 
         Message generation should handle nested templates
