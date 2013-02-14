@@ -34,7 +34,6 @@
 namespace WebCore {
 
 class HTMLParserOptions;
-class HTMLToken;
 class HTMLTokenizer;
 class SegmentedString;
 
@@ -49,14 +48,31 @@ public:
     void setPredictedBaseElementURL(const KURL& url) { m_predictedBaseElementURL = url; }
 
 private:
-    bool processStyleCharacters(const HTMLToken&);
+    enum TagId {
+        // These tags are scanned by the StartTagScanner.
+        ImgTagId,
+        InputTagId,
+        LinkTagId,
+        ScriptTagId,
+
+        // These tags are not scanned by the StartTagScanner.
+        UnknownTagId,
+        StyleTagId,
+        BaseTagId,
+        TemplateTagId,
+    };
+
+    class StartTagScanner;
+
+    static TagId identifierFor(const AtomicString& tagName);
+    static String inititatorFor(TagId);
 
 #if ENABLE(TEMPLATE_ELEMENT)
-    bool processPossibleTemplateTag(const AtomicString& tagName, const HTMLToken&);
+    bool processPossibleTemplateTag(TagId, HTMLToken::Type);
 #endif
 
-    bool processPossibleStyleTag(const AtomicString& tagName, const HTMLToken&);
-    bool processPossibleBaseTag(const AtomicString& tagName, const HTMLToken&);
+    bool processPossibleStyleTag(TagId, HTMLToken::Type);
+    bool processPossibleBaseTag(TagId, const HTMLToken&);
 
     CSSPreloadScanner m_cssScanner;
     KURL m_documentURL;
