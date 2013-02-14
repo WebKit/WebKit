@@ -27,14 +27,14 @@
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
-    <Import Project="..\..\..\..\..\WebKitLibraries\win\tools\vsprops\release.props" />
-    <Import Project="..\..\..\..\..\WebKitLibraries\win\tools\vsprops\releaseproduction.props" />
+    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\common.props" />
+    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\release.props" />
+    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\releaseproduction.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\..\WebKitLibraries\win\tools\vsprops\common.props" />
-    <Import Project="..\..\..\..\..\WebKitLibraries\win\tools\vsprops\debug.props" />
+    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\common.props" />
+    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\debug.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>

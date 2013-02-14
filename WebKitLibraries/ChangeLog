@@ -1,3 +1,16 @@
+2013-02-13  Roger Fong  <roger_fong@apple.com>
+
+        Move all .props files from WebKitLibraries folder to WebKit Source folder.
+        https://bugs.webkit.org/show_bug.cgi?id=109761
+
+        Reviewed by Brent Fulgham.
+
+        * win/tools/vsprops/FeatureDefines.props: Removed.
+        * win/tools/vsprops/common.props: Removed.
+        * win/tools/vsprops/debug.props: Removed.
+        * win/tools/vsprops/release.props: Removed.
+        * win/tools/vsprops/releaseproduction.props: Removed.
+
 2013-02-07  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. More VS2010 WebKit solution touchups.
