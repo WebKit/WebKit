@@ -191,44 +191,21 @@ private:
     bool m_inputIsImage;
 };
 
-HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL)
-    : m_tokenizer(HTMLTokenizer::create(options))
+TokenPreloadScanner::TokenPreloadScanner(const KURL& documentURL)
+    : m_documentURL(documentURL)
     , m_inStyle(false)
-    , m_documentURL(documentURL)
 #if ENABLE(TEMPLATE_ELEMENT)
     , m_templateCount(0)
 #endif
 {
 }
 
-void HTMLPreloadScanner::appendToEnd(const SegmentedString& source)
+TokenPreloadScanner::~TokenPreloadScanner()
 {
-    m_source.append(source);
-}
-
-// This function exists for convenience on the main thread and is not used by the background-thread preload scanner.
-void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const KURL& startingBaseElementURL)
-{
-    ASSERT(isMainThread()); // HTMLTokenizer::updateStateFor only works on the main thread.
-    // When we start scanning, our best prediction of the baseElementURL is the real one!
-    if (!startingBaseElementURL.isEmpty())
-        m_predictedBaseElementURL = startingBaseElementURL;
-
-    Vector<OwnPtr<PreloadRequest> > requests;
-    // Note: m_token is only used from this function and for the main thread.
-    // All other functions are passed a token.
-    while (m_tokenizer->nextToken(m_source, m_token)) {
-        if (isStartTag(m_token))
-            m_tokenizer->updateStateFor(AtomicString(m_token.name()));
-        processToken(m_token, requests);
-        m_token.clear();
-    }
-    for (size_t i = 0; i < requests.size(); i++)
-        preloader->preload(requests[i].release());
 }
 
 #if ENABLE(TEMPLATE_ELEMENT)
-bool HTMLPreloadScanner::processPossibleTemplateTag(const AtomicString& tagName, const HTMLToken& token)
+bool TokenPreloadScanner::processPossibleTemplateTag(const AtomicString& tagName, const HTMLToken& token)
 {
     if (isStartOrEndTag(token) && tagName == templateTag) {
         if (isStartTag(token))
@@ -242,7 +219,7 @@ bool HTMLPreloadScanner::processPossibleTemplateTag(const AtomicString& tagName,
 }
 #endif
 
-bool HTMLPreloadScanner::processPossibleStyleTag(const AtomicString& tagName, const HTMLToken& token)
+bool TokenPreloadScanner::processPossibleStyleTag(const AtomicString& tagName, const HTMLToken& token)
 {
     ASSERT(isStartOrEndTag(token));
     if (tagName != styleTag)
@@ -256,7 +233,7 @@ bool HTMLPreloadScanner::processPossibleStyleTag(const AtomicString& tagName, co
     return true;
 }
 
-bool HTMLPreloadScanner::processPossibleBaseTag(const AtomicString& tagName, const HTMLToken& token)
+bool TokenPreloadScanner::processPossibleBaseTag(const AtomicString& tagName, const HTMLToken& token)
 {
     ASSERT(isStartTag(token));
     if (tagName != baseTag)
@@ -277,7 +254,7 @@ bool HTMLPreloadScanner::processPossibleBaseTag(const AtomicString& tagName, con
     return true;
 }
 
-void HTMLPreloadScanner::processToken(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
+void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
 {
     // <style> is the only place we search for urls in non-start/end-tag tokens.
     if (m_inStyle) {
@@ -286,6 +263,7 @@ void HTMLPreloadScanner::processToken(const HTMLToken& token, Vector<OwnPtr<Prel
         const HTMLToken::DataVector& characters = token.characters();
         return m_cssScanner.scan(characters.begin(), characters.end(), requests);
     }
+
     if (!isStartOrEndTag(token))
         return;
 
@@ -305,6 +283,40 @@ void HTMLPreloadScanner::processToken(const HTMLToken& token, Vector<OwnPtr<Prel
     OwnPtr<PreloadRequest> request =  scanner.createPreloadRequest(m_predictedBaseElementURL);
     if (request)
         requests.append(request.release());
+}
+
+HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL)
+    : m_scanner(documentURL)
+    , m_tokenizer(HTMLTokenizer::create(options))
+{
+}
+
+HTMLPreloadScanner::~HTMLPreloadScanner()
+{
+}
+
+void HTMLPreloadScanner::appendToEnd(const SegmentedString& source)
+{
+    m_source.append(source);
+}
+
+void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const KURL& startingBaseElementURL)
+{
+    ASSERT(isMainThread()); // HTMLTokenizer::updateStateFor only works on the main thread.
+
+    // When we start scanning, our best prediction of the baseElementURL is the real one!
+    if (!startingBaseElementURL.isEmpty())
+        m_scanner.setPredictedBaseElementURL(startingBaseElementURL);
+
+    Vector<OwnPtr<PreloadRequest> > requests;
+    while (m_tokenizer->nextToken(m_source, m_token)) {
+        if (isStartTag(m_token))
+            m_tokenizer->updateStateFor(AtomicString(m_token.name()));
+        m_scanner.scan(m_token, requests);
+        m_token.clear();
+    }
+    for (size_t i = 0; i < requests.size(); i++)
+        preloader->preload(requests[i].release());
 }
 
 }

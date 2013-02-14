@@ -38,18 +38,17 @@ class HTMLToken;
 class HTMLTokenizer;
 class SegmentedString;
 
-class HTMLPreloadScanner {
-    WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
+class TokenPreloadScanner {
+    WTF_MAKE_NONCOPYABLE(TokenPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
 public:
-    // HTMLPreloadScanner intentionally does not have a pointer to Document.
-    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL);
+    explicit TokenPreloadScanner(const KURL& documentURL);
+    ~TokenPreloadScanner();
 
-    void appendToEnd(const SegmentedString&);
-    void scan(HTMLResourcePreloader*, const KURL& documentBaseElementURL);
+    void scan(const HTMLToken&, Vector<OwnPtr<PreloadRequest> >& requests);
+
+    void setPredictedBaseElementURL(const KURL& url) { m_predictedBaseElementURL = url; }
 
 private:
-    void processToken(const HTMLToken&, Vector<OwnPtr<PreloadRequest> >& requests);
-
     bool processStyleCharacters(const HTMLToken&);
 
 #if ENABLE(TEMPLATE_ELEMENT)
@@ -59,17 +58,30 @@ private:
     bool processPossibleStyleTag(const AtomicString& tagName, const HTMLToken&);
     bool processPossibleBaseTag(const AtomicString& tagName, const HTMLToken&);
 
-    SegmentedString m_source;
     CSSPreloadScanner m_cssScanner;
-    HTMLToken m_token;
-    OwnPtr<HTMLTokenizer> m_tokenizer;
-    bool m_inStyle;
     KURL m_documentURL;
     KURL m_predictedBaseElementURL;
+    bool m_inStyle;
 
 #if ENABLE(TEMPLATE_ELEMENT)
     size_t m_templateCount;
 #endif
+};
+
+class HTMLPreloadScanner {
+    WTF_MAKE_NONCOPYABLE(HTMLPreloadScanner); WTF_MAKE_FAST_ALLOCATED;
+public:
+    HTMLPreloadScanner(const HTMLParserOptions&, const KURL& documentURL);
+    ~HTMLPreloadScanner();
+
+    void appendToEnd(const SegmentedString&);
+    void scan(HTMLResourcePreloader*, const KURL& documentBaseElementURL);
+
+private:
+    TokenPreloadScanner m_scanner;
+    SegmentedString m_source;
+    HTMLToken m_token;
+    OwnPtr<HTMLTokenizer> m_tokenizer;
 };
 
 }
