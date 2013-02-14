@@ -53,51 +53,104 @@ static bool isStartOrEndTag(const HTMLToken& token)
     return token.type() == HTMLToken::EndTag || isStartTag(token);
 }
 
+enum HTMLTagIdentifier {
+    ImgTagId,
+    InputTagId,
+    LinkTagId,
+    ScriptTagId,
+    UnknownTagId,
+};
+
+static HTMLTagIdentifier identifierFor(const AtomicString& tagName)
+{
+    if (tagName == imgTag)
+        return ImgTagId;
+    if (tagName == inputTag)
+        return InputTagId;
+    if (tagName == linkTag)
+        return LinkTagId;
+    if (tagName == scriptTag)
+        return ScriptTagId;
+    return UnknownTagId;
+}
+
+static String inititatorFor(HTMLTagIdentifier tagId)
+{
+    switch (tagId) {
+    case ImgTagId:
+        return "img";
+    case InputTagId:
+        return "input";
+    case LinkTagId:
+        return "link";
+    case ScriptTagId:
+        return "script";
+    case UnknownTagId:
+        ASSERT_NOT_REACHED();
+        return "unknown";
+    }
+    ASSERT_NOT_REACHED();
+    return "unknown";
+}
+
 class StartTagScanner {
 public:
-    StartTagScanner(const AtomicString& tagName, const HTMLToken::AttributeList& attributes)
-        : m_tagName(tagName)
+    explicit StartTagScanner(HTMLTagIdentifier tagId)
+        : m_tagId(tagId)
         , m_linkIsStyleSheet(false)
         , m_linkMediaAttributeIsScreen(true)
         , m_inputIsImage(false)
     {
-        processAttributes(attributes);
     }
 
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
-        if (m_tagName != imgTag
-            && m_tagName != inputTag
-            && m_tagName != linkTag
-            && m_tagName != scriptTag)
+        ASSERT(isMainThread());
+
+        if (m_tagId == UnknownTagId)
             return;
 
-        for (HTMLToken::AttributeList::const_iterator iter = attributes.begin();
-             iter != attributes.end(); ++iter) {
+        for (HTMLToken::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter) {
             AtomicString attributeName(iter->name);
             String attributeValue = StringImpl::create8BitIfPossible(iter->value);
+            processAttribute(attributeName, attributeValue);
+        }
+    }
 
-            if (attributeName == charsetAttr)
-                m_charset = attributeValue;
+    PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL)
+    {
+        if (!shouldPreload())
+            return nullptr;
 
-            if (m_tagName == scriptTag || m_tagName == imgTag) {
-                if (attributeName == srcAttr)
-                    setUrlToLoad(attributeValue);
-                else if (attributeName == crossoriginAttr && !attributeValue.isNull())
-                    m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
-            } else if (m_tagName == linkTag) {
-                if (attributeName == hrefAttr)
-                    setUrlToLoad(attributeValue);
-                else if (attributeName == relAttr)
-                    m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
-                else if (attributeName == mediaAttr)
-                    m_linkMediaAttributeIsScreen = linkMediaAttributeIsScreen(attributeValue);
-            } else if (m_tagName == inputTag) {
-                if (attributeName == srcAttr)
-                    setUrlToLoad(attributeValue);
-                else if (attributeName == typeAttr)
-                    m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
-            }
+        OwnPtr<PreloadRequest> request = PreloadRequest::create(inititatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType());
+        request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
+        request->setCharset(charset());
+        return request.release();
+    }
+
+private:
+    void processAttribute(const String& attributeName, const String& attributeValue)
+    {
+        if (threadSafeMatch(attributeName, charsetAttr))
+            m_charset = attributeValue;
+
+        if (m_tagId == ScriptTagId || m_tagId == ImgTagId) {
+            if (threadSafeMatch(attributeName, srcAttr))
+                setUrlToLoad(attributeValue);
+            else if (threadSafeMatch(attributeName, crossoriginAttr) && !attributeValue.isNull())
+                m_crossOriginMode = stripLeadingAndTrailingHTMLSpaces(attributeValue);
+        } else if (m_tagId == LinkTagId) {
+            if (threadSafeMatch(attributeName, hrefAttr))
+                setUrlToLoad(attributeValue);
+            else if (threadSafeMatch(attributeName, relAttr))
+                m_linkIsStyleSheet = relAttributeIsStyleSheet(attributeValue);
+            else if (threadSafeMatch(attributeName, mediaAttr))
+                m_linkMediaAttributeIsScreen = linkMediaAttributeIsScreen(attributeValue);
+        } else if (m_tagId == InputTagId) {
+            if (threadSafeMatch(attributeName, srcAttr))
+                setUrlToLoad(attributeValue);
+            else if (threadSafeMatch(attributeName, typeAttr))
+                m_inputIsImage = equalIgnoringCase(attributeValue, InputTypeNames::image());
         }
     }
 
@@ -132,18 +185,18 @@ public:
     const String& charset() const
     {
         // FIXME: Its not clear that this if is needed, the loader probably ignores charset for image requests anyway.
-        if (m_tagName == imgTag)
+        if (m_tagId == ImgTagId)
             return emptyString();
         return m_charset;
     }
 
     CachedResource::Type resourceType() const
     {
-        if (m_tagName == scriptTag)
+        if (m_tagId == ScriptTagId)
             return CachedResource::Script;
-        if (m_tagName == imgTag || (m_tagName == inputTag && m_inputIsImage))
+        if (m_tagId == ImgTagId || (m_tagId == InputTagId && m_inputIsImage))
             return CachedResource::ImageResource;
-        if (m_tagName == linkTag && m_linkIsStyleSheet && m_linkMediaAttributeIsScreen)
+        if (m_tagId == LinkTagId && m_linkIsStyleSheet && m_linkMediaAttributeIsScreen)
             return CachedResource::CSSStyleSheet;
         ASSERT_NOT_REACHED();
         return CachedResource::RawResource;
@@ -154,35 +207,21 @@ public:
         if (m_urlToLoad.isEmpty())
             return false;
 
-        if (m_tagName == linkTag && (!m_linkIsStyleSheet || !m_linkMediaAttributeIsScreen))
+        if (m_tagId == LinkTagId && (!m_linkIsStyleSheet || !m_linkMediaAttributeIsScreen))
             return false;
 
-        if (m_tagName == inputTag && !m_inputIsImage)
+        if (m_tagId == InputTagId && !m_inputIsImage)
             return false;
+
         return true;
     }
-
-    PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL)
-    {
-        if (!shouldPreload())
-            return nullptr;
-
-        OwnPtr<PreloadRequest> request = PreloadRequest::create(m_tagName, m_urlToLoad, predictedBaseURL, resourceType());
-        request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
-        request->setCharset(charset());
-        return request.release();
-    }
-
-    const AtomicString& tagName() const { return m_tagName; }
-
-private:
 
     bool crossOriginModeAllowsCookies()
     {
         return m_crossOriginMode.isNull() || equalIgnoringCase(m_crossOriginMode, "use-credentials");
     }
 
-    AtomicString m_tagName;
+    HTMLTagIdentifier m_tagId;
     String m_urlToLoad;
     String m_charset;
     String m_crossOriginMode;
@@ -279,7 +318,8 @@ void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequ
     if (processPossibleBaseTag(tagName, token))
         return;
 
-    StartTagScanner scanner(tagName, token.attributes());
+    StartTagScanner scanner(identifierFor(tagName));
+    scanner.processAttributes(token.attributes());
     OwnPtr<PreloadRequest> request =  scanner.createPreloadRequest(m_predictedBaseElementURL);
     if (request)
         requests.append(request.release());
