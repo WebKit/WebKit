@@ -297,6 +297,32 @@ namespace WTF {
     
     template<typename P> struct DefaultHash<RetainPtr<P> > { typedef PtrHash<RetainPtr<P> > Hash; };
 
+    template <typename P>
+    struct RetainPtrObjectHashTraits : GenericHashTraits<RetainPtr<P> > {
+        static const bool emptyValueIsZero = true;
+        static const RetainPtr<P>& emptyValue()
+        {
+            static RetainPtr<P>& null = *(new RetainPtr<P>);
+            return null;
+        }
+        static const bool needsDestruction = true;
+        static void constructDeletedValue(RetainPtr<P>& slot) { new (&slot) RetainPtr<P>(HashTableDeletedValue); }
+        static bool isDeletedValue(const RetainPtr<P>& value) { return value.isHashTableDeletedValue(); }
+    };
+
+    template <typename P>
+    struct RetainPtrObjectHash {
+        static unsigned hash(const RetainPtr<P>& o)
+        {
+            ASSERT_WITH_MESSAGE(o.get(), "attempt to use null RetainPtr in HashTable");
+            return CFHash(o.get());
+        }
+        static bool equal(const RetainPtr<P>& a, const RetainPtr<P>& b)
+        {
+            return CFEqual(a.get(), b.get());
+        }
+        static const bool safeToCompareToEmptyOrDeleted = false;
+    };
 } // namespace WTF
 
 using WTF::AdoptCF;
