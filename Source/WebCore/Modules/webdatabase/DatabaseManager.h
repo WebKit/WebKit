@@ -104,11 +104,6 @@ public:
     bool deleteOrigin(SecurityOrigin*);
     bool deleteDatabase(SecurityOrigin*, const String& name);
 
-    // From a secondary thread, must be thread safe with its data
-    void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name);
-
-    void databaseChanged(DatabaseBackend*);
-
 #else // PLATFORM(CHROMIUM)
     void closeDatabasesImmediately(const String& originIdentifier, const String& name);
 #endif // PLATFORM(CHROMIUM)

@@ -31,20 +31,79 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "SQLTransactionBackend.h"
+#include "SQLCallbackWrapper.h"
+#include "SQLStatement.h"
+#include "SQLTransactionStateMachine.h"
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class SQLTransaction : public SQLTransactionBackend {
-public:
-    static PassRefPtr<SQLTransaction> create(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
-                                             PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>, bool readOnly = false);
+class Database;
+class SQLError;
+class SQLStatementCallback;
+class SQLStatementErrorCallback;
+class SQLTransactionBackend;
+class SQLTransactionCallback;
+class SQLTransactionErrorCallback;
+class SQLValue;
+class VoidCallback;
 
-    static SQLTransaction* from(SQLTransactionBackend*);
+class SQLTransaction : public SQLTransactionStateMachine<SQLTransaction> {
+public:
+    static PassRefPtr<SQLTransaction> create(Database*, PassRefPtr<SQLTransactionCallback>,
+        PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionErrorCallback>,
+        bool readOnly);
+
+    void setBackend(SQLTransactionBackend*);
+
+    void performPendingCallback();
+
+    void executeSQL(const String& sqlStatement, const Vector<SQLValue>& arguments,
+        PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, ExceptionCode&);
+
+    Database* database() { return m_database.get(); }
+
+    bool hasCallback() const { return m_callbackWrapper.hasCallback(); }
+    bool hasSuccessCallback() const { return m_successCallbackWrapper.hasCallback(); }
+    bool hasErrorCallback() const { return m_errorCallbackWrapper.hasCallback(); }
 
 private:
-    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
-                   PassRefPtr<VoidCallback>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
+    SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>,
+        PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionErrorCallback>,
+        bool readOnly);
+
+    bool checkAndHandleClosedOrInterruptedDatabase();
+    void clearCallbackWrappers();
+
+    // State Machine functions:
+    virtual StateFunction stateFunctionFor(SQLTransactionState);
+    void requestTransitToState(SQLTransactionState);
+
+    // State functions:
+    SQLTransactionState deliverTransactionCallback();
+    SQLTransactionState deliverTransactionErrorCallback();
+    SQLTransactionState deliverStatementCallback();
+    SQLTransactionState deliverQuotaIncreaseCallback();
+    SQLTransactionState deliverSuccessCallback();
+
+    SQLTransactionState unreachableState();
+    SQLTransactionState sendToBackendState();
+
+    SQLTransactionState nextStateForTransactionError();
+
+    RefPtr<Database> m_database;
+    RefPtr<SQLTransactionBackend> m_backend;
+    SQLCallbackWrapper<SQLTransactionCallback> m_callbackWrapper;
+    SQLCallbackWrapper<VoidCallback> m_successCallbackWrapper;
+    SQLCallbackWrapper<SQLTransactionErrorCallback> m_errorCallbackWrapper;
+
+    bool m_executeSqlAllowed;
+    RefPtr<SQLError> m_transactionError;
+
+    bool m_readOnly;
+
+    friend class SQLTransactionBackend;
 };
 
 } // namespace WebCore

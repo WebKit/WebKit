@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -43,11 +43,11 @@ ChangeVersionWrapper::ChangeVersionWrapper(const String& oldVersion, const Strin
 {
 }
 
-bool ChangeVersionWrapper::performPreflight(SQLTransaction* transaction)
+bool ChangeVersionWrapper::performPreflight(SQLTransactionBackend* transaction)
 {
     ASSERT(transaction && transaction->database());
 
-    Database* database = transaction->database();
+    DatabaseBackendAsync* database = transaction->database();
 
     String actualVersion;
     if (!database->getVersionFromDatabase(actualVersion)) {
@@ -67,11 +67,11 @@ bool ChangeVersionWrapper::performPreflight(SQLTransaction* transaction)
     return true;
 }
 
-bool ChangeVersionWrapper::performPostflight(SQLTransaction* transaction)
+bool ChangeVersionWrapper::performPostflight(SQLTransactionBackend* transaction)
 {
     ASSERT(transaction && transaction->database());
 
-    Database* database = transaction->database();
+    DatabaseBackendAsync* database = transaction->database();
 
     if (!database->setVersionInDatabase(m_newVersion)) {
         int sqliteError = database->sqliteDatabase().lastError();
@@ -87,7 +87,7 @@ bool ChangeVersionWrapper::performPostflight(SQLTransaction* transaction)
     return true;
 }
 
-void ChangeVersionWrapper::handleCommitFailedAfterPostflight(SQLTransaction* transaction)
+void ChangeVersionWrapper::handleCommitFailedAfterPostflight(SQLTransactionBackend* transaction)
 {
     transaction->database()->setCachedVersion(m_oldVersion);
 }

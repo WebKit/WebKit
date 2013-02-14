@@ -1455,6 +1455,7 @@ HEADERS += \
     Modules/proximity/DeviceProximityEvent.h \
     \
     Modules/webdatabase/AbstractDatabaseServer.h \
+    Modules/webdatabase/ChangeVersionData.h \
     Modules/webdatabase/ChangeVersionWrapper.h \
     Modules/webdatabase/DOMWindowWebDatabase.h \
     Modules/webdatabase/DatabaseAuthorizer.h \
@@ -1485,6 +1486,8 @@ HEADERS += \
     Modules/webdatabase/SQLTransactionBackendSync.h \
     Modules/webdatabase/SQLTransactionClient.h \
     Modules/webdatabase/SQLTransactionCoordinator.h \
+    Modules/webdatabase/SQLTransactionState.h \
+    Modules/webdatabase/SQLTransactionStateMachine.h \
     Modules/webdatabase/SQLTransactionSync.h \
     Modules/webdatabase/SQLTransactionSyncCallback.h \
     Modules/webdatabase/WorkerContextWebDatabase.h \
@@ -3074,6 +3077,7 @@ enable?(SQL_DATABASE) {
         Modules/webdatabase/SQLTransactionBackendSync.cpp \
         Modules/webdatabase/SQLTransactionClient.cpp \
         Modules/webdatabase/SQLTransactionCoordinator.cpp \
+        Modules/webdatabase/SQLTransactionStateMachine.cpp \
         Modules/webdatabase/SQLTransactionSync.cpp \
 
     SOURCES += \

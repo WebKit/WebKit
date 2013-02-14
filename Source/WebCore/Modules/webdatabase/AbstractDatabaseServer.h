@@ -74,10 +74,6 @@ public:
     virtual bool deleteOrigin(SecurityOrigin*) = 0;
     virtual bool deleteDatabase(SecurityOrigin*, const String& name) = 0;
 
-    // From a secondary thread, must be thread safe with its data
-    virtual void scheduleNotifyDatabaseChanged(SecurityOrigin*, const String& name) = 0;
-    virtual void databaseChanged(DatabaseBackend*) = 0;
-
 #else // PLATFORM(CHROMIUM)
     virtual void closeDatabasesImmediately(const String& originIdentifier, const String& name) = 0;
 #endif // PLATFORM(CHROMIUM)

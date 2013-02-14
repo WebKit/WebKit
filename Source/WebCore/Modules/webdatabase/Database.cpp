@@ -31,7 +31,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "ChangeVersionWrapper.h"
+#include "ChangeVersionData.h"
 #include "CrossThreadTask.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseCallback.h"
@@ -45,9 +45,8 @@
 #include "NotImplemented.h"
 #include "Page.h"
 #include "SQLError.h"
+#include "SQLTransaction.h"
 #include "SQLTransactionCallback.h"
-#include "SQLTransactionClient.h"
-#include "SQLTransactionCoordinator.h"
 #include "SQLTransactionErrorCallback.h"
 #include "SQLiteStatement.h"
 #include "ScriptExecutionContext.h"
@@ -68,6 +67,10 @@ namespace WebCore {
 
 PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<DatabaseBackend> backend)
 {
+    // FIXME: Currently, we're only simulating the backend by return the
+    // frontend database as its own the backend. When we split the 2 apart,
+    // this create() function should be changed to be a factory method for
+    // instantiating the backend.
     return static_cast<Database*>(backend.get());
 }
 
@@ -75,8 +78,7 @@ Database::Database(PassRefPtr<DatabaseBackendContext> databaseContext,
     const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBase(databaseContext->scriptExecutionContext())
     , DatabaseBackendAsync(databaseContext, name, expectedVersion, displayName, estimatedSize)
-    , m_transactionInProgress(false)
-    , m_isTransactionQueueEnabled(true)
+    , m_databaseContext(DatabaseBackendAsync::databaseContext()->frontend())
     , m_deleted(false)
 {
     m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->isolatedCopy();
@@ -162,13 +164,6 @@ void Database::close()
     ASSERT(databaseContext()->databaseThread());
     ASSERT(currentThread() == databaseContext()->databaseThread()->getThreadID());
 
-    {
-        MutexLocker locker(m_transactionInProgressMutex);
-        m_isTransactionQueueEnabled = false;
-        m_transactionInProgress = false;
-        m_transactionQueue.clear();
-    }
-
     closeDatabase();
 
     // Must ref() before calling databaseThread()->recordDatabaseClosed().
@@ -196,17 +191,18 @@ void Database::changeVersion(const String& oldVersion, const String& newVersion,
                              PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                              PassRefPtr<VoidCallback> successCallback)
 {
-    runTransaction(callback, errorCallback, successCallback, ChangeVersionWrapper::create(oldVersion, newVersion), false);
+    ChangeVersionData data(oldVersion, newVersion);
+    runTransaction(callback, errorCallback, successCallback, false, &data);
 }
 
 void Database::transaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback)
 {
-    runTransaction(callback, errorCallback, successCallback, 0, false);
+    runTransaction(callback, errorCallback, successCallback, false);
 }
 
 void Database::readTransaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback, PassRefPtr<VoidCallback> successCallback)
 {
-    runTransaction(callback, errorCallback, successCallback, 0, true);
+    runTransaction(callback, errorCallback, successCallback, true);
 }
 
 static void callTransactionErrorCallback(ScriptExecutionContext*, PassRefPtr<SQLTransactionErrorCallback> callback, PassRefPtr<SQLError> error)
@@ -215,57 +211,17 @@ static void callTransactionErrorCallback(ScriptExecutionContext*, PassRefPtr<SQL
 }
 
 void Database::runTransaction(PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
-                              PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
+    PassRefPtr<VoidCallback> successCallback, bool readOnly, const ChangeVersionData* changeVersionData)
 {
-    MutexLocker locker(m_transactionInProgressMutex);
-    if (!m_isTransactionQueueEnabled) {
-        if (errorCallback) {
-            RefPtr<SQLError> error = SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed");
-            scriptExecutionContext()->postTask(createCallbackTask(&callTransactionErrorCallback, errorCallback, error.release()));
-        }
-        return;
+    RefPtr<SQLTransactionErrorCallback> anotherRefToErrorCallback = errorCallback;
+    RefPtr<SQLTransaction> transaction = SQLTransaction::create(this, callback, successCallback, anotherRefToErrorCallback, readOnly);
+
+    RefPtr<SQLTransactionBackend> transactionBackend;
+    transactionBackend = backend()->runTransaction(transaction.release(), readOnly, changeVersionData);
+    if (!transactionBackend && anotherRefToErrorCallback) {
+        RefPtr<SQLError> error = SQLError::create(SQLError::UNKNOWN_ERR, "database has been closed");
+        scriptExecutionContext()->postTask(createCallbackTask(&callTransactionErrorCallback, anotherRefToErrorCallback, error.release()));
     }
-    RefPtr<SQLTransaction> transaction = SQLTransaction::create(this, callback, errorCallback, successCallback, wrapper, readOnly);
-    m_transactionQueue.append(transaction.release());
-    if (!m_transactionInProgress)
-        scheduleTransaction();
-}
-
-void Database::inProgressTransactionCompleted()
-{
-    MutexLocker locker(m_transactionInProgressMutex);
-    m_transactionInProgress = false;
-    scheduleTransaction();
-}
-
-void Database::scheduleTransaction()
-{
-    ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
-    RefPtr<SQLTransaction> transaction;
-
-    if (m_isTransactionQueueEnabled && !m_transactionQueue.isEmpty())
-        transaction = m_transactionQueue.takeFirst();
-
-    if (transaction && databaseContext()->databaseThread()) {
-        OwnPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
-        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
-        m_transactionInProgress = true;
-        databaseContext()->databaseThread()->scheduleTask(task.release());
-    } else
-        m_transactionInProgress = false;
-}
-
-void Database::scheduleTransactionStep(SQLTransactionBackend* transaction, bool immediately)
-{
-    if (!databaseContext()->databaseThread())
-        return;
-
-    OwnPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
-    LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
-    if (immediately)
-        databaseContext()->databaseThread()->scheduleImmediateTask(task.release());
-    else
-        databaseContext()->databaseThread()->scheduleTask(task.release());
 }
 
 class DeliverPendingCallbackTask : public ScriptExecutionContext::Task {
@@ -323,16 +279,6 @@ Vector<String> Database::performGetTableNames()
     return tableNames;
 }
 
-SQLTransactionClient* Database::transactionClient() const
-{
-    return databaseContext()->databaseThread()->transactionClient();
-}
-
-SQLTransactionCoordinator* Database::transactionCoordinator() const
-{
-    return databaseContext()->databaseThread()->transactionCoordinator();
-}
-
 Vector<String> Database::tableNames()
 {
     // FIXME: Not using isolatedCopy on these strings looks ok since threads take strict turns
@@ -357,6 +303,23 @@ SecurityOrigin* Database::securityOrigin() const
         return m_databaseThreadSecurityOrigin.get();
     return 0;
 }
+
+#if PLATFORM(CHROMIUM)
+void Database::reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+{
+    backend()->reportStartTransactionResult(errorSite, webSqlErrorCode, sqliteErrorCode);
+}
+
+void Database::reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+{
+    backend()->reportCommitTransactionResult(errorSite, webSqlErrorCode, sqliteErrorCode);
+}
+
+void Database::reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+{
+    backend()->reportExecuteStatementResult(errorSite, webSqlErrorCode, sqliteErrorCode);
+}
+#endif
 
 } // namespace WebCore
 

@@ -155,8 +155,7 @@ DatabaseBackendAsync::DatabaseTransactionTask::DatabaseTransactionTask(PassRefPt
 
 void DatabaseBackendAsync::DatabaseTransactionTask::doPerformTask()
 {
-    if (m_transaction->performNextStep())
-        Database::from(m_transaction->database())->inProgressTransactionCompleted();
+    m_transaction->performNextStep();
 }
 
 #if !LOG_DISABLED

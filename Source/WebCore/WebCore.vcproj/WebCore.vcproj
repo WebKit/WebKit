@@ -25378,6 +25378,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\ChangeVersionData.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\ChangeVersionWrapper.cpp"
 					>
 				</File>
@@ -25635,6 +25639,18 @@
 				</File>
 				<File
 					RelativePath="..\Modules\webdatabase\SQLTransactionErrorCallback.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\SQLTransactionState.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\SQLTransactionStateMachine.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\SQLTransactionStateMachine.h"
 					>
 				</File>
 				<File

@@ -32,6 +32,14 @@
 
 namespace WebCore {
 
+DatabaseContext* DatabaseBackendContext::frontend()
+{
+    // FIXME: Currently, we're only simulating the frontend by return the
+    // backend context as its own the frontend. When we split the 2 apart, this
+    // create() function should be changed to return a cached m_frontend.
+    return static_cast<DatabaseContext*>(this);
+}
+
 SecurityOrigin* DatabaseBackendContext::securityOrigin() const
 {
     return m_scriptExecutionContext->securityOrigin();

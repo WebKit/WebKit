@@ -652,13 +652,6 @@ void DatabaseBackend::reportVacuumDatabaseResult(int sqliteErrorCode)
     DatabaseObserver::reportVacuumDatabaseResult(this, sqliteErrorCode);
 }
 
-#else
-void DatabaseBackend::reportOpenDatabaseResult(int, int, int) { }
-void DatabaseBackend::reportChangeVersionResult(int, int, int) { }
-void DatabaseBackend::reportStartTransactionResult(int, int, int) { }
-void DatabaseBackend::reportCommitTransactionResult(int, int, int) { }
-void DatabaseBackend::reportExecuteStatementResult(int, int, int) { }
-void DatabaseBackend::reportVacuumDatabaseResult(int) { }
 #endif // PLATFORM(CHROMIUM)
 
 } // namespace WebCore

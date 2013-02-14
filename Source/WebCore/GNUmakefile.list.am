@@ -2100,6 +2100,7 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/WaveTable.cpp \
 	Source/WebCore/Modules/webaudio/WaveTable.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabaseServer.h \
+	Source/WebCore/Modules/webdatabase/ChangeVersionData.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.h \
 	Source/WebCore/Modules/webdatabase/DOMWindowWebDatabase.cpp \
@@ -2168,6 +2169,9 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/SQLTransactionCoordinator.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionErrorCallback.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSyncCallback.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionState.h \
+	Source/WebCore/Modules/webdatabase/SQLTransactionStateMachine.cpp \
+	Source/WebCore/Modules/webdatabase/SQLTransactionStateMachine.h \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSync.cpp \
 	Source/WebCore/Modules/webdatabase/SQLTransactionSync.h \
 	Source/WebCore/Modules/webdatabase/WorkerContextWebDatabase.cpp \

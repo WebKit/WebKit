@@ -414,17 +414,6 @@ bool DatabaseManager::deleteDatabase(SecurityOrigin* origin, const String& name)
     return m_server->deleteDatabase(origin, name);
 }
 
-// From a secondary thread, must be thread safe with its data
-void DatabaseManager::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, const String& name)
-{
-    m_server->scheduleNotifyDatabaseChanged(origin, name);
-}
-
-void DatabaseManager::databaseChanged(DatabaseBackend* database)
-{
-    m_server->databaseChanged(database);
-}
-
 #else // PLATFORM(CHROMIUM)
 void DatabaseManager::closeDatabasesImmediately(const String& originIdentifier, const String& name)
 {

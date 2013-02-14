@@ -35,21 +35,18 @@
 #include "DatabaseBase.h"
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
-#include <wtf/Deque.h>
-#include <wtf/Forward.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class ChangeVersionData;
 class DatabaseCallback;
+class DatabaseContext;
 class SecurityOrigin;
 class SQLTransaction;
 class SQLTransactionBackend;
 class SQLTransactionCallback;
-class SQLTransactionClient;
-class SQLTransactionCoordinator;
 class SQLTransactionErrorCallback;
-class SQLTransactionWrapper;
 class VoidCallback;
 
 class Database : public DatabaseBase, public DatabaseBackendAsync {
@@ -65,6 +62,7 @@ public:
 
     // Internal engine support
     static Database* from(DatabaseBackendAsync*);
+    DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
 
     Vector<String> tableNames();
 
@@ -80,10 +78,6 @@ public:
     unsigned long long maximumSize() const;
 
     void scheduleTransactionCallback(SQLTransaction*);
-    void scheduleTransactionStep(SQLTransactionBackend*, bool immediately = false);
-
-    SQLTransactionClient* transactionClient() const;
-    SQLTransactionCoordinator* transactionCoordinator() const;
 
 private:
     Database(PassRefPtr<DatabaseBackendContext>, const String& name,
@@ -92,25 +86,30 @@ private:
     static PassRefPtr<Database> create(ScriptExecutionContext*, PassRefPtr<DatabaseBackend>);
 
     void runTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
-                        PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
-
-    void inProgressTransactionCompleted();
-    void scheduleTransaction();
+        PassRefPtr<VoidCallback> successCallback, bool readOnly, const ChangeVersionData* = 0);
 
     Vector<String> performGetTableNames();
 
-    Deque<RefPtr<SQLTransaction> > m_transactionQueue;
-    Mutex m_transactionInProgressMutex;
-    bool m_transactionInProgress;
-    bool m_isTransactionQueueEnabled;
+#if PLATFORM(CHROMIUM)
+    void reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
+    void reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
+    void reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode);
+#else
+    void reportStartTransactionResult(int, int, int) { }
+    void reportCommitTransactionResult(int, int, int) { }
+    void reportExecuteStatementResult(int, int, int) { }
+#endif
 
     RefPtr<SecurityOrigin> m_databaseThreadSecurityOrigin;
+    RefPtr<DatabaseContext> m_databaseContext;
 
     bool m_deleted;
 
     friend class DatabaseManager;
     friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
     friend class DatabaseBackendAsync; // FIXME: remove this when the backend has been split out.
+    friend class SQLStatement;
+    friend class SQLTransaction;
 };
 
 } // namespace WebCore

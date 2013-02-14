@@ -1880,6 +1880,7 @@
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionBackendSync.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionClient.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionCoordinator.cpp" />
+    <ClCompile Include="..\Modules\webdatabase\SQLTransactionStateMachine.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionSync.cpp" />
     <ClCompile Include="..\Modules\webdatabase\WorkerContextWebDatabase.cpp" />
     <ClCompile Include="..\Modules\websockets\ThreadableWebSocketChannel.cpp" />
@@ -6415,6 +6416,7 @@
     <ClInclude Include="..\Modules\notifications\NotificationClient.h" />
     <ClInclude Include="..\Modules\notifications\WorkerContextNotifications.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractDatabaseServer.h" />
+    <ClInclude Include="..\Modules\webdatabase\ChangeVersionData.h" />
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionWrapper.h" />
     <ClInclude Include="..\Modules\webdatabase\Database.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseAuthorizer.h" />
@@ -6452,6 +6454,8 @@
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionClient.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionCoordinator.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionErrorCallback.h" />
+    <ClInclude Include="..\Modules\webdatabase\SQLTransactionState.h" />
+    <ClInclude Include="..\Modules\webdatabase\SQLTransactionStateMachine.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionSync.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLTransactionSyncCallback.h" />
     <ClInclude Include="..\Modules\webdatabase\WorkerContextWebDatabase.h" />

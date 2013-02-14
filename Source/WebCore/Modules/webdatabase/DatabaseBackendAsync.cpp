@@ -28,15 +28,24 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "ChangeVersionData.h"
+#include "ChangeVersionWrapper.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseTask.h"
 #include "DatabaseThread.h"
 #include "DatabaseTracker.h"
+#include "Logging.h"
+#include "SQLTransaction.h"
+#include "SQLTransactionBackend.h"
+#include "SQLTransactionClient.h"
+#include "SQLTransactionCoordinator.h"
 
 namespace WebCore {
 
 DatabaseBackendAsync::DatabaseBackendAsync(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBackend(databaseContext, name, expectedVersion, displayName, estimatedSize, DatabaseType::Async)
+    , m_transactionInProgress(false)
+    , m_isTransactionQueueEnabled(true)
 {
 }
 
@@ -67,6 +76,69 @@ bool DatabaseBackendAsync::performOpenAndVerify(bool setVersionInNewDatabase, Da
     }
 
     return false;
+}
+
+PassRefPtr<SQLTransactionBackend> DatabaseBackendAsync::runTransaction(PassRefPtr<SQLTransaction> transaction,
+    bool readOnly, const ChangeVersionData* data)
+{
+    MutexLocker locker(m_transactionInProgressMutex);
+    if (!m_isTransactionQueueEnabled)
+        return 0;
+
+    RefPtr<SQLTransactionWrapper> wrapper;
+    if (data)
+        wrapper = ChangeVersionWrapper::create(data->oldVersion(), data->newVersion());
+
+    RefPtr<SQLTransactionBackend> transactionBackend = SQLTransactionBackend::create(this, transaction, wrapper, readOnly);
+    m_transactionQueue.append(transactionBackend);
+    if (!m_transactionInProgress)
+        scheduleTransaction();
+
+    return transactionBackend;
+}
+
+void DatabaseBackendAsync::inProgressTransactionCompleted()
+{
+    MutexLocker locker(m_transactionInProgressMutex);
+    m_transactionInProgress = false;
+    scheduleTransaction();
+}
+
+void DatabaseBackendAsync::scheduleTransaction()
+{
+    ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
+    RefPtr<SQLTransactionBackend> transaction;
+
+    if (m_isTransactionQueueEnabled && !m_transactionQueue.isEmpty())
+        transaction = m_transactionQueue.takeFirst();
+
+    if (transaction && databaseContext()->databaseThread()) {
+        OwnPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
+        LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for transaction %p\n", task.get(), task->transaction());
+        m_transactionInProgress = true;
+        databaseContext()->databaseThread()->scheduleTask(task.release());
+    } else
+        m_transactionInProgress = false;
+}
+
+void DatabaseBackendAsync::scheduleTransactionStep(SQLTransactionBackend* transaction)
+{
+    if (!databaseContext()->databaseThread())
+        return;
+
+    OwnPtr<DatabaseTransactionTask> task = DatabaseTransactionTask::create(transaction);
+    LOG(StorageAPI, "Scheduling DatabaseTransactionTask %p for the transaction step\n", task.get());
+    databaseContext()->databaseThread()->scheduleTask(task.release());
+}
+
+SQLTransactionClient* DatabaseBackendAsync::transactionClient() const
+{
+    return databaseContext()->databaseThread()->transactionClient();
+}
+
+SQLTransactionCoordinator* DatabaseBackendAsync::transactionCoordinator() const
+{
+    return databaseContext()->databaseThread()->transactionCoordinator();
 }
 
 } // namespace WebCore

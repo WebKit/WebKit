@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "SQLTransaction.h"
+#include "SQLTransactionBackend.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
@@ -41,10 +41,10 @@ class ChangeVersionWrapper : public SQLTransactionWrapper {
 public:
     static PassRefPtr<ChangeVersionWrapper> create(const String& oldVersion, const String& newVersion) { return adoptRef(new ChangeVersionWrapper(oldVersion, newVersion)); }
 
-    virtual bool performPreflight(SQLTransaction*);
-    virtual bool performPostflight(SQLTransaction*);
+    virtual bool performPreflight(SQLTransactionBackend*);
+    virtual bool performPostflight(SQLTransactionBackend*);
     virtual SQLError* sqlError() const { return m_sqlError.get(); }
-    virtual void handleCommitFailedAfterPostflight(SQLTransaction*);
+    virtual void handleCommitFailedAfterPostflight(SQLTransactionBackend*);
 
 private:
     ChangeVersionWrapper(const String& oldVersion, const String& newVersion);

@@ -128,17 +128,6 @@ bool DatabaseServer::deleteDatabase(SecurityOrigin* origin, const String& name)
     return DatabaseTracker::tracker().deleteDatabase(origin, name);
 }
 
-// From a secondary thread, must be thread safe with its data
-void DatabaseServer::scheduleNotifyDatabaseChanged(SecurityOrigin* origin, const String& name)
-{
-    DatabaseTracker::tracker().scheduleNotifyDatabaseChanged(origin, name);
-}
-
-void DatabaseServer::databaseChanged(DatabaseBackend* database)
-{
-    DatabaseTracker::tracker().databaseChanged(database);
-}
-
 #else // PLATFORM(CHROMIUM)
 void DatabaseServer::closeDatabasesImmediately(const String& originIdentifier, const String& name)
 {
