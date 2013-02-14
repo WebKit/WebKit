@@ -499,13 +499,11 @@ void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> rec
 
 void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type, const String& frameId)
 {
-    DEFINE_STATIC_LOCAL(String, program, (TimelineRecordType::Program));
-
     RefPtr<InspectorObject> record(prpRecord);
     record->setString("type", type);
     if (!frameId.isEmpty())
         record->setString("frameId", frameId);
-    if (type == program)
+    if (type == TimelineRecordType::Program)
         setNativeHeapStatistics(record.get());
     else
         setDOMCounters(record.get());
