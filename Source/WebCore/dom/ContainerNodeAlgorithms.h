@@ -162,9 +162,11 @@ namespace Private {
             ASSERT(!n->m_deletionHasBegun);
 
             next = n->nextSibling();
-            n->setPreviousSibling(0);
             n->setNextSibling(0);
             n->setParentOrShadowHostNode(0);
+            container->setFirstChild(next);
+            if (next)
+                next->setPreviousSibling(0);
 
             if (!n->refCount()) {
 #ifndef NDEBUG
@@ -184,7 +186,6 @@ namespace Private {
             }
         }
 
-        container->setFirstChild(0);
         container->setLastChild(0);
     }
 
