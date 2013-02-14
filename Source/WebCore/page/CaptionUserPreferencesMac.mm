@@ -161,8 +161,11 @@ String CaptionUserPreferencesMac::captionsWindowCSS() const
     if (!windowColor.isValid())
         windowColor = Color::transparent;
 
+    bool important = behavior == kMACaptionAppearanceBehaviorUseValue;
     CGFloat opacity = MACaptionAppearanceGetWindowOpacity(kMACaptionAppearanceDomainUser, &behavior);
-    String windowStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(windowColor.red(), windowColor.green(), windowColor.blue(), static_cast<int>(opacity * 255)), behavior == kMACaptionAppearanceBehaviorUseValue);
+    if (!important)
+        important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    String windowStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(windowColor.red(), windowColor.green(), windowColor.blue(), static_cast<int>(opacity * 255)), important);
 
     if (!opacity)
         return windowStyle;
@@ -188,8 +191,11 @@ String CaptionUserPreferencesMac::captionsBackgroundCSS() const
     if (!backgroundColor.isValid())
         backgroundColor = defaultBackgroundColor;
 
+    bool important = behavior == kMACaptionAppearanceBehaviorUseValue;
     CGFloat opacity = MACaptionAppearanceGetBackgroundOpacity(kMACaptionAppearanceDomainUser, 0);
-    String backgroundStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), behavior == kMACaptionAppearanceBehaviorUseValue);
+    if (!important)
+        important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    String backgroundStyle = colorPropertyCSS(CSSPropertyBackgroundColor, Color(backgroundColor.red(), backgroundColor.green(), backgroundColor.blue(), static_cast<int>(opacity * 255)), important);
 
     if (!opacity)
         return backgroundStyle;
@@ -214,8 +220,10 @@ Color CaptionUserPreferencesMac::captionsTextColor(bool& important) const
         // This default value must be the same as the one specified in mediaControls.css for -webkit-media-text-track-container.
         textColor = Color::white;
     
-    CGFloat opacity = MACaptionAppearanceGetForegroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
     important = behavior == kMACaptionAppearanceBehaviorUseValue;
+    CGFloat opacity = MACaptionAppearanceGetForegroundOpacity(kMACaptionAppearanceDomainUser, &behavior);
+    if (!important)
+        important = behavior == kMACaptionAppearanceBehaviorUseValue;
     return Color(textColor.red(), textColor.green(), textColor.blue(), static_cast<int>(opacity * 255));
 }
     
