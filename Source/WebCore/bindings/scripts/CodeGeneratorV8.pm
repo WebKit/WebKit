@@ -1150,7 +1150,7 @@ static void ${interfaceName}ReplaceableAttrSetter(v8::Local<v8::String> name, v8
 END
     push(@implContentDecls, GenerateFeatureObservation($interface->extendedAttributes->{"V8MeasureAs"}));
 
-    if ($interfaceName eq "DOMWindow" || $interface->extendedAttributes->{"CheckSecurity"}) {
+    if ($interface->extendedAttributes->{"CheckSecurity"}) {
         AddToImplIncludes("Frame.h");
         push(@implContentDecls, <<END);
     ${interfaceName}* imp = V8${interfaceName}::toNative(info.Holder());
@@ -1573,9 +1573,7 @@ END
     }
 
     # Check domain security if needed
-    if (($interface->extendedAttributes->{"CheckSecurity"}
-        || $interfaceName eq "DOMWindow")
-        && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
+    if ($interface->extendedAttributes->{"CheckSecurity"} && !$function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
         # We have not find real use cases yet.
         AddToImplIncludes("Frame.h");
         push(@implContentDecls, <<END);
@@ -2385,8 +2383,7 @@ sub GenerateNonStandardFunction
         $conditional = "if (${enable_function}(impl->document()))\n        ";
     }
 
-    if ($attrExt->{"DoNotCheckSecurity"} &&
-        ($interface->extendedAttributes->{"CheckSecurity"} || $interfaceName eq "DOMWindow")) {
+    if ($interface->extendedAttributes->{"CheckSecurity"} && $attrExt->{"DoNotCheckSecurity"}) {
         # Functions that are marked DoNotCheckSecurity are always readable but if they are changed
         # and then accessed on a different domain we do not return the underlying value but instead
         # return a new copy of the original function. This is achieved by storing the changed value
@@ -2763,7 +2760,7 @@ END
         # If the function does not need domain security check, we need to
         # generate an access getter that returns different function objects
         # for different calling context.
-        if (($interface->extendedAttributes->{"CheckSecurity"} || ($interfaceName eq "DOMWindow")) && $function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
+        if ($interface->extendedAttributes->{"CheckSecurity"} && $function->signature->extendedAttributes->{"DoNotCheckSecurity"}) {
             if (!HasCustomMethod($function->signature->extendedAttributes) || $function->{overloadIndex} == 1) {
                 GenerateDomainSafeFunctionGetter($function, $interfaceName);
                 $needsDomainSafeFunctionSetter = 1;
