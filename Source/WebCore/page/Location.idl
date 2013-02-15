@@ -67,7 +67,7 @@
     [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly, ImplementedAs=toStringFunction] DOMString toString();
 #endif
 #if defined(V8_BINDING) && V8_BINDING
-    [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly] DOMObject valueOf();
+    [NotEnumerable, Custom, V8Unforgeable, V8ReadOnly] any valueOf();
 #endif
 };
 

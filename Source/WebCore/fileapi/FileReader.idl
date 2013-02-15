@@ -56,7 +56,7 @@
     void abort();
 
     // file data
-    [Custom] readonly attribute DOMObject result;
+    [Custom] readonly attribute any result;
 
     readonly attribute FileError error;
 

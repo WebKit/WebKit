@@ -28,7 +28,7 @@
 [
     ConstructorTemplate=Event
 ] interface PopStateEvent : Event {
-    [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute DOMObject state;
+    [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any state;
 };
 #endif
 

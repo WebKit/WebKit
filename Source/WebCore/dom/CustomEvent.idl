@@ -28,12 +28,12 @@
 [
     ConstructorTemplate=Event
 ] interface CustomEvent : Event {
-    [InitializedByEventConstructor, V8Custom] readonly attribute DOMObject detail;
+    [InitializedByEventConstructor, V8Custom] readonly attribute any detail;
 
     void initCustomEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
                          in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
                          in [Optional=DefaultIsUndefined] boolean cancelableArg, 
-                         in [Optional=DefaultIsUndefined] DOMObject detailArg);
+                         in [Optional=DefaultIsUndefined] any detailArg);
 };
 #endif
 

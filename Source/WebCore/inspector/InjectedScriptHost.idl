@@ -37,18 +37,18 @@
     void clearConsoleMessages();
 
     void copyText(in DOMString text);
-    [Custom] void inspect(in DOMObject objectId, in DOMObject hints);
-    [Custom] DOMObject inspectedObject(in int num);
-    [Custom] DOMObject internalConstructorName(in DOMObject object);
-    [Custom] boolean isHTMLAllCollection(in DOMObject object);
-    [Custom] DOMString type(in DOMObject object);
-    [Custom] DOMObject functionDetails(in DOMObject object);
-    [Custom] Array getInternalProperties(in DOMObject object);
+    [Custom] void inspect(in any objectId, in any hints);
+    [Custom] any inspectedObject(in int num);
+    [Custom] any internalConstructorName(in any object);
+    [Custom] boolean isHTMLAllCollection(in any object);
+    [Custom] DOMString type(in any object);
+    [Custom] any functionDetails(in any object);
+    [Custom] Array getInternalProperties(in any object);
     [Custom] Array getEventListeners(in Node node);
 
-    [Custom] DOMString databaseId(in DOMObject database);
-    [Custom] DOMString storageId(in DOMObject storage);
-    [Custom] DOMObject evaluate(in DOMString text);
+    [Custom] DOMString databaseId(in any database);
+    [Custom] DOMString storageId(in any storage);
+    [Custom] any evaluate(in DOMString text);
     // Only declarative scope (local, with and catch) is accepted. Returns undefined. 
-    [Custom] DOMObject setFunctionVariableValue(in DOMObject functionObject, in int scopeIndex, in DOMString variableName, DOMObject newValue);
+    [Custom] any setFunctionVariableValue(in any functionObject, in int scopeIndex, in DOMString variableName, any newValue);
 };

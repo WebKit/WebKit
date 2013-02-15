@@ -233,7 +233,7 @@ sub AddIncludesForType
     # When we're finished with the one-file-per-class
     # reorganization, we won't need these special cases.
     if ($codeGenerator->IsPrimitiveType($type) or $codeGenerator->SkipIncludeHeader($type)
-        or $type eq "DOMString" or $type eq "DOMObject" or $type eq "any" or $type eq "Array" or $type eq "DOMTimeStamp") {
+        or $type eq "DOMString" or $type eq "any" or $type eq "Array" or $type eq "DOMTimeStamp") {
     } elsif ($type =~ /SVGPathSeg/) {
         my $joinedName = $type;
         $joinedName =~ s/Abs|Rel//;
@@ -2092,7 +2092,7 @@ sub GenerateImplementation
                                 # $constructorType ~= /Constructor$/ indicates that it is NamedConstructor.
                                 # We do not generate the header file for NamedConstructor of class XXXX,
                                 # since we generate the NamedConstructor declaration into the header file of class XXXX.
-                                if ($constructorType ne "DOMObject" and $constructorType !~ /Constructor$/) {
+                                if ($constructorType ne "any" and $constructorType !~ /Constructor$/) {
                                     AddToImplIncludes("JS" . $constructorType . ".h", $attribute->signature->extendedAttributes->{"Conditional"});
                                 }
                                 push(@implContent, "    // Shadowing a built-in constructor\n");
@@ -3042,7 +3042,6 @@ sub GetNativeTypeFromSignature
 my %nativeType = (
     "CompareHow" => "Range::CompareHow",
     "DOMString" => "const String&",
-    "DOMObject" => "ScriptValue",
     "NodeFilter" => "RefPtr<NodeFilter>",
     "SerializedScriptValue" => "RefPtr<SerializedScriptValue>",
     "Dictionary" => "Dictionary",
@@ -3174,7 +3173,7 @@ sub JSValueToNative
         return "$value.isEmpty() ? String() : $value.toString(exec)->value(exec)";
     }
 
-    if ($type eq "DOMObject" or $type eq "any") {
+    if ($type eq "any") {
         return "exec->globalData(), $value";
     }
 
@@ -3293,7 +3292,7 @@ sub NativeToJSValue
         return "jsArray(exec, $thisValue->globalObject(), $value)";
     }
 
-    if ($type eq "DOMObject" or $type eq "any") {
+    if ($type eq "any") {
         if ($interfaceName eq "Document") {
             AddToImplIncludes("JSCanvasRenderingContext2D.h", $conditional);
         } else {

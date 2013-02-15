@@ -3838,7 +3838,7 @@ sub GetNativeType
     # EventTarget can be passed as a parameter.
     return "Node*" if $type eq "EventTarget" and $isParameter;
 
-    return "ScriptValue" if $type eq "DOMObject" or $type eq "any";
+    return "ScriptValue" if $type eq "any";
     return "Dictionary" if $type eq "Dictionary";
 
     return "RefPtr<DOMStringList>" if $type eq "DOMStringList";
@@ -3929,7 +3929,7 @@ sub JSValueToNative
         return "Dictionary($value, $getIsolate)";
     }
 
-    if ($type eq "DOMObject" or $type eq "any") {
+    if ($type eq "any") {
         AddToImplIncludes("ScriptValue.h");
         return "ScriptValue($value)";
     }
@@ -3981,7 +3981,7 @@ sub GetV8HeaderName
     return "V8Event.h" if $type eq "DOMTimeStamp";
     return "EventListener.h" if $type eq "EventListener";
     return "SerializedScriptValue.h" if $type eq "SerializedScriptValue";
-    return "ScriptValue.h" if $type eq "DOMObject" or $type eq "any";
+    return "ScriptValue.h" if $type eq "any";
     return "V8${type}.h";
 }
 

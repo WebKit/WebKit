@@ -33,5 +33,5 @@
     ImplementationLacksVTable
 ] interface SQLResultSetRowList {
     readonly attribute unsigned long length;
-    [Custom] DOMObject item(in unsigned long index);
+    [Custom] any item(in unsigned long index);
 };

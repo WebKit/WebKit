@@ -81,7 +81,7 @@
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
 #if !defined(LANGUAGE_OBJECTIVE_C) || !LANGUAGE_OBJECTIVE_C
-             [Conditional=MICRODATA, Custom] attribute DOMObject itemValue
+             [Conditional=MICRODATA, Custom] attribute any itemValue
                  setter raises(DOMException);
 #endif
 #endif

@@ -59,7 +59,7 @@
 
     [Custom] DOMString platform();
     [Custom] DOMString port();
-    [Custom] void showContextMenu(in MouseEvent event, in DOMObject items);
+    [Custom] void showContextMenu(in MouseEvent event, in any items);
     void sendMessageToBackend(in DOMString message);
 
     [Custom] void recordActionTaken(in unsigned long actionCode);

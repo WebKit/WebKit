@@ -38,10 +38,10 @@
     const unsigned short CATCH_SCOPE = 4;
 
     [Custom] void evaluate(in DOMString script);
-    [Custom] DOMObject restart();
+    [Custom] any restart();
     
     // Only declarative scope (local, with and catch) is accepted. Returns undefined. 
-    [Custom] DOMObject setVariableValue(in int scopeIndex, in DOMString variableName, DOMObject newValue);
+    [Custom] any setVariableValue(in int scopeIndex, in DOMString variableName, any newValue);
 
     readonly attribute JavaScriptCallFrame caller;
     readonly attribute long sourceID;

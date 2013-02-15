@@ -34,9 +34,9 @@
     // We have to use custom code because our code generator does not support int8_t type.
     // int8_t getInt8(in unsigned long byteOffset);
     // uint8_t getUint8(in unsigned long byteOffset);
-    [Custom] DOMObject getInt8()
+    [Custom] any getInt8()
         raises (DOMException);
-    [Custom] DOMObject getUint8()
+    [Custom] any getUint8()
         raises (DOMException);
 
     [StrictTypeChecking] short getInt16(in unsigned long byteOffset, in [Optional] boolean littleEndian)

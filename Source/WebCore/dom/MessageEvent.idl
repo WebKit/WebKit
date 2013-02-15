@@ -33,13 +33,13 @@
     [InitializedByEventConstructor] readonly attribute DOMString lastEventId;
     [InitializedByEventConstructor] readonly attribute DOMWindow source;
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
-    [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute DOMObject data;
+    [InitializedByEventConstructor, CachedAttribute, CustomGetter] readonly attribute any data;
     [InitializedByEventConstructor, CustomGetter] readonly attribute Array ports;
 
     [Custom] void initMessageEvent(in [Optional=DefaultIsUndefined] DOMString typeArg, 
                                    in [Optional=DefaultIsUndefined] boolean canBubbleArg, 
                                    in [Optional=DefaultIsUndefined] boolean cancelableArg, 
-                                   in [Optional=DefaultIsUndefined] DOMObject dataArg, 
+                                   in [Optional=DefaultIsUndefined] any dataArg, 
                                    in [Optional=DefaultIsUndefined] DOMString originArg, 
                                    in [Optional=DefaultIsUndefined] DOMString lastEventIdArg, 
                                    in [Optional=DefaultIsUndefined] DOMWindow sourceArg, 
@@ -48,7 +48,7 @@
     [Custom] void webkitInitMessageEvent(in [Optional=DefaultIsUndefined] DOMString typeArg,
                                          in [Optional=DefaultIsUndefined] boolean canBubbleArg,
                                          in [Optional=DefaultIsUndefined] boolean cancelableArg,
-                                         in [Optional=DefaultIsUndefined] DOMObject dataArg,
+                                         in [Optional=DefaultIsUndefined] any dataArg,
                                          in [Optional=DefaultIsUndefined] DOMString originArg,
                                          in [Optional=DefaultIsUndefined] DOMString lastEventIdArg,
                                          in [Optional=DefaultIsUndefined] DOMWindow sourceArg,

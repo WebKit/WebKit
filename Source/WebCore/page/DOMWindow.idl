@@ -74,8 +74,8 @@
                             in DOMString name,
                             in [Optional] DOMString options);
 
-    [Custom] DOMObject showModalDialog(in DOMString url,
-                                       in [Optional] DOMObject dialogArgs,
+    [Custom] any showModalDialog(in DOMString url,
+                                       in [Optional] any dialogArgs,
                                        in [Optional] DOMString featureArgs);
 
     void alert(in [Optional=DefaultIsUndefined] DOMString message);
