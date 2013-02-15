@@ -1891,3 +1891,12 @@ webkit.org/b/109775 media/controls-without-preload.html [ Failure ]
 webkit.org/b/109775 media/video-controls-rendering.html [ Failure ]
 webkit.org/b/109775 media/video-display-toggle.html [ Failure ]
 webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]
+
+# Failing after r142947.
+webkit.org/b/83869 fast/layers/video-layer.html [ Failure ]
+webkit.org/b/83869 media/media-controls-clone.html [ Failure ]
+webkit.org/b/83869 media/track/track-cue-rendering-horizontal.html [ Failure ]
+webkit.org/b/83869 media/track/track-cue-rendering-vertical.html [ Failure ]
+webkit.org/b/83869 media/video-empty-source.html [ Failure ]
+webkit.org/b/83869 media/video-no-audio.html [ Failure ]
+webkit.org/b/83869 media/video-zoom-controls.html [ Failure ]
