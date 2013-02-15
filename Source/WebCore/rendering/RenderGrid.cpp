@@ -168,30 +168,34 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     setNeedsLayout(false);
 }
 
-void RenderGrid::computePreferredLogicalWidths()
+void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    ASSERT(preferredLogicalWidthsDirty());
-
-    placeItemsOnGrid();
-
-    m_minPreferredLogicalWidth = 0;
-    m_maxPreferredLogicalWidth = 0;
-
-    // FIXME: We don't take our own logical width into account.
+    const_cast<RenderGrid*>(this)->placeItemsOnGrid();
 
     const Vector<GridTrackSize>& trackStyles = style()->gridColumns();
-
     for (size_t i = 0; i < trackStyles.size(); ++i) {
         LayoutUnit minTrackBreadth = computePreferredTrackWidth(trackStyles[i].minTrackBreadth(), i);
         LayoutUnit maxTrackBreadth = computePreferredTrackWidth(trackStyles[i].maxTrackBreadth(), i);
         maxTrackBreadth = std::max(maxTrackBreadth, minTrackBreadth);
 
-        m_minPreferredLogicalWidth += minTrackBreadth;
-        m_maxPreferredLogicalWidth += maxTrackBreadth;
+        minLogicalWidth += minTrackBreadth;
+        maxLogicalWidth += maxTrackBreadth;
 
         // FIXME: This should add in the scrollbarWidth (e.g. see RenderFlexibleBox).
     }
 
+    const_cast<RenderGrid*>(this)->m_grid.clear();
+}
+
+void RenderGrid::computePreferredLogicalWidths()
+{
+    ASSERT(preferredLogicalWidthsDirty());
+
+    m_minPreferredLogicalWidth = 0;
+    m_maxPreferredLogicalWidth = 0;
+
+    // FIXME: We don't take our own logical width into account.
+    computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
     // FIXME: We should account for min / max logical width.
 
     LayoutUnit borderAndPaddingInInlineDirection = borderAndPaddingLogicalWidth();
@@ -199,7 +203,6 @@ void RenderGrid::computePreferredLogicalWidths()
     m_maxPreferredLogicalWidth += borderAndPaddingInInlineDirection;
 
     setPreferredLogicalWidthsDirty(false);
-    m_grid.clear();
 }
 
 LayoutUnit RenderGrid::computePreferredTrackWidth(const Length& length, size_t trackIndex) const

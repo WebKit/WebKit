@@ -46,6 +46,7 @@ public:
 
 private:
     virtual bool isRenderGrid() const OVERRIDE { return true; }
+    virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const OVERRIDE;
     virtual void computePreferredLogicalWidths() OVERRIDE;
 
     LayoutUnit computePreferredTrackWidth(const Length&, size_t) const;
