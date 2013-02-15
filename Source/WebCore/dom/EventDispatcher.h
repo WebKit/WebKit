@@ -45,27 +45,9 @@ class ShadowRoot;
 class TreeScope;
 class WindowEventContext;
 
-enum EventDispatchBehavior {
-    RetargetEvent,
-    StayInsideShadowDOM
-};
-
 enum EventDispatchContinuation {
     ContinueDispatching,
     DoneDispatching
-};
-
-class EventRelatedTargetAdjuster {
-public:
-    EventRelatedTargetAdjuster(PassRefPtr<Node>, PassRefPtr<Node> relatedTarget);
-    void adjust(EventPath&);
-private:
-    typedef HashMap<TreeScope*, EventTarget*> RelatedTargetMap;
-    EventTarget* findRelatedTarget(TreeScope*);
-
-    RefPtr<Node> m_node;
-    RefPtr<Node> m_relatedTarget;
-    RelatedTargetMap m_relatedTargetMap;
 };
 
 class EventDispatcher {
@@ -76,15 +58,11 @@ public:
     static void dispatchSimulatedClick(Node*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 
     bool dispatchEvent(PassRefPtr<Event>);
-    void adjustRelatedTarget(Event*, PassRefPtr<EventTarget> prpRelatedTarget);
     Node* node() const;
+    EventPath& ensureEventPath(Event*);
 
 private:
     EventDispatcher(Node*);
-
-    EventDispatchBehavior determineDispatchBehavior(Event*, ShadowRoot*, EventTarget*);
-
-    void ensureEventPath(Event*);
     const EventContext* topEventContext();
 
     EventDispatchContinuation dispatchEventPreProcess(PassRefPtr<Event>, void*& preDispatchEventHandlerResult);

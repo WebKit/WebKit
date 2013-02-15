@@ -2830,6 +2830,8 @@
             'dom/EventDispatchMediator.h',
             'dom/EventDispatcher.cpp',
             'dom/EventDispatcher.h',
+            'dom/EventRetargeter.cpp',
+            'dom/EventRetargeter.h',
             'dom/EventException.cpp',
             'dom/EventException.h',
             'dom/EventListenerMap.cpp',

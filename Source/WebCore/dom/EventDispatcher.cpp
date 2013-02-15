@@ -31,6 +31,7 @@
 #include "ElementShadow.h"
 #include "EventContext.h"
 #include "EventDispatchMediator.h"
+#include "EventRetargeter.h"
 #include "FrameView.h"
 #include "HTMLMediaElement.h"
 #include "InsertionPoint.h"
@@ -42,92 +43,9 @@
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
 
-#if ENABLE(SVG)
-#include "SVGElementInstance.h"
-#include "SVGNames.h"
-#include "SVGUseElement.h"
-#endif
-
 namespace WebCore {
 
 static HashSet<Node*>* gNodesDispatchingSimulatedClicks = 0;
-
-EventRelatedTargetAdjuster::EventRelatedTargetAdjuster(PassRefPtr<Node> node, PassRefPtr<Node> relatedTarget)
-    : m_node(node)
-    , m_relatedTarget(relatedTarget)
-{
-    ASSERT(m_node);
-    ASSERT(m_relatedTarget);
-}
-
-void EventRelatedTargetAdjuster::adjust(EventPath& eventPath)
-{
-    // Synthetic mouse events can have a relatedTarget which is identical to the target.
-    bool targetIsIdenticalToToRelatedTarget = (m_node.get() == m_relatedTarget.get());
-
-    Vector<EventTarget*, 32> relatedTargetStack;
-    TreeScope* lastTreeScope = 0;
-    for (AncestorChainWalker walker(m_relatedTarget.get()); walker.get(); walker.parent()) {
-        Node* node = walker.get();
-        if (relatedTargetStack.isEmpty())
-            relatedTargetStack.append(node);
-        else if (walker.crossingInsertionPoint())
-            relatedTargetStack.append(relatedTargetStack.last());
-        TreeScope* scope = node->treeScope();
-        // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.
-        if (scope != lastTreeScope)
-            m_relatedTargetMap.add(scope, relatedTargetStack.last());
-        lastTreeScope = scope;
-        if (node->isShadowRoot()) {
-            ASSERT(!relatedTargetStack.isEmpty());
-            relatedTargetStack.removeLast();
-        }
-    }
-
-    lastTreeScope = 0;
-    EventTarget* adjustedRelatedTarget = 0;
-    for (EventPath::iterator iter = eventPath.begin(); iter < eventPath.end(); ++iter) {
-        ASSERT((*iter)->isMouseOrFocusEventContext());
-        MouseOrFocusEventContext* mosueOrFocusEventContext = static_cast<MouseOrFocusEventContext*>(iter->get());
-        TreeScope* scope = mosueOrFocusEventContext->node()->treeScope();
-        if (scope == lastTreeScope) {
-            // Re-use the previous adjustedRelatedTarget if treeScope does not change. Just for the performance optimization.
-            mosueOrFocusEventContext->setRelatedTarget(adjustedRelatedTarget);
-        } else {
-            adjustedRelatedTarget = findRelatedTarget(scope);
-            mosueOrFocusEventContext->setRelatedTarget(adjustedRelatedTarget);
-        }
-        lastTreeScope = scope;
-        if (targetIsIdenticalToToRelatedTarget) {
-            if (m_node->treeScope()->rootNode() == mosueOrFocusEventContext->node()) {
-                eventPath.shrink(iter + 1 - eventPath.begin());
-                break;
-            }
-        } else if (mosueOrFocusEventContext->target() == adjustedRelatedTarget) {
-            // Event dispatching should be stopped here.
-            eventPath.shrink(iter - eventPath.begin());
-            break;
-        }
-    }
-}
-
-EventTarget* EventRelatedTargetAdjuster::findRelatedTarget(TreeScope* scope)
-{
-    Vector<TreeScope*, 32> parentTreeScopes;
-    EventTarget* relatedTarget = 0;
-    while (scope) {
-        parentTreeScopes.append(scope);
-        RelatedTargetMap::const_iterator found = m_relatedTargetMap.find(scope);
-        if (found != m_relatedTargetMap.end()) {
-            relatedTarget = found->value;
-            break;
-        }
-        scope = scope->parentTreeScope();
-    }
-    for (Vector<TreeScope*, 32>::iterator iter = parentTreeScopes.begin(); iter < parentTreeScopes.end(); ++iter)
-      m_relatedTargetMap.add(*iter, relatedTarget);
-    return relatedTarget;
-}
 
 bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
 {
@@ -135,44 +53,6 @@ bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator
 
     EventDispatcher dispatcher(node);
     return mediator->dispatchEvent(&dispatcher);
-}
-
-inline static EventTarget* eventTargetRespectingTargetRules(Node* referenceNode)
-{
-    ASSERT(referenceNode);
-
-    if (referenceNode->isPseudoElement())
-        return referenceNode->parentNode();
-
-#if ENABLE(SVG)
-    if (!referenceNode->isSVGElement() || !referenceNode->isInShadowTree())
-        return referenceNode;
-
-    // Spec: The event handling for the non-exposed tree works as if the referenced element had been textually included
-    // as a deeply cloned child of the 'use' element, except that events are dispatched to the SVGElementInstance objects
-    Element* shadowHostElement = toShadowRoot(referenceNode->treeScope()->rootNode())->host();
-    // At this time, SVG nodes are not supported in non-<use> shadow trees.
-    if (!shadowHostElement || !shadowHostElement->hasTagName(SVGNames::useTag))
-        return referenceNode;
-    SVGUseElement* useElement = static_cast<SVGUseElement*>(shadowHostElement);
-    if (SVGElementInstance* instance = useElement->instanceForShadowTreeElement(referenceNode))
-        return instance;
-#endif
-
-    return referenceNode;
-}
-
-void EventDispatcher::adjustRelatedTarget(Event* event, PassRefPtr<EventTarget> prpRelatedTarget)
-{
-    if (!prpRelatedTarget)
-        return;
-    RefPtr<Node> relatedTarget = prpRelatedTarget->toNode();
-    if (!relatedTarget)
-        return;
-    if (!m_node.get())
-        return;
-    ensureEventPath(event);
-    EventRelatedTargetAdjuster(m_node, relatedTarget.release()).adjust(m_eventPath);
 }
 
 EventDispatcher::EventDispatcher(Node* node)
@@ -186,42 +66,19 @@ EventDispatcher::EventDispatcher(Node* node)
     m_view = node->document()->view();
 }
 
-void EventDispatcher::ensureEventPath(Event* event)
+EventPath& EventDispatcher::ensureEventPath(Event* event)
 {
     if (m_eventPathInitialized)
-        return;
+        return m_eventPath;
     m_eventPathInitialized = true;
-    bool inDocument = m_node->inDocument();
-    bool isSVGElement = m_node->isSVGElement();
-    bool isMouseOrFocusEvent = event->isMouseEvent() || event->isFocusEvent();
-    Vector<EventTarget*, 32> targetStack;
-    for (AncestorChainWalker walker(m_node.get()); walker.get(); walker.parent()) {
-        Node* node = walker.get();
-        if (targetStack.isEmpty())
-            targetStack.append(eventTargetRespectingTargetRules(node));
-        else if (walker.crossingInsertionPoint())
-            targetStack.append(targetStack.last());
-        if (isMouseOrFocusEvent)
-            m_eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
-        else
-            m_eventPath.append(adoptPtr(new EventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
-        if (!inDocument)
-            return;
-        if (!node->isShadowRoot())
-            continue;
-        if (determineDispatchBehavior(event, toShadowRoot(node), targetStack.last()) == StayInsideShadowDOM)
-            return;
-        if (!isSVGElement) {
-            ASSERT(!targetStack.isEmpty());
-            targetStack.removeLast();
-        }
-    }
+    EventRetargeter::calculateEventPath(m_node.get(), event, m_eventPath);
+    return m_eventPath;
 }
 
 void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
 {
     // We need to set the target here because it can go away by the time we actually fire the event.
-    mediator->event()->setTarget(eventTargetRespectingTargetRules(node));
+    mediator->event()->setTarget(EventRetargeter::eventTargetRespectingTargetRules(node));
     ScopedEventQueue::instance()->enqueueEventDispatchMediator(mediator);
 }
 
@@ -262,7 +119,7 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
     RefPtr<Event> event = prpEvent;
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
-    event->setTarget(eventTargetRespectingTargetRules(m_node.get()));
+    event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(event->target());
     ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
@@ -348,7 +205,7 @@ inline EventDispatchContinuation EventDispatcher::dispatchEventAtBubbling(PassRe
 
 inline void EventDispatcher::dispatchEventPostProcess(PassRefPtr<Event> event, void* preDispatchEventHandlerResult)
 {
-    event->setTarget(eventTargetRespectingTargetRules(m_node.get()));
+    event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
     event->setCurrentTarget(0);
     event->setEventPhase(0);
 
@@ -381,45 +238,6 @@ inline void EventDispatcher::dispatchEventPostProcess(PassRefPtr<Event> event, v
 const EventContext* EventDispatcher::topEventContext()
 {
     return m_eventPath.isEmpty() ? 0 : m_eventPath.last().get();
-}
-
-static inline bool inTheSameScope(ShadowRoot* shadowRoot, EventTarget* target)
-{
-    return target->toNode() && target->toNode()->treeScope()->rootNode() == shadowRoot;
-}
-
-EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, ShadowRoot* shadowRoot, EventTarget* target)
-{
-#if ENABLE(FULLSCREEN_API) && ENABLE(VIDEO)
-    // Video-only full screen is a mode where we use the shadow DOM as an implementation
-    // detail that should not be detectable by the web content.
-    if (Element* element = m_node->document()->webkitCurrentFullScreenElement()) {
-        // FIXME: We assume that if the full screen element is a media element that it's
-        // the video-only full screen. Both here and elsewhere. But that is probably wrong.
-        if (element->isMediaElement() && shadowRoot && shadowRoot->host() == element)
-            return StayInsideShadowDOM;
-    }
-#else
-    UNUSED_PARAM(shadowRoot);
-#endif
-
-    // WebKit never allowed selectstart event to cross the the shadow DOM boundary.
-    // Changing this breaks existing sites.
-    // See https://bugs.webkit.org/show_bug.cgi?id=52195 for details.
-    const AtomicString eventType = event->type();
-    if (inTheSameScope(shadowRoot, target)
-        && (eventType == eventNames().abortEvent
-            || eventType == eventNames().changeEvent
-            || eventType == eventNames().errorEvent
-            || eventType == eventNames().loadEvent
-            || eventType == eventNames().resetEvent
-            || eventType == eventNames().resizeEvent
-            || eventType == eventNames().scrollEvent
-            || eventType == eventNames().selectEvent
-            || eventType == eventNames().selectstartEvent))
-        return StayInsideShadowDOM;
-
-    return RetargetEvent;
 }
 
 }

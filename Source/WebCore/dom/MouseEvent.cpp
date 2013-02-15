@@ -25,6 +25,7 @@
 
 #include "EventDispatcher.h"
 #include "EventNames.h"
+#include "EventRetargeter.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLIFrameElement.h"
@@ -261,7 +262,7 @@ MouseEvent* MouseEventDispatchMediator::event() const
 bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
     if (isSyntheticMouseEvent()) {
-        dispatcher->adjustRelatedTarget(event(), event()->relatedTarget());
+        EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->ensureEventPath(event()));
         return dispatcher->dispatchEvent(event());
     }
 
@@ -274,7 +275,7 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
     ASSERT(!event()->target() || event()->target() != event()->relatedTarget());
 
     EventTarget* relatedTarget = event()->relatedTarget();
-    dispatcher->adjustRelatedTarget(event(), relatedTarget);
+    EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->ensureEventPath(event()));
 
     dispatcher->dispatchEvent(event());
     bool swallowEvent = event()->defaultHandled() || event()->defaultPrevented();

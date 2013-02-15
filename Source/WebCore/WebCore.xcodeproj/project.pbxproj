@@ -1447,6 +1447,8 @@
 		4A4F48AA16B0DFC000EDBB29 /* DocumentRuleSets.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */; };
 		4A5A2ADB161E7E00005889DD /* WebSocketExtensionParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A5A2AD9161E7E00005889DD /* WebSocketExtensionParser.cpp */; };
 		4A5A2ADC161E7E00005889DD /* WebSocketExtensionParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A5A2ADA161E7E00005889DD /* WebSocketExtensionParser.h */; };
+		4A5CB1C516C3A5FD00AB2886 /* EventRetargeter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A5CB1C316C3A5FD00AB2886 /* EventRetargeter.cpp */; };
+		4A5CB1C616C3A5FD00AB2886 /* EventRetargeter.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A5CB1C416C3A5FD00AB2886 /* EventRetargeter.h */; };
 		4A6A0C5B15232F2400B09C6E /* ComposedShadowTreeWalker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A6A0C5915232F2400B09C6E /* ComposedShadowTreeWalker.cpp */; };
 		4A6A0C5C15232F2400B09C6E /* ComposedShadowTreeWalker.h in Headers */ = {isa = PBXBuildFile; fileRef = 4A6A0C5A15232F2400B09C6E /* ComposedShadowTreeWalker.h */; };
 		4A6E9FC313C17D1D0046A7F8 /* FontFeatureValue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */; };
@@ -8869,6 +8871,8 @@
 		4A4F48A816B0DFC000EDBB29 /* DocumentRuleSets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocumentRuleSets.h; sourceTree = "<group>"; };
 		4A5A2AD9161E7E00005889DD /* WebSocketExtensionParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketExtensionParser.cpp; path = Modules/websockets/WebSocketExtensionParser.cpp; sourceTree = "<group>"; };
 		4A5A2ADA161E7E00005889DD /* WebSocketExtensionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebSocketExtensionParser.h; path = Modules/websockets/WebSocketExtensionParser.h; sourceTree = "<group>"; };
+		4A5CB1C316C3A5FD00AB2886 /* EventRetargeter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventRetargeter.cpp; sourceTree = "<group>"; };
+		4A5CB1C416C3A5FD00AB2886 /* EventRetargeter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventRetargeter.h; sourceTree = "<group>"; };
 		4A6A0C5915232F2400B09C6E /* ComposedShadowTreeWalker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ComposedShadowTreeWalker.cpp; sourceTree = "<group>"; };
 		4A6A0C5A15232F2400B09C6E /* ComposedShadowTreeWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ComposedShadowTreeWalker.h; sourceTree = "<group>"; };
 		4A6E9FC113C17D1D0046A7F8 /* FontFeatureValue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFeatureValue.cpp; sourceTree = "<group>"; };
@@ -22557,6 +22561,8 @@
 				939885C208B7E3D100E707C4 /* EventNames.h */,
 				BC9A6142146859D9006057FD /* EventNames.in */,
 				8F6756191288B17B0047ACA3 /* EventQueue.h */,
+				4A5CB1C316C3A5FD00AB2886 /* EventRetargeter.cpp */,
+				4A5CB1C416C3A5FD00AB2886 /* EventRetargeter.h */,
 				CE5CB1B314EDAB6F00BB2795 /* EventSender.h */,
 				E12EDBE90B308E0B002704B6 /* EventTarget.cpp */,
 				E12EDB7A0B308A78002704B6 /* EventTarget.h */,
@@ -24281,6 +24287,7 @@
 				939885C408B7E3D100E707C4 /* EventNames.h in Headers */,
 				8F67561B1288B17B0047ACA3 /* EventQueue.h in Headers */,
 				E0FEF372B17C53EAC1C1FBEE /* EventSource.h in Headers */,
+				4A5CB1C616C3A5FD00AB2886 /* EventRetargeter.h in Headers */,
 				E12EDB7B0B308A78002704B6 /* EventTarget.h in Headers */,
 				97AA3CA5145237CC003E1DA6 /* EventTargetHeaders.h in Headers */,
 				97AA3CA6145237CC003E1DA6 /* EventTargetInterfaces.h in Headers */,
@@ -27619,6 +27626,7 @@
 				1CA19E050DC255950065A994 /* EventLoopMac.mm in Sources */,
 				939885C308B7E3D100E707C4 /* EventNames.cpp in Sources */,
 				E0FEF372B27C53EAC1C1FBEE /* EventSource.cpp in Sources */,
+				4A5CB1C516C3A5FD00AB2886 /* EventRetargeter.cpp in Sources */,
 				E12EDBEA0B308E0B002704B6 /* EventTarget.cpp in Sources */,
 				D6FDAEF3149C06190037B1E4 /* EventTracer.cpp in Sources */,
 				BC60D8F20D2A11E000B9918F /* ExceptionBase.cpp in Sources */,
