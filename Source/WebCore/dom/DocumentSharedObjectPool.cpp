@@ -86,7 +86,7 @@ PassRefPtr<ShareableElementData> DocumentSharedObjectPool::cachedShareableElemen
     if (!cacheHash || cacheIterator->value)
         return elementData.release();
 
-    cacheIterator->value = adoptPtr(new ShareableElementDataCacheEntry(ShareableElementDataCacheKey(elementData->immutableAttributeArray(), elementData->length()), elementData));
+    cacheIterator->value = adoptPtr(new ShareableElementDataCacheEntry(ShareableElementDataCacheKey(elementData->m_attributeArray, elementData->length()), elementData));
 
     return elementData.release();
 }
