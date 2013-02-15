@@ -28,8 +28,8 @@
 
 #include "HitTestResult.h"
 #include "PaintInfo.h"
-#include "RenderMultiColumnFlowThread.h"
 #include "RenderMultiColumnBlock.h"
+#include "RenderMultiColumnFlowThread.h"
 
 using std::min;
 using std::max;
@@ -205,7 +205,7 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
     return overflowRectForFlowThreadPortion(overflowRect, isFirstRegion() && isFirstColumn, isLastRegion() && isLastColumn);
 }
 
-void RenderMultiColumnSet::paintReplaced(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderMultiColumnSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     // FIXME: RenderRegions are replaced elements right now and so they only paint in the foreground phase.
     // Columns should technically respect phases and allow for background/float/foreground overlap etc., just like
@@ -258,7 +258,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
             ruleLogicalLeft -= (inlineDirectionSize + colGap / 2);
             currLogicalLeftOffset -= (inlineDirectionSize + colGap);
         }
-       
+
         // Now paint the column rule.
         if (i < colCount - 1) {
             LayoutUnit ruleLeft = isHorizontalWritingMode() ? paintOffset.x() + ruleLogicalLeft - ruleThickness / 2 + ruleAdd : paintOffset.x() + borderLeft() + paddingLeft();
