@@ -1201,10 +1201,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\wtf\StringExtras.cpp"
-			>
-		</File>
-		<File
 			RelativePath="..\wtf\StringExtras.h"
 			>
 		</File>

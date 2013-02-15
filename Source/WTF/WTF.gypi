@@ -202,7 +202,6 @@
             'wtf/SegmentedVector.h',
             'wtf/SizeLimits.cpp',
             'wtf/StackBounds.cpp',
-            'wtf/StringExtras.cpp',
             'wtf/StringPrintStream.cpp',
             'wtf/TCPackedCache.h',
             'wtf/TCPageMap.h',

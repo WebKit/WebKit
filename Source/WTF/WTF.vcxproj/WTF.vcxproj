@@ -53,7 +53,6 @@
     <ClCompile Include="..\wtf\SHA1.cpp" />
     <ClCompile Include="..\wtf\SizeLimits.cpp" />
     <ClCompile Include="..\wtf\StackBounds.cpp" />
-    <ClCompile Include="..\wtf\StringExtras.cpp" />
     <ClCompile Include="..\wtf\StringPrintStream.cpp" />
     <ClCompile Include="..\wtf\TCSystemAlloc.cpp" />
     <ClCompile Include="..\wtf\text\AtomicString.cpp" />

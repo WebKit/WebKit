@@ -94,7 +94,6 @@
 #endif
 
 /* COMPILER(RVCT) - ARM RealView Compilation Tools */
-/* COMPILER(RVCT4_OR_GREATER) - ARM RealView Compilation Tools 4.0 or greater */
 #if defined(__CC_ARM) || defined(__ARMCC__)
 #define WTF_COMPILER_RVCT 1
 #define RVCT_VERSION_AT_LEAST(major, minor, patch, build) (__ARMCC_VERSION >= (major * 100000 + minor * 10000 + patch * 1000 + build))
@@ -187,7 +186,7 @@
 /* UNLIKELY */
 
 #ifndef UNLIKELY
-#if COMPILER(GCC) || (RVCT_VERSION_AT_LEAST(3, 0, 0, 0) && defined(__GNUC__))
+#if COMPILER(GCC) || (COMPILER(RVCT) && defined(__GNUC__))
 #define UNLIKELY(x) __builtin_expect((x), 0)
 #else
 #define UNLIKELY(x) (x)
@@ -198,7 +197,7 @@
 /* LIKELY */
 
 #ifndef LIKELY
-#if COMPILER(GCC) || (RVCT_VERSION_AT_LEAST(3, 0, 0, 0) && defined(__GNUC__))
+#if COMPILER(GCC) || (COMPILER(RVCT) && defined(__GNUC__))
 #define LIKELY(x) __builtin_expect((x), 1)
 #else
 #define LIKELY(x) (x)

@@ -42,9 +42,8 @@ public:
     // not return these results directly to JavaScript without filling first.
     static inline PassRefPtr<Int16Array> createUninitialized(unsigned length);
 
-    // Can’t use "using" here due to a bug in the RVCT compiler.
-    bool set(TypedArrayBase<short>* array, unsigned offset) { return TypedArrayBase<short>::set(array, offset); }
-    void set(unsigned index, double value) { IntegralTypedArrayBase<short>::set(index, value); }
+    using TypedArrayBase<short>::set;
+    using IntegralTypedArrayBase<short>::set;
 
     inline PassRefPtr<Int16Array> subarray(int start) const;
     inline PassRefPtr<Int16Array> subarray(int start, int end) const;

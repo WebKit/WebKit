@@ -42,8 +42,7 @@ public:
     // not return these results directly to JavaScript without filling first.
     static inline PassRefPtr<Float64Array> createUninitialized(unsigned length);
 
-    // Can’t use "using" here due to a bug in the RVCT compiler.
-    bool set(TypedArrayBase<double>* array, unsigned offset) { return TypedArrayBase<double>::set(array, offset); }
+    using TypedArrayBase<double>::set;
 
     void set(unsigned index, double value)
     {

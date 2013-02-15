@@ -697,9 +697,7 @@
 #endif
 #endif
 
-#if !OS(WINDOWS) && !OS(SOLARIS) \
-    && !OS(RVCT) \
-    && !OS(ANDROID)
+#if !OS(WINDOWS) && !OS(SOLARIS) && !OS(ANDROID)
 #define HAVE_TM_GMTOFF 1
 #define HAVE_TM_ZONE 1
 #define HAVE_TIMEGM 1
@@ -963,7 +961,7 @@
 #endif
 
 /* Configure the interpreter */
-#if COMPILER(GCC) || (RVCT_VERSION_AT_LEAST(4, 0, 0, 0) && defined(__GNUC__))
+#if COMPILER(GCC) || (COMPILER(RVCT) && defined(__GNUC__))
 #define HAVE_COMPUTED_GOTO 1
 #endif
 

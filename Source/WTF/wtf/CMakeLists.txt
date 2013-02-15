@@ -185,7 +185,6 @@ set(WTF_SOURCES
     RefCountedLeakCounter.cpp
     SHA1.cpp
     StackBounds.cpp
-    StringExtras.cpp
     StringPrintStream.cpp
     Threading.cpp
     TypeTraits.cpp
