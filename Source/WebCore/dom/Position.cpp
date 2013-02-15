@@ -933,7 +933,7 @@ bool Position::isCandidate() const
         return false;
         
     if (renderer->isBlockFlow()) {
-        if (toRenderBlock(renderer)->height() || m_anchorNode->hasTagName(bodyTag)) {
+        if (toRenderBlock(renderer)->logicalHeight() || m_anchorNode->hasTagName(bodyTag)) {
             if (!Position::hasRenderedNonAnonymousDescendantsWithHeight(renderer))
                 return atFirstEditingPositionForNode() && !Position::nodeIsUserSelectNone(deprecatedNode());
             return m_anchorNode->rendererIsEditable() && !Position::nodeIsUserSelectNone(deprecatedNode()) && atEditingBoundary();
