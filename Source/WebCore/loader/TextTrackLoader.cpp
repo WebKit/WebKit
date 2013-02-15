@@ -103,7 +103,8 @@ void TextTrackLoader::processNewCueData(CachedResource* resource)
     }
 }
 
-void TextTrackLoader::didReceiveData(CachedResource* resource)
+// FIXME: This is a very unusual pattern, no other CachedResourceClient does this. Refactor to use notifyFinished() instead.
+void TextTrackLoader::deprecatedDidReceiveCachedResource(CachedResource* resource)
 {
     ASSERT(m_cachedCueData == resource);
     

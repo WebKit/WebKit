@@ -87,13 +87,14 @@ namespace WebCore {
 #endif
 
         void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
+        void didReceiveData(unsigned long identifier, const char* data, int dataLength);
         void didFinishLoading(unsigned long identifier, double finishTime);
-        void didFail(const ResourceError&);
+        void didFail(unsigned long identifier, const ResourceError&);
         void makeCrossOriginAccessRequest(const ResourceRequest&);
         void makeSimpleCrossOriginAccessRequest(const ResourceRequest& request);
         void makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request);
         void preflightSuccess();
-        void preflightFailure(const String& url, const String& errorDescription);
+        void preflightFailure(unsigned long identifier, const String& url, const String& errorDescription);
 
         void loadRequest(const ResourceRequest&, SecurityCheckPolicy);
         bool isAllowedRedirect(const KURL&);
@@ -108,10 +109,6 @@ namespace WebCore {
         bool m_simpleRequest;
         bool m_async;
         OwnPtr<ResourceRequest> m_actualRequest;  // non-null during Access Control preflight checks
-
-#if ENABLE(INSPECTOR)
-        unsigned long m_preflightRequestIdentifier;
-#endif
     };
 
 } // namespace WebCore

@@ -69,7 +69,7 @@ private:
 
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);
-    virtual void didReceiveData(CachedResource*);
+    virtual void deprecatedDidReceiveCachedResource(CachedResource*);
     
     // WebVTTParserClient
     virtual void newCuesParsed();

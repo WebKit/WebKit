@@ -55,7 +55,7 @@ void CachedTextTrack::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived
 
     CachedResourceClientWalker<CachedResourceClient> walker(m_clients);
     while (CachedResourceClient *client = walker.next())
-        client->didReceiveData(this);
+        client->deprecatedDidReceiveCachedResource(this);
 
     if (!allDataReceived)
         return;

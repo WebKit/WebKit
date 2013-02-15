@@ -47,7 +47,7 @@ public:
 
     virtual ~CachedResourceClient() { }
     virtual void notifyFinished(CachedResource*) { }
-    virtual void didReceiveData(CachedResource*) { };
+    virtual void deprecatedDidReceiveCachedResource(CachedResource*) { }
     
     static CachedResourceClientType expectedType() { return BaseResourceType; }
     virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
