@@ -19,6 +19,17 @@ function test()
         return range;
     }
 
+    function typeDelete(textModel, startRange, count)
+    {
+        var count = count || 1;
+        var range = startRange;
+        for (var i = 0; i < count; ++i) {
+            var deleteRange = range.isEmpty() ? textModel.growRangeRight(range) : range;
+            range = textModel.editRange(deleteRange, "", range).collapseToEnd();
+        }
+        return range;
+    }
+
     function typeBackspace(textModel, startRange, count)
     {
         var count = count || 1;
@@ -85,6 +96,102 @@ function test()
             dumpTextModel("Text after first redo:\n", textModel, range);
             range = textModel.redo();
             dumpTextModel("Text after second redo:\n", textModel, range);
+            next();
+        },
+
+        function testDelete(next)
+        {
+            var textModel = new WebInspector.TextEditorModel();
+            var functionText = "    bar();\n    baz();\n    foo();";
+            textModel.setText("function foo()\n{\n\n}\n");
+            dumpTextModel("Text before edit:\n", textModel);
+            var range = typeText(textModel, new WebInspector.TextRange(2, 0, 2, 0), "    bar();\n    baz();\n    foo();");
+            dumpTextModel("Text after edit:\n", textModel, range);
+            range = typeDelete(textModel, new WebInspector.TextRange(2, 0, 2, 0), functionText.length);
+            dumpTextModel("Text after deletes:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after first undo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after second undo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after first redo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after second redo:\n", textModel, range);
+            next();
+        },
+
+        function testBackspace(next)
+        {
+            var textModel = new WebInspector.TextEditorModel();
+            var functionText = "    bar();\n    baz();\n    foo();";
+            textModel.setText("function foo()\n{\n\n}\n");
+            dumpTextModel("Text before edit:\n", textModel);
+            var range = typeText(textModel, new WebInspector.TextRange(2, 0, 2, 0), "    bar();\n    baz();\n    foo();");
+            dumpTextModel("Text after edit:\n", textModel, range);
+            range = typeBackspace(textModel, range, functionText.length);
+            dumpTextModel("Text after backspaces:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after first undo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after second undo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after first redo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after second redo:\n", textModel, range);
+            next();
+        },
+
+        function testBackspaceAndDeleteInDifferentLines(next)
+        {
+            var textModel = new WebInspector.TextEditorModel();
+            var functionText = "    bar();\n    baz();\n    foo();";
+            textModel.setText("function foo()\n{\n\n}\n");
+            dumpTextModel("Text before edit:\n", textModel);
+            var range = typeText(textModel, new WebInspector.TextRange(2, 0, 2, 0), "    bar();\n    baz();\n    foo();");
+            dumpTextModel("Text after edit:\n", textModel, range);
+            range = typeBackspace(textModel, range);
+            dumpTextModel("Text after backspace:\n", textModel, range);
+            range = typeDelete(textModel, new WebInspector.TextRange(2, 0, 2, 0));
+            dumpTextModel("Text after delete:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after first undo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after second undo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after third undo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after first redo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after second redo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after third redo:\n", textModel, range);
+            next();
+        },
+
+        function testPasteSeveralTimes(next)
+        {
+            var textModel = new WebInspector.TextEditorModel();
+            var functionText = "    bar();\n    baz();\n    foo();";
+            textModel.setText("function foo()\n{\n\n}\n");
+            dumpTextModel("Text before edit:\n", textModel);
+            var range = typeText(textModel, new WebInspector.TextRange(2, 0, 2, 0), "    bar();\n    baz();\n    foo();");
+            dumpTextModel("Text after edit:\n", textModel, range);
+            range = textModel.editRange(range, "42").collapseToEnd();
+            dumpTextModel("Text after first paste:\n", textModel, range);
+            range = textModel.editRange(range, "42").collapseToEnd();
+            dumpTextModel("Text after second paste:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after first undo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after second undo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after third undo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after first redo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after second redo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after third redo:\n", textModel, range);
             next();
         },
 

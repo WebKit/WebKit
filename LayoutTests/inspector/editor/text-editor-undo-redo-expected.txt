@@ -134,6 +134,266 @@ function foo()
 }
 
 
+Running: testDelete
+Text before edit:
+function foo()
+{
+
+}
+
+Text after edit:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after deletes:
+function foo()
+{
+|
+}
+
+Text after first undo:
+function foo()
+{
+|    bar();
+    baz();
+    foo();
+}
+
+Text after second undo:
+function foo()
+{
+    bar();
+    baz();|
+}
+
+Text after first redo:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after second redo:
+function foo()
+{
+|
+}
+
+
+Running: testBackspace
+Text before edit:
+function foo()
+{
+
+}
+
+Text after edit:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after backspaces:
+function foo()
+{
+|
+}
+
+Text after first undo:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after second undo:
+function foo()
+{
+    bar();
+    baz();|
+}
+
+Text after first redo:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after second redo:
+function foo()
+{
+|
+}
+
+
+Running: testBackspaceAndDeleteInDifferentLines
+Text before edit:
+function foo()
+{
+
+}
+
+Text after edit:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after backspace:
+function foo()
+{
+    bar();
+    baz();
+    foo()|
+}
+
+Text after delete:
+function foo()
+{
+|   bar();
+    baz();
+    foo()
+}
+
+Text after first undo:
+function foo()
+{
+|    bar();
+    baz();
+    foo()
+}
+
+Text after second undo:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after third undo:
+function foo()
+{
+    bar();
+    baz();|
+}
+
+Text after first redo:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after second redo:
+function foo()
+{
+    bar();
+    baz();
+    foo()|
+}
+
+Text after third redo:
+function foo()
+{
+|   bar();
+    baz();
+    foo()
+}
+
+
+Running: testPasteSeveralTimes
+Text before edit:
+function foo()
+{
+
+}
+
+Text after edit:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after first paste:
+function foo()
+{
+    bar();
+    baz();
+    foo();42|
+}
+
+Text after second paste:
+function foo()
+{
+    bar();
+    baz();
+    foo();4242|
+}
+
+Text after first undo:
+function foo()
+{
+    bar();
+    baz();
+    foo();42|
+}
+
+Text after second undo:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after third undo:
+function foo()
+{
+    bar();
+    baz();|
+}
+
+Text after first redo:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after second redo:
+function foo()
+{
+    bar();
+    baz();
+    foo();42|
+}
+
+Text after third redo:
+function foo()
+{
+    bar();
+    baz();
+    foo();4242|
+}
+
+
 Running: testSelectionAfterUndoRedo
 Text before edit:
 function foo()

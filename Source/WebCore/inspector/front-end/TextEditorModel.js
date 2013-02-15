@@ -67,6 +67,28 @@ WebInspector.TextRange.prototype = {
     },
 
     /**
+     * @param {WebInspector.TextRange} range
+     * @return {boolean}
+     */
+    immediatelyPrecedes: function(range)
+    {
+        if (!range)
+            return false;
+        return this.endLine === range.startLine && this.endColumn === range.startColumn;
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @return {boolean}
+     */
+    immediatelyFollows: function(range)
+    {
+        if (!range)
+            return false;
+        return range.immediatelyPrecedes(this);
+    },
+
+    /**
      * @return {number}
      */
     get linesCount()
@@ -251,15 +273,63 @@ WebInspector.TextEditorModel.prototype = {
 
     /**
      * @param {WebInspector.TextRange} range
+     * @return {boolean}
+     */
+    _rangeHasOneCharacter: function(range)
+    {
+        if (range.startLine === range.endLine && range.endColumn - range.startColumn === 1)
+            return true;
+        if (range.endLine - range.startLine === 1 && range.endColumn === 0 && range.startColumn === this.lineLength(range.startLine))
+            return true;
+        return false;
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {string} text
+     * @param {WebInspector.TextRange=} originalSelection
+     * @return {boolean}
+     */
+    _isEditRangeUndoBoundary: function(range, text, originalSelection)
+    {
+        if (originalSelection && !originalSelection.isEmpty())
+            return true;
+        if (text)
+            return text.length > 1 || !range.isEmpty();
+        return !this._rangeHasOneCharacter(range);
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
+     * @param {string} text
+     * @return {boolean}
+     */
+    _isEditRangeAdjacentToLastCommand: function(range, text)
+    {
+        if (!this._lastCommand)
+            return true;
+        if (!text) {
+            // FIXME: Distinguish backspace and delete in lastCommand.
+            return this._lastCommand.newRange.immediatelyPrecedes(range) || this._lastCommand.newRange.immediatelyFollows(range);
+        }
+        return text.indexOf("\n") === -1 && this._lastCommand.newRange.immediatelyPrecedes(range);
+    },
+
+    /**
+     * @param {WebInspector.TextRange} range
      * @param {string} text
      * @param {WebInspector.TextRange=} originalSelection
      * @return {WebInspector.TextRange}
      */
     editRange: function(range, text, originalSelection)
-    {   
-        if (this._lastEditedRange && (!text || text.indexOf("\n") !== -1 || this._lastEditedRange.endLine !== range.startLine || this._lastEditedRange.endColumn !== range.startColumn))
+    {
+        var undoBoundary = this._isEditRangeUndoBoundary(range, text, originalSelection);
+        if (undoBoundary || !this._isEditRangeAdjacentToLastCommand(range, text))
             this._markUndoableState();
-        return this._innerEditRange(range, text, originalSelection);
+        var newRange = this._innerEditRange(range, text, originalSelection);
+        if (undoBoundary)
+            this._markUndoableState();
+        return newRange;
     },
 
     /**
@@ -272,8 +342,7 @@ WebInspector.TextEditorModel.prototype = {
     {
         var originalText = this.copyRange(range);
         var newRange = this._innerSetText(range, text);
-        this._lastEditedRange = newRange;
-        this._pushUndoableCommand(newRange, originalText, originalSelection || range);
+        this._lastCommand = this._pushUndoableCommand(newRange, originalText, originalSelection || range);
         this.dispatchEventToListeners(WebInspector.TextEditorModel.Events.TextChanged, { oldRange: range, newRange: newRange, editRange: true });
         return newRange;
     },
