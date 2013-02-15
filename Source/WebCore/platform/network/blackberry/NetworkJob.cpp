@@ -270,7 +270,7 @@ void NetworkJob::notifyMultipartHeaderReceived(const char* key, const char* valu
         handleNotifyMultipartHeaderReceived(key, value);
 }
 
-void NetworkJob::notifyAuthReceived(NetworkRequest::AuthType authType, NetworkRequest::AuthProtocol authProtocol, NetworkRequest::AuthScheme authScheme, const char* realm, AuthResult result, bool requireCredentials)
+void NetworkJob::notifyAuthReceived(NetworkRequest::AuthType authType, NetworkRequest::AuthProtocol authProtocol, NetworkRequest::AuthScheme authScheme, const char* realm, AuthResult result)
 {
     ProtectionSpaceServerType serverType;
     switch (authType) {
@@ -355,7 +355,7 @@ void NetworkJob::notifyAuthReceived(NetworkRequest::AuthType authType, NetworkRe
         storeCredentials();
     }
     if (result != AuthResultSuccess) {
-        switch (sendRequestWithCredentials(serverType, scheme, realm, requireCredentials)) {
+        switch (sendRequestWithCredentials(serverType, scheme, realm, result != AuthResultRetry)) {
         case SendRequestSucceeded:
             m_newJobWithCredentialsStarted = true;
             break;

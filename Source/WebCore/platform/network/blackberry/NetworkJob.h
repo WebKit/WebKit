@@ -77,8 +77,7 @@ public:
         BlackBerry::Platform::NetworkRequest::AuthProtocol,
         BlackBerry::Platform::NetworkRequest::AuthScheme,
         const char* realm,
-        AuthResult,
-        bool requireCredentials);
+        AuthResult);
     // notifyStringHeaderReceived exists only to resolve ambiguity between char* and String parameters
     void notifyStringHeaderReceived(const String& key, const String& value);
     void handleNotifyHeaderReceived(const String& key, const String& value);
