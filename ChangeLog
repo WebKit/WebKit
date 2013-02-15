@@ -1,3 +1,10 @@
+2013-02-15  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix.
+
+        * Source/autotools/SetupLibtool.m4: Move AR_FLAGS definition so it comes before dolt
+        and libtool initialization, thus having an effect once again.
+
 2013-02-15  Keishi Hattori  <keishi@webkit.org>
 
         Add setValue and closePopup methods to PagePopupController
