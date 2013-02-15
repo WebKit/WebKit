@@ -56,7 +56,7 @@ RenderFlowThread::RenderFlowThread(Document* document)
     , m_overset(true)
     , m_hasRegionsWithStyling(false)
     , m_dispatchRegionLayoutUpdateEvent(false)
-    , m_pageLogicalHeightChanged(false)
+    , m_pageLogicalSizeChanged(false)
 {
     ASSERT(document->cssRegionsEnabled());
     setInRenderFlowThread();
@@ -136,7 +136,7 @@ void RenderFlowThread::layout()
 {
     StackStats::LayoutCheckPoint layoutCheckPoint;
 
-    m_pageLogicalHeightChanged = m_regionsInvalidated && everHadLayout();
+    m_pageLogicalSizeChanged = m_regionsInvalidated && everHadLayout();
     if (m_regionsInvalidated) {
         m_regionsInvalidated = false;
         m_regionsHaveUniformLogicalWidth = true;
@@ -187,7 +187,7 @@ void RenderFlowThread::layout()
     CurrentRenderFlowThreadMaintainer currentFlowThreadSetter(this);
     RenderBlock::layout();
 
-    m_pageLogicalHeightChanged = false;
+    m_pageLogicalSizeChanged = false;
 
     if (lastRegion())
         lastRegion()->expandToEncompassFlowThreadContentsIfNeeded();
@@ -460,16 +460,20 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
 
 bool RenderFlowThread::logicalWidthChangedInRegions(const RenderBlock* block, LayoutUnit offsetFromLogicalTopOfFirstPage)
 {
-    if (!hasRegions() || block == this) // Not necessary, since if any region changes, we do a full pagination relayout anyway.
+    if (!hasRegions())
         return false;
 
     RenderRegion* startRegion;
     RenderRegion* endRegion;
     getRegionRangeForBox(block, startRegion, endRegion);
 
-    // If the block doesn't have a startRegion (and implicitly a region range) it's safe to assume the width in regions has changed (e.g. the region chain was invalidated).
-    if (!startRegion)
+    // When the region chain is invalidated the box information is discarded so we must assume the width has changed.
+    if (m_pageLogicalSizeChanged && !startRegion)
         return true;
+
+    // Not necessary for the flow thread, since we already computed the correct info for it.
+    if (block == this)
+        return false;
 
     for (RenderRegionList::iterator iter = m_regionList.find(startRegion); iter != m_regionList.end(); ++iter) {
         RenderRegion* region = *iter;

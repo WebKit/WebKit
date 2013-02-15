@@ -1473,7 +1473,7 @@ void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalH
         colInfo->setPaginationUnit(paginationUnit());
     } else if (isRenderFlowThread()) {
         pageLogicalHeight = 1; // This is just a hack to always make sure we have a page logical height.
-        pageLogicalHeightChanged = toRenderFlowThread(this)->pageLogicalHeightChanged();
+        pageLogicalHeightChanged = toRenderFlowThread(this)->pageLogicalSizeChanged();
     }
 }
 
