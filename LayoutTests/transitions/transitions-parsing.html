@@ -140,6 +140,12 @@ shouldBe("computedStyle.transitionProperty", "'all'");
 shouldBe("style.webkitTransitionProperty", "''");
 shouldBe("computedStyle.webkitTransitionProperty", "'all'");
 
+style.transitionProperty = "all, all";
+shouldBe("style.transitionProperty", "''");
+shouldBe("computedStyle.transitionProperty", "'all'");
+shouldBe("style.webkitTransitionProperty", "''");
+shouldBe("computedStyle.webkitTransitionProperty", "'all'");
+
 style.transitionProperty = "";
 
 debug("Valid transition-duration values.");
@@ -589,6 +595,20 @@ shouldBe("computedStyle.transitionDelay", "'10s, 20s'");
 shouldBe("computedStyle.webkitTransitionDelay", "'10s, 20s'");
 shouldBe("checkTransitionShorthandValue()", "true");
 
+style.transition = "ease-in opacity 20s 10s, all ease-out 20s";
+shouldBe("style.transition", "'opacity 20s ease-in 10s, all 20s ease-out'");
+shouldBe("computedStyle.transition", "'opacity 20s ease-in 10s, all 20s ease-out 0s'");
+shouldBe("style.webkitTransition", "'opacity 20s ease-in 10s, all 20s ease-out'");
+shouldBe("computedStyle.webkitTransition", "'opacity 20s ease-in 10s, all 20s ease-out 0s'");
+shouldBe("checkTransitionShorthandValue()", "true");
+
+style.transition = " all ease-out 20s, ease-in opacity 20s 10s";
+shouldBe("style.transition", "'all 20s ease-out, opacity 20s ease-in 10s'");
+shouldBe("computedStyle.transition", "'all 20s ease-out 0s, opacity 20s ease-in 10s'");
+shouldBe("style.webkitTransition", "'all 20s ease-out, opacity 20s ease-in 10s'");
+shouldBe("computedStyle.webkitTransition", "'all 20s ease-out 0s, opacity 20s ease-in 10s'");
+shouldBe("checkTransitionShorthandValue()", "true");
+
 debug("Invalid transition shorthand values.");
 style.transition = "";
 
@@ -629,6 +649,48 @@ shouldBe("style.webkitTransition", "''");
 shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
 
 style.transition = "all 30s ease-in 20s, step-start(2)";
+shouldBe("style.transition", "''");
+shouldBe("computedStyle.transition", "'all 0s ease 0s'");
+shouldBe("style.webkitTransition", "''");
+shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
+
+style.transition = "ease-in opacity 20s 10s, none";
+shouldBe("style.transition", "''");
+shouldBe("computedStyle.transition", "'all 0s ease 0s'");
+shouldBe("style.webkitTransition", "''");
+shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
+
+style.transition = "none, ease-in opacity 20s 10s, none";
+shouldBe("style.transition", "''");
+shouldBe("computedStyle.transition", "'all 0s ease 0s'");
+shouldBe("style.webkitTransition", "''");
+shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
+
+style.transition = "none, ease-in opacity 20s 10s";
+shouldBe("style.transition", "''");
+shouldBe("computedStyle.transition", "'all 0s ease 0s'");
+shouldBe("style.webkitTransition", "''");
+shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
+
+style.transition = "ease-in opacity 20s 10s, all 20s ease-out 0s, none";
+shouldBe("style.transition", "''");
+shouldBe("computedStyle.transition", "'all 0s ease 0s'");
+shouldBe("style.webkitTransition", "''");
+shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
+
+style.transition = "ease-in opacity 20s 10s, ease-in width 20s 10s, none";
+shouldBe("style.transition", "''");
+shouldBe("computedStyle.transition", "'all 0s ease 0s'");
+shouldBe("style.webkitTransition", "''");
+shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
+
+style.transition = "none, none";
+shouldBe("style.transition", "''");
+shouldBe("computedStyle.transition", "'all 0s ease 0s'");
+shouldBe("style.webkitTransition", "''");
+shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
+
+style.transition = "all, all";
 shouldBe("style.transition", "''");
 shouldBe("computedStyle.transition", "'all 0s ease 0s'");
 shouldBe("style.webkitTransition", "''");

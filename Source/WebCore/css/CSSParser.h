@@ -45,6 +45,7 @@
 
 namespace WebCore {
 
+class AnimationParseContext;
 class CSSBorderImageSliceValue;
 class CSSPrimitiveValue;
 class CSSSelectorList;
@@ -143,12 +144,12 @@ public:
     PassRefPtr<CSSValue> parseAnimationIterationCount();
     PassRefPtr<CSSValue> parseAnimationName();
     PassRefPtr<CSSValue> parseAnimationPlayState();
-    PassRefPtr<CSSValue> parseAnimationProperty(bool& allowAnimationProperty);
+    PassRefPtr<CSSValue> parseAnimationProperty(AnimationParseContext&);
     PassRefPtr<CSSValue> parseAnimationTimingFunction();
 
     bool parseTransformOriginShorthand(RefPtr<CSSValue>&, RefPtr<CSSValue>&, RefPtr<CSSValue>&);
     bool parseCubicBezierTimingFunctionValue(CSSParserValueList*& args, double& result);
-    bool parseAnimationProperty(CSSPropertyID, RefPtr<CSSValue>&);
+    bool parseAnimationProperty(CSSPropertyID, RefPtr<CSSValue>&, AnimationParseContext&);
     bool parseTransitionShorthand(bool important);
     bool parseAnimationShorthand(bool important);
 
