@@ -51,7 +51,8 @@ PassRefPtr<StorageAreaProxy> StorageAreaProxy::create(StorageNamespaceProxy* sto
 }
 
 StorageAreaProxy::StorageAreaProxy(StorageNamespaceProxy* storageNamespaceProxy, PassRefPtr<SecurityOrigin> securityOrigin)
-    : m_storageAreaID(generateStorageAreaID())
+    : m_storageType(storageNamespaceProxy->storageType())
+    , m_storageAreaID(generateStorageAreaID())
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, storageNamespaceProxy->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(securityOrigin.get())), 0);
 }
@@ -148,7 +149,8 @@ bool StorageAreaProxy::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame
     if (!sourceFrame->page()->settings()->privateBrowsingEnabled())
         return false;
 
-    // FIXME: Check the type of the storage.
+    if (m_storageType != LocalStorage)
+        return true;
 
     return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(sourceFrame->document()->securityOrigin()->protocol());
 }

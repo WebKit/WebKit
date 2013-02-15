@@ -59,6 +59,7 @@ private:
 
     void loadValuesIfNeeded();
 
+    WebCore::StorageType m_storageType;
     uint64_t m_storageAreaID;
     OwnPtr<HashMap<String, String> > m_values;
 };

@@ -39,6 +39,7 @@ public:
     virtual ~StorageNamespaceProxy();
 
     uint64_t storageNamespaceID() const { return m_storageNamespaceID; }
+    WebCore::StorageType storageType() const;
 
 private:
     explicit StorageNamespaceProxy(WebPage*);
