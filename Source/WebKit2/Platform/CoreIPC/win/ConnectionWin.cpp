@@ -277,7 +277,7 @@ bool Connection::sendOutgoingMessage(PassOwnPtr<MessageEncoder> encoder)
         return false;
 
     // We put the message ID last.
-    encoder << 0;
+    *encoder << 0;
 
     // Write the outgoing message.
 

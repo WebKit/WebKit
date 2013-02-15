@@ -1,5 +1,12 @@
 2013-02-15  Csaba Osztrogonác  <ossy@webkit.org>
 
+        Typo fix after r143064.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+
+2013-02-15  Csaba Osztrogonác  <ossy@webkit.org>
+
         One more buildfix after r143052.
 
         * Platform/CoreIPC/win/ConnectionWin.cpp:
