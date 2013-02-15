@@ -1,32 +1,13 @@
 <html>
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="editor-test.js"></script>
 <script>
 function test()
 {
-    function textWithSelection(text, selection)
-    {
-        if (!selection)
-            return text;
-
-        function lineWithCursor(line, column, cursorChar)
-        {
-            return line.substring(0, column) + cursorChar + line.substring(column);
-        }
-
-        var lines = text.split("\n");
-        selection = selection.normalize();
-        var endCursorChar = selection.isEmpty() ? "|" : "<";
-        lines[selection.endLine] = lineWithCursor(lines[selection.endLine], selection.endColumn, endCursorChar);
-        if (!selection.isEmpty()) {
-            lines[selection.startLine] = lineWithCursor(lines[selection.startLine], selection.startColumn, ">");
-        }
-        return lines.join("\n");
-    }
-
     function dumpTextModel(prefix, textModel, range)
     {
-        var text = textWithSelection(textModel.text(), range);
+        var text = InspectorTest.textWithSelection(textModel.text(), range);
         InspectorTest.addResult(prefix + text);
     }
 
@@ -71,6 +52,27 @@ function test()
             dumpTextModel("Text after second redo:\n", textModel, range);
             range = textModel.redo();
             dumpTextModel("Text after third redo:\n", textModel, range);
+            next();
+        },
+
+        function testEditRangeWithTheSameTextAsOriginal(next)
+        {
+            var textModel = new WebInspector.TextEditorModel();
+            var functionText = "    bar();\n    baz();\n    foo();";
+            textModel.setText("function foo()\n{\n\n}\n");
+            dumpTextModel("Text before edit:\n", textModel);
+            var range = typeText(textModel, new WebInspector.TextRange(2, 0, 2, 0), "    bar();\n    baz();\n    foo();");
+            dumpTextModel("Text after edit:\n", textModel, range);
+            textModel.editRange(new WebInspector.TextRange(3, 0, 4, 0), "    baz();\n");
+            dumpTextModel("Text after paste of the same text:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after first undo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after second undo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after first redo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after second redo:\n", textModel, range);
             next();
         }
     ]);

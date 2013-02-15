@@ -267,11 +267,8 @@ WebInspector.TextEditorModel.prototype = {
     _innerEditRange: function(range, text)
     {
         var originalText = this.copyRange(range);
-        var newRange = range;
-        if (text !== originalText) {
-            newRange = this._innerSetText(range, text);
-            this._pushUndoableCommand(newRange, originalText);
-        }
+        var newRange = this._innerSetText(range, text);
+        this._pushUndoableCommand(newRange, originalText);
         this._lastEditedRange = newRange;
         this.dispatchEventToListeners(WebInspector.TextEditorModel.Events.TextChanged, { oldRange: range, newRange: newRange, editRange: true });
         return newRange;

@@ -79,3 +79,58 @@ function foo()
 }
 
 
+Running: testEditRangeWithTheSameTextAsOriginal
+Text before edit:
+function foo()
+{
+
+}
+
+Text after edit:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after paste of the same text:
+function foo()
+{
+    bar();
+    baz();
+    foo();|
+}
+
+Text after first undo:
+function foo()
+{
+    bar();
+>    baz();
+<    foo();
+}
+
+Text after second undo:
+function foo()
+{
+    bar();
+    baz();|
+}
+
+Text after first redo:
+function foo()
+{
+    bar();
+    baz();
+    foo()>;<
+}
+
+Text after second redo:
+function foo()
+{
+    bar();
+>    baz();
+<    foo();
+}
+
+
