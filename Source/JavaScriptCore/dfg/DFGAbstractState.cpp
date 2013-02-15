@@ -1284,6 +1284,28 @@ bool AbstractState::execute(unsigned indexInBlock)
             
     case NewArray:
         node->setCanExit(true);
+        switch (node->indexingType()) {
+        case ALL_BLANK_INDEXING_TYPES:
+            CRASH();
+            break;
+        case ALL_UNDECIDED_INDEXING_TYPES:
+            ASSERT(!node->numChildren());
+            break;
+        case ALL_INT32_INDEXING_TYPES:
+            for (unsigned operandIndex = 0; operandIndex < node->numChildren(); ++operandIndex)
+                forNode(m_graph.m_varArgChildren[node->firstChild() + operandIndex]).filter(SpecInt32);
+            break;
+        case ALL_DOUBLE_INDEXING_TYPES:
+            for (unsigned operandIndex = 0; operandIndex < node->numChildren(); ++operandIndex)
+                forNode(m_graph.m_varArgChildren[node->firstChild() + operandIndex]).filter(SpecRealNumber);
+            break;
+        case ALL_CONTIGUOUS_INDEXING_TYPES:
+        case ALL_ARRAY_STORAGE_INDEXING_TYPES:
+            break;
+        default:
+            CRASH();
+            break;
+        }
         forNode(node).set(m_graph.globalObjectFor(node->codeOrigin)->arrayStructureForIndexingTypeDuringAllocation(node->indexingType()));
         m_haveStructures = true;
         break;

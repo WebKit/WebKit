@@ -1,3 +1,16 @@
+2013-02-14  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG AbstractState should filter operands to NewArray more precisely
+        https://bugs.webkit.org/show_bug.cgi?id=109900
+
+        Reviewed by Mark Hahnenberg.
+        
+        NewArray for primitive indexing types speculates that the inputs are the appropriate
+        primitives. Now, the CFA filters the abstract state accordingly, as well.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+
 2013-02-15  Andreas Kling  <akling@apple.com>
 
         Yarr: Use OwnPtr to make pattern/disjunction/character-class ownership clearer.
