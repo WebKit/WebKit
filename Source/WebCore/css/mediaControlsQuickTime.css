@@ -41,7 +41,7 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 }
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
-    -webkit-box-ordinal-group: 2; /* Before the fullscreen button */
+    -webkit-order: 2; /* Before the fullscreen button */
 
     width: 14px;
     height: 12px;
@@ -63,20 +63,20 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
     -webkit-appearance: none;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: center;
-    -webkit-box-flex: 1;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: center;
+    -webkit-flex: 1 1;
     text-align: right;
     height: auto;
 }
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
     -webkit-user-select: none;
-    display: -webkit-box;
-    -webkit-box-flex: 0;
-    -webkit-box-pack: center;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    -webkit-flex: 0 0;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
     cursor: default;
     font: -webkit-small-control;
     font-size: 9px;
@@ -95,10 +95,10 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
 
 audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
     -webkit-user-select: none;
-    display: -webkit-box;
-    -webkit-box-flex: 0;
-    -webkit-box-pack: center;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    -webkit-flex: 0 0;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
     cursor: default;
     font: -webkit-small-control;
     font-size: 9px;
@@ -116,8 +116,8 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 }
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1 1;
     height: 13px;
     padding: 0px;
     margin: 0px;
@@ -141,12 +141,12 @@ audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-f
     height: 16px;
     margin-left: 7px;
     margin-right: 7px;
-    -webkit-box-ordinal-group: 4; /* At the very end */
+    -webkit-order: 4; /* At the very end */
     border: none !important;
 }
 
 audio::-webkit-media-controls-rewind-button, video::-webkit-media-controls-rewind-button {
-    display: -webkit-box;
+    display: -webkit-flex;
     -webkit-appearance: media-rewind-button;
     width: 18px;
     height: 18px;
@@ -169,8 +169,8 @@ audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-co
 audio::-webkit-media-controls-status-display, video::-webkit-media-controls-status-display {
     -webkit-user-select: none;
     cursor: default;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1 1;
     font: -webkit-small-control;
     color: white;
     font-size: 10px;
@@ -231,12 +231,12 @@ audio::-webkit-media-controls-volume-slider-mute-button, video::-webkit-media-co
 
 video::-webkit-media-controls-toggle-closed-captions-button {
     -webkit-appearance: media-toggle-closed-captions-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 16px;
     height: 16px;
     margin-left: 7px;
     margin-right: 7px;
-    -webkit-box-ordinal-group: 3; /* between mute and fullscreen */
+    -webkit-order: 3; /* between mute and fullscreen */
     border: none !important;
     background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 102 105"><path fill="rgb(224,224,224)" d="M98.766,43.224c0-23.163-21.775-41.94-48.637-41.94c-26.859,0-48.635,18.777-48.635,41.94c0,18.266,13.546,33.796,32.444,39.549c1.131,8.356,26.037,24.255,22.864,19.921c-4.462-6.096-5.159-13.183-5.07-17.566C77.85,84.397,98.766,65.923,98.766,43.224z"/></svg>');
     background-repeat: no-repeat;

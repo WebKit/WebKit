@@ -39,10 +39,10 @@ audio:-webkit-full-page-media, video:-webkit-full-page-media {
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: center;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: center;
     bottom: auto;
     height: 35px;
     background-color: rgba(20, 20, 20, 0.8);
@@ -54,10 +54,10 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 }
 
 ::-webkit-media-controls {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-pack: end;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-justify-content: flex-end;
+    -webkit-align-items: center;
 }
 
 audio::-webkit-media-controls-enclosure, video::-webkit-media-controls-enclosure {
@@ -80,11 +80,11 @@ audio::-webkit-media-controls-overlay-enclosure {
 }
 
 video::-webkit-media-controls-overlay-enclosure {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-pack: center;
-    -webkit-box-align: center;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-justify-content: center;
+    -webkit-align-items: center;
+    -webkit-flex: 1 1;
     width: 100%;
     height: 100%;
     max-width: 800px;
@@ -112,8 +112,8 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
 
 video::-webkit-media-controls-overlay-play-button {
     -webkit-appearance: media-overlay-play-button;
-    -webkit-box-align: center;
-    display: -webkit-box;
+    -webkit-align-items: center;
+    display: -webkit-flex;
     border: none;
     box-sizing: border-box;
     background-color: transparent;
@@ -150,8 +150,8 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1 1;
     height: 8px;
     margin: 0 15px 0 0;
     padding: 0;
@@ -174,9 +174,9 @@ video::-webkit-media-controls-fullscreen-button {
 }
 
 input[type="range"]::-webkit-media-slider-container {
-    display: -webkit-box;
-    -webkit-box-align: center;
-    -webkit-box-orient: horizontal;
+    display: -webkit-flex;
+    -webkit-align-items: center;
+    -webkit-flex-direction: row;
     box-sizing: border-box;
     height: 100%;
     width: 100%;

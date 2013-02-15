@@ -15,13 +15,13 @@ layer at (18,42) size 320x240
 layer at (8,282) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
 layer at (18,42) size 320x240
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
 layer at (18,42) size 320x240 scrollHeight 481
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
     RenderButton {INPUT} at (0,220) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,220) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderFlexibleBox {DIV} at (20,220) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 218x30
-        RenderDeprecatedFlexibleBox {DIV} at (10,0) size 218x30
+        RenderFlexibleBox {DIV} at (10,0) size 218x30
           RenderBlock (anonymous) at (5,5) size 208x20
             RenderText {#text} at (22,44) size 179x212
               text run at (22,44) width 174: "00:00"
@@ -38,13 +38,13 @@ layer at (18,42) size 320x240 scrollHeight 481
 layer at (318,262) size 20x20
   RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (8,282) size 320x240
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
 layer at (8,282) size 320x240 scrollHeight 250
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
     RenderButton {INPUT} at (0,220) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,220) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderFlexibleBox {DIV} at (20,220) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
+        RenderFlexibleBox {DIV} at (0,0) size 65x30
           RenderBlock (anonymous) at (5,5) size 55x20
             RenderText {#text} at (0,0) size 55x12
               text run at (0,0) width 55: "00:00 / 00:06"

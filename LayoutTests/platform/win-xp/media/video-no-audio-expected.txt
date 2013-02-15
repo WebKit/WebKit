@@ -11,13 +11,13 @@ layer at (0,0) size 800x600
 layer at (8,42) size 352x288
   RenderVideo {VIDEO} at (0,0) size 352x288
 layer at (8,42) size 352x288
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 352x288
+  RenderFlexibleBox {DIV} at (0,0) size 352x288
 layer at (8,314) size 352x16
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,272) size 352x16
+  RenderFlexibleBox {DIV} at (0,272) size 352x16
     RenderButton {INPUT} at (0,0) size 16x16
-    RenderDeprecatedFlexibleBox {DIV} at (16,0) size 288x16
+    RenderFlexibleBox {DIV} at (16,0) size 288x16
       RenderSlider {INPUT} at (0,0) size 288x16
-        RenderDeprecatedFlexibleBox {DIV} at (2,0) size 284x16
+        RenderFlexibleBox {DIV} at (2,0) size 284x16
           RenderBlock {DIV} at (0,4) size 274x8
           RenderBlock {DIV} at (274,4) size 10x8
     RenderButton {INPUT} at (304,0) size 16x16

@@ -11,13 +11,13 @@ layer at (0,0) size 800x600
 layer at (8,42) size 352x288
   RenderVideo {VIDEO} at (0,0) size 352x288
 layer at (8,42) size 352x288
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 352x288
+  RenderFlexibleBox {DIV} at (0,0) size 352x288
 layer at (8,42) size 352x288 scrollHeight 298
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 352x288
+  RenderFlexibleBox {DIV} at (0,0) size 352x288
     RenderButton {INPUT} at (0,268) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,268) size 272x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderFlexibleBox {DIV} at (20,268) size 272x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
+        RenderFlexibleBox {DIV} at (0,0) size 65x30
           RenderBlock (anonymous) at (5,5) size 55x20
             RenderText {#text} at (0,0) size 55x12
               text run at (0,0) width 55: "00:00 / 00:09"

@@ -77,6 +77,17 @@ webkit.org/b/107567 svg/carto.net/combobox.svg [ Failure ]
 
 # Rebaseline required after https://webkit.org/b/95772
 webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.html [ Failure ]
+
+# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
+webkit.org/b/109775 media/audio-controls-rendering.html [ Failure ]
+webkit.org/b/109775 media/controls-after-reload.html [ Failure ]
+webkit.org/b/109775 media/controls-strict.html [ Failure ]
+webkit.org/b/109775 media/controls-styling-strict.html [ Failure ]
+webkit.org/b/109775 media/controls-without-preload.html [ Failure ]
+webkit.org/b/109775 media/video-controls-rendering.html [ Failure ]
+webkit.org/b/109775 media/video-display-toggle.html [ Failure ]
+webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

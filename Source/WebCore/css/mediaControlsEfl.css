@@ -31,9 +31,9 @@ audio {
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
     -webkit-user-select: none;
     position: relative;
     bottom: 0;
@@ -50,7 +50,7 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-appearance: media-mute-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 20px;
     height: 20px;
     position: relative;
@@ -62,7 +62,7 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 20px;
     height: 20px;
     background-color: initial;
@@ -72,11 +72,11 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: flex-end;
+    -webkit-flex: 1 1;
     -webkit-user-select: none;
     height: 20px;
 }
@@ -84,7 +84,7 @@ audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
-    display: -webkit-box;
+    display: -webkit-flex;
     height: 20px;
 
     padding: 4px;
@@ -111,8 +111,8 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1 1;
     height: 20px;
     padding: 0px 2px;
     background-color: initial;
@@ -141,7 +141,7 @@ audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volum
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
     -webkit-appearance: media-seek-back-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 20px;
     height: 20px;
     background-color: initial;
@@ -151,7 +151,7 @@ audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-se
 
 audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
     -webkit-appearance: media-seek-forward-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 20px;
     height: 20px;
     background-color: initial;
@@ -161,7 +161,7 @@ audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-fullscreen-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 20px;
     height: 20px;
     background-color: initial;
@@ -185,7 +185,7 @@ audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-co
 
 audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
     -webkit-appearance: media-toggle-closed-captions-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 20px;
     height: 20px;
     background-color: initial;

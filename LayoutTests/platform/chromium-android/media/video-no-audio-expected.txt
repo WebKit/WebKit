@@ -11,19 +11,19 @@ layer at (0,0) size 800x600
 layer at (8,44) size 352x288
   RenderVideo {VIDEO} at (0,0) size 352x288
 layer at (8,44) size 352x288
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 352x288
-    RenderDeprecatedFlexibleBox {DIV} at (0,0) size 352x253
+  RenderFlexibleBox {DIV} at (0,0) size 352x288
+    RenderFlexibleBox {DIV} at (0,0) size 352x253
       RenderButton {INPUT} at (136,86) size 80x81
     RenderBlock {DIV} at (0,253) size 352x35
 layer at (13,297) size 342x35 scrollHeight 39
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (5,0) size 342x35 [bgcolor=#141414CC]
+  RenderFlexibleBox {DIV} at (5,0) size 342x35 [bgcolor=#141414CC]
     RenderBlock (anonymous) at (0,0) size 53x35
       RenderButton {INPUT} at (9,-1) size 35x36
     RenderSlider {INPUT} at (53,13) size 189x9
-      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 189x8 [border: (1px solid #E6E6E659)]
+      RenderFlexibleBox {DIV} at (0,0) size 189x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,1) size 169x24
         RenderBlock {DIV} at (163,1) size 32x24
-    RenderDeprecatedFlexibleBox {DIV} at (257,0) size 37x35 [color=#FFFFFF]
+    RenderFlexibleBox {DIV} at (257,0) size 37x35 [color=#FFFFFF]
       RenderBlock (anonymous) at (0,0) size 37x35
         RenderText {#text} at (0,7) size 37x21
           text run at (0,7) width 37: "0:09"

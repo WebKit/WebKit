@@ -34,9 +34,9 @@ audio {
 }
 
 audio::-webkit-media-controls-embedded-panel, video::-webkit-media-controls-embedded-panel {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
     position: absolute;
     bottom: 0;
     width: 100%;
@@ -58,11 +58,11 @@ video::-webkit-media-controls-fullscreen-time-display-container, audio::-webkit-
 
 video::-webkit-media-controls-time-display-container, audio::-webkit-media-controls-time-display-container {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: justify;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: space-between;
+    -webkit-flex: 1 1;
 }
 
 video::-webkit-media-controls-fullscreen-play-button, audio::-webkit-media-controls-fullscreen-play-button {
@@ -71,7 +71,7 @@ video::-webkit-media-controls-fullscreen-play-button, audio::-webkit-media-contr
 
 video::-webkit-media-controls-play-button, audio::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
-    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 audio::-webkit-media-controls-fullscreen-timeline-container, video::-webkit-media-controls-fullscreen-timeline-container {
@@ -80,11 +80,11 @@ audio::-webkit-media-controls-fullscreen-timeline-container, video::-webkit-medi
 
 video::-webkit-media-controls-timeline-container, audio::-webkit-media-controls-timeline-container {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-align: stretch;
-    -webkit-box-pack: center;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-align-items: stretch;
+    -webkit-justify-content: center;
+    -webkit-flex: 1 1;
     height: auto;
     width: 100%;
 }
@@ -95,11 +95,11 @@ audio::-webkit-media-controls-fullscreen-current-time-display, video::-webkit-me
 
 audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display {
     -webkit-appearance: media-current-time-display;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
-    -webkit-box-flex: 0;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: flex-end;
+    -webkit-flex: 0 0;
     color: #fafafa;
 }
 
@@ -109,11 +109,11 @@ video::-webkit-media-controls-fullscreen-time-remaining-display, audio::-webkit-
 
 video::-webkit-media-controls-time-remaining-display, audio::-webkit-media-controls-time-remaining-display {
     -webkit-appearance: media-time-remaining-display;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
-    -webkit-box-flex: 0;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: flex-end;
+    -webkit-flex: 0 0;
     color: rgb(125, 125, 125);
 }
 
@@ -123,8 +123,8 @@ audio::-webkit-media-controls-fullscreen-timeline, video::-webkit-media-controls
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1 1;
     margin-bottom: 2px;
 }
 
@@ -134,7 +134,7 @@ video::-webkit-media-controls-fullscreen-fullscreen-button, audio::-webkit-media
 
 video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-enter-fullscreen-button;
-    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 audio::-webkit-media-controls-fullscreen-button {
@@ -143,7 +143,7 @@ audio::-webkit-media-controls-fullscreen-button {
 
 audio::-webkit-media-controls-audio-mute-button {
     -webkit-appearance: media-mute-button;
-    display: -webkit-box;
+    display: -webkit-flex;
 }
 
 video::-webkit-media-controls-audio-mute-button {
@@ -152,11 +152,11 @@ video::-webkit-media-controls-audio-mute-button {
 
 audio::-webkit-media-controls-volume-slider-container {
     -webkit-appearance: media-volume-slider-container;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-align-items: center;
+    -webkit-justify-content: flex-end;
+    -webkit-flex: 1 1;
     -webkit-user-select: none;
     position: absolute;
     left: 0px;
@@ -170,8 +170,8 @@ video::-webkit-media-controls-volume-slider-container {
 
 audio::-webkit-media-controls-volume-slider {
      -webkit-appearance: media-volume-slider;
-     display: -webkit-box;
-     -webkit-box-flex: 1;
+     display: -webkit-flex;
+     -webkit-flex: 1 1;
     position: absolute;
     left: 3%;
     right: 3%;

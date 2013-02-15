@@ -33,9 +33,9 @@ audio {
 }
 
 audio::-webkit-media-controls-panel {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: end;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: flex-end;
     -webkit-user-select: none;
     position: absolute;
     bottom: 0;
@@ -47,9 +47,9 @@ audio::-webkit-media-controls-panel {
 }
 
 video::-webkit-media-controls-panel {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: end;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: flex-end;
     -webkit-user-select: none;
     position: absolute;
     bottom: 0;

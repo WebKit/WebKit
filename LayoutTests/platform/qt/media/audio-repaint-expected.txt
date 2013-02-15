@@ -17,12 +17,12 @@ layer at (8,67) size 200x25
 layer at (8,67) size 200x25
   RenderBlock (relative positioned) {DIV} at (0,0) size 200x25
 layer at (8,67) size 200x25
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 200x25
+  RenderFlexibleBox (positioned) {DIV} at (0,0) size 200x25
     RenderButton {INPUT} at (6,3) size 18x18
     RenderButton {INPUT} at (32,4) size 16x16
-    RenderDeprecatedFlexibleBox {DIV} at (49,5) size 126x15
+    RenderFlexibleBox {DIV} at (49,5) size 126x15
       RenderSlider {INPUT} at (0,2) size 126x13
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 126x13
+        RenderFlexibleBox {DIV} at (0,0) size 126x13
           RenderBlock {DIV} at (0,2) size 116x8
           RenderBlock {DIV} at (116,2) size 10x8
     RenderButton {INPUT} at (177,6) size 14x12
@@ -31,12 +31,12 @@ layer at (114,76) size 10x8
 layer at (8,42) size 200x25
   RenderBlock (relative positioned) {DIV} at (0,0) size 200x25
 layer at (8,42) size 200x25
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 200x25
+  RenderFlexibleBox (positioned) {DIV} at (0,0) size 200x25
     RenderButton {INPUT} at (6,3) size 18x18
     RenderButton {INPUT} at (32,4) size 16x16
-    RenderDeprecatedFlexibleBox {DIV} at (49,5) size 126x15
+    RenderFlexibleBox {DIV} at (49,5) size 126x15
       RenderSlider {INPUT} at (0,2) size 126x13
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 126x13
+        RenderFlexibleBox {DIV} at (0,0) size 126x13
           RenderBlock {DIV} at (0,2) size 116x8
           RenderBlock {DIV} at (116,2) size 10x8
     RenderButton {INPUT} at (177,6) size 14x12
@@ -47,12 +47,12 @@ layer at (8,144) size 200x25
 layer at (8,144) size 200x25
   RenderBlock (relative positioned) {DIV} at (0,0) size 200x25
 layer at (8,144) size 200x25
-  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 200x25
+  RenderFlexibleBox (positioned) {DIV} at (0,0) size 200x25
     RenderButton {INPUT} at (6,3) size 18x18
     RenderButton {INPUT} at (32,4) size 16x16
-    RenderDeprecatedFlexibleBox {DIV} at (49,5) size 126x15
+    RenderFlexibleBox {DIV} at (49,5) size 126x15
       RenderSlider {INPUT} at (0,2) size 126x13
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 126x13
+        RenderFlexibleBox {DIV} at (0,0) size 126x13
           RenderBlock {DIV} at (0,2) size 116x8
           RenderBlock {DIV} at (116,2) size 10x8
     RenderButton {INPUT} at (177,6) size 14x12

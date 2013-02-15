@@ -45,10 +45,10 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 }
 
 ::-webkit-media-controls {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-pack: end;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    -webkit-justify-content: flex-end;
+    -webkit-align-items: center;
 }
 
 audio::-webkit-media-controls-enclosure, video::-webkit-media-controls-enclosure {
@@ -67,10 +67,13 @@ video::-webkit-media-controls-enclosure {
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: center;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    /* We use flex-start here to ensure that the play button is visible even
+     * if we are too small to show all controls.
+     */
+    -webkit-justify-content: flex-start;
     bottom: auto;
     height: 30px;
     background-color: rgba(20, 20, 20, 0.8);
@@ -79,7 +82,8 @@ audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-appearance: media-mute-button;
-    display: -webkit-box;
+    display: -webkit-flex;
+    -webkit-flex: none;
     border: none;
     box-sizing: border-box;
     width: 35px;
@@ -91,7 +95,8 @@ audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-bu
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
-    display: -webkit-box;
+    display: -webkit-flex;
+    -webkit-flex: none;
     border: none;
     box-sizing: border-box;
     width: 30px;
@@ -106,6 +111,7 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
 audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-controls-time-remaining-display {
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
+    -webkit-flex: none;
     display: block;
     border: none;
     cursor: default;
@@ -131,8 +137,8 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1 1 auto;
     height: 8px;
     margin: 0 15px 0 0;
     padding: 0;
@@ -142,8 +148,11 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
 
 audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volume-slider {
     -webkit-appearance: media-volume-slider;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    /* The 1.9 value was empirically chosen to match old-flexbox behaviour
+     * and be aesthetically pleasing.
+     */
+    -webkit-flex: 1 1.9 auto;
     height: 8px;
     max-width: 70px;
     margin: 0 15px 0 0;
@@ -157,9 +166,9 @@ audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volum
    https://bugs.webkit.org/show_bug.cgi?id=62218
 */
 input[type="range"]::-webkit-media-slider-container {
-    display: -webkit-box;
-    -webkit-box-align: center;
-    -webkit-box-orient: horizontal; /* This property is updated by C++ code. */
+    display: -webkit-flex;
+    -webkit-align-items: center;
+    -webkit-flex-direction: row; /* This property is updated by C++ code. */
     box-sizing: border-box;
     height: 100%;
     width: 100%;
@@ -180,7 +189,8 @@ input[type="range"]::-webkit-media-slider-thumb {
 
 audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
     -webkit-appearance: media-toggle-closed-captions-button;
-    display: -webkit-box;
+    display: -webkit-flex;
+    -webkit-flex: none;
     border: none;
     box-sizing: border-box;
     width: 30px;
@@ -193,7 +203,8 @@ audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-medi
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-enter-fullscreen-button;
-    display: -webkit-box;
+    display: -webkit-flex;
+    -webkit-flex: none;
     border: none;
     box-sizing: border-box;
     width: 30px;

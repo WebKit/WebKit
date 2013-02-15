@@ -15,13 +15,13 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,58) size 0x19
         RenderBR {BR} at (0,76) size 0x19
 layer at (8,42) size 300x20
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
+  RenderFlexibleBox {DIV} at (0,0) size 300x20
 layer at (8,42) size 300x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 300x20
+  RenderFlexibleBox {DIV} at (0,0) size 300x20
     RenderButton {INPUT} at (0,0) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderFlexibleBox {DIV} at (20,0) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
+        RenderFlexibleBox {DIV} at (0,0) size 65x30
           RenderBlock (anonymous) at (5,5) size 55x20
             RenderText {#text} at (0,0) size 55x12
               text run at (0,0) width 55: "00:00 / 00:07"
@@ -35,13 +35,13 @@ layer at (8,42) size 300x20 scrollHeight 30
 layer at (288,42) size 20x20
   RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (8,80) size 320x20
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x20
+  RenderFlexibleBox {DIV} at (0,0) size 320x20
 layer at (8,80) size 320x20 scrollHeight 30
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x20
+  RenderFlexibleBox {DIV} at (0,0) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 240x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderFlexibleBox {DIV} at (20,0) size 240x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
+        RenderFlexibleBox {DIV} at (0,0) size 65x30
           RenderBlock (anonymous) at (5,5) size 55x20
             RenderText {#text} at (0,0) size 55x12
               text run at (0,0) width 55: "00:00 / 00:07"
@@ -57,13 +57,13 @@ layer at (308,80) size 20x20
 layer at (8,118) size 320x100
   RenderMedia {AUDIO} at (8,118) size 320x100 [bgcolor=#0000FF]
 layer at (8,118) size 320x100
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x100
+  RenderFlexibleBox {DIV} at (0,0) size 320x100
 layer at (8,118) size 320x100 scrollHeight 110
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x100
+  RenderFlexibleBox {DIV} at (0,0) size 320x100
     RenderButton {INPUT} at (0,80) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,80) size 240x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
+    RenderFlexibleBox {DIV} at (20,80) size 240x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
       RenderBlock (anonymous) at (1,0) size 65x30
-        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 65x30
+        RenderFlexibleBox {DIV} at (0,0) size 65x30
           RenderBlock (anonymous) at (5,5) size 55x20
             RenderText {#text} at (0,0) size 55x12
               text run at (0,0) width 55: "00:00 / 00:07"

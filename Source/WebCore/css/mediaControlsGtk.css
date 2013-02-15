@@ -26,7 +26,7 @@ audio {
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
-    -webkit-box-align: end;
+    -webkit-align-items: flex-end;
     text-align: right;
     height: 100%;
 }

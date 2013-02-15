@@ -16,9 +16,9 @@ layer at (0,0) size 800x600
 layer at (58,110) size 302x152
   RenderVideo {VIDEO} at (50,50) size 302x152 [border: (1px solid #000000)]
 layer at (59,111) size 300x150
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (1,1) size 300x150
+  RenderFlexibleBox {DIV} at (1,1) size 300x150
 layer at (59,236) size 300x25
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,125) size 300x25
+  RenderFlexibleBox {DIV} at (0,125) size 300x25
     RenderButton {INPUT} at (6,3) size 18x18
     RenderButton {INPUT} at (32,4) size 16x17
     RenderBlock {DIV} at (49,12) size 0x1

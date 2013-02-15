@@ -32,7 +32,7 @@
 
 #include "MediaControlElements.h"
 #include "RenderBlock.h"
-#include "RenderDeprecatedFlexibleBox.h"
+#include "RenderFlexibleBox.h"
 
 namespace WebCore {
 
@@ -46,7 +46,7 @@ private:
 
 // ----------------------------
 
-class RenderMediaControlTimeDisplay : public RenderDeprecatedFlexibleBox {
+class RenderMediaControlTimeDisplay : public RenderFlexibleBox {
 public:
     RenderMediaControlTimeDisplay(Element*);
 

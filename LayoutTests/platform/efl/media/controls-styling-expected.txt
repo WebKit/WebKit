@@ -15,12 +15,12 @@ layer at (18,42) size 320x240
 layer at (8,282) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
 layer at (18,42) size 320x240
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
 layer at (18,262) size 320x20 scrollHeight 28
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,220) size 320x20
+  RenderFlexibleBox {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
-      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 63x28 [color=#000000]
+    RenderFlexibleBox {DIV} at (20,0) size 220x20
+      RenderFlexibleBox {DIV} at (0,0) size 63x28 [color=#000000]
         RenderBlock (anonymous) at (4,4) size 55x20
           RenderText {#text} at (0,0) size 55x12
             text run at (0,0) width 55: "00:00 / 00:06"
@@ -36,12 +36,12 @@ layer at (18,262) size 320x20 scrollHeight 28
 layer at (318,262) size 20x20
   RenderButton zI: 2 {INPUT} at (0,0) size 20x20
 layer at (8,282) size 320x240
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
 layer at (8,502) size 320x20 scrollHeight 28
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,220) size 320x20
+  RenderFlexibleBox {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
-    RenderDeprecatedFlexibleBox {DIV} at (20,0) size 220x20
-      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 63x28
+    RenderFlexibleBox {DIV} at (20,0) size 220x20
+      RenderFlexibleBox {DIV} at (0,0) size 63x28
         RenderBlock (anonymous) at (4,4) size 55x20
           RenderText {#text} at (0,0) size 55x12
             text run at (0,0) width 55: "00:00 / 00:06"

@@ -2618,3 +2618,12 @@ webkit.org/b/91665 fast/dynamic/absolute-positioned-to-static-positioned.html [ 
 webkit.org/b/91665 fast/dynamic/floating-to-non-floating.html [ Skip ]
 webkit.org/b/91665 fast/dynamic/static-positioned-to-absolute-positioned.html [ Skip ]
 
+# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
+webkit.org/b/109775 media/audio-controls-rendering.html [ Failure ]
+webkit.org/b/109775 media/controls-after-reload.html [ Failure ]
+webkit.org/b/109775 media/controls-strict.html [ Failure ]
+webkit.org/b/109775 media/controls-styling-strict.html [ Failure ]
+webkit.org/b/109775 media/controls-without-preload.html [ Failure ]
+webkit.org/b/109775 media/video-controls-rendering.html [ Failure ]
+webkit.org/b/109775 media/video-display-toggle.html [ Failure ]
+webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]

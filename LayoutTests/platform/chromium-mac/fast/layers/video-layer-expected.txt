@@ -16,16 +16,16 @@ layer at (0,0) size 800x600
 layer at (58,110) size 302x152
   RenderVideo {VIDEO} at (50,50) size 302x152 [border: (1px solid #000000)]
 layer at (59,111) size 300x150
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (1,1) size 300x150
+  RenderFlexibleBox {DIV} at (1,1) size 300x150
     RenderBlock {DIV} at (0,115) size 300x35
 layer at (64,226) size 290x30
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (5,0) size 290x30 [bgcolor=#141414CC]
+  RenderFlexibleBox {DIV} at (5,0) size 290x30 [bgcolor=#141414CC]
     RenderButton {INPUT} at (9,0) size 30x30
     RenderSlider {INPUT} at (48,11) size 152x8
       RenderFlexibleBox {DIV} at (0,0) size 152x8 [border: (1px solid #E6E6E659)]
         RenderBlock {DIV} at (1,-8) size 164x24
           RenderBlock {DIV} at (-7,0) size 32x24
-    RenderDeprecatedFlexibleBox {DIV} at (215,0) size 25x30 [color=#FFFFFF]
+    RenderFlexibleBox {DIV} at (215,0) size 25x30 [color=#FFFFFF]
       RenderBlock (anonymous) at (0,0) size 25x30
         RenderText {#text} at (0,7) size 25x15
           text run at (0,7) width 25: "0:00"

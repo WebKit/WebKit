@@ -15,38 +15,48 @@ layer at (0,0) size 800x600
         RenderBR {BR} at (0,68) size 0x18
         RenderBR {BR} at (0,86) size 0x18
 layer at (8,42) size 200x25
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
 layer at (8,42) size 200x25
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 200x25
+  RenderFlexibleBox {DIV} at (0,0) size 200x25
     RenderButton {INPUT} at (6,3) size 18x18
     RenderButton {INPUT} at (32,4) size 16x17
-    RenderDeprecatedFlexibleBox {DIV} at (49,5) size 126x15
-      RenderSlider {INPUT} at (0,2) size 126x13
-        RenderFlexibleBox {DIV} at (0,0) size 126x13
-          RenderBlock {DIV} at (0,2) size 126x9
+    RenderFlexibleBox {DIV} at (49,5) size 219x15
+      RenderSlider {INPUT} at (45,2) size 129x13
+        RenderFlexibleBox {DIV} at (0,0) size 129x13
+          RenderBlock {DIV} at (0,2) size 129x9
             RenderBlock {DIV} at (0,0) size 10x8
-    RenderBlock {DIV} at (175,6) size 25x13
-layer at (185,49) size 14x12
+    RenderBlock {DIV} at (268,6) size 25x13
+layer at (57,49) size 45x11
+  RenderFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (9,0) size 27x11
+      RenderText {#text} at (0,0) size 26x11
+        text run at (0,0) width 26: "00:00"
+layer at (231,49) size 45x11
+  RenderFlexibleBox {DIV} at (174,2) size 45x11 [color=#FFFFFF]
+    RenderBlock (anonymous) at (7,0) size 31x11
+      RenderText {#text} at (0,0) size 31x11
+        text run at (0,0) width 31: "-00:07"
+layer at (278,49) size 14x12
   RenderButton zI: 1 {INPUT} at (2,0) size 14x12
 layer at (8,85) size 320x25
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x25
+  RenderFlexibleBox {DIV} at (0,0) size 320x25
 layer at (8,85) size 320x25
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x25
+  RenderFlexibleBox {DIV} at (0,0) size 320x25
     RenderButton {INPUT} at (6,3) size 18x18
     RenderButton {INPUT} at (32,4) size 16x17
-    RenderDeprecatedFlexibleBox {DIV} at (49,5) size 246x15
+    RenderFlexibleBox {DIV} at (49,5) size 246x15
       RenderSlider {INPUT} at (45,2) size 156x13
         RenderFlexibleBox {DIV} at (0,0) size 156x13
           RenderBlock {DIV} at (0,2) size 156x9
             RenderBlock {DIV} at (0,0) size 10x8
     RenderBlock {DIV} at (295,6) size 25x13
 layer at (57,92) size 45x11
-  RenderDeprecatedFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
+  RenderFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (9,0) size 27x11
       RenderText {#text} at (0,0) size 26x11
         text run at (0,0) width 26: "00:00"
 layer at (258,92) size 45x11
-  RenderDeprecatedFlexibleBox {DIV} at (201,2) size 45x11 [color=#FFFFFF]
+  RenderFlexibleBox {DIV} at (201,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (7,0) size 31x11
       RenderText {#text} at (0,0) size 31x11
         text run at (0,0) width 31: "-00:07"
@@ -55,24 +65,24 @@ layer at (305,92) size 14x12
 layer at (8,128) size 320x100
   RenderMedia {AUDIO} at (8,128) size 320x100 [bgcolor=#0000FF]
 layer at (8,128) size 320x100
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,0) size 320x100
+  RenderFlexibleBox {DIV} at (0,0) size 320x100
 layer at (8,203) size 320x25
-  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,75) size 320x25
+  RenderFlexibleBox {DIV} at (0,75) size 320x25
     RenderButton {INPUT} at (6,3) size 18x18
     RenderButton {INPUT} at (32,4) size 16x17
-    RenderDeprecatedFlexibleBox {DIV} at (49,5) size 246x15
+    RenderFlexibleBox {DIV} at (49,5) size 246x15
       RenderSlider {INPUT} at (45,2) size 156x13
         RenderFlexibleBox {DIV} at (0,0) size 156x13
           RenderBlock {DIV} at (0,2) size 156x9
             RenderBlock {DIV} at (0,0) size 10x8
     RenderBlock {DIV} at (295,6) size 25x13
 layer at (57,210) size 45x11
-  RenderDeprecatedFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
+  RenderFlexibleBox {DIV} at (0,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (9,0) size 27x11
       RenderText {#text} at (0,0) size 26x11
         text run at (0,0) width 26: "00:00"
 layer at (258,210) size 45x11
-  RenderDeprecatedFlexibleBox {DIV} at (201,2) size 45x11 [color=#FFFFFF]
+  RenderFlexibleBox {DIV} at (201,2) size 45x11 [color=#FFFFFF]
     RenderBlock (anonymous) at (7,0) size 31x11
       RenderText {#text} at (0,0) size 31x11
         text run at (0,0) width 31: "-00:07"

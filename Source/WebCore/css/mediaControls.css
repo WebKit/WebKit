@@ -37,17 +37,17 @@ audio {
     width: inherit;
     height: inherit;
     position: relative;
-    display: -webkit-box;
+    display: -webkit-flex;
     direction: ltr;
-    -webkit-box-align: start;
-    -webkit-box-pack: end;
-    -webkit-box-orient: vertical;
+    -webkit-align-items: flex-start;
+    -webkit-justify-content: flex-end;
+    -webkit-flex-direction: column;
 }
 
 audio::-webkit-media-controls-panel, video::-webkit-media-controls-panel {
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
     -webkit-user-select: none;
     position: relative;
     bottom: 0;
@@ -73,7 +73,7 @@ video:-webkit-full-page-media::-webkit-media-controls-panel {
 
 audio::-webkit-media-controls-mute-button, video::-webkit-media-controls-mute-button {
     -webkit-appearance: media-mute-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 16px;
     height: 16px;
     background-color: initial;
@@ -87,7 +87,7 @@ audio::-webkit-media-controls-overlay-play-button, video::-webkit-media-controls
 
 audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-button {
     -webkit-appearance: media-play-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 16px;
     height: 16px;
     background-color: initial;
@@ -97,11 +97,11 @@ audio::-webkit-media-controls-play-button, video::-webkit-media-controls-play-bu
 
 audio::-webkit-media-controls-timeline-container, video::-webkit-media-controls-timeline-container {
     -webkit-appearance: media-controls-background;
-    display: -webkit-box;
-    -webkit-box-orient: horizontal;
-    -webkit-box-align: center;
-    -webkit-box-pack: end;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex-direction: row;
+    -webkit-align-items: center;
+    -webkit-justify-content: flex-end;
+    -webkit-flex: 1 1;
     -webkit-user-select: none;
     height: 16px;
 }
@@ -116,8 +116,8 @@ audio::-webkit-media-controls-time-remaining-display, video::-webkit-media-contr
 
 audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     -webkit-appearance: media-slider;
-    display: -webkit-box;
-    -webkit-box-flex: 1;
+    display: -webkit-flex;
+    -webkit-flex: 1 1;
     height: 16px;
     padding: 0px 2px;
     background-color: initial;
@@ -135,7 +135,7 @@ audio::-webkit-media-controls-volume-slider, video::-webkit-media-controls-volum
 
 audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-seek-back-button {
     -webkit-appearance: media-seek-back-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 16px;
     height: 16px;
     background-color: initial;
@@ -145,7 +145,7 @@ audio::-webkit-media-controls-seek-back-button, video::-webkit-media-controls-se
 
 audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls-seek-forward-button {
     -webkit-appearance: media-seek-forward-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 16px;
     height: 16px;
     background-color: initial;
@@ -155,7 +155,7 @@ audio::-webkit-media-controls-seek-forward-button, video::-webkit-media-controls
 
 audio::-webkit-media-controls-fullscreen-button, video::-webkit-media-controls-fullscreen-button {
     -webkit-appearance: media-enter-fullscreen-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 16px;
     height: 16px;
     background-color: initial;
@@ -179,7 +179,7 @@ audio::-webkit-media-controls-return-to-realtime-button, video::-webkit-media-co
 
 audio::-webkit-media-controls-toggle-closed-captions-button, video::-webkit-media-controls-toggle-closed-captions-button {
     -webkit-appearance: media-toggle-closed-captions-button;
-    display: -webkit-box;
+    display: -webkit-flex;
     width: 16px;
     height: 16px;
     background-color: initial;
@@ -235,7 +235,7 @@ video::-webkit-media-text-track-container {
     -webkit-user-select: none;
     word-break: break-word;
 
-    -webkit-box-flex: 1;
+    -webkit-flex: 1 1;
 }
 
 video::-webkit-media-text-track-all-nodes {

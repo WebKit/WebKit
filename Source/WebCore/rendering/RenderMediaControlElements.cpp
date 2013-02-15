@@ -60,7 +60,7 @@ void RenderMediaVolumeSliderContainer::layout()
 // ----------------------------
 
 RenderMediaControlTimeDisplay::RenderMediaControlTimeDisplay(Element* element)
-    : RenderDeprecatedFlexibleBox(element)
+    : RenderFlexibleBox(element)
 {
 }
 
@@ -70,7 +70,7 @@ static const int minWidthToDisplayTimeDisplays = 45 + 100 + 45;
 
 void RenderMediaControlTimeDisplay::layout()
 {
-    RenderDeprecatedFlexibleBox::layout();
+    RenderFlexibleBox::layout();
     RenderBox* timelineContainerBox = parentBox();
     while (timelineContainerBox && timelineContainerBox->isAnonymous())
         timelineContainerBox = timelineContainerBox->parentBox();
