@@ -1831,6 +1831,7 @@ webkit.org/b/106743 media/video-controls-captions.html [ Failure ]
 inspector/editor/text-editor-formatter.html
 inspector/editor/text-editor-word-jumps.html
 inspector/editor/text-editor-home-button.html
+inspector/editor/text-editor-smart-braces.html
 
 # Remove from list after enabling CANVAS_PATH
 webkit.org/b/108508 fast/canvas/canvas-path-constructors.html [ Failure ]

@@ -214,6 +214,7 @@ WebInspector.ExperimentsSettings = function()
     this.fileSystemProject = this._createExperiment("fileSystemProject", "File system folders in Sources Panel");
     this.horizontalPanelSplit = this._createExperiment("horizontalPanelSplit", "Allow horizontal split in Elements and Sources panels");
     this.showWhitespaceInEditor = this._createExperiment("showWhitespaceInEditor", "Show whitespace characters in editor");
+    this.textEditorSmartBraces = this._createExperiment("textEditorSmartBraces", "Enable smart braces in text editor");
 
     this._cleanUpSetting();
 }

@@ -614,6 +614,11 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
                 code -= 'a' - 'A';
             generateChar = true;
         }
+
+        if ("(" == codeStr) {
+            code = '9';
+            needsShiftKeyModifier = true;
+        }
     }
 
     // For one generated keyboard event, we need to generate a keyDown/keyUp
