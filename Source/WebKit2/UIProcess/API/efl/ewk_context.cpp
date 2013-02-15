@@ -30,6 +30,7 @@
 #include "WKContextSoup.h"
 #include "WKNumber.h"
 #include "WKString.h"
+#include "WebContext.h"
 #include "WebIconDatabase.h"
 #include "ewk_context_private.h"
 #include "ewk_cookie_manager_private.h"
@@ -64,10 +65,10 @@ EwkContext::EwkContext(WKContextRef context)
     , m_databaseManager(EwkDatabaseManager::create(WKContextGetDatabaseManager(context)))
     , m_storageManager(EwkStorageManager::create(WKContextGetKeyValueStorageManager(context)))
 #if ENABLE(BATTERY_STATUS)
-    , m_batteryProvider(BatteryProvider::create(toImpl(context)))
+    , m_batteryProvider(BatteryProvider::create(context))
 #endif
 #if ENABLE(NETWORK_INFO)
-    , m_networkInfoProvider(NetworkInfoProvider::create(toImpl(context)))
+    , m_networkInfoProvider(NetworkInfoProvider::create(context))
 #endif
     , m_downloadManager(DownloadManagerEfl::create(context))
     , m_requestManagerClient(RequestManagerClientEfl::create(context))

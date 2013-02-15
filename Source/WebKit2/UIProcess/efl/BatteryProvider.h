@@ -31,8 +31,8 @@
 #include "BatteryProviderEfl.h"
 #include "BatteryProviderEflClient.h"
 #include "BatteryStatus.h"
-#include "WebContext.h"
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassRefPtr.h>
 
 namespace WebKit {
@@ -40,18 +40,18 @@ namespace WebKit {
 class BatteryProvider : public RefCounted<BatteryProvider>, public WebCore::BatteryProviderEflClient {
 public:
     virtual ~BatteryProvider();
-    static PassRefPtr<BatteryProvider> create(PassRefPtr<WebContext>);
+    static PassRefPtr<BatteryProvider> create(WKContextRef);
 
     void startUpdating();
     void stopUpdating();
 
 private:
-    explicit BatteryProvider(PassRefPtr<WebContext>);
+    explicit BatteryProvider(WKContextRef);
 
     // BatteryProviderEflClient interface.
     virtual void didChangeBatteryStatus(const AtomicString& eventType, PassRefPtr<WebCore::BatteryStatus>);
 
-    RefPtr<WebContext> m_context;
+    WKRetainPtr<WKBatteryManagerRef> m_batteryManager;
     WebCore::BatteryProviderEfl m_provider;
 };
 

@@ -28,10 +28,10 @@
 
 #if ENABLE(NETWORK_INFO)
 
-#include "WebContext.h"
 #include <NetworkInfoClient.h>
 #include <NetworkInfoProviderEfl.h>
 #include <WebKit2/WKBase.h>
+#include <WebKit2/WKContext.h>
 #include <WebKit2/WKRetainPtr.h>
 #include <wtf/PassRefPtr.h>
 
@@ -40,7 +40,7 @@ namespace WebKit {
 class NetworkInfoProvider : public RefCounted<NetworkInfoProvider>, public WebCore::NetworkInfoClient {
 public:
     virtual ~NetworkInfoProvider();
-    static PassRefPtr<NetworkInfoProvider> create(PassRefPtr<WebContext>);
+    static PassRefPtr<NetworkInfoProvider> create(WKContextRef);
 
     // NetworkInfoClient interface.
     virtual void networkInfoControllerDestroyed();
@@ -52,9 +52,9 @@ public:
     virtual void stopUpdating();
 
 private:
-    explicit NetworkInfoProvider(PassRefPtr<WebContext>);
+    explicit NetworkInfoProvider(WKContextRef);
 
-    RefPtr<WebContext> m_context;
+    WKRetainPtr<WKContextRef> m_context;
     WebCore::NetworkInfoProviderEfl m_provider;
 };
 

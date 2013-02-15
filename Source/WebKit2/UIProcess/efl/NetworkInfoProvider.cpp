@@ -29,8 +29,6 @@
 #if ENABLE(NETWORK_INFO)
 
 #include "WKNetworkInfoManager.h"
-#include "WebContext.h"
-#include "WebNetworkInfoManagerProxy.h"
 #include <NotImplemented.h>
 
 using namespace WebKit;
@@ -60,15 +58,18 @@ static bool isMeteredCallback(WKNetworkInfoManagerRef, const void* clientInfo)
     return toNetworkInfoProvider(clientInfo)->metered();
 }
 
-PassRefPtr<NetworkInfoProvider> NetworkInfoProvider::create(PassRefPtr<WebContext> context)
+PassRefPtr<NetworkInfoProvider> NetworkInfoProvider::create(WKContextRef context)
 {
     return adoptRef(new NetworkInfoProvider(context));
 }
 
-NetworkInfoProvider::NetworkInfoProvider(PassRefPtr<WebContext> context)
+NetworkInfoProvider::NetworkInfoProvider(WKContextRef context)
     : m_context(context)
 {
     ASSERT(m_context);
+
+    WKNetworkInfoManagerRef wkNetworkInfoManager = WKContextGetNetworkInfoManager(m_context.get());
+    ASSERT(wkNetworkInfoManager);
 
     WKNetworkInfoProvider wkNetworkInfoProvider = {
         kWKNetworkInfoProviderCurrentVersion,
@@ -79,14 +80,15 @@ NetworkInfoProvider::NetworkInfoProvider(PassRefPtr<WebContext> context)
         isMeteredCallback
     };
 
-    ASSERT(m_context->networkInfoManagerProxy());
-    m_context->networkInfoManagerProxy()->initializeProvider(&wkNetworkInfoProvider);
+    WKNetworkInfoManagerSetProvider(wkNetworkInfoManager, &wkNetworkInfoProvider);
 }
 
 NetworkInfoProvider::~NetworkInfoProvider()
 {
-    ASSERT(m_context->networkInfoManagerProxy());
-    m_context->networkInfoManagerProxy()->initializeProvider(0);
+    WKNetworkInfoManagerRef wkNetworkInfoManager = WKContextGetNetworkInfoManager(m_context.get());
+    ASSERT(wkNetworkInfoManager);
+
+    WKNetworkInfoManagerSetProvider(wkNetworkInfoManager, 0);
 }
 
 void NetworkInfoProvider::networkInfoControllerDestroyed()
