@@ -27,11 +27,13 @@
 #define DeleteButtonController_h
 
 #include "DeleteButton.h"
+#include "Frame.h"
 
 namespace WebCore {
 
+#if ENABLE(DELETION_UI)
+
 class DeleteButton;
-class Frame;
 class HTMLElement;
 class RenderObject;
 class VisibleSelection;
@@ -50,15 +52,16 @@ public:
     void show(HTMLElement*);
     void hide();
 
-    void enable();
-    void disable();
-
     void deleteTarget();
 
 private:
     static const char* const buttonElementIdentifier;
     static const char* const outlineElementIdentifier;
     static const char* const containerElementIdentifier;
+    
+    void enable();
+    void disable();
+    friend class DeleteButtonControllerDisableScope;
 
     void createDeletionUI();
     bool enabled() const { return (!m_disableStack); }
@@ -72,6 +75,27 @@ private:
     bool m_wasAutoZIndex;
     unsigned m_disableStack;
 };
+
+class DeleteButtonControllerDisableScope {
+public:
+    DeleteButtonControllerDisableScope(Frame* frame)
+        : m_frame(frame)
+    {
+        if (frame)
+            frame->editor()->deleteButtonController()->disable();
+    }
+
+    ~DeleteButtonControllerDisableScope()
+    {
+        if (m_frame)
+            m_frame->editor()->deleteButtonController()->enable();
+    }
+
+private:
+    RefPtr<Frame> m_frame;
+};
+
+#endif
 
 } // namespace WebCore
 

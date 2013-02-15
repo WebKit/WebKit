@@ -639,25 +639,23 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     if (!document)
         return emptyString();
 
+    const Range* updatedRange = range;
+
+#if ENABLE(DELETION_UI)
     // Disable the delete button so it's elements are not serialized into the markup,
     // but make sure neither endpoint is inside the delete user interface.
-#if ENABLE(DELETION_UI)
     Frame* frame = document->frame();
-    if (DeleteButtonController* deleteButton = frame ? frame->editor()->deleteButtonController() : 0) {
-        RefPtr<Range> updatedRange = frame->editor()->avoidIntersectionWithDeleteButtonController(range);
+    DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame);
+
+    if (frame) {
+        RefPtr<Range> updatedRangeRef = frame->editor()->avoidIntersectionWithDeleteButtonController(range);
+        updatedRange = updatedRangeRef.get();
         if (!updatedRange)
             return emptyString();
-
-        deleteButton->disable();
-
-        String result = createMarkupInternal(document, range, updatedRange.get(), nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
-
-        deleteButton->enable();
-
-        return result;
     }
 #endif
-    return createMarkupInternal(document, range, range, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
+
+    return createMarkupInternal(document, range, updatedRange, nodes, shouldAnnotate, convertBlocksToInlines, shouldResolveURLs);
 }
 
 PassRefPtr<DocumentFragment> createFragmentFromMarkup(Document* document, const String& markup, const String& baseURL, FragmentScriptingPermission scriptingPermission)
@@ -909,9 +907,9 @@ PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const V
 
 #if ENABLE(DELETION_UI)
     // disable the delete button so it's elements are not serialized into the markup
-    if (document->frame())
-        document->frame()->editor()->deleteButtonController()->disable();
+    DeleteButtonControllerDisableScope(document->frame());
 #endif
+
     RefPtr<DocumentFragment> fragment = document->createDocumentFragment();
 
     size_t size = nodes.size();
@@ -921,10 +919,6 @@ PassRefPtr<DocumentFragment> createFragmentFromNodes(Document *document, const V
         fragment->appendChild(element.release(), ASSERT_NO_EXCEPTION);
     }
 
-#if ENABLE(DELETION_UI)
-    if (document->frame())
-        document->frame()->editor()->deleteButtonController()->enable();
-#endif
     return fragment.release();
 }
 

@@ -103,16 +103,16 @@ void EditCommandComposition::unapply()
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
 
+    {
 #if ENABLE(DELETION_UI)
-    DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
-    deleteButtonController->disable();
+        DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame.get());
 #endif
-    size_t size = m_commands.size();
-    for (size_t i = size; i != 0; --i)
-        m_commands[i - 1]->doUnapply();
-#if ENABLE(DELETION_UI)
-    deleteButtonController->enable();
-#endif
+
+        size_t size = m_commands.size();
+        for (size_t i = size; i; --i)
+            m_commands[i - 1]->doUnapply();
+    }
+
     frame->editor()->unappliedEditing(this);
 }
 
@@ -126,17 +126,15 @@ void EditCommandComposition::reapply()
     // Low level operations, like RemoveNodeCommand, don't require a layout because the high level operations that use them perform one
     // if one is necessary (like for the creation of VisiblePositions).
     m_document->updateLayoutIgnorePendingStylesheets();
-    
+
+    {
 #if ENABLE(DELETION_UI)
-    DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
-    deleteButtonController->disable();
+        DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame.get());
 #endif
-    size_t size = m_commands.size();
-    for (size_t i = 0; i != size; ++i)
-        m_commands[i]->doReapply();
-#if ENABLE(DELETION_UI)
-    deleteButtonController->enable();
-#endif
+        size_t size = m_commands.size();
+        for (size_t i = 0; i != size; ++i)
+            m_commands[i]->doReapply();
+    }
     
     frame->editor()->reappliedEditing(this);
 }
@@ -211,13 +209,9 @@ void CompositeEditCommand::apply()
     {
         EventQueueScope scope;
 #if ENABLE(DELETION_UI)
-        DeleteButtonController* deleteButtonController = frame->editor()->deleteButtonController();
-        deleteButtonController->disable();
+        DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame);
 #endif
         doApply();
-#if ENABLE(DELETION_UI)
-        deleteButtonController->enable();
-#endif
     }
 
     // Only need to call appliedEditing for top-level commands,
