@@ -45,8 +45,8 @@ WebNetworkInfo::~WebNetworkInfo()
 
 void WebNetworkInfo::Data::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(bandwidth);
-    encoder.encode(metered);
+    encoder << bandwidth;
+    encoder << metered;
 }
 
 bool WebNetworkInfo::Data::decode(CoreIPC::ArgumentDecoder& decoder, Data& result)

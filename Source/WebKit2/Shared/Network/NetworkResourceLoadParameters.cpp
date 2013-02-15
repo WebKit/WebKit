@@ -73,7 +73,7 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     if (m_request.httpBody()) {
         EncoderAdapter httpBodyEncoderAdapter;
         m_request.httpBody()->encode(httpBodyEncoderAdapter);
-        encoder.encode(httpBodyEncoderAdapter.dataReference());
+        encoder << httpBodyEncoderAdapter.dataReference();
 
         const Vector<FormDataElement>& elements = m_request.httpBody()->elements();
         size_t fileCount = 0;
@@ -92,13 +92,13 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
                 SandboxExtension::createHandle(path, SandboxExtension::ReadOnly, requestBodySandboxExtensions[extensionIndex++]);
             }
         }
-        encoder.encode(requestBodySandboxExtensions);
+        encoder << requestBodySandboxExtensions;
     }
 
     if (m_request.url().isLocalFile()) {
         SandboxExtension::Handle requestSandboxExtension;
         SandboxExtension::createHandle(m_request.url().fileSystemPath(), SandboxExtension::ReadOnly, requestSandboxExtension);
-        encoder.encode(requestSandboxExtension);
+        encoder << requestSandboxExtension;
     }
 
     encoder.encodeEnum(m_priority);

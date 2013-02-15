@@ -1,3 +1,30 @@
+2013-02-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix after r143052 for Qt/GTK/EFL ports.
+
+        * Platform/unix/SharedMemoryUnix.cpp:
+        (WebKit::SharedMemory::Handle::encode):
+        * Platform/win/SharedMemoryWin.cpp:
+        (WebKit::SharedMemory::Handle::encode):
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode):
+        * Shared/WebBatteryStatus.cpp:
+        (WebKit::WebBatteryStatus::Data::encode):
+        * Shared/WebNetworkInfo.cpp:
+        (WebKit::WebNetworkInfo::Data::encode):
+        * Shared/efl/LayerTreeContextEfl.cpp:
+        (WebKit::LayerTreeContext::encode):
+        * Shared/gtk/LayerTreeContextGtk.cpp:
+        (WebKit::LayerTreeContext::encode):
+        * Shared/qt/LayerTreeContextQt.cpp:
+        (WebKit::LayerTreeContext::encode):
+        * Shared/qt/QtNetworkReplyData.cpp:
+        (WebKit::QtNetworkReplyData::encode):
+        * Shared/qt/QtNetworkRequestData.cpp:
+        (WebKit::QtNetworkRequestData::encode):
+        * Shared/soup/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::encode):
+
 2013-02-15  Anders Carlsson  <andersca@apple.com>
 
         Make most ArgumentEncoder::encode member functions private

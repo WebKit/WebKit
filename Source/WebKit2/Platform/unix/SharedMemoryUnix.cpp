@@ -65,7 +65,7 @@ bool SharedMemory::Handle::isNull() const
 
 void SharedMemory::Handle::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(releaseToAttachment());
+    encoder << releaseToAttachment();
 }
 
 bool SharedMemory::Handle::decode(CoreIPC::ArgumentDecoder& decoder, Handle& handle)

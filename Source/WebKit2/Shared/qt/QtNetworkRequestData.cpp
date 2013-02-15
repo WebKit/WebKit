@@ -51,9 +51,9 @@ QtNetworkRequestData::QtNetworkRequestData(const QNetworkRequest& request, QNetw
 
 void QtNetworkRequestData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(m_scheme);
-    encoder.encode(m_urlString);
-    encoder.encode(m_replyUuid);
+    encoder << m_scheme;
+    encoder << m_urlString;
+    encoder << m_replyUuid;
 }
 
 bool QtNetworkRequestData::decode(CoreIPC::ArgumentDecoder& decoder, QtNetworkRequestData& destination)
