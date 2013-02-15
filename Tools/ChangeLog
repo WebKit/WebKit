@@ -1,3 +1,9 @@
+2013-02-15  Joanmarie Diggs  <jdiggs@igalia.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         NRWT: ML Debug Test bot is timing out after cleaning up ports
