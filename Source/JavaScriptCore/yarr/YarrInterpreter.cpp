@@ -1455,8 +1455,6 @@ private:
     unsigned remainingMatchCount;
 };
 
-
-
 class ByteCompiler {
     struct ParenthesesStackEntry {
         unsigned beginTerm;
@@ -1712,17 +1710,20 @@ public:
         unsigned subpatternId = parenthesesBegin.atom.subpatternId;
 
         unsigned numSubpatterns = lastSubpatternId - subpatternId + 1;
-        ByteDisjunction* parenthesesDisjunction = new ByteDisjunction(numSubpatterns, callFrameSize);
+        OwnPtr<ByteDisjunction> parenthesesDisjunction = adoptPtr(new ByteDisjunction(numSubpatterns, callFrameSize));
+
+        unsigned firstTermInParentheses = beginTerm + 1;
+        parenthesesDisjunction->terms.reserveInitialCapacity(endTerm - firstTermInParentheses + 2);
 
         parenthesesDisjunction->terms.append(ByteTerm::SubpatternBegin());
-        for (unsigned termInParentheses = beginTerm + 1; termInParentheses < endTerm; ++termInParentheses)
+        for (unsigned termInParentheses = firstTermInParentheses; termInParentheses < endTerm; ++termInParentheses)
             parenthesesDisjunction->terms.append(m_bodyDisjunction->terms[termInParentheses]);
         parenthesesDisjunction->terms.append(ByteTerm::SubpatternEnd());
 
         m_bodyDisjunction->terms.shrink(beginTerm);
 
-        m_allParenthesesInfo.append(parenthesesDisjunction);
-        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction, capture, inputPosition));
+        m_bodyDisjunction->terms.append(ByteTerm(ByteTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, inputPosition));
+        m_allParenthesesInfo.append(parenthesesDisjunction.release());
 
         m_bodyDisjunction->terms[beginTerm].atom.quantityCount = quantityCount.unsafeGet();
         m_bodyDisjunction->terms[beginTerm].atom.quantityType = quantityType;
@@ -1809,7 +1810,7 @@ public:
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
             unsigned currentCountAlreadyChecked = inputCountAlreadyChecked;
 
-            PatternAlternative* alternative = disjunction->m_alternatives[alt];
+            PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
 
             if (alt) {
                 if (disjunction == m_pattern.m_body)
@@ -1920,7 +1921,7 @@ private:
     OwnPtr<ByteDisjunction> m_bodyDisjunction;
     unsigned m_currentAlternativeIndex;
     Vector<ParenthesesStackEntry> m_parenthesesStack;
-    Vector<ByteDisjunction*> m_allParenthesesInfo;
+    Vector<OwnPtr<ByteDisjunction> > m_allParenthesesInfo;
 };
 
 PassOwnPtr<BytecodePattern> byteCompile(YarrPattern& pattern, BumpPointerAllocator* allocator)

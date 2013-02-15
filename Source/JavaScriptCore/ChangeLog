@@ -1,3 +1,51 @@
+2013-02-15  Andreas Kling  <akling@apple.com>
+
+        Yarr: Use OwnPtr to make pattern/disjunction/character-class ownership clearer.
+        <http://webkit.org/b/109218>
+
+        Reviewed by Benjamin Poulain.
+
+        - Let classes that manage lifetime of other objects hold on to them with OwnPtr instead of raw pointers.
+        - Placed some strategic Vector::shrinkToFit(), ::reserveInitialCapacity() and ::swap().
+
+        668 kB progression on Membuster3.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::ByteCompiler::atomParenthesesSubpatternEnd):
+        (JSC::Yarr::ByteCompiler::emitDisjunction):
+        (ByteCompiler):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+        (BytecodePattern):
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+        (JSC::Yarr::YarrGenerator::opCompileParentheticalAssertion):
+        (JSC::Yarr::YarrGenerator::opCompileBody):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::CharacterClassConstructor::charClass):
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPatternConstructor::reset):
+        (JSC::Yarr::YarrPatternConstructor::atomPatternCharacter):
+        (JSC::Yarr::YarrPatternConstructor::atomCharacterClassEnd):
+        (JSC::Yarr::YarrPatternConstructor::copyDisjunction):
+        (JSC::Yarr::YarrPatternConstructor::setupDisjunctionOffsets):
+        (JSC::Yarr::YarrPatternConstructor::checkForTerminalParentheses):
+        (JSC::Yarr::YarrPatternConstructor::optimizeBOL):
+        (JSC::Yarr::YarrPatternConstructor::containsCapturingTerms):
+        (JSC::Yarr::YarrPatternConstructor::optimizeDotStarWrappedExpressions):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::PatternDisjunction::addNewAlternative):
+        (PatternDisjunction):
+        (YarrPattern):
+        (JSC::Yarr::YarrPattern::reset):
+        (JSC::Yarr::YarrPattern::newlineCharacterClass):
+        (JSC::Yarr::YarrPattern::digitsCharacterClass):
+        (JSC::Yarr::YarrPattern::spacesCharacterClass):
+        (JSC::Yarr::YarrPattern::wordcharCharacterClass):
+        (JSC::Yarr::YarrPattern::nondigitsCharacterClass):
+        (JSC::Yarr::YarrPattern::nonspacesCharacterClass):
+        (JSC::Yarr::YarrPattern::nonwordcharCharacterClass):
+
 2013-02-14  Geoffrey Garen  <ggaren@apple.com>
 
         Merged the global function cache into the source code cache

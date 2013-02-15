@@ -175,16 +175,16 @@ public:
 
     }
 
-    CharacterClass* charClass()
+    PassOwnPtr<CharacterClass> charClass()
     {
-        CharacterClass* characterClass = new CharacterClass(0);
+        OwnPtr<CharacterClass> characterClass = adoptPtr(new CharacterClass(0));
 
         characterClass->m_matches.swap(m_matches);
         characterClass->m_ranges.swap(m_ranges);
         characterClass->m_matchesUnicode.swap(m_matchesUnicode);
         characterClass->m_rangesUnicode.swap(m_rangesUnicode);
 
-        return characterClass;
+        return characterClass.release();
     }
 
 private:
@@ -274,9 +274,10 @@ public:
         , m_characterClassConstructor(pattern.m_ignoreCase)
         , m_invertParentheticalAssertion(false)
     {
-        m_pattern.m_body = new PatternDisjunction();
-        m_alternative = m_pattern.m_body->addNewAlternative();
-        m_pattern.m_disjunctions.append(m_pattern.m_body);
+        OwnPtr<PatternDisjunction> body = adoptPtr(new PatternDisjunction);
+        m_pattern.m_body = body.get();
+        m_alternative = body->addNewAlternative();
+        m_pattern.m_disjunctions.append(body.release());
     }
 
     ~YarrPatternConstructor()
@@ -288,9 +289,10 @@ public:
         m_pattern.reset();
         m_characterClassConstructor.reset();
 
-        m_pattern.m_body = new PatternDisjunction();
-        m_alternative = m_pattern.m_body->addNewAlternative();
-        m_pattern.m_disjunctions.append(m_pattern.m_body);
+        OwnPtr<PatternDisjunction> body = adoptPtr(new PatternDisjunction);
+        m_pattern.m_body = body.get();
+        m_alternative = body->addNewAlternative();
+        m_pattern.m_disjunctions.append(body.release());
     }
     
     void assertionBOL()
@@ -327,9 +329,9 @@ public:
         }
 
         m_characterClassConstructor.putUnicodeIgnoreCase(ch, info);
-        CharacterClass* newCharacterClass = m_characterClassConstructor.charClass();
-        m_pattern.m_userCharacterClasses.append(newCharacterClass);
-        m_alternative->m_terms.append(PatternTerm(newCharacterClass, false));
+        OwnPtr<CharacterClass> newCharacterClass = m_characterClassConstructor.charClass();
+        m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), false));
+        m_pattern.m_userCharacterClasses.append(newCharacterClass.release());
     }
 
     void atomBuiltInCharacterClass(BuiltInCharacterClassID classID, bool invert)
@@ -389,9 +391,9 @@ public:
 
     void atomCharacterClassEnd()
     {
-        CharacterClass* newCharacterClass = m_characterClassConstructor.charClass();
-        m_pattern.m_userCharacterClasses.append(newCharacterClass);
-        m_alternative->m_terms.append(PatternTerm(newCharacterClass, m_invertCharacterClass));
+        OwnPtr<CharacterClass> newCharacterClass = m_characterClassConstructor.charClass();
+        m_alternative->m_terms.append(PatternTerm(newCharacterClass.get(), m_invertCharacterClass));
+        m_pattern.m_userCharacterClasses.append(newCharacterClass.release());
     }
 
     void atomParenthesesSubpatternBegin(bool capture = true)
@@ -400,19 +402,19 @@ public:
         if (capture)
             m_pattern.m_numSubpatterns++;
 
-        PatternDisjunction* parenthesesDisjunction = new PatternDisjunction(m_alternative);
-        m_pattern.m_disjunctions.append(parenthesesDisjunction);
-        m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction, capture, false));
+        OwnPtr<PatternDisjunction> parenthesesDisjunction = adoptPtr(new PatternDisjunction(m_alternative));
+        m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParenthesesSubpattern, subpatternId, parenthesesDisjunction.get(), capture, false));
         m_alternative = parenthesesDisjunction->addNewAlternative();
+        m_pattern.m_disjunctions.append(parenthesesDisjunction.release());
     }
 
     void atomParentheticalAssertionBegin(bool invert = false)
     {
-        PatternDisjunction* parenthesesDisjunction = new PatternDisjunction(m_alternative);
-        m_pattern.m_disjunctions.append(parenthesesDisjunction);
-        m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParentheticalAssertion, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction, false, invert));
+        OwnPtr<PatternDisjunction> parenthesesDisjunction = adoptPtr(new PatternDisjunction(m_alternative));
+        m_alternative->m_terms.append(PatternTerm(PatternTerm::TypeParentheticalAssertion, m_pattern.m_numSubpatterns + 1, parenthesesDisjunction.get(), false, invert));
         m_alternative = parenthesesDisjunction->addNewAlternative();
         m_invertParentheticalAssertion = invert;
+        m_pattern.m_disjunctions.append(parenthesesDisjunction.release());
     }
 
     void atomParenthesesEnd()
@@ -477,23 +479,27 @@ public:
     // skip alternatives with m_startsWithBOL set true.
     PatternDisjunction* copyDisjunction(PatternDisjunction* disjunction, bool filterStartsWithBOL = false)
     {
-        PatternDisjunction* newDisjunction = 0;
+        OwnPtr<PatternDisjunction> newDisjunction;
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
-            PatternAlternative* alternative = disjunction->m_alternatives[alt];
+            PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
             if (!filterStartsWithBOL || !alternative->m_startsWithBOL) {
                 if (!newDisjunction) {
-                    newDisjunction = new PatternDisjunction();
+                    newDisjunction = adoptPtr(new PatternDisjunction());
                     newDisjunction->m_parent = disjunction->m_parent;
                 }
                 PatternAlternative* newAlternative = newDisjunction->addNewAlternative();
+                newAlternative->m_terms.reserveInitialCapacity(alternative->m_terms.size());
                 for (unsigned i = 0; i < alternative->m_terms.size(); ++i)
                     newAlternative->m_terms.append(copyTerm(alternative->m_terms[i], filterStartsWithBOL));
             }
         }
         
-        if (newDisjunction)
-            m_pattern.m_disjunctions.append(newDisjunction);
-        return newDisjunction;
+        if (!newDisjunction)
+            return 0;
+
+        PatternDisjunction* copiedDisjunction = newDisjunction.get();
+        m_pattern.m_disjunctions.append(newDisjunction.release());
+        return copiedDisjunction;
     }
     
     PatternTerm copyTerm(PatternTerm& term, bool filterStartsWithBOL = false)
@@ -655,7 +661,7 @@ public:
         bool hasFixedSize = true;
 
         for (unsigned alt = 0; alt < disjunction->m_alternatives.size(); ++alt) {
-            PatternAlternative* alternative = disjunction->m_alternatives[alt];
+            PatternAlternative* alternative = disjunction->m_alternatives[alt].get();
             unsigned currentAlternativeCallFrameSize = setupAlternativeOffsets(alternative, initialCallFrameSize, initialInputPosition);
             minimumInputSize = std::min(minimumInputSize, alternative->m_minimumSize);
             maximumCallFrameSize = std::max(maximumCallFrameSize, currentAlternativeCallFrameSize);
@@ -690,7 +696,7 @@ public:
         if (m_pattern.m_numSubpatterns)
             return;
 
-        Vector<PatternAlternative*>& alternatives = m_pattern.m_body->m_alternatives;
+        Vector<OwnPtr<PatternAlternative> >& alternatives = m_pattern.m_body->m_alternatives;
         for (size_t i = 0; i < alternatives.size(); ++i) {
             Vector<PatternTerm>& terms = alternatives[i]->m_terms;
             if (terms.size()) {
@@ -725,7 +731,7 @@ public:
         if (loopDisjunction) {
             // Move alternatives from loopDisjunction to disjunction
             for (unsigned alt = 0; alt < loopDisjunction->m_alternatives.size(); ++alt)
-                disjunction->m_alternatives.append(loopDisjunction->m_alternatives[alt]);
+                disjunction->m_alternatives.append(loopDisjunction->m_alternatives[alt].release());
                 
             loopDisjunction->m_alternatives.clear();
         }
@@ -744,7 +750,7 @@ public:
             if (term.type == PatternTerm::TypeParenthesesSubpattern) {
                 PatternDisjunction* nestedDisjunction = term.parentheses.disjunction;
                 for (unsigned alt = 0; alt < nestedDisjunction->m_alternatives.size(); ++alt) {
-                    if (containsCapturingTerms(nestedDisjunction->m_alternatives[alt], 0, nestedDisjunction->m_alternatives[alt]->m_terms.size() - 1))
+                    if (containsCapturingTerms(nestedDisjunction->m_alternatives[alt].get(), 0, nestedDisjunction->m_alternatives[alt]->m_terms.size() - 1))
                         return true;
                 }
             }
@@ -760,11 +766,11 @@ public:
     // beginning and the end of the match.
     void optimizeDotStarWrappedExpressions()
     {
-        Vector<PatternAlternative*>& alternatives = m_pattern.m_body->m_alternatives;
+        Vector<OwnPtr<PatternAlternative> >& alternatives = m_pattern.m_body->m_alternatives;
         if (alternatives.size() != 1)
             return;
 
-        PatternAlternative* alternative = alternatives[0];
+        PatternAlternative* alternative = alternatives[0].get();
         Vector<PatternTerm>& terms = alternative->m_terms;
         if (terms.size() >= 3) {
             bool startsWithBOL = false;

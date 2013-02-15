@@ -337,27 +337,22 @@ public:
 struct BytecodePattern {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    BytecodePattern(PassOwnPtr<ByteDisjunction> body, Vector<ByteDisjunction*> allParenthesesInfo, YarrPattern& pattern, BumpPointerAllocator* allocator)
+    BytecodePattern(PassOwnPtr<ByteDisjunction> body, Vector<OwnPtr<ByteDisjunction> >& parenthesesInfoToAdopt, YarrPattern& pattern, BumpPointerAllocator* allocator)
         : m_body(body)
         , m_ignoreCase(pattern.m_ignoreCase)
         , m_multiline(pattern.m_multiline)
         , m_allocator(allocator)
     {
+        m_body->terms.shrinkToFit();
+
         newlineCharacterClass = pattern.newlineCharacterClass();
         wordcharCharacterClass = pattern.wordcharCharacterClass();
 
-        m_allParenthesesInfo.append(allParenthesesInfo);
-        m_userCharacterClasses.append(pattern.m_userCharacterClasses);
-        // 'Steal' the YarrPattern's CharacterClasses!  We clear its
-        // array, so that it won't delete them on destruction.  We'll
-        // take responsibility for that.
-        pattern.m_userCharacterClasses.clear();
-    }
+        m_allParenthesesInfo.swap(parenthesesInfoToAdopt);
+        m_allParenthesesInfo.shrinkToFit();
 
-    ~BytecodePattern()
-    {
-        deleteAllValues(m_allParenthesesInfo);
-        deleteAllValues(m_userCharacterClasses);
+        m_userCharacterClasses.swap(pattern.m_userCharacterClasses);
+        m_userCharacterClasses.shrinkToFit();
     }
 
     OwnPtr<ByteDisjunction> m_body;
@@ -371,8 +366,8 @@ public:
     CharacterClass* wordcharCharacterClass;
 
 private:
-    Vector<ByteDisjunction*> m_allParenthesesInfo;
-    Vector<CharacterClass*> m_userCharacterClasses;
+    Vector<OwnPtr<ByteDisjunction> > m_allParenthesesInfo;
+    Vector<OwnPtr<CharacterClass> > m_userCharacterClasses;
 };
 
 JS_EXPORT_PRIVATE PassOwnPtr<BytecodePattern> byteCompile(YarrPattern&, BumpPointerAllocator*);

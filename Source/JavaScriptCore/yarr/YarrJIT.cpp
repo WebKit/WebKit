@@ -2315,11 +2315,11 @@ class YarrGenerator : private MacroAssembler {
         m_ops.append(alternativeBeginOpCode);
         m_ops.last().m_previousOp = notFound;
         m_ops.last().m_term = term;
-        Vector<PatternAlternative*>& alternatives =  term->parentheses.disjunction->m_alternatives;
+        Vector<OwnPtr<PatternAlternative> >& alternatives =  term->parentheses.disjunction->m_alternatives;
         for (unsigned i = 0; i < alternatives.size(); ++i) {
             size_t lastOpIndex = m_ops.size() - 1;
 
-            PatternAlternative* nestedAlternative = alternatives[i];
+            PatternAlternative* nestedAlternative = alternatives[i].get();
             opCompileAlternative(nestedAlternative);
 
             size_t thisOpIndex = m_ops.size();
@@ -2366,11 +2366,11 @@ class YarrGenerator : private MacroAssembler {
         m_ops.append(OpSimpleNestedAlternativeBegin);
         m_ops.last().m_previousOp = notFound;
         m_ops.last().m_term = term;
-        Vector<PatternAlternative*>& alternatives =  term->parentheses.disjunction->m_alternatives;
+        Vector<OwnPtr<PatternAlternative> >& alternatives =  term->parentheses.disjunction->m_alternatives;
         for (unsigned i = 0; i < alternatives.size(); ++i) {
             size_t lastOpIndex = m_ops.size() - 1;
 
-            PatternAlternative* nestedAlternative = alternatives[i];
+            PatternAlternative* nestedAlternative = alternatives[i].get();
             opCompileAlternative(nestedAlternative);
 
             size_t thisOpIndex = m_ops.size();
@@ -2440,7 +2440,7 @@ class YarrGenerator : private MacroAssembler {
     // to return the failing result.
     void opCompileBody(PatternDisjunction* disjunction)
     {
-        Vector<PatternAlternative*>& alternatives =  disjunction->m_alternatives;
+        Vector<OwnPtr<PatternAlternative> >& alternatives = disjunction->m_alternatives;
         size_t currentAlternativeIndex = 0;
 
         // Emit the 'once through' alternatives.
@@ -2450,7 +2450,7 @@ class YarrGenerator : private MacroAssembler {
 
             do {
                 size_t lastOpIndex = m_ops.size() - 1;
-                PatternAlternative* alternative = alternatives[currentAlternativeIndex];
+                PatternAlternative* alternative = alternatives[currentAlternativeIndex].get();
                 opCompileAlternative(alternative);
 
                 size_t thisOpIndex = m_ops.size();
@@ -2485,7 +2485,7 @@ class YarrGenerator : private MacroAssembler {
         m_ops.last().m_previousOp = notFound;
         do {
             size_t lastOpIndex = m_ops.size() - 1;
-            PatternAlternative* alternative = alternatives[currentAlternativeIndex];
+            PatternAlternative* alternative = alternatives[currentAlternativeIndex].get();
             ASSERT(!alternative->onceThrough());
             opCompileAlternative(alternative);
 
