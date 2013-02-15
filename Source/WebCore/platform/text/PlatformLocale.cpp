@@ -99,7 +99,7 @@ void DateTimeStringBuilder::visitField(DateTimeFormat::FieldType fieldType, int 
         // Always use padding width of 4 so it matches DateTimeEditElement.
         appendNumber(m_date.fullYear(), 4);
         return;
-    case DateTimeFormat::FieldTypeMonth:    
+    case DateTimeFormat::FieldTypeMonth:
         if (numberOfPatternCharacters == 3)
             m_builder.append(m_localizer.shortMonthLabels()[m_date.month()]);
         else if (numberOfPatternCharacters == 4)
@@ -354,7 +354,7 @@ String Locale::formatDateTime(const DateComponents& date, FormatType formatType)
         builder.build(dateFormat());
         break;
     case DateComponents::Month:
-        builder.build(monthFormat());
+        builder.build(formatType == FormatTypeShort ? shortMonthFormat() : monthFormat());
         break;
     case DateComponents::Week:    
 #if ENABLE(INPUT_TYPE_WEEK)

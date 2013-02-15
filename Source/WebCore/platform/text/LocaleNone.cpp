@@ -99,6 +99,11 @@ String LocaleNone::monthFormat()
     return ASCIILiteral("yyyy-MM");
 }
 
+String shortMonthFormat()
+{
+    return ASCIILiteral("yyyy-MM");
+}
+
 String LocaleNone::timeFormat()
 {
     return ASCIILiteral("HH:mm:ss");

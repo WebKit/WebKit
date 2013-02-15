@@ -427,6 +427,13 @@ String LocaleWin::monthFormat()
     return m_monthFormat;
 }
 
+String LocaleWin::shortMonthFormat()
+{
+    if (m_shortMonthFormat.isNull())
+        m_shortMonthFormat = convertWindowsDateTimeFormat(getLocaleInfoString(LOCALE_SYEARMONTH)).replace("MMMM", "MMM");
+    return m_shortMonthFormat;
+}
+
 String LocaleWin::timeFormat()
 {
     if (m_timeFormatWithSeconds.isNull())

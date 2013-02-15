@@ -78,13 +78,13 @@ protected:
         return locale->formatDateTime(date);
     }
 
-    String formatMonth(const String& localeString, const String& isoString)
+    String formatMonth(const String& localeString, const String& isoString, bool useShortFormat)
     {
         OwnPtr<LocaleMac> locale = LocaleMac::create(localeString);
         DateComponents date;
         unsigned end;
         date.parseMonth(isoString.characters(), isoString.length(), 0, end);
-        return locale->formatDateTime(date);
+        return locale->formatDateTime(date, (useShortFormat ? Locale::FormatTypeShort : Locale::FormatTypeMedium));
     }
 
     String formatDate(const String& localeString, int year, int month, int day)
@@ -184,9 +184,13 @@ TEST_F(LocaleMacTest, formatWeek)
 
 TEST_F(LocaleMacTest, formatMonth)
 {
-    EXPECT_STREQ("April 2005", formatMonth("en_US", "2005-04").utf8().data());
-    EXPECT_STREQ("avril 2005", formatMonth("fr_FR", "2005-04").utf8().data());
-    EXPECT_STREQ("2005\xE5\xB9\xB4" "04\xE6\x9C\x88", formatMonth("ja_JP", "2005-04").utf8().data());
+    EXPECT_STREQ("April 2005", formatMonth("en_US", "2005-04", false).utf8().data());
+    EXPECT_STREQ("avril 2005", formatMonth("fr_FR", "2005-04", false).utf8().data());
+    EXPECT_STREQ("2005\xE5\xB9\xB4" "04\xE6\x9C\x88", formatMonth("ja_JP", "2005-04", false).utf8().data());
+
+    EXPECT_STREQ("Apr 2005", formatMonth("en_US", "2005-04", true).utf8().data());
+    EXPECT_STREQ("avr. 2005", formatMonth("fr_FR", "2005-04", true).utf8().data());
+    EXPECT_STREQ("2005\xE5\xB9\xB4" "04\xE6\x9C\x88", formatMonth("ja_JP", "2005-04", true).utf8().data());
 }
 
 TEST_F(LocaleMacTest, formatDate)

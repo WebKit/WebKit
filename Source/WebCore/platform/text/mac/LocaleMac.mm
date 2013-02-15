@@ -204,6 +204,14 @@ String LocaleMac::monthFormat()
     return m_monthFormat;
 }
 
+String LocaleMac::shortMonthFormat()
+{
+    if (!m_shortMonthFormat.isNull())
+        return m_shortMonthFormat;
+    m_shortMonthFormat = [NSDateFormatter dateFormatFromTemplate:@"yyyyMMM" options:0 locale:m_locale.get()];
+    return m_shortMonthFormat;
+}
+
 String LocaleMac::timeFormat()
 {
     if (!m_timeFormatWithSeconds.isNull())

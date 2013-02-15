@@ -355,6 +355,14 @@ String LocaleICU::monthFormat()
     return m_monthFormat;
 }
 
+String LocaleICU::shortMonthFormat()
+{
+    if (!m_shortMonthFormat.isNull())
+        return m_shortMonthFormat;
+    m_shortMonthFormat = getFormatForSkeleton(m_locale.data(), ASCIILiteral("yyyyMMM"));
+    return m_shortMonthFormat;
+}
+
 String LocaleICU::timeFormat()
 {
     initializeDateTimeFormat();

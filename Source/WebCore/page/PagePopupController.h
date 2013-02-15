@@ -49,6 +49,7 @@ public:
     String localizeNumberString(const String&);
 #if ENABLE(CALENDAR_PICKER)
     String formatMonth(int year, int zeroBaseMonth);
+    String formatShortMonth(int year, int zeroBaseMonth);
 #endif
     void clearPagePopupClient();
     void histogramEnumeration(const String& name, int sample, int boundaryValue);

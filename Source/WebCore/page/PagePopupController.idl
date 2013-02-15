@@ -37,5 +37,6 @@
     void closePopup();
     DOMString localizeNumberString(in DOMString numberString);
     [Conditional=CALENDAR_PICKER] DOMString formatMonth(in long year, in long zeroBaseMonth);
+    [Conditional=CALENDAR_PICKER] DOMString formatShortMonth(in long year, in long zeroBaseMonth);
     void histogramEnumeration(DOMString name, long sample, long boundaryValue);
 };

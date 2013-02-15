@@ -81,7 +81,16 @@ String PagePopupController::formatMonth(int year, int zeroBaseMonth)
         return emptyString();
     DateComponents date;
     date.setMonthsSinceEpoch((year - 1970) * 12.0 + zeroBaseMonth);
-    return m_popupClient->locale().formatDateTime(date);
+    return m_popupClient->locale().formatDateTime(date, Locale::FormatTypeMedium);
+}
+
+String PagePopupController::formatShortMonth(int year, int zeroBaseMonth)
+{
+    if (!m_popupClient)
+        return emptyString();
+    DateComponents date;
+    date.setMonthsSinceEpoch((year - 1970) * 12.0 + zeroBaseMonth);
+    return m_popupClient->locale().formatDateTime(date, Locale::FormatTypeShort);
 }
 #endif
 

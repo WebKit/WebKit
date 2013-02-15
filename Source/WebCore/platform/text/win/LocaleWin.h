@@ -54,6 +54,7 @@ public:
 #if ENABLE(DATE_AND_TIME_INPUT_TYPES)
     virtual String dateFormat() OVERRIDE;
     virtual String monthFormat() OVERRIDE;
+    virtual String shortMonthFormat() OVERRIDE;
     virtual String timeFormat() OVERRIDE;
     virtual String shortTimeFormat() OVERRIDE;
     virtual String dateTimeFormatWithSeconds() OVERRIDE;
@@ -85,6 +86,7 @@ private:
     Vector<String> m_monthLabels;
     String m_dateFormat;
     String m_monthFormat;
+    String m_shortMonthFormat;
     String m_timeFormatWithSeconds;
     String m_timeFormatWithoutSeconds;
     String m_dateTimeFormatWithSeconds;

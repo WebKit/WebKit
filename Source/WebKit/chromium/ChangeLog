@@ -1,5 +1,16 @@
 2013-02-15  Keishi Hattori  <keishi@webkit.org>
 
+        PagePopupController.formatMonth should support short month format
+        https://bugs.webkit.org/show_bug.cgi?id=109530
+
+        Reviewed by Kent Tamura.
+
+        * tests/LocaleMacTest.cpp:
+        (LocaleMacTest::formatMonth):
+        (TEST_F):
+
+2013-02-15  Keishi Hattori  <keishi@webkit.org>
+
         Add setValue and closePopup methods to PagePopupController
         https://bugs.webkit.org/show_bug.cgi?id=109897
 
