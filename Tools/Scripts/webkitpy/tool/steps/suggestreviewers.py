@@ -42,9 +42,12 @@ class SuggestReviewers(AbstractStep):
         if not self._options.suggest_reviewers:
             return
 
-        reviewers = self._tool.checkout().suggested_reviewers(self._options.git_commit, self._changed_files(state))
+        reviewers = self._tool.checkout().suggested_reviewers(self._options.git_commit, self._changed_files(state))[:5]
         print "The following reviewers have recently modified files in your patch:"
-        print "\n".join([reviewer.full_name for reviewer in reviewers])
+        print ", ".join([reviewer.full_name for reviewer in reviewers])
+
+        if not state.get('bug_id'):
+            return
         if not self._tool.user.confirm("Would you like to CC them?"):
             return
         reviewer_emails = [reviewer.bugzilla_email() for reviewer in reviewers]

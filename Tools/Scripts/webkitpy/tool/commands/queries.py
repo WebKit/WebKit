@@ -44,6 +44,7 @@ from webkitpy.common.net.buildbot import BuildBot
 from webkitpy.common.net.regressionwindow import RegressionWindow
 from webkitpy.common.system.crashlogs import CrashLogs
 from webkitpy.common.system.user import User
+from webkitpy.tool.commands.abstractsequencedcommand import AbstractSequencedCommand
 from webkitpy.tool.grammar import pluralize
 from webkitpy.tool.multicommandtool import AbstractDeclarativeCommand
 from webkitpy.layout_tests.models.test_expectations import TestExpectations
@@ -52,19 +53,15 @@ from webkitpy.layout_tests.port import platform_options, configuration_options
 _log = logging.getLogger(__name__)
 
 
-class SuggestReviewers(AbstractDeclarativeCommand):
+class SuggestReviewers(AbstractSequencedCommand):
     name = "suggest-reviewers"
     help_text = "Suggest reviewers for a patch based on recent changes to the modified files."
+    steps = [
+        steps.SuggestReviewers,
+    ]
 
-    def __init__(self):
-        options = [
-            steps.Options.git_commit,
-        ]
-        AbstractDeclarativeCommand.__init__(self, options=options)
-
-    def execute(self, options, args, tool):
-        reviewers = tool.checkout().suggested_reviewers(options.git_commit)
-        print "\n".join([reviewer.full_name for reviewer in reviewers])
+    def _prepare_state(self, options, args, tool):
+        options.suggest_reviewers = True
 
 
 class BugsToCommit(AbstractDeclarativeCommand):

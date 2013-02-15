@@ -1,3 +1,25 @@
+2013-02-15  Zan Dobersek  <zdobersek@igalia.com>
+
+        webkit-patch suggest-reviewers should limit itself to 5 reviewers
+        https://bugs.webkit.org/show_bug.cgi?id=107528
+
+        Reviewed by Eric Seidel.
+
+        * Scripts/webkitpy/common/checkout/checkout.py:
+        (Checkout.suggested_reviewers): Iterate through the sorted commit info list,
+        scraping reviewers from the commit information and in the end producing a list
+        of reviewers that's sorted from the most to least recent activity of any reviewer
+        that has reviewed or authored patches for the changed files.
+        * Scripts/webkitpy/tool/commands/queries.py:
+        (SuggestReviewers): Use the SuggestReviewers step instead of reimplementing much of
+        the same logic.
+        (SuggestReviewers._prepare_state): Force the reviewer suggestion because the option
+        defaults to False.
+        * Scripts/webkitpy/tool/steps/suggestreviewers.py:
+        (SuggestReviewers.run): Only list the first five suggested reviewers, now printed out
+        on a single line.  Only ask for CC-ing the suggested reviewers to the bug if the
+        bug ID is located in the command's state.
+
 2013-02-15  Pablo Flouret  <pablof@motorola.com>
 
         Unreviewed. Add myself as a committer.
