@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 20: Uncaught PASS if this is reported as an uncaught exception.
+
