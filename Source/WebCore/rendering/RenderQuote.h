@@ -36,16 +36,17 @@ public:
     RenderQuote(Document*, const QuoteType);
     virtual ~RenderQuote();
     void attachQuote();
-    void detachQuote();
+
+    virtual void updateText() OVERRIDE;
 
 private:
+    void detachQuote();
+
     virtual void willBeDestroyed() OVERRIDE;
     virtual const char* renderName() const OVERRIDE { return "RenderQuote"; };
     virtual bool isQuote() const OVERRIDE { return true; };
     virtual PassRefPtr<StringImpl> originalText() const OVERRIDE;
-
-    virtual void updateText() OVERRIDE;
-    virtual void computePreferredLogicalWidths(float leadWidth) OVERRIDE;
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
 
     // We don't override insertedIntoTree to call attachQuote() as it would be attached
     // too early and get the wrong depth since generated content is inserted into anonymous
