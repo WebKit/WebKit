@@ -1,3 +1,9 @@
+2013-02-14  Karen Grunberg  <kareng@chromium.org>
+
+        adding myself as a committer
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-14  Glenn Adams  <glenn@skynav.com>
 
         new-run-webkit-tests needs a shared TestExpectations between all WebKit ports
