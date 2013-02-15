@@ -311,6 +311,8 @@ webkit.org/b/108507 printing/standards-percentage-heights.html [ Skip ]
 
 webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
+webkit.org/b/109890 [ Debug ] platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Crash ]
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

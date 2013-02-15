@@ -1417,3 +1417,5 @@ webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.
 webkit.org/b/109232 [ Debug ] inspector/debugger/debugger-reload-on-pause.html [ Crash ]
 
 webkit.org/b/109869 media/media-captions.html [ Crash ]
+
+webkit.org/b/109889 [ Debug ] scrollbars/overflow-scrollbar-combinations.html [ Crash ]
