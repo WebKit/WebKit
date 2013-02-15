@@ -142,15 +142,13 @@ bool getRawCookies(const NetworkStorageSession& session, const KURL& /*firstPart
     if (!jar)
         return false;
 
-    GOwnPtr<GSList> cookies(soup_cookie_jar_all_cookies(jar));
+    GOwnPtr<SoupURI> uri(soup_uri_new(url.string().utf8().data()));
+    GOwnPtr<GSList> cookies(soup_cookie_jar_get_cookie_list(jar, uri.get(), TRUE));
     if (!cookies)
         return false;
 
-    GOwnPtr<SoupURI> uri(soup_uri_new(url.string().utf8().data()));
     for (GSList* iter = cookies.get(); iter; iter = g_slist_next(iter)) {
         GOwnPtr<SoupCookie> cookie(static_cast<SoupCookie*>(iter->data));
-        if (!soup_cookie_applies_to_uri(cookie.get(), uri.get()))
-            continue;
         rawCookies.append(Cookie(String::fromUTF8(cookie->name), String::fromUTF8(cookie->value), String::fromUTF8(cookie->domain),
                                  String::fromUTF8(cookie->path), static_cast<double>(soup_date_to_time_t(cookie->expires)) * 1000,
                                  cookie->http_only, cookie->secure, soup_cookie_jar_is_persistent(jar)));
@@ -165,16 +163,14 @@ void deleteCookie(const NetworkStorageSession& session, const KURL& url, const S
     if (!jar)
         return;
 
-    GOwnPtr<GSList> cookies(soup_cookie_jar_all_cookies(jar));
+    GOwnPtr<SoupURI> uri(soup_uri_new(url.string().utf8().data()));
+    GOwnPtr<GSList> cookies(soup_cookie_jar_get_cookie_list(jar, uri.get(), TRUE));
     if (!cookies)
         return;
 
     CString cookieName = name.utf8();
-    GOwnPtr<SoupURI> uri(soup_uri_new(url.string().utf8().data()));
     for (GSList* iter = cookies.get(); iter; iter = g_slist_next(iter)) {
         GOwnPtr<SoupCookie> cookie(static_cast<SoupCookie*>(iter->data));
-        if (!soup_cookie_applies_to_uri(cookie.get(), uri.get()))
-            continue;
         if (cookieName == cookie->name)
             soup_cookie_jar_delete_cookie(jar, cookie.get());
     }
