@@ -1,3 +1,15 @@
+2013-02-15  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add CString operators for comparison with const char*
+        https://bugs.webkit.org/show_bug.cgi?id=109947
+
+        Reviewed by Darin Adler.
+
+        Add tests for WTF::CString's comparison operators.
+
+        * TestWebKitAPI/Tests/WTF/CString.cpp:
+        (TEST):
+
 2013-02-15  Zan Dobersek  <zdobersek@igalia.com>
 
         webkit-patch suggest-reviewers should limit itself to 5 reviewers

@@ -107,3 +107,90 @@ TEST(WTF, CStringCopyOnWrite)
     ASSERT_STREQ(string.data(), "WebKit");
     ASSERT_STREQ(copy.data(), initialString);
 }
+
+TEST(WTF, CStringComparison)
+{
+    // Comparison with another CString.
+    CString a;
+    CString b;
+    ASSERT_TRUE(a == b);
+    ASSERT_FALSE(a != b);
+    a = "a";
+    b = CString();
+    ASSERT_FALSE(a == b);
+    ASSERT_TRUE(a != b);
+    a = "a";
+    b = "b";
+    ASSERT_FALSE(a == b);
+    ASSERT_TRUE(a != b);
+    a = "a";
+    b = "a";
+    ASSERT_TRUE(a == b);
+    ASSERT_FALSE(a != b);
+    a = "a";
+    b = "aa";
+    ASSERT_FALSE(a == b);
+    ASSERT_TRUE(a != b);
+    a = "";
+    b = "";
+    ASSERT_TRUE(a == b);
+    ASSERT_FALSE(a != b);
+    a = "";
+    b = CString();
+    ASSERT_FALSE(a == b);
+    ASSERT_TRUE(a != b);
+    a = "a";
+    b = "";
+    ASSERT_FALSE(a == b);
+    ASSERT_TRUE(a != b);
+
+    // Comparison with a const char*.
+    CString c;
+    const char* d = 0;
+    ASSERT_TRUE(c == d);
+    ASSERT_FALSE(c != d);
+    c = "c";
+    d = 0;
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+    c = CString();
+    d = "d";
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+    c = "c";
+    d = "d";
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+    c = "c";
+    d = "c";
+    ASSERT_TRUE(c == d);
+    ASSERT_FALSE(c != d);
+    c = "c";
+    d = "cc";
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+    c = "cc";
+    d = "c";
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+    c = "";
+    d = "";
+    ASSERT_TRUE(c == d);
+    ASSERT_FALSE(c != d);
+    c = "";
+    d = 0;
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+    c = CString();
+    d = "";
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+    c = "a";
+    d = "";
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+    c = "";
+    d = "b";
+    ASSERT_FALSE(c == d);
+    ASSERT_TRUE(c != d);
+}

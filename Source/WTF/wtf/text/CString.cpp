@@ -110,7 +110,16 @@ bool operator==(const CString& a, const CString& b)
         return false;
     if (a.length() != b.length())
         return false;
-    return !strncmp(a.data(), b.data(), min(a.length(), b.length()));
+    return !memcmp(a.data(), b.data(), a.length());
+}
+
+bool operator==(const CString& a, const char* b)
+{
+    if (a.isNull() != !b)
+        return false;
+    if (!b)
+        return true;
+    return !strcmp(a.data(), b);
 }
 
 } // namespace WTF

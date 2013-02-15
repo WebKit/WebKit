@@ -1,3 +1,24 @@
+2013-02-15  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Add CString operators for comparison with const char*
+        https://bugs.webkit.org/show_bug.cgi?id=109947
+
+        Reviewed by Darin Adler.
+
+        Add operators to WTF::CString for equality/inequality comparison
+        with const char* strings. This avoids constructing a CString
+        from a const char* in such cases, which is can be expensive as
+        it would copy it and call strlen().
+
+        * wtf/text/CString.cpp:
+        (WTF::operator==): Use memcmp instead of strncmp to compare the
+        CString buffers as we know they are the same size and we don't
+        want to scan for terminating null byte.
+        (WTF):
+        * wtf/text/CString.h:
+        (WTF):
+        (WTF::operator!=):
+
 2013-02-15  Geoffrey Garen  <ggaren@apple.com>
 
         Merged the global function cache into the source code cache
