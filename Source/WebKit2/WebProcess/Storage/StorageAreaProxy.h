@@ -27,6 +27,7 @@
 #define StorageAreaProxy_h
 
 #include <WebCore/StorageArea.h>
+#include <wtf/HashMap.h>
 
 namespace WebKit {
 
@@ -54,7 +55,12 @@ private:
     virtual void decrementAccessCount() OVERRIDE;
     virtual void closeDatabaseIfIdle() OVERRIDE;
 
+    bool disabledByPrivateBrowsingInFrame(const WebCore::Frame* sourceFrame) const;
+
+    void loadValuesIfNeeded();
+
     uint64_t m_storageAreaID;
+    OwnPtr<HashMap<String, String> > m_values;
 };
 
 } // namespace WebKit

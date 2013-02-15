@@ -31,6 +31,8 @@
 #include "StorageNamespaceProxy.h"
 #include "WebProcess.h"
 #include <WebCore/Frame.h>
+#include <WebCore/Page.h>
+#include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
 
 using namespace WebCore;
@@ -59,11 +61,20 @@ StorageAreaProxy::~StorageAreaProxy()
     WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageArea(m_storageAreaID), 0);
 }
 
-unsigned StorageAreaProxy::length(ExceptionCode&, Frame* sourceFrame)
+unsigned StorageAreaProxy::length(ExceptionCode& exceptionCode, Frame* sourceFrame)
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-    return 0;
+    exceptionCode = 0;
+    if (!canAccessStorage(sourceFrame)) {
+        exceptionCode = SECURITY_ERR;
+        return 0;
+    }
+
+    if (disabledByPrivateBrowsingInFrame(sourceFrame))
+        return 0;
+
+    loadValuesIfNeeded();
+
+    return m_values->size();
 }
 
 String StorageAreaProxy::key(unsigned index, ExceptionCode&, Frame* sourceFrame)
@@ -130,6 +141,25 @@ void StorageAreaProxy::closeDatabaseIfIdle()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
+}
+
+bool StorageAreaProxy::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const
+{
+    if (!sourceFrame->page()->settings()->privateBrowsingEnabled())
+        return false;
+
+    // FIXME: Check the type of the storage.
+
+    return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(sourceFrame->document()->securityOrigin()->protocol());
+}
+
+void StorageAreaProxy::loadValuesIfNeeded()
+{
+    if (m_values)
+        return;
+
+    // FIXME: Actually load the values.
+    m_values = adoptPtr(new HashMap<String, String>());
 }
 
 } // namespace WebKit

@@ -1,5 +1,25 @@
 2013-02-15  Anders Carlsson  <andersca@apple.com>
 
+        Implement StorageAreaProxy::length
+        https://bugs.webkit.org/show_bug.cgi?id=109962
+
+        Reviewed by Andreas Kling.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::length):
+        Load the values if needed and then return the length.
+
+        (WebKit::StorageAreaProxy::disabledByPrivateBrowsingInFrame):
+        Add helper function.
+
+        (WebKit::StorageAreaProxy::loadValuesIfNeeded):
+        Just allocate the hash map for now.
+
+        * WebProcess/Storage/StorageAreaProxy.h:
+        (StorageAreaProxy):
+
+2013-02-15  Anders Carlsson  <andersca@apple.com>
+
         Remove const from a bunch of StorageArea member functions
         https://bugs.webkit.org/show_bug.cgi?id=109957
 
