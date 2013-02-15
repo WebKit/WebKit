@@ -115,6 +115,7 @@ public:
     bool transparentBackground() const;
     void setNavigatorQtObjectEnabled(bool);
     void updateUserScripts();
+    void updateSchemeDelegates();
 
     QPointF contentPos() const;
     void setContentPos(const QPointF&);

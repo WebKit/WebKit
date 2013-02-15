@@ -589,6 +589,7 @@ void QQuickWebViewPrivate::didRelaunchProcess()
 
     updateViewportSize();
     updateUserScripts();
+    updateSchemeDelegates();
 }
 
 PassOwnPtr<DrawingAreaProxy> QQuickWebViewPrivate::createDrawingAreaProxy()
@@ -866,6 +867,17 @@ void QQuickWebViewPrivate::updateUserScripts()
         if (!contents || WKStringIsEmpty(contents.get()))
             continue;
         WKPageGroupAddUserScript(pageGroup.get(), contents.get(), /*baseURL*/ 0, /*whitelistedURLPatterns*/ 0, /*blacklistedURLPatterns*/ 0, kWKInjectInTopFrameOnly, kWKInjectAtDocumentEnd);
+    }
+}
+
+void QQuickWebViewPrivate::updateSchemeDelegates()
+{
+    webPageProxy->registerApplicationScheme(ASCIILiteral("qrc"));
+
+    QQmlListProperty<QQuickUrlSchemeDelegate> schemes = experimental->schemeDelegates();
+    for (int i = 0, numSchemes = experimental->schemeDelegates_Count(&schemes); i < numSchemes; ++i) {
+        QQuickUrlSchemeDelegate* scheme = experimental->schemeDelegates_At(&schemes, i);
+        webPageProxy->registerApplicationScheme(scheme->scheme());
     }
 }
 

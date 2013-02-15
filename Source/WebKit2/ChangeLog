@@ -1,3 +1,20 @@
+2013-02-15  Milian Wolff  <milian.wolff@kdab.com>
+
+        [Qt] Restore URL Scheme Delegates after QtWebProcess crash
+        https://bugs.webkit.org/show_bug.cgi?id=108808
+
+        When the QtWebProcess crashes, the registered URL Scheme
+        Delegates are not properly restored over IPC in the newly
+        launched process instance.
+
+        Reviewed by Simon Hausmann.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        (QQuickWebViewPrivate::updateSchemeDelegates):
+        * UIProcess/API/qt/qquickwebview_p_p.h:
+        (QQuickWebViewPrivate):
+
 2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs
