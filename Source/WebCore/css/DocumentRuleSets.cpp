@@ -157,11 +157,11 @@ void DocumentRuleSets::collectFeatures(bool isViewSource, StyleScopeResolver* sc
 void DocumentRuleSets::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
-    info.addMember(m_authorStyle);
-    info.addMember(m_userStyle);
-    info.addMember(m_features);
-    info.addMember(m_siblingRuleSet);
-    info.addMember(m_uncommonAttributeRuleSet);
+    info.addMember(m_authorStyle, "authorStyle");
+    info.addMember(m_userStyle, "userStyle");
+    info.addMember(m_features, "features");
+    info.addMember(m_siblingRuleSet, "siblingRuleSet");
+    info.addMember(m_uncommonAttributeRuleSet, "uncommonAttributeRuleSet");
 }
 
 } // namespace WebCore
