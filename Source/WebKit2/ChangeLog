@@ -1,5 +1,31 @@
 2013-02-15  Anders Carlsson  <andersca@apple.com>
 
+        Add a synchronous GetValues message to StorageManager
+        https://bugs.webkit.org/show_bug.cgi?id=109968
+
+        Reviewed by Sam Weinig.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchWorkQueueMessageReceiverMessage):
+        Handle synchronous messages.
+
+        (CoreIPC::Connection::processIncomingMessage):
+        Check for work queue message receivers before doing any other processing.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::getValues):
+        Add empty stub.
+
+        * UIProcess/Storage/StorageManager.h:
+        * UIProcess/Storage/StorageManager.messages.in:
+        Add GetValues message.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::loadValuesIfNeeded):
+        Send the GetValues message.
+
+2013-02-15  Anders Carlsson  <andersca@apple.com>
+
         A storage area should know its storage type
         https://bugs.webkit.org/show_bug.cgi?id=109964
 

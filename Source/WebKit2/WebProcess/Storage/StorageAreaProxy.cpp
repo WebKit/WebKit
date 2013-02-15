@@ -74,7 +74,6 @@ unsigned StorageAreaProxy::length(ExceptionCode& exceptionCode, Frame* sourceFra
         return 0;
 
     loadValuesIfNeeded();
-
     return m_values->size();
 }
 
@@ -160,8 +159,13 @@ void StorageAreaProxy::loadValuesIfNeeded()
     if (m_values)
         return;
 
-    // FIXME: Actually load the values.
-    m_values = adoptPtr(new HashMap<String, String>());
+    HashMap<String, String> values;
+    // FIXME: This should use a special sendSync flag to indicate that we don't want to process incoming messages while waiting for a reply.
+    // (This flag does not yet exist).
+    WebProcess::shared().connection()->sendSync(Messages::StorageManager::GetValues(m_storageAreaID), Messages::StorageManager::GetValues::Reply(values), 0);
+
+    // FIXME: Don't copy the hash map.
+    m_values = adoptPtr(new HashMap<String, String>(values));
 }
 
 } // namespace WebKit

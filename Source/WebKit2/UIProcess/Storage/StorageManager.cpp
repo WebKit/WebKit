@@ -66,4 +66,9 @@ void StorageManager::destroyStorageArea(uint64_t)
 {
 }
 
+void StorageManager::getValues(uint64_t, HashMap<String, String>&)
+{
+    // FIXME: Implement this.
+}
+
 } // namespace WebKit

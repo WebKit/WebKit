@@ -285,10 +285,29 @@ void Connection::dispatchWorkQueueMessageReceiverMessage(WorkQueueMessageReceive
 {
     OwnPtr<MessageDecoder> decoder = adoptPtr(incomingMessageDecoder);
 
-    // FIXME: Handle sync messages.
-    ASSERT(!decoder->isSyncMessage());
+    if (!decoder->isSyncMessage()) {
+        workQueueMessageReceiver->didReceiveMessage(this, *decoder);
+        return;
+    }
 
-    workQueueMessageReceiver->didReceiveMessage(this, *decoder);
+    uint64_t syncRequestID = 0;
+    if (!decoder->decode(syncRequestID) || !syncRequestID) {
+        // We received an invalid sync message.
+        // FIXME: Handle this.
+        decoder->markInvalid();
+        return;
+    }
+
+    OwnPtr<MessageEncoder> replyEncoder = MessageEncoder::create("IPC", "SyncMessageReply", syncRequestID);
+
+    // Hand off both the decoder and encoder to the work queue message receiver.
+    workQueueMessageReceiver->didReceiveSyncMessage(this, *decoder, replyEncoder);
+
+    // FIXME: If the message was invalid, we should send back a SyncMessageError.
+    ASSERT(!decoder->isInvalid());
+
+    if (replyEncoder)
+        sendSyncReply(replyEncoder.release());
 }
 
 void Connection::setDidCloseOnConnectionWorkQueueCallback(DidCloseOnConnectionWorkQueueCallback callback)
@@ -593,6 +612,13 @@ void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
         return;
     }
 
+    // Check if any work queue message receivers are interested in this message.
+    HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver> > >::const_iterator it = m_workQueueMessageReceivers.find(message->messageReceiverName());
+    if (it != m_workQueueMessageReceivers.end()) {
+        it->value.first->dispatch(bind(&Connection::dispatchWorkQueueMessageReceiverMessage, this, it->value.second, message.release().leakPtr()));
+        return;
+    }
+
     // Check if this is a sync message or if it's a message that should be dispatched even when waiting for
     // a sync reply. If it is, and we're waiting for a sync reply this message needs to be dispatched.
     // If we don't we'll end up with a deadlock where both sync message senders are stuck waiting for a reply.
@@ -611,13 +637,6 @@ void Connection::processIncomingMessage(PassOwnPtr<MessageDecoder> incomingMessa
             m_waitForMessageCondition.signal();
             return;
         }
-    }
-
-    // Check if any work queue message receivers are interested in this message.
-    HashMap<StringReference, std::pair<RefPtr<WorkQueue>, RefPtr<WorkQueueMessageReceiver> > >::const_iterator it = m_workQueueMessageReceivers.find(message->messageReceiverName());
-    if (it != m_workQueueMessageReceivers.end()) {
-        it->value.first->dispatch(bind(&Connection::dispatchWorkQueueMessageReceiverMessage, this, it->value.second, message.release().leakPtr()));
-        return;
     }
 
     enqueueIncomingMessage(message.release());

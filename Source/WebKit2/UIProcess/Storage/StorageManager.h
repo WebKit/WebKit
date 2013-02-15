@@ -29,6 +29,7 @@
 #include "Connection.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+#include <wtf/text/StringHash.h>
 
 class WorkQueue;
 
@@ -50,10 +51,12 @@ private:
 
     // CoreIPC::Connection::WorkQueueMessageReceiver.
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+    virtual void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder) OVERRIDE;
 
     // Message handlers.
     void createStorageArea(uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&);
     void destroyStorageArea(uint64_t storageAreaID);
+    void getValues(uint64_t storageAreaID, HashMap<String, String>& values);
 
     RefPtr<WorkQueue> m_queue;
 };
