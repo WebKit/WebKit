@@ -243,5 +243,6 @@ namespace WTF {
 using WTF::HashTraits;
 using WTF::PairHashTraits;
 using WTF::NullableHashTraits;
+using WTF::SimpleClassHashTraits;
 
 #endif // WTF_HashTraits_h

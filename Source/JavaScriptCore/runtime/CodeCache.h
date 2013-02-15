@@ -99,8 +99,6 @@ public:
 
     SourceCodeKey(WTF::HashTableDeletedValueType)
         : m_sourceString(WTF::HashTableDeletedValue)
-        , m_name(WTF::HashTableDeletedValue)
-        , m_flags(0)
     {
     }
 
@@ -129,7 +127,7 @@ struct SourceCodeKeyHash {
     static const bool safeToCompareToEmptyOrDeleted = false;
 };
 
-struct SourceCodeKeyHashTraits : WTF::SimpleClassHashTraits<SourceCodeKey> {
+struct SourceCodeKeyHashTraits : SimpleClassHashTraits<SourceCodeKey> {
     static const bool hasIsEmptyValueFunction = true;
     static bool isEmptyValue(const SourceCodeKey& sourceCodeKey) { return sourceCodeKey.isNull(); }
 };

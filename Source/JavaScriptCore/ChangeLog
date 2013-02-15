@@ -1,3 +1,16 @@
+2013-02-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Merged the global function cache into the source code cache
+        https://bugs.webkit.org/show_bug.cgi?id=108660
+
+        Reviewed by Sam Weinig.
+
+        Responding to review comments by Darin Adler.
+
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeKey::SourceCodeKey): Don't initialize m_name and m_flags
+        in the hash table deleted value because they're meaningless.
+
 2013-02-14  Filip Pizlo  <fpizlo@apple.com>
 
         DFG AbstractState should filter operands to NewArray more precisely
