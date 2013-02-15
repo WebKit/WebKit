@@ -111,6 +111,7 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
     , m_shouldSyncImageBacking(true)
     , m_shouldSyncAnimations(true)
     , m_fixedToViewport(false)
+    , m_movingVisibleRect(false)
     , m_pendingContentsScaleAdjustment(false)
     , m_pendingVisibleRectAdjustment(false)
 #if USE(GRAPHICS_SURFACE)
@@ -646,6 +647,11 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 {
     ASSERT(m_coordinator->isFlushingLayerChanges());
 
+    // When we have a transform animation, we need to update visible rect every frame to adjust the visible rect of a backing store.
+    bool hasActiveTransformAnimation = selfOrAncestorHasActiveTransformAnimation();
+    if (hasActiveTransformAnimation)
+        m_movingVisibleRect = true;
+
     // Sets the values.
     computePixelAlignment(m_adjustedPosition, m_adjustedSize, m_adjustedAnchorPoint, m_pixelAlignmentOffset);
 
@@ -661,6 +667,9 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 #if USE(GRAPHICS_SURFACE)
     syncCanvas();
 #endif
+    // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
+    if (!hasActiveTransformAnimation)
+        m_movingVisibleRect = false;
 }
 
 bool CoordinatedGraphicsLayer::imageBackingVisible()
@@ -956,14 +965,12 @@ void CoordinatedGraphicsLayer::computePixelAlignment(FloatPoint& position, Float
 
 void CoordinatedGraphicsLayer::computeTransformedVisibleRect()
 {
-    // When we have a transform animation, we need to update visible rect every frame to adjust the visible rect of a backing store.
-    bool hasActiveTransformAnimation = selfOrAncestorHasActiveTransformAnimation();
-    if (!m_shouldUpdateVisibleRect && !hasActiveTransformAnimation)
+    if (!m_shouldUpdateVisibleRect && !m_movingVisibleRect)
         return;
 
     m_shouldUpdateVisibleRect = false;
     TransformationMatrix currentTransform = transform();
-    if (hasActiveTransformAnimation)
+    if (m_movingVisibleRect)
         client()->getCurrentTransform(this, currentTransform);
     m_layerTransform.setLocalTransform(currentTransform);
 

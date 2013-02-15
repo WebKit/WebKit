@@ -344,26 +344,13 @@ void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
     IntRect bounds = m_rect;
     IntSize candidateSize = rect.size();
 
-    // If candidateSize is bigger than bounds (i.e. TBS is used as a backing store of GraphicsLayer), we skip the below adjusting logic which expects bounds to cover the given rect.
-    if (candidateSize.width() > bounds.width() && candidateSize.height() > bounds.height()) {
-        rect.intersect(bounds);
-        return;
-    }
-
-    // We will try to keep the cover and keep rect the same size at all time, which
-    // might not be the case when at the content edges.
-
-    // We start by moving when at the edges.
-    rect.move(std::max(0, bounds.x() - rect.x()), std::max(0, bounds.y() - rect.y()));
-    rect.move(std::min(0, bounds.maxX() - rect.maxX()), std::min(0, bounds.maxY() - rect.maxY()));
-
     rect.intersect(bounds);
 
     if (rect.size() == candidateSize)
         return;
 
     /*
-     * In the following case, there is no intersection of the contents rect and the cover/keep rect.
+     * In the following case, there is no intersection of the contents rect and the cover rect.
      * Thus the latter should not be inflated.
      *
      *  +---------------+
@@ -371,7 +358,7 @@ void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
      *  +---------------+
      *
      *          +-------------------------------+
-     *          |      cover or keep rect       |
+     *          |          cover rect           |
      *          |         +---------+           |
      *          |         | visible |           |
      *          |         |  rect   |           |
@@ -381,13 +368,12 @@ void TiledBackingStore::adjustForContentsRect(IntRect& rect) const
     if (rect.isEmpty())
         return;
 
-    // Even now we might cover more than the content area so let's inflate in the
-    // opposite directions.
+    // Try to create a cover rect of the same size as the candidate, but within content bounds.
     int pixelsCovered = candidateSize.width() * candidateSize.height();
 
-    if (rect.width() != candidateSize.width())
+    if (rect.width() < candidateSize.width())
         rect.inflateY(((pixelsCovered / rect.width()) - rect.height()) / 2);
-    if (rect.height() != candidateSize.height())
+    if (rect.height() < candidateSize.height())
         rect.inflateX(((pixelsCovered / rect.height()) - rect.width()) / 2);
 
     rect.intersect(bounds);
@@ -425,16 +411,18 @@ void TiledBackingStore::computeCoverAndKeepRect(const IntRect& visibleRect, IntR
 
             coverRect.unite(visibleRect);
         }
+        ASSERT(keepRect.contains(coverRect));
     }
 
-    ASSERT(keepRect.contains(coverRect));
+    adjustForContentsRect(coverRect);
 
     // The keep rect is an inflated version of the cover rect, inflated in tile dimensions.
+    keepRect.unite(coverRect);
     keepRect.inflateX(m_tileSize.width() / 2);
     keepRect.inflateY(m_tileSize.height() / 2);
+    keepRect.intersect(m_rect);
 
-    adjustForContentsRect(coverRect);
-    adjustForContentsRect(keepRect);
+    ASSERT(coverRect.isEmpty() || keepRect.contains(coverRect));
 }
 
 bool TiledBackingStore::isBackingStoreUpdatesSuspended() const

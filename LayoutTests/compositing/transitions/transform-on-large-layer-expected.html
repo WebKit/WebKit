@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Animating transform on large tiled layer.</title>
+    <style type="text/css">
+        #box {
+            display: block;
+            width: 1000px;
+            height: 2000px;
+            background-color: green;
+        }
+
+        #sandbox {
+            height: 1000px;
+            width: 1000px;
+            background-color: red;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<script>
+    window.resizeTo(1600,1200);
+</script>
+<body>
+    <div id=description> 
+        The test passes if the box below turns green.
+    </div>
+    <div id=sandbox> 
+        <div id="box"><font style="opacity:0">ABC</font></div>
+    </div>
+</body>
+</html>

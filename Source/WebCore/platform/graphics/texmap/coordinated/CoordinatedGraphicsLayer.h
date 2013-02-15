@@ -234,6 +234,7 @@ private:
     bool m_shouldSyncImageBacking: 1;
     bool m_shouldSyncAnimations: 1;
     bool m_fixedToViewport : 1;
+    bool m_movingVisibleRect : 1;
     bool m_pendingContentsScaleAdjustment : 1;
     bool m_pendingVisibleRectAdjustment : 1;
 #if USE(GRAPHICS_SURFACE)

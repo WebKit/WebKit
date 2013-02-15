@@ -188,3 +188,6 @@ webkit.org/b/95507 http/tests/notifications/events.html [ Failure ]
 webkit.org/b/95507 http/tests/notifications/window-show-on-click.html [ Failure ]
 webkit.org/b/95507 http/tests/notifications/legacy/events.html [ Failure ]
 webkit.org/b/95507 http/tests/notifications/legacy/window-show-on-click.html [ Failure ]
+
+# New test fails due to resizeTo not firing an event.
+webkit.org/b/109179 compositing/transitions/transform-on-large-layer.html [ Failure ]
