@@ -1,3 +1,14 @@
+2013-02-14  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13161700> REGRESSION: Safari is unable to make SSL connections
+        when running from recovery partition
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/mac/com.apple.WebKit.NetworkProcess.sb.in:
+        * WebProcess/com.apple.WebProcess.sb.in:
+        Re-added /private/var/db/mds/system rules lost in r141445.
+
 2013-02-14  Anders Carlsson  <andersca@apple.com>
 
         Add WKContextIsPlugInUpdateAvailable
