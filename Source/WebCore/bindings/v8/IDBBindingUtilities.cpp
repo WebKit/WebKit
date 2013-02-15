@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-static v8::Handle<v8::Value> idbKeyToV8Value(IDBKey* key, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+static v8::Handle<v8::Value> idbKeyToV8Value(IDBKey* key, v8::Isolate* isolate)
 {
     if (!key) {
         // This should be undefined, not null.
@@ -62,7 +62,7 @@ static v8::Handle<v8::Value> idbKeyToV8Value(IDBKey* key, v8::Handle<v8::Object>
         {
             v8::Local<v8::Array> array = v8::Array::New(key->array().size());
             for (size_t i = 0; i < key->array().size(); ++i)
-                array->Set(i, idbKeyToV8Value(key->array()[i].get(), creationContext, isolate));
+                array->Set(i, idbKeyToV8Value(key->array()[i].get(), isolate));
             return array;
         }
     }
@@ -275,7 +275,7 @@ bool injectIDBKeyIntoScriptValue(DOMRequestState* state, PassRefPtr<IDBKey> key,
     if (parent.IsEmpty())
         return false;
 
-    if (!set(parent, keyPathElements.last(), idbKeyToV8Value(key.get(), v8::Handle<v8::Object>(), isolate), isolate))
+    if (!set(parent, keyPathElements.last(), idbKeyToV8Value(key.get(), isolate), isolate))
         return false;
 
     return true;
@@ -301,7 +301,7 @@ ScriptValue idbKeyToScriptValue(DOMRequestState* state, PassRefPtr<IDBKey> key)
 {
     ASSERT(v8::Context::InContext());
     v8::HandleScope handleScope;
-    v8::Handle<v8::Value> v8Value(idbKeyToV8Value(key.get(), v8::Handle<v8::Object>(), state->context()->GetIsolate()));
+    v8::Handle<v8::Value> v8Value(idbKeyToV8Value(key.get(), state->context()->GetIsolate()));
     return ScriptValue(v8Value);
 }
 
