@@ -1485,6 +1485,16 @@ webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
 webkit.org/b/109469 fast/css/cursor-parsing-image-set.html [ Failure ]
 webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Timeout ]
 
+webkit.org/b/83869 fast/hidpi/video-controls-in-hidpi.html [ Failure ]
+webkit.org/b/83869 fast/layers/video-layer.html [ Failure ]
+webkit.org/b/83869 media/audio-repaint.html [ Failure ]
+webkit.org/b/83869 media/controls-styling.html [ Failure ]
+webkit.org/b/83869 media/media-controls-clone.html [ Failure ]
+webkit.org/b/83869 media/video-empty-source.html [ Failure ]
+webkit.org/b/83869 media/video-no-audio.html [ Failure ]
+webkit.org/b/83869 media/video-volume-slider.html [ Failure ]
+webkit.org/b/83869 media/video-zoom-controls.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////
