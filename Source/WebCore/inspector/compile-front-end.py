@@ -126,6 +126,7 @@ modules = [
             "DataGrid.js",
             "DefaultTextEditor.js",
             "Dialog.js",
+            "DockController.js",
             "Drawer.js",
             "EmptyView.js",
             "GoToLineDialog.js",
@@ -329,7 +330,7 @@ modules = [
     },
     {
         "name": "profiler",
-        "dependencies": ["components"],
+        "dependencies": ["components", "workers"],
         "sources": [
             "BottomUpProfileDataGridTree.js",
             "CPUProfileView.js",
@@ -354,19 +355,12 @@ modules = [
     },
     {
         "name": "host_stub",
-        "dependencies": ["ui"],
+        "dependencies": ["components", "profiler", "timeline"],
         "sources": [
             "InspectorFrontendAPI.js",
             "InspectorFrontendHostStub.js",
         ]
-    },
-    {
-        "name": "inspector",
-        "dependencies": ["components"],
-        "sources": [
-            "DockController.js",
-        ]
-    },
+    }
 ]
 
 modules_by_name = {}

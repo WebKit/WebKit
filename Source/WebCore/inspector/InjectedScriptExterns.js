@@ -88,8 +88,7 @@ InjectedScriptHost.prototype.evaluate = function(expression) { }
  * @param {string} variableName
  * @param {*} newValue
  */
-InjectedScriptHost.prototype.setFunctionVariableValue = function(fun, scopeNumber, variableName, newValue) {}
-
+InjectedScriptHost.prototype.setFunctionVariableValue = function(fun, scopeNumber, variableName, newValue) { }
 
 /**
  * @constructor

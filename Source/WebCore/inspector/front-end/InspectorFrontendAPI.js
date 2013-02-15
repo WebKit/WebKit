@@ -165,7 +165,7 @@ var InspectorFrontendAPI = {
      */
     loadTimelineFromURL: function(url) 
     {
-        WebInspector.showPanel("timeline").loadFromURL(url);
+        /** @type {WebInspector.TimelinePanel} */ (WebInspector.showPanel("timeline")).loadFromURL(url);
     },
 
     loadCompleted: function()

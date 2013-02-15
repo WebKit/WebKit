@@ -76,7 +76,7 @@ WebInspector.CPUProfileView = function(profile)
     this.resetButton.visible = false;
     this.resetButton.addEventListener("click", this._resetClicked, this);
 
-    this.profileHead = /** @type {?ProfilerAgent.CPUProfileNode} */ null;
+    this.profileHead = /** @type {?ProfilerAgent.CPUProfileNode} */ (null);
     this.profile = profile;
 
     this._linkifier = new WebInspector.Linkifier(new WebInspector.Linkifier.DefaultFormatter(30));

@@ -26,6 +26,7 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
+ * @param {Object.<string, WebInspector.DataGrid.ColumnDescriptor>} columns
  * @param {?function(WebInspector.DataGridNode, string, string, string)=} editCallback
  * @param {?function(WebInspector.DataGridNode)=} deleteCallback
  * @param {?function()=} refreshCallback
@@ -150,6 +151,9 @@ WebInspector.DataGrid = function(columns, editCallback, deleteCallback, refreshC
     this.resizers = [];
     this._columnWidthsInitialized = false;
 }
+
+/** @typedef {{editable:boolean, sort:string, sortable:boolean, aligned:string}} */
+WebInspector.DataGrid.ColumnDescriptor;
 
 WebInspector.DataGrid.Events = {
     SelectedNode: "SelectedNode",

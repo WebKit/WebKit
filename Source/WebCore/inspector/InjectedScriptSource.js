@@ -604,13 +604,13 @@ InjectedScript.prototype = {
     setVariableValue: function(topCallFrame, callFrameId, functionObjectId, scopeNumber, variableName, newValueJsonString)
     {   
         var setter;
-        if (callFrameId) {
-            var callFrame = this._callFrameForId(topCallFrame, String(callFrameId));
+        if (typeof callFrameId === "string") {
+            var callFrame = this._callFrameForId(topCallFrame, callFrameId);
             if (!callFrame)
                 return "Could not find call frame with given id";
             setter = callFrame.setVariableValue.bind(callFrame);    
         } else {
-            var parsedFunctionId = this._parseObjectId(String(functionObjectId));
+            var parsedFunctionId = this._parseObjectId(/** @type {string} */(functionObjectId));
             var func = this._objectForId(parsedFunctionId);
             if (typeof func !== "function")
                 return "Cannot resolve function by id.";

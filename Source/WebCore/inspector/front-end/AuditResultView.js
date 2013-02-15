@@ -92,7 +92,7 @@ WebInspector.AuditCategoryResultPane = function(categoryResult)
 WebInspector.AuditCategoryResultPane.prototype = {
     /**
      * @param {(TreeOutline|TreeElement)} parentTreeElement
-     * @param {!WebInspector.AuditCategoryResult} result
+     * @param {!WebInspector.AuditRuleResult} result
      */
     _appendResult: function(parentTreeElement, result)
     {
