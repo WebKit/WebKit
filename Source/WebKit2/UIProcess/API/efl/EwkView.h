@@ -311,8 +311,7 @@ private:
 };
 
 EwkView* toEwkView(const Evas_Object*);
-EwkView* toEwkView(const Ewk_View_Smart_Data* smartData);
 
-bool isViewEvasObject(const Evas_Object* evasObject);
+bool isEwkViewEvasObject(const Evas_Object*);
 
 #endif // EwkView_h

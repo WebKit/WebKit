@@ -1,3 +1,25 @@
+2013-02-15  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL]REGRESSION (r141978): ewk_view_type_check api test failing
+        https://bugs.webkit.org/show_bug.cgi?id=109038
+
+        Reviewed by Anders Carlsson.
+
+        EFL API is defensive by its nature and expects graceful handling of wrong function arguments
+        whereas webkit implementation code does not. This patch adds new 'toEwkViewChecked' function,
+        which provides handling of wrong arguments, to be used within EFL API layer code.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (toEwkView):
+
+            EwkView* toEwkView(const Ewk_View_Smart_Data* smartData) is not exported anymore
+            as it's used within EwkView class only.        
+
+        (EwkView::handleTouchMove):
+        * UIProcess/API/efl/EwkView.h:
+        * UIProcess/API/efl/ewk_view.cpp:
+        (toEwkViewChecked):
+
 2013-02-15  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Have WebView subclass PageClient

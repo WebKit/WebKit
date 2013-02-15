@@ -113,9 +113,18 @@ static Evas_Smart* defaultSmartClassInstance()
 
 static inline Ewk_View_Smart_Data* toSmartData(Evas_Object* evasObject)
 {
-    ASSERT(evasObject && isViewEvasObject(evasObject));
+    ASSERT(evasObject);
+    ASSERT(isEwkViewEvasObject(evasObject));
 
     return static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(evasObject));
+}
+
+static inline EwkView* toEwkView(const Ewk_View_Smart_Data* smartData)
+{
+    ASSERT(smartData);
+    ASSERT(smartData->priv);
+
+    return smartData->priv;
 }
 
 // EwkViewEventHandler implementation.
@@ -1317,7 +1326,7 @@ void EwkView::handleTouchUp(void* /* data */, Evas* /* canvas */, Evas_Object* e
 }
 
 void EwkView::handleTouchMove(void* /* data */, Evas* /* canvas */, Evas_Object* ewkView, void* /* eventInfo */)
-{    
+{
     toEwkView(ewkView)->feedTouchEvents(EWK_TOUCH_MOVE);
 }
 #endif
@@ -1363,17 +1372,13 @@ Evas_Smart_Class EwkView::parentSmartClass = EVAS_SMART_CLASS_INIT_NULL;
 
 EwkView* toEwkView(const Evas_Object* evasObject)
 {
-    ASSERT(evasObject && isViewEvasObject(evasObject));
+    ASSERT(evasObject);
+    ASSERT(isEwkViewEvasObject(evasObject));
+
     return toEwkView(static_cast<Ewk_View_Smart_Data*>(evas_object_smart_data_get(evasObject)));
 }
 
-EwkView* toEwkView(const Ewk_View_Smart_Data* smartData)
-{
-    ASSERT(smartData && smartData->priv);
-    return smartData->priv;
-}
-
-bool isViewEvasObject(const Evas_Object* evasObject)
+bool isEwkViewEvasObject(const Evas_Object* evasObject)
 {
     ASSERT(evasObject);
 
