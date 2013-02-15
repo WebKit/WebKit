@@ -98,8 +98,8 @@ void V8AbstractEventListener::handleEvent(ScriptExecutionContext* context, Event
 
     // Get the V8 wrapper for the event object.
     v8::Handle<v8::Value> jsEvent = toV8(event, v8::Handle<v8::Object>(), v8Context->GetIsolate());
-    ASSERT(!jsEvent.IsEmpty());
-
+    if (jsEvent.IsEmpty())
+        return;
     invokeEventHandler(context, event, jsEvent);
 }
 
