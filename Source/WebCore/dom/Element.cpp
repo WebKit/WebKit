@@ -2863,7 +2863,7 @@ COMPILE_ASSERT(sizeof(ElementData) == sizeof(SameSizeAsElementData), element_att
 
 static size_t sizeForShareableElementDataWithAttributeCount(unsigned count)
 {
-    return sizeof(ShareableElementData) + sizeof(Attribute) * count;
+    return sizeof(ShareableElementData) - sizeof(void*) + sizeof(Attribute) * count;
 }
 
 PassRefPtr<ShareableElementData> ShareableElementData::createWithAttributes(const Vector<Attribute>& attributes)
@@ -2881,13 +2881,13 @@ ShareableElementData::ShareableElementData(const Vector<Attribute>& attributes)
     : ElementData(attributes.size())
 {
     for (unsigned i = 0; i < m_arraySize; ++i)
-        new (&m_attributeArray[i]) Attribute(attributes[i]);
+        new (&reinterpret_cast<Attribute*>(&m_attributeArray)[i]) Attribute(attributes[i]);
 }
 
 ShareableElementData::~ShareableElementData()
 {
     for (unsigned i = 0; i < m_arraySize; ++i)
-        m_attributeArray[i].~Attribute();
+        (reinterpret_cast<Attribute*>(&m_attributeArray)[i]).~Attribute();
 }
 
 ShareableElementData::ShareableElementData(const UniqueElementData& other)
@@ -2901,7 +2901,7 @@ ShareableElementData::ShareableElementData(const UniqueElementData& other)
     }
 
     for (unsigned i = 0; i < m_arraySize; ++i)
-        new (&m_attributeArray[i]) Attribute(other.m_attributeVector.at(i));
+        new (&reinterpret_cast<Attribute*>(&m_attributeArray)[i]) Attribute(other.m_attributeVector.at(i));
 }
 
 ElementData::ElementData(const ElementData& other, bool isUnique)
@@ -2939,7 +2939,7 @@ UniqueElementData::UniqueElementData(const ShareableElementData& other)
 
     m_attributeVector.reserveCapacity(other.length());
     for (unsigned i = 0; i < other.length(); ++i)
-        m_attributeVector.uncheckedAppend(other.m_attributeArray[i]);
+        m_attributeVector.uncheckedAppend(other.immutableAttributeArray()[i]);
 }
 
 PassRefPtr<UniqueElementData> ElementData::makeUniqueCopy() const
