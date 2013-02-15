@@ -1,5 +1,19 @@
 2013-02-15  Alec Flett  <alecflett@chromium.org>
 
+        IndexedDB: Stub out SharedBuffer version of get()
+        https://bugs.webkit.org/show_bug.cgi?id=108993
+
+        Reviewed by Darin Fisher.
+
+        All asynchronous get()-like calls go through WebIDBCallbacks,
+        so this includes both get() and cursor callbacks.
+
+        * public/WebIDBCallbacks.h:
+        (WebKit::WebIDBCallbacks::onSuccess):
+        (WebKit::WebIDBCallbacks::onSuccessWithPrefetch):
+
+2013-02-15  Alec Flett  <alecflett@chromium.org>
+
         IndexedDB: fix chromium windows bustage
         https://bugs.webkit.org/show_bug.cgi?id=109970
 
