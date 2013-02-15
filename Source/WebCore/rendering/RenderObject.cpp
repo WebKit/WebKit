@@ -1758,17 +1758,6 @@ void RenderObject::setPseudoStyle(PassRefPtr<RenderStyle> pseudoStyle)
     setStyle(pseudoStyle);
 }
 
-static bool areNonIdenticalCursorListsEqual(const RenderStyle* a, const RenderStyle* b)
-{
-    ASSERT(a->cursors() != b->cursors());
-    return a->cursors() && b->cursors() && *a->cursors() == *b->cursors();
-}
-
-static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
-{
-    return a->cursor() == b->cursor() && (a->cursors() == b->cursors() || areNonIdenticalCursorListsEqual(a, b));
-}
-
 void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
 {
     if (m_style == style) {
@@ -1806,11 +1795,6 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
     bool doesNotNeedLayout = !m_parent || isText();
 
     styleDidChange(diff, oldStyle.get());
-
-    if (oldStyle.get() && !areCursorsEqual(oldStyle.get(), this->style())) {
-        if (Frame* frame = this->frame())
-            frame->eventHandler()->updateCursor();
-    }
 
     // FIXME: |this| might be destroyed here. This can currently happen for a RenderTextFragment when
     // its first-letter block gets an update in RenderTextFragment::styleDidChange. For RenderTextFragment(s),
@@ -1937,6 +1921,17 @@ void RenderObject::styleWillChange(StyleDifference diff, const RenderStyle* newS
     }
 }
 
+static bool areNonIdenticalCursorListsEqual(const RenderStyle* a, const RenderStyle* b)
+{
+    ASSERT(a->cursors() != b->cursors());
+    return a->cursors() && b->cursors() && *a->cursors() == *b->cursors();
+}
+
+static inline bool areCursorsEqual(const RenderStyle* a, const RenderStyle* b)
+{
+    return a->cursor() == b->cursor() && (a->cursors() == b->cursors() || areNonIdenticalCursorListsEqual(a, b));
+}
+
 void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
 
@@ -1970,6 +1965,11 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
 
     // Don't check for repaint here; we need to wait until the layer has been
     // updated by subclasses before we know if we have to repaint (in setStyle()).
+
+    if (oldStyle && !areCursorsEqual(oldStyle, style())) {
+        if (Frame* frame = this->frame())
+            frame->eventHandler()->dispatchFakeMouseMoveEventSoon();
+    }
 }
 
 void RenderObject::propagateStyleToAnonymousChildren(bool blockChildrenOnly)

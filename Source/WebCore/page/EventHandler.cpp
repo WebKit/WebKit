@@ -1237,40 +1237,7 @@ bool EventHandler::useHandCursor(Node* node, bool isOverLink, bool shiftKey)
     return ((isOverLink || isSubmitImage(node)) && (!editable || editableLinkEnabled));
 }
 
-void EventHandler::updateCursor()
-{
-    if (m_mousePositionIsUnknown)
-        return;
-
-    Settings* settings = m_frame->settings();
-    if (settings && !settings->deviceSupportsMouse())
-        return;
-
-    FrameView* view = m_frame->view();
-    if (!view)
-        return;
-
-    if (!m_frame->page() || !m_frame->page()->isOnscreen() || !m_frame->page()->focusController()->isActive())
-        return;
-
-    bool shiftKey;
-    bool ctrlKey;
-    bool altKey;
-    bool metaKey;
-    PlatformKeyboardEvent::getCurrentModifierState(shiftKey, ctrlKey, altKey, metaKey);
-
-    HitTestRequest request(HitTestRequest::ReadOnly);
-    HitTestResult result(view->windowToContents(m_lastKnownMousePosition));
-    m_frame->document()->renderView()->hitTest(request, result);
-
-    OptionalCursor optionalCursor = selectCursor(result, shiftKey);
-    if (optionalCursor.isCursorChange()) {
-        m_currentMouseCursor = optionalCursor.cursor();
-        view->setCursor(m_currentMouseCursor);
-    }
-}
-
-OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shiftKey)
+OptionalCursor EventHandler::selectCursor(const MouseEventWithHitTestResults& event, Scrollbar* scrollbar)
 {
     if (m_resizeLayer && m_resizeLayer->inResizeMode())
         return NoCursorChange;
@@ -1283,16 +1250,8 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
         return NoCursorChange;
 #endif
 
-    Node* node = result.targetNode();
-    if (!node)
-        return NoCursorChange;
-    bool originalIsText = node->isTextNode();
-    if (node && originalIsText)
-        node = node->parentNode();
-    if (!node)
-        return NoCursorChange;
-
-    RenderObject* renderer = node->renderer();
+    Node* node = event.targetNode();
+    RenderObject* renderer = node ? node->renderer() : 0;
     RenderStyle* style = renderer ? renderer->style() : 0;
     bool horizontalText = !style || style->isHorizontalWritingMode();
     const Cursor& iBeam = horizontalText ? iBeamCursor() : verticalTextCursor();
@@ -1308,7 +1267,7 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
 
     if (renderer) {
         Cursor overrideCursor;
-        switch (renderer->getCursor(roundedIntPoint(result.localPoint()), overrideCursor)) {
+        switch (renderer->getCursor(roundedIntPoint(event.localPoint()), overrideCursor)) {
         case SetCursorBasedOnStyle:
             break;
         case SetCursor:
@@ -1355,19 +1314,19 @@ OptionalCursor EventHandler::selectCursor(const HitTestResult& result, bool shif
 
     switch (style ? style->cursor() : CURSOR_AUTO) {
     case CURSOR_AUTO: {
-        bool editable = (node->rendererIsEditable());
+        bool editable = (node && node->rendererIsEditable());
 
-        if (useHandCursor(node, result.URLElement() && result.URLElement()->isLink(), shiftKey))
+        if (useHandCursor(node, event.isOverLink(), event.event().shiftKey()))
             return handCursor();
 
         bool inResizer = false;
         if (renderer) {
             if (RenderLayer* layer = renderer->enclosingLayer()) {
                 if (FrameView* view = m_frame->view())
-                    inResizer = layer->isPointInResizeControl(view->windowToContents(roundedIntPoint(result.localPoint())));
+                    inResizer = layer->isPointInResizeControl(view->windowToContents(event.event().position()));
             }
         }
-        if ((editable || (originalIsText && node->canStartSelection())) && !inResizer && !result.scrollbar())
+        if ((editable || (renderer && renderer->isText() && node->canStartSelection())) && !inResizer && !scrollbar)
             return iBeam;
         return pointerCursor();
     }
@@ -1778,7 +1737,7 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
         if (scrollbar && !m_mousePressed)
             scrollbar->mouseMoved(mouseEvent); // Handle hover effects on platforms that support visual feedback on scrollbar hovering.
         if (FrameView* view = m_frame->view()) {
-            OptionalCursor optionalCursor = selectCursor(mev.hitTestResult(), mouseEvent.shiftKey());
+            OptionalCursor optionalCursor = selectCursor(mev, scrollbar);
             if (optionalCursor.isCursorChange()) {
                 m_currentMouseCursor = optionalCursor.cursor();
                 view->setCursor(m_currentMouseCursor);

@@ -251,7 +251,6 @@ public:
 #endif
 
     bool useHandCursor(Node*, bool isOverLink, bool shiftKey);
-    void updateCursor();
 
 private:
 #if ENABLE(DRAG_SUPPORT)
@@ -278,8 +277,7 @@ private:
 #endif
     bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
 
-    OptionalCursor selectCursor(const HitTestResult&, bool shiftKey);
-
+    OptionalCursor selectCursor(const MouseEventWithHitTestResults&, Scrollbar*);
     void hoverTimerFired(Timer<EventHandler>*);
 
     bool logicalScrollOverflow(ScrollLogicalDirection, ScrollGranularity, Node* startingNode = 0);

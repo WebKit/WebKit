@@ -1416,7 +1416,4 @@ webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.
 # Crashing after https://webkit.org/b/105667
 webkit.org/b/109232 [ Debug ] inspector/debugger/debugger-reload-on-pause.html [ Crash ]
 
-# Mac fails cursor change test for unknown reasons
-webkit.org/b/103857 fast/events/mouse-cursor-change.html
-
 webkit.org/b/109869 media/media-captions.html [ Crash ]
