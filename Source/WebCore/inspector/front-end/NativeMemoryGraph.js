@@ -79,7 +79,9 @@ WebInspector.NativeMemoryCounterUI.prototype = {
 
     updateCurrentValue: function(countersEntry)
     {
-        this._value.textContent = Number.bytesToString(this.valueGetter(countersEntry));
+        var bytes = this.valueGetter(countersEntry);
+        var megabytes =  bytes / (1024 * 1024);
+        this._value.textContent = WebInspector.UIString("%.1f\u2009MB", megabytes);
     },
 
     clearCurrentValueAndMarker: function(ctx)
