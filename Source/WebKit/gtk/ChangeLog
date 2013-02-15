@@ -1,3 +1,17 @@
+2013-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Unreviewed, rolling out parts of r142731.
+        http://trac.webkit.org/changeset/142731
+        https://bugs.webkit.org/show_bug.cgi?id=109672
+
+        This patch broke the GTK+ gyp build. Roll out the changes there,
+        since they were actually unnecessary.
+
+        * gyp/Configuration.gypi.in:
+        * gyp/Dependencies.gyp:
+        * gyp/JavaScriptCore.gyp:
+        * gyp/WTF.gyp:
+
 2013-02-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] window.open passes height and width parameters even if not defined in a page

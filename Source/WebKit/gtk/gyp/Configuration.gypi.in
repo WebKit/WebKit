@@ -31,5 +31,7 @@
 
     'UNICODE_CFLAGS': '@UNICODE_CFLAGS@',
     'UNICODE_LIBS': '@UNICODE_LIBS@',
+    'GLIB_CFLAGS': '@GLIB_CFLAGS@',
+    'GLIB_LIBS': '@GLIB_LIBS@',
   }
 }

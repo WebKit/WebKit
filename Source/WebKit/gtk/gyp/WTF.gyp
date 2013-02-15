@@ -11,6 +11,7 @@
       'target_name': 'wtf',
       'type': 'static_library',
       'dependencies': [
+        'Dependencies.gyp:glib',
         'Dependencies.gyp:icu',
        ],
       'include_dirs': [
