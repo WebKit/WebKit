@@ -154,7 +154,7 @@ VisibleSelection Editor::avoidIntersectionWithDeleteButtonController(const Visib
     if (updatedBase != selection.base())
         updatedSelection.setBase(updatedBase);
 
-    Position updatedExtent = selection.base();
+    Position updatedExtent = selection.extent();
     updatePositionForNodeRemoval(updatedExtent, element);
     if (updatedExtent != selection.extent())
         updatedSelection.setExtent(updatedExtent);
