@@ -6433,7 +6433,7 @@ RenderBlock* RenderBlock::firstLineBlock() const
             break;
         RenderObject* parentBlock = firstLineBlock->parent();
         if (firstLineBlock->isReplaced() || firstLineBlock->isFloating() || 
-            !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlow())
+            !parentBlock || parentBlock->firstChild() != firstLineBlock || !parentBlock->isBlockFlow() || parentBlock->isFlexibleBox())
             break;
         ASSERT_WITH_SECURITY_IMPLICATION(parentBlock->isRenderBlock());
         firstLineBlock = toRenderBlock(parentBlock);
