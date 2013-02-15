@@ -85,13 +85,13 @@ private:
         ASSERT(value->IsObject());
         v8::Persistent<v8::Object> wrapper = v8::Persistent<v8::Object>::Cast(value);
         ASSERT(key->wrapper() == wrapper);
-        key->disposeWrapper(value, isolate);
 
         // Note: |object| might not be equal to |key|, e.g., if ScriptWrappable isn't a left-most base class.
         void* object = toNative(wrapper);
         WrapperTypeInfo* info = toWrapperTypeInfo(wrapper);
         ASSERT(info->derefObjectFunction);
 
+        key->disposeWrapper(value, isolate);
         // FIXME: I noticed that 50%~ of minor GC cycle times can be consumed
         // inside key->deref(), which causes Node destructions. We should
         // make Node destructions incremental.
