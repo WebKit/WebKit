@@ -56,7 +56,13 @@ function openColorPicker(args) {
             window.log('number=' + numValue + ', string="' + stringValue + '"');
             if (numValue === 0)
                 window.document.getElementById('color').value = stringValue;
-        }
+        },
+        setValue: function(value) {
+            window.log('value="' + value + '"');
+            window.document.getElementById('color').value = value;
+        },
+        closePopup: function() {
+        },
     }
 
     setTimeout(function() {

@@ -294,6 +294,12 @@ function openCalendar(args) {
             if (numValue == 0)
                 window.document.getElementById('date').value = stringValue;
         },
+        setValue: function(value) {
+            window.log('value="' + value + '"');
+            window.document.getElementById('date').value = value;
+        },
+        closePopup: function() {
+        },
         localizeNumberString: function(numString) {
             if (typeof numString == "number")
                 return numString.toLocaleString();

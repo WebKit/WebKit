@@ -25,6 +25,7 @@
 #include "DocumentWriter.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PagePopup.h"
 #include "PopupPicker.h"
@@ -135,6 +136,11 @@ void DatePickerClient::setValueAndClosePopup(int, const String& value)
     if (value != "-1")
         m_element->setValue(value);
     closePopup();
+}
+
+void DatePickerClient::setValue(int, const String& value)
+{
+    notImplemented();
 }
 
 void DatePickerClient::didClosePopup()

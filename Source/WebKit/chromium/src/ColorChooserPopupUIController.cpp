@@ -122,6 +122,12 @@ void ColorChooserPopupUIController::setValueAndClosePopup(int numValue, const St
     closePopup();
 }
 
+void ColorChooserPopupUIController::setValue(const String& value)
+{
+    ASSERT(m_client);
+    m_client->didChooseColor(Color(value));
+}
+
 void ColorChooserPopupUIController::didClosePopup()
 {
     m_popup = 0;

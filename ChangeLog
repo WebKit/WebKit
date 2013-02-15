@@ -1,3 +1,13 @@
+2013-02-15  Keishi Hattori  <keishi@webkit.org>
+
+        Add setValue and closePopup methods to PagePopupController
+        https://bugs.webkit.org/show_bug.cgi?id=109897
+
+        Reviewed by Kent Tamura.
+
+        * ManualTests/forms/calendar-picker.html: Added mock setValue and closePopup implementation.
+        * ManualTests/forms/color-suggestion-picker.html: Ditto.
+
 2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs

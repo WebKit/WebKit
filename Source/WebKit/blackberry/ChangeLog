@@ -1,3 +1,26 @@
+2013-02-15  Keishi Hattori  <keishi@webkit.org>
+
+        Add setValue and closePopup methods to PagePopupController
+        https://bugs.webkit.org/show_bug.cgi?id=109897
+
+        Reviewed by Kent Tamura.
+
+        * WebCoreSupport/ColorPickerClient.cpp:
+        (WebCore::ColorPickerClient::setValue): Added empty implementation.
+        (WebCore):
+        * WebCoreSupport/ColorPickerClient.h:
+        (ColorPickerClient):
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::setValue): Ditto.
+        (WebCore):
+        * WebCoreSupport/DatePickerClient.h:
+        (DatePickerClient):
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::setValue): Ditto.
+        (WebCore):
+        * WebCoreSupport/SelectPopupClient.h:
+        (SelectPopupClient):
+
 2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs

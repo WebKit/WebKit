@@ -24,6 +24,7 @@
 #include "Document.h"
 #include "DocumentWriter.h"
 #include "HTMLInputElement.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PagePopup.h"
 #include "PopupPicker.h"
@@ -96,6 +97,11 @@ void ColorPickerClient::setValueAndClosePopup(int, const String& value)
     if (value != cancelValue)
         m_element->setValue(value);
     closePopup();
+}
+
+void ColorPickerClient::setValue(const String&)
+{
+    notImplemented();
 }
 
 void ColorPickerClient::didClosePopup()

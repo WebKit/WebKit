@@ -60,6 +60,12 @@ public:
     // An implementation of this function should call ChromeClient::closePagePopup().
     virtual void setValueAndClosePopup(int numValue, const String& stringValue) = 0;
 
+    // This is called by the content HTML of a PagePopup.
+    virtual void setValue(const String&) = 0;
+
+    // This is called by the content HTML of a PagePopup.
+    virtual void closePopup() = 0;
+
     // This is called whenever a PagePopup was closed.
     virtual void didClosePopup() = 0;
 

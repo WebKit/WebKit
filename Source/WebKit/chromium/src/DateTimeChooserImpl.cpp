@@ -169,7 +169,17 @@ void DateTimeChooserImpl::setValueAndClosePopup(int numValue, const String& stri
 {
     RefPtr<DateTimeChooserImpl> protector(this);
     if (numValue >= 0)
-        m_client->didChooseValue(stringValue);
+        setValue(stringValue);
+    endChooser();
+}
+
+void DateTimeChooserImpl::setValue(const String& value)
+{
+    m_client->didChooseValue(value);
+}
+
+void DateTimeChooserImpl::closePopup()
+{
     endChooser();
 }
 

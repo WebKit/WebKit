@@ -54,11 +54,12 @@ public:
     virtual void writeDocument(WebCore::DocumentWriter&) OVERRIDE;
     virtual WebCore::Locale& locale() OVERRIDE;
     virtual void setValueAndClosePopup(int, const String&) OVERRIDE;
+    virtual void setValue(const String&) OVERRIDE;
+    virtual void closePopup() OVERRIDE;
     virtual void didClosePopup() OVERRIDE;
 
 private:
     void openPopup();
-    void closePopup();
 
     ChromeClientImpl* m_chromeClient;
     WebCore::ColorChooserClient* m_client;

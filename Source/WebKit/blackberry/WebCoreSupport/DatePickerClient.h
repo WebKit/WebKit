@@ -48,6 +48,7 @@ public:
     virtual String htmlSource();
     virtual Localizer& localizer();
     void setValueAndClosePopup(int, const String&);
+    void setValue(const String&);
     void didClosePopup();
     void closePopup();
 

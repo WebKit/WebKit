@@ -1,3 +1,23 @@
+2013-02-15  Keishi Hattori  <keishi@webkit.org>
+
+        Add setValue and closePopup methods to PagePopupController
+        https://bugs.webkit.org/show_bug.cgi?id=109897
+
+        Reviewed by Kent Tamura.
+
+        * src/ColorChooserPopupUIController.cpp:
+        (WebKit::ColorChooserPopupUIController::setValue):
+        (WebKit):
+        * src/ColorChooserPopupUIController.h:
+        (ColorChooserPopupUIController):
+        * src/DateTimeChooserImpl.cpp:
+        (WebKit::DateTimeChooserImpl::setValueAndClosePopup): Use setValue and closePopup.
+        (WebKit):
+        (WebKit::DateTimeChooserImpl::setValue):
+        (WebKit::DateTimeChooserImpl::closePopup):
+        * src/DateTimeChooserImpl.h:
+        (DateTimeChooserImpl):
+
 2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs

@@ -242,11 +242,12 @@ Picker.Actions = {
  * @param {!string} value
  */
 Picker.prototype.submitValue = function(value) {
-    window.pagePopupController.setValueAndClosePopup(Picker.Actions.SetValue, value);
+    window.pagePopupController.setValue(value);
+    window.pagePopupController.closePopup();
 }
 
 Picker.prototype.handleCancel = function() {
-    window.pagePopupController.setValueAndClosePopup(Picker.Actions.Cancel, "");
+    window.pagePopupController.closePopup();
 }
 
 Picker.prototype.chooseOtherColor = function() {

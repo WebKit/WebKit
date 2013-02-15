@@ -59,6 +59,8 @@ private:
     virtual void writeDocument(WebCore::DocumentWriter&) OVERRIDE;
     virtual WebCore::Locale& locale() OVERRIDE;
     virtual void setValueAndClosePopup(int, const String&) OVERRIDE;
+    virtual void setValue(const String&) OVERRIDE;
+    virtual void closePopup() OVERRIDE;
     virtual void didClosePopup() OVERRIDE;
 
     ChromeClientImpl* m_chromeClient;

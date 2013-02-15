@@ -26,6 +26,7 @@
 #include "DocumentWriter.h"
 #include "HTMLOptionElement.h"
 #include "HTMLSelectElement.h"
+#include "NotImplemented.h"
 #include "Page.h"
 #include "PagePopup.h"
 #include "PopupPicker.h"
@@ -193,6 +194,11 @@ void SelectPopupClient::setValueAndClosePopup(int, const String& stringValue)
         m_element->renderer()->repaint();
 
     m_notifyChangeTimer.startOneShot(0);
+}
+
+void SelectPopupClient::setValue(const String&)
+{
+    notImplemented();
 }
 
 void SelectPopupClient::didClosePopup()
