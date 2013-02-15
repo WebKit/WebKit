@@ -53,6 +53,12 @@ static void checkThatTokensAreSafeToSendToAnotherThread(const CompactHTMLTokenSt
         ASSERT(tokens->at(i).isSafeToSendToAnotherThread());
 }
 
+static void checkThatPreloadsAreSafeToSendToAnotherThread(const PreloadRequestStream& preloads)
+{
+    for (size_t i = 0; i < preloads.size(); ++i)
+        ASSERT(preloads[i]->isSafeToSendToAnotherThread());
+}
+
 #endif
 
 static inline bool tokenExitsForeignContent(const CompactHTMLToken& token)
@@ -106,17 +112,18 @@ static inline bool tokenExitsForeignContent(const CompactHTMLToken& token)
         || (threadSafeMatch(tagName, fontTag) && (token.getAttributeItem(colorAttr) || token.getAttributeItem(faceAttr) || token.getAttributeItem(sizeAttr)));
 }
 
-// FIXME: Tune this constant based on a benchmark. The current value was choosen arbitrarily.
+// FIXME: Tune this constant based on a benchmark. The current value was chosen arbitrarily.
 static const size_t pendingTokenLimit = 4000;
 
-BackgroundHTMLParser::BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
+BackgroundHTMLParser::BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, PassOwnPtr<Configuration> config)
     : m_weakFactory(reference, this)
     , m_token(adoptPtr(new HTMLToken))
-    , m_tokenizer(HTMLTokenizer::create(options))
-    , m_options(options)
-    , m_parser(parser)
+    , m_tokenizer(HTMLTokenizer::create(config->options))
+    , m_options(config->options)
+    , m_parser(config->parser)
     , m_pendingTokens(adoptPtr(new CompactHTMLTokenStream))
-    , m_xssAuditor(xssAuditor)
+    , m_xssAuditor(config->xssAuditor.release())
+    , m_preloadScanner(config->preloadScanner.release())
 {
     m_namespaceStack.append(HTML);
 }
@@ -133,6 +140,7 @@ void BackgroundHTMLParser::resumeFrom(PassOwnPtr<Checkpoint> checkpoint)
     m_token = checkpoint->token.release();
     m_tokenizer = checkpoint->tokenizer.release();
     m_input.rewindTo(checkpoint->inputCheckpoint, checkpoint->unparsedInput);
+    m_preloadScanner.clear(); // FIXME: We should rewind the preload scanner rather than clearing it.
     pumpTokenizer();
 }
 
@@ -223,8 +231,13 @@ void BackgroundHTMLParser::pumpTokenizer()
         {
             OwnPtr<XSSInfo> xssInfo = m_xssAuditor->filterToken(FilterTokenRequest(*m_token, m_sourceTracker, m_tokenizer->shouldAllowCDATA()));
             CompactHTMLToken token(m_token.get(), TextPosition(m_input.current().currentLine(), m_input.current().currentColumn()));
+
             if (xssInfo)
                 token.setXSSInfo(xssInfo.release());
+
+            if (m_preloadScanner)
+                m_preloadScanner->scan(token, m_pendingPreloads);
+
             m_pendingTokens->append(token);
         }
 
@@ -244,10 +257,12 @@ void BackgroundHTMLParser::sendTokensToMainThread()
 
 #ifndef NDEBUG
     checkThatTokensAreSafeToSendToAnotherThread(m_pendingTokens.get());
+    checkThatPreloadsAreSafeToSendToAnotherThread(m_pendingPreloads);
 #endif
 
     OwnPtr<HTMLDocumentParser::ParsedChunk> chunk = adoptPtr(new HTMLDocumentParser::ParsedChunk);
     chunk->tokens = m_pendingTokens.release();
+    chunk->preloads.swap(m_pendingPreloads);
     chunk->checkpoint = m_input.createCheckpoint();
     callOnMainThread(bind(&HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser, m_parser, chunk.release()));
 

@@ -51,7 +51,7 @@ void CSSPreloadScanner::reset()
 }
 
 template<typename Char>
-void CSSPreloadScanner::scanCommon(const Char* begin, const Char* end, Vector<OwnPtr<PreloadRequest> >& requests)
+void CSSPreloadScanner::scanCommon(const Char* begin, const Char* end, PreloadRequestStream& requests)
 {
     m_requests = &requests;
     for (const Char* it = begin; it != end && m_state != DoneParsingImportRules; ++it)
@@ -59,12 +59,12 @@ void CSSPreloadScanner::scanCommon(const Char* begin, const Char* end, Vector<Ow
     m_requests = 0;
 }
 
-void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, Vector<OwnPtr<PreloadRequest> >& requests)
+void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestStream& requests)
 {
     scanCommon(data.data(), data.data() + data.size(), requests);
 }
 
-void CSSPreloadScanner::scan(const String& data, Vector<OwnPtr<PreloadRequest> >& requests)
+void CSSPreloadScanner::scan(const String& data, PreloadRequestStream& requests)
 {
     if (data.is8Bit()) {
         const LChar* begin = data.characters8();
@@ -213,8 +213,7 @@ void CSSPreloadScanner::emitRule()
         String url = parseCSSStringOrURL(m_ruleValue.characters(), m_ruleValue.length());
         if (!url.isEmpty()) {
             KURL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScaner via scan()!
-            OwnPtr<PreloadRequest> request = PreloadRequest::create(
-                cachedResourceRequestInitiators().css, url, baseElementURL, CachedResource::CSSStyleSheet);
+            OwnPtr<PreloadRequest> request = PreloadRequest::create("css", url, baseElementURL, CachedResource::CSSStyleSheet);
             // FIXME: Should this be including the charset in the preload request?
             m_requests->append(request.release());
         }

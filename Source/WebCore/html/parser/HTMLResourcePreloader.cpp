@@ -56,6 +56,15 @@ CachedResourceRequest PreloadRequest::resourceRequest(Document* document)
     return request;
 }
 
+void HTMLResourcePreloader::takeAndPreload(PreloadRequestStream& r)
+{
+    PreloadRequestStream requests;
+    requests.swap(r);
+
+    for (PreloadRequestStream::iterator it = requests.begin(); it != requests.end(); ++it)
+        preload(it->release());
+}
+
 void HTMLResourcePreloader::preload(PassOwnPtr<PreloadRequest> preload)
 {
     CachedResourceRequest request = preload->resourceRequest(m_document);

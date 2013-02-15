@@ -354,7 +354,7 @@ void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token)
 void TokenPreloadScanner::updatePredictedBaseURL(const CompactHTMLToken& token)
 {
     ASSERT(m_predictedBaseElementURL.isEmpty());
-    m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(token.getAttributeItem(hrefAttr)->value()));
+    m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(token.getAttributeItem(hrefAttr)->value())).copy();
 }
 #endif
 
@@ -381,15 +381,16 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const KURL& star
     if (!startingBaseElementURL.isEmpty())
         m_scanner.setPredictedBaseElementURL(startingBaseElementURL);
 
-    Vector<OwnPtr<PreloadRequest> > requests;
+    PreloadRequestStream requests;
+
     while (m_tokenizer->nextToken(m_source, m_token)) {
         if (m_token.type() == HTMLToken::StartTag)
             m_tokenizer->updateStateFor(AtomicString(m_token.name()));
         m_scanner.scan(m_token, requests);
         m_token.clear();
     }
-    for (size_t i = 0; i < requests.size(); i++)
-        preloader->preload(requests[i].release());
+
+    preloader->takeAndPreload(requests);
 }
 
 }

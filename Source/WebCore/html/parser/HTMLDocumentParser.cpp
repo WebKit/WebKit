@@ -286,10 +286,12 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
 void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk> chunk)
 {
     if (isWaitingForScripts()) {
+        m_preloader->takeAndPreload(chunk->preloads);
         m_speculations.append(chunk);
         return;
     }
     ASSERT(m_speculations.isEmpty());
+    chunk->preloads.clear(); // We don't need to preload because we're going to parse immediately.
     processParsedChunkFromBackgroundParser(chunk);
 }
 
@@ -555,11 +557,16 @@ void HTMLDocumentParser::startBackgroundParser()
     RefPtr<WeakReference<BackgroundHTMLParser> > reference = WeakReference<BackgroundHTMLParser>::createUnbound();
     m_backgroundParser = WeakPtr<BackgroundHTMLParser>(reference);
 
-    WeakPtr<HTMLDocumentParser> parser = m_weakFactory.createWeakPtr();
-    OwnPtr<XSSAuditor> xssAuditor = adoptPtr(new XSSAuditor);
-    xssAuditor->init(document());
-    ASSERT(xssAuditor->isSafeToSendToAnotherThread());
-    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::create, reference.release(), m_options, parser, xssAuditor.release()));
+    OwnPtr<BackgroundHTMLParser::Configuration> config = adoptPtr(new BackgroundHTMLParser::Configuration);
+    config->options = m_options;
+    config->parser = m_weakFactory.createWeakPtr();
+    config->xssAuditor = adoptPtr(new XSSAuditor);
+    config->xssAuditor->init(document());
+    config->preloadScanner = adoptPtr(new TokenPreloadScanner(document()->url().copy()));
+
+    ASSERT(config->xssAuditor->isSafeToSendToAnotherThread());
+    ASSERT(config->preloadScanner->isSafeToSendToAnotherThread());
+    HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::create, reference.release(), config.release()));
 }
 
 void HTMLDocumentParser::stopBackgroundParser()

@@ -50,8 +50,8 @@ public:
 private:
     PreloadRequest(const String& initiator, const String& resourceURL, const KURL& baseURL, CachedResource::Type resourceType)
         : m_initiator(initiator)
-        , m_resourceURL(resourceURL)
-        , m_baseURL(baseURL)
+        , m_resourceURL(resourceURL.isolatedCopy())
+        , m_baseURL(baseURL.copy())
         , m_resourceType(resourceType)
         , m_crossOriginModeAllowsCookies(false)
     {
@@ -67,6 +67,8 @@ private:
     bool m_crossOriginModeAllowsCookies;
 };
 
+typedef Vector<OwnPtr<PreloadRequest> > PreloadRequestStream;
+
 class HTMLResourcePreloader {
     WTF_MAKE_NONCOPYABLE(HTMLResourcePreloader); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -76,6 +78,7 @@ public:
     {
     }
 
+    void takeAndPreload(PreloadRequestStream&);
     void preload(PassOwnPtr<PreloadRequest>);
 
     WeakPtr<HTMLResourcePreloader> createWeakPtr() { return m_weakFactory.createWeakPtr(); }

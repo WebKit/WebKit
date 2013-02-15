@@ -41,8 +41,8 @@ public:
 
     void reset();
 
-    void scan(const HTMLToken::DataVector&, Vector<OwnPtr<PreloadRequest> >&);
-    void scan(const String&, Vector<OwnPtr<PreloadRequest> >&);
+    void scan(const HTMLToken::DataVector&, PreloadRequestStream&);
+    void scan(const String&, PreloadRequestStream&);
 
 private:
     enum State {
@@ -59,7 +59,7 @@ private:
     };
 
     template<typename Char>
-    void scanCommon(const Char* begin, const Char* end, Vector<OwnPtr<PreloadRequest> >&);
+    void scanCommon(const Char* begin, const Char* end, PreloadRequestStream&);
 
     inline void tokenize(UChar);
     void emitRule();
@@ -69,7 +69,7 @@ private:
     StringBuilder m_ruleValue;
 
     // Only non-zero during scan()
-    Vector<OwnPtr<PreloadRequest> >* m_requests;
+    PreloadRequestStream* m_requests;
 };
 
 }

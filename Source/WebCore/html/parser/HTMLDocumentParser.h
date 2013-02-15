@@ -32,6 +32,7 @@
 #include "FragmentScriptingPermission.h"
 #include "HTMLInputStream.h"
 #include "HTMLParserOptions.h"
+#include "HTMLPreloadScanner.h"
 #include "HTMLScriptRunnerHost.h"
 #include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
@@ -56,7 +57,6 @@ class HTMLParserScheduler;
 class HTMLTokenizer;
 class HTMLScriptRunner;
 class HTMLTreeBuilder;
-class HTMLPreloadScanner;
 class HTMLResourcePreloader;
 class ScriptController;
 class ScriptSourceCode;
@@ -88,6 +88,7 @@ public:
 #if ENABLE(THREADED_HTML_PARSER)
     struct ParsedChunk {
         OwnPtr<CompactHTMLTokenStream> tokens;
+        PreloadRequestStream preloads;
         HTMLInputCheckpoint checkpoint;
     };
     void didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);

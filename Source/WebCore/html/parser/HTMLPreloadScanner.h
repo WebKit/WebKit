@@ -44,12 +44,18 @@ public:
     explicit TokenPreloadScanner(const KURL& documentURL);
     ~TokenPreloadScanner();
 
-    void scan(const HTMLToken&, Vector<OwnPtr<PreloadRequest> >& requests);
+    void scan(const HTMLToken&, PreloadRequestStream& requests);
 #if ENABLE(THREADED_HTML_PARSER)
-    void scan(const CompactHTMLToken&, Vector<OwnPtr<PreloadRequest> >& requests);
+    void scan(const CompactHTMLToken&, PreloadRequestStream& requests);
 #endif
 
     void setPredictedBaseElementURL(const KURL& url) { m_predictedBaseElementURL = url; }
+
+    bool isSafeToSendToAnotherThread()
+    {
+        return m_documentURL.isSafeToSendToAnotherThread()
+            && m_predictedBaseElementURL.isSafeToSendToAnotherThread();
+    }
 
 private:
     enum TagId {
@@ -69,7 +75,7 @@ private:
     class StartTagScanner;
 
     template<typename Token>
-    inline void scanCommon(const Token&, Vector<OwnPtr<PreloadRequest> >& requests);
+    inline void scanCommon(const Token&, PreloadRequestStream& requests);
 
     static TagId tagIdFor(const HTMLToken::DataVector&);
     static TagId tagIdFor(const String&);

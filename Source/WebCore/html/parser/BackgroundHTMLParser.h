@@ -31,6 +31,7 @@
 #include "BackgroundHTMLInputStream.h"
 #include "CompactHTMLToken.h"
 #include "HTMLParserOptions.h"
+#include "HTMLPreloadScanner.h"
 #include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
@@ -48,9 +49,16 @@ class XSSAuditor;
 class BackgroundHTMLParser {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static void create(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, const HTMLParserOptions& options, const WeakPtr<HTMLDocumentParser>& parser, PassOwnPtr<XSSAuditor> xssAuditor)
+    struct Configuration {
+        HTMLParserOptions options;
+        WeakPtr<HTMLDocumentParser> parser;
+        OwnPtr<XSSAuditor> xssAuditor;
+        OwnPtr<TokenPreloadScanner> preloadScanner;
+    };
+
+    static void create(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, PassOwnPtr<Configuration> config)
     {
-        new BackgroundHTMLParser(reference, options, parser, xssAuditor);
+        new BackgroundHTMLParser(reference, config);
         // Caller must free by calling stop().
     }
 
@@ -76,7 +84,7 @@ private:
         MathML
     };
 
-    BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> >, const HTMLParserOptions&, const WeakPtr<HTMLDocumentParser>&, PassOwnPtr<XSSAuditor>);
+    BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> >, PassOwnPtr<Configuration>);
 
     void markEndOfFile();
     void pumpTokenizer();
@@ -93,8 +101,12 @@ private:
     OwnPtr<HTMLTokenizer> m_tokenizer;
     HTMLParserOptions m_options;
     WeakPtr<HTMLDocumentParser> m_parser;
+
     OwnPtr<CompactHTMLTokenStream> m_pendingTokens;
+    PreloadRequestStream m_pendingPreloads;
+
     OwnPtr<XSSAuditor> m_xssAuditor;
+    OwnPtr<TokenPreloadScanner> m_preloadScanner;
 };
 
 }

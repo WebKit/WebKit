@@ -38,7 +38,7 @@ public:
     bool useThreading;
     unsigned maximumDOMTreeDepth;
 
-    explicit HTMLParserOptions(Document*);
+    explicit HTMLParserOptions(Document* = 0);
 };
 
 }
