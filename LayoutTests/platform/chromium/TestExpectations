@@ -1383,13 +1383,13 @@ webkit.org/b/101396 svg/css/arrow-with-shadow.svg
 
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
 webkit.org/b/109775 [ Win Mac ] media/audio-controls-rendering.html [ Failure ]
-webkit.org/b/109775 [ Win Mac ] media/controls-after-reload.html [ Failure ]
-webkit.org/b/109775 [ Win Mac ] media/controls-strict.html [ Failure ]
-webkit.org/b/109775 [ Win Mac ] media/controls-styling-strict.html [ Failure ]
+webkit.org/b/109775 [ Lion MountainLion Win7 ] media/controls-after-reload.html [ Failure ]
+webkit.org/b/109775 [ Lion MountainLion Win ] media/controls-strict.html [ Failure ]
+webkit.org/b/109775 [ Lion MountainLion Win ] media/controls-styling-strict.html [ Failure ]
 webkit.org/b/109775 [ Win Mac ] media/controls-without-preload.html [ Failure ]
-webkit.org/b/109775 [ Win Mac ] media/video-controls-rendering.html [ Failure ]
-webkit.org/b/109775 [ Win Mac ] media/video-display-toggle.html [ Failure ]
-webkit.org/b/109775 [ Win Mac ] media/video-playing-and-pause.html [ Failure ]
+webkit.org/b/109775 [ MountainLion Win ] media/video-controls-rendering.html [ Failure ]
+webkit.org/b/109775 [ MountainLion XP ] media/video-display-toggle.html [ Failure ]
+webkit.org/b/109775 [ Lion MountainLion Win7 ] media/video-playing-and-pause.html [ Failure ]
 
 # -----------------------------------------------------------------
 # End SVG TESTS
