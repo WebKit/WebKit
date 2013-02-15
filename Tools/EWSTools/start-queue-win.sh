@@ -1,4 +1,6 @@
 #!/bin/sh
+export WEBKIT_BUGZILLA_USERNAME=$1
+export WEBKIT_BUGZILLA_PASSWORD=$2
 while :
 do
 	date
