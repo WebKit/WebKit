@@ -683,7 +683,7 @@ webkit.org/b/109682 fast/frames/seamless/seamless-hyperlink-named.html [ Crash ]
 webkit.org/b/109682 fast/frames/seamless/seamless-hyperlink.html [ Crash ]
 
 # Sometimes hit !m_isolatedWorld->isNormal() || m_wrapper || !m_jsFunction assertion.
-webkit.org/b/105299 webaudio/javascriptaudionode.html [ Crash ]
+webkit.org/b/105299 webaudio/javascriptaudionode.html [ Crash Failure ]
 webkit.org/b/105299 webaudio/javascriptaudionode-upmix2-8channel-input.html [ Pass Crash ]
 
 # Sometimes hit !m_finishedNodes.size() assertion in AudioContext destructor.
@@ -1695,6 +1695,8 @@ webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ ImageO
 # Identical failures on GTK, EFL and Qt.
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
 
+webkit.org/b/66268 editing/deleting/regional-indicators.html [ Failure ]
+
 # Wrong video colors.
 webkit.org/b/102091 media/video-colorspace-yuv420.html [ Skip ]
 webkit.org/b/102091 media/video-colorspace-yuv422.html [ Skip ]
@@ -1901,3 +1903,14 @@ webkit.org/b/83869 media/track/track-cue-rendering-vertical.html [ Failure ]
 webkit.org/b/83869 media/video-empty-source.html [ Failure ]
 webkit.org/b/83869 media/video-no-audio.html [ Failure ]
 webkit.org/b/83869 media/video-zoom-controls.html [ Failure ]
+
+webkit.org/b/109950 fast/dom/Window/webkitConvertPoint.html [ Failure ]
+
+# Failing after r142758.
+webkit.org/b/109948 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
+
+# Newly added test in r142855 is failing.
+webkit.org/b/109949 fast/dom/shadow/distributed-pseudo-element-scoped.html [ ImageOnlyFailure ]
+
+# Newly added test in r142979 is failing.
+webkit.org/b/109951 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
