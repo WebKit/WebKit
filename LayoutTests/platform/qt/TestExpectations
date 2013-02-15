@@ -1412,6 +1412,8 @@ webkit.org/b/105437 svg/filters/feImage-target-style-change.svg [ ImageOnlyFailu
 
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 
+# New test, needs platform results
+webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
 
 # ============================================================================= #
 # Failing CSS Tests

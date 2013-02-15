@@ -3944,6 +3944,9 @@ webkit.org/b/98192 fast/js/post-message-numeric-property.html [ Failure Pass ]
 
 webkit.org/b/98275 media/event-queue-crash.html [ Skip ]
 
+# Needs platform results after webkit.org/b/106221
+webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
+
 # Needs rebaselining on after webkit.org/b/107339
 webkit.org/b/107339 [ Mac Android Win ] platform/chromium/fast/events/touch/compositor-touch-hit-rects.html [ Pass Failure ]
 

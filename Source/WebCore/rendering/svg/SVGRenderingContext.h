@@ -111,6 +111,7 @@ private:
     RenderObject* m_object;
     PaintInfo* m_paintInfo;
     GraphicsContext* m_savedContext;
+    IntRect m_savedPaintRect;
 #if ENABLE(FILTERS)
     RenderSVGResourceFilter* m_filter;
 #endif

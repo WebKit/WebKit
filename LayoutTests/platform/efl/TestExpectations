@@ -1860,6 +1860,9 @@ webkit.org/b/107476 fast/block/margin-collapse/empty-clear-blocks.html [ Failure
 # Needs a rebaseline after WK108429 lands.
 webkit.org/b/108429 svg/custom/text-ctm.svg [ Pass Failure ]
 
+# New test, needs platform results
+webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
+
 # New ruby selection test (in r140613) fails to render correctly, not generating an expected result
 webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
 

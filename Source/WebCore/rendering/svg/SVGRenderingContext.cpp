@@ -61,6 +61,7 @@ SVGRenderingContext::~SVGRenderingContext()
         ASSERT(m_filter);
         m_filter->postApplyResource(static_cast<RenderSVGShape*>(m_object), m_paintInfo->context, ApplyToDefaultMode, 0, 0);
         m_paintInfo->context = m_savedContext;
+        m_paintInfo->rect = m_savedPaintRect;
     }
 #endif
 
@@ -157,11 +158,18 @@ void SVGRenderingContext::prepareToRenderSVGContent(RenderObject* object, PaintI
         m_filter = resources->filter();
         if (m_filter) {
             m_savedContext = m_paintInfo->context;
+            m_savedPaintRect = m_paintInfo->rect;
             // Return with false here may mean that we don't need to draw the content
             // (because it was either drawn before or empty) but we still need to apply the filter.
             m_renderingFlags |= EndFilterLayer;
             if (!m_filter->applyResource(m_object, style, m_paintInfo->context, ApplyToDefaultMode))
                 return;
+
+            // Since we're caching the resulting bitmap and do not invalidate it on repaint rect
+            // changes, we need to paint the whole filter region. Otherwise, elements not visible
+            // at the time of the initial paint (due to scrolling, window size, etc.) will never
+            // be drawn.
+            m_paintInfo->rect = IntRect(m_filter->drawingRegion(m_object));
         }
     }
 #endif
