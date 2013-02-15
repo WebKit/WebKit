@@ -3715,7 +3715,6 @@ webkit.org/b/94002 [ Win7 Debug ] inspector/debugger/event-listener-breakpoints.
 
 # Requires a rebaseline after webkit.org/b/108108 
 webkit.org/b/108108 [ Linux Win ] svg/zoom/page/zoom-img-preserveAspectRatio-support-1.html [ ImageOnlyFailure Pass ]
-webkit.org/b/108108 fast/backgrounds/size/contain-and-cover-zoomed.html [ ImageOnlyFailure Pass ]
 
 # Flaky
 webkit.org/b/99389 [ Win ] inspector/debugger/xhr-breakpoints.html [ Pass Failure ]
@@ -4200,8 +4199,6 @@ webkit.org/b/106159 svg/zoom/page/zoom-svg-as-background-with-relative-size.html
 webkit.org/b/106159 css2.1/20110323/background-intrinsic-005.htm [ ImageOnlyFailure Pass ]
 webkit.org/b/106159 svg/as-image/same-image-two-instances.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106159 css2.1/20110323/background-intrinsic-004.htm [ ImageOnlyFailure Pass ]
-webkit.org/b/106159 fast/backgrounds/size/contain-and-cover.html [ ImageOnlyFailure Pass ]
-webkit.org/b/106159 fast/writing-mode/block-level-images.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/103363 [ Mac ] touchadjustment/touch-links-longpress.html [ Failure ]
 webkit.org/b/103446 [ Mac ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
