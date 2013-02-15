@@ -28,6 +28,7 @@
 #define HTMLPreloadScanner_h
 
 #include "CSSPreloadScanner.h"
+#include "CompactHTMLToken.h"
 #include "HTMLToken.h"
 #include "SegmentedString.h"
 
@@ -44,6 +45,9 @@ public:
     ~TokenPreloadScanner();
 
     void scan(const HTMLToken&, Vector<OwnPtr<PreloadRequest> >& requests);
+#if ENABLE(THREADED_HTML_PARSER)
+    void scan(const CompactHTMLToken&, Vector<OwnPtr<PreloadRequest> >& requests);
+#endif
 
     void setPredictedBaseElementURL(const KURL& url) { m_predictedBaseElementURL = url; }
 
@@ -64,15 +68,18 @@ private:
 
     class StartTagScanner;
 
-    static TagId identifierFor(const AtomicString& tagName);
+    template<typename Token>
+    inline void scanCommon(const Token&, Vector<OwnPtr<PreloadRequest> >& requests);
+
+    static TagId tagIdFor(const HTMLToken::DataVector&);
+    static TagId tagIdFor(const String&);
+
     static String inititatorFor(TagId);
 
-#if ENABLE(TEMPLATE_ELEMENT)
-    bool processPossibleTemplateTag(TagId, HTMLToken::Type);
+    void updatePredictedBaseURL(const HTMLToken&);
+#if ENABLE(THREADED_HTML_PARSER)
+    void updatePredictedBaseURL(const CompactHTMLToken&);
 #endif
-
-    bool processPossibleStyleTag(TagId, HTMLToken::Type);
-    bool processPossibleBaseTag(TagId, const HTMLToken&);
 
     CSSPreloadScanner m_cssScanner;
     KURL m_documentURL;

@@ -28,6 +28,7 @@
 #define CSSPreloadScanner_h
 
 #include "HTMLResourcePreloader.h"
+#include "HTMLToken.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
@@ -40,8 +41,8 @@ public:
 
     void reset();
 
-    void scan(const UChar* begin, const UChar* end, Vector<OwnPtr<PreloadRequest> >&);
-    void scan(const LChar* begin, const LChar* end, Vector<OwnPtr<PreloadRequest> >&);
+    void scan(const HTMLToken::DataVector&, Vector<OwnPtr<PreloadRequest> >&);
+    void scan(const String&, Vector<OwnPtr<PreloadRequest> >&);
 
 private:
     enum State {
@@ -56,6 +57,9 @@ private:
         AfterRuleValue,
         DoneParsingImportRules,
     };
+
+    template<typename Char>
+    void scanCommon(const Char* begin, const Char* end, Vector<OwnPtr<PreloadRequest> >&);
 
     inline void tokenize(UChar);
     void emitRule();

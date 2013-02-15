@@ -43,18 +43,9 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static bool isStartTag(HTMLToken::Type type)
+TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const HTMLToken::DataVector& data)
 {
-    return type == HTMLToken::StartTag;
-}
-
-static bool isStartOrEndTag(HTMLToken::Type type)
-{
-    return type == HTMLToken::EndTag || isStartTag(type);
-}
-
-TokenPreloadScanner::TagId TokenPreloadScanner::identifierFor(const AtomicString& tagName)
-{
+    AtomicString tagName(data);
     if (tagName == imgTag)
         return ImgTagId;
     if (tagName == inputTag)
@@ -68,6 +59,25 @@ TokenPreloadScanner::TagId TokenPreloadScanner::identifierFor(const AtomicString
     if (tagName == baseTag)
         return BaseTagId;
     if (tagName == templateTag)
+        return TemplateTagId;
+    return UnknownTagId;
+}
+
+TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const String& tagName)
+{
+    if (threadSafeMatch(tagName, imgTag))
+        return ImgTagId;
+    if (threadSafeMatch(tagName, inputTag))
+        return InputTagId;
+    if (threadSafeMatch(tagName, linkTag))
+        return LinkTagId;
+    if (threadSafeMatch(tagName, scriptTag))
+        return ScriptTagId;
+    if (threadSafeMatch(tagName, styleTag))
+        return StyleTagId;
+    if (threadSafeMatch(tagName, baseTag))
+        return BaseTagId;
+    if (threadSafeMatch(tagName, templateTag))
         return TemplateTagId;
     return UnknownTagId;
 }
@@ -107,16 +117,24 @@ public:
     void processAttributes(const HTMLToken::AttributeList& attributes)
     {
         ASSERT(isMainThread());
-
         if (m_tagId >= UnknownTagId)
             return;
-
         for (HTMLToken::AttributeList::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter) {
             AtomicString attributeName(iter->name);
             String attributeValue = StringImpl::create8BitIfPossible(iter->value);
             processAttribute(attributeName, attributeValue);
         }
     }
+
+#if ENABLE(THREADED_HTML_PARSER)
+    void processAttributes(const Vector<CompactAttribute>& attributes)
+    {
+        if (m_tagId >= UnknownTagId)
+            return;
+        for (Vector<CompactAttribute>::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
+            processAttribute(iter->name(), iter->value());
+    }
+#endif
 
     PassOwnPtr<PreloadRequest> createPreloadRequest(const KURL& predictedBaseURL)
     {
@@ -244,45 +262,84 @@ TokenPreloadScanner::~TokenPreloadScanner()
 {
 }
 
-#if ENABLE(TEMPLATE_ELEMENT)
-bool TokenPreloadScanner::processPossibleTemplateTag(TagId tagId, HTMLToken::Type type)
+void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
 {
-    if (isStartOrEndTag(type) && tagId == TemplateTagId) {
-        if (isStartTag(type))
-            m_templateCount++;
-        else
-            m_templateCount--;
-        return true; // Twas our token.
-    }
-    // If we're in a template we "consume" all tokens.
-    return m_templateCount > 0;
+    scanCommon(token, requests);
+}
+
+#if ENABLE(THREADED_HTML_PARSER)
+void TokenPreloadScanner::scan(const CompactHTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
+{
+    scanCommon(token, requests);
 }
 #endif
 
-bool TokenPreloadScanner::processPossibleStyleTag(TagId tagId, HTMLToken::Type type)
+template<typename Token>
+void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRequest> >& requests)
 {
-    ASSERT(isStartOrEndTag(type));
-    if (tagId != StyleTagId)
-        return false;
+    switch (token.type()) {
+    case HTMLToken::Character: {
+        if (!m_inStyle)
+            return;
+        m_cssScanner.scan(token.data(), requests);
+        return;
+    }
+    case HTMLToken::EndTag: {
+        TagId tagId = tagIdFor(token.data());
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (tagId == TemplateTagId) {
+            if (m_templateCount)
+                --m_templateCount;
+            return;
+        }
+#endif
+        if (tagId == StyleTagId) {
+            if (m_inStyle)
+                m_cssScanner.reset();
+            m_inStyle = false;
+        }
+        return;
+    }
+    case HTMLToken::StartTag: {
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (m_templateCount)
+            return;
+#endif
+        TagId tagId = tagIdFor(token.data());
+#if ENABLE(TEMPLATE_ELEMENT)
+        if (tagId == TemplateTagId) {
+            ++m_templateCount;
+            return;
+        }
+#endif
+        if (tagId == StyleTagId) {
+            m_inStyle = true;
+            return;
+        }
+        if (tagId == BaseTagId) {
+            // The first <base> element is the one that wins.
+            if (!m_predictedBaseElementURL.isEmpty())
+                return;
+            updatePredictedBaseURL(token);
+            return;
+        }
 
-    m_inStyle = isStartTag(type);
-
-    if (!m_inStyle)
-        m_cssScanner.reset();
-
-    return true;
+        StartTagScanner scanner(tagId);
+        scanner.processAttributes(token.attributes());
+        OwnPtr<PreloadRequest> request = scanner.createPreloadRequest(m_predictedBaseElementURL);
+        if (request)
+            requests.append(request.release());
+        return;
+    }
+    default: {
+        return;
+    }
+    }
 }
 
-bool TokenPreloadScanner::processPossibleBaseTag(TagId tagId, const HTMLToken& token)
+void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token)
 {
-    ASSERT(isStartTag(token.type()));
-    if (tagId != BaseTagId)
-        return false;
-
-    // The first <base> element is the one that wins.
-    if (!m_predictedBaseElementURL.isEmpty())
-        return true;
-
+    ASSERT(m_predictedBaseElementURL.isEmpty());
     for (HTMLToken::AttributeList::const_iterator iter = token.attributes().begin(); iter != token.attributes().end(); ++iter) {
         AtomicString attributeName(iter->name);
         if (attributeName == hrefAttr) {
@@ -291,42 +348,15 @@ bool TokenPreloadScanner::processPossibleBaseTag(TagId tagId, const HTMLToken& t
             break;
         }
     }
-    return true;
 }
 
-void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
+#if ENABLE(THREADED_HTML_PARSER)
+void TokenPreloadScanner::updatePredictedBaseURL(const CompactHTMLToken& token)
 {
-    // <style> is the only place we search for urls in non-start/end-tag tokens.
-    if (m_inStyle) {
-        if (token.type() != HTMLToken::Character)
-            return;
-        const HTMLToken::DataVector& characters = token.characters();
-        return m_cssScanner.scan(characters.begin(), characters.end(), requests);
-    }
-
-    if (!isStartOrEndTag(token.type()))
-        return;
-
-    AtomicString tagName(token.name());
-    TagId tagId = identifierFor(tagName);
-
-#if ENABLE(TEMPLATE_ELEMENT)
-    if (processPossibleTemplateTag(tagId, token.type()))
-        return;
-#endif
-    if (processPossibleStyleTag(tagId, token.type()))
-        return;
-    if (!isStartTag(token.type()))
-        return;
-    if (processPossibleBaseTag(tagId, token))
-        return;
-
-    StartTagScanner scanner(tagId);
-    scanner.processAttributes(token.attributes());
-    OwnPtr<PreloadRequest> request =  scanner.createPreloadRequest(m_predictedBaseElementURL);
-    if (request)
-        requests.append(request.release());
+    ASSERT(m_predictedBaseElementURL.isEmpty());
+    m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(token.getAttributeItem(hrefAttr)->value()));
 }
+#endif
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL)
     : m_scanner(documentURL)
@@ -353,7 +383,7 @@ void HTMLPreloadScanner::scan(HTMLResourcePreloader* preloader, const KURL& star
 
     Vector<OwnPtr<PreloadRequest> > requests;
     while (m_tokenizer->nextToken(m_source, m_token)) {
-        if (isStartTag(m_token.type()))
+        if (m_token.type() == HTMLToken::StartTag)
             m_tokenizer->updateStateFor(AtomicString(m_token.name()));
         m_scanner.scan(m_token, requests);
         m_token.clear();
