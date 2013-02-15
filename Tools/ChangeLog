@@ -1,3 +1,9 @@
+2013-02-15  Pablo Flouret  <pablof@motorola.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-15  Roger Fong  <roger_fong@apple.com>
 
         Get Win EWS startup script checked into tree so we can make changes to all the EWS bots more easily.
