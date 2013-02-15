@@ -2467,6 +2467,7 @@ WebInspector.TextEditorMainPanel.prototype = {
         var startLine = dirtyLines.start;
         var endLine = dirtyLines.end;
 
+        var originalSelection = this._lastSelection;
         var editInfo = this._guessEditRangeBasedOnSelection(startLine, endLine, lines);
         if (!editInfo) {
             if (WebInspector.debugDefaultTextEditor)
@@ -2491,7 +2492,7 @@ WebInspector.TextEditorMainPanel.prototype = {
             }
         }
 
-        this._textModel.editRange(editInfo.range, editInfo.text);
+        this._textModel.editRange(editInfo.range, editInfo.text, originalSelection);
         this._restoreSelection(selection);
     },
 
@@ -3399,7 +3400,7 @@ WebInspector.DefaultTextEditor.WordMovementController.prototype = {
             return false;
 
         var newSelection = this._rangeForCtrlArrowMove(selection, "left");
-        this._textModel.editRange(newSelection.normalize(), "");
+        this._textModel.editRange(newSelection.normalize(), "", selection);
 
         this._textEditor.setSelection(newSelection.collapseToEnd());
         return true;

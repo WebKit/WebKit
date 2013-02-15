@@ -134,3 +134,55 @@ function foo()
 }
 
 
+Running: testSelectionAfterUndoRedo
+Text before edit:
+function foo()
+{
+
+}
+
+Text after backspace:
+function foo()
+{|
+}
+
+Text after first undo:
+function foo()
+{
+|
+}
+
+Text after first redo:
+function foo()
+{|
+}
+
+Text after second undo:
+function foo()
+{>
+<
+}
+
+Text after deleting selection:
+function foo()
+{|
+}
+
+Text after first undo:
+function foo()
+{>
+<
+}
+
+Text after first redo:
+function foo()
+{|
+}
+
+Text after second undo:
+function foo()
+{>
+<
+}
+
+

@@ -18,6 +18,18 @@ function test()
             range = textModel.editRange(range, text[i]).collapseToEnd();
         return range;
     }
+
+    function typeBackspace(textModel, startRange, count)
+    {
+        var count = count || 1;
+        var range = startRange;
+        for (var i = 0; i < count; ++i) {
+            var backspaceRange = range.isEmpty() ? textModel.growRangeLeft(range) : range;
+            range = textModel.editRange(backspaceRange, "", range).collapseToEnd();
+        }
+        return range;
+    }
+
     InspectorTest.runTestSuite([
         function testUndoRedoTab(next)
         {
@@ -73,6 +85,31 @@ function test()
             dumpTextModel("Text after first redo:\n", textModel, range);
             range = textModel.redo();
             dumpTextModel("Text after second redo:\n", textModel, range);
+            next();
+        },
+
+        function testSelectionAfterUndoRedo(next)
+        {
+            var textModel = new WebInspector.TextEditorModel();
+            var functionText = "    bar();\n    baz();\n    foo();";
+            textModel.setText("function foo()\n{\n\n}\n");
+            dumpTextModel("Text before edit:\n", textModel);
+            range = typeBackspace(textModel, new WebInspector.TextRange(2, 0, 2, 0), 1);
+            dumpTextModel("Text after backspace:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after first undo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after first redo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after second undo:\n", textModel, range);
+            range = typeBackspace(textModel, new WebInspector.TextRange(1, 1, 2, 0), 1);
+            dumpTextModel("Text after deleting selection:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after first undo:\n", textModel, range);
+            range = textModel.redo();
+            dumpTextModel("Text after first redo:\n", textModel, range);
+            range = textModel.undo();
+            dumpTextModel("Text after second undo:\n", textModel, range);
             next();
         }
     ]);

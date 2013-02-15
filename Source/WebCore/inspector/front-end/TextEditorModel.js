@@ -147,11 +147,13 @@ WebInspector.TextRange.prototype = {
  * @constructor
  * @param {WebInspector.TextRange} newRange
  * @param {string} originalText
+ * @param {WebInspector.TextRange} originalSelection
  */
-WebInspector.TextEditorCommand = function(newRange, originalText)
+WebInspector.TextEditorCommand = function(newRange, originalText, originalSelection)
 {
     this.newRange = newRange;
     this.originalText = originalText;
+    this.originalSelection = originalSelection;
 }
 
 /**
@@ -250,26 +252,28 @@ WebInspector.TextEditorModel.prototype = {
     /**
      * @param {WebInspector.TextRange} range
      * @param {string} text
+     * @param {WebInspector.TextRange=} originalSelection
      * @return {WebInspector.TextRange}
      */
-    editRange: function(range, text)
+    editRange: function(range, text, originalSelection)
     {   
         if (this._lastEditedRange && (!text || text.indexOf("\n") !== -1 || this._lastEditedRange.endLine !== range.startLine || this._lastEditedRange.endColumn !== range.startColumn))
             this._markUndoableState();
-        return this._innerEditRange(range, text);
+        return this._innerEditRange(range, text, originalSelection);
     },
 
     /**
      * @param {WebInspector.TextRange} range
      * @param {string} text
+     * @param {WebInspector.TextRange=} originalSelection
      * @return {WebInspector.TextRange}
      */
-    _innerEditRange: function(range, text)
+    _innerEditRange: function(range, text, originalSelection)
     {
         var originalText = this.copyRange(range);
         var newRange = this._innerSetText(range, text);
-        this._pushUndoableCommand(newRange, originalText);
         this._lastEditedRange = newRange;
+        this._pushUndoableCommand(newRange, originalText, originalSelection || range);
         this.dispatchEventToListeners(WebInspector.TextEditorModel.Events.TextChanged, { oldRange: range, newRange: newRange, editRange: true });
         return newRange;
     },
@@ -459,11 +463,12 @@ WebInspector.TextEditorModel.prototype = {
     /**
      * @param {WebInspector.TextRange} newRange
      * @param {string} originalText
+     * @param {WebInspector.TextRange} originalSelection
      * @return {WebInspector.TextEditorCommand}
      */
-    _pushUndoableCommand: function(newRange, originalText)
+    _pushUndoableCommand: function(newRange, originalText, originalSelection)
     {
-        var command = new WebInspector.TextEditorCommand(newRange.clone(), originalText);
+        var command = new WebInspector.TextEditorCommand(newRange.clone(), originalText, originalSelection);
         if (this._inUndo)
             this._redoStack.push(command);
         else {
@@ -517,7 +522,8 @@ WebInspector.TextEditorModel.prototype = {
         for (var i = stack.length - 1; i >= 0; --i) {
             var command = stack[i];
             stack.length = i;
-            range = this._innerEditRange(command.newRange, command.originalText);
+            this._innerEditRange(command.newRange, command.originalText);
+            range = command.originalSelection;
             if (i > 0 && stack[i - 1].explicit)
                 return range;
         }
