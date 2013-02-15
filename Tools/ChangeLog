@@ -1,3 +1,9 @@
+2013-02-15  Andreas Kling  <akling@apple.com>
+
+        Unbreak webkit-patch -- can't have both Committer and Contributor entry with same e-mail address.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-15  Joanmarie Diggs  <jdiggs@igalia.com>
 
         Unreviewed. Add myself as a committer.
