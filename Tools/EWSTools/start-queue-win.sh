@@ -1,6 +1,4 @@
 #!/bin/sh
-export WEBKIT_BUGZILLA_USERNAME=buildbot@hotmail.com
-export WEBKIT_BUGZILLA_PASSWORD=intrigue
 while :
 do
 	date
