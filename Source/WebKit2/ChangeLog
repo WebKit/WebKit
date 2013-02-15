@@ -1,5 +1,48 @@
 2013-02-15  Anders Carlsson  <andersca@apple.com>
 
+        Make most ArgumentEncoder::encode member functions private
+        https://bugs.webkit.org/show_bug.cgi?id=109973
+
+        Reviewed by Sam Weinig.
+
+        Make the encode overloads private; the stream operator should be used instead.
+
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        (ArgumentEncoder):
+        * Platform/CoreIPC/Arguments.h:
+        (CoreIPC::Arguments1::encode):
+        (CoreIPC::Arguments2::encode):
+        (CoreIPC::Arguments3::encode):
+        (CoreIPC::Arguments4::encode):
+        (CoreIPC::Arguments5::encode):
+        (CoreIPC::Arguments6::encode):
+        (CoreIPC::Arguments7::encode):
+        (CoreIPC::Arguments8::encode):
+        (CoreIPC::Arguments10::encode):
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::createSyncMessageEncoder):
+        * Platform/CoreIPC/MessageEncoder.cpp:
+        (CoreIPC::MessageEncoder::MessageEncoder):
+        * Scripts/webkit2/messages.py:
+        (generate_message_handler):
+        * Scripts/webkit2/messages_unittest.py:
+        * Shared/Network/NetworkResourceLoadParameters.cpp:
+        (WebKit::NetworkResourceLoadParameters::encode):
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::EncoderAdapter):
+        (WebKit::EncoderAdapter::encodeBytes):
+        (WebKit::EncoderAdapter::encodeBool):
+        (WebKit::EncoderAdapter::encodeUInt16):
+        (WebKit::EncoderAdapter::encodeUInt32):
+        (WebKit::EncoderAdapter::encodeUInt64):
+        (WebKit::EncoderAdapter::encodeInt32):
+        (WebKit::EncoderAdapter::encodeInt64):
+        (WebKit::EncoderAdapter::encodeFloat):
+        (WebKit::EncoderAdapter::encodeDouble):
+        (WebKit::EncoderAdapter::encodeString):
+
+2013-02-15  Anders Carlsson  <andersca@apple.com>
+
         Add a synchronous GetValues message to StorageManager
         https://bugs.webkit.org/show_bug.cgi?id=109968
 

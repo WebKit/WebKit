@@ -64,12 +64,12 @@ NetworkResourceLoadParameters::NetworkResourceLoadParameters(ResourceLoadIdentif
 
 void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
-    encoder.encode(m_identifier);
-    encoder.encode(m_webPageID);
-    encoder.encode(m_webFrameID);
-    encoder.encode(m_request);
+    encoder << m_identifier;
+    encoder << m_webPageID;
+    encoder << m_webFrameID;
+    encoder << m_request;
 
-    encoder.encode(static_cast<bool>(m_request.httpBody()));
+    encoder << static_cast<bool>(m_request.httpBody());
     if (m_request.httpBody()) {
         EncoderAdapter httpBodyEncoderAdapter;
         m_request.httpBody()->encode(httpBodyEncoderAdapter);
@@ -104,8 +104,8 @@ void NetworkResourceLoadParameters::encode(CoreIPC::ArgumentEncoder& encoder) co
     encoder.encodeEnum(m_priority);
     encoder.encodeEnum(m_contentSniffingPolicy);
     encoder.encodeEnum(m_allowStoredCredentials);
-    encoder.encode(m_inPrivateBrowsingMode);
-    encoder.encode(m_shouldClearReferrerOnHTTPSToHTTPRedirect);
+    encoder << m_inPrivateBrowsingMode;
+    encoder << m_shouldClearReferrerOnHTTPSToHTTPRedirect;
 }
 
 bool NetworkResourceLoadParameters::decode(CoreIPC::ArgumentDecoder& decoder, NetworkResourceLoadParameters& result)

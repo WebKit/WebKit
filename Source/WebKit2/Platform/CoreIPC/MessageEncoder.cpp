@@ -43,10 +43,10 @@ MessageEncoder::MessageEncoder(StringReference messageReceiverName, StringRefere
 {
     ASSERT(!messageReceiverName.isEmpty());
 
-    encode(defaultMessageFlags);
-    encode(messageReceiverName);
-    encode(messageName);
-    encode(destinationID);
+    *this << defaultMessageFlags;
+    *this << messageReceiverName;
+    *this << messageName;
+    *this << destinationID;
 }
 
 MessageEncoder::~MessageEncoder()

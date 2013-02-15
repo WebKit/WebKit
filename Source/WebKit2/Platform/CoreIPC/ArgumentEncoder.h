@@ -45,16 +45,6 @@ public:
     void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
     void encodeVariableLengthByteArray(const DataReference&);
 
-    void encode(bool);
-    void encode(uint8_t);
-    void encode(uint16_t);
-    void encode(uint32_t);
-    void encode(uint64_t);
-    void encode(int32_t);
-    void encode(int64_t);
-    void encode(float);
-    void encode(double);
-
     template<typename T> void encodeEnum(T t)
     {
         COMPILE_ASSERT(sizeof(T) <= sizeof(uint64_t), enum_type_must_not_be_larger_than_64_bits);
@@ -83,6 +73,16 @@ protected:
     ArgumentEncoder();
 
 private:
+    void encode(bool);
+    void encode(uint8_t);
+    void encode(uint16_t);
+    void encode(uint32_t);
+    void encode(uint64_t);
+    void encode(int32_t);
+    void encode(int64_t);
+    void encode(float);
+    void encode(double);
+
     uint8_t* grow(unsigned alignment, size_t size);
     
     uint8_t* m_buffer;

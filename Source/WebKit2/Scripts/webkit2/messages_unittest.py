@@ -677,7 +677,7 @@ GetPluginProcessConnection::DelayedReply::~DelayedReply()
 bool GetPluginProcessConnection::DelayedReply::send(const CoreIPC::Connection::Handle& connectionHandle)
 {
     ASSERT(m_encoder);
-    m_encoder->encode(connectionHandle);
+    *m_encoder << connectionHandle;
     bool result = m_connection->sendSyncReply(m_encoder.release());
     m_connection = nullptr;
     return result;

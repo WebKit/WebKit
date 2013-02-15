@@ -534,7 +534,7 @@ def generate_message_handler(file):
             result.append('bool %s::DelayedReply::send(%s)\n' % (message.name, ', '.join([' '.join(x) for x in send_parameters])))
             result.append('{\n')
             result.append('    ASSERT(m_encoder);\n')
-            result += ['    m_encoder->encode(%s);\n' % x.name for x in message.reply_parameters]
+            result += ['    *m_encoder << %s;\n' % x.name for x in message.reply_parameters]
             result.append('    bool result = m_connection->sendSyncReply(m_encoder.release());\n')
             result.append('    m_connection = nullptr;\n')
             result.append('    return result;\n')
