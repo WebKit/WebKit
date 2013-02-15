@@ -286,7 +286,7 @@ static v8::Handle<v8::Value> funcWithClampCallback(const v8::Arguments& args)
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
     unsigned long long arg1 = 0;
     V8TRYCATCH(double, arg1NativeValue, args[0]->NumberValue());
-    if (!isnan(arg1NativeValue))
+    if (!std::isnan(arg1NativeValue))
         arg1 = clampTo<unsigned long long>(arg1NativeValue);
     if (args.Length() <= 1) {
         imp->funcWithClamp(arg1);
@@ -294,7 +294,7 @@ static v8::Handle<v8::Value> funcWithClampCallback(const v8::Arguments& args)
     }
     unsigned long long arg2 = 0;
     V8TRYCATCH(double, arg2NativeValue, args[1]->NumberValue());
-    if (!isnan(arg2NativeValue))
+    if (!std::isnan(arg2NativeValue))
         arg2 = clampTo<unsigned long long>(arg2NativeValue);
     imp->funcWithClamp(arg1, arg2);
     return v8Undefined();

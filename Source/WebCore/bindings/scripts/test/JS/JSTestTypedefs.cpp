@@ -496,7 +496,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    if (!isnan(arg1NativeValue))
+    if (!std::isnan(arg1NativeValue))
         arg1 = clampTo<unsigned long long>(arg1NativeValue);
 
 
@@ -511,7 +511,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFuncWithClamp(ExecSt
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    if (!isnan(arg2NativeValue))
+    if (!std::isnan(arg2NativeValue))
         arg2 = clampTo<unsigned long long>(arg2NativeValue);
 
     impl->funcWithClamp(arg1, arg2);

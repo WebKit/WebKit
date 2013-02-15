@@ -34,11 +34,11 @@ class WebDOMDictionary;
 class WebDOMDocument;
 class WebDOMEventListener;
 class WebDOMNode;
+class WebDOMObject;
 class WebDOMSVGPoint;
 class WebDOMString;
 class WebDOMTestObj;
 class WebDOMa;
-class WebDOMany;
 class WebDOMb;
 class WebDOMbool;
 class WebDOMd;
@@ -129,8 +129,8 @@ public:
     int conditionalAttr3() const;
     void setConditionalAttr3(int);
 #endif
-    WebDOMany anyAttribute() const;
-    void setAnyAttribute(const WebDOMany&);
+    WebDOMObject anyAttribute() const;
+    void setAnyAttribute(const WebDOMObject&);
     WebDOMDocument contentDocument() const;
     WebDOMSVGPoint mutablePoint() const;
     void setMutablePoint(const WebDOMSVGPoint&);

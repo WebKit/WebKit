@@ -33,7 +33,6 @@
 #include "WebKitDOMSerializedScriptValuePrivate.h"
 #include "WebKitDOMTestObjPrivate.h"
 #include "WebKitDOMaPrivate.h"
-#include "WebKitDOManyPrivate.h"
 #include "WebKitDOMbPrivate.h"
 #include "WebKitDOMboolPrivate.h"
 #include "WebKitDOMdPrivate.h"
@@ -2150,7 +2149,7 @@ webkit_dom_test_obj_get_any_attribute(WebKitDOMTestObj* self)
     g_return_val_if_fail(WEBKIT_DOM_IS_TEST_OBJ(self), 0);
     WebCore::TestObj* item = WebKit::core(self);
     RefPtr<WebCore::any> gobjectResult = WTF::getPtr(item->anyAttribute());
-    return WebKit::kit(gobjectResult.get());
+    return 0; // TODO: return canvas object
 }
 
 void

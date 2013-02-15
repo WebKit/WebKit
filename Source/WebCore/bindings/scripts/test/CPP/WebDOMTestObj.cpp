@@ -31,11 +31,11 @@
 #include "WebDOMDictionary.h"
 #include "WebDOMDocument.h"
 #include "WebDOMNode.h"
+#include "WebDOMObject.h"
 #include "WebDOMSVGPoint.h"
 #include "WebDOMString.h"
 #include "WebDOMTestObj.h"
 #include "WebDOMa.h"
-#include "WebDOMany.h"
 #include "WebDOMb.h"
 #include "WebDOMbool.h"
 #include "WebDOMd.h"
@@ -43,7 +43,6 @@
 #include "WebExceptionHandler.h"
 #include "WebNativeEventListener.h"
 #include "a.h"
-#include "any.h"
 #include "b.h"
 #include "bool.h"
 #include "d.h"
@@ -537,15 +536,15 @@ void WebDOMTestObj::setConditionalAttr3(int newConditionalAttr3)
 }
 
 #endif
-WebDOMany WebDOMTestObj::anyAttribute() const
+WebDOMObject WebDOMTestObj::anyAttribute() const
 {
     if (!impl())
-        return WebDOMany();
+        return WebDOMObject();
 
     return toWebKit(WTF::getPtr(impl()->anyAttribute()));
 }
 
-void WebDOMTestObj::setAnyAttribute(const WebDOMany& newAnyAttribute)
+void WebDOMTestObj::setAnyAttribute(const WebDOMObject& newAnyAttribute)
 {
     if (!impl())
         return;
