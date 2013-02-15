@@ -36,6 +36,7 @@
 #include "IDBTracing.h"
 #include "IDBTransactionBackendImpl.h"
 #include "IDBTransactionCoordinator.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -271,29 +272,29 @@ private:
 
 class PutOperation : public IDBTransactionBackendImpl::Operation {
 public:
-    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBBackingStore> backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, Vector<uint8_t>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys)
+    static PassOwnPtr<IDBTransactionBackendImpl::Operation> create(PassRefPtr<IDBBackingStore> backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys)
     {
         return adoptPtr(new PutOperation(backingStore, databaseId, objectStore, value, key, putMode, callbacks, indexIds, indexKeys));
     }
     virtual void perform(IDBTransactionBackendImpl*);
 private:
-    PutOperation(PassRefPtr<IDBBackingStore> backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, Vector<uint8_t>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys)
+    PutOperation(PassRefPtr<IDBBackingStore> backingStore, int64_t databaseId, const IDBObjectStoreMetadata& objectStore, PassRefPtr<SharedBuffer>& value, PassRefPtr<IDBKey> key, IDBDatabaseBackendInterface::PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IDBDatabaseBackendInterface::IndexKeys>& indexKeys)
         : m_backingStore(backingStore)
         , m_databaseId(databaseId)
         , m_objectStore(objectStore)
+        , m_value(value)
         , m_key(key)
         , m_putMode(putMode)
         , m_callbacks(callbacks)
         , m_indexIds(indexIds)
         , m_indexKeys(indexKeys)
     {
-        m_value.swap(value);
     }
 
     const RefPtr<IDBBackingStore> m_backingStore;
     const int64_t m_databaseId;
     const IDBObjectStoreMetadata m_objectStore;
-    Vector<uint8_t> m_value;
+    const RefPtr<SharedBuffer> m_value;
     const RefPtr<IDBKey> m_key;
     const IDBDatabaseBackendInterface::PutMode m_putMode;
     const RefPtr<IDBCallbacks> m_callbacks;
@@ -779,7 +780,7 @@ void GetOperation::perform(IDBTransactionBackendImpl* transaction)
     m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(value));
 }
 
-void IDBDatabaseBackendImpl::put(int64_t transactionId, int64_t objectStoreId, Vector<uint8_t>* value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+void IDBDatabaseBackendImpl::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
     IDB_TRACE("IDBDatabaseBackendImpl::put");
     IDBTransactionBackendImpl* transaction = m_transactions.get(transactionId);
@@ -791,7 +792,7 @@ void IDBDatabaseBackendImpl::put(int64_t transactionId, int64_t objectStoreId, V
 
     ASSERT(objectStoreMetadata.autoIncrement || key.get());
 
-    transaction->scheduleTask(PutOperation::create(m_backingStore, id(), objectStoreMetadata, *value, key, putMode, callbacks, indexIds, indexKeys));
+    transaction->scheduleTask(PutOperation::create(m_backingStore, id(), objectStoreMetadata, value, key, putMode, callbacks, indexIds, indexKeys));
 }
 
 void PutOperation::perform(IDBTransactionBackendImpl* transaction)

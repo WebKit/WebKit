@@ -43,6 +43,7 @@
 #include "LevelDBSlice.h"
 #include "LevelDBTransaction.h"
 #include "SecurityOrigin.h"
+#include "SharedBuffer.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -836,7 +837,7 @@ WARN_UNUSED_RETURN static bool getNewVersionNumber(LevelDBTransaction* transacti
     return true;
 }
 
-bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, const Vector<uint8_t>& value, RecordIdentifier* recordIdentifier)
+bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, PassRefPtr<SharedBuffer> prpValue, RecordIdentifier* recordIdentifier)
 {
     IDB_TRACE("IDBBackingStore::putRecord");
     ASSERT(key.isValid());
@@ -850,7 +851,9 @@ bool IDBBackingStore::putRecord(IDBBackingStore::Transaction* transaction, int64
 
     Vector<char> v;
     v.append(encodeVarInt(version));
-    v.appendVector(value);
+    RefPtr<SharedBuffer> value = prpValue;
+    ASSERT(value);
+    v.append(value->data(), value->size());
 
     levelDBTransaction->put(objectStoredataKey, v);
 

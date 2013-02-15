@@ -41,6 +41,7 @@
 #include "WebIDBDatabaseCallbacksImpl.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBKeyRange.h"
+#include "public/WebData.h"
 
 using namespace WebCore;
 
@@ -109,12 +110,10 @@ void IDBDatabaseBackendProxy::get(int64_t transactionId, int64_t objectStoreId, 
         m_webIDBDatabase->get(transactionId, objectStoreId, indexId, keyRange, keyOnly, new WebIDBCallbacksImpl(callbacks));
 }
 
-void IDBDatabaseBackendProxy::put(int64_t transactionId, int64_t objectStoreId, Vector<uint8_t>* buffer, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
+void IDBDatabaseBackendProxy::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
 {
     if (m_webIDBDatabase) {
-        WebVector<unsigned char> webBuffer(buffer->size());
-        webBuffer.assign(buffer->data(), buffer->size());
-        m_webIDBDatabase->put(transactionId, objectStoreId, &webBuffer, key, static_cast<WebIDBDatabase::PutMode>(putMode), new WebIDBCallbacksImpl(callbacks), indexIds, indexKeys);
+        m_webIDBDatabase->put(transactionId, objectStoreId, WebData(value), key, static_cast<WebIDBDatabase::PutMode>(putMode), new WebIDBCallbacksImpl(callbacks), indexIds, indexKeys);
     }
 }
 

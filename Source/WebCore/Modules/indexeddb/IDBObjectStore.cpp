@@ -43,6 +43,7 @@
 #include "IDBTransaction.h"
 #include "ScriptExecutionContext.h"
 #include "SerializedScriptValue.h"
+#include "SharedBuffer.h"
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -230,7 +231,11 @@ PassRefPtr<IDBRequest> IDBObjectStore::put(IDBDatabaseBackendInterface::PutMode 
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, source, m_transaction.get());
     Vector<uint8_t> valueBytes = serializedValue->toWireBytes();
-    backendDB()->put(m_transaction->id(), id(), &valueBytes, key.release(), static_cast<IDBDatabaseBackendInterface::PutMode>(putMode), request, indexIds, indexKeys);
+    // This is a hack to account for disagreements about whether SerializedScriptValue should deal in Vector<uint8_t> or Vector<char>.
+    // See https://lists.webkit.org/pipermail/webkit-dev/2013-February/023682.html
+    Vector<char>* valueBytesSigned = reinterpret_cast<Vector<char>*>(&valueBytes);
+    RefPtr<SharedBuffer> valueBuffer = SharedBuffer::adoptVector(*valueBytesSigned);
+    backendDB()->put(m_transaction->id(), id(), valueBuffer, key.release(), static_cast<IDBDatabaseBackendInterface::PutMode>(putMode), request, indexIds, indexKeys);
     return request.release();
 }
 
