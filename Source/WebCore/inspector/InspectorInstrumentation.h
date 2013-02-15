@@ -47,6 +47,7 @@
 #include "WebSocketHandshakeResponse.h"
 #include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -82,6 +83,7 @@ class ShadowRoot;
 class StorageArea;
 class StyleResolver;
 class StyleRule;
+class StyleSheet;
 class ThreadableLoaderClient;
 class WorkerContext;
 class WorkerContextProxy;
@@ -122,6 +124,7 @@ public:
     static void didRemoveDOMAttr(Document*, Element*, const AtomicString& name);
     static void characterDataModified(Document*, CharacterData*);
     static void didInvalidateStyleAttr(Document*, Node*);
+    static void activeStyleSheetsUpdated(Document*, const Vector<RefPtr<StyleSheet> >&, const Vector<RefPtr<StyleSheet> >&);
     static void frameWindowDiscarded(Frame*, DOMWindow*);
     static void mediaQueryResultChanged(Document*);
     static void didPushShadowRoot(Element* host, ShadowRoot*);
@@ -325,6 +328,7 @@ private:
     static void didRemoveDOMAttrImpl(InstrumentingAgents*, Element*, const AtomicString& name);
     static void characterDataModifiedImpl(InstrumentingAgents*, CharacterData*);
     static void didInvalidateStyleAttrImpl(InstrumentingAgents*, Node*);
+    static void activeStyleSheetsUpdatedImpl(InstrumentingAgents*, const Vector<RefPtr<StyleSheet> >&, const Vector<RefPtr<StyleSheet> >&);
     static void frameWindowDiscardedImpl(InstrumentingAgents*, DOMWindow*);
     static void mediaQueryResultChangedImpl(InstrumentingAgents*);
     static void didPushShadowRootImpl(InstrumentingAgents*, Element* host, ShadowRoot*);
@@ -613,6 +617,19 @@ inline void InspectorInstrumentation::didInvalidateStyleAttr(Document* document,
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(node);
+#endif
+}
+
+inline void InspectorInstrumentation::activeStyleSheetsUpdated(Document* document, const Vector<RefPtr<StyleSheet> >& oldSheets, const Vector<RefPtr<StyleSheet> >& newSheets)
+{
+#if ENABLE(INSPECTOR)
+    FAST_RETURN_IF_NO_FRONTENDS(void());
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
+        activeStyleSheetsUpdatedImpl(instrumentingAgents, oldSheets, newSheets);
+#else
+    UNUSED_PARAM(document);
+    UNUSED_PARAM(oldSheets);
+    UNUSED_PARAM(newSheets);
 #endif
 }
 

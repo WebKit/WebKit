@@ -1196,17 +1196,11 @@ WebInspector.StylePropertiesSection.prototype = {
             return document.createTextNode(WebInspector.UIString("user stylesheet"));
         if (this.rule.isViaInspector) {
             var element = document.createElement("span");
-            /**
-             * @param {?WebInspector.Resource} resource
-             */
-            function callback(resource)
-            {
-                if (resource)
-                    element.appendChild(linkifyUncopyable(resource.url, this.rule.sourceLine));
-                else
-                    element.textContent = WebInspector.UIString("via inspector");
-            }
-            WebInspector.cssModel.getViaInspectorResourceForRule(this.rule, callback.bind(this));
+            var resource = WebInspector.cssModel.viaInspectorResourceForRule(this.rule);
+            if (resource)
+                element.appendChild(linkifyUncopyable(resource.url, this.rule.sourceLine));
+            else
+                element.textContent = WebInspector.UIString("via inspector");
             return element;
         }
     },

@@ -76,14 +76,10 @@ WebInspector.SASSSourceMapping.prototype = {
 
         if (isAddingRevision)
             return;
-        this._cssModel.resourceBinding().requestResourceURLForStyleSheetId(event.data.styleSheetId, callback.bind(this));
-
-        function callback(url)
-        {
-            if (!url)
-                return;
-            this._cssModel.setSourceMapping(url, null);
-        }
+        var url = this._cssModel.resourceBinding().resourceURLForStyleSheetId(event.data.styleSheetId);
+        if (!url)
+            return;
+        this._cssModel.setSourceMapping(url, null);
     },
 
     /**

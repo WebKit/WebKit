@@ -239,31 +239,13 @@ WebInspector.StyleContentBinding.prototype = {
             userCallback("No resource found: " + uiSourceCode.url);
             return;
         }
-            
-        this._cssModel.resourceBinding().requestStyleSheetIdForResource(resource, callback.bind(this));
 
-        /**
-         * @param {?CSSAgent.StyleSheetId} styleSheetId
-         */
-        function callback(styleSheetId)
-        {
-            if (!styleSheetId) {
-                userCallback("No stylesheet found: " + resource.frameId + ":" + resource.url);
-                return;
-            }
-
-            this._innerSetContent(styleSheetId, content, majorChange, userCallback, null);
+        var styleSheetId = this._cssModel.resourceBinding().styleSheetIdForResource(resource);
+        if (!styleSheetId) {
+            userCallback("No stylesheet found: " + resource.frameId + ":" + resource.url);
+            return;
         }
-    },
 
-    /**
-     * @param {CSSAgent.StyleSheetId} styleSheetId
-     * @param {string} content
-     * @param {boolean} majorChange
-     * @param {function(?string)} userCallback
-     */
-    _innerSetContent: function(styleSheetId, content, majorChange, userCallback)
-    {
         this._isSettingContent = true;
         function callback(error)
         {
@@ -302,25 +284,18 @@ WebInspector.StyleContentBinding.prototype = {
      */
     _innerStyleSheetChanged: function(styleSheetId, content)
     {
-        /**
-         * @param {?string} styleSheetURL
-         */
-        function callback(styleSheetURL)
-        {
-            if (typeof styleSheetURL !== "string")
-                return;
+        var styleSheetURL = this._cssModel.resourceBinding().resourceURLForStyleSheetId(styleSheetId);
+        if (typeof styleSheetURL !== "string")
+            return;
 
-            var uri = WebInspector.fileMapping.uriForURL(styleSheetURL);
-            var uiSourceCode = WebInspector.workspace.uiSourceCodeForURI(uri);
-            if (!uiSourceCode)
-                return;
+        var uri = WebInspector.fileMapping.uriForURL(styleSheetURL);
+        var uiSourceCode = WebInspector.workspace.uiSourceCodeForURI(uri);
+        if (!uiSourceCode)
+            return;
 
-            if (uiSourceCode.styleFile())
-                uiSourceCode.styleFile().addRevision(content);
-        }
-
-        this._cssModel.resourceBinding().requestResourceURLForStyleSheetId(styleSheetId, callback.bind(this));
-    },
+        if (uiSourceCode.styleFile())
+            uiSourceCode.styleFile().addRevision(content);
+    }
 }
 
 /**
