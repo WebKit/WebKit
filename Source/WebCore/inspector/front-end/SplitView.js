@@ -58,7 +58,7 @@ WebInspector.SplitView = function(isVertical, sidebarSizeSettingName, defaultSid
     
     this._sidebarSizeSettingName = sidebarSizeSettingName;
 
-    this._secondIsSidebar = true;
+    this.setSecondIsSidebar(true);
 
     this._innerSetVertical(isVertical);
 }
@@ -118,6 +118,22 @@ WebInspector.SplitView.prototype = {
     secondElement: function()
     {
         return this._secondElement;
+    },
+
+    /**
+     * @return {Element}
+     */
+    get mainElement()
+    {
+        return this.isSidebarSecond() ? this.firstElement() : this.secondElement();
+    },
+
+    /**
+     * @return {Element}
+     */
+    get sidebarElement()
+    {
+        return this.isSidebarSecond() ? this.secondElement() : this.firstElement();
     },
 
     /**

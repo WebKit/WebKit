@@ -109,6 +109,8 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this.splitView.mainElement.appendChild(this.debugSidebarResizeWidgetElement);
     this.splitView.mainElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
 
+    this.splitView.sidebarElement.addEventListener("contextmenu", this._sidebarContextMenuEventFired.bind(this), false);
+
     this.sidebarPanes = {};
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
     this.sidebarPanes.callstack = new WebInspector.CallStackSidebarPane();
@@ -123,18 +125,13 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
         this.sidebarPanes.workerList = new WebInspector.WorkersSidebarPane(WebInspector.workerManager);
     }
 
-    this.sidebarPaneView = new WebInspector.SidebarPaneGroup();
-    this.sidebarPaneView.element.id = "scripts-debug-sidebar-contents";
-    for (var pane in this.sidebarPanes)
-        this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
-    this.sidebarPaneView.attachToPanel(this);
+    this._splitDirectionSetting = WebInspector.settings.createSetting(this.name + "PanelSplitHorizontally", false);
+    this._splitDirectionSetting.addChangeListener(this._arrangeSidebarPanes.bind(this));
 
-    this.sidebarPanes.callstack.expand();
-    this.sidebarPanes.scopechain.expand();
-    this.sidebarPanes.jsBreakpoints.expand();
+    this._splitSidebarSetting = WebInspector.settings.createSetting(this.name + "PanelSplitSidebar", false);
+    this._splitSidebarSetting.addChangeListener(this._arrangeSidebarPanes.bind(this));
 
-    if (WebInspector.settings.watchExpressions.get().length > 0)
-        this.sidebarPanes.watchExpressions.expand();
+    this._arrangeSidebarPanes();
 
     this.sidebarPanes.callstack.registerShortcuts(this.registerShortcuts.bind(this));
     this.registerShortcuts(WebInspector.ScriptsPanelDescriptor.ShortcutKeys.EvaluateSelectionInConsole, this._evaluateSelectionInConsole.bind(this));
@@ -1125,7 +1122,7 @@ WebInspector.ScriptsPanel.prototype = {
             contextMenu.appendApplicableItems(resource.request);
 
         if (WebInspector.inspectorView.currentPanel() === this)
-            this.sidebarPaneView.populateContextMenu(contextMenu);
+            this._populateContextMenuForSidebar(contextMenu);
     },
 
     /** 
@@ -1167,8 +1164,74 @@ WebInspector.ScriptsPanel.prototype = {
     _contextMenuEventFired: function(event)
     {
         var contextMenu = new WebInspector.ContextMenu(event);
-        this.sidebarPaneView.populateContextMenu(contextMenu);
+        this._populateContextMenuForSidebar(contextMenu);
         contextMenu.show();
+    },
+
+    _sidebarContextMenuEventFired: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu(event);
+        this._populateContextMenuForSidebar(contextMenu);
+        contextMenu.show();
+    },
+
+    _populateContextMenuForSidebar: function(contextMenu)
+    {
+        if (!WebInspector.experimentsSettings.horizontalPanelSplit.isEnabled())
+            return;
+
+        function toggleSetting(setting)
+        {
+            setting.set(!setting.get());
+        }
+        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Split horizontally" : "Split Horizontally"), toggleSetting.bind(this, this._splitDirectionSetting), this._splitDirectionSetting.get());
+
+        if (!this.splitView.isVertical())
+            contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Split sidebar" : "Split Sidebar"), toggleSetting.bind(this, this._splitSidebarSetting), this._splitSidebarSetting.get());
+    },
+
+    _arrangeSidebarPanes: function()
+    {
+        if (this.sidebarPaneView)
+            this.sidebarPaneView.detach();
+
+        var vertical = !WebInspector.experimentsSettings.horizontalPanelSplit.isEnabled() || !this._splitDirectionSetting.get();
+        this.splitView.setVertical(vertical);
+
+        if (vertical) {
+            this.sidebarPaneView = new WebInspector.SidebarPaneStack();
+            for (var pane in this.sidebarPanes)
+                this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
+        } else if (!this._splitSidebarSetting.get()) {
+            this.sidebarPaneView = new WebInspector.SidebarTabbedPane();
+            for (var pane in this.sidebarPanes)
+                this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
+        } else {
+            this.sidebarPaneView = new WebInspector.SplitView(true, this.name + "PanelSplitSidebarRatio", 0.5);
+
+            var group1 = new WebInspector.SidebarPaneStack();
+            group1.show(this.sidebarPaneView.firstElement());
+            group1.addPane(this.sidebarPanes.watchExpressions);
+            group1.addPane(this.sidebarPanes.callstack);
+            group1.addPane(this.sidebarPanes.scopechain);
+
+            var group2 = new WebInspector.SidebarTabbedPane();
+            group2.show(this.sidebarPaneView.secondElement());
+            group2.addPane(this.sidebarPanes.jsBreakpoints);
+            group2.addPane(this.sidebarPanes.domBreakpoints);
+            group2.addPane(this.sidebarPanes.xhrBreakpoints);
+            group2.addPane(this.sidebarPanes.eventListenerBreakpoints);
+        }
+
+        this.sidebarPaneView.element.id = "scripts-debug-sidebar-contents";
+        this.sidebarPaneView.show(this.splitView.sidebarElement);
+
+        this.sidebarPanes.scopechain.expand();
+        this.sidebarPanes.jsBreakpoints.expand();
+        this.sidebarPanes.callstack.expand();
+
+        if (WebInspector.settings.watchExpressions.get().length > 0)
+            this.sidebarPanes.watchExpressions.expand();
     },
 
     __proto__: WebInspector.Panel.prototype

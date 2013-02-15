@@ -62,22 +62,6 @@ WebInspector.SidebarView.SidebarPosition = {
 
 WebInspector.SidebarView.prototype = {
     /**
-     * @return {Element}
-     */
-    get mainElement()
-    {
-        return this.isSidebarSecond() ? this.firstElement() : this.secondElement();
-    },
-
-    /**
-     * @return {Element}
-     */
-    get sidebarElement()
-    {
-        return this.isSidebarSecond() ? this.secondElement() : this.firstElement();
-    },
-
-    /**
      * @param {number} width
      */
     setMinimumSidebarWidth: function(width)

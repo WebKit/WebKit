@@ -66,6 +66,7 @@ WebInspector.ElementsPanel = function()
     WebInspector.settings.domWordWrap.addChangeListener(this._domWordWrapSettingChanged.bind(this));
 
     this.contentElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), true);
+    this.splitView.sidebarElement.addEventListener("contextmenu", this._sidebarContextMenuEventFired.bind(this), false);
 
     this.treeOutline = new WebInspector.ElementsTreeOutline(true, true, false, this._populateContextMenu.bind(this), this._setPseudoClassForNodeId.bind(this));
     this.treeOutline.wireToDomAgent();
@@ -85,21 +86,22 @@ WebInspector.ElementsPanel = function()
     this.sidebarPanes.domBreakpoints = WebInspector.domBreakpointsSidebarPane.createProxy(this);
     this.sidebarPanes.eventListeners = new WebInspector.EventListenersSidebarPane();
 
-    this.sidebarPanes.styles.setShowCallback(this.updateStyles.bind(this, false));
-    this.sidebarPanes.metrics.setShowCallback(this.updateMetrics.bind(this));
-    this.sidebarPanes.properties.setShowCallback(this.updateProperties.bind(this));
-    this.sidebarPanes.eventListeners.setShowCallback(this.updateEventListeners.bind(this));
+    this.sidebarPanes.styles.addEventListener(WebInspector.SidebarPane.EventTypes.wasShown, this.updateStyles.bind(this, false));
+    this.sidebarPanes.metrics.addEventListener(WebInspector.SidebarPane.EventTypes.wasShown, this.updateMetrics.bind(this));
+    this.sidebarPanes.properties.addEventListener(WebInspector.SidebarPane.EventTypes.wasShown, this.updateProperties.bind(this));
+    this.sidebarPanes.eventListeners.addEventListener(WebInspector.SidebarPane.EventTypes.wasShown, this.updateEventListeners.bind(this));
 
     this.sidebarPanes.styles.addEventListener("style edited", this._stylesPaneEdited, this);
     this.sidebarPanes.styles.addEventListener("style property toggled", this._stylesPaneEdited, this);
     this.sidebarPanes.metrics.addEventListener("metrics edited", this._metricsPaneEdited, this);
 
-    this.sidebarPaneView = new WebInspector.SidebarPaneGroup();
-    for (var pane in this.sidebarPanes)
-        this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
-    this.sidebarPaneView.attachToPanel(this);
+    this._splitDirectionSetting = WebInspector.settings.createSetting(this.name + "PanelSplitHorizontally", false);
+    this._splitDirectionSetting.addChangeListener(this._arrangeSidebarPanes.bind(this));
 
-    this.sidebarPanes.styles.expand();
+    this._splitSidebarSetting = WebInspector.settings.createSetting(this.name + "PanelSplitSidebar", false);
+    this._splitSidebarSetting.addChangeListener(this._arrangeSidebarPanes.bind(this));
+
+    this._arrangeSidebarPanes();
 
     this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
     this._popoverHelper.setTimeout(0);
@@ -350,7 +352,7 @@ WebInspector.ElementsPanel.prototype = {
         contextMenu.appendSeparator();
         contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Word wrap" : "Word Wrap"), toggleWordWrap.bind(this), WebInspector.settings.domWordWrap.get());
 
-        this.sidebarPaneView.populateContextMenu(contextMenu);
+        this._populateContextMenuForSidebar(contextMenu);
 
         contextMenu.show();
     },
@@ -1090,6 +1092,76 @@ WebInspector.ElementsPanel.prototype = {
         }
 
         contextMenu.appendItem(WebInspector.UIString("Reveal in Elements Panel"), revealElement.bind(this));
+    },
+
+    _sidebarContextMenuEventFired: function(event)
+    {
+        var contextMenu = new WebInspector.ContextMenu(event);
+        this._populateContextMenuForSidebar(contextMenu);
+        contextMenu.show();
+    },
+
+    _populateContextMenuForSidebar: function(contextMenu)
+    {
+        if (!WebInspector.experimentsSettings.horizontalPanelSplit.isEnabled())
+            return;
+
+        function toggleSetting(setting)
+        {
+            setting.set(!setting.get());
+        }
+        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Split horizontally" : "Split Horizontally"), toggleSetting.bind(this, this._splitDirectionSetting), this._splitDirectionSetting.get());
+
+        if (!this.splitView.isVertical())
+            contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Split sidebar" : "Split Sidebar"), toggleSetting.bind(this, this._splitSidebarSetting), this._splitSidebarSetting.get());
+    },
+
+    _arrangeSidebarPanes: function()
+    {
+        if (this.sidebarPaneView)
+            this.sidebarPaneView.detach();
+
+        var vertical = !WebInspector.experimentsSettings.horizontalPanelSplit.isEnabled() || !this._splitDirectionSetting.get();
+        this.splitView.setVertical(vertical);
+
+        if (vertical) {
+            this.sidebarPaneView = new WebInspector.SidebarPaneStack();
+            for (var pane in this.sidebarPanes)
+                this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
+        } else if (!this._splitSidebarSetting.get()) {
+            this.sidebarPaneView = new WebInspector.SidebarTabbedPane();
+            for (var pane in this.sidebarPanes)
+                this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
+        } else {
+            this.sidebarPaneView = new WebInspector.SplitView(true, this.name + "PanelSplitSidebarRatio", 0.5);
+
+            var group1 = new WebInspector.SidebarTabbedPane();
+            group1.show(this.sidebarPaneView.firstElement());
+            group1.addPane(this.sidebarPanes.computedStyle);
+            group1.addPane(this.sidebarPanes.styles);
+            group1.addPane(this.sidebarPanes.metrics);
+
+            var group2 = new WebInspector.SidebarTabbedPane();
+            group2.show(this.sidebarPaneView.secondElement());
+            group2.addPane(this.sidebarPanes.properties);
+            group2.addPane(this.sidebarPanes.domBreakpoints);
+            group2.addPane(this.sidebarPanes.eventListeners);
+
+            this.sidebarPaneView.extensionPaneContainer = group2;
+        }
+        this.sidebarPaneView.show(this.splitView.sidebarElement);
+        this.sidebarPanes.styles.expand();
+    },
+
+    /**
+     * @param {string} id
+     * @param {WebInspector.SidebarPane} pane
+     */
+    addExtensionSidebarPane: function(id, pane)
+    {
+        this.sidebarPanes[id] = pane;
+        var container = this.sidebarPaneView.extensionPaneContainer || this.sidebarPaneView;
+        container.addPane(pane);
     },
 
     __proto__: WebInspector.Panel.prototype

@@ -366,19 +366,9 @@ WebInspector.DOMBreakpointsSidebarPane.Proxy = function(pane, panel)
 }
 
 WebInspector.DOMBreakpointsSidebarPane.Proxy.prototype = {
-    expanded: function()
-    {
-        return this._wrappedPane.expanded();
-    },
-
     expand: function()
     {
         this._wrappedPane.expand();
-    },
-
-    collapse: function()
-    {
-        this._wrappedPane.collapse();
     },
 
     onContentReady: function()
@@ -398,11 +388,8 @@ WebInspector.DOMBreakpointsSidebarPane.Proxy.prototype = {
 
     _reattachBody: function()
     {
-        if (this.bodyElement.parentNode == this.element)
-            return;
-
-        this.bodyElement.removeSelf();
-        this.element.appendChild(this.bodyElement);
+        if (this.bodyElement.parentNode !== this.element)
+            this.element.appendChild(this.bodyElement);
     },
 
     __proto__: WebInspector.SidebarPane.prototype
