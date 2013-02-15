@@ -1,3 +1,14 @@
+2013-02-15  Jochen Eisinger  <jochen@chromium.org>
+
+        Speculative build fix for chromium-win.
+
+        Unreviewed build fix.
+
+        Add declarations of the copy constructor and assignment operator to
+        WebTestProxyBase, so VS doesn't try to generate them.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+
 2013-02-15  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Port GCController to JSC C API

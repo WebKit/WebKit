@@ -192,6 +192,9 @@ private:
     std::map<unsigned, std::string> m_resourceIdentifierMap;
 
     bool m_logConsoleOutput;
+private:
+    WebTestProxyBase(WebTestProxyBase&);
+    WebTestProxyBase& operator=(const WebTestProxyBase&);
 };
 
 // Use this template to inject methods into your WebViewClient/WebFrameClient
