@@ -66,8 +66,8 @@ const char* nameForSQLTransactionState(SQLTransactionState state)
     default:
         return "UNKNOWN";
     }
-    ASSERT_NOT_REACHED();
-    return "UNKNOWN";
+    //ASSERT_NOT_REACHED();
+    //return "UNKNOWN";
 }
 #endif
 
