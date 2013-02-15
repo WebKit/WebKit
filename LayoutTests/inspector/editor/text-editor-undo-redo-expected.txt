@@ -19,7 +19,7 @@ Text after undo:
 
 Text after redo:
 1
->	<2
+	|2
 3
 
 
@@ -60,14 +60,14 @@ function foo()
 Text after first redo:
 function foo()
 {
-    bar()>;<
+    bar();|
 }
 
 Text after second redo:
 function foo()
 {
     bar();
-    baz()>;<
+    baz();|
 }
 
 Text after third redo:
@@ -75,7 +75,7 @@ function foo()
 {
     bar();
     baz();
-    foo()>;<
+    foo();|
 }
 
 
@@ -122,15 +122,15 @@ function foo()
 {
     bar();
     baz();
-    foo()>;<
+    foo();|
 }
 
 Text after second redo:
 function foo()
 {
     bar();
->    baz();
-<    foo();
+    baz();
+|    foo();
 }
 
 

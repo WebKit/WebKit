@@ -504,7 +504,7 @@ WebInspector.TextEditorModel.prototype = {
         var range = this._doUndo(this._redoStack);
         delete this._inRedo;
 
-        return range;
+        return range ? range.collapseToEnd() : null;
     },
 
     /**
