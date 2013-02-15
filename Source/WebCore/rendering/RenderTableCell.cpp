@@ -79,10 +79,10 @@ unsigned RenderTableCell::parseColSpanFromDOM() const
 {
     ASSERT(node());
     if (node()->hasTagName(tdTag) || node()->hasTagName(thTag))
-        return toHTMLTableCellElement(node())->colSpan();
+        return min<unsigned>(toHTMLTableCellElement(node())->colSpan(), maxColumnIndex);
 #if ENABLE(MATHML)
     if (node()->hasTagName(MathMLNames::mtdTag))
-        return toMathMLElement(node())->colSpan();
+        return min<unsigned>(toMathMLElement(node())->colSpan(), maxColumnIndex);
 #endif
     return 1;
 }
@@ -91,10 +91,10 @@ unsigned RenderTableCell::parseRowSpanFromDOM() const
 {
     ASSERT(node());
     if (node()->hasTagName(tdTag) || node()->hasTagName(thTag))
-        return toHTMLTableCellElement(node())->rowSpan();
+        return min<unsigned>(toHTMLTableCellElement(node())->rowSpan(), maxRowIndex);
 #if ENABLE(MATHML)
     if (node()->hasTagName(MathMLNames::mtdTag))
-        return toMathMLElement(node())->rowSpan();
+        return min<unsigned>(toMathMLElement(node())->rowSpan(), maxRowIndex);
 #endif
     return 1;
 }
