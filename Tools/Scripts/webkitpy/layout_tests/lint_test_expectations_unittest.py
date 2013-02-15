@@ -59,6 +59,8 @@ class FakePort(object):
     def get_option(self, _, val):
         return val
 
+    def path_to_generic_test_expectations_file(self):
+        return ''
 
 class FakeFactory(object):
     def __init__(self, host, ports):

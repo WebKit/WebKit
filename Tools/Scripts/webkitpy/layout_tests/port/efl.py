@@ -118,7 +118,7 @@ class EflPort(Port):
     def default_baseline_search_path(self):
         return map(self._webkit_baseline_path, self._search_paths())
 
-    def expectations_files(self):
+    def _port_specific_expectations_files(self):
         # FIXME: We should be able to use the default algorithm here.
         return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self._search_paths()]))
 

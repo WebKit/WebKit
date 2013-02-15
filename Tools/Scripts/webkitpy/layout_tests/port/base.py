@@ -806,6 +806,10 @@ class Port(object):
         return self._options.ensure_value(name, default_value)
 
     @memoized
+    def path_to_generic_test_expectations_file(self):
+        return self._filesystem.join(self.layout_tests_dir(), 'TestExpectations')
+
+    @memoized
     def path_to_test_expectations_file(self):
         """Update the test expectations to the passed-in string.
 
@@ -1070,7 +1074,7 @@ class Port(object):
                 _log.warning("additional_expectations path '%s' does not exist" % path)
         return expectations
 
-    def expectations_files(self):
+    def _port_specific_expectations_files(self):
         # Unlike baseline_search_path, we only want to search [WK2-PORT, PORT-VERSION, PORT] and any directories
         # included via --additional-platform-directory, not the full casade.
         search_paths = [self.port_name]
@@ -1087,6 +1091,9 @@ class Port(object):
         search_paths.extend(self.get_option("additional_platform_directory", []))
 
         return [self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in search_paths]
+
+    def expectations_files(self):
+        return [self.path_to_generic_test_expectations_file()] + self._port_specific_expectations_files()
 
     def repository_paths(self):
         """Returns a list of (repository_name, repository_path) tuples of its depending code base.

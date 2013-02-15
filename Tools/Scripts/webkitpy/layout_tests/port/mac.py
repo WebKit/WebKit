@@ -82,8 +82,8 @@ class MacPort(ApplePort):
             fallback_names = [self._wk2_port_name(), 'wk2'] + fallback_names
         return map(self._webkit_baseline_path, fallback_names)
 
-    def expectations_files(self):
-        return reversed([self._filesystem.join(self._webkit_baseline_path(d), 'TestExpectations') for d in self.baseline_search_path()])
+    def _port_specific_expectations_files(self):
+        return list(reversed([self._filesystem.join(self._webkit_baseline_path(p), 'TestExpectations') for p in self.baseline_search_path()]))
 
     def setup_environ_for_server(self, server_name=None):
         env = super(MacPort, self).setup_environ_for_server(server_name)

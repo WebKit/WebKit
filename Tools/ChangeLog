@@ -1,3 +1,50 @@
+2013-02-14  Glenn Adams  <glenn@skynav.com>
+
+        new-run-webkit-tests needs a shared TestExpectations between all WebKit ports
+        https://bugs.webkit.org/show_bug.cgi?id=37565
+
+        Introduce generic TestExpectations file that applies as a fallback for all ports, the location of which
+        is LayoutTests/TestExpectations.
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/layout_tests/lint_test_expectations_unittest.py:
+        (FakePort.path_to_generic_test_expectations_file):
+        * Scripts/webkitpy/layout_tests/models/test_expectations.py:
+        (TestExpectations.__init__):
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.path_to_generic_test_expectations_file):
+        (Port):
+        (Port._port_specific_expectations_files):
+        (Port.expectations_files):
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort._port_specific_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_android.py:
+        (ChromiumAndroidPort._port_specific_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/chromium_port_testcase.py:
+        (ChromiumPortTestCase.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/efl.py:
+        (EflPort._port_specific_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+        (GtkPort._port_specific_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/gtk_unittest.py:
+        (GtkPortTest.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/mac.py:
+        (MacPort._port_specific_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        (PortTestCase.test_expectations_ordering):
+        (test_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/qt.py:
+        (QtPort._port_specific_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/qt_unittest.py:
+        (QtPortTest.test_expectations_files):
+        * Scripts/webkitpy/layout_tests/port/win_unittest.py:
+        (WinPortTest.test_expectations_files):
+        * Scripts/webkitpy/tool/commands/queries_unittest.py:
+        (PrintExpectationsTest.test_paths):
+        * Scripts/webkitpy/tool/commands/rebaseline.py:
+        (RebaselineTest._update_expectations_file):
+
 2013-02-14  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move pixel generation logic to TestRunner library

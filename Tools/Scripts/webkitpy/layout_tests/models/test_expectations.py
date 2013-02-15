@@ -842,7 +842,7 @@ class TestExpectations(object):
     # FIXME: This constructor does too much work. We should move the actual parsing of
     # the expectations into separate routines so that linting and handling overrides
     # can be controlled separately, and the constructor can be more of a no-op.
-    def __init__(self, port, tests=None, include_overrides=True, expectations_to_lint=None):
+    def __init__(self, port, tests=None, include_generic=True, include_overrides=True, expectations_to_lint=None):
         self._full_test_list = tests
         self._test_config = port.test_configuration()
         self._is_lint_mode = expectations_to_lint is not None
@@ -850,16 +850,32 @@ class TestExpectations(object):
         self._parser = TestExpectationParser(port, tests, self._is_lint_mode)
         self._port = port
         self._skipped_tests_warnings = []
+        self._expectations = []
 
         expectations_dict = expectations_to_lint or port.expectations_dict()
-        self._expectations = self._parser.parse(expectations_dict.keys()[0], expectations_dict.values()[0])
-        self._add_expectations(self._expectations)
 
-        if len(expectations_dict) > 1 and include_overrides:
-            for name in expectations_dict.keys()[1:]:
-                expectations = self._parser.parse(name, expectations_dict[name])
+        expectations_dict_index = 0
+        # Populate generic expectations (if enabled by include_generic).
+        if port.path_to_generic_test_expectations_file() in expectations_dict:
+            if include_generic:
+                expectations = self._parser.parse(expectations_dict.keys()[expectations_dict_index], expectations_dict.values()[expectations_dict_index])
                 self._add_expectations(expectations)
                 self._expectations += expectations
+            expectations_dict_index += 1
+
+        # Populate default port expectations (always enabled).
+        if len(expectations_dict) > expectations_dict_index:
+            expectations = self._parser.parse(expectations_dict.keys()[expectations_dict_index], expectations_dict.values()[expectations_dict_index])
+            self._add_expectations(expectations)
+            self._expectations += expectations
+            expectations_dict_index += 1
+
+        # Populate override expectations (if enabled by include_overrides).
+        while len(expectations_dict) > expectations_dict_index and include_overrides:
+            expectations = self._parser.parse(expectations_dict.keys()[expectations_dict_index], expectations_dict.values()[expectations_dict_index])
+            self._add_expectations(expectations)
+            self._expectations += expectations
+            expectations_dict_index += 1
 
         # FIXME: move ignore_tests into port.skipped_layout_tests()
         self.add_skipped_tests(port.skipped_layout_tests(tests).union(set(port.get_option('ignore_tests', []))))

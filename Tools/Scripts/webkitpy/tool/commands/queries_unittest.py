@@ -223,7 +223,8 @@ class PrintExpectationsTest(unittest.TestCase):
 
     def test_paths(self):
         self.run_test([],
-                      ('LayoutTests/platform/test/TestExpectations\n'
+                      ('LayoutTests/TestExpectations\n'
+                       'LayoutTests/platform/test/TestExpectations\n'
                        'LayoutTests/platform/test-win-xp/TestExpectations\n'),
                       paths=True)
 

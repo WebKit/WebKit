@@ -424,7 +424,8 @@ class PortTestCase(unittest.TestCase):
         for path in port.expectations_files():
             port._filesystem.write_text_file(path, '')
         ordered_dict = port.expectations_dict()
-        self.assertEqual(port.path_to_test_expectations_file(), ordered_dict.keys()[0])
+        self.assertEqual(port.path_to_generic_test_expectations_file(), ordered_dict.keys()[0])
+        self.assertEqual(port.path_to_test_expectations_file(), ordered_dict.keys()[1])
 
         options = MockOptions(additional_expectations=['/tmp/foo', '/tmp/bar'])
         port = self.make_port(options=options)
@@ -507,17 +508,17 @@ class PortTestCase(unittest.TestCase):
         def platform_dirs(port):
             return [port.host.filesystem.basename(port.host.filesystem.dirname(f)) for f in port.expectations_files()]
 
-        self.assertEqual(platform_dirs(port), ['testwebkitport'])
+        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport'])
 
         port = TestWebKitPort(port_name="testwebkitport-version")
-        self.assertEqual(platform_dirs(port), ['testwebkitport', 'testwebkitport-version'])
+        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport', 'testwebkitport-version'])
 
         port = TestWebKitPort(port_name="testwebkitport-version-wk2")
-        self.assertEqual(platform_dirs(port), ['testwebkitport', 'testwebkitport-version', 'wk2', 'testwebkitport-wk2'])
+        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport', 'testwebkitport-version', 'wk2', 'testwebkitport-wk2'])
 
         port = TestWebKitPort(port_name="testwebkitport-version",
                               options=MockOptions(additional_platform_directory=["internal-testwebkitport"]))
-        self.assertEqual(platform_dirs(port), ['testwebkitport', 'testwebkitport-version', 'internal-testwebkitport'])
+        self.assertEqual(platform_dirs(port), ['LayoutTests', 'testwebkitport', 'testwebkitport-version', 'internal-testwebkitport'])
 
     def test_root_option(self):
         port = TestWebKitPort()

@@ -147,7 +147,7 @@ class QtPort(Port):
     def default_baseline_search_path(self):
         return map(self._webkit_baseline_path, self._search_paths())
 
-    def expectations_files(self):
+    def _port_specific_expectations_files(self):
         paths = self._search_paths()
         if self.get_option('webkit_test_runner'):
             paths.append('wk2')

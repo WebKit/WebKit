@@ -152,7 +152,7 @@ class RebaselineTest(AbstractRebaseliningCommand):
             path = port.path_to_test_expectations_file()
             lock = self._tool.make_file_lock(path + '.lock')
             lock.acquire_lock()
-            expectations = TestExpectations(port, include_overrides=False)
+            expectations = TestExpectations(port, include_generic=False, include_overrides=False)
             for test_configuration in port.all_test_configurations():
                 if test_configuration.version == port.test_configuration().version:
                     expectationsString = expectations.remove_configuration_from_test(test_name, test_configuration)

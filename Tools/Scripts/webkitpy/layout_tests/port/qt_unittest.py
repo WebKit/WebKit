@@ -97,8 +97,9 @@ class QtPortTest(port_testcase.PortTestCase):
             expectations_case = deepcopy(case)
             if expectations_case['use_webkit2']:
                 expectations_case['search_paths'].append("wk2")
+            expectations_case['search_paths'].append('')
             expectations_case['search_paths'].reverse()
-            expectations_case['search_paths'] = map(lambda path: '/mock-checkout/LayoutTests/platform/%s/TestExpectations' % (path), expectations_case['search_paths'])
+            expectations_case['search_paths'] = map(lambda path: '/mock-checkout/LayoutTests/TestExpectations' if not path else '/mock-checkout/LayoutTests/platform/%s/TestExpectations' % (path), expectations_case['search_paths'])
             self._assert_expectations_files(**expectations_case)
 
     def test_show_results_html_file(self):
