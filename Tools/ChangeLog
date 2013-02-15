@@ -1,3 +1,15 @@
+2013-02-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        NRWT: ML Debug Test bot is timing out after cleaning up ports
+        https://bugs.webkit.org/show_bug.cgi?id=109912
+
+        Reviewed by Simon Fraser.
+
+        Added more debug messgaes to diagnose the issue.
+
+        * Scripts/webkitpy/layout_tests/controllers/manager.py:
+        (Manager.run):
+
 2013-02-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         Unreviewed. Add myself as a committer.
