@@ -41,15 +41,15 @@ private:
     StorageAreaProxy(StorageNamespaceProxy*, PassRefPtr<WebCore::SecurityOrigin>);
 
     // WebCore::StorageArea.
-    virtual unsigned length(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const OVERRIDE;
-    virtual String key(unsigned index, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const OVERRIDE;
-    virtual String getItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const OVERRIDE;
+    virtual unsigned length(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
+    virtual String key(unsigned index, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
+    virtual String getItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual void setItem(const String& key, const String& value, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual void removeItem(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
     virtual void clear(WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
-    virtual bool contains(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) const OVERRIDE;
-    virtual bool canAccessStorage(WebCore::Frame*) const OVERRIDE;
-    virtual size_t memoryBytesUsedByCache() const OVERRIDE;
+    virtual bool contains(const String& key, WebCore::ExceptionCode&, WebCore::Frame* sourceFrame) OVERRIDE;
+    virtual bool canAccessStorage(WebCore::Frame*) OVERRIDE;
+    virtual size_t memoryBytesUsedByCache() OVERRIDE;
     virtual void incrementAccessCount() OVERRIDE;
     virtual void decrementAccessCount() OVERRIDE;
     virtual void closeDatabaseIfIdle() OVERRIDE;

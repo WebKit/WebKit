@@ -62,7 +62,7 @@ StorageAreaProxy::~StorageAreaProxy()
 {
 }
 
-unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* frame) const
+unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* frame)
 {
     if (!canAccessStorage(frame)) {
         ec = SECURITY_ERR;
@@ -72,7 +72,7 @@ unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* frame) const
     return m_storageArea->length();
 }
 
-String StorageAreaProxy::key(unsigned index, ExceptionCode& ec, Frame* frame) const
+String StorageAreaProxy::key(unsigned index, ExceptionCode& ec, Frame* frame)
 {
     if (!canAccessStorage(frame)) {
         ec = SECURITY_ERR;
@@ -82,7 +82,7 @@ String StorageAreaProxy::key(unsigned index, ExceptionCode& ec, Frame* frame) co
     return m_storageArea->key(index);
 }
 
-String StorageAreaProxy::getItem(const String& key, ExceptionCode& ec, Frame* frame) const
+String StorageAreaProxy::getItem(const String& key, ExceptionCode& ec, Frame* frame)
 {
     if (!canAccessStorage(frame)) {
         ec = SECURITY_ERR;
@@ -123,7 +123,7 @@ void StorageAreaProxy::clear(ExceptionCode& ec, Frame* frame)
     m_storageArea->clear(frame->document()->url());
 }
 
-bool StorageAreaProxy::contains(const String& key, ExceptionCode& ec, Frame* frame) const
+bool StorageAreaProxy::contains(const String& key, ExceptionCode& ec, Frame* frame)
 {
     if (!canAccessStorage(frame)) {
         ec = SECURITY_ERR;
@@ -132,7 +132,7 @@ bool StorageAreaProxy::contains(const String& key, ExceptionCode& ec, Frame* fra
     return !getItem(key, ec, frame).isNull();
 }
 
-bool StorageAreaProxy::canAccessStorage(Frame* frame) const
+bool StorageAreaProxy::canAccessStorage(Frame* frame)
 {
     if (!frame || !frame->page())
         return false;
@@ -146,7 +146,7 @@ bool StorageAreaProxy::canAccessStorage(Frame* frame) const
     return result;
 }
 
-size_t StorageAreaProxy::memoryBytesUsedByCache() const
+size_t StorageAreaProxy::memoryBytesUsedByCache()
 {
     return m_storageArea->memoryBytesUsedByCache();
 }

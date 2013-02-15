@@ -59,21 +59,21 @@ StorageAreaProxy::~StorageAreaProxy()
     WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageArea(m_storageAreaID), 0);
 }
 
-unsigned StorageAreaProxy::length(ExceptionCode&, Frame* sourceFrame) const
+unsigned StorageAreaProxy::length(ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
     return 0;
 }
 
-String StorageAreaProxy::key(unsigned index, ExceptionCode&, Frame* sourceFrame) const
+String StorageAreaProxy::key(unsigned index, ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
     return String();
 }
 
-String StorageAreaProxy::getItem(const String& key, ExceptionCode&, Frame* sourceFrame) const
+String StorageAreaProxy::getItem(const String& key, ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
@@ -98,18 +98,18 @@ void StorageAreaProxy::clear(ExceptionCode&, Frame* sourceFrame)
     ASSERT_NOT_REACHED();
 }
 
-bool StorageAreaProxy::contains(const String& key, ExceptionCode&, Frame* sourceFrame) const
+bool StorageAreaProxy::contains(const String& key, ExceptionCode&, Frame* sourceFrame)
 {
     // FIXME: Implement this.
     return false;
 }
 
-bool StorageAreaProxy::canAccessStorage(Frame* frame) const
+bool StorageAreaProxy::canAccessStorage(Frame* frame)
 {
     return frame && frame->page();
 }
 
-size_t StorageAreaProxy::memoryBytesUsedByCache() const
+size_t StorageAreaProxy::memoryBytesUsedByCache()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();

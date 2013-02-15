@@ -44,17 +44,17 @@ namespace WebCore {
         virtual ~StorageAreaImpl();
 
         // The HTML5 DOM Storage API (and contains)
-        virtual unsigned length(ExceptionCode&, Frame* sourceFrame) const;
-        virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) const;
-        virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) const;
-        virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
-        virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame);
-        virtual void clear(ExceptionCode&, Frame* sourceFrame);
-        virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) const;
+        virtual unsigned length(ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+        virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+        virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+        virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+        virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+        virtual void clear(ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+        virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
 
-        virtual bool canAccessStorage(Frame* sourceFrame) const;
+        virtual bool canAccessStorage(Frame* sourceFrame) OVERRIDE;
 
-        virtual size_t memoryBytesUsedByCache() const;
+        virtual size_t memoryBytesUsedByCache() OVERRIDE;
 
         virtual void incrementAccessCount();
         virtual void decrementAccessCount();

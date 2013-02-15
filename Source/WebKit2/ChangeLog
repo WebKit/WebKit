@@ -1,3 +1,22 @@
+2013-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Remove const from a bunch of StorageArea member functions
+        https://bugs.webkit.org/show_bug.cgi?id=109957
+
+        Reviewed by Beth Dakin.
+
+        Update for WebCore changes.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::length):
+        (WebKit::StorageAreaProxy::key):
+        (WebKit::StorageAreaProxy::getItem):
+        (WebKit::StorageAreaProxy::contains):
+        (WebKit::StorageAreaProxy::canAccessStorage):
+        (WebKit::StorageAreaProxy::memoryBytesUsedByCache):
+        * WebProcess/Storage/StorageAreaProxy.h:
+        (StorageAreaProxy):
+
 2013-02-15  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
         [EFL][WK2] Use C API inside BatteryProvider and NetworkInfoProvider

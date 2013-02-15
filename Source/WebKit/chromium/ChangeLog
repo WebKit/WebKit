@@ -1,3 +1,22 @@
+2013-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Remove const from a bunch of StorageArea member functions
+        https://bugs.webkit.org/show_bug.cgi?id=109957
+
+        Reviewed by Beth Dakin.
+
+        Update for WebCore changes.
+
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::length):
+        (WebCore::StorageAreaProxy::key):
+        (WebCore::StorageAreaProxy::getItem):
+        (WebCore::StorageAreaProxy::contains):
+        (WebCore::StorageAreaProxy::canAccessStorage):
+        (WebCore::StorageAreaProxy::memoryBytesUsedByCache):
+        * src/StorageAreaProxy.h:
+        (StorageAreaProxy):
+
 2013-02-15  Keishi Hattori  <keishi@webkit.org>
 
         PagePopupController.formatMonth should support short month format

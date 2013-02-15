@@ -48,17 +48,17 @@ public:
     virtual ~StorageAreaProxy();
 
     // The HTML5 DOM Storage API
-    virtual unsigned length(ExceptionCode&, Frame* sourceFrame) const;
-    virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) const;
-    virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) const;
+    virtual unsigned length(ExceptionCode&, Frame* sourceFrame);
+    virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame);
+    virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame);
     virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame);
     virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame);
     virtual void clear(ExceptionCode&, Frame* sourceFrame);
-    virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) const;
+    virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame);
 
-    virtual bool canAccessStorage(Frame*) const;
+    virtual bool canAccessStorage(Frame*);
 
-    virtual size_t memoryBytesUsedByCache() const;
+    virtual size_t memoryBytesUsedByCache();
 
     static void dispatchLocalStorageEvent(
             PageGroup*, const String& key, const String& oldValue, const String& newValue,
