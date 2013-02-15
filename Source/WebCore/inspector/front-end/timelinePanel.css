@@ -688,3 +688,12 @@
 .memory-category-value {
     float: right;
 }
+
+.highlighted-timeline-record {
+    -webkit-animation: "timeline_record_highlight" 2s 0s;
+}
+
+@-webkit-keyframes timeline_record_highlight {
+    from {background-color: rgba(255, 255, 120, 1); }
+    to { background-color: rgba(255, 255, 120, 0); }
+}
