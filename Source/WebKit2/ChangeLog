@@ -1,5 +1,12 @@
 2013-02-15  Csaba Osztrogonác  <ossy@webkit.org>
 
+        One more buildfix after r143052.
+
+        * Platform/CoreIPC/win/ConnectionWin.cpp:
+        (CoreIPC::Connection::sendOutgoingMessage):
+
+2013-02-15  Csaba Osztrogonác  <ossy@webkit.org>
+
         Unreviewed buildfix after r143052 for Qt/GTK/EFL ports.
 
         * Platform/unix/SharedMemoryUnix.cpp:
