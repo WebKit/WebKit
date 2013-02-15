@@ -1,3 +1,109 @@
+2013-02-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Merged the global function cache into the source code cache
+        https://bugs.webkit.org/show_bug.cgi?id=108660
+
+        Reviewed by Sam Weinig.
+
+        This has a few benefits:
+
+            (*) Saves a few kB by removing a second cache data structure.
+
+            (*) Reduces the worst case memory usage of the cache by 1.75X. (Heavy
+            use of 'new Function' and other techniques could cause us to fill
+            both root caches, and they didn't trade off against each other.)
+
+            (*) Paves the way for future improvements based on a non-trivial
+            cache key (for example, shrinkable pointer to the key string, and
+            more precise cache size accounting).
+
+        Also cleaned up the cache implementation and simplified it a bit.
+
+        * heap/Handle.h:
+        (HandleBase):
+        * heap/Strong.h:
+        (Strong): Build!
+
+        * runtime/CodeCache.cpp:
+        (JSC):
+        (JSC::CodeCache::getCodeBlock):
+        (JSC::CodeCache::generateFunctionCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        (JSC::CodeCache::usedFunctionCode): Updated for three interface changes:
+
+            (*) SourceCodeKey is a class, not a pair.
+
+            (*) Table values are abstract pointers, since they can be executables
+            or code blocks. (In a future patch, I'd like to change this so we
+            always store only code blocks. But that's too much for one patch.)
+
+            (*) The cache function is named "set" because it always overwrites
+            unconditionally.
+
+        * runtime/CodeCache.h:
+        (CacheMap):
+        (JSC::CacheMap::find):
+        (JSC::CacheMap::set):
+        (JSC::CacheMap::clear): Added support for specifying hash traits, so we
+        can use a SourceCodeKey.
+
+        Removed side table and random number generator to save space and reduce
+        complexity. Hash tables are already random, so we don't need another source
+        of randomness.
+
+        (SourceCodeKey):
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::isHashTableDeletedValue):
+        (JSC::SourceCodeKey::hash):
+        (JSC::SourceCodeKey::isNull):
+        (JSC::SourceCodeKey::operator==):
+        (JSC::SourceCodeKeyHash::hash):
+        (JSC::SourceCodeKeyHash::equal):
+        (SourceCodeKeyHash):
+        (SourceCodeKeyHashTraits):
+        (JSC::SourceCodeKeyHashTraits::isEmptyValue): A SourceCodeKey is just a
+        fancy triplet: source code string; function name (or null, for non-functions);
+        and flags. Flags and function name distinguish between functions and programs
+        with identical code, so they can live in the same cache.
+
+        I chose to use the source code string as the primary hashing reference
+        because it's likely to be unique. We can use profiling to choose another
+        technique in future, if collisions between functions and programs prove
+        to be hot. I suspect they won't.
+
+        (JSC::CodeCache::clear):
+        (CodeCache): Removed the second cache.
+
+        * heap/Handle.h:
+        (HandleBase):
+        * heap/Strong.h:
+        (Strong):
+        * runtime/CodeCache.cpp:
+        (JSC):
+        (JSC::CodeCache::getCodeBlock):
+        (JSC::CodeCache::generateFunctionCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        (JSC::CodeCache::usedFunctionCode):
+        * runtime/CodeCache.h:
+        (JSC):
+        (CacheMap):
+        (JSC::CacheMap::find):
+        (JSC::CacheMap::set):
+        (JSC::CacheMap::clear):
+        (SourceCodeKey):
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::isHashTableDeletedValue):
+        (JSC::SourceCodeKey::hash):
+        (JSC::SourceCodeKey::isNull):
+        (JSC::SourceCodeKey::operator==):
+        (JSC::SourceCodeKeyHash::hash):
+        (JSC::SourceCodeKeyHash::equal):
+        (SourceCodeKeyHash):
+        (SourceCodeKeyHashTraits):
+        (JSC::SourceCodeKeyHashTraits::isEmptyValue):
+        (JSC::CodeCache::clear):
+        (CodeCache):
+
 2013-02-14  Tony Chang  <tony@chromium.org>
 
         Unreviewed, set svn:eol-style native for .sln, .vcproj, and .vsprops files.

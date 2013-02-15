@@ -44,30 +44,25 @@ CodeCache::~CodeCache()
 {
 }
 
-CodeCache::SourceCodeKey CodeCache::makeSourceCodeKey(const SourceCode& source, CodeCache::CodeType type, JSParserStrictness strictness)
-{
-    return std::make_pair(source.toString(), (type << 1) | strictness);
-}
-
 template <typename T> struct CacheTypes { };
 
 template <> struct CacheTypes<UnlinkedProgramCodeBlock> {
     typedef JSC::ProgramNode RootNode;
-    static const CodeCache::CodeType codeType = CodeCache::ProgramType;
+    static const SourceCodeKey::CodeType codeType = SourceCodeKey::ProgramType;
 };
 
 template <> struct CacheTypes<UnlinkedEvalCodeBlock> {
     typedef JSC::EvalNode RootNode;
-    static const CodeCache::CodeType codeType = CodeCache::EvalType;
+    static const SourceCodeKey::CodeType codeType = SourceCodeKey::EvalType;
 };
 
 template <class UnlinkedCodeBlockType, class ExecutableType>
 UnlinkedCodeBlockType* CodeCache::getCodeBlock(JSGlobalData& globalData, ExecutableType* executable, const SourceCode& source, JSParserStrictness strictness, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
 {
-    SourceCodeKey key = makeSourceCodeKey(source, CacheTypes<UnlinkedCodeBlockType>::codeType, strictness);
+    SourceCodeKey key = SourceCodeKey(source, String(), CacheTypes<UnlinkedCodeBlockType>::codeType, strictness);
     bool storeInCache = false;
     if (debuggerMode == DebuggerOff && profilerMode == ProfilerOff) {
-        const Strong<UnlinkedCodeBlock>* result = m_sourceCode.find(key);
+        const Strong<JSCell>* result = m_sourceCode.find(key);
         if (result) {
             UnlinkedCodeBlockType* unlinkedCode = jsCast<UnlinkedCodeBlockType*>(result->get());
             unsigned firstLine = source.firstLine() + unlinkedCode->firstLine();
@@ -92,7 +87,7 @@ UnlinkedCodeBlockType* CodeCache::getCodeBlock(JSGlobalData& globalData, Executa
         return 0;
 
     if (storeInCache)
-        m_sourceCode.add(key, Strong<UnlinkedCodeBlock>(globalData, unlinkedCode));
+        m_sourceCode.set(key, Strong<UnlinkedCodeBlock>(globalData, unlinkedCode));
 
     return unlinkedCode;
 }
@@ -127,7 +122,7 @@ UnlinkedFunctionCodeBlock* CodeCache::generateFunctionCodeBlock(JSGlobalData& gl
     body->destroyData();
     if (error.m_type != ParserError::ErrorNone)
         return 0;
-    m_recentlyUsedFunctions.add(result, Strong<UnlinkedFunctionCodeBlock>(globalData, result));
+    m_recentlyUsedFunctions.set(result, Strong<UnlinkedFunctionCodeBlock>(globalData, result));
     return result;
 }
 
@@ -136,17 +131,12 @@ UnlinkedFunctionCodeBlock* CodeCache::getFunctionCodeBlock(JSGlobalData& globalD
     return generateFunctionCodeBlock(globalData, executable, source, kind, debuggerMode, profilerMode, error);
 }
 
-CodeCache::FunctionKey CodeCache::makeFunctionKey(const SourceCode& source, const String& name)
-{
-    return FunctionKey(source.toString(), name);
-}
-
 UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, ParserError& error)
 {
-    FunctionKey key = makeFunctionKey(source, name.string());
-    const Strong<UnlinkedFunctionExecutable>* result = m_globalFunctions.find(key);
+    SourceCodeKey key = SourceCodeKey(source, name.string(), SourceCodeKey::FunctionCallType, JSParseNormal);
+    const Strong<JSCell>* result = m_sourceCode.find(key);
     if (result)
-        return result->get();
+        return jsCast<UnlinkedFunctionExecutable*>(result->get());
 
     RefPtr<ProgramNode> program = parse<ProgramNode>(&globalData, source, 0, Identifier(), JSParseNormal, JSParseProgramCode, error);
     if (!program) {
@@ -168,13 +158,13 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlo
     UnlinkedFunctionExecutable* functionExecutable = UnlinkedFunctionExecutable::create(&globalData, source, body);
     functionExecutable->m_nameValue.set(globalData, functionExecutable, jsString(&globalData, name.string()));
 
-    m_globalFunctions.add(key, Strong<UnlinkedFunctionExecutable>(globalData, functionExecutable));
+    m_sourceCode.set(key, Strong<UnlinkedFunctionExecutable>(globalData, functionExecutable));
     return functionExecutable;
 }
 
 void CodeCache::usedFunctionCode(JSGlobalData& globalData, UnlinkedFunctionCodeBlock* codeBlock)
 {
-    m_recentlyUsedFunctions.add(codeBlock, Strong<UnlinkedFunctionCodeBlock>(globalData, codeBlock));
+    m_recentlyUsedFunctions.set(codeBlock, Strong<UnlinkedFunctionCodeBlock>(globalData, codeBlock));
 }
 
 }

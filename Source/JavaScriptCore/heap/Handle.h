@@ -45,6 +45,7 @@ template <> class Handle<JSValue>;
 
 class HandleBase {
     template <typename T> friend class Weak;
+    template <typename T> friend class Strong;
     friend class HandleSet;
     friend struct JSCallbackObjectData;
 

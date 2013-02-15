@@ -38,6 +38,7 @@ class JSGlobalData;
 template <typename T> class Strong : public Handle<T> {
     using Handle<T>::slot;
     using Handle<T>::setSlot;
+    template <typename U> friend class Strong;
 
 public:
     typedef typename Handle<T>::ExternalType ExternalType;
