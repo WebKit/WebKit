@@ -536,8 +536,7 @@ typedef /*unrestricted*/ float GLclampf;
 
     [StrictTypeChecking, Custom] void getAttachedShaders(in WebGLProgram program) raises (DOMException);
 
-    // FIXME: this differs from the current WebGL spec (should return GLint/long)
-    [StrictTypeChecking] int          getAttribLocation(in WebGLProgram program, in DOMString name);
+    [StrictTypeChecking] GLint        getAttribLocation(in WebGLProgram program, in DOMString name);
 
     // any getBufferParameter(in GLenum target, in GLenum pname) raises(DOMException);
     [StrictTypeChecking, Custom] void getBufferParameter();
