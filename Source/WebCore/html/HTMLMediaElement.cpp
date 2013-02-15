@@ -4447,6 +4447,9 @@ void HTMLMediaElement::captionPreferencesChanged()
 
 void HTMLMediaElement::markCaptionAndSubtitleTracksAsUnconfigured()
 {
+    if (!m_textTracks)
+        return;
+
     // Mark all tracks as not "configured" so that configureTextTracks()
     // will reconsider which tracks to display in light of new user preferences
     // (e.g. default tracks should not be displayed if the user has turned off
