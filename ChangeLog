@@ -1,3 +1,14 @@
+2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Simplify hitTestResultAtPoint and nodesFromRect APIs
+        https://bugs.webkit.org/show_bug.cgi?id=95720
+
+        Reviewed by Julien Chaffraix.
+
+        Update exported symbols.
+
+        * Source/autotools/symbols.filter:
+
 2013-02-08  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: expose did{Begin,Cancel}Frame() and {will,did}Composite() on WebDebToolsAgent

@@ -1008,8 +1008,7 @@ void FrameLoaderClientImpl::dispatchDecidePolicyForNavigationAction(
                 if (event->isMouseEvent()) {
                     const MouseEvent* mouseEvent =
                         static_cast<const MouseEvent*>(event);
-                    node = m_webFrame->frame()->eventHandler()->hitTestResultAtPoint(
-                        mouseEvent->absoluteLocation(), false).innerNonSharedNode();
+                    node = m_webFrame->frame()->eventHandler()->hitTestResultAtPoint(mouseEvent->absoluteLocation()).innerNonSharedNode();
                     break;
                 }
             }

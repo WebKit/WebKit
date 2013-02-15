@@ -1,3 +1,15 @@
+2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Simplify hitTestResultAtPoint and nodesFromRect APIs
+        https://bugs.webkit.org/show_bug.cgi?id=95720
+
+        Reviewed by Julien Chaffraix.
+
+        Update calls to new API.
+
+        * WebFrame.cpp:
+        (WebKit::WebFrame::HitTest):
+
 2013-02-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Disable delete button controller on non-Mac ports and delete EditorClient::shouldShowDeleteInterface

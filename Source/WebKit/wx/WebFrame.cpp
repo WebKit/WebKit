@@ -690,7 +690,7 @@ WebViewDOMElementInfo WebFrame::HitTest(const wxPoint& pos) const
     WebViewDOMElementInfo domInfo;
 
     if (m_impl->frame->view()) {
-        WebCore::HitTestResult result = m_impl->frame->eventHandler()->hitTestResultAtPoint(m_impl->frame->view()->windowToContents(pos), false);
+        WebCore::HitTestResult result = m_impl->frame->eventHandler()->hitTestResultAtPoint(m_impl->frame->view()->windowToContents(pos));
         if (result.innerNode()) {
             domInfo.SetLink(result.absoluteLinkURL().string());
             domInfo.SetText(result.textContent());

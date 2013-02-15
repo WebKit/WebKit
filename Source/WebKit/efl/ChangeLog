@@ -1,3 +1,15 @@
+2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Simplify hitTestResultAtPoint and nodesFromRect APIs
+        https://bugs.webkit.org/show_bug.cgi?id=95720
+
+        Reviewed by Julien Chaffraix.
+
+        Update calls to new API.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_hit_test_new):
+
 2013-02-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] window.open passes height and width parameters even if not defined in a page

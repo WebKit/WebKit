@@ -37,6 +37,7 @@
 #include "HTMLNames.h"
 #include "HTMLPlugInElement.h"
 #include "HistoryItem.h"
+#include "HitTestRequest.h"
 #include "HitTestResult.h"
 #include "IntSize.h"
 #include "KURL.h"
@@ -691,8 +692,8 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* ewkFrame, int x, int y)
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame->contentRenderer(), 0);
 
     WebCore::HitTestResult result = smartData->frame->eventHandler()->hitTestResultAtPoint
-                                        (view->windowToContents(WebCore::IntPoint(x, y)),
-                                        /*allowShadowContent*/ false, /*ignoreClipping*/ true);
+                                        (view->windowToContents(WebCore::IntPoint(x, y)), 
+                                        WebCore::HitTestRequest::ReadOnly | WebCore::HitTestRequest::Active | WebCore::HitTestRequest::IgnoreClipping);
 
     if (result.scrollbar())
         return 0;

@@ -35,6 +35,7 @@
 #include "DocumentEventQueue.h"
 #include "DocumentTiming.h"
 #include "FocusDirection.h"
+#include "HitTestRequest.h"
 #include "IconURL.h"
 #include "InspectorCounters.h"
 #include "IntRect.h"
@@ -380,11 +381,10 @@ public:
      * @param rightPadding How much to expand the right of the rectangle
      * @param bottomPadding How much to expand the bottom of the rectangle
      * @param leftPadding How much to expand the left of the rectangle
-     * @param ignoreClipping whether or not to ignore the root scroll frame when retrieving the element.
-     *        If false, this method returns null for coordinates outside of the viewport.
      */
-    PassRefPtr<NodeList> nodesFromRect(int centerX, int centerY, unsigned topPadding, unsigned rightPadding,
-                                       unsigned bottomPadding, unsigned leftPadding, bool ignoreClipping, bool allowShadowContent) const;
+    PassRefPtr<NodeList> nodesFromRect(int centerX, int centerY,
+                                       unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding,
+                                       HitTestRequest::HitTestRequestType hitType = HitTestRequest::ReadOnly | HitTestRequest::Active) const;
     Element* elementFromPoint(int x, int y) const;
     PassRefPtr<Range> caretRangeFromPoint(int x, int y);
 

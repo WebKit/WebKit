@@ -35,7 +35,8 @@ public:
         IgnoreClipping = 1 << 5,
         SVGClipContent = 1 << 6,
         TouchEvent = 1 << 7,
-        AllowShadowContent = 1 << 8
+        AllowShadowContent = 1 << 8,
+        AllowFrameScrollbars = 1 << 9
     };
 
     typedef unsigned HitTestRequestType;
@@ -54,6 +55,7 @@ public:
     bool touchEvent() const { return m_requestType & TouchEvent; }
     bool mouseEvent() const { return !touchEvent(); }
     bool allowsShadowContent() const { return m_requestType & AllowShadowContent; }
+    bool allowsFrameScrollbars() const { return m_requestType & AllowFrameScrollbars; }
 
     // Convenience functions
     bool touchMove() const { return move() && touchEvent(); }
