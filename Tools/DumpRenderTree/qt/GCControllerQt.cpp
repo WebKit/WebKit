@@ -28,15 +28,9 @@
  */
 
 #include "config.h"
-#include "GCControllerQt.h"
+#include "GCController.h"
+
 #include "DumpRenderTreeSupportQt.h"
-
-#include <qwebpage.h>
-
-GCController::GCController(QWebPage* parent)
-    : QObject(parent)
-{
-}
 
 void GCController::collect() const
 {
@@ -48,7 +42,7 @@ void GCController::collectOnAlternateThread(bool waitUntilDone) const
     DumpRenderTreeSupportQt::garbageCollectorCollectOnAlternateThread(waitUntilDone);
 }
 
-unsigned int GCController::getJSObjectCount() const
+size_t GCController::getJSObjectCount() const
 {
     return DumpRenderTreeSupportQt::javaScriptObjectsCount();
 }

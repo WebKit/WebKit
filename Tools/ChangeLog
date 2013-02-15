@@ -1,3 +1,157 @@
+2013-02-15  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Port GCController to JSC C API
+        https://bugs.webkit.org/show_bug.cgi?id=109690
+
+        Reviewed by Benjamin Poulain.
+
+        Rename TestRunner to TestRunnerQt to avoid conflict when
+        including TestRunner.h in the future.
+
+        Replaced QObject based GCController implementation with JSC C API
+        based one.
+
+        * DumpRenderTree/qt/DumpRenderTree.pro:
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::DumpRenderTree::DumpRenderTree):
+        (WebCore::DumpRenderTree::open):
+        (WebCore::DumpRenderTree::initJSObjects):
+        (WebCore::methodNameStringForFailedTest):
+        * DumpRenderTree/qt/DumpRenderTreeQt.h:
+        (WebCore::DumpRenderTree::testRunner):
+        (DumpRenderTree):
+        * DumpRenderTree/qt/GCControllerQt.cpp:
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/qt/GCControllerQt.h: Removed.
+        * DumpRenderTree/qt/TestRunnerQt.cpp:
+        (TestRunnerQt::TestRunnerQt):
+        (TestRunnerQt::reset):
+        (TestRunnerQt::dumpNotifications):
+        (TestRunnerQt::processWork):
+        (TestRunnerQt::maybeDump):
+        (TestRunnerQt::dumpAsText):
+        (TestRunnerQt::waitUntilDone):
+        (TestRunnerQt::setViewModeMediaFeature):
+        (TestRunnerQt::webHistoryItemCount):
+        (TestRunnerQt::keepWebHistory):
+        (TestRunnerQt::notifyDone):
+        (TestRunnerQt::windowCount):
+        (TestRunnerQt::grantWebNotificationPermission):
+        (TestRunnerQt::ignoreLegacyWebNotificationPermissionRequests):
+        (TestRunnerQt::denyWebNotificationPermission):
+        (TestRunnerQt::removeAllWebNotificationPermissions):
+        (TestRunnerQt::simulateWebNotificationClick):
+        (TestRunnerQt::simulateLegacyWebNotificationClick):
+        (TestRunnerQt::display):
+        (TestRunnerQt::displayInvalidatedRegion):
+        (TestRunnerQt::clearBackForwardList):
+        (TestRunnerQt::pathToLocalResource):
+        (TestRunnerQt::dumpEditingCallbacks):
+        (TestRunnerQt::dumpFrameLoadCallbacks):
+        (TestRunnerQt::dumpProgressFinishedCallback):
+        (TestRunnerQt::dumpUserGestureInFrameLoadCallbacks):
+        (TestRunnerQt::dumpResourceLoadCallbacks):
+        (TestRunnerQt::dumpResourceResponseMIMETypes):
+        (TestRunnerQt::dumpWillCacheResponse):
+        (TestRunnerQt::dumpHistoryCallbacks):
+        (TestRunnerQt::setWillSendRequestReturnsNullOnRedirect):
+        (TestRunnerQt::setWillSendRequestReturnsNull):
+        (TestRunnerQt::setWillSendRequestClearHeader):
+        (TestRunnerQt::setDeferMainResourceDataLoad):
+        (TestRunnerQt::queueBackNavigation):
+        (TestRunnerQt::queueForwardNavigation):
+        (TestRunnerQt::queueLoad):
+        (TestRunnerQt::queueLoadHTMLString):
+        (TestRunnerQt::queueReload):
+        (TestRunnerQt::queueLoadingScript):
+        (TestRunnerQt::queueNonLoadingScript):
+        (TestRunnerQt::provisionalLoad):
+        (TestRunnerQt::timerEvent):
+        (TestRunnerQt::encodeHostName):
+        (TestRunnerQt::decodeHostName):
+        (TestRunnerQt::closeWebInspector):
+        (TestRunnerQt::setDeveloperExtrasEnabled):
+        (TestRunnerQt::setAsynchronousSpellCheckingEnabled):
+        (TestRunnerQt::showWebInspector):
+        (TestRunnerQt::evaluateInWebInspector):
+        (TestRunnerQt::goBack):
+        (TestRunnerQt::setDefersLoading):
+        (TestRunnerQt::setAllowUniversalAccessFromFileURLs):
+        (TestRunnerQt::setAllowFileAccessFromFileURLs):
+        (TestRunnerQt::setAppCacheMaximumSize):
+        (TestRunnerQt::setAutofilled):
+        (TestRunnerQt::setValueForUser):
+        (TestRunnerQt::setFixedContentsSize):
+        (TestRunnerQt::setPrivateBrowsingEnabled):
+        (TestRunnerQt::setSpatialNavigationEnabled):
+        (TestRunnerQt::setPopupBlockingEnabled):
+        (TestRunnerQt::setPluginsEnabled):
+        (TestRunnerQt::setPOSIXLocale):
+        (TestRunnerQt::setWindowIsKey):
+        (TestRunnerQt::setMainFrameIsFirstResponder):
+        (TestRunnerQt::setJavaScriptCanAccessClipboard):
+        (TestRunnerQt::setXSSAuditorEnabled):
+        (TestRunnerQt::dispatchPendingLoadRequests):
+        (TestRunnerQt::clearAllApplicationCaches):
+        (TestRunnerQt::clearApplicationCacheForOrigin):
+        (TestRunnerQt::localStorageDiskUsageForOrigin):
+        (TestRunnerQt::setApplicationCacheOriginQuota):
+        (TestRunnerQt::applicationCacheDiskUsageForOrigin):
+        (TestRunnerQt::originsWithApplicationCache):
+        (TestRunnerQt::setCacheModel):
+        (TestRunnerQt::setDatabaseQuota):
+        (TestRunnerQt::clearAllDatabases):
+        (TestRunnerQt::addOriginAccessWhitelistEntry):
+        (TestRunnerQt::removeOriginAccessWhitelistEntry):
+        (TestRunnerQt::setCustomPolicyDelegate):
+        (TestRunnerQt::waitForPolicyDelegate):
+        (TestRunnerQt::overridePreference):
+        (TestRunnerQt::setUserStyleSheetLocation):
+        (TestRunnerQt::setCaretBrowsingEnabled):
+        (TestRunnerQt::setAuthorAndUserStylesEnabled):
+        (TestRunnerQt::setUserStyleSheetEnabled):
+        (TestRunnerQt::setDomainRelaxationForbiddenForURLScheme):
+        (TestRunnerQt::callShouldCloseOnWebView):
+        (TestRunnerQt::setScrollbarPolicy):
+        (TestRunnerQt::setSmartInsertDeleteEnabled):
+        (TestRunnerQt::setSelectTrailingWhitespaceEnabled):
+        (TestRunnerQt::execCommand):
+        (TestRunnerQt::isCommandEnabled):
+        (TestRunnerQt::findString):
+        (TestRunnerQt::markerTextForListItem):
+        (TestRunnerQt::computedStyleIncludingVisitedInfo):
+        (TestRunnerQt::elementDoesAutoCompleteForElementWithId):
+        (TestRunnerQt::authenticateSession):
+        (TestRunnerQt::setIconDatabaseEnabled):
+        (TestRunnerQt::setMockDeviceOrientation):
+        (TestRunnerQt::setGeolocationPermission):
+        (TestRunnerQt::numberOfPendingGeolocationPermissionRequests):
+        (TestRunnerQt::setGeolocationPermissionCommon):
+        (TestRunnerQt::setMockGeolocationPositionUnavailableError):
+        (TestRunnerQt::setMockGeolocationPosition):
+        (TestRunnerQt::addMockSpeechInputResult):
+        (TestRunnerQt::setMockSpeechInputDumpRect):
+        (TestRunnerQt::startSpeechInput):
+        (TestRunnerQt::evaluateScriptInIsolatedWorldAndReturnValue):
+        (TestRunnerQt::evaluateScriptInIsolatedWorld):
+        (TestRunnerQt::addUserStyleSheet):
+        (TestRunnerQt::removeAllVisitedLinks):
+        (TestRunnerQt::addURLToRedirect):
+        (TestRunnerQt::originsWithLocalStorage):
+        (TestRunnerQt::deleteAllLocalStorage):
+        (TestRunnerQt::deleteLocalStorageForOrigin):
+        (TestRunnerQt::observeStorageTrackerNotifications):
+        (TestRunnerQt::syncLocalStorage):
+        (TestRunnerQt::resetPageVisibility):
+        (TestRunnerQt::setPageVisibility):
+        (TestRunnerQt::setAutomaticLinkDetectionEnabled):
+        (TestRunnerQt::setTextDirection):
+        (TestRunnerQt::setAlwaysAcceptCookies):
+        (TestRunnerQt::setAlwaysBlockCookies):
+        (TestRunnerQt::setAudioData):
+        * DumpRenderTree/qt/TestRunnerQt.h:
+        (TestRunnerQt):
+
 2013-02-14  Karen Grunberg  <kareng@chromium.org>
 
         adding myself as a committer

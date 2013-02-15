@@ -53,12 +53,12 @@ namespace WebCore {
 class DumpRenderTree;
 }
 
-class TestRunner : public QObject {
+class TestRunnerQt : public QObject {
     Q_OBJECT
     Q_PROPERTY(int webHistoryItemCount READ webHistoryItemCount)
     Q_PROPERTY(bool globalFlag READ globalFlag WRITE setGlobalFlag)
 public:
-    TestRunner(WebCore::DumpRenderTree*);
+    TestRunnerQt(WebCore::DumpRenderTree*);
 
     bool shouldDisallowIncreaseForApplicationCacheQuota() const { return m_disallowIncreaseForApplicationCacheQuota; }
     bool shouldDumpAsText() const { return m_textDump; }

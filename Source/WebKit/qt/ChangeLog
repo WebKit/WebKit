@@ -1,3 +1,16 @@
+2013-02-15  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Port GCController to JSC C API
+        https://bugs.webkit.org/show_bug.cgi?id=109690
+
+        Reviewed by Benjamin Poulain.
+
+        Add hooks to retrieve JSContextRef and window object.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::getJSWindowObject):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2013-02-13  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] window.open passes height and width parameters even if not defined in a page
