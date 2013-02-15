@@ -218,17 +218,19 @@ TEST(WebInputEventConversionTest, InputEventsScaling)
         EXPECT_EQ(5, platformTouchBuilder.touchPoints()[0].radiusY());
     }
 
+    // Reverse builders should *not* go back to physical pixels, as they are used for plugins
+    // which expect CSS pixel coordinates.
     {
         PlatformMouseEvent platformMouseEvent(IntPoint(10, 10), IntPoint(10, 10), LeftButton, PlatformEvent::MouseMoved, 1, false, false, false, false, 0);
         RefPtr<MouseEvent> mouseEvent = MouseEvent::create(WebCore::eventNames().mousemoveEvent, domWindow, platformMouseEvent, 0, document);
         WebMouseEventBuilder webMouseBuilder(view, docRenderer, *mouseEvent);
 
-        EXPECT_EQ(20, webMouseBuilder.x);
-        EXPECT_EQ(20, webMouseBuilder.y);
+        EXPECT_EQ(10, webMouseBuilder.x);
+        EXPECT_EQ(10, webMouseBuilder.y);
         EXPECT_EQ(10, webMouseBuilder.globalX);
         EXPECT_EQ(10, webMouseBuilder.globalY);
-        EXPECT_EQ(20, webMouseBuilder.windowX);
-        EXPECT_EQ(20, webMouseBuilder.windowY);
+        EXPECT_EQ(10, webMouseBuilder.windowX);
+        EXPECT_EQ(10, webMouseBuilder.windowY);
     }
 
     {
@@ -236,12 +238,12 @@ TEST(WebInputEventConversionTest, InputEventsScaling)
         RefPtr<GestureEvent> gestureEvent = GestureEvent::create(domWindow, platformGestureEvent);
         WebGestureEventBuilder webGestureBuilder(view, docRenderer, *gestureEvent);
 
-        EXPECT_EQ(20, webGestureBuilder.x);
-        EXPECT_EQ(20, webGestureBuilder.y);
+        EXPECT_EQ(10, webGestureBuilder.x);
+        EXPECT_EQ(10, webGestureBuilder.y);
         EXPECT_EQ(10, webGestureBuilder.globalX);
         EXPECT_EQ(10, webGestureBuilder.globalY);
-        EXPECT_EQ(20, webGestureBuilder.data.scrollUpdate.deltaX);
-        EXPECT_EQ(20, webGestureBuilder.data.scrollUpdate.deltaY);
+        EXPECT_EQ(10, webGestureBuilder.data.scrollUpdate.deltaX);
+        EXPECT_EQ(10, webGestureBuilder.data.scrollUpdate.deltaY);
     }
 
     {
@@ -254,10 +256,10 @@ TEST(WebInputEventConversionTest, InputEventsScaling)
         ASSERT_EQ(1u, webTouchBuilder.touchesLength);
         EXPECT_EQ(10, webTouchBuilder.touches[0].screenPosition.x);
         EXPECT_EQ(10, webTouchBuilder.touches[0].screenPosition.y);
-        EXPECT_EQ(20, webTouchBuilder.touches[0].position.x);
-        EXPECT_EQ(20, webTouchBuilder.touches[0].position.y);
-        EXPECT_EQ(20, webTouchBuilder.touches[0].radiusX);
-        EXPECT_EQ(20, webTouchBuilder.touches[0].radiusY);
+        EXPECT_EQ(10, webTouchBuilder.touches[0].position.x);
+        EXPECT_EQ(10, webTouchBuilder.touches[0].position.y);
+        EXPECT_EQ(10, webTouchBuilder.touches[0].radiusX);
+        EXPECT_EQ(10, webTouchBuilder.touches[0].radiusY);
     }
 
     webViewImpl->close();

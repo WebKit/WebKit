@@ -1,3 +1,23 @@
+2013-02-15  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] WebInputEventBuilders should not reverse page scale
+        https://bugs.webkit.org/show_bug.cgi?id=109901
+
+        Reviewed by James Robinson.
+
+        Though in theory logical that if WebInputEvent -> PlatformEvent
+        conversions divide by page scale, then the reverse builders should
+        multiply, in reality the only user of the reverse builders is
+        plugins which expect the same coordinate space as WebCore.
+
+        * src/WebInputEventConversion.cpp:
+        (WebKit::updateWebMouseEventFromWebCoreMouseEvent):
+        (WebKit::WebMouseEventBuilder::WebMouseEventBuilder):
+        (WebKit::addTouchPoints):
+        (WebKit::WebGestureEventBuilder::WebGestureEventBuilder):
+        * tests/WebInputEventConversionTest.cpp:
+        (WebCore::TEST):
+
 2013-02-15  Anders Carlsson  <andersca@apple.com>
 
         Remove const from a bunch of StorageArea member functions
