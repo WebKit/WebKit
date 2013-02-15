@@ -256,6 +256,7 @@ typedef struct _OpenGLFunctionTable {
 #define glBindFramebuffer                      LOOKUP_GL_FUNCTION(glBindFramebuffer)
 #define glBindRenderbufferEXT                  glBindRenderbuffer
 #define glBindRenderbuffer                     LOOKUP_GL_FUNCTION(glBindRenderbuffer)
+#define glBindVertexArrayOES                   glBindVertexArray
 #define glBindVertexArray                      LOOKUP_GL_FUNCTION(glBindVertexArray)
 #define glBlendColor                           LOOKUP_GL_FUNCTION(glBlendColor)
 #define glBlendEquation                        LOOKUP_GL_FUNCTION(glBlendEquation)
@@ -277,6 +278,7 @@ typedef struct _OpenGLFunctionTable {
 #define glDeleteRenderbuffersEXT               glDeleteRenderbuffers
 #define glDeleteRenderbuffers                  LOOKUP_GL_FUNCTION(glDeleteRenderbuffers)
 #define glDeleteShader                         LOOKUP_GL_FUNCTION(glDeleteShader)
+#define glDeleteVertexArraysOES                glDeleteVertexArrays
 #define glDeleteVertexArrays                   LOOKUP_GL_FUNCTION(glDeleteVertexArrays)
 #define glDetachShader                         LOOKUP_GL_FUNCTION(glDetachShader)
 #define glDisableVertexAttribArray             LOOKUP_GL_FUNCTION(glDisableVertexAttribArray)
@@ -292,6 +294,7 @@ typedef struct _OpenGLFunctionTable {
 #define glGenFramebuffers                      LOOKUP_GL_FUNCTION(glGenFramebuffers)
 #define glGenRenderbuffersEXT                  glGenRenderbuffers
 #define glGenRenderbuffers                     LOOKUP_GL_FUNCTION(glGenRenderbuffers)
+#define glGenVertexArraysOES                   glGenVertexArrays;
 #define glGenVertexArrays                      LOOKUP_GL_FUNCTION(glGenVertexArrays)
 #define glGetActiveAttrib                      LOOKUP_GL_FUNCTION(glGetActiveAttrib)
 #define glGetActiveUniform                     LOOKUP_GL_FUNCTION(glGetActiveUniform)
@@ -321,6 +324,7 @@ typedef struct _OpenGLFunctionTable {
 #define glIsRenderbufferEXT                    glIsRenderbuffer
 #define glIsRenderbuffer                       LOOKUP_GL_FUNCTION(glIsRenderbuffer)
 #define glIsShader                             LOOKUP_GL_FUNCTION(glIsShader)
+#define glIsVertexArrayOES                     glIsVertexArray;
 #define glIsVertexArray                        LOOKUP_GL_FUNCTION(glIsVertexArray)
 #define glLinkProgram                          LOOKUP_GL_FUNCTION(glLinkProgram)
 #define glRenderbufferStorageEXT               glRenderbufferStorage
