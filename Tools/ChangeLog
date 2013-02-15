@@ -1,3 +1,9 @@
+2013-02-15  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-15  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed. Update Yi Shen, Antonio Gomes and Laszlo Gombos'
