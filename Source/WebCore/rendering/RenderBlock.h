@@ -455,12 +455,27 @@ protected:
     void setMaxMarginBeforeValues(LayoutUnit pos, LayoutUnit neg);
     void setMaxMarginAfterValues(LayoutUnit pos, LayoutUnit neg);
 
+    void setMustDiscardMarginBefore(bool = true);
+    void setMustDiscardMarginAfter(bool = true);
+
+    bool mustDiscardMarginBefore() const;
+    bool mustDiscardMarginAfter() const;
+
+    bool mustDiscardMarginBeforeForChild(const RenderBox*) const;
+    bool mustDiscardMarginAfterForChild(const RenderBox*) const;
+
+    bool mustSeparateMarginBeforeForChild(const RenderBox*) const;
+    bool mustSeparateMarginAfterForChild(const RenderBox*) const;
+
     void initMaxMarginValues()
     {
         if (m_rareData) {
             m_rareData->m_margins = MarginValues(RenderBlockRareData::positiveMarginBeforeDefault(this) , RenderBlockRareData::negativeMarginBeforeDefault(this),
                                                  RenderBlockRareData::positiveMarginAfterDefault(this), RenderBlockRareData::negativeMarginAfterDefault(this));
             m_rareData->m_paginationStrut = 0;
+
+            m_rareData->m_discardMarginBefore = false;
+            m_rareData->m_discardMarginAfter = false;
         }
     }
 
@@ -949,6 +964,8 @@ private:
         bool m_marginAfterQuirk : 1;
         bool m_determinedMarginBeforeQuirk : 1;
 
+        bool m_discardMargin : 1;
+
         // These flags track the previous maximal positive and negative margins.
         LayoutUnit m_positiveMargin;
         LayoutUnit m_negativeMargin;
@@ -966,33 +983,37 @@ private:
         void setMarginBeforeQuirk(bool b) { m_marginBeforeQuirk = b; }
         void setMarginAfterQuirk(bool b) { m_marginAfterQuirk = b; }
         void setDeterminedMarginBeforeQuirk(bool b) { m_determinedMarginBeforeQuirk = b; }
-        void setPositiveMargin(LayoutUnit p) { m_positiveMargin = p; }
-        void setNegativeMargin(LayoutUnit n) { m_negativeMargin = n; }
+        void setPositiveMargin(LayoutUnit p) { ASSERT(!m_discardMargin); m_positiveMargin = p; }
+        void setNegativeMargin(LayoutUnit n) { ASSERT(!m_discardMargin); m_negativeMargin = n; }
         void setPositiveMarginIfLarger(LayoutUnit p)
         {
+            ASSERT(!m_discardMargin);
             if (p > m_positiveMargin)
                 m_positiveMargin = p;
         }
         void setNegativeMarginIfLarger(LayoutUnit n)
         {
+            ASSERT(!m_discardMargin);
             if (n > m_negativeMargin)
                 m_negativeMargin = n;
         }
 
-        void setMargin(LayoutUnit p, LayoutUnit n) { m_positiveMargin = p; m_negativeMargin = n; }
+        void setMargin(LayoutUnit p, LayoutUnit n) { ASSERT(!m_discardMargin); m_positiveMargin = p; m_negativeMargin = n; }
+        void setCanCollapseMarginAfterWithChildren(bool collapse) { m_canCollapseMarginAfterWithChildren = collapse; }
+        void setDiscardMargin(bool value) { m_discardMargin = value; }
 
         bool atBeforeSideOfBlock() const { return m_atBeforeSideOfBlock; }
         bool canCollapseWithMarginBefore() const { return m_atBeforeSideOfBlock && m_canCollapseMarginBeforeWithChildren; }
         bool canCollapseWithMarginAfter() const { return m_atAfterSideOfBlock && m_canCollapseMarginAfterWithChildren; }
         bool canCollapseMarginBeforeWithChildren() const { return m_canCollapseMarginBeforeWithChildren; }
         bool canCollapseMarginAfterWithChildren() const { return m_canCollapseMarginAfterWithChildren; }
-        void setCanCollapseMarginAfterWithChildren(bool collapse) { m_canCollapseMarginAfterWithChildren = collapse; }
         bool quirkContainer() const { return m_quirkContainer; }
         bool determinedMarginBeforeQuirk() const { return m_determinedMarginBeforeQuirk; }
         bool marginBeforeQuirk() const { return m_marginBeforeQuirk; }
         bool marginAfterQuirk() const { return m_marginAfterQuirk; }
         LayoutUnit positiveMargin() const { return m_positiveMargin; }
         LayoutUnit negativeMargin() const { return m_negativeMargin; }
+        bool discardMargin() const { return m_discardMargin; }
         LayoutUnit margin() const { return m_positiveMargin - m_negativeMargin; }
     };
 
@@ -1010,7 +1031,7 @@ private:
     LayoutUnit collapseMargins(RenderBox* child, MarginInfo&);
     LayoutUnit clearFloatsIfNeeded(RenderBox* child, MarginInfo&, LayoutUnit oldTopPosMargin, LayoutUnit oldTopNegMargin, LayoutUnit yPos);
     LayoutUnit estimateLogicalTopPosition(RenderBox* child, const MarginInfo&, LayoutUnit& estimateWithoutPagination);
-    void marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore) const;
+    void marginBeforeEstimateForChild(RenderBox*, LayoutUnit&, LayoutUnit&, bool&) const;
     void determineLogicalLeftPositionForChild(RenderBox* child);
     void handleAfterSideOfBlock(LayoutUnit top, LayoutUnit bottom, MarginInfo&);
     void setCollapsedBottomMargin(const MarginInfo&);
@@ -1172,8 +1193,10 @@ protected:
             , m_paginationStrut(0)
             , m_pageLogicalOffset(0)
             , m_lineGridBox(0)
-            , m_shouldBreakAtLineToAvoidWidow(false)
             , m_lineBreakToAvoidWidow(0)
+            , m_shouldBreakAtLineToAvoidWidow(false)
+            , m_discardMarginBefore(false)
+            , m_discardMarginAfter(false)
         { 
         }
 
@@ -1181,7 +1204,6 @@ protected:
         { 
             return std::max<LayoutUnit>(block->marginBefore(), 0);
         }
-        
         static LayoutUnit negativeMarginBeforeDefault(const RenderBlock* block)
         { 
             return std::max<LayoutUnit>(-block->marginBefore(), 0);
@@ -1201,8 +1223,10 @@ protected:
         
         RootInlineBox* m_lineGridBox;
 
-        bool m_shouldBreakAtLineToAvoidWidow;
         RootInlineBox* m_lineBreakToAvoidWidow;
+        bool m_shouldBreakAtLineToAvoidWidow : 1;
+        bool m_discardMarginBefore : 1;
+        bool m_discardMarginAfter : 1;
      };
 
     OwnPtr<RenderBlockRareData> m_rareData;

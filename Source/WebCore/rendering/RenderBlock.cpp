@@ -169,6 +169,7 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderP
     , m_marginBeforeQuirk(false)
     , m_marginAfterQuirk(false)
     , m_determinedMarginBeforeQuirk(false)
+    , m_discardMargin(false)
 {
     RenderStyle* blockStyle = block->style();
     ASSERT(block->isRenderView() || block->parent());
@@ -186,11 +187,12 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderP
     m_canCollapseMarginAfterWithChildren = m_canCollapseWithChildren && (afterBorderPadding == 0) &&
         (blockStyle->logicalHeight().isAuto() && !blockStyle->logicalHeight().value()) && blockStyle->marginAfterCollapse() != MSEPARATE;
     
-    m_quirkContainer = block->isTableCell() || block->isBody() || blockStyle->marginBeforeCollapse() == MDISCARD
-        || blockStyle->marginAfterCollapse() == MDISCARD;
+    m_quirkContainer = block->isTableCell() || block->isBody();
 
-    m_positiveMargin = m_canCollapseMarginBeforeWithChildren ? block->maxPositiveMarginBefore() : LayoutUnit();
-    m_negativeMargin = m_canCollapseMarginBeforeWithChildren ? block->maxNegativeMarginBefore() : LayoutUnit();
+    m_discardMargin = m_canCollapseMarginBeforeWithChildren && block->mustDiscardMarginBefore();
+
+    m_positiveMargin = (m_canCollapseMarginBeforeWithChildren && !block->mustDiscardMarginBefore()) ? block->maxPositiveMarginBefore() : LayoutUnit();
+    m_negativeMargin = (m_canCollapseMarginBeforeWithChildren && !block->mustDiscardMarginBefore()) ? block->maxNegativeMarginBefore() : LayoutUnit();
 }
 
 // -------------------------------------------------------------------------------------------------------
@@ -1526,8 +1528,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (!isCell) {
         initMaxMarginValues();
         
-        setMarginBeforeQuirk(styleToUse->marginBefore().quirk());
-        setMarginAfterQuirk(styleToUse->marginAfter().quirk());
+        setMarginBeforeQuirk(styleToUse->isMarginBeforeQuirk());
+        setMarginAfterQuirk(styleToUse->isMarginAfterQuirk());
         setPaginationStrut(0);
     }
 
@@ -1957,6 +1959,13 @@ void RenderBlock::moveRunInToOriginalPosition(RenderObject* runIn)
 
 LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo)
 {
+    bool childDiscardMarginBefore = mustDiscardMarginBeforeForChild(child);
+    bool childDiscardMarginAfter = mustDiscardMarginAfterForChild(child);
+    bool childIsSelfCollapsing = child->isSelfCollapsingBlock();
+
+    // The child discards the before margin when the the after margin has discard in the case of a self collapsing block.
+    childDiscardMarginBefore = childDiscardMarginBefore || (childDiscardMarginAfter && childIsSelfCollapsing);
+
     // Get the four margin values for the child and cache them.
     const MarginValues childMargins = marginValuesForChild(child);
 
@@ -1966,38 +1975,48 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
 
     // For self-collapsing blocks, collapse our bottom margins into our
     // top to get new posTop and negTop values.
-    if (child->isSelfCollapsingBlock()) {
+    if (childIsSelfCollapsing) {
         posTop = max(posTop, childMargins.positiveMarginAfter());
         negTop = max(negTop, childMargins.negativeMarginAfter());
     }
     
     // See if the top margin is quirky. We only care if this child has
     // margins that will collapse with us.
-    bool topQuirk = child->isMarginBeforeQuirk() || style()->marginBeforeCollapse() == MDISCARD;
+    bool topQuirk = child->isMarginBeforeQuirk();
 
     if (marginInfo.canCollapseWithMarginBefore()) {
-        // This child is collapsing with the top of the
-        // block.  If it has larger margin values, then we need to update
-        // our own maximal values.
-        if (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !topQuirk)
-            setMaxMarginBeforeValues(max(posTop, maxPositiveMarginBefore()), max(negTop, maxNegativeMarginBefore()));
+        if (!childDiscardMarginBefore && !marginInfo.discardMargin()) {
+            // This child is collapsing with the top of the
+            // block. If it has larger margin values, then we need to update
+            // our own maximal values.
+            if (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !topQuirk)
+                setMaxMarginBeforeValues(max(posTop, maxPositiveMarginBefore()), max(negTop, maxNegativeMarginBefore()));
 
-        // The minute any of the margins involved isn't a quirk, don't
-        // collapse it away, even if the margin is smaller (www.webreference.com
-        // has an example of this, a <dt> with 0.8em author-specified inside
-        // a <dl> inside a <td>.
-        if (!marginInfo.determinedMarginBeforeQuirk() && !topQuirk && (posTop - negTop)) {
-            setMarginBeforeQuirk(false);
-            marginInfo.setDeterminedMarginBeforeQuirk(true);
-        }
+            // The minute any of the margins involved isn't a quirk, don't
+            // collapse it away, even if the margin is smaller (www.webreference.com
+            // has an example of this, a <dt> with 0.8em author-specified inside
+            // a <dl> inside a <td>.
+            if (!marginInfo.determinedMarginBeforeQuirk() && !topQuirk && (posTop - negTop)) {
+                setMarginBeforeQuirk(false);
+                marginInfo.setDeterminedMarginBeforeQuirk(true);
+            }
 
-        if (!marginInfo.determinedMarginBeforeQuirk() && topQuirk && !marginBefore())
-            // We have no top margin and our top child has a quirky margin.
-            // We will pick up this quirky margin and pass it through.
-            // This deals with the <td><div><p> case.
-            // Don't do this for a block that split two inlines though.  You do
-            // still apply margins in this case.
-            setMarginBeforeQuirk(true);
+            if (!marginInfo.determinedMarginBeforeQuirk() && topQuirk && !marginBefore())
+                // We have no top margin and our top child has a quirky margin.
+                // We will pick up this quirky margin and pass it through.
+                // This deals with the <td><div><p> case.
+                // Don't do this for a block that split two inlines though. You do
+                // still apply margins in this case.
+                setMarginBeforeQuirk(true);
+        } else
+            // The before margin of the container will also discard all the margins it is collapsing with.
+            setMustDiscardMarginBefore();
+    }
+
+    // Once we find a child with discardMarginBefore all the margins collapsing with us must also discard. 
+    if (childDiscardMarginBefore) {
+        marginInfo.setDiscardMargin(true);
+        marginInfo.clearMargin();
     }
 
     if (marginInfo.quirkContainer() && marginInfo.atBeforeSideOfBlock() && (posTop - negTop))
@@ -2005,45 +2024,53 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
 
     LayoutUnit beforeCollapseLogicalTop = logicalHeight();
     LayoutUnit logicalTop = beforeCollapseLogicalTop;
-    if (child->isSelfCollapsingBlock()) {
-        // This child has no height.  We need to compute our
-        // position before we collapse the child's margins together,
-        // so that we can get an accurate position for the zero-height block.
-        LayoutUnit collapsedBeforePos = max(marginInfo.positiveMargin(), childMargins.positiveMarginBefore());
-        LayoutUnit collapsedBeforeNeg = max(marginInfo.negativeMargin(), childMargins.negativeMarginBefore());
-        marginInfo.setMargin(collapsedBeforePos, collapsedBeforeNeg);
-        
-        // Now collapse the child's margins together, which means examining our
-        // bottom margin values as well. 
-        marginInfo.setPositiveMarginIfLarger(childMargins.positiveMarginAfter());
-        marginInfo.setNegativeMarginIfLarger(childMargins.negativeMarginAfter());
+    if (childIsSelfCollapsing) {
+        // For a self collapsing block both the before and after margins get discarded. The block doesn't contribute anything to the height of the block.
+        // Also, the child's top position equals the logical height of the container.
+        if (!childDiscardMarginBefore && !marginInfo.discardMargin()) {
+            // This child has no height. We need to compute our
+            // position before we collapse the child's margins together,
+            // so that we can get an accurate position for the zero-height block.
+            LayoutUnit collapsedBeforePos = max(marginInfo.positiveMargin(), childMargins.positiveMarginBefore());
+            LayoutUnit collapsedBeforeNeg = max(marginInfo.negativeMargin(), childMargins.negativeMarginBefore());
+            marginInfo.setMargin(collapsedBeforePos, collapsedBeforeNeg);
+            
+            // Now collapse the child's margins together, which means examining our
+            // bottom margin values as well. 
+            marginInfo.setPositiveMarginIfLarger(childMargins.positiveMarginAfter());
+            marginInfo.setNegativeMarginIfLarger(childMargins.negativeMarginAfter());
 
-        if (!marginInfo.canCollapseWithMarginBefore())
-            // We need to make sure that the position of the self-collapsing block
-            // is correct, since it could have overflowing content
-            // that needs to be positioned correctly (e.g., a block that
-            // had a specified height of 0 but that actually had subcontent).
-            logicalTop = logicalHeight() + collapsedBeforePos - collapsedBeforeNeg;
-    }
-    else {
-        if (child->style()->marginBeforeCollapse() == MSEPARATE) {
+            if (!marginInfo.canCollapseWithMarginBefore())
+                // We need to make sure that the position of the self-collapsing block
+                // is correct, since it could have overflowing content
+                // that needs to be positioned correctly (e.g., a block that
+                // had a specified height of 0 but that actually had subcontent).
+                logicalTop = logicalHeight() + collapsedBeforePos - collapsedBeforeNeg;
+        }
+    } else {
+        if (mustSeparateMarginBeforeForChild(child)) {
+            ASSERT(!marginInfo.discardMargin() || (marginInfo.discardMargin() && !marginInfo.margin()));
             setLogicalHeight(logicalHeight() + marginInfo.margin() + marginBeforeForChild(child));
             logicalTop = logicalHeight();
-        }
-        else if (!marginInfo.atBeforeSideOfBlock() ||
-            (!marginInfo.canCollapseMarginBeforeWithChildren()
-             && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginBeforeQuirk()))) {
+        } else if (!marginInfo.discardMargin() && (!marginInfo.atBeforeSideOfBlock()
+            || (!marginInfo.canCollapseMarginBeforeWithChildren()
+            && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginBeforeQuirk())))) {
             // We're collapsing with a previous sibling's margins and not
             // with the top of the block.
             setLogicalHeight(logicalHeight() + max(marginInfo.positiveMargin(), posTop) - max(marginInfo.negativeMargin(), negTop));
             logicalTop = logicalHeight();
         }
 
-        marginInfo.setPositiveMargin(childMargins.positiveMarginAfter());
-        marginInfo.setNegativeMargin(childMargins.negativeMarginAfter());
+        marginInfo.setDiscardMargin(childDiscardMarginAfter);
+        
+        if (!marginInfo.discardMargin()) {
+            marginInfo.setPositiveMargin(childMargins.positiveMarginAfter());
+            marginInfo.setNegativeMargin(childMargins.negativeMarginAfter());
+        } else
+            marginInfo.clearMargin();
 
         if (marginInfo.margin())
-            marginInfo.setMarginAfterQuirk(child->isMarginAfterQuirk() || style()->marginAfterCollapse() == MDISCARD);
+            marginInfo.setMarginAfterQuirk(child->isMarginAfterQuirk());
     }
     
     // If margins would pull us past the top of the next page, then we need to pull back and pretend like the margins
@@ -2079,12 +2106,19 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
         return yPos;
 
     if (child->isSelfCollapsingBlock()) {
+        bool childDiscardMargin = mustDiscardMarginBeforeForChild(child) || mustDiscardMarginAfterForChild(child);
+
         // For self-collapsing blocks that clear, they can still collapse their
         // margins with following siblings.  Reset the current margins to represent
         // the self-collapsing block's margins only.
-        MarginValues childMargins = marginValuesForChild(child);
-        marginInfo.setPositiveMargin(max(childMargins.positiveMarginBefore(), childMargins.positiveMarginAfter()));
-        marginInfo.setNegativeMargin(max(childMargins.negativeMarginBefore(), childMargins.negativeMarginAfter()));
+        // If DISCARD is specified for -webkit-margin-collapse, reset the margin values.
+        if (!childDiscardMargin) {
+            MarginValues childMargins = marginValuesForChild(child);
+            marginInfo.setPositiveMargin(max(childMargins.positiveMarginBefore(), childMargins.positiveMarginAfter()));
+            marginInfo.setNegativeMargin(max(childMargins.negativeMarginBefore(), childMargins.negativeMarginAfter()));
+        } else
+            marginInfo.clearMargin();
+        marginInfo.setDiscardMargin(childDiscardMargin);
 
         // CSS2.1 states:
         // "If the top and bottom margins of an element with clearance are adjoining, its margins collapse with 
@@ -2117,6 +2151,9 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
         // margins involved.
         setMaxMarginBeforeValues(oldTopPosMargin, oldTopNegMargin);
         marginInfo.setAtBeforeSideOfBlock(false);
+
+        // In case the child discarded the before margin of the block we need to reset the mustDiscardMarginBefore flag to the initial value.
+        setMustDiscardMarginBefore(style()->marginBeforeCollapse() == MDISCARD);
     }
 
     LayoutUnit logicalTop = yPos + heightIncrease;
@@ -2128,12 +2165,22 @@ LayoutUnit RenderBlock::clearFloatsIfNeeded(RenderBox* child, MarginInfo& margin
     return logicalTop;
 }
 
-void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore) const
+void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& positiveMarginBefore, LayoutUnit& negativeMarginBefore, bool& discardMarginBefore) const
 {
-    // FIXME: We should deal with the margin-collapse-* style extensions that prevent collapsing and that discard margins.
     // Give up if in quirks mode and we're a body/table cell and the top margin of the child box is quirky.
-    if (document()->inQuirksMode() && child->isMarginBeforeQuirk() && (isTableCell() || isBody()))
+    // Give up if the child specified -webkit-margin-collapse: separate that prevents collapsing.
+    // FIXME: Use writing mode independent accessor for marginBeforeCollapse.
+    if ((document()->inQuirksMode() && child->isMarginBeforeQuirk() && (isTableCell() || isBody())) || child->style()->marginBeforeCollapse() == MSEPARATE)
         return;
+
+    // The margins are discarded by a child that specified -webkit-margin-collapse: discard.
+    // FIXME: Use writing mode independent accessor for marginBeforeCollapse.
+    if (child->style()->marginBeforeCollapse() == MDISCARD) {
+        positiveMarginBefore = 0;
+        negativeMarginBefore = 0;
+        discardMarginBefore = true;
+        return;
+    }
 
     LayoutUnit beforeChildMargin = marginBeforeForChild(child);
     positiveMarginBefore = max(positiveMarginBefore, beforeChildMargin);
@@ -2163,12 +2210,12 @@ void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& pos
     // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
     if (grandchildBox->needsLayout()) {
         grandchildBox->computeAndSetBlockDirectionMargins(this);
-        grandchildBox->setMarginBeforeQuirk(grandchildBox->style()->marginBefore().quirk());
-        grandchildBox->setMarginAfterQuirk(grandchildBox->style()->marginAfter().quirk());
+        grandchildBox->setMarginBeforeQuirk(grandchildBox->style()->isMarginBeforeQuirk());
+        grandchildBox->setMarginAfterQuirk(grandchildBox->style()->isMarginAfterQuirk());
     }
 
     // Collapse the margin of the grandchild box with our own to produce an estimate.
-    childBlock->marginBeforeEstimateForChild(grandchildBox, positiveMarginBefore, negativeMarginBefore);
+    childBlock->marginBeforeEstimateForChild(grandchildBox, positiveMarginBefore, negativeMarginBefore, discardMarginBefore);
 }
 
 LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const MarginInfo& marginInfo, LayoutUnit& estimateWithoutPagination)
@@ -2179,19 +2226,22 @@ LayoutUnit RenderBlock::estimateLogicalTopPosition(RenderBox* child, const Margi
     if (!marginInfo.canCollapseWithMarginBefore()) {
         LayoutUnit positiveMarginBefore = 0;
         LayoutUnit negativeMarginBefore = 0;
+        bool discardMarginBefore = false;
         if (child->selfNeedsLayout()) {
             // Try to do a basic estimation of how the collapse is going to go.
-            marginBeforeEstimateForChild(child, positiveMarginBefore, negativeMarginBefore);
+            marginBeforeEstimateForChild(child, positiveMarginBefore, negativeMarginBefore, discardMarginBefore);
         } else {
             // Use the cached collapsed margin values from a previous layout. Most of the time they
             // will be right.
             MarginValues marginValues = marginValuesForChild(child);
             positiveMarginBefore = max(positiveMarginBefore, marginValues.positiveMarginBefore());
             negativeMarginBefore = max(negativeMarginBefore, marginValues.negativeMarginBefore());
+            discardMarginBefore = mustDiscardMarginBeforeForChild(child);
         }
 
         // Collapse the result with our current margins.
-        logicalTopEstimate += max(marginInfo.positiveMargin(), positiveMarginBefore) - max(marginInfo.negativeMargin(), negativeMarginBefore);
+        if (!discardMarginBefore)
+            logicalTopEstimate += max(marginInfo.positiveMargin(), positiveMarginBefore) - max(marginInfo.negativeMargin(), negativeMarginBefore);
     }
 
     // Adjust logicalTopEstimate down to the next page if the margins are so large that we don't fit on the current
@@ -2266,6 +2316,13 @@ void RenderBlock::determineLogicalLeftPositionForChild(RenderBox* child)
 void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
 {
     if (marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()) {
+        // Update the after side margin of the container to discard if the after margin of the last child also discards and we collapse with it.
+        // Don't update the max margin values because we won't need them anyway.
+        if (marginInfo.discardMargin()) {
+            setMustDiscardMarginAfter();
+            return;
+        }
+
         // Update our max pos/neg bottom margins, since we collapsed our bottom margins
         // with our children.
         setMaxMarginAfterValues(max(maxPositiveMarginAfter(), marginInfo.positiveMargin()), max(maxNegativeMarginAfter(), marginInfo.negativeMargin()));
@@ -2288,9 +2345,9 @@ void RenderBlock::handleAfterSideOfBlock(LayoutUnit beforeSide, LayoutUnit after
     // If we can't collapse with children then go ahead and add in the bottom margin.
     // Don't do this for ordinary anonymous blocks as only the enclosing box should add in
     // its margin.
-    if (!marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()
+    if (!marginInfo.discardMargin() && (!marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()
         && (!isAnonymousBlock() || isAnonymousColumnsBlock() || isAnonymousColumnSpanBlock())
-        && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginAfterQuirk()))
+        && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginAfterQuirk())))
         setLogicalHeight(logicalHeight() + marginInfo.margin());
         
     // Now add in our bottom border/padding.
@@ -2415,13 +2472,6 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
     // The child is a normal flow object.  Compute the margins we will use for collapsing now.
     child->computeAndSetBlockDirectionMargins(this);
 
-    // Do not allow a collapse if the margin-before-collapse style is set to SEPARATE.
-    RenderStyle* childStyle = child->style();
-    if (childStyle->marginBeforeCollapse() == MSEPARATE) {
-        marginInfo.setAtBeforeSideOfBlock(false);
-        marginInfo.clearMargin();
-    }
-
     // Try to guess our correct logical top position.  In most cases this guess will
     // be correct.  Only if we're wrong (when we compute the real logical top position)
     // will we have to potentially relayout.
@@ -2515,7 +2565,7 @@ void RenderBlock::layoutBlockChild(RenderBox* child, MarginInfo& marginInfo, Lay
 
     // Update our height now that the child has been placed in the correct position.
     setLogicalHeight(logicalHeight() + logicalHeightForChild(child));
-    if (childStyle->marginAfterCollapse() == MSEPARATE) {
+    if (mustSeparateMarginAfterForChild(child)) {
         setLogicalHeight(logicalHeight() + marginAfterForChild(child));
         marginInfo.clearMargin();
     }
@@ -6817,6 +6867,99 @@ void RenderBlock::setMaxMarginAfterValues(LayoutUnit pos, LayoutUnit neg)
     }
     m_rareData->m_margins.setPositiveMarginAfter(pos);
     m_rareData->m_margins.setNegativeMarginAfter(neg);
+}
+
+void RenderBlock::setMustDiscardMarginBefore(bool value)
+{
+    if (style()->marginBeforeCollapse() == MDISCARD) {
+        ASSERT(value);
+        return;
+    }
+    
+    if (!m_rareData && !value)
+        return;
+
+    if (!m_rareData)
+        m_rareData = adoptPtr(new RenderBlockRareData(this));
+
+    m_rareData->m_discardMarginBefore = value;
+}
+
+void RenderBlock::setMustDiscardMarginAfter(bool value)
+{
+    if (style()->marginAfterCollapse() == MDISCARD) {
+        ASSERT(value);
+        return;
+    }
+
+    if (!m_rareData && !value)
+        return;
+
+    if (!m_rareData)
+        m_rareData = adoptPtr(new RenderBlockRareData(this));
+
+    m_rareData->m_discardMarginAfter = value;
+}
+
+bool RenderBlock::mustDiscardMarginBefore() const
+{
+    return style()->marginBeforeCollapse() == MDISCARD || (m_rareData && m_rareData->m_discardMarginBefore);
+}
+
+bool RenderBlock::mustDiscardMarginAfter() const
+{
+    return style()->marginAfterCollapse() == MDISCARD || (m_rareData && m_rareData->m_discardMarginAfter);
+}
+
+bool RenderBlock::mustDiscardMarginBeforeForChild(const RenderBox* child) const
+{
+    ASSERT(!child->selfNeedsLayout());
+    if (!child->isWritingModeRoot())
+        return child->isRenderBlock() ? toRenderBlock(child)->mustDiscardMarginBefore() : (child->style()->marginBeforeCollapse() == MDISCARD);
+    if (child->isHorizontalWritingMode() == isHorizontalWritingMode())
+        return child->isRenderBlock() ? toRenderBlock(child)->mustDiscardMarginAfter() : (child->style()->marginAfterCollapse() == MDISCARD);
+
+    // FIXME: We return false here because the implementation is not geometrically complete. We have values only for before/after, not start/end.
+    // In case the boxes are perpendicular we assume the property is not specified.
+    return false;
+}
+
+bool RenderBlock::mustDiscardMarginAfterForChild(const RenderBox* child) const
+{
+    ASSERT(!child->selfNeedsLayout());
+    if (!child->isWritingModeRoot())
+        return child->isRenderBlock() ? toRenderBlock(child)->mustDiscardMarginAfter() : (child->style()->marginAfterCollapse() == MDISCARD);
+    if (child->isHorizontalWritingMode() == isHorizontalWritingMode())
+        return child->isRenderBlock() ? toRenderBlock(child)->mustDiscardMarginBefore() : (child->style()->marginBeforeCollapse() == MDISCARD);
+
+    // FIXME: See |mustDiscardMarginBeforeForChild| above.
+    return false;
+}
+
+bool RenderBlock::mustSeparateMarginBeforeForChild(const RenderBox* child) const
+{
+    ASSERT(!child->selfNeedsLayout());
+    const RenderStyle* childStyle = child->style();
+    if (!child->isWritingModeRoot())
+        return childStyle->marginBeforeCollapse() == MSEPARATE;
+    if (child->isHorizontalWritingMode() == isHorizontalWritingMode())
+        return childStyle->marginAfterCollapse() == MSEPARATE;
+
+    // FIXME: See |mustDiscardMarginBeforeForChild| above.
+    return false;
+}
+
+bool RenderBlock::mustSeparateMarginAfterForChild(const RenderBox* child) const
+{
+    ASSERT(!child->selfNeedsLayout());
+    const RenderStyle* childStyle = child->style();
+    if (!child->isWritingModeRoot())
+        return childStyle->marginAfterCollapse() == MSEPARATE;
+    if (child->isHorizontalWritingMode() == isHorizontalWritingMode())
+        return childStyle->marginBeforeCollapse() == MSEPARATE;
+
+    // FIXME: See |mustDiscardMarginBeforeForChild| above.
+    return false;
 }
 
 void RenderBlock::setPaginationStrut(LayoutUnit strut)
