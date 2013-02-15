@@ -31,6 +31,7 @@
 #include "IDBFactoryBackendImpl.h"
 #include "IDBFakeBackingStore.h"
 #include "IDBTransactionBackendImpl.h"
+#include "SharedBuffer.h"
 #include "WebIDBDatabaseCallbacksImpl.h"
 #include "WebIDBDatabaseImpl.h"
 

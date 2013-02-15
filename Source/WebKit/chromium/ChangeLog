@@ -1,5 +1,14 @@
 2013-02-15  Alec Flett  <alecflett@chromium.org>
 
+        IndexedDB: fix chromium windows bustage
+        https://bugs.webkit.org/show_bug.cgi?id=109970
+
+        Unreviewed build fix for Chromium Windows.
+
+        * tests/IDBDatabaseBackendTest.cpp:
+
+2013-02-15  Alec Flett  <alecflett@chromium.org>
+
         IndexedDB: Implement SharedBuffer version of put()
         https://bugs.webkit.org/show_bug.cgi?id=109092
 
