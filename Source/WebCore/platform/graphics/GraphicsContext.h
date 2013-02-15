@@ -326,7 +326,7 @@ namespace WebCore {
         void drawImage(Image*, ColorSpace styleColorSpace, const FloatRect& destRect, const FloatRect& srcRect, CompositeOperator, BlendMode, RespectImageOrientationEnum = DoNotRespectImageOrientation, bool useLowQualityScale = false);
         
         void drawTiledImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize,
-                       CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
+            CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false, BlendMode = BlendModeNormal);
         void drawTiledImage(Image*, ColorSpace styleColorSpace, const IntRect& destRect, const IntRect& srcRect,
                             const FloatSize& tileScaleFactor, Image::TileRule hRule = Image::StretchTile, Image::TileRule vRule = Image::StretchTile,
                             CompositeOperator = CompositeSourceOver, bool useLowQualityScale = false);
@@ -406,6 +406,7 @@ namespace WebCore {
 
         void setCompositeOperation(CompositeOperator, BlendMode = BlendModeNormal);
         CompositeOperator compositeOperation() const;
+        BlendMode blendModeOperation() const;
 
         void clip(const Path&, WindRule = RULE_EVENODD);
 

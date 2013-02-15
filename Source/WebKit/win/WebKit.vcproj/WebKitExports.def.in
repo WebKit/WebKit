@@ -365,7 +365,7 @@ EXPORTS
 #endif
         ?getHBITMAP@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@@Z
         ?getHBITMAPOfSize@BitmapImage@WebCore@@UAE_NPAUHBITMAP__@@PAUtagSIZE@@@Z
-        ?drawPattern@Image@WebCore@@UAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVAffineTransform@2@ABVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1@Z
+        ?drawPattern@Image@WebCore@@UAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVAffineTransform@2@ABVFloatPoint@2@W4ColorSpace@2@W4CompositeOperator@2@1W4BlendMode@2@@Z
         ?reportMemoryUsage@BitmapImage@WebCore@@UBEXPAVMemoryObjectInfo@WTF@@@Z
         ?drawFrameMatchingSourceSize@BitmapImage@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@ABVIntSize@2@W4ColorSpace@2@W4CompositeOperator@2@@Z
         ?draw@Image@WebCore@@MAEXPAVGraphicsContext@2@ABVFloatRect@2@1W4ColorSpace@2@W4CompositeOperator@2@W4BlendMode@2@W4RespectImageOrientationEnum@2@@Z

@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<script>
+    if (window.testRunner) {
+        window.testRunner.overridePreference("WebKitAcceleratedCompositingEnabled", "1");
+    }
+    if (window.testRunner)
+      window.testRunner.dumpAsText(true);
+</script>
+<style>
+
+li
+{
+	margin: 5px;
+	width: 130px;
+	height: 130px;
+	background:  url("resources/ducky.png") no-repeat 0 0 /100% 100%, linear-gradient(to right, #00ffff 0%, rgba(0,0,255,0) 24%, #ff0000 50%, #ffff00 75%, #00ff00 100%);
+	display: block;
+	float: left;
+}
+</style>
+<!-- this file should contain a duck on top of a gradient with every type of blending -->
+<body style="background-color: green">
+<ul>
+<li style="-webkit-background-blend-mode: normal, normal"></li>
+<li style="-webkit-background-blend-mode: multiply, normal"></li>
+<li style="-webkit-background-blend-mode: screen, normal"></li>
+<li style="-webkit-background-blend-mode: overlay, normal; opacity:.9"></li>
+<li style="-webkit-background-blend-mode: darken, normal"></li>
+<li style="-webkit-background-blend-mode: lighten, normal"></li>
+<li style="-webkit-background-blend-mode: color-dodge, normal"></li>
+<li style="-webkit-background-blend-mode: color-burn, normal"></li>
+<li style="-webkit-background-blend-mode: hard-ligh, normalt"></li>
+<li style="-webkit-background-blend-mode: soft-light, normal"></li>
+<li style="-webkit-background-blend-mode: difference, normal"></li>
+<li style="-webkit-background-blend-mode: exclusion, normal"></li>
+<li style="-webkit-background-blend-mode: hue, normal;"></li>
+<li style="-webkit-background-blend-mode: saturation, normal"></li>
+<li style="-webkit-background-blend-mode: color, normal"></li>
+<li style="-webkit-background-blend-mode: luminosity, normal"></li>
+</ul>
+</body>
+

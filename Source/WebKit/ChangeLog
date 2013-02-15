@@ -1,3 +1,14 @@
+2013-02-15  Rik Cabanier  <cabanier@adobe.com>
+
+        Add platform support for -webkit-background-blend-mode to CG context
+        https://bugs.webkit.org/show_bug.cgi?id=108549
+
+        Reviewed by Dean Jackson.
+
+        Fixed build issue.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-02-14  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Touch-ups to the VS2010 WebKit solution.

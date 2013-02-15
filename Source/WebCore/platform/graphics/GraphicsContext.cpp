@@ -499,7 +499,7 @@ void GraphicsContext::drawImage(Image* image, ColorSpace styleColorSpace, const 
         setImageInterpolationQuality(previousInterpolationQuality);
 }
 
-void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize, CompositeOperator op, bool useLowQualityScale)
+void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& destRect, const IntPoint& srcPoint, const IntSize& tileSize, CompositeOperator op, bool useLowQualityScale, BlendMode blendMode)
 {
     if (paintingDisabled() || !image)
         return;
@@ -507,10 +507,10 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
     if (useLowQualityScale) {
         InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
         setImageInterpolationQuality(InterpolationLow);
-        image->drawTiled(this, destRect, srcPoint, tileSize, styleColorSpace, op);
+        image->drawTiled(this, destRect, srcPoint, tileSize, styleColorSpace, op, blendMode);
         setImageInterpolationQuality(previousInterpolationQuality);
     } else
-        image->drawTiled(this, destRect, srcPoint, tileSize, styleColorSpace, op);
+        image->drawTiled(this, destRect, srcPoint, tileSize, styleColorSpace, op, blendMode);
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect,
@@ -715,6 +715,11 @@ void GraphicsContext::setCompositeOperation(CompositeOperator compositeOperation
 CompositeOperator GraphicsContext::compositeOperation() const
 {
     return m_state.compositeOperator;
+}
+
+BlendMode GraphicsContext::blendModeOperation() const
+{
+    return m_state.blendMode;
 }
 
 #if !USE(CG) && !USE(SKIA)

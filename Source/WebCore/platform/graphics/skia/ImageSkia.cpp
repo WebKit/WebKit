@@ -465,7 +465,8 @@ void Image::drawPattern(GraphicsContext* context,
                         const FloatPoint& phase,
                         ColorSpace styleColorSpace,
                         CompositeOperator compositeOp,
-                        const FloatRect& destRect)
+                        const FloatRect& destRect,
+                        BlendMode)
 {
 #if PLATFORM(CHROMIUM)
     TRACE_EVENT0("skia", "Image::drawPattern");

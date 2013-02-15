@@ -74,7 +74,7 @@ static void drawPatternCallback(void* info, CGContextRef context)
 }
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const AffineTransform& patternTransform,
-                        const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect)
+    const FloatPoint& phase, ColorSpace styleColorSpace, CompositeOperator op, const FloatRect& destRect, BlendMode blendMode)
 {
     if (!nativeImageForCurrentFrame())
         return;
@@ -85,7 +85,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& tileRect, const 
     CGContextRef context = ctxt->platformContext();
     GraphicsContextStateSaver stateSaver(*ctxt);
     CGContextClipToRect(context, destRect);
-    ctxt->setCompositeOperation(op);
+    ctxt->setCompositeOperation(op, blendMode);
     CGContextTranslateCTM(context, destRect.x(), destRect.y() + destRect.height());
     CGContextScaleCTM(context, 1, -1);
     
