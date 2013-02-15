@@ -1608,6 +1608,7 @@ webkit.org/b/23166 ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.h
 webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html
+webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html
 
 # EFL port does not support Emacs commands.
 Bug(EFL) editing/pasteboard/emacs-cntl-y-001.html [ Missing ]

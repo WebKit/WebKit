@@ -427,6 +427,18 @@ Object.defineProperty(Array.prototype, "select",
     }
 });
 
+Object.defineProperty(Array.prototype, "peekLast",
+{
+    /**
+     * @this {Array.<*>}
+     * @return {*}
+     */
+    value: function()
+    {
+        return this[this.length - 1];
+    }
+});
+
 /**
  * @param {*} anObject
  * @param {Array.<*>} aList

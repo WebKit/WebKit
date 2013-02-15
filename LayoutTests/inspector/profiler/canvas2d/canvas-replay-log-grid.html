@@ -1,0 +1,128 @@
+<html>
+<head>
+    <script src="../../../http/tests/inspector/inspector-test.js"></script>
+    <script src="../canvas-profiler-test.js"></script>
+<script>
+
+var canvas;
+var context;
+var round = 0;
+var colors = ["red", "green", "blue", "yellow", "black"];
+
+function createCanvasContext()
+{
+    canvas = document.getElementById("canvas");
+    context = canvas.getContext("2d");
+    console.assert(context, "Failed to create a canvas context");
+}
+
+function doSomeCanvasCalls(repeats)
+{
+    if (!context)
+        createCanvasContext();
+    repeats = repeats || 1;
+    while (repeats-- > 0) {
+        var offset = 5 * round;
+        context.beginPath();
+        context.rect(offset, offset, 100 - offset, 100 - offset);
+        context.fillStyle = colors[round % colors.length];
+        context.fill();
+        ++round;
+    }
+}
+
+function test()
+{
+    // FIXME: Remove once taken out of experiments.
+    WebInspector.experimentsSettings.canvasInspection = {};
+    WebInspector.experimentsSettings.canvasInspection.isEnabled = function() { return true; };
+
+    WebInspector.showPanel("profiles");
+    var profilesPanel = WebInspector.panels.profiles;
+    var profileType = profilesPanel.getProfileType(WebInspector.CanvasProfileType.TypeId);
+    profilesPanel._onProfileTypeSelected({data: profileType});
+
+    InspectorTest.addSniffer(profileType, "_didStartCapturingFrame", didStartCapturingFrame);
+    profilesPanel.toggleRecordButton();
+
+    var traceLogId;
+    var profileHeader;
+    function didStartCapturingFrame(profilesPanel, frameId, error, traceLogId)
+    {
+        profileHeader = profilesPanel.getProfiles(WebInspector.CanvasProfileType.TypeId)[0];
+        traceLogId = profileHeader.traceLogId();
+        profilesPanel.showProfile(profileHeader);
+        InspectorTest.evaluateInConsole("doSomeCanvasCalls(4)", didSomeCanvasCalls);
+    }
+    function didSomeCanvasCalls()
+    {
+        InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", onUpdateCapturingStatus);
+        profilesPanel.toggleRecordButton();
+    }
+    function onUpdateCapturingStatus()
+    {
+        if (profileHeader._alive) {
+            InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", onUpdateCapturingStatus);
+            return;
+        }
+
+        var profileView = profilesPanel.visibleView;
+        var dataGrid = profileView._logGrid;
+        dataGrid.rootNode().expandRecursively();
+
+        dumpTableData(dataGrid.element);
+        InspectorTest.completeTest();
+    }
+    function dumpTableData(tableElement)
+    {
+        var textRows = [];
+        var textWidths = [];
+        var rows = tableElement.getElementsByTagName("tr");
+        for (var i = 0, row; row = rows[i]; ++i) {
+            if (!row.offsetHeight || !row.textContent)
+                continue;
+            var textCols = [];
+            var cols = row.getElementsByTagName("td");
+            for (var j = 0, col; col = cols[j]; ++j) {
+                if (!col.offsetHeight)
+                    continue;
+                var index = textCols.length;
+                var text = col.textContent;
+                textWidths[index] = Math.max(textWidths[index] || 0, text.length);
+                textCols[index] = text;
+            }
+            textRows.push(textCols);
+        }
+
+        function alignText(text, width)
+        {
+            var result = "";
+            var spaces = width - text.length;
+            while (spaces-- > 0)
+                result += " ";
+            result += text;
+            return result;
+        }
+
+        for (var i = 0; i < textRows.length; ++i) {
+            var line = "";
+            for (var j = 0; j < textRows[i].length; ++j) {
+                if (j)
+                    line += " | ";
+                line += alignText(textRows[i][j], textWidths[j]);
+            }
+            InspectorTest.addResult(line);
+        }
+    }
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests replay log grid.
+</p>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=109592">Bug 109592</a>
+<canvas id="canvas"></canvas>
+</body>
+</html>

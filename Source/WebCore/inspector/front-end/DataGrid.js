@@ -628,10 +628,7 @@ WebInspector.DataGrid.prototype = {
             return;
 
         this.columns[columnIdentifier].hidden = !visible;
-        if (visible)
-            this.element.removeStyleClass("hide-" + columnIdentifier + "-column");
-        else
-            this.element.addStyleClass("hide-" + columnIdentifier + "-column");
+        this.element.enableStyleClass("hide-" + columnIdentifier + "-column", !visible);
     },
 
     get scrollContainer()
@@ -1149,17 +1146,8 @@ WebInspector.DataGridNode.prototype = {
         if (!this._element)
             return;
 
-        if (this._hasChildren)
-        {
-            this._element.addStyleClass("parent");
-            if (this.expanded)
-                this._element.addStyleClass("expanded");
-        }
-        else
-        {
-            this._element.removeStyleClass("parent");
-            this._element.removeStyleClass("expanded");
-        }
+        this._element.enableStyleClass("parent", this._hasChildren);
+        this._element.enableStyleClass("expanded", this._hasChildren && this.expanded);
     },
 
     get hasChildren()
@@ -1174,12 +1162,8 @@ WebInspector.DataGridNode.prototype = {
 
         this._revealed = x;
 
-        if (this._element) {
-            if (this._revealed)
-                this._element.addStyleClass("revealed");
-            else
-                this._element.removeStyleClass("revealed");
-        }
+        if (this._element)
+            this._element.enableStyleClass("revealed", this._revealed);
 
         for (var i = 0; i < this.children.length; ++i)
             this.children[i].revealed = x && this.expanded;
@@ -1198,7 +1182,7 @@ WebInspector.DataGridNode.prototype = {
 
     get leftPadding()
     {
-        if (typeof(this._leftPadding) === "number")
+        if (typeof this._leftPadding === "number")
             return this._leftPadding;
         
         this._leftPadding = this.depth * this.dataGrid.indentWidth;
@@ -1634,6 +1618,9 @@ WebInspector.DataGridNode.prototype = {
         return this.parent;
     },
 
+    /**
+     * @return {boolean}
+     */
     isEventWithinDisclosureTriangle: function(event)
     {
         if (!this.hasChildren)

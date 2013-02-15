@@ -1,0 +1,25 @@
+Tests replay log grid.
+
+Bug 109592 
+
+   |         Draw call group #1 |                                | 
+ 1 |                beginPath() | canvas-replay-log-grid.html:26 | 
+ 2 |       rect(0, 0, 100, 100) | canvas-replay-log-grid.html:27 | 
+ 3 |    context.fillStyle = red | canvas-replay-log-grid.html:28 | 
+ 4 |                     fill() | canvas-replay-log-grid.html:29 | 
+   |         Draw call group #2 |                                | 
+ 5 |                beginPath() | canvas-replay-log-grid.html:26 | 
+ 6 |         rect(5, 5, 95, 95) | canvas-replay-log-grid.html:27 | 
+ 7 |  context.fillStyle = green | canvas-replay-log-grid.html:28 | 
+ 8 |                     fill() | canvas-replay-log-grid.html:29 | 
+   |         Draw call group #3 |                                | 
+ 9 |                beginPath() | canvas-replay-log-grid.html:26 | 
+10 |       rect(10, 10, 90, 90) | canvas-replay-log-grid.html:27 | 
+11 |   context.fillStyle = blue | canvas-replay-log-grid.html:28 | 
+12 |                     fill() | canvas-replay-log-grid.html:29 | 
+   |         Draw call group #4 |                                | 
+13 |                beginPath() | canvas-replay-log-grid.html:26 | 
+14 |       rect(15, 15, 85, 85) | canvas-replay-log-grid.html:27 | 
+15 | context.fillStyle = yellow | canvas-replay-log-grid.html:28 | 
+16 |                     fill() | canvas-replay-log-grid.html:29 | 
+
