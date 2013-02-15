@@ -27,7 +27,6 @@
 #define PageViewportControllerClientEfl_h
 
 #include "EwkView.h"
-#include "PageClientBase.h"
 #include "PageViewportControllerClient.h"
 #include <wtf/PassOwnPtr.h>
 

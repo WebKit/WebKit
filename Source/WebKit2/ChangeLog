@@ -1,3 +1,103 @@
+2013-02-15  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Have WebView subclass PageClient
+        https://bugs.webkit.org/show_bug.cgi?id=109684
+
+        Reviewed by Anders Carlsson.
+
+        Stop constructing the PageClient in EwkView. PageClient is an internal
+        class and we should not use it directly in our Ewk implementation.
+        Instead, have WebView subclass PageClient. The PageClient implementation
+        just calls WebView methods otherwise.
+
+        * PlatformEfl.cmake:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::setSize):
+        * UIProcess/API/efl/EwkView.h:
+        (WebKit):
+        (EwkView):
+        (EwkView::webView):
+        * UIProcess/API/efl/ewk_view.cpp:
+        * UIProcess/efl/PageClientBase.cpp: Removed.
+        * UIProcess/efl/PageClientBase.h: Removed.
+        * UIProcess/efl/PageClientDefaultImpl.cpp: Removed.
+        * UIProcess/efl/PageClientDefaultImpl.h: Removed.
+        * UIProcess/efl/PageClientLegacyImpl.cpp: Removed.
+        * UIProcess/efl/PageClientLegacyImpl.h: Removed.
+        * UIProcess/efl/PageLoadClientEfl.cpp:
+        (WebKit::PageLoadClientEfl::didCommitLoadForFrame):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::viewWidget):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::~WebView):
+        (WebKit::WebView::initialize):
+        (WebKit):
+        (WebKit::WebView::evasObject):
+        (WebKit::WebView::setThemePath):
+        (WebKit::WebView::setDrawsBackground):
+        (WebKit::WebView::drawsBackground):
+        (WebKit::WebView::setDrawsTransparentBackground):
+        (WebKit::WebView::drawsTransparentBackground):
+        (WebKit::WebView::suspendActiveDOMObjectsAndAnimations):
+        (WebKit::WebView::resumeActiveDOMObjectsAndAnimations):
+        (WebKit::WebView::didCommitLoad):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::didChangeContentsSize):
+        (WebKit::WebView::createDrawingAreaProxy):
+        (WebKit::WebView::setViewNeedsDisplay):
+        (WebKit::WebView::displayView):
+        (WebKit::WebView::scrollView):
+        (WebKit::WebView::viewSize):
+        (WebKit::WebView::isViewWindowActive):
+        (WebKit::WebView::isViewFocused):
+        (WebKit::WebView::isViewVisible):
+        (WebKit::WebView::isViewInWindow):
+        (WebKit::WebView::processDidCrash):
+        (WebKit::WebView::didRelaunchProcess):
+        (WebKit::WebView::pageClosed):
+        (WebKit::WebView::toolTipChanged):
+        (WebKit::WebView::setCursor):
+        (WebKit::WebView::setCursorHiddenUntilMouseMoves):
+        (WebKit::WebView::registerEditCommand):
+        (WebKit::WebView::clearAllEditCommands):
+        (WebKit::WebView::canUndoRedo):
+        (WebKit::WebView::executeUndoRedo):
+        (WebKit::WebView::screenToWindow):
+        (WebKit::WebView::windowToScreen):
+        (WebKit::WebView::doneWithKeyEvent):
+        (WebKit::WebView::doneWithTouchEvent):
+        (WebKit::WebView::createPopupMenuProxy):
+        (WebKit::WebView::createContextMenuProxy):
+        (WebKit::WebView::createColorChooserProxy):
+        (WebKit::WebView::setFindIndicator):
+        (WebKit::WebView::enterAcceleratedCompositingMode):
+        (WebKit::WebView::exitAcceleratedCompositingMode):
+        (WebKit::WebView::updateAcceleratedCompositingMode):
+        (WebKit::WebView::didCommitLoadForMainFrame):
+        (WebKit::WebView::didFinishLoadingDataForCustomRepresentation):
+        (WebKit::WebView::customRepresentationZoomFactor):
+        (WebKit::WebView::setCustomRepresentationZoomFactor):
+        (WebKit::WebView::flashBackingStoreUpdates):
+        (WebKit::WebView::findStringInCustomRepresentation):
+        (WebKit::WebView::countStringMatchesInCustomRepresentation):
+        (WebKit::WebView::updateTextInputState):
+        (WebKit::WebView::handleDownloadRequest):
+        (WebKit::WebView::convertToDeviceSpace):
+        (WebKit::WebView::convertToUserSpace):
+        (WebKit::WebView::didChangeViewportProperties):
+        (WebKit::WebView::pageDidRequestScroll):
+        (WebKit::WebView::didRenderFrame):
+        (WebKit::WebView::pageTransitionViewportReady):
+        * UIProcess/efl/WebView.h:
+        (WebKit):
+        (WebView):
+        (WebKit::WebView::pageRef):
+        (WebKit::WebView::page):
+        (WebKit::WebView::canScrollView):
+
 2013-02-15  Milian Wolff  <milian.wolff@kdab.com>
 
         [Qt] Restore URL Scheme Delegates after QtWebProcess crash

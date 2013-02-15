@@ -30,9 +30,6 @@
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NativeWebWheelEvent.h"
-#include "PageClientBase.h"
-#include "PageClientDefaultImpl.h"
-#include "PageClientLegacyImpl.h"
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
@@ -226,8 +223,7 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
     : m_evasObject(evasObject)
     , m_context(context)
     , m_pendingSurfaceResize(false)
-    , m_pageClient(behavior == DefaultBehavior ? PageClientDefaultImpl::create(this) : PageClientLegacyImpl::create(this))
-    , m_webView(adoptRef(new WebView(toImpl(m_context->wkContext()), m_pageClient.get(), toImpl(pageGroup), evasObject)))
+    , m_webView(adoptRef(new WebView(toImpl(m_context->wkContext()), toImpl(pageGroup), this)))
     , m_pageLoadClient(PageLoadClientEfl::create(this))
     , m_pagePolicyClient(PagePolicyClientEfl::create(this))
     , m_pageUIClient(PageUIClientEfl::create(this))
@@ -465,7 +461,7 @@ void EwkView::setSize(const IntSize& size)
         return;
 
     drawingArea->setSize(m_size, IntSize());
-    pageClient()->updateViewportSize();
+    webView()->updateViewportSize();
 }
 
 AffineTransform EwkView::transformFromScene() const

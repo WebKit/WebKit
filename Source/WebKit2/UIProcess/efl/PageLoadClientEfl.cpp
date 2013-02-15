@@ -27,7 +27,6 @@
 #include "PageLoadClientEfl.h"
 
 #include "EwkView.h"
-#include "PageClientBase.h"
 #include "WKAPICast.h"
 #include "WKFrame.h"
 #include "WKPage.h"
@@ -117,7 +116,7 @@ void PageLoadClientEfl::didCommitLoadForFrame(WKPageRef, WKFrameRef frame, WKTyp
         return;
 
     EwkView* view = toPageLoadClientEfl(clientInfo)->view();
-    view->pageClient()->didCommitLoad();
+    view->webView()->didCommitLoad();
 }
 
 void PageLoadClientEfl::didChangeBackForwardList(WKPageRef, WKBackForwardListItemRef addedItem, WKArrayRef removedItems, const void* clientInfo)

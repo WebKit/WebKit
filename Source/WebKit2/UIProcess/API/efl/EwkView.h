@@ -59,7 +59,6 @@ class ContextMenuClientEfl;
 class FindClientEfl;
 class FormClientEfl;
 class InputMethodContextEfl;
-class PageClientBase;
 class PageLoadClientEfl;
 class PagePolicyClientEfl;
 class PageUIClientEfl;
@@ -209,7 +208,8 @@ public:
 
     unsigned long long informDatabaseQuotaReached(const String& databaseName, const String& displayName, unsigned long long currentQuota, unsigned long long currentOriginUsage, unsigned long long currentDatabaseUsage, unsigned long long expectedUsage);
 
-    WebKit::PageClientBase* pageClient() { return m_pageClient.get(); }
+    // FIXME: Remove when possible.
+    WebKit::WebView* webView() { return m_webView.get(); }
 
     void setPageScaleFactor(float scaleFactor) { m_pageScaleFactor = scaleFactor; }
     float pageScaleFactor() const { return m_pageScaleFactor; }
@@ -272,7 +272,6 @@ private:
     WebCore::IntSize m_size;
     WebCore::TransformationMatrix m_userViewportTransform;
     bool m_pendingSurfaceResize;
-    OwnPtr<WebKit::PageClientBase> m_pageClient;
     RefPtr<WebKit::WebView> m_webView;
     OwnPtr<WebKit::PageLoadClientEfl> m_pageLoadClient;
     OwnPtr<WebKit::PagePolicyClientEfl> m_pagePolicyClient;

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 Intel Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +28,7 @@
 #define WebView_h
 
 #include "APIObject.h"
+#include "DefaultUndoController.h"
 #include "PageClient.h"
 #include "WebContext.h"
 #include "WebPageGroup.h"
@@ -34,18 +36,23 @@
 #include "WebPreferences.h"
 #include "WebViewClient.h"
 
+class EwkView;
+
 namespace WebKit {
 
-class WebView : public APIObject {
+class PageViewportController;
+class PageViewportControllerClientEfl;
+
+class WebView : public APIObject, public PageClient {
 public:
     static const Type APIType = TypeView;
 
-    WebView(WebContext*, PageClient*, WebPageGroup*, Evas_Object*);
+    WebView(WebContext*, WebPageGroup*, EwkView*);
     virtual ~WebView();
 
     void initialize();
 
-    WKPageRef pageRef() const { return toAPI(m_webPageProxy.get()); }
+    WKPageRef pageRef() const { return toAPI(m_page.get()); }
 
     void setDrawsBackground(bool);
     bool drawsBackground() const;
@@ -59,19 +66,99 @@ public:
 
     // View client.
     void initializeClient(const WKViewClient*);
-    void setViewNeedsDisplay(const WebCore::IntRect&);
-    void didChangeContentsSize(const WebCore::IntSize&);
 
     // FIXME: Remove when possible.
-    Evas_Object* evasObject() { return m_evasObject; }
-    WebPageProxy* page() { return m_webPageProxy.get(); }
+    Evas_Object* evasObject();
+    WebPageProxy* page() { return m_page.get(); }
+
+    void didCommitLoad();
+    void updateViewportSize();
+    void didChangeContentsSize(const WebCore::IntSize&);
+
+private:
+    // PageClient
+    PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy() OVERRIDE;
+
+    void setViewNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
+
+    void displayView() OVERRIDE;
+
+    bool canScrollView() OVERRIDE { return false; }
+    void scrollView(const WebCore::IntRect&, const WebCore::IntSize&) OVERRIDE;
+
+    WebCore::IntSize viewSize() OVERRIDE;
+
+    bool isViewWindowActive() OVERRIDE;
+    bool isViewFocused() OVERRIDE;
+    bool isViewVisible() OVERRIDE;
+    bool isViewInWindow() OVERRIDE;
+
+    void processDidCrash() OVERRIDE;
+    void didRelaunchProcess() OVERRIDE;
+    void pageClosed() OVERRIDE;
+
+    void toolTipChanged(const String&, const String&) OVERRIDE;
+
+    void pageDidRequestScroll(const WebCore::IntPoint&) OVERRIDE;
+    void didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect) OVERRIDE;
+    void pageTransitionViewportReady() OVERRIDE;
+
+    void setCursor(const WebCore::Cursor&) OVERRIDE;
+    void setCursorHiddenUntilMouseMoves(bool) OVERRIDE;
+
+    void didChangeViewportProperties(const WebCore::ViewportAttributes&) OVERRIDE;
+
+    void registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo) OVERRIDE;
+    void clearAllEditCommands() OVERRIDE;
+    bool canUndoRedo(WebPageProxy::UndoOrRedo) OVERRIDE;
+    void executeUndoRedo(WebPageProxy::UndoOrRedo) OVERRIDE;
+
+    WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&) OVERRIDE;
+    WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&) OVERRIDE;
+    WebCore::IntPoint screenToWindow(const WebCore::IntPoint&) OVERRIDE;
+    WebCore::IntRect windowToScreen(const WebCore::IntRect&) OVERRIDE;
+
+    void updateTextInputState() OVERRIDE;
+
+    void handleDownloadRequest(DownloadProxy*) OVERRIDE;
+
+    void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool) OVERRIDE;
+#if ENABLE(TOUCH_EVENTS)
+    void doneWithTouchEvent(const NativeWebTouchEvent&, bool wasEventHandled) OVERRIDE;
+#endif
+
+    PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*) OVERRIDE;
+    PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*) OVERRIDE;
+#if ENABLE(INPUT_TYPE_COLOR)
+    PassRefPtr<WebColorChooserProxy> createColorChooserProxy(WebPageProxy*, const WebCore::Color& initialColor, const WebCore::IntRect&) OVERRIDE;
+#endif
+
+    void setFindIndicator(PassRefPtr<FindIndicator>, bool, bool) OVERRIDE;
+
+    void enterAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
+    void exitAcceleratedCompositingMode() OVERRIDE;
+    void updateAcceleratedCompositingMode(const LayerTreeContext&) OVERRIDE;
+
+    void didCommitLoadForMainFrame(bool) OVERRIDE;
+    void didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&) OVERRIDE;
+
+    double customRepresentationZoomFactor() OVERRIDE;
+    void setCustomRepresentationZoomFactor(double) OVERRIDE;
+
+    void flashBackingStoreUpdates(const Vector<WebCore::IntRect>&) OVERRIDE;
+    void findStringInCustomRepresentation(const String&, FindOptions, unsigned) OVERRIDE;
+    void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned) OVERRIDE;
 
 private:
     virtual Type type() const { return APIType; }
 
     WebViewClient m_client;
-    RefPtr<WebPageProxy> m_webPageProxy;
-    Evas_Object* m_evasObject;
+    EwkView* m_ewkView;
+    RefPtr<WebPageProxy> m_page;
+    DefaultUndoController m_undoController;
+    // FIXME: Remove when possible.
+    OwnPtr<WebKit::PageViewportControllerClientEfl> m_pageViewportControllerClient;
+    OwnPtr<WebKit::PageViewportController> m_pageViewportController;
 };
 
 }
