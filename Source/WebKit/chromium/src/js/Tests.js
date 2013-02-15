@@ -327,9 +327,9 @@ TestSuite.prototype.testNoScriptDuplicatesOnPanelSwitch = function()
     function checkNoDuplicates() {
         var uiSourceCodes = test.nonAnonymousUISourceCodes_();
         for (var i = 0; i < uiSourceCodes.length; i++) {
-            var scriptName = uiSourceCodes[i].fileName;
+            var scriptName = uiSourceCodes[i].url;
             for (var j = i + 1; j < uiSourceCodes.length; j++)
-                test.assertTrue(scriptName !== uiSourceCodes[j].fileName, "Found script duplicates: " + test.uiSourceCodesToString_(uiSourceCodes));
+                test.assertTrue(scriptName !== uiSourceCodes[j].url, "Found script duplicates: " + test.uiSourceCodesToString_(uiSourceCodes));
         }
     }
 
@@ -717,7 +717,7 @@ TestSuite.prototype.uiSourceCodesToString_ = function(uiSourceCodes)
 {
     var names = [];
     for (var i = 0; i < uiSourceCodes.length; i++)
-        names.push('"' + uiSourceCodes[i].fileName + '"');
+        names.push('"' + uiSourceCodes[i].url + '"');
     return names.join(",");
 };
 
