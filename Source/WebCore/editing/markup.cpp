@@ -647,8 +647,9 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     Frame* frame = document->frame();
     DeleteButtonControllerDisableScope deleteButtonControllerDisableScope(frame);
 
+    RefPtr<Range> updatedRangeRef;
     if (frame) {
-        RefPtr<Range> updatedRangeRef = frame->editor()->avoidIntersectionWithDeleteButtonController(range);
+        updatedRangeRef = frame->editor()->avoidIntersectionWithDeleteButtonController(range);
         updatedRange = updatedRangeRef.get();
         if (!updatedRange)
             return emptyString();
