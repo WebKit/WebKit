@@ -1067,12 +1067,14 @@ region:
 before_filter_rule:
     /* empty */ {
         parser->markRuleHeaderStart(CSSRuleSourceData::FILTER_RULE);
+        parser->m_inFilterRule = true;
     }
     ;
 
 filter:
     before_filter_rule WEBKIT_FILTER_RULE_SYM WHITESPACE IDENT at_rule_header_end_maybe_space
     '{' at_rule_body_start maybe_space_before_declaration declaration_list closing_brace {
+        parser->m_inFilterRule = false;
         $$ = parser->createFilterRule($4);
     }
     ;

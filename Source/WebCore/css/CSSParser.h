@@ -68,6 +68,7 @@ class StyledElement;
 #if ENABLE(CSS_SHADERS)
 class WebKitCSSArrayFunctionValue;
 class WebKitCSSMixFunctionValue;
+class WebKitCSSShaderValue;
 #endif
 
 class CSSParser {
@@ -243,6 +244,8 @@ public:
     PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunctionWithAtRuleReferenceSyntax(CSSParserValue*);
     PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunctionWithInlineSyntax(CSSParserValue*);
     PassRefPtr<WebKitCSSFilterValue> parseCustomFilterFunction(CSSParserValue*);
+    bool parseFilterRuleSrc();
+    PassRefPtr<WebKitCSSShaderValue> parseFilterRuleSrcUriAndFormat(CSSParserValueList*);
 #endif
 #endif
 
@@ -373,6 +376,10 @@ public:
 
     bool m_hasFontFaceOnlyValues;
     bool m_hadSyntacticallyValidCSSRule;
+
+#if ENABLE(CSS_SHADERS)
+    bool m_inFilterRule;
+#endif
 
     AtomicString m_defaultNamespace;
 

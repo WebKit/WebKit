@@ -315,6 +315,9 @@ CSSParser::CSSParser(const CSSParserContext& context)
     , m_implicitShorthand(false)
     , m_hasFontFaceOnlyValues(false)
     , m_hadSyntacticallyValidCSSRule(false)
+#if ENABLE(CSS_SHADERS)
+    , m_inFilterRule(false)
+#endif
     , m_defaultNamespace(starAtom)
     , m_parsedTextPrefixLength(0)
     , m_propertyRange(UINT_MAX, UINT_MAX)
@@ -2289,7 +2292,11 @@ bool CSSParser::parseValue(CSSPropertyID propId, bool important)
             validPrimitive = (!id && validUnit(value, FNumber | FPercent | FNonNeg, CSSStrictMode));
         break;
 
-    case CSSPropertySrc:  // Only used within @font-face, so cannot use inherit | initial or be !important.  This is a list of urls or local references.
+    case CSSPropertySrc: // Only used within @font-face and @-webkit-filter, so cannot use inherit | initial or be !important. This is a list of urls or local references.
+#if ENABLE(CSS_SHADERS)
+        if (m_inFilterRule)
+            return parseFilterRuleSrc();
+#endif
         return parseFontFaceSrc();
 
     case CSSPropertyUnicodeRange:
@@ -8636,6 +8643,56 @@ PassRefPtr<CSSValueList> CSSParser::parseCustomFilterTransform(CSSParserValueLis
     return list.release();
 }
 
+PassRefPtr<WebKitCSSShaderValue> CSSParser::parseFilterRuleSrcUriAndFormat(CSSParserValueList* valueList)
+{
+    CSSParserValue* value = valueList->current();
+    ASSERT(value && value->unit == CSSPrimitiveValue::CSS_URI);
+    RefPtr<WebKitCSSShaderValue> shaderValue = WebKitCSSShaderValue::create(completeURL(value->string));
+
+    value = valueList->next();
+    if (value && value->unit == CSSParserValue::Function && equalIgnoringCase(value->function->name, "format(")) {
+        CSSParserValueList* args = value->function->args.get();
+        if (!args || args->size() != 1)
+            return 0;
+
+        CSSParserValue* arg = args->current();
+        if (arg->unit != CSSPrimitiveValue::CSS_STRING)
+            return 0;
+
+        shaderValue->setFormat(arg->string);
+        valueList->next();
+    }
+
+    return shaderValue.release();
+}
+
+bool CSSParser::parseFilterRuleSrc()
+{
+    RefPtr<CSSValueList> srcList = CSSValueList::createCommaSeparated();
+
+    CSSParserValue* value = m_valueList->current();
+    while (value) {
+        if (value->unit != CSSPrimitiveValue::CSS_URI)
+            return false;
+
+        RefPtr<WebKitCSSShaderValue> shaderValue = parseFilterRuleSrcUriAndFormat(m_valueList.get());
+        if (!shaderValue)
+            return false;
+        srcList->append(shaderValue.release());
+
+        if (!acceptCommaOperator(m_valueList.get()))
+            return false;
+
+        value = m_valueList->current();
+    }
+
+    if (!srcList->length())
+        return false;
+
+    addProperty(CSSPropertySrc, srcList.release(), m_important);
+    return true;
+}
+
 StyleRuleBase* CSSParser::createFilterRule(const CSSParserString& filterName)
 {
     RefPtr<StyleRuleFilter> rule = StyleRuleFilter::create(filterName);
@@ -8646,7 +8703,8 @@ StyleRuleBase* CSSParser::createFilterRule(const CSSParserString& filterName)
     processAndAddNewRuleToSourceTreeIfNeeded();
     return result;
 }
-#endif
+
+#endif // ENABLE(CSS_SHADERS)
 
 PassRefPtr<WebKitCSSFilterValue> CSSParser::parseBuiltinFilterArguments(CSSParserValueList* args, WebKitCSSFilterValue::FilterOperationType filterType)
 {

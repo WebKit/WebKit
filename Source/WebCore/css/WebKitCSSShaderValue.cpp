@@ -80,7 +80,16 @@ StyleShader* WebKitCSSShaderValue::cachedOrPendingShader()
 
 String WebKitCSSShaderValue::customCssText() const
 {
-    return "url(" + quoteCSSURLIfNeeded(m_url) + ")";
+    StringBuilder result;
+    result.appendLiteral("url(");
+    result.append(quoteCSSURLIfNeeded(m_url));
+    result.append(')');
+    if (!m_format.isEmpty()) {
+        result.appendLiteral(" format('");
+        result.append(m_format);
+        result.appendLiteral("')");
+    }
+    return result.toString();
 }
 
 bool WebKitCSSShaderValue::equals(const WebKitCSSShaderValue& other) const
@@ -92,6 +101,7 @@ void WebKitCSSShaderValue::reportDescendantMemoryUsage(MemoryObjectInfo* memoryO
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CSS);
     info.addMember(m_url, "url");
+    info.addMember(m_format, "format");
 }
     
 } // namespace WebCore
