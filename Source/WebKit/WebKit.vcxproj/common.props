@@ -49,7 +49,6 @@ nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <StringPooling>false</StringPooling>
       <MinimalRebuild>false</MinimalRebuild>
-      <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Lib>

@@ -6823,6 +6823,15 @@
     <ClCompile Include="..\html\canvas\DataView.cpp">
       <Filter>html\canvas</Filter>
     </ClCompile>
+    <ClCompile Include="..\html\parser\HTMLResourcePreloader.cpp">
+      <Filter>html\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\page\CaptionUserPreferences.cpp">
+      <Filter>page</Filter>
+    </ClCompile>
+    <ClCompile Include="..\svg\graphics\SVGImageForContainer.cpp">
+      <Filter>rendering\svg\graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.h">
@@ -14320,6 +14329,12 @@
     </ClInclude>
     <ClInclude Include="..\html\canvas\DataView.h">
       <Filter>html\canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\html\parser\HTMLResourcePreloader.h">
+      <Filter>html\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\svg\graphics\SVGImageForContainer.h">
+      <Filter>rendering\svg\graphics</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

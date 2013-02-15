@@ -51,6 +51,7 @@
     <ClCompile>
       <PrecompiledHeader>
       </PrecompiledHeader>
+      <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link />
   </ItemDefinitionGroup>

@@ -9,6 +9,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\..\;..\..\tools\;..\..\runtime\;..\..\llint\;..\..\jit\;..\..\disassembler\;..\..\heap\;..\..\debugger\;..\..\assembler\;..\..\profiler\;..\..\interpreter\;..\..\bytecode\;..\..\dfg\;..\..\bytecompiler\;..\..\parser\;..\..\API\;$(ConfigurationBuildDir)\include\;$(ConfigurationBuildDir)\include\private\;$(ConfigurationBuildDir)\include\JavaScriptCore\;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ForcedIncludeFiles>ICUVersion.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>JavaScriptCore.lib;winmm.lib;libicuin.lib;libicuuc.lib;pthreadVC2.lib;%(AdditionalDependencies)</AdditionalDependencies>

@@ -82,4 +82,8 @@
       <Filter>Tests\WTF\cf</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="TestWebKitAPIPostBuild.cmd" />
+    <None Include="TestWebKitAPIPreBuild.cmd" />
+  </ItemGroup>
 </Project>

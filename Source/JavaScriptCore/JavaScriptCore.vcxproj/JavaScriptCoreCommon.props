@@ -7,6 +7,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>..\;..\tools\;..\runtime\;..\llint\;..\jit\;..\disassembler\;..\heap\;..\debugger\;..\assembler\;..\profiler\;..\yarr\;..\interpreter\;..\bytecode\;..\dfg\;..\bytecompiler\;..\parser\;..\API\;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources\;$(ConfigurationBuildDir)\include\;$(ConfigurationBuildDir)\include\JavaScriptCore\;$(ConfigurationBuildDir)\include\private\;$(WebKit_Libraries)\include;$(WebKit_Libraries)\include\private;$(WebKit_Libraries)\include\pthreads;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>STATICALLY_LINKED_WITH_WTF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
       <AdditionalDependencies>winmm.lib;libicuin.lib;libicuuc.lib;pthreadVC2.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>

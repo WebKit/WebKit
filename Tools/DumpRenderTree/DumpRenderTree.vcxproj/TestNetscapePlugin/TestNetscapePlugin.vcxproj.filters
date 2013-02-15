@@ -125,6 +125,8 @@
     <None Include="TestNetscapePlugin.def">
       <Filter>Resources</Filter>
     </None>
+    <None Include="TestNetscapePluginPostBuild.cmd" />
+    <None Include="TestNetscapePluginPreBuild.cmd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TestNetscapePlugin.rc">

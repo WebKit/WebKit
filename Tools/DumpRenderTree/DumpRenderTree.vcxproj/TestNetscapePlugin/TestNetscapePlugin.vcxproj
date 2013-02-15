@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="TestNetscapePlugin.def" />
+    <None Include="TestNetscapePluginPostBuild.cmd" />
+    <None Include="TestNetscapePluginPreBuild.cmd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TestNetscapePlugin.rc" />

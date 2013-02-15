@@ -10,7 +10,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>../;../wtf/;../wtf/threads/;../wtf/unicode/;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\JavaScriptCore;$(WebKit_Libraries)\include\pthreads;$(WebKit_Libraries)\include\private;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;__STD_C;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ForcedIncludeFiles>%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <DisableSpecificWarnings>%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>

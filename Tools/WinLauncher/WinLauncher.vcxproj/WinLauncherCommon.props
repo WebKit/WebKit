@@ -6,8 +6,7 @@
       <OutputFile>$(OutDir)WinLauncher.exe</OutputFile>
       <ProgramDatabaseFile>$(TargetDir)$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(WebKit_Libraries)\include\private;$(ConfigurationBuildDir)\Include\private;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
+    <ClCompile />
+    <ClCompile />
   </ItemDefinitionGroup>
 </Project>
