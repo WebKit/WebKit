@@ -404,10 +404,10 @@ void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool)
     m_page->drawingArea()->setNeedsDisplay(rect);
 }
 
-void WebChromeClient::scroll(const IntSize& scrollOffset, const IntRect& scrollRect, const IntRect& clipRect)
+void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRect, const IntRect& clipRect)
 {
     m_page->pageDidScroll();
-    m_page->drawingArea()->scroll(intersection(scrollRect, clipRect), scrollOffset);
+    m_page->drawingArea()->scroll(intersection(scrollRect, clipRect), scrollDelta);
 }
 
 #if USE(TILED_BACKING_STORE)

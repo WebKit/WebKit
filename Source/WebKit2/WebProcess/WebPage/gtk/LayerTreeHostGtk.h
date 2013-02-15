@@ -65,7 +65,7 @@ private:
     virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool);
 
     virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&);
-    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect);
 
     virtual void didInstallPageOverlay();
     virtual void didUninstallPageOverlay();

@@ -104,7 +104,7 @@ void TiledCoreAnimationDrawingArea::setNeedsDisplay(const IntRect& rect)
 {
 }
 
-void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
+void TiledCoreAnimationDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
 }
 

@@ -186,7 +186,7 @@ void CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplay(const WebCore
     scheduleLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect& scrollRect, const WebCore::IntSize& /* scrollOffset */)
+void CoordinatedLayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect& scrollRect)
 {
     setNonCompositedContentsNeedDisplay(scrollRect);
 }

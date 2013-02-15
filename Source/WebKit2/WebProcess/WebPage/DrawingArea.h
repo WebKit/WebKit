@@ -61,7 +61,7 @@ public:
     void didReceiveDrawingAreaMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
 
     virtual void setNeedsDisplay(const WebCore::IntRect&) = 0;
-    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;
+    virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) = 0;
 
     // FIXME: These should be pure virtual.
     virtual void pageBackgroundTransparencyChanged() { }

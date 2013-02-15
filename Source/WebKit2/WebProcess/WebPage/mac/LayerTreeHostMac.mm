@@ -121,7 +121,7 @@ void LayerTreeHostMac::setNonCompositedContentsNeedDisplay(const IntRect& rect)
     scheduleLayerFlush();
 }
 
-void LayerTreeHostMac::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
+void LayerTreeHostMac::scrollNonCompositedContents(const IntRect& scrollRect)
 {
     setNonCompositedContentsNeedDisplay(scrollRect);
 }

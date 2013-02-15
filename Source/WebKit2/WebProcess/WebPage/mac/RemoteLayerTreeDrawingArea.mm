@@ -51,7 +51,7 @@ void RemoteLayerTreeDrawingArea::setNeedsDisplay(const IntRect&)
 {
 }
 
-void RemoteLayerTreeDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
+void RemoteLayerTreeDrawingArea::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
 }
 

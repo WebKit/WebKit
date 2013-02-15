@@ -177,7 +177,7 @@ void LayerTreeHostGtk::setNonCompositedContentsNeedDisplay(const IntRect& rect)
     scheduleLayerFlush();
 }
 
-void LayerTreeHostGtk::scrollNonCompositedContents(const IntRect& scrollRect, const IntSize& scrollOffset)
+void LayerTreeHostGtk::scrollNonCompositedContents(const IntRect& scrollRect)
 {
     setNonCompositedContentsNeedDisplay(scrollRect);
 }

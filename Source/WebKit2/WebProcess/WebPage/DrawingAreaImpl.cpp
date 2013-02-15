@@ -105,7 +105,7 @@ void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
     scheduleDisplay();
 }
 
-void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOffset)
+void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDelta)
 {
     if (!m_isPaintingEnabled)
         return;
@@ -115,7 +115,7 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
         ASSERT(m_scrollOffset.isEmpty());
         ASSERT(m_dirtyRegion.isEmpty());
 
-        m_layerTreeHost->scrollNonCompositedContents(scrollRect, scrollOffset);
+        m_layerTreeHost->scrollNonCompositedContents(scrollRect);
         return;
     }
 
@@ -150,20 +150,20 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
         m_dirtyRegion.subtract(scrollRect);
 
         // Move the dirty parts.
-        Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollOffset), scrollRect);
+        Region movedDirtyRegionInScrollRect = intersect(translate(dirtyRegionInScrollRect, scrollDelta), scrollRect);
 
         // And add them back.
         m_dirtyRegion.unite(movedDirtyRegionInScrollRect);
     } 
     
     // Compute the scroll repaint region.
-    Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollOffset));
+    Region scrollRepaintRegion = subtract(scrollRect, translate(scrollRect, scrollDelta));
 
     m_dirtyRegion.unite(scrollRepaintRegion);
     scheduleDisplay();
 
     m_scrollRect = scrollRect;
-    m_scrollOffset += scrollOffset;
+    m_scrollOffset += scrollDelta;
 }
 
 void DrawingAreaImpl::setLayerTreeStateIsFrozen(bool isFrozen)
