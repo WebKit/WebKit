@@ -1,3 +1,16 @@
+2013-02-16  Sam Weinig  <sam@webkit.org>
+
+        The Plugin.32 target does not build
+        https://bugs.webkit.org/show_bug.cgi?id=110032
+
+        Reviewed by Anders Carlsson.
+
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32/PluginService.32.Main.mm: Removed.
+        This was meant to be removed already.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add Plugin.32 as dependency in All as it should be.
+
 2013-02-16  Darin Adler  <darin@apple.com>
 
         Fix WKDOMRangePrivate.h mistakes

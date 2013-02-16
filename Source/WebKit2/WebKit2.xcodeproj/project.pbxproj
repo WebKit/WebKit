@@ -25,6 +25,7 @@
 				BCAE9DFD160C0AB000A33217 /* PBXTargetDependency */,
 				BC8283D516B4C01F00A278FE /* PBXTargetDependency */,
 				BC8283D716B4C02200A278FE /* PBXTargetDependency */,
+				BC77F95616D0459100F8F78A /* PBXTargetDependency */,
 				BC82844616B4FF6600A278FE /* PBXTargetDependency */,
 				BC82844816B4FF6F00A278FE /* PBXTargetDependency */,
 				BCAF361816CA27BD00D4E9FC /* PBXTargetDependency */,
@@ -834,7 +835,6 @@
 		BC82839916B48DC000A278FE /* WebContentServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC82839816B48DC000A278FE /* WebContentServiceEntryPoint.mm */; };
 		BC8283AC16B4BF3F00A278FE /* NetworkServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283A816B4BD9100A278FE /* NetworkServiceEntryPoint.mm */; };
 		BC8283DA16B4DB9300A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
-		BC82844916B5004200A278FE /* PluginService.32.Main.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283E516B4F8E200A278FE /* PluginService.32.Main.mm */; };
 		BC82844D16B5081C00A278FE /* PluginServiceEntryPoint.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */; };
 		BC82844E16B5089400A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
 		BC82844F16B5089800A278FE /* WebKit2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8DC2EF5B0486A6940098B216 /* WebKit2.framework */; };
@@ -1201,6 +1201,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 510031EA1379CACB00C8DFE4;
 			remoteInfo = SecItemShim;
+		};
+		BC77F95516D0459100F8F78A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = BC8283F816B4FDDE00A278FE;
+			remoteInfo = Plugin.32;
 		};
 		BC8283D416B4C01F00A278FE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -2242,7 +2249,6 @@
 		BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Networking.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC8283C516B4BFA800A278FE /* com.apple.WebKit.Networking.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Networking.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC8283E416B4F8E200A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC8283E516B4F8E200A278FE /* PluginService.32.Main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginService.32.Main.mm; sourceTree = "<group>"; };
 		BC8283EA16B4F8E200A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283F216B4FC5300A278FE /* PluginService.32.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.32.xcconfig; sourceTree = "<group>"; };
@@ -4458,7 +4464,6 @@
 			isa = PBXGroup;
 			children = (
 				BC8283E416B4F8E200A278FE /* Info.plist */,
-				BC8283E516B4F8E200A278FE /* PluginService.32.Main.mm */,
 			);
 			path = PluginService.32;
 			sourceTree = "<group>";
@@ -6808,7 +6813,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC82844916B5004200A278FE /* PluginService.32.Main.mm in Sources */,
 				BC5D24AC16CC3D63007D5461 /* XPCServiceMain.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -6910,6 +6914,11 @@
 			isa = PBXTargetDependency;
 			target = 510031EA1379CACB00C8DFE4 /* SecItemShim */;
 			targetProxy = 5183B38D1379F54600E8754E /* PBXContainerItemProxy */;
+		};
+		BC77F95616D0459100F8F78A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = BC8283F816B4FDDE00A278FE /* Plugin.32 */;
+			targetProxy = BC77F95516D0459100F8F78A /* PBXContainerItemProxy */;
 		};
 		BC8283D516B4C01F00A278FE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
