@@ -348,17 +348,21 @@ void ScrollingCoordinatorMac::updateViewportConstrainedNode(ScrollingNodeID node
 {
     ASSERT(supportsFixedPositionLayers());
 
+    ScrollingStateNode* node = m_scrollingStateTree->stateNodeForID(nodeID);
+    if (!node)
+        return;
+
     switch (constraints.constraintType()) {
     case ViewportConstraints::FixedPositionConstaint: {
-        ScrollingStateFixedNode* node = toScrollingStateFixedNode(m_scrollingStateTree->stateNodeForID(nodeID));
-        setScrollLayerForNode(graphicsLayer, node);
-        node->updateConstraints((const FixedPositionViewportConstraints&)constraints);
+        ScrollingStateFixedNode* fixedNode = toScrollingStateFixedNode(node);
+        setScrollLayerForNode(graphicsLayer, fixedNode);
+        fixedNode->updateConstraints((const FixedPositionViewportConstraints&)constraints);
         break;
     }
     case ViewportConstraints::StickyPositionConstraint: {
-        ScrollingStateStickyNode* node = toScrollingStateStickyNode(m_scrollingStateTree->stateNodeForID(nodeID));
-        setScrollLayerForNode(graphicsLayer, node);
-        node->updateConstraints((const StickyPositionViewportConstraints&)constraints);
+        ScrollingStateStickyNode* stickyNode = toScrollingStateStickyNode(node);
+        setScrollLayerForNode(graphicsLayer, stickyNode);
+        stickyNode->updateConstraints((const StickyPositionViewportConstraints&)constraints);
         break;
     }
     }

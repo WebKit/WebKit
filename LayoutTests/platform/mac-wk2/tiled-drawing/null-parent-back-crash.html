@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        .fixed {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background-color: green;
+        }
+    </style>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.waitUntilDone();
+            testRunner.overridePreference("WebKitUsesPageCachePreferenceKey", 1);
+        }
+
+        function pageHidden()
+        {
+            if (!sessionStorage.finishTest) {
+                sessionStorage.finishTest = true;
+            } else {
+                // Clean up after ourselves
+                delete sessionStorage.finishTest;
+            }
+        }
+
+        function pageShown()
+        {
+            if (sessionStorage.finishTest) {
+                if (window.testRunner)
+                    testRunner.notifyDone();
+            } else {
+                setTimeout(function() {window.location = "data:text/html,<script>history.back();</scrip" + "t>";}, 0);
+            }
+        }
+    </script>
+</head>
+<body onpagehide="pageHidden();" onpageshow="pageShown();">
+<p>Test passes if it does not crash.</p>
+<div class="fixed"></div>
+<iframe></iframe>
+</body>
+</html>

@@ -73,6 +73,9 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
         newNode = rootStateNode();
     } else {
         ScrollingStateNode* parent = stateNodeForID(parentID);
+        if (!parent)
+            return 0;
+
         switch (nodeType) {
         case FixedNode: {
             OwnPtr<ScrollingStateFixedNode> fixedNode = ScrollingStateFixedNode::create(this, newNodeID);
@@ -94,8 +97,6 @@ ScrollingNodeID ScrollingStateTree::attachNode(ScrollingNodeType nodeType, Scrol
             parent->appendChild(scrollingNode.release());
             break;
         }
-        default:
-            ASSERT_NOT_REACHED();
         }
     }
 
@@ -175,6 +176,7 @@ ScrollingStateNode* ScrollingStateTree::stateNodeForID(ScrollingNodeID scrollLay
     if (it == m_stateNodeMap.end())
         return 0;
 
+    ASSERT(it->value->scrollingNodeID() == scrollLayerID);
     return it->value;
 }
 
