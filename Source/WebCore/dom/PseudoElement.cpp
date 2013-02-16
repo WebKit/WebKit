@@ -60,7 +60,7 @@ PseudoElement::PseudoElement(Element* parent, PseudoId pseudoId)
 {
     ASSERT(pseudoId != NOPSEUDO);
     setParentOrShadowHostNode(parent);
-    setHasCustomCallbacks();
+    setHasCustomStyleCallbacks();
 }
 
 PassRefPtr<RenderStyle> PseudoElement::customStyleForRenderer()

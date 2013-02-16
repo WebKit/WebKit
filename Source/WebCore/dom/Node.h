@@ -233,7 +233,7 @@ public:
     bool isPseudoElement() const { return pseudoId() != NOPSEUDO; }
     bool isBeforePseudoElement() const { return pseudoId() == BEFORE; }
     bool isAfterPseudoElement() const { return pseudoId() == AFTER; }
-    PseudoId pseudoId() const { return (isElementNode() && hasCustomCallbacks()) ? customPseudoId() : NOPSEUDO; }
+    PseudoId pseudoId() const { return (isElementNode() && hasCustomStyleCallbacks()) ? customPseudoId() : NOPSEUDO; }
 
     virtual bool isMediaControlElement() const { return false; }
     virtual bool isMediaControls() const { return false; }
@@ -259,7 +259,7 @@ public:
     void resetNeedsShadowTreeWalker() { setFlag(needsShadowTreeWalkerSlow(), NeedsShadowTreeWalkerFlag); }
 
     bool inNamedFlow() const { return getFlag(InNamedFlowFlag); }
-    bool hasCustomCallbacks() const { return getFlag(HasCustomCallbacksFlag); }
+    bool hasCustomStyleCallbacks() const { return getFlag(HasCustomStyleCallbacksFlag); }
 
     bool hasSyntheticAttrChildNodes() const { return getFlag(HasSyntheticAttrChildNodesFlag); }
     void setHasSyntheticAttrChildNodes(bool flag) { setFlag(flag, HasSyntheticAttrChildNodesFlag); }
@@ -717,7 +717,7 @@ private:
 
         InNamedFlowFlag = 1 << 19,
         HasSyntheticAttrChildNodesFlag = 1 << 20,
-        HasCustomCallbacksFlag = 1 << 21,
+        HasCustomStyleCallbacksFlag = 1 << 21,
         HasScopedHTMLStyleChildFlag = 1 << 22,
         HasEventTargetDataFlag = 1 << 23,
 #if USE(V8)
@@ -746,20 +746,13 @@ protected:
         CreateShadowRoot = CreateContainer | IsDocumentFragmentFlag | NeedsShadowTreeWalkerFlag | IsInShadowTreeFlag,
         CreateDocumentFragment = CreateContainer | IsDocumentFragmentFlag,
         CreateStyledElement = CreateElement | IsStyledElementFlag, 
-        CreateHTMLElement = CreateStyledElement | IsHTMLFlag, 
-        CreateFrameOwnerElement = CreateHTMLElement | HasCustomCallbacksFlag,
+        CreateHTMLElement = CreateStyledElement | IsHTMLFlag,
         CreateSVGElement = CreateStyledElement | IsSVGFlag,
         CreateDocument = CreateContainer | InDocumentFlag,
         CreateInsertionPoint = CreateHTMLElement | NeedsShadowTreeWalkerFlag,
         CreateEditingText = CreateText | HasNameOrIsEditingTextFlag,
     };
     Node(Document*, ConstructionType);
-
-    virtual PseudoId customPseudoId() const
-    {
-        ASSERT(hasCustomCallbacks());
-        return NOPSEUDO;
-    }
 
     virtual void didMoveToNewDocument(Document* oldDocument);
     
@@ -773,13 +766,19 @@ protected:
 
     void clearEventTargetData();
 
-    void setHasCustomCallbacks() { setFlag(true, HasCustomCallbacksFlag); }
+    void setHasCustomStyleCallbacks() { setFlag(true, HasCustomStyleCallbacksFlag); }
 
     Document* documentInternal() const { return treeScope()->documentScope(); }
     void setTreeScope(TreeScope* scope) { m_treeScope = scope; }
 
 private:
     friend class TreeShared<Node>;
+
+    virtual PseudoId customPseudoId() const
+    {
+        ASSERT(hasCustomStyleCallbacks());
+        return NOPSEUDO;
+    }
 
     void removedLastRef();
     bool hasTreeSharedParent() const { return !!parentOrShadowHostNode(); }

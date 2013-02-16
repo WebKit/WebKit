@@ -136,7 +136,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    setHasCustomCallbacks();
+    setHasCustomStyleCallbacks();
 #endif
 }
 

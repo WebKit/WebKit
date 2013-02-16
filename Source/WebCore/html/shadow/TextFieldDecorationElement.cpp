@@ -62,7 +62,7 @@ TextFieldDecorationElement::TextFieldDecorationElement(Document* document, TextF
     , m_isInHoverState(false)
 {
     ASSERT(decorator);
-    setHasCustomCallbacks();
+    setHasCustomStyleCallbacks();
 }
 
 PassRefPtr<TextFieldDecorationElement> TextFieldDecorationElement::create(Document* document, TextFieldDecorator* decorator)

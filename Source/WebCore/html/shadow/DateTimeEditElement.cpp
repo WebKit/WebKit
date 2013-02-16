@@ -402,7 +402,7 @@ DateTimeEditElement::DateTimeEditElement(Document* document, EditControlOwner& e
 {
     DEFINE_STATIC_LOCAL(AtomicString, dateTimeEditPseudoId, ("-webkit-datetime-edit", AtomicString::ConstructFromLiteral));
     setPseudo(dateTimeEditPseudoId);
-    setHasCustomCallbacks();
+    setHasCustomStyleCallbacks();
 }
 
 DateTimeEditElement::~DateTimeEditElement()

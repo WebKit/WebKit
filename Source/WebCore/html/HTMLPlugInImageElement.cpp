@@ -77,7 +77,7 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
 {
-    setHasCustomCallbacks();
+    setHasCustomStyleCallbacks();
 }
 
 HTMLPlugInImageElement::~HTMLPlugInImageElement()

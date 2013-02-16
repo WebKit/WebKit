@@ -34,7 +34,7 @@
 namespace WebCore {
 
 HTMLFrameOwnerElement::HTMLFrameOwnerElement(const QualifiedName& tagName, Document* document)
-    : HTMLElement(tagName, document, CreateFrameOwnerElement)
+    : HTMLElement(tagName, document)
     , m_contentFrame(0)
     , m_sandboxFlags(SandboxNone)
 {
@@ -75,7 +75,6 @@ void HTMLFrameOwnerElement::clearContentFrame()
 
 void HTMLFrameOwnerElement::disconnectContentFrame()
 {
-    ASSERT(hasCustomCallbacks());
     // FIXME: Currently we don't do this in removedFrom because this causes an
     // unload event in the subframe which could execute script that could then
     // reach up into this document and then attempt to look back down. We should

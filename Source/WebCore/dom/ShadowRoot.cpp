@@ -129,7 +129,7 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 void ShadowRoot::recalcStyle(StyleChange change)
 {
     // ShadowRoot doesn't support custom callbacks.
-    ASSERT(!hasCustomCallbacks());
+    ASSERT(!hasCustomStyleCallbacks());
 
     StyleResolver* styleResolver = document()->styleResolver();
     styleResolver->pushParentShadowRoot(this);

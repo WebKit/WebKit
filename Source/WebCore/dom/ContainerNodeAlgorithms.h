@@ -291,9 +291,7 @@ inline void ChildFrameDisconnector::collectFrameOwners(Node* root)
     if (!root->connectedSubframeCount())
         return;
 
-    // FIXME: This should just check isElementNode() to avoid the virtual call
-    // and we should not depend on hasCustomCallbacks().
-    if (root->hasCustomCallbacks() && root->isFrameOwnerElement())
+    if (root->isHTMLElement() && root->isFrameOwnerElement())
         m_frameOwners.append(toFrameOwnerElement(root));
 
     for (Node* child = root->firstChild(); child; child = child->nextSibling())

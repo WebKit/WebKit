@@ -1316,7 +1316,7 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
 
 PassRefPtr<RenderStyle> Element::styleForRenderer()
 {
-    if (hasCustomCallbacks()) {
+    if (hasCustomStyleCallbacks()) {
         if (RefPtr<RenderStyle> style = customStyleForRenderer())
             return style.release();
     }
@@ -1326,7 +1326,7 @@ PassRefPtr<RenderStyle> Element::styleForRenderer()
 
 void Element::recalcStyle(StyleChange change)
 {
-    if (hasCustomCallbacks()) {
+    if (hasCustomStyleCallbacks()) {
         if (!willRecalcStyle(change))
             return;
     }
@@ -1351,7 +1351,7 @@ void Element::recalcStyle(StyleChange change)
             clearNeedsStyleRecalc();
             clearChildNeedsStyleRecalc();
 
-            if (hasCustomCallbacks())
+            if (hasCustomStyleCallbacks())
                 didRecalcStyle(change);
             return;
         }
@@ -1422,7 +1422,7 @@ void Element::recalcStyle(StyleChange change)
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
     
-    if (hasCustomCallbacks())
+    if (hasCustomStyleCallbacks())
         didRecalcStyle(change);
 }
 
@@ -2722,19 +2722,19 @@ void Element::detachAllAttrNodesFromElement()
 
 bool Element::willRecalcStyle(StyleChange)
 {
-    ASSERT(hasCustomCallbacks());
+    ASSERT(hasCustomStyleCallbacks());
     return true;
 }
 
 void Element::didRecalcStyle(StyleChange)
 {
-    ASSERT(hasCustomCallbacks());
+    ASSERT(hasCustomStyleCallbacks());
 }
 
 
 PassRefPtr<RenderStyle> Element::customStyleForRenderer()
 {
-    ASSERT(hasCustomCallbacks());
+    ASSERT(hasCustomStyleCallbacks());
     return 0;
 }
 
