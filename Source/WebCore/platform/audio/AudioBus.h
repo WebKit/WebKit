@@ -57,6 +57,11 @@ public:
         // Can define non-standard layouts here
     };
 
+    enum ChannelInterpretation {
+        Speakers,
+        Discrete,
+    };
+
     // allocate indicates whether or not to initially have the AudioChannels created with managed storage.
     // Normal usage is to pass true here, in which case the AudioChannels will memory-manage their own storage.
     // If allocate is false then setChannelMemory() has to be called later on for each channel before the AudioBus is useable...
@@ -115,12 +120,13 @@ public:
 
     void reset() { m_isFirstTime = true; } // for de-zippering
 
-    // Assuming sourceBus has the same topology, copies sample data from each channel of sourceBus to our corresponding channel.
-    void copyFrom(const AudioBus &sourceBus);
+    // Copies the samples from the source bus to this one.
+    // This is just a simple per-channel copy if the number of channels match, otherwise an up-mix or down-mix is done.
+    void copyFrom(const AudioBus& sourceBus, ChannelInterpretation = Speakers);
 
-    // Sums the sourceBus into our bus with unity gain.
-    // Our own internal gain m_busGain is ignored.
-    void sumFrom(const AudioBus &sourceBus);
+    // Sums the samples from the source bus to this one.
+    // This is just a simple per-channel summing if the number of channels match, otherwise an up-mix or down-mix is done.
+    void sumFrom(const AudioBus& sourceBus, ChannelInterpretation = Speakers);
 
     // Copy each channel from sourceBus into our corresponding channel.
     // We scale by targetGain (and our own internal gain m_busGain), performing "de-zippering" to smoothly change from *lastMixGain to (targetGain*m_busGain).
@@ -141,6 +147,11 @@ public:
 
 protected:
     AudioBus() { };
+
+    void speakersCopyFrom(const AudioBus&);
+    void discreteCopyFrom(const AudioBus&);
+    void speakersSumFrom(const AudioBus&);
+    void discreteSumFrom(const AudioBus&);
 
     size_t m_length;
     Vector<OwnPtr<AudioChannel> > m_channels;

@@ -210,10 +210,7 @@ void AudioBus::scale(float scale)
         channel(i)->scale(scale);
 }
 
-// Just copies the samples from the source bus to this one.
-// This is just a simple copy if the number of channels match, otherwise a mixup or mixdown is done.
-// For now, we just support mixup from mono -> stereo and mixdown from stereo -> mono.
-void AudioBus::copyFrom(const AudioBus& sourceBus)
+void AudioBus::copyFrom(const AudioBus& sourceBus, ChannelInterpretation channelInterpretation)
 {
     if (&sourceBus == this)
         return;
@@ -224,7 +221,54 @@ void AudioBus::copyFrom(const AudioBus& sourceBus)
     if (numberOfDestinationChannels == numberOfSourceChannels) {
         for (unsigned i = 0; i < numberOfSourceChannels; ++i)
             channel(i)->copyFrom(sourceBus.channel(i));
-    } else if (numberOfDestinationChannels == 2 && numberOfSourceChannels == 1) {
+    } else {
+        switch (channelInterpretation) {
+        case Speakers:
+            speakersCopyFrom(sourceBus);
+            break;
+        case Discrete:
+            discreteCopyFrom(sourceBus);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+}
+
+void AudioBus::sumFrom(const AudioBus& sourceBus, ChannelInterpretation channelInterpretation)
+{
+    if (&sourceBus == this)
+        return;
+
+    unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
+    unsigned numberOfDestinationChannels = numberOfChannels();
+
+    if (numberOfDestinationChannels == numberOfSourceChannels) {
+        for (unsigned i = 0; i < numberOfSourceChannels; ++i)
+            channel(i)->sumFrom(sourceBus.channel(i));
+    } else {
+        switch (channelInterpretation) {
+        case Speakers:
+            speakersSumFrom(sourceBus);
+            break;
+        case Discrete:
+            discreteSumFrom(sourceBus);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+        }
+    }
+}
+
+void AudioBus::speakersCopyFrom(const AudioBus& sourceBus)
+{
+    // FIXME: Implement down mixing 5.1 to stereo.
+    // https://bugs.webkit.org/show_bug.cgi?id=79192
+
+    unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
+    unsigned numberOfDestinationChannels = numberOfChannels();
+
+    if (numberOfDestinationChannels == 2 && numberOfSourceChannels == 1) {
         // Handle mono -> stereo case (for now simply copy mono channel into both left and right)
         // FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
         const AudioChannel* sourceChannel = sourceBus.channel(0);
@@ -253,37 +297,22 @@ void AudioBus::copyFrom(const AudioBus& sourceBus)
         // Handle 5.1 -> mono case, copy center channel into mono.
         // FIXME: We should have a better algorithm for this down mixing.
         channel(0)->copyFrom(sourceBus.channel(2));
-    } else if (numberOfDestinationChannels < numberOfSourceChannels) {
-        // Default down mixing handling, just match the source channels with the first available destination channels. 
-        // 5.1 -> stereo case covered here. 
-        // FIXME: We should have a better algorithm for down mixing 5.1 to stereo.
-        // https://bugs.webkit.org/show_bug.cgi?id=79192
-        for (unsigned i = 0; i < numberOfDestinationChannels; ++i)
-            channel(i)->copyFrom(sourceBus.channel(i));
-    } else if (numberOfDestinationChannels > numberOfSourceChannels) {
-        // Default up mixing handling, just match the destination channels with the first available source channels. 
-        // Stereo -> 5.1 case covered here. 
-        for (unsigned i = 0; i < numberOfSourceChannels; ++i) 
-            channel(i)->copyFrom(sourceBus.channel(i));
-        for (unsigned i = numberOfSourceChannels; i < numberOfDestinationChannels; ++i)
-            channel(i)->zero();
     } else {
-        // Case not handled
-        ASSERT_NOT_REACHED();
+        // Fallback for unknown combinations.
+        discreteCopyFrom(sourceBus);
     }
 }
 
-void AudioBus::sumFrom(const AudioBus &sourceBus)
+void AudioBus::speakersSumFrom(const AudioBus& sourceBus)
 {
+    // FIXME: Implement down mixing 5.1 to stereo.
+    // https://bugs.webkit.org/show_bug.cgi?id=79192
+    
     unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
     unsigned numberOfDestinationChannels = numberOfChannels();
 
-    if (numberOfDestinationChannels == numberOfSourceChannels) {
-        for (unsigned i = 0; i < numberOfChannels(); ++i)
-            channel(i)->sumFrom(sourceBus.channel(i));
-    } else if (numberOfDestinationChannels == 2 && numberOfSourceChannels == 1) {
-        // Handle mono -> stereo case (for now simply sum mono channel into both left and right)
-        // FIXME: Really we should apply an equal-power scaling factor here, since we're effectively panning center...
+    if (numberOfDestinationChannels == 2 && numberOfSourceChannels == 1) {
+        // Handle mono -> stereo case (summing mono channel into both left and right).
         const AudioChannel* sourceChannel = sourceBus.channel(0);
         channel(0)->sumFrom(sourceChannel);
         channel(1)->sumFrom(sourceChannel);
@@ -305,21 +334,43 @@ void AudioBus::sumFrom(const AudioBus &sourceBus)
         // Handle 5.1 -> mono case, sum center channel into mono.
         // FIXME: We should have a better algorithm for this down mixing.
         channel(0)->sumFrom(sourceBus.channel(2));
-    } else if (numberOfDestinationChannels < numberOfSourceChannels) {
-        // Default down mixing, just summing the first available destination channels. 
-        // 5.1 -> stereo case covered here.
-        // FIXME: We should have a better algorithm for down mixing 5.1 to stereo.
-        // https://bugs.webkit.org/show_bug.cgi?id=79192
+    } else {
+        // Fallback for unknown combinations.
+        discreteSumFrom(sourceBus);
+    }
+}
+
+void AudioBus::discreteCopyFrom(const AudioBus& sourceBus)
+{
+    unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
+    unsigned numberOfDestinationChannels = numberOfChannels();
+    
+    if (numberOfDestinationChannels < numberOfSourceChannels) {
+        // Down-mix by copying channels and dropping the remaining.
+        for (unsigned i = 0; i < numberOfDestinationChannels; ++i)
+            channel(i)->copyFrom(sourceBus.channel(i));
+    } else if (numberOfDestinationChannels > numberOfSourceChannels) {
+        // Up-mix by copying as many channels as we have, then zeroing remaining channels.
+        for (unsigned i = 0; i < numberOfSourceChannels; ++i) 
+            channel(i)->copyFrom(sourceBus.channel(i));
+        for (unsigned i = numberOfSourceChannels; i < numberOfDestinationChannels; ++i)
+            channel(i)->zero();
+    }
+}
+
+void AudioBus::discreteSumFrom(const AudioBus& sourceBus)
+{
+    unsigned numberOfSourceChannels = sourceBus.numberOfChannels();
+    unsigned numberOfDestinationChannels = numberOfChannels();
+
+    if (numberOfDestinationChannels < numberOfSourceChannels) {
+        // Down-mix by summing channels and dropping the remaining.
         for (unsigned i = 0; i < numberOfDestinationChannels; ++i) 
             channel(i)->sumFrom(sourceBus.channel(i));
     } else if (numberOfDestinationChannels > numberOfSourceChannels) {
-        // Default up mixing, just summing the first available source channels. 
-        // stereo -> 5.1 case covered here.
+        // Up-mix by summing as many channels as we have.
         for (unsigned i = 0; i < numberOfSourceChannels; ++i) 
             channel(i)->sumFrom(sourceBus.channel(i));
-    } else {
-        // Case not handled
-        ASSERT_NOT_REACHED();
     }
 }
 
