@@ -1,3 +1,11 @@
+2013-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix indentation of Structure.h
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * runtime/Structure.h:
+
 2013-02-16  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Unreviewed build fix.
