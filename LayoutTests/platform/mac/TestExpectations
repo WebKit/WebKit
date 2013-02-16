@@ -1418,3 +1418,5 @@ webkit.org/b/109232 [ Debug ] inspector/debugger/debugger-reload-on-pause.html [
 
 # New test failing, needs investigation.
 webkit.org/b/109179 compositing/transitions/transform-on-large-layer.html [ Failure ]
+
+webkit.org/b/110027 compositing/transitions/transform-on-large-layer.html [ Pass ImageOnlyFailure ]
