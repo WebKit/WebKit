@@ -1,3 +1,16 @@
+2013-02-16  Darin Adler  <darin@apple.com>
+
+        Remove redundant use of inline keyword in StringHasher.h
+        https://bugs.webkit.org/show_bug.cgi?id=110036
+
+        Reviewed by Geoffrey Garen.
+
+        I have some other improvements for StringHasher.h, but wanted to get the simplest ones
+        out of the way first.
+
+        * wtf/StringHasher.h: Remove inline keyword on functions inside the class definition,
+        since functions defined inside the class are automatically inline.
+
 2013-02-15  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Spread the gyp build files throughout the tree

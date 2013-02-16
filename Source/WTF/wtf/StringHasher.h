@@ -38,20 +38,20 @@ class StringHasher {
 public:
     static const unsigned flagCount = 8; // Save 8 bits for StringImpl to use as flags.
 
-    inline StringHasher()
+    StringHasher()
         : m_hash(stringHashingStartValue)
         , m_hasPendingCharacter(false)
         , m_pendingCharacter(0)
     {
     }
 
-    inline void addCharacters(UChar a, UChar b)
+    void addCharacters(UChar a, UChar b)
     {
         ASSERT(!m_hasPendingCharacter);
         addCharactersToHash(a, b);
     }
 
-    inline void addCharacter(UChar ch)
+    void addCharacter(UChar ch)
     {
         if (m_hasPendingCharacter) {
             addCharactersToHash(m_pendingCharacter, ch);
@@ -63,7 +63,7 @@ public:
         m_hasPendingCharacter = true;
     }
 
-    template<typename T, UChar Converter(T)> inline void addCharacters(const T* data, unsigned length)
+    template<typename T, UChar Converter(T)> void addCharacters(const T* data, unsigned length)
     {
         if (!length)
             return;
@@ -86,7 +86,7 @@ public:
             addCharacter(Converter(*data));
     }
 
-    inline unsigned hashWithTop8BitsMasked() const
+    unsigned hashWithTop8BitsMasked() const
     {
         unsigned result = avalancheBits();
 
@@ -104,7 +104,7 @@ public:
         return result;
     }
 
-    inline unsigned hash() const
+    unsigned hash() const
     {
         unsigned result = avalancheBits();
 
@@ -118,7 +118,7 @@ public:
         return result;
     }
 
-    template<typename T, UChar Converter(T)> static inline unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
+    template<typename T, UChar Converter(T)> static unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
     {
         StringHasher hasher;
         bool rem = length & 1;
@@ -135,7 +135,7 @@ public:
         return hasher.hashWithTop8BitsMasked();
     }
 
-    template<typename T, UChar Converter(T)> static inline unsigned computeHashAndMaskTop8Bits(const T* data)
+    template<typename T, UChar Converter(T)> static unsigned computeHashAndMaskTop8Bits(const T* data)
     {
         StringHasher hasher;
 
@@ -155,24 +155,24 @@ public:
         return hasher.hashWithTop8BitsMasked();
     }
 
-    template<typename T> static inline unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
+    template<typename T> static unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
     {
         return computeHashAndMaskTop8Bits<T, defaultConverter>(data, length);
     }
 
-    template<typename T> static inline unsigned computeHashAndMaskTop8Bits(const T* data)
+    template<typename T> static unsigned computeHashAndMaskTop8Bits(const T* data)
     {
         return computeHashAndMaskTop8Bits<T, defaultConverter>(data);
     }
 
-    template<typename T, UChar Converter(T)> static inline unsigned computeHash(const T* data, unsigned length)
+    template<typename T, UChar Converter(T)> static unsigned computeHash(const T* data, unsigned length)
     {
         StringHasher hasher;
         hasher.addCharacters<T, Converter>(data, length);
         return hasher.hash();
     }
 
-    template<typename T, UChar Converter(T)> static inline unsigned computeHash(const T* data)
+    template<typename T, UChar Converter(T)> static unsigned computeHash(const T* data)
     {
         StringHasher hasher;
 
@@ -192,40 +192,40 @@ public:
         return hasher.hash();
     }
 
-    template<typename T> static inline unsigned computeHash(const T* data, unsigned length)
+    template<typename T> static unsigned computeHash(const T* data, unsigned length)
     {
         return computeHash<T, defaultConverter>(data, length);
     }
 
-    template<typename T> static inline unsigned computeHash(const T* data)
+    template<typename T> static unsigned computeHash(const T* data)
     {
         return computeHash<T, defaultConverter>(data);
     }
 
-    template<size_t length> static inline unsigned hashMemory(const void* data)
+    template<size_t length> static unsigned hashMemory(const void* data)
     {
         COMPILE_ASSERT(!(length % 4), length_must_be_a_multible_of_four);
         return computeHashAndMaskTop8Bits<UChar>(static_cast<const UChar*>(data), length / sizeof(UChar));
     }
 
-    static inline unsigned hashMemory(const void* data, unsigned size)
+    static unsigned hashMemory(const void* data, unsigned size)
     {
         ASSERT(!(size % 2));
         return computeHashAndMaskTop8Bits<UChar>(static_cast<const UChar*>(data), size / sizeof(UChar));
     }
 
 private:
-    static inline UChar defaultConverter(UChar ch)
+    static UChar defaultConverter(UChar ch)
     {
         return ch;
     }
 
-    static inline UChar defaultConverter(LChar ch)
+    static UChar defaultConverter(LChar ch)
     {
         return ch;
     }
 
-    inline void addCharactersToHash(UChar a, UChar b)
+    void addCharactersToHash(UChar a, UChar b)
     {
         m_hash += a;
         unsigned tmp = (b << 11) ^ m_hash;
@@ -233,7 +233,7 @@ private:
         m_hash += m_hash >> 11;
     }
 
-    inline unsigned avalancheBits() const
+    unsigned avalancheBits() const
     {
         unsigned result = m_hash;
 
