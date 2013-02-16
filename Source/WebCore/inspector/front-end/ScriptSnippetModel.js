@@ -82,7 +82,7 @@ WebInspector.ScriptSnippetModel.prototype = {
      */
     _addScriptSnippet: function(snippet)
     {
-        var uiSourceCode = this._workspaceProvider.addFileForURL(snippet.name, new WebInspector.SnippetContentProvider(snippet), true);
+        var uiSourceCode = this._workspaceProvider.addFileByName("", snippet.name, new WebInspector.SnippetContentProvider(snippet), true);
         var scriptFile = new WebInspector.SnippetScriptFile(this, uiSourceCode);
         uiSourceCode.setScriptFile(scriptFile);
         this._snippetIdForUISourceCode.put(uiSourceCode, snippet.id);
@@ -103,7 +103,7 @@ WebInspector.ScriptSnippetModel.prototype = {
         this._releaseSnippetScript(uiSourceCode);
         delete this._uiSourceCodeForSnippetId[snippet.id];
         this._snippetIdForUISourceCode.remove(uiSourceCode);
-        this._workspaceProvider.removeFile(snippet.name);
+        this._workspaceProvider.removeFileByName("", snippet.name);
     },
 
     /**
