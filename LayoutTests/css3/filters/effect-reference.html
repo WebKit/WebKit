@@ -28,6 +28,9 @@
       <feColorMatrix type="matrix" values="0 0 0 1 0  0 0 0 1 0  0 0 0 1 0  0 0 0 0 1"/>
       <feBlend in2="SourceGraphic" mode="multiply"/>
     </filter>
+    <filter id="offset" x="0%">
+      <feOffset dx="10" dy="10"/>
+    </filter>
   </defs>
 </svg>
 <style>
@@ -42,3 +45,4 @@ img {
 <img style="-webkit-filter: url(#blurY); filter: url(#blurY);" src="resources/reference.png">
 <img style="-webkit-filter: url(#blend); filter: url(#blend);" src="resources/reference.png">
 <img style="-webkit-filter: url(#lighting); filter: url(#lighting);" src="resources/reference.png">
+<img style="-webkit-filter: url(#offset); filter: url(#offset);" src="resources/reference.png">

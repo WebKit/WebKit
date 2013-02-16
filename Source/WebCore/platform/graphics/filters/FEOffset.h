@@ -45,6 +45,10 @@ public:
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
+#if USE(SKIA)
+    virtual SkImageFilter* createImageFilter(SkiaImageFilterBuilder*);
+#endif
+
 private:
     FEOffset(Filter*, float dx, float dy);
 
