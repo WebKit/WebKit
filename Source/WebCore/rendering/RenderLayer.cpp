@@ -3585,7 +3585,6 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     bool shouldPaintOutline = isSelfPaintingLayer && !isPaintingOverlayScrollbars;
     bool shouldPaintContent = m_hasVisibleContent && isSelfPaintingLayer && !isPaintingOverlayScrollbars;
 
-    bool useClipRect = true;
     GraphicsContext* transparencyLayerContext = context;
     
     if (localPaintFlags & PaintLayerPaintingRootBackgroundOnly && !renderer()->isRenderView() && !renderer()->isRoot())
@@ -3685,7 +3684,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
                 // If the filter needs the full source image, we need to avoid using the clip rectangles.
                 // Otherwise, if for example this layer has overflow:hidden, a drop shadow will not compute correctly.
                 // Note that we will still apply the clipping on the final rendering of the filter.
-                useClipRect = !filterRenderer()->hasFilterThatMovesPixels();
+                localPaintingInfo.clipToDirtyRect = !filterRenderer()->hasFilterThatMovesPixels();
             }
         }
     }
@@ -3732,7 +3731,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             if (haveTransparency)
                 beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, paintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
         
-            if (useClipRect) {
+            if (localPaintingInfo.clipToDirtyRect) {
                 // Paint our background first, before painting any child layers.
                 // Establish the clip used to paint our background.
                 clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Background painting will handle clipping to self.
@@ -3742,10 +3741,8 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseBlockBackground, paintBehavior, paintingRootForRenderer, localPaintingInfo.region);
             renderer()->paint(paintInfo, paintOffset);
 
-            if (useClipRect) {
-                // Restore the clip.
+            if (localPaintingInfo.clipToDirtyRect)
                 restoreClip(context, localPaintingInfo.paintDirtyRect, damageRect);
-            }
         }
 
         // Now walk the sorted list of children with negative z-indices.
@@ -3759,7 +3756,7 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
             if (haveTransparency)
                 beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, paintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
 
-            if (useClipRect) {
+            if (localPaintingInfo.clipToDirtyRect) {
                 // Set up the clip used when painting our children.
                 clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, clipRectToApply);
             }
@@ -3778,10 +3775,8 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
                 renderer()->paint(paintInfo, paintOffset);
             }
 
-            if (useClipRect) {
-                // Now restore our clip.
+            if (localPaintingInfo.clipToDirtyRect)
                 restoreClip(context, localPaintingInfo.paintDirtyRect, clipRectToApply);
-            }
         }
 
         if (shouldPaintOutline && !outlineRect.isEmpty()) {
@@ -3818,17 +3813,15 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     ASSERT(transparencyLayerContext == context);
 
     if ((localPaintFlags & PaintLayerPaintingCompositingMaskPhase) && shouldPaintContent && renderer()->hasMask() && !selectionOnly) {
-        if (useClipRect)
+        if (localPaintingInfo.clipToDirtyRect)
             clipToRect(localPaintingInfo.rootLayer, context, localPaintingInfo.paintDirtyRect, damageRect, DoNotIncludeSelfForBorderRadius); // Mask painting will handle clipping to self.
         
         // Paint the mask.
         PaintInfo paintInfo(context, pixelSnappedIntRect(damageRect.rect()), PaintPhaseMask, PaintBehaviorNormal, paintingRootForRenderer, localPaintingInfo.region);
         renderer()->paint(paintInfo, paintOffset);
         
-        if (useClipRect) {
-            // Restore the clip.
+        if (localPaintingInfo.clipToDirtyRect)
             restoreClip(context, localPaintingInfo.paintDirtyRect, damageRect);
-        }
     }
 
     // End our transparency layer

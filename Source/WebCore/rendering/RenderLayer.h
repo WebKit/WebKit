@@ -867,6 +867,7 @@ private:
             , region(inRegion)
             , overlapTestRequests(inOverlapTestRequests)
             , paintBehavior(inPaintBehavior)
+            , clipToDirtyRect(true)
         { }
         RenderLayer* rootLayer;
         RenderObject* paintingRoot; // only paint descendants of this object
@@ -875,6 +876,7 @@ private:
         RenderRegion* region; // May be null.
         OverlapTestRequestMap* overlapTestRequests; // May be null.
         PaintBehavior paintBehavior;
+        bool clipToDirtyRect;
     };
         
     void paintLayer(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
