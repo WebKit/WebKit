@@ -31,16 +31,18 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "DatabaseBasicTypes.h"
-#include "SQLStatement.h"
 #include "SQLTransactionStateMachine.h"
 #include <wtf/Deque.h>
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class DatabaseBackendAsync;
 class SQLError;
 class SQLiteTransaction;
+class SQLStatement;
+class SQLStatementBackend;
 class SQLTransaction;
 class SQLTransactionBackend;
 class SQLValue;
@@ -68,8 +70,13 @@ public:
     bool isReadOnly() { return m_readOnly; }
     void notifyDatabaseThreadIsShuttingDown();
 
+    // APIs for the frontend:
+    SQLStatement* currentStatement();
     PassRefPtr<SQLError> transactionError();
     void setShouldRetryCurrentStatement(bool);
+
+    void executeSQL(PassOwnPtr<SQLStatement>, const String& statement,
+        const Vector<SQLValue>& arguments, int permissions);
 
 private:
     SQLTransactionBackend(DatabaseBackendAsync*, PassRefPtr<SQLTransaction>,
@@ -77,7 +84,7 @@ private:
 
     void doCleanup();
 
-    void enqueueStatement(PassRefPtr<SQLStatement>);
+    void enqueueStatementBackend(PassRefPtr<SQLStatementBackend>);
 
     void checkAndHandleClosedOrInterruptedDatabase();
 
@@ -103,7 +110,7 @@ private:
     void getNextStatement();
 
     RefPtr<SQLTransaction> m_frontend;
-    RefPtr<SQLStatement> m_currentStatement;
+    RefPtr<SQLStatementBackend> m_currentStatementBackend;
 
     RefPtr<DatabaseBackendAsync> m_database;
     RefPtr<SQLTransactionWrapper> m_wrapper;
@@ -119,7 +126,7 @@ private:
     bool m_hasVersionMismatch;
 
     Mutex m_statementMutex;
-    Deque<RefPtr<SQLStatement> > m_statementQueue;
+    Deque<RefPtr<SQLStatementBackend> > m_statementQueue;
 
     OwnPtr<SQLiteTransaction> m_sqliteTransaction;
 

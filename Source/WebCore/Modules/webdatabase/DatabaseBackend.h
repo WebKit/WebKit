@@ -93,7 +93,7 @@ public:
 
 protected:
     friend class ChangeVersionWrapper;
-    friend class SQLStatement;
+    friend class SQLStatementBackend;
     friend class SQLStatementSync;
     friend class SQLTransactionBackend;
     friend class SQLTransactionBackendSync;

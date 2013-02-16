@@ -1481,6 +1481,7 @@ HEADERS += \
     Modules/webdatabase/SQLResultSet.h \
     Modules/webdatabase/SQLResultSetRowList.h \
     Modules/webdatabase/SQLStatement.h \
+    Modules/webdatabase/SQLStatementBackend.h \
     Modules/webdatabase/SQLStatementSync.h \
     Modules/webdatabase/SQLTransaction.h \
     Modules/webdatabase/SQLTransactionBackend.h \
@@ -3072,6 +3073,7 @@ enable?(SQL_DATABASE) {
         Modules/webdatabase/SQLResultSet.cpp \
         Modules/webdatabase/SQLResultSetRowList.cpp \
         Modules/webdatabase/SQLStatement.cpp \
+        Modules/webdatabase/SQLStatementBackend.cpp \
         Modules/webdatabase/SQLStatementSync.cpp \
         Modules/webdatabase/SQLTransaction.cpp \
         Modules/webdatabase/SQLTransactionBackend.cpp \

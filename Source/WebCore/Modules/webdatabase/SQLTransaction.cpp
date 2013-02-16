@@ -170,12 +170,15 @@ SQLTransactionState SQLTransaction::deliverTransactionErrorCallback()
 
 SQLTransactionState SQLTransaction::deliverStatementCallback()
 {
-    ASSERT(m_backend->m_currentStatement);
-
     // Spec 4.3.2.6.6 and 4.3.2.6.3: If the statement callback went wrong, jump to the transaction error callback
     // Otherwise, continue to loop through the statement queue
     m_executeSqlAllowed = true;
-    bool result = m_backend->m_currentStatement->performCallback(this);
+
+    SQLStatement* currentStatement = m_backend->currentStatement();
+    ASSERT(currentStatement);
+
+    bool result = currentStatement->performCallback(this);
+
     m_executeSqlAllowed = false;
 
     if (result) {
@@ -188,7 +191,7 @@ SQLTransactionState SQLTransaction::deliverStatementCallback()
 
 SQLTransactionState SQLTransaction::deliverQuotaIncreaseCallback()
 {
-    ASSERT(m_backend->m_currentStatement);
+    ASSERT(m_backend->currentStatement());
 
     bool shouldRetryCurrentStatement = m_database->transactionClient()->didExceedQuota(database());
     m_backend->setShouldRetryCurrentStatement(shouldRetryCurrentStatement);
@@ -255,12 +258,8 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
     else if (m_readOnly)
         permissions |= DatabaseAuthorizer::ReadOnlyMask;
 
-    RefPtr<SQLStatement> statement = SQLStatement::create(m_database.get(), sqlStatement, arguments, callback, callbackError, permissions);
-
-    if (m_database->deleted())
-        statement->setDatabaseDeletedError(m_database.get());
-
-    m_backend->enqueueStatement(statement);
+    OwnPtr<SQLStatement> statement = SQLStatement::create(m_database.get(), callback, callbackError);
+    m_backend->executeSQL(statement.release(), sqlStatement, arguments, permissions);
 }
 
 bool SQLTransaction::checkAndHandleClosedOrInterruptedDatabase()

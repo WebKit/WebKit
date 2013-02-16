@@ -25578,6 +25578,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\SQLStatementBackend.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\SQLStatementBackend.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\SQLStatementCallback.h"
 					>
 				</File>

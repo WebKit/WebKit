@@ -315,10 +315,6 @@ void Database::reportCommitTransactionResult(int errorSite, int webSqlErrorCode,
     backend()->reportCommitTransactionResult(errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void Database::reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
-{
-    backend()->reportExecuteStatementResult(errorSite, webSqlErrorCode, sqliteErrorCode);
-}
 #endif
 
 } // namespace WebCore

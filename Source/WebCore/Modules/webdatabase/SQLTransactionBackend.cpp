@@ -33,12 +33,14 @@
 
 #include "Database.h"
 #include "DatabaseAuthorizer.h"
+#include "DatabaseBackendAsync.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseThread.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include "SQLError.h"
 #include "SQLStatement.h"
+#include "SQLStatementBackend.h"
 #include "SQLStatementCallback.h" // FIXME: remove when SQLStatement has been refactored.
 #include "SQLStatementErrorCallback.h" // FIXME: remove when SQLStatement has been refactored.
 #include "SQLTransaction.h"
@@ -230,15 +232,15 @@
 // to wait for further action.
 
 
-// The Life-Cycle of a SQLTransaction i.e. Who's keeping the SQLTransactionAlive? 
-// =============================================================================
+// The Life-Cycle of a SQLTransaction i.e. Who's keeping the SQLTransaction alive? 
+// ==============================================================================
 // The RefPtr chain goes something like this:
 //
 //     At birth (in DatabaseBackendAsync::runTransaction()):
 //     ====================================================
-//     DatabaseBackendAsync               // in Deque<RefPtr<SQLTransactionBackend> > m_transactionQueue points to ...
-//     --> SQLTransactionBackend          // in RefPtr<SQLTransaction> m_frontend points to ...
-//         --> SQLTransaction             // in RefPtr<SQLTransactionBackend> m_backend points to ...
+//     DatabaseBackendAsync               // Deque<RefPtr<SQLTransactionBackend> > m_transactionQueue points to ...
+//     --> SQLTransactionBackend          // RefPtr<SQLTransaction> m_frontend points to ...
+//         --> SQLTransaction             // RefPtr<SQLTransactionBackend> m_backend points to ...
 //             --> SQLTransactionBackend  // which is a circular reference.
 //
 //     Note: there's a circular reference between the SQLTransaction front-end and
@@ -249,18 +251,18 @@
 //
 //     After scheduling the transaction with the DatabaseThread (DatabaseBackendAsync::scheduleTransaction()):
 //     ======================================================================================================
-//     DatabaseThread                         // in MessageQueue<DatabaseTask> m_queue points to ...
-//     --> DatabaseTransactionTask            // in RefPtr<SQLTransactionBackend> m_transaction points to ...
-//         --> SQLTransactionBackend          // in RefPtr<SQLTransaction> m_frontend points to ...
-//             --> SQLTransaction             // in RefPtr<SQLTransactionBackend> m_backend points to ...
+//     DatabaseThread                         // MessageQueue<DatabaseTask> m_queue points to ...
+//     --> DatabaseTransactionTask            // RefPtr<SQLTransactionBackend> m_transaction points to ...
+//         --> SQLTransactionBackend          // RefPtr<SQLTransaction> m_frontend points to ...
+//             --> SQLTransaction             // RefPtr<SQLTransactionBackend> m_backend points to ...
 //                 --> SQLTransactionBackend  // which is a circular reference.
 //
 //     When executing the transaction (in DatabaseThread::databaseThread()):
 //     ====================================================================
 //     OwnPtr<DatabaseTask> task;             // points to ...
-//     --> DatabaseTransactionTask            // in RefPtr<SQLTransactionBackend> m_transaction points to ...
-//         --> SQLTransactionBackend          // in: RefPtr<SQLTransaction> m_frontend;
-//             --> SQLTransaction             // in RefPtr<SQLTransactionBackend> m_backend points to ...
+//     --> DatabaseTransactionTask            // RefPtr<SQLTransactionBackend> m_transaction points to ...
+//         --> SQLTransactionBackend          // RefPtr<SQLTransaction> m_frontend;
+//             --> SQLTransaction             // RefPtr<SQLTransactionBackend> m_backend points to ...
 //                 --> SQLTransactionBackend  // which is a circular reference.
 //
 //     At the end of cleanupAndTerminate():
@@ -370,9 +372,14 @@ void SQLTransactionBackend::doCleanup()
     // m_requestedState, but we won't execute a transition to that state because
     // we've already shut down the transaction.
 
-    m_currentStatement = 0;
+    m_currentStatementBackend = 0;
     m_wrapper = 0;
     m_transactionError = 0;
+}
+
+SQLStatement* SQLTransactionBackend::currentStatement()
+{
+    return m_currentStatementBackend->frontend();
 }
 
 PassRefPtr<SQLError> SQLTransactionBackend::transactionError()
@@ -410,10 +417,10 @@ SQLTransactionBackend::StateFunction SQLTransactionBackend::stateFunctionFor(SQL
     return stateFunctions[static_cast<int>(state)];
 }
 
-void SQLTransactionBackend::enqueueStatement(PassRefPtr<SQLStatement> statement)
+void SQLTransactionBackend::enqueueStatementBackend(PassRefPtr<SQLStatementBackend> statementBackend)
 {
     MutexLocker locker(m_statementMutex);
-    m_statementQueue.append(statement);
+    m_statementQueue.append(statementBackend);
 }
 
 void SQLTransactionBackend::checkAndHandleClosedOrInterruptedDatabase()
@@ -454,6 +461,18 @@ void SQLTransactionBackend::performNextStep()
 
     checkAndHandleClosedOrInterruptedDatabase();
     runStateMachine();
+}
+
+void SQLTransactionBackend::executeSQL(PassOwnPtr<SQLStatement> statement,
+    const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
+{
+    RefPtr<SQLStatementBackend> statementBackend;
+    statementBackend = SQLStatementBackend::create(statement, sqlStatement, arguments, permissions);
+
+    if (Database::from(m_database.get())->deleted())
+        statementBackend->setDatabaseDeletedError(m_database.get());
+
+    enqueueStatementBackend(statementBackend);
 }
 
 void SQLTransactionBackend::notifyDatabaseThreadIsShuttingDown()
@@ -577,7 +596,7 @@ SQLTransactionState SQLTransactionBackend::runStatements()
         } else {
             // If the current statement has already been run, failed due to quota constraints, and we're not retrying it,
             // that means it ended in an error. Handle it now
-            if (m_currentStatement && m_currentStatement->lastExecutionFailedDueToQuota()) {
+            if (m_currentStatementBackend && m_currentStatementBackend->lastExecutionFailedDueToQuota()) {
                 return nextStateForCurrentStatementError();
             }
 
@@ -592,16 +611,16 @@ SQLTransactionState SQLTransactionBackend::runStatements()
 
 void SQLTransactionBackend::getNextStatement()
 {
-    m_currentStatement = 0;
+    m_currentStatementBackend = 0;
 
     MutexLocker locker(m_statementMutex);
     if (!m_statementQueue.isEmpty())
-        m_currentStatement = m_statementQueue.takeFirst();
+        m_currentStatementBackend = m_statementQueue.takeFirst();
 }
 
 SQLTransactionState SQLTransactionBackend::runCurrentStatementAndGetNextState()
 {
-    if (!m_currentStatement) {
+    if (!m_currentStatementBackend) {
         // No more statements to run. So move on to the next state.
         return SQLTransactionState::PostflightAndCommit;
     }
@@ -609,9 +628,9 @@ SQLTransactionState SQLTransactionBackend::runCurrentStatementAndGetNextState()
     m_database->resetAuthorizer();
 
     if (m_hasVersionMismatch)
-        m_currentStatement->setVersionMismatchedError(Database::from(m_database.get()));
+        m_currentStatementBackend->setVersionMismatchedError(Database::from(m_database.get()));
 
-    if (m_currentStatement->execute(Database::from(m_database.get()))) {
+    if (m_currentStatementBackend->execute(m_database.get())) {
         if (m_database->lastActionChangedDatabase()) {
             // Flag this transaction as having changed the database for later delegate notification
             m_modifiedDatabase = true;
@@ -619,7 +638,7 @@ SQLTransactionState SQLTransactionBackend::runCurrentStatementAndGetNextState()
             m_database->transactionClient()->didExecuteStatement(Database::from(database()));
         }
 
-        if (m_currentStatement->hasStatementCallback()) {
+        if (m_currentStatementBackend->hasStatementCallback()) {
             return SQLTransactionState::DeliverStatementCallback;
         }
 
@@ -628,7 +647,7 @@ SQLTransactionState SQLTransactionBackend::runCurrentStatementAndGetNextState()
         return SQLTransactionState::RunStatements;
     }
 
-    if (m_currentStatement->lastExecutionFailedDueToQuota()) {
+    if (m_currentStatementBackend->lastExecutionFailedDueToQuota()) {
         return SQLTransactionState::DeliverQuotaIncreaseCallback;
     }
 
@@ -639,10 +658,10 @@ SQLTransactionState SQLTransactionBackend::nextStateForCurrentStatementError()
 {
     // Spec 4.3.2.6.6: error - Call the statement's error callback, but if there was no error callback,
     // or the transaction was rolled back, jump to the transaction error callback
-    if (m_currentStatement->hasStatementErrorCallback() && !m_sqliteTransaction->wasRolledBackBySqlite())
+    if (m_currentStatementBackend->hasStatementErrorCallback() && !m_sqliteTransaction->wasRolledBackBySqlite())
         return SQLTransactionState::DeliverStatementCallback;
 
-    m_transactionError = m_currentStatement->sqlError();
+    m_transactionError = m_currentStatementBackend->sqlError();
     if (!m_transactionError) {
         m_database->reportCommitTransactionResult(1, SQLError::DATABASE_ERR, 0);
         m_transactionError = SQLError::create(SQLError::DATABASE_ERR, "the statement failed to execute");

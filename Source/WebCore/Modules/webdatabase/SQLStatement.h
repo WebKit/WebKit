@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -41,41 +41,33 @@ namespace WebCore {
 
 class Database;
 class SQLError;
+class SQLStatementBackend;
 class SQLStatementCallback;
 class SQLStatementErrorCallback;
 class SQLTransaction;
 
-class SQLStatement : public ThreadSafeRefCounted<SQLStatement> {
+class SQLStatement {
 public:
-    static PassRefPtr<SQLStatement> create(Database*, const String&, const Vector<SQLValue>&, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
-
-    bool execute(Database*);
-    bool lastExecutionFailedDueToQuota() const;
-
-    bool hasStatementCallback() const { return m_statementCallbackWrapper.hasCallback(); }
-    bool hasStatementErrorCallback() const { return m_statementErrorCallbackWrapper.hasCallback(); }
-
-    void setDatabaseDeletedError(Database*);
-    void setVersionMismatchedError(Database*);
+    static PassOwnPtr<SQLStatement> create(Database*,
+        PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>);
 
     bool performCallback(SQLTransaction*);
 
-    SQLError* sqlError() const { return m_error.get(); }
+    void setBackend(SQLStatementBackend*);
+
+    bool hasCallback();
+    bool hasErrorCallback();
+
 private:
-    SQLStatement(Database*, const String& statement, const Vector<SQLValue>& arguments, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, int permissions);
+    SQLStatement(Database*, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>);
 
-    void setFailureDueToQuota(Database*);
-    void clearFailureDueToQuota();
+    // The SQLStatementBackend owns the SQLStatement. Hence, the backend is
+    // guaranteed to be outlive the SQLStatement, and it is safe for us to refer
+    // to the backend using a raw pointer here.
+    SQLStatementBackend* m_backend;
 
-    String m_statement;
-    Vector<SQLValue> m_arguments;
     SQLCallbackWrapper<SQLStatementCallback> m_statementCallbackWrapper;
     SQLCallbackWrapper<SQLStatementErrorCallback> m_statementErrorCallbackWrapper;
-
-    RefPtr<SQLError> m_error;
-    RefPtr<SQLResultSet> m_resultSet;
-
-    int m_permissions;
 };
 
 } // namespace WebCore

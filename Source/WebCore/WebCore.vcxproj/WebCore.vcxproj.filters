@@ -1893,6 +1893,9 @@
     <ClCompile Include="..\Modules\webdatabase\SQLStatement.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
+    <ClCompile Include="..\Modules\webdatabase\SQLStatementBackend.cpp">
+      <Filter>Modules\webdatabase</Filter>
+    </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\SQLStatementSync.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
@@ -8563,6 +8566,9 @@
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\SQLStatement.h">
+      <Filter>Modules\webdatabase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Modules\webdatabase\SQLStatementBackend.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\SQLStatementCallback.h">

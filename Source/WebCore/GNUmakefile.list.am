@@ -2152,8 +2152,10 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/SQLResultSetRowList.h \
 	Source/WebCore/Modules/webdatabase/SQLStatementCallback.h \
 	Source/WebCore/Modules/webdatabase/SQLStatement.cpp \
-	Source/WebCore/Modules/webdatabase/SQLStatementErrorCallback.h \
 	Source/WebCore/Modules/webdatabase/SQLStatement.h \
+	Source/WebCore/Modules/webdatabase/SQLStatementBackend.cpp \
+	Source/WebCore/Modules/webdatabase/SQLStatementBackend.h \
+	Source/WebCore/Modules/webdatabase/SQLStatementErrorCallback.h \
 	Source/WebCore/Modules/webdatabase/SQLStatementSync.cpp \
 	Source/WebCore/Modules/webdatabase/SQLStatementSync.h \
 	Source/WebCore/Modules/webdatabase/SQLTransaction.cpp \

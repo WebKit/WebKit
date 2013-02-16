@@ -1874,6 +1874,7 @@
     <ClCompile Include="..\Modules\webdatabase\SQLResultSet.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLResultSetRowList.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLStatement.cpp" />
+    <ClCompile Include="..\Modules\webdatabase\SQLStatementBackend.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLStatementSync.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransaction.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLTransactionBackend.cpp" />
@@ -6445,6 +6446,7 @@
     <ClInclude Include="..\Modules\webdatabase\SQLResultSet.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLResultSetRowList.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLStatement.h" />
+    <ClInclude Include="..\Modules\webdatabase\SQLStatementBackend.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLStatementCallback.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLStatementErrorCallback.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLStatementSync.h" />
