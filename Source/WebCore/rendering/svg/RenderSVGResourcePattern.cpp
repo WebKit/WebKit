@@ -66,7 +66,7 @@ PatternData* RenderSVGResourcePattern::buildPattern(RenderObject* object, unsign
         return 0;
 
     if (m_shouldCollectPatternAttributes) {
-        patternElement->updateAnimatedSVGAttribute(anyQName());
+        patternElement->synchronizeAnimatedSVGAttribute(anyQName());
 
         m_attributes = PatternAttributes();
         patternElement->collectPatternAttributes(m_attributes);

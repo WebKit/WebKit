@@ -93,7 +93,7 @@ public:
     SVGElement* correspondingElement();
     void setCorrespondingElement(SVGElement*);
 
-    virtual void updateAnimatedSVGAttribute(const QualifiedName&) const;
+    void synchronizeAnimatedSVGAttribute(const QualifiedName&) const;
  
     virtual PassRefPtr<RenderStyle> customStyleForRenderer() OVERRIDE;
 

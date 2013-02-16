@@ -49,6 +49,8 @@ public:
     bool setInlineStyleProperty(CSSPropertyID, const String& value, bool important = false);
     bool removeInlineStyleProperty(CSSPropertyID);
     void removeAllInlineStyleProperties();
+
+    void synchronizeStyleAttributeInternal() const;
     
     virtual CSSStyleDeclaration* style() OVERRIDE;
 
@@ -75,7 +77,6 @@ protected:
 private:
     void styleAttributeChanged(const AtomicString& newStyleString);
 
-    virtual void updateStyleAttribute() const;
     void inlineStyleChanged();
     PropertySetCSSStyleDeclaration* inlineStyleCSSOMWrapper();
     void setInlineStyleFromString(const AtomicString&);

@@ -340,11 +340,15 @@ void Element::synchronizeAllAttributes() const
 {
     if (!elementData())
         return;
-    if (elementData()->m_styleAttributeIsDirty)
-        updateStyleAttribute();
+    if (elementData()->m_styleAttributeIsDirty) {
+        ASSERT(isStyledElement());
+        static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
+    }
 #if ENABLE(SVG)
-    if (elementData()->m_animatedSVGAttributesAreDirty)
-        updateAnimatedSVGAttribute(anyQName());
+    if (elementData()->m_animatedSVGAttributesAreDirty) {
+        ASSERT(isSVGElement());
+        static_cast<const SVGElement*>(this)->synchronizeAnimatedSVGAttribute(anyQName());
+    }
 #endif
 }
 
@@ -353,12 +357,15 @@ inline void Element::synchronizeAttribute(const QualifiedName& name) const
     if (!elementData())
         return;
     if (UNLIKELY(name == styleAttr && elementData()->m_styleAttributeIsDirty)) {
-        updateStyleAttribute();
+        ASSERT(isStyledElement());
+        static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
         return;
     }
 #if ENABLE(SVG)
-    if (UNLIKELY(elementData()->m_animatedSVGAttributesAreDirty))
-        updateAnimatedSVGAttribute(name);
+    if (UNLIKELY(elementData()->m_animatedSVGAttributesAreDirty)) {
+        ASSERT(isSVGElement());
+        static_cast<const SVGElement*>(this)->synchronizeAnimatedSVGAttribute(name);
+    }
 #endif
 }
 
@@ -369,13 +376,15 @@ inline void Element::synchronizeAttribute(const AtomicString& localName) const
     if (!elementData())
         return;
     if (elementData()->m_styleAttributeIsDirty && equalPossiblyIgnoringCase(localName, styleAttr.localName(), shouldIgnoreAttributeCase(this))) {
-        updateStyleAttribute();
+        ASSERT(isStyledElement());
+        static_cast<const StyledElement*>(this)->synchronizeStyleAttributeInternal();
         return;
     }
 #if ENABLE(SVG)
     if (elementData()->m_animatedSVGAttributesAreDirty) {
         // We're not passing a namespace argument on purpose. SVGNames::*Attr are defined w/o namespaces as well.
-        updateAnimatedSVGAttribute(QualifiedName(nullAtom, localName, nullAtom));
+        ASSERT(isSVGElement());
+        static_cast<const SVGElement*>(this)->synchronizeAnimatedSVGAttribute(QualifiedName(nullAtom, localName, nullAtom));
     }
 #endif
 }

@@ -542,7 +542,7 @@ void SVGElement::attributeChanged(const QualifiedName& name, const AtomicString&
         svgAttributeChanged(name);
 }
 
-void SVGElement::updateAnimatedSVGAttribute(const QualifiedName& name) const
+void SVGElement::synchronizeAnimatedSVGAttribute(const QualifiedName& name) const
 {
     if (!elementData() || !elementData()->m_animatedSVGAttributesAreDirty)
         return;

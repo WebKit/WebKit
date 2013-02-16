@@ -126,7 +126,7 @@ static PresentationAttributeCacheCleaner& presentationAttributeCacheCleaner()
     return cleaner;
 }
 
-void StyledElement::updateStyleAttribute() const
+void StyledElement::synchronizeStyleAttributeInternal() const
 {
     ASSERT(elementData());
     ASSERT(elementData()->m_styleAttributeIsDirty);

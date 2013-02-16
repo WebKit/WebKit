@@ -127,7 +127,7 @@ bool RenderSVGResourceGradient::applyResource(RenderObject* object, RenderStyle*
         return false;
 
     if (m_shouldCollectGradientAttributes) {
-        gradientElement->updateAnimatedSVGAttribute(anyQName());
+        gradientElement->synchronizeAnimatedSVGAttribute(anyQName());
         if (!collectGradientAttributes(gradientElement))
             return false;
 

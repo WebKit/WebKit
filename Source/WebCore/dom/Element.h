@@ -666,12 +666,6 @@ private:
 
     bool pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderStyle* newStyle);
 
-    virtual void updateStyleAttribute() const { }
-
-#if ENABLE(SVG)
-    virtual void updateAnimatedSVGAttribute(const QualifiedName&) const { }
-#endif
-
     void cancelFocusAppearanceUpdate();
 
     virtual const AtomicString& virtualPrefix() const { return prefix(); }
