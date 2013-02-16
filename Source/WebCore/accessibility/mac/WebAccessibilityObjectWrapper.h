@@ -41,12 +41,11 @@ class VisiblePosition;
 - (id)initWithAccessibilityObject:(WebCore::AccessibilityObject*)axObject;
 - (void)detach;
 - (WebCore::AccessibilityObject*)accessibilityObject;
-+ (void)accessibilitySetShouldRepostNotifications:(BOOL)repost;
+- (BOOL)updateObjectBackingStore;
 
+- (id)attachmentView;
 // Used to inform an element when a notification is posted for it. Used by DRT.
 - (void)accessibilityPostedNotification:(NSString *)notificationName;
-
-- (NSView*)attachmentView;
 
 @end
 
