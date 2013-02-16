@@ -1,3 +1,18 @@
+2013-02-15  Kiran Muppala  <cmuppala@apple.com>
+
+        Disable sudden termination on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=109990
+
+        Reviewed by Mark Rowe.
+
+        Sudden Termination is causing WebContent XPC services to be killed in
+        response to memory pressure.  Hence, disable it until we can identify
+        if it is being enabled in error or not.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize): Add call to
+        [NSProcessInfo disableSuddenTermination].
+
 2013-02-15  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] remove wkCaptionAppearance from WebKitSystemInterface

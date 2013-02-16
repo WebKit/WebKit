@@ -79,6 +79,10 @@ void ChildProcess::platformInitialize()
     // Starting with process suppression disabled.  The proxy for this process will enable if appropriate from didFinishLaunching().
     setProcessSuppressionEnabled(false);
 
+    // <rdar://problem/13229217> Sudden Termination is causing WebContent XPC services to be killed in response to memory pressure
+    // Hence, disable it until we can identify if it is being enabled in error or not.
+    [[NSProcessInfo processInfo] disableSuddenTermination];
+
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] bundlePath]];
 }
 
