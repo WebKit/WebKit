@@ -1,3 +1,65 @@
+2013-02-15  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure should be more methodical about the relationship between m_offset and m_propertyTable
+        https://bugs.webkit.org/show_bug.cgi?id=109978
+
+        Reviewed by Mark Hahnenberg.
+        
+        Allegedly, the previous relationship was that either m_propertyTable or m_offset
+        would be set, and if m_propertyTable was not set you could rebuild it.  In reality,
+        we would sometimes "reset" both: some transitions wouldn't set m_offset, and other
+        transitions would clear the previous structure's m_propertyTable.  So, in a
+        structure transition chain of A->B->C you could have:
+
+        A transitions to B: B doesn't copy m_offset but does copy m_propertyTable, because
+            that seemed like a good idea at the time (this was a common idiom in the code).
+        B transitions to C: C steals B's m_propertyTable, leaving B with neither a
+            m_propertyTable nor a m_offset.
+
+        Then we would ask for the size of the property storage of B and get the answer
+        "none".  That's not good.
+
+        Now, there is a new relationship, which, hopefully, should fix things: m_offset is
+        always set and always refers to the maximum offset ever used by the property table.
+        From this, you can infer both the inline and out-of-line property size, and
+        capacity.  This is accomplished by having PropertyTable::add() take a
+        PropertyOffset reference, which must be Structure::m_offset.  It will update this
+        offset.  As well, all transitions now copy m_offset.  And we frequently assert
+        (using RELEASE_ASSERT) that the m_offset matches what m_propertyTable would tell
+        you.  Hence if you ever modify the m_propertyTable, you'll also update the offset.
+        If you ever copy the property table, you'll also copy the offset.  Life should be
+        good, I think.
+
+        * runtime/PropertyMapHashTable.h:
+        (JSC::PropertyTable::add):
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::removePropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::sealTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::checkConsistency):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::createPropertyMap):
+        (JSC::PropertyTable::checkConsistency):
+        * runtime/Structure.h:
+        (JSC):
+        (JSC::Structure::putWillGrowOutOfLineStorage):
+        (JSC::Structure::outOfLineCapacity):
+        (JSC::Structure::outOfLineSize):
+        (JSC::Structure::isEmpty):
+        (JSC::Structure::materializePropertyMapIfNecessary):
+        (JSC::Structure::materializePropertyMapIfNecessaryForPinning):
+        (Structure):
+        (JSC::Structure::checkOffsetConsistency):
+
 2013-02-15  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Spread the gyp build files throughout the tree

@@ -157,7 +157,8 @@ public:
     find_iterator find(const KeyType&);
     find_iterator findWithString(const KeyType&);
     // Add a value to the table
-    std::pair<find_iterator, bool> add(const ValueType& entry);
+    enum EffectOnPropertyOffset { PropertyOffsetMayChange, PropertyOffsetMustNotChange };
+    std::pair<find_iterator, bool> add(const ValueType& entry, PropertyOffset&, EffectOnPropertyOffset);
     // Remove a value from the table.
     void remove(const find_iterator& iter);
     void remove(const KeyType& key);
@@ -389,12 +390,14 @@ inline PropertyTable::find_iterator PropertyTable::findWithString(const KeyType&
     }
 }
 
-inline std::pair<PropertyTable::find_iterator, bool> PropertyTable::add(const ValueType& entry)
+inline std::pair<PropertyTable::find_iterator, bool> PropertyTable::add(const ValueType& entry, PropertyOffset& offset, EffectOnPropertyOffset offsetEffect)
 {
     // Look for a value with a matching key already in the array.
     find_iterator iter = find(entry.key);
-    if (iter.first)
+    if (iter.first) {
+        RELEASE_ASSERT(iter.first->offset <= offset);
         return std::make_pair(iter, false);
+    }
 
     // Ref the key
     entry.key->ref();
@@ -413,6 +416,12 @@ inline std::pair<PropertyTable::find_iterator, bool> PropertyTable::add(const Va
     *iter.first = entry;
 
     ++m_keyCount;
+    
+    if (offsetEffect == PropertyOffsetMayChange)
+        offset = std::max(offset, entry.offset);
+    else
+        RELEASE_ASSERT(offset >= entry.offset);
+    
     return std::make_pair(iter, true);
 }
 

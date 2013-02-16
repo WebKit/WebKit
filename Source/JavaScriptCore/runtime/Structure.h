@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -110,6 +110,8 @@ namespace JSC {
         bool didTransition() const { return m_didTransition; }
         bool putWillGrowOutOfLineStorage()
         {
+            checkOffsetConsistency();
+            
             ASSERT(outOfLineCapacity() >= outOfLineSize());
             
             if (!m_propertyTable) {
@@ -187,6 +189,8 @@ namespace JSC {
 
         unsigned outOfLineCapacity() const
         {
+            ASSERT(checkOffsetConsistency());
+            
             unsigned outOfLineSize = this->outOfLineSize();
 
             if (!outOfLineSize)
@@ -201,14 +205,9 @@ namespace JSC {
         }
         unsigned outOfLineSize() const
         {
+            ASSERT(checkOffsetConsistency());
             ASSERT(structure()->classInfo() == &s_info);
-            if (m_propertyTable) {
-                unsigned totalSize = m_propertyTable->propertyStorageSize();
-                unsigned inlineCapacity = this->inlineCapacity();
-                if (totalSize < inlineCapacity)
-                    return 0;
-                return totalSize - inlineCapacity;
-            }
+            
             return numberOfOutOfLineSlotsForLastOffset(m_offset);
         }
         bool hasInlineStorage() const
@@ -221,17 +220,10 @@ namespace JSC {
         }
         unsigned inlineSize() const
         {
-            unsigned result;
-            if (m_propertyTable)
-                result = m_propertyTable->propertyStorageSize();
-            else
-                result = m_offset + 1;
-            return std::min<unsigned>(result, m_inlineCapacity);
+            return std::min<unsigned>(m_offset + 1, m_inlineCapacity);
         }
         unsigned totalStorageSize() const
         {
-            if (m_propertyTable)
-                return m_propertyTable->propertyStorageSize();
             return numberOfSlotsForLastOffset(m_offset, m_inlineCapacity);
         }
         unsigned totalStorageCapacity() const
@@ -248,8 +240,6 @@ namespace JSC {
         }
         PropertyOffset lastValidOffset() const
         {
-            if (m_propertyTable)
-                return offsetForPropertyNumber(m_propertyTable->propertyStorageSize() - 1, m_inlineCapacity);
             return m_offset;
         }
         bool isValidOffset(PropertyOffset offset) const
@@ -281,8 +271,7 @@ namespace JSC {
         
         bool isEmpty() const
         {
-            if (m_propertyTable)
-                return m_propertyTable->isEmpty();
+            ASSERT(checkOffsetConsistency());
             return !JSC::isValidOffset(m_offset);
         }
 
@@ -405,12 +394,14 @@ namespace JSC {
         void materializePropertyMapIfNecessary(JSGlobalData& globalData)
         {
             ASSERT(structure()->classInfo() == &s_info);
+            ASSERT(checkOffsetConsistency());
             if (!m_propertyTable && previousID())
                 materializePropertyMap(globalData);
         }
         void materializePropertyMapIfNecessaryForPinning(JSGlobalData& globalData)
         {
             ASSERT(structure()->classInfo() == &s_info);
+            checkOffsetConsistency();
             if (!m_propertyTable)
                 materializePropertyMap(globalData);
         }
@@ -452,6 +443,20 @@ namespace JSC {
         {
             ASSERT(typeInfo().structureHasRareData());
             return static_cast<StructureRareData*>(m_previousOrRareData.get());
+        }
+        
+        ALWAYS_INLINE bool checkOffsetConsistency() const
+        {
+            if (!m_propertyTable) {
+                ASSERT(!m_isPinnedPropertyTable);
+                return true;
+            }
+            
+            RELEASE_ASSERT(numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) == m_propertyTable->propertyStorageSize());
+            unsigned totalSize = m_propertyTable->propertyStorageSize();
+            RELEASE_ASSERT((totalSize < inlineCapacity() ? 0 : totalSize - inlineCapacity()) == numberOfOutOfLineSlotsForLastOffset(m_offset));
+            
+            return true;
         }
 
         void allocateRareData(JSGlobalData&);
