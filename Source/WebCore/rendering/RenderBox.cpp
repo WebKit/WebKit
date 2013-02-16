@@ -232,12 +232,18 @@ void RenderBox::styleWillChange(StyleDifference diff, const RenderStyle* newStyl
     RenderBoxModelObject::styleWillChange(diff, newStyle);
 }
 
-static bool borderWidthChanged(const RenderStyle* oldStyle, const RenderStyle* newStyle)
+static bool borderOrPaddingLogicalWidthChanged(const RenderStyle* oldStyle, const RenderStyle* newStyle)
 {
-    return oldStyle->borderLeftWidth() != newStyle->borderLeftWidth()
-        || oldStyle->borderTopWidth() != newStyle->borderTopWidth()
-        || oldStyle->borderRightWidth() != newStyle->borderRightWidth()
-        || oldStyle->borderBottomWidth() != newStyle->borderBottomWidth();
+    if (newStyle->isHorizontalWritingMode())
+        return oldStyle->borderLeftWidth() != newStyle->borderLeftWidth()
+            || oldStyle->borderRightWidth() != newStyle->borderRightWidth()
+            || oldStyle->paddingLeft() != newStyle->paddingLeft()
+            || oldStyle->paddingRight() != newStyle->paddingRight();
+
+    return oldStyle->borderTopWidth() != newStyle->borderTopWidth()
+        || oldStyle->borderBottomWidth() != newStyle->borderBottomWidth()
+        || oldStyle->paddingTop() != newStyle->paddingTop()
+        || oldStyle->paddingBottom() != newStyle->paddingBottom();
 }
 
 void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
@@ -314,9 +320,7 @@ void RenderBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle
     updateExclusionShapeOutsideInfoAfterStyleChange(style()->shapeOutside(), oldStyle ? oldStyle->shapeOutside() : 0);
 #endif
 
-    if (oldStyle && (newStyle->boxSizing() == BORDER_BOX || oldStyle->boxSizing() == BORDER_BOX) && diff == StyleDifferenceLayout
-        && (newStyle->paddingBox() != oldStyle->paddingBox() || borderWidthChanged(oldStyle, newStyle))) {
-        ASSERT(needsLayout());
+    if (oldStyle && diff == StyleDifferenceLayout && needsLayout() && borderOrPaddingLogicalWidthChanged(oldStyle, newStyle)) {
         for (RenderObject* child = firstChild(); child; child = child->nextSibling())
             child->setChildNeedsLayout(true, MarkOnlyThis);
     }
