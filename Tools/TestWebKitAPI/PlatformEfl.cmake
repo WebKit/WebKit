@@ -70,6 +70,7 @@ set(test_webkit2_api_BINARIES
     LoadCanceledNoServerRedirectCallback
     MouseMoveAfterCrash
     ReloadPageAfterCrash
+    ResizeWindowAfterCrash
     NewFirstVisuallyNonEmptyLayout
     NewFirstVisuallyNonEmptyLayoutFails
     NewFirstVisuallyNonEmptyLayoutForImages

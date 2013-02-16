@@ -1,3 +1,23 @@
+2013-02-15  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [WK2] Write a test to simulate crashed WebProcess followed by Window resize
+        https://bugs.webkit.org/show_bug.cgi?id=109842
+
+        Reviewed by Benjamin Poulain.
+
+        This new test will kill WebProcess, followed by next resizing the Window. It helps to
+        identify if the port is testing for WebPageProxy data members state (e.g. DrawingArea, Frames)
+        before making calls into them.
+
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WebKit2/ResizeWindowAfterCrash.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::didFinishLoad):
+        (TestWebKitAPI::didCrash):
+        (TestWebKitAPI::TEST):
+
 2013-02-15  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Add CString operators for comparison with const char*
