@@ -69,15 +69,14 @@ class QueueEngineDelegate:
 
 
 class QueueEngine:
-    def __init__(self, name, delegate, wakeup_event):
+    def __init__(self, name, delegate, wakeup_event, seconds_to_sleep=120):
         self._name = name
         self._delegate = delegate
         self._wakeup_event = wakeup_event
         self._output_tee = OutputTee()
+        self._seconds_to_sleep = seconds_to_sleep
 
     log_date_format = "%Y-%m-%d %H:%M:%S"
-    sleep_duration_text = "2 mins"  # This could be generated from seconds_to_sleep
-    seconds_to_sleep = 120
     handled_error_code = 2
 
     # Child processes exit with a special code to the parent queue process can detect the error was handled.
@@ -153,10 +152,14 @@ class QueueEngine:
         return datetime.now()
 
     def _sleep_message(self, message):
-        wake_time = self._now() + timedelta(seconds=self.seconds_to_sleep)
-        return "%s Sleeping until %s (%s)." % (message, wake_time.strftime(self.log_date_format), self.sleep_duration_text)
+        wake_time = self._now() + timedelta(seconds=self._seconds_to_sleep)
+        if self._seconds_to_sleep < 3 * 60:
+            sleep_duration_text = str(self._seconds_to_sleep) + ' seconds'
+        else:
+            sleep_duration_text = str(round(self._seconds_to_sleep / 60)) + ' minutes'
+        return "%s Sleeping until %s (%s)." % (message, wake_time.strftime(self.log_date_format), sleep_duration_text)
 
     def _sleep(self, message):
         _log.info(self._sleep_message(message))
-        self._wakeup_event.wait(self.seconds_to_sleep)
+        self._wakeup_event.wait(self._seconds_to_sleep)
         self._wakeup_event.clear()

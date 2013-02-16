@@ -37,6 +37,7 @@ class SheriffBotTest(QueuesTest):
         tool = MockTool()
         options = MockOptions()
         options.ensure_value("confirm", False)
+        options.ensure_value("seconds_to_sleep", 120)
         sheriffbot = SheriffBot()
         sheriffbot.execute(options, [], tool, MockQueueEngine)
         sheriffbot.begin_work_queue()

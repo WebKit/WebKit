@@ -10,6 +10,7 @@ from webkitpy.tool.commands.download import *
 from webkitpy.tool.commands.earlywarningsystem import *
 from webkitpy.tool.commands.findusers import FindUsers
 from webkitpy.tool.commands.gardenomatic import GardenOMatic
+from webkitpy.tool.commands.newcommitbot import NewCommitBot
 from webkitpy.tool.commands.openbugs import OpenBugs
 from webkitpy.tool.commands.perfalizer import Perfalizer
 from webkitpy.tool.commands.prettydiff import PrettyDiff

@@ -48,6 +48,7 @@ class WebKitPatch(MultiCommandTool, Host):
         make_option("--status-host", action="store", dest="status_host", type="string", help="Hostname (e.g. localhost or commit.webkit.org) where status updates should be posted."),
         make_option("--bot-id", action="store", dest="bot_id", type="string", help="Identifier for this bot (if multiple bots are running for a queue)"),
         make_option("--irc-password", action="store", dest="irc_password", type="string", help="Password to use when communicating via IRC."),
+        make_option("--seconds-to-sleep", action="store", default=120, type="int", help="Number of seconds to sleep in the task queue."),
         make_option("--port", action="store", dest="port", default=None, help="Specify a port (e.g., mac, qt, gtk, ...)."),
     ]
 

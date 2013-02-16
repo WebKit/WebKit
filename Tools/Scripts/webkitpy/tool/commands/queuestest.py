@@ -37,7 +37,7 @@ from webkitpy.tool.mocktool import MockTool
 
 
 class MockQueueEngine(object):
-    def __init__(self, name, queue, wakeup_event):
+    def __init__(self, name, queue, wakeup_event, seconds_to_sleep):
         pass
 
     def run(self):

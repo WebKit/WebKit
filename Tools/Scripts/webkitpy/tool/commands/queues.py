@@ -148,7 +148,7 @@ class AbstractQueue(Command, QueueEngineDelegate):
     def execute(self, options, args, tool, engine=QueueEngine):
         self._options = options # FIXME: This code is wrong.  Command.options is a list, this assumes an Options element!
         self._tool = tool  # FIXME: This code is wrong too!  Command.bind_to_tool handles this!
-        return engine(self.name, self, self._tool.wakeup_event).run()
+        return engine(self.name, self, self._tool.wakeup_event, self._options.seconds_to_sleep).run()
 
     @classmethod
     def _log_from_script_error_for_upload(cls, script_error, output_limit=None):
