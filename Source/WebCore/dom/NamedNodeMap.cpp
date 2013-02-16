@@ -110,6 +110,8 @@ PassRefPtr<Node> NamedNodeMap::item(unsigned index) const
 
 size_t NamedNodeMap::length() const
 {
+    if (!m_element->hasAttributes())
+        return 0;
     return m_element->attributeCount();
 }
 

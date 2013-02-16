@@ -313,7 +313,6 @@ void Element::setBooleanAttribute(const QualifiedName& name, bool value)
 
 NamedNodeMap* Element::attributes() const
 {
-    ensureElementDataWithSynchronizedAttributes();
     ElementRareData* rareData = const_cast<Element*>(this)->ensureElementRareData();
     if (NamedNodeMap* attributeMap = rareData->attributeMap())
         return attributeMap;
