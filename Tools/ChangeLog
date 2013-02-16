@@ -1,3 +1,13 @@
+2013-02-16  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] destroy the TestPlugin when the destroy() method is invoked.
+        https://bugs.webkit.org/show_bug.cgi?id=110012
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/TestRunner/src/TestPlugin.cpp:
+        (WebTestRunner::TestPlugin::destroy):
+
 2013-02-15  Adenilson Cavalcanti  <cavalcantii@gmail.com>
 
         [WK2] Write a test to simulate crashed WebProcess followed by Window resize

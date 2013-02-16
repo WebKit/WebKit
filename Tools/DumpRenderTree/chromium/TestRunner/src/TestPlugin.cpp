@@ -139,6 +139,12 @@ WebPluginContainer::TouchEventRequestType parseTouchEventRequestType(const WebSt
     return WebPluginContainer::TouchEventRequestTypeNone;
 }
 
+void deferredDelete(void* context)
+{
+    TestPlugin* plugin = static_cast<TestPlugin*>(context);
+    delete plugin;
+}
+
 }
 
 
@@ -231,6 +237,8 @@ void TestPlugin::destroy()
 
     m_container = 0;
     m_frame = 0;
+
+    Platform::current()->callOnMainThread(deferredDelete, this);
 }
 
 void TestPlugin::updateGeometry(const WebRect& frameRect, const WebRect& clipRect, const WebVector<WebRect>& cutOutsRects, bool isVisible)
