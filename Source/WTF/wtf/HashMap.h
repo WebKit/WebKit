@@ -131,6 +131,8 @@ namespace WTF {
 
         void checkConsistency() const;
 
+        static bool isValidKey(const KeyType&);
+
     private:
         AddResult inlineAdd(const KeyType&, MappedPassInReferenceType);
 
@@ -408,6 +410,23 @@ namespace WTF {
     inline void HashMap<T, U, V, W, X>::checkConsistency() const
     {
         m_impl.checkTableConsistency();
+    }
+
+    template<typename T, typename U, typename V, typename W, typename X>
+    inline bool HashMap<T, U, V, W, X>::isValidKey(const KeyType& key)
+    {
+        if (KeyTraits::isDeletedValue(key))
+            return false;
+
+        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+            if (key == KeyTraits::emptyValue())
+                return false;
+        } else {
+            if (isHashTraitsEmptyValue<KeyTraits>(key))
+                return false;
+        }
+
+        return true;
     }
 
     template<typename T, typename U, typename V, typename W, typename X>

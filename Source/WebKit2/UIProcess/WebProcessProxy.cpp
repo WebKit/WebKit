@@ -69,16 +69,10 @@ using namespace std;
 
 namespace WebKit {
 
-template<typename HashMap>
-static inline bool isGoodKey(const typename HashMap::KeyType& key)
-{
-    return key != HashTraits<typename HashMap::KeyType>::emptyValue() && !HashTraits<typename HashMap::KeyType>::isDeletedValue(key);
-}
-
 static uint64_t generatePageID()
 {
-    static uint64_t uniquePageID = 1;
-    return uniquePageID++;
+    static uint64_t uniquePageID;
+    return ++uniquePageID;
 }
 
 static WebProcessProxy::WebPageProxyMap& globalPageMap()
@@ -458,12 +452,15 @@ void WebProcessProxy::didFinishLaunching(ProcessLauncher* launcher, CoreIPC::Con
 
 WebFrameProxy* WebProcessProxy::webFrame(uint64_t frameID) const
 {
-    return isGoodKey<WebFrameProxyMap>(frameID) ? m_frameMap.get(frameID).get() : 0;
+    if (!WebFrameProxyMap::isValidKey(frameID))
+        return 0;
+
+    return m_frameMap.get(frameID).get();
 }
 
 bool WebProcessProxy::canCreateFrame(uint64_t frameID) const
 {
-    return isGoodKey<WebFrameProxyMap>(frameID) && !m_frameMap.contains(frameID);
+    return WebFrameProxyMap::isValidKey(frameID) && !m_frameMap.contains(frameID);
 }
 
 void WebProcessProxy::frameCreated(uint64_t frameID, WebFrameProxy* frameProxy)
@@ -477,7 +474,7 @@ void WebProcessProxy::didDestroyFrame(uint64_t frameID)
     // If the page is closed before it has had the chance to send the DidCreateMainFrame message
     // back to the UIProcess, then the frameDestroyed message will still be received because it
     // gets sent directly to the WebProcessProxy.
-    ASSERT(isGoodKey<WebFrameProxyMap>(frameID));
+    ASSERT(WebFrameProxyMap::isValidKey(frameID));
     m_frameMap.remove(frameID);
 }
 

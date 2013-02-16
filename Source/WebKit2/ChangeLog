@@ -1,3 +1,20 @@
+2013-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Add HashMap::isValidKey and HashSet::isValidValue
+        https://bugs.webkit.org/show_bug.cgi?id=109977
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        Just call HashMap::isValidKey directly.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::generatePageID):
+        Initialize the id to 0 and use prefix increment.
+
+        (WebKit::WebProcessProxy::webFrame):
+        (WebKit::WebProcessProxy::canCreateFrame):
+        (WebKit::WebProcessProxy::didDestroyFrame):
+
 2013-02-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         Typo fix after r143064.

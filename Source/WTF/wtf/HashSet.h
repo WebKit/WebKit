@@ -91,6 +91,8 @@ namespace WTF {
         void remove(iterator);
         void clear();
 
+        static bool isValidValue(const ValueType&);
+
     private:
         friend void deleteAllValues<>(const HashSet&);
 
@@ -207,6 +209,23 @@ namespace WTF {
     inline void HashSet<T, U, V>::clear()
     {
         m_impl.clear(); 
+    }
+
+    template<typename T, typename U, typename V>
+    inline bool HashSet<T, U, V>::isValidValue(const ValueType& value)
+    {
+        if (ValueTraits::isDeletedValue(value))
+            return false;
+
+        if (HashFunctions::safeToCompareToEmptyOrDeleted) {
+            if (value == ValueTraits::emptyValue())
+                return false;
+        } else {
+            if (isHashTraitsEmptyValue<ValueTraits>(value))
+                return false;
+        }
+
+        return true;
     }
 
     template<typename ValueType, typename HashTableType>

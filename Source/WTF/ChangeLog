@@ -1,3 +1,16 @@
+2013-02-15  Anders Carlsson  <andersca@apple.com>
+
+        Add HashMap::isValidKey and HashSet::isValidValue
+        https://bugs.webkit.org/show_bug.cgi?id=109977
+
+        Reviewed by Sam Weinig and Darin Adler.
+
+        Add helper functions for determining whether keys are valid, i.e. if
+        they are _not_ empty or deleted according to the hash traits.
+
+        * wtf/HashMap.h:
+        * wtf/HashSet.h:
+
 2013-02-15  Laszlo Gombos  <l.gombos@samsung.com>
 
         Remove support for RVCT version less than 4.0
