@@ -368,6 +368,31 @@ static LayoutSize accumulateInFlowPositionOffsets(const RenderObject* child)
     return offset;
 }
 
+bool RenderBoxModelObject::hasAutoHeightOrContainingBlockWithAutoHeight() const
+{
+    Length logicalHeightLength = style()->logicalHeight();
+    if (logicalHeightLength.isAuto())
+        return true;
+
+    // For percentage heights: The percentage is calculated with respect to the height of the generated box's
+    // containing block. If the height of the containing block is not specified explicitly (i.e., it depends
+    // on content height), and this element is not absolutely positioned, the value computes to 'auto'.
+    if (!logicalHeightLength.isPercent() || isOutOfFlowPositioned() || document()->inQuirksMode())
+        return false;
+
+    RenderBlock* cb = containingBlock(); 
+    while (cb->isAnonymousBlock()) {
+        if (cb->isTableCell())
+            return true;
+        cb = cb->containingBlock();
+    }
+
+    if (!cb->style()->logicalHeight().isAuto() || (!cb->style()->logicalTop().isAuto() && !cb->style()->logicalBottom().isAuto()))
+        return false;
+
+    return true;
+}
+
 LayoutSize RenderBoxModelObject::relativePositionOffset() const
 {
     LayoutSize offset = accumulateInFlowPositionOffsets(this);
@@ -394,13 +419,13 @@ LayoutSize RenderBoxModelObject::relativePositionOffset() const
     // calculate the percent offset based on this height.
     // See <https://bugs.webkit.org/show_bug.cgi?id=26396>.
     if (!style()->top().isAuto()
-        && (!containingBlock->style()->height().isAuto()
+        && (!containingBlock->hasAutoHeightOrContainingBlockWithAutoHeight()
             || !style()->top().isPercent()
             || containingBlock->stretchesToViewport()))
         offset.expand(0, valueForLength(style()->top(), containingBlock->availableHeight(), view()));
 
     else if (!style()->bottom().isAuto()
-        && (!containingBlock->style()->height().isAuto()
+        && (!containingBlock->hasAutoHeightOrContainingBlockWithAutoHeight()
             || !style()->bottom().isPercent()
             || containingBlock->stretchesToViewport()))
         offset.expand(0, -valueForLength(style()->bottom(), containingBlock->availableHeight(), view()));

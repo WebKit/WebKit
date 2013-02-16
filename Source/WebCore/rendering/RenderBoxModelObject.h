@@ -247,6 +247,8 @@ protected:
 
     static void clipRoundedInnerRect(GraphicsContext*, const LayoutRect&, const RoundedRect& clipRect);
 
+    bool hasAutoHeightOrContainingBlockWithAutoHeight() const;
+
 public:
     // For RenderBlocks and RenderInlines with m_style->styleType() == FIRST_LETTER, this tracks their remaining text fragments
     RenderObject* firstLetterRemainingText() const;
