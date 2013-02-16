@@ -15,5 +15,5 @@ os.chdir(toplevel_directory)
 sys.exit(subprocess.call(['gyp',
                           '--depth=.',
                           '--generator-output=%s' % build_directory,
-                          'Source/WebKit/gtk/gyp/JavaScriptCore.gyp',
+                          'Source/JavaScriptCore/JavaScriptCore.gyp/JavaScriptCoreGTK.gyp',
                           '-I', os.path.join(build_directory, 'Configuration.gypi')]))

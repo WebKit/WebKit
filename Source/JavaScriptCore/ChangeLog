@@ -1,3 +1,13 @@
+2013-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Spread the gyp build files throughout the tree
+        https://bugs.webkit.org/show_bug.cgi?id=109960
+
+        Reviewed by Dirk Pranke.
+
+        * JavaScriptCore.gyp/JavaScriptCoreGTK.gyp: Renamed from Source/WebKit/gtk/gyp/JavaScriptCore.gyp.
+        * JavaScriptCore.gyp/generate-derived-sources.sh: Renamed from Source/WebKit/gtk/gyp/generate-derived-sources.sh.
+
 2013-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         DFG SpeculativeJIT64 should be more precise about when it's dealing with a cell (even though it probably doesn't matter)

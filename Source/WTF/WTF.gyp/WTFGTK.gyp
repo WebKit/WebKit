@@ -1,23 +1,31 @@
 {
   'includes': [
-    '../../../WTF/WTF.gypi',
+    '../WTF.gypi',
   ],
+
+  'variables': {
+    'WTF': '..',
+    'Source': '../..',
+    'Dependencies': '<(Source)/WebKit/gtk/gyp/Dependencies.gyp',
+  },
+
   'target_defaults' : {
       'cflags' : [ '<@(global_cflags)', ],
       'defines': [ '<@(global_defines)' ],
   },
+
   'targets': [
     {
       'target_name': 'wtf',
       'type': 'static_library',
       'dependencies': [
-        'Dependencies.gyp:glib',
-        'Dependencies.gyp:icu',
+        '<(Dependencies):glib',
+        '<(Dependencies):icu',
        ],
       'include_dirs': [
-        '<(Source)/WTF',
-        '<(Source)/WTF/wtf',
-        '<(Source)/WTF/wtf/unicode',
+        '<(WTF)',
+        '<(WTF)/wtf',
+        '<(WTF)/wtf/unicode',
       ],
       'sources': [
         '<@(wtf_privateheader_files)',
@@ -41,8 +49,8 @@
           '<(global_cflags)',
          ],
         'include_dirs': [
-          '<(Source)/WTF',
-          '<(Source)/WTF/wtf',
+          '<(WTF)',
+          '<(WTF)/wtf',
         ],
       },
       'direct_dependent_settings': {

@@ -5,9 +5,6 @@
     # relative to the source directory after running autogen.sh.
     'toplevel_directory': '@TOPLEVEL_DIRECTORY@',
 
-    # Source is <toplevel>/Source, but relative to the actual .gyp files.
-    'Source': '../../..',
-
     'api_version': '@WEBKITGTK_API_VERSION@',
 
     # TODO: Currently this is calculated by libtool, but we could move
