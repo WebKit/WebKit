@@ -30,7 +30,7 @@
 
 #import "AccessibilityObject.h"
 #import "RenderObject.h"
-#import "WebAccessibilityObjectWrapperMac.h"
+#import "WebAccessibilityObjectWrapper.h"
 #import "WebCoreSystemInterface.h"
 
 #import <wtf/PassRefPtr.h>
@@ -51,7 +51,7 @@ void AXObjectCache::detachWrapper(AccessibilityObject* obj)
 
 void AXObjectCache::attachWrapper(AccessibilityObject* obj)
 {
-    RetainPtr<WebAccessibilityObjectWrapper> wrapper(AdoptNS, [[WebAccessibilityObjectWrapperMac alloc] initWithAccessibilityObject:obj]);
+    RetainPtr<WebAccessibilityObjectWrapper> wrapper(AdoptNS, [[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
     obj->setWrapper(wrapper.get());
 }
 
