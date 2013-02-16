@@ -1,3 +1,21 @@
+2013-02-15  Adenilson Cavalcanti  <cavalcantii@gmail.com>
+
+        [Qt][WK2] Crash on window resize if WebProcess is closed/crashed
+        https://bugs.webkit.org/show_bug.cgi?id=109216
+
+        Reviewed by Benjamin Poulain.
+
+        Only make calls into DrawingAreaProxy pointer after checking its state.
+
+        When the WebProcess was closed or crashed, WebKit::WebPageProxy will set
+        its DrawingAreaProxy pointer to null. Resize events on UIProcess/client will
+        try to access the object to update the geometry and forward this information
+        into the WebProcess. This would create a crash scenario that is fixed by this patch.
+
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::didRelaunchProcess):
+        (QQuickWebViewLegacyPrivate::updateViewportSize):
+
 2013-02-15  Anders Carlsson  <andersca@apple.com>
 
         Add HashMap::isValidKey and HashSet::isValidValue
