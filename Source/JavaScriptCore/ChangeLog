@@ -1,3 +1,11 @@
+2013-02-16  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Unreviewed build fix.
+
+        Export symbol for new CString operator== operator to fix Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+
 2013-02-15  Filip Pizlo  <fpizlo@apple.com>
 
         Structure should be more methodical about the relationship between m_offset and m_propertyTable
