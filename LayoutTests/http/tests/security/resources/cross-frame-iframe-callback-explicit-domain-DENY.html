@@ -1,12 +1,11 @@
 <script src="cross-frame-access.js"></script>
 <body>
-<pre id=console></pre>
+<div id=console></div>
 <script>
 var parentWindow = window.parent;
 parentWindow.testFunction = function()
 {
     shouldBeFalse("canGet('parentWindow.location.href')");
-    shouldBeTrue("accessThrowsException('parentWindow.location.href')");
     if (window.testRunner)
         testRunner.notifyDone();
 }

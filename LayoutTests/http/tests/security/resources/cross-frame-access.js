@@ -58,15 +58,6 @@ function canGet(keyPath)
     }
 }
 
-function accessThrowsException(keyPath) {
-    try {
-        eval("window." + keyPath);
-        return false;
-    } catch (e) {
-        return true;
-    }
-}
-
 function canGetDescriptor(target, property)
 {
     try {
