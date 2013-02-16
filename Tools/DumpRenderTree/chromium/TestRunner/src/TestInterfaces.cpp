@@ -55,6 +55,7 @@ TestInterfaces::TestInterfaces()
     , m_webView(0)
     , m_delegate(0)
 {
+    resetAll();
 }
 
 TestInterfaces::~TestInterfaces()

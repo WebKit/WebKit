@@ -1,5 +1,17 @@
 2013-02-16  Jochen Eisinger  <jochen@chromium.org>
 
+        [chromium] initialize all variables of TestRunner classes
+        https://bugs.webkit.org/show_bug.cgi?id=110013
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+
+2013-02-16  Jochen Eisinger  <jochen@chromium.org>
+
         [chromium] destroy the TestPlugin when the destroy() method is invoked.
         https://bugs.webkit.org/show_bug.cgi?id=110012
 

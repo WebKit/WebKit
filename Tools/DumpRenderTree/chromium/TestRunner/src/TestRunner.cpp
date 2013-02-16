@@ -144,6 +144,7 @@ void TestRunner::WorkQueue::addWork(WorkItem* work)
 
 TestRunner::TestRunner()
     : m_testIsRunning(false)
+    , m_closeRemainingWindows(false)
     , m_workQueue(this)
     , m_delegate(0)
     , m_webView(0)
