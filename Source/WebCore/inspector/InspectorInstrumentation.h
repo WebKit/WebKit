@@ -1671,6 +1671,8 @@ inline void InspectorInstrumentation::frameStartedLoading(Frame* frame)
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameStartedLoadingImpl(instrumentingAgents, frame);
+#else
+    UNUSED_PARAM(frame);
 #endif
 }
 
@@ -1679,6 +1681,8 @@ inline void InspectorInstrumentation::frameStoppedLoading(Frame* frame)
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameStoppedLoadingImpl(instrumentingAgents, frame);
+#else
+    UNUSED_PARAM(frame);
 #endif
 }
 
@@ -1687,6 +1691,9 @@ inline void InspectorInstrumentation::frameScheduledNavigation(Frame* frame, dou
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameScheduledNavigationImpl(instrumentingAgents, frame, delay);
+#else
+    UNUSED_PARAM(frame);
+    UNUSED_PARAM(delay);
 #endif
 }
 
@@ -1695,6 +1702,8 @@ inline void InspectorInstrumentation::frameClearedScheduledNavigation(Frame* fra
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
         frameClearedScheduledNavigationImpl(instrumentingAgents, frame);
+#else
+    UNUSED_PARAM(frame);
 #endif
 }
 
