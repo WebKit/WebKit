@@ -1,3 +1,18 @@
+2013-02-16  Darin Adler  <darin@apple.com>
+
+        Fix WKDOMRangePrivate.h mistakes
+        https://bugs.webkit.org/show_bug.cgi?id=110028
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMRange.mm:
+        Added include of WKDOMRangePrivate.h.
+
+        * WebProcess/InjectedBundle/API/mac/WKDOMRangePrivate.h:
+        Fixed class name and include to be WKDOMRange.
+        Fixed method name, _copyBundleRangeHandleRef, to match the
+        name in the source file.
+
 2013-02-15  Eric Carlson  <eric.carlson@apple.com>
 
         [Mac] remove wkCaptionAppearance from WebKitSystemInterface

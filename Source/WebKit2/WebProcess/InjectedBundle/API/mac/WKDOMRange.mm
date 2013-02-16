@@ -28,6 +28,7 @@
 #if defined(__LP64__) && defined(__clang__)
 
 #import "WKDOMRange.h"
+#import "WKDOMRangePrivate.h"
 
 #import "InjectedBundleRangeHandle.h"
 #import "WKBundleAPICast.h"

@@ -25,11 +25,11 @@
 
 #if defined(__LP64__) && defined(__clang__)
 
-#import <WebKit2/WKRangeNode.h>
+#import <WebKit2/WKDOMRange.h>
 
-@interface WKRangeNode (WKPrivate)
+@interface WKDOMRange (WKPrivate)
 
-- (WKBundleRangeHandleRef)_copyWKBundleRangeHandleRef;
+- (WKBundleRangeHandleRef)_copyBundleRangeHandleRef;
 
 @end
 
