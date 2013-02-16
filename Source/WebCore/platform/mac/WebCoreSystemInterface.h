@@ -351,6 +351,40 @@ extern CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 extern CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
 
+typedef enum {
+    wkCaptionFontStyleDefault = 0,
+    wkCaptionFontStyleMonospacedWithSerif,
+    wkCaptionFontStyleProportionalWithSerif,
+    wkCaptionFontStyleMonospacedWithoutSerif,
+    wkCaptionFontStyleProportionalWithoutSerif,
+    wkCaptionFontStyleCasual,
+    wkCaptionFontStyleCursive,
+    wkCaptionFontStyleSmallCapital,
+    wkCaptionFontStyleMax
+} wkCaptionFontStyle;
+
+typedef enum {
+    wkCaptionTextEdgeStyleUndefined = 0,
+    wkCaptionTextEdgeStyleNone,
+    wkCaptionTextEdgeStyleRaised,
+    wkCaptionTextEdgeStyleDepressed,
+    wkCaptionTextEdgeStyleUniform,
+    wkCaptionTextEdgeStyleDropShadow,
+    wkCaptionTextEdgeStyleMax
+} wkCaptionTextEdgeStyle;
+
+extern bool (*wkCaptionAppearanceHasUserPreferences)(void);
+extern bool (*wkCaptionAppearanceShowCaptionsWhenAvailable)(void);
+extern CGColorRef(*wkCaptionAppearanceCopyForegroundColor)(void);
+extern CGColorRef(*wkCaptionAppearanceCopyBackgroundColor)(void);
+extern CGColorRef(*wkCaptionAppearanceCopyWindowColor)(void);
+extern bool(*wkCaptionAppearanceGetForegroundOpacity)(CGFloat*);
+extern bool(*wkCaptionAppearanceGetBackgroundOpacity)(CGFloat*);
+extern bool(*wkCaptionAppearanceGetWindowOpacity)(CGFloat*);
+extern CGFontRef(*wkCaptionAppearanceCopyFontForStyle)(int);
+extern bool(*wkCaptionAppearanceGetRelativeCharacterSize)(CGFloat*);
+extern int(*wkCaptionAppearanceGetTextEdgeStyle)(void);
+extern CFStringRef(*wkCaptionAppearanceGetSettingsChangedNotification)(void);
 }
 
 #endif
