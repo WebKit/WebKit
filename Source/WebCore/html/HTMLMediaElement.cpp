@@ -349,6 +349,10 @@ HTMLMediaElement::~HTMLMediaElement()
     setSourceState(MediaSource::closedKeyword());
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    setMediaKeys(0);
+#endif
+
     removeElementFromDocumentMap(this, document());
 }
 
@@ -1995,7 +1999,14 @@ bool HTMLMediaElement::mediaPlayerKeyNeeded(MediaPlayer*, Uint8Array* initData)
 
 void HTMLMediaElement::setMediaKeys(MediaKeys* mediaKeys)
 {
+    if (m_mediaKeys == mediaKeys)
+        return;
+
+    if (m_mediaKeys)
+        m_mediaKeys->setMediaElement(0);
     m_mediaKeys = mediaKeys;
+    if (m_mediaKeys)
+        m_mediaKeys->setMediaElement(this);
 }
 #endif
 

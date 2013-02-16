@@ -92,6 +92,7 @@ PassOwnPtr<CDM> CDM::create(const String& keySystem)
 
 CDM::CDM(const String& keySystem)
     : m_keySystem(keySystem)
+    , m_client(0)
 {
     m_private = CDMFactoryForKeySystem(keySystem)->constructor(this);
 }
@@ -100,7 +101,7 @@ CDM::~CDM()
 {
 }
 
-bool CDM::supportsMIMEType(const String& mimeType)
+bool CDM::supportsMIMEType(const String& mimeType) const
 {
     return m_private->supportsMIMEType(mimeType);
 }
@@ -108,6 +109,13 @@ bool CDM::supportsMIMEType(const String& mimeType)
 PassOwnPtr<CDMSession> CDM::createSession()
 {
     return m_private->createSession();
+}
+
+MediaPlayer* CDM::mediaPlayer() const
+{
+    if (!m_client)
+        return 0;
+    return m_client->cdmMediaPlayer(this);
 }
 
 }

@@ -30,6 +30,7 @@
 
 #include "CDM.h"
 #include "EventNames.h"
+#include "HTMLMediaElement.h"
 #include "MediaKeyMessageEvent.h"
 #include "MediaKeySession.h"
 #include "UUID.h"
@@ -65,9 +66,11 @@ PassRefPtr<MediaKeys> MediaKeys::create(const String& keySystem, ExceptionCode& 
 }
 
 MediaKeys::MediaKeys(const String& keySystem, PassOwnPtr<CDM> cdm)
-    : m_keySystem(keySystem)
+    : m_mediaElement(0)
+    , m_keySystem(keySystem)
     , m_cdm(cdm)
 {
+    m_cdm->setClient(this);
 }
 
 MediaKeys::~MediaKeys()
@@ -113,6 +116,18 @@ PassRefPtr<MediaKeySession> MediaKeys::createSession(ScriptExecutionContext* con
 
     // 6. Return the new object to the caller.
     return session;
+}
+
+void MediaKeys::setMediaElement(HTMLMediaElement* element)
+{
+    m_mediaElement = element;
+}
+
+MediaPlayer* MediaKeys::cdmMediaPlayer(const CDM*) const
+{
+    if (m_mediaElement)
+        return m_mediaElement->player();
+    return 0;
 }
 
 }

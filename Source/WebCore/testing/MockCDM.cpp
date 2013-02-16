@@ -39,7 +39,7 @@ public:
     static PassOwnPtr<MockCDMSession> create() { return adoptPtr(new MockCDMSession()); }
     virtual ~MockCDMSession() { }
 
-    virtual const String& sessionId() OVERRIDE { return m_sessionId; }
+    virtual const String& sessionId() const OVERRIDE { return m_sessionId; }
     virtual PassRefPtr<Uint8Array> generateKeyRequest(const String& mimeType, Uint8Array* initData, String& destinationURL, unsigned short& errorCode, unsigned long& systemCode) OVERRIDE;
     virtual void releaseKeys() OVERRIDE;
     virtual bool update(Uint8Array*, RefPtr<Uint8Array>& nextMessage, unsigned short& errorCode, unsigned long& systemCode) OVERRIDE;

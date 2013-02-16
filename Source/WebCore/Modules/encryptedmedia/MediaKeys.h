@@ -28,6 +28,7 @@
 
 #if ENABLE(ENCRYPTED_MEDIA_V2)
 
+#include "CDM.h"
 #include "EventTarget.h"
 #include "ExceptionCode.h"
 #include <wtf/OwnPtr.h>
@@ -39,10 +40,10 @@
 
 namespace WebCore {
 
-class CDM;
 class MediaKeySession;
+class HTMLMediaElement;
 
-class MediaKeys : public RefCounted<MediaKeys> {
+class MediaKeys : public RefCounted<MediaKeys>, public CDMClient {
 public:
     static PassRefPtr<MediaKeys> create(const String& keySystem, ExceptionCode&);
     ~MediaKeys();
@@ -52,11 +53,18 @@ public:
     const String& keySystem() const { return m_keySystem; }
     CDM* cdm() { return m_cdm.get(); }
 
+    HTMLMediaElement* mediaElement() const { return m_mediaElement; }
+    void setMediaElement(HTMLMediaElement*);
+
 protected:
+    // CDMClient:
+    virtual MediaPlayer* cdmMediaPlayer(const CDM*) const OVERRIDE;
+
     MediaKeys(const String& keySystem, PassOwnPtr<CDM>);
 
     Vector<RefPtr<MediaKeySession> > m_sessions;
 
+    HTMLMediaElement* m_mediaElement;
     String m_keySystem;
     OwnPtr<CDM> m_cdm;
 };
