@@ -369,9 +369,9 @@ public:
     void parserSetAttributes(const Vector<Attribute>&, FragmentScriptingPermission);
 
     const ElementData* elementData() const { return m_elementData.get(); }
-    const ElementData* elementDataWithSynchronizedAttributes() const;
-    const ElementData* ensureElementDataWithSynchronizedAttributes() const;
     UniqueElementData* ensureUniqueElementData();
+
+    void synchronizeAllAttributes() const;
 
     // Clones attributes only.
     void cloneAttributesFromElement(const Element&);
@@ -647,7 +647,8 @@ private:
     void didModifyAttribute(const QualifiedName&, const AtomicString&);
     void didRemoveAttribute(const QualifiedName&);
 
-    void updateInvalidAttributes() const;
+    void synchronizeAttribute(const QualifiedName&) const;
+    void synchronizeAttribute(const AtomicString& localName) const;
 
     void scrollByUnits(int units, ScrollGranularity);
 
@@ -774,20 +775,6 @@ inline Element* Element::nextElementSibling() const
     return static_cast<Element*>(n);
 }
 
-inline const ElementData* Element::elementDataWithSynchronizedAttributes() const
-{
-    updateInvalidAttributes();
-    return elementData();
-}
-
-inline const ElementData* Element::ensureElementDataWithSynchronizedAttributes() const
-{
-    updateInvalidAttributes();
-    if (elementData())
-        return elementData();
-    return const_cast<Element*>(this)->ensureUniqueElementData();
-}
-
 inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
 {
     if (!inDocument() || isInShadowTree())
@@ -899,20 +886,6 @@ inline const Attribute* Element::getAttributeItem(const QualifiedName& name) con
 {
     ASSERT(elementData());
     return elementData()->getAttributeItem(name);
-}
-
-inline void Element::updateInvalidAttributes() const
-{
-    if (!elementData())
-        return;
-
-    if (elementData()->m_styleAttributeIsDirty)
-        updateStyleAttribute();
-
-#if ENABLE(SVG)
-    if (elementData()->m_animatedSVGAttributesAreDirty)
-        updateAnimatedSVGAttribute(anyQName());
-#endif
 }
 
 inline bool Element::hasID() const
