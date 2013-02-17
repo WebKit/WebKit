@@ -53,6 +53,7 @@ EXPORTS
     ??1WTFThreadData@WTF@@QAE@XZ
     ??8MediaTime@WTF@@QBE_NABV01@@Z 
     ??8WTF@@YA_NABVCString@0@0@Z
+    ??8WTF@@YA_NABVCString@0@PBD@Z
     ??GMediaTime@WTF@@QBE?AV01@ABV01@@Z 
     ??HMediaTime@WTF@@QBE?AV01@ABV01@@Z 
     ??MMediaTime@WTF@@QBE_NABV01@@Z 

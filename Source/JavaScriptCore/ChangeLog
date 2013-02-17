@@ -1,3 +1,11 @@
+2013-02-16  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Unreviewed Visual Studio 2010 build fix after r143117
+
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorDebug.props: Reference new path to property sheets.
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+        Build correction after new operator == added.
+
 2013-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         Fix indentation of Structure.h
