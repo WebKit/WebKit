@@ -47,8 +47,8 @@ Reviewed by Adam Barth.
 (WebTestRunner::TestRunner::TestRunner):
 
 ------------------------------------------------------------------------"""),
-            "https://trac.webkit.org/r143106 by jochen__  [chromium] initialize all variables of TestRunner classes"
-            "  https://webkit.org/b/110013  Reviewed by abarth.")
+            "https://trac.webkit.org/r143106 by Jochen Eisinger (jochen__) [chromium] initialize all variables of TestRunner classes"
+            " https://webkit.org/b/110013 Reviewed by Adam Barth (abarth).")
 
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
 r140066 | simon.fraser@apple.com | 2013-01-17 16:10:31 -0800 (Thu, 17 Jan 2013) | 10 lines
@@ -64,8 +64,8 @@ instead of "false".
 * rendering/RenderScrollbarPart.cpp:
 (WebCore::RenderScrollbarPart::paintIntoRect):
 ------------------------------------------------------------------------"""),
-            "https://trac.webkit.org/r140066 by smfr"
-            "  Allow PaintInfo to carry all PaintBehavior flags  https://webkit.org/b/106980  Reviewed by dethbakin.")
+            "https://trac.webkit.org/r140066 by Simon Fraser (smfr)"
+            " Allow PaintInfo to carry all PaintBehavior flags https://webkit.org/b/106980 Reviewed by Beth Dakin (dethbakin).")
 
     def test_summarize_commit_log_rollout(self):
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
@@ -83,7 +83,7 @@ Patch by Sheriff Bot <webkit.review.bot@gmail.com> on 2013-02-16
 Source/WebCore:
 
 ------------------------------------------------------------------------"""),
-            "ggaren rolled out r142734 in https://trac.webkit.org/r143104: Triggered crashes on lots of websites")
+            "Geoffrey Garen (ggaren) rolled out r142734 in https://trac.webkit.org/r143104: Triggered crashes on lots of websites")
 
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
 r139884 | kov@webkit.org | 2013-01-16 08:26:10 -0800 (Wed, 16 Jan 2013) | 23 lines
@@ -100,9 +100,9 @@ Reverting 139877. It made a couple of API tests fail.
 (_WebKitWebSrcPrivate):
 
 ------------------------------------------------------------------------"""),
-            "kov rolled out 139877 in https://trac.webkit.org/r139884"
-            "  [GStreamer][Soup] Let GStreamer provide the buffer data is downloaded to, to avoid copying"
-            "  https://webkit.org/b/105552   It made a couple of API tests fail.")
+            "Gustavo Noronha Silva (kov) rolled out 139877 in https://trac.webkit.org/r139884"
+            " [GStreamer][Soup] Let GStreamer provide the buffer data is downloaded to, to avoid copying"
+            " https://webkit.org/b/105552 It made a couple of API tests fail.")
 
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
 r135487 | commit-queue@webkit.org | 2012-11-22 00:09:25 -0800 (Thu, 22 Nov 2012) | 52 lines
@@ -125,4 +125,5 @@ Patch by Sheriff Bot <webkit.review.bot@gmail.com> on 2012-11-22
 * inspector/front-end/CallStackSidebarPane.js:
 
 ------------------------------------------------------------------------"""),
-            "vsevik rolled out r134927 and r134944 in https://trac.webkit.org/r135487: Reverting the reverts after merging.")
+            "Vsevolod Vlasov (vsevik) rolled out r134927 and r134944 in https://trac.webkit.org/r135487:"
+            " Reverting the reverts after merging.")

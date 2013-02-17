@@ -100,8 +100,8 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
         return range(max(first_new_revision, current_head - 20), current_head + 1)
 
     _patch_by_regex = re.compile(r'^Patch\s+by\s+(?P<author>.+?)\s+on(\s+\d{4}-\d{2}-\d{2})?\n?', re.MULTILINE | re.IGNORECASE)
-    _rollout_regex = re.compile(r'(rolling out|reverting) (?P<revisions>r?\d+((,\s*|,?\s*and\s+)?r?\d+)*)\.?', re.MULTILINE | re.IGNORECASE)
-    _requested_by_regex = re.compile(r'^\"?(?P<reason>.+?)\"? \(Requested\s+by\s+(?P<author>.+)\s+on\s+#webkit\)\.', re.MULTILINE | re.IGNORECASE)
+    _rollout_regex = re.compile(r'(rolling out|reverting) (?P<revisions>r?\d+((,\s*|,?\s*and\s+)?r?\d+)*)\.?\s*', re.MULTILINE | re.IGNORECASE)
+    _requested_by_regex = re.compile(r'^\"?(?P<reason>.+?)\"? \(Requested\s+by\s+(?P<author>.+?)\s+on\s+#webkit\)\.', re.MULTILINE | re.IGNORECASE)
     _bugzilla_url_regex = re.compile(r'http(s?)://bugs\.webkit\.org/show_bug\.cgi\?id=(?P<id>\d+)', re.MULTILINE)
     _trac_url_regex = re.compile(r'http(s?)://trac.webkit.org/changeset/(?P<revision>\d+)', re.MULTILINE)
 
@@ -121,14 +121,18 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
         for contributor in committer_list.contributors():
             if not contributor.irc_nicknames:
                 continue
-            nickname = contributor.irc_nicknames[0]
-            commit_log = commit_log.replace(contributor.full_name, nickname)
-            for email in contributor.emails:
-                commit_log = commit_log.replace(email, nickname)
+            name_with_nick = "%s (%s)" % (contributor.full_name, contributor.irc_nicknames[0])
+            if contributor.full_name in commit_log:
+                commit_log = commit_log.replace(contributor.full_name, name_with_nick)
+                for email in contributor.emails:
+                    commit_log = commit_log.replace(' <' + email + '>', '')
+            else:
+                for email in contributor.emails:
+                    commit_log = commit_log.replace(email, name_with_nick)
 
         lines = commit_log.split('\n')[1:-2]  # Ignore lines with ----------.
 
-        firstline = re.match(r'^(?P<revision>r\d+) \| (?P<email>[^\s\|]+) \| (?P<timestamp>[^|]+) \| [^\n]+', lines[0])
+        firstline = re.match(r'^(?P<revision>r\d+) \| (?P<email>[^\|]+) \| (?P<timestamp>[^|]+) \| [^\n]+', lines[0])
         assert firstline
         author = firstline.group('email')
         if patch_by:
@@ -139,11 +143,15 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
 
         if rollout:
             if requested_by:
-                return '%s rolled out %s in %s: %s' % (requested_by.group('author'), rollout.group('revisions'),
+                author = requested_by.group('author')
+                contributor = committer_list.contributor_by_irc_nickname(author)
+                if contributor:
+                    author = "%s (%s)" % (contributor.full_name, contributor.irc_nicknames[0])
+                return '%s rolled out %s in %s: %s' % (author, rollout.group('revisions'),
                     linkified_revision, requested_by.group('reason'))
             lines[0] = '%s rolled out %s in %s' % (author, rollout.group('revisions'), linkified_revision)
 
-        return '  '.join(filter(lambda line: len(line), lines)[0:4])
+        return ' '.join(filter(lambda line: len(line), lines)[0:4])
 
     def handle_unexpected_error(self, failure_map, message):
         _log.error(message)

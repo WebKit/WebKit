@@ -1,5 +1,19 @@
 2013-02-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        new-commit-bot should report the full name of committer and reviewer instead of just nicks
+        https://bugs.webkit.org/show_bug.cgi?id=110040
+
+        Reviewed by Darin Adler.
+
+        Have it report names like "Ryosuke Niwa (rniwa)" instead of just "rniwa".
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot):
+        (NewCommitBot._summarize_commit_log):
+        * Scripts/webkitpy/tool/commands/newcommitbot_unittest.py:
+
+2013-02-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         We need a CIA replacement
         https://bugs.webkit.org/show_bug.cgi?id=110008
 
