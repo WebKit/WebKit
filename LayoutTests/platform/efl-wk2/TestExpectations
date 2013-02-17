@@ -433,6 +433,9 @@ webkit.org/b/109431 compositing/layer-creation/fixed-position-out-of-view-dynami
 webkit.org/b/109431 compositing/layer-creation/fixed-position-out-of-view-scroll-reason.html [ Failure ]
 webkit.org/b/109431 compositing/layer-creation/no-compositing-for-fixed-position-under-transform.html [ Failure ]
 
+# New test introduced in r143073 that never passed on WK2 EFL.
+webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
+
 # Several new Khronos WebGL conformance tests are failing on WK2 EFL.
 webkit.org/b/109435 webgl/conformance/canvas/texture-bindings-unaffected-on-resize.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
