@@ -30,6 +30,11 @@
 
 namespace WebCore {
     
+PassOwnPtr<PlatformSpeechSynthesizer> PlatformSpeechSynthesizer::create(PlatformSpeechSynthesizerClient* client)
+{
+    return adoptPtr(new PlatformSpeechSynthesizer(client));
+}
+
 PlatformSpeechSynthesizer::PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient* client)
     : m_speechSynthesizerClient(client)
 {

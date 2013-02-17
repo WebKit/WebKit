@@ -29,6 +29,7 @@
 #if ENABLE(SPEECH_SYNTHESIS)
 
 #include "PlatformSpeechSynthesisVoice.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 #if PLATFORM(MAC)
@@ -53,18 +54,22 @@ protected:
     
 class PlatformSpeechSynthesizer {
 public:
-    explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
+    static PassOwnPtr<PlatformSpeechSynthesizer> create(PlatformSpeechSynthesizerClient*);
+
+    virtual ~PlatformSpeechSynthesizer() { }
     
     const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& voiceList() const { return m_voiceList; }
-    void speak(const PlatformSpeechSynthesisUtterance&);
+    virtual void speak(const PlatformSpeechSynthesisUtterance&);
     
     PlatformSpeechSynthesizerClient* client() const { return m_speechSynthesizerClient; }
     
-private:
-    PlatformSpeechSynthesizerClient* m_speechSynthesizerClient;
+protected:
+    explicit PlatformSpeechSynthesizer(PlatformSpeechSynthesizerClient*);
     Vector<RefPtr<PlatformSpeechSynthesisVoice> > m_voiceList;
     
-    void initializeVoiceList();
+private:
+    PlatformSpeechSynthesizerClient* m_speechSynthesizerClient;
+    virtual void initializeVoiceList();
     
 #if PLATFORM(MAC)
     RetainPtr<WebSpeechSynthesisWrapper> m_platformSpeechWrapper;

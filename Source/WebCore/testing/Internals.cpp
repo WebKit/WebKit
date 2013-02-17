@@ -137,6 +137,12 @@
 #include "PageGroup.h"
 #endif
 
+#if ENABLE(SPEECH_SYNTHESIS)
+#include "DOMWindowSpeechSynthesis.h"
+#include "PlatformSpeechSynthesizerMock.h"
+#include "SpeechSynthesis.h"
+#endif
+
 namespace WebCore {
 
 #if ENABLE(PAGE_POPUP)
@@ -827,6 +833,20 @@ void Internals::setFormControlStateOfPreviousHistoryItem(const Vector<String>& s
         ec = INVALID_ACCESS_ERR;
 }
 
+#if ENABLE(SPEECH_SYNTHESIS)
+void Internals::enableMockSpeechSynthesizer()
+{
+    Document* document = contextDocument();
+    if (!document || !document->domWindow())
+        return;
+    SpeechSynthesis* synthesis = DOMWindowSpeechSynthesis::speechSynthesis(document->domWindow());
+    if (!synthesis)
+        return;
+    
+    synthesis->setPlatformSynthesizer(PlatformSpeechSynthesizerMock::create(synthesis));
+}
+#endif
+    
 void Internals::setEnableMockPagePopup(bool enabled, ExceptionCode& ec)
 {
 #if ENABLE(PAGE_POPUP)

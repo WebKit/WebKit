@@ -2831,6 +2831,7 @@ endif ()
 
 set(WebCoreTestSupport_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/testing"
+    "${WEBCORE_DIR}/platform/mock"
 )
 
 set(WebCoreTestSupport_IDL_INCLUDES
@@ -2847,6 +2848,7 @@ set(WebCoreTestSupport_IDL_FILES
 set(WebCoreTestSupport_SOURCES
     testing/Internals.cpp
     testing/InternalSettings.cpp
+    platform/mock/PlatformSpeechSynthesizerMock.cpp
 )
 
 # Modules that the bindings generator scripts may use

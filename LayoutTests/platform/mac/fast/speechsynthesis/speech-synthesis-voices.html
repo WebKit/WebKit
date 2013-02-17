@@ -8,6 +8,8 @@
 <div id="console"></div>
 
 <script>
+    if (window.internals)
+        window.internals.enableMockSpeechSynthesizer();
 
     description("This tests that we can get synthesizer voices on the Mac");
 

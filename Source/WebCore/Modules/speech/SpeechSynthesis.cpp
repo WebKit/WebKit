@@ -42,9 +42,14 @@ PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
 }
     
 SpeechSynthesis::SpeechSynthesis()
-    : m_platformSpeechSynthesizer(PlatformSpeechSynthesizer(this))
+    : m_platformSpeechSynthesizer(PlatformSpeechSynthesizer::create(this))
     , m_currentSpeechUtterance(0)
 {
+}
+    
+void SpeechSynthesis::setPlatformSynthesizer(PassOwnPtr<PlatformSpeechSynthesizer> synthesizer)
+{
+    m_platformSpeechSynthesizer = synthesizer;
 }
     
 void SpeechSynthesis::voicesDidChange()
@@ -58,7 +63,7 @@ const Vector<RefPtr<SpeechSynthesisVoice> >& SpeechSynthesis::getVoices()
         return m_voiceList;
     
     // If the voiceList is empty, that's the cue to get the voices from the platform again.
-    const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& platformVoices = m_platformSpeechSynthesizer.voiceList();
+    const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& platformVoices = m_platformSpeechSynthesizer->voiceList();
     size_t voiceCount = platformVoices.size();
     for (size_t k = 0; k < voiceCount; k++)
         m_voiceList.append(SpeechSynthesisVoice::create(platformVoices[k]));
@@ -88,7 +93,7 @@ void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance* utteran
     ASSERT(!m_currentSpeechUtterance);
     utterance->setStartTime(monotonicallyIncreasingTime());
     m_currentSpeechUtterance = utterance;
-    m_platformSpeechSynthesizer.speak(utterance->platformUtterance());
+    m_platformSpeechSynthesizer->speak(utterance->platformUtterance());
 }
 
 void SpeechSynthesis::speak(SpeechSynthesisUtterance* utterance)

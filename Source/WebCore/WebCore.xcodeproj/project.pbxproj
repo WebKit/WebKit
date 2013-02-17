@@ -4670,6 +4670,9 @@
 		AA478A8016CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA478A7E16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm */; };
 		AA4C3A760B2B1679002334A2 /* StyleElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA4C3A740B2B1679002334A2 /* StyleElement.cpp */; };
 		AA4C3A770B2B1679002334A2 /* StyleElement.h in Headers */ = {isa = PBXBuildFile; fileRef = AA4C3A750B2B1679002334A2 /* StyleElement.h */; };
+		AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */ = {isa = PBXBuildFile; fileRef = AAE27B7516CBFC0D00623043 /* PlatformSpeechSynthesizerMock.h */; };
+		AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAE27B7416CBFC0D00623043 /* PlatformSpeechSynthesizerMock.cpp */; };
+		AA5F3B9116CC5BEB00455EB0 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */; };
 		AA73183E159255B900A93E6E /* InjectedScriptCanvasModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */; };
 		AA73183F159255B900A93E6E /* InjectedScriptCanvasModule.h in Headers */ = {isa = PBXBuildFile; fileRef = AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */; };
 		AA7FEEA416A4E6F3004C0C33 /* JSSpeechSynthesis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7FEE9C16A4E6F3004C0C33 /* JSSpeechSynthesis.cpp */; };
@@ -12068,6 +12071,7 @@
 		AA478A7E16CD70C3007D1BB4 /* WebAccessibilityObjectWrapperMac.mm */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp.objcpp; fileEncoding = 4; path = WebAccessibilityObjectWrapperMac.mm; sourceTree = "<group>"; };
 		AA4C3A740B2B1679002334A2 /* StyleElement.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = StyleElement.cpp; sourceTree = "<group>"; };
 		AA4C3A750B2B1679002334A2 /* StyleElement.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = StyleElement.h; sourceTree = "<group>"; };
+		AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = ../../../../../System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<group>"; };
 		AA73183C159255B900A93E6E /* InjectedScriptCanvasModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptCanvasModule.cpp; sourceTree = "<group>"; };
 		AA73183D159255B900A93E6E /* InjectedScriptCanvasModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptCanvasModule.h; sourceTree = "<group>"; };
 		AA7FEE9C16A4E6F3004C0C33 /* JSSpeechSynthesis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSpeechSynthesis.cpp; sourceTree = "<group>"; };
@@ -12088,6 +12092,8 @@
 		AAD766E8157E502F00E85423 /* InspectorCanvasAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorCanvasAgent.cpp; sourceTree = "<group>"; };
 		AAD766E9157E502F00E85423 /* InspectorCanvasAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCanvasAgent.h; sourceTree = "<group>"; };
 		AAD766EA157E502F00E85423 /* InspectorCanvasInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorCanvasInstrumentation.h; sourceTree = "<group>"; };
+		AAE27B7416CBFC0D00623043 /* PlatformSpeechSynthesizerMock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformSpeechSynthesizerMock.cpp; path = mock/PlatformSpeechSynthesizerMock.cpp; sourceTree = "<group>"; };
+		AAE27B7516CBFC0D00623043 /* PlatformSpeechSynthesizerMock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlatformSpeechSynthesizerMock.h; path = mock/PlatformSpeechSynthesizerMock.h; sourceTree = "<group>"; };
 		AAF5B7B11524B4BD0004CB49 /* WebSocketFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebSocketFrame.cpp; path = Modules/websockets/WebSocketFrame.cpp; sourceTree = "<group>"; };
 		AB23A32509BBA7D00067CC53 /* BeforeTextInsertedEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = BeforeTextInsertedEvent.cpp; sourceTree = "<group>"; };
 		AB23A32609BBA7D00067CC53 /* BeforeTextInsertedEvent.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BeforeTextInsertedEvent.h; sourceTree = "<group>"; };
@@ -14570,6 +14576,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA5F3B9116CC5BEB00455EB0 /* CoreFoundation.framework in Frameworks */,
 				41230913138C42FF00BCCFCA /* JavaScriptCore.framework in Frameworks */,
 				4123081B138C429700BCCFCA /* WebCore.framework in Frameworks */,
 			);
@@ -14718,6 +14725,7 @@
 		0867D69AFE84028FC02AAC07 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				AA5F3B9016CC5BEB00455EB0 /* CoreFoundation.framework */,
 				FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */,
 				F5C2869302846DCD018635CA /* ApplicationServices.framework */,
 				FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */,
@@ -16011,6 +16019,8 @@
 			children = (
 				59309A1011F4AE5800250603 /* DeviceOrientationClientMock.cpp */,
 				59309A1211F4AE6A00250603 /* DeviceOrientationClientMock.h */,
+				AAE27B7416CBFC0D00623043 /* PlatformSpeechSynthesizerMock.cpp */,
+				AAE27B7516CBFC0D00623043 /* PlatformSpeechSynthesizerMock.h */,
 				0FE71403142170B800DB33BA /* ScrollbarThemeMock.cpp */,
 				0FE71404142170B800DB33BA /* ScrollbarThemeMock.h */,
 			);
@@ -23142,6 +23152,7 @@
 				417DA6DA13734E6E007C57FB /* Internals.h in Headers */,
 				A7BF7EE014C9175A0014489D /* InternalSettings.h in Headers */,
 				53E29E5F167A8A1900586D3D /* InternalSettingsGenerated.h in Headers */,
+				AA5F3B8D16CC33D100455EB0 /* PlatformSpeechSynthesizerMock.h in Headers */,
 				417DA71E13735DFA007C57FB /* JSInternals.h in Headers */,
 				A740B5A514C935AB00A77FA4 /* JSInternalSettings.h in Headers */,
 				53ED3FDF167A88E7006762E6 /* JSInternalSettingsGenerated.h in Headers */,
@@ -26891,6 +26902,7 @@
 				A740B59714C935AF00A77FA4 /* JSMallocStatistics.cpp in Sources */,
 				EBF5121C1696496C0056BD25 /* JSTypeConversions.cpp in Sources */,
 				CDC26B40160A8CC60026757B /* MockCDM.cpp in Sources */,
+				AA5F3B8F16CC4B3900455EB0 /* PlatformSpeechSynthesizerMock.cpp in Sources */,
 				41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

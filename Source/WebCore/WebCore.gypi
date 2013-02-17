@@ -4421,6 +4421,8 @@
             'platform/mock/DeviceMotionClientMock.cpp',
             'platform/mock/DeviceOrientationClientMock.cpp',
             'platform/mock/GeolocationClientMock.cpp',
+            'platform/mock/PlatformSpeechSynthesizerMock.cpp',
+            'platform/mock/PlatformSpeechSynthesizerMock.h',
             'platform/mock/ScrollbarThemeMock.cpp',
             'platform/mock/ScrollbarThemeMock.h',
             'platform/network/AuthenticationChallengeBase.cpp',
@@ -5149,6 +5151,8 @@
         'webcore_test_support_files': [
             'inspector/InspectorFrontendClientLocal.cpp',
             'inspector/InspectorFrontendClientLocal.h',
+            'platform/mock/PlatformSpeechSynthesizerMock.cpp',
+            'platform/mock/PlatformSpeechSynthesizerMock.h',
             'testing/v8/WebCoreTestSupport.cpp',
             'testing/v8/WebCoreTestSupport.h',
             'testing/js/WebCoreTestSupport.cpp',

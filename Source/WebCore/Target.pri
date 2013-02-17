@@ -1081,6 +1081,7 @@ SOURCES += \
     platform/mock/DeviceMotionClientMock.cpp \
     platform/mock/DeviceOrientationClientMock.cpp \
     platform/mock/GeolocationClientMock.cpp \
+    platform/mock/PlatformSpeechSynthesizerMock.cpp \
     platform/mock/ScrollbarThemeMock.cpp \
     platform/network/AuthenticationChallengeBase.cpp \
     platform/network/BlobData.cpp \
@@ -2175,6 +2176,7 @@ HEADERS += \
     platform/mock/DeviceMotionClientMock.h \
     platform/mock/DeviceOrientationClientMock.h \
     platform/mock/GeolocationClientMock.cpp \
+    platform/mock/PlatformSpeechSynthesizerMock.h \
     platform/mock/ScrollbarThemeMock.h \
     platform/graphics/BitmapImage.h \
     platform/graphics/Color.h \

@@ -9,6 +9,9 @@
 
 <script>
 
+    if (window.internals)
+        window.internals.enableMockSpeechSynthesizer();
+
     description("This tests that the basic mechanisms of speaking text work, including sending the job and receving the callback.");
 
     if (window.testRunner)
