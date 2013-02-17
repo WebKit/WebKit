@@ -90,6 +90,8 @@ void PluginInfoStore::loadPluginsIfNecessary()
     // Then load plug-ins that are not in the standard plug-ins directories.
     addFromVector(uniquePluginPaths, individualPluginPaths());
 
+    m_plugins.clear();
+
     PathHashSet::const_iterator end = uniquePluginPaths.end();
     for (PathHashSet::const_iterator it = uniquePluginPaths.begin(); it != end; ++it)
         loadPlugin(m_plugins, *it);

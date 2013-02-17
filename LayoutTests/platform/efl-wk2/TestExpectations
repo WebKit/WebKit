@@ -495,9 +495,6 @@ webkit.org/b/106407 http/tests/security/401-logout/401-logout.php [ Failure ]
 webkit.org/b/106407 http/tests/xmlhttprequest/failed-auth.html [ Failure ]
 webkit.org/b/106407 http/tests/xmlhttprequest/remember-bad-password.html [ Failure ]
 
-# Regression(r143124): Caused plugins/plugin-javascript-access.html to fail.
-webkit.org/b/110053 plugins/plugin-javascript-access.html [ Failure ]
-
 # Most probably failures are result of delay in scrolling caused by 'delegated scrolling' usage.
 webkit.org/b/107286 fast/css/sticky/sticky-margins.html [ ImageOnlyFailure ]
 webkit.org/b/107286 fast/css/sticky/sticky-writing-mode-vertical-lr.html [ ImageOnlyFailure ]

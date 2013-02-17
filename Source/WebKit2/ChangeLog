@@ -1,3 +1,16 @@
+2013-02-17  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        Regression(r143124): Caused plugins/plugin-javascript-access.html to fail
+        https://bugs.webkit.org/show_bug.cgi?id=110053
+
+        Reviewed by Alexey Proskuryakov.
+
+        Clear m_plugins in loadPluginsIfNecessary() before populating the
+        vector again. We get duplicates otherwise.
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary):
+
 2013-02-16  Andreas Kling  <akling@apple.com>
 
         Remove multi-threading gunk from PluginInfoStore.
