@@ -55,19 +55,6 @@ struct PluginModuleInfo {
     String bundleIdentifier;
     String versionString;
 #endif
-
-    PluginModuleInfo isolatedCopy() const
-    {
-        PluginModuleInfo clone;
-        clone.path = path.isolatedCopy();
-        clone.info = info.isolatedCopy();
-#if PLATFORM(MAC)
-        clone.pluginArchitecture = pluginArchitecture;
-        clone.bundleIdentifier = bundleIdentifier.isolatedCopy();
-        clone.versionString = versionString.isolatedCopy();
-#endif
-        return clone;
-    }
 };
 
 } // namespace WebKit

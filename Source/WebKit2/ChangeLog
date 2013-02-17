@@ -1,3 +1,25 @@
+2013-02-16  Andreas Kling  <akling@apple.com>
+
+        Remove multi-threading gunk from PluginInfoStore.
+        <http://webkit.org/b/110046>
+
+        Reviewed by Alexey Proskuryakov.
+
+        PluginInfoStore is never accessed from multiple threads anymore, so remove the Mutex locking
+        and stop making isolated copies of everything.
+
+        * Shared/Plugins/PluginModuleInfo.h:
+        (PluginModuleInfo):
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary):
+        (WebKit::PluginInfoStore::plugins):
+        (WebKit::PluginInfoStore::findPluginForMIMEType):
+        (WebKit::PluginInfoStore::findPluginForExtension):
+        (WebKit::PluginInfoStore::findPlugin):
+        (WebKit::PluginInfoStore::infoForPluginWithPath):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        (PluginInfoStore):
+
 2013-02-16  Sam Weinig  <sam@webkit.org>
 
         Fix non-production builds.

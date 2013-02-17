@@ -71,16 +71,6 @@ typedef ListHashSet<String, 32, CaseFoldingHash> PathHashSet;
 typedef ListHashSet<String, 32> PathHashSet;
 #endif
 
-static inline Vector<PluginModuleInfo> deepIsolatedCopyPluginInfoVector(const Vector<PluginModuleInfo>& vector)
-{
-    // Let the copy begin!
-    Vector<PluginModuleInfo> copy;
-    copy.reserveCapacity(vector.size());
-    for (unsigned i = 0; i < vector.size(); ++i)
-        copy.append(vector[i].isolatedCopy());
-    return copy;
-}
-
 void PluginInfoStore::loadPluginsIfNecessary()
 {
     if (m_pluginListIsUpToDate)
@@ -100,13 +90,9 @@ void PluginInfoStore::loadPluginsIfNecessary()
     // Then load plug-ins that are not in the standard plug-ins directories.
     addFromVector(uniquePluginPaths, individualPluginPaths());
 
-    Vector<PluginModuleInfo> plugins;
-
     PathHashSet::const_iterator end = uniquePluginPaths.end();
     for (PathHashSet::const_iterator it = uniquePluginPaths.begin(); it != end; ++it)
-        loadPlugin(plugins, *it);
-
-    m_plugins = deepIsolatedCopyPluginInfoVector(plugins);
+        loadPlugin(m_plugins, *it);
 
     m_pluginListIsUpToDate = true;
 }
@@ -126,15 +112,12 @@ void PluginInfoStore::loadPlugin(Vector<PluginModuleInfo>& plugins, const String
 
 Vector<PluginModuleInfo> PluginInfoStore::plugins()
 {
-    MutexLocker locker(m_pluginsLock);
     loadPluginsIfNecessary();
-    return deepIsolatedCopyPluginInfoVector(m_plugins);
+    return m_plugins;
 }
 
 PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) const
 {
-    MutexLocker locker(m_pluginsLock);
-
     ASSERT(!mimeType.isNull());
     
     for (size_t i = 0; i < m_plugins.size(); ++i) {
@@ -152,8 +135,6 @@ PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) 
 
 PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension, String& mimeType) const
 {
-    MutexLocker locker(m_pluginsLock);
-
     ASSERT(!extension.isNull());
     
     for (size_t i = 0; i < m_plugins.size(); ++i) {
@@ -207,10 +188,7 @@ String PluginInfoStore::getMIMETypeForExtension(const String& extension)
 
 PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
 {
-    {
-        MutexLocker locker(m_pluginsLock);
-        loadPluginsIfNecessary();
-    }
+    loadPluginsIfNecessary();
     
     // First, check if we can get the plug-in based on its MIME type.
     if (!mimeType.isNull()) {
@@ -242,8 +220,6 @@ PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
 
 PluginModuleInfo PluginInfoStore::infoForPluginWithPath(const String& pluginPath) const
 {
-    MutexLocker locker(m_pluginsLock);
-
     for (size_t i = 0; i < m_plugins.size(); ++i) {
         if (m_plugins[i].path == pluginPath)
             return m_plugins[i];
