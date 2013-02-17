@@ -1891,9 +1891,7 @@ webkit.org/b/109775 media/controls-after-reload.html [ Failure ]
 webkit.org/b/109775 media/controls-strict.html [ Failure ]
 webkit.org/b/109775 media/controls-styling-strict.html [ Failure ]
 webkit.org/b/109775 media/controls-without-preload.html [ Failure ]
-webkit.org/b/109775 media/video-controls-rendering.html [ Failure ]
 webkit.org/b/109775 media/video-display-toggle.html [ Failure ]
-webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]
 
 # Failing after r142947.
 webkit.org/b/83869 fast/layers/video-layer.html [ Failure ]

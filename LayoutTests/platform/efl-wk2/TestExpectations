@@ -73,7 +73,7 @@ webkit.org/b/109941 webgl/conformance/textures/origin-clean-conformance.html [ C
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-uniform-packing-restrictions.html [ Crash ]
 webkit.org/b/109945 webgl/conformance/glsl/misc/shader-with-non-reserved-words.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/ogles/GL/swizzlers/swizzlers_113_to_120.html [ Crash ]
-webkit.org/b/109945 webgl/conformance/reading/read-pixels-test.html [ Crash ]
+webkit.org/b/109945 webgl/conformance/reading/read-pixels-test.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/uniforms/gl-uniform-arrays.html [ Crash Failure ]
 webkit.org/b/109945 webgl/conformance/uniforms/uniform-default-values.html [ Crash ]
 webkit.org/b/109945 webgl/conformance/ogles/GL/swizzlers/swizzlers_081_to_088.html [ Crash ]
@@ -396,9 +396,6 @@ webkit.org/b/107018 svg/animations/mozilla/animateMotion-mpath-pathLength-1.svg 
 
 webkit.org/b/104656 compositing/repaint/clipped-layer-size-change.html [ ImageOnlyFailure Pass ]
 
-# New compositing test introduced in r137828 that is failing on WK2 EFL.
-webkit.org/b/94743 compositing/overflow/automatically-opt-into-composited-scrolling.html [ Failure ]
-
 # NPP_SetWindow is not called during plugin destruction on X11.
 webkit.org/b/63261 plugins/npp-set-window-called-during-destruction.html [ Failure ]
 
@@ -480,7 +477,6 @@ webkit.org/b/109435 webgl/conformance/more/functions/texSubImage2DHTML.html [ Fa
 webkit.org/b/109435 webgl/conformance/more/functions/uniformfArrayLen1.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/programs/gl-bind-attrib-location-long-names-test.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/programs/program-test.html [ Failure ]
-webkit.org/b/109435 webgl/conformance/reading/read-pixels-test.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/renderbuffers/framebuffer-object-attachment.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/rendering/gl-scissor-test.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/rendering/multisample-corruption.html [ Failure ]
