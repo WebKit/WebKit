@@ -103,10 +103,10 @@ public:
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         Glyph glyph = m_glyphs[index];
-        if (!glyph)
-            return GlyphData(0, 0);
         if (m_perGlyphFontData)
             return GlyphData(glyph, m_perGlyphFontData[index]);
+        if (!glyph)
+            return GlyphData(0, 0);
         return GlyphData(glyph, m_fontDataForAllGlyphs);
     }
 
@@ -118,7 +118,13 @@ public:
 
     const SimpleFontData* fontDataForCharacter(UChar32 c) const
     {
-        return glyphDataForIndex(indexForCharacter(c)).fontData;
+        unsigned index = indexForCharacter(c);
+        if (m_perGlyphFontData)
+            return m_perGlyphFontData[index];
+        Glyph glyph = m_glyphs[index];
+        if (!glyph)
+            return 0;
+        return m_fontDataForAllGlyphs;
     }
 
     void setGlyphDataForCharacter(UChar32 c, Glyph g, const SimpleFontData* f)
@@ -131,17 +137,17 @@ public:
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         m_glyphs[index] = glyph;
 
-        // GlyphPage getters will always return a null SimpleFontData* for glyph #0, so don't worry about the pointer for them.
+        // GlyphPage getters will always return a null SimpleFontData* for glyph #0 if there's no per-glyph font array.
+        if (m_perGlyphFontData) {
+            m_perGlyphFontData[index] = glyph ? fontData : 0;
+            return;
+        }
+
         if (!glyph)
             return;
 
         // A glyph index without a font data pointer makes no sense.
         ASSERT(fontData);
-
-        if (m_perGlyphFontData) {
-            m_perGlyphFontData[index] = fontData;
-            return;
-        }
 
         if (!m_fontDataForAllGlyphs)
             m_fontDataForAllGlyphs = fontData;
@@ -153,7 +159,7 @@ public:
         const SimpleFontData* oldFontData = m_fontDataForAllGlyphs;
         m_perGlyphFontData = static_cast<const SimpleFontData**>(fastMalloc(size * sizeof(SimpleFontData*)));
         for (unsigned i = 0; i < size; ++i)
-            m_perGlyphFontData[i] = oldFontData;
+            m_perGlyphFontData[i] = m_glyphs[i] ? oldFontData : 0;
         m_perGlyphFontData[index] = fontData;
     }
 
