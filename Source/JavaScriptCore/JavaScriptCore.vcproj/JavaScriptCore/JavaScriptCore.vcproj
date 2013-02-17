@@ -1794,10 +1794,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\bytecode\Comment.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\bytecode\EvalCodeCache.h"
 				>
 			</File>

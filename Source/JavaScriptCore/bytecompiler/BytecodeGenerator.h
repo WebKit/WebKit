@@ -509,18 +509,6 @@ namespace JSC {
     private:
         friend class Label;
         
-#if ENABLE(BYTECODE_COMMENTS)
-        // Record a comment in the CodeBlock's comments list for the current
-        // opcode that is about to be emitted.
-        void emitComment();
-        // Register a comment to be associated with the next opcode that will
-        // be emitted.
-        void prependComment(const char* string);
-#else
-        ALWAYS_INLINE void emitComment() { }
-        ALWAYS_INLINE void prependComment(const char*) { }
-#endif
-
         void emitOpcode(OpcodeID);
         UnlinkedArrayAllocationProfile newArrayAllocationProfile();
         UnlinkedObjectAllocationProfile newObjectAllocationProfile();
@@ -621,9 +609,6 @@ namespace JSC {
         Vector<UnlinkedInstruction>& instructions() { return m_instructions; }
 
         SharedSymbolTable& symbolTable() { return *m_symbolTable; }
-#if ENABLE(BYTECODE_COMMENTS)
-        Vector<Comment>& comments() { return m_comments; }
-#endif
 
         bool shouldOptimizeLocals()
         {
@@ -662,11 +647,6 @@ namespace JSC {
         bool m_shouldEmitProfileHooks;
 
         SharedSymbolTable* m_symbolTable;
-
-#if ENABLE(BYTECODE_COMMENTS)
-        Vector<Comment> m_comments;
-        const char *m_currentCommentString;
-#endif
 
         ScopeNode* m_scopeNode;
         Strong<UnlinkedCodeBlock> m_codeBlock;

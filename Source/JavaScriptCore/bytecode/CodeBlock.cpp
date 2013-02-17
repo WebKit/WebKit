@@ -156,27 +156,6 @@ static CString idName(int id0, const Identifier& ident)
     return makeString(ident.string(), "(@id", String::number(id0), ")").utf8();
 }
 
-void CodeBlock::dumpBytecodeCommentAndNewLine(PrintStream& out, int location)
-{
-#if ENABLE(DFG_JIT)
-    Vector<FrequentExitSite> exitSites = exitProfile().exitSitesFor(location);
-    if (!exitSites.isEmpty()) {
-        out.print(" !! frequent exits: ");
-        CommaPrinter comma;
-        for (unsigned i = 0; i < exitSites.size(); ++i)
-            out.print(comma, exitSites[i].kind());
-    }
-#endif // ENABLE(DFG_JIT)
-#if ENABLE(BYTECODE_COMMENTS)
-    const char* comment = commentForBytecodeOffset(location);
-    if (comment)
-        out.printf("\t\t ; %s", comment);
-#else
-    UNUSED_PARAM(location);
-#endif
-    out.print("\n");
-}
-
 CString CodeBlock::registerName(ExecState* exec, int r) const
 {
     if (r == missingThisObjectMarker())
@@ -1506,7 +1485,18 @@ void CodeBlock::dumpBytecode(PrintStream& out, ExecState* exec, const Instructio
     dumpRareCaseProfile(out, "special fast case: ", specialFastCaseProfileForBytecodeOffset(location), hasPrintedProfiling);
 #endif
     
-    dumpBytecodeCommentAndNewLine(out, location);
+#if ENABLE(DFG_JIT)
+    Vector<FrequentExitSite> exitSites = exitProfile().exitSitesFor(location);
+    if (!exitSites.isEmpty()) {
+        out.print(" !! frequent exits: ");
+        CommaPrinter comma;
+        for (unsigned i = 0; i < exitSites.size(); ++i)
+            out.print(comma, exitSites[i].kind());
+    }
+#else // ENABLE(DFG_JIT)
+    UNUSED_PARAM(location);
+#endif // ENABLE(DFG_JIT)
+    out.print("\n");
 }
 
 void CodeBlock::dumpBytecode(PrintStream& out, unsigned bytecodeOffset)
@@ -1665,9 +1655,6 @@ CodeBlock::CodeBlock(CopyParsedBlockTag, CodeBlock& other)
     , m_reoptimizationRetryCounter(0)
     , m_resolveOperations(other.m_resolveOperations)
     , m_putToBaseOperations(other.m_putToBaseOperations)
-#if ENABLE(BYTECODE_COMMENTS)
-    , m_bytecodeCommentIterator(0)
-#endif
 #if ENABLE(JIT)
     , m_canCompileWithDFGState(DFG::CapabilityLevelNotSet)
 #endif
@@ -1706,9 +1693,6 @@ CodeBlock::CodeBlock(ScriptExecutable* ownerExecutable, UnlinkedCodeBlock* unlin
     , m_osrExitCounter(0)
     , m_optimizationDelayCounter(0)
     , m_reoptimizationRetryCounter(0)
-#if ENABLE(BYTECODE_COMMENTS)
-    , m_bytecodeCommentIterator(0)
-#endif
 {
     m_globalData->startedCompiling(this);
 
@@ -2478,82 +2462,6 @@ void CodeBlock::stronglyVisitWeakReferences(SlotVisitor& visitor)
         visitor.append(&m_dfgData->weakReferences[i]);
 #endif    
 }
-
-#if ENABLE(BYTECODE_COMMENTS)
-// Finds the comment string for the specified bytecode offset/PC is available. 
-const char* CodeBlock::commentForBytecodeOffset(unsigned bytecodeOffset)
-{
-    ASSERT(bytecodeOffset < instructions().size());
-
-    Vector<Comment>& comments = m_bytecodeComments;
-    size_t numberOfComments = comments.size();
-    const char* result = 0;
-
-    if (!numberOfComments)
-        return 0; // No comments to match with.
-
-    // The next match is most likely the next comment in the list.
-    // Do a quick check to see if that is a match first.
-    // m_bytecodeCommentIterator should already be pointing to the
-    // next comment we should check.
-
-    ASSERT(m_bytecodeCommentIterator < comments.size());
-
-    size_t i = m_bytecodeCommentIterator;
-    size_t commentPC = comments[i].pc;
-    if (commentPC == bytecodeOffset) {
-        // We've got a match. All done!
-        m_bytecodeCommentIterator = i;
-        result = comments[i].string;
-    } else if (commentPC > bytecodeOffset) {
-        // The current comment is already greater than the requested PC.
-        // Start searching from the first comment.
-        i = 0;
-    } else {
-        // Otherwise, the current comment's PC is less than the requested PC.
-        // Hence, we can just start searching from the next comment in the
-        // list.
-        i++;
-    }
-
-    // If the result is still not found, do a linear search in the range
-    // that we've determined above.
-    if (!result) {
-        for (; i < comments.size(); ++i) {
-            commentPC = comments[i].pc;
-            if (commentPC == bytecodeOffset) {
-                result = comments[i].string;
-                break;
-            }
-            if (comments[i].pc > bytecodeOffset) {
-                // The current comment PC is already past the requested
-                // bytecodeOffset. Hence, there are no more possible
-                // matches. Just fail.
-                break;
-            }
-        }
-    }
-
-    // Update the iterator to point to the next comment.
-    if (++i >= numberOfComments) {
-        // At most point to the last comment entry. This ensures that the
-        // next time we call this function, the quick checks will at least
-        // have one entry to check and can fail fast if appropriate.
-        i = numberOfComments - 1;
-    }
-    m_bytecodeCommentIterator = i;
-    return result;
-}
-
-void CodeBlock::dumpBytecodeComments()
-{
-    Vector<Comment>& comments = m_bytecodeComments;
-    printf("Comments for codeblock %p: size %lu\n", this, comments.size());
-    for (size_t i = 0; i < comments.size(); ++i)
-        printf("     pc %lu : '%s'\n", comments[i].pc, comments[i].string);
-    printf("End of comments for codeblock %p\n", this);
-}
-#endif // ENABLE_BYTECODE_COMMENTS
 
 HandlerInfo* CodeBlock::handlerForBytecodeOffset(unsigned bytecodeOffset)
 {

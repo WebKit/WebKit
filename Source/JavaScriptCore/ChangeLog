@@ -1,3 +1,33 @@
+2013-02-16  Filip Pizlo  <fpizlo@apple.com>
+
+        Remove support for bytecode comments, since it doesn't build, and hasn't been used in a while.
+        https://bugs.webkit.org/show_bug.cgi?id=110035
+
+        Rubber stamped by Andreas Kling.
+        
+        There are other ways of achieving the same effect, like adding print statements to the bytecode generator.
+        The fact that this feature doesn't build and nobody noticed implies that it's probably not a popular
+        feature. As well, the amount of wiring that was required for it was quite big considering its relatively
+        modest utility.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/CodeBlock.cpp:
+        (JSC):
+        (JSC::CodeBlock::dumpBytecode):
+        (JSC::CodeBlock::CodeBlock):
+        * bytecode/CodeBlock.h:
+        (CodeBlock):
+        * bytecode/Comment.h: Removed.
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        (JSC::BytecodeGenerator::emitOpcode):
+        (JSC):
+        * bytecompiler/BytecodeGenerator.h:
+        (BytecodeGenerator):
+        (JSC::BytecodeGenerator::symbolTable):
+
 2013-02-16  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows] Unreviewed Visual Studio 2010 build fix after r143117

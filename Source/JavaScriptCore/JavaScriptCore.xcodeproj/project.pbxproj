@@ -1766,7 +1766,6 @@
 		FE20CE9C15F04A9500DF3430 /* LLIntCLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntCLoop.h; path = llint/LLIntCLoop.h; sourceTree = "<group>"; };
 		FE4A331D15BD2E07006F54F3 /* VMInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VMInspector.cpp; sourceTree = "<group>"; };
 		FE4A331E15BD2E07006F54F3 /* VMInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMInspector.h; sourceTree = "<group>"; };
-		FEB63AA2159B9DA3008932A6 /* Comment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Comment.h; sourceTree = "<group>"; };
 		FED287B115EC9A5700DA8161 /* LLIntOpcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LLIntOpcode.h; path = llint/LLIntOpcode.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -2816,7 +2815,6 @@
 				0FBD7E671447998F00481315 /* CodeOrigin.h */,
 				0F8F943F1667632D00D61971 /* CodeType.cpp */,
 				0F0B83A514BCF50400885B4F /* CodeType.h */,
-				FEB63AA2159B9DA3008932A6 /* Comment.h */,
 				0F426A4A1460CD6B00131F8F /* DataFormat.h */,
 				0FBC0AE41496C7C100D4FBDD /* DFGExitProfile.cpp */,
 				0FBC0AE51496C7C100D4FBDD /* DFGExitProfile.h */,
