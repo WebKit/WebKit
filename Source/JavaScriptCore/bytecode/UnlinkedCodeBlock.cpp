@@ -46,6 +46,29 @@ const ClassInfo UnlinkedProgramCodeBlock::s_info = { "UnlinkedProgramCodeBlock",
 const ClassInfo UnlinkedEvalCodeBlock::s_info = { "UnlinkedEvalCodeBlock", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(UnlinkedEvalCodeBlock) };
 const ClassInfo UnlinkedFunctionCodeBlock::s_info = { "UnlinkedFunctionCodeBlock", &Base::s_info, 0, 0, CREATE_METHOD_TABLE(UnlinkedFunctionCodeBlock) };
 
+static UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(JSGlobalData& globalData, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
+{
+    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(&globalData, source, executable->parameters(), executable->name(), executable->isInStrictContext() ? JSParseStrict : JSParseNormal, JSParseFunctionCode, error);
+
+    if (!body) {
+        ASSERT(error.m_type != ParserError::ErrorNone);
+        return 0;
+    }
+
+    if (executable->forceUsesArguments())
+        body->setUsesArguments();
+    body->finishParsing(executable->parameters(), executable->name(), executable->functionNameIsInScopeToggle());
+    executable->recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
+    
+    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&globalData, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct));
+    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(globalData, body.get(), result, debuggerMode, profilerMode)));
+    error = generator->generate();
+    body->destroyData();
+    if (error.m_type != ParserError::ErrorNone)
+        return 0;
+    return result;
+}
+
 unsigned UnlinkedCodeBlock::addOrFindConstant(JSValue v)
 {
     unsigned numberOfConstants = numberOfConstantRegisters();
@@ -82,6 +105,8 @@ void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visito
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(thisObject, visitor);
+    visitor.append(&thisObject->m_codeBlockForCall);
+    visitor.append(&thisObject->m_codeBlockForConstruct);
     visitor.append(&thisObject->m_nameValue);
     visitor.append(&thisObject->m_symbolTableForCall);
     visitor.append(&thisObject->m_symbolTableForConstruct);
@@ -112,31 +137,27 @@ UnlinkedFunctionCodeBlock* UnlinkedFunctionExecutable::codeBlockFor(JSGlobalData
 {
     switch (specializationKind) {
     case CodeForCall:
-        if (UnlinkedFunctionCodeBlock* codeBlock = m_codeBlockForCall.get()) {
-            globalData.codeCache()->usedFunctionCode(globalData, codeBlock);
+        if (UnlinkedFunctionCodeBlock* codeBlock = m_codeBlockForCall.get())
             return codeBlock;
-        }
         break;
     case CodeForConstruct:
-        if (UnlinkedFunctionCodeBlock* codeBlock = m_codeBlockForConstruct.get()) {
-            globalData.codeCache()->usedFunctionCode(globalData, codeBlock);
+        if (UnlinkedFunctionCodeBlock* codeBlock = m_codeBlockForConstruct.get())
             return codeBlock;
-        }
         break;
     }
 
-    UnlinkedFunctionCodeBlock* result = globalData.codeCache()->getFunctionCodeBlock(globalData, this, source, specializationKind, debuggerMode, profilerMode, error);
+    UnlinkedFunctionCodeBlock* result = generateFunctionCodeBlock(globalData, this, source, specializationKind, debuggerMode, profilerMode, error);
     
     if (error.m_type != ParserError::ErrorNone)
         return 0;
 
     switch (specializationKind) {
     case CodeForCall:
-        m_codeBlockForCall = PassWeak<UnlinkedFunctionCodeBlock>(result);
+        m_codeBlockForCall.set(globalData, this, result);
         m_symbolTableForCall.set(globalData, this, result->symbolTable());
         break;
     case CodeForConstruct:
-        m_codeBlockForConstruct = PassWeak<UnlinkedFunctionCodeBlock>(result);
+        m_codeBlockForConstruct.set(globalData, this, result);
         m_symbolTableForConstruct.set(globalData, this, result->symbolTable());
         break;
     }

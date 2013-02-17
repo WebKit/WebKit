@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,34 +53,6 @@ struct ParserError;
 class SourceCode;
 class SourceProvider;
 
-template <int CacheSize, typename KeyType, typename EntryType, typename HashArg = typename DefaultHash<KeyType>::Hash, typename KeyTraitsArg = HashTraits<KeyType> >
-class CacheMap {
-    typedef HashMap<KeyType, EntryType, HashArg, KeyTraitsArg> MapType;
-    typedef typename MapType::iterator iterator;
-
-public:
-    const EntryType* find(const KeyType& key)
-    {
-        iterator result = m_map.find(key);
-        if (result == m_map.end())
-            return 0;
-        return &result->value;
-    }
-
-    void set(const KeyType& key, const EntryType& value)
-    {
-        if (m_map.size() >= CacheSize)
-            m_map.remove(m_map.begin());
-
-        m_map.set(key, value);
-    }
-
-    void clear() { m_map.clear(); }
-
-private:
-    MapType m_map;
-};
-
 class SourceCodeKey {
 public:
     enum CodeType { EvalType, ProgramType, FunctionCallType, FunctionConstructType };
@@ -105,6 +77,8 @@ public:
     bool isHashTableDeletedValue() const { return m_sourceString.isHashTableDeletedValue(); }
 
     unsigned hash() const { return m_sourceString.impl()->hash(); }
+
+    size_t length() const { return m_sourceString.length(); }
 
     bool isNull() const { return m_sourceString.isNull(); }
 
@@ -132,37 +106,73 @@ struct SourceCodeKeyHashTraits : SimpleClassHashTraits<SourceCodeKey> {
     static bool isEmptyValue(const SourceCodeKey& sourceCodeKey) { return sourceCodeKey.isNull(); }
 };
 
+class CodeCacheMap {
+    typedef HashMap<SourceCodeKey, Strong<JSCell>, SourceCodeKeyHash, SourceCodeKeyHashTraits> MapType;
+    typedef typename MapType::iterator iterator;
+
+public:
+    CodeCacheMap(size_t capacity)
+        : m_size(0)
+        , m_capacity(capacity)
+    {
+    }
+
+    const Strong<JSCell>* find(const SourceCodeKey& key)
+    {
+        iterator result = m_map.find(key);
+        if (result == m_map.end())
+            return 0;
+        return &result->value;
+    }
+
+    void set(const SourceCodeKey& key, const Strong<JSCell>& value)
+    {
+        while (m_size >= m_capacity) {
+            MapType::iterator it = m_map.begin();
+            m_size -= it->key.length();
+            m_map.remove(it);
+        }
+
+        m_size += key.length();
+        m_map.set(key, value);
+    }
+
+    void clear()
+    {
+        m_size = 0;
+        m_map.clear();
+    }
+
+private:
+    MapType m_map;
+    size_t m_size;
+    size_t m_capacity;
+};
+
+// Caches top-level code such as <script>, eval(), new Function, and JSEvaluateScript().
 class CodeCache {
 public:
     static PassOwnPtr<CodeCache> create() { return adoptPtr(new CodeCache); }
 
     UnlinkedProgramCodeBlock* getProgramCodeBlock(JSGlobalData&, ProgramExecutable*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedEvalCodeBlock* getEvalCodeBlock(JSGlobalData&, EvalExecutable*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
-    UnlinkedFunctionCodeBlock* getFunctionCodeBlock(JSGlobalData&, UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, ParserError&);
     UnlinkedFunctionExecutable* getFunctionExecutableFromGlobalCode(JSGlobalData&, const Identifier&, const SourceCode&, ParserError&);
-    void usedFunctionCode(JSGlobalData&, UnlinkedFunctionCodeBlock*);
     ~CodeCache();
 
     void clear()
     {
         m_sourceCode.clear();
-        m_recentlyUsedFunctions.clear();
     }
 
 private:
     CodeCache();
 
-    UnlinkedFunctionCodeBlock* generateFunctionCodeBlock(JSGlobalData&, UnlinkedFunctionExecutable*, const SourceCode&, CodeSpecializationKind, DebuggerMode, ProfilerMode, ParserError&);
+    template <class UnlinkedCodeBlockType, class ExecutableType> 
+    UnlinkedCodeBlockType* getCodeBlock(JSGlobalData&, ExecutableType*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
 
-    template <class UnlinkedCodeBlockType, class ExecutableType> inline UnlinkedCodeBlockType* getCodeBlock(JSGlobalData&, ExecutableType*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
+    enum { CacheSize = 16000000 }; // Size in characters
 
-    enum {
-        MaxRootEntries = 1280, // Top-level code such as <script>, eval(), JSEvaluateScript(), etc.
-        MaxChildFunctionEntries = MaxRootEntries * 8 // Sampling shows that each root holds about 6 functions. 8 is enough to usually cache all the child functions for each top-level entry.
-    };
-
-    CacheMap<MaxRootEntries, SourceCodeKey, Strong<JSCell>, SourceCodeKeyHash, SourceCodeKeyHashTraits> m_sourceCode;
-    CacheMap<MaxChildFunctionEntries, UnlinkedFunctionCodeBlock*, Strong<UnlinkedFunctionCodeBlock> > m_recentlyUsedFunctions;
+    CodeCacheMap m_sourceCode;
 };
 
 }

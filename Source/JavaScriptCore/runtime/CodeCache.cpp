@@ -37,6 +37,7 @@
 namespace JSC {
 
 CodeCache::CodeCache()
+    : m_sourceCode(CacheSize)
 {
 }
 
@@ -102,35 +103,6 @@ UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(JSGlobalData& globalData, Eva
     return getCodeBlock<UnlinkedEvalCodeBlock>(globalData, executable, source, strictness, debuggerMode, profilerMode, error);
 }
 
-UnlinkedFunctionCodeBlock* CodeCache::generateFunctionCodeBlock(JSGlobalData& globalData, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
-{
-    RefPtr<FunctionBodyNode> body = parse<FunctionBodyNode>(&globalData, source, executable->parameters(), executable->name(), executable->isInStrictContext() ? JSParseStrict : JSParseNormal, JSParseFunctionCode, error);
-
-    if (!body) {
-        ASSERT(error.m_type != ParserError::ErrorNone);
-        return 0;
-    }
-
-    if (executable->forceUsesArguments())
-        body->setUsesArguments();
-    body->finishParsing(executable->parameters(), executable->name(), executable->functionNameIsInScopeToggle());
-    executable->recordParse(body->features(), body->hasCapturedVariables(), body->lineNo(), body->lastLine());
-    
-    UnlinkedFunctionCodeBlock* result = UnlinkedFunctionCodeBlock::create(&globalData, FunctionCode, ExecutableInfo(body->needsActivation(), body->usesEval(), body->isStrictMode(), kind == CodeForConstruct));
-    OwnPtr<BytecodeGenerator> generator(adoptPtr(new BytecodeGenerator(globalData, body.get(), result, debuggerMode, profilerMode)));
-    error = generator->generate();
-    body->destroyData();
-    if (error.m_type != ParserError::ErrorNone)
-        return 0;
-    m_recentlyUsedFunctions.set(result, Strong<UnlinkedFunctionCodeBlock>(globalData, result));
-    return result;
-}
-
-UnlinkedFunctionCodeBlock* CodeCache::getFunctionCodeBlock(JSGlobalData& globalData, UnlinkedFunctionExecutable* executable, const SourceCode& source, CodeSpecializationKind kind, DebuggerMode debuggerMode, ProfilerMode profilerMode, ParserError& error)
-{
-    return generateFunctionCodeBlock(globalData, executable, source, kind, debuggerMode, profilerMode, error);
-}
-
 UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, ParserError& error)
 {
     SourceCodeKey key = SourceCodeKey(source, name.string(), SourceCodeKey::FunctionCallType, JSParseNormal);
@@ -160,11 +132,6 @@ UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlo
 
     m_sourceCode.set(key, Strong<UnlinkedFunctionExecutable>(globalData, functionExecutable));
     return functionExecutable;
-}
-
-void CodeCache::usedFunctionCode(JSGlobalData& globalData, UnlinkedFunctionCodeBlock* codeBlock)
-{
-    m_recentlyUsedFunctions.set(codeBlock, Strong<UnlinkedFunctionCodeBlock>(globalData, codeBlock));
 }
 
 }

@@ -1,3 +1,64 @@
+2013-02-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Code cache should be explicit about what it caches
+        https://bugs.webkit.org/show_bug.cgi?id=110039
+
+        Reviewed by Oliver Hunt.
+
+        This patch makes the code cache more explicit in two ways:
+
+        (1) The cache caches top-level scripts. Any sub-functions executed as a
+        part of a script are cached with it and evicted with it.
+
+        This simplifies things by eliminating out-of-band sub-function tracking,
+        and fixes pathological cases where functions for live scripts would be
+        evicted in favor of functions for dead scripts, and/or high probability
+        functions executed early in script lifetime would be evicted in favor of
+        low probability functions executed late in script lifetime, due to LRU.
+
+        Statistical data from general browsing and PLT confirms that caching
+        functions independently of scripts is not profitable.
+
+        (2) The cache tracks script size, not script count.
+
+        This reduces the worst-case cache size by a factor of infinity.
+
+        Script size is a reasonable first-order estimate of in-memory footprint 
+        for a cached script because there are no syntactic constructs that have
+        super-linear memory footprint.
+
+        * bytecode/UnlinkedCodeBlock.cpp:
+        (JSC::generateFunctionCodeBlock): Moved this function out of the cache
+        because it does not consult the cache, and is not managed by it.
+
+        (JSC::UnlinkedFunctionExecutable::visitChildren): Visit our code blocks
+        because they are strong references now, rather than weak, a la (1).
+
+        (JSC::UnlinkedFunctionExecutable::codeBlockFor): Updated for interface changes.
+
+        * bytecode/UnlinkedCodeBlock.h:
+        (UnlinkedFunctionExecutable):
+        (UnlinkedFunctionCodeBlock): Strong now, not weak, a la (1).
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::CodeCache):
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeKey::length):
+        (SourceCodeKey):
+        (CodeCacheMap):
+        (JSC::CodeCacheMap::CodeCacheMap):
+        (JSC::CodeCacheMap::find):
+        (JSC::CodeCacheMap::set):
+        (JSC::CodeCacheMap::clear):
+        (CodeCache):
+        (JSC::CodeCache::clear): Removed individual function tracking, due to (1).
+        Added explicit character counting, for (2).
+
+        You might think 16000000 characters is a lot. It is. But this patch
+        didn't establish that limit -- it just took the existing limit and
+        made it more visible. I intend to reduce the size of the cache in a
+        future patch.
+
 2013-02-16  Filip Pizlo  <fpizlo@apple.com>
 
         Remove support for bytecode comments, since it doesn't build, and hasn't been used in a while.

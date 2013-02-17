@@ -139,8 +139,8 @@ public:
 
 private:
     UnlinkedFunctionExecutable(JSGlobalData*, Structure*, const SourceCode&, FunctionBodyNode*);
-    Weak<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
-    Weak<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
+    WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForCall;
+    WriteBarrier<UnlinkedFunctionCodeBlock> m_codeBlockForConstruct;
 
     unsigned m_numCapturedVariables : 29;
     bool m_forceUsesArguments : 1;
@@ -675,9 +675,7 @@ public:
 };
 
 class UnlinkedFunctionCodeBlock : public UnlinkedCodeBlock {
-private:
-    friend class CodeCache;
-
+public:
     static UnlinkedFunctionCodeBlock* create(JSGlobalData* globalData, CodeType codeType, const ExecutableInfo& info)
     {
         UnlinkedFunctionCodeBlock* instance = new (NotNull, allocateCell<UnlinkedFunctionCodeBlock>(globalData->heap)) UnlinkedFunctionCodeBlock(globalData, globalData->unlinkedFunctionCodeBlockStructure.get(), codeType, info);
@@ -685,7 +683,6 @@ private:
         return instance;
     }
 
-public:
     typedef UnlinkedCodeBlock Base;
     static void destroy(JSCell*);
 
