@@ -1,3 +1,9 @@
+2013-02-16  Glenn Adams  <glenn@skynav.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         new-commit-bot should report the full name of committer and reviewer instead of just nicks
