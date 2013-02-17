@@ -200,8 +200,8 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                     buffer[i * 2 + 1] = U16_TRAIL(c);
                 }
             }
-            
-            m_page = GlyphPage::create(this);
+
+            m_page = GlyphPage::createUninitialized(this);
 
             // Now that we have a buffer full of characters, we want to get back an array
             // of glyph indices.  This part involves calling into the platform-specific 
@@ -225,7 +225,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                     int to = 1 + min(static_cast<int>(range.to()) - static_cast<int>(start), static_cast<int>(GlyphPage::size) - 1);
                     if (from < static_cast<int>(GlyphPage::size) && to > 0) {
                         if (haveGlyphs && !scratchPage) {
-                            scratchPage = GlyphPage::create(this);
+                            scratchPage = GlyphPage::createUninitialized(this);
                             pageToFill = scratchPage.get();
                         }
 
@@ -279,7 +279,7 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
                 m_page = parentPage;
             } else {
                 // Combine the parent's glyphs and ours to form a new more complete page.
-                m_page = GlyphPage::create(this);
+                m_page = GlyphPage::createUninitialized(this);
 
                 // Overlay the parent page on the fallback page. Check if the fallback font
                 // has added anything.
@@ -300,15 +300,14 @@ void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNu
             }
         }
     } else {
-        m_page = GlyphPage::create(this);
         // System fallback. Initialized with the parent's page here, as individual
         // entries may use different fonts depending on character. If the Font
         // ever finds it needs a glyph out of the system fallback page, it will
         // ask the system for the best font to use and fill that glyph in for us.
         if (parentPage)
-            m_page->copyFrom(*parentPage);
+            m_page = parentPage->createCopiedSystemFallbackPage(this);
         else
-            m_page->clear();
+            m_page = GlyphPage::createZeroedSystemFallbackPage(this);
     }
 }
 

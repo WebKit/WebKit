@@ -230,7 +230,7 @@ GlyphData SVGTextRunRenderingContext::glyphDataForCharacter(const Font& font, co
     // No suitable glyph found that is compatible with the requirments (same language, arabic-form, orientation etc.)
     // Even though our GlyphPage contains an entry for eg. glyph "a", it's not compatible. So we have to temporarily
     // remove the glyph data information from the GlyphPage, and retry the lookup, which handles font fallbacks correctly.
-    page->setGlyphDataForCharacter(character, glyphData.glyph, 0);
+    page->setGlyphDataForCharacter(character, 0, 0);
 
     // Assure that the font fallback glyph selection worked, aka. the fallbackGlyphData font data is not the same as before.
     GlyphData fallbackGlyphData = font.glyphDataForCharacter(character, mirror);
