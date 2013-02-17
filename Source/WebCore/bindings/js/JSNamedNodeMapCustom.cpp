@@ -46,22 +46,4 @@ JSValue JSNamedNodeMap::nameGetter(ExecState* exec, JSValue slotBase, PropertyNa
     return toJS(exec, thisObj->globalObject(), thisObj->impl()->getNamedItem(propertyNameToAtomicString(propertyName)));
 }
 
-void JSNamedNodeMap::visitChildren(JSCell* cell, SlotVisitor& visitor)
-{
-    JSNamedNodeMap* thisObject = jsCast<JSNamedNodeMap*>(cell);
-    ASSERT_GC_OBJECT_INHERITS(thisObject, &s_info);
-    COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
-    ASSERT(thisObject->structure()->typeInfo().overridesVisitChildren());
-    Base::visitChildren(thisObject, visitor);
-
-    // We need to keep the wrapper for our underlying NamedNodeMap's element
-    // alive because NamedNodeMap and Attr rely on the element for data, and
-    // don't know how to keep it alive correctly.
-    // FIXME: Fix this lifetime issue in the DOM, and remove this.
-    Element* element = thisObject->impl()->element();
-    if (!element)
-        return;
-    visitor.addOpaqueRoot(root(element));
-}
-
 } // namespace WebCore

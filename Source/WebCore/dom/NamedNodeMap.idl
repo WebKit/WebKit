@@ -21,7 +21,6 @@
 [
     GenerateIsReachable=ImplElementRoot,
     IndexedGetter,
-    JSCustomMarkFunction,
     NamedGetter,
     ImplementationLacksVTable
 ] interface NamedNodeMap {
