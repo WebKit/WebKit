@@ -80,6 +80,7 @@ webkit.org/b/109945 webgl/conformance/ogles/GL/swizzlers/swizzlers_081_to_088.ht
 
 # ASSERTION FAILED: m_fixedToViewport.
 webkit.org/b/110059 [ Debug ] compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Crash Pass ]
+webkit.org/b/110059 [ Debug ] compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # FLAKY TESTS
