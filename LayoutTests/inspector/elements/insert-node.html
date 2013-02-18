@@ -33,9 +33,9 @@ function appendChildWithText()
 {
     var container = document.getElementById("container");
     var child = document.createElement("div");
-    child.style.display = "none";
-    child.innerText = "Text";
     child.setAttribute("id", "child-with-text");
+    child.setAttribute("style", "display: none;");
+    child.innerText = "Text";
     container.appendChild(child);
 }
 
