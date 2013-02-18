@@ -373,9 +373,6 @@ webkit.org/b/98744 plugins/reloadplugins-and-pages.html [ Failure ]
 # Plugin test timeout.
 webkit.org/b/98743 plugins/evaluate-js-after-removing-plugin-element.html [ Failure ]
 
-# Plugin failure related to NPP_URLNotify.
-webkit.org/b/98742 plugins/get-targeted-javascript-url.html [ Failure ]
-
 # Reloading a Netscape plugin that accesses its own DOM element is failing.
 webkit.org/b/82020 plugins/netscape-dom-access-and-reload.html [ Failure ]
 
