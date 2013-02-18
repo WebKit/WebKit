@@ -42,276 +42,276 @@
 
 namespace JSC {
 
-    class PolymorphicPutByIdList;
+class PolymorphicPutByIdList;
 
-    enum AccessType {
-        access_get_by_id_self,
-        access_get_by_id_proto,
-        access_get_by_id_chain,
-        access_get_by_id_self_list,
-        access_get_by_id_proto_list,
-        access_put_by_id_transition_normal,
-        access_put_by_id_transition_direct,
-        access_put_by_id_replace,
-        access_put_by_id_list,
-        access_unset,
-        access_get_by_id_generic,
-        access_put_by_id_generic,
-        access_get_array_length,
-        access_get_string_length,
-    };
+enum AccessType {
+    access_get_by_id_self,
+    access_get_by_id_proto,
+    access_get_by_id_chain,
+    access_get_by_id_self_list,
+    access_get_by_id_proto_list,
+    access_put_by_id_transition_normal,
+    access_put_by_id_transition_direct,
+    access_put_by_id_replace,
+    access_put_by_id_list,
+    access_unset,
+    access_get_by_id_generic,
+    access_put_by_id_generic,
+    access_get_array_length,
+    access_get_string_length,
+};
 
-    inline bool isGetByIdAccess(AccessType accessType)
-    {
-        switch (accessType) {
-        case access_get_by_id_self:
-        case access_get_by_id_proto:
-        case access_get_by_id_chain:
-        case access_get_by_id_self_list:
-        case access_get_by_id_proto_list:
-        case access_get_by_id_generic:
-        case access_get_array_length:
-        case access_get_string_length:
-            return true;
-        default:
-            return false;
-        }
+inline bool isGetByIdAccess(AccessType accessType)
+{
+    switch (accessType) {
+    case access_get_by_id_self:
+    case access_get_by_id_proto:
+    case access_get_by_id_chain:
+    case access_get_by_id_self_list:
+    case access_get_by_id_proto_list:
+    case access_get_by_id_generic:
+    case access_get_array_length:
+    case access_get_string_length:
+        return true;
+    default:
+        return false;
     }
+}
     
-    inline bool isPutByIdAccess(AccessType accessType)
+inline bool isPutByIdAccess(AccessType accessType)
+{
+    switch (accessType) {
+    case access_put_by_id_transition_normal:
+    case access_put_by_id_transition_direct:
+    case access_put_by_id_replace:
+    case access_put_by_id_list:
+    case access_put_by_id_generic:
+        return true;
+    default:
+        return false;
+    }
+}
+
+struct StructureStubInfo {
+    StructureStubInfo()
+        : accessType(access_unset)
+        , seen(false)
     {
-        switch (accessType) {
-        case access_put_by_id_transition_normal:
-        case access_put_by_id_transition_direct:
-        case access_put_by_id_replace:
-        case access_put_by_id_list:
-        case access_put_by_id_generic:
-            return true;
-        default:
-            return false;
-        }
     }
 
-    struct StructureStubInfo {
-        StructureStubInfo()
-            : accessType(access_unset)
-            , seen(false)
-        {
-        }
+    void initGetByIdSelf(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure)
+    {
+        accessType = access_get_by_id_self;
 
-        void initGetByIdSelf(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure)
-        {
-            accessType = access_get_by_id_self;
+        u.getByIdSelf.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+    }
 
-            u.getByIdSelf.baseObjectStructure.set(globalData, owner, baseObjectStructure);
-        }
+    void initGetByIdProto(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, Structure* prototypeStructure, bool isDirect)
+    {
+        accessType = access_get_by_id_proto;
 
-        void initGetByIdProto(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, Structure* prototypeStructure, bool isDirect)
-        {
-            accessType = access_get_by_id_proto;
+        u.getByIdProto.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+        u.getByIdProto.prototypeStructure.set(globalData, owner, prototypeStructure);
+        u.getByIdProto.isDirect = isDirect;
+    }
 
-            u.getByIdProto.baseObjectStructure.set(globalData, owner, baseObjectStructure);
-            u.getByIdProto.prototypeStructure.set(globalData, owner, prototypeStructure);
-            u.getByIdProto.isDirect = isDirect;
-        }
+    void initGetByIdChain(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain, unsigned count, bool isDirect)
+    {
+        accessType = access_get_by_id_chain;
 
-        void initGetByIdChain(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure, StructureChain* chain, unsigned count, bool isDirect)
-        {
-            accessType = access_get_by_id_chain;
+        u.getByIdChain.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+        u.getByIdChain.chain.set(globalData, owner, chain);
+        u.getByIdChain.count = count;
+        u.getByIdChain.isDirect = isDirect;
+    }
 
-            u.getByIdChain.baseObjectStructure.set(globalData, owner, baseObjectStructure);
-            u.getByIdChain.chain.set(globalData, owner, chain);
-            u.getByIdChain.count = count;
-            u.getByIdChain.isDirect = isDirect;
-        }
+    void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize)
+    {
+        accessType = access_get_by_id_self_list;
 
-        void initGetByIdSelfList(PolymorphicAccessStructureList* structureList, int listSize)
-        {
-            accessType = access_get_by_id_self_list;
+        u.getByIdSelfList.structureList = structureList;
+        u.getByIdSelfList.listSize = listSize;
+    }
 
-            u.getByIdSelfList.structureList = structureList;
-            u.getByIdSelfList.listSize = listSize;
-        }
+    void initGetByIdProtoList(PolymorphicAccessStructureList* structureList, int listSize)
+    {
+        accessType = access_get_by_id_proto_list;
 
-        void initGetByIdProtoList(PolymorphicAccessStructureList* structureList, int listSize)
-        {
-            accessType = access_get_by_id_proto_list;
+        u.getByIdProtoList.structureList = structureList;
+        u.getByIdProtoList.listSize = listSize;
+    }
 
-            u.getByIdProtoList.structureList = structureList;
-            u.getByIdProtoList.listSize = listSize;
-        }
+    // PutById*
 
-        // PutById*
+    void initPutByIdTransition(JSGlobalData& globalData, JSCell* owner, Structure* previousStructure, Structure* structure, StructureChain* chain, bool isDirect)
+    {
+        if (isDirect)
+            accessType = access_put_by_id_transition_direct;
+        else
+            accessType = access_put_by_id_transition_normal;
 
-        void initPutByIdTransition(JSGlobalData& globalData, JSCell* owner, Structure* previousStructure, Structure* structure, StructureChain* chain, bool isDirect)
-        {
-            if (isDirect)
-                accessType = access_put_by_id_transition_direct;
-            else
-                accessType = access_put_by_id_transition_normal;
+        u.putByIdTransition.previousStructure.set(globalData, owner, previousStructure);
+        u.putByIdTransition.structure.set(globalData, owner, structure);
+        u.putByIdTransition.chain.set(globalData, owner, chain);
+    }
 
-            u.putByIdTransition.previousStructure.set(globalData, owner, previousStructure);
-            u.putByIdTransition.structure.set(globalData, owner, structure);
-            u.putByIdTransition.chain.set(globalData, owner, chain);
-        }
-
-        void initPutByIdReplace(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure)
-        {
-            accessType = access_put_by_id_replace;
+    void initPutByIdReplace(JSGlobalData& globalData, JSCell* owner, Structure* baseObjectStructure)
+    {
+        accessType = access_put_by_id_replace;
     
-            u.putByIdReplace.baseObjectStructure.set(globalData, owner, baseObjectStructure);
-        }
+        u.putByIdReplace.baseObjectStructure.set(globalData, owner, baseObjectStructure);
+    }
         
-        void initPutByIdList(PolymorphicPutByIdList* list)
-        {
-            accessType = access_put_by_id_list;
-            u.putByIdList.list = list;
-        }
+    void initPutByIdList(PolymorphicPutByIdList* list)
+    {
+        accessType = access_put_by_id_list;
+        u.putByIdList.list = list;
+    }
         
-        void reset()
-        {
-            deref();
-            accessType = access_unset;
-            stubRoutine.clear();
-            watchpoints.clear();
-        }
+    void reset()
+    {
+        deref();
+        accessType = access_unset;
+        stubRoutine.clear();
+        watchpoints.clear();
+    }
 
-        void deref();
+    void deref();
 
-        bool visitWeakReferences();
+    bool visitWeakReferences();
         
-        bool seenOnce()
-        {
-            return seen;
-        }
+    bool seenOnce()
+    {
+        return seen;
+    }
 
-        void setSeen()
-        {
-            seen = true;
-        }
+    void setSeen()
+    {
+        seen = true;
+    }
         
-        StructureStubClearingWatchpoint* addWatchpoint(CodeBlock* codeBlock)
-        {
-            return WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
-                watchpoints, codeBlock, this);
-        }
+    StructureStubClearingWatchpoint* addWatchpoint(CodeBlock* codeBlock)
+    {
+        return WatchpointsOnStructureStubInfo::ensureReferenceAndAddWatchpoint(
+            watchpoints, codeBlock, this);
+    }
         
-        unsigned bytecodeIndex;
+    unsigned bytecodeIndex;
 
-        int8_t accessType;
-        int8_t seen;
+    int8_t accessType;
+    int8_t seen;
 
 #if ENABLE(DFG_JIT)
-        CodeOrigin codeOrigin;
+    CodeOrigin codeOrigin;
 #endif // ENABLE(DFG_JIT)
 
-        union {
-            struct {
-                int8_t registersFlushed;
-                int8_t baseGPR;
+    union {
+        struct {
+            int8_t registersFlushed;
+            int8_t baseGPR;
 #if USE(JSVALUE32_64)
-                int8_t valueTagGPR;
+            int8_t valueTagGPR;
 #endif
-                int8_t valueGPR;
-                DFG::RegisterSetPOD usedRegisters;
-                int32_t deltaCallToDone;
-                int32_t deltaCallToStorageLoad;
-                int32_t deltaCallToStructCheck;
-                int32_t deltaCallToSlowCase;
-                int32_t deltaCheckImmToCall;
+            int8_t valueGPR;
+            DFG::RegisterSetPOD usedRegisters;
+            int32_t deltaCallToDone;
+            int32_t deltaCallToStorageLoad;
+            int32_t deltaCallToStructCheck;
+            int32_t deltaCallToSlowCase;
+            int32_t deltaCheckImmToCall;
 #if USE(JSVALUE64)
-                int32_t deltaCallToLoadOrStore;
+            int32_t deltaCallToLoadOrStore;
 #else
-                int32_t deltaCallToTagLoadOrStore;
-                int32_t deltaCallToPayloadLoadOrStore;
+            int32_t deltaCallToTagLoadOrStore;
+            int32_t deltaCallToPayloadLoadOrStore;
 #endif
-            } dfg;
-            struct {
-                union {
-                    struct {
-                        int16_t structureToCompare;
-                        int16_t structureCheck;
-                        int16_t propertyStorageLoad;
+        } dfg;
+        struct {
+            union {
+                struct {
+                    int16_t structureToCompare;
+                    int16_t structureCheck;
+                    int16_t propertyStorageLoad;
 #if USE(JSVALUE64)
-                        int16_t displacementLabel;
+                    int16_t displacementLabel;
 #else
-                        int16_t displacementLabel1;
-                        int16_t displacementLabel2;
+                    int16_t displacementLabel1;
+                    int16_t displacementLabel2;
 #endif
-                        int16_t putResult;
-                        int16_t coldPathBegin;
-                    } get;
-                    struct {
-                        int16_t structureToCompare;
-                        int16_t propertyStorageLoad;
+                    int16_t putResult;
+                    int16_t coldPathBegin;
+                } get;
+                struct {
+                    int16_t structureToCompare;
+                    int16_t propertyStorageLoad;
 #if USE(JSVALUE64)
-                        int16_t displacementLabel;
+                    int16_t displacementLabel;
 #else
-                        int16_t displacementLabel1;
-                        int16_t displacementLabel2;
+                    int16_t displacementLabel1;
+                    int16_t displacementLabel2;
 #endif
-                    } put;
-                } u;
-                int16_t methodCheckProtoObj;
-                int16_t methodCheckProtoStructureToCompare;
-                int16_t methodCheckPutFunction;
-            } baseline;
-        } patch;
+                } put;
+            } u;
+            int16_t methodCheckProtoObj;
+            int16_t methodCheckProtoStructureToCompare;
+            int16_t methodCheckPutFunction;
+        } baseline;
+    } patch;
 
-        union {
-            struct {
-                // It would be unwise to put anything here, as it will surely be overwritten.
-            } unset;
-            struct {
-                WriteBarrierBase<Structure> baseObjectStructure;
-            } getByIdSelf;
-            struct {
-                WriteBarrierBase<Structure> baseObjectStructure;
-                WriteBarrierBase<Structure> prototypeStructure;
-                bool isDirect;
-            } getByIdProto;
-            struct {
-                WriteBarrierBase<Structure> baseObjectStructure;
-                WriteBarrierBase<StructureChain> chain;
-                unsigned count : 31;
-                bool isDirect : 1;
-            } getByIdChain;
-            struct {
-                PolymorphicAccessStructureList* structureList;
-                int listSize;
-            } getByIdSelfList;
-            struct {
-                PolymorphicAccessStructureList* structureList;
-                int listSize;
-            } getByIdProtoList;
-            struct {
-                WriteBarrierBase<Structure> previousStructure;
-                WriteBarrierBase<Structure> structure;
-                WriteBarrierBase<StructureChain> chain;
-            } putByIdTransition;
-            struct {
-                WriteBarrierBase<Structure> baseObjectStructure;
-            } putByIdReplace;
-            struct {
-                PolymorphicPutByIdList* list;
-            } putByIdList;
-        } u;
+    union {
+        struct {
+            // It would be unwise to put anything here, as it will surely be overwritten.
+        } unset;
+        struct {
+            WriteBarrierBase<Structure> baseObjectStructure;
+        } getByIdSelf;
+        struct {
+            WriteBarrierBase<Structure> baseObjectStructure;
+            WriteBarrierBase<Structure> prototypeStructure;
+            bool isDirect;
+        } getByIdProto;
+        struct {
+            WriteBarrierBase<Structure> baseObjectStructure;
+            WriteBarrierBase<StructureChain> chain;
+            unsigned count : 31;
+            bool isDirect : 1;
+        } getByIdChain;
+        struct {
+            PolymorphicAccessStructureList* structureList;
+            int listSize;
+        } getByIdSelfList;
+        struct {
+            PolymorphicAccessStructureList* structureList;
+            int listSize;
+        } getByIdProtoList;
+        struct {
+            WriteBarrierBase<Structure> previousStructure;
+            WriteBarrierBase<Structure> structure;
+            WriteBarrierBase<StructureChain> chain;
+        } putByIdTransition;
+        struct {
+            WriteBarrierBase<Structure> baseObjectStructure;
+        } putByIdReplace;
+        struct {
+            PolymorphicPutByIdList* list;
+        } putByIdList;
+    } u;
 
-        RefPtr<JITStubRoutine> stubRoutine;
-        CodeLocationCall callReturnLocation;
-        CodeLocationLabel hotPathBegin;
-        RefPtr<WatchpointsOnStructureStubInfo> watchpoints;
-    };
+    RefPtr<JITStubRoutine> stubRoutine;
+    CodeLocationCall callReturnLocation;
+    CodeLocationLabel hotPathBegin;
+    RefPtr<WatchpointsOnStructureStubInfo> watchpoints;
+};
 
-    inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)
-    {
-        return structureStubInfo->callReturnLocation.executableAddress();
-    }
+inline void* getStructureStubInfoReturnLocation(StructureStubInfo* structureStubInfo)
+{
+    return structureStubInfo->callReturnLocation.executableAddress();
+}
 
-    inline unsigned getStructureStubInfoBytecodeIndex(StructureStubInfo* structureStubInfo)
-    {
-        return structureStubInfo->bytecodeIndex;
-    }
+inline unsigned getStructureStubInfoBytecodeIndex(StructureStubInfo* structureStubInfo)
+{
+    return structureStubInfo->bytecodeIndex;
+}
 
 } // namespace JSC
 

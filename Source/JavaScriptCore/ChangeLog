@@ -1,5 +1,13 @@
 2013-02-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix indentation of StructureStubInfo.h
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/StructureStubInfo.h:
+
+2013-02-18  Filip Pizlo  <fpizlo@apple.com>
+
         Fix indentation of JSGlobalObject.h and JSGlobalObjectFunctions.h
 
         Rubber stamped by Mark Hahnenberg.
