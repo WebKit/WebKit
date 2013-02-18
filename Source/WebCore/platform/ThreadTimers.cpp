@@ -142,7 +142,6 @@ void ThreadTimers::fireTimersInNestedEventLoop()
 {
     // Reset the reentrancy guard so the timers can fire again.
     m_firingTimers = false;
-    m_sharedTimer->willEnterNestedEventLoop();
     updateSharedTimer();
 }
 
