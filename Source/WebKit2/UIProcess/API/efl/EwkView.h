@@ -146,7 +146,7 @@ public:
     void paintToCairoSurface(cairo_surface_t*);
 
     const char* url() const { return m_url; }
-    const char* faviconURL() const { return m_faviconURL; }
+    Evas_Object* createFavicon() const;
     const char* title() const;
     WebKit::InputMethodContextEfl* inputMethodContext();
 
@@ -232,8 +232,6 @@ private:
 
     WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
 
-    void informIconChange();
-
     // Evas_Smart_Class callback interface:
     static void handleEvasObjectAdd(Evas_Object*);
     static void handleEvasObjectDelete(Evas_Object*);
@@ -289,7 +287,6 @@ private:
     OwnPtr<EwkSettings> m_settings;
     RefPtr<EwkWindowFeatures> m_windowFeatures;
     const void* m_cursorIdentifier; // This is an address, do not free it.
-    WKEinaSharedString m_faviconURL;
     WKEinaSharedString m_url;
     mutable WKEinaSharedString m_title;
     WKEinaSharedString m_theme;

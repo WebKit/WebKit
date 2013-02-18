@@ -54,7 +54,7 @@ enum CallbackType {
     DownloadJobRequested,
     FileChooserRequest,
     NewFormSubmissionRequest,
-    IconChanged,
+    FaviconChanged,
     LoadError,
     LoadFinished,
     LoadProgress,
@@ -164,7 +164,7 @@ DECLARE_EWK_VIEW_CALLBACK(DownloadJobFinished, "download,finished", Ewk_Download
 DECLARE_EWK_VIEW_CALLBACK(DownloadJobRequested, "download,request", Ewk_Download_Job*);
 DECLARE_EWK_VIEW_CALLBACK(FileChooserRequest, "file,chooser,request", Ewk_File_Chooser_Request*);
 DECLARE_EWK_VIEW_CALLBACK(NewFormSubmissionRequest, "form,submission,request", Ewk_Form_Submission_Request*);
-DECLARE_EWK_VIEW_CALLBACK(IconChanged, "icon,changed", void);
+DECLARE_EWK_VIEW_CALLBACK(FaviconChanged, "favicon,changed", void);
 DECLARE_EWK_VIEW_CALLBACK(LoadError, "load,error", Ewk_Error*);
 DECLARE_EWK_VIEW_CALLBACK(LoadFinished, "load,finished", void);
 DECLARE_EWK_VIEW_CALLBACK(LoadProgress, "load,progress", double*);

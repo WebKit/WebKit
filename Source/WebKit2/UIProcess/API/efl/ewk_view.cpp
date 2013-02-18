@@ -131,11 +131,11 @@ const char* ewk_view_url_get(const Evas_Object* ewkView)
     return impl->url();
 }
 
-const char *ewk_view_icon_url_get(const Evas_Object *ewkView)
+Evas_Object* ewk_view_favicon_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, 0);
 
-    return impl->faviconURL();
+    return impl->createFavicon();
 }
 
 Eina_Bool ewk_view_reload(Evas_Object* ewkView)

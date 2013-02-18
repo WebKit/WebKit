@@ -1,3 +1,49 @@
+2013-02-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Refactor Ewk_Favicon code and stop relying on internal C++ API
+        https://bugs.webkit.org/show_bug.cgi?id=108598
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Refactor the Ewk_Favicon code so that it no longer relies on internal
+        C++ API and so that it is based solely on the C API. The API is changed
+        a little as well so that the Favicon URL is no longer exposed to the
+        client. Also the client is now only notified of icon changes once the
+        favicon data is actually available.
+
+        The API is covered by existing API tests and by MiniBrowser which are
+        both updated accordingly in this patch.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::informURLChange):
+        (EwkView::createFavicon):
+        (EwkView::onFaviconChanged):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+        * UIProcess/API/efl/EwkViewCallbacks.h:
+        * UIProcess/API/efl/ewk_favicon_database.cpp:
+        Client are now notified of favicon changes only when the favicon data
+        becomes available and make API to retrieve a favicon synchronous. NULL
+        is returned if the favicon data is not available.
+
+        (EwkFaviconDatabase::EwkFaviconDatabase):
+        (EwkFaviconDatabase::getIconSurfaceSynchronously):
+        (EwkFaviconDatabase::iconDataReadyForPageURL):
+        (ewk_favicon_database_icon_get):
+        * UIProcess/API/efl/ewk_favicon_database.h:
+        * UIProcess/API/efl/ewk_favicon_database_private.h:
+        (EwkFaviconDatabase):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_favicon_get):
+        * UIProcess/API/efl/ewk_view.h:
+        Rename 'icon,changed' signal to 'favicon,changed' for clarity and
+        consistency with the rest of the favicon API. Remove API to retrieve
+        the favicon URL and replace it by one to retrieve the favicon image as
+        an Evas_Object instead.
+
+        * UIProcess/API/efl/tests/test_ewk2_favicon_database.cpp:
+        Update API tests to use the new favicon API.
+
 2013-02-17  Jae Hyun Park  <jae.park@company100.net>
 
         Remove unnecessary public method DrawingAreaImpl::createGraphicsContext()

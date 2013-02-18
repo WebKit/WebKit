@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -46,27 +47,7 @@ struct IconChangeCallbackData {
     { }
 };
 
-struct IconRequestCallbackData {
-    Ewk_Favicon_Database_Async_Icon_Get_Cb callback;
-    void* userData;
-    Evas* evas;
-
-    IconRequestCallbackData()
-        : callback(0)
-        , userData(0)
-        , evas(0)
-    { }
-
-    IconRequestCallbackData(Ewk_Favicon_Database_Async_Icon_Get_Cb _callback, void* _userData, Evas* _evas)
-        : callback(_callback)
-        , userData(_userData)
-        , evas(_evas)
-    { }
-};
-
 typedef HashMap<Ewk_Favicon_Database_Icon_Change_Cb, IconChangeCallbackData> ChangeListenerMap;
-typedef Vector<IconRequestCallbackData> PendingIconRequestVector;
-typedef HashMap<String /* pageURL */, PendingIconRequestVector> PendingIconRequestMap;
 
 class EwkFaviconDatabase {
 public:
@@ -76,23 +57,18 @@ public:
     }
     ~EwkFaviconDatabase();
 
-    String iconURLForPageURL(const String& pageURL) const;
-    void iconForPageURL(const char* pageURL, const IconRequestCallbackData& callbackData);
-
+    PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(const char* pageURL) const;
     void watchChanges(const IconChangeCallbackData& callbackData);
     void unwatchChanges(Ewk_Favicon_Database_Icon_Change_Cb callback);
 
 private:
     explicit EwkFaviconDatabase(WKIconDatabaseRef iconDatabase);
 
-    PassRefPtr<cairo_surface_t> getIconSurfaceSynchronously(WKURLRef pageURL) const;
-
     static void didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
     static void iconDataReadyForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo);
 
     WKRetainPtr<WKIconDatabaseRef> m_iconDatabase;
     ChangeListenerMap m_changeListeners;
-    PendingIconRequestMap m_iconRequests;
 };
 
 #endif // ewk_favicon_database_private_h

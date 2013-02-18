@@ -1,3 +1,17 @@
+2013-02-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Refactor Ewk_Favicon code and stop relying on internal C++ API
+        https://bugs.webkit.org/show_bug.cgi?id=108598
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Update EFL's MiniBrowser to make use of new Ewk_Favicon API.
+
+        * MiniBrowser/efl/main.c:
+        (update_view_favicon):
+        (on_view_favicon_changed):
+        (window_create):
+
 2013-02-18  Zoltan Arvai  <zarvai@inf.u-szeged.hu>
 
         Unreviewed. Add myself as a committer.

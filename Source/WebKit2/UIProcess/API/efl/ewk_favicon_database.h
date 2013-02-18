@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Intel Corporation. All rights reserved.
+ * Copyright (C) 2013 Samsung Electronics. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -47,40 +48,16 @@ typedef struct EwkFaviconDatabase Ewk_Favicon_Database;
 typedef void (*Ewk_Favicon_Database_Icon_Change_Cb)(const char *page_url, void *event_info);
 
 /**
- * @typedef Ewk_Favicon_Database_Async_Icon_Get_Cb Ewk_Favicon_Database_Async_Icon_Get_Cb
- * @brief Callback type for use with ewk_favicon_database_async_icon_get
- *
- * The @a icon may be NULL if there is no favicon associated to the given @a page_url.
- *
- * You need to call evas_object_ref() on the @a icon if you wish to keep it after the
- * callback is executed.
- */
-typedef void (*Ewk_Favicon_Database_Async_Icon_Get_Cb)(const char *page_url, Evas_Object *icon, void *event_info);
-
-/**
- * Retrieves from the database the favicon URL for the given @a page_url
- *
- * @param database database object to query
- * @param page_url URL of the page to get the favicon URL for
- *
- * @return a newly allocated string guaranteed to be eina_stringshare
- *         or @c NULL in case of error or if the key does not exist.
- *         You need to call eina_stringshare_del() after use.
- */
-EAPI const char *ewk_favicon_database_icon_url_get(Ewk_Favicon_Database *database, const char *page_url);
-
-/**
- * Retrieves asynchronously from the database the favicon for the given @a page_url
+ * Retrieves from the database the favicon for the given @a page_url
  *
  * @param database database object to query
  * @param page_url URL of the page to get the favicon for
  * @param evas The canvas to add the favicon to
- * @param callback callback function to be called when the icon is retrieved
- * @param data the data pointer that was to be passed to the callback
  *
- * @return @c EINA_TRUE if the icon was successfuly requested, @c EINA_FALSE otherwise
+ * @return The favicon as an Evas_Object if successful, @c NULL otherwise.
+ * The returned Evas_Object needs to be freed after use.
  */
-EAPI Eina_Bool ewk_favicon_database_async_icon_get(Ewk_Favicon_Database *database, const char *page_url, Evas *evas, Ewk_Favicon_Database_Async_Icon_Get_Cb callback, void *data);
+EAPI Evas_Object *ewk_favicon_database_icon_get(Ewk_Favicon_Database *database, const char *page_url, Evas *evas);
 
 /**
  * Add (register) a callback function to a icon change event
