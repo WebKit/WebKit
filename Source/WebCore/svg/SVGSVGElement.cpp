@@ -598,7 +598,7 @@ FloatSize SVGSVGElement::currentViewportSize() const
     }
 
     FloatRect viewportRect = toRenderSVGViewportContainer(renderer())->viewport();
-    return FloatSize(viewportRect.width() / renderer()->style()->effectiveZoom(), viewportRect.height() / renderer()->style()->effectiveZoom());
+    return FloatSize(viewportRect.width(), viewportRect.height());
 }
 
 bool SVGSVGElement::widthAttributeEstablishesViewport() const
