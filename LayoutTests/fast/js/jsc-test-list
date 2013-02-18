@@ -207,6 +207,7 @@ fast/js/exception-try-finally-scope-error
 fast/js/exception-with-handler-inside-eval-with-dynamic-scope
 fast/js/excessive-comma-usage
 fast/js/finally-codegen-failure
+fast/js/flatten-dictionary-structure-from-which-all-properties-were-deleted
 fast/js/for-in-avoid-duplicates
 fast/js/for-in-cached
 fast/js/for-in-exeception

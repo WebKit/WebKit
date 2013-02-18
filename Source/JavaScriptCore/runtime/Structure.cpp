@@ -643,6 +643,7 @@ Structure* Structure::flattenDictionaryStructure(JSGlobalData& globalData, JSObj
         // Copies out our values from their hashed locations, compacting property table offsets as we go.
         unsigned i = 0;
         PropertyTable::iterator end = m_propertyTable->end();
+        m_offset = invalidOffset;
         for (PropertyTable::iterator iter = m_propertyTable->begin(); iter != end; ++iter, ++i) {
             values[i] = object->getDirect(iter->offset);
             m_offset = iter->offset = offsetForPropertyNumber(i, m_inlineCapacity);

@@ -1,3 +1,25 @@
+2013-02-18  Filip Pizlo  <fpizlo@apple.com>
+
+        Structure::flattenDictionaryStructure should compute max offset in a manner that soundly handles the case where the property list becomes empty
+        https://bugs.webkit.org/show_bug.cgi?id=110155
+        <rdar://problem/13233773>
+
+        Reviewed by Mark Rowe.
+        
+        This was a rookie mistake.  It was doing:
+        
+        for (blah) {
+            m_offset = foo // foo's monotonically increase in the loop
+        }
+        
+        as a way of computing max offset for all of the properties.  Except what if the loop doesn't
+        execute because there are no properties?  Well, then, you're going to have a bogus m_offset.
+        
+        The solution is to initialize m_offset at the top of the loop.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::flattenDictionaryStructure):
+
 2013-02-18  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         MIPS DFG implementation.
