@@ -1200,6 +1200,8 @@ css3/filters/custom-with-at-rule-syntax/parsing-custom-function-invalid.html
 css3/filters/custom-with-at-rule-syntax/parsing-custom-function-valid.html
 css3/filters/custom-with-at-rule-syntax/parsing-at-rule-invalid.html
 css3/filters/custom-with-at-rule-syntax/parsing-at-rule-valid.html
+css3/filters/custom-with-at-rule-syntax/parsing-src-property-invalid.html
+css3/filters/custom-with-at-rule-syntax/parsing-src-property-valid.html
 
 # The following tests need further investigation:
 # https://bugs.webkit.org/show_bug.cgi?id=101531
@@ -1894,6 +1896,10 @@ webkit.org/b/109224 fast/forms/number/number-l10n-input.html [ Skip ]
 
 # [Qt] New fast/flexbox/line-clamp-link-after-ellipsis.html layout test is failing since r142335.
 webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Skip ]
+
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ Skip ]
+
+webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Skip ]
 
 # ============================================================================= #
 # failing security tests
