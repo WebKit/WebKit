@@ -81,7 +81,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
         _log.info('Obtaining commit logs for %d revisions' % len(revisions))
         for revision in revisions:
             commit_log = self._tool.scm().svn_commit_log(revision)
-            self._tool.irc().post(self._summarize_commit_log(commit_log))
+            self._tool.irc().post(self._summarize_commit_log(commit_log).encode('ascii', 'ignore'))
 
         return
 
