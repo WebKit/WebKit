@@ -159,19 +159,6 @@ void Database::markAsDeletedAndClose()
     synchronizer.waitForTaskCompletion();
 }
 
-void Database::close()
-{
-    ASSERT(databaseContext()->databaseThread());
-    ASSERT(currentThread() == databaseContext()->databaseThread()->getThreadID());
-
-    closeDatabase();
-
-    // Must ref() before calling databaseThread()->recordDatabaseClosed().
-    RefPtr<Database> protect = this;
-    databaseContext()->databaseThread()->recordDatabaseClosed(this);
-    databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
-}
-
 void Database::closeImmediately()
 {
     ASSERT(m_scriptExecutionContext->isContextThread());

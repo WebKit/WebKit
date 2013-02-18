@@ -71,7 +71,6 @@ public:
     virtual void markAsDeletedAndClose();
     bool deleted() const { return m_deleted; }
 
-    void close();
     virtual void closeImmediately();
 
     unsigned long long databaseSize() const;

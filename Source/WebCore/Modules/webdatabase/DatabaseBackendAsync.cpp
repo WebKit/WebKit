@@ -78,6 +78,40 @@ bool DatabaseBackendAsync::performOpenAndVerify(bool setVersionInNewDatabase, Da
     return false;
 }
 
+void DatabaseBackendAsync::close()
+{
+    ASSERT(databaseContext()->databaseThread());
+    ASSERT(currentThread() == databaseContext()->databaseThread()->getThreadID());
+
+    {
+        MutexLocker locker(m_transactionInProgressMutex);
+
+        // Clean up transactions that have not been scheduled yet:
+        // Transaction phase 1 cleanup. See comment on "What happens if a
+        // transaction is interrupted?" at the top of SQLTransactionBackend.cpp.
+        RefPtr<SQLTransactionBackend> transaction;
+        while (!m_transactionQueue.isEmpty()) {
+            transaction = m_transactionQueue.takeFirst();
+            transaction->notifyDatabaseThreadIsShuttingDown();
+        }
+
+        m_isTransactionQueueEnabled = false;
+        m_transactionInProgress = false;
+    }
+
+    closeDatabase();
+
+    // DatabaseThread keeps databases alive by referencing them in its
+    // m_openDatabaseSet. DatabaseThread::recordDatabaseClose() will remove
+    // this database from that set (which effectively deref's it). We hold on
+    // to it with a local pointer here for a liitle longer, so that we can
+    // unschedule any DatabaseTasks that refer to it before the database gets
+    // deleted.
+    RefPtr<DatabaseBackendAsync> protect = this;
+    databaseContext()->databaseThread()->recordDatabaseClosed(this);
+    databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
+}
+
 PassRefPtr<SQLTransactionBackend> DatabaseBackendAsync::runTransaction(PassRefPtr<SQLTransaction> transaction,
     bool readOnly, const ChangeVersionData* data)
 {

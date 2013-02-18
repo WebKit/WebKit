@@ -137,6 +137,8 @@ private:
 
 class DatabaseBackendAsync::DatabaseTransactionTask : public DatabaseTask {
 public:
+    virtual ~DatabaseTransactionTask();
+
     // Transaction task is never synchronous, so no 'synchronizer' parameter.
     static PassOwnPtr<DatabaseTransactionTask> create(PassRefPtr<SQLTransactionBackend> transaction)
     {
@@ -154,6 +156,7 @@ private:
 #endif
 
     RefPtr<SQLTransactionBackend> m_transaction;
+    bool m_didPerformTask;
 };
 
 class DatabaseBackendAsync::DatabaseTableNamesTask : public DatabaseTask {
