@@ -299,6 +299,7 @@
 		A8A47486151A825B004123FF /* WTFThreadData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A8A4737A151A825B004123FF /* WTFThreadData.cpp */; };
 		A8A47487151A825B004123FF /* WTFThreadData.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4737B151A825B004123FF /* WTFThreadData.h */; };
 		A8A4748C151A8264004123FF /* config.h in Headers */ = {isa = PBXBuildFile; fileRef = A8A4748B151A8264004123FF /* config.h */; };
+		B38FD7BD168953E80065C969 /* FeatureDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = B38FD7BC168953E80065C969 /* FeatureDefines.h */; };
 		CD5497AC15857D0300B5BC30 /* MediaTime.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD5497AA15857D0300B5BC30 /* MediaTime.cpp */; };
 		CD5497AD15857D0300B5BC30 /* MediaTime.h in Headers */ = {isa = PBXBuildFile; fileRef = CD5497AB15857D0300B5BC30 /* MediaTime.h */; };
 		EB95E1F0161A72410089A2F5 /* ByteOrder.h in Headers */ = {isa = PBXBuildFile; fileRef = EB95E1EF161A72410089A2F5 /* ByteOrder.h */; };
@@ -610,6 +611,7 @@
 		A8A4737A151A825B004123FF /* WTFThreadData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WTFThreadData.cpp; sourceTree = "<group>"; };
 		A8A4737B151A825B004123FF /* WTFThreadData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WTFThreadData.h; sourceTree = "<group>"; };
 		A8A4748B151A8264004123FF /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		B38FD7BC168953E80065C969 /* FeatureDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FeatureDefines.h; sourceTree = "<group>"; };
 		CD5497AA15857D0300B5BC30 /* MediaTime.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaTime.cpp; sourceTree = "<group>"; };
 		CD5497AB15857D0300B5BC30 /* MediaTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaTime.h; sourceTree = "<group>"; };
 		EB95E1EF161A72410089A2F5 /* ByteOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ByteOrder.h; sourceTree = "<group>"; };
@@ -730,6 +732,7 @@
 				0FD81AC4154FB22E00983E72 /* FastBitVector.h */,
 				A8A472A1151A825A004123FF /* FastMalloc.cpp */,
 				A8A472A2151A825A004123FF /* FastMalloc.h */,
+				B38FD7BC168953E80065C969 /* FeatureDefines.h */,
 				0F9D335B165DBA73005AD387 /* FilePrintStream.cpp */,
 				0F9D335C165DBA73005AD387 /* FilePrintStream.h */,
 				A8A472A3151A825A004123FF /* FixedArray.h */,
@@ -1103,6 +1106,7 @@
 				A8A473C2151A825B004123FF /* FastAllocBase.h in Headers */,
 				0FD81AC5154FB22E00983E72 /* FastBitVector.h in Headers */,
 				A8A473C4151A825B004123FF /* FastMalloc.h in Headers */,
+				B38FD7BD168953E80065C969 /* FeatureDefines.h in Headers */,
 				0F9D3361165DBA73005AD387 /* FilePrintStream.h in Headers */,
 				A8A473B6151A825B004123FF /* fixed-dtoa.h in Headers */,
 				A8A473C5151A825B004123FF /* FixedArray.h in Headers */,

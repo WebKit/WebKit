@@ -781,6 +781,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\wtf\FeatureDefines.h"
+			>
+		</File>
+		<File
 			RelativePath="..\wtf\FilePrintStream.cpp"
 			>
 		</File>

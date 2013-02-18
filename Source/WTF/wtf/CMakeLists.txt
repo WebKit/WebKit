@@ -26,6 +26,7 @@ set(WTF_HEADERS
     Encoder.h
     FastAllocBase.h
     FastMalloc.h
+    FeatureDefines.h
     FilePrintStream.h
     FixedArray.h
     Forward.h

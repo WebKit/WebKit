@@ -49,6 +49,7 @@ wtf_sources += \
     Source/WTF/wtf/FastBitVector.h \
     Source/WTF/wtf/FastMalloc.cpp \
     Source/WTF/wtf/FastMalloc.h \
+    Source/WTF/wtf/FeatureDefines.h \
     Source/WTF/wtf/FilePrintStream.cpp \
     Source/WTF/wtf/FilePrintStream.h \
     Source/WTF/wtf/FixedArray.h \

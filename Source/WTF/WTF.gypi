@@ -31,6 +31,7 @@
             'wtf/Encoder.h',
             'wtf/FastAllocBase.h',
             'wtf/FastMalloc.h',
+            'wtf/FeatureDefines.h',
             'wtf/FilePrintStream.h',
             'wtf/FixedArray.h',
             'wtf/Forward.h',

@@ -114,6 +114,7 @@
       'ENABLE_SPEECH_SYNTHESIS=0',
       'ENABLE_SQL_DATABASE=1',
       'ENABLE_STYLE_SCOPED=1',
+      'ENABLE_SUBPIXEL_LAYOUT=1',
       'ENABLE_SVG=<(enable_svg)',
       'ENABLE_SVG_FONTS=<(enable_svg)',
       'ENABLE_TEMPLATE_ELEMENT=1',

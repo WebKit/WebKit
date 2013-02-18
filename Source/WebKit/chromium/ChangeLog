@@ -1,3 +1,15 @@
+2013-02-18  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Move ENABLE macros for WebCore out from Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=105735
+
+        Move the chromium specific WebCore ENABLE macro definitions
+        from Platform.h to features.gypi.
+
+        Reviewed by Darin Adler and Benjamin Poulain.
+
+        * features.gypi: Set ENABLE_SUBPIXEL_LAYOUT to 1.
+
 2013-02-15  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Stub out SharedBuffer version of get()
