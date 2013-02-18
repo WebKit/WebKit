@@ -169,10 +169,13 @@ void deleteCookie(const NetworkStorageSession& session, const KURL& url, const S
         return;
 
     CString cookieName = name.utf8();
+    bool wasDeleted = false;
     for (GSList* iter = cookies.get(); iter; iter = g_slist_next(iter)) {
         GOwnPtr<SoupCookie> cookie(static_cast<SoupCookie*>(iter->data));
-        if (cookieName == cookie->name)
+        if (!wasDeleted && cookieName == cookie->name) {
             soup_cookie_jar_delete_cookie(jar, cookie.get());
+            wasDeleted = true;
+        }
     }
 }
 
