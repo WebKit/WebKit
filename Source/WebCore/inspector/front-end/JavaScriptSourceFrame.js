@@ -30,7 +30,7 @@
 
 /**
  * @constructor
- * @extends {WebInspector.SourceFrame}
+ * @extends {WebInspector.UISourceCodeFrame}
  * @param {WebInspector.ScriptsPanel} scriptsPanel
  * @param {WebInspector.UISourceCode} uiSourceCode
  */
@@ -44,7 +44,7 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
     for (var i = 0; i < locations.length; ++i)
         this._breakpointAdded({data:locations[i]});
 
-    WebInspector.SourceFrame.call(this, uiSourceCode);
+    WebInspector.UISourceCodeFrame.call(this, uiSourceCode);
 
     this._popoverHelper = new WebInspector.ObjectPopoverHelper(this.textEditor.element,
             this._getPopoverAnchor.bind(this), this._resolveObjectForPopover.bind(this), this._onHidePopover.bind(this), true);
@@ -56,9 +56,6 @@ WebInspector.JavaScriptSourceFrame = function(scriptsPanel, uiSourceCode)
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointAdded, this._breakpointAdded, this);
     this._breakpointManager.addEventListener(WebInspector.BreakpointManager.Events.BreakpointRemoved, this._breakpointRemoved, this);
 
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.FormattedChanged, this._onFormattedChanged, this);
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyChanged, this._onWorkingCopyChanged, this);
-    this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.WorkingCopyCommitted, this._onWorkingCopyCommitted, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessageRemoved, this._consoleMessageRemoved, this);
     this._uiSourceCode.addEventListener(WebInspector.UISourceCode.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
@@ -81,60 +78,14 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     },
 
     /**
-     * @return {boolean}
+     * @param {string} content
      */
-    canEditSource: function()
+    onUISourceCodeContentChanged: function(content, contentEncoded, mimeType)
     {
-        return this._uiSourceCode.isEditable();
-    },
-
-    /**
-     * @param {string} text
-     */
-    commitEditing: function(text)
-    {
-        if (!this._uiSourceCode.isDirty())
-            return;
-
-        this._isCommittingEditing = true;
-        this._uiSourceCode.commitWorkingCopy(function() { });
-        delete this._isCommittingEditing;
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _onFormattedChanged: function(event)
-    {
-        var content = /** @type {string} */ (event.data.content);
-        this._textEditor.setReadOnly(this._uiSourceCode.formatted());
-        this.setContent(content, false, this._uiSourceCode.mimeType());
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _onWorkingCopyChanged: function(event)
-    {
-        this._innerSetContent(this._uiSourceCode.workingCopy());
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _onWorkingCopyCommitted: function(event)
-    {
-        this._innerSetContent(this._uiSourceCode.workingCopy());
-    },
-
-    _innerSetContent: function(content)
-    {
-        if (this._isSettingWorkingCopy || this._isCommittingEditing)
-            return;
         var breakpointLocations = this._breakpointManager.breakpointLocationsForUISourceCode(this._uiSourceCode);
         for (var i = 0; i < breakpointLocations.length; ++i)
             breakpointLocations[i].breakpoint.remove();
-        this.setContent(content, false, this._uiSourceCode.mimeType());
+        WebInspector.UISourceCodeFrame.prototype.onUISourceCodeContentChanged.call(this, content);
     },
 
     populateLineGutterContextMenu: function(contextMenu, lineNumber)
@@ -180,15 +131,7 @@ WebInspector.JavaScriptSourceFrame.prototype = {
             contextMenu.appendItem(liveEditLabel, liveEdit.bind(this));
             contextMenu.appendSeparator();
         }
-        contextMenu.appendApplicableItems(this._uiSourceCode);
-    },
-
-    onTextChanged: function(oldRange, newRange)
-    {
-        WebInspector.SourceFrame.prototype.onTextChanged.call(this, oldRange, newRange);
-        this._isSettingWorkingCopy = true;
-        this._uiSourceCode.setWorkingCopy(this._textEditor.text());
-        delete this._isSettingWorkingCopy;
+        WebInspector.UISourceCodeFrame.prototype.populateTextAreaContextMenu.call(this, contextMenu, lineNumber);
     },
 
     _willMergeToVM: function()
@@ -644,5 +587,5 @@ WebInspector.JavaScriptSourceFrame.prototype = {
         WebInspector.debuggerModel.continueToLocation(rawLocation);
     },
 
-    __proto__: WebInspector.SourceFrame.prototype
+    __proto__: WebInspector.UISourceCodeFrame.prototype
 }

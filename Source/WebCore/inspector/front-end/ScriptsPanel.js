@@ -27,6 +27,7 @@
 importScript("BreakpointsSidebarPane.js");
 importScript("CallStackSidebarPane.js");
 importScript("FilteredItemSelectionDialog.js");
+importScript("UISourceCodeFrame.js");
 importScript("JavaScriptSourceFrame.js");
 importScript("NavigatorOverlayController.js");
 importScript("NavigatorView.js");
@@ -37,7 +38,6 @@ importScript("ScriptsSearchScope.js");
 importScript("SnippetJavaScriptSourceFrame.js");
 importScript("StyleSheetOutlineDialog.js");
 importScript("TabbedEditorContainer.js");
-importScript("UISourceCodeFrame.js");
 importScript("WatchExpressionsSidebarPane.js");
 importScript("WorkersSidebarPane.js");
 

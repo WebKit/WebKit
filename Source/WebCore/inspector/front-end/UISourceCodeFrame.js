@@ -46,7 +46,7 @@ WebInspector.UISourceCodeFrame.prototype = {
      */
     canEditSource: function()
     {
-        return true;
+        return this._uiSourceCode.isEditable();
     },
 
     /**
@@ -64,6 +64,7 @@ WebInspector.UISourceCodeFrame.prototype = {
 
     onTextChanged: function(oldRange, newRange)
     {
+        WebInspector.SourceFrame.prototype.onTextChanged.call(this, oldRange, newRange);
         this._isSettingWorkingCopy = true;
         this._uiSourceCode.setWorkingCopy(this._textEditor.text());
         delete this._isSettingWorkingCopy;
@@ -84,7 +85,7 @@ WebInspector.UISourceCodeFrame.prototype = {
     {
         var content = /** @type {string} */ (event.data.content);
         this._textEditor.setReadOnly(this._uiSourceCode.formatted());
-        this._innerSetContent(content);
+        this.setContent(content, false, this._uiSourceCode.mimeType());
     },
 
     /**
@@ -103,12 +104,22 @@ WebInspector.UISourceCodeFrame.prototype = {
         this._innerSetContent(this._uiSourceCode.workingCopy());
     },
 
+    /**
+     * @param {string} content
+     */
+    onUISourceCodeContentChanged: function(content)
+    {
+        this.setContent(content, false, this._uiSourceCode.mimeType());
+    },
+
+    /**
+     * @param {string} content
+     */
     _innerSetContent: function(content)
     {
         if (this._isSettingWorkingCopy || this._isCommittingEditing)
             return;
-
-        this.setContent(this._uiSourceCode.content() || "", false, this._uiSourceCode.contentType().canonicalMimeType());
+        this.onUISourceCodeContentChanged(content);
     },
 
     populateTextAreaContextMenu: function(contextMenu, lineNumber)
