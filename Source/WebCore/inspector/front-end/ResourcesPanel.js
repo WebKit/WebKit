@@ -193,7 +193,7 @@ WebInspector.ResourcesPanel.prototype = {
         this.sessionStorageListTreeElement.removeChildren();
         this.cookieListTreeElement.removeChildren();
 
-        if (this.visibleView)
+        if (this.visibleView && !(this.visibleView instanceof WebInspector.StorageCategoryView))
             this.visibleView.detach();
 
         this.storageViewStatusBarItemsContainer.removeChildren();
@@ -933,8 +933,10 @@ WebInspector.BaseStorageTreeElement.prototype = {
         }
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
+        if (!selectedByUser)
+            return;
         var itemURL = this.itemURL;
         if (itemURL)
             WebInspector.settings.resourcesLastSelectedItem.set(itemURL);
@@ -995,9 +997,9 @@ WebInspector.StorageCategoryTreeElement.prototype = {
         return "category://" + this._categoryName;
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel.showCategoryView(this._categoryName);
     },
 
@@ -1052,9 +1054,9 @@ WebInspector.FrameTreeElement.prototype = {
         return "frame://" + encodeURI(this.displayName);
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel.showCategoryView(this.displayName);
 
         this.listItemElement.removeStyleClass("hovered");
@@ -1160,9 +1162,9 @@ WebInspector.FrameResourceTreeElement.prototype = {
         return this._resource.url;
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel._showResourceView(this._resource);
     },
 
@@ -1327,9 +1329,9 @@ WebInspector.DatabaseTreeElement.prototype = {
         return "database://" + encodeURI(this._database.name);
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel._showDatabase(this._database);
     },
 
@@ -1371,9 +1373,9 @@ WebInspector.DatabaseTableTreeElement.prototype = {
         return "database://" + encodeURI(this._database.name) + "/" + encodeURI(this._tableName);
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel._showDatabase(this._database, this._tableName);
     },
 
@@ -1643,9 +1645,9 @@ WebInspector.IDBDatabaseTreeElement.prototype = {
         this.tooltip = WebInspector.UIString("Version") + ": " + this._database.version;
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         if (!this._view)
             this._view = new WebInspector.IDBDatabaseView(this._database);
 
@@ -1744,9 +1746,9 @@ WebInspector.IDBObjectStoreTreeElement.prototype = {
         this.tooltip = tooltipString
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         if (!this._view)
             this._view = new WebInspector.IDBDataView(this._model, this._databaseId, this._objectStore, null);
 
@@ -1824,9 +1826,9 @@ WebInspector.IDBIndexTreeElement.prototype = {
         this.tooltip = tooltipLines.join("\n");
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         if (!this._view)
             this._view = new WebInspector.IDBDataView(this._model, this._databaseId, this._objectStore, this._index);
 
@@ -1858,9 +1860,9 @@ WebInspector.DOMStorageTreeElement.prototype = {
         return "storage://" + this._domStorage.domain + "/" + (this._domStorage.isLocalStorage ? "local" : "session");
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel._showDOMStorage(this._domStorage);
     },
 
@@ -1883,9 +1885,9 @@ WebInspector.CookieTreeElement.prototype = {
         return "cookies://" + this._cookieDomain;
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel.showCookies(this, this._cookieDomain);
     },
 
@@ -1915,9 +1917,9 @@ WebInspector.ApplicationCacheManifestTreeElement.prototype = {
         return this._manifestURL;
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel.showCategoryView(this._manifestURL);
     },
 
@@ -1968,9 +1970,9 @@ WebInspector.ApplicationCacheFrameTreeElement.prototype = {
         this._refreshTitles();
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._storagePanel.showApplicationCache(this._frameId);
     },
 
@@ -2001,16 +2003,16 @@ WebInspector.FileSystemTreeElement.prototype = {
         return "filesystem://" + this._fileSystem.name;
     },
 
-    onselect: function()
+    onselect: function(selectedByUser)
     {
-        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this);
+        WebInspector.BaseStorageTreeElement.prototype.onselect.call(this, selectedByUser);
         this._fileSystemView = new WebInspector.FileSystemView(this._fileSystem);
         this._storagePanel.showFileSystem(this._fileSystemView);
     },
 
     clear: function()
     {
-        if (this.fileSystemView && this._storagePanel.visibleView == this.fileSystemView)
+        if (this.fileSystemView && this._storagePanel.visibleView === this.fileSystemView)
             this._storagePanel.closeVisibleView();
     },
 
@@ -2068,7 +2070,7 @@ WebInspector.ResourcesSearchController.prototype = {
         if (this._lastTreeElement !== currentTreeElement || this._lastIndex === -1)
             return this._searchResult(currentTreeElement, 0);
 
-        if (this._lastIndex == currentTreeElement.searchMatchesCount - 1)
+        if (this._lastIndex === currentTreeElement.searchMatchesCount - 1)
             return this._searchResult(this._traverser.next(currentTreeElement), 0, this._currentMatchIndex % this._matchesCount + 1);
 
         return this._searchResult(currentTreeElement, this._lastIndex + 1, this._currentMatchIndex + 1);
