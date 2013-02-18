@@ -1,3 +1,24 @@
+2013-02-18  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Changing WebView.contentY and WebView.contentX does not redraw content
+        https://bugs.webkit.org/show_bug.cgi?id=108337
+
+        Reviewed by Jocelyn Turcotte.
+
+        We should not ignore content position changes unless pinch zoom or bounce-back
+        animation is ongoing.
+        This way we notify the web process about visible rect changes if the contentX
+        and contentY properties are used to programmatically scroll the content from QML.
+        One important usecase for this is when implementing scrollbars.
+
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::PageViewportControllerClientQt):
+        (WebKit::PageViewportControllerClientQt::flickMoveStarted):
+        (WebKit::PageViewportControllerClientQt::flickMoveEnded):
+        (WebKit::PageViewportControllerClientQt::pageItemPositionChanged):
+        (WebKit::PageViewportControllerClientQt::scaleAnimationStateChanged):
+        (WebKit::PageViewportControllerClientQt::pinchGestureStarted):
+
 2013-02-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2][EFL] Unified text checker implementation
