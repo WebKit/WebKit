@@ -264,6 +264,11 @@ button.status-bar-item.scripts-debugger-show-hide-button {
     border: none;
 }
 
+.split-view-horizontal button.status-bar-item.scripts-debugger-show-hide-button,
+.split-view-horizontal #scripts-debug-sidebar-resizer-widget {
+    display: none;
+}
+
 button.status-bar-item.scripts-debugger-show-hide-button:active {
     top: 1px;
 }

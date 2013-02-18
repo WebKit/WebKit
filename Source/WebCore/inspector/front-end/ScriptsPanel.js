@@ -120,9 +120,6 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
         this.sidebarPanes.workerList = new WebInspector.WorkersSidebarPane(WebInspector.workerManager);
     }
 
-    WebInspector.dockController.addEventListener(WebInspector.DockController.Events.DockSideChanged, this._dockSideChanged.bind(this));
-    this._dockSideChanged();
-
     this.sidebarPanes.callstack.registerShortcuts(this.registerShortcuts.bind(this));
     this.registerShortcuts(WebInspector.ScriptsPanelDescriptor.ShortcutKeys.EvaluateSelectionInConsole, this._evaluateSelectionInConsole.bind(this));
     this.registerShortcuts(WebInspector.ScriptsPanelDescriptor.ShortcutKeys.GoToMember, this._showOutlineDialog.bind(this));
@@ -151,6 +148,9 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this._scriptViewStatusBarItemsContainer.style.display = "inline-block";
 
     this._installDebuggerSidebarController();
+
+    WebInspector.dockController.addEventListener(WebInspector.DockController.Events.DockSideChanged, this._dockSideChanged.bind(this));
+    this._dockSideChanged();
 
     this._sourceFramesByUISourceCode = new Map();
     this._updateDebuggerButtons();
@@ -1174,6 +1174,8 @@ WebInspector.ScriptsPanel.prototype = {
 
             this.sidebarElement.appendChild(this.debugToolbar);
         } else {
+            this._showDebuggerSidebar();
+
             this.sidebarPaneView = new WebInspector.SplitView(true, this.name + "PanelSplitSidebarRatio", 0.5);
 
             var group1 = new WebInspector.SidebarPaneStack();
