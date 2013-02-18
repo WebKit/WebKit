@@ -1572,6 +1572,8 @@ crbug.com/10361 [ Win ] http/tests/misc/single-character-pi-stylesheet.xhtml [ F
 # Windows is missing the green box. Started to pass in roll to WebKit r50313
 crbug.com/8729 [ Win ] http/tests/multipart/invalid-image-data.html [ Failure ]
 
+crbug.com/110076 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
+
 # -----------------------------------------------------------------
 # MAC PORT TESTS
 # -----------------------------------------------------------------
