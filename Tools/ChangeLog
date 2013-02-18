@@ -1,3 +1,9 @@
+2013-02-17  Dongwoo Joshua Im  <dw.im@samsung.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-17  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Fix typo in script.
