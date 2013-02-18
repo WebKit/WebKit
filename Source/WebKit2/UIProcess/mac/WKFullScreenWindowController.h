@@ -57,6 +57,8 @@ class IntRect;
     BOOL _isExitingFullScreen;
     BOOL _isFullScreen;
     BOOL _isPlaying;
+
+    double _savedScale;
 }
 
 - (WKView*)webView;

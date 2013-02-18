@@ -262,6 +262,8 @@ static RetainPtr<CGImageRef> createImageWithCopiedData(CGImageRef sourceImage)
 
     [self _manager]->setAnimatingFullScreen(true);
     [self _manager]->willEnterFullScreen();
+    _savedScale = [self _page]->pageScaleFactor();
+    [self _page]->scalePage(1, IntPoint());
 }
 
 - (void)beganEnterFullScreenWithInitialFrame:(const WebCore::IntRect&)initialFrame finalFrame:(const WebCore::IntRect&)finalFrame
@@ -391,7 +393,7 @@ static void completeFinishExitFullScreenAnimationAfterRepaint(WKErrorRef, void*)
     // These messages must be sent after the swap or flashing will occur during forceRepaint:
     [self _manager]->didExitFullScreen();
     [self _manager]->setAnimatingFullScreen(false);
-
+    [self _page]->scalePage(_savedScale, IntPoint());
     [self _page]->forceRepaint(VoidCallback::create(self, completeFinishExitFullScreenAnimationAfterRepaint));
 }
 
