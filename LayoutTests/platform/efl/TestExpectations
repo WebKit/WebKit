@@ -1822,6 +1822,9 @@ webkit.org/b/108315 fast/ruby/select-ruby.html [ Missing ]
 # empty position:fixed element gets a layer. Should not happen after r141039
 webkit.org/b/108339 compositing/layer-creation/fixed-position-no-content.html [ Failure ]
 
+# Test introduced in r143191 and failing on EFL port.
+webkit.org/b/110109 fast/dom/shadow/shadow-dom-event-dispatching-distributed-child.html [ Failure ]
+
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word-with-underscores.html [ Skip ]
