@@ -231,6 +231,7 @@ committers_unable_to_review = [
     Committer("Arko Saha", "arko@motorola.com", "arkos"),
     Committer("Arvid Nilsson", "anilsson@rim.com", "anilsson"),
     Committer("Balazs Kelemen", "kbalazs@webkit.org", "kbalazs"),
+    Committer("Bear Travis", "betravis@adobe.com", "betravis"),
     Committer("Ben Murdoch", "benm@google.com", "benm"),
     Committer("Ben Wells", "benwells@chromium.org", "benwells"),
     Committer("Benjamin C Meyer", ["ben@meyerhome.net", "ben@webkit.org", "bmeyer@rim.com"], "icefox"),
