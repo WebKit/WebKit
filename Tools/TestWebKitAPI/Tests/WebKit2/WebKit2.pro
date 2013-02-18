@@ -20,7 +20,6 @@ SOURCES += \
     LoadAlternateHTMLStringWithNonDirectoryURL.cpp \
     LoadCanceledNoServerRedirectCallback.cpp \
     MouseMoveAfterCrash.cpp \
-    ReloadPageAfterCrash.cpp \
     PageLoadBasic.cpp \
     PageLoadDidChangeLocationWithinPageForFrame.cpp \
     PageVisibilityState.cpp \
@@ -28,6 +27,7 @@ SOURCES += \
     PreventEmptyUserAgent.cpp \
     PrivateBrowsingPushStateNoHistoryCallback.cpp \
     ReloadPageAfterCrash.cpp \
+    ResizeWindowAfterCrash.cpp \
     ResponsivenessTimerDoesntFireEarly.cpp \
     UserMessage.cpp \
     WillSendSubmitEvent.cpp \
