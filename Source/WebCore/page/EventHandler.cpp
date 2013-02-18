@@ -2323,22 +2323,28 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
     setFrameWasScrolledByUser();
     LayoutPoint vPoint = view->windowToContents(e.position());
 
-    Node* node;
-    bool isOverWidget;
-
     HitTestRequest request(HitTestRequest::ReadOnly);
     HitTestResult result(vPoint);
     doc->renderView()->hitTest(request, result);
 
     bool useLatchedWheelEventNode = e.useLatchedEventNode();
 
+    Node* node = result.innerNode();
+    // Wheel events should not dispatch to text nodes.
+    if (node && node->isTextNode()) {
+        AncestorChainWalker walker(node);
+        walker.parent();
+        node = walker.get();
+    }
+
+    bool isOverWidget;
     if (useLatchedWheelEventNode) {
         if (!m_latchedWheelEventNode) {
-            m_latchedWheelEventNode = result.innerNode();
+            m_latchedWheelEventNode = node;
             m_widgetIsLatched = result.isOverWidget();
-        }
+        } else
+            node = m_latchedWheelEventNode.get();
 
-        node = m_latchedWheelEventNode.get();
         isOverWidget = m_widgetIsLatched;
     } else {
         if (m_latchedWheelEventNode)
@@ -2346,7 +2352,6 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
         if (m_previousWheelScrolledNode)
             m_previousWheelScrolledNode = 0;
 
-        node = result.innerNode();
         isOverWidget = result.isOverWidget();
     }
 

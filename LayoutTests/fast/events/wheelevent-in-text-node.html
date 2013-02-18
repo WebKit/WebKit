@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        function test() {
+            var div = document.querySelector('div');
+            if (window.eventSender) {
+                eventSender.mouseMoveTo(div.offsetLeft + 5, div.offsetTop + 5);
+                eventSender.mouseScrollBy(0,120);
+            } else {
+                debug("FAIL: This test requires window.eventSender.");
+                finishJSTest();
+            }
+        }
+
+        function wheelHandler(e) {
+            window.theEvent = e;
+
+            debug("'Real' MouseWheel events should not be dispatched on the text node, but instead on its parent.");
+            shouldBeEqualToString('theEvent.target.nodeName', 'DIV');
+            finishJSTest();
+        }
+
+        window.onload = function () {
+            var div = document.querySelector('div');
+            div.addEventListener('mousewheel', wheelHandler);
+            test();
+        };
+    </script>
+    <script src="../js/resources/js-test-post.js"></script>
+</head>
+<body>
+    <div>This is a div containing text. Wheel events originating on the text
+    node should target the div.</div>
+</body>
+</html>
