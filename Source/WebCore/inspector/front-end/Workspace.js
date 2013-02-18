@@ -187,7 +187,7 @@ WebInspector.Project.prototype = {
     _fileAdded: function(event)
     {
         var fileDescriptor = /** @type {WebInspector.FileDescriptor} */ (event.data);
-        var uiSourceCode = this.uiSourceCode(fileDescriptor.path);
+        var uiSourceCode = this.uiSourceCodeForURI(fileDescriptor.path);
         if (uiSourceCode) {
             // FIXME: Implement
             return;
@@ -201,7 +201,7 @@ WebInspector.Project.prototype = {
     _fileRemoved: function(event)
     {
         var path = /** @type {string} */ (event.data);
-        var uiSourceCode = this.uiSourceCode(path);
+        var uiSourceCode = this.uiSourceCodeForURI(path);
         if (!uiSourceCode)
             return;
         delete this._uiSourceCodes[uiSourceCode.path()];
@@ -243,10 +243,7 @@ WebInspector.Project.prototype = {
      */
     uiSourceCodeForURI: function(uri)
     {
-        var path = WebInspector.UISourceCode.path(this.id(), uri);
-        if (typeof path !== "string")
-            return null;
-        return this._uiSourceCodes[path];
+        return this.uiSourceCode(uri);
     },
 
     /**
@@ -298,6 +295,7 @@ WebInspector.Project.prototype = {
 WebInspector.projectTypes = {
     Debugger: "debugger",
     LiveEdit: "liveedit",
+    Compiler: "compiler",
     Network: "network",
     Snippets: "snippets",
     FileSystem: "filesystem"
@@ -441,6 +439,19 @@ WebInspector.Workspace.prototype = {
             result = result.concat(project.uiSourceCodes());
         }
         return result;
+    },
+
+    /**
+     * @return {?WebInspector.Project}
+     */
+    projectForUISourceCode: function(uiSourceCode)
+    {
+        for (var projectId in this._projects) {
+            var project = this._projects[projectId];
+            if (project.uiSourceCodeForURI(uiSourceCode.uri()))
+                return project;
+        }
+        return null;
     },
 
     __proto__: WebInspector.Object.prototype

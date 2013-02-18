@@ -81,37 +81,6 @@ WebInspector.UISourceCode.Events = {
     SourceMappingChanged: "SourceMappingChanged",
 }
 
-/**
- * @param {string} projectId
- * @param {string} path
- * @return {string}
- */
-WebInspector.UISourceCode.uri = function(projectId, path)
-{
-    if (!projectId)
-        return path;
-    if (!path)
-        return projectId;
-    return projectId + "/" + path;
-}
-
-/**
- * @param {string} projectId
- * @param {string} uri
- * @return {?string}
- */
-WebInspector.UISourceCode.path = function(projectId, uri)
-{
-    if (!projectId)
-        return uri;
-    if (!uri.startsWith(projectId))
-        return null;
-    var path = uri.substr(projectId.length);
-    if (path.length && path[0] === "/")
-        path = path.substr(1);
-    return path;
-}
-
 WebInspector.UISourceCode.prototype = {
     /**
      * @return {string}
@@ -134,7 +103,7 @@ WebInspector.UISourceCode.prototype = {
      */
     uri: function()
     {
-        return WebInspector.UISourceCode.uri(this._project.id(), this._path);
+        return this._path;
     },
 
     /**

@@ -39,8 +39,8 @@ function test()
         for (var i = 0; i < locations.length; ++i) {
             var uiLocation = locations[i].uiLocation;
             var uiSourceCode = uiLocation.uiSourceCode;
-            var project = uiSourceCode.project();
-            InspectorTest.addResult("        url: " + pathToFileName(uiSourceCode.originURL()) + ", lineNumber: " + uiLocation.lineNumber + ", project type: " + project.type() + ", project id: " + project.id());
+            var project = WebInspector.workspace.projectForUISourceCode(uiSourceCode);
+            InspectorTest.addResult("        url: " + pathToFileName(uiSourceCode.originURL()) + ", lineNumber: " + uiLocation.lineNumber + ", project name: " + project.id());
         }
     }
 
