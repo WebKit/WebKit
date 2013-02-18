@@ -35,7 +35,9 @@
 WebInspector.NativeHeapSnapshot = function(profile)
 {
     WebInspector.HeapSnapshot.call(this, profile);
-    this._nodeObjectType = 3;
+    this._nodeObjectType = this._metaNode.type_strings["object"];
+    this._edgeWeakType = this._metaNode.type_strings["weak"];
+    this._edgeElementType = this._metaNode.type_strings["property"];
 }
 
 WebInspector.NativeHeapSnapshot.prototype = {

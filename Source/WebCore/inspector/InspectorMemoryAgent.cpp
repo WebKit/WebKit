@@ -307,10 +307,10 @@ void InspectorMemoryAgent::getProcessMemoryDistributionMap(TypeNameToSizeMap* me
     getProcessMemoryDistributionImpl(false, memoryInfo);
 }
 
-void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<InspectorMemoryBlock>& processMemory)
+void InspectorMemoryAgent::getProcessMemoryDistribution(ErrorString*, const bool* reportGraph, RefPtr<InspectorMemoryBlock>& processMemory, RefPtr<InspectorObject>& graphMetaInformation)
 {
     TypeNameToSizeMap memoryInfo;
-    getProcessMemoryDistributionImpl(reportGraph && *reportGraph, &memoryInfo);
+    graphMetaInformation = getProcessMemoryDistributionImpl(reportGraph && *reportGraph, &memoryInfo);
 
     MemoryUsageStatsGenerator statsGenerator;
     RefPtr<InspectorMemoryBlocks> children = InspectorMemoryBlocks::create();
@@ -348,8 +348,9 @@ private:
 
 }
 
-void InspectorMemoryAgent::getProcessMemoryDistributionImpl(bool reportGraph, TypeNameToSizeMap* memoryInfo)
+PassRefPtr<InspectorObject> InspectorMemoryAgent::getProcessMemoryDistributionImpl(bool reportGraph, TypeNameToSizeMap* memoryInfo)
 {
+    RefPtr<InspectorObject> meta;
     OwnPtr<HeapGraphSerializer> graphSerializer;
     OwnPtr<FrontendWrapper> frontendWrapper;
 
@@ -374,7 +375,7 @@ void InspectorMemoryAgent::getProcessMemoryDistributionImpl(bool reportGraph, Ty
     memoryInstrumentation.addRootObject(memoryInstrumentationClient);
     if (graphSerializer) {
         memoryInstrumentation.addRootObject(graphSerializer.get());
-        graphSerializer->finish();
+        meta = graphSerializer->finish();
         graphSerializer.release(); // Release it earlier than frontendWrapper
         frontendWrapper.release();
     }
@@ -384,6 +385,7 @@ void InspectorMemoryAgent::getProcessMemoryDistributionImpl(bool reportGraph, Ty
     *memoryInfo = memoryInstrumentationClient.sizesMap();
     addPlatformComponentsInfo(memoryInfo);
     addMemoryInstrumentationDebugData(&memoryInstrumentationClient, memoryInfo);
+    return meta.release();
 }
 
 InspectorMemoryAgent::InspectorMemoryAgent(InstrumentingAgents* instrumentingAgents, InspectorClient* client, InspectorCompositeState* state, Page* page)

@@ -267,61 +267,15 @@ WebInspector.NativeSnapshotProfileType.prototype = {
          * @param {?string} error
          * @param {?MemoryAgent.MemoryBlock} memoryBlock
          */
-        function didReceiveMemorySnapshot(error, memoryBlock)
+        function didReceiveMemorySnapshot(error, memoryBlock, graphMetaInformation)
         {
             this.isTemporary = false;
             this.sidebarElement.subtitle = Number.bytesToString(/** @type{number} */(memoryBlock.size));
 
-            var meta = {
-              "node_fields": [
-                "type",
-                "name",
-                "id",
-                "self_size",
-                "edge_count"
-              ],
-              "node_types": [
-                [
-                  "hidden",
-                  "array",
-                  "string",
-                  "object",
-                  "code",
-                  "closure",
-                  "regexp",
-                  "number",
-                  "native",
-                  "synthetic"
-                ],
-                "string",
-                "number",
-                "number",
-                "number",
-              ],
-              "edge_fields": [
-                "type",
-                "name_or_index",
-                "to_node"
-              ],
-              "edge_types": [
-                [
-                  "context",
-                  "element",
-                  "property",
-                  "internal",
-                  "hidden",
-                  "shortcut",
-                  "weak"
-                ],
-                "string_or_number",
-                "node"
-              ]
-            };
-
-            var edgeFieldCount = meta.edge_fields.length;
-            var nodeFieldCount = meta.node_fields.length;
-            var nodeIdFieldOffset = meta.node_fields.indexOf("id");
-            var toNodeIdFieldOffset = meta.edge_fields.indexOf("to_node");
+            var edgeFieldCount = graphMetaInformation.edge_fields.length;
+            var nodeFieldCount = graphMetaInformation.node_fields.length;
+            var nodeIdFieldOffset = graphMetaInformation.node_fields.indexOf("id");
+            var toNodeIdFieldOffset = graphMetaInformation.edge_fields.indexOf("to_node");
 
             var baseToRealNodeIdMap = {};
             for (var i = 0; i < this._baseToRealNodeId.length; i += 2)
@@ -341,7 +295,7 @@ WebInspector.NativeSnapshotProfileType.prototype = {
 
             var heapSnapshot = {
                 "snapshot": {
-                    "meta": meta,
+                    "meta": graphMetaInformation,
                     node_count: this._nodes.length / nodeFieldCount,
                     edge_count: this._edges.length / edgeFieldCount,
                     root_index: this._nodes.length - nodeFieldCount

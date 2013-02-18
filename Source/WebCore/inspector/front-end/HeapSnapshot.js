@@ -1026,8 +1026,21 @@ WebInspector.HeapSnapshot.prototype = {
             }
         }
 
-        if (postOrderIndex !== nodeCount)
+        if (postOrderIndex !== nodeCount) {
+            var dumpNode = this.rootNode();
+            for (var i = 0; i < nodeCount; ++i) {
+                if (painted[i] !== black) {
+                    dumpNode.nodeIndex = i * nodeFieldCount;
+                    console.log(JSON.stringify(dumpNode.serialize()));
+                    var retainers = dumpNode.retainers();
+                    while (retainers) {
+                        console.log("edgeName: " + retainers.item().name() + " nodeClassName: " + retainers.item().node().className());
+                        retainers = retainers.item().node().retainers();
+                    }
+                }
+            }
             throw new Error("Postordering failed. " + (nodeCount - postOrderIndex) + " hanging nodes");
+        }
 
         return {postOrderIndex2NodeOrdinal: postOrderIndex2NodeOrdinal, nodeOrdinal2PostOrderIndex: nodeOrdinal2PostOrderIndex};
     },

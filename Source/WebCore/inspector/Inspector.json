@@ -77,7 +77,8 @@
                     { "name": "reportGraph", "type": "boolean", "optional": true, "description": "Whether native memory graph should be reported in addition to aggregated statistics." }
                 ],
                 "returns": [
-                    { "name": "distribution", "$ref": "MemoryBlock", "description": "An object describing all memory allocated by the process"}
+                    { "name": "distribution", "$ref": "MemoryBlock", "description": "An object describing all memory allocated by the process"},
+                    { "name": "graphMetaInformation", "type": "object", "optional": true, "description": "An object describing structures of nodes and edges in the graph."}
                 ]
             }
         ],

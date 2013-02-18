@@ -50,6 +50,7 @@ HeapGraphSerializer::HeapGraphSerializer(Client* client)
     , m_nodeEdgesCount(0)
     , m_nodes(Nodes::create())
     , m_baseToRealNodeIdMap(BaseToRealNodeIdMap::create())
+    , m_typeStrings(InspectorObject::create())
     , m_leafCount(0)
 {
     ASSERT(m_client);
@@ -57,9 +58,11 @@ HeapGraphSerializer::HeapGraphSerializer(Client* client)
 
     memset(m_edgeTypes, 0, sizeof(m_edgeTypes));
 
-    m_edgeTypes[WTF::PointerMember] = addString("weak");
-    m_edgeTypes[WTF::OwnPtrMember] = addString("ownRef");
-    m_edgeTypes[WTF::RefPtrMember] = addString("countRef");
+    m_edgeTypes[WTF::PointerMember] = registerTypeString("weak");
+    m_edgeTypes[WTF::OwnPtrMember] = m_edgeTypes[WTF::RefPtrMember] = registerTypeString("property");
+
+    // FIXME: It is used as a magic constant for 'object' node type.
+    registerTypeString("object");
 
     m_unknownClassNameId = addString("unknown");
 }
@@ -155,21 +158,55 @@ void HeapGraphSerializer::reportBaseAddress(const void* base, const void* real)
     m_baseToRealNodeIdMap->addItem(toNodeId(real));
 }
 
-void HeapGraphSerializer::finish()
+PassRefPtr<InspectorObject> HeapGraphSerializer::finish()
 {
     addRootNode();
     pushUpdate();
+    String metaString =
+        "{"
+            "\"node_fields\":["
+                "\"type\","
+                "\"name\","
+                "\"id\","
+                "\"self_size\","
+                "\"edge_count\""
+            "],"
+            "\"node_types\":["
+                "[]," // FIXME: It is a fallback for Heap Snapshot parser. In case of Native Heap Snapshot it is a plain string id.
+                "\"string\","
+                "\"number\","
+                "\"number\","
+                "\"number\""
+            "],"
+            "\"edge_fields\":["
+                "\"type\","
+                "\"name_or_index\","
+                "\"to_node\""
+            "],"
+            "\"edge_types\":["
+                "[],"
+                "\"string_or_number\","
+                "\"node\""
+            "]"
+        "}";
+
+    RefPtr<InspectorValue> metaValue = InspectorValue::parseJSON(metaString);
+    RefPtr<InspectorObject> meta;
+    metaValue->asObject(&meta);
+    ASSERT(meta);
+    meta->setObject("type_strings", m_typeStrings);
+    return meta.release();
 }
 
 void HeapGraphSerializer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Inspector);
-    info.addMember(m_stringToIndex, "stringToIndex");
-    info.addMember(m_strings, "strings");
-    info.addMember(m_edges, "edges");
-    info.addMember(m_nodes, "nodes");
-    info.addMember(m_baseToRealNodeIdMap, "baseToRealNodeIdMap");
-    info.addMember(m_roots, "roots");
+    info.ignoreMember(m_stringToIndex);
+    info.ignoreMember(m_strings);
+    info.ignoreMember(m_edges);
+    info.ignoreMember(m_nodes);
+    info.ignoreMember(m_baseToRealNodeIdMap);
+    info.ignoreMember(m_roots);
 }
 
 int HeapGraphSerializer::addString(const String& string)
@@ -180,6 +217,13 @@ int HeapGraphSerializer::addString(const String& string)
     if (result.isNewEntry)
         m_strings->addItem(string);
     return result.iterator->value;
+}
+
+int HeapGraphSerializer::registerTypeString(const String& string)
+{
+    int stringId = addString(string);
+    m_typeStrings->setNumber(string, stringId);
+    return stringId;
 }
 
 int HeapGraphSerializer::toNodeId(const void* to)
