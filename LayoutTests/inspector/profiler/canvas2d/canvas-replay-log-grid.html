@@ -23,10 +23,12 @@ function doSomeCanvasCalls(repeats)
     repeats = repeats || 1;
     while (repeats-- > 0) {
         var offset = 5 * round;
+        context.save();
         context.beginPath();
         context.rect(offset, offset, 100 - offset, 100 - offset);
         context.fillStyle = colors[round % colors.length];
         context.fill();
+        context.restore();
         ++round;
     }
 }

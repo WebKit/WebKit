@@ -359,7 +359,7 @@ WebInspector.CanvasProfileView.prototype = {
         var drawCallGroup = this._drawCallGroups.peekLast();
         if (drawCallGroup) {
             var lastNode = drawCallGroup.children.peekLast();
-            if (lastNode && lastNode.call.isDrawingCall)
+            if (lastNode && (lastNode.call.isDrawingCall || lastNode.call.isFrameEndCall))
                 drawCallGroup = null;
         }
         if (!drawCallGroup) {
@@ -375,6 +375,8 @@ WebInspector.CanvasProfileView.prototype = {
             this._appendDrawCallGroup(drawCallGroup);
         }
         drawCallGroup.appendChild(gridNode);
+        if (gridNode.call.isFrameEndCall)
+            this._maybeMergeLastDrawCallGroups();
     },
 
     /**
@@ -402,6 +404,26 @@ WebInspector.CanvasProfileView.prototype = {
             this._logGrid.rootNode().appendChild(frameGroup);
         }
         frameGroup.appendChild(drawCallGroup);
+    },
+
+    _maybeMergeLastDrawCallGroups: function()
+    {
+        var frameGroup = this._frameGroups.peekLast();
+        if (!frameGroup)
+            return;
+        var groups = frameGroup.children.length;
+        if (groups < 2)
+            return;
+        var src = frameGroup.children[groups - 1]
+        for (var i = 0, n = src.children.length; i < n; ++i) {
+            if (src.children[i].call.isDrawingCall)
+                return;
+        }
+        var dst = frameGroup.children[groups - 2];
+        while (src.children.length)
+            dst.appendChild(src.children[0]);
+        frameGroup.removeChild(src);
+        this._drawCallGroups.pop();
     },
 
     /**
