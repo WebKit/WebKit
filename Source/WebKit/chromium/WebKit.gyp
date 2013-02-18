@@ -48,7 +48,6 @@
                 'chromium_src_dir': '../../../../..',
             }],
         ],
-        'ahem_path': '../../../Tools/DumpRenderTree/qt/fonts/AHEM____.TTF',
 
         # If debug_devtools is set to 1, JavaScript files for DevTools are
         # stored as is. Otherwise, a concatenated file is stored.
