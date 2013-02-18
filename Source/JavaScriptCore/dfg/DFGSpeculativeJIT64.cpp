@@ -363,68 +363,6 @@ GPRReg SpeculativeJIT::fillJSValue(Node* node)
     }
 }
 
-class ValueToNumberSlowPathGenerator
-    : public CallSlowPathGenerator<MacroAssembler::Jump, D_DFGOperation_EJ, GPRReg> {
-public:
-    ValueToNumberSlowPathGenerator(
-        MacroAssembler::Jump from, SpeculativeJIT* jit,
-        GPRReg resultGPR, GPRReg jsValueGPR)
-        : CallSlowPathGenerator<MacroAssembler::Jump, D_DFGOperation_EJ, GPRReg>(
-            from, jit, dfgConvertJSValueToNumber, NeedToSpill, resultGPR)
-        , m_jsValueGPR(jsValueGPR)
-    {
-    }
-
-protected:
-    virtual void generateInternal(SpeculativeJIT* jit)
-    {
-        setUp(jit);
-        recordCall(jit->callOperation(dfgConvertJSValueToNumber, FPRInfo::returnValueFPR, m_jsValueGPR));
-        jit->boxDouble(FPRInfo::returnValueFPR, m_result);
-        tearDown(jit);
-    }
-
-private:
-    GPRReg m_jsValueGPR;
-};
-
-void SpeculativeJIT::nonSpeculativeValueToNumber(Node* node)
-{
-    if (isKnownNumeric(node->child1().node())) {
-        JSValueOperand op1(this, node->child1());
-        GPRTemporary result(this, op1);
-        m_jit.move(op1.gpr(), result.gpr());
-        jsValueResult(result.gpr(), m_currentNode);
-        return;
-    }
-
-    JSValueOperand op1(this, node->child1());
-    GPRTemporary result(this);
-    
-    ASSERT(!isInt32Constant(node->child1().node()));
-    ASSERT(!isNumberConstant(node->child1().node()));
-    
-    GPRReg jsValueGpr = op1.gpr();
-    GPRReg gpr = result.gpr();
-    op1.use();
-
-    JITCompiler::Jump isInteger = m_jit.branch64(MacroAssembler::AboveOrEqual, jsValueGpr, GPRInfo::tagTypeNumberRegister);
-    JITCompiler::Jump nonNumeric = m_jit.branchTest64(MacroAssembler::Zero, jsValueGpr, GPRInfo::tagTypeNumberRegister);
-
-    // First, if we get here we have a double encoded as a JSValue
-    m_jit.move(jsValueGpr, gpr);
-    JITCompiler::Jump hasUnboxedDouble = m_jit.jump();
-
-    // Finally, handle integers.
-    isInteger.link(&m_jit);
-    m_jit.or64(GPRInfo::tagTypeNumberRegister, jsValueGpr, gpr);
-    hasUnboxedDouble.link(&m_jit);
-    
-    addSlowPathGenerator(adoptPtr(new ValueToNumberSlowPathGenerator(nonNumeric, this, gpr, jsValueGpr)));
-    
-    jsValueResult(result.gpr(), m_currentNode, UseChildrenCalledExplicitly);
-}
-
 void SpeculativeJIT::nonSpeculativeValueToInt32(Node* node)
 {
     ASSERT(!isInt32Constant(node->child1().node()));

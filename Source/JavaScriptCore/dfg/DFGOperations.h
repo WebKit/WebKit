@@ -254,8 +254,7 @@ inline DFGHandlerEncoded dfgHandlerEncoded(ExecState* exec, void* handler)
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandler(ExecState*, uint32_t) WTF_INTERNAL;
 DFGHandlerEncoded DFG_OPERATION lookupExceptionHandlerInStub(ExecState*, StructureStubInfo*) WTF_INTERNAL;
 
-// These operations implement the implicitly called ToInt32, ToNumber, and ToBoolean conversions from ES5.
-double DFG_OPERATION dfgConvertJSValueToNumber(ExecState*, EncodedJSValue) WTF_INTERNAL;
+// These operations implement the implicitly called ToInt32 and ToBoolean conversions from ES5.
 // This conversion returns an int32_t within a size_t such that the value is zero extended to fill the register.
 size_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState*, EncodedJSValue) WTF_INTERNAL;
 size_t DFG_OPERATION dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue) WTF_INTERNAL;

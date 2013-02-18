@@ -693,7 +693,6 @@ public:
         return lastNode->op() == Branch && lastNode->child1() == m_currentNode ? block->size() - 1 : UINT_MAX;
     }
     
-    void nonSpeculativeValueToNumber(Node*);
     void nonSpeculativeValueToInt32(Node*);
     void nonSpeculativeUInt32ToNumber(Node*);
 

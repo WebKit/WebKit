@@ -1583,14 +1583,6 @@ DFGHandlerEncoded DFG_OPERATION lookupExceptionHandlerInStub(ExecState* exec, St
     return dfgHandlerEncoded(handler.callFrame, handler.catchRoutine);
 }
 
-double DFG_OPERATION dfgConvertJSValueToNumber(ExecState* exec, EncodedJSValue value)
-{
-    JSGlobalData* globalData = &exec->globalData();
-    NativeCallFrameTracer tracer(globalData, exec);
-    
-    return JSValue::decode(value).toNumber(exec);
-}
-
 size_t DFG_OPERATION dfgConvertJSValueToInt32(ExecState* exec, EncodedJSValue value)
 {
     JSGlobalData* globalData = &exec->globalData();
