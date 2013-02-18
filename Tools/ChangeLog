@@ -1,3 +1,15 @@
+2013-02-18  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt] Disable the build if certain configure checks fail
+        https://bugs.webkit.org/show_bug.cgi?id=110094
+
+        Reviewed by Tor Arne Vestbø.
+
+        Allow for the build to be skipped (clear out SUBDIRS) if certain
+        configure conditions aren't met.
+
+        * qmake/mkspecs/features/configure.prf:
+
 2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt][WK2] Support WK2 API tests

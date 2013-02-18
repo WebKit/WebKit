@@ -109,8 +109,13 @@ defineTest(finalizeConfigure) {
         error(Done computing defaults)
     }
 
-    # Sanity check that would prevent us from building the whole project altogether.
-    !mac:!contains(QT_CONFIG,icu): error("To build QtWebKit with Qt 5 you need to build Qt 5 with libICU support. Check for ICU support being mentioned in qtbase/config.summary.")
+    # Sanity checks that would prevent us from building the whole project altogether.
+    !mac:!contains(QT_CONFIG,icu) {
+        skipBuildReason = "ICU is required. To build QtWebKit with Qt 5 you need to build Qt 5 with libICU support. Check for ICU support being mentioned in qtbase/config.summary.")
+    }
+    production_build:blackberry {
+        skipBuildReason = "Build not supported on BB10 yet."
+    }
 
     # Detect changes to the configuration. Changes need a clean build.
     webkit_configured {
@@ -227,7 +232,13 @@ defineTest(finalizeConfigure) {
             }
         }
 
-        log("$${EOL}WebKit is now configured for building. Just run 'make'.$${EOL}$${EOL}")
+        !isEmpty(skipBuildReason) {
+            log("$${EOL}WebKit build disabled: " $$skipBuildReason "$${EOL}$${EOL}")
+            SUBDIRS=
+            export(SUBDIRS)
+        } else {
+            log("$${EOL}WebKit is now configured for building. Just run 'make'.$${EOL}$${EOL}")
+        }
 
         configuration_changed {
             log(WARNING: The configuration was changed since the last build:$${EOL}$${EOL})
