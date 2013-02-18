@@ -1,6 +1,7 @@
 CONSOLE MESSAGE: line 20: test,test2,,,test4,,,,,
 CONSOLE MESSAGE: line 21: %o
 CONSOLE MESSAGE: line 22: %O
+CONSOLE MESSAGE: line 23: Test for zero "%f" in formatter
 CONSOLE MESSAGE: line 54: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 CONSOLE MESSAGE: line 55: /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i
 CONSOLE MESSAGE: line 54: /foo\\bar\sbaz/i
@@ -56,6 +57,7 @@ Tests that console logging dumps proper messages.
 Array[10] console-format.html:20
 Array[10] console-format.html:21
 Array[10] console-format.html:22
+Test for zero "0" in formatter console-format.html:23
 /^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\.))*"|'(?:[^\\\']|(?:\\[\da-f]{1,6}\s?|\.))*')|(?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i console-format.html:54
 [/^url\(\s*(?:(?:"(?:[^\\\"]|(?:\\[\da-f]{1,6}\s?|\…?:[!#$%&*-~\w]|(?:\\[\da-f]{1,6}\s?|\.))*)\s*\)/i] console-format.html:55
 globals[0]

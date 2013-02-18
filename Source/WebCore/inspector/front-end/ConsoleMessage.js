@@ -548,8 +548,8 @@ WebInspector.ConsoleMessageImpl.prototype = {
         {
             if (b instanceof Node)
                 a.appendChild(b);
-            else if (b) {
-                var toAppend = WebInspector.linkifyStringAsFragment(b.toString());
+            else if (typeof b !== "undefined") {
+                var toAppend = WebInspector.linkifyStringAsFragment(String(b));
                 if (currentStyle) {
                     var wrapper = document.createElement('span');
                     for (var key in currentStyle)
