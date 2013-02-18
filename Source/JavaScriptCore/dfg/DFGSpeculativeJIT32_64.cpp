@@ -113,130 +113,6 @@ GPRReg SpeculativeJIT::fillInteger(Node* node, DataFormat& returnFormat)
     }
 }
 
-FPRReg SpeculativeJIT::fillDouble(Node* node)
-{
-    VirtualRegister virtualRegister = node->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
-
-    if (info.registerFormat() == DataFormatNone) {
-
-        if (node->hasConstant()) {
-            if (isInt32Constant(node)) {
-                // FIXME: should not be reachable?
-                GPRReg gpr = allocate();
-                m_jit.move(MacroAssembler::Imm32(valueOfInt32Constant(node)), gpr);
-                m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-                info.fillInteger(*m_stream, gpr);
-                unlock(gpr);
-            } else if (isNumberConstant(node)) {
-                FPRReg fpr = fprAllocate();
-                m_jit.loadDouble(addressOfDoubleConstant(node), fpr);
-                m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-                info.fillDouble(*m_stream, fpr);
-                return fpr;
-            } else {
-                // FIXME: should not be reachable?
-                RELEASE_ASSERT_NOT_REACHED();
-            }
-        } else {
-            DataFormat spillFormat = info.spillFormat();
-            ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInteger);
-            if (spillFormat == DataFormatJSDouble) {
-                FPRReg fpr = fprAllocate();
-                m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
-                m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
-                info.fillDouble(*m_stream, fpr);
-                return fpr;
-            }
-
-            FPRReg fpr = fprAllocate();
-            JITCompiler::Jump hasUnboxedDouble;
-
-            if (spillFormat != DataFormatJSInteger && spillFormat != DataFormatInteger) {
-                JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, JITCompiler::tagFor(virtualRegister), TrustedImm32(JSValue::Int32Tag));
-                m_jit.loadDouble(JITCompiler::addressFor(virtualRegister), fpr);
-                hasUnboxedDouble = m_jit.jump();
-                isInteger.link(&m_jit);
-            }
-
-            m_jit.convertInt32ToDouble(JITCompiler::payloadFor(virtualRegister), fpr);
-
-            if (hasUnboxedDouble.isSet())
-                hasUnboxedDouble.link(&m_jit);
-
-            m_fprs.retain(fpr, virtualRegister, SpillOrderSpilled);
-            info.fillDouble(*m_stream, fpr);
-            return fpr;
-        }
-    }
-
-    switch (info.registerFormat()) {
-    case DataFormatNone:
-        // Should have filled, above.
-    case DataFormatCell:
-    case DataFormatJSCell:
-    case DataFormatBoolean:
-    case DataFormatJSBoolean:
-    case DataFormatStorage:
-        // Should only be calling this function if we know this operand to be numeric.
-        RELEASE_ASSERT_NOT_REACHED();
-
-    case DataFormatJSInteger:
-    case DataFormatJS: {
-        GPRReg tagGPR = info.tagGPR();
-        GPRReg payloadGPR = info.payloadGPR();
-        FPRReg fpr = fprAllocate();
-        m_gprs.lock(tagGPR);
-        m_gprs.lock(payloadGPR);
-
-        JITCompiler::Jump hasUnboxedDouble;
-
-        if (info.registerFormat() != DataFormatJSInteger) {
-            FPRTemporary scratch(this);
-            JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, tagGPR, TrustedImm32(JSValue::Int32Tag));
-            m_jit.jitAssertIsJSDouble(tagGPR);
-            unboxDouble(tagGPR, payloadGPR, fpr, scratch.fpr());
-            hasUnboxedDouble = m_jit.jump();
-            isInteger.link(&m_jit);
-        }
-
-        m_jit.convertInt32ToDouble(payloadGPR, fpr);
-
-        if (hasUnboxedDouble.isSet())
-            hasUnboxedDouble.link(&m_jit);
-
-        m_gprs.release(tagGPR);
-        m_gprs.release(payloadGPR);
-        m_gprs.unlock(tagGPR);
-        m_gprs.unlock(payloadGPR);
-        m_fprs.retain(fpr, virtualRegister, SpillOrderDouble);
-        info.fillDouble(*m_stream, fpr);
-        info.killSpilled();
-        return fpr;
-    }
-
-    case DataFormatInteger: {
-        FPRReg fpr = fprAllocate();
-        GPRReg gpr = info.gpr();
-        m_gprs.lock(gpr);
-        m_jit.convertInt32ToDouble(gpr, fpr);
-        m_gprs.unlock(gpr);
-        return fpr;
-    }
-
-    case DataFormatJSDouble: 
-    case DataFormatDouble: {
-        FPRReg fpr = info.fpr();
-        m_fprs.lock(fpr);
-        return fpr;
-    }
-
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return InvalidFPRReg;
-    }
-}
-
 bool SpeculativeJIT::fillJSValue(Node* node, GPRReg& tagGPR, GPRReg& payloadGPR, FPRReg& fpr)
 {
     // FIXME: For double we could fill with a FPR.
@@ -361,49 +237,6 @@ bool SpeculativeJIT::fillJSValue(Node* node, GPRReg& tagGPR, GPRReg& payloadGPR,
         RELEASE_ASSERT_NOT_REACHED();
         return true;
     }
-}
-
-void SpeculativeJIT::nonSpeculativeValueToInt32(Node* node)
-{
-    ASSERT(!isInt32Constant(node->child1().node()));
-
-    if (isKnownInteger(node->child1().node())) {
-        IntegerOperand op1(this, node->child1());
-        GPRTemporary result(this, op1);
-        m_jit.move(op1.gpr(), result.gpr());
-        integerResult(result.gpr(), node);
-        return;
-    }
-
-    GenerationInfo& childInfo = m_generationInfo[node->child1()->virtualRegister()];
-    if (childInfo.isJSDouble()) {
-        DoubleOperand op1(this, node->child1());
-        GPRTemporary result(this);
-        FPRReg fpr = op1.fpr();
-        GPRReg gpr = result.gpr();
-        op1.use();
-        JITCompiler::Jump notTruncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateFailed);
-
-        addSlowPathGenerator(slowPathCall(notTruncatedToInteger, this, toInt32, gpr, fpr));
-
-        integerResult(gpr, node, UseChildrenCalledExplicitly);
-        return;
-    }
-
-    JSValueOperand op1(this, node->child1());
-    GPRTemporary result(this);
-    GPRReg tagGPR = op1.tagGPR();
-    GPRReg payloadGPR = op1.payloadGPR();
-    GPRReg resultGPR = result.gpr();
-    op1.use();
-
-    JITCompiler::Jump isNotInteger = m_jit.branch32(MacroAssembler::NotEqual, tagGPR, TrustedImm32(JSValue::Int32Tag));
-
-    m_jit.move(payloadGPR, resultGPR);
-    
-    addSlowPathGenerator(slowPathCall(isNotInteger, this, dfgConvertJSValueToInt32, resultGPR, tagGPR, payloadGPR));
-    
-    integerResult(resultGPR, node, UseChildrenCalledExplicitly);
 }
 
 void SpeculativeJIT::nonSpeculativeUInt32ToNumber(Node* node)
@@ -2215,7 +2048,7 @@ void SpeculativeJIT::compile(Node* node)
             }
             SpeculatedType predictedType = node->variableAccessData()->argumentAwarePrediction();
             if (m_generationInfo[node->child1()->virtualRegister()].registerFormat() == DataFormatDouble) {
-                DoubleOperand value(this, node->child1());
+                SpeculateDoubleOperand value(this, Edge(node->child1().node(), DoubleUse));
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node->local()));
                 noResult(node);
                 recordSetLocal(node->local(), ValueSource(DoubleInJSStack));

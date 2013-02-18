@@ -86,7 +86,7 @@ namespace JSC { namespace DFG {
     macro(BitRShift, NodeResultInt32) \
     macro(BitURShift, NodeResultInt32) \
     /* Bitwise operators call ToInt32 on their operands. */\
-    macro(ValueToInt32, NodeResultInt32 | NodeMustGenerate) \
+    macro(ValueToInt32, NodeResultInt32) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
     macro(UInt32ToNumber, NodeResultNumber) \
     \

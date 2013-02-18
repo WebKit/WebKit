@@ -1,3 +1,51 @@
+2013-02-17  Filip Pizlo  <fpizlo@apple.com>
+
+        Get rid of DFG::DoubleOperand and simplify ValueToInt32
+        https://bugs.webkit.org/show_bug.cgi?id=110072
+
+        Reviewed by Geoffrey Garen.
+        
+        ValueToInt32 had a side-effecting path, which was not OSR-friendly: an OSR after
+        the side-effect would lead to the side-effect re-executing. I got rid of that path
+        and replaced it with an optimization for the case where the input is speculated
+        number-or-other. This makes idioms like null|0 and true|0 work as expected, and
+        get optimized appropriately.
+        
+        Also got rid of DoubleOperand. Replaced all remaining uses of it with
+        SpeculateDoubleOperand. Because the latter asserts that the Edge is a DoubleUse
+        edge and the remaining uses of DoubleOperand are all for untyped uses, I worked
+        around the assertion by setting the UseKind to DoubleUse by force. This is sound,
+        since all existing assertions for DoubleUse are actually asserting that we're not
+        converting a value to double unexpectedly. But all of these calls to
+        SpeculateDoubleOperand are when the operand is already known to be represented as
+        double, so there is no conversion.
+        
+        This is neutral on benchmarks, except stanford-crypto-ccm, which speeds up a
+        little. Mostly, this is intended to delete a bunch of code. DoubleOperand was
+        equivalent to the replace-edge-with-DoubleUse trick that I'm using now, except it
+        involved a _lot_ more code.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (DFG):
+        (FPRTemporary):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (DFG):
+
 2013-02-18  Ádám Kallai  <kadam@inf.u-szeged.hu>
 
         [Qt] Mountain Lion buildfix after r143147.

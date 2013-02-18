@@ -425,12 +425,14 @@ bool AbstractState::execute(unsigned indexInBlock)
         }
         if (node->child1()->shouldSpeculateInteger())
             speculateInt32Unary(node);
-        else if (node->child1()->shouldSpeculateNumber())
-            speculateNumberUnary(node);
         else if (node->child1()->shouldSpeculateBoolean())
             speculateBooleanUnary(node);
-        else
-            node->setCanExit(false);
+        else if (node->child1()->shouldSpeculateNumber())
+            speculateNumberUnary(node);
+        else {
+            node->setCanExit(forNode(node->child1()).m_type & SpecCell);
+            forNode(node->child1()).filter(~SpecCell);
+        }
         
         forNode(node).set(SpecInt32);
         break;

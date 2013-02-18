@@ -1132,6 +1132,7 @@ private:
         case GetScope:
         case TypeOf:
         case CompareEqConstant:
+        case ValueToInt32:
             setReplacement(pureCSE(node));
             break;
             

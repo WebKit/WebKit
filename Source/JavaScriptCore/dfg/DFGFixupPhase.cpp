@@ -180,15 +180,6 @@ private:
             break;
         }
             
-        case ValueToInt32: {
-            if (node->child1()->shouldSpeculateNumber()
-                && node->mustGenerate()) {
-                node->clearFlags(NodeMustGenerate);
-                m_graph.deref(node);
-            }
-            break;
-        }
-            
         case BitAnd:
         case BitOr:
         case BitXor:

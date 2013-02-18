@@ -122,7 +122,6 @@ public:
     }
     
     GPRReg fillInteger(Node*, DataFormat& returnFormat);
-    FPRReg fillDouble(Node*);
 #if USE(JSVALUE64)
     GPRReg fillJSValue(Node*);
 #elif USE(JSVALUE32_64)
@@ -690,7 +689,6 @@ public:
         return lastNode->op() == Branch && lastNode->child1() == m_currentNode ? block->size() - 1 : UINT_MAX;
     }
     
-    void nonSpeculativeValueToInt32(Node*);
     void nonSpeculativeUInt32ToNumber(Node*);
 
 #if USE(JSVALUE64)
@@ -2297,7 +2295,7 @@ public:
 
 // === Operand types ===
 //
-// IntegerOperand, DoubleOperand and JSValueOperand.
+// IntegerOperand and JSValueOperand.
 //
 // These classes are used to lock the operands to a node into machine
 // registers. These classes implement of pattern of locking a value
@@ -2357,56 +2355,6 @@ private:
     Node* m_node;
     GPRReg m_gprOrInvalid;
     DataFormat m_format;
-};
-
-class DoubleOperand {
-public:
-    explicit DoubleOperand(SpeculativeJIT* jit, Edge use)
-        : m_jit(jit)
-        , m_node(use.node())
-        , m_fprOrInvalid(InvalidFPRReg)
-    {
-        ASSERT(m_jit);
-        
-        // This is counter-intuitive but correct. DoubleOperand is intended to
-        // be used only when you're a node that is happy to accept an untyped
-        // value, but will special-case for doubles (using DoubleOperand) if the
-        // value happened to already be represented as a double. The implication
-        // is that you will not try to force the value to become a double if it
-        // is not one already.
-        ASSERT(use.useKind() != DoubleUse);
-        
-        if (jit->isFilledDouble(m_node))
-            fpr();
-    }
-
-    ~DoubleOperand()
-    {
-        ASSERT(m_fprOrInvalid != InvalidFPRReg);
-        m_jit->unlock(m_fprOrInvalid);
-    }
-
-    Node* node() const
-    {
-        return m_node;
-    }
-
-    FPRReg fpr()
-    {
-        if (m_fprOrInvalid == InvalidFPRReg)
-            m_fprOrInvalid = m_jit->fillDouble(node());
-        return m_fprOrInvalid;
-    }
-    
-    void use()
-    {
-        m_jit->use(m_node);
-    }
-
-private:
-    SpeculativeJIT* m_jit;
-    Node* m_node;
-    FPRReg m_fprOrInvalid;
 };
 
 class JSValueOperand {
@@ -2614,8 +2562,6 @@ private:
 class FPRTemporary {
 public:
     FPRTemporary(SpeculativeJIT*);
-    FPRTemporary(SpeculativeJIT*, DoubleOperand&);
-    FPRTemporary(SpeculativeJIT*, DoubleOperand&, DoubleOperand&);
     FPRTemporary(SpeculativeJIT*, SpeculateDoubleOperand&);
     FPRTemporary(SpeculativeJIT*, SpeculateDoubleOperand&, SpeculateDoubleOperand&);
 #if USE(JSVALUE32_64)

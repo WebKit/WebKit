@@ -187,6 +187,7 @@ fast/js/dfg-uint32array-overflow-values
 fast/js/dfg-uint32array
 fast/js/dfg-uint8array
 fast/js/dfg-uint8clampedarray
+fast/js/dfg-value-to-int32-with-side-effects
 fast/js/dfg-weak-js-constant-silent-fill
 fast/js/dictionary-no-cache
 fast/js/dictionary-prototype-caching
