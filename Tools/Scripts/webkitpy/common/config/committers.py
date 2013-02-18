@@ -240,6 +240,7 @@ committers_unable_to_review = [
     Committer("Bill Budge", ["bbudge@chromium.org", "bbudge@gmail.com"], "bbudge"),
     Committer("Brett Wilson", "brettw@chromium.org", "brettx"),
     Committer("Bruno de Oliveira Abinader", ["bruno.abinader@basyskom.com", "brunoabinader@gmail.com"], "abinader"),
+    Committer("Byungwoo Lee", ["bw80.lee@samsung.com", "bw80.lee@gmail.com"], "byungwoo"),
     Committer("Cameron McCormack", ["cam@mcc.id.au", "cam@webkit.org"], "heycam"),
     Committer("Carol Szabo", ["carol@webkit.org", "carol.szabo@nokia.com"], "cszabo1"),
     Committer("Cary Clark", ["caryclark@google.com", "caryclark@chromium.org"], "caryclark"),
