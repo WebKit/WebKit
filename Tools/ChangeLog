@@ -1,3 +1,20 @@
+2013-02-17  Alan Cutter  <alancutter@chromium.org>
+
+        GCE EWS bots are all offline
+        https://bugs.webkit.org/show_bug.cgi?id=110069
+
+        Reviewed by Eric Seidel.
+
+        Updated GCE EWS build scripts to use the gcel-10-04-v20130104 image instead of the obsoleted ubuntu-10-04-v20120621.
+        This changed the ephemeral disk path to /dev/sdb and required /etc/hosts to be chmodded to 644.
+
+        * EWSTools/GoogleComputeEngine/build-chromium-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh:
+        * EWSTools/GoogleComputeEngine/build-cr-linux-debug-ews.sh:
+        * EWSTools/GoogleComputeEngine/build-feeder-style-sheriffbot.sh:
+        * EWSTools/build-vm.sh:
+        * EWSTools/start-queue.sh:
+
 2013-02-18  Eugene Klyuchnikov  <eustas@chromium.org>
 
         Unreviewed, add myself to commiters.py.

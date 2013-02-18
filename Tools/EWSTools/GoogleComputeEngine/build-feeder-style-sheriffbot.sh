@@ -11,9 +11,6 @@
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -42,7 +39,7 @@ read -s -p "sheriffbot IRC Password: " IRC_PASSWORD && echo
 
 PROJECT=google.com:webkit
 ZONE=$(bash findzone.sh $PROJECT)
-IMAGE=projects/google/global/images/ubuntu-10-04-v20120621
+IMAGE=projects/google/global/images/gcel-10-04-v20130104
 MACHINE_TYPE=n1-standard-4-d
 
 gcutil --project=$PROJECT addinstance $BOT_ID --machine_type=$MACHINE_TYPE --image=$IMAGE --zone=$ZONE --wait_until_running

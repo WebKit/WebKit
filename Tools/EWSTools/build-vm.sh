@@ -11,9 +11,6 @@
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -35,7 +32,7 @@ fi
 CWD=$(pwd)
 
 # Format the disk
-cat <<EOF | sudo fdisk /dev/vdb
+cat <<EOF | sudo fdisk /dev/sdb
 n
 p
 1
@@ -44,8 +41,8 @@ p
 w
 EOF
 
-sudo mkfs.ext4 /dev/vdb1
-sudo mount /dev/vdb1 /mnt
+sudo mkfs.ext4 /dev/sdb1
+sudo mount /dev/sdb1 /mnt
 
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 
@@ -60,5 +57,7 @@ cd /mnt
 sudo mkdir -p git
 sudo chown $USER git
 sudo chgrp $USER git
+
+sudo chmod 644 /etc/hosts
 
 cd $CWD

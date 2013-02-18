@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (c) 2012 Google Inc. All rights reserved.
+# Copyright (c) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -11,9 +11,6 @@
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -41,7 +38,7 @@ done
 
 shift $((OPTIND-1))
 
-if [[ $# -ne 3 ]]; then
+if [[ "$#" -ne 3 ]]; then
     echo "$USAGE"
     exit 1
 fi
@@ -79,7 +76,7 @@ do
     ./Tools/Scripts/test-webkitpy
 
     # Run the given reset script.
-    if [[ -n $RESET_SCRIPT ]]; then
+    if [[ -n "$RESET_SCRIPT" ]]; then
         bash "$RESET_SCRIPT"
     fi
 
