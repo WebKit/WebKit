@@ -68,21 +68,21 @@ WebInspector.FileSystemProjectDelegate.prototype = {
     },
 
     /**
-     * @param {string} uri
+     * @param {string} path
      * @return {string}
      */
-    _filePathForURI: function(uri)
+    _filePathForPath: function(path)
     {
-        return uri.substr(uri.indexOf("/") + 1);
+        return "/" + path;
     },
 
     /**
-     * @param {string} uri
+     * @param {string} path
      * @param {function(?string,boolean,string)} callback
      */
-    requestFileContent: function(uri, callback)
+    requestFileContent: function(path, callback)
     {
-        var filePath = this._filePathForURI(uri);
+        var filePath = this._filePathForPath(path);
         this._fileSystem.requestFileContent(filePath, innerCallback.bind(this));
         
         /**
@@ -96,26 +96,26 @@ WebInspector.FileSystemProjectDelegate.prototype = {
     },
 
     /**
-     * @param {string} uri
+     * @param {string} path
      * @param {string} newContent
      * @param {function(?string)} callback
      */
-    setFileContent: function(uri, newContent, callback)
+    setFileContent: function(path, newContent, callback)
     {
-        var filePath = this._filePathForURI(uri);
+        var filePath = this._filePathForPath(path);
         this._fileSystem.setFileContent(filePath, newContent, callback.bind(this, ""));
     },
 
     /**
-     * @param {string} uri
+     * @param {string} path
      * @param {string} query
      * @param {boolean} caseSensitive
      * @param {boolean} isRegex
      * @param {function(Array.<WebInspector.ContentProvider.SearchMatch>)} callback
      */
-    searchInFileContent: function(uri, query, caseSensitive, isRegex, callback)
+    searchInFileContent: function(path, query, caseSensitive, isRegex, callback)
     {
-        this.requestFileContent(uri, contentCallback.bind(this));
+        this.requestFileContent(path, contentCallback.bind(this));
 
         /**
          * @param {?string} content
@@ -160,10 +160,12 @@ WebInspector.FileSystemProjectDelegate.prototype = {
         function filesLoaded(files)
         {
             for (var i = 0; i < files.length; ++i) {
-                var uri = this.id() + files[i];
+                var path = files[i].substr(1);
+                // FIXME: FileSystemProject delegate should know nothing about UISourceCode.
+                var uri = WebInspector.UISourceCode.uri(this.id(), path);
                 var contentType = this._contentTypeForPath(files[i]);
                 var url = WebInspector.fileMapping.urlForURI(uri);
-                var fileDescriptor = new WebInspector.FileDescriptor(uri, "file://" + this._fileSystem.path() + files[i], url, contentType, true);
+                var fileDescriptor = new WebInspector.FileDescriptor(path, "file://" + this._fileSystem.path() + files[i], url, contentType, true);
                 this._addFile(fileDescriptor);
             } 
         }
@@ -178,11 +180,11 @@ WebInspector.FileSystemProjectDelegate.prototype = {
     },
 
     /**
-     * @param {string} uri
+     * @param {string} path
      */
-    _removeFile: function(uri)
+    _removeFile: function(path)
     {
-        this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileRemoved, uri);
+        this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileRemoved, path);
     },
 
     reset: function()
