@@ -29,6 +29,8 @@
 #ifndef ContextMenuClientEfl_h
 #define ContextMenuClientEfl_h
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenuClient.h"
 
 #include <wtf/RefCounted.h>
@@ -52,4 +54,5 @@ public:
 };
 }
 
+#endif // ENABLE(CONTEXT_MENUS)
 #endif

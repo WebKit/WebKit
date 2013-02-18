@@ -379,7 +379,9 @@ struct _Ewk_View_Private_Data {
 #ifdef HAVE_ECORE_X
     bool isUsingEcoreX;
 #endif
+#if ENABLE(CONTEXT_MENUS)
     Ewk_Context_Menu* contextMenu;
+#endif
 };
 
 #ifndef EWK_TYPE_CHECK
@@ -761,7 +763,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
 
     WebCore::Page::PageClients pageClients;
     pageClients.chromeClient = new WebCore::ChromeClientEfl(smartData->self);
+#if ENABLE(CONTEXT_MENUS)
     pageClients.contextMenuClient = new WebCore::ContextMenuClientEfl;
+#endif
     pageClients.editorClient = new WebCore::EditorClientEfl(smartData->self);
     pageClients.dragClient = new WebCore::DragClientEfl;
 #if ENABLE(INSPECTOR)
@@ -935,7 +939,9 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* smartData)
     priv->isUsingEcoreX = WebCore::isUsingEcoreX(smartData->base.evas);
 #endif
 
+#if ENABLE(CONTEXT_MENUS)
     priv->contextMenu = 0;
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     priv->isCompositingActive = false;
@@ -974,8 +980,10 @@ static void _ewk_view_priv_del(Ewk_View_Private_Data* priv)
     if (priv->cursorObject)
         evas_object_del(priv->cursorObject);
 
+#if ENABLE(CONTEXT_MENUS)
     if (priv->contextMenu)
         ewk_context_menu_free(priv->contextMenu);
+#endif
 
 #if USE(ACCELERATED_COMPOSITING)
     priv->acceleratedCompositingContext = nullptr;
@@ -4781,10 +4789,15 @@ void ewk_view_fullscreen_exit(const Evas_Object* ewkView)
 
 Ewk_Context_Menu* ewk_view_context_menu_get(const Evas_Object* ewkView)
 {
+#if ENABLE(CONTEXT_MENUS)
     EWK_VIEW_SD_GET_OR_RETURN(ewkView, smartData, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(smartData, priv, 0);
 
     return priv->contextMenu;
+#else
+    UNUSED_PARAM(ewkView);
+    return 0;
+#endif
 }
 
 Eina_Bool ewk_view_setting_tiled_backing_store_enabled_set(Evas_Object* ewkView, Eina_Bool enable)

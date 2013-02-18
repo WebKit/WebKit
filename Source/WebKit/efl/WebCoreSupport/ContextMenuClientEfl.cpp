@@ -29,6 +29,8 @@
 #include "config.h"
 #include "ContextMenuClientEfl.h"
 
+#if ENABLE(CONTEXT_MENUS)
+
 #include "ContextMenu.h"
 #include "HitTestResult.h"
 #include "KURL.h"
@@ -85,3 +87,5 @@ void ContextMenuClientEfl::searchWithGoogle(const Frame*)
 }
 
 }
+
+#endif // ENABLE(CONTEXT_MENUS)
