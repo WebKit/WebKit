@@ -348,6 +348,7 @@ modules = [
             "NativeMemorySnapshotView.js",
             "ProfileDataGridTree.js",
             "ProfilesPanel.js",
+            "ProfilesPanelDescriptor.js",
             "ProfileLauncherView.js",
             "TopDownProfileDataGridTree.js",
             "CanvasProfileView.js",

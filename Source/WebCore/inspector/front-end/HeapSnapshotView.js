@@ -698,8 +698,8 @@ WebInspector.HeapSnapshotView.prototype = {
         for (var i = this.baseSelectElement.length, n = list.length; i < n; ++i) {
             var baseOption = document.createElement("option");
             var title = list[i].title;
-            if (!title.indexOf(UserInitiatedProfileName))
-                title = WebInspector.UIString("Snapshot %d", title.substring(UserInitiatedProfileName.length + 1));
+            if (WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile(title))
+                title = WebInspector.UIString("Snapshot %d", WebInspector.ProfilesPanelDescriptor.userInitiatedProfileIndex(title));
             baseOption.label = title;
             this.baseSelectElement.appendChild(baseOption);
         }
@@ -724,11 +724,12 @@ WebInspector.HeapSnapshotView.prototype = {
             var profile = list[i];
             var filterOption = document.createElement("option");
             var title = list[i].title;
-            if (!title.indexOf(UserInitiatedProfileName)) {
+            if (WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile(title)) {
+                var profileIndex = WebInspector.ProfilesPanelDescriptor.userInitiatedProfileIndex(title);
                 if (!i)
-                    title = WebInspector.UIString("Objects allocated before Snapshot %d", title.substring(UserInitiatedProfileName.length + 1));
+                    title = WebInspector.UIString("Objects allocated before Snapshot %d", profileIndex);
                 else
-                    title = WebInspector.UIString("Objects allocated between Snapshots %d and %d", title.substring(UserInitiatedProfileName.length + 1) - 1, title.substring(UserInitiatedProfileName.length + 1));
+                    title = WebInspector.UIString("Objects allocated between Snapshots %d and %d", profileIndex - 1, profileIndex);
             }
             filterOption.label = title;
             this.filterSelectElement.appendChild(filterOption);

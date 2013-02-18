@@ -139,6 +139,7 @@
     <file>ProfileDataGridTree.js</file>
     <file>ProfileLauncherView.js</file>
     <file>ProfilesPanel.js</file>
+    <file>ProfilesPanelDescriptor.js</file>
     <file>Progress.js</file>
     <file>ProgressIndicator.js</file>
     <file>PropertiesSection.js</file>

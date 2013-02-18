@@ -5254,6 +5254,7 @@
             'inspector/front-end/Placard.js',
             'inspector/front-end/Popover.js',
             'inspector/front-end/PresentationConsoleMessageHelper.js',
+            'inspector/front-end/ProfilesPanelDescriptor.js',
             'inspector/front-end/Progress.js',
             'inspector/front-end/ProgressIndicator.js',
             'inspector/front-end/PropertiesSection.js',

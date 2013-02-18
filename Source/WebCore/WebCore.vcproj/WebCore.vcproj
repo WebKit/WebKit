@@ -77626,6 +77626,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ProfilesPanelDescriptor.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Progress.js"
 					>
 				</File>

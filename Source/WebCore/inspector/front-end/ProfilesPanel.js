@@ -340,7 +340,7 @@ WebInspector.ProfilesPanel.prototype = {
         }
 
         var profileType = this.getProfileType(WebInspector.HeapSnapshotProfileType.TypeId);
-        var temporaryProfile = profileType.createTemporaryProfile(UserInitiatedProfileName + "." + file.name);
+        var temporaryProfile = profileType.createTemporaryProfile(WebInspector.ProfilesPanelDescriptor.UserInitiatedProfileName + "." + file.name);
         this.addProfileHeader(temporaryProfile);
 
         temporaryProfile._fromFile = true;
@@ -556,7 +556,7 @@ WebInspector.ProfilesPanel.prototype = {
         this._profiles.push(profile);
         this._profilesIdMap[this._makeKey(profile.uid, typeId)] = profile;
 
-        if (!profile.title.startsWith(UserInitiatedProfileName)) {
+        if (!WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile(profile.title)) {
             var profileTitleKey = this._makeTitleKey(profile.title, typeId);
             if (!(profileTitleKey in this._profileGroups))
                 this._profileGroups[profileTitleKey] = [];
@@ -789,7 +789,7 @@ WebInspector.ProfilesPanel.prototype = {
      */
     showProfileForURL: function(url)
     {
-        var match = url.match(WebInspector.ProfileURLRegExp);
+        var match = url.match(WebInspector.ProfilesPanelDescriptor.ProfileURLRegExp);
         if (!match)
             return;
         this.showProfile(this._profilesIdMap[this._makeKey(Number(match[3]), match[1])]);
@@ -1395,8 +1395,8 @@ WebInspector.ProfileSidebarTreeElement = function(profile, titleFormat, classNam
     this.profile = profile;
     this._titleFormat = titleFormat;
 
-    if (this.profile.title.startsWith(UserInitiatedProfileName))
-        this._profileNumber = this.profile.title.substring(UserInitiatedProfileName.length + 1);
+    if (WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile(this.profile.title))
+        this._profileNumber = WebInspector.ProfilesPanelDescriptor.userInitiatedProfileIndex(this.profile.title);
 
     WebInspector.SidebarTreeElement.call(this, className, "", "", profile, false);
 
@@ -1420,7 +1420,7 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
     {
         if (this._mainTitle)
             return this._mainTitle;
-        if (this.profile.title.startsWith(UserInitiatedProfileName))
+        if (WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile(this.profile.title))
             return WebInspector.UIString(this._titleFormat, this._profileNumber);
         return this.profile.title;
     },
