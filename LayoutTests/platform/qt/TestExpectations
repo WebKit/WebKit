@@ -2643,3 +2643,6 @@ webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ ImageOnlyFailure ]
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
+
+# New test introduced in r143073 that never passed on Qt and EFL.
+webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
