@@ -101,7 +101,6 @@ private:
     void displayTimerFired();
     void display();
     void display(UpdateInfo&);
-    PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext(ShareableBitmap*);
 
     uint64_t m_backingStoreStateID;
 

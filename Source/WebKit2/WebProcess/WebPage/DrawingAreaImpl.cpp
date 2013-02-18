@@ -652,11 +652,6 @@ static bool shouldPaintBoundsRect(const IntRect& bounds, const Vector<IntRect>& 
     return wastedSpace <= wastedSpaceThreshold;
 }
 
-PassOwnPtr<GraphicsContext> DrawingAreaImpl::createGraphicsContext(ShareableBitmap* bitmap)
-{
-    return bitmap->createGraphicsContext();
-}
-
 void DrawingAreaImpl::display(UpdateInfo& updateInfo)
 {
     ASSERT(!m_isPaintingSuspended);
@@ -707,7 +702,7 @@ void DrawingAreaImpl::display(UpdateInfo& updateInfo)
     m_scrollRect = IntRect();
     m_scrollOffset = IntSize();
 
-    OwnPtr<GraphicsContext> graphicsContext = createGraphicsContext(bitmap.get());
+    OwnPtr<GraphicsContext> graphicsContext = bitmap->createGraphicsContext();
     graphicsContext->applyDeviceScaleFactor(deviceScaleFactor);
     
     updateInfo.updateRectBounds = bounds;
