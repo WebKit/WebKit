@@ -122,7 +122,7 @@ bool GestureEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) co
     if (dispatcher->node()->disabled())
         return true;
 
-    dispatcher->dispatchEvent(event());
+    dispatcher->dispatch();
     ASSERT(!event()->defaultPrevented());
     return event()->defaultHandled() || event()->defaultPrevented();
 }
