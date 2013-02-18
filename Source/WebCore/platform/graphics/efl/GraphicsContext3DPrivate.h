@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2012 Samsung Electronics
-    Copyright (C) 2012 Intel Corporation.
+    Copyright (C) 2012 Intel Corporation. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -41,37 +41,42 @@ class GraphicsContext3DPrivate
 #endif
 {
 public:
-    GraphicsContext3DPrivate(GraphicsContext3D*, HostWindow*, GraphicsContext3D::RenderStyle);
+    static PassOwnPtr<GraphicsContext3DPrivate> create(GraphicsContext3D*, HostWindow*);
     ~GraphicsContext3DPrivate();
 
     bool createSurface(PageClientEfl*, bool);
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
-    void setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>  callBack);
-#if USE(ACCELERATED_COMPOSITING)
-    PlatformLayer* platformLayer() const;
-#endif
+    void setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
 #if USE(TEXTURE_MAPPER_GL)
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*) OVERRIDE;
 #endif
 #if USE(GRAPHICS_SURFACE)
-    virtual IntSize platformLayerSize() const;
-    virtual uint32_t copyToGraphicsSurface();
-    virtual GraphicsSurfaceToken graphicsSurfaceToken() const;
+    virtual IntSize platformLayerSize() const OVERRIDE;
+    virtual uint32_t copyToGraphicsSurface() OVERRIDE;
+    virtual GraphicsSurfaceToken graphicsSurfaceToken() const OVERRIDE;
     void didResizeCanvas(const IntSize&);
 #endif
-    bool makeContextCurrent();
+    bool makeContextCurrent() const;
+
+private:
+    GraphicsContext3DPrivate(GraphicsContext3D*, HostWindow*);
+    bool initialize();
+    bool prepareBuffer() const;
     void releaseResources();
-    GraphicsContext3D::Attributes m_attributes;
+#if USE(GRAPHICS_SURFACE)
+    bool makeSharedContextCurrent() const;
+#endif
     GraphicsContext3D* m_context;
     HostWindow* m_hostWindow;
-    OwnPtr<GLPlatformContext> m_platformContext;
-    OwnPtr<GLPlatformSurface> m_platformSurface;
+    OwnPtr<GLPlatformContext> m_offScreenContext;
+    OwnPtr<GLPlatformSurface> m_offScreenSurface;
 #if USE(GRAPHICS_SURFACE)
+    OwnPtr<GLPlatformContext> m_sharedContext;
+    OwnPtr<GLPlatformSurface> m_sharedSurface;
     GraphicsSurfaceToken m_surfaceHandle;
 #endif
     OwnPtr<GraphicsContext3D::ContextLostCallback> m_contextLostCallback;
     ListHashSet<GC3Denum> m_syntheticErrors;
-    bool m_pendingSurfaceResize;
     IntSize m_size;
 };
 
@@ -80,3 +85,4 @@ public:
 #endif
 
 #endif
+

@@ -32,13 +32,12 @@ namespace WebCore {
 
 static const int pbufferAttributes[] = { GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGHT, 1, 0 };
 
-#if USE(GRAPHICS_SURFACE)
 GLXTransportSurface::GLXTransportSurface()
     : GLPlatformSurface()
 {
     m_sharedDisplay = X11Helper::nativeDisplay();
     m_configSelector = adoptPtr(new GLXConfigSelector());
-    OwnPtrX11<XVisualInfo> visInfo(m_configSelector->visualInfo());
+    OwnPtrX11<XVisualInfo> visInfo(m_configSelector->visualInfo(m_configSelector->surfaceContextConfig()));
 
     if (!visInfo.get()) {
         destroy();
@@ -77,14 +76,7 @@ void GLXTransportSurface::swapBuffers()
     if (!m_drawable)
         return;
 
-    if (m_restoreNeeded) {
-        GLint oldFBO;
-        glGetIntegerv(GL_FRAMEBUFFER_BINDING, &oldFBO);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glXSwapBuffers(sharedDisplay(), m_drawable);
-        glBindFramebuffer(GL_FRAMEBUFFER, oldFBO);
-    } else
-        glXSwapBuffers(sharedDisplay(), m_drawable);
+    glXSwapBuffers(sharedDisplay(), m_drawable);
 }
 
 void GLXTransportSurface::destroy()
@@ -100,67 +92,73 @@ void GLXTransportSurface::destroy()
     m_configSelector = nullptr;
 }
 
-#endif
-
-GLXPBuffer::GLXPBuffer()
+GLXOffScreenSurface::GLXOffScreenSurface()
     : GLPlatformSurface()
+    , m_pixmap(0)
+    , m_glxPixmap(0)
 {
     initialize();
 }
 
-GLXPBuffer::~GLXPBuffer()
+GLXOffScreenSurface::~GLXOffScreenSurface()
 {
 }
 
-void GLXPBuffer::initialize()
+void GLXOffScreenSurface::initialize()
 {
     m_sharedDisplay = X11Helper::nativeDisplay();
 
     m_configSelector = adoptPtr(new GLXConfigSelector());
-    GLXFBConfig config = m_configSelector->pBufferContextConfig();
 
-    if (!config) {
+    OwnPtrX11<XVisualInfo> visualInfo(m_configSelector->visualInfo(m_configSelector->pixmapContextConfig()));
+    X11Helper::createPixmap(&m_pixmap, *visualInfo.get());
+
+    if (!m_pixmap) {
         destroy();
         return;
     }
 
-    m_drawable = glXCreatePbuffer(m_sharedDisplay, config, pbufferAttributes);
+    m_glxPixmap = glXCreateGLXPixmap(m_sharedDisplay, visualInfo.get(), m_pixmap);
 
-    if (!m_drawable) {
+    if (!m_glxPixmap) {
         destroy();
         return;
     }
 
-    m_bufferHandle = m_drawable;
+    m_drawable = m_glxPixmap;
 }
 
-PlatformSurfaceConfig GLXPBuffer::configuration()
+PlatformSurfaceConfig GLXOffScreenSurface::configuration()
 {
-    return m_configSelector->pBufferContextConfig();
+    return m_configSelector->pixmapContextConfig();
 }
 
-void GLXPBuffer::destroy()
+void GLXOffScreenSurface::destroy()
 {
     freeResources();
 }
 
-void GLXPBuffer::freeResources()
+void GLXOffScreenSurface::freeResources()
 {
     GLPlatformSurface::destroy();
     Display* display = sharedDisplay();
 
-    if (m_drawable && display) {
-        glXDestroyPbuffer(display, m_drawable);
-        m_drawable = 0;
-        m_bufferHandle = 0;
+    if (!display)
+        return;
+
+    if (m_glxPixmap) {
+        glXDestroyGLXPixmap(display, m_glxPixmap);
+        glXWaitGL();
+        m_glxPixmap = 0;
+    }
+
+    if (m_pixmap) {
+        X11Helper::destroyPixmap(m_pixmap);
+        m_pixmap = 0;
     }
 
     m_configSelector = nullptr;
-}
-
-void GLXPBuffer::setGeometry(const IntRect& newRect)
-{
-    GLPlatformSurface::setGeometry(newRect);
+    m_drawable = 0;
 }
 
 }

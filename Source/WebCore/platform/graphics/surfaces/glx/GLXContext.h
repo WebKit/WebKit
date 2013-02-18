@@ -37,7 +37,7 @@ class GLXOffScreenContext : public GLPlatformContext {
 public:
     GLXOffScreenContext();
     virtual ~GLXOffScreenContext();
-    virtual bool initialize(GLPlatformSurface*) OVERRIDE;
+    virtual bool initialize(GLPlatformSurface*, PlatformContext) OVERRIDE;
     virtual bool platformMakeCurrent(GLPlatformSurface*) OVERRIDE;
     virtual void platformReleaseCurrent() OVERRIDE;
     virtual void destroy() OVERRIDE;

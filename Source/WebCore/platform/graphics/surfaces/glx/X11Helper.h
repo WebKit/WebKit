@@ -46,11 +46,13 @@ namespace WebCore {
 class X11Helper {
 
 public:
+    static void createPixmap(Pixmap*, const XVisualInfo&, const IntSize& = IntSize(1, 1));
     static void createOffScreenWindow(uint32_t*, const XVisualInfo&, const IntSize& = IntSize(1, 1));
 #if USE(EGL)
     static void createOffScreenWindow(uint32_t*, const EGLint, const IntSize& = IntSize(1, 1));
 #endif
     static void destroyWindow(const uint32_t);
+    static void destroyPixmap(const uint32_t);
     static void resizeWindow(const IntRect&, const uint32_t);
     static bool isXRenderExtensionSupported();
     static Display* nativeDisplay();

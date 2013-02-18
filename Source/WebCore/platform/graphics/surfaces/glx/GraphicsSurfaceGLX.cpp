@@ -123,7 +123,8 @@ struct GraphicsSurfacePrivate {
         if (!display() || !m_configSelector)
             return 0;
 
-        OwnPtrX11<XVisualInfo> visInfo(m_configSelector->visualInfo());
+        GLXFBConfig config = m_configSelector->surfaceContextConfig();
+        OwnPtrX11<XVisualInfo> visInfo(m_configSelector->visualInfo(config));
 
         if (!visInfo.get()) {
             clear();
@@ -137,7 +138,7 @@ struct GraphicsSurfacePrivate {
             return 0;
         }
 
-        m_glxSurface = glXCreateWindow(display(), m_configSelector->surfaceContextConfig(), m_surface, 0);
+        m_glxSurface = glXCreateWindow(display(), config, m_surface, 0);
         return m_surface;
     }
 

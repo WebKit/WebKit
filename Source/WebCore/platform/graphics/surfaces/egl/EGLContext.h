@@ -37,7 +37,7 @@ class EGLOffScreenContext : public GLPlatformContext {
 public:
     EGLOffScreenContext();
     virtual ~EGLOffScreenContext();
-    virtual bool initialize(GLPlatformSurface*) OVERRIDE;
+    virtual bool initialize(GLPlatformSurface*, PlatformContext) OVERRIDE;
     virtual bool platformMakeCurrent(GLPlatformSurface*) OVERRIDE;
     virtual void platformReleaseCurrent() OVERRIDE;
     virtual void destroy() OVERRIDE;

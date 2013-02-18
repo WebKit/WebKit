@@ -140,6 +140,47 @@ void X11Helper::resizeWindow(const IntRect& newRect, const uint32_t windowId)
     XFlush(nativeDisplay());
 }
 
+void X11Helper::createPixmap(Pixmap* handleId, const XVisualInfo& visualInfo, const IntSize& size)
+{
+    Display* display = nativeDisplay();
+    if (!display)
+        return;
+
+    if (!visualInfo.visual) {
+        LOG_ERROR("Failed to find valid XVisual.");
+        return;
+    }
+
+    Window xWindow = offscreenRootWindow();
+    if (!xWindow) {
+        LOG_ERROR("Failed to create offscreen root window.");
+        return;
+    }
+
+    Pixmap tempHandleId = XCreatePixmap(display, xWindow, size.width(), size.height(), visualInfo.depth);
+
+    if (!tempHandleId) {
+        LOG_ERROR("Failed to create offscreen pixmap.");
+        return;
+    }
+
+    *handleId = tempHandleId;
+    XSync(X11Helper::nativeDisplay(), false);
+}
+
+void X11Helper::destroyPixmap(const uint32_t pixmapId)
+{
+    if (!pixmapId)
+        return;
+
+    Display* display = nativeDisplay();
+    if (!display)
+        return;
+
+    XFreePixmap(display, pixmapId);
+    XSync(X11Helper::nativeDisplay(), false);
+}
+
 void X11Helper::createOffScreenWindow(uint32_t* handleId, const XVisualInfo& visInfo, const IntSize& size)
 {
 #if USE(GRAPHICS_SURFACE)
@@ -162,8 +203,7 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const XVisualInfo& vis
     attribute.border_pixel = BlackPixel(display, 0);
     attribute.colormap = cmap;
     attribute.event_mask = ResizeRedirectMask;
-    uint32_t tempHandleId;
-    tempHandleId = XCreateWindow(display, xWindow, 0, 0, size.width(), size.height(), 0, visInfo.depth, InputOutput, visInfo.visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
+    uint32_t tempHandleId = XCreateWindow(display, xWindow, 0, 0, size.width(), size.height(), 0, visInfo.depth, InputOutput, visInfo.visual, CWBackPixel | CWBorderPixel | CWColormap, &attribute);
 
     if (!tempHandleId) {
         LOG_ERROR("Failed to create offscreen window.");

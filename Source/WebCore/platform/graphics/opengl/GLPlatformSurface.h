@@ -42,7 +42,7 @@ class GLPlatformSurface {
 
 public:
     // Creates a GL surface used for offscreen rendering.
-    static PassOwnPtr<GLPlatformSurface> createOffscreenSurface();
+    static PassOwnPtr<GLPlatformSurface> createOffScreenSurface();
 
     // Creates a GL surface used for offscreen rendering. The results can be transported
     // to the UI process for display.
@@ -53,6 +53,8 @@ public:
     const IntRect& geometry() const;
 
     // Get the underlying platform specific buffer handle.
+    // The handle will be null if surface doesn't support
+    // buffer sharing.
     PlatformBufferHandle handle() const;
 
     PlatformDrawable drawable() const;
@@ -61,12 +63,12 @@ public:
 
     virtual void swapBuffers();
 
-    // Convenience Function to update surface backbuffer with texture contents, restore current FBO and Texture.
+    // Convenience Function to update surface backbuffer with texture contents.
+    // Note that the function doesn't track or restore any GL states.
     // Function does the following(in order):
     // a) Blits texture contents to back buffer.
     // b) Calls Swap Buffers.
-    // c) Sets current FBO as bindFboId.
-    virtual void updateContents(const uint32_t texture, const GLuint bindFboId, const uint32_t bindTexture);
+    virtual void updateContents(const uint32_t texture);
 
     virtual void setGeometry(const IntRect& newRect);
 
@@ -76,7 +78,6 @@ public:
 
 protected:
     GLPlatformSurface();
-    bool m_restoreNeeded;
     IntRect m_rect;
     GLuint m_fboId;
     PlatformDisplay m_sharedDisplay;

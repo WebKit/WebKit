@@ -1,6 +1,6 @@
 /*
     Copyright (C) 2012 Samsung Electronics
-    Copyright (C) 2012 Intel Corporation.
+    Copyright (C) 2012 Intel Corporation. All rights reserved.
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,58 +28,102 @@
 
 namespace WebCore {
 
-GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, HostWindow* hostWindow, GraphicsContext3D::RenderStyle renderStyle)
+PassOwnPtr<GraphicsContext3DPrivate> GraphicsContext3DPrivate::create(GraphicsContext3D* context, HostWindow* hostWindow)
+{
+    OwnPtr<GraphicsContext3DPrivate> platformLayer = adoptPtr(new GraphicsContext3DPrivate(context, hostWindow));
+
+    if (platformLayer && platformLayer->initialize())
+        return platformLayer.release();
+
+    return nullptr;
+}
+
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(GraphicsContext3D* context, HostWindow* hostWindow)
     : m_context(context)
     , m_hostWindow(hostWindow)
-    , m_pendingSurfaceResize(false)
 {
+}
+
+bool GraphicsContext3DPrivate::initialize()
+{
+    if (m_context->m_renderStyle == GraphicsContext3D::RenderDirectlyToHostWindow)
+        return false;
+
     if (m_hostWindow && m_hostWindow->platformPageClient()) {
         // FIXME: Implement this code path for WebKit1.
         // Get Evas object from platformPageClient and set EvasGL related members.
-        return;
+        return false;
     }
 
-    m_platformContext = GLPlatformContext::createContext(renderStyle);
-    if (!m_platformContext)
-        return;
+    m_offScreenContext = GLPlatformContext::createContext(m_context->m_renderStyle);
+    if (!m_offScreenContext)
+        return false;
 
-    if (renderStyle == GraphicsContext3D::RenderOffscreen) {
+    if (m_context->m_renderStyle == GraphicsContext3D::RenderOffscreen) {
 #if USE(GRAPHICS_SURFACE)
-        m_platformSurface = GLPlatformSurface::createTransportSurface();
-#else
-        m_platformSurface = GLPlatformSurface::createOffscreenSurface();
+        m_sharedSurface = GLPlatformSurface::createTransportSurface();
+        if (!m_sharedSurface)
+            return false;
+
+        m_sharedContext = GLPlatformContext::createContext(m_context->m_renderStyle);
+        if (!m_sharedContext)
+            return false;
 #endif
-        if (!m_platformSurface) {
-            m_platformContext = nullptr;
-            return;
-        }
 
-        if (!m_platformContext->initialize(m_platformSurface.get()) || !m_platformContext->makeCurrent(m_platformSurface.get())) {
-            releaseResources();
-            m_platformContext = nullptr;
-            m_platformSurface = nullptr;
+        m_offScreenSurface = GLPlatformSurface::createOffScreenSurface();
+
+        if (!m_offScreenSurface)
+            return false;
+
+        if (!m_offScreenContext->initialize(m_offScreenSurface.get()))
+            return false;
+
 #if USE(GRAPHICS_SURFACE)
-        } else
-            m_surfaceHandle = GraphicsSurfaceToken(m_platformSurface->handle());
-#else
-        }
+        if (!m_sharedContext->initialize(m_sharedSurface.get(), m_offScreenContext->handle()))
+            return false;
+
+        if (!makeSharedContextCurrent())
+            return false;
+
+        m_surfaceHandle = GraphicsSurfaceToken(m_sharedSurface->handle());
 #endif
     }
+
+    if (!makeContextCurrent())
+        return false;
+
+    return true;
 }
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
+    releaseResources();
 }
 
 void GraphicsContext3DPrivate::releaseResources()
 {
-    // Release the current context and drawable only after destroying any associated gl resources.
-    if (m_platformSurface)
-        m_platformSurface->destroy();
+    if (m_context->m_renderStyle == GraphicsContext3D::RenderToCurrentGLContext)
+        return;
 
-    if (m_platformContext) {
-        m_platformContext->destroy();
-        m_platformContext->releaseCurrent();
+    // Release the current context and drawable only after destroying any associated gl resources.
+#if USE(GRAPHICS_SURFACE)
+    if (m_sharedContext && m_sharedContext->handle() && m_sharedSurface)
+        makeSharedContextCurrent();
+
+    if (m_sharedSurface)
+        m_sharedSurface->destroy();
+
+    if (m_sharedContext) {
+        m_sharedContext->destroy();
+        m_sharedContext->releaseCurrent();
+    }
+#endif
+    if (m_offScreenSurface)
+        m_offScreenSurface->destroy();
+
+    if (m_offScreenContext) {
+        m_offScreenContext->destroy();
+        m_offScreenContext->releaseCurrent();
     }
 }
 
@@ -96,49 +140,30 @@ void GraphicsContext3DPrivate::setContextLostCallback(PassOwnPtr<GraphicsContext
 
 PlatformGraphicsContext3D GraphicsContext3DPrivate::platformGraphicsContext3D() const
 {
-    return m_platformContext->handle();
+    return m_offScreenContext->handle();
 }
 
-bool GraphicsContext3DPrivate::makeContextCurrent()
+bool GraphicsContext3DPrivate::makeContextCurrent() const
 {
-    bool success = m_platformContext->makeCurrent(m_platformSurface.get());
+    bool success = m_offScreenContext->makeCurrent(m_offScreenSurface.get());
 
-    if (!m_platformContext->isValid()) {
+    if (!m_offScreenContext->isValid()) {
         // FIXME: Restore context
         if (m_contextLostCallback)
             m_contextLostCallback->onContextLost();
 
-        success = false;
+        return false;
     }
 
     return success;
 }
 
-#if USE(TEXTURE_MAPPER_GL)
-void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatRect& /* target */, const TransformationMatrix&, float /* opacity */, BitmapTexture* /* mask */)
+bool GraphicsContext3DPrivate::prepareBuffer() const
 {
-    notImplemented();
-}
-#endif
-
-#if USE(GRAPHICS_SURFACE)
-void GraphicsContext3DPrivate::didResizeCanvas(const IntSize& size)
-{
-    m_pendingSurfaceResize = true;
-    m_size = size;
-}
-
-uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
-{
-    if (!m_platformContext || !makeContextCurrent())
-        return 0;
+    if (!makeContextCurrent())
+        return false;
 
     m_context->markLayerComposited();
-
-    if (m_pendingSurfaceResize) {
-        m_pendingSurfaceResize = false;
-        m_platformSurface->setGeometry(IntRect(0, 0, m_context->m_currentWidth, m_context->m_currentHeight));
-    }
 
     if (m_context->m_attrs.antialias) {
         bool enableScissorTest = false;
@@ -161,8 +186,46 @@ uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
             m_context->enable(GraphicsContext3D::SCISSOR_TEST);
     }
 
-    m_platformSurface->updateContents(m_context->m_texture, m_context->m_boundFBO, m_context->m_boundTexture0);
+    return true;
+}
 
+#if USE(TEXTURE_MAPPER_GL)
+void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatRect& /* target */, const TransformationMatrix&, float /* opacity */, BitmapTexture* /* mask */)
+{
+    notImplemented();
+}
+#endif
+
+#if USE(GRAPHICS_SURFACE)
+bool GraphicsContext3DPrivate::makeSharedContextCurrent() const
+{
+    bool success = m_sharedContext->makeCurrent(m_sharedSurface.get());
+
+    if (!m_sharedContext->isValid()) {
+        // FIXME: Restore context
+        if (m_contextLostCallback)
+            m_contextLostCallback->onContextLost();
+
+        return false;
+    }
+
+    return success;
+}
+
+void GraphicsContext3DPrivate::didResizeCanvas(const IntSize& size)
+{
+    m_size = size;
+    m_sharedSurface->setGeometry(IntRect(0, 0, m_size.width(), m_size.height()));
+}
+
+uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()
+{
+    if (m_context->m_layerComposited || !prepareBuffer() || !makeSharedContextCurrent())
+        return 0;
+
+    m_sharedSurface->updateContents(m_context->m_texture);
+    makeContextCurrent();
+    glBindFramebuffer(GL_FRAMEBUFFER,  m_context->m_boundFBO);
     return 0;
 }
 
@@ -175,7 +238,6 @@ IntSize GraphicsContext3DPrivate::platformLayerSize() const
 {
     return m_size;
 }
-
 #endif
 
 } // namespace WebCore

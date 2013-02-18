@@ -67,7 +67,7 @@ EGLOffScreenContext::EGLOffScreenContext()
 {
 }
 
-bool EGLOffScreenContext::initialize(GLPlatformSurface* surface)
+bool EGLOffScreenContext::initialize(GLPlatformSurface* surface, PlatformContext sharedContext)
 {
     if (!surface)
         return false;
@@ -86,7 +86,7 @@ bool EGLOffScreenContext::initialize(GLPlatformSurface* surface)
         return false;
 
     if (isRobustnessExtSupported(m_display))
-        m_contextHandle = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextRobustnessAttributes);
+        m_contextHandle = eglCreateContext(m_display, config, sharedContext, contextRobustnessAttributes);
 
     if (m_contextHandle != EGL_NO_CONTEXT) {
         // The EGL_EXT_create_context_robustness spec requires that a context created with
@@ -100,7 +100,7 @@ bool EGLOffScreenContext::initialize(GLPlatformSurface* surface)
     }
 
     if (m_contextHandle == EGL_NO_CONTEXT)
-        m_contextHandle = eglCreateContext(m_display, config, EGL_NO_CONTEXT, contextAttributes);
+        m_contextHandle = eglCreateContext(m_display, config, sharedContext, contextAttributes);
 
     if (m_contextHandle != EGL_NO_CONTEXT)
         return true;

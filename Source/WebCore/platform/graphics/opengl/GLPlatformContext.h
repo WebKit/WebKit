@@ -63,7 +63,7 @@ public:
 
     virtual ~GLPlatformContext();
 
-    virtual bool initialize(GLPlatformSurface*);
+    virtual bool initialize(GLPlatformSurface*, PlatformContext = 0);
 
     // Makes this and surface as current context and drawable.
     // Calling this function with no surface is same as calling releaseCurrent.

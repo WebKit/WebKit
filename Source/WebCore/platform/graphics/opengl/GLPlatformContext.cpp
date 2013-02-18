@@ -207,7 +207,7 @@ bool GLPlatformContext::makeCurrent(GLPlatformSurface* surface)
 
     m_currentContext = 0;
 
-    if (!surface || (surface && !surface->handle()))
+    if (!surface || (surface && !surface->drawable()))
         platformReleaseCurrent();
     else if (platformMakeCurrent(surface))
         m_currentContext = this;
@@ -262,7 +262,7 @@ bool GLPlatformContext::isCurrentContext() const
     return true;
 }
 
-bool GLPlatformContext::initialize(GLPlatformSurface*)
+bool GLPlatformContext::initialize(GLPlatformSurface*, PlatformContext)
 {
     return true;
 }

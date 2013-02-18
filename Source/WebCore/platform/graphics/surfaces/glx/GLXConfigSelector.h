@@ -48,8 +48,8 @@ class GLXConfigSelector {
 
 public:
     GLXConfigSelector()
-        : m_pbufferFBConfig(0)
-        , m_surfaceContextFBConfig(0)
+        : m_surfaceContextFBConfig(0)
+        , m_pixmapContextFBConfig(0)
     {
     }
 
@@ -57,33 +57,32 @@ public:
     {
     }
 
-    XVisualInfo* visualInfo()
+    XVisualInfo* visualInfo(const GLXFBConfig& config)
     {
-        if (!surfaceContextConfig())
-            return 0;
-
-        return glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), m_surfaceContextFBConfig);
+        return glXGetVisualFromFBConfig(X11Helper::nativeDisplay(), config);
     }
 
-    GLXFBConfig pBufferContextConfig()
+    GLXFBConfig pixmapContextConfig()
     {
-        if (!m_pbufferFBConfig) {
+        if (!m_pixmapContextFBConfig) {
             static const int attributes[] = {
                 GLX_LEVEL, 0,
-                GLX_DRAWABLE_TYPE, GLX_PBUFFER_BIT,
+                GLX_DRAWABLE_TYPE, GLX_PIXMAP_BIT,
                 GLX_RENDER_TYPE,   GLX_RGBA_BIT,
                 GLX_RED_SIZE,      1,
                 GLX_GREEN_SIZE,    1,
                 GLX_BLUE_SIZE,     1,
+                GLX_ALPHA_SIZE,    1,
                 GLX_DOUBLEBUFFER,  GL_FALSE,
                 None
             };
 
-            m_pbufferFBConfig = findMatchingConfig(attributes);
+            m_pixmapContextFBConfig = findMatchingConfig(attributes);
         }
 
-        return m_pbufferFBConfig;
+        return m_pixmapContextFBConfig;
     }
+
 
     GLXFBConfig surfaceContextConfig()
     {
@@ -103,8 +102,8 @@ public:
 
     void reset()
     {
-        m_pbufferFBConfig = 0;
         m_surfaceContextFBConfig = 0;
+        m_pixmapContextFBConfig = 0;
     }
 
 private:
@@ -159,8 +158,8 @@ private:
         return temp[0];
     }
 
-    GLXFBConfig m_pbufferFBConfig;
     GLXFBConfig m_surfaceContextFBConfig;
+    GLXFBConfig m_pixmapContextFBConfig;
 };
 
 }

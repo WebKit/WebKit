@@ -56,7 +56,7 @@ GLXOffScreenContext::GLXOffScreenContext()
 {
 }
 
-bool GLXOffScreenContext::initialize(GLPlatformSurface* surface)
+bool GLXOffScreenContext::initialize(GLPlatformSurface* surface, PlatformContext sharedContext)
 {
     if (!surface)
         return false;
@@ -71,7 +71,7 @@ bool GLXOffScreenContext::initialize(GLPlatformSurface* surface)
         initializeARBExtensions();
 
         if (glXCreateContextAttribsARB)
-            m_contextHandle = glXCreateContextAttribsARB(x11Display, config, 0, true, Attribs);
+            m_contextHandle = glXCreateContextAttribsARB(x11Display, config, sharedContext, true, Attribs);
 
         if (m_contextHandle) {
             // The GLX_ARB_create_context_robustness spec requires that a context created with
@@ -85,7 +85,7 @@ bool GLXOffScreenContext::initialize(GLPlatformSurface* surface)
         }
 
         if (!m_contextHandle)
-            m_contextHandle = glXCreateNewContext(x11Display, config, GLX_RGBA_TYPE, 0, true);
+            m_contextHandle = glXCreateNewContext(x11Display, config, GLX_RGBA_TYPE, sharedContext, true);
 
         if (m_contextHandle)
             return true;
@@ -105,7 +105,7 @@ bool GLXOffScreenContext::isCurrentContext() const
 
 bool GLXOffScreenContext::platformMakeCurrent(GLPlatformSurface* surface)
 {
-    return glXMakeCurrent(surface->sharedDisplay(), surface->handle(), m_contextHandle);
+    return glXMakeCurrent(surface->sharedDisplay(), surface->drawable(), m_contextHandle);
 }
 
 void GLXOffScreenContext::platformReleaseCurrent()
