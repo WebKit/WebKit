@@ -51,6 +51,23 @@ private:
 
     LayoutUnit computePreferredTrackWidth(const Length&, size_t) const;
 
+    struct GridCoordinate {
+        // HashMap requires a default constuctor.
+        GridCoordinate()
+            : columnIndex(0)
+            , rowIndex(0)
+        {
+        }
+
+        GridCoordinate(size_t row, size_t column)
+            : columnIndex(column)
+            , rowIndex(row)
+        {
+        }
+
+        size_t columnIndex;
+        size_t rowIndex;
+    };
     class GridIterator;
     enum TrackSizingDirection { ForColumns, ForRows };
     void computedUsedBreadthOfGridTracks(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks);
@@ -58,8 +75,10 @@ private:
     LayoutUnit computeUsedBreadthOfMaxLength(TrackSizingDirection, const Length&) const;
     LayoutUnit computeUsedBreadthOfSpecifiedLength(TrackSizingDirection, const Length&) const;
     void resolveContentBasedTrackSizingFunctions(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, LayoutUnit& availableLogicalSpace);
+    void insertItemIntoGrid(RenderBox*, size_t rowTrack, size_t columnTrack);
     void placeItemsOnGrid();
     void layoutGridItems();
+    void clearGrid();
 
     typedef LayoutUnit (RenderGrid::* SizingFunction)(RenderBox*, TrackSizingDirection, Vector<GridTrack>&);
     typedef LayoutUnit (GridTrack::* AccumulatorGetter)() const;
@@ -74,8 +93,8 @@ private:
     LayoutUnit minContentForChild(RenderBox*, TrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutUnit maxContentForChild(RenderBox*, TrackSizingDirection, Vector<GridTrack>& columnTracks);
     LayoutPoint findChildLogicalPosition(RenderBox*, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks);
-    size_t resolveGridPosition(TrackSizingDirection, const RenderObject*) const;
-    size_t resolveGridPosition(const GridPosition&) const;
+    GridCoordinate cachedGridCoordinate(const RenderBox*) const;
+    size_t resolveGridPositionFromStyle(const GridPosition&) const;
 
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(TrackSizingDirection, const Vector<GridTrack>&);
@@ -85,6 +104,7 @@ private:
     size_t gridRowCount() const { return m_grid.size(); }
 
     Vector<Vector<Vector<RenderBox*, 1> > > m_grid;
+    HashMap<const RenderBox*, GridCoordinate> m_gridItemCoordinate;
 };
 
 } // namespace WebCore

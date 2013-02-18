@@ -184,7 +184,7 @@ void RenderGrid::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, Layo
         // FIXME: This should add in the scrollbarWidth (e.g. see RenderFlexibleBox).
     }
 
-    const_cast<RenderGrid*>(this)->m_grid.clear();
+    const_cast<RenderGrid*>(this)->clearGrid();
 }
 
 void RenderGrid::computePreferredLogicalWidths()
@@ -316,8 +316,9 @@ size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
     size_t maximumIndex = trackStyles.size();
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        GridPosition position = (direction == ForColumns) ? child->style()->gridItemColumn() : child->style()->gridItemRow();
-        maximumIndex = std::max(maximumIndex, resolveGridPosition(position) + 1);
+        const GridPosition& position = (direction == ForColumns) ? child->style()->gridItemColumn() : child->style()->gridItemRow();
+        // This function bypasses the cache as it is used to build it. Also 'auto' items will need to be resolved in seperate phases anyway.
+        maximumIndex = std::max(maximumIndex, resolveGridPositionFromStyle(position) + 1);
     }
 
     return maximumIndex;
@@ -332,8 +333,8 @@ LayoutUnit RenderGrid::logicalContentHeightForChild(RenderBox* child, Vector<Gri
     if (!child->needsLayout())
         child->setNeedsLayout(true, MarkOnlyThis);
 
-    size_t columnTrack = resolveGridPosition(ForColumns, child);
-    child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
+    const GridCoordinate& coordinate = cachedGridCoordinate(child);
+    child->setOverrideContainingBlockContentLogicalWidth(columnTracks[coordinate.columnIndex].m_usedBreadth);
     child->clearOverrideContainingBlockContentLogicalHeight();
     child->layout();
     return child->logicalHeight();
@@ -469,20 +470,33 @@ bool RenderGrid::tracksAreWiderThanMinTrackBreadth(TrackSizingDirection directio
 }
 #endif
 
+void RenderGrid::insertItemIntoGrid(RenderBox* child, size_t rowTrack, size_t columnTrack)
+{
+    m_grid[rowTrack][columnTrack].append(child);
+    m_gridItemCoordinate.set(child, GridCoordinate(rowTrack, columnTrack));
+}
+
 void RenderGrid::placeItemsOnGrid()
 {
     ASSERT(m_grid.isEmpty());
+    ASSERT(m_gridItemCoordinate.isEmpty());
+
     m_grid.grow(maximumIndexInDirection(ForRows));
     size_t maximumColumnIndex = maximumIndexInDirection(ForColumns);
     for (size_t i = 0; i < gridRowCount(); ++i)
         m_grid[i].grow(maximumColumnIndex);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        size_t columnTrack = resolveGridPosition(child->style()->gridItemColumn());
-        size_t rowTrack = resolveGridPosition(child->style()->gridItemRow());
-
-        m_grid[rowTrack][columnTrack].append(child);
+        size_t columnTrack = resolveGridPositionFromStyle(child->style()->gridItemColumn());
+        size_t rowTrack = resolveGridPositionFromStyle(child->style()->gridItemRow());
+        insertItemIntoGrid(child, rowTrack, columnTrack);
     }
+}
+
+void RenderGrid::clearGrid()
+{
+    m_grid.clear();
+    m_gridItemCoordinate.clear();
 }
 
 void RenderGrid::layoutGridItems()
@@ -499,8 +513,7 @@ void RenderGrid::layoutGridItems()
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         LayoutPoint childPosition = findChildLogicalPosition(child, columnTracks, rowTracks);
 
-        size_t columnTrack = resolveGridPosition(child->style()->gridItemColumn());
-        size_t rowTrack = resolveGridPosition(child->style()->gridItemRow());
+        const GridCoordinate& childCoordinate = cachedGridCoordinate(child);
 
         // Because the grid area cannot be styled, we don't need to adjust
         // the grid breadth to account for 'box-sizing'.
@@ -509,11 +522,11 @@ void RenderGrid::layoutGridItems()
 
         // FIXME: For children in a content sized track, we clear the overrideContainingBlockContentLogicalHeight
         // in minContentForChild / maxContentForChild which means that we will always relayout the child.
-        if (oldOverrideContainingBlockContentLogicalWidth != columnTracks[columnTrack].m_usedBreadth || oldOverrideContainingBlockContentLogicalHeight != rowTracks[rowTrack].m_usedBreadth)
+        if (oldOverrideContainingBlockContentLogicalWidth != columnTracks[childCoordinate.columnIndex].m_usedBreadth || oldOverrideContainingBlockContentLogicalHeight != rowTracks[childCoordinate.rowIndex].m_usedBreadth)
             child->setNeedsLayout(true, MarkOnlyThis);
 
-        child->setOverrideContainingBlockContentLogicalWidth(columnTracks[columnTrack].m_usedBreadth);
-        child->setOverrideContainingBlockContentLogicalHeight(rowTracks[rowTrack].m_usedBreadth);
+        child->setOverrideContainingBlockContentLogicalWidth(columnTracks[childCoordinate.columnIndex].m_usedBreadth);
+        child->setOverrideContainingBlockContentLogicalHeight(rowTracks[childCoordinate.rowIndex].m_usedBreadth);
 
         // FIXME: Grid items should stretch to fill their cells. Once we
         // implement grid-{column,row}-align, we can also shrink to fit. For
@@ -530,16 +543,16 @@ void RenderGrid::layoutGridItems()
     // FIXME: We should handle min / max logical height.
 
     setLogicalHeight(logicalHeight() + borderAndPaddingLogicalHeight());
-    m_grid.clear();
+    clearGrid();
 }
 
-size_t RenderGrid::resolveGridPosition(TrackSizingDirection direction, const RenderObject* gridItem) const
+RenderGrid::GridCoordinate RenderGrid::cachedGridCoordinate(const RenderBox* gridItem) const
 {
-    const GridPosition& position = (direction == ForColumns) ? gridItem->style()->gridItemColumn() : gridItem->style()->gridItemRow();
-    return resolveGridPosition(position);
+    ASSERT(m_gridItemCoordinate.contains(gridItem));
+    return m_gridItemCoordinate.get(gridItem);
 }
 
-size_t RenderGrid::resolveGridPosition(const GridPosition& position) const
+size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position) const
 {
     // FIXME: Handle other values for grid-{row,column} like ranges or line names.
     switch (position.type()) {
@@ -561,14 +574,13 @@ size_t RenderGrid::resolveGridPosition(const GridPosition& position) const
 
 LayoutPoint RenderGrid::findChildLogicalPosition(RenderBox* child, const Vector<GridTrack>& columnTracks, const Vector<GridTrack>& rowTracks)
 {
-    size_t columnTrack = resolveGridPosition(child->style()->gridItemColumn());
-    size_t rowTrack = resolveGridPosition(child->style()->gridItemRow());
+    const GridCoordinate& coordinate = cachedGridCoordinate(child);
 
     LayoutPoint offset;
     // FIXME: |columnTrack| and |rowTrack| should be smaller than our column / row count.
-    for (size_t i = 0; i < columnTrack && i < columnTracks.size(); ++i)
+    for (size_t i = 0; i < coordinate.columnIndex && i < columnTracks.size(); ++i)
         offset.setX(offset.x() + columnTracks[i].m_usedBreadth);
-    for (size_t i = 0; i < rowTrack && i < rowTracks.size(); ++i)
+    for (size_t i = 0; i < coordinate.rowIndex && i < rowTracks.size(); ++i)
         offset.setY(offset.y() + rowTracks[i].m_usedBreadth);
 
     // FIXME: Handle margins on the grid item.
