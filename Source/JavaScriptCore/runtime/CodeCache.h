@@ -108,7 +108,7 @@ struct SourceCodeKeyHashTraits : SimpleClassHashTraits<SourceCodeKey> {
 
 class CodeCacheMap {
     typedef HashMap<SourceCodeKey, Strong<JSCell>, SourceCodeKeyHash, SourceCodeKeyHashTraits> MapType;
-    typedef typename MapType::iterator iterator;
+    typedef MapType::iterator iterator;
 
 public:
     CodeCacheMap(size_t capacity)

@@ -1,3 +1,10 @@
+2013-02-17  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Windows build fix.
+
+        * runtime/CodeCache.h:
+        (CodeCacheMap):
+
 2013-02-16  Geoffrey Garen  <ggaren@apple.com>
 
         Code cache should be explicit about what it caches
