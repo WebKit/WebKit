@@ -42,6 +42,7 @@ function test()
     var profileType = profilesPanel.getProfileType(WebInspector.CanvasProfileType.TypeId);
     profilesPanel._onProfileTypeSelected({data: profileType});
 
+    InspectorTest.override(profileType, "_isSingleFrameMode", function() { return false; }, true /*sticky*/);
     InspectorTest.addSniffer(profileType, "_didStartCapturingFrame", didStartCapturingFrame);
     profilesPanel.toggleRecordButton();
 
@@ -52,17 +53,26 @@ function test()
         profileHeader = profilesPanel.getProfiles(WebInspector.CanvasProfileType.TypeId)[0];
         traceLogId = profileHeader.traceLogId();
         profilesPanel.showProfile(profileHeader);
-        InspectorTest.evaluateInConsole("doSomeCanvasCalls(4)", didSomeCanvasCalls);
+        InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveFirstFrame);
+        InspectorTest.evaluateInConsole("doSomeCanvasCalls(2)");
     }
-    function didSomeCanvasCalls()
+    function didReceiveFirstFrame(traceLog)
     {
-        InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", onUpdateCapturingStatus);
+        if (!traceLog || traceLog.calls.length < 2) {
+            InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveFirstFrame);
+            return;
+        }
+        InspectorTest.evaluateInConsole("doSomeCanvasCalls(3)", didSecondFrameCalls);
+    }
+    function didSecondFrameCalls()
+    {
+        InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveSecondFrame);
         profilesPanel.toggleRecordButton();
     }
-    function onUpdateCapturingStatus()
+    function didReceiveSecondFrame()
     {
         if (profileHeader._alive) {
-            InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", onUpdateCapturingStatus);
+            InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveSecondFrame);
             return;
         }
 
@@ -111,6 +121,8 @@ function test()
                     line += " | ";
                 line += alignText(textRows[i][j], textWidths[j]);
             }
+            if (line)
+                line += "|";
             InspectorTest.addResult(line);
         }
     }

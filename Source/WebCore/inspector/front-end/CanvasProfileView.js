@@ -90,6 +90,8 @@ WebInspector.CanvasProfileView = function(profile)
     this._logGridNodes = [];
     /** @type {!Array.<WebInspector.DataGridNode>} */
     this._drawCallGroups = [];
+    /** @type {!Array.<WebInspector.DataGridNode>} */
+    this._frameGroups = [];
 
     this._splitView.show(this.element);
     this._requestTraceLog();
@@ -106,6 +108,7 @@ WebInspector.CanvasProfileView.prototype = {
     {
         this._logGridNodes = [];
         this._drawCallGroupNodes = [];
+        this._frameGroups = [];
         this._linkifier.reset();
     },
 
@@ -369,9 +372,36 @@ WebInspector.CanvasProfileView.prototype = {
             drawCallGroup.selectable = true;
             drawCallGroup.drawCallGroupIndex = index;
             this._drawCallGroups.push(drawCallGroup);
-            this._logGrid.rootNode().appendChild(drawCallGroup);
+            this._appendDrawCallGroup(drawCallGroup);
         }
         drawCallGroup.appendChild(gridNode);
+    },
+
+    /**
+     * @param {!WebInspector.DataGridNode} drawCallGroup
+     */
+    _appendDrawCallGroup: function(drawCallGroup)
+    {
+        var frameGroup = this._frameGroups.peekLast();
+        if (frameGroup) {
+            var lastDrawCallGroup = frameGroup.children.peekLast();
+            var lastNode = lastDrawCallGroup && lastDrawCallGroup.children.peekLast();
+            if (lastNode && lastNode.call.isFrameEndCall)
+                frameGroup = null;
+        }
+        if (!frameGroup) {
+            var index = this._frameGroups.length;
+            var data = {};
+            data[0] = "";
+            data[1] = "Frame #" + (index + 1);
+            data[2] = "";
+            frameGroup = new WebInspector.DataGridNode(data);
+            frameGroup.selectable = true;
+            frameGroup.frameGroupIndex = index;
+            this._frameGroups.push(frameGroup);
+            this._logGrid.rootNode().appendChild(frameGroup);
+        }
+        frameGroup.appendChild(drawCallGroup);
     },
 
     /**

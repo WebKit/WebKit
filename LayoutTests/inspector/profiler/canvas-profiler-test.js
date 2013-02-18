@@ -64,6 +64,7 @@ InspectorTest.dumpTraceLogCall = function(call, indent)
         call.property ? "property:\"" + call.property + "\"" : "",
         call.value ? "value:" + call.value.description : "",
         call.isDrawingCall ? "isDrawingCall:true" : "",
+        call.isFrameEndCall ? "isFrameEndCall:true" : "",
         "sourceURL:" + formatSourceURL(call.sourceURL),
         "lineNumber:" + call.lineNumber,
         "columnNumber:" + call.columnNumber
