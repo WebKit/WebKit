@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,12 @@
 #include "ExpressionRangeInfo.h"
 #include "Identifier.h"
 #include "JSCell.h"
+#include "JSString.h"
 #include "LineInfo.h"
-#include "Nodes.h"
+#include "ParserModes.h"
 #include "RegExp.h"
 #include "SpecialPointer.h"
+#include "SymbolTable.h"
 #include "Weak.h"
 
 #include <wtf/RefCountedArray.h>
@@ -93,7 +95,7 @@ public:
     {
         return (kind == CodeForCall) ? m_symbolTableForCall.get() : m_symbolTableForConstruct.get();
     }
-    size_t parameterCount() const { return m_parameters->size(); }
+    size_t parameterCount() const;
     bool isInStrictContext() const { return m_isInStrictContext; }
     FunctionNameIsInScopeToggle functionNameIsInScopeToggle() const { return m_functionNameIsInScopeToggle; }
 

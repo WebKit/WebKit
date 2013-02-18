@@ -35,7 +35,7 @@
 #include "DFGArrayMode.h"
 #include "DFGCapabilities.h"
 #include "GetByIdStatus.h"
-#include "JSCJSValueInlines.h"
+#include "Operations.h"
 #include "PreciseJumpTargets.h"
 #include "PutByIdStatus.h"
 #include "ResolveGlobalStatus.h"

@@ -31,8 +31,6 @@
 
 #include "Executable.h"
 #include "JSGlobalObject.h"
-#include "Nodes.h"
-#include "Parser.h"
 #include "SourceCode.h"
 #include <wtf/HashMap.h>
 #include <wtf/RefPtr.h>

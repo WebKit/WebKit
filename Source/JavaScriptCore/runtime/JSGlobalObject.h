@@ -451,56 +451,6 @@ namespace JSC {
         return !entry.isNull();
     }
 
-    inline JSValue Structure::prototypeForLookup(JSGlobalObject* globalObject) const
-    {
-        if (isObject())
-            return m_prototype.get();
-
-        ASSERT(typeInfo().type() == StringType);
-        return globalObject->stringPrototype();
-    }
-
-    inline JSValue Structure::prototypeForLookup(ExecState* exec) const
-    {
-        return prototypeForLookup(exec->lexicalGlobalObject());
-    }
-
-    inline StructureChain* Structure::prototypeChain(JSGlobalData& globalData, JSGlobalObject* globalObject) const
-    {
-        // We cache our prototype chain so our clients can share it.
-        if (!isValid(globalObject, m_cachedPrototypeChain.get())) {
-            JSValue prototype = prototypeForLookup(globalObject);
-            m_cachedPrototypeChain.set(globalData, this, StructureChain::create(globalData, prototype.isNull() ? 0 : asObject(prototype)->structure()));
-        }
-        return m_cachedPrototypeChain.get();
-    }
-
-    inline StructureChain* Structure::prototypeChain(ExecState* exec) const
-    {
-        return prototypeChain(exec->globalData(), exec->lexicalGlobalObject());
-    }
-
-    inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cachedPrototypeChain) const
-    {
-        if (!cachedPrototypeChain)
-            return false;
-
-        JSValue prototype = prototypeForLookup(globalObject);
-        WriteBarrier<Structure>* cachedStructure = cachedPrototypeChain->head();
-        while(*cachedStructure && !prototype.isNull()) {
-            if (asObject(prototype)->structure() != cachedStructure->get())
-                return false;
-            ++cachedStructure;
-            prototype = asObject(prototype)->prototype();
-        }
-        return prototype.isNull() && !*cachedStructure;
-    }
-
-    inline bool Structure::isValid(ExecState* exec, StructureChain* cachedPrototypeChain) const
-    {
-        return isValid(exec->lexicalGlobalObject(), cachedPrototypeChain);
-    }
-
     inline JSGlobalObject* ExecState::dynamicGlobalObject()
     {
         if (this == lexicalGlobalObject()->globalExec())

@@ -39,6 +39,7 @@
 
 #if USE(JSC)  
 #include <parser/SourceProvider.h>
+#include <parser/SourceProviderCache.h>
 #endif
 
 namespace WebCore {

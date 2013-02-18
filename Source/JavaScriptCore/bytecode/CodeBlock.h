@@ -61,7 +61,6 @@
 #include "LLIntCallLinkInfo.h"
 #include "LazyOperandValueProfile.h"
 #include "LineInfo.h"
-#include "Nodes.h"
 #include "ProfilerCompilation.h"
 #include "RegExpObject.h"
 #include "ResolveOperation.h"
@@ -1461,11 +1460,6 @@ namespace JSC {
     }
 #endif
     
-    inline JSValue Structure::prototypeForLookup(CodeBlock* codeBlock) const
-    {
-        return prototypeForLookup(codeBlock->globalObject());
-    }
-
 } // namespace JSC
 
 #endif // CodeBlock_h

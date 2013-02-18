@@ -28,6 +28,7 @@
 #include "CachedCall.h"
 #include "CodeBlock.h"
 #include "CopiedSpaceInlines.h"
+#include "Error.h"
 #include "Interpreter.h"
 #include "JIT.h"
 #include "JSStringBuilder.h"

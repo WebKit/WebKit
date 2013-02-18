@@ -193,6 +193,7 @@ SOURCES += \
     parser/Nodes.cpp \
     parser/ParserArena.cpp \
     parser/Parser.cpp \
+    parser/SourceProvider.cpp \
     parser/SourceProviderCache.cpp \
     profiler/ProfilerBytecode.cpp \
     profiler/ProfilerBytecode.h \

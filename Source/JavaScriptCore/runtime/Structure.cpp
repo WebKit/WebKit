@@ -26,6 +26,7 @@
 #include "config.h"
 #include "Structure.h"
 
+#include "CodeBlock.h"
 #include "JSObject.h"
 #include "JSPropertyNameIterator.h"
 #include "Lookup.h"
@@ -857,6 +858,11 @@ void Structure::getPropertyNamesFromStructure(JSGlobalData& globalData, Property
                 propertyNames.add(iter->key);
         }
     }
+}
+
+JSValue Structure::prototypeForLookup(CodeBlock* codeBlock) const
+{
+    return prototypeForLookup(codeBlock->globalObject());
 }
 
 void Structure::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -30,6 +30,7 @@
 #include "JITCode.h"
 #include "Opcode.h"
 #include "ParserArena.h"
+#include "ParserTokens.h"
 #include "ResultType.h"
 #include "SourceCode.h"
 #include "SymbolTable.h"
@@ -46,19 +47,6 @@ namespace JSC {
     class RegisterID;
     class JSScope;
     class ScopeNode;
-
-    typedef unsigned CodeFeatures;
-
-    const CodeFeatures NoFeatures = 0;
-    const CodeFeatures EvalFeature = 1 << 0;
-    const CodeFeatures ArgumentsFeature = 1 << 1;
-    const CodeFeatures WithFeature = 1 << 2;
-    const CodeFeatures CatchFeature = 1 << 3;
-    const CodeFeatures ThisFeature = 1 << 4;
-    const CodeFeatures StrictModeFeature = 1 << 5;
-    const CodeFeatures ShadowsArgumentsFeature = 1 << 6;
-    
-    const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | CatchFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature;
 
     enum Operator {
         OpEqual,
@@ -1412,7 +1400,6 @@ namespace JSC {
         void* m_storage;
     };
 
-    enum FunctionNameIsInScopeToggle { FunctionNameIsNotInScope, FunctionNameIsInScope };
     class FunctionBodyNode : public ScopeNode {
     public:
         static const bool isFunctionNode = true;

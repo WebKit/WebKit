@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,10 +32,11 @@
 #include "HandlerInfo.h"
 #include "JSFunction.h"
 #include "Interpreter.h"
+#include "JITCode.h"
 #include "JSGlobalObject.h"
 #include "LLIntCLoop.h"
-#include "Nodes.h"
 #include "SamplingTool.h"
+#include "SourceCode.h"
 #include "UnlinkedCodeBlock.h"
 #include <wtf/PassOwnPtr.h>
 

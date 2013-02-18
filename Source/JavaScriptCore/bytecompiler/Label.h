@@ -37,6 +37,8 @@
 
 namespace JSC {
 
+    class BytecodeGenerator;
+
     class Label {
     public:
         explicit Label(BytecodeGenerator* generator)

@@ -27,6 +27,7 @@
 #include "JSCJSValueInlines.h"
 #include "JSProxy.h"
 #include "JSString.h"
+#include "StructureInlines.h"
 
 namespace JSC {
 

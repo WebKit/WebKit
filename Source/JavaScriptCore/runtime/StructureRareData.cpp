@@ -26,10 +26,8 @@
 #include "config.h"
 #include "StructureRareData.h"
 
-#include "JSCJSValueInlines.h"
-#include "JSCellInlines.h"
 #include "JSString.h"
-#include "Structure.h"
+#include "Operations.h"
 
 namespace JSC {
 

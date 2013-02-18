@@ -29,6 +29,7 @@
 #include "APIShims.h"
 #include "APICast.h"
 #include "CodeBlock.h"
+#include "Error.h"
 #include "ExceptionHelpers.h"
 #include "FunctionPrototype.h"
 #include "JSFunction.h"

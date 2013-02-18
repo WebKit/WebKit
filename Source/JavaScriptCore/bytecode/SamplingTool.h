@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,7 +30,6 @@
 #define SamplingTool_h
 
 #include "Strong.h"
-#include "Nodes.h"
 #include "Opcode.h"
 #include "SamplingCounter.h"
 #include <wtf/Assertions.h>

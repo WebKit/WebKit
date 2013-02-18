@@ -28,7 +28,7 @@
 
 #if ENABLE(DFG_JIT)
 
-#include <dfg/DFGGraph.h>
+#include "DFGGraph.h"
 
 namespace JSC {
 

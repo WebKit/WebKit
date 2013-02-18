@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,32 +29,23 @@
 #ifndef SourceProvider_h
 #define SourceProvider_h
 
-#include "SourceProviderCache.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/TextPosition.h>
+#include <wtf/text/WTFString.h>
 
 namespace JSC {
+
+    class SourceProviderCache;
 
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
         static const intptr_t nullID = 1;
         
-        SourceProvider(const String& url, const TextPosition& startPosition, SourceProviderCache* cache = 0)
-            : m_url(url)
-            , m_startPosition(startPosition)
-            , m_validated(false)
-            , m_cache(cache ? cache : new SourceProviderCache)
-            , m_cacheOwned(!cache)
-        {
-        }
+        JS_EXPORT_PRIVATE SourceProvider(const String& url, const TextPosition& startPosition, SourceProviderCache* = 0);
 
-        virtual ~SourceProvider()
-        {
-            if (m_cacheOwned)
-                delete m_cache;
-        }
+        JS_EXPORT_PRIVATE virtual ~SourceProvider();
 
         virtual const String& source() const = 0;
         String getRange(int start, int end) const

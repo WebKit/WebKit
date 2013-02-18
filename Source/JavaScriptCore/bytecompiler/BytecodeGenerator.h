@@ -37,6 +37,7 @@
 #include "Label.h"
 #include "LabelScope.h"
 #include "Interpreter.h"
+#include "ParserError.h"
 #include "RegisterID.h"
 #include "SymbolTable.h"
 #include "Debugger.h"

@@ -30,8 +30,8 @@
 
 #include "MacroAssembler.h"
 #include "SlotVisitor.h"
+#include "UnusedPointer.h"
 #include "WriteBarrier.h"
-#include "jit/UnusedPointer.h"
 
 namespace JSC {
 

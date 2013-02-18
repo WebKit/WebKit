@@ -30,8 +30,10 @@
 #include "Lexer.h"
 #include "Nodes.h"
 #include "ParserArena.h"
+#include "ParserError.h"
 #include "ParserTokens.h"
 #include "SourceProvider.h"
+#include "SourceProviderCache.h"
 #include "SourceProviderCacheItem.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
@@ -75,49 +77,6 @@ COMPILE_ASSERT(LastUntaggedToken < 64, LessThan64UntaggedTokens);
 
 enum SourceElementsMode { CheckForStrictMode, DontCheckForStrictMode };
 enum FunctionRequirements { FunctionNoRequirements, FunctionNeedsName };
-
-struct ParserError {
-    enum ErrorType { ErrorNone, StackOverflow, SyntaxError, EvalError, OutOfMemory } m_type;
-    String m_message;
-    int m_line;
-    ParserError()
-        : m_type(ErrorNone)
-        , m_line(-1)
-    {
-    }
-
-    ParserError(ErrorType type)
-        : m_type(type)
-        , m_line(-1)
-    {
-    }
-
-    ParserError(ErrorType type, String msg, int line)
-        : m_type(type)
-        , m_message(msg)
-        , m_line(line)
-    {
-    }
-
-    JSObject* toErrorObject(JSGlobalObject* globalObject, const SourceCode& source)
-    {
-        switch (m_type) {
-        case ErrorNone:
-            return 0;
-        case SyntaxError:
-            return addErrorInfo(globalObject->globalExec(), createSyntaxError(globalObject, m_message), m_line, source);
-        case EvalError:
-            return createSyntaxError(globalObject, m_message);
-        case StackOverflow:
-            return createStackOverflowError(globalObject);
-        case OutOfMemory:
-            return createOutOfMemoryError(globalObject);
-        }
-        CRASH();
-        return createOutOfMemoryError(globalObject); // Appease Qt bot
-    }
-
-};
 
 template <typename T> inline bool isEvalNode() { return false; }
 template <> inline bool isEvalNode<EvalNode>() { return true; }

@@ -33,6 +33,7 @@
 #include "Executable.h"
 #include "JSString.h"
 #include "Operations.h"
+#include "Parser.h"
 #include "SourceProvider.h"
 #include "Structure.h"
 #include "SymbolTable.h"
@@ -96,6 +97,11 @@ UnlinkedFunctionExecutable::UnlinkedFunctionExecutable(JSGlobalData* globalData,
     , m_features(node->features())
     , m_functionNameIsInScopeToggle(node->functionNameIsInScopeToggle())
 {
+}
+
+size_t UnlinkedFunctionExecutable::parameterCount() const
+{
+    return m_parameters->size();
 }
 
 void UnlinkedFunctionExecutable::visitChildren(JSCell* cell, SlotVisitor& visitor)

@@ -1338,6 +1338,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\runtime\StructureInlines.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\runtime\StructureRareData.cpp"
 				>
 			</File>
@@ -2466,6 +2470,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\parser\ParserError.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\parser\ParserModes.h"
 				>
 			</File>
@@ -2475,6 +2483,10 @@
 			</File>
 			<File
 				RelativePath="..\..\parser\SourceCode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\parser\SourceProvider.cpp"
 				>
 			</File>
 			<File

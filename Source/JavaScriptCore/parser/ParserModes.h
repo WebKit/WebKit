@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -35,6 +35,21 @@ enum JSParserMode { JSParseProgramCode, JSParseFunctionCode };
 enum ProfilerMode { ProfilerOff, ProfilerOn };
 enum DebuggerMode { DebuggerOff, DebuggerOn };
 
-}
+enum FunctionNameIsInScopeToggle { FunctionNameIsNotInScope, FunctionNameIsInScope };
 
-#endif
+typedef unsigned CodeFeatures;
+
+const CodeFeatures NoFeatures = 0;
+const CodeFeatures EvalFeature = 1 << 0;
+const CodeFeatures ArgumentsFeature = 1 << 1;
+const CodeFeatures WithFeature = 1 << 2;
+const CodeFeatures CatchFeature = 1 << 3;
+const CodeFeatures ThisFeature = 1 << 4;
+const CodeFeatures StrictModeFeature = 1 << 5;
+const CodeFeatures ShadowsArgumentsFeature = 1 << 6;
+
+const CodeFeatures AllFeatures = EvalFeature | ArgumentsFeature | WithFeature | CatchFeature | ThisFeature | StrictModeFeature | ShadowsArgumentsFeature;
+
+} // namespace JSC
+
+#endif // ParserModes_h

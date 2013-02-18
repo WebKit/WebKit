@@ -182,6 +182,7 @@ set(JavaScriptCore_SOURCES
     parser/Nodes.cpp
     parser/Parser.cpp
     parser/ParserArena.cpp
+    parser/SourceProvider.cpp
     parser/SourceProviderCache.cpp
 
     profiler/ProfilerBytecode.cpp
