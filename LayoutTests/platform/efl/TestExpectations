@@ -1350,9 +1350,6 @@ webkit.org/b/84678 fast/spatial-navigation/snav-container-white-space.html [ Fai
 webkit.org/b/84678 fast/spatial-navigation/snav-fully-aligned-horizontally.html [ Failure ]
 webkit.org/b/84678 fast/spatial-navigation/snav-iframe-no-scrollable-content.html [ Failure ]
 
-# Off-by-few-pixels issue for this selection reftest, fails on GTK as well.
-webkit.org/b/84701 fast/block/line-layout/selection-highlight-overlap.html [ Failure ImageOnlyFailure ]
-
 # Times-out with debug build during heavy cpu loads
 webkit.org/b/85902 [ Debug ] fast/overflow/lots-of-sibling-inline-boxes.html [ Crash Pass Slow ]
 
@@ -1480,9 +1477,6 @@ webkit.org/b/90007 http/tests/security/mixedContent/insecure-audio-video-in-main
 webkit.org/b/91210 http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure ]
 webkit.org/b/91210 http/tests/w3c/webperf/approved/navigation-timing/html/test_timing_xserver_redirect.html [ Failure ]
 
-# This test depends on subpixel layout.
-webkit.org/b/92352 css3/flexbox/flex-rounding.html [ Failure ]
-
 # Proximity Events is not supported.
 webkit.org/b/92942 proximity
 webkit.org/b/92942 fast/events/constructors/device-proximity-event-constructor.html
@@ -1564,8 +1558,7 @@ webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-plugin.html
 webkit.org/b/96881 http/tests/security/storage-blocking-strengthened-private-browsing-plugin.html [ Failure ]
 webkit.org/b/96881 java [ Skip ]
 
-# Ref tests added in r130592 that are failing on both EFL and GTK ports
-webkit.org/b/98613 css3/masking/clip-path-reference-userSpaceOnUse.html [ ImageOnlyFailure ] 
+# Ref test added in r130592 that is failing on both EFL and GTK ports
 webkit.org/b/98613 css3/masking/clip-path-reference.html [ ImageOnlyFailure ]
 
 # EFL does not yet support global selection
@@ -1764,8 +1757,8 @@ webkit.org/b/105030 fast/canvas/webgl/framebuffer-object-attachment.html [ Failu
 webkit.org/b/105030 fast/canvas/webgl/premultiplyalpha-test.html [ Failure ]
 
 # Rendering issues.
-webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure ]
-webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes.html [ ImageOnlyFailure Pass ]
+webkit.org/b/105029 fast/canvas/webgl/webgl-composite-modes-repaint.html [ ImageOnlyFailure Pass ]
 
 # Failing touch events case
 webkit.org/b/105406 fast/events/touch/touch-input-element-change-documents.html [ Failure ]
@@ -1801,10 +1794,6 @@ webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
 # Leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
 
-# New tests introduced in r138632 is failing.
-webkit.org/b/106015 fast/css-generated-content/pseudo-animation.html [ Failure ]
-webkit.org/b/106015 fast/css-generated-content/pseudo-transition.html [ Failure ]
-
 # Fail after r139145 on MAC, EFL, QT, GTK.
 webkit.org/b/106415 fast/workers/worker-close-more.html [ Pass Failure ]
 
@@ -1833,7 +1822,6 @@ inspector/editor/text-editor-smart-braces.html
 # Remove from list after enabling CANVAS_PATH
 webkit.org/b/108508 fast/canvas/canvas-path-constructors.html [ Failure ]
 webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Failure ]
-webkit.org/b/108508 fast/canvas/canvas-currentPath-crash.html [ Failure ]
 
 # Test fails on JSC platforms due to GC timing problems
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
