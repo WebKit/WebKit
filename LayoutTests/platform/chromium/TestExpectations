@@ -2841,6 +2841,9 @@ webkit.org/b/98315 css3/compositing/should-have-compositing-layer.html [ Failure
 
 webkit.org/b/96267 fast/regions/autoheight-regions-mark.html [ Pass ]
 
+#something is hosed with seamless iframe repainting
+webkit.org/b/106125 fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
+
 webkit.org/b/74137 [ SnowLeopard ] fast/regions/outline-sides-in-region.html [ Pass Timeout ]
 webkit.org/b/74137 fast/regions/float-pushed-width-change.html [ ImageOnlyFailure Pass ]
 
