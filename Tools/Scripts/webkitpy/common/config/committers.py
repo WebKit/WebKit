@@ -186,7 +186,6 @@ contributors_who_are_not_committers = [
     Contributor("Web Components Team", "webcomponents-bugzilla@chromium.org"),
     Contributor("Wyatt Carss", ["wcarss@chromium.org", "wcarss@google.com"], "wcarss"),
     Contributor("Zeev Lieber", "zlieber@chromium.org"),
-    Contributor("Zoltan Arvai", "zarvai@inf.u-szeged.hu", "azbest_hu"),
     Contributor("Zsolt Feher", "feherzs@inf.u-szeged.hu", "Smith"),
 ]
 
@@ -466,6 +465,7 @@ committers_unable_to_review = [
     Committer("Zalan Bujtas", ["zbujtas@gmail.com", "zalan.bujtas@nokia.com"], "zalan"),
     Committer("Zeno Albisser", ["zeno@webkit.org", "zeno.albisser@nokia.com"], "zalbisser"),
     Committer("Zhenyao Mo", "zmo@google.com", "zhenyao"),
+    Committer("Zoltan Arvai", "zarvai@inf.u-szeged.hu", "azbest_hu"),
     Committer("Zoltan Horvath", ["zoltan@webkit.org", "hzoltan@inf.u-szeged.hu", "horvath.zoltan.6@stud.u-szeged.hu"], "zoltan"),
     Committer(u"\u017dan Dober\u0161ek", "zandobersek@gmail.com", "zdobersek"),
 ]
