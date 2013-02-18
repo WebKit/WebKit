@@ -412,7 +412,6 @@ WebInspector.ConsoleView.prototype = {
                 this.currentGroup.messagesElement.appendChild(group.element);
                 this.currentGroup = group;
             }
-
             this.currentGroup.addMessage(message);
         }
 
@@ -422,6 +421,8 @@ WebInspector.ConsoleView.prototype = {
     _consoleCleared: function()
     {
         this._scrolledToBottom = true;
+        for (var i = 0; i < this._visibleMessages.length; ++i)
+            this._visibleMessages[i].willHide();
         this._visibleMessages = [];
 
         this.currentGroup = this.topGroup;
@@ -545,8 +546,10 @@ WebInspector.ConsoleView.prototype = {
                 visibleMessageIndex++;
                 if (this._shouldBeVisible(visibleMessage))
                     newVisibleMessages.push(visibleMessage);
-                else
-                    visibleMessage.toMessageElement().removeSelf();
+                else {
+                    visibleMessage.willHide();
+                    visibleMessage.toMessageElement().removeSelf();                    
+                }
             } else {
                 if (this._shouldBeVisible(sourceMessage)) {
                     this.currentGroup.addMessage(sourceMessage, visibleMessage ? visibleMessage.toMessageElement() : null);
@@ -698,6 +701,14 @@ WebInspector.ConsoleCommand = function(command)
 }
 
 WebInspector.ConsoleCommand.prototype = {
+    wasShown: function()
+    {
+    },
+
+    willHide: function()
+    {
+    },
+
     clearHighlight: function()
     {
         var highlightedMessage = this._formattedCommand;
@@ -819,8 +830,10 @@ WebInspector.ConsoleGroup.prototype = {
             var groupElement = element.enclosingNodeOrSelfWithClass("console-group");
             if (groupElement && message.type === WebInspector.ConsoleMessage.MessageType.StartGroupCollapsed)
                 groupElement.addStyleClass("collapsed");
-        } else
+        } else {
             this.messagesElement.insertBefore(element, node || null);
+            message.wasShown();
+        }
 
         if (element.previousSibling && message.originatingCommand && element.previousSibling.command === message.originatingCommand)
             element.previousSibling.addStyleClass("console-adjacent-user-command-result");

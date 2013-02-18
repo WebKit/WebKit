@@ -266,6 +266,11 @@ void Console::dirxml(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
     internalAddMessage(page(), DirXMLMessageType, LogMessageLevel, state, arguments);
 }
 
+void Console::table(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
+{
+    internalAddMessage(page(), TableMessageType, LogMessageLevel, state, arguments);
+}
+
 void Console::clear(ScriptState* state, PassRefPtr<ScriptArguments> arguments)
 {
     internalAddMessage(page(), ClearMessageType, LogMessageLevel, state, arguments, true);

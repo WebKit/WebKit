@@ -31,6 +31,7 @@ enum MessageType {
     LogMessageType,
     DirMessageType,
     DirXMLMessageType,
+    TableMessageType,
     TraceMessageType,
     StartGroupMessageType,
     StartGroupCollapsedMessageType,

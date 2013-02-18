@@ -240,9 +240,26 @@ PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapObject(const 
     wrapFunction.appendArgument(generatePreview);
     bool hadException = false;
     ScriptValue r = callFunctionWithEvalEnabled(wrapFunction, hadException);
-    if (hadException) {
+    if (hadException)
         return 0;
-    }
+    RefPtr<InspectorObject> rawResult = r.toInspectorValue(scriptState())->asObject();
+    return TypeBuilder::Runtime::RemoteObject::runtimeCast(rawResult);
+}
+
+PassRefPtr<TypeBuilder::Runtime::RemoteObject> InjectedScript::wrapTable(const ScriptValue& table, const ScriptValue& columns) const
+{
+    ASSERT(!hasNoValue());
+    ScriptFunctionCall wrapFunction(injectedScriptObject(), "wrapTable");
+    wrapFunction.appendArgument(canAccessInspectedWindow());
+    wrapFunction.appendArgument(table);
+    if (columns.hasNoValue())
+        wrapFunction.appendArgument(false);
+    else
+        wrapFunction.appendArgument(columns);
+    bool hadException = false;
+    ScriptValue r = callFunctionWithEvalEnabled(wrapFunction, hadException);
+    if (hadException)
+        return 0;
     RefPtr<InspectorObject> rawResult = r.toInspectorValue(scriptState())->asObject();
     return TypeBuilder::Runtime::RemoteObject::runtimeCast(rawResult);
 }

@@ -145,7 +145,7 @@ WebInspector.DatabaseQueryView.prototype = {
         var trimmedQuery = query.trim();
 
         if (dataGrid) {
-            dataGrid.element.addStyleClass("inline");
+            dataGrid.renderInline();
             this._appendViewQueryResult(trimmedQuery, dataGrid);
             dataGrid.autoSizeColumns(5);
         }

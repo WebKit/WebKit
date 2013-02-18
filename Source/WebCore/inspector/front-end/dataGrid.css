@@ -30,8 +30,17 @@
     overflow-y: overlay;
 }
 
+.data-grid.inline {
+    border-right: none;
+}
+
 .data-grid.inline .data-container {
     position: static;
+}
+
+.data-grid.inline th.corner,
+.data-grid.inline td.corner {
+    display: none;
 }
 
 .data-grid th {

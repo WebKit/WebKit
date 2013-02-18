@@ -154,6 +154,7 @@ static TypeBuilder::Console::ConsoleMessage::Type::Enum messageTypeValue(Message
     case ClearMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Clear;
     case DirMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Dir;
     case DirXMLMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Dirxml;
+    case TableMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Table;
     case TraceMessageType: return TypeBuilder::Console::ConsoleMessage::Type::Trace;
     case StartGroupMessageType: return TypeBuilder::Console::ConsoleMessage::Type::StartGroup;
     case StartGroupCollapsedMessageType: return TypeBuilder::Console::ConsoleMessage::Type::StartGroupCollapsed;
@@ -193,13 +194,24 @@ void ConsoleMessage::addToFrontend(InspectorFrontend::Console* frontend, Injecte
         InjectedScript injectedScript = injectedScriptManager->injectedScriptFor(m_arguments->globalState());
         if (!injectedScript.hasNoValue()) {
             RefPtr<TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject> > jsonArgs = TypeBuilder::Array<TypeBuilder::Runtime::RemoteObject>::create();
-            for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
-                RefPtr<TypeBuilder::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console", generatePreview);
+            if (m_type == TableMessageType && generatePreview && m_arguments->argumentCount()) {
+                ScriptValue table = m_arguments->argumentAt(0);
+                ScriptValue columns = m_arguments->argumentCount() > 1 ? m_arguments->argumentAt(1) : ScriptValue();
+                RefPtr<TypeBuilder::Runtime::RemoteObject> inspectorValue = injectedScript.wrapTable(table, columns);
                 if (!inspectorValue) {
                     ASSERT_NOT_REACHED();
                     return;
                 }
                 jsonArgs->addItem(inspectorValue);
+            } else {
+                for (unsigned i = 0; i < m_arguments->argumentCount(); ++i) {
+                    RefPtr<TypeBuilder::Runtime::RemoteObject> inspectorValue = injectedScript.wrapObject(m_arguments->argumentAt(i), "console", generatePreview);
+                    if (!inspectorValue) {
+                        ASSERT_NOT_REACHED();
+                        return;
+                    }
+                    jsonArgs->addItem(inspectorValue);
+                }
             }
             jsonObj->setParameters(jsonArgs);
         }

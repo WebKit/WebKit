@@ -38,6 +38,7 @@
     [CallWith=ScriptArguments|ScriptState] void warn();
     [CallWith=ScriptArguments|ScriptState] void dir();
     [CallWith=ScriptArguments|ScriptState] void dirxml();
+    [CallWith=ScriptArguments|ScriptState] void table();
     [V8Custom, CallWith=ScriptArguments|ScriptState] void trace();
     [V8Custom, CallWith=ScriptArguments|ScriptState, ImplementedAs=assertCondition] void assert(in boolean condition);
     [CallWith=ScriptArguments|ScriptState] void count();

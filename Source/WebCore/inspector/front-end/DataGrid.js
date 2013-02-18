@@ -173,19 +173,17 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
     var columns = {};
 
     for (var i = 0; i < columnNames.length; ++i) {
-        var column = {};
-        column.width = columnNames[i].length;
-        column.title = columnNames[i];
-        column.sortable = true;
-
-        columns[columnNames[i]] = column;
+        columns[i] = {};
+        columns[i].width = columnNames[i].length;
+        columns[i].title = columnNames[i];
+        columns[i].sortable = true;
     }
 
     var nodes = [];
     for (var i = 0; i < values.length / numColumns; ++i) {
         var data = {};
         for (var j = 0; j < columnNames.length; ++j)
-            data[columnNames[j]] = values[numColumns * i + j];
+            data[j] = values[numColumns * i + j];
 
         var node = new WebInspector.DataGridNode(data, false);
         node.selectable = false;
@@ -215,6 +213,8 @@ WebInspector.DataGrid.createSortableDataGrid = function(columnNames, values)
         {
             var item1 = dataGridNode1.data[sortColumnIdentifier];
             var item2 = dataGridNode2.data[sortColumnIdentifier];
+            item1 = item1 instanceof Node ? item1.textContent : String(item1);
+            item2 = item2 instanceof Node ? item2.textContent : String(item2);
 
             var comparison;
             if (columnIsNumeric) {
@@ -314,6 +314,10 @@ WebInspector.DataGrid.prototype = {
         window.getSelection().setBaseAndExtent(element, 0, element, 1);
     },
 
+    renderInline: function()
+    {
+        this.element.addStyleClass("inline");
+    },
 
     _startEditingConfig: function(element)
     {

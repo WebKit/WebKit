@@ -230,6 +230,7 @@ WebInspector.ConsoleMessage.MessageType = {
     Log: "log",
     Dir: "dir",
     DirXML: "dirxml",
+    Table: "table",
     Trace: "trace",
     Clear: "clear",
     StartGroup: "startGroup",

@@ -118,7 +118,7 @@ li.selected .base-storage-tree-element-subtitle {
     overflow: hidden;
 }
 
-.storage-view .data-grid {
+.storage-view > .data-grid {
     border: none;
     height: 100%;
 }

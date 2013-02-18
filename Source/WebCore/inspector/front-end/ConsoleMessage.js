@@ -56,6 +56,8 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
     this._stackTrace = stackTrace;
     this._request = requestId ? WebInspector.networkLog.requestForId(requestId) : null;
     this._isOutdated = isOutdated;
+    this._dataGrids = [];
+    this._dataGridParents = new Map();
 
     this._customFormatters = {
         "object": this._formatParameterAsObject,
@@ -66,6 +68,24 @@ WebInspector.ConsoleMessageImpl = function(source, level, message, linkifier, ty
 }
 
 WebInspector.ConsoleMessageImpl.prototype = {
+    wasShown: function()
+    {
+        for (var i = 0; this._dataGrids && i < this._dataGrids.length; ++i) {
+            var dataGrid = this._dataGrids[i];
+            var parentElement = this._dataGridParents.get(dataGrid);
+            dataGrid.show(parentElement);
+        }
+    },
+
+    willHide: function()
+    {
+        for (var i = 0; this._dataGrids && i < this._dataGrids.length; ++i) {
+            var dataGrid = this._dataGrids[i];
+            this._dataGridParents.put(dataGrid, dataGrid.element.parentElement);
+            dataGrid.detach();
+        }
+    },
+
     _formatMessage: function()
     {
         this._formattedMessage = document.createElement("span");
@@ -233,6 +253,11 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 formattedResult.appendChild(document.createTextNode(" "));
         }
 
+        if (this.type === WebInspector.ConsoleMessage.MessageType.Table) {
+            formattedResult.appendChild(this._formatParameterAsTable(parameters));
+            return formattedResult;
+        }
+
         // Single parameter, or unused substitutions from above.
         for (var i = 0; i < parameters.length; ++i) {
             // Inline strings when formatting.
@@ -334,7 +359,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 titleElement.createTextChild(": ");
             }
 
-            this._appendPropertyPreview(titleElement, property);
+            titleElement.appendChild(this._renderPropertyPreview(property));
         }
         if (preview.overflow)
             titleElement.createChild("span").textContent = "\u2026";
@@ -343,31 +368,38 @@ WebInspector.ConsoleMessageImpl.prototype = {
     },
 
     /**
-     * @param {Element} titleElement
      * @param {RuntimeAgent.PropertyPreview} property
+     * @return {Element}
      */
-    _appendPropertyPreview: function(titleElement, property)
+    _renderPropertyPreview: function(property)
     {
-        var span = titleElement.createChild("span", "console-formatted-" + property.type);
+        var span = document.createElement("span");
+        span.className = "console-formatted-";
 
         if (property.type === "function") {
             span.textContent = "function";
-            return;
+            return span;
         }
 
         if (property.type === "object" && property.subtype === "regexp") {
             span.addStyleClass("console-formatted-string");
             span.textContent = property.value;
-            return;
+            return span;
         }
 
         if (property.type === "object" && property.subtype === "node" && property.value) {
             span.addStyleClass("console-formatted-preview-node");
             WebInspector.DOMPresentationUtils.createSpansForNodeTitle(span, property.value);
-            return;
+            return span;
+        }
+
+        if (property.type === "string") {
+            span.textContent = "\"" + property.value + "\"";
+            return span;
         }
 
         span.textContent = property.value;
+        return span;
     },
 
     _formatParameterAsNode: function(object, elem)
@@ -401,6 +433,10 @@ WebInspector.ConsoleMessageImpl.prototype = {
         return this.type !== WebInspector.ConsoleMessage.MessageType.DirXML && !!array.preview;
     },
 
+    /**
+     * @param {WebInspector.RemoteObject} array
+     * @param {Element} elem
+     */
     _formatParameterAsArray: function(array, elem)
     {
         if (this.useArrayPreviewInFormatter(array)) {
@@ -413,6 +449,56 @@ WebInspector.ConsoleMessageImpl.prototype = {
             this._formatParameterAsObject(array, elem, false);
         else
             array.getOwnProperties(this._printArray.bind(this, array, elem));
+    },
+
+    /**
+     * @param {Array.<WebInspector.RemoteObject>} parameters
+     * @return {Element}
+     */
+    _formatParameterAsTable: function(parameters)
+    {
+        var element = document.createElement("span");
+        var table = parameters[0];
+        if (!table || !table.preview)
+            return element;
+
+        var columnNames = [];
+        var preview = table.preview;
+        var rows = [];
+        for (var i = 0; i < preview.properties.length; ++i) {
+            var rowProperty = preview.properties[i];
+            var rowPreview = rowProperty.valuePreview;
+            if (!rowPreview)
+                continue;
+
+            var rowValue = {};
+            const maxColumnsToRender = 20;
+            for (var j = 0; j < rowPreview.properties.length && columnNames.length < maxColumnsToRender; ++j) {
+                var cellProperty = rowPreview.properties[j];
+                if (columnNames.indexOf(cellProperty.name) === -1)
+                    columnNames.push(cellProperty.name);
+                rowValue[cellProperty.name] = this._renderPropertyPreview(cellProperty);
+            }
+            rows.push([rowProperty.name, rowValue]);
+        }
+
+        var flatValues = [];
+        for (var i = 0; i < rows.length; ++i) {
+            var rowName = rows[i][0];
+            var rowValue = rows[i][1];
+            flatValues.push(rowName);
+            for (var j = 0; j < columnNames.length; ++j)
+                flatValues.push(rowValue[columnNames[j]]);
+        }
+
+        if (!flatValues.length)
+            return element;
+        columnNames.unshift(WebInspector.UIString("(index)"));
+        var dataGrid = WebInspector.DataGrid.createSortableDataGrid(columnNames, flatValues);
+        dataGrid.renderInline();
+        this._dataGrids.push(dataGrid);
+        this._dataGridParents.put(dataGrid, element);
+        return element;
     },
 
     _formatParameterAsString: function(output, elem)

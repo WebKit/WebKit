@@ -70,6 +70,7 @@ public:
     void warn(ScriptState*, PassRefPtr<ScriptArguments>);
     void dir(ScriptState*, PassRefPtr<ScriptArguments>);
     void dirxml(ScriptState*, PassRefPtr<ScriptArguments>);
+    void table(ScriptState*, PassRefPtr<ScriptArguments>);
     void trace(ScriptState*, PassRefPtr<ScriptArguments>);
     void assertCondition(ScriptState*, PassRefPtr<ScriptArguments>, bool condition);
     void count(ScriptState*, PassRefPtr<ScriptArguments>);
