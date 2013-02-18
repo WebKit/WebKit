@@ -52,7 +52,6 @@ set(test_webcore_BINARIES
 set(test_webkit2_api_BINARIES
     AboutBlankLoad
     CookieManager
-    DOMWindowExtensionBasic
     DOMWindowExtensionNoCache
     DocumentStartUserScriptAlertCrash
     EvaluateJavaScript
@@ -91,6 +90,7 @@ set(test_webkit2_api_BINARIES
 
 set(test_webkit2_api_fail_BINARIES
     CanHandleRequest
+    DOMWindowExtensionBasic
     DownloadDecideDestinationCrash
     NewFirstVisuallyNonEmptyLayoutFrames
     RestoreSessionStateContainingFormData

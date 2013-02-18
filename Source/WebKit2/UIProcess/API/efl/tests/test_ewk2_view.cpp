@@ -748,7 +748,7 @@ TEST_F(EWK2UnitTestBase, ewk_view_inspector)
 #endif
 }
 
-TEST_F(EWK2UnitTestBase, ewk_view_scale)
+TEST_F(EWK2UnitTestBase, DISABLED_ewk_view_scale)
 {
     ASSERT_TRUE(loadUrlSync(environment->defaultTestPageUrl()));
 
