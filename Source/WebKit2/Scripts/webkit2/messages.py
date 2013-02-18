@@ -328,9 +328,11 @@ def sync_message_statement(receiver, message):
     if message.has_attribute(VARIADIC_ATTRIBUTE):
         dispatch_function += 'Variadic'
 
+    wants_connection = message.has_attribute(DELAYED_ATTRIBUTE) or message.has_attribute(WANTS_CONNECTION_ATTRIBUTE)
+
     result = []
     result.append('    if (decoder.messageName() == Messages::%s::%s::name()) {\n' % (receiver.name, message.name))
-    result.append('        CoreIPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if message.has_attribute(DELAYED_ATTRIBUTE) else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
+    result.append('        CoreIPC::%s<Messages::%s::%s>(%sdecoder, %sreplyEncoder, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if wants_connection else '', '' if message.has_attribute(DELAYED_ATTRIBUTE) else '*', handler_function(receiver, message)))
     result.append('        return;\n')
     result.append('    }\n')
     return surround_in_condition(''.join(result), message.condition)
@@ -572,7 +574,7 @@ def generate_message_handler(file):
         if receiver.has_attribute(LEGACY_RECEIVER_ATTRIBUTE):
             result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
         else:
-            result.append('void %s::didReceiveSyncMessage(CoreIPC::Connection*%s, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name, ' connection' if sync_delayed_messages else ''))
+            result.append('void %s::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageDecoder& decoder, OwnPtr<CoreIPC::MessageEncoder>& replyEncoder)\n' % (receiver.name))
         result.append('{\n')
         result += [sync_message_statement(receiver, message) for message in sync_messages]
         result.append('    ASSERT_NOT_REACHED();\n')

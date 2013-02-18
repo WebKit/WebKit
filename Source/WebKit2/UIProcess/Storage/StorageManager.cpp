@@ -56,17 +56,17 @@ void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy
     webProcessProxy->connection()->removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 }
 
-void StorageManager::createStorageArea(uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&)
+void StorageManager::createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&)
 {
     UNUSED_PARAM(storageAreaID);
     UNUSED_PARAM(storageNamespaceID);
 }
 
-void StorageManager::destroyStorageArea(uint64_t)
+void StorageManager::destroyStorageArea(CoreIPC::Connection*, uint64_t)
 {
 }
 
-void StorageManager::getValues(uint64_t, HashMap<String, String>&)
+void StorageManager::getValues(CoreIPC::Connection*, uint64_t, HashMap<String, String>&)
 {
     // FIXME: Implement this.
 }

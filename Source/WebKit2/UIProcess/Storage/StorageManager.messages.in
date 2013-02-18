@@ -21,8 +21,8 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 messages -> StorageManager {
-    CreateStorageArea(uint64_t storageAreaID, uint64_t storageNamespaceID, WebKit::SecurityOriginData securityOriginData)
-    DestroyStorageArea(uint64_t storageAreaID)
+    CreateStorageArea(uint64_t storageAreaID, uint64_t storageNamespaceID, WebKit::SecurityOriginData securityOriginData) WantsConnection
+    DestroyStorageArea(uint64_t storageAreaID) WantsConnection
 
-    GetValues(uint64_t storageAreaID) -> (WTF::HashMap<WTF::String, WTF::String> values)
+    GetValues(uint64_t storageAreaID) -> (WTF::HashMap<WTF::String, WTF::String> values) WantsConnection
 }

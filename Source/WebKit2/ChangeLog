@@ -1,3 +1,25 @@
+2013-02-18  Anders Carlsson  <andersca@apple.com>
+
+        StorageManager message handlers should take the connection
+        https://bugs.webkit.org/show_bug.cgi?id=110151
+
+        Reviewed by Andreas Kling.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC):
+        (CoreIPC::callMemberFunction):
+        (CoreIPC::handleMessage):
+        * Scripts/webkit2/messages.py:
+        (sync_message_statement):
+        (generate_message_handler):
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createStorageArea):
+        (WebKit::StorageManager::destroyStorageArea):
+        (WebKit::StorageManager::getValues):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/Storage/StorageManager.messages.in:
+
 2013-02-18  Christophe Dumez  <christophe.dumez@intel.com>
 
         [EFL][WK2] Use C API inside ewk_security_origin
