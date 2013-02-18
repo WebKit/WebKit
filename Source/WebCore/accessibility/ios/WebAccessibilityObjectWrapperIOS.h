@@ -30,20 +30,13 @@
 
 #include "AXObjectCache.h"
 #include "AccessibilityObject.h"
+#include "WebAccessibilityObjectWrapperBase.h"
 
-@class WAKView;
-
-@interface WebAccessibilityObjectWrapper : NSObject {
-    WebCore::AccessibilityObject* m_object;
-    
+@interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase {
     // Cached data to avoid frequent re-computation.
     int m_isAccessibilityElement;
     uint64_t m_accessibilityTraitsFromAncestor;
 }
-
-- (id)initWithAccessibilityObject:(WebCore::AccessibilityObject*)axObject;
-- (void)detach;
-- (WebCore::AccessibilityObject*)accessibilityObject;
 
 - (id)accessibilityHitTest:(CGPoint)point;
 - (AccessibilityObjectWrapper *)accessibilityPostProcessHitTest:(CGPoint)point;
@@ -59,7 +52,6 @@
 - (NSInteger)indexOfAccessibilityElement:(id)element;
 
 - (BOOL)isAttachment;
-- (WAKView *)attachmentView;
 
 - (void)postFocusChangeNotification;
 - (void)postSelectedTextChangeNotification;
@@ -68,9 +60,6 @@
 - (void)postLoadCompleteNotification;
 - (void)postChildrenChangedNotification;
 - (void)postInvalidStatusChangedNotification;
-
-// Used to inform an element when a notification is posted for it. Used by DRT.
-- (void)accessibilityPostedNotification:(WebCore::AXObjectCache::AXNotification)notification;
 
 @end
 

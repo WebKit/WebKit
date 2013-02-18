@@ -24,7 +24,7 @@
  */
 
 #import "config.h"
-#import "AccessibilityObjectWrapperIOS.h"
+#import "WebAccessibilityObjectWrapperIOS.h"
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
 
@@ -182,11 +182,9 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
 
 - (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
 {
-    self = [super init];
+    self = [super initWithAccessibilityObject:axObject];
     if (!self)
         return nil;
-    
-    m_object = axObject;
     
     // Initialize to a sentinel value.
     m_accessibilityTraitsFromAncestor = ULLONG_MAX;
@@ -229,11 +227,6 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return NO;
     
     return YES;
-}
-
-- (AccessibilityObject*)accessibilityObject
-{
-    return m_object;
 }
 
 // These are here so that we don't have to import AXRuntime.
@@ -1148,7 +1141,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     m_object->press();
 }
 
-- (WAKView *)attachmentView
+- (id)attachmentView
 {
     if (![self _prepareAccessibilityCall])
         return nil;
@@ -2055,22 +2048,8 @@ static void* AXPostedNotificationContext = 0;
 
 - (void)accessibilityPostedNotification:(WebCore::AXObjectCache::AXNotification)notificationType
 {
-    if (AXNotificationCallback) {
-        NSString *notificationString = nil;
-        
-        // Pass a string back to DRT which is easier to match than an enum type.
-        switch (notificationType) {
-            case WebCore::AXObjectCache::AXActiveDescendantChanged:
-            case WebCore::AXObjectCache::AXFocusedUIElementChanged:
-                notificationString = @"AXFocusChanged";
-                break;
-            default:
-                break;
-        }
-        
-        if (notificationString)
-            AXNotificationCallback(self, notificationString, AXPostedNotificationContext);
-    }
+    if (AXNotificationCallback && notificationString)
+        AXNotificationCallback(self, notificationString, AXPostedNotificationContext);
 }
 
 #ifndef NDEBUG

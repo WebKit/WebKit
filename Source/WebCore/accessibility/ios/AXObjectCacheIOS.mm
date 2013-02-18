@@ -29,7 +29,7 @@
 #if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
 
 #import "AccessibilityObject.h"
-#import "AccessibilityObjectWrapperIOS.h"
+#import "WebAccessibilityObjectWrapperIOS.h"
 #import "RenderObject.h"
 
 #import <wtf/PassRefPtr.h>
@@ -45,7 +45,7 @@ void AXObjectCache::detachWrapper(AccessibilityObject* obj)
 
 void AXObjectCache::attachWrapper(AccessibilityObject* obj)
 {
-    RetainPtr<AccessibilityObjectWrapper> wrapper(AdoptNS, [[AccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
+    RetainPtr<AccessibilityObjectWrapper> wrapper(AdoptNS, [[WebAccessibilityObjectWrapper alloc] initWithAccessibilityObject:obj]);
     obj->setWrapper(wrapper.get());
 }
 
@@ -54,10 +54,12 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     if (!obj)
         return;
 
+    NSString *notificationString = nil;
     switch (notification) {
         case AXActiveDescendantChanged:
         case AXFocusedUIElementChanged:
             [obj->wrapper() postFocusChangeNotification];
+            notificationString = @"AXFocusChanged";
             break;
         case AXSelectedTextChanged:
             [obj->wrapper() postSelectedTextChangeNotification];
@@ -85,7 +87,7 @@ void AXObjectCache::postPlatformNotification(AccessibilityObject* obj, AXNotific
     }
     
     // Used by DRT to know when notifications are posted.
-    [obj->wrapper() accessibilityPostedNotification:notification];
+    [obj->wrapper() accessibilityPostedNotification:notificationString];
 }
 
 void AXObjectCache::nodeTextChangePlatformNotification(AccessibilityObject*, AXTextChange, unsigned, const String&)
