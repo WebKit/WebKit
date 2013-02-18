@@ -422,9 +422,9 @@ double CachedResource::currentAge() const
     // RFC2616 13.2.3
     // No compensation for latency as that is not terribly important in practice
     double dateValue = m_response.date();
-    double apparentAge = isfinite(dateValue) ? std::max(0., m_responseTimestamp - dateValue) : 0;
+    double apparentAge = std::isfinite(dateValue) ? std::max(0., m_responseTimestamp - dateValue) : 0;
     double ageValue = m_response.age();
-    double correctedReceivedAge = isfinite(ageValue) ? std::max(apparentAge, ageValue) : apparentAge;
+    double correctedReceivedAge = std::isfinite(ageValue) ? std::max(apparentAge, ageValue) : apparentAge;
     double residentTime = currentTime() - m_responseTimestamp;
     return correctedReceivedAge + residentTime;
 }
@@ -437,15 +437,15 @@ double CachedResource::freshnessLifetime() const
 
     // RFC2616 13.2.4
     double maxAgeValue = m_response.cacheControlMaxAge();
-    if (isfinite(maxAgeValue))
+    if (std::isfinite(maxAgeValue))
         return maxAgeValue;
     double expiresValue = m_response.expires();
     double dateValue = m_response.date();
-    double creationTime = isfinite(dateValue) ? dateValue : m_responseTimestamp;
-    if (isfinite(expiresValue))
+    double creationTime = std::isfinite(dateValue) ? dateValue : m_responseTimestamp;
+    if (std::isfinite(expiresValue))
         return expiresValue - creationTime;
     double lastModifiedValue = m_response.lastModified();
-    if (isfinite(lastModifiedValue))
+    if (std::isfinite(lastModifiedValue))
         return (creationTime - lastModifiedValue) * 0.1;
     // If no cache headers are present, the specification leaves the decision to the UA. Other browsers seem to opt for 0.
     return 0;

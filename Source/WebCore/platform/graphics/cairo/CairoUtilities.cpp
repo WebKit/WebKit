@@ -175,7 +175,7 @@ void drawPatternToCairoContext(cairo_t* cr, cairo_surface_t* image, const IntSiz
                                const AffineTransform& patternTransform, const FloatPoint& phase, cairo_operator_t op, const FloatRect& destRect)
 {
     // Avoid NaN
-    if (!isfinite(phase.x()) || !isfinite(phase.y()))
+    if (!std::isfinite(phase.x()) || !std::isfinite(phase.y()))
        return;
 
     cairo_save(cr);

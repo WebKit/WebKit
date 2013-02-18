@@ -85,15 +85,14 @@ inline double wtf_ceil(double x) { return copysign(ceil(x), x); }
 
 #if OS(SOLARIS)
 
+namespace std {
+
 #ifndef isfinite
 inline bool isfinite(double x) { return finite(x) && !isnand(x); }
 #endif
 #ifndef signbit
 inline bool signbit(double x) { return copysign(1.0, x) < 0; }
 #endif
-
-namespace std {
-
 #ifndef isinf
 inline bool isinf(double x) { return !finite(x) && !isnand(x); }
 #endif
@@ -104,12 +103,16 @@ inline bool isinf(double x) { return !finite(x) && !isnand(x); }
 
 #if OS(OPENBSD)
 
+namespace std {
+
 #ifndef isfinite
 inline bool isfinite(double x) { return finite(x); }
 #endif
 #ifndef signbit
 inline bool signbit(double x) { struct ieee_double *p = (struct ieee_double *)&x; return p->dbl_sign; }
 #endif
+
+} // namespace std
 
 #endif
 
@@ -168,16 +171,15 @@ namespace std {
 
 inline bool isinf(double num) { return !_finite(num) && !_isnan(num); }
 inline bool isnan(double num) { return !!_isnan(num); }
+inline bool isfinite(double x) { return _finite(x); }
+inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
 
 } // namespace std
-
-inline bool signbit(double num) { return _copysign(1.0, num) < 0; }
 
 inline double nextafter(double x, double y) { return _nextafter(x, y); }
 inline float nextafterf(float x, float y) { return x > y ? x - FLT_EPSILON : x + FLT_EPSILON; }
 
 inline double copysign(double x, double y) { return _copysign(x, y); }
-inline int isfinite(double x) { return _finite(x); }
 
 // Work around a bug in Win, where atan2(+-infinity, +-infinity) yields NaN instead of specific values.
 inline double wtf_atan2(double x, double y)
@@ -222,7 +224,7 @@ inline long int lrint(double flt)
         fistp intgr
     };
 #else
-    ASSERT(isfinite(flt));
+    ASSERT(std::isfinite(flt));
     double rounded = round(flt);
     intgr = static_cast<int64_t>(rounded);
     // If the fractional part is exactly 0.5, we need to check whether
@@ -339,11 +341,6 @@ template<typename T> inline T timesThreePlusOneDividedByTwo(T value)
     return value + (value >> 1) + (value & 1);
 }
 
-#if !COMPILER(MSVC) && !COMPILER(RVCT) && !OS(SOLARIS)
-using std::isfinite;
-using std::signbit;
-#endif
-
 #ifndef UINT64_C
 #if COMPILER(MSVC)
 #define UINT64_C(c) c ## ui64
@@ -357,7 +354,7 @@ inline double wtf_pow(double x, double y)
 {
     // MinGW-w64 has a custom implementation for pow.
     // This handles certain special cases that are different.
-    if ((x == 0.0 || std::isinf(x)) && isfinite(y)) {
+    if ((x == 0.0 || std::isinf(x)) && std::isfinite(y)) {
         double f;
         if (modf(y, &f) != 0.0)
             return ((x == 0.0) ^ (y > 0.0)) ? std::numeric_limits<double>::infinity() : 0.0;
@@ -380,9 +377,9 @@ inline double wtf_pow(double x, double y)
 //     (sign ? -1 : 1) * pow(2, exponent) * (mantissa / (1 << 52))
 inline void decomposeDouble(double number, bool& sign, int32_t& exponent, uint64_t& mantissa)
 {
-    ASSERT(isfinite(number));
+    ASSERT(std::isfinite(number));
 
-    sign = signbit(number);
+    sign = std::signbit(number);
 
     uint64_t bits = WTF::bitwise_cast<uint64_t>(number);
     exponent = (static_cast<int32_t>(bits >> 52) & 0x7ff) - 0x3ff;

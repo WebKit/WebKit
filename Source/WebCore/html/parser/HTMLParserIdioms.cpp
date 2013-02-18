@@ -135,7 +135,7 @@ double parseToDoubleForNumberType(const String& string, double fallbackValue)
         return fallbackValue;
 
     // NaN and infinity are considered valid by String::toDouble, but not valid here.
-    if (!isfinite(value))
+    if (!std::isfinite(value))
         return fallbackValue;
 
     // Numbers are considered finite IEEE 754 single-precision floating point values.

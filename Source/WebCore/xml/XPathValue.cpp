@@ -128,7 +128,7 @@ String Value::toString() const
             if (m_number == 0)
                 return "0";
             if (std::isinf(m_number))
-                return signbit(m_number) ? "-Infinity" : "Infinity";
+                return std::signbit(m_number) ? "-Infinity" : "Infinity";
             return String::number(m_number);
         case BooleanValue:
             return m_bool ? "true" : "false";

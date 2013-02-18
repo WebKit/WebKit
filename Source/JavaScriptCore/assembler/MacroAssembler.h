@@ -847,7 +847,7 @@ public:
     bool shouldBlindDouble(double value)
     {
         // Don't trust NaN or +/-Infinity
-        if (!isfinite(value))
+        if (!std::isfinite(value))
             return shouldConsiderBlinding();
 
         // Try to force normalisation, and check that there's no change

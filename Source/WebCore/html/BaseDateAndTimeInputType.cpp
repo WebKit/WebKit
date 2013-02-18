@@ -102,7 +102,7 @@ Decimal BaseDateAndTimeInputType::parseToNumber(const String& source, const Deci
     if (!parseToDateComponents(source, &date))
         return defaultValue;
     double msec = date.millisecondsSinceEpoch();
-    ASSERT(isfinite(msec));
+    ASSERT(std::isfinite(msec));
     return Decimal::fromDouble(msec);
 }
 

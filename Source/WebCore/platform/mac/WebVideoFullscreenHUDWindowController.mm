@@ -587,7 +587,7 @@ static NSString *timeToString(double time)
 {
     ASSERT_ARG(time, time >= 0);
 
-    if (!isfinite(time))
+    if (!std::isfinite(time))
         time = 0;
 
     int seconds = narrowPrecisionToFloat(abs(time));

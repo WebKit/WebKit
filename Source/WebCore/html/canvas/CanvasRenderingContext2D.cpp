@@ -383,7 +383,7 @@ float CanvasRenderingContext2D::lineWidth() const
 
 void CanvasRenderingContext2D::setLineWidth(float width)
 {
-    if (!(isfinite(width) && width > 0))
+    if (!(std::isfinite(width) && width > 0))
         return;
     if (state().m_lineWidth == width)
         return;
@@ -442,7 +442,7 @@ float CanvasRenderingContext2D::miterLimit() const
 
 void CanvasRenderingContext2D::setMiterLimit(float limit)
 {
-    if (!(isfinite(limit) && limit > 0))
+    if (!(std::isfinite(limit) && limit > 0))
         return;
     if (state().m_miterLimit == limit)
         return;
@@ -461,7 +461,7 @@ float CanvasRenderingContext2D::shadowOffsetX() const
 
 void CanvasRenderingContext2D::setShadowOffsetX(float x)
 {
-    if (!isfinite(x))
+    if (!std::isfinite(x))
         return;
     if (state().m_shadowOffset.width() == x)
         return;
@@ -477,7 +477,7 @@ float CanvasRenderingContext2D::shadowOffsetY() const
 
 void CanvasRenderingContext2D::setShadowOffsetY(float y)
 {
-    if (!isfinite(y))
+    if (!std::isfinite(y))
         return;
     if (state().m_shadowOffset.height() == y)
         return;
@@ -493,7 +493,7 @@ float CanvasRenderingContext2D::shadowBlur() const
 
 void CanvasRenderingContext2D::setShadowBlur(float blur)
 {
-    if (!(isfinite(blur) && blur >= 0))
+    if (!(std::isfinite(blur) && blur >= 0))
         return;
     if (state().m_shadowBlur == blur)
         return;
@@ -527,7 +527,7 @@ const Vector<float>& CanvasRenderingContext2D::getLineDash() const
 static bool lineDashSequenceIsValid(const Vector<float>& dash)
 {
     for (size_t i = 0; i < dash.size(); i++) {
-        if (!isfinite(dash[i]) || dash[i] < 0)
+        if (!std::isfinite(dash[i]) || dash[i] < 0)
             return false;
     }
     return true;
@@ -566,7 +566,7 @@ float CanvasRenderingContext2D::lineDashOffset() const
 
 void CanvasRenderingContext2D::setLineDashOffset(float offset)
 {
-    if (!isfinite(offset) || state().m_lineDashOffset == offset)
+    if (!std::isfinite(offset) || state().m_lineDashOffset == offset)
         return;
 
     realizeSaves();
@@ -644,7 +644,7 @@ void CanvasRenderingContext2D::scale(float sx, float sy)
     if (!state().m_invertibleCTM)
         return;
 
-    if (!isfinite(sx) | !isfinite(sy))
+    if (!std::isfinite(sx) | !std::isfinite(sy))
         return;
 
     AffineTransform newTransform = state().m_transform;
@@ -672,7 +672,7 @@ void CanvasRenderingContext2D::rotate(float angleInRadians)
     if (!state().m_invertibleCTM)
         return;
 
-    if (!isfinite(angleInRadians))
+    if (!std::isfinite(angleInRadians))
         return;
 
     AffineTransform newTransform = state().m_transform;
@@ -700,7 +700,7 @@ void CanvasRenderingContext2D::translate(float tx, float ty)
     if (!state().m_invertibleCTM)
         return;
 
-    if (!isfinite(tx) | !isfinite(ty))
+    if (!std::isfinite(tx) | !std::isfinite(ty))
         return;
 
     AffineTransform newTransform = state().m_transform;
@@ -728,7 +728,7 @@ void CanvasRenderingContext2D::transform(float m11, float m12, float m21, float 
     if (!state().m_invertibleCTM)
         return;
 
-    if (!isfinite(m11) | !isfinite(m21) | !isfinite(dx) | !isfinite(m12) | !isfinite(m22) | !isfinite(dy))
+    if (!std::isfinite(m11) | !std::isfinite(m21) | !std::isfinite(dx) | !std::isfinite(m12) | !std::isfinite(m22) | !std::isfinite(dy))
         return;
 
     AffineTransform transform(m11, m12, m21, m22, dx, dy);
@@ -754,7 +754,7 @@ void CanvasRenderingContext2D::setTransform(float m11, float m12, float m21, flo
     if (!c)
         return;
 
-    if (!isfinite(m11) | !isfinite(m21) | !isfinite(dx) | !isfinite(m12) | !isfinite(m22) | !isfinite(dy))
+    if (!std::isfinite(m11) | !std::isfinite(m21) | !std::isfinite(dx) | !std::isfinite(m12) | !std::isfinite(m22) | !std::isfinite(dy))
         return;
 
     AffineTransform ctm = state().m_transform;
@@ -876,7 +876,7 @@ void CanvasRenderingContext2D::setCurrentPath(DOMPath* path)
 
 static bool validateRectForCanvas(float& x, float& y, float& width, float& height)
 {
-    if (!isfinite(x) | !isfinite(y) | !isfinite(width) | !isfinite(height))
+    if (!std::isfinite(x) | !std::isfinite(y) | !std::isfinite(width) | !std::isfinite(height))
         return false;
 
     if (!width && !height)
@@ -1020,7 +1020,7 @@ bool CanvasRenderingContext2D::isPointInPath(const float x, const float y, const
     FloatPoint point(x, y);
     AffineTransform ctm = state().m_transform;
     FloatPoint transformedPoint = ctm.inverse().mapPoint(point);
-    if (!isfinite(transformedPoint.x()) || !isfinite(transformedPoint.y()))
+    if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
     WindRule windRule = RULE_NONZERO;
@@ -1042,7 +1042,7 @@ bool CanvasRenderingContext2D::isPointInStroke(const float x, const float y)
     FloatPoint point(x, y);
     AffineTransform ctm = state().m_transform;
     FloatPoint transformedPoint = ctm.inverse().mapPoint(point);
-    if (!isfinite(transformedPoint.x()) || !isfinite(transformedPoint.y()))
+    if (!std::isfinite(transformedPoint.x()) || !std::isfinite(transformedPoint.y()))
         return false;
 
     CanvasStrokeStyleApplier applier(this);
@@ -1302,8 +1302,8 @@ void CanvasRenderingContext2D::drawImage(HTMLImageElement* image, const FloatRec
 
     ec = 0;
 
-    if (!isfinite(dstRect.x()) || !isfinite(dstRect.y()) || !isfinite(dstRect.width()) || !isfinite(dstRect.height())
-        || !isfinite(srcRect.x()) || !isfinite(srcRect.y()) || !isfinite(srcRect.width()) || !isfinite(srcRect.height()))
+    if (!std::isfinite(dstRect.x()) || !std::isfinite(dstRect.y()) || !std::isfinite(dstRect.width()) || !std::isfinite(dstRect.height())
+        || !std::isfinite(srcRect.x()) || !std::isfinite(srcRect.y()) || !std::isfinite(srcRect.width()) || !std::isfinite(srcRect.height()))
         return;
 
     if (!dstRect.width() || !dstRect.height())
@@ -1680,7 +1680,7 @@ void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient* gradi
 
 PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float x0, float y0, float x1, float y1, ExceptionCode& ec)
 {
-    if (!isfinite(x0) || !isfinite(y0) || !isfinite(x1) || !isfinite(y1)) {
+    if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(x1) || !std::isfinite(y1)) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
@@ -1692,7 +1692,7 @@ PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createLinearGradient(float 
 
 PassRefPtr<CanvasGradient> CanvasRenderingContext2D::createRadialGradient(float x0, float y0, float r0, float x1, float y1, float r1, ExceptionCode& ec)
 {
-    if (!isfinite(x0) || !isfinite(y0) || !isfinite(r0) || !isfinite(x1) || !isfinite(y1) || !isfinite(r1)) {
+    if (!std::isfinite(x0) || !std::isfinite(y0) || !std::isfinite(r0) || !std::isfinite(x1) || !std::isfinite(y1) || !std::isfinite(r1)) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
@@ -1835,7 +1835,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::createImageData(float sw, float 
         ec = INDEX_SIZE_ERR;
         return 0;
     }
-    if (!isfinite(sw) || !isfinite(sh)) {
+    if (!std::isfinite(sw) || !std::isfinite(sh)) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
@@ -1876,7 +1876,7 @@ PassRefPtr<ImageData> CanvasRenderingContext2D::getImageData(ImageBuffer::Coordi
         ec = INDEX_SIZE_ERR;
         return 0;
     }
-    if (!isfinite(sx) || !isfinite(sy) || !isfinite(sw) || !isfinite(sh)) {
+    if (!std::isfinite(sx) || !std::isfinite(sy) || !std::isfinite(sw) || !std::isfinite(sh)) {
         ec = NOT_SUPPORTED_ERR;
         return 0;
     }
@@ -1946,7 +1946,7 @@ void CanvasRenderingContext2D::putImageData(ImageData* data, ImageBuffer::Coordi
         ec = TYPE_MISMATCH_ERR;
         return;
     }
-    if (!isfinite(dx) || !isfinite(dy) || !isfinite(dirtyX) || !isfinite(dirtyY) || !isfinite(dirtyWidth) || !isfinite(dirtyHeight)) {
+    if (!std::isfinite(dx) || !std::isfinite(dy) || !std::isfinite(dirtyX) || !std::isfinite(dirtyY) || !std::isfinite(dirtyWidth) || !std::isfinite(dirtyHeight)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -2173,9 +2173,9 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         return;
     if (!state().m_invertibleCTM)
         return;
-    if (!isfinite(x) | !isfinite(y))
+    if (!std::isfinite(x) | !std::isfinite(y))
         return;
-    if (useMaxWidth && (!isfinite(maxWidth) || maxWidth <= 0))
+    if (useMaxWidth && (!std::isfinite(maxWidth) || maxWidth <= 0))
         return;
 
     // If gradient size is zero, then paint nothing.

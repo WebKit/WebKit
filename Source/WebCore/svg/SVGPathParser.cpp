@@ -473,7 +473,7 @@ bool SVGPathParser::decomposeArcToCubic(float angle, float rx, float ry, FloatPo
         float endTheta = theta1 + (i + 1) * thetaArc / segments;
 
         float t = (8 / 6.f) * tanf(0.25f * (endTheta - startTheta));
-        if (!isfinite(t))
+        if (!std::isfinite(t))
             return false;
         float sinStartTheta = sinf(startTheta);
         float cosStartTheta = cosf(startTheta);

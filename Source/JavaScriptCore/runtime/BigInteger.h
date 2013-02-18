@@ -35,7 +35,7 @@ class BigInteger {
 public:
     BigInteger(double number)
     {
-        ASSERT(isfinite(number) && !signbit(number));
+        ASSERT(std::isfinite(number) && !std::signbit(number));
         ASSERT(number == floor(number));
 
         bool sign;

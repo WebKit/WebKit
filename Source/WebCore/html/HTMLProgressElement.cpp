@@ -107,12 +107,12 @@ void HTMLProgressElement::attach()
 double HTMLProgressElement::value() const
 {
     double value = parseToDoubleForNumberType(fastGetAttribute(valueAttr));
-    return !isfinite(value) || value < 0 ? 0 : std::min(value, max());
+    return !std::isfinite(value) || value < 0 ? 0 : std::min(value, max());
 }
 
 void HTMLProgressElement::setValue(double value, ExceptionCode& ec)
 {
-    if (!isfinite(value)) {
+    if (!std::isfinite(value)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }
@@ -122,12 +122,12 @@ void HTMLProgressElement::setValue(double value, ExceptionCode& ec)
 double HTMLProgressElement::max() const
 {
     double max = parseToDoubleForNumberType(getAttribute(maxAttr));
-    return !isfinite(max) || max <= 0 ? 1 : max;
+    return !std::isfinite(max) || max <= 0 ? 1 : max;
 }
 
 void HTMLProgressElement::setMax(double max, ExceptionCode& ec)
 {
-    if (!isfinite(max)) {
+    if (!std::isfinite(max)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }

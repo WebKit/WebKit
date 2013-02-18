@@ -115,7 +115,7 @@ String valueToStringWithUndefinedOrNullCheck(ExecState* exec, JSValue value)
 
 JSValue jsDateOrNull(ExecState* exec, double value)
 {
-    if (!isfinite(value))
+    if (!std::isfinite(value))
         return jsNull();
     return DateInstance::create(exec, exec->lexicalGlobalObject()->dateStructure(), value);
 }

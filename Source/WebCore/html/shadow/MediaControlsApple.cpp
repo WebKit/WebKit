@@ -323,7 +323,7 @@ void MediaControlsApple::reset()
         m_fullScreenButton->hide();
 
     float duration = m_mediaController->duration();
-    if (isfinite(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
+    if (std::isfinite(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
         m_timeline->setDuration(duration);
         m_timelineContainer->show();
         m_timeline->setPosition(m_mediaController->currentTime());

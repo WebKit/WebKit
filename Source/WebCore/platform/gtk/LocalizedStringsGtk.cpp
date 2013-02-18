@@ -623,7 +623,7 @@ String localizedMediaControlElementHelpText(const String& name)
 
 String localizedMediaTimeDescription(float time)
 {
-    if (!isfinite(time))
+    if (!std::isfinite(time))
         return String::fromUTF8(_("indefinite time"));
 
     int seconds = static_cast<int>(abs(time));

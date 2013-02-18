@@ -173,7 +173,7 @@ void Path::addArc(const FloatPoint& p, float r, float startAngle, float endAngle
 {
     // http://bugs.webkit.org/show_bug.cgi?id=16449
     // cairo_arc() functions hang or crash when passed inf as radius or start/end angle
-    if (!isfinite(r) || !isfinite(startAngle) || !isfinite(endAngle))
+    if (!std::isfinite(r) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
         return;
 
     cairo_t* cr = ensurePlatformPath()->context();
@@ -330,7 +330,7 @@ FloatRect Path::strokeBoundingRect(StrokeStyleApplier* applier) const
 
 bool Path::contains(const FloatPoint& point, WindRule rule) const
 {
-    if (isNull() || !isfinite(point.x()) || !isfinite(point.y()))
+    if (isNull() || !std::isfinite(point.x()) || !std::isfinite(point.y()))
         return false;
     cairo_t* cr = platformPath()->context();
     cairo_fill_rule_t cur = cairo_get_fill_rule(cr);

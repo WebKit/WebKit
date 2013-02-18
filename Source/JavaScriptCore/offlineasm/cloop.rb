@@ -709,7 +709,7 @@ class Instruction
             $asm.putc "{"
             $asm.putc "    double d = #{operands[0].clValue(:double)};"
             $asm.putc "    const int32_t asInt32 = int32_t(d);"
-            $asm.putc "    if (asInt32 != d || (!asInt32 && signbit(d))) // true for -0.0"
+            $asm.putc "    if (asInt32 != d || (!asInt32 && std::signbit(d))) // true for -0.0"
             $asm.putc "        goto  #{operands[2].cLabel};"
             $asm.putc "    #{operands[1].clValue} = asInt32;"            
             $asm.putc "    #{operands[1].clDump}.clearHighWord();"

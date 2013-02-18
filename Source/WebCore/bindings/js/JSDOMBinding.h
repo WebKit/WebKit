@@ -297,7 +297,7 @@ enum ParameterDefaultPolicy {
     inline int32_t finiteInt32Value(JSC::JSValue value, JSC::ExecState* exec, bool& okay)
     {
         double number = value.toNumber(exec);
-        okay = isfinite(number);
+        okay = std::isfinite(number);
         return JSC::toInt32(number);
     }
 

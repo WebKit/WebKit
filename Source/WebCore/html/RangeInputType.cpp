@@ -120,7 +120,7 @@ void RangeInputType::setValueAsDecimal(const Decimal& newValue, TextFieldEventBe
 
 bool RangeInputType::typeMismatchFor(const String& value) const
 {
-    return !value.isEmpty() && !isfinite(parseToDoubleForNumberType(value));
+    return !value.isEmpty() && !std::isfinite(parseToDoubleForNumberType(value));
 }
 
 bool RangeInputType::supportsRequired() const

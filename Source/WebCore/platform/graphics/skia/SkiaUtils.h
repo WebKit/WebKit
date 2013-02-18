@@ -54,12 +54,12 @@ Color SkPMColorToWebCoreColor(SkPMColor);
 // Skia has problems when passed infinite, etc floats, filter them to 0.
 inline SkScalar WebCoreFloatToSkScalar(float f)
 {
-    return SkFloatToScalar(isfinite(f) ? f : 0);
+    return SkFloatToScalar(std::isfinite(f) ? f : 0);
 }
 
 inline SkScalar WebCoreDoubleToSkScalar(double d)
 {
-    return SkDoubleToScalar(isfinite(d) ? d : 0);
+    return SkDoubleToScalar(std::isfinite(d) ? d : 0);
 }
 
 // Computes the smallest rectangle that, which when drawn to the given canvas,

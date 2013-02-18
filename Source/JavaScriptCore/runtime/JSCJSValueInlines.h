@@ -136,7 +136,7 @@ inline JSValue::JSValue(unsigned long long i)
 inline JSValue::JSValue(double d)
 {
     const int32_t asInt32 = static_cast<int32_t>(d);
-    if (asInt32 != d || (!asInt32 && signbit(d))) { // true for -0.0
+    if (asInt32 != d || (!asInt32 && std::signbit(d))) { // true for -0.0
         *this = JSValue(EncodeAsDouble, d);
         return;
     }

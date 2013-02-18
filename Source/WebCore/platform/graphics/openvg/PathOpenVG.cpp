@@ -307,7 +307,7 @@ void Path::addArc(const FloatPoint& center, float radius, float startAngle, floa
     // The OpenVG spec says nothing about inf as radius or start/end angle.
     // WebKit seems to pass those (e.g. https://bugs.webkit.org/show_bug.cgi?id=16449),
     // so abort instead of risking undefined behavior.
-    if (!isfinite(radius) || !isfinite(startAngle) || !isfinite(endAngle))
+    if (!std::isfinite(radius) || !std::isfinite(startAngle) || !std::isfinite(endAngle))
         return;
 
     // For some reason, the HTML 5 spec defines the angle as going clockwise

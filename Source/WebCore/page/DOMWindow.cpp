@@ -321,14 +321,14 @@ FloatRect DOMWindow::adjustWindowRect(Page* page, const FloatRect& pendingChange
     FloatRect window = page->chrome()->windowRect();
 
     // Make sure we're in a valid state before adjusting dimensions.
-    ASSERT(isfinite(screen.x()));
-    ASSERT(isfinite(screen.y()));
-    ASSERT(isfinite(screen.width()));
-    ASSERT(isfinite(screen.height()));
-    ASSERT(isfinite(window.x()));
-    ASSERT(isfinite(window.y()));
-    ASSERT(isfinite(window.width()));
-    ASSERT(isfinite(window.height()));
+    ASSERT(std::isfinite(screen.x()));
+    ASSERT(std::isfinite(screen.y()));
+    ASSERT(std::isfinite(screen.width()));
+    ASSERT(std::isfinite(screen.height()));
+    ASSERT(std::isfinite(window.x()));
+    ASSERT(std::isfinite(window.y()));
+    ASSERT(std::isfinite(window.width()));
+    ASSERT(std::isfinite(window.height()));
 
     // Update window values if new requested values are not NaN.
     if (!std::isnan(pendingChanges.x()))

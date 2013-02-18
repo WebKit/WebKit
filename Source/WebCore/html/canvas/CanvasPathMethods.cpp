@@ -53,7 +53,7 @@ void CanvasPathMethods::closePath()
 
 void CanvasPathMethods::moveTo(float x, float y)
 {
-    if (!isfinite(x) || !isfinite(y))
+    if (!std::isfinite(x) || !std::isfinite(y))
         return;
     if (!isTransformInvertible())
         return;
@@ -62,7 +62,7 @@ void CanvasPathMethods::moveTo(float x, float y)
 
 void CanvasPathMethods::lineTo(float x, float y)
 {
-    if (!isfinite(x) || !isfinite(y))
+    if (!std::isfinite(x) || !std::isfinite(y))
         return;
     if (!isTransformInvertible())
         return;
@@ -76,7 +76,7 @@ void CanvasPathMethods::lineTo(float x, float y)
 
 void CanvasPathMethods::quadraticCurveTo(float cpx, float cpy, float x, float y)
 {
-    if (!isfinite(cpx) || !isfinite(cpy) || !isfinite(x) || !isfinite(y))
+    if (!std::isfinite(cpx) || !std::isfinite(cpy) || !std::isfinite(x) || !std::isfinite(y))
         return;
     if (!isTransformInvertible())
         return;
@@ -91,7 +91,7 @@ void CanvasPathMethods::quadraticCurveTo(float cpx, float cpy, float x, float y)
 
 void CanvasPathMethods::bezierCurveTo(float cp1x, float cp1y, float cp2x, float cp2y, float x, float y)
 {
-    if (!isfinite(cp1x) || !isfinite(cp1y) || !isfinite(cp2x) || !isfinite(cp2y) || !isfinite(x) || !isfinite(y))
+    if (!std::isfinite(cp1x) || !std::isfinite(cp1y) || !std::isfinite(cp2x) || !std::isfinite(cp2y) || !std::isfinite(x) || !std::isfinite(y))
         return;
     if (!isTransformInvertible())
         return;
@@ -108,7 +108,7 @@ void CanvasPathMethods::bezierCurveTo(float cp1x, float cp1y, float cp2x, float 
 void CanvasPathMethods::arcTo(float x1, float y1, float x2, float y2, float r, ExceptionCode& ec)
 {
     ec = 0;
-    if (!isfinite(x1) || !isfinite(y1) || !isfinite(x2) || !isfinite(y2) || !isfinite(r))
+    if (!std::isfinite(x1) || !std::isfinite(y1) || !std::isfinite(x2) || !std::isfinite(y2) || !std::isfinite(r))
         return;
 
     if (r < 0) {
@@ -133,7 +133,7 @@ void CanvasPathMethods::arcTo(float x1, float y1, float x2, float y2, float r, E
 void CanvasPathMethods::arc(float x, float y, float r, float sa, float ea, bool anticlockwise, ExceptionCode& ec)
 {
     ec = 0;
-    if (!isfinite(x) || !isfinite(y) || !isfinite(r) || !isfinite(sa) || !isfinite(ea))
+    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(r) || !std::isfinite(sa) || !std::isfinite(ea))
         return;
 
     if (r < 0) {
@@ -168,7 +168,7 @@ void CanvasPathMethods::rect(float x, float y, float width, float height)
     if (!isTransformInvertible())
         return;
 
-    if (!isfinite(x) || !isfinite(y) || !isfinite(width) || !isfinite(height))
+    if (!std::isfinite(x) || !std::isfinite(y) || !std::isfinite(width) || !std::isfinite(height))
         return;
 
     if (!width && !height) {

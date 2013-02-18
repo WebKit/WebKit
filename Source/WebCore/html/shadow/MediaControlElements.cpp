@@ -968,7 +968,7 @@ void MediaControlTimelineElement::setPosition(float currentTime)
 
 void MediaControlTimelineElement::setDuration(float duration)
 {
-    setAttribute(maxAttr, String::number(isfinite(duration) ? duration : 0));
+    setAttribute(maxAttr, String::number(std::isfinite(duration) ? duration : 0));
 }
 
 

@@ -529,7 +529,7 @@ void MediaControlFullscreenTimelineElement::setPosition(float currentTime)
 
 void MediaControlFullscreenTimelineElement::setDuration(float duration)
 {
-    setAttribute(maxAttr, String::number(isfinite(duration) ? duration : 0));
+    setAttribute(maxAttr, String::number(std::isfinite(duration) ? duration : 0));
 }
 
 const AtomicString& MediaControlFullscreenTimelineElement::shadowPseudoId() const
@@ -912,7 +912,7 @@ void MediaControlsBlackBerry::reset()
             m_fullscreenFullScreenButton->hide();
     }
     float duration = m_mediaController->duration();
-    if (isfinite(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
+    if (std::isfinite(duration) || page->theme()->hasOwnDisabledStateHandlingFor(MediaSliderPart)) {
         float now = m_mediaController->currentTime();
         m_timeline->setDuration(duration);
         m_fullscreenTimeline->setDuration(duration);

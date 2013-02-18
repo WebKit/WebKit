@@ -1,3 +1,16 @@
+2013-02-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Stop placing std::isfinite and std::signbit inside the global scope
+        https://bugs.webkit.org/show_bug.cgi?id=109817
+
+        Reviewed by Darin Adler.
+
+        Prefix calls to the isfinite and signbit methods with std:: as the two
+        methods are no longer being imported into the global scope.
+
+        * FullscreenVideoController.cpp:
+        (timeToString):
+
 2013-02-15  Rik Cabanier  <cabanier@adobe.com>
 
         Add platform support for -webkit-background-blend-mode to CG context

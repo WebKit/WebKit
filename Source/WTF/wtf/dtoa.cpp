@@ -742,7 +742,7 @@ void dtoa(DtoaBuffer result, double dd, int ndigits, bool& signOut, int& exponen
     // roundingNone only allowed (only sensible?) with leftright set.
     ASSERT(!roundingNone || leftright);
 
-    ASSERT(isfinite(dd));
+    ASSERT(std::isfinite(dd));
 
     int bbits, b2, b5, be, dig, i, ieps, ilim = 0, ilim0, ilim1 = 0,
         j, j1, k, k0, k_check, m2, m5, s2, s5,

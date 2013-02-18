@@ -418,7 +418,7 @@ namespace WebCore {
     inline v8::Handle<v8::Value> v8DateOrNull(double value, v8::Isolate* isolate)
     {
         ASSERT(isolate);
-        return isfinite(value) ? v8::Date::New(value) : v8NullWithCheck(isolate);
+        return std::isfinite(value) ? v8::Date::New(value) : v8NullWithCheck(isolate);
     }
 
     v8::Persistent<v8::FunctionTemplate> createRawTemplate(v8::Isolate*);

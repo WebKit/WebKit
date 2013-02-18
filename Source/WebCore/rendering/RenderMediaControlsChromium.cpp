@@ -421,9 +421,9 @@ void RenderMediaControlsChromium::adjustMediaSliderThumbSize(RenderStyle* style)
 
 static String formatChromiumMediaControlsTime(float time, float duration)
 {
-    if (!isfinite(time))
+    if (!std::isfinite(time))
         time = 0;
-    if (!isfinite(duration))
+    if (!std::isfinite(duration))
         duration = 0;
     int seconds = static_cast<int>(fabsf(time));
     int hours = seconds / (60 * 60);

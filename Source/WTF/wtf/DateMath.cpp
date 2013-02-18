@@ -1072,7 +1072,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
 
 double timeClip(double t)
 {
-    if (!isfinite(t))
+    if (!std::isfinite(t))
         return std::numeric_limits<double>::quiet_NaN();
     if (fabs(t) > maxECMAScriptTime)
         return std::numeric_limits<double>::quiet_NaN();

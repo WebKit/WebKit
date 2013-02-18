@@ -375,7 +375,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     if (maxArgs >= 4 && idx < numArgs) {
         t->setHour(0);
         double hours = exec->argument(idx++).toIntegerPreserveNaN(exec);
-        ok = isfinite(hours);
+        ok = std::isfinite(hours);
         milliseconds += hours * msPerHour;
     }
 
@@ -383,7 +383,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     if (maxArgs >= 3 && idx < numArgs && ok) {
         t->setMinute(0);
         double minutes = exec->argument(idx++).toIntegerPreserveNaN(exec);
-        ok = isfinite(minutes);
+        ok = std::isfinite(minutes);
         milliseconds += minutes * msPerMinute;
     }
     
@@ -391,7 +391,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     if (maxArgs >= 2 && idx < numArgs && ok) {
         t->setSecond(0);
         double seconds = exec->argument(idx++).toIntegerPreserveNaN(exec);
-        ok = isfinite(seconds);
+        ok = std::isfinite(seconds);
         milliseconds += seconds * msPerSecond;
     }
     
@@ -401,7 +401,7 @@ static bool fillStructuresUsingTimeArgs(ExecState* exec, int maxArgs, double* ms
     // milliseconds
     if (idx < numArgs) {
         double millis = exec->argument(idx).toIntegerPreserveNaN(exec);
-        ok = isfinite(millis);
+        ok = std::isfinite(millis);
         milliseconds += millis;
     } else
         milliseconds += *ms;
@@ -427,19 +427,19 @@ static bool fillStructuresUsingDateArgs(ExecState *exec, int maxArgs, double *ms
     // years
     if (maxArgs >= 3 && idx < numArgs) {
         double years = exec->argument(idx++).toIntegerPreserveNaN(exec);
-        ok = isfinite(years);
+        ok = std::isfinite(years);
         t->setYear(toInt32(years));
     }
     // months
     if (maxArgs >= 2 && idx < numArgs && ok) {
         double months = exec->argument(idx++).toIntegerPreserveNaN(exec);
-        ok = isfinite(months);
+        ok = std::isfinite(months);
         t->setMonth(toInt32(months));
     }
     // days
     if (idx < numArgs && ok) {
         double days = exec->argument(idx++).toIntegerPreserveNaN(exec);
-        ok = isfinite(days);
+        ok = std::isfinite(days);
         t->setMonthDay(0);
         *ms += days * msPerDay;
     }
@@ -546,7 +546,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncToISOString(ExecState* exec)
         return throwVMTypeError(exec);
     
     DateInstance* thisDateObj = asDateInstance(thisValue); 
-    if (!isfinite(thisDateObj->internalNumber()))
+    if (!std::isfinite(thisDateObj->internalNumber()))
         return throwVMError(exec, createRangeError(exec, ASCIILiteral("Invalid Date")));
 
     const GregorianDateTime* gregorianDateTime = thisDateObj->gregorianDateTimeUTC(exec);
@@ -1076,7 +1076,7 @@ EncodedJSValue JSC_HOST_CALL dateProtoFuncSetYear(ExecState* exec)
     }
 
     double year = exec->argument(0).toIntegerPreserveNaN(exec);
-    if (!isfinite(year)) {
+    if (!std::isfinite(year)) {
         JSValue result = jsNaN();
         thisDateObj->setInternalValue(exec->globalData(), result);
         return JSValue::encode(result);

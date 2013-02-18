@@ -125,13 +125,13 @@ JSObject* constructDate(ExecState* exec, JSGlobalObject* globalObject, const Arg
             args.at(5).toNumber(exec), 
             args.at(6).toNumber(exec)
         };
-        if (!isfinite(doubleArguments[0])
-            || !isfinite(doubleArguments[1])
-            || (numArgs >= 3 && !isfinite(doubleArguments[2]))
-            || (numArgs >= 4 && !isfinite(doubleArguments[3]))
-            || (numArgs >= 5 && !isfinite(doubleArguments[4]))
-            || (numArgs >= 6 && !isfinite(doubleArguments[5]))
-            || (numArgs >= 7 && !isfinite(doubleArguments[6])))
+        if (!std::isfinite(doubleArguments[0])
+            || !std::isfinite(doubleArguments[1])
+            || (numArgs >= 3 && !std::isfinite(doubleArguments[2]))
+            || (numArgs >= 4 && !std::isfinite(doubleArguments[3]))
+            || (numArgs >= 5 && !std::isfinite(doubleArguments[4]))
+            || (numArgs >= 6 && !std::isfinite(doubleArguments[5]))
+            || (numArgs >= 7 && !std::isfinite(doubleArguments[6])))
             value = QNaN;
         else {
             GregorianDateTime t;

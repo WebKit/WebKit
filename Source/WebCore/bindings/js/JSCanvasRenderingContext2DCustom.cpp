@@ -112,7 +112,7 @@ void JSCanvasRenderingContext2D::setWebkitLineDash(ExecState* exec, JSValue valu
     JSArray* valueArray = asArray(value);
     for (unsigned i = 0; i < valueArray->length(); ++i) {
         float elem = valueArray->getIndex(exec, i).toFloat(exec);
-        if (elem <= 0 || !isfinite(elem))
+        if (elem <= 0 || !std::isfinite(elem))
             return;
 
         dash.append(elem);

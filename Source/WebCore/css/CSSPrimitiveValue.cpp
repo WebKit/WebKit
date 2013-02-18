@@ -237,7 +237,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(double num, UnitTypes type)
     : CSSValue(PrimitiveClass)
 {
     m_primitiveUnitType = type;
-    ASSERT(isfinite(num));
+    ASSERT(std::isfinite(num));
     m_value.num = num;
 }
 
@@ -295,7 +295,7 @@ CSSPrimitiveValue::CSSPrimitiveValue(const Length& length)
             break;
         case Percent:
             m_primitiveUnitType = CSS_PERCENTAGE;
-            ASSERT(isfinite(length.percent()));
+            ASSERT(std::isfinite(length.percent()));
             m_value.num = length.percent();
             break;
         case ViewportPercentageWidth:

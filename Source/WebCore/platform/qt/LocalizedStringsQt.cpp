@@ -585,7 +585,7 @@ String localizedMediaControlElementHelpText(const String& name)
 
 String localizedMediaTimeDescription(float time)
 {
-    if (!isfinite(time))
+    if (!std::isfinite(time))
         return QCoreApplication::translate("QWebPage", "Indefinite time", "Media time description");
 
     int seconds = (int)fabsf(time);

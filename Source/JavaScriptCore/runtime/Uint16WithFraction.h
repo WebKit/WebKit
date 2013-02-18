@@ -41,7 +41,7 @@ class Uint16WithFraction {
 public:
     explicit Uint16WithFraction(double number, uint16_t divideByExponent = 0)
     {
-        ASSERT(number && isfinite(number) && !signbit(number));
+        ASSERT(number && std::isfinite(number) && !std::signbit(number));
 
         // Check for values out of uint16_t range.
         if (number >= oneGreaterThanMaxUInt16) {

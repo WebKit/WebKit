@@ -178,7 +178,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMax(ExecState* exec)
             result = QNaN;
             break;
         }
-        if (val > result || (val == 0 && result == 0 && !signbit(val)))
+        if (val > result || (!val && !result && !std::signbit(val)))
             result = val;
     }
     return JSValue::encode(jsNumber(result));
@@ -194,7 +194,7 @@ EncodedJSValue JSC_HOST_CALL mathProtoFuncMin(ExecState* exec)
             result = QNaN;
             break;
         }
-        if (val < result || (val == 0 && result == 0 && signbit(val)))
+        if (val < result || (!val && !result && std::signbit(val)))
             result = val;
     }
     return JSValue::encode(jsNumber(result));

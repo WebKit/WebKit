@@ -1061,7 +1061,7 @@ double HTMLInputElement::valueAsNumber() const
 
 void HTMLInputElement::setValueAsNumber(double newValue, ExceptionCode& ec, TextFieldEventBehavior eventBehavior)
 {
-    if (!isfinite(newValue)) {
+    if (!std::isfinite(newValue)) {
         ec = NOT_SUPPORTED_ERR;
         return;
     }

@@ -910,7 +910,7 @@ String localizedMediaControlElementHelpText(const String& name)
 
 String localizedMediaTimeDescription(float time)
 {
-    if (!isfinite(time))
+    if (!std::isfinite(time))
         return WEB_UI_STRING("indefinite time", "accessibility help text for an indefinite media controller time value");
 
     int seconds = static_cast<int>(fabsf(time));

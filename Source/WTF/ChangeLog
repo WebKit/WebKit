@@ -1,3 +1,33 @@
+2013-02-18  Zan Dobersek  <zdobersek@igalia.com>
+
+        Stop placing std::isfinite and std::signbit inside the global scope
+        https://bugs.webkit.org/show_bug.cgi?id=109817
+
+        Reviewed by Darin Adler.
+
+        Prefix calls to the isfinite and signbit methods with std:: as the two
+        methods are no longer being imported into the global scope.
+
+        On Solaris and OpenBSD platforms or when using Visual C++ the two methods
+        are now defined (as incompatibility workarounds) inside the std namespace.
+
+        * wtf/DateMath.cpp:
+        (WTF::timeClip):
+        * wtf/DecimalNumber.h:
+        (WTF::DecimalNumber::DecimalNumber):
+        * wtf/MathExtras.h:
+        (std):
+        (std::isfinite):
+        (std::signbit):
+        (lrint):
+        (wtf_pow):
+        (decomposeDouble):
+        * wtf/MediaTime.cpp:
+        (WTF::MediaTime::createWithFloat):
+        (WTF::MediaTime::createWithDouble):
+        * wtf/dtoa.cpp:
+        (WTF::dtoa):
+
 2013-02-18  Laszlo Gombos  <l.gombos@samsung.com>
 
         Move ENABLE macros for WebCore out from Platform.h

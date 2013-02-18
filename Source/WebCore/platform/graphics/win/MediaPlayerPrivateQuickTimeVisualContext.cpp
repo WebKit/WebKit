@@ -574,7 +574,7 @@ PassRefPtr<TimeRanges> MediaPlayerPrivateQuickTimeVisualContext::buffered() cons
 float MediaPlayerPrivateQuickTimeVisualContext::maxTimeSeekable() const
 {
     // infinite duration means live stream
-    return !isfinite(duration()) ? 0 : maxTimeLoaded();
+    return !std::isfinite(duration()) ? 0 : maxTimeLoaded();
 }
 
 float MediaPlayerPrivateQuickTimeVisualContext::maxTimeLoaded() const

@@ -285,7 +285,7 @@ void Path::closeSubpath()
 void Path::addArc(const FloatPoint& p, float r, float sa, float ea, bool clockwise)
 {
     // Workaround for <rdar://problem/5189233> CGPathAddArc hangs or crashes when passed inf as start or end angle
-    if (isfinite(sa) && isfinite(ea))
+    if (std::isfinite(sa) && std::isfinite(ea))
         CGPathAddArc(ensurePlatformPath(), 0, p.x(), p.y(), r, sa, ea, clockwise);
 }
 

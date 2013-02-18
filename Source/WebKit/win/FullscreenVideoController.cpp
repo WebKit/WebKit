@@ -469,7 +469,7 @@ void FullscreenVideoController::createHUDWindow()
 
 static String timeToString(float time)
 {
-    if (!isfinite(time))
+    if (!std::isfinite(time))
         time = 0;
     int seconds = fabsf(time); 
     int hours = seconds / (60 * 60);

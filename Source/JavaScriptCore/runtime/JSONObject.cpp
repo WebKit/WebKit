@@ -387,7 +387,7 @@ Stringifier::StringifyResult Stringifier::appendStringifiedValue(StringBuilder& 
 
     if (value.isNumber()) {
         double number = value.asNumber();
-        if (!isfinite(number))
+        if (!std::isfinite(number))
             builder.appendLiteral("null");
         else
             builder.append(String::numberToStringECMAScript(number));

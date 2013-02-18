@@ -156,7 +156,7 @@ void NumberInputType::setValueAsDecimal(const Decimal& newValue, TextFieldEventB
 
 bool NumberInputType::typeMismatchFor(const String& value) const
 {
-    return !value.isEmpty() && !isfinite(parseToDoubleForNumberType(value));
+    return !value.isEmpty() && !std::isfinite(parseToDoubleForNumberType(value));
 }
 
 bool NumberInputType::typeMismatch() const
@@ -261,13 +261,13 @@ String NumberInputType::sanitizeValue(const String& proposedValue) const
 {
     if (proposedValue.isEmpty())
         return proposedValue;
-    return isfinite(parseToDoubleForNumberType(proposedValue)) ? proposedValue : emptyString();
+    return std::isfinite(parseToDoubleForNumberType(proposedValue)) ? proposedValue : emptyString();
 }
 
 bool NumberInputType::hasBadInput() const
 {
     String standardValue = convertFromVisibleValue(element()->innerTextValue());
-    return !standardValue.isEmpty() && !isfinite(parseToDoubleForNumberType(standardValue));
+    return !standardValue.isEmpty() && !std::isfinite(parseToDoubleForNumberType(standardValue));
 }
 
 String NumberInputType::badInputText() const
