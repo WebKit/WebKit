@@ -400,7 +400,6 @@ string dumpAllBackForwardLists(WebTestDelegate* delegate)
 {
     string result;
     unsigned windowCount = delegate->windowCount();
-    fprintf(stderr, "windowCount = %d\n", windowCount);
     for (unsigned i = 0; i < windowCount; ++i) {
         size_t currentEntryIndex = 0;
         WebVector<WebHistoryItem> history;

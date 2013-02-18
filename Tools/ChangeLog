@@ -1,3 +1,12 @@
+2013-02-18  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] remove log spew from dumpAllBackForwardLists
+        https://bugs.webkit.org/show_bug.cgi?id=110108
+
+        Reviewed by Nico Weber.
+
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+
 2013-02-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Disable failing API tests
