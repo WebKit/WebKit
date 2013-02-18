@@ -1825,6 +1825,8 @@ webkit.org/b/108339 compositing/layer-creation/fixed-position-no-content.html [ 
 # Test introduced in r143191 and failing on EFL port.
 webkit.org/b/110109 fast/dom/shadow/shadow-dom-event-dispatching-distributed-child.html [ Failure ]
 
+webkit.org/b/67921 [ Release ] perf/show-hide-table-rows.html [ Failure Pass Slow ]
+
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word-with-underscores.html [ Skip ]
