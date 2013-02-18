@@ -1,5 +1,16 @@
 2013-02-18  Filip Pizlo  <fpizlo@apple.com>
 
+        Remove DFG::SpeculativeJIT::isStrictInt32(), since it's not called from anywhere.
+
+        Rubber stampted by Andy Estes.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+
+2013-02-18  Filip Pizlo  <fpizlo@apple.com>
+
         Remove dead code for ValueToNumber from the DFG.
 
         Rubber stamped by Andy Estes.

@@ -931,16 +931,6 @@ void SpeculativeJIT::useChildren(Node* node)
     }
 }
 
-bool SpeculativeJIT::isStrictInt32(Node* node)
-{
-    if (isInt32Constant(node))
-        return true;
-    
-    GenerationInfo& info = m_generationInfo[node->virtualRegister()];
-    
-    return info.registerFormat() == DataFormatInteger;
-}
-
 bool SpeculativeJIT::isKnownInteger(Node* node)
 {
     if (isInt32Constant(node))

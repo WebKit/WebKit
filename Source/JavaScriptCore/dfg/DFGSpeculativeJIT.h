@@ -524,8 +524,6 @@ public:
         }
     }
     
-    bool isStrictInt32(Node*);
-    
     bool isKnownInteger(Node*);
     bool isKnownNumeric(Node*);
     bool isKnownCell(Node*);
