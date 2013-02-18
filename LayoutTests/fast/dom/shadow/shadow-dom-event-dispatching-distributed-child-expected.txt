@@ -1,0 +1,60 @@
+Tests to ensure that event dispatching behaves as the Shadow DOM spec describes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DIV	 id=shadow-host
+			DIV	 id=distributed-light-child
+			DIV	 id=shadow-root-child
+
+
+Moving mouse from shadow-host to shadow-host/shadow-root-child
+
+  mouseout
+
+  mouseover
+     @shadow-root-child (target: shadow-root-child) (related: shadow-host)
+     @shadow-root (target: shadow-root-child) (related: shadow-host)
+
+Moving mouse from shadow-host/shadow-root-child to shadow-host
+
+  mouseout
+     @shadow-root-child (target: shadow-root-child) (related: shadow-host)
+     @shadow-root (target: shadow-root-child) (related: shadow-host)
+
+  mouseover
+
+Moving mouse from shadow-host to distributed-light-child
+
+  mouseout
+     @shadow-host (target: shadow-host)
+     @top (target: shadow-host)
+
+  mouseover
+
+Moving mouse from distributed-light-child to shadow-host
+
+  mouseout
+
+  mouseover
+
+Moving mouse from shadow-host/shadow-root-child to distributed-light-child
+
+  mouseout
+
+  mouseover
+
+Moving mouse from distributed-light-child to shadow-host/shadow-root-child
+
+  mouseout
+
+  mouseover
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

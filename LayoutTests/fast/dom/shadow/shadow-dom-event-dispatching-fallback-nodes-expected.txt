@@ -1,0 +1,45 @@
+Tests to ensure that event dispatching behaves as the Shadow DOM spec describes.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+
+Composed Shadow Tree will be:
+DIV	 id=sandbox
+	DIV	 id=top
+		DIV	 id=A
+			DIV	 id=used-fallback
+			DIV	 id=B
+
+
+Moving mouse from A/used-fallback to A
+
+  mouseout
+     @used-fallback (target: used-fallback) (related: A)
+     @content1 (target: used-fallback) (related: A)
+     @shadow-root (target: used-fallback) (related: A)
+
+  mouseover
+
+Moving mouse from A to A/used-fallback
+
+  mouseout
+
+  mouseover
+     @used-fallback (target: used-fallback) (related: A)
+     @content1 (target: used-fallback) (related: A)
+     @shadow-root (target: used-fallback) (related: A)
+
+Click non-used-fallback node
+
+  click
+     @non-used-fallback (target: non-used-fallback)
+     @content2 (target: non-used-fallback)
+     @shadow-root (target: non-used-fallback)
+     @A (target: A)
+     @top (target: A)
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

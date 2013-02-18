@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="resources/shadow-dom.js"></script>
+    <script src="resources/event-dispatching.js"></script>
+</head>
+<body>
+    <p id="description"></p>
+    <div id="sandbox"></div>
+    <pre id="console"></pre>
+    <script>
+        var sandbox = document.getElementById('sandbox');
+
+        sandbox.appendChild(
+            createDOM('div', {'id': 'top'},
+                      createDOM('div', {'id': 'A'},
+                                createShadowRoot(
+                                    createDOM('content', {'id': 'content1', 'select': '#none'},
+                                              createDOM('div', {'id': 'used-fallback'})),
+                                    createDOM('content', {'id': 'content2'},
+                                              createDOM('div', {'id': 'non-used-fallback'}))),
+                                createDOM('div', {'id': 'B'}))));
+
+        addEventListeners(['top', 'A', 'B', 'A/', 'A/content1', 'A/used-fallback', 'A/content2', 'A/non-used-fallback']);
+        getNodeInShadowTreeStack('A/').id = 'shadow-root';
+        showSandboxTree();
+
+        moveMouse('A/used-fallback', 'A');
+        moveMouse('A', 'A/used-fallback');
+
+        clearEventRecords();
+        debug('\nClick non-used-fallback node');
+        getNodeInShadowTreeStack('A/non-used-fallback').click();
+        debugDispatchedEvent('click');
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

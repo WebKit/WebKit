@@ -4183,7 +4183,6 @@ webkit.org/b/103161 inspector/console/command-line-api-inspect.html [ Pass Failu
 webkit.org/b/103161 inspector/runtime/runtime-localStorage-getProperties.html [ Pass Failure ]
 webkit.org/b/103148 [ Linux Win Mac ] svg/batik/text/textPosition2.svg [ Pass Failure ]
 webkit.org/b/103181 [ Win7 ] http/tests/local/drag-over-remote-content.html [ Pass Crash Timeout ]
-webkit.org/b/103299 [ Linux Mac Win ] fast/dom/shadow/shadow-dom-event-dispatching.html [ Failure Pass ]
 webkit.org/b/103148 [ Linux Win ] fast/text/atsui-small-caps-punctuation-size.html [ ImageOnlyFailure Failure Pass ]
 webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-transforms-animation.html [ Pass Timeout ]
 

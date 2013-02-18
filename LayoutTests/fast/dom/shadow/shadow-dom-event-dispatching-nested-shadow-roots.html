@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="resources/shadow-dom.js"></script>
+    <script src="resources/event-dispatching.js"></script>
+</head>
+<body>
+    <p id="description"></p>
+    <div id="sandbox"></div>
+    <pre id="console"></pre>
+    <script>
+        var sandbox = document.getElementById('sandbox');
+
+        sandbox.appendChild(
+            createDOM('div', {'id': 'top'},
+                      createDOM('div', {'id': 'A'},
+                                createDOM('div', {'id': 'B'},
+                                          createShadowRoot(
+                                              createDOM('div', {'id': 'G'},
+                                                        createShadowRoot(
+                                                            createDOM('div', {'id': 'J'},
+                                                                      createShadowRoot(
+                                                                          createDOM('content', {'id': 'N', 'select': '#C'})),
+                                                                      createDOM('content', {'id': 'K', 'select': '#C'})),
+                                                            createDOM('div', {'id': 'L'},
+                                                                      createShadowRoot(
+                                                                          createDOM('content', {'id': 'O', 'select': '#E'})),
+                                                                      createDOM('content', {'id': 'M', 'select': '#E'}))),
+                                                        createDOM('content', {'id': 'H', 'select': '#C'}),
+                                                        createDOM('content', {'id': 'I', 'select': '#E'}))),
+                                          createDOM('div', {'id': 'C'},
+                                                    createDOM('div', {'id': 'D'})),
+                                          createDOM('div', {'id': 'E'},
+                                                    createDOM('div', {'id': 'F'}))))));
+
+        addEventListeners(['top', 'A', 'B', 'C', 'D', 'E', 'F', 'B/', 'B/G', 'B/H', 'B/I', 'B/G/', 'B/G/J', 'B/G/K', 'B/G/L', 'B/G/M',
+                           'B/G/J/', 'B/G/J/N', 'B/G/L/', 'B/G/L/O']);
+        getNodeInShadowTreeStack('B/').id = 'shadow-root-B';
+        getNodeInShadowTreeStack('B/G/').id = 'shadow-root-G';
+        getNodeInShadowTreeStack('B/G/J/').id = 'shadow-root-J';
+        getNodeInShadowTreeStack('B/G/L/').id = 'shadow-root-L';
+        showSandboxTree();
+
+        moveMouse('F', 'D');
+        moveMouse('B/G/L', 'D');
+        moveMouse('B/G/L', 'B/G/J');
+        moveMouse('A', 'D');
+        moveMouse('D', 'A');
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

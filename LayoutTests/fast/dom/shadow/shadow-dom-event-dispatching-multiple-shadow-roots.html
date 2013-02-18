@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../../js/resources/js-test-pre.js"></script>
+    <script src="resources/shadow-dom.js"></script>
+    <script src="resources/event-dispatching.js"></script>
+</head>
+<body>
+    <p id="description"></p>
+    <div id="sandbox"></div>
+    <pre id="console"></pre>
+    <script>
+        var sandbox = document.getElementById('sandbox');
+
+        sandbox.appendChild(
+            createDOM('div', {'id': 'top'},
+                      createDOM('div', {'id': 'A'},
+                                createShadowRoot(
+                                    createDOM('content', {'id': 'C'}),
+                                    createDOM('div', {'id': 'D'})),
+                                createShadowRoot(
+                                    createDOM('shadow', {'id': 'E'}),
+                                    createDOM('div', {'id': 'F'})),
+                                createDOM('div', {'id': 'B'}))));
+
+        addEventListeners(['top', 'A', 'B', 'A/', 'A/C', 'A/D', 'A//', 'A//E', 'A//F']);
+        getNodeInShadowTreeStack('A/').id = 'older-shadow-root';
+        getNodeInShadowTreeStack('A//').id = 'younger-shadow-root';
+        showSandboxTree();
+
+        moveMouse('B', 'A');
+        moveMouse('A/D', 'A//F');
+        moveMouse('B', 'A//F');
+    </script>
+    <script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+
