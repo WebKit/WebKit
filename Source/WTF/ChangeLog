@@ -1,3 +1,15 @@
+2013-02-18  Laszlo Gombos  <l.gombos@samsung.com>
+
+        Move ENABLE macros for WebCore out from Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=105735
+
+        Unreviewed, build fix when NETSCAPE_PLUGIN_API is disabled.
+
+        Enable ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH even if
+        NETSCAPE_PLUGIN_API is disabled (Qt, Efl, GTK, WX ports).
+
+        * wtf/FeatureDefines.h:
+
 2013-02-18  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         MIPS DFG implementation.

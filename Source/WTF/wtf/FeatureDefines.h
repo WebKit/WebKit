@@ -237,7 +237,7 @@
 #endif
 #endif
 
-#if OS(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
+#if OS(UNIX)
 #if !defined(ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH)
 #define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
 #endif
@@ -248,10 +248,8 @@
 /* --------- EFL port (Unix) --------- */
 #if PLATFORM(EFL)
 
-#if ENABLE(NETSCAPE_PLUGIN_API)
 #if !defined(ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH)
 #define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
-#endif
 #endif
 
 #if !defined(ENABLE_SUBPIXEL_LAYOUT)
@@ -263,7 +261,7 @@
 /* --------- Gtk port (Unix, Windows, Mac) --------- */
 #if PLATFORM(GTK)
 
-#if OS(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
+#if OS(UNIX)
 #if !defined(ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH)
 #define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
 #endif
@@ -274,7 +272,7 @@
 /* --------- Qt port (Unix, Windows, Mac, WinCE) --------- */
 #if PLATFORM(QT)
 
-#if OS(UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
+#if OS(UNIX)
 #if !defined(ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH)
 #define ENABLE_PLUGIN_PACKAGE_SIMPLE_HASH 1
 #endif
