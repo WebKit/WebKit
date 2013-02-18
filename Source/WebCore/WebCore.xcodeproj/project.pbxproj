@@ -4671,6 +4671,10 @@
 		AA7FEEA816A4E6F3004C0C33 /* JSSpeechSynthesisVoice.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AA7FEEA016A4E6F3004C0C33 /* JSSpeechSynthesisVoice.cpp */; };
 		AA7FEEA916A4E6F3004C0C33 /* JSSpeechSynthesisVoice.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7FEEA116A4E6F3004C0C33 /* JSSpeechSynthesisVoice.h */; };
 		AA7FEEAD16A4E74B004C0C33 /* JSSpeechSynthesis.h in Headers */ = {isa = PBXBuildFile; fileRef = AA7FEEAC16A4E74B004C0C33 /* JSSpeechSynthesis.h */; };
+		AAA728F616D1D8BC00D3BBC6 /* AccessibilityObjectIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAA728F016D1D8BC00D3BBC6 /* AccessibilityObjectIOS.mm */; };
+		AAA728F716D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.h in Headers */ = {isa = PBXBuildFile; fileRef = AAA728F116D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.h */; };
+		AAA728F816D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAA728F216D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.mm */; };
+		AAA728F916D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = AAA728F316D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm */; };
 		AAB6054E15874C58007B5031 /* InjectedScriptBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB6054A15874C58007B5031 /* InjectedScriptBase.cpp */; };
 		AAB6054F15874C58007B5031 /* InjectedScriptBase.h in Headers */ = {isa = PBXBuildFile; fileRef = AAB6054B15874C58007B5031 /* InjectedScriptBase.h */; };
 		AAB6055015874C58007B5031 /* InjectedScriptModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AAB6054C15874C58007B5031 /* InjectedScriptModule.cpp */; };
@@ -12068,6 +12072,10 @@
 		AA7FEEAC16A4E74B004C0C33 /* JSSpeechSynthesis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSpeechSynthesis.h; sourceTree = "<group>"; };
 		AA9030FE157E16A000276247 /* InjectedScriptCanvasModuleSource.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = InjectedScriptCanvasModuleSource.js; sourceTree = "<group>"; };
 		AA912750157E35A500454E54 /* InjectedScriptCanvasModuleSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptCanvasModuleSource.h; sourceTree = "<group>"; };
+		AAA728F016D1D8BC00D3BBC6 /* AccessibilityObjectIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectIOS.mm; sourceTree = "<group>"; };
+		AAA728F116D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccessibilityObjectWrapperIOS.h; sourceTree = "<group>"; };
+		AAA728F216D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AccessibilityObjectWrapperIOS.mm; sourceTree = "<group>"; };
+		AAA728F316D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AXObjectCacheIOS.mm; sourceTree = "<group>"; };
 		AAB6054A15874C58007B5031 /* InjectedScriptBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptBase.cpp; sourceTree = "<group>"; };
 		AAB6054B15874C58007B5031 /* InjectedScriptBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedScriptBase.h; sourceTree = "<group>"; };
 		AAB6054C15874C58007B5031 /* InjectedScriptModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedScriptModule.cpp; sourceTree = "<group>"; };
@@ -15356,6 +15364,7 @@
 		29A812040FBB9B4100510293 /* accessibility */ = {
 			isa = PBXGroup;
 			children = (
+				AAA728EF16D1D8BC00D3BBC6 /* ios */,
 				29A812050FBB9B5200510293 /* mac */,
 				0F29C16D1300C2E2002D794E /* AccessibilityAllInOne.cpp */,
 				2981CA9D131822EC00D12F2A /* AccessibilityARIAGrid.cpp */,
@@ -19908,6 +19917,17 @@
 			name = Speech;
 			sourceTree = "<group>";
 		};
+		AAA728EF16D1D8BC00D3BBC6 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				AAA728F016D1D8BC00D3BBC6 /* AccessibilityObjectIOS.mm */,
+				AAA728F116D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.h */,
+				AAA728F216D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.mm */,
+				AAA728F316D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm */,
+			);
+			path = ios;
+			sourceTree = "<group>";
+		};
 		B1A942DD15B5CE2200D525D1 /* mediasource */ = {
 			isa = PBXGroup;
 			children = (
@@ -23173,6 +23193,7 @@
 				76CDD2F51103DA6600680521 /* AccessibilityMenuListPopup.h in Headers */,
 				29ACB212143E7128006BCA5F /* AccessibilityMockObject.h in Headers */,
 				29A812360FBB9C1D00510293 /* AccessibilityObject.h in Headers */,
+				AAA728F716D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.h in Headers */,
 				A409C985116D0DDD007197BD /* AccessibilityProgressIndicator.h in Headers */,
 				29A812390FBB9C1D00510293 /* AccessibilityRenderObject.h in Headers */,
 				93C4F6EB1108F9A50099D0DB /* AccessibilityScrollbar.h in Headers */,
@@ -26917,7 +26938,9 @@
 				76CDD2F61103DA6600680521 /* AccessibilityMenuListOption.cpp in Sources */,
 				76CDD2F41103DA6600680521 /* AccessibilityMenuListPopup.cpp in Sources */,
 				29ACB214143E7498006BCA5F /* AccessibilityMockObject.cpp in Sources */,
+				AAA728F616D1D8BC00D3BBC6 /* AccessibilityObjectIOS.mm in Sources */,
 				29A812480FBB9CA900510293 /* AccessibilityObjectMac.mm in Sources */,
+				AAA728F816D1D8BC00D3BBC6 /* AccessibilityObjectWrapperIOS.mm in Sources */,
 				A409C984116D0DDD007197BD /* AccessibilityProgressIndicator.cpp in Sources */,
 				29D7BCF61444AF580070619C /* AccessibilitySpinButton.cpp in Sources */,
 				B5D31DFA11CF610B009F22B4 /* ActiveDOMCallback.cpp in Sources */,
@@ -26981,6 +27004,7 @@
 				51E1ECAF0C91C54600DC255B /* AutodrainedPool.mm in Sources */,
 				45830D4D1679B4F800ACF8C3 /* AutoscrollController.cpp in Sources */,
 				A8CFF0500A154F09000A4234 /* AutoTableLayout.cpp in Sources */,
+				AAA728F916D1D8BC00D3BBC6 /* AXObjectCacheIOS.mm in Sources */,
 				29A8124B0FBB9CA900510293 /* AXObjectCacheMac.mm in Sources */,
 				BCA8C81F11E3D36900812FB7 /* BackForwardController.cpp in Sources */,
 				BCA8CA5F11E4E6D100812FB7 /* BackForwardListImpl.cpp in Sources */,
