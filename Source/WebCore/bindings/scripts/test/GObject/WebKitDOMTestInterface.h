@@ -18,6 +18,10 @@
     Boston, MA 02110-1301, USA.
 */
 
+#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <webkitdom/webkitdom.h> can be included directly."
+#endif
+
 #ifndef WebKitDOMTestInterface_h
 #define WebKitDOMTestInterface_h
 

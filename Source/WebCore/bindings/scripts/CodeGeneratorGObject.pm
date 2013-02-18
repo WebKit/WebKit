@@ -761,7 +761,16 @@ sub GenerateHeader {
     @hPrefix = split("\r", $licenceTemplate);
     push(@hPrefix, "\n");
 
-    #Header guard
+    # Force single header include.
+    my $headerCheck = << "EOF";
+#if !defined(__WEBKITDOM_H_INSIDE__) && !defined(BUILDING_WEBKIT)
+#error "Only <webkitdom/webkitdom.h> can be included directly."
+#endif
+
+EOF
+    push(@hPrefix, $headerCheck);
+
+    # Header guard
     my $guard = $className . "_h";
 
     @hPrefixGuard = << "EOF";

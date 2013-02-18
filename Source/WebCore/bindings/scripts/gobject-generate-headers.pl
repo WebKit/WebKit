@@ -84,9 +84,11 @@ if ($outType eq "defines") {
         print "\n";
     }
 } elsif ($outType eq "gdom") {
+    print "#define __WEBKITDOM_H_INSIDE__\n\n";
     foreach my $class (@classes) {
         print "#include <webkitdom/WebKitDOM${class}.h>\n";
     }
+    print "\n#undef __WEBKITDOM_H_INSIDE__\n";
 }
 
 print "\n";
