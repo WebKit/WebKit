@@ -438,9 +438,9 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.workspaceController = new WebInspector.WorkspaceController(this.workspace);
 
-    this.isolatedFileSystemModel = new WebInspector.IsolatedFileSystemModel(this.workspace);
-    this.isolatedFileSystemDispatcher = new WebInspector.IsolatedFileSystemDispatcher(this.isolatedFileSystemModel);
-    this.fileMapping = new WebInspector.FileMapping(this.isolatedFileSystemModel.mapping());
+    this.isolatedFileSystemManager = new WebInspector.IsolatedFileSystemManager(this.workspace);
+    this.isolatedFileSystemDispatcher = new WebInspector.IsolatedFileSystemDispatcher(this.isolatedFileSystemManager);
+    this.fileMapping = new WebInspector.FileMapping(this.isolatedFileSystemManager.mapping());
 
     this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace, WebInspector.projectTypes.Network);
     new WebInspector.NetworkUISourceCodeProvider(this.networkWorkspaceProvider);

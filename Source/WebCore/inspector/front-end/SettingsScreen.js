@@ -475,7 +475,7 @@ WebInspector.WorkspaceSettingsTab.prototype = {
         addFileSystemButton.value = WebInspector.UIString("Add file system");
         addFileSystemButton.addEventListener("click", this._addFileSystemClicked.bind(this));
 
-        var fileSystemPaths = WebInspector.isolatedFileSystemModel.mapping().fileSystemPaths();
+        var fileSystemPaths = WebInspector.isolatedFileSystemManager.mapping().fileSystemPaths();
         for (var i = 0; i < fileSystemPaths.length; ++i)
             this._addFileSystemRow(fileSystemPaths[i]);
 
@@ -553,7 +553,7 @@ WebInspector.WorkspaceSettingsTab.prototype = {
         function removeFileSystemClicked()
         {
             removeFileSystemButton.disabled = true;
-            WebInspector.isolatedFileSystemModel.removeFileSystem(fileSystemPath, fileSystemRemoved.bind(this));
+            WebInspector.isolatedFileSystemManager.removeFileSystem(fileSystemPath, fileSystemRemoved.bind(this));
         }
         
         function fileSystemRemoved()
@@ -565,7 +565,7 @@ WebInspector.WorkspaceSettingsTab.prototype = {
 
     _addFileSystemClicked: function()
     {
-        WebInspector.isolatedFileSystemModel.addFileSystem(this._fileSystemAdded.bind(this));
+        WebInspector.isolatedFileSystemManager.addFileSystem(this._fileSystemAdded.bind(this));
     },
 
     /**
