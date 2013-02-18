@@ -29,9 +29,9 @@
 #include "CSSParser.h"
 #include "CSSSelectorList.h"
 #include "Document.h"
+#include "SelectorChecker.h"
 #include "StaticNodeList.h"
 #include "StyledElement.h"
-#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -48,10 +48,11 @@ void SelectorDataList::initialize(const CSSSelectorList& selectorList)
         m_selectors.uncheckedAppend(SelectorData(selector, SelectorChecker::isFastCheckableSelector(selector)));
 }
 
-bool SelectorDataList::matches(const SelectorChecker& selectorChecker, Element* targetElement) const
+bool SelectorDataList::matches(Element* targetElement) const
 {
     ASSERT(targetElement);
 
+    SelectorChecker selectorChecker(targetElement->document(), SelectorChecker::ResolvingStyle);
     unsigned selectorCount = m_selectors.size();
     for (unsigned i = 0; i < selectorCount; ++i) {
         if (selectorChecker.matches(m_selectors[i].selector, targetElement, m_selectors[i].isFastCheckable))
@@ -61,17 +62,17 @@ bool SelectorDataList::matches(const SelectorChecker& selectorChecker, Element* 
     return false;
 }
 
-PassRefPtr<NodeList> SelectorDataList::queryAll(const SelectorChecker& selectorChecker, Node* rootNode) const
+PassRefPtr<NodeList> SelectorDataList::queryAll(Node* rootNode) const
 {
     Vector<RefPtr<Node> > result;
-    execute<false>(selectorChecker, rootNode, result);
+    execute<false>(rootNode, result);
     return StaticNodeList::adopt(result);
 }
 
-PassRefPtr<Element> SelectorDataList::queryFirst(const SelectorChecker& selectorChecker, Node* rootNode) const
+PassRefPtr<Element> SelectorDataList::queryFirst(Node* rootNode) const
 {
     Vector<RefPtr<Node> > result;
-    execute<true>(selectorChecker, rootNode, result);
+    execute<true>(rootNode, result);
     if (result.isEmpty())
         return 0;
     ASSERT(result.size() == 1);
@@ -103,8 +104,10 @@ static inline bool isTreeScopeRoot(Node* node)
 }
 
 template <bool firstMatchOnly>
-void SelectorDataList::execute(const SelectorChecker& selectorChecker, Node* rootNode, Vector<RefPtr<Node> >& matchedElements) const
+void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node> >& matchedElements) const
 {
+    SelectorChecker selectorChecker(rootNode->document(), SelectorChecker::QueryingRules);
+
     if (canUseIdLookup(rootNode)) {
         ASSERT(m_selectors.size() == 1);
         const CSSSelector* selector = m_selectors[0].selector;
@@ -152,20 +155,17 @@ SelectorQuery::SelectorQuery(const CSSSelectorList& selectorList)
 
 bool SelectorQuery::matches(Element* element) const
 {
-    SelectorChecker selectorChecker(element->document(), SelectorChecker::ResolvingStyle);
-    return m_selectors.matches(selectorChecker, element);
+    return m_selectors.matches(element);
 }
 
 PassRefPtr<NodeList> SelectorQuery::queryAll(Node* rootNode) const
 {
-    SelectorChecker selectorChecker(rootNode->document(), SelectorChecker::QueryingRules);
-    return m_selectors.queryAll(selectorChecker, rootNode);
+    return m_selectors.queryAll(rootNode);
 }
 
 PassRefPtr<Element> SelectorQuery::queryFirst(Node* rootNode) const
 {
-    SelectorChecker selectorChecker(rootNode->document(), SelectorChecker::QueryingRules);
-    return m_selectors.queryFirst(selectorChecker, rootNode);
+    return m_selectors.queryFirst(rootNode);
 }
 
 SelectorQuery* SelectorQueryCache::add(const AtomicString& selectors, Document* document, ExceptionCode& ec)

@@ -27,14 +27,16 @@
 #define SelectorQuery_h
 
 #include "CSSSelectorList.h"
-#include "SelectorChecker.h"
+#include <wtf/HashMap.h>
 #include <wtf/Vector.h>
+#include <wtf/text/AtomicStringHash.h>
 
 namespace WebCore {
 
 typedef int ExceptionCode;
     
 class CSSSelector;
+class Document;
 class Element;
 class Node;
 class NodeList;
@@ -42,9 +44,9 @@ class NodeList;
 class SelectorDataList {
 public:
     void initialize(const CSSSelectorList&);
-    bool matches(const SelectorChecker&, Element*) const;
-    PassRefPtr<NodeList> queryAll(const SelectorChecker&, Node* rootNode) const;
-    PassRefPtr<Element> queryFirst(const SelectorChecker&, Node* rootNode) const;
+    bool matches(Element*) const;
+    PassRefPtr<NodeList> queryAll(Node* rootNode) const;
+    PassRefPtr<Element> queryFirst(Node* rootNode) const;
 
 private:
     struct SelectorData {
@@ -55,7 +57,7 @@ private:
 
     bool canUseIdLookup(Node* rootNode) const;
     template <bool firstMatchOnly>
-    void execute(const SelectorChecker&, Node* rootNode, Vector<RefPtr<Node> >&) const;
+    void execute(Node* rootNode, Vector<RefPtr<Node> >&) const;
 
     Vector<SelectorData> m_selectors;
 };
