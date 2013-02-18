@@ -6418,6 +6418,8 @@
     <ClInclude Include="..\Modules\notifications\NotificationClient.h" />
     <ClInclude Include="..\Modules\notifications\WorkerContextNotifications.h" />
     <ClInclude Include="..\Modules\webdatabase\AbstractDatabaseServer.h" />
+    <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatement.h" />
+    <ClInclude Include="..\Modules\webdatabase\AbstractSQLStatementBackend.h" />
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionData.h" />
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionWrapper.h" />
     <ClInclude Include="..\Modules\webdatabase\Database.h" />

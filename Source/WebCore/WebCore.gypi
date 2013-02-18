@@ -984,6 +984,8 @@
             'Modules/webaudio/WaveTable.cpp',
             'Modules/webaudio/WaveTable.h',
             'Modules/webdatabase/AbstractDatabaseServer.h',
+            'Modules/webdatabase/AbstractSQLStatement.h',
+            'Modules/webdatabase/AbstractSQLStatementBackend.h',
             'Modules/webdatabase/ChangeVersionData.h',
             'Modules/webdatabase/ChangeVersionWrapper.cpp',
             'Modules/webdatabase/ChangeVersionWrapper.h',

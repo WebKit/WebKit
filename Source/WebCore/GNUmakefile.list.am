@@ -2100,6 +2100,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webaudio/WaveTable.cpp \
 	Source/WebCore/Modules/webaudio/WaveTable.h \
 	Source/WebCore/Modules/webdatabase/AbstractDatabaseServer.h \
+	Source/WebCore/Modules/webdatabase/AbstractSQLStatement.h \
+	Source/WebCore/Modules/webdatabase/AbstractSQLStatementBackend.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionData.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.h \

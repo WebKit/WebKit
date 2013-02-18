@@ -39,10 +39,7 @@
 #include "ExceptionCode.h"
 #include "Logging.h"
 #include "SQLError.h"
-#include "SQLStatement.h"
 #include "SQLStatementBackend.h"
-#include "SQLStatementCallback.h" // FIXME: remove when SQLStatement has been refactored.
-#include "SQLStatementErrorCallback.h" // FIXME: remove when SQLStatement has been refactored.
 #include "SQLTransaction.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
@@ -377,7 +374,7 @@ void SQLTransactionBackend::doCleanup()
     m_transactionError = 0;
 }
 
-SQLStatement* SQLTransactionBackend::currentStatement()
+AbstractSQLStatement* SQLTransactionBackend::currentStatement()
 {
     return m_currentStatementBackend->frontend();
 }
@@ -463,7 +460,7 @@ void SQLTransactionBackend::performNextStep()
     runStateMachine();
 }
 
-void SQLTransactionBackend::executeSQL(PassOwnPtr<SQLStatement> statement,
+void SQLTransactionBackend::executeSQL(PassOwnPtr<AbstractSQLStatement> statement,
     const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions)
 {
     RefPtr<SQLStatementBackend> statementBackend;

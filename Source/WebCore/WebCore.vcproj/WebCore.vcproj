@@ -25378,6 +25378,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\AbstractSQLStatement.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\AbstractSQLStatementBackend.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\ChangeVersionData.h"
 					>
 				</File>

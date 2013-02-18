@@ -30,12 +30,10 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "AbstractSQLStatement.h"
 #include "DatabaseBackendAsync.h"
 #include "Logging.h"
 #include "SQLError.h"
-#include "SQLStatement.h"
-#include "SQLStatementCallback.h"
-#include "SQLStatementErrorCallback.h"
 #include "SQLValue.h"
 #include "SQLiteDatabase.h"
 #include "SQLiteStatement.h"
@@ -76,13 +74,13 @@
 
 namespace WebCore {
 
-PassRefPtr<SQLStatementBackend> SQLStatementBackend::create(PassOwnPtr<SQLStatement> frontend,
+PassRefPtr<SQLStatementBackend> SQLStatementBackend::create(PassOwnPtr<AbstractSQLStatement> frontend,
     const String& statement, const Vector<SQLValue>& arguments, int permissions)
 {
     return adoptRef(new SQLStatementBackend(frontend, statement, arguments, permissions));
 }
 
-SQLStatementBackend::SQLStatementBackend(PassOwnPtr<SQLStatement> frontend,
+SQLStatementBackend::SQLStatementBackend(PassOwnPtr<AbstractSQLStatement> frontend,
     const String& statement, const Vector<SQLValue>& arguments, int permissions)
     : m_frontend(frontend)
     , m_statement(statement.isolatedCopy())
@@ -94,7 +92,7 @@ SQLStatementBackend::SQLStatementBackend(PassOwnPtr<SQLStatement> frontend,
     m_frontend->setBackend(this);
 }
 
-SQLStatement* SQLStatementBackend::frontend()
+AbstractSQLStatement* SQLStatementBackend::frontend()
 {
     return m_frontend.get();
 }

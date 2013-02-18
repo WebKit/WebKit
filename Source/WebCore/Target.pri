@@ -1457,6 +1457,8 @@ HEADERS += \
     Modules/proximity/DeviceProximityEvent.h \
     \
     Modules/webdatabase/AbstractDatabaseServer.h \
+    Modules/webdatabase/AbstractSQLStatement.h \
+    Modules/webdatabase/AbstractSQLStatementBackend.h \
     Modules/webdatabase/ChangeVersionData.h \
     Modules/webdatabase/ChangeVersionWrapper.h \
     Modules/webdatabase/DOMWindowWebDatabase.h \

@@ -30,22 +30,23 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "SQLResultSet.h"
+#include "AbstractSQLStatementBackend.h"
 #include "SQLValue.h"
 #include <wtf/Forward.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
+class AbstractSQLStatement;
 class DatabaseBackendAsync;
 class SQLError;
-class SQLStatement;
 class SQLTransactionBackend;
 
-class SQLStatementBackend : public ThreadSafeRefCounted<SQLStatementBackend> {
+class SQLStatementBackend : public AbstractSQLStatementBackend {
 public:
-    static PassRefPtr<SQLStatementBackend> create(PassOwnPtr<SQLStatement>,
+    static PassRefPtr<SQLStatementBackend> create(PassOwnPtr<AbstractSQLStatement>,
         const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
 
     bool execute(DatabaseBackendAsync*);
@@ -57,18 +58,18 @@ public:
     void setDatabaseDeletedError(DatabaseBackendAsync*);
     void setVersionMismatchedError(DatabaseBackendAsync*);
 
-    SQLStatement* frontend();
-    PassRefPtr<SQLError> sqlError() const;
-    PassRefPtr<SQLResultSet> sqlResultSet() const;
+    AbstractSQLStatement* frontend();
+    virtual PassRefPtr<SQLError> sqlError() const;
+    virtual PassRefPtr<SQLResultSet> sqlResultSet() const;
 
 private:
-    SQLStatementBackend(PassOwnPtr<SQLStatement>, const String& statement,
+    SQLStatementBackend(PassOwnPtr<AbstractSQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions);
 
     void setFailureDueToQuota(DatabaseBackendAsync*);
     void clearFailureDueToQuota();
 
-    OwnPtr<SQLStatement> m_frontend;
+    OwnPtr<AbstractSQLStatement> m_frontend;
     String m_statement;
     Vector<SQLValue> m_arguments;
     bool m_hasCallback;

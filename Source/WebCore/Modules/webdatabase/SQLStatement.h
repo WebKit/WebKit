@@ -30,6 +30,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "AbstractSQLStatement.h"
 #include "SQLCallbackWrapper.h"
 #include "SQLResultSet.h"
 #include "SQLValue.h"
@@ -39,32 +40,32 @@
 
 namespace WebCore {
 
+class AbstractSQLStatementBackend;
 class Database;
 class SQLError;
-class SQLStatementBackend;
 class SQLStatementCallback;
 class SQLStatementErrorCallback;
 class SQLTransaction;
 
-class SQLStatement {
+class SQLStatement : public AbstractSQLStatement {
 public:
     static PassOwnPtr<SQLStatement> create(Database*,
         PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>);
 
     bool performCallback(SQLTransaction*);
 
-    void setBackend(SQLStatementBackend*);
+    virtual void setBackend(AbstractSQLStatementBackend*);
 
-    bool hasCallback();
-    bool hasErrorCallback();
+    virtual bool hasCallback();
+    virtual bool hasErrorCallback();
 
 private:
     SQLStatement(Database*, PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>);
 
-    // The SQLStatementBackend owns the SQLStatement. Hence, the backend is
+    // The AbstractSQLStatementBackend owns the SQLStatement. Hence, the backend is
     // guaranteed to be outlive the SQLStatement, and it is safe for us to refer
     // to the backend using a raw pointer here.
-    SQLStatementBackend* m_backend;
+    AbstractSQLStatementBackend* m_backend;
 
     SQLCallbackWrapper<SQLStatementCallback> m_statementCallbackWrapper;
     SQLCallbackWrapper<SQLStatementErrorCallback> m_statementErrorCallbackWrapper;
