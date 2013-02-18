@@ -41,6 +41,7 @@ function runReadTransaction(db)
 
 function runTest() {
     if (window.testRunner) {
+        testRunner.clearAllDatabases();
         testRunner.dumpAsText();
         testRunner.waitUntilDone();
     }
