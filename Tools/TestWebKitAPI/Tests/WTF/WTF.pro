@@ -18,9 +18,12 @@ SOURCES += \
     StringImpl.cpp \
     StringOperators.cpp \
     TemporaryChange.cpp \
-    VectorBasic.cpp \
     Vector.cpp \
+    VectorBasic.cpp \
     VectorReverse.cpp \
     WTFString.cpp
 
 include(../../TestWebKitAPI.pri)
+
+DEFINES += APITEST_SOURCE_DIR=\\\"$$PWD\\\"
+

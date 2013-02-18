@@ -50,6 +50,13 @@ typedef GtkWidget *PlatformWindow;
 typedef struct _Ecore_Evas Ecore_Evas;
 typedef WKViewRef PlatformWKView;
 typedef Ecore_Evas* PlatformWindow;
+#elif PLATFORM(QT)
+QT_BEGIN_NAMESPACE
+class QQuickView;
+QT_END_NAMESPACE
+class QQuickWebView;
+typedef QQuickWebView* PlatformWKView;
+typedef QQuickView* PlatformWindow;
 #endif
 
 namespace TestWebKitAPI {

@@ -48,6 +48,10 @@ namespace WTR {
 class PlatformWebView;
 }
 
+namespace TestWebKitAPI {
+class PlatformWebView;
+}
+
 namespace WebKit {
 struct QtRefCountedNetworkRequestData;
 class PageViewportControllerClientQt;
@@ -224,6 +228,7 @@ private:
     friend class WebKit::QtWebPagePolicyClient;
     friend class WebKit::QtWebPageUIClient;
     friend class WTR::PlatformWebView;
+    friend class TestWebKitAPI::PlatformWebView;
     friend class QQuickWebViewExperimental;
 };
 

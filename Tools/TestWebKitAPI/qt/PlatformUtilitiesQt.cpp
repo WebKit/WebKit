@@ -21,9 +21,14 @@
 #include "config.h"
 #include "PlatformUtilities.h"
 
-#include <QCoreApplication>
+#include <WebKit2/WKStringQt.h>
+#include <WebKit2/WKNativeEvent.h>
+#include <WebKit2/WKURLQt.h>
 
-#include <unistd.h>
+#include <QCoreApplication>
+#include <QDir>
+#include <QUrl>
+#include <QThread>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -36,24 +41,32 @@ void run(bool* done)
 
 void sleep(double seconds)
 {
-    usleep(seconds * 1000000);
+    QThread::sleep(seconds);
 }
 
 WKStringRef createInjectedBundlePath()
 {
-    // ### FIXME.
-    return WKStringCreateWithUTF8CString("");
+    QString path = QFileInfo(QStringLiteral(ROOT_BUILD_DIR "/lib/libTestWebKitAPIInjectedBundle")).absoluteFilePath();
+
+    return WKStringCreateWithQString(path);
 }
 
 WKURLRef createURLForResource(const char* resource, const char* extension)
 {
-    // ### FIXME.
-    return WKURLCreateWithUTF8CString("");
+    QDir path(QStringLiteral(APITEST_SOURCE_DIR));
+    QString filename = QString::fromLocal8Bit(resource) + QStringLiteral(".") + QString::fromLocal8Bit(extension);
+
+    return WKURLCreateWithQUrl(QUrl::fromLocalFile(path.absoluteFilePath(filename)));
 }
 
 WKURLRef URLForNonExistentResource()
 {
     return WKURLCreateWithUTF8CString("file:///does-not-exist.html");
+}
+
+bool isKeyDown(WKNativeEventPtr event)
+{
+    return event->type() == QEvent::KeyPress;
 }
 
 } // namespace Util
