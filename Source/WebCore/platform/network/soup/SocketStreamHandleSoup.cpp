@@ -60,10 +60,10 @@ static gboolean writeReadyCallback(GPollableOutputStream*, void*);
 // we just ignore it in the callback. We avoid a lot of extra checks and tricky
 // situations this way.
 static HashMap<void*, SocketStreamHandle*> gActiveHandles;
+COMPILE_ASSERT(HashTraits<SocketStreamHandle*>::emptyValueIsZero, emptyMapValue_is_0);
+
 static SocketStreamHandle* getHandleFromId(void* id)
 {
-    if (!gActiveHandles.contains(id))
-        return 0;
     return gActiveHandles.get(id);
 }
 
