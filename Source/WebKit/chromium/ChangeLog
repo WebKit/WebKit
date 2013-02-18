@@ -1,3 +1,10 @@
+2013-02-18  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r183105.  Requested by
+        thakis_ via sheriffbot.
+
+        * DEPS:
+
 2013-02-18  Nico Weber  <thakis@chromium.org>
 
         [chromium] Remove ahem_path from WebKit.gyp
