@@ -1,3 +1,9 @@
+2013-02-17  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix typo in script.
+
+        * EWSTools/start-queue-win.sh:
+
 2013-02-15  Roger Fong  <roger_fong@apple.com>
 
         Pass in bot name as parameter to start-queue-win script.
