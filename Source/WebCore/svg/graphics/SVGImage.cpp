@@ -144,15 +144,25 @@ void SVGImage::drawForContainer(GraphicsContext* context, const FloatSize contai
 void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize containerSize, float pageScale, float zoom, const FloatRect& srcRect,
     const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect)
 {
-    FloatSize zoomedContainerSize(containerSize);
-    zoomedContainerSize.scale(zoom);
-    FloatRect zoomedContainerRect = FloatRect(FloatPoint(), zoomedContainerSize);
+    ASSERT(pageScale);
 
-    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(expandedIntSize(zoomedContainerSize), pageScale);
-    drawForContainer(buffer->context(), containerSize, zoom, zoomedContainerRect, zoomedContainerRect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+    FloatRect zoomedContainerRect = FloatRect(FloatPoint(), containerSize);
+    zoomedContainerRect.scale(zoom);
+    FloatRect zoomedAndScaledContainerRect = zoomedContainerRect;
+    zoomedAndScaledContainerRect.scale(pageScale);
 
-    RefPtr<Image> image = buffer->copyImage(CopyBackingStore);
-    image->drawPattern(context, srcRect, patternTransform, phase, colorSpace, compositeOp, dstRect);
+    // FIXME(WK110065): This should take advantage of the ImageBuffer resolution instead of scaling the buffer manually.
+    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(expandedIntSize(zoomedAndScaledContainerRect.size()), 1);
+    drawForContainer(buffer->context(), containerSize, zoom, zoomedAndScaledContainerRect, zoomedContainerRect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+    RefPtr<Image> image = buffer->copyImage(CopyBackingStore, Unscaled);
+
+    // Adjust the source rect and transform for image buffer scale due to pageScale.
+    FloatRect scaledSrcRect = srcRect;
+    scaledSrcRect.scale(pageScale);
+    AffineTransform unscaledPatternTransform(patternTransform);
+    unscaledPatternTransform.scale(1 / pageScale);
+
+    image->drawPattern(context, scaledSrcRect, unscaledPatternTransform, phase, colorSpace, compositeOp, dstRect);
 }
 
 void SVGImage::draw(GraphicsContext* context, const FloatRect& dstRect, const FloatRect& srcRect, ColorSpace, CompositeOperator compositeOp, BlendMode)
