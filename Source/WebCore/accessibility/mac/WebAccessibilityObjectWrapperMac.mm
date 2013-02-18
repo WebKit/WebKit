@@ -351,7 +351,7 @@ using namespace std;
 #define NSAccessibilityMathFencedOpenAttribute @"AXMathFencedOpen"
 #define NSAccessibilityMathFencedCloseAttribute @"AXMathFencedClose"
 
-@implementation WebAccessibilityObjectWrapperMac
+@implementation WebAccessibilityObjectWrapper
 
 - (void)unregisterUniqueIdForUIElement
 {

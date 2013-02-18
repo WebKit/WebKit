@@ -26,13 +26,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebAccessibilityObjectWrapperMac_h
-#define WebAccessibilityObjectWrapperMac_h
+#ifndef WebAccessibilityObjectWrapper_h
+#define WebAccessibilityObjectWrapper_h
 
-#import "WebAccessibilityObjectWrapper.h"
+#import "WebAccessibilityObjectWrapperBase.h"
 
-@interface WebAccessibilityObjectWrapperMac : WebAccessibilityObjectWrapper
+@interface WebAccessibilityObjectWrapper : WebAccessibilityObjectWrapperBase
 
 @end
 
-#endif // WebAccessibilityObjectWrapperMac_h
+#endif // WebAccessibilityObjectWrapper_h

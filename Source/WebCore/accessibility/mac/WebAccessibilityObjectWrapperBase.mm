@@ -27,7 +27,7 @@
  */
 
 #import "config.h"
-#import "WebAccessibilityObjectWrapper.h"
+#import "WebAccessibilityObjectWrapperBase.h"
 
 #if HAVE(ACCESSIBILITY)
 
@@ -77,7 +77,7 @@ using namespace WebCore;
 using namespace HTMLNames;
 using namespace std;
 
-@implementation WebAccessibilityObjectWrapper
+@implementation WebAccessibilityObjectWrapperBase
 
 - (id)initWithAccessibilityObject:(AccessibilityObject*)axObject
 {
