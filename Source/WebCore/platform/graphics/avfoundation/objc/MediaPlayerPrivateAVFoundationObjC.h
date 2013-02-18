@@ -74,6 +74,14 @@ public:
     void didCancelLoadingRequest(AVAssetResourceLoadingRequest*);
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
+    static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate);
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    static RetainPtr<AVAssetResourceLoadingRequest> takeRequestForPlayerAndKeyURI(MediaPlayer*, const String&);
+#endif
+
 private:
     MediaPlayerPrivateAVFoundationObjC(MediaPlayer*);
 

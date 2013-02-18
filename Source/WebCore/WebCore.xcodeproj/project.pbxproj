@@ -6002,6 +6002,7 @@
 		CD27F6E51457685A0078207D /* JSMediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E2145767580078207D /* JSMediaController.cpp */; };
 		CD27F6E7145770D30078207D /* MediaController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD27F6E6145770D30078207D /* MediaController.cpp */; };
 		CD37B39815C1B971006DC898 /* DiagnosticLoggingKeys.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */; };
+		CD47B3FC16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD47B3FA16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm */; };
 		CD4AC52A1496AE9A0087C4EF /* Composite.wav in Copy Audio Resources */ = {isa = PBXBuildFile; fileRef = CD4AC5281496AE2F0087C4EF /* Composite.wav */; };
 		CD7E05221651C28200C1201F /* WebCoreAVFResourceLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = CD7E05211651A84100C1201F /* WebCoreAVFResourceLoader.mm */; };
 		CD82030A1395AB6A00F956C6 /* WebVideoFullscreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = CD8203061395AB6A00F956C6 /* WebVideoFullscreenController.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13611,6 +13612,8 @@
 		CD27F6E6145770D30078207D /* MediaController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaController.cpp; sourceTree = "<group>"; };
 		CD37B37415C1A7E1006DC898 /* DiagnosticLoggingKeys.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiagnosticLoggingKeys.cpp; sourceTree = "<group>"; };
 		CD37B37515C1A7E1006DC898 /* DiagnosticLoggingKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiagnosticLoggingKeys.h; sourceTree = "<group>"; };
+		CD47B3F916CC34F800A21EC8 /* CDMPrivateAVFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CDMPrivateAVFoundation.h; path = Modules/encryptedmedia/CDMPrivateAVFoundation.h; sourceTree = "<group>"; };
+		CD47B3FA16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = CDMPrivateAVFoundation.mm; path = Modules/encryptedmedia/CDMPrivateAVFoundation.mm; sourceTree = "<group>"; };
 		CD4AC5281496AE2F0087C4EF /* Composite.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; name = Composite.wav; path = platform/audio/resources/Composite.wav; sourceTree = SOURCE_ROOT; };
 		CD4E0AFA11F7BC27009D3811 /* fullscreen.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; path = fullscreen.css; sourceTree = "<group>"; };
 		CD7E05201651A84100C1201F /* WebCoreAVFResourceLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = WebCoreAVFResourceLoader.h; path = objc/WebCoreAVFResourceLoader.h; sourceTree = "<group>"; };
@@ -21712,6 +21715,9 @@
 			children = (
 				CDA98E091603CD5900FEA3B1 /* CDM.cpp */,
 				CDA98E0A1603CD5900FEA3B1 /* CDM.h */,
+				CDA98E0C1603CF3C00FEA3B1 /* CDMPrivate.h */,
+				CD47B3F916CC34F800A21EC8 /* CDMPrivateAVFoundation.h */,
+				CD47B3FA16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm */,
 				CDA98DD516025BED00FEA3B1 /* MediaKeyMessageEvent.cpp */,
 				CDA98DD616025BED00FEA3B1 /* MediaKeyMessageEvent.h */,
 				CDA98DD716025BEE00FEA3B1 /* MediaKeyMessageEvent.idl */,
@@ -21724,7 +21730,6 @@
 				CDA98DC716014F2C00FEA3B1 /* MediaKeySession.cpp */,
 				CDA98DC816014F2C00FEA3B1 /* MediaKeySession.h */,
 				CDA98DC916014F4000FEA3B1 /* MediaKeySession.idl */,
-				CDA98E0C1603CF3C00FEA3B1 /* Modules/encryptedmedia/CDMPrivate.h */,
 			);
 			name = encryptedmedia;
 			sourceTree = "<group>";
@@ -27488,6 +27493,7 @@
 				19BFF64C11C0F2AC00B8C04D /* DOMSVGFEConvolveMatrixElement.mm in Sources */,
 				8502AB490AD438C000378540 /* DOMSVGFEDiffuseLightingElement.mm in Sources */,
 				8502AB4B0AD438C000378540 /* DOMSVGFEDisplacementMapElement.mm in Sources */,
+				CD47B3FC16CC34F800A21EC8 /* CDMPrivateAVFoundation.mm in Sources */,
 				8502AB4D0AD438C000378540 /* DOMSVGFEDistantLightElement.mm in Sources */,
 				4358E86B1360A21600E4748C /* DOMSVGFEDropShadowElement.mm in Sources */,
 				8502AB4F0AD438C000378540 /* DOMSVGFEFloodElement.mm in Sources */,

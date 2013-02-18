@@ -63,6 +63,8 @@ public:
 
 class CDM {
 public:
+
+    enum CDMErrorCode { UnknownError = 1, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
     static bool supportsKeySystem(const String&);
     static PassOwnPtr<CDM> create(const String& keySystem);
     static void registerCDMFactory(CreateCDM, CDMSupportsKeySystem);

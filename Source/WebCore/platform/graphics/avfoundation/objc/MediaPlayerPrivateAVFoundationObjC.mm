@@ -186,6 +186,16 @@ static const char *boolString(bool val)
 }
 #endif
 
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+typedef HashMap<MediaPlayer*, MediaPlayerPrivateAVFoundationObjC*> PlayerToPrivateMapType;
+static PlayerToPrivateMapType& playerToPrivateMap()
+{
+    DEFINE_STATIC_LOCAL(PlayerToPrivateMapType, map, ());
+    return map;
+};
+#endif
+
+
 PassOwnPtr<MediaPlayerPrivateInterface> MediaPlayerPrivateAVFoundationObjC::create(MediaPlayer* player)
 { 
     return adoptPtr(new MediaPlayerPrivateAVFoundationObjC(player));
@@ -213,10 +223,16 @@ MediaPlayerPrivateAVFoundationObjC::MediaPlayerPrivateAVFoundationObjC(MediaPlay
     , m_currentTrack(0)
 #endif
 {
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    playerToPrivateMap().set(player, this);
+#endif
 }
 
 MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 {
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+    playerToPrivateMap().remove(player());
+#endif
     cancelLoad();
 }
 
@@ -870,7 +886,7 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
     String scheme = [[[avRequest request] URL] scheme];
     String keyURI = [[[avRequest request] URL] absoluteString];
 
-#if ENABLE(ENCRYPTED_MEDIA)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
     if (scheme == "skd") {
         // Create an initData with the following layout:
         // [4 bytes: keyURI size], [keyURI size bytes: keyURI]
@@ -882,7 +898,12 @@ bool MediaPlayerPrivateAVFoundationObjC::shouldWaitForLoadingOfResource(AVAssetR
         RefPtr<Uint16Array> keyURIArray = Uint16Array::create(initDataBuffer, 4, keyURI.length());
         keyURIArray->setRange(keyURI.characters(), keyURI.length() / sizeof(unsigned char), 0);
 
+#if ENABLE(ENCRYPTED_MEDIA)
         if (!player()->keyNeeded("com.apple.lskd", emptyString(), static_cast<const unsigned char*>(initDataBuffer->data()), initDataBuffer->byteLength()))
+#elif ENABLE(ENCRYPTED_MEDIA_V2)
+        RefPtr<Uint8Array> initData = Uint8Array::create(initDataBuffer, 0, initDataBuffer->byteLength());
+        if (!player()->keyNeeded(initData.get()))
+#endif
             return false;
 
         m_keyURIToRequestMap.set(keyURI, avRequest);
@@ -1116,9 +1137,8 @@ void MediaPlayerPrivateAVFoundationObjC::paintWithVideoOutput(GraphicsContext* c
 
 #endif
 
-#if ENABLE(ENCRYPTED_MEDIA)
-
-static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate)
+#if ENABLE(ENCRYPTED_MEDIA) || ENABLE(ENCRYPTED_MEDIA_V2)
+bool MediaPlayerPrivateAVFoundationObjC::extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, String& keyURI, String& keyID, RefPtr<Uint8Array>& certificate)
 {
     // initData should have the following layout:
     // [4 bytes: keyURI length][N bytes: keyURI][4 bytes: contentID length], [N bytes: contentID], [4 bytes: certificate length][N bytes: certificate]
@@ -1167,7 +1187,9 @@ static bool extractKeyURIKeyIDAndCertificateFromInitData(Uint8Array* initData, S
 
     return true;
 }
+#endif
 
+#if ENABLE(ENCRYPTED_MEDIA)
 MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::generateKeyRequest(const String& keySystem, const unsigned char* initDataPtr, unsigned initDataLength)
 {
     if (!keySystemIsSupported(keySystem))
@@ -1241,6 +1263,18 @@ MediaPlayer::MediaKeyException MediaPlayerPrivateAVFoundationObjC::cancelKeyRequ
 
     m_sessionIDToRequestMap.remove(sessionID);
     return MediaPlayer::NoError;
+}
+#endif
+
+#if ENABLE(ENCRYPTED_MEDIA_V2)
+RetainPtr<AVAssetResourceLoadingRequest> MediaPlayerPrivateAVFoundationObjC::takeRequestForPlayerAndKeyURI(MediaPlayer* player, const String& keyURI)
+{
+    MediaPlayerPrivateAVFoundationObjC* _this = playerToPrivateMap().get(player);
+    if (!_this)
+        return nullptr;
+
+    return _this->m_keyURIToRequestMap.take(keyURI);
+
 }
 #endif
 
