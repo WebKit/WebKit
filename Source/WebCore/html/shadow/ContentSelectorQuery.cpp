@@ -35,17 +35,14 @@
 
 namespace WebCore {
 
-ContentSelectorChecker::ContentSelectorChecker(Document* document)
-    : m_selectorChecker(document, SelectorChecker::CollectingRules)
+bool ContentSelectorDataList::checkContentSelector(const CSSSelector* selector, const Vector<RefPtr<Node> >& siblings, int nth)
 {
-}
-
-bool ContentSelectorChecker::checkContentSelector(const CSSSelector* selector, const Vector<RefPtr<Node> >& siblings, int nth) const
-{
-    SelectorChecker::SelectorCheckingContext context(selector, toElement(siblings[nth].get()), SelectorChecker::VisitedMatchEnabled);
+    Element* element = toElement(siblings[nth].get());
+    SelectorChecker selectorChecker(element->document(), SelectorChecker::CollectingRules);
+    SelectorChecker::SelectorCheckingContext context(selector, element, SelectorChecker::VisitedMatchEnabled);
     ShadowDOMSiblingTraversalStrategy strategy(siblings, nth);
     PseudoId ignoreDynamicPseudo = NOPSEUDO;
-    return m_selectorChecker.match(context, ignoreDynamicPseudo, strategy) == SelectorChecker::SelectorMatches;
+    return selectorChecker.match(context, ignoreDynamicPseudo, strategy) == SelectorChecker::SelectorMatches;
 }
 
 void ContentSelectorDataList::initialize(const CSSSelectorList& selectors)
@@ -54,11 +51,11 @@ void ContentSelectorDataList::initialize(const CSSSelectorList& selectors)
         m_selectors.append(selector);
 }
 
-bool ContentSelectorDataList::matches(const ContentSelectorChecker& selectorChecker, const Vector<RefPtr<Node> >& siblings, int nth) const
+bool ContentSelectorDataList::matches(const Vector<RefPtr<Node> >& siblings, int nth) const
 {
     unsigned selectorCount = m_selectors.size();
     for (unsigned i = 0; i < selectorCount; ++i) {
-        if (selectorChecker.checkContentSelector(m_selectors[i], siblings, nth))
+        if (checkContentSelector(m_selectors[i], siblings, nth))
             return true;
     }
     return false;
@@ -66,7 +63,6 @@ bool ContentSelectorDataList::matches(const ContentSelectorChecker& selectorChec
 
 ContentSelectorQuery::ContentSelectorQuery(InsertionPoint* insertionPoint)
     : m_insertionPoint(insertionPoint)
-    , m_selectorChecker(insertionPoint->document())
 {
     m_selectors.initialize(insertionPoint->selectorList());
 }
@@ -82,7 +78,7 @@ bool ContentSelectorQuery::matches(const Vector<RefPtr<Node> >& siblings, int nt
     case InsertionPoint::NeverMatches:
         return false;
     case InsertionPoint::HasToMatchSelector:
-        return node->isElementNode() && m_selectors.matches(m_selectorChecker, siblings, nth);
+        return node->isElementNode() && m_selectors.matches(siblings, nth);
     default:
         ASSERT_NOT_REACHED();
         return false;

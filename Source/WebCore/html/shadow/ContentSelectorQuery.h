@@ -43,21 +43,14 @@ class Document;
 class Node;
 class InsertionPoint;
 
-class ContentSelectorChecker {
-public:
-    ContentSelectorChecker(Document*);
-
-    bool checkContentSelector(const CSSSelector*, const Vector<RefPtr<Node> >& siblings, int nthNode) const;
-private:
-    SelectorChecker m_selectorChecker;
-};
-
 class ContentSelectorDataList {
 public:
     void initialize(const CSSSelectorList&);
-    bool matches(const ContentSelectorChecker&, const Vector<RefPtr<Node> >& siblings, int nthNode) const;
+    bool matches(const Vector<RefPtr<Node> >& siblings, int nthNode) const;
 
 private:
+    static bool checkContentSelector(const CSSSelector*, const Vector<RefPtr<Node> >& siblings, int nthNode);
+
     Vector<const CSSSelector*> m_selectors;
 };
 
@@ -67,11 +60,10 @@ public:
     explicit ContentSelectorQuery(InsertionPoint*);
 
     bool matches(const Vector<RefPtr<Node> >& siblings, int nthNode) const;
-private:
 
+private:
     InsertionPoint* m_insertionPoint;
     ContentSelectorDataList m_selectors;
-    ContentSelectorChecker m_selectorChecker;
 };
 
 }
