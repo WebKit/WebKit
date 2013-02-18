@@ -1,34 +1,33 @@
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
-layer at (0,0) size 800x322
-  RenderBlock {HTML} at (0,0) size 800x322
-    RenderBody {BODY} at (8,16) size 784x298
-      RenderBlock {P} at (0,0) size 784x38
-        RenderText {#text} at (0,0) size 766x38
+layer at (0,0) size 800x320
+  RenderBlock {HTML} at (0,0) size 800x320
+    RenderBody {BODY} at (8,16) size 784x296
+      RenderBlock {P} at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 766x35
           text run at (0,0) width 766: "Test that pausing the media element in \"playing\" event handler pauses the media immediately. The video should show the"
-          text run at (0,19) width 68: "first frame."
-      RenderBlock (anonymous) at (0,54) size 784x244
+          text run at (0,18) width 68: "first frame."
+      RenderBlock (anonymous) at (0,52) size 784x244
         RenderText {#text} at (0,0) size 0x0
-layer at (8,70) size 320x240
+layer at (8,68) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
-layer at (8,70) size 320x240
-  RenderBlock (relative positioned) {DIV} at (0,0) size 320x240
-layer at (8,290) size 320x20 scrollHeight 30
-  RenderFlexibleBox (positioned) {DIV} at (0,220) size 320x20
+layer at (8,68) size 320x240
+  RenderFlexibleBox {DIV} at (0,0) size 320x240
+layer at (8,288) size 320x20
+  RenderFlexibleBox {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderFlexibleBox {DIV} at (20,0) size 220x20
-      RenderBlock (anonymous) at (0,0) size 63x30
-        RenderFlexibleBox {DIV} at (0,2) size 63x28
-          RenderBlock (anonymous) at (4,4) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:06"
-      RenderSlider {INPUT} at (63,0) size 157x20
-        RenderFlexibleBox {DIV} at (0,0) size 157x20
-          RenderBlock {DIV} at (0,4) size 145x12
-          RenderBlock {DIV} at (145,4) size 12x12
+      RenderFlexibleBox {DIV} at (0,0) size 65x20
+        RenderBlock (anonymous) at (5,5) size 55x10
+          RenderText {#text} at (0,0) size 55x11
+            text run at (0,0) width 55: "00:00 / 00:06"
+      RenderSlider {INPUT} at (65,0) size 155x20
+        RenderFlexibleBox {DIV} at (2,0) size 151x20
+          RenderBlock {DIV} at (0,4) size 151x12
+            RenderBlock {DIV} at (0,0) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
-    RenderButton {INPUT} at (300,0) size 20x20
-layer at (95,294) size 12x12
-  RenderBlock (relative positioned) {DIV} at (0,0) size 12x12
+    RenderBlock {DIV} at (300,0) size 20x20
+layer at (308,288) size 20x20
+  RenderButton zI: 2 {INPUT} at (0,0) size 20x20

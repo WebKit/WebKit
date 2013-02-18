@@ -85,9 +85,9 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     -webkit-appearance: media-current-time-display;
     -webkit-user-select: none;
     display: -webkit-flex;
-    height: 20px;
+    height: 10px;
 
-    padding: 4px;
+    padding: 5px;
 
     text-align: center;
     font-size: 10px;

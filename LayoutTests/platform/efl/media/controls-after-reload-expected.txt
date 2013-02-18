@@ -4,7 +4,7 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {P} at (0,0) size 784x18
-        RenderText {#text} at (0,0) size 360x19
+        RenderText {#text} at (0,0) size 360x17
           text run at (0,0) width 360: "Making sure the controller looks ok after a second load()."
       RenderBlock (anonymous) at (0,34) size 784x240
         RenderText {#text} at (0,0) size 0x0
@@ -12,19 +12,18 @@ layer at (8,42) size 320x240
   RenderVideo {VIDEO} at (0,0) size 320x240
 layer at (8,42) size 320x240
   RenderFlexibleBox {DIV} at (0,0) size 320x240
-layer at (8,262) size 320x20 scrollHeight 28
+layer at (8,262) size 320x20
   RenderFlexibleBox {DIV} at (0,220) size 320x20
     RenderButton {INPUT} at (0,0) size 20x20
     RenderFlexibleBox {DIV} at (20,0) size 220x20
-      RenderFlexibleBox {DIV} at (0,0) size 63x28
-        RenderBlock (anonymous) at (4,4) size 55x20
-          RenderText {#text} at (0,0) size 55x12
+      RenderFlexibleBox {DIV} at (0,0) size 65x20
+        RenderBlock (anonymous) at (5,5) size 55x10
+          RenderText {#text} at (0,0) size 55x11
             text run at (0,0) width 55: "00:00 / 00:06"
-      RenderSlider {INPUT} at (63,0) size 157x20
-        RenderFlexibleBox {DIV} at (2,0) size 153x20
-          RenderBlock {DIV} at (0,4) size 141x12
+      RenderSlider {INPUT} at (65,0) size 155x20
+        RenderFlexibleBox {DIV} at (2,0) size 151x20
+          RenderBlock {DIV} at (0,4) size 151x12
             RenderBlock {DIV} at (0,0) size 12x12
-          RenderBlock {DIV} at (141,0) size 12x12
     RenderButton {INPUT} at (240,0) size 20x20
     RenderButton {INPUT} at (260,0) size 20x20
     RenderButton {INPUT} at (280,0) size 20x20
