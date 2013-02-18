@@ -1,3 +1,9 @@
+2013-02-17  Kangil Han  <kangil.han@samsung.com>
+
+        Unreviewed. Add myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-17  Alan Cutter  <alancutter@chromium.org>
 
         GCE EWS bots are all offline
