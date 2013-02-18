@@ -11,5 +11,9 @@ function keepAlive() {}
 Running: testSourceURLCommentInDynamicScript
 function keepAliveInDynamicScript() {}
 //@ sourceURL=dynamicScriptURL.js
+
+Running: testNonRelativeURL
+function relativeURLScript() {}
+//@ sourceURL=/js/nonRelativeURL.js
 Debugger was disabled.
 

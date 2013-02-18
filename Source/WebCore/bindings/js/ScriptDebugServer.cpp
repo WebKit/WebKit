@@ -292,14 +292,6 @@ void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, Sou
     script.startColumn = sourceProvider->startPosition().m_column.zeroBasedInt();
     script.isContentScript = isContentScript;
 
-#if ENABLE(INSPECTOR)
-    if (!script.startLine && !script.startColumn) {
-        String sourceURL = ContentSearchUtils::findSourceURL(script.source);
-        if (!sourceURL.isEmpty())
-            script.url = sourceURL;
-    }
-#endif
-
     int sourceLength = script.source.length();
     int lineCount = 1;
     int lastLineStart = 0;
