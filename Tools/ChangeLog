@@ -1,3 +1,48 @@
+2013-02-13  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: reportLeaf method doesn't report the leaf node properly.
+        https://bugs.webkit.org/show_bug.cgi?id=109554
+
+        In some cases leaves have no pointer so with the old schema we can't generate nodeId for them because we
+        can't insert 0 into hashmap. It happens when we call addPrivateBuffer method.
+
+        Drive by fix: I introduced a client interface for the HeapGraphSerializer.
+        It helps me to do the tests for the serializer.
+
+        Reviewed by Yury Semikhatsky.
+
+        It is covered by newly added tests in TestWebKitAPI.
+
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        * TestWebKitAPI/Tests/WebCore/HeapGraphSerializerTest.cpp: Added.
+        (TestWebKitAPI):
+        (HeapGraphReceiver):
+        (TestWebKitAPI::HeapGraphReceiver::HeapGraphReceiver):
+        (TestWebKitAPI::HeapGraphReceiver::printGraph):
+        (TestWebKitAPI::HeapGraphReceiver::dumpNodes):
+        (TestWebKitAPI::HeapGraphReceiver::dumpEdges):
+        (TestWebKitAPI::HeapGraphReceiver::dumpBaseToRealNodeId):
+        (TestWebKitAPI::HeapGraphReceiver::dumpStrings):
+        (TestWebKitAPI::HeapGraphReceiver::serializer):
+        (TestWebKitAPI::HeapGraphReceiver::chunkPart):
+        (TestWebKitAPI::HeapGraphReceiver::dumpPart):
+        (TestWebKitAPI::HeapGraphReceiver::stringValue):
+        (TestWebKitAPI::HeapGraphReceiver::intValue):
+        (TestWebKitAPI::HeapGraphReceiver::nodeToString):
+        (TestWebKitAPI::HeapGraphReceiver::edgeToString):
+        (TestWebKitAPI::HeapGraphReceiver::printNode):
+        (Helper):
+        (TestWebKitAPI::Helper::Helper):
+        (TestWebKitAPI::Helper::addNode):
+        (TestWebKitAPI::Helper::addEdge):
+        (TestWebKitAPI::Helper::done):
+        (Object):
+        (TestWebKitAPI::Helper::Object::Object):
+        (TestWebKitAPI::TEST):
+        (Owner):
+        (TestWebKitAPI::Owner::Owner):
+        (TestWebKitAPI::Owner::reportMemoryUsage):
+
 2013-02-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         WKR build fix. Always use ascii since irclib/ircbot doesn't support unicode.
