@@ -40,7 +40,7 @@ function test()
         InspectorTest.dumpSelectedElementStyles(true);
 
         var treeItem = InspectorTest.getMatchedStylePropertyTreeItem("font-weight");
-        var treeElement = treeItem.section.addNewBlankProperty(index);
+        var treeElement = treeItem.section().addNewBlankProperty(index);
         treeElement.applyStyleText(propertyText, true, true);
         InspectorTest.waitForStyles("container", step1);
 
