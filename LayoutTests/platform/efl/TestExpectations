@@ -864,9 +864,6 @@ webkit.org/b/102367 fast/forms/zoomed-controls.html [ Pass ]
 # FAILING TESTS
 #////////////////////////////////////////////////////////////////////////////////////////
 
-# CSS Regions issues.
-webkit.org/b/97209 fast/regions/webkit-flow-floats-inside-regions-bounds.html [ Missing ]
-
 # Needs inner spin button to respect -webkit-inner-spin-button style
 webkit.org/b/87619 fast/forms/number/number-appearance-rtl.html [ Failure ]
 webkit.org/b/87619 fast/forms/number/number-appearance-spinbutton-disabled-readonly.html [ Failure ]
@@ -1287,8 +1284,6 @@ webkit.org/b/75747 fast/css/color-correction-on-text-shadow.html [ Missing Failu
 webkit.org/b/75747 fast/css/color-correction-on-text.html [ Missing Failure ]
 webkit.org/b/75747 fast/css/color-correction-untagged-images.html [ Missing Failure ]
 
-webkit.org/b/65536 fast/css/text-rendering.html [ Missing Failure ]
-
 webkit.org/b/49142 fast/css/style-scoped [ Skip ]
 
 # These tests require TOUCH_ADJUSTMENT flag to be enabled
@@ -1441,9 +1436,6 @@ webkit.org/b/86637 editing/spelling/spelling-marker-description.html [ Failure ]
 # Missing test infrastructure, no gamepads available.
 Bug(EFL) gamepad/gamepad-polling-access.html [ Failure ]
 
-# Fails on GTK+ and Qt as well.
-webkit.org/b/86445 fast/multicol/split-in-top-margin.html [ ImageOnlyFailure ]
-
 # ENABLE_INPUT_TYPE_* are not enabled on EFL port.
 webkit.org/b/29359 fast/forms/date [ Skip ]
 webkit.org/b/29359 fast/forms/datetime [ Skip ]
@@ -1567,9 +1559,6 @@ webkit.org/b/54251 fast/canvas/DrawImageSinglePixelStretch.html [ Failure ]
 
 webkit.org/b/98564 fast/table/colspanMinWidth-vertical.html [ Missing Failure ]
 
-# Fails after r129175.
-webkit.org/b/97296 fast/text/international/hebrew-selection.html [ ImageOnlyFailure ]
-
 # Fails on the bots.
 webkit.org/b/97968 media/unsupported-rtsp.html [ Failure ]
 
@@ -1676,7 +1665,7 @@ webkit.org/b/100846 inspector-protocol/debugger-terminate-dedicated-worker-while
 # New media test introduced in r133660 fails.
 webkit.org/b/101439 media/progress-events-generated-correctly.html [ Failure ]
 
-webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure ]
+webkit.org/b/101456 fast/repaint/block-selection-gap-in-table-cell.html [ ImageOnlyFailure Pass ]
 
 # Identical failures on GTK, EFL and Qt.
 webkit.org/b/101539 editing/execCommand/switch-list-type-with-orphaned-li.html [ Failure ]
@@ -1829,8 +1818,6 @@ webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-scaled-ifram
 webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failure ]
 webkit.org/b/106992 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Failure ]
 webkit.org/b/106992 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
-
-webkit.org/b/107013 http/tests/inspector/resource-tree/resource-tree-document-url.html [ Failure ]
 
 webkit.org/b/107375 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
