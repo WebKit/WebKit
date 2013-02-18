@@ -1,3 +1,22 @@
+2013-02-18  Christophe Dumez  <christophe.dumez@intel.com>
+
+        [EFL][WK2] Use C API inside ewk_security_origin
+        https://bugs.webkit.org/show_bug.cgi?id=107923
+
+        Reviewed by Alexey Proskuryakov.
+
+        Use C API inside ewk_security_origin instead of accessing
+        directly internal C++ classes, to avoid breaking API
+        layering.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::enterFullScreen):
+        * UIProcess/API/efl/ewk_security_origin.cpp:
+        (EwkSecurityOrigin::EwkSecurityOrigin):
+        * UIProcess/API/efl/ewk_security_origin_private.h:
+        (EwkSecurityOrigin::create):
+        (EwkSecurityOrigin):
+
 2013-01-04  Jer Noble  <jer.noble@apple.com>
 
         pinch-zooming webpage messes up full-screening of embedded video

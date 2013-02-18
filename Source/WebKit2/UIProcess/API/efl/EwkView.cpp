@@ -616,7 +616,7 @@ void EwkView::enterFullScreen()
 {
     Ewk_View_Smart_Data* sd = smartData();
 
-    RefPtr<EwkSecurityOrigin> origin = EwkSecurityOrigin::create(KURL(ParsedURLString, String::fromUTF8(m_url)));
+    RefPtr<EwkSecurityOrigin> origin = EwkSecurityOrigin::create(m_url);
 
     if (!sd->api->fullscreen_enter || !sd->api->fullscreen_enter(sd, origin.get())) {
         Ecore_Evas* ecoreEvas = ecore_evas_ecore_evas_get(sd->base.evas);
