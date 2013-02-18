@@ -2046,10 +2046,10 @@ static void* AXPostedNotificationContext = 0;
     AXPostedNotificationContext = context;
 }
 
-- (void)accessibilityPostedNotification:(WebCore::AXObjectCache::AXNotification)notificationType
+- (void)accessibilityPostedNotification:(NSString *)notificationName
 {
-    if (AXNotificationCallback && notificationString)
-        AXNotificationCallback(self, notificationString, AXPostedNotificationContext);
+    if (AXNotificationCallback && notificationName)
+        AXNotificationCallback(self, notificationName, AXPostedNotificationContext);
 }
 
 #ifndef NDEBUG
@@ -2062,4 +2062,4 @@ static void* AXPostedNotificationContext = 0;
 
 @end
 
-#endif // PLATFORM(IOS)
+#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS)

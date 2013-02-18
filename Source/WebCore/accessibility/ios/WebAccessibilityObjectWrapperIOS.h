@@ -63,6 +63,6 @@
 
 @end
 
-#endif
+#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS)
 
 #endif // AccessibilityObjectWrapperIOS_h

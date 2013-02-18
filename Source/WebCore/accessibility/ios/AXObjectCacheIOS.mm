@@ -109,4 +109,4 @@ void AXObjectCache::handleScrolledToAnchor(const Node*)
     
 }
 
-#endif // HAVE(ACCESSIBILITY)
+#endif // HAVE(ACCESSIBILITY) && PLATFORM(IOS)

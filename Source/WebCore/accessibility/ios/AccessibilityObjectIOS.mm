@@ -32,7 +32,7 @@
 
 #if HAVE(ACCESSIBILITY) && PLATFORM(IOS)
 
-#import "AccessibilityObjectWrapperIOS.h"
+#import "WebAccessibilityObjectWrapperIOS.h"
 
 @interface WAKView (iOSAccessibility)
 - (BOOL)accessibilityIsIgnored;
