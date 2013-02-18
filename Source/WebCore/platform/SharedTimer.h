@@ -44,6 +44,7 @@ namespace WebCore {
         // The fire interval is in seconds relative to the current monotonic clock time.
         virtual void setFireInterval(double) = 0;
         virtual void stop() = 0;
+        virtual void willEnterNestedEventLoop() { ASSERT_NOT_REACHED(); }
     };
 
 
@@ -52,7 +53,9 @@ namespace WebCore {
     void setSharedTimerFiredFunction(void (*)());
     void setSharedTimerFireInterval(double);
     void stopSharedTimer();
-
+#if PLATFORM(MAC)
+    void clearSharedTimer();
+#endif
     // Implementation of SharedTimer for the main thread.
     class MainThreadSharedTimer : public SharedTimer {
     public:
@@ -69,6 +72,13 @@ namespace WebCore {
         virtual void stop()
         {
             stopSharedTimer();
+        }
+
+        virtual void willEnterNestedEventLoop()
+        {
+#if PLATFORM(MAC)
+            clearSharedTimer();
+#endif
         }
     };
 

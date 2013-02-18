@@ -42,7 +42,7 @@
 
 namespace WebCore {
 
-static CFRunLoopTimerRef sharedTimer;
+static const CFTimeInterval distantFuture = 60 * 60 * 24 * 365 * 10; // Decade.
 static void (*sharedTimerFiredFunction)();
 static void timerFired(CFRunLoopTimerRef, void*);
 
@@ -143,14 +143,38 @@ void PowerObserver::restartSharedTimer()
 {
     ASSERT(CFRunLoopGetCurrent() == CFRunLoopGetMain());
 
-    if (!sharedTimer)
-        return;
-
     stopSharedTimer();
     timerFired(0, 0);
 }
 
-static PowerObserver* PowerObserver;
+static void ensurePowerObserver()
+{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        static PowerObserver* powerObserver;
+        powerObserver = PowerObserver::create().leakPtr();
+    });
+}
+
+static CFRunLoopTimerRef globalSharedTimer;
+
+static CFRunLoopTimerRef sharedTimer()
+{
+    if (!globalSharedTimer) {
+        globalSharedTimer = CFRunLoopTimerCreate(0, CFAbsoluteTimeGetCurrent() + distantFuture, distantFuture, 0, 0, timerFired, 0);
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), globalSharedTimer, kCFRunLoopCommonModes);
+        ensurePowerObserver();
+    }
+    return globalSharedTimer;
+};
+
+void clearSharedTimer()
+{
+    // For some reason the timer won't fire in a nested runloop unless it has been freshly created and inserted.
+    CFRunLoopTimerInvalidate(globalSharedTimer);
+    CFRelease(globalSharedTimer);
+    globalSharedTimer = 0;
+}
 
 void setSharedTimerFiredFunction(void (*f)())
 {
@@ -170,27 +194,13 @@ static void timerFired(CFRunLoopTimerRef, void*)
 void setSharedTimerFireInterval(double interval)
 {
     ASSERT(sharedTimerFiredFunction);
-
-    if (sharedTimer) {
-        CFRunLoopTimerInvalidate(sharedTimer);
-        CFRelease(sharedTimer);
-    }
-
     CFAbsoluteTime fireDate = CFAbsoluteTimeGetCurrent() + interval;
-    sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
-    CFRunLoopAddTimer(CFRunLoopGetCurrent(), sharedTimer, kCFRunLoopCommonModes);
-    
-    if (!PowerObserver)
-        PowerObserver = PowerObserver::create().leakPtr();
+    CFRunLoopTimerSetNextFireDate(sharedTimer(), fireDate);
 }
 
 void stopSharedTimer()
 {
-    if (sharedTimer) {
-        CFRunLoopTimerInvalidate(sharedTimer);
-        CFRelease(sharedTimer);
-        sharedTimer = 0;
-    }
+    CFRunLoopTimerSetNextFireDate(sharedTimer(), CFAbsoluteTimeGetCurrent() + distantFuture);
 }
 
 } // namespace WebCore
