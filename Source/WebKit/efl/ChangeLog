@@ -1,3 +1,18 @@
+2013-02-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL] Unified text checker implementation
+        https://bugs.webkit.org/show_bug.cgi?id=107682
+
+        Reviewed by Anders Carlsson.
+
+        Add an empty checkTextOfParagraph implementation for WK1-EFL
+        to do not break build when WTF_USE_UNIFIED_TEXT_CHECKING
+        is enabled.
+
+        * WebCoreSupport/EditorClientEfl.h:
+        (EditorClientEfl):
+        (WebCore::EditorClientEfl::checkTextOfParagraph):
+
 2013-02-15  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Simplify hitTestResultAtPoint and nodesFromRect APIs

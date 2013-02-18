@@ -1,3 +1,29 @@
+2013-02-18  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL] Unified text checker implementation
+        https://bugs.webkit.org/show_bug.cgi?id=107682
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit):
+        (WebKit::nextWordOffset):
+        Helper function to determine the word offset to do not call
+        client's checkSpellingOfString for the word separators.
+
+        (WebKit::TextChecker::checkTextOfParagraph):
+        Allow to check spelling for multiple words,
+        their misspelling location and length are saved to the vector.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.h:
+        Add UNIFIED_TEXT_CHECKING guard to checkTextOfParagraph.
+
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp:
+        (WebKit):
+        (WebKit::WebEditorClient::checkTextOfParagraph):
+        As spelling implementation is exposed to UIProcess,
+        send a meesage to UIProcess to call TextChecker::checkTextOfParagraph.
+
 2013-02-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Refactor Ewk_Favicon code and stop relying on internal C++ API

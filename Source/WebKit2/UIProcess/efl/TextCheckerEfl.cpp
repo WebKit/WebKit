@@ -31,6 +31,7 @@
 #include "TextCheckerState.h"
 
 #if ENABLE(SPELLCHECK)
+#include "TextBreakIterator.h"
 #include "WebTextChecker.h"
 #endif
 
@@ -123,6 +124,76 @@ void TextChecker::closeSpellDocumentWithTag(int64_t tag)
     UNUSED_PARAM(tag);
 #endif
 }
+
+#if USE(UNIFIED_TEXT_CHECKING)
+static int nextWordOffset(const UChar* text, int length, int currentOffset)
+{
+    // FIXME: avoid creating textIterator object here, it could be passed as a parameter.
+    //        isTextBreak() leaves the iterator pointing to the first boundary position at
+    //        or after "offset" (ubrk_isBoundary side effect).
+    //        For many word separators, the method doesn't properly determine the boundaries
+    //        without resetting the iterator.
+    TextBreakIterator* textIterator = wordBreakIterator(text, length);
+    if (!textIterator)
+        return currentOffset;
+
+    int wordOffset = currentOffset;
+    while (wordOffset < length && isTextBreak(textIterator, wordOffset))
+        ++wordOffset;
+
+    // Do not treat the word's boundary as a separator.
+    if (!currentOffset && wordOffset == 1)
+        return currentOffset;
+
+    // Omit multiple separators.
+    if ((wordOffset - currentOffset) > 1)
+        --wordOffset;
+
+    return wordOffset;
+}
+
+Vector<TextCheckingResult> TextChecker::checkTextOfParagraph(int64_t spellDocumentTag, const UChar* text, int length, uint64_t checkingTypes)
+{
+    Vector<TextCheckingResult> paragraphCheckingResult;
+#if ENABLE(SPELLCHECK)
+    if (checkingTypes & TextCheckingTypeSpelling) {
+        TextBreakIterator* textIterator = wordBreakIterator(text, length);
+        if (!textIterator)
+            return paragraphCheckingResult;
+
+        // Omit the word separators at the beginning/end of the text to don't unnecessarily
+        // involve the client to check spelling for them.
+        int offset = nextWordOffset(text, length, 0);
+        int lengthStrip = length;
+        while (lengthStrip > 0 && isTextBreak(textIterator, lengthStrip - 1))
+            --lengthStrip;
+
+        while (offset >= 0 && offset < lengthStrip) {
+            int32_t misspellingLocation = -1;
+            int32_t misspellingLength = 0;
+            checkSpellingOfString(spellDocumentTag, text + offset, lengthStrip - offset, misspellingLocation, misspellingLength);
+            if (!misspellingLength)
+                break;
+
+            TextCheckingResult misspellingResult;
+            misspellingResult.type = TextCheckingTypeSpelling;
+            misspellingResult.location = offset + misspellingLocation;
+            misspellingResult.length = misspellingLength;
+            paragraphCheckingResult.append(misspellingResult);
+            offset += misspellingLocation + misspellingLength;
+            // Generally, we end up checking at the word separator, move to the adjacent word.
+            offset = nextWordOffset(text, lengthStrip, offset);
+        }
+    }
+#else
+    UNUSED_PARAM(spellDocumentTag);
+    UNUSED_PARAM(text);
+    UNUSED_PARAM(length);
+    UNUSED_PARAM(checkingTypes);
+#endif
+    return paragraphCheckingResult;
+}
+#endif
 
 void TextChecker::checkSpellingOfString(int64_t spellDocumentTag, const UChar* text, uint32_t length, int32_t& misspellingLocation, int32_t& misspellingLength)
 {
