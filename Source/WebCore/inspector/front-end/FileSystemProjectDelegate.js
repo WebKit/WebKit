@@ -41,7 +41,6 @@ WebInspector.FileSystemProjectDelegate = function(isolatedFileSystemModel, fileS
     this._isolatedFileSystemModel = isolatedFileSystemModel;
     this._fileSystemId = fileSystemId;
     this._fileSystemPath = fileSystemPath;
-    this._files = {};
     this._populate();
 }
 
@@ -179,9 +178,6 @@ WebInspector.FileSystemProjectDelegate.prototype = {
      */
     _addFile: function(fileDescriptor)
     {
-        if (!this._files[this._fileSystemPath])
-            this._files[this._fileSystemPath] = {};
-        this._files[this._fileSystemPath][fileDescriptor.path] = true;
         this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileAdded, fileDescriptor);
     },
 
@@ -190,9 +186,6 @@ WebInspector.FileSystemProjectDelegate.prototype = {
      */
     _removeFile: function(uri)
     {
-        delete this._files[this._fileSystemPath][uri];
-        if (Object.keys(this._files[this._fileSystemPath]).length === 0)
-            delete this._files[this._fileSystemPath];
         this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileRemoved, uri);
     },
 
