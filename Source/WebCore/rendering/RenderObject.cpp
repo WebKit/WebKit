@@ -1298,6 +1298,10 @@ RenderLayerModelObject* RenderObject::containerForRepaint() const
     // repainting to do individual region repaints.
     if (inRenderFlowThread()) {
         RenderFlowThread* parentRenderFlowThread = enclosingRenderFlowThread();
+        // The ancestor document will do the reparenting when the repaint propagates further up.
+        // We're just a seamless child document, and we don't need to do the hacking.
+        if (parentRenderFlowThread && parentRenderFlowThread->document() != document())
+            return repaintContainer;
         // If we have already found a repaint container then we will repaint into that container only if it is part of the same
         // flow thread. Otherwise we will need to catch the repaint call and send it to the flow thread.
         if (!(repaintContainer && repaintContainer->inRenderFlowThread() && repaintContainer->enclosingRenderFlowThread() == parentRenderFlowThread))

@@ -7569,8 +7569,10 @@ bool RenderBlock::logicalWidthChangedInRegions() const
 
 RenderRegion* RenderBlock::clampToStartAndEndRegions(RenderRegion* region) const
 {
-    ASSERT(region && inRenderFlowThread());
-    
+    ASSERT(isRenderView() || (region && inRenderFlowThread()));
+    if (isRenderView())
+        return region;
+
     // We need to clamp to the block, since we want any lines or blocks that overflow out of the
     // logical top or logical bottom of the block to size as though the border box in the first and
     // last regions extended infinitely. Otherwise the lines are going to size according to the regions
