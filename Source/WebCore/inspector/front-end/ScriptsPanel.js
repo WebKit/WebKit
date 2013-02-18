@@ -74,8 +74,6 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this.splitView.setMinimumSidebarWidth(Preferences.minScriptsSidebarWidth);
     this.splitView.setMinimumMainWidthPercent(minimumDebugSidebarWidthPercent);
 
-    this.sidebarElement.appendChild(this.debugToolbar);
-
     this.debugSidebarResizeWidgetElement = document.createElement("div");
     this.debugSidebarResizeWidgetElement.id = "scripts-debug-sidebar-resizer-widget";
     this.splitView.installResizer(this.debugSidebarResizeWidgetElement);
@@ -107,9 +105,6 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
     this._editorContainer.addEventListener(WebInspector.TabbedEditorContainer.Events.EditorClosed, this._editorClosed, this);
 
     this.splitView.mainElement.appendChild(this.debugSidebarResizeWidgetElement);
-    this.splitView.mainElement.addEventListener("contextmenu", this._contextMenuEventFired.bind(this), false);
-
-    this.splitView.sidebarElement.addEventListener("contextmenu", this._sidebarContextMenuEventFired.bind(this), false);
 
     this.sidebarPanes = {};
     this.sidebarPanes.watchExpressions = new WebInspector.WatchExpressionsSidebarPane();
@@ -125,13 +120,8 @@ WebInspector.ScriptsPanel = function(workspaceForTest)
         this.sidebarPanes.workerList = new WebInspector.WorkersSidebarPane(WebInspector.workerManager);
     }
 
-    this._splitDirectionSetting = WebInspector.settings.createSetting(this.name + "PanelSplitHorizontally", false);
-    this._splitDirectionSetting.addChangeListener(this._arrangeSidebarPanes.bind(this));
-
-    this._splitSidebarSetting = WebInspector.settings.createSetting(this.name + "PanelSplitSidebar", false);
-    this._splitSidebarSetting.addChangeListener(this._arrangeSidebarPanes.bind(this));
-
-    this._arrangeSidebarPanes();
+    WebInspector.dockController.addEventListener(WebInspector.DockController.Events.DockSideChanged, this._dockSideChanged.bind(this));
+    this._dockSideChanged();
 
     this.sidebarPanes.callstack.registerShortcuts(this.registerShortcuts.bind(this));
     this.registerShortcuts(WebInspector.ScriptsPanelDescriptor.ShortcutKeys.EvaluateSelectionInConsole, this._evaluateSelectionInConsole.bind(this));
@@ -1120,9 +1110,6 @@ WebInspector.ScriptsPanel.prototype = {
         var resource = WebInspector.resourceForURL(uiSourceCode.url);
         if (resource && resource.request)
             contextMenu.appendApplicableItems(resource.request);
-
-        if (WebInspector.inspectorView.currentPanel() === this)
-            this._populateContextMenuForSidebar(contextMenu);
     },
 
     /** 
@@ -1161,56 +1148,37 @@ WebInspector.ScriptsPanel.prototype = {
         WebInspector.OpenResourceDialog.show(this, this.editorView.mainElement);
     },
 
-    _contextMenuEventFired: function(event)
+    _dockSideChanged: function()
     {
-        var contextMenu = new WebInspector.ContextMenu(event);
-        this._populateContextMenuForSidebar(contextMenu);
-        contextMenu.show();
+        var dockSide = WebInspector.dockController.dockSide();
+        this._setVerticalSplit(dockSide !== WebInspector.DockController.State.DockedToRight);
     },
 
-    _sidebarContextMenuEventFired: function(event)
+    /**
+     * @param {boolean} vertical
+     */
+    _setVerticalSplit: function(vertical)
     {
-        var contextMenu = new WebInspector.ContextMenu(event);
-        this._populateContextMenuForSidebar(contextMenu);
-        contextMenu.show();
-    },
-
-    _populateContextMenuForSidebar: function(contextMenu)
-    {
-        if (!WebInspector.experimentsSettings.horizontalPanelSplit.isEnabled())
+        if (this.sidebarPaneView && vertical === this.splitView.isVertical())
             return;
 
-        function toggleSetting(setting)
-        {
-            setting.set(!setting.get());
-        }
-        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Split horizontally" : "Split Horizontally"), toggleSetting.bind(this, this._splitDirectionSetting), this._splitDirectionSetting.get());
-
-        if (!this.splitView.isVertical())
-            contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Split sidebar" : "Split Sidebar"), toggleSetting.bind(this, this._splitSidebarSetting), this._splitSidebarSetting.get());
-    },
-
-    _arrangeSidebarPanes: function()
-    {
         if (this.sidebarPaneView)
             this.sidebarPaneView.detach();
 
-        var vertical = !WebInspector.experimentsSettings.horizontalPanelSplit.isEnabled() || !this._splitDirectionSetting.get();
         this.splitView.setVertical(vertical);
 
         if (vertical) {
             this.sidebarPaneView = new WebInspector.SidebarPaneStack();
             for (var pane in this.sidebarPanes)
                 this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
-        } else if (!this._splitSidebarSetting.get()) {
-            this.sidebarPaneView = new WebInspector.SidebarTabbedPane();
-            for (var pane in this.sidebarPanes)
-                this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
+
+            this.sidebarElement.appendChild(this.debugToolbar);
         } else {
             this.sidebarPaneView = new WebInspector.SplitView(true, this.name + "PanelSplitSidebarRatio", 0.5);
 
             var group1 = new WebInspector.SidebarPaneStack();
             group1.show(this.sidebarPaneView.firstElement());
+            group1.element.id = "scripts-sidebar-stack-pane";
             group1.addPane(this.sidebarPanes.watchExpressions);
             group1.addPane(this.sidebarPanes.callstack);
             group1.addPane(this.sidebarPanes.scopechain);
@@ -1221,6 +1189,8 @@ WebInspector.ScriptsPanel.prototype = {
             group2.addPane(this.sidebarPanes.domBreakpoints);
             group2.addPane(this.sidebarPanes.xhrBreakpoints);
             group2.addPane(this.sidebarPanes.eventListenerBreakpoints);
+
+            this.sidebarPaneView.firstElement().appendChild(this.debugToolbar);
         }
 
         this.sidebarPaneView.element.id = "scripts-debug-sidebar-contents";

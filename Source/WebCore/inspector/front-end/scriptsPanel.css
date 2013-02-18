@@ -62,15 +62,6 @@
     border-bottom: 1px solid rgb(202, 202, 202);
 }
 
-#scripts-debug-sidebar-contents {
-    position: absolute;
-    top: 22px;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    overflow: auto;
-}
-
 #scripts-editor-toolbar {
     position: relative;
     margin-top: -1px;
@@ -306,4 +297,13 @@ button.status-bar-item.scripts-debugger-show-hide-button.toggled-hidden:active {
 
 .status-bar-item.scripts-debugger-show-hide-button.toggled-hidden > .glyph {
     -webkit-mask-position: -16px -16px;
+}
+
+#scripts-sidebar-stack-pane {
+    overflow: auto;
+    top: 23px;
+}
+
+div.sidebar-pane-stack#scripts-debug-sidebar-contents {
+    top: 23px;
 }
