@@ -54,7 +54,7 @@ const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter>::computedShape
     return m_shape.get();
 }
 
-template class ExclusionShapeInfo<RenderBlock, &RenderStyle::shapeInside>;
+template class ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside>;
 template class ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside>;
 }
 #endif

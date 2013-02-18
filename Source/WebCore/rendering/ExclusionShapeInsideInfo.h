@@ -52,14 +52,14 @@ struct LineSegmentRange {
 };
 typedef Vector<LineSegmentRange> SegmentRangeList;
 
-class ExclusionShapeInsideInfo : public ExclusionShapeInfo<RenderBlock, &RenderStyle::shapeInside>, public MappedInfo<RenderBlock, ExclusionShapeInsideInfo> {
+class ExclusionShapeInsideInfo : public ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside>, public MappedInfo<RenderBlock, ExclusionShapeInsideInfo> {
 public:
     static PassOwnPtr<ExclusionShapeInsideInfo> createInfo(const RenderBlock* renderer) { return adoptPtr(new ExclusionShapeInsideInfo(renderer)); }
 
     static bool isEnabledFor(const RenderBlock* renderer)
     {
         // FIXME: Bug 89707: Enable shape inside for non-rectangular shapes
-        ExclusionShapeValue* shapeValue = renderer->style()->shapeInside();
+        ExclusionShapeValue* shapeValue = renderer->style()->resolvedShapeInside();
         BasicShape* shape = (shapeValue && shapeValue->type() == ExclusionShapeValue::SHAPE) ? shapeValue->shape() : 0;
         return shape && shape->type() != BasicShape::BASIC_SHAPE_ELLIPSE;
     }
@@ -89,7 +89,7 @@ public:
     LayoutUnit logicalLineBottom() const { return m_shapeLineTop + m_lineHeight + logicalTopOffset(); }
 
 private:
-    ExclusionShapeInsideInfo(const RenderBlock* renderer) : ExclusionShapeInfo<RenderBlock, &RenderStyle::shapeInside>(renderer) { }
+    ExclusionShapeInsideInfo(const RenderBlock* renderer) : ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside>(renderer) { }
 
     LayoutUnit m_shapeLineTop;
     LayoutUnit m_lineHeight;

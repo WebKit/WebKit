@@ -1421,6 +1421,13 @@ public:
         rareNonInheritedData.access()->m_shapeInside = value;
     }
     ExclusionShapeValue* shapeInside() const { return rareNonInheritedData->m_shapeInside.get(); }
+    ExclusionShapeValue* resolvedShapeInside() const
+    {
+        ExclusionShapeValue* shapeInside = this->shapeInside();
+        if (shapeInside && shapeInside->type() == ExclusionShapeValue::OUTSIDE)
+            return shapeOutside();
+        return shapeInside;
+    }
 
     void setShapeOutside(PassRefPtr<ExclusionShapeValue> value)
     {
