@@ -200,6 +200,13 @@ public:
     }
 #endif
     
+#if CPU(MIPS)
+    void poke(FPRegisterID src, int index = 0)
+    {
+        ASSERT(!(index & 1));
+        storeDouble(src, addressForPoke(index));
+    }
+#endif
 
     // Backwards banches, these are currently all implemented using existing forwards branch mechanisms.
     void branchPtr(RelationalCondition cond, RegisterID op1, TrustedImmPtr imm, Label target)

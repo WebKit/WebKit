@@ -125,6 +125,10 @@ namespace JSC {
         static const RegisterID cachedResultRegister = MIPSRegisters::v0;
         static const RegisterID firstArgumentRegister = MIPSRegisters::a0;
         
+#if ENABLE(VALUE_PROFILER)
+        static const RegisterID bucketCounterRegister = MIPSRegisters::s3;
+#endif
+
         // regT0 must be v0 for returning a 32-bit value.
         static const RegisterID regT0 = MIPSRegisters::v0;
         

@@ -461,6 +461,73 @@ private:
 
 #endif
 
+#if CPU(MIPS)
+#define NUMBER_OF_ARGUMENT_REGISTERS 4
+
+class GPRInfo {
+public:
+    typedef GPRReg RegisterType;
+    static const unsigned numberOfRegisters = 6;
+
+    // Temporary registers.
+    static const GPRReg regT0 = MIPSRegisters::v0;
+    static const GPRReg regT1 = MIPSRegisters::v1;
+    static const GPRReg regT2 = MIPSRegisters::t4;
+    static const GPRReg regT3 = MIPSRegisters::t5;
+    static const GPRReg regT4 = MIPSRegisters::t6;
+    static const GPRReg regT5 = MIPSRegisters::t7;
+    // These registers match the baseline JIT.
+    static const GPRReg cachedResultRegister = regT0;
+    static const GPRReg cachedResultRegister2 = regT1;
+    static const GPRReg callFrameRegister = MIPSRegisters::s0;
+    // These constants provide the names for the general purpose argument & return value registers.
+    static const GPRReg argumentGPR0 = MIPSRegisters::a0;
+    static const GPRReg argumentGPR1 = MIPSRegisters::a1;
+    static const GPRReg argumentGPR2 = MIPSRegisters::a2;
+    static const GPRReg argumentGPR3 = MIPSRegisters::a3;
+    static const GPRReg nonArgGPR0 = regT2;
+    static const GPRReg nonArgGPR1 = regT3;
+    static const GPRReg nonArgGPR2 = regT4;
+    static const GPRReg returnValueGPR = regT0;
+    static const GPRReg returnValueGPR2 = regT1;
+    static const GPRReg nonPreservedNonReturnGPR = regT5;
+
+    static GPRReg toRegister(unsigned index)
+    {
+        ASSERT(index < numberOfRegisters);
+        static const GPRReg registerForIndex[numberOfRegisters] = { regT0, regT1, regT2, regT3, regT4, regT5 };
+        return registerForIndex[index];
+    }
+
+    static unsigned toIndex(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(reg < 16);
+        static const unsigned indexForRegister[16] = { InvalidIndex, InvalidIndex, 0, 1, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, InvalidIndex, 2, 3, 4, 5 };
+        unsigned result = indexForRegister[reg];
+        ASSERT(result != InvalidIndex);
+        return result;
+    }
+
+    static const char* debugName(GPRReg reg)
+    {
+        ASSERT(reg != InvalidGPRReg);
+        ASSERT(reg < 16);
+        static const char* nameForRegister[16] = {
+            "zero", "at", "v0", "v1",
+            "a0", "a1", "a2", "a3",
+            "t0", "t1", "t2", "t3",
+            "t4", "t5", "t6", "t7"
+        };
+        return nameForRegister[reg];
+    }
+private:
+
+    static const unsigned InvalidIndex = 0xffffffff;
+};
+
+#endif
+
 typedef RegisterBank<GPRInfo>::iterator gpr_iterator;
 
 } } // namespace JSC::DFG

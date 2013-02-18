@@ -818,6 +818,10 @@
 #if CPU(ARM_TRADITIONAL)
 #define ENABLE_DFG_JIT 1
 #endif
+/* Enable the DFG JIT on MIPS. */
+#if CPU(MIPS)
+#define ENABLE_DFG_JIT 1
+#endif
 #endif
 
 /* If the jit is not available, enable the LLInt C Loop: */

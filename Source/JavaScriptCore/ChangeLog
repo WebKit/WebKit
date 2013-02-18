@@ -1,3 +1,93 @@
+2013-02-18  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        MIPS DFG implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=101328
+
+        Reviewed by Oliver Hunt.
+
+        DFG implementation for MIPS.
+
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::MIPSAssembler):
+        (JSC::MIPSAssembler::sllv):
+        (JSC::MIPSAssembler::movd):
+        (MIPSAssembler):
+        (JSC::MIPSAssembler::negd):
+        (JSC::MIPSAssembler::labelForWatchpoint):
+        (JSC::MIPSAssembler::label):
+        (JSC::MIPSAssembler::vmov):
+        (JSC::MIPSAssembler::linkDirectJump):
+        (JSC::MIPSAssembler::maxJumpReplacementSize):
+        (JSC::MIPSAssembler::revertJumpToMove):
+        (JSC::MIPSAssembler::replaceWithJump):
+        * assembler/MacroAssembler.h:
+        (MacroAssembler):
+        (JSC::MacroAssembler::poke):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::add32):
+        (MacroAssemblerMIPS):
+        (JSC::MacroAssemblerMIPS::and32):
+        (JSC::MacroAssemblerMIPS::lshift32):
+        (JSC::MacroAssemblerMIPS::mul32):
+        (JSC::MacroAssemblerMIPS::or32):
+        (JSC::MacroAssemblerMIPS::rshift32):
+        (JSC::MacroAssemblerMIPS::urshift32):
+        (JSC::MacroAssemblerMIPS::sub32):
+        (JSC::MacroAssemblerMIPS::xor32):
+        (JSC::MacroAssemblerMIPS::store32):
+        (JSC::MacroAssemblerMIPS::jump):
+        (JSC::MacroAssemblerMIPS::branchAdd32):
+        (JSC::MacroAssemblerMIPS::branchMul32):
+        (JSC::MacroAssemblerMIPS::branchSub32):
+        (JSC::MacroAssemblerMIPS::branchNeg32):
+        (JSC::MacroAssemblerMIPS::call):
+        (JSC::MacroAssemblerMIPS::loadDouble):
+        (JSC::MacroAssemblerMIPS::moveDouble):
+        (JSC::MacroAssemblerMIPS::swapDouble):
+        (JSC::MacroAssemblerMIPS::subDouble):
+        (JSC::MacroAssemblerMIPS::mulDouble):
+        (JSC::MacroAssemblerMIPS::divDouble):
+        (JSC::MacroAssemblerMIPS::negateDouble):
+        (JSC::MacroAssemblerMIPS::branchEqual):
+        (JSC::MacroAssemblerMIPS::branchNotEqual):
+        (JSC::MacroAssemblerMIPS::branchTruncateDoubleToInt32):
+        (JSC::MacroAssemblerMIPS::branchTruncateDoubleToUint32):
+        (JSC::MacroAssemblerMIPS::truncateDoubleToInt32):
+        (JSC::MacroAssemblerMIPS::truncateDoubleToUint32):
+        (JSC::MacroAssemblerMIPS::branchDoubleNonZero):
+        (JSC::MacroAssemblerMIPS::branchDoubleZeroOrNaN):
+        (JSC::MacroAssemblerMIPS::invert):
+        (JSC::MacroAssemblerMIPS::replaceWithJump):
+        (JSC::MacroAssemblerMIPS::maxJumpReplacementSize):
+        * dfg/DFGAssemblyHelpers.h:
+        (AssemblyHelpers):
+        (JSC::DFG::AssemblyHelpers::preserveReturnAddressAfterCall):
+        (JSC::DFG::AssemblyHelpers::restoreReturnAddressBeforeReturn):
+        (JSC::DFG::AssemblyHelpers::debugCall):
+        * dfg/DFGCCallHelpers.h:
+        (CCallHelpers):
+        (JSC::DFG::CCallHelpers::setupArguments):
+        (JSC::DFG::CCallHelpers::setupArgumentsWithExecState):
+        * dfg/DFGFPRInfo.h:
+        (DFG):
+        (FPRInfo):
+        (JSC::DFG::FPRInfo::toRegister):
+        (JSC::DFG::FPRInfo::toIndex):
+        (JSC::DFG::FPRInfo::debugName):
+        * dfg/DFGGPRInfo.h:
+        (DFG):
+        (GPRInfo):
+        (JSC::DFG::GPRInfo::toRegister):
+        (JSC::DFG::GPRInfo::toIndex):
+        (JSC::DFG::GPRInfo::debugName):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+        * runtime/JSGlobalData.h:
+        (JSC::ScratchBuffer::allocationSize):
+        (ScratchBuffer):
+
 2013-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::SpeculativeJIT::isKnownXYZ methods should use CFA rather than other things

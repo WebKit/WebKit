@@ -114,6 +114,11 @@ public:
         m_assembler.addu(dest, dest, src);
     }
 
+    void add32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.addu(dest, op1, op2);
+    }
+
     void add32(TrustedImm32 imm, RegisterID dest)
     {
         add32(imm, dest, dest);
@@ -267,6 +272,11 @@ public:
         m_assembler.andInsn(dest, dest, src);
     }
 
+    void and32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.andInsn(dest, op1, op2);
+    }
+
     void and32(TrustedImm32 imm, RegisterID dest)
     {
         if (!imm.m_value && !m_fixedWidth)
@@ -283,9 +293,16 @@ public:
         }
     }
 
-    void lshift32(TrustedImm32 imm, RegisterID dest)
+    void and32(TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
-        m_assembler.sll(dest, dest, imm.m_value);
+        if (!imm.m_value && !m_fixedWidth)
+            move(MIPSRegisters::zero, dest);
+        else if (imm.m_value > 0 && imm.m_value < 65535 && !m_fixedWidth)
+            m_assembler.andi(dest, src, imm.m_value);
+        else {
+            move(imm, immTempRegister);
+            m_assembler.andInsn(dest, src, immTempRegister);
+        }
     }
 
     void lshift32(RegisterID shiftAmount, RegisterID dest)
@@ -293,9 +310,31 @@ public:
         m_assembler.sllv(dest, dest, shiftAmount);
     }
 
+    void lshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.sllv(dest, src, shiftAmount);
+    }
+
+    void lshift32(TrustedImm32 imm, RegisterID dest)
+    {
+        move(imm, immTempRegister);
+        m_assembler.sllv(dest, dest, immTempRegister);
+    }
+
+    void lshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        move(imm, immTempRegister);
+        m_assembler.sllv(dest, src, immTempRegister);
+    }
+
     void mul32(RegisterID src, RegisterID dest)
     {
         m_assembler.mul(dest, dest, src);
+    }
+
+    void mul32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.mul(dest, op1, op2);
     }
 
     void mul32(TrustedImm32 imm, RegisterID src, RegisterID dest)
@@ -348,6 +387,24 @@ public:
         m_assembler.orInsn(dest, dest, dataTempRegister);
     }
 
+    void or32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (!imm.m_value && !m_fixedWidth)
+            return;
+
+        if (imm.m_value > 0 && imm.m_value < 65535 && !m_fixedWidth) {
+            m_assembler.ori(dest, src, imm.m_value);
+            return;
+        }
+
+        /*
+            li      dataTemp, imm
+            or      dest, src, dataTemp
+        */
+        move(imm, dataTempRegister);
+        m_assembler.orInsn(dest, src, dataTempRegister);
+    }
+
     void or32(RegisterID src, AbsoluteAddress dest)
     {
         load32(dest.m_ptr, dataTempRegister);
@@ -358,6 +415,11 @@ public:
     void rshift32(RegisterID shiftAmount, RegisterID dest)
     {
         m_assembler.srav(dest, dest, shiftAmount);
+    }
+
+    void rshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.srav(dest, src, shiftAmount);
     }
 
     void rshift32(TrustedImm32 imm, RegisterID dest)
@@ -375,14 +437,29 @@ public:
         m_assembler.srlv(dest, dest, shiftAmount);
     }
 
+    void urshift32(RegisterID src, RegisterID shiftAmount, RegisterID dest)
+    {
+        m_assembler.srlv(dest, src, shiftAmount);
+    }
+
     void urshift32(TrustedImm32 imm, RegisterID dest)
     {
         m_assembler.srl(dest, dest, imm.m_value);
     }
 
+    void urshift32(RegisterID src, TrustedImm32 imm, RegisterID dest)
+    {
+        m_assembler.srl(dest, src, imm.m_value);
+    }
+
     void sub32(RegisterID src, RegisterID dest)
     {
         m_assembler.subu(dest, dest, src);
+    }
+
+    void sub32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.subu(dest, op1, op2);
     }
 
     void sub32(TrustedImm32 imm, RegisterID dest)
@@ -495,6 +572,11 @@ public:
         m_assembler.xorInsn(dest, dest, src);
     }
 
+    void xor32(RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        m_assembler.xorInsn(dest, op1, op2);
+    }
+
     void xor32(TrustedImm32 imm, RegisterID dest)
     {
         if (imm.m_value == -1) {
@@ -508,6 +590,21 @@ public:
         */
         move(imm, immTempRegister);
         m_assembler.xorInsn(dest, dest, immTempRegister);
+    }
+
+    void xor32(TrustedImm32 imm, RegisterID src, RegisterID dest)
+    {
+        if (imm.m_value == -1) {
+            m_assembler.nor(dest, src, MIPSRegisters::zero);
+            return;
+        }
+
+        /*
+            li  immTemp, imm
+            xor dest, dest, immTemp
+        */
+        move(imm, immTempRegister);
+        m_assembler.xorInsn(dest, src, immTempRegister);
     }
 
     void sqrtDouble(FPRegisterID src, FPRegisterID dst)
@@ -989,6 +1086,44 @@ public:
         }
     }
 
+    void store32(TrustedImm32 imm, BaseIndex address)
+    {
+        if (address.offset >= -32768 && address.offset <= 32767 && !m_fixedWidth) {
+            /*
+                sll     addrTemp, address.index, address.scale
+                addu    addrTemp, addrTemp, address.base
+                sw      src, address.offset(addrTemp)
+            */
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            if (!imm.m_value)
+                m_assembler.sw(MIPSRegisters::zero, addrTempRegister, address.offset);
+            else {
+                move(imm, immTempRegister);
+                m_assembler.sw(immTempRegister, addrTempRegister, address.offset);
+            }
+        } else {
+            /*
+                sll     addrTemp, address.index, address.scale
+                addu    addrTemp, addrTemp, address.base
+                lui     immTemp, (address.offset + 0x8000) >> 16
+                addu    addrTemp, addrTemp, immTemp
+                sw      src, (address.offset & 0xffff)(at)
+            */
+            m_assembler.sll(addrTempRegister, address.index, address.scale);
+            m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
+            m_assembler.lui(immTempRegister, (address.offset + 0x8000) >> 16);
+            m_assembler.addu(addrTempRegister, addrTempRegister, immTempRegister);
+            if (!imm.m_value && !m_fixedWidth)
+                m_assembler.sw(MIPSRegisters::zero, addrTempRegister, address.offset);
+            else {
+                move(imm, immTempRegister);
+                m_assembler.sw(immTempRegister, addrTempRegister, address.offset);
+            }
+        }
+    }
+
+
     void store32(RegisterID src, const void* address)
     {
         /*
@@ -1336,6 +1471,15 @@ public:
         m_fixedWidth = false;
     }
 
+    void jump(AbsoluteAddress address)
+    {
+        m_fixedWidth = true;
+        load32(address.m_ptr, MIPSRegisters::t9);
+        m_assembler.jr(MIPSRegisters::t9);
+        m_assembler.nop();
+        m_fixedWidth = false;
+    }
+
     void moveDoubleToInts(FPRegisterID src, RegisterID dest1, RegisterID dest2)
     {
         m_assembler.vmov(dest1, dest2, src);
@@ -1404,6 +1548,53 @@ public:
         return Jump();
     }
 
+    Jump branchAdd32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        if (cond == Overflow) {
+            /*
+                move    dataTemp, op1
+                xor     cmpTemp, dataTemp, op2
+                bltz    cmpTemp, No_overflow    # diff sign bit -> no overflow
+                addu    dest, dataTemp, op2
+                xor     cmpTemp, dest, dataTemp
+                bgez    cmpTemp, No_overflow    # same sign big -> no overflow
+                nop
+                b       Overflow
+                nop
+                nop
+                nop
+                nop
+                nop
+            No_overflow:
+            */
+            move(op1, dataTempRegister);
+            m_assembler.xorInsn(cmpTempRegister, dataTempRegister, op2);
+            m_assembler.bltz(cmpTempRegister, 10);
+            m_assembler.addu(dest, dataTempRegister, op2);
+            m_assembler.xorInsn(cmpTempRegister, dest, dataTempRegister);
+            m_assembler.bgez(cmpTempRegister, 7);
+            m_assembler.nop();
+            return jump();
+        }
+        if (cond == Signed) {
+            add32(op1, op2, dest);
+            // Check if dest is negative.
+            m_assembler.slt(cmpTempRegister, dest, MIPSRegisters::zero);
+            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == Zero) {
+            add32(op1, op2, dest);
+            return branchEqual(dest, MIPSRegisters::zero);
+        }
+        if (cond == NonZero) {
+            add32(op1, op2, dest);
+            return branchNotEqual(dest, MIPSRegisters::zero);
+        }
+        ASSERT(0);
+        return Jump();
+    }
+
     Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, RegisterID dest)
     {
         move(imm, immTempRegister);
@@ -1415,6 +1606,111 @@ public:
         move(imm, immTempRegister);
         move(src, dest);
         return branchAdd32(cond, immTempRegister, dest);
+    }
+
+    Jump branchAdd32(ResultCondition cond, TrustedImm32 imm, AbsoluteAddress dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        if (cond == Overflow) {
+            /*
+                move    dataTemp, dest
+                xori    cmpTemp, dataTemp, imm
+                bltz    cmpTemp, No_overflow    # diff sign bit -> no overflow
+                addiu   dataTemp, dataTemp, imm
+                move    dest, dataTemp
+                xori    cmpTemp, dataTemp, imm
+                bgez    cmpTemp, No_overflow    # same sign big -> no overflow
+                nop
+                b       Overflow
+                nop
+                nop
+                nop
+                nop
+                nop
+            No_overflow:
+            */
+            if (imm.m_value >= -32768 && imm.m_value  <= 32767 && !m_fixedWidth) {
+                load32(dest.m_ptr, dataTempRegister);
+                m_assembler.xori(cmpTempRegister, dataTempRegister, imm.m_value);
+                m_assembler.bltz(cmpTempRegister, 10);
+                m_assembler.addiu(dataTempRegister, dataTempRegister, imm.m_value);
+                store32(dataTempRegister, dest.m_ptr);
+                m_assembler.xori(cmpTempRegister, dataTempRegister, imm.m_value);
+                m_assembler.bgez(cmpTempRegister, 7);
+                m_assembler.nop();
+            } else {
+                load32(dest.m_ptr, dataTempRegister);
+                move(imm, immTempRegister);
+                m_assembler.xorInsn(cmpTempRegister, dataTempRegister, immTempRegister);
+                m_assembler.bltz(cmpTempRegister, 10);
+                m_assembler.addiu(dataTempRegister, dataTempRegister, immTempRegister);
+                store32(dataTempRegister, dest.m_ptr);
+                m_assembler.xori(cmpTempRegister, dataTempRegister, immTempRegister);
+                m_assembler.bgez(cmpTempRegister, 7);
+                m_assembler.nop();
+            }
+            return jump();
+        }
+        move(imm, immTempRegister);
+        load32(dest.m_ptr, dataTempRegister);
+        add32(immTempRegister, dataTempRegister);
+        store32(dataTempRegister, dest.m_ptr);
+        if (cond == Signed) {
+            // Check if dest is negative.
+            m_assembler.slt(cmpTempRegister, dataTempRegister, MIPSRegisters::zero);
+            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == Zero)
+            return branchEqual(dataTempRegister, MIPSRegisters::zero);
+        if (cond == NonZero)
+            return branchNotEqual(dataTempRegister, MIPSRegisters::zero);
+        ASSERT(0);
+        return Jump();
+    }
+
+    Jump branchMul32(ResultCondition cond, RegisterID src1, RegisterID src2, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        if (cond == Overflow) {
+            /*
+                mult    src, dest
+                mfhi    dataTemp
+                mflo    dest
+                sra     addrTemp, dest, 31
+                beq     dataTemp, addrTemp, No_overflow # all sign bits (bit 63 to bit 31) are the same -> no overflow
+                nop
+                b       Overflow
+                nop
+                nop
+                nop
+                nop
+                nop
+            No_overflow:
+            */
+            m_assembler.mult(src1, src2);
+            m_assembler.mfhi(dataTempRegister);
+            m_assembler.mflo(dest);
+            m_assembler.sra(addrTempRegister, dest, 31);
+            m_assembler.beq(dataTempRegister, addrTempRegister, 7);
+            m_assembler.nop();
+            return jump();
+        }
+        if (cond == Signed) {
+            mul32(src1, src2, dest);
+            // Check if dest is negative.
+            m_assembler.slt(cmpTempRegister, dest, MIPSRegisters::zero);
+            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == Zero) {
+            mul32(src1, src2, dest);
+            return branchEqual(dest, MIPSRegisters::zero);
+        }
+        if (cond == NonZero) {
+            mul32(src1, src2, dest);
+            return branchNotEqual(dest, MIPSRegisters::zero);
+        }
+        ASSERT(0);
+        return Jump();
     }
 
     Jump branchMul32(ResultCondition cond, RegisterID src, RegisterID dest)
@@ -1465,8 +1761,7 @@ public:
     Jump branchMul32(ResultCondition cond, TrustedImm32 imm, RegisterID src, RegisterID dest)
     {
         move(imm, immTempRegister);
-        move(src, dest);
-        return branchMul32(cond, immTempRegister, dest);
+        return branchMul32(cond, immTempRegister, src, dest);
     }
 
     Jump branchSub32(ResultCondition cond, RegisterID src, RegisterID dest)
@@ -1525,8 +1820,60 @@ public:
     Jump branchSub32(ResultCondition cond, RegisterID src, TrustedImm32 imm, RegisterID dest)
     {
         move(imm, immTempRegister);
-        move(src, dest);
-        return branchSub32(cond, immTempRegister, dest);
+        return branchSub32(cond, src, immTempRegister, dest);
+    }
+
+    Jump branchSub32(ResultCondition cond, RegisterID op1, RegisterID op2, RegisterID dest)
+    {
+        ASSERT((cond == Overflow) || (cond == Signed) || (cond == Zero) || (cond == NonZero));
+        if (cond == Overflow) {
+            /*
+                move    dataTemp, op1
+                xor     cmpTemp, dataTemp, op2
+                bgez    cmpTemp, No_overflow    # same sign bit -> no overflow
+                subu    dest, dataTemp, op2
+                xor     cmpTemp, dest, dataTemp
+                bgez    cmpTemp, No_overflow    # same sign bit -> no overflow
+                nop
+                b       Overflow
+                nop
+                nop
+                nop
+                nop
+                nop
+            No_overflow:
+            */
+            move(op1, dataTempRegister);
+            m_assembler.xorInsn(cmpTempRegister, dataTempRegister, op2);
+            m_assembler.bgez(cmpTempRegister, 10);
+            m_assembler.subu(dest, dataTempRegister, op2);
+            m_assembler.xorInsn(cmpTempRegister, dest, dataTempRegister);
+            m_assembler.bgez(cmpTempRegister, 7);
+            m_assembler.nop();
+            return jump();
+        }
+        if (cond == Signed) {
+            sub32(op1, op2, dest);
+            // Check if dest is negative.
+            m_assembler.slt(cmpTempRegister, dest, MIPSRegisters::zero);
+            return branchNotEqual(cmpTempRegister, MIPSRegisters::zero);
+        }
+        if (cond == Zero) {
+            sub32(op1, op2, dest);
+            return branchEqual(dest, MIPSRegisters::zero);
+        }
+        if (cond == NonZero) {
+            sub32(op1, op2, dest);
+            return branchNotEqual(dest, MIPSRegisters::zero);
+        }
+        ASSERT(0);
+        return Jump();
+    }
+
+    Jump branchNeg32(ResultCondition cond, RegisterID srcDest)
+    {
+        m_assembler.li(dataTempRegister, -1);
+        return branchMul32(cond, dataTempRegister, srcDest);
     }
 
     Jump branchOr32(ResultCondition cond, RegisterID src, RegisterID dest)
@@ -1578,7 +1925,8 @@ public:
 
     Call call(RegisterID target)
     {
-        m_assembler.jalr(target);
+        move(target, MIPSRegisters::t9);
+        m_assembler.jalr(MIPSRegisters::t9);
         m_assembler.nop();
         return Call(m_assembler.label(), Call::None);
     }
@@ -1822,7 +2170,7 @@ public:
                 lui     immTemp, (address.offset + 0x8000) >> 16
                 addu    addrTemp, addrTemp, immTemp
                 lwc1    dest, (address.offset & 0xffff)(at)
-                lwc1    dest+4, (address.offset & 0xffff + 4)(at)
+                lwc1    dest+1, (address.offset & 0xffff + 4)(at)
             */
             m_assembler.sll(addrTempRegister, address.index, address.scale);
             m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
@@ -2009,6 +2357,19 @@ public:
 #endif
     }
 
+    void moveDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        if (src != dest || m_fixedWidth)
+            m_assembler.movd(dest, src);
+    }
+
+    void swapDouble(FPRegisterID fr1, FPRegisterID fr2)
+    {
+        moveDouble(fr1, fpTempRegister);
+        moveDouble(fr2, fr1);
+        moveDouble(fpTempRegister, fr2);
+    }
+
     void addDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.addd(dest, dest, src);
@@ -2036,6 +2397,11 @@ public:
         m_assembler.subd(dest, dest, src);
     }
 
+    void subDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.subd(dest, op1, op2);
+    }
+
     void subDouble(Address src, FPRegisterID dest)
     {
         loadDouble(src, fpTempRegister);
@@ -2053,9 +2419,30 @@ public:
         m_assembler.muld(dest, dest, fpTempRegister);
     }
 
+    void mulDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.muld(dest, op1, op2);
+    }
+
     void divDouble(FPRegisterID src, FPRegisterID dest)
     {
         m_assembler.divd(dest, dest, src);
+    }
+
+    void divDouble(FPRegisterID op1, FPRegisterID op2, FPRegisterID dest)
+    {
+        m_assembler.divd(dest, op1, op2);
+    }
+
+    void divDouble(Address src, FPRegisterID dest)
+    {
+        loadDouble(src, fpTempRegister);
+        m_assembler.divd(dest, dest, fpTempRegister);
+    }
+
+    void negateDouble(FPRegisterID src, FPRegisterID dest)
+    {
+        m_assembler.negd(dest, src);
     }
 
     void convertInt32ToDouble(RegisterID src, FPRegisterID dest)
@@ -2117,6 +2504,8 @@ public:
 
     Jump branchEqual(RegisterID rs, RegisterID rt)
     {
+        m_assembler.nop();
+        m_assembler.nop();
         m_assembler.appendJump();
         m_assembler.beq(rs, rt, 0);
         m_assembler.nop();
@@ -2126,6 +2515,8 @@ public:
 
     Jump branchNotEqual(RegisterID rs, RegisterID rt)
     {
+        m_assembler.nop();
+        m_assembler.nop();
         m_assembler.appendJump();
         m_assembler.bne(rs, rt, 0);
         m_assembler.nop();
@@ -2192,11 +2583,33 @@ public:
     // If the result is not representable as a 32 bit value, branch.
     // May also branch for some values that are representable in 32 bits
     // (specifically, in this case, INT_MAX 0x7fffffff).
-    Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest)
+    enum BranchTruncateType { BranchIfTruncateFailed, BranchIfTruncateSuccessful };
+    Jump branchTruncateDoubleToInt32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
     {
         m_assembler.truncwd(fpTempRegister, src);
         m_assembler.mfc1(dest, fpTempRegister);
-        return branch32(Equal, dest, TrustedImm32(0x7fffffff));
+        return branch32(branchType == BranchIfTruncateFailed ? Equal : NotEqual, dest, TrustedImm32(0x7fffffff));
+    }
+
+    Jump branchTruncateDoubleToUint32(FPRegisterID src, RegisterID dest, BranchTruncateType branchType = BranchIfTruncateFailed)
+    {
+        m_assembler.truncwd(fpTempRegister, src);
+        m_assembler.mfc1(dest, fpTempRegister);
+        return branch32(branchType == BranchIfTruncateFailed ? Equal : NotEqual, dest, TrustedImm32(0));
+    }
+
+    // Result is undefined if the value is outside of the integer range.
+    void truncateDoubleToInt32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.truncwd(fpTempRegister, src);
+        m_assembler.mfc1(dest, fpTempRegister);
+    }
+
+    // Result is undefined if src > 2^31
+    void truncateDoubleToUint32(FPRegisterID src, RegisterID dest)
+    {
+        m_assembler.truncwd(fpTempRegister, src);
+        m_assembler.mfc1(dest, fpTempRegister);
     }
 
     // Convert 'src' to an integer, and places the resulting 'dest'.
@@ -2218,26 +2631,41 @@ public:
 
     Jump branchDoubleNonZero(FPRegisterID reg, FPRegisterID scratch)
     {
-#if WTF_MIPS_ISA_REV(2) && WTF_MIPS_FP64
-        m_assembler.mtc1(MIPSRegisters::zero, scratch);
-        m_assembler.mthc1(MIPSRegisters::zero, scratch);
-#else
-        m_assembler.mtc1(MIPSRegisters::zero, scratch);
-        m_assembler.mtc1(MIPSRegisters::zero, FPRegisterID(scratch + 1));
-#endif
+        m_assembler.vmov(scratch, MIPSRegisters::zero, MIPSRegisters::zero);
         return branchDouble(DoubleNotEqual, reg, scratch);
     }
 
     Jump branchDoubleZeroOrNaN(FPRegisterID reg, FPRegisterID scratch)
     {
-#if WTF_MIPS_ISA_REV(2) && WTF_MIPS_FP64
-        m_assembler.mtc1(MIPSRegisters::zero, scratch);
-        m_assembler.mthc1(MIPSRegisters::zero, scratch);
-#else
-        m_assembler.mtc1(MIPSRegisters::zero, scratch);
-        m_assembler.mtc1(MIPSRegisters::zero, FPRegisterID(scratch + 1));
-#endif
+        m_assembler.vmov(scratch, MIPSRegisters::zero, MIPSRegisters::zero);
         return branchDouble(DoubleEqualOrUnordered, reg, scratch);
+    }
+
+    // Invert a relational condition, e.g. == becomes !=, < becomes >=, etc.
+    static RelationalCondition invert(RelationalCondition cond)
+    {
+        RelationalCondition r;
+        if (cond == Equal)
+            r = NotEqual;
+        else if (cond == NotEqual)
+            r = Equal;
+        else if (cond == Above)
+            r = BelowOrEqual;
+        else if (cond == AboveOrEqual)
+            r = Below;
+        else if (cond == Below)
+            r = AboveOrEqual;
+        else if (cond == BelowOrEqual)
+            r = Above;
+        else if (cond == GreaterThan)
+            r = LessThanOrEqual;
+        else if (cond == GreaterThanOrEqual)
+            r = LessThan;
+        else if (cond == LessThan)
+            r = GreaterThanOrEqual;
+        else if (cond == LessThanOrEqual)
+            r = GreaterThan;
+        return r;
     }
 
     void nop()
@@ -2252,12 +2680,12 @@ public:
 
     static void replaceWithJump(CodeLocationLabel instructionStart, CodeLocationLabel destination)
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        MIPSAssembler::replaceWithJump(instructionStart.dataLocation(), destination.dataLocation());
     }
     
     static ptrdiff_t maxJumpReplacementSize()
     {
-        RELEASE_ASSERT_NOT_REACHED();
+        MIPSAssembler::maxJumpReplacementSize();
         return 0;
     }
 

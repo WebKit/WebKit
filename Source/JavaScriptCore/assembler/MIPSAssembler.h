@@ -152,6 +152,8 @@ public:
     typedef SegmentedVector<AssemblerLabel, 64> Jumps;
 
     MIPSAssembler()
+        : m_indexOfLastWatchpoint(INT_MIN)
+        , m_indexOfTailOfLastWatchpoint(INT_MIN)
     {
     }
 
@@ -325,7 +327,7 @@ public:
         emitInst(0x00000000 | (rd << OP_SH_RD) | (rt << OP_SH_RT) | ((shamt & 0x1f) << OP_SH_SHAMT));
     }
 
-    void sllv(RegisterID rd, RegisterID rt, int rs)
+    void sllv(RegisterID rd, RegisterID rt, RegisterID rs)
     {
         emitInst(0x00000004 | (rd << OP_SH_RD) | (rt << OP_SH_RT) | (rs << OP_SH_RS));
     }
@@ -527,6 +529,16 @@ public:
         emitInst(0x46200004 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
     }
 
+    void movd(FPRegisterID fd, FPRegisterID fs)
+    {
+        emitInst(0x46200006 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
+    }
+
+    void negd(FPRegisterID fd, FPRegisterID fs)
+    {
+        emitInst(0x46200007 | (fd << OP_SH_FD) | (fs << OP_SH_FS));
+    }
+
     void truncwd(FPRegisterID fd, FPRegisterID fs)
     {
         emitInst(0x4620000d | (fd << OP_SH_FD) | (fs << OP_SH_FS));
@@ -619,9 +631,24 @@ public:
         return m_buffer.label();
     }
 
+    AssemblerLabel labelForWatchpoint()
+    {
+        AssemblerLabel result = m_buffer.label();
+        if (static_cast<int>(result.m_offset) != m_indexOfLastWatchpoint)
+            result = label();
+        m_indexOfLastWatchpoint = result.m_offset;
+        m_indexOfTailOfLastWatchpoint = result.m_offset + maxJumpReplacementSize();
+        return result;
+    }
+
     AssemblerLabel label()
     {
-        return m_buffer.label();
+        AssemblerLabel result = m_buffer.label();
+        while (UNLIKELY(static_cast<int>(result.m_offset) < m_indexOfTailOfLastWatchpoint)) {
+            nop();
+            result = m_buffer.label();
+        }
+        return result;
     }
 
     AssemblerLabel align(int alignment)
@@ -664,14 +691,24 @@ public:
     // Assembly helpers for moving data between fp and registers.
     void vmov(RegisterID rd1, RegisterID rd2, FPRegisterID rn)
     {
+#if WTF_MIPS_ISA_REV(2) && WTF_MIPS_FP64
+        mfc1(rd1, rn);
+        mfhc1(rd2, rn);
+#else
         mfc1(rd1, rn);
         mfc1(rd2, FPRegisterID(rn + 1));
+#endif
     }
 
     void vmov(FPRegisterID rd, RegisterID rn1, RegisterID rn2)
     {
+#if WTF_MIPS_ISA_REV(2) && WTF_MIPS_FP64
+        mtc1(rn1, rd);
+        mthc1(rn2, rd);
+#else
         mtc1(rn1, rd);
         mtc1(rn2, FPRegisterID(rd + 1));
+#endif
     }
 
     static unsigned getCallReturnOffset(AssemblerLabel call)
@@ -687,6 +724,35 @@ public:
     // code has been finalized it is (platform support permitting) within a non-
     // writable region of memory; to modify the code in an execute-only execuable
     // pool the 'repatch' and 'relink' methods should be used.
+
+    static size_t linkDirectJump(void* code, void* to)
+    {
+        MIPSWord* insn = reinterpret_cast<MIPSWord*>(reinterpret_cast<intptr_t>(code));
+        size_t ops = 0;
+        int32_t slotAddr = reinterpret_cast<int>(insn) + 4;
+        int32_t toAddr = reinterpret_cast<int>(to);
+
+        if ((slotAddr & 0xf0000000) != (toAddr & 0xf0000000)) {
+            // lui
+            *insn = 0x3c000000 | (MIPSRegisters::t9 << OP_SH_RT) | ((toAddr >> 16) & 0xffff);
+            ++insn;
+            // ori
+            *insn = 0x34000000 | (MIPSRegisters::t9 << OP_SH_RT) | (MIPSRegisters::t9 << OP_SH_RS) | (toAddr & 0xffff);
+            ++insn;
+            // jr
+            *insn = 0x00000008 | (MIPSRegisters::t9 << OP_SH_RS);
+            ++insn;
+            ops = 4 * sizeof(MIPSWord);
+        } else {
+            // j
+            *insn = 0x08000000 | ((toAddr & 0x0fffffff) >> 2);
+            ++insn;
+            ops = 2 * sizeof(MIPSWord);
+        }
+        // nop
+        *insn = 0x00000000;
+        return ops;
+    }
 
     void linkJump(AssemblerLabel from, AssemblerLabel to)
     {
@@ -825,29 +891,36 @@ public:
 #endif
     }
 
+    static ptrdiff_t maxJumpReplacementSize()
+    {
+        return sizeof(MIPSWord) * 4;
+    }
+
     static void revertJumpToMove(void* instructionStart, RegisterID rt, int imm)
     {
-        MIPSWord* insn = static_cast<MIPSWord*>(instructionStart) + 1;
-        ASSERT((*insn & 0xfc000000) == 0x34000000);
-        *insn = (*insn & 0xfc1f0000) | (imm & 0xffff);
-        cacheFlush(insn, sizeof(MIPSWord));
+        MIPSWord* insn = static_cast<MIPSWord*>(instructionStart);
+        size_t codeSize = 2 * sizeof(MIPSWord);
+
+        // lui
+        *insn = 0x3c000000 | (rt << OP_SH_RT) | ((imm >> 16) & 0xffff);
+        ++insn;
+        // ori
+        *insn = 0x34000000 | (rt << OP_SH_RS) | (rt << OP_SH_RT) | (imm & 0xffff);
+        ++insn;
+        // if jr $t9
+        if (*insn == 0x03200008) {
+            *insn = 0x00000000;
+            codeSize += sizeof(MIPSWord);
+        }
+        cacheFlush(insn, codeSize);
     }
 
     static void replaceWithJump(void* instructionStart, void* to)
     {
-        MIPSWord* instruction = reinterpret_cast<MIPSWord*>(instructionStart);
-        intptr_t jumpTo = reinterpret_cast<intptr_t>(to);
-
-        // lui
-        instruction[0] = 0x3c000000 | (MIPSRegisters::t9 << OP_SH_RT) | ((jumpTo >> 16) & 0xffff);
-        // ori
-        instruction[1] = 0x34000000 | (MIPSRegisters::t9 << OP_SH_RT) | (MIPSRegisters::t9 << OP_SH_RS) | (jumpTo & 0xffff);
-        // jr
-        instruction[2] = 0x00000008 | (MIPSRegisters::t9 << OP_SH_RS);
-        // nop
-        instruction[3] = 0x0;
-
-        cacheFlush(instruction, sizeof(MIPSWord) * 4);
+        ASSERT(!(bitwise_cast<uintptr_t>(instructionStart) & 3));
+        ASSERT(!(bitwise_cast<uintptr_t>(to) & 3));
+        size_t ops = linkDirectJump(instructionStart, to);
+        cacheFlush(instructionStart, ops);
     }
 
     static void replaceWithLoad(void* instructionStart)
@@ -1023,6 +1096,8 @@ private:
 
     AssemblerBuffer m_buffer;
     Jumps m_jumps;
+    int m_indexOfLastWatchpoint;
+    int m_indexOfTailOfLastWatchpoint;
 };
 
 } // namespace JSC

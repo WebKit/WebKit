@@ -1,3 +1,14 @@
+2013-02-18  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        MIPS DFG implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=101328
+
+        Reviewed by Oliver Hunt.
+
+        DFG implementation for MIPS.
+
+        * wtf/Platform.h:
+
 2013-02-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Stop placing std::isfinite and std::signbit inside the global scope

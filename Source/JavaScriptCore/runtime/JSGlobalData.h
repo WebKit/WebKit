@@ -141,14 +141,18 @@ namespace JSC {
             return result;
         }
 
-        static size_t allocationSize(size_t bufferSize) { return sizeof(size_t) + bufferSize; }
+        static size_t allocationSize(size_t bufferSize) { return sizeof(ScratchBuffer) + bufferSize; }
         void setActiveLength(size_t activeLength) { m_activeLength = activeLength; }
         size_t activeLength() const { return m_activeLength; };
         size_t* activeLengthPtr() { return &m_activeLength; };
         void* dataBuffer() { return m_buffer; }
 
         size_t m_activeLength;
+#if CPU(MIPS) && (defined WTF_MIPS_ARCH_REV && WTF_MIPS_ARCH_REV == 2)
+        void* m_buffer[0] __attribute__((aligned(8)));
+#else
         void* m_buffer[0];
+#endif
     };
 #if COMPILER(MSVC)
 #pragma warning(pop)
