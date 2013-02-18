@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        window.a = document.createElement('a');
+        window.b = document.createElement('b');
+
+        shouldBe('a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_DISCONNECTED', 'Node.DOCUMENT_POSITION_DISCONNECTED');
+        shouldBe('b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_DISCONNECTED', 'Node.DOCUMENT_POSITION_DISCONNECTED');
+        shouldBe('a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC', 'Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC');
+        shouldBe('b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC', 'Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC');
+        shouldNotBe('a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING', 'b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_PRECEDING');
+        shouldNotBe('a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING', 'b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_FOLLOWING');
+    </script>
+    <script src="../js/resources/js-test-post.js"></script>
+</head>
+<body>
+    <p>Comparing the positions of two disconnected nodes should result in DOCUMENT_POSITION_DISCONNECTED.</p>
+</body>
+</html>

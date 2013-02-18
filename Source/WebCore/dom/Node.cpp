@@ -1785,10 +1785,17 @@ unsigned short Node::compareDocumentPosition(Node* otherNode)
         chain1.append(current);
     for (current = start2; current; current = current->parentNode())
         chain2.append(current);
-   
-    // Walk the two chains backwards and look for the first difference.
+
     unsigned index1 = chain1.size();
     unsigned index2 = chain2.size();
+
+    // If the two elements don't have a common root, they're not in the same tree.
+    if (chain1[index1 - 1] != chain2[index2 - 1]) {
+        unsigned short direction = (start1 > start2) ? DOCUMENT_POSITION_PRECEDING : DOCUMENT_POSITION_FOLLOWING;
+        return DOCUMENT_POSITION_DISCONNECTED | DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC | direction;
+    }
+
+    // Walk the two chains backwards and look for the first difference.
     for (unsigned i = min(index1, index2); i; --i) {
         Node* child1 = chain1[--index1];
         Node* child2 = chain2[--index2];

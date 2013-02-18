@@ -1,0 +1,10 @@
+PASS a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_DISCONNECTED is Node.DOCUMENT_POSITION_DISCONNECTED
+PASS b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_DISCONNECTED is Node.DOCUMENT_POSITION_DISCONNECTED
+PASS a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC is Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC
+PASS b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC is Node.DOCUMENT_POSITION_IMPLEMENTATION_SPECIFIC
+PASS a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_PRECEDING is not b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_PRECEDING
+PASS a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING is not b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_FOLLOWING
+PASS successfullyParsed is true
+
+TEST COMPLETE
+Comparing the positions of two disconnected nodes should result in DOCUMENT_POSITION_DISCONNECTED.
