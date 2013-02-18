@@ -1572,7 +1572,8 @@ crbug.com/10361 [ Win ] http/tests/misc/single-character-pi-stylesheet.xhtml [ F
 # Windows is missing the green box. Started to pass in roll to WebKit r50313
 crbug.com/8729 [ Win ] http/tests/multipart/invalid-image-data.html [ Failure ]
 
-webkit.org/b/110076 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
+webkit.org/b/110138 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
+webkit.org/b/110138 platform/chromium/virtual/softwarecompositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
 
 webkit.org/b/110079 [ Win Debug ] storage/websql/sql-data-types.html [ Crash ]
 
@@ -4414,3 +4415,5 @@ webkit.org/b/109416 [ Mac ] inspector/editor/text-editor-home-button.html [ Fail
 webkit.org/b/109963 [ Debug ] inspector/profiler/heap-snapshot-get-profile-crash.html [ Pass Crash ]
 
 webkit.org/b/109581 [ Win ] inspector/debugger/debugger-script-preprocessor.html [ Pass Crash ]
+
+crbug.com/176843 fast/filesystem/op-restricted-names.html [ Failure ]
