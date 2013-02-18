@@ -31,9 +31,9 @@ enum HexConversionMode {
 
 namespace Internal {
 
-const char lowerHexDigits[17] = "0123456789abcdef";
-const char upperHexDigits[17] = "0123456789ABCDEF";
-inline const char* hexDigitsForMode(HexConversionMode mode)
+const LChar lowerHexDigits[17] = "0123456789abcdef";
+const LChar upperHexDigits[17] = "0123456789ABCDEF";
+inline const LChar* hexDigitsForMode(HexConversionMode mode)
 {
     return mode == Lowercase ? lowerHexDigits : upperHexDigits;
 }
@@ -43,7 +43,7 @@ inline const char* hexDigitsForMode(HexConversionMode mode)
 template<typename T>
 inline void appendByteAsHex(unsigned char byte, T& destination, HexConversionMode mode = Uppercase)
 {
-    const char* hexDigits = Internal::hexDigitsForMode(mode);
+    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
     destination.append(hexDigits[byte >> 4]);
     destination.append(hexDigits[byte & 0xF]);
 }
@@ -51,7 +51,7 @@ inline void appendByteAsHex(unsigned char byte, T& destination, HexConversionMod
 template<typename T>
 inline void placeByteAsHexCompressIfPossible(unsigned char byte, T& destination, unsigned& index, HexConversionMode mode = Uppercase)
 {
-    const char* hexDigits = Internal::hexDigitsForMode(mode);
+    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
     if (byte >= 0x10)
         destination[index++] = hexDigits[byte >> 4];
     destination[index++] = hexDigits[byte & 0xF];
@@ -60,7 +60,7 @@ inline void placeByteAsHexCompressIfPossible(unsigned char byte, T& destination,
 template<typename T>
 inline void placeByteAsHex(unsigned char byte, T& destination, HexConversionMode mode = Uppercase)
 {
-    const char* hexDigits = Internal::hexDigitsForMode(mode);
+    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
     *destination++ = hexDigits[byte >> 4];
     *destination++ = hexDigits[byte & 0xF];
 }
@@ -68,8 +68,8 @@ inline void placeByteAsHex(unsigned char byte, T& destination, HexConversionMode
 template<typename T>
 inline void appendUnsignedAsHex(unsigned number, T& destination, HexConversionMode mode = Uppercase)
 {
-    const char* hexDigits = Internal::hexDigitsForMode(mode);
-    Vector<UChar, 8> result;
+    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    Vector<LChar, 8> result;
     do {
         result.prepend(hexDigits[number % 16]);
         number >>= 4;
@@ -84,8 +84,8 @@ inline void appendUnsignedAsHexFixedSize(unsigned number, T& destination, unsign
 {
     ASSERT(desiredDigits);
 
-    const char* hexDigits = Internal::hexDigitsForMode(mode);
-    Vector<UChar, 8> result;
+    const LChar* hexDigits = Internal::hexDigitsForMode(mode);
+    Vector<LChar, 8> result;
     do {
         result.prepend(hexDigits[number % 16]);
         number >>= 4;

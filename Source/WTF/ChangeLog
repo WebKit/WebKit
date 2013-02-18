@@ -1,3 +1,20 @@
+2013-02-18  Alexey Proskuryakov  <ap@apple.com>
+
+        Make HexNumber functions return 8-bit strings
+        https://bugs.webkit.org/show_bug.cgi?id=110152
+
+        Reviewed by Michael Saboff.
+
+        * wtf/HexNumber.h:
+        (Internal):
+        (WTF::Internal::hexDigitsForMode):
+        (WTF::appendByteAsHex):
+        (WTF::placeByteAsHexCompressIfPossible):
+        (WTF::placeByteAsHex):
+        (WTF::appendUnsignedAsHex):
+        (WTF::appendUnsignedAsHexFixedSize):
+        Use LChar everywhere.
+
 2013-02-18  Benjamin Poulain  <bpoulain@apple.com>
 
         Remove Vector::dataSlot(), it has no implementation
