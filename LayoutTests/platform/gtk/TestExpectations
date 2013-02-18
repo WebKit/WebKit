@@ -1496,6 +1496,10 @@ webkit.org/b/83869 media/video-no-audio.html [ Failure ]
 webkit.org/b/83869 media/video-volume-slider.html [ Failure ]
 webkit.org/b/83869 media/video-zoom-controls.html [ Failure ]
 
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ ImageOnlyFailure ]
+
+webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

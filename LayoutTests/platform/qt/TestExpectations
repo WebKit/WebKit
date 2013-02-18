@@ -2633,3 +2633,7 @@ webkit.org/b/109775 media/controls-without-preload.html [ Failure ]
 webkit.org/b/109775 media/video-controls-rendering.html [ Failure ]
 webkit.org/b/109775 media/video-display-toggle.html [ Failure ]
 webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]
+
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ ImageOnlyFailure ]
+
+webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
