@@ -603,7 +603,6 @@ void TextureMapperLayer::setScrollPositionDeltaIfNeeded(const FloatSize& delta)
     // in the web process. We add this delta to the position of fixed layers, to make
     // sure that they do not move while scrolling. We need to reset this delta to fixed layers
     // that have an ancestor which is also a fixed layer, because the delta will be added to the ancestor.
-    ASSERT(m_fixedToViewport);
     if (isAncestorFixedToViewport())
         m_scrollPositionDelta = FloatSize();
     else
