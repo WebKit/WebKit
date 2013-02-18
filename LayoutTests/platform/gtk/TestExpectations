@@ -349,7 +349,6 @@ webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed.ht
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html [ Skip ]
 webkit.org/b/71849 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html [ Skip ]
 webkit.org/b/71849 inspector/profiler/webgl [ Skip ]
-webkit.org/b/71849 inspector-protocol/layer-tree.html [ Failure ]
 webkit.org/b/71849 transforms/3d [ Skip ]
 webkit.org/b/71849 webgl [ Skip ]
 
@@ -771,11 +770,6 @@ Bug(GTK) media/progress-events-generated-correctly.html [ Failure Timeout ]
 
 webkit.org/b/102257 fast/dom/Window/open-window-min-size.html [ Timeout ]
 
-webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Timeout ]
-
-# Misses setMediaType() implementation
-Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
-
 # GTK still has the CC toggle button, not the menu of tracks.
 webkit.org/b/101670 media/video-controls-captions-trackmenu.html [ Skip ]
 webkit.org/b/101670 media/video-controls-captions-trackmenu-sorted.html [ Skip ]
@@ -787,9 +781,6 @@ webkit.org/b/107194 storage/indexeddb/database-quota.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/pending-activity-workers.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Timeout ]
 webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Timeout ]
-
-webkit.org/b/107534 fast/js/regress/object-closure-call.html [ Timeout ]
-webkit.org/b/107534 fast/js/regress/cell-argument.html [ Timeout ]
 
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Timeout Failure ]
 
@@ -863,11 +854,7 @@ Bug(GTK) fast/loader/onload-policy-ignore-for-frame.html [ Failure ]
 Bug(GTK) fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
 Bug(GTK) fast/loader/reload-policy-delegate.html [ Failure ]
 Bug(GTK) fast/loader/stop-provisional-loads.html [ Failure ]
-Bug(GTK) fast/loader/subframe-removes-itself.html [ Failure ]
 Bug(GTK) http/tests/security/feed-urls-from-remote.html [ Timeout ]
-
-# This policy delegate is implemented, but it needs the DOM node path in the output.
-Bug(GTK) fast/encoding/mailto-always-utf-8.html [ Failure ]
 
 # Looks like a bug in the LayoutTestController global history support due to missing API.
 Bug(GTK) fast/history/window-open.html [ Failure ]
@@ -904,7 +891,6 @@ Bug(GTK) http/tests/appcache/origins-with-appcache.html [ Failure ]
 webkit.org/b/57127 http/tests/appcache/origin-usage.html [ Failure ]
 
 Bug(GTK) http/tests/loading/bad-scheme-subframe.html [ Failure ]
-Bug(GTK) http/tests/loading/bad-server-subframe.html [ Failure ]
 
 # Needed to cover the fix for <rdar://problem/6727495>
 Bug(rdar6727495) http/tests/loading/text-content-type-with-binary-extension.html [ Failure ]
@@ -934,9 +920,6 @@ Bug(GTK) http/tests/xmlhttprequest/cross-origin-no-authorization.html [ Failure 
 
 Bug(GTK) media/video-size-intrinsic-scale.html [ Failure ]
 
-# This test is for clients that choose to make the missing plugin indicator a button
-Bug(GTK) plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
-
 # Need to implement getFormValue().
 Bug(GTK) plugins/form-value.html [ Failure ]
 
@@ -963,9 +946,6 @@ Bug(GTK) fast/history/back-forward-reset-after-error-handling.html [ Failure ]
 Bug(GTK) editing/selection/mixed-editability-10.html [ Failure ]
 Bug(GTK) editing/selection/5825350-1.html [ Failure ]
 Bug(GTK) editing/selection/5825350-2.html [ Failure ]
-
-# Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
-Bug(GTK) http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
 
 # Needs platform specific API implemented in DRT, maybe not relevant for non-Mac and non-Windows ports
 Bug(GTK) fast/loader/api-test-new-window-data-load-base-url.html [ Failure ]
@@ -1008,7 +988,6 @@ webkit.org/b/85709 inspector/extensions/extensions-audits-content-script.html [ 
 
 # These inspector tests fell out of the radar after the transition to NRWT
 # Some time out and some are flaky or present different baselines.
-Bug(GTK) inspector/debugger/linkifier.html [ Failure ]
 Bug(GTK) inspector/debugger/scripts-panel.html [ Failure Pass ]
 Bug(GTK) inspector/elements/edit-dom-actions.html [ Failure Timeout Pass ]
 Bug(GTK) inspector/timeline/timeline-paint.html [ Failure ]
@@ -1114,12 +1093,6 @@ webkit.org/b/52094 editing/pasteboard/files-during-page-drags.html [ Failure ]
 # is enabled or assume platform-dependent sizing.
 Bug(GTK) http/tests/security/dataTransfer-set-data-file-url.html [ Failure ]
 Bug(GTK) fast/events/ondragenter.html [ Failure ]
-
-# Remaining Sputnik failures
-webkit.org/b/43568 sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
-Bug(GTK) [ Release ] sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Failure ]
-Bug(GTK) [ Release ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
-Bug(GTK) [ Release ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
 
 # The following Sputnik tests fail on the 32bit release bot
 Bug(GTK) sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.3/S15.9.3.1_A5_T1.html [ Failure ]
@@ -1258,8 +1231,6 @@ webkit.org/b/84772 ietestcenter/css3/multicolumn/column-width-applies-to-010.htm
 webkit.org/b/84773 ietestcenter/css3/multicolumn/column-width-applies-to-012.htm [ ImageOnlyFailure ]
 webkit.org/b/84777 ietestcenter/css3/multicolumn/column-width-applies-to-015.htm [ ImageOnlyFailure ]
 
-webkit.org/b/87951 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
-
 # Requires ENABLE(MEDIA_CAPTURE)
 webkit.org/b/85958 fast/forms/file/file-input-capture.html [ Failure ]
 
@@ -1354,9 +1325,6 @@ webkit.org/b/91489 fast/dom/shadow/shadowdom-for-fieldset-only-shadow.html [ Ima
 
 webkit.org/b/49142 fast/regions/style-scoped-in-flow-override-region-styling-multiple-regions.html [ ImageOnlyFailure ]
 
-# Missing support in DRT for Geolocation's Coordinate attributes.
-Bug(GTK) fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
-
 webkit.org/b/98587 fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ ImageOnlyFailure ]
 
 webkit.org/b/98612 [ Release ] fast/dom/gc-dom-tree-lifetime.html [ Failure ]
@@ -1397,7 +1365,6 @@ webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ F
 # Remove from list after enabling CANVAS_PATH
 webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Failure ]
 webkit.org/b/108508 fast/canvas/canvas-path-constructors.html [ Failure ]
-webkit.org/b/108508 fast/canvas/canvas-currentPath-crash.html [ Failure ]
 
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
 
@@ -1445,13 +1412,6 @@ webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure 
 webkit.org/b/108169 fast/dom/shadow/touch-event.html [ Failure ]
 
 webkit.org/b/108363 fullscreen/full-screen-iframe-legacy.html [ Failure ]
-webkit.org/b/108363 fullscreen/video-specified-size.html [ Timeout ]
-webkit.org/b/108363 fullscreen/full-screen-no-style-sharing.html [ Timeout ]
-webkit.org/b/108363 fullscreen/full-screen-stacking-context.html [ Timeout ]
-webkit.org/b/108363 fullscreen/video-controls-drag.html [ Timeout ]
-webkit.org/b/108363 fullscreen/full-screen-crash-offsetLeft.html [ Timeout ]
-webkit.org/b/108363 fullscreen/video-controls-override.html [ Timeout ]
-webkit.org/b/108363 fast/regions/full-screen-video-from-region.html [ Timeout ]
 
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]
@@ -1467,11 +1427,6 @@ webkit.org/b/108370 editing/spelling/spelling-with-underscore-selection.html [ S
 webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
 
 webkit.org/b/107118 fast/canvas/canvas-quadratic-same-endpoint.html [ Failure ]
-
-# Needs further investigating.
-webkit.org/b/107962 webkit.org/b/108380 http/tests/cache/iframe-304-crash.html [ Failure ]
-
-webkit.org/b/108747 inspector-protocol/page/javascriptDialogEvents.html [ Failure ]
 
 webkit.org/b/91665 fast/dynamic/absolute-positioned-to-static-positioned.html [ Failure ]
 webkit.org/b/91665 fast/dynamic/floating-to-non-floating.html [ Failure ]

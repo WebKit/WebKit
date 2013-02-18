@@ -49,6 +49,58 @@
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
 
+# This policy delegate is implemented, but it needs the DOM node path in the output.
+Bug(GTK) fast/encoding/mailto-always-utf-8.html [ Failure ]
+
+Bug(GTK) fast/loader/subframe-removes-itself.html [ Failure ]
+
+webkit.org/b/108508 fast/canvas/canvas-currentPath-crash.html [ Failure ]
+
+# Missing support in DRT for Geolocation's Coordinate attributes.
+Bug(GTK) fast/dom/Geolocation/coordinates-interface-attributes.html [ Failure ]
+
+webkit.org/b/87951 fast/dom/Window/mozilla-focus-blur.html [ Failure ]
+
+webkit.org/b/104648 fast/images/webgl-teximage2d.html [ Timeout ]
+
+webkit.org/b/107534 fast/js/regress/object-closure-call.html [ Timeout ]
+webkit.org/b/107534 fast/js/regress/cell-argument.html [ Timeout ]
+
+# Misses setMediaType() implementation
+Bug(GTK) fast/media/print-restores-previous-mediatype.html [ Timeout ]
+
+webkit.org/b/108363 fast/regions/full-screen-video-from-region.html [ Timeout ]
+
+webkit.org/b/108363 fullscreen/full-screen-crash-offsetLeft.html [ Timeout ]
+webkit.org/b/108363 fullscreen/full-screen-no-style-sharing.html [ Timeout ]
+webkit.org/b/108363 fullscreen/full-screen-stacking-context.html [ Timeout ]
+webkit.org/b/108363 fullscreen/video-controls-drag.html [ Timeout ]
+webkit.org/b/108363 fullscreen/video-controls-override.html [ Timeout ]
+webkit.org/b/108363 fullscreen/video-specified-size.html [ Timeout ]
+
+# Needs further investigating.
+webkit.org/b/107962 webkit.org/b/108380 http/tests/cache/iframe-304-crash.html [ Failure ]
+
+Bug(GTK) http/tests/loading/bad-server-subframe.html [ Failure ]
+
+# Requires willSendRequestReturnsNullOnRedirect + willSendRequest + didFinishLoading
+Bug(GTK) http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failure ]
+
+Bug(GTK) inspector/debugger/linkifier.html [ Failure ]
+
+webkit.org/b/71849 inspector-protocol/layer-tree.html [ Failure ]
+
+webkit.org/b/108747 inspector-protocol/page/javascriptDialogEvents.html [ Failure ]
+
+# This test is for clients that choose to make the missing plugin indicator a button
+Bug(GTK) plugins/clicking-missing-plugin-fires-delegate.html [ Failure ]
+
+# Remaining Sputnik failures
+webkit.org/b/43568 sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Failure ]
+Bug(GTK) [ Release ] sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Failure ]
+Bug(GTK) [ Release ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Failure ]
+Bug(GTK) [ Release ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
