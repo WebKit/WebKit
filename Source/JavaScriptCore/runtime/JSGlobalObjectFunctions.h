@@ -29,34 +29,34 @@
 
 namespace JSC {
 
-    class ArgList;
-    class ExecState;
-    class JSObject;
+class ArgList;
+class ExecState;
+class JSObject;
 
-    // FIXME: These functions should really be in JSGlobalObject.cpp, but putting them there
-    // is a 0.5% reduction.
+// FIXME: These functions should really be in JSGlobalObject.cpp, but putting them there
+// is a 0.5% reduction.
 
-    EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState*);
-    EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncParseFloat(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncDecodeURIComponent(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncEncodeURI(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncEncodeURIComponent(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncEscape(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncThrowTypeError(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncProtoGetter(ExecState*);
+EncodedJSValue JSC_HOST_CALL globalFuncProtoSetter(ExecState*);
 
-    static const double mantissaOverflowLowerBound = 9007199254740992.0;
-    double parseIntOverflow(const LChar*, int length, int radix);
-    ALWAYS_INLINE double parseIntOverflow(const char* s, int length, int radix) { return parseIntOverflow(reinterpret_cast<const LChar*>(s), length, radix); }
-    double parseIntOverflow(const UChar*, int length, int radix);
-    bool isStrWhiteSpace(UChar);
-    double jsToNumber(const WTF::String&);
+static const double mantissaOverflowLowerBound = 9007199254740992.0;
+double parseIntOverflow(const LChar*, int length, int radix);
+ALWAYS_INLINE double parseIntOverflow(const char* s, int length, int radix) { return parseIntOverflow(reinterpret_cast<const LChar*>(s), length, radix); }
+double parseIntOverflow(const UChar*, int length, int radix);
+bool isStrWhiteSpace(UChar);
+double jsToNumber(const WTF::String&);
 
 } // namespace JSC
 
