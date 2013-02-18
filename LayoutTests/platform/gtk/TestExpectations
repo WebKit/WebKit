@@ -1039,7 +1039,7 @@ webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html [ Failu
 
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html [ Failure ]
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html [ Failure ]
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html [ Failure ]
+webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html [ Timeout ]
 
 webkit.org/b/37613 webkit.org/b/20011 printing [ Skip ]
 webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
