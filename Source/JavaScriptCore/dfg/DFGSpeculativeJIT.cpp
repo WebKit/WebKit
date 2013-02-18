@@ -944,19 +944,6 @@ bool SpeculativeJIT::isKnownInteger(Node* node)
     return info.isJSInteger();
 }
 
-bool SpeculativeJIT::isKnownNumeric(Node* node)
-{
-    if (isInt32Constant(node) || isNumberConstant(node))
-        return true;
-
-    if (node->hasNumberResult())
-        return true;
-    
-    GenerationInfo& info = m_generationInfo[node->virtualRegister()];
-
-    return info.isJSInteger() || info.isJSDouble();
-}
-
 bool SpeculativeJIT::isKnownCell(Node* node)
 {
     return m_generationInfo[node->virtualRegister()].isJSCell();

@@ -525,7 +525,6 @@ public:
     }
     
     bool isKnownInteger(Node*);
-    bool isKnownNumeric(Node*);
     bool isKnownCell(Node*);
     
     bool isKnownNotInteger(Node*);
