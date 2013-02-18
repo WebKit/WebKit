@@ -1177,7 +1177,6 @@ webkit.org/b/100815 http/tests/security/isolatedWorld/bypass-main-world-csp-for-
 Bug(EFL) http/tests/security/isolatedWorld/didClearWindowObject.html
 
 # EFL has accelerated compositing disabled
-webkit.org/b/79766 compositing/geometry/composited-in-columns.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/layer-due-to-layer-children-deep-switch.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/layer-due-to-layer-children-switch.html [ Failure ]
 webkit.org/b/79766 compositing/geometry/limit-layer-bounds-clipping-ancestor.html [ Failure ]
@@ -1192,8 +1191,6 @@ webkit.org/b/79766 compositing/geometry/preserve-3d-switching.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-size-from-zero.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-size-to-zero.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/iframe-src-change.html [ Failure ]
-webkit.org/b/79766 compositing/iframes/invisible-nested-iframe-show.html [ Failure ]
-webkit.org/b/79766 compositing/iframes/page-cache-layer-tree.html [ Failure ]
 webkit.org/b/79766 compositing/iframes/resizer.html [ Missing ]
 webkit.org/b/79766 compositing/layer-creation/scroll-partial-update.html [ Failure ]
 webkit.org/b/79766 compositing/layer-creation/spanOverlapsCanvas.html [ Failure ]
@@ -1204,7 +1201,6 @@ webkit.org/b/79766 compositing/overflow/overflow-auto-with-touch-toggle.html [ F
 webkit.org/b/79766 compositing/overflow/overflow-clip-with-accelerated-scrolling-ancestor.html [ Skip ]
 webkit.org/b/79766 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/remove-overflow-crash2.html [ Skip ]
-webkit.org/b/79766 compositing/overflow/scrolling-content-clip-to-viewport.html [ Failure ]
 webkit.org/b/79766 compositing/overflow/textarea-scroll-touch.html [ Failure ]
 webkit.org/b/79766 compositing/plugins/no-backing-store.html [ Failure ]
 webkit.org/b/79766 compositing/plugins/small-to-large-composited-plugin.html [ Failure ]
@@ -1212,7 +1208,6 @@ webkit.org/b/79766 compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ 
 webkit.org/b/79766 compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ]
 webkit.org/b/79766 compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ]
 webkit.org/b/79766 compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ]
-webkit.org/b/79766 compositing/tiling/huge-layer-img.html [ Failure ]
 webkit.org/b/79766 compositing/tiling/huge-layer-resize.html [ Failure ]
 webkit.org/b/79766 compositing/tiling/huge-layer.html [ Failure ]
 webkit.org/b/79766 compositing/tiling/tile-cache-zoomed.html [ Failure ]
@@ -1748,7 +1743,6 @@ webkit.org/b/104571 http/tests/security/xssAuditor/script-tag-with-source-null-c
 webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failure ]
 
 # Rendering failure, also missing expected results:
-webkit.org/b/105093 compositing/webgl/webgl-repaint.html [ ImageOnlyFailure ]
 webkit.org/b/105093 compositing/webgl/webgl-background-color.html [ Skip ]
 webkit.org/b/105093 compositing/webgl/webgl-no-alpha.html [ Skip ]
 webkit.org/b/105093 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
@@ -1849,8 +1843,6 @@ webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-scaled-ifram
 webkit.org/b/106992 scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ Failure ]
 webkit.org/b/106992 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm [ Failure ]
 webkit.org/b/106992 http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Failure ]
-
-webkit.org/b/107001 compositing/layer-creation/overlap-animation-container.html [ Failure ]
 
 webkit.org/b/107013 http/tests/inspector/resource-tree/resource-tree-document-url.html [ Failure ]
 
