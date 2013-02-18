@@ -262,8 +262,8 @@ MouseEvent* MouseEventDispatchMediator::event() const
 bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
     if (isSyntheticMouseEvent()) {
-        EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->ensureEventPath());
-        return dispatcher->dispatch();
+        EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->ensureEventPath(event()));
+        return dispatcher->dispatchEvent(event());
     }
 
     if (dispatcher->node()->disabled()) // Don't even send DOM events for disabled controls..
@@ -275,9 +275,9 @@ bool MouseEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) cons
     ASSERT(!event()->target() || event()->target() != event()->relatedTarget());
 
     EventTarget* relatedTarget = event()->relatedTarget();
-    EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->ensureEventPath());
+    EventRetargeter::adjustForMouseEvent(dispatcher->node(), *event(),  dispatcher->ensureEventPath(event()));
 
-    dispatcher->dispatch();
+    dispatcher->dispatchEvent(event());
     bool swallowEvent = event()->defaultHandled() || event()->defaultPrevented();
 
     if (event()->type() != eventNames().clickEvent || event()->detail() != 2)

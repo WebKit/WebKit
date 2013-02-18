@@ -30,7 +30,6 @@
 #include "SimulatedClickOptions.h"
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -58,30 +57,33 @@ public:
 
     static void dispatchSimulatedClick(Node*, Event* underlyingEvent, SimulatedClickMouseEventOptions, SimulatedClickVisualOptions);
 
-    bool dispatch();
-    Node* node() const { return m_node.get(); }
-    Event* event() const { return m_event.get(); }
-    EventPath& ensureEventPath();
+    bool dispatchEvent(PassRefPtr<Event>);
+    Node* node() const;
+    EventPath& ensureEventPath(Event*);
 
 private:
-    EventDispatcher(Node*, PassRefPtr<Event>);
+    EventDispatcher(Node*);
     const EventContext* topEventContext();
 
-    EventDispatchContinuation dispatchEventPreProcess(void*& preDispatchEventHandlerResult);
-    EventDispatchContinuation dispatchEventAtCapturing(WindowEventContext&);
-    EventDispatchContinuation dispatchEventAtTarget();
-    EventDispatchContinuation dispatchEventAtBubbling(WindowEventContext&);
-    void dispatchEventPostProcess(void* preDispatchEventHandlerResult);
+    EventDispatchContinuation dispatchEventPreProcess(PassRefPtr<Event>, void*& preDispatchEventHandlerResult);
+    EventDispatchContinuation dispatchEventAtCapturing(PassRefPtr<Event>, WindowEventContext&);
+    EventDispatchContinuation dispatchEventAtTarget(PassRefPtr<Event>);
+    EventDispatchContinuation dispatchEventAtBubbling(PassRefPtr<Event>, WindowEventContext&);
+    void dispatchEventPostProcess(PassRefPtr<Event>, void* preDispatchEventHandlerResult);
 
     EventPath m_eventPath;
     RefPtr<Node> m_node;
-    RefPtr<Event> m_event;
     RefPtr<FrameView> m_view;
     bool m_eventPathInitialized;
 #ifndef NDEBUG
     bool m_eventDispatched;
 #endif
 };
+
+inline Node* EventDispatcher::node() const
+{
+    return m_node.get();
+}
 
 }
 
