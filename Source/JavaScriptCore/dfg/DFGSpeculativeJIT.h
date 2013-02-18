@@ -523,13 +523,12 @@ public:
         }
     }
     
-    bool isKnownInteger(Node*);
-    bool isKnownCell(Node*);
+    bool isKnownInteger(Node* node) { return !(m_state.forNode(node).m_type & ~SpecInt32); }
+    bool isKnownCell(Node* node) { return !(m_state.forNode(node).m_type & ~SpecCell); }
     
-    bool isKnownNotInteger(Node*);
-    bool isKnownNotNumber(Node*);
-
-    bool isKnownNotCell(Node*);
+    bool isKnownNotInteger(Node* node) { return !(m_state.forNode(node).m_type & SpecInt32); }
+    bool isKnownNotNumber(Node* node) { return !(m_state.forNode(node).m_type & SpecNumber); }
+    bool isKnownNotCell(Node* node) { return !(m_state.forNode(node).m_type & SpecCell); }
     
     // Checks/accessors for constant values.
     bool isConstant(Node* node) { return m_jit.graph().isConstant(node); }

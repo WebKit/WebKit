@@ -63,6 +63,7 @@ public:
         , m_couldTakeSlowPath(false)
         , m_isProved(false)
     {
+        ASSERT(!!executable == !!structure);
     }
     
     CallLinkStatus& setIsProved(bool isProved)

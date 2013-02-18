@@ -1,3 +1,48 @@
+2013-02-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::SpeculativeJIT::isKnownXYZ methods should use CFA rather than other things
+        https://bugs.webkit.org/show_bug.cgi?id=110092
+
+        Reviewed by Geoffrey Garen.
+        
+        These methods were previously using GenerationInfo and other things to try to
+        gain information that the CFA could give away for free, if you asked kindly
+        enough.
+        
+        Also fixed CallLinkStatus's dump() method since it was making an invalid
+        assertion: we most certainly can have a status where the structure is non-null
+        and the executable is null, like if we're dealing with an InternalFunction.
+        
+        Also removed calls to isKnownNotXYZ from fillSpeculateABC methods in 32_64. I
+        don't know why that was there. But it was causing asserts if the value was
+        empty - i.e. we had already exited unconditionally but we didn't know it. I
+        could have fixed this by introducing another form of isKnownNotXYZ which was
+        tolerant of empty values, but I didn't feel like fixing code that I knew to be
+        unnecessary. (More deeply, isKnownNotCell, for example, really asks: "do you
+        know that this value can never be a cell?" while some of the previous uses
+        wanted to ask: "do you know that this is a value that is not a cell?". The
+        former is "true" if the value is a contradiction [i.e. BOTTOM], while the
+        latter is "false" for contradictions, since contradictions are not values.)
+
+        * bytecode/CallLinkStatus.cpp:
+        (JSC::CallLinkStatus::dump):
+        * bytecode/CallLinkStatus.h:
+        (JSC::CallLinkStatus::CallLinkStatus):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (DFG):
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::isKnownInteger):
+        (JSC::DFG::SpeculativeJIT::isKnownCell):
+        (JSC::DFG::SpeculativeJIT::isKnownNotInteger):
+        (JSC::DFG::SpeculativeJIT::isKnownNotNumber):
+        (JSC::DFG::SpeculativeJIT::isKnownNotCell):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        * dfg/DFGStructureAbstractValue.h:
+        (JSC::DFG::StructureAbstractValue::dump):
+
 2013-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         Get rid of DFG::DoubleOperand and simplify ValueToInt32

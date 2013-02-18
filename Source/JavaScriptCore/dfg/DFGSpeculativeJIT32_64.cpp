@@ -849,12 +849,6 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(Node* node, DataFormat& returnFo
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLogF("SpecInt@%d   ", node->index());
 #endif
-    if (isKnownNotInteger(node)) {
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
-        returnFormat = DataFormatInteger;
-        return allocate();
-    }
-
     SpeculatedType type = m_state.forNode(node).m_type;
     VirtualRegister virtualRegister = node->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -946,11 +940,6 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Node* node, SpeculationDirection dire
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLogF("SpecDouble@%d   ", node->index());
 #endif
-    if (isKnownNotNumber(node)) {
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
-        return fprAllocate();
-    }
-
     SpeculatedType type = m_state.forNode(node).m_type;
     VirtualRegister virtualRegister = node->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
@@ -1080,11 +1069,6 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Node* node, SpeculationDirection direct
 #if DFG_ENABLE(DEBUG_VERBOSE)
     dataLogF("SpecCell@%d   ", node->index());
 #endif
-    if (isKnownNotCell(node)) {
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
-        return allocate();
-    }
-
     SpeculatedType type = m_state.forNode(node).m_type;
     VirtualRegister virtualRegister = node->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];

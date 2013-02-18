@@ -307,7 +307,7 @@ public:
         
         out.print("[");
         if (m_structure)
-            out.print(RawPointer(m_structure));
+            out.print(RawPointer(m_structure), "(", m_structure->classInfo()->className, ")");
         out.print("]");
     }
 

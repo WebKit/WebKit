@@ -931,51 +931,6 @@ void SpeculativeJIT::useChildren(Node* node)
     }
 }
 
-bool SpeculativeJIT::isKnownInteger(Node* node)
-{
-    if (isInt32Constant(node))
-        return true;
-
-    if (node->hasInt32Result())
-        return true;
-    
-    GenerationInfo& info = m_generationInfo[node->virtualRegister()];
-
-    return info.isJSInteger();
-}
-
-bool SpeculativeJIT::isKnownCell(Node* node)
-{
-    return m_generationInfo[node->virtualRegister()].isJSCell();
-}
-
-bool SpeculativeJIT::isKnownNotCell(Node* node)
-{
-    VirtualRegister virtualRegister = node->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
-    if (node->hasConstant() && !valueOfJSConstant(node).isCell())
-        return true;
-    return !(info.isJSCell() || info.isUnknownJS());
-}
-
-bool SpeculativeJIT::isKnownNotInteger(Node* node)
-{
-    VirtualRegister virtualRegister = node->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
-    
-    return info.isJSDouble() || info.isJSCell() || info.isJSBoolean()
-        || (node->hasConstant() && !valueOfJSConstant(node).isInt32());
-}
-
-bool SpeculativeJIT::isKnownNotNumber(Node* node)
-{
-    VirtualRegister virtualRegister = node->virtualRegister();
-    GenerationInfo& info = m_generationInfo[virtualRegister];
-    
-    return (!info.isJSDouble() && !info.isJSInteger() && !info.isUnknownJS())
-        || (node->hasConstant() && !isNumberConstant(node));
-}
-
 void SpeculativeJIT::writeBarrier(MacroAssembler& jit, GPRReg owner, GPRReg scratch1, GPRReg scratch2, WriteBarrierUseKind useKind)
 {
     UNUSED_PARAM(jit);
