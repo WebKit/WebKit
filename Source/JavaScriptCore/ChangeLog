@@ -1,3 +1,9 @@
+2013-02-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed buildfix for JSVALUE32_64 builds after r143147.
+
+        * jit/JIT.h:
+
 2013-02-17  Filip Pizlo  <fpizlo@apple.com>
 
         Move all Structure out-of-line inline methods to StructureInlines.h
