@@ -1,3 +1,15 @@
+2013-02-18  ChangSeok Oh  <shivamidow@gmail.com>
+
+        [GTK] Fix nits for configuration
+        https://bugs.webkit.org/show_bug.cgi?id=110083
+
+        Reviewed by Martin Robinson.
+
+        Remove unicode backend printing option. The only backend for unicode is icu
+        after changeset 142724.
+
+        * Source/autotools/PrintBuildConfiguration.m4:
+
 2013-02-15  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix.
