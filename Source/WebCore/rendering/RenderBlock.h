@@ -1135,10 +1135,11 @@ protected:
         LayoutUnit* m_heightRemaining;
     };
 
+    void createFloatingObjects();
+
     class FloatingObjects {
         WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;
     public:
-        static PassOwnPtr<FloatingObjects> create(const RenderBlock*, bool horizontalWritingMode);
         void clear();
         void add(FloatingObject*);
         void remove(FloatingObject*);
@@ -1172,12 +1173,11 @@ protected:
         unsigned m_rightObjectsCount;
         bool m_horizontalWritingMode;
         const RenderBlock* m_renderer;
+
+        friend void RenderBlock::createFloatingObjects();
     };
 
     OwnPtr<FloatingObjects> m_floatingObjects;
-
-    void createFloatingObjects();
-
 
     // Allocated only when some of these fields have non-default values
     struct RenderBlockRareData {

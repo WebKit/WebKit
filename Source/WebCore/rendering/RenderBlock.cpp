@@ -7746,16 +7746,9 @@ inline RenderBlock::FloatingObjects::FloatingObjects(const RenderBlock* renderer
 {
 }
 
-inline PassOwnPtr<RenderBlock::FloatingObjects> RenderBlock::FloatingObjects::create(const RenderBlock* renderer, bool horizontalWritingMode)
-{
-    return adoptPtr(new FloatingObjects(renderer, horizontalWritingMode));
-}
-
 void RenderBlock::createFloatingObjects()
 {
-    if (m_floatingObjects)
-        return;
-    m_floatingObjects = FloatingObjects::create(this, isHorizontalWritingMode());
+    m_floatingObjects = adoptPtr(new FloatingObjects(this, isHorizontalWritingMode()));
 }
 
 inline void RenderBlock::FloatingObjects::clear()
