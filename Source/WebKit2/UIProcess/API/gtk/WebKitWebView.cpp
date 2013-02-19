@@ -21,6 +21,8 @@
 #include "config.h"
 #include "WebKitWebView.h"
 
+#include "PlatformCertificateInfo.h"
+#include "WebCertificateInfo.h"
 #include "WebContextMenuItem.h"
 #include "WebContextMenuItemData.h"
 #include "WebData.h"
@@ -1308,15 +1310,6 @@ static void webkitWebViewSetIsLoading(WebKitWebView* webView, bool isLoading)
     g_object_thaw_notify(G_OBJECT(webView));
 }
 
-static void setCertificateToMainResource(WebKitWebView* webView)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    ASSERT(priv->mainResource.get());
-
-    webkitURIResponseSetCertificateInfo(webkit_web_resource_get_response(priv->mainResource.get()),
-                                        webkitWebResourceGetFrame(priv->mainResource.get())->certificateInfo());
-}
-
 static void webkitWebViewEmitLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
 {
     if (loadEvent == WEBKIT_LOAD_STARTED) {
@@ -1367,8 +1360,7 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
             // main resource available when load has been committed, so we delay the emission of
             // load-changed signal until main resource object has been created.
             priv->waitingForMainResource = true;
-        } else
-            setCertificateToMainResource(webView);
+        }
     }
 
     if (priv->waitingForMainResource)
@@ -1527,7 +1519,6 @@ void webkitWebViewPrintFrame(WebKitWebView* webView, WebFrameProxy* frame)
 static void mainResourceResponseChangedCallback(WebKitWebResource*, GParamSpec*, WebKitWebView* webView)
 {
     webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
-    setCertificateToMainResource(webView);
     webkitWebViewEmitDelayedLoadEvents(webView);
 }
 
@@ -2896,4 +2887,38 @@ WebKitViewMode webkit_web_view_get_view_mode(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), WEBKIT_VIEW_MODE_WEB);
 
     return webView->priv->viewMode;
+}
+
+/**
+ * webkit_web_view_get_tls_info:
+ * @web_view: a #WebKitWebView
+ * @certificate: (out) (transfer none): return location for a #GTlsCertificate
+ * @errors: (out): return location for a #GTlsCertificateFlags the verification status of @certificate
+ *
+ * Retrieves the #GTlsCertificate associated with the @web_view connection,
+ * and the #GTlsCertificateFlags showing what problems, if any, have been found
+ * with that certificate.
+ * If the connection is not HTTPS, this function returns %FALSE.
+ * This function should be called after a response has been received from the
+ * server, so you can connect to #WebKitWebView::load-changed and call this function
+ * when it's emitted with %WEBKIT_LOAD_COMMITTED event.
+ *
+ * Returns: %TRUE if the @web_view connection uses HTTPS and a response has been received
+ *    from the server, or %FALSE otherwise.
+ */
+gboolean webkit_web_view_get_tls_info(WebKitWebView* webView, GTlsCertificate** certificate, GTlsCertificateFlags* errors)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
+
+    WebFrameProxy* mainFrame = getPage(webView)->mainFrame();
+    if (!mainFrame)
+        return FALSE;
+
+    const PlatformCertificateInfo& certificateInfo = mainFrame->certificateInfo()->platformCertificateInfo();
+    if (certificate)
+        *certificate = certificateInfo.certificate();
+    if (errors)
+        *errors = certificateInfo.tlsErrors();
+
+    return !!certificateInfo.certificate();
 }

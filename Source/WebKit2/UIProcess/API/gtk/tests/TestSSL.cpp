@@ -46,13 +46,8 @@ public:
 
     virtual void loadCommitted()
     {
-        WebKitWebResource* resource = webkit_web_view_get_main_resource(m_webView);
-        g_assert(resource);
-        WebKitURIResponse* response = webkit_web_resource_get_response(resource);
-        g_assert(response);
-
         GTlsCertificate* certificate = 0;
-        webkit_uri_response_get_https_status(response, &certificate, &m_tlsErrors);
+        webkit_web_view_get_tls_info(m_webView, &certificate, &m_tlsErrors);
         m_certificate = certificate;
         LoadTrackingTest::loadCommitted();
     }

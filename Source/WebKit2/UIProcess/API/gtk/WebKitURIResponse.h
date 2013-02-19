@@ -67,10 +67,6 @@ webkit_uri_response_get_content_length     (WebKitURIResponse    *response);
 WEBKIT_API const gchar *
 webkit_uri_response_get_mime_type          (WebKitURIResponse    *response);
 
-WEBKIT_API gboolean
-webkit_uri_response_get_https_status       (WebKitURIResponse    *response,
-                                            GTlsCertificate     **certificate,
-                                            GTlsCertificateFlags *errors);
 WEBKIT_API const gchar *
 webkit_uri_response_get_suggested_filename (WebKitURIResponse    *response);
 

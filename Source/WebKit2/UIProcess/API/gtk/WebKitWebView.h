@@ -414,6 +414,11 @@ webkit_web_view_set_view_mode                        (WebKitWebView             
 WEBKIT_API WebKitViewMode
 webkit_web_view_get_view_mode                        (WebKitWebView             *web_view);
 
+WEBKIT_API gboolean
+webkit_web_view_get_tls_info                         (WebKitWebView             *web_view,
+                                                      GTlsCertificate          **certificate,
+                                                      GTlsCertificateFlags      *errors);
+
 G_END_DECLS
 
 #endif

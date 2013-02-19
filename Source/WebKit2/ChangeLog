@@ -1,3 +1,26 @@
+2013-02-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Move the API to get TLS certificate from WebKitURIResponse to WebKitWebView
+        https://bugs.webkit.org/show_bug.cgi?id=110190
+
+        Reviewed by Anders Carlsson.
+
+        Add webkit_web_view_get_tls_info() and remove
+        webkit_uri_response_get_https_status(). This way I can be sure
+        that when called after load has been committed the certificate
+        will be available. It also makes the API easier to use.
+
+        * UIProcess/API/gtk/WebKitURIResponse.cpp:
+        * UIProcess/API/gtk/WebKitURIResponse.h:
+        * UIProcess/API/gtk/WebKitURIResponsePrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (webkitWebViewLoadChanged):
+        (mainResourceResponseChangedCallback):
+        (webkit_web_view_get_tls_info):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestSSL.cpp:
+
 2013-02-19  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] Eliminate access to WK2 C++ internals from ewk_view functions
