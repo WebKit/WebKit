@@ -42,6 +42,12 @@ FeatureObserver::~FeatureObserver()
     // We always log PageDestruction so that we have a scale for the rest of the features.
     HistogramSupport::histogramEnumeration("WebCore.FeatureObserver", PageDestruction, NumberOfFeatures);
 
+    updateMeasurements();
+}
+
+void FeatureObserver::updateMeasurements()
+{
+    HistogramSupport::histogramEnumeration("WebCore.FeatureObserver", PageVisits, NumberOfFeatures);
     if (!m_featureBits)
         return;
 
@@ -49,6 +55,13 @@ FeatureObserver::~FeatureObserver()
         if (m_featureBits->quickGet(i))
             HistogramSupport::histogramEnumeration("WebCore.FeatureObserver", i, NumberOfFeatures);
     }
+
+    m_featureBits->clearAll();
+}
+
+void FeatureObserver::didCommitLoad()
+{
+    updateMeasurements();
 }
 
 void FeatureObserver::observe(Document* document, Feature feature)

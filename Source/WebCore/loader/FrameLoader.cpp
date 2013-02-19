@@ -3264,6 +3264,10 @@ void FrameLoader::dispatchDidCommitLoad()
     }
 
     InspectorInstrumentation::didCommitLoad(m_frame, m_documentLoader.get());
+
+    if (m_frame->page()->mainFrame() == m_frame)
+        m_frame->page()->featureObserver()->didCommitLoad();
+
 }
 
 void FrameLoader::tellClientAboutPastMemoryCacheLoads()
