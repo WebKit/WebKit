@@ -404,7 +404,7 @@ fi
 
 # Check for XRender under Linux/Unix. Some linkers require explicit linkage (like GNU Gold),
 # so we cannot rely on GTK+ pulling XRender.
-if test "$os_win32" = "no"; then
+if test "$with_target" = "x11"; then
     PKG_CHECK_MODULES([XRENDER], [xrender])
     AC_SUBST([XRENDER_CFLAGS])
     AC_SUBST([XRENDER_LIBS])

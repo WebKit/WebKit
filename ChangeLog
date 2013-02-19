@@ -1,3 +1,12 @@
+2013-02-19  Changhun Kang  <temoochin@company100.net>
+
+        Only depend on xrender if x11 is being used
+        https://bugs.webkit.org/show_bug.cgi?id=84095
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/FindDependencies.m4:
+
 2013-02-18  ChangSeok Oh  <shivamidow@gmail.com>
 
         [GTK] Fix nits for configuration
