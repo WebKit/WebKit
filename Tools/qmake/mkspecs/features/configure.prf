@@ -111,11 +111,15 @@ defineTest(finalizeConfigure) {
 
     # Sanity checks that would prevent us from building the whole project altogether.
     !mac:!contains(QT_CONFIG,icu) {
-        skipBuildReason = "ICU is required. To build QtWebKit with Qt 5 you need to build Qt 5 with libICU support. Check for ICU support being mentioned in qtbase/config.summary.")
+        addReasonForSkippingBuild("ICU is required. To build QtWebKit with Qt 5 you need to build Qt 5 with libICU support. Check for ICU support being mentioned in qtbase/config.summary.")
     }
     production_build:blackberry {
-        skipBuildReason = "Build not supported on BB10 yet."
+        addReasonForSkippingBuild("Build not supported on BB10 yet.")
     }
+    requiredPrograms = gperf python perl bison ruby flex
+    for(program, requiredPrograms): \
+        !programExistsInPath($$program): \
+            addReasonForSkippingBuild("Missing $$program from PATH")
 
     # Detect changes to the configuration. Changes need a clean build.
     webkit_configured {
@@ -233,7 +237,7 @@ defineTest(finalizeConfigure) {
         }
 
         !isEmpty(skipBuildReason) {
-            log("$${EOL}WebKit build disabled: " $$skipBuildReason "$${EOL}$${EOL}")
+            log("$${EOL}The WebKit build was disabled for the following reasons: $$skipBuildReason $${EOL}$${EOL}")
             SUBDIRS=
             export(SUBDIRS)
         } else {

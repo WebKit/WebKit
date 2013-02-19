@@ -203,6 +203,25 @@ defineTest(haveQtModule) {
     return(false)
 }
 
+defineTest(programExistsInPath) {
+    win_cmd_shell: program = $${1}.exe
+    else: program = $$1
+
+    PATH = "$$(PATH)"
+    paths=$$split(PATH, $$QMAKE_DIRLIST_SEP)
+
+    GNUTOOLS_DIR=$$[QT_HOST_DATA]/../gnuwin32/bin
+    exists($$GNUTOOLS_DIR): paths += $$GNUTOOLS_DIR
+
+    for(p, paths): exists($$p/$$program):return(true)
+    return(false)
+}
+
+defineTest(addReasonForSkippingBuild) {
+    skipBuildReason = "$$skipBuildReason$${EOL}    * $$1"
+    export(skipBuildReason)
+}
+
 defineTest(prependEach) {
     unset(variable)
     unset(prefix)
