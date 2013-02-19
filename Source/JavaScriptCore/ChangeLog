@@ -1,5 +1,13 @@
 2013-02-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Fix indentation of Opcode.h
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/Opcode.h:
+
+2013-02-19  Filip Pizlo  <fpizlo@apple.com>
+
         Moved PolymorphicAccessStructureList into its own file.
 
         Rubber stamped by Mark Hahnenberg.
