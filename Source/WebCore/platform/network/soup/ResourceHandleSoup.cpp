@@ -231,7 +231,6 @@ static bool createSoupRequestAndMessageForHandle(ResourceHandle*, const Resource
 static void cleanupSoupRequestOperation(ResourceHandle*, bool isDestroying = false);
 static void sendRequestCallback(GObject*, GAsyncResult*, gpointer);
 static void readCallback(GObject*, GAsyncResult*, gpointer);
-static void closeCallback(GObject*, GAsyncResult*, gpointer);
 static gboolean requestTimeoutCallback(void*);
 #if ENABLE(WEB_TIMING)
 static int  milisecondsSinceRequest(double requestTime);
@@ -499,20 +498,6 @@ static void doRedirect(ResourceHandle* handle)
     handle->sendPendingRequest();
 }
 
-static void redirectCloseCallback(GObject*, GAsyncResult* result, gpointer data)
-{
-    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
-
-    if (handle->cancelledOrClientless()) {
-        cleanupSoupRequestOperation(handle.get());
-        return;
-    }
-
-    ResourceHandleInternal* d = handle->getInternal();
-    g_input_stream_close_finish(d->m_inputStream.get(), result, 0);
-    doRedirect(handle.get());
-}
-
 static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
@@ -538,7 +523,8 @@ static void redirectSkipCallback(GObject*, GAsyncResult* asyncResult, gpointer d
         return;
     }
 
-    g_input_stream_close_async(d->m_inputStream.get(), G_PRIORITY_DEFAULT, 0, redirectCloseCallback, handle.get());
+    g_input_stream_close(d->m_inputStream.get(), 0, 0);
+    doRedirect(handle.get());
 }
 
 static void wroteBodyDataCallback(SoupMessage*, SoupBuffer* buffer, gpointer data)
@@ -1305,19 +1291,6 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
     syncLoader.run();
 }
 
-static void closeCallback(GObject*, GAsyncResult* res, gpointer data)
-{
-    RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
-    ResourceHandleInternal* d = handle->getInternal();
-
-    g_input_stream_close_finish(d->m_inputStream.get(), res, 0);
-
-    if (handle->client() && loadingSynchronousRequest)
-        handle->client()->didFinishLoading(handle.get(), 0);
-
-    cleanupSoupRequestOperation(handle.get());
-}
-
 static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
 {
     RefPtr<ResourceHandle> handle = static_cast<ResourceHandle*>(data);
@@ -1351,16 +1324,10 @@ static void readCallback(GObject*, GAsyncResult* asyncResult, gpointer data)
             return;
         }
 
-        // We inform WebCore of load completion now instead of waiting for the input
-        // stream to close because the input stream is closed asynchronously. If this
-        // is a synchronous request, we wait until the closeCallback, because we don't
-        // want to halt the internal main loop before the input stream closes.
-        if (handle->client() && !loadingSynchronousRequest) {
-            handle->client()->didFinishLoading(handle.get(), 0);
-            handle->setClient(0); // Unset the client so that we do not try to access th
-                                  // client in the closeCallback.
-        }
-        g_input_stream_close_async(d->m_inputStream.get(), G_PRIORITY_DEFAULT, 0, closeCallback, handle.get());
+        g_input_stream_close(d->m_inputStream.get(), 0, 0);
+
+        handle->client()->didFinishLoading(handle.get(), 0);
+        cleanupSoupRequestOperation(handle.get());
         return;
     }
 
