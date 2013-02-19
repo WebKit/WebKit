@@ -91,6 +91,16 @@ TextAutosizer::~TextAutosizer()
 {
 }
 
+void TextAutosizer::recalculateMultipliers()
+{
+    RenderObject* renderer = m_document->renderer();
+    while (renderer) {
+        if (renderer->style() && renderer->style()->textAutosizingMultiplier() != 1)
+            setMultiplier(renderer, 1);
+        renderer = renderer->nextInPreOrder();
+    }
+}
+
 bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
 {
     // FIXME: Text Autosizing should only be enabled when m_document->page()->mainFrame()->view()->useFixedLayout()
@@ -189,7 +199,7 @@ void TextAutosizer::processContainer(float multiplier, RenderBlock* container, T
     RenderObject* descendant = nextInPreOrderSkippingDescendantsOfContainers(subtreeRoot, subtreeRoot);
     while (descendant) {
         if (descendant->isText()) {
-            if (localMultiplier != descendant->style()->textAutosizingMultiplier()) {
+            if (localMultiplier != 1 && descendant->style()->textAutosizingMultiplier() == 1) {
                 setMultiplier(descendant, localMultiplier);
                 setMultiplier(descendant->parent(), localMultiplier); // Parent does line spacing.
             }

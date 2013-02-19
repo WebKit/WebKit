@@ -50,6 +50,7 @@ public:
     virtual ~TextAutosizer();
 
     bool processSubtree(RenderObject* layoutRoot);
+    void recalculateMultipliers();
 
     static float computeAutosizedFontSize(float specifiedSize, float multiplier);
 

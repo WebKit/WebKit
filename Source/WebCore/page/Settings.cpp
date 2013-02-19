@@ -42,6 +42,7 @@
 #include "PageCache.h"
 #include "ResourceHandle.h"
 #include "StorageMap.h"
+#include "TextAutosizer.h"
 #include <limits>
 
 using namespace std;
@@ -364,6 +365,11 @@ void Settings::setTextAutosizingWindowSizeOverride(const IntSize& textAutosizing
 void Settings::setTextAutosizingFontScaleFactor(float fontScaleFactor)
 {
     m_textAutosizingFontScaleFactor = fontScaleFactor;
+
+    // FIXME: I wonder if this needs to traverse frames like in WebViewImpl::resize, or whether there is only one document per Settings instance?
+    for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+        frame->document()->textAutosizer()->recalculateMultipliers();
+
     m_page->setNeedsRecalcStyleInAllFrames();
 }
 

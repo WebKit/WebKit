@@ -444,6 +444,17 @@ void FrameView::setFrameRect(const IntRect& newRect)
     if (newRect == oldRect)
         return;
 
+#if ENABLE(TEXT_AUTOSIZING)
+    // Autosized font sizes depend on the width of the viewing area.
+    if (newRect.width() != oldRect.width()) {
+        Page* page = m_frame ? m_frame->page() : 0;
+        if (page && page->mainFrame() == m_frame && page->settings()->textAutosizingEnabled()) {
+            for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext())
+                m_frame->document()->textAutosizer()->recalculateMultipliers();
+        }
+    }
+#endif
+
     ScrollView::setFrameRect(newRect);
 
     updateScrollableAreaSet();
