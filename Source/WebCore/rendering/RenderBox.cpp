@@ -3819,7 +3819,6 @@ LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit
     // They never refer to children.
     // FIXME: Paint the carets inside empty blocks differently than the carets before/after elements.
 
-    // FIXME: What about border and padding?
     LayoutRect rect(location(), LayoutSize(caretWidth, height()));
     bool ltr = box ? box->isLeftToRightDirection() : style()->isLeftToRightDirection();
 
@@ -3850,6 +3849,14 @@ LayoutRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, LayoutUnit
 
     // Move to local coords
     rect.moveBy(-location());
+
+    // FIXME: Border/padding should be added for all elements but this workaround
+    // is needed because we use offsets inside an "atomic" element to represent
+    // positions before and after the element in deprecated editing offsets.
+    if (!(editingIgnoresContent(node()) || isTableElement(node()))) {
+        rect.setX(rect.x() + borderLeft() + paddingLeft());
+        rect.setY(rect.y() + paddingTop() + borderTop());
+    }
 
     if (!isHorizontalWritingMode())
         return rect.transposedRect();
