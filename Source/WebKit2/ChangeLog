@@ -1,3 +1,28 @@
+2013-02-18  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Remove webkit_web_view_get_subresources from WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=110125
+
+        Reviewed by Anders Carlsson.
+
+        This API is currently implemented caching all resources in the
+        WebView which causes some problems in documents loading resources
+        indefinitely. This API was used in WebKit1 mainly to implement
+        webkit_web_view_save(), but we already have such API in
+        WebKit2.
+
+        * UIProcess/API/gtk/WebKitInjectedBundleClient.cpp:
+        (didReceiveWebViewMessageFromInjectedBundle):
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate):
+        (webkitWebViewLoadChanged):
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewPrivate.h:
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt:
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        (testWebViewResources):
+        (testWebResourceGetData):
+
 2013-02-18  Christophe Dumez  <dchris@gmail.com>
 
         [WK2][EFL] Stop using internal C++ API in ewk_error

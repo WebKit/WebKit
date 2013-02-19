@@ -51,7 +51,6 @@ void webkitWebViewResourceLoadStarted(WebKitWebView*, WebKit::WebFrameProxy*, ui
 void webkitWebViewRunFileChooserRequest(WebKitWebView*, WebKitFileChooserRequest*);
 WebKitWebResource* webkitWebViewGetLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
 void webkitWebViewRemoveLoadingWebResource(WebKitWebView*, uint64_t resourceIdentifier);
-WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView*, uint64_t resourceIdentifier);
 bool webkitWebViewEnterFullScreen(WebKitWebView*);
 bool webkitWebViewLeaveFullScreen(WebKitWebView*);
 void webkitWebViewPopulateContextMenu(WebKitWebView*, WebKit::ImmutableArray* proposedMenu, WebKit::WebHitTestResult*);

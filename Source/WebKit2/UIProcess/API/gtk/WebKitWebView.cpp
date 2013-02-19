@@ -130,7 +130,6 @@ enum {
 };
 
 typedef HashMap<uint64_t, GRefPtr<WebKitWebResource> > LoadingResourcesMap;
-typedef HashMap<String, GRefPtr<WebKitWebResource> > ResourcesMap;
 
 struct _WebKitWebViewPrivate {
     ~_WebKitWebViewPrivate()
@@ -169,7 +168,6 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitWebResource> mainResource;
     LoadingResourcesMap loadingResourcesMap;
-    ResourcesMap subresourcesMap;
 
     GRefPtr<WebKitWebInspector> inspector;
 
@@ -1363,7 +1361,6 @@ void webkitWebViewLoadChanged(WebKitWebView* webView, WebKitLoadEvent loadEvent)
         GOwnPtr<char> faviconURI(webkit_favicon_database_get_favicon_uri(database, priv->activeURI.data()));
         webkitWebViewUpdateFaviconURI(webView, faviconURI.get());
 
-        priv->subresourcesMap.clear();
         if (!priv->mainResource) {
             // When a page is loaded from the history cache, the main resource load callbacks
             // are called when the main frame load is finished. We want to make sure there's a
@@ -1570,16 +1567,6 @@ void webkitWebViewRemoveLoadingWebResource(WebKitWebView* webView, uint64_t reso
     WebKitWebViewPrivate* priv = webView->priv;
     ASSERT(priv->loadingResourcesMap.contains(resourceIdentifier));
     priv->loadingResourcesMap.remove(resourceIdentifier);
-}
-
-WebKitWebResource* webkitWebViewResourceLoadFinished(WebKitWebView* webView, uint64_t resourceIdentifier)
-{
-    WebKitWebViewPrivate* priv = webView->priv;
-    WebKitWebResource* resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier);
-    if (resource != priv->mainResource)
-        priv->subresourcesMap.set(String::fromUTF8(webkit_web_resource_get_uri(resource)), resource);
-    webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier);
-    return resource;
 }
 
 bool webkitWebViewEnterFullScreen(WebKitWebView* webView)
@@ -2640,7 +2627,6 @@ WebKitJavascriptResult* webkit_web_view_run_javascript_from_gresource_finish(Web
  * @web_view: a #WebKitWebView
  *
  * Return the main resource of @web_view.
- * See also webkit_web_view_get_subresources():
  *
  * Returns: (transfer none): the main #WebKitWebResource of the view
  *    or %NULL if nothing has been loaded.
@@ -2650,28 +2636,6 @@ WebKitWebResource* webkit_web_view_get_main_resource(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     return webView->priv->mainResource.get();
-}
-
-/**
- * webkit_web_view_get_subresources:
- * @web_view: a #WebKitWebView
- *
- * Return the list of subresources of @web_view.
- * See also webkit_web_view_get_main_resource().
- *
- * Returns: (element-type WebKitWebResource) (transfer container): a list of #WebKitWebResource.
- */
-GList* webkit_web_view_get_subresources(WebKitWebView* webView)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-
-    GList* subresources = 0;
-    WebKitWebViewPrivate* priv = webView->priv;
-    ResourcesMap::const_iterator end = priv->subresourcesMap.end();
-    for (ResourcesMap::const_iterator it = priv->subresourcesMap.begin(); it != end; ++it)
-        subresources = g_list_prepend(subresources, it->value.get());
-
-    return g_list_reverse(subresources);
 }
 
 /**

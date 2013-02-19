@@ -71,11 +71,12 @@ static void didReceiveWebViewMessageFromInjectedBundle(WebKitWebView* webView, c
         webkitWebResourceNotifyProgress(resource.get(), contentLength->value());
     } else if (g_str_equal(messageName, "DidFinishLoadForResource")) {
         WebUInt64* resourceIdentifier = static_cast<WebUInt64*>(message.get(String::fromUTF8("Identifier")));
-        GRefPtr<WebKitWebResource> resource = webkitWebViewResourceLoadFinished(webView, resourceIdentifier->value());
+        GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());
         if (!resource)
             return;
 
         webkitWebResourceFinished(resource.get());
+        webkitWebViewRemoveLoadingWebResource(webView, resourceIdentifier->value());
     } else if (g_str_equal(messageName, "DidFailLoadForResource")) {
         WebUInt64* resourceIdentifier = static_cast<WebUInt64*>(message.get(String::fromUTF8("Identifier")));
         GRefPtr<WebKitWebResource> resource = webkitWebViewGetLoadingWebResource(webView, resourceIdentifier->value());

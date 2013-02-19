@@ -150,7 +150,6 @@ webkit_script_dialog_confirm_set_confirmed
 webkit_script_dialog_prompt_get_default_text
 webkit_script_dialog_prompt_set_text
 webkit_web_view_get_main_resource
-webkit_web_view_get_subresources
 
 <SUBSECTION Standard>
 WebKitWebViewClass
