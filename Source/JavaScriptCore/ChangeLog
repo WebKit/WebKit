@@ -1,3 +1,10 @@
+2013-02-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed build fix for Apple Windows. Second stage.
+        Add missed export statement.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+
 2013-02-18  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed Windows build fix.
