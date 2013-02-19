@@ -23,7 +23,7 @@ function testBasic() {
         div = document.createElement('div');
         subDiv = div.appendChild(document.createElement('div'));
         subDiv.innerHTML = 'hello, world';
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 

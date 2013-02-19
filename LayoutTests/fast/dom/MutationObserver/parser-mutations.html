@@ -7,7 +7,7 @@
     if (window.testRunner)
         testRunner.dumpAsText();
 
-    var observer = new WebKitMutationObserver(function(mutations, observer) {
+    var observer = new MutationObserver(function(mutations, observer) {
         window.mutations = mutations;
     });
     observer.observe(document.body, {childList: true, subtree:true});

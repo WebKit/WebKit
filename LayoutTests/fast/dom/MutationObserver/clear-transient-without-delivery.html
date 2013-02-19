@@ -7,7 +7,7 @@ var mutationsDelivered = false;
 function callback(mutations) {
     mutationsDelivered = true;
 }
-var observer = new WebKitMutationObserver(callback);
+var observer = new MutationObserver(callback);
 
 var div = document.createElement('div');
 var span = div.appendChild(document.createElement('span'));

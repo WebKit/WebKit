@@ -10,7 +10,7 @@
 
     var list = document.querySelector('ol');
     var observerRan = false;
-    var observer = new WebKitMutationObserver(function() { observerRan = true; });
+    var observer = new MutationObserver(function() { observerRan = true; });
     observer.observe(list, {childList: true, characterData: true});
     list.focus();
     if (window.eventSender)

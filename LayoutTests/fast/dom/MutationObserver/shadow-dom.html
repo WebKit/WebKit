@@ -16,7 +16,7 @@ function doTest()
     }
 
     var shadowRoot = internals.shadowRoot(document.querySelector('input'));
-    var observer = new WebKitMutationObserver(function() { });
+    var observer = new MutationObserver(function() { });
 
     observer.observe(shadowRoot.firstChild, {attributes: true, childList: true, characterData: true, subtree: true});
     mutate(shadowRoot.firstChild);

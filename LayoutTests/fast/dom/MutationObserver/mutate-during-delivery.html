@@ -15,14 +15,14 @@ function finish() {
 var order = [];
 var div = document.createElement('div');
 
-var observer1 = new WebKitMutationObserver(function(mutations) {
+var observer1 = new MutationObserver(function(mutations) {
     order.push(1);
     div.appendChild(document.createElement('span'));
 });
-var observer2 = new WebKitMutationObserver(function(mutations) {
+var observer2 = new MutationObserver(function(mutations) {
     order.push(2);
 });
-var observer3 = new WebKitMutationObserver(function(mutations) {
+var observer3 = new MutationObserver(function(mutations) {
     order.push(3);
 });
 

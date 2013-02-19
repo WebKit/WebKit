@@ -18,7 +18,7 @@ function testBasic() {
 
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 
@@ -52,7 +52,7 @@ function testSubtree() {
         mutations = null;
         div = document.createElement('div');
         subDiv = div.appendChild(document.createElement('div'));
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 

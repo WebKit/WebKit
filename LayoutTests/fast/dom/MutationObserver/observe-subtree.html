@@ -27,7 +27,7 @@ function testBasic() {
         div = document.createElement('div');
         subDiv = div.appendChild(document.createElement('div'));
         subDiv.innerHTML = 'hello, world';
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 
@@ -66,10 +66,10 @@ function testMultipleObservers() {
         mutations2 = null;
         div = document.createElement('div');
         subDiv = div.appendChild(document.createElement('div'));
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
-        observer2 = new WebKitMutationObserver(function(mutations) {
+        observer2 = new MutationObserver(function(mutations) {
             window.mutations2 = mutations;
         });
 
@@ -109,7 +109,7 @@ function testMultipleObservations() {
         calls = 0;
         div = document.createElement('div');
         subDiv = div.appendChild(document.createElement('div'));
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
             ++calls;
         });
@@ -145,7 +145,7 @@ function testTransientDetachedBasic() {
         div = document.createElement('div');
         subDiv = div.appendChild(document.createElement('div'));
         subDiv.innerHTML = 'hello, world';
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 
@@ -230,7 +230,7 @@ function testTransientDetachedDetailed() {
         subDiv2.innerHTML = 'hello, world';
         subDiv3 = document.createElement('div');
 
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 

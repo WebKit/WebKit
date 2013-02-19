@@ -11,7 +11,7 @@ sandbox.addEventListener('DOMNodeRemoved', function() {
         inserted = true;
     }
 });
-var observer = new WebKitMutationObserver(function(){});
+var observer = new MutationObserver(function(){});
 observer.observe(sandbox, {childList: true});
 sandbox.textContent = 'hello world';
 

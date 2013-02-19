@@ -11,7 +11,7 @@ function start() {
     mutations = null;
     div = document.createElement('div');
 
-    observer = new WebKitMutationObserver(function(m) {
+    observer = new MutationObserver(function(m) {
         mutations = m;
     });
 

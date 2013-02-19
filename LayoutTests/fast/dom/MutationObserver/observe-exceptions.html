@@ -11,7 +11,7 @@
 <script>
 
 function runTest() {
-    window.observer = new WebKitMutationObserver(function(mutations) { });
+    window.observer = new MutationObserver(function(mutations) { });
     shouldThrow('observer.observe()');
     shouldThrow('observer.observe(null)');
     shouldThrow('observer.observe(undefined)');

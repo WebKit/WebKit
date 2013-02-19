@@ -12,7 +12,7 @@
     var list = document.querySelector('ol');
     var p = document.querySelector('p');
     var observerRuns = 0;
-    var observer = new WebKitMutationObserver(function() { ++observerRuns; });
+    var observer = new MutationObserver(function() { ++observerRuns; });
     observer.observe(list, {childList: true});
     list.addEventListener('blur', function() {
         document.body.innerHTML = observerRuns == 1 ? 'PASSED' : 'FAILED';

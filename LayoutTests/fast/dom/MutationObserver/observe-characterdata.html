@@ -27,7 +27,7 @@ function testBasic() {
         div = document.createElement('div');
         div.textContent = 'foo';
         charDataNode = div.firstChild;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -87,7 +87,7 @@ function testWrongType() {
         div = document.createElement('div');
         div.textContent = 'hello';
         charDataNode = div.firstChild;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -117,10 +117,10 @@ function testMultipleObservers() {
         div = document.createElement('div');
         div.textContent = 'foo';
         charDataNode = div.firstChild;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
-        observer2 = new WebKitMutationObserver(function(m) {
+        observer2 = new MutationObserver(function(m) {
             mutations2 = m;
         });
         observer.observe(charDataNode, {characterData: true});
@@ -161,7 +161,7 @@ function testOrderingWrtDOMSubtreeModified() {
         subDiv.textContent = 'foo';
         charDataNode = subDiv.firstChild;
 
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -202,7 +202,7 @@ function testOldValue() {
         div = document.createElement('div');
         div.textContent = 'foo';
         charDataNode = div.firstChild;
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observer.observe(charDataNode, {characterData: true, characterDataOldValue: true});
@@ -239,10 +239,10 @@ function testOldValueAsRequested() {
         div = document.createElement('div');
         div.textContent = 'foo';
         charDataNode = div.firstChild;
-        observerWithOldValue = new WebKitMutationObserver(function(mutations) {
+        observerWithOldValue = new MutationObserver(function(mutations) {
             window.mutationsWithOldValue = mutations;
         });
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observerWithOldValue.observe(charDataNode, {characterData: true, characterDataOldValue: true});
@@ -277,7 +277,7 @@ function testOldValueUnionMultipleObservations() {
         div = document.createElement('div');
         div.textContent = 'foo';
         charDataNode = div.firstChild;
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observer.observe(div, {characterData: true, characterDataOldValue: true, subtree: true});

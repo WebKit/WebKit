@@ -14,7 +14,7 @@ function runTest() {
     shouldBeNonNull('window.WebKitMutationObserver');
     shouldBeEqualToString('typeof WebKitMutationObserver.prototype.observe', 'function');
     shouldBeEqualToString('typeof WebKitMutationObserver.prototype.disconnect', 'function');
-    window.observer = new WebKitMutationObserver(function(mutations) { });
+    window.observer = new MutationObserver(function(mutations) { });
     shouldBeEqualToString('typeof observer.observe', 'function');
     shouldBeEqualToString('typeof observer.disconnect', 'function');
 }

@@ -23,7 +23,7 @@ var order = [];
 var observers = [];
 
 function setUpOrdering(num) {
-    observers.push(new WebKitMutationObserver(function(mutations) {
+    observers.push(new MutationObserver(function(mutations) {
         order.push(num);
     }));
 }

@@ -20,7 +20,7 @@ function createObservedDiv() {
 function callback(mutations) {
     window.mutations = mutations;
 }
-var observer = new WebKitMutationObserver(callback);
+var observer = new MutationObserver(callback);
 
 function testAppendChild() {
     debug('Testing appendChild');

@@ -8,7 +8,7 @@ description('MutationObserver wrappers should survive GC for passing into the ca
 jsTestIsAsync = true;
 
 function addObserver(node, fn) {
-    var observer = new WebKitMutationObserver(fn);
+    var observer = new MutationObserver(fn);
     observer.testProperty = true;
     observer.observe(node, {attributes:true});
 }

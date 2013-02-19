@@ -24,7 +24,7 @@ function testBasic() {
 
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -84,7 +84,7 @@ function testWrongType() {
 
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -113,7 +113,7 @@ function testMultipleRegistration() {
         calls = 0;
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
             calls++;
         });
@@ -154,10 +154,10 @@ function testMultipleObservers() {
         debug('Testing that multiple observers can be registered to a given node and both receive mutations.');
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
-        observer2 = new WebKitMutationObserver(function(m) {
+        observer2 = new MutationObserver(function(m) {
             mutations2 = m;
         });
         observer.observe(div, { childList: true });
@@ -192,7 +192,7 @@ function testInnerHTMLAndInnerText() {
         div.innerHTML = '<span>Foo</span><div>Bar</div>';
         removedDiv1 = div.firstChild;
         removedDiv2 = removedDiv1.nextSibling;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -250,7 +250,7 @@ function testReplaceChild() {
         div.innerHTML = '<span>Foo</span><div>Bar</div>';
         removedDiv1 = div.firstChild;
 
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -315,7 +315,7 @@ function testInsertBefore() {
         addedDiv1 = fragment.appendChild(document.createElement('div'));
         addedDiv2 = fragment.appendChild(document.createElement('div'));
 
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -356,7 +356,7 @@ function testAppendChild() {
         addedDiv1 = fragment.appendChild(document.createElement('div'));
         addedDiv2 = fragment.appendChild(document.createElement('div'));
 
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -387,7 +387,7 @@ function testInnerHTMLEmpty() {
 
         var div = document.createElement('div');
         mutations = null;
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observer.observe(div, {childList: true});

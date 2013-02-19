@@ -18,7 +18,7 @@ function testBasic() {
         div = document.createElement('div');
         div.setAttribute('bar', 'foo');
 
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -82,7 +82,7 @@ function testWrongType() {
 
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -111,7 +111,7 @@ function testMultipleRegistration() {
 		calls = 0;
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
 			calls++;
         });
@@ -153,10 +153,10 @@ function testMultipleObservers() {
         debug('Testing that multiple observers can be registered to a given node and both receive mutations.');
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
-        observer2 = new WebKitMutationObserver(function(m) {
+        observer2 = new MutationObserver(function(m) {
             mutations2 = m;
         });
         observer.observe(div, { attributes: true });
@@ -189,7 +189,7 @@ function testNamespaceURI() {
         debug('Testing that "attributeNamespace" value is delivered properly.');
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -221,7 +221,7 @@ function testPropertyAccess() {
         img = document.createElement('img');
         a = document.createElement('a');
 
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -262,7 +262,7 @@ function testOrderingWrtDOMSubtreeModified() {
 
         subDiv = div.appendChild(document.createElement('div'));
 
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -305,7 +305,7 @@ function testOldValue() {
         div = document.createElement('div');
         div.setAttribute('bar', 'boo');
         
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observer.observe(div, { attributes: true, attributeOldValue: true });
@@ -346,10 +346,10 @@ function testOldValueAsRequested() {
         mutations = null;
         div = document.createElement('div');
         div.setAttribute('foo', 'bar');
-        observerWithOldValue = new WebKitMutationObserver(function(mutations) {
+        observerWithOldValue = new MutationObserver(function(mutations) {
             window.mutationsWithOldValue = mutations;
         });
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observerWithOldValue.observe(div, { attributes: true, attributeOldValue: true });
@@ -387,7 +387,7 @@ function testOldValueUnionMultipleObservations() {
         div = document.createElement('div');
         span = div.appendChild(document.createElement('span'));
         span.setAttribute('foo', 'bar');
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observer.observe(div, { attributes: true, attributeOldValue: true, subtree: true });
@@ -417,7 +417,7 @@ function testIDLAttribute() {
         debug('Testing setting an attribute via reflected IDL attribute.');
         mutations = null;
         div = document.createElement('div');
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
         observer.observe(div, { attributes: true, attributeOldValue: true });
@@ -454,7 +454,7 @@ function testAttributeFilter() {
         debug('Testing that attributeFilter works as expected and observes case with HTML elements.');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -494,7 +494,7 @@ function testAttributeFilterSubtree() {
         debug('Testing the behavior of attributeFilter when the same observer observes at multiple nodes in a subtree with different filter options.');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -565,7 +565,7 @@ function testAttributeFilterNonHTMLElement() {
         debug('Testing that setting an attributeFilter filters out namespaced attributes.');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -597,7 +597,7 @@ function testAttributeFilterNonHTMLDocument() {
 
         svgDoc = document.implementation.createDocument('http://www.w3.org/2000/svg', 'svg', 'svg');
         mutations = null;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -642,7 +642,7 @@ function testStyleAttributePropertyAccess() {
         debug('Testing that modifying an elements style property dispatches Mutation Records.');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -694,7 +694,7 @@ function testStyleAttributePropertyAccessOldValue() {
         debug('Testing that modifying an elements style property dispatches Mutation Records with correct oldValues.');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -746,7 +746,7 @@ function testStyleAttributePropertyAccessIgnoreNoop() {
         debug('Testing that a no-op style property mutation does not create Mutation Records.');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(m) {
+        observer = new MutationObserver(function(m) {
             mutations = m;
         });
 
@@ -776,7 +776,7 @@ function testMutateThroughAttrNodeValue() {
         debug('Test that mutating an attribute through an attr node delivers mutation records');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 
@@ -810,7 +810,7 @@ function testMutateThroughAttrNodeChild() {
         debug('Test that mutating an attribute by attaching a child to an attr node delivers mutation records');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 
@@ -844,7 +844,7 @@ function testSetAndRemoveAttributeNode() {
         debug('Test that mutating via setAttributeNode delivers mutation records');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 
@@ -893,7 +893,7 @@ function testMixedNodeAndElementOperations() {
         debug('Test that setAttribute on an attribute with an existing Attr delivers mutation records');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 
@@ -929,7 +929,7 @@ function testNamedNodeMapOperations() {
         debug('Test that setNamedItem and removeNamedItem deliver mutation records');
 
         mutations = null;
-        observer = new WebKitMutationObserver(function(mutations) {
+        observer = new MutationObserver(function(mutations) {
             window.mutations = mutations;
         });
 

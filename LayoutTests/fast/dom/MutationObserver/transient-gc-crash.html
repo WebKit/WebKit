@@ -6,7 +6,7 @@ description('Clearing transient observers after observation node is GCed should 
 function callback(mutations) {
     window.mutations = mutations;
 }
-var observer = new WebKitMutationObserver(callback);
+var observer = new MutationObserver(callback);
 
 var div = document.createElement('div');
 var span = div.appendChild(document.createElement('span'));

@@ -2,7 +2,7 @@
 <script src="../../js/resources/js-test-pre.js"></script>
 <script>
 description('Non-relevant properties on mutation records should be null, except for NodeLists, which should be empty');
-var observer = new WebKitMutationObserver(function() {});
+var observer = new MutationObserver(function() {});
 
 var text = document.createTextNode('something');
 observer.observe(text, {characterData: true});

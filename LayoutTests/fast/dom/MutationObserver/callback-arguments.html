@@ -12,7 +12,7 @@ function mutationCallback(mutations, observer) {
     shouldBe('argument2', 'mutationObserver');
     finishJSTest();
 }
-var mutationObserver = new WebKitMutationObserver(mutationCallback);
+var mutationObserver = new MutationObserver(mutationCallback);
 var div = document.createElement('div');
 mutationObserver.observe(div, {attributes: true});
 div.setAttribute('foo', 'bar');
