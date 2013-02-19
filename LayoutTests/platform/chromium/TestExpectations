@@ -3396,7 +3396,7 @@ webkit.org/b/84550 [ SnowLeopard ] fast/canvas/2d.text.draw.fill.maxWidth.gradie
 webkit.org/b/84688 [ SnowLeopard ] compositing/animation/computed-style-during-delay.html [ Failure Pass ]
 webkit.org/b/84688 [ SnowLeopard ] platform/chromium/virtual/softwarecompositing/animation/computed-style-during-delay.html [ Failure Pass ]
 
-webkit.org/b/84696 fast/workers/storage/interrupt-database.html [ Pass Slow ]
+webkit.org/b/84696 [ Release ] fast/workers/storage/interrupt-database.html [ Pass Slow ]
 
 webkit.org/b/84720 [ Debug ] fast/repaint/fixed-right-in-page-scale.html [ ImageOnlyFailure Pass ]
 webkit.org/b/84720 fast/repaint/fixed-scale.html [ ImageOnlyFailure Pass ]
@@ -4389,3 +4389,5 @@ webkit.org/b/109963 [ Debug ] inspector/profiler/heap-snapshot-get-profile-crash
 webkit.org/b/109581 [ Win ] inspector/debugger/debugger-script-preprocessor.html [ Pass Crash ]
 
 crbug.com/176843 fast/filesystem/op-restricted-names.html [ Failure ]
+
+webkit.org/b/110247 [ Debug ] fast/workers/storage/interrupt-database.html [ Pass Crash Slow ]
