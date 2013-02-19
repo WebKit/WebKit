@@ -799,7 +799,7 @@ void ChromeClientImpl::popupOpened(PopupContainer* popupContainer,
     // to interact via the keyboard with an invisible popup.
     if (popupContainer->popupType() == PopupContainer::Suggestion) {
         FrameView* view = m_webView->page()->mainFrame()->view();
-        IntRect visibleRect = view->visibleContentRect(true /* include scrollbars */);
+        IntRect visibleRect = view->visibleContentRect(ScrollableArea::IncludeScrollbars);
         // |bounds| is in screen coordinates, so make sure to convert it to
         // content coordinates prior to comparing to |visibleRect|.
         IntRect screenRect = bounds;

@@ -688,7 +688,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
         hMode = ScrollbarAuto;
         // Seamless documents begin with heights of 0; we special case that here
         // to correctly render documents that don't need scrollbars.
-        IntSize fullVisibleSize = visibleContentRect(true /*includeScrollbars*/).size();
+        IntSize fullVisibleSize = visibleContentRect(IncludeScrollbars).size();
         bool isSeamlessDocument = frame() && frame()->document() && frame()->document()->shouldDisplaySeamlesslyWithParent();
         vMode = (isSeamlessDocument && !fullVisibleSize.height()) ? ScrollbarAlwaysOff : ScrollbarAuto;
     } else {
@@ -1161,7 +1161,7 @@ void FrameView::layout(bool allowSubtree)
                     if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
                         m_lastViewportSize = fixedLayoutSize();
                     else
-                        m_lastViewportSize = visibleContentRect(true /*includeScrollbars*/).size();
+                        m_lastViewportSize = visibleContentRect(IncludeScrollbars).size();
                     m_lastZoomFactor = root->style()->zoom();
 
                     // Set the initial vMode to AlwaysOn if we're auto.
@@ -2602,7 +2602,7 @@ void FrameView::performPostLayoutTasks()
         if (useFixedLayout() && !fixedLayoutSize().isEmpty() && delegatesScrolling())
             currentSize = fixedLayoutSize();
         else
-            currentSize = visibleContentRect(true /*includeScrollbars*/).size();
+            currentSize = visibleContentRect(IncludeScrollbars).size();
         float currentZoomFactor = renderView->style()->zoom();
         bool resized = !m_firstLayout && (currentSize != m_lastViewportSize || currentZoomFactor != m_lastZoomFactor);
         m_lastViewportSize = currentSize;
@@ -2784,7 +2784,7 @@ IntRect FrameView::windowClipRect(bool clipToContents) const
         return IntRect(IntPoint(), contentsSize());
 
     // Set our clip rect to be our contents.
-    IntRect clipRect = contentsToWindow(visibleContentRect(!clipToContents));
+    IntRect clipRect = contentsToWindow(visibleContentRect(clipToContents ? ExcludeScrollbars : IncludeScrollbars));
     if (!m_frame || !m_frame->ownerElement())
         return clipRect;
 

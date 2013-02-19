@@ -1,3 +1,17 @@
+2013-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up the boolean argument to visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=110167
+
+        Reviewed by Simon Fraser.
+        
+        Replace the boolean argument to visibleContentRect() with
+        an enum.
+
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::visibleContentBounds):
+        (WebKit::WebFrame::visibleContentBoundsExcludingScrollbars):
+
 2013-02-18  Anders Carlsson  <andersca@apple.com>
 
         Add a DefaultHash for RefPtr<SecurityOrigin>

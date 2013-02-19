@@ -1,3 +1,17 @@
+2013-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up the boolean argument to visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=110167
+
+        Reviewed by Simon Fraser.
+
+        Replace the boolean argument to visibleContentRect() with
+        an enum.
+
+        * WebFrame.cpp:
+        (WebFrame::visibleContentRect):
+        (WebFrame::frameBounds):
+
 2013-02-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Stop placing std::isfinite and std::signbit inside the global scope

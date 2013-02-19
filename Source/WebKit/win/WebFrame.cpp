@@ -1264,7 +1264,7 @@ HRESULT WebFrame::visibleContentRect(RECT* rect)
     if (!view)
         return E_FAIL;
 
-    *rect = view->visibleContentRect(false);
+    *rect = view->visibleContentRect();
     return S_OK;
 }
 
@@ -2471,7 +2471,7 @@ HRESULT STDMETHODCALLTYPE WebFrame::frameBounds(
     if (!view)
         return E_FAIL;
 
-    FloatRect bounds = view->visibleContentRect(true);
+    FloatRect bounds = view->visibleContentRect(ScrollableArea::IncludeScrollbars);
     result->bottom = (LONG) bounds.height();
     result->right = (LONG) bounds.width();
     return S_OK;

@@ -482,7 +482,7 @@ IntRect WebFrame::visibleContentBounds() const
     if (!view)
         return IntRect();
     
-    IntRect contentRect = view->visibleContentRect(true);
+    IntRect contentRect = view->visibleContentRect(ScrollableArea::IncludeScrollbars);
     return IntRect(0, 0, contentRect.width(), contentRect.height());
 }
 
@@ -495,7 +495,7 @@ IntRect WebFrame::visibleContentBoundsExcludingScrollbars() const
     if (!view)
         return IntRect();
     
-    IntRect contentRect = view->visibleContentRect(false);
+    IntRect contentRect = view->visibleContentRect();
     return IntRect(0, 0, contentRect.width(), contentRect.height());
 }
 

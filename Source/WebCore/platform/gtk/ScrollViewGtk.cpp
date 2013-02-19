@@ -63,8 +63,10 @@ PassRefPtr<Scrollbar> ScrollView::createScrollbar(ScrollbarOrientation orientati
     return Scrollbar::createNativeScrollbar(this, orientation, RegularScrollbar);
 }
 
-IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
+IntRect ScrollView::visibleContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
+    bool includeScrollbars = scrollbarInclusion == IncludeScrollbars;
+
     // If we are an interior frame scrollbar or are in some sort of transition
     // state, just calculate our size based on what the GTK+ theme says the
     // scrollbar width should be.

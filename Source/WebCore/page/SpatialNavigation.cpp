@@ -485,7 +485,7 @@ bool canScrollInDirection(const Frame* frame, FocusDirection direction)
         return false;
     LayoutSize size = frame->view()->contentsSize();
     LayoutSize offset = frame->view()->scrollOffset();
-    LayoutRect rect = frame->view()->visibleContentRect(true);
+    LayoutRect rect = frame->view()->visibleContentRect(ScrollableArea::IncludeScrollbars);
 
     switch (direction) {
     case FocusDirectionLeft:

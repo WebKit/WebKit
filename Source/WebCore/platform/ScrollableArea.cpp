@@ -403,12 +403,12 @@ IntPoint ScrollableArea::maximumScrollPosition() const
     return IntPoint(contentsSize().width() - visibleWidth(), contentsSize().height() - visibleHeight());
 }
 
-IntRect ScrollableArea::visibleContentRect(bool includeScrollbars) const
+IntRect ScrollableArea::visibleContentRect(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     int verticalScrollbarWidth = 0;
     int horizontalScrollbarHeight = 0;
 
-    if (includeScrollbars) {
+    if (scrollbarInclusion == IncludeScrollbars) {
         if (Scrollbar* verticalBar = verticalScrollbar())
             verticalScrollbarWidth = !verticalBar->isOverlayScrollbar() ? verticalBar->width() : 0;
         if (Scrollbar* horizontalBar = horizontalScrollbar())

@@ -53,7 +53,7 @@ void RenderDialog::layout()
     FrameView* frameView = document()->view();
     int scrollTop = frameView->scrollOffset().height();
     FloatPoint absolutePoint(0, scrollTop);
-    int visibleHeight = frameView->visibleContentRect(true).height();
+    int visibleHeight = frameView->visibleContentRect(ScrollableArea::IncludeScrollbars).height();
     if (height() < visibleHeight)
         absolutePoint.move(0, (visibleHeight - height()) / 2);
     FloatPoint localPoint = containingBlock()->absoluteToLocal(absolutePoint);

@@ -1,3 +1,16 @@
+2013-02-18  Simon Fraser  <simon.fraser@apple.com>
+
+        Clean up the boolean argument to visibleContentRect
+        https://bugs.webkit.org/show_bug.cgi?id=110167
+
+        Reviewed by Simon Fraser.
+
+        Replace the boolean argument to visibleContentRect() with
+        an enum.
+
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_visible_content_geometry_get):
+
 2013-02-18  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [EFL] Fix build when CONTEXT_MENUS flag is turned off

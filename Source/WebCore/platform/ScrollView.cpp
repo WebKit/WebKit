@@ -225,10 +225,10 @@ void ScrollView::setDelegatesScrolling(bool delegatesScrolling)
     delegatesScrollingDidChange();
 }
 
-IntSize ScrollView::unscaledVisibleContentSize(bool includeScrollbars) const
+IntSize ScrollView::unscaledVisibleContentSize(VisibleContentRectIncludesScrollbars scrollbarInclusion) const
 {
     if (platformWidget())
-        return platformVisibleContentRect(includeScrollbars).size();
+        return platformVisibleContentRect(scrollbarInclusion == IncludeScrollbars).size();
 
     if (!m_fixedVisibleContentRect.isEmpty())
         return m_fixedVisibleContentRect.size();
@@ -236,7 +236,7 @@ IntSize ScrollView::unscaledVisibleContentSize(bool includeScrollbars) const
     int verticalScrollbarWidth = 0;
     int horizontalScrollbarHeight = 0;
 
-    if (!includeScrollbars) {
+    if (scrollbarInclusion == ExcludeScrollbars) {
         if (Scrollbar* verticalBar = verticalScrollbar())
             verticalScrollbarWidth = !verticalBar->isOverlayScrollbar() ? verticalBar->width() : 0;
         if (Scrollbar* horizontalBar = horizontalScrollbar())
@@ -248,15 +248,15 @@ IntSize ScrollView::unscaledVisibleContentSize(bool includeScrollbars) const
 }
 
 #if !PLATFORM(GTK)
-IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
+IntRect ScrollView::visibleContentRect(VisibleContentRectIncludesScrollbars scollbarInclusion) const
 {
     if (platformWidget())
-        return platformVisibleContentRect(includeScrollbars);
+        return platformVisibleContentRect(scollbarInclusion == IncludeScrollbars);
 
     if (!m_fixedVisibleContentRect.isEmpty())
         return m_fixedVisibleContentRect;
 
-    FloatSize visibleContentSize = unscaledVisibleContentSize(includeScrollbars);
+    FloatSize visibleContentSize = unscaledVisibleContentSize(scollbarInclusion);
     visibleContentSize.scale(1 / visibleContentScaleFactor());
     return IntRect(IntPoint(m_scrollOffset), expandedIntSize(visibleContentSize));
 }
@@ -264,7 +264,7 @@ IntRect ScrollView::visibleContentRect(bool includeScrollbars) const
 
 IntSize ScrollView::layoutSize() const
 {
-    return m_fixedLayoutSize.isEmpty() || !m_useFixedLayout ? unscaledVisibleContentSize(false) : m_fixedLayoutSize;
+    return m_fixedLayoutSize.isEmpty() || !m_useFixedLayout ? unscaledVisibleContentSize(ExcludeScrollbars) : m_fixedLayoutSize;
 }
 
 IntSize ScrollView::fixedLayoutSize() const
@@ -504,7 +504,7 @@ void ScrollView::updateScrollbars(const IntSize& desiredOffset)
         bool sendContentResizedNotification = false;
         
         IntSize docSize = contentsSize();
-        IntSize fullVisibleSize = visibleContentRect(true /*includeScrollbars*/).size();
+        IntSize fullVisibleSize = visibleContentRect(IncludeScrollbars).size();
 
         if (hScroll == ScrollbarAuto) {
             newHasHorizontalScrollbar = docSize.width() > visibleWidth();
@@ -1053,7 +1053,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
 
     IntRect documentDirtyRect = rect;
     if (!paintsEntireContents()) {
-        IntRect visibleAreaWithoutScrollbars(location(), visibleContentRect(false).size());
+        IntRect visibleAreaWithoutScrollbars(location(), visibleContentRect().size());
         documentDirtyRect.intersect(visibleAreaWithoutScrollbars);
     }
 
@@ -1084,7 +1084,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
     if (!m_scrollbarsSuppressed && (m_horizontalScrollbar || m_verticalScrollbar)) {
         GraphicsContextStateSaver stateSaver(*context);
         IntRect scrollViewDirtyRect = rect;
-        IntRect visibleAreaWithScrollbars(location(), visibleContentRect(true).size());
+        IntRect visibleAreaWithScrollbars(location(), visibleContentRect(IncludeScrollbars).size());
         scrollViewDirtyRect.intersect(visibleAreaWithScrollbars);
         context->translate(x(), y());
         scrollViewDirtyRect.moveBy(-location());

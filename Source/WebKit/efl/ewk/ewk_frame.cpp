@@ -820,7 +820,7 @@ Eina_Bool ewk_frame_visible_content_geometry_get(const Evas_Object* ewkFrame, Ei
     EWK_FRAME_SD_GET_OR_RETURN(ewkFrame, smartData, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame, false);
     EINA_SAFETY_ON_NULL_RETURN_VAL(smartData->frame->view(), false);
-    WebCore::IntRect rect = smartData->frame->view()->visibleContentRect(includeScrollbars);
+    WebCore::IntRect rect = smartData->frame->view()->visibleContentRect(includeScrollbars ? WebCore::ScrollableArea::IncludeScrollbars : WebCore::ScrollableArea::ExcludeScrollbars);
     if (x)
         *x = rect.x();
     if (y)

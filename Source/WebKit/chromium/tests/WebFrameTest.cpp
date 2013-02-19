@@ -482,11 +482,11 @@ TEST_F(WebFrameTest, pageScaleFactorShrinksViewport)
 
     m_webView->setPageScaleFactor(2, WebPoint());
 
-    WebCore::IntSize unscaledSize = view->unscaledVisibleContentSize(true);
+    WebCore::IntSize unscaledSize = view->unscaledVisibleContentSize(WebCore::ScrollableArea::IncludeScrollbars);
     EXPECT_EQ(viewportWidth, unscaledSize.width());
     EXPECT_EQ(viewportHeight, unscaledSize.height());
 
-    WebCore::IntSize unscaledSizeMinusScrollbar = view->unscaledVisibleContentSize(false);
+    WebCore::IntSize unscaledSizeMinusScrollbar = view->unscaledVisibleContentSize(WebCore::ScrollableArea::ExcludeScrollbars);
     EXPECT_EQ(viewportWidthMinusScrollbar, unscaledSizeMinusScrollbar.width());
     EXPECT_EQ(viewportHeightMinusScrollbar, unscaledSizeMinusScrollbar.height());
 
