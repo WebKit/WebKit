@@ -4335,10 +4335,6 @@ webkit.org/b/107341 [ Debug ] inspector/profiler/memory-instrumentation-cached-i
 
 webkit.org/b/108163 [ Debug ] platform/chromium/virtual/deferred/fast/images/icon-0colors.html [ Crash ]
 
-# New test cases added to these tests will require rebaselines.
-webkit.org/b/109831 css3/filters/effect-reference.html [ Failure ImageOnlyFailure ]
-webkit.org/b/109831 css3/filters/effect-reference-hw.html [ Failure ImageOnlyFailure ]
-
 # New clamping logic in the tile shader will causes slight diffs. These images must be rebaselined.
 crbug.com/170722 [ Mac Win Linux ] compositing/color-matching/image-color-matching.html [ ImageOnlyFailure ]
 crbug.com/170722 [ Mac Win Linux ] compositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
