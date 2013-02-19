@@ -1,3 +1,24 @@
+2013-02-19  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13239119> NetworkProcess generates timeout spindump logs
+
+        Reviewed by Mark Rowe.
+
+        Don't keep a window server connection in processes that don't need it, and don't
+        run an NSApplication run loop.
+
+        * Shared/ChildProcess.h:
+        * Shared/mac/ChildProcessMac.mm: (WebKit::ChildProcess::shutdownWindowServerConnection):
+        Added a function to shut down connections, and to make sure we don't get one in the future.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::initializeProcessName):
+        * OfflineStorageProcess/mac/OfflineStorageProcessMac.mm:
+        (WebKit::OfflineStorageProcess::initializeProcessName):
+        * SharedWorkerProcess/mac/SharedWorkerProcessMac.mm:
+        (WebKit::SharedWorkerProcess::platformInitializeSharedWorkerProcess): Also removed
+        some unused includes and forward declarations.
+
 2013-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         [WK2] Cannot load documents with blob urls

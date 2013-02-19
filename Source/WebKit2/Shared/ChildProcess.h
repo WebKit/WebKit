@@ -64,6 +64,8 @@ public:
 #if PLATFORM(MAC)
     bool processSuppressionEnabled() const { return !m_processVisibleAssertion; }
     void setProcessSuppressionEnabled(bool);
+
+    void shutdownWindowServerConnection();
 #endif
 
     CoreIPC::Connection* parentProcessConnection() const { return m_connection.get(); }

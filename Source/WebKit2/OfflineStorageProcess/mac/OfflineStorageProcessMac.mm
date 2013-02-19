@@ -36,6 +36,9 @@ void OfflineStorageProcess::initializeProcessName(const ChildProcessInitializati
 {
     NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Offline Storage", "visible name of the offline storage process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
+
+    // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
+    shutdownWindowServerConnection();
 }
 
 void OfflineStorageProcess::initializeSandbox(const ChildProcessInitializationParameters& parameters, SandboxInitializationParameters& sandboxParameters)

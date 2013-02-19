@@ -41,6 +41,19 @@
 #define SANDBOX_NAMED_EXTERNAL 0x0003
 extern "C" int sandbox_init_with_parameters(const char *profile, uint64_t flags, const char *const parameters[], char **errorbuf);
 
+#ifdef __has_include
+#if __has_include(<CoreGraphics/CGSConnection.h>)
+#include <CoreGraphics/CGSConnection.h>
+#endif
+
+#if __has_include(<HIServices/ProcessesPriv.h>)
+#include <HIServices/ProcessesPriv.h>
+#endif
+#endif
+
+extern "C" CGError CGSShutdownServerConnections();
+extern "C" OSStatus SetApplicationIsDaemon(Boolean isDaemon);
+
 using namespace WebCore;
 
 namespace WebKit {
@@ -69,6 +82,12 @@ static void initializeTimerCoalescingPolicy()
     ASSERT_UNUSED(kr, kr == KERN_SUCCESS);
 }
 #endif
+
+void ChildProcess::shutdownWindowServerConnection()
+{
+    CGSShutdownServerConnections();
+    SetApplicationIsDaemon(true);
+}
 
 void ChildProcess::platformInitialize()
 {

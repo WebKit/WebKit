@@ -59,6 +59,9 @@ void NetworkProcess::initializeProcessName(const ChildProcessInitializationParam
     if (!parameters.uiProcessName.isNull()) {
         NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Networking", "visible name of the network process. The argument is the application name."), (NSString *)parameters.uiProcessName];
         WKSetVisibleApplicationName((CFStringRef)applicationName);
+
+        // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).
+        shutdownWindowServerConnection();
     }
 }
 
