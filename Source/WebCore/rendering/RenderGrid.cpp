@@ -317,7 +317,12 @@ size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         const GridPosition& position = (direction == ForColumns) ? child->style()->gridItemColumn() : child->style()->gridItemRow();
-        // This function bypasses the cache as it is used to build it. Also 'auto' items will need to be resolved in seperate phases anyway.
+        // 'auto' items will need to be resolved in seperate phases anyway. Note that because maximumIndex is at least 1,
+        // the grid-auto-flow == none case is automatically handled.
+        if (position.isAuto())
+            continue;
+
+        // This function bypasses the cache (cachedGridCoordinate()) as it is used to build it.
         maximumIndex = std::max(maximumIndex, resolveGridPositionFromStyle(position) + 1);
     }
 
@@ -486,14 +491,39 @@ void RenderGrid::placeItemsOnGrid()
     for (size_t i = 0; i < m_grid.size(); ++i)
         m_grid[i].grow(maximumColumnIndex);
 
+    Vector<RenderBox*> autoGridItems;
+    GridAutoFlow autoFlow = style()->gridAutoFlow();
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        size_t columnTrack = resolveGridPositionFromStyle(child->style()->gridItemColumn());
-        size_t rowTrack = resolveGridPositionFromStyle(child->style()->gridItemRow());
+        const GridPosition& columnPosition = child->style()->gridItemColumn();
+        const GridPosition& rowPosition = child->style()->gridItemRow();
+        if (autoFlow != AutoFlowNone && (columnPosition.isAuto() || rowPosition.isAuto())) {
+            autoGridItems.append(child);
+            continue;
+        }
+        size_t columnTrack = resolveGridPositionFromStyle(columnPosition);
+        size_t rowTrack = resolveGridPositionFromStyle(rowPosition);
         insertItemIntoGrid(child, rowTrack, columnTrack);
     }
 
     ASSERT(gridRowCount() >= style()->gridRows().size());
     ASSERT(gridColumnCount() >= style()->gridColumns().size());
+
+    if (autoFlow == AutoFlowNone) {
+        // If we did collect some grid items, they won't be placed thus never laid out.
+        ASSERT(!autoGridItems.size());
+        return;
+    }
+
+    // FIXME: This should implement the auto flow algorithm (https://bugs.webkit.org/b/103316).
+    // To keep our tests passing, we just insert them in the grid as if grid-auto-flow was none.
+    for (size_t i = 0; i < autoGridItems.size(); ++i) {
+        const GridPosition& columnPosition = autoGridItems[i]->style()->gridItemColumn();
+        const GridPosition& rowPosition = autoGridItems[i]->style()->gridItemRow();
+        size_t columnTrack = columnPosition.isAuto() ? 0 : resolveGridPositionFromStyle(columnPosition);
+        size_t rowTrack = rowPosition.isAuto() ? 0 : resolveGridPositionFromStyle(rowPosition);
+
+        insertItemIntoGrid(autoGridItems[i], rowTrack, columnTrack);
+    }
 }
 
 void RenderGrid::clearGrid()
@@ -566,9 +596,8 @@ size_t RenderGrid::resolveGridPositionFromStyle(const GridPosition& position) co
 
         return position.integerPosition() - 1;
     case AutoPosition:
-        // FIXME: We should follow 'grid-auto-flow' for resolution.
-        // Until then, we use the 'grid-auto-flow: none' behavior (which is the default)
-        // and resolve 'auto' as the first row / column.
+        // We cannot resolve grid positions if grid-auto-flow != none as it requires several iterations.
+        ASSERT(style()->gridAutoFlow() == AutoFlowNone);
         return 0;
     }
     ASSERT_NOT_REACHED();

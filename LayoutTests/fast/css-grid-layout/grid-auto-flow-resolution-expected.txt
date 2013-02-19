@@ -1,0 +1,9 @@
+This test checks that the tracks' auto position are properly resolved on a static grid.
+
+XXXXX XXXXX XXXXX
+XXXXX XXXXX XXXXX
+XXXXX XXXXX XXXXX
+XXXXX XXXXX XXXXX
+XXXXX XXXXX XXXXX
+XXXXX XXXXX XXXXX
+PASS
