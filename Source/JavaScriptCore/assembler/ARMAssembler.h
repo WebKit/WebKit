@@ -952,6 +952,17 @@ namespace JSC {
             }
         }
 
+        static void revertBranchPtrWithPatch(void* instructionStart, RegisterID rn, ARMWord imm)
+        {
+            ARMWord* instruction = reinterpret_cast<ARMWord*>(instructionStart);
+
+            ASSERT((instruction[2] & LdrPcImmediateInstructionMask) == LdrPcImmediateInstruction);
+            instruction[0] = toARMWord(AL) | ((instruction[2] & 0x0fff0fff) + sizeof(ARMWord)) | RD(ARMRegisters::S1);
+            *getLdrImmAddress(instruction) = imm;
+            instruction[1] = toARMWord(AL) | CMP | SetConditionalCodes | RN(rn) | RM(ARMRegisters::S1);
+            cacheFlush(instruction, 2 * sizeof(ARMWord));
+        }
+
         // Address operations
 
         static void* getRelocatedAddress(void* code, AssemblerLabel label)
