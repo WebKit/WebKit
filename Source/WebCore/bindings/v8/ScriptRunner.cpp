@@ -43,7 +43,7 @@ v8::Local<v8::Value> ScriptRunner::runCompiledScript(v8::Handle<v8::Script> scri
         return handleMaxRecursionDepthExceeded();
 
     if (handleOutOfMemory())
-        ASSERT(script.IsEmpty());
+        return v8::Local<v8::Value>();
 
     // Run the script and keep track of the current recursion depth.
     v8::Local<v8::Value> result;
