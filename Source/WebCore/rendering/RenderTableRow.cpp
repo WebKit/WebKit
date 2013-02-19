@@ -54,13 +54,11 @@ void RenderTableRow::willBeRemovedFromTree()
     section()->setNeedsCellRecalc();
 }
 
-static bool borderLogicalWidthChanged(const RenderStyle* oldStyle, const RenderStyle* newStyle)
+static bool borderWidthChanged(const RenderStyle* oldStyle, const RenderStyle* newStyle)
 {
-    if (newStyle->isHorizontalWritingMode())
-        return oldStyle->borderLeftWidth() != newStyle->borderLeftWidth()
-            || oldStyle->borderRightWidth() != newStyle->borderRightWidth();
-
-    return oldStyle->borderTopWidth() != newStyle->borderTopWidth()
+    return oldStyle->borderLeftWidth() != newStyle->borderLeftWidth()
+        || oldStyle->borderTopWidth() != newStyle->borderTopWidth()
+        || oldStyle->borderRightWidth() != newStyle->borderRightWidth()
         || oldStyle->borderBottomWidth() != newStyle->borderBottomWidth();
 }
 
@@ -80,7 +78,7 @@ void RenderTableRow::styleDidChange(StyleDifference diff, const RenderStyle* old
         if (table && !table->selfNeedsLayout() && !table->normalChildNeedsLayout() && oldStyle && oldStyle->border() != style()->border())
             table->invalidateCollapsedBorders();
         
-        if (table && oldStyle && diff == StyleDifferenceLayout && needsLayout() && table->collapseBorders() && borderLogicalWidthChanged(oldStyle, style())) {
+        if (table && oldStyle && diff == StyleDifferenceLayout && needsLayout() && table->collapseBorders() && borderWidthChanged(oldStyle, style())) {
             // If the border width changes on a row, we need to make sure the cells in the row know to lay out again.
             // This only happens when borders are collapsed, since they end up affecting the border sides of the cell
             // itself.
