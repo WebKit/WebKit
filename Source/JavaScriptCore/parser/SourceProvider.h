@@ -37,13 +37,11 @@
 
 namespace JSC {
 
-    class SourceProviderCache;
-
     class SourceProvider : public RefCounted<SourceProvider> {
     public:
         static const intptr_t nullID = 1;
         
-        JS_EXPORT_PRIVATE SourceProvider(const String& url, const TextPosition& startPosition, SourceProviderCache* = 0);
+        JS_EXPORT_PRIVATE SourceProvider(const String& url, const TextPosition& startPosition);
 
         JS_EXPORT_PRIVATE virtual ~SourceProvider();
 
@@ -66,17 +64,11 @@ namespace JSC {
         bool isValid() const { return m_validated; }
         void setValid() { m_validated = true; }
 
-        SourceProviderCache* cache() const { return m_cache; }
-        void notifyCacheSizeChanged(int delta) { if (!m_cacheOwned) cacheSizeChanged(delta); }
-        
     private:
-        virtual void cacheSizeChanged(int delta) { UNUSED_PARAM(delta); }
 
         String m_url;
         TextPosition m_startPosition;
         bool m_validated;
-        SourceProviderCache* m_cache;
-        bool m_cacheOwned;
     };
 
     class StringSourceProvider : public SourceProvider {

@@ -30,23 +30,22 @@
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace JSC {
 
-class SourceProviderCache {
+class SourceProviderCache : public RefCounted<SourceProviderCache> {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    SourceProviderCache() : m_contentByteSize(0) {}
+    SourceProviderCache() { }
     JS_EXPORT_PRIVATE ~SourceProviderCache();
 
     JS_EXPORT_PRIVATE void clear();
-    JS_EXPORT_PRIVATE unsigned byteSize() const;
-    void add(int sourcePosition, PassOwnPtr<SourceProviderCacheItem>, unsigned size);
+    void add(int sourcePosition, PassOwnPtr<SourceProviderCacheItem>);
     const SourceProviderCacheItem* get(int sourcePosition) const { return m_map.get(sourcePosition); }
 
 private:
     HashMap<int, OwnPtr<SourceProviderCacheItem> > m_map;
-    unsigned m_contentByteSize;
 };
 
 }

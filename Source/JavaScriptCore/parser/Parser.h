@@ -908,7 +908,7 @@ private:
     int m_statementDepth;
     int m_nonTrivialExpressionCount;
     const Identifier* m_lastIdentifier;
-    SourceProviderCache* m_functionCache;
+    RefPtr<SourceProviderCache> m_functionCache;
     SourceElements* m_sourceElements;
     ParserArenaData<DeclarationStacks::VarStack>* m_varDeclarations;
     ParserArenaData<DeclarationStacks::FunctionStack>* m_funcDeclarations;

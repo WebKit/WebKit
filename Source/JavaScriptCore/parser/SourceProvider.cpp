@@ -26,23 +26,17 @@
 #include "config.h"
 #include "SourceProvider.h"
 
-#include "SourceProviderCache.h"
-
 namespace JSC {
 
-SourceProvider::SourceProvider(const String& url, const TextPosition& startPosition, SourceProviderCache* cache)
+SourceProvider::SourceProvider(const String& url, const TextPosition& startPosition)
     : m_url(url)
     , m_startPosition(startPosition)
     , m_validated(false)
-    , m_cache(cache ? cache : new SourceProviderCache)
-    , m_cacheOwned(!cache)
 {
 }
 
 SourceProvider::~SourceProvider()
 {
-    if (m_cacheOwned)
-        delete m_cache;
 }
 
 } // namespace JSC

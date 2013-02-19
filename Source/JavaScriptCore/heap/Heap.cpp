@@ -750,6 +750,11 @@ void Heap::collect(SweepToggle sweepToggle)
         deleteUnmarkedCompiledCode();
     }
 
+    {
+        GCPHASE(DeleteSourceProviderCaches);
+        m_globalData->clearSourceProviderCaches();
+    }
+
     if (sweepToggle == DoSweep) {
         SamplingRegion samplingRegion("Garbage Collection: Sweeping");
         GCPHASE(Sweeping);

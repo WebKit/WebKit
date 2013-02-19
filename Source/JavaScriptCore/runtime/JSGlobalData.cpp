@@ -57,6 +57,7 @@
 #include "ParserArena.h"
 #include "RegExpCache.h"
 #include "RegExpObject.h"
+#include "SourceProviderCache.h"
 #include "StrictEvalActivation.h"
 #include "StrongInlines.h"
 #include "UnlinkedCodeBlock.h"
@@ -454,6 +455,19 @@ void JSGlobalData::dumpSampleData(ExecState* exec)
 #if ENABLE(ASSEMBLER)
     ExecutableAllocator::dumpProfile();
 #endif
+}
+
+SourceProviderCache* JSGlobalData::addSourceProviderCache(SourceProvider* sourceProvider)
+{
+    SourceProviderCacheMap::AddResult addResult = sourceProviderCacheMap.add(sourceProvider, 0);
+    if (addResult.isNewEntry)
+        addResult.iterator->value = adoptRef(new SourceProviderCache);
+    return addResult.iterator->value.get();
+}
+
+void JSGlobalData::clearSourceProviderCaches()
+{
+    sourceProviderCacheMap.clear();
 }
 
 struct StackPreservingRecompiler : public MarkedBlock::VoidFunctor {

@@ -82,6 +82,8 @@ namespace JSC {
     class NativeExecutable;
     class ParserArena;
     class RegExpCache;
+    class SourceProvider;
+    class SourceProviderCache;
     class Stringifier;
     class Structure;
 #if ENABLE(REGEXP_TRACING)
@@ -303,9 +305,14 @@ namespace JSC {
         bool canUseRegExpJIT() { return false; } // interpreter only
 #endif
 
+        SourceProviderCache* addSourceProviderCache(SourceProvider*);
+        void clearSourceProviderCaches();
+
         PrototypeMap prototypeMap;
 
         OwnPtr<ParserArena> parserArena;
+        typedef HashMap<RefPtr<SourceProvider>, RefPtr<SourceProviderCache> > SourceProviderCacheMap;
+        SourceProviderCacheMap sourceProviderCacheMap;
         OwnPtr<Keywords> keywords;
         Interpreter* interpreter;
 #if ENABLE(JIT)

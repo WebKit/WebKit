@@ -55,15 +55,6 @@ public:
     static PassOwnPtr<SourceProviderCacheItem> create(const SourceProviderCacheItemCreationParameters&);
     ~SourceProviderCacheItem();
 
-    unsigned approximateByteSize() const
-    {
-        // The identifiers are uniqued strings so most likely there are few names that actually use any additional memory.
-        static const unsigned assumedAverageIdentifierSize = sizeof(StringImpl*) + 2;
-        unsigned size = sizeof(*this);
-        size += usedVariablesCount * assumedAverageIdentifierSize;
-        size += writtenVariablesCount * assumedAverageIdentifierSize;
-        return size;
-    }
     JSToken closeBraceToken() const 
     {
         JSToken token;

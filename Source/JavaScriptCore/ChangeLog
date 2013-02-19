@@ -1,3 +1,65 @@
+2013-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Shrank the SourceProvider cache
+        https://bugs.webkit.org/show_bug.cgi?id=110158
+
+        Reviewed by Oliver Hunt.
+
+        CodeCache is now our primary source cache, so a long-lived SourceProvider
+        cache is a waste. I measured this as a 10MB Membuster win; with more
+        precise instrumentation, Andreas estimated it as up to 30MB.
+
+        I didn't eliminate the SourceProvider cache because it's still useful
+        in speeding up uncached parsing of scripts with large nested functions
+        (i.e., all scripts).
+
+        * heap/Heap.cpp:
+        (JSC::Heap::collect): Discard all source provider caches after GC. This
+        is a convenient place to do so because it's reasonably soon after initial
+        parsing without being immediate.
+
+        * parser/Parser.cpp:
+        (JSC::::Parser): Updated for interface change: The heap now owns the
+        source provider cache, since most SourceProviders are not expected to
+        have one by default, and the heap is responsible for throwing them away.
+
+        (JSC::::parseInner): No need to update statistics on cache size, since
+        we're going to throw it away no matter what.
+
+        (JSC::::parseFunctionInfo): Reduced the minimum function size to 16. This
+        is a 27% win on a new parsing micro-benchmark I've added. Now that the
+        cache is temporary, we don't have to worry so much about its memory
+        footprint.
+
+        * parser/Parser.h:
+        (Parser): Updated for interface changes.
+
+        * parser/SourceProvider.cpp:
+        (JSC::SourceProvider::SourceProvider):
+        (JSC::SourceProvider::~SourceProvider):
+        * parser/SourceProvider.h:
+        (JSC):
+        (SourceProvider): SourceProvider doesn't own its cache anymore because
+        the cache is temporary.
+
+        * parser/SourceProviderCache.cpp:
+        (JSC::SourceProviderCache::clear):
+        (JSC::SourceProviderCache::add):
+        * parser/SourceProviderCache.h:
+        (JSC::SourceProviderCache::SourceProviderCache):
+        (SourceProviderCache):
+        * parser/SourceProviderCacheItem.h:
+        (SourceProviderCacheItem): No need to update statistics on cache size,
+        since we're going to throw it away no matter what.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::addSourceProviderCache):
+        (JSC):
+        (JSC::JSGlobalData::clearSourceProviderCaches):
+        * runtime/JSGlobalData.h:
+        (JSC):
+        (JSGlobalData): Moved the cache here so it's easier to throw away.
+
 2013-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         DFG backend Branch handling has duplicate code and dead code

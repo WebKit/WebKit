@@ -37,11 +37,6 @@
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/Vector.h>
 
-#if USE(JSC)  
-#include <parser/SourceProvider.h>
-#include <parser/SourceProviderCache.h>
-#endif
-
 namespace WebCore {
 
 CachedScript::CachedScript(const ResourceRequest& resourceRequest, const String& charset)
@@ -101,31 +96,10 @@ void CachedScript::data(PassRefPtr<ResourceBuffer> data, bool allDataReceived)
 void CachedScript::destroyDecodedData()
 {
     m_script = String();
-    unsigned extraSize = 0;
-#if USE(JSC)
-    if (m_sourceProviderCache && m_clients.isEmpty())
-        m_sourceProviderCache->clear();
-
-    extraSize = m_sourceProviderCache ? m_sourceProviderCache->byteSize() : 0;
-#endif
-    setDecodedSize(extraSize);
+    setDecodedSize(0);
     if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() && isSafeToMakePurgeable())
         makePurgeable(true);
 }
-
-#if USE(JSC)
-JSC::SourceProviderCache* CachedScript::sourceProviderCache() const
-{   
-    if (!m_sourceProviderCache) 
-        m_sourceProviderCache = adoptPtr(new JSC::SourceProviderCache); 
-    return m_sourceProviderCache.get(); 
-}
-
-void CachedScript::sourceProviderCacheSizeChanged(int delta)
-{
-    setDecodedSize(decodedSize() + delta);
-}
-#endif
 
 #if ENABLE(NOSNIFF)
 bool CachedScript::mimeTypeAllowedByNosniff() const
@@ -140,9 +114,6 @@ void CachedScript::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     CachedResource::reportMemoryUsage(memoryObjectInfo);
     info.addMember(m_script, "script");
     info.addMember(m_decoder, "decoder");
-#if USE(JSC)
-    info.addMember(m_sourceProviderCache, "sourceProviderCache");
-#endif
 }
 
 } // namespace WebCore

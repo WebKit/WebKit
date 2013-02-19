@@ -28,12 +28,6 @@
 
 #include "CachedResource.h"
 
-#if USE(JSC)
-namespace JSC {
-    class SourceProviderCache;
-}
-#endif
-
 namespace WebCore {
 
     class CachedResourceLoader;
@@ -52,11 +46,6 @@ namespace WebCore {
         String mimeType() const;
 
         virtual void destroyDecodedData();
-#if USE(JSC)        
-        // Allows JSC to cache additional information about the source.
-        JSC::SourceProviderCache* sourceProviderCache() const;
-        void sourceProviderCacheSizeChanged(int delta);
-#endif
 #if ENABLE(NOSNIFF)
         bool mimeTypeAllowedByNosniff() const;
 #endif
@@ -68,9 +57,6 @@ namespace WebCore {
 
         String m_script;
         RefPtr<TextResourceDecoder> m_decoder;
-#if USE(JSC)        
-        mutable OwnPtr<JSC::SourceProviderCache> m_sourceProviderCache;
-#endif
     };
 }
 

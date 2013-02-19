@@ -46,14 +46,9 @@ public:
 
     const String& source() const { return m_cachedScript->script(); }
 
-    virtual void cacheSizeChanged(int delta)
-    {
-        m_cachedScript->sourceProviderCacheSizeChanged(delta);
-    }
-
 private:
     CachedScriptSourceProvider(CachedScript* cachedScript)
-        : SourceProvider(cachedScript->response().url(), TextPosition::minimumPosition(), cachedScript->sourceProviderCache())
+        : SourceProvider(cachedScript->response().url(), TextPosition::minimumPosition())
         , m_cachedScript(cachedScript)
     {
         m_cachedScript->addClient(this);
