@@ -41,7 +41,7 @@
     text-align: center;
     background-color: black;
     overflow: hidden;
-    padding: 5px;
+    padding: 5px 5px 10px 5px;
     color: white;
 }
 
@@ -55,13 +55,19 @@
     display: block;
 }
 
-.canvas-replay-image.wait {
-    content: url(Images/spinnerActiveSelected.gif);
-    zoom: inherit;
+.canvas-debug-info {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -16px 0 0 -16px;
+    left: 0;
+    right: 0;
+    bottom: 6px;
+}
+
+.canvas-spinner-icon {
+    content: url(Images/spinnerActiveSelected.gif);
+    position: absolute;
+    width: 16px;
+    right: 4px;
+    bottom: 4px;
 }
 
 .canvas-replay-log {

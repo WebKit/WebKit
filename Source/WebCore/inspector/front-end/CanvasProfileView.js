@@ -47,7 +47,8 @@ WebInspector.CanvasProfileView = function(profile)
     var replayImageContainer = this._splitView.firstElement();
     replayImageContainer.id = "canvas-replay-image-container";
     this._replayImageElement = replayImageContainer.createChild("image", "canvas-replay-image");
-    this._debugInfoElement = replayImageContainer.createChild("div");
+    this._debugInfoElement = replayImageContainer.createChild("div", "canvas-debug-info hidden");
+    this._spinnerIcon = replayImageContainer.createChild("img", "canvas-spinner-icon hidden");
 
     var replayInfoContainer = this._splitView.secondElement();
     var controlsContainer = replayInfoContainer.createChild("div", "status-bar");
@@ -238,23 +239,8 @@ WebInspector.CanvasProfileView.prototype = {
      */
     _enableWaitIcon: function(enable)
     {
-        function showWaitIcon()
-        {
-            this._replayImageElement.addStyleClass("wait");
-            this._debugInfoElement.addStyleClass("hidden");
-            delete this._showWaitIconTimer;
-        }
-
-        if (enable && this._replayImageElement.src && !this._showWaitIconTimer)
-            this._showWaitIconTimer = setTimeout(showWaitIcon.bind(this), 250);
-        else {
-            if (this._showWaitIconTimer) {
-                clearTimeout(this._showWaitIconTimer);
-                delete this._showWaitIconTimer;
-            }
-            this._replayImageElement.enableStyleClass("wait", enable);
-            this._debugInfoElement.enableStyleClass("hidden", enable);
-        }
+        this._spinnerIcon.enableStyleClass("hidden", !enable);
+        this._debugInfoElement.enableStyleClass("hidden", enable);
     },
 
     _replayTraceLog: function()
