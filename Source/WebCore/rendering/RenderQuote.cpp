@@ -60,7 +60,7 @@ void RenderQuote::willBeRemovedFromTree()
 void RenderQuote::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderText::styleDidChange(diff, oldStyle);
-    updateText();
+    setText(originalText());
 }
 
 typedef HashMap<AtomicString, const QuotesData*, CaseFoldingHash> QuotesMap;
@@ -248,11 +248,6 @@ PassRefPtr<StringImpl> RenderQuote::originalText() const
     return StringImpl::empty();
 }
 
-void RenderQuote::updateText()
-{
-    setText(originalText());
-}
-
 const QuotesData* RenderQuote::quotesData() const
 {
     if (QuotesData* customQuotes = style()->quotes())
@@ -352,7 +347,7 @@ void RenderQuote::updateDepth()
         }
     }
     if (oldDepth != m_depth)
-        updateText();
+        setText(originalText());
 }
 
 } // namespace WebCore

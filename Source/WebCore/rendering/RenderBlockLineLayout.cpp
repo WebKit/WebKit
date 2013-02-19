@@ -29,6 +29,7 @@
 #include "Logging.h"
 #include "RenderArena.h"
 #include "RenderCombineText.h"
+#include "RenderCounter.h"
 #include "RenderFlowThread.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -426,11 +427,20 @@ static inline InlineBox* createInlineBoxForRenderer(RenderObject* obj, bool isRo
     return toRenderInline(obj)->createAndAppendInlineFlowBox();
 }
 
+// FIXME: Don't let counters mark themselves as needing pref width recalcs during layout
+// so we don't need this hack.
+static inline void updateCounterIfNeeded(RenderText* o)
+{
+    if (!o->preferredLogicalWidthsDirty() || !o->isCounter())
+        return;
+    toRenderCounter(o)->updateCounter();
+}
+
 static inline void dirtyLineBoxesForRenderer(RenderObject* o, bool fullLayout)
 {
     if (o->isText()) {
         RenderText* renderText = toRenderText(o);
-        renderText->updateTextIfNeeded(); // FIXME: Counters depend on this hack. No clue why. Should be investigated and removed.
+        updateCounterIfNeeded(renderText);
         renderText->dirtyLineBoxes(fullLayout);
     } else
         toRenderInline(o)->dirtyLineBoxes(fullLayout);
@@ -2782,7 +2792,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             }
 
             if (renderTextInfo.m_text != t) {
-                t->updateTextIfNeeded();
+                updateCounterIfNeeded(t);
                 renderTextInfo.m_text = t;
                 renderTextInfo.m_font = &f;
                 renderTextInfo.m_layout = f.createLayout(t, width.currentWidth(), collapseWhiteSpace);

@@ -40,6 +40,8 @@ public:
     static void rendererRemovedFromTree(RenderObject*);
     static void rendererStyleChanged(RenderObject*, const RenderStyle* oldStyle, const RenderStyle* newStyle);
 
+    void updateCounter();
+
 protected:
     virtual void willBeDestroyed();
 
@@ -48,7 +50,6 @@ private:
     virtual bool isCounter() const;
     virtual PassRefPtr<StringImpl> originalText() const;
     
-    virtual void updateText() OVERRIDE;
     virtual void computePreferredLogicalWidths(float leadWidth) OVERRIDE;
 
     // Removes the reference to the CounterNode associated with this renderer.

@@ -512,7 +512,7 @@ PassRefPtr<StringImpl> RenderCounter::originalText() const
     return text.impl();
 }
 
-void RenderCounter::updateText()
+void RenderCounter::updateCounter()
 {
     computePreferredLogicalWidths(0);
 }
