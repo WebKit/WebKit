@@ -1,3 +1,11 @@
+2013-02-19  Filip Pizlo  <fpizlo@apple.com>
+
+        Fix indentation of Instruction.h
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * bytecode/Instruction.h:
+
 2013-02-18  Geoffrey Garen  <ggaren@apple.com>
 
         Unreviewed, rolling in r143348.
