@@ -51,4 +51,12 @@ TransformationMatrix::operator CoglMatrix() const
     return matrix;
 }
 
+TransformationMatrix::TransformationMatrix(const CoglMatrix* matrix)
+{
+    setMatrix(matrix->xx, matrix->yx, matrix->zx, matrix->wx,
+        matrix->xy, matrix->yy, matrix->zy, matrix->wy,
+        matrix->xz, matrix->yz, matrix->zz, matrix->wz,
+        matrix->xw, matrix->yw, matrix->zw, matrix->ww);
+}
+
 }

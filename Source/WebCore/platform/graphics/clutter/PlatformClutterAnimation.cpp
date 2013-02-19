@@ -56,7 +56,7 @@ static String toClutterActorPropertyString(const PlatformClutterAnimation::Value
 {
     // ClutterActor doesn't have 'scale' and 'translate' properties. So we should support
     // 'scale' and 'translate' ValueFunctionType by combination of existing property animations. 
-    const char* clutterActorProperty[] = { "NoProperty", "rotation-angle-x", "rotation-angle-y", "rotation-angle-z", "scale-x", "scale-y", "scale-z", "scale", "translation-x", "translation-y", "translation-z", "translate" }; 
+    const char* clutterActorProperty[] = { "NoProperty", "rotation-angle-x", "rotation-angle-y", "rotation-angle-z", "scale-x", "scale-y", "scale-z", "scale", "translation-x", "translation-y", "translation-z", "translate", "transform" }; 
     return clutterActorProperty[valueFunctionType];
 }
 
@@ -83,6 +83,23 @@ static ClutterAnimationMode toClutterAnimationMode(const TimingFunction* timingF
     }
 
     return CLUTTER_EASE;
+}
+
+static gboolean clutterMatrixProgress(const GValue* fromValue, const GValue* toValue, gdouble progress, GValue* returnValue)
+{
+    const CoglMatrix* fromCoglMatrix = static_cast<CoglMatrix*>(g_value_get_boxed(fromValue));
+    const CoglMatrix* toCoglMatrix = static_cast<CoglMatrix*>(g_value_get_boxed(toValue));
+
+    ASSERT(fromCoglMatrix && toCoglMatrix);
+
+    TransformationMatrix fromMatrix(fromCoglMatrix);
+    TransformationMatrix toMatrix(toCoglMatrix);
+    toMatrix.blend(fromMatrix, progress);
+
+    CoglMatrix resultCoglMatrix = toMatrix;
+    g_value_set_boxed(returnValue, &resultCoglMatrix);
+
+    return true;
 }
 
 PlatformClutterAnimation::AnimatedPropertyType PlatformClutterAnimation::stringToAnimatedPropertyType(const String& keyPath) const
@@ -133,6 +150,13 @@ PlatformClutterAnimation::~PlatformClutterAnimation()
 bool PlatformClutterAnimation::supportsValueFunction()
 {
     return true;
+}
+
+bool PlatformClutterAnimation::supportsAdditiveValueFunction()
+{
+    // FIXME: Clutter 1.12 doesn't support additive valueFunction type animations.
+    // So, we use matrix animation instead until clutter supports it.
+    return false;
 }
 
 double PlatformClutterAnimation::beginTime() const
@@ -277,7 +301,10 @@ void PlatformClutterAnimation::setFromValue(float value)
 
 void PlatformClutterAnimation::setFromValue(const WebCore::TransformationMatrix& value)
 {
-    notImplemented();
+    if (animationType() != Basic || m_fromValueMatrix == value)
+        return;
+
+    m_fromValueMatrix = value;
 }
 
 void PlatformClutterAnimation::setFromValue(const FloatPoint3D& value)
@@ -308,7 +335,10 @@ void PlatformClutterAnimation::setToValue(float value)
 
 void PlatformClutterAnimation::setToValue(const WebCore::TransformationMatrix& value)
 {
-    notImplemented();
+    if (animationType() != Basic || m_toValueMatrix == value)
+        return;
+
+    m_toValueMatrix = value;
 }
 
 void PlatformClutterAnimation::setToValue(const FloatPoint3D& value)
@@ -412,6 +442,27 @@ void PlatformClutterAnimation::addClutterTransitionForProperty(const String& pro
     clutter_timeline_set_progress_mode(timeline(), toClutterAnimationMode(m_timingFunction));
 
     clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
+}
+
+void PlatformClutterAnimation::addClutterTransitionForProperty(const String& property, const WebCore::TransformationMatrix& fromValue, const WebCore::TransformationMatrix& toValue)
+{
+    ASSERT(property != "NoProperty");
+
+    const CoglMatrix fromCoglMatrix = fromValue;
+    const CoglMatrix toCoglMatrix = toValue;
+
+    GRefPtr<ClutterTransition> transition = adoptGRef(clutter_property_transition_new(property.utf8().data()));
+    clutter_transition_set_from(transition.get(), CLUTTER_TYPE_MATRIX, &fromCoglMatrix);
+    clutter_transition_set_to(transition.get(), CLUTTER_TYPE_MATRIX, &toCoglMatrix);
+
+    clutter_timeline_set_progress_mode(timeline(), toClutterAnimationMode(m_timingFunction));
+
+    clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
+
+    // FIXME: The matrix interpolation api, clutter_matrix_progress of Clutter 1.12 works unexpectedly.
+    // So we overwrite it and handle the interpolation of two matrices with TransformationMatrix.
+    // See https://bugzilla.gnome.org/show_bug.cgi?id=694197
+    clutter_interval_register_progress_func(CLUTTER_TYPE_MATRIX, clutterMatrixProgress);
 }
 
 void PlatformClutterAnimation::addClutterTransitionForProperty(const String& property, const FloatPoint3D& fromValue, const FloatPoint3D& toValue)
@@ -544,6 +595,9 @@ void PlatformClutterAnimation::addTransformTransition()
             addClutterKeyframeTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_values3D); 
         else
             addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValue3D, m_toValue3D);
+        break;
+    case Matrix:
+        addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValueMatrix, m_toValueMatrix);
         break;
     default:
         ASSERT_NOT_REACHED();

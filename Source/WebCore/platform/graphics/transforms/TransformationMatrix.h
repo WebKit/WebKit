@@ -341,6 +341,7 @@ public:
     operator CATransform3D() const;
 #endif
 #if USE(CLUTTER)
+    TransformationMatrix(const CoglMatrix*);
     operator CoglMatrix() const;
 #endif
 #if USE(CG)

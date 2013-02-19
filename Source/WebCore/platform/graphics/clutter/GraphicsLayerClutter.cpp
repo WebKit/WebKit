@@ -190,6 +190,8 @@ static PlatformClutterAnimation::ValueFunctionType getValueFunctionNameForTransf
     case TransformOperation::TRANSLATE:
     case TransformOperation::TRANSLATE_3D:
         return PlatformClutterAnimation::Translate;
+    case TransformOperation::MATRIX_3D:
+        return PlatformClutterAnimation::Matrix;
     default:
         return PlatformClutterAnimation::NoValueFunction;
     }
@@ -925,7 +927,7 @@ bool GraphicsLayerClutter::createTransformAnimationsFromKeyframes(const Keyframe
     // If function lists don't match we do a matrix animation, otherwise we do a component hardware animation.
     // Also, we can't do component animation unless we have valueFunction, so we need to do matrix animation
     // if that's not true as well.
-    bool isMatrixAnimation = listIndex < 0 || !PlatformClutterAnimation::supportsValueFunction();
+    bool isMatrixAnimation = listIndex < 0 || !PlatformClutterAnimation::supportsValueFunction() || (operations->size() >= 2 && !PlatformClutterAnimation::supportsAdditiveValueFunction());
     int numAnimations = isMatrixAnimation ? 1 : operations->size();
 
     for (int animationIndex = 0; animationIndex < numAnimations; ++animationIndex) {
