@@ -1,3 +1,19 @@
+2013-02-18  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG backend Branch handling has duplicate code and dead code
+        https://bugs.webkit.org/show_bug.cgi?id=110162
+
+        Reviewed by Mark Hahnenberg.
+        
+        Streamline the code, and make the 64 backend's optimizations make more sense
+        (i.e. not be dead code).
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-02-18  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows] Unreviewed VS2010 build correction after r143273.

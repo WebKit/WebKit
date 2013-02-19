@@ -3161,27 +3161,6 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case Branch:
-        if (node->child1()->shouldSpeculateInteger()) {
-            SpeculateIntegerOperand op(this, node->child1());
-            
-            BlockIndex taken = node->takenBlockIndex();
-            BlockIndex notTaken = node->notTakenBlockIndex();
-            
-            MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
-            
-            if (taken == nextBlock()) {
-                condition = MacroAssembler::Zero;
-                BlockIndex tmp = taken;
-                taken = notTaken;
-                notTaken = tmp;
-            }
-            
-            branchTest32(condition, op.gpr(), taken);
-            jump(notTaken);
-            
-            noResult(node);
-            break;
-        }
         emitBranch(node);
         break;
 

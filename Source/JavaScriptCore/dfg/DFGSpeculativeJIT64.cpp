@@ -1866,10 +1866,12 @@ void SpeculativeJIT::emitBranch(Node* node)
         GPRTemporary result(this);
         GPRReg resultGPR = result.gpr();
         
-        branch64(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(0))), notTaken);
-        branch64(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister, taken);
+        if (node->child1()->prediction() & SpecInt32) {
+            branch64(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImm64(JSValue::encode(jsNumber(0))), notTaken);
+            branch64(MacroAssembler::AboveOrEqual, valueGPR, GPRInfo::tagTypeNumberRegister, taken);
+        }
     
-        if (!predictBoolean) {
+        if (node->child1()->prediction() & SpecBoolean) {
             branch64(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImm64(JSValue::encode(jsBoolean(false))), notTaken);
             branch64(MacroAssembler::Equal, valueGPR, MacroAssembler::TrustedImm64(JSValue::encode(jsBoolean(true))), taken);
         }
@@ -3131,27 +3133,6 @@ void SpeculativeJIT::compile(Node* node)
     }
 
     case Branch:
-        if (node->child1()->shouldSpeculateInteger()) {
-            SpeculateIntegerOperand op(this, node->child1());
-            
-            BlockIndex taken = node->takenBlockIndex();
-            BlockIndex notTaken = node->notTakenBlockIndex();
-            
-            MacroAssembler::ResultCondition condition = MacroAssembler::NonZero;
-            
-            if (taken == nextBlock()) {
-                condition = MacroAssembler::Zero;
-                BlockIndex tmp = taken;
-                taken = notTaken;
-                notTaken = tmp;
-            }
-            
-            branchTest32(condition, op.gpr(), taken);
-            jump(notTaken);
-            
-            noResult(node);
-            break;
-        }
         emitBranch(node);
         break;
 
