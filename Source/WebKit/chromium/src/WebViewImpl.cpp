@@ -399,8 +399,11 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_ignoreViewportTagMaximumScale(false)
     , m_pageScaleFactorIsSet(false)
     , m_savedPageScaleFactor(0)
-    , m_doubleTapZoomInEffect(false)
-    , m_shouldUseDoubleTapTimeZero(false)
+    , m_doubleTapZoomPageScaleFactor(0)
+    , m_doubleTapZoomPending(false)
+    , m_enableFakeDoubleTapAnimationForTesting(false)
+    , m_fakeDoubleTapPageScaleFactor(0)
+    , m_fakeDoubleTapUseAnchor(false)
     , m_contextMenuAllowed(false)
     , m_doingDragAndDrop(false)
     , m_ignoreInputEvents(false)
@@ -856,19 +859,34 @@ void WebViewImpl::transferActiveWheelFlingAnimation(const WebActiveWheelFlingPar
     scheduleAnimation();
 }
 
-void WebViewImpl::startPageScaleAnimation(const IntPoint& targetPosition, bool useAnchor, float newScale, double durationInSeconds)
+bool WebViewImpl::startPageScaleAnimation(const IntPoint& targetPosition, bool useAnchor, float newScale, double durationInSeconds)
 {
     WebPoint clampedPoint = targetPosition;
-    if (!useAnchor)
+    if (!useAnchor) {
         clampedPoint = clampOffsetAtScale(targetPosition, newScale);
-    if ((!durationInSeconds && !useAnchor) || m_shouldUseDoubleTapTimeZero) {
-        setPageScaleFactor(newScale, clampedPoint);
-        return;
+        if (!durationInSeconds) {
+            setPageScaleFactor(newScale, clampedPoint);
+            return false;
+        }
     }
-    if (!m_layerTreeView)
-        return;
+    if (useAnchor && newScale == pageScaleFactor())
+        return false;
 
-    m_layerTreeView->startPageScaleAnimation(targetPosition, useAnchor, newScale, durationInSeconds);
+    if (m_enableFakeDoubleTapAnimationForTesting) {
+        m_fakeDoubleTapTargetPosition = targetPosition;
+        m_fakeDoubleTapUseAnchor = useAnchor;
+        m_fakeDoubleTapPageScaleFactor = newScale;
+    } else {
+        if (!m_layerTreeView)
+            return false;
+        m_layerTreeView->startPageScaleAnimation(targetPosition, useAnchor, newScale, durationInSeconds);
+    }
+    return true;
+}
+
+void WebViewImpl::enableFakeDoubleTapAnimationForTesting(bool enable)
+{
+    m_enableFakeDoubleTapAnimationForTesting = enable;
 }
 #endif
 
@@ -1153,11 +1171,6 @@ WebRect WebViewImpl::widenRectWithinPageBounds(const WebRect& source, int target
     return WebRect(newX, source.y, newWidth, source.height);
 }
 
-void WebViewImpl::shouldUseAnimateDoubleTapTimeZeroForTesting(bool setToZero)
-{
-    m_shouldUseDoubleTapTimeZero = setToZero;
-}
-
 void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZoomType zoomType, float& scale, WebPoint& scroll, bool& isAnchor)
 {
     scale = pageScaleFactor();
@@ -1215,17 +1228,15 @@ void WebViewImpl::computeScaleAndScrollForHitRect(const WebRect& hitRect, AutoZo
         scaleUnchanged = fabs(pageScaleFactor() - scale) < minScaleDifference;
     }
 
-    if (zoomType == DoubleTap && (rect.isEmpty() || scaleUnchanged || m_doubleTapZoomInEffect)) {
+    bool stillAtPreviousDoubleTapScale = (pageScaleFactor() == m_doubleTapZoomPageScaleFactor
+        && m_doubleTapZoomPageScaleFactor != m_minimumPageScaleFactor)
+        || m_doubleTapZoomPending;
+    if (zoomType == DoubleTap && (rect.isEmpty() || scaleUnchanged || stillAtPreviousDoubleTapScale)) {
         // Zoom out to minimum scale.
         scale = m_minimumPageScaleFactor;
         scroll = WebPoint(hitRect.x, hitRect.y);
         isAnchor = true;
-        m_doubleTapZoomInEffect = false;
     } else {
-        if (zoomType == DoubleTap && scale != m_minimumPageScaleFactor)
-            m_doubleTapZoomInEffect = true;
-        else
-            m_doubleTapZoomInEffect = false;
         // FIXME: If this is being called for auto zoom during find in page,
         // then if the user manually zooms in it'd be nice to preserve the
         // relative increase in zoom they caused (if they zoom out then it's ok
@@ -1343,8 +1354,13 @@ void WebViewImpl::animateZoomAroundPoint(const IntPoint& point, AutoZoomType zoo
     computeScaleAndScrollForHitRect(WebRect(webPoint.x, webPoint.y, 0, 0), zoomType, scale, scroll, isAnchor);
 
     bool isDoubleTap = (zoomType == DoubleTap);
-    double durationInSeconds = (isDoubleTap && !m_shouldUseDoubleTapTimeZero) ? doubleTapZoomAnimationDurationInSeconds : 0;
-    startPageScaleAnimation(scroll, isAnchor, scale, durationInSeconds);
+    double durationInSeconds = isDoubleTap ? doubleTapZoomAnimationDurationInSeconds : 0;
+    bool isAnimating = startPageScaleAnimation(scroll, isAnchor, scale, durationInSeconds);
+
+    if (isDoubleTap && isAnimating) {
+        m_doubleTapZoomPageScaleFactor = scale;
+        m_doubleTapZoomPending = true;
+    }
 #endif
 }
 
@@ -3767,10 +3783,8 @@ void WebViewImpl::didCommitLoad(bool* isNewNavigation, bool isNavigationWithinPa
     m_newNavigationLoader = 0;
 #endif
     m_observedNewNavigation = false;
-    if (*isNewNavigation && !isNavigationWithinPage) {
+    if (*isNewNavigation && !isNavigationWithinPage)
         m_pageScaleFactorIsSet = false;
-        m_doubleTapZoomInEffect = false;
-    }
 
     // Make sure link highlight from previous page is cleared.
     m_linkHighlight.clear();
@@ -4217,7 +4231,7 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
         }
 
         setPageScaleFactor(pageScaleFactor() * pageScaleDelta, scrollPoint);
-        m_doubleTapZoomInEffect = false;
+        m_doubleTapZoomPending = false;
     }
 }
 

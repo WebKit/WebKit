@@ -595,7 +595,7 @@ void setScaleAndScrollAndLayout(WebKit::WebView* webView, WebPoint scroll, float
     webView->layout();
 }
 
-TEST_F(WebFrameTest, DivAutoZoomParamsTestCompositorScaling)
+TEST_F(WebFrameTest, DivAutoZoomParamsTest)
 {
     registerMockedHttpURLLoad("get_scale_for_auto_zoom_into_div_test.html");
 
@@ -656,11 +656,14 @@ TEST_F(WebFrameTest, DivAutoZoomParamsTestCompositorScaling)
 void simulateDoubleTap(WebViewImpl* webViewImpl, WebPoint& point, float& scale)
 {
     webViewImpl->animateZoomAroundPoint(point, WebViewImpl::DoubleTap);
-    webViewImpl->mainFrameImpl()->frameView()->layout();
+    EXPECT_TRUE(webViewImpl->fakeDoubleTapAnimationPendingForTesting());
+    WebCore::IntSize scrollDelta = webViewImpl->fakeDoubleTapTargetPositionForTesting() - webViewImpl->mainFrameImpl()->frameView()->scrollPosition();
+    float scaleDelta = webViewImpl->fakeDoubleTapPageScaleFactorForTesting() / webViewImpl->pageScaleFactor();
+    webViewImpl->applyScrollAndScale(scrollDelta, scaleDelta);
     scale = webViewImpl->pageScaleFactor();
 }
 
-TEST_F(WebFrameTest, DivAutoZoomMultipleDivsTestCompositorScaling)
+TEST_F(WebFrameTest, DivAutoZoomMultipleDivsTest)
 {
     registerMockedHttpURLLoad("get_multiple_divs_for_auto_zoom_test.html");
 
@@ -679,7 +682,7 @@ TEST_F(WebFrameTest, DivAutoZoomMultipleDivsTestCompositorScaling)
     m_webView->layout();
 
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(m_webView);
-    webViewImpl->shouldUseAnimateDoubleTapTimeZeroForTesting(true);
+    webViewImpl->enableFakeDoubleTapAnimationForTesting(true);
 
     WebRect topDiv(200, 100, 200, 150);
     WebRect bottomDiv(200, 300, 200, 150);
@@ -701,9 +704,18 @@ TEST_F(WebFrameTest, DivAutoZoomMultipleDivsTestCompositorScaling)
     webViewImpl->applyScrollAndScale(WebSize(), 0.6f);
     simulateDoubleTap(webViewImpl, bottomPoint, scale);
     EXPECT_FLOAT_EQ(1, scale);
+    simulateDoubleTap(webViewImpl, bottomPoint, scale);
+    EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
+
+    // If we didn't yet get an auto-zoom update and a second double-tap arrives, should go back to minimum scale.
+    webViewImpl->applyScrollAndScale(WebSize(), 1.1f);
+    webViewImpl->animateZoomAroundPoint(topPoint, WebViewImpl::DoubleTap);
+    EXPECT_TRUE(webViewImpl->fakeDoubleTapAnimationPendingForTesting());
+    simulateDoubleTap(webViewImpl, bottomPoint, scale);
+    EXPECT_FLOAT_EQ(webViewImpl->minimumPageScaleFactor(), scale);
 }
 
-TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTestCompositorScaling)
+TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTest)
 {
     registerMockedHttpURLLoad("get_scale_bounds_check_for_auto_zoom_test.html");
 
@@ -719,7 +731,7 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTestCompositorScaling)
     m_webView->layout();
 
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(m_webView);
-    webViewImpl->shouldUseAnimateDoubleTapTimeZeroForTesting(true);
+    webViewImpl->enableFakeDoubleTapAnimationForTesting(true);
 
     WebRect div(200, 100, 200, 150);
     WebPoint doubleTapPoint(div.x + 50, div.y + 50);
@@ -768,7 +780,7 @@ TEST_F(WebFrameTest, DivAutoZoomScaleBoundsTestCompositorScaling)
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
-TEST_F(WebFrameTest, DivAutoZoomScaleFontScaleFactorTestCompositorScaling)
+TEST_F(WebFrameTest, DivAutoZoomScaleFontScaleFactorTest)
 {
     registerMockedHttpURLLoad("get_scale_bounds_check_for_auto_zoom_test.html");
 
@@ -784,7 +796,7 @@ TEST_F(WebFrameTest, DivAutoZoomScaleFontScaleFactorTestCompositorScaling)
     m_webView->layout();
 
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(m_webView);
-    webViewImpl->shouldUseAnimateDoubleTapTimeZeroForTesting(true);
+    webViewImpl->enableFakeDoubleTapAnimationForTesting(true);
     webViewImpl->page()->settings()->setTextAutosizingFontScaleFactor(textAutosizingFontScaleFactor);
 
     WebRect div(200, 100, 200, 150);
@@ -869,7 +881,7 @@ TEST_F(WebFrameTest, DivScrollIntoEditableTest)
     m_webView->settings()->setAutoZoomFocusedNodeToLegibleScale(true);
 
     WebViewImpl* webViewImpl = static_cast<WebViewImpl*>(m_webView);
-    webViewImpl->shouldUseAnimateDoubleTapTimeZeroForTesting(true);
+    webViewImpl->enableFakeDoubleTapAnimationForTesting(true);
 
     WebRect editBoxWithText(200, 200, 250, 20);
     WebRect editBoxWithNoText(200, 250, 250, 20);

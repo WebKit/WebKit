@@ -1,3 +1,39 @@
+2013-02-19  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Fix races in double-tap zoom minimum scale policy
+        https://bugs.webkit.org/show_bug.cgi?id=110183
+
+        Reviewed by Adam Barth.
+
+        Double-tap zoom on Android is supposed to return to minimum scale
+        if no pinch zoom occurred since the last double-tap. Because both
+        pinch zoom and the result of double-tap zoom gets passed in from CC
+        via applyScrollAndScale, this logic was brittle and prone to races
+        depending on when the animation update was received. This patch
+        keeps track of what the target double-tap scale is to make it more
+        robust.
+
+        I also fixed double-tap zoom test mocking to exercise the entire
+        page scale animation flow (our previous way of testing was hiding the
+        raciness), and added a new test case in DivAutoZoomMultipleParamsTest.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::startPageScaleAnimation):
+        (WebKit):
+        (WebKit::WebViewImpl::enableFakeDoubleTapAnimationForTesting):
+        (WebKit::WebViewImpl::computeScaleAndScrollForHitRect):
+        (WebKit::WebViewImpl::animateZoomAroundPoint):
+        (WebKit::WebViewImpl::didCommitLoad):
+        (WebKit::WebViewImpl::applyScrollAndScale):
+        * src/WebViewImpl.h:
+        (WebViewImpl):
+        (WebKit::WebViewImpl::fakeDoubleTapAnimationPendingForTesting):
+        (WebKit::WebViewImpl::fakeDoubleTapTargetPositionForTesting):
+        (WebKit::WebViewImpl::fakeDoubleTapPageScaleFactorForTesting):
+        (WebKit::WebViewImpl::fakeDoubleTapUseAnchorForTesting):
+        * tests/WebFrameTest.cpp:
+
 2013-02-19  Joshua Bell  <jsbell@chromium.org>
 
         IndexedDB: additional checks on LevelDB decoding
