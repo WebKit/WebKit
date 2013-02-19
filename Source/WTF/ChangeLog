@@ -1,3 +1,27 @@
+2013-02-18  Darin Adler  <darin@apple.com>
+
+        Style tweaks to StringHasher.h
+        https://bugs.webkit.org/show_bug.cgi?id=110042
+
+        Reviewed by Alexey Proskuryakov.
+
+        I have a bug fix coming soon, but figured I'd separate out style tweaks and land them
+        first to make that patch easier to undrestand.
+
+        * wtf/StringHasher.h: Tweak and rearrange comments a bit.
+        (WTF::StringHasher::addCharacter): Use character instead of ch.
+        (WTF::StringHasher::addCharacters): Use remainder instead of rem. Also capitalize the U
+        that we use to make an unsigned 1 constant.
+        (WTF::StringHasher::computeHashAndMaskTop8Bits): Ditto.
+        (WTF::StringHasher::hashMemory): Change version that takes size as a template argument
+        to call the version that takes the size at runtime, since both generate the same code
+        anyway. Added a FIXME questioning why this function uses the "mask top 8 bits" version
+        of the hash. Fix incorrect compile assertion that required sizes that are multiples
+        of four. This function works on sizes that are multiples of two. Also fixed a spelling
+        error where we called it a "multible".
+        (WTF::StringHasher::defaultConverter): Use character instead of ch.
+        (WTF::StringHasher::addCharactersToHash): Eliminated unnecessary local variable.
+
 2013-02-18  Alexey Proskuryakov  <ap@apple.com>
 
         Make HexNumber functions return 8-bit strings
