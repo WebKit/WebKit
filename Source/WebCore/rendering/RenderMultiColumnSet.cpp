@@ -119,7 +119,7 @@ LayoutRect RenderMultiColumnSet::columnRectAt(unsigned index) const
     LayoutUnit colLogicalHeight = computedColumnHeight();
     LayoutUnit colLogicalTop = borderBefore() + paddingBefore();
     LayoutUnit colLogicalLeft = borderAndPaddingLogicalLeft();
-    int colGap = columnGap();
+    LayoutUnit colGap = columnGap();
     if (style()->isLeftToRightDirection())
         colLogicalLeft += index * (colLogicalWidth + colGap);
     else
@@ -205,14 +205,21 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
     return overflowRectForFlowThreadPortion(overflowRect, isFirstRegion() && isFirstColumn, isLastRegion() && isLastColumn);
 }
 
-void RenderMultiColumnSet::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+void RenderMultiColumnSet::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
-    // FIXME: RenderRegions are replaced elements right now and so they only paint in the foreground phase.
+    if (style()->visibility() != VISIBLE)
+        return;
+
+    RenderBlock::paintObject(paintInfo, paintOffset);
+
+    // FIXME: Right now we're only painting in the foreground phase.
     // Columns should technically respect phases and allow for background/float/foreground overlap etc., just like
-    // RenderBlocks do. We can't correct this, however, until RenderRegions are changed to actually be
-    // RenderBlocks. Note this is a pretty minor issue, since the old column implementation clipped columns
+    // RenderBlocks do. Note this is a pretty minor issue, since the old column implementation clipped columns
     // anyway, thus making it impossible for them to overlap one another. It's also really unlikely that the columns
     // would overlap another block.
+    if (!m_flowThread || !isValid() || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
+        return;
+
     setRegionObjectsRegionStyle();
     paintColumnRules(paintInfo, paintOffset);
     paintColumnContents(paintInfo, paintOffset);
@@ -230,7 +237,7 @@ void RenderMultiColumnSet::paintColumnRules(PaintInfo& paintInfo, const LayoutPo
     EBorderStyle ruleStyle = blockStyle->columnRuleStyle();
     LayoutUnit ruleThickness = blockStyle->columnRuleWidth();
     LayoutUnit colGap = columnGap();
-    bool renderRule = ruleStyle > BHIDDEN && !ruleTransparent && ruleThickness <= colGap;
+    bool renderRule = ruleStyle > BHIDDEN && !ruleTransparent;
     if (!renderRule)
         return;
 

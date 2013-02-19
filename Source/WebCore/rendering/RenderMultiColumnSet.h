@@ -94,7 +94,7 @@ private:
     virtual void updateLogicalHeight() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
-    virtual void paint(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;
+    virtual void paintObject(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual LayoutUnit pageLogicalWidth() const OVERRIDE { return m_computedColumnWidth; }
