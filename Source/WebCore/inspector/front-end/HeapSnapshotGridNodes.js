@@ -350,6 +350,7 @@ WebInspector.HeapSnapshotGenericObjectNode = function(tree, node)
     if (!node)
         return;
     this._name = node.name;
+    this._displayName = node.displayName;
     this._type = node.type;
     this._distance = node.distance;
     this._shallowSize = node.selfSize;
@@ -383,19 +384,31 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
         var div = document.createElement("div");
         div.className = "source-code event-properties";
         div.style.overflow = "visible";
+
         var data = this.data["object"];
         if (this._prefixObjectCell)
             this._prefixObjectCell(div, data);
+
         var valueSpan = document.createElement("span");
         valueSpan.className = "value console-formatted-" + data.valueStyle;
         valueSpan.textContent = data.value;
         div.appendChild(valueSpan);
+
+        if (this.data.displayName) {
+            var nameSpan = document.createElement("span");
+            nameSpan.className = "name console-formatted-name";
+            nameSpan.textContent = " " + this.data.displayName;
+            div.appendChild(nameSpan);
+        }
+
         var idSpan = document.createElement("span");
         idSpan.className = "console-formatted-id";
         idSpan.textContent = " @" + data["nodeId"];
         div.appendChild(idSpan);
+
         if (this._postfixObjectCell)
             this._postfixObjectCell(div, data);
+
         cell.appendChild(div);
         cell.addStyleClass("disclosure");
         if (this.depth)
@@ -444,6 +457,7 @@ WebInspector.HeapSnapshotGenericObjectNode.prototype = {
             valueStyle += " detached-dom-tree-node";
         data["object"] = { valueStyle: valueStyle, value: value, nodeId: this.snapshotNodeId };
 
+        data["displayName"] = this._displayName;
         data["distance"] =  this._distance;
         data["shallowSize"] = Number.withThousandsSeparator(this._shallowSize);
         data["retainedSize"] = Number.withThousandsSeparator(this._retainedSize);

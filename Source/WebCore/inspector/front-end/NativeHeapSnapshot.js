@@ -109,6 +109,7 @@ WebInspector.NativeHeapSnapshotNode.prototype = {
         return {
             id: this.id(),
             name: this.className(),
+            displayName: this.name(),
             distance: this.distance(),
             nodeIndex: this.nodeIndex,
             retainedSize: this.retainedSize(),
