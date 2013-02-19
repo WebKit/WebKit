@@ -1139,16 +1139,9 @@ protected:
     };
 
     class FloatingObjects {
+        WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;
     public:
-        FloatingObjects(const RenderBlock* renderer, bool horizontalWritingMode)
-            : m_placedFloatsTree(UninitializedTree)
-            , m_leftObjectsCount(0)
-            , m_rightObjectsCount(0)
-            , m_horizontalWritingMode(horizontalWritingMode)
-            , m_renderer(renderer)
-        {
-        }
-
+        static PassOwnPtr<FloatingObjects> create(const RenderBlock*, bool horizontalWritingMode);
         void clear();
         void add(FloatingObject*);
         void remove(FloatingObject*);
@@ -1165,6 +1158,7 @@ protected:
             return m_placedFloatsTree; 
         }
     private:
+        FloatingObjects(const RenderBlock*, bool horizontalWritingMode);
         void computePlacedFloatsTree();
         inline void computePlacedFloatsTreeIfNeeded()
         {
@@ -1182,7 +1176,11 @@ protected:
         bool m_horizontalWritingMode;
         const RenderBlock* m_renderer;
     };
+
     OwnPtr<FloatingObjects> m_floatingObjects;
+
+    void createFloatingObjects();
+
 
     // Allocated only when some of these fields have non-default values
     struct RenderBlockRareData {
