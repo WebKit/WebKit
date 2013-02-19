@@ -50,28 +50,32 @@ static HashSet<Node*>* gNodesDispatchingSimulatedClicks = 0;
 bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
 {
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-
-    EventDispatcher dispatcher(node);
+    if (!mediator->event())
+        return true;
+    EventDispatcher dispatcher(node, mediator->event());
     return mediator->dispatchEvent(&dispatcher);
 }
 
-EventDispatcher::EventDispatcher(Node* node)
+EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)
     : m_node(node)
+    , m_event(event)
     , m_eventPathInitialized(false)
 #ifndef NDEBUG
     , m_eventDispatched(false)
 #endif
 {
     ASSERT(node);
+    ASSERT(m_event.get());
+    ASSERT(!m_event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
     m_view = node->document()->view();
 }
 
-EventPath& EventDispatcher::ensureEventPath(Event* event)
+EventPath& EventDispatcher::ensureEventPath()
 {
     if (m_eventPathInitialized)
         return m_eventPath;
     m_eventPathInitialized = true;
-    EventRetargeter::calculateEventPath(m_node.get(), event, m_eventPath);
+    EventRetargeter::calculateEventPath(m_node.get(), m_event.get(), m_eventPath);
     return m_eventPath;
 }
 
@@ -95,140 +99,138 @@ void EventDispatcher::dispatchSimulatedClick(Node* node, Event* underlyingEvent,
     gNodesDispatchingSimulatedClicks->add(node);
 
     if (mouseEventOptions == SendMouseOverUpDownEvents)
-        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseoverEvent, node->document()->defaultView(), underlyingEvent));
+        EventDispatcher(node, SimulatedMouseEvent::create(eventNames().mouseoverEvent, node->document()->defaultView(), underlyingEvent)).dispatch();
 
     if (mouseEventOptions != SendNoEvents)
-        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent));
+        EventDispatcher(node, SimulatedMouseEvent::create(eventNames().mousedownEvent, node->document()->defaultView(), underlyingEvent)).dispatch();
     node->setActive(true, visualOptions == ShowPressedLook);
     if (mouseEventOptions != SendNoEvents)
-        EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent));
+        EventDispatcher(node, SimulatedMouseEvent::create(eventNames().mouseupEvent, node->document()->defaultView(), underlyingEvent)).dispatch();
     node->setActive(false);
 
     // always send click
-    EventDispatcher(node).dispatchEvent(SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent));
+    EventDispatcher(node, SimulatedMouseEvent::create(eventNames().clickEvent, node->document()->defaultView(), underlyingEvent)).dispatch();
 
     gNodesDispatchingSimulatedClicks->remove(node);
 }
 
-bool EventDispatcher::dispatchEvent(PassRefPtr<Event> prpEvent)
+bool EventDispatcher::dispatch()
 {
 #ifndef NDEBUG
     ASSERT(!m_eventDispatched);
     m_eventDispatched = true;
 #endif
-    RefPtr<Event> event = prpEvent;
     ChildNodesLazySnapshot::takeChildNodesLazySnapshot();
 
-    event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
+    m_event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
-    ASSERT(event->target());
-    ASSERT(!event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
-    ensureEventPath(event.get());
-    WindowEventContext windowEventContext(event.get(), m_node.get(), topEventContext());
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(m_node->document(), *event, windowEventContext.window(), m_node.get(), m_eventPath);
+    ASSERT(m_event->target());
+    ensureEventPath();
+    WindowEventContext windowEventContext(m_event.get(), m_node.get(), topEventContext());
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(m_node->document(), *m_event, windowEventContext.window(), m_node.get(), m_eventPath);
 
     void* preDispatchEventHandlerResult;
-    if (dispatchEventPreProcess(event, preDispatchEventHandlerResult) == ContinueDispatching)
-        if (dispatchEventAtCapturing(event, windowEventContext) == ContinueDispatching)
-            if (dispatchEventAtTarget(event) == ContinueDispatching)
-                dispatchEventAtBubbling(event, windowEventContext);
-    dispatchEventPostProcess(event, preDispatchEventHandlerResult);
+    if (dispatchEventPreProcess(preDispatchEventHandlerResult) == ContinueDispatching)
+        if (dispatchEventAtCapturing(windowEventContext) == ContinueDispatching)
+            if (dispatchEventAtTarget() == ContinueDispatching)
+                dispatchEventAtBubbling(windowEventContext);
+    dispatchEventPostProcess(preDispatchEventHandlerResult);
 
     // Ensure that after event dispatch, the event's target object is the
     // outermost shadow DOM boundary.
-    event->setTarget(windowEventContext.target());
-    event->setCurrentTarget(0);
+    m_event->setTarget(windowEventContext.target());
+    m_event->setCurrentTarget(0);
     InspectorInstrumentation::didDispatchEvent(cookie);
 
-    return !event->defaultPrevented();
+    return !m_event->defaultPrevented();
 }
 
-inline EventDispatchContinuation EventDispatcher::dispatchEventPreProcess(PassRefPtr<Event> event, void*& preDispatchEventHandlerResult)
+inline EventDispatchContinuation EventDispatcher::dispatchEventPreProcess(void*& preDispatchEventHandlerResult)
 {
     // Give the target node a chance to do some work before DOM event handlers get a crack.
-    preDispatchEventHandlerResult = m_node->preDispatchEventHandler(event.get());
-    return (m_eventPath.isEmpty() || event->propagationStopped()) ? DoneDispatching : ContinueDispatching;
+    preDispatchEventHandlerResult = m_node->preDispatchEventHandler(m_event.get());
+    return (m_eventPath.isEmpty() || m_event->propagationStopped()) ? DoneDispatching : ContinueDispatching;
 }
 
-inline EventDispatchContinuation EventDispatcher::dispatchEventAtCapturing(PassRefPtr<Event> event, WindowEventContext& windowEventContext)
+inline EventDispatchContinuation EventDispatcher::dispatchEventAtCapturing(WindowEventContext& windowEventContext)
 {
     // Trigger capturing event handlers, starting at the top and working our way down.
-    event->setEventPhase(Event::CAPTURING_PHASE);
+    m_event->setEventPhase(Event::CAPTURING_PHASE);
 
-    if (windowEventContext.handleLocalEvents(event.get()) && event->propagationStopped())
+    if (windowEventContext.handleLocalEvents(m_event.get()) && m_event->propagationStopped())
         return DoneDispatching;
 
     for (size_t i = m_eventPath.size() - 1; i > 0; --i) {
         const EventContext& eventContext = *m_eventPath[i];
         if (eventContext.currentTargetSameAsTarget()) {
-            if (event->bubbles())
+            if (m_event->bubbles())
                 continue;
-            event->setEventPhase(Event::AT_TARGET);
+            m_event->setEventPhase(Event::AT_TARGET);
         } else
-            event->setEventPhase(Event::CAPTURING_PHASE);
-        eventContext.handleLocalEvents(event.get());
-        if (event->propagationStopped())
+            m_event->setEventPhase(Event::CAPTURING_PHASE);
+        eventContext.handleLocalEvents(m_event.get());
+        if (m_event->propagationStopped())
             return DoneDispatching;
     }
 
     return ContinueDispatching;
 }
 
-inline EventDispatchContinuation EventDispatcher::dispatchEventAtTarget(PassRefPtr<Event> event)
+inline EventDispatchContinuation EventDispatcher::dispatchEventAtTarget()
 {
-    event->setEventPhase(Event::AT_TARGET);
-    m_eventPath[0]->handleLocalEvents(event.get());
-    return event->propagationStopped() ? DoneDispatching : ContinueDispatching;
+    m_event->setEventPhase(Event::AT_TARGET);
+    m_eventPath[0]->handleLocalEvents(m_event.get());
+    return m_event->propagationStopped() ? DoneDispatching : ContinueDispatching;
 }
 
-inline EventDispatchContinuation EventDispatcher::dispatchEventAtBubbling(PassRefPtr<Event> event, WindowEventContext& windowContext)
+inline EventDispatchContinuation EventDispatcher::dispatchEventAtBubbling(WindowEventContext& windowContext)
 {
-    if (event->bubbles() && !event->cancelBubble()) {
+    if (m_event->bubbles() && !m_event->cancelBubble()) {
         // Trigger bubbling event handlers, starting at the bottom and working our way up.
-        event->setEventPhase(Event::BUBBLING_PHASE);
+        m_event->setEventPhase(Event::BUBBLING_PHASE);
 
         size_t size = m_eventPath.size();
         for (size_t i = 1; i < size; ++i) {
             const EventContext& eventContext = *m_eventPath[i];
             if (eventContext.currentTargetSameAsTarget())
-                event->setEventPhase(Event::AT_TARGET);
+                m_event->setEventPhase(Event::AT_TARGET);
             else
-                event->setEventPhase(Event::BUBBLING_PHASE);
-            eventContext.handleLocalEvents(event.get());
-            if (event->propagationStopped() || event->cancelBubble())
+                m_event->setEventPhase(Event::BUBBLING_PHASE);
+            eventContext.handleLocalEvents(m_event.get());
+            if (m_event->propagationStopped() || m_event->cancelBubble())
                 return DoneDispatching;
         }
-        windowContext.handleLocalEvents(event.get());
+        windowContext.handleLocalEvents(m_event.get());
     }
     return ContinueDispatching;
 }
 
-inline void EventDispatcher::dispatchEventPostProcess(PassRefPtr<Event> event, void* preDispatchEventHandlerResult)
+inline void EventDispatcher::dispatchEventPostProcess(void* preDispatchEventHandlerResult)
 {
-    event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
-    event->setCurrentTarget(0);
-    event->setEventPhase(0);
+    m_event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
+    m_event->setCurrentTarget(0);
+    m_event->setEventPhase(0);
 
     // Pass the data from the preDispatchEventHandler to the postDispatchEventHandler.
-    m_node->postDispatchEventHandler(event.get(), preDispatchEventHandlerResult);
+    m_node->postDispatchEventHandler(m_event.get(), preDispatchEventHandlerResult);
 
     // Call default event handlers. While the DOM does have a concept of preventing
     // default handling, the detail of which handlers are called is an internal
     // implementation detail and not part of the DOM.
-    if (!event->defaultPrevented() && !event->defaultHandled()) {
+    if (!m_event->defaultPrevented() && !m_event->defaultHandled()) {
         // Non-bubbling events call only one default event handler, the one for the target.
-        m_node->defaultEventHandler(event.get());
-        ASSERT(!event->defaultPrevented());
-        if (event->defaultHandled())
+        m_node->defaultEventHandler(m_event.get());
+        ASSERT(!m_event->defaultPrevented());
+        if (m_event->defaultHandled())
             return;
         // For bubbling events, call default event handlers on the same targets in the
         // same order as the bubbling phase.
-        if (event->bubbles()) {
+        if (m_event->bubbles()) {
             size_t size = m_eventPath.size();
             for (size_t i = 1; i < size; ++i) {
-                m_eventPath[i]->node()->defaultEventHandler(event.get());
-                ASSERT(!event->defaultPrevented());
-                if (event->defaultHandled())
+                m_eventPath[i]->node()->defaultEventHandler(m_event.get());
+                ASSERT(!m_event->defaultPrevented());
+                if (m_event->defaultHandled())
                     return;
             }
         }
