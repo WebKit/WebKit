@@ -1240,6 +1240,12 @@ webkit.org/b/90951 fast/text/shaping
 webkit.org/b/101177 svg/dynamic-updates/SVGUseElement-dom-requiredFeatures.html [ ImageOnlyFailure Pass ]
 webkit.org/b/101177 svg/repaint/inner-svg-change-viewBox.svg [ ImageOnlyFailure Pass ]
 
+# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=99984
+webkit.org/b/99984 svg/as-image/image-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/filters/feImage-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html [ ImageOnlyFailure Pass ]
+
 # Needs rebaseline after bug https://bugs.webkit.org/show_bug.cgi?id=104462
 webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
 webkit.org/b/104595 fast/css/empty-generated-content.html [ Failure ]

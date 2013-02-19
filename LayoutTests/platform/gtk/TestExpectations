@@ -75,6 +75,12 @@ webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ]
 webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
 webkit.org/b/107567 svg/carto.net/combobox.svg [ Failure ] 
 
+# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=99984
+webkit.org/b/99984 svg/as-image/image-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/filters/feImage-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html [ ImageOnlyFailure Pass ]
+
 # Rebaseline required after https://webkit.org/b/95772
 webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.html [ Failure ]
 

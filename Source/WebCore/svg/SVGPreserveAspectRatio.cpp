@@ -220,12 +220,12 @@ void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRe
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMID:
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
-                srcRect.setY(destRect.y() + imageSize.height() / 2 - srcRect.height() / 2);
+                srcRect.setY(srcRect.y() + imageSize.height() / 2 - srcRect.height() / 2);
                 break;
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMINYMAX:
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
-                srcRect.setY(destRect.y() + imageSize.height() - srcRect.height());
+                srcRect.setY(srcRect.y() + imageSize.height() - srcRect.height());
                 break;
             default:
                 break;
@@ -239,12 +239,12 @@ void SVGPreserveAspectRatio::transformRect(FloatRect& destRect, FloatRect& srcRe
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMIN:
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMID:
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMIDYMAX:
-                srcRect.setX(destRect.x() + imageSize.width() / 2 - srcRect.width() / 2);
+                srcRect.setX(srcRect.x() + imageSize.width() / 2 - srcRect.width() / 2);
                 break;
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMIN:
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMID:
             case SVGPreserveAspectRatio::SVG_PRESERVEASPECTRATIO_XMAXYMAX:
-                srcRect.setX(destRect.x() + imageSize.width() - srcRect.width());
+                srcRect.setX(srcRect.x() + imageSize.width() - srcRect.width());
                 break;
             default:
                 break;

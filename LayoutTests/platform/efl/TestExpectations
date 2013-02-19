@@ -590,6 +590,12 @@ webkit.org/b/98895 perf/accessibility-title-ui-element.html [ Skip ]
 # not SKIP, just WONTFIX.
 webkit.org/b/66218 fast/harness/sample-fail-mismatch-reftest.html [ WontFix ImageOnlyFailure ]
 
+# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=99984
+webkit.org/b/99984 svg/as-image/image-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/filters/feImage-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html [ ImageOnlyFailure Pass ]
+webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html [ ImageOnlyFailure Pass ]
+
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=105437
 webkit.org/b/105437 svg/W3C-SVG-1.1-SE/filters-image-03-f.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/105437 svg/W3C-SVG-1.1-SE/filters-image-05-f.svg [ ImageOnlyFailure Pass ]
