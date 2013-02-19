@@ -313,7 +313,7 @@ size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
 {
     const Vector<GridTrackSize>& trackStyles = (direction == ForColumns) ? style()->gridColumns() : style()->gridRows();
 
-    size_t maximumIndex = trackStyles.size();
+    size_t maximumIndex = std::max<size_t>(1, trackStyles.size());
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         const GridPosition& position = (direction == ForColumns) ? child->style()->gridItemColumn() : child->style()->gridItemRow();
@@ -478,12 +478,12 @@ void RenderGrid::insertItemIntoGrid(RenderBox* child, size_t rowTrack, size_t co
 
 void RenderGrid::placeItemsOnGrid()
 {
-    ASSERT(m_grid.isEmpty());
+    ASSERT(!gridWasPopulated());
     ASSERT(m_gridItemCoordinate.isEmpty());
 
     m_grid.grow(maximumIndexInDirection(ForRows));
     size_t maximumColumnIndex = maximumIndexInDirection(ForColumns);
-    for (size_t i = 0; i < gridRowCount(); ++i)
+    for (size_t i = 0; i < m_grid.size(); ++i)
         m_grid[i].grow(maximumColumnIndex);
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
@@ -491,6 +491,9 @@ void RenderGrid::placeItemsOnGrid()
         size_t rowTrack = resolveGridPositionFromStyle(child->style()->gridItemRow());
         insertItemIntoGrid(child, rowTrack, columnTrack);
     }
+
+    ASSERT(gridRowCount() >= style()->gridRows().size());
+    ASSERT(gridColumnCount() >= style()->gridColumns().size());
 }
 
 void RenderGrid::clearGrid()

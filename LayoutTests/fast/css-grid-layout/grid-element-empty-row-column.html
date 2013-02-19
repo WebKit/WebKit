@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<script>
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href=resources/grid.css rel=stylesheet>
+<style>
+.gridNoRow {
+    -webkit-grid-columns: 50px;
+    /* Make the grid shrink-to-fit. */
+    position: absolute;
+}
+.gridNoColumn {
+    -webkit-grid-rows: 50px 80px;
+    /* Make the grid shrink-to-fit. */
+    position: absolute;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<body onload="checkLayout('.grid');">
+<p>This test checks that a grid element with row(s) (resp. column(s)) but no column (resp. row) is properly laid out.</p>
+<div class="grid gridNoRow" data-expected-width="50" data-expected-height="0"></div>
+<div class="grid gridNoColumn" data-expected-width="0" data-expected-height="130"></div>
+</body>
+</html>

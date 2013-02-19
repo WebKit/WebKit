@@ -98,10 +98,19 @@ private:
 
 #ifndef NDEBUG
     bool tracksAreWiderThanMinTrackBreadth(TrackSizingDirection, const Vector<GridTrack>&);
+    bool gridWasPopulated() const { return !m_grid.isEmpty() && !m_grid[0].isEmpty(); }
 #endif
 
-    size_t gridColumnCount() const { return m_grid.isEmpty() ? 0 : m_grid[0].size(); }
-    size_t gridRowCount() const { return m_grid.size(); }
+    size_t gridColumnCount() const
+    {
+        ASSERT(gridWasPopulated());
+        return m_grid[0].size();
+    }
+    size_t gridRowCount() const
+    {
+        ASSERT(gridWasPopulated());
+        return m_grid.size();
+    }
 
     Vector<Vector<Vector<RenderBox*, 1> > > m_grid;
     HashMap<const RenderBox*, GridCoordinate> m_gridItemCoordinate;
