@@ -116,7 +116,6 @@ public:
     LayoutUnit(float value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
     LayoutUnit(double value) { REPORT_OVERFLOW(isInBounds(value)); m_value = value; }
 #endif
-    LayoutUnit(const LayoutUnit& value) { m_value = value.rawValue(); }
 
     static LayoutUnit fromFloatCeil(float value)
     {
