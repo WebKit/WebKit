@@ -1,0 +1,264 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x349
+  RenderBlock {HTML} at (0,0) size 800x349
+    RenderBody {BODY} at (8,8) size 784x333
+      RenderMathMLMath {math} at (0,0) size 784x75 [padding: 0 1 0 1]
+        RenderMathMLRow {mrow} at (308,0) size 167x75
+          RenderMathMLRow {mrow} at (0,0) size 109x75
+            RenderMathMLRow {mrow} at (0,0) size 46x75
+              RenderBlock {mi} at (0,33) size 6x14
+                RenderText {#text} at (0,-3) size 5x17
+                  text run at (0,-3) width 5: "f"
+              RenderMathMLRow {mrow} at (6,0) size 40x75
+                RenderMathMLOperator {mo} at (1,0) size 0x75
+                RenderMathMLFraction {mfrac} at (3,9) size 34x63
+                  RenderMathMLBlock (anonymous, flex) at (0,0) size 34x31
+                    RenderMathMLRow {mrow} at (0,0) size 34x28
+                      RenderMathMLFraction {mfrac} at (1,0) size 9x28
+                        RenderMathMLBlock (anonymous, flex) at (0,0) size 9x12
+                          RenderBlock {mi} at (0,0) size 9x9
+                            RenderText {#text} at (0,-6) size 8x17
+                              text run at (0,-6) width 8: "a"
+                        RenderMathMLBlock (anonymous, flex) at (0,12) size 9x16 [padding: 1 0 0 0]
+                          RenderBlock {mi} at (0,4) size 9x12
+                            RenderText {#text} at (0,-3) size 8x17
+                              text run at (0,-3) width 8: "b"
+                      RenderMathMLOperator {mo} at (14,6) size 9x11
+                        RenderMathMLBlock (flex) {mo} at (0,0) size 9x11
+                          RenderBlock (anonymous) at (0,0) size 9x11
+                            RenderText {mo} at (0,-4) size 9x17
+                              text run at (0,-4) width 9: "+"
+                      RenderBlock {mi} at (26,8) size 8x9
+                        RenderText {#text} at (0,-6) size 7x17
+                          text run at (0,-6) width 7: "c"
+                  RenderMathMLBlock (anonymous, flex) at (0,31) size 34x32 [padding: 1 0 0 0]
+                    RenderMathMLRow {mrow} at (0,4) size 34x28
+                      RenderMathMLFraction {mfrac} at (1,0) size 9x28
+                        RenderMathMLBlock (anonymous, flex) at (0,0) size 9x12
+                          RenderBlock {mi} at (0,0) size 8x9
+                            RenderText {#text} at (0,-6) size 7x17
+                              text run at (0,-6) width 7: "c"
+                        RenderMathMLBlock (anonymous, flex) at (0,12) size 9x16 [padding: 1 0 0 0]
+                          RenderBlock {mi} at (0,4) size 9x12
+                            RenderText {#text} at (0,-3) size 8x17
+                              text run at (0,-3) width 8: "d"
+                      RenderMathMLOperator {mo} at (14,6) size 9x11
+                        RenderMathMLBlock (flex) {mo} at (0,0) size 9x11
+                          RenderBlock (anonymous) at (0,0) size 9x11
+                            RenderText {mo} at (0,-4) size 9x17
+                              text run at (0,-4) width 9: "+"
+                      RenderBlock {mi} at (26,8) size 8x9
+                        RenderText {#text} at (0,-6) size 7x17
+                          text run at (0,-6) width 7: "e"
+                RenderMathMLOperator {mo} at (39,0) size 0x75
+            RenderMathMLOperator {mo} at (49,34) size 9x11
+              RenderMathMLBlock (flex) {mo} at (0,0) size 9x11
+                RenderBlock (anonymous) at (0,0) size 9x11
+                  RenderText {mo} at (0,-4) size 9x17
+                    text run at (0,-4) width 9: "+"
+            RenderMathMLRow {mrow} at (61,14) size 48x52
+              RenderBlock {mi} at (0,22) size 9x11
+                RenderText {#text} at (0,-6) size 8x17
+                  text run at (0,-6) width 8: "g"
+              RenderMathMLRow {mrow} at (9,0) size 39x52
+                RenderMathMLOperator {mo} at (1,0) size 0x52
+                RenderMathMLSubSup {msubsup} at (2,5) size 35x44
+                  RenderMathMLBlock (anonymous, flex) at (0,0) size 8x44 [padding: 17 0 18 0]
+                    RenderBlock {mi} at (0,17) size 8x9
+                      RenderText {#text} at (0,-6) size 8x17
+                        text run at (0,-6) width 8: "x"
+                  RenderMathMLBlock (anonymous, flex) at (8,0) size 27x44
+                    RenderMathMLRow {mrow} at (0,22) size 27x22
+                      RenderMathMLFraction {mfrac} at (1,0) size 7x22
+                        RenderMathMLBlock (anonymous, flex) at (0,0) size 7x9
+                          RenderBlock {mi} at (0,0) size 6x7
+                            RenderText {#text} at (0,-5) size 5x14
+                              text run at (0,-5) width 5: "c"
+                        RenderMathMLBlock (anonymous, flex) at (0,9) size 7x13 [padding: 1 0 0 0]
+                          RenderBlock {mi} at (0,3) size 7x10
+                            RenderText {#text} at (0,-2) size 6x14
+                              text run at (0,-2) width 6: "d"
+                      RenderMathMLOperator {mo} at (11,4) size 7x9
+                        RenderMathMLBlock (flex) {mo} at (0,0) size 7x9
+                          RenderBlock (anonymous) at (0,0) size 7x9
+                            RenderText {mo} at (0,-3) size 7x14
+                              text run at (0,-3) width 7: "+"
+                      RenderBlock {mi} at (20,6) size 6x7
+                        RenderText {#text} at (0,-5) size 5x14
+                          text run at (0,-5) width 5: "e"
+                    RenderMathMLRow {mrow} at (1,0) size 26x22
+                      RenderMathMLFraction {mfrac} at (1,0) size 7x22
+                        RenderMathMLBlock (anonymous, flex) at (0,0) size 7x9
+                          RenderBlock {mi} at (0,0) size 7x7
+                            RenderText {#text} at (0,-5) size 6x14
+                              text run at (0,-5) width 6: "a"
+                        RenderMathMLBlock (anonymous, flex) at (0,9) size 7x13 [padding: 1 0 0 0]
+                          RenderBlock {mi} at (0,3) size 7x10
+                            RenderText {#text} at (0,-2) size 6x14
+                              text run at (0,-2) width 6: "b"
+                      RenderMathMLOperator {mo} at (11,4) size 7x9
+                        RenderMathMLBlock (flex) {mo} at (0,0) size 7x9
+                          RenderBlock (anonymous) at (0,0) size 7x9
+                            RenderText {mo} at (0,-3) size 7x14
+                              text run at (0,-3) width 7: "+"
+                      RenderBlock {mi} at (20,6) size 6x7
+                        RenderText {#text} at (0,-5) size 5x14
+                          text run at (0,-5) width 5: "c"
+                RenderMathMLOperator {mo} at (38,0) size 0x52
+          RenderMathMLOperator {mo} at (112,34) size 9x11
+            RenderMathMLBlock (flex) {mo} at (0,0) size 9x11
+              RenderBlock (anonymous) at (0,0) size 9x11
+                RenderText {mo} at (0,-4) size 9x17
+                  text run at (0,-4) width 9: "+"
+          RenderMathMLRow {mrow} at (124,23) size 43x37
+            RenderMathMLSubSup {msubsup} at (0,0) size 17x37
+              RenderMathMLBlock (anonymous, flex) at (0,0) size 10x37
+                RenderMathMLOperator {mo} at (0,0) size 10x37
+              RenderMathMLBlock (anonymous, flex) at (10,0) size 7x37
+                RenderBlock {mi} at (0,30) size 7x7
+                  RenderText {#text} at (0,-5) size 6x14
+                    text run at (0,-5) width 6: "a"
+                RenderBlock {mi} at (0,0) size 7x10
+                  RenderText {#text} at (0,-2) size 6x14
+                    text run at (0,-2) width 6: "b"
+            RenderMathMLRow {mrow} at (17,3) size 26x31
+              RenderMathMLUnderOver {munderover} at (0,0) size 21x31
+                RenderMathMLOperator {mo} at (5,7) size 11x14
+                  RenderMathMLBlock (flex) {mo} at (0,0) size 11x14
+                    RenderBlock (anonymous) at (0,0) size 11x14
+                      RenderText {mo} at (0,-3) size 11x17
+                        text run at (0,-3) width 11: "\x{2211}"
+                RenderMathMLRow {mrow} at (0,21) size 21x10
+                  RenderBlock {mi} at (0,0) size 4x10
+                    RenderText {#text} at (0,-2) size 3x14
+                      text run at (0,-2) width 3: "i"
+                  RenderMathMLOperator {mo} at (6,3) size 7x7
+                    RenderMathMLBlock (flex) {mo} at (0,0) size 7x7
+                      RenderBlock (anonymous) at (0,0) size 7x7
+                        RenderText {mo} at (0,-5) size 7x14
+                          text run at (0,-5) width 7: "="
+                  RenderBlock {mn} at (15,0) size 6x10
+                    RenderText {#text} at (0,-2) size 6x14
+                      text run at (0,-2) width 6: "0"
+                RenderBlock {mi} at (7,0) size 7x7
+                  RenderText {#text} at (0,-5) size 6x14
+                    text run at (0,-5) width 6: "n"
+              RenderBlock {mi} at (21,7) size 5x12
+                RenderText {#text} at (0,-3) size 4x17
+                  text run at (0,-3) width 4: "i"
+      RenderBlock {P} at (0,91) size 784x18
+        RenderText {#text} at (0,0) size 49x17
+          text run at (0,0) width 49: "Implied "
+        RenderInline {CODE} at (0,0) size 32x15
+          RenderText {#text} at (49,3) size 32x15
+            text run at (49,3) width 32: "mrow"
+        RenderText {#text} at (81,0) size 149x17
+          text run at (81,0) width 149: " with operator stretching:"
+      RenderMathMLMath {math} at (0,125) size 784x42 [padding: 0 1 0 1]
+        RenderMathMLSquareRoot {msqrt} at (374,0) size 36x42 [intrinsic padding: 3 0 3 12]
+          RenderMathMLRow (anonymous) at (12,3) size 24x36
+            RenderBlock {mi} at (0,10) size 6x14
+              RenderText {#text} at (0,-3) size 5x17
+                text run at (0,-3) width 5: "f"
+            RenderMathMLOperator {mo} at (9,0) size 0x36
+            RenderMathMLFraction {mfrac} at (13,2) size 8x30
+              RenderMathMLBlock (anonymous, flex) at (0,0) size 8x15
+                RenderBlock {mn} at (0,0) size 8x12
+                  RenderText {#text} at (0,-3) size 8x17
+                    text run at (0,-3) width 8: "1"
+              RenderMathMLBlock (anonymous, flex) at (0,15) size 8x15 [padding: 1 0 0 0]
+                RenderBlock {mi} at (0,4) size 8x11
+                  RenderText {#text} at (0,-6) size 7x17
+                    text run at (0,-6) width 7: "y"
+            RenderMathMLOperator {mo} at (23,0) size 0x36
+      RenderBlock {P} at (0,183) size 784x18
+        RenderText {#text} at (0,0) size 366x17
+          text run at (0,0) width 366: "Preferred logical widths and heights, with operator stretching:"
+      RenderTable {TABLE} at (0,217) size 19x30
+        RenderTableSection {TBODY} at (0,0) size 19x30
+          RenderTableRow {TR} at (0,2) size 19x26
+            RenderTableCell {TD} at (2,2) size 15x26 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderText {#text} at (4,4) size 7x17
+                text run at (4,4) width 7: "a"
+      RenderTable {TABLE} at (0,247) size 103x86
+        RenderTableSection {TBODY} at (0,0) size 103x86
+          RenderTableRow {TR} at (0,2) size 103x82
+            RenderTableCell {TD} at (2,2) size 99x82 [border: (3px solid #000000)] [r=0 c=0 rs=1 cs=1]
+              RenderMathMLMath {math} at (4,4) size 91x74 [padding: 0 1 0 1]
+                RenderMathMLRow {mrow} at (1,0) size 89x74
+                  RenderMathMLRow {mrow} at (0,31) size 23x15
+                    RenderMathMLOperator {mo} at (1,0) size 5x15
+                      RenderMathMLBlock (flex) {mo} at (0,0) size 5x15
+                        RenderBlock (anonymous) at (0,0) size 5x15
+                          RenderText {mo} at (0,-2) size 5x17
+                            text run at (0,-2) width 5: "{"
+                    RenderBlock {mi} at (7,4) size 9x9
+                      RenderText {#text} at (0,-6) size 8x17
+                        text run at (0,-6) width 8: "x"
+                    RenderMathMLOperator {mo} at (17,0) size 5x15
+                      RenderMathMLBlock (flex) {mo} at (0,0) size 5x15
+                        RenderBlock (anonymous) at (0,0) size 5x15
+                          RenderText {mo} at (0,-2) size 5x17
+                            text run at (0,-2) width 5: "}"
+                  RenderMathMLOperator {mo} at (26,33) size 9x11
+                    RenderMathMLBlock (flex) {mo} at (0,0) size 9x11
+                      RenderBlock (anonymous) at (0,0) size 9x11
+                        RenderText {mo} at (0,-4) size 9x17
+                          text run at (0,-4) width 9: "+"
+                  RenderMathMLFenced {mfenced} at (38,22) size 14x36
+                    RenderMathMLOperator {mfenced} at (1,0) size 0x36
+                    RenderMathMLFraction {mfrac} at (3,2) size 8x30
+                      RenderMathMLBlock (anonymous, flex) at (0,0) size 8x15
+                        RenderBlock {mn} at (0,0) size 8x12
+                          RenderText {#text} at (0,-3) size 8x17
+                            text run at (0,-3) width 8: "1"
+                      RenderMathMLBlock (anonymous, flex) at (0,15) size 8x15 [padding: 1 0 0 0]
+                        RenderBlock {mi} at (0,4) size 8x11
+                          RenderText {#text} at (0,-6) size 7x17
+                            text run at (0,-6) width 7: "y"
+                    RenderMathMLOperator {mfenced} at (13,0) size 0x36
+                  RenderMathMLOperator {mo} at (55,33) size 9x11
+                    RenderMathMLBlock (flex) {mo} at (0,0) size 9x11
+                      RenderBlock (anonymous) at (0,0) size 9x11
+                        RenderText {mo} at (0,-4) size 9x17
+                          text run at (0,-4) width 9: "+"
+                  RenderMathMLRow {mrow} at (67,0) size 22x74
+                    RenderMathMLOperator {mo} at (1,0) size 0x74
+                    RenderMathMLTable {mtable} at (2,9) size 18x62
+                      RenderTableSection (anonymous) at (0,0) size 18x62
+                        RenderTableRow {mtr} at (0,2) size 18x18
+                          RenderTableCell {mtd} at (2,2) size 14x18 [r=0 c=0 rs=1 cs=1]
+                            RenderInline {mn} at (0,0) size 8x17
+                              RenderText {#text} at (3,0) size 8x17
+                                text run at (3,0) width 8: "1"
+                        RenderTableRow {mtr} at (0,22) size 18x18
+                          RenderTableCell {mtd} at (2,22) size 14x18 [r=1 c=0 rs=1 cs=1]
+                            RenderInline {mn} at (0,0) size 8x17
+                              RenderText {#text} at (3,0) size 8x17
+                                text run at (3,0) width 8: "2"
+                        RenderTableRow {mtr} at (0,42) size 18x18
+                          RenderTableCell {mtd} at (2,42) size 14x18 [r=2 c=0 rs=1 cs=1]
+                            RenderInline {mn} at (0,0) size 8x17
+                              RenderText {#text} at (3,0) size 8x17
+                                text run at (3,0) width 8: "3"
+                    RenderMathMLOperator {mo} at (21,0) size 0x74
+layer at (440,31) size 10x18
+  RenderMathMLBlock (flex) {mo} at (0,0) size 10x18
+    RenderBlock (anonymous) at (0,0) size 10x18
+      RenderText {mo} at (0,-1) size 10x17
+        text run at (0,-1) width 10: "\x{2320}"
+layer at (440,49) size 10x1 scrollHeight 12
+  RenderMathMLBlock (flex) {mo} at (0,18) size 10x1
+    RenderBlock (anonymous) at (0,0) size 0x1
+layer at (440,50) size 10x18
+  RenderMathMLBlock (flex) {mo} at (0,19) size 10x18
+    RenderBlock (anonymous) at (0,0) size 10x18
+layer at (440,48) size 0x12
+  RenderBlock (relative positioned) {mo} at (0,0) size 0x12
+    RenderText {mo} at (0,-3) size 0x17
+      text run at (0,-3) width 0: "\x{23AE}"
+layer at (440,49) size 10x18 backgroundClip at (440,50) size 10x18 clip at (440,50) size 10x18 outlineClip at (440,50) size 10x18
+  RenderBlock (relative positioned) {mo} at (0,0) size 10x18
+    RenderText {mo} at (0,-1) size 10x17
+      text run at (0,-1) width 10: "\x{2321}"
