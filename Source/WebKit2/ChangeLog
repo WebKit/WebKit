@@ -1,3 +1,17 @@
+2013-02-19  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] ASSERT(node) hit in WebPage::findZoomableAreaForPoint if no zoomable area found
+        https://bugs.webkit.org/show_bug.cgi?id=110220
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        If EventHandler::bestZoomableAreaForTouchPoint was unsuccessfull, eg.
+        no node was found for a given point, we hit ASSERT(node).
+        We should only assert for a valid node if a zoomable area was found.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::findZoomableAreaForPoint):
+
 2013-02-19  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         Regression(r143273): Caused a lot of tests to time out
