@@ -113,12 +113,12 @@ void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID)
 
 void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
 {
-    m_queue->dispatch(bind(&StorageManager::destroySessionStorageNamespace, this, storageNamespaceID));
+    m_queue->dispatch(bind(&StorageManager::destroySessionStorageNamespaceInternal, this, storageNamespaceID));
 }
 
 void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
 {
-    m_queue->dispatch(bind(&StorageManager::cloneSessionStorageNamespace, this, storageNamespaceID, newStorageNamespaceID));
+    m_queue->dispatch(bind(&StorageManager::cloneSessionStorageNamespaceInternal, this, storageNamespaceID, newStorageNamespaceID));
 }
 
 void StorageManager::processWillOpenConnection(WebProcessProxy* webProcessProxy)
