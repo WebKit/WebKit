@@ -82,7 +82,7 @@ TokenPreloadScanner::TagId TokenPreloadScanner::tagIdFor(const String& tagName)
     return UnknownTagId;
 }
 
-String TokenPreloadScanner::inititatorFor(TagId tagId)
+String TokenPreloadScanner::initiatorFor(TagId tagId)
 {
     switch (tagId) {
     case ImgTagId:
@@ -141,7 +141,7 @@ public:
         if (!shouldPreload())
             return nullptr;
 
-        OwnPtr<PreloadRequest> request = PreloadRequest::create(inititatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType());
+        OwnPtr<PreloadRequest> request = PreloadRequest::create(initiatorFor(m_tagId), m_urlToLoad, predictedBaseURL, resourceType());
         request->setCrossOriginModeAllowsCookies(crossOriginModeAllowsCookies());
         request->setCharset(charset());
         return request.release();

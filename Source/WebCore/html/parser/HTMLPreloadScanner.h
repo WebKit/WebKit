@@ -80,7 +80,7 @@ private:
     static TagId tagIdFor(const HTMLToken::DataVector&);
     static TagId tagIdFor(const String&);
 
-    static String inititatorFor(TagId);
+    static String initiatorFor(TagId);
 
     void updatePredictedBaseURL(const HTMLToken&);
 #if ENABLE(THREADED_HTML_PARSER)
