@@ -29,8 +29,68 @@
 #include "StorageManagerMessages.h"
 #include "WebProcessProxy.h"
 #include "WorkQueue.h"
+#include <WebCore/SecurityOriginHash.h>
+
+using namespace WebCore;
 
 namespace WebKit {
+
+class StorageManager::StorageArea : public ThreadSafeRefCounted<StorageManager::StorageArea> {
+public:
+    static PassRefPtr<StorageArea> create();
+    ~StorageArea();
+
+private:
+    StorageArea();
+};
+
+PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create()
+{
+    return adoptRef(new StorageArea());
+}
+
+StorageManager::StorageArea::StorageArea()
+{
+}
+
+StorageManager::StorageArea::~StorageArea()
+{
+}
+
+class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
+public:
+    static PassRefPtr<SessionStorageNamespace> create();
+    ~SessionStorageNamespace();
+
+    bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
+
+    void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
+
+private:
+    SessionStorageNamespace();
+
+    HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> m_storageAreaMap;
+};
+
+PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create()
+{
+    return adoptRef(new SessionStorageNamespace());
+}
+
+StorageManager::SessionStorageNamespace::SessionStorageNamespace()
+{
+}
+
+StorageManager::SessionStorageNamespace::~SessionStorageNamespace()
+{
+}
+
+void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& newSessionStorageNamespace)
+{
+    ASSERT(newSessionStorageNamespace.isEmpty());
+
+    // FIXME: Implement.
+}
 
 PassRefPtr<StorageManager> StorageManager::create()
 {
@@ -88,17 +148,27 @@ void StorageManager::getValues(CoreIPC::Connection*, uint64_t, HashMap<String, S
 
 void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID)
 {
-    // FIXME: Implement.
+    ASSERT(!m_sessionStorageNamespaces.contains(storageNamespaceID));
+
+    m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create());
 }
 
 void StorageManager::destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID)
 {
-    // FIXME: Implement.
+    ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
+
+    m_sessionStorageNamespaces.remove(storageNamespaceID);
 }
 
 void StorageManager::cloneSessionStorageNamespaceInternal(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
 {
-    // FIXME: Implement.
+    SessionStorageNamespace* sessionStorageNamespace = m_sessionStorageNamespaces.get(storageNamespaceID).get();
+    ASSERT(sessionStorageNamespace);
+
+    SessionStorageNamespace* newSessionStorageNamespace = m_sessionStorageNamespaces.get(newStorageNamespaceID).get();
+    ASSERT(newSessionStorageNamespace);
+
+    sessionStorageNamespace->cloneTo(*newSessionStorageNamespace);
 }
 
 } // namespace WebKit

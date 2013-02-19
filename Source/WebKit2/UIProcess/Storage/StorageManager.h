@@ -67,6 +67,11 @@ private:
     void cloneSessionStorageNamespaceInternal(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
     RefPtr<WorkQueue> m_queue;
+
+    class SessionStorageNamespace;
+    HashMap<uint64_t, RefPtr<SessionStorageNamespace> > m_sessionStorageNamespaces;
+
+    class StorageArea;
 };
 
 } // namespace WebKit

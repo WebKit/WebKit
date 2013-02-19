@@ -1,3 +1,28 @@
+2013-02-18  Anders Carlsson  <andersca@apple.com>
+
+        Begin stubbing out session storage classes
+        https://bugs.webkit.org/show_bug.cgi?id=110168
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::StorageArea):
+        (WebKit):
+        (WebKit::StorageManager::StorageArea::create):
+        (WebKit::StorageManager::StorageArea::StorageArea):
+        (WebKit::StorageManager::StorageArea::~StorageArea):
+        (StorageManager::SessionStorageNamespace):
+        (WebKit::StorageManager::SessionStorageNamespace::isEmpty):
+        (WebKit::StorageManager::SessionStorageNamespace::create):
+        (WebKit::StorageManager::SessionStorageNamespace::SessionStorageNamespace):
+        (WebKit::StorageManager::SessionStorageNamespace::~SessionStorageNamespace):
+        (WebKit::StorageManager::SessionStorageNamespace::cloneTo):
+        (WebKit::StorageManager::createSessionStorageNamespaceInternal):
+        (WebKit::StorageManager::destroySessionStorageNamespaceInternal):
+        (WebKit::StorageManager::cloneSessionStorageNamespaceInternal):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+
 2013-02-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Add C API for popup menu and popup item
