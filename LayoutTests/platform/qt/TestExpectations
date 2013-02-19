@@ -2110,7 +2110,8 @@ http/tests/loading/preload-slow-loading.php
 http/tests/security/contentSecurityPolicy/media-src-allowed.html
 http/tests/security/contentSecurityPolicy/media-src-blocked.html
 
-# [Qt] Migrate to Ubuntu 12.04. Maybe rebaseline needed.
+# [Qt] Migrate to Ubuntu 12.04.
+compositing/visibility/visibility-simple-webgl-layer.html
 css2.1/t0805-c5519-brdr-r-01-e.html
 css2.1/t0905-c5525-fltblck-00-d-ag.html
 
