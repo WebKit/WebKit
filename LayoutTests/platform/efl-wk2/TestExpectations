@@ -431,7 +431,6 @@ webkit.org/b/109431 compositing/layer-creation/no-compositing-for-fixed-position
 webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure ]
 
 # Several new Khronos WebGL conformance tests are failing on WK2 EFL.
-webkit.org/b/109435 webgl/conformance/canvas/texture-bindings-unaffected-on-resize.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/context/context-attributes-alpha-depth-stencil-antialias.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/context/premultiplyalpha-test.html [ Failure ]
 webkit.org/b/109435 webgl/conformance/extensions/oes-element-index-uint.html [ Failure ]
