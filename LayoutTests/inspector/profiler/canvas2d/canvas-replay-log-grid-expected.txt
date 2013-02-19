@@ -2,6 +2,20 @@ Tests replay log grid.
 
 Bug 109592 
 
+Total frames: 2
+Total draw call groups: 5
+Total calls: 30
+Total grid nodes: 37
+
+Testing ReplayFirstStepClick
+Testing ReplayNextStepClick
+Testing ReplayPreviousStepClick
+Testing ReplayNextDrawingCallClick starting on a frame node
+Testing ReplayPreviousDrawingCallClick starting on a frame node
+Testing ReplayNextDrawingCallClick starting on a draw call group
+Testing ReplayPreviousDrawingCallClick starting on a call node
+Testing ReplayNextDrawingCallClick starting on a call node
+
    |                   Frame #1 |                                | |
    |         Draw call group #1 |                                | |
  1 |                     save() | canvas-replay-log-grid.html:26 | |

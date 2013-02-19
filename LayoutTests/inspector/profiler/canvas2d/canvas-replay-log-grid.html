@@ -48,12 +48,13 @@ function test()
     InspectorTest.addSniffer(profileType, "_didStartCapturingFrame", didStartCapturingFrame);
     profilesPanel.toggleRecordButton();
 
-    var traceLogId;
     var profileHeader;
+    var profileView;
+    var dataGrid;
+
     function didStartCapturingFrame(profilesPanel, frameId, error, traceLogId)
     {
         profileHeader = profilesPanel.getProfiles(WebInspector.CanvasProfileType.TypeId)[0];
-        traceLogId = profileHeader.traceLogId();
         profilesPanel.showProfile(profileHeader);
         InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveFirstFrame);
         InspectorTest.evaluateInConsole("doSomeCanvasCalls(2)");
@@ -68,23 +69,115 @@ function test()
     }
     function didSecondFrameCalls()
     {
-        InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveSecondFrame);
+        profileView = profilesPanel.visibleView;
+        dataGrid = profileView._logGrid;
+        InspectorTest.addSniffer(CanvasAgent, "replayTraceLog", onReplayTraceLog);
         profilesPanel.toggleRecordButton();
     }
-    function didReceiveSecondFrame()
+    function onReplayTraceLog(traceLogId, index)
     {
-        if (profileHeader._alive) {
-            InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveSecondFrame);
-            return;
-        }
+        testControlButtons();
 
-        var profileView = profilesPanel.visibleView;
-        var dataGrid = profileView._logGrid;
-        dataGrid.rootNode().expandRecursively();
-
+        InspectorTest.addResult("");
         dumpTableData(dataGrid.element);
         InspectorTest.completeTest();
     }
+
+
+    function testControlButtons()
+    {
+        var rootNode = dataGrid.rootNode();
+        var frameNodes = [];
+        var drawCallGroups = [];
+        var nodes = [];
+        var allNodesFlat = [];
+
+        frameNodes = frameNodes.concat(rootNode.children);
+        frameNodes.forEach(function(frameNode) {
+            drawCallGroups = drawCallGroups.concat(frameNode.children);
+        });
+        drawCallGroups.forEach(function(drawCallGroup) {
+            nodes = nodes.concat(drawCallGroup.children);
+        });
+        for (var node = rootNode; node; node = node.traverseNextNode(false)) {
+            if (node !== rootNode)
+                allNodesFlat.push(node);
+        }
+        allNodesFlat.forEach(function(node) {
+            node.toString = function()
+            {
+                return "Node{" + this.element.textContent + "}";
+            }
+        });
+
+        InspectorTest.addResult("");
+        InspectorTest.addResult("Total frames: " + frameNodes.length);
+        InspectorTest.addResult("Total draw call groups: " + drawCallGroups.length);
+        InspectorTest.addResult("Total calls: " + nodes.length);
+        InspectorTest.addResult("Total grid nodes: " + allNodesFlat.length);
+        InspectorTest.addResult("");
+
+        InspectorTest.assertEquals(frameNodes.peekLast(), dataGrid.selectedNode, "Expected last frame node before testing control buttons");
+
+        InspectorTest.addResult("Testing ReplayFirstStepClick");
+        profileView._onReplayFirstStepClick();
+        InspectorTest.assertEquals(frameNodes[0], dataGrid.selectedNode);
+
+        InspectorTest.addResult("Testing ReplayNextStepClick");
+        for (var i = 1; i < allNodesFlat.length + 5; ++i) {
+            profileView._onReplayStepClick(true);
+            InspectorTest.assertEquals(allNodesFlat[i] || allNodesFlat.peekLast(), dataGrid.selectedNode, "error on index " + i);
+        }
+
+        InspectorTest.addResult("Testing ReplayPreviousStepClick");
+        for (var i = allNodesFlat.length - 2; i >= -5; --i) {
+            profileView._onReplayStepClick(false);
+            InspectorTest.assertEquals(allNodesFlat[i] || allNodesFlat[0], dataGrid.selectedNode, "error on index " + i);
+        }
+
+        InspectorTest.addResult("Testing ReplayNextDrawingCallClick starting on a frame node");
+        for (var i = 1; i < frameNodes.length + 5; ++i) {
+            profileView._onReplayDrawingCallClick(true);
+            InspectorTest.assertEquals(frameNodes[i] || frameNodes.peekLast(), dataGrid.selectedNode, "error on index " + i);
+        }
+
+        InspectorTest.addResult("Testing ReplayPreviousDrawingCallClick starting on a frame node");
+        for (var i = frameNodes.length - 2; i >= -5; --i) {
+            profileView._onReplayDrawingCallClick(false);
+            InspectorTest.assertEquals(frameNodes[i] || frameNodes[0], dataGrid.selectedNode, "error on index " + i);
+        }
+
+        profileView._onReplayStepClick(true);
+        InspectorTest.assertEquals(drawCallGroups[0], dataGrid.selectedNode, "Expected to move to the first draw call group");
+
+        InspectorTest.addResult("Testing ReplayNextDrawingCallClick starting on a draw call group");
+        var expected = [drawCallGroups[1], frameNodes[1]];
+        for (var i = 0; i < expected.length + 5; ++i) {
+            profileView._onReplayDrawingCallClick(true);
+            InspectorTest.assertEquals(expected[i] || expected.peekLast(), dataGrid.selectedNode, "error on index " + i);
+        }
+
+        profileView._onReplayLastStepClick();
+        InspectorTest.assertEquals(allNodesFlat.peekLast(), dataGrid.selectedNode, "Expected to move to the last call");
+
+        InspectorTest.addResult("Testing ReplayPreviousDrawingCallClick starting on a call node");
+        var expected = [frameNodes[0], frameNodes[1], drawCallGroups[2], drawCallGroups[3], drawCallGroups[4]];
+        for (var i = expected.length - 1; i >= -5; --i) {
+            profileView._onReplayDrawingCallClick(false);
+            InspectorTest.assertEquals(expected[i] || expected[0], dataGrid.selectedNode, "error on index " + i);
+        }
+
+        nodes[15].revealAndSelect();
+        InspectorTest.assertEquals(nodes[15], dataGrid.selectedNode, "Expected to select node #20");
+
+        InspectorTest.addResult("Testing ReplayNextDrawingCallClick starting on a call node");
+        var expected = [drawCallGroups[3], drawCallGroups[4]];
+        for (var i = 0; i < expected.length + 5; ++i) {
+            profileView._onReplayDrawingCallClick(true);
+            InspectorTest.assertEquals(expected[i] || expected.peekLast(), dataGrid.selectedNode, "error on index " + i);
+        }
+    }
+
     function dumpTableData(tableElement)
     {
         var textRows = [];
@@ -103,7 +196,8 @@ function test()
                 textWidths[index] = Math.max(textWidths[index] || 0, text.length);
                 textCols[index] = text;
             }
-            textRows.push(textCols);
+            if (textCols.length)
+                textRows.push(textCols);
         }
 
         function alignText(text, width)
@@ -123,8 +217,7 @@ function test()
                     line += " | ";
                 line += alignText(textRows[i][j], textWidths[j]);
             }
-            if (line)
-                line += "|";
+            line += "|";
             InspectorTest.addResult(line);
         }
     }

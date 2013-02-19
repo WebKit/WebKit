@@ -181,11 +181,11 @@ WebInspector.CanvasProfileView.prototype = {
      */
     _onReplayStepClick: function(forward)
     {
-        var index = this._selectedCallIndex();
-        if (index === -1)
+        var selectedNode = this._logGrid.selectedNode;
+        if (!selectedNode)
             return;
-        var nextNode = this._logGridNodes[forward ? index + 1 : index - 1] || this._logGridNodes[index];
-        nextNode.revealAndSelect();
+        var nextNode = forward ? selectedNode.traverseNextNode(false) : selectedNode.traversePreviousNode(false);
+        (nextNode || selectedNode).revealAndSelect();
     },
 
     /**
@@ -193,11 +193,23 @@ WebInspector.CanvasProfileView.prototype = {
      */
     _onReplayDrawingCallClick: function(forward)
     {
-        var index = this._selectedDrawCallGroupIndex();
-        if (index === -1)
+        var selectedNode = this._logGrid.selectedNode;
+        if (!selectedNode)
             return;
-        var nextNode = this._drawCallGroups[forward ? index + 1 : index - 1] || this._drawCallGroups[index];
-        nextNode.revealAndSelect();
+        var nextNode = selectedNode;
+        while (nextNode) {
+            var sibling = forward ? nextNode.nextSibling : nextNode.previousSibling;
+            if (sibling) {
+                nextNode = sibling;
+                if (nextNode.hasChildren)
+                    break;
+            } else {
+                nextNode = nextNode.parent;
+                if (!forward)
+                    break;
+            }
+        }
+        (nextNode || selectedNode).revealAndSelect();
     },
 
     _onReplayFirstStepClick: function()
@@ -210,8 +222,15 @@ WebInspector.CanvasProfileView.prototype = {
     _onReplayLastStepClick: function()
     {
         var lastNode = this._logGrid.rootNode().children.peekLast();
-        if (lastNode)
-            lastNode.revealAndSelect();
+        if (!lastNode)
+            return;
+        while (lastNode.expanded) {
+            var lastChild = lastNode.children.peekLast();
+            if (!lastChild)
+                break;
+            lastNode = lastChild;
+        }
+        lastNode.revealAndSelect();
     },
 
     /**
