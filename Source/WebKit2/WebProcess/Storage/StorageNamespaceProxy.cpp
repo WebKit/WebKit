@@ -29,6 +29,7 @@
 #include "StorageAreaProxy.h"
 #include "WebPage.h"
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/Settings.h>
 
 using namespace WebCore;
 
@@ -36,11 +37,12 @@ namespace WebKit {
 
 PassRefPtr<StorageNamespaceProxy> StorageNamespaceProxy::createSessionStorageNamespace(WebPage* webPage)
 {
-    return adoptRef(new StorageNamespaceProxy(webPage));
+    return adoptRef(new StorageNamespaceProxy(webPage->pageID(), webPage->corePage()->settings()->sessionStorageQuota()));
 }
 
-StorageNamespaceProxy::StorageNamespaceProxy(WebPage* webPage)
-    : m_storageNamespaceID(webPage->pageID())
+StorageNamespaceProxy::StorageNamespaceProxy(uint64_t storageNamespaceID, unsigned quotaInBytes)
+    : m_storageNamespaceID(storageNamespaceID)
+    , m_quotaInBytes(quotaInBytes)
 {
 }
 

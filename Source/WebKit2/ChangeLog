@@ -1,3 +1,24 @@
+2013-02-19  Anders Carlsson  <andersca@apple.com>
+
+        StorageAreaProxy should know its quota
+        https://bugs.webkit.org/show_bug.cgi?id=110268
+
+        Reviewed by Sam Weinig.
+
+        Begin stubbing out StorageAreaProxy::setItem and add some quota member variables.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::StorageAreaProxy):
+        (WebKit::StorageAreaProxy::setItem):
+        * WebProcess/Storage/StorageAreaProxy.h:
+        (StorageAreaProxy):
+        * WebProcess/Storage/StorageNamespaceProxy.cpp:
+        (WebKit::StorageNamespaceProxy::createSessionStorageNamespace):
+        (WebKit::StorageNamespaceProxy::StorageNamespaceProxy):
+        * WebProcess/Storage/StorageNamespaceProxy.h:
+        (WebKit::StorageNamespaceProxy::quota):
+        (StorageNamespaceProxy):
+
 2013-02-19  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/13239119> NetworkProcess generates timeout spindump logs

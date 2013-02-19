@@ -52,6 +52,7 @@ PassRefPtr<StorageAreaProxy> StorageAreaProxy::create(StorageNamespaceProxy* sto
 
 StorageAreaProxy::StorageAreaProxy(StorageNamespaceProxy* storageNamespaceProxy, PassRefPtr<SecurityOrigin> securityOrigin)
     : m_storageType(storageNamespaceProxy->storageType())
+    , m_quotaInBytes(storageNamespaceProxy->quotaInBytes())
     , m_storageAreaID(generateStorageAreaID())
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, storageNamespaceProxy->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(securityOrigin.get())), 0);
@@ -62,11 +63,11 @@ StorageAreaProxy::~StorageAreaProxy()
     WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageArea(m_storageAreaID), 0);
 }
 
-unsigned StorageAreaProxy::length(ExceptionCode& exceptionCode, Frame* sourceFrame)
+unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* sourceFrame)
 {
-    exceptionCode = 0;
+    ec = 0;
     if (!canAccessStorage(sourceFrame)) {
-        exceptionCode = SECURITY_ERR;
+        ec = SECURITY_ERR;
         return 0;
     }
 
@@ -91,9 +92,24 @@ String StorageAreaProxy::getItem(const String& key, ExceptionCode&, Frame* sourc
     return String();
 }
 
-void StorageAreaProxy::setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame)
+void StorageAreaProxy::setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame)
 {
-    // FIXME: Implement this.
+    ec = 0;
+    if (!canAccessStorage(sourceFrame)) {
+        ec = SECURITY_ERR;
+        return;
+    }
+
+    ASSERT(!value.isNull());
+
+    if (disabledByPrivateBrowsingInFrame(sourceFrame)) {
+        ec = QUOTA_EXCEEDED_ERR;
+        return;
+    }
+
+    loadValuesIfNeeded();
+
+    // FIXME: Actually set the value.
     ASSERT_NOT_REACHED();
 }
 

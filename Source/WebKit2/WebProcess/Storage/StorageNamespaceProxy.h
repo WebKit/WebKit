@@ -39,10 +39,12 @@ public:
     virtual ~StorageNamespaceProxy();
 
     uint64_t storageNamespaceID() const { return m_storageNamespaceID; }
+    unsigned quotaInBytes() const { return m_quotaInBytes; }
+
     WebCore::StorageType storageType() const;
 
 private:
-    explicit StorageNamespaceProxy(WebPage*);
+    explicit StorageNamespaceProxy(uint64_t storageNamespaceID, unsigned quotaInBytes);
 
     virtual PassRefPtr<WebCore::StorageArea> storageArea(PassRefPtr<WebCore::SecurityOrigin>) OVERRIDE;
     virtual PassRefPtr<WebCore::StorageNamespace> copy() OVERRIDE;
@@ -53,6 +55,7 @@ private:
     virtual void closeIdleLocalStorageDatabases() OVERRIDE;
 
     uint64_t m_storageNamespaceID;
+    unsigned m_quotaInBytes;
 };
 
 } // namespace WebKit
