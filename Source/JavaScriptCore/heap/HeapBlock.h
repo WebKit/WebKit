@@ -45,7 +45,7 @@ template<typename T>
 class HeapBlock : public DoublyLinkedListNode<T> {
     friend CLASS_IF_GCC DoublyLinkedListNode<T>;
 public:
-    static HeapBlock* destroy(HeapBlock* block)
+    static HeapBlock* destroy(HeapBlock* block) WARN_UNUSED_RETURN
     {
         static_cast<T*>(block)->~T();
         return block;
