@@ -128,7 +128,7 @@ layer at (0,0) size 800x600
                   RenderInline {A} at (0,0) size 81x15 [color=#0000EE]
                     RenderText {#text} at (497,4) size 81x15
                       text run at (497,4) width 81: "WebMail< /A>"
-                RenderInline {A} at (0,0) size 0x0 [color=#0000EE]
+                RenderInline {A} at (0,0) size 0x19 [color=#0000EE]
                   RenderText {#text} at (0,0) size 0x0
             RenderTableRow {TR} at (0,180) size 600x3
               RenderTableCell {TD} at (2,180) size 596x3 [bgcolor=#99CCCC] [r=4 c=0 rs=1 cs=4]

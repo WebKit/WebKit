@@ -15,7 +15,7 @@ layer at (0,0) size 800x600
           RenderBlock (anonymous) at (0,0) size 756x28
             RenderText {#text} at (0,0) size 132x27
               text run at (0,0) width 132: "one two three"
-            RenderInline {FRIJOLE} at (0,0) size 0x0
+            RenderInline {FRIJOLE} at (0,0) size 0x27
               RenderText {#text} at (0,0) size 0x0
           RenderBlock (anonymous) at (0,28) size 756x28
             RenderBlock {DOODAD} at (0,0) size 756x28

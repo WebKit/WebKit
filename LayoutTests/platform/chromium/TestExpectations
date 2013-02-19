@@ -1292,12 +1292,12 @@ webkit.org/b/79454 [ Android Linux Mac ] svg/text/text-viewbox-rescale.html [ Im
 # These require more investigation. There is a small change, probably two pixels, in the filter offset
 # when comparing the former and new results. This may be due to bad test design or may be revealing a bug
 # in the code. Turbulence results are very different.
-webkit.org/b/80517 [ Win Mac Android ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html [ ImageOnlyFailure ]
-webkit.org/b/80517 [ Win Mac Android ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html [ ImageOnlyFailure ]
-webkit.org/b/80517 [ Win Mac Android ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.html [ ImageOnlyFailure ]
-webkit.org/b/80517 [ Win Mac Android ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html [ ImageOnlyFailure ]
-webkit.org/b/80517 [ Win Mac Android ] svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html [ ImageOnlyFailure ]
-webkit.org/b/80517 [ Win Mac Android ] svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android Lion SnowLeopard ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android XP ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android Lion SnowLeopard ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android MountainLion XP ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Debug ] svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/81217 [ Android ] svg/custom/js-late-pattern-and-object-creation.svg [ ImageOnlyFailure ]
@@ -4289,18 +4289,6 @@ webkit.org/b/106426 [ Win ] inspector/geolocation-success.html [ Failure Pass ]
 webkit.org/b/106426 [ Win ] inspector/geolocation-watchPosition.html [ Failure Pass ]
 crbug.com/166932 [ Debug ] plugins/embed-attributes-setting.html [ Crash Pass ]
 
-# Needs rebaseline.
-webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/week-picker-appearance-step.html [ ImageOnlyFailure Pass ]
-webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/week-picker-appearance.html [ ImageOnlyFailure Pass ]
-webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ru.html [ ImageOnlyFailure Pass ]
-webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/month-picker-appearance-step.html [ ImageOnlyFailure Pass ]
-webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/month-picker-appearance.html [ ImageOnlyFailure Pass ]
-webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-step.html [ ImageOnlyFailure Pass ]
-webkit.org/b/107508 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance.html [ ImageOnlyFailure Pass ]
-webkit.org/b/109136 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-required.html [ ImageOnlyFailure Pass Missing ]
-webkit.org/b/109136 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-required-ar.html [ ImageOnlyFailure Pass Missing ]
-webkit.org/b/109158 platform/chromium/fast/forms/calendar-picker/calendar-picker-appearance-ar.html [ ImageOnlyFailure Pass Missing ]
-
 # Rebaseline after currentPath
 webkit.org/b/108246 fast/canvas/canvas-currentPath.html [ Failure ]
 webkit.org/b/108246 platform/chromium/virtual/gpu/fast/canvas/canvas-currentPath.html [ Failure ]
@@ -4317,14 +4305,6 @@ webkit.org/b/106746 css3/filters/filter-property-parsing.html [ Failure ]
 webkit.org/b/108065 [ Debug ] tables/mozilla_expected_failures/bugs/bug2479-5.html [ Crash ]
 
 webkit.org/b/106609 [ Win ] animations/fill-mode-iteration-count-non-integer.html [ Failure ]
-
-webkit.org/b/106689 canvas/philip/tests/2d.gradient.interpolate.overlap2.html [ Failure ]
-webkit.org/b/106689 canvas/philip/tests/2d.gradient.linear.transform.1.html [ Failure ]
-webkit.org/b/106689 canvas/philip/tests/2d.gradient.linear.transform.2.html [ Failure ]
-webkit.org/b/106689 canvas/philip/tests/2d.gradient.linear.transform.3.html [ Failure ]
-webkit.org/b/106689 canvas/philip/tests/2d.gradient.radial.transform.1.html [ Failure ]
-webkit.org/b/106689 canvas/philip/tests/2d.gradient.radial.transform.2.html [ Failure ]
-webkit.org/b/106689 canvas/philip/tests/2d.gradient.radial.transform.3.html [ Failure ]
 
 # Ref tests that now fail with Skia changes
 crbug.com/169602 fast/backgrounds/background-opaque-clipped-gradients.html [ ImageOnlyFailure ]
@@ -4364,20 +4344,6 @@ crbug.com/170722 [ Mac Win Linux ] compositing/color-matching/image-color-matchi
 crbug.com/170722 [ Mac Win Linux ] compositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
 crbug.com/170722 fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ ImageOnlyFailure ]
 
-# Rebaseline required after https://webkit.org/b/31397
-webkit.org/b/107567 svg/batik/text/xmlSpace.svg [ Failure ] 
-webkit.org/b/107567 fast/text/capitalize-empty-generated-string.html [ Failure ] 
-webkit.org/b/107567 fast/text/whitespace/007.html [ Failure ] 
-webkit.org/b/107567 fast/text/whitespace/006.html [ Failure ] 
-webkit.org/b/107567 fast/inline/drawStyledEmptyInlinesWithWS.html [ Failure ] 
-webkit.org/b/107567 tables/mozilla/bugs/bug1318.html [ Failure ] 
-webkit.org/b/107567 fast/inline/drawStyledEmptyInlines.html [ Failure ] 
-webkit.org/b/107567 tables/mozilla/bugs/bug113235-3.html [ Failure ] 
-webkit.org/b/107567 css2.1/t0505-c16-descendant-01-e.html [ Failure ]
-webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ] 
-webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
-webkit.org/b/107567 svg/carto.net/combobox.svg [ Pass Failure ] 
-
 webkit.org/b/107899 [ Linux Win Android ] fast/repaint/selection-clear.html [ ImageOnlyFailure ]
 
 webkit.org/b/107962 http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
@@ -4389,39 +4355,6 @@ webkit.org/b/107893 [ MountainLion ] fast/exclusions/shape-inside/shape-inside-f
 
 # Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=9221
 webkit.org/b/9221 [ Mac ] fast/css/resize-corner-tracking-transformed.html [ Failure ]
-
-# Needs rebaseline after https://webkit.org/b/109985
-webkit.org/b/109985 svg/W3C-SVG-1.1/filters-offset-01-b.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/custom/visibility-override-filter.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-dom-in-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-dom-in2-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-dom-k1-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-dom-k2-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-dom-k3-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-dom-k4-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-dom-operator-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-svgdom-in-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-svgdom-in2-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-svgdom-k1-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-svgdom-k2-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-svgdom-k3-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-svgdom-k4-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFECompositeElement-svgdom-operator-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFEFloodElement-dom-flood-color-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFEFloodElement-dom-flood-opacity-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFEFloodElement-inherit-flood-color.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-color-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFEFloodElement-svgdom-flood-opacity-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFETileElement-dom-in-attr.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/dynamic-updates/SVGFETileElement-svgdom-in-prop.html [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/filters/big-sized-filter-2.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/filters/feImage-reference-svg-primitive.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/filters/filter-on-tspan.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/filters/filterRes1.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/filters/filterRes3.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/filters/parent-children-with-same-filter.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/filters/shadow-on-filter.svg [ ImageOnlyFailure ]
-webkit.org/b/109985 svg/filters/shadow-on-rect-with-filter.svg [ ImageOnlyFailure ]
 
 # The test is flaky on chromium-ews
 webkit.org/b/107953 inspector-protocol/debugger-terminate-dedicated-worker-while-paused.html [ Pass Failure ]
