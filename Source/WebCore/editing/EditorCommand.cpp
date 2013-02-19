@@ -1179,7 +1179,7 @@ static bool supportedPaste(Frame* frame)
         return false;
 
     Settings* settings = frame->settings();
-    bool defaultValue = settings && settings->javaScriptCanAccessClipboard() && settings->isDOMPasteAllowed();
+    bool defaultValue = settings && settings->javaScriptCanAccessClipboard() && settings->DOMPasteAllowed();
 
     EditorClient* client = frame->editor()->client();
     return client ? client->canPaste(frame, defaultValue) : defaultValue;

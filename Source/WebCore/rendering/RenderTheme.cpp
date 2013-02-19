@@ -854,7 +854,7 @@ bool RenderTheme::isDefault(const RenderObject* o) const
         return false;
 
     Settings* settings = o->document()->settings();
-    if (!settings || !settings->inApplicationChromeMode())
+    if (!settings || !settings->applicationChromeMode())
         return false;
     
     return o->style()->appearance() == DefaultButtonPart;

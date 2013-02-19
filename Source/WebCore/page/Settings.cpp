@@ -166,16 +166,13 @@ Settings::Settings(Page* page)
     , m_loadsImagesAutomatically(false)
     , m_privateBrowsingEnabled(false)
     , m_areImagesEnabled(true)
-    , m_isMediaEnabled(true)
     , m_arePluginsEnabled(false)
     , m_isScriptEnabled(false)
     , m_textAreasAreResizable(false)
     , m_needsAdobeFrameReloadingQuirk(false)
-    , m_isDOMPasteAllowed(false)
     , m_usesPageCache(false)
     , m_authorAndUserStylesEnabled(true)
     , m_fontRenderingMode(0)
-    , m_inApplicationChromeMode(false)
     , m_isCSSCustomFilterEnabled(false)
 #if ENABLE(CSS_STICKY_POSITION)
     , m_cssStickyPositionEnabled(true)
@@ -443,11 +440,6 @@ void Settings::setImagesEnabled(bool areImagesEnabled)
     m_setImageLoadingSettingsTimer.startOneShot(0);
 }
 
-void Settings::setMediaEnabled(bool isMediaEnabled)
-{
-    m_isMediaEnabled = isMediaEnabled;
-}
-
 void Settings::setPluginsEnabled(bool arePluginsEnabled)
 {
     m_arePluginsEnabled = arePluginsEnabled;
@@ -486,11 +478,6 @@ void Settings::setTextAreasAreResizable(bool textAreasAreResizable)
 void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
 {
     m_needsAdobeFrameReloadingQuirk = shouldNotReloadIFramesForUnchangedSRC;
-}
-
-void Settings::setDOMPasteAllowed(bool DOMPasteAllowed)
-{
-    m_isDOMPasteAllowed = DOMPasteAllowed;
 }
 
 void Settings::setDefaultMinDOMTimerInterval(double interval)
@@ -568,11 +555,6 @@ void Settings::setFontRenderingMode(FontRenderingMode mode)
 FontRenderingMode Settings::fontRenderingMode() const
 {
     return static_cast<FontRenderingMode>(m_fontRenderingMode);
-}
-
-void Settings::setApplicationChromeMode(bool mode)
-{
-    m_inApplicationChromeMode = mode;
 }
 
 #if USE(SAFARI_THEME)

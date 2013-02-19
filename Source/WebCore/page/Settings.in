@@ -153,6 +153,9 @@ needsDidFinishLoadOrderQuirk initial=false
 fixedPositionCreatesStackingContext initial=false
 syncXHRInDocumentsEnabled initial=true
 cookieEnabled initial=true
+mediaEnabled initial=true
+applicationChromeMode initial=false
+DOMPasteAllowed initial=false
 
 threadedHTMLParser initial=false, conditional=THREADED_HTML_PARSER
 

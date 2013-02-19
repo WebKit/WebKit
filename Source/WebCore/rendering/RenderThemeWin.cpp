@@ -145,7 +145,7 @@ static bool gWebKitIsBeingUnloaded;
 static bool documentIsInApplicationChromeMode(const Document* document)
 {
     Settings* settings = document->settings();
-    return settings && settings->inApplicationChromeMode();
+    return settings && settings->applicationChromeMode();
 }
 
 void RenderThemeWin::setWebKitIsBeingUnloaded()

@@ -152,9 +152,6 @@ namespace WebCore {
         void setImagesEnabled(bool);
         bool areImagesEnabled() const { return m_areImagesEnabled; }
 
-        void setMediaEnabled(bool);
-        bool isMediaEnabled() const { return m_isMediaEnabled; }
-
         void setPluginsEnabled(bool);
         bool arePluginsEnabled() const { return m_arePluginsEnabled; }
 
@@ -186,9 +183,6 @@ namespace WebCore {
         void setNeedsAdobeFrameReloadingQuirk(bool);
         bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
 
-        void setDOMPasteAllowed(bool);
-        bool isDOMPasteAllowed() const { return m_isDOMPasteAllowed; }
-        
         static void setDefaultMinDOMTimerInterval(double); // Interval specified in seconds.
         static double defaultMinDOMTimerInterval();
         
@@ -212,9 +206,6 @@ namespace WebCore {
         
         void setFontRenderingMode(FontRenderingMode mode);
         FontRenderingMode fontRenderingMode() const;
-
-        void setApplicationChromeMode(bool);
-        bool inApplicationChromeMode() const { return m_inApplicationChromeMode; }
 
         void setCSSCustomFilterEnabled(bool enabled) { m_isCSSCustomFilterEnabled = enabled; }
         bool isCSSCustomFilterEnabled() const { return m_isCSSCustomFilterEnabled; }
@@ -339,16 +330,13 @@ namespace WebCore {
         bool m_loadsImagesAutomatically : 1;
         bool m_privateBrowsingEnabled : 1;
         bool m_areImagesEnabled : 1;
-        bool m_isMediaEnabled : 1;
         bool m_arePluginsEnabled : 1;
         bool m_isScriptEnabled : 1;
         bool m_textAreasAreResizable : 1;
         bool m_needsAdobeFrameReloadingQuirk : 1;
-        bool m_isDOMPasteAllowed : 1;
         bool m_usesPageCache : 1;
         bool m_authorAndUserStylesEnabled : 1;
         unsigned m_fontRenderingMode : 1;
-        bool m_inApplicationChromeMode : 1;
         bool m_isCSSCustomFilterEnabled : 1;
 #if ENABLE(CSS_STICKY_POSITION)
         bool m_cssStickyPositionEnabled : 1;
