@@ -26,6 +26,7 @@
 #define Cache_h
 
 #include "CachedResource.h"
+#include "SecurityOriginHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
@@ -158,7 +159,7 @@ public:
     
     void resourceAccessed(CachedResource*);
 
-    typedef HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> SecurityOriginSet;
+    typedef HashSet<RefPtr<SecurityOrigin> > SecurityOriginSet;
     void removeResourcesWithOrigin(SecurityOrigin*);
     void getOriginsWithCache(SecurityOriginSet& origins);
 

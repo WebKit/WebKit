@@ -86,7 +86,7 @@ void WebResourceCacheManager::getCacheOrigins(uint64_t callbackID) const
     m_process->send(Messages::WebResourceCacheManagerProxy::DidGetCacheOrigins(identifiers, callbackID), 0);
 }
 
-void WebResourceCacheManager::clearCacheForOrigin(SecurityOriginData originData, uint32_t cachesToClear) const
+void WebResourceCacheManager::clearCacheForOrigin(const SecurityOriginData& originData, uint32_t cachesToClear) const
 {
 #if USE(CFURLCACHE)
     ResourceCachesToClear resourceCachesToClear = static_cast<ResourceCachesToClear>(cachesToClear);

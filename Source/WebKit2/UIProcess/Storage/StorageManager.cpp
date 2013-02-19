@@ -69,7 +69,7 @@ public:
 private:
     SessionStorageNamespace();
 
-    HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea>, SecurityOriginHash> m_storageAreaMap;
+    HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea> > m_storageAreaMap;
 };
 
 PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create()

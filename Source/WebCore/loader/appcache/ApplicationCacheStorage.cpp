@@ -1512,7 +1512,7 @@ long long ApplicationCacheStorage::flatFileAreaSize()
     return totalSize;
 }
 
-void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>& origins)
+void ApplicationCacheStorage::getOriginsWithCache(HashSet<RefPtr<SecurityOrigin> >& origins)
 {
     Vector<KURL> urls;
     if (!manifestURLs(&urls)) {

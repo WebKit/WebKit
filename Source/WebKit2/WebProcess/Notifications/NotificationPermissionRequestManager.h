@@ -28,6 +28,7 @@
 
 #include <WebCore/NotificationClient.h>
 #include <WebCore/NotificationPermissionCallback.h>
+#include <WebCore/SecurityOriginHash.h>
 #include <WebCore/VoidCallback.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>

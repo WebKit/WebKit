@@ -398,12 +398,12 @@ void InjectedBundle::resetApplicationCacheOriginQuota(const String& originString
 
 PassRefPtr<ImmutableArray> InjectedBundle::originsWithApplicationCache()
 {
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> origins;
+    HashSet<RefPtr<SecurityOrigin> > origins;
     cacheStorage().getOriginsWithCache(origins);
     Vector< RefPtr<APIObject> > originsVector;
 
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>::iterator it = origins.begin();
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>::iterator end = origins.end();
+    HashSet<RefPtr<SecurityOrigin> >::iterator it = origins.begin();
+    HashSet<RefPtr<SecurityOrigin> >::iterator end = origins.end();
     for ( ; it != end; ++it)
         originsVector.append(WebString::create((*it)->databaseIdentifier()));
 

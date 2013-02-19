@@ -40,6 +40,7 @@
 #if !PLATFORM(CHROMIUM)
 #include "DatabaseDetails.h"
 #include "SQLiteDatabase.h"
+#include "SecurityOriginHash.h"
 #include <wtf/OwnPtr.h>
 #endif // !PLATFORM(CHROMIUM)
 
@@ -49,12 +50,9 @@ class DatabaseBackend;
 class DatabaseBackendContext;
 class SecurityOrigin;
 
-struct SecurityOriginHash;
-
 #if !PLATFORM(CHROMIUM)
 class DatabaseManagerClient;
 
-struct SecurityOriginTraits;
 #endif // !PLATFORM(CHROMIUM)
 
 class DatabaseTracker {
@@ -145,7 +143,7 @@ private:
 
     typedef HashSet<DatabaseBackend*> DatabaseSet;
     typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
-    typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*, SecurityOriginHash> DatabaseOriginMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*> DatabaseOriginMap;
 
     Mutex m_openDatabaseMapGuard;
     mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;
@@ -154,7 +152,7 @@ private:
     Mutex m_databaseGuard;
     SQLiteDatabase m_database;
 
-    typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long, SecurityOriginHash> QuotaMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long> QuotaMap;
     mutable OwnPtr<QuotaMap> m_quotaMap;
 
     String m_databaseDirectoryPath;
@@ -165,8 +163,8 @@ private:
     typedef HashMap<RefPtr<SecurityOrigin>, NameCountMap*, SecurityOriginHash> CreateSet;
     CreateSet m_beingCreated;
     typedef HashSet<String> NameSet;
-    HashMap<RefPtr<SecurityOrigin>, NameSet*, SecurityOriginHash> m_beingDeleted;
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> m_originsBeingDeleted;
+    HashMap<RefPtr<SecurityOrigin>, NameSet*> m_beingDeleted;
+    HashSet<RefPtr<SecurityOrigin> > m_originsBeingDeleted;
     bool isDeletingDatabaseOrOriginFor(SecurityOrigin*, const String& name);
     void recordCreatingDatabase(SecurityOrigin*, const String& name);
     void doneCreatingDatabase(SecurityOrigin*, const String& name);

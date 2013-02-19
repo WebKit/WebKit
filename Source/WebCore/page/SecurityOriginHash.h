@@ -78,4 +78,13 @@ struct SecurityOriginHash {
 
 } // namespace WebCore
 
-#endif
+namespace WTF {
+    template<typename> struct DefaultHash;
+
+    template<> struct DefaultHash<RefPtr<WebCore::SecurityOrigin> > {
+        typedef WebCore::SecurityOriginHash Hash;
+    };
+
+} // namespace WTF
+
+#endif // SecurityOriginHash_h

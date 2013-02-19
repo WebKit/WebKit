@@ -40,6 +40,7 @@ namespace WebCore {
 
 class DatabaseBackend;
 class OriginUsageRecord;
+class SecurityOrigin;
 
 class OriginQuotaManager {
     WTF_MAKE_NONCOPYABLE(OriginQuotaManager); WTF_MAKE_FAST_ALLOCATED;
@@ -65,7 +66,7 @@ private:
     bool m_usageRecordGuardLocked;
 #endif
 
-    typedef HashMap<RefPtr<SecurityOrigin>, OriginUsageRecord*, SecurityOriginHash> OriginUsageMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, OriginUsageRecord*> OriginUsageMap;
     OriginUsageMap m_usageMap;
 };
 

@@ -53,15 +53,15 @@ WebApplicationCacheManager::WebApplicationCacheManager(ChildProcess* childProces
 
 void WebApplicationCacheManager::getApplicationCacheOrigins(uint64_t callbackID)
 {
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash> origins;
+    HashSet<RefPtr<SecurityOrigin> > origins;
 
     cacheStorage().getOriginsWithCache(origins);
 
     Vector<SecurityOriginData> identifiers;
     identifiers.reserveCapacity(origins.size());
 
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>::iterator end = origins.end();
-    HashSet<RefPtr<SecurityOrigin>, SecurityOriginHash>::iterator i = origins.begin();
+    HashSet<RefPtr<SecurityOrigin> >::iterator end = origins.end();
+    HashSet<RefPtr<SecurityOrigin> >::iterator i = origins.begin();
     for (; i != end; ++i) {
         RefPtr<SecurityOrigin> origin = *i;
         

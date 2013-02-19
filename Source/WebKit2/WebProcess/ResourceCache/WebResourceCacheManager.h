@@ -51,7 +51,7 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void getCacheOrigins(uint64_t callbackID) const;
-    void clearCacheForOrigin(SecurityOriginData, uint32_t cachesToClear) const;
+    void clearCacheForOrigin(const SecurityOriginData&, uint32_t cachesToClear) const;
     void clearCacheForAllOrigins(uint32_t cachesToClear) const;
 
 #if USE(CFURLCACHE)

@@ -1,5 +1,30 @@
 2013-02-18  Anders Carlsson  <andersca@apple.com>
 
+        Add a DefaultHash for RefPtr<SecurityOrigin>
+        https://bugs.webkit.org/show_bug.cgi?id=110170
+
+        Reviewed by Andreas Kling.
+
+        Remove all explicit uses of SecurityOriginHash.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::SessionStorageNamespace):
+        * WebProcess/ApplicationCache/WebApplicationCacheManager.cpp:
+        (WebKit::WebApplicationCacheManager::getApplicationCacheOrigins):
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::originsWithApplicationCache):
+        * WebProcess/Notifications/NotificationPermissionRequestManager.h:
+        Include SecurityOriginHash.h. This fixes a bug where m_originToIDMap used pointer-equality
+        for looking up security origins.
+
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+        (WebKit::WebResourceCacheManager::clearCacheForOrigin):
+        This can just take a const reference.
+
+        * WebProcess/ResourceCache/WebResourceCacheManager.h:
+
+2013-02-18  Anders Carlsson  <andersca@apple.com>
+
         Begin stubbing out session storage classes
         https://bugs.webkit.org/show_bug.cgi?id=110168
 
