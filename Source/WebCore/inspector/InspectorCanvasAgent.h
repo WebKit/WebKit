@@ -37,7 +37,7 @@
 #include "InspectorFrontend.h"
 #include "InspectorTypeBuilder.h"
 #include "ScriptState.h"
-#include <wtf/HashSet.h>
+#include <wtf/HashMap.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -66,11 +66,11 @@ public:
     virtual void clearFrontend();
     virtual void restore();
 
-    // Called from InspectorInstrumentation
     void frameNavigated(Frame*);
     void frameDetached(Frame*);
+    void didBeginFrame();
 
-    // Called from InspectorCanvasInstrumentation
+    // Called from InspectorCanvasInstrumentation.
     ScriptObject wrapCanvas2DRenderingContextForInstrumentation(const ScriptObject&);
 #if ENABLE(WEBGL)
     ScriptObject wrapWebGLRenderingContextForInstrumentation(const ScriptObject&);
@@ -104,7 +104,9 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Canvas* m_frontend;
     bool m_enabled;
-    HashSet<Frame*> m_framesWithUninstrumentedCanvases;
+    // Contains all frames with canvases, value is true only for frames that have an uninstrumented canvas.
+    typedef HashMap<Frame*, bool> FramesWithUninstrumentedCanvases;
+    FramesWithUninstrumentedCanvases m_framesWithUninstrumentedCanvases;
 };
 
 } // namespace WebCore

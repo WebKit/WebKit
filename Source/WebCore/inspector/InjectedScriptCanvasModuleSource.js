@@ -2866,52 +2866,12 @@ TraceLogPlayer.prototype = {
 
 /**
  * @constructor
- * @param {function()} callback
- */
-function ZeroTimeoutCallback(callback)
-{
-    this._callback = callback;
-    this._scheduled = false;
-}
-
-ZeroTimeoutCallback.prototype = {
-    schedule: function()
-    {
-        if (this._scheduled)
-            return;
-        this._scheduled = true;
-        var callback = this._onCallback.bind(this);
-        // We need a fastest async callback, whatever fires first.
-        // Usually a postMessage should be faster than a setTimeout(0).
-        var channel = new MessageChannel();
-        channel.port1.onmessage = callback;
-        channel.port2.postMessage("");
-        inspectedWindow.setTimeout(callback, 0);
-    },
-
-    cancel: function()
-    {
-        this._scheduled = false;
-    },
-
-    _onCallback: function()
-    {
-        if (!this._scheduled)
-            return;
-        this._scheduled = false;
-        this._callback();
-    }
-}
-
-/**
- * @constructor
  */
 function ResourceTrackingManager()
 {
     this._capturing = false;
     this._stopCapturingOnFrameEnd = false;
     this._lastTraceLog = null;
-    this._frameEndScheduler = new ZeroTimeoutCallback(this.markFrameEnd.bind(this));
 }
 
 ResourceTrackingManager.prototype = {
@@ -2956,7 +2916,6 @@ ResourceTrackingManager.prototype = {
             return;
         this._capturing = false;
         this._stopCapturingOnFrameEnd = false;
-        this._frameEndScheduler.cancel();
         if (this._lastTraceLog)
             this._lastTraceLog.addFrameEndMark();
     },
@@ -3002,7 +2961,6 @@ ResourceTrackingManager.prototype = {
         if (!this._capturing)
             return;
         this._lastTraceLog.addCall(call);
-        this._frameEndScheduler.schedule();
     },
 
     markFrameEnd: function()
@@ -3010,7 +2968,7 @@ ResourceTrackingManager.prototype = {
         if (!this._lastTraceLog)
             return;
         this._lastTraceLog.addFrameEndMark();
-        if (this._stopCapturingOnFrameEnd)
+        if (this._stopCapturingOnFrameEnd && this._lastTraceLog.size())
             this.stopCapturing(this._lastTraceLog);
     }
 }
@@ -3067,6 +3025,11 @@ InjectedCanvasModule.prototype = {
     startCapturing: function()
     {
         return this._callStartCapturingFunction(this._manager.startCapturing);
+    },
+
+    markFrameEnd: function()
+    {
+        this._manager.markFrameEnd();
     },
 
     /**

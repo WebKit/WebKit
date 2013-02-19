@@ -127,7 +127,13 @@ void InspectorCanvasAgent::hasUninstrumentedCanvases(ErrorString* errorString, b
 {
     if (!checkIsEnabled(errorString))
         return;
-    *result = !m_framesWithUninstrumentedCanvases.isEmpty();
+    for (FramesWithUninstrumentedCanvases::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it) {
+        if (it->value) {
+            *result = true;
+            return;
+        }
+    }
+    *result = false;
 }
 
 void InspectorCanvasAgent::captureFrame(ErrorString* errorString, const FrameId* frameId, TraceLogId* traceLogId)
@@ -211,6 +217,8 @@ ScriptObject InspectorCanvasAgent::notifyRenderingContextWasWrapped(const Script
     ScriptState* scriptState = wrappedContext.scriptState();
     DOMWindow* domWindow = scriptState ? domWindowFromScriptState(scriptState) : 0;
     Frame* frame = domWindow ? domWindow->frame() : 0;
+    if (frame && !m_framesWithUninstrumentedCanvases.contains(frame))
+        m_framesWithUninstrumentedCanvases.set(frame, false);
     String frameId = m_pageAgent->frameId(frame);
     if (!frameId.isEmpty())
         m_frontend->contextCreated(frameId);
@@ -257,7 +265,7 @@ void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
 {
     class NodeVisitor : public WrappedNodeVisitor {
     public:
-        NodeVisitor(Page* page, HashSet<Frame*>& result)
+        NodeVisitor(Page* page, FramesWithUninstrumentedCanvases& result)
             : m_page(page)
             , m_framesWithUninstrumentedCanvases(result)
         {
@@ -274,19 +282,19 @@ void InspectorCanvasAgent::findFramesWithUninstrumentedCanvases()
 
             HTMLCanvasElement* canvas = static_cast<HTMLCanvasElement*>(node);
             if (canvas->renderingContext())
-                m_framesWithUninstrumentedCanvases.add(frame);
+                m_framesWithUninstrumentedCanvases.set(frame, true);
         }
 
     private:
         Page* m_page;
-        HashSet<Frame*>& m_framesWithUninstrumentedCanvases;
+        FramesWithUninstrumentedCanvases& m_framesWithUninstrumentedCanvases;
     } nodeVisitor(m_pageAgent->page(), m_framesWithUninstrumentedCanvases);
 
     m_framesWithUninstrumentedCanvases.clear();
     ScriptProfiler::visitNodeWrappers(&nodeVisitor);
 
-    for (HashSet<Frame*>::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it) {
-        String frameId = m_pageAgent->frameId(*it);
+    for (FramesWithUninstrumentedCanvases::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it) {
+        String frameId = m_pageAgent->frameId(it->key);
         if (!frameId.isEmpty())
             m_frontend->contextCreated(frameId);
     }
@@ -305,11 +313,13 @@ void InspectorCanvasAgent::frameNavigated(Frame* frame)
     if (!m_enabled)
         return;
     if (frame == m_pageAgent->mainFrame()) {
-        m_framesWithUninstrumentedCanvases.clear();
+        for (FramesWithUninstrumentedCanvases::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it)
+            m_framesWithUninstrumentedCanvases.set(it->key, false);
         m_frontend->traceLogsRemoved(0, 0);
     } else {
         while (frame) {
-            m_framesWithUninstrumentedCanvases.remove(frame);
+            if (m_framesWithUninstrumentedCanvases.contains(frame))
+                m_framesWithUninstrumentedCanvases.set(frame, false);
             if (m_pageAgent->hasIdForFrame(frame)) {
                 String frameId = m_pageAgent->frameId(frame);
                 m_frontend->traceLogsRemoved(&frameId, 0);
@@ -323,6 +333,18 @@ void InspectorCanvasAgent::frameDetached(Frame* frame)
 {
     if (m_enabled)
         m_framesWithUninstrumentedCanvases.remove(frame);
+}
+
+void InspectorCanvasAgent::didBeginFrame()
+{
+    if (!m_enabled)
+        return;
+    ErrorString error;
+    for (FramesWithUninstrumentedCanvases::iterator it = m_framesWithUninstrumentedCanvases.begin(); it != m_framesWithUninstrumentedCanvases.end(); ++it) {
+        InjectedScriptCanvasModule module = injectedScriptCanvasModule(&error, mainWorldScriptState(it->key));
+        if (!module.hasNoValue())
+            module.markFrameEnd();
+    }
 }
 
 } // namespace WebCore

@@ -91,6 +91,14 @@ ScriptObject InjectedScriptCanvasModule::callWrapContextFunction(const String& f
     return ScriptObject(context.scriptState(), resultValue);
 }
 
+void InjectedScriptCanvasModule::markFrameEnd()
+{
+    ScriptFunctionCall function(injectedScriptObject(), "markFrameEnd");
+    RefPtr<InspectorValue> resultValue;
+    makeCall(function, &resultValue);
+    ASSERT(resultValue);
+}
+
 void InjectedScriptCanvasModule::captureFrame(ErrorString* errorString, TraceLogId* traceLogId)
 {
     callStartCapturingFunction("captureFrame", errorString, traceLogId);

@@ -54,6 +54,7 @@ public:
 #if ENABLE(WEBGL)
     ScriptObject wrapWebGLContext(const ScriptObject&);
 #endif
+    void markFrameEnd();
 
     void captureFrame(ErrorString*, TypeBuilder::Canvas::TraceLogId*);
     void startCapturing(ErrorString*, TypeBuilder::Canvas::TraceLogId*);
