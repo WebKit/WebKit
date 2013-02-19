@@ -538,6 +538,9 @@ void WebPageProxy::close()
     m_loaderClient.initialize(0);
     m_policyClient.initialize(0);
     m_uiClient.initialize(0);
+#if PLATFORM(EFL)
+    m_uiPopupMenuClient.initialize(0);
+#endif
 
     m_drawingArea = nullptr;
 
@@ -2976,7 +2979,11 @@ void WebPageProxy::failedToShowPopupMenu()
 void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, const Vector<WebPopupItem>& items, int32_t selectedIndex, const PlatformPopupMenuData& data)
 {
     if (m_activePopupMenu) {
+#if PLATFORM(EFL)
+        m_uiPopupMenuClient.hidePopupMenu(this);
+#else
         m_activePopupMenu->hidePopupMenu();
+#endif
         m_activePopupMenu->invalidate();
         m_activePopupMenu = 0;
     }
@@ -2989,15 +2996,20 @@ void WebPageProxy::showPopupMenu(const IntRect& rect, uint64_t textDirection, co
     // Since showPopupMenu() can spin a nested run loop we need to turn off the responsiveness timer.
     m_process->responsivenessTimer()->stop();
 
+#if PLATFORM(EFL)
+    UNUSED_PARAM(data);
+    m_uiPopupMenuClient.showPopupMenu(this, m_activePopupMenu.get(), rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, selectedIndex);
+#else
     RefPtr<WebPopupMenuProxy> protectedActivePopupMenu = m_activePopupMenu;
 
     protectedActivePopupMenu->showPopupMenu(rect, static_cast<TextDirection>(textDirection), m_pageScaleFactor, items, data, selectedIndex);
 
     // Since Qt and Efl doesn't use a nested mainloop to show the popup and get the answer, we need to keep the client pointer valid.
-#if !PLATFORM(QT) && !PLATFORM(EFL)
+#if !PLATFORM(QT)
     protectedActivePopupMenu->invalidate();
 #endif
     protectedActivePopupMenu = 0;
+#endif
 }
 
 void WebPageProxy::hidePopupMenu()
@@ -3005,7 +3017,11 @@ void WebPageProxy::hidePopupMenu()
     if (!m_activePopupMenu)
         return;
 
+#if PLATFORM(EFL)
+    m_uiPopupMenuClient.hidePopupMenu(this);
+#else
     m_activePopupMenu->hidePopupMenu();
+#endif
     m_activePopupMenu->invalidate();
     m_activePopupMenu = 0;
 }

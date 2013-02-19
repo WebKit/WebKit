@@ -37,6 +37,9 @@ list(APPEND WebKit2_SOURCES
 
     UIProcess/API/C/cairo/WKIconDatabaseCairo.cpp
 
+    UIProcess/API/C/efl/WKPageEfl.cpp
+    UIProcess/API/C/efl/WKPopupItem.cpp
+    UIProcess/API/C/efl/WKPopupMenuListener.cpp
     UIProcess/API/C/efl/WKView.cpp
 
     UIProcess/API/cpp/efl/WKEinaSharedString.cpp
@@ -102,9 +105,11 @@ list(APPEND WebKit2_SOURCES
     UIProcess/efl/WebFullScreenManagerProxyEfl.cpp
     UIProcess/efl/WebInspectorProxyEfl.cpp
     UIProcess/efl/WebPageProxyEfl.cpp
-    UIProcess/efl/WebPopupMenuProxyEfl.cpp
+    UIProcess/efl/WebPopupItemEfl.cpp
+    UIProcess/efl/WebPopupMenuListenerEfl.cpp
     UIProcess/efl/WebPreferencesEfl.cpp
     UIProcess/efl/WebProcessProxyEfl.cpp
+    UIProcess/efl/WebUIPopupMenuClient.cpp
     UIProcess/efl/WebView.cpp
     UIProcess/efl/WebViewClient.cpp
 

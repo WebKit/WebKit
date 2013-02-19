@@ -66,8 +66,10 @@ public:
     {
     }
 
+#if !PLATFORM(EFL)
     virtual void showPopupMenu(const WebCore::IntRect& rect, WebCore::TextDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex) = 0;
     virtual void hidePopupMenu() = 0;
+#endif
 
     void invalidate() { m_client = 0; }
 

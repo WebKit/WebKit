@@ -80,6 +80,8 @@
 #endif
 
 #if PLATFORM(EFL)
+#include "WKPageEfl.h"
+#include "WebUIPopupMenuClient.h"
 #include <Evas.h>
 #endif
 
@@ -271,6 +273,9 @@ public:
     void initializeLoaderClient(const WKPageLoaderClient*);
     void initializePolicyClient(const WKPagePolicyClient*);
     void initializeUIClient(const WKPageUIClient*);
+#if PLATFORM(EFL)
+    void initializeUIPopupMenuClient(const WKPageUIPopupMenuClient*);
+#endif
 
     void initializeWebPage();
 
@@ -1024,6 +1029,9 @@ private:
     WebPolicyClient m_policyClient;
     WebFormClient m_formClient;
     WebUIClient m_uiClient;
+#if PLATFORM(EFL)
+    WebUIPopupMenuClient m_uiPopupMenuClient;
+#endif
     WebFindClient m_findClient;
     WebFindMatchesClient m_findMatchesClient;
 #if ENABLE(CONTEXT_MENUS)

@@ -36,7 +36,7 @@
 #include "PageViewportControllerClientEfl.h"
 #include "WebContextMenuProxyEfl.h"
 #include "WebPageProxy.h"
-#include "WebPopupMenuProxyEfl.h"
+#include "WebPopupMenuListenerEfl.h"
 #include "ewk_context_private.h"
 
 #if ENABLE(FULLSCREEN_API)
@@ -302,7 +302,7 @@ void WebView::doneWithTouchEvent(const NativeWebTouchEvent&, bool /*wasEventHand
 
 PassRefPtr<WebPopupMenuProxy> WebView::createPopupMenuProxy(WebPageProxy* page)
 {
-    return WebPopupMenuProxyEfl::create(m_ewkView, page);
+    return WebPopupMenuListenerEfl::create(page);
 }
 
 PassRefPtr<WebContextMenuProxy> WebView::createContextMenuProxy(WebPageProxy* page)

@@ -133,6 +133,9 @@ public:
 #if USE(SOUP)
         TypeSoupRequestManager,
 #endif
+#if PLATFORM(EFL)
+        TypePopupMenuItem,
+#endif
     };
 
     virtual ~APIObject()

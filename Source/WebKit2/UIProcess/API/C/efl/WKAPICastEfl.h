@@ -24,11 +24,35 @@
 #error "Please #include \"WKAPICast.h\" instead of this file directly."
 #endif
 
+#include <WebCore/TextDirection.h>
+#include <WebKit2/WKPopupItem.h>
+
 namespace WebKit {
 
 class WebView;
+class WebPopupItemEfl;
+class WebPopupMenuListenerEfl;
 
 WK_ADD_API_MAPPING(WKViewRef, WebView)
+WK_ADD_API_MAPPING(WKPopupItemRef, WebPopupItemEfl)
+WK_ADD_API_MAPPING(WKPopupMenuListenerRef, WebPopupMenuListenerEfl)
+
+// Enum conversions.
+inline WKPopupItemTextDirection toAPI(WebCore::TextDirection direction)
+{
+    WKPopupItemTextDirection wkDirection = kWKPopupItemTextDirectionLTR;
+
+    switch (direction) {
+    case WebCore::RTL:
+        wkDirection = kWKPopupItemTextDirectionRTL;
+        break;
+    case WebCore::LTR:
+        wkDirection = kWKPopupItemTextDirectionLTR;
+        break;
+    }
+
+    return wkDirection;
+}
 
 }
 

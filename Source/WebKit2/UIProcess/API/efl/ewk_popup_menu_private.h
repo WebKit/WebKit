@@ -28,21 +28,16 @@
 #define ewk_popup_menu_private_h
 
 #include <Eina.h>
+#include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
-
-namespace WebKit {
-class WebPopupItem;
-class WebPopupMenuProxyEfl;
-}
 
 class EwkView;
 
 class EwkPopupMenu {
 public:
-    static PassOwnPtr<EwkPopupMenu> create(EwkView* view, WebKit::WebPopupMenuProxyEfl* popupMenuProxy, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex)
+    static PassOwnPtr<EwkPopupMenu> create(EwkView* view, WKPopupMenuListenerRef popupMenuListener, WKArrayRef items, unsigned selectedIndex)
     {
-        return adoptPtr(new EwkPopupMenu(view, popupMenuProxy, items, selectedIndex));
+        return adoptPtr(new EwkPopupMenu(view, popupMenuListener, items, selectedIndex));
     }
     ~EwkPopupMenu();
 
@@ -54,10 +49,10 @@ public:
     unsigned selectedIndex() const;
 
 private:
-    EwkPopupMenu(EwkView* viewImpl, WebKit::WebPopupMenuProxyEfl*, const Vector<WebKit::WebPopupItem>& items, unsigned selectedIndex);
+    EwkPopupMenu(EwkView* viewImpl, WKPopupMenuListenerRef, WKArrayRef items, unsigned selectedIndex);
 
     EwkView* m_view;
-    WebKit::WebPopupMenuProxyEfl* m_popupMenuProxy;
+    WKRetainPtr<WKPopupMenuListenerRef> m_popupMenuListener;
     Eina_List* m_popupMenuItems;
     unsigned m_selectedIndex;
 };

@@ -23,38 +23,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "WebPopupMenuProxyEfl.h"
+#ifndef WebPopupMenuListenerEfl_h
+#define WebPopupMenuListenerEfl_h
 
-#include "EwkView.h"
-#include "NativeWebMouseEvent.h"
-#include "WebPopupItem.h"
-#include "ewk_view.h"
-#include <wtf/text/CString.h>
-
-using namespace WebCore;
+#include "WebPopupMenuProxy.h"
 
 namespace WebKit {
 
-WebPopupMenuProxyEfl::WebPopupMenuProxyEfl(EwkView* view, WebPopupMenuProxy::Client* client)
-    : WebPopupMenuProxy(client)
-    , m_view(view)
-{
-}
+class WebPopupMenuListenerEfl : public WebPopupMenuProxy {
+public:
+    static PassRefPtr<WebPopupMenuListenerEfl> create(WebPopupMenuProxy::Client* client)
+    {
+        return adoptRef(new WebPopupMenuListenerEfl(client));
+    }
 
-void WebPopupMenuProxyEfl::showPopupMenu(const IntRect& rect, TextDirection textDirection, double pageScaleFactor, const Vector<WebPopupItem>& items, const PlatformPopupMenuData&, int32_t selectedIndex)
-{
-    m_view->requestPopupMenu(this, rect, textDirection, pageScaleFactor, items, selectedIndex);
-}
+    void valueChanged(int newSelectedIndex);
 
-void WebPopupMenuProxyEfl::hidePopupMenu()
-{
-    m_view->closePopupMenu();
-}
-
-void WebPopupMenuProxyEfl::valueChanged(int newSelectedIndex)
-{
-    m_client->valueChangedForPopupMenu(this, newSelectedIndex);
-}
+private:
+    WebPopupMenuListenerEfl(WebPopupMenuProxy::Client*);
+};
 
 } // namespace WebKit
+
+#endif // WebPopupMenuListenerEfl_h

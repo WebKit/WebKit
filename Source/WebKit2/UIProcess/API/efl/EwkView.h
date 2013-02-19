@@ -67,8 +67,6 @@ class WebContextMenuItemData;
 class WebContextMenuProxyEfl;
 class WebPageGroup;
 class WebPageProxy;
-class WebPopupItem;
-class WebPopupMenuProxyEfl;
 
 #if ENABLE(VIBRATION)
 class VibrationClientEfl;
@@ -188,7 +186,7 @@ public:
     WKPageRef createNewPage(PassRefPtr<EwkUrlRequest>, WKDictionaryRef windowFeatures);
     void close();
 
-    void requestPopupMenu(WebKit::WebPopupMenuProxyEfl*, const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebKit::WebPopupItem>& items, int32_t selectedIndex);
+    void requestPopupMenu(WKPopupMenuListenerRef, const WKRect&, WKPopupItemTextDirection, double pageScaleFactor, WKArrayRef items, int32_t selectedIndex);
     void closePopupMenu();
 
     void showContextMenu(WebKit::WebContextMenuProxyEfl*, const WebCore::IntPoint& position, const Vector<WebKit::WebContextMenuItemData>& items);

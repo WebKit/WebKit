@@ -1,3 +1,128 @@
+2013-02-18  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Add C API for popup menu and popup item
+        https://bugs.webkit.org/show_bug.cgi?id=109083
+
+        Reviewed by Anders Carlsson.
+
+        WK2 EFL delegates display of the popup menu to the browser which causes
+        us to have a strong interdependency between internal C++ classes
+        (WebPopupMenuProxyEfl, WebPopupItem) and our EFL API implementation
+        (EwkView, EwkPopupMenu, EwkPopupMenuItem).
+
+        Since we want to remove this interdependency, this patch introduces a
+        for WebPopupMenuProxyEfl (WKPopupMenuListener) and for WebPopupItem
+        (WKPopupItem). It also introduces a WKPage client with callbacks for
+        showPopupMenu and hidePopupMenu.
+
+        Note that the popup menu functionality is covered by ewk_popup_menu API
+        tests and no functionality is lost.
+
+        * PlatformEfl.cmake: Add new files to EFL CMake config.
+        * Shared/API/c/efl/WKBaseEfl.h: Add typedefs for WKPopupItemRef and
+        WKPopupMenuListenerRef.
+        * Shared/APIObject.h: Add new TypePopupMenuItem APIObject type for EFL
+        platform.
+        * UIProcess/API/C/efl/WKAPICastEfl.h: Add mapping for WKPopupItemRef
+        and WKPopupMenuListenerRef API types.
+        (WebKit):
+        (WebKit::toAPI):
+        * UIProcess/API/C/efl/WKPageEfl.cpp: Added.
+        (WKPageSetUIPopupMenuClient): Add new C API to set the UI Popup Menu
+        client on the page.
+        * UIProcess/API/C/efl/WKPageEfl.h: Added.
+        * UIProcess/API/C/efl/WKPopupItem.cpp: Added. Add C API for WebPopupItem.
+        (WKPopupItemGetType):
+        (WKPopupItemGetTextDirection):
+        (WKPopupItemHasTextDirectionOverride):
+        (WKPopupItemCopyText):
+        (WKPopupItemCopyToolTipText):
+        (WKPopupItemCopyAccessibilityText):
+        (WKPopupItemIsEnabled):
+        (WKPopupItemIsLabel):
+        (WKPopupItemIsSelected):
+        * UIProcess/API/C/efl/WKPopupItem.h: Added.
+        * UIProcess/API/C/efl/WKPopupMenuListener.cpp: Added. Add C API for
+        WebPopupMenuListenerEfl (formerly WebPopupMenuProxyEfl) so that the
+        client can report which popup menu item was selected.
+        (WKPopupMenuListenerSetSelection):
+        * UIProcess/API/C/efl/WKPopupMenuListener.h: Added.
+        * UIProcess/API/efl/EwkView.cpp: Remove dependency on internal C++ types
+        (WebPopupMenuProxyEfl and WebPopupItem) and use C API types instead.
+        (EwkView::requestPopupMenu):
+        * UIProcess/API/efl/EwkView.h:
+        (WebKit):
+        (EwkView):
+        * UIProcess/API/efl/ewk_popup_menu.cpp: Use C API for Popup menu.
+        (EwkPopupMenu::EwkPopupMenu):
+        (EwkPopupMenu::setSelectedIndex):
+        * UIProcess/API/efl/ewk_popup_menu_private.h:
+        (EwkPopupMenu::create):
+        (EwkPopupMenu):
+        * UIProcess/WebPageProxy.cpp: Use WKPageUIPopupMenuClient to show / hide
+        the popup menu on EFL port instead of asking the WebPopupMenuProxy.
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::showPopupMenu):
+        (WebKit::WebPageProxy::hidePopupMenu):
+        * UIProcess/WebPageProxy.h: Add new WKPageUIPopupMenuClient member and
+        corresponding initialization method.
+        (WebPageProxy):
+        * UIProcess/WebPopupMenuProxy.h: Disable showPopupMenu / hidePopupMenu
+        virtual methods on EFL port since we go via WKPageUIPopupMenuClient
+        for this now.
+        (WebPopupMenuProxy):
+        * UIProcess/efl/PageUIClientEfl.cpp:
+        (WebKit::PageUIClientEfl::PageUIClientEfl): Handle WKPageUIPopupMenuClient
+        callbacks and call corresponding EwkView methods. Previously, the EwkView
+        methods were called by the internal WebPageProxyEfl class which is no
+        longer needed.
+        (WebKit::PageUIClientEfl::showPopupMenu):
+        (WebKit):
+        (WebKit::PageUIClientEfl::hidePopupMenu):
+        * UIProcess/efl/PageUIClientEfl.h:
+        (PageUIClientEfl):
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::initializeUIPopupMenuClient):
+        (WebKit):
+        * UIProcess/efl/WebPopupItemEfl.cpp: Added. Add APIObject wrapper for
+        WebPopupItem so that we can use it in WKPageUIPopupMenuClient.
+        (WebKit):
+        (WebKit::WebPopupItemEfl::WebPopupItemEfl):
+        (WebKit::WebPopupItemEfl::~WebPopupItemEfl):
+        * UIProcess/efl/WebPopupItemEfl.h: Added.
+        (WebKit):
+        (WebPopupItemEfl):
+        (WebKit::WebPopupItemEfl::create):
+        (WebKit::WebPopupItemEfl::data):
+        (WebKit::WebPopupItemEfl::itemType):
+        (WebKit::WebPopupItemEfl::text):
+        (WebKit::WebPopupItemEfl::textDirection):
+        (WebKit::WebPopupItemEfl::hasTextDirectionOverride):
+        (WebKit::WebPopupItemEfl::toolTipText):
+        (WebKit::WebPopupItemEfl::accessibilityText):
+        (WebKit::WebPopupItemEfl::isEnabled):
+        (WebKit::WebPopupItemEfl::isLabel):
+        (WebKit::WebPopupItemEfl::isSelected):
+        (WebKit::WebPopupItemEfl::type):
+        * UIProcess/efl/WebPopupMenuListenerEfl.cpp: Renamed from Source/WebKit2/UIProcess/efl/WebPopupMenuProxyEfl.cpp.
+        Use WebPopupMenuListenerEfl name instead of WebPopupMenuProxyEfl since
+        it more accurately represents its functionality now.
+        (WebKit):
+        (WebKit::WebPopupMenuListenerEfl::WebPopupMenuListenerEfl):
+        (WebKit::WebPopupMenuListenerEfl::valueChanged):
+        * UIProcess/efl/WebPopupMenuListenerEfl.h: Renamed from Source/WebKit2/UIProcess/efl/WebPopupMenuProxyEfl.h.
+        (WebKit):
+        (WebPopupMenuListenerEfl):
+        (WebKit::WebPopupMenuListenerEfl::create):
+        * UIProcess/efl/WebUIPopupMenuClient.cpp: Added.
+        (WebUIPopupMenuClient::showPopupMenu):
+        (WebUIPopupMenuClient::hidePopupMenu):
+        * UIProcess/efl/WebUIPopupMenuClient.h: Added.
+        (WebKit):
+        (WebUIPopupMenuClient):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::createPopupMenuProxy):
+
 2013-02-18  Anders Carlsson  <andersca@apple.com>
 
         Add StorageManager member functions for keeping track of session storage namespaces

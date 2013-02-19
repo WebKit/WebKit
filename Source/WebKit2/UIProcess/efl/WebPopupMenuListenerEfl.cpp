@@ -23,39 +23,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPopupMenuProxyEfl_h
-#define WebPopupMenuProxyEfl_h
-
-#include "WebPopupMenuProxy.h"
-
-namespace WebCore {
-class IntRect;
-}
-
-class EwkView;
+#include "config.h"
+#include "WebPopupMenuListenerEfl.h"
 
 namespace WebKit {
 
-class WebPageProxy;
+WebPopupMenuListenerEfl::WebPopupMenuListenerEfl(WebPopupMenuProxy::Client* client)
+    : WebPopupMenuProxy(client)
+{
+}
 
-class WebPopupMenuProxyEfl : public WebPopupMenuProxy {
-public:
-    static PassRefPtr<WebPopupMenuProxyEfl> create(EwkView* viewImpl, WebPopupMenuProxy::Client* client)
-    {
-        return adoptRef(new WebPopupMenuProxyEfl(viewImpl, client));
-    }
+void WebPopupMenuListenerEfl::valueChanged(int newSelectedIndex)
+{
+    if (!m_client)
+        return;
 
-    void showPopupMenu(const WebCore::IntRect&, WebCore::TextDirection, double pageScaleFactor, const Vector<WebPopupItem>&, const PlatformPopupMenuData&, int32_t selectedIndex);
-    void hidePopupMenu();
-
-    void valueChanged(int newSelectedIndex);
-
-private:
-    WebPopupMenuProxyEfl(EwkView*, WebPopupMenuProxy::Client*);
-
-    EwkView* m_view;
-};
+    m_client->valueChangedForPopupMenu(this, newSelectedIndex);
+    invalidate();
+}
 
 } // namespace WebKit
-
-#endif // WebPopupMenuProxyEfl_h

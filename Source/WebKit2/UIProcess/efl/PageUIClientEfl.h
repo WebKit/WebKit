@@ -28,6 +28,7 @@
 #define PageUIClientEfl_h
 
 #include "WKPage.h"
+#include "WKPopupItem.h"
 #include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -72,6 +73,9 @@ private:
     static void showColorPicker(WKPageRef, WKStringRef initialColor, WKColorPickerResultListenerRef, const void*);
     static void hideColorPicker(WKPageRef, const void*);
 #endif
+
+    static void showPopupMenu(WKPageRef, WKPopupMenuListenerRef, WKRect, WKPopupItemTextDirection, double pageScaleFactor, WKArrayRef itemsRef, int32_t selectedIndex, const void* clientInfo);
+    static void hidePopupMenu(WKPageRef, const void* clientInfo);
 
     EwkView* m_view;
 };
