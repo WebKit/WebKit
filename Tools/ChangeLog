@@ -1,3 +1,10 @@
+2013-02-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed. Adjust expectations.
+
+        * TestWebKitAPI/Tests/WebCore/HeapGraphSerializerTest.cpp:
+        (TestWebKitAPI::TEST):
+
 2013-02-18  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed GTK gardening.

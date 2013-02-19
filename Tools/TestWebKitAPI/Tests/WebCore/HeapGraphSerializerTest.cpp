@@ -216,7 +216,7 @@ TEST(HeapGraphSerializerTest, snapshotWithoutUserObjects)
     Helper helper(receiver.serializer());
     helper.done();
     receiver.printGraph();
-    EXPECT_EQ(String("['','weak','ownRef','countRef','unknown','Root']"), receiver.dumpStrings());
+    EXPECT_EQ(String("['','weak','property','object','unknown','Root']"), receiver.dumpStrings());
     EXPECT_EQ(String("[5,0,1,0,0]"), receiver.dumpNodes()); // Only Root object.
     EXPECT_EQ(String("[]"), receiver.dumpEdges()); // No edges.
     EXPECT_EQ(String("[]"), receiver.dumpBaseToRealNodeId()); // No id maps.
@@ -229,7 +229,7 @@ TEST(HeapGraphSerializerTest, oneRootUserObject)
     helper.addNode("ClassName", "objectName", true);
     helper.done();
     receiver.printGraph();
-    EXPECT_EQ(String("['','weak','ownRef','countRef','unknown','ClassName','objectName','Root']"), receiver.dumpStrings());
+    EXPECT_EQ(String("['','weak','property','object','unknown','ClassName','objectName','Root']"), receiver.dumpStrings());
     EXPECT_EQ(String("[5,6,1,0,0,7,0,2,0,1]"), receiver.dumpNodes());
     EXPECT_EQ(String("[1,0,1]"), receiver.dumpEdges());
     EXPECT_EQ(String("[]"), receiver.dumpBaseToRealNodeId());
@@ -244,7 +244,7 @@ TEST(HeapGraphSerializerTest, twoUserObjectsWithEdge)
     helper.addNode("Parent", "parent", true);
     helper.done();
     receiver.printGraph();
-    EXPECT_EQ(String("['','weak','ownRef','countRef','unknown','Child','child','pointerToChild','Parent','parent','Root']"), receiver.dumpStrings());
+    EXPECT_EQ(String("['','weak','property','object','unknown','Child','child','pointerToChild','Parent','parent','Root']"), receiver.dumpStrings());
     EXPECT_EQ(String("[5,6,1,0,0,8,9,2,0,1,10,0,3,0,1]"), receiver.dumpNodes());
     EXPECT_EQ(String("[2,7,1,1,0,2]"), receiver.dumpEdges());
     EXPECT_EQ(String("[]"), receiver.dumpBaseToRealNodeId());
