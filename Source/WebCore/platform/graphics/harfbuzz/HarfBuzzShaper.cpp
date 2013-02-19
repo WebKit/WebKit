@@ -329,6 +329,9 @@ bool HarfBuzzShaper::shapeHarfBuzzRuns(bool shouldSetDirection)
         hb_buffer_set_script(harfBuzzBuffer.get(), currentRun->script());
         if (shouldSetDirection)
             hb_buffer_set_direction(harfBuzzBuffer.get(), currentRun->rtl() ? HB_DIRECTION_RTL : HB_DIRECTION_LTR);
+        else
+            // Leaving direction to HarfBuzz to guess is *really* bad, but will do for now.
+            hb_buffer_guess_segment_properties(harfBuzzBuffer.get());
 
         // Add a space as pre-context to the buffer. This prevents showing dotted-circle
         // for combining marks at the beginning of runs.
