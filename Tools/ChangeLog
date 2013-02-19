@@ -1,3 +1,9 @@
+2013-02-19  Pravin D  <pravind@webkit.org>
+
+        Unreviewed, changing primary email.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-19  Alan Cutter  <alancutter@chromium.org>
 
         REGRESSION: Sheriffbot is failing to process rollout requests
