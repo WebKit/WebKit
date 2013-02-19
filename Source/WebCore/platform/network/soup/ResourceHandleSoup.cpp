@@ -453,48 +453,52 @@ static void doRedirect(ResourceHandle* handle)
         return;
     }
 
-    ResourceRequest request = handle->firstRequest();
+    ResourceRequest newRequest = handle->firstRequest();
     SoupMessage* message = d->m_soupMessage.get();
     const char* location = soup_message_headers_get_one(message->response_headers, "Location");
     KURL newURL = KURL(soupURIToKURL(soup_message_get_uri(message)), location);
-    bool crossOrigin = !protocolHostAndPortAreEqual(request.url(), newURL);
-    request.setURL(newURL);
+    bool crossOrigin = !protocolHostAndPortAreEqual(handle->firstRequest().url(), newURL);
+    newRequest.setURL(newURL);
 
-    if (shouldRedirectAsGET(message, newURL, crossOrigin)) {
-        request.setHTTPMethod("GET");
-        request.setHTTPBody(0);
-        request.clearHTTPContentType();
+    if (newRequest.httpMethod() != "GET") {
+        // Change newRequest method to GET if change was made during a previous redirection
+        // or if current redirection says so
+        if (message->method == SOUP_METHOD_GET || shouldRedirectAsGET(message, newURL, crossOrigin)) {
+            newRequest.setHTTPMethod("GET");
+            newRequest.setHTTPBody(0);
+            newRequest.clearHTTPContentType();
+        }
     }
 
     // Should not set Referer after a redirect from a secure resource to non-secure one.
-    if (!newURL.protocolIs("https") && protocolIs(request.httpReferrer(), "https") && handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
-        request.clearHTTPReferrer();
+    if (!newURL.protocolIs("https") && protocolIs(newRequest.httpReferrer(), "https") && handle->context()->shouldClearReferrerOnHTTPSToHTTPRedirect())
+        newRequest.clearHTTPReferrer();
 
     d->m_user = newURL.user();
     d->m_pass = newURL.pass();
-    request.removeCredentials();
+    newRequest.removeCredentials();
 
     if (crossOrigin) {
         // If the network layer carries over authentication headers from the original request
         // in a cross-origin redirect, we want to clear those headers here. 
-        request.clearHTTPAuthorization();
+        newRequest.clearHTTPAuthorization();
 
         // TODO: We are losing any username and password specified in the redirect URL, as this is the 
         // same behavior as the CFNet port. We should investigate if this is really what we want.
     } else
-        applyAuthenticationToRequest(handle, request, true);
+        applyAuthenticationToRequest(handle, newRequest, true);
 
     cleanupSoupRequestOperation(handle);
-    if (!createSoupRequestAndMessageForHandle(handle, request, true)) {
+    if (!createSoupRequestAndMessageForHandle(handle, newRequest, true)) {
         d->client()->cannotShowURL(handle);
         return;
     }
 
     // If we sent credentials with this request's URL, we don't want the response to carry them to
     // the WebKit layer. They were only placed in the URL for the benefit of libsoup.
-    request.removeCredentials();
+    newRequest.removeCredentials();
 
-    d->client()->willSendRequest(handle, request, d->m_response);
+    d->client()->willSendRequest(handle, newRequest, d->m_response);
     handle->sendPendingRequest();
 }
 
