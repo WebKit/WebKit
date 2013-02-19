@@ -1,0 +1,1824 @@
+# Romanian translation for webkit.
+# Copyright (C) 2010-2013 webkit's COPYRIGHT HOLDER
+# This file is distributed under the same license as the webkit package.
+# kuchiki14 <kuchiki14@yahoo.com>, 2010.
+# Daniel Șerbănescu <daniel@serbanescu.dk>, 2012.
+# Mișu Moldovan <dumol@xfce.org>, 2012 - 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: webkit HEAD\n"
+"Report-Msgid-Bugs-To: http://bugs.webkit.org\n"
+"POT-Creation-Date: 2013-02-05 15:28+0000\n"
+"PO-Revision-Date: 2013-02-12 12:02+0200\n"
+"Last-Translator: Mișu Moldovan <dumol@gnome.org>\n"
+"Language-Team: Romanian <diacritice@googlegroups.com>\n"
+"Language: ro\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2);;\n"
+"X-Generator: Virtaal 0.7.0\n"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:36
+msgid "Load request cancelled"
+msgstr "Cerere de încărcare anulată"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:42
+msgid "Not allowed to use restricted network port"
+msgstr "Utilizarea acestui port de rețea este restricționată"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:48
+msgid "URL cannot be shown"
+msgstr "Nu se poate afișa adresa URL"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:54
+msgid "Frame load was interrupted"
+msgstr "Încărcarea cadrului a fost întreruptă"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:60
+msgid "Content with the specified MIME type cannot be shown"
+msgstr "Conținutul cu tipul MIME specificat nu se poate afișa"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:66
+msgid "File does not exist"
+msgstr "Fișierul nu există"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:72
+msgid "Plugin will handle load"
+msgstr "Încărcarea va fi în sarcina modulului"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:84
+msgid "User cancelled the download"
+msgstr "Utilizatorul a renunțat la descărcare"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:104
+msgid "Printer not found"
+msgstr "Nu s-a găsit imprimanta"
+
+#: ../../../WebCore/platform/gtk/ErrorsGtk.cpp:111
+msgid "Invalid page range"
+msgstr "Interval de pagini greșit"
+
+#: ../../../WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:327
+msgid "Play"
+msgstr "Redare"
+
+#: ../../../WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:329
+msgid "Pause"
+msgstr "Pauză"
+
+#: ../../../WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:403
+msgid "Play / Pause"
+msgstr "Redare / Pauză"
+
+#: ../../../WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:403
+msgid "Play or pause the media"
+msgstr "Redare ori pauză la redare"
+
+#: ../../../WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:409
+msgid "Time:"
+msgstr "Timp:"
+
+#: ../../../WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:435
+msgid "Exit Fullscreen"
+msgstr "Revenire la normal"
+
+#: ../../../WebCore/platform/graphics/gtk/FullscreenVideoControllerGtk.cpp:435
+msgid "Exit from fullscreen mode"
+msgstr "Ieșire din modul de redare pe tot ecranul"
+
+#: ../../../WebCore/platform/gtk/GtkAuthenticationDialog.cpp:171
+#, c-format
+msgid "The site %s:%i requests a username and password"
+msgstr "Site-ul %s:%i cere un nume de utilizator și o parolă"
+
+#: ../../../WebCore/platform/gtk/GtkAuthenticationDialog.cpp:175
+msgid "_Remember password"
+msgstr "_Reține parola"
+
+#: ../../../WebCore/platform/gtk/GtkAuthenticationDialog.cpp:201
+msgid "Server message:"
+msgstr "Mesaj de la server:"
+
+#: ../../../WebCore/platform/gtk/GtkAuthenticationDialog.cpp:202
+#: ../../../WebCore/platform/gtk/GtkAuthenticationDialog.cpp:210
+msgid "Username:"
+msgstr "Nume de utilizator:"
+
+#: ../../../WebCore/platform/gtk/GtkAuthenticationDialog.cpp:203
+#: ../../../WebCore/platform/gtk/GtkAuthenticationDialog.cpp:211
+msgid "Password:"
+msgstr "Parolă:"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:56
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:61
+msgid "Submit"
+msgstr "Trimitere"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:66
+msgid "Reset"
+msgstr "Reinițializare"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:71
+msgid "Details"
+msgstr "Detalii"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:76
+msgid "This is a searchable index. Enter search keywords: "
+msgstr ""
+"Acesta este un index în care se pot face căutări. Introduceți cuvintele "
+"cheie de căutat:"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:81
+msgid "Choose File"
+msgstr "Alegeți un fișier"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:86
+msgid "Choose Files"
+msgstr "Alegeți fișiere"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:91
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:96
+msgid "(None)"
+msgstr "(Nimic)"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:101
+msgid "Open Link in New _Window"
+msgstr "Deschide linkul într-o _fereastră nouă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:106
+msgid "_Download Linked File"
+msgstr "_Descarcă fișierul din link"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:111
+msgid "Copy Link Loc_ation"
+msgstr "Copiază _adresa linkului"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:116
+msgid "Open _Image in New Window"
+msgstr "Deschide _imaginea într-o fereastră nouă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:121
+msgid "Sa_ve Image As"
+msgstr "Sal_vează imaginea ca"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:126
+msgid "Cop_y Image"
+msgstr "Copia_ză imaginea"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:131
+msgid "Copy Image _Address"
+msgstr "Copiază a_dresa imaginii"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:136
+msgid "Open _Video in New Window"
+msgstr "Deschide materialul _video într-o fereastră nouă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:141
+msgid "Open _Audio in New Window"
+msgstr "Deschide materialul _audio într-o fereastră nouă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:146
+msgid "Cop_y Video Link Location"
+msgstr "Copia_ză adresa materialului video"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:151
+msgid "Cop_y Audio Link Location"
+msgstr "Copi_ază adresa materialului audio"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:156
+msgid "_Toggle Media Controls"
+msgstr "Comu_tă controalele media"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:161
+msgid "Toggle Media _Loop Playback"
+msgstr "Comută _repetarea redării multimedia"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:166
+msgid "Switch Video to _Fullscreen"
+msgstr "Comută redarea pe tot _ecranul "
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:171
+msgid "_Play"
+msgstr "_Redă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:176
+msgid "_Pause"
+msgstr "_Pauză"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:181
+msgid "_Mute"
+msgstr "_Silențios"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:186
+msgid "Open _Frame in New Window"
+msgstr "Deschide cadrul într-o _fereastră nouă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:209
+msgid "_Insert Unicode Control Character"
+msgstr "_Introduceți un caracter de control Unicode"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:214
+msgid "Input _Methods"
+msgstr "_Metode de input"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:237
+msgid "_Reload"
+msgstr "_Reîncarcă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:254
+msgid "No Guesses Found"
+msgstr "Nu s-au găsit sugestii"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:259
+msgid "_Ignore Spelling"
+msgstr "Nu _verifica ortografia"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:264
+msgid "_Learn Spelling"
+msgstr "Învață _ortografia"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:269
+msgid "_Search the Web"
+msgstr "_Caută pe net"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:274
+msgid "_Look Up in Dictionary"
+msgstr "Caută în _dicționar"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:279
+msgid "_Open Link"
+msgstr "_Deschide linkul"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:284
+msgid "Ignore _Grammar"
+msgstr "Nu ve_rifica gramatica"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:289
+msgid "Spelling and _Grammar"
+msgstr "_Ortografie și gramatică"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:294
+msgid "_Show Spelling and Grammar"
+msgstr "Afișează _verificările de ortografie și gramatică"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:294
+msgid "_Hide Spelling and Grammar"
+msgstr "Ascunde ve_rificările de ortografie și gramatică"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:299
+msgid "_Check Document Now"
+msgstr "Verifică acum _documentul"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:304
+msgid "Check Spelling While _Typing"
+msgstr "Verifică ortografia în timpul _tastării"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:309
+msgid "Check _Grammar With Spelling"
+msgstr "Veri_fică gramatica împreună cu ortografia"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:314
+msgid "_Font"
+msgstr "_Font"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:337
+msgid "_Outline"
+msgstr "C_ontur"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:342
+msgid "Inspect _Element"
+msgstr "_Inspectați elementul"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:347
+msgid "LRM _Left-to-right mark"
+msgstr "Marcaj _stânga-spre-dreapta LRM"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:352
+msgid "RLM _Right-to-left mark"
+msgstr "Marcaj _dreapta-spre-stânga RLM"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:357
+msgid "LRE Left-to-right _embedding"
+msgstr "Î_ncapsulare stânga-spre-dreapta LRE"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:362
+msgid "RLE Right-to-left e_mbedding"
+msgstr "În_capsulare dreapta-spre-stânga RLE"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:367
+msgid "LRO Left-to-right _override"
+msgstr "S_uprascriere stânga-spre-dreapta LRO"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:372
+msgid "RLO Right-to-left o_verride"
+msgstr "Supr_ascriere dreapta-spre-stânga RLO"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:377
+msgid "PDF _Pop directional formatting"
+msgstr "_Formatare direcțională Pop PDF"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:382
+msgid "ZWS _Zero width space"
+msgstr "Spațiu de lungime _zero ZWS"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:387
+msgid "ZWJ Zero width _joiner"
+msgstr "_Legătură de lungime zero ZWJ"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:392
+msgid "ZWNJ Zero width _non-joiner"
+msgstr "N_on-legătură de lungime zero ZWNJ"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:397
+msgid "No recent searches"
+msgstr "Nicio căutare recentă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:402
+msgid "Recent searches"
+msgstr "Căutări recente"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:407
+msgid "_Clear recent searches"
+msgstr "_Golește căutările recente"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:412
+msgid "definition"
+msgstr "definiție"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:417
+msgid "term"
+msgstr "termen"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:422
+#| msgid "definition"
+msgid "description"
+msgstr "descriere"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:427
+msgid "footer"
+msgstr "notă de subsol"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:432
+msgid "press"
+msgstr "apăsați"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:437
+msgid "select"
+msgstr "alegeți"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:442
+msgid "activate"
+msgstr "activați"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:447
+msgid "uncheck"
+msgstr "debifați"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:452
+msgid "check"
+msgstr "bifați"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:457
+msgid "jump"
+msgstr "salt"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:472
+msgid "Missing Plug-in"
+msgstr "Modul lipsă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:478
+msgid "Plug-in Failure"
+msgstr "Eroare de modul"
+
+#. FIXME: If this file gets localized, this should really be localized as one string with a wildcard for the number.
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:502
+msgid " files"
+msgstr " fișiere"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:507
+msgid "Unknown"
+msgstr "Nu se cunoaște"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:512
+#, c-format
+msgctxt "Title string for images"
+msgid "%s  (%dx%d pixels)"
+msgstr "%s  (%dx%d pixeli)"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:524
+msgid "Loading..."
+msgstr "Se încarcă..."
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:529
+msgid "Live Broadcast"
+msgstr "Transmisiune în direct"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:535
+msgid "audio element controller"
+msgstr "controler de element audio"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:537
+msgid "video element controller"
+msgstr "controler de element video"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:539
+msgid "mute"
+msgstr "fără sunet"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:541
+msgid "unmute"
+msgstr "cu sunet"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:543
+msgid "play"
+msgstr "redare"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:545
+msgid "pause"
+msgstr "pauză"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:547
+msgid "movie time"
+msgstr "durata filmului"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:549
+msgid "timeline slider thumb"
+msgstr "glisor de progres în redare"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:551
+msgid "back 30 seconds"
+msgstr "înapoi cu 30 de secunde"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:553
+msgid "return to realtime"
+msgstr "revenire la redarea în timp real"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:555
+msgid "elapsed time"
+msgstr "timp scurs"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:557
+msgid "remaining time"
+msgstr "timp rămas"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:559
+msgid "status"
+msgstr "stare"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:561
+msgid "enter fullscreen"
+msgstr "pe tot ecranul"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:563
+msgid "exit fullscreen"
+msgstr "mărime normală"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:565
+msgid "fast forward"
+msgstr "derulare înainte"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:567
+msgid "fast reverse"
+msgstr "derulare înapoi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:569
+msgid "show closed captions"
+msgstr "arată subtitrarea"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:571
+msgid "hide closed captions"
+msgstr "ascunde subtitrarea"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:573
+msgid "media controls"
+msgstr "controale media"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:582
+msgid "audio element playback controls and status display"
+msgstr "controale de redare audio și afișarea stării"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:584
+msgid "video element playback controls and status display"
+msgstr "controale de redare video și afișarea stării"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:586
+msgid "mute audio tracks"
+msgstr "nu reda sunetul"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:588
+msgid "unmute audio tracks"
+msgstr "redă sunetul"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:590
+msgid "begin playback"
+msgstr "pornește redarea"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:592
+msgid "pause playback"
+msgstr "pune pauză redării"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:594
+msgid "movie time scrubber"
+msgstr "bară de progres în redare"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:596
+msgid "movie time scrubber thumb"
+msgstr "glisorul barei de progres în redare"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:598
+msgid "seek movie back 30 seconds"
+msgstr "derulează înapoi cu 30 de secunde"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:600
+msgid "return streaming movie to real time"
+msgstr "revino la redarea în timp real"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:602
+msgid "current movie time in seconds"
+msgstr "timpul redat, în secunde"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:604
+msgid "number of seconds of movie remaining"
+msgstr "timpul de redat, în secunde"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:606
+msgid "current movie status"
+msgstr "starea materialului în redare"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:608
+msgid "seek quickly back"
+msgstr "derulare rapidă înapoi"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:610
+msgid "seek quickly forward"
+msgstr "derulare rapidă înainte"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:612
+msgid "Play movie in fullscreen mode"
+msgstr "Redare pe tot ecranul"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:614
+msgid "Exit fullscreen mode"
+msgstr "Revenire la normal"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:616
+msgid "start displaying closed captions"
+msgstr "începe afișarea subtitrării"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:618
+msgid "stop displaying closed captions"
+msgstr "oprește afișarea subtitrării"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:627
+msgid "indefinite time"
+msgstr "timp nedefinit"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:657
+msgid "value missing"
+msgstr "valoare lipsă"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:693
+msgid "type mismatch"
+msgstr "nepotrivire de tip"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:716
+msgid "pattern mismatch"
+msgstr "nepotrivire de model"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:721
+msgid "too long"
+msgstr "prea lung"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:726
+msgid "range underflow"
+msgstr "valoare sub limită"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:731
+msgid "range overflow"
+msgstr "valoare peste limită"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:736
+msgid "step mismatch"
+msgstr "granularitate nepotrivită"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:741
+msgid "Unacceptable TLS certificate"
+msgstr "Certificat TLS de neacceptat"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:758
+msgctxt "Closed Captions"
+msgid "Menu section heading for closed captions"
+msgstr "Titlul secțiunii cu subtitrări opționale"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:763
+msgctxt "Subtitles"
+msgid "Menu section heading for subtitles"
+msgstr "Titlul secțiunii cu subtitrări"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:768
+msgctxt "Off"
+msgid "Menu item label for the track that represents disabling closed captions"
+msgstr ""
+"Eticheta elementului de meniu pentru pista de dezactivare e subtitrărilor"
+
+#: ../../../WebCore/platform/gtk/LocalizedStringsGtk.cpp:773
+msgctxt "No label"
+msgid "Menu item label for a closed captions track that has no other name"
+msgstr "Eticheta elementului de meniu pentru o pistă cu subtitrări fără nume"
+
+#: ../webkit/webkitdownload.cpp:276
+msgid "Network Request"
+msgstr "Cerere în rețea"
+
+#: ../webkit/webkitdownload.cpp:277
+msgid "The network request for the URI that should be downloaded"
+msgstr "Cererea în rețea pentru adresa URI de descărcat"
+
+#: ../webkit/webkitdownload.cpp:291
+msgid "Network Response"
+msgstr "Răspuns din rețea"
+
+#: ../webkit/webkitdownload.cpp:292
+msgid "The network response for the URI that should be downloaded"
+msgstr "Răspunsul din rețea pentru adresa URI de descărcat"
+
+#: ../webkit/webkitdownload.cpp:306
+msgid "Destination URI"
+msgstr "Destinație URI"
+
+#: ../webkit/webkitdownload.cpp:307
+msgid "The destination URI where to save the file"
+msgstr "Destinația URI pentru salvarea fișierului"
+
+#: ../webkit/webkitdownload.cpp:321
+msgid "Suggested Filename"
+msgstr "Nume de fișier sugerat"
+
+#: ../webkit/webkitdownload.cpp:322
+msgid "The filename suggested as default when saving"
+msgstr "Numele de fișier sugerat implicit la salvare"
+
+#: ../webkit/webkitdownload.cpp:339
+msgid "Progress"
+msgstr "Progres"
+
+#: ../webkit/webkitdownload.cpp:340
+msgid "Determines the current progress of the download"
+msgstr "Determină progresul curent al descărcării"
+
+#: ../webkit/webkitdownload.cpp:353
+msgid "Status"
+msgstr "Stare"
+
+#: ../webkit/webkitdownload.cpp:354
+msgid "Determines the current status of the download"
+msgstr "Determină starea curentă a descărcării"
+
+#: ../webkit/webkitdownload.cpp:369
+msgid "Current Size"
+msgstr "Mărime curentă"
+
+#: ../webkit/webkitdownload.cpp:370
+msgid "The length of the data already downloaded"
+msgstr "Mărimea datelor deja descărcate"
+
+#: ../webkit/webkitdownload.cpp:384
+msgid "Total Size"
+msgstr "Mărime totală"
+
+#: ../webkit/webkitdownload.cpp:385
+msgid "The total size of the file"
+msgstr "Mărimea totală a fișierului"
+
+#: ../webkit/webkitfavicondatabase.cpp:144
+#: ../webkit/webkitfavicondatabase.cpp:579
+msgid "Operation was cancelled"
+msgstr "S-a renunțat la operațiune"
+
+#: ../webkit/webkitfavicondatabase.cpp:253
+#: ../webkit/webkiticondatabase.cpp:148
+msgid "Path"
+msgstr "Cale"
+
+#: ../webkit/webkitfavicondatabase.cpp:254
+#: ../webkit/webkiticondatabase.cpp:149
+msgid "The absolute path of the icon database folder"
+msgstr "Calea completă a directorului cu baza de date a iconițelor"
+
+#: ../webkit/webkitfilechooserrequest.cpp:129
+msgid "MIME types filter"
+msgstr "Filtru de tipuri MIME"
+
+#: ../webkit/webkitfilechooserrequest.cpp:130
+msgid "The filter currently associated with the request"
+msgstr "Filtrul asociat curent cu această cerere"
+
+#: ../webkit/webkitfilechooserrequest.cpp:145
+msgid "MIME types"
+msgstr "Tipuri MIME"
+
+#: ../webkit/webkitfilechooserrequest.cpp:146
+msgid "The list of MIME types associated with the request"
+msgstr "Lista tipurilor MIME asociate cu această cerere"
+
+#: ../webkit/webkitfilechooserrequest.cpp:161
+msgid "Select multiple files"
+msgstr "Selectare multiplă de fișiere"
+
+#: ../webkit/webkitfilechooserrequest.cpp:162
+msgid "Whether the file chooser should allow selecting multiple files"
+msgstr ""
+"Specifică dacă selectorul de fișiere permite selectarea mai multor fișiere"
+
+#: ../webkit/webkitfilechooserrequest.cpp:177
+msgid "Selected files"
+msgstr "Fișiere selectate"
+
+#: ../webkit/webkitfilechooserrequest.cpp:178
+msgid "The list of selected files associated with the request"
+msgstr "Lista fișierelor selectate asociată cu cererea"
+
+#: ../webkit/webkithittestresult.cpp:175
+msgid "Context"
+msgstr "Context"
+
+#: ../webkit/webkithittestresult.cpp:176
+msgid "Flags indicating the kind of target that received the event."
+msgstr "Marcaje ce indică tipul destinației care a recepționat evenimentul."
+
+#: ../webkit/webkithittestresult.cpp:190
+msgid "Link URI"
+msgstr "Adresă URI"
+
+#: ../webkit/webkithittestresult.cpp:191
+msgid "The URI to which the target that received the event points, if any."
+msgstr ""
+"Adresa URI la care destinația a recepționat indicatorii de eveniment, dacă "
+"există."
+
+#: ../webkit/webkithittestresult.cpp:204
+msgid "Image URI"
+msgstr "Imagine URI"
+
+#: ../webkit/webkithittestresult.cpp:205
+msgid ""
+"The URI of the image that is part of the target that received the event, if "
+"any."
+msgstr ""
+"Adresa URI a imaginii care face parte din destinația ce a recepționat "
+"evenimentul, dacă există."
+
+#: ../webkit/webkithittestresult.cpp:218
+msgid "Media URI"
+msgstr "Media URI"
+
+#: ../webkit/webkithittestresult.cpp:219
+msgid ""
+"The URI of the media that is part of the target that received the event, if "
+"any."
+msgstr ""
+"Adresa URI pentru materialul media care face parte din destinația ce a "
+"recepționat evenimentul, dacă există."
+
+#: ../webkit/webkithittestresult.cpp:240
+msgid "Inner node"
+msgstr "Nod intern"
+
+#: ../webkit/webkithittestresult.cpp:241
+msgid "The inner DOM node associated with the hit test result."
+msgstr "Nodul DOM intern asociat cu rezultatul testului hit."
+
+#: ../webkit/webkithittestresult.cpp:254
+msgid "X coordinate"
+msgstr "Coordonată x"
+
+#: ../webkit/webkithittestresult.cpp:255
+msgid "The x coordinate of the event relative to the view's window."
+msgstr "Coordonata x a evenimentului relativ la fereastra vizualizării."
+
+#: ../webkit/webkithittestresult.cpp:268
+msgid "Y coordinate"
+msgstr "Coordonată y"
+
+#: ../webkit/webkithittestresult.cpp:269
+msgid "The y coordinate of the event relative to the view's window."
+msgstr "Coordonata y a evenimentului relativ la fereastra vizualizării."
+
+#: ../webkit/webkitnetworkrequest.cpp:134
+#: ../webkit/webkitnetworkresponse.cpp:143 ../webkit/webkitwebframe.cpp:466
+#: ../webkit/webkitwebhistoryitem.cpp:176 ../webkit/webkitwebresource.cpp:209
+#: ../webkit/webkitwebview.cpp:3111
+msgid "URI"
+msgstr "URI"
+
+#: ../webkit/webkitnetworkrequest.cpp:135
+msgid "The URI to which the request will be made."
+msgstr "Adresa URI la care se va realiza cererea."
+
+#: ../webkit/webkitnetworkrequest.cpp:148
+#: ../webkit/webkitnetworkresponse.cpp:157
+msgid "Message"
+msgstr "Mesaj"
+
+#: ../webkit/webkitnetworkrequest.cpp:149
+msgid "The SoupMessage that backs the request."
+msgstr "MessageSoup asociat cererii."
+
+#: ../webkit/webkitnetworkresponse.cpp:144
+msgid "The URI to which the response will be made."
+msgstr "Adresa URI către care se va răspunde."
+
+#: ../webkit/webkitnetworkresponse.cpp:158
+msgid "The SoupMessage that backs the response."
+msgstr "MesageSoup asociat răspunsului."
+
+#: ../webkit/webkitnetworkresponse.cpp:171
+msgid "Suggested filename"
+msgstr "Nume de fișier sugerat"
+
+#: ../webkit/webkitnetworkresponse.cpp:172
+msgid "The suggested filename for the response."
+msgstr "Numele de fișier sugerat pentru răspuns."
+
+#: ../webkit/webkitsecurityorigin.cpp:150
+msgid "Protocol"
+msgstr "Protocol"
+
+#: ../webkit/webkitsecurityorigin.cpp:151
+msgid "The protocol of the security origin"
+msgstr "Protocolul pentru originea securității"
+
+#: ../webkit/webkitsecurityorigin.cpp:164
+msgid "Host"
+msgstr "Gazdă"
+
+#: ../webkit/webkitsecurityorigin.cpp:165
+msgid "The host of the security origin"
+msgstr "Gazda pentru originea securității"
+
+#: ../webkit/webkitsecurityorigin.cpp:178
+msgid "Port"
+msgstr "Port"
+
+#: ../webkit/webkitsecurityorigin.cpp:179
+msgid "The port of the security origin"
+msgstr "Portul pentru originea securității"
+
+#: ../webkit/webkitsecurityorigin.cpp:192
+msgid "Web Database Usage"
+msgstr "Utilizarea bazei de date web"
+
+#: ../webkit/webkitsecurityorigin.cpp:193
+msgid "The cumulative size of all web databases in the security origin"
+msgstr "Mărimea totală pentru toate bazele de date web în originea securității"
+
+#: ../webkit/webkitsecurityorigin.cpp:205
+msgid "Web Database Quota"
+msgstr "Cota bazei de date web"
+
+#: ../webkit/webkitsecurityorigin.cpp:206
+msgid "The web database quota of the security origin in bytes"
+msgstr "Cota bazei de date web pentru originea securității în bytes"
+
+#: ../webkit/webkitviewportattributes.cpp:139
+msgid "Device Width"
+msgstr "Lățimea dispozitivului"
+
+#: ../webkit/webkitviewportattributes.cpp:140
+msgid "The width of the screen."
+msgstr "Lățimea ecranului."
+
+#: ../webkit/webkitviewportattributes.cpp:161
+msgid "Device Height"
+msgstr "Înălțimea dispozitivului"
+
+#: ../webkit/webkitviewportattributes.cpp:162
+msgid "The height of the screen."
+msgstr "Înălțimea ecranului."
+
+#: ../webkit/webkitviewportattributes.cpp:185
+msgid "Available Width"
+msgstr "Lățime disponibilă"
+
+#: ../webkit/webkitviewportattributes.cpp:186
+msgid "The width of the visible area."
+msgstr "Lățimea ariei vizibile."
+
+#: ../webkit/webkitviewportattributes.cpp:209
+msgid "Available Height"
+msgstr "Înălțime disponibilă"
+
+#: ../webkit/webkitviewportattributes.cpp:210
+msgid "The height of the visible area."
+msgstr "Înălțimea ariei vizibile."
+
+#: ../webkit/webkitviewportattributes.cpp:231
+msgid "Desktop Width"
+msgstr "Lățimea desktopului"
+
+#: ../webkit/webkitviewportattributes.cpp:232
+msgid ""
+"The width of viewport that works well for most web pages designed for "
+"desktop."
+msgstr ""
+"Lățimea vizualizării potrivite pentru cele mai multe pagini concepute pentru "
+"desktop."
+
+#: ../webkit/webkitviewportattributes.cpp:254
+msgid "Device DPI"
+msgstr "DPI-ul dispozitivului"
+
+#: ../webkit/webkitviewportattributes.cpp:255
+msgid "The number of dots per inch of the screen."
+msgstr "Numărul punctelor per inch al ecranului."
+
+#: ../webkit/webkitviewportattributes.cpp:273
+msgid "Width"
+msgstr "Lățime"
+
+#: ../webkit/webkitviewportattributes.cpp:274
+msgid "The width of the viewport."
+msgstr "Lățimea vizualizării."
+
+#: ../webkit/webkitviewportattributes.cpp:292
+msgid "Height"
+msgstr "Înălțime"
+
+#: ../webkit/webkitviewportattributes.cpp:293
+msgid "The height of the viewport."
+msgstr "Înălțimea vizualizării."
+
+#: ../webkit/webkitviewportattributes.cpp:311
+msgid "Initial Scale Factor"
+msgstr "Factor de scalare inițial"
+
+#: ../webkit/webkitviewportattributes.cpp:312
+msgid "The initial scale of the viewport."
+msgstr "Scalarea inițială a vizualizării."
+
+#: ../webkit/webkitviewportattributes.cpp:330
+msgid "Minimum Scale Factor"
+msgstr "Factor de scalare minimă"
+
+#: ../webkit/webkitviewportattributes.cpp:331
+msgid "The minimum scale of the viewport."
+msgstr "Scalare minimă a vizualizării."
+
+#: ../webkit/webkitviewportattributes.cpp:349
+msgid "Maximum Scale Factor"
+msgstr "Factor de scalare maximă"
+
+#: ../webkit/webkitviewportattributes.cpp:350
+msgid "The maximum scale of the viewport."
+msgstr "Scalare maximă a vizualizării."
+
+#: ../webkit/webkitviewportattributes.cpp:368
+msgid "Device Pixel Ratio"
+msgstr "Raport de pixeli al dispozitivului"
+
+#: ../webkit/webkitviewportattributes.cpp:369
+msgid "The device pixel ratio of the viewport."
+msgstr "Raportul de pixeli al vizualizării"
+
+#: ../webkit/webkitviewportattributes.cpp:387
+msgid "user-scalable"
+msgstr "user-scalable"
+
+#: ../webkit/webkitviewportattributes.cpp:388
+msgid "User Scalable"
+msgstr "Scalabil de către utilizator"
+
+#: ../webkit/webkitviewportattributes.cpp:389
+msgid "Determines whether or not the user can zoom in and out."
+msgstr "Determină dacă utilizatorul poate modifica zoomul."
+
+#: ../webkit/webkitviewportattributes.cpp:406
+msgid "valid"
+msgstr "validă"
+
+#: ../webkit/webkitviewportattributes.cpp:407
+msgid "Valid"
+msgstr "Validă"
+
+#: ../webkit/webkitviewportattributes.cpp:408
+msgid "Determines whether or not the attributes are valid, and can be used."
+msgstr "Determină dacă atributele sunt sau nu valide și dacă pot fi utilizate."
+
+#: ../webkit/webkitwebdatabase.cpp:176
+msgid "Security Origin"
+msgstr "Originea securității"
+
+#: ../webkit/webkitwebdatabase.cpp:177
+msgid "The security origin of the database"
+msgstr "Originea securității bazei de date"
+
+#: ../webkit/webkitwebdatabase.cpp:190 ../webkit/webkitwebframe.cpp:452
+msgid "Name"
+msgstr "Nume"
+
+#: ../webkit/webkitwebdatabase.cpp:191
+msgid "The name of the Web Database database"
+msgstr "Numele bazei de date Web Database"
+
+#: ../webkit/webkitwebdatabase.cpp:204
+msgid "Display Name"
+msgstr "Nume de afișat"
+
+#: ../webkit/webkitwebdatabase.cpp:205
+msgid "The display name of the Web Storage database"
+msgstr "Numele de afișat al bazei de date Web Storage"
+
+#: ../webkit/webkitwebdatabase.cpp:218
+msgid "Expected Size"
+msgstr "Mărime așteptată"
+
+#: ../webkit/webkitwebdatabase.cpp:219
+msgid "The expected size of the Web Database database"
+msgstr "Mărimea așteptată pentru baza de date Web Database"
+
+#: ../webkit/webkitwebdatabase.cpp:231
+msgid "Size"
+msgstr "Mărime"
+
+#: ../webkit/webkitwebdatabase.cpp:232
+msgid "The current size of the Web Database database"
+msgstr "Mărimea curentă a bazei de date Web Database"
+
+#: ../webkit/webkitwebdatabase.cpp:244
+msgid "Filename"
+msgstr "Nume de fișier"
+
+#: ../webkit/webkitwebdatabase.cpp:245
+msgid "The absolute filename of the Web Storage database"
+msgstr "Numele complet de fișier al bazei de date Web Storage"
+
+#: ../webkit/webkitwebframe.cpp:453
+msgid "The name of the frame"
+msgstr "Numele cadrului"
+
+#: ../webkit/webkitwebframe.cpp:459 ../webkit/webkitwebhistoryitem.cpp:144
+#: ../webkit/webkitwebview.cpp:3097
+msgid "Title"
+msgstr "Titlu"
+
+#: ../webkit/webkitwebframe.cpp:460
+msgid "The document title of the frame"
+msgstr "Titlul de document al cadrului"
+
+#: ../webkit/webkitwebframe.cpp:467
+msgid "The current URI of the contents displayed by the frame"
+msgstr "Adresa curentă URI a conținutului afișat în cadru"
+
+#: ../webkit/webkitwebframe.cpp:498
+msgid "Horizontal Scrollbar Policy"
+msgstr "Reguli pentru bara de derulare orizontală"
+
+#: ../webkit/webkitwebframe.cpp:499
+msgid ""
+"Determines the current policy for the horizontal scrollbar of the frame."
+msgstr ""
+"Determină regulile curente pentru bara de derulare orizontală a cadrului."
+
+#: ../webkit/webkitwebframe.cpp:516
+msgid "Vertical Scrollbar Policy"
+msgstr "Reguli pentru bara de derulare verticală"
+
+#: ../webkit/webkitwebframe.cpp:517
+msgid "Determines the current policy for the vertical scrollbar of the frame."
+msgstr ""
+"Determină regulile curente pentru bara de derulare verticală a cadrului."
+
+#: ../webkit/webkitwebhistoryitem.cpp:145
+msgid "The title of the history item"
+msgstr "Titlul elementului din istoric"
+
+#: ../webkit/webkitwebhistoryitem.cpp:160
+msgid "Alternate Title"
+msgstr "Titlu alternativ"
+
+#: ../webkit/webkitwebhistoryitem.cpp:161
+msgid "The alternate title of the history item"
+msgstr "Titlul alternativ pentru elementul din istoric"
+
+#: ../webkit/webkitwebhistoryitem.cpp:177
+msgid "The URI of the history item"
+msgstr "Adresa URI pentru elementul din istoric"
+
+#: ../webkit/webkitwebhistoryitem.cpp:192
+#: ../webkit/webkitwebnavigationaction.cpp:163
+msgid "Original URI"
+msgstr "Adresă URI originală"
+
+#: ../webkit/webkitwebhistoryitem.cpp:193
+msgid "The original URI of the history item"
+msgstr "Adresa originală URI pentru elementul din istoric"
+
+#: ../webkit/webkitwebhistoryitem.cpp:208
+msgid "Last visited Time"
+msgstr "Data ultimei accesări"
+
+#: ../webkit/webkitwebhistoryitem.cpp:209
+msgid "The time at which the history item was last visited"
+msgstr "Data la care a fost accesat ultima dată elementul din istoric"
+
+#: ../webkit/webkitwebinspector.cpp:273
+msgid "Web View"
+msgstr "Vizualizare web"
+
+#: ../webkit/webkitwebinspector.cpp:274
+msgid "The Web View that renders the Web Inspector itself"
+msgstr "Vizualizarea web în care se randează Inspectorul Web"
+
+#: ../webkit/webkitwebinspector.cpp:287
+msgid "Inspected URI"
+msgstr "Adresă URI inspectată"
+
+#: ../webkit/webkitwebinspector.cpp:288
+msgid "The URI that is currently being inspected"
+msgstr "Adresa URI inspectată curent"
+
+#: ../webkit/webkitwebinspector.cpp:304
+msgid "Enable JavaScript profiling"
+msgstr "Activează analiza JavaScript"
+
+#: ../webkit/webkitwebinspector.cpp:305
+msgid "Profile the executed JavaScript."
+msgstr "Analizați codul JavaScript executat."
+
+#: ../webkit/webkitwebinspector.cpp:320
+msgid "Enable Timeline profiling"
+msgstr "Activează analiza Timeline"
+
+#: ../webkit/webkitwebinspector.cpp:321
+msgid "Profile the WebCore instrumentation."
+msgstr "Analizați instrumentația WebCore."
+
+#: ../webkit/webkitwebnavigationaction.cpp:148
+msgid "Reason"
+msgstr "Motiv"
+
+#: ../webkit/webkitwebnavigationaction.cpp:149
+msgid "The reason why this navigation is occurring"
+msgstr "Motivul pentru care se produce această navigare"
+
+#: ../webkit/webkitwebnavigationaction.cpp:164
+msgid "The URI that was requested as the target for the navigation"
+msgstr "Adresa URI cerută ca destinație pentru navigare"
+
+#: ../webkit/webkitwebnavigationaction.cpp:178
+msgid "Button"
+msgstr "Buton"
+
+#: ../webkit/webkitwebnavigationaction.cpp:179
+msgid "The button used to click"
+msgstr "Butonul folosit pentru clic"
+
+#: ../webkit/webkitwebnavigationaction.cpp:194
+msgid "Modifier state"
+msgstr "Starea modificatorului"
+
+#: ../webkit/webkitwebnavigationaction.cpp:195
+msgid "A bitmask representing the state of the modifier keys"
+msgstr "O mască de biți ce reprezintă starea tastelor modificatoare"
+
+#: ../webkit/webkitwebnavigationaction.cpp:210
+msgid "Target frame"
+msgstr "Cadru de destinație"
+
+#: ../webkit/webkitwebnavigationaction.cpp:211
+msgid "The target frame for the navigation"
+msgstr "Cadrul de destinație pentru navigare"
+
+#: ../webkit/webkitwebplugin.cpp:115
+msgid "Enabled"
+msgstr "Activare"
+
+#: ../webkit/webkitwebplugin.cpp:116
+msgid "Whether the plugin is enabled"
+msgstr "Specifică dacă modulul este activat"
+
+#: ../webkit/webkitwebresource.cpp:210
+msgid "The URI of the resource"
+msgstr "Adresa URI a resursei"
+
+#: ../webkit/webkitwebresource.cpp:224
+msgid "MIME Type"
+msgstr "Tip MIME"
+
+#: ../webkit/webkitwebresource.cpp:225
+msgid "The MIME type of the resource"
+msgstr "Tipul MIME al resursei"
+
+#: ../webkit/webkitwebresource.cpp:239 ../webkit/webkitwebview.cpp:3246
+msgid "Encoding"
+msgstr "Codare"
+
+#: ../webkit/webkitwebresource.cpp:240
+msgid "The text encoding name of the resource"
+msgstr "Numele codării de text pentru această resursă"
+
+#: ../webkit/webkitwebresource.cpp:255
+msgid "Frame Name"
+msgstr "Numele cadrului"
+
+#: ../webkit/webkitwebresource.cpp:256
+msgid "The frame name of the resource"
+msgstr "Numele cadrului pentru această resursă"
+
+#: ../webkit/webkitwebsettings.cpp:149
+msgid "Default Encoding"
+msgstr "Codare implicită"
+
+#: ../webkit/webkitwebsettings.cpp:150
+msgid "The default encoding used to display text."
+msgstr "Codarea implicită folosită pentru afișarea textului."
+
+#: ../webkit/webkitwebsettings.cpp:158
+msgid "Cursive Font Family"
+msgstr "Familie de fonturi cursive"
+
+#: ../webkit/webkitwebsettings.cpp:159
+msgid "The default Cursive font family used to display text."
+msgstr ""
+"Familia implicită de fonturi cursive folosită pentru afișarea textului."
+
+#: ../webkit/webkitwebsettings.cpp:167
+msgid "Default Font Family"
+msgstr "Familia implicită de fonturi"
+
+#: ../webkit/webkitwebsettings.cpp:168
+msgid "The default font family used to display text."
+msgstr "Familia implicită de fonturi folosită pentru afișarea textului."
+
+#: ../webkit/webkitwebsettings.cpp:176
+msgid "Fantasy Font Family"
+msgstr "Familie de fonturi fanteziste"
+
+#: ../webkit/webkitwebsettings.cpp:177
+msgid "The default Fantasy font family used to display text."
+msgstr ""
+"Familia implicită de fonturi fanteziste folosită pentru afișarea textului."
+
+#: ../webkit/webkitwebsettings.cpp:185
+msgid "Monospace Font Family"
+msgstr "Familie de fonturi monospațiate"
+
+#: ../webkit/webkitwebsettings.cpp:186
+msgid "The default font family used to display monospace text."
+msgstr ""
+"Familia implicită de fonturi folosită pentru afișarea textului monospațiat."
+
+#: ../webkit/webkitwebsettings.cpp:194
+msgid "Sans Serif Font Family"
+msgstr "Font de fonturi fără serife"
+
+#: ../webkit/webkitwebsettings.cpp:195
+msgid "The default Sans Serif font family used to display text."
+msgstr ""
+"Familia implicită de fonturi fără serife folosită pentru afișarea textului."
+
+#: ../webkit/webkitwebsettings.cpp:203
+msgid "Serif Font Family"
+msgstr "Familie de fonturi cu serife"
+
+#: ../webkit/webkitwebsettings.cpp:204
+msgid "The default Serif font family used to display text."
+msgstr ""
+"Familia implicită de fonturi cu serife folosită pentru afișarea textului."
+
+#: ../webkit/webkitwebsettings.cpp:212
+msgid "Default Font Size"
+msgstr "Mărime implicită pentru fonturi"
+
+#: ../webkit/webkitwebsettings.cpp:213
+msgid "The default font size used to display text."
+msgstr "Mărimea implicită a fonturilor pentru afișarea textului."
+
+#: ../webkit/webkitwebsettings.cpp:221
+msgid "Default Monospace Font Size"
+msgstr "Mărime implicită pentru fontul monospațiat"
+
+#: ../webkit/webkitwebsettings.cpp:222
+msgid "The default font size used to display monospace text."
+msgstr "Mărimea implicită a fontului pentru afișarea textului monospațiat."
+
+#: ../webkit/webkitwebsettings.cpp:230
+msgid "Minimum Font Size"
+msgstr "Mărime minimă pentru fonturi"
+
+#: ../webkit/webkitwebsettings.cpp:231
+msgid "The minimum font size used to display text."
+msgstr "Mărimea minimă a fonturilor pentru afișarea textului."
+
+#: ../webkit/webkitwebsettings.cpp:239
+msgid "Minimum Logical Font Size"
+msgstr "Mărime minimă pentru fonturi logice"
+
+#: ../webkit/webkitwebsettings.cpp:240
+msgid "The minimum logical font size used to display text."
+msgstr "Mărimea minimă a fonturilor logice pentru afișare textului."
+
+#: ../webkit/webkitwebsettings.cpp:259
+msgid "Enforce 96 DPI"
+msgstr "Forțează un DPI de 96"
+
+#: ../webkit/webkitwebsettings.cpp:260
+msgid "Enforce a resolution of 96 DPI"
+msgstr "Forțează o rezoluție de 96 DPI"
+
+#: ../webkit/webkitwebsettings.cpp:268
+msgid "Auto Load Images"
+msgstr "Arată automat imaginile"
+
+#: ../webkit/webkitwebsettings.cpp:269
+msgid "Load images automatically."
+msgstr "Arată imaginile în mod automat."
+
+#: ../webkit/webkitwebsettings.cpp:277
+msgid "Auto Shrink Images"
+msgstr "Micșorează automat imaginile"
+
+#: ../webkit/webkitwebsettings.cpp:278
+msgid "Automatically shrink standalone images to fit."
+msgstr ""
+"Micșorează automat imaginile de sine stătătoare pentru o potrivire optimă."
+
+#: ../webkit/webkitwebsettings.cpp:286
+msgid "Print Backgrounds"
+msgstr "Tipărește fundalurile"
+
+#: ../webkit/webkitwebsettings.cpp:287
+msgid "Whether background images should be printed."
+msgstr "Specifică dacă imaginile de fundal trebuie tipărite."
+
+#: ../webkit/webkitwebsettings.cpp:295
+msgid "Enable Scripts"
+msgstr "Activează scripturile"
+
+#: ../webkit/webkitwebsettings.cpp:296
+msgid "Enable embedded scripting languages."
+msgstr "Interpretează limbajele de scripting înglobate."
+
+#: ../webkit/webkitwebsettings.cpp:304
+msgid "Enable Plugins"
+msgstr "Activează modulele"
+
+#: ../webkit/webkitwebsettings.cpp:305
+msgid "Enable embedded plugin objects."
+msgstr "Activează modulele pentru obiecte înglobate."
+
+#: ../webkit/webkitwebsettings.cpp:313
+msgid "Resizable Text Areas"
+msgstr "Zone de text redimensionabile"
+
+#: ../webkit/webkitwebsettings.cpp:314
+msgid "Whether text areas are resizable."
+msgstr "Specifică dacă zonele de text sunt redimensionabile."
+
+#: ../webkit/webkitwebsettings.cpp:321
+msgid "User Stylesheet URI"
+msgstr "Adresa URI pentru foaia de stiluri a utilizatorului"
+
+#: ../webkit/webkitwebsettings.cpp:322
+msgid "The URI of a stylesheet that is applied to every page."
+msgstr "Adresa URI a unei foi de stiluri care este aplicată fiecărei pagini."
+
+#: ../webkit/webkitwebsettings.cpp:337
+msgid "Zoom Stepping Value"
+msgstr "Valoare pentru pasul de zoom"
+
+#: ../webkit/webkitwebsettings.cpp:338
+msgid "The value by which the zoom level is changed when zooming in or out."
+msgstr "Valoarea cu care se schimbă nivelul zoomului când se mărește sau "
+"se micșorează zoomul."
+
+#: ../webkit/webkitwebsettings.cpp:356
+msgid "Enable Developer Extras"
+msgstr "Activează extensiile pentru dezvoltatori"
+
+#: ../webkit/webkitwebsettings.cpp:357
+msgid "Enables special extensions that help developers"
+msgstr "Activează extensii speciale pentru asistența dezvoltatorilor"
+
+#: ../webkit/webkitwebsettings.cpp:377
+msgid "Enable Private Browsing"
+msgstr "Activează navigarea privată"
+
+#: ../webkit/webkitwebsettings.cpp:378
+msgid "Enables private browsing mode"
+msgstr "Activează modul de navigare privată"
+
+#: ../webkit/webkitwebsettings.cpp:393
+msgid "Enable Spell Checking"
+msgstr "Activează corectarea ortografică"
+
+#: ../webkit/webkitwebsettings.cpp:394
+msgid "Enables spell checking while typing"
+msgstr "Activează corectarea ortografică în timpul tastării"
+
+#: ../webkit/webkitwebsettings.cpp:417
+msgid "Languages to use for spell checking"
+msgstr "Limbi folosite pentru corectare ortografică"
+
+#: ../webkit/webkitwebsettings.cpp:418
+msgid "Comma separated list of languages to use for spell checking"
+msgstr ""
+"Listă separată prin virgulă a limbilor folosite pentru corectare ortografică"
+
+#: ../webkit/webkitwebsettings.cpp:432
+msgid "Enable Caret Browsing"
+msgstr "Activează navigarea cu cursorul"
+
+#: ../webkit/webkitwebsettings.cpp:433
+msgid "Whether to enable accessibility enhanced keyboard navigation"
+msgstr ""
+"Specifică dacă se activează o accesibilitate îmbunătățită pentru navigarea "
+"cu tastatura "
+
+#: ../webkit/webkitwebsettings.cpp:448
+msgid "Enable HTML5 Database"
+msgstr "Activează baza de date HTML5"
+
+#: ../webkit/webkitwebsettings.cpp:449
+msgid "Whether to enable HTML5 database support"
+msgstr "Specifică dacă se activează suportul pentru baze de date HTML5"
+
+#: ../webkit/webkitwebsettings.cpp:464
+msgid "Enable HTML5 Local Storage"
+msgstr "Activează stocarea locală HTML5"
+
+#: ../webkit/webkitwebsettings.cpp:465
+msgid "Whether to enable HTML5 Local Storage support"
+msgstr "Specifică dacă se activează suportul pentru stocare locală HTML5"
+
+#: ../webkit/webkitwebsettings.cpp:480
+msgid "Local Storage Database Path"
+msgstr "Calea bazei de date stocate local"
+
+#: ../webkit/webkitwebsettings.cpp:481
+msgid "The path to where HTML5 Local Storage databases are stored."
+msgstr "Calea către baza de date HTML5 stocată local."
+
+#: ../webkit/webkitwebsettings.cpp:495
+msgid "Enable XSS Auditor"
+msgstr "Activează auditorul XSS"
+
+#: ../webkit/webkitwebsettings.cpp:496
+msgid "Whether to enable the XSS auditor"
+msgstr "Specifică dacă se activează auditorul XSS"
+
+#: ../webkit/webkitwebsettings.cpp:514
+msgid "Enable Spatial Navigation"
+msgstr "Activează navigarea spațială"
+
+#: ../webkit/webkitwebsettings.cpp:515
+msgid "Whether to enable Spatial Navigation"
+msgstr "Specifică dacă se activează navigarea spațială"
+
+#: ../webkit/webkitwebsettings.cpp:533
+msgid "Enable Frame Flattening"
+msgstr "Activează aplatizarea cadrelor"
+
+#: ../webkit/webkitwebsettings.cpp:534
+msgid "Whether to enable Frame Flattening"
+msgstr ""
+"Specifică dacă se activează o afișare optimizată a cadrelor pentru ecrane "
+"tactile"
+
+#: ../webkit/webkitwebsettings.cpp:551
+msgid "User Agent"
+msgstr "Agent de utilizator"
+
+#: ../webkit/webkitwebsettings.cpp:552
+msgid "The User-Agent string used by WebKitGtk"
+msgstr "Șirul User-Agent folosit de către WebKitGtk"
+
+#: ../webkit/webkitwebsettings.cpp:567
+msgid "JavaScript can open windows automatically"
+msgstr "JavaScript poate deschide automat ferestre"
+
+#: ../webkit/webkitwebsettings.cpp:568
+msgid "Whether JavaScript can open windows automatically"
+msgstr "Specifică dacă JavaScript poate deschide automat ferestre"
+
+#: ../webkit/webkitwebsettings.cpp:582
+msgid "JavaScript can access Clipboard"
+msgstr "JavaScript poate accesa clipboardul"
+
+#: ../webkit/webkitwebsettings.cpp:583
+msgid "Whether JavaScript can access Clipboard"
+msgstr "Specifică dacă JavaScript poate accesa clipboardul"
+
+#: ../webkit/webkitwebsettings.cpp:599
+msgid "Enable offline web application cache"
+msgstr "Activează stocarea offline pentru aplicațiile web"
+
+#: ../webkit/webkitwebsettings.cpp:600
+msgid "Whether to enable offline web application cache"
+msgstr ""
+"Specifică dacă se activează un cache pentru funcționarea offline a "
+"aplicațiilor web deconectate"
+
+#: ../webkit/webkitwebsettings.cpp:625
+msgid "Editing behavior"
+msgstr "Comportament la editare"
+
+#: ../webkit/webkitwebsettings.cpp:626
+msgid "The behavior mode to use in editing mode"
+msgstr "Modul de comportament folosit în modul de editare"
+
+#: ../webkit/webkitwebsettings.cpp:642
+msgid "Enable universal access from file URIs"
+msgstr "Activează accesul universal de la URI-urile de fișiere"
+
+#: ../webkit/webkitwebsettings.cpp:643
+msgid "Whether to allow universal access from file URIs"
+msgstr ""
+"Specifică dacă se permite accesul universal de la URI-urile de tip file://"
+
+#: ../webkit/webkitwebsettings.cpp:658
+msgid "Enable DOM paste"
+msgstr "Activează lipirea DOM"
+
+#: ../webkit/webkitwebsettings.cpp:659
+msgid "Whether to enable DOM paste"
+msgstr "Specifică dacă se activează lipirea DOM din clipboard"
+
+#: ../webkit/webkitwebsettings.cpp:677
+msgid "Tab key cycles through elements"
+msgstr "Tasta tab ciclează elementele"
+
+#: ../webkit/webkitwebsettings.cpp:678
+msgid "Whether the tab key cycles through elements on the page."
+msgstr "Specifică dacă tasta Tab ciclează elementele din pagină."
+
+#: ../webkit/webkitwebsettings.cpp:700
+msgid "Enable Default Context Menu"
+msgstr "Activează meniul de context implicit"
+
+#: ../webkit/webkitwebsettings.cpp:701
+msgid ""
+"Enables the handling of right-clicks for the creation of the default context "
+"menu"
+msgstr ""
+"Activează gestionarea clicului dreapta pentru crearea meniului de context "
+"implicit."
+
+#: ../webkit/webkitwebsettings.cpp:721
+msgid "Enable Site Specific Quirks"
+msgstr "Activează subterfugii pentru anumite site-uri"
+
+#: ../webkit/webkitwebsettings.cpp:722
+msgid "Enables the site-specific compatibility workarounds"
+msgstr ""
+"Activează modul de compatibilitate maximă pentru anumite site-uri problemă"
+
+#: ../webkit/webkitwebsettings.cpp:744
+msgid "Enable page cache"
+msgstr "Activează cache-ul pentru pagini"
+
+#: ../webkit/webkitwebsettings.cpp:745
+msgid "Whether the page cache should be used"
+msgstr "Specifică dacă se folosește un cache pentru pagini"
+
+#: ../webkit/webkitwebsettings.cpp:765
+msgid "Auto Resize Window"
+msgstr "Redimensionează automat fereastra"
+
+#: ../webkit/webkitwebsettings.cpp:766
+msgid "Automatically resize the toplevel window when a page requests it"
+msgstr ""
+"Redimensionează automat fereastra de prim nivel atunci când o pagină o "
+"solicită"
+
+#: ../webkit/webkitwebsettings.cpp:798
+msgid "Enable Java Applet"
+msgstr "Activează suportul pentru <applet>"
+
+#: ../webkit/webkitwebsettings.cpp:799
+msgid "Whether Java Applet support through <applet> should be enabled"
+msgstr ""
+"Specifică dacă e activat suportul pentru aplicații Java înglobate prin "
+"<applet>"
+
+#: ../webkit/webkitwebsettings.cpp:813
+msgid "Enable Hyperlink Auditing"
+msgstr "Activează auditul pentru linkuri"
+
+#: ../webkit/webkitwebsettings.cpp:814
+msgid "Whether <a ping> should be able to send pings"
+msgstr "Specifică dacă se pot trimite pinguri prin <a ping>"
+
+#: ../webkit/webkitwebsettings.cpp:822
+msgid "Enable Fullscreen"
+msgstr "Activează modul pe tot ecranul"
+
+#: ../webkit/webkitwebsettings.cpp:823
+msgid "Whether the Mozilla style API should be enabled."
+msgstr ""
+"Specifică dacă se activează suportul pentru API-ul Mozilla pentru pagini pe "
+"tot ecranul."
+
+#: ../webkit/webkitwebsettings.cpp:838
+msgid "Enable WebGL"
+msgstr "Activează WebGL"
+
+#: ../webkit/webkitwebsettings.cpp:839
+msgid "Whether WebGL content should be rendered"
+msgstr "Specifică dacă se va randa conținutul WebGL."
+
+#: ../webkit/webkitwebsettings.cpp:855
+msgid "Enable accelerated compositing"
+msgstr "Activează compoziționarea accelerată"
+
+#: ../webkit/webkitwebsettings.cpp:856
+msgid "Whether accelerated compositing should be enabled"
+msgstr "Specifică dacă se activează compoziționarea accelerată"
+
+#: ../webkit/webkitwebsettings.cpp:874
+msgid "Enable WebAudio"
+msgstr "Activează WebAudio"
+
+#: ../webkit/webkitwebsettings.cpp:875
+msgid "Whether WebAudio content should be handled"
+msgstr "Specifică dacă se deschide conținutul WebAudio"
+
+#: ../webkit/webkitwebsettings.cpp:891
+msgid "WebKit prefetches domain names"
+msgstr "WebKit rezolvă anticipat numele"
+
+#: ../webkit/webkitwebsettings.cpp:892
+msgid "Whether WebKit prefetches domain names"
+msgstr "Specifică dacă WebKit rezolvă anticipat numele de domenii"
+
+#: ../webkit/webkitwebsettings.cpp:910
+msgid "Enable Media Stream"
+msgstr "Activează streamingul media"
+
+#: ../webkit/webkitwebsettings.cpp:911
+msgid "Whether Media Stream should be enabled"
+msgstr "Specifică dacă se activează streamingul media"
+
+#: ../webkit/webkitwebsettings.cpp:926
+msgid "Enable smooth scrolling"
+msgstr "Activează derularea cu efect"
+
+#: ../webkit/webkitwebsettings.cpp:927
+msgid "Whether to enable smooth scrolling"
+msgstr "Specifică dacă se activează derularea cu efect"
+
+#: ../webkit/webkitwebsettings.cpp:945
+msgid "Media playback requires user gesture"
+msgstr "Redarea multimedia necesită acțiunea utilizatorului"
+
+#: ../webkit/webkitwebsettings.cpp:946
+msgid "Whether media playback requires user gesture"
+msgstr "Specifică dacă redarea multimedia necesită intervenția utilizatorului"
+
+#: ../webkit/webkitwebsettings.cpp:962
+msgid "Media playback allows inline"
+msgstr "Redarea multimedia este înglobată"
+
+#: ../webkit/webkitwebsettings.cpp:963
+msgid "Whether media playback allows inline"
+msgstr "Specifică dacă redarea multimedia se face în cadrul paginii"
+
+#: ../webkit/webkitwebsettings.cpp:981
+msgid "Enable CSS shaders"
+msgstr "Activează filtrele personalizate CSS"
+
+#: ../webkit/webkitwebsettings.cpp:982
+msgid "Whether to enable css shaders"
+msgstr "Specifică dacă se activează filtrele personalizate CSS (shaders)"
+
+#: ../webkit/webkitwebsettings.cpp:997
+msgid "Enable display of insecure content"
+msgstr "Activează afișarea conținutului nesigur"
+
+#: ../webkit/webkitwebsettings.cpp:998
+msgid "Whether non-HTTPS resources can display on HTTPS pages."
+msgstr "Specifică dacă se vor afișa resursele non-HTTPS în paginile HTTPS."
+
+#: ../webkit/webkitwebsettings.cpp:1013
+msgid "Enable running of insecure content"
+msgstr "Activează executarea conținutului nesigur"
+
+#: ../webkit/webkitwebsettings.cpp:1014
+msgid "Whether non-HTTPS resources can run on HTTPS pages."
+msgstr "Specifică dacă se vor executa resursele non-HTTPS în paginile HTTPS."
+
+#: ../webkit/webkitwebview.cpp:1312
+msgid "Select Files"
+msgstr "Alegeți fișierele"
+
+#: ../webkit/webkitwebview.cpp:1312
+msgid "Select File"
+msgstr "Alegeți un fișier"
+
+#: ../webkit/webkitwebview.cpp:3098
+msgid "Returns the @web_view's document title"
+msgstr "Returnează titlul documentului @web_view"
+
+#: ../webkit/webkitwebview.cpp:3112
+msgid "Returns the current URI of the contents displayed by the @web_view"
+msgstr "Returnează adresa curentă URI a conținutului afișat de @web_view"
+
+#: ../webkit/webkitwebview.cpp:3125
+msgid "Copy target list"
+msgstr "Lista destinațiilor de copiat"
+
+#: ../webkit/webkitwebview.cpp:3126
+msgid "The list of targets this web view supports for clipboard copying"
+msgstr ""
+"Lista cu destinațiile din această vizualizare web pentru care există suport "
+"pentru copiere în clipboard"
+
+#: ../webkit/webkitwebview.cpp:3139
+msgid "Paste target list"
+msgstr "Lista destinațiilor pentru lipit"
+
+#: ../webkit/webkitwebview.cpp:3140
+msgid "The list of targets this web view supports for clipboard pasting"
+msgstr ""
+"Lista cu destinațiile din această vizualizare web pentru care există suport "
+"pentru lipire din clipboard"
+
+#: ../webkit/webkitwebview.cpp:3146
+msgid "Settings"
+msgstr "Opțiuni"
+
+#: ../webkit/webkitwebview.cpp:3147
+msgid "An associated WebKitWebSettings instance"
+msgstr "O instanță asociată WebKitWebSettings"
+
+#: ../webkit/webkitwebview.cpp:3160
+msgid "Web Inspector"
+msgstr "Inspector Web"
+
+#: ../webkit/webkitwebview.cpp:3161
+msgid "The associated WebKitWebInspector instance"
+msgstr "Instanța asociată WebKitWebInspector"
+
+#: ../webkit/webkitwebview.cpp:3174
+msgid "Viewport Attributes"
+msgstr "Atribute viewport"
+
+#: ../webkit/webkitwebview.cpp:3175
+msgid "The associated WebKitViewportAttributes instance"
+msgstr "Instanța asociată WebKitViewportAttributes"
+
+#: ../webkit/webkitwebview.cpp:3195
+msgid "Editable"
+msgstr "Editabil"
+
+#: ../webkit/webkitwebview.cpp:3196
+msgid "Whether content can be modified by the user"
+msgstr "Specifică dacă poate fi modificat conținutul de către utilizator"
+
+#: ../webkit/webkitwebview.cpp:3202
+msgid "Transparent"
+msgstr "Transparent"
+
+#: ../webkit/webkitwebview.cpp:3203
+msgid "Whether content has a transparent background"
+msgstr "Specifică dacă conținutul are un fundal transparent"
+
+#: ../webkit/webkitwebview.cpp:3216
+msgid "Zoom level"
+msgstr "Nivel de zoom"
+
+#: ../webkit/webkitwebview.cpp:3217
+msgid "The level of zoom of the content"
+msgstr "Nivelul de zoom pentru conținut"
+
+#: ../webkit/webkitwebview.cpp:3232
+msgid "Full content zoom"
+msgstr "Zoom pentru tot conținutul"
+
+#: ../webkit/webkitwebview.cpp:3233
+msgid "Whether the full content is scaled when zooming"
+msgstr "Specifică dacă se scalează tot conținutul când se face zoom"
+
+#: ../webkit/webkitwebview.cpp:3247
+msgid "The default encoding of the web view"
+msgstr "Codarea implicită pentru vizualizarea web"
+
+#: ../webkit/webkitwebview.cpp:3260
+msgid "Custom Encoding"
+msgstr "Codare personalizată"
+
+#: ../webkit/webkitwebview.cpp:3261
+msgid "The custom encoding of the web view"
+msgstr "Codarea personalizată pentru vizualizarea web"
+
+#: ../webkit/webkitwebview.cpp:3313
+msgid "Icon URI"
+msgstr "Adresa URI a iconiței"
+
+#: ../webkit/webkitwebview.cpp:3314
+msgid "The URI for the favicon for the #WebKitWebView."
+msgstr "Adresa URI a iconiței de tip favicon pentru #WebKitWebView."
+
