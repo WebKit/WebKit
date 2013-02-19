@@ -254,7 +254,7 @@ class DOMStringList;
         return mediaList;
     }
 
-    inline JSC::JSValue argumentOrNull(JSC::ExecState* exec, int index)
+    inline JSC::JSValue argumentOrNull(JSC::ExecState* exec, unsigned index)
     {
         return index >= exec->argumentCount() ? JSC::JSValue() : exec->argument(index);
     }
