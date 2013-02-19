@@ -29,6 +29,96 @@ namespace WebCore {
 
 static HashMap<String, String> cookieJar;
 
+static void readCurlCookieToken(const char*& cookie, String& token)
+{
+    // Read the next token from a cookie with the Netscape cookie format.
+    // Curl separates each token in line with tab character.
+    while (cookie && cookie[0] && cookie[0] != '\t') {
+        token.append(cookie[0]);
+        cookie++;
+    }
+    if (cookie[0] == '\t')
+        cookie++;
+}
+
+static void addMatchingCurlCookie(const char* cookie, const String& domain, const String& path, String& cookies)
+{
+    // Check if the cookie matches domain and path, and is not expired.
+    // If so, add it to the list of cookies.
+    //
+    // Description of the Netscape cookie file format which Curl uses:
+    //
+    // .netscape.com     TRUE   /  FALSE  946684799   NETSCAPE_ID  100103
+    //
+    // Each line represents a single piece of stored information. A tab is inserted between each of the fields.
+    //
+    // From left-to-right, here is what each field represents:
+    //
+    // domain - The domain that created AND that can read the variable.
+    // flag - A TRUE/FALSE value indicating if all machines within a given domain can access the variable. This value is set automatically by the browser, depending on the value you set for domain.
+    // path - The path within the domain that the variable is valid for.
+    // secure - A TRUE/FALSE value indicating if a secure connection with the domain is needed to access the variable.
+    // expiration - The UNIX time that the variable will expire on. UNIX time is defined as the number of seconds since Jan 1, 1970 00:00:00 GMT.
+    // name - The name of the variable.
+    // value - The value of the variable.
+
+    if (!cookie)
+        return;
+
+    String cookieDomain;
+    readCurlCookieToken(cookie, cookieDomain);
+
+    bool subDomain = false;
+
+    if (cookieDomain[0] == '.') {
+        // Check if domain is a subdomain of the domain in the cookie.
+        // Curl uses a '.' in front of domains to indicate its valid on subdomains.
+        cookieDomain.remove(0);
+        int lenDiff = domain.length() - cookieDomain.length();
+        int index = domain.find(cookieDomain);
+        if (index == lenDiff)
+            subDomain = true;
+    }
+
+    if (!subDomain && cookieDomain != domain)
+        return;
+
+    String strBoolean;
+    readCurlCookieToken(cookie, strBoolean);
+
+    String strPath;
+    readCurlCookieToken(cookie, strPath);
+
+    // Check if path matches
+    int index = path.find(strPath);
+    if (index)
+        return;
+
+    String strSecure;
+    readCurlCookieToken(cookie, strSecure);
+
+    String strExpires;
+    readCurlCookieToken(cookie, strExpires);
+
+    int expires = strExpires.toInt();
+
+    time_t now = 0;
+    time(&now);
+
+    // Check if cookie has expired
+    if (expires && now > expires)
+        return;
+
+    String strName;
+    readCurlCookieToken(cookie, strName);
+
+    String strValue;
+    readCurlCookieToken(cookie, strValue);
+
+    // The cookie matches, add it to the cookie list.
+    cookies = cookies + strName + "=" + strValue + "; ";
+}
+
 void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& url, const String& value)
 {
     cookieJar.set(url.string(), value);
@@ -51,6 +141,12 @@ void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& ur
     else
         cookie.append(String::make8BitFrom16BitSource(value.characters16(), value.length()));
 
+    if (cookie.find(String("domain")) == notFound) {
+        // If no domain is set, set domain and path from url.
+        cookie.append(String("; domain=") + url.host());
+        cookie.append(String("; path=") + url.path());
+    }
+
     CString strCookie(reinterpret_cast<const char*>(cookie.characters8()), cookie.length());
 
     curl_easy_setopt(curl, CURLOPT_COOKIELIST, strCookie.data());
@@ -60,7 +156,37 @@ void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& ur
 
 String cookiesForDOM(const NetworkStorageSession&, const KURL&, const KURL& url)
 {
-    return cookieJar.get(url.string());
+    String cookies;
+
+    CURL* curl = curl_easy_init();
+
+    if (!curl)
+        return cookies;
+
+    CURLSH* curlsh = ResourceHandleManager::sharedInstance()->getCurlShareHandle();
+
+    curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
+
+    struct curl_slist* list = 0;
+    curl_easy_getinfo(curl, CURLINFO_COOKIELIST, &list);
+
+    if (list) {
+        String domain = url.host();
+        String path = url.path();
+
+        struct curl_slist* item = list;
+        while (item) {
+            const char* cookie = item->data;
+            addMatchingCurlCookie(cookie, domain, path, cookies);
+            item = item->next;
+        }
+
+        curl_slist_free_all(list);
+    }
+
+    curl_easy_cleanup(curl);
+
+    return cookies;
 }
 
 String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& url)
