@@ -1453,7 +1453,4 @@ webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.
 # Crashing after https://webkit.org/b/105667
 webkit.org/b/109232 [ Debug ] inspector/debugger/debugger-reload-on-pause.html [ Crash ]
 
-# New test failing, needs investigation.
-webkit.org/b/109179 compositing/transitions/transform-on-large-layer.html [ Failure ]
-
 webkit.org/b/110027 compositing/transitions/transform-on-large-layer.html [ Pass ImageOnlyFailure ]
