@@ -256,7 +256,7 @@ class DOMStringList;
 
     inline JSC::JSValue argumentOrNull(JSC::ExecState* exec, int index)
     {
-        return index >= exec->argumentCount() ? JSValue() : exec->argument(index);
+        return index >= exec->argumentCount() ? JSC::JSValue() : exec->argument(index);
     }
 
     const JSC::HashTable* getHashTableForGlobalData(JSC::JSGlobalData&, const JSC::HashTable* staticTable);
