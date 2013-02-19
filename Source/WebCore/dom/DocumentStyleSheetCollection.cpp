@@ -487,7 +487,6 @@ bool DocumentStyleSheetCollection::updateActiveStyleSheets(UpdateFlag updateFlag
         resetCSSFeatureFlags();
     }
     m_activeAuthorStyleSheets.swap(activeCSSStyleSheets);
-    InspectorInstrumentation::activeStyleSheetsUpdated(m_document, m_styleSheetsForStyleSheetList, activeStyleSheets);
     m_styleSheetsForStyleSheetList.swap(activeStyleSheets);
 
     m_usesRemUnits = styleSheetsUseRemUnits(m_activeAuthorStyleSheets);

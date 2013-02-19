@@ -37,7 +37,6 @@
 #include <wtf/HashSet.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
-#include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -106,7 +105,6 @@ public:
     void willRemoveNamedFlow(Document*, WebKitNamedFlow*);
     void didUpdateRegionLayout(Document*, WebKitNamedFlow*);
     void regionLayoutUpdated(WebKitNamedFlow*, int documentNodeId);
-    void activeStyleSheetsUpdated(const Vector<RefPtr<StyleSheet> >& oldSheets, const Vector<RefPtr<StyleSheet> >& newSheets);
 
     virtual void getComputedStyleForNode(ErrorString*, int nodeId, RefPtr<TypeBuilder::Array<TypeBuilder::CSS::CSSComputedStyleProperty> >&);
     virtual void getInlineStylesForNode(ErrorString*, int nodeId, RefPtr<TypeBuilder::CSS::CSSStyle>& inlineStyle, RefPtr<TypeBuilder::CSS::CSSStyle>& attributes);
@@ -152,11 +150,9 @@ private:
     InspectorStyleSheetForInlineStyle* asInspectorStyleSheet(Element* element);
     Element* elementForId(ErrorString*, int nodeId);
     int documentNodeWithRequestedFlowsId(Document*);
-    void collectAllStyleSheets(Vector<InspectorStyleSheet*>&);
-    void collectStyleSheets(CSSStyleSheet*, Vector<InspectorStyleSheet*>&);
+    void collectStyleSheets(CSSStyleSheet*, TypeBuilder::Array<WebCore::TypeBuilder::CSS::CSSStyleSheetHeader>*);
 
     InspectorStyleSheet* bindStyleSheet(CSSStyleSheet*);
-    String unbindStyleSheet(InspectorStyleSheet*);
     InspectorStyleSheet* viaInspectorStyleSheet(Document*, bool createIfAbsent);
     InspectorStyleSheet* assertStyleSheetForId(ErrorString*, const String&);
     TypeBuilder::CSS::StyleSheetOrigin::Enum detectOrigin(CSSStyleSheet* pageStyleSheet, Document* ownerDocument);
@@ -190,7 +186,6 @@ private:
     OwnPtr<UpdateRegionLayoutTask> m_updateRegionLayoutTask;
 
     int m_lastStyleSheetId;
-    bool m_creatingViaInspectorStyleSheet;
 
     OwnPtr<SelectorProfile> m_currentSelectorProfile;
 };

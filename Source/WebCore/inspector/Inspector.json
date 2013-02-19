@@ -2163,7 +2163,7 @@
     {
         "domain": "CSS",
         "hidden": true,
-        "description": "This domain exposes CSS read/write operations. All CSS objects (stylesheets, rules, and styles) have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). A client can also discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method (or keeping track of the <code>styleSheetAdded</code>/<code>styleSheetRemoved</code> events) and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
+        "description": "This domain exposes CSS read/write operations. All CSS objects, like stylesheets, rules, and styles, have an associated <code>id</code> used in subsequent operations on the related object. Each object type has a specific <code>id</code> structure, and those are not interchangeable between objects of different kinds. CSS objects can be loaded using the <code>get*ForNode()</code> calls (which accept a DOM node id). Alternatively, a client can discover all the existing stylesheets with the <code>getAllStyleSheets()</code> method and subsequently load the required stylesheet contents using the <code>getStyleSheet[Text]()</code> methods.",
         "types": [
             {
                 "id": "StyleSheetId",
@@ -2567,20 +2567,6 @@
                     { "name": "styleSheetId", "$ref": "StyleSheetId" }
                 ],
                 "description": "Fired whenever a stylesheet is changed as a result of the client operation."
-            },
-            {
-                "name": "styleSheetAdded",
-                "parameters": [
-                    { "name": "header", "$ref": "CSSStyleSheetHeader", "description": "Added stylesheet metainfo." }
-                ],
-                "description": "Fired whenever an active document stylesheet is added."
-            },
-            {
-                "name": "styleSheetRemoved",
-                "parameters": [
-                    { "name": "styleSheetId", "$ref": "StyleSheetId", "description": "Identifier of the removed stylesheet." }
-                ],
-                "description": "Fired whenever an active document stylesheet is removed."
             },
             {
                 "name": "namedFlowCreated",

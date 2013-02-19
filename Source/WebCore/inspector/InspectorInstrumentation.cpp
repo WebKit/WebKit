@@ -244,12 +244,6 @@ void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents* i
 #endif
 }
 
-void InspectorInstrumentation::activeStyleSheetsUpdatedImpl(InstrumentingAgents* instrumentingAgents, const Vector<RefPtr<StyleSheet> >& oldSheets, const Vector<RefPtr<StyleSheet> >& newSheets)
-{
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
-        cssAgent->activeStyleSheetsUpdated(oldSheets, newSheets);
-}
-
 void InspectorInstrumentation::frameWindowDiscardedImpl(InstrumentingAgents* instrumentingAgents, DOMWindow* window)
 {
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
