@@ -109,7 +109,7 @@ private:
 
     void getNextStatement();
 
-    RefPtr<SQLTransaction> m_frontend;
+    RefPtr<SQLTransaction> m_frontend; // Has a reference cycle, and will break in doCleanup().
     RefPtr<SQLStatementBackend> m_currentStatementBackend;
 
     RefPtr<DatabaseBackendAsync> m_database;

@@ -242,9 +242,11 @@
 //
 //     Note: there's a circular reference between the SQLTransaction front-end and
 //     back-end. This circular reference is established in the constructor of the
-//     SQLTransactionBackend. The circular reference will only be broken at the end
-//     of the transaction's clean up state i.e. when the transaction should no
-//     longer be in use thereafter.
+//     SQLTransactionBackend. The circular reference will be broken by calling
+//     doCleanup() to nullify m_frontend. This is done at the end of the transaction's
+//     clean up state (i.e. when the transaction should no longer be in use thereafter),
+//     or if the database was interrupted. See comments on "What happens if a transaction
+//     is interrupted?" below for details.
 //
 //     After scheduling the transaction with the DatabaseThread (DatabaseBackendAsync::scheduleTransaction()):
 //     ======================================================================================================
@@ -380,6 +382,7 @@ void SQLTransactionBackend::doCleanup()
 {
     if (!m_frontend)
         return;
+    m_frontend = 0; // Break the reference cycle. See comment about the life-cycle above.
 
     ASSERT(currentThread() == database()->databaseContext()->databaseThread()->getThreadID());
 
@@ -398,10 +401,6 @@ void SQLTransactionBackend::doCleanup()
     // Release the lock on this database
     if (m_lockAcquired)
         m_database->transactionCoordinator()->releaseLock(this);
-
-    // Now that we're done, break the reference cycle that keeps us alive.
-    // See comment about the life-cycle above.
-    m_frontend = 0;
 
     // Do some aggresive clean up here except for m_database.
     //
