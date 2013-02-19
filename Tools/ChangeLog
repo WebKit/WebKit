@@ -1,3 +1,9 @@
+2013-02-17  Andrei Bucur  <abucur@adobe.com>
+
+        Unreviewed. Adding myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-19  Hajime Morrita  <morrita@google.com>
 
         Unreviewed, updated spelling of my name.
