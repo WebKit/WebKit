@@ -138,8 +138,11 @@ private:
     ClutterTimeline* timeline() const;
     AnimatedPropertyType stringToAnimatedPropertyType(const String& keyPath) const;
 
-    void addClutterTransitionForProperty(const String& property, const unsigned fromValue, const unsigned toValue);
     void addClutterTransitionForProperty(const String& property, const float fromValue, const float toValue);
+    void addClutterTransitionForProperty(const String& property, const FloatPoint3D& fromValue, const FloatPoint3D& toValue);
+
+    void addClutterKeyframeTransitionForProperty(const String& property, const Vector<float>& values);
+    void addClutterKeyframeTransitionForProperty(const String& property, const Vector<FloatPoint3D>& values);
 
     void addOpacityTransition();
     void addTransformTransition();
@@ -162,6 +165,12 @@ private:
 
     const TimingFunction* m_timingFunction;
     ValueFunctionType m_valueFunctionType;
+
+    Vector<float> m_keyTimes;
+    Vector<const TimingFunction*> m_timingFunctions;
+
+    Vector<float> m_values;
+    Vector<FloatPoint3D> m_values3D;
 };
 
 }

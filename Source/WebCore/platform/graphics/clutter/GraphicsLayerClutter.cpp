@@ -748,14 +748,74 @@ PassRefPtr<PlatformClutterAnimation> GraphicsLayerClutter::createBasicAnimation(
 
 PassRefPtr<PlatformClutterAnimation>GraphicsLayerClutter::createKeyframeAnimation(const Animation* anim, const String& keyPath, bool additive)
 {
-    notImplemented();
-    return 0;
+    RefPtr<PlatformClutterAnimation> keyframeAnim = PlatformClutterAnimation::create(PlatformClutterAnimation::Keyframe, keyPath);
+    setupAnimation(keyframeAnim.get(), anim, additive);
+    return keyframeAnim;
 }
 
 bool GraphicsLayerClutter::setTransformAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformClutterAnimation* keyframeAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const IntSize& boxSize)
 {
-    notImplemented();
-    return false;
+    Vector<float> keyTimes;
+    Vector<float> floatValues;
+    Vector<FloatPoint3D> floatPoint3DValues;
+    Vector<TransformationMatrix> transformationMatrixValues;
+    Vector<const TimingFunction*> timingFunctions;
+
+    bool forwards = animation->directionIsForwards();
+
+    for (unsigned i = 0; i < valueList.size(); ++i) {
+        unsigned index = forwards ? i : (valueList.size() - i - 1);
+        const TransformAnimationValue* curValue = static_cast<const TransformAnimationValue*>(valueList.at(index));
+        keyTimes.append(forwards ? curValue->keyTime() : (1 - curValue->keyTime()));
+
+        if (isMatrixAnimation) {
+            TransformationMatrix transform;
+            curValue->value()->apply(boxSize, transform);
+
+            // FIXME: In CoreAnimation case, if any matrix is singular, CA won't animate it correctly.
+            // But I'm not sure clutter also does. Check it later, and then decide
+            // whether removing following lines or not.
+            if (!transform.isInvertible())
+                return false;
+
+            transformationMatrixValues.append(transform);
+        } else {
+            const TransformOperation* transformOp = curValue->value()->at(functionIndex);
+            if (isTransformTypeNumber(transformOpType)) {
+                float value;
+                getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
+                floatValues.append(value);
+            } else if (isTransformTypeFloatPoint3D(transformOpType)) {
+                FloatPoint3D value;
+                getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
+                floatPoint3DValues.append(value);
+            } else {
+                TransformationMatrix value;
+                getTransformFunctionValue(transformOp, transformOpType, boxSize, value);
+                transformationMatrixValues.append(value);
+            }
+        }
+
+        if (i < (valueList.size() - 1))
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), animation));
+    }
+
+    keyframeAnim->setKeyTimes(keyTimes);
+
+    if (isTransformTypeNumber(transformOpType))
+        keyframeAnim->setValues(floatValues);
+    else if (isTransformTypeFloatPoint3D(transformOpType))
+        keyframeAnim->setValues(floatPoint3DValues);
+    else
+        keyframeAnim->setValues(transformationMatrixValues);
+
+    keyframeAnim->setTimingFunctions(timingFunctions, !forwards);
+
+    PlatformClutterAnimation::ValueFunctionType valueFunction = getValueFunctionNameForTransformOperation(transformOpType);
+    if (valueFunction != PlatformClutterAnimation::NoValueFunction)
+        keyframeAnim->setValueFunction(valueFunction);
+
+    return true;
 }
 
 bool GraphicsLayerClutter::setTransformAnimationEndpoints(const KeyframeValueList& valueList, const Animation* animation, PlatformClutterAnimation* basicAnim, int functionIndex, TransformOperation::OperationType transformOpType, bool isMatrixAnimation, const IntSize& boxSize)
@@ -986,8 +1046,37 @@ bool GraphicsLayerClutter::setAnimationEndpoints(const KeyframeValueList& valueL
 
 bool GraphicsLayerClutter::setAnimationKeyframes(const KeyframeValueList& valueList, const Animation* animation, PlatformClutterAnimation* keyframeAnim)
 {
-    notImplemented();
-    return false;
+    Vector<float> keyTimes;
+    Vector<float> values;
+    Vector<const TimingFunction*> timingFunctions;
+
+    bool forwards = animation->directionIsForwards();
+
+    for (unsigned i = 0; i < valueList.size(); ++i) {
+        unsigned index = forwards ? i : (valueList.size() - i - 1);
+        const AnimationValue* curValue = valueList.at(index);
+        keyTimes.append(forwards ? curValue->keyTime() : (1 - curValue->keyTime()));
+
+        switch (valueList.property()) {
+        case AnimatedPropertyOpacity: {
+            const FloatAnimationValue* floatValue = static_cast<const FloatAnimationValue*>(curValue);
+            values.append(floatValue->value());
+            break;
+        }
+        default:
+            ASSERT_NOT_REACHED(); // we don't animate color yet
+            break;
+        }
+
+        if (i < (valueList.size() - 1))
+            timingFunctions.append(timingFunctionForAnimationValue(forwards ? curValue : valueList.at(index - 1), animation));
+    }
+
+    keyframeAnim->setKeyTimes(keyTimes);
+    keyframeAnim->setValues(values);
+    keyframeAnim->setTimingFunctions(timingFunctions, !forwards);
+
+    return true;
 }
 
 GraphicsLayerActor* GraphicsLayerClutter::layerForSuperlayer() const

@@ -38,7 +38,9 @@
 #include "UnitBezier.h"
 #include <limits.h>
 #include <wtf/CurrentTime.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/UnusedParam.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
 
 using namespace std;
@@ -54,7 +56,7 @@ static String toClutterActorPropertyString(const PlatformClutterAnimation::Value
 {
     // ClutterActor doesn't have 'scale' and 'translate' properties. So we should support
     // 'scale' and 'translate' ValueFunctionType by combination of existing property animations. 
-    const char* clutterActorProperty[] = { "NoProperty", "rotation-angle-x", "rotation-angle-y", "rotation-angle-z", "scale-x", "scale-y", "scale-z", "NoProperty", "translation-x", "translation-y", "translation-z", "NoProperty" }; 
+    const char* clutterActorProperty[] = { "NoProperty", "rotation-angle-x", "rotation-angle-y", "rotation-angle-z", "scale-x", "scale-y", "scale-z", "scale", "translation-x", "translation-y", "translation-z", "translate" }; 
     return clutterActorProperty[valueFunctionType];
 }
 
@@ -114,8 +116,6 @@ PlatformClutterAnimation::PlatformClutterAnimation(AnimationType type, const Str
     , m_timingFunction(0)
     , m_valueFunctionType(NoValueFunction)
 {
-    // FIXME: We support only Basic type now.
-    ASSERT(type == Basic);
     m_animation = adoptGRef(G_OBJECT(clutter_transition_group_new()));
 }
 
@@ -221,6 +221,7 @@ void PlatformClutterAnimation::setTimingFunction(const TimingFunction* timingFun
 {
     if (!timingFunction)
         return;
+
     m_timingFunction = timingFunction;
 }
 
@@ -330,7 +331,9 @@ void PlatformClutterAnimation::copyToValueFrom(const PlatformClutterAnimation* v
 
 void PlatformClutterAnimation::setValues(const Vector<float>& value)
 {
-    notImplemented();
+    ASSERT(animationType() == Keyframe);
+
+    m_values = value;
 }
 
 void PlatformClutterAnimation::setValues(const Vector<WebCore::TransformationMatrix>& value)
@@ -340,7 +343,9 @@ void PlatformClutterAnimation::setValues(const Vector<WebCore::TransformationMat
 
 void PlatformClutterAnimation::setValues(const Vector<FloatPoint3D>& value)
 {
-    notImplemented();
+    ASSERT(animationType() == Keyframe);
+
+    m_values3D = value;
 }
 
 void PlatformClutterAnimation::setValues(const Vector<WebCore::Color>& value)
@@ -355,7 +360,9 @@ void PlatformClutterAnimation::copyValuesFrom(const PlatformClutterAnimation* va
 
 void PlatformClutterAnimation::setKeyTimes(const Vector<float>& value)
 {
-    notImplemented();
+    ASSERT(animationType() == Keyframe);
+
+    m_keyTimes = value;
 }
 
 void PlatformClutterAnimation::copyKeyTimesFrom(const PlatformClutterAnimation* value)
@@ -365,7 +372,9 @@ void PlatformClutterAnimation::copyKeyTimesFrom(const PlatformClutterAnimation* 
 
 void PlatformClutterAnimation::setTimingFunctions(const Vector<const TimingFunction*>& value, bool reverse)
 {
-    notImplemented();
+    ASSERT(animationType() == Keyframe);
+
+    m_timingFunctions = value;
 }
 
 void PlatformClutterAnimation::copyTimingFunctionsFrom(const PlatformClutterAnimation* value)
@@ -390,40 +399,133 @@ ClutterTimeline* PlatformClutterAnimation::timeline() const
     return CLUTTER_TIMELINE(m_animation.get());
 }
 
-void PlatformClutterAnimation::addClutterTransitionForProperty(const String& property, const unsigned fromValue, const unsigned toValue)
-{
-    ASSERT(property != "NoProperty");
-
-    GRefPtr<ClutterTransition> transition = adoptGRef(clutter_property_transition_new(property.utf8().data()));
-    clutter_transition_set_from(transition.get(), G_TYPE_UINT, fromValue);
-    clutter_transition_set_to(transition.get(), G_TYPE_UINT, toValue);
-
-    clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
-}
-
 void PlatformClutterAnimation::addClutterTransitionForProperty(const String& property, const float fromValue, const float toValue)
 {
     ASSERT(property != "NoProperty");
 
+    GType gType = (property == "opacity" ? G_TYPE_UINT : G_TYPE_FLOAT);
+
     GRefPtr<ClutterTransition> transition = adoptGRef(clutter_property_transition_new(property.utf8().data()));
-    clutter_transition_set_from(transition.get(), G_TYPE_FLOAT, fromValue);
-    clutter_transition_set_to(transition.get(), G_TYPE_FLOAT, toValue);
+    clutter_transition_set_from(transition.get(), gType, (gType == G_TYPE_UINT ? static_cast<unsigned>(fromValue) : fromValue));
+    clutter_transition_set_to(transition.get(), gType, (gType == G_TYPE_UINT ? static_cast<unsigned>(toValue) : toValue));
+
+    clutter_timeline_set_progress_mode(timeline(), toClutterAnimationMode(m_timingFunction));
 
     clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
 }
 
+void PlatformClutterAnimation::addClutterTransitionForProperty(const String& property, const FloatPoint3D& fromValue, const FloatPoint3D& toValue)
+{
+    ASSERT(property != "NoProperty");
+
+    if (property == "scale") {
+        addClutterTransitionForProperty(String("scale-x"), fromValue.x(), toValue.x());
+        addClutterTransitionForProperty(String("scale-y"), fromValue.y(), toValue.y());
+        return;
+    }
+    if (property == "translate") {
+        addClutterTransitionForProperty(String("translation-x"), fromValue.x(), toValue.x());
+        addClutterTransitionForProperty(String("translation-y"), fromValue.x(), toValue.y());
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
+void PlatformClutterAnimation::addClutterKeyframeTransitionForProperty(const String& property, const Vector<float>& values)
+{
+    ASSERT(property != "NoProperty");
+
+    GType gType = (property == "opacity" ? G_TYPE_UINT : G_TYPE_FLOAT);
+
+    GRefPtr<ClutterTransition> transition = adoptGRef(clutter_keyframe_transition_new(property.utf8().data()));
+    clutter_transition_set_from(transition.get(), gType, values.first());
+    clutter_transition_set_to(transition.get(), gType, values.last());
+
+    // Ignore the first keyframe, since it's a '0' frame, meaningless.
+    const unsigned nKeyframes = values.size() - 1;
+    OwnArrayPtr<ClutterAnimationMode> animationModes = adoptArrayPtr(new ClutterAnimationMode[nKeyframes]);
+    OwnArrayPtr<double> keyTimes = adoptArrayPtr(new double[nKeyframes]);
+    GOwnPtr<GValue> keyValues(g_new0(GValue, nKeyframes));
+
+    for (unsigned i = 0; i < nKeyframes; ++i) {
+        keyTimes[i] = static_cast<double>(m_keyTimes[i + 1]);
+        animationModes[i] = toClutterAnimationMode(m_timingFunctions[i]);
+        g_value_init(&keyValues.get()[i], gType);
+        if (gType == G_TYPE_UINT)
+            g_value_set_uint(&keyValues.get()[i], static_cast<unsigned>(values[i + 1]));
+        else
+            g_value_set_float(&keyValues.get()[i], values[i + 1]);
+    }
+
+    clutter_keyframe_transition_set_key_frames(CLUTTER_KEYFRAME_TRANSITION(transition.get()), nKeyframes, keyTimes.get());
+    clutter_keyframe_transition_set_values(CLUTTER_KEYFRAME_TRANSITION(transition.get()), nKeyframes, keyValues.get());
+    clutter_keyframe_transition_set_modes(CLUTTER_KEYFRAME_TRANSITION(transition.get()), nKeyframes, animationModes.get());
+
+    clutter_transition_group_add_transition(CLUTTER_TRANSITION_GROUP(m_animation.get()), transition.get());
+
+    for (unsigned i = 0; i < nKeyframes; ++i)
+        g_value_unset(&keyValues.get()[i]);
+}
+
+void PlatformClutterAnimation::addClutterKeyframeTransitionForProperty(const String& property, const Vector<FloatPoint3D>& values)
+{
+    ASSERT(property != "NoProperty");
+
+    Vector<float> valuesX, valuesY;
+    for (unsigned i = 0; i < values.size(); ++i) {
+        valuesX.append(values[i].x());
+        valuesY.append(values[i].y());
+    }
+
+    if (property == "scale") {
+        addClutterKeyframeTransitionForProperty(String("scale-x"), valuesX);
+        addClutterKeyframeTransitionForProperty(String("scale-y"), valuesY);
+        return;
+    }
+    if (property == "translate") {
+        addClutterKeyframeTransitionForProperty(String("translation-x"), valuesX);
+        addClutterKeyframeTransitionForProperty(String("translation-y"), valuesY);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 void PlatformClutterAnimation::addOpacityTransition()
 {
-    addClutterTransitionForProperty(String("opacity"), static_cast<unsigned>(255 * m_fromValue), static_cast<unsigned>(255 * m_toValue));
+    if (animationType() == Keyframe) {
+        for (unsigned i = 0; i < m_values.size(); ++i)
+            m_values[i] *= 255;
+
+        addClutterKeyframeTransitionForProperty(String("opacity"), m_values);
+    } else {
+        m_fromValue *= 255;
+        m_toValue *= 255;
+
+        addClutterTransitionForProperty(String("opacity"), m_fromValue, m_toValue);
+    }
 }
 
 void PlatformClutterAnimation::addTransformTransition()
 {
+    const bool isKeyframe = (animationType() == Keyframe);
+
     switch (m_valueFunctionType) {
     case RotateX:
     case RotateY:
     case RotateZ:
-        addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), rad2deg(m_fromValue), rad2deg(m_toValue));
+        if (isKeyframe) {
+            for (unsigned i = 0; i < m_values.size(); ++i)
+                m_values[i] = rad2deg(m_values[i]);
+
+            addClutterKeyframeTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_values);
+        } else {
+            m_fromValue = rad2deg(m_fromValue);
+            m_toValue = rad2deg(m_toValue);
+
+            addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValue, m_toValue);
+        }
         break;
     case ScaleX:
     case ScaleY:
@@ -431,15 +533,17 @@ void PlatformClutterAnimation::addTransformTransition()
     case TranslateX:
     case TranslateY:
     case TranslateZ:
-        addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValue, m_toValue);
+        if (isKeyframe)
+            addClutterKeyframeTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_values);
+        else
+            addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValue, m_toValue);
         break;
     case Scale:
-        addClutterTransitionForProperty(String("scale-x"), m_fromValue3D.x(), m_toValue3D.x());
-        addClutterTransitionForProperty(String("scale-y"), m_fromValue3D.y(), m_toValue3D.y());
-        break;
     case Translate:
-        addClutterTransitionForProperty(String("translation-x"), m_fromValue3D.x(), m_toValue3D.x());
-        addClutterTransitionForProperty(String("translation-y"), m_fromValue3D.x(), m_toValue3D.y());
+        if (isKeyframe)
+            addClutterKeyframeTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_values3D); 
+        else
+            addClutterTransitionForProperty(toClutterActorPropertyString(m_valueFunctionType), m_fromValue3D, m_toValue3D);
         break;
     default:
         ASSERT_NOT_REACHED();
@@ -452,7 +556,6 @@ void PlatformClutterAnimation::addTransformTransition()
 
 void PlatformClutterAnimation::addAnimationForKey(GraphicsLayerActor* platformLayer, const String& key)
 {
-    ASSERT(animationType() == Basic);
     ASSERT(!g_object_get_data(G_OBJECT(platformLayer), key.utf8().data()));
 
     m_layer = CLUTTER_ACTOR(platformLayer);
@@ -466,11 +569,7 @@ void PlatformClutterAnimation::addAnimationForKey(GraphicsLayerActor* platformLa
     else
         ASSERT_NOT_REACHED();
 
-    ClutterAnimationMode animationMode = toClutterAnimationMode(m_timingFunction);
-    ClutterTimeline* clutterTimeline = timeline();
-    clutter_timeline_set_progress_mode(clutterTimeline, animationMode);
-
-    g_signal_connect(clutterTimeline, "started", G_CALLBACK(timelineStartedCallback), this);
+    g_signal_connect(timeline(), "started", G_CALLBACK(timelineStartedCallback), this);
     g_object_set_data(G_OBJECT(platformLayer), key.utf8().data(), this);
 
     clutter_actor_add_transition(m_layer.get(), key.utf8().data(), CLUTTER_TRANSITION(m_animation.get()));
@@ -478,8 +577,6 @@ void PlatformClutterAnimation::addAnimationForKey(GraphicsLayerActor* platformLa
 
 void PlatformClutterAnimation::removeAnimationForKey(GraphicsLayerActor* layer, const String& key)
 {
-    ASSERT(animationType() == Basic);
-
     clutter_actor_remove_transition(CLUTTER_ACTOR(layer), key.utf8().data());
     g_object_set_data(G_OBJECT(layer), key.utf8().data(), 0);
 }
