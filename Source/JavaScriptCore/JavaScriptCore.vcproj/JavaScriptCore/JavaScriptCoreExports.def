@@ -25,7 +25,6 @@ EXPORTS
     ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
     ??0RegExpObject@JSC@@IAE@PAVJSGlobalObject@1@PAVStructure@1@PAVRegExp@1@@Z
     ??0SHA1@WTF@@QAE@XZ
-    ??0SourceProvider@JSC@@QAE@ABVString@WTF@@ABVTextPosition@3@PAVSourceProviderCache@1@@Z
     ??0StringObject@JSC@@IAE@AAVJSGlobalData@1@PAVStructure@1@@Z
     ??0StringPrintStream@WTF@@QAE@XZ
     ??0Structure@JSC@@AAE@AAVJSGlobalData@1@PAVJSGlobalObject@1@VJSValue@1@ABVTypeInfo@1@PBUClassInfo@1@EI@Z
@@ -96,7 +95,6 @@ EXPORTS
     ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
     ?bufferLengthForStringExponential@DecimalNumber@WTF@@QBEIXZ
     ?byteCompile@Yarr@JSC@@YA?AV?$PassOwnPtr@UBytecodePattern@Yarr@JSC@@@WTF@@AAUYarrPattern@12@PAVBumpPointerAllocator@4@@Z
-    ?byteSize@SourceProviderCache@JSC@@QBEIXZ
     ?calculatedFunctionName@DebuggerCallFrame@JSC@@QBE?AVString@WTF@@XZ
     ?calculateDSTOffset@WTF@@YANNN@Z
     ?calculateStringHashAndLengthFromUTF8MaskingTop8Bits@Unicode@WTF@@YAIPBD0AAI1@Z

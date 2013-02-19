@@ -1,3 +1,10 @@
+2013-02-18  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed Windows build fix.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-02-18  Darin Adler  <darin@apple.com>
 
         Remove unneeded explicit function template arguments.
