@@ -1020,9 +1020,6 @@ private:
     void layoutBlockChild(RenderBox* child, MarginInfo&, LayoutUnit& previousFloatLogicalBottom, LayoutUnit& maxFloatLogicalBottom);
     void adjustPositionedBlock(RenderBox* child, const MarginInfo&);
     void adjustFloatingBlock(const MarginInfo&);
-    bool handleSpecialChild(RenderBox* child, const MarginInfo&);
-    bool handleFloatingChild(RenderBox* child, const MarginInfo&);
-    bool handlePositionedChild(RenderBox* child, const MarginInfo&);
 
     RenderBoxModelObject* createReplacementRunIn(RenderBoxModelObject* runIn);
     void moveRunInUnderSiblingBlockIfNeeded(RenderObject* runIn);

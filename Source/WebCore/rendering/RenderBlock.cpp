@@ -1842,34 +1842,6 @@ void RenderBlock::adjustFloatingBlock(const MarginInfo& marginInfo)
     setLogicalHeight(logicalHeight() - marginOffset);
 }
 
-bool RenderBlock::handleSpecialChild(RenderBox* child, const MarginInfo& marginInfo)
-{
-    // Handle in the given order
-    return handlePositionedChild(child, marginInfo)
-        || handleFloatingChild(child, marginInfo);
-}
-
-
-bool RenderBlock::handlePositionedChild(RenderBox* child, const MarginInfo& marginInfo)
-{
-    if (child->isOutOfFlowPositioned()) {
-        child->containingBlock()->insertPositionedObject(child);
-        adjustPositionedBlock(child, marginInfo);
-        return true;
-    }
-    return false;
-}
-
-bool RenderBlock::handleFloatingChild(RenderBox* child, const MarginInfo& marginInfo)
-{
-    if (child->isFloating()) {
-        insertFloatingObject(child);
-        adjustFloatingBlock(marginInfo);
-        return true;
-    }
-    return false;
-}
-
 static void destroyRunIn(RenderBoxModelObject* runIn)
 {
     ASSERT(runIn->isRunIn());
@@ -2498,10 +2470,16 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, LayoutUnit& maxFloa
 
         updateBlockChildDirtyBitsBeforeLayout(relayoutChildren, child);
 
-        // Handle the four types of special elements first.  These include positioned content, floating content, compacts and
-        // run-ins.  When we encounter these four types of objects, we don't actually lay them out as normal flow blocks.
-        if (handleSpecialChild(child, marginInfo))
+        if (child->isOutOfFlowPositioned()) {
+            child->containingBlock()->insertPositionedObject(child);
+            adjustPositionedBlock(child, marginInfo);
             continue;
+        }
+        if (child->isFloating()) {
+            insertFloatingObject(child);
+            adjustFloatingBlock(marginInfo);
+            continue;
+        }
 
         // Lay out the child.
         layoutBlockChild(child, marginInfo, previousFloatLogicalBottom, maxFloatLogicalBottom);
