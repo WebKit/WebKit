@@ -1137,6 +1137,8 @@ protected:
 
     void createFloatingObjects();
 
+public:
+
     class FloatingObjects {
         WTF_MAKE_NONCOPYABLE(FloatingObjects); WTF_MAKE_FAST_ALLOCATED;
     public:
@@ -1176,6 +1178,8 @@ protected:
 
         friend void RenderBlock::createFloatingObjects();
     };
+
+protected:
 
     OwnPtr<FloatingObjects> m_floatingObjects;
 
