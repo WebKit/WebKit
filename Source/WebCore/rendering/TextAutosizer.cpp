@@ -149,7 +149,10 @@ void TextAutosizer::processClusterInternal(TextAutosizingClusterInfo& clusterInf
 
     processContainer(multiplier, container, clusterInfo, subtreeRoot, windowInfo);
 
-    processCompositeCluster(clusterInfo.narrowDescendants, windowInfo);
+    Vector<Vector<TextAutosizingClusterInfo> > narrowDescendantsGroups;
+    getNarrowDescendantsGroupedByWidth(clusterInfo, narrowDescendantsGroups);
+    for (size_t i = 0; i < narrowDescendantsGroups.size(); ++i)
+        processCompositeCluster(narrowDescendantsGroups[i], windowInfo);
 }
 
 void TextAutosizer::processCluster(TextAutosizingClusterInfo& clusterInfo, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
@@ -554,6 +557,43 @@ const RenderObject* TextAutosizer::findFirstTextLeafNotInCluster(const RenderObj
     --depth;
 
     return 0;
+}
+
+namespace {
+
+// Compares the width of the specified cluster's roots in descending order.
+bool clusterWiderThanComparisonFn(const TextAutosizingClusterInfo& first, const TextAutosizingClusterInfo& second)
+{
+    return first.root->contentLogicalWidth() > second.root->contentLogicalWidth();
+}
+
+} // namespace
+
+void TextAutosizer::getNarrowDescendantsGroupedByWidth(const TextAutosizingClusterInfo& parentClusterInfo, Vector<Vector<TextAutosizingClusterInfo> >& groups)
+{
+    ASSERT(parentClusterInfo.blockContainingAllText);
+    ASSERT(groups.isEmpty());
+
+    Vector<TextAutosizingClusterInfo> clusterInfos(parentClusterInfo.narrowDescendants);
+    if (clusterInfos.isEmpty())
+        return;
+
+    std::sort(clusterInfos.begin(), clusterInfos.end(), &clusterWiderThanComparisonFn);
+    groups.grow(1);
+
+    // If the width difference between two consecutive elements of |clusterInfos| is greater than
+    // this empirically determined value, the next element should start a new group.
+    const float maxWidthDifferenceWithinGroup = 100;
+    for (size_t i = 0; i < clusterInfos.size(); ++i) {
+        groups.last().append(clusterInfos[i]);
+
+        if (i + 1 < clusterInfos.size()) {
+            float currentWidth = clusterInfos[i].root->contentLogicalWidth();
+            float nextWidth = clusterInfos[i + 1].root->contentLogicalWidth();
+            if (currentWidth - nextWidth > maxWidthDifferenceWithinGroup)
+                groups.grow(groups.size() + 1);
+        }
+    }
 }
 
 } // namespace WebCore

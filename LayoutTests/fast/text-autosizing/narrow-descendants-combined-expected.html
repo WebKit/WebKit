@@ -12,14 +12,19 @@ body { width: 800px; margin: 0; overflow-y: hidden; }
 <body>
 
 <div style="font-size: 1.25rem">
+    <div style="width: 240px">
+        This text should be autosized to 20px computed font-size as it is combined with the next and the last narrow siblings and the maximum width is 400px.
+    </div>
     <div style="width: 320px">
-        This text should be autosized to 20px computed font-size as it is combined with its narrow siblings and the maximum width is 400px.
+        This text should be autosized to 20px computed font-size as it is combined with the first and the last narrow siblings and the maximum width is 400px.
+    </div>
+    <div style="width: 560px; font-size: 1.75rem">
+        This text should be autosized to 28px computed font-size as it is combined into a separate group from its two siblings since it's significantly wider.<br>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </div>
     <div style="width: 400px">
-        This text should be autosized to 20px computed font-size as it is combined with its narrow siblings and the maximum width is 400px.
-    </div>
-    <div style="width: 240px">
-        This text should be autosized to 20px computed font-size as it is combined with its narrow siblings and the maximum width is 400px.
+        This text should be autosized to 20px computed font-size as it is combined with the first and the second narrow siblings and the maximum width is 400px.<br>
+        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     </div>
 </div>
 
