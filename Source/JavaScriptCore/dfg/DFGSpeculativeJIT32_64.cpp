@@ -855,7 +855,12 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(Node* node, DataFormat& returnFo
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-
+        if ((node->hasConstant() && !isInt32Constant(node)) || info.spillFormat() == DataFormatDouble) {
+            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
+            returnFormat = DataFormatInteger;
+            return allocate();
+        }
+        
         if (node->hasConstant()) {
             ASSERT(isInt32Constant(node));
             GPRReg gpr = allocate();
@@ -913,9 +918,11 @@ GPRReg SpeculativeJIT::fillSpeculateIntInternal(Node* node, DataFormat& returnFo
     case DataFormatJSDouble:
     case DataFormatJSCell:
     case DataFormatJSBoolean:
-    case DataFormatStorage:
-        RELEASE_ASSERT_NOT_REACHED();
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
+        returnFormat = DataFormatInteger;
+        return allocate();
 
+    case DataFormatStorage:
     default:
         RELEASE_ASSERT_NOT_REACHED();
         return InvalidGPRReg;
@@ -959,8 +966,10 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Node* node, SpeculationDirection dire
                 m_fprs.retain(fpr, virtualRegister, SpillOrderConstant);
                 info.fillDouble(*m_stream, fpr);
                 return fpr;
-            } else
-                RELEASE_ASSERT_NOT_REACHED();
+            } else {
+                terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
+                return fprAllocate();
+            }
         } else {
             DataFormat spillFormat = info.spillFormat();
             ASSERT((spillFormat & DataFormatJS) || spillFormat == DataFormatInteger);
@@ -1052,11 +1061,14 @@ FPRReg SpeculativeJIT::fillSpeculateDouble(Node* node, SpeculationDirection dire
 
     case DataFormatNone:
     case DataFormatStorage:
+        RELEASE_ASSERT_NOT_REACHED();
+
     case DataFormatCell:
     case DataFormatJSCell:
     case DataFormatBoolean:
     case DataFormatJSBoolean:
-        RELEASE_ASSERT_NOT_REACHED();
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
+        return fprAllocate();
 
     default:
         RELEASE_ASSERT_NOT_REACHED();
@@ -1078,11 +1090,14 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Node* node, SpeculationDirection direct
 
         if (node->hasConstant()) {
             JSValue jsValue = valueOfJSConstant(node);
-            ASSERT(jsValue.isCell());
             GPRReg gpr = allocate();
-            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), gpr);
-            info.fillCell(*m_stream, gpr);
+            if (jsValue.isCell()) {
+                m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
+                m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), gpr);
+                info.fillCell(*m_stream, gpr);
+                return gpr;
+            }
+            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
             return gpr;
         }
 
@@ -1124,6 +1139,9 @@ GPRReg SpeculativeJIT::fillSpeculateCell(Node* node, SpeculationDirection direct
     case DataFormatDouble:
     case DataFormatJSBoolean:
     case DataFormatBoolean:
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
+        return allocate();
+
     case DataFormatStorage:
         RELEASE_ASSERT_NOT_REACHED();
 
@@ -1141,22 +1159,24 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Node* node, SpeculationDirection dir
     SpeculatedType type = m_state.forNode(node).m_type;
     VirtualRegister virtualRegister = node->virtualRegister();
     GenerationInfo& info = m_generationInfo[virtualRegister];
-    if ((node->hasConstant() && !valueOfJSConstant(node).isBoolean())
-        || !(info.isJSBoolean() || info.isUnknownJS())) {
-        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
-        return allocate();
-    }
 
     switch (info.registerFormat()) {
     case DataFormatNone: {
-
+        if (info.spillFormat() == DataFormatInteger || info.spillFormat() == DataFormatDouble) {
+            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
+            return allocate();
+        }
+        
         if (node->hasConstant()) {
             JSValue jsValue = valueOfJSConstant(node);
-            ASSERT(jsValue.isBoolean());
             GPRReg gpr = allocate();
-            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
-            m_jit.move(MacroAssembler::TrustedImm32(jsValue.asBoolean()), gpr);
-            info.fillBoolean(*m_stream, gpr);
+            if (jsValue.isBoolean()) {
+                m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
+                m_jit.move(MacroAssembler::TrustedImm32(jsValue.asBoolean()), gpr);
+                info.fillBoolean(*m_stream, gpr);
+                return gpr;
+            }
+            terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
             return gpr;
         }
 
@@ -1201,6 +1221,9 @@ GPRReg SpeculativeJIT::fillSpeculateBoolean(Node* node, SpeculationDirection dir
     case DataFormatDouble:
     case DataFormatJSCell:
     case DataFormatCell:
+        terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0, direction);
+        return allocate();
+
     case DataFormatStorage:
         RELEASE_ASSERT_NOT_REACHED();
 

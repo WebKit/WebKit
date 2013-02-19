@@ -2074,10 +2074,10 @@ GeneratedOperandType SpeculativeJIT::checkGeneratedTypeForToInt32(Node* node)
     }
 
     switch (info.registerFormat()) {
-    case DataFormatBoolean: // This type never occurs.
     case DataFormatStorage:
         RELEASE_ASSERT_NOT_REACHED();
 
+    case DataFormatBoolean:
     case DataFormatCell:
         terminateSpeculativeExecution(Uncountable, JSValueRegs(), 0);
         return GeneratedOperandTypeUnknown;
@@ -2249,7 +2249,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         return;
     }
     case GeneratedOperandTypeUnknown:
-        RELEASE_ASSERT_NOT_REACHED();
+        ASSERT(!m_compileOkay);
         break;
     }
 }

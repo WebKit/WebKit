@@ -1,3 +1,24 @@
+2013-02-19  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r143241): It made 27 layout tests crash on 32 bit platforms
+        https://bugs.webkit.org/show_bug.cgi?id=110184
+
+        Reviewed by Zoltan Herczeg.
+        
+        32-bit backend was making all sorts of crazy assumptions, which happened to mostly
+        not break things prior to http://trac.webkit.org/changeset/143241. This brings the
+        32-bit backend's type speculation fully into compliance with what the 64-bit
+        backend does.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkGeneratedTypeForToInt32):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+
 2013-02-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed build fix for Apple Windows. Second stage.
