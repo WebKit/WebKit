@@ -70,13 +70,69 @@
       ],
     },
     {
+      'target_name': 'GenerateLUTs',
+      'type': 'none',
+      'sources': [
+          '../runtime/ArrayConstructor.cpp',
+          '../runtime/ArrayPrototype.cpp',
+          '../runtime/BooleanPrototype.cpp',
+          '../runtime/DateConstructor.cpp',
+          '../runtime/DatePrototype.cpp',
+          '../runtime/ErrorPrototype.cpp',
+          '../runtime/JSONObject.cpp',
+          '../runtime/JSGlobalObject.cpp',
+          '../runtime/MathObject.cpp',
+          '../runtime/NamePrototype.cpp',
+          '../runtime/NumberConstructor.cpp',
+          '../runtime/NumberPrototype.cpp',
+          '../runtime/ObjectConstructor.cpp',
+          '../runtime/ObjectPrototype.cpp',
+          '../runtime/RegExpConstructor.cpp',
+          '../runtime/RegExpPrototype.cpp',
+          '../runtime/RegExpObject.cpp',
+          '../runtime/StringConstructor.cpp',
+          '../runtime/StringPrototype.cpp',
+      ],
+      'rules' : [
+        {
+          'rule_name': 'GenerateLUT',
+          'extension': 'cpp',
+          'inputs': [ '<(JavaScriptCore)/create_hash_table', ],
+          'outputs': [
+            '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/<(RULE_INPUT_ROOT).lut.h',
+          ],
+          'action': [
+            './redirect-stdout.sh',
+            '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/<(RULE_INPUT_ROOT).lut.h',
+            'perl', '<@(_inputs)', '<(RULE_INPUT_PATH)', '-i',
+          ],
+        }
+      ],
+      'actions': [
+        {
+          'action_name': 'GenerateLexerLUT',
+          'inputs': [
+              '<(JavaScriptCore)/create_hash_table',
+              '<(JavaScriptCore)/parser/Keywords.table',
+           ],
+          'outputs': [ '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/Lexer.lut.h', ],
+          'action': [
+            './redirect-stdout.sh',
+            '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/Lexer.lut.h',
+            'perl', '<@(_inputs)',
+          ],
+        },
+      ],
+    },
+    {
       'target_name': 'libjavascriptcoregtk',
         'type': 'shared_library',
         'dependencies': [
-          '<(Source)/WTF/WTF.gyp/WTFGTK.gyp:wtf',
-          'LLIntOffsetExtractor',
           '<(Dependencies):glib',
           '<(Dependencies):icu',
+          '<(Source)/WTF/WTF.gyp/WTFGTK.gyp:wtf',
+          'GenerateLUTs',
+          'LLIntOffsetExtractor',
         ],
         'product_extension': 'so.<@(javascriptcore_soname_version)',
         'product_name': 'javascriptcoregtk-<@(api_version)',
@@ -94,17 +150,6 @@
         ],
       'actions': [
         {
-          'action_name': 'Generate Derived Sources',
-          'inputs': [
-            '<(JavaScriptCore)/DerivedSources.make',
-            'generate-derived-sources.sh',
-          ],
-          'outputs': [
-            '<@(javascriptcore_derived_source_files)',
-          ],
-          'action': ['sh', 'generate-derived-sources.sh', '<@(project_dir)', '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore'],
-        },
-        {
           'action_name': 'llintassembly_header_generation',
           'inputs': [
             '<(JavaScriptCore)/offlineasm/asm.rb',
@@ -115,6 +160,29 @@
             '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/LLIntAssembly.h',
           ],
           'action': ['ruby', '<@(_inputs)', '<@(_outputs)'],
+        },
+        {
+          'action_name': 'GenerateRegExpJitTables',
+          'inputs': [ '<(JavaScriptCore)/create_regex_tables', ],
+          'outputs': [ '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/RegExpJitTables.h', ],
+          'action': [
+            './redirect-stdout.sh',
+            '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/RegExpJitTables.h',
+            'python', '<@(_inputs)'
+          ],
+        },
+        {
+          'action_name': 'GenerateKeywordLookup',
+          'inputs': [
+            '<(JavaScriptCore)/KeywordLookupGenerator.py',
+            '<(JavaScriptCore)/parser/Keywords.table',
+          ],
+          'outputs': [ '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/KeywordLookup.h', ],
+          'action': [
+            './redirect-stdout.sh',
+            '<(PRODUCT_DIR)/DerivedSources/JavaScriptCore/KeywordLookup.h',
+            'python', '<@(_inputs)'
+          ],
         },
       ],
     },

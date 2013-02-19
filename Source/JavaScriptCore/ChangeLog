@@ -1,3 +1,18 @@
+2013-02-15  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Improve gyp build JavaScriptCore code generation
+        https://bugs.webkit.org/show_bug.cgi?id=109969
+
+        Reviewed by Dirk Pranke.
+
+        Switch away from using DerivedSources.make when building JavaScriptCore generated
+        sources. This bring a couple advantages, such as building the sources in parallel,
+        but requires us to list the generated sources more than once.
+
+        * JavaScriptCore.gyp/JavaScriptCoreGTK.gyp: Add rules for generating JavaScriptCore sources.
+        * JavaScriptCore.gyp/generate-derived-sources.sh: Added.
+        * JavaScriptCore.gyp/redirect-stdout.sh: Added.
+
 2013-02-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r143348.
