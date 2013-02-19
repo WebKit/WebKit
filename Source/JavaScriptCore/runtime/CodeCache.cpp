@@ -105,7 +105,7 @@ UnlinkedEvalCodeBlock* CodeCache::getEvalCodeBlock(JSGlobalData& globalData, Eva
 
 UnlinkedFunctionExecutable* CodeCache::getFunctionExecutableFromGlobalCode(JSGlobalData& globalData, const Identifier& name, const SourceCode& source, ParserError& error)
 {
-    SourceCodeKey key = SourceCodeKey(source, name.string(), SourceCodeKey::FunctionCallType, JSParseNormal);
+    SourceCodeKey key = SourceCodeKey(source, name.string(), SourceCodeKey::FunctionType, JSParseNormal);
     const Strong<JSCell>* result = m_sourceCode.find(key);
     if (result)
         return jsCast<UnlinkedFunctionExecutable*>(result->get());

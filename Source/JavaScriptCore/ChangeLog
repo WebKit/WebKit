@@ -1,3 +1,29 @@
+2013-02-18  Geoffrey Garen  <ggaren@apple.com>
+
+        Save space on keys in the CodeCache
+        https://bugs.webkit.org/show_bug.cgi?id=110179
+
+        Reviewed by Oliver Hunt.
+
+        Share the SourceProvider's string instead of making our own copy. This
+        chops off 16MB - 32MB from the CodeCache's memory footprint when full.
+        (It's 16MB when the strings are LChar, and 32MB when they're UChar.)
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode):
+        * runtime/CodeCache.h: Removed a defunct enum value.
+
+        (JSC::SourceCodeKey::SourceCodeKey):
+        (JSC::SourceCodeKey::isHashTableDeletedValue):
+        (SourceCodeKey):
+        (JSC::SourceCodeKey::hash):
+        (JSC::SourceCodeKey::length):
+        (JSC::SourceCodeKey::isNull):
+        (JSC::SourceCodeKey::string):
+        (JSC::SourceCodeKey::operator==): Store a SourceCode instead of a String
+        so we can share our string with our SourceProvider. Cache our hash so
+        we don't have to re-decode our string just to re-hash the table.
+
 2013-02-19  Zoltan Herczeg  <zherczeg@webkit.org>
 
         revertBranchPtrWithPatch is incorrect on ARM traditional
