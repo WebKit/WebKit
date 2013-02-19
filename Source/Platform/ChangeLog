@@ -1,3 +1,14 @@
+2013-02-19  Tommy Widenflycht  <tommyw@google.com>
+
+        WebAudio API: Change the Platform::createAudioDevice function to take a DeviceId parameter
+        https://bugs.webkit.org/show_bug.cgi?id=110192
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/Platform.h:
+        (WebKit::Platform::createAudioDevice):
+        (Platform):
+
 2013-02-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r142841.
