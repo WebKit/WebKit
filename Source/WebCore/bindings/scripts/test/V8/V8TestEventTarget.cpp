@@ -72,7 +72,7 @@ static v8::Handle<v8::Value> itemCallback(const v8::Arguments& args)
     TestEventTarget* imp = V8TestEventTarget::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    V8TRYCATCH(int, index, toUInt32(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(int, index, toUInt32(args[0]));
     if (UNLIKELY(index < 0)) {
         ec = INDEX_SIZE_ERR;
         goto fail;
@@ -112,7 +112,7 @@ static v8::Handle<v8::Value> dispatchEventCallback(const v8::Arguments& args)
     TestEventTarget* imp = V8TestEventTarget::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    V8TRYCATCH(Event*, evt, V8Event::HasInstance(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate()) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined))) : 0);
+    V8TRYCATCH(Event*, evt, V8Event::HasInstance(args[0], args.GetIsolate()) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
     bool result = imp->dispatchEvent(evt, ec);
     if (UNLIKELY(ec))
         goto fail;

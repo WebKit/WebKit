@@ -83,9 +83,9 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
     ExceptionCode ec = 0;
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str1, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str2, MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined));
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str3, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str1, args[0]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str2, args[1]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str3, argumentOrNull(args, 2));
 
     RefPtr<TestNamedConstructor> impl = TestNamedConstructor::createForJSConstructor(document, str1, str2, str3, ec);
     v8::Handle<v8::Object> wrapper = args.Holder();

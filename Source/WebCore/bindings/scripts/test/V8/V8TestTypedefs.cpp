@@ -192,7 +192,7 @@ static v8::Handle<v8::Value> funcCallback(const v8::Arguments& args)
     }
     if (args.Length() > 0 && !isUndefinedOrNull(args[0]) && !V8long[]::HasInstance(args[0], args.GetIsolate()))
         return throwTypeError(0, args.GetIsolate());
-    V8TRYCATCH(Vector<int>, x, toNativeArray<int>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(Vector<int>, x, toNativeArray<int>(args[0]));
     imp->func(x);
     return v8Undefined();
 }
@@ -243,19 +243,19 @@ static v8::Handle<v8::Value> setShadowCallback(const v8::Arguments& args)
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
-    V8TRYCATCH(float, width, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)->NumberValue()));
-    V8TRYCATCH(float, height, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 1, DefaultIsUndefined)->NumberValue()));
-    V8TRYCATCH(float, blur, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 2, DefaultIsUndefined)->NumberValue()));
+    V8TRYCATCH(float, width, static_cast<float>(args[0]->NumberValue()));
+    V8TRYCATCH(float, height, static_cast<float>(args[1]->NumberValue()));
+    V8TRYCATCH(float, blur, static_cast<float>(args[2]->NumberValue()));
     if (args.Length() <= 3) {
         imp->setShadow(width, height, blur);
         return v8Undefined();
     }
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, color, MAYBE_MISSING_PARAMETER(args, 3, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, color, args[3]);
     if (args.Length() <= 4) {
         imp->setShadow(width, height, blur, color);
         return v8Undefined();
     }
-    V8TRYCATCH(float, alpha, static_cast<float>(MAYBE_MISSING_PARAMETER(args, 4, DefaultIsUndefined)->NumberValue()));
+    V8TRYCATCH(float, alpha, static_cast<float>(args[4]->NumberValue()));
     imp->setShadow(width, height, blur, color, alpha);
     return v8Undefined();
 }
@@ -265,7 +265,7 @@ static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& 
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
-    V8TRYCATCH(Vector<RefPtr<SerializedScriptValue> >, sequenceArg, (toRefPtrNativeArray<SerializedScriptValue, V8SerializedScriptValue>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined), args.GetIsolate())));
+    V8TRYCATCH(Vector<RefPtr<SerializedScriptValue> >, sequenceArg, (toRefPtrNativeArray<SerializedScriptValue, V8SerializedScriptValue>(args[0], args.GetIsolate())));
     return v8::Number::New(static_cast<double>(imp->methodWithSequenceArg(sequenceArg)));
 }
 
@@ -274,7 +274,7 @@ static v8::Handle<v8::Value> nullableArrayArgCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
-    V8TRYCATCH(Vector<String>, arrayArg, toNativeArray<String>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(Vector<String>, arrayArg, toNativeArray<String>(args[0]));
     imp->nullableArrayArg(arrayArg);
     return v8Undefined();
 }
@@ -313,7 +313,7 @@ static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& ar
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    V8TRYCATCH(Vector<String>, values, toNativeArray<String>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(Vector<String>, values, toNativeArray<String>(args[0]));
     Vector<String> result = imp->stringArrayFunction(values, ec);
     if (UNLIKELY(ec))
         goto fail;
@@ -330,7 +330,7 @@ static v8::Handle<v8::Value> stringArrayFunction2Callback(const v8::Arguments& a
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
-    V8TRYCATCH(Vector<String>, values, toNativeArray<String>(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(Vector<String>, values, toNativeArray<String>(args[0]));
     Vector<String> result = imp->stringArrayFunction2(values, ec);
     if (UNLIKELY(ec))
         goto fail;
@@ -392,7 +392,7 @@ v8::Handle<v8::Value> V8TestTypedefs::constructorCallback(const v8::Arguments& a
         return args.Holder();
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, hello, MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, hello, args[0]);
     if (args.Length() <= 1 || !args[1]->IsFunction())
         return throwTypeError(0, args.GetIsolate());
     RefPtr<TestCallback> testCallback = V8TestCallback::create(args[1], getScriptExecutionContext());

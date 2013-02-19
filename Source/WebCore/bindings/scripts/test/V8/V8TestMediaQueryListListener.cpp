@@ -67,7 +67,7 @@ static v8::Handle<v8::Value> methodCallback(const v8::Arguments& args)
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     TestMediaQueryListListener* imp = V8TestMediaQueryListListener::toNative(args.Holder());
-    V8TRYCATCH(RefPtr<MediaQueryListListener>, listener, MediaQueryListListener::create(MAYBE_MISSING_PARAMETER(args, 0, DefaultIsUndefined)));
+    V8TRYCATCH(RefPtr<MediaQueryListListener>, listener, MediaQueryListListener::create(args[0]));
     imp->method(listener);
     return v8Undefined();
 }

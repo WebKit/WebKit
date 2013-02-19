@@ -1812,7 +1812,7 @@ sub GenerateParametersCheck
                 $parameterCheckString .= "    V8TRYCATCH(Vector<$nativeElementType>, $parameterName, toNativeArguments<$nativeElementType>(args, $paramIndex));\n";
             }
         } elsif ($nativeType =~ /^V8StringResource/) {
-            my $value = JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()");
+            my $value = JSValueToNative($parameter, $optional eq "DefaultIsNullString" ? "argumentOrNull(args, $paramIndex)" : "args[$paramIndex]", "args.GetIsolate()");
             $parameterCheckString .= "    " . ConvertToV8StringResource($parameter, $nativeType, $parameterName, $value) . "\n";
         } else {
             # If the "StrictTypeChecking" extended attribute is present, and the argument's type is an
@@ -1830,7 +1830,7 @@ sub GenerateParametersCheck
                 }
             }
             $parameterCheckString .= "    V8TRYCATCH($nativeType, $parameterName, " .
-                 JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(args, $paramIndex, $parameterDefaultPolicy)", "args.GetIsolate()") . ");\n";
+                 JSValueToNative($parameter, $optional eq "DefaultIsNullString" ? "argumentOrNull(args, $paramIndex)" : "args[$paramIndex]", "args.GetIsolate()") . ");\n";
             if ($nativeType eq 'Dictionary') {
                $parameterCheckString .= "    if (!$parameterName.isUndefinedOrNull() && !$parameterName.isObject())\n";
                $parameterCheckString .= "        return throwTypeError(\"Not an object.\", args.GetIsolate());\n";

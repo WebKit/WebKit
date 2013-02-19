@@ -65,7 +65,7 @@ v8::Handle<v8::Value> V8History::pushStateCallbackCustom(const v8::Arguments& ar
         return v8::Undefined();
 
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[1]);
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, url, argumentOrNull(args, 2));
 
     ExceptionCode ec = 0;
     History* history = V8History::toNative(args.Holder());
@@ -82,7 +82,7 @@ v8::Handle<v8::Value> V8History::replaceStateCallbackCustom(const v8::Arguments&
         return v8::Undefined();
 
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[1]);
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, url, MAYBE_MISSING_PARAMETER(args, 2, DefaultIsNullString));
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, url, argumentOrNull(args, 2));
 
     ExceptionCode ec = 0;
     History* history = V8History::toNative(args.Holder());
