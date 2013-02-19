@@ -37,12 +37,10 @@ function test()
     InspectorTest.addResult(fileMapping.uriForURL("https://localhost"));
     InspectorTest.addResult(fileMapping.uriForURL("http://example.com"));
 
-    InspectorTest.addResult(fileMapping.urlForURI("uri:/home/example.com"));
-    InspectorTest.addResult(fileMapping.urlForURI("uri:/home/example.com/"));
-    InspectorTest.addResult(fileMapping.urlForURI("uri:/var/www/index.html"));
-    InspectorTest.addResult(fileMapping.urlForURI("uri:/var/www/foo/index.html"));
-    InspectorTest.addResult(fileMapping.urlForURI("https://localhost"));
-    InspectorTest.addResult(fileMapping.urlForURI("http://example.com"));
+    InspectorTest.addResult(fileMapping.urlForPath("/home/example.com"));
+    InspectorTest.addResult(fileMapping.urlForPath("/home/example.com/"));
+    InspectorTest.addResult(fileMapping.urlForPath("/var/www/index.html"));
+    InspectorTest.addResult(fileMapping.urlForPath("/var/www/foo/index.html"));
 
     InspectorTest.addResult("All mappings were correct.");
     InspectorTest.completeTest();

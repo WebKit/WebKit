@@ -400,6 +400,21 @@ InspectorTest.StringOutputStream.prototype = {
     }
 };
 
+InspectorTest.MockSetting = function(value)
+{
+    this._value = value;
+};
+
+InspectorTest.MockSetting.prototype = {
+    get: function() {
+        return this._value;
+    },
+
+    set: function(value) {
+        this._value = value;
+    }
+};
+
 };
 
 var initializeCallId = 0;

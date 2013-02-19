@@ -34,11 +34,13 @@
  * @param {string} id
  * @param {string} path
  */
-WebInspector.IsolatedFileSystem = function(manager, id, path)
+WebInspector.IsolatedFileSystem = function(manager, id, path, name, rootURL)
 {
     this._manager = manager;
     this._id = id;
     this._path = path;
+    this._name = name;
+    this._rootURL = rootURL;
 }
 
 WebInspector.IsolatedFileSystem.errorMessage = function(error)
@@ -83,6 +85,22 @@ WebInspector.IsolatedFileSystem.prototype = {
     path: function()
     {
         return this._path;
+    },
+
+    /**
+     * @return {string}
+     */
+    name: function()
+    {
+        return this._name;
+    },
+
+    /**
+     * @return {string}
+     */
+    rootURL: function()
+    {
+        return this._rootURL;
     },
 
     /**

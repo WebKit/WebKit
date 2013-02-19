@@ -4,21 +4,6 @@
 <script>
 function test()
 {
-    var MockSetting = function(value)
-    {
-        this._value = value;
-    };
-    var value;
-    MockSetting.prototype = {
-        get: function() {
-            return this._value;
-        },
-
-        set: function(value) {
-            this._value = value;
-        }
-    }
-
     function createBreakpoint(uiSourceCodeId, lineNumber, condition, enabled)
     {
         return { sourceFileId: uiSourceCodeId, lineNumber: lineNumber, condition: condition, enabled: enabled };
@@ -57,7 +42,7 @@ function test()
                 var serializedBreakpoints = [];
                 for (var i = 0; i < breakpointsCount; ++i)
                     serializedBreakpoints.push(createBreakpoint("file" + i + ".js", i % 10, "", true));
-                var breakpointsSetting = new MockSetting(serializedBreakpoints);
+                var breakpointsSetting = new InspectorTest.MockSetting(serializedBreakpoints);
                 versionController._clearBreakpointsWhenTooMany(breakpointsSetting, maxBreakpointsCount);
                 InspectorTest.addResult("Number of breakpoints left in the setting after the test: " + breakpointsSetting.get().length + ".");
                 InspectorTest.addResult("");

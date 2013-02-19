@@ -30,11 +30,10 @@
 
 /**
  * @constructor
- * @param {WebInspector.Workspace} workspace
+ * @extends {WebInspector.Object}
  */
-WebInspector.IsolatedFileSystemManager = function(workspace)
+WebInspector.IsolatedFileSystemManager = function()
 {
-    this._workspace = workspace;
     /** @type {!Object.<string, WebInspector.IsolatedFileSystemManager.FileSystem>} */
     this._fileSystems = {};
     /** @type {Object.<string, Array.<function(DOMFileSystem)>>} */
@@ -47,6 +46,11 @@ WebInspector.IsolatedFileSystemManager = function(workspace)
 
 /** @typedef {{fileSystemName: string, rootURL: string, fileSystemPath: string}} */
 WebInspector.IsolatedFileSystemManager.FileSystem;
+
+WebInspector.IsolatedFileSystemManager.Events = {
+    FileSystemAdded: "FileSystemAdded",
+    FileSystemRemoved: "FileSystemRemoved"
+}
 
 WebInspector.IsolatedFileSystemManager.prototype = {
     /**
@@ -106,11 +110,10 @@ WebInspector.IsolatedFileSystemManager.prototype = {
     _innerAddFileSystem: function(fileSystem)
     {
         var fileSystemPath = fileSystem.fileSystemPath;
-        this._fileSystems[fileSystemPath] = fileSystem;
         var fileSystemId = this._fileSystemMapping.addFileSystemMapping(fileSystemPath);
-        console.assert(!this._workspace.project(fileSystemId));
-        var isolatedFileSystem = new WebInspector.IsolatedFileSystem(this, fileSystemId, fileSystemPath);
-        this._workspace.addProject(new WebInspector.FileSystemProjectDelegate(isolatedFileSystem));
+        var isolatedFileSystem = new WebInspector.IsolatedFileSystem(this, fileSystemId, fileSystemPath, fileSystem.fileSystemName, fileSystem.rootURL);
+        this._fileSystems[fileSystemPath] = isolatedFileSystem;
+        this.dispatchEventToListeners(WebInspector.IsolatedFileSystemManager.Events.FileSystemAdded, isolatedFileSystem);
     },
 
     /**
@@ -157,14 +160,14 @@ WebInspector.IsolatedFileSystemManager.prototype = {
     _fileSystemRemoved: function(fileSystemPath)
     {
         var fileSystemId = this._fileSystemMapping.fileSystemId(fileSystemPath);
-        if (fileSystemId)
-            this._workspace.removeProject(fileSystemId);
         this._fileSystemMapping.removeFileSystemMapping(fileSystemPath);
+        var isolatedFileSystem = this._fileSystems[fileSystemPath];
         delete this._fileSystems[fileSystemPath];
         if (this._removeFileSystemCallback) {
             this._removeFileSystemCallback(fileSystemPath);
             delete this._removeFileSystemCallback;
         }
+        this.dispatchEventToListeners(WebInspector.IsolatedFileSystemManager.Events.FileSystemRemoved, isolatedFileSystem);
     },
 
     /**
@@ -178,7 +181,7 @@ WebInspector.IsolatedFileSystemManager.prototype = {
             return null;
         if (!InspectorFrontendHost.isolatedFileSystem)
             return null;
-        return InspectorFrontendHost.isolatedFileSystem(fileSystem.fileSystemName, fileSystem.rootURL);
+        return InspectorFrontendHost.isolatedFileSystem(fileSystem.name(), fileSystem.rootURL());
     },
 
     /**
@@ -194,7 +197,9 @@ WebInspector.IsolatedFileSystemManager.prototype = {
             return;
         }
         callback(this._isolatedFileSystem(fileSystemPath));
-    }
+    },
+
+    __proto__: WebInspector.Object.prototype
 }
 
 /**

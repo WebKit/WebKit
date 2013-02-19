@@ -10,7 +10,5 @@ http://www.example.com
 http://www.example.com/
 http://localhost/index.html
 http://localhost/foo/index.html
-
-
 All mappings were correct.
 

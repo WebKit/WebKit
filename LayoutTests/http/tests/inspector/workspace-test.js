@@ -9,15 +9,18 @@ InspectorTest.createWorkspace = function()
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, InspectorTest._defaultUISourceCodeProviderEventHandler);
 }
 
-InspectorTest.waitForWorkspaceUISourceCodeAddedEvent = function(callback)
+InspectorTest.waitForWorkspaceUISourceCodeAddedEvent = function(callback, count)
 {
+    InspectorTest.uiSourceCodeAddedEventsLeft = count || 1;
     InspectorTest.testWorkspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
 
     function uiSourceCodeAdded(event)
     {
-        InspectorTest.testWorkspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
-        InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
+        if (!(--InspectorTest.uiSourceCodeAddedEventsLeft)) {
+            InspectorTest.testWorkspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCodeAdded);
+            InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
+        }
         callback(event.data);
     }
 }
@@ -31,7 +34,8 @@ InspectorTest.addMockUISourceCodeToWorkspace = function(url, type, content)
 
 InspectorTest._defaultUISourceCodeProviderEventHandler = function(event)
 {
-    throw new Error("Unexpected UISourceCodeProvider event: " + event.type + ".");
+    var uiSourceCode = event.data;
+    throw new Error("Unexpected UISourceCodeProvider event: " + event.type + ": " + uiSourceCode.uri() + ".");
 }
 
 InspectorTest.dumpUISourceCode = function(uiSourceCode, callback)

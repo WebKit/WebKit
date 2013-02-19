@@ -95,16 +95,15 @@ WebInspector.FileMapping.prototype = {
     },
     
     /**
-     * @param {string} uri
+     * @param {string} path
      * @return {string}
      */
-    urlForURI: function(uri)
+    urlForPath: function(path)
     {
         for (var i = 0; i < this._entries.length; ++i) {
             var entry = this._entries[i];
-            var uriPrefix = this._entryURIPrefix(entry);
-            if (uriPrefix && uri.startsWith(uriPrefix))
-                return entry.urlPrefix + uri.substring(uriPrefix.length);
+            if (path.startsWith(entry.pathPrefix))
+                return entry.urlPrefix + path.substring(entry.pathPrefix.length);
         }
         return "";
     },
