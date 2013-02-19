@@ -1,3 +1,6 @@
 # This file contains generic test expectations that apply to all ports of WebKit.
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+# pending functional patch and per-port verification
+webkit.org/b/109954 css3/line-break [ Skip ]
