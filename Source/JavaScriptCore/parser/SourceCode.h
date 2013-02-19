@@ -44,6 +44,11 @@ namespace JSC {
         {
         }
 
+        SourceCode(WTF::HashTableDeletedValueType)
+            : m_provider(WTF::HashTableDeletedValue)
+        {
+        }
+
         SourceCode(PassRefPtr<SourceProvider> provider, int firstLine = 1)
             : m_provider(provider)
             , m_startChar(0)
@@ -59,6 +64,8 @@ namespace JSC {
             , m_firstLine(std::max(firstLine, 1))
         {
         }
+
+        bool isHashTableDeletedValue() const { return m_provider.isHashTableDeletedValue(); }
 
         String toString() const
         {
