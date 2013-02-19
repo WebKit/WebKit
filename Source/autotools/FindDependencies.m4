@@ -366,10 +366,10 @@ AC_SUBST([LIBSECRET_LIBS])
 # Check if FreeType/FontConfig are available.
 if test "$with_target" = "directfb"; then
     PKG_CHECK_MODULES([FREETYPE],
-        [fontconfig >= fontconfig_required_version freetype2 >= freetype2_required_version harfbuzz])
+        [fontconfig >= fontconfig_required_version freetype2 >= freetype2_required_version harfbuzz >= harfbuzz_required_version])
 else
     PKG_CHECK_MODULES([FREETYPE],
-        [cairo-ft fontconfig >= fontconfig_required_version freetype2 >= freetype2_required_version harfbuzz])
+        [cairo-ft fontconfig >= fontconfig_required_version freetype2 >= freetype2_required_version harfbuzz >= harfbuzz_required_version])
 fi
 AC_SUBST([FREETYPE_CFLAGS])
 AC_SUBST([FREETYPE_LIBS])

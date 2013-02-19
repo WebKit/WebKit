@@ -1,3 +1,14 @@
+2013-02-19  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Unreviewed build fix.
+
+        * Source/autotools/FindDependencies.m4:
+        * Source/autotools/Versions.m4:
+        * Source/cmake/FindHarfBuzz.cmake:
+
+        Bump gtk and efl dependencies on harfbuzz
+        to 0.9.7. See bug 110145.
+
 2013-02-19  Changhun Kang  <temoochin@company100.net>
 
         Only depend on xrender if x11 is being used

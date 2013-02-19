@@ -1,3 +1,12 @@
+2013-02-19  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Unreviewed build fix.
+
+        * efl/jhbuild.modules:
+        * gtk/jhbuild.modules:
+
+        Bump harfbuzz module to 0.9.7. See related bug 110145.
+
 2013-02-19  Simon Hausmann  <simon.hausmann@digia.com>
 
         [Qt] Skip the build with a warning if certain tools cannot be found in the PATH
