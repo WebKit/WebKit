@@ -1,3 +1,9 @@
+2013-02-19  Hans Muller  <hmuller@adobe.com>
+
+        Unreviewed. Adding myself as a committer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-19  Pravin D  <pravind@webkit.org>
 
         Unreviewed, changing primary email.
