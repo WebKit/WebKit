@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 17: PASS: blur event was fired on the active element when the iframe was focused.
+ 

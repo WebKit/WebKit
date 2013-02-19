@@ -56,48 +56,60 @@ function assertActiveElement(doc, expected)
         print('FAIL: ' + describe(doc) + ' document.activeElement is ' + describe(doc.activeElement) + ' but expected ' + describe(expected));
 }
 
+function setFocus(node, shouldFocusWindow)
+{
+    print('\nFocusing ' + describe(node) + (shouldFocusWindow ? ' after focusing its window' : ''));
+    if (shouldFocusWindow)
+        node.ownerDocument.defaultView.focus();
+    node.focus();
+}
+
+function test(shouldFocusWindow)
+{
+    setFocus(input0, shouldFocusWindow);
+    assertActiveElement(doc0, input0);
+    assertActiveElement(doc1, doc1.body);
+    assertActiveElement(doc2, doc2.body);
+    assertActiveElement(doc3, doc3.body);
+    assertActiveElement(doc4, doc4.body);
+
+    setFocus(input1, shouldFocusWindow);
+    assertActiveElement(doc0, iframe1);
+    assertActiveElement(doc1, input1);
+    assertActiveElement(doc2, doc2.body);
+    assertActiveElement(doc3, doc3.body);
+    assertActiveElement(doc4, doc4.body);
+
+    setFocus(input2, shouldFocusWindow);
+    assertActiveElement(doc0, iframe2);
+    assertActiveElement(doc1, doc1.body);
+    assertActiveElement(doc2, input2);
+    assertActiveElement(doc3, doc3.body);
+    assertActiveElement(doc4, doc4.body);
+
+    setFocus(input3, shouldFocusWindow);
+    assertActiveElement(doc0, iframe1);
+    assertActiveElement(doc1, iframe3);
+    assertActiveElement(doc2, doc2.body);
+    assertActiveElement(doc3, input3);
+    assertActiveElement(doc4, doc4.body);
+
+    setFocus(input4, shouldFocusWindow);
+    assertActiveElement(doc0, iframe2);
+    assertActiveElement(doc1, doc1.body);
+    assertActiveElement(doc2, iframe4);
+    assertActiveElement(doc3, doc3.body);
+    assertActiveElement(doc4, input4);
+}
+
 if (window.testRunner)
     testRunner.dumpAsText();
 
-print('Focusing ' + describe(input0));
-input0.focus();
-assertActiveElement(doc0, input0);
-assertActiveElement(doc1, doc1.body);
-assertActiveElement(doc2, doc2.body);
-assertActiveElement(doc3, doc3.body);
-assertActiveElement(doc4, doc4.body);
+// Test focusing elements directly.
+test(false);
 
-print('\nFocusing ' + describe(input1));
-input1.focus();
-assertActiveElement(doc0, iframe1);
-assertActiveElement(doc1, input1);
-assertActiveElement(doc2, doc2.body);
-assertActiveElement(doc3, doc3.body);
-assertActiveElement(doc4, doc4.body);
-
-print('\nFocusing ' + describe(input2));
-input2.focus();
-assertActiveElement(doc0, iframe2);
-assertActiveElement(doc1, doc1.body);
-assertActiveElement(doc2, input2);
-assertActiveElement(doc3, doc3.body);
-assertActiveElement(doc4, doc4.body);
-
-print('\nFocusing ' + describe(input3));
-input3.focus();
-assertActiveElement(doc0, iframe1);
-assertActiveElement(doc1, iframe3);
-assertActiveElement(doc2, doc2.body);
-assertActiveElement(doc3, input3);
-assertActiveElement(doc4, doc4.body);
-
-print('\nFocusing ' + describe(input4));
-input4.focus();
-assertActiveElement(doc0, iframe2);
-assertActiveElement(doc1, doc1.body);
-assertActiveElement(doc2, iframe4);
-assertActiveElement(doc3, doc3.body);
-assertActiveElement(doc4, input4);
+// Test focusing elements after focusing their windows first.
+test(true);
 
 </script>
 </body>
