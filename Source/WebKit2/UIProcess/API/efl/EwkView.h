@@ -156,6 +156,7 @@ public:
     bool mouseEventsEnabled() const { return m_mouseEventsEnabled; }
     void setMouseEventsEnabled(bool enabled);
 #if ENABLE(TOUCH_EVENTS)
+    void feedTouchEvent(Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers);
     bool touchEventsEnabled() const { return m_touchEventsEnabled; }
     void setTouchEventsEnabled(bool enabled);
 #endif

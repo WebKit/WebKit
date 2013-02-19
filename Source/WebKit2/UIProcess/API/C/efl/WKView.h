@@ -70,6 +70,11 @@ WK_EXPORT bool WKViewGetDrawsTransparentBackground(WKViewRef);
 WK_EXPORT void WKViewSuspendActiveDOMObjectsAndAnimations(WKViewRef);
 WK_EXPORT void WKViewResumeActiveDOMObjectsAndAnimations(WKViewRef);
 
+WK_EXPORT void WKViewSetShowsAsSource(WKViewRef, bool);
+WK_EXPORT bool WKViewGetShowsAsSource(WKViewRef);
+
+WK_EXPORT void WKViewExitFullScreen(WKViewRef);
+
 // FIXME: The long term plan is to get rid of this, so keep usage to a bare minimum.
 WK_EXPORT Evas_Object* WKViewGetEvasObject(WKViewRef);
 

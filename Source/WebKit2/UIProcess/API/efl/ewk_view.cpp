@@ -30,19 +30,6 @@
 #include "PageUIClientEfl.h"
 #include "PageViewportController.h"
 #include "PageViewportControllerClientEfl.h"
-#include "WKAPICast.h"
-#include "WKEinaSharedString.h"
-#include "WKFindOptions.h"
-#include "WKInspector.h"
-#include "WKRetainPtr.h"
-#include "WKString.h"
-#include "WKURL.h"
-#include "WKView.h"
-#include "WebContext.h"
-#include "WebData.h"
-#include "WebFullScreenManagerProxy.h"
-#include "WebPageGroup.h"
-#include "WebPreferences.h"
 #include "ewk_back_forward_list_private.h"
 #include "ewk_context.h"
 #include "ewk_context_private.h"
@@ -50,7 +37,16 @@
 #include "ewk_private.h"
 #include "ewk_settings_private.h"
 #include <Ecore_Evas.h>
+#include <WebKit2/WKAPICast.h>
+#include <WebKit2/WKData.h>
+#include <WebKit2/WKEinaSharedString.h>
+#include <WebKit2/WKFindOptions.h>
+#include <WebKit2/WKInspector.h>
 #include <WebKit2/WKPageGroup.h>
+#include <WebKit2/WKRetainPtr.h>
+#include <WebKit2/WKString.h>
+#include <WebKit2/WKURL.h>
+#include <WebKit2/WKView.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 
@@ -376,7 +372,7 @@ Eina_Bool ewk_view_feed_touch_event(Evas_Object* ewkView, Ewk_Touch_Event_Type t
     EINA_SAFETY_ON_NULL_RETURN_VAL(points, false);
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, impl->transformFromScene(), impl->transformToScreen(), ecore_time_get()));
+    impl->feedTouchEvent(type, points, modifiers);
 
     return true;
 #else
@@ -457,8 +453,8 @@ COMPILE_ASSERT_MATCHING_ENUM(EWK_PAGINATION_MODE_BOTTOM_TO_TOP, WebCore::Paginat
 Eina_Bool ewk_view_pagination_mode_set(Evas_Object* ewkView, Ewk_Pagination_Mode mode)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
-    
-    impl->page()->setPaginationMode(static_cast<WebCore::Pagination::Mode>(mode));
+    // FIXME: move to exported C WKPage API when it appears.
+    toImpl(impl->wkPage())->setPaginationMode(static_cast<WebCore::Pagination::Mode>(mode));
 
     return true;
 }
@@ -466,8 +462,8 @@ Eina_Bool ewk_view_pagination_mode_set(Evas_Object* ewkView, Ewk_Pagination_Mode
 Ewk_Pagination_Mode ewk_view_pagination_mode_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, EWK_PAGINATION_MODE_INVALID);
-
-    return static_cast<Ewk_Pagination_Mode>(impl->page()->paginationMode());
+    // FIXME: move to exported C WKPage API when it appears.
+    return static_cast<Ewk_Pagination_Mode>(toImpl(impl->wkPage())->paginationMode());
 }
 
 Eina_Bool ewk_view_fullscreen_exit(Evas_Object* ewkView)
@@ -475,7 +471,7 @@ Eina_Bool ewk_view_fullscreen_exit(Evas_Object* ewkView)
 #if ENABLE(FULLSCREEN_API)
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->fullScreenManager()->requestExitFullScreen();
+    WKViewExitFullScreen(impl->wkView());
 
     return true;
 #else
@@ -510,9 +506,8 @@ static void ewkViewPageContentsCallback(WKDataRef wkData, WKErrorRef, void* cont
 {
     EINA_SAFETY_ON_NULL_RETURN(context);
 
-    RefPtr<WebData> webData = toImpl(wkData);
     Ewk_Page_Contents_Context* contentsContext= static_cast<Ewk_Page_Contents_Context*>(context);
-    contentsContext->callback(contentsContext->type, reinterpret_cast<const char*>(webData->bytes()));
+    contentsContext->callback(contentsContext->type, reinterpret_cast<const char*>(WKDataGetBytes(wkData)));
 
     delete contentsContext;
 }
@@ -530,7 +525,7 @@ Eina_Bool ewk_view_page_contents_get(const Evas_Object* ewkView, Ewk_Page_Conten
     context->type = type;
     context->callback = callback;
 
-    impl->page()->getContentsAsMHTMLData(DataCallback::create(context, ewkViewPageContentsCallback), false);
+    WKPageGetContentsAsMHTMLData(impl->wkPage(), false, context, ewkViewPageContentsCallback);
 
     return true;
 }
@@ -539,7 +534,7 @@ Eina_Bool ewk_view_source_mode_set(Evas_Object* ewkView, Eina_Bool enabled)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    impl->page()->setMainFrameInViewSourceMode(enabled);
+    WKViewSetShowsAsSource(impl->wkView(), enabled);
 
     return true;
 }
@@ -548,5 +543,5 @@ Eina_Bool ewk_view_source_mode_get(const Evas_Object* ewkView)
 {
     EWK_VIEW_IMPL_GET_OR_RETURN(ewkView, impl, false);
 
-    return impl->page()->mainFrameInViewSourceMode();
+    return WKViewGetShowsAsSource(impl->wkView());
 }

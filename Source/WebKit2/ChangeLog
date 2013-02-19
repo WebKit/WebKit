@@ -1,3 +1,55 @@
+2013-02-19  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Eliminate access to WK2 C++ internals from ewk_view functions
+        https://bugs.webkit.org/show_bug.cgi?id=109794
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewSetShowsAsSource):
+        (WKViewGetShowsAsSource):
+
+            Added new WKView API to wrap WebPageProxy::setMainFrameInViewSourceMode()
+            and WebPageProxy::mainFrameInViewSourceMode() calls.
+
+        (WKViewExitFullScreen):
+
+            Added new WKView API to wrap WebFullScreenManagerProxy::exitFullScreen()
+            calls.
+
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::feedTouchEvent):
+
+            Added feedTouchEvent() method so that: at first ewk_view_feed_touch_event()
+            is not invoked from EwkView class, secondly ewk_view_feed_touch_event() does
+            not access WebPage instance directly.
+
+        (EwkView::feedTouchEvents):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+        * UIProcess/API/efl/ewk_view.cpp:
+        (ewk_view_feed_touch_event):
+        (ewk_view_pagination_mode_set):
+        (ewk_view_pagination_mode_get):
+        (ewk_view_fullscreen_exit):
+        (ewkViewPageContentsCallback):
+        (ewk_view_page_contents_get):
+        (ewk_view_source_mode_set):
+        (ewk_view_source_mode_get):
+
+            Those are now using exported C API.
+
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::setShowsAsSource):
+        (WebKit):
+        (WebKit::WebView::showsAsSource):
+        (WebKit::WebView::exitFullScreen):
+        * UIProcess/efl/WebView.h:
+        (WebView):
+
+            Added WebView methods to support added WKView API.
+
 2013-02-19  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] ASSERT(node) hit in WebPage::findZoomableAreaForPoint if no zoomable area found

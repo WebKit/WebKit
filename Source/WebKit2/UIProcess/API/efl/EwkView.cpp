@@ -748,6 +748,11 @@ void EwkView::setMouseEventsEnabled(bool enabled)
 }
 
 #if ENABLE(TOUCH_EVENTS)
+void EwkView::feedTouchEvent(Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers)
+{
+    page()->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, transformFromScene(), transformToScreen(), ecore_time_get()));
+}
+
 void EwkView::setTouchEventsEnabled(bool enabled)
 {
     if (m_touchEventsEnabled == enabled)
@@ -1305,7 +1310,7 @@ void EwkView::feedTouchEvents(Ewk_Touch_Event_Type type)
         points = eina_list_append(points, point);
     }
 
-    ewk_view_feed_touch_event(m_evasObject, type, points, evas_key_modifier_get(sd->base.evas));
+    feedTouchEvent(type, points, evas_key_modifier_get(sd->base.evas));
 
     void* data;
     EINA_LIST_FREE(points, data)

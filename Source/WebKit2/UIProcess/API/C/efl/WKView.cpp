@@ -97,6 +97,25 @@ void WKViewResumeActiveDOMObjectsAndAnimations(WKViewRef viewRef)
     toImpl(viewRef)->resumeActiveDOMObjectsAndAnimations();
 }
 
+void WKViewSetShowsAsSource(WKViewRef viewRef, bool flag)
+{
+    toImpl(viewRef)->setShowsAsSource(flag);
+}
+
+bool WKViewGetShowsAsSource(WKViewRef viewRef)
+{
+    return toImpl(viewRef)->showsAsSource();
+}
+
+void WKViewExitFullScreen(WKViewRef viewRef)
+{
+#if ENABLE(FULLSCREEN_API)
+    toImpl(viewRef)->exitFullScreen();
+#else
+    UNUSED_PARAM(viewRef);
+#endif
+}
+
 Evas_Object* WKViewGetEvasObject(WKViewRef viewRef)
 {
     return toImpl(viewRef)->evasObject();

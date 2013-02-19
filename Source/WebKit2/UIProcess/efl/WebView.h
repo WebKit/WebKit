@@ -64,6 +64,13 @@ public:
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();
 
+    void setShowsAsSource(bool);
+    bool showsAsSource() const;
+
+#if ENABLE(FULLSCREEN_API)
+    void exitFullScreen();
+#endif
+
     // View client.
     void initializeClient(const WKViewClient*);
 
