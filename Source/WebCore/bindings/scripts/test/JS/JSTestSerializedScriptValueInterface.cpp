@@ -66,13 +66,13 @@ EncodedJSValue JSC_HOST_CALL JSTestSerializedScriptValueInterfaceConstructor::co
     JSTestSerializedScriptValueInterfaceConstructor* castedThis = jsCast<JSTestSerializedScriptValueInterfaceConstructor*>(exec->callee());
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    const String& hello(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? String() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toString(exec)->value(exec));
+    const String& hello(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    RefPtr<SerializedScriptValue> data(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined), 0, 0));
+    RefPtr<SerializedScriptValue> data(SerializedScriptValue::create(exec, exec->argument(1), 0, 0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    Array* transferList(toArray(MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsUndefined)));
+    Array* transferList(toArray(exec->argument(2)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestSerializedScriptValueInterface> object = TestSerializedScriptValueInterface::create(hello, data, transferList);
@@ -285,7 +285,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
     TestSerializedScriptValueInterface* impl = static_cast<TestSerializedScriptValueInterface*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    RefPtr<SerializedScriptValue> data(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined), 0, 0));
+    RefPtr<SerializedScriptValue> data(SerializedScriptValue::create(exec, exec->argument(0), 0, 0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -295,7 +295,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
         return JSValue::encode(jsUndefined());
     }
 
-    Array* transferList(toArray(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined)));
+    Array* transferList(toArray(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->acceptTransferList(data, transferList);
@@ -317,7 +317,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
         return JSValue::encode(jsUndefined());
     }
 
-    RefPtr<SerializedScriptValue> first(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined), 0, 0));
+    RefPtr<SerializedScriptValue> first(SerializedScriptValue::create(exec, exec->argument(0), 0, 0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 1) {
@@ -325,7 +325,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
         return JSValue::encode(jsUndefined());
     }
 
-    Array* tx(toArray(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined)));
+    Array* tx(toArray(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 2) {
@@ -333,7 +333,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
         return JSValue::encode(jsUndefined());
     }
 
-    RefPtr<SerializedScriptValue> second(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsUndefined), 0, 0));
+    RefPtr<SerializedScriptValue> second(SerializedScriptValue::create(exec, exec->argument(2), 0, 0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 3) {
@@ -341,7 +341,7 @@ EncodedJSValue JSC_HOST_CALL jsTestSerializedScriptValueInterfacePrototypeFuncti
         return JSValue::encode(jsUndefined());
     }
 
-    Array* txx(toArray(MAYBE_MISSING_PARAMETER(exec, 3, DefaultIsUndefined)));
+    Array* txx(toArray(exec->argument(3)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->multiTransferList(first, tx, second, txx);

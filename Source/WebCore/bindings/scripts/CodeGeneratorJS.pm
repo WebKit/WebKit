@@ -2755,12 +2755,7 @@ sub GenerateParametersCheck
                 }
             }
 
-            my $parameterDefaultPolicy = "DefaultIsUndefined";
-            if ($optional and $optional eq "DefaultIsNullString") {
-                $parameterDefaultPolicy = "DefaultIsNullString";
-            }
-
-            push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, "MAYBE_MISSING_PARAMETER(exec, $argsIndex, $parameterDefaultPolicy)") . ");\n");
+            push(@$outputArray, "    " . GetNativeTypeFromSignature($parameter) . " $name(" . JSValueToNative($parameter, $optional eq "DefaultIsNullString" ? "argumentOrNull(exec, $argsIndex)" : "exec->argument($argsIndex)") . ");\n");
 
             # If a parameter is "an index" and it's negative it should throw an INDEX_SIZE_ERR exception.
             # But this needs to be done in the bindings, because the type is unsigned and the fact that it

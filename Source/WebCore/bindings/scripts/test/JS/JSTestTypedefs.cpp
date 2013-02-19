@@ -71,7 +71,7 @@ EncodedJSValue JSC_HOST_CALL JSTestTypedefsConstructor::constructJSTestTypedefs(
     JSTestTypedefsConstructor* castedThis = jsCast<JSTestTypedefsConstructor*>(exec->callee());
     if (exec->argumentCount() < 2)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    const String& hello(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? String() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toString(exec)->value(exec));
+    const String& hello(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (exec->argumentCount() <= 1 || !exec->argument(1).isFunction())
@@ -355,7 +355,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionFunc(ExecState* exec
 
     if (exec->argumentCount() > 0 && !exec->argument(0).isUndefinedOrNull() && !exec->argument(0).inherits(&JSlong[]::s_info))
         return throwVMTypeError(exec);
-    Vector<int> x(toNativeArray<int>(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    Vector<int> x(toNativeArray<int>(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->func(x);
@@ -372,7 +372,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMultiTransferList(Ex
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    RefPtr<SerializedScriptValue> first(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined), 0, 0));
+    RefPtr<SerializedScriptValue> first(SerializedScriptValue::create(exec, exec->argument(0), 0, 0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -382,7 +382,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMultiTransferList(Ex
         return JSValue::encode(jsUndefined());
     }
 
-    Array* tx(toArray(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined)));
+    Array* tx(toArray(exec->argument(1)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 2) {
@@ -390,7 +390,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMultiTransferList(Ex
         return JSValue::encode(jsUndefined());
     }
 
-    RefPtr<SerializedScriptValue> second(SerializedScriptValue::create(exec, MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsUndefined), 0, 0));
+    RefPtr<SerializedScriptValue> second(SerializedScriptValue::create(exec, exec->argument(2), 0, 0));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 3) {
@@ -398,7 +398,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMultiTransferList(Ex
         return JSValue::encode(jsUndefined());
     }
 
-    Array* txx(toArray(MAYBE_MISSING_PARAMETER(exec, 3, DefaultIsUndefined)));
+    Array* txx(toArray(exec->argument(3)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->multiTransferList(first, tx, second, txx);
@@ -415,13 +415,13 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
     if (exec->argumentCount() < 3)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    float width(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toFloat(exec));
+    float width(exec->argument(0).toFloat(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    float height(MAYBE_MISSING_PARAMETER(exec, 1, DefaultIsUndefined).toFloat(exec));
+    float height(exec->argument(1).toFloat(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
-    float blur(MAYBE_MISSING_PARAMETER(exec, 2, DefaultIsUndefined).toFloat(exec));
+    float blur(exec->argument(2).toFloat(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -431,7 +431,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
         return JSValue::encode(jsUndefined());
     }
 
-    const String& color(MAYBE_MISSING_PARAMETER(exec, 3, DefaultIsUndefined).isEmpty() ? String() : MAYBE_MISSING_PARAMETER(exec, 3, DefaultIsUndefined).toString(exec)->value(exec));
+    const String& color(exec->argument(3).isEmpty() ? String() : exec->argument(3).toString(exec)->value(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     if (argsCount <= 4) {
@@ -439,7 +439,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionSetShadow(ExecState*
         return JSValue::encode(jsUndefined());
     }
 
-    float alpha(MAYBE_MISSING_PARAMETER(exec, 4, DefaultIsUndefined).toFloat(exec));
+    float alpha(exec->argument(4).toFloat(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->setShadow(width, height, blur, color, alpha);
@@ -456,7 +456,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionMethodWithSequenceAr
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    Vector<RefPtr<SerializedScriptValue>> sequenceArg((toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined), &toSerializedScriptValue)));
+    Vector<RefPtr<SerializedScriptValue>> sequenceArg((toRefPtrNativeArray<SerializedScriptValue, JSSerializedScriptValue>(exec, exec->argument(0), &toSerializedScriptValue)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -474,7 +474,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionNullableArrayArg(Exe
     TestTypedefs* impl = static_cast<TestTypedefs*>(castedThis->impl());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    Vector<String> arrayArg(toNativeArray<String>(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    Vector<String> arrayArg(toNativeArray<String>(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     impl->nullableArrayArg(arrayArg);
@@ -542,7 +542,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction(
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
-    Vector<String> values(toNativeArray<String>(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
@@ -562,7 +562,7 @@ EncodedJSValue JSC_HOST_CALL jsTestTypedefsPrototypeFunctionStringArrayFunction2
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
     ExceptionCode ec = 0;
-    Vector<String> values(toNativeArray<String>(exec, MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    Vector<String> values(toNativeArray<String>(exec, exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 

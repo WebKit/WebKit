@@ -59,13 +59,6 @@ namespace WebCore {
 
 class DOMStringList;
 
-enum ParameterDefaultPolicy {
-    DefaultIsUndefined,
-    DefaultIsNullString
-};
-
-#define MAYBE_MISSING_PARAMETER(exec, index, policy) (((policy) == DefaultIsNullString && (index) >= (exec)->argumentCount()) ? (JSValue()) : ((exec)->argument(index)))
-
     class CachedScript;
     class Frame;
     class KURL;
@@ -259,6 +252,11 @@ enum ParameterDefaultPolicy {
         if (CSSStyleSheet* parentStyleSheet = mediaList->parentStyleSheet())
             return root(parentStyleSheet);
         return mediaList;
+    }
+
+    inline JSC::JSValue argumentOrNull(JSC::ExecState* exec, int index)
+    {
+        return index >= exec->argumentCount() ? JSValue() : exec->argument(index);
     }
 
     const JSC::HashTable* getHashTableForGlobalData(JSC::JSGlobalData&, const JSC::HashTable* staticTable);

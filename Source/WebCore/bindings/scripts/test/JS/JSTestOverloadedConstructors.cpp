@@ -56,7 +56,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     JSTestOverloadedConstructorsConstructor* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    ArrayBuffer* arrayBuffer(toArrayBuffer(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    ArrayBuffer* arrayBuffer(toArrayBuffer(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(arrayBuffer);
@@ -68,7 +68,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     JSTestOverloadedConstructorsConstructor* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    ArrayBufferView* arrayBufferView(toArrayBufferView(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    ArrayBufferView* arrayBufferView(toArrayBufferView(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(arrayBufferView);
@@ -80,7 +80,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     JSTestOverloadedConstructorsConstructor* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    Blob* blob(toBlob(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined)));
+    Blob* blob(toBlob(exec->argument(0)));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(blob);
@@ -92,7 +92,7 @@ EncodedJSValue JSC_HOST_CALL JSTestOverloadedConstructorsConstructor::constructJ
     JSTestOverloadedConstructorsConstructor* castedThis = jsCast<JSTestOverloadedConstructorsConstructor*>(exec->callee());
     if (exec->argumentCount() < 1)
         return throwVMError(exec, createNotEnoughArgumentsError(exec));
-    const String& string(MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).isEmpty() ? String() : MAYBE_MISSING_PARAMETER(exec, 0, DefaultIsUndefined).toString(exec)->value(exec));
+    const String& string(exec->argument(0).isEmpty() ? String() : exec->argument(0).toString(exec)->value(exec));
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
     RefPtr<TestOverloadedConstructors> object = TestOverloadedConstructors::create(string);
