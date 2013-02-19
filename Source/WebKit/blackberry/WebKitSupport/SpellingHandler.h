@@ -30,21 +30,23 @@ public:
     SpellingHandler(InputHandler*);
     ~SpellingHandler();
 
-    void spellCheckTextBlock(WebCore::VisibleSelection&, WebCore::TextCheckingProcessType);
+    void spellCheckTextBlock(const WebCore::VisibleSelection&, const WebCore::TextCheckingProcessType);
     bool isSpellCheckActive() { return m_isSpellCheckActive; }
     void setSpellCheckActive(bool active) { m_isSpellCheckActive = active; }
 
 private:
-    void createSpellCheckRequest(PassRefPtr<WebCore::Range> rangeForSpellCheckingPtr, WebCore::TextCheckingProcessType);
+    void createSpellCheckRequest(PassRefPtr<WebCore::Range> rangeForSpellCheckingPtr);
     void parseBlockForSpellChecking(WebCore::Timer<SpellingHandler>*);
-    PassRefPtr<WebCore::Range> getRangeForSpellCheckWithFineGranularity(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
+    void incrementSentinels(bool shouldIncrementStartPosition);
+    PassRefPtr<WebCore::Range> handleOversizedRange();
 
     InputHandler* m_inputHandler;
 
     WebCore::Timer<SpellingHandler> m_timer;
-    WebCore::VisiblePosition m_startOfCurrentLine;
-    WebCore::VisiblePosition m_endOfCurrentLine;
-    WebCore::VisibleSelection m_endOfRange;
+    WebCore::VisiblePosition m_startPosition;
+    WebCore::VisiblePosition m_endPosition;
+    WebCore::VisiblePosition m_cachedEndPosition;
+    WebCore::VisiblePosition m_endOfRange;
     WebCore::TextCheckingProcessType m_textCheckingProcessType;
     bool m_isSpellCheckActive;
 };

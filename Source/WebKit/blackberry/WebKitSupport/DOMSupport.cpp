@@ -508,6 +508,46 @@ VisibleSelection visibleSelectionForClosestActualWordStart(const VisibleSelectio
     return selection;
 }
 
+int offsetFromStartOfBlock(const VisiblePosition offset)
+{
+    RefPtr<Range> range = makeRange(startOfBlock(offset), offset);
+    if (!range)
+        return -1;
+
+    return range->text().latin1().length();
+}
+
+VisibleSelection visibleSelectionForFocusedBlock(Element* element)
+{
+    int textLength = inputElementText(element).length();
+
+    if (DOMSupport::toTextControlElement(element)) {
+        RenderTextControl* textRender = toRenderTextControl(element->renderer());
+        if (!textRender)
+            return VisibleSelection();
+
+        VisiblePosition startPosition = textRender->visiblePositionForIndex(0);
+        VisiblePosition endPosition;
+
+        if (textLength)
+            endPosition = textRender->visiblePositionForIndex(textLength);
+        else
+            endPosition = startPosition;
+        return VisibleSelection(startPosition, endPosition);
+    }
+
+    // Must be content editable, generate the range.
+    RefPtr<Range> selectionRange = TextIterator::rangeFromLocationAndLength(element, 0, textLength);
+
+    if (!selectionRange)
+        return VisibleSelection();
+
+    if (!textLength)
+        return VisibleSelection(selectionRange->startPosition(), DOWNSTREAM);
+
+    return VisibleSelection(selectionRange->startPosition(), selectionRange->endPosition());
+}
+
 // This function is copied from WebCore/page/Page.cpp.
 Frame* incrementFrame(Frame* curr, bool forward, bool wrapFlag)
 {
@@ -523,7 +563,7 @@ PassRefPtr<Range> trimWhitespaceFromRange(PassRefPtr<Range> range)
 
 PassRefPtr<Range> trimWhitespaceFromRange(VisiblePosition startPosition, VisiblePosition endPosition)
 {
-    if (isEmptyRangeOrAllSpaces(startPosition, endPosition))
+    if (startPosition == endPosition || isRangeTextAllWhitespace(startPosition, endPosition))
         return 0;
 
     while (isWhitespace(startPosition.characterAfter()))
@@ -535,11 +575,8 @@ PassRefPtr<Range> trimWhitespaceFromRange(VisiblePosition startPosition, Visible
     return makeRange(startPosition, endPosition);
 }
 
-bool isEmptyRangeOrAllSpaces(VisiblePosition startPosition, VisiblePosition endPosition)
+bool isRangeTextAllWhitespace(VisiblePosition startPosition, VisiblePosition endPosition)
 {
-    if (startPosition == endPosition)
-        return true;
-
     while (isWhitespace(startPosition.characterAfter())) {
         startPosition = startPosition.next();
 

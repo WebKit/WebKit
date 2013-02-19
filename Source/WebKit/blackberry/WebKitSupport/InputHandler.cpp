@@ -612,17 +612,20 @@ void InputHandler::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingReque
         return;
     }
 
-    if (requestLength > MaxSpellCheckingStringLength) {
+    if (requestLength >= MaxSpellCheckingStringLength) {
         // Batch requests which are generally created by us on focus, should not exceed this limit. Check that this is in fact of Incremental type.
         ASSERT(textCheckingRequest->processType() == TextCheckingProcessIncremental);
 
         // Cancel this request and send it off in newly created chunks.
         m_request->didCancel();
         if (m_currentFocusElement->document() && m_currentFocusElement->document()->frame() && m_currentFocusElement->document()->frame()->selection()) {
-            // Convert from position back to selection so we can expand the range to include the previous line. This should handle cases when the user hits
-            // enter to finish composing a word and create a new line.
             VisiblePosition caretPosition = m_currentFocusElement->document()->frame()->selection()->start();
-            VisibleSelection visibleSelection = VisibleSelection(previousLinePosition(caretPosition, caretPosition.lineDirectionPointForBlockDirectionNavigation()), caretPosition);
+            // Convert from position back to selection so we can expand the range to include the previous line. This should handle cases when the user hits
+            // enter to finish composing a word and create a new line. Account for word wrapping by jumping to the start of the previous line, then moving
+            // to the start of any word which might be there.
+            VisibleSelection visibleSelection = VisibleSelection(
+                startOfWord(startOfLine(previousLinePosition(caretPosition, caretPosition.lineDirectionPointForBlockDirectionNavigation()))),
+                endOfWord(endOfLine(caretPosition)));
             m_spellingHandler->spellCheckTextBlock(visibleSelection, TextCheckingProcessIncremental);
         }
         return;
@@ -1092,8 +1095,8 @@ void InputHandler::setElementFocused(Element* element)
         return;
 
     // Spellcheck the field in its entirety.
-    VisibleSelection focusedBlock = DOMSupport::visibleSelectionForInputElement(element);
-    m_spellingHandler->spellCheckTextBlock(focusedBlock, TextCheckingProcessBatch);
+    const VisibleSelection visibleSelection = DOMSupport::visibleSelectionForFocusedBlock(element);
+    m_spellingHandler->spellCheckTextBlock(visibleSelection, TextCheckingProcessBatch);
 
 #ifdef ENABLE_SPELLING_LOG
     SpellingLog(Platform::LogLevelInfo, "InputHandler::setElementFocused Spellchecking the field increased the total time to focus to %f seconds.", timer.elapsed());

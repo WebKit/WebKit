@@ -1,3 +1,32 @@
+2013-02-19  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Appropriately handle word wrapping in SpellingHandler
+        https://bugs.webkit.org/show_bug.cgi?id=110253
+
+        Reviewed by Rob Buis.
+
+        PR286001
+        Since we traverse through text by visual lines instead of blocks, word wrapping causes some
+        bad behavior. Changing the way we traverse text to jump by words instead of lines. This will
+        mean it takes longer to finish spellchecking, but the removal of any loops allows webkit
+        processing to continue. This gives priority to user actions while still completing a large
+        paragraph in a reasonable amount of time.
+
+        Internally reviewed by Mike Fenton
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        * WebKitSupport/SpellingHandler.cpp:
+        (BlackBerry::WebKit::SpellingHandler::createSpellCheckRequest):
+        (BlackBerry::WebKit::SpellingHandler::parseBlockForSpellChecking):
+        (BlackBerry::WebKit::SpellingHandler::getRangeForSpellCheckWithFineGranularity):
+        (BlackBerry::WebKit::SpellingHandler::startOfNextWord):
+        (WebKit):
+        (BlackBerry::WebKit::SpellingHandler::incrementByWord):
+        (BlackBerry::WebKit::SpellingHandler::doesWordWrap):
+        * WebKitSupport/SpellingHandler.h:
+        (SpellingHandler):
+
 2013-02-18  Simon Fraser  <simon.fraser@apple.com>
 
         Clean up the boolean argument to visibleContentRect
