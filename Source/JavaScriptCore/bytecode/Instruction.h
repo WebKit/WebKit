@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,7 +29,6 @@
 #ifndef Instruction_h
 #define Instruction_h
 
-#include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
 #include "PropertySlot.h"
@@ -39,116 +38,13 @@
 #include "StructureChain.h"
 #include <wtf/VectorTraits.h>
 
-#define POLYMORPHIC_LIST_CACHE_SIZE 8
-
 namespace JSC {
-
-// *Sigh*, If the JIT is enabled we need to track the stubRountine (of type CodeLocationLabel),
-// If the JIT is not in use we don't actually need the variable (that said, if the JIT is not in use we don't
-// curently actually use PolymorphicAccessStructureLists, which we should).  Anyway, this seems like the best
-// solution for now - will need to something smarter if/when we actually want mixed-mode operation.
 
 class ArrayAllocationProfile;
 class ArrayProfile;
-class JSCell;
 class ObjectAllocationProfile;
-class Structure;
-class StructureChain;
 struct LLIntCallLinkInfo;
 struct ValueProfile;
-
-#if ENABLE(JIT)
-// Structure used by op_get_by_id_self_list and op_get_by_id_proto_list instruction to hold data off the main opcode stream.
-struct PolymorphicAccessStructureList {
-    WTF_MAKE_FAST_ALLOCATED;
-public:
-    struct PolymorphicStubInfo {
-        bool isChain;
-        bool isDirect;
-        RefPtr<JITStubRoutine> stubRoutine;
-        WriteBarrier<Structure> base;
-        union {
-            WriteBarrierBase<Structure> proto;
-            WriteBarrierBase<StructureChain> chain;
-        } u;
-
-        PolymorphicStubInfo()
-        {
-            u.proto.clear();
-        }
-
-        void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, bool isDirect)
-        {
-            stubRoutine = _stubRoutine;
-            base.set(globalData, owner, _base);
-            u.proto.clear();
-            isChain = false;
-            this->isDirect = isDirect;
-        }
-            
-        void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, Structure* _proto, bool isDirect)
-        {
-            stubRoutine = _stubRoutine;
-            base.set(globalData, owner, _base);
-            u.proto.set(globalData, owner, _proto);
-            isChain = false;
-            this->isDirect = isDirect;
-        }
-            
-        void set(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> _stubRoutine, Structure* _base, StructureChain* _chain, bool isDirect)
-        {
-            stubRoutine = _stubRoutine;
-            base.set(globalData, owner, _base);
-            u.chain.set(globalData, owner, _chain);
-            isChain = true;
-            this->isDirect = isDirect;
-        }
-    } list[POLYMORPHIC_LIST_CACHE_SIZE];
-        
-    PolymorphicAccessStructureList()
-    {
-    }
-        
-    PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, bool isDirect)
-    {
-        list[0].set(globalData, owner, stubRoutine, firstBase, isDirect);
-    }
-
-    PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, Structure* firstProto, bool isDirect)
-    {
-        list[0].set(globalData, owner, stubRoutine, firstBase, firstProto, isDirect);
-    }
-
-    PolymorphicAccessStructureList(JSGlobalData& globalData, JSCell* owner, PassRefPtr<JITStubRoutine> stubRoutine, Structure* firstBase, StructureChain* firstChain, bool isDirect)
-    {
-        list[0].set(globalData, owner, stubRoutine, firstBase, firstChain, isDirect);
-    }
-
-    bool visitWeak(int count)
-    {
-        for (int i = 0; i < count; ++i) {
-            PolymorphicStubInfo& info = list[i];
-            if (!info.base) {
-                // We're being marked during initialisation of an entry
-                ASSERT(!info.u.proto);
-                continue;
-            }
-                
-            if (!Heap::isMarked(info.base.get()))
-                return false;
-            if (info.u.proto && !info.isChain
-                && !Heap::isMarked(info.u.proto.get()))
-                return false;
-            if (info.u.chain && info.isChain
-                && !Heap::isMarked(info.u.chain.get()))
-                return false;
-        }
-            
-        return true;
-    }
-};
-
-#endif
 
 struct Instruction {
     Instruction()

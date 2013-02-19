@@ -1,5 +1,26 @@
 2013-02-19  Filip Pizlo  <fpizlo@apple.com>
 
+        Moved PolymorphicAccessStructureList into its own file.
+
+        Rubber stamped by Mark Hahnenberg.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * bytecode/Instruction.h:
+        (JSC):
+        * bytecode/PolymorphicAccessStructureList.h: Added.
+        (JSC):
+        (PolymorphicAccessStructureList):
+        (PolymorphicStubInfo):
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::PolymorphicStubInfo):
+        (JSC::PolymorphicAccessStructureList::PolymorphicStubInfo::set):
+        (JSC::PolymorphicAccessStructureList::PolymorphicAccessStructureList):
+        (JSC::PolymorphicAccessStructureList::visitWeak):
+        * bytecode/StructureStubInfo.h:
+
+2013-02-19  Filip Pizlo  <fpizlo@apple.com>
+
         Fix indentation of Instruction.h
 
         Rubber stamped by Mark Hahnenberg.

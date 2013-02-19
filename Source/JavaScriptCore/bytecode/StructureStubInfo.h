@@ -36,6 +36,7 @@
 #include "JITStubRoutine.h"
 #include "MacroAssembler.h"
 #include "Opcode.h"
+#include "PolymorphicAccessStructureList.h"
 #include "Structure.h"
 #include "StructureStubClearingWatchpoint.h"
 #include <wtf/OwnPtr.h>
