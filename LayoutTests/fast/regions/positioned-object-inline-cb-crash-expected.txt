@@ -1,0 +1,2 @@
+Test for WebKit Bug 108307 Crash when layout a positioned object with inline containing block inside a flow thread.The test passes if it does not crash or assert.PASS
+

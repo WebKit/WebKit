@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            #container { -webkit-flow-into: flow; }
+            p { position: absolute; }
+        </style>
+    </head>
+    <body>
+        <p>Test for <a href="https://bugs.webkit.org/show_bug.cgi?id=108307">WebKit Bug 108307</a> Crash when layout a positioned object with inline containing block inside a flow thread.</p>
+        <p>The test passes if it does not crash or assert.</p>
+        <p>PASS</p>
+        <div id="container">
+            <span style="position: relative;">
+                <div style="display: inline-block; -webkit-writing-mode: vertical-rl;">
+                    <p></p>
+                </div>
+            </span>
+        </div>
+        <script>
+            if (window.testRunner)
+                window.testRunner.dumpAsText();
+        </script>
+    </body>
+</html>

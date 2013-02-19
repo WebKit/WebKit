@@ -164,6 +164,8 @@ public:
 
     virtual void setSelectionState(SelectionState s);
 
+    bool canHaveBoxInfoInRegion() const { return !isFloating() && !isReplaced() && !isInline() && !hasColumns() && !isTableCell() && isBlockFlow(); }
+
 #if USE(ACCELERATED_COMPOSITING)
     void contentChanged(ContentChangeType);
     bool hasAcceleratedCompositing() const;
