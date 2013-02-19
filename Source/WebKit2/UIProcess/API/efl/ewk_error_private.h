@@ -27,10 +27,9 @@
 #define ewk_error_private_h
 
 #include "WKEinaSharedString.h"
-#include <WKError.h>
 #include <WKRetainPtr.h>
+#include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/text/WTFString.h>
 
 class EwkError {
 public:
@@ -44,7 +43,7 @@ public:
 
     const char* url() const;
     const char* description() const;
-    String domain() const;
+    WKRetainPtr<WKStringRef> domain() const;
     int errorCode() const;
     bool isCancellation() const;
 

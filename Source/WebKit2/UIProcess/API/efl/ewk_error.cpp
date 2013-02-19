@@ -27,14 +27,12 @@
 #include "ewk_error.h"
 
 #include "ErrorsEfl.h"
+#include "WKError.h"
 #include "WKString.h"
 #include "WKURL.h"
 #include "ewk_error_private.h"
-#include <WKAPICast.h>
-#include <wtf/text/CString.h>
 
 using namespace WebCore;
-using namespace WebKit;
 
 EwkError::EwkError(WKErrorRef errorRef)
     : m_wkError(errorRef)
@@ -52,10 +50,9 @@ const char* EwkError::description() const
     return m_description;
 }
 
-String EwkError::domain() const
+WKRetainPtr<WKStringRef> EwkError::domain() const
 {
-    WKRetainPtr<WKStringRef> wkDomain(AdoptWK, WKErrorCopyDomain(m_wkError.get()));
-    return toWTFString(wkDomain.get());
+    return adoptWK(WKErrorCopyDomain(m_wkError.get()));
 }
 
 int EwkError::errorCode() const
@@ -65,25 +62,26 @@ int EwkError::errorCode() const
 
 bool EwkError::isCancellation() const
 {
-    return toImpl(m_wkError.get())->platformError().isCancellation();
+    return WKStringIsEqualToUTF8CString(domain().get(), errorDomainNetwork) && errorCode() == NetworkErrorCancelled;
 }
 
 Ewk_Error_Type ewk_error_type_get(const Ewk_Error* error)
 {
     EINA_SAFETY_ON_NULL_RETURN_VAL(error, EWK_ERROR_TYPE_NONE);
 
-    String errorDomain = error->domain();
+    WKRetainPtr<WKStringRef> wkErrorDomain = error->domain();
 
-    if (errorDomain == errorDomainNetwork)
+    if (WKStringIsEqualToUTF8CString(wkErrorDomain.get(), errorDomainNetwork))
         return EWK_ERROR_TYPE_NETWORK;
-    if (errorDomain == errorDomainPolicy)
+    if (WKStringIsEqualToUTF8CString(wkErrorDomain.get(), errorDomainPolicy))
         return EWK_ERROR_TYPE_POLICY;
-    if (errorDomain == errorDomainPlugin)
+    if (WKStringIsEqualToUTF8CString(wkErrorDomain.get(), errorDomainPlugin))
         return EWK_ERROR_TYPE_PLUGIN;
-    if (errorDomain == errorDomainDownload)
+    if (WKStringIsEqualToUTF8CString(wkErrorDomain.get(), errorDomainDownload))
         return EWK_ERROR_TYPE_DOWNLOAD;
-    if (errorDomain == errorDomainPrint)
+    if (WKStringIsEqualToUTF8CString(wkErrorDomain.get(), errorDomainPrint))
         return EWK_ERROR_TYPE_PRINT;
+
     return EWK_ERROR_TYPE_INTERNAL;
 }
 
