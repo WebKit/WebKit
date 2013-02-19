@@ -1,5 +1,30 @@
 2013-02-18  Anders Carlsson  <andersca@apple.com>
 
+        Add StorageManager member functions for keeping track of session storage namespaces
+        https://bugs.webkit.org/show_bug.cgi?id=110163
+
+        Reviewed by Andreas Kling.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        (WebKit):
+        (WebKit::StorageManager::destroySessionStorageNamespace):
+        (WebKit::StorageManager::cloneSessionStorageNamespace):
+        (WebKit::StorageManager::createSessionStorageNamespaceInternal):
+        (WebKit::StorageManager::destroySessionStorageNamespaceInternal):
+        (WebKit::StorageManager::cloneSessionStorageNamespaceInternal):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/WebContext.h:
+        (WebKit::WebContext::storageManager):
+        (WebContext):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        (WebKit::WebPageProxy::close):
+        (WebKit::WebPageProxy::createNewPage):
+
+2013-02-18  Anders Carlsson  <andersca@apple.com>
+
         StorageManager message handlers should take the connection
         https://bugs.webkit.org/show_bug.cgi?id=110151
 

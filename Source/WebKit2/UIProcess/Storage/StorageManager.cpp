@@ -46,6 +46,21 @@ StorageManager::~StorageManager()
 {
 }
 
+void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID)
+{
+    m_queue->dispatch(bind(&StorageManager::createSessionStorageNamespaceInternal, this, storageNamespaceID));
+}
+
+void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
+{
+    m_queue->dispatch(bind(&StorageManager::destroySessionStorageNamespace, this, storageNamespaceID));
+}
+
+void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
+{
+    m_queue->dispatch(bind(&StorageManager::cloneSessionStorageNamespace, this, storageNamespaceID, newStorageNamespaceID));
+}
+
 void StorageManager::processWillOpenConnection(WebProcessProxy* webProcessProxy)
 {
     webProcessProxy->connection()->addWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName(), m_queue.get(), this);
@@ -69,6 +84,21 @@ void StorageManager::destroyStorageArea(CoreIPC::Connection*, uint64_t)
 void StorageManager::getValues(CoreIPC::Connection*, uint64_t, HashMap<String, String>&)
 {
     // FIXME: Implement this.
+}
+
+void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID)
+{
+    // FIXME: Implement.
+}
+
+void StorageManager::destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID)
+{
+    // FIXME: Implement.
+}
+
+void StorageManager::cloneSessionStorageNamespaceInternal(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
+{
+    // FIXME: Implement.
 }
 
 } // namespace WebKit

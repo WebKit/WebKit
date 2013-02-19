@@ -261,6 +261,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
 #endif
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
+    m_process->context()->storageManager().createSessionStorageNamespace(m_pageID);
 }
 
 WebPageProxy::~WebPageProxy()
@@ -543,6 +544,7 @@ void WebPageProxy::close()
     m_process->send(Messages::WebPage::Close(), m_pageID);
     m_process->removeWebPage(m_pageID);
     m_process->removeMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID);
+    m_process->context()->storageManager().destroySessionStorageNamespace(m_pageID);
 }
 
 bool WebPageProxy::tryClose()
@@ -2433,11 +2435,14 @@ void WebPageProxy::willSubmitForm(uint64_t frameID, uint64_t sourceFrameID, cons
 void WebPageProxy::createNewPage(const ResourceRequest& request, const WindowFeatures& windowFeatures, uint32_t opaqueModifiers, int32_t opaqueMouseButton, uint64_t& newPageID, WebPageCreationParameters& newPageParameters)
 {
     RefPtr<WebPageProxy> newPage = m_uiClient.createNewPage(this, request, windowFeatures, static_cast<WebEvent::Modifiers>(opaqueModifiers), static_cast<WebMouseEvent::Button>(opaqueMouseButton));
-    if (newPage) {
-        newPageID = newPage->pageID();
-        newPageParameters = newPage->creationParameters();
-    } else
+    if (!newPage) {
         newPageID = 0;
+        return;
+    }
+
+    newPageID = newPage->pageID();
+    newPageParameters = newPage->creationParameters();
+    process()->context()->storageManager().cloneSessionStorageNamespace(m_pageID, newPage->pageID());
 }
     
 void WebPageProxy::showPage()
