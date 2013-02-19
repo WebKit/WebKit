@@ -1,3 +1,12 @@
+2013-02-19  Joshua Bell  <jsbell@chromium.org>
+
+        IndexedDB: additional checks on LevelDB decoding
+        https://bugs.webkit.org/show_bug.cgi?id=109711
+
+        Reviewed by Tony Chang.
+
+        * tests/IDBLevelDBCodingTest.cpp: Update test with new method signatures.
+
 2013-02-19  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] fix ScrollAnimatorNoneTest after r143295

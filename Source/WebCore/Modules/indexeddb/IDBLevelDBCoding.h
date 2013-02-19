@@ -61,14 +61,14 @@ Vector<char> encodeString(const String&);
 String decodeString(const char* p, const char* end);
 Vector<char> encodeStringWithLength(const String&);
 const char* decodeStringWithLength(const char* p, const char* limit, String& foundString);
-int compareEncodedStringsWithLength(const char*& p, const char* limitP, const char*& q, const char* limitQ);
+int compareEncodedStringsWithLength(const char*& p, const char* limitP, const char*& q, const char* limitQ, bool& ok);
 Vector<char> encodeDouble(double);
 const char* decodeDouble(const char* p, const char* limit, double*);
 void encodeIDBKey(const IDBKey&, Vector<char, DefaultInlineBufferSize>& into);
 Vector<char> encodeIDBKey(const IDBKey&);
 const char* decodeIDBKey(const char* p, const char* limit, RefPtr<IDBKey>& foundKey);
 const char* extractEncodedIDBKey(const char* start, const char* limit, Vector<char>* result);
-int compareEncodedIDBKeys(const Vector<char>&, const Vector<char>&);
+int compareEncodedIDBKeys(const Vector<char>&, const Vector<char>&, bool& ok);
 Vector<char> encodeIDBKeyPath(const IDBKeyPath&);
 IDBKeyPath decodeIDBKeyPath(const char*, const char*);
 
@@ -271,7 +271,7 @@ public:
     static const char* decode(const char* start, const char* end, ObjectStoreDataKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, const Vector<char> encodedUserKey);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, const IDBKey& userKey);
-    int compare(const ObjectStoreDataKey& other);
+    int compare(const ObjectStoreDataKey& other, bool& ok);
     PassRefPtr<IDBKey> userKey() const;
     static const int64_t SpecialIndexNumber;
 
@@ -284,7 +284,7 @@ public:
     static const char* decode(const char* start, const char* end, ExistsEntryKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, const Vector<char>& encodedKey);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, const IDBKey& userKey);
-    int compare(const ExistsEntryKey& other);
+    int compare(const ExistsEntryKey& other, bool& ok);
     PassRefPtr<IDBKey> userKey() const;
 
     static const int64_t SpecialIndexNumber;
@@ -301,7 +301,7 @@ public:
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKey& userKey);
     static Vector<char> encodeMinKey(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
     static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
-    int compare(const IndexDataKey& other, bool ignoreDuplicates);
+    int compare(const IndexDataKey& other, bool ignoreDuplicates, bool& ok);
     int64_t databaseId() const;
     int64_t objectStoreId() const;
     int64_t indexId() const;

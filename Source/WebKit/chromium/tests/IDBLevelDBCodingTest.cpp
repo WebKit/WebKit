@@ -116,6 +116,14 @@ TEST(IDBLevelDBCodingTest, EncodeBool)
     }
 }
 
+static int compareKeys(const Vector<char>& a, const Vector<char>& b)
+{
+    bool ok;
+    int result = compareEncodedIDBKeys(a, b, ok);
+    EXPECT_TRUE(ok);
+    return result;
+}
+
 TEST(IDBLevelDBCodingTest, MaxIDBKey)
 {
     Vector<char> maxKey = maxIDBKey();
@@ -126,11 +134,11 @@ TEST(IDBLevelDBCodingTest, MaxIDBKey)
     Vector<char> numberKey = encodeIDBKey(*IDBKey::createNumber(3.14));
     Vector<char> dateKey = encodeIDBKey(*IDBKey::createDate(1000000));
 
-    EXPECT_GT(compareEncodedIDBKeys(maxKey, minKey), 0);
-    EXPECT_GT(compareEncodedIDBKeys(maxKey, arrayKey), 0);
-    EXPECT_GT(compareEncodedIDBKeys(maxKey, stringKey), 0);
-    EXPECT_GT(compareEncodedIDBKeys(maxKey, numberKey), 0);
-    EXPECT_GT(compareEncodedIDBKeys(maxKey, dateKey), 0);
+    EXPECT_GT(compareKeys(maxKey, minKey), 0);
+    EXPECT_GT(compareKeys(maxKey, arrayKey), 0);
+    EXPECT_GT(compareKeys(maxKey, stringKey), 0);
+    EXPECT_GT(compareKeys(maxKey, numberKey), 0);
+    EXPECT_GT(compareKeys(maxKey, dateKey), 0);
 }
 
 TEST(IDBLevelDBCodingTest, MinIDBKey)
@@ -143,11 +151,11 @@ TEST(IDBLevelDBCodingTest, MinIDBKey)
     Vector<char> numberKey = encodeIDBKey(*IDBKey::createNumber(3.14));
     Vector<char> dateKey = encodeIDBKey(*IDBKey::createDate(1000000));
 
-    EXPECT_LT(compareEncodedIDBKeys(minKey, maxKey), 0);
-    EXPECT_LT(compareEncodedIDBKeys(minKey, arrayKey), 0);
-    EXPECT_LT(compareEncodedIDBKeys(minKey, stringKey), 0);
-    EXPECT_LT(compareEncodedIDBKeys(minKey, numberKey), 0);
-    EXPECT_LT(compareEncodedIDBKeys(minKey, dateKey), 0);
+    EXPECT_LT(compareKeys(minKey, maxKey), 0);
+    EXPECT_LT(compareKeys(minKey, arrayKey), 0);
+    EXPECT_LT(compareKeys(minKey, stringKey), 0);
+    EXPECT_LT(compareKeys(minKey, numberKey), 0);
+    EXPECT_LT(compareKeys(minKey, dateKey), 0);
 }
 
 TEST(IDBLevelDBCodingTest, EncodeInt)
@@ -322,7 +330,9 @@ TEST(IDBLevelDBCodingTest, DecodeStringWithLength)
 
 static int compareStrings(const char* p, const char* limitP, const char* q, const char* limitQ)
 {
-    int result = compareEncodedStringsWithLength(p, limitP, q, limitQ);
+    bool ok;
+    int result = compareEncodedStringsWithLength(p, limitP, q, limitQ, ok);
+    EXPECT_TRUE(ok);
     EXPECT_EQ(p, limitP);
     EXPECT_EQ(q, limitQ);
     return result;
@@ -631,10 +641,10 @@ TEST(IDBLevelDBCodingTest, ExtractAndCompareIDBKeys)
         EXPECT_EQ(encodedB.data() + encodedB.size(), q);
         EXPECT_EQ(encodedB, extractedB);
 
-        EXPECT_LT(compareEncodedIDBKeys(extractedA, extractedB), 0);
-        EXPECT_GT(compareEncodedIDBKeys(extractedB, extractedA), 0);
-        EXPECT_EQ(compareEncodedIDBKeys(extractedA, extractedA), 0);
-        EXPECT_EQ(compareEncodedIDBKeys(extractedB, extractedB), 0);
+        EXPECT_LT(compareKeys(extractedA, extractedB), 0);
+        EXPECT_GT(compareKeys(extractedB, extractedA), 0);
+        EXPECT_EQ(compareKeys(extractedA, extractedA), 0);
+        EXPECT_EQ(compareKeys(extractedB, extractedB), 0);
 
         EXPECT_EQ(0, extractEncodedIDBKey(encodedA.data(), encodedA.data() + encodedA.size() - 1, &extractedA));
     }
