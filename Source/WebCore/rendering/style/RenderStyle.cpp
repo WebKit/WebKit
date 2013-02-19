@@ -261,6 +261,20 @@ void RenderStyle::setHasPseudoStyle(PseudoId pseudo)
     noninherited_flags._pseudoBits |= pseudoBit(pseudo);
 }
 
+bool RenderStyle::hasUniquePseudoStyle() const
+{
+    if (!m_cachedPseudoStyles || styleType() != NOPSEUDO)
+        return false;
+
+    for (size_t i = 0; i < m_cachedPseudoStyles->size(); ++i) {
+        RenderStyle* pseudoStyle = m_cachedPseudoStyles->at(i).get();
+        if (pseudoStyle->unique())
+            return true;
+    }
+
+    return false;
+}
+
 RenderStyle* RenderStyle::getCachedPseudoStyle(PseudoId pid) const
 {
     if (!m_cachedPseudoStyles || !m_cachedPseudoStyles->size())

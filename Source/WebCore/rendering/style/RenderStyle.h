@@ -423,6 +423,7 @@ public:
     bool hasAnyPublicPseudoStyles() const;
     bool hasPseudoStyle(PseudoId pseudo) const;
     void setHasPseudoStyle(PseudoId pseudo);
+    bool hasUniquePseudoStyle() const;
 
     // attribute getter methods
 

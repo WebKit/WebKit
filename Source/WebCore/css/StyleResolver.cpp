@@ -1013,6 +1013,8 @@ bool StyleResolver::canShareStyleWithElement(StyledElement* element) const
         return false;
     if (style->unique())
         return false;
+    if (style->hasUniquePseudoStyle())
+        return false;
     if (element->tagQName() != state.element()->tagQName())
         return false;
     if (element->inlineStyle())
