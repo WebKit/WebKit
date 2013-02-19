@@ -60,7 +60,7 @@ static const char javaScriptBreakpoints[] = "javaScriptBreakopints";
 static const char pauseOnExceptionsState[] = "pauseOnExceptionsState";
 };
 
-const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace-object-group";
+const char* InspectorDebuggerAgent::backtraceObjectGroup = "backtrace";
 
 InspectorDebuggerAgent::InspectorDebuggerAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager)
     : InspectorBaseAgent<InspectorDebuggerAgent>("Debugger", instrumentingAgents, inspectorState)
@@ -455,6 +455,7 @@ void InspectorDebuggerAgent::stepOver(ErrorString* errorString)
 {
     if (!assertPaused(errorString))
         return;
+    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().stepOverStatement();
 }
 
@@ -462,6 +463,7 @@ void InspectorDebuggerAgent::stepInto(ErrorString* errorString)
 {
     if (!assertPaused(errorString))
         return;
+    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().stepIntoStatement();
     m_listener->stepInto();
 }
@@ -470,6 +472,7 @@ void InspectorDebuggerAgent::stepOut(ErrorString* errorString)
 {
     if (!assertPaused(errorString))
         return;
+    m_injectedScriptManager->releaseObjectGroup(InspectorDebuggerAgent::backtraceObjectGroup);
     scriptDebugServer().stepOutOfFunction();
 }
 
