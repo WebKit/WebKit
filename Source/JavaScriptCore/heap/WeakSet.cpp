@@ -84,7 +84,7 @@ WeakBlock::FreeCell* WeakSet::addAllocator()
 void WeakSet::removeAllocator(WeakBlock* block)
 {
     m_blocks.remove(block);
-    WeakBlock::destroy(block);
+    heap()->blockAllocator().deallocate(WeakBlock::destroy(block));
 }
 
 } // namespace JSC

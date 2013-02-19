@@ -1,3 +1,15 @@
+2013-02-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        WeakSet::removeAllocator leaks WeakBlocks
+        https://bugs.webkit.org/show_bug.cgi?id=110228
+
+        Reviewed by Geoffrey Garen.
+
+        We need to return the WeakBlock to the BlockAllocator after the call to WeakBlock::destroy.
+
+        * heap/WeakSet.cpp:
+        (JSC::WeakSet::removeAllocator):
+
 2013-02-18  Geoffrey Garen  <ggaren@apple.com>
 
         Save space on keys in the CodeCache
