@@ -573,7 +573,7 @@ void BlobResourceHandle::notifyResponseOnError()
 {
     ASSERT(m_errorCode);
 
-    ResourceResponse response(firstRequest().url(), String(), 0, String(), String());
+    ResourceResponse response(firstRequest().url(), "text/plain", 0, String(), String());
     switch (m_errorCode) {
     case rangeError:
         response.setHTTPStatusCode(httpRequestedRangeNotSatisfiable);
