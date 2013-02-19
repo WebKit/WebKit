@@ -1,5 +1,11 @@
 2013-02-19  Andrey Adaikin  <aandrey@chromium.org>
 
+        Unreviewed, adding external symbol ?didBeginFrame@InspectorCanvasAgent@WebCore@@QAEXXZ.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
+2013-02-19  Andrey Adaikin  <aandrey@chromium.org>
+
         Unreviewed, Web Inspector: follow up to r143328 fixing Win Debug Build
         https://bugs.webkit.org/show_bug.cgi?id=110227
 
