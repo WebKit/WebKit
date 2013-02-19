@@ -1,0 +1,35 @@
+<html>
+	<head>
+		<style>
+		.content {
+			-webkit-flow-into: flow;
+		}
+
+		.region {
+			-webkit-flow-from: flow;
+			width: 300px;
+			height: 300px;
+		}
+	</style>
+	</head>
+<body>
+	<p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=109914">109914</a>: [CSS Regions] Assertion in RenderFlowThread::removeRenderBoxRegionInfo</p>
+	<p>This test PASSES if it does not CRASH or ASSERT.</p>
+	<!-- We need two regions to prevent optimizations from hiding the assertion-->
+	<div class="region"></div>
+	<div class="region" id="region"></div>
+	<div class="content"><div id="content">X</div></div>
+	<script type="text/javascript">
+	if (window.testRunner)
+        window.testRunner.dumpAsText();
+	document.body.offsetTop;
+	var region = document.getElementById("region");
+	var content = document.getElementById("content");
+	region.style.webkitFlowFrom = "change_flow";
+	content.style.webkitFlowInto = "change_flow";
+	document.body.offsetTop;
+	content.style.display = "none";
+	region.style.display = "none";
+	</script>
+</body>
+</html>

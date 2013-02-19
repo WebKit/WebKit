@@ -84,7 +84,7 @@ public:
     bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }
     void checkRegionsWithStyling();
 
-    void invalidateRegions() { m_regionsInvalidated = true; setNeedsLayout(true); }
+    void invalidateRegions();
     bool hasValidRegionInfo() const { return !m_regionsInvalidated && !m_regionList.isEmpty(); }
 
     static PassRefPtr<RenderStyle> createFlowThreadStyle(RenderStyle* parentStyle);

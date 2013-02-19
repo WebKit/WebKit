@@ -250,7 +250,6 @@ void RenderNamedFlowThread::addRegionToThread(RenderRegion* renderRegion)
 void RenderNamedFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
 {
     ASSERT(renderRegion);
-    m_regionRangeMap.clear();
 
     if (renderRegion->parentNamedFlowThread()) {
         if (!renderRegion->isValid()) {

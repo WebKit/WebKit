@@ -105,10 +105,24 @@ void RenderFlowThread::addRegionToThread(RenderRegion* renderRegion)
 void RenderFlowThread::removeRegionFromThread(RenderRegion* renderRegion)
 {
     ASSERT(renderRegion);
-    m_regionRangeMap.clear();
     m_regionList.remove(renderRegion);
     invalidateRegions();
     checkRegionsWithStyling();
+}
+
+void RenderFlowThread::invalidateRegions()
+{
+    if (m_regionsInvalidated) {
+        ASSERT(selfNeedsLayout());
+        return;
+    }
+
+    m_regionRangeMap.clear();
+    m_breakBeforeToRegionMap.clear();
+    m_breakAfterToRegionMap.clear();
+    setNeedsLayout(true);
+
+    m_regionsInvalidated = true;
 }
 
 class CurrentRenderFlowThreadDisabler {
@@ -141,9 +155,6 @@ void RenderFlowThread::layout()
         m_regionsInvalidated = false;
         m_regionsHaveUniformLogicalWidth = true;
         m_regionsHaveUniformLogicalHeight = true;
-        m_regionRangeMap.clear();
-        m_breakBeforeToRegionMap.clear();
-        m_breakAfterToRegionMap.clear();
 
         LayoutUnit previousRegionLogicalWidth = 0;
         LayoutUnit previousRegionLogicalHeight = 0;
@@ -152,7 +163,7 @@ void RenderFlowThread::layout()
             for (RenderRegionList::iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
                 RenderRegion* region = *iter;
                 ASSERT(!region->needsLayout());
-                
+
                 region->deleteAllRenderBoxRegionInfo();
 
                 // In the normal layout phase we need to initialize the overrideLogicalContentHeight for auto-height regions.
@@ -435,6 +446,12 @@ void RenderFlowThread::removeRenderBoxRegionInfo(RenderBox* box)
 {
     if (!hasRegions())
         return;
+
+    // If the region chain was invalidated the next layout will clear the box information from all the regions.
+    if (m_regionsInvalidated) {
+        ASSERT(selfNeedsLayout());
+        return;
+    }
 
     RenderRegion* startRegion;
     RenderRegion* endRegion;
