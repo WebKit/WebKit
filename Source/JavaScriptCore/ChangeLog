@@ -1,3 +1,12 @@
+2013-02-18  Brent Fulgham  <bfulgham@webkit.org>
+
+        [Windows] Unreviewed VS2010 build correction after r143273.
+
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj: Add missing source
+        file SourceProvider.cpp.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj.filters: Ditto.
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in: Add missing exports.
+
 2013-02-18  Filip Pizlo  <fpizlo@apple.com>
 
         Structure::flattenDictionaryStructure should compute max offset in a manner that soundly handles the case where the property list becomes empty

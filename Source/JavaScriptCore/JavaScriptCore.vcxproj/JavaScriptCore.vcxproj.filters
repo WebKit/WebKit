@@ -744,6 +744,9 @@
     <ClCompile Include="..\runtime\StructureRareData.cpp">
       <Filter>runtime</Filter>
     </ClCompile>
+    <ClCompile Include="..\parser\SourceProvider.cpp">
+      <Filter>parser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\API\APICast.h">
