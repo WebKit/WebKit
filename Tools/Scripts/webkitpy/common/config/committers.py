@@ -538,7 +538,7 @@ reviewers_list = [
     Reviewer("George Staikos", ["staikos@kde.org", "staikos@webkit.org"]),
     Reviewer("Gustavo Noronha Silva", ["gns@gnome.org", "kov@webkit.org", "gustavo.noronha@collabora.co.uk", "gustavo.noronha@collabora.com"], "kov"),
     Reviewer("Gyuyoung Kim", ["gyuyoung.kim@samsung.com", "gyuyoung.kim@webkit.org"], "gyuyoung"),
-    Reviewer("Hajime Morita", ["morrita@google.com", "morrita@chromium.org"], "morrita"),
+    Reviewer("Hajime Morrita", ["morrita@google.com", "morrita@chromium.org"], "morrita"),
     Reviewer("Holger Freyther", ["zecke@selfish.org", "zecke@webkit.org"], "zecke"),
     Reviewer("James Robinson", ["jamesr@chromium.org", "jamesr@google.com"], "jamesr"),
     Reviewer("Jan Alonzo", ["jmalonzo@gmail.com", "jmalonzo@webkit.org"], "janm"),

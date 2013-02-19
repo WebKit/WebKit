@@ -1,3 +1,9 @@
+2013-02-19  Hajime Morrita  <morrita@google.com>
+
+        Unreviewed, updated spelling of my name.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-18  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed. Adjust expectations.
