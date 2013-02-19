@@ -55,51 +55,44 @@ class SourceProvider;
 
 class SourceCodeKey {
 public:
-    enum CodeType { EvalType, ProgramType, FunctionType };
+    enum CodeType { EvalType, ProgramType, FunctionCallType, FunctionConstructType };
 
     SourceCodeKey()
+        : m_flags(0)
     {
     }
 
     SourceCodeKey(const SourceCode& sourceCode, const String& name, CodeType codeType, JSParserStrictness jsParserStrictness)
-        : m_sourceCode(sourceCode)
+        : m_sourceString(sourceCode.toString())
         , m_name(name)
         , m_flags((codeType << 1) | jsParserStrictness)
-        , m_hash(string().impl()->hash())
     {
     }
 
     SourceCodeKey(WTF::HashTableDeletedValueType)
-        : m_name(WTF::HashTableDeletedValue)
+        : m_sourceString(WTF::HashTableDeletedValue)
     {
     }
 
-    bool isHashTableDeletedValue() const { return m_name.isHashTableDeletedValue(); }
+    bool isHashTableDeletedValue() const { return m_sourceString.isHashTableDeletedValue(); }
 
-    unsigned hash() const { return m_hash; }
+    unsigned hash() const { return m_sourceString.impl()->hash(); }
 
-    size_t length() const { return m_sourceCode.length(); }
+    size_t length() const { return m_sourceString.length(); }
 
-    bool isNull() const { return m_sourceCode.isNull(); }
-
-    // To save memory, we compute our string on demand. It's expected that source
-    // providers cache their strings to make this efficient.
-    String string() const { return m_sourceCode.toString(); }
+    bool isNull() const { return m_sourceString.isNull(); }
 
     bool operator==(const SourceCodeKey& other) const
     {
-        return m_hash == other.m_hash
-            && length() == other.length()
-            && m_flags == other.m_flags
+        return m_flags == other.m_flags
             && m_name == other.m_name
-            && string() == other.string();
+            && m_sourceString == other.m_sourceString;
     }
 
 private:
-    SourceCode m_sourceCode;
+    String m_sourceString;
     String m_name;
     unsigned m_flags;
-    unsigned m_hash;
 };
 
 struct SourceCodeKeyHash {
