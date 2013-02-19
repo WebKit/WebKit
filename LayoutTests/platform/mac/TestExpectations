@@ -1456,3 +1456,5 @@ webkit.org/b/109232 [ Debug ] inspector/debugger/debugger-reload-on-pause.html [
 webkit.org/b/110027 compositing/transitions/transform-on-large-layer.html [ Pass ImageOnlyFailure ]
 
 webkit.org/b/110173 media/video-controls-captions-trackmenu.html [ Crash Pass ]
+
+webkit.org/b/110186 inspector/editor/brace-matcher.html [ Pass Failure ]
