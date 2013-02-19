@@ -12,10 +12,31 @@
 <div id="description"></div>
 <canvas id="canvas" style="width: 50px; height: 50px;"> </canvas>
 <div id="console"></div>
+<script id="vs" type="x-shader/x-vertex">
+attribute vec4 vPosition;
+attribute vec4 vColor;
+varying vec4 color;
+void main() {
+    gl_Position = vPosition;
+    color = vColor;
+}
+</script>
+<script id="fs" type="x-shader/x-fragment">
+#if defined(GL_ES)
+precision mediump float;
+#endif
+varying vec4 color;
+void main() {
+  gl_FragColor = color;
+}
+</script>
 <script>
 description("This test verifies the functionality of the OES_element_index_uint extension, if it is available.");
 
 debug("");
+
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
 
 var wtu = WebGLTestUtils;
 var canvas = document.getElementById("canvas");
@@ -75,7 +96,7 @@ function runDrawTests() {
     canvas.width = 50; canvas.height = 50;
     gl.viewport(0, 0, canvas.width, canvas.height);
     
-    var program = wtu.setupNoTexCoordTextureProgram(gl);
+    var program = wtu.setupSimpleTextureProgram(gl);
 
     function setupDraw(s) {
         // Create a vertex buffer that cannot be fully indexed via shorts
@@ -261,6 +282,7 @@ function runIndexValidationTests() {
     gl.vertexAttribPointer(normalLoc, 3, gl.FLOAT, false, 7 * sizeInBytes(gl.FLOAT), -2000000000 * sizeInBytes(gl.FLOAT));
     glErrorShouldBe(gl, gl.INVALID_VALUE);
     shouldBeUndefined('gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_INT, 0)');
+    gl.disableVertexAttribArray(vertexLoc);
 }
 
 function runCopiesIndicesTests() {
@@ -294,7 +316,7 @@ function runCopiesIndicesTests() {
 function runResizedBufferTests() {
     debug("Test that updating the size of a vertex buffer is properly noticed by the WebGL implementation.");
 
-    var program = setupProgram(gl, "vs", "fs", ["vPosition", "vColor"]);
+    var program = wtu.setupProgram(gl, ["vs", "fs"], ["vPosition", "vColor"]);
     glErrorShouldBe(gl, gl.NO_ERROR, "after initialization");
 
     var vertexObject = gl.createBuffer();
@@ -389,8 +411,11 @@ function runCrashWithBufferSubDataTests() {
     glErrorShouldBe(gl, gl.INVALID_VALUE, "after attempting to update a buffer outside of the allocated bounds");
     testPassed("bufferSubData, when buffer object was initialized with null, did not crash");
 }
-</script>
-<script src="../../resources/js-test-post.js"></script>
 
+debug("");
+successfullyParsed = true;
+isSuccessfullyParsed();
+
+</script>
 </body>
 </html>
