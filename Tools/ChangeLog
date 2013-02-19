@@ -1,3 +1,17 @@
+2013-02-19  Alan Cutter  <alancutter@chromium.org>
+
+        REGRESSION: Sheriffbot is failing to process rollout requests
+        https://bugs.webkit.org/show_bug.cgi?id=106945
+
+        Reviewed by Adam Barth.
+
+        Modified Sheriffbot build script to track the svn repo from git and add bot user details to the git repo config file.
+        This resolves problems when Sheriffbot attempts to perform a rollout request.
+
+        * EWSTools/GoogleComputeEngine/build-feeder-style-sheriffbot.sh:
+        * EWSTools/configure-git-svn.sh: Copied from Tools/EWSTools/create-webkit-git.
+        * EWSTools/configure-git-user.sh: Renamed from Tools/EWSTools/create-webkit-git.
+
 2013-02-19  Claudio Saavedra  <csaavedra@igalia.com>
 
         Unreviewed build fix.

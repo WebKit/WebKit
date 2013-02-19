@@ -1,5 +1,5 @@
-#/bin/bash
-# Copyright (c) 2010 Google Inc. All rights reserved.
+#!/bin/sh
+# Copyright (c) 2013 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -11,9 +11,6 @@
 # copyright notice, this list of conditions and the following disclaimer
 # in the documentation and/or other materials provided with the
 # distribution.
-#     * Neither the name of Google Inc. nor the names of its
-# contributors may be used to endorse or promote products derived from
-# this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,16 +24,19 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# These are meant to match the instructions from:
-# http://trac.webkit.org/wiki/UsingGitWithWebKit
-cd /mnt/git
-git clone git://git.webkit.org/WebKit.git webkit
-cd webkit
+if [[ $# -ne 1 ]]; then
+    echo "Usage: configure-git-svn.sh QUEUE_TYPE"
+    exit 1
+fi
 
-git svn init -T trunk http://svn.webkit.org/repository/webkit
-git update-ref refs/remotes/trunk origin/master
-# It's possible that this "config" step can get merged into an earlier setup step.
-git config --replace-all svn-remote.svn.fetch trunk:refs/remotes/origin/master
+QUEUE_TYPE=$1
 
-git fetch
-git svn rebase
+CWD="$(pwd)"
+cd /mnt/git/webkit-$QUEUE_TYPE
+
+# These commands come from the WebKit wiki: http://trac.webkit.org/wiki/UsingGitWithWebKit
+git svn init --prefix=origin/ -T trunk http://svn.webkit.org/repository/webkit
+git config --replace svn-remote.svn.fetch trunk:refs/remotes/origin/master
+git svn fetch --local
+
+cd "$CWD"
