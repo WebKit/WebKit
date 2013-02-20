@@ -66,33 +66,35 @@ WebInspector.SuggestBox = function(suggestBoxDelegate, inputElement, className)
     this._length = 0;
     this._selectedIndex = -1;
     this._selectedElement = null;
-    this._boundOnScroll = this._onscrollresize.bind(this, true);
-    this._boundOnResize = this._onscrollresize.bind(this, false);
+    this._boundOnScroll = this._onScrollOrResize.bind(this, true);
+    this._boundOnResize = this._onScrollOrResize.bind(this, false);
     window.addEventListener("scroll", this._boundOnScroll, true);
     window.addEventListener("resize", this._boundOnResize, true);
 
     this._bodyElement = inputElement.ownerDocument.body;
     this._element = inputElement.ownerDocument.createElement("div");
     this._element.className = "suggest-box " + (className || "");
-    this._element.addEventListener("mousedown", this._onboxmousedown.bind(this), true);
+    this._element.addEventListener("mousedown", this._onBoxMouseDown.bind(this), true);
     this.containerElement = this._element.createChild("div", "container");
     this.contentElement = this.containerElement.createChild("div", "content");
 }
 
 WebInspector.SuggestBox.prototype = {
-    get visible()
+    /**
+     * @return {boolean}
+     */
+    visible: function()
     {
         return !!this._element.parentElement;
     },
 
-    get hasSelection()
+    /**
+     * @param {boolean} isScroll
+     * @param {Event} event
+     */
+    _onScrollOrResize: function(isScroll, event)
     {
-        return !!this._selectedElement;
-    },
-
-    _onscrollresize: function(isScroll, event)
-    {
-        if (isScroll && this._element.isAncestor(event.target) || !this.visible)
+        if (isScroll && this._element.isAncestor(event.target) || !this.visible())
             return;
         this._updateBoxPositionWithExistingAnchor();
     },
@@ -155,14 +157,17 @@ WebInspector.SuggestBox.prototype = {
         this._element.style.height = height + "px";
     },
 
-    _onboxmousedown: function(event)
+    /**
+     * @param {Event} event
+     */
+    _onBoxMouseDown: function(event)
     {
         event.preventDefault();
     },
 
     hide: function()
     {
-        if (!this.visible)
+        if (!this.visible())
             return;
 
         this._element.parentElement.removeChild(this._element);
@@ -182,7 +187,7 @@ WebInspector.SuggestBox.prototype = {
      */
     _applySuggestion: function(text, isIntermediateSuggestion)
     {
-        if (!this.visible || !(text || this._selectedElement))
+        if (!this.visible() || !(text || this._selectedElement))
             return false;
 
         var suggestion = text || this._selectedElement.textContent;
@@ -231,26 +236,19 @@ WebInspector.SuggestBox.prototype = {
     },
 
     /**
-     * @param {AnchorBox} anchorBox
-     * @param {Array.<string>=} completions
-     * @param {number=} selectedIndex
-     * @param {boolean=} canShowForSingleItem
+     * @param {string} text
+     * @param {Event} event
      */
-    updateSuggestions: function(anchorBox, completions, selectedIndex, canShowForSingleItem)
-    {
-        if (this._suggestTimeout) {
-            clearTimeout(this._suggestTimeout);
-            delete this._suggestTimeout;
-        }
-        this._completionsReady(anchorBox, completions, selectedIndex, canShowForSingleItem);
-    },
-
     _onItemMouseDown: function(text, event)
     {
         this.acceptSuggestion(text);
         event.consume(true);
     },
 
+    /**
+     * @param {string} prefix
+     * @param {string} text
+     */
     _createItemElement: function(prefix, text)
     {
         var element = document.createElement("div");
@@ -335,12 +333,12 @@ WebInspector.SuggestBox.prototype = {
      * @param {number=} selectedIndex
      * @param {boolean=} canShowForSingleItem
      */
-    _completionsReady: function(anchorBox, completions, selectedIndex, canShowForSingleItem)
+    updateSuggestions: function(anchorBox, completions, selectedIndex, canShowForSingleItem)
     {
         if (this._canShowBox(completions, canShowForSingleItem)) {
             this._updateItems(completions, selectedIndex);
             this._updateBoxPosition(anchorBox);
-            if (!this.visible)
+            if (!this.visible())
                 this._bodyElement.appendChild(this._element);
             this._rememberRowCountPerViewport();
         } else

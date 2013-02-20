@@ -630,7 +630,7 @@ WebInspector.TextPrompt.prototype = {
 
     isSuggestBoxVisible: function()
     {
-        return this._suggestBox && this._suggestBox.visible;
+        return this._suggestBox && this._suggestBox.visible();
     },
 
     isCaretInsidePrompt: function()
