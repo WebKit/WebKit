@@ -1,3 +1,12 @@
+2013-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed BlackBerry build fix.
+
+        WebPage::download was renamed in the header by mistake to
+        convertMainResourceLoadToDownload in r137845.
+
+        * Api/WebPage.h:
+
 2013-02-19  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Appropriately handle word wrapping in SpellingHandler

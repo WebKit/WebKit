@@ -99,7 +99,7 @@ public:
 
     void loadString(const BlackBerry::Platform::String&, const BlackBerry::Platform::String& baseURL, const BlackBerry::Platform::String& contentType = "text/html", const BlackBerry::Platform::String& failingURL = BlackBerry::Platform::String::emptyString());
 
-    void convertMainResourceLoadToDownload(const Platform::NetworkRequest&);
+    void download(const Platform::NetworkRequest&);
 
     bool executeJavaScript(const BlackBerry::Platform::String& script, JavaScriptDataType& returnType, BlackBerry::Platform::String& returnValue);
 
