@@ -661,6 +661,16 @@ bool WebRuntimeFeatures::areSeamlessIFramesEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableCanvasPath(bool enable)
+{
+    RuntimeEnabledFeatures::setCanvasPathEnabled(enable);
+}
+
+bool WebRuntimeFeatures::isCanvasPathEnabled()
+{
+    return RuntimeEnabledFeatures::canvasPathEnabled();
+}
+
 void WebRuntimeFeatures::enableCSSExclusions(bool enable)
 {
     RuntimeEnabledFeatures::setCSSExclusionsEnabled(enable);

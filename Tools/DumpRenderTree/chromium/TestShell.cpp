@@ -150,6 +150,7 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableRequestAutocomplete(true);
     WebRuntimeFeatures::enableExperimentalContentSecurityPolicyFeatures(true);
     WebRuntimeFeatures::enableSeamlessIFrames(true);
+    WebRuntimeFeatures::enableCanvasPath(true);
 
     // 30 second is the same as the value in Mac DRT.
     // If we use a value smaller than the timeout value of

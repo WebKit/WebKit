@@ -27,6 +27,7 @@
  */
 
 interface [
+    V8EnabledAtRuntime=canvasPath,
     Constructor,
     Constructor(in DOMPath path),
 #if defined(ENABLE_SVG) && ENABLE_SVG
