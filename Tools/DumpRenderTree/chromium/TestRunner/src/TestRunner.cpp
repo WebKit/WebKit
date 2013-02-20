@@ -33,14 +33,19 @@
 #include "config.h"
 #include "TestRunner.h"
 
+#include "MockWebSpeechInputController.h"
+#include "MockWebSpeechRecognizer.h"
 #include "NotificationPresenter.h"
+#include "TestInterfaces.h"
 #include "WebBindings.h"
 #include "WebDataSource.h"
 #include "WebDeviceOrientation.h"
+#include "WebDeviceOrientationClientMock.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFindOptions.h"
 #include "WebFrame.h"
+#include "WebGeolocationClientMock.h"
 #include "WebInputElement.h"
 #include "WebPermissions.h"
 #include "WebPreferences.h"
@@ -142,10 +147,11 @@ void TestRunner::WorkQueue::addWork(WorkItem* work)
 }
 
 
-TestRunner::TestRunner()
+TestRunner::TestRunner(TestInterfaces* interfaces)
     : m_testIsRunning(false)
     , m_closeRemainingWindows(false)
     , m_workQueue(this)
+    , m_testInterfaces(interfaces)
     , m_delegate(0)
     , m_webView(0)
     , m_webPermissions(new WebPermissions)
@@ -427,6 +433,8 @@ void TestRunner::reset()
 #if ENABLE_NOTIFICATIONS
     m_notificationPresenter->reset();
 #endif
+    m_pointerLocked = false;
+    m_pointerLockPlannedResult = PointerLockWillSucceed;
 
     m_taskList.revokeAll();
     m_workQueue.reset();
@@ -683,6 +691,61 @@ WebNotificationPresenter* TestRunner::notificationPresenter() const
 }
 #endif
 
+bool TestRunner::requestPointerLock()
+{
+    switch (m_pointerLockPlannedResult) {
+    case PointerLockWillSucceed:
+        m_delegate->postDelayedTask(new HostMethodTask(this, &TestRunner::didAcquirePointerLockInternal), 0);
+        return true;
+    case PointerLockWillRespondAsync:
+        WEBKIT_ASSERT(!m_pointerLocked);
+        return true;
+    case PointerLockWillFailSync:
+        WEBKIT_ASSERT(!m_pointerLocked);
+        return false;
+    default:
+        WEBKIT_ASSERT_NOT_REACHED();
+        return false;
+    }
+}
+
+void TestRunner::requestPointerUnlock()
+{
+    m_delegate->postDelayedTask(new HostMethodTask(this, &TestRunner::didLosePointerLockInternal), 0);
+}
+
+bool TestRunner::isPointerLocked()
+{
+    return m_pointerLocked;
+}
+
+void TestRunner::didAcquirePointerLockInternal()
+{
+    m_pointerLocked = true;
+    m_webView->didAcquirePointerLock();
+
+    // Reset planned result to default.
+    m_pointerLockPlannedResult = PointerLockWillSucceed;
+}
+
+void TestRunner::didNotAcquirePointerLockInternal()
+{
+    WEBKIT_ASSERT(!m_pointerLocked);
+    m_pointerLocked = false;
+    m_webView->didNotAcquirePointerLock();
+
+    // Reset planned result to default.
+    m_pointerLockPlannedResult = PointerLockWillSucceed;
+}
+
+void TestRunner::didLosePointerLockInternal()
+{
+    bool wasLocked = m_pointerLocked;
+    m_pointerLocked = false;
+    if (wasLocked)
+        m_webView->didLosePointerLock();
+}
+
 void TestRunner::showDevTools()
 {
     m_delegate->showDevTools();
@@ -880,7 +943,7 @@ void TestRunner::locationChangeDone()
 
 void TestRunner::windowCount(const CppArgumentList&, CppVariant* result)
 {
-    result->set(static_cast<int>(m_delegate->windowCount()));
+    result->set(static_cast<int>(m_testInterfaces->windowList().size()));
 }
 
 void TestRunner::setCloseRemainingWindowsWhenComplete(const CppArgumentList& arguments, CppVariant* result)
@@ -1511,10 +1574,10 @@ void TestRunner::setMockDeviceOrientation(const CppArgumentList& arguments, CppV
     if (arguments[4].toBoolean())
         orientation.setGamma(arguments[5].toDouble());
 
-    // Note that we only call setOrientation on the main page's mock since this is all that the
-    // tests require. If necessary, we could get a list of WebViewHosts from the TestShell and
+    // Note that we only call setOrientation on the main page's mock since this
+    // tests require. If necessary, we could get a list of WebViewHosts from th
     // call setOrientation on each DeviceOrientationClientMock.
-    m_delegate->setDeviceOrientation(orientation);
+    m_proxy->deviceOrientationClientMock()->setOrientation(orientation);
 }
 
 void TestRunner::setUserStyleSheetEnabled(const CppArgumentList& arguments, CppVariant* result)
@@ -1759,7 +1822,7 @@ void TestRunner::setPOSIXLocale(const CppArgumentList& arguments, CppVariant* re
 
 void TestRunner::numberOfPendingGeolocationPermissionRequests(const CppArgumentList& arguments, CppVariant* result)
 {
-    result->set(m_delegate->numberOfPendingGeolocationPermissionRequests());
+    result->set(m_proxy->geolocationClientMock()->numberOfPendingPermissionRequests());
 }
 
 // FIXME: For greater test flexibility, we should be able to set each page's geolocation mock individually.
@@ -1769,7 +1832,9 @@ void TestRunner::setGeolocationPermission(const CppArgumentList& arguments, CppV
     result->setNull();
     if (arguments.size() < 1 || !arguments[0].isBool())
         return;
-    m_delegate->setGeolocationPermission(arguments[0].toBoolean());
+    const vector<WebTestProxyBase*>& windowList = m_testInterfaces->windowList();
+    for (unsigned i = 0; i < windowList.size(); ++i)
+        windowList.at(i)->geolocationClientMock()->setPermission(arguments[0].toBoolean());
 }
 
 void TestRunner::setMockGeolocationPosition(const CppArgumentList& arguments, CppVariant* result)
@@ -1777,7 +1842,9 @@ void TestRunner::setMockGeolocationPosition(const CppArgumentList& arguments, Cp
     result->setNull();
     if (arguments.size() < 3 || !arguments[0].isNumber() || !arguments[1].isNumber() || !arguments[2].isNumber())
         return;
-    m_delegate->setMockGeolocationPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
+    const vector<WebTestProxyBase*>& windowList = m_testInterfaces->windowList();
+    for (unsigned i = 0; i < windowList.size(); ++i)
+        windowList.at(i)->geolocationClientMock()->setPosition(arguments[0].toDouble(), arguments[1].toDouble(), arguments[2].toDouble());
 }
 
 void TestRunner::setMockGeolocationPositionUnavailableError(const CppArgumentList& arguments, CppVariant* result)
@@ -1785,7 +1852,9 @@ void TestRunner::setMockGeolocationPositionUnavailableError(const CppArgumentLis
     result->setNull();
     if (arguments.size() != 1 || !arguments[0].isString())
         return;
-    m_delegate->setMockGeolocationPositionUnavailableError(arguments[0].toString());
+    const vector<WebTestProxyBase*>& windowList = m_testInterfaces->windowList();
+    for (unsigned i = 0; i < windowList.size(); ++i)
+        windowList.at(i)->geolocationClientMock()->setPositionUnavailableError(WebString::fromUTF8(arguments[0].toString()));
 }
 
 #if ENABLE_NOTIFICATIONS
@@ -1815,7 +1884,9 @@ void TestRunner::addMockSpeechInputResult(const CppArgumentList& arguments, CppV
     if (arguments.size() < 3 || !arguments[0].isString() || !arguments[1].isNumber() || !arguments[2].isString())
         return;
 
-    m_delegate->addMockSpeechInputResult(arguments[0].toString(), arguments[1].toDouble(), arguments[2].toString());
+#if ENABLE_INPUT_SPEECH
+    m_proxy->speechInputControllerMock()->addMockRecognitionResult(WebString::fromUTF8(arguments[0].toString()), arguments[1].toDouble(), WebString::fromUTF8(arguments[2].toString()));
+#endif
 }
 
 void TestRunner::setMockSpeechInputDumpRect(const CppArgumentList& arguments, CppVariant* result)
@@ -1824,7 +1895,9 @@ void TestRunner::setMockSpeechInputDumpRect(const CppArgumentList& arguments, Cp
     if (arguments.size() < 1 || !arguments[0].isBool())
         return;
 
-    m_delegate->setMockSpeechInputDumpRect(arguments[0].toBoolean());
+#if ENABLE_INPUT_SPEECH
+    m_proxy->speechInputControllerMock()->setDumpRect(arguments[0].toBoolean());
+#endif
 }
 
 void TestRunner::addMockSpeechRecognitionResult(const CppArgumentList& arguments, CppVariant* result)
@@ -1833,7 +1906,7 @@ void TestRunner::addMockSpeechRecognitionResult(const CppArgumentList& arguments
     if (arguments.size() < 2 || !arguments[0].isString() || !arguments[1].isNumber())
         return;
 
-    m_delegate->addMockSpeechRecognitionResult(arguments[0].toString(), arguments[1].toDouble());
+    m_proxy->speechRecognizerMock()->addMockResult(WebString::fromUTF8(arguments[0].toString()), arguments[1].toDouble());
 }
 
 void TestRunner::setMockSpeechRecognitionError(const CppArgumentList& arguments, CppVariant* result)
@@ -1842,12 +1915,12 @@ void TestRunner::setMockSpeechRecognitionError(const CppArgumentList& arguments,
     if (arguments.size() != 2 || !arguments[0].isString() || !arguments[1].isString())
         return;
 
-    m_delegate->setMockSpeechRecognitionError(arguments[0].toString(), arguments[1].toString());
+    m_proxy->speechRecognizerMock()->setError(WebString::fromUTF8(arguments[0].toString()), WebString::fromUTF8(arguments[1].toString()));
 }
 
 void TestRunner::wasMockSpeechRecognitionAborted(const CppArgumentList&, CppVariant* result)
 {
-    result->set(m_delegate->wasMockSpeechRecognitionAborted());
+    result->set(m_proxy->speechRecognizerMock()->wasAborted());
 }
 
 void TestRunner::display(const CppArgumentList& arguments, CppVariant* result)
@@ -2025,31 +2098,31 @@ void TestRunner::notImplemented(const CppArgumentList&, CppVariant* result)
 
 void TestRunner::didAcquirePointerLock(const CppArgumentList&, CppVariant* result)
 {
-    m_delegate->didAcquirePointerLock();
+    didAcquirePointerLockInternal();
     result->setNull();
 }
 
 void TestRunner::didNotAcquirePointerLock(const CppArgumentList&, CppVariant* result)
 {
-    m_delegate->didNotAcquirePointerLock();
+    didNotAcquirePointerLockInternal();
     result->setNull();
 }
 
 void TestRunner::didLosePointerLock(const CppArgumentList&, CppVariant* result)
 {
-    m_delegate->didLosePointerLock();
+    didLosePointerLockInternal();
     result->setNull();
 }
 
 void TestRunner::setPointerLockWillRespondAsynchronously(const CppArgumentList&, CppVariant* result)
 {
-    m_delegate->setPointerLockWillRespondAsynchronously();
+    m_pointerLockPlannedResult = PointerLockWillRespondAsync;
     result->setNull();
 }
 
 void TestRunner::setPointerLockWillFailSynchronously(const CppArgumentList&, CppVariant* result)
 {
-    m_delegate->setPointerLockWillFailSynchronously();
+    m_pointerLockPlannedResult = PointerLockWillFailSync;
     result->setNull();
 }
 

@@ -26,18 +26,14 @@
 #ifndef MockWebSpeechInputController_h
 #define MockWebSpeechInputController_h
 
-#if ENABLE(INPUT_SPEECH)
-
-#include "WebTask.h"
+#include "TestCommon.h"
 #include "WebSpeechInputController.h"
 #include "WebSpeechInputResult.h"
+#include "WebTask.h"
+#include <map>
 #include <public/WebRect.h>
-#include <wtf/Compiler.h>
-#include <wtf/HashMap.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
-#include <wtf/text/StringHash.h>
+#include <string>
+#include <vector>
 
 namespace WebKit {
 class WebSecurityOrigin;
@@ -45,26 +41,31 @@ class WebSpeechInputListener;
 class WebString;
 }
 
+namespace WebTestRunner {
+
+class WebTestDelegate;
+
 class MockWebSpeechInputController : public WebKit::WebSpeechInputController {
 public:
-    static PassOwnPtr<MockWebSpeechInputController> create(WebKit::WebSpeechInputListener*);
+    explicit MockWebSpeechInputController(WebKit::WebSpeechInputListener*);
+    ~MockWebSpeechInputController();
 
     void addMockRecognitionResult(const WebKit::WebString& result, double confidence, const WebKit::WebString& language);
     void setDumpRect(bool);
     void clearResults();
+    void setDelegate(WebTestDelegate*);
 
     // WebSpeechInputController implementation:
     virtual bool startRecognition(int requestId, const WebKit::WebRect& elementRect, const WebKit::WebString& language, const WebKit::WebString& grammar, const WebKit::WebSecurityOrigin&) OVERRIDE;
     virtual void cancelRecognition(int requestId) OVERRIDE;
     virtual void stopRecording(int requestId) OVERRIDE;
 
-    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
+    WebTaskList* taskList() { return &m_taskList; }
 
 private:
-    MockWebSpeechInputController(WebKit::WebSpeechInputListener*);
     void speechTaskFired();
 
-    class SpeechTask : public WebTestRunner::WebMethodTask<MockWebSpeechInputController> {
+    class SpeechTask : public WebMethodTask<MockWebSpeechInputController> {
     public:
         SpeechTask(MockWebSpeechInputController*);
         void stop();
@@ -75,19 +76,21 @@ private:
 
     WebKit::WebSpeechInputListener* m_listener;
 
-    WebTestRunner::WebTaskList m_taskList;
+    WebTaskList m_taskList;
     SpeechTask* m_speechTask;
 
     bool m_recording;
     int m_requestId;
     WebKit::WebRect m_requestRect;
-    String m_language;
+    std::string m_language;
 
-    HashMap<String, Vector<WebKit::WebSpeechInputResult> > m_recognitionResults;
-    Vector<WebKit::WebSpeechInputResult> m_resultsForEmptyLanguage;
+    std::map<std::string, std::vector<WebKit::WebSpeechInputResult> > m_recognitionResults;
+    std::vector<WebKit::WebSpeechInputResult> m_resultsForEmptyLanguage;
     bool m_dumpRect;
+
+    WebTestDelegate* m_delegate;
 };
 
-#endif // ENABLE(INPUT_SPEECH)
+}
 
 #endif // MockWebSpeechInputController_h

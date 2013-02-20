@@ -44,22 +44,13 @@
 #include <wtf/Vector.h>
 #include <wtf/text/WTFString.h>
 
-class MockWebSpeechInputController;
-class MockWebSpeechRecognizer;
 class SkCanvas;
 class TestShell;
 
 namespace WebKit {
 class WebFrame;
-class WebDeviceOrientationClient;
-class WebDeviceOrientationClientMock;
-class WebGeolocationClient;
-class WebGeolocationClientMock;
-class WebGeolocationServiceMock;
 class WebSerializedScriptValue;
 class WebSharedWorkerClient;
-class WebSpeechInputController;
-class WebSpeechInputListener;
 class WebURL;
 struct WebRect;
 struct WebURLError;
@@ -92,14 +83,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
 
     void closeWidget();
 
-#if ENABLE(INPUT_SPEECH)
-    MockWebSpeechInputController* speechInputControllerMock() { return m_speechInputControllerMock.get(); }
-#endif
-
-#if ENABLE(SCRIPTED_SPEECH)
-    MockWebSpeechRecognizer* mockSpeechRecognizer() { return m_mockSpeechRecognizer.get(); }
-#endif
-
     // WebTestDelegate.
     virtual void setEditCommand(const std::string& name, const std::string& value) OVERRIDE;
     virtual void clearEditCommand() OVERRIDE;
@@ -126,34 +109,12 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void setAcceptAllCookies(bool) OVERRIDE;
     virtual std::string pathToLocalResource(const std::string& url) OVERRIDE;
     virtual void setLocale(const std::string&) OVERRIDE;
-    virtual void setDeviceOrientation(WebKit::WebDeviceOrientation&) OVERRIDE;
-#if ENABLE(POINTER_LOCK)
-    virtual void didAcquirePointerLock() OVERRIDE;
-    virtual void didNotAcquirePointerLock() OVERRIDE;
-    virtual void didLosePointerLock() OVERRIDE;
-    virtual void setPointerLockWillRespondAsynchronously() OVERRIDE { m_pointerLockPlannedResult = PointerLockWillRespondAsync; }
-    virtual void setPointerLockWillFailSynchronously() OVERRIDE { m_pointerLockPlannedResult = PointerLockWillFailSync; }
-#endif
-    virtual int numberOfPendingGeolocationPermissionRequests() OVERRIDE;
-    virtual void setGeolocationPermission(bool) OVERRIDE;
-    virtual void setMockGeolocationPosition(double, double, double) OVERRIDE;
-    virtual void setMockGeolocationPositionUnavailableError(const std::string&) OVERRIDE;
-#if ENABLE(INPUT_SPEECH)
-    virtual void addMockSpeechInputResult(const std::string&, double, const std::string&) OVERRIDE;
-    virtual void setMockSpeechInputDumpRect(bool) OVERRIDE;
-#endif
-#if ENABLE(SCRIPTED_SPEECH)
-    virtual void addMockSpeechRecognitionResult(const std::string&, double) OVERRIDE;
-    virtual void setMockSpeechRecognitionError(const std::string&, const std::string&) OVERRIDE;
-    virtual bool wasMockSpeechRecognitionAborted() OVERRIDE;
-#endif
     virtual void testFinished() OVERRIDE;
     virtual void testTimedOut() OVERRIDE;
     virtual bool isBeingDebugged() OVERRIDE;
     virtual int layoutTestTimeout() OVERRIDE;
     virtual void closeRemainingWindows() OVERRIDE;
     virtual int navigationEntryCount() OVERRIDE;
-    virtual int windowCount() OVERRIDE;
     virtual void goToOffset(int) OVERRIDE;
     virtual void reload() OVERRIDE;
     virtual void loadURLForFrame(const WebKit::WebURL&, const std::string& frameName) OVERRIDE;
@@ -193,14 +154,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void navigateBackForwardSoon(int offset);
     virtual int historyBackListCount();
     virtual int historyForwardListCount();
-    virtual WebKit::WebGeolocationClient* geolocationClient();
-#if ENABLE(INPUT_SPEECH)
-    virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
-#endif
-#if ENABLE(SCRIPTED_SPEECH)
-    virtual WebKit::WebSpeechRecognizer* speechRecognizer() OVERRIDE;
-#endif
-    virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient() OVERRIDE;
 
     // WebKit::WebWidgetClient
     virtual void didAutoResize(const WebKit::WebSize& newSize);
@@ -220,11 +173,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual WebKit::WebRect rootWindowRect();
     virtual WebKit::WebRect windowResizerRect();
     virtual WebKit::WebScreenInfo screenInfo();
-#if ENABLE(POINTER_LOCK)
-    virtual bool requestPointerLock();
-    virtual void requestPointerUnlock();
-    virtual bool isPointerLocked();
-#endif
 
     // WebKit::WebFrameClient
     virtual WebKit::WebPlugin* createPlugin(WebKit::WebFrame*, const WebKit::WebPluginParams&);
@@ -250,11 +198,6 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual bool willCheckAndDispatchMessageEvent(
         WebKit::WebFrame* sourceFrame, WebKit::WebFrame* targetFrame, 
         WebKit::WebSecurityOrigin target, WebKit::WebDOMMessageEvent);
-
-    WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();
-
-    // Geolocation client mocks for DRTTestRunner
-    WebKit::WebGeolocationClientMock* geolocationClientMock();
 
     // Pending task list, Note taht the method is referred from WebMethodTask class.
     WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
@@ -326,17 +269,6 @@ private:
 
     OwnPtr<WebKit::WebContextMenuData> m_lastContextMenuData;
 
-    // Geolocation
-    OwnPtr<WebKit::WebGeolocationClientMock> m_geolocationClientMock;
-
-    OwnPtr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClientMock;
-#if ENABLE(INPUT_SPEECH)
-    OwnPtr<MockWebSpeechInputController> m_speechInputControllerMock;
-#endif
-
-#if ENABLE(SCRIPTED_SPEECH)
-    OwnPtr<MockWebSpeechRecognizer> m_mockSpeechRecognizer;
-#endif
 
 #if ENABLE(MEDIA_STREAM)
     OwnPtr<webkit_support::TestMediaStreamClient> m_testMediaStreamClient;
@@ -346,15 +278,6 @@ private:
 
     WebTestRunner::WebTaskList m_taskList;
     Vector<WebKit::WebWidget*> m_popupmenus;
-
-#if ENABLE(POINTER_LOCK)
-    bool m_pointerLocked;
-    enum {
-        PointerLockWillSucceed,
-        PointerLockWillRespondAsync,
-        PointerLockWillFailSync
-    } m_pointerLockPlannedResult;
-#endif
 
     OwnPtr<WebKit::WebLayerTreeView> m_layerTreeView;
 };

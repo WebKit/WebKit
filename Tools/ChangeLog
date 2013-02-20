@@ -1,3 +1,137 @@
+2013-02-20  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] move most of the remaining mocks to TestRunner library
+        https://bugs.webkit.org/show_bug.cgi?id=110217
+
+        Reviewed by Nico Weber.
+
+        While most of the functionality provided by these mocks is also
+        available in the content module, there is no straight forward way to
+        inject the mock results required for layout tests.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebKit):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxy::geolocationClient):
+        (WebTestRunner::WebTestProxy::speechInputController):
+        (WebTestRunner::WebTestProxy::speechRecognizer):
+        (WebTestRunner::WebTestProxy::deviceOrientationClient):
+        (WebTestRunner::WebTestProxy::requestPointerLock):
+        (WebTestRunner::WebTestProxy::requestPointerUnlock):
+        (WebTestRunner::WebTestProxy::isPointerLocked):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebSpeechInputController.cpp: Renamed from Tools/DumpRenderTree/chromium/MockWebSpeechInputController.cpp.
+        (WebTestRunner::MockWebSpeechInputController::MockWebSpeechInputController):
+        (WebTestRunner):
+        (WebTestRunner::MockWebSpeechInputController::~MockWebSpeechInputController):
+        (WebTestRunner::MockWebSpeechInputController::setDelegate):
+        (WebTestRunner::MockWebSpeechInputController::addMockRecognitionResult):
+        (WebTestRunner::MockWebSpeechInputController::setDumpRect):
+        (WebTestRunner::MockWebSpeechInputController::clearResults):
+        (WebTestRunner::MockWebSpeechInputController::startRecognition):
+        (WebTestRunner::MockWebSpeechInputController::cancelRecognition):
+        (WebTestRunner::MockWebSpeechInputController::stopRecording):
+        (WebTestRunner::MockWebSpeechInputController::speechTaskFired):
+        (WebTestRunner::MockWebSpeechInputController::SpeechTask::SpeechTask):
+        (WebTestRunner::MockWebSpeechInputController::SpeechTask::stop):
+        (WebTestRunner::MockWebSpeechInputController::SpeechTask::runIfValid):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebSpeechInputController.h: Renamed from Tools/DumpRenderTree/chromium/MockWebSpeechInputController.h.
+        (WebKit):
+        (WebTestRunner):
+        (MockWebSpeechInputController):
+        (WebTestRunner::MockWebSpeechInputController::taskList):
+        (SpeechTask):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebSpeechRecognizer.cpp: Renamed from Tools/DumpRenderTree/chromium/MockWebSpeechRecognizer.cpp.
+        (WebTestRunner::MockWebSpeechRecognizer::MockWebSpeechRecognizer):
+        (WebTestRunner):
+        (WebTestRunner::MockWebSpeechRecognizer::~MockWebSpeechRecognizer):
+        (WebTestRunner::MockWebSpeechRecognizer::setDelegate):
+        (WebTestRunner::MockWebSpeechRecognizer::start):
+        (WebTestRunner::MockWebSpeechRecognizer::stop):
+        (WebTestRunner::MockWebSpeechRecognizer::abort):
+        (WebTestRunner::MockWebSpeechRecognizer::addMockResult):
+        (WebTestRunner::MockWebSpeechRecognizer::setError):
+        (WebTestRunner::MockWebSpeechRecognizer::startTaskQueue):
+        (WebTestRunner::MockWebSpeechRecognizer::clearTaskQueue):
+        (WebTestRunner::MockWebSpeechRecognizer::StepTask::runIfValid):
+        * DumpRenderTree/chromium/TestRunner/src/MockWebSpeechRecognizer.h: Renamed from Tools/DumpRenderTree/chromium/MockWebSpeechRecognizer.h.
+        (WebKit):
+        (WebTestRunner):
+        (MockWebSpeechRecognizer):
+        (WebTestRunner::MockWebSpeechRecognizer::wasAborted):
+        (WebTestRunner::MockWebSpeechRecognizer::client):
+        (WebTestRunner::MockWebSpeechRecognizer::handle):
+        (WebTestRunner::MockWebSpeechRecognizer::taskList):
+        (Task):
+        (WebTestRunner::MockWebSpeechRecognizer::Task::Task):
+        (WebTestRunner::MockWebSpeechRecognizer::Task::~Task):
+        (StepTask):
+        (WebTestRunner::MockWebSpeechRecognizer::StepTask::StepTask):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::TestInterfaces):
+        (WebTestRunner::TestInterfaces::windowOpened):
+        (WebTestRunner):
+        (WebTestRunner::TestInterfaces::windowClosed):
+        (WebTestRunner::TestInterfaces::windowList):
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.h:
+        (TestInterfaces):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::TestRunner):
+        (WebTestRunner::TestRunner::reset):
+        (WebTestRunner::TestRunner::requestPointerLock):
+        (WebTestRunner):
+        (WebTestRunner::TestRunner::requestPointerUnlock):
+        (WebTestRunner::TestRunner::isPointerLocked):
+        (WebTestRunner::TestRunner::didAcquirePointerLockInternal):
+        (WebTestRunner::TestRunner::didNotAcquirePointerLockInternal):
+        (WebTestRunner::TestRunner::didLosePointerLockInternal):
+        (WebTestRunner::TestRunner::windowCount):
+        (WebTestRunner::TestRunner::setMockDeviceOrientation):
+        (WebTestRunner::TestRunner::numberOfPendingGeolocationPermissionRequests):
+        (WebTestRunner::TestRunner::setGeolocationPermission):
+        (WebTestRunner::TestRunner::setMockGeolocationPosition):
+        (WebTestRunner::TestRunner::setMockGeolocationPositionUnavailableError):
+        (WebTestRunner::TestRunner::addMockSpeechInputResult):
+        (WebTestRunner::TestRunner::setMockSpeechInputDumpRect):
+        (WebTestRunner::TestRunner::addMockSpeechRecognitionResult):
+        (WebTestRunner::TestRunner::setMockSpeechRecognitionError):
+        (WebTestRunner::TestRunner::wasMockSpeechRecognitionAborted):
+        (WebTestRunner::TestRunner::didAcquirePointerLock):
+        (WebTestRunner::TestRunner::didNotAcquirePointerLock):
+        (WebTestRunner::TestRunner::didLosePointerLock):
+        (WebTestRunner::TestRunner::setPointerLockWillRespondAsynchronously):
+        (WebTestRunner::TestRunner::setPointerLockWillFailSynchronously):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.h:
+        (WebTestRunner):
+        (TestRunner):
+        (HostMethodTask):
+        (WebTestRunner::TestRunner::HostMethodTask::HostMethodTask):
+        (WebTestRunner::TestRunner::HostMethodTask::runIfValid):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::~WebTestProxyBase):
+        (WebTestRunner::WebTestProxyBase::setInterfaces):
+        (WebTestRunner::WebTestProxyBase::setDelegate):
+        (WebTestRunner::WebTestProxyBase::reset):
+        (WebTestRunner::WebTestProxyBase::captureTree):
+        (WebTestRunner::WebTestProxyBase::geolocationClientMock):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::deviceOrientationClientMock):
+        (WebTestRunner::WebTestProxyBase::speechInputControllerMock):
+        (WebTestRunner::WebTestProxyBase::speechRecognizerMock):
+        (WebTestRunner::WebTestProxyBase::geolocationClient):
+        (WebTestRunner::WebTestProxyBase::speechInputController):
+        (WebTestRunner::WebTestProxyBase::speechRecognizer):
+        (WebTestRunner::WebTestProxyBase::deviceOrientationClient):
+        (WebTestRunner::WebTestProxyBase::requestPointerLock):
+        (WebTestRunner::WebTestProxyBase::requestPointerUnlock):
+        (WebTestRunner::WebTestProxyBase::isPointerLocked):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::reset):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebKit):
+        (WebViewHost):
+
 2013-02-20  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Make debug builds possible on 32bit Linux

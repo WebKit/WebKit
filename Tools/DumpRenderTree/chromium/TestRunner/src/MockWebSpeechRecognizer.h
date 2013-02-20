@@ -26,13 +26,11 @@
 #ifndef MockWebSpeechRecognizer_h
 #define MockWebSpeechRecognizer_h
 
-#if ENABLE(SCRIPTED_SPEECH)
-
+#include "TestCommon.h"
 #include "WebSpeechRecognizer.h"
 #include "WebTask.h"
-#include <wtf/Compiler.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/Vector.h>
+#include <deque>
+#include <vector>
 
 namespace WebKit {
 class WebSpeechRecognitionHandle;
@@ -40,10 +38,16 @@ class WebSpeechRecognitionParams;
 class WebSpeechRecognizerClient;
 }
 
+namespace WebTestRunner {
+
+class WebTestDelegate;
+
 class MockWebSpeechRecognizer : public WebKit::WebSpeechRecognizer {
 public:
-    static PassOwnPtr<MockWebSpeechRecognizer> create();
+    MockWebSpeechRecognizer();
     ~MockWebSpeechRecognizer();
+
+    void setDelegate(WebTestDelegate*);
 
     // WebSpeechRecognizer implementation:
     virtual void start(const WebKit::WebSpeechRecognitionHandle&, const WebKit::WebSpeechRecognitionParams&, WebKit::WebSpeechRecognizerClient*) OVERRIDE;
@@ -58,7 +62,7 @@ public:
     // Methods accessed from Task objects:
     WebKit::WebSpeechRecognizerClient* client() { return m_client; }
     WebKit::WebSpeechRecognitionHandle& handle() { return m_handle; }
-    WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
+    WebTaskList* taskList() { return &m_taskList; }
 
     class Task {
     public:
@@ -70,29 +74,30 @@ public:
     };
 
 private:
-    MockWebSpeechRecognizer();
     void startTaskQueue();
     void clearTaskQueue();
 
-    WebTestRunner::WebTaskList m_taskList;
+    WebTaskList m_taskList;
     WebKit::WebSpeechRecognitionHandle m_handle;
     WebKit::WebSpeechRecognizerClient* m_client;
-    Vector<WebKit::WebString> m_mockTranscripts;
-    Vector<float> m_mockConfidences;
+    std::vector<WebKit::WebString> m_mockTranscripts;
+    std::vector<float> m_mockConfidences;
     bool m_wasAborted;
 
     // Queue of tasks to be run.
-    Vector<OwnPtr<Task> > m_taskQueue;
+    std::deque<Task*> m_taskQueue;
     bool m_taskQueueRunning;
 
+    WebTestDelegate* m_delegate;
+
     // Task for stepping the queue.
-    class StepTask : public WebTestRunner::WebMethodTask<MockWebSpeechRecognizer> {
+    class StepTask : public WebMethodTask<MockWebSpeechRecognizer> {
     public:
-        StepTask(MockWebSpeechRecognizer* object) : WebTestRunner::WebMethodTask<MockWebSpeechRecognizer>(object) { }
+        StepTask(MockWebSpeechRecognizer* object) : WebMethodTask<MockWebSpeechRecognizer>(object) { }
         virtual void runIfValid() OVERRIDE;
     };
 };
 
-#endif // ENABLE(SCRIPTED_SPEECH)
+}
 
 #endif // MockWebSpeechRecognizer_h

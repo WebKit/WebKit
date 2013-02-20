@@ -26,21 +26,52 @@
 #include "config.h"
 #include "MockWebSpeechInputController.h"
 
-#include "Task.h"
 #include "WebSpeechInputListener.h"
+#include "WebTestDelegate.h"
 #include <public/WebCString.h>
 #include <public/WebVector.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/StringBuilder.h>
 
-#if ENABLE(INPUT_SPEECH)
+#if ENABLE_INPUT_SPEECH
 
 using namespace WebKit;
-using namespace WebTestRunner;
+using namespace std;
 
-PassOwnPtr<MockWebSpeechInputController> MockWebSpeechInputController::create(WebSpeechInputListener* listener)
+namespace WebTestRunner {
+
+namespace {
+
+WebSpeechInputResultArray makeRectResult(const WebRect& rect)
 {
-    return adoptPtr(new MockWebSpeechInputController(listener));
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "%d,%d,%d,%d", rect.x, rect.y, rect.width, rect.height);
+
+    WebSpeechInputResult res;
+    res.assign(WebString::fromUTF8(static_cast<const char*>(buffer)), 1.0);
+
+    WebSpeechInputResultArray results;
+    results.assign(&res, 1);
+    return results;
+}
+
+}
+
+MockWebSpeechInputController::MockWebSpeechInputController(WebSpeechInputListener* listener)
+    : m_listener(listener)
+    , m_speechTask(0)
+    , m_recording(false)
+    , m_requestId(-1)
+    , m_dumpRect(false)
+    , m_delegate(0)
+{
+}
+
+MockWebSpeechInputController::~MockWebSpeechInputController()
+{
+}
+
+void MockWebSpeechInputController::setDelegate(WebTestDelegate* delegate)
+{
+    m_delegate = delegate;
 }
 
 void MockWebSpeechInputController::addMockRecognitionResult(const WebString& result, double confidence, const WebString& language)
@@ -49,12 +80,12 @@ void MockWebSpeechInputController::addMockRecognitionResult(const WebString& res
     res.assign(result, confidence);
 
     if (language.isEmpty())
-        m_resultsForEmptyLanguage.append(res);
+        m_resultsForEmptyLanguage.push_back(res);
     else {
-        String langString = String::fromUTF8(language.utf8().data());
-        if (!m_recognitionResults.contains(langString))
-            m_recognitionResults.set(langString, Vector<WebSpeechInputResult>());
-        m_recognitionResults.find(langString)->value.append(res);
+        string langString = language.utf8();
+        if (m_recognitionResults.find(langString) == m_recognitionResults.end())
+            m_recognitionResults[langString] = vector<WebSpeechInputResult>();
+        m_recognitionResults[langString].push_back(res);
     }
 }
 
@@ -78,10 +109,10 @@ bool MockWebSpeechInputController::startRecognition(int requestId, const WebRect
     m_requestId = requestId;
     m_requestRect = elementRect;
     m_recording = true;
-    m_language = String::fromUTF8(language.utf8().data());
+    m_language = language.utf8();
 
     m_speechTask = new SpeechTask(this);
-    postTask(m_speechTask);
+    m_delegate->postTask(m_speechTask);
 
     return true;
 }
@@ -89,7 +120,7 @@ bool MockWebSpeechInputController::startRecognition(int requestId, const WebRect
 void MockWebSpeechInputController::cancelRecognition(int requestId)
 {
     if (m_speechTask) {
-        ASSERT(requestId == m_requestId);
+        WEBKIT_ASSERT(requestId == m_requestId);
 
         m_speechTask->stop();
         m_recording = false;
@@ -100,39 +131,11 @@ void MockWebSpeechInputController::cancelRecognition(int requestId)
 
 void MockWebSpeechInputController::stopRecording(int requestId)
 {
-    ASSERT(requestId == m_requestId);
+    WEBKIT_ASSERT(requestId == m_requestId);
     if (m_speechTask && m_recording) {
         m_speechTask->stop();
         speechTaskFired();
     }
-}
-
-MockWebSpeechInputController::MockWebSpeechInputController(WebSpeechInputListener* listener)
-    : m_listener(listener)
-    , m_speechTask(0)
-    , m_recording(false)
-    , m_requestId(-1)
-    , m_dumpRect(false)
-{
-}
-
-static WebSpeechInputResultArray makeRectResult(const WebRect& rect)
-{
-    StringBuilder sb;
-    sb.append(String::number(rect.x));
-    sb.append(",");
-    sb.append(String::number(rect.y));
-    sb.append(",");
-    sb.append(String::number(rect.width));
-    sb.append(",");
-    sb.append(String::number(rect.height));
-
-    WebSpeechInputResult res;
-    res.assign(WebString(sb.characters(), sb.length()), 1.0);
-
-    WebSpeechInputResultArray results;
-    results.assign(&res, 1);
-    return results;
 }
 
 void MockWebSpeechInputController::speechTaskFired()
@@ -142,7 +145,7 @@ void MockWebSpeechInputController::speechTaskFired()
         m_listener->didCompleteRecording(m_requestId);
 
         m_speechTask = new SpeechTask(this);
-        postTask(m_speechTask);
+        m_delegate->postTask(m_speechTask);
     } else {
         bool noResultsFound = false;
         // We take a copy of the requestId here so that if scripts destroyed the input element
@@ -152,15 +155,15 @@ void MockWebSpeechInputController::speechTaskFired()
 
         if (m_dumpRect) {
             m_listener->setRecognitionResult(requestId, makeRectResult(m_requestRect));
-        } else if (m_language.isEmpty()) {
+        } else if (m_language.empty()) {
             // Empty language case must be handled separately to avoid problems with HashMap and empty keys.
-            if (!m_resultsForEmptyLanguage.isEmpty())
+            if (!m_resultsForEmptyLanguage.empty())
                 m_listener->setRecognitionResult(requestId, m_resultsForEmptyLanguage);
             else
                 noResultsFound = true;
         } else {
-            if (m_recognitionResults.contains(m_language))
-                m_listener->setRecognitionResult(requestId, m_recognitionResults.get(m_language));
+            if (m_recognitionResults.find(m_language) != m_recognitionResults.end())
+                m_listener->setRecognitionResult(requestId, m_recognitionResults[m_language]);
             else
                 noResultsFound = true;
         }
@@ -168,15 +171,15 @@ void MockWebSpeechInputController::speechTaskFired()
         if (noResultsFound) {
             // Can't avoid setting a result even if no result was set for the given language.
             // This would avoid generating the events used to check the results and the test would timeout.
-            String error("error: no result found for language '");
+            string error("error: no result found for language '");
             error.append(m_language);
             error.append("'");
 
             WebSpeechInputResult res;
-            res.assign(WebString::fromUTF8(error.utf8().data()), 1.0);
+            res.assign(WebString::fromUTF8(error), 1.0);
 
-            Vector<WebSpeechInputResult> results;
-            results.append(res);
+            vector<WebSpeechInputResult> results;
+            results.push_back(res);
 
             m_listener->setRecognitionResult(requestId, results);
         }
@@ -192,13 +195,15 @@ void MockWebSpeechInputController::SpeechTask::stop()
 {
     m_object->m_speechTask = 0;
     cancel();
-    delete(this);
+    delete this;
 }
 
 void MockWebSpeechInputController::SpeechTask::runIfValid()
 {
     m_object->m_speechTask = 0;
     m_object->speechTaskFired();
+}
+
 }
 
 #endif

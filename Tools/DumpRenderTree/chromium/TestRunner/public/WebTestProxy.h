@@ -51,14 +51,21 @@ namespace WebKit {
 class WebAccessibilityObject;
 class WebCachedURLRequest;
 class WebDataSource;
+class WebDeviceOrientationClient;
+class WebDeviceOrientationClientMock;
 class WebDragData;
 class WebFrame;
+class WebGeolocationClient;
+class WebGeolocationClientMock;
 class WebImage;
 class WebNode;
 class WebNotificationPresenter;
 class WebPlugin;
 class WebRange;
 class WebSerializedScriptValue;
+class WebSpeechInputController;
+class WebSpeechInputListener;
+class WebSpeechRecognizer;
 class WebSpellCheckClient;
 class WebString;
 class WebURL;
@@ -78,6 +85,8 @@ class SkCanvas;
 
 namespace WebTestRunner {
 
+class MockWebSpeechInputController;
+class MockWebSpeechRecognizer;
 class SpellCheckClient;
 class TestInterfaces;
 class WebTestDelegate;
@@ -99,9 +108,16 @@ public:
 
     void setLogConsoleOutput(bool enabled);
 
+#if WEBTESTRUNNER_IMPLEMENTATION
     void display();
     void displayInvalidatedRegion();
     void discardBackingStore();
+
+    WebKit::WebDeviceOrientationClientMock* deviceOrientationClientMock();
+    WebKit::WebGeolocationClientMock* geolocationClientMock();
+    MockWebSpeechInputController* speechInputControllerMock();
+    MockWebSpeechRecognizer* speechRecognizerMock();
+#endif
 
 protected:
     WebTestProxyBase();
@@ -137,6 +153,13 @@ protected:
     WebKit::WebUserMediaClient* userMediaClient();
     void printPage(WebKit::WebFrame*);
     WebKit::WebNotificationPresenter* notificationPresenter();
+    WebKit::WebGeolocationClient* geolocationClient();
+    WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
+    WebKit::WebSpeechRecognizer* speechRecognizer();
+    WebKit::WebDeviceOrientationClient* deviceOrientationClient();
+    bool requestPointerLock();
+    void requestPointerUnlock();
+    bool isPointerLocked();
 
     void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
     void didCancelClientRedirect(WebKit::WebFrame*);
@@ -192,6 +215,12 @@ private:
     std::map<unsigned, std::string> m_resourceIdentifierMap;
 
     bool m_logConsoleOutput;
+
+    std::auto_ptr<WebKit::WebGeolocationClientMock> m_geolocationClient;
+    std::auto_ptr<WebKit::WebDeviceOrientationClientMock> m_deviceOrientationClient;
+    std::auto_ptr<MockWebSpeechRecognizer> m_speechRecognizer;
+    std::auto_ptr<MockWebSpeechInputController> m_speechInputController;
+
 private:
     WebTestProxyBase(WebTestProxyBase&);
     WebTestProxyBase& operator=(const WebTestProxyBase&);
@@ -357,6 +386,34 @@ public:
     virtual WebKit::WebNotificationPresenter* notificationPresenter()
     {
         return WebTestProxyBase::notificationPresenter();
+    }
+    virtual WebKit::WebGeolocationClient* geolocationClient()
+    {
+        return WebTestProxyBase::geolocationClient();
+    }
+    virtual WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener* listener)
+    {
+        return WebTestProxyBase::speechInputController(listener);
+    }
+    virtual WebKit::WebSpeechRecognizer* speechRecognizer()
+    {
+        return WebTestProxyBase::speechRecognizer();
+    }
+    virtual WebKit::WebDeviceOrientationClient* deviceOrientationClient()
+    {
+        return WebTestProxyBase::deviceOrientationClient();
+    }
+    virtual bool requestPointerLock()
+    {
+        return WebTestProxyBase::requestPointerLock();
+    }
+    virtual void requestPointerUnlock()
+    {
+        WebTestProxyBase::requestPointerUnlock();
+    }
+    virtual bool isPointerLocked()
+    {
+        return WebTestProxyBase::isPointerLocked();
     }
 
     // WebFrameClient implementation.

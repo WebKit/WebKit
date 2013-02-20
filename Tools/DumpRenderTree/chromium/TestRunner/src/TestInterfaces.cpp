@@ -51,7 +51,7 @@ TestInterfaces::TestInterfaces()
     , m_eventSender(new EventSender())
     , m_gamepadController(new GamepadController())
     , m_textInputController(new TextInputController())
-    , m_testRunner(new TestRunner())
+    , m_testRunner(new TestRunner(this))
     , m_webView(0)
     , m_delegate(0)
 {
@@ -133,6 +133,21 @@ void TestInterfaces::configureForTestWithURL(const WebURL& testURL, bool generat
         m_testRunner->showDevTools();
 }
 
+void TestInterfaces::windowOpened(WebTestProxyBase* proxy)
+{
+    m_windowList.push_back(proxy);
+}
+
+void TestInterfaces::windowClosed(WebTestProxyBase* proxy)
+{
+    vector<WebTestProxyBase*>::iterator pos = find(m_windowList.begin(), m_windowList.end(), proxy);
+    if (pos == m_windowList.end()) {
+        WEBKIT_ASSERT_NOT_REACHED();
+        return;
+    }
+    m_windowList.erase(pos);
+}
+
 AccessibilityController* TestInterfaces::accessibilityController()
 {
     return m_accessibilityController.get();
@@ -161,6 +176,11 @@ WebTestDelegate* TestInterfaces::delegate()
 WebTestProxyBase* TestInterfaces::proxy()
 {
     return m_proxy;
+}
+
+const vector<WebTestProxyBase*>& TestInterfaces::windowList()
+{
+    return m_windowList;
 }
 
 }

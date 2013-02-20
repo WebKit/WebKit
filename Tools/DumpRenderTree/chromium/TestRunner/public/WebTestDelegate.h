@@ -37,7 +37,6 @@
 #include <string>
 
 namespace WebKit {
-class WebDeviceOrientation;
 class WebGamepads;
 class WebHistoryItem;
 struct WebRect;
@@ -84,28 +83,12 @@ public:
     virtual void setAcceptAllCookies(bool) { }
     virtual std::string pathToLocalResource(const std::string& resource) { return std::string(); }
     virtual void setLocale(const std::string&) { }
-    virtual void setDeviceOrientation(WebKit::WebDeviceOrientation&) { }
-    virtual void didAcquirePointerLock() { }
-    virtual void didNotAcquirePointerLock() { }
-    virtual void didLosePointerLock() { }
-    virtual void setPointerLockWillRespondAsynchronously() { }
-    virtual void setPointerLockWillFailSynchronously() { }
-    virtual int numberOfPendingGeolocationPermissionRequests() { return 0; }
-    virtual void setGeolocationPermission(bool) { }
-    virtual void setMockGeolocationPosition(double, double, double) { }
-    virtual void setMockGeolocationPositionUnavailableError(const std::string&) { }
-    virtual void addMockSpeechInputResult(const std::string&, double, const std::string&) { }
-    virtual void setMockSpeechInputDumpRect(bool) { }
-    virtual void addMockSpeechRecognitionResult(const std::string&, double) { }
-    virtual void setMockSpeechRecognitionError(const std::string&, const std::string&) { }
-    virtual bool wasMockSpeechRecognitionAborted() { return false; }
     virtual void testFinished() { }
     virtual void testTimedOut() { }
     virtual bool isBeingDebugged() { return false; }
     virtual int layoutTestTimeout() { return 30 * 1000; }
     virtual void closeRemainingWindows() { }
     virtual int navigationEntryCount() { return 0; }
-    virtual int windowCount() { return 0; }
     virtual void goToOffset(int) { }
     virtual void reload() { }
     virtual void loadURLForFrame(const WebKit::WebURL&, const std::string&) { }

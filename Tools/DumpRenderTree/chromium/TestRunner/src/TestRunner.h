@@ -55,13 +55,14 @@ class WebView;
 namespace WebTestRunner {
 
 class NotificationPresenter;
+class TestInterfaces;
 class WebPermissions;
 class WebTestDelegate;
 class WebTestProxyBase;
 
 class TestRunner : public WebTestRunner, public CppBoundClass {
 public:
-    TestRunner();
+    explicit TestRunner(TestInterfaces*);
     virtual ~TestRunner();
 
     void setDelegate(WebTestDelegate*);
@@ -122,6 +123,9 @@ public:
 #if ENABLE_NOTIFICATIONS
     WebKit::WebNotificationPresenter* notificationPresenter() const;
 #endif
+    bool requestPointerLock();
+    void requestPointerUnlock();
+    bool isPointerLocked();
 
     // A single item in the work queue.
     class WorkItem {
@@ -502,6 +506,23 @@ private:
         virtual void runIfValid() { m_object->completeNotifyDone(true); }
     };
 
+    class HostMethodTask : public WebMethodTask<TestRunner> {
+    public:
+        typedef void (TestRunner::*CallbackMethodType)();
+        HostMethodTask(TestRunner* object, CallbackMethodType callback)
+            : WebMethodTask<TestRunner>(object)
+            , m_callback(callback)
+        { }
+
+        virtual void runIfValid() { (m_object->*m_callback)(); }
+
+    private:
+        CallbackMethodType m_callback;
+    };
+    void didAcquirePointerLockInternal();
+    void didNotAcquirePointerLockInternal();
+    void didLosePointerLockInternal();
+
     bool elementDoesAutoCompleteForElementWithId(const WebKit::WebString&);
     bool cppVariantToBool(const CppVariant&);
     int32_t cppVariantToInt32(const CppVariant&);
@@ -660,6 +681,7 @@ private:
     // Used for test timeouts.
     WebTaskList m_taskList;
 
+    TestInterfaces* m_testInterfaces;
     WebTestDelegate* m_delegate;
     WebKit::WebView* m_webView;
     WebTestProxyBase* m_proxy;
@@ -673,6 +695,13 @@ private:
 #if ENABLE_NOTIFICATIONS
     std::auto_ptr<NotificationPresenter> m_notificationPresenter;
 #endif
+
+    bool m_pointerLocked;
+    enum {
+        PointerLockWillSucceed,
+        PointerLockWillRespondAsync,
+        PointerLockWillFailSync,
+    } m_pointerLockPlannedResult;
 };
 
 }

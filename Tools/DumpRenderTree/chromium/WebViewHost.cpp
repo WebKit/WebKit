@@ -32,8 +32,6 @@
 #include "WebViewHost.h"
 
 #include "DRTDevToolsAgent.h"
-#include "MockWebSpeechInputController.h"
-#include "MockWebSpeechRecognizer.h"
 #include "Task.h"
 #include "TestNavigationController.h"
 #include "TestShell.h"
@@ -42,11 +40,9 @@
 #include "WebContextMenuData.h"
 #include "WebDOMMessageEvent.h"
 #include "WebDataSource.h"
-#include "WebDeviceOrientationClientMock.h"
 #include "WebDocument.h"
 #include "WebElement.h"
 #include "WebFrame.h"
-#include "WebGeolocationClientMock.h"
 #include "WebHistoryItem.h"
 #include "WebKit.h"
 #include "WebNode.h"
@@ -269,48 +265,6 @@ int WebViewHost::historyForwardListCount()
     return navigationController()->entryCount() - currentIndex - 1;
 }
 
-WebKit::WebGeolocationClient* WebViewHost::geolocationClient()
-{
-    return geolocationClientMock();
-}
-
-WebKit::WebGeolocationClientMock* WebViewHost::geolocationClientMock()
-{
-    if (!m_geolocationClientMock)
-        m_geolocationClientMock = adoptPtr(WebGeolocationClientMock::create());
-    return m_geolocationClientMock.get();
-}
-
-#if ENABLE(INPUT_SPEECH)
-WebSpeechInputController* WebViewHost::speechInputController(WebKit::WebSpeechInputListener* listener)
-{
-    if (!m_speechInputControllerMock)
-        m_speechInputControllerMock = MockWebSpeechInputController::create(listener);
-    return m_speechInputControllerMock.get();
-}
-#endif
-
-#if ENABLE(SCRIPTED_SPEECH)
-WebSpeechRecognizer* WebViewHost::speechRecognizer()
-{
-    if (!m_mockSpeechRecognizer)
-        m_mockSpeechRecognizer = MockWebSpeechRecognizer::create();
-    return m_mockSpeechRecognizer.get();
-}
-#endif
-
-WebDeviceOrientationClientMock* WebViewHost::deviceOrientationClientMock()
-{
-    if (!m_deviceOrientationClientMock.get())
-        m_deviceOrientationClientMock = adoptPtr(WebDeviceOrientationClientMock::create());
-    return m_deviceOrientationClientMock.get();
-}
-
-WebDeviceOrientationClient* WebViewHost::deviceOrientationClient()
-{
-    return deviceOrientationClientMock();
-}
-
 // WebWidgetClient -----------------------------------------------------------
 
 void WebViewHost::didAutoResize(const WebSize& newSize)
@@ -362,63 +316,6 @@ WebScreenInfo WebViewHost::screenInfo()
                                  screenHeight - screenUnavailableBorder * 2);
     return info;
 }
-
-#if ENABLE(POINTER_LOCK)
-bool WebViewHost::requestPointerLock()
-{
-    switch (m_pointerLockPlannedResult) {
-    case PointerLockWillSucceed:
-        postDelayedTask(new HostMethodTask(this, &WebViewHost::didAcquirePointerLock), 0);
-        return true;
-    case PointerLockWillRespondAsync:
-        ASSERT(!m_pointerLocked);
-        return true;
-    case PointerLockWillFailSync:
-        ASSERT(!m_pointerLocked);
-        return false;
-    default:
-        ASSERT_NOT_REACHED();
-        return false;
-    }
-}
-
-void WebViewHost::requestPointerUnlock()
-{
-    postDelayedTask(new HostMethodTask(this, &WebViewHost::didLosePointerLock), 0);
-}
-
-bool WebViewHost::isPointerLocked()
-{
-    return m_pointerLocked;
-}
-
-void WebViewHost::didAcquirePointerLock()
-{
-    m_pointerLocked = true;
-    webWidget()->didAcquirePointerLock();
-
-    // Reset planned result to default.
-    m_pointerLockPlannedResult = PointerLockWillSucceed;
-}
-
-void WebViewHost::didNotAcquirePointerLock()
-{
-    ASSERT(!m_pointerLocked);
-    m_pointerLocked = false;
-    webWidget()->didNotAcquirePointerLock();
-
-    // Reset planned result to default.
-    m_pointerLockPlannedResult = PointerLockWillSucceed;
-}
-
-void WebViewHost::didLosePointerLock()
-{
-    bool wasLocked = m_pointerLocked;
-    m_pointerLocked = false;
-    if (wasLocked)
-        webWidget()->didLosePointerLock();
-}
-#endif
 
 void WebViewHost::show(WebNavigationPolicy)
 {
@@ -763,71 +660,6 @@ void WebViewHost::setLocale(const std::string& locale)
     setlocale(LC_ALL, locale.c_str());
 }
 
-void WebViewHost::setDeviceOrientation(WebKit::WebDeviceOrientation& orientation)
-{
-    deviceOrientationClientMock()->setOrientation(orientation);
-}
-
-int WebViewHost::numberOfPendingGeolocationPermissionRequests()
-{
-    Vector<WebViewHost*> windowList = m_shell->windowList();
-    int numberOfRequests = 0;
-    for (size_t i = 0; i < windowList.size(); i++)
-        numberOfRequests += windowList[i]->geolocationClientMock()->numberOfPendingPermissionRequests();
-    return numberOfRequests;
-}
-
-void WebViewHost::setGeolocationPermission(bool allowed)
-{
-    Vector<WebViewHost*> windowList = m_shell->windowList();
-    for (size_t i = 0; i < windowList.size(); i++)
-        windowList[i]->geolocationClientMock()->setPermission(allowed);
-}
-
-void WebViewHost::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
-{
-    Vector<WebViewHost*> windowList = m_shell->windowList();
-    for (size_t i = 0; i < windowList.size(); i++)
-        windowList[i]->geolocationClientMock()->setPosition(latitude, longitude, accuracy);
-}
-
-void WebViewHost::setMockGeolocationPositionUnavailableError(const std::string& message)
-{
-    Vector<WebViewHost*> windowList = m_shell->windowList();
-    // FIXME: Benjamin
-    for (size_t i = 0; i < windowList.size(); i++)
-        windowList[i]->geolocationClientMock()->setPositionUnavailableError(WebString::fromUTF8(message));
-}
-
-#if ENABLE(INPUT_SPEECH)
-void WebViewHost::addMockSpeechInputResult(const std::string& result, double confidence, const std::string& language)
-{
-    m_speechInputControllerMock->addMockRecognitionResult(WebString::fromUTF8(result), confidence, WebString::fromUTF8(language));
-}
-
-void WebViewHost::setMockSpeechInputDumpRect(bool dumpRect)
-{
-    m_speechInputControllerMock->setDumpRect(dumpRect);
-}
-#endif
-
-#if ENABLE(SCRIPTED_SPEECH)
-void WebViewHost::addMockSpeechRecognitionResult(const std::string& transcript, double confidence)
-{
-    m_mockSpeechRecognizer->addMockResult(WebString::fromUTF8(transcript), confidence);
-}
-
-void WebViewHost::setMockSpeechRecognitionError(const std::string& error, const std::string& message)
-{
-    m_mockSpeechRecognizer->setError(WebString::fromUTF8(error), WebString::fromUTF8(message));
-}
-
-bool WebViewHost::wasMockSpeechRecognitionAborted()
-{
-    return m_mockSpeechRecognizer->wasAborted();
-}
-#endif
-
 void WebViewHost::testFinished()
 {
     m_shell->testFinished(this);
@@ -856,11 +688,6 @@ void WebViewHost::closeRemainingWindows()
 int WebViewHost::navigationEntryCount()
 {
     return m_shell->navigationEntryCount();
-}
-
-int WebViewHost::windowCount()
-{
-    return m_shell->windowCount();
 }
 
 void WebViewHost::goToOffset(int offset)
@@ -971,24 +798,12 @@ void WebViewHost::reset()
     m_lastPageIdUpdated = -1;
     m_hasWindow = false;
     m_inModalLoop = false;
-#if ENABLE(POINTER_LOCK)
-    m_pointerLocked = false;
-    m_pointerLockPlannedResult = PointerLockWillSucceed;
-#endif
 
     m_navigationController = adoptPtr(new TestNavigationController(this));
 
     m_pendingExtraData.clear();
     m_editCommandName.clear();
     m_editCommandValue.clear();
-
-    if (m_geolocationClientMock.get())
-        m_geolocationClientMock->resetMock();
-
-#if ENABLE(INPUT_SPEECH)
-    if (m_speechInputControllerMock.get())
-        m_speechInputControllerMock->clearResults();
-#endif
 
     m_currentCursor = WebCursorInfo();
     m_windowRect = WebRect();

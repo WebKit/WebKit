@@ -32,6 +32,7 @@
 #define TestInterfaces_h
 
 #include <memory>
+#include <vector>
 
 namespace WebKit {
 class WebFrame;
@@ -61,13 +62,16 @@ public:
     void setTestIsRunning(bool);
     void configureForTestWithURL(const WebKit::WebURL&, bool generatePixels);
 
+    void windowOpened(WebTestProxyBase*);
+    void windowClosed(WebTestProxyBase*);
+
     AccessibilityController* accessibilityController();
     EventSender* eventSender();
     TestRunner* testRunner();
     WebKit::WebView* webView();
     WebTestDelegate* delegate();
     WebTestProxyBase* proxy();
-
+    const std::vector<WebTestProxyBase*>& windowList();
 
 private:
     std::auto_ptr<AccessibilityController> m_accessibilityController;
@@ -78,6 +82,8 @@ private:
     WebKit::WebView* m_webView;
     WebTestDelegate* m_delegate;
     WebTestProxyBase* m_proxy;
+
+    std::vector<WebTestProxyBase*> m_windowList;
 };
 
 }
