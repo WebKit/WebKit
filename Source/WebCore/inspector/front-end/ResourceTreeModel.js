@@ -50,6 +50,7 @@ WebInspector.ResourceTreeModel = function(networkManager)
     InspectorBackend.registerPageDispatcher(new WebInspector.PageDispatcher(this));
 
     this._pendingConsoleMessages = {};
+    this._securityOriginFrameCount = {};
 }
 
 WebInspector.ResourceTreeModel.EventTypes = {
@@ -63,7 +64,9 @@ WebInspector.ResourceTreeModel.EventTypes = {
     CachedResourcesLoaded: "CachedResourcesLoaded",
     DOMContentLoaded: "DOMContentLoaded",
     OnLoad: "OnLoad",
-    InspectedURLChanged: "InspectedURLChanged"
+    InspectedURLChanged: "InspectedURLChanged",
+    SecurityOriginAdded: "SecurityOriginAdded",
+    SecurityOriginRemoved: "SecurityOriginRemoved"
 }
 
 WebInspector.ResourceTreeModel.prototype = {
@@ -102,15 +105,63 @@ WebInspector.ResourceTreeModel.prototype = {
 
     /**
      * @param {WebInspector.ResourceTreeFrame} frame
+     * @param {boolean=} aboutToNavigate
      */
-    _addFrame: function(frame)
+    _addFrame: function(frame, aboutToNavigate)
     {
         this._frames[frame.id] = frame;
         if (frame.isMainFrame())
             this.mainFrame = frame;
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, frame);
+        if (!aboutToNavigate)
+            this._addSecurityOrigin(frame.securityOrigin);
         if (frame.isMainFrame())
             this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.MainFrameCreatedOrNavigated, frame);
+    },
+
+    /**
+     * @param {string} securityOrigin
+     */
+    _addSecurityOrigin: function(securityOrigin)
+    {
+        if (!this._securityOriginFrameCount[securityOrigin]) {
+            this._securityOriginFrameCount[securityOrigin] = 1;
+            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.SecurityOriginAdded, securityOrigin);
+            return;
+        }
+        this._securityOriginFrameCount[securityOrigin] += 1;
+    },
+
+    /**
+     * @param {string} securityOrigin
+     */
+    _removeSecurityOrigin: function(securityOrigin)
+    {
+        console.assert(this._securityOriginFrameCount[securityOrigin]);
+        if (this._securityOriginFrameCount[securityOrigin] === 1) {
+            delete this._securityOriginFrameCount[securityOrigin];
+            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.SecurityOriginRemoved, securityOrigin);
+            return;
+        }
+        this._securityOriginFrameCount[securityOrigin] -= 1;
+    },
+
+    /**
+     * @param {WebInspector.ResourceTreeFrame} mainFrame
+     */
+    _handleMainFrameDetached: function(mainFrame)
+    {
+        /**
+         * @param {WebInspector.ResourceTreeFrame} frame
+         */
+        function removeOriginForFrame(frame)
+        {
+            for (var i = 0; i < frame.childFrames.length; ++i)
+                removeOriginForFrame.call(this, frame.childFrames[i]);
+            if (!frame.isMainFrame())
+                this._removeSecurityOrigin(frame.securityOrigin);
+        }
+        removeOriginForFrame.call(this, WebInspector.resourceTreeModel.mainFrame);
     },
 
     /**
@@ -122,18 +173,23 @@ WebInspector.ResourceTreeModel.prototype = {
         if (!this._cachedResourcesProcessed)
             return;
         var frame = this._frames[framePayload.id];
+        var addedOrigin;
         if (frame) {
             // Navigation within existing frame.
+            this._removeSecurityOrigin(frame.securityOrigin);
             frame._navigate(framePayload);
+            addedOrigin = frame.securityOrigin;
         } else {
             // Either a new frame or a main frame navigation to the new backend process. 
             var parentFrame = this._frames[framePayload.parentId];
             frame = new WebInspector.ResourceTreeFrame(this, parentFrame, framePayload);
             if (frame.isMainFrame() && this.mainFrame) {
+                this._handleMainFrameDetached(this.mainFrame);
                 // Definitely a navigation to the new backend process.
                 this._frameDetached(this.mainFrame.id);
             }
-            this._addFrame(frame);
+            this._addFrame(frame, true);
+            addedOrigin = frame.securityOrigin;
         }
 
         if (frame.isMainFrame())
@@ -144,6 +200,8 @@ WebInspector.ResourceTreeModel.prototype = {
             this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.MainFrameNavigated, frame);
             this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.MainFrameCreatedOrNavigated, frame);
         }
+        if (addedOrigin)
+            this._addSecurityOrigin(addedOrigin);
 
         // Fill frame with retained resources (the ones loaded using new loader).
         var resources = frame.resources();
@@ -167,6 +225,7 @@ WebInspector.ResourceTreeModel.prototype = {
         if (!frame)
             return;
 
+        this._removeSecurityOrigin(frame.securityOrigin);
         if (frame.parentFrame)
             frame.parentFrame._removeChildFrame(frame);
         else

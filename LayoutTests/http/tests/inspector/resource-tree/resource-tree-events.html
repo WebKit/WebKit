@@ -27,6 +27,11 @@ function test()
                 var frame = event.data;
                 InspectorTest.addResult("    " + eventName + " : " + frame.id);
                 break;
+            case "SecurityOriginAdded":
+            case "SecurityOriginRemoved":
+                var securityOrigin = event.data;
+                InspectorTest.addResult("    " + eventName + " : " + securityOrigin);
+                break;
             default:
             }
             
@@ -34,6 +39,8 @@ function test()
 
         InspectorTest.addResult("Navigating child frame 1");
         WebInspector.resourceTreeModel._frameNavigated(createFramePayload("child1", "root1"));
+        InspectorTest.addResult("Navigating child frame 1 to a different URL");
+        WebInspector.resourceTreeModel._frameNavigated(createFramePayload("child1", "root1", "child1-new"));
         InspectorTest.addResult("Navigating child frame 2");
         WebInspector.resourceTreeModel._frameNavigated(createFramePayload("child2", "root1"));
         InspectorTest.addResult("Detaching child frame 1");
@@ -44,14 +51,15 @@ function test()
         InspectorTest.completeTest();
     }
 
-    function createFramePayload(id, parentId)
+    function createFramePayload(id, parentId, name)
     {
         var framePayload = {};
         framePayload.id = id;
         framePayload.parentId = parentId || "";
         framePayload.loaderId = "loader-" + id;
         framePayload.name = "frame-" + id;
-        framePayload.url = "http://frame/" + id + ".html";
+        framePayload.url = "http://frame/" + (name || id) + ".html";
+        framePayload.securityOrigin = framePayload.url;
         framePayload.mimeType = "text/html";
         return framePayload;
     }

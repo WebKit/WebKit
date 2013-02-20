@@ -4,15 +4,25 @@ Tests top frame navigation events.
 Navigating child frame 1
     FrameAdded : child1
     FrameNavigated : child1
+    SecurityOriginAdded : http://frame/child1.html
+Navigating child frame 1 to a different URL
+    SecurityOriginRemoved : http://frame/child1.html
+    FrameNavigated : child1
+    SecurityOriginAdded : http://frame/child1-new.html
 Navigating child frame 2
     FrameAdded : child2
     FrameNavigated : child2
+    SecurityOriginAdded : http://frame/child2.html
 Detaching child frame 1
+    SecurityOriginRemoved : http://frame/child1-new.html
     FrameDetached : child1
 Navigating root frame
+    SecurityOriginRemoved : http://frame/child2.html
+    SecurityOriginRemoved : http://frame/root1.html
     FrameDetached : child2
     FrameDetached : root1
     FrameAdded : root2
     FrameNavigated : root2
     MainFrameNavigated : root2
+    SecurityOriginAdded : http://frame/root2.html
 
