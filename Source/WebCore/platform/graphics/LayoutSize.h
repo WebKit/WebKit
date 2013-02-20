@@ -72,6 +72,12 @@ public:
         m_height += height;
     }
     
+    void shrink(LayoutUnit width, LayoutUnit height)
+    {
+        m_width -= width;
+        m_height -= height;
+    }
+    
     void scale(float scale)
     {
         m_width *= scale;

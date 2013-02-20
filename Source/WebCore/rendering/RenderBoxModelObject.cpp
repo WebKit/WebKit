@@ -475,17 +475,17 @@ void RenderBoxModelObject::computeStickyPositionConstraints(StickyPositionViewpo
     RenderBlock* containingBlock = this->containingBlock();
 
     LayoutRect containerContentRect = containingBlock->contentBoxRect();
+    LayoutUnit maxWidth = containingBlock->availableLogicalWidth();
 
     // Sticky positioned element ignore any override logical width on the containing block (as they don't call
     // containingBlockLogicalWidthForContent). It's unclear whether this is totally fine.
-    LayoutUnit minLeftMargin = minimumValueForLength(style()->marginLeft(), containingBlock->availableLogicalWidth(), view());
-    LayoutUnit minTopMargin = minimumValueForLength(style()->marginTop(), containingBlock->availableLogicalWidth(), view());
-    LayoutUnit minRightMargin = minimumValueForLength(style()->marginRight(), containingBlock->availableLogicalWidth(), view());
-    LayoutUnit minBottomMargin = minimumValueForLength(style()->marginBottom(), containingBlock->availableLogicalWidth(), view());
+    LayoutBoxExtent minMargin(minimumValueForLength(style()->marginTop(), maxWidth, view()),
+        minimumValueForLength(style()->marginRight(), maxWidth, view()),
+        minimumValueForLength(style()->marginBottom(), maxWidth, view()),
+        minimumValueForLength(style()->marginLeft(), maxWidth, view()));
 
     // Compute the container-relative area within which the sticky element is allowed to move.
-    containerContentRect.move(minLeftMargin, minTopMargin);
-    containerContentRect.contract(minLeftMargin + minRightMargin, minTopMargin + minBottomMargin);
+    containerContentRect.contract(minMargin);
     // Map to the view to avoid including page scale factor.
     constraints.setAbsoluteContainingBlockRect(containingBlock->localToContainerQuad(FloatRect(containerContentRect), view()).boundingBox());
 

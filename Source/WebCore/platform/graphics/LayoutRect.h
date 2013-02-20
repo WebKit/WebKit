@@ -107,6 +107,11 @@ public:
     }
     void expand(LayoutUnit dw, LayoutUnit dh) { m_size.expand(dw, dh); }
     void contract(const LayoutSize& size) { m_size -= size; }
+    void contract(const LayoutBoxExtent& box)
+    {
+        m_location.move(box.left(), box.top());
+        m_size.shrink(box.left() + box.right(), box.top() + box.bottom());
+    }
     void contract(LayoutUnit dw, LayoutUnit dh) { m_size.expand(-dw, -dh); }
 
     void shiftXEdgeTo(LayoutUnit edge)
