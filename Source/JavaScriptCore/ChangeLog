@@ -1,3 +1,16 @@
+2013-02-19  Oliver Hunt  <oliver@apple.com>
+
+        Don't force everything to be blinded in debug builds
+        https://bugs.webkit.org/show_bug.cgi?id=110279
+
+        Reviewed by Mark Hahnenberg.
+
+        Switch to an explicit flag for indicating that we want
+        every constant to be blinded.
+
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::shouldBlind):
+
 2013-02-19  Filip Pizlo  <fpizlo@apple.com>
 
         Fix indentation of Opcode.h

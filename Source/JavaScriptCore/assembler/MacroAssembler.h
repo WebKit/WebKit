@@ -876,7 +876,7 @@ public:
     
     bool shouldBlind(ImmPtr imm)
     { 
-#if !defined(NDEBUG)
+#if ENABLE(FORCED_JIT_BLINDING)
         UNUSED_PARAM(imm);
         // Debug always blind all constants, if only so we know
         // if we've broken blinding during patch development.
@@ -934,8 +934,8 @@ public:
     }
 
     bool shouldBlind(Imm64 imm)
-    { 
-#if !defined(NDEBUG)
+    {
+#if ENABLE(FORCED_JIT_BLINDING)
         UNUSED_PARAM(imm);
         // Debug always blind all constants, if only so we know
         // if we've broken blinding during patch development.
@@ -1073,8 +1073,8 @@ public:
 
 #if ENABLE(JIT_CONSTANT_BLINDING)
     bool shouldBlind(Imm32 imm)
-    { 
-#if !defined(NDEBUG)
+    {
+#if ENABLE(FORCED_JIT_BLINDING)
         UNUSED_PARAM(imm);
         // Debug always blind all constants, if only so we know
         // if we've broken blinding during patch development.
