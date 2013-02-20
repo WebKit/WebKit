@@ -1870,3 +1870,5 @@ webkit.org/b/109951 compositing/transitions/transform-on-large-layer.html [ Imag
 webkit.org/b/110282 fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
 
 webkit.org/b/110316 svg/as-background-image/tiled-background-image.html [ ImageOnlyFailure ]
+
+webkit.org/b/110338 fast/events/touch/emulate-touch-events.html [ Failure ]
