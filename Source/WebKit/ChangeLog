@@ -1,3 +1,9 @@
+2013-02-19  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, include exports for VS2010 as well.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+
 2013-02-18  Brent Fulgham  <bfulgham@webkit.org>
 
         [Windows] Unreviewed VS2010 build correction.

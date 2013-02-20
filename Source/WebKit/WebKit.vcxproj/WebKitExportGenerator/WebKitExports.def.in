@@ -396,6 +396,8 @@ EXPORTS
         ?numberOfActiveAnimations@AnimationController@WebCore@@QBEIPAVDocument@2@@Z
         ?minDOMTimerInterval@Settings@WebCore@@QAENXZ
         ?setMinDOMTimerInterval@Settings@WebCore@@QAEXN@Z
+        ?setApplicationChromeMode@Settings@WebCore@@QAEX_N@Z
+        ?setDOMPasteAllowed@Settings@WebCore@@QAEX_N@Z
 
 #if ENABLE(WORKERS)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ
