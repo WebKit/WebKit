@@ -1589,7 +1589,6 @@ HEADERS += \
     css/WebKitCSSTransformValue.h \
     css/WebKitCSSViewportRule.h \
     dom/ActiveDOMObject.h \
-    dom/AncestorChainWalker.h \
     dom/Attr.h \
     dom/Attribute.h \
     dom/BeforeTextInsertedEvent.h \
@@ -1640,6 +1639,7 @@ HEADERS += \
     dom/EventDispatchMediator.h \
     dom/EventListenerMap.h \
     dom/EventNames.h \
+    dom/EventPathWalker.h \
     dom/EventQueue.h \
     dom/EventSender.h \
     dom/EventTarget.h \
