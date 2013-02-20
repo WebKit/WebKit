@@ -1,3 +1,19 @@
+2013-02-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r143400.
+        http://trac.webkit.org/changeset/143400
+        https://bugs.webkit.org/show_bug.cgi?id=110290
+
+        breaks everything (instacrash launching Safari) (Requested by
+        thorton on #webkit).
+
+        * wtf/FastMalloc.cpp:
+        (WTF::internalEntropyValue):
+        (WTF):
+        (WTF::TCMalloc_Central_FreeList::Populate):
+        (WTF::TCMalloc_ThreadCache::Allocate):
+        (WTF::TCMalloc_ThreadCache::Deallocate):
+
 2013-02-19  Oliver Hunt  <oliver@apple.com>
 
         Moar hardening

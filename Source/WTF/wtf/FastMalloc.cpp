@@ -544,8 +544,7 @@ template <> struct EntropySource<8> {
     }
 };
 
-static ALWAYS_INLINE uintptr_t internalEntropyValue() 
-{
+static ALWAYS_INLINE uintptr_t internalEntropyValue() {
     static uintptr_t value = EntropySource<sizeof(uintptr_t)>::value();
     ASSERT(value);
     return value;
@@ -555,64 +554,11 @@ static ALWAYS_INLINE uintptr_t internalEntropyValue()
 #define ROTATE_VALUE(value, amount) (((value) >> (amount)) | ((value) << (sizeof(value) * 8 - (amount))))
 #define XOR_MASK_PTR_WITH_KEY(ptr, key, entropy) (reinterpret_cast<typeof(ptr)>(reinterpret_cast<uintptr_t>(ptr)^(ROTATE_VALUE(reinterpret_cast<uintptr_t>(key), MaskKeyShift)^entropy)))
 
-
-static ALWAYS_INLINE uint32_t freedObjectStartPoison()
-{
-    static uint32_t value = EntropySource<sizeof(uint32_t)>::value();
-    ASSERT(value);
-    return value;
-}
-
-static ALWAYS_INLINE uint32_t freedObjectEndPoison()
-{
-    static uint32_t value = EntropySource<sizeof(uint32_t)>::value();
-    ASSERT(value);
-    return value;
-}
-
-#define PTR_TO_UINT32(ptr) static_cast<uint32_t>(reinterpret_cast<uintptr_t>(ptr))
-#define END_POISON_INDEX(allocationSize) (((allocationSize) - sizeof(uint32_t)) / sizeof(uint32_t))
-#define POISON_ALLOCATION(allocation, allocationSize) do { \
-    reinterpret_cast<uint32_t*>(allocation)[0] = 1; \
-    reinterpret_cast<uint32_t*>(allocation)[1] = 1; \
-    if (allocationSize < 4 * sizeof(uint32_t)) \
-        break; \
-    reinterpret_cast<uint32_t*>(allocation)[2] = 1; \
-    reinterpret_cast<uint32_t*>(allocation)[END_POISON_INDEX(allocationSize)] = 1; \
-} while (false);
-
-#define POISON_DEALLOCATION_EXPLICIT(allocation, allocationSize, startPoison, endPoison) do { \
-    if (allocationSize < 4 * sizeof(uint32_t)) \
-        break; \
-    reinterpret_cast<uint32_t*>(allocation)[2] = (startPoison) ^ PTR_TO_UINT32(allocation); \
-    reinterpret_cast<uint32_t*>(allocation)[END_POISON_INDEX(allocationSize)] = (endPoison) ^ PTR_TO_UINT32(allocation); \
-} while (false)
-
-#define POISON_DEALLOCATION(allocation, allocationSize) \
-    POISON_DEALLOCATION_EXPLICIT(allocation, allocationSize, freedObjectStartPoison(), freedObjectEndPoison())
-
-#define MAY_BE_POISONED(allocation, allocationSize) (((allocationSize) >= 4 * sizeof(uint32_t)) && ( \
-    (reinterpret_cast<uint32_t*>(allocation)[2] == (freedObjectStartPoison() ^ PTR_TO_UINT32(allocation))) || \
-    (reinterpret_cast<uint32_t*>(allocation)[END_POISON_INDEX(allocationSize)] == (freedObjectEndPoison() ^ PTR_TO_UINT32(allocation))) \
-))
-
-#define IS_DEFINITELY_POISONED(allocation, allocationSize) (((allocationSize) < 4 * sizeof(uint32_t)) || ( \
-    (reinterpret_cast<uint32_t*>(allocation)[2] == (freedObjectStartPoison() ^ PTR_TO_UINT32(allocation))) && \
-    (reinterpret_cast<uint32_t*>(allocation)[END_POISON_INDEX(allocationSize)] == (freedObjectEndPoison() ^ PTR_TO_UINT32(allocation))) \
-))
-
 #else
-
-#define POISON_ALLOCATION(allocation, allocationSize)
-#define POISON_DEALLOCATION(allocation, allocationSize)
-#define POISON_DEALLOCATION_EXPLICIT(allocation, allocationSize, startPoison, endPoison)
-#define MAY_BE_POISONED(allocation, allocationSize) (false)
-#define IS_DEFINITELY_POISONED(allocation, allocationSize) (true)
 #define XOR_MASK_PTR_WITH_KEY(ptr, key, entropy) (((void)entropy), ((void)key), ptr)
-
 #define HARDENING_ENTROPY 0
-
 #endif
+
 
 //-------------------------------------------------------------------
 // Configuration
@@ -2584,17 +2530,6 @@ class TCMalloc_ThreadCache_FreeList {
     return SLL_Pop(&list_, entropy_).value();
   }
 
-    // Runs through the linked list to ensure that
-    // we can do that, and ensures that 'missing'
-    // is not present
-    NEVER_INLINE void Validate(HardenedSLL missing) {
-        HardenedSLL node = list_;
-        while (node) {
-            RELEASE_ASSERT(node != missing);
-            node = SLL_Next(node, entropy_);
-        }
-    }
-
 #ifdef WTF_CHANGES
   template <class Finder, class Reader>
   void enumerateFreeObjects(Finder& finder, const Reader& reader)
@@ -3106,15 +3041,9 @@ ALWAYS_INLINE void TCMalloc_Central_FreeList::Populate() {
   const size_t size = ByteSizeForClass(size_class_);
   char* ptr = start + (npages << kPageShift) - ((npages << kPageShift) % size);
   int num = 0;
-#if ENABLE(TCMALLOC_HARDENING)
-  uint32_t startPoison = freedObjectStartPoison();
-  uint32_t endPoison = freedObjectEndPoison();
-#endif
-
   while (ptr > start) {
     ptr -= size;
     HardenedSLL node = HardenedSLL::create(ptr);
-    POISON_DEALLOCATION_EXPLICIT(ptr, size, startPoison, endPoison);
     SLL_SetNext(node, head, entropy_);
     head = node;
     num++;
@@ -3186,22 +3115,12 @@ ALWAYS_INLINE void* TCMalloc_ThreadCache::Allocate(size_t size) {
     if (list->empty()) return NULL;
   }
   size_ -= allocationSize;
-  void* result = list->Pop();
-  if (!result)
-      return 0;
-  RELEASE_ASSERT(IS_DEFINITELY_POISONED(result, allocationSize));
-  POISON_ALLOCATION(result, allocationSize);
-  return result;
+  return list->Pop();
 }
 
 inline void TCMalloc_ThreadCache::Deallocate(HardenedSLL ptr, size_t cl) {
-  size_t allocationSize = ByteSizeForClass(cl);
-  size_ += allocationSize;
+  size_ += ByteSizeForClass(cl);
   FreeList* list = &list_[cl];
-  if (MAY_BE_POISONED(ptr.value(), allocationSize))
-      list->Validate(ptr);
-
-  POISON_DEALLOCATION(ptr.value(), allocationSize);
   list->Push(ptr);
   // If enough data is free, put back into central cache
   if (list->length() > kMaxFreeListLength) {
