@@ -651,10 +651,14 @@ static CallFrame* getCallerInfo(JSGlobalData* globalData, CallFrame* callFrame, 
             }
         } else
     #endif
+        {
+            RELEASE_ASSERT(callerCodeBlock);
             bytecodeOffset = callerCodeBlock->bytecodeOffset(callerFrame, callFrame->returnPC());
+        }
 #endif
     }
 
+    RELEASE_ASSERT(callerCodeBlock);
     lineNumber = callerCodeBlock->lineNumberForBytecodeOffset(bytecodeOffset);
     return callerFrame;
 }

@@ -1,5 +1,20 @@
 2013-02-19  Oliver Hunt  <oliver@apple.com>
 
+        Silence some analyzer warnings
+        https://bugs.webkit.org/show_bug.cgi?id=110281
+
+        Reviewed by Mark Hahnenberg.
+
+        The static analyzer believes that callerCodeBlock can be null,
+        based on other code performing null tests.  This should not
+        ever be the case, but we'll add RELEASE_ASSERTs to make it
+        obvious if we're ever wrong.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::getCallerInfo):
+
+2013-02-19  Oliver Hunt  <oliver@apple.com>
+
         Don't force everything to be blinded in debug builds
         https://bugs.webkit.org/show_bug.cgi?id=110279
 
