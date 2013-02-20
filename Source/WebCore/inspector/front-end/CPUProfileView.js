@@ -295,7 +295,7 @@ WebInspector.CPUProfileView.prototype = {
                     profileDataGridNode._searchMatchedCallsColumn = true;
             }
 
-            if (profileDataGridNode.functionName.match(matcher) || profileDataGridNode.url.match(matcher))
+            if (profileDataGridNode.functionName.match(matcher) || (profileDataGridNode.url && profileDataGridNode.url.match(matcher)))
                 profileDataGridNode._searchMatchedFunctionColumn = true;
 
             if (profileDataGridNode._searchMatchedSelfColumn ||
