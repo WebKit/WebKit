@@ -42,24 +42,19 @@ namespace WebCore {
 class QualifiedName;
 class XSSInfo;
 
-class CompactAttribute {
-public:
-    CompactAttribute(const String& name, const String& value)
-        : m_name(name)
-        , m_value(value)
-    {
-    }
-
-    const String& name() const { return m_name; }
-    const String& value() const { return m_value; }
-
-private:
-    String m_name;
-    String m_value;
-};
-
 class CompactHTMLToken {
 public:
+    struct Attribute {
+        Attribute(const String& name, const String& value)
+            : name(name)
+            , value(value)
+        {
+        }
+
+        String name;
+        String value;
+    };
+
     CompactHTMLToken(const HTMLToken*, const TextPosition&);
     CompactHTMLToken(const CompactHTMLToken&);
 
@@ -69,14 +64,14 @@ public:
     const String& data() const { return m_data; }
     bool selfClosing() const { return m_selfClosing; }
     bool isAll8BitData() const { return m_isAll8BitData; }
-    const Vector<CompactAttribute>& attributes() const { return m_attributes; }
-    const CompactAttribute* getAttributeItem(const QualifiedName&) const;
+    const Vector<Attribute>& attributes() const { return m_attributes; }
+    const Attribute* getAttributeItem(const QualifiedName&) const;
     const TextPosition& textPosition() const { return m_textPosition; }
 
     // There is only 1 DOCTYPE token per document, so to avoid increasing the
     // size of CompactHTMLToken, we just use the m_attributes vector.
-    const String& publicIdentifier() const { return m_attributes[0].name(); }
-    const String& systemIdentifier() const { return m_attributes[0].value(); }
+    const String& publicIdentifier() const { return m_attributes[0].name; }
+    const String& systemIdentifier() const { return m_attributes[0].value; }
     bool doctypeForcesQuirks() const { return m_doctypeForcesQuirks; }
     XSSInfo* xssInfo() const;
     void setXSSInfo(PassOwnPtr<XSSInfo>);
@@ -88,7 +83,7 @@ private:
     unsigned m_doctypeForcesQuirks: 1;
 
     String m_data; // "name", "characters", or "data" depending on m_type
-    Vector<CompactAttribute> m_attributes;
+    Vector<Attribute> m_attributes;
     TextPosition m_textPosition;
     OwnPtr<XSSInfo> m_xssInfo;
 };

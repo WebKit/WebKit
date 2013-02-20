@@ -82,10 +82,8 @@ private:
 
     static String initiatorFor(TagId);
 
-    void updatePredictedBaseURL(const HTMLToken&);
-#if ENABLE(THREADED_HTML_PARSER)
-    void updatePredictedBaseURL(const CompactHTMLToken&);
-#endif
+    template<typename Token>
+    void updatePredictedBaseURL(const Token&);
 
     CSSPreloadScanner m_cssScanner;
     KURL m_documentURL;

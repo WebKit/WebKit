@@ -201,8 +201,8 @@ private:
             break;
         case HTMLToken::StartTag:
             m_attributes.reserveInitialCapacity(token.attributes().size());
-            for (Vector<CompactAttribute>::const_iterator it = token.attributes().begin(); it != token.attributes().end(); ++it)
-                m_attributes.append(Attribute(QualifiedName(nullAtom, it->name(), nullAtom), it->value()));
+            for (Vector<CompactHTMLToken::Attribute>::const_iterator it = token.attributes().begin(); it != token.attributes().end(); ++it)
+                m_attributes.append(Attribute(QualifiedName(nullAtom, it->name, nullAtom), it->value));
             // Fall through!
         case HTMLToken::EndTag:
             m_selfClosing = token.selfClosing();

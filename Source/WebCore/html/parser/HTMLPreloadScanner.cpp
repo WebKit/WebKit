@@ -127,12 +127,12 @@ public:
     }
 
 #if ENABLE(THREADED_HTML_PARSER)
-    void processAttributes(const Vector<CompactAttribute>& attributes)
+    void processAttributes(const Vector<CompactHTMLToken::Attribute>& attributes)
     {
         if (m_tagId >= UnknownTagId)
             return;
-        for (Vector<CompactAttribute>::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
-            processAttribute(iter->name(), iter->value());
+        for (Vector<CompactHTMLToken::Attribute>::const_iterator iter = attributes.begin(); iter != attributes.end(); ++iter)
+            processAttribute(iter->name, iter->value);
     }
 #endif
 
@@ -337,26 +337,13 @@ void TokenPreloadScanner::scanCommon(const Token& token, Vector<OwnPtr<PreloadRe
     }
 }
 
-void TokenPreloadScanner::updatePredictedBaseURL(const HTMLToken& token)
+template<typename Token>
+void TokenPreloadScanner::updatePredictedBaseURL(const Token& token)
 {
     ASSERT(m_predictedBaseElementURL.isEmpty());
-    for (HTMLToken::AttributeList::const_iterator iter = token.attributes().begin(); iter != token.attributes().end(); ++iter) {
-        AtomicString attributeName(iter->name);
-        if (attributeName == hrefAttr) {
-            String hrefValue = StringImpl::create8BitIfPossible(iter->value);
-            m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefValue));
-            break;
-        }
-    }
+    if (const typename Token::Attribute* hrefAttribute = token.getAttributeItem(hrefAttr))
+        m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(hrefAttribute->value)).copy();
 }
-
-#if ENABLE(THREADED_HTML_PARSER)
-void TokenPreloadScanner::updatePredictedBaseURL(const CompactHTMLToken& token)
-{
-    ASSERT(m_predictedBaseElementURL.isEmpty());
-    m_predictedBaseElementURL = KURL(m_documentURL, stripLeadingAndTrailingHTMLSpaces(token.getAttributeItem(hrefAttr)->value())).copy();
-}
-#endif
 
 HTMLPreloadScanner::HTMLPreloadScanner(const HTMLParserOptions& options, const KURL& documentURL)
     : m_scanner(documentURL)

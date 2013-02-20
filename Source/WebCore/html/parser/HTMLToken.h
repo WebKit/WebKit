@@ -358,6 +358,15 @@ public:
         return m_attributes;
     }
 
+    const Attribute* getAttributeItem(const QualifiedName& name) const
+    {
+        for (unsigned i = 0; i < m_attributes.size(); ++i) {
+            if (AtomicString(m_attributes.at(i).name) == name.localName())
+                return &m_attributes.at(i);
+        }
+        return 0;
+    }
+
     // Used by the XSSAuditor to nuke XSS-laden attributes.
     void eraseValueOfAttribute(size_t i)
     {

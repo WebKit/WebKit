@@ -39,7 +39,7 @@ namespace WebCore {
 struct SameSizeAsCompactHTMLToken  {
     unsigned bitfields;
     String name;
-    Vector<CompactAttribute> vector;
+    Vector<Attribute> vector;
     TextPosition textPosition;
     OwnPtr<XSSInfo> xssInfo;
 };
@@ -60,7 +60,7 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
         m_data = String(token->name());
         // There is only 1 DOCTYPE token per document, so to avoid increasing the
         // size of CompactHTMLToken, we just use the m_attributes vector.
-        m_attributes.append(CompactAttribute(String(token->publicIdentifier()), String(token->systemIdentifier())));
+        m_attributes.append(Attribute(String(token->publicIdentifier()), String(token->systemIdentifier())));
         m_doctypeForcesQuirks = token->forceQuirks();
         break;
     }
@@ -70,7 +70,7 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
         m_attributes.reserveInitialCapacity(token->attributes().size());
         // FIXME: Attribute names and values should be 8bit when possible.
         for (Vector<HTMLToken::Attribute>::const_iterator it = token->attributes().begin(); it != token->attributes().end(); ++it)
-            m_attributes.append(CompactAttribute(String(it->name), String(it->value)));
+            m_attributes.append(Attribute(String(it->name), String(it->value)));
         // Fall through!
     case HTMLToken::EndTag:
         m_selfClosing = token->selfClosing();
@@ -102,10 +102,10 @@ CompactHTMLToken::CompactHTMLToken(const CompactHTMLToken& other)
         m_xssInfo = adoptPtr(new XSSInfo(*other.m_xssInfo));
 }
 
-const CompactAttribute* CompactHTMLToken::getAttributeItem(const QualifiedName& name) const
+const CompactHTMLToken::Attribute* CompactHTMLToken::getAttributeItem(const QualifiedName& name) const
 {
     for (unsigned i = 0; i < m_attributes.size(); ++i) {
-        if (threadSafeMatch(m_attributes.at(i).name(), name))
+        if (threadSafeMatch(m_attributes.at(i).name, name))
             return &m_attributes.at(i);
     }
     return 0;
@@ -113,10 +113,10 @@ const CompactAttribute* CompactHTMLToken::getAttributeItem(const QualifiedName& 
 
 bool CompactHTMLToken::isSafeToSendToAnotherThread() const
 {
-    for (Vector<CompactAttribute>::const_iterator it = m_attributes.begin(); it != m_attributes.end(); ++it) {
-        if (!it->name().isSafeToSendToAnotherThread())
+    for (Vector<Attribute>::const_iterator it = m_attributes.begin(); it != m_attributes.end(); ++it) {
+        if (!it->name.isSafeToSendToAnotherThread())
             return false;
-        if (!it->value().isSafeToSendToAnotherThread())
+        if (!it->value.isSafeToSendToAnotherThread())
             return false;
     }
     if (m_xssInfo && !m_xssInfo->isSafeToSendToAnotherThread())
