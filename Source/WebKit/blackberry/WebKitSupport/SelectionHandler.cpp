@@ -892,6 +892,12 @@ bool SelectionHandler::inputNodeOverridesTouch() const
     return DOMSupport::elementAttributeState(element, selectionTouchOverrideAttr) == DOMSupport::On;
 }
 
+RequestedHandlePosition SelectionHandler::requestedSelectionHandlePosition(const VisibleSelection& selection) const
+{
+    Element* element = DOMSupport::selectionContainerElement(selection);
+    return DOMSupport::elementHandlePositionAttribute(element);
+}
+
 // Note: This is the only function in SelectionHandler in which the coordinate
 // system is not entirely WebKit.
 void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
@@ -1013,7 +1019,7 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
     if (m_webPage->m_selectionOverlay)
         m_webPage->m_selectionOverlay->draw(visibleSelectionRegion);
 
-    m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, visibleSelectionRegion, inputNodeOverridesTouch());
+    m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, visibleSelectionRegion, inputNodeOverridesTouch(), requestedSelectionHandlePosition(frame->selection()->selection()));
     SelectionTimingLog(Platform::LogLevelInfo,
         "SelectionHandler::selectionPositionChanged completed at %f",
         m_timer.elapsed());

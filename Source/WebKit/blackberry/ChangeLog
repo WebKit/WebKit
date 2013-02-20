@@ -1,3 +1,32 @@
+2013-02-20  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] Read "data-blackberry-text-selection-handle-position" attribute from element
+        https://bugs.webkit.org/show_bug.cgi?id=110235
+
+        Reviewed by Yong Li.
+
+        PR #257207.
+
+        Read "data-blackberry-text-selection-handle-position" attribute from element and pass it along
+        with notifySelectionDetailsChanged(). If "data-blackberry-text-selection-handle-position" attribute
+        is specified in the element, the selection handle is always flipped to the required position.
+        along with selected text within element.
+
+        Reviewed Internally by Mike Fenton.
+
+        * Api/WebPageClient.h:
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::selectionContainerElement):
+        (DOMSupport):
+        (BlackBerry::WebKit::DOMSupport::elementHandlePositionAttribute):
+        * WebKitSupport/DOMSupport.h:
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::requestedSelectionHandlePosition):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2013-02-20  Alberto Garcia  <albgarcia@rim.com>
 
         [BlackBerry] Fix usage of HitTestRequest::RequestType

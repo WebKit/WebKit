@@ -601,6 +601,50 @@ bool isFixedPositionOrHasFixedPositionAncestor(RenderObject* renderer)
     return false;
 }
 
+Element* selectionContainerElement(const VisibleSelection& selection)
+{
+    if (!selection.isRange())
+        return 0;
+
+    Node* startContainer = 0;
+    if (selection.firstRange())
+        startContainer = selection.firstRange()->startContainer();
+
+    if (!startContainer)
+        return 0;
+
+    Element* element = 0;
+    if (startContainer->isInShadowTree())
+        element = startContainer->shadowHost();
+    else if (startContainer->isElementNode())
+        element = static_cast<Element*>(startContainer);
+    else
+        element = startContainer->parentElement();
+
+    return element;
+}
+
+BlackBerry::Platform::RequestedHandlePosition elementHandlePositionAttribute(const WebCore::Element* element)
+{
+    BlackBerry::Platform::RequestedHandlePosition position = BlackBerry::Platform::SmartPlacement;
+    if (!element)
+        return position;
+
+    DEFINE_STATIC_LOCAL(QualifiedName, qualifiedAttrNameForHandlePosition, (nullAtom, "data-blackberry-text-selection-handle-position", nullAtom));
+    AtomicString attributeString;
+    if (element->fastHasAttribute(qualifiedAttrNameForHandlePosition))
+        attributeString = element->fastGetAttribute(qualifiedAttrNameForHandlePosition);
+
+    if (attributeString.isNull() || attributeString.isEmpty())
+        return position;
+
+    if (equalIgnoringCase(attributeString, "above"))
+        position = BlackBerry::Platform::Above;
+    else if (equalIgnoringCase(attributeString, "below"))
+        position = BlackBerry::Platform::Below;
+    return position;
+}
+
 } // DOMSupport
 } // WebKit
 } // BlackBerry

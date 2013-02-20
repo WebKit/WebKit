@@ -22,6 +22,7 @@
 #include "IntPoint.h"
 #include "IntRect.h"
 
+#include <BlackBerryPlatformInputEvents.h>
 #include <wtf/Vector.h>
 
 namespace WTF {
@@ -100,6 +101,9 @@ PassRefPtr<WebCore::Range> trimWhitespaceFromRange(WebCore::VisiblePosition star
 bool isRangeTextAllWhitespace(WebCore::VisiblePosition startPosition, WebCore::VisiblePosition endPosition);
 
 bool isFixedPositionOrHasFixedPositionAncestor(WebCore::RenderObject*);
+
+WebCore::Element* selectionContainerElement(const WebCore::VisibleSelection&);
+BlackBerry::Platform::RequestedHandlePosition elementHandlePositionAttribute(const WebCore::Element*);
 
 } // DOMSupport
 } // WebKit

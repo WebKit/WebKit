@@ -89,6 +89,7 @@ private:
     WebCore::IntPoint clipPointToVisibleContainer(const WebCore::IntPoint&) const;
 
     bool inputNodeOverridesTouch() const;
+    BlackBerry::Platform::RequestedHandlePosition requestedSelectionHandlePosition(const WebCore::VisibleSelection&) const;
 
     bool selectNodeIfFatFingersResultIsLink(FatFingersResult);
 
