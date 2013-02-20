@@ -117,7 +117,7 @@ private:
     unsigned columnCount() const;
 
     LayoutRect flowThreadPortionRectAt(unsigned index) const;
-    LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, int colGap) const;
+    LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap) const;
     
     unsigned columnIndexAtOffset(LayoutUnit) const;
     

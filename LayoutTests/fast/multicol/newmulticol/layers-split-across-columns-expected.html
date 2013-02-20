@@ -1,0 +1,69 @@
+<html>
+<head>
+<style>
+.container { display:inline-block; width:220px; }
+.multicol { -moz-column-width:100px; -webkit-column-width:100px; height:300px; border:5px solid black; -webkit-column-gap: 10px; -moz-column-gap: 10px }
+.block { width:100px; height:100px }
+.block:hover { background-color: maroon !important; }
+.layer { height:400px; width:100px }
+</style>
+<body style="overflow:hidden">
+
+<div class="container">
+Overflow:
+<div class="multicol">
+<div class="block" style="display:inline-block; background-color:black"></div>
+<div style="overflow:hidden;" class="layer">
+<div class="block" style="background-color: #0000f0"></div>
+<div class="block" style="background-color: #0000d0"></div>
+<div class="block" style="background-color: #0000b0"></div>
+<div class="block" style="background-color: #000090"></div>
+</div>
+<div class="block" style="display:inline-block; background-color:black"></div>
+</div>
+</div>
+
+<div class="container">
+Transforms:
+
+<div class="multicol">
+<div class="block" style="display:inline-block; background-color:black"></div>
+<div style="margin-left: -100px; -webkit-transform: translate(100px, 0);" class="layer">
+<div class="block" style="background-color: #0000f0"></div>
+<div class="block" style="background-color: #0000d0"></div>
+<div class="block" style="background-color: #0000b0"></div>
+<div class="block" style="background-color: #000090"></div>
+</div>
+<div class="block" style="display:inline-block; background-color:black"></div>
+</div>
+</div>
+</div>
+
+<div class="container">
+Relative Positioning:
+<div class="multicol">
+<div class="block" style="display:inline-block; background-color:black"></div>
+<div style="position:relative; margin-left:-100px; left:100px" class="layer">
+<div class="block" style="background-color: #0000f0"></div>
+<div class="block" style="background-color: #0000d0"></div>
+<div class="block" style="background-color: #0000b0"></div>
+<div class="block" style="background-color: #000090"></div>
+</div>
+<div class="block" style="display:inline-block; background-color:black"></div>
+</div>
+</div>
+
+<div class="container">
+Opacity:
+
+<div class="multicol">
+<div class="block" style="display:inline-block; background-color:black"></div>
+<div style="opacity:0.99;" class="layer">
+<div class="block" style="background-color: #0000f0"></div>
+<div class="block" style="background-color: #0000d0"></div>
+<div class="block" style="background-color: #0000b0"></div>
+<div class="block" style="background-color: #000090"></div>
+</div>
+<div class="block" style="display:inline-block; background-color:black"></div>
+</div>
+</div>

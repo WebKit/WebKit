@@ -98,9 +98,12 @@ void RenderMultiColumnSet::computeLogicalHeight(LayoutUnit, LayoutUnit, LogicalE
 
 LayoutUnit RenderMultiColumnSet::columnGap() const
 {
-    if (style()->hasNormalColumnGap())
-        return style()->fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
-    return static_cast<int>(style()->columnGap());
+    // FIXME: Eventually we will cache the column gap when the widths of columns start varying, but for now we just
+    // go to the parent block to get the gap.
+    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    if (parentBlock->style()->hasNormalColumnGap())
+        return parentBlock->style()->fontDescription().computedPixelSize(); // "1em" is recommended as the normal gap setting. Matches <p> margins.
+    return parentBlock->style()->columnGap();
 }
 
 unsigned RenderMultiColumnSet::columnCount() const
@@ -156,7 +159,7 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionRectAt(unsigned index) const
     return portionRect;
 }
 
-LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect& portionRect, unsigned index, unsigned colCount, int colGap) const
+LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect& portionRect, unsigned index, unsigned colCount, LayoutUnit colGap) const
 {
     // This function determines the portion of the flow thread that paints for the column. Along the inline axis, columns are
     // unclipped at outside edges (i.e., the first and last column in the set), and they clip to half the column
