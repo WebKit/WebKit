@@ -1586,10 +1586,11 @@ webkit.org/b/110138 platform/chromium/virtual/softwarecompositing/geometry/limit
 webkit.org/b/110079 [ Win Debug ] storage/websql/sql-data-types.html [ Crash ]
 
 # Newly introduced Reftest fails on Chrome/Mac
-webkit.org/b/110203 [ Mac ] fast/multicol/seamless-flowed-through-columns.html [ Failure ]
+webkit.org/b/110203 [ Mac ] fast/multicol/seamless-flowed-through-columns.html [ ImageOnlyFailure ]
 
 # Test fails for some reason.
 webkit.org/b/110296 fast/multicol/newmulticol/column-rules-fixed-height.html [ ImageOnlyFailure ]
+webkit.org/b/110203 [ Mac ] fast/multicol/newmulticol/layers-in-multicol.html [ ImageOnlyFailure ]
 
 # -----------------------------------------------------------------
 # MAC PORT TESTS
