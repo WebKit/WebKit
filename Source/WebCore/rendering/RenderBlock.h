@@ -525,7 +525,9 @@ protected:
 
     void setDesiredColumnCountAndWidth(int, LayoutUnit);
 
+public:
     void computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats = false);
+protected:
     virtual void addOverflowFromChildren();
     void addOverflowFromFloats();
     void addOverflowFromPositionedObjects();

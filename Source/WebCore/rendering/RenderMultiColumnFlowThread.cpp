@@ -26,6 +26,8 @@
 #include "config.h"
 #include "RenderMultiColumnFlowThread.h"
 
+#include "RenderMultiColumnBlock.h"
+
 namespace WebCore {
 
 RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Document* document)
@@ -47,6 +49,19 @@ void RenderMultiColumnFlowThread::computeLogicalHeight(LayoutUnit logicalHeight,
     // We simply remain at our intrinsic height.
     computedValues.m_extent = logicalHeight;
     computedValues.m_position = logicalTop;
+}
+
+void RenderMultiColumnFlowThread::layout()
+{
+    RenderFlowThread::layout();
+    
+    // Now that flow thread portions have been determined, we may have changed the dimensions of some of our multi-column sets.
+    // We need to make the RenderMultiColumnBlock recompute its overflow because some of these sets may be spilling out of the
+    // block.
+    RenderMultiColumnBlock* colBlock = toRenderMultiColumnBlock(parent());
+    if (!colBlock)
+        return;
+    colBlock->computeOverflow(colBlock->clientLogicalBottom());
 }
 
 }

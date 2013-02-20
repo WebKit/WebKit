@@ -118,6 +118,7 @@ private:
 
     LayoutRect flowThreadPortionRectAt(unsigned index) const;
     LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap) const;
+    virtual void setFlowThreadPortionRect(const LayoutRect&) OVERRIDE;
     
     unsigned columnIndexAtOffset(LayoutUnit) const;
     

@@ -38,8 +38,9 @@ public:
 
 private:
     virtual const char* renderName() const OVERRIDE;
-    
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
+    
+    virtual void layout() OVERRIDE;
 };
 
 } // namespace WebCore

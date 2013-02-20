@@ -31,8 +31,7 @@
 #include "RenderMultiColumnBlock.h"
 #include "RenderMultiColumnFlowThread.h"
 
-using std::min;
-using std::max;
+using namespace std;
 
 namespace WebCore {
 
@@ -111,7 +110,7 @@ unsigned RenderMultiColumnSet::columnCount() const
     if (!computedColumnHeight())
         return 0;
     
-    // Our region rect determines our column count. We have as many columns as needed to fit all the content.
+    // Our portion rect determines our column count. We have as many columns as needed to fit all the content.
     LayoutUnit logicalHeightInColumns = flowThread()->isHorizontalWritingMode() ? flowThreadPortionRect().height() : flowThreadPortionRect().width();
     return ceil(static_cast<float>(logicalHeightInColumns) / computedColumnHeight());
 }
@@ -208,6 +207,31 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
         }
     }
     return overflowRectForFlowThreadPortion(overflowRect, isFirstRegion() && isFirstColumn, isLastRegion() && isLastColumn);
+}
+
+void RenderMultiColumnSet::setFlowThreadPortionRect(const LayoutRect& rect)
+{
+    RenderRegion::setFlowThreadPortionRect(rect);
+    
+    // Mutate the dimensions of the column set once our flow portion is set if the flow portion has more columns
+    // than can fit inside our current dimensions.
+    unsigned colCount = columnCount();
+    if (!colCount)
+        return;
+    
+    LayoutUnit colGap = columnGap();
+    LayoutUnit minimumContentLogicalWidth = colCount * computedColumnWidth() + (colCount - 1) * colGap;
+    LayoutUnit currentContentLogicalWidth = contentLogicalWidth();
+    LayoutUnit delta = max(LayoutUnit(), minimumContentLogicalWidth - currentContentLogicalWidth);
+    if (!delta)
+        return;
+
+    // Increase our logical width by the delta.
+    setLogicalWidth(logicalWidth() + delta);
+    
+    // Shift our position left by the delta if we are RTL.
+    if (!style()->isLeftToRightDirection())
+        setLogicalLeft(logicalLeft() - delta);
 }
 
 void RenderMultiColumnSet::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
