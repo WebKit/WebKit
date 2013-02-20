@@ -157,7 +157,9 @@ void HTMLDocumentParser::stopParsing()
 // http://www.whatwg.org/specs/web-apps/current-work/multipage/the-end.html#the-end
 void HTMLDocumentParser::prepareToStopParsing()
 {
-    ASSERT(!hasInsertionPoint());
+    // FIXME: It may not be correct to disable this for the background parser.
+    // That means hasInsertionPoint() may not be correct in some cases.
+    ASSERT(!hasInsertionPoint() || m_haveBackgroundParser);
 
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
@@ -644,7 +646,9 @@ void HTMLDocumentParser::end()
 void HTMLDocumentParser::attemptToRunDeferredScriptsAndEnd()
 {
     ASSERT(isStopping());
-    ASSERT(!hasInsertionPoint());
+    // FIXME: It may not be correct to disable this for the background parser.
+    // That means hasInsertionPoint() may not be correct in some cases.
+    ASSERT(!hasInsertionPoint() || m_haveBackgroundParser);
     if (m_scriptRunner && !m_scriptRunner->executeScriptsWaitingForParsing())
         return;
     end();
