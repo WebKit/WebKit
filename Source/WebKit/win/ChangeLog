@@ -1,5 +1,11 @@
 2013-02-19  Tony Chang  <tony@chromium.org>
 
+        Unreviewed, force file to recompile to fix win build.
+
+        * WebView.cpp:
+
+2013-02-19  Tony Chang  <tony@chromium.org>
+
         Unreviewed, fix the Windows build after r143398.
         Add new setters to the export list.
 

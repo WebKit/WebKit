@@ -7007,3 +7007,4 @@ HRESULT STDMETHODCALLTYPE WebView::selectedRangeForTesting(/* [out] */ UINT* loc
 
     return S_OK;
 }
+
