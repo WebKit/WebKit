@@ -1,3 +1,16 @@
+2013-02-20  Alberto Garcia  <albgarcia@rim.com>
+
+        [BlackBerry] Fix usage of HitTestRequest::RequestType
+        https://bugs.webkit.org/show_bug.cgi?id=110342
+
+        Reviewed by Carlos Garcia Campos.
+
+        Rename HitTestResult::* -> HitTestRequest::*
+        This was introduced by mistake in r142977.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::hitTestResult):
+
 2013-02-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed BlackBerry build fix.
