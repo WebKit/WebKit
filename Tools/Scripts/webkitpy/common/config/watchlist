@@ -439,7 +439,7 @@
         "WebIDL": [ "abarth@webkit.org", "ojan.autocc@gmail.com", "esprehn+autocc@chromium.org" ],
         "WebInspectorAPI": [ "timothy@apple.com", "joepeck@webkit.org", "graouts@apple.com" ],
         "WebKitGTKTranslations": [ "gns@gnome.org", "mrobinson@webkit.org" ],
-        "WebSocket": [ "yutak@chromium.org" ],
+        "WebSocket": [ "yutak@chromium.org", "toyoshim+watchlist@chromium.org" ],
         "XSS": [ "dbates@webkit.org", "ojan.autocc@gmail.com" ],
         "webkitperl": [ "dbates@webkit.org" ],
         "webkitpy": [ "abarth@webkit.org", "dpranke@chromium.org", "eric@webkit.org" ],

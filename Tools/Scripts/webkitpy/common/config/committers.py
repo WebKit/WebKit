@@ -433,7 +433,7 @@ committers_unable_to_review = [
     Committer("Sudarsana Nagineni", ["naginenis@gmail.com", "sudarsana.nagineni@linux.intel.com", "sudarsana.nagineni@intel.com"], "babu"),
     Committer("Taiju Tsuiki", "tzik@chromium.org", "tzik"),
     Committer("Takashi Sakamoto", "tasak@google.com", "tasak"),
-    Committer("Takashi Toyoshima", "toyoshim@chromium.org", "toyoshim"),
+    Committer("Takashi Toyoshima", ["toyoshim@chromium.org", "toyoshim+watchlist@chromium.org"], "toyoshim"),
     Committer("Terry Anderson", "tdanderson@chromium.org", "tdanderson"),
     Committer("Thiago Marcos P. Santos", ["tmpsantos@gmail.com", "thiago.santos@intel.com"], "tmpsantos"),
     Committer("Thomas Sepez", "tsepez@chromium.org", "tsepez"),

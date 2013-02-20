@@ -1,3 +1,10 @@
+2013-02-20  Takashi Toyoshima  <toyoshim@chromium.org>
+
+        Unreviewed. Add myself to watch lists.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-02-19  Joshua Bell  <jsbell@chromium.org>
 
         Remove warning from run-bindings-tests
