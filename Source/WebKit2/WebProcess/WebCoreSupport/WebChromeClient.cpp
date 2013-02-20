@@ -390,7 +390,7 @@ void WebChromeClient::invalidateContentsAndRootView(const IntRect& rect, bool)
             return;
     }
 
-    m_page->drawingArea()->setNeedsDisplay(rect);
+    m_page->drawingArea()->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool)
@@ -401,7 +401,7 @@ void WebChromeClient::invalidateContentsForSlowScroll(const IntRect& rect, bool)
     }
 
     m_page->pageDidScroll();
-    m_page->drawingArea()->setNeedsDisplay(rect);
+    m_page->drawingArea()->setNeedsDisplayInRect(rect);
 }
 
 void WebChromeClient::scroll(const IntSize& scrollDelta, const IntRect& scrollRect, const IntRect& clipRect)

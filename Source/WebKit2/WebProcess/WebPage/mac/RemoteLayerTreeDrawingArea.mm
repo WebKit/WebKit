@@ -47,7 +47,11 @@ RemoteLayerTreeDrawingArea::~RemoteLayerTreeDrawingArea()
 {
 }
 
-void RemoteLayerTreeDrawingArea::setNeedsDisplay(const IntRect&)
+void RemoteLayerTreeDrawingArea::setNeedsDisplay()
+{
+}
+
+void RemoteLayerTreeDrawingArea::setNeedsDisplayInRect(const IntRect&)
 {
 }
 

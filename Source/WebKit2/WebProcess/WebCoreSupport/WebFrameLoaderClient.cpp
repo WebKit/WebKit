@@ -1129,7 +1129,7 @@ void WebFrameLoaderClient::restoreViewState()
     // FIXME: This should not be necessary. WebCore should be correctly invalidating
     // the view on restores from the back/forward cache.
     if (m_frame == m_frame->page()->mainWebFrame())
-        m_frame->page()->drawingArea()->setNeedsDisplay(m_frame->page()->bounds());
+        m_frame->page()->drawingArea()->setNeedsDisplay();
 }
 
 void WebFrameLoaderClient::provisionalLoadStarted()

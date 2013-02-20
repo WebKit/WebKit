@@ -42,7 +42,8 @@ private:
     RemoteLayerTreeDrawingArea(WebPage*, const WebPageCreationParameters&);
 
     // DrawingArea
-    virtual void setNeedsDisplay(const WebCore::IntRect&) OVERRIDE;
+    virtual void setNeedsDisplay() OVERRIDE;
+    virtual void setNeedsDisplayInRect(const WebCore::IntRect&) OVERRIDE;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollDelta) OVERRIDE;
 
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;

@@ -80,24 +80,37 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
         enterAcceleratedCompositingMode(0);
 }
 
-void DrawingAreaImpl::setNeedsDisplay(const IntRect& rect)
+void DrawingAreaImpl::setNeedsDisplay()
 {
     if (!m_isPaintingEnabled)
         return;
 
+    if (m_layerTreeHost) {
+        ASSERT(m_dirtyRegion.isEmpty());
+        m_layerTreeHost->setNonCompositedContentsNeedDisplay();
+        return;
+    }
+
+    setNeedsDisplayInRect(m_webPage->bounds());
+}
+
+void DrawingAreaImpl::setNeedsDisplayInRect(const IntRect& rect)
+{
+    if (!m_isPaintingEnabled)
+        return;
+
+    if (m_layerTreeHost) {
+        ASSERT(m_dirtyRegion.isEmpty());
+        m_layerTreeHost->setNonCompositedContentsNeedDisplayInRect(rect);
+        return;
+    }
+    
     IntRect dirtyRect = rect;
     dirtyRect.intersect(m_webPage->bounds());
 
     if (dirtyRect.isEmpty())
         return;
 
-    if (m_layerTreeHost) {
-        ASSERT(m_dirtyRegion.isEmpty());
-
-        m_layerTreeHost->setNonCompositedContentsNeedDisplay(dirtyRect);
-        return;
-    }
-    
     if (m_webPage->mainFrameHasCustomRepresentation())
         return;
 
@@ -132,12 +145,12 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollDel
         if (currentScrollArea >= scrollArea) {
             // The rect being scrolled is at least as large as the rect we'd like to scroll.
             // Go ahead and just invalidate the scroll rect.
-            setNeedsDisplay(scrollRect);
+            setNeedsDisplayInRect(scrollRect);
             return;
         }
 
         // Just repaint the entire current scroll rect, we'll scroll the new rect instead.
-        setNeedsDisplay(m_scrollRect);
+        setNeedsDisplayInRect(m_scrollRect);
         m_scrollRect = IntRect();
         m_scrollOffset = IntSize();
     }
@@ -184,7 +197,7 @@ void DrawingAreaImpl::setLayerTreeStateIsFrozen(bool isFrozen)
 
 void DrawingAreaImpl::forceRepaint()
 {
-    setNeedsDisplay(m_webPage->bounds());
+    setNeedsDisplay();
 
     m_webPage->layoutIfNeeded();
 
@@ -223,7 +236,7 @@ void DrawingAreaImpl::didUninstallPageOverlay()
     if (m_layerTreeHost)
         m_layerTreeHost->didUninstallPageOverlay();
 
-    setNeedsDisplay(m_webPage->bounds());
+    setNeedsDisplay();
 }
 
 void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
@@ -233,7 +246,7 @@ void DrawingAreaImpl::setPageOverlayNeedsDisplay(const IntRect& rect)
         return;
     }
 
-    setNeedsDisplay(rect);
+    setNeedsDisplayInRect(rect);
 }
 
 void DrawingAreaImpl::setPageOverlayOpacity(float value)
@@ -488,7 +501,7 @@ void DrawingAreaImpl::resumePainting()
     m_isPaintingSuspended = false;
 
     // FIXME: We shouldn't always repaint everything here.
-    setNeedsDisplay(m_webPage->bounds());
+    setNeedsDisplay();
 
 #if PLATFORM(MAC)
     if (m_webPage->windowIsVisible())

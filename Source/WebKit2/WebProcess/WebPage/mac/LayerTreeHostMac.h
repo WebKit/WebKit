@@ -50,7 +50,8 @@ private:
     virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) OVERRIDE;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) OVERRIDE;
     virtual void invalidate() OVERRIDE;
-    virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&) OVERRIDE;
+    virtual void setNonCompositedContentsNeedDisplay() OVERRIDE;
+    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) OVERRIDE;
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) OVERRIDE;
     virtual void forceRepaint() OVERRIDE;
     virtual void sizeDidChange(const WebCore::IntSize& newSize) OVERRIDE;

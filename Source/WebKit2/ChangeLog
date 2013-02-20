@@ -1,3 +1,80 @@
+2013-02-20  Huang Dongsung  <luxtella@company100.net>
+
+        [WK2] add setNeedsDisplay in DrawingArea to mark whole layer as dirty.
+        https://bugs.webkit.org/show_bug.cgi?id=110299
+
+        Reviewed by Anders Carlsson.
+
+        Currently, we call setNeedsDisplay with the size of WebPage to mark whole
+        backing store as dirty. However, the size of non compositing layer can be
+        inconsistent with the size of WebPage. For example, in Coordinated Graphics, the
+        size of non compositing layer is contents size.
+
+        So, WebPage should not assume the size of non compositing layer, and should just
+        call setNeedsDisplay when marking whole layer as dirty.
+
+        In addition, this patch renames from setNeedsDisplay() with a rect argument to
+        setNeedsDisplayInRect(), which matches to the terms of GraphicsLayer.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::invalidateContentsAndRootView):
+        (WebKit::WebChromeClient::invalidateContentsForSlowScroll):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::restoreViewState):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplay):
+        (WebKit):
+        (WebKit::CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplayInRect):
+        (WebKit::CoordinatedLayerTreeHost::scrollNonCompositedContents):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (CoordinatedLayerTreeHost):
+        * WebProcess/WebPage/DrawingArea.h:
+        (DrawingArea):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setNeedsDisplay):
+        (WebKit):
+        (WebKit::DrawingAreaImpl::setNeedsDisplayInRect):
+        (WebKit::DrawingAreaImpl::scroll):
+        (WebKit::DrawingAreaImpl::forceRepaint):
+        (WebKit::DrawingAreaImpl::didUninstallPageOverlay):
+        (WebKit::DrawingAreaImpl::setPageOverlayNeedsDisplay):
+        (WebKit::DrawingAreaImpl::resumePainting):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        (DrawingAreaImpl):
+        * WebProcess/WebPage/LayerTreeHost.h:
+        (LayerTreeHost):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSize):
+        (WebKit::WebPage::setDrawsBackground):
+        (WebKit::WebPage::setDrawsTransparentBackground):
+        (WebKit::WebPage::resumeActiveDOMObjectsAndAnimations):
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.cpp:
+        (WebKit::LayerTreeHostGtk::setNonCompositedContentsNeedDisplay):
+        (WebKit):
+        (WebKit::LayerTreeHostGtk::setNonCompositedContentsNeedDisplayInRect):
+        (WebKit::LayerTreeHostGtk::scrollNonCompositedContents):
+        * WebProcess/WebPage/gtk/LayerTreeHostGtk.h:
+        (LayerTreeHostGtk):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.h:
+        (LayerTreeHostMac):
+        * WebProcess/WebPage/mac/LayerTreeHostMac.mm:
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplay):
+        (WebKit):
+        (WebKit::LayerTreeHostMac::setNonCompositedContentsNeedDisplayInRect):
+        (WebKit::LayerTreeHostMac::scrollNonCompositedContents):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.h:
+        (RemoteLayerTreeDrawingArea):
+        * WebProcess/WebPage/mac/RemoteLayerTreeDrawingArea.mm:
+        (WebKit::RemoteLayerTreeDrawingArea::setNeedsDisplay):
+        (WebKit):
+        (WebKit::RemoteLayerTreeDrawingArea::setNeedsDisplayInRect):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.h:
+        (TiledCoreAnimationDrawingArea):
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::setNeedsDisplay):
+        (WebKit):
+        (WebKit::TiledCoreAnimationDrawingArea::setNeedsDisplayInRect):
+
 2013-02-20  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Port EwkPopupMenuItem to the C API

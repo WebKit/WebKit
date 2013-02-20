@@ -177,7 +177,16 @@ void CoordinatedLayerTreeHost::invalidate()
     m_isValid = false;
 }
 
-void CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplay(const WebCore::IntRect& rect)
+void CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplay()
+{
+    m_nonCompositedContentLayer->setNeedsDisplay();
+    if (m_pageOverlayLayer)
+        m_pageOverlayLayer->setNeedsDisplay();
+
+    scheduleLayerFlush();
+}
+
+void CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect& rect)
 {
     m_nonCompositedContentLayer->setNeedsDisplayInRect(rect);
     if (m_pageOverlayLayer)
@@ -188,7 +197,7 @@ void CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplay(const WebCore
 
 void CoordinatedLayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect& scrollRect)
 {
-    setNonCompositedContentsNeedDisplay(scrollRect);
+    setNonCompositedContentsNeedDisplayInRect(scrollRect);
 }
 
 void CoordinatedLayerTreeHost::forceRepaint()

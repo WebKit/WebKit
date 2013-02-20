@@ -990,7 +990,7 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 
     view->resize(viewSize);
     view->setNeedsLayout();
-    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), viewSize));
+    m_drawingArea->setNeedsDisplay();
     
     m_viewSize = viewSize;
 }
@@ -1879,7 +1879,7 @@ void WebPage::setDrawsBackground(bool drawsBackground)
     }
 
     m_drawingArea->pageBackgroundTransparencyChanged();
-    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+    m_drawingArea->setNeedsDisplay();
 }
 
 void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
@@ -1896,7 +1896,7 @@ void WebPage::setDrawsTransparentBackground(bool drawsTransparentBackground)
     }
 
     m_drawingArea->pageBackgroundTransparencyChanged();
-    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+    m_drawingArea->setNeedsDisplay();
 }
 
 void WebPage::viewWillStartLiveResize()
@@ -2038,7 +2038,7 @@ void WebPage::resumeActiveDOMObjectsAndAnimations()
     m_page->resumeActiveDOMObjectsAndAnimations();
 
     // We need to repaint on resume to kickstart animated painting again.
-    m_drawingArea->setNeedsDisplay(IntRect(IntPoint(0, 0), m_viewSize));
+    m_drawingArea->setNeedsDisplay();
 }
 
 IntPoint WebPage::screenToWindow(const IntPoint& point)

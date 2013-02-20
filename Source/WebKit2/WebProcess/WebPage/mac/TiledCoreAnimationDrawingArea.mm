@@ -100,7 +100,11 @@ TiledCoreAnimationDrawingArea::~TiledCoreAnimationDrawingArea()
     m_layerFlushScheduler.invalidate();
 }
 
-void TiledCoreAnimationDrawingArea::setNeedsDisplay(const IntRect& rect)
+void TiledCoreAnimationDrawingArea::setNeedsDisplay()
+{
+}
+
+void TiledCoreAnimationDrawingArea::setNeedsDisplayInRect(const IntRect& rect)
 {
 }
 

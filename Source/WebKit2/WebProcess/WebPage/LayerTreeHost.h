@@ -64,7 +64,8 @@ public:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void invalidate() = 0;
 
-    virtual void setNonCompositedContentsNeedDisplay(const WebCore::IntRect&) = 0;
+    virtual void setNonCompositedContentsNeedDisplay() = 0;
+    virtual void setNonCompositedContentsNeedDisplayInRect(const WebCore::IntRect&) = 0;
     virtual void scrollNonCompositedContents(const WebCore::IntRect& scrollRect) = 0;
     virtual void forceRepaint() = 0;
     virtual bool forceRepaintAsync(uint64_t /*callbackID*/) { return false; }
