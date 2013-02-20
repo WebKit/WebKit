@@ -1,3 +1,10 @@
+2013-02-19  Elliott Sprehn  <esprehn@chromium.org>
+
+        Unreviewed. Add myself to watch lists.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-02-19  Hans Muller  <hmuller@adobe.com>
 
         Unreviewed, corrected primary email.
