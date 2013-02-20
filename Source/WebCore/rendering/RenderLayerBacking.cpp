@@ -138,7 +138,7 @@ RenderLayerBacking::RenderLayerBacking(RenderLayer* layer)
         TiledBacking* tiledBacking = this->tiledBacking();
         if (Page* page = renderer()->frame()->page()) {
             Frame* frame = renderer()->frame();
-            tiledBacking->setIsInWindow(page->isOnscreen());
+            tiledBacking->setIsInWindow(page->isInWindow());
 
             if (m_isMainFrameRenderViewLayer)
                 tiledBacking->setUnparentsOffscreenTiles(true);
