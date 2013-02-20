@@ -1,3 +1,54 @@
+2013-02-19  Conrad Shultz  <conrad_shultz@apple.com>
+
+        Allow UI clients to handle vertical wheel events.
+        https://bugs.webkit.org/show_bug.cgi?id=110006
+
+        Reviewed by Tim Horton.
+
+        Add API to allow clients to selectively control rubber-banding at vertical page extrema.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageRubberBandsAtBottom):
+        Proxy for the corresponding function in WebCore::Page.
+        (WKPageSetRubberBandsAtBottom):
+        Ditto.
+        (WKPageRubberBandsAtTop):
+        Ditto.
+        (WKPageSetRubberBandsAtTop):
+        Ditto.
+
+        * UIProcess/API/C/WKPage.h:
+        Declare new API.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Initialize new member variables.
+        (WebKit::WebPageProxy::setRubberBandsAtBottom):
+        New function; dispatches a matching message to the WebKit::WebPage.
+        (WebKit::WebPageProxy::setRubberBandsAtTop):
+        Ditto.
+
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        Declare new API.
+        (WebKit::WebPageProxy::rubberBandsAtBottom):
+        New accessor function.
+        (WebKit::WebPageProxy::rubberBandsAtTop):
+        Ditto.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setRubberBandsAtBottom):
+        New function; call the matching function on the associated WebCore::Page.
+        (WebKit::WebPage::setRubberBandsAtTop):
+        Ditto.
+
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        Declare new rubber-banding API.
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Declare new rubber-banding API.
+
 2013-02-19  Anders Carlsson  <andersca@apple.com>
 
         StorageAreaProxy should know its quota

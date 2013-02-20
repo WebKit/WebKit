@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,6 +53,10 @@ ScrollingTree::ScrollingTree(ScrollingCoordinator* scrollingCoordinator)
     , m_canGoForward(false)
     , m_mainFramePinnedToTheLeft(false)
     , m_mainFramePinnedToTheRight(false)
+    , m_rubberBandsAtBottom(true)
+    , m_rubberBandsAtTop(true)
+    , m_mainFramePinnedToTheTop(false)
+    , m_mainFramePinnedToTheBottom(false)
     , m_mainFrameIsRubberBanding(false)
     , m_scrollingPerformanceLoggingEnabled(false)
     , m_isHandlingProgrammaticScroll(false)
@@ -225,12 +229,14 @@ void ScrollingTree::removeDestroyedNodes(ScrollingStateTree* stateTree)
     }
 }
 
-void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight)
+void ScrollingTree::setMainFramePinState(bool pinnedToTheLeft, bool pinnedToTheRight, bool pinnedToTheTop, bool pinnedToTheBottom)
 {
     MutexLocker locker(m_swipeStateMutex);
 
     m_mainFramePinnedToTheLeft = pinnedToTheLeft;
     m_mainFramePinnedToTheRight = pinnedToTheRight;
+    m_mainFramePinnedToTheTop = pinnedToTheTop;
+    m_mainFramePinnedToTheBottom = pinnedToTheBottom;
 }
 
 void ScrollingTree::updateMainFrameScrollPosition(const IntPoint& scrollPosition, SetOrSyncScrollingLayerPosition scrollingLayerPositionAction)
@@ -290,11 +296,37 @@ void ScrollingTree::setMainFrameIsRubberBanding(bool isRubberBanding)
     m_mainFrameIsRubberBanding = isRubberBanding;
 }
 
+bool ScrollingTree::rubberBandsAtBottom()
+{
+    MutexLocker lock(m_swipeStateMutex);
+
+    return m_rubberBandsAtBottom;
+}
+
+void ScrollingTree::setRubberBandsAtBottom(bool rubberBandsAtBottom)
+{
+    MutexLocker locker(m_swipeStateMutex);
+
+    m_rubberBandsAtBottom = rubberBandsAtBottom;
+}
+
+bool ScrollingTree::rubberBandsAtTop()
+{
+    MutexLocker lock(m_swipeStateMutex);
+
+    return m_rubberBandsAtTop;
+}
+
+void ScrollingTree::setRubberBandsAtTop(bool rubberBandsAtTop)
+{
+    MutexLocker locker(m_swipeStateMutex);
+
+    m_rubberBandsAtTop = rubberBandsAtTop;
+}
+
 bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wheelEvent)
 {
     if (wheelEvent.phase() != PlatformWheelEventPhaseBegan)
-        return false;
-    if (!wheelEvent.deltaX())
         return false;
 
     MutexLocker lock(m_swipeStateMutex);
@@ -302,6 +334,10 @@ bool ScrollingTree::willWheelEventStartSwipeGesture(const PlatformWheelEvent& wh
     if (wheelEvent.deltaX() > 0 && m_mainFramePinnedToTheLeft && m_canGoBack)
         return true;
     if (wheelEvent.deltaX() < 0 && m_mainFramePinnedToTheRight && m_canGoForward)
+        return true;
+    if (wheelEvent.deltaY() > 0 && m_mainFramePinnedToTheTop && !m_rubberBandsAtTop)
+        return true;
+    if (wheelEvent.deltaY() < 0 && m_mainFramePinnedToTheBottom && !m_rubberBandsAtBottom)
         return true;
 
     return false;

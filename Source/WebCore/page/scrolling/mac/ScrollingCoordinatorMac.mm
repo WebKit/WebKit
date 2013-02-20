@@ -93,6 +93,26 @@ bool ScrollingCoordinatorMac::isRubberBandInProgress() const
     return scrollingTree()->isRubberBandInProgress();
 }
 
+bool ScrollingCoordinatorMac::rubberBandsAtBottom() const
+{
+    return scrollingTree()->rubberBandsAtBottom();
+}
+
+void ScrollingCoordinatorMac::setRubberBandsAtBottom(bool rubberBandsAtBottom)
+{
+    scrollingTree()->setRubberBandsAtBottom(rubberBandsAtBottom);
+}
+
+bool ScrollingCoordinatorMac::rubberBandsAtTop() const
+{
+    return scrollingTree()->rubberBandsAtTop();
+}
+
+void ScrollingCoordinatorMac::setRubberBandsAtTop(bool rubberBandsAtTop)
+{
+    scrollingTree()->setRubberBandsAtTop(rubberBandsAtTop);
+}
+
 void ScrollingCoordinatorMac::commitTreeStateIfNeeded()
 {
     if (!m_scrollingStateTree->hasChangedProperties())

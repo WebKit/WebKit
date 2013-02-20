@@ -200,7 +200,7 @@ bool ScrollingTreeScrollingNodeMac::pinnedInDirection(const FloatSize& delta)
         }
     }
 
-    if ((delta.width() || delta.height()) && (limitDelta.width() < 1 && limitDelta.height() < 1))        
+    if ((delta.width() || delta.height()) && (limitDelta.width() < 1 && limitDelta.height() < 1))
         return true;
 
     return false;
@@ -349,8 +349,10 @@ void ScrollingTreeScrollingNodeMac::updateMainFramePinState(const IntPoint& scro
 {
     bool pinnedToTheLeft = scrollPosition.x() <= minimumScrollPosition().x();
     bool pinnedToTheRight = scrollPosition.x() >= maximumScrollPosition().x();
+    bool pinnedToTheTop = scrollPosition.y() <= minimumScrollPosition().y();
+    bool pinnedToTheBottom = scrollPosition.y() >= maximumScrollPosition().y();
 
-    scrollingTree()->setMainFramePinState(pinnedToTheLeft, pinnedToTheRight);
+    scrollingTree()->setMainFramePinState(pinnedToTheLeft, pinnedToTheRight, pinnedToTheTop, pinnedToTheBottom);
 }
 
 void ScrollingTreeScrollingNodeMac::logExposedUnfilledArea()

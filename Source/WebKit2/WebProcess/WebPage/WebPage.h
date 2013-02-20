@@ -315,6 +315,9 @@ public:
 
     void setSuppressScrollbarAnimations(bool);
 
+    void setRubberBandsAtBottom(bool);
+    void setRubberBandsAtTop(bool);
+
     void setPaginationMode(uint32_t /* WebCore::Pagination::Mode */);
     void setPaginationBehavesLikeColumns(bool);
     void setPageLength(double);

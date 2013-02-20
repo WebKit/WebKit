@@ -502,6 +502,11 @@ public:
     bool isPinnedToTopSide() const { return m_mainFrameIsPinnedToTopSide; }
     bool isPinnedToBottomSide() const { return m_mainFrameIsPinnedToBottomSide; }
 
+    bool rubberBandsAtBottom() const { return m_rubberBandsAtBottom; }
+    void setRubberBandsAtBottom(bool);
+    bool rubberBandsAtTop() const { return m_rubberBandsAtTop; }
+    void setRubberBandsAtTop(bool);
+
     void setPaginationMode(WebCore::Pagination::Mode);
     WebCore::Pagination::Mode paginationMode() const { return m_paginationMode; }
     void setPaginationBehavesLikeColumns(bool);
@@ -1208,6 +1213,9 @@ private:
     bool m_mainFrameIsPinnedToRightSide;
     bool m_mainFrameIsPinnedToTopSide;
     bool m_mainFrameIsPinnedToBottomSide;
+
+    bool m_rubberBandsAtBottom;
+    bool m_rubberBandsAtTop;
 
     bool m_mainFrameInViewSourceMode;
 

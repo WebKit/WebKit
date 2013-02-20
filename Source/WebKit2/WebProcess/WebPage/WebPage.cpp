@@ -1312,6 +1312,16 @@ void WebPage::setSuppressScrollbarAnimations(bool suppressAnimations)
     m_page->setShouldSuppressScrollbarAnimations(suppressAnimations);
 }
 
+void WebPage::setRubberBandsAtBottom(bool rubberBandsAtBottom)
+{
+    m_page->setRubberBandsAtBottom(rubberBandsAtBottom);
+}
+
+void WebPage::setRubberBandsAtTop(bool rubberBandsAtTop)
+{
+    m_page->setRubberBandsAtTop(rubberBandsAtTop);
+}
+
 void WebPage::setPaginationMode(uint32_t mode)
 {
     Pagination pagination = m_page->pagination();

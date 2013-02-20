@@ -394,6 +394,27 @@ bool WKPageIsPinnedToBottomSide(WKPageRef pageRef)
     return toImpl(pageRef)->isPinnedToBottomSide();
 }
 
+
+bool WKPageRubberBandsAtBottom(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->rubberBandsAtBottom();
+}
+
+void WKPageSetRubberBandsAtBottom(WKPageRef pageRef, bool rubberBandsAtBottom)
+{
+    toImpl(pageRef)->setRubberBandsAtBottom(rubberBandsAtBottom);
+}
+
+bool WKPageRubberBandsAtTop(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->rubberBandsAtTop();
+}
+
+void WKPageSetRubberBandsAtTop(WKPageRef pageRef, bool rubberBandsAtTop)
+{
+    toImpl(pageRef)->setRubberBandsAtTop(rubberBandsAtTop);
+}
+
 void WKPageSetPaginationMode(WKPageRef pageRef, WKPaginationMode paginationMode)
 {
     Pagination::Mode mode;

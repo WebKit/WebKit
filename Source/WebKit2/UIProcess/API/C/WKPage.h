@@ -444,6 +444,11 @@ WK_EXPORT bool WKPageIsPinnedToRightSide(WKPageRef page);
 WK_EXPORT bool WKPageIsPinnedToTopSide(WKPageRef page);
 WK_EXPORT bool WKPageIsPinnedToBottomSide(WKPageRef page);
 
+WK_EXPORT bool WKPageRubberBandsAtBottom(WKPageRef);
+WK_EXPORT void WKPageSetRubberBandsAtBottom(WKPageRef, bool rubberBandsAtBottom);
+WK_EXPORT bool WKPageRubberBandsAtTop(WKPageRef);
+WK_EXPORT void WKPageSetRubberBandsAtTop(WKPageRef, bool rubberBandsAtTop);
+
 WK_EXPORT bool WKPageCanDelete(WKPageRef page);
 WK_EXPORT bool WKPageHasSelectedRange(WKPageRef page);
 WK_EXPORT bool WKPageIsContentEditable(WKPageRef page);

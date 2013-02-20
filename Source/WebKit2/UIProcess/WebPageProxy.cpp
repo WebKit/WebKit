@@ -226,6 +226,8 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrameIsPinnedToRightSide(false)
     , m_mainFrameIsPinnedToTopSide(false)
     , m_mainFrameIsPinnedToBottomSide(false)
+    , m_rubberBandsAtBottom(false)
+    , m_rubberBandsAtTop(false)
     , m_mainFrameInViewSourceMode(false)
     , m_pageCount(0)
     , m_renderTreeSize(0)
@@ -258,6 +260,10 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
 #endif
 #if ENABLE(VIBRATION)
     m_vibration = WebVibrationProxy::create(this);
+#endif
+#if ENABLE(THREADED_SCROLLING)
+    m_rubberBandsAtBottom = true;
+    m_rubberBandsAtTop = true;
 #endif
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
@@ -1671,6 +1677,32 @@ void WebPageProxy::setSuppressScrollbarAnimations(bool suppressAnimations)
 
     m_suppressScrollbarAnimations = suppressAnimations;
     m_process->send(Messages::WebPage::SetSuppressScrollbarAnimations(suppressAnimations), m_pageID);
+}
+
+void WebPageProxy::setRubberBandsAtBottom(bool rubberBandsAtBottom)
+{
+    if (rubberBandsAtBottom == m_rubberBandsAtBottom)
+        return;
+
+    m_rubberBandsAtBottom = rubberBandsAtBottom;
+
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetRubberBandsAtBottom(rubberBandsAtBottom), m_pageID);
+}
+
+void WebPageProxy::setRubberBandsAtTop(bool rubberBandsAtTop)
+{
+    if (rubberBandsAtTop == m_rubberBandsAtTop)
+        return;
+
+    m_rubberBandsAtTop = rubberBandsAtTop;
+
+    if (!isValid())
+        return;
+
+    m_process->send(Messages::WebPage::SetRubberBandsAtTop(rubberBandsAtTop), m_pageID);
 }
 
 void WebPageProxy::setPaginationMode(WebCore::Pagination::Mode mode)

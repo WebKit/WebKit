@@ -142,6 +142,9 @@ messages -> WebPage LegacyReceiver {
     ListenForLayoutMilestones(uint32_t milestones)
     SetSuppressScrollbarAnimations(bool suppressAnimations)
 
+    SetRubberBandsAtBottom(bool rubberBandsAtBottom)
+    SetRubberBandsAtTop(bool rubberBandsAtTop)
+
     SetPaginationMode(uint32_t mode)
     SetPaginationBehavesLikeColumns(bool behavesLikeColumns)
     SetPageLength(double pageLength)
