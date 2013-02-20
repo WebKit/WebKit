@@ -43,7 +43,6 @@ private:
 
     virtual void computePreferredLogicalWidths();
     virtual bool avoidsFloats() const { return true; }
-    virtual bool stretchesToMinIntrinsicLogicalWidth() const OVERRIDE;
 
     virtual void paintBoxDecorations(PaintInfo&, const LayoutPoint&);
     virtual void paintMask(PaintInfo&, const LayoutPoint&);

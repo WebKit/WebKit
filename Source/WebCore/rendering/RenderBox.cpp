@@ -2008,10 +2008,6 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
         computedValues.m_extent = constrainLogicalWidthInRegionByMinMax(preferredWidth, containerWidthInInlineDirection, cb, region, offsetFromLogicalTopOfFirstPage);
     }
 
-    // Fieldsets are currently the only objects that stretch to their minimum width.
-    if (stretchesToMinIntrinsicLogicalWidth())
-        computedValues.m_extent = max(computedValues.m_extent, minPreferredLogicalWidth());
-
     // Margin calculations.
     if (hasPerpendicularContainingBlock || isFloating() || isInline()) {
         RenderView* renderView = view();
@@ -3024,13 +3020,6 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
             computedValues.m_margins.m_start = minValues.m_margins.m_start;
             computedValues.m_margins.m_end = minValues.m_margins.m_end;
         }
-    }
-
-    if (stretchesToMinIntrinsicLogicalWidth() && computedValues.m_extent < minPreferredLogicalWidth() - bordersPlusPadding) {
-        computePositionedLogicalWidthUsing(MainOrPreferredSize, Length(minPreferredLogicalWidth() - bordersPlusPadding, Fixed), containerBlock, containerDirection,
-                                           containerLogicalWidth, bordersPlusPadding,
-                                           logicalLeftLength, logicalRightLength, marginLogicalLeft, marginLogicalRight,
-                                           computedValues);
     }
 
     computedValues.m_extent += bordersPlusPadding;

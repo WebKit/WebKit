@@ -212,13 +212,4 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, const LayoutPoint& paintOff
     paintMaskImages(paintInfo, paintRect);
 }
 
-bool RenderFieldset::stretchesToMinIntrinsicLogicalWidth() const
-{
-    // If width is explicitly specified then Fieldsets should not stretch
-    if (style()->width().isPercent())
-        return false;
-
-    return true;
-}
-
 } // namespace WebCore

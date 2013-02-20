@@ -393,7 +393,8 @@ fieldset {
     -webkit-padding-start: 0.75em;
     -webkit-padding-end: 0.75em;
     -webkit-padding-after: 0.625em;
-    border: 2px groove ThreeDFace
+    border: 2px groove ThreeDFace;
+    min-width: -webkit-min-content;
 }
 
 button {
