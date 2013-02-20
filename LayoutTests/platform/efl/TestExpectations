@@ -1868,3 +1868,5 @@ webkit.org/b/109951 compositing/transitions/transform-on-large-layer.html [ Imag
 
 # Failing after r143256.
 webkit.org/b/110282 fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
+
+webkit.org/b/110316 svg/as-background-image/tiled-background-image.html [ ImageOnlyFailure ]
