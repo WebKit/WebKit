@@ -508,6 +508,7 @@ function HeapSnapshotMetainfo()
     this.node_types = [];
     this.edge_fields = [];
     this.edge_types = [];
+    this.type_strings = {};
 
     // Old format.
     this.fields = [];
