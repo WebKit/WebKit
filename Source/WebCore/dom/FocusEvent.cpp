@@ -77,7 +77,7 @@ FocusEventDispatchMediator::FocusEventDispatchMediator(PassRefPtr<FocusEvent> fo
 
 bool FocusEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->ensureEventPath());
+    EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->eventPath());
     return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 
@@ -93,7 +93,7 @@ BlurEventDispatchMediator::BlurEventDispatchMediator(PassRefPtr<FocusEvent> focu
 
 bool BlurEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->ensureEventPath());
+    EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->eventPath());
     return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 
@@ -109,7 +109,7 @@ FocusInEventDispatchMediator::FocusInEventDispatchMediator(PassRefPtr<FocusEvent
 
 bool FocusInEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->ensureEventPath());
+    EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->eventPath());
     return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 
@@ -125,7 +125,7 @@ FocusOutEventDispatchMediator::FocusOutEventDispatchMediator(PassRefPtr<FocusEve
 
 bool FocusOutEventDispatchMediator::dispatchEvent(EventDispatcher* dispatcher) const
 {
-    EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->ensureEventPath());
+    EventRetargeter::adjustForFocusEvent(dispatcher->node(), *event(), dispatcher->eventPath());
     return EventDispatchMediator::dispatchEvent(dispatcher);
 }
 

@@ -59,7 +59,6 @@ bool EventDispatcher::dispatchEvent(Node* node, PassRefPtr<EventDispatchMediator
 EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)
     : m_node(node)
     , m_event(event)
-    , m_eventPathInitialized(false)
 #ifndef NDEBUG
     , m_eventDispatched(false)
 #endif
@@ -68,15 +67,7 @@ EventDispatcher::EventDispatcher(Node* node, PassRefPtr<Event> event)
     ASSERT(m_event.get());
     ASSERT(!m_event->type().isNull()); // JavaScript code can create an event with an empty name, but not null.
     m_view = node->document()->view();
-}
-
-EventPath& EventDispatcher::ensureEventPath()
-{
-    if (m_eventPathInitialized)
-        return m_eventPath;
-    m_eventPathInitialized = true;
     EventRetargeter::calculateEventPath(m_node.get(), m_event.get(), m_eventPath);
-    return m_eventPath;
 }
 
 void EventDispatcher::dispatchScopedEvent(Node* node, PassRefPtr<EventDispatchMediator> mediator)
@@ -125,7 +116,6 @@ bool EventDispatcher::dispatch()
     m_event->setTarget(EventRetargeter::eventTargetRespectingTargetRules(m_node.get()));
     ASSERT(!NoEventDispatchAssertion::isEventDispatchForbidden());
     ASSERT(m_event->target());
-    ensureEventPath();
     WindowEventContext windowEventContext(m_event.get(), m_node.get(), topEventContext());
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willDispatchEvent(m_node->document(), *m_event, windowEventContext.window(), m_node.get(), m_eventPath);
 
