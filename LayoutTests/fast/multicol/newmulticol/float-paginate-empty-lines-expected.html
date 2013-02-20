@@ -1,0 +1,12 @@
+<body style="overflow:hidden">
+<p>This test is ensuring we don't grow the height of a block improperly when a float has no line association (e.g., when it's at the end of a
+block). The complete dashed border should be in the first column, with none of it appearing in the second column.</p>
+
+<div style="-webkit-column-width:300px;-moz-column-width:300px; height:400px">
+<div style="border:10px dashed maroon">
+This is some text.<br>
+This is some text.<br>This is some text.<br>This is some text.<br>This is some text.<br>This is some text.<br>This is some text.<br>
+This is some text.<br>This is some text.<br>This is some text.<br>This is some text.<br>
+This is some text.<br>
+<img style="float:right;width:100px;height:200px;background-color:#cccccc">
+</div>
