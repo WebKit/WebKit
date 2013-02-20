@@ -1,3 +1,14 @@
+2013-02-19  Adrienne Walker  <enne@chromium.org>
+
+        Unreviewed, rolling out r143382 and r143401.
+        http://trac.webkit.org/changeset/143382
+        http://trac.webkit.org/changeset/143401
+        https://bugs.webkit.org/show_bug.cgi?id=106457
+
+        Breaks Chromium win/mac canary compilation
+
+        * chromium/public/Platform.h:
+
 2013-02-19  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move WebKitPlatformSupport declaration to Platform.h

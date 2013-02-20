@@ -28,4 +28,26 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef WebKitPlatformSupport_h
+#define WebKitPlatformSupport_h
+
 #include "../../../../Platform/chromium/public/Platform.h"
+
+namespace WebKit {
+
+class WebIDBFactory; // FIXME: Does this belong in platform?
+
+// FIXME: Eventually all these API will need to move to WebKit::Platform.
+class WebKitPlatformSupport : public Platform {
+public:
+    // Indexed Database ----------------------------------------------------
+
+    virtual WebIDBFactory* idbFactory() { return 0; }
+
+protected:
+    ~WebKitPlatformSupport() { }
+};
+
+} // namespace WebKit
+
+#endif
