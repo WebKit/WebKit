@@ -34,7 +34,7 @@
 namespace WebCore {
 
 DatabaseBackendSync::DatabaseBackendSync(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : DatabaseBackend(databaseContext, name, expectedVersion, displayName, estimatedSize, DatabaseType::Sync)
+    : DatabaseBackendBase(databaseContext, name, expectedVersion, displayName, estimatedSize, DatabaseType::Sync)
 {
 }
 

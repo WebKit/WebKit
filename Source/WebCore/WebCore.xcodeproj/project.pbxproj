@@ -3708,8 +3708,8 @@
 		97B38E27151C4271004622E9 /* DOMWindowNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B38E24151C4264004622E9 /* DOMWindowNotifications.h */; };
 		97B38E28151C4273004622E9 /* DOMWindowNotifications.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97B38E23151C4264004622E9 /* DOMWindowNotifications.cpp */; };
 		97B8FFD116AE7F960038388D /* CharacterReferenceParserInlines.h in Headers */ = {isa = PBXBuildFile; fileRef = 97B8FFCF16AE7F920038388D /* CharacterReferenceParserInlines.h */; };
-		97BC69DA1505F076001B74AC /* DatabaseBackend.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69D61505F076001B74AC /* DatabaseBackend.cpp */; };
-		97BC69DB1505F076001B74AC /* DatabaseBackend.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D71505F076001B74AC /* DatabaseBackend.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97BC69DA1505F076001B74AC /* DatabaseBackendBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69D61505F076001B74AC /* DatabaseBackendBase.cpp */; };
+		97BC69DB1505F076001B74AC /* DatabaseBackendBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D71505F076001B74AC /* DatabaseBackendBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC69DC1505F076001B74AC /* ChangeVersionWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */; };
 		97BC69DD1505F076001B74AC /* ChangeVersionWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */; };
 		97BC6A201505F081001B74AC /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69DE1505F081001B74AC /* Database.cpp */; };
@@ -11179,8 +11179,8 @@
 		97B38E24151C4264004622E9 /* DOMWindowNotifications.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DOMWindowNotifications.h; path = Modules/notifications/DOMWindowNotifications.h; sourceTree = "<group>"; };
 		97B38E25151C4264004622E9 /* DOMWindowNotifications.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = DOMWindowNotifications.idl; path = Modules/notifications/DOMWindowNotifications.idl; sourceTree = "<group>"; };
 		97B8FFCF16AE7F920038388D /* CharacterReferenceParserInlines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CharacterReferenceParserInlines.h; sourceTree = "<group>"; };
-		97BC69D61505F076001B74AC /* DatabaseBackend.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseBackend.cpp; path = Modules/webdatabase/DatabaseBackend.cpp; sourceTree = "<group>"; };
-		97BC69D71505F076001B74AC /* DatabaseBackend.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseBackend.h; path = Modules/webdatabase/DatabaseBackend.h; sourceTree = "<group>"; };
+		97BC69D61505F076001B74AC /* DatabaseBackendBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseBackendBase.cpp; path = Modules/webdatabase/DatabaseBackendBase.cpp; sourceTree = "<group>"; };
+		97BC69D71505F076001B74AC /* DatabaseBackendBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseBackendBase.h; path = Modules/webdatabase/DatabaseBackendBase.h; sourceTree = "<group>"; };
 		97BC69D81505F076001B74AC /* ChangeVersionWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ChangeVersionWrapper.cpp; path = Modules/webdatabase/ChangeVersionWrapper.cpp; sourceTree = "<group>"; };
 		97BC69D91505F076001B74AC /* ChangeVersionWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ChangeVersionWrapper.h; path = Modules/webdatabase/ChangeVersionWrapper.h; sourceTree = "<group>"; };
 		97BC69DE1505F081001B74AC /* Database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Database.cpp; path = Modules/webdatabase/Database.cpp; sourceTree = "<group>"; };
@@ -18673,10 +18673,10 @@
 				97BC69E01505F081001B74AC /* Database.idl */,
 				97BC69E11505F081001B74AC /* DatabaseAuthorizer.cpp */,
 				97BC69E21505F081001B74AC /* DatabaseAuthorizer.h */,
-				97BC69D61505F076001B74AC /* DatabaseBackend.cpp */,
-				97BC69D71505F076001B74AC /* DatabaseBackend.h */,
 				FE16CFCF169D1DEC00D3A0C7 /* DatabaseBackendAsync.cpp */,
 				FE16CFD0169D1DEC00D3A0C7 /* DatabaseBackendAsync.h */,
+				97BC69D61505F076001B74AC /* DatabaseBackendBase.cpp */,
+				97BC69D71505F076001B74AC /* DatabaseBackendBase.h */,
 				FE6F6AAD169E057500FC30A2 /* DatabaseBackendContext.cpp */,
 				FE6F6AAE169E057500FC30A2 /* DatabaseBackendContext.h */,
 				FE16CFD1169D1DEC00D3A0C7 /* DatabaseBackendSync.cpp */,
@@ -23555,8 +23555,8 @@
 				A80E6D0B0A1989CA007FB8C5 /* DashboardRegion.h in Headers */,
 				97BC6A211505F081001B74AC /* Database.h in Headers */,
 				97BC6A241505F081001B74AC /* DatabaseAuthorizer.h in Headers */,
-				97BC69DB1505F076001B74AC /* DatabaseBackend.h in Headers */,
 				FE16CFD4169D1DED00D3A0C7 /* DatabaseBackendAsync.h in Headers */,
+				97BC69DB1505F076001B74AC /* DatabaseBackendBase.h in Headers */,
 				FE6F6AB0169E057500FC30A2 /* DatabaseBackendContext.h in Headers */,
 				FE16CFD6169D1DED00D3A0C7 /* DatabaseBackendSync.h in Headers */,
 				FEBC5F3216BD0CC300659BD3 /* DatabaseBase.h in Headers */,
@@ -27229,8 +27229,8 @@
 				A29532CF15DD5E1700469EBC /* CustomFilterValidatedProgram.cpp in Sources */,
 				97BC6A201505F081001B74AC /* Database.cpp in Sources */,
 				97BC6A231505F081001B74AC /* DatabaseAuthorizer.cpp in Sources */,
-				97BC69DA1505F076001B74AC /* DatabaseBackend.cpp in Sources */,
 				FE16CFD3169D1DED00D3A0C7 /* DatabaseBackendAsync.cpp in Sources */,
+				97BC69DA1505F076001B74AC /* DatabaseBackendBase.cpp in Sources */,
 				FE6F6AAF169E057500FC30A2 /* DatabaseBackendContext.cpp in Sources */,
 				FE16CFD5169D1DED00D3A0C7 /* DatabaseBackendSync.cpp in Sources */,
 				FEBC5F3116BD0CC300659BD3 /* DatabaseBase.cpp in Sources */,

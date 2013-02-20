@@ -65,7 +65,7 @@
 
 namespace WebCore {
 
-PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<DatabaseBackend> backend)
+PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<DatabaseBackendBase> backend)
 {
     // FIXME: Currently, we're only simulating the backend by return the
     // frontend database as its own the backend. When we split the 2 apart,
@@ -137,7 +137,7 @@ String Database::version() const
 {
     if (m_deleted)
         return String();
-    return DatabaseBackend::version();
+    return DatabaseBackendBase::version();
 }
 
 void Database::markAsDeletedAndClose()

@@ -140,12 +140,12 @@ void DatabaseServer::interruptAllDatabasesForContext(const DatabaseBackendContex
     DatabaseTracker::tracker().interruptAllDatabasesForContext(context);
 }
 
-PassRefPtr<DatabaseBackend> DatabaseServer::openDatabase(RefPtr<DatabaseBackendContext>& backendContext,
+PassRefPtr<DatabaseBackendBase> DatabaseServer::openDatabase(RefPtr<DatabaseBackendContext>& backendContext,
     DatabaseType type, const String& name, const String& expectedVersion, const String& displayName,
     unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError &error, String& errorMessage,
     OpenAttempt attempt)
 {
-    RefPtr<DatabaseBackend> database;
+    RefPtr<DatabaseBackendBase> database;
     bool success = false; // Make some older compilers happy.
     
     switch (attempt) {
@@ -161,11 +161,11 @@ PassRefPtr<DatabaseBackend> DatabaseServer::openDatabase(RefPtr<DatabaseBackendC
     return database.release();
 }
 
-PassRefPtr<DatabaseBackend> DatabaseServer::createDatabase(RefPtr<DatabaseBackendContext>& backendContext,
+PassRefPtr<DatabaseBackendBase> DatabaseServer::createDatabase(RefPtr<DatabaseBackendContext>& backendContext,
     DatabaseType type, const String& name, const String& expectedVersion, const String& displayName,
     unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
-    RefPtr<DatabaseBackend> database;
+    RefPtr<DatabaseBackendBase> database;
     switch (type) {
     case DatabaseType::Async:
         database = adoptRef(new Database(backendContext, name, expectedVersion, displayName, estimatedSize));
@@ -181,7 +181,7 @@ PassRefPtr<DatabaseBackend> DatabaseServer::createDatabase(RefPtr<DatabaseBacken
     return database.release();
 }
 
-unsigned long long DatabaseServer::getMaxSizeForDatabase(const DatabaseBackend* database)
+unsigned long long DatabaseServer::getMaxSizeForDatabase(const DatabaseBackendBase* database)
 {
     return DatabaseTracker::tracker().getMaxSizeForDatabase(database);
 }

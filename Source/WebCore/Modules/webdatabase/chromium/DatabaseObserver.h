@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class DatabaseBackend;
+class DatabaseBackendBase;
 class ScriptExecutionContext;
 
 // The implementation of this class is in the WebKit API (Chromium source tree)
@@ -45,16 +45,16 @@ class ScriptExecutionContext;
 class DatabaseObserver {
 public:
     static bool canEstablishDatabase(ScriptExecutionContext*, const String&, const String&, unsigned long);
-    static void databaseOpened(DatabaseBackend*);
-    static void databaseModified(DatabaseBackend*);
-    static void databaseClosed(DatabaseBackend*);
+    static void databaseOpened(DatabaseBackendBase*);
+    static void databaseModified(DatabaseBackendBase*);
+    static void databaseClosed(DatabaseBackendBase*);
 
-    static void reportOpenDatabaseResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportChangeVersionResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportStartTransactionResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportCommitTransactionResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportExecuteStatementResult(DatabaseBackend*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
-    static void reportVacuumDatabaseResult(DatabaseBackend*, int sqliteErrorCode);
+    static void reportOpenDatabaseResult(DatabaseBackendBase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportChangeVersionResult(DatabaseBackendBase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportStartTransactionResult(DatabaseBackendBase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportCommitTransactionResult(DatabaseBackendBase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportExecuteStatementResult(DatabaseBackendBase*, int callsite, int webSqlErrorCode, int sqliteErrorCode);
+    static void reportVacuumDatabaseResult(DatabaseBackendBase*, int sqliteErrorCode);
 };
 
 }

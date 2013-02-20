@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class DatabaseBackend;
+class DatabaseBackendBase;
 
 // A client to the SQLTransaction class. Allows SQLTransaction to notify interested
 // parties that certain things have happened in a transaction.
@@ -46,9 +46,9 @@ class SQLTransactionClient {
     WTF_MAKE_NONCOPYABLE(SQLTransactionClient); WTF_MAKE_FAST_ALLOCATED;
 public:
     SQLTransactionClient() { }
-    void didCommitWriteTransaction(DatabaseBackend*);
-    void didExecuteStatement(DatabaseBackend*);
-    bool didExceedQuota(DatabaseBackend*);
+    void didCommitWriteTransaction(DatabaseBackendBase*);
+    void didExecuteStatement(DatabaseBackendBase*);
+    bool didExceedQuota(DatabaseBackendBase*);
 };
 
 }

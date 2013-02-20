@@ -1836,10 +1836,10 @@
     <ClCompile Include="..\Modules\webdatabase\DatabaseAuthorizer.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\DatabaseBackend.cpp">
+    <ClCompile Include="..\Modules\webdatabase\DatabaseBackendAsync.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\DatabaseBackendAsync.cpp">
+    <ClCompile Include="..\Modules\webdatabase\DatabaseBackendBase.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\DatabaseBackendContext.cpp">
@@ -8502,10 +8502,10 @@
     <ClInclude Include="..\Modules\webdatabase\DatabaseAuthorizer.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\DatabaseBackend.h">
+    <ClInclude Include="..\Modules\webdatabase\DatabaseBackendAsync.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\DatabaseBackendAsync.h">
+    <ClInclude Include="..\Modules\webdatabase\DatabaseBackendBase.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\DatabaseBackendContext.h">

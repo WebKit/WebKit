@@ -43,7 +43,7 @@
 namespace WebCore {
 
 DatabaseBackendAsync::DatabaseBackendAsync(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
-    : DatabaseBackend(databaseContext, name, expectedVersion, displayName, estimatedSize, DatabaseType::Async)
+    : DatabaseBackendBase(databaseContext, name, expectedVersion, displayName, estimatedSize, DatabaseType::Async)
     , m_transactionInProgress(false)
     , m_isTransactionQueueEnabled(true)
 {
@@ -68,7 +68,7 @@ bool DatabaseBackendAsync::openAndVerifyVersion(bool setVersionInNewDatabase, Da
 
 bool DatabaseBackendAsync::performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
-    if (DatabaseBackend::performOpenAndVerify(setVersionInNewDatabase, error, errorMessage)) {
+    if (DatabaseBackendBase::performOpenAndVerify(setVersionInNewDatabase, error, errorMessage)) {
         if (databaseContext()->databaseThread())
             databaseContext()->databaseThread()->recordDatabaseOpen(this);
 

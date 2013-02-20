@@ -1,3 +1,25 @@
+2013-02-20  Mark Lam  <mark.lam@apple.com>
+
+        Rename DatabaseBackend to DatabaseBackendBase.
+        https://bugs.webkit.org/show_bug.cgi?id=110303.
+
+        Rubber stamped by Alexey Proskuryakov.
+
+        * public/WebDatabase.h:
+        (WebDatabase):
+        * src/DatabaseObserver.cpp:
+        (WebCore::DatabaseObserver::databaseOpened):
+        (WebCore::DatabaseObserver::databaseModified):
+        (WebCore::DatabaseObserver::databaseClosed):
+        (WebCore::DatabaseObserver::reportOpenDatabaseResult):
+        (WebCore::DatabaseObserver::reportChangeVersionResult):
+        (WebCore::DatabaseObserver::reportStartTransactionResult):
+        (WebCore::DatabaseObserver::reportCommitTransactionResult):
+        (WebCore::DatabaseObserver::reportExecuteStatementResult):
+        (WebCore::DatabaseObserver::reportVacuumDatabaseResult):
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::WebDatabase):
+
 2013-02-20  Rouslan Solomakhin  <rouslan@chromium.org>
 
         Fix use after free in ContextMenuClientImpl.cpp

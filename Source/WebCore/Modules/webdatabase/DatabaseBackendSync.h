@@ -28,7 +28,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DatabaseBackend.h"
+#include "DatabaseBackendBase.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -41,7 +41,7 @@ class DatabaseServer;
 // DatabaseBackendSync to do so before the proper backend split is
 // available. This should be replaced with the actual implementation later.
 
-class DatabaseBackendSync : public DatabaseBackend {
+class DatabaseBackendSync : public DatabaseBackendBase {
 public:
     virtual ~DatabaseBackendSync();
 

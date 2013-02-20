@@ -37,7 +37,7 @@
 
 namespace WebCore {
 
-class DatabaseBackend;
+class DatabaseBackendBase;
 class DatabaseBackendContext;
 class DatabaseManagerClient;
 class SecurityOrigin;
@@ -57,7 +57,9 @@ public:
         RetryOpenDatabase
     };
 
-    virtual PassRefPtr<DatabaseBackend> openDatabase(RefPtr<DatabaseBackendContext>&, DatabaseType, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt = FirstTryToOpenDatabase) = 0;
+    virtual PassRefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseBackendContext>&, DatabaseType,
+        const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize,
+        bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt = FirstTryToOpenDatabase) = 0;
 
 #if !PLATFORM(CHROMIUM)
     virtual bool hasEntryForOrigin(SecurityOrigin*) = 0;
@@ -80,7 +82,7 @@ public:
 
     virtual void interruptAllDatabasesForContext(const DatabaseBackendContext*) = 0;
 
-    virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackend*) = 0;
+    virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackendBase*) = 0;
 
 protected:
     AbstractDatabaseServer() { }

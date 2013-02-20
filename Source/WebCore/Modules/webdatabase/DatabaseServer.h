@@ -45,7 +45,9 @@ public:
 
     virtual String fullPathForDatabase(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
 
-    virtual PassRefPtr<DatabaseBackend> openDatabase(RefPtr<DatabaseBackendContext>&, DatabaseType, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
+    virtual PassRefPtr<DatabaseBackendBase> openDatabase(RefPtr<DatabaseBackendContext>&, DatabaseType,
+        const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize,
+        bool setVersionInNewDatabase, DatabaseError&, String& errorMessage, OpenAttempt);
 
 #if !PLATFORM(CHROMIUM)
     virtual bool hasEntryForOrigin(SecurityOrigin*);
@@ -68,10 +70,12 @@ public:
 
     virtual void interruptAllDatabasesForContext(const DatabaseBackendContext*);
 
-    virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackend*);
+    virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackendBase*);
 
 protected:
-    virtual PassRefPtr<DatabaseBackend> createDatabase(RefPtr<DatabaseBackendContext>&, DatabaseType, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
+    virtual PassRefPtr<DatabaseBackendBase> createDatabase(RefPtr<DatabaseBackendContext>&, DatabaseType,
+        const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize,
+        bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
 };
 
 } // namespace WebCore

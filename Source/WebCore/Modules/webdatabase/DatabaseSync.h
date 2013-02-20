@@ -77,7 +77,7 @@ private:
     DatabaseSync(PassRefPtr<DatabaseBackendContext>, const String& name,
         const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
     PassRefPtr<DatabaseBackendSync> backend();
-    static PassRefPtr<DatabaseSync> create(ScriptExecutionContext*, PassRefPtr<DatabaseBackend>);
+    static PassRefPtr<DatabaseSync> create(ScriptExecutionContext*, PassRefPtr<DatabaseBackendBase>);
 
     void runTransaction(PassRefPtr<SQLTransactionSyncCallback>, bool readOnly, ExceptionCode&);
 

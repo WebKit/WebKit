@@ -1855,8 +1855,8 @@
     <ClCompile Include="..\Modules\webdatabase\ChangeVersionWrapper.cpp" />
     <ClCompile Include="..\Modules\webdatabase\Database.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseAuthorizer.cpp" />
-    <ClCompile Include="..\Modules\webdatabase\DatabaseBackend.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseBackendAsync.cpp" />
+    <ClCompile Include="..\Modules\webdatabase\DatabaseBackendBase.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseBackendContext.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseBackendSync.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseBase.cpp" />
@@ -6424,8 +6424,8 @@
     <ClInclude Include="..\Modules\webdatabase\ChangeVersionWrapper.h" />
     <ClInclude Include="..\Modules\webdatabase\Database.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseAuthorizer.h" />
-    <ClInclude Include="..\Modules\webdatabase\DatabaseBackend.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseBackendAsync.h" />
+    <ClInclude Include="..\Modules\webdatabase\DatabaseBackendBase.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseBackendContext.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseBackendSync.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseBase.h" />

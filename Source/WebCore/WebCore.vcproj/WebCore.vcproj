@@ -25414,19 +25414,19 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\webdatabase\DatabaseBackend.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\webdatabase\DatabaseBackend.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Modules\webdatabase\DatabaseBackendAsync.cpp"
 					>
 				</File>
 				<File
 					RelativePath="..\Modules\webdatabase\DatabaseBackendAsync.h"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackendBase.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\DatabaseBackendBase.h"
 					>
 				</File>
 				<File

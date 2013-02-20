@@ -28,7 +28,7 @@
  */
 
 #include "config.h"
-#include "DatabaseBackend.h"
+#include "DatabaseBackendBase.h"
 
 #if ENABLE(SQL_DATABASE)
 
@@ -74,13 +74,13 @@
 // The only databases instances not tracked by the tracker's open database
 // list are the ones that have not been added yet, or the ones that we
 // attempted an open on but failed to. Such instances only exist in the
-// DatabaseServer's factory methods for creating DatabaseBackends.
+// DatabaseServer's factory methods for creating database backends.
 //
 // The factory methods will either call openAndVerifyVersion() or
 // performOpenAndVerify(). These methods will add the newly instantiated
-// DatabaseBackend if they succeed in opening the requested database.
+// database backend if they succeed in opening the requested database.
 // In the case of failure to open the database, the factory methods will
-// simply discard the newly instantiated DatabaseBackend when they return.
+// simply discard the newly instantiated database backend when they return.
 // The ref counting mechanims will automatically destruct the un-added
 // (and un-returned) databases instances.
 
@@ -171,7 +171,7 @@ static inline void updateGuidVersionMap(DatabaseGuid guid, String newVersion)
     guidToVersionMap().set(guid, newVersion.isEmpty() ? String() : newVersion.isolatedCopy());
 }
 
-typedef HashMap<DatabaseGuid, HashSet<DatabaseBackend*>*> GuidDatabaseMap;
+typedef HashMap<DatabaseGuid, HashSet<DatabaseBackendBase*>*> GuidDatabaseMap;
 static GuidDatabaseMap& guidToDatabaseMap()
 {
     // Ensure the the mutex is locked.
@@ -200,13 +200,13 @@ static DatabaseGuid guidForOriginAndName(const String& origin, const String& nam
 }
 
 // static
-const char* DatabaseBackend::databaseInfoTableName()
+const char* DatabaseBackendBase::databaseInfoTableName()
 {
     return infoTableName;
 }
 
-DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion,
-    const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
+DatabaseBackendBase::DatabaseBackendBase(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name,
+    const String& expectedVersion, const String& displayName, unsigned long estimatedSize, DatabaseType databaseType)
     : m_databaseContext(databaseContext)
     , m_name(name.isolatedCopy())
     , m_expectedVersion(expectedVersion.isolatedCopy())
@@ -227,9 +227,9 @@ DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseBackendContext> databaseCont
     {
         MutexLocker locker(guidMutex());
         m_guid = guidForOriginAndName(securityOrigin()->toString(), name);
-        HashSet<DatabaseBackend*>* hashSet = guidToDatabaseMap().get(m_guid);
+        HashSet<DatabaseBackendBase*>* hashSet = guidToDatabaseMap().get(m_guid);
         if (!hashSet) {
-            hashSet = new HashSet<DatabaseBackend*>;
+            hashSet = new HashSet<DatabaseBackendBase*>;
             guidToDatabaseMap().set(m_guid, hashSet);
         }
 
@@ -239,7 +239,7 @@ DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseBackendContext> databaseCont
     m_filename = DatabaseManager::manager().fullPathForDatabase(securityOrigin(), m_name);
 }
 
-DatabaseBackend::~DatabaseBackend()
+DatabaseBackendBase::~DatabaseBackendBase()
 {
     // SQLite is "multi-thread safe", but each database handle can only be used
     // on a single thread at a time.
@@ -253,7 +253,7 @@ DatabaseBackend::~DatabaseBackend()
     ASSERT(!m_opened);
 }
 
-void DatabaseBackend::closeDatabase()
+void DatabaseBackendBase::closeDatabase()
 {
     if (!m_opened)
         return;
@@ -265,7 +265,7 @@ void DatabaseBackend::closeDatabase()
     {
         MutexLocker locker(guidMutex());
 
-        HashSet<DatabaseBackend*>* hashSet = guidToDatabaseMap().get(m_guid);
+        HashSet<DatabaseBackendBase*>* hashSet = guidToDatabaseMap().get(m_guid);
         ASSERT(hashSet);
         ASSERT(hashSet->contains(this));
         hashSet->remove(this);
@@ -277,7 +277,7 @@ void DatabaseBackend::closeDatabase()
     }
 }
 
-String DatabaseBackend::version() const
+String DatabaseBackendBase::version() const
 {
     // Note: In multi-process browsers the cached value may be accurate, but we cannot read the
     // actual version from the database without potentially inducing a deadlock.
@@ -287,7 +287,7 @@ String DatabaseBackend::version() const
 
 class DoneCreatingDatabaseOnExitCaller {
 public:
-    DoneCreatingDatabaseOnExitCaller(DatabaseBackend* database)
+    DoneCreatingDatabaseOnExitCaller(DatabaseBackendBase* database)
         : m_database(database)
         , m_openSucceeded(false)
     {
@@ -305,11 +305,11 @@ public:
     void setOpenSucceeded() { m_openSucceeded = true; }
 
 private:
-    DatabaseBackend* m_database;
+    DatabaseBackendBase* m_database;
     bool m_openSucceeded;
 };
 
-bool DatabaseBackend::performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+bool DatabaseBackendBase::performOpenAndVerify(bool shouldSetVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
     DoneCreatingDatabaseOnExitCaller onExitCaller(this);
     ASSERT(errorMessage.isEmpty());
@@ -435,40 +435,40 @@ bool DatabaseBackend::performOpenAndVerify(bool shouldSetVersionInNewDatabase, D
     return true;
 }
 
-SecurityOrigin* DatabaseBackend::securityOrigin() const
+SecurityOrigin* DatabaseBackendBase::securityOrigin() const
 {
     return m_contextThreadSecurityOrigin.get();
 }
 
-String DatabaseBackend::stringIdentifier() const
+String DatabaseBackendBase::stringIdentifier() const
 {
     // Return a deep copy for ref counting thread safety
     return m_name.isolatedCopy();
 }
 
-String DatabaseBackend::displayName() const
+String DatabaseBackendBase::displayName() const
 {
     // Return a deep copy for ref counting thread safety
     return m_displayName.isolatedCopy();
 }
 
-unsigned long DatabaseBackend::estimatedSize() const
+unsigned long DatabaseBackendBase::estimatedSize() const
 {
     return m_estimatedSize;
 }
 
-String DatabaseBackend::fileName() const
+String DatabaseBackendBase::fileName() const
 {
     // Return a deep copy for ref counting thread safety
     return m_filename.isolatedCopy();
 }
 
-DatabaseDetails DatabaseBackend::details() const
+DatabaseDetails DatabaseBackendBase::details() const
 {
     return DatabaseDetails(stringIdentifier(), displayName(), estimatedSize(), 0);
 }
 
-bool DatabaseBackend::getVersionFromDatabase(String& version, bool shouldCacheVersion)
+bool DatabaseBackendBase::getVersionFromDatabase(String& version, bool shouldCacheVersion)
 {
     String query(String("SELECT value FROM ") + infoTableName +  " WHERE key = '" + versionKey + "';");
 
@@ -486,7 +486,7 @@ bool DatabaseBackend::getVersionFromDatabase(String& version, bool shouldCacheVe
     return result;
 }
 
-bool DatabaseBackend::setVersionInDatabase(const String& version, bool shouldCacheVersion)
+bool DatabaseBackendBase::setVersionInDatabase(const String& version, bool shouldCacheVersion)
 {
     // The INSERT will replace an existing entry for the database with the new version number, due to the UNIQUE ON CONFLICT REPLACE
     // clause in the CREATE statement (see Database::performOpenAndVerify()).
@@ -506,25 +506,25 @@ bool DatabaseBackend::setVersionInDatabase(const String& version, bool shouldCac
     return result;
 }
 
-void DatabaseBackend::setExpectedVersion(const String& version)
+void DatabaseBackendBase::setExpectedVersion(const String& version)
 {
     m_expectedVersion = version.isolatedCopy();
 }
 
-String DatabaseBackend::getCachedVersion() const
+String DatabaseBackendBase::getCachedVersion() const
 {
     MutexLocker locker(guidMutex());
     return guidToVersionMap().get(m_guid).isolatedCopy();
 }
 
-void DatabaseBackend::setCachedVersion(const String& actualVersion)
+void DatabaseBackendBase::setCachedVersion(const String& actualVersion)
 {
     // Update the in memory database version map.
     MutexLocker locker(guidMutex());
     updateGuidVersionMap(m_guid, actualVersion);
 }
 
-bool DatabaseBackend::getActualVersionForTransaction(String &actualVersion)
+bool DatabaseBackendBase::getActualVersionForTransaction(String &actualVersion)
 {
     ASSERT(m_sqliteDatabase.transactionInProgress());
 #if PLATFORM(CHROMIUM)
@@ -537,66 +537,66 @@ bool DatabaseBackend::getActualVersionForTransaction(String &actualVersion)
 #endif
 }
 
-void DatabaseBackend::disableAuthorizer()
+void DatabaseBackendBase::disableAuthorizer()
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->disable();
 }
 
-void DatabaseBackend::enableAuthorizer()
+void DatabaseBackendBase::enableAuthorizer()
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->enable();
 }
 
-void DatabaseBackend::setAuthorizerReadOnly()
+void DatabaseBackendBase::setAuthorizerReadOnly()
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->setReadOnly();
 }
 
-void DatabaseBackend::setAuthorizerPermissions(int permissions)
+void DatabaseBackendBase::setAuthorizerPermissions(int permissions)
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->setPermissions(permissions);
 }
 
-bool DatabaseBackend::lastActionChangedDatabase()
+bool DatabaseBackendBase::lastActionChangedDatabase()
 {
     ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->lastActionChangedDatabase();
 }
 
-bool DatabaseBackend::lastActionWasInsert()
+bool DatabaseBackendBase::lastActionWasInsert()
 {
     ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->lastActionWasInsert();
 }
 
-void DatabaseBackend::resetDeletes()
+void DatabaseBackendBase::resetDeletes()
 {
     ASSERT(m_databaseAuthorizer);
     m_databaseAuthorizer->resetDeletes();
 }
 
-bool DatabaseBackend::hadDeletes()
+bool DatabaseBackendBase::hadDeletes()
 {
     ASSERT(m_databaseAuthorizer);
     return m_databaseAuthorizer->hadDeletes();
 }
 
-void DatabaseBackend::resetAuthorizer()
+void DatabaseBackendBase::resetAuthorizer()
 {
     if (m_databaseAuthorizer)
         m_databaseAuthorizer->reset();
 }
 
-unsigned long long DatabaseBackend::maximumSize() const
+unsigned long long DatabaseBackendBase::maximumSize() const
 {
     return DatabaseManager::manager().getMaxSizeForDatabase(this);
 }
 
-void DatabaseBackend::incrementalVacuumIfNeeded()
+void DatabaseBackendBase::incrementalVacuumIfNeeded()
 {
     int64_t freeSpaceSize = m_sqliteDatabase.freeSpaceSize();
     int64_t totalSize = m_sqliteDatabase.totalSize();
@@ -608,12 +608,12 @@ void DatabaseBackend::incrementalVacuumIfNeeded()
     }
 }
 
-void DatabaseBackend::interrupt()
+void DatabaseBackendBase::interrupt()
 {
     m_sqliteDatabase.interrupt();
 }
 
-bool DatabaseBackend::isInterrupted()
+bool DatabaseBackendBase::isInterrupted()
 {
     MutexLocker locker(m_sqliteDatabase.databaseMutex());
     return m_sqliteDatabase.isInterrupted();
@@ -622,32 +622,32 @@ bool DatabaseBackend::isInterrupted()
 #if PLATFORM(CHROMIUM)
 // These are used to generate histograms of errors seen with websql.
 // See about:histograms in chromium.
-void DatabaseBackend::reportOpenDatabaseResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackendBase::reportOpenDatabaseResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportOpenDatabaseResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseBackend::reportChangeVersionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackendBase::reportChangeVersionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportChangeVersionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseBackend::reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackendBase::reportStartTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportStartTransactionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseBackend::reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackendBase::reportCommitTransactionResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportCommitTransactionResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseBackend::reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
+void DatabaseBackendBase::reportExecuteStatementResult(int errorSite, int webSqlErrorCode, int sqliteErrorCode)
 {
     DatabaseObserver::reportExecuteStatementResult(this, errorSite, webSqlErrorCode, sqliteErrorCode);
 }
 
-void DatabaseBackend::reportVacuumDatabaseResult(int sqliteErrorCode)
+void DatabaseBackendBase::reportVacuumDatabaseResult(int sqliteErrorCode)
 {
     DatabaseObserver::reportVacuumDatabaseResult(this, sqliteErrorCode);
 }

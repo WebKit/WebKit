@@ -27,8 +27,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef DatabaseBackend_h
-#define DatabaseBackend_h
+#ifndef DatabaseBackendBase_h
+#define DatabaseBackendBase_h
 
 #if ENABLE(SQL_DATABASE)
 
@@ -52,9 +52,9 @@ class DatabaseBackendContext;
 class DatabaseBase;
 class SecurityOrigin;
 
-class DatabaseBackend : public ThreadSafeRefCounted<DatabaseBackend> {
+class DatabaseBackendBase : public ThreadSafeRefCounted<DatabaseBackendBase> {
 public:
-    virtual ~DatabaseBackend();
+    virtual ~DatabaseBackendBase();
 
     virtual String version() const;
 
@@ -98,7 +98,7 @@ protected:
     friend class SQLTransactionBackend;
     friend class SQLTransactionBackendSync;
 
-    DatabaseBackend(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion,
+    DatabaseBackendBase(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion,
         const String& displayName, unsigned long estimatedSize, DatabaseType);
 
     void closeDatabase();
@@ -164,4 +164,4 @@ private:
 
 #endif // ENABLE(SQL_DATABASE)
 
-#endif // DatabaseBackend_h
+#endif // DatabaseBackendBase_h

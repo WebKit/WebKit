@@ -33,7 +33,7 @@ SOURCES += \
     Modules/webdatabase/DOMWindowWebDatabase.cpp \
     Modules/webdatabase/Database.cpp \
     Modules/webdatabase/DatabaseAuthorizer.cpp \
-    Modules/webdatabase/DatabaseBackend.cpp \
+    Modules/webdatabase/DatabaseBackendBase.cpp \
     Modules/webdatabase/DatabaseContext.cpp \
     Modules/webdatabase/DatabaseServer.cpp \
     Modules/webdatabase/DatabaseSync.cpp \
@@ -1464,8 +1464,8 @@ HEADERS += \
     Modules/webdatabase/DOMWindowWebDatabase.h \
     Modules/webdatabase/DatabaseAuthorizer.h \
     Modules/webdatabase/Database.h \
-    Modules/webdatabase/DatabaseBackend.h \
     Modules/webdatabase/DatabaseBackendAsync.h \
+    Modules/webdatabase/DatabaseBackendBase.h \
     Modules/webdatabase/DatabaseBackendContext.h \
     Modules/webdatabase/DatabaseBackendSync.h \
     Modules/webdatabase/DatabaseBase.h \

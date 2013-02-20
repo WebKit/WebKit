@@ -28,7 +28,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DatabaseBackend.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -28,7 +28,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DatabaseBackend.h"
+#include "DatabaseBackendBase.h"
 #include <wtf/Deque.h>
 #include <wtf/text/WTFString.h>
 
@@ -48,7 +48,7 @@ class SQLTransactionCoordinator;
 // DatabaseBackendAsync to do so before the proper backend split is
 // available. This should be replaced with the actual implementation later.
 
-class DatabaseBackendAsync : public DatabaseBackend {
+class DatabaseBackendAsync : public DatabaseBackendBase {
 public:
     DatabaseBackendAsync(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 

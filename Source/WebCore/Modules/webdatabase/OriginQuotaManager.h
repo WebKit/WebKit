@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-class DatabaseBackend;
+class DatabaseBackendBase;
 class OriginUsageRecord;
 class SecurityOrigin;
 
@@ -57,7 +57,7 @@ public:
     void removeDatabase(SecurityOrigin*, const String& databaseIdentifier);
     void removeOrigin(SecurityOrigin*);
 
-    void markDatabase(DatabaseBackend*); // Mark dirtiness of a specific database.
+    void markDatabase(DatabaseBackendBase*); // Mark dirtiness of a specific database.
     unsigned long long diskUsage(SecurityOrigin*) const;
 
 private:

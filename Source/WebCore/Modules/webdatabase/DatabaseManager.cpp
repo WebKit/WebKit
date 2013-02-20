@@ -30,8 +30,8 @@
 
 #include "AbstractDatabaseServer.h"
 #include "Database.h"
-#include "DatabaseBackend.h"
 #include "DatabaseBackendAsync.h"
+#include "DatabaseBackendBase.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseBackendSync.h"
 #include "DatabaseCallback.h"
@@ -227,7 +227,7 @@ static void logOpenDatabaseError(ScriptExecutionContext* context, const String& 
         context->securityOrigin()->toString().ascii().data());
 }
 
-PassRefPtr<DatabaseBackend> DatabaseManager::openDatabaseBackend(ScriptExecutionContext* context,
+PassRefPtr<DatabaseBackendBase> DatabaseManager::openDatabaseBackend(ScriptExecutionContext* context,
     DatabaseType type, const String& name, const String& expectedVersion, const String& displayName,
     unsigned long estimatedSize, bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
@@ -236,7 +236,7 @@ PassRefPtr<DatabaseBackend> DatabaseManager::openDatabaseBackend(ScriptExecution
     RefPtr<DatabaseContext> databaseContext = databaseContextFor(context);
     RefPtr<DatabaseBackendContext> backendContext = databaseContext->backend();
 
-    RefPtr<DatabaseBackend> backend = m_server->openDatabase(backendContext, type, name, expectedVersion,
+    RefPtr<DatabaseBackendBase> backend = m_server->openDatabase(backendContext, type, name, expectedVersion,
         displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
 
     if (!backend) {
@@ -297,7 +297,7 @@ PassRefPtr<Database> DatabaseManager::openDatabase(ScriptExecutionContext* conte
 
     bool setVersionInNewDatabase = !creationCallback;
     String errorMessage;
-    RefPtr<DatabaseBackend> backend = openDatabaseBackend(context, DatabaseType::Async, name,
+    RefPtr<DatabaseBackendBase> backend = openDatabaseBackend(context, DatabaseType::Async, name,
         expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
     if (!backend)
         return 0;
@@ -326,7 +326,7 @@ PassRefPtr<DatabaseSync> DatabaseManager::openDatabaseSync(ScriptExecutionContex
 
     bool setVersionInNewDatabase = !creationCallback;
     String errorMessage;
-    RefPtr<DatabaseBackend> backend = openDatabaseBackend(context, DatabaseType::Sync, name,
+    RefPtr<DatabaseBackendBase> backend = openDatabaseBackend(context, DatabaseType::Sync, name,
         expectedVersion, displayName, estimatedSize, setVersionInNewDatabase, error, errorMessage);
     if (!backend)
         return 0;
@@ -428,7 +428,7 @@ void DatabaseManager::interruptAllDatabasesForContext(ScriptExecutionContext* co
         m_server->interruptAllDatabasesForContext(databaseContext->backend().get());
 }
 
-unsigned long long DatabaseManager::getMaxSizeForDatabase(const DatabaseBackend* database)
+unsigned long long DatabaseManager::getMaxSizeForDatabase(const DatabaseBackendBase* database)
 {
     return m_server->getMaxSizeForDatabase(database);
 }

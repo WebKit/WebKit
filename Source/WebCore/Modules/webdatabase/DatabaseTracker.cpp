@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -33,7 +33,7 @@
 
 #include "Chrome.h"
 #include "ChromeClient.h"
-#include "DatabaseBackend.h"
+#include "DatabaseBackendBase.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseManager.h"
 #include "DatabaseManagerClient.h"
@@ -283,7 +283,7 @@ bool DatabaseTracker::hasEntryForDatabase(SecurityOrigin* origin, const String& 
     return statement.step() == SQLResultRow;
 }
 
-unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackend* database)
+unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackendBase* database)
 {
     // The maximum size for a database is the full quota for its origin, minus the current usage within the origin,
     // plus the current usage of the given database
@@ -293,7 +293,7 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackend*
     return quotaForOriginNoLock(origin) - originQuotaManager().diskUsage(origin) + SQLiteFileSystem::getDatabaseFileSize(database->fileName());
 }
 
-void DatabaseTracker::databaseChanged(DatabaseBackend* database)
+void DatabaseTracker::databaseChanged(DatabaseBackendBase* database)
 {
     Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
     originQuotaManager().markDatabase(database);
@@ -301,7 +301,7 @@ void DatabaseTracker::databaseChanged(DatabaseBackend* database)
 
 void DatabaseTracker::interruptAllDatabasesForContext(const DatabaseBackendContext* context)
 {
-    Vector<RefPtr<DatabaseBackend> > openDatabases;
+    Vector<RefPtr<DatabaseBackendBase> > openDatabases;
     {
         MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
 
@@ -323,8 +323,8 @@ void DatabaseTracker::interruptAllDatabasesForContext(const DatabaseBackendConte
         }
     }
 
-    Vector<RefPtr<DatabaseBackend> >::const_iterator openDatabasesEndIt = openDatabases.end();
-    for (Vector<RefPtr<DatabaseBackend> >::const_iterator openDatabasesIt = openDatabases.begin(); openDatabasesIt != openDatabasesEndIt; ++openDatabasesIt)
+    Vector<RefPtr<DatabaseBackendBase> >::const_iterator openDatabasesEndIt = openDatabases.end();
+    for (Vector<RefPtr<DatabaseBackendBase> >::const_iterator openDatabasesIt = openDatabases.begin(); openDatabasesIt != openDatabasesEndIt; ++openDatabasesIt)
         (*openDatabasesIt)->interrupt();
 }
 
@@ -562,13 +562,13 @@ unsigned long long DatabaseTracker::usageForDatabase(const String& name, Securit
     return SQLiteFileSystem::getDatabaseFileSize(path);
 }
 
-void DatabaseTracker::doneCreatingDatabase(DatabaseBackend* database)
+void DatabaseTracker::doneCreatingDatabase(DatabaseBackendBase* database)
 {
     MutexLocker lockDatabase(m_databaseGuard);
     doneCreatingDatabase(database->securityOrigin(), database->stringIdentifier());
 }
 
-void DatabaseTracker::addOpenDatabase(DatabaseBackend* database)
+void DatabaseTracker::addOpenDatabase(DatabaseBackendBase* database)
 {
     if (!database)
         return;
@@ -604,7 +604,7 @@ void DatabaseTracker::addOpenDatabase(DatabaseBackend* database)
     }
 }
 
-void DatabaseTracker::removeOpenDatabase(DatabaseBackend* database)
+void DatabaseTracker::removeOpenDatabase(DatabaseBackendBase* database)
 {
     if (!database)
         return;
@@ -651,7 +651,7 @@ void DatabaseTracker::removeOpenDatabase(DatabaseBackend* database)
     }
 }
 
-void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<DatabaseBackend> >* databases)
+void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<DatabaseBackendBase> >* databases)
 {
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)
@@ -1077,7 +1077,7 @@ bool DatabaseTracker::deleteDatabaseFile(SecurityOrigin* origin, const String& n
     }
 #endif
 
-    Vector<RefPtr<DatabaseBackend> > deletedDatabases;
+    Vector<RefPtr<DatabaseBackendBase> > deletedDatabases;
 
     // Make sure not to hold the any locks when calling
     // Database::markAsDeletedAndClose(), since that can cause a deadlock
