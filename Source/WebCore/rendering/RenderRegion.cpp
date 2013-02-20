@@ -42,6 +42,8 @@
 #include "RenderView.h"
 #include "StyleResolver.h"
 
+using namespace std;
+
 namespace WebCore {
 
 RenderRegion::RenderRegion(Element* element, RenderFlowThread* flowThread)
@@ -105,14 +107,14 @@ LayoutRect RenderRegion::overflowRectForFlowThreadPortion(LayoutRect flowThreadP
     if (m_flowThread->isHorizontalWritingMode()) {
         LayoutUnit minY = isFirstPortion ? (flowThreadOverflow.y() - outlineSize) : flowThreadPortionRect.y();
         LayoutUnit maxY = isLastPortion ? max(flowThreadPortionRect.maxY(), flowThreadOverflow.maxY()) + outlineSize : flowThreadPortionRect.maxY();
-        LayoutUnit minX = clipX ? flowThreadPortionRect.x() : (flowThreadOverflow.x() - outlineSize);
-        LayoutUnit maxX = clipX ? flowThreadPortionRect.maxX() : (flowThreadOverflow.maxX() + outlineSize);
+        LayoutUnit minX = clipX ? flowThreadPortionRect.x() : min(flowThreadPortionRect.x(), flowThreadOverflow.x() - outlineSize);
+        LayoutUnit maxX = clipX ? flowThreadPortionRect.maxX() : max(flowThreadPortionRect.maxX(), (flowThreadOverflow.maxX() + outlineSize));
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     } else {
         LayoutUnit minX = isFirstPortion ? (flowThreadOverflow.x() - outlineSize) : flowThreadPortionRect.x();
         LayoutUnit maxX = isLastPortion ? max(flowThreadPortionRect.maxX(), flowThreadOverflow.maxX()) + outlineSize : flowThreadPortionRect.maxX();
-        LayoutUnit minY = clipY ? flowThreadPortionRect.y() : (flowThreadOverflow.y() - outlineSize);
-        LayoutUnit maxY = clipY ? flowThreadPortionRect.maxY() : (flowThreadOverflow.maxY() + outlineSize);
+        LayoutUnit minY = clipY ? flowThreadPortionRect.y() : min(flowThreadPortionRect.y(), (flowThreadOverflow.y() - outlineSize));
+        LayoutUnit maxY = clipY ? flowThreadPortionRect.maxY() : max(flowThreadPortionRect.y(), (flowThreadOverflow.maxY() + outlineSize));
         clipRect = LayoutRect(minX, minY, maxX - minX, maxY - minY);
     }
 

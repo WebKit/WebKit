@@ -170,16 +170,18 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
     // This problem applies to regions and pages as well and is not unique to columns.
     bool isFirstColumn = !index;
     bool isLastColumn = index == colCount - 1;
+    bool isLeftmostColumn = style()->isLeftToRightDirection() ? isFirstColumn : isLastColumn;
+    bool isRightmostColumn = style()->isLeftToRightDirection() ? isLastColumn : isFirstColumn;
     LayoutRect overflowRect(portionRect);
     if (isHorizontalWritingMode()) {
-        if (isFirstColumn) {
+        if (isLeftmostColumn) {
             // Shift to the logical left overflow of the flow thread to make sure it's all covered.
             overflowRect.shiftXEdgeTo(min(flowThread()->visualOverflowRect().x(), portionRect.x()));
         } else {
             // Expand into half of the logical left column gap.
             overflowRect.shiftXEdgeTo(portionRect.x() - colGap / 2);
         }
-        if (isLastColumn) {
+        if (isRightmostColumn) {
             // Shift to the logical right overflow of the flow thread to ensure content can spill out of the column.
             overflowRect.shiftMaxXEdgeTo(max(flowThread()->visualOverflowRect().maxX(), portionRect.maxX()));
         } else {
@@ -187,14 +189,14 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
             overflowRect.shiftMaxXEdgeTo(portionRect.maxX() + colGap / 2);
         }
     } else {
-        if (isFirstColumn) {
+        if (isLeftmostColumn) {
             // Shift to the logical left overflow of the flow thread to make sure it's all covered.
             overflowRect.shiftYEdgeTo(min(flowThread()->visualOverflowRect().y(), portionRect.y()));
         } else {
             // Expand into half of the logical left column gap.
             overflowRect.shiftYEdgeTo(portionRect.y() - colGap / 2);
         }
-        if (isLastColumn) {
+        if (isRightmostColumn) {
             // Shift to the logical right overflow of the flow thread to ensure content can spill out of the column.
             overflowRect.shiftMaxYEdgeTo(max(flowThread()->visualOverflowRect().maxY(), portionRect.maxY()));
         } else {
