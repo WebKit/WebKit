@@ -1,3 +1,18 @@
+2013-02-19  Joshua Bell  <jsbell@chromium.org>
+
+        Remove warning from run-bindings-tests
+        https://bugs.webkit.org/show_bug.cgi?id=110285
+
+        Reviewed by Kentaro Hara.
+
+        Since wkrev.com/139331 run-bindings-tests has been harmlessly emitting
+        "Unknown option: idlattributesfile". That option was removed from
+        bindings/scripts/preprocess-idls.pl but was still being passed by
+        the test script. Remove it.
+
+        * Scripts/webkitpy/bindings/main.py:
+        (BindingsTests.generate_supplemental_dependency): Remove unused arg.
+
 2013-02-19  Elliott Sprehn  <esprehn@chromium.org>
 
         Unreviewed. Add myself to watch lists.
