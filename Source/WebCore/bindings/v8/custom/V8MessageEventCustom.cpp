@@ -53,7 +53,7 @@ v8::Handle<v8::Value> V8MessageEvent::dataAttrGetterCustom(v8::Local<v8::String>
         if (scriptValue.hasNoValue())
             result = v8Null(info.GetIsolate());
         else
-            result = v8::Local<v8::Value>::New(scriptValue.v8Value());
+            result = scriptValue.v8Value();
         break;
     }
 
