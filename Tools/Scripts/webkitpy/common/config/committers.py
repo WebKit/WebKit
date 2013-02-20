@@ -292,7 +292,7 @@ committers_unable_to_review = [
     Committer("Greg Bolsinga", "bolsinga@apple.com"),
     Committer("Gregg Tavares", ["gman@google.com", "gman@chromium.org"], "gman"),
     Committer("Grzegorz Czajkowski", "g.czajkowski@samsung.com", "grzegorz"),
-    Committer("Hans Muller", "hmuller@adobe.com", "hansmuller"),
+    Committer("Hans Muller", "giles_joplin@yahoo.com", "hansmuller"),
     Committer("Hans Wennborg", "hans@chromium.org", "hwennborg"),
     Committer("Hayato Ito", "hayato@chromium.org", "hayato"),
     Committer("Hironori Bono", "hbono@chromium.org", "hbono"),
