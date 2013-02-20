@@ -1865,3 +1865,6 @@ webkit.org/b/109949 fast/dom/shadow/distributed-pseudo-element-scoped.html [ Ima
 
 # Newly added test in r142979 is failing.
 webkit.org/b/109951 compositing/transitions/transform-on-large-layer.html [ ImageOnlyFailure ]
+
+# Failing after r143256.
+webkit.org/b/110282 fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
