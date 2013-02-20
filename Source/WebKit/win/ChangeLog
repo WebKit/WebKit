@@ -1,3 +1,14 @@
+2013-02-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r143338.
+        http://trac.webkit.org/changeset/143338
+        https://bugs.webkit.org/show_bug.cgi?id=110301
+
+        False alarm, no need to export the symbol (Requested by
+        aandrey on #webkit).
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-02-19  Tony Chang  <tony@chromium.org>
 
         Unreviewed, force file to recompile to fix win build.

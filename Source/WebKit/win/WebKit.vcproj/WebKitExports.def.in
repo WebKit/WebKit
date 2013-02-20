@@ -122,7 +122,6 @@ EXPORTS
         ?consoleMessageArgumentCounts@InspectorConsoleAgent@WebCore@@QAE?AV?$Vector@I$0A@@WTF@@XZ
         ?counterValue@InspectorCounters@WebCore@@SAHW4CounterType@12@@Z
         ?didBeginFrame@InspectorController@WebCore@@QAEXXZ
-        ?didBeginFrame@InspectorCanvasAgent@WebCore@@QAEXXZ
         ?didCancelFrame@InspectorController@WebCore@@QAEXXZ
 #endif
         ?counterValueForElement@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z
