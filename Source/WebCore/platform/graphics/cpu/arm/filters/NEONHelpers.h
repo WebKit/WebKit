@@ -27,8 +27,6 @@
 #ifndef NEONHelpers_h
 #define NEONHelpers_h
 
-#include <wtf/Platform.h>
-
 #if ENABLE(FILTERS) && HAVE(ARM_NEON_INTRINSICS)
 
 #include <arm_neon.h>

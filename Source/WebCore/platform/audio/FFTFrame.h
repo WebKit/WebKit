@@ -66,7 +66,6 @@ struct RDFTContext;
 
 #include <wtf/Forward.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/Platform.h>
 #include <wtf/Threading.h>
 
 namespace WebCore {

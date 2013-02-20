@@ -26,8 +26,6 @@
 #ifndef PrintInfo_h
 #define PrintInfo_h
 
-#include <wtf/Platform.h>
-
 #if PLATFORM(MAC)
 OBJC_CLASS NSPrintInfo;
 #elif PLATFORM(GTK)

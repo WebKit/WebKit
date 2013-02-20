@@ -31,8 +31,6 @@
 #ifndef SecureTextInput_h
 #define SecureTextInput_h
 
-#include <wtf/Platform.h>
-
 namespace WebCore {
 
 // Once enableSecureTextInput is called, secure text input mode is set until

@@ -34,7 +34,6 @@
 #include "LightSource.h"
 #include "PointLightSource.h"
 #include "SpotLightSource.h"
-#include <wtf/Platform.h>
 #include <wtf/Uint8ClampedArray.h>
 
 // Common base class for FEDiffuseLighting and FESpecularLighting
