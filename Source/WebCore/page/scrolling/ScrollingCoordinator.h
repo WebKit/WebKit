@@ -64,9 +64,6 @@ class ViewportConstraints;
 class ScrollingTree;
 #endif
 
-IntSize scrollOffsetForFixedPosition(const IntRect& visibleContentRect, const IntSize& contentsSize, const IntPoint& scrollPosition,
-    const IntPoint& scrollOrigin, float frameScaleFactor, bool fixedElementsLayoutRelativeToFrame);
-
 enum SetOrSyncScrollingLayerPosition {
     SetScrollingLayerPosition,
     SyncScrollingLayerPosition
