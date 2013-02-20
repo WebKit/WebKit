@@ -1590,7 +1590,9 @@ webkit.org/b/110203 [ Mac ] fast/multicol/seamless-flowed-through-columns.html [
 
 # Test fails for some reason.
 webkit.org/b/110296 fast/multicol/newmulticol/column-rules-fixed-height.html [ ImageOnlyFailure ]
-webkit.org/b/110203 [ Mac ] fast/multicol/newmulticol/layers-in-multicol.html [ ImageOnlyFailure ]
+webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/layers-in-multicol.html [ ImageOnlyFailure ]
+webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/float-paginate-complex.html [ ImageOnlyFailure ]
+webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/float-paginate.html [ ImageOnlyFailure ]
 
 # -----------------------------------------------------------------
 # MAC PORT TESTS
