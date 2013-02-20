@@ -1,3 +1,10 @@
+2013-02-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r183552.  Requested by
+        "Mark Pilgrim" <pilgrim@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-02-19  Adrienne Walker  <enne@chromium.org>
 
         Unreviewed, rolling out r143382 and r143401.
