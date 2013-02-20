@@ -402,7 +402,7 @@ void BackingStorePrivate::resumeScreenUpdates(BackingStore::ResumeUpdateOperatio
 #endif
 }
 
-void BackingStorePrivate::updateSuspendScreenUpdateState()
+void BackingStorePrivate::updateSuspendScreenUpdateState(bool* hasSyncedToUserInterfaceThread)
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
 
@@ -413,8 +413,11 @@ void BackingStorePrivate::updateSuspendScreenUpdateState()
         || !m_webPage->isVisible()
         || (!isBackingStoreUsable && !m_webPage->d->compositorDrawsRootLayer());
 
-    if (m_suspendScreenUpdatesWebKitThread == shouldSuspend)
+    if (m_suspendScreenUpdatesWebKitThread == shouldSuspend) {
+        if (hasSyncedToUserInterfaceThread)
+            *hasSyncedToUserInterfaceThread = false;
         return;
+    }
 
     m_suspendScreenUpdatesWebKitThread = shouldSuspend;
 
@@ -422,6 +425,8 @@ void BackingStorePrivate::updateSuspendScreenUpdateState()
     //   assignment should be moved to a dispatched setter function instead.
     m_suspendScreenUpdatesUserInterfaceThread = shouldSuspend;
     BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
+    if (hasSyncedToUserInterfaceThread)
+        *hasSyncedToUserInterfaceThread = true;
 }
 
 void BackingStorePrivate::repaint(const Platform::IntRect& windowRect,
@@ -2138,10 +2143,14 @@ void BackingStorePrivate::adoptAsFrontState(BackingStoreGeometry* newFrontState)
     // Atomic change.
     _smp_xchg(&m_frontState, newFront);
 
+    bool hasSynced = false;
+
     if (hasValidBuffers) {
         m_tileMatrixContainsUsefulContent = true;
-        updateSuspendScreenUpdateState(); // includes syncToCurrentMessage(), so we can use it instead
-    } else {
+        updateSuspendScreenUpdateState(&hasSynced);
+    }
+
+    if (!hasSynced) {
         // Wait until the user interface thread won't access the old front state anymore.
         BlackBerry::Platform::userInterfaceThreadMessageClient()->syncToCurrentMessage();
     }

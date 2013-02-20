@@ -1,3 +1,35 @@
+2013-02-20  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Make sure to always sync before reusing backingstore tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=109863
+        PR 296118
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Mike Lattanzio and Konrad Piascik.
+
+        In SVN r142137, I replaced a syncToCurrentMessage() call
+        with updateSuspendScreenUpdateState() in some cases,
+        which internally calls the same function.
+
+        Unfortunately, when I optimized updateSuspendScreenUpdateState()
+        to only sync when the state is actually being changed,
+        I omitted an adaptation of adoptAsFrontState() which would
+        rely on this sync but now didn't always perform it.
+
+        This caused a bad race condition as tile buffers could now
+        be accessed from the WebKit thread and the UI thread at
+        the same time. Fix it by (optionally) letting the caller
+        of updateSuspendScreenUpdateState() know whether a sync
+        was performed, and adapt adoptAsFrontState() accordingly.
+
+        Also fixes some excessive flicker caused by the same
+        race condition.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::updateSuspendScreenUpdateState):
+        (BlackBerry::WebKit::BackingStorePrivate::adoptAsFrontState):
+        * Api/BackingStore_p.h:
+
 2013-02-20  Yongxin Dai  <yodai@rim.com>
 
         [BlackBerry] Read "data-blackberry-text-selection-handle-position" attribute from element

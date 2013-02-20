@@ -121,7 +121,7 @@ public:
     void resumeScreenUpdates(BackingStore::ResumeUpdateOperation);
 
     // Update m_suspendScreenUpdates*Thread based on a number of conditions.
-    void updateSuspendScreenUpdateState();
+    void updateSuspendScreenUpdateState(bool* hasSyncedToUserInterfaceThread = 0);
 
     // The functions repaint(), slowScroll(), scroll(), scrollingStartedHelper() are
     // called from outside WebKit and within WebKit via ChromeClientBlackBerry.
