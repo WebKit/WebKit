@@ -514,7 +514,6 @@ typedef /*unrestricted*/ float GLclampf;
 
     [StrictTypeChecking] void         depthFunc(in GLenum func);
     [StrictTypeChecking] void         depthMask(in GLboolean flag);
-    // FIXME: this differs from the current WebGL spec (depthRangef)
     [StrictTypeChecking] void         depthRange(in GLclampf zNear, in GLclampf zFar);
     [StrictTypeChecking] void         detachShader(in WebGLProgram program, in WebGLShader shader) raises(DOMException);
     [StrictTypeChecking] void         disable(in GLenum cap);
@@ -538,8 +537,7 @@ typedef /*unrestricted*/ float GLclampf;
 
     [StrictTypeChecking] GLint        getAttribLocation(in WebGLProgram program, in DOMString name);
 
-    // any getBufferParameter(in GLenum target, in GLenum pname) raises(DOMException);
-    [StrictTypeChecking, Custom] void getBufferParameter();
+    [StrictTypeChecking, Custom] any getBufferParameter(in GLenum target, in GLenum pname);
 
     [StrictTypeChecking] WebGLContextAttributes getContextAttributes();
 
@@ -548,17 +546,12 @@ typedef /*unrestricted*/ float GLclampf;
     // object getExtension(in DOMString name);
     [StrictTypeChecking, Custom] any getExtension(in DOMString name);
 
-    // any getFramebufferAttachmentParameter(in GLenum target, in GLenum attachment, in GLenum pname) raises(DOMException);
-    [StrictTypeChecking, Custom] void getFramebufferAttachmentParameter();
-    // any getParameter(in GLenum pname) raises(DOMException);
-    [StrictTypeChecking, Custom] void getParameter();
-    // any getProgramParameter(in WebGLProgram program, in GLenum pname) raises(DOMException);
-    [StrictTypeChecking, Custom] void getProgramParameter();
+    [StrictTypeChecking, Custom] any getFramebufferAttachmentParameter(in GLenum target, in GLenum attachment, in GLenum pname) raises(DOMException);
+    [StrictTypeChecking, Custom] any getParameter(in GLenum pname) raises(DOMException);
+    [StrictTypeChecking, Custom] any getProgramParameter(in WebGLProgram program, in GLenum pname) raises(DOMException);
     [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString getProgramInfoLog(in WebGLProgram program) raises(DOMException);
-    // any getRenderbufferParameter(in GLenum target, in GLenum pname) raises(DOMException);
-    [StrictTypeChecking, Custom] void getRenderbufferParameter();
-    // any getShaderParameter(in WebGLShader shader, in GLenum pname) raises(DOMException);
-    [StrictTypeChecking, Custom] void getShaderParameter() raises(DOMException);
+    [StrictTypeChecking, Custom] any getRenderbufferParameter(in GLenum target, in GLenum pname) raises(DOMException);
+    [StrictTypeChecking, Custom] any getShaderParameter(in WebGLShader shader, in GLenum pname) raises(DOMException);
 
     [StrictTypeChecking, TreatReturnedNullStringAs=Null] DOMString    getShaderInfoLog(in WebGLShader shader) raises(DOMException);
 
@@ -568,16 +561,13 @@ typedef /*unrestricted*/ float GLclampf;
 
     [StrictTypeChecking, Custom] sequence<DOMString> getSupportedExtensions();
 
-    // any getTexParameter(in GLenum target, in GLenum pname) raises(DOMException);
-    [StrictTypeChecking, Custom] void getTexParameter();
+    [StrictTypeChecking, Custom] any getTexParameter(in GLenum target, in GLenum pname) raises(DOMException);
 
-    // any getUniform(in WebGLProgram program, in WebGLUniformLocation location) raises(DOMException);
-    [StrictTypeChecking, Custom] void getUniform();
+    [StrictTypeChecking, Custom] any getUniform(in WebGLProgram program, in WebGLUniformLocation location) raises(DOMException);
 
     [StrictTypeChecking] WebGLUniformLocation getUniformLocation(in WebGLProgram program, in DOMString name) raises(DOMException);
 
-    // any getVertexAttrib(in GLuint index, in GLenum pname) raises(DOMException);
-    [StrictTypeChecking, Custom] void getVertexAttrib();
+    [StrictTypeChecking, Custom] any getVertexAttrib(in GLuint index, in GLenum pname) raises(DOMException);
 
     [StrictTypeChecking] GLsizeiptr getVertexAttribOffset(in GLuint index, in GLenum pname);
 
