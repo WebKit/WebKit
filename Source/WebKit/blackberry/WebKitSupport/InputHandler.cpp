@@ -798,7 +798,7 @@ void InputHandler::requestSpellingCheckingOptions(imf_sp_text_t& spellCheckingOp
     if (!shouldMoveDialog && spellCheckingOptionRequest.startTextPosition == spellCheckingOptionRequest.endTextPosition)
         return;
 
-    if (screenOffset.isEmpty()) {
+    if (screenOffset.width() == -1 && screenOffset.height() == -1) {
         screenOffset.setWidth(m_screenOffset.width());
         screenOffset.setHeight(m_screenOffset.height());
     } else {

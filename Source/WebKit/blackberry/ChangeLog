@@ -1,3 +1,19 @@
+2013-02-20  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Check offset for initialized value
+        https://bugs.webkit.org/show_bug.cgi?id=110390
+
+        Reviewed by Rob Buis.
+
+        Instead of checking isEmpty, which checks for either point being <= 0, we want to explicitly check
+        for the initialized value of (-1, -1). This would be set in redrawSpellCheckDialogIfRequired, and
+        triggers the restore from cache in requestSpellingCheckingOptions.
+
+        Internally reviewed by Gen Mak.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestSpellingCheckingOptions):
+
 2013-02-20  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Make sure to always sync before reusing backingstore tiles.
