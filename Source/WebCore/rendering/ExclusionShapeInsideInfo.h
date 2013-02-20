@@ -58,10 +58,8 @@ public:
 
     static bool isEnabledFor(const RenderBlock* renderer)
     {
-        // FIXME: Bug 89707: Enable shape inside for non-rectangular shapes
         ExclusionShapeValue* shapeValue = renderer->style()->resolvedShapeInside();
-        BasicShape* shape = (shapeValue && shapeValue->type() == ExclusionShapeValue::SHAPE) ? shapeValue->shape() : 0;
-        return shape && shape->type() != BasicShape::BASIC_SHAPE_ELLIPSE;
+        return (shapeValue && shapeValue->type() == ExclusionShapeValue::SHAPE) ? shapeValue->shape() : 0;
     }
     bool lineOverlapsShapeBounds() const { return logicalLineTop() < shapeLogicalBottom() && logicalLineBottom() >= shapeLogicalTop(); }
 

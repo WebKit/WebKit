@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    /* The Ahem font's size is equal to a little less than the size of the largest square that will 
+       fit within the ellipse.  Solving the ellipse equation when x = y, produces the size of the 
+       square: 2 * rx * ry / sqrt(rx^2 + ry^2).  For rx=200 and ry=100, that's 178.885.  I've reduced
+       the value to 178 so non-subpixel layout truncation will not change the layout.
+    */
+    #shape-inside {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        -webkit-shape-inside: ellipse(220px, 220px, 200px, 100px);
+        font: 178px/1 Ahem, sans-serif;
+        color: green;
+    }
+
+    #shape-outline {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 500px;
+        height: 500px;
+    }
+</style>
+</head>
+<body>
+    <div id="shape-inside">
+        <svg id="shape-outline" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="220" cy="220" rx="200" ry="100"  stroke="blue" fill="none"/>
+        </svg>
+        X
+    </div>
+</body>
+</html>
