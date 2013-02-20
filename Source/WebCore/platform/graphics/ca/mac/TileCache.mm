@@ -460,8 +460,11 @@ IntRect TileCache::computeTileCoverageRect(const IntRect& previousVisibleRect) c
 
 IntSize TileCache::tileSizeForCoverageRect(const IntRect& coverageRect) const
 {
-    if (m_tileCoverage & CoverageForSlowScrolling)
-        return coverageRect.size();
+    if (m_tileCoverage & CoverageForSlowScrolling) {
+        IntSize tileSize = coverageRect.size();
+        tileSize.scale(m_scale);
+        return tileSize;
+    }
 
     return IntSize(defaultTileCacheWidth, defaultTileCacheHeight);
 }
