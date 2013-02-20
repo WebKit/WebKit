@@ -684,10 +684,12 @@ void ChromeClientImpl::print(Frame* frame)
         m_webView->client()->printPage(WebFrameImpl::fromFrame(frame));
 }
 
+#if ENABLE(SQL_DATABASE)
 void ChromeClientImpl::exceededDatabaseQuota(Frame* frame, const String& databaseName, DatabaseDetails)
 {
     // Chromium users cannot currently change the default quota
 }
+#endif
 
 void ChromeClientImpl::reachedMaxAppCacheSize(int64_t spaceNeeded)
 {

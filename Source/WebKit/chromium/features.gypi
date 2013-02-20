@@ -112,7 +112,7 @@
       'ENABLE_SHADOW_DOM=1',
       'ENABLE_SMOOTH_SCROLLING=1',
       'ENABLE_SPEECH_SYNTHESIS=0',
-      'ENABLE_SQL_DATABASE=1',
+      'ENABLE_SQL_DATABASE=<(enable_sql_database)',
       'ENABLE_STYLE_SCOPED=1',
       'ENABLE_SUBPIXEL_LAYOUT=1',
       'ENABLE_SVG=<(enable_svg)',
@@ -152,12 +152,14 @@
     'variables': {
       'use_accelerated_compositing%': 1,
       'enable_skia_text%': 1,
+      'enable_sql_database%': 1,
       'enable_svg%': 1,
       'enable_touch_events%': 1,
       'enable_touch_icon_loading%' : 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'enable_skia_text%': '<(enable_skia_text)',
+    'enable_sql_database%': '<(enable_sql_database)',
     'enable_svg%': '<(enable_svg)',
     'enable_touch_events%': '<(enable_touch_events)',
     'conditions': [

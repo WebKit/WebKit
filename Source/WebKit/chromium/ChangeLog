@@ -1,3 +1,19 @@
+2013-02-20  Paweł Hajdan, Jr.  <phajdan.jr@chromium.org>
+
+        Add gyp option to switch ENABLE(SQL_DATABASE)
+        https://bugs.webkit.org/show_bug.cgi?id=109303
+        http://code.google.com/p/chromium/issues/detail?id=22208
+
+        Reviewed by Tony Chang.
+
+        This will be useful to implement build with system sqlite.
+
+        * features.gypi:
+        * src/ChromeClientImpl.cpp:
+        (WebKit):
+        * src/ChromeClientImpl.h:
+        (ChromeClientImpl):
+
 2013-02-20  Dirk Schulze  <krit@webkit.org>
 
         Enable CANVAS_PATH flag
