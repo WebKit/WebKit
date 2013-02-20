@@ -31,6 +31,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
+#include "AbstractSQLTransaction.h"
 #include "SQLCallbackWrapper.h"
 #include "SQLStatement.h"
 #include "SQLTransactionStateMachine.h"
@@ -39,23 +40,21 @@
 
 namespace WebCore {
 
+class AbstractSQLTransactionBackend;
 class Database;
 class SQLError;
 class SQLStatementCallback;
 class SQLStatementErrorCallback;
-class SQLTransactionBackend;
 class SQLTransactionCallback;
 class SQLTransactionErrorCallback;
 class SQLValue;
 class VoidCallback;
 
-class SQLTransaction : public SQLTransactionStateMachine<SQLTransaction> {
+class SQLTransaction : public SQLTransactionStateMachine<SQLTransaction>, public AbstractSQLTransaction {
 public:
     static PassRefPtr<SQLTransaction> create(Database*, PassRefPtr<SQLTransactionCallback>,
         PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionErrorCallback>,
         bool readOnly);
-
-    void setBackend(SQLTransactionBackend*);
 
     void performPendingCallback();
 
@@ -63,10 +62,6 @@ public:
         PassRefPtr<SQLStatementCallback>, PassRefPtr<SQLStatementErrorCallback>, ExceptionCode&);
 
     Database* database() { return m_database.get(); }
-
-    bool hasCallback() const { return m_callbackWrapper.hasCallback(); }
-    bool hasSuccessCallback() const { return m_successCallbackWrapper.hasCallback(); }
-    bool hasErrorCallback() const { return m_errorCallbackWrapper.hasCallback(); }
 
 private:
     SQLTransaction(Database*, PassRefPtr<SQLTransactionCallback>,
@@ -76,9 +71,15 @@ private:
     bool checkAndHandleClosedOrInterruptedDatabase();
     void clearCallbackWrappers();
 
+    // APIs called from the backend published via AbstractSQLTransaction:
+    virtual void requestTransitToState(SQLTransactionState) OVERRIDE;
+    virtual bool hasCallback() const OVERRIDE;
+    virtual bool hasSuccessCallback() const OVERRIDE;
+    virtual bool hasErrorCallback() const OVERRIDE;
+    virtual void setBackend(AbstractSQLTransactionBackend*) OVERRIDE;
+
     // State Machine functions:
-    virtual StateFunction stateFunctionFor(SQLTransactionState);
-    void requestTransitToState(SQLTransactionState);
+    virtual StateFunction stateFunctionFor(SQLTransactionState) OVERRIDE;
 
     // State functions:
     SQLTransactionState deliverTransactionCallback();
@@ -93,7 +94,7 @@ private:
     SQLTransactionState nextStateForTransactionError();
 
     RefPtr<Database> m_database;
-    RefPtr<SQLTransactionBackend> m_backend;
+    RefPtr<AbstractSQLTransactionBackend> m_backend;
     SQLCallbackWrapper<SQLTransactionCallback> m_callbackWrapper;
     SQLCallbackWrapper<VoidCallback> m_successCallbackWrapper;
     SQLCallbackWrapper<SQLTransactionErrorCallback> m_errorCallbackWrapper;
@@ -102,8 +103,6 @@ private:
     RefPtr<SQLError> m_transactionError;
 
     bool m_readOnly;
-
-    friend class SQLTransactionBackend;
 };
 
 } // namespace WebCore

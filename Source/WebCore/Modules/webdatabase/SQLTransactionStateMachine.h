@@ -34,7 +34,7 @@
 namespace WebCore {
 
 template<typename T>
-class SQLTransactionStateMachine : public ThreadSafeRefCounted<SQLTransactionStateMachine<T> > {
+class SQLTransactionStateMachine {
 public:
     virtual ~SQLTransactionStateMachine() { }
 

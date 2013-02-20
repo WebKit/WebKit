@@ -31,7 +31,8 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "Database.h"
+#include "AbstractSQLTransaction.h"
+#include "Database.h" // FIXME: Should only be used in the frontend.
 #include "DatabaseAuthorizer.h"
 #include "DatabaseBackendAsync.h"
 #include "DatabaseBackendContext.h"
@@ -40,7 +41,6 @@
 #include "Logging.h"
 #include "SQLError.h"
 #include "SQLStatementBackend.h"
-#include "SQLTransaction.h"
 #include "SQLTransactionClient.h"
 #include "SQLTransactionCoordinator.h"
 #include "SQLValue.h"
@@ -349,13 +349,13 @@ static const int DefaultQuotaSizeIncrease = 1048576;
 namespace WebCore {
 
 PassRefPtr<SQLTransactionBackend> SQLTransactionBackend::create(DatabaseBackendAsync* db,
-    PassRefPtr<SQLTransaction> frontend, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
+    PassRefPtr<AbstractSQLTransaction> frontend, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
 {
     return adoptRef(new SQLTransactionBackend(db, frontend, wrapper, readOnly));
 }
 
 SQLTransactionBackend::SQLTransactionBackend(DatabaseBackendAsync* db,
-    PassRefPtr<SQLTransaction> frontend, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
+    PassRefPtr<AbstractSQLTransaction> frontend, PassRefPtr<SQLTransactionWrapper> wrapper, bool readOnly)
     : m_frontend(frontend)
     , m_database(db)
     , m_wrapper(wrapper)
