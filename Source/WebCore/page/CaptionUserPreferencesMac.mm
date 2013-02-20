@@ -25,7 +25,7 @@
 
 #import "config.h"
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO_TRACK) && !PLATFORM(IOS)
 
 #import "CaptionUserPreferencesMac.h"
 
@@ -517,4 +517,4 @@ String CaptionUserPreferencesMac::displayNameForTrack(TextTrack* track) const
 
 }
 
-#endif // ENABLE(VIDEO_TRACK)
+#endif // ENABLE(VIDEO_TRACK) && !PLATFORM(IOS)

@@ -26,7 +26,7 @@
 #ifndef CaptionUserPreferencesMac_h
 #define CaptionUserPreferencesMac_h
 
-#if ENABLE(VIDEO_TRACK)
+#if ENABLE(VIDEO_TRACK) && !PLATFORM(IOS)
 
 #include "CSSPropertyNames.h"
 #include "CaptionUserPreferences.h"
