@@ -122,12 +122,19 @@ bool MockSpellCheck::spellCheckWord(const WebString& text, int* misspelledOffset
     return false;
 }
 
+bool MockSpellCheck::hasInCache(const WebString& word)
+{
+    return word == WebString::fromUTF8("Spell cheher. Is it broken?") || word == WebString::fromUTF8("Spell cheher.\x007F");
+}
+
 void MockSpellCheck::fillSuggestionList(const WebString& word, WebVector<WebString>* suggestions)
 {
     if (word == WebString::fromUTF8("wellcome"))
         append(suggestions, WebString::fromUTF8("welcome"));
     else if (word == WebString::fromUTF8("upper case"))
         append(suggestions, WebString::fromUTF8("uppercase"));
+    else if (word == WebString::fromUTF8("cheher"))
+        append(suggestions, WebString::fromUTF8("checker"));
 }
 
 bool MockSpellCheck::initializeIfNeeded()
@@ -173,7 +180,8 @@ bool MockSpellCheck::initializeIfNeeded()
         "qwertyuiopasd",
         "qwertyuiopasdf",
         "upper case",
-        "wellcome"
+        "wellcome",
+        "cheher"
     };
 
     m_misspelledWords.clear();

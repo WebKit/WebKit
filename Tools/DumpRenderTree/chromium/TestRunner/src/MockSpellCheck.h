@@ -60,6 +60,10 @@ public:
     // misspelledOffset and 2 to misspelledLength, respectively.
     bool spellCheckWord(const WebKit::WebString& text, int* misspelledOffset, int* misspelledLength);
 
+    // Checks whether the specified text can be spell checked immediately using
+    // the spell checker cache.
+    bool hasInCache(const WebKit::WebString& text);
+
 private:
     // Initialize the internal resources if we need to initialize it.
     // Initializing this object may take long time. To prevent from hurting

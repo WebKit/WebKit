@@ -1,3 +1,22 @@
+2013-02-20  Rouslan Solomakhin  <rouslan@chromium.org>
+
+        Fix use after free in ContextMenuClientImpl.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=109220
+
+        Reviewed by Tony Chang.
+
+        ContextMenuClientImpl can use a DocumentMarker after it is freed. The DocumentMarker is originally allocated
+        by the spell checker. When the user context-clicks on a misspelling, ContextMenuClientImpl saves a reference
+        to the clicked DocumentMarker, changes the selection, and then uses the DocumentMarker. Changing the selection
+        causes re-check of spelling. If the spell check client serves the spellcheck request from cache, then re-checking
+        spelling will delete the DocumentMarker and add a new one. This invalidates the DocumentMarker reference held by
+        ContextMenuClientImpl. When ContextMenuClientImpl attempts to use the DocumentMarker, Address Sanitizer detects
+        use after free. The fix is to save a copy of the DocumentMarker before changing selection.
+
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::selectMisspellingAsync): Save a copy of DocumentMarker before changing selection.
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems): Use DocumentMarker instead of Vector<DocumentMarker*>.
+
 2013-02-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r183552.  Requested by

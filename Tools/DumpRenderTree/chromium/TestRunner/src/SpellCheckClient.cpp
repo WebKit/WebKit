@@ -116,7 +116,10 @@ void SpellCheckClient::requestCheckingOfText(const WebString& text, WebTextCheck
 
     m_lastRequestedTextCheckingCompletion = completion;
     m_lastRequestedTextCheckString = text;
-    m_delegate->postDelayedTask(new HostMethodTask(this, &SpellCheckClient::finishLastTextCheck), 0);
+    if (m_spellcheck.hasInCache(text))
+        finishLastTextCheck();
+    else
+        m_delegate->postDelayedTask(new HostMethodTask(this, &SpellCheckClient::finishLastTextCheck), 0);
 }
 
 void SpellCheckClient::finishLastTextCheck()

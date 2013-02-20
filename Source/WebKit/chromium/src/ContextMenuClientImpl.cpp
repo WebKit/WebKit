@@ -149,7 +149,7 @@ static bool IsWhiteSpaceOrPunctuation(UChar c)
     return isSpaceOrNewline(c) || WTF::Unicode::isPunct(c);
 }
 
-static String selectMisspellingAsync(Frame* selectedFrame, Vector<DocumentMarker*>& markers)
+static String selectMisspellingAsync(Frame* selectedFrame, DocumentMarker& marker)
 {
     VisibleSelection selection = selectedFrame->selection()->selection();
     if (!selection.isCaretOrRange())
@@ -157,14 +157,15 @@ static String selectMisspellingAsync(Frame* selectedFrame, Vector<DocumentMarker
 
     // Caret and range selections always return valid normalized ranges.
     RefPtr<Range> selectionRange = selection.toNormalizedRange();
-    markers.append(selectedFrame->document()->markers()->markersInRange(selectionRange.get(), DocumentMarker::Spelling | DocumentMarker::Grammar));
+    Vector<DocumentMarker*> markers = selectedFrame->document()->markers()->markersInRange(selectionRange.get(), DocumentMarker::Spelling | DocumentMarker::Grammar);
     if (markers.size() != 1)
         return String();
+    marker = *markers[0];
 
     // Cloning a range fails only for invalid ranges.
     RefPtr<Range> markerRange = selectionRange->cloneRange(ASSERT_NO_EXCEPTION);
-    markerRange->setStart(markerRange->startContainer(), markers[0]->startOffset());
-    markerRange->setEnd(markerRange->endContainer(), markers[0]->endOffset());
+    markerRange->setStart(markerRange->startContainer(), marker.startOffset());
+    markerRange->setEnd(markerRange->endContainer(), marker.endOffset());
     if (selection.isCaret()) {
         selection = VisibleSelection(markerRange.get());
         selectedFrame->selection()->setSelection(selection, WordGranularity);
@@ -310,11 +311,11 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
         // words and attaches suggestions to these markers in the background. Therefore, when a user right-clicks
         // a mouse on a word, Chrome just needs to find a spelling marker on the word instead of spellchecking it.
         if (selectedFrame->settings() && selectedFrame->settings()->asynchronousSpellCheckingEnabled()) {
-            Vector<DocumentMarker*> markers;
-            data.misspelledWord = selectMisspellingAsync(selectedFrame, markers);
-            if (markers.size() == 1 && markers[0]->description().length()) {
+            DocumentMarker marker;
+            data.misspelledWord = selectMisspellingAsync(selectedFrame, marker);
+            if (marker.description().length()) {
                 Vector<String> suggestions;
-                markers[0]->description().split('\n', suggestions);
+                marker.description().split('\n', suggestions);
                 data.dictionarySuggestions = suggestions;
             } else if (m_webView->spellCheckClient()) {
                 int misspelledOffset, misspelledLength;

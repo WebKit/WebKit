@@ -1,3 +1,20 @@
+2013-02-19  Rouslan Solomakhin  <rouslan@chromium.org>
+
+        [Chromium] Serve spellcheck suggestions for editing/spelling/spelling-changed-text.html from cache
+        https://bugs.webkit.org/show_bug.cgi?id=109220
+
+        Reviewed by Tony Chang.
+
+        * DumpRenderTree/chromium/TestRunner/src/MockSpellCheck.cpp:
+        (WebTestRunner::MockSpellCheck::hasInCache): Added a method to detect whether spellcheck results can be served from cache.
+        (WebTestRunner):
+        (WebTestRunner::MockSpellCheck::fillSuggestionList): Modified to suggest "checker" for the word "cheher".
+        (WebTestRunner::MockSpellCheck::initializeIfNeeded): Modified to mark "cheher" as misspelling.
+        * DumpRenderTree/chromium/TestRunner/src/MockSpellCheck.h:
+        (MockSpellCheck):
+        * DumpRenderTree/chromium/TestRunner/src/SpellCheckClient.cpp:
+        (WebTestRunner::SpellCheckClient::requestCheckingOfText): Modified to serve spellcheck suggestions from cache when possible.
+
 2013-02-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
 
         [Gtk] HTML5 Media controls require a design refresh
