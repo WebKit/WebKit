@@ -73,6 +73,8 @@ embed::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label
     margin: 1em;
     padding: 0.25em 2em;
     text-align: center;
+    cursor: pointer;
+    -webkit-user-select: none;
 }
 
 object::-webkit-snapshotted-plugin-content .snapshot-container .snapshot-label .snapshot-title,
