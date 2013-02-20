@@ -3610,6 +3610,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     } else {
         _private->page->setCanStartMedia(false);
         _private->page->willMoveOffscreen();
+        _private->page->setIsInWindow(false);
     }
         
     if (window != [self window]) {
@@ -3630,6 +3631,7 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     if ([self window]) {
         _private->page->setCanStartMedia(true);
         _private->page->didMoveOnscreen();
+        _private->page->setIsInWindow(true);
     }
     
     _private->page->setDeviceScaleFactor([self _deviceScaleFactor]);

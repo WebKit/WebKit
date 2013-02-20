@@ -171,8 +171,7 @@ public:
     void updateRootLayerAttachment();
     void updateRootLayerPosition();
     
-    void didMoveOnscreen();
-    void willMoveOffscreen();
+    void setIsInWindow(bool);
 
     void clearBackingForAllLayers();
     

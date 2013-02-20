@@ -970,16 +970,18 @@ bool FrameView::isSoftwareRenderable() const
 
 void FrameView::didMoveOnscreen()
 {
-    if (RenderView* renderView = this->renderView())
-        renderView->didMoveOnscreen();
     contentAreaDidShow();
 }
 
 void FrameView::willMoveOffscreen()
 {
-    if (RenderView* renderView = this->renderView())
-        renderView->willMoveOffscreen();
     contentAreaDidHide();
+}
+
+void FrameView::setIsInWindow(bool isInWindow)
+{
+    if (RenderView* renderView = this->renderView())
+        renderView->setIsInWindow(isInWindow);
 }
 
 RenderObject* FrameView::layoutRoot(bool onlyDuringLayout) const

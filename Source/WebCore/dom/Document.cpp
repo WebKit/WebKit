@@ -2015,7 +2015,7 @@ void Document::attach()
     // Create the rendering tree
     setRenderer(new (m_renderArena.get()) RenderView(this));
 #if USE(ACCELERATED_COMPOSITING)
-    renderView()->didMoveOnscreen();
+    renderView()->setIsInWindow(true);
 #endif
 
     recalcStyle(Force);
@@ -4035,7 +4035,7 @@ void Document::documentWillBecomeInactive()
 {
 #if USE(ACCELERATED_COMPOSITING)
     if (renderer())
-        renderView()->willMoveOffscreen();
+        renderView()->setIsInWindow(false);
 #endif
 }
 
@@ -4064,7 +4064,7 @@ void Document::documentDidResumeFromPageCache()
 
 #if USE(ACCELERATED_COMPOSITING)
     if (renderer())
-        renderView()->didMoveOnscreen();
+        renderView()->setIsInWindow(true);
 #endif
 
     if (FrameView* frameView = view())

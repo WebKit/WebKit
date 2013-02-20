@@ -1516,27 +1516,26 @@ TiledBacking* RenderLayerCompositor::pageTiledBacking() const
     return renderViewBacking ? renderViewBacking->tiledBacking() : 0;
 }
 
-void RenderLayerCompositor::didMoveOnscreen()
+void RenderLayerCompositor::setIsInWindow(bool isInWindow)
 {
     if (TiledBacking* tiledBacking = pageTiledBacking())
-        tiledBacking->setIsInWindow(true);
+        tiledBacking->setIsInWindow(isInWindow);
 
-    if (!inCompositingMode() || m_rootLayerAttachment != RootLayerUnattached)
+    if (!inCompositingMode())
         return;
 
-    RootLayerAttachment attachment = shouldPropagateCompositingToEnclosingFrame() ? RootLayerAttachedViaEnclosingFrame : RootLayerAttachedViaChromeClient;
-    attachRootLayer(attachment);
-}
+    if (isInWindow) {
+        if (m_rootLayerAttachment != RootLayerUnattached)
+            return;
 
-void RenderLayerCompositor::willMoveOffscreen()
-{
-    if (TiledBacking* tiledBacking = pageTiledBacking())
-        tiledBacking->setIsInWindow(false);
+        RootLayerAttachment attachment = shouldPropagateCompositingToEnclosingFrame() ? RootLayerAttachedViaEnclosingFrame : RootLayerAttachedViaChromeClient;
+        attachRootLayer(attachment);
+    } else {
+        if (m_rootLayerAttachment == RootLayerUnattached)
+            return;
 
-    if (!inCompositingMode() || m_rootLayerAttachment == RootLayerUnattached)
-        return;
-
-    detachRootLayer();
+        detachRootLayer();
+    }
 }
 
 void RenderLayerCompositor::clearBackingForLayerIncludingDescendants(RenderLayer* layer)

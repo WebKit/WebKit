@@ -153,6 +153,7 @@ public:
 
     void didMoveOnscreen();
     void willMoveOffscreen();
+    void setIsInWindow(bool);
 
     void resetScrollbars();
     void resetScrollbarsAndClearContentsSize();

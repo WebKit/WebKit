@@ -1,3 +1,15 @@
+2013-02-19  Tim Horton  <timothy_horton@apple.com>
+
+        Clarify isInWindow vs. isVisible path through to RenderLayerCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=110261
+        <rdar://problem/13196122>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setIsInWindow):
+        Use Page::setIsInWindow in addition to willMoveOffscreen/didMoveOnscreen.
+
 2013-02-19  Conrad Shultz  <conrad_shultz@apple.com>
 
         Allow UI clients to handle vertical wheel events.

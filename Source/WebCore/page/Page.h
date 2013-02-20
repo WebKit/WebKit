@@ -290,6 +290,10 @@ public:
     void willMoveOffscreen();
     bool isOnscreen() const { return m_isOnscreen; }
 
+    // Notification that this Page was moved into or out of a native window.
+    void setIsInWindow(bool);
+    bool isInWindow() const { return m_isInWindow; }
+
     void windowScreenDidChange(PlatformDisplayID);
 
     void suspendScriptedAnimations();
@@ -472,6 +476,7 @@ private:
 
     bool m_isEditable;
     bool m_isOnscreen;
+    bool m_isInWindow;
 
 #if ENABLE(PAGE_VISIBILITY_API)
     PageVisibilityState m_visibilityState;

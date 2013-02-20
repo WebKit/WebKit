@@ -891,6 +891,19 @@ void Page::willMoveOffscreen()
     suspendScriptedAnimations();
 }
 
+void Page::setIsInWindow(bool isInWindow)
+{
+    if (m_isInWindow == isInWindow)
+        return;
+
+    m_isInWindow = isInWindow;
+
+    for (Frame* frame = mainFrame(); frame; frame = frame->tree()->traverseNext()) {
+        if (FrameView* frameView = frame->view())
+            frameView->setIsInWindow(isInWindow);
+    }
+}
+
 void Page::windowScreenDidChange(PlatformDisplayID displayID)
 {
     m_displayID = displayID;

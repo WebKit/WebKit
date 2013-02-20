@@ -183,10 +183,8 @@ public:
     void setPrintRect(const IntRect& r) { m_legacyPrinting.m_printRect = r; }
     // End deprecated functions.
 
-    // Notifications that this view became visible in a window, or will be
-    // removed from the window.
-    void didMoveOnscreen();
-    void willMoveOffscreen();
+    // Notification that this view moved into or out of a native window.
+    void setIsInWindow(bool);
 
 #if USE(ACCELERATED_COMPOSITING)
     RenderLayerCompositor* compositor();

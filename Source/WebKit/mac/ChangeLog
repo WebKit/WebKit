@@ -1,3 +1,16 @@
+2013-02-19  Tim Horton  <timothy_horton@apple.com>
+
+        Clarify isInWindow vs. isVisible path through to RenderLayerCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=110261
+        <rdar://problem/13196122>
+
+        Reviewed by Simon Fraser.
+
+        * WebView/WebView.mm:
+        (-[WebView viewWillMoveToWindow:]):
+        (-[WebView viewDidMoveToWindow]):
+        Use Page::setIsInWindow in addition to willMoveOffscreen/didMoveOnscreen.
+
 2013-02-18  Anders Carlsson  <andersca@apple.com>
 
         Add a DefaultHash for RefPtr<SecurityOrigin>

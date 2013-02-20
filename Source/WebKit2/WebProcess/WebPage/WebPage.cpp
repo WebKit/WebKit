@@ -1982,7 +1982,7 @@ void WebPage::setIsInWindow(bool isInWindow)
         m_page->setCanStartMedia(false);
         m_page->willMoveOffscreen();
     } else {
-        // Defer the call to Page::setCanStartMedia() since it ends up sending a syncrhonous messages to the UI process
+        // Defer the call to Page::setCanStartMedia() since it ends up sending a synchronous message to the UI process
         // in order to get plug-in connections, and the UI process will be waiting for the Web process to update the backing
         // store after moving the view into a window, until it times out and paints white. See <rdar://problem/9242771>.
         if (m_mayStartMediaWhenInWindow)
@@ -1990,6 +1990,8 @@ void WebPage::setIsInWindow(bool isInWindow)
 
         m_page->didMoveOnscreen();
     }
+
+    m_page->setIsInWindow(isInWindow);
 }
 
 void WebPage::didReceivePolicyDecision(uint64_t frameID, uint64_t listenerID, uint32_t policyAction, uint64_t downloadID)
