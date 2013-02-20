@@ -16,6 +16,41 @@ function moveMouseOver(element)
     eventSender.mouseMoveTo(x, y);
 }
 
+function touchLocation(node)
+{
+    var x = node.offsetLeft + 5;
+    var y = node.offsetTop + defaultPaddingSize + 5;
+    eventSender.addTouchPoint(x, y);
+    eventSender.touchStart();
+    eventSender.leapForward(100);
+    eventSender.touchEnd();
+    eventSender.cancelTouchPoint(0);
+}
+
+function selectTextNode(node)
+{
+    getSelection().setBaseAndExtent(node, 0, node, node.length);
+}
+
+function dragMouse(node) {
+    var x = node.offsetLeft + 5;
+    var y = node.offsetTop + defaultPaddingSize + 5;
+
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseDown();
+    eventSender.leapForward(100);
+    eventSender.mouseMoveTo(x + 100, y + 100);
+    eventSender.mouseUp();
+    eventSender.mouseMoveTo(x, y);
+}
+
+function scrollMouseWheel(node) {
+    var x = node.offsetLeft + 5;
+    var y = node.offsetTop + defaultPaddingSize + 5;
+    eventSender.mouseMoveTo(x, y);
+    eventSender.mouseScrollBy(0, 120);
+}
+
 var eventRecords = {};
 
 function clearEventRecords()
@@ -75,9 +110,12 @@ function addEventListeners(nodes)
 {
     for (var i = 0; i < nodes.length; ++i) {
         var node = getNodeInShadowTreeStack(nodes[i]);
-        node.addEventListener('mouseover', recordEvent, false);
-        node.addEventListener('mouseout', recordEvent, false);
         node.addEventListener('click', recordEvent, false);
+        node.addEventListener('dragstart', recordEvent, false);
+        node.addEventListener('mouseout', recordEvent, false);
+        node.addEventListener('mouseover', recordEvent, false);
+        node.addEventListener('mousewheel', recordEvent, false);
+        node.addEventListener('touchstart', recordEvent, false);
         // <content> might be an inactive insertion point, so style it also.
         if (node.tagName == 'DIV' || node.tagName == 'DETAILS' || node.tagName == 'SUMMARY' || node.tagName == 'CONTENT')
             node.setAttribute('style', 'padding-top: ' + defaultPaddingSize + 'px;');

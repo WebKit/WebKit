@@ -20,6 +20,16 @@ Moving mouse from a direct child text node of the shadow root to top
 
   mouseover
      @top (target: top) (related: shadow-host)
+
+  touchstart
+     @shadow-root (target: shadow-root)
+     @shadow-host (target: shadow-host)
+     @top (target: shadow-host)
+
+  mousewheel
+     @shadow-root (target: shadow-root)
+     @shadow-host (target: shadow-host)
+     @top (target: shadow-host)
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -29,9 +29,16 @@
         debug('\n' + 'Moving mouse from a direct child text node of the shadow root to top');
         eventSender.mouseMoveTo(x, y);
         clearEventRecords();
+
         moveMouseOver(document.getElementById('top'));
         debugDispatchedEvent('mouseout');
         debugDispatchedEvent('mouseover');
+
+        touchLocation(host);
+        debugDispatchedEvent('touchstart');
+
+        scrollMouseWheel(host);
+        debugDispatchedEvent('mousewheel');
     </script>
     <script src="../../js/resources/js-test-post.js"></script>
 </body>
