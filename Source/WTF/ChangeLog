@@ -1,3 +1,30 @@
+2013-02-19  Oliver Hunt  <oliver@apple.com>
+
+        Moar hardening
+        https://bugs.webkit.org/show_bug.cgi?id=110275
+
+        Reviewed by Anders Carlsson.
+
+        We now poison objects when they get freed, and verify that
+        any object that is being freed is not poisoned.  If the
+        object looks like it's poisoned we validate the freelist,
+        and ensure the object is not already present.  If it is
+        we crash.
+
+        On allocation, we ensure that the object being allocated
+        is poisoned, then clear the poisoning fields.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::internalEntropyValue):
+        (WTF):
+        (WTF::freedObjectStartPoison):
+        (WTF::freedObjectEndPoison):
+        (TCMalloc_ThreadCache_FreeList):
+        (WTF::TCMalloc_ThreadCache_FreeList::Validate):
+        (WTF::TCMalloc_Central_FreeList::Populate):
+        (WTF::TCMalloc_ThreadCache::Allocate):
+        (WTF::TCMalloc_ThreadCache::Deallocate):
+
 2013-02-18  Darin Adler  <darin@apple.com>
 
         Style tweaks to StringHasher.h
