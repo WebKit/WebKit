@@ -141,7 +141,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const LayoutPoin
         // We want to match the button's baseline
         // FIXME: Make this work with transforms.
         if (RenderButton* buttonRenderer = toRenderButton(button->renderer()))
-            textY = paintOffset.y() + borderTop() + paddingTop() + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
+            textY = paintOffset.y() + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
         else
             textY = baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
 
