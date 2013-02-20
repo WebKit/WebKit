@@ -2254,6 +2254,7 @@ fast/block/lineboxcontain/font.html
 css3/flexbox/flexbox-overflow-auto.html
 fast/block/line-layout/selection-highlight-overlap.html
 fast/css/empty-cell-baseline.html
+fast/exclusions/shape-inside/shape-inside-ellipse.html
 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html
 fast/forms/datalist/update-range-with-datalist.html
 fast/multicol/cell-shrinkback.html
