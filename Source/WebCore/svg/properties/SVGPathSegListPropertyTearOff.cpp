@@ -29,18 +29,23 @@
 
 namespace WebCore {
 
+void SVGPathSegListPropertyTearOff::clearContextAndRoles()
+{
+    ASSERT(m_values);
+    unsigned size = m_values->size();
+    for (unsigned i = 0; i < size; ++i) {
+        ListItemType item = m_values->at(i);
+        static_cast<SVGPathSegWithContext*>(item.get())->setContextAndRole(0, PathSegUndefinedRole);
+    }
+}
+
 void SVGPathSegListPropertyTearOff::clear(ExceptionCode& ec)
 {
     ASSERT(m_values);
     if (m_values->isEmpty())
         return;
 
-    unsigned size = m_values->size();
-    for (unsigned i = 0; i < size; ++i) {
-        ListItemType item = m_values->at(i);
-        static_cast<SVGPathSegWithContext*>(item.get())->setContextAndRole(0, PathSegUndefinedRole);
-    }
-
+    clearContextAndRoles();
     SVGPathSegListPropertyTearOff::Base::clearValues(ec);
 }
 
@@ -52,6 +57,24 @@ SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::g
         ASSERT(static_cast<SVGPathSegWithContext*>(returnedItem.get())->role() == m_pathSegRole);
     }
     return returnedItem.release();
+}
+
+SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::replaceItem(PassListItemType passNewItem, unsigned index, ExceptionCode& ec)
+{
+    // Not specified, but FF/Opera do it this way, and it's just sane.
+    if (!passNewItem) {
+        ec = SVGException::SVG_WRONG_TYPE_ERR;
+        return 0;
+    }
+
+    if (index < m_values->size()) {
+        ListItemType replacedItem = m_values->at(index);
+        ASSERT(replacedItem);
+        static_cast<SVGPathSegWithContext*>(replacedItem.get())->setContextAndRole(0, PathSegUndefinedRole);
+    }
+
+    ListItemType newItem = passNewItem;
+    return Base::replaceItemValues(newItem, index, ec);
 }
 
 SVGPathSegListPropertyTearOff::PassListItemType SVGPathSegListPropertyTearOff::removeItem(unsigned index, ExceptionCode& ec)

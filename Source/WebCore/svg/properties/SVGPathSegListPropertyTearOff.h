@@ -76,6 +76,7 @@ public:
             return 0;
         }
 
+        clearContextAndRoles();
         ListItemType newItem = passNewItem;
         return Base::initializeValues(newItem, ec);
     }
@@ -94,17 +95,7 @@ public:
         return Base::insertItemBeforeValues(newItem, index, ec);
     }
 
-    PassListItemType replaceItem(PassListItemType passNewItem, unsigned index, ExceptionCode& ec)
-    {
-        // Not specified, but FF/Opera do it this way, and it's just sane.
-        if (!passNewItem) {
-            ec = SVGException::SVG_WRONG_TYPE_ERR;
-            return 0;
-        }
-
-        ListItemType newItem = passNewItem;
-        return Base::replaceItemValues(newItem, index, ec);
-    }
+    PassListItemType replaceItem(PassListItemType, unsigned index, ExceptionCode&);
 
     PassListItemType removeItem(unsigned index, ExceptionCode&);
 
@@ -129,6 +120,8 @@ private:
     }
 
     SVGPathElement* contextElement() const;
+
+    void clearContextAndRoles();
 
     using Base::m_role;
 
