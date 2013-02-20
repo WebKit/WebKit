@@ -68,7 +68,6 @@ private:
         PassRefPtr<VoidCallback> successCallback, PassRefPtr<SQLTransactionErrorCallback>,
         bool readOnly);
 
-    bool checkAndHandleClosedOrInterruptedDatabase();
     void clearCallbackWrappers();
 
     // APIs called from the backend published via AbstractSQLTransaction:
@@ -80,6 +79,7 @@ private:
 
     // State Machine functions:
     virtual StateFunction stateFunctionFor(SQLTransactionState) OVERRIDE;
+    bool computeNextStateAndCleanupIfNeeded();
 
     // State functions:
     SQLTransactionState deliverTransactionCallback();

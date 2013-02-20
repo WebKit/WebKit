@@ -87,10 +87,9 @@ private:
 
     void enqueueStatementBackend(PassRefPtr<SQLStatementBackend>);
 
-    void checkAndHandleClosedOrInterruptedDatabase();
-
     // State Machine functions:
     virtual StateFunction stateFunctionFor(SQLTransactionState) OVERRIDE;
+    void computeNextStateAndCleanupIfNeeded();
 
     // State functions:
     SQLTransactionState acquireLock();

@@ -465,10 +465,26 @@ void SQLTransactionBackend::enqueueStatementBackend(PassRefPtr<SQLStatementBacke
     m_statementQueue.append(statementBackend);
 }
 
-void SQLTransactionBackend::checkAndHandleClosedOrInterruptedDatabase()
+void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
 {
-    if (m_database->opened() && !m_database->isInterrupted())
+    // Only honor the requested state transition if we're not supposed to be
+    // cleaning up and shutting down:
+    if (m_database->opened() && !m_database->isInterrupted()) {
+        setStateToRequestedState();
+        ASSERT(m_nextState == SQLTransactionState::AcquireLock
+            || m_nextState == SQLTransactionState::OpenTransactionAndPreflight
+            || m_nextState == SQLTransactionState::RunStatements
+            || m_nextState == SQLTransactionState::PostflightAndCommit
+            || m_nextState == SQLTransactionState::CleanupAndTerminate
+            || m_nextState == SQLTransactionState::CleanupAfterTransactionErrorCallback);
+
+        LOG(StorageAPI, "State %s\n", nameForSQLTransactionState(m_nextState));
         return;
+    }
+
+    if (m_nextState == SQLTransactionState::End)
+        return;
+    m_nextState = SQLTransactionState::End;
 
     // If the database was stopped, don't do anything and cancel queued work
     LOG(StorageAPI, "Database was stopped or interrupted - cancelling work for this transaction");
@@ -480,28 +496,17 @@ void SQLTransactionBackend::checkAndHandleClosedOrInterruptedDatabase()
     }
 
     // Terminate the frontend state machine. This also gets the frontend to
-    // call checkAndHandleClosedOrInterruptedDatabase() and clear its wrappers
+    // call computeNextStateAndCleanupIfNeeded() and clear its wrappers
     // if needed.
     m_frontend->requestTransitToState(SQLTransactionState::End);
 
     // Redirect to the end state to abort, clean up, and end the transaction.
     doCleanup();
-    m_nextState = SQLTransactionState::End;
 }
 
 void SQLTransactionBackend::performNextStep()
 {
-    LOG(StorageAPI, "State %s\n", nameForSQLTransactionState(m_nextState));
-
-    setStateToRequestedState();
-    ASSERT(m_nextState == SQLTransactionState::AcquireLock
-        || m_nextState == SQLTransactionState::OpenTransactionAndPreflight
-        || m_nextState == SQLTransactionState::RunStatements
-        || m_nextState == SQLTransactionState::PostflightAndCommit
-        || m_nextState == SQLTransactionState::CleanupAndTerminate
-        || m_nextState == SQLTransactionState::CleanupAfterTransactionErrorCallback);
-
-    checkAndHandleClosedOrInterruptedDatabase();
+    computeNextStateAndCleanupIfNeeded();
     runStateMachine();
 }
 

@@ -247,17 +247,7 @@ SQLTransactionState SQLTransaction::sendToBackendState()
 
 void SQLTransaction::performPendingCallback()
 {
-    LOG(StorageAPI, "Callback %s\n", nameForSQLTransactionState(m_nextState));
-
-    setStateToRequestedState();
-    ASSERT(m_nextState == SQLTransactionState::End
-        || m_nextState == SQLTransactionState::DeliverTransactionCallback
-        || m_nextState == SQLTransactionState::DeliverTransactionErrorCallback
-        || m_nextState == SQLTransactionState::DeliverStatementCallback
-        || m_nextState == SQLTransactionState::DeliverQuotaIncreaseCallback
-        || m_nextState == SQLTransactionState::DeliverSuccessCallback);
-
-    checkAndHandleClosedOrInterruptedDatabase();
+    computeNextStateAndCleanupIfNeeded();
     runStateMachine();
 }
 
@@ -278,10 +268,22 @@ void SQLTransaction::executeSQL(const String& sqlStatement, const Vector<SQLValu
     m_backend->executeSQL(statement.release(), sqlStatement, arguments, permissions);
 }
 
-bool SQLTransaction::checkAndHandleClosedOrInterruptedDatabase()
+bool SQLTransaction::computeNextStateAndCleanupIfNeeded()
 {
-    if (m_database->opened() && !m_database->isInterrupted())
+    // Only honor the requested state transition if we're not supposed to be
+    // cleaning up and shutting down:
+    if (m_database->opened() && !m_database->isInterrupted()) {
+        setStateToRequestedState();
+        ASSERT(m_nextState == SQLTransactionState::End
+            || m_nextState == SQLTransactionState::DeliverTransactionCallback
+            || m_nextState == SQLTransactionState::DeliverTransactionErrorCallback
+            || m_nextState == SQLTransactionState::DeliverStatementCallback
+            || m_nextState == SQLTransactionState::DeliverQuotaIncreaseCallback
+            || m_nextState == SQLTransactionState::DeliverSuccessCallback);
+
+        LOG(StorageAPI, "Callback %s\n", nameForSQLTransactionState(m_nextState));
         return false;
+    }
 
     clearCallbackWrappers();
     m_nextState = SQLTransactionState::CleanupAndTerminate;
