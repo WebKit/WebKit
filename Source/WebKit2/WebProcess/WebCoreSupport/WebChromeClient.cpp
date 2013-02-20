@@ -119,11 +119,7 @@ FloatRect WebChromeClient::windowRect()
 
 FloatRect WebChromeClient::pageRect()
 {
-#if USE(TILED_BACKING_STORE)
-    return FloatRect(FloatPoint(), m_page->viewportSize());
-#else
     return FloatRect(FloatPoint(), m_page->size());
-#endif
 }
 
 void WebChromeClient::focus()
@@ -446,14 +442,11 @@ void WebChromeClient::contentsSizeChanged(Frame* frame, const IntSize& size) con
     if (frame->page()->mainFrame() != frame)
         return;
 
-#if PLATFORM(QT) || PLATFORM(EFL)
-    if (m_page->useFixedLayout()) {
-        // The below method updates the size().
-        m_page->resizeToContentsIfNeeded();
-        m_page->drawingArea()->layerTreeHost()->sizeDidChange(m_page->size());
-    }
+#if USE(COORDINATED_GRAPHICS)
+    if (m_page->useFixedLayout())
+        m_page->drawingArea()->layerTreeHost()->sizeDidChange(size);
 
-    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(m_page->size()));
+    m_page->send(Messages::WebPageProxy::DidChangeContentsSize(size));
 #endif
 
     m_page->drawingArea()->mainFrameContentSizeChanged(size);

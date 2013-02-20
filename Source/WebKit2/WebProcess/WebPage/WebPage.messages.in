@@ -116,10 +116,6 @@ messages -> WebPage LegacyReceiver {
     SuspendActiveDOMObjectsAndAnimations()
     ResumeActiveDOMObjectsAndAnimations()
 
-#if USE(TILED_BACKING_STORE)
-    SetViewportSize(WebCore::IntSize size)
-#endif
-
     Close()
     TryClose()
 

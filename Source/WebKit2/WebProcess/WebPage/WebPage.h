@@ -377,10 +377,7 @@ public:
 #if USE(TILED_BACKING_STORE)
     void pageDidRequestScroll(const WebCore::IntPoint&);
     void setFixedVisibleContentRect(const WebCore::IntRect&);
-    void resizeToContentsIfNeeded();
     void sendViewportAttributesChanged();
-    void setViewportSize(const WebCore::IntSize&);
-    WebCore::IntSize viewportSize() const { return m_viewportSize; }
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
@@ -873,10 +870,6 @@ private:
     InjectedBundlePageFullScreenClient m_fullScreenClient;
 #endif
     InjectedBundlePageDiagnosticLoggingClient m_logDiagnosticMessageClient;
-
-#if USE(TILED_BACKING_STORE)
-    WebCore::IntSize m_viewportSize;
-#endif
 
     FindController m_findController;
 #if ENABLE(TOUCH_EVENTS) && PLATFORM(QT)

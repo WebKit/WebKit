@@ -419,7 +419,6 @@ public:
     PlatformWidget viewWidget();
 #endif
 #if USE(TILED_BACKING_STORE)
-    void setViewportSize(const WebCore::IntSize&);
     void commitPageTransitionViewport();
 #endif
 

@@ -979,12 +979,6 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
 {
     FrameView* view = m_page->mainFrame()->view();
 
-#if USE(TILED_BACKING_STORE)
-    // If we are resizing to content ignore external attempts.
-    if (view->useFixedLayout())
-        return;
-#endif
-
     if (m_viewSize == viewSize)
         return;
 
@@ -993,6 +987,11 @@ void WebPage::setSize(const WebCore::IntSize& viewSize)
     m_drawingArea->setNeedsDisplay();
     
     m_viewSize = viewSize;
+
+#if USE(TILED_BACKING_STORE)
+    if (view->useFixedLayout())
+        sendViewportAttributesChanged();
+#endif
 }
 
 #if USE(TILED_BACKING_STORE)
@@ -1003,43 +1002,24 @@ void WebPage::setFixedVisibleContentRect(const IntRect& rect)
     m_page->mainFrame()->view()->setFixedVisibleContentRect(rect);
 }
 
-void WebPage::resizeToContentsIfNeeded()
-{
-    ASSERT(m_useFixedLayout);
-
-    FrameView* view = m_page->mainFrame()->view();
-
-    if (!view->useFixedLayout())
-        return;
-
-    IntSize newSize = view->contentsSize().expandedTo(view->fixedLayoutSize());
-
-    if (newSize == m_viewSize)
-        return;
-
-    m_viewSize = newSize;
-    view->resize(newSize);
-    view->setNeedsLayout();
-}
-
 void WebPage::sendViewportAttributesChanged()
 {
     ASSERT(m_useFixedLayout);
 
     // Viewport properties have no impact on zero sized fixed viewports.
-    if (m_viewportSize.isEmpty())
+    if (m_viewSize.isEmpty())
         return;
 
     // Recalculate the recommended layout size, when the available size (device pixel) changes.
     Settings* settings = m_page->settings();
 
-    int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), m_viewportSize.width());
+    int minimumLayoutFallbackWidth = std::max(settings->layoutFallbackWidth(), m_viewSize.width());
 
     // If unset  we use the viewport dimensions. This fits with the behavior of desktop browsers.
-    int deviceWidth = (settings->deviceWidth() > 0) ? settings->deviceWidth() : m_viewportSize.width();
-    int deviceHeight = (settings->deviceHeight() > 0) ? settings->deviceHeight() : m_viewportSize.height();
+    int deviceWidth = (settings->deviceWidth() > 0) ? settings->deviceWidth() : m_viewSize.width();
+    int deviceHeight = (settings->deviceHeight() > 0) ? settings->deviceHeight() : m_viewSize.height();
 
-    ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, 1, m_viewportSize);
+    ViewportAttributes attr = computeViewportAttributes(m_page->viewportArguments(), minimumLayoutFallbackWidth, deviceWidth, deviceHeight, 1, m_viewSize);
 
     FrameView* view = m_page->mainFrame()->view();
 
@@ -1048,7 +1028,7 @@ void WebPage::sendViewportAttributesChanged()
 
     // Put the width and height to the viewport width and height. In css units however.
     // Use FloatSize to avoid truncated values during scale.
-    FloatSize contentFixedSize = m_viewportSize;
+    FloatSize contentFixedSize = m_viewSize;
 
 #if ENABLE(CSS_DEVICE_ADAPTATION)
     // CSS viewport descriptors might be applied to already affected viewport size
@@ -1066,19 +1046,6 @@ void WebPage::sendViewportAttributesChanged()
 
     send(Messages::WebPageProxy::DidChangeViewportProperties(attr));
 }
-
-void WebPage::setViewportSize(const IntSize& size)
-{
-    ASSERT(m_useFixedLayout);
-
-    if (m_viewportSize == size)
-        return;
-
-    m_viewportSize = size;
-
-    sendViewportAttributesChanged();
-}
-
 #endif
 
 void WebPage::scrollMainFrameIfNotAtMaxScrollPosition(const IntSize& scrollOffset)

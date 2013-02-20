@@ -344,7 +344,7 @@ void QRawWebView::setSize(const QSize& size)
         return;
 
     if (d->m_webPageProxy->useFixedLayout())
-        d->m_webPageProxy->setViewportSize(size);
+        drawingArea->setSize(size, WebCore::IntSize());
 
     d->m_size = size;
 

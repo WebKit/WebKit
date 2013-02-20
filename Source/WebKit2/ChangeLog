@@ -1,5 +1,44 @@
 2013-02-20  Huang Dongsung  <luxtella@company100.net>
 
+        [WK2] Remove m_viewportSize in WebPage.
+        https://bugs.webkit.org/show_bug.cgi?id=110311
+
+        Reviewed by Anders Carlsson.
+
+        EFL and Qt use m_viewSize as a contents size while Apple use it as a viewport
+        size, so EFL and Qt introduced m_viewportSize to make WebPage know a viewport
+        size.
+
+        EFL and Qt use m_viewSize as a contents size because the size of non compositing
+        layer is contents size, and EFL and Qt mark whole non compositing layer as dirty
+        using m_viewSize. Bug 110299 (http://webkit.org/b/110299) changes that it is not
+        necessary to know m_viewSize when marking whole non compositing layer as dirty.
+        So we can make EFL and Qt use m_viewSize as a viewport size also.
+
+        This patch removes m_viewportSize and related methods to increase readability.
+
+        * UIProcess/API/qt/raw/qrawwebview.cpp:
+        (QRawWebView::setSize):
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::didChangeViewportSize):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::pageRect):
+        (WebKit::WebChromeClient::contentsSizeChanged):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::updateBackingStoreState):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setSize):
+        (WebKit::WebPage::sendViewportAttributesChanged):
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage):
+        * WebProcess/WebPage/WebPage.messages.in:
+
+2013-02-20  Huang Dongsung  <luxtella@company100.net>
+
         [WK2] add setNeedsDisplay in DrawingArea to mark whole layer as dirty.
         https://bugs.webkit.org/show_bug.cgi?id=110299
 

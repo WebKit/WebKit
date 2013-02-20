@@ -394,9 +394,11 @@ void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImme
         m_webPage->scrollMainFrameIfNotAtMaxScrollPosition(scrollOffset);
 
         if (m_layerTreeHost) {
-            // Use the previously set page size instead of the argument.
-            // It gets adjusted properly when using the fixed layout mode.
-            m_layerTreeHost->sizeDidChange(m_webPage->size());
+#if USE(COORDINATED_GRAPHICS)
+            // Coordinated Graphics sets the size of the root layer to contents size.
+            if (!m_webPage->useFixedLayout())
+#endif
+                m_layerTreeHost->sizeDidChange(m_webPage->size());
         } else
             m_dirtyRegion = m_webPage->bounds();
     } else {

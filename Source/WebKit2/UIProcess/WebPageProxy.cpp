@@ -1007,14 +1007,6 @@ void WebPageProxy::executeEditCommand(const String& commandName)
 }
     
 #if USE(TILED_BACKING_STORE)
-void WebPageProxy::setViewportSize(const IntSize& size)
-{
-    if (!isValid())
-        return;
-
-    m_process->send(Messages::WebPage::SetViewportSize(size), m_pageID);
-}
-
 void WebPageProxy::commitPageTransitionViewport()
 {
     if (!isValid())
