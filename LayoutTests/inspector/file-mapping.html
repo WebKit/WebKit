@@ -4,45 +4,44 @@
 <script>
 function test()
 {
-    function MockFileSystemMapping() {}
-    MockFileSystemMapping.prototype = {
-        uriPrefixForPathPrefix: function(pathPrefix) {
-            return "uri:" + pathPrefix;
-        }
-    };
-
     // At first fill file mapping with entries.
-    var fileMapping = new WebInspector.FileMapping(new MockFileSystemMapping());
+    var fileMapping = new WebInspector.FileMapping();
     var mappingEntries = [];
-    mappingEntries.push(new WebInspector.FileMapping.Entry("http://localhost", "/var/www"));
-    mappingEntries.push(new WebInspector.FileMapping.Entry("http://www.example.com", "/home/example.com"));
-    mappingEntries.push(new WebInspector.FileMapping.Entry("http://www.foo.com", "/bar/"));
+    mappingEntries.push(new WebInspector.FileMapping.Entry("http://localhost/", "/var/www/"));
+    mappingEntries.push(new WebInspector.FileMapping.Entry("http://www.example.com/", "/home/example.com/"));
+    mappingEntries.push(new WebInspector.FileMapping.Entry("http://www.foo.com/", "/bar/"));
     fileMapping.setMappingEntries(mappingEntries);
 
     // Then create another file mapping to make sure it is correctly restored from the settings.
-    fileMapping = new WebInspector.FileMapping(new MockFileSystemMapping());
+    fileMapping = new WebInspector.FileMapping();
+
+    function testPathPrefixForURL(url)
+    {
+        var entry = fileMapping.mappingEntryForURL(url);
+        InspectorTest.addResult("    " + url + " -> " + (entry ? entry.pathPrefix : null));
+    }
+
+    function testURLPrefixForPath(path)
+    {
+        var entry = fileMapping.mappingEntryForPath(path);
+        InspectorTest.addResult("    " + path + " -> " + (entry ? entry.urlPrefix : null));
+    }
 
     // Now test all FileMapping methods.
-    InspectorTest.assertTrue(fileMapping.hasMappingForURL("http://www.example.com"), "fileMapping.hasMappingForURL failed.");
-    InspectorTest.assertTrue(fileMapping.hasMappingForURL("http://www.example.com/"), "fileMapping.hasMappingForURL failed.");
-    InspectorTest.assertTrue(fileMapping.hasMappingForURL("http://localhost/index.html"), "fileMapping.hasMappingForURL failed.");
-    InspectorTest.assertTrue(fileMapping.hasMappingForURL("http://localhost/foo/index.html"), "fileMapping.hasMappingForURL failed.");
-    InspectorTest.assertTrue(!fileMapping.hasMappingForURL("https://localhost"), "fileMapping.hasMappingForURL failed.");
-    InspectorTest.assertTrue(!fileMapping.hasMappingForURL("http://example.com"), "fileMapping.hasMappingForURL failed.");
+    InspectorTest.addResult("Test mappingEntryForURL");
+    testPathPrefixForURL("http://www.example.com");
+    testPathPrefixForURL("http://www.example.com/");
+    testPathPrefixForURL("http://localhost/index.html");
+    testPathPrefixForURL("http://localhost/foo/index.html");
+    testPathPrefixForURL("https://localhost");
+    testPathPrefixForURL("http://example.com");
 
-    InspectorTest.addResult(fileMapping.uriForURL("http://www.example.com"));
-    InspectorTest.addResult(fileMapping.uriForURL("http://www.example.com/"));
-    InspectorTest.addResult(fileMapping.uriForURL("http://localhost/index.html"));
-    InspectorTest.addResult(fileMapping.uriForURL("http://localhost/foo/index.html"));
-    InspectorTest.addResult(fileMapping.uriForURL("https://localhost"));
-    InspectorTest.addResult(fileMapping.uriForURL("http://example.com"));
+    InspectorTest.addResult("Test mappingEntryForPath");
+    testURLPrefixForPath("/home/example.com");
+    testURLPrefixForPath("/home/example.com/");
+    testURLPrefixForPath("/var/www/index.html");
+    testURLPrefixForPath("/var/www/foo/index.html");
 
-    InspectorTest.addResult(fileMapping.urlForPath("/home/example.com"));
-    InspectorTest.addResult(fileMapping.urlForPath("/home/example.com/"));
-    InspectorTest.addResult(fileMapping.urlForPath("/var/www/index.html"));
-    InspectorTest.addResult(fileMapping.urlForPath("/var/www/foo/index.html"));
-
-    InspectorTest.addResult("All mappings were correct.");
     InspectorTest.completeTest();
 }
 </script>

@@ -372,8 +372,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         if (WebInspector.debuggerModel.debuggerEnabled() && anchor.uiSourceCode)
             return true;
-        var uri = WebInspector.fileMapping.uriForURL(anchor.href);
-        var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+        var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(anchor.href);
         if (uiSourceCode) {
             anchor.uiSourceCode = uiSourceCode;
             return true;

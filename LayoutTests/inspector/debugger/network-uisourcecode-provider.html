@@ -56,7 +56,7 @@ function test()
     {
         InspectorTest.createWorkspace();
         WebInspector.resourceTreeModel = new WebInspector.Object();
-        var networkUISourceCodeProvider = new WebInspector.NetworkUISourceCodeProvider(InspectorTest.testNetworkWorkspaceProvider);
+        var networkUISourceCodeProvider = new WebInspector.NetworkUISourceCodeProvider(InspectorTest.testNetworkWorkspaceProvider, InspectorTest.testWorkspace);
         return networkUISourceCodeProvider;
     }
 

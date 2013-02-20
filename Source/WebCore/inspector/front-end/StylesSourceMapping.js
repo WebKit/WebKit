@@ -54,8 +54,7 @@ WebInspector.StylesSourceMapping.prototype = {
     rawLocationToUILocation: function(rawLocation)
     {
         var location = /** @type WebInspector.CSSLocation */ (rawLocation);
-        var uri = WebInspector.fileMapping.uriForURL(location.url);
-        var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+        var uiSourceCode = this._workspace.uiSourceCodeForURL(location.url);
         return new WebInspector.UILocation(uiSourceCode, location.lineNumber, 0);
     },
 
@@ -77,8 +76,7 @@ WebInspector.StylesSourceMapping.prototype = {
             return;
         if (!resource.url)
             return;
-        var uri = WebInspector.fileMapping.uriForURL(resource.url);
-        var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+        var uiSourceCode = this._workspace.uiSourceCodeForURL(resource.url);
         if (!uiSourceCode)
             return;
         this._bindUISourceCode(uiSourceCode);
@@ -125,8 +123,7 @@ WebInspector.StylesSourceMapping.prototype = {
     _mainFrameCreatedOrNavigated: function(event)
     {
         for (var mappedURL in this._mappedURLs) {
-            var uri = WebInspector.fileMapping.uriForURL(mappedURL);
-            var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+            var uiSourceCode = this._workspace.uiSourceCodeForURL(mappedURL);
             if (!uiSourceCode)
                 continue;
             uiSourceCode.styleFile().dispose();
@@ -214,14 +211,14 @@ WebInspector.StyleFile.prototype = {
     }
 }
 
-
 /**
  * @constructor
  * @param {WebInspector.CSSStyleModel} cssModel
  */
-WebInspector.StyleContentBinding = function(cssModel)
+WebInspector.StyleContentBinding = function(cssModel, workspace)
 {
     this._cssModel = cssModel;
+    this._workspace = workspace;
     this._cssModel.addEventListener(WebInspector.CSSStyleModel.Events.StyleSheetChanged, this._styleSheetChanged, this);
 }
 
@@ -310,8 +307,7 @@ WebInspector.StyleContentBinding.prototype = {
             if (typeof styleSheetURL !== "string")
                 return;
 
-            var uri = WebInspector.fileMapping.uriForURL(styleSheetURL);
-            var uiSourceCode = WebInspector.workspace.uiSourceCodeForURI(uri);
+            var uiSourceCode = this._workspace.uiSourceCodeForURL(styleSheetURL);
             if (!uiSourceCode)
                 return;
 

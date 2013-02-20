@@ -2,26 +2,26 @@ Tests FileSystemMapping
 
 Testing file system mapping.
     file system paths:
-    uriPrefixForPathPrefix:
+    fileSystemPathForPrefix:
 
 Adding file system /home/username/projects/foo
 Testing file system mapping.
     file system paths:
      - /home/username/projects/foo(id = 0@foo)
-    uriPrefixForPathPrefix:
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/foo => 0@foo/
+    fileSystemPathForPrefix:
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/foo => /home/username/projects/foo
 
 Adding file system /home/username/projects/bar
 Testing file system mapping.
     file system paths:
      - /home/username/projects/foo(id = 0@foo)
      - /home/username/projects/bar(id = 1@bar)
-    uriPrefixForPathPrefix:
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
+    fileSystemPathForPrefix:
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/bar => /home/username/projects/bar
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/bar => /home/username/projects/bar
 
 Adding file system /www/site1
 Testing file system mapping.
@@ -29,13 +29,13 @@ Testing file system mapping.
      - /home/username/projects/foo(id = 0@foo)
      - /home/username/projects/bar(id = 1@bar)
      - /www/site1(id = 2@site1)
-    uriPrefixForPathPrefix:
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
-        /www/site1 => 2@site1/
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
-        /www/site1 => 2@site1/
+    fileSystemPathForPrefix:
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/bar => /home/username/projects/bar
+        /www/site1 => /www/site1
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/bar => /home/username/projects/bar
+        /www/site1 => /www/site1
 
 Creating another file system mapping.
 Testing file system mapping.
@@ -43,36 +43,36 @@ Testing file system mapping.
      - /home/username/projects/foo(id = 0@foo)
      - /home/username/projects/bar(id = 1@bar)
      - /www/site1(id = 2@site1)
-    uriPrefixForPathPrefix:
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
-        /www/site1 => 2@site1/
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
-        /www/site1 => 2@site1/
+    fileSystemPathForPrefix:
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/bar => /home/username/projects/bar
+        /www/site1 => /www/site1
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/bar => /home/username/projects/bar
+        /www/site1 => /www/site1
 
 Removing file system /www/site1
 Testing file system mapping.
     file system paths:
      - /home/username/projects/foo(id = 0@foo)
      - /home/username/projects/bar(id = 1@bar)
-    uriPrefixForPathPrefix:
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
-        /home/username/projects/foo => 0@foo/
-        /home/username/projects/bar => 1@bar/
+    fileSystemPathForPrefix:
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/bar => /home/username/projects/bar
+        /home/username/projects/foo => /home/username/projects/foo
+        /home/username/projects/bar => /home/username/projects/bar
 
 Removing file system /home/username/projects/foo
 Testing file system mapping.
     file system paths:
      - /home/username/projects/bar(id = 1@bar)
-    uriPrefixForPathPrefix:
-        /home/username/projects/bar => 1@bar/
-        /home/username/projects/bar => 1@bar/
+    fileSystemPathForPrefix:
+        /home/username/projects/bar => /home/username/projects/bar
+        /home/username/projects/bar => /home/username/projects/bar
 
 Removing file system /home/username/projects/bar
 Testing file system mapping.
     file system paths:
-    uriPrefixForPathPrefix:
+    fileSystemPathForPrefix:
 
 

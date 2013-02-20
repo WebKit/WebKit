@@ -1,14 +1,15 @@
 Tests FileMapping
 
-uri:/home/example.com
-uri:/home/example.com/
-uri:/var/www/index.html
-uri:/var/www/foo/index.html
-https://localhost
-http://example.com
-http://www.example.com
-http://www.example.com/
-http://localhost/index.html
-http://localhost/foo/index.html
-All mappings were correct.
+Test mappingEntryForURL
+    http://www.example.com -> null
+    http://www.example.com/ -> /home/example.com/
+    http://localhost/index.html -> /var/www/
+    http://localhost/foo/index.html -> /var/www/
+    https://localhost -> null
+    http://example.com -> null
+Test mappingEntryForPath
+    /home/example.com -> null
+    /home/example.com/ -> http://www.example.com/
+    /var/www/index.html -> http://localhost/
+    /var/www/foo/index.html -> http://localhost/
 

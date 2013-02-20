@@ -548,8 +548,7 @@ WebInspector.CSSStyleModel.prototype = {
             if (uiLocation)
                 return uiLocation;
         }
-        var uri = WebInspector.fileMapping.uriForURL(rawLocation.url);
-        var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+        var uiSourceCode = this._workspace.uiSourceCodeForURL(rawLocation.url);
         if (!uiSourceCode)
             return null;
         return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber, rawLocation.columnNumber);

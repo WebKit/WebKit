@@ -33,12 +33,12 @@
  * @implements {WebInspector.ProjectDelegate}
  * @extends {WebInspector.Object}
  * @param {WebInspector.IsolatedFileSystem} isolatedFileSystem
- * @param {WebInspector.FileMapping} fileMapping
+ * @param {WebInspector.Workspace} workspace
  */
-WebInspector.FileSystemProjectDelegate = function(isolatedFileSystem, fileMapping)
+WebInspector.FileSystemProjectDelegate = function(isolatedFileSystem, workspace)
 {
     this._fileSystem = isolatedFileSystem;
-    this._fileMapping = fileMapping;
+    this._workspace = workspace;
 }
 
 WebInspector.FileSystemProjectDelegate._scriptExtensions = ["js", "java", "cc", "cpp", "h", "cs", "py", "php"].keySet();
@@ -163,7 +163,7 @@ WebInspector.FileSystemProjectDelegate.prototype = {
             for (var i = 0; i < files.length; ++i) {
                 var fullPath = this._fileSystem.path() + files[i];
                 var path = files[i].substr(1); 
-                var url = this._fileMapping.urlForPath(fullPath);
+                var url = this._workspace.urlForPath(fullPath);
                 var contentType = this._contentTypeForPath(path);
                 var fileDescriptor = new WebInspector.FileDescriptor(path, "file://" + fullPath, url, contentType, true);
                 this._addFile(fileDescriptor);
@@ -202,35 +202,32 @@ WebInspector.fileSystemProjectDelegate = null;
 
 /**
  * @constructor
- * @implements {WebInspector.ProjectDelegate}
  * @param {WebInspector.IsolatedFileSystemManager} isolatedFileSystemManager
  * @param {WebInspector.Workspace} workspace
- * @param {WebInspector.FileMapping} fileMapping
  */
-WebInspector.FileSystemWorkspaceProvider = function(isolatedFileSystemManager, workspace, fileMapping)
+WebInspector.FileSystemWorkspaceProvider = function(isolatedFileSystemManager, workspace)
 {
     this._isolatedFileSystemManager = isolatedFileSystemManager;
     this._workspace = workspace;
-    this._fileMapping = fileMapping;
     this._isolatedFileSystemManager.addEventListener(WebInspector.IsolatedFileSystemManager.Events.FileSystemAdded, this._fileSystemAdded, this);
     this._isolatedFileSystemManager.addEventListener(WebInspector.IsolatedFileSystemManager.Events.FileSystemRemoved, this._fileSystemRemoved, this);
 }
 
 WebInspector.FileSystemWorkspaceProvider.prototype = {
     /**
-     * @param {WebInspector.event} event
+     * @param {WebInspector.Event} event
      */
     _fileSystemAdded: function(event)
     {
         var fileSystem = /** @type {WebInspector.IsolatedFileSystem} */ (event.data);
         console.assert(!this._workspace.project(fileSystem.id()));
-        var projectDelegate = new WebInspector.FileSystemProjectDelegate(fileSystem, this._fileMapping)
+        var projectDelegate = new WebInspector.FileSystemProjectDelegate(fileSystem, this._workspace)
         this._workspace.addProject(projectDelegate);
         projectDelegate.populate();
     },
 
     /**
-     * @param {WebInspector.event} event
+     * @param {WebInspector.Event} event
      */
     _fileSystemRemoved: function(event)
     {

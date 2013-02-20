@@ -117,8 +117,7 @@ WebInspector.SASSSourceMapping.prototype = {
 
     _reloadCSS: function(url)
     {
-        var uri = WebInspector.fileMapping.uriForURL(url);
-        var uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+        var uiSourceCode = this._workspace.uiSourceCodeForURL(url);
         if (!uiSourceCode)
             return;
         var newContent = InspectorFrontendHost.loadResourceSynchronously(url);
@@ -230,8 +229,7 @@ WebInspector.SASSSourceMapping.prototype = {
         var sources = sourceMap.sources();
         for (var i = 0; i < sources.length; ++i) {
             var url = sources[i];
-            var uri = WebInspector.fileMapping.uriForURL(url);
-            if (!WebInspector.fileMapping.hasMappingForURL(url) && !this._workspace.uiSourceCodeForURI(uri)) {
+            if (!this._workspace.hasMappingForURL(url) && !this._workspace.uiSourceCodeForURL(url)) {
                 var content = InspectorFrontendHost.loadResourceSynchronously(url);
                 var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
                 var uiSourceCode = this._networkWorkspaceProvider.addFileForURL(url, contentProvider, true);
@@ -251,15 +249,13 @@ WebInspector.SASSSourceMapping.prototype = {
     {
         var location = /** @type WebInspector.CSSLocation */ (rawLocation);
         var entry;
-        var uiSourceCode;
         var sourceMap = this._sourceMapByStyleSheetURL[location.url];
         if (!sourceMap)
             return null;
         entry = sourceMap.findEntry(location.lineNumber, location.columnNumber);
         if (!entry || entry.length === 2)
             return null;
-        var uri = WebInspector.fileMapping.uriForURL(entry[2]);
-        uiSourceCode = this._workspace.uiSourceCodeForURI(uri);
+        var uiSourceCode = this._workspace.uiSourceCodeForURL(entry[2]);
         if (!uiSourceCode)
             return null;
         return new WebInspector.UILocation(uiSourceCode, entry[3], entry[4]);

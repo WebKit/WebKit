@@ -415,7 +415,10 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     InspectorBackend.registerInspectorDispatcher(this);
 
-    this.workspace = new WebInspector.Workspace();
+    this.isolatedFileSystemManager = new WebInspector.IsolatedFileSystemManager();
+    this.isolatedFileSystemDispatcher = new WebInspector.IsolatedFileSystemDispatcher(this.isolatedFileSystemManager);
+    this.fileMapping = new WebInspector.FileMapping();
+    this.workspace = new WebInspector.Workspace(this.fileMapping, this.isolatedFileSystemManager.mapping());
 
     this.cssModel = new WebInspector.CSSStyleModel(this.workspace);
     this.timelineManager = new WebInspector.TimelineManager();
@@ -438,13 +441,10 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     this.workspaceController = new WebInspector.WorkspaceController(this.workspace);
 
-    this.isolatedFileSystemManager = new WebInspector.IsolatedFileSystemManager();
-    this.isolatedFileSystemDispatcher = new WebInspector.IsolatedFileSystemDispatcher(this.isolatedFileSystemManager);
-    this.fileMapping = new WebInspector.FileMapping(this.isolatedFileSystemManager.mapping());
-    this.fileSystemWorkspaceProvider = new WebInspector.FileSystemWorkspaceProvider(this.isolatedFileSystemManager, this.workspace, this.fileMapping);
+    this.fileSystemWorkspaceProvider = new WebInspector.FileSystemWorkspaceProvider(this.isolatedFileSystemManager, this.workspace);
 
     this.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(this.workspace, WebInspector.projectTypes.Network);
-    new WebInspector.NetworkUISourceCodeProvider(this.networkWorkspaceProvider);
+    new WebInspector.NetworkUISourceCodeProvider(this.networkWorkspaceProvider, this.workspace);
 
     this.breakpointManager = new WebInspector.BreakpointManager(WebInspector.settings.breakpoints, this.debuggerModel, this.workspace);
 
@@ -452,7 +452,7 @@ WebInspector._doLoadedDoneWithCapabilities = function()
 
     new WebInspector.DebuggerScriptMapping(this.workspace, this.networkWorkspaceProvider);
     this.liveEditSupport = new WebInspector.LiveEditSupport(this.workspace);
-    this.styleContentBinding = new WebInspector.StyleContentBinding(this.cssModel);
+    this.styleContentBinding = new WebInspector.StyleContentBinding(this.cssModel, this.workspace);
     new WebInspector.StylesSourceMapping(this.cssModel, this.workspace);
     if (WebInspector.experimentsSettings.sass.isEnabled())
         new WebInspector.SASSSourceMapping(this.cssModel, this.workspace, this.networkWorkspaceProvider);

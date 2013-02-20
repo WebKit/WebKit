@@ -34,7 +34,7 @@
  */
 WebInspector.IsolatedFileSystemManager = function()
 {
-    /** @type {!Object.<string, WebInspector.IsolatedFileSystemManager.FileSystem>} */
+    /** @type {!Object.<string, WebInspector.IsolatedFileSystem>} */
     this._fileSystems = {};
     /** @type {Object.<string, Array.<function(DOMFileSystem)>>} */
     this._pendingFileSystemRequests = {};

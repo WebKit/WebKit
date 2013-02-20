@@ -31,15 +31,15 @@ function test()
             var id = fileSystemMapping.fileSystemId(fileSystemPaths[i]);
             InspectorTest.addResult("     - " + fileSystemPaths[i] + "(id = " + id + ")");
         }
-        InspectorTest.addResult("    uriPrefixForPathPrefix:");
-        // Call uriPrefixForPathPrefix twice for each path prefix to check caching.
+        InspectorTest.addResult("    fileSystemPathForPrefix:");
+        // Call fileSystemPathForPrefix twice for each path prefix to check caching.
         for (var i = 0; i < 2; ++i) {
             for (pathId in paths) {
                 var pathPrefix = paths[pathId];
-                var uriPrefix = fileSystemMapping.uriPrefixForPathPrefix(pathPrefix + "/");
-                if (!uriPrefix)
+                var fileSystemPath = fileSystemMapping.fileSystemPathForPrefix(pathPrefix + "/");
+                if (!fileSystemPath)
                     continue;
-                InspectorTest.addResult("        " + pathPrefix + " => " + uriPrefix);
+                InspectorTest.addResult("        " + pathPrefix + " => " + fileSystemPath);
             }
         }
         InspectorTest.addResult("");

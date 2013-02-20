@@ -44,7 +44,7 @@ function test()
     MockIsolatedFileSystemManager.prototype = {
         addMockFileSystem: function(path, files)
         {
-            var id = this.fileSystemMapping.addFileSystemMapping(path);
+            var id = InspectorTest.testFileSystemMapping.addFileSystemMapping(path);
             var fileSystem = new MockIsolatedFileSystem(id, path, files);
             this._fileSystems = this._fileSystems || {};
             this._fileSystems[path] = fileSystem;
@@ -55,6 +55,7 @@ function test()
         {
             var fileSystem = this._fileSystems[path];
             delete this._fileSystems[path];
+            InspectorTest.testFileSystemMapping.removeFileSystemMapping(path);
             this.dispatchEventToListeners(WebInspector.IsolatedFileSystemManager.Events.FileSystemRemoved, fileSystem);
         },
 
@@ -65,11 +66,7 @@ function test()
     {
         InspectorTest.createWorkspace();
         var manager = new MockIsolatedFileSystemManager();
-        manager.fileSystemMapping = new WebInspector.FileSystemMappingImpl();
-        manager.fileSystemMapping._fileSystemMappingSetting = new InspectorTest.MockSetting({});
-        InspectorTest.MockSetting
-        manager.fileMapping = new WebInspector.FileMapping(manager.fileSystemMapping);
-        manager.fileSystemWorkspaceProvider = new WebInspector.FileSystemWorkspaceProvider(manager, InspectorTest.testWorkspace, manager.fileMapping);
+        manager.fileSystemWorkspaceProvider = new WebInspector.FileSystemWorkspaceProvider(manager, InspectorTest.testWorkspace);
         return manager;
     }
 
@@ -95,7 +92,7 @@ function test()
             var manager = createIsolatedFileSystemManager();
             var entry1 = new WebInspector.FileMapping.Entry("http://localhost/", "/var/www/localhost/");
             var entry2 = new WebInspector.FileMapping.Entry("http://www.example.com/", "/foo/bar/");
-            manager.fileMapping.setMappingEntries([entry1, entry2]);
+            InspectorTest.testFileMapping.setMappingEntries([entry1, entry2]);
             InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(uiSourceCodeAdded, 3);
             InspectorTest.addResult("Adding first file system.");
             manager.addMockFileSystem("/var/www", {"/localhost/foo.js": "<foo content>", "/bar.js": "<bar content>"});
@@ -123,7 +120,7 @@ function test()
                     var url = uiSourceCodes[i].url;
                     if (!url)
                         continue;
-                    var uri = manager.fileMapping.uriForURL(url);
+                    var uri = InspectorTest.testWorkspace.uiSourceCodeForURL(url).uri();
                     InspectorTest.addResult("    " + url + " -> " + uri);
                 }
                 var uiSourceCodesCount = InspectorTest.testWorkspace.uiSourceCodes().length;

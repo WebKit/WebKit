@@ -58,8 +58,7 @@ WebInspector.displayNameForURL = function(url)
     if (resource)
         return resource.displayName;
 
-    var uri = WebInspector.fileMapping.uriForURL(url);
-    var uiSourceCode = WebInspector.workspace.uiSourceCodeForURI(uri);
+    var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(url);
     if (uiSourceCode)
         return uiSourceCode.parsedURL.displayName;
 

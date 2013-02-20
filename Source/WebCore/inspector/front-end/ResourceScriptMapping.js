@@ -138,8 +138,7 @@ WebInspector.ResourceScriptMapping.prototype = {
         // FIXME: workaround for script.isDynamicScript() being unreliable.
         if (!script.isInlineScript() && this._inlineScriptsForSourceURL[script.sourceURL])
             return null;
-        var uri = WebInspector.fileMapping.uriForURL(script.sourceURL);
-        return this._workspace.uiSourceCodeForURI(uri);
+        return this._workspace.uiSourceCodeForURL(script.sourceURL);
     },
 
     /**

@@ -278,14 +278,14 @@ function test()
                 "sourcesContent":["<source content>"]
             };
             script.sourceMapURL = "data:application/json;base64," + btoa(JSON.stringify(sourceMap));
-            InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
+            InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(compiledUISourceCodeAdded);
 
-            function originalUISourceCodeAdded(uiSourceCode)
+            function compiledUISourceCodeAdded(uiSourceCode)
             {
-                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(compiledUISourceCodeAdded);
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
             }
 
-            function compiledUISourceCodeAdded(uiSourceCode) { }
+            function originalUISourceCodeAdded(uiSourceCode) { }
             
             defaultScriptMapping.addScript(script);
             resourceScriptMapping.addScript(script);
@@ -309,11 +309,19 @@ function test()
         {
             WebInspector.settings.sourceMapsEnabled.set(true);
             WebInspector.debuggerModel._reset();
-            var workspace = new WebInspector.Workspace();
-            var networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Network);
-            var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping(workspace, networkWorkspaceProvider);
+            InspectorTest.createWorkspace();
+            var debuggerScriptMapping = new WebInspector.DebuggerScriptMapping(InspectorTest.testWorkspace, InspectorTest.testNetworkWorkspaceProvider);
 
+            InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(compiledUISourceCodeAdded);
             var script = InspectorTest.createScriptMock("compiled.js", 0, 0, true, "");
+
+            function compiledUISourceCodeAdded(uiSourceCode)
+            {
+                InspectorTest.waitForWorkspaceUISourceCodeAddedEvent(originalUISourceCodeAdded);
+            }
+
+            function originalUISourceCodeAdded(uiSourceCode) { }
+
             script.sourceMapURL = "http://localhost:8000/inspector/resources/source-map.json_";
             console.error = function() {}; // Error message is platform dependent.
             debuggerScriptMapping._parsedScriptSource({data:script});
