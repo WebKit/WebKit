@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -111,6 +111,20 @@ void ResourceHandle::fireFailure(Timer<ResourceHandle>*)
     }
 
     ASSERT_NOT_REACHED();
+}
+
+void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+{
+#if ENABLE(BLOB)
+    // FIXME: This should use a more generic mechanism, like builtinResourceHandleConstructorMap we have for async requests.
+    if (request.url().protocolIs("blob"))
+        if (blobRegistry().loadResourceSynchronously(request, error, response, data))
+            return;
+#endif
+
+    ASSERT(builtinResourceHandleConstructorMap().find(request.url().protocol()) == builtinResourceHandleConstructorMap().end());
+
+    platformLoadResourceSynchronously(context, request, storedCredentials, error, response, data);
 }
 
 ResourceHandleClient* ResourceHandle::client() const

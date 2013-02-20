@@ -132,7 +132,7 @@ void ResourceHandle::cancel()
     setClient(0);
 }
 
-void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     if (!context || !context->isValid()) {
         ASSERT(false && "loadResourceSynchronously called with invalid networking context");

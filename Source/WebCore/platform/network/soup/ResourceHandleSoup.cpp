@@ -1270,15 +1270,8 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-#if ENABLE(BLOB)
-    if (request.url().protocolIs("blob")) {
-        blobRegistry().loadResourceSynchronously(request, error, response, data);
-        return;
-    }
-#endif
- 
     ASSERT(!loadingSynchronousRequest);
     if (loadingSynchronousRequest) // In practice this cannot happen, but if for some reason it does,
         return;                    // we want to avoid accidentally going into an infinite loop of requests.

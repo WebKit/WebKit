@@ -30,7 +30,6 @@
 #include "config.h"
 #include "ResourceHandle.h"
 
-#include "BlobRegistry.h"
 #include "CachedResourceLoader.h"
 #include "Frame.h"
 #include "FrameNetworkingContext.h"
@@ -124,14 +123,8 @@ bool ResourceHandle::loadsBlocked()
     return false;
 }
 
-void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials /*storedCredentials*/, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-#if ENABLE(BLOB)
-    if (request.url().protocolIs("blob")) {
-        blobRegistry().loadResourceSynchronously(request, error, response, data);
-        return;
-    }
-#endif
     WebCoreSynchronousLoader syncLoader(error, response, data);
     RefPtr<ResourceHandle> handle = adoptRef(new ResourceHandle(context, request, &syncLoader, true, false));
 
