@@ -30,7 +30,7 @@ function test()
         },
 
         addUISourceCode: function(path) {
-            var fileDescriptor = new WebInspector.FileDescriptor(path, path, path, WebInspector.resourceTypes.Script, true, false);
+            var fileDescriptor = new WebInspector.FileDescriptor(path.split("/"), path, path, WebInspector.resourceTypes.Script, true, false);
             this.dispatchEventToListeners(WebInspector.ProjectDelegate.Events.FileAdded, fileDescriptor);
         },
 

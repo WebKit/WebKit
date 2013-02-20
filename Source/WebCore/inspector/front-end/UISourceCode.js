@@ -34,7 +34,7 @@
  * @extends {WebInspector.Object}
  * @implements {WebInspector.ContentProvider}
  * @param {WebInspector.Project} project
- * @param {string} path
+ * @param {Array.<string>} path
  * @param {string} url
  * @param {WebInspector.ResourceType} contentType
  * @param {boolean} isEditable
@@ -81,37 +81,6 @@ WebInspector.UISourceCode.Events = {
     SourceMappingChanged: "SourceMappingChanged",
 }
 
-/**
- * @param {string} projectId
- * @param {string} path
- * @return {string}
- */
-WebInspector.UISourceCode.uri = function(projectId, path)
-{
-    if (!projectId)
-        return path;
-    if (!path)
-        return projectId;
-    return projectId + "/" + path;
-}
-
-/**
- * @param {string} projectId
- * @param {string} uri
- * @return {?string}
- */
-WebInspector.UISourceCode.path = function(projectId, uri)
-{
-    if (!projectId)
-        return uri;
-    if (!uri.startsWith(projectId))
-        return null;
-    var path = uri.substr(projectId.length);
-    if (path.length && path[0] === "/")
-        path = path.substr(1);
-    return path;
-}
-
 WebInspector.UISourceCode.prototype = {
     /**
      * @return {string}
@@ -122,7 +91,7 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @return {string}
+     * @return {Array.<string>}
      */
     path: function()
     {
@@ -134,7 +103,11 @@ WebInspector.UISourceCode.prototype = {
      */
     uri: function()
     {
-        return WebInspector.UISourceCode.uri(this._project.id(), this._path);
+        if (!this._project.id())
+            return this._path.join("/");
+        if (!this._path.length)
+            return this._project.id();
+        return this._project.id() + "/" + this._path.join("/");
     },
 
     /**

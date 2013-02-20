@@ -69,16 +69,16 @@ WebInspector.FileSystemProjectDelegate.prototype = {
     },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @return {string}
      */
     _filePathForPath: function(path)
     {
-        return "/" + path;
+        return "/" + path.join("/");
     },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @param {function(?string,boolean,string)} callback
      */
     requestFileContent: function(path, callback)
@@ -91,13 +91,13 @@ WebInspector.FileSystemProjectDelegate.prototype = {
          */
         function innerCallback(content)
         {
-            var contentType = this._contentTypeForPath(filePath);
+            var contentType = this._contentTypeForPath(path);
             callback(content, false, contentType.canonicalMimeType());
         }
     },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @param {string} newContent
      * @param {function(?string)} callback
      */
@@ -108,7 +108,7 @@ WebInspector.FileSystemProjectDelegate.prototype = {
     },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @param {string} query
      * @param {boolean} caseSensitive
      * @param {boolean} isRegex
@@ -133,13 +133,12 @@ WebInspector.FileSystemProjectDelegate.prototype = {
     },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @return {WebInspector.ResourceType}
      */
     _contentTypeForPath: function(path)
     {
-        var splittedPath = path.split("/");
-        var fileName = splittedPath[splittedPath.length - 1];
+        var fileName = path[path.length - 1];
         var extensionIndex = fileName.lastIndexOf(".");
         var extension = "";
         if (extensionIndex !== -1)
@@ -161,8 +160,10 @@ WebInspector.FileSystemProjectDelegate.prototype = {
         function filesLoaded(files)
         {
             for (var i = 0; i < files.length; ++i) {
+                var path = files[i].split("/");
+                path.shift();
+                console.assert(path.length);
                 var fullPath = this._fileSystem.path() + files[i];
-                var path = files[i].substr(1); 
                 var url = this._workspace.urlForPath(fullPath);
                 var contentType = this._contentTypeForPath(path);
                 var fileDescriptor = new WebInspector.FileDescriptor(path, "file://" + fullPath, url, contentType, true);
@@ -180,7 +181,7 @@ WebInspector.FileSystemProjectDelegate.prototype = {
     },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      */
     _removeFile: function(path)
     {

@@ -49,7 +49,7 @@ WebInspector.WorkspaceController.prototype = {
 
 /**
  * @constructor
- * @param {string} path
+ * @param {Array.<string>} path
  * @param {string} originURL
  * @param {string} url
  * @param {WebInspector.ResourceType} contentType
@@ -94,20 +94,20 @@ WebInspector.ProjectDelegate.prototype = {
     displayName: function() { }, 
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @param {function(?string,boolean,string)} callback
      */
     requestFileContent: function(path, callback) { },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @param {string} newContent
      * @param {function(?string)} callback
      */
     setFileContent: function(path, newContent, callback) { },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @param {string} query
      * @param {boolean} caseSensitive
      * @param {boolean} isRegex
@@ -194,17 +194,17 @@ WebInspector.Project.prototype = {
         }
         uiSourceCode = new WebInspector.UISourceCode(this, fileDescriptor.path, fileDescriptor.originURL, fileDescriptor.url, fileDescriptor.contentType, fileDescriptor.isEditable); 
         uiSourceCode.isContentScript = fileDescriptor.isContentScript;
-        this._uiSourceCodes[uiSourceCode.path()] = uiSourceCode;
+        this._uiSourceCodes[uiSourceCode.path().join("/")] = uiSourceCode;
         this._workspace.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, uiSourceCode);
     },
 
     _fileRemoved: function(event)
     {
-        var path = /** @type {string} */ (event.data);
+        var path = /** @type {Array.<string>} */ (event.data);
         var uiSourceCode = this.uiSourceCode(path);
         if (!uiSourceCode)
             return;
-        delete this._uiSourceCodes[uiSourceCode.path()];
+        delete this._uiSourceCodes[uiSourceCode.path().join("/")];
         this._workspace.dispatchEventToListeners(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, uiSourceCode);
     },
 
@@ -215,12 +215,12 @@ WebInspector.Project.prototype = {
     },
 
     /**
-     * @param {string} path
+     * @param {Array.<string>} path
      * @return {?WebInspector.UISourceCode}
      */
     uiSourceCode: function(path)
     {
-        return this._uiSourceCodes[path] || null;
+        return this._uiSourceCodes[path.join("/")] || null;
     },
 
     /**
@@ -235,18 +235,6 @@ WebInspector.Project.prototype = {
                 return uiSourceCode;
         }
         return null;
-    },
-
-    /**
-     * @param {string} uri
-     * @return {?WebInspector.UISourceCode}
-     */
-    uiSourceCodeForURI: function(uri)
-    {
-        var path = WebInspector.UISourceCode.path(this.id(), uri);
-        if (typeof path !== "string")
-            return null;
-        return this._uiSourceCodes[path];
     },
 
     /**
@@ -326,7 +314,7 @@ WebInspector.Workspace.Events = {
 WebInspector.Workspace.prototype = {
     /**
      * @param {string} projectId
-     * @param {string} path
+     * @param {Array.<string>} path
      * @return {?WebInspector.UISourceCode}
      */
     uiSourceCode: function(projectId, path)
@@ -345,21 +333,6 @@ WebInspector.Workspace.prototype = {
         for (var i = 0; i < networkProjects.length; ++i) {
             var project = networkProjects[i];
             var uiSourceCode = project.uiSourceCodeForOriginURL(originURL);
-            if (uiSourceCode)
-                return uiSourceCode;
-        }
-        return null;
-    },
-
-    /**
-     * @param {string} uri
-     * @return {?WebInspector.UISourceCode}
-     */
-    uiSourceCodeForURI: function(uri)
-    {
-        for (var projectId in this._projects) {
-            var project = this._projects[projectId];
-            var uiSourceCode = project.uiSourceCodeForURI(uri);
             if (uiSourceCode)
                 return uiSourceCode;
         }
@@ -487,7 +460,7 @@ WebInspector.Workspace.prototype = {
         var pathPrefix = entry.pathPrefix.substr(fileSystemPath.length + 1);
         var path = pathPrefix + url.substr(entry.urlPrefix.length);
         var project = this.project(projectId);
-        return project ? project.uiSourceCode(path) : null;
+        return project ? project.uiSourceCode(path.split("/")) : null;
     },
 
     /**
