@@ -43,7 +43,7 @@ public:
     CachedResourceRequest resourceRequest(Document*);
 
     const String& charset() const { return m_charset; }
-    void setCharset(const String& charset) { m_charset = charset; }
+    void setCharset(const String& charset) { m_charset = charset.isolatedCopy(); }
     void setCrossOriginModeAllowsCookies(bool allowsCookies) { m_crossOriginModeAllowsCookies = allowsCookies; }
     CachedResource::Type resourceType() const { return m_resourceType; }
 
