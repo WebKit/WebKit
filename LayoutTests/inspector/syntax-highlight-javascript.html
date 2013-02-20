@@ -24,6 +24,9 @@ function test()
     dumpSyntaxHighlightJS("foo/**\n/\n*/foo");
     dumpSyntaxHighlightJS("{0: true}");
     dumpSyntaxHighlightJS("var toString;");
+    dumpSyntaxHighlightJS("var foo = undefined;");
+    dumpSyntaxHighlightJS("var foo = Infinity;");
+    dumpSyntaxHighlightJS("var foo = NaN;");
 
     InspectorTest.completeTest();
 }

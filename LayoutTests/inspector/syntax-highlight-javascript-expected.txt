@@ -17,4 +17,7 @@ foo/**
 */foo: webkit-javascript-ident,webkit-javascript-comment,,webkit-javascript-comment,,webkit-javascript-comment,webkit-javascript-ident
 {0: true}: webkit-block-start,webkit-javascript-number,*,webkit-whitespace,webkit-javascript-keyword,webkit-block-end
 var toString;: webkit-javascript-keyword,webkit-whitespace,webkit-javascript-ident,*
+var foo = undefined;: webkit-javascript-keyword,webkit-whitespace,webkit-javascript-ident,webkit-whitespace,*,webkit-whitespace,webkit-javascript-undef,*
+var foo = Infinity;: webkit-javascript-keyword,webkit-whitespace,webkit-javascript-ident,webkit-whitespace,*,webkit-whitespace,webkit-javascript-inf,*
+var foo = NaN;: webkit-javascript-keyword,webkit-whitespace,webkit-javascript-ident,webkit-whitespace,*,webkit-whitespace,webkit-javascript-nan,*
 

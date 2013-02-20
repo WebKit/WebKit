@@ -50,6 +50,10 @@
     color: rgb(200, 0, 180);
 }
 
+.webkit-javascript-undef {
+    color: rgb(123, 123, 123);
+}
+
 .webkit-javascript-comment {
     color: rgb(0, 116, 0);
 }
