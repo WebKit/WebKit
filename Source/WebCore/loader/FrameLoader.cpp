@@ -744,6 +744,7 @@ bool FrameLoader::allAncestorsAreComplete() const
 
 void FrameLoader::checkCompleted()
 {
+    RefPtr<Frame> protect(m_frame);
     m_shouldCallCheckCompleted = false;
 
     if (m_frame->view())
@@ -774,7 +775,6 @@ void FrameLoader::checkCompleted()
     m_requestedHistoryItem = 0;
     m_frame->document()->setReadyState(Document::Complete);
 
-    RefPtr<Frame> protect(m_frame);
     checkCallImplicitClose(); // if we didn't do it before
 
     m_frame->navigationScheduler()->startTimer();
