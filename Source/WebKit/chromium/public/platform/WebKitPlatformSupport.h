@@ -28,18 +28,4 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitPlatformSupport_h
-#define WebKitPlatformSupport_h
-
 #include "../../../../Platform/chromium/public/Platform.h"
-
-namespace WebKit {
-
-class WebKitPlatformSupport : public Platform {
-protected:
-    ~WebKitPlatformSupport() { }
-};
-
-} // namespace WebKit
-
-#endif

@@ -1,3 +1,19 @@
+2013-02-20  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Move WebKitPlatformSupport declaration to Platform.h
+        https://bugs.webkit.org/show_bug.cgi?id=110262
+
+        Reviewed by Adam Barth.
+
+        In preparation for removing WebKitPlatformSupport.h entirely (once
+        downstream references to that file have been updated). Part of a
+        larger refactoring series; see tracking bug 82948.
+
+        * chromium/public/Platform.h:
+        (WebKitPlatformSupport):
+        (WebKit::WebKitPlatformSupport::~WebKitPlatformSupport):
+        (WebKit):
+
 2013-02-19  Adrienne Walker  <enne@chromium.org>
 
         Unreviewed, rolling out r143382 and r143401.
