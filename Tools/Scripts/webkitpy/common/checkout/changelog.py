@@ -104,6 +104,8 @@ class ChangeLogEntry(object):
     # e.g. git-svn-id: http://svn.webkit.org/repository/webkit/trunk@96161 268f45cc-cd09-0410-ab3c-d52691b4dbfc
     svn_id_regexp = r'git-svn-id: http://svn.webkit.org/repository/webkit/trunk@(?P<svnid>\d+) '
 
+    split_names_regexp = r'\s*(?:,(?:\s+and\s+|&)?|(?:^|\s+)and\s+|&&|[/+&])\s*'
+
     def __init__(self, contents, committer_list=CommitterList(), revision=None):
         self._contents = contents
         self._committer_list = committer_list
@@ -131,7 +133,7 @@ class ChangeLogEntry(object):
         if not len(reviewer_text):
             return None, None
 
-        reviewer_list = ChangeLogEntry._split_contributor_names(reviewer_text)
+        reviewer_list = ChangeLogEntry._split_reviewer_names(reviewer_text)
 
         # Get rid of "reviewers" like "even though this is just a..." in "Reviewed by Sam Weinig, even though this is just a..."
         # and "who wrote the original code" in "Noam Rosenthal, who wrote the original code"
@@ -140,8 +142,16 @@ class ChangeLogEntry(object):
         return reviewer_text, reviewer_list
 
     @classmethod
-    def _split_contributor_names(cls, text):
-        return re.split(r'\s*(?:,(?:\s+and\s+|&)?|(?:^|\s+)and\s+|&&|[/+&])\s*', text)
+    def _split_reviewer_names(cls, text):
+        return re.split(ChangeLogEntry.split_names_regexp, text)
+
+    @classmethod
+    def _split_author_names_with_emails(cls, text):
+        regex = '>' + ChangeLogEntry.split_names_regexp
+        names = re.split(regex, text)
+        if len(names) > 1:
+            names = [name + ">" for name in names[:-1]] + [names[-1]]
+        return names
 
     def _fuzz_match_reviewers(self, reviewers_text_list):
         if not reviewers_text_list:
@@ -159,7 +169,7 @@ class ChangeLogEntry(object):
     def _parse_author_text(cls, text):
         if not text:
             return []
-        authors = cls._split_contributor_names(text)
+        authors = cls._split_author_names_with_emails(text)
         assert(authors and len(authors) >= 1)
         return [cls._parse_author_name_and_email(author) for author in authors]
 
