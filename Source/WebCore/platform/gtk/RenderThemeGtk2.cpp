@@ -528,12 +528,8 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& inf
 void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     ControlPart part = style->appearance();
-#if ENABLE(VIDEO)
-    if (part == MediaSliderThumbPart) {
-        adjustMediaSliderThumbSize(style);
+    if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
         return;
-    }
-#endif
 
     GtkWidget* widget = part == SliderThumbHorizontalPart ? gtkHScale() : gtkVScale();
     int length = 0, width = 0;
@@ -670,6 +666,10 @@ GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconN
                                               static_cast<GtkIconSize>(iconSize), 0, 0));
 }
 
+GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char *fallbackStockIconName, gint direction, gint state, gint iconSize)
+{
+    return getStockIconForWidgetType(widgetType, fallbackStockIconName, direction, state, iconSize);
+}
 
 Color RenderThemeGtk::platformActiveSelectionBackgroundColor() const
 {

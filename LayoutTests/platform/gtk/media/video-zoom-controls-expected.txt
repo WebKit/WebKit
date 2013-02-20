@@ -10,47 +10,35 @@ layer at (57,85) size 240x180
   RenderVideo {VIDEO} at (45,73) size 240x180
 layer at (57,85) size 240x180
   RenderFlexibleBox {DIV} at (0,0) size 240x180
-layer at (57,85) size 240x180 scrollHeight 194
-  RenderFlexibleBox {DIV} at (0,0) size 240x180
-    RenderButton {INPUT} at (0,150) size 30x30
-    RenderFlexibleBox {DIV} at (30,150) size 90x30 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 88x44
-        RenderFlexibleBox {DIV} at (88,0) size 0x44
-          RenderBlock (anonymous) at (7,7) size 74x30
-            RenderText {#text} at (15,0) size 44x35
-              text run at (15,0) width 44: "00:00 /"
-              text run at (19,17) width 36: "00:06"
-      RenderSlider {INPUT} at (89,0) size 6x30
-        RenderFlexibleBox {DIV} at (3,0) size 0x30
-          RenderBlock {DIV} at (0,9) size 0x12
-            RenderBlock {DIV} at (0,0) size 12x12
-    RenderButton {INPUT} at (120,150) size 30x30
-    RenderButton {INPUT} at (150,150) size 30x30
-    RenderButton {INPUT} at (180,150) size 30x30
-    RenderBlock {DIV} at (210,150) size 30x30
-layer at (267,235) size 30x30
-  RenderButton zI: 2 {INPUT} at (0,0) size 30x30
+    RenderBlock {DIV} at (0,120) size 240x60
+layer at (64,212) size 226x45
+  RenderFlexibleBox {DIV} at (7,7) size 226x45 [bgcolor=#141414CC]
+    RenderButton {INPUT} at (13,0) size 45x45
+    RenderSlider {INPUT} at (72,16) size 37x12 [color=#E6E6E659]
+      RenderFlexibleBox {DIV} at (0,0) size 37x12 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,-3) size 56x18
+          RenderBlock {DIV} at (-10,0) size 18x18 [color=#FFFFFF]
+    RenderFlexibleBox {DIV} at (131,0) size 108x45 [color=#FFFFFF]
+      RenderBlock (anonymous) at (0,0) size 108x45
+        RenderText {#text} at (0,11) size 108x23
+          text run at (0,11) width 108: "00:00 / 00:06"
+    RenderButton {INPUT} at (251,0) size 45x45
+    RenderButton {INPUT} at (299,0) size 45x45
 layer at (57,310) size 240x180
   RenderVideo {VIDEO} at (45,298) size 240x180
 layer at (57,310) size 240x180
   RenderFlexibleBox {DIV} at (0,0) size 240x180
-layer at (57,310) size 240x180 scrollHeight 194
-  RenderFlexibleBox {DIV} at (0,0) size 240x180
-    RenderButton {INPUT} at (0,150) size 30x30
-    RenderFlexibleBox {DIV} at (30,150) size 90x30 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 88x44
-        RenderFlexibleBox {DIV} at (88,0) size 0x44
-          RenderBlock (anonymous) at (7,7) size 74x30
-            RenderText {#text} at (15,0) size 44x35
-              text run at (15,0) width 44: "00:00 /"
-              text run at (19,17) width 36: "00:06"
-      RenderSlider {INPUT} at (89,0) size 6x30
-        RenderFlexibleBox {DIV} at (3,0) size 0x30
-          RenderBlock {DIV} at (0,9) size 0x12
-            RenderBlock {DIV} at (0,0) size 12x12
-    RenderButton {INPUT} at (120,150) size 30x30
-    RenderButton {INPUT} at (150,150) size 30x30
-    RenderButton {INPUT} at (180,150) size 30x30
-    RenderBlock {DIV} at (210,150) size 30x30
-layer at (267,460) size 30x30 backgroundClip at (74,291) size 240x180 clip at (74,291) size 240x180 outlineClip at (74,291) size 240x180
-  RenderButton zI: 2 {INPUT} at (0,0) size 30x30
+    RenderBlock {DIV} at (0,120) size 240x60
+layer at (64,437) size 226x45
+  RenderFlexibleBox {DIV} at (7,7) size 226x45 [bgcolor=#141414CC]
+    RenderButton {INPUT} at (13,0) size 45x45
+    RenderSlider {INPUT} at (72,16) size 37x12 [color=#E6E6E659]
+      RenderFlexibleBox {DIV} at (0,0) size 37x12 [border: (1px solid #E6E6E659)]
+        RenderBlock {DIV} at (1,-3) size 56x18
+          RenderBlock {DIV} at (-10,0) size 18x18 [color=#FFFFFF]
+    RenderFlexibleBox {DIV} at (131,0) size 108x45 [color=#FFFFFF]
+      RenderBlock (anonymous) at (0,0) size 108x45
+        RenderText {#text} at (0,11) size 108x23
+          text run at (0,11) width 108: "00:00 / 00:06"
+    RenderButton {INPUT} at (251,0) size 45x45
+    RenderButton {INPUT} at (299,0) size 45x45

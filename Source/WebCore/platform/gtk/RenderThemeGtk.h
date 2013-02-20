@@ -161,7 +161,6 @@ protected:
 #if ENABLE(VIDEO)
     void initMediaColors();
     void initMediaButtons();
-    void adjustMediaSliderThumbSize(RenderStyle*) const;
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const;
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
@@ -196,7 +195,7 @@ private:
     static double getScreenDPI();
 
 #if ENABLE(VIDEO)
-    bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* iconName);
+    bool paintMediaButton(RenderObject*, GraphicsContext*, const IntRect&, const char* symbolicIconName, const char* fallbackStockIconName);
 #endif
 
 #if ENABLE(PROGRESS_ELEMENT)
@@ -208,8 +207,6 @@ private:
     mutable Color m_sliderThumbColor;
     const int m_mediaIconSize;
     const int m_mediaSliderHeight;
-    const int m_mediaSliderThumbWidth;
-    const int m_mediaSliderThumbHeight;
 
 #ifdef GTK_API_VERSION_2
     void setupWidgetAndAddToContainer(GtkWidget*, GtkWidget*) const;

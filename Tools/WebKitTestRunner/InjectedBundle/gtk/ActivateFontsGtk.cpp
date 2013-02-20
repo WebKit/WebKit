@@ -50,6 +50,7 @@ void initializeGtkSettings()
                  "gtk-xft-hinting", 0,
                  "gtk-font-name", "Liberation Sans 12",
                  "gtk-theme-name", "Raleigh",
+                 "gtk-icon-theme-name", "gnome",
                  "gtk-xft-rgba", "none", NULL);
 }
 

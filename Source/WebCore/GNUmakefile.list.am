@@ -3670,8 +3670,8 @@ webcore_sources += \
 	Source/WebCore/html/shadow/MediaControlElementTypes.h \
 	Source/WebCore/html/shadow/MediaControls.cpp \
 	Source/WebCore/html/shadow/MediaControls.h \
-	Source/WebCore/html/shadow/MediaControlsApple.cpp \
-	Source/WebCore/html/shadow/MediaControlsApple.h \
+	Source/WebCore/html/shadow/MediaControlsGtk.cpp \
+	Source/WebCore/html/shadow/MediaControlsGtk.h \
 	Source/WebCore/html/shadow/MeterShadowElement.cpp \
 	Source/WebCore/html/shadow/MeterShadowElement.h \
 	Source/WebCore/html/shadow/ProgressShadowElement.cpp \

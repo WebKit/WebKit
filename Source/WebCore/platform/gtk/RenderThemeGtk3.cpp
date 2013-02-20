@@ -708,12 +708,8 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInf
 void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style, Element*) const
 {
     ControlPart part = style->appearance();
-#if ENABLE(VIDEO)
-    if (part == MediaSliderThumbPart) {
-        adjustMediaSliderThumbSize(style);
+    if (part != SliderThumbHorizontalPart && part != SliderThumbVerticalPart)
         return;
-    }
-#endif
 
     gint sliderWidth, sliderLength;
     gtk_style_context_get_style(getStyleContext(GTK_TYPE_SCALE),
@@ -895,6 +891,36 @@ GRefPtr<GdkPixbuf> getStockIconForWidgetType(GType widgetType, const char* iconN
     GdkPixbuf* icon = gtk_icon_set_render_icon_pixbuf(iconSet, context, static_cast<GtkIconSize>(iconSize));
 
     gtk_style_context_restore(context);
+
+    return adoptGRef(icon);
+}
+
+GRefPtr<GdkPixbuf> getStockSymbolicIconForWidgetType(GType widgetType, const char* symbolicIconName, const char *fallbackStockIconName, gint direction, gint state, gint iconSize)
+{
+    GtkStyleContext* context = getStyleContext(widgetType);
+
+    gtk_style_context_save(context);
+
+    guint flags = 0;
+    if (state == GTK_STATE_PRELIGHT)
+        flags |= GTK_STATE_FLAG_PRELIGHT;
+    else if (state == GTK_STATE_INSENSITIVE)
+        flags |= GTK_STATE_FLAG_INSENSITIVE;
+
+    gtk_style_context_set_state(context, static_cast<GtkStateFlags>(flags));
+    gtk_style_context_set_direction(context, static_cast<GtkTextDirection>(direction));
+    GtkIconInfo* info = gtk_icon_theme_lookup_icon(gtk_icon_theme_get_default(), symbolicIconName, iconSize,
+        static_cast<GtkIconLookupFlags>(GTK_ICON_LOOKUP_FORCE_SVG | GTK_ICON_LOOKUP_FORCE_SIZE));
+    GdkPixbuf* icon = 0;
+    if (info) {
+        icon = gtk_icon_info_load_symbolic_for_context(info, context, 0, 0);
+        gtk_icon_info_free(info);
+    }
+
+    gtk_style_context_restore(context);
+
+    if (!icon)
+        return getStockIconForWidgetType(widgetType, fallbackStockIconName, direction, state, iconSize);
 
     return adoptGRef(icon);
 }

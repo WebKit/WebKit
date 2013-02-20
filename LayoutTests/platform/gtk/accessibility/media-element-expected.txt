@@ -8,28 +8,24 @@ State at 'canplaythrough' event:
     role: AXRole: AXToolbar
 
 
-        description: AXDescription: play
-        role: AXRole: AXButton
+        description: AXDescription: video element controller
+        role: AXRole: AXToolbar
 
 
-        description: AXDescription: 
-        role: AXRole: AXSlider
+            description: AXDescription: play
+            role: AXRole: AXButton
 
 
-        description: AXDescription: fast reverse
-        role: AXRole: AXButton
+            description: AXDescription: 
+            role: AXRole: AXSlider
 
 
-        description: AXDescription: fast forward
-        role: AXRole: AXButton
+            description: AXDescription: enter fullscreen
+            role: AXRole: AXButton
 
 
-        description: AXDescription: enter fullscreen
-        role: AXRole: AXButton
-
-
-        description: AXDescription: mute
-        role: AXRole: AXButton
+            description: AXDescription: mute
+            role: AXRole: AXButton
 
 
 

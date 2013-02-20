@@ -1,3 +1,19 @@
+2013-02-20  Xabier Rodriguez Calvar  <calvaris@igalia.com>
+
+        [Gtk] HTML5 Media controls require a design refresh
+        https://bugs.webkit.org/show_bug.cgi?id=83869
+
+        Reviewed by Philippe Normand.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (initializeGtkFontSettings): Added gnome as default icon theme for
+        the DRT.
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp:
+        (WTR::initializeGtkSettings): Added gnome as default icon theme for
+        the WTR.
+        * gtk/jhbuild.modules: Added gnome-icon-theme-symbolic as external
+        dependency.
+
 2013-02-20  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] move most of the remaining mocks to TestRunner library

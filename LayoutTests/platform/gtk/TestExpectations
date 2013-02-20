@@ -476,6 +476,18 @@ webkit.org/b/103771 media/track/track-in-band.html [ Failure ]
 webkit.org/b/103771 media/track/track-in-band-cues-added-once.html [ Timeout ]
 webkit.org/b/103771 media/track/track-in-band-style.html [ Timeout ]
 
+#Incorrect rebaseline
+webkit.org/b/107818 media/controls-styling.html [ Failure ]
+
+# New chromium based controls
+webkit.org/b/107825 fullscreen/video-controls-drag.html [ Failure ]
+webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure ]
+webkit.org/b/107825 media/media-volume-slider-rendered-below.html [ Failure ]
+webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure ]
+webkit.org/b/107825 media/video-zoom-controls.html [ Failure ]
+webkit.org/b/107825 media/video-controls-fullscreen-volume.html [ Failure ]
+webkit.org/b/107825 media/media-controls-clone.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1448,16 +1460,6 @@ webkit.org/b/109353 fast/flexbox/line-clamp-link-after-ellipsis.html [ Failure ]
 
 webkit.org/b/109469 fast/css/cursor-parsing-image-set.html [ Failure ]
 webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Timeout ]
-
-webkit.org/b/83869 fast/hidpi/video-controls-in-hidpi.html [ Failure ]
-webkit.org/b/83869 fast/layers/video-layer.html [ Failure ]
-webkit.org/b/83869 media/audio-repaint.html [ Failure ]
-webkit.org/b/83869 media/controls-styling.html [ Failure ]
-webkit.org/b/83869 media/media-controls-clone.html [ Failure ]
-webkit.org/b/83869 media/video-empty-source.html [ Failure ]
-webkit.org/b/83869 media/video-no-audio.html [ Failure ]
-webkit.org/b/83869 media/video-volume-slider.html [ Failure ]
-webkit.org/b/83869 media/video-zoom-controls.html [ Failure ]
 
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ ImageOnlyFailure ]
