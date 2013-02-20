@@ -1,3 +1,10 @@
+2013-02-19  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, fix the Windows build after r143398.
+        Add new setters to the export list.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-02-19  Andrey Adaikin  <aandrey@chromium.org>
 
         Unreviewed, adding external symbol ?didBeginFrame@InspectorCanvasAgent@WebCore@@QAEXXZ.
