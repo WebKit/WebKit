@@ -47,13 +47,13 @@ ScriptValue::~ScriptValue()
 PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState)
 {
     ScriptScope scope(scriptState);
-    return SerializedScriptValue::create(v8ValueRaw());
+    return SerializedScriptValue::create(v8Value());
 }
 
 PassRefPtr<SerializedScriptValue> ScriptValue::serialize(ScriptState* scriptState, MessagePortArray* messagePorts, ArrayBufferArray* arrayBuffers, bool& didThrow)
 {
     ScriptScope scope(scriptState);
-    return SerializedScriptValue::create(v8ValueRaw(), messagePorts, arrayBuffers, didThrow);
+    return SerializedScriptValue::create(v8Value(), messagePorts, arrayBuffers, didThrow);
 }
 
 ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptValue* value)
@@ -64,20 +64,20 @@ ScriptValue ScriptValue::deserialize(ScriptState* scriptState, SerializedScriptV
 
 bool ScriptValue::getString(String& result) const
 {
-    if (hasNoValue())
+    if (m_value.isEmpty())
         return false;
 
-    if (!v8ValueRaw()->IsString())
+    if (!m_value->IsString())
         return false;
 
-    result = toWebCoreString(v8ValueRaw());
+    result = toWebCoreString(m_value.get());
     return true;
 }
 
 String ScriptValue::toString(ScriptState*) const
 {
     v8::TryCatch block;
-    v8::Handle<v8::String> string = v8ValueRaw()->ToString();
+    v8::Handle<v8::String> string = m_value->ToString();
     if (block.HasCaught())
         return String();
     return v8StringToWebCoreString<String>(string, DoNotExternalize);
@@ -142,7 +142,7 @@ PassRefPtr<InspectorValue> ScriptValue::toInspectorValue(ScriptState* scriptStat
     v8::HandleScope handleScope;
     // v8::Object::GetPropertyNames() expects current context to be not null.
     v8::Context::Scope contextScope(scriptState->context());
-    return v8ToInspectorValue(v8ValueRaw(), InspectorValue::maxDepth);
+    return v8ToInspectorValue(m_value.get(), InspectorValue::maxDepth);
 }
 #endif
 

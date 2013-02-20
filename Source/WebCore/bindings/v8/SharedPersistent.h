@@ -38,6 +38,7 @@
 
 namespace WebCore {
 
+    // FIXME: Remove this class.
     template <typename T>
     class SharedPersistent : public RefCounted<SharedPersistent<T> > {
     public:

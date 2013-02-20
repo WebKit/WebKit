@@ -31,8 +31,8 @@
 #ifndef ScriptValue_h
 #define ScriptValue_h
 
+#include "ScopedPersistent.h"
 #include "ScriptState.h"
-#include "SharedPersistent.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -60,37 +60,47 @@ public:
     ScriptValue() { }
     virtual ~ScriptValue();
 
-    ScriptValue(v8::Handle<v8::Value> value)
-        : m_value(value.IsEmpty() ? 0 : SharedPersistent<v8::Value>::create(value))
+    ScriptValue(v8::Handle<v8::Value> value) 
     {
+        if (value.IsEmpty())
+            return;
+        m_value.set(value);
     }
 
-    ScriptValue(const ScriptValue& value)
-        : m_value(value.m_value)
+    ScriptValue(const ScriptValue& value) 
     {
+        if (value.hasNoValue())
+            return;
+        m_value.set(value.m_value.get());
     }
 
     ScriptValue& operator=(const ScriptValue& value) 
     {
-        if (this != &value)
-            m_value = value.m_value;
+        if (this == &value) 
+            return *this;
+
+        m_value.clear();
+
+        if (value.hasNoValue())
+            return *this;
+
+        m_value.set(value.m_value.get());
         return *this;
     }
 
     bool operator==(const ScriptValue& value) const
     {
-        return v8ValueRaw() == value.v8ValueRaw();
+        return m_value.get() == value.m_value.get();
     }
 
     bool isEqual(ScriptState*, const ScriptValue& value) const
     {
-        return operator==(value);
+        return m_value.get() == value.m_value.get();
     }
 
     bool isFunction() const
     {
-        ASSERT(!hasNoValue());
-        return v8ValueRaw()->IsFunction();
+        return m_value->IsFunction();
     }
 
     bool operator!=(const ScriptValue& value) const
@@ -100,25 +110,22 @@ public:
 
     bool isNull() const
     {
-        ASSERT(!hasNoValue());
-        return v8ValueRaw()->IsNull();
+        return m_value->IsNull();
     }
 
     bool isUndefined() const
     {
-        ASSERT(!hasNoValue());
-        return v8ValueRaw()->IsUndefined();
+        return m_value->IsUndefined();
     }
 
     bool isObject() const
     {
-        ASSERT(!hasNoValue());
-        return v8ValueRaw()->IsObject();
+        return m_value->IsObject();
     }
 
     bool hasNoValue() const
     {
-        return !m_value.get() || m_value->get().IsEmpty();
+        return m_value.isEmpty();
     }
 
     PassRefPtr<SerializedScriptValue> serialize(ScriptState*);
@@ -127,19 +134,10 @@ public:
 
     void clear()
     {
-        m_value = 0;
+        m_value.clear();
     }
 
-    v8::Handle<v8::Value> v8Value() const
-    {
-        return v8::Local<v8::Value>::New(v8ValueRaw());
-    }
-
-    // FIXME: This function should be private. 
-    v8::Handle<v8::Value> v8ValueRaw() const
-    {
-        return m_value.get() ? m_value->get() : v8::Handle<v8::Value>();
-    }
+    v8::Handle<v8::Value> v8Value() const { return m_value.get(); }
 
     bool getString(ScriptState*, String& result) const { return getString(result); }
     bool getString(String& result) const;
@@ -148,7 +146,7 @@ public:
     PassRefPtr<InspectorValue> toInspectorValue(ScriptState*) const;
 
 private:
-    RefPtr<SharedPersistent<v8::Value> > m_value;
+    ScopedPersistent<v8::Value> m_value;
 };
 
 } // namespace WebCore
