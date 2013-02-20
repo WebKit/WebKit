@@ -658,6 +658,8 @@ private:
     void computePositionedLogicalHeightReplaced(LogicalExtentComputedValues&) const;
     void computePositionedLogicalWidthReplaced(LogicalExtentComputedValues&) const;
 
+    LayoutUnit computeIntrinsicLogicalWidthUsing(Length logicalWidthLength, LayoutUnit availableLogicalWidth) const;
+
     virtual void computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const;
 
     // This function calculates the minimum and maximum preferred widths for an object.

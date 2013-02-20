@@ -2038,6 +2038,32 @@ void RenderBox::computeLogicalWidthInRegion(LogicalExtentComputedValues& compute
     }
 }
 
+LayoutUnit RenderBox::computeIntrinsicLogicalWidthUsing(Length logicalWidthLength, LayoutUnit availableLogicalWidth) const
+{
+    if (logicalWidthLength.type() == MinContent)
+        return minIntrinsicLogicalWidth();
+    if (logicalWidthLength.type() == MaxContent)
+        return maxIntrinsicLogicalWidth();
+
+    RenderView* renderView = view();
+    LayoutUnit marginStart = minimumValueForLength(style()->marginStart(), availableLogicalWidth, renderView);
+    LayoutUnit marginEnd = minimumValueForLength(style()->marginEnd(), availableLogicalWidth, renderView);
+    LayoutUnit fillAvailableMeasure = availableLogicalWidth - marginStart - marginEnd;
+
+    if (logicalWidthLength.type() == FillAvailable)
+        return fillAvailableMeasure;
+    if (logicalWidthLength.type() == FitContent) {
+        LayoutUnit minLogicalWidth = 0;
+        LayoutUnit maxLogicalWidth = 0;
+        computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
+        minLogicalWidth += borderAndPaddingLogicalWidth();
+        maxLogicalWidth += borderAndPaddingLogicalWidth();
+        return max(minLogicalWidth, min(maxLogicalWidth, fillAvailableMeasure));
+    }
+    ASSERT_NOT_REACHED();
+    return 0;
+}
+
 LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(SizeType widthType, LayoutUnit availableLogicalWidth,
     const RenderBlock* cb, RenderRegion* region, LayoutUnit offsetFromLogicalTopOfFirstPage) const
 {
@@ -2060,32 +2086,16 @@ LayoutUnit RenderBox::computeLogicalWidthInRegionUsing(SizeType widthType, Layou
         return adjustBorderBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, availableLogicalWidth, view()));
     }
 
-    if (logicalWidth.type() == MinContent)
-        return minIntrinsicLogicalWidth();
-    if (logicalWidth.type() == MaxContent)
-        return maxIntrinsicLogicalWidth();
+    if (logicalWidth.isIntrinsic())
+        return computeIntrinsicLogicalWidthUsing(logicalWidth, availableLogicalWidth);
 
     RenderView* renderView = view();
     LayoutUnit marginStart = minimumValueForLength(styleToUse->marginStart(), availableLogicalWidth, renderView);
     LayoutUnit marginEnd = minimumValueForLength(styleToUse->marginEnd(), availableLogicalWidth, renderView);
     LayoutUnit logicalWidthResult = availableLogicalWidth - marginStart - marginEnd;
 
-    // shrinkToAvoidFloats() is only true for width: auto so the below code works correctly for
-    // width: fill-available since no case matches and it returns the logicalWidthResult from above.
     if (shrinkToAvoidFloats() && cb->containsFloats())
         logicalWidthResult = min(logicalWidthResult, shrinkLogicalWidthToAvoidFloats(marginStart, marginEnd, cb, region, offsetFromLogicalTopOfFirstPage));
-
-    if (logicalWidth.type() == FitContent) {
-        LayoutUnit minLogicalWidth = 0;
-        LayoutUnit maxLogicalWidth = 0;
-        computeIntrinsicLogicalWidths(minLogicalWidth, maxLogicalWidth);
-        minLogicalWidth += borderAndPaddingLogicalWidth();
-        maxLogicalWidth += borderAndPaddingLogicalWidth();
-        return max(minLogicalWidth, min(maxLogicalWidth, logicalWidthResult));
-    }
-
-    if (logicalWidth.type() == FillAvailable)
-        return logicalWidthResult;
 
     if (widthType == MainOrPreferredSize && sizesLogicalWidthToFitContent(widthType))
         return max(minPreferredLogicalWidth(), min(maxPreferredLogicalWidth(), logicalWidthResult));
@@ -3000,7 +3010,7 @@ void RenderBox::computePositionedLogicalWidth(LogicalExtentComputedValues& compu
     }
 
     // Calculate constraint equation values for 'min-width' case.
-    if (!style()->logicalMinWidth().isZero()) {
+    if (!style()->logicalMinWidth().isZero() || style()->logicalMinWidth().isIntrinsic()) {
         LogicalExtentComputedValues minValues;
 
         computePositionedLogicalWidthUsing(MinSize, style()->logicalMinWidth(), containerBlock, containerDirection,
@@ -3062,6 +3072,8 @@ void RenderBox::computePositionedLogicalWidthUsing(SizeType widthSizeType, Lengt
 {
     if (widthSizeType == MinSize && logicalWidth.isAuto())
         logicalWidth = Length(0, Fixed);
+    else if (logicalWidth.isIntrinsic())
+        logicalWidth = Length(computeIntrinsicLogicalWidthUsing(logicalWidth, containerLogicalWidth) - bordersPlusPadding, Fixed);
 
     // 'left' and 'right' cannot both be 'auto' because one would of been
     // converted to the static position already
