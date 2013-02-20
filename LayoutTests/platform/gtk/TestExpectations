@@ -1382,10 +1382,6 @@ webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
 
 webkit.org/b/103740 editing/selection/caret-alignment-for-vertical-text.html [ Failure ]
 
-# Remove from list after enabling CANVAS_PATH
-webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Failure ]
-webkit.org/b/108508 fast/canvas/canvas-path-constructors.html [ Failure ]
-
 webkit.org/b/104054 svg/custom/use-href-update-crash.svg [ Failure ]
 
 webkit.org/b/104680 http/tests/security/xss-DENIED-xml-external-entity.xhtml [ Failure ]

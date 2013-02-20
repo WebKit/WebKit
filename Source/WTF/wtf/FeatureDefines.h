@@ -325,7 +325,7 @@
 #endif
 
 #if !defined(ENABLE_CANVAS_PATH)
-#define ENABLE_CANVAS_PATH 0
+#define ENABLE_CANVAS_PATH 1
 #endif
 
 #if !defined(ENABLE_CANVAS_PROXY)

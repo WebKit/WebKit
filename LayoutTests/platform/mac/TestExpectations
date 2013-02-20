@@ -144,11 +144,6 @@ http/tests/security/cross-origin-worker-indexeddb-allowed.html
 http/tests/security/cross-origin-worker-indexeddb.html
 http/tests/security/no-indexeddb-from-sandbox.html
 
-# Remove from list after enabling CANVAS_PATH
-fast/canvas/canvas-currentPath.html
-fast/canvas/canvas-path-constructors.html
-fast/canvas/canvas-currentPath-crash.html
-
 # This port doesn't support DeviceMotion or DeviceOrientation.
 fast/dom/DeviceMotion
 fast/dom/DeviceOrientation

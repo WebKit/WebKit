@@ -1,3 +1,14 @@
+2013-02-20  Dirk Schulze  <krit@webkit.org>
+
+        Enable CANVAS_PATH flag
+        https://bugs.webkit.org/show_bug.cgi?id=108508
+
+        Reviewed by Simon Fraser.
+
+        Enable CANVAS_PATH flag on trunk.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-19  Tim Horton  <timothy_horton@apple.com>
 
         Clarify isInWindow vs. isVisible path through to RenderLayerCompositor

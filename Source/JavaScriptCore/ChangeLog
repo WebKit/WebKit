@@ -1,3 +1,16 @@
+2013-02-20  Dirk Schulze  <krit@webkit.org>
+
+        Enable CANVAS_PATH flag
+        https://bugs.webkit.org/show_bug.cgi?id=108508
+
+        Reviewed by Simon Fraser.
+
+        Enable CANVAS_PATH flag on trunk.
+
+        Existing tests cover the feature.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-19  Mark Rowe  <mrowe@apple.com>
 
         Unreviewed, uninteresting change to test a theory about bad dependency handling.

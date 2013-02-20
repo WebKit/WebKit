@@ -1797,10 +1797,6 @@ inspector/editor/text-editor-word-jumps.html
 inspector/editor/text-editor-home-button.html
 inspector/editor/text-editor-smart-braces.html
 
-# Remove from list after enabling CANVAS_PATH
-webkit.org/b/108508 fast/canvas/canvas-path-constructors.html [ Failure ]
-webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Failure ]
-
 # Test fails on JSC platforms due to GC timing problems
 webkit.org/b/106957 svg/dom/SVGViewSpec-invalid-ref-crash.html [ Failure ]
 
