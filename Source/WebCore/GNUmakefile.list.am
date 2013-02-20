@@ -2743,8 +2743,6 @@ webcore_sources += \
 	Source/WebCore/css/WebKitCSSViewportRule.h \
 	Source/WebCore/dom/ActiveDOMObject.cpp \
 	Source/WebCore/dom/ActiveDOMObject.h \
-	Source/WebCore/dom/AncestorChainWalker.cpp \
-	Source/WebCore/dom/AncestorChainWalker.h \
 	Source/WebCore/dom/Attr.cpp \
 	Source/WebCore/dom/Attr.h \
 	Source/WebCore/dom/Attribute.h \
@@ -2876,6 +2874,8 @@ webcore_sources += \
 	Source/WebCore/dom/EventListenerMap.h \
 	Source/WebCore/dom/EventNames.cpp \
 	Source/WebCore/dom/EventNames.h \
+	Source/WebCore/dom/EventPathWalker.cpp \
+	Source/WebCore/dom/EventPathWalker.h \
 	Source/WebCore/dom/EventRetargeter.cpp \
 	Source/WebCore/dom/EventTarget.cpp \
 	Source/WebCore/dom/EventTarget.h \

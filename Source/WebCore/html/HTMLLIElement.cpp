@@ -23,10 +23,10 @@
 #include "config.h"
 #include "HTMLLIElement.h"
 
-#include "AncestorChainWalker.h"
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "EventPathWalker.h"
 #include "HTMLNames.h"
 #include "RenderListItem.h"
 
@@ -96,13 +96,13 @@ void HTMLLIElement::attach()
 
         // Find the enclosing list node.
         Node* listNode = 0;
-        AncestorChainWalker walker(this);
+        EventPathWalker walker(this);
         while (!listNode) {
-            walker.parent();
-            if (!walker.get())
+            walker.moveToParent();
+            if (!walker.node())
                 break;
-            if (walker.get()->hasTagName(ulTag) || walker.get()->hasTagName(olTag))
-                listNode = walker.get();
+            if (walker.node()->hasTagName(ulTag) || walker.node()->hasTagName(olTag))
+                listNode = walker.node();
         }
 
         // If we are not in a list, tell the renderer so it can position us inside.

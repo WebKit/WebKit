@@ -24,24 +24,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AncestorChainWalker_h
-#define AncestorChainWalker_h
+#ifndef EventPathWalker_h
+#define EventPathWalker_h
 
 namespace WebCore {
 
 class Node;
 
-class AncestorChainWalker {
+class EventPathWalker {
 public:
-    explicit AncestorChainWalker(const Node*);
-    void parent();
-    Node* get() const { return const_cast<Node*>(m_node); }
-    bool crossingInsertionPoint() { return m_isCrossingInsertionPoint; }
+    explicit EventPathWalker(const Node*);
+    static Node* parent(const Node*);
+    void moveToParent();
+    Node* node() const { return const_cast<Node*>(m_node); }
+    bool isVisitingInsertionPointInReprojection() { return m_isVisitingInsertionPointInReprojection; }
 
 private:
     const Node* m_node;
     const Node* m_distributedNode;
-    bool m_isCrossingInsertionPoint;
+    bool m_isVisitingInsertionPointInReprojection;
 };
 
 } // namespace

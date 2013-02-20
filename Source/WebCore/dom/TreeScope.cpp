@@ -27,12 +27,12 @@
 #include "config.h"
 #include "TreeScope.h"
 
-#include "AncestorChainWalker.h"
 #include "ContainerNode.h"
 #include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Element.h"
+#include "EventPathWalker.h"
 #include "FocusController.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -352,11 +352,11 @@ Node* TreeScope::focusedNode()
     if (!node)
         return 0;
     Vector<Node*> targetStack;
-    for (AncestorChainWalker walker(node); walker.get(); walker.parent()) {
-        Node* node = walker.get();
+    for (EventPathWalker walker(node); walker.node(); walker.moveToParent()) {
+        Node* node = walker.node();
         if (targetStack.isEmpty())
             targetStack.append(node);
-        else if (walker.crossingInsertionPoint())
+        else if (walker.isVisitingInsertionPointInReprojection())
             targetStack.append(targetStack.last());
         if (node == rootNode())
             return targetStack.last();

@@ -26,11 +26,11 @@
 #include "config.h"
 #include "EventDispatcher.h"
 
-#include "AncestorChainWalker.h"
 #include "ContainerNode.h"
 #include "ElementShadow.h"
 #include "EventContext.h"
 #include "EventDispatchMediator.h"
+#include "EventPathWalker.h"
 #include "EventRetargeter.h"
 #include "FrameView.h"
 #include "HTMLMediaElement.h"

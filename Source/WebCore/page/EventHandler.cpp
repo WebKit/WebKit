@@ -29,7 +29,6 @@
 #include "EventHandler.h"
 
 #include "AXObjectCache.h"
-#include "AncestorChainWalker.h"
 #include "AutoscrollController.h"
 #include "CachedImage.h"
 #include "Chrome.h"
@@ -43,6 +42,7 @@
 #include "Editor.h"
 #include "EditorClient.h"
 #include "EventNames.h"
+#include "EventPathWalker.h"
 #include "ExceptionCodePlaceholder.h"
 #include "FloatPoint.h"
 #include "FloatRect.h"
@@ -2119,11 +2119,8 @@ void EventHandler::updateMouseEventTargetNode(Node* targetNode, const PlatformMo
         result = m_capturingMouseEventsNode.get();
     else {
         // If the target node is a text node, dispatch on the parent node - rdar://4196646
-        if (result && result->isTextNode()) {
-            AncestorChainWalker walker(result);
-            walker.parent();
-            result = walker.get();
-        }
+        if (result && result->isTextNode())
+            result = EventPathWalker::parent(result);
     }
     m_nodeUnderMouse = result;
 #if ENABLE(SVG)
@@ -2331,11 +2328,8 @@ bool EventHandler::handleWheelEvent(const PlatformWheelEvent& e)
 
     Node* node = result.innerNode();
     // Wheel events should not dispatch to text nodes.
-    if (node && node->isTextNode()) {
-        AncestorChainWalker walker(node);
-        walker.parent();
-        node = walker.get();
-    }
+    if (node && node->isTextNode())
+        node = EventPathWalker::parent(node);
 
     bool isOverWidget;
     if (useLatchedWheelEventNode) {

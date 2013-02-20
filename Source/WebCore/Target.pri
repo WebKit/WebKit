@@ -352,7 +352,6 @@ SOURCES += \
     css/WebKitCSSTransformValue.cpp \
     css/WebKitCSSViewportRule.cpp \
     dom/ActiveDOMObject.cpp \
-    dom/AncestorChainWalker.cpp \
     dom/Attr.cpp \
     dom/BeforeTextInsertedEvent.cpp \
     dom/BeforeUnloadEvent.cpp \
@@ -410,6 +409,7 @@ SOURCES += \
     dom/EventException.cpp \
     dom/EventListenerMap.cpp \
     dom/EventNames.cpp \
+    dom/EventPathWalker.cpp \
     dom/EventRetargeter.cpp \
     dom/EventTarget.cpp \
     dom/ExceptionBase.cpp \

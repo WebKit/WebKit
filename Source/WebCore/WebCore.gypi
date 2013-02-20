@@ -2736,8 +2736,6 @@
         ],
         'webcore_dom_files': [
             'dom/ActiveDOMObject.cpp',
-            'dom/AncestorChainWalker.cpp',
-            'dom/AncestorChainWalker.h',
             'dom/Attr.cpp',
             'dom/AutocompleteErrorEvent.h',
             'dom/BeforeLoadEvent.h',
@@ -2841,6 +2839,8 @@
             'dom/EventException.h',
             'dom/EventListenerMap.cpp',
             'dom/EventNames.cpp',
+            'dom/EventPathWalker.cpp',
+            'dom/EventPathWalker.h',
             'dom/EventQueue.h',
             'dom/EventSender.h',
             'dom/EventTarget.cpp',

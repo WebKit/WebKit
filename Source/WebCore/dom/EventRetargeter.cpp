@@ -20,9 +20,9 @@
 #include "config.h"
 #include "EventRetargeter.h"
 
-#include "AncestorChainWalker.h"
 #include "ContainerNode.h"
 #include "EventContext.h"
+#include "EventPathWalker.h"
 #include "FocusEvent.h"
 #include "MouseEvent.h"
 #include "ShadowRoot.h"
@@ -78,11 +78,11 @@ void EventRetargeter::calculateEventPath(Node* node, Event* event, EventPath& ev
     bool isSVGElement = node->isSVGElement();
     bool isMouseOrFocusEvent = event->isMouseEvent() || event->isFocusEvent();
     Vector<EventTarget*, 32> targetStack;
-    for (AncestorChainWalker walker(node); walker.get(); walker.parent()) {
-        Node* node = walker.get();
+    for (EventPathWalker walker(node); walker.node(); walker.moveToParent()) {
+        Node* node = walker.node();
         if (targetStack.isEmpty())
             targetStack.append(eventTargetRespectingTargetRules(node));
-        else if (walker.crossingInsertionPoint())
+        else if (walker.isVisitingInsertionPointInReprojection())
             targetStack.append(targetStack.last());
         if (isMouseOrFocusEvent)
             eventPath.append(adoptPtr(new MouseOrFocusEventContext(node, eventTargetRespectingTargetRules(node), targetStack.last())));
@@ -168,11 +168,11 @@ void EventRetargeter::buildRelatedNodeMap(Node* relatedNode, RelatedNodeMap& rel
 {
     Vector<Node*, 32> relatedNodeStack;
     TreeScope* lastTreeScope = 0;
-    for (AncestorChainWalker walker(relatedNode); walker.get(); walker.parent()) {
-        Node* node = walker.get();
+    for (EventPathWalker walker(relatedNode); walker.node(); walker.moveToParent()) {
+        Node* node = walker.node();
         if (relatedNodeStack.isEmpty())
             relatedNodeStack.append(node);
-        else if (walker.crossingInsertionPoint())
+        else if (walker.isVisitingInsertionPointInReprojection())
             relatedNodeStack.append(relatedNodeStack.last());
         TreeScope* scope = node->treeScope();
         // Skips adding a node to the map if treeScope does not change. Just for the performance optimization.

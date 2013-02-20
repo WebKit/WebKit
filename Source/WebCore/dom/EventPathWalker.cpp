@@ -25,7 +25,7 @@
  */
 
 #include "config.h"
-#include "AncestorChainWalker.h"
+#include "EventPathWalker.h"
 
 #include "ContentDistributor.h"
 #include "InsertionPoint.h"
@@ -33,22 +33,29 @@
 
 namespace WebCore {
 
-AncestorChainWalker::AncestorChainWalker(const Node* node)
+EventPathWalker::EventPathWalker(const Node* node)
     : m_node(node)
     , m_distributedNode(node)
-    , m_isCrossingInsertionPoint(false)
+    , m_isVisitingInsertionPointInReprojection(false)
 {
     ASSERT(node);
 }
 
-void AncestorChainWalker::parent()
+Node* EventPathWalker::parent(const Node* node)
+{
+    EventPathWalker walker(node);
+    walker.moveToParent();
+    return walker.node();
+}
+
+void EventPathWalker::moveToParent()
 {
     ASSERT(m_node);
     ASSERT(m_distributedNode);
     if (ElementShadow* shadow = shadowOfParent(m_node)) {
         if (InsertionPoint* insertionPoint = shadow->distributor().findInsertionPointFor(m_distributedNode)) {
             m_node = insertionPoint;
-            m_isCrossingInsertionPoint = true;
+            m_isVisitingInsertionPointInReprojection = true;
             return;
         }
     }
@@ -56,19 +63,19 @@ void AncestorChainWalker::parent()
         m_node = m_node->parentNode();
         if (!(m_node && m_node->isShadowRoot() && ScopeContentDistribution::assignedTo(toShadowRoot(m_node))))
             m_distributedNode = m_node;
-        m_isCrossingInsertionPoint = false;
+        m_isVisitingInsertionPointInReprojection = false;
         return;
     }
 
     const ShadowRoot* shadowRoot = toShadowRoot(m_node);
     if (InsertionPoint* insertionPoint = ScopeContentDistribution::assignedTo(shadowRoot)) {
         m_node = insertionPoint;
-        m_isCrossingInsertionPoint = true;
+        m_isVisitingInsertionPointInReprojection = true;
         return;
     }
     m_node = shadowRoot->host();
     m_distributedNode = m_node;
-    m_isCrossingInsertionPoint = false;
+    m_isVisitingInsertionPointInReprojection = false;
 }
 
 } // namespace
