@@ -1,3 +1,15 @@
+2013-02-20  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Make debug builds possible on 32bit Linux
+        https://bugs.webkit.org/show_bug.cgi?id=110231
+
+        Reviewed by Tor Arne Vestbø.
+
+        Use the stabs format for debug builds to make the object files
+        a bit smaller so that they can be linked on a 32bit system.
+
+        * qmake/mkspecs/features/unix/default_post.prf:
+
 2013-02-20  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed. Add myself to watch lists.
