@@ -77,6 +77,10 @@ public:
     // initialized to identity already. Returns false if the layer has no transform.
     virtual bool getCurrentTransform(const GraphicsLayer*, TransformationMatrix&) const { return false; }
 
+    // Allows the client to modify a layer position used during the visibleRect calculation, for example to ignore
+    // scroll overhang.
+    virtual void customPositionForVisibleRectComputation(const GraphicsLayer*, FloatPoint&) const { }
+
     // Multiplier for backing store size, related to high DPI.
     virtual float deviceScaleFactor() const { return 1; }
     // Page scale factor.

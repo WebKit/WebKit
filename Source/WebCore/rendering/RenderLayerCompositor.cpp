@@ -302,6 +302,20 @@ void RenderLayerCompositor::setCompositingLayersNeedRebuild(bool needRebuild)
         m_compositingLayersNeedRebuild = needRebuild;
 }
 
+void RenderLayerCompositor::customPositionForVisibleRectComputation(const GraphicsLayer* graphicsLayer, FloatPoint& position) const
+{
+    if (graphicsLayer != m_scrollLayer.get())
+        return;
+
+    FrameView* frameView = m_renderView ? m_renderView->frameView() : 0;
+    if (!frameView)
+        return;
+
+    FloatPoint scrollPosition = -position;
+    scrollPosition = frameView->constrainScrollPositionForOverhang(roundedIntPoint(scrollPosition));
+    position = -scrollPosition;
+}
+
 void RenderLayerCompositor::scheduleLayerFlush()
 {
     if (Page* page = this->page())
