@@ -43,6 +43,7 @@ public:
     virtual bool shouldGeneratePixelResults() = 0;
     virtual bool shouldDumpAsAudio() const = 0;
     virtual const WebKit::WebArrayBufferView* audioData() const = 0;
+    virtual bool shouldDumpBackForwardList() const = 0;
     virtual WebKit::WebPermissionClient* webPermissions() const = 0;
 };
 

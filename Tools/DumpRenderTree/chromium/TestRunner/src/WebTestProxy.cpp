@@ -400,13 +400,14 @@ void dumpBackForwardList(const WebVector<WebHistoryItem>& history, size_t curren
     result.append("===============================================\n");
 }
 
-string dumpAllBackForwardLists(WebTestDelegate* delegate, unsigned windowCount)
+string dumpAllBackForwardLists(TestInterfaces* interfaces, WebTestDelegate* delegate)
 {
     string result;
-    for (unsigned i = 0; i < windowCount; ++i) {
+    const vector<WebTestProxyBase*>& windowList = interfaces->windowList();
+    for (unsigned i = 0; i < windowList.size(); ++i) {
         size_t currentEntryIndex = 0;
         WebVector<WebHistoryItem> history;
-        delegate->captureHistoryForWindow(i, &history, &currentEntryIndex);
+        delegate->captureHistoryForWindow(windowList.at(i), &history, &currentEntryIndex);
         dumpBackForwardList(history, currentEntryIndex, result);
     }
     return result;
@@ -488,7 +489,7 @@ string WebTestProxyBase::captureTree(bool debugRenderTree)
     }
 
     if (m_testInterfaces->testRunner()->shouldDumpBackForwardList())
-        dataUtf8 += dumpAllBackForwardLists(m_delegate, m_testInterfaces->windowList().size());
+        dataUtf8 += dumpAllBackForwardLists(m_testInterfaces, m_delegate);
 
     return dataUtf8;
 }

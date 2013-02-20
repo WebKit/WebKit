@@ -78,6 +78,7 @@ public:
     virtual bool shouldGeneratePixelResults() OVERRIDE;
     virtual bool shouldDumpAsAudio() const OVERRIDE;
     virtual const WebKit::WebArrayBufferView* audioData() const OVERRIDE;
+    virtual bool shouldDumpBackForwardList() const OVERRIDE;
     virtual WebKit::WebPermissionClient* webPermissions() const OVERRIDE;
 
     // Methods used by WebTestProxyBase.
@@ -86,7 +87,6 @@ public:
     bool sweepHorizontally() const;
     bool isPrinting() const;
     bool shouldDumpAsText();
-    bool shouldDumpBackForwardList() const;
     bool shouldDumpChildFrameScrollPositions() const;
     bool shouldDumpChildFramesAsText() const;
     void showDevTools();

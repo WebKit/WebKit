@@ -713,9 +713,12 @@ bool WebViewHost::allowExternalPages()
     return m_shell->allowExternalPages();
 }
 
-void WebViewHost::captureHistoryForWindow(size_t windowIndex, WebVector<WebHistoryItem>* history, size_t* currentEntryIndex)
+void WebViewHost::captureHistoryForWindow(WebTestProxyBase* proxy, WebVector<WebHistoryItem>* history, size_t* currentEntryIndex)
 {
-    m_shell->captureHistoryForWindow(windowIndex, history, currentEntryIndex);
+    for (size_t i = 0; i < m_shell->windowList().size(); ++i) {
+        if (m_shell->windowList()[i]->proxy() == proxy)
+            m_shell->captureHistoryForWindow(i, history, currentEntryIndex);
+    }
 }
 
 // Public functions -----------------------------------------------------------

@@ -36,6 +36,8 @@
 #include "Platform/chromium/public/WebVector.h"
 #include <string>
 
+#define WEBTESTRUNNER_NEW_HISTORY_CAPTURE
+
 namespace WebKit {
 class WebGamepads;
 class WebHistoryItem;
@@ -47,6 +49,7 @@ namespace WebTestRunner {
 
 struct WebPreferences;
 class WebTask;
+class WebTestProxyBase;
 
 class WebTestDelegate {
 public:
@@ -93,7 +96,7 @@ public:
     virtual void reload() { }
     virtual void loadURLForFrame(const WebKit::WebURL&, const std::string&) { }
     virtual bool allowExternalPages() { return false; }
-    virtual void captureHistoryForWindow(size_t windowIndex, WebKit::WebVector<WebKit::WebHistoryItem>* history, size_t* currentEntryIndex) { }
+    virtual void captureHistoryForWindow(WebTestProxyBase*, WebKit::WebVector<WebKit::WebHistoryItem>* history, size_t* currentEntryIndex) { }
 };
 
 }
