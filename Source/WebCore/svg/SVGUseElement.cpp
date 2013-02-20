@@ -409,10 +409,10 @@ void SVGUseElement::clearResourceReferences()
 
 void SVGUseElement::buildPendingResource()
 {
-    if (!referencedDocument())
+    if (!referencedDocument() || isInShadowTree())
         return;
     clearResourceReferences();
-    if (!inDocument() || isInShadowTree())
+    if (!inDocument())
         return;
 
     String id;
@@ -430,8 +430,11 @@ void SVGUseElement::buildPendingResource()
         return;
     }
 
-    if (target->isSVGElement())
+    if (target->isSVGElement()) {
         buildShadowAndInstanceTree(static_cast<SVGElement*>(target));
+        invalidateDependentShadowTrees();
+    }
+
     ASSERT(!m_needsShadowTreeRecreation);
 }
 
@@ -516,10 +519,6 @@ void SVGUseElement::buildShadowAndInstanceTree(SVGElement* target)
 
     // Update relative length information.
     updateRelativeLengthsInformation();
-
-    // Rebuild all dependent use elements.
-    ASSERT(document());
-    document()->accessSVGExtensions()->rebuildAllElementReferencesForTarget(this);
 
     // Eventually dump instance tree
 #ifdef DUMP_INSTANCE_TREE
@@ -906,6 +905,20 @@ void SVGUseElement::invalidateShadowTree()
         return;
     m_needsShadowTreeRecreation = true;
     setNeedsStyleRecalc();
+    invalidateDependentShadowTrees();
+}
+
+void SVGUseElement::invalidateDependentShadowTrees()
+{
+    // Recursively invalidate dependent <use> shadow trees
+    const HashSet<SVGElementInstance*>& instances = instancesForElement();
+    const HashSet<SVGElementInstance*>::const_iterator end = instances.end();
+    for (HashSet<SVGElementInstance*>::const_iterator it = instances.begin(); it != end; ++it) {
+        if (SVGUseElement* element = (*it)->correspondingUseElement()) {
+            ASSERT(element->inDocument());
+            element->invalidateShadowTree();
+        }
+    }
 }
 
 void SVGUseElement::transferUseAttributesToReplacedElement(SVGElement* from, SVGElement* to) const

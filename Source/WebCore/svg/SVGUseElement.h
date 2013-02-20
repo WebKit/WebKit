@@ -50,6 +50,7 @@ public:
     SVGElementInstance* animatedInstanceRoot() const;
     SVGElementInstance* instanceForShadowTreeElement(Node*) const;
     void invalidateShadowTree();
+    void invalidateDependentShadowTrees();
 
     RenderObject* rendererClipChild() const;
 
