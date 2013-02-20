@@ -1,3 +1,14 @@
+2013-02-19  Jer Noble  <jer.noble@apple.com>
+
+        EME: Enable both ENCRYPTED_MEDIA and ENCRYPTED_MEDIA_V2 until clients transition to the new API.
+        https://bugs.webkit.org/show_bug.cgi?id=110284
+
+        Reviewed by Eric Carlson.
+
+        Re-enable the ENCRYPTED_MEDIA flag.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-20  Dirk Schulze  <krit@webkit.org>
 
         Enable CANVAS_PATH flag
