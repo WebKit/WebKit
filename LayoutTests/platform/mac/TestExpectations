@@ -1111,6 +1111,9 @@ plugins/npruntime/invoke-failure.html
 # Very flaky, often failing on retry, too.
 svg/dom/SVGScriptElement/script-change-externalResourcesRequired-while-loading.svg
 
+# Needs baseline after 14185
+webkit.org/b/14185 fast/borders/border-image-02.html [ Missing ]
+
 # Unknown failures.
 http/tests/multipart/invalid-image-data-standalone.html
 webkit.org/b/76478 compositing/iframes/repaint-after-losing-scrollbars.html [ ImageOnlyFailure ]

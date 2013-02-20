@@ -2018,6 +2018,9 @@ crbug.com/9798 [ Win Release ] http/tests/xmlhttprequest/small-chunks-response-t
 # so the test timeouts.
 crbug.com/11001 http/tests/history/back-to-post.php [ Timeout ]
 
+# Needs baseline after 14185
+webkit.org/b/14185 [ Android Win Mac ] fast/borders/border-image-02.html [ Missing ]
+
 # WebKit 45086:45111
 crbug.com/15270 fast/js/excessive-comma-usage.html [ Failure ]
 
@@ -2910,6 +2913,9 @@ webkit.org/b/74694 http/tests/cache/history-only-cached-subresource-loads.html [
 webkit.org/b/74694 http/tests/cache/history-only-cached-subresource-loads-max-age-https.html [ Missing Pass ]
 
 webkit.org/b/67915 [ Android ] fast/borders/borderRadiusDashed06.html [ ImageOnlyFailure ]
+
+# Needs rebaseline after bug 14185
+webkit.org/b/14185 fast/borders/border-image-rotate-transform.html [ ImageOnlyFailure ]
 
 webkit.org/b/95365 fast/loader/reload-zero-byte-plugin.html
 

@@ -2555,6 +2555,9 @@ proximity/window-property.html
 webkit.org/b/9221 fast/css/resize-corner-tracking.html [ Failure ]
 webkit.org/b/9221 fast/css/resize-corner-tracking-transformed-iframe.html [ Missing ]
 
+# Needs baseline after 14185
+webkit.org/b/14185 fast/borders/border-image-02.html [ Missing ]
+
 # Temporarily skip inspector tests which are now failing on the bots due to some configuration problem
 inspector
 http/tests/inspector

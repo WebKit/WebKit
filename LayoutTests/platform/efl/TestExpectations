@@ -676,6 +676,9 @@ webkit.org/b/100519 fast/images/paletted-png-with-color-profile.html [ Skip ]
 webkit.org/b/105542 fast/canvas/canvas-blend-image.html [ Skip ]
 webkit.org/b/105542 fast/canvas/canvas-blend-solid.html [ Skip ]
 
+# Needs baseline after 14185
+webkit.org/b/14185 fast/borders/border-image-02.html [ Missing ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # CRASHES
 #////////////////////////////////////////////////////////////////////////////////////////

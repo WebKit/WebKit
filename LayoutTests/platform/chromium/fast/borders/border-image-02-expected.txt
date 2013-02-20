@@ -1,0 +1,33 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderBlock {DIV} at (10,10) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (141,111) size 4x19
+        text run at (141,111) width 4: " "
+      RenderBlock {DIV} at (155,10) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (286,111) size 4x19
+        text run at (286,111) width 4: " "
+      RenderBlock {DIV} at (300,10) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (431,111) size 4x19
+        text run at (431,111) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderBlock {DIV} at (10,141) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (141,242) size 4x19
+        text run at (141,242) width 4: " "
+      RenderBlock {DIV} at (155,141) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (286,242) size 4x19
+        text run at (286,242) width 4: " "
+      RenderBlock {DIV} at (300,141) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (431,242) size 4x19
+        text run at (431,242) width 4: " "
+      RenderBR {BR} at (0,0) size 0x0
+      RenderBlock {DIV} at (10,272) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (141,373) size 4x19
+        text run at (141,373) width 4: " "
+      RenderBlock {DIV} at (155,272) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (286,373) size 4x19
+        text run at (286,373) width 4: " "
+      RenderBlock {DIV} at (300,272) size 121x106 [border: (21px none #000000) (30px none #000000) (21px none #000000)]
+      RenderText {#text} at (0,0) size 0x0

@@ -514,24 +514,18 @@ void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, c
 }
 
 void GraphicsContext::drawTiledImage(Image* image, ColorSpace styleColorSpace, const IntRect& dest, const IntRect& srcRect,
-    const FloatSize& tileScaleFactor, Image::TileRule hRule, Image::TileRule vRule, CompositeOperator op, bool useLowQualityScale)
+    const FloatPoint& patternPhase, const AffineTransform& patternTransform, CompositeOperator op, bool useLowQualityScale)
 {
     if (paintingDisabled() || !image)
         return;
 
-    if (hRule == Image::StretchTile && vRule == Image::StretchTile) {
-        // Just do a scale.
-        drawImage(image, styleColorSpace, dest, srcRect, op);
-        return;
-    }
-
     if (useLowQualityScale) {
         InterpolationQuality previousInterpolationQuality = imageInterpolationQuality();
         setImageInterpolationQuality(InterpolationLow);
-        image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
+        image->drawTiled(this, dest, srcRect, patternPhase, patternTransform, styleColorSpace, op);
         setImageInterpolationQuality(previousInterpolationQuality);
     } else
-        image->drawTiled(this, dest, srcRect, tileScaleFactor, hRule, vRule, styleColorSpace, op);
+        image->drawTiled(this, dest, srcRect, patternPhase, patternTransform, styleColorSpace, op);
 }
 
 void GraphicsContext::drawImageBuffer(ImageBuffer* image, ColorSpace styleColorSpace, const IntPoint& p, CompositeOperator op, BlendMode blendMode)

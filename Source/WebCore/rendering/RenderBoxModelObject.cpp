@@ -1267,142 +1267,180 @@ bool RenderBoxModelObject::paintNinePieceImage(GraphicsContext* graphicsContext,
     int imageHeight = imageSize.height();
     RenderView* renderView = view();
 
+    enum { TopTile, CenterTile, BottomTile, LeftTile = TopTile, RightTile = BottomTile };
+    int sliceX[3];
+    int sliceY[3];
+
     float imageScaleFactor = styleImage->imageScaleFactor();
-    int topSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight, renderView)) * imageScaleFactor;
-    int rightSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().right(), imageWidth, renderView)) * imageScaleFactor;
-    int bottomSlice = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().bottom(), imageHeight, renderView)) * imageScaleFactor;
-    int leftSlice = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().left(), imageWidth, renderView)) * imageScaleFactor;
+    sliceY[TopTile] = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().top(), imageHeight, renderView)) * imageScaleFactor;
+    sliceX[RightTile] = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().right(), imageWidth, renderView)) * imageScaleFactor;
+    sliceY[BottomTile] = min<int>(imageHeight, valueForLength(ninePieceImage.imageSlices().bottom(), imageHeight, renderView)) * imageScaleFactor;
+    sliceX[LeftTile] = min<int>(imageWidth, valueForLength(ninePieceImage.imageSlices().left(), imageWidth, renderView)) * imageScaleFactor;
+    sliceY[CenterTile] = max(0, imageHeight - sliceY[TopTile] - sliceY[BottomTile]);
+    sliceX[CenterTile] = max(0, imageWidth - sliceX[LeftTile] - sliceX[RightTile]);
 
     ENinePieceImageRule hRule = ninePieceImage.horizontalRule();
     ENinePieceImageRule vRule = ninePieceImage.verticalRule();
 
-    int topWidth = computeBorderImageSide(ninePieceImage.borderSlices().top(), style->borderTopWidth(), topSlice, borderImageRect.height(), renderView);
-    int rightWidth = computeBorderImageSide(ninePieceImage.borderSlices().right(), style->borderRightWidth(), rightSlice, borderImageRect.width(), renderView);
-    int bottomWidth = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style->borderBottomWidth(), bottomSlice, borderImageRect.height(), renderView);
-    int leftWidth = computeBorderImageSide(ninePieceImage.borderSlices().left(), style->borderLeftWidth(), leftSlice, borderImageRect.width(), renderView);
+    int widthY[3];
+    int widthX[3];
+    widthY[TopTile] = computeBorderImageSide(ninePieceImage.borderSlices().top(), style->borderTopWidth(), sliceY[TopTile], borderImageRect.height(), renderView);
+    widthX[RightTile] = computeBorderImageSide(ninePieceImage.borderSlices().right(), style->borderRightWidth(), sliceX[RightTile], borderImageRect.width(), renderView);
+    widthY[BottomTile] = computeBorderImageSide(ninePieceImage.borderSlices().bottom(), style->borderBottomWidth(), sliceY[BottomTile], borderImageRect.height(), renderView);
+    widthX[LeftTile] = computeBorderImageSide(ninePieceImage.borderSlices().left(), style->borderLeftWidth(), sliceX[LeftTile], borderImageRect.width(), renderView);
     
     // Reduce the widths if they're too large.
     // The spec says: Given Lwidth as the width of the border image area, Lheight as its height, and Wside as the border image width
     // offset for the side, let f = min(Lwidth/(Wleft+Wright), Lheight/(Wtop+Wbottom)). If f < 1, then all W are reduced by
     // multiplying them by f.
-    int borderSideWidth = max(1, leftWidth + rightWidth);
-    int borderSideHeight = max(1, topWidth + bottomWidth);
+    int borderSideWidth = max(1, widthX[LeftTile] + widthX[RightTile]);
+    int borderSideHeight = max(1, widthY[TopTile] + widthY[BottomTile]);
     float borderSideScaleFactor = min((float)borderImageRect.width() / borderSideWidth, (float)borderImageRect.height() / borderSideHeight);
     if (borderSideScaleFactor < 1) {
-        topWidth *= borderSideScaleFactor;
-        rightWidth *= borderSideScaleFactor;
-        bottomWidth *= borderSideScaleFactor;
-        leftWidth *= borderSideScaleFactor;
+        widthY[TopTile] *= borderSideScaleFactor;
+        widthX[RightTile] *= borderSideScaleFactor;
+        widthY[BottomTile] *= borderSideScaleFactor;
+        widthX[LeftTile] *= borderSideScaleFactor;
     }
 
-    bool drawLeft = leftSlice > 0 && leftWidth > 0;
-    bool drawTop = topSlice > 0 && topWidth > 0;
-    bool drawRight = rightSlice > 0 && rightWidth > 0;
-    bool drawBottom = bottomSlice > 0 && bottomWidth > 0;
-    bool drawMiddle = ninePieceImage.fill() && (imageWidth - leftSlice - rightSlice) > 0 && (borderImageRect.width() - leftWidth - rightWidth) > 0
-                      && (imageHeight - topSlice - bottomSlice) > 0 && (borderImageRect.height() - topWidth - bottomWidth) > 0;
+    widthY[CenterTile] = max(0, borderImageRect.height() - widthY[TopTile] - widthY[BottomTile]);
+    widthX[CenterTile] = max(0, borderImageRect.width() - widthX[LeftTile] - widthX[RightTile]);
+
+    // 1. Scale to 'border-image-width'.
+    // - The two images for the top and bottom edges are made as tall as the top and bottom border image area parts,
+    //   respectively, and their width is scaled proportionally.
+    // - The images for the left and right edge are made as wide as the left and right border image area parts,
+    //   respectively, and their height is scaled proportionally.
+    // - The corner images are scaled to be as wide and as tall as the two border-image edges they are part of.
+
+    // We're implementing the standard using two variables for every row and column:
+    // "stretch" is the amount of scaling needed to make the source tile exactly fit the destination
+    // "scale" is the scaling applied to the middle row and column respecting border-image-repeat. Be careful,
+    // because scaleX is scaling in X direction, but applies to a column.
+    // Also, when a row or column doesn't need to be drawn, we're using 0.0 only, and not INF, as the spec does.
+    float stretchX[3];
+    float stretchY[3];
+    float scaleX[3];
+    float scaleY[3];
+    stretchX[LeftTile] = sliceX[LeftTile] ? static_cast<float>(widthX[LeftTile]) / sliceX[LeftTile] : 0.0;
+    stretchX[RightTile] = sliceX[RightTile] ? static_cast<float>(widthX[RightTile]) / sliceX[RightTile] : 0.0;
+    stretchX[CenterTile] = sliceX[CenterTile] ? static_cast<float>(widthX[CenterTile]) / sliceX[CenterTile] : 0.0;
+    stretchY[TopTile] = sliceY[TopTile] ? static_cast<float>(widthY[TopTile]) / sliceY[TopTile] : 0.0;
+    stretchY[BottomTile] = sliceY[BottomTile] ? static_cast<float>(widthY[BottomTile]) / sliceY[BottomTile] : 0.0;
+    stretchY[CenterTile] = sliceY[CenterTile] ? static_cast<float>(widthY[CenterTile]) / sliceY[CenterTile] : 0.0;
+
+    scaleX[TopTile] = stretchY[TopTile];
+    scaleX[BottomTile] = stretchY[BottomTile];
+    scaleY[LeftTile] = stretchX[LeftTile];
+    scaleY[RightTile] = stretchX[RightTile];
+
+    // The middle image's width is scaled by the same factor as the top image unless that factor is zero or infinity,
+    // in which case the scaling factor of the bottom is substituted, and failing that, the width is not scaled.
+    // The height of the middle image is scaled by the same factor as the left image unless that factor is zero or infinity,
+    // in which case the scaling factor of the right image is substituted, and failing that, the height is not scaled.
+    if (scaleX[TopTile])
+        scaleX[CenterTile] = scaleX[TopTile];
+    else if (scaleX[BottomTile])
+        scaleX[CenterTile] = scaleX[BottomTile];
+    else
+        scaleX[CenterTile] = 1.0f;
+    if (scaleY[LeftTile])
+        scaleY[CenterTile] = scaleY[LeftTile];
+    else if (scaleY[RightTile])
+        scaleY[CenterTile] = scaleY[RightTile];
+    else
+        scaleY[CenterTile] = 1.0f;
+
+    // Scale to 'border-image-repeat'.
+    switch (hRule) {
+    case StretchImageRule:
+        // If the first keyword is 'stretch', the top, middle and bottom images are further scaled to be as wide
+        // as the middle part of the border image area. The height is not changed any further.
+        scaleX[TopTile] = stretchX[CenterTile];
+        scaleX[CenterTile] = stretchX[CenterTile];
+        scaleX[BottomTile] = stretchX[CenterTile];
+        break;
+    case RoundImageRule:
+        // If the first keyword is 'round', the top, middle and bottom images are resized in width,
+        // so that exactly a whole number of them fit in the middle part of the border-image area,
+        // exactly as for 'round' in the 'background-repeat' property.
+        scaleX[TopTile] = stretchX[CenterTile] / max(1.0f, roundf(stretchX[CenterTile] / scaleX[TopTile]));
+        scaleX[CenterTile] = stretchX[CenterTile] / max(1.0f, roundf(stretchX[CenterTile] / scaleX[CenterTile]));
+        scaleX[BottomTile] = stretchX[CenterTile] / max(1.0f, roundf(stretchX[CenterTile] / scaleX[BottomTile]));
+        break;
+    case SpaceImageRule:
+        // FIXME: We do not support 'space' yet. For now map it to 'repeat'.
+    case RepeatImageRule:
+        // If the first keyword is 'repeat' or 'space', the top, middle, and bottom images are not changed any further.
+        break;
+    }
+    // The effects of 'stretch', 'round', 'repeat', and 'space' for the second keyword are analogous,
+    // acting on the height of the left, middle and right images.
+    switch (vRule) {
+    case StretchImageRule:
+        // If the first keyword is 'stretch', the top, middle and bottom images are further scaled to be as wide
+        // as the middle part of the border image area. The height is not changed any further.
+        scaleY[LeftTile] = stretchY[CenterTile];
+        scaleY[CenterTile] = stretchY[CenterTile];
+        scaleY[RightTile] = stretchY[CenterTile];
+        break;
+    case RoundImageRule:
+        // If the first keyword is 'round', the top, middle and bottom images are resized in width,
+        // so that exactly a whole number of them fit in the middle part of the border-image area,
+        // exactly as for 'round' in the 'background-repeat' property.
+        scaleY[LeftTile] = stretchY[CenterTile] / max(1.0f, roundf(stretchY[CenterTile] / scaleY[LeftTile]));
+        scaleY[CenterTile] = stretchY[CenterTile] / max(1.0f, roundf(stretchY[CenterTile] / scaleY[CenterTile]));
+        scaleY[RightTile] = stretchY[CenterTile] / max(1.0f, roundf(stretchY[CenterTile] / scaleY[RightTile]));
+        break;
+    case SpaceImageRule:
+        // FIXME: We do not support 'space' yet. For now map it to 'repeat'.
+    case RepeatImageRule:
+        // If the first keyword is 'repeat' or 'space', the top, middle, and bottom images are not changed any further.
+        break;
+    }
 
     RefPtr<Image> image = styleImage->image(this, imageSize);
     ColorSpace colorSpace = style->colorSpace();
-    
-    float destinationWidth = borderImageRect.width() - leftWidth - rightWidth;
-    float destinationHeight = borderImageRect.height() - topWidth - bottomWidth;
-    
-    float sourceWidth = imageWidth - leftSlice - rightSlice;
-    float sourceHeight = imageHeight - topSlice - bottomSlice;
-    
-    float leftSideScale = drawLeft ? (float)leftWidth / leftSlice : 1;
-    float rightSideScale = drawRight ? (float)rightWidth / rightSlice : 1;
-    float topSideScale = drawTop ? (float)topWidth / topSlice : 1;
-    float bottomSideScale = drawBottom ? (float)bottomWidth / bottomSlice : 1;
-    
-    if (drawLeft) {
-        // Paint the top and bottom left corners.
 
-        // The top left corner rect is (tx, ty, leftWidth, topWidth)
-        // The rect to use from within the image is obtained from our slice, and is (0, 0, leftSlice, topSlice)
-        if (drawTop)
-            graphicsContext->drawImage(image.get(), colorSpace, IntRect(borderImageRect.location(), IntSize(leftWidth, topWidth)),
-                                       LayoutRect(0, 0, leftSlice, topSlice), op);
+    // If the first keyword is 'repeat', the top, middle, and bottom images are centered horizontally in
+    // their respective areas. Otherwise the images are placed at the left edge of their respective parts
+    // of the border-image area.
+    // If the second keyword is 'repeat', the left, middle, and right images are centered vertically in their
+    // respective areas. Otherwise the images are placed at the top edge of their respective parts of the
+    // border-image area.
+    for (int j = 0; j < 3; j++) {
+        if (!stretchY[j])
+            continue;
+        for (int i = 0; i < 3; i++) {
+            if (!stretchX[i])
+                continue;
+            if (i == CenterTile && j == CenterTile && !ninePieceImage.fill())
+                continue;
 
-        // The bottom left corner rect is (tx, ty + h - bottomWidth, leftWidth, bottomWidth)
-        // The rect to use from within the image is (0, imageHeight - bottomSlice, leftSlice, botomSlice)
-        if (drawBottom)
-            graphicsContext->drawImage(image.get(), colorSpace, IntRect(borderImageRect.x(), borderImageRect.maxY() - bottomWidth, leftWidth, bottomWidth),
-                                       LayoutRect(0, imageHeight - bottomSlice, leftSlice, bottomSlice), op);
+            // This somewhat weird size computation is necessary because left and right tile may overlap.
+            IntRect destRect(borderImageRect.x() + (i == LeftTile ? 0 : i == CenterTile ? widthX[LeftTile] : borderImageRect.width() - widthX[RightTile]),
+                borderImageRect.y() + (j == TopTile ? 0 : j == CenterTile ? widthY[TopTile] : borderImageRect.height() - widthY[BottomTile]), widthX[i], widthY[j]);
 
-        // Paint the left edge.
-        // Have to scale and tile into the border rect.
-        if (sourceHeight > 0)
-            graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.x(), borderImageRect.y() + topWidth, leftWidth,
-                                            destinationHeight),
-                                            IntRect(0, topSlice, leftSlice, sourceHeight),
-                                            FloatSize(leftSideScale, leftSideScale), Image::StretchTile, (Image::TileRule)vRule, op);
-    }
+            IntRect srcRect(i == LeftTile ? 0 : i == CenterTile ? sliceX[LeftTile] : imageWidth - sliceX[RightTile],
+                j == TopTile ? 0 : j == CenterTile ? sliceY[TopTile] : imageHeight - sliceY[BottomTile], sliceX[i], sliceY[j]);
 
-    if (drawRight) {
-        // Paint the top and bottom right corners
-        // The top right corner rect is (tx + w - rightWidth, ty, rightWidth, topWidth)
-        // The rect to use from within the image is obtained from our slice, and is (imageWidth - rightSlice, 0, rightSlice, topSlice)
-        if (drawTop)
-            graphicsContext->drawImage(image.get(), colorSpace, IntRect(borderImageRect.maxX() - rightWidth, borderImageRect.y(), rightWidth, topWidth),
-                                       LayoutRect(imageWidth - rightSlice, 0, rightSlice, topSlice), op);
+            if ((i == CenterTile && hRule != StretchImageRule) || (j == CenterTile && vRule != StretchImageRule)) {
+                // We want to construct the phase such that the pattern is centered (when stretch is not
+                // set for a particular rule).
+                AffineTransform transform;
 
-        // The bottom right corner rect is (tx + w - rightWidth, ty + h - bottomWidth, rightWidth, bottomWidth)
-        // The rect to use from within the image is (imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice)
-        if (drawBottom)
-            graphicsContext->drawImage(image.get(), colorSpace, IntRect(borderImageRect.maxX() - rightWidth, borderImageRect.maxY() - bottomWidth, rightWidth, bottomWidth),
-                                       LayoutRect(imageWidth - rightSlice, imageHeight - bottomSlice, rightSlice, bottomSlice), op);
+                transform.translate(destRect.x(), destRect.y());
+                if (i == CenterTile && hRule == RepeatImageRule)
+                    transform.translate((destRect.width() - scaleX[j] * sliceX[i]) / 2, 0);
+                if (j == CenterTile && vRule == RepeatImageRule)
+                    transform.translate(0, (destRect.height() - scaleY[i] * sliceY[j]) / 2);
+                transform.scaleNonUniform(i == CenterTile ? scaleX[j] : stretchX[i], j == CenterTile ? scaleY[i] : stretchY[j]);
+                transform.translate(-srcRect.x(), -srcRect.y());
 
-        // Paint the right edge.
-        if (sourceHeight > 0)
-            graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.maxX() - rightWidth, borderImageRect.y() + topWidth, rightWidth,
-                                            destinationHeight),
-                                            IntRect(imageWidth - rightSlice, topSlice, rightSlice, sourceHeight),
-                                            FloatSize(rightSideScale, rightSideScale),
-                                            Image::StretchTile, (Image::TileRule)vRule, op);
-    }
-
-    // Paint the top edge.
-    if (drawTop && sourceWidth > 0)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.x() + leftWidth, borderImageRect.y(), destinationWidth, topWidth),
-                                        IntRect(leftSlice, 0, sourceWidth, topSlice),
-                                        FloatSize(topSideScale, topSideScale), (Image::TileRule)hRule, Image::StretchTile, op);
-
-    // Paint the bottom edge.
-    if (drawBottom && sourceWidth > 0)
-        graphicsContext->drawTiledImage(image.get(), colorSpace, IntRect(borderImageRect.x() + leftWidth, borderImageRect.maxY() - bottomWidth,
-                                        destinationWidth, bottomWidth),
-                                        IntRect(leftSlice, imageHeight - bottomSlice, sourceWidth, bottomSlice),
-                                        FloatSize(bottomSideScale, bottomSideScale),
-                                        (Image::TileRule)hRule, Image::StretchTile, op);
-
-    // Paint the middle.
-    if (drawMiddle) {
-        FloatSize middleScaleFactor(1, 1);
-        if (drawTop)
-            middleScaleFactor.setWidth(topSideScale);
-        else if (drawBottom)
-            middleScaleFactor.setWidth(bottomSideScale);
-        if (drawLeft)
-            middleScaleFactor.setHeight(leftSideScale);
-        else if (drawRight)
-            middleScaleFactor.setHeight(rightSideScale);
-            
-        // For "stretch" rules, just override the scale factor and replace. We only had to do this for the
-        // center tile, since sides don't even use the scale factor unless they have a rule other than "stretch".
-        // The middle however can have "stretch" specified in one axis but not the other, so we have to
-        // correct the scale here.
-        if (hRule == StretchImageRule)
-            middleScaleFactor.setWidth(destinationWidth / sourceWidth);
-            
-        if (vRule == StretchImageRule)
-            middleScaleFactor.setHeight(destinationHeight / sourceHeight);
-        
-        graphicsContext->drawTiledImage(image.get(), colorSpace,
-            IntRect(borderImageRect.x() + leftWidth, borderImageRect.y() + topWidth, destinationWidth, destinationHeight),
-            IntRect(leftSlice, topSlice, sourceWidth, sourceHeight),
-            middleScaleFactor, (Image::TileRule)hRule, (Image::TileRule)vRule, op);
+                graphicsContext->drawTiledImage(image.get(), colorSpace, destRect, srcRect, FloatPoint(), transform, op);
+            } else
+                graphicsContext->drawImage(image.get(), colorSpace, destRect, srcRect, op);
+        }
     }
 
     return true;
