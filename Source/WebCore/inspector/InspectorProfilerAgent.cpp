@@ -62,6 +62,7 @@ namespace WebCore {
 namespace ProfilerAgentState {
 static const char userInitiatedProfiling[] = "userInitiatedProfiling";
 static const char profilerEnabled[] = "profilerEnabled";
+static const char profileHeadersRequested[] = "profileHeadersRequested";
 }
 
 static const char* const UserInitiatedProfileName = "org.webkit.profiles.user-initiated";
@@ -135,7 +136,6 @@ InspectorProfilerAgent::InspectorProfilerAgent(InstrumentingAgents* instrumentin
     , m_frontend(0)
     , m_enabled(false)
     , m_recordingCPUProfile(false)
-    , m_headersRequested(false)
     , m_currentUserInitiatedProfileNumber(-1)
     , m_nextUserInitiatedProfileNumber(1)
     , m_nextUserInitiatedHeapSnapshotNumber(1)
@@ -154,7 +154,7 @@ void InspectorProfilerAgent::addProfile(PassRefPtr<ScriptProfile> prpProfile, un
 {
     RefPtr<ScriptProfile> profile = prpProfile;
     m_profiles.add(profile->uid(), profile);
-    if (m_frontend && m_headersRequested)
+    if (m_frontend && m_state->getBoolean(ProfilerAgentState::profileHeadersRequested))
         m_frontend->addProfileHeader(createProfileHeader(*profile));
     addProfileFinishedMessageToConsole(profile, lineNumber, sourceURL);
 }
@@ -235,7 +235,7 @@ void InspectorProfilerAgent::disable()
     if (!m_enabled)
         return;
     m_enabled = false;
-    m_headersRequested = false;
+    m_state->setBoolean(ProfilerAgentState::profileHeadersRequested, false);
     recompileScript();
 }
 
@@ -258,7 +258,7 @@ String InspectorProfilerAgent::getCurrentUserInitiatedProfileName(bool increment
 
 void InspectorProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader> >& headers)
 {
-    m_headersRequested = true;
+    m_state->setBoolean(ProfilerAgentState::profileHeadersRequested, true);
     headers = TypeBuilder::Array<TypeBuilder::Profiler::ProfileHeader>::create();
 
     ProfilesMap::iterator profilesEnd = m_profiles.end();
@@ -340,9 +340,11 @@ void InspectorProfilerAgent::resetState()
 
 void InspectorProfilerAgent::resetFrontendProfiles()
 {
-    if (m_headersRequested && m_frontend
-        && m_profiles.begin() == m_profiles.end()
-        && m_snapshots.begin() == m_snapshots.end())
+    if (!m_frontend)
+        return;
+    if (!m_state->getBoolean(ProfilerAgentState::profileHeadersRequested))
+        return;
+    if (m_profiles.isEmpty() && m_snapshots.isEmpty())
         m_frontend->resetProfiles();
 }
 
@@ -363,9 +365,6 @@ void InspectorProfilerAgent::restore()
 {
     // Need to restore enablement state here as in setFrontend m_state wasn't loaded yet.
     restoreEnablement();
-
-    // Revisit this.
-    m_headersRequested = true;
     resetFrontendProfiles();
     if (m_state->getBoolean(ProfilerAgentState::userInitiatedProfiling))
         start();

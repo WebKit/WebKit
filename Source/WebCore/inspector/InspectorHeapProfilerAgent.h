@@ -87,7 +87,6 @@ private:
 
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::HeapProfiler* m_frontend;
-    bool m_headersRequested;
     unsigned m_nextUserInitiatedHeapSnapshotNumber;
     IdToHeapSnapshotMap m_snapshots;
 };

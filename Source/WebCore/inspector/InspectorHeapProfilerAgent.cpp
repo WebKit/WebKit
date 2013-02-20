@@ -36,11 +36,16 @@
 
 #include "InjectedScript.h"
 #include "InjectedScriptHost.h"
+#include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "ScriptProfiler.h"
 #include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
+
+namespace HeapProfilerAgentState {
+static const char profileHeadersRequested[] = "profileHeadersRequested";
+}
 
 static const char* const UserInitiatedProfileNameHeap = "org.webkit.profiles.user-initiated";
 
@@ -53,7 +58,6 @@ InspectorHeapProfilerAgent::InspectorHeapProfilerAgent(InstrumentingAgents* inst
     : InspectorBaseAgent<InspectorHeapProfilerAgent>("HeapProfiler", instrumentingAgents, inspectorState)
     , m_injectedScriptManager(injectedScriptManager)
     , m_frontend(0)
-    , m_headersRequested(false)
     , m_nextUserInitiatedHeapSnapshotNumber(1)
 {
     m_instrumentingAgents->setInspectorHeapProfilerAgent(this);
@@ -74,7 +78,11 @@ void InspectorHeapProfilerAgent::resetState()
 
 void InspectorHeapProfilerAgent::resetFrontendProfiles()
 {
-    if (m_headersRequested && m_frontend && m_snapshots.isEmpty())
+    if (!m_frontend)
+        return;
+    if (!m_state->getBoolean(HeapProfilerAgentState::profileHeadersRequested))
+        return;
+    if (m_snapshots.isEmpty())
         m_frontend->resetProfiles();
 }
 
@@ -85,14 +93,12 @@ void InspectorHeapProfilerAgent::setFrontend(InspectorFrontend* frontend)
 
 void InspectorHeapProfilerAgent::clearFrontend()
 {
-    m_headersRequested = false;
+    m_state->setBoolean(HeapProfilerAgentState::profileHeadersRequested, false);
     m_frontend = 0;
 }
 
 void InspectorHeapProfilerAgent::restore()
 {
-    // Revisit this.
-    m_headersRequested = true;
     resetFrontendProfiles();
 }
 
@@ -117,7 +123,7 @@ void InspectorHeapProfilerAgent::hasHeapProfiler(ErrorString*, bool* result)
 
 void InspectorHeapProfilerAgent::getProfileHeaders(ErrorString*, RefPtr<TypeBuilder::Array<TypeBuilder::HeapProfiler::ProfileHeader> >& headers)
 {
-    m_headersRequested = true;
+    m_state->setBoolean(HeapProfilerAgentState::profileHeadersRequested, true);
     headers = TypeBuilder::Array<TypeBuilder::HeapProfiler::ProfileHeader>::create();
 
     IdToHeapSnapshotMap::iterator snapshotsEnd = m_snapshots.end();

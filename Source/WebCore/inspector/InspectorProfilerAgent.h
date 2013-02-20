@@ -126,7 +126,6 @@ private:
     InspectorFrontend::Profiler* m_frontend;
     bool m_enabled;
     bool m_recordingCPUProfile;
-    bool m_headersRequested;
     int m_currentUserInitiatedProfileNumber;
     unsigned m_nextUserInitiatedProfileNumber;
     unsigned m_nextUserInitiatedHeapSnapshotNumber;
