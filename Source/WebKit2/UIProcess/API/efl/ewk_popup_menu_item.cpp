@@ -26,71 +26,70 @@
 #include "config.h"
 #include "ewk_popup_menu_item.h"
 
+#include "WKPopupItem.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_private.h"
-#include <wtf/text/CString.h>
 
-using namespace WebKit;
-
-EwkPopupMenuItem::EwkPopupMenuItem(const WebKit::WebPopupItem& item)
-    : m_type(static_cast<Ewk_Popup_Menu_Item_Type>(item.m_type))
-    , m_textDirection(static_cast<Ewk_Text_Direction>(item.m_textDirection))
-    , m_hasTextDirectionOverride(item.m_hasTextDirectionOverride)
-    , m_isEnabled(item.m_isEnabled)
-    , m_isLabel(item.m_isLabel)
-    , m_isSelected(item.m_isSelected)
-    , m_text(item.m_text.utf8().data())
-    , m_tooltipText(item.m_toolTip.utf8().data())
-    , m_accessibilityText(item.m_accessibilityText.utf8().data())
+EwkPopupMenuItem::EwkPopupMenuItem(WKPopupItemRef item)
+    : m_wkItem(item)
 { }
+
+COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_SEPARATOR, kWKPopupItemTypeSeparator);
+COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_ITEM, kWKPopupItemTypeItem);
 
 Ewk_Popup_Menu_Item_Type EwkPopupMenuItem::type() const
 {
-    return m_type;
+    return static_cast<Ewk_Popup_Menu_Item_Type>(WKPopupItemGetType(m_wkItem.get()));
 }
 
 Ewk_Text_Direction EwkPopupMenuItem::textDirection() const
 {
-    return m_textDirection;
+    return static_cast<Ewk_Text_Direction>(WKPopupItemGetTextDirection(m_wkItem.get()));
 }
 
 const char* EwkPopupMenuItem::text() const
 {
+    if (!m_text)
+        m_text = WKEinaSharedString(AdoptWK, WKPopupItemCopyText(m_wkItem.get()));
+
     return m_text;
 }
 
 const char* EwkPopupMenuItem::tooltipText() const
 {
+    if (!m_tooltipText)
+        m_tooltipText = WKEinaSharedString(AdoptWK, WKPopupItemCopyToolTipText(m_wkItem.get()));
+
     return m_tooltipText;
 }
 
 const char* EwkPopupMenuItem::accessibilityText() const
 {
+    if (!m_accessibilityText)
+        m_accessibilityText = WKEinaSharedString(AdoptWK, WKPopupItemCopyAccessibilityText(m_wkItem.get()));
+
     return m_accessibilityText;
 }
 
 bool EwkPopupMenuItem::hasTextDirectionOverride() const
 {
-    return m_hasTextDirectionOverride;
+    return WKPopupItemHasTextDirectionOverride(m_wkItem.get());
 }
 
 bool EwkPopupMenuItem::isEnabled() const
 {
-    return m_isEnabled;
+    return WKPopupItemIsEnabled(m_wkItem.get());
 }
 
 bool EwkPopupMenuItem::isLabel() const
 {
-    return m_isLabel;
+    return WKPopupItemIsLabel(m_wkItem.get());
 }
 
 bool EwkPopupMenuItem::isSelected() const
 {
-    return m_isSelected;
+    return WKPopupItemIsSelected(m_wkItem.get());
 }
-
-COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_SEPARATOR, WebPopupItem::Separator);
-COMPILE_ASSERT_MATCHING_ENUM(EWK_POPUP_MENU_ITEM, WebPopupItem::Item);
 
 Ewk_Popup_Menu_Item_Type ewk_popup_menu_item_type_get(const Ewk_Popup_Menu_Item* item)
 {

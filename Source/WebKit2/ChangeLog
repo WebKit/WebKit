@@ -1,3 +1,31 @@
+2013-02-20  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Port EwkPopupMenuItem to the C API
+        https://bugs.webkit.org/show_bug.cgi?id=108798
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Make use of the new WKPopupItem C API inside EwkPopupMenuItem to remove
+        dependency on internal WebPopupItem type. Eina shared string members
+        are now lazily initialized to make the object cheaper to construct.
+
+        * UIProcess/API/efl/ewk_popup_menu.cpp:
+        (EwkPopupMenu::EwkPopupMenu):
+        * UIProcess/API/efl/ewk_popup_menu_item.cpp:
+        (EwkPopupMenuItem::EwkPopupMenuItem):
+        (EwkPopupMenuItem::type):
+        (EwkPopupMenuItem::textDirection):
+        (EwkPopupMenuItem::text):
+        (EwkPopupMenuItem::tooltipText):
+        (EwkPopupMenuItem::accessibilityText):
+        (EwkPopupMenuItem::hasTextDirectionOverride):
+        (EwkPopupMenuItem::isEnabled):
+        (EwkPopupMenuItem::isLabel):
+        (EwkPopupMenuItem::isSelected):
+        * UIProcess/API/efl/ewk_popup_menu_item_private.h:
+        (EwkPopupMenuItem::create):
+        (EwkPopupMenuItem):
+
 2013-02-19  Tim Horton  <timothy_horton@apple.com>
 
         Clarify isInWindow vs. isVisible path through to RenderLayerCompositor

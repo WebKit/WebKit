@@ -31,11 +31,8 @@
 #include "WKAPICast.h"
 #include "WKArray.h"
 #include "WKPopupMenuListener.h"
-#include "WebPopupItemEfl.h"
 #include "ewk_popup_menu_item_private.h"
 #include "ewk_popup_menu_private.h"
-
-using namespace WebKit;
 
 EwkPopupMenu::EwkPopupMenu(EwkView* view, WKPopupMenuListenerRef popupMenuListener, WKArrayRef items, unsigned selectedIndex)
     : m_view(view)
@@ -46,8 +43,7 @@ EwkPopupMenu::EwkPopupMenu(EwkView* view, WKPopupMenuListenerRef popupMenuListen
     size_t size = WKArrayGetSize(items);
     for (size_t i = 0; i < size; ++i) {
         WKPopupItemRef wkItem = static_cast<WKPopupItemRef>(WKArrayGetItemAtIndex(items, i));
-        // FIXME: Remove EwkPopupMenuItem dependency on WebPopupItem.
-        m_popupMenuItems = eina_list_append(m_popupMenuItems, EwkPopupMenuItem::create(toImpl(wkItem)->data()).leakPtr());
+        m_popupMenuItems = eina_list_append(m_popupMenuItems, EwkPopupMenuItem::create(wkItem).leakPtr());
     }
 }
 

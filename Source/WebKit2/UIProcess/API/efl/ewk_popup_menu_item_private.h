@@ -27,8 +27,9 @@
 #define ewk_popup_menu_item_private_h
 
 #include "WKEinaSharedString.h"
-#include "WebPopupItem.h"
+#include "WKRetainPtr.h"
 #include "ewk_popup_menu_item.h"
+#include <WebKit2/WKBase.h>
 #include <wtf/PassOwnPtr.h>
 
 /**
@@ -37,7 +38,7 @@
  */
 class EwkPopupMenuItem {
 public:
-    static PassOwnPtr<EwkPopupMenuItem> create(const WebKit::WebPopupItem& item)
+    static PassOwnPtr<EwkPopupMenuItem> create(WKPopupItemRef item)
     {
         return adoptPtr(new EwkPopupMenuItem(item));
     }
@@ -55,19 +56,14 @@ public:
     const char* accessibilityText() const;
 
 private:
-    explicit EwkPopupMenuItem(const WebKit::WebPopupItem& item);
+    explicit EwkPopupMenuItem(WKPopupItemRef item);
 
-    Ewk_Popup_Menu_Item_Type m_type;
-    Ewk_Text_Direction m_textDirection;
+    WKRetainPtr<WKPopupItemRef> m_wkItem;
 
-    bool m_hasTextDirectionOverride;
-    bool m_isEnabled;
-    bool m_isLabel;
-    bool m_isSelected;
-
-    WKEinaSharedString m_text;
-    WKEinaSharedString m_tooltipText;
-    WKEinaSharedString m_accessibilityText;
+    // Lazily initialized.
+    mutable WKEinaSharedString m_text;
+    mutable WKEinaSharedString m_tooltipText;
+    mutable WKEinaSharedString m_accessibilityText;
 };
 
 #endif // ewk_popup_menu_item_private_h
