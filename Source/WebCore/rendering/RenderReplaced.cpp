@@ -319,7 +319,7 @@ void RenderReplaced::computeIntrinsicRatioInformation(FloatSize& intrinsicSize, 
 
 LayoutUnit RenderReplaced::computeReplacedLogicalWidth(ShouldComputePreferred shouldComputePreferred) const
 {
-    if (style()->logicalWidth().isSpecified())
+    if (style()->logicalWidth().isSpecified() || style()->logicalWidth().isIntrinsic())
         return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(MainOrPreferredSize, style()->logicalWidth()), shouldComputePreferred);
 
     RenderBox* contentRenderer = embeddedContentBox();
@@ -421,16 +421,19 @@ LayoutUnit RenderReplaced::computeReplacedLogicalHeight() const
 
 void RenderReplaced::computeIntrinsicLogicalWidths(LayoutUnit& minLogicalWidth, LayoutUnit& maxLogicalWidth) const
 {
-    // We cannot resolve any percent logical width here as the available logical
-    // width may not be set on our containing block.
-    minLogicalWidth = maxLogicalWidth = style()->logicalWidth().isPercent() ? intrinsicLogicalWidth() : computeReplacedLogicalWidth(ComputePreferred);
+    minLogicalWidth = maxLogicalWidth = intrinsicLogicalWidth();
 }
 
 void RenderReplaced::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
-    computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    // We cannot resolve any percent logical width here as the available logical
+    // width may not be set on our containing block.
+    if (style()->logicalWidth().isPercent())
+        computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    else
+        m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeReplacedLogicalWidth(ComputePreferred);
 
     RenderStyle* styleToUse = style();
     if (styleToUse->logicalWidth().isPercent() || styleToUse->logicalMaxWidth().isPercent() || hasRelativeIntrinsicLogicalWidth())

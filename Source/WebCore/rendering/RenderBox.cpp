@@ -2588,11 +2588,19 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType sizeType, Length
     switch (logicalWidth.type()) {
         case Fixed:
             return adjustContentBoxLogicalWidthForBoxSizing(logicalWidth.value());
+        case MinContent:
+        case MaxContent: {
+            // MinContent/MaxContent don't need the availableLogicalWidth argument.
+            LayoutUnit availableLogicalWidth = 0;
+            return computeIntrinsicLogicalWidthUsing(logicalWidth, availableLogicalWidth) - borderAndPaddingLogicalWidth();
+        }
         case ViewportPercentageWidth:
         case ViewportPercentageHeight:
         case ViewportPercentageMin:
         case ViewportPercentageMax:
             return adjustContentBoxLogicalWidthForBoxSizing(valueForLength(logicalWidth, 0, view()));
+        case FitContent:
+        case FillAvailable:
         case Percent: 
         case Calculated: {
             // FIXME: containingBlockLogicalWidthForContent() is wrong if the replaced element's block-flow is perpendicular to the
@@ -2602,11 +2610,17 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType sizeType, Length
             Length containerLogicalWidth = containingBlock()->style()->logicalWidth();
             // FIXME: Handle cases when containing block width is calculated or viewport percent.
             // https://bugs.webkit.org/show_bug.cgi?id=91071
+            if (logicalWidth.isIntrinsic())
+                return computeIntrinsicLogicalWidthUsing(logicalWidth, cw) - borderAndPaddingLogicalWidth();
             if (cw > 0 || (!cw && (containerLogicalWidth.isFixed() || containerLogicalWidth.isPercent())))
                 return adjustContentBoxLogicalWidthForBoxSizing(minimumValueForLength(logicalWidth, cw));
         }
         // fall through
-        default:
+        case Intrinsic:
+        case MinIntrinsic:
+        case Auto:
+        case Relative:
+        case Undefined:
             return intrinsicLogicalWidth();
      }
 }
