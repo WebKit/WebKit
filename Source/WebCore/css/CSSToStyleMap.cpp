@@ -43,22 +43,22 @@ namespace WebCore {
 
 RenderStyle* CSSToStyleMap::style() const
 {
-    return m_resolver->style();
+    return m_state.style();
 }
     
 RenderStyle* CSSToStyleMap::rootElementStyle() const
 {
-    return m_resolver->rootElementStyle();
+    return m_state.rootElementStyle();
 }
 
 bool CSSToStyleMap::useSVGZoomRules() const
 {
-    return m_resolver->useSVGZoomRules();
+    return m_state.useSVGZoomRules();
 }
     
 PassRefPtr<StyleImage> CSSToStyleMap::styleImage(CSSPropertyID propertyId, CSSValue* value)
 {
-    return m_resolver->styleImage(propertyId, value);
+    return StyleResolver::styleImage(m_state, propertyId, value);
 }
 
 void CSSToStyleMap::mapFillAttachment(CSSPropertyID, FillLayer* layer, CSSValue* value)

@@ -28,6 +28,7 @@
 
 #include "CSSImageGeneratorValue.h"
 #include "CSSPrimitiveValue.h"
+#include "StyleResolver.h"
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
@@ -89,7 +90,7 @@ public:
     bool knownToBeOpaque(const RenderObject*) const;
 
     void loadSubimages(CachedResourceLoader*) { }
-    PassRefPtr<CSSGradientValue> gradientWithStylesResolved(StyleResolver*);
+    PassRefPtr<CSSGradientValue> gradientWithStylesResolved(StyleResolver::State&);
 
 protected:
     CSSGradientValue(ClassType classType, CSSGradientRepeat repeat, CSSGradientType gradientType)

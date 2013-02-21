@@ -34,7 +34,6 @@
 #include "CSSBasicShapes.h"
 #include "CSSPrimitiveValueMappings.h"
 #include "CSSValuePool.h"
-#include "StyleResolver.h"
 
 namespace WebCore {
 
@@ -100,12 +99,12 @@ PassRefPtr<CSSValue> valueForBasicShape(const BasicShape* basicShape)
     return cssValuePool().createValue<PassRefPtr<CSSBasicShape> >(basicShapeValue.release());
 }
 
-static Length convertToLength(const StyleResolver* styleResolver, CSSPrimitiveValue* value)
+static Length convertToLength(const StyleResolver::State& state, CSSPrimitiveValue* value)
 {
-    return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | ViewportPercentageConversion>(styleResolver->style(), styleResolver->rootElementStyle(), styleResolver->style()->effectiveZoom());
+    return value->convertToLength<FixedIntegerConversion | FixedFloatConversion | PercentConversion | ViewportPercentageConversion>(state.style(), state.rootElementStyle(), state.style()->effectiveZoom());
 }
 
-PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver* styleResolver, const CSSBasicShape* basicShapeValue)
+PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver::State& state, const CSSBasicShape* basicShapeValue)
 {
     RefPtr<BasicShape> basicShape;
 
@@ -114,14 +113,14 @@ PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver* styleResolver, co
         const CSSBasicShapeRectangle* rectValue = static_cast<const CSSBasicShapeRectangle *>(basicShapeValue);
         RefPtr<BasicShapeRectangle> rect = BasicShapeRectangle::create();
 
-        rect->setX(convertToLength(styleResolver, rectValue->x()));
-        rect->setY(convertToLength(styleResolver, rectValue->y()));
-        rect->setWidth(convertToLength(styleResolver, rectValue->width()));
-        rect->setHeight(convertToLength(styleResolver, rectValue->height()));
+        rect->setX(convertToLength(state, rectValue->x()));
+        rect->setY(convertToLength(state, rectValue->y()));
+        rect->setWidth(convertToLength(state, rectValue->width()));
+        rect->setHeight(convertToLength(state, rectValue->height()));
         if (rectValue->radiusX()) {
-            rect->setCornerRadiusX(convertToLength(styleResolver, rectValue->radiusX()));
+            rect->setCornerRadiusX(convertToLength(state, rectValue->radiusX()));
             if (rectValue->radiusY())
-                rect->setCornerRadiusY(convertToLength(styleResolver, rectValue->radiusY()));
+                rect->setCornerRadiusY(convertToLength(state, rectValue->radiusY()));
         }
         basicShape = rect.release();
         break;
@@ -130,9 +129,9 @@ PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver* styleResolver, co
         const CSSBasicShapeCircle* circleValue = static_cast<const CSSBasicShapeCircle *>(basicShapeValue);
         RefPtr<BasicShapeCircle> circle = BasicShapeCircle::create();
 
-        circle->setCenterX(convertToLength(styleResolver, circleValue->centerX()));
-        circle->setCenterY(convertToLength(styleResolver, circleValue->centerY()));
-        circle->setRadius(convertToLength(styleResolver, circleValue->radius()));
+        circle->setCenterX(convertToLength(state, circleValue->centerX()));
+        circle->setCenterY(convertToLength(state, circleValue->centerY()));
+        circle->setRadius(convertToLength(state, circleValue->radius()));
 
         basicShape = circle.release();
         break;
@@ -141,10 +140,10 @@ PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver* styleResolver, co
         const CSSBasicShapeEllipse* ellipseValue = static_cast<const CSSBasicShapeEllipse *>(basicShapeValue);
         RefPtr<BasicShapeEllipse> ellipse = BasicShapeEllipse::create();
 
-        ellipse->setCenterX(convertToLength(styleResolver, ellipseValue->centerX()));
-        ellipse->setCenterY(convertToLength(styleResolver, ellipseValue->centerY()));
-        ellipse->setRadiusX(convertToLength(styleResolver, ellipseValue->radiusX()));
-        ellipse->setRadiusY(convertToLength(styleResolver, ellipseValue->radiusY()));
+        ellipse->setCenterX(convertToLength(state, ellipseValue->centerX()));
+        ellipse->setCenterY(convertToLength(state, ellipseValue->centerY()));
+        ellipse->setRadiusX(convertToLength(state, ellipseValue->radiusX()));
+        ellipse->setRadiusY(convertToLength(state, ellipseValue->radiusY()));
 
         basicShape = ellipse.release();
         break;
@@ -156,7 +155,7 @@ PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver* styleResolver, co
         polygon->setWindRule(polygonValue->windRule());
         const Vector<RefPtr<CSSPrimitiveValue> >& values = polygonValue->values();
         for (unsigned i = 0; i < values.size(); i += 2)
-            polygon->appendPoint(convertToLength(styleResolver, values.at(i).get()), convertToLength(styleResolver, values.at(i + 1).get()));
+            polygon->appendPoint(convertToLength(state, values.at(i).get()), convertToLength(state, values.at(i + 1).get()));
 
         basicShape = polygon.release();
         break;
