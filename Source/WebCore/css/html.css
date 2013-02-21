@@ -793,7 +793,7 @@ input[type="file"]::-webkit-file-upload-button {
 }
 
 input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {
-    -webkit-box-align: center;
+    -webkit-align-items: flex-start;
     text-align: center;
     cursor: default;
     color: ButtonText;

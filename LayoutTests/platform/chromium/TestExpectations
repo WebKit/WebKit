@@ -4419,3 +4419,10 @@ webkit.org/b/109581 [ Win ] inspector/debugger/debugger-script-preprocessor.html
 crbug.com/176843 fast/filesystem/op-restricted-names.html [ Failure ]
 
 webkit.org/b/110247 [ Debug ] fast/workers/storage/interrupt-database.html [ Pass Crash Slow ]
+
+# Need rebaseline for https://bugs.webkit.org/show_bug.cgi?id=109994
+webkit.org/b/109994 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
+webkit.org/b/109994 [ Mac Win ] fast/forms/button-generated-content.html [ Failure ]
+webkit.org/b/109994 [ Mac Win ] fast/forms/select-baseline.html [ Failure ]
+webkit.org/b/109994 [ Mac Win ] svg/custom/foreign-object-skew.svg [ Failure ]
+webkit.org/b/109994 [ Mac Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]

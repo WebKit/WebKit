@@ -40,6 +40,8 @@ public:
     RenderFlexibleBox(Element*);
     virtual ~RenderFlexibleBox();
 
+    static RenderFlexibleBox* createAnonymous(Document*);
+
     virtual const char* renderName() const OVERRIDE;
 
     virtual bool isFlexibleBox() const OVERRIDE { return true; }

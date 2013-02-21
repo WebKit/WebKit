@@ -46,6 +46,7 @@
 #include "RenderBoxRegionInfo.h"
 #include "RenderCombineText.h"
 #include "RenderDeprecatedFlexibleBox.h"
+#include "RenderFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -7936,13 +7937,16 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
 
 RenderBlock* RenderBlock::createAnonymousWithParentRendererAndDisplay(const RenderObject* parent, EDisplay display)
 {
-    // FIXME: Do we need to cover the new flex box here ?
     // FIXME: Do we need to convert all our inline displays to block-type in the anonymous logic ?
     EDisplay newDisplay;
     RenderBlock* newBox = 0;
     if (display == BOX || display == INLINE_BOX) {
+        // FIXME: Remove this case once we have eliminated all internal users of old flexbox
         newBox = RenderDeprecatedFlexibleBox::createAnonymous(parent->document());
         newDisplay = BOX;
+    } else if (display == FLEX || display == INLINE_FLEX) {
+        newBox = RenderFlexibleBox::createAnonymous(parent->document());
+        newDisplay = FLEX;
     } else {
         newBox = RenderBlock::createAnonymous(parent->document());
         newDisplay = BLOCK;

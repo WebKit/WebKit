@@ -34,7 +34,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderButton::RenderButton(Element* element)
-    : RenderDeprecatedFlexibleBox(element)
+    : RenderFlexibleBox(element)
     , m_buttonText(0)
     , m_inner(0)
     , m_default(false)
@@ -52,7 +52,7 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
         ASSERT(!firstChild());
         m_inner = createAnonymousBlock(style()->display());
         setupInnerStyle(m_inner->style());
-        RenderDeprecatedFlexibleBox::addChild(m_inner);
+        RenderFlexibleBox::addChild(m_inner);
     }
     
     m_inner->addChild(newChild, beforeChild);
@@ -65,7 +65,7 @@ void RenderButton::removeChild(RenderObject* oldChild)
     // violated.
     if (oldChild == m_inner || !m_inner || oldChild->parent() == this) {
         ASSERT(oldChild == m_inner || !m_inner);
-        RenderDeprecatedFlexibleBox::removeChild(oldChild);
+        RenderFlexibleBox::removeChild(oldChild);
         m_inner = 0;
     } else
         m_inner->removeChild(oldChild);
@@ -75,10 +75,14 @@ void RenderButton::styleWillChange(StyleDifference diff, const RenderStyle* newS
 {
     if (m_inner) {
         // RenderBlock::setStyle is going to apply a new style to the inner block, which
-        // will have the initial box flex value, 0. The current value is 1, because we set
+        // will have the initial flex value, 0. The current value is 1, because we set
         // it right below. Here we change it back to 0 to avoid getting a spurious layout hint
-        // because of the difference.
-        m_inner->style()->setBoxFlex(0);
+        // because of the difference. Same goes for the other properties.
+        // FIXME: Make this hack unnecessary.
+        m_inner->style()->setFlexGrow(newStyle->initialFlexGrow());
+        m_inner->style()->setMinWidth(newStyle->initialMinSize());
+        m_inner->style()->setMarginTop(newStyle->initialMargin());
+        m_inner->style()->setMarginBottom(newStyle->initialMargin());
     }
     RenderBlock::styleWillChange(diff, newStyle);
 }
@@ -108,8 +112,17 @@ void RenderButton::setupInnerStyle(RenderStyle* innerStyle)
     ASSERT(innerStyle->refCount() == 1);
     // RenderBlock::createAnonymousBlock creates a new RenderStyle, so this is
     // safe to modify.
-    innerStyle->setBoxFlex(1.0f);
-    innerStyle->setBoxOrient(style()->boxOrient());
+    innerStyle->setFlexGrow(1.0f);
+    // min-width: 0; is needed for correct shrinking.
+    // FIXME: If and when the spec changes to not require this, we should
+    // remove this line and the corresponding line in styleWillChange.
+    // See: http://lists.w3.org/Archives/Public/www-style/2013Feb/0364.html
+    innerStyle->setMinWidth(Length(0, Fixed));
+    // Use margin:auto instead of align-items:center to get safe centering, i.e.
+    // when the content overflows, treat it the same as align-items: flex-start.
+    innerStyle->setMarginTop(Length());
+    innerStyle->setMarginBottom(Length());
+    innerStyle->setFlexDirection(style()->flexDirection());
 }
 
 void RenderButton::updateFromElement()

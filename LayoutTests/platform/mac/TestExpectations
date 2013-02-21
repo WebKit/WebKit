@@ -1433,3 +1433,10 @@ webkit.org/b/110027 compositing/transitions/transform-on-large-layer.html [ Pass
 webkit.org/b/110173 media/video-controls-captions-trackmenu.html [ Crash Pass ]
 
 webkit.org/b/110186 inspector/editor/brace-matcher.html [ Pass Failure ]
+
+# Need rebaseline for https://bugs.webkit.org/show_bug.cgi?id=109994
+webkit.org/b/109994 css2.1/20110323/replaced-elements-001.htm [ Failure ]
+webkit.org/b/109994 fast/forms/button-generated-content.html [ Failure ]
+webkit.org/b/109994 fast/forms/select-baseline.html [ Failure ]
+webkit.org/b/109994 svg/custom/foreign-object-skew.svg [ Failure ]
+webkit.org/b/109994 tables/mozilla/bugs/bug92647-2.html [ Failure ]

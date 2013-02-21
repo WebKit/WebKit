@@ -1,16 +1,16 @@
 description("Check if box-orient is working in &lt;button&gt;. See https://bugs.webkit.org/show_bug.cgi?id=25406");
 
-function setBoxOrient(element, boxOrient) {
-    element.style.webkitBoxOrient = boxOrient;
-    element.style.mozBoxOrient = boxOrient;
+function setFlexDirection(element, flexDirection) {
+    element.style.webkitFlexDirection = flexDirection;
+    element.style.flexDirection = flexDirection;
 }
 
 function gebi(id) {
     return document.getElementById(id);
 }
 
-setBoxOrient(gebi("toVertical"), "vertical");
-setBoxOrient(gebi("toHorizontal"), "horizontal");
+setFlexDirection(gebi("toVertical"), "column");
+setFlexDirection(gebi("toHorizontal"), "row");
 
 var referenceHorizontalHeight = gebi("reference_horizontal").clientHeight;
 var referenceVerticalHeight = gebi("reference_vertical").clientHeight;
