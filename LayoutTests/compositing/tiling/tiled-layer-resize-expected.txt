@@ -9,6 +9,7 @@ Tiled layer
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 800.00 2100.00)
+          (contentsOpaque 1)
           (drawsContent 1)
         )
       )

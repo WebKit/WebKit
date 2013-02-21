@@ -20,18 +20,21 @@
                 (GraphicsLayer
                   (position -100.00 0.00)
                   (bounds 200.00 200.00)
+                  (contentsOpaque 1)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
                   (visible rect 100.00, 0.00 100.00 x 200.00)
                 )
                 (GraphicsLayer
                   (position 150.00 0.00)
                   (bounds 200.00 200.00)
+                  (contentsOpaque 1)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
                   (visible rect 0.00, 0.00 200.00 x 200.00)
                 )
                 (GraphicsLayer
                   (position 400.00 0.00)
                   (bounds 200.00 200.00)
+                  (contentsOpaque 1)
                   (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
                   (visible rect 0.00, 0.00 100.00 x 200.00)
                 )

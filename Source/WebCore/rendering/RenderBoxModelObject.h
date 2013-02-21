@@ -88,6 +88,8 @@ public:
 
     virtual bool requiresLayer() const OVERRIDE { return isRoot() || isPositioned() || createsGroup() || hasClipPath() || hasTransform() || hasHiddenBackface() || hasReflection() || style()->specifiesColumns(); }
 
+    virtual bool isOpaqueInRect(const LayoutRect& localRect) const OVERRIDE { return foregroundIsOpaqueInRect(localRect) || backgroundIsOpaqueInRect(localRect); }
+
     // This will work on inlines to return the bounding box of all of the lines' border boxes.
     virtual IntRect borderBoundingBox() const = 0;
 
@@ -183,6 +185,9 @@ public:
 
 protected:
     virtual void willBeDestroyed();
+
+    virtual bool backgroundIsOpaqueInRect(const LayoutRect&) const { return false; }
+    virtual bool foregroundIsOpaqueInRect(const LayoutRect&) const { return false; }
 
     class BackgroundImageGeometry {
     public:

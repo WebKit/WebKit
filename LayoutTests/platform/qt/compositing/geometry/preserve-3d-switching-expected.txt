@@ -17,6 +17,7 @@ The green box appear angled out from the yellow box and embedded in it.
               (position 12.00 12.00)
               (bounds 280.00 280.00)
               (opacity 0.80)
+              (contentsOpaque 1)
               (preserves3D 1)
               (transform [0.77 -0.56 -0.32 0.00] [0.00 0.50 -0.87 0.00] [0.64 0.66 0.38 0.00] [0.00 0.00 0.00 1.00])
               (children 1
@@ -24,6 +25,7 @@ The green box appear angled out from the yellow box and embedded in it.
                   (position 40.00 40.00)
                   (bounds 200.00 200.00)
                   (opacity 0.70)
+                  (contentsOpaque 1)
                   (drawsContent 1)
                   (transform [0.77 0.00 0.64 0.00] [0.00 1.00 0.00 0.00] [-0.64 0.00 0.77 0.00] [0.00 0.00 50.00 1.00])
                 )

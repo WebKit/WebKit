@@ -15,10 +15,12 @@ Should be composited
             (GraphicsLayer
               (position 6.00 6.00)
               (bounds 250.00 50.00)
+              (contentsOpaque 1)
             )
             (GraphicsLayer
               (position 11.00 21.00)
               (bounds 100.00 100.00)
+              (contentsOpaque 1)
               (drawsContent 1)
             )
           )
@@ -26,6 +28,7 @@ Should be composited
         (GraphicsLayer
           (position 18.00 230.00)
           (bounds 100.00 100.00)
+          (contentsOpaque 1)
           (drawsContent 1)
         )
       )

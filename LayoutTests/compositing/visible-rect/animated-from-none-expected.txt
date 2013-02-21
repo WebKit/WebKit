@@ -20,6 +20,7 @@
                 (GraphicsLayer
                   (position -100.00 0.00)
                   (bounds 200.00 200.00)
+                  (contentsOpaque 1)
                   (visible rect 100.00, 0.00 100.00 x 200.00)
                 )
               )

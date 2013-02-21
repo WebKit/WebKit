@@ -9,6 +9,7 @@
           (position 23.00 8.00)
           (anchor 1.47 0.00)
           (bounds 256.00 256.00)
+          (contentsOpaque 1)
           (drawsContent 1)
           (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [-10.00 0.00 0.00 1.00])
           (children 1
@@ -19,6 +20,7 @@
         )
         (GraphicsLayer
           (bounds 300.00 300.00)
+          (contentsOpaque 1)
           (drawsContent 1)
         )
       )

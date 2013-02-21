@@ -11,16 +11,19 @@ This is some text
         (GraphicsLayer
           (position 8.00 86.00)
           (bounds 502.00 5002.00)
+          (contentsOpaque 1)
           (drawsContent 1)
           (children 2
             (GraphicsLayer
               (position 51.00 101.00)
               (bounds 200.00 200.00)
+              (contentsOpaque 1)
               (drawsContent 1)
             )
             (GraphicsLayer
               (position 51.00 4701.00)
               (bounds 200.00 200.00)
+              (contentsOpaque 1)
               (drawsContent 1)
             )
           )

@@ -35,6 +35,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
                                 (GraphicsLayer
                                   (position 8.00 8.00)
                                   (bounds 202.00 202.00)
+                                  (contentsOpaque 1)
                                   (drawsContent 1)
                                   (transform [0.71 0.71 0.00 0.00] [-0.71 0.71 0.00 0.00] [0.00 0.00 1.00 0.00] [100.00 100.00 0.00 1.00])
                                 )
@@ -77,6 +78,7 @@ This tests that layers are rebuilt properly after the page is restored from the 
                                 (GraphicsLayer
                                   (position 108.00 100.00)
                                   (bounds 200.00 200.00)
+                                  (contentsOpaque 1)
                                 )
                               )
                             )

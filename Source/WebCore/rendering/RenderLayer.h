@@ -724,6 +724,10 @@ public:
 
     bool paintsWithTransform(PaintBehavior) const;
 
+    // Returns true if layer contents are painted opaque in the given rect.
+    // The query rect is given in local coordinates.
+    bool contentsOpaqueInRect(const LayoutRect&) const;
+
     bool containsDirtyOverlayScrollbars() const { return m_containsDirtyOverlayScrollbars; }
     void setContainsDirtyOverlayScrollbars(bool dirtyScrollbars) { m_containsDirtyOverlayScrollbars = dirtyScrollbars; }
 
@@ -906,6 +910,8 @@ private:
                             const HitTestingTransformState* containerTransformState) const;
     
     bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const HitTestLocation&, HitTestFilter) const;
+
+    bool listContentsOpaqueInRect(const Vector<RenderLayer*>*, const LayoutRect&) const;
 
     void computeScrollDimensions();
     bool hasHorizontalOverflow() const;

@@ -26,6 +26,7 @@ middlebottom
           (children 1
             (GraphicsLayer
               (bounds 110.00 200.00)
+              (contentsOpaque 1)
               (drawsContent 1)
             )
           )
@@ -47,6 +48,7 @@ middlebottom
           (children 1
             (GraphicsLayer
               (bounds 110.00 200.00)
+              (contentsOpaque 1)
               (drawsContent 1)
             )
           )

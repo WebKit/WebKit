@@ -32,6 +32,7 @@
                       (children 1
                         (GraphicsLayer
                           (bounds 500.00 500.00)
+                          (contentsOpaque 1)
                           (transform [1.00 0.00 0.00 0.00] [0.00 0.82 0.57 0.00] [0.00 -0.57 0.82 0.00] [0.00 0.00 0.00 1.00])
                           (visible rect 0.00, 0.00 500.00 x 369.91)
                         )
@@ -67,6 +68,7 @@
                       (children 1
                         (GraphicsLayer
                           (bounds 500.00 500.00)
+                          (contentsOpaque 1)
                           (transform [1.00 0.00 0.00 0.00] [0.00 0.82 0.57 0.00] [0.00 -0.57 0.82 0.00] [0.00 0.00 0.00 1.00])
                           (visible rect 0.00, 0.00 500.00 x 351.87)
                         )

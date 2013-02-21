@@ -675,6 +675,8 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         if (m_boundsConstrainedByClipping)
             m_graphicsLayer->setNeedsDisplay();
     }
+    if (!m_isMainFrameRenderViewLayer)
+        m_graphicsLayer->setContentsOpaque(m_owningLayer->contentsOpaqueInRect(localCompositingBounds));
 
     // If we have a layer that clips children, position it.
     IntRect clippingBox;

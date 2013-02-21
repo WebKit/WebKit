@@ -13,10 +13,12 @@
         (GraphicsLayer
           (position 8.00 41.00)
           (bounds 400.00 400.00)
+          (contentsOpaque 1)
           (children 1
             (GraphicsLayer
               (position 50.00 50.00)
               (bounds 75.00 75.00)
+              (contentsOpaque 1)
             )
           )
         )

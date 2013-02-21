@@ -16,6 +16,7 @@
               (children 1
                 (GraphicsLayer
                   (bounds 202.00 202.00)
+                  (contentsOpaque 1)
                   (preserves3D 1)
                   (drawsContent 1)
                   (backfaceVisibility hidden)
@@ -37,6 +38,7 @@
                 (GraphicsLayer
                   (bounds 202.00 2502.00)
                   (usingTiledLayer 1)
+                  (contentsOpaque 1)
                   (preserves3D 1)
                   (drawsContent 1)
                   (backfaceVisibility hidden)
