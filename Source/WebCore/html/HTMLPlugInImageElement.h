@@ -52,6 +52,8 @@ public:
 
     RenderEmbeddedObject* renderEmbeddedObject() const;
 
+    virtual void setDisplayState(DisplayState) OVERRIDE;
+
     virtual void updateWidget(PluginCreationOption) = 0;
 
     const String& serviceType() const { return m_serviceType; }

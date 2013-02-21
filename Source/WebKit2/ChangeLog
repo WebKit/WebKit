@@ -1,3 +1,23 @@
+2013-02-21  Dean Jackson  <dino@apple.com>
+
+        Plug-in snapshotting code always accepts first snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=110495
+
+        Reviewed by Tim Horton.
+
+        When we detect a plugin that can be snapshotted we start capturing
+        images until we find one that we believe isn't blank, or we timeout.
+        I introduced a regression recently where we swap renderers as
+        soon as the snapshot arrives, whether or not is is blank.
+
+        The fix was to have the embedder (currently only WK2) be the one
+        who tells the HTMLPlugInElement to start displaying snapshots.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::pluginSnapshotTimerFired): When we find a
+        snapshot that we like, tell the HTMLPlugInElement to move to
+        the snapshot view.
+
 2013-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix make distcheck.

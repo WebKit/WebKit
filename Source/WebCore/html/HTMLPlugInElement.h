@@ -55,7 +55,7 @@ public:
         Playing
     };
     DisplayState displayState() const { return m_displayState; }
-    void setDisplayState(DisplayState state) { m_displayState = state; }
+    virtual void setDisplayState(DisplayState state) { m_displayState = state; }
     virtual void updateSnapshot(PassRefPtr<Image>) { }
     virtual void dispatchPendingMouseClick() { }
 

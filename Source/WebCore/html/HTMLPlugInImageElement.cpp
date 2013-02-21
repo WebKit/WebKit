@@ -86,6 +86,13 @@ HTMLPlugInImageElement::~HTMLPlugInImageElement()
         document()->unregisterForPageCacheSuspensionCallbacks(this);
 }
 
+void HTMLPlugInImageElement::setDisplayState(DisplayState state)
+{
+    HTMLPlugInElement::setDisplayState(state);
+    if (displayState() == DisplayingSnapshot)
+        m_swapRendererTimer.startOneShot(0);
+}
+
 RenderEmbeddedObject* HTMLPlugInImageElement::renderEmbeddedObject() const
 {
     // HTMLObjectElement and HTMLEmbedElement may return arbitrary renderers
@@ -287,9 +294,6 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
         toRenderSnapshottedPlugIn(renderer())->updateSnapshot(image);
         return;
     }
-
-    setDisplayState(DisplayingSnapshot);
-    m_swapRendererTimer.startOneShot(0);
 }
 
 static AtomicString classNameForShadowRootSize(const IntSize& viewContentsSize, const Node* node)
