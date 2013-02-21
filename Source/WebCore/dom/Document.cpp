@@ -562,12 +562,12 @@ static void histogramMutationEventUsage(const unsigned short& listenerTypes)
 }
 
 #if ENABLE(FULLSCREEN_API)
-static bool isAttributeOnAllOwners(const WebCore::QualifiedName& attribute, const HTMLFrameOwnerElement* owner)
+static bool isAttributeOnAllOwners(const WebCore::QualifiedName& attribute, const WebCore::QualifiedName& prefixedAttribute, const HTMLFrameOwnerElement* owner)
 {
     if (!owner)
         return true;
     do {
-        if (!owner->hasAttribute(attribute))
+        if (!(owner->hasAttribute(attribute) || owner->hasAttribute(prefixedAttribute)))
             return false;
     } while ((owner = owner->document()->ownerElement()));
     return true;
@@ -4952,7 +4952,7 @@ MediaCanStartListener* Document::takeAnyMediaCanStartListener()
 bool Document::fullScreenIsAllowedForElement(Element* element) const
 {
     ASSERT(element);
-    return isAttributeOnAllOwners(webkitallowfullscreenAttr, element->document()->ownerElement());
+    return isAttributeOnAllOwners(allowfullscreenAttr, webkitallowfullscreenAttr, element->document()->ownerElement());
 }
 
 void Document::requestFullScreenForElement(Element* element, unsigned short flags, FullScreenCheckType checkType)
@@ -5171,7 +5171,7 @@ bool Document::webkitFullscreenEnabled() const
     // browsing context's documents have their fullscreen enabled flag set, or false otherwise.
 
     // Top-level browsing contexts are implied to have their allowFullScreen attribute set.
-    return isAttributeOnAllOwners(webkitallowfullscreenAttr, ownerElement());
+    return isAttributeOnAllOwners(allowfullscreenAttr, webkitallowfullscreenAttr, ownerElement());
 }
 
 void Document::webkitWillEnterFullScreenForElement(Element* element)
