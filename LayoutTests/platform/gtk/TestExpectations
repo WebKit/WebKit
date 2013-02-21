@@ -1045,6 +1045,7 @@ webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
 
 # DRT doesn't dispatch an event for the second call eventSender.contextClick().
 webkit.org/b/39102 editing/spelling/context-menu-suggestions.html [ Failure ]
+webkit.org/b/39102 editing/spelling/spelling-changed-text.html [ Failure ]
 
 # Some input type=range tests fail because of the size
 # of the slider thumb in GTK+ themes.
@@ -1468,6 +1469,8 @@ webkit.org/b/110319 fast/multicol/newmulticol/column-rules-fixed-height.html [ I
 
 webkit.org/b/110320 fast/dom/shadow/shadow-dom-event-dispatching-distributed-text-node.html [ Failure ]
 webkit.org/b/110320 fast/dom/shadow/shadow-dom-event-dispatching-text-node-in-shadow-root.html [ Failure ]
+
+webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
