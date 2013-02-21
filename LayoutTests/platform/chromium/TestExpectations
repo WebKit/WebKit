@@ -1351,7 +1351,8 @@ webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-container.xhtml [ ImageO
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-root-standalone.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-root.xhtml [ ImageOnlyFailure Pass ]
 
-webkit.org/b/109413 [ Linux Mac ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure Pass ]
+# Need to rebaseline text failure for https://bugs.webkit.org/show_bug.cgi?id=109994
+webkit.org/b/109413 svg/custom/foreign-object-skew.svg [ ImageOnlyFailure Pass Failure ]
 
 # This fails image 5-10% of the time. Probably a race condition on timers.
 webkit.org/b/83471 svg/as-image/animated-svg-as-image-same-image.html [ ImageOnlyFailure Pass ]
@@ -4418,5 +4419,4 @@ webkit.org/b/110247 [ Debug ] fast/workers/storage/interrupt-database.html [ Pas
 webkit.org/b/109994 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
 webkit.org/b/109994 [ Mac Win ] fast/forms/button-generated-content.html [ Failure ]
 webkit.org/b/109994 [ Mac Win ] fast/forms/select-baseline.html [ Failure ]
-webkit.org/b/109994 [ Mac Win ] svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/109994 [ Mac Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
