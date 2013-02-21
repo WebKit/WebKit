@@ -102,6 +102,10 @@ WebInspector.TimelinePresentationModel._initRecordStyles = function()
     recordStyles[recordTypes.RequestAnimationFrame] = { title: WebInspector.UIString("Request Animation Frame"), category: categories["scripting"] };
     recordStyles[recordTypes.CancelAnimationFrame] = { title: WebInspector.UIString("Cancel Animation Frame"), category: categories["scripting"] };
     recordStyles[recordTypes.FireAnimationFrame] = { title: WebInspector.UIString("Animation Frame Fired"), category: categories["scripting"] };
+    recordStyles[recordTypes.WebSocketCreate] = { title: WebInspector.UIString("Create WebSocket"), category: categories["scripting"] };
+    recordStyles[recordTypes.WebSocketSendHandshakeRequest] = { title: WebInspector.UIString("Send WebSocket Handshake"), category: categories["scripting"] };
+    recordStyles[recordTypes.WebSocketReceiveHandshakeResponse] = { title: WebInspector.UIString("Receive WebSocket Handshake"), category: categories["scripting"] };
+    recordStyles[recordTypes.WebSocketDestroy] = { title: WebInspector.UIString("Destroy WebSocket"), category: categories["scripting"] };
 
     WebInspector.TimelinePresentationModel._recordStylesMap = recordStyles;
     return recordStyles;
@@ -267,6 +271,7 @@ WebInspector.TimelinePresentationModel.prototype = {
         this._minimumRecordTime = -1;
         this._layoutInvalidateStack = {};
         this._lastScheduleStyleRecalculation = {};
+        this._webSocketCreateRecords = {};
     },
 
     addFrame: function(frame)
@@ -658,6 +663,24 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
             this.setHasWarning();
         presentationModel._layoutInvalidateStack[this.frameId] = null;
         break;
+
+    case recordTypes.WebSocketCreate:
+        this.webSocketURL = record.data["url"];
+        if (typeof record.data["webSocketProtocol"] !== "undefined")
+            this.webSocketProtocol = record.data["webSocketProtocol"];
+        presentationModel._webSocketCreateRecords[record.data["identifier"]] = this;
+        break;
+   
+    case recordTypes.WebSocketSendHandshakeRequest:
+    case recordTypes.WebSocketReceiveHandshakeResponse:
+    case recordTypes.WebSocketDestroy:
+        var webSocketCreateRecord = presentationModel._webSocketCreateRecords[record.data["identifier"]];
+        if (webSocketCreateRecord) { // False if we started instrumentation in the middle of request.
+            this.webSocketURL = webSocketCreateRecord.webSocketURL;
+            if (typeof webSocketCreateRecord.webSocketProtocol !== "undefined")
+                this.webSocketProtocol = webSocketCreateRecord.webSocketProtocol;
+        }
+        break;
     }
 }
 
@@ -910,6 +933,17 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
                 if (typeof this.intervalDuration === "number")
                     contentHelper._appendTextRow(WebInspector.UIString("Interval Duration"), Number.secondsToString(this.intervalDuration, true));
                 break;
+            case recordTypes.WebSocketCreate:
+            case recordTypes.WebSocketSendHandshakeRequest:
+            case recordTypes.WebSocketReceiveHandshakeResponse:
+            case recordTypes.WebSocketDestroy:
+                if (typeof this.webSocketURL !== "undefined")
+                    contentHelper._appendTextRow(WebInspector.UIString("URL"), this.webSocketURL);
+                if (typeof this.webSocketProtocol !== "undefined")
+                    contentHelper._appendTextRow(WebInspector.UIString("WebSocket Protocol"), this.webSocketProtocol);
+                if (typeof this.data["message"] !== "undefined")
+                    contentHelper._appendTextRow(WebInspector.UIString("Message"), this.data["message"])
+                    break;
             default:
                 if (this.detailsNode())
                     contentHelper._appendElementRow(WebInspector.UIString("Details"), this.detailsNode().childNodes[1].cloneNode());

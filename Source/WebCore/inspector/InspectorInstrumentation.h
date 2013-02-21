@@ -263,7 +263,7 @@ public:
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-    static void didCreateWebSocket(Document*, unsigned long identifier, const KURL& requestURL, const KURL& documentURL);
+    static void didCreateWebSocket(Document*, unsigned long identifier, const KURL& requestURL, const KURL& documentURL, const String& protocol);
     static void willSendWebSocketHandshakeRequest(Document*, unsigned long identifier, const WebSocketHandshakeRequest&);
     static void didReceiveWebSocketHandshakeResponse(Document*, unsigned long identifier, const WebSocketHandshakeResponse&);
     static void didCloseWebSocket(Document*, unsigned long identifier);
@@ -461,10 +461,10 @@ private:
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-    static void didCreateWebSocketImpl(InstrumentingAgents*, unsigned long identifier, const KURL& requestURL, const KURL& documentURL);
-    static void willSendWebSocketHandshakeRequestImpl(InstrumentingAgents*, unsigned long identifier, const WebSocketHandshakeRequest&);
-    static void didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents*, unsigned long identifier, const WebSocketHandshakeResponse&);
-    static void didCloseWebSocketImpl(InstrumentingAgents*, unsigned long identifier);
+    static void didCreateWebSocketImpl(InstrumentingAgents*, unsigned long identifier, const KURL& requestURL, const KURL& documentURL, const String& protocol, Document*);
+    static void willSendWebSocketHandshakeRequestImpl(InstrumentingAgents*, unsigned long identifier, const WebSocketHandshakeRequest&, Document*);
+    static void didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents*, unsigned long identifier, const WebSocketHandshakeResponse&, Document*);
+    static void didCloseWebSocketImpl(InstrumentingAgents*, unsigned long identifier, Document*);
     static void didReceiveWebSocketFrameImpl(InstrumentingAgents*, unsigned long identifier, const WebSocketFrame&);
     static void didSendWebSocketFrameImpl(InstrumentingAgents*, unsigned long identifier, const WebSocketFrame&);
     static void didReceiveWebSocketFrameErrorImpl(InstrumentingAgents*, unsigned long identifier, const String&);
@@ -1819,16 +1819,17 @@ inline void InspectorInstrumentation::workerContextTerminated(ScriptExecutionCon
 
 
 #if ENABLE(WEB_SOCKETS)
-inline void InspectorInstrumentation::didCreateWebSocket(Document* document, unsigned long identifier, const KURL& requestURL, const KURL& documentURL)
+inline void InspectorInstrumentation::didCreateWebSocket(Document* document, unsigned long identifier, const KURL& requestURL, const KURL& documentURL, const String& protocol)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didCreateWebSocketImpl(instrumentingAgents, identifier, requestURL, documentURL);
+        didCreateWebSocketImpl(instrumentingAgents, identifier, requestURL, documentURL, protocol, document);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(identifier);
     UNUSED_PARAM(requestURL);
     UNUSED_PARAM(documentURL);
+    UNUSED_PARAM(protocol);
 #endif
 }
 
@@ -1836,7 +1837,7 @@ inline void InspectorInstrumentation::willSendWebSocketHandshakeRequest(Document
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        willSendWebSocketHandshakeRequestImpl(instrumentingAgents, identifier, request);
+        willSendWebSocketHandshakeRequestImpl(instrumentingAgents, identifier, request, document);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(identifier);
@@ -1848,7 +1849,7 @@ inline void InspectorInstrumentation::didReceiveWebSocketHandshakeResponse(Docum
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didReceiveWebSocketHandshakeResponseImpl(instrumentingAgents, identifier, response);
+        didReceiveWebSocketHandshakeResponseImpl(instrumentingAgents, identifier, response, document);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(identifier);
@@ -1860,7 +1861,7 @@ inline void InspectorInstrumentation::didCloseWebSocket(Document* document, unsi
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForDocument(document))
-        didCloseWebSocketImpl(instrumentingAgents, identifier);
+        didCloseWebSocketImpl(instrumentingAgents, identifier, document);
 #else
     UNUSED_PARAM(document);
     UNUSED_PARAM(identifier);

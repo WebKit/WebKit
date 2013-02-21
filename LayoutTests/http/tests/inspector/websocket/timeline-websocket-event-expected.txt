@@ -1,0 +1,49 @@
+Tests the Timeline events for WebSocket
+
+WebSocketCreate Properties:
+{
+    counters : <object>
+    data : {
+        identifier : <number>
+        url : <string>
+    }
+    frameId : <string>
+    stackTrace : <object>
+    startTime : <number>
+    type : "WebSocketCreate"
+    usedHeapSize : <number>
+}
+WebSocketSendHandshakeRequest Properties:
+{
+    counters : <object>
+    data : {
+        identifier : <number>
+    }
+    frameId : <string>
+    startTime : <number>
+    type : "WebSocketSendHandshakeRequest"
+    usedHeapSize : <number>
+}
+WebSocketReceiveHandshakeResponse Properties:
+{
+    counters : <object>
+    data : {
+        identifier : <number>
+    }
+    frameId : <string>
+    startTime : <number>
+    type : "WebSocketReceiveHandshakeResponse"
+    usedHeapSize : <number>
+}
+WebSocketDestroy Properties:
+{
+    counters : <object>
+    data : {
+        identifier : <number>
+    }
+    frameId : <string>
+    startTime : <number>
+    type : "WebSocketDestroy"
+    usedHeapSize : <number>
+}
+

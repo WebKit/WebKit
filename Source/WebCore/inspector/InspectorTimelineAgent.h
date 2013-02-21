@@ -53,6 +53,7 @@ class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
 class IntRect;
+class KURL;
 class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
@@ -158,6 +159,13 @@ public:
     void willProcessTask();
     void didProcessTask();
 
+#if ENABLE(WEB_SOCKETS)
+    void didCreateWebSocket(unsigned long identifier, const KURL&, const String& protocol, Frame*);
+    void willSendWebSocketHandshakeRequest(unsigned long identifier, Frame*);
+    void didReceiveWebSocketHandshakeResponse(unsigned long identifier, Frame*);
+    void didDestroyWebSocket(unsigned long identifier, Frame*);
+#endif
+
     // ScriptGCEventListener methods.
     virtual void didGC(double, double, size_t);
 
@@ -195,6 +203,10 @@ private:
 
     void pushGCEventRecords();
     void clearRecordStack();
+
+#if ENABLE(WEB_SOCKETS)
+    void addWebSocketRecord(unsigned long, Frame*, const String&);
+#endif
 
     double timestamp();
     double timestampFromMicroseconds(double microseconds);

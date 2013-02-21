@@ -36,6 +36,10 @@ Applications outside of WebKit depend on the stability of the mapping of these t
     TimerFire : "TimerFire"
     TimerInstall : "TimerInstall"
     TimerRemove : "TimerRemove"
+    WebSocketCreate : "WebSocketCreate"
+    WebSocketDestroy : "WebSocketDestroy"
+    WebSocketReceiveHandshakeResponse : "WebSocketReceiveHandshakeResponse"
+    WebSocketSendHandshakeRequest : "WebSocketSendHandshakeRequest"
     XHRLoad : "XHRLoad"
     XHRReadyStateChange : "XHRReadyStateChange"
 }

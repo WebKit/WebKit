@@ -1,0 +1,44 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../timeline-test.js"></script>
+<script>
+
+function performActions()
+{
+    var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hybi/simple");
+
+    testRunner.display();
+}
+
+function test()
+{
+    InspectorTest.startTimeline(function() {
+        InspectorTest.evaluateInPage("performActions()");
+    });
+
+    InspectorTest.waitForRecordType("WebSocketDestroy", finish);
+
+    function finish()
+    {
+        InspectorTest.printTimelineRecords("WebSocketCreate");
+        InspectorTest.printTimelineRecords("WebSocketSendHandshakeRequest");
+        InspectorTest.printTimelineRecords("WebSocketReceiveHandshakeResponse");
+        InspectorTest.printTimelineRecords("WebSocketDestroy");
+        InspectorTest.completeTest();
+    }
+}
+
+if (!window.testRunner)
+    setTimeout(performActions, 2000);
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests the Timeline events for WebSocket
+</p>
+
+</body>
+</html>

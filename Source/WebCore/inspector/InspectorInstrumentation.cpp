@@ -1151,32 +1151,41 @@ void InspectorInstrumentation::workerContextTerminatedImpl(InstrumentingAgents* 
 #endif
 
 #if ENABLE(WEB_SOCKETS)
-void InspectorInstrumentation::didCreateWebSocketImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const KURL& requestURL, const KURL&)
+void InspectorInstrumentation::didCreateWebSocketImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const KURL& requestURL, const KURL&, const String& protocol, Document* document)
 {
     InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
     if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
         return;
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didCreateWebSocket(identifier, requestURL);
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didCreateWebSocket(identifier, requestURL, protocol, document->frame());
 }
 
-void InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const WebSocketHandshakeRequest& request)
+void InspectorInstrumentation::willSendWebSocketHandshakeRequestImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const WebSocketHandshakeRequest& request, Document* document)
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->willSendWebSocketHandshakeRequest(identifier, request);
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->willSendWebSocketHandshakeRequest(identifier, document->frame());
 }
 
-void InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const WebSocketHandshakeResponse& response)
+void InspectorInstrumentation::didReceiveWebSocketHandshakeResponseImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const WebSocketHandshakeResponse& response, Document* document)
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didReceiveWebSocketHandshakeResponse(identifier, response);
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didReceiveWebSocketHandshakeResponse(identifier, document->frame());
 }
 
-void InspectorInstrumentation::didCloseWebSocketImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier)
+void InspectorInstrumentation::didCloseWebSocketImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, Document* document)
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
         resourceAgent->didCloseWebSocket(identifier);
+    if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
+        timelineAgent->didDestroyWebSocket(identifier, document->frame());
 }
+
 void InspectorInstrumentation::didReceiveWebSocketFrameImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const WebSocketFrame& frame)
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())

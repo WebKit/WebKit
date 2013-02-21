@@ -89,7 +89,12 @@ WebInspector.TimelineModel.RecordType = {
 
     RequestAnimationFrame: "RequestAnimationFrame",
     CancelAnimationFrame: "CancelAnimationFrame",
-    FireAnimationFrame: "FireAnimationFrame"
+    FireAnimationFrame: "FireAnimationFrame",
+
+    WebSocketCreate : "WebSocketCreate",
+    WebSocketSendHandshakeRequest : "WebSocketSendHandshakeRequest",
+    WebSocketReceiveHandshakeResponse : "WebSocketReceiveHandshakeResponse",
+    WebSocketDestroy : "WebSocketDestroy",
 }
 
 WebInspector.TimelineModel.Events = {

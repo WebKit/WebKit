@@ -31,8 +31,11 @@
 #ifndef TimelineRecordFactory_h
 #define TimelineRecordFactory_h
 
+#include "InspectorValues.h"
+#include "KURL.h"
 #include "LayoutRect.h"
 #include <wtf/Forward.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -84,6 +87,25 @@ namespace WebCore {
         static PassRefPtr<InspectorObject> createParseHTMLData(unsigned int length, unsigned int startLine);
 
         static PassRefPtr<InspectorObject> createAnimationFrameData(int callbackId);
+
+#if ENABLE(WEB_SOCKETS)
+        static inline PassRefPtr<InspectorObject> createWebSocketCreateData(unsigned long identifier, const KURL& url, const String& protocol)
+        {
+            RefPtr<InspectorObject> data = InspectorObject::create();
+            data->setNumber("identifier", identifier);
+            data->setString("url", url.string());
+            if (!protocol.isNull())
+                data->setString("webSocketProtocol", protocol);
+            return data.release();
+        }
+
+        static inline PassRefPtr<InspectorObject> createGenericWebSocketData(unsigned long identifier)
+        {
+            RefPtr<InspectorObject> data = InspectorObject::create();
+            data->setNumber("identifier", identifier);
+            return data.release();
+        }
+#endif
 
     private:
         TimelineRecordFactory() { }

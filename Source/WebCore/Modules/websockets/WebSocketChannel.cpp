@@ -108,7 +108,7 @@ void WebSocketChannel::connect(const KURL& url, const String& protocol)
     if (m_deflateFramer.canDeflate())
         m_handshake->addExtensionProcessor(m_deflateFramer.createExtensionProcessor());
     if (m_identifier)
-        InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url, m_document->url());
+        InspectorInstrumentation::didCreateWebSocket(m_document, m_identifier, url, m_document->url(), protocol);
     ref();
     m_handle = SocketStreamHandle::create(m_handshake->url(), this);
 }
