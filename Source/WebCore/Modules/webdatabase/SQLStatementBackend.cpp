@@ -31,7 +31,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "AbstractSQLStatement.h"
-#include "DatabaseBackendAsync.h"
+#include "DatabaseBackend.h"
 #include "Logging.h"
 #include "SQLError.h"
 #include "SQLValue.h"
@@ -107,7 +107,7 @@ PassRefPtr<SQLResultSet> SQLStatementBackend::sqlResultSet() const
     return m_resultSet;
 }
 
-bool SQLStatementBackend::execute(DatabaseBackendAsync* db)
+bool SQLStatementBackend::execute(DatabaseBackend* db)
 {
     ASSERT(!m_resultSet);
 
@@ -211,21 +211,21 @@ bool SQLStatementBackend::execute(DatabaseBackendAsync* db)
     return true;
 }
 
-void SQLStatementBackend::setDatabaseDeletedError(DatabaseBackendAsync* database)
+void SQLStatementBackend::setDatabaseDeletedError(DatabaseBackend* database)
 {
     ASSERT(!m_error && !m_resultSet);
     database->reportExecuteStatementResult(6, SQLError::UNKNOWN_ERR, 0);
     m_error = SQLError::create(SQLError::UNKNOWN_ERR, "unable to execute statement, because the user deleted the database");
 }
 
-void SQLStatementBackend::setVersionMismatchedError(DatabaseBackendAsync* database)
+void SQLStatementBackend::setVersionMismatchedError(DatabaseBackend* database)
 {
     ASSERT(!m_error && !m_resultSet);
     database->reportExecuteStatementResult(7, SQLError::VERSION_ERR, 0);
     m_error = SQLError::create(SQLError::VERSION_ERR, "current version of the database and `oldVersion` argument do not match");
 }
 
-void SQLStatementBackend::setFailureDueToQuota(DatabaseBackendAsync* database)
+void SQLStatementBackend::setFailureDueToQuota(DatabaseBackend* database)
 {
     ASSERT(!m_error && !m_resultSet);
     database->reportExecuteStatementResult(8, SQLError::QUOTA_ERR, 0);

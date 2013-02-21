@@ -77,8 +77,8 @@ PassRefPtr<Database> Database::create(ScriptExecutionContext*, PassRefPtr<Databa
 Database::Database(PassRefPtr<DatabaseBackendContext> databaseContext,
     const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBase(databaseContext->scriptExecutionContext())
-    , DatabaseBackendAsync(databaseContext, name, expectedVersion, displayName, estimatedSize)
-    , m_databaseContext(DatabaseBackendAsync::databaseContext()->frontend())
+    , DatabaseBackend(databaseContext, name, expectedVersion, displayName, estimatedSize)
+    , m_databaseContext(DatabaseBackend::databaseContext()->frontend())
     , m_deleted(false)
 {
     m_databaseThreadSecurityOrigin = m_contextThreadSecurityOrigin->isolatedCopy();
@@ -123,12 +123,12 @@ Database::~Database()
     }
 }
 
-Database* Database::from(DatabaseBackendAsync* backend)
+Database* Database::from(DatabaseBackend* backend)
 {
     return static_cast<Database*>(backend->m_frontend);
 }
 
-PassRefPtr<DatabaseBackendAsync> Database::backend()
+PassRefPtr<DatabaseBackend> Database::backend()
 {
     return this;
 }

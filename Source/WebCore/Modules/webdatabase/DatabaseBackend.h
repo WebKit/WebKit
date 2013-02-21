@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef DatabaseBackendAsync_h
-#define DatabaseBackendAsync_h
+#ifndef DatabaseBackend_h
+#define DatabaseBackend_h
 
 #if ENABLE(SQL_DATABASE)
 
@@ -42,15 +42,15 @@ class SQLTransactionBackend;
 class SQLTransactionClient;
 class SQLTransactionCoordinator;
 
-// FIXME: This implementation of DatabaseBackendAsync is only a place holder
+// FIXME: This implementation of DatabaseBackend is only a place holder
 // for the split out of the Database backend to be done later. This
 // place holder is needed to allow other code that need to reference the
-// DatabaseBackendAsync to do so before the proper backend split is
+// DatabaseBackend to do so before the proper backend split is
 // available. This should be replaced with the actual implementation later.
 
-class DatabaseBackendAsync : public DatabaseBackendBase {
+class DatabaseBackend : public DatabaseBackendBase {
 public:
-    DatabaseBackendAsync(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
+    DatabaseBackend(PassRefPtr<DatabaseBackendContext>, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
 
     virtual bool openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError&, String& errorMessage);
     void close();
@@ -84,4 +84,4 @@ private:
 
 #endif // ENABLE(SQL_DATABASE)
 
-#endif // DatabaseBackendAsync_h
+#endif // DatabaseBackend_h

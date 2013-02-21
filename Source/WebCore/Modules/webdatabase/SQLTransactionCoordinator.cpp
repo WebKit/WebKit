@@ -34,7 +34,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DatabaseBackendAsync.h"
+#include "DatabaseBackend.h"
 #include "SQLTransactionBackend.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
@@ -45,7 +45,7 @@ namespace WebCore {
 
 static String getDatabaseIdentifier(SQLTransactionBackend* transaction)
 {
-    DatabaseBackendAsync* database = transaction->database();
+    DatabaseBackend* database = transaction->database();
     ASSERT(database);
     return database->stringIdentifier();
 }

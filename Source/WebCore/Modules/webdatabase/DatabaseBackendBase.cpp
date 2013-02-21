@@ -244,7 +244,7 @@ DatabaseBackendBase::~DatabaseBackendBase()
     // SQLite is "multi-thread safe", but each database handle can only be used
     // on a single thread at a time.
     //
-    // For DatabaseBackendAsync, we open the SQLite database on the DatabaseThread,
+    // For DatabaseBackend, we open the SQLite database on the DatabaseThread,
     // and hence we should also close it on that same thread. This means that the
     // SQLite database need to be closed by another mechanism (see
     // DatabaseContext::stopDatabases()). By the time we get here, the SQLite

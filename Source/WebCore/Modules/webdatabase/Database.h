@@ -31,7 +31,7 @@
 
 #if ENABLE(SQL_DATABASE)
 
-#include "DatabaseBackendAsync.h"
+#include "DatabaseBackend.h"
 #include "DatabaseBase.h"
 #include "DatabaseBasicTypes.h"
 #include "DatabaseError.h"
@@ -49,7 +49,7 @@ class SQLTransactionCallback;
 class SQLTransactionErrorCallback;
 class VoidCallback;
 
-class Database : public DatabaseBase, public DatabaseBackendAsync {
+class Database : public DatabaseBase, public DatabaseBackend {
 public:
     virtual ~Database();
 
@@ -61,7 +61,7 @@ public:
     void readTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>, PassRefPtr<VoidCallback> successCallback);
 
     // Internal engine support
-    static Database* from(DatabaseBackendAsync*);
+    static Database* from(DatabaseBackend*);
     DatabaseContext* databaseContext() const { return m_databaseContext.get(); }
 
     Vector<String> tableNames();
@@ -81,7 +81,7 @@ public:
 private:
     Database(PassRefPtr<DatabaseBackendContext>, const String& name,
         const String& expectedVersion, const String& displayName, unsigned long estimatedSize);
-    PassRefPtr<DatabaseBackendAsync> backend();
+    PassRefPtr<DatabaseBackend> backend();
     static PassRefPtr<Database> create(ScriptExecutionContext*, PassRefPtr<DatabaseBackendBase>);
 
     void runTransaction(PassRefPtr<SQLTransactionCallback>, PassRefPtr<SQLTransactionErrorCallback>,
@@ -104,7 +104,7 @@ private:
 
     friend class DatabaseManager;
     friend class DatabaseServer; // FIXME: remove this when the backend has been split out.
-    friend class DatabaseBackendAsync; // FIXME: remove this when the backend has been split out.
+    friend class DatabaseBackend; // FIXME: remove this when the backend has been split out.
     friend class SQLStatement;
     friend class SQLTransaction;
 };

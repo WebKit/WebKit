@@ -29,7 +29,7 @@
 #if ENABLE(SQL_DATABASE)
 
 #include "Database.h"
-#include "DatabaseBackendAsync.h"
+#include "DatabaseBackend.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseBackendSync.h"
 #include "DatabaseSync.h"

@@ -41,7 +41,7 @@
 namespace WebCore {
 
 class AbstractSQLTransaction;
-class DatabaseBackendAsync;
+class DatabaseBackend;
 class SQLError;
 class SQLiteTransaction;
 class SQLStatementBackend;
@@ -59,7 +59,7 @@ public:
 
 class SQLTransactionBackend : public SQLTransactionStateMachine<SQLTransactionBackend>, public AbstractSQLTransactionBackend {
 public:
-    static PassRefPtr<SQLTransactionBackend> create(DatabaseBackendAsync*,
+    static PassRefPtr<SQLTransactionBackend> create(DatabaseBackend*,
         PassRefPtr<AbstractSQLTransaction>, PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
     virtual ~SQLTransactionBackend();
@@ -67,12 +67,12 @@ public:
     void lockAcquired();
     void performNextStep();
 
-    DatabaseBackendAsync* database() { return m_database.get(); }
+    DatabaseBackend* database() { return m_database.get(); }
     bool isReadOnly() { return m_readOnly; }
     void notifyDatabaseThreadIsShuttingDown();
 
 private:
-    SQLTransactionBackend(DatabaseBackendAsync*, PassRefPtr<AbstractSQLTransaction>,
+    SQLTransactionBackend(DatabaseBackend*, PassRefPtr<AbstractSQLTransaction>,
         PassRefPtr<SQLTransactionWrapper>, bool readOnly);
 
     // APIs called from the frontend published via AbstractSQLTransactionBackend:
@@ -111,7 +111,7 @@ private:
     RefPtr<AbstractSQLTransaction> m_frontend; // Has a reference cycle, and will break in doCleanup().
     RefPtr<SQLStatementBackend> m_currentStatementBackend;
 
-    RefPtr<DatabaseBackendAsync> m_database;
+    RefPtr<DatabaseBackend> m_database;
     RefPtr<SQLTransactionWrapper> m_wrapper;
     RefPtr<SQLError> m_transactionError;
 

@@ -1464,7 +1464,7 @@ HEADERS += \
     Modules/webdatabase/DOMWindowWebDatabase.h \
     Modules/webdatabase/DatabaseAuthorizer.h \
     Modules/webdatabase/Database.h \
-    Modules/webdatabase/DatabaseBackendAsync.h \
+    Modules/webdatabase/DatabaseBackend.h \
     Modules/webdatabase/DatabaseBackendBase.h \
     Modules/webdatabase/DatabaseBackendContext.h \
     Modules/webdatabase/DatabaseBackendSync.h \
@@ -3063,7 +3063,7 @@ use?(PLUGIN_BACKEND_XLIB) {
 enable?(SQL_DATABASE) {
     SOURCES += \
         Modules/webdatabase/ChangeVersionWrapper.cpp \
-        Modules/webdatabase/DatabaseBackendAsync.cpp \
+        Modules/webdatabase/DatabaseBackend.cpp \
         Modules/webdatabase/DatabaseBackendContext.cpp \
         Modules/webdatabase/DatabaseBackendSync.cpp \
         Modules/webdatabase/DatabaseBase.cpp \

@@ -40,7 +40,7 @@
 namespace WebCore {
 
 class AbstractSQLStatement;
-class DatabaseBackendAsync;
+class DatabaseBackend;
 class SQLError;
 class SQLTransactionBackend;
 
@@ -49,14 +49,14 @@ public:
     static PassRefPtr<SQLStatementBackend> create(PassOwnPtr<AbstractSQLStatement>,
         const String& sqlStatement, const Vector<SQLValue>& arguments, int permissions);
 
-    bool execute(DatabaseBackendAsync*);
+    bool execute(DatabaseBackend*);
     bool lastExecutionFailedDueToQuota() const;
 
     bool hasStatementCallback() const { return m_hasCallback; }
     bool hasStatementErrorCallback() const { return m_hasErrorCallback; }
 
-    void setDatabaseDeletedError(DatabaseBackendAsync*);
-    void setVersionMismatchedError(DatabaseBackendAsync*);
+    void setDatabaseDeletedError(DatabaseBackend*);
+    void setVersionMismatchedError(DatabaseBackend*);
 
     AbstractSQLStatement* frontend();
     virtual PassRefPtr<SQLError> sqlError() const;
@@ -66,7 +66,7 @@ private:
     SQLStatementBackend(PassOwnPtr<AbstractSQLStatement>, const String& statement,
         const Vector<SQLValue>& arguments, int permissions);
 
-    void setFailureDueToQuota(DatabaseBackendAsync*);
+    void setFailureDueToQuota(DatabaseBackend*);
     void clearFailureDueToQuota();
 
     OwnPtr<AbstractSQLStatement> m_frontend;

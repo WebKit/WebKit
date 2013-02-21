@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "DatabaseBackendAsync.h"
+#include "DatabaseBackend.h"
 
 #if ENABLE(SQL_DATABASE)
 
@@ -42,14 +42,14 @@
 
 namespace WebCore {
 
-DatabaseBackendAsync::DatabaseBackendAsync(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
+DatabaseBackend::DatabaseBackend(PassRefPtr<DatabaseBackendContext> databaseContext, const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize)
     : DatabaseBackendBase(databaseContext, name, expectedVersion, displayName, estimatedSize, DatabaseType::Async)
     , m_transactionInProgress(false)
     , m_isTransactionQueueEnabled(true)
 {
 }
 
-bool DatabaseBackendAsync::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+bool DatabaseBackend::openAndVerifyVersion(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
     DatabaseTaskSynchronizer synchronizer;
     if (!databaseContext()->databaseThread() || databaseContext()->databaseThread()->terminationRequested(&synchronizer))
@@ -66,7 +66,7 @@ bool DatabaseBackendAsync::openAndVerifyVersion(bool setVersionInNewDatabase, Da
     return success;
 }
 
-bool DatabaseBackendAsync::performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
+bool DatabaseBackend::performOpenAndVerify(bool setVersionInNewDatabase, DatabaseError& error, String& errorMessage)
 {
     if (DatabaseBackendBase::performOpenAndVerify(setVersionInNewDatabase, error, errorMessage)) {
         if (databaseContext()->databaseThread())
@@ -78,7 +78,7 @@ bool DatabaseBackendAsync::performOpenAndVerify(bool setVersionInNewDatabase, Da
     return false;
 }
 
-void DatabaseBackendAsync::close()
+void DatabaseBackend::close()
 {
     ASSERT(databaseContext()->databaseThread());
     ASSERT(currentThread() == databaseContext()->databaseThread()->getThreadID());
@@ -107,12 +107,12 @@ void DatabaseBackendAsync::close()
     // to it with a local pointer here for a liitle longer, so that we can
     // unschedule any DatabaseTasks that refer to it before the database gets
     // deleted.
-    RefPtr<DatabaseBackendAsync> protect = this;
+    RefPtr<DatabaseBackend> protect = this;
     databaseContext()->databaseThread()->recordDatabaseClosed(this);
     databaseContext()->databaseThread()->unscheduleDatabaseTasks(this);
 }
 
-PassRefPtr<SQLTransactionBackend> DatabaseBackendAsync::runTransaction(PassRefPtr<SQLTransaction> transaction,
+PassRefPtr<SQLTransactionBackend> DatabaseBackend::runTransaction(PassRefPtr<SQLTransaction> transaction,
     bool readOnly, const ChangeVersionData* data)
 {
     MutexLocker locker(m_transactionInProgressMutex);
@@ -131,14 +131,14 @@ PassRefPtr<SQLTransactionBackend> DatabaseBackendAsync::runTransaction(PassRefPt
     return transactionBackend;
 }
 
-void DatabaseBackendAsync::inProgressTransactionCompleted()
+void DatabaseBackend::inProgressTransactionCompleted()
 {
     MutexLocker locker(m_transactionInProgressMutex);
     m_transactionInProgress = false;
     scheduleTransaction();
 }
 
-void DatabaseBackendAsync::scheduleTransaction()
+void DatabaseBackend::scheduleTransaction()
 {
     ASSERT(!m_transactionInProgressMutex.tryLock()); // Locked by caller.
     RefPtr<SQLTransactionBackend> transaction;
@@ -155,7 +155,7 @@ void DatabaseBackendAsync::scheduleTransaction()
         m_transactionInProgress = false;
 }
 
-void DatabaseBackendAsync::scheduleTransactionStep(SQLTransactionBackend* transaction)
+void DatabaseBackend::scheduleTransactionStep(SQLTransactionBackend* transaction)
 {
     if (!databaseContext()->databaseThread())
         return;
@@ -165,12 +165,12 @@ void DatabaseBackendAsync::scheduleTransactionStep(SQLTransactionBackend* transa
     databaseContext()->databaseThread()->scheduleTask(task.release());
 }
 
-SQLTransactionClient* DatabaseBackendAsync::transactionClient() const
+SQLTransactionClient* DatabaseBackend::transactionClient() const
 {
     return databaseContext()->databaseThread()->transactionClient();
 }
 
-SQLTransactionCoordinator* DatabaseBackendAsync::transactionCoordinator() const
+SQLTransactionCoordinator* DatabaseBackend::transactionCoordinator() const
 {
     return databaseContext()->databaseThread()->transactionCoordinator();
 }
