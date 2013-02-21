@@ -1,3 +1,18 @@
+2013-02-21  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r143536.
+        http://trac.webkit.org/changeset/143536
+        https://bugs.webkit.org/show_bug.cgi?id=110523
+
+        Causing a bunch of tests to fail on Windows, requires
+        rebaselining (Requested by rfong on #webkit).
+
+        * WebKitClassFactory.cpp:
+        (WebKitClassFactory::WebKitClassFactory):
+        * WebView.cpp:
+        (WebView::initWithFrame):
+        (WebView::notifyPreferencesChanged):
+
 2013-02-20  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Remove references to SAFARI_THEME from Windows Solution.

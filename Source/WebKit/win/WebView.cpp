@@ -2666,6 +2666,12 @@ HRESULT STDMETHODCALLTYPE WebView::initWithFrame(
         didOneTimeInitialization = true;
      }
 
+#if USE(SAFARI_THEME)
+    BOOL shouldPaintNativeControls;
+    if (SUCCEEDED(m_preferences->shouldPaintNativeControls(&shouldPaintNativeControls)))
+        Settings::setShouldPaintNativeControls(shouldPaintNativeControls);
+#endif
+
     BOOL useHighResolutionTimer;
     if (SUCCEEDED(m_preferences->shouldUseHighResolutionTimers(&useHighResolutionTimer)))
         Settings::setShouldUseHighResolutionTimers(useHighResolutionTimer);
@@ -4849,6 +4855,13 @@ HRESULT WebView::notifyPreferencesChanged(IWebNotification* notification)
     if (FAILED(hr))
         return hr;
     settings->setXSSAuditorEnabled(!!enabled);
+
+#if USE(SAFARI_THEME)
+    hr = prefsPrivate->shouldPaintNativeControls(&enabled);
+    if (FAILED(hr))
+        return hr;
+    settings->setShouldPaintNativeControls(!!enabled);
+#endif
 
     hr = prefsPrivate->shouldUseHighResolutionTimers(&enabled);
     if (FAILED(hr))

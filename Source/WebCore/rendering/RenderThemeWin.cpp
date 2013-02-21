@@ -158,11 +158,13 @@ PassRefPtr<RenderTheme> RenderThemeWin::create()
     return adoptRef(new RenderThemeWin);
 }
 
+#if !USE(SAFARI_THEME)
 PassRefPtr<RenderTheme> RenderTheme::themeForPage(Page* page)
 {
     static RenderTheme* winTheme = RenderThemeWin::create().leakRef();
     return winTheme;
 }
+#endif
 
 RenderThemeWin::RenderThemeWin()
     : m_buttonTheme(0)

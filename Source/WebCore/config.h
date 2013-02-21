@@ -138,6 +138,10 @@ typedef float CGFloat;
 #endif
 #endif /* USE(CG) */
 
+#if PLATFORM(WIN) && USE(CG)
+#define WTF_USE_SAFARI_THEME 1
+#endif
+
 // CoreAnimation is available to IOS, Mac and Windows if using CG
 #if PLATFORM(MAC) || PLATFORM(IOS) || (PLATFORM(WIN) && USE(CG))
 #define WTF_USE_CA 1
