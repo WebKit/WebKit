@@ -1593,6 +1593,7 @@ webkit.org/b/110296 fast/multicol/newmulticol/column-rules-fixed-height.html [ I
 webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/layers-in-multicol.html [ ImageOnlyFailure ]
 webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/float-paginate-complex.html [ ImageOnlyFailure ]
 webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/float-paginate.html [ ImageOnlyFailure ]
+webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/positioned-with-constrained-height.html [ ImageOnlyFailure ]
 
 # -----------------------------------------------------------------
 # MAC PORT TESTS
