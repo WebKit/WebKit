@@ -748,6 +748,9 @@ void Page::setPageScaleFactor(float scale, const IntPoint& origin)
     mainFrame()->deviceOrPageScaleFactorChanged();
 #endif
 
+    if (view)
+        view->setViewportConstrainedObjectsNeedLayout();
+
     if (view && view->scrollPosition() != origin) {
         if (!m_settings->applyPageScaleFactorInCompositor() && document->renderer() && document->renderer()->needsLayout() && view->didFirstLayout())
             view->layout();

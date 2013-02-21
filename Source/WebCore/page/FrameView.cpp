@@ -2049,6 +2049,8 @@ void FrameView::visibleContentsResized()
     if (!frame()->view())
         return;
 
+    setViewportConstrainedObjectsNeedLayout();
+
     if (!useFixedLayout() && needsLayout())
         layout();
 
