@@ -156,21 +156,21 @@ WebInspector.DOMStorageItemsView.prototype = {
     _update: function()
     {
         this.detachChildViews();
-        this.domStorage.getEntries(this._showDOMStorageEntries.bind(this));
+        this.domStorage.getItems(this._showDOMStorageItems.bind(this));
     },
 
-    _showDOMStorageEntries: function(error, entries)
+    _showDOMStorageItems: function(error, items)
     {
         if (error)
             return;
 
-        this._dataGrid = this._dataGridForDOMStorageEntries(entries);
+        this._dataGrid = this._dataGridForDOMStorageItems(items);
         this._dataGrid.show(this.element);
         this._dataGrid.autoSizeColumns(10);
         this.deleteButton.visible = (this._dataGrid.rootNode().children.length > 1);
     },
 
-    _dataGridForDOMStorageEntries: function(entries)
+    _dataGridForDOMStorageItems: function(items)
     {
         var columns = {key: {}, value: {}};
 
@@ -183,10 +183,10 @@ WebInspector.DOMStorageItemsView.prototype = {
         var nodes = [];
 
         var keys = [];
-        var length = entries.length;
-        for (var i = 0; i < entries.length; i++) {
-            var key = entries[i][0];
-            var value = entries[i][1];
+        var length = items.length;
+        for (var i = 0; i < items.length; i++) {
+            var key = items[i][0];
+            var value = items[i][1];
             var node = new WebInspector.DataGridNode({key: key, value: value}, false);
             node.selectable = true;
             nodes.push(node);

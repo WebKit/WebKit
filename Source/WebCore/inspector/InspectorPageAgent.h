@@ -173,6 +173,7 @@ public:
     String frameId(Frame*);
     bool hasIdForFrame(Frame*) const;
     String loaderId(DocumentLoader*);
+    Frame* findFrameWithSecurityOrigin(const String& originRawString);
     Frame* assertFrame(ErrorString*, const String& frameId);
     String scriptPreprocessor() { return m_scriptPreprocessor; }
     static DocumentLoader* assertDocumentLoader(ErrorString*, Frame*);

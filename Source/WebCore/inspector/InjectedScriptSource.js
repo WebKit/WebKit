@@ -185,7 +185,7 @@ InjectedScript.prototype = {
             case "Storage":
                 var storageId = InjectedScriptHost.storageId(object)
                 if (storageId)
-                    hints.domStorageId = storageId;
+                    hints.domStorageId = InjectedScriptHost.evaluate("(" + storageId + ")");
                 break;
         }
         InjectedScriptHost.inspect(objectId, hints);

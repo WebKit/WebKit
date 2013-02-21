@@ -252,7 +252,6 @@ public:
     static void didOpenDatabase(ScriptExecutionContext*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
-    static void didUseDOMStorage(Page*, StorageArea*, bool isLocalStorage, Frame*);
     static void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
 #if ENABLE(WORKERS)
@@ -451,7 +450,6 @@ private:
     static void didOpenDatabaseImpl(InstrumentingAgents*, PassRefPtr<Database>, const String& domain, const String& name, const String& version);
 #endif
 
-    static void didUseDOMStorageImpl(InstrumentingAgents*, StorageArea*, bool isLocalStorage, Frame*);
     static void didDispatchDOMStorageEventImpl(InstrumentingAgents*, const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
 #if ENABLE(WORKERS)
@@ -1747,19 +1745,6 @@ inline void InspectorInstrumentation::didWriteHTML(const InspectorInstrumentatio
 #else
     UNUSED_PARAM(cookie);
     UNUSED_PARAM(endLine);
-#endif
-}
-
-inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
-        didUseDOMStorageImpl(instrumentingAgents, storageArea, isLocalStorage, frame);
-#else
-    UNUSED_PARAM(page);
-    UNUSED_PARAM(storageArea);
-    UNUSED_PARAM(isLocalStorage);
-    UNUSED_PARAM(frame);
 #endif
 }
 
