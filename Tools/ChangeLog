@@ -1,3 +1,10 @@
+2013-02-21  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; add myself to the Media watchlist and update my committers.py setting to Reviewer.
+
+        * Scripts/webkitpy/common/config/committers.py:
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-02-21  Martin Robinson  <mrobinson@igalia.com>
 
         gtk/DumpRenderTree.cpp is missing <locale.h> include

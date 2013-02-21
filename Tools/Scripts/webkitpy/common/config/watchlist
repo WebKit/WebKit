@@ -408,7 +408,7 @@
         "IndexedDB": [ "alecflett@chromium.org", "dgrogan@chromium.org", "jsbell@chromium.org" ],
         "Loader": [ "japhet@chromium.org" ],
         "MathML": [ "dbarton@mathscribe.com" ],
-        "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com" ],
+        "Media": [ "feature-media-reviews@chromium.org", "eric.carlson@apple.com", "jer.noble@apple.com" ],
         "MediaStream": [ "tommyw@google.com", "hta@google.com" ],
         "NetworkInfo": [ "gyuyoung.kim@samsung.com" ],
         "OpenGL" : [ "noam@webkit.org", "dino@apple.com" ],
