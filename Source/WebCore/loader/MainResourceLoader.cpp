@@ -363,7 +363,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
     if (!m_documentLoader->isStopping() && m_substituteData.isValid()) {
         if (m_substituteData.content()->size())
             dataReceived(0, m_substituteData.content()->data(), m_substituteData.content()->size());
-        if (!m_documentLoader->isStopping())
+        if (m_documentLoader->isLoadingMainResource())
             didFinishLoading(0);
     }
 }
@@ -719,8 +719,8 @@ bool MainResourceLoader::defersLoading() const
 
 void MainResourceLoader::setDataBufferingPolicy(DataBufferingPolicy dataBufferingPolicy)
 {
-    ASSERT(m_resource);
-    m_resource->setDataBufferingPolicy(dataBufferingPolicy);
+    if (m_resource)
+        m_resource->setDataBufferingPolicy(dataBufferingPolicy);
 }
 
 ResourceLoader* MainResourceLoader::loader() const
