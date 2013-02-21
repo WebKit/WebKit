@@ -33,6 +33,17 @@ using WebCore::TextCodecICU;
 namespace BlackBerry {
 namespace WebKit {
 
+#define COMPILE_ASSERT_MATCHING_ENUM(webkitName, wtfName) \
+    COMPILE_ASSERT(static_cast<int>(webkitName) == static_cast<int>(WTF::wtfName), mismatchingEnums)
+
+COMPILE_ASSERT_MATCHING_ENUM(Base64FailOnInvalidCharacter, Base64FailOnInvalidCharacter);
+COMPILE_ASSERT_MATCHING_ENUM(Base64IgnoreWhitespace, Base64IgnoreWhitespace);
+COMPILE_ASSERT_MATCHING_ENUM(Base64IgnoreInvalidCharacters, Base64IgnoreInvalidCharacters);
+
+// FIXME: Base64InsertCRLF should be Base64InsertLFs. WTF::encodeBase64 doesn't insert CR.
+COMPILE_ASSERT_MATCHING_ENUM(Base64DoNotInsertCRLF, Base64DoNotInsertLFs);
+COMPILE_ASSERT_MATCHING_ENUM(Base64InsertCRLF, Base64InsertLFs);
+
 bool isSameEncoding(const char* encoding1, const char* encoding2)
 {
     return TextEncoding(encoding1) == TextEncoding(encoding2);
@@ -85,30 +96,14 @@ TranscodeResult transcode(const char* sourceEncoding, const char* targetEncoding
     return Success;
 }
 
-WTF::Base64DecodePolicy base64DecodePolicyForWTF(Base64DecodePolicy policy)
-{
-    COMPILE_ASSERT(WTF::Base64FailOnInvalidCharacter == static_cast<WTF::Base64DecodePolicy>(Base64FailOnInvalidCharacter));
-    COMPILE_ASSERT(WTF::Base64IgnoreWhitespace == static_cast<WTF::Base64DecodePolicy>(Base64IgnoreWhitespace));
-    COMPILE_ASSERT(WTF::Base64IgnoreInvalidCharacters == static_cast<WTF::Base64DecodePolicy>(Base64IgnoreInvalidCharacters));
-    return static_cast<WTF::Base64DecodePolicy>(policy);
-}
-
 bool base64Decode(const BlackBerry::Platform::String& base64, std::vector<char>& binary, Base64DecodePolicy policy)
 {
     Vector<char> result;
-    if (!WTF::base64Decode(base64.c_str(), base64.length(), result, base64DecodePolicyForWTF(policy)))
+    if (!WTF::base64Decode(base64.c_str(), base64.length(), result, static_cast<WTF::Base64DecodePolicy>(policy)))
         return false;
 
     binary.insert(binary.begin(), result.begin(), result.end());
     return true;
-}
-
-WTF::Base64DecodePolicy base64EncodePolicyForWTF(Base64EncodePolicy policy)
-{
-    // FIXME: Base64InsertCRLF should be Base64InsertLFs. WTF::encodeBase64 doesn't insert CR.
-    COMPILE_ASSERT(WTF::Base64DoNotInsertLFs == static_cast<WTF::Base64EncodePolicy>(Base64DoNotInsertCRLF));
-    COMPILE_ASSERT(WTF::Base64InsertLFs == static_cast<WTF::Base64EncodePolicy>(Base64InsertCRLF));
-    return static_cast<WTF::Base64EncodePolicy>(policy);
 }
 
 bool base64Encode(const std::vector<char>& binary, BlackBerry::Platform::String& base64, Base64EncodePolicy policy)
@@ -116,9 +111,9 @@ bool base64Encode(const std::vector<char>& binary, BlackBerry::Platform::String&
     Vector<char> result;
     result.append(&binary[0], binary.size());
 
-    WTF::base64Encode(&binary[0], binary.size(), result, base64EncodePolicyForWTF(policy));
+    WTF::base64Encode(&binary[0], binary.size(), result, static_cast<WTF::Base64EncodePolicy>(policy));
 
-    base64 = Blackberry::Platform::String(&result[0], result.size());
+    base64 = BlackBerry::Platform::String(&result[0], result.size());
 
     return true;
 }

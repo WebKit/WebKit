@@ -1,3 +1,18 @@
+2013-02-21  Carlos Garcia Campos  <cargarcia@rim.com>
+
+        [BlackBerry] Invalid use of COMPILE_ASSERT macro in WebKitTextCodec.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=110437
+
+        Reviewed by Yong Li.
+
+        * Api/WebKitTextCodec.cpp:
+        (WebKit): Define COMPILE_ASSERT_MATCHING_ENUM() macro and use it to
+        check enum values match between WebKit and WTF.
+        (BlackBerry::WebKit::base64Decode): Use a static cast directly to
+        convert from WebKit Base64DecodePolicy to WTF.
+        (BlackBerry::WebKit::base64Encode): Use a static cast directly to
+        convert from WebKit Base64EncodePolicy to WTF.
+
 2013-02-21  Alberto Garcia  <albgarcia@rim.com>
 
         [BlackBerry] Element::getAttributeItem() no longer returns a mutable attribute
