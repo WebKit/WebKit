@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+        window.jsTestIsAsync = true;
+
+        function initEventHandlers(element) {
+            element.addEventListener('mousedown', handleEvent);
+            element.addEventListener('mouseup', handleEvent);
+        }
+
+        window.events = {
+            'scrollme': [],
+            'notscrollme': []
+        };
+        function handleEvent(e) {
+            window.events[e.target.id].push(e);
+        }
+
+        function finish() {
+            shouldBe("events['scrollme'].length", "4");
+            shouldBe("events['notscrollme'].length", "0");
+            shouldBeEqualToString("events['scrollme'][0].type", "mousedown");
+            shouldBe("events['scrollme'][0].which", "1");
+            shouldBeEqualToString("events['scrollme'][1].type", "mouseup");
+            shouldBe("events['scrollme'][1].which", "1");
+            shouldBeEqualToString("events['scrollme'][2].type", "mousedown");
+            shouldBe("events['scrollme'][2].which", "2");
+            shouldBeEqualToString("events['scrollme'][3].type", "mouseup");
+            shouldBe("events['scrollme'][3].which", "2");
+            finishJSTest();
+        }
+
+        window.onload = function () {
+            var d1 = document.querySelector('#scrollme');
+            var d2 = document.querySelector('#notscrollme');
+            initEventHandlers(d1);
+            initEventHandlers(d2);
+
+            if (window.eventSender) {
+                eventSender.mouseMoveTo(d1.offsetLeft + d1.offsetWidth - 4, d1.offsetTop + 4);
+                eventSender.mouseDown();
+                eventSender.mouseMoveTo(d2.offsetLeft + d2.offsetWidth - 4, d2.offsetTop + 4);
+                eventSender.mouseUp();
+                eventSender.mouseMoveTo(d1.offsetLeft + d1.offsetWidth - 4, d1.offsetTop + 4);
+                eventSender.mouseDown(1);
+                eventSender.mouseMoveTo(d2.offsetLeft + d2.offsetWidth - 4, d2.offsetTop + 4);
+                eventSender.mouseUp(1);
+                finish();
+            } else
+                debug('This test requires eventSender. Click the scrollbar to play manually.');
+        };
+    </script>
+    <script src="../js/resources/js-test-post.js"></script>
+    <style>
+        #scrollme, #notscrollme {
+            width: 100px;
+            height: 100px;
+            overflow: auto;
+        }
+        #scrollme p {
+            height: 1000px;
+        }
+    </style>
+</head>
+<body>
+    <div id="scrollme"><p>This is a scrollable div.</p></div>
+    <div id="notscrollme"></div>
+    <pre id="console"></pre>
+</body>
+</html>
