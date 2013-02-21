@@ -1,3 +1,24 @@
+2013-02-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Need a way to use the Objective-C JavaScript API with WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=106059
+
+        Reviewed by Geoffrey Garen.
+
+        Added new tests for the WebKit API portion of the JSC Objective-C API.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/JSContextBackForwardCache1.html: Added.
+        * TestWebKitAPI/Tests/mac/JSContextBackForwardCache2.html: Added.
+        * TestWebKitAPI/Tests/mac/WebViewDidCreateJavaScriptContext.mm: Added.
+        (-[MyConsole log:]):
+        (-[MyConsole printHelloWorld]):
+        (-[MyConsole add:to:]):
+        (-[DidCreateJavaScriptContextFrameLoadDelegate webView:didFinishLoadForFrame:]):
+        (-[DidCreateJavaScriptContextFrameLoadDelegate webView:didCreateJavaScriptContext:forFrame:]):
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2013-02-21  Stephen Chenney  <schenney@chromium.org>
 
         Unreviewed, add myself as a reviewer

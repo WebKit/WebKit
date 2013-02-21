@@ -25,7 +25,7 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 JSObjectRef objCCallbackFunctionForMethod(JSContext *, Class, Protocol *, BOOL isInstanceMethod, SEL, const char* types);
 JSObjectRef objCCallbackFunctionForBlock(JSContext *, id);

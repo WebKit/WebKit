@@ -22,8 +22,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-typedef struct OpaqueJSContext* JSGlobalContextRef;
+#include <JavaScriptCore/JSBase.h>
 
+@class JSContext;
 @class WebScriptWorldPrivate;
 
 @interface WebScriptWorld : NSObject {
@@ -35,6 +36,9 @@ typedef struct OpaqueJSContext* JSGlobalContextRef;
 + (WebScriptWorld *)world;
 
 + (WebScriptWorld *)scriptWorldForGlobalContext:(JSGlobalContextRef)globalContext;
+#if JSC_OBJC_API_ENABLED
++ (WebScriptWorld *)scriptWorldForJavaScriptContext:(JSContext *)context;
+#endif
 
 - (void)unregisterWorld;
 

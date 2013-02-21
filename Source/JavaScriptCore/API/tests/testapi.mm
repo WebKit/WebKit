@@ -31,7 +31,7 @@ extern "C" const char * _Block_signature(id);
 extern int failed;
 extern "C" void testObjectiveCAPI(void);
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 @protocol ParentObject <JSExport>
 @end
@@ -57,7 +57,7 @@ extern "C" void testObjectiveCAPI(void);
 JSExportAs(testArgumentTypes,
 - (NSString *)testArgumentTypesWithInt:(int)i double:(double)d boolean:(BOOL)b string:(NSString *)s number:(NSNumber *)n array:(NSArray *)a dictionary:(NSDictionary *)o
 );
-- (void)callback:(void(^)(int))block;
+- (void)callback:(JSValue *)function;
 @end
 
 @interface TestObject : ParentObject <TestObject>
@@ -85,9 +85,9 @@ JSExportAs(testArgumentTypes,
 {
     return [NSString stringWithFormat:@"%d,%g,%d,%@,%d,%@,%@", i, d, b==YES?true:false,s,[n intValue],a[1],o[@"x"]];
 }
-- (void)callback:(void(^)(int))block
+- (void)callback:(JSValue *)function
 {
-    block(42);
+    [function callWithArguments:[NSArray arrayWithObject:[NSNumber numberWithInt:42]]];
 }
 @end
 
@@ -482,10 +482,8 @@ void testObjectiveCAPI()
         JSContext *context1 = [[JSContext alloc] init];
         JSContext *context2 = [[JSContext alloc] initWithVirtualMachine:context1.virtualMachine];
         JSValue *value = [JSValue valueWithDouble:42 inContext:context2];
-        checkResult(@"value.context == context2", value.context == context2);
         context1[@"passValueBetweenContexts"] = value;
         JSValue *result = [context1 evaluateScript:@"passValueBetweenContexts"];
-        checkResult(@"result.context == context1", result.context == context1);
         checkResult(@"[value isEqualToObject:result]", [value isEqualToObject:result]);
     }
 }

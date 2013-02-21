@@ -26,12 +26,15 @@
 #include "config.h"
 #import "JavaScriptCore.h"
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
 #import "APIShims.h"
 #import "Error.h"
 #import "JSBlockAdaptor.h"
+#import "JSCJSValueInlines.h"
+#import "JSCell.h"
+#import "JSCellInlines.h"
 #import "JSContextInternal.h"
 #import "JSWrapperMap.h"
 #import "JSValueInternal.h"
@@ -426,8 +429,6 @@ public:
         , m_result(result)
     {
         ASSERT(type != CallbackInstanceMethod || instanceClass);
-        if (m_type != CallbackInstanceMethod)
-            [[m_invocation.get() target] retain];
     }
 
     ~ObjCCallbackFunction()
@@ -442,6 +443,12 @@ public:
     JSContext *context()
     {
         return m_context.get();
+    }
+
+    void setContext(JSContext *context)
+    {
+        ASSERT(!m_context.get());
+        m_context.set(context);
     }
 
     id wrappedBlock()
@@ -474,11 +481,8 @@ static JSValueRef objCCallbackFunctionCallAsFunction(JSContextRef callerContext,
     ObjCCallbackFunction* callback = static_cast<ObjCCallbackFunction*>(JSObjectGetPrivate(function));
     JSContext *context = callback->context();
     if (!context) {
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=105894
-        // Rather than requiring that the context be retained, it would probably be more
-        // appropriate to use a new JSContext instance (creating one if necessary).
-        *exception = toRef(JSC::createTypeError(toJS(callerContext), "Objective-C callback function context released"));
-        return JSValueMakeUndefined(callerContext);
+        context = [JSContext contextWithGlobalContextRef:toGlobalRef(toJS(callerContext)->lexicalGlobalObject()->globalExec())];
+        callback->setContext(context);
     }
 
     CallbackData callbackData;
@@ -610,7 +614,7 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     JSObjectRef functionObject = JSObjectMake(contextInternalContext(context), objCCallbackFunctionClass(), new ObjCCallbackFunction(context, invocation, type, instanceClass, arguments.release(), result.release()));
     JSValue *value = [JSValue valueWithValue:functionObject inContext:context];
     value[@"length"] = @(argumentCount);
-    value[@"__proto__"] = context[@"Function"][@"prototype"];
+    JSObjectSetPrototype(contextInternalContext(context), functionObject, valueInternalValue(context[@"Function"][@"prototype"]));
     value[@"toString"] = [context evaluateScript:@"(function(){ return '"
         "function <Objective-C>() {" "\\n"
         "    [native code]"          "\\n"
@@ -634,7 +638,7 @@ JSObjectRef objCCallbackFunctionForBlock(JSContext *context, id target)
         return 0;
     const char* signature = _Block_signature(target);
     NSInvocation *invocation = [NSInvocation invocationWithMethodSignature:[NSMethodSignature signatureWithObjCTypes:signature]];
-    [invocation setTarget:target];
+    [invocation setTarget:[target copy]];
     return objCCallbackFunctionForInvocation(context, invocation, CallbackBlock, nil, signature);
 }
 

@@ -41,6 +41,7 @@
 #import "objc_instance.h"
 #import "runtime_root.h"
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSContextInternal.h>
 #import <runtime/JSLock.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -108,6 +109,16 @@ WebScriptObject* ScriptController::windowScriptObject()
     ASSERT([m_windowScriptObject.get() isKindOfClass:[DOMAbstractView class]]);
     return m_windowScriptObject.get();
 }
+
+#if JSC_OBJC_API_ENABLED
+JSContext *ScriptController::javaScriptContext()
+{
+    if (!canExecuteScripts(NotAboutToExecuteScript))
+        return 0;
+    JSContext *context = [JSContext contextWithGlobalContextRef:toGlobalRef(bindingRootObject()->globalObject()->globalExec())];
+    return context;
+}
+#endif
 
 void ScriptController::updatePlatformScriptObjects()
 {

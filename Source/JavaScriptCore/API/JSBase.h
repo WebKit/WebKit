@@ -140,7 +140,8 @@ JS_EXPORT void JSGarbageCollect(JSContextRef ctx);
 #endif
 
 /* Enable the Objective-C API for platforms with a modern runtime. */
-#undef JS_OBJC_API_ENABLED
-#define JS_OBJC_API_ENABLED (defined(__clang__) && defined(__APPLE__) && defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090 && !defined(__i386__))
+#if !defined(JSC_OBJC_API_ENABLED)
+#define JSC_OBJC_API_ENABLED (defined(__clang__) && defined(__APPLE__) && defined(__MAC_OS_X_VERSION_MIN_REQUIRED) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090 && !defined(__i386__))
+#endif
 
 #endif /* JSBase_h */

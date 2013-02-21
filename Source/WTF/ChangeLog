@@ -1,3 +1,13 @@
+2013-02-19  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Need a way to use the Objective-C JavaScript API with WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=106059
+
+        Reviewed by Geoffrey Garen.
+
+        * wtf/FeatureDefines.h: Added enable flag for JSC Objective-C API so it can be used in
+        export files.
+
 2013-02-21  Martin Robinson  <mrobinson@igalia.com>
 
         A couple more 'make dist' fixes for WebKitGTK+.

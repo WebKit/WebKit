@@ -23,15 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "JSVirtualMachine.h"
+#ifndef JSVirtualMachineInternal_h
+#define JSVirtualMachineInternal_h
+
+#import <JavaScriptCore/JSVirtualMachine.h>
 #import <JavaScriptCore/JavaScriptCore.h>
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 @interface JSVirtualMachine(Internal)
 
 JSContextGroupRef getGroupFromVirtualMachine(JSVirtualMachine *);
 
++ (JSVirtualMachine *)virtualMachineWithContextGroupRef:(JSContextGroupRef)group;
+
+- (JSContext *)contextForGlobalContextRef:(JSGlobalContextRef)globalContext;
+- (void)addContext:(JSContext *)wrapper forGlobalContextRef:(JSGlobalContextRef)globalContext;
+
 @end
 
 #endif
+
+#endif // JSVirtualMachineInternal_h

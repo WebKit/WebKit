@@ -53,6 +53,7 @@
 #import "WebScriptWorldInternal.h"
 #import "WebViewInternal.h"
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSContextInternal.h>
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/AccessibilityObject.h>
 #import <WebCore/AnimationController.h>
@@ -106,7 +107,6 @@ using namespace HTMLNames;
 
 using JSC::JSGlobalObject;
 using JSC::JSLock;
-using JSC::JSValue;
 
 /*
 Here is the current behavior matrix for four types of navigations:
@@ -580,7 +580,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     ASSERT(_private->coreFrame->document());
     RetainPtr<WebFrame> protect(self); // Executing arbitrary JavaScript can destroy the frame.
     
-    JSValue result = _private->coreFrame->script()->executeScript(string, forceUserGesture).jsValue();
+    JSC::JSValue result = _private->coreFrame->script()->executeScript(string, forceUserGesture).jsValue();
 
     if (!_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
@@ -1059,7 +1059,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     ASSERT(frame->document());
     RetainPtr<WebFrame> webFrame(kit(frame)); // Running arbitrary JavaScript can destroy the frame.
 
-    JSValue result = frame->script()->executeScriptInWorld(core(world), string, true).jsValue();
+    JSC::JSValue result = frame->script()->executeScriptInWorld(core(world), string, true).jsValue();
 
     if (!webFrame->_private->coreFrame) // In case the script removed our frame from the page.
         return @"";
@@ -1085,6 +1085,16 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
         return 0;
     return toGlobalRef(coreFrame->script()->globalObject(coreWorld)->globalExec());
 }
+
+#if JSC_OBJC_API_ENABLED
+- (JSContext *)_javaScriptContextForScriptWorld:(WebScriptWorld *)world
+{
+    JSGlobalContextRef globalContextRef = [self _globalContextForScriptWorld:world];
+    if (!globalContextRef)
+        return 0;
+    return [JSContext contextWithGlobalContextRef:globalContextRef];
+}
+#endif
 
 - (void)setAllowsScrollersToOverlapContent:(BOOL)flag
 {
@@ -1470,5 +1480,15 @@ static NSURL *createUniqueWebDataURL()
         return 0;
     return toGlobalRef(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
 }
+
+#if JSC_OBJC_API_ENABLED
+- (JSContext *)javaScriptContext
+{
+    Frame* coreFrame = _private->coreFrame;
+    if (!coreFrame)
+        return 0;
+    return coreFrame->script()->javaScriptContext();
+}
+#endif
 
 @end

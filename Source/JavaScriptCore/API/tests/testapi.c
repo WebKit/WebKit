@@ -51,7 +51,7 @@ using std::isnan;
 
 #endif
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 void testObjectiveCAPI(void);
 #endif
 
@@ -1047,7 +1047,7 @@ int main(int argc, char* argv[])
     ::SetErrorMode(0);
 #endif
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
     testObjectiveCAPI();
 #endif
 

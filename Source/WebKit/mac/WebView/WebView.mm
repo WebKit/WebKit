@@ -1659,6 +1659,9 @@ static inline IMP getMethod(id o, SEL s)
     cache->didPushStateWithinPageForFrameFunc = getMethod(delegate, @selector(webView:didPushStateWithinPageForFrame:));
     cache->didReplaceStateWithinPageForFrameFunc = getMethod(delegate, @selector(webView:didReplaceStateWithinPageForFrame:));
     cache->didPopStateWithinPageForFrameFunc = getMethod(delegate, @selector(webView:didPopStateWithinPageForFrame:));
+#if JSC_OBJC_API_ENABLED
+    cache->didCreateJavaScriptContextForFrameFunc = getMethod(delegate, @selector(webView:didCreateJavaScriptContext:forFrame:));
+#endif
     cache->didClearWindowObjectForFrameFunc = getMethod(delegate, @selector(webView:didClearWindowObject:forFrame:));
     cache->didClearWindowObjectForFrameInScriptWorldFunc = getMethod(delegate, @selector(webView:didClearWindowObjectForFrame:inScriptWorld:));
     cache->didClearInspectorWindowObjectForFrameFunc = getMethod(delegate, @selector(webView:didClearInspectorWindowObject:forFrame:));
@@ -4916,7 +4919,7 @@ static BOOL findString(NSView <WebDocumentSearching> *searchView, NSString *stri
     return coreFrame->loader()->shouldClose();
 }
 
-static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValue)
+static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSC::JSValue jsValue)
 {
     NSAppleEventDescriptor* aeDesc = 0;
     if (jsValue.isBoolean())
@@ -4957,7 +4960,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
                 return aeDesc;
             }
         }
-        JSValue primitive = object->toPrimitive(exec);
+        JSC::JSValue primitive = object->toPrimitive(exec);
         if (exec->hadException()) {
             exec->clearException();
             return [NSAppleEventDescriptor nullDescriptor];
@@ -4977,7 +4980,7 @@ static NSAppleEventDescriptor* aeDescFromJSValue(ExecState* exec, JSValue jsValu
         return nil;
     if (!coreFrame->document())
         return nil;
-    JSValue result = coreFrame->script()->executeScript(script, true).jsValue();
+    JSC::JSValue result = coreFrame->script()->executeScript(script, true).jsValue();
     if (!result) // FIXME: pass errors
         return 0;
     JSLockHolder lock(coreFrame->script()->globalObject(mainThreadNormalWorld())->globalExec());
@@ -6699,7 +6702,7 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
     JSLockHolder lock(exec);
     if (!value)
         return JSValueMakeUndefined(context);
-    JSValue jsValue = toJS(exec, value);
+    JSC::JSValue jsValue = toJS(exec, value);
     if (!jsValue.inherits(&JSElement::s_info))
         return JSValueMakeUndefined(context);
     JSElement* jsElement = static_cast<JSElement*>(asObject(jsValue));

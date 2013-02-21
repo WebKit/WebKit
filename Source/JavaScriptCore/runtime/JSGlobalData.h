@@ -479,8 +479,6 @@ namespace JSC {
 
         JS_EXPORT_PRIVATE void discardAllCode();
 
-        void *m_apiData;
-
     private:
         friend class LLIntOffsetsExtractor;
         

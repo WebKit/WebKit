@@ -23,7 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#if JS_OBJC_API_ENABLED
+#ifndef JSValue_h
+#define JSValue_h
+
+#if JSC_OBJC_API_ENABLED
 
 @class JSContext;
 
@@ -101,6 +104,10 @@ NS_CLASS_AVAILABLE(10_9, NA)
 + (JSValue *)valueWithNewErrorFromMessage:(NSString *)message inContext:(JSContext *)context;
 + (JSValue *)valueWithNullInContext:(JSContext *)context;
 + (JSValue *)valueWithUndefinedInContext:(JSContext *)context;
+
+// Return the C API version of this value. This function is for convenience
+// at the boundaries when converting code from the C API to the Objective-C API.
+- (JSValueRef)JSValueRef;
 
 // Convert this value to a corresponding Objective-C object, according to the
 // conversion specified above.
@@ -292,3 +299,4 @@ JS_EXPORT extern NSString * const JSPropertyDescriptorSetKey;
 
 #endif
 
+#endif // JSValue_h

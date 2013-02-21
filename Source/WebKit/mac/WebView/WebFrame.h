@@ -31,6 +31,7 @@
 
 @class DOMDocument;
 @class DOMHTMLElement;
+@class JSContext;
 @class NSURLRequest;
 @class WebArchive;
 @class WebDataSource;
@@ -213,4 +214,14 @@
     bridge between the WebKit and JavaScriptCore APIs.
 */
 - (JSGlobalContextRef)globalContext;
+
+#if JSC_OBJC_API_ENABLED
+/*!
+    @method javaScriptContext
+    @result The frame's global JavaScript execution context. Use this method to 
+    bridge between the WebKit and Objective-C JavaScriptCore API.
+*/
+- (JSContext *)javaScriptContext;
+#endif // JSC_OBJC_API_ENABLED
+
 @end

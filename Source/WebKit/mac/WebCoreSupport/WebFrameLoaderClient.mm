@@ -74,6 +74,7 @@
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
 #import "WebViewInternal.h"
+#import <JavaScriptCore/JSContextInternal.h>
 #import <WebCore/AuthenticationCF.h>
 #import <WebCore/AuthenticationMac.h>
 #import <WebCore/BackForwardController.h>
@@ -117,6 +118,7 @@
 #import <WebCore/ScriptController.h>
 #import <WebCore/SharedBuffer.h>
 #import <WebCore/WebCoreObjCExtras.h>
+#import <WebCore/WebScriptObjectPrivate.h>
 #import <WebCore/Widget.h>
 #import <WebKit/DOMElement.h>
 #import <WebKit/DOMHTMLFormElement.h>
@@ -1950,7 +1952,14 @@ void WebFrameLoaderClient::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* 
     Frame *frame = core(m_webFrame.get());
     ScriptController *script = frame->script();
 
+#if JSC_OBJC_API_ENABLED
+    if (implementations->didCreateJavaScriptContextForFrameFunc) {
+        CallFrameLoadDelegate(implementations->didCreateJavaScriptContextForFrameFunc, webView, @selector(webView:didCreateJavaScriptContext:forFrame:),
+            script->javaScriptContext(), m_webFrame.get());
+    } else if (implementations->didClearWindowObjectForFrameFunc) {
+#else
     if (implementations->didClearWindowObjectForFrameFunc) {
+#endif
         CallFrameLoadDelegate(implementations->didClearWindowObjectForFrameFunc, webView, @selector(webView:didClearWindowObject:forFrame:),
             script->windowScriptObject(), m_webFrame.get());
     } else if (implementations->windowScriptObjectAvailableFunc) {

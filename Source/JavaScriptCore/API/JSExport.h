@@ -25,7 +25,7 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 // When a JavaScript value is created from an instance of an Objective-C class
 // for which no copying conversion is specified a JavaScript wrapper object will

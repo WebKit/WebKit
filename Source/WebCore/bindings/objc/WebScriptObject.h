@@ -23,6 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef WebScriptObject_h
+#define WebScriptObject_h
+
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/JSBase.h>
 #import <JavaScriptCore/WebKitAvailability.h>
@@ -189,6 +192,7 @@
 
 // WebScriptObject --------------------------------------------------
 
+@class JSValue;
 @class WebScriptObjectPrivate;
 @class WebFrame;
 
@@ -297,6 +301,17 @@
 */
 - (void)setException:(NSString *)description;
 
+
+#if JSC_OBJC_API_ENABLED
+/*!
+    @method JSValue
+    @result The equivalent Objective-C JSValue for this WebScriptObject.
+    @discussion Use this method to bridge between the WebScriptObject and 
+    JavaScriptCore Objective-C APIs.
+*/
+- (JSValue *)JSValue;
+#endif
+
 @end
 
 
@@ -316,3 +331,5 @@
 @end
 
 #endif
+
+#endif // WebScriptObject_h

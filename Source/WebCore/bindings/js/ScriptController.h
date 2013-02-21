@@ -26,6 +26,7 @@
 #include "JSDOMWindowShell.h"
 #include "ScriptControllerBase.h"
 #include "ScriptInstance.h"
+#include <JavaScriptCore/JSBase.h>
 #include <heap/Strong.h>
 #include <wtf/Forward.h>
 #include <wtf/RefPtr.h>
@@ -34,6 +35,7 @@
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 OBJC_CLASS WebScriptObject;
+OBJC_CLASS JSContext;
 #endif
 
 struct NPObject;
@@ -151,6 +153,9 @@ public:
 
 #if PLATFORM(MAC)
     WebScriptObject* windowScriptObject();
+#if JSC_OBJC_API_ENABLED
+    JSContext *javaScriptContext();
+#endif
 #endif
 
     JSC::JSObject* jsObjectForPluginElement(HTMLPlugInElement*);

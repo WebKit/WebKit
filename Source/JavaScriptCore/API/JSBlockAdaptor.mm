@@ -26,7 +26,7 @@
 #include "config.h"
 #import "JavaScriptCore.h"
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
 #import "APIShims.h"

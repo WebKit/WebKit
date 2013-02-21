@@ -588,13 +588,13 @@
 		86E3C614167BABD7006D760A /* JSExport.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C60A167BAB87006D760A /* JSExport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		86E3C615167BABD7006D760A /* JSVirtualMachine.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C60F167BAB87006D760A /* JSVirtualMachine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		86E3C616167BABEE006D760A /* JSContext.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86E3C608167BAB87006D760A /* JSContext.mm */; };
-		86E3C617167BABEE006D760A /* JSContextInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C609167BAB87006D760A /* JSContextInternal.h */; };
+		86E3C617167BABEE006D760A /* JSContextInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C609167BAB87006D760A /* JSContextInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86E3C618167BABEE006D760A /* JSWrapperMap.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86E3C60B167BAB87006D760A /* JSWrapperMap.mm */; };
 		86E3C619167BABEE006D760A /* JSWrapperMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C60C167BAB87006D760A /* JSWrapperMap.h */; };
 		86E3C61A167BABEE006D760A /* JSValue.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86E3C60D167BAB87006D760A /* JSValue.mm */; };
-		86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C60E167BAB87006D760A /* JSValueInternal.h */; };
+		86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C60E167BAB87006D760A /* JSValueInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86E3C61C167BABEE006D760A /* JSVirtualMachine.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86E3C610167BAB87006D760A /* JSVirtualMachine.mm */; };
-		86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C611167BAB87006D760A /* JSVirtualMachineInternal.h */; };
+		86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E3C611167BAB87006D760A /* JSVirtualMachineInternal.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86E85539111B9968001AF51E /* JSStringBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = 86E85538111B9968001AF51E /* JSStringBuilder.h */; };
 		86EBF2FF1560F06A008E9222 /* NameConstructor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86EBF2F91560F036008E9222 /* NameConstructor.cpp */; };
 		86EBF3001560F06A008E9222 /* NameConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EBF2FA1560F036008E9222 /* NameConstructor.h */; };
@@ -2928,7 +2928,10 @@
 				0FB7F39515ED8E4600F167B2 /* ArrayConventions.h in Headers */,
 				0F63945515D07057006A597C /* ArrayProfile.h in Headers */,
 				BC18C3E70E16F5CD00B34460 /* ArrayPrototype.h in Headers */,
+				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
 				BC18C5240E16FC8A00B34460 /* ArrayPrototype.lut.h in Headers */,
+				86E3C617167BABEE006D760A /* JSContextInternal.h in Headers */,
+				86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */,
 				0FB7F39615ED8E4600F167B2 /* ArrayStorage.h in Headers */,
 				9688CB150ED12B4E001D649F /* AssemblerBuffer.h in Headers */,
 				86D3B2C510156BDE002865E7 /* AssemblerBufferWithConstantPool.h in Headers */,
@@ -3125,7 +3128,6 @@
 				865A30F1135007E100CDB49E /* JSCJSValueInlines.h in Headers */,
 				BC18C41D0E16F5CD00B34460 /* JSClassRef.h in Headers */,
 				86E3C613167BABD7006D760A /* JSContext.h in Headers */,
-				86E3C617167BABEE006D760A /* JSContextInternal.h in Headers */,
 				BC18C41E0E16F5CD00B34460 /* JSContextRef.h in Headers */,
 				148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */,
 				978801411471AD920041B016 /* JSDateMath.h in Headers */,
@@ -3160,11 +3162,9 @@
 				BC18C42A0E16F5CD00B34460 /* JSType.h in Headers */,
 				6507D29E0E871E5E00D7D896 /* JSTypeInfo.h in Headers */,
 				86E3C612167BABD7006D760A /* JSValue.h in Headers */,
-				86E3C61B167BABEE006D760A /* JSValueInternal.h in Headers */,
 				BC18C42C0E16F5CD00B34460 /* JSValueRef.h in Headers */,
 				BC18C42D0E16F5CD00B34460 /* JSVariableObject.h in Headers */,
 				86E3C615167BABD7006D760A /* JSVirtualMachine.h in Headers */,
-				86E3C61D167BABEE006D760A /* JSVirtualMachineInternal.h in Headers */,
 				A7482E93116A7CAD003B0712 /* JSWeakObjectMapRefInternal.h in Headers */,
 				A7482B9311671147003B0712 /* JSWeakObjectMapRefPrivate.h in Headers */,
 				1442566215EDE98D0066A49B /* JSWithScope.h in Headers */,

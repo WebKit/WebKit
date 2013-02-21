@@ -44,12 +44,7 @@ namespace WebCore {
         static void destroy(JSCell*);
 
         JSDOMWindow* window() const { return JSC::jsCast<JSDOMWindow*>(target()); }
-        void setWindow(JSC::JSGlobalData& globalData, JSDOMWindow* window)
-        {
-            ASSERT_ARG(window, window);
-            setTarget(globalData, window);
-            structure()->setGlobalObject(*JSDOMWindow::commonJSGlobalData(), window);
-        }
+        void setWindow(JSC::JSGlobalData&, JSDOMWindow*);
         void setWindow(PassRefPtr<DOMWindow>);
 
         static const JSC::ClassInfo s_info;

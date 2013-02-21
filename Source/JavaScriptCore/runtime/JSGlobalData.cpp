@@ -187,7 +187,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, HeapType heapType)
     , m_timeoutCount(512)
 #endif
     , m_newStringsSinceLastHashConst(0)
-    , m_apiData(0)
 #if ENABLE(ASSEMBLER)
     , m_canUseAssembler(enableAssembler(executableAllocator))
 #endif

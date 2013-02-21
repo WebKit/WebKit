@@ -30,6 +30,7 @@
 #include "JSDOMWindowShell.h"
 
 #include "Frame.h"
+#include "GCController.h"
 #include "JSDOMWindow.h"
 #include "DOMWindow.h"
 #include "ScriptController.h"
@@ -58,6 +59,14 @@ void JSDOMWindowShell::finishCreation(JSGlobalData& globalData, PassRefPtr<DOMWi
 void JSDOMWindowShell::destroy(JSCell* cell)
 {
     static_cast<JSDOMWindowShell*>(cell)->JSDOMWindowShell::~JSDOMWindowShell();
+}
+
+void JSDOMWindowShell::setWindow(JSC::JSGlobalData& globalData, JSDOMWindow* window)
+{
+    ASSERT_ARG(window, window);
+    setTarget(globalData, window);
+    structure()->setGlobalObject(*JSDOMWindow::commonJSGlobalData(), window);
+    gcController().garbageCollectSoon();
 }
 
 void JSDOMWindowShell::setWindow(PassRefPtr<DOMWindow> domWindow)

@@ -25,7 +25,7 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 @interface JSBlockAdaptor : NSObject
 

@@ -23,9 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#ifndef JSContext_h
+#define JSContext_h
+
 #include <JavaScriptCore/JavaScript.h>
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 @class JSVirtualMachine, JSValue;
 
@@ -48,6 +51,10 @@ NS_CLASS_AVAILABLE(10_9, NA)
 
 // Evaluate a string of JavaScript code.
 - (JSValue *)evaluateScript:(NSString *)script;
+
+// Return the C API version of this context. This function is for convenience
+// at the boundaries when converting code from the C API to the Objective-C API.
+- (JSGlobalContextRef)globalContextRef;
 
 // This method retrieves the global object of the JavaScript execution context.
 // Instances of JSContext originating from WebKit will return a reference to the
@@ -114,3 +121,5 @@ NS_CLASS_AVAILABLE(10_9, NA)
 @end
 
 #endif
+
+#endif // JSContext_h

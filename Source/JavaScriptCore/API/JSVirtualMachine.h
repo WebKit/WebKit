@@ -25,7 +25,7 @@
 
 #import <JavaScriptCore/JavaScriptCore.h>
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 // An instance of JSVirtualMachine represents a single JavaScript "object space"
 // or set of execution resources. Thread safety is supported by locking the

@@ -27,13 +27,15 @@
 #import <JSValueInternal.h>
 #import <objc/objc-runtime.h>
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 @interface JSWrapperMap : NSObject
 
 - (id)initWithContext:(JSContext *)context;
 
-- (JSValue *)wrapperForObject:(id)object;
+- (JSValue *)jsWrapperForObject:(id)object;
+
+- (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value;
 
 @end
 

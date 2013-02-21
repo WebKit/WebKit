@@ -24,7 +24,6 @@
  */
 
 #include "config.h"
-//#import "JSValue.h"
 
 #import "APICast.h"
 #import "APIShims.h"
@@ -45,7 +44,7 @@
 #import <wtf/text/WTFString.h>
 #import <wtf/text/StringHash.h>
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 NSString * const JSPropertyDescriptorWritableKey = @"writable";
 NSString * const JSPropertyDescriptorEnumerableKey = @"enumerable";
@@ -56,6 +55,11 @@ NSString * const JSPropertyDescriptorSetKey = @"set";
 
 @implementation JSValue {
     JSValueRef m_value;
+}
+
+- (JSValueRef)JSValueRef
+{
+    return m_value;
 }
 
 + (JSValue *)valueWithObject:(id)value inContext:(JSContext *)context
@@ -890,7 +894,7 @@ static ObjcContainerConvertor::Task objectToValueWithoutCopy(JSContext *context,
         }
     }
 
-    return (ObjcContainerConvertor::Task){ object, valueInternalValue([context wrapperForObject:object]), ContainerNone };
+    return (ObjcContainerConvertor::Task){ object, valueInternalValue([context wrapperForObjCObject:object]), ContainerNone };
 }
 
 JSValueRef objectToValue(JSContext *context, id object)
@@ -941,7 +945,7 @@ JSValueRef valueInternalValue(JSValue * value)
 
 + (JSValue *)valueWithValue:(JSValueRef)value inContext:(JSContext *)context
 {
-    return [[[JSValue alloc] initWithValue:value inContext:context] autorelease];
+    return [context wrapperForJSObject:value];
 }
 
 - (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext *)context

@@ -55,7 +55,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
 @interface WebScriptCallFrame (WebScriptDebugDelegateInternal)
 
-- (id)_convertValueToObjcValue:(JSValue)value;
+- (id)_convertValueToObjcValue:(JSC::JSValue)value;
 
 @end
 
@@ -113,7 +113,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     _private->debuggerCallFrame = 0;
 }
 
-- (id)_convertValueToObjcValue:(JSValue)value
+- (id)_convertValueToObjcValue:(JSC::JSValue)value
 {
     if (!value)
         return nil;
@@ -214,7 +214,7 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
     if (!_private->debuggerCallFrame)
         return nil;
 
-    JSValue exception = _private->debuggerCallFrame->exception();
+    JSC::JSValue exception = _private->debuggerCallFrame->exception();
     return exception ? [self _convertValueToObjcValue:exception] : nil;
 }
 
@@ -241,15 +241,15 @@ NSString * const WebScriptErrorLineNumberKey = @"WebScriptErrorLineNumber";
 
         DynamicGlobalObjectScope globalObjectScope(globalObject->globalData(), globalObject);
 
-        JSValue exception;
-        JSValue result = evaluateInGlobalCallFrame(script, exception, globalObject);
+        JSC::JSValue exception;
+        JSC::JSValue result = evaluateInGlobalCallFrame(script, exception, globalObject);
         if (exception)
             return [self _convertValueToObjcValue:exception];
         return result ? [self _convertValueToObjcValue:result] : nil;        
     }
 
-    JSValue exception;
-    JSValue result = _private->debuggerCallFrame->evaluate(script, exception);
+    JSC::JSValue exception;
+    JSC::JSValue result = _private->debuggerCallFrame->evaluate(script, exception);
     if (exception)
         return [self _convertValueToObjcValue:exception];
     return result ? [self _convertValueToObjcValue:result] : nil;

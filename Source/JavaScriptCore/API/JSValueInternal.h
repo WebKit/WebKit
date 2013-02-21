@@ -23,10 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <JavaScriptCore/JavaScriptCore.h>
-#import "JSValue.h"
+#ifndef JSValueInternal_h
+#define JSValueInternal_h
 
-#if JS_OBJC_API_ENABLED
+#import <JavaScriptCore/JavaScriptCore.h>
+#import <JavaScriptCore/JSValue.h>
+
+#if JSC_OBJC_API_ENABLED
 
 @interface JSValue(Internal)
 
@@ -52,3 +55,5 @@ NSInvocation *typeToValueInvocationFor(const char* encodedType);
 NSInvocation *valueToTypeInvocationFor(const char* encodedType);
 
 #endif
+
+#endif // JSValueInternal_h

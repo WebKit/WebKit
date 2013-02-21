@@ -28,6 +28,7 @@
 #import <WebCore/JSDOMBinding.h>
 #import <WebCore/ScriptController.h>
 #import <JavaScriptCore/APICast.h>
+#import <JavaScriptCore/JSContextInternal.h>
 
 #import <wtf/RefPtr.h>
 
@@ -105,6 +106,13 @@ static WorldMap& allWorlds()
 {
     return [self findOrCreateWorld:currentWorld(toJS(context))];
 }
+
+#if JSC_OBJC_API_ENABLED
++ (WebScriptWorld *)scriptWorldForJavaScriptContext:(JSContext *)context
+{
+    return [self scriptWorldForGlobalContext:contextInternalContext(context)];
+}
+#endif
 
 @end
 

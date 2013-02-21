@@ -1,3 +1,82 @@
+2013-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Need a way to use the Objective-C JavaScript API with WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=106059
+
+        Reviewed by Geoffrey Garen.
+        
+        * API/JSBase.h: Renamed enable flag for API.
+        * API/JSBlockAdaptor.h: Using new flag.
+        * API/JSBlockAdaptor.mm: Ditto.
+        * API/JSContext.h: Add convenience C API conversion function for JSGlobalContextRef.
+        * API/JSContext.mm: 
+        (-[JSContext JSGlobalContextRef]): Implementation of C API convenience function.
+        (-[JSContext initWithVirtualMachine:]): We don't use the m_apiData field any more.
+        (-[JSContext initWithGlobalContextRef:]): init method for allocating new JSContexts given a JSGlobalContextRef.
+        (-[JSContext dealloc]): No more m_apiData.
+        (-[JSContext wrapperForObjCObject:]): Renamed wrapperForObject. 
+        (-[JSContext wrapperForJSObject:]): Fetches or allocates the JSValue for the specified JSValueRef in this JSContext.
+        (+[JSContext contextWithGlobalContextRef:]): Helper function to grab the lightweight JSContext wrapper for a given
+        JSGlobalContextRef from the global wrapper cache or allocate a new one if there isn't already one.
+        * API/JSContextInternal.h: New flag, new method declaration for initWithGlobalContextRef.
+        * API/JSExport.h: New flag.
+        * API/JSValue.h: New flag and new C API convenience method.
+        * API/JSValue.mm:
+        (-[JSValue JSValueRef]): Implementation of the C API convenience method.
+        (objectToValueWithoutCopy):
+        (+[JSValue valueWithValue:inContext:]): We now ask the JSContext for an Objective-C JSValue wrapper, which it can cache
+        in its internal JSWrapperMap.
+        * API/JSValueInternal.h:
+        * API/JSVirtualMachine.h:
+        * API/JSVirtualMachine.mm: Added global cache that maps JSContextGroupRef -> JSVirtualMachine lightweight wrappers.
+        (wrapperCacheLock):
+        (initWrapperCache):
+        (+[JSVMWrapperCache addWrapper:forJSContextGroupRef:]):
+        (+[JSVMWrapperCache wrapperForJSContextGroupRef:]):
+        (-[JSVirtualMachine init]):
+        (-[JSVirtualMachine initWithContextGroupRef:]):
+        (-[JSVirtualMachine dealloc]):
+        (+[JSVirtualMachine virtualMachineWithContextGroupRef:]):
+        (-[JSVirtualMachine contextForGlobalContextRef:]):
+        (-[JSVirtualMachine addContext:forGlobalContextRef:]):
+        * API/JSVirtualMachineInternal.h:
+        * API/JSWrapperMap.h:
+        * API/JSWrapperMap.mm:
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]): We use the JSObjectSetPrototype C API call because 
+        setting the __proto__ property causes all sorts of bad things to happen behind the scenes, which can cause crashes based on 
+        when it gets called.
+        (-[JSWrapperMap initWithContext:]):
+        (-[JSWrapperMap jsWrapperForObject:]):
+        (-[JSWrapperMap objcWrapperForJSValueRef:]):
+        * API/JavaScriptCore.h:
+        * API/ObjCCallbackFunction.h:
+        * API/ObjCCallbackFunction.mm:
+        (ObjCCallbackFunction::ObjCCallbackFunction): We never actually should have retained the target in the case that we had a 
+        block as a callback. Blocks are initially allocated on the stack and are only moved to the heap if we call their copy method.
+        Retaining the block on the stack was a bad idea because if that stack frame ever went away and we called the block later, 
+        we'd crash and burn.
+        (ObjCCallbackFunction::setContext): We need a new setter for when the weak reference to a JSContext inside an ObjCCallbackFunction
+        disappears, we can allocate a new one in its place.
+        (ObjCCallbackFunction):
+        (objCCallbackFunctionCallAsFunction): Reset the callback's context if it's ever destroyed.
+        (objCCallbackFunctionForInvocation): Again, don't set the __proto__ property because it uses black magic that can cause us to crash
+        depending on when this is called.
+        (objCCallbackFunctionForBlock): Here is where we copy the block to the heap when we're first creating the callback object for it.
+        * API/tests/testapi.c:
+        (main):
+        * API/tests/testapi.mm: We're going to get rid of the automatic block conversion, since that is causing leaks. I changed it 
+        here in this test just so that it wouldn't mask any other potential leaks. Also modified some of the tests since JSContexts are 
+        just lightweight wrappers now, we're not guaranteed to get the same pointer back from the call to [JSValue context] as the one 
+        that the value was created in.
+        (-[TestObject callback:]):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData): No more m_apiData.
+        * runtime/JSGlobalData.h: Ditto.
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::JSGlobalObject): Ditto.
+        * runtime/JSGlobalObject.h:
+
 2013-02-19  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::SpeculativeJIT::compileInt32ToDouble() has an unnecessary case for constant operands

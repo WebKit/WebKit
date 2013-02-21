@@ -194,4 +194,19 @@
 */
 - (void)webView:(WebView *)webView windowScriptObjectAvailable:(WebScriptObject *)windowScriptObject WEBKIT_OBJC_METHOD_ANNOTATION(AVAILABLE_WEBKIT_VERSION_1_3_AND_LATER_BUT_DEPRECATED_IN_WEBKIT_VERSION_3_0);
 
+#if JSC_OBJC_API_ENABLED
+/*!
+    @method webView:didCreateJavaScriptContext:contextForFrame:
+    @abstract Notifies the delegate that a new JavaScript context has been created created.
+    @param webView The WebView sending the message.
+    @param context The JSContext representing the frame's JavaScript window object.
+    @param frame The WebFrame to which the context belongs.
+    @discussion If a delegate implements webView:didCreateJavaScriptContext:forFrame: along with either 
+    webView:didClearWindowObject:forFrame: or webView:windowScriptObjectAvailable:, only 
+    webView:didCreateJavaScriptContext:forFrame will be invoked. This enables a delegate to implement 
+    multiple versions to maintain backwards compatibility with older versions of WebKit.
+*/
+- (void)webView:(WebView *)webView didCreateJavaScriptContext:(JSContext *)context forFrame:(WebFrame *)frame;
+#endif
+
 @end

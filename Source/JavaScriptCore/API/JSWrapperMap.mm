@@ -26,7 +26,7 @@
 #include "config.h"
 #import "JavaScriptCore.h"
 
-#if JS_OBJC_API_ENABLED
+#if JSC_OBJC_API_ENABLED
 
 #import "APICast.h"
 #import "JSContextInternal.h"
@@ -382,7 +382,7 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
         });
 
         // Set [Prototype].
-        prototype[@"__proto__"] = [JSValue valueWithValue:toRef(superClassInfo->m_prototype.get()) inContext:m_context];
+        JSObjectSetPrototype(contextInternalContext(m_context), toRef(m_prototype.get()), toRef(superClassInfo->m_prototype.get()));
 
         [constructor release];
         [prototype release];
@@ -425,7 +425,8 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
 @implementation JSWrapperMap {
     JSContext *m_context;
     NSMutableDictionary *m_classMap;
-    JSC::WeakGCMap<id, JSC::JSObject> m_cachedWrappers;
+    JSC::WeakGCMap<id, JSC::JSObject> m_cachedJSWrappers;
+    NSMapTable *m_cachedObjCWrappers;
 }
 
 - (id)initWithContext:(JSContext *)context
@@ -434,6 +435,10 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     if (!self)
         return nil;
 
+    NSPointerFunctionsOptions keyOptions = NSPointerFunctionsOpaqueMemory | NSPointerFunctionsOpaquePersonality;
+    NSPointerFunctionsOptions valueOptions = NSPointerFunctionsWeakMemory | NSPointerFunctionsObjectPersonality;
+    m_cachedObjCWrappers = [[NSMapTable alloc] initWithKeyOptions:keyOptions valueOptions:valueOptions capacity:0];
+    
     m_context = context;
     m_classMap = [[NSMutableDictionary alloc] init];
     return self;
@@ -461,9 +466,9 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     return m_classMap[cls] = [[[JSObjCClassInfo alloc] initWithContext:m_context forClass:cls superClassInfo:[self classInfoForClass:class_getSuperclass(cls)]] autorelease];
 }
 
-- (JSValue *)wrapperForObject:(id)object
+- (JSValue *)jsWrapperForObject:(id)object
 {
-    JSC::JSObject* jsWrapper = m_cachedWrappers.get(object);
+    JSC::JSObject* jsWrapper = m_cachedJSWrappers.get(object);
     if (jsWrapper)
         return [JSValue valueWithValue:toRef(jsWrapper) inContext:m_context];
 
@@ -482,7 +487,17 @@ static void copyPrototypeProperties(JSContext *context, Class objcClass, Protoco
     //     but still, would probably nicer if we made it so that only one associated object was required, broadcasting object dealloc.
     JSC::ExecState* exec = toJS(contextInternalContext(m_context));
     jsWrapper = toJS(exec, valueInternalValue(wrapper)).toObject(exec);
-    m_cachedWrappers.set(object, jsWrapper);
+    m_cachedJSWrappers.set(object, jsWrapper);
+    return wrapper;
+}
+
+- (JSValue *)objcWrapperForJSValueRef:(JSValueRef)value
+{
+    JSValue *wrapper = static_cast<JSValue *>(NSMapGet(m_cachedObjCWrappers, value));
+    if (!wrapper) {
+        wrapper = [[[JSValue alloc] initWithValue:value inContext:m_context] autorelease];
+        NSMapInsert(m_cachedObjCWrappers, value, wrapper);
+    }
     return wrapper;
 }
 

@@ -57,6 +57,7 @@ namespace WebCore {
 - (BOOL)_hasImp;
 - (JSC::Bindings::RootObject*)_rootObject;
 - (JSC::Bindings::RootObject*)_originRootObject;
+- (JSGlobalContextRef)_globalContextRef;
 @end
 
 @interface WebScriptObject (StagedForPublic)

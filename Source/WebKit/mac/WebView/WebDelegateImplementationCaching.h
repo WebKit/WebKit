@@ -52,6 +52,9 @@ struct WebResourceDelegateImplementationCache {
 };
 
 struct WebFrameLoadDelegateImplementationCache {
+#if JSC_OBJC_API_ENABLED
+    IMP didCreateJavaScriptContextForFrameFunc;
+#endif
     IMP didClearWindowObjectForFrameFunc;
     IMP didClearWindowObjectForFrameInScriptWorldFunc;
     IMP didClearInspectorWindowObjectForFrameFunc;
