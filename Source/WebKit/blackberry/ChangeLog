@@ -1,3 +1,29 @@
+2013-02-21  Jakob Petsovits  <jpetsovits@rim.com>
+
+        [BlackBerry] Move posting and scrollbar updates to the page client.
+        https://bugs.webkit.org/show_bug.cgi?id=110256
+        Internal PR 297099
+
+        Reviewed by Rob Buis.
+
+        In blitVisibleContents(), we were calling the WebKit thread
+        functions BackingStorePrivate::isScrollingOrZooming() and
+        WebPage::isVisible(). This is not the right spot to do it.
+        Furthermore, we want to move away from direct window access
+        in WebKit and leave that kind of dirtywork to the client.
+
+        This patch removes invalidateWindow() as well as the two
+        virtual scrollbar drawing functions and replaces it with
+        one new virtual, WebPageClient::postToSurface().
+        This clears up threading issues and gets us another step
+        further towards pure WebPageCompositor rendering.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::blitVisibleContents):
+        * Api/BackingStore_p.h:
+        (BackingStorePrivate):
+        * Api/WebPageClient.h:
+
 2013-02-21  Carlos Garcia Campos  <cargarcia@rim.com>
 
         [BlackBerry] Rename Localizer to Locale

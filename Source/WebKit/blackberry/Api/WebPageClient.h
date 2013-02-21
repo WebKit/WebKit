@@ -138,6 +138,7 @@ public:
     virtual void setPageTitle(const unsigned short* title, unsigned titleLength) = 0;
 
     virtual Platform::Graphics::Window* window() const = 0;
+    virtual void postToSurface(const Platform::IntRect&) = 0;
 
     virtual void notifyPixelContentRendered(const Platform::IntRect&) = 0;
 
@@ -236,8 +237,6 @@ public:
 
     virtual int fullscreenSetWindowRect(const BlackBerry::Platform::IntRect& newWindowScreenRect) = 0;
 
-    virtual void drawVerticalScrollbar() = 0;
-    virtual void drawHorizontalScrollbar() = 0;
     virtual void populateCustomHeaders(Platform::NetworkRequest&) = 0;
 
     virtual void notifyWillUpdateApplicationCache() = 0;

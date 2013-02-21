@@ -283,7 +283,6 @@ public:
     WebCore::Color webPageBackgroundColorUserInterfaceThread() const; // use WebSettings::backgroundColor() for the WebKit thread
     void setWebPageBackgroundColor(const WebCore::Color&);
 
-    void invalidateWindow(const Platform::IntRect& dst);
     void clearWindow(const Platform::IntRect&, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha = 255);
 
     bool isScrollingOrZooming() const;

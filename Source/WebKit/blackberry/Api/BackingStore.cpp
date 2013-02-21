@@ -1257,7 +1257,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
         if (!transformedContentsRect.isEmpty()) {
             clippedTransformedSrcRect.intersect(transformedContentsRect);
             if (clippedTransformedSrcRect.isEmpty()) {
-                invalidateWindow(dstRect);
+                m_webPage->client()->postToSurface(dstRect);
                 return;
             }
 
@@ -1359,13 +1359,6 @@ void BackingStorePrivate::blitVisibleContents(bool force)
     }
 #endif
 
-#if ENABLE_SCROLLBARS
-    if (isScrollingOrZooming() && m_client->isMainFrame()) {
-        blitHorizontalScrollbar();
-        blitVerticalScrollbar();
-    }
-#endif
-
 #if DEBUG_VISUALIZE
     if (debugViewportAccessor) {
         Platform::Graphics::Buffer* targetBuffer = buffer();
@@ -1408,7 +1401,7 @@ void BackingStorePrivate::blitVisibleContents(bool force)
     }
 #endif
 
-    invalidateWindow(dstRect);
+    m_webPage->client()->postToSurface(dstRect);
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -1506,22 +1499,6 @@ Platform::IntRect BackingStorePrivate::blitTileRect(TileBuffer* tileBuffer,
 
     blitToWindow(dstRect, tileBuffer->nativeBuffer(), srcRect, BlackBerry::Platform::Graphics::SourceCopy, 255);
     return dstRect;
-}
-
-void BackingStorePrivate::blitHorizontalScrollbar()
-{
-    if (!m_webPage->isVisible())
-        return;
-
-    m_webPage->client()->drawHorizontalScrollbar();
-}
-
-void BackingStorePrivate::blitVerticalScrollbar()
-{
-    if (!m_webPage->isVisible())
-        return;
-
-    m_webPage->client()->drawVerticalScrollbar();
 }
 
 bool BackingStorePrivate::isTileVisible(const TileIndex& index, BackingStoreGeometry* geometry) const
@@ -2010,37 +1987,6 @@ void BackingStorePrivate::setWebPageBackgroundColor(const WebCore::Color& color)
     }
 
     m_webPageBackgroundColor = color;
-}
-
-void BackingStorePrivate::invalidateWindow(const Platform::IntRect& dst)
-{
-    ASSERT(BlackBerry::Platform::userInterfaceThreadMessageClient()->isCurrentThread());
-
-    if (dst.isEmpty())
-        return;
-
-#if DEBUG_BACKINGSTORE
-    Platform::logAlways(Platform::LogLevelCritical,
-        "BackingStorePrivate::invalidateWindow dst = %s",
-        dst.toString().c_str());
-#endif
-
-    Platform::IntRect dstRect = dst;
-
-    Platform::IntRect surfaceRect(Platform::IntPoint(0, 0), surfaceSize());
-    dstRect.intersect(surfaceRect);
-
-    if (dstRect.width() <= 0 || dstRect.height() <= 0)
-        return;
-
-#if DEBUG_BACKINGSTORE
-    Platform::logAlways(Platform::LogLevelCritical,
-        "BackingStorePrivate::invalidateWindow posting = %s",
-        dstRect.toString().c_str());
-#endif
-
-    if (Window* window = m_webPage->client()->window())
-        window->post(dstRect);
 }
 
 void BackingStorePrivate::clearWindow(const Platform::IntRect& rect,
