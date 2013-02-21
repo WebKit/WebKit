@@ -6483,6 +6483,9 @@
     <ClCompile Include="..\inspector\InspectorDOMStorageAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
+    <ClCompile Include="..\inspector\InspectorDOMStorageResource.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
     <ClCompile Include="..\inspector\InspectorFileSystemAgent.cpp">
       <Filter>inspector</Filter>
     </ClCompile>
@@ -13786,6 +13789,9 @@
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorDOMStorageAgent.h">
+      <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\InspectorDOMStorageResource.h">
       <Filter>inspector</Filter>
     </ClInclude>
     <ClInclude Include="..\inspector\InspectorFileSystemAgent.h">

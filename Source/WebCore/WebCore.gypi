@@ -1859,6 +1859,8 @@
             'inspector/InspectorDOMDebuggerAgent.h',
             'inspector/InspectorDOMStorageAgent.cpp',
             'inspector/InspectorDOMStorageAgent.h',
+            'inspector/InspectorDOMStorageResource.cpp',
+            'inspector/InspectorDOMStorageResource.h',
             'inspector/InspectorDatabaseAgent.cpp',
             'inspector/InspectorDatabaseAgent.h',
             'inspector/InspectorDatabaseInstrumentation.h',

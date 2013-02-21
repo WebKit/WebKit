@@ -49,6 +49,7 @@
 #include "InspectorDOMAgent.cpp"
 #include "InspectorDOMDebuggerAgent.cpp"
 #include "InspectorDOMStorageAgent.cpp"
+#include "InspectorDOMStorageResource.cpp"
 #include "InspectorDatabaseAgent.cpp"
 #include "InspectorDatabaseResource.cpp"
 #include "InspectorDebuggerAgent.cpp"

@@ -1423,16 +1423,22 @@
     {
         "domain": "DOMStorage",
         "hidden": true,
-        "description": "Query and modify DOM storage.",
         "types": [
             {
                 "id": "StorageId",
+                "type": "string",
+                "description": "Unique identifier of DOM storage entry.",
+                "hidden": true
+            },
+            {
+                "id": "Entry",
                 "type": "object",
-                "description": "DOM Storage identifier.",
+                "description": "DOM Storage entry.",
                 "hidden": true,
                 "properties": [
-                    { "name": "securityOrigin", "type": "string", "description": "Security origin for the storage." },
-                    { "name": "isLocalStorage", "type": "boolean", "description": "Whether the storage is local storage (not session storage)." }
+                    { "name": "origin", "type": "string", "description": "Document origin." },
+                    { "name": "isLocalStorage", "type": "boolean", "description": "True for local storage." },
+                    { "name": "id", "$ref": "StorageId", "description": "Entry id for further reference." }
                 ]
             },
             {
@@ -1453,7 +1459,7 @@
                 "description": "Disables storage tracking, prevents storage events from being sent to the client."
             },
             {
-                "name": "getDOMStorageItems",
+                "name": "getDOMStorageEntries",
                 "parameters": [
                     { "name": "storageId", "$ref": "StorageId" }
                 ],
@@ -1467,6 +1473,9 @@
                     { "name": "storageId", "$ref": "StorageId" },
                     { "name": "key", "type": "string" },
                     { "name": "value", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" }
                 ]
             },
             {
@@ -1474,10 +1483,19 @@
                 "parameters": [
                     { "name": "storageId", "$ref": "StorageId" },
                     { "name": "key", "type": "string" }
+                ],
+                "returns": [
+                    { "name": "success", "type": "boolean" }
                 ]
             }
         ],
         "events": [
+            {
+                "name": "addDOMStorage",
+                "parameters": [
+                    { "name": "storage", "$ref": "Entry" }
+                ]
+            },
             {
                 "name": "domStorageItemsCleared",
                 "parameters": [

@@ -798,6 +798,7 @@ SOURCES += \
     inspector/InspectorDOMAgent.cpp \
     inspector/InspectorDOMDebuggerAgent.cpp \
     inspector/InspectorDOMStorageAgent.cpp \
+    inspector/InspectorDOMStorageResource.cpp \
     inspector/InspectorFrontendClientLocal.cpp \
     inspector/InspectorFrontendHost.cpp \
     inspector/InspectorHeapProfilerAgent.cpp \
@@ -1998,6 +1999,7 @@ HEADERS += \
     inspector/InspectorDebuggerAgent.h \
     inspector/InspectorDOMDebuggerAgent.h \
     inspector/InspectorDOMStorageAgent.h \
+    inspector/InspectorDOMStorageResource.h \
     inspector/InspectorFrontendChannel.h \
     inspector/InspectorFrontendClient.h \
     inspector/InspectorFrontendClientLocal.h \

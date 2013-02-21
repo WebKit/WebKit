@@ -115,6 +115,9 @@ WebInspector.ResourcesPanel = function(database)
 
     WebInspector.databaseModel.databases().forEach(this._addDatabase.bind(this));
     WebInspector.databaseModel.addEventListener(WebInspector.DatabaseModel.Events.DatabaseAdded, this._databaseAdded, this);
+
+    WebInspector.domStorageModel.storages().forEach(this._addDOMStorage.bind(this));
+    WebInspector.domStorageModel.addEventListener(WebInspector.DOMStorageModel.Events.DOMStorageAdded, this._domStorageAdded, this);
 }
 
 WebInspector.ResourcesPanel.prototype = {
@@ -133,7 +136,6 @@ WebInspector.ResourcesPanel.prototype = {
     {
         if (!this._initialized && this.isShowing() && this._cachedResourcesWereLoaded) {
             this._populateResourceTree();
-            this._populateDOMStorageTree();
             this._populateApplicationCacheTree();
             this._initDefaultSelection();
             this._initialized = true;
@@ -329,7 +331,7 @@ WebInspector.ResourcesPanel.prototype = {
      */
     _domStorageAdded: function(event)
     {
-        var domStorage = /** @type {WebInspector.DOMStorage} */ (event.data);
+        var domStorage = /** @type {WebInspector.DOMStorage}*/ (event.data);
         this._addDOMStorage(domStorage);
     },
 
@@ -338,40 +340,12 @@ WebInspector.ResourcesPanel.prototype = {
      */
     _addDOMStorage: function(domStorage)
     {
-        console.assert(!this._domStorageTreeElements.get(domStorage));
-
         var domStorageTreeElement = new WebInspector.DOMStorageTreeElement(this, domStorage, (domStorage.isLocalStorage ? "local-storage" : "session-storage"));
         this._domStorageTreeElements.put(domStorage, domStorageTreeElement);
         if (domStorage.isLocalStorage)
             this.localStorageListTreeElement.appendChild(domStorageTreeElement);
         else
             this.sessionStorageListTreeElement.appendChild(domStorageTreeElement);
-    },
-
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _domStorageRemoved: function(event)
-    {
-        var domStorage = /** @type {WebInspector.DOMStorage} */ (event.data);
-        this._removeDOMStorage(domStorage);
-    },
-
-    /**
-     * @param {WebInspector.DOMStorage} domStorage
-     */
-    _removeDOMStorage: function(domStorage)
-    {
-        var treeElement = this._domStorageTreeElements.get(domStorage);
-        if (!treeElement)
-            return;
-        var wasSelected = treeElement.selected;
-        var parentListTreeElement = treeElement.parent;
-        parentListTreeElement.removeChild(treeElement);
-        if (wasSelected)
-            parentListTreeElement.select();
-        this._domStorageTreeElements.remove(treeElement);
-        this._domStorageViews.remove(domStorage);
     },
 
     /**
@@ -596,13 +570,6 @@ WebInspector.ResourcesPanel.prototype = {
             }
         }
         database.getTableNames(tableNamesCallback);
-    },
-
-    _populateDOMStorageTree: function()
-    {
-        WebInspector.domStorageModel.storages().forEach(this._addDOMStorage.bind(this));
-        WebInspector.domStorageModel.addEventListener(WebInspector.DOMStorageModel.Events.DOMStorageAdded, this._domStorageAdded, this);
-        WebInspector.domStorageModel.addEventListener(WebInspector.DOMStorageModel.Events.DOMStorageRemoved, this._domStorageRemoved, this);
     },
 
     _populateApplicationCacheTree: function()
@@ -1883,14 +1850,14 @@ WebInspector.IDBIndexTreeElement.prototype = {
  */
 WebInspector.DOMStorageTreeElement = function(storagePanel, domStorage, className)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, domStorage.securityOrigin ? domStorage.securityOrigin : WebInspector.UIString("Local Files"), ["domstorage-storage-tree-item", className]);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, domStorage.domain ? domStorage.domain : WebInspector.UIString("Local Files"), ["domstorage-storage-tree-item", className]);
     this._domStorage = domStorage;
 }
 
 WebInspector.DOMStorageTreeElement.prototype = {
     get itemURL()
     {
-        return "storage://" + this._domStorage.securityOrigin + "/" + (this._domStorage.isLocalStorage ? "local" : "session");
+        return "storage://" + this._domStorage.domain + "/" + (this._domStorage.isLocalStorage ? "local" : "session");
     },
 
     onselect: function(selectedByUser)

@@ -65,6 +65,7 @@ public:
     static MemoryObjectType InspectorController;
     static MemoryObjectType InspectorMemoryAgent;
     static MemoryObjectType InspectorDOMStorageAgent;
+    static MemoryObjectType InspectorDOMStorageResources;
     static MemoryObjectType InspectorOverlay;
     static MemoryObjectType InspectorProfilerAgent;
     static MemoryObjectType InspectorDebuggerAgent;

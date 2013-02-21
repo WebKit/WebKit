@@ -1119,6 +1119,8 @@
 		41E1B1D10FF5986900576B3B /* AbstractWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CB0FF5986900576B3B /* AbstractWorker.h */; };
 		41E1B1D30FF5986900576B3B /* SharedWorker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41E1B1CD0FF5986900576B3B /* SharedWorker.cpp */; };
 		41E1B1D40FF5986900576B3B /* SharedWorker.h in Headers */ = {isa = PBXBuildFile; fileRef = 41E1B1CE0FF5986900576B3B /* SharedWorker.h */; };
+		41F061740F5F00AC00A07EAC /* InspectorDOMStorageResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */; };
+		41F061750F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */; };
 		41F0618E0F5F069800A07EAC /* ConsoleMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F0618C0F5F069800A07EAC /* ConsoleMessage.h */; };
 		41F0618F0F5F069800A07EAC /* ConsoleMessage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41F0618D0F5F069800A07EAC /* ConsoleMessage.cpp */; };
 		41F062140F5F192600A07EAC /* InspectorDatabaseResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */; };
@@ -8501,6 +8503,8 @@
 		41E1B1CD0FF5986900576B3B /* SharedWorker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SharedWorker.cpp; path = workers/SharedWorker.cpp; sourceTree = "<group>"; };
 		41E1B1CE0FF5986900576B3B /* SharedWorker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SharedWorker.h; path = workers/SharedWorker.h; sourceTree = "<group>"; };
 		41E1B1CF0FF5986900576B3B /* SharedWorker.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SharedWorker.idl; path = workers/SharedWorker.idl; sourceTree = "<group>"; };
+		41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDOMStorageResource.h; sourceTree = "<group>"; };
+		41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorDOMStorageResource.cpp; sourceTree = "<group>"; };
 		41F0618C0F5F069800A07EAC /* ConsoleMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConsoleMessage.h; sourceTree = "<group>"; };
 		41F0618D0F5F069800A07EAC /* ConsoleMessage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConsoleMessage.cpp; sourceTree = "<group>"; };
 		41F062120F5F192600A07EAC /* InspectorDatabaseResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorDatabaseResource.h; sourceTree = "<group>"; };
@@ -15261,6 +15265,8 @@
 				F3D4C47712E07663003DA150 /* InspectorDOMDebuggerAgent.h */,
 				7A74ECB8101839A500BF939E /* InspectorDOMStorageAgent.cpp */,
 				7A74ECB9101839A600BF939E /* InspectorDOMStorageAgent.h */,
+				41F061730F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp */,
+				41F061720F5F00AC00A07EAC /* InspectorDOMStorageResource.h */,
 				15D17D1E147231EB005EBCA6 /* InspectorFileSystemAgent.cpp */,
 				15D17D1F147231EB005EBCA6 /* InspectorFileSystemAgent.h */,
 				2277775F1345DEA9008EA455 /* InspectorFrontendChannel.h */,
@@ -24757,6 +24763,7 @@
 				7A24587C1021EAF4000A00AA /* InspectorDOMAgent.h in Headers */,
 				F3D4C47912E07663003DA150 /* InspectorDOMDebuggerAgent.h in Headers */,
 				7A74ECBB101839A600BF939E /* InspectorDOMStorageAgent.h in Headers */,
+				41F061740F5F00AC00A07EAC /* InspectorDOMStorageResource.h in Headers */,
 				15D17D22147231EB005EBCA6 /* InspectorFileSystemAgent.h in Headers */,
 				578DA20E1520EB8C006141C1 /* InspectorFrontend.h in Headers */,
 				227777601345DEA9008EA455 /* InspectorFrontendChannel.h in Headers */,
@@ -28050,6 +28057,7 @@
 				7A24587B1021EAF4000A00AA /* InspectorDOMAgent.cpp in Sources */,
 				F3D4C47812E07663003DA150 /* InspectorDOMDebuggerAgent.cpp in Sources */,
 				7A74ECBA101839A600BF939E /* InspectorDOMStorageAgent.cpp in Sources */,
+				41F061750F5F00AC00A07EAC /* InspectorDOMStorageResource.cpp in Sources */,
 				15D17D21147231EB005EBCA6 /* InspectorFileSystemAgent.cpp in Sources */,
 				4F4F5FFB11CBD2E100A186BF /* InspectorFrontend.cpp in Sources */,
 				F344C75811294FF600F26EEE /* InspectorFrontendClientLocal.cpp in Sources */,

@@ -60,6 +60,7 @@ MemoryObjectType WebCoreMemoryTypes::Inspector = "WebInspector";
 MemoryObjectType WebCoreMemoryTypes::InspectorController = "WebInspector";
 MemoryObjectType WebCoreMemoryTypes::InspectorMemoryAgent = "WebInspector";
 MemoryObjectType WebCoreMemoryTypes::InspectorDOMStorageAgent = "WebInspector";
+MemoryObjectType WebCoreMemoryTypes::InspectorDOMStorageResources = "WebInspector";
 MemoryObjectType WebCoreMemoryTypes::InspectorOverlay = "WebInspector";
 MemoryObjectType WebCoreMemoryTypes::InspectorProfilerAgent = "WebInspector";
 MemoryObjectType WebCoreMemoryTypes::InspectorDebuggerAgent = "WebInspector";

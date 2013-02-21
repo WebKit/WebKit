@@ -915,6 +915,8 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
         if (InspectorDatabaseAgent* databaseAgent = instrumentingAgents->inspectorDatabaseAgent())
             databaseAgent->clearResources();
 #endif
+        if (InspectorDOMStorageAgent* domStorageAgent = instrumentingAgents->inspectorDOMStorageAgent())
+            domStorageAgent->clearResources();
         if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
             domAgent->setDocument(mainFrame->document());
 #if USE(ACCELERATED_COMPOSITING)
@@ -1098,6 +1100,15 @@ void InspectorInstrumentation::didOpenDatabaseImpl(InstrumentingAgents* instrume
         dbAgent->didOpenDatabase(database, domain, name, version);
 }
 #endif
+
+void InspectorInstrumentation::didUseDOMStorageImpl(InstrumentingAgents* instrumentingAgents, StorageArea* storageArea, bool isLocalStorage, Frame* frame)
+{
+    InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent();
+    if (!inspectorAgent || !inspectorAgent->developerExtrasEnabled())
+        return;
+    if (InspectorDOMStorageAgent* domStorageAgent = instrumentingAgents->inspectorDOMStorageAgent())
+        domStorageAgent->didUseDOMStorage(storageArea, isLocalStorage, frame);
+}
 
 void InspectorInstrumentation::didDispatchDOMStorageEventImpl(InstrumentingAgents* instrumentingAgents, const String& key, const String& oldValue, const String& newValue, StorageType storageType, SecurityOrigin* securityOrigin, Page* page)
 {

@@ -1623,6 +1623,7 @@ set(WebCore_SOURCES
     inspector/InspectorDOMAgent.cpp
     inspector/InspectorDOMDebuggerAgent.cpp
     inspector/InspectorDOMStorageAgent.cpp
+    inspector/InspectorDOMStorageResource.cpp
     inspector/InspectorDatabaseAgent.cpp
     inspector/InspectorDatabaseResource.cpp
     inspector/InspectorDebuggerAgent.cpp

@@ -39,8 +39,8 @@ namespace WebCore {
 
 class Frame;
 class InspectorArray;
+class InspectorDOMStorageResource;
 class InspectorFrontend;
-class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
 class Page;
@@ -51,40 +51,44 @@ typedef String ErrorString;
 
 class InspectorDOMStorageAgent : public InspectorBaseAgent<InspectorDOMStorageAgent>, public InspectorBackendDispatcher::DOMStorageCommandHandler {
 public:
-    static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* state)
+    static PassOwnPtr<InspectorDOMStorageAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
     {
-        return adoptPtr(new InspectorDOMStorageAgent(instrumentingAgents, pageAgent, state));
+        return adoptPtr(new InspectorDOMStorageAgent(instrumentingAgents, state));
     }
     ~InspectorDOMStorageAgent();
 
     virtual void setFrontend(InspectorFrontend*);
     virtual void clearFrontend();
+    void restore();
+
+    void clearResources();
 
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void getDOMStorageItems(ErrorString*, const RefPtr<InspectorObject>& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > >& items);
-    virtual void setDOMStorageItem(ErrorString*, const RefPtr<InspectorObject>& storageId, const String& key, const String& value);
-    virtual void removeDOMStorageItem(ErrorString*, const RefPtr<InspectorObject>& storageId, const String& key);
+    virtual void getDOMStorageEntries(ErrorString*, const String& storageId, RefPtr<TypeBuilder::Array<TypeBuilder::Array<String> > >& entries);
+    virtual void setDOMStorageItem(ErrorString*, const String& storageId, const String& key, const String& value, bool* success);
+    virtual void removeDOMStorageItem(ErrorString*, const String& storageId, const String& key, bool* success);
 
     // Called from the injected script.
     String storageId(Storage*);
-    PassRefPtr<TypeBuilder::DOMStorage::StorageId> storageId(SecurityOrigin*, bool isLocalStorage);
+    String storageId(SecurityOrigin*, bool isLocalStorage);
 
     // Called from InspectorInstrumentation
+    void didUseDOMStorage(StorageArea*, bool isLocalStorage, Frame*);
     void didDispatchDOMStorageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Page*);
 
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
+    InspectorDOMStorageAgent(InstrumentingAgents*, InspectorCompositeState*);
 
-    InspectorDOMStorageAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorCompositeState*);
+    InspectorDOMStorageResource* getDOMStorageResourceForId(const String& storageId);
 
-    bool isEnabled() const;
-    PassRefPtr<StorageArea> findStorageArea(ErrorString*, const RefPtr<InspectorObject>&, Frame*&);
-
-    InspectorPageAgent* m_pageAgent;
+    typedef HashMap<String, RefPtr<InspectorDOMStorageResource> > DOMStorageResourcesMap;
+    DOMStorageResourcesMap m_resources;
     InspectorFrontend* m_frontend;
+    bool m_enabled;
 };
 
 } // namespace WebCore
