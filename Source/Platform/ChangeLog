@@ -1,3 +1,13 @@
+2013-02-21  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove deprecated WebCompositorSupport::createLayerTreeView() declaration
+        https://bugs.webkit.org/show_bug.cgi?id=110492
+
+        Reviewed by Adrienne Walker.
+
+        * chromium/public/WebCompositorSupport.h:
+        (WebCompositorSupport):
+
 2013-02-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Request WebLayerTreeView for DumpRenderTree via explicit testing path

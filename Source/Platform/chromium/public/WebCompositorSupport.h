@@ -105,12 +105,6 @@ public:
     virtual WebTransformOperations* createTransformOperations() { return 0; }
 
 
-    // Testing ------------------------------------------------------
-
-    // DEPRECATED
-    // May return 0 if initialization fails.
-    virtual WebLayerTreeView* createLayerTreeView(WebLayerTreeViewClient*, const WebLayer& root, const WebLayerTreeView::Settings&) { return 0; }
-
 protected:
     virtual ~WebCompositorSupport() { }
 };
