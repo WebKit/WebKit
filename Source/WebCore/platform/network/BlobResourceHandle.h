@@ -50,10 +50,7 @@ struct BlobDataItem;
 
 class BlobResourceHandle : public FileStreamClient, public ResourceHandle  {
 public:
-    static PassRefPtr<BlobResourceHandle> create(PassRefPtr<BlobStorageData> blobData, const ResourceRequest& request, ResourceHandleClient* client, bool async = true)
-    {
-        return adoptRef(new BlobResourceHandle(blobData, request, client, async));
-    }
+    static PassRefPtr<BlobResourceHandle> createAsync(PassRefPtr<BlobStorageData>, const ResourceRequest&, ResourceHandleClient*);
 
     static void loadResourceSynchronously(PassRefPtr<BlobStorageData> blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data);
 

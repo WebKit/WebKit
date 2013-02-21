@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -58,11 +59,18 @@ static PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest& re
     return static_cast<BlobRegistryImpl&>(blobRegistry()).createResourceHandle(request, client);
 }
 
+static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
+{
+    RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
+    BlobResourceHandle::loadResourceSynchronously(blobData, request, error, response, data);
+}
+
 static void registerBlobResourceHandleConstructor()
 {
     static bool didRegister = false;
     if (!didRegister) {
         ResourceHandle::registerBuiltinConstructor("blob", createResourceHandle);
+        ResourceHandle::registerBuiltinSynchronousLoader("blob", loadResourceSynchronously);
         didRegister = true;
     }
 }
@@ -74,32 +82,14 @@ static void registerBlobResourceHandleConstructor()
 }
 #endif
 
-bool BlobRegistryImpl::shouldLoadResource(const ResourceRequest& request) const
-{
-    // If the resource is not fetched using the GET method, bail out.
-    if (!equalIgnoringCase(request.httpMethod(), "GET"))
-        return false;
-
-    return true;
-}
-
 PassRefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
-    if (!shouldLoadResource(request))
+    RefPtr<BlobResourceHandle> handle = BlobResourceHandle::createAsync(m_blobs.get(request.url().string()), request, client);
+    if (!handle)
         return 0;
 
-    RefPtr<BlobResourceHandle> handle = BlobResourceHandle::create(m_blobs.get(request.url().string()), request, client);
     handle->start();
     return handle.release();
-}
-
-bool BlobRegistryImpl::loadResourceSynchronously(const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
-{
-    if (!shouldLoadResource(request))
-        return false;
-
-    BlobResourceHandle::loadResourceSynchronously(m_blobs.get(request.url().string()), request, error, response, data);
-    return true;
 }
 
 void BlobRegistryImpl::appendStorageItems(BlobStorageData* blobStorageData, const BlobDataItemList& items)

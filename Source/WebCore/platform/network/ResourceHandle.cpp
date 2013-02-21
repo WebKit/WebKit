@@ -53,6 +53,19 @@ void ResourceHandle::registerBuiltinConstructor(const AtomicString& protocol, Re
     builtinResourceHandleConstructorMap().add(protocol, constructor);
 }
 
+typedef HashMap<AtomicString, ResourceHandle::BuiltinSynchronousLoader> BuiltinResourceHandleSynchronousLoaderMap;
+static BuiltinResourceHandleSynchronousLoaderMap& builtinResourceHandleSynchronousLoaderMap()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(BuiltinResourceHandleSynchronousLoaderMap, map, ());
+    return map;
+}
+
+void ResourceHandle::registerBuiltinSynchronousLoader(const AtomicString& protocol, ResourceHandle::BuiltinSynchronousLoader loader)
+{
+    builtinResourceHandleSynchronousLoaderMap().add(protocol, loader);
+}
+
 ResourceHandle::ResourceHandle(NetworkingContext* context, const ResourceRequest& request, ResourceHandleClient* client, bool defersLoading, bool shouldContentSniff)
     : d(adoptPtr(new ResourceHandleInternal(this, context, request, client, defersLoading, shouldContentSniff && shouldContentSniffURL(request.url()))))
 {
@@ -115,14 +128,12 @@ void ResourceHandle::fireFailure(Timer<ResourceHandle>*)
 
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-#if ENABLE(BLOB)
-    // FIXME: This should use a more generic mechanism, like builtinResourceHandleConstructorMap we have for async requests.
-    if (request.url().protocolIs("blob"))
-        if (blobRegistry().loadResourceSynchronously(request, error, response, data))
-            return;
-#endif
+    BuiltinResourceHandleSynchronousLoaderMap::iterator protocolMapItem = builtinResourceHandleSynchronousLoaderMap().find(request.url().protocol());
 
-    ASSERT(builtinResourceHandleConstructorMap().find(request.url().protocol()) == builtinResourceHandleConstructorMap().end());
+    if (protocolMapItem != builtinResourceHandleSynchronousLoaderMap().end()) {
+        protocolMapItem->value(context, request, storedCredentials, error, response, data);
+        return;
+    }
 
     platformLoadResourceSynchronously(context, request, storedCredentials, error, response, data);
 }

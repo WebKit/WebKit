@@ -70,6 +70,7 @@ enum {
     securityError = 2,
     rangeError = 3,
     notReadableError = 4,
+    methodNotAllowed = 5
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,11 +133,24 @@ void BlobResourceSynchronousLoader::didFail(ResourceHandle*, const ResourceError
 ///////////////////////////////////////////////////////////////////////////////
 // BlobResourceHandle
 
-// static
+PassRefPtr<BlobResourceHandle> BlobResourceHandle::createAsync(PassRefPtr<BlobStorageData> blobData, const ResourceRequest& request, ResourceHandleClient* client)
+{
+    // FIXME: Should probably call didFail() instead of blocking the load without explanation.
+    if (!equalIgnoringCase(request.httpMethod(), "GET"))
+        return 0;
+
+    return adoptRef(new BlobResourceHandle(blobData, request, client, true));
+}
+
 void BlobResourceHandle::loadResourceSynchronously(PassRefPtr<BlobStorageData> blobData, const ResourceRequest& request, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
+    if (!equalIgnoringCase(request.httpMethod(), "GET")) {
+        error = ResourceError(webKitBlobResourceDomain, methodNotAllowed, response.url(), "Request method must be GET");
+        return;
+    }
+
     BlobResourceSynchronousLoader loader(error, response, data);
-    RefPtr<BlobResourceHandle> handle = BlobResourceHandle::create(blobData, request, &loader, false);
+    RefPtr<BlobResourceHandle> handle = adoptRef(new BlobResourceHandle(blobData, request, &loader, false));
     handle->start();
 }
 

@@ -57,14 +57,12 @@ public:
     virtual void registerBlobURL(const KURL&, PassOwnPtr<BlobData>);
     virtual void registerBlobURL(const KURL&, const KURL& srcURL);
     virtual void unregisterBlobURL(const KURL&);
-    virtual bool loadResourceSynchronously(const ResourceRequest&, ResourceError&, ResourceResponse&, Vector<char>& data);
 
     PassRefPtr<BlobStorageData> getBlobDataFromURL(const KURL&) const;
 
     PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 
 private:
-    bool shouldLoadResource(const ResourceRequest& request) const;
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&);
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&, long long offset, long long length);
 
