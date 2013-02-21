@@ -43,8 +43,6 @@ CONFIG(release, debug|release): DEFINES *= NDEBUG
 
 DEFINES += $$configDefines()
 
-DEPENDPATH += $$OUT_PWD
-
 INCLUDEPATH += \
     $${ROOT_WEBKIT_DIR}/Source \
     $${ROOT_BUILD_DIR}/Source/include \

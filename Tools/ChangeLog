@@ -1,3 +1,14 @@
+2013-02-21  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
+
+        [Qt] Remove obsolete DEPENDPATH assignment
+
+        Reviewed by Simon Hausmann
+
+        qmake now adds CONFIG+=depend_includepath by default, making manual
+        DEPENDPATH setup unnecessary.
+
+        * qmake/mkspecs/features/default_post.prf:
+
 2013-02-20  Vivek Galatage  <vivekg@webkit.org>
 
         Unreviewed. Changing primary email id.
