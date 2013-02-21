@@ -1,3 +1,18 @@
+2013-02-21  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] WebPagePrivate::load should not check new window policy
+        https://bugs.webkit.org/show_bug.cgi?id=110403
+
+        Reviewed by Rob Buis.
+
+        Based on my understanding of changeset 135952, we should
+        not check the new window policy in WebPagePrivate::load.
+
+        None of the other ports seem to do this, except for plugins.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::load):
+
 2013-02-21  Alberto Garcia  <albgarcia@rim.com>
 
         [BlackBerry] BackingStore: replace instrument{Begin,Cancel}Frame with did{Begin,Cancel}Frame
