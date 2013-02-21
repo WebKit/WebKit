@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<script>
+if (window.testRunner)
+    testRunner.overridePreference("WebKitCSSGridLayoutEnabled", 1);
+</script>
+<link href="resources/grid.css" rel="stylesheet">
+<style>
+.grid {
+    -webkit-grid-columns: 50px 100px;
+    -webkit-grid-rows: 50px 100px;
+}
+</style>
+<script src="../../resources/check-layout.js"></script>
+<script>
+function testAddition(gridElementID, position, autoFlowElementID, size)
+{
+    var gridElement = document.getElementById(gridElementID);
+
+    var gridItem = document.createElement("div");
+    gridItem.style.webkitGridRow = position.row;
+    gridItem.style.webkitGridColumn = position.column;
+    gridElement.appendChild(gridItem);
+
+    var autoFlowElement = document.getElementById(autoFlowElementID);
+    autoFlowElement.setAttribute("data-expected-width", size.width);
+    autoFlowElement.setAttribute("data-expected-height", size.height);
+    checkLayout("#" + autoFlowElementID);
+}
+
+function testAdditions()
+{
+    checkLayout("#autoFlowColumnElement");
+    testAddition("gridAutoFlowColumn", { 'row': '1', 'column': '1' }, "autoFlowColumnElement", { 'width': '50', 'height': '100' });
+    testAddition("gridAutoFlowColumn", { 'row': '1', 'column': '2' }, "autoFlowColumnElement", { 'width': '50', 'height': '100' });
+    testAddition("gridAutoFlowColumn", { 'row': '2', 'column': '2' }, "autoFlowColumnElement", { 'width': '50', 'height': '100' });
+    testAddition("gridAutoFlowColumn", { 'row': '2', 'column': '1' }, "autoFlowColumnElement", { 'width': '170', 'height': '50' });
+
+    checkLayout("#autoFlowRowElement");
+    testAddition("gridAutoFlowRow", { 'row': '1', 'column': '1' }, "autoFlowRowElement", { 'width': '100', 'height': '50' });
+    testAddition("gridAutoFlowRow", { 'row': '2', 'column': '1' }, "autoFlowRowElement", { 'width': '100', 'height': '50' });
+    testAddition("gridAutoFlowRow", { 'row': '2', 'column': '2' }, "autoFlowRowElement", { 'width': '100', 'height': '50' });
+    testAddition("gridAutoFlowRow", { 'row': '1', 'column': '2' }, "autoFlowRowElement", { 'width': '50', 'height': '30' });
+
+    checkLayout("#gridAutoFlowColumnWithAuto");
+    testAddition("gridAutoFlowColumnWithAuto", { 'row': 'auto', 'column': '1' }, "autoFlowColumnElementWithAuto", { 'width': '50', 'height': '100' });
+    testAddition("gridAutoFlowColumnWithAuto", { 'row': '1', 'column': '1' }, "autoFlowColumnElementWithAuto", { 'width': '100', 'height': '50' });
+    testAddition("gridAutoFlowColumnWithAuto", { 'row': 'auto', 'column': '2' }, "autoFlowColumnElementWithAuto", { 'width': '100', 'height': '100' });
+    testAddition("gridAutoFlowColumnWithAuto", { 'row': '2', 'column': '2' }, "autoFlowColumnElementWithAuto", { 'width': '170', 'height': '50' });
+
+    checkLayout("#gridAutoFlowRowWithAuto");
+    testAddition("gridAutoFlowRowWithAuto", { 'row': '1', 'column': 'auto' }, "autoFlowRowElementWithAuto", { 'width': '100', 'height': '50' });
+    testAddition("gridAutoFlowRowWithAuto", { 'row': 'auto', 'column': '1' }, "autoFlowRowElementWithAuto", { 'width': '100', 'height': '50' });
+    testAddition("gridAutoFlowRowWithAuto", { 'row': '1', 'column': '2' }, "autoFlowRowElementWithAuto", { 'width': '50', 'height': '100' });
+    testAddition("gridAutoFlowRowWithAuto", { 'row': '1', 'column': '1' }, "autoFlowRowElementWithAuto", { 'width': '50', 'height': '100' });
+}
+window.addEventListener("load", testAdditions, false);
+</script>
+<body>
+
+<p>This test checks that the tracks' auto positions are recomputed after adding a grid item.</p>
+
+<div class="unconstrainedContainer">
+    <div class="grid gridAutoFlowColumn" id="gridAutoFlowColumn">
+        <div class="sizedToGridArea autoRowAutoColumn" id="autoFlowColumnElement" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer">
+    <div class="grid gridAutoFlowRow" id="gridAutoFlowRow">
+        <div class="sizedToGridArea autoRowAutoColumn" id="autoFlowRowElement" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer">
+    <div class="grid gridAutoFlowColumn" id="gridAutoFlowColumnWithAuto">
+        <div class="sizedToGridArea autoRowAutoColumn" id="autoFlowColumnElementWithAuto" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
+
+<div class="unconstrainedContainer">
+    <div class="grid gridAutoFlowRow" id="gridAutoFlowRowWithAuto">
+        <div class="sizedToGridArea autoRowAutoColumn" id="autoFlowRowElementWithAuto" data-expected-width="50" data-expected-height="50">XXXXX XXXXX XXXXX</div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -75,8 +75,17 @@ private:
     LayoutUnit computeUsedBreadthOfMaxLength(TrackSizingDirection, const Length&) const;
     LayoutUnit computeUsedBreadthOfSpecifiedLength(TrackSizingDirection, const Length&) const;
     void resolveContentBasedTrackSizingFunctions(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, LayoutUnit& availableLogicalSpace);
+
     void insertItemIntoGrid(RenderBox*, size_t rowTrack, size_t columnTrack);
     void placeItemsOnGrid();
+    void placeSpecifiedMajorAxisItemsOnGrid(Vector<RenderBox*>);
+    void placeAutoMajorAxisItemsOnGrid(Vector<RenderBox*>);
+    void placeAutoMajorAxisItemOnGrid(RenderBox*);
+    const GridPosition& autoPlacementMajorAxisPositionForChild(const RenderBox*) const;
+    const GridPosition& autoPlacementMinorAxisPositionForChild(const RenderBox*) const;
+    TrackSizingDirection autoPlacementMajorAxisDirection() const;
+    TrackSizingDirection autoPlacementMinorAxisDirection() const;
+
     void layoutGridItems();
     void clearGrid();
 

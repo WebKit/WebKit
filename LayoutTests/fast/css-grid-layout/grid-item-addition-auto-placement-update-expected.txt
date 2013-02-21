@@ -1,0 +1,35 @@
+This test checks that the tracks' auto positions are recomputed after adding a grid item.
+
+XXXXX XXXXX XXXXX
+FAIL:
+Expected 170 for width, but got 50. 
+
+<div class="sizedToGridArea autoRowAutoColumn" id="autoFlowColumnElement" data-expected-width="170" data-expected-height="50">XXXXX XXXXX XXXXX</div>
+PASS
+PASS
+PASS
+PASS
+XXXXX XXXXX XXXXX
+FAIL:
+Expected 30 for height, but got 50. 
+
+<div class="sizedToGridArea autoRowAutoColumn" id="autoFlowRowElement" data-expected-width="50" data-expected-height="30">XXXXX XXXXX XXXXX</div>
+PASS
+PASS
+PASS
+PASS
+XXXXX XXXXX XXXXX
+FAIL:
+Expected 170 for width, but got 50. 
+
+<div class="sizedToGridArea autoRowAutoColumn" id="autoFlowColumnElementWithAuto" data-expected-width="170" data-expected-height="50">XXXXX XXXXX XXXXX</div>
+PASS
+PASS
+PASS
+PASS
+XXXXX XXXXX XXXXX
+PASS
+PASS
+PASS
+PASS
+PASS
