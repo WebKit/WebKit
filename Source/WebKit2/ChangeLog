@@ -1,3 +1,17 @@
+2013-02-20  Mark Rowe  <mrowe@apple.com>
+
+        <https://webkit.org/b/110409> Remove duplication between 32- and 64-bit PluginService plists.
+
+        Reviewed by Dan Bernstein.
+
+        The only difference between the plists was the CFBundleIdentifier. Since the values are the
+        same as the product name, we can just use the value of the PRODUCT_NAME configuration setting.
+
+        * Configurations/PluginService.32.xcconfig:
+        * Configurations/PluginService.64.xcconfig:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist: Renamed from Source/WebKit2/PluginProcess/EntryPoint/mac/XPCService/PluginService.32/Info.plist.
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.64/Info.plist: Removed.
+
 2013-02-20  Simon Fraser  <simon.fraser@apple.com>
 
         Zoomed, slow-scrolling pages keep recreating tiles when scrolled

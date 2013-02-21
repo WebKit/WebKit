@@ -25,7 +25,7 @@
 
 ARCHS = x86_64;
 PRODUCT_NAME = com.apple.WebKit.Plugin.64;
-INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.64/Info.plist;
+INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist;
 
 // Since this service is only used in production builds, in debug and release builds
 // we don't link against WebKit2, to avoid linking errors due to not having a WebKit2
