@@ -652,6 +652,64 @@ function openCalendarPicker() {
 
 /**
  * @constructor
+ */
+function EventEmitter() {
+};
+
+/**
+ * @param {!string} type
+ * @param {!function({...*})} callback
+ */
+EventEmitter.prototype.on = function(type, callback) {
+    console.assert(callback instanceof Function);
+    if (!this._callbacks)
+        this._callbacks = {};
+    if (!this._callbacks[type])
+        this._callbacks[type] = [];
+    this._callbacks[type].push(callback);
+};
+
+EventEmitter.prototype.hasListener = function(type) {
+    if (!this._callbacks)
+        return false;
+    var callbacksForType = this._callbacks[type];
+    if (!callbacksForType)
+        return false;
+    return callbacksForType.length > 0;
+};
+
+/**
+ * @param {!string} type
+ * @param {!function(Object)} callback
+ */
+EventEmitter.prototype.removeListener = function(type, callback) {
+    if (!this._callbacks)
+        return;
+    var callbacksForType = this._callbacks[type];
+    if (!callbacksForType)
+        return;
+    callbacksForType.splice(callbacksForType.indexOf(callback), 1);
+    if (callbacksForType.length === 0)
+        delete this._callbacks[type];
+};
+
+/**
+ * @param {!string} type
+ * @param {...*} var_args
+ */
+EventEmitter.prototype.dispatchEvent = function(type) {
+    if (!this._callbacks)
+        return;
+    var callbacksForType = this._callbacks[type];
+    if (!callbacksForType)
+        return;
+    for (var i = 0; i < callbacksForType.length; ++i) {
+        callbacksForType[i].apply(this, Array.prototype.slice.call(arguments, 1));
+    }
+};
+
+/**
+ * @constructor
  * @param {!Element} element
  * @param {!Object} config
  */
