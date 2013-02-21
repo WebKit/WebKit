@@ -50,6 +50,7 @@
 #include <cstring>
 #include <getopt.h>
 #include <gtk/gtk.h>
+#include <locale.h>
 #include <webkit/webkit.h>
 #include <wtf/Assertions.h>
 #include <wtf/gobject/GOwnPtr.h>

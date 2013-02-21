@@ -1,3 +1,11 @@
+2013-02-21  Martin Robinson  <mrobinson@igalia.com>
+
+        gtk/DumpRenderTree.cpp is missing <locale.h> include
+        https://bugs.webkit.org/show_bug.cgi?id=109386
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp: Fix the WebKitGTK+ Mac build
+        by include locale.h when we use setlocale.
+
 2013-02-21  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
 
         [Qt] Remove obsolete DEPENDPATH assignment
