@@ -1320,16 +1320,7 @@ void RenderLayerBacking::updateRootLayerConfiguration()
         return;
 
     Color backgroundColor;
-    FrameView* frameView = toRenderView(renderer())->frameView();
-    bool viewIsTransparent = frameView->isTransparent();
-
-    if (!viewIsTransparent) {
-        backgroundColor = frameView->documentBackgroundColor();
-        if (!backgroundColor.isValid())
-            backgroundColor = Color::white;
-
-        viewIsTransparent = backgroundColor.hasAlpha();
-    }
+    bool viewIsTransparent = compositor()->viewHasTransparentBackground(&backgroundColor);
 
     if (m_backgroundLayerPaintsFixedRootBackground && m_backgroundLayer) {
         m_backgroundLayer->setBackgroundColor(backgroundColor);

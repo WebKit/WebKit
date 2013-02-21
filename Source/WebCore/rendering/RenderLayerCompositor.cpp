@@ -2332,6 +2332,9 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
         return false;
 
 #if PLATFORM(MAC)
+    if (viewHasTransparentBackground())
+        return false;
+
     // On Mac, we want a content shadow layer if we have a scrolling coordinator and can scroll.
     if (scrollingCoordinator() && !m_renderView->frameView()->prohibitsScrolling())
         return true;
@@ -2340,6 +2343,25 @@ bool RenderLayerCompositor::requiresContentShadowLayer() const
     return false;
 }
 #endif
+
+bool RenderLayerCompositor::viewHasTransparentBackground(Color* backgroundColor) const
+{
+    FrameView* frameView = m_renderView->frameView();
+    if (frameView->isTransparent()) {
+        if (backgroundColor)
+            *backgroundColor = Color(); // Return an invalid color.
+        return true;
+    }
+
+    Color documentBackgroundColor = frameView->documentBackgroundColor();
+    if (!documentBackgroundColor.isValid())
+        documentBackgroundColor = Color::white;
+
+    if (backgroundColor)
+        *backgroundColor = documentBackgroundColor;
+        
+    return documentBackgroundColor.hasAlpha();
+}
 
 void RenderLayerCompositor::updateOverflowControlsLayers()
 {
