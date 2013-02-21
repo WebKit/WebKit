@@ -1,3 +1,16 @@
+2013-02-19  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::SpeculativeJIT::compileInt32ToDouble() has an unnecessary case for constant operands
+        https://bugs.webkit.org/show_bug.cgi?id=110309
+
+        Reviewed by Sam Weinig.
+        
+        It used to be necessary, back when we didn't have constant folding. Now we have
+        constant folding. So we don't need it.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+
 2013-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG inlines Resolves that it doesn't know how to handle correctly

@@ -2310,20 +2310,7 @@ void SpeculativeJIT::compileDoubleAsInt32(Node* node)
 
 void SpeculativeJIT::compileInt32ToDouble(Node* node)
 {
-#if USE(JSVALUE64)
-    // On JSVALUE64 we have a way of loading double constants in a more direct manner
-    // than a int->double conversion. On 32_64, unfortunately, we currently don't have
-    // any such mechanism - though we could have it, if we just provisioned some memory
-    // in CodeBlock for the double form of integer constants.
-    if (isInt32Constant(node->child1().node())) {
-        FPRTemporary result(this);
-        GPRTemporary temp(this);
-        m_jit.move(MacroAssembler::Imm64(reinterpretDoubleToInt64(valueOfNumberConstant(node->child1().node()))), temp.gpr());
-        m_jit.move64ToDouble(temp.gpr(), result.fpr());
-        doubleResult(result.fpr(), node);
-        return;
-    }
-#endif
+    ASSERT(!isInt32Constant(node->child1().node())); // This should have been constant folded.
     
     if (isInt32Speculation(m_state.forNode(node->child1()).m_type)) {
         SpeculateIntegerOperand op1(this, node->child1());
