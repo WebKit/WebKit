@@ -1,3 +1,19 @@
+2013-02-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move feature overriding to the configure phase
+        https://bugs.webkit.org/show_bug.cgi?id=110293
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * Scripts/webkitdirs.pm:
+        (runAutogenForAutotoolsProjectIfNecessary): Rename the feature file to
+        WebKitFeatureOverrides.txt to better match the other filenames used in
+        the new feature processing.
+        * gtk/generate-feature-defines-files: Added. A script which takes as an argument
+        the default features, overrides them with the contents of WebKitFeatureOverrrides.txt
+        and writes WebKitFeatures.txt and WebKitFeatures.h.
+        * gtk/override-feature-defines: Removed.
+
 2013-02-21  Oswald Buddenhagen  <oswald.buddenhagen@digia.com>
 
         [Qt] Remove obsolete DEPENDPATH assignment

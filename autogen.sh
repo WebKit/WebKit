@@ -12,8 +12,6 @@ rm -f $top_srcdir/autom4te.cache
 
 touch README INSTALL
 
-Tools/gtk/override-feature-defines $ORIGDIR
-
 if test -z `which autoreconf`; then
     echo "Error: autoreconf not found, please install it."
     exit 1

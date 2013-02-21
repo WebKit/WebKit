@@ -60,9 +60,6 @@ USER_LINGUAS :=
 USE_LINGUAS :=
 MOFILES :=
 ALL_MOFILES :=
-feature_defines_defaults :=
-feature_defines_overrides :=
-feature_defines :=
 dom_binding_idls :=
 wtf_sources :=
 javascriptcore_h_api :=
@@ -151,6 +148,10 @@ endif
 global_cxxflags += \
 	-fno-rtti
 
+# Read the feature defines file, that's created by generate-feature-defines-files
+# during configuration (SetupWebKitFeatures.m4).
+feature_defines := $(shell cat WebKitFeatures.txt)
+
 # -no-undefined required for building DLLs on Windows
 # It breaks the build on other platforms, so we use it conditionally
 if OS_WIN32
@@ -170,6 +171,7 @@ endif
 
 EXTRA_DIST += \
 	$(srcdir)/Source/autotools/symbols.filter \
+	$(srcdir)/Tools/generate-feature-defines-files \
 	$(srcdir)/Source/WebKit/LICENSE
 
 # Include module makefiles

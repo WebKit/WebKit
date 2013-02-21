@@ -1,3 +1,30 @@
+2013-02-21  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Move feature overriding to the configure phase
+        https://bugs.webkit.org/show_bug.cgi?id=110293
+
+        Reviewed by Gustavo Noronha Silva.
+
+        Rework the feature overrides logic so all feature defines go into a
+        header rather than the command line. This has a few benefits. Most
+        notably, we can reuse the header in the gyp build. Another nice result
+        is that changes to the configuration automatically result in a full
+        rebuild and Debug and Release builds can have different configurations.
+
+        All feature define processing happens now during the configuration phase,
+        instead of when running autogen.sh. This means that we need to distribute
+        the feature processing script.
+
+        * GNUmakefile.am: Read feature defines from WebKitFeatures.txt when kicking
+        off a build. Also include generate-feature-defines-files in the distribution.
+        * Source/autotools/SetupAutoconfHeader.m4: Remove an extra ENABLE_3D_RENDERING
+        from the autoconf header, as it is already provided by the feature configuration.
+        * Source/autotools/SetupWebKitFeatures.m4: Added.
+        * Source/autotools/webkitfeature.m4: Removed. The functionality has been moved
+        to SetupWebKitFeatures.m4.
+        * autogen.sh: Remove the call to override-feature-defines.
+        * configure.ac: Now include SetupWebKitFeatures.
+
 2013-02-20  Dirk Schulze  <krit@webkit.org>
 
         Enable CANVAS_PATH flag

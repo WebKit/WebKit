@@ -1,4 +1,3 @@
-include $(srcdir)/Source/WebCore/GNUmakefile.features.am
 include $(srcdir)/Source/WebCore/GNUmakefile.list.am
 
 WEBCORE_CSS_PROPERTY_NAMES := $(WebCore)/css/CSSPropertyNames.in
@@ -137,74 +136,11 @@ webcoregtk_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/win
 endif # END TARGET_WIN32
 
-# ----
-# Gamepad support
-# ---
-if ENABLE_GAMEPAD
-feature_defines_overrides += ENABLE_GAMEPAD=1
-else
-feature_defines_overrides += ENABLE_GAMEPAD=0
-endif # END ENABLE_GAMEPAD
-
-# ----
-# Video Support
-# ----
-if ENABLE_VIDEO
-feature_defines_overrides += ENABLE_VIDEO=1
-else
-feature_defines_overrides += ENABLE_VIDEO=0 ENABLE_VIDEO_TRACK=0
-endif # END ENABLE_VIDEO
-
-# ----
-# Filters
-# ----
-if ENABLE_CSS_FILTERS
-feature_defines_overrides += ENABLE_CSS_FILTERS=1
-else
-feature_defines_overrides += ENABLE_CSS_FILTERS=0
-endif # END ENABLE_CSS_FILTERS
-
-# ----
-# Media Stream Support
-# ----
-if ENABLE_MEDIA_STREAM
-feature_defines_overrides += ENABLE_MEDIA_STREAM=1
-else
-feature_defines_overrides += ENABLE_MEDIA_STREAM=0
-endif # END ENABLE_MEDIA_STREAM
-
 # XPath grammar
 $(GENSOURCES_WEBCORE)/XPathGrammar.h: $(GENSOURCES_WEBCORE)/XPathGrammar.cpp
 $(GENSOURCES_WEBCORE)/XPathGrammar.cpp: $(WebCore)/xml/XPathGrammar.y
 	$(AM_V_GEN)
 	$(AM_V_at)perl $(WebCore)/css/makegrammar.pl --outputDir $(GENSOURCES_WEBCORE) --bison "$(BISON)" --symbolsPrefix xpathyy $<
-
-# ----
-# XSLT Support
-# ----
-if ENABLE_XSLT
-feature_defines_overrides += ENABLE_XSLT=1
-else
-feature_defines_overrides += ENABLE_XSLT=0
-endif # END ENABLE_XSLT
-
-# ----
-# Shaders
-# ----
-if ENABLE_CSS_SHADERS
-feature_defines_overrides += ENABLE_CSS_SHADERS=1
-else
-feature_defines_overrides += ENABLE_CSS_SHADERS=0
-endif # END ENABLE_CSS_SHADERS
-
-# ----
-# Geolocation
-# ----
-if ENABLE_GEOLOCATION
-feature_defines_overrides += ENABLE_GEOLOCATION=1
-else
-feature_defines_overrides += ENABLE_GEOLOCATION=0
-endif # END ENABLE_GEOLOCATION
 
 # MathML tag and attribute names, and element factory
 DerivedSources/WebCore/MathMLElementFactory.h: DerivedSources/WebCore/MathMLElementFactory.cpp
@@ -245,18 +181,10 @@ libWebCoreSVG_la_CPPFLAGS = \
 	$(LIBSOUP_CFLAGS) \
 	$(UNICODE_CFLAGS)
 
-feature_defines_overrides += ENABLE_SVG=1
 WEBCORE_CSS_PROPERTY_NAMES += $(WebCore)/css/SVGCSSPropertyNames.in
 WEBCORE_CSS_VALUE_KEYWORDS += $(WebCore)/css/SVGCSSValueKeywords.in
-# SVG Features
-if ENABLE_SVG_FONTS
-feature_defines_overrides += ENABLE_SVG_FONTS=1
-else
-feature_defines_overrides += ENABLE_SVG_FONTS=0
-endif
-else
-feature_defines_overrides += ENABLE_SVG=0 ENABLE_SVG_FONTS=0
-endif # END ENABLE_SVG
+
+endif # END_ENABLE_SVG
 
 # SVG tag and attribute names (need to pass an extra flag if svg experimental features are enabled)
 DerivedSources/WebCore/SVGNames.cpp: DerivedSources/WebCore/SVGElementFactory.cpp
@@ -269,33 +197,6 @@ DerivedSources/WebCore/SVGElementFactory.cpp: $(WebCore)/dom/make_names.pl $(Web
 DerivedSources/WebCore/XLinkNames.h: DerivedSources/WebCore/XLinkNames.cpp
 DerivedSources/WebCore/XLinkNames.cpp : $(WebCore)/dom/make_names.pl $(WebCore)/svg/xlinkattrs.in
 	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $< --attrs $(WebCore)/svg/xlinkattrs.in --outputDir "$(GENSOURCES_WEBCORE)"
-
-# ----
-# Web Audio Support
-# ----
-if ENABLE_WEB_AUDIO
-feature_defines_overrides += ENABLE_WEB_AUDIO=1
-else
-feature_defines_overrides += ENABLE_WEB_AUDIO=0
-endif
-
-# ---
-# 3D canvas (WebGL) support
-# ---
-if ENABLE_WEBGL
-feature_defines_overrides += ENABLE_WEBGL=1
-else
-feature_defines_overrides += ENABLE_WEBGL=0
-endif  # END ENABLE_WEBGL
-
-# ---
-# Accelerated compositing support
-# ---
-if USE_ACCELERATED_COMPOSITING
-feature_defines_overrides += ENABLE_3D_RENDERING=1
-else
-feature_defines_overrides += ENABLE_3D_RENDERING=0
-endif  # END USE_ACCELERATED_COMPOSITING
 
 if USE_TEXTURE_MAPPER_CAIRO
 webcore_cppflags += \
@@ -313,41 +214,12 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/platform/graphics/clutter
 endif  # END USE_CLUTTER
 
-# ---
-# Spell check support
-# ---
-if ENABLE_SPELLCHECK
-feature_defines_overrides += ENABLE_SPELLCHECK=1
-else
-feature_defines_overrides += ENABLE_SPELLCHECK=0
-endif  # END ENABLE_SPELLCHECK
-
 if ENABLE_INDEXED_DATABASE
 webcore_cppflags += \
 	-DWTF_USE_LEVELDB=1 \
 	-I$(srcdir)/Source/ThirdParty/leveldb \
 	-I$(srcdir)/Source/ThirdParty/leveldb/include
 endif
-
-# Fill the feature_defines variable with all the defines, making it possible
-# to override the default define value (as set in feature_defines_defaults)
-# through adding the feature define with the desired value to either
-# feature_defines_unstable or feature_defines_overrides.
-feature_defines += $(strip $(foreach bare_define, \
-	$(foreach define,$(feature_defines_defaults), \
-		$(foreach fvalue,0 1, \
-			$(if $(findstring =$(fvalue),$(define)),$(patsubst %=$(fvalue),%,$(define))) \
-		) \
-	), \
-	$(if $(findstring $(bare_define)=, $(feature_defines_overrides)), \
-		$(filter $(bare_define)=%,$(feature_defines_overrides)), \
-		$(filter $(bare_define)=%,$(feature_defines_defaults)) \
-	) \
-))
-
-# Add the feature defines to webcore_cppflags in macro form.
-webcore_cppflags += $(foreach define,$(feature_defines),-D$(define))
-
 
 $(WEBCORE_CSS_PROPERTY_NAMES): $(srcdir)/configure.ac $(srcdir)/Source/WebCore/GNUmakefile.am
 
