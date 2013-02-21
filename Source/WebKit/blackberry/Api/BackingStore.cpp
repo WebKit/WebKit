@@ -218,14 +218,14 @@ BackingStorePrivate::~BackingStorePrivate()
 void BackingStorePrivate::instrumentBeginFrame()
 {
 #if ENABLE(INSPECTOR)
-    WebPagePrivate::core(m_webPage)->inspectorController()->instrumentBeginFrame();
+    WebPagePrivate::core(m_webPage)->inspectorController()->didBeginFrame();
 #endif
 }
 
 void BackingStorePrivate::instrumentCancelFrame()
 {
 #if ENABLE(INSPECTOR)
-    WebPagePrivate::core(m_webPage)->inspectorController()->instrumentCancelFrame();
+    WebPagePrivate::core(m_webPage)->inspectorController()->didCancelFrame();
 #endif
 }
 

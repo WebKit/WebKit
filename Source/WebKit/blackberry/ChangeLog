@@ -1,3 +1,16 @@
+2013-02-21  Alberto Garcia  <albgarcia@rim.com>
+
+        [BlackBerry] BackingStore: replace instrument{Begin,Cancel}Frame with did{Begin,Cancel}Frame
+        https://bugs.webkit.org/show_bug.cgi?id=110460
+
+        Reviewed by Rob Buis.
+
+        This was renamed incorrectly in r142879.
+
+        * Api/BackingStore.cpp:
+        (BlackBerry::WebKit::BackingStorePrivate::instrumentBeginFrame):
+        (BlackBerry::WebKit::BackingStorePrivate::instrumentCancelFrame):
+
 2013-02-21  Carlos Garcia Campos  <cargarcia@rim.com>
 
         [BlackBerry] Extra ResourceRequest parameter in FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload
