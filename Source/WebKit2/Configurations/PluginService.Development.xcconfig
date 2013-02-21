@@ -25,3 +25,5 @@
 
 PRODUCT_NAME = com.apple.WebKit.Plugin.Development;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist;
+
+CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;

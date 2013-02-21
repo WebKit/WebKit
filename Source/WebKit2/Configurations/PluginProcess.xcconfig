@@ -25,3 +25,4 @@
 
 PRODUCT_NAME = PluginProcess;
 INFOPLIST_FILE = PluginProcess/EntryPoint/mac/LegacyProcess/Info.plist;
+CODE_SIGN_ENTITLEMENTS = Configurations/PluginService.entitlements;

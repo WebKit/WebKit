@@ -1,5 +1,27 @@
 2013-02-20  Mark Rowe  <mrowe@apple.com>
 
+        <https://webkit.org/b/110410> Specify the plug-in process / service entitlements via the Xcode configuration.
+
+        This is the modern mechanism for applying entitlements to production builds,
+        and it simplifies the maintenance of entitlements going forward. It also allows
+        us to fix the new XPC PluginServices to have the same entitlements as PluginProcess.
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Configurations/Base.xcconfig: Ad-hoc sign all WebKit2 components.
+        * Configurations/PluginProcess.xcconfig: Specify the entitlements to use.
+        * Configurations/PluginService.32.xcconfig: Ditto.
+        * Configurations/PluginService.64.xcconfig: Ditto.
+        * Configurations/PluginService.Development.xcconfig: Ditto.
+        * Configurations/PluginService.entitlements: Renamed from Source/WebKit2/PluginProcess/mac/PluginProcess.entitlements.
+        Move the entitlements in to the Configurations directory to make them easier to find.
+        * PluginProcess/mac/add-entitlements.sh: Removed. In my testing the dependency issue mentioned
+        in the script is not an issue with current versions of Xcode. If we see it again we can come
+        up with a workaround that doesn't involve performing the signing via a script phase.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-02-20  Mark Rowe  <mrowe@apple.com>
+
         <https://webkit.org/b/110409> Remove duplication between 32- and 64-bit PluginService plists.
 
         Reviewed by Dan Bernstein.
