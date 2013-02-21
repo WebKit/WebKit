@@ -233,6 +233,9 @@ MediaPlayerPrivateAVFoundationObjC::~MediaPlayerPrivateAVFoundationObjC()
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     playerToPrivateMap().remove(player());
 #endif
+#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    [[m_avAsset.get() resourceLoader] setDelegate:nil queue:0];
+#endif
     cancelLoad();
 }
 
