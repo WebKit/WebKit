@@ -20,6 +20,6 @@ shouldBe("gebi('vertical').clientHeight", "referenceVerticalHeight");
 shouldBe("gebi('toHorizontal').clientHeight", "referenceHorizontalHeight");
 shouldBe("gebi('toVertical').clientHeight", "referenceVerticalHeight");
 
-// If we are in DTR, we don't need meaningless messages.
+// If we are in DRT, we don't need meaningless messages.
 if (window.testRunner)
     document.getElementById("main").innerHTML = "";
