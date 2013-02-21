@@ -686,6 +686,7 @@ webkit.org/b/99306 css3/filters/filter-change-repaint.html [ ImageOnlyFailure ]
 webkit.org/b/99306 css3/filters/filtered-compositing-descendant.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/events/scale-and-scroll-iframe-body.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/events/scale-and-scroll-iframe-window.html [ ImageOnlyFailure ]
+webkit.org/b/99306 fast/multicol/newmulticol/column-rules-fixed-height.html [ Skip ]
 webkit.org/b/99306 fast/multicol/pagination-h-horizontal-bt.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/multicol/scrolling-overflow.html [ ImageOnlyFailure ]
 webkit.org/b/99306 http/tests/images/png-partial-load-no-alpha.html [ ImageOnlyFailure ]
@@ -703,6 +704,7 @@ webkit.org/b/99306 fast/multicol/vertical-rl/rule-style.html [ ImageOnlyFailure 
 webkit.org/b/99306 fast/overflow/paged-x-with-column-gap.html [ ImageOnlyFailure ]
 webkit.org/b/99306 fast/replaced/border-radius-clip.html [ ImageOnlyFailure ]
 webkit.org/b/99306 transitions/opacity-transition-zindex.html [ ImageOnlyFailure ]
+webkit.org/b/99306 svg/as-background-image/tiled-background-image.html [ Skip ]
 webkit.org/b/99306 svg/filters/feImage-reference-svg-primitive.svg [ ImageOnlyFailure ] # Reni said this is actually a know svg issue with feImage.
 webkit.org/b/99306 svg/custom/use-instanceRoot-event-bubbling.xhtml [ ImageOnlyFailure ]
 
