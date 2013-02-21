@@ -495,6 +495,19 @@ bool RenderGrid::tracksAreWiderThanMinTrackBreadth(TrackSizingDirection directio
 }
 #endif
 
+void RenderGrid::growGrid(TrackSizingDirection direction)
+{
+    if (direction == ForColumns) {
+        const size_t oldColumnSize = m_grid[0].size();
+        for (size_t row = 0; row < m_grid.size(); ++row)
+            m_grid[row].grow(oldColumnSize + 1);
+    } else {
+        const size_t oldRowSize = m_grid.size();
+        m_grid.grow(oldRowSize + 1);
+        m_grid[oldRowSize].grow(m_grid[0].size());
+    }
+}
+
 void RenderGrid::insertItemIntoGrid(RenderBox* child, size_t rowTrack, size_t columnTrack)
 {
     m_grid[rowTrack][columnTrack].append(child);
@@ -555,13 +568,10 @@ void RenderGrid::placeSpecifiedMajorAxisItemsOnGrid(Vector<RenderBox*> autoGridI
             continue;
         }
 
-        // FIXME: Handle growing the grid in the minor axis instead of defaulting to the first row / column.
-        const GridPosition& columnPosition = autoGridItems[i]->style()->gridItemColumn();
-        const GridPosition& rowPosition = autoGridItems[i]->style()->gridItemRow();
-        size_t columnTrack = columnPosition.isAuto() ? 0 : resolveGridPositionFromStyle(columnPosition);
-        size_t rowTrack = rowPosition.isAuto() ? 0 : resolveGridPositionFromStyle(rowPosition);
-
-        insertItemIntoGrid(autoGridItems[i], rowTrack, columnTrack);
+        growGrid(autoPlacementMinorAxisDirection());
+        OwnPtr<GridCoordinate> emptyGridArea = iterator.nextEmptyGridArea();
+        ASSERT(emptyGridArea);
+        insertItemIntoGrid(autoGridItems[i], emptyGridArea->rowIndex, emptyGridArea->columnIndex);
     }
 }
 
@@ -577,8 +587,10 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox* gridItem)
 {
     ASSERT(autoPlacementMajorAxisPositionForChild(gridItem).isAuto());
     const GridPosition& minorAxisPosition = autoPlacementMinorAxisPositionForChild(gridItem);
+    size_t minorAxisIndex = 0;
     if (!minorAxisPosition.isAuto()) {
-        GridIterator iterator(m_grid, autoPlacementMinorAxisDirection(), resolveGridPositionFromStyle(minorAxisPosition));
+        minorAxisIndex = resolveGridPositionFromStyle(minorAxisPosition);
+        GridIterator iterator(m_grid, autoPlacementMinorAxisDirection(), minorAxisIndex);
         if (OwnPtr<GridCoordinate> emptyGridArea = iterator.nextEmptyGridArea()) {
             insertItemIntoGrid(gridItem, emptyGridArea->rowIndex, emptyGridArea->columnIndex);
             return;
@@ -594,14 +606,11 @@ void RenderGrid::placeAutoMajorAxisItemOnGrid(RenderBox* gridItem)
         }
     }
 
-
-    // FIXME: Handle extending the grid in the major direction instead of defaulting to the first row / column.
-    const GridPosition& columnPosition = gridItem->style()->gridItemColumn();
-    const GridPosition& rowPosition = gridItem->style()->gridItemRow();
-    size_t columnTrack = columnPosition.isAuto() ? 0 : resolveGridPositionFromStyle(columnPosition);
-    size_t rowTrack = rowPosition.isAuto() ? 0 : resolveGridPositionFromStyle(rowPosition);
-
-    insertItemIntoGrid(gridItem, rowTrack, columnTrack);
+    // We didn't find an empty grid area so we need to create an extra major axis line and insert our gridItem in it.
+    const size_t columnIndex = (autoPlacementMajorAxisDirection() == ForColumns) ? m_grid[0].size() : minorAxisIndex;
+    const size_t rowIndex = (autoPlacementMajorAxisDirection() == ForColumns) ? minorAxisIndex : m_grid.size();
+    growGrid(autoPlacementMajorAxisDirection());
+    insertItemIntoGrid(gridItem, rowIndex, columnIndex);
 }
 
 const GridPosition& RenderGrid::autoPlacementMajorAxisPositionForChild(const RenderBox* gridItem) const

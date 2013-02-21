@@ -76,6 +76,7 @@ private:
     LayoutUnit computeUsedBreadthOfSpecifiedLength(TrackSizingDirection, const Length&) const;
     void resolveContentBasedTrackSizingFunctions(TrackSizingDirection, Vector<GridTrack>& columnTracks, Vector<GridTrack>& rowTracks, LayoutUnit& availableLogicalSpace);
 
+    void growGrid(TrackSizingDirection);
     void insertItemIntoGrid(RenderBox*, size_t rowTrack, size_t columnTrack);
     void placeItemsOnGrid();
     void placeSpecifiedMajorAxisItemsOnGrid(Vector<RenderBox*>);
