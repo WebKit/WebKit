@@ -62,13 +62,15 @@ private:
     {
         m_path = path->path();
     }
-#if ENABLE(SVG)
     DOMPath(const String& pathData)
         : CanvasPathMethods()
     {
+#if ENABLE(SVG)
         buildPathFromString(pathData, m_path);
-    }
+#else
+        UNUSED_PARAM(pathData);
 #endif
+    }
 };
 }
 #endif
