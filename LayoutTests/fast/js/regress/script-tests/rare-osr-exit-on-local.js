@@ -36,7 +36,7 @@ var array = [1,2,3,4,5,6,7,8,9,10];
 
 var result = 0;
 
-for (var i = 0; i < 3000; ++i) {
+for (var i = 0; i < 300; ++i) {
     var v = i;
     if (i <= 100 || (i%4))
         v = {f:{h:v}, g:{h:v+1}, h:array};
@@ -45,9 +45,7 @@ for (var i = 0; i < 3000; ++i) {
     result += foo(v,(i%2)==0);
 }
 
-if (result != 165000483) {
-    print("Bad result: " + result);
+if (result != 16500033)
     throw "Bad result: " + result;
-}
 
 

@@ -23,7 +23,7 @@ var array = [];
 for (var i = 0; i < 20; ++i)
     array.push(i);
 
-var limit = 1000000;
+var limit = 20000;
 var phases = 4;
 var result = 0;
 for (var i = 0; i < limit; ++i) {
@@ -31,9 +31,7 @@ for (var i = 0; i < limit; ++i) {
     result += foo(i % (phase + 1), ((i % array.length) / 2) | 0, array.length - (((i % array.length) / 2) | 0), array);
 }
 
-if (result != 153620752) {
-    print(result);
-    throw "Bad result";
-}
+if (result != 3072367)
+    throw "Bad result: " + result;
 
 

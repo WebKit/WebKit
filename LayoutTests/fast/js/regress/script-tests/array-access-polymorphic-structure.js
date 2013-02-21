@@ -13,12 +13,12 @@ function foo(a) {
 
 var result = 0;
 
-for (var i = 0; i < 1000000; ++i) {
+for (var i = 0; i < 100000; ++i) {
     var array = [1, 2, 3, 4, 5];
     if (i & 1)
         array.f = 42;
     result += foo(array);
 }
 
-if (result != 15000000)
+if (result != 1500000)
     throw "Error: bad result: " + result;

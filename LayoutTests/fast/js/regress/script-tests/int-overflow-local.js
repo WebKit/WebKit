@@ -14,12 +14,10 @@ function foo(a, b, c) {
 var bigNumber = 2147483647;
 var result = 0;
 
-for (var i = 0; i < 10000000; ++i)
+for (var i = 0; i < 500000; ++i)
     result = (result + foo(i, bigNumber - i, i%2)) | 0;
 
-if (result != -2014260032) {
-    print("Got a bad result: " + result);
-    throw "Bad result";
-}
+if (result != 445698416)
+    throw "Bad result: " + result;
 
 
