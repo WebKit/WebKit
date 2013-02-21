@@ -232,6 +232,13 @@ void RenderRegion::updateRegionHasAutoLogicalHeightFlag()
     }
 }
 
+bool RenderRegion::shouldHaveAutoLogicalHeight() const
+{
+    bool hasSpecifiedEndpointsForHeight = style()->logicalTop().isSpecified() && style()->logicalBottom().isSpecified();
+    bool hasAnchoredEndpointsForHeight = isOutOfFlowPositioned() && hasSpecifiedEndpointsForHeight;
+    return style()->logicalHeight().isAuto() && !hasAnchoredEndpointsForHeight;
+}
+    
 void RenderRegion::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);

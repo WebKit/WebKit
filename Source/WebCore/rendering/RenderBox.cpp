@@ -4025,6 +4025,10 @@ void RenderBox::addVisualEffectOverflow()
 
 void RenderBox::addOverflowFromChild(RenderBox* child, const LayoutSize& delta)
 {
+    // Never allow flow threads to propagate overflow up to a parent.
+    if (child->isRenderFlowThread())
+        return;
+
     // Only propagate layout overflow from the child if the child isn't clipping its overflow.  If it is, then
     // its overflow is internal to it, and we don't care about it.  layoutOverflowRectForPropagation takes care of this
     // and just propagates the border box rect instead.

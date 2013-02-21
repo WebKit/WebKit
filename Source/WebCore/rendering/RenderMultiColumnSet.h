@@ -104,6 +104,10 @@ private:
     
     // FIXME: This will change once we have column sets constrained by enclosing pages, etc.
     virtual LayoutUnit logicalHeightOfAllFlowThreadContent() const OVERRIDE { return m_computedColumnHeight; }
+
+    // FIXME: For now we return false, but it's likely we will leverage the auto height region code to do column
+    // balancing. That's why we have an override of this function that is distinct from RenderRegionSet's override.
+    virtual bool shouldHaveAutoLogicalHeight() const OVERRIDE { return false; }
     
     virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const OVERRIDE;
 
