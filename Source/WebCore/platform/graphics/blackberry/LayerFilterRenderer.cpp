@@ -30,7 +30,7 @@
 
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformLog.h>
-#include <Vector.h>
+#include <wtf/Vector.h>
 
 #include <cstring>
 #include <limits>
