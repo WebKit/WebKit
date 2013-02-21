@@ -2622,7 +2622,10 @@ LayoutUnit RenderBox::computeReplacedLogicalWidthUsing(SizeType sizeType, Length
         case Relative:
         case Undefined:
             return intrinsicLogicalWidth();
-     }
+    }
+
+    ASSERT_NOT_REACHED();
+    return 0;
 }
 
 LayoutUnit RenderBox::computeReplacedLogicalHeight() const
