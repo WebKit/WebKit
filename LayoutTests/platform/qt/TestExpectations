@@ -1684,7 +1684,6 @@ fast/block/positioning/absolute-in-inline-ltr.html
 fast/block/positioning/absolute-in-inline-rtl-2.html
 fast/block/positioning/absolute-in-inline-rtl-3.html
 fast/block/positioning/absolute-in-inline-rtl.html
-fast/borders/border-image-02.html
 fast/borders/border-image-omit-right-slice.html
 fast/borders/borderRadiusAllStylesAllCorners.html
 fast/borders/borderRadiusDashed01.html

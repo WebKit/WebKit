@@ -252,9 +252,6 @@ http/tests/security/local-user-CSS-from-remote.html
 # https://bugs.webkit.org/show_bug.cgi?id=58337
 fast/dom/StyleSheet/detached-stylesheet-without-wrapper.html
 
-# Needs baseline after bug 14185
-fast/borders/border-image-02.html
-
 # All spatial navigation tests fail on Mac WK2
 webkit.org/b/96438 fast/spatial-navigation
 
