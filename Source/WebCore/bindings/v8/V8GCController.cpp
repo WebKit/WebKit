@@ -90,12 +90,12 @@ public:
         m_liveObjects.append(V8PerIsolateData::current()->ensureLiveRoot());
     }
 
-    void addObjectToGroup(void* root, v8::Persistent<v8::Value> wrapper)
+    void addObjectWrapperToGroup(void* root, v8::Persistent<v8::Value> wrapper)
     {
         m_connections.append(ImplicitConnection(root, wrapper));
     }
 
-    void addNodeToGroup(Node* root, v8::Persistent<v8::Value> wrapper)
+    void addNodeWrapperToGroup(Node* root, v8::Persistent<v8::Value> wrapper)
     {
         m_connections.append(ImplicitConnection(root, wrapper));
     }
@@ -311,7 +311,7 @@ public:
             MutationObserver* observer = static_cast<MutationObserver*>(object);
             HashSet<Node*> observedNodes = observer->getObservedNodes();
             for (HashSet<Node*>::iterator it = observedNodes.begin(); it != observedNodes.end(); ++it)
-                m_grouper.addObjectToGroup(V8GCController::opaqueRootForGC(*it, m_isolate), wrapper);
+                m_grouper.addObjectWrapperToGroup(V8GCController::opaqueRootForGC(*it, m_isolate), wrapper);
         } else {
             ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())
@@ -328,9 +328,9 @@ public:
             if (node->hasEventListeners())
                 addImplicitReferencesForNodeWithEventListeners(node, wrapper);
 
-            m_grouper.addNodeToGroup(V8GCController::opaqueRootForGC(node, m_isolate), wrapper);
+            m_grouper.addNodeWrapperToGroup(V8GCController::opaqueRootForGC(node, m_isolate), wrapper);
         } else if (classId == v8DOMObjectClassId) {
-            m_grouper.addObjectToGroup(type->opaqueRootForGC(object, wrapper, m_isolate), wrapper);
+            m_grouper.addObjectWrapperToGroup(type->opaqueRootForGC(object, wrapper, m_isolate), wrapper);
         } else {
             ASSERT_NOT_REACHED();
         }
