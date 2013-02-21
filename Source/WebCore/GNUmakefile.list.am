@@ -2102,6 +2102,8 @@ webcore_modules_sources += \
 	Source/WebCore/Modules/webdatabase/AbstractDatabaseServer.h \
 	Source/WebCore/Modules/webdatabase/AbstractSQLStatement.h \
 	Source/WebCore/Modules/webdatabase/AbstractSQLStatementBackend.h \
+	Source/WebCore/Modules/webdatabase/AbstractSQLTransaction.h \
+	Source/WebCore/Modules/webdatabase/AbstractSQLTransactionBackend.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionData.h \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.cpp \
 	Source/WebCore/Modules/webdatabase/ChangeVersionWrapper.h \
@@ -2877,6 +2879,7 @@ webcore_sources += \
 	Source/WebCore/dom/EventPathWalker.cpp \
 	Source/WebCore/dom/EventPathWalker.h \
 	Source/WebCore/dom/EventRetargeter.cpp \
+	Source/WebCore/dom/EventRetargeter.h \
 	Source/WebCore/dom/EventTarget.cpp \
 	Source/WebCore/dom/EventTarget.h \
 	Source/WebCore/dom/EventQueue.h \
@@ -4557,6 +4560,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RootInlineBox.h \
 	Source/WebCore/rendering/ScrollBehavior.cpp \
 	Source/WebCore/rendering/ScrollBehavior.h \
+	Source/WebCore/rendering/TextAutosizer.cpp \
+	Source/WebCore/rendering/TextAutosizer.h \
 	Source/WebCore/rendering/VerticalPositionCache.h \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.cpp \
 	Source/WebCore/rendering/mathml/RenderMathMLBlock.h \

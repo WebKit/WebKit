@@ -1,3 +1,12 @@
+2013-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add -DBUILDING_WEBKIT flags to introspection
+        scanner.
+        * GNUmakefile.list.am: Add missing header to compilation and
+        remove one that no longer exists.
+
 2013-02-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] Move PageViewportController and PageViewportControllerClientEfl out from WebView

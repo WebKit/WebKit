@@ -312,6 +312,7 @@ $(WEBKIT_GIRSOURCES): $(G_IR_SCANNER) $(JSCORE_GIRSOURCES) libwebkitgtk-@WEBKITG
 	     --add-include-path=$(WebKit) \
 	     --add-include-path=$(top_builddir) \
 	     --c-include="webkit/webkit.h" \
+	     -DBUILDING_WEBKIT \
 	     -I$(srcdir)/Source \
 	     -I$(WebKit) \
 	     -I$(GENSOURCES) \

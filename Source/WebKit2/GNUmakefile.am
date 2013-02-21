@@ -245,6 +245,7 @@ WebKit2-@WEBKITGTK_API_VERSION@.gir: $(G_IR_SCANNER) libwebkit2gtk-@WEBKITGTK_AP
 	     -I$(top_srcdir) \
 	     -I$(GENSOURCES_WEBKIT2)/webkit2gtk/include \
 	     -I$(GENSOURCES_WEBKIT2)/webkit2gtk \
+	     -DBUILDING_WEBKIT \
 	     -DWEBKIT2_COMPILATION \
 	     $(GENSOURCES_WEBKIT2)/webkit2gtk/webkit2/WebKitEnumTypes.h \
 	     $(webkit2gtk_h_api) \

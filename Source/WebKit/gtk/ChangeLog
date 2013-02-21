@@ -1,3 +1,10 @@
+2013-02-21  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix make distcheck.
+
+        * GNUmakefile.am: Add -DBUILDING_WEBKIT flags to introspection
+        scanner.
+
 2013-02-15  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Spread the gyp build files throughout the tree
