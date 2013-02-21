@@ -311,7 +311,7 @@ public:
             MutationObserver* observer = static_cast<MutationObserver*>(object);
             HashSet<Node*> observedNodes = observer->getObservedNodes();
             for (HashSet<Node*>::iterator it = observedNodes.begin(); it != observedNodes.end(); ++it)
-                m_grouper.addNodeToGroup(V8GCController::opaqueRootForGC(*it, m_isolate), wrapper);
+                m_grouper.addObjectToGroup(V8GCController::opaqueRootForGC(*it, m_isolate), wrapper);
         } else {
             ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())
