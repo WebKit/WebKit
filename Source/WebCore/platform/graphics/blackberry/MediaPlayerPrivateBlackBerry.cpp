@@ -31,6 +31,7 @@
 #include "GraphicsContext.h"
 #include "HTMLNames.h"
 #include "HostWindow.h"
+#include "Logging.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamRegistry.h"
 #include "NotImplemented.h"
