@@ -40,9 +40,6 @@ class EwkView;
 
 namespace WebKit {
 
-class PageViewportController;
-class PageViewportControllerClientEfl;
-
 class WebView : public APIObject, public PageClient {
 public:
     static const Type APIType = TypeView;
@@ -163,9 +160,6 @@ private:
     EwkView* m_ewkView;
     RefPtr<WebPageProxy> m_page;
     DefaultUndoController m_undoController;
-    // FIXME: Remove when possible.
-    OwnPtr<WebKit::PageViewportControllerClientEfl> m_pageViewportControllerClient;
-    OwnPtr<WebKit::PageViewportController> m_pageViewportController;
 };
 
 }

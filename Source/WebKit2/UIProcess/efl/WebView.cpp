@@ -143,29 +143,26 @@ void WebView::initializeClient(const WKViewClient* client)
 void WebView::didCommitLoad()
 {
     if (m_page->useFixedLayout()) {
-        ASSERT(m_pageViewportController);
-        m_pageViewportController->didCommitLoad();
-    } else
-        m_ewkView->scheduleUpdateDisplay();
+        m_ewkView->pageViewportController()->didCommitLoad();
+        return;
+    }
+    m_ewkView->scheduleUpdateDisplay();
 }
 
 void WebView::updateViewportSize()
 {
     if (m_page->useFixedLayout()) {
-        if (!m_pageViewportControllerClient) {
-            m_pageViewportControllerClient = PageViewportControllerClientEfl::create(m_ewkView);
-            m_pageViewportController = adoptPtr(new PageViewportController(page(), m_pageViewportControllerClient.get()));
-        }
-        m_pageViewportControllerClient->updateViewportSize();
-    } else
-        m_page->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_ewkView->pagePosition()), m_ewkView->size()), FloatPoint());
+        m_ewkView->pageViewportControllerClient()->updateViewportSize();
+        return;
+    }
+    m_page->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_ewkView->pagePosition()), m_ewkView->size()), FloatPoint());
 }
 
 void WebView::didChangeContentsSize(const WebCore::IntSize& size)
 {
     if (m_page->useFixedLayout()) {
-        ASSERT(m_pageViewportController);
-        m_pageViewportController->didChangeContentsSize(size);
+        m_ewkView->pageViewportController()->didChangeContentsSize(size);
+        return;
     }
     m_client.didChangeContentsSize(this, size);
 }
@@ -431,39 +428,38 @@ FloatRect WebView::convertToUserSpace(const FloatRect& deviceRect)
 void WebView::didChangeViewportProperties(const WebCore::ViewportAttributes& attr)
 {
     if (m_page->useFixedLayout()) {
-        ASSERT(m_pageViewportController);
-        m_pageViewportController->didChangeViewportAttributes(attr);
-    } else
-        m_ewkView->scheduleUpdateDisplay();
+        m_ewkView->pageViewportController()->didChangeViewportAttributes(attr);
+        return;
+    }
+    m_ewkView->scheduleUpdateDisplay();
 }
 
 void WebView::pageDidRequestScroll(const IntPoint& position)
 {
-    if (m_page->useFixedLayout()) {
-        ASSERT(m_pageViewportController);
-        m_pageViewportController->pageDidRequestScroll(position);
-    } else {
-        m_ewkView->setPagePosition(FloatPoint(position));
-        m_ewkView->scheduleUpdateDisplay();
+    if (m_page->useFixedLayout()) {        
+        m_ewkView->pageViewportController()->pageDidRequestScroll(position);
+        return;
     }
+    m_ewkView->setPagePosition(FloatPoint(position));
+    m_ewkView->scheduleUpdateDisplay();
 }
 
 void WebView::didRenderFrame(const WebCore::IntSize& contentsSize, const WebCore::IntRect& coveredRect)
 {
     if (m_page->useFixedLayout()) {
-        ASSERT(m_pageViewportController);
-        m_pageViewportController->didRenderFrame(contentsSize, coveredRect);
-    } else
-        m_ewkView->scheduleUpdateDisplay();
+        m_ewkView->pageViewportController()->didRenderFrame(contentsSize, coveredRect);
+        return;
+    }
+    m_ewkView->scheduleUpdateDisplay();
 }
 
 void WebView::pageTransitionViewportReady()
 {
     if (m_page->useFixedLayout()) {
-        ASSERT(m_pageViewportController);
-        m_pageViewportController->pageTransitionViewportReady();
-    } else
-        m_ewkView->scheduleUpdateDisplay();
+        m_ewkView->pageViewportController()->pageTransitionViewportReady();
+        return;
+    }
+    m_ewkView->scheduleUpdateDisplay();
 }
 
 } // namespace WebKit

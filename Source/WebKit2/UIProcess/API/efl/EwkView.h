@@ -63,6 +63,8 @@ class PageLoadClientEfl;
 class PagePolicyClientEfl;
 class PageUIClientEfl;
 class ViewClientEfl;
+class PageViewportController;
+class PageViewportControllerClientEfl;
 class WebContextMenuItemData;
 class WebContextMenuProxyEfl;
 class WebPageGroup;
@@ -122,6 +124,8 @@ public:
     EwkSettings* settings() { return m_settings.get(); }
     EwkBackForwardList* backForwardList() { return m_backForwardList.get(); }
     EwkWindowFeatures* windowFeatures();
+    WebKit::PageViewportControllerClientEfl* pageViewportControllerClient() { return m_pageViewportControllerClient.get(); }
+    WebKit::PageViewportController* pageViewportController() { return m_pageViewportController.get(); }
 
     bool isFocused() const;
     bool isVisible() const;
@@ -301,6 +305,8 @@ private:
 #if ENABLE(INPUT_TYPE_COLOR)
     OwnPtr<EwkColorPicker> m_colorPicker;
 #endif
+    OwnPtr<WebKit::PageViewportControllerClientEfl> m_pageViewportControllerClient;
+    OwnPtr<WebKit::PageViewportController> m_pageViewportController;
     bool m_isAccelerated;
 
     static Evas_Smart_Class parentSmartClass;

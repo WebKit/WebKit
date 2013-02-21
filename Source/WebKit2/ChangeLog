@@ -1,3 +1,37 @@
+2013-02-21  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Move PageViewportController and PageViewportControllerClientEfl out from WebView
+        https://bugs.webkit.org/show_bug.cgi?id=110345
+
+        Reviewed by Andreas Kling.
+
+        WebView does not need to know about both PageViewportController and 
+        PageViewportControllerClientEfl. Considering the fact that PageViewportController
+        will stop being WK2 internal and will be based on WK2 C API, it 
+        should be owned by EwkView rather than WebView.
+
+        This patch is also a preparation for WKViewClient API extension to cover all
+        the places where PageViewportController and PageViewportControllerClientEfl
+        are accessed directly from WebView at the moment.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        * UIProcess/API/efl/EwkView.h:
+        (WebKit):
+        (EwkView::pageViewportControllerClient):
+        (EwkView::pageViewportController):
+        (EwkView):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::didCommitLoad):
+        (WebKit::WebView::updateViewportSize):
+        (WebKit::WebView::didChangeContentsSize):
+        (WebKit::WebView::didChangeViewportProperties):
+        (WebKit::WebView::pageDidRequestScroll):
+        (WebKit::WebView::didRenderFrame):
+        (WebKit::WebView::pageTransitionViewportReady):
+        * UIProcess/efl/WebView.h:
+        (WebView):
+
 2013-02-20  Tim Horton  <timothy_horton@apple.com>
 
         Provide WKView SPI to defer telling the WebPageProxy and WebProcess about changes in the hosting window

@@ -33,6 +33,8 @@
 #include "PageLoadClientEfl.h"
 #include "PagePolicyClientEfl.h"
 #include "PageUIClientEfl.h"
+#include "PageViewportController.h"
+#include "PageViewportControllerClientEfl.h"
 #include "SnapshotImageGL.h"
 #include "ViewClientEfl.h"
 #include "WKDictionary.h"
@@ -253,6 +255,8 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
 #endif
     , m_displayTimer(this, &EwkView::displayTimerFired)
     , m_inputMethodContext(InputMethodContextEfl::create(this, smartData()->base.evas))
+    , m_pageViewportControllerClient(PageViewportControllerClientEfl::create(this))
+    , m_pageViewportController(adoptPtr(new PageViewportController(page(), m_pageViewportControllerClient.get())))
     , m_isAccelerated(true)
 {
     ASSERT(m_evasObject);
