@@ -121,18 +121,6 @@ WebStorageNamespace* WebViewHost::createSessionStorageNamespace(unsigned quota)
     return webkit_support::CreateSessionStorageNamespace(quota);
 }
 
-WebCompositorOutputSurface* WebViewHost::createOutputSurface()
-{
-    if (!webView())
-        return 0;
-
-    if (m_shell->softwareCompositingEnabled())
-        return WebKit::Platform::current()->compositorSupport()->createOutputSurfaceForSoftware();
-
-    WebGraphicsContext3D* context = webkit_support::CreateGraphicsContext3D(WebGraphicsContext3D::Attributes(), webView());
-    return WebKit::Platform::current()->compositorSupport()->createOutputSurfaceFor3D(context);
-}
-
 void WebViewHost::didAddMessageToConsole(const WebConsoleMessage& message, const WebString& sourceName, unsigned sourceLine)
 {
 }
@@ -276,9 +264,14 @@ void WebViewHost::didAutoResize(const WebSize& newSize)
 
 void WebViewHost::initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
 {
-    m_layerTreeView = adoptPtr(Platform::current()->compositorSupport()->createLayerTreeView(client, rootLayer, settings));
-    if (m_layerTreeView)
-        m_layerTreeView->setSurfaceReady();
+    if (m_shell->softwareCompositingEnabled())
+        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeViewSoftware(client));
+    else
+        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeView3d(client));
+
+    ASSERT(m_layerTreeView);
+    m_layerTreeView->setRootLayer(rootLayer);
+    m_layerTreeView->setSurfaceReady();
 }
 
 WebLayerTreeView* WebViewHost::layerTreeView()

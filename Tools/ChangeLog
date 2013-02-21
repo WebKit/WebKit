@@ -1,3 +1,14 @@
+2013-02-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Request WebLayerTreeView for DumpRenderTree via explicit testing path
+        https://bugs.webkit.org/show_bug.cgi?id=109634
+
+        Reviewed by Adrienne Walker.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createOutputSurface):
+        (WebViewHost::initializeLayerTreeView):
+
 2013-02-20  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Re-enable 3D CSS transforms when using build-webkit

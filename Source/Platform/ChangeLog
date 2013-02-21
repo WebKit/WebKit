@@ -1,3 +1,12 @@
+2013-02-14  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Request WebLayerTreeView for DumpRenderTree via explicit testing path
+        https://bugs.webkit.org/show_bug.cgi?id=109634
+
+        Reviewed by Adrienne Walker.
+
+        * chromium/public/WebUnitTestSupport.h:
+
 2013-02-20  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Move WebKitPlatformSupport declaration to Platform.h
