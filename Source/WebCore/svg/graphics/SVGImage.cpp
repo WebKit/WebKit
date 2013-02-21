@@ -295,7 +295,6 @@ void SVGImage::stopAnimation()
 void SVGImage::resetAnimation()
 {
     stopAnimation();
-    startAnimation();
 }
 
 bool SVGImage::dataChanged(bool allDataReceived)

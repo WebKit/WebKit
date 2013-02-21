@@ -323,7 +323,6 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed, bool seekToTime)
 #endif
 
     startTimer(earliestFireTime, animationFrameDelay);
-    Document::updateStyleForAllDocuments();
 }
 
 }
