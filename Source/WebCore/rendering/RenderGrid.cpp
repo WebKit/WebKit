@@ -159,8 +159,6 @@ void RenderGrid::layoutBlock(bool relayoutChildren, LayoutUnit)
     setLogicalHeight(0);
     updateLogicalWidth();
 
-    m_overflow.clear();
-
     layoutGridItems();
 
     LayoutUnit oldClientAfterEdge = clientLogicalBottom();

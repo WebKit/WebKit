@@ -391,7 +391,6 @@ void RenderTable::layout()
     LayoutStateMaintainer statePusher(view(), this, locationOffset(), style()->isFlippedBlocksWritingMode());
 
     setLogicalHeight(0);
-    m_overflow.clear();
 
     initMaxMarginValues();
     

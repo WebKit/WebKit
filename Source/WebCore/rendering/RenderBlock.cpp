@@ -1540,8 +1540,6 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (updateLogicalWidthAndColumnWidth())
         relayoutChildren = true;
 
-    m_overflow.clear();
-
     clearFloats();
 
     LayoutUnit previousHeight = logicalHeight();
@@ -1704,6 +1702,8 @@ void RenderBlock::addOverflowFromChildren()
 
 void RenderBlock::computeOverflow(LayoutUnit oldClientAfterEdge, bool recomputeFloats)
 {
+    m_overflow.clear();
+
     // Add overflow from children.
     addOverflowFromChildren();
 
@@ -2699,7 +2699,6 @@ bool RenderBlock::simplifiedLayout()
     // computeOverflow expects the bottom edge before we clamp our height. Since this information isn't available during
     // simplifiedLayout, we cache the value in m_overflow.
     LayoutUnit oldClientAfterEdge = hasRenderOverflow() ? m_overflow->layoutClientAfterEdge() : clientLogicalBottom();
-    m_overflow.clear();
     computeOverflow(oldClientAfterEdge, true);
 
     statePusher.pop();

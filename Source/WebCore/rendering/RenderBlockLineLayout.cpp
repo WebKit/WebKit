@@ -1812,8 +1812,6 @@ void RenderBlock::repaintDirtyFloats(Vector<FloatWithRect>& floats)
 
 void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
 {
-    m_overflow.clear();
-
     setLogicalHeight(borderBefore() + paddingBefore());
     
     // Lay out our hypothetical grid line as though it occurs at the top of the block.

@@ -194,10 +194,8 @@ void RenderTextControlSingleLine::layout()
         }
         // The placeholder gets layout last, after the parent text control and its other children,
         // so in order to get the correct overflow from the placeholder we need to recompute it now.
-        if (neededLayout) {
-            m_overflow.clear();
+        if (neededLayout)
             computeOverflow(clientLogicalBottom());
-        }
     }
 }
 

@@ -262,8 +262,6 @@ void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     updateLogicalWidth();
     updateLogicalHeight();
 
-    m_overflow.clear();
-
     if (previousSize != size()
         || (parent()->isDeprecatedFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
         && parent()->style()->boxAlign() == BSTRETCH))

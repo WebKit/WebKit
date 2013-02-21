@@ -300,8 +300,6 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
     if (updateLogicalWidthAndColumnWidth())
         relayoutChildren = true;
 
-    m_overflow.clear();
-
     LayoutUnit previousHeight = logicalHeight();
     setLogicalHeight(0);
 
