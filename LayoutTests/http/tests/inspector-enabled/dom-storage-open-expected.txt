@@ -1,5 +1,7 @@
-Tests that Web Inspector gets populated with DOM storages that were opened before inspector is shown.
+Tests that Web Inspector gets populated with DOM storages according to security origins found in the page.
 
-Domain: http://127.0.0.1:8000
+SecurityOrigin: http://127.0.0.1:8000
+IsLocalStorage: true
+SecurityOrigin: http://127.0.0.1:8000
 IsLocalStorage: false
 

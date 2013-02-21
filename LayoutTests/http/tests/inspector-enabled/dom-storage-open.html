@@ -22,7 +22,7 @@ function test()
     {
         var storages = WebInspector.domStorageModel.storages();
         for (var i = 0; i < storages.length; ++i) {
-            InspectorTest.addResult("Domain: " + storages[i].domain);
+            InspectorTest.addResult("SecurityOrigin: " + storages[i].securityOrigin);
             InspectorTest.addResult("IsLocalStorage: " + storages[i].isLocalStorage);
         }
         InspectorTest.completeTest();
@@ -34,6 +34,6 @@ function test()
 
 </head>
 <body onload="onload()">
-<p>Tests that Web Inspector gets populated with DOM storages that were opened before inspector is shown.</p>
+<p>Tests that Web Inspector gets populated with DOM storages according to security origins found in the page.</p>
 </body>
 </html>
