@@ -1,5 +1,9 @@
 CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
 
+CONSOLE MESSAGE: Entire page will be blocked.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/xssAuditor/full-block-object-tag.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+
+ALERT: URL mismatch: undefined vs. http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1&q=%3Cobject%20name='plugin'%20type='application/x-webkit-test-netscape'%3E%3Cparam%20name='movie'%20value='http://localhost:8000/security/xssAuditor/resources/dummy.swf'%20/%3E%3C/object%3E
 There should be no content in the iframe below:
 
 

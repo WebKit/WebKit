@@ -20,45 +20,49 @@ if ($cgi->param('enable-full-block-report')) {
     print "X-XSS-Protection: 1; mode=block; report=/security/contentSecurityPolicy/resources/save-report.php\n";
 }
 
-if ($cgi->param('valid-header') == 1) {
-    print "X-XSS-Protection:   1  ;MoDe =  bLocK   \n";
-}
-if ($cgi->param('valid-header') == 2) {
-    print "X-XSS-Protection: 1; \n";
-}
-if ($cgi->param('valid-header') == 3) {
-    print "X-XSS-Protection: 1; mode=block; \n";
-}
-if ($cgi->param('valid-header') == 4) {
-    print "X-XSS-Protection: 1; report=/security/contentSecurityPolicy/resources/nonesuch.php; mode=block; \n";
+if ($cgi->param('valid-header')) {
+    if ($cgi->param('valid-header') == 1) {
+        print "X-XSS-Protection:   1  ;MoDe =  bLocK   \n";
+    }
+    if ($cgi->param('valid-header') == 2) {
+        print "X-XSS-Protection: 1; \n";
+    }
+    if ($cgi->param('valid-header') == 3) {
+        print "X-XSS-Protection: 1; mode=block; \n";
+    }
+    if ($cgi->param('valid-header') == 4) {
+        print "X-XSS-Protection: 1; report=/security/contentSecurityPolicy/resources/nonesuch.php; mode=block; \n";
+    }
 }
 
-if ($cgi->param('malformed-header') == 1) {
-    print "X-XSS-Protection: 12345678901234567\n";
-}
-if ($cgi->param('malformed-header') == 2) {
-    print "X-XSS-Protection: red\n";
-}
-if ($cgi->param('malformed-header') == 3) {
-    print "X-XSS-Protection: 1; mode=purple\n";
-}
-if ($cgi->param('malformed-header') == 4) {
-    print "X-XSS-Protection: 1; mode=block-a-block-block\n";
-}
-if ($cgi->param('malformed-header') == 5) {
-    print "X-XSS-Protection: 1; mode=block; report\n";
-}
-if ($cgi->param('malformed-header') == 6) {
-    print "X-XSS-Protection: 1; report= ;\n";
-}
-if ($cgi->param('malformed-header') == 7) {
-    print "X-XSS-Protection: 1; red\n";
-}
-if ($cgi->param('malformed-header') == 8) {
-    print "X-XSS-Protection: 1; mode=block; report=/fail; mode=block;\n";
-}
-if ($cgi->param('malformed-header') == 9) {
-    print "X-XSS-Protection: 1; mode=block; report=/fail; report=/fail;\n";
+if ($cgi->param('malformed-header')) {
+    if ($cgi->param('malformed-header') == 1) {
+        print "X-XSS-Protection: 12345678901234567\n";
+    }
+    if ($cgi->param('malformed-header') == 2) {
+        print "X-XSS-Protection: red\n";
+    }
+    if ($cgi->param('malformed-header') == 3) {
+        print "X-XSS-Protection: 1; mode=purple\n";
+    }
+    if ($cgi->param('malformed-header') == 4) {
+        print "X-XSS-Protection: 1; mode=block-a-block-block\n";
+    }
+    if ($cgi->param('malformed-header') == 5) {
+        print "X-XSS-Protection: 1; mode=block; report\n";
+    }
+    if ($cgi->param('malformed-header') == 6) {
+        print "X-XSS-Protection: 1; report= ;\n";
+    }
+    if ($cgi->param('malformed-header') == 7) {
+        print "X-XSS-Protection: 1; red\n";
+    }
+    if ($cgi->param('malformed-header') == 8) {
+        print "X-XSS-Protection: 1; mode=block; report=/fail; mode=block;\n";
+    }
+    if ($cgi->param('malformed-header') == 9) {
+        print "X-XSS-Protection: 1; mode=block; report=/fail; report=/fail;\n";
+    }
 }
 
 print "Content-Type: text/html; charset=";

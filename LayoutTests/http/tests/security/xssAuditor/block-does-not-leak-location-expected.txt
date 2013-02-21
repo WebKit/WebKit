@@ -1,0 +1,23 @@
+CONSOLE MESSAGE: line 7: Refused to execute a JavaScript script. Source code of script found within request.
+
+CONSOLE MESSAGE: Entire page will be blocked.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/xssAuditor/block-does-not-leak-location.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/xssAuditor/block-does-not-leak-location.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim.html from frame with URL http://127.0.0.1:8000/security/xssAuditor/block-does-not-leak-location.html. Domains, protocols and ports must match.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/xssAuditor/block-does-not-leak-location.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/xssAuditor/block-does-not-leak-location.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/innocent-victim.html from frame with URL http://127.0.0.1:8000/security/xssAuditor/block-does-not-leak-location.html. Domains, protocols and ports must match.
+
+PASS xssed.contentDocument is null
+PASS xssed.contentDocument is crossorigin.contentDocument
+PASS xssed.contentWindow.location.href is undefined.
+PASS xssed.contentWindow.location.href is crossorigin.contentWindow.location.href
+PASS successfullyParsed is true
+
+TEST COMPLETE
+  

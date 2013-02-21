@@ -13,7 +13,7 @@ if (window.testRunner) {
 </head>
 <body>
 <p>There should be no content in the iframe below:</p>
-<iframe id="frame" onload="checkIfFrameLocationMatchesURLAndCallDone('frame', 'about:blank')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-head-base-href.pl?enable-full-block=1&q=<base href='http://localhost:8000/security/xssAuditor/resources/base-href/'>">
+<iframe id="frame" onload="checkIfFrameLocationMatchesSrcAndCallDone('frame')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-head-base-href.pl?enable-full-block=1&q=<base href='http://localhost:8000/security/xssAuditor/resources/base-href/'>">
 </iframe>
 </body>
 </html>

@@ -1,9 +1,18 @@
-function checkIfFrameLocationMatchesURLAndCallDone(frameId, expectedURL)
+function checkIfFrameLocationMatchesSrcAndCallDone(frameId)
 {
     if (!window.testRunner)
         return;
-    if (document.getElementById(frameId).contentWindow.location == expectedURL)
-        testRunner.notifyDone();
+
+    var actualURL = 'unavailable', frame = document.getElementById(frameId); 
+    try {
+        actualURL = frame.contentWindow.location.href;
+    } 
+    catch (e) {}
+    
+    if (actualURL != frame.src)
+        alert('URL mismatch: ' + actualURL + ' vs. ' + frame.src);
+
+    testRunner.notifyDone();
 }
 
 function sendRequestFromIFrame(url, params, HTTPMethod, callbackWhenDone)

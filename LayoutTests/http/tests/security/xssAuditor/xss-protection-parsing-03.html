@@ -14,7 +14,7 @@ if (window.testRunner) {
 <body>
 <p>This tests that the X-XSS-Protection header is not ignored when there is a trailing semicolon following mode=blank.
 Although theoretically malformed, we tolerate this case without issuing an error. </p>
-<iframe id="frame" onload="checkIfFrameLocationMatchesURLAndCallDone('frame', 'about:blank')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?notifyDone=1&valid-header=3&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script><p>If you see this message and no JavaScript alert() then the test PASSED.</p>">
+<iframe id="frame" onload="checkIfFrameLocationMatchesSrcAndCallDone('frame')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?notifyDone=1&valid-header=3&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script><p>If you see this message and no JavaScript alert() then the test PASSED.</p>">
 </iframe>
 </body>
 </html>

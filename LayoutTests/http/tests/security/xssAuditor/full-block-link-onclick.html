@@ -13,7 +13,7 @@ if (window.testRunner) {
 </head>
 <body>
 <p>There should be no content in the iframe below:</p>
-<iframe id="frame" onload="checkIfFrameLocationMatchesURLAndCallDone('frame', 'about:blank')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1&q=<a%20onclick='alert(String.fromCharCode(0x58,0x53,0x53))'>Click</a>">
+<iframe id="frame" onload="checkIfFrameLocationMatchesSrcAndCallDone('frame')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1&q=<a%20onclick='alert(String.fromCharCode(0x58,0x53,0x53))'>Click</a>">
 </iframe>
 </body>
 </html>

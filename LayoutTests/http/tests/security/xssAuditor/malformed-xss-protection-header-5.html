@@ -13,7 +13,7 @@ if (window.testRunner) {
 </head>
 <body>
 <p>This tests that the X-XSS-Protection header is not ignored when there is an incomplete report url following mode=block, and we issue an error</p>
-<iframe id="frame" onload="checkIfFrameLocationMatchesURLAndCallDone('frame', 'about:blank')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?notifyDone=1&malformed-header=5&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script><p>If you see this message and no JavaScript alert() then the test PASSED.</p>">
+<iframe id="frame" onload="checkIfFrameLocationMatchesSrcAndCallDone('frame')" src="http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?notifyDone=1&malformed-header=5&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script><p>If you see this message and no JavaScript alert() then the test PASSED.</p>">
 </iframe>
 </body>
 </html>

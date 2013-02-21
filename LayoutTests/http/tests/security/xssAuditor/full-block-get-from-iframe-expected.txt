@@ -1,5 +1,6 @@
 CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
 
+CONSOLE MESSAGE: Entire page will be blocked.
 
 
 --------

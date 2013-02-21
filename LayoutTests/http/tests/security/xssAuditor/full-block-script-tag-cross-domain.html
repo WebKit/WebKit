@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="/security/xssAuditor/resources/utilities.js"></script>
+<script>
+if (window.testRunner) {
+    testRunner.dumpAsText();
+    testRunner.dumpChildFramesAsText();
+    testRunner.waitUntilDone();
+    testRunner.setXSSAuditorEnabled(true);
+}
+
+function checkframe()
+{
+    try {
+      var ref = document.getElementById("frame").contentDocument.referrer;
+      alert('Referrer is "' + ref + '"'); 
+    } catch (e1) {}
+    checkIfFrameLocationMatchesSrcAndCallDone('frame');
+}
+</script>
+</head>
+<body>
+<p>There should be no content in the iframe below:</p>
+<iframe id="frame" onload="checkframe()" src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?enable-full-block=1&q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script>">
+</iframe>
+</body>
+</html>
