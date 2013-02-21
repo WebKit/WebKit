@@ -1868,3 +1868,6 @@ webkit.org/b/110282 fast/regions/seamless-iframe-flowed-into-regions.html [ Imag
 webkit.org/b/110316 svg/as-background-image/tiled-background-image.html [ ImageOnlyFailure ]
 
 webkit.org/b/110338 fast/events/touch/emulate-touch-events.html [ Failure ]
+
+# REGRESSION(r143470): editing/spelling/spelling-changed-text.html fails on Qt, GTK, EFL 
+webkit.org/b/110447 editing/spelling/spelling-changed-text.html [ Failure ]

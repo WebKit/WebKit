@@ -157,6 +157,7 @@ PASS OfflineAudioCompletionEvent.toString() is '[object OfflineAudioCompletionEv
 PASS Option.toString() is '[object OptionConstructor]'
 PASS OverflowEvent.toString() is '[object OverflowEventConstructor]'
 PASS PageTransitionEvent.toString() is '[object PageTransitionEventConstructor]'
+PASS Path.toString() is '[object PathConstructor]'
 PASS Plugin.toString() is '[object PluginConstructor]'
 PASS PluginArray.toString() is '[object PluginArrayConstructor]'
 PASS PopStateEvent.toString() is '[object PopStateEventConstructor]'
