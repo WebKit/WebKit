@@ -1,3 +1,9 @@
+2013-02-21  Stephen Chenney  <schenney@chromium.org>
+
+        Unreviewed, add myself as a reviewer
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-21  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed; add myself to the Media watchlist and update my committers.py setting to Reviewer.
