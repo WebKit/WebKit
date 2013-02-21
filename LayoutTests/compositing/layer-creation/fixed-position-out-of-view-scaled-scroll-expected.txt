@@ -29,17 +29,7 @@ Scale=0.5:
       (bounds 800.00 1016.00)
       (contentsOpaque 1)
       (transform [0.50 0.00 0.00 0.00] [0.00 0.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
-      (children 4
-        (GraphicsLayer
-          (position 8.00 1008.00)
-          (bounds 10.00 10.00)
-          (contentsOpaque 1)
-        )
-        (GraphicsLayer
-          (position 1000.00 0.00)
-          (bounds 10.00 10.00)
-          (contentsOpaque 1)
-        )
+      (children 2
         (GraphicsLayer
           (position 600.00 0.00)
           (bounds 10.00 10.00)
@@ -62,7 +52,12 @@ Scale=1.5:
       (bounds 848.00 1016.00)
       (contentsOpaque 1)
       (transform [1.50 0.00 0.00 0.00] [0.00 1.50 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 0.00 1.00])
-      (children 1
+      (children 2
+        (GraphicsLayer
+          (position 600.00 0.00)
+          (bounds 10.00 10.00)
+          (contentsOpaque 1)
+        )
         (GraphicsLayer
           (bounds 10.00 10.00)
           (contentsOpaque 1)

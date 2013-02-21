@@ -46,12 +46,13 @@
   Scale=1.5:
   <pre id="layerTreeScaledUp"></pre>
 </div>
+<!-- The layer tree should always be the same, regardless of page scale, except on platforms that enable the applyPageScaleFactorInCompositor Setting. -->
 <!-- No layer in any case. -->
 <div class="fixed" style="top: -100px"></div>
-<!-- Has composited layer when scaled down; no layer when not scaled or scaled up. -->
+<!-- When applyPageScaleFactorInCompositor is true, this will have composited layer when scaled down; no layer when not scaled or scaled up. -->
 <div class="fixed"></div>
 <div class="fixed" style="top: 0px; left: 1000px"></div>
-<!-- Has composited layer when not scaled and scaled down; no layer scaled up. -->
+<!-- When applyPageScaleFactorInCompositor is true, this will have composited layer when not scaled and scaled down; no layer scaled up. -->
 <div class="fixed" style="top: 0px; left: 600px"></div>
 <!-- Always has composited layer. -->
 <div class="fixed" style="top: 0px; left: 0px"></div>

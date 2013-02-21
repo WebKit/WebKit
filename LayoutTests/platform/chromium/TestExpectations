@@ -1401,6 +1401,12 @@ webkit.org/b/109775 [ MountainLion Win ] media/video-controls-rendering.html [ F
 webkit.org/b/109775 [ MountainLion XP ] media/video-display-toggle.html [ Failure ]
 webkit.org/b/109775 [ Lion MountainLion Win7 ] media/video-playing-and-pause.html [ Failure ]
 
+# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=110294
+webkit.org/b/110294 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+webkit.org/b/110294 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+webkit.org/b/110294 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
+webkit.org/b/110294 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
+
 # -----------------------------------------------------------------
 # End SVG TESTS
 # -----------------------------------------------------------------

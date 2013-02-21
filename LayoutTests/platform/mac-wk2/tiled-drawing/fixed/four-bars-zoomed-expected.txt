@@ -2,7 +2,7 @@
   (viewport rect 0 0 785 585)
   (contents size 1805 5108)
   (frame scale factor 2.30)
-  (children 3
+  (children 4
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
       (viewport rect at last layout: 0.00 0.00 785.00 585.00)
@@ -11,6 +11,11 @@
       (anchor edges: AnchorEdgeLeft AnchorEdgeTop)
       (viewport rect at last layout: 0.00 0.00 785.00 585.00)
       (layer position at last layout 10.00 200.00)
+    )
+    (Fixed node
+      (anchor edges: AnchorEdgeRight AnchorEdgeTop)
+      (viewport rect at last layout: 0.00 0.00 785.00 585.00)
+      (layer position at last layout 601.00 200.00)
     )
     (Fixed node
       (anchor edges: AnchorEdgeLeft AnchorEdgeBottom)
@@ -38,7 +43,7 @@
       (children 1
         (GraphicsLayer
           (visible rect 0.00, 0.00 0.00 x 0.00)
-          (children 3
+          (children 4
             (GraphicsLayer
               (bounds 778.00 74.00)
               (drawsContent 1)
@@ -49,6 +54,12 @@
               (bounds 174.00 324.00)
               (drawsContent 1)
               (visible rect 0.00, 0.00 174.00 x 54.35)
+            )
+            (GraphicsLayer
+              (position 601.00 200.00)
+              (bounds 174.00 324.00)
+              (drawsContent 1)
+              (visible rect 0.00, 0.00 0.00 x 0.00)
             )
             (GraphicsLayer
               (position 0.00 501.00)
