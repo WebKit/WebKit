@@ -2313,6 +2313,11 @@ static void windowBecameOccluded(uint32_t, void* data, uint32_t dataLength, void
 
 + (BOOL)_registerWindowOcclusionNotificationHandlers
 {
+    // Disable window occlusion notifications for App Store until <rdar://problem/13255270> is resolved.
+    static bool isAppStore = [[[NSBundle mainBundle] bundleIdentifier] isEqualToString:@"com.apple.appstore"];
+    if (isAppStore)
+        return NO;
+
     if (windowOcclusionNotificationsAreRegistered)
         return YES;
 

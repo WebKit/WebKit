@@ -1,3 +1,17 @@
+2013-02-20  Kiran Muppala  <cmuppala@apple.com>
+
+        Disable window occlusion notifications for App Store on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=110417
+
+        Reviewed by Simon Fraser.
+
+        Temporary fix to workaround issues with window occlusion notifications
+        in App Store.
+
+        * UIProcess/API/mac/WKView.mm:
+        (+[WKView _registerWindowOcclusionNotificationHandlers]): Return early
+        if the main bundle identifier matches that of App Store.
+
 2013-02-20  Mark Rowe  <mrowe@apple.com>
 
         <https://webkit.org/b/110410> Specify the plug-in process / service entitlements via the Xcode configuration.
