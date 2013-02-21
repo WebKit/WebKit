@@ -450,7 +450,7 @@ committers_unable_to_review = [
     Committer("Vincent Scheib", "scheib@chromium.org", "scheib"),
     Committer("Vineet Chaudhary", "rgf748@motorola.com", "vineetc"),
     Committer("Vitaly Repeshko", "vitalyr@chromium.org"),
-    Committer("Vivek Galatage", ["vivek.vg@samsung.com", "vivekg@webkit.org"], "vivekg"),
+    Committer("Vivek Galatage", ["vivekg@webkit.org", "vivek.vg@samsung.com"], "vivekg"),
     Committer("William Siegrist", "wsiegrist@apple.com", "wms"),
     Committer("W. James MacLean", "wjmaclean@chromium.org", "seumas"),
     Committer("Xianzhu Wang", ["wangxianzhu@chromium.org", "phnixwxz@gmail.com", "wangxianzhu@google.com"], "wangxianzhu"),

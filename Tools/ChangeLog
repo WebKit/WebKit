@@ -1,3 +1,9 @@
+2013-02-20  Vivek Galatage  <vivekg@webkit.org>
+
+        Unreviewed. Changing primary email id.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-14  James Robinson  <jamesr@chromium.org>
 
         [chromium] Request WebLayerTreeView for DumpRenderTree via explicit testing path
