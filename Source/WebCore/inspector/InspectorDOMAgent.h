@@ -57,6 +57,7 @@ class DOMEditor;
 class Document;
 class Element;
 class Event;
+class InspectorClient;
 class InspectorFrontend;
 class InspectorHistory;
 class InspectorOverlay;
@@ -102,9 +103,9 @@ public:
         virtual void didModifyDOMAttr(Element*) = 0;
     };
 
-    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
+    static PassOwnPtr<InspectorDOMAgent> create(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay, InspectorClient* client)
     {
-        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, inspectorState, injectedScriptManager, overlay));
+        return adoptPtr(new InspectorDOMAgent(instrumentingAgents, pageAgent, inspectorState, injectedScriptManager, overlay, client));
     }
 
     static String toErrorString(const ExceptionCode&);
@@ -149,6 +150,7 @@ public:
     virtual void redo(ErrorString*);
     virtual void markUndoableState(ErrorString*);
     virtual void focus(ErrorString*, int nodeId);
+    virtual void setFileInputFiles(ErrorString*, int nodeId, const RefPtr<InspectorArray>& files);
 
     void getEventListeners(Node*, Vector<EventListenerInfo>& listenersArray, bool includeAncestors);
 
@@ -204,7 +206,7 @@ public:
     int pushNodePathForRenderLayerToFrontend(const RenderLayer*);
 
 private:
-    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorCompositeState*, InjectedScriptManager*, InspectorOverlay*);
+    InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorCompositeState*, InjectedScriptManager*, InspectorOverlay*, InspectorClient*);
 
     void setSearchingForNode(ErrorString*, bool enabled, InspectorObject* highlightConfig);
     PassOwnPtr<HighlightConfig> highlightConfigFromInspectorObject(ErrorString*, InspectorObject* highlightInspectorObject);
@@ -236,6 +238,7 @@ private:
     InspectorPageAgent* m_pageAgent;
     InjectedScriptManager* m_injectedScriptManager;
     InspectorOverlay* m_overlay;
+    InspectorClient* m_client;
     InspectorFrontend::DOM* m_frontend;
     DOMListener* m_domListener;
     NodeToIdMap m_documentNodeToIdMap;

@@ -94,6 +94,8 @@ public:
 
     virtual bool handleJavaScriptDialog(bool accept);
 
+    virtual bool canSetFileInputFiles();
+
 private:
     WebDevToolsAgentImpl* devToolsAgent();
 

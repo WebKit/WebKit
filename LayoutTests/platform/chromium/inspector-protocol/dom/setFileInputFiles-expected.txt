@@ -1,0 +1,6 @@
+ 
+File count: 2
+Name: file1
+Name: file2
+Received error: Node is not a file input element
+

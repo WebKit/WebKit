@@ -1,3 +1,16 @@
+2013-02-21  Ken Kania  <kkania@chromium.org>
+
+        Web Inspector: Add command for selecting files for file input element
+        https://bugs.webkit.org/show_bug.cgi?id=109308
+
+        Reviewed by Pavel Feldman.
+
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::canSetFileInputFiles):
+        (WebKit):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+
 2013-02-20  Paweł Hajdan, Jr.  <phajdan.jr@chromium.org>
 
         Add gyp option to switch ENABLE(SQL_DATABASE)

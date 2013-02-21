@@ -59,15 +59,19 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "EventTarget.h"
+#include "File.h"
+#include "FileList.h"
 #include "Frame.h"
 #include "FrameTree.h"
 #include "HTMLElement.h"
 #include "HTMLFrameOwnerElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLTemplateElement.h"
 #include "HitTestResult.h"
 #include "IdentifiersFactory.h"
 #include "InjectedScriptManager.h"
+#include "InspectorClient.h"
 #include "InspectorFrontend.h"
 #include "InspectorHistory.h"
 #include "InspectorOverlay.h"
@@ -194,11 +198,12 @@ String InspectorDOMAgent::toErrorString(const ExceptionCode& ec)
     return "";
 }
 
-InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay)
+InspectorDOMAgent::InspectorDOMAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorCompositeState* inspectorState, InjectedScriptManager* injectedScriptManager, InspectorOverlay* overlay, InspectorClient* client)
     : InspectorBaseAgent<InspectorDOMAgent>("DOM", instrumentingAgents, inspectorState)
     , m_pageAgent(pageAgent)
     , m_injectedScriptManager(injectedScriptManager)
     , m_overlay(overlay)
+    , m_client(client)
     , m_frontend(0)
     , m_domListener(0)
     , m_lastNodeId(1)
@@ -1198,6 +1203,34 @@ void InspectorDOMAgent::focus(ErrorString* errorString, int nodeId)
         return;
     }
     element->focus();
+}
+
+void InspectorDOMAgent::setFileInputFiles(ErrorString* errorString, int nodeId, const RefPtr<InspectorArray>& files)
+{
+    if (!m_client->canSetFileInputFiles()) {
+        *errorString = "Cannot set file input files";
+        return;
+    }
+
+    Node* node = assertNode(errorString, nodeId);
+    if (!node)
+        return;
+    HTMLInputElement* element = node->toInputElement();
+    if (!element || !element->isFileUpload()) {
+        *errorString = "Node is not a file input element";
+        return;
+    }
+
+    RefPtr<FileList> fileList = FileList::create();
+    for (InspectorArray::const_iterator iter = files->begin(); iter != files->end(); ++iter) {
+        String path;
+        if (!(*iter)->asString(&path)) {
+            *errorString = "Files must be strings";
+            return;
+        }
+        fileList->append(File::create(path));
+    }
+    element->setFiles(fileList);
 }
 
 void InspectorDOMAgent::resolveNode(ErrorString* errorString, int nodeId, const String* const objectGroup, RefPtr<TypeBuilder::Runtime::RemoteObject>& result)

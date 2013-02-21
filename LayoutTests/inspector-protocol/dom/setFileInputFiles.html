@@ -1,0 +1,69 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script>
+
+function onLoad()
+{
+    document.querySelector("input").addEventListener("change", onChange);
+
+    function onChange(event)
+    {
+        var files = event.target.files;
+        log("File count: " + files.length);
+        for (var i = 0; i < files.length; i++) {
+            log("Name: " + files[i].name);
+        }
+    }
+
+    runTest();
+}
+
+function test()
+{
+    function abortOnError(message)
+    {
+        if (message.error) {
+            InspectorTest.log(message.error.message);
+            InspectorTest.completeTest();
+        }
+    }
+
+    InspectorTest.sendCommand("DOM.getDocument", {}, onGotDocument);
+
+    function onGotDocument(message)
+    {
+        abortOnError(message);
+        var node = message.result.root;
+        InspectorTest.sendCommand("DOM.querySelectorAll", { "nodeId": node.nodeId, "selector": "input" }, onQuerySelectorAll);
+    }
+
+    function onQuerySelectorAll(message)
+    {
+        abortOnError(message);
+        var ids = message.result.nodeIds;
+        InspectorTest.sendCommand("DOM.setFileInputFiles", { "nodeId": ids[0], "files": ["file1", "file2"] }, onSetFiles);
+        InspectorTest.sendCommand("DOM.setFileInputFiles", { "nodeId": ids[1], "files": ["file1", "file2"] }, onBadSetFiles);
+    }
+
+    function onSetFiles(message)
+    {
+        if (message.error) {
+            InspectorTest.log("Received error: " + message.error.message);
+        }
+    }
+
+    function onBadSetFiles(message)
+    {
+        InspectorTest.log("Received error: " + message.error.message);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+<body onload="onLoad()">
+<input type="file"></input>
+<input type="text"></input>
+</body>
+</html>
