@@ -346,45 +346,14 @@ void Graph::dump(PrintStream& out)
     }
 }
 
-// FIXME: Convert this to be iterative, not recursive.
-#define DO_TO_CHILDREN(node, thingToDo) do {                            \
-        Node* _node = (node);                                           \
-        if (_node->flags() & NodeHasVarArgs) {                          \
-            for (unsigned _childIdx = _node->firstChild();              \
-                _childIdx < _node->firstChild() + _node->numChildren(); \
-                _childIdx++) {                                          \
-                if (!!m_varArgChildren[_childIdx])                      \
-                    thingToDo(m_varArgChildren[_childIdx]);             \
-            }                                                           \
-        } else {                                                        \
-            if (!_node->child1()) {                                     \
-                ASSERT(                                                 \
-                    !_node->child2()                                    \
-                    && !_node->child3());                               \
-                break;                                                  \
-            }                                                           \
-            thingToDo(_node->child1());                                 \
-                                                                        \
-            if (!_node->child2()) {                                     \
-                ASSERT(!_node->child3());                               \
-                break;                                                  \
-            }                                                           \
-            thingToDo(_node->child2());                                 \
-                                                                        \
-            if (!_node->child3())                                       \
-                break;                                                  \
-            thingToDo(_node->child3());                                 \
-        }                                                               \
-    } while (false)
-
 void Graph::refChildren(Node* op)
 {
-    DO_TO_CHILDREN(op, ref);
+    DFG_NODE_DO_TO_CHILDREN(*this, op, ref);
 }
 
 void Graph::derefChildren(Node* op)
 {
-    DO_TO_CHILDREN(op, deref);
+    DFG_NODE_DO_TO_CHILDREN(*this, op, deref);
 }
 
 void Graph::dethread()

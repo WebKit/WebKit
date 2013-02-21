@@ -805,7 +805,6 @@ private:
         case PutStructure:
         case TearOffActivation:
         case TearOffArguments:
-        case CheckNumber:
         case CheckArgumentsNotCreated:
         case GlobalVarWatchpoint:
         case GarbageValue:

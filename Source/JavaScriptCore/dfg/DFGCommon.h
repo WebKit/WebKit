@@ -83,12 +83,6 @@ struct NodePointerTraits {
     static void dump(Node* value, PrintStream& out);
 };
 
-enum UseKind {
-    UntypedUse,
-    DoubleUse,
-    LastUseKind // Must always be the last entry in the enum, as it is used to denote the number of enum elements.
-};
-
 // Use RefChildren if the child ref counts haven't already been adjusted using
 // other means and either of the following is true:
 // - The node you're creating is MustGenerate.
@@ -105,19 +99,6 @@ enum RefNodeMode {
     RefNode,
     DontRefNode
 };
-
-inline const char* useKindToString(UseKind useKind)
-{
-    switch (useKind) {
-    case UntypedUse:
-        return "";
-    case DoubleUse:
-        return "d";
-    default:
-        RELEASE_ASSERT_NOT_REACHED();
-        return 0;
-    }
-}
 
 inline bool isARMv7s()
 {
@@ -235,6 +216,8 @@ enum UnificationState {
     // Unification has been performed globally.
     GloballyUnified
 };
+
+enum OperandSpeculationMode { AutomaticOperandSpeculation, ManualOperandSpeculation };
 
 enum SpeculationDirection { ForwardSpeculation, BackwardSpeculation };
 

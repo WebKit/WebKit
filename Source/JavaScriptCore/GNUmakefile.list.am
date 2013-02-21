@@ -272,6 +272,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/dfg/DFGThunks.h \
 	Source/JavaScriptCore/dfg/DFGUnificationPhase.cpp \
 	Source/JavaScriptCore/dfg/DFGUnificationPhase.h \
+	Source/JavaScriptCore/dfg/DFGUseKind.cpp \
+	Source/JavaScriptCore/dfg/DFGUseKind.h \
 	Source/JavaScriptCore/dfg/DFGValueRecoveryOverride.h \
 	Source/JavaScriptCore/dfg/DFGValueSource.cpp \
 	Source/JavaScriptCore/dfg/DFGValueSource.h \

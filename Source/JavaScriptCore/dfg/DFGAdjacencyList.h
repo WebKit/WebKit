@@ -47,9 +47,6 @@ public:
     AdjacencyList() { }
     
     AdjacencyList(Kind kind)
-#if !ASSERT_DISABLED
-        : m_kind(kind)
-#endif
     {
         if (kind == Variable) {
             m_words[0].m_encodedWord = UINT_MAX;
@@ -57,19 +54,13 @@ public:
         }
     }
     
-    AdjacencyList(Kind kind, Node* child1, Node* child2, Node* child3)
-#if !ASSERT_DISABLED
-        : m_kind(Fixed)
-#endif
+    AdjacencyList(Kind kind, Edge child1, Edge child2, Edge child3)
     {
         ASSERT_UNUSED(kind, kind == Fixed);
         initialize(child1, child2, child3);
     }
     
     AdjacencyList(Kind kind, unsigned firstChild, unsigned numChildren)
-#if !ASSERT_DISABLED
-        : m_kind(Variable)
-#endif
     {
         ASSERT_UNUSED(kind, kind == Variable);
         setFirstChild(firstChild);
@@ -79,21 +70,18 @@ public:
     const Edge& child(unsigned i) const
     {
         ASSERT(i < Size);
-        ASSERT(m_kind == Fixed);
         return m_words[i];
     }    
     
     Edge& child(unsigned i)
     {
         ASSERT(i < Size);
-        ASSERT(m_kind == Fixed);
         return m_words[i];
     }
     
     void setChild(unsigned i, Edge nodeUse)
     {
         ASSERT(i < Size);
-        ASSERT(m_kind == Fixed);
         m_words[i] = nodeUse;
     }
     
@@ -125,9 +113,6 @@ public:
     
     void reset()
     {
-#if !ASSERT_DISABLED
-        m_kind = Fixed;
-#endif
         initialize();
     }
     
@@ -142,34 +127,24 @@ public:
 
     unsigned firstChild() const
     {
-        ASSERT(m_kind == Variable);
         return m_words[0].m_encodedWord;
     }
     void setFirstChild(unsigned firstChild)
     {
-        ASSERT(m_kind == Variable);
         m_words[0].m_encodedWord = firstChild;
     }
     
     unsigned numChildren() const
     {
-        ASSERT(m_kind == Variable);
         return m_words[1].m_encodedWord;
     }
     void setNumChildren(unsigned numChildren)
     {
-        ASSERT(m_kind == Variable);
         m_words[1].m_encodedWord = numChildren;
     }
     
-#if !ASSERT_DISABLED
-    Kind kind() const { return m_kind; }
-#endif
 private:
     Edge m_words[Size];
-#if !ASSERT_DISABLED
-    Kind m_kind;
-#endif
 };
 
 } } // namespace JSC::DFG

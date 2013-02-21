@@ -158,7 +158,52 @@ public:
     // if execution should continue past this node. Notably, it will return true
     // for block terminals, so long as those terminals are not Return or variants
     // of Throw.
-    bool execute(unsigned);
+    //
+    // This is guaranteed to be equivalent to doing:
+    //
+    // if (state.startExecuting(index)) {
+    //     state.executeEdges(index);
+    //     result = state.executeEffects(index);
+    // } else
+    //     result = true;
+    bool execute(unsigned indexInBlock);
+    
+    // Indicate the start of execution of the node. It resets any state in the node,
+    // that is progressively built up by executeEdges() and executeEffects(). In
+    // particular, this resets canExit(), so if you want to "know" between calls of
+    // startExecuting() and executeEdges()/Effects() whether the last run of the
+    // analysis concluded that the node can exit, you should probably set that
+    // information aside prior to calling startExecuting().
+    bool startExecuting(Node*);
+    bool startExecuting(unsigned indexInBlock);
+    
+    // Abstractly execute the edges of the given node. This runs filterEdgeByUse()
+    // on all edges of the node. You can skip this step, if you have already used
+    // filterEdgeByUse() (or some equivalent) on each edge.
+    void executeEdges(Node*);
+    void executeEdges(unsigned indexInBlock);
+    
+    ALWAYS_INLINE void filterEdgeByUse(Node* node, Edge edge)
+    {
+#if !ASSERT_DISABLED
+        switch (edge.useKind()) {
+        case KnownInt32Use:
+        case KnownNumberUse:
+        case KnownCellUse:
+            ASSERT(!(forNode(edge).m_type & ~typeFilterFor(edge.useKind())));
+            break;
+        default:
+            break;
+        }
+#endif // !ASSERT_DISABLED
+        
+        filterByType(node, edge.node(), typeFilterFor(edge.useKind()));
+    }
+    
+    // Abstractly execute the effects of the given node. This changes the abstract
+    // state assuming that edges have already been filtered.
+    bool executeEffects(unsigned indexInBlock);
+    bool executeEffects(unsigned indexInBlock, Node*);
     
     // Did the last executed node clobber the world?
     bool didClobber() const { return m_didClobber; }
@@ -191,50 +236,6 @@ private:
     
     static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode);
     
-    void speculateInt32Unary(Node* node, bool forceCanExit = false)
-    {
-        AbstractValue& childValue = forNode(node->child1());
-        node->setCanExit(forceCanExit || !isInt32Speculation(childValue.m_type));
-        childValue.filter(SpecInt32);
-    }
-    
-    void speculateNumberUnary(Node* node)
-    {
-        AbstractValue& childValue = forNode(node->child1());
-        node->setCanExit(!isNumberSpeculation(childValue.m_type));
-        childValue.filter(SpecNumber);
-    }
-    
-    void speculateBooleanUnary(Node* node)
-    {
-        AbstractValue& childValue = forNode(node->child1());
-        node->setCanExit(!isBooleanSpeculation(childValue.m_type));
-        childValue.filter(SpecBoolean);
-    }
-    
-    void speculateInt32Binary(Node* node, bool forceCanExit = false)
-    {
-        AbstractValue& childValue1 = forNode(node->child1());
-        AbstractValue& childValue2 = forNode(node->child2());
-        node->setCanExit(
-            forceCanExit
-            || !isInt32Speculation(childValue1.m_type)
-            || !isInt32Speculation(childValue2.m_type));
-        childValue1.filter(SpecInt32);
-        childValue2.filter(SpecInt32);
-    }
-    
-    void speculateNumberBinary(Node* node)
-    {
-        AbstractValue& childValue1 = forNode(node->child1());
-        AbstractValue& childValue2 = forNode(node->child2());
-        node->setCanExit(
-            !isNumberSpeculation(childValue1.m_type)
-            || !isNumberSpeculation(childValue2.m_type));
-        childValue1.filter(SpecNumber);
-        childValue2.filter(SpecNumber);
-    }
-    
     enum BooleanResult {
         UnknownBooleanResult,
         DefinitelyFalse,
@@ -258,6 +259,17 @@ private:
         forNode(node).set(value);
         return true;
     }
+    
+    ALWAYS_INLINE void filterByType(Node* node, Node* child, SpeculatedType type)
+    {
+        AbstractValue& value = forNode(child);
+        if (value.m_type & ~type)
+            node->setCanExit(true);
+        value.filter(type);
+    }
+    
+    void verifyEdge(Node*, Edge);
+    void verifyEdges(Node*);
     
     CodeBlock* m_codeBlock;
     Graph& m_graph;

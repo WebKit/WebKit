@@ -354,7 +354,7 @@ private:
     
     void reportValidationContext(Node* node, Edge edge)
     {
-        dataLogF("@%u -> %s@%u", node->index(), useKindToString(edge.useKind()), edge->index());
+        dataLog(node, " -> ", edge);
     }
     
     void reportValidationContext(VirtualRegister local, BlockIndex blockIndex)
@@ -389,7 +389,7 @@ private:
     void reportValidationContext(
         Node* node, BlockIndex blockIndex, Node* expectedNode, Edge incomingEdge)
     {
-        dataLogF("@%u in Block #%u, searching for @%u from @%u", node->index(), blockIndex, expectedNode->index(), incomingEdge->index());
+        dataLog(node, " in Block #", blockIndex, ", searching for ", expectedNode, " from ", incomingEdge);
     }
     
     void dumpGraphIfAppropriate()

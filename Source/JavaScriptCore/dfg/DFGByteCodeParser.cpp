@@ -698,6 +698,18 @@ private:
     {
         Node* result = m_graph.addNode(
             DontRefChildren, DontRefNode, SpecNone,
+            op, currentCodeOrigin(), Edge(child1), Edge(child2), Edge(child3));
+        ASSERT(op != Phi);
+        m_currentBlock->append(result);
+
+        if (defaultFlags(op) & NodeMustGenerate)
+            m_graph.refChildren(result);
+        return result;
+    }
+    Node* addToGraph(NodeType op, Edge child1, Edge child2 = Edge(), Edge child3 = Edge())
+    {
+        Node* result = m_graph.addNode(
+            DontRefChildren, DontRefNode, SpecNone,
             op, currentCodeOrigin(), child1, child2, child3);
         ASSERT(op != Phi);
         m_currentBlock->append(result);
@@ -710,7 +722,7 @@ private:
     {
         Node* result = m_graph.addNode(
             DontRefChildren, DontRefNode, SpecNone,
-            op, currentCodeOrigin(), info, child1, child2, child3);
+            op, currentCodeOrigin(), info, Edge(child1), Edge(child2), Edge(child3));
         if (op == Phi)
             m_currentBlock->phis.append(result);
         else
@@ -724,7 +736,7 @@ private:
     {
         Node* result = m_graph.addNode(
             DontRefChildren, DontRefNode, SpecNone,
-            op, currentCodeOrigin(), info1, info2, child1, child2, child3);
+            op, currentCodeOrigin(), info1, info2, Edge(child1), Edge(child2), Edge(child3));
         ASSERT(op != Phi);
         m_currentBlock->append(result);
 
@@ -1465,7 +1477,7 @@ bool ByteCodeParser::handleMinMax(bool usesResult, int resultOperand, NodeType o
      
     if (argumentCountIncludingThis == 2) { // Math.min(x)
         Node* result = get(registerOffset + argumentToOperand(1));
-        addToGraph(CheckNumber, result);
+        addToGraph(Phantom, Edge(result, NumberUse));
         setIntrinsicResult(usesResult, resultOperand, result);
         return true;
     }

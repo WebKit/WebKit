@@ -95,11 +95,10 @@ struct Node {
         , m_prediction(SpecNone)
     {
         setOpAndDefaultFlags(op);
-        ASSERT(!!(m_flags & NodeHasVarArgs) == (children.kind() == AdjacencyList::Variable));
     }
     
     // Construct a node with up to 3 children, no immediate value.
-    Node(NodeType op, CodeOrigin codeOrigin, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
+    Node(NodeType op, CodeOrigin codeOrigin, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
@@ -111,7 +110,7 @@ struct Node {
     }
 
     // Construct a node with up to 3 children and an immediate value.
-    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
+    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
@@ -124,7 +123,7 @@ struct Node {
     }
 
     // Construct a node with up to 3 children and two immediate values.
-    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, Node* child1 = 0, Node* child2 = 0, Node* child3 = 0)
+    Node(NodeType op, CodeOrigin codeOrigin, OpInfo imm1, OpInfo imm2, Edge child1 = Edge(), Edge child2 = Edge(), Edge child3 = Edge())
         : codeOrigin(codeOrigin)
         , children(AdjacencyList::Fixed, child1, child2, child3)
         , m_virtualRegister(InvalidVirtualRegister)
@@ -294,22 +293,22 @@ struct Node {
         convertToStructureTransitionWatchpoint(structureSet().singletonStructure());
     }
     
-    void convertToGetByOffset(unsigned storageAccessDataIndex, Node* storage)
+    void convertToGetByOffset(unsigned storageAccessDataIndex, Edge storage)
     {
         ASSERT(m_op == GetById || m_op == GetByIdFlush);
         m_opInfo = storageAccessDataIndex;
-        children.setChild1(Edge(storage));
+        children.setChild1(storage);
         m_op = GetByOffset;
         m_flags &= ~NodeClobbersWorld;
     }
     
-    void convertToPutByOffset(unsigned storageAccessDataIndex, Node* storage)
+    void convertToPutByOffset(unsigned storageAccessDataIndex, Edge storage)
     {
         ASSERT(m_op == PutById || m_op == PutByIdDirect);
         m_opInfo = storageAccessDataIndex;
         children.setChild3(children.child2());
         children.setChild2(children.child1());
-        children.setChild1(Edge(storage));
+        children.setChild1(storage);
         m_op = PutByOffset;
         m_flags &= ~NodeClobbersWorld;
     }
@@ -949,9 +948,10 @@ struct Node {
         case DoubleAsInt32:
         case PhantomArguments:
             return true;
-        case Phantom:
         case Nop:
             return false;
+        case Phantom:
+            return child1().useKindUnchecked() != UntypedUse || child2().useKindUnchecked() != UntypedUse || child3().useKindUnchecked() != UntypedUse;
         default:
             return shouldGenerate();
         }
@@ -995,7 +995,7 @@ struct Node {
         return m_refCount--;
     }
     
-    Edge child1()
+    Edge& child1()
     {
         ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child1();
@@ -1009,13 +1009,13 @@ struct Node {
         return children.child1Unchecked();
     }
 
-    Edge child2()
+    Edge& child2()
     {
         ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child2();
     }
 
-    Edge child3()
+    Edge& child3()
     {
         ASSERT(!(m_flags & NodeHasVarArgs));
         return children.child3();
@@ -1031,6 +1031,17 @@ struct Node {
     {
         ASSERT(m_flags & NodeHasVarArgs);
         return children.numChildren();
+    }
+    
+    UseKind binaryUseKind()
+    {
+        ASSERT(child1().useKind() == child2().useKind());
+        return child1().useKind();
+    }
+    
+    bool isBinaryUseKind(UseKind useKind)
+    {
+        return child1().useKind() == useKind && child2().useKind() == useKind;
     }
     
     SpeculatedType prediction()

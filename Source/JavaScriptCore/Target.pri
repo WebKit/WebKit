@@ -149,6 +149,7 @@ SOURCES += \
     dfg/DFGStructureCheckHoistingPhase.cpp \
     dfg/DFGThunks.cpp \
     dfg/DFGUnificationPhase.cpp \
+    dfg/DFGUseKind.cpp \
     dfg/DFGValueSource.cpp \
     dfg/DFGVariableAccessDataDump.cpp \
     dfg/DFGVariableEvent.cpp \

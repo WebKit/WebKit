@@ -24,22 +24,66 @@
  */
 
 #include "config.h"
-#include "DFGEdge.h"
+#include "DFGUseKind.h"
 
 #if ENABLE(DFG_JIT)
 
-#include "DFGNode.h"
+namespace WTF {
 
-namespace JSC { namespace DFG {
+using namespace JSC::DFG;
 
-void Edge::dump(PrintStream& out) const
+void printInternal(PrintStream& out, UseKind useKind)
 {
-    if (useKind() != UntypedUse)
-        out.print(useKind(), ":");
-    out.print(node());
+    switch (useKind) {
+    case UntypedUse:
+        out.print("Untyped");
+        break;
+    case Int32Use:
+        out.print("Int32");
+        break;
+    case KnownInt32Use:
+        out.print("KnownInt32");
+        break;
+    case RealNumberUse:
+        out.print("RealNumber");
+        break;
+    case NumberUse:
+        out.print("Number");
+        break;
+    case KnownNumberUse:
+        out.print("KnownNumber");
+        break;
+    case BooleanUse:
+        out.print("Boolean");
+        break;
+    case CellUse:
+        out.print("Cell");
+        break;
+    case KnownCellUse:
+        out.print("KnownCell");
+        break;
+    case ObjectUse:
+        out.print("Object");
+        break;
+    case ObjectOrOtherUse:
+        out.print("ObjectOrOther");
+        break;
+    case StringUse:
+        out.print("String");
+        break;
+    case NotCellUse:
+        out.print("NotCell");
+        break;
+    case OtherUse:
+        out.print("Other");
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
 }
 
-} } // namespace JSC::DFG
+} // namespace WTF
 
 #endif // ENABLE(DFG_JIT)
 

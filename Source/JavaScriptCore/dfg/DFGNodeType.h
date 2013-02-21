@@ -96,8 +96,6 @@ namespace JSC { namespace DFG {
     macro(ForwardInt32ToDouble, NodeResultNumber) \
     /* Used to speculate that a double value is actually an integer. */\
     macro(DoubleAsInt32, NodeResultInt32) \
-    /* Used to record places where we must check if a value is a number. */\
-    macro(CheckNumber, NodeMustGenerate) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber | NodeMustGenerate) \

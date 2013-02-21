@@ -1,3 +1,288 @@
+2013-02-20  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not change its mind about what type speculations a node does, by encoding the checks in the NodeType, UseKind, and ArrayMode
+        https://bugs.webkit.org/show_bug.cgi?id=109371
+
+        Reviewed by Oliver Hunt.
+        
+        FixupPhase now locks in the speculations that each node will do. The DFG then
+        remembers those speculations, and doesn't change its mind about them even if the
+        graph is transformed - for example if a node's child is repointed to a different
+        node as part of CSE, CFG simplification, or folding. Each node ensures that it
+        executes the speculations promised by its edges. This is true even for Phantom
+        nodes.
+        
+        This still leaves some craziness on the table for future work, like the
+        elimination of speculating SetLocal's due to CFG simplification
+        (webkit.org/b/109388) and elimination of nodes via DCE (webkit.org/b/109389).
+        
+        In all, this allows for a huge simplification of the DFG. Instead of having to
+        execute the right speculation heuristic each time you want to decide what a node
+        does (for example Node::shouldSpeculateInteger(child1, child2) &&
+        node->canSpeculateInteger()), you just ask for the use kinds of its children
+        (typically node->binaryUseKind() == Int32Use). Because the use kinds are
+        discrete, you can often just switch over them. This makes many parts of the code
+        more clear than they were before.
+        
+        Having UseKinds describe the speculations being performed also makes it far
+        easier to perform analyses that need to know what speculations are done. This is
+        so far only used to simplify large parts of the CFA.
+        
+        To have a larger vocabulary of UseKinds, this also changes the node allocator to
+        be able to round up Node sizes to the nearest multiple of 16.
+        
+        This appears to be neutral on benchmarks, except for some goofy speed-ups, like
+        8% on Octane/box2d.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::startExecuting):
+        (DFG):
+        (JSC::DFG::AbstractState::executeEdges):
+        (JSC::DFG::AbstractState::verifyEdge):
+        (JSC::DFG::AbstractState::verifyEdges):
+        (JSC::DFG::AbstractState::executeEffects):
+        (JSC::DFG::AbstractState::execute):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+        (JSC::DFG::AbstractState::filterEdgeByUse):
+        (JSC::DFG::AbstractState::filterByType):
+        * dfg/DFGAbstractValue.h:
+        (JSC::DFG::AbstractValue::filter):
+        * dfg/DFGAdjacencyList.h:
+        (JSC::DFG::AdjacencyList::AdjacencyList):
+        (JSC::DFG::AdjacencyList::child):
+        (JSC::DFG::AdjacencyList::setChild):
+        (JSC::DFG::AdjacencyList::reset):
+        (JSC::DFG::AdjacencyList::firstChild):
+        (JSC::DFG::AdjacencyList::setFirstChild):
+        (JSC::DFG::AdjacencyList::numChildren):
+        (JSC::DFG::AdjacencyList::setNumChildren):
+        (AdjacencyList):
+        * dfg/DFGAllocator.h:
+        (DFG):
+        (Allocator):
+        (JSC::DFG::Allocator::cellSize):
+        (JSC::DFG::Allocator::Region::headerSize):
+        (JSC::DFG::Allocator::Region::numberOfThingsPerRegion):
+        (JSC::DFG::Allocator::Region::payloadSize):
+        (JSC::DFG::Allocator::Region::payloadBegin):
+        (JSC::DFG::Allocator::Region::payloadEnd):
+        (JSC::DFG::Allocator::Region::isInThisRegion):
+        (JSC::DFG::::Allocator):
+        (JSC::DFG::::~Allocator):
+        (JSC::DFG::::allocate):
+        (JSC::DFG::::free):
+        (JSC::DFG::::freeAll):
+        (JSC::DFG::::reset):
+        (JSC::DFG::::indexOf):
+        (JSC::DFG::::allocatorOf):
+        (JSC::DFG::::bumpAllocate):
+        (JSC::DFG::::freeListAllocate):
+        (JSC::DFG::::allocateSlow):
+        (JSC::DFG::::freeRegionsStartingAt):
+        (JSC::DFG::::startBumpingIn):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::addToGraph):
+        (JSC::DFG::ByteCodeParser::handleMinMax):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::eliminateIrrelevantPhantomChildren):
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGCommon.h:
+        (DFG):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        (JSC::DFG::ConstantFoldingPhase::addStructureTransitionCheck):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+        * dfg/DFGEdge.cpp:
+        (JSC::DFG::Edge::dump):
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::useKindUnchecked):
+        (JSC::DFG::Edge::useKind):
+        (JSC::DFG::Edge::shift):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::checkArray):
+        (JSC::DFG::FixupPhase::blessArrayOperation):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+        (JSC::DFG::FixupPhase::injectInt32ToDoubleNode):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::truncateConstantToInt32):
+        (JSC::DFG::FixupPhase::truncateConstantsIfNecessary):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+        * dfg/DFGGraph.cpp:
+        (DFG):
+        (JSC::DFG::Graph::refChildren):
+        (JSC::DFG::Graph::derefChildren):
+        * dfg/DFGGraph.h:
+        (JSC::DFG::Graph::ref):
+        (JSC::DFG::Graph::deref):
+        (JSC::DFG::Graph::performSubstitution):
+        (JSC::DFG::Graph::isPredictedNumerical):
+        (JSC::DFG::Graph::addImmediateShouldSpeculateInteger):
+        (DFG):
+        * dfg/DFGNode.h:
+        (JSC::DFG::Node::Node):
+        (JSC::DFG::Node::convertToGetByOffset):
+        (JSC::DFG::Node::convertToPutByOffset):
+        (JSC::DFG::Node::willHaveCodeGenOrOSR):
+        (JSC::DFG::Node::child1):
+        (JSC::DFG::Node::child2):
+        (JSC::DFG::Node::child3):
+        (JSC::DFG::Node::binaryUseKind):
+        (Node):
+        (JSC::DFG::Node::isBinaryUseKind):
+        * dfg/DFGNodeAllocator.h:
+        (DFG):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::nodeFlagsAsString):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::propagate):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::speculationWatchpoint):
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::terminateSpeculativeExecution):
+        (JSC::DFG::SpeculativeJIT::typeCheck):
+        (JSC::DFG::SpeculativeJIT::forwardTypeCheck):
+        (JSC::DFG::SpeculativeJIT::fillStorage):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::compileDoublePutByVal):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        (JSC::DFG::SpeculativeJIT::compilePutByValForIntTypedArray):
+        (JSC::DFG::SpeculativeJIT::compileInstanceOf):
+        (JSC::DFG::SpeculativeJIT::compileAdd):
+        (JSC::DFG::SpeculativeJIT::compileArithSub):
+        (JSC::DFG::SpeculativeJIT::compileArithNegate):
+        (JSC::DFG::SpeculativeJIT::compileArithMul):
+        (JSC::DFG::SpeculativeJIT::compileArithMod):
+        (JSC::DFG::SpeculativeJIT::compare):
+        (JSC::DFG::SpeculativeJIT::compileStrictEq):
+        (JSC::DFG::SpeculativeJIT::speculateInt32):
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+        (JSC::DFG::SpeculativeJIT::speculateRealNumber):
+        (JSC::DFG::SpeculativeJIT::speculateBoolean):
+        (JSC::DFG::SpeculativeJIT::speculateCell):
+        (JSC::DFG::SpeculativeJIT::speculateObject):
+        (JSC::DFG::SpeculativeJIT::speculateObjectOrOther):
+        (JSC::DFG::SpeculativeJIT::speculateString):
+        (JSC::DFG::SpeculativeJIT::speculateNotCell):
+        (JSC::DFG::SpeculativeJIT::speculateOther):
+        (JSC::DFG::SpeculativeJIT::speculate):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculativeJIT::valueOfNumberConstant):
+        (JSC::DFG::SpeculativeJIT::needsTypeCheck):
+        (JSC::DFG::IntegerOperand::IntegerOperand):
+        (JSC::DFG::IntegerOperand::edge):
+        (IntegerOperand):
+        (JSC::DFG::IntegerOperand::node):
+        (JSC::DFG::IntegerOperand::gpr):
+        (JSC::DFG::IntegerOperand::use):
+        (JSC::DFG::JSValueOperand::JSValueOperand):
+        (JSValueOperand):
+        (JSC::DFG::JSValueOperand::edge):
+        (JSC::DFG::JSValueOperand::node):
+        (JSC::DFG::JSValueOperand::gpr):
+        (JSC::DFG::JSValueOperand::fill):
+        (JSC::DFG::JSValueOperand::use):
+        (JSC::DFG::StorageOperand::StorageOperand):
+        (JSC::DFG::StorageOperand::edge):
+        (StorageOperand):
+        (JSC::DFG::StorageOperand::node):
+        (JSC::DFG::StorageOperand::gpr):
+        (JSC::DFG::StorageOperand::use):
+        (JSC::DFG::SpeculateIntegerOperand::SpeculateIntegerOperand):
+        (SpeculateIntegerOperand):
+        (JSC::DFG::SpeculateIntegerOperand::edge):
+        (JSC::DFG::SpeculateIntegerOperand::node):
+        (JSC::DFG::SpeculateIntegerOperand::gpr):
+        (JSC::DFG::SpeculateIntegerOperand::use):
+        (JSC::DFG::SpeculateStrictInt32Operand::SpeculateStrictInt32Operand):
+        (SpeculateStrictInt32Operand):
+        (JSC::DFG::SpeculateStrictInt32Operand::edge):
+        (JSC::DFG::SpeculateStrictInt32Operand::node):
+        (JSC::DFG::SpeculateStrictInt32Operand::gpr):
+        (JSC::DFG::SpeculateStrictInt32Operand::use):
+        (JSC::DFG::SpeculateDoubleOperand::SpeculateDoubleOperand):
+        (SpeculateDoubleOperand):
+        (JSC::DFG::SpeculateDoubleOperand::edge):
+        (JSC::DFG::SpeculateDoubleOperand::node):
+        (JSC::DFG::SpeculateDoubleOperand::fpr):
+        (JSC::DFG::SpeculateDoubleOperand::use):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (SpeculateCellOperand):
+        (JSC::DFG::SpeculateCellOperand::edge):
+        (JSC::DFG::SpeculateCellOperand::node):
+        (JSC::DFG::SpeculateCellOperand::gpr):
+        (JSC::DFG::SpeculateCellOperand::use):
+        (JSC::DFG::SpeculateBooleanOperand::SpeculateBooleanOperand):
+        (JSC::DFG::SpeculateBooleanOperand::edge):
+        (SpeculateBooleanOperand):
+        (JSC::DFG::SpeculateBooleanOperand::node):
+        (JSC::DFG::SpeculateBooleanOperand::gpr):
+        (JSC::DFG::SpeculateBooleanOperand::use):
+        (DFG):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntStrict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillInteger):
+        (JSC::DFG::SpeculativeJIT::fillJSValue):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntStrict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compileObjectEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleObjectToObjectOrOtherEquality):
+        (JSC::DFG::SpeculativeJIT::compileObjectOrOtherLogicalNot):
+        (JSC::DFG::SpeculativeJIT::compileLogicalNot):
+        (JSC::DFG::SpeculativeJIT::emitObjectOrOtherBranch):
+        (JSC::DFG::SpeculativeJIT::emitBranch):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGStructureCheckHoistingPhase.cpp:
+        (JSC::DFG::StructureCheckHoistingPhase::run):
+        * dfg/DFGUseKind.cpp: Added.
+        (WTF):
+        (WTF::printInternal):
+        * dfg/DFGUseKind.h: Added.
+        (DFG):
+        (JSC::DFG::typeFilterFor):
+        (JSC::DFG::isNumerical):
+        (WTF):
+        * dfg/DFGValidate.cpp:
+        (JSC::DFG::Validate::reportValidationContext):
+
 2013-02-20  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Need a way to use the Objective-C JavaScript API with WebKit

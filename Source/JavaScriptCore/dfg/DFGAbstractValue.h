@@ -234,6 +234,9 @@ struct AbstractValue {
     
     void filter(const StructureSet& other)
     {
+        // FIXME: This could be optimized for the common case of m_type not
+        // having structures, array modes, or a specific value.
+        // https://bugs.webkit.org/show_bug.cgi?id=109663
         m_type &= other.speculationFromStructures();
         m_arrayModes &= other.arrayModesFromStructures();
         m_currentKnownStructure.filter(other);

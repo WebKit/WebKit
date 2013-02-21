@@ -34,7 +34,7 @@ namespace JSC { namespace DFG {
 
 const char* nodeFlagsAsString(NodeFlags flags)
 {
-    if (!flags)
+    if (!(flags ^ NodeDoesNotExit))
         return "<empty>";
 
     static const int size = 128;

@@ -289,11 +289,11 @@ public:
                     
                     Node* getLocal = insertionSet.insertNode(
                         indexInBlock + 1, DontRefChildren, DontRefNode, variable->prediction(),
-                        GetLocal, codeOrigin, OpInfo(variable), node);
+                        GetLocal, codeOrigin, OpInfo(variable), Edge(node));
                     insertionSet.insertNode(
                         indexInBlock + 1, RefChildren, DontRefNode, SpecNone, CheckStructure,
                         codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)),
-                        getLocal);
+                        Edge(getLocal, CellUse));
 
                     if (block->variablesAtTail.operand(variable->local()) == node)
                         block->variablesAtTail.operand(variable->local()) = getLocal;
@@ -317,7 +317,7 @@ public:
                     // to exit.
                     
                     CodeOrigin codeOrigin = node->codeOrigin;
-                    Node* child1 = node->child1().node();
+                    Edge child1 = node->child1();
                     
                     insertionSet.insertNode(
                         indexInBlock, DontRefChildren, DontRefNode, SpecNone, SetLocal, codeOrigin,
@@ -327,7 +327,7 @@ public:
                     // next bytecode instruction rather than reexecuting the current one.
                     insertionSet.insertNode(
                         indexInBlock, RefChildren, DontRefNode, SpecNone, ForwardCheckStructure,
-                        codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)), child1);
+                        codeOrigin, OpInfo(m_graph.addStructureSet(iter->value.m_structure)), Edge(child1.node(), CellUse));
                     changed = true;
                     break;
                 }

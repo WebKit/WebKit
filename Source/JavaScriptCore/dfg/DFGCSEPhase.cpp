@@ -969,7 +969,7 @@ private:
                 
             case GetByVal:
                 // If this is accessing arguments then it's potentially accessing locals.
-                if (node->child1()->shouldSpeculateArguments())
+                if (node->arrayMode().type() == Array::Arguments)
                     result.mayBeAccessed = true;
                 break;
                 
@@ -1002,6 +1002,8 @@ private:
             Edge edge = node->children.child(i);
             if (!edge)
                 continue;
+            if (edge.useKind() != UntypedUse)
+                continue; // Keep the type check.
             if (edge->flags() & NodeRelevantToOSR)
                 continue;
             
@@ -1014,16 +1016,9 @@ private:
         }
     }
     
-    enum PredictionHandlingMode { RequireSamePrediction, AllowPredictionMismatch };
-    bool setReplacement(Node* replacement, PredictionHandlingMode predictionHandlingMode = RequireSamePrediction)
+    bool setReplacement(Node* replacement)
     {
         if (!replacement)
-            return false;
-        
-        // Be safe. Don't try to perform replacements if the predictions don't
-        // agree.
-        if (predictionHandlingMode == RequireSamePrediction
-            && m_currentNode->prediction() != replacement->prediction())
             return false;
         
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -1230,7 +1225,7 @@ private:
         case JSConstant:
             // This is strange, but necessary. Some phases will convert nodes to constants,
             // which may result in duplicated constants. We use CSE to clean this up.
-            setReplacement(constantCSE(node), AllowPredictionMismatch);
+            setReplacement(constantCSE(node));
             break;
             
         case WeakJSConstant:

@@ -31,6 +31,7 @@
 #if ENABLE(DFG_JIT)
 
 #include "DFGCommon.h"
+#include "DFGUseKind.h"
 
 namespace JSC { namespace DFG {
 
@@ -62,12 +63,18 @@ public:
         m_encodedWord = makeWord(node, useKind());
     }
     
+    UseKind useKindUnchecked() const
+    {
+        unsigned masked = m_encodedWord & (((1 << shift()) - 1));
+        ASSERT(masked < LastUseKind);
+        UseKind result = static_cast<UseKind>(masked);
+        ASSERT(node() || result == UntypedUse);
+        return result;
+    }
     UseKind useKind() const
     {
         ASSERT(node());
-        unsigned masked = m_encodedWord & (((1 << shift()) - 1));
-        ASSERT(masked < LastUseKind);
-        return static_cast<UseKind>(masked);
+        return useKindUnchecked();
     }
     void setUseKind(UseKind useKind)
     {
@@ -96,7 +103,7 @@ public:
 private:
     friend class AdjacencyList;
     
-    static uint32_t shift() { return 2; }
+    static uint32_t shift() { return 4; }
     
     static uintptr_t makeWord(Node* node, UseKind useKind)
     {
