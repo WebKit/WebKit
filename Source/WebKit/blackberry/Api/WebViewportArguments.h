@@ -52,14 +52,14 @@ public:
         ValueDeviceHeight = -3,
     };
 
-    float initialScale() const;
-    void setInitialScale(float);
+    float zoom() const;
+    void setZoom(float);
 
-    float minimumScale() const;
-    void setMinimumScale(float);
+    float minZoom() const;
+    void setMinZoom(float);
 
-    float maximumScale() const;
-    void setMaximumScale(float);
+    float maxZoom() const;
+    void setMaxZoom(float);
 
     float width() const;
     void setWidth(float);
@@ -70,8 +70,8 @@ public:
     float devicePixelRatio() const;
     void setDevicePixelRatio(float);
 
-    float userScalable() const;
-    void setUserScalable(float);
+    float userZoom() const;
+    void setUserZoom(float);
 
     bool operator==(const WebViewportArguments &other);
     bool operator!=(const WebViewportArguments &other);

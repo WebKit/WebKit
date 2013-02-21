@@ -1,3 +1,25 @@
+2013-02-21  Xan Lopez  <xlopez@rim.com>
+
+        [BlackBerry] Adapt to name changes in WebCore::ViewPortArguments
+        https://bugs.webkit.org/show_bug.cgi?id=110469
+
+        Reviewed by Rob Buis.
+
+        This changed in r134765.
+
+        * Api/WebViewportArguments.cpp:
+        (BlackBerry::WebKit::WebViewportArguments::zoom):
+        (BlackBerry::WebKit::WebViewportArguments::setZoom):
+        (BlackBerry::WebKit::WebViewportArguments::minZoom):
+        (BlackBerry::WebKit::WebViewportArguments::setMinZoom):
+        (BlackBerry::WebKit::WebViewportArguments::maxZoom):
+        (BlackBerry::WebKit::WebViewportArguments::setMaxZoom):
+        (BlackBerry::WebKit::WebViewportArguments::userZoom):
+        (BlackBerry::WebKit::WebViewportArguments::setUserZoom):
+        * Api/WebViewportArguments.h:
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::didSetSVGZoomAndPan):
+
 2013-02-21  Jakob Petsovits  <jpetsovits@rim.com>
 
         [BlackBerry] Move posting and scrollbar updates to the page client.

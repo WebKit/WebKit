@@ -781,10 +781,10 @@ void ChromeClientBlackBerry::didSetSVGZoomAndPan(Frame* frame, unsigned short zo
         ViewportArguments arguments;
         switch (zoomAndPan) {
         case SVGZoomAndPan::SVG_ZOOMANDPAN_DISABLE:
-            arguments.userScalable = 0;
+            arguments.userZoom = 0;
             break;
         case SVGZoomAndPan::SVG_ZOOMANDPAN_MAGNIFY:
-            arguments.userScalable = 1;
+            arguments.userZoom = 1;
             break;
         default:
             return;
