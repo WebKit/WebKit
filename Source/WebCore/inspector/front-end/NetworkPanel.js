@@ -2183,16 +2183,20 @@ WebInspector.NetworkDataGridNode.prototype = {
         this._initiatorCell.removeStyleClass("network-script-initiated");
         delete this._initiatorCell.request;
         this._initiatorCell.title = "";
+        delete this._displayedInitiatorURL;
+        delete this._displayedInitiatorLineNumber;
 
         var initiator = this._request.initiator;
-        if ((initiator && initiator.type !== "other") || this._request.redirectSource) {
+        var initiatorTypes = WebInspector.NetworkRequest.InitiatorType;
+        if ((initiator && initiator.type !== initiatorTypes.Other) || this._request.redirectSource) {
             this._initiatorCell.removeChildren();
             var redirectSource = this._request.redirectSource;
             if (redirectSource) {
                 this._initiatorCell.title = redirectSource.url;
                 this._initiatorCell.appendChild(WebInspector.linkifyRequestAsNode(redirectSource));
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Redirect"));
-            } else if (initiator.type === "script") {
+                this._displayedInitiatorURL = redirectSource.url;
+            } else if (initiator.type === initiatorTypes.Script) {
                 var topFrame = initiator.stackTrace[0];
                 // This could happen when request loading was triggered by console.
                 if (!topFrame.url) {
@@ -2206,10 +2210,14 @@ WebInspector.NetworkDataGridNode.prototype = {
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Script"));
                 this._initiatorCell.addStyleClass("network-script-initiated");
                 this._initiatorCell.request = this._request;
-            } else { // initiator.type === "parser"
+                this._displayedInitiatorURL = WebInspector.displayNameForURL(topFrame.url);
+                this._displayedInitiatorLineNumber = topFrame.lineNumber;
+            } else { // initiator.type === initiatorTypes.Parser
                 this._initiatorCell.title = initiator.url + ":" + initiator.lineNumber;
                 this._initiatorCell.appendChild(WebInspector.linkifyResourceAsNode(initiator.url, initiator.lineNumber - 1));
                 this._appendSubtitle(this._initiatorCell, WebInspector.UIString("Parser"));
+                this._displayedInitiatorURL = WebInspector.displayNameForURL(initiator.url);
+                this._displayedInitiatorLineNumber = initiator.lineNumber;
             }
         } else {
             this._initiatorCell.addStyleClass("network-dim-cell");
@@ -2386,17 +2394,18 @@ WebInspector.NetworkDataGridNode.SizeComparator = function(a, b)
 
 WebInspector.NetworkDataGridNode.InitiatorComparator = function(a, b)
 {
-    if (!a._request.initiator || a._request.initiator.type === "Other")
-        return -1;
-    if (!b._request.initiator || b._request.initiator.type === "Other")
+    var initiatorTypes = WebInspector.NetworkRequest.InitiatorType;
+    if (!a._request.initiator || a._request.initiator.type === initiatorTypes.Other)
+        return -1;    
+    if (!b._request.initiator || b._request.initiator.type === initiatorTypes.Other)
         return 1;
 
-    if (a._request.initiator.url < b._request.initiator.url)
+    if (a._displayedInitiatorURL < b._displayedInitiatorURL)
         return -1;
-    if (a._request.initiator.url > b._request.initiator.url)
+    if (a._displayedInitiatorURL > b._displayedInitiatorURL)
         return 1;
 
-    return a._request.initiator.lineNumber - b._request.initiator.lineNumber;
+    return a._displayedInitiatorLineNumber - b._displayedInitiatorLineNumber;
 }
 
 WebInspector.NetworkDataGridNode.RequestCookiesCountComparator = function(a, b)
