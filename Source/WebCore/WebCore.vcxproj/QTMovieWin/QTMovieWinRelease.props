@@ -3,7 +3,6 @@
   <ImportGroup Label="PropertySheets">
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\FeatureDefines.props" />
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\common.props" />
-    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\releaseproduction.props" />
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\release.props" />
     <Import Project="QTMovieWinCommon.props" />
   </ImportGroup>

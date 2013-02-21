@@ -16,19 +16,33 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		DebugSuffix|Win32 = DebugSuffix|Win32
+		Production|Win32 = Production|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{A4159B6F-3106-4F75-9EDD-582307BDB96A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{A4159B6F-3106-4F75-9EDD-582307BDB96A}.Debug|Win32.Build.0 = Debug|Win32
+		{A4159B6F-3106-4F75-9EDD-582307BDB96A}.DebugSuffix|Win32.ActiveCfg = DebugSuffix|Win32
+		{A4159B6F-3106-4F75-9EDD-582307BDB96A}.DebugSuffix|Win32.Build.0 = DebugSuffix|Win32
+		{A4159B6F-3106-4F75-9EDD-582307BDB96A}.Production|Win32.ActiveCfg = Production|Win32
+		{A4159B6F-3106-4F75-9EDD-582307BDB96A}.Production|Win32.Build.0 = Production|Win32
 		{A4159B6F-3106-4F75-9EDD-582307BDB96A}.Release|Win32.ActiveCfg = Release|Win32
 		{A4159B6F-3106-4F75-9EDD-582307BDB96A}.Release|Win32.Build.0 = Release|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug|Win32.ActiveCfg = Debug|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Debug|Win32.Build.0 = Debug|Win32
+		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.DebugSuffix|Win32.ActiveCfg = DebugSuffix|Win32
+		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.DebugSuffix|Win32.Build.0 = DebugSuffix|Win32
+		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Production|Win32.ActiveCfg = Production|Win32
+		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Production|Win32.Build.0 = Production|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Release|Win32.ActiveCfg = Release|Win32
 		{1C16337B-ACF3-4D03-AA90-851C5B5EADA6}.Release|Win32.Build.0 = Release|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug|Win32.ActiveCfg = Debug|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Debug|Win32.Build.0 = Debug|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.DebugSuffix|Win32.ActiveCfg = DebugSuffix|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.DebugSuffix|Win32.Build.0 = DebugSuffix|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Production|Win32.ActiveCfg = Production|Win32
+		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Production|Win32.Build.0 = Production|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Release|Win32.ActiveCfg = Release|Win32
 		{E498CA9D-3BD2-4D52-8E37-C8DC76526325}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection

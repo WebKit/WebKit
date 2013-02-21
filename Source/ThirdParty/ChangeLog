@@ -1,3 +1,14 @@
+2013-02-20  Roger Fong  <roger_fong@apple.com>
+
+       Get VS2010 Solution B&I ready.
+        <rdar://problem/1322988>
+
+        Rubberstamped by Timothy Horton.
+        
+        Add Production configuration. 
+
+        * gtest/msvc/gtest-md.vcxproj:
+
 2013-02-14  Tony Chang  <tony@chromium.org>
 
         Unreviewed, set svn:eol-style native for .sln, .vcproj, and .vsprops files.

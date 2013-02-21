@@ -4,5 +4,6 @@
     <None Include="build-generated-files.sh" />
     <None Include="JavaScriptCoreGenerated.make" />
     <None Include="..\DerivedSources.make" />
+    <None Include="copy-files.cmd" />
   </ItemGroup>
 </Project>

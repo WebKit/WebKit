@@ -4,7 +4,6 @@
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\FeatureDefines.props" />
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\common.props" />
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\release.props" />
-    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\releaseproduction.props" />
     <Import Project="WebKitExportGeneratorCommon.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />

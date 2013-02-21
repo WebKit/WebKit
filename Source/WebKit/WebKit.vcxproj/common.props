@@ -2,7 +2,6 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="UserMacros">
     <CONFIGURATIONBUILDDIR>$(WEBKIT_OUTPUTDIR)\$(Configuration)</CONFIGURATIONBUILDDIR>
-    <PRODUCTIONBUILD>$(PRODUCTION)</PRODUCTIONBUILD>
   </PropertyGroup>
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
@@ -24,6 +23,7 @@ set PATH=$(VSInstallDir)\VC\bin;%PATH%
 REM VS2010 has a known bug where the clean command does not recognize environment variables properly unless explicitly set here
 set CONFIGURATIONBUILDDIR=$(ConfigurationBuildDir)
 nmake /nologo -f $(ProjectName).make clean</NMakeCleanCommandLine>
+    <TargetName>$(ProjectName)$(DebugSuffix)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -84,8 +84,7 @@ set TARGETDIR=$(TargetDir)
 set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
-set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)
-set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)
+set DEBUGSUFFIX=$(DebugSuffix)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,
@@ -121,8 +120,7 @@ set TARGETDIR=$(TargetDir)
 set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
-set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)
-set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)
+set DEBUGSUFFIX=$(DebugSuffix)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,
@@ -158,8 +156,7 @@ set TARGETDIR=$(TargetDir)
 set TARGETEXT=$(TargetExt)
 set TARGETFILENAME=$(TargetFileName)
 set TARGETPATH=$(TargetPath)
-set WEBKITCONFIGSUFFIX=$(WebKitConfigSuffix)
-set WEBKITDLLCONFIGSUFFIX=$(WebKitDLLConfigSuffix)
+set DEBUGSUFFIX=$(DebugSuffix)
 
 REM If any of the above variables didn't exist previously and
 REM were set to an empty string, set will set the errorlevel to 1,
@@ -216,10 +213,6 @@ cmd /c
   <ItemGroup>
     <BuildMacro Include="CONFIGURATIONBUILDDIR">
       <Value>$(CONFIGURATIONBUILDDIR)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-    <BuildMacro Include="PRODUCTIONBUILD">
-      <Value>$(PRODUCTIONBUILD)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

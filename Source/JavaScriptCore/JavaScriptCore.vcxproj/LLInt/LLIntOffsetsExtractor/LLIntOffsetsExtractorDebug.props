@@ -6,7 +6,4 @@
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\debug.props" />
     <Import Project="LLIntOffsetsExtractorCommon.props" />
   </ImportGroup>
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
-  </PropertyGroup>
 </Project>

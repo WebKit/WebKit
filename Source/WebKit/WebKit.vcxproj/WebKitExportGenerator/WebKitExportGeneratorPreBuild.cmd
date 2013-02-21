@@ -9,7 +9,7 @@ mkdir "%GeneratorDirectory%\DerivedSources" 2>NUL
 echo Clearing old definition file...
 del /F /Q "%GeneratorDirectory%\WebKitExports.def"
 del /F /Q "%GeneratorDirectory%\DerivedSources\WebKitExportGenerator.cpp"
-del /F /Q "%OUTDIR%\WebKitExportGenerator.exe"
+del /F /Q "%OUTDIR%\WebKitExportGenerator%DEBUGSUFFIX%.exe"
 
 cmd /c
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" grep XX%PROJECTNAME%XX "%CONFIGURATIONBUILDDIR%\buildfailed"

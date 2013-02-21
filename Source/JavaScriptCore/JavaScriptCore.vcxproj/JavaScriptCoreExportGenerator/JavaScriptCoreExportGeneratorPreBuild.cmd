@@ -9,7 +9,7 @@ mkdir "%GeneratorDirectory%\DerivedSources" 2>NUL
 echo Clearing old definition file...
 del /F /Q "%GeneratorDirectory%\JavaScriptCoreExports.def"
 del /F /Q "%GeneratorDirectory%\DerivedSources\JavaScriptCoreExportGenerator.cpp"
-del /F /Q "%OUTDIR%\JavaScriptCoreExportGenerator.exe"
+del /F /Q "%OUTDIR%\JavaScriptCoreExportGenerator%DEBUGSUFFIX%.exe"
 
 cmd /c
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" grep XX%PROJECTNAME%XX "%CONFIGURATIONBUILDDIR%\buildfailed"

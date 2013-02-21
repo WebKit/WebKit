@@ -10,7 +10,7 @@
       <ForcedIncludeFiles>ICUVersion.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>winmm.lib;libicuin.lib;libicuuc.lib;pthreadVC2.lib;WTF.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;libicuin.lib;libicuuc.lib;pthreadVC2.lib;WTF$(DebugSuffix).lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ModuleDefinitionFile>$(ConfigurationBuildDir)\obj\JavaScriptCoreExportGenerator\JavaScriptCoreExports.def</ModuleDefinitionFile>
       <SubSystem>Console</SubSystem>
     </Link>

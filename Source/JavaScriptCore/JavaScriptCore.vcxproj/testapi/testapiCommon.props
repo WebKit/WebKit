@@ -5,7 +5,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>CoreFoundation.lib;JavaScriptCore.lib;WTF.lib;pthreadVC2.lib;libicuin.lib;libicuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>CoreFoundation.lib;JavaScriptCore$(DebugSuffix).lib;WTF$(DebugSuffix).lib;pthreadVC2.lib;libicuin.lib;libicuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
     <ClCompile>

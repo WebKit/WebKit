@@ -9,7 +9,7 @@
       <AdditionalIncludeDirectories>$(ConfigurationBuildDir)\include;$(ConfigurationBuildDir)\include\private;$(ConfigurationBuildDir)\include\private\JavaScriptCore;$(ConfigurationBuildDir)\obj\JavaScriptCore\DerivedSources;..\..\;..\..\os-win32;..\..\assembler;..\..\API;..\..\parser;..\..\heap;..\..\runtime;..\..\bytecode;..\..\interpreter;..\..\debugger;..\..\bytecompiler;..\..\profiler;..\..\jit;$(WebKit_Libraries)\include\pthreads;$(WebKit_Libraries)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>JavaScriptCore.lib;libicuin.lib;libicuuc.lib;winmm.lib;pthreadVC2.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>JavaScriptCore$(DebugSuffix).lib;libicuin.lib;libicuuc.lib;winmm.lib;pthreadVC2.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>

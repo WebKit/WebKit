@@ -1,8 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="DebugSuffix|Win32">
+      <Configuration>DebugSuffix</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Production|Win32">
+      <Configuration>Production</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -19,7 +27,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -29,30 +43,54 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\common.props" />
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\release.props" />
-    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\releaseproduction.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\common.props" />
+    <Import Project="..\..\..\..\WebKit\WebKit.vcxproj\production.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\common.props" />
     <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\debug.props" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\common.props" />
+    <Import Project="$(WebKit_Source)\WebKit\WebKit.vcxproj\debug.props" />
+    <Import Project="..\..\..\..\WebKit\WebKit.vcxproj\debugsuffix.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">LLIntAssembly.h</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">LLIntAssembly.h</NMakeOutput>
     <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" />
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" />
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" />
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'" />
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">$(ConfigurationBuildDir)\obj\$(ProjectName)\</IntDir>
     <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">LLIntAssembly.h</NMakeOutput>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">LLIntAssembly.h</NMakeOutput>
     <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" />
     <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" />
     <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" />
     <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Production|Win32'" />
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>

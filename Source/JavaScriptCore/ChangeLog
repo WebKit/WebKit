@@ -1,3 +1,51 @@
+2013-02-20  Roger Fong  <roger_fong@apple.com>
+
+        Get VS2010 Solution B&I ready.
+        <rdar://problem/1322988>
+
+        Rubberstamped by Timothy Horton.        
+        
+        Add Production configuration. 
+        Add a JavaScriptCore submit solution with a DebugSuffix configuration. 
+        Modify JavaScriptCore.make as necessary.
+        
+        * JavaScriptCore.vcxproj/JavaScriptCore.make: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCore.sln: Removed.
+        * JavaScriptCore.vcxproj/JavaScriptCore.submit.sln: Copied from Source/JavaScriptCore/JavaScriptCore.vcxproj/JavaScriptCore.sln.
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreCommon.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGenerator.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorCommon.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorPostBuild.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorPreBuild.cmd:
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorProduction.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorRelease.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGenerated.vcxproj.filters:
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedProduction.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreGeneratedRelease.props:
+        * JavaScriptCore.vcxproj/JavaScriptCoreProduction.props: Added.
+        * JavaScriptCore.vcxproj/JavaScriptCoreRelease.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntAssembly/LLIntAssembly.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntDesiredOffsets/LLIntDesiredOffsets.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractor.vcxproj:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorCommon.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorDebug.props:
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorProduction.props: Added.
+        * JavaScriptCore.vcxproj/LLInt/LLIntOffsetsExtractor/LLIntOffsetsExtractorRelease.props:
+        * JavaScriptCore.vcxproj/jsc/jsc.vcxproj:
+        * JavaScriptCore.vcxproj/jsc/jscCommon.props:
+        * JavaScriptCore.vcxproj/jsc/jscProduction.props: Added.
+        * JavaScriptCore.vcxproj/jsc/jscRelease.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExp.vcxproj:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpCommon.props:
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpProduction.props: Added.
+        * JavaScriptCore.vcxproj/testRegExp/testRegExpRelease.props:
+        * JavaScriptCore.vcxproj/testapi/testapi.vcxproj:
+        * JavaScriptCore.vcxproj/testapi/testapiCommon.props:
+        * JavaScriptCore.vcxproj/testapi/testapiProduction.props: Added.
+        * JavaScriptCore.vcxproj/testapi/testapiRelease.props:
+
 2013-02-19  Jer Noble  <jer.noble@apple.com>
 
         EME: Enable both ENCRYPTED_MEDIA and ENCRYPTED_MEDIA_V2 until clients transition to the new API.

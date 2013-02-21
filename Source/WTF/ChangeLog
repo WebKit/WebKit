@@ -1,3 +1,26 @@
+2013-02-20  Roger Fong  <roger_fong@apple.com>
+
+        Get VS2010 Solution B&I ready.
+        <rdar://problem/1322988>
+
+        Rubberstamped by Timothy Horton.        
+        
+        Add Production configuration. 
+        Add a WTF submit solution with a DebugSuffix configuration. 
+        Modify WTF.make as necessary.
+        
+        * WTF.vcxproj: Added property svn:eol-style. Modified property svn:ignore.
+        * WTF.vcxproj/WTF.make: Added.
+        * WTF.vcxproj/WTF.submit.sln: Added.
+        * WTF.vcxproj/WTF.vcxproj:
+        * WTF.vcxproj/WTFCommon.props:
+        * WTF.vcxproj/WTFGenerated.vcxproj:
+        * WTF.vcxproj/WTFGeneratedProduction.props: Added.
+        * WTF.vcxproj/WTFGeneratedRelease.props:
+        * WTF.vcxproj/WTFProduction.props: Added.
+        * WTF.vcxproj/WTFRelease.props:
+        * WTF.vcxproj/copy-files.cmd:
+
 2013-02-20  Oliver Hunt  <oliver@apple.com>
 
         Moar hardening

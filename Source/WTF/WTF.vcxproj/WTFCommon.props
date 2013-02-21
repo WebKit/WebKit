@@ -3,7 +3,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <OutDir>$(ConfigurationBuildDir)\lib\</OutDir>
-    <TargetExt>.lib</TargetExt>
   </PropertyGroup>
   <ItemGroup />
   <ItemDefinitionGroup>

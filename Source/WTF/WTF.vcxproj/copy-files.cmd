@@ -1,7 +1,6 @@
 @echo off
 
 set PrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\include\private
-set PGOPrivateHeadersDirectory=%CONFIGURATIONBUILDDIR%\..\Release_PGO\include\private
 set WTF_Directory=%Webkit_Source%\WTF
 
 if "%1" EQU "clean" goto :clean
@@ -28,7 +27,6 @@ for %%f in (
     wtf\text\WTFString.cpp
 ) do (
     echo F | xcopy /y /d %WTF_Directory%\%%f "%PrivateHeadersDirectory%\%%f" >NUL
-    echo F | xcopy /y /d %WTF_Directory%\%%f "%PGOPrivateHeadersDirectory%\%%f" >NUL
 )
 
 goto :EOF
@@ -37,4 +35,3 @@ goto :EOF
 
 echo Deleting copied files...
 if exist "%PrivateHeadersDirectory%" rmdir /s /q "%PrivateHeadersDirectory%" >NUL
-if exist "%PGOPrivateHeadersDirectory%" rmdir /s /q "%PGOPrivateHeadersDirectory%" >NUL

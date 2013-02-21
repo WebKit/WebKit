@@ -10,7 +10,7 @@
       <DisableSpecificWarnings>4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>QTMLClient.lib;CVClient.lib;JavaScriptCore.lib;WebKitSystemInterface.lib;winmm.lib;pthreadVC2.lib;Msimg32.lib;user32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>QTMLClient.lib;CVClient.lib;JavaScriptCore$(DebugSuffix).lib;WebKitSystemInterface.lib;winmm.lib;pthreadVC2.lib;Msimg32.lib;user32.lib;advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).dll</OutputFile>
       <AdditionalLibraryDirectories>$(WebKitLibrariesDir)\QTInternalSDK\Libraries;$(WebKitLibrariesDir)\QuickTime SDK\Libraries;$(ProgramFiles)\QuickTime SDK\Libraries;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

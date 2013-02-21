@@ -1,3 +1,39 @@
+2013-02-20  Roger Fong  <roger_fong@apple.com>
+
+        Get VS2010 Solution B&I ready.
+        <rdar://problem/1322988>
+
+        Rubberstamped by Timothy Horton.        
+        
+        Add Production configuration. 
+        Add a WebKit submit solution with a DebugSuffix configuration. 
+        Modify WebKit.make as necessary.
+        
+        * WebKit.vcxproj/Interfaces/Interfaces.vcxproj:
+        * WebKit.vcxproj/Interfaces/InterfacesProduction.props: Added.
+        * WebKit.vcxproj/Interfaces/InterfacesRelease.props:
+        * WebKit.vcxproj/WebKit.make: Added.
+        * WebKit.vcxproj/WebKit.sln:
+        * WebKit.vcxproj/WebKit.submit.sln: Added.
+        * WebKit.vcxproj/WebKit/WebKit.vcxproj:
+        * WebKit.vcxproj/WebKit/WebKitCommon.props:
+        * WebKit.vcxproj/WebKit/WebKitProduction.props: Added.
+        * WebKit.vcxproj/WebKit/WebKitRelease.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGenerator.vcxproj:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPostBuild.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorPreBuild.cmd:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorProduction.props: Added.
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorRelease.props:
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExports.def.in:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUID.vcxproj:
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDProduction.props: Added.
+        * WebKit.vcxproj/WebKitGUID/WebKitGUIDRelease.props:
+        * WebKit.vcxproj/common.props:
+        * WebKit.vcxproj/debugsuffix.props: Added.
+        * WebKit.vcxproj/production.props: Added.
+        * WebKit.vcxproj/releaseproduction.props: Removed.
+
 2013-02-19  Tony Chang  <tony@chromium.org>
 
         Unreviewed, include exports for VS2010 as well.
