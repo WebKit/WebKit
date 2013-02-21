@@ -2629,6 +2629,11 @@ inspector/editor/text-editor-word-jumps.html
 inspector/editor/text-editor-home-button.html
 inspector/editor/text-editor-smart-braces.html
 
+# [Qt] REGRESSION(143400): It made all inspector tests crash on Qt 64 bit release.
+webkit.org/b/110440 http/tests/inspector-enabled
+webkit.org/b/110440 http/tests/inspector
+webkit.org/b/110440 inspector
+
 # [Qt] REGRESSION(r141634) test failing
 webkit.org/b/108813 compositing/visibility/visibility-image-layers-dynamic.html [ Skip ]
 
