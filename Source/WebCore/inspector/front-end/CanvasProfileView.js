@@ -192,7 +192,7 @@ WebInspector.CanvasProfileView.prototype = {
             var sibling = forward ? nextNode.nextSibling : nextNode.previousSibling;
             if (sibling) {
                 nextNode = sibling;
-                if (nextNode.hasChildren)
+                if (nextNode.hasChildren || nextNode.call.isDrawingCall)
                     break;
             } else {
                 nextNode = nextNode.parent;
@@ -200,7 +200,10 @@ WebInspector.CanvasProfileView.prototype = {
                     break;
             }
         }
-        (nextNode || selectedNode).revealAndSelect();
+        if (!nextNode && forward)
+            this._onReplayLastStepClick();
+        else
+            (nextNode || selectedNode).revealAndSelect();
     },
 
     _onReplayFirstStepClick: function()
