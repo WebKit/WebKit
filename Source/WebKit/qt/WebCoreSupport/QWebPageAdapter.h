@@ -260,19 +260,6 @@ public:
 
     bool findText(const QString& subString, FindFlag options);
 
-    class TouchAdjuster {
-    public:
-        TouchAdjuster(unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
-
-        WebCore::IntPoint findCandidatePointForTouch(const WebCore::IntPoint&, WebCore::Document*) const;
-
-    private:
-        unsigned m_topPadding;
-        unsigned m_rightPadding;
-        unsigned m_bottomPadding;
-        unsigned m_leftPadding;
-    };
-
     void adjustPointForClicking(QMouseEvent*);
 
     void mouseMoveEvent(QMouseEvent*);
