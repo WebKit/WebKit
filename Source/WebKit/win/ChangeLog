@@ -1,3 +1,11 @@
+2013-02-20  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Remove references to SAFARI_THEME from Windows Solution.
+        <rdar://problem/13258710>
+
+        * WebKitClassFactory.cpp:
+        * WebView.cpp:
+
 2013-02-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r143338.

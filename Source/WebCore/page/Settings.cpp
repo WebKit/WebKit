@@ -88,10 +88,6 @@ double Settings::gDefaultMinDOMTimerInterval = 0.010; // 10 milliseconds
 double Settings::gDefaultDOMTimerAlignmentInterval = 0;
 double Settings::gHiddenPageDOMTimerAlignmentInterval = 1.0;
 
-#if USE(SAFARI_THEME)
-bool Settings::gShouldPaintNativeControls = true;
-#endif
-
 #if USE(AVFOUNDATION)
 bool Settings::gAVFoundationEnabled = false;
 #endif
@@ -556,13 +552,6 @@ FontRenderingMode Settings::fontRenderingMode() const
 {
     return static_cast<FontRenderingMode>(m_fontRenderingMode);
 }
-
-#if USE(SAFARI_THEME)
-void Settings::setShouldPaintNativeControls(bool shouldPaintNativeControls)
-{
-    gShouldPaintNativeControls = shouldPaintNativeControls;
-}
-#endif
 
 void Settings::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
 {

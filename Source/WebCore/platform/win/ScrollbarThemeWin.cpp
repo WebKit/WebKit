@@ -86,13 +86,11 @@ static void checkAndInitScrollbarTheme()
         scrollbarTheme = OpenThemeData(0, L"Scrollbar");
 }
 
-#if !USE(SAFARI_THEME)
 ScrollbarTheme* ScrollbarTheme::nativeTheme()
 {
     static ScrollbarThemeWin winTheme;
     return &winTheme;
 }
-#endif
 
 ScrollbarThemeWin::ScrollbarThemeWin()
 {

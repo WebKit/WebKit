@@ -263,12 +263,6 @@ namespace WebCore {
         bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
 #endif
 
-#if USE(SAFARI_THEME)
-        // Windows debugging pref (global) for switching between the Aqua look and a native windows look.
-        static void setShouldPaintNativeControls(bool);
-        static bool shouldPaintNativeControls() { return gShouldPaintNativeControls; }
-#endif
-
         static void setMockScrollbarsEnabled(bool flag);
         static bool mockScrollbarsEnabled();
 
@@ -377,9 +371,6 @@ namespace WebCore {
         static bool gMockScrollbarsEnabled;
         static bool gUsesOverlayScrollbars;
 
-#if USE(SAFARI_THEME)
-        static bool gShouldPaintNativeControls;
-#endif
 #if PLATFORM(WIN) || (OS(WINDOWS) && PLATFORM(WX))
         static bool gShouldUseHighResolutionTimers;
 #endif
