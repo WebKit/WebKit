@@ -304,11 +304,7 @@ button.status-bar-item.scripts-debugger-show-hide-button.toggled-hidden:active {
     -webkit-mask-position: -16px -16px;
 }
 
-#scripts-sidebar-stack-pane {
+div.sidebar-pane-stack#scripts-debug-sidebar-contents, #scripts-sidebar-stack-pane {
+    top: 23px;
     overflow: auto;
-    top: 23px;
-}
-
-div.sidebar-pane-stack#scripts-debug-sidebar-contents {
-    top: 23px;
 }
