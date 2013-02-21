@@ -6259,14 +6259,14 @@ void WebPagePrivate::willComposite()
 {
     if (!m_page->settings()->developerExtrasEnabled())
         return;
-    InspectorInstrumentation::willComposite(m_page);
+    m_page->inspectorController()->willComposite();
 }
 
 void WebPagePrivate::didComposite()
 {
     if (!m_page->settings()->developerExtrasEnabled())
         return;
-    InspectorInstrumentation::didComposite(m_page);
+    m_page->inspectorController()->didComposite();
 }
 
 void WebPage::updateNotificationPermission(const BlackBerry::Platform::String& requestId, bool allowed)

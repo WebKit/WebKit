@@ -1,3 +1,16 @@
+2013-02-21  Alberto Garcia  <albgarcia@rim.com>
+
+        [BlackBerry] willComposite() and didComposite() are now in InspectorController
+        https://bugs.webkit.org/show_bug.cgi?id=110343
+
+        Reviewed by Carlos Garcia Campos.
+
+        This was changed in r142879.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::willComposite):
+        (BlackBerry::WebKit::WebPagePrivate::didComposite):
+
 2013-02-20  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Check offset for initialized value
