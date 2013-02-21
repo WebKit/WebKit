@@ -738,7 +738,7 @@ InspectorTest.takeAndOpenSnapshot = function(generator, callback)
     InspectorTest.override(HeapProfilerAgent, "getHeapSnapshot", pushGeneratedSnapshot);
     InspectorTest._takeAndOpenSnapshotCallback = callback;
     WebInspector.panels.profiles.addProfileHeader(profile);
-    WebInspector.panels.profiles.showProfile(profile);
+    WebInspector.panels.profiles._showProfile(profile);
 };
 
 InspectorTest.viewColumns = function()

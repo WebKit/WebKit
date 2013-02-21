@@ -34,7 +34,7 @@ function test()
             timer.finish(backendTimerCookie);
             transferTimerCookie = timer.start("transfer-snapshot");
             var profiles = WebInspector.panels.profiles.getProfiles("HEAP");
-            WebInspector.panels.profiles.showProfile(profiles[profiles.length - 1]);
+            WebInspector.panels.profiles._showProfile(profiles[profiles.length - 1]);
             InspectorTest.addSniffer(WebInspector.panels.profiles, "_finishHeapSnapshot", step1);
         }
 

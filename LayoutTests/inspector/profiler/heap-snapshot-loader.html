@@ -45,7 +45,7 @@ function test()
         InspectorTest.addSniffer(profileHeader, "_snapshotReceived", snapshotLoaded);
 
         InspectorTest.override(HeapProfilerAgent, "getHeapSnapshot", getHeapSnapshotMock);
-        panel.showProfile(profileHeader);
+        panel._showProfile(profileHeader);
     }
 
     InspectorTest.runTestSuite([

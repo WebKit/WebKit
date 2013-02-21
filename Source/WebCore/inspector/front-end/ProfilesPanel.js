@@ -602,7 +602,7 @@ WebInspector.ProfilesPanel.prototype = {
         sidebarParent.appendChild(profileTreeElement);
         if (!profile.isTemporary) {
             if (!this.visibleView)
-                this.showProfile(profile);
+                this._showProfile(profile);
             this.dispatchEventToListeners("profile added", {
                 type: typeId
             });
@@ -650,7 +650,7 @@ WebInspector.ProfilesPanel.prototype = {
     /**
      * @param {WebInspector.ProfileHeader} profile
      */
-    showProfile: function(profile)
+    _showProfile: function(profile)
     {
         if (!profile || profile.isTemporary)
             return;
@@ -704,7 +704,7 @@ WebInspector.ProfilesPanel.prototype = {
             var profile = heapProfiles[i];
             // TODO: allow to choose snapshot if there are several options.
             if (profile.maxJSObjectId >= snapshotObjectId) {
-                this.showProfile(profile);
+                this._showProfile(profile);
                 profile.view().changeView(viewName, function() {
                     profile.view().dataGrid.highlightObjectByHeapSnapshotId(snapshotObjectId);
                 });
@@ -773,7 +773,7 @@ WebInspector.ProfilesPanel.prototype = {
      */
     showView: function(view)
     {
-        this.showProfile(view.profile);
+        this._showProfile(view.profile);
     },
 
     /**
@@ -785,14 +785,12 @@ WebInspector.ProfilesPanel.prototype = {
     },
 
     /**
-     * @param {string} url
+     * @param {string} typeId
+     * @param {string} uid
      */
-    showProfileForURL: function(url)
+    showProfile: function(typeId, uid)
     {
-        var match = url.match(WebInspector.ProfilesPanelDescriptor.ProfileURLRegExp);
-        if (!match)
-            return;
-        this.showProfile(this._profilesIdMap[this._makeKey(Number(match[3]), match[1])]);
+        this._showProfile(this._profilesIdMap[this._makeKey(Number(uid), typeId)]);
     },
 
     closeVisibleView: function()
@@ -800,31 +798,6 @@ WebInspector.ProfilesPanel.prototype = {
         if (this.visibleView)
             this.visibleView.detach();
         delete this.visibleView;
-    },
-
-    /**
-     * @param {string} title
-     * @param {string} typeId
-     */
-    displayTitleForProfileLink: function(title, typeId)
-    {
-        title = unescape(title);
-        if (title.startsWith(UserInitiatedProfileName)) {
-            title = WebInspector.UIString("Profile %d", title.substring(UserInitiatedProfileName.length + 1));
-        } else {
-            var titleKey = this._makeTitleKey(title, typeId);
-            if (!(titleKey in this._profileGroupsForLinks))
-                this._profileGroupsForLinks[titleKey] = 0;
-
-            var groupNumber = ++this._profileGroupsForLinks[titleKey];
-
-            if (groupNumber > 2)
-                // The title is used in the console message announcing that a profile has started so it gets
-                // incremented twice as often as it's displayed
-                title += " " + WebInspector.UIString("Run %d", (groupNumber + 1) / 2);
-        }
-
-        return title;
     },
 
     /**
@@ -1407,7 +1380,7 @@ WebInspector.ProfileSidebarTreeElement.prototype = {
     onselect: function()
     {
         if (!this._suppressOnSelect)
-            this.treeOutline.panel.showProfile(this.profile);
+            this.treeOutline.panel._showProfile(this.profile);
     },
 
     ondelete: function()
@@ -1483,7 +1456,7 @@ WebInspector.ProfileGroupSidebarTreeElement.prototype = {
     onselect: function()
     {
         if (this.children.length > 0)
-            WebInspector.ProfilesPanel._instance.showProfile(this.children[this.children.length - 1].profile);
+            WebInspector.ProfilesPanel._instance._showProfile(this.children[this.children.length - 1].profile);
     },
 
     __proto__: WebInspector.SidebarTreeElement.prototype

@@ -164,17 +164,15 @@ void InspectorProfilerAgent::addProfileFinishedMessageToConsole(PassRefPtr<Scrip
     if (!m_frontend)
         return;
     RefPtr<ScriptProfile> profile = prpProfile;
-    String title = profile->title();
-    String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), '#', String::number(profile->uid()), "\" finished.");
-    m_consoleAgent->addMessageToConsole(ConsoleAPIMessageSource, LogMessageType, DebugMessageLevel, message, sourceURL, lineNumber);
+    String message = makeString(profile->title(), '#', String::number(profile->uid()));
+    m_consoleAgent->addMessageToConsole(ConsoleAPIMessageSource, ProfileEndMessageType, DebugMessageLevel, message, sourceURL, lineNumber);
 }
 
 void InspectorProfilerAgent::addStartProfilingMessageToConsole(const String& title, unsigned lineNumber, const String& sourceURL)
 {
     if (!m_frontend)
         return;
-    String message = makeString("Profile \"webkit-profile://", CPUProfileType, '/', encodeWithURLEscapeSequences(title), "#0\" started.");
-    m_consoleAgent->addMessageToConsole(ConsoleAPIMessageSource, LogMessageType, DebugMessageLevel, message, sourceURL, lineNumber);
+    m_consoleAgent->addMessageToConsole(ConsoleAPIMessageSource, ProfileMessageType, DebugMessageLevel, title, sourceURL, lineNumber);
 }
 
 void InspectorProfilerAgent::collectGarbage(WebCore::ErrorString*)

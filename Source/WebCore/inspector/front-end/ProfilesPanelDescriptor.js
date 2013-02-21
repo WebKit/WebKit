@@ -64,3 +64,14 @@ WebInspector.ProfilesPanelDescriptor.userInitiatedProfileIndex = function(title)
     var suffix = title.substring(WebInspector.ProfilesPanelDescriptor.UserInitiatedProfileName.length + 1);
     return parseInt(suffix, 10);
 }
+
+/**
+ * @param {string} title
+ * @return {string}
+ */
+WebInspector.ProfilesPanelDescriptor.resolveProfileTitle = function(title)
+{
+    if (!WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile(title))
+        return title;
+    return WebInspector.UIString("Profile %d", WebInspector.ProfilesPanelDescriptor.userInitiatedProfileIndex(title));
+}

@@ -237,7 +237,9 @@ WebInspector.ConsoleMessage.MessageType = {
     StartGroupCollapsed: "startGroupCollapsed",
     EndGroup: "endGroup",
     Assert: "assert",
-    Result: "result"
+    Result: "result",
+    Profile: "profile",
+    ProfileEnd: "profileEnd"
 }
 
 WebInspector.ConsoleMessage.MessageLevel = {

@@ -55,7 +55,7 @@ function test()
     function didStartCapturingFrame(profilesPanel, frameId, error, traceLogId)
     {
         profileHeader = profilesPanel.getProfiles(WebInspector.CanvasProfileType.TypeId)[0];
-        profilesPanel.showProfile(profileHeader);
+        profilesPanel._showProfile(profileHeader);
         InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveFirstFrame);
         InspectorTest.evaluateInConsole("doSomeCanvasCalls(2)");
     }

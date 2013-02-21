@@ -111,6 +111,19 @@ WebInspector.ConsoleMessageImpl.prototype = {
                     var args = ["%O", obj];
                     this._messageElement = this._format(args);
                     break;
+                case WebInspector.ConsoleMessage.MessageType.Profile:
+                    var title = WebInspector.ProfilesPanelDescriptor.resolveProfileTitle(this._messageText);
+                    this._messageElement = document.createTextNode(WebInspector.UIString("Profile '%s' started.", title));
+                    break;
+                case WebInspector.ConsoleMessage.MessageType.ProfileEnd:
+                    var hashIndex = this._messageText.lastIndexOf("#");
+                    var title = WebInspector.ProfilesPanelDescriptor.resolveProfileTitle(this._messageText.substring(0, hashIndex));
+                    var uid = this._messageText.substring(hashIndex + 1);
+                    var format = WebInspector.UIString("Profile '%s' finished.", "%_");
+                    var link = WebInspector.linkifyURLAsNode("webkit-profile://CPU/" + uid, title);
+                    this._messageElement = document.createElement("span");
+                    this._formatWithSubstitutionString(format, [link], this._messageElement);
+                    break;
                 default:
                     var args = this._parameters || [this._messageText];
                     this._messageElement = this._format(args);
@@ -247,7 +260,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         // Multiple parameters with the first being a format string. Save unused substitutions.
         if (shouldFormatMessage) {
             // Multiple parameters with the first being a format string. Save unused substitutions.
-            var result = this._formatWithSubstitutionString(parameters, formattedResult);
+            var result = this._formatWithSubstitutionString(parameters[0].description, parameters.slice(1), formattedResult);
             parameters = result.unusedSubstitutions;
             if (parameters.length)
                 formattedResult.appendChild(document.createTextNode(" "));
@@ -565,7 +578,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         return this._formatParameter(output, output.subtype && output.subtype === "array", false);
     },
 
-    _formatWithSubstitutionString: function(parameters, formattedResult)
+    _formatWithSubstitutionString: function(format, parameters, formattedResult)
     {
         var formatters = {};
 
@@ -591,6 +604,11 @@ WebInspector.ConsoleMessageImpl.prototype = {
             if (typeof obj.value !== "number")
                 return "NaN";
             return Math.floor(obj.value);
+        }
+
+        function bypassFormatter(obj)
+        {
+            return (obj instanceof Node) ? obj : "";
         }
 
         var currentStyle = null;
@@ -630,6 +648,8 @@ WebInspector.ConsoleMessageImpl.prototype = {
         // Support %O to force object formatting, instead of the type-based %o formatting.
         formatters.O = parameterFormatter.bind(this, true);
 
+        formatters._ = bypassFormatter;
+
         function append(a, b)
         {
             if (b instanceof Node)
@@ -649,7 +669,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
         }
 
         // String.format does treat formattedResult like a Builder, result is an object.
-        return String.format(parameters[0].description, parameters.slice(1), formatters, formattedResult, append);
+        return String.format(format, parameters, formatters, formattedResult, append);
     },
 
     clearHighlight: function()
@@ -819,6 +839,10 @@ WebInspector.ConsoleMessageImpl.prototype = {
                 break;
             case WebInspector.ConsoleMessage.MessageType.Result:
                 typeString = "Result";
+                break;
+            case WebInspector.ConsoleMessage.MessageType.Profile:
+            case WebInspector.ConsoleMessage.MessageType.ProfileEnd:
+                typeString = "Profiling";
                 break;
         }
 

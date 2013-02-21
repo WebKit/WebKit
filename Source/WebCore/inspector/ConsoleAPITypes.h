@@ -38,7 +38,9 @@ enum MessageType {
     EndGroupMessageType,
     ClearMessageType,
     AssertMessageType,
-    TimingMessageType
+    TimingMessageType,
+    ProfileMessageType,
+    ProfileEndMessageType
 };
 
 } // namespace WebCore
