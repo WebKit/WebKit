@@ -1,5 +1,25 @@
 2013-02-21  Carlos Garcia Campos  <cargarcia@rim.com>
 
+        [BlackBerry] Rename Localizer to Locale
+        https://bugs.webkit.org/show_bug.cgi?id=110449
+
+        Reviewed by Rob Buis.
+
+        * WebCoreSupport/ColorPickerClient.cpp:
+        (WebCore::ColorPickerClient::locale):
+        * WebCoreSupport/ColorPickerClient.h:
+        (ColorPickerClient):
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::locale):
+        * WebCoreSupport/DatePickerClient.h:
+        (DatePickerClient):
+        * WebCoreSupport/SelectPopupClient.cpp:
+        (WebCore::SelectPopupClient::locale):
+        * WebCoreSupport/SelectPopupClient.h:
+        (SelectPopupClient):
+
+2013-02-21  Carlos Garcia Campos  <cargarcia@rim.com>
+
         [BlackBerry] Invalid use of COMPILE_ASSERT macro in WebKitTextCodec.cpp
         https://bugs.webkit.org/show_bug.cgi?id=110437
 

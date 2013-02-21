@@ -84,9 +84,9 @@ String ColorPickerClient::htmlSource() const
     return m_source;
 }
 
-Localizer& ColorPickerClient::localizer()
+Locale& ColorPickerClient::locale()
 {
-    return m_element->document()->getCachedLocalizer();
+    return m_element->document()->getCachedLocale();
 }
 
 void ColorPickerClient::setValueAndClosePopup(int, const String& value)

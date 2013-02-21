@@ -46,7 +46,7 @@ public:
     void writeDocument(DocumentWriter&);
     virtual IntSize contentSize();
     virtual String htmlSource();
-    virtual Localizer& localizer();
+    virtual Locale& locale();
     void setValueAndClosePopup(int, const String&);
     void setValue(const String&);
     void didClosePopup();
