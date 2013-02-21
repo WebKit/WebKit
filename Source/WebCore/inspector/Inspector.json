@@ -3471,6 +3471,7 @@
                     { "name": "arguments", "type": "array", "items": { "$ref": "CallArgument" }, "optional": true },
                     { "name": "result", "$ref": "CallArgument", "optional": true },
                     { "name": "isDrawingCall", "type": "boolean", "optional": true },
+                    { "name": "isFrameEndCall", "type": "boolean", "optional": true },
                     { "name": "property", "type": "string", "optional": true },
                     { "name": "value", "$ref": "CallArgument", "optional": true },
                     { "name": "sourceURL", "type": "string", "optional": true },
