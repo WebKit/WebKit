@@ -1,3 +1,9 @@
+2013-02-21  Martin Robinson  <mrobinson@igalia.com>
+
+        A couple more 'make dist' fixes for WebKitGTK+.
+
+        * GNUmakefile.list.am: Add a missing file to the source list.
+
 2013-02-20  Roger Fong  <roger_fong@apple.com>
 
         Get VS2010 Solution B&I ready.
