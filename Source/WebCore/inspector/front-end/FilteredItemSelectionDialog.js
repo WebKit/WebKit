@@ -585,7 +585,7 @@ WebInspector.OpenResourceDialog = function(panel)
 
     function filterOutEmptyURLs(uiSourceCode)
     {
-        return !!uiSourceCode.parsedURL.lastPathComponent;
+        return !!uiSourceCode.name();
     }
     this._uiSourceCodes = this._uiSourceCodes.filter(filterOutEmptyURLs);
 }
@@ -597,7 +597,7 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     itemTitleAt: function(itemIndex)
     {
-        return this._uiSourceCodes[itemIndex].parsedURL.lastPathComponent;
+        return this._uiSourceCodes[itemIndex].name().trimEnd(100);
     },
 
     /*
@@ -615,7 +615,12 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     itemSubtitleAt: function(itemIndex)
     {
-        return this._uiSourceCodes[itemIndex].parsedURL.folderPathComponents;
+        var uiSourceCode = this._uiSourceCodes[itemIndex]
+        var projectName = uiSourceCode.project().displayName();
+        var path = uiSourceCode.path().slice();
+        path.pop();
+        path.unshift(projectName);
+        return path.join("/");
     },
 
     /**
@@ -624,7 +629,7 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     itemKeyAt: function(itemIndex)
     {
-        return this._uiSourceCodes[itemIndex].parsedURL.lastPathComponent;
+        return this._uiSourceCodes[itemIndex].name();
     },
 
     /**

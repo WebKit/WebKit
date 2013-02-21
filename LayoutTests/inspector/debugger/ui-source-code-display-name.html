@@ -5,9 +5,29 @@
 function test()
 {
     WebInspector.showPanel("scripts");
+
+    function createContentProvider(url)
+    {
+        var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "", "text/javascript");
+        contentProvider.requestContent = function(callback)
+        {
+            InspectorTest.addResult("Source requested for " + url);
+            callback("");
+        };
+        return contentProvider;
+    }
+
+    var workspace = new WebInspector.Workspace();
+    workspace.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Network);
+
+    function addNetworkFile(url)
+    {
+        return workspace.networkWorkspaceProvider.addFileForURL(url, createContentProvider(url), false);
+    }
+
     function dumpUISourceCodeDisplayName(url)
     {
-        var uiSourceCode = new WebInspector.UISourceCode(null, url, url, url, null);
+        var uiSourceCode = addNetworkFile(url);
         InspectorTest.addResult("UISourceCode display name for url \"" + url + "\" is \"" + WebInspector.TabbedEditorContainer.prototype._titleForFile(uiSourceCode) + "\".");
     }
 

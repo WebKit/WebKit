@@ -101,6 +101,14 @@ WebInspector.UISourceCode.prototype = {
     /**
      * @return {string}
      */
+    name: function()
+    {
+        return this._path[this._path.length - 1];
+    },
+
+    /**
+     * @return {string}
+     */
     uri: function()
     {
         if (!this._project.id())

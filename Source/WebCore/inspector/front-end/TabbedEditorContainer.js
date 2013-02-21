@@ -170,18 +170,8 @@ WebInspector.TabbedEditorContainer.prototype = {
         const maxDisplayNameLength = 30;
         const minDisplayQueryParamLength = 5;
 
-        var title;
-        var parsedURL = uiSourceCode.parsedURL;
-        if (!parsedURL.isValid)
-            title = parsedURL.url ? parsedURL.url.trimMiddle(maxDisplayNameLength) : WebInspector.UIString("(program)");
-        else {
-            var maxDisplayQueryParamLength = Math.max(minDisplayQueryParamLength, maxDisplayNameLength - parsedURL.lastPathComponent.length);
-            var displayQueryParams = parsedURL.queryParams ? "?" + parsedURL.queryParams.trimEnd(maxDisplayQueryParamLength - 1) : "";
-            var displayLastPathComponent = parsedURL.lastPathComponent.trimMiddle(maxDisplayNameLength - displayQueryParams.length);
-            var displayName = displayLastPathComponent + displayQueryParams;
-            title = displayName || WebInspector.UIString("(program)");
-        }
-        
+        var title = uiSourceCode.name();
+        title = title ? title.trimMiddle(maxDisplayNameLength) : WebInspector.UIString("(program)");
         if (uiSourceCode.isDirty())
             title += "*";
         return title;
