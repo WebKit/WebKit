@@ -778,7 +778,7 @@ TestSuite.prototype._scriptsAreParsed = function(expected)
     var missing = expected.slice(0);
     for (var i = 0; i < uiSourceCodes.length; ++i) {
         for (var j = 0; j < missing.length; ++j) {
-            if (uiSourceCodes[i].parsedURL.lastPathComponent.search(missing[j]) !== -1) {
+            if (uiSourceCodes[i].name().search(missing[j]) !== -1) {
                 missing.splice(j, 1);
                 break;
             }

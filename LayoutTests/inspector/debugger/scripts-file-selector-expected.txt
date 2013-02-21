@@ -2,18 +2,18 @@ Tests scripts panel file selectors.
 
 Dumping ScriptsNavigator 'Scripts' tab:
   example.com
-  localhost
+  localhost:8080
     LayoutTests/inspector/debugger/foo/bar
     LayoutTests/inspector/debugger/foo/baz
   ?a=b
-  very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url
+  very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo…
 Dumping ScriptsNavigator 'Content scripts' tab:
-  localhost
+  localhost:8080
     LayoutTests/inspector/debugger/foo/bar
 Dumping ScriptsNavigator 'Scripts' tab:
   example.com
     ?a=b
-  localhost
+  localhost:8080
     LayoutTests/inspector/debugger/foo/bar
       script.js
       script.js?a=1
@@ -21,9 +21,9 @@ Dumping ScriptsNavigator 'Scripts' tab:
     LayoutTests/inspector/debugger/foo/baz
       script.js
   ?a=b
-  very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url
+  very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo…
 Dumping ScriptsNavigator 'Content scripts' tab:
-  localhost
+  localhost:8080
     LayoutTests/inspector/debugger/foo/bar
       contentScript.js?a=1
       contentScript.js?a=2

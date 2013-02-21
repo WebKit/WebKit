@@ -96,7 +96,7 @@ function test()
 
         function testNonRelativeURL(next)
         {
-            InspectorTest.showScriptSource("nonRelativeURL.js", didShowScriptSource);
+            InspectorTest.showScriptSource("/js/nonRelativeURL.js", didShowScriptSource);
             InspectorTest.evaluateInPage("setTimeout(doEvalWithNonRelativeURL, 0)");
 
             function didShowScriptSource(sourceFrame)

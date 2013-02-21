@@ -145,13 +145,7 @@ WebInspector.NavigatorView.prototype = {
         if (!scriptTreeElement)
             return;
 
-        var titleText;
-        if (uiSourceCode.parsedURL.isValid) {
-            titleText = uiSourceCode.parsedURL.lastPathComponent;
-            if (uiSourceCode.parsedURL.queryParams)
-                titleText += "?" + uiSourceCode.parsedURL.queryParams;
-        } else if (uiSourceCode.parsedURL)
-            titleText = uiSourceCode.parsedURL.url;
+        var titleText = uiSourceCode.name().trimEnd(100);
         if (!titleText)
             titleText = WebInspector.UIString("(program)");
         if (!ignoreIsDirty && uiSourceCode.isDirty())
@@ -326,7 +320,9 @@ WebInspector.NavigatorView.prototype = {
      */
     getOrCreateFolderTreeElement: function(uiSourceCode)
     {
-        return this._getOrCreateFolderTreeElement(uiSourceCode.parsedURL.host, uiSourceCode.parsedURL.folderPathComponents);
+        var folders = uiSourceCode.path().slice();
+        folders.pop();
+        return this._getOrCreateFolderTreeElement(uiSourceCode.project().displayName(), folders.join("/"));
     },
 
     /**
@@ -551,7 +547,7 @@ WebInspector.NavigatorFolderTreeElement = function(navigatorView, folderIdentifi
     this._folderName = folderName;
     
     var iconClass = this.isDomain ? "navigator-domain-tree-item" : "navigator-folder-tree-item";
-    var title = this.isDomain ? domain : folderName.substring(1);
+    var title = this.isDomain ? domain : folderName;
 
     WebInspector.BaseNavigatorTreeElement.call(this, title, [iconClass], true);
     this.tooltip = folderName;

@@ -81,12 +81,12 @@ WebInspector.RevisionHistoryView.prototype = {
      */
     _createUISourceCodeItem: function(uiSourceCode)
     {
-        var uiSourceCodeItem = new TreeElement(uiSourceCode.parsedURL.displayName, null, true);
+        var uiSourceCodeItem = new TreeElement(uiSourceCode.displayName(), null, true);
         uiSourceCodeItem.selectable = false;
 
         // Insert in sorted order
         for (var i = 0; i < this._treeOutline.children.length; ++i) {
-            if (this._treeOutline.children[i].title.localeCompare(uiSourceCode.parsedURL.displayName) > 0) {
+            if (this._treeOutline.children[i].title.localeCompare(uiSourceCode.displayName()) > 0) {
                 this._treeOutline.insertChild(uiSourceCodeItem, i);
                 break;
             }

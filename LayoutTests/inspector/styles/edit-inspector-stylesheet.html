@@ -32,7 +32,7 @@ function test()
     function step2(sourceFrame)
     {
         var uiSourceCode = sourceFrame._uiSourceCode;
-        InspectorTest.addResult("Inspector stylesheet URL: " + uiSourceCode.parsedURL.displayName);
+        InspectorTest.addResult("Inspector stylesheet URL: " + uiSourceCode.displayName());
         uiSourceCode.requestContent(printContent());
 
         InspectorTest.addResult("\nSetting new content");

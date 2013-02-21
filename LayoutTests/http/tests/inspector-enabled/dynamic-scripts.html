@@ -52,7 +52,7 @@ function test()
     {
         var panel = WebInspector.showPanel("scripts");
         var uiSourceCodes = WebInspector.workspace.uiSourceCodesForProjectType(WebInspector.projectTypes.Network);
-        var urls = uiSourceCodes.map(function(uiSourceCode) { return uiSourceCode.parsedURL.lastPathComponent; });
+        var urls = uiSourceCodes.map(function(uiSourceCode) { return uiSourceCode.name(); });
         urls.sort();
         
         var whiteList = ["debugger-test.js", "dynamic-script.js", "dynamic-scripts.html", "evalSourceURL.js", "inspector-test.js", "scriptElementContentSourceURL.js"];

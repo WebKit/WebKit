@@ -1,3 +1,13 @@
+2013-02-21  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Web Inspector: Get rid of parsedURL in uiSourceCode, use name and path for displayName instead.
+        https://bugs.webkit.org/show_bug.cgi?id=110335
+
+        Reviewed by Alexander Pavlov.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype._scriptsAreParsed):
+
 2013-02-21  Ken Kania  <kkania@chromium.org>
 
         Web Inspector: Add command for selecting files for file input element

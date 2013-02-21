@@ -45,7 +45,6 @@ WebInspector.UISourceCode = function(project, path, originURL, url, contentType,
     this._path = path;
     this._originURL = originURL;
     this._url = url;
-    this._parsedURL = new WebInspector.ParsedURL(originURL);
     this._contentType = contentType;
     this._isEditable = isEditable;
     /**
@@ -109,6 +108,15 @@ WebInspector.UISourceCode.prototype = {
     /**
      * @return {string}
      */
+    displayName: function()
+    {
+        var displayName = this.name() || (this._project.displayName() + "/" + this._path.join("/"));
+        return displayName.trimEnd(100);
+    },
+
+    /**
+     * @return {string}
+     */
     uri: function()
     {
         if (!this._project.id())
@@ -133,16 +141,7 @@ WebInspector.UISourceCode.prototype = {
     {
         this._url = url;
         this._originURL = url;
-        this._parsedURL = new WebInspector.ParsedURL(url);
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.TitleChanged, null);
-    },
-
-    /**
-     * @return {WebInspector.ParsedURL}
-     */
-    get parsedURL()
-    {
-        return this._parsedURL;
     },
 
     /**

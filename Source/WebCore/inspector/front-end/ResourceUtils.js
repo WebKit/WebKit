@@ -60,7 +60,7 @@ WebInspector.displayNameForURL = function(url)
 
     var uiSourceCode = WebInspector.workspace.uiSourceCodeForURL(url);
     if (uiSourceCode)
-        return uiSourceCode.parsedURL.displayName;
+        return uiSourceCode.displayName();
 
     if (!WebInspector.inspectedPageURL)
         return url.trimURL("");
