@@ -38,9 +38,9 @@ namespace WebCore {
 
 class SVGImageForContainer : public Image {
 public:
-    static PassRefPtr<SVGImageForContainer> create(SVGImage* image, const FloatSize& containerSize, float pageScale, float zoom)
+    static PassRefPtr<SVGImageForContainer> create(SVGImage* image, const FloatSize& containerSize, float zoom)
     {
-        return adoptRef(new SVGImageForContainer(image, containerSize, pageScale, zoom));
+        return adoptRef(new SVGImageForContainer(image, containerSize, zoom));
     }
 
     virtual bool isSVGImage() const OVERRIDE { return true; }
@@ -62,25 +62,20 @@ public:
     // FIXME: Implement this to be less conservative.
     virtual bool currentFrameKnownToBeOpaque() OVERRIDE { return false; }
 
-    FloatSize containerSize() { return m_containerSize; }
-    float pageScale() { return m_pageScale; }
-    float zoom() { return m_zoom; }
-
-    void setSize(FloatSize& size) { m_containerSize = size; }
-    void setZoom(float zoom) { m_zoom = zoom; }
-    void setPageScale(float pageScale) { m_pageScale = pageScale; }
-
 private:
-    SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float pageScale, float zoom)
-        : m_image(image), m_containerSize(containerSize), m_pageScale(pageScale), m_zoom(zoom) { }
+    SVGImageForContainer(SVGImage* image, const FloatSize& containerSize, float zoom)
+        : m_image(image)
+        , m_containerSize(containerSize)
+        , m_zoom(zoom)
+    {
+    }
 
     virtual void destroyDecodedData(bool /*destroyAll*/ = true) { }
     virtual unsigned decodedSize() const { return 0; }
 
     SVGImage* m_image;
-    FloatSize m_containerSize;
-    float m_pageScale;
-    float m_zoom;
+    const FloatSize m_containerSize;
+    const float m_zoom;
 };
 }
 

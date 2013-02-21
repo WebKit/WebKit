@@ -56,18 +56,12 @@ void SVGImageCache::setContainerSizeForRenderer(const CachedImageClient* client,
 {
     ASSERT(client);
     ASSERT(!containerSize.isEmpty());
+    ASSERT(containerZoom);
 
     FloatSize containerSizeWithoutZoom(containerSize);
     containerSizeWithoutZoom.scale(1 / containerZoom);
 
-    ImageForContainerMap::iterator imageIt = m_imageForContainerMap.find(client);
-    if (imageIt == m_imageForContainerMap.end()) {
-        RefPtr<SVGImageForContainer> image = SVGImageForContainer::create(m_svgImage, containerSizeWithoutZoom, 1, containerZoom);
-        m_imageForContainerMap.set(client, image);
-    } else {
-        imageIt->value->setSize(containerSizeWithoutZoom);
-        imageIt->value->setZoom(containerZoom);
-    }
+    m_imageForContainerMap.set(client, SVGImageForContainer::create(m_svgImage, containerSizeWithoutZoom, containerZoom));
 }
 
 IntSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
@@ -81,14 +75,8 @@ IntSize SVGImageCache::imageSizeForRenderer(const RenderObject* renderer) const
         return imageSize;
 
     RefPtr<SVGImageForContainer> image = it->value;
-    FloatSize size = image->containerSize();
-    if (!size.isEmpty()) {
-        size.scale(image->zoom());
-        imageSize.setWidth(size.width());
-        imageSize.setHeight(size.height());
-    }
-
-    return imageSize;
+    ASSERT(!image->size().isEmpty());
+    return image->size();
 }
 
 // FIXME: This doesn't take into account the animation timeline so animations will not
@@ -98,18 +86,12 @@ Image* SVGImageCache::imageForRenderer(const RenderObject* renderer)
     if (!renderer)
         return Image::nullImage();
 
-    // The cache needs to know the size of the renderer before querying an image for it.
     ImageForContainerMap::iterator it = m_imageForContainerMap.find(renderer);
     if (it == m_imageForContainerMap.end())
         return Image::nullImage();
 
     RefPtr<SVGImageForContainer> image = it->value;
-    ASSERT(!image->containerSize().isEmpty());
-
-    // FIXME: Set the page scale in setContainerSizeForRenderer instead of looking it up here.
-    Page* page = renderer->document()->page();
-    image->setPageScale(page->deviceScaleFactor() * page->pageScaleFactor());
-
+    ASSERT(!image->size().isEmpty());
     return image.get();
 }
 

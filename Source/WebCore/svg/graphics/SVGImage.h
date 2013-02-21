@@ -89,8 +89,8 @@ private:
     SVGImage(ImageObserver*);
     virtual void draw(GraphicsContext*, const FloatRect& fromRect, const FloatRect& toRect, ColorSpace styleColorSpace, CompositeOperator, BlendMode);
     void drawForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const FloatRect&, ColorSpace, CompositeOperator, BlendMode);
-    void drawPatternForContainer(GraphicsContext*, const FloatSize, float, float, const FloatRect&, const AffineTransform&,
-        const FloatPoint&, ColorSpace, CompositeOperator, const FloatRect&);
+    void drawPatternForContainer(GraphicsContext*, const FloatSize, float, const FloatRect&, const AffineTransform&, const FloatPoint&, ColorSpace,
+        CompositeOperator, const FloatRect&);
 
     OwnPtr<SVGImageChromeClient> m_chromeClient;
     OwnPtr<Page> m_page;

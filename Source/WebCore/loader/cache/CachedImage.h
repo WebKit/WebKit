@@ -97,8 +97,6 @@ public:
     virtual void reportMemoryUsage(MemoryObjectInfo*) const OVERRIDE;
 
 private:
-    Image* lookupOrCreateImageForRenderer(const RenderObject*);
-
     void clear();
 
     void createImage();

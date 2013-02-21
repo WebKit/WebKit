@@ -141,26 +141,30 @@ void SVGImage::drawForContainer(GraphicsContext* context, const FloatSize contai
     setImageObserver(observer);
 }
 
-void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize containerSize, float pageScale, float zoom, const FloatRect& srcRect,
+void SVGImage::drawPatternForContainer(GraphicsContext* context, const FloatSize containerSize, float zoom, const FloatRect& srcRect,
     const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect)
 {
-    ASSERT(pageScale);
-
     FloatRect zoomedContainerRect = FloatRect(FloatPoint(), containerSize);
     zoomedContainerRect.scale(zoom);
-    FloatRect zoomedAndScaledContainerRect = zoomedContainerRect;
-    zoomedAndScaledContainerRect.scale(pageScale);
 
-    // FIXME(WK110065): This should take advantage of the ImageBuffer resolution instead of scaling the buffer manually.
-    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(expandedIntSize(zoomedAndScaledContainerRect.size()), 1);
-    drawForContainer(buffer->context(), containerSize, zoom, zoomedAndScaledContainerRect, zoomedContainerRect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
+    // The ImageBuffer size needs to be scaled to match the final resolution.
+    AffineTransform transform = context->getCTM();
+    FloatSize imageBufferScale = FloatSize(transform.xScale(), transform.yScale());
+    ASSERT(imageBufferScale.width());
+    ASSERT(imageBufferScale.height());
+
+    FloatRect imageBufferSize = zoomedContainerRect;
+    imageBufferSize.scale(imageBufferScale.width(), imageBufferScale.height());
+
+    OwnPtr<ImageBuffer> buffer = ImageBuffer::create(expandedIntSize(imageBufferSize.size()), 1);
+    drawForContainer(buffer->context(), containerSize, zoom, imageBufferSize, zoomedContainerRect, ColorSpaceDeviceRGB, CompositeSourceOver, BlendModeNormal);
     RefPtr<Image> image = buffer->copyImage(CopyBackingStore, Unscaled);
 
-    // Adjust the source rect and transform for image buffer scale due to pageScale.
+    // Adjust the source rect and transform due to the image buffer's scaling.
     FloatRect scaledSrcRect = srcRect;
-    scaledSrcRect.scale(pageScale);
+    scaledSrcRect.scale(imageBufferScale.width(), imageBufferScale.height());
     AffineTransform unscaledPatternTransform(patternTransform);
-    unscaledPatternTransform.scale(1 / pageScale);
+    unscaledPatternTransform.scale(1 / imageBufferScale.width(), 1 / imageBufferScale.height());
 
     image->drawPattern(context, scaledSrcRect, unscaledPatternTransform, phase, colorSpace, compositeOp, dstRect);
 }

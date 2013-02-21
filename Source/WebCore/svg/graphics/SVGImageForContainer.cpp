@@ -45,7 +45,7 @@ void SVGImageForContainer::draw(GraphicsContext* context, const FloatRect& dstRe
 void SVGImageForContainer::drawPattern(GraphicsContext* context, const FloatRect& srcRect, const AffineTransform& patternTransform,
     const FloatPoint& phase, ColorSpace colorSpace, CompositeOperator compositeOp, const FloatRect& dstRect, BlendMode)
 {
-    m_image->drawPatternForContainer(context, m_containerSize, m_pageScale, m_zoom, srcRect, patternTransform, phase, colorSpace, compositeOp, dstRect);
+    m_image->drawPatternForContainer(context, m_containerSize, m_zoom, srcRect, patternTransform, phase, colorSpace, compositeOp, dstRect);
 }
 
 } // namespace WebCore

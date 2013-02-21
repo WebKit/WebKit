@@ -157,25 +157,6 @@ bool CachedImage::willPaintBrokenImage() const
     return errorOccurred() && m_shouldPaintBrokenImage;
 }
 
-#if ENABLE(SVG)
-inline Image* CachedImage::lookupOrCreateImageForRenderer(const RenderObject* renderer)
-{
-    if (!m_image)
-        return 0;
-    if (!m_image->isSVGImage())
-        return m_image.get();
-    Image* useImage = m_svgImageCache->imageForRenderer(renderer);
-    if (useImage == Image::nullImage())
-        return m_image.get();
-    return useImage;
-}
-#else
-inline Image* CachedImage::lookupOrCreateImageForRenderer(const RenderObject*)
-{
-    return m_image.get();
-}
-#endif
-
 Image* CachedImage::image()
 {
     ASSERT(!isPurgeable());
@@ -204,10 +185,19 @@ Image* CachedImage::imageForRenderer(const RenderObject* renderer)
         return brokenImage(1).first;
     }
 
-    if (m_image)
-        return lookupOrCreateImageForRenderer(renderer);
+    if (!m_image)
+        return Image::nullImage();
 
-    return Image::nullImage();
+#if ENABLE(SVG)
+    if (m_image->isSVGImage()) {
+        Image* image = m_svgImageCache->imageForRenderer(renderer);
+        if (image != Image::nullImage())
+            return image;
+    }
+#else
+    UNUSED_PARAM(renderer);
+#endif
+    return m_image.get();
 }
 
 void CachedImage::setContainerSizeForRenderer(const CachedImageClient* renderer, const IntSize& containerSize, float containerZoom)
