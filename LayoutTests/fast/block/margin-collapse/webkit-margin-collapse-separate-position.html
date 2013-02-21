@@ -1,0 +1,41 @@
+<html>
+    <head>
+        <script src="../../../fast/js/resources/js-test-pre.js"></script>
+        <style>
+        .container {
+            border: thin solid blue;
+        }
+
+        .child_with_margins {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .separate_top {
+            -webkit-margin-top-collapse: separate;
+        }
+
+        .separate_bottom {
+            -webkit-margin-bottom-collapse: separate;
+        }
+        </style>
+    </head>
+    <body>
+        <div class="container" id="22px_height">
+            <div class="child_with_margins" id="zero_height">
+                <div class="separate_top separate_bottom"></div>
+            </div>
+        </div>
+        <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        description("Test for https://bugs.webkit.org/show_bug.cgi?id=109956 -webkit-margin-collapse: separate doesn't work correctly for before margins. \
+            The test basically creates an empty block inside a container with a margin that collapses with children. The empty block has the margins \
+            set to separate so its height should be 0px. The container is not selfcollapsing so it should have a height of 10px+10px+2px=22px.");
+        shouldEvaluateTo('document.getElementById("zero_height").offsetHeight', '0');
+        shouldEvaluateTo('document.getElementById("22px_height").offsetHeight', '22');
+        </script>
+        <script src="../../../fast/js/resources/js-test-post.js"></script>
+    </body>
+</html>

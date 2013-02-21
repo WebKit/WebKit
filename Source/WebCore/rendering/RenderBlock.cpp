@@ -2078,7 +2078,11 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     } else {
         if (mustSeparateMarginBeforeForChild(child)) {
             ASSERT(!marginInfo.discardMargin() || (marginInfo.discardMargin() && !marginInfo.margin()));
-            setLogicalHeight(logicalHeight() + marginInfo.margin() + marginBeforeForChild(child));
+            // If we are at the before side of the block and we collapse, ignore the computed margin
+            // and just add the child margin to the container height. This will correctly position
+            // the child inside the container.
+            LayoutUnit separateMargin = !marginInfo.canCollapseWithMarginBefore() ? marginInfo.margin() : LayoutUnit(0);
+            setLogicalHeight(logicalHeight() + separateMargin + marginBeforeForChild(child));
             logicalTop = logicalHeight();
         } else if (!marginInfo.discardMargin() && (!marginInfo.atBeforeSideOfBlock()
             || (!marginInfo.canCollapseMarginBeforeWithChildren()
