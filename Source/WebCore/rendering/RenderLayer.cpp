@@ -3724,7 +3724,14 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
     // We want to paint our layer, but only if we intersect the damage rect.
     if (this != localPaintingInfo.rootLayer || !(localPaintFlags & PaintLayerPaintingOverflowContents))
         shouldPaintContent &= intersectsDamageRect(layerBounds, damageRect.rect(), localPaintingInfo.rootLayer, &offsetFromRoot);
-    
+
+#if ENABLE(CSS_FILTERS)
+    if (filterPainter.hasStartedFilterEffect() && haveTransparency) {
+        // If we have a filter and transparency, we have to eagerly start a transparency layer here, rather than risk a child layer lazily starts one with the wrong context.
+        beginTransparencyLayers(transparencyLayerContext, localPaintingInfo.rootLayer, paintingInfo.paintDirtyRect, localPaintingInfo.paintBehavior);
+    }
+#endif
+
     if (localPaintFlags & PaintLayerPaintingCompositingBackgroundPhase) {
         if (shouldPaintContent && !selectionOnly) {
             // Begin transparency layers lazily now that we know we have to paint something.
