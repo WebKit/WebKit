@@ -78,7 +78,7 @@ using namespace WebCore;
 
 - (void)logFilledFreshTile
 {
-    IntRect visiblePart(enclosingIntRect([self frame]));
+    FloatRect visiblePart([self frame]);
     visiblePart.intersect(_tileCache->visibleRect());
 
     if ([self paintCount] == 1 && !visiblePart.isEmpty())

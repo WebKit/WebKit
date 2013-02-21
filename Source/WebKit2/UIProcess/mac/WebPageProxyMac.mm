@@ -137,7 +137,7 @@ void WebPageProxy::windowAndViewFramesChanged(const IntRect& windowFrameInScreen
     process()->send(Messages::WebPage::WindowAndViewFramesChanged(windowFrameInScreenCoordinates, viewFrameInWindowCoordinates, accessibilityViewCoordinates), m_pageID);
 }
 
-void WebPageProxy::viewExposedRectChanged(const IntRect& exposedRect)
+void WebPageProxy::viewExposedRectChanged(const FloatRect& exposedRect)
 {
     if (!isValid())
         return;

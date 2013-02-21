@@ -2911,7 +2911,7 @@ void WebPage::windowAndViewFramesChanged(const IntRect& windowFrameInScreenCoord
 }
 #endif
 
-void WebPage::viewExposedRectChanged(const IntRect& exposedRect)
+void WebPage::viewExposedRectChanged(const FloatRect& exposedRect)
 {
     m_drawingArea->setExposedRect(exposedRect);
 }

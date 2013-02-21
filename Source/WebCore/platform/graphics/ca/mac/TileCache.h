@@ -26,6 +26,7 @@
 #ifndef TileCache_h
 #define TileCache_h
 
+#include "FloatRect.h"
 #include "IntPointHash.h"
 #include "IntRect.h"
 #include "TiledBacking.h"
@@ -76,10 +77,10 @@ public:
     void setTileDebugBorderWidth(float);
     void setTileDebugBorderColor(CGColorRef);
 
-    virtual IntRect visibleRect() const OVERRIDE { return m_visibleRect; }
+    virtual FloatRect visibleRect() const OVERRIDE { return m_visibleRect; }
 
     unsigned blankPixelCount() const;
-    static unsigned blankPixelCountForTiles(const WebTileLayerList&, const IntRect&, const IntPoint&);
+    static unsigned blankPixelCountForTiles(const WebTileLayerList&, const FloatRect&, const IntPoint&);
 
     // Only public for the WebTileCacheMapLayer.
     void drawTileMapContents(CGContextRef, CGRect);
@@ -105,10 +106,10 @@ private:
     TileCache(WebTileCacheLayer*);
 
     // TiledBacking member functions.
-    virtual void setVisibleRect(const IntRect&) OVERRIDE;
-    virtual void setExposedRect(const IntRect&) OVERRIDE;
+    virtual void setVisibleRect(const FloatRect&) OVERRIDE;
+    virtual void setExposedRect(const FloatRect&) OVERRIDE;
     virtual void setClipsToExposedRect(bool) OVERRIDE;
-    virtual void prepopulateRect(const IntRect&) OVERRIDE;
+    virtual void prepopulateRect(const FloatRect&) OVERRIDE;
     virtual void setIsInWindow(bool) OVERRIDE;
     virtual void setTileCoverage(TileCoverage) OVERRIDE;
     virtual TileCoverage tileCoverage() const OVERRIDE { return m_tileCoverage; }
@@ -130,8 +131,8 @@ private:
     IntRect rectForTileIndex(const TileIndex&) const;
     void getTileIndexRangeForRect(const IntRect&, TileIndex& topLeft, TileIndex& bottomRight) const;
 
-    IntRect computeTileCoverageRect(const IntRect& previousVisibleRect) const;
-    IntSize tileSizeForCoverageRect(const IntRect&) const;
+    FloatRect computeTileCoverageRect(const FloatRect& previousVisibleRect) const;
+    IntSize tileSizeForCoverageRect(const FloatRect&) const;
 
     void scheduleTileRevalidation(double interval);
     void tileRevalidationTimerFired(Timer<TileCache>*);
@@ -142,7 +143,7 @@ private:
     typedef unsigned TileValidationPolicyFlags;
 
     void revalidateTiles(TileValidationPolicyFlags foregroundValidationPolicy = 0, TileValidationPolicyFlags backgroundValidationPolicy = 0);
-    void ensureTilesForRect(const IntRect&);
+    void ensureTilesForRect(const FloatRect&);
     void updateTileCoverageMap();
 
     void removeAllTiles();
@@ -168,9 +169,9 @@ private:
     RetainPtr<WebTiledScrollingIndicatorLayer> m_tiledScrollingIndicatorLayer; // Used for coverage visualization.
 
     IntSize m_tileSize;
-    IntRect m_visibleRect;
-    IntRect m_visibleRectAtLastRevalidate;
-    IntRect m_exposedRect; // The exposed area of containing platform views.
+    FloatRect m_visibleRect;
+    FloatRect m_visibleRectAtLastRevalidate;
+    FloatRect m_exposedRect; // The exposed area of containing platform views.
 
     typedef HashMap<TileIndex, TileInfo> TileMap;
     TileMap m_tiles;

@@ -382,7 +382,7 @@ struct WKViewInterpretKeyEventsParameters {
 
     if (![self frameSizeUpdatesDisabled]) {
         if (_data->_expandsToFitContentViaAutoLayout)
-            _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
+            _data->_page->viewExposedRectChanged([self visibleRect]);
         [self _setDrawingAreaSize:size];
     }
 }
@@ -398,7 +398,7 @@ struct WKViewInterpretKeyEventsParameters {
     
     _data->_page->windowAndViewFramesChanged(enclosingIntRect(windowFrameInScreenCoordinates), enclosingIntRect(viewFrameInWindowCoordinates), IntPoint(accessibilityPosition));
     if (_data->_expandsToFitContentViaAutoLayout)
-        _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
+        _data->_page->viewExposedRectChanged([self visibleRect]);
 }
 
 - (void)renewGState
@@ -3202,7 +3202,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     
     if (!(--_data->_frameSizeUpdatesDisabledCount)) {
         if (_data->_expandsToFitContentViaAutoLayout)
-            _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
+            _data->_page->viewExposedRectChanged([self visibleRect]);
         [self _setDrawingAreaSize:[self frame].size];
     }
 }
@@ -3263,7 +3263,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->setMinimumLayoutWidth(minimumLayoutWidth);
 
     if (expandsToFit)
-        _data->_page->viewExposedRectChanged(enclosingIntRect([self visibleRect]));
+        _data->_page->viewExposedRectChanged([self visibleRect]);
 
     _data->_page->setMainFrameIsScrollable(!expandsToFit);
 }

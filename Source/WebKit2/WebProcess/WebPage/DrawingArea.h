@@ -84,7 +84,7 @@ public:
     virtual void updatePreferences(const WebPreferencesStore&) { }
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) { }
 
-    virtual void setExposedRect(const WebCore::IntRect&) { }
+    virtual void setExposedRect(const WebCore::FloatRect&) { }
     virtual void mainFrameScrollabilityChanged(bool) { }
 
 #if USE(ACCELERATED_COMPOSITING)

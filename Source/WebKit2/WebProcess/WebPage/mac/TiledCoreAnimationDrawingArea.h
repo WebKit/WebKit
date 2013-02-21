@@ -30,6 +30,7 @@
 
 #include "DrawingArea.h"
 #include "LayerTreeContext.h"
+#include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/LayerFlushScheduler.h>
 #include <WebCore/LayerFlushSchedulerClient.h>
@@ -72,7 +73,7 @@ private:
     virtual void updatePreferences(const WebPreferencesStore&) OVERRIDE;
     virtual void mainFrameContentSizeChanged(const WebCore::IntSize&) OVERRIDE;
 
-    virtual void setExposedRect(const WebCore::IntRect&) OVERRIDE;
+    virtual void setExposedRect(const WebCore::FloatRect&) OVERRIDE;
     virtual void mainFrameScrollabilityChanged(bool) OVERRIDE;
 
     virtual void dispatchAfterEnsuringUpdatedScrollPosition(const Function<void ()>&) OVERRIDE;
@@ -120,7 +121,7 @@ private:
     bool m_isPaintingSuspended;
     bool m_hasRootCompositingLayer;
 
-    WebCore::IntRect m_exposedRect;
+    WebCore::FloatRect m_exposedRect;
 
     WebCore::IntSize m_lastSentIntrinsicContentSize;
     bool m_inUpdateGeometry;

@@ -339,7 +339,7 @@ void TiledCoreAnimationDrawingArea::resumePainting()
         m_webPage->corePage()->resumeScriptedAnimations();
 }
 
-void TiledCoreAnimationDrawingArea::setExposedRect(const IntRect& exposedRect)
+void TiledCoreAnimationDrawingArea::setExposedRect(const FloatRect& exposedRect)
 {
     // FIXME: This should be mapped through the scroll offset, but we need to keep it up to date.
     m_exposedRect = exposedRect;

@@ -297,7 +297,7 @@ void TileCache::setTilesOpaque(bool opaque)
     }
 }
 
-void TileCache::setVisibleRect(const IntRect& visibleRect)
+void TileCache::setVisibleRect(const FloatRect& visibleRect)
 {
     if (m_visibleRect == visibleRect)
         return;
@@ -306,7 +306,7 @@ void TileCache::setVisibleRect(const IntRect& visibleRect)
     revalidateTiles();
 }
 
-void TileCache::setExposedRect(const IntRect& exposedRect)
+void TileCache::setExposedRect(const FloatRect& exposedRect)
 {
     if (m_exposedRect == exposedRect)
         return;
@@ -327,7 +327,7 @@ void TileCache::setClipsToExposedRect(bool clipsToExposedRect)
         revalidateTiles();
 }
 
-void TileCache::prepopulateRect(const IntRect& rect)
+void TileCache::prepopulateRect(const FloatRect& rect)
 {
     ensureTilesForRect(rect);
 }
@@ -417,9 +417,9 @@ void TileCache::getTileIndexRangeForRect(const IntRect& rect, TileIndex& topLeft
     bottomRight.setY(max(bottomYRatio - 1, 0));
 }
 
-IntRect TileCache::computeTileCoverageRect(const IntRect& previousVisibleRect) const
+FloatRect TileCache::computeTileCoverageRect(const FloatRect& previousVisibleRect) const
 {
-    IntRect visibleRect = m_visibleRect;
+    FloatRect visibleRect = m_visibleRect;
 
     if (m_clipsToExposedRect)
         visibleRect.intersect(m_exposedRect);
@@ -433,8 +433,8 @@ IntRect TileCache::computeTileCoverageRect(const IntRect& previousVisibleRect) c
     bool largeVisibleRectChange = !previousVisibleRect.isEmpty() && !visibleRect.intersects(previousVisibleRect);
     
     // FIXME: look at how far the document can scroll in each dimension.
-    int coverageHorizontalSize = visibleRect.width();
-    int coverageVerticalSize = visibleRect.height();
+    float coverageHorizontalSize = visibleRect.width();
+    float coverageVerticalSize = visibleRect.height();
     
     // Inflate the coverage rect so that it covers 2x of the visible width and 3x of the visible height.
     // These values were chosen because it's more common to have tall pages and to scroll vertically,
@@ -446,24 +446,24 @@ IntRect TileCache::computeTileCoverageRect(const IntRect& previousVisibleRect) c
         coverageVerticalSize *= 3;
 
     // Don't extend coverage before 0 or after the end.
-    IntRect coverageBounds = bounds();
-    int coverageLeft = visibleRect.x() - (coverageHorizontalSize - visibleRect.width()) / 2;
+    FloatRect coverageBounds = bounds();
+    float coverageLeft = visibleRect.x() - (coverageHorizontalSize - visibleRect.width()) / 2;
     coverageLeft = min(coverageLeft, coverageBounds.maxX() - coverageHorizontalSize);
     coverageLeft = max(coverageLeft, coverageBounds.x());
 
-    int coverageTop = visibleRect.y() - (coverageVerticalSize - visibleRect.height()) / 2;
+    float coverageTop = visibleRect.y() - (coverageVerticalSize - visibleRect.height()) / 2;
     coverageTop = min(coverageTop, coverageBounds.maxY() - coverageVerticalSize);
     coverageTop = max(coverageTop, coverageBounds.y());
 
-    return IntRect(coverageLeft, coverageTop, coverageHorizontalSize, coverageVerticalSize);
+    return FloatRect(coverageLeft, coverageTop, coverageHorizontalSize, coverageVerticalSize);
 }
 
-IntSize TileCache::tileSizeForCoverageRect(const IntRect& coverageRect) const
+IntSize TileCache::tileSizeForCoverageRect(const FloatRect& coverageRect) const
 {
     if (m_tileCoverage & CoverageForSlowScrolling) {
-        IntSize tileSize = coverageRect.size();
+        FloatSize tileSize = coverageRect.size();
         tileSize.scale(m_scale);
-        return tileSize;
+        return expandedIntSize(tileSize);
     }
 
     return IntSize(defaultTileCacheWidth, defaultTileCacheHeight);
@@ -495,21 +495,21 @@ unsigned TileCache::blankPixelCount() const
     return blankPixelCountForTiles(tiles, m_visibleRect, IntPoint(0,0));
 }
 
-unsigned TileCache::blankPixelCountForTiles(const WebTileLayerList& tiles, const IntRect& visibleRect, const IntPoint& tileTranslation)
+unsigned TileCache::blankPixelCountForTiles(const WebTileLayerList& tiles, const FloatRect& visibleRect, const IntPoint& tileTranslation)
 {
     Region paintedVisibleTiles;
 
     for (WebTileLayerList::const_iterator it = tiles.begin(), end = tiles.end(); it != end; ++it) {
         const WebTileLayer* tileLayer = it->get();
 
-        IntRect visiblePart(CGRectOffset([tileLayer frame], tileTranslation.x(), tileTranslation.y()));
+        FloatRect visiblePart(CGRectOffset([tileLayer frame], tileTranslation.x(), tileTranslation.y()));
         visiblePart.intersect(visibleRect);
 
         if (!visiblePart.isEmpty())
-            paintedVisibleTiles.unite(visiblePart);
+            paintedVisibleTiles.unite(enclosingIntRect(visiblePart));
     }
 
-    Region uncoveredRegion(visibleRect);
+    Region uncoveredRegion(enclosingIntRect(visibleRect));
     uncoveredRegion.subtract(paintedVisibleTiles);
 
     return uncoveredRegion.totalArea();
@@ -581,7 +581,7 @@ void TileCache::revalidateTiles(TileValidationPolicyFlags foregroundValidationPo
     if (!platformLayer)
         return;
 
-    IntRect visibleRect = m_visibleRect;
+    FloatRect visibleRect = m_visibleRect;
 
     if (m_clipsToExposedRect)
         visibleRect.intersect(m_exposedRect);
@@ -591,7 +591,7 @@ void TileCache::revalidateTiles(TileValidationPolicyFlags foregroundValidationPo
     
     TileValidationPolicyFlags validationPolicy = m_isInWindow ? foregroundValidationPolicy : backgroundValidationPolicy;
     
-    IntRect tileCoverageRect = computeTileCoverageRect(m_visibleRectAtLastRevalidate);
+    FloatRect tileCoverageRect = computeTileCoverageRect(m_visibleRectAtLastRevalidate);
     FloatRect scaledRect(tileCoverageRect);
     scaledRect.scale(m_scale);
     IntRect coverageRectInTileCoords(enclosingIntRect(scaledRect));
@@ -750,7 +750,7 @@ void TileCache::cohortRemovalTimerFired(Timer<TileCache>*)
         updateTileCoverageMap();
 }
 
-void TileCache::ensureTilesForRect(const IntRect& rect)
+void TileCache::ensureTilesForRect(const FloatRect& rect)
 {
     if (m_unparentsOffscreenTiles && !m_isInWindow)
         return;
