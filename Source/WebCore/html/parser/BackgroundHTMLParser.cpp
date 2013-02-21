@@ -112,8 +112,7 @@ static inline bool tokenExitsForeignContent(const CompactHTMLToken& token)
         || (threadSafeMatch(tagName, fontTag) && (token.getAttributeItem(colorAttr) || token.getAttributeItem(faceAttr) || token.getAttributeItem(sizeAttr)));
 }
 
-// FIXME: Tune this constant based on a benchmark. The current value was chosen arbitrarily.
-static const size_t pendingTokenLimit = 4000;
+static const size_t pendingTokenLimit = 1000;
 
 BackgroundHTMLParser::BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHTMLParser> > reference, PassOwnPtr<Configuration> config)
     : m_weakFactory(reference, this)
