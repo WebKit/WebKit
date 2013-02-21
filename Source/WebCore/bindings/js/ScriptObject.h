@@ -45,7 +45,7 @@ namespace WebCore {
     public:
         ScriptObject(ScriptState*, JSC::JSObject*);
         ScriptObject(ScriptState*, const ScriptValue&);
-        ScriptObject() { }
+        ScriptObject() : m_scriptState(0) { }
         JSC::JSObject* jsObject() const { return asObject(jsValue()); }
         ScriptState* scriptState() const { return m_scriptState; }
 
