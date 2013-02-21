@@ -1779,9 +1779,6 @@ webkit.org/b/106316 accessibility/render-counter-text.html [ Failure ]
 # Newly added test at r139111 is failing.
 webkit.org/b/106439 editing/pasteboard/paste-noplugin.html [ Failure ]
 
-# Failing after r139140.
-webkit.org/b/106441 http/tests/misc/authentication-redirect-3/authentication-sent-to-redirect-same-origin-with-location-credentials.html [ Failure ]
-
 # Mark as missing image result, same as other ports. Test should be updated to text-based repaint test.
 webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
 
