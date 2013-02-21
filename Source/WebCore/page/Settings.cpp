@@ -141,11 +141,6 @@ static const double defaultUnifiedTextCheckerEnabled = false;
 Settings::Settings(Page* page)
     : m_page(0)
     , m_mediaTypeOverride("screen")
-    , m_minimumFontSize(0)
-    , m_minimumLogicalFontSize(0)
-    , m_defaultFontSize(0)
-    , m_defaultFixedFontSize(0)
-    , m_screenFontSubstitutionEnabled(true)
     , m_storageBlockingPolicy(SecurityOrigin::AllowAllStorage)
 #if ENABLE(TEXT_AUTOSIZING)
     , m_textAutosizingFontScaleFactor(1)
@@ -164,10 +159,8 @@ Settings::Settings(Page* page)
     , m_areImagesEnabled(true)
     , m_arePluginsEnabled(false)
     , m_isScriptEnabled(false)
-    , m_textAreasAreResizable(false)
     , m_needsAdobeFrameReloadingQuirk(false)
     , m_usesPageCache(false)
-    , m_authorAndUserStylesEnabled(true)
     , m_fontRenderingMode(0)
     , m_isCSSCustomFilterEnabled(false)
 #if ENABLE(CSS_STICKY_POSITION)
@@ -176,9 +169,6 @@ Settings::Settings(Page* page)
 #if ENABLE(CSS_VARIABLES)
     , m_cssVariablesEnabled(false)
 #endif
-    , m_acceleratedCompositingEnabled(true)
-    , m_showDebugBorders(false)
-    , m_showRepaintCounter(false)
     , m_showTiledScrollingIndicator(false)
     , m_tiledBackingStoreEnabled(false)
     , m_dnsPrefetchingEnabled(false)
@@ -203,6 +193,8 @@ PassOwnPtr<Settings> Settings::create(Page* page)
 {
     return adoptPtr(new Settings(page));
 } 
+
+SETTINGS_SETTER_BODIES
 
 void Settings::setHiddenPageDOMTimerAlignmentInterval(double hiddenPageDOMTimerAlignmentinterval)
 {
@@ -289,51 +281,6 @@ const AtomicString& Settings::pictographFontFamily(UScriptCode script) const
 void Settings::setPictographFontFamily(const AtomicString& family, UScriptCode script)
 {
     setGenericFontFamilyMap(m_pictographFontFamilyMap, family, script, m_page);
-}
-
-void Settings::setMinimumFontSize(int minimumFontSize)
-{
-    if (m_minimumFontSize == minimumFontSize)
-        return;
-
-    m_minimumFontSize = minimumFontSize;
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setMinimumLogicalFontSize(int minimumLogicalFontSize)
-{
-    if (m_minimumLogicalFontSize == minimumLogicalFontSize)
-        return;
-
-    m_minimumLogicalFontSize = minimumLogicalFontSize;
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setDefaultFontSize(int defaultFontSize)
-{
-    if (m_defaultFontSize == defaultFontSize)
-        return;
-
-    m_defaultFontSize = defaultFontSize;
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setDefaultFixedFontSize(int defaultFontSize)
-{
-    if (m_defaultFixedFontSize == defaultFontSize)
-        return;
-
-    m_defaultFixedFontSize = defaultFontSize;
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setScreenFontSubstitutionEnabled(bool screenFontSubstitutionEnabled)
-{
-    if (m_screenFontSubstitutionEnabled == screenFontSubstitutionEnabled)
-        return;
-
-    m_screenFontSubstitutionEnabled = screenFontSubstitutionEnabled;
-    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
 #if ENABLE(TEXT_AUTOSIZING)
@@ -460,15 +407,6 @@ void Settings::setUserStyleSheetLocation(const KURL& userStyleSheetLocation)
     m_page->userStyleSheetLocationChanged();
 }
 
-void Settings::setTextAreasAreResizable(bool textAreasAreResizable)
-{
-    if (m_textAreasAreResizable == textAreasAreResizable)
-        return;
-
-    m_textAreasAreResizable = textAreasAreResizable;
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
 // FIXME: This quirk is needed because of Radar 4674537 and 5211271. We need to phase it out once Adobe
 // can fix the bug from their end.
 void Settings::setNeedsAdobeFrameReloadingQuirk(bool shouldNotReloadIFramesForUnchangedSRC)
@@ -531,15 +469,6 @@ void Settings::setUsesPageCache(bool usesPageCache)
     }
 }
 
-void Settings::setAuthorAndUserStylesEnabled(bool authorAndUserStylesEnabled)
-{
-    if (m_authorAndUserStylesEnabled == authorAndUserStylesEnabled)
-        return;
-
-    m_authorAndUserStylesEnabled = authorAndUserStylesEnabled;
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
 void Settings::setFontRenderingMode(FontRenderingMode mode)
 {
     if (fontRenderingMode() == mode)
@@ -560,33 +489,6 @@ void Settings::setDNSPrefetchingEnabled(bool dnsPrefetchingEnabled)
 
     m_dnsPrefetchingEnabled = dnsPrefetchingEnabled;
     m_page->dnsPrefetchingStateChanged();
-}
-
-void Settings::setAcceleratedCompositingEnabled(bool enabled)
-{
-    if (m_acceleratedCompositingEnabled == enabled)
-        return;
-        
-    m_acceleratedCompositingEnabled = enabled;
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setShowDebugBorders(bool enabled)
-{
-    if (m_showDebugBorders == enabled)
-        return;
-        
-    m_showDebugBorders = enabled;
-    m_page->setNeedsRecalcStyleInAllFrames();
-}
-
-void Settings::setShowRepaintCounter(bool enabled)
-{
-    if (m_showRepaintCounter == enabled)
-        return;
-        
-    m_showRepaintCounter = enabled;
-    m_page->setNeedsRecalcStyleInAllFrames();
 }
 
 void Settings::setShowTiledScrollingIndicator(bool enabled)

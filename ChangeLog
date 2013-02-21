@@ -1,3 +1,14 @@
+2013-02-21  Tony Chang  <tony@chromium.org>
+
+        Autogenerate Settings that call setNeedsRecalcStyleInAllFrames when set
+        https://bugs.webkit.org/show_bug.cgi?id=109989
+
+        Reviewed by Ryosuke Niwa.
+
+        Add setters to export symbols.
+
+        * Source/autotools/symbols.filter:
+
 2013-02-21  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Move feature overriding to the configure phase

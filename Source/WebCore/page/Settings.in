@@ -33,6 +33,11 @@ deviceHeight type=int, initial=0
 # since the memory used won't be released until the Page is destroyed.
 sessionStorageQuota type=unsigned, initial=StorageMap::noQuota
 
+minimumFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
+minimumLogicalFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
+defaultFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
+defaultFixedFontSize type=int, initial=0, setNeedsStyleRecalcInAllFrames=1
+
 editingBehaviorType type=EditingBehaviorType, initial=editingBehaviorTypeForPlatform()
 maximumHTMLParserDOMTreeDepth type=unsigned, initial=defaultMaximumHTMLParserDOMTreeDepth
 
@@ -49,6 +54,13 @@ supportsMultipleWindows initial=true
 javaScriptCanAccessClipboard initial=false
 shouldPrintBackgrounds initial=false
 usesDashboardBackwardCompatibilityMode initial=false, conditional=DASHBOARD_SUPPORT
+
+screenFontSubstitutionEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
+textAreasAreResizable initial=false, setNeedsStyleRecalcInAllFrames=1
+authorAndUserStylesEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
+acceleratedCompositingEnabled initial=true, setNeedsStyleRecalcInAllFrames=1
+showDebugBorders initial=false, setNeedsStyleRecalcInAllFrames=1
+showRepaintCounter initial=false, setNeedsStyleRecalcInAllFrames=1
 
 # This is a quirk we are pro-actively applying to old applications. It changes keyboard event dispatching,
 # making keyIdentifier available on keypress events, making charCode available on keydown/keyup events,

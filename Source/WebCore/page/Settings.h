@@ -94,21 +94,6 @@ namespace WebCore {
         void setPictographFontFamily(const AtomicString&, UScriptCode = USCRIPT_COMMON);
         const AtomicString& pictographFontFamily(UScriptCode = USCRIPT_COMMON) const;
 
-        void setMinimumFontSize(int);
-        int minimumFontSize() const { return m_minimumFontSize; }
-
-        void setMinimumLogicalFontSize(int);
-        int minimumLogicalFontSize() const { return m_minimumLogicalFontSize; }
-
-        void setDefaultFontSize(int);
-        int defaultFontSize() const { return m_defaultFontSize; }
-
-        void setDefaultFixedFontSize(int);
-        int defaultFixedFontSize() const { return m_defaultFixedFontSize; }
-
-        void setScreenFontSubstitutionEnabled(bool);
-        bool screenFontSubstitutionEnabled() const { return m_screenFontSubstitutionEnabled; }
-
 #if ENABLE(TEXT_AUTOSIZING)
         void setTextAutosizingEnabled(bool);
         bool textAutosizingEnabled() const { return m_textAutosizingEnabled; }
@@ -177,9 +162,6 @@ namespace WebCore {
         void setUserStyleSheetLocation(const KURL&);
         const KURL& userStyleSheetLocation() const { return m_userStyleSheetLocation; }
 
-        void setTextAreasAreResizable(bool);
-        bool textAreasAreResizable() const { return m_textAreasAreResizable; }
-
         void setNeedsAdobeFrameReloadingQuirk(bool);
         bool needsAcrobatFrameReloadingQuirk() const { return m_needsAdobeFrameReloadingQuirk; }
 
@@ -200,9 +182,6 @@ namespace WebCore {
 
         void setUsesPageCache(bool);
         bool usesPageCache() const { return m_usesPageCache; }
-        
-        void setAuthorAndUserStylesEnabled(bool);
-        bool authorAndUserStylesEnabled() const { return m_authorAndUserStylesEnabled; }
         
         void setFontRenderingMode(FontRenderingMode mode);
         FontRenderingMode fontRenderingMode() const;
@@ -225,15 +204,6 @@ namespace WebCore {
         void setCSSVariablesEnabled(bool) { }
         bool cssVariablesEnabled() const { return false; }
 #endif
-
-        void setAcceleratedCompositingEnabled(bool);
-        bool acceleratedCompositingEnabled() const { return m_acceleratedCompositingEnabled; }
-
-        void setShowDebugBorders(bool);
-        bool showDebugBorders() const { return m_showDebugBorders; }
-
-        void setShowRepaintCounter(bool);
-        bool showRepaintCounter() const { return m_showRepaintCounter; }
 
         void setShowTiledScrollingIndicator(bool);
         bool showTiledScrollingIndicator() const { return m_showTiledScrollingIndicator; }
@@ -304,11 +274,6 @@ namespace WebCore {
         ScriptFontFamilyMap m_cursiveFontFamilyMap;
         ScriptFontFamilyMap m_fantasyFontFamilyMap;
         ScriptFontFamilyMap m_pictographFontFamilyMap;
-        int m_minimumFontSize;
-        int m_minimumLogicalFontSize;
-        int m_defaultFontSize;
-        int m_defaultFixedFontSize;
-        bool m_screenFontSubstitutionEnabled;
         SecurityOrigin::StorageBlockingPolicy m_storageBlockingPolicy;
 #if ENABLE(TEXT_AUTOSIZING)
         float m_textAutosizingFontScaleFactor;
@@ -326,10 +291,8 @@ namespace WebCore {
         bool m_areImagesEnabled : 1;
         bool m_arePluginsEnabled : 1;
         bool m_isScriptEnabled : 1;
-        bool m_textAreasAreResizable : 1;
         bool m_needsAdobeFrameReloadingQuirk : 1;
         bool m_usesPageCache : 1;
-        bool m_authorAndUserStylesEnabled : 1;
         unsigned m_fontRenderingMode : 1;
         bool m_isCSSCustomFilterEnabled : 1;
 #if ENABLE(CSS_STICKY_POSITION)
@@ -338,9 +301,6 @@ namespace WebCore {
 #if ENABLE(CSS_VARIABLES)
         bool m_cssVariablesEnabled : 1;
 #endif
-        bool m_acceleratedCompositingEnabled : 1;
-        bool m_showDebugBorders : 1;
-        bool m_showRepaintCounter : 1;
         bool m_showTiledScrollingIndicator : 1;
         bool m_tiledBackingStoreEnabled : 1;
         bool m_dnsPrefetchingEnabled : 1;

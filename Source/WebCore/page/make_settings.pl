@@ -45,7 +45,8 @@ sub defaultItemFactory
     return (
         'conditional' => 0,
         'initial' => '',
-        'type' => 'bool'
+        'type' => 'bool',
+        'setNeedsStyleRecalcInAllFrames' => 0,
     );
 }
 
@@ -102,6 +103,7 @@ sub generateSettingsMacrosHeader($)
     printGettersAndSetters($file, \%unconditionalSettings, \%settingsByConditional, $parsedItemsRef);
     printMemberVariables($file, \%unconditionalSettings, \%settingsByConditional, $parsedItemsRef);
     printInitializerList($file, \%unconditionalSettings, \%settingsByConditional, $parsedItemsRef);
+    printSetterBodies($file, \%unconditionalSettings, \%settingsByConditional, $parsedItemsRef);
 
     print $file "#endif // SettingsMacros_h\n";
 
@@ -120,7 +122,7 @@ sub printConditionalMacros($$$)
 
         print $file "#define ${preferredConditional}_SETTINGS_GETTER_AND_SETTERS \\\n";
         for my $settingName (sort keys %{ $settingsByConditional{$conditional} }) {
-            printGetterAndSetter($file, $settingName, $parsedItems{$settingName}{"type"});
+            printGetterAndSetter($file, $settingName, $parsedItems{$settingName}{"type"}, $parsedItems{$settingName}{"setNeedsStyleRecalcInAllFrames"});
         }
         print $file "// End of ${preferredConditional}_SETTINGS_GETTER_AND_SETTERS\n";
 
@@ -153,12 +155,19 @@ sub printConditionalMacros($$$)
         }
         print $file "// End of ${preferredConditional}_SETTINGS_BOOL_INITIALIZERS\n";
 
+        print $file "#define ${preferredConditional}_SETTINGS_SETTER_BODIES \\\n";
+        for my $settingName (sort keys %{ $settingsByConditional{$conditional} }) {
+            printSetterBody($file, $settingName, $parsedItems{$settingName}{"type"}, $parsedItems{$settingName}{"setNeedsStyleRecalcInAllFrames"});
+        }
+        print $file "// End of ${preferredConditional}_SETTINGS_SETTER_BODIES\n";
+
         print $file "#else\n";
         print $file "#define ${preferredConditional}_SETTINGS_GETTER_AND_SETTERS\n";
         print $file "#define ${preferredConditional}_SETTINGS_NON_BOOL_MEMBER_VARIABLES\n";
         print $file "#define ${preferredConditional}_SETTINGS_BOOL_MEMBER_VARIABLES\n";
         print $file "#define ${preferredConditional}_SETTINGS_NON_BOOL_INITIALIZERS\n";
         print $file "#define ${preferredConditional}_SETTINGS_BOOL_INITIALIZERS\n";
+        print $file "#define ${preferredConditional}_SETTINGS_SETTER_BODIES\n";
         print $file "#endif\n";
         print $file "\n";
     }
@@ -173,7 +182,7 @@ sub printGettersAndSetters($$$$)
 
     print $file "#define SETTINGS_GETTERS_AND_SETTERS \\\n";
     for my $settingName (sort keys %unconditionalSettings) {
-        printGetterAndSetter($file, $settingName, $parsedItems{$settingName}{"type"});
+        printGetterAndSetter($file, $settingName, $parsedItems{$settingName}{"type"}, $parsedItems{$settingName}{"setNeedsStyleRecalcInAllFrames"});
     }
     for my $conditional (sort keys %settingsByConditional) {
         my $preferredConditional = $InCompiler->preferredConditional($conditional);
@@ -226,16 +235,21 @@ sub setterFunctionName($)
     return $setterFunctionName;
 }
 
-sub printGetterAndSetter($$$)
+sub printGetterAndSetter($$$$)
 {
-    my ($file, $settingName, $type) = @_;
+    my ($file, $settingName, $type, $setNeedsStyleRecalcInAllFrames) = @_;
     my $setterFunctionName = setterFunctionName($settingName);
     if (lc(substr($type, 0, 1)) eq substr($type, 0, 1)) {
         print $file "    $type $settingName() const { return m_$settingName; } \\\n";
-        print $file "    void $setterFunctionName($type $settingName) { m_$settingName = $settingName; } \\\n";
+        print $file "    void $setterFunctionName($type $settingName)";
     } else {
         print $file "    const $type& $settingName() { return m_$settingName; } \\\n";
-        print $file "    void $setterFunctionName(const $type& $settingName) { m_$settingName = $settingName; } \\\n";
+        print $file "    void $setterFunctionName(const $type& $settingName)";
+    }
+    if ($setNeedsStyleRecalcInAllFrames) {
+        print $file "; \\\n";
+    } else {
+        print $file " { m_$settingName = $settingName; } \\\n";
     }
 }
 
@@ -276,6 +290,43 @@ sub printInitializer($$$)
     die "Must provide an initial value for $settingName." if ($initialValue eq '' && lc(substr($type, 0, 1)) eq substr($type, 0, 1));
     return if ($initialValue eq '');
     print $file "    , m_$settingName($initialValue) \\\n"
+}
+
+sub printSetterBodies($$$$)
+{
+    my ($file, $unconditionalSettingsRef, $settingsByConditionalRef, $parsedItemsRef) = @_;
+    my %parsedItems = %{ $parsedItemsRef };
+    my %unconditionalSettings = %{ $unconditionalSettingsRef };
+    my %settingsByConditional = %{ $settingsByConditionalRef };
+
+    print $file "#define SETTINGS_SETTER_BODIES \\\n";
+    for my $settingName (sort keys %unconditionalSettings) {
+        printSetterBody($file, $settingName, $parsedItems{$settingName}{"type"}, $parsedItems{$settingName}{"setNeedsStyleRecalcInAllFrames"});
+    }
+    for my $conditional (sort keys %settingsByConditional) {
+        my $preferredConditional = $InCompiler->preferredConditional($conditional);
+        print $file "    ${preferredConditional}_SETTINGS_SETTER_BODIES \\\n";
+    }
+    print $file "// End of SETTINGS_SETTER_BODIES.\n\n";
+}
+
+sub printSetterBody($$$$)
+{
+    my ($file, $settingName, $type, $setNeedsStyleRecalcInAllFrames) = @_;
+    return if (!$setNeedsStyleRecalcInAllFrames);
+
+    my $setterFunctionName = setterFunctionName($settingName);
+    if (lc(substr($type, 0, 1)) eq substr($type, 0, 1)) {
+        print $file "void Settings::$setterFunctionName($type $settingName) \\\n";
+    } else {
+        print $file "void Settings::$setterFunctionName(const $type& $settingName) \\\n";
+    }
+    print $file "{ \\\n";
+    print $file "    if (m_$settingName == $settingName) \\\n";
+    print $file "        return; \\\n";
+    print $file "    m_$settingName = $settingName; \\\n";
+    print $file "    m_page->setNeedsRecalcStyleInAllFrames(); \\\n";
+    print $file "} \\\n";
 }
 
 sub enumerateParsedItems($$$)
