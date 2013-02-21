@@ -5386,6 +5386,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/Arena.h \
 	Source/WebCore/platform/AsyncFileSystem.cpp \
 	Source/WebCore/platform/AsyncFileSystem.h \
+	Source/WebCore/platform/AsyncFileSystemCallbacks.h \
 	Source/WebCore/platform/AutodrainedPool.h \
 	Source/WebCore/platform/CalculationValue.cpp \
 	Source/WebCore/platform/CalculationValue.h \

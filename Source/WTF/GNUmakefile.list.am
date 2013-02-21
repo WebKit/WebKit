@@ -109,6 +109,7 @@ wtf_sources += \
     Source/WTF/wtf/NumberOfCores.h \
     Source/WTF/wtf/RAMSize.cpp \
     Source/WTF/wtf/RAMSize.h \
+    Source/WTF/wtf/ObjcRuntimeExtras.h \
     Source/WTF/wtf/OSAllocator.h \
     Source/WTF/wtf/OSAllocatorPosix.cpp \
     Source/WTF/wtf/OSAllocatorWin.cpp \
