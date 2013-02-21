@@ -32,12 +32,8 @@
 #include "PlatformScreen.h"
 
 #include "FloatRect.h"
-#include "Frame.h"
-#include "FrameView.h"
 #include "HostWindow.h"
-#include "Page.h"
 #include "ScrollView.h"
-#include "Settings.h"
 #include "Widget.h"
 #include <public/Platform.h>
 #include <public/WebScreenInfo.h>
@@ -81,24 +77,12 @@ bool screenIsMonochrome(Widget* widget)
     return client->screenInfo().isMonochrome;
 }
 
-// On Chrome for Android, the screenInfo rects are in physical screen pixels
-// instead of density independent (UI) pixels, and must be scaled down.
-static FloatRect toUserSpace(FloatRect rect, Widget* widget)
-{
-    if (widget->isFrameView()) {
-        Page* page = static_cast<FrameView*>(widget)->frame()->page();
-        if (page && !page->settings()->applyDeviceScaleFactorInCompositor())
-            rect.scale(1 / page->deviceScaleFactor());
-    }
-    return rect;
-}
-
 FloatRect screenRect(Widget* widget)
 {
     PlatformPageClient client = toPlatformPageClient(widget);
     if (!client)
         return FloatRect();
-    return toUserSpace(IntRect(client->screenInfo().rect), widget);
+    return IntRect(client->screenInfo().rect);
 }
 
 FloatRect screenAvailableRect(Widget* widget)
@@ -106,7 +90,7 @@ FloatRect screenAvailableRect(Widget* widget)
     PlatformPageClient client = toPlatformPageClient(widget);
     if (!client)
         return FloatRect();
-    return toUserSpace(IntRect(client->screenInfo().availableRect), widget);
+    return IntRect(client->screenInfo().availableRect);
 }
 
 void screenColorProfile(ColorProfile& toProfile)

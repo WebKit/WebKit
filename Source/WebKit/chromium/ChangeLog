@@ -1,3 +1,18 @@
+2013-02-21  John Mellor  <johnme@chromium.org>
+
+        [chromium] Simplify computation of screenRect/windowRect.
+        https://bugs.webkit.org/show_bug.cgi?id=110456
+
+        Reviewed by Adam Barth.
+
+        This patch removes applyDeviceScaleFactorInCompositor checks
+        added by http://trac.webkit.org/changeset/139356 because
+        Chrome for Android now sizes its screen and window in DIP
+        units (like other platforms), so they are no longer necessary.
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::windowRect):
+
 2013-02-21  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Web Inspector: Get rid of parsedURL in uiSourceCode, use name and path for displayName instead.
