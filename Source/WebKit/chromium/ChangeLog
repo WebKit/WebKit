@@ -1,3 +1,9 @@
+2013-02-21  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, roll chromium deps 183552 -> 183788
+
+        * DEPS:
+
 2013-02-21  John Mellor  <johnme@chromium.org>
 
         [chromium] Simplify computation of screenRect/windowRect.
