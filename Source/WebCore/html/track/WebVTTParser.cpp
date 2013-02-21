@@ -418,10 +418,10 @@ void WebVTTParser::constructTreeFromToken(Document* document)
     }
     case WebVTTTokenTypes::TimestampTag: {
         unsigned position = 0;
-        double time = collectTimeStamp(m_token.characters().data(), &position);
-        // FIXME: This should use an 8bit string if possible.
+        String charactersString(StringImpl::create8BitIfPossible(m_token.characters()));
+        double time = collectTimeStamp(charactersString, &position);
         if (time != malformedTime)
-            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp", String(m_token.characters())));
+            m_currentNode->parserAppendChild(ProcessingInstruction::create(document, "timestamp", charactersString));
         break;
     }
     default:
