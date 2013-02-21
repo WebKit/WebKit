@@ -901,7 +901,7 @@ void GraphicsLayerBlackBerry::setupContentsLayer(LayerWebKitThread* contentsLaye
 
         updateContentsRect();
 
-        if (showDebugBorders()) {
+        if (isShowingDebugBorder()) {
             setLayerBorderColor(*m_contentsLayer, Color(0, 0, 128, 180));
             m_contentsLayer->setBorderWidth(1);
         }
