@@ -111,7 +111,6 @@ public:
 
     bool needsLayout() const;
     void setNeedsLayout();
-    void setViewportConstrainedObjectsNeedLayout();
 
     bool needsFullRepaint() const { return m_doFullRepaint; }
 
@@ -485,6 +484,8 @@ private:
     FrameView* parentFrameView() const;
 
     bool doLayoutWithFrameFlattening(bool allowSubtree);
+
+    void setViewportConstrainedObjectsNeedLayout();
 
     virtual AXObjectCache* axObjectCache() const;
     void notifyWidgetsInAllFrames(WidgetNotification);
