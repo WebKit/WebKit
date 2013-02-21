@@ -1926,6 +1926,8 @@ WebGLRenderingContextResource.prototype = {
                 break;
         }
 
+        console.assert(replayContext, "Failed to create a WebGLRenderingContext for the replay.");
+
         var gl = /** @type {!WebGLRenderingContext} */ (Resource.wrappedObject(replayContext));
         this.setWrappedObject(gl);
 
