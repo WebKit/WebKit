@@ -1224,7 +1224,7 @@ void FrameLoaderClientBlackBerry::startDownload(const ResourceRequest& request, 
     m_webPagePrivate->load(request.url().string(), BlackBerry::Platform::String::emptyString(), "GET", NetworkRequest::UseProtocolCachePolicy, 0, 0, 0, 0, false, false, true, "", suggestedName);
 }
 
-void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(MainResourceLoader* mainResourceLoader, const ResourceRequest&, const ResourceRequest&, const ResourceResponse& r)
+void FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload(MainResourceLoader* mainResourceLoader, const ResourceRequest&, const ResourceResponse& r)
 {
     BlackBerry::Platform::FilterStream* stream = NetworkManager::instance()->streamForHandle(mainResourceLoader->loader()->handle());
     ASSERT(stream);

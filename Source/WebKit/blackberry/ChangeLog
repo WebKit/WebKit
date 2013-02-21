@@ -1,3 +1,18 @@
+2013-02-21  Carlos Garcia Campos  <cargarcia@rim.com>
+
+        [BlackBerry] Extra ResourceRequest parameter in FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload
+        https://bugs.webkit.org/show_bug.cgi?id=110451
+
+        Reviewed by Rob Buis.
+
+        Remove the extra ResourceRequest parameter from
+        FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::convertMainResourceLoadToDownload):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
 2013-02-21  Xan Lopez  <xlopez@rim.com>
 
         [BlackBerry] Adapt to name changes in WebCore::ViewPortArguments
