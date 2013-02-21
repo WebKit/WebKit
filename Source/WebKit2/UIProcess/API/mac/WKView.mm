@@ -208,6 +208,9 @@ struct WKViewInterpretKeyEventsParameters {
     NSRect _windowBottomCornerIntersectionRect;
     
     unsigned _frameSizeUpdatesDisabledCount;
+    unsigned _viewInWindowChangesDeferredCount;
+
+    BOOL _viewInWindowChangeWasDeferred;
 
     // Whether the containing window of the WKView has a valid backing store.
     // The window server invalidates the backing store whenever the window is resized or minimized.
@@ -1898,7 +1901,13 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
         _data->_windowHasValidBackingStore = NO;
         [self _updateWindowVisibility];
         _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
-        _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewIsInWindow);
+
+        if ([self isDeferringViewInWindowChanges]) {
+            _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
+            _data->_viewInWindowChangeWasDeferred = YES;
+        } else
+            _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible | WebPageProxy::ViewIsInWindow);
+
         [self _updateWindowAndViewFrames];
 
         if (!_data->_flagsChangedEventMonitor) {
@@ -1912,7 +1921,12 @@ static NSString * const backingPropertyOldScaleFactorKey = @"NSBackingPropertyOl
     } else {
         [self _updateWindowVisibility];
         _data->_page->viewStateDidChange(WebPageProxy::ViewIsVisible);
-        _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
+
+        if ([self isDeferringViewInWindowChanges]) {
+            _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive);
+            _data->_viewInWindowChangeWasDeferred = YES;
+        } else
+            _data->_page->viewStateDidChange(WebPageProxy::ViewWindowIsActive | WebPageProxy::ViewIsInWindow);
 
         [NSEvent removeMonitor:_data->_flagsChangedEventMonitor];
         _data->_flagsChangedEventMonitor = nil;
@@ -3280,6 +3294,31 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
         return [_data->_fullScreenWindowController webViewPlaceholder];
 #endif
     return nil;
+}
+
+- (void)beginDeferringViewInWindowChanges
+{
+    _data->_viewInWindowChangesDeferredCount++;
+}
+
+- (void)endDeferringViewInWindowChanges
+{
+    if (!_data->_viewInWindowChangesDeferredCount) {
+        NSLog(@"endDeferringViewInWindowChanges was called without a matching beginDeferringViewInWindowChanges!");
+        return;
+    }
+
+    --_data->_viewInWindowChangesDeferredCount;
+
+    if (!_data->_viewInWindowChangesDeferredCount && _data->_viewInWindowChangeWasDeferred) {
+        _data->_page->viewStateDidChange(WebPageProxy::ViewIsInWindow);
+        _data->_viewInWindowChangeWasDeferred = NO;
+    }
+}
+
+- (BOOL)isDeferringViewInWindowChanges
+{
+    return _data->_viewInWindowChangesDeferredCount;
 }
 
 @end

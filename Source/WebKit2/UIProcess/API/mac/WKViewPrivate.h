@@ -55,4 +55,8 @@
 
 - (NSView*)fullScreenPlaceholderView;
 
+- (void)beginDeferringViewInWindowChanges;
+- (void)endDeferringViewInWindowChanges;
+- (BOOL)isDeferringViewInWindowChanges;
+
 @end

@@ -1,3 +1,21 @@
+2013-02-20  Tim Horton  <timothy_horton@apple.com>
+
+        Provide WKView SPI to defer telling the WebPageProxy and WebProcess about changes in the hosting window
+        https://bugs.webkit.org/show_bug.cgi?id=110415
+        <rdar://problem/13095405>
+
+        Reviewed by Simon Fraser.
+
+        * UIProcess/API/mac/WKView.mm: Add _viewInWindowChangesDeferredCount and _viewInWindowChangeWasDeferred to WKViewData.
+        (-[WKView viewDidMoveToWindow]): If we're deferring window changes, don't include the ViewIsInWindow flag
+        when sending viewStateDidChange. Instead, save the fact that we want to do that later aside.
+        (-[WKView beginDeferringViewInWindowChanges]):
+        (-[WKView endDeferringViewInWindowChanges]): Straightforward begin/end pair. When we exit the last pair and
+        have a pending window change, let the WebPageProxy know. WebPageProxy will do the check to ensure that
+        the in-window state has actually changed.
+        (-[WKView isDeferringViewInWindowChanges]):
+        * UIProcess/API/mac/WKViewPrivate.h: 
+
 2013-02-20  Kiran Muppala  <cmuppala@apple.com>
 
         Disable window occlusion notifications for App Store on Mac.
