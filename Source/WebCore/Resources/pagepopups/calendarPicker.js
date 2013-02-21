@@ -708,6 +708,189 @@ EventEmitter.prototype.dispatchEvent = function(type) {
     }
 };
 
+// Parameter t should be a number between 0 and 1.
+var AnimationTimingFunction = {
+    Linear: function(t){
+        return t;
+    },
+    EaseInOut: function(t){
+        t *= 2;
+        if (t < 1)
+            return Math.pow(t, 3) / 2;
+        t -= 2;
+        return Math.pow(t, 3) / 2 + 1;
+    }
+};
+
+/**
+ * @constructor
+ * @extends EventEmitter
+ */
+function AnimationManager() {
+    EventEmitter.call(this);
+
+    this._isRunning = false;
+    this._runningAnimatorCount = 0;
+    this._runningAnimators = {};
+    this._animationFrameCallbackBound = this._animationFrameCallback.bind(this);
+}
+
+AnimationManager.prototype = Object.create(EventEmitter.prototype);
+
+AnimationManager.EventTypeAnimationFrameWillFinish = "animationFrameWillFinish";
+
+AnimationManager.prototype._startAnimation = function() {
+    if (this._isRunning)
+        return;
+    this._isRunning = true;
+    window.webkitRequestAnimationFrame(this._animationFrameCallbackBound);
+};
+
+AnimationManager.prototype._stopAnimation = function() {
+    if (!this._isRunning)
+        return;
+    this._isRunning = false;
+};
+
+/**
+ * @param {!Animator} animator
+ */
+AnimationManager.prototype.add = function(animator) {
+    if (this._runningAnimators[animator.id])
+        return;
+    this._runningAnimators[animator.id] = animator;
+    this._runningAnimatorCount++;
+    if (this._needsTimer())
+        this._startAnimation();
+};
+
+/**
+ * @param {!Animator} animator
+ */
+AnimationManager.prototype.remove = function(animator) {
+    if (!this._runningAnimators[animator.id])
+        return;
+    delete this._runningAnimators[animator.id];
+    this._runningAnimatorCount--;
+    if (!this._needsTimer())
+        this._stopAnimation();
+};
+
+AnimationManager.prototype._animationFrameCallback = function(now) {
+    if (this._runningAnimatorCount > 0) {
+        for (var id in this._runningAnimators) {
+            this._runningAnimators[id].onAnimationFrame(now);
+        }
+    }
+    this.dispatchEvent(AnimationManager.EventTypeAnimationFrameWillFinish);
+    if (this._isRunning)
+        window.webkitRequestAnimationFrame(this._animationFrameCallbackBound);
+};
+
+/**
+ * @return {!boolean}
+ */
+AnimationManager.prototype._needsTimer = function() {
+    return this._runningAnimatorCount > 0 || this.hasListener(AnimationManager.EventTypeAnimationFrameWillFinish);
+};
+
+/**
+ * @param {!string} type
+ * @param {!Function} callback
+ * @override
+ */
+AnimationManager.prototype.on = function(type, callback) {
+    EventEmitter.prototype.on.call(this, type, callback);
+    if (this._needsTimer())
+        this._startAnimation();
+};
+
+/**
+ * @param {!string} type
+ * @param {!Function} callback
+ * @override
+ */
+AnimationManager.prototype.removeListener = function(type, callback) {
+    EventEmitter.prototype.removeListener.call(this, type, callback);
+    if (!this._needsTimer())
+        this._stopAnimation();
+};
+
+AnimationManager.shared = new AnimationManager();
+
+/**
+ * @constructor
+ * @extends EventEmitter
+ */
+function Animator() {
+    EventEmitter.call(this);
+
+    this.id = Animator._lastId++;
+    this._from = 0;
+    this._to = 0;
+    this._delta = 0;
+    this.duration = 100;
+    this.step = null;
+    this._lastStepTime = null;
+    this.progress = 0.0;
+    this.timingFunction = AnimationTimingFunction.Linear;
+}
+
+Animator.prototype = Object.create(EventEmitter.prototype);
+
+Animator._lastId = 0;
+
+Animator.EventTypeDidAnimationStop = "didAnimationStop";
+
+/**
+ * @param {!number} value
+ */
+Animator.prototype.setFrom = function(value) {
+    this._from = value;
+    this._delta = this._to - this._from;
+};
+
+/**
+ * @param {!number} value
+ */
+Animator.prototype.setTo = function(value) {
+    this._to = value;
+    this._delta = this._to - this._from;
+};
+
+Animator.prototype.start = function() {
+    this._lastStepTime = Date.now();
+    this.progress = 0.0;
+    this._isRunning = true;
+    this.currentValue = this._from;
+    AnimationManager.shared.add(this);
+};
+
+Animator.prototype.stop = function() {
+    if (!this._isRunning)
+        return;
+    this._isRunning = false;
+    this.currentValue = this._to;
+    this.step(this);
+    AnimationManager.shared.remove(this);
+    this.dispatchEvent(Animator.EventTypeDidAnimationStop, this);
+};
+
+/**
+ * @param {!number} now
+ */
+Animator.prototype.onAnimationFrame = function(now) {
+    this.progress += (now - this._lastStepTime) / this.duration;
+    if (this.progress >= 1.0) {
+        this.progress = 1.0;
+        this.stop();
+        return;
+    }
+    this.currentValue = this.timingFunction(this.progress) * this._delta + this._from;
+    this.step(this);
+    this._lastStepTime = now;
+};
+
 /**
  * @constructor
  * @param {!Element} element
