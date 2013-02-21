@@ -36,6 +36,8 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 
+const unsigned DefaultNumberOfOutputChannels = 1;
+
 namespace WebCore {
 
 PassRefPtr<ChannelMergerNode> ChannelMergerNode::create(AudioContext* context, float sampleRate, unsigned numberOfInputs)
@@ -48,6 +50,7 @@ PassRefPtr<ChannelMergerNode> ChannelMergerNode::create(AudioContext* context, f
 
 ChannelMergerNode::ChannelMergerNode(AudioContext* context, float sampleRate, unsigned numberOfInputs)
     : AudioNode(context, sampleRate)
+    , m_desiredNumberOfOutputChannels(DefaultNumberOfOutputChannels)
 {
     // Create the requested number of inputs.
     for (unsigned i = 0; i < numberOfInputs; ++i)
@@ -64,7 +67,13 @@ void ChannelMergerNode::process(size_t framesToProcess)
 {
     AudioNodeOutput* output = this->output(0);
     ASSERT(output);
-    ASSERT_UNUSED(framesToProcess, framesToProcess == output->bus()->length());    
+    ASSERT_UNUSED(framesToProcess, framesToProcess == output->bus()->length());
+
+    // Output bus not updated yet, so just output silence.
+    if (m_desiredNumberOfOutputChannels != output->numberOfChannels()) {
+        output->bus()->zero();
+        return;
+    }
     
     // Merge all the channels from all the inputs into one output.
     unsigned outputChannelIndex = 0;
@@ -109,6 +118,10 @@ void ChannelMergerNode::checkNumberOfChannelsForInput(AudioNodeInput* input)
     AudioNodeOutput* output = this->output(0);
     ASSERT(output);
     output->setNumberOfChannels(numberOfOutputChannels);
+    // There can in rare cases be a slight delay before the output bus is updated to the new number of
+    // channels because of tryLocks() in the context's updating system. So record the new number of
+    // output channels here.
+    m_desiredNumberOfOutputChannels = numberOfOutputChannels;
 
     AudioNode::checkNumberOfChannelsForInput(input);
 }
