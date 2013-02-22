@@ -204,8 +204,8 @@ private:
     }
 
     MapType m_map;
-    size_t m_size;
-    size_t m_capacity;
+    int64_t m_size;
+    int64_t m_capacity;
     int64_t m_age;
 };
 

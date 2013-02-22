@@ -2,6 +2,15 @@
 
         Not reviewed.
 
+        Fix the 32-bit build by using the right data type in more places.
+
+        * runtime/CodeCache.h:
+        (CodeCacheMap):
+
+2013-02-22  Geoffrey Garen  <ggaren@apple.com>
+
+        Not reviewed.
+
         Fix the 32-bit build by using the right data type.
 
         * runtime/CodeCache.h:
