@@ -1,3 +1,22 @@
+==================
+WebKitGTK+ 1.11.90
+==================
+
+What's new in WebKitGTK+ 1.11.90?
+
+  - New HTML5 media controls design.
+  - Move the API to get TLS certificate from WebKitURIResponse to
+    WebKitWebView in WebKit2.
+  - Remove webkit_web_view_get_subresources from WebKit2 GTK+ API.
+  - Allow building with Clang.
+  - The GLib unicode backend have been removed, leaving ICU as the
+    only supported backend.
+  - Fix a crash in the GStreamer implementation of
+    FullscreenVideoController.
+  - Fix a bug that made the audio to be muted when playback rate was
+    between 0.8 and 2.0.
+  - Fix memory leaks in subresources API in WebKit1.
+
 =================
 WebKitGTK+ 1.11.5
 =================
