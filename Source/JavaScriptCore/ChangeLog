@@ -1,3 +1,15 @@
+2013-02-21  Michael Saboff  <msaboff@apple.com>
+
+        25-30% regression in V8 RayTrace test in 32 bit builds with JIT disabled
+        https://bugs.webkit.org/show_bug.cgi?id=110539
+
+        Reviewed by Filip Pizlo.
+
+        Change the scale used to lookup pointers in JSGlobalObject::m_specialPointers to be 4 bytes for
+        the 32 bit version of the interpreter.
+
+        * llint/LowLevelInterpreter32_64.asm:
+
 2013-02-21  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Add executable property to cmd file.
