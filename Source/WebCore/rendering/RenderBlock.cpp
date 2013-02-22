@@ -5615,7 +5615,7 @@ void RenderBlock::adjustRectForColumns(LayoutRect& r) const
         return;
 
     LayoutUnit startOffset = max(isHorizontal ? r.y() : r.x(), beforeBorderPadding);
-    LayoutUnit endOffset = min<LayoutUnit>(isHorizontal ? r.maxY() : r.maxX(), beforeBorderPadding + colCount * colHeight);
+    LayoutUnit endOffset = max(min<LayoutUnit>(isHorizontal ? r.maxY() : r.maxX(), beforeBorderPadding + colCount * colHeight), beforeBorderPadding);
 
     // FIXME: Can overflow on fast/block/float/float-not-removed-from-next-sibling4.html, see https://bugs.webkit.org/show_bug.cgi?id=68744
     unsigned startColumn = (startOffset - beforeBorderPadding) / colHeight;
