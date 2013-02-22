@@ -4244,10 +4244,6 @@ webkit.org/b/99800 fast/harness/perftests/runs-per-second-iterations.html [ Fail
 webkit.org/b/99800 fast/harness/perftests/perf-runner-compute-statistics.html [ Failure Pass ]
 webkit.org/b/99800 fast/harness/perftests/runs-per-second-log.html [ Failure ImageOnlyFailure Missing Pass ]
 
-# Needs platform-specific results
-webkit.org/b/104035 fast/text/orientation-sideways.html [ Missing ]
-webkit.org/b/104172 fast/text/decorations-with-text-combine.html [ Missing ]
-
 webkit.org/b/104092 fast/frames/paint-iframe-background.html [ Failure Pass ]
 
 webkit.org/b/103487 [ Linux ] fast/forms/placeholder-position.html [ ImageOnlyFailure Pass ]
