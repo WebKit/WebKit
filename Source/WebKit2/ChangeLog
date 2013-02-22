@@ -1,3 +1,18 @@
+2013-02-22  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
+
+        [WK2][EFL][GTK][Qt] Add context menu item tags for C API
+        https://bugs.webkit.org/show_bug.cgi?id=109815
+
+        Reviewed by Anders Carlsson.
+
+        This patch adds context menu item tags used by EFL, GTK and Qt ports, defined in
+        WebCore to WK2 C API.
+
+        * Shared/API/c/WKContextMenuItemTypes.h:
+        * Shared/API/c/WKSharedAPICast.h:
+        (WebKit::toAPI):
+        (WebKit::toImpl):
+
 2013-02-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] Move AC code from EwkView to WebView

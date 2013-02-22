@@ -335,6 +335,10 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagDownloadImageToDisk;
     case WebCore::ContextMenuItemTagCopyImageToClipboard:
         return kWKContextMenuItemTagCopyImageToClipboard;
+#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+    case WebCore::ContextMenuItemTagCopyImageUrlToClipboard:
+        return kWKContextMenuItemTagCopyImageUrlToClipboard;
+#endif
     case WebCore::ContextMenuItemTagOpenFrameInNewWindow:
         return kWKContextMenuItemTagOpenFrameInNewWindow;
     case WebCore::ContextMenuItemTagCopy:
@@ -351,6 +355,10 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
         return kWKContextMenuItemTagCut;
     case WebCore::ContextMenuItemTagPaste:
         return kWKContextMenuItemTagPaste;
+#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+    case WebCore::ContextMenuItemTagSelectAll:
+        return kWKContextMenuItemTagSelectAll;
+#endif
     case WebCore::ContextMenuItemTagSpellingGuess:
         return kWKContextMenuItemTagSpellingGuess;
     case WebCore::ContextMenuItemTagNoGuessesFound:
@@ -491,6 +499,8 @@ inline WKContextMenuItemTag toAPI(WebCore::ContextMenuAction action)
     case WebCore::ContextMenuItemTagChangeBack:
         return kWKContextMenuItemTagChangeBack;
 #endif
+    case WebCore::ContextMenuItemTagOpenLinkInThisWindow:
+        return kWKContextMenuItemTagOpenLinkInThisWindow;
     default:
         if (action < WebCore::ContextMenuItemBaseApplicationTag)
             LOG_ERROR("ContextMenuAction %i is an unknown tag but is below the allowable custom tag value of %i", action, WebCore::  ContextMenuItemBaseApplicationTag);
@@ -516,6 +526,10 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
     case kWKContextMenuItemTagCopyImageToClipboard:
         return WebCore::ContextMenuItemTagCopyImageToClipboard;
     case kWKContextMenuItemTagOpenFrameInNewWindow:
+#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+    case kWKContextMenuItemTagCopyImageUrlToClipboard:
+        return WebCore::ContextMenuItemTagCopyImageUrlToClipboard;
+#endif
         return WebCore::ContextMenuItemTagOpenFrameInNewWindow;
     case kWKContextMenuItemTagCopy:
         return WebCore::ContextMenuItemTagCopy;
@@ -531,6 +545,10 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
         return WebCore::ContextMenuItemTagCut;
     case kWKContextMenuItemTagPaste:
         return WebCore::ContextMenuItemTagPaste;
+#if PLATFORM(EFL) || PLATFORM(GTK) || PLATFORM(QT)
+    case kWKContextMenuItemTagSelectAll:
+        return WebCore::ContextMenuItemTagSelectAll;
+#endif
     case kWKContextMenuItemTagSpellingGuess:
         return WebCore::ContextMenuItemTagSpellingGuess;
     case kWKContextMenuItemTagNoGuessesFound:
@@ -671,6 +689,8 @@ inline WebCore::ContextMenuAction toImpl(WKContextMenuItemTag tag)
     case kWKContextMenuItemTagChangeBack:
         return WebCore::ContextMenuItemTagChangeBack;
 #endif
+    case kWKContextMenuItemTagOpenLinkInThisWindow:
+        return WebCore::ContextMenuItemTagOpenLinkInThisWindow;
     default:
         if (tag < kWKContextMenuItemBaseApplicationTag)
             LOG_ERROR("WKContextMenuItemTag %i is an unknown tag but is below the allowable custom tag value of %i", tag, kWKContextMenuItemBaseApplicationTag);
