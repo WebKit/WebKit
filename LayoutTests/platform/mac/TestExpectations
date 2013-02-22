@@ -1439,3 +1439,7 @@ webkit.org/b/109994 fast/forms/button-generated-content.html [ Failure ]
 webkit.org/b/109994 fast/forms/select-baseline.html [ Failure ]
 webkit.org/b/109994 svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/109994 tables/mozilla/bugs/bug92647-2.html [ Failure ]
+
+webkit.org/b/110554 http/tests/security/feed-urls-from-remote.html [ Failure ]
+webkit.org/b/110555 fast/canvas/canvas-currentPath.html [ Failure ]
+webkit.org/b/110555 fast/canvas/canvas-path-constructors.html [ Failure ]
