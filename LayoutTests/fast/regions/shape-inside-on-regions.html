@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <script>
+        if (window.internals)
+            window.internals.settings.setCSSExclusionsEnabled(true);
+    </script>
+    <style>
+        #rectangle {
+            font: 16px Ahem, sans-serif;
+            -webkit-flow-into: rectangle;
+        }
+
+        .region { -webkit-flow-from: rectangle; }
+
+        #region1 {
+            width: 180px;
+            height: 100px;
+            -webkit-shape-inside: rectangle(0, 0, 130px, 90px);
+            margin-top: 10px;
+        }
+        #region2 {
+            width: 300px;
+            height: 145px;
+            -webkit-shape-inside: rectangle(0, 0, 220px, 150px);
+            margin-top: 60px;
+        }
+        #region3 {
+            width: 300px;
+            height: 50px;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div id="rectangle">
+        X X X X X
+        <p>X X</p>
+        <p style="color: green">X X X X X X</p>
+        <p style="color: orange">X X X X</p>
+        <p>X X X X X X X X<p style="color: yellow">X X X X X X X X X X</p> X X</p>
+        <div style="color: red"> X X X X X X X X X</div>
+    </div>
+    <div id="page">
+        <div id="region1" class="region"></div>
+        <div id="region2" class="region"></div>
+        <div id="region3" class="region"></div>
+    </div>
+    <p>Requires Ahem font. Two different -shape-inside property are applied to the first and second region. The third region is a simple region without -shape-inside.
+    The rectangles should flow through the regions and the shape-insides should be applied to the first two regions.</p>
+    <p> Bug <a href="http://webkit.org/b/107880">107880</a>: Regions should respect shape-inside</p>
+</body>
+</html>

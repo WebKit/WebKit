@@ -35,6 +35,7 @@
 #include "ExclusionShape.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
+#include "RenderRegion.h"
 #include "RenderStyle.h"
 
 namespace WebCore {
@@ -52,6 +53,16 @@ const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter>::computedShape
     m_shape = ExclusionShape::createExclusionShape(shape, m_shapeLogicalWidth, m_shapeLogicalHeight, m_renderer->style()->writingMode());
     ASSERT(m_shape);
     return m_shape.get();
+}
+
+template <class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const>
+LayoutUnit ExclusionShapeInfo<RenderType, shapeGetter>::logicalTopOffset() const
+{
+    LayoutUnit logicalTopOffset = m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderBefore() + m_renderer->paddingBefore() : LayoutUnit();
+    // Content in a flow thread is relative to the beginning of the thread, but the shape calculation should be relative to the current region.
+    if (m_renderer->isRenderRegion())
+        logicalTopOffset += toRenderRegion(m_renderer)->logicalTopForFlowThreadContent();
+    return logicalTopOffset;
 }
 
 template class ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside>;

@@ -34,6 +34,7 @@
 #include "RenderInline.h"
 #include "RenderLayer.h"
 #include "RenderListMarker.h"
+#include "RenderRegion.h"
 #include "RenderRubyRun.h"
 #include "RenderView.h"
 #include "Settings.h"
@@ -64,10 +65,27 @@ namespace WebCore {
 // We don't let our line box tree for a single line get any deeper than this.
 const unsigned cMaxLineDepth = 200;
 
+static LayoutUnit logicalHeightForLine(const RenderBlock* block, bool isFirstLine, LayoutUnit replacedHeight = 0)
+{
+    if (!block->document()->inNoQuirksMode() && replacedHeight)
+        return replacedHeight;
+
+    if (!(block->style(isFirstLine)->lineBoxContain() & LineBoxContainBlock))
+        return 0;
+
+    return max<LayoutUnit>(replacedHeight, block->lineHeight(isFirstLine, block->isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
+}
+
 #if ENABLE(CSS_EXCLUSIONS)
 static inline ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo(const RenderBlock* block)
 {
-    return block->view()->layoutState()->exclusionShapeInsideInfo();
+    ExclusionShapeInsideInfo* shapeInsideInfo = block->view()->layoutState()->exclusionShapeInsideInfo();
+    if (!shapeInsideInfo && block->inRenderFlowThread()) {
+        LayoutUnit offset = block->logicalHeight() + logicalHeightForLine(block, false);
+        RenderRegion* region = block->regionAtBlockOffset(offset);
+        return region ? region->exclusionShapeInsideInfo() : 0;
+    }
+    return shapeInsideInfo;
 }
 #endif
 
@@ -133,17 +151,6 @@ private:
 #endif
     bool m_isFirstLine;
 };
-
-static LayoutUnit logicalHeightForLine(RenderBlock* block, bool isFirstLine, LayoutUnit replacedHeight = 0)
-{
-    if (!block->document()->inNoQuirksMode() && replacedHeight)
-        return replacedHeight;
-
-    if (!(block->style(isFirstLine)->lineBoxContain() & LineBoxContainBlock))
-        return 0;
-
-    return max<LayoutUnit>(replacedHeight, block->lineHeight(isFirstLine, block->isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
-}
 
 inline void LineWidth::updateAvailableWidth(LayoutUnit replacedHeight)
 {
@@ -1538,6 +1545,8 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 #if ENABLE(CSS_EXCLUSIONS)
         // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which
         // case these segments may be incorrect.
+        if (inRenderFlowThread())
+            exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
         if (exclusionShapeInsideInfo) {
             LayoutUnit lineTop = logicalHeight() + absoluteLogicalTop;
             exclusionShapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
