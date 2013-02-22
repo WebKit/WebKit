@@ -91,7 +91,7 @@ static WebThread::TaskObserver* s_endOfTaskRunner = 0;
 // Doing so may cause hard to reproduce crashes.
 static bool s_webKitInitialized = false;
 
-static Platform* s_webKitPlatformSupport = 0;
+static WebKitPlatformSupport* s_webKitPlatformSupport = 0;
 
 static bool generateEntropy(unsigned char* buffer, size_t length)
 {
@@ -109,7 +109,7 @@ static void assertV8RecursionScope()
 }
 #endif
 
-void initialize(Platform* webKitPlatformSupport)
+void initialize(WebKitPlatformSupport* webKitPlatformSupport)
 {
     initializeWithoutV8(webKitPlatformSupport);
 
@@ -128,7 +128,7 @@ void initialize(Platform* webKitPlatformSupport)
     }
 }
 
-void initializeWithoutV8(Platform* webKitPlatformSupport)
+void initializeWithoutV8(WebKitPlatformSupport* webKitPlatformSupport)
 {
     ASSERT(!s_webKitInitialized);
     s_webKitInitialized = true;
@@ -189,7 +189,7 @@ void shutdown()
     WebPrerenderingSupport::shutdown();
 }
 
-Platform* webKitPlatformSupport()
+WebKitPlatformSupport* webKitPlatformSupport()
 {
     return s_webKitPlatformSupport;
 }
