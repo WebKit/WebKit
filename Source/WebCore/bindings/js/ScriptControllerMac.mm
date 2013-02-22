@@ -110,15 +110,17 @@ WebScriptObject* ScriptController::windowScriptObject()
     return m_windowScriptObject.get();
 }
 
-#if JSC_OBJC_API_ENABLED
 JSContext *ScriptController::javaScriptContext()
 {
+#if JSC_OBJC_API_ENABLED
     if (!canExecuteScripts(NotAboutToExecuteScript))
         return 0;
     JSContext *context = [JSContext contextWithGlobalContextRef:toGlobalRef(bindingRootObject()->globalObject()->globalExec())];
     return context;
-}
+#else
+    return 0;
 #endif
+}
 
 void ScriptController::updatePlatformScriptObjects()
 {

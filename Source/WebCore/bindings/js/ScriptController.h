@@ -153,9 +153,7 @@ public:
 
 #if PLATFORM(MAC)
     WebScriptObject* windowScriptObject();
-#if JSC_OBJC_API_ENABLED
     JSContext *javaScriptContext();
-#endif
 #endif
 
     JSC::JSObject* jsObjectForPluginElement(HTMLPlugInElement*);
