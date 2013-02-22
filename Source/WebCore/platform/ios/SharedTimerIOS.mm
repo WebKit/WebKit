@@ -34,34 +34,8 @@ using namespace WebCore;
 namespace WebCore {
 static CFRunLoopTimerRef sharedTimer;
 static void timerFired(CFRunLoopTimerRef, void*);
-}
 
-@interface WebCoreResumeNotifierIOS : NSObject
-- (void)didWake;
-@end
-
-@implementation WebCoreResumeNotifierIOS
-
-- (id)init
-{
-    if (!(self = [super init])) {
-        ASSERT_NOT_REACHED();
-        return nil;
-    }
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(didWake) name:@"UIApplicationDidBecomeActiveNotification" object:nil];
-
-    return self;
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-    [super dealloc];
-}
-
-- (void)didWake
+static void applicationDidBecomeActive(CFNotificationCenterRef, void*, CFStringRef, const void*, CFDictionaryRef)
 {
     WebThreadRun(^{
         if (!sharedTimer)
@@ -72,11 +46,6 @@ static void timerFired(CFRunLoopTimerRef, void*);
     });
 }
 
-@end
-
-namespace WebCore {
-
-static WebCoreResumeNotifierIOS *resumeNotifier;
 typedef void (*SharedTimerFiredFunction)();
 static SharedTimerFiredFunction sharedTimerFiredFunction;
 
@@ -108,8 +77,12 @@ void setSharedTimerFireInterval(double interval)
     sharedTimer = CFRunLoopTimerCreate(0, fireDate, 0, 0, 0, timerFired, 0);
     CFRunLoopAddTimer(WebThreadRunLoop(), sharedTimer, kCFRunLoopCommonModes);
 
-    if (!resumeNotifier)
-        resumeNotifier = [[WebCoreResumeNotifierIOS alloc] init];
+    static bool registeredForApplicationNotification = false;
+    if (!registeredForApplicationNotification) {
+        registeredForApplicationNotification = true;
+        CFNotificationCenterRef notificationCenter = CFNotificationCenterGetLocalCenter();
+        CFNotificationCenterAddObserver(notificationCenter, 0, applicationDidBecomeActive, CFSTR("UIApplicationDidBecomeActiveNotification"), NULL, CFNotificationSuspensionBehaviorCoalesce);
+    }
 }
 
 void stopSharedTimer()
