@@ -1,1 +1,5 @@
 resources/tests9.dat: PASS
+
+Switching to data: url parser (threaded if available) and re-running...
+
+resources/tests9.dat: PASS

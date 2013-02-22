@@ -53,13 +53,27 @@ var ignoreTitle = iframe.contentWindow.document.getElementsByTagName("title")[0]
 window.onload = function()
 {
     stat.data = "Running";
+    saved_test_files = window.test_files.slice();
+    have_tested_threaded_parser = false;
     run();
 }
 
 function run()
 {
     var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    if (file = test_files.shift())
+    file = test_files.shift()
+    if (!file && !have_tested_threaded_parser) {
+        var log_element = document.createElement('p');
+        log_element.appendChild(document.createTextNode("Switching to data: url parser (threaded if available) and re-running..."));
+        document.body.appendChild(log_element);
+        if (window.internals && internals.settings.setUseThreadedHTMLParserForDataURLs)
+            internals.settings.setUseThreadedHTMLParserForDataURLs(true);
+        write = false;
+        test_files = saved_test_files.slice();
+        file = test_files.shift()
+        have_tested_threaded_parser = true;
+    }
+    if (file)
     {
         stat.data = "Retriving " + file;
         test_number = 1;

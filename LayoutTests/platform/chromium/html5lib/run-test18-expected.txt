@@ -2,4 +2,12 @@ CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
 CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+resources/tests18.dat: PASS
+
+Switching to data: url parser (threaded if available) and re-running...
+
 resources/tests18.dat: PASS

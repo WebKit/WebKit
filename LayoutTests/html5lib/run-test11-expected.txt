@@ -1,4 +1,11 @@
 CONSOLE MESSAGE: Warning: Problem parsing viewBox=""
 CONSOLE MESSAGE: Warning: Problem parsing viewBox=""
 CONSOLE MESSAGE: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
+CONSOLE MESSAGE: line 1: Warning: Problem parsing viewBox=""
+resources/tests11.dat: PASS
+
+Switching to data: url parser (threaded if available) and re-running...
+
 resources/tests11.dat: PASS
