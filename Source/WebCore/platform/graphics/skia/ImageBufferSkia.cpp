@@ -129,6 +129,11 @@ ImageBuffer::ImageBuffer(const IntSize& size, float resolutionScale, ColorSpace,
     }
 
     SkAutoTUnref<SkDevice> device(compatibleContext->platformContext()->createCompatibleDevice(size, hasAlpha));
+    if (!device.get()) {
+        success = false;
+        return;
+    }
+
     SkPixelRef* pixelRef = device->accessBitmap(false).pixelRef();
     if (!pixelRef) {
         success = false;
