@@ -308,6 +308,9 @@ void HTMLDocumentParser::checkForSpeculationFailure()
 
 void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwnPtr<HTMLTokenizer> tokenizer)
 {
+    if (!m_currentChunk)
+        return;
+
     m_weakFactory.revokeAll();
     m_speculations.clear();
 
@@ -319,6 +322,7 @@ void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwn
     checkpoint->preloadScannerCheckpoint = m_currentChunk->preloadScannerCheckpoint;
     checkpoint->unparsedInput = m_input.current().toString().isolatedCopy();
     m_input.current().clear();
+    m_currentChunk.clear();
 
     ASSERT(checkpoint->unparsedInput.isSafeToSendToAnotherThread());
     HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::resumeFrom, m_backgroundParser, checkpoint.release()));

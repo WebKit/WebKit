@@ -283,10 +283,7 @@ void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex
     m_templateCount = checkpoint.templateCount;
 #endif
     m_cssScanner.reset();
-
-    // FIXME: We should be able to actively invalidate all the outstanding checkpoints
-    // by clearing m_checkpoints, but that causes fast/tokenizer/write-before-load.html
-    // to hit the ASSERT at the beginning of this function.
+    m_checkpoints.clear();
 }
 
 void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)

@@ -71,10 +71,8 @@ void BackgroundHTMLInputStream::rewindTo(HTMLInputCheckpoint checkpointIndex, co
     if (isClosed && !m_current.isClosed())
         m_current.close();
 
-    // FIXME: We should be able to actively invalidate all the outstanding checkpoints
-    // by clearing m_segments and m_checkpoints, but that causes
-    // fast/tokenizer/write-before-load.html to hit the ASSERT at the beginning of
-    // this function.
+    m_segments.clear();
+    m_checkpoints.clear();
 }
 
 }
