@@ -1,3 +1,15 @@
+2013-02-22  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Remove old SerializedScriptValue-based get() callbacks
+        https://bugs.webkit.org/show_bug.cgi?id=110626
+
+        Reviewed by James Robinson.
+
+        Removal now that refactoring is complete.
+
+        * public/WebIDBCallbacks.h:
+        (WebKit):
+
 2013-02-22  Ali Juma  <ajuma@chromium.org>
 
         [chromium] Register newly-created layers for animation
