@@ -1,3 +1,9 @@
+2013-02-21  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Build fix for VS2010 WebKit solution.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-02-20  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not change its mind about what type speculations a node does, by encoding the checks in the NodeType, UseKind, and ArrayMode
