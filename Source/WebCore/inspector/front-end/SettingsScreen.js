@@ -276,6 +276,7 @@ WebInspector.GenericSettingsTab = function()
 
     p = this._appendSection(WebInspector.UIString("Appearance"));
     p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Show toolbar icons"), WebInspector.settings.showToolbarIcons));
+    p.appendChild(this._createCheckboxSetting(WebInspector.UIString("Split panels vertically when docked to right"), WebInspector.settings.splitVerticallyWhenDockedToRight));
 
     p = this._appendSection(WebInspector.UIString("Elements"));
     p.appendChild(this._createRadioSetting(WebInspector.UIString("Color format"), [

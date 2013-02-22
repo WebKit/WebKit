@@ -871,3 +871,4 @@ localizedStrings["Create WebSocket"] = "Create WebSocket";
 localizedStrings["Send WebSocket Handshake"] = "Send WebSocket Handshake";
 localizedStrings["Receive WebSocket Handshake"] = "Receive WebSocket Handshake";
 localizedStrings["Destroy WebSocket"] = "Destroy WebSocket";
+localizedStrings["Split panels vertically when docked to right"] = "Split panels vertically when docked to right";
