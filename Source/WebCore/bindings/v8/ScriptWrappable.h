@@ -70,6 +70,8 @@ private:
         m_maskedWrapper.Clear();
     }
 
+    // Stores a masked wrapper to prevent attackers from overwriting this field
+    // with a phony wrapper.
     v8::Persistent<v8::Object> m_maskedWrapper;
 
     static inline v8::Object* maskOrUnmaskPointer(const v8::Object* object)
