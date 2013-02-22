@@ -689,6 +689,7 @@ EXTRA_DIST += \
 	Source/WebCore/html/parser/HTMLEntityNames.in \
 	Source/WebCore/icu/LICENSE \
 	Source/WebCore/inspector/CodeGeneratorInspector.py \
+	Source/WebCore/inspector/CodeGeneratorInspectorStrings.py \
 	Source/WebCore/inspector/InjectedScriptCanvasModuleSource.js \
 	Source/WebCore/inspector/InjectedScriptSource.js \
 	Source/WebCore/inspector/Inspector.json \
