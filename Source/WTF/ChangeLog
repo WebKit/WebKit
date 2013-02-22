@@ -1,3 +1,12 @@
+2013-02-21  Brady Eidson  <beidson@apple.com>
+
+        Move fastlog2() to WTF/MathExtras.h so it can be used from multiple projects.
+
+        Rubberstamped by Geoff Garen.
+
+        * wtf/MathExtras.h:
+        (WTF::fastLog2):
+
 2013-02-21  Andy Estes  <aestes@apple.com>
 
         TriState.h should be a Project header
