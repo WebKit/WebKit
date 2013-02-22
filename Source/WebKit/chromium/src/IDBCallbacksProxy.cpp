@@ -46,7 +46,7 @@
 #include "WebIDBDatabaseImpl.h"
 #include "WebIDBKey.h"
 #include "WebIDBMetadata.h"
-#include "WebSerializedScriptValue.h"
+#include <public/WebData.h>
 
 using namespace WebCore;
 
@@ -77,10 +77,10 @@ void IDBCallbacksProxy::onError(PassRefPtr<IDBDatabaseError> idbDatabaseError)
     m_callbacks->onError(WebIDBDatabaseError(idbDatabaseError));
 }
 
-void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCursorBackend, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
+void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBCursorBackendInterface> idbCursorBackend, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> value)
 {
     m_didComplete = true;
-    m_callbacks->onSuccess(new WebIDBCursorImpl(idbCursorBackend), key, primaryKey, value);
+    m_callbacks->onSuccess(new WebIDBCursorImpl(idbCursorBackend), key, primaryKey, WebData(value));
 }
 
 void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBDatabaseBackendInterface> backend, const IDBDatabaseMetadata& metadata)
@@ -103,15 +103,15 @@ void IDBCallbacksProxy::onSuccess(PassRefPtr<DOMStringList> domStringList)
     m_callbacks->onSuccess(WebDOMStringList(domStringList));
 }
 
-void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)
+void IDBCallbacksProxy::onSuccess(PassRefPtr<SharedBuffer> value)
 {
     m_didComplete = true;
-    m_callbacks->onSuccess(WebSerializedScriptValue(serializedScriptValue));
+    m_callbacks->onSuccess(WebData(value));
 }
 
-void IDBCallbacksProxy::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue, PassRefPtr<IDBKey> key, const IDBKeyPath& keyPath)
+void IDBCallbacksProxy::onSuccess(PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, const IDBKeyPath& keyPath)
 {
-    m_callbacks->onSuccess(serializedScriptValue, key, keyPath);
+    m_callbacks->onSuccess(WebData(value), key, keyPath);
     m_didComplete = true;
 }
 
@@ -127,25 +127,25 @@ void IDBCallbacksProxy::onSuccess()
     m_callbacks->onSuccess();
 }
 
-void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> value)
+void IDBCallbacksProxy::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> value)
 {
     m_didComplete = true;
-    m_callbacks->onSuccess(key, primaryKey, value);
+    m_callbacks->onSuccess(key, primaryKey, WebData(value));
 }
 
-void IDBCallbacksProxy::onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SerializedScriptValue> >& values)
+void IDBCallbacksProxy::onSuccessWithPrefetch(const Vector<RefPtr<IDBKey> >& keys, const Vector<RefPtr<IDBKey> >& primaryKeys, const Vector<RefPtr<SharedBuffer> >& values)
 {
     m_didComplete = true;
     const size_t n = keys.size();
 
     WebVector<WebIDBKey> webKeys(n);
     WebVector<WebIDBKey> webPrimaryKeys(n);
-    WebVector<WebSerializedScriptValue> webValues(n);
+    WebVector<WebData> webValues(n);
 
     for (size_t i = 0; i < n; ++i) {
         webKeys[i] = WebIDBKey(keys[i]);
         webPrimaryKeys[i] = WebIDBKey(primaryKeys[i]);
-        webValues[i] = WebSerializedScriptValue(values[i]);
+        webValues[i] = WebData(values[i]);
     }
 
     m_callbacks->onSuccessWithPrefetch(webKeys, webPrimaryKeys, webValues);

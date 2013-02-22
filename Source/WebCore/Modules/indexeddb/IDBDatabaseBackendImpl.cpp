@@ -723,7 +723,7 @@ void GetOperation::perform(IDBTransactionBackendImpl* transaction)
     bool ok;
     if (m_indexId == IDBIndexMetadata::InvalidId) {
         // Object Store Retrieval Operation
-        Vector<uint8_t> value;
+        Vector<char> value;
         ok = m_backingStore->getRecord(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, *key, value);
         if (!ok) {
             m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
@@ -736,11 +736,11 @@ void GetOperation::perform(IDBTransactionBackendImpl* transaction)
         }
 
         if (m_autoIncrement && !m_keyPath.isNull()) {
-            m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(value), key, m_keyPath);
+            m_callbacks->onSuccess(SharedBuffer::adoptVector(value), key, m_keyPath);
             return;
         }
 
-        m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(value));
+        m_callbacks->onSuccess(SharedBuffer::adoptVector(value));
         return;
 
     }
@@ -762,7 +762,7 @@ void GetOperation::perform(IDBTransactionBackendImpl* transaction)
     }
 
     // Index Referenced Value Retrieval Operation
-    Vector<uint8_t> value;
+    Vector<char> value;
     ok = m_backingStore->getRecord(transaction->backingStoreTransaction(), m_databaseId, m_objectStoreId, *primaryKey, value);
     if (!ok) {
         m_callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UnknownError, "Internal error in getRecord."));
@@ -774,10 +774,10 @@ void GetOperation::perform(IDBTransactionBackendImpl* transaction)
         return;
     }
     if (m_autoIncrement && !m_keyPath.isNull()) {
-        m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(value), primaryKey, m_keyPath);
+        m_callbacks->onSuccess(SharedBuffer::adoptVector(value), primaryKey, m_keyPath);
         return;
     }
-    m_callbacks->onSuccess(SerializedScriptValue::createFromWireBytes(value));
+    m_callbacks->onSuccess(SharedBuffer::adoptVector(value));
 }
 
 void IDBDatabaseBackendImpl::put(int64_t transactionId, int64_t objectStoreId, PassRefPtr<SharedBuffer> value, PassRefPtr<IDBKey> key, PutMode putMode, PassRefPtr<IDBCallbacks> callbacks, const Vector<int64_t>& indexIds, const Vector<IndexKeys>& indexKeys)
@@ -964,7 +964,7 @@ void OpenCursorOperation::perform(IDBTransactionBackendImpl* transaction)
     }
 
     if (!backingStoreCursor) {
-        m_callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
+        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
         return;
     }
 

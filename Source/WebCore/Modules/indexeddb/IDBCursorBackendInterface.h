@@ -37,7 +37,6 @@ class IDBAny;
 class IDBCallbacks;
 class IDBKey;
 class IDBRequest;
-class SerializedScriptValue;
 
 typedef int ExceptionCode;
 

@@ -48,15 +48,15 @@ public:
 
     virtual void onError(PassRefPtr<WebCore::IDBDatabaseError>);
     virtual void onSuccess(PassRefPtr<WebCore::DOMStringList>);
-    virtual void onSuccess(PassRefPtr<WebCore::IDBCursorBackendInterface>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey> primaryKey, PassRefPtr<WebCore::SerializedScriptValue>);
+    virtual void onSuccess(PassRefPtr<WebCore::IDBCursorBackendInterface>, PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey> primaryKey, PassRefPtr<WebCore::SharedBuffer>);
     virtual void onSuccess(PassRefPtr<WebCore::IDBDatabaseBackendInterface>, const WebCore::IDBDatabaseMetadata&);
     virtual void onSuccess(PassRefPtr<WebCore::IDBKey>);
-    virtual void onSuccess(PassRefPtr<WebCore::SerializedScriptValue>);
-    virtual void onSuccess(PassRefPtr<WebCore::SerializedScriptValue>, PassRefPtr<WebCore::IDBKey>, const WebCore::IDBKeyPath&);
+    virtual void onSuccess(PassRefPtr<WebCore::SharedBuffer>);
+    virtual void onSuccess(PassRefPtr<WebCore::SharedBuffer>, PassRefPtr<WebCore::IDBKey>, const WebCore::IDBKeyPath&);
     virtual void onSuccess(int64_t);
     virtual void onSuccess();
-    virtual void onSuccess(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey> primaryKey, PassRefPtr<WebCore::SerializedScriptValue>);
-    virtual void onSuccessWithPrefetch(const Vector<RefPtr<WebCore::IDBKey> >& keys, const Vector<RefPtr<WebCore::IDBKey> >& primaryKeys, const Vector<RefPtr<WebCore::SerializedScriptValue> >& values);
+    virtual void onSuccess(PassRefPtr<WebCore::IDBKey>, PassRefPtr<WebCore::IDBKey> primaryKey, PassRefPtr<WebCore::SharedBuffer>);
+    virtual void onSuccessWithPrefetch(const Vector<RefPtr<WebCore::IDBKey> >& keys, const Vector<RefPtr<WebCore::IDBKey> >& primaryKeys, const Vector<RefPtr<WebCore::SharedBuffer> >& values);
     virtual void onBlocked(int64_t existingVersion);
     virtual void onUpgradeNeeded(int64_t oldVersion, PassRefPtr<WebCore::IDBDatabaseBackendInterface>, const WebCore::IDBDatabaseMetadata&);
 

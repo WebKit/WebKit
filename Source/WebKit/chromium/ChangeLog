@@ -1,3 +1,30 @@
+2013-02-21  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Implement SharedBuffer version of put() / onSuccess()
+        https://bugs.webkit.org/show_bug.cgi?id=110398
+
+        Reviewed by Tony Chang.
+
+        Proxy new SharedBuffer calls to WebIDBCallbacks through
+        to the new SharedBuffer-based IDBCallbacks.
+
+        * public/WebIDBCursor.h:
+        * src/IDBCallbacksProxy.cpp:
+        (WebKit::IDBCallbacksProxy::onSuccess):
+        (WebKit::IDBCallbacksProxy::onSuccessWithPrefetch):
+        * src/IDBCallbacksProxy.h:
+        (IDBCallbacksProxy):
+        * src/WebIDBCallbacksImpl.cpp:
+        (WebKit::WebIDBCallbacksImpl::onSuccess):
+        * src/WebIDBCallbacksImpl.h:
+        (WebIDBCallbacksImpl):
+        * tests/IDBAbortOnCorruptTest.cpp:
+        (WebCore::MockIDBCallbacks::onSuccess):
+        (WebCore::MockIDBCallbacks::onSuccessWithPrefetch):
+        * tests/IDBDatabaseBackendTest.cpp:
+        * tests/IDBRequestTest.cpp:
+        (WebKit::TEST_F):
+
 2013-02-21  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Allow to retrieve the request data from abstract TextCheckingRequest to be accessible for WK2

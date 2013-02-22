@@ -781,7 +781,7 @@ bool IDBBackingStore::deleteObjectStore(IDBBackingStore::Transaction* transactio
     return true;
 }
 
-bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, Vector<uint8_t>& record)
+bool IDBBackingStore::getRecord(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKey& key, Vector<char>& record)
 {
     IDB_TRACE("IDBBackingStore::getRecord");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
@@ -1407,7 +1407,7 @@ public:
     }
 
     // IDBBackingStore::Cursor
-    virtual const Vector<uint8_t>& value() const { ASSERT_NOT_REACHED(); return *new Vector<uint8_t>(); }
+    virtual PassRefPtr<SharedBuffer> value() const { ASSERT_NOT_REACHED(); return 0; }
     virtual bool loadCurrentRow();
 
 private:
@@ -1462,7 +1462,7 @@ public:
     }
 
     // IDBBackingStore::Cursor
-    virtual const Vector<uint8_t>& value() const { return m_currentValue; }
+    virtual PassRefPtr<SharedBuffer> value() const { return m_currentValue; }
     virtual bool loadCurrentRow();
 
 private:
@@ -1477,7 +1477,7 @@ private:
     {
     }
 
-    Vector<uint8_t> m_currentValue;
+    RefPtr<SharedBuffer> m_currentValue;
 };
 
 bool ObjectStoreCursorImpl::loadCurrentRow()
@@ -1504,9 +1504,9 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
     // FIXME: This re-encodes what was just decoded; try and optimize.
     m_recordIdentifier.reset(encodeIDBKey(*m_currentKey), version);
 
-    m_currentValue.clear();
-    m_currentValue.appendRange(valuePosition, static_cast<const char*>(m_iterator->value().end()));
-
+    Vector<char> value;
+    value.append(valuePosition, m_iterator->value().end() - valuePosition);
+    m_currentValue = SharedBuffer::adoptVector(value);
     return true;
 }
 
@@ -1523,7 +1523,7 @@ public:
     }
 
     // IDBBackingStore::Cursor
-    virtual const Vector<uint8_t>& value() const { ASSERT_NOT_REACHED(); return *new Vector<uint8_t>(); }
+    virtual PassRefPtr<SharedBuffer> value() const { ASSERT_NOT_REACHED(); return 0; }
     virtual PassRefPtr<IDBKey> primaryKey() const { return m_primaryKey; }
     virtual const IDBBackingStore::RecordIdentifier& recordIdentifier() const { ASSERT_NOT_REACHED(); return m_recordIdentifier; }
     virtual bool loadCurrentRow();
@@ -1608,7 +1608,7 @@ public:
     }
 
     // IDBBackingStore::Cursor
-    virtual const Vector<uint8_t>& value() const { return m_currentValue; }
+    virtual PassRefPtr<SharedBuffer> value() const { return m_currentValue; }
     virtual PassRefPtr<IDBKey> primaryKey() const { return m_primaryKey; }
     virtual const IDBBackingStore::RecordIdentifier& recordIdentifier() const { ASSERT_NOT_REACHED(); return m_recordIdentifier; }
     bool loadCurrentRow();
@@ -1628,7 +1628,7 @@ private:
     }
 
     RefPtr<IDBKey> m_primaryKey;
-    Vector<uint8_t> m_currentValue;
+    RefPtr<SharedBuffer> m_currentValue;
     Vector<char> m_primaryLevelDBKey;
 };
 
@@ -1672,8 +1672,8 @@ bool IndexCursorImpl::loadCurrentRow()
     }
 
     int64_t objectStoreDataVersion;
-    const char* t = decodeVarInt(result.begin(), result.end(), objectStoreDataVersion);
-    if (!t) {
+    valuePosition = decodeVarInt(result.begin(), result.end(), objectStoreDataVersion);
+    if (!valuePosition) {
         INTERNAL_READ_ERROR(LoadCurrentRow);
         return false;
     }
@@ -1683,8 +1683,9 @@ bool IndexCursorImpl::loadCurrentRow()
         return false;
     }
 
-    m_currentValue.clear();
-    m_currentValue.appendRange(t, static_cast<const char*>(result.end()));
+    Vector<char> value;
+    value.append(valuePosition, result.end() - valuePosition);
+    m_currentValue = SharedBuffer::adoptVector(value);
     return true;
 }
 

@@ -78,7 +78,7 @@ public:
         int64_t m_version;
     };
 
-    virtual bool getRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, Vector<uint8_t>& record) WARN_UNUSED_RETURN;
+    virtual bool getRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, Vector<char>& record) WARN_UNUSED_RETURN;
     virtual bool putRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKey&, PassRefPtr<SharedBuffer> value, RecordIdentifier*) WARN_UNUSED_RETURN;
     virtual void clearObjectStore(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId);
     virtual void deleteRecord(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const RecordIdentifier&);
@@ -115,7 +115,7 @@ public:
 
         virtual PassRefPtr<Cursor> clone() = 0;
         virtual PassRefPtr<IDBKey> primaryKey() const { return m_currentKey; }
-        virtual const Vector<uint8_t>& value() const = 0;
+        virtual PassRefPtr<SharedBuffer> value() const = 0;
         virtual const RecordIdentifier& recordIdentifier() const { return m_recordIdentifier; }
         virtual ~Cursor() { }
         virtual bool loadCurrentRow() = 0;

@@ -283,14 +283,14 @@ void IDBRequest::onSuccess(PassRefPtr<DOMStringList> domStringList)
     enqueueEvent(createSuccessEvent());
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> serializedValue)
+void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> buffer)
 {
     IDB_TRACE("IDBRequest::onSuccess(IDBCursor)");
     if (!shouldEnqueueEvent())
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(requestState(), serializedValue);
+    ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer);
     ASSERT(!m_pendingCursor);
     RefPtr<IDBCursor> cursor;
     switch (m_cursorType) {
@@ -322,14 +322,14 @@ void IDBRequest::onSuccess(PassRefPtr<IDBKey> idbKey)
     enqueueEvent(createSuccessEvent());
 }
 
-void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> serializedScriptValue)
+void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer)
 {
-    IDB_TRACE("IDBRequest::onSuccess(SerializedScriptValue)");
+    IDB_TRACE("IDBRequest::onSuccess(SharedBuffer)");
     if (!shouldEnqueueEvent())
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(requestState(), serializedScriptValue);
+    ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer);
     onSuccessInternal(value);
 }
 
@@ -346,9 +346,9 @@ static PassRefPtr<IDBObjectStore> effectiveObjectStore(PassRefPtr<IDBAny> source
 }
 #endif
 
-void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScriptValue, PassRefPtr<IDBKey> prpPrimaryKey, const IDBKeyPath& keyPath)
+void IDBRequest::onSuccess(PassRefPtr<SharedBuffer> valueBuffer, PassRefPtr<IDBKey> prpPrimaryKey, const IDBKeyPath& keyPath)
 {
-    IDB_TRACE("IDBRequest::onSuccess(SerializedScriptValue, IDBKey, IDBKeyPath)");
+    IDB_TRACE("IDBRequest::onSuccess(SharedBuffer, IDBKey, IDBKeyPath)");
     if (!shouldEnqueueEvent())
         return;
 
@@ -356,7 +356,7 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
     ASSERT(keyPath == effectiveObjectStore(m_source)->keyPath());
 #endif
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(requestState(), prpSerializedScriptValue);
+    ScriptValue value = deserializeIDBValueBuffer(requestState(), valueBuffer);
 
     RefPtr<IDBKey> primaryKey = prpPrimaryKey;
 #ifndef NDEBUG
@@ -370,12 +370,18 @@ void IDBRequest::onSuccess(PassRefPtr<SerializedScriptValue> prpSerializedScript
 
 void IDBRequest::onSuccess(int64_t value)
 {
-    return onSuccess(SerializedScriptValue::numberValue(value));
+    return onSuccessInternal(SerializedScriptValue::numberValue(value));
 }
 
 void IDBRequest::onSuccess()
 {
-    return onSuccess(SerializedScriptValue::undefinedValue());
+    return onSuccessInternal(SerializedScriptValue::undefinedValue());
+}
+
+void IDBRequest::onSuccessInternal(PassRefPtr<SerializedScriptValue> value)
+{
+    DOMRequestState::Scope scope(m_requestState);
+    return onSuccessInternal(deserializeIDBValue(requestState(), value));
 }
 
 void IDBRequest::onSuccessInternal(const ScriptValue& value)
@@ -388,14 +394,14 @@ void IDBRequest::onSuccessInternal(const ScriptValue& value)
     enqueueEvent(createSuccessEvent());
 }
 
-void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SerializedScriptValue> serializedValue)
+void IDBRequest::onSuccess(PassRefPtr<IDBKey> key, PassRefPtr<IDBKey> primaryKey, PassRefPtr<SharedBuffer> buffer)
 {
     IDB_TRACE("IDBRequest::onSuccess(key, primaryKey, value)");
     if (!shouldEnqueueEvent())
         return;
 
     DOMRequestState::Scope scope(m_requestState);
-    ScriptValue value = deserializeIDBValue(requestState(), serializedValue);
+    ScriptValue value = deserializeIDBValueBuffer(requestState(), buffer);
     ASSERT(m_pendingCursor);
     setResultCursor(m_pendingCursor.release(), key, primaryKey, value);
     enqueueEvent(createSuccessEvent());

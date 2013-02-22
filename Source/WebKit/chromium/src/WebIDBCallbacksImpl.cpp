@@ -39,7 +39,7 @@
 #include "WebIDBDatabase.h"
 #include "WebIDBDatabaseError.h"
 #include "WebIDBKey.h"
-#include "WebSerializedScriptValue.h"
+#include <public/WebData.h>
 
 using namespace WebCore;
 
@@ -64,7 +64,7 @@ void WebIDBCallbacksImpl::onSuccess(const WebDOMStringList& domStringList)
     m_callbacks->onSuccess(domStringList);
 }
 
-void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor, const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue& value)
+void WebIDBCallbacksImpl::onSuccess(WebIDBCursor* cursor, const WebIDBKey& key, const WebIDBKey& primaryKey, const WebData& value)
 {
     m_callbacks->onSuccess(IDBCursorBackendProxy::create(adoptPtr(cursor)), key, primaryKey, value);
 }
@@ -84,14 +84,14 @@ void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key)
     m_callbacks->onSuccess(key);
 }
 
-void WebIDBCallbacksImpl::onSuccess(const WebSerializedScriptValue& serializedScriptValue)
+void WebIDBCallbacksImpl::onSuccess(const WebData& value)
 {
-    m_callbacks->onSuccess(serializedScriptValue);
+    m_callbacks->onSuccess(value);
 }
 
-void WebIDBCallbacksImpl::onSuccess(const WebSerializedScriptValue& serializedScriptValue, const WebIDBKey& key, const WebIDBKeyPath& keyPath)
+void WebIDBCallbacksImpl::onSuccess(const WebData& value, const WebIDBKey& key, const WebIDBKeyPath& keyPath)
 {
-    m_callbacks->onSuccess(serializedScriptValue, key, keyPath);
+    m_callbacks->onSuccess(value, key, keyPath);
 }
 
 void WebIDBCallbacksImpl::onSuccess(long long value)
@@ -104,7 +104,7 @@ void WebIDBCallbacksImpl::onSuccess()
     m_callbacks->onSuccess();
 }
 
-void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key, const WebIDBKey& primaryKey, const WebSerializedScriptValue& value)
+void WebIDBCallbacksImpl::onSuccess(const WebIDBKey& key, const WebIDBKey& primaryKey, const WebData& value)
 {
     m_callbacks->onSuccess(key, primaryKey, value);
 }

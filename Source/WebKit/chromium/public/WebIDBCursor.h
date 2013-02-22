@@ -31,7 +31,6 @@
 #include "WebExceptionCode.h"
 #include "WebIDBCallbacks.h"
 #include "WebIDBKey.h"
-#include "WebSerializedScriptValue.h"
 
 namespace WebKit {
 

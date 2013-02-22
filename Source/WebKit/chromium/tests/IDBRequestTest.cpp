@@ -92,11 +92,11 @@ TEST_F(IDBRequestTest, EventsAfterStopping)
     // Ensure none of the following raise assertions in stopped state:
     request->onError(IDBDatabaseError::create(IDBDatabaseException::AbortError, "Description goes here."));
     request->onSuccess(DOMStringList::create());
-    request->onSuccess(PassRefPtr<IDBCursorBackendInterface>(), IDBKey::createInvalid(), IDBKey::createInvalid(), SerializedScriptValue::nullValue());
+    request->onSuccess(PassRefPtr<IDBCursorBackendInterface>(), IDBKey::createInvalid(), IDBKey::createInvalid(), 0);
     request->onSuccess(IDBKey::createInvalid());
-    request->onSuccess(SerializedScriptValue::nullValue());
-    request->onSuccess(SerializedScriptValue::nullValue(), IDBKey::createInvalid(), IDBKeyPath());
-    request->onSuccess(IDBKey::createInvalid(), IDBKey::createInvalid(), SerializedScriptValue::nullValue());
+    request->onSuccess(PassRefPtr<SharedBuffer>(0));
+    request->onSuccess(PassRefPtr<SharedBuffer>(0), IDBKey::createInvalid(), IDBKeyPath());
+    request->onSuccess(IDBKey::createInvalid(), IDBKey::createInvalid(), 0);
 }
 
 TEST_F(IDBRequestTest, AbortErrorAfterAbort)

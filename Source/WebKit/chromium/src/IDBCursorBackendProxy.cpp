@@ -31,10 +31,8 @@
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
 #include "IDBKey.h"
-#include "SerializedScriptValue.h"
 #include "WebIDBCallbacksImpl.h"
 #include "WebIDBKey.h"
-#include "WebSerializedScriptValue.h"
 
 using namespace WebCore;
 

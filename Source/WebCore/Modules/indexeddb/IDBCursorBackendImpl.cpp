@@ -37,7 +37,7 @@
 #include "IDBRequest.h"
 #include "IDBTracing.h"
 #include "IDBTransactionBackendImpl.h"
-#include "SerializedScriptValue.h"
+#include "SharedBuffer.h"
 
 namespace WebCore {
 
@@ -138,7 +138,7 @@ void IDBCursorBackendImpl::CursorAdvanceOperation::perform(IDBTransactionBackend
     IDB_TRACE("CursorAdvanceOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->advance(m_count)) {
         m_cursor->m_cursor = 0;
-        m_callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
+        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
         return;
     }
 
@@ -150,7 +150,7 @@ void IDBCursorBackendImpl::CursorIterationOperation::perform(IDBTransactionBacke
     IDB_TRACE("CursorIterationOperation");
     if (!m_cursor->m_cursor || !m_cursor->m_cursor->continueFunction(m_key.get())) {
         m_cursor->m_cursor = 0;
-        m_callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
+        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
         return;
     }
 
@@ -178,7 +178,7 @@ void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform(IDBTransact
 
     Vector<RefPtr<IDBKey> > foundKeys;
     Vector<RefPtr<IDBKey> > foundPrimaryKeys;
-    Vector<RefPtr<SerializedScriptValue> > foundValues;
+    Vector<RefPtr<SharedBuffer> > foundValues;
 
     if (m_cursor->m_cursor)
         m_cursor->m_savedCursor = m_cursor->m_cursor->clone();
@@ -197,11 +197,11 @@ void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform(IDBTransact
 
         switch (m_cursor->m_cursorType) {
         case KeyOnly:
-            foundValues.append(SerializedScriptValue::create());
+            foundValues.append(SharedBuffer::create());
             break;
         case KeyAndValue:
-            sizeEstimate += m_cursor->m_cursor->value().size();
-            foundValues.append(SerializedScriptValue::createFromWireBytes(m_cursor->m_cursor->value()));
+            sizeEstimate += m_cursor->m_cursor->value()->size();
+            foundValues.append(m_cursor->m_cursor->value());
             break;
         default:
             ASSERT_NOT_REACHED();
@@ -214,7 +214,7 @@ void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform(IDBTransact
     }
 
     if (!foundKeys.size()) {
-        m_callbacks->onSuccess(static_cast<SerializedScriptValue*>(0));
+        m_callbacks->onSuccess(static_cast<SharedBuffer*>(0));
         return;
     }
 

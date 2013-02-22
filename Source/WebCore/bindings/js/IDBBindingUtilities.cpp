@@ -33,6 +33,7 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "IDBTracing.h"
+#include "SharedBuffer.h"
 
 #include <runtime/DateInstance.h>
 #include <runtime/ObjectConstructor.h>
@@ -298,6 +299,20 @@ ScriptValue deserializeIDBValue(DOMRequestState* requestState, PassRefPtr<Serial
     RefPtr<SerializedScriptValue> serializedValue = prpValue;
     if (serializedValue)
         return ScriptValue::deserialize(exec, serializedValue.get(), NonThrowing);
+    return ScriptValue(exec->globalData(), jsNull());
+}
+
+ScriptValue deserializeIDBValueBuffer(DOMRequestState* requestState, PassRefPtr<SharedBuffer> prpBuffer)
+{
+    ExecState* exec = requestState->exec();
+    RefPtr<SharedBuffer> buffer = prpBuffer;
+    if (buffer) {
+        // FIXME: The extra copy here can be eliminated by allowing SerializedScriptValue to take a raw const char* or const uint8_t*.
+        Vector<uint8_t> value;
+        value.append(buffer->data(), buffer->size());
+        RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(value);
+        return ScriptValue::deserialize(exec, serializedValue.get(), NonThrowing);
+    }
     return ScriptValue(exec->globalData(), jsNull());
 }
 

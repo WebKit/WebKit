@@ -33,7 +33,7 @@
 #include "IDBCursor.h"
 #include "IDBCursorBackendInterface.h"
 #include "IDBTransactionBackendImpl.h"
-#include "SerializedScriptValue.h"
+#include "SharedBuffer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -65,7 +65,7 @@ public:
 
     PassRefPtr<IDBKey> key() const { return m_cursor->key(); }
     PassRefPtr<IDBKey> primaryKey() const { return m_cursor->primaryKey(); }
-    PassRefPtr<SerializedScriptValue> value() const { return (m_cursorType == KeyOnly) ? 0 : SerializedScriptValue::createFromWireBytes(m_cursor->value()); }
+    PassRefPtr<SharedBuffer> value() const { return (m_cursorType == KeyOnly) ? 0 : m_cursor->value(); }
     void close();
 
 private:

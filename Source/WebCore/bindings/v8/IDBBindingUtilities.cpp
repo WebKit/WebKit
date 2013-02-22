@@ -33,6 +33,7 @@
 #include "IDBKeyPath.h"
 #include "IDBTracing.h"
 #include "SerializedScriptValue.h"
+#include "SharedBuffer.h"
 #include "V8Binding.h"
 #include <wtf/MathExtras.h>
 #include <wtf/Vector.h>
@@ -251,6 +252,21 @@ ScriptValue deserializeIDBValue(DOMRequestState*, PassRefPtr<SerializedScriptVal
     RefPtr<SerializedScriptValue> serializedValue = prpValue;
     if (serializedValue)
         return ScriptValue(serializedValue->deserialize());
+    return ScriptValue(v8::Null());
+}
+
+ScriptValue deserializeIDBValueBuffer(DOMRequestState*, PassRefPtr<SharedBuffer> prpBuffer)
+{
+    ASSERT(v8::Context::InContext());
+    v8::HandleScope handleScope;
+    RefPtr<SharedBuffer> buffer = prpBuffer;
+    if (buffer) {
+        // FIXME: The extra copy here can be eliminated by allowing SerializedScriptValue to take a raw const char* or const uint8_t*.
+        Vector<uint8_t> value;
+        value.append(buffer->data(), buffer->size());
+        RefPtr<SerializedScriptValue> serializedValue = SerializedScriptValue::createFromWireBytes(value);
+        return ScriptValue(serializedValue->deserialize());
+    }
     return ScriptValue(v8::Null());
 }
 
