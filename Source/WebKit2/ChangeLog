@@ -1,5 +1,12 @@
 2013-02-22  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Yet another unreviewed buildfix after r143714.
+
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::paintToCairoSurface):
+
+2013-02-22  Balazs Kelemen  <kbalazs@webkit.org>
+
         Unreviewed preventive buildfix after my last commit.
 
         * UIProcess/API/efl/EwkView.cpp:

@@ -112,7 +112,7 @@ void WebView::paintToCairoSurface(cairo_surface_t* surface)
     if (!scene)
         return;
 
-    PlatformContextCairo context(cairo_create(surface.get()));
+    PlatformContextCairo context(cairo_create(surface));
 
     const FloatPoint& pagePosition = m_ewkView->pagePosition();
     double effectiveScale = m_page->deviceScaleFactor() * m_ewkView->pageScaleFactor();
