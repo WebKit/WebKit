@@ -244,7 +244,7 @@ void ResourceRequest::clearHTTPContentLength()
 
     m_httpHeaderFields.remove("Content-Length");
 
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
@@ -254,7 +254,7 @@ void ResourceRequest::clearHTTPContentType()
 
     m_httpHeaderFields.remove("Content-Type");
 
-    if (url().protocolInHTTPFamily())
+    if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
 }
 
