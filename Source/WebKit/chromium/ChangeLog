@@ -1,3 +1,16 @@
+2013-02-22  Fady Samuel  <fsamuel@chromium.org>
+
+        [Chromium] Expose shadowRoot to the WebKit API
+        https://bugs.webkit.org/show_bug.cgi?id=110522
+
+        Reviewed by Dimitri Glazkov.
+
+        * public/WebElement.h:
+        (WebElement):
+        * src/WebElement.cpp:
+        (WebKit::WebElement::shadowRoot):
+        (WebKit):
+
 2013-02-22  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r143734.

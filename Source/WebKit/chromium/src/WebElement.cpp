@@ -35,6 +35,7 @@
 #include "NamedNodeMap.h"
 #include "RenderBoxModelObject.h"
 #include "RenderObject.h"
+#include "ShadowRoot.h"
 #include <public/WebRect.h>
 #include <wtf/PassRefPtr.h>
 
@@ -102,6 +103,12 @@ unsigned WebElement::attributeCount() const
     if (!constUnwrap<Element>()->hasAttributes())
         return 0;
     return constUnwrap<Element>()->attributeCount();
+}
+
+WebNode WebElement::shadowRoot() const
+{
+    Node* shadowRoot = constUnwrap<Element>()->shadowRoot()->toNode();
+    return WebNode(shadowRoot);
 }
 
 WebString WebElement::attributeLocalName(unsigned index) const

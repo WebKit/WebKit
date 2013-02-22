@@ -70,6 +70,7 @@ struct WebRect;
         WEBKIT_EXPORT WebString attributeLocalName(unsigned index) const;
         WEBKIT_EXPORT WebString attributeValue(unsigned index) const;
         WEBKIT_EXPORT unsigned attributeCount() const;
+        WEBKIT_EXPORT WebNode shadowRoot() const;
 
         // Returns the language code specified for this element.  This attribute
         // is inherited, so the returned value is drawn from the closest parent
