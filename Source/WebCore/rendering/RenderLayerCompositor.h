@@ -55,6 +55,35 @@ enum CompositingUpdateType {
     CompositingUpdateOnCompositedScroll
 };
 
+enum {
+    CompositingReasonNone                                   = 0,
+    CompositingReason3DTransform                            = 1 << 0,
+    CompositingReasonVideo                                  = 1 << 1,
+    CompositingReasonCanvas                                 = 1 << 2,
+    CompositingReasonPlugin                                 = 1 << 3,
+    CompositingReasonIFrame                                 = 1 << 4,
+    CompositingReasonBackfaceVisibilityHidden               = 1 << 5,
+    CompositingReasonClipsCompositingDescendants            = 1 << 6,
+    CompositingReasonAnimation                              = 1 << 7,
+    CompositingReasonFilters                                = 1 << 8,
+    CompositingReasonPositionFixed                          = 1 << 9,
+    CompositingReasonPositionSticky                         = 1 << 10,
+    CompositingReasonOverflowScrollingTouch                 = 1 << 11,
+    CompositingReasonStacking                               = 1 << 12,
+    CompositingReasonOverlap                                = 1 << 13,
+    CompositingReasonNegativeZIndexChildren                 = 1 << 14,
+    CompositingReasonTransformWithCompositedDescendants     = 1 << 15,
+    CompositingReasonOpacityWithCompositedDescendants       = 1 << 16,
+    CompositingReasonMaskWithCompositedDescendants          = 1 << 17,
+    CompositingReasonReflectionWithCompositedDescendants    = 1 << 18,
+    CompositingReasonFilterWithCompositedDescendants        = 1 << 19,
+    CompositingReasonBlendingWithCompositedDescendants      = 1 << 20,
+    CompositingReasonPerspective                            = 1 << 21,
+    CompositingReasonPreserve3D                             = 1 << 22,
+    CompositingReasonRoot                                   = 1 << 23
+};
+typedef unsigned CompositingReasons;
+
 // RenderLayerCompositor manages the hierarchy of
 // composited RenderLayers. It determines which RenderLayers
 // become compositing, and creates and maintains a hierarchy of
@@ -237,6 +266,8 @@ public:
     void setShouldReevaluateCompositingAfterLayout() { m_reevaluateCompositingAfterLayout = true; }
 
     bool viewHasTransparentBackground(Color* backgroundColor = 0) const;
+
+    CompositingReasons reasonsForCompositing(const RenderLayer*) const;
     
 private:
     class OverlapMap;
@@ -341,7 +372,7 @@ private:
 #endif
 
 #if !LOG_DISABLED
-    const char* reasonForCompositing(const RenderLayer*);
+    const char* logReasonsForCompositing(const RenderLayer*);
     void logLayerInfo(const RenderLayer*, int depth);
 #endif
 
