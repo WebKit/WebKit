@@ -36,9 +36,11 @@
 #include "config.h"
 #include "RenderArena.h"
 
+#include <limits>
 #include <stdlib.h>
 #include <string.h>
 #include <wtf/Assertions.h>
+#include <wtf/CryptographicallyRandomNumber.h>
 
 #define ROUNDUP(x, y) ((((x)+((y)-1))/(y))*(y))
 
@@ -89,10 +91,8 @@ RenderArena::RenderArena(unsigned arenaSize)
     // should immediately crash on the first invalid vtable access for a stale
     // RenderObject pointer.
     // See http://download.crowdstrike.com/papers/hes-exploiting-a-coalmine.pdf.
-
-    // The bottom bits are predictable because the binary is loaded on a
-    // boundary. This just shifts most of those predictable bits out.
-    m_mask = ~(reinterpret_cast<uintptr_t>(WTF::fastMalloc) >> 13);
+    WTF::cryptographicallyRandomValues(&m_mask, sizeof(m_mask));
+    m_mask |= (static_cast<uintptr_t>(3) << (std::numeric_limits<uintptr_t>::digits - 2)) | 1;
 }
 
 RenderArena::~RenderArena()
