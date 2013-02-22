@@ -1,3 +1,10 @@
+2013-02-21  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add executable property to cmd file.
+        Required for executable files to maintain their executable permissions over svn.
+
+        * WTF.vcxproj/copy-files.cmd: Added property svn:executable.
+
 2013-02-19  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Need a way to use the Objective-C JavaScript API with WebKit

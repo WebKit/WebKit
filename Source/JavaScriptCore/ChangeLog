@@ -1,3 +1,10 @@
+2013-02-21  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Add executable property to cmd file.
+        Required for executable files to maintain their executable permissions over svn.
+
+        * JavaScriptCore.vcxproj/copy-files.cmd: Added property svn:executable.
+
 2013-02-21  Filip Pizlo  <fpizlo@apple.com>
 
         Object allocation profiling will refuse to create objects with more than JSFinalObject::maxInlineCapacity() inline slots, but JSFunction::allocationProfile() asserts that the number of inline slots is always what it asked for
