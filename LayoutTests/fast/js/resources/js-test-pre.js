@@ -188,6 +188,60 @@ function shouldBe(_a, _b, quiet)
     testFailed(_a + " should be " + _bv + " (of type " + typeof _bv + "). Was " + _av + " (of type " + typeof _av + ").");
 }
 
+// Execute condition every 5 milliseconds until it succeed or failureTime is reached.
+// completionHandler is executed on success, failureHandler is executed on timeout.
+function _waitForCondition(condition, failureTime, completionHandler, failureHandler)
+{
+  if (condition()) {
+    completionHandler();
+  } else if (Date() > failureTime) {
+    failureHandler();
+  } else {
+    setTimeout(_waitForCondition, 5, condition, failureTime, completionHandler, failureHandler);
+  }
+}
+
+function shouldBecomeEqual(value, reference, completionHandler, timeout)
+{
+  if (typeof value != "string" || typeof reference != "string")
+    debug("WARN: shouldBe() expects string arguments");
+  var _bv = eval(reference);
+
+  if (timeout === undefined)
+    timeout = 500;
+
+  var condition = function() {
+    var exception;
+    var _av;
+    try {
+      _av = eval(value);
+    } catch (e) {
+      exception = e;
+    }
+    if (exception)
+      testFailed(value + " should become " + _bv + ". Threw exception " + exception);
+    if (isResultCorrect(_av, _bv)) {
+      testPassed(value + " became " + reference);
+      return true;
+    }
+    return false;
+  };
+  var failureTime = new Date() + Date(timeout);
+  var failureHandler = function () {
+    testFailed(value + " failed to change to " + reference + " in " + (timeout / 1000) + " seconds.");
+    completionHandler();
+  };
+  _waitForCondition(condition, failureTime, completionHandler, failureHandler);
+}
+
+function shouldBecomeEqualToString(value, reference, completionHandler, timeout)
+{
+  if (typeof value !== "string" || typeof reference !== "string")
+    debug("WARN: shouldBecomeEqualToString() expects string arguments");
+  var unevaledString = JSON.stringify(reference);
+  shouldBecomeEqual(value, unevaledString, completionHandler, timeout);
+}
+
 function shouldBeType(_a, _type) {
   var exception;
   var _av;
