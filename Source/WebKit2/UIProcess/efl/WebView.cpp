@@ -40,6 +40,7 @@
 #include "WebPopupMenuListenerEfl.h"
 #include "ewk_context_private.h"
 #include <WebCore/CoordinatedGraphicsScene.h>
+#include <WebCore/PlatformContextCairo.h>
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"

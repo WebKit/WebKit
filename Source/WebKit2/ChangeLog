@@ -1,5 +1,12 @@
 2013-02-22  Balazs Kelemen  <kbalazs@webkit.org>
 
+        Unreviewed preventive buildfix after my last commit.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        * UIProcess/efl/WebView.cpp:
+
+2013-02-22  Balazs Kelemen  <kbalazs@webkit.org>
+
         [CoordGfx] Minor cleanup in CoordinatedGraphicsScene::paintToGraphicsContext
         https://bugs.webkit.org/show_bug.cgi?id=109824
 
