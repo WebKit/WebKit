@@ -280,8 +280,13 @@ void DocumentLoader::commitIfReady()
 
 bool DocumentLoader::isLoading() const
 {
+    // FIXME: This should always be enabled, but it seems to cause
+    // http/tests/security/feed-urls-from-remote.html to timeout on Mac WK1
+    // see http://webkit.org/b/110554 and http://webkit.org/b/110401
+#if ENABLE(THREADED_HTML_PARSER)
     if (m_frame && m_frame->document() && m_frame->document()->hasActiveParser())
         return true;
+#endif
     return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
 }
 
