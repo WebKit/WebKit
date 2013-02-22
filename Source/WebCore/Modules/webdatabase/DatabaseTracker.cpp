@@ -290,7 +290,19 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackendB
     MutexLocker lockDatabase(m_databaseGuard);
     Locker<OriginQuotaManager> quotaManagerLocker(originQuotaManager());
     SecurityOrigin* origin = database->securityOrigin();
-    return quotaForOriginNoLock(origin) - originQuotaManager().diskUsage(origin) + SQLiteFileSystem::getDatabaseFileSize(database->fileName());
+
+    unsigned long long quota = quotaForOriginNoLock(origin);
+    unsigned long long diskUsage = originQuotaManager().diskUsage(origin);
+    unsigned long long databaseFileSize = SQLiteFileSystem::getDatabaseFileSize(database->fileName());
+
+    // A previous error may have allowed the origin to exceed its quota, or may
+    // have allowed this database to exceed our cached estimate of the origin
+    // disk usage. Don't multiply that error through integer underflow, or the
+    // effective quota will permanently become 2^64.
+    unsigned long long maxSize = quota - diskUsage + databaseFileSize;
+    if (maxSize > quota)
+        maxSize = 0;
+    return maxSize;
 }
 
 void DatabaseTracker::databaseChanged(DatabaseBackendBase* database)
