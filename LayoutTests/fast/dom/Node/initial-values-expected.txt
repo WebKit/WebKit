@@ -11,7 +11,6 @@ PASS attr.namespaceURI is null
 PASS attr.prefix is null
 PASS attr.nodeValue is ''
 PASS attr.value is ''
-PASS attr.attributes is null
 Attribute creation using createElementNS on an HTML doc:
 PASS attr.nodeName is 'example:foo'
 PASS attr.name is 'example:foo'
@@ -20,7 +19,6 @@ PASS attr.namespaceURI is 'http://www.example.com'
 PASS attr.prefix is 'example'
 PASS attr.nodeValue is ''
 PASS attr.value is ''
-PASS attr.attributes is null
 Attribute creation using createElement on an XHTML doc:
 PASS attr.nodeName is 'foo'
 PASS attr.name is 'foo'
@@ -29,7 +27,6 @@ PASS attr.namespaceURI is null
 PASS attr.prefix is null
 PASS attr.nodeValue is ''
 PASS attr.value is ''
-PASS attr.attributes is null
 Attribute creation using createElementNS on an XHTML doc:
 PASS attr.nodeName is 'example:foo'
 PASS attr.name is 'example:foo'
@@ -38,14 +35,12 @@ PASS attr.namespaceURI is 'http://www.example.com'
 PASS attr.prefix is 'example'
 PASS attr.nodeValue is ''
 PASS attr.value is ''
-PASS attr.attributes is null
 PASS comment.nodeName is '#comment'
 PASS comment.localName is null
 PASS comment.namespaceURI is null
 PASS comment.prefix is null
 PASS comment.nodeValue is 'foo'
 PASS comment.data is 'foo'
-PASS comment.attributes is null
 PASS document.createCDATASection('foo') threw exception Error: NotSupportedError: DOM Exception 9.
 PASS cdata.nodeName is '#cdata-section'
 PASS cdata.localName is null
@@ -53,26 +48,22 @@ PASS cdata.namespaceURI is null
 PASS cdata.prefix is null
 PASS cdata.nodeValue is 'foo'
 PASS cdata.data is 'foo'
-PASS cdata.attributes is null
 PASS fragment.nodeName is '#document-fragment'
 PASS fragment.localName is null
 PASS fragment.namespaceURI is null
 PASS fragment.prefix is null
 PASS fragment.nodeValue is null
-PASS fragment.attributes is null
 PASS doc.nodeName is '#document'
 PASS doc.localName is null
 FAIL doc.namespaceURI should be http://www.w3.org/1999/xhtml (of type string). Was null (of type object).
 PASS doc.prefix is null
 PASS doc.nodeValue is null
-PASS doc.attributes is null
 PASS doctype.nodeName is 'svg'
 PASS doctype.name is 'svg'
 PASS doctype.localName is null
 PASS doctype.namespaceURI is null
 PASS doctype.prefix is null
 PASS doctype.nodeValue is null
-PASS doctype.attributes is null
 Element creation using createElement on an HTML doc:
 PASS element.nodeName is 'PRE'
 FAIL element.localName should be null (of type object). Was pre (of type string).
@@ -128,14 +119,12 @@ PASS entityReference.localName is null
 PASS entityReference.namespaceURI is null
 PASS entityReference.prefix is null
 PASS entityReference.nodeValue is null
-PASS entityReference.attributes is null
 PASS document.createProcessingInstruction('xml-stylesheet', 'type="text/xsl" href="missing.xsl"') threw exception Error: NotSupportedError: DOM Exception 9.
 PASS processingInstruction.nodeName is 'xml-stylesheet'
 PASS processingInstruction.localName is null
 PASS processingInstruction.namespaceURI is null
 PASS processingInstruction.prefix is null
 PASS processingInstruction.nodeValue is 'type="text/xsl" href="missing.xsl"'
-PASS processingInstruction.attributes is null
 PASS processingInstruction.target is 'xml-stylesheet'
 PASS processingInstruction.data is 'type="text/xsl" href="missing.xsl"'
 PASS text.nodeName is '#text'
@@ -144,7 +133,6 @@ PASS text.namespaceURI is null
 PASS text.prefix is null
 PASS text.nodeValue is 'foo'
 PASS text.data is 'foo'
-PASS text.attributes is null
 PASS successfullyParsed is true
 
 TEST COMPLETE

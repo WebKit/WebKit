@@ -13,7 +13,6 @@ shouldBe("attr.namespaceURI", "null");
 shouldBe("attr.prefix", "null");
 shouldBe("attr.nodeValue", "''");
 shouldBe("attr.value", "''");
-shouldBe("attr.attributes", "null");
 
 debug("Attribute creation using createElementNS on an HTML doc:")
 attr = document.createAttributeNS("http://www.example.com", "example:foo");
@@ -24,7 +23,6 @@ shouldBe("attr.namespaceURI", "'http://www.example.com'");
 shouldBe("attr.prefix", "'example'");
 shouldBe("attr.nodeValue", "''");
 shouldBe("attr.value", "''");
-shouldBe("attr.attributes", "null");
 
 debug("Attribute creation using createElement on an XHTML doc:")
 attr = xmlDoc.createAttribute("foo");
@@ -37,7 +35,6 @@ shouldBe("attr.namespaceURI", "null");
 shouldBe("attr.prefix", "null");
 shouldBe("attr.nodeValue", "''");
 shouldBe("attr.value", "''");
-shouldBe("attr.attributes", "null");
 
 debug("Attribute creation using createElementNS on an XHTML doc:")
 attr = xmlDoc.createAttributeNS("http://www.example.com", "example:foo");
@@ -48,7 +45,6 @@ shouldBe("attr.namespaceURI", "'http://www.example.com'");
 shouldBe("attr.prefix", "'example'");
 shouldBe("attr.nodeValue", "''");
 shouldBe("attr.value", "''");
-shouldBe("attr.attributes", "null");
 
 var comment = document.createComment("foo");
 shouldBe("comment.nodeName", "'#comment'");
@@ -57,7 +53,6 @@ shouldBe("comment.namespaceURI", "null");
 shouldBe("comment.prefix", "null");
 shouldBe("comment.nodeValue", "'foo'");
 shouldBe("comment.data", "'foo'");
-shouldBe("comment.attributes", "null");
 
 shouldThrow("document.createCDATASection('foo')");
 var cdata = xmlDoc.createCDATASection("foo");
@@ -67,7 +62,6 @@ shouldBe("cdata.namespaceURI", "null");
 shouldBe("cdata.prefix", "null");
 shouldBe("cdata.nodeValue", "'foo'");
 shouldBe("cdata.data", "'foo'");
-shouldBe("cdata.attributes", "null");
 
 var fragment = document.createDocumentFragment();
 shouldBe("fragment.nodeName", "'#document-fragment'");
@@ -75,7 +69,6 @@ shouldBe("fragment.localName", "null");
 shouldBe("fragment.namespaceURI", "null");
 shouldBe("fragment.prefix", "null");
 shouldBe("fragment.nodeValue", "null");
-shouldBe("fragment.attributes", "null");
 
 var doc = document.implementation.createDocument("http://www.w3.org/1999/xhtml", "html", null);
 shouldBe("doc.nodeName", "'#document'");
@@ -85,7 +78,6 @@ shouldBe("doc.localName", "null");
 shouldBe("doc.namespaceURI", "'http://www.w3.org/1999/xhtml'");
 shouldBe("doc.prefix", "null");
 shouldBe("doc.nodeValue", "null");
-shouldBe("doc.attributes", "null");
 
 var doctype = document.implementation.createDocumentType("svg", "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd");
 shouldBe("doctype.nodeName", "'svg'");
@@ -94,7 +86,6 @@ shouldBe("doctype.localName", "null");
 shouldBe("doctype.namespaceURI", "null");
 shouldBe("doctype.prefix", "null");
 shouldBe("doctype.nodeValue", "null");
-shouldBe("doctype.attributes", "null");
 
 debug("Element creation using createElement on an HTML doc:")
 var element = document.createElement("pre");
@@ -174,7 +165,6 @@ shouldBe("entityReference.localName", "null");
 shouldBe("entityReference.namespaceURI", "null");
 shouldBe("entityReference.prefix", "null");
 shouldBe("entityReference.nodeValue", "null");
-shouldBe("entityReference.attributes", "null");
 
 // Not possible to create Notation nodes via the DOM, WebKit doesn't create them from parsing
 
@@ -189,7 +179,6 @@ shouldBe("processingInstruction.prefix", "null");
 // L3: same as ProcessingInstruction.data
 // We're following Level 3
 shouldBe("processingInstruction.nodeValue", "'type=\"text/xsl\" href=\"missing.xsl\"'");
-shouldBe("processingInstruction.attributes", "null");
 shouldBe("processingInstruction.target", "'xml-stylesheet'");
 shouldBe("processingInstruction.data", "'type=\"text/xsl\" href=\"missing.xsl\"'");
 
@@ -200,4 +189,3 @@ shouldBe("text.namespaceURI", "null");
 shouldBe("text.prefix", "null");
 shouldBe("text.nodeValue", "'foo'");
 shouldBe("text.data", "'foo'");
-shouldBe("text.attributes", "null");

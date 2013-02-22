@@ -62,7 +62,6 @@
     readonly attribute Node             lastChild;
     readonly attribute Node             previousSibling;
     readonly attribute Node             nextSibling;
-    readonly attribute NamedNodeMap     attributes;
     readonly attribute Document         ownerDocument;
 
     [ObjCLegacyUnnamedParameters, Custom] Node insertBefore(in [CustomReturn] Node newChild,
@@ -90,7 +89,11 @@
                  setter raises(DOMException);
     readonly attribute [TreatReturnedNullStringAs=Null] DOMString        localName;
 
+#if defined(LANGUAGE_OBJECTIVE_C)
+    readonly attribute NamedNodeMap     attributes;
     boolean            hasAttributes();
+#endif
+
 
     // Introduced in DOM Level 3:
 
