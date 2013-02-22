@@ -1402,6 +1402,8 @@ webkit.org/b/106415 fast/workers/worker-lifecycle.html [ Pass Failure ]
 webkit.org/b/109507 compositing/contents-opaque/contents-opaque-background-color.html [ Failure ]
 webkit.org/b/109507 compositing/contents-opaque/contents-opaque-layer-opacity.html [ Failure ]
 webkit.org/b/109507 compositing/contents-opaque/contents-opaque-layer-transform.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-fixed.html [ Failure ]
+webkit.org/b/109507 compositing/rtl/rtl-fixed-overflow.html [ Failure ]
 
 # Spellchecker behavior tests.
 webkit.org/b/108370 editing/spelling/spelling-double-clicked-word.html [ Skip ]

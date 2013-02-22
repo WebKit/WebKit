@@ -2648,6 +2648,11 @@ webkit.org/b/91665 fast/dynamic/absolute-positioned-to-static-positioned.html [ 
 webkit.org/b/91665 fast/dynamic/floating-to-non-floating.html [ Skip ]
 webkit.org/b/91665 fast/dynamic/static-positioned-to-absolute-positioned.html [ Skip ]
 
+# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=70634
+webkit.org/b/109507 compositing/contents-opaque/contents-opaque-background-color.html [ Failure ]
+webkit.org/b/109507 compositing/contents-opaque/contents-opaque-layer-opacity.html [ Failure ]
+webkit.org/b/109507 compositing/contents-opaque/contents-opaque-layer-transform.html [ Failure ]
+
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
 webkit.org/b/109775 media/audio-controls-rendering.html [ Failure ]
 webkit.org/b/109775 media/controls-after-reload.html [ Failure ]
