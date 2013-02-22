@@ -1,3 +1,23 @@
+2013-02-22  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] enable the fixed version of freetype on linux
+        https://bugs.webkit.org/show_bug.cgi?id=110542
+
+        Reviewed by Tony Chang.
+
+        Switch to building with a fixed version of FreeType for
+        just DumpRenderTree. This allows us to share one version
+        of pixel baselines for both Lucid and Precise, and run
+        the layout tests in a stock Precise install (instead of a Lucid
+        chroot). Going forward, this approach isolates us from os-level
+        changes to the version of FreeType. Note that Chromium itself
+        still uses the system FreeType and is unaffected by this change.
+        
+        This setting can still be turned off (at compile/gyp-time) by
+        manually setting use_custom_freetype=0.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-02-22  Anders Carlsson  <andersca@apple.com>
 
         Move pluginLoadPolicy to the page loader client
