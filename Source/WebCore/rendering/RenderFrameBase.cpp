@@ -121,7 +121,12 @@ bool RenderFrameBase::nodeAtPoint(const HitTestRequest& request, HitTestResult& 
         HitTestResult childFrameResult(newHitTestLocation);
 
         bool isInsideChildFrame = childRoot->hitTest(newHitTestRequest, newHitTestLocation, childFrameResult);
-        result.append(childFrameResult);
+
+        if (newHitTestLocation.isRectBasedTest())
+            result.append(childFrameResult);
+        else if (isInsideChildFrame)
+            result = childFrameResult;
+
         if (isInsideChildFrame)
             return true;
 
