@@ -423,7 +423,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     LayoutRect rect = toRenderEmbeddedObject(renderer())->contentBoxRect();
     int width = rect.width();
     int height = rect.height();
-    if (!width || !height || (width <= sizingTinyDimensionThreshold || height <= sizingTinyDimensionThreshold)) {
+    if (width <= sizingTinyDimensionThreshold || height <= sizingTinyDimensionThreshold) {
         LOG(Plugins, "%p Plug-in is %dx%d, set to play", this, width, height);
         return;
     }
