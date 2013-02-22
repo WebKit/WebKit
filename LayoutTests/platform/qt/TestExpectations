@@ -832,6 +832,9 @@ editing/spelling/spelling-with-punctuation-selection.html
 editing/spelling/spelling-with-underscore-selection.html
 editing/spelling/spelling-with-whitespace-selection.html
 
+# REGRESSION(r143470): editing/spelling/spelling-changed-text.html fails on Qt, GTK, EFL
+webkit.org/b/110447 editing/spelling/spelling-changed-text.html [ Skip ]
+
 # =========================================================================== #
 #       Failing plugins tests.                                                #
 # =========================================================================== #
@@ -2674,3 +2677,7 @@ webkit.org/b/109994 fast/forms/button-generated-content.html [ Failure ]
 webkit.org/b/109994 fast/forms/select-baseline.html [ Failure ]
 webkit.org/b/109994 svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/109994 tables/mozilla/bugs/bug92647-2.html [ Failure ]
+
+# [Qt] REGRESSION(r143654): some fast/js test crashes on 32 bit build
+webkit.org/b/110590 fast/js/regress/HashMap-string-put-get-iterate.html [ Skip ]
+webkit.org/b/110590 fast/js/dfg-value-to-int32-with-side-effect.html [ Skip ]
