@@ -746,7 +746,7 @@ void EditorClientImpl::checkSpellingOfString(const UChar* text, int length,
 void EditorClientImpl::requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest> request)
 {
     if (m_webView->spellCheckClient()) {
-        String text = request->text();
+        String text = request->data().text();
         m_webView->spellCheckClient()->requestCheckingOfText(text, new WebTextCheckingCompletionImpl(request));
     }
 }

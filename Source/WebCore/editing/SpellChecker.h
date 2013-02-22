@@ -57,6 +57,7 @@ public:
     void requesterDestroyed();
     bool isStarted() const { return m_checker; }
 
+    virtual const TextCheckingRequestData& data() const OVERRIDE;
     virtual void didSucceed(const Vector<TextCheckingResult>&) OVERRIDE;
     virtual void didCancel() OVERRIDE;
 
@@ -67,6 +68,7 @@ private:
     RefPtr<Range> m_checkingRange;
     RefPtr<Range> m_paragraphRange;
     RefPtr<Element> m_rootEditableElement;
+    TextCheckingRequestData m_requestData;
 };
 
 class SpellChecker {

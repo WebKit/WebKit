@@ -2135,7 +2135,7 @@ void Editor::markAndReplaceFor(PassRefPtr<SpellCheckRequest> request, const Vect
 {
     ASSERT(request);
 
-    TextCheckingTypeMask textCheckingOptions = request->mask();
+    TextCheckingTypeMask textCheckingOptions = request->data().mask();
     TextCheckingParagraph paragraph(request->checkingRange(), request->paragraphRange());
 
     bool shouldMarkSpelling = textCheckingOptions & TextCheckingTypeSpelling;

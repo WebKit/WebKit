@@ -972,8 +972,8 @@ void WebEditorClient::setInputMethodState(bool)
 
 void WebEditorClient::didCheckSucceed(int sequence, NSArray* results)
 {
-    ASSERT_UNUSED(sequence, sequence == m_textCheckingRequest->sequence());
-    m_textCheckingRequest->didSucceed(core(results, m_textCheckingRequest->mask()));
+    ASSERT_UNUSED(sequence, sequence == m_textCheckingRequest->data().sequence());
+    m_textCheckingRequest->didSucceed(core(results, m_textCheckingRequest->data().mask()));
     m_textCheckingRequest.clear();
 }
 
@@ -983,10 +983,10 @@ void WebEditorClient::requestCheckingOfString(PassRefPtr<WebCore::TextCheckingRe
     ASSERT(!m_textCheckingRequest);
     m_textCheckingRequest = request;
 
-    int sequence = m_textCheckingRequest->sequence();
-    NSRange range = NSMakeRange(0, m_textCheckingRequest->text().length());
+    int sequence = m_textCheckingRequest->data().sequence();
+    NSRange range = NSMakeRange(0, m_textCheckingRequest->data().text().length());
     NSRunLoop* currentLoop = [NSRunLoop currentRunLoop];
-    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:m_textCheckingRequest->text() range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0
+    [[NSSpellChecker sharedSpellChecker] requestCheckingOfString:m_textCheckingRequest->data().text() range:range types:NSTextCheckingAllSystemTypes options:0 inSpellDocumentWithTag:0
                                          completionHandler:^(NSInteger, NSArray* results, NSOrthography*, NSInteger) {
             [currentLoop performSelector:@selector(perform) 
                                   target:[[[WebEditorSpellCheckResponder alloc] initWithClient:this sequence:sequence results:results] autorelease]

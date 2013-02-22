@@ -1,3 +1,14 @@
+2013-02-21  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Allow to retrieve the request data from abstract TextCheckingRequest to be accessible for WK2
+        https://bugs.webkit.org/show_bug.cgi?id=110208
+
+        Reviewed by Hajime Morrita.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::requestCheckingOfString):
+        Extract the request data as it is the member of 'TextCheckingRequest'.
+
 2013-02-21  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] WebPagePrivate::load should not check new window policy
