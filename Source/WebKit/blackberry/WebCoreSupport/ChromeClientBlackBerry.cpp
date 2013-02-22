@@ -823,25 +823,6 @@ PassOwnPtr<ColorChooser> ChromeClientBlackBerry::createColorChooser(ColorChooser
     return nullptr;
 }
 
-#if ENABLE(NAVIGATOR_CONTENT_UTILS)
-void ChromeClientBlackBerry::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title)
-{
-    m_webPagePrivate->m_client->registerProtocolHandler(scheme, baseURL, url, title);
-}
-
-#if ENABLE(CUSTOM_SCHEME_HANDLER)
-ChromeClient::CustomHandlersState ChromeClientBlackBerry::isProtocolHandlerRegistered(const String& scheme, const String& baseURL, const String& url)
-{
-    return static_cast<CustomHandlersState>(m_webPagePrivate->m_client->isProtocolHandlerRegistered(scheme, baseURL, url));
-}
-
-void ChromeClientBlackBerry::unregisterProtocolHandler(const String& scheme, const String& baseURL, const String& url)
-{
-    m_webPagePrivate->m_client->unregisterProtocolHandler(scheme, baseURL, url);
-}
-#endif
-#endif
-
 void ChromeClientBlackBerry::addSearchProvider(const BlackBerry::Platform::String& originURL, const BlackBerry::Platform::String& newURL)
 {
     // See if the input URL host matches of the origin host.
