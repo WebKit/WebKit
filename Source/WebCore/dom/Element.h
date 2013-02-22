@@ -464,8 +464,6 @@ public:
     void updateName(const AtomicString& oldName, const AtomicString& newName);
     void updateLabel(TreeScope*, const AtomicString& oldForAttributeValue, const AtomicString& newForAttributeValue);
 
-    void removeCachedHTMLCollection(HTMLCollection*, CollectionType);
-
     LayoutSize minimumSizeForResizing() const;
     void setMinimumSizeForResizing(const LayoutSize&);
 
