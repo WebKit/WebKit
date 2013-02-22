@@ -818,9 +818,6 @@ editing/spelling/spelling-unified-emulation.html
 # https://bugs.webkit.org/show_bug.cgi?id=89199
 editing/spelling/grammar-edit-word.html
 
-# REGRESSION(r143470): editing/spelling/spelling-changed-text.html fails on Qt, GTK, EFL
-webkit.org/b/110447 editing/spelling/spelling-changed-text.html [ Skip ]
-
 # Spellchecker behavior tests.
 # https://bugs.webkit.org/show_bug.cgi?id=108370
 editing/spelling/spelling-double-clicked-word.html

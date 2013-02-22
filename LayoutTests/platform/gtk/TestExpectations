@@ -1045,7 +1045,6 @@ webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
 
 # DRT doesn't dispatch an event for the second call eventSender.contextClick().
 webkit.org/b/39102 editing/spelling/context-menu-suggestions.html [ Failure ]
-webkit.org/b/39102 editing/spelling/spelling-changed-text.html [ Failure ]
 
 # Some input type=range tests fail because of the size
 # of the slider thumb in GTK+ themes.

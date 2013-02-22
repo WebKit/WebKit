@@ -1,4 +1,4 @@
-Spellcheck should not crash after the text has changed and results are served from cache. To test manually, launch Chromium compiled with Address Sanitizer, enable 'Ask Google for Suggestions', type 'Spell cheher. Is it broken?', delete the words 'Is it broken?', and context-click on the word 'cheher'. The test suceeds when the browser does not crash and shows suggestions in the context menu.
+Spellcheck should not crash after the text has changed and results are served from cache. To test manually, launch Chromium compiled with Address Sanitizer, enable 'Ask Google for Suggestions', type 'Spell wellcome. Is it broken?', delete the words 'Is it broken?', and context-click on the word 'wellcome'. The test succeeds when the browser does not crash and shows suggestions in the context menu.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
