@@ -831,9 +831,7 @@ editing/spelling/spelling-subword-selection.html
 editing/spelling/spelling-with-punctuation-selection.html
 editing/spelling/spelling-with-underscore-selection.html
 editing/spelling/spelling-with-whitespace-selection.html
-
-# REGRESSION(r143470): editing/spelling/spelling-changed-text.html fails on Qt, GTK, EFL
-webkit.org/b/110447 editing/spelling/spelling-changed-text.html [ Skip ]
+webkit.org/b/108370 editing/spelling/spelling-changed-text.html [ Failure ]
 
 # =========================================================================== #
 #       Failing plugins tests.                                                #
