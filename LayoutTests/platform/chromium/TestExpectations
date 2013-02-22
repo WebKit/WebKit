@@ -4414,3 +4414,6 @@ webkit.org/b/109994 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Fail
 webkit.org/b/109994 [ Mac Win ] fast/forms/button-generated-content.html [ Failure ]
 webkit.org/b/109994 [ Mac Win ] fast/forms/select-baseline.html [ Failure ]
 webkit.org/b/109994 [ Mac Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
+
+webkit.org/b/110568 [ MountainLion ] fast/multicol/newmulticol/positioned-split.html [ ImageOnlyFailure ]
+
