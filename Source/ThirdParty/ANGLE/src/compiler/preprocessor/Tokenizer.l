@@ -28,9 +28,6 @@ IF YOU MODIFY THIS FILE YOU ALSO NEED TO RUN generate_parser.sh.
 #include "DiagnosticsBase.h"
 #include "Token.h"
 
-#if defined(__clang__)
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
-#endif
 #if defined(__GNUC__)
 // Triggered by the auto-generated yy_fatal_error function.
 #pragma GCC diagnostic ignored "-Wmissing-noreturn"
@@ -242,13 +239,14 @@ FRACTIONAL_CONSTANT  ({DIGIT}*"."{DIGIT}+)|({DIGIT}+".")
     // Set the location for EOF token manually.
     pp::Input* input = &yyextra->input;
     pp::Input::Location* scanLoc = &yyextra->scanLoc;
-    int sIndexMax = std::max(0, input->count() - 1);
+    yy_size_t sIndexMax = input->count() ? input->count() - 1 : 0;
     if (scanLoc->sIndex != sIndexMax)
     {
         // We can only reach here if there are empty strings at the
         // end of the input.
         scanLoc->sIndex = sIndexMax; scanLoc->cIndex = 0;
-        yyfileno = sIndexMax; yylineno = 1;
+        // FIXME: this is not 64-bit clean.
+        yyfileno = static_cast<int>(sIndexMax); yylineno = 1;
     }
     yylloc->file = yyfileno;
     yylloc->line = yylineno;
@@ -281,9 +279,8 @@ Tokenizer::~Tokenizer()
     destroyScanner();
 }
 
-bool Tokenizer::init(int count, const char* const string[], const int length[])
+bool Tokenizer::init(size_t count, const char* const string[], const int length[])
 {
-    if (count < 0) return false;
     if ((count > 0) && (string == 0)) return false;
 
     mContext.input = Input(count, string, length);

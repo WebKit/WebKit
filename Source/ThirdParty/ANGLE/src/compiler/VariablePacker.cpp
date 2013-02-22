@@ -85,7 +85,7 @@ int VariablePacker::GetNumRows(ShDataType type)
         case SH_FLOAT_MAT3:
             return 3;
         case SH_FLOAT_MAT2:
-            return 1;
+            return 2;
         case SH_FLOAT_VEC4:
         case SH_INT_VEC4:
         case SH_BOOL_VEC4:

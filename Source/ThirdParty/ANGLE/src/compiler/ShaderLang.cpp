@@ -21,18 +21,18 @@
 //
 
 static bool checkActiveUniformAndAttribMaxLengths(const ShHandle handle,
-                                                  int expectedValue)
+                                                  size_t expectedValue)
 {
-    int activeUniformLimit = 0;
+    size_t activeUniformLimit = 0;
     ShGetInfo(handle, SH_ACTIVE_UNIFORM_MAX_LENGTH, &activeUniformLimit);
-    int activeAttribLimit = 0;
+    size_t activeAttribLimit = 0;
     ShGetInfo(handle, SH_ACTIVE_ATTRIBUTE_MAX_LENGTH, &activeAttribLimit);
     return (expectedValue == activeUniformLimit && expectedValue == activeAttribLimit);
 }
 
-static bool checkMappedNameMaxLength(const ShHandle handle, int expectedValue)
+static bool checkMappedNameMaxLength(const ShHandle handle, size_t expectedValue)
 {
-    int mappedNameMaxLength = 0;
+    size_t mappedNameMaxLength = 0;
     ShGetInfo(handle, SH_MAPPED_NAME_MAX_LENGTH, &mappedNameMaxLength);
     return (expectedValue == mappedNameMaxLength);
 }
@@ -40,7 +40,7 @@ static bool checkMappedNameMaxLength(const ShHandle handle, int expectedValue)
 static void getVariableInfo(ShShaderInfo varType,
                             const ShHandle handle,
                             int index,
-                            int* length,
+                            size_t* length,
                             int* size,
                             ShDataType* type,
                             char* name,
@@ -62,28 +62,21 @@ static void getVariableInfo(ShShaderInfo varType,
         return;
 
     const TVariableInfo& varInfo = varList[index];
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
-#endif
     if (length) *length = varInfo.name.size();
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
     *size = varInfo.size;
     *type = varInfo.type;
 
     // This size must match that queried by
     // SH_ACTIVE_UNIFORM_MAX_LENGTH and SH_ACTIVE_ATTRIBUTE_MAX_LENGTH
     // in ShGetInfo, below.
-    int activeUniformAndAttribLength = 1 + MAX_SYMBOL_NAME_LEN;
+    size_t activeUniformAndAttribLength = 1 + MAX_SYMBOL_NAME_LEN;
     ASSERT(checkActiveUniformAndAttribMaxLengths(handle, activeUniformAndAttribLength));
     strncpy(name, varInfo.name.c_str(), activeUniformAndAttribLength);
     name[activeUniformAndAttribLength - 1] = 0;
     if (mappedName) {
         // This size must match that queried by
         // SH_MAPPED_NAME_MAX_LENGTH in ShGetInfo, below.
-        int maxMappedNameLength = 1 + MAX_SYMBOL_NAME_LEN;
+        size_t maxMappedNameLength = 1 + MAX_SYMBOL_NAME_LEN;
         ASSERT(checkMappedNameMaxLength(handle, maxMappedNameLength));
         strncpy(mappedName, varInfo.mappedName.c_str(), maxMappedNameLength);
         mappedName[maxMappedNameLength - 1] = 0;
@@ -132,9 +125,12 @@ void ShInitBuiltInResources(ShBuiltInResources* resources)
     resources->OES_standard_derivatives = 0;
     resources->OES_EGL_image_external = 0;
     resources->ARB_texture_rectangle = 0;
+    resources->EXT_draw_buffers = 0;
 
     // Disable name hashing by default.
     resources->HashFunction = NULL;
+
+    resources->ArrayIndexClampingStrategy = SH_CLAMP_WITH_CLAMP_INTRINSIC;
 }
 
 //
@@ -182,7 +178,7 @@ void ShDestruct(ShHandle handle)
 int ShCompile(
     const ShHandle handle,
     const char* const shaderStrings[],
-    const int numStrings,
+    size_t numStrings,
     int compileOptions)
 {
     if (!InitThread())
@@ -200,7 +196,7 @@ int ShCompile(
     return success ? 1 : 0;
 }
 
-void ShGetInfo(const ShHandle handle, ShShaderInfo pname, int* params)
+void ShGetInfo(const ShHandle handle, ShShaderInfo pname, size_t* params)
 {
     if (!handle || !params)
         return;
@@ -218,27 +214,13 @@ void ShGetInfo(const ShHandle handle, ShShaderInfo pname, int* params)
         *params = compiler->getInfoSink().obj.size() + 1;
         break;
     case SH_ACTIVE_UNIFORMS:
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
-#endif
         *params = compiler->getUniforms().size();
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
         break;
     case SH_ACTIVE_UNIFORM_MAX_LENGTH:
         *params = 1 +  MAX_SYMBOL_NAME_LEN;
         break;
     case SH_ACTIVE_ATTRIBUTES:
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
-#endif
         *params = compiler->getAttribs().size();
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
         break;
     case SH_ACTIVE_ATTRIBUTE_MAX_LENGTH:
         *params = 1 + MAX_SYMBOL_NAME_LEN;
@@ -262,14 +244,7 @@ void ShGetInfo(const ShHandle handle, ShShaderInfo pname, int* params)
         }
         break;
     case SH_HASHED_NAMES_COUNT:
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
-#endif
         *params = compiler->getNameMap().size();
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
         break;
     default: UNREACHABLE();
     }
@@ -309,7 +284,7 @@ void ShGetObjectCode(const ShHandle handle, char* objCode)
 
 void ShGetActiveAttrib(const ShHandle handle,
                        int index,
-                       int* length,
+                       size_t* length,
                        int* size,
                        ShDataType* type,
                        char* name,
@@ -321,7 +296,7 @@ void ShGetActiveAttrib(const ShHandle handle,
 
 void ShGetActiveUniform(const ShHandle handle,
                         int index,
-                        int* length,
+                        size_t* length,
                         int* size,
                         ShDataType* type,
                         char* name,
@@ -352,24 +327,24 @@ void ShGetNameHashingEntry(const ShHandle handle,
         ++it;
 
     size_t len = it->first.length() + 1;
-    int max_len = 0;
+    size_t max_len = 0;
     ShGetInfo(handle, SH_NAME_MAX_LENGTH, &max_len);
-    if (static_cast<int>(len) > max_len) {
+    if (len > max_len) {
         ASSERT(false);
         len = max_len;
     }
     strncpy(name, it->first.c_str(), len);
     // To be on the safe side in case the source is longer than expected.
-    name[len] = '\0';
+    name[len - 1] = '\0';
 
     len = it->second.length() + 1;
     max_len = 0;
     ShGetInfo(handle, SH_HASHED_NAME_MAX_LENGTH, &max_len);
-    if (static_cast<int>(len) > max_len) {
+    if (len > max_len) {
         ASSERT(false);
         len = max_len;
     }
     strncpy(hashedName, it->second.c_str(), len);
     // To be on the safe side in case the source is longer than expected.
-    hashedName[len] = '\0';
+    hashedName[len - 1] = '\0';
 }

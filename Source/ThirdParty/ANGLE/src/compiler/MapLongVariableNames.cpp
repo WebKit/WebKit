@@ -8,7 +8,7 @@
 
 namespace {
 
-TString mapLongName(int id, const TString& name, bool isGlobal)
+TString mapLongName(size_t id, const TString& name, bool isGlobal)
 {
     ASSERT(name.size() > MAX_SHORTENED_IDENTIFIER_SIZE);
     TStringStream stream;
@@ -70,16 +70,9 @@ void LongNameMap::Insert(const char* originalName, const char* mappedName)
         originalName, mappedName));
 }
 
-int LongNameMap::Size() const
+size_t LongNameMap::Size() const
 {
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
-#endif
     return mLongNameMap.size();
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
 }
 
 MapLongVariableNames::MapLongVariableNames(LongNameMap* globalMap)
@@ -122,7 +115,7 @@ TString MapLongVariableNames::mapGlobalLongName(const TString& name)
     const char* mappedName = mGlobalMap->Find(name.c_str());
     if (mappedName != NULL)
         return mappedName;
-    int id = mGlobalMap->Size();
+    size_t id = mGlobalMap->Size();
     TString rt = mapLongName(id, name, true);
     mGlobalMap->Insert(name.c_str(), rt.c_str());
     return rt;

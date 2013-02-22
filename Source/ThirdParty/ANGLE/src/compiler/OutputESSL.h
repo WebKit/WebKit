@@ -13,6 +13,7 @@ class TOutputESSL : public TOutputGLSLBase
 {
 public:
     TOutputESSL(TInfoSinkBase& objSink,
+                ShArrayIndexClampingStrategy clampingStrategy,
                 ShHashFunction64 hashFunction,
                 NameMap& nameMap,
                 TSymbolTable& symbolTable);

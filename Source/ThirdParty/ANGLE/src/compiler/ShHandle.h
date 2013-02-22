@@ -16,13 +16,13 @@
 
 #include "GLSLANG/ShaderLang.h"
 
-#include "compiler/ArrayBoundsClamper.h"
 #include "compiler/BuiltInFunctionEmulator.h"
 #include "compiler/ExtensionBehavior.h"
 #include "compiler/HashNames.h"
 #include "compiler/InfoSink.h"
 #include "compiler/SymbolTable.h"
 #include "compiler/VariableInfo.h"
+#include "third_party/compiler/ArrayBoundsClamper.h"
 
 class LongNameMap;
 class TCompiler;
@@ -61,7 +61,7 @@ public:
 
     bool Init(const ShBuiltInResources& resources);
     bool compile(const char* const shaderStrings[],
-                 const int numStrings,
+                 size_t numStrings,
                  int compileOptions);
 
     // Get results of the last compilation.
@@ -108,6 +108,7 @@ protected:
     const TExtensionBehavior& getExtensionBehavior() const;
 
     const ArrayBoundsClamper& getArrayBoundsClamper() const;
+    ShArrayIndexClampingStrategy getArrayIndexClampingStrategy() const;
     const BuiltInFunctionEmulator& getBuiltInFunctionEmulator() const;
 
 private:
@@ -123,6 +124,7 @@ private:
     TExtensionBehavior extensionBehavior;
 
     ArrayBoundsClamper arrayBoundsClamper;
+    ShArrayIndexClampingStrategy clampingStrategy;
     BuiltInFunctionEmulator builtInFunctionEmulator;
 
     // Results of compilation.

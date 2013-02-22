@@ -7,6 +7,8 @@
 #include "compiler/OutputGLSLBase.h"
 #include "compiler/debug.h"
 
+#include <cfloat>
+
 namespace
 {
 TString arrayBrackets(const TType& type)
@@ -38,12 +40,14 @@ bool isSingleStatement(TIntermNode* node) {
 }  // namespace
 
 TOutputGLSLBase::TOutputGLSLBase(TInfoSinkBase& objSink,
+                                 ShArrayIndexClampingStrategy clampingStrategy,
                                  ShHashFunction64 hashFunction,
                                  NameMap& nameMap,
                                  TSymbolTable& symbolTable)
     : TIntermTraverser(true, true, true),
       mObjSink(objSink),
       mDeclaringVariables(false),
+      mClampingStrategy(clampingStrategy),
       mHashFunction(hashFunction),
       mNameMap(nameMap),
       mSymbolTable(symbolTable)
@@ -155,7 +159,7 @@ const ConstantUnion* TOutputGLSLBase::writeConstantUnion(const TType& type,
         {
             switch (pConstUnion->getType())
             {
-                case EbtFloat: out << pConstUnion->getFConst(); break;
+                case EbtFloat: out << std::min(FLT_MAX, std::max(-FLT_MAX, pConstUnion->getFConst())); break;
                 case EbtInt: out << pConstUnion->getIConst(); break;
                 case EbtBool: out << pConstUnion->getBConst(); break;
                 default: UNREACHABLE();
@@ -219,7 +223,11 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary* node)
             {
                 if (visit == InVisit)
                 {
-                    out << "[webgl_int_clamp(";
+                    if (mClampingStrategy == SH_CLAMP_WITH_CLAMP_INTRINSIC) {
+                        out << "[int(clamp(float(";
+                    } else {
+                        out << "[webgl_int_clamp(";
+                    }
                 }
                 else if (visit == PostVisit)
                 {
@@ -236,7 +244,12 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary* node)
                     {
                         maxSize = leftType.getNominalSize() - 1;
                     }
-                    out << ", 0, " << maxSize << ")]";
+
+                    if (mClampingStrategy == SH_CLAMP_WITH_CLAMP_INTRINSIC) {
+                        out << "), 0.0, float(" << maxSize << ")))]";
+                    } else {
+                        out << ", 0, " << maxSize << ")]";
+                    }
                 }
             }
             else
@@ -249,7 +262,13 @@ bool TOutputGLSLBase::visitBinary(Visit visit, TIntermBinary* node)
             {
                 out << ".";
                 // TODO(alokp): ASSERT
-                out << hashName(node->getType().getFieldName());
+                TString fieldName = node->getType().getFieldName();
+
+                const TType& structType = node->getLeft()->getType();
+                if (!mSymbolTable.findBuiltIn(structType.getTypeName()))
+                    fieldName = hashName(fieldName);
+
+                out << fieldName;
                 visitChildren = false;
             }
             break;

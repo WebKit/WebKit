@@ -421,20 +421,13 @@ bool ValidateLimitations::validateFunctionCall(TIntermAggregate* node)
         return true;
 
     // List of param indices for which loop indices are used as argument.
-    typedef std::vector<int> ParamIndex;
+    typedef std::vector<size_t> ParamIndex;
     ParamIndex pIndex;
     TIntermSequence& params = node->getSequence();
     for (TIntermSequence::size_type i = 0; i < params.size(); ++i) {
         TIntermSymbol* symbol = params[i]->getAsSymbolNode();
         if (symbol && isLoopIndex(symbol))
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
-#endif
             pIndex.push_back(i);
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
     }
     // If none of the loop indices are used as arguments,
     // there is nothing to check.

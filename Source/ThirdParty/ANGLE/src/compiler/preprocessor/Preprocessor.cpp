@@ -48,7 +48,7 @@ Preprocessor::~Preprocessor()
     delete mImpl;
 }
 
-bool Preprocessor::init(int count,
+bool Preprocessor::init(size_t count,
                         const char* const string[],
                         const int length[])
 {

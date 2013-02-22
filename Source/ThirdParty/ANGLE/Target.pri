@@ -17,7 +17,6 @@ INCLUDEPATH += \
     $$SOURCE_DIR/include
 
 HEADERS += \
-    src/compiler/ArrayBoundsClamper.h \
     src/compiler/BaseTypes.h \
     src/compiler/BuiltInFunctionEmulator.h \
     src/compiler/Common.h \
@@ -81,10 +80,10 @@ HEADERS += \
     src/compiler/ValidateLimitations.h \
     src/compiler/VariableInfo.h \
     src/compiler/VariablePacker.h \
-    src/compiler/VersionGLSL.h
+    src/compiler/VersionGLSL.h \
+    src/third_party/compiler/ArrayBoundsClamper.h
 
 SOURCES += \
-    src/compiler/ArrayBoundsClamper.cpp \
     src/compiler/BuiltInFunctionEmulator.cpp \
     src/compiler/CodeGenGLSL.cpp \
     src/compiler/Compiler.cpp \
@@ -138,6 +137,7 @@ SOURCES += \
     src/compiler/preprocessor/MacroExpander.cpp \
     src/compiler/preprocessor/Preprocessor.cpp \
     src/compiler/preprocessor/Token.cpp \
+    src/third_party/compiler/ArrayBoundsClamper.cpp
 
 win32: SOURCES += src/compiler/ossource_win.cpp
 else: SOURCES += src/compiler/ossource_posix.cpp

@@ -493,7 +493,7 @@ bool TParseContext::constructorErrorCheck(int line, TIntermNode* node, TFunction
     bool overFull = false;
     bool matrixInMatrix = false;
     bool arrayArg = false;
-    for (int i = 0; i < function.getParamCount(); ++i) {
+    for (size_t i = 0; i < function.getParamCount(); ++i) {
         const TParameter& param = function.getParam(i);
         size += param.type->getObjectSize();
         
@@ -512,7 +512,7 @@ bool TParseContext::constructorErrorCheck(int line, TIntermNode* node, TFunction
     if (constType)
         type->setQualifier(EvqConst);
 
-    if (type->isArray() && type->getArraySize() != function.getParamCount()) {
+    if (type->isArray() && static_cast<size_t>(type->getArraySize()) != function.getParamCount()) {
         error(line, "array constructor needs one argument per array element", "constructor");
         return true;
     }
@@ -1507,7 +1507,7 @@ bool TParseContext::structNestingErrorCheck(TSourceLoc line, const TType& fieldT
 //
 // Returns 0 for success.
 //
-int PaParseStrings(int count, const char* const string[], const int length[],
+int PaParseStrings(size_t count, const char* const string[], const int length[],
                    TParseContext* context) {
     if ((count == 0) || (string == NULL))
         return 1;

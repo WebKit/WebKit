@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		312BDB0C15FECAC90097EBC7 /* ANGLE.plist in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0915FEC91E0097EBC7 /* ANGLE.plist */; };
 		312BDB0E15FECAE50097EBC7 /* ANGLE.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */; };
-		3158EA0E1630968D006BE5EE /* ArrayBoundsClamper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3158EA0C1630968D006BE5EE /* ArrayBoundsClamper.cpp */; };
-		3158EA0F1630968D006BE5EE /* ArrayBoundsClamper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3158EA0D1630968D006BE5EE /* ArrayBoundsClamper.h */; };
 		49951C0314B7AAB30060E96E /* length_limits.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0214B7AAB30060E96E /* length_limits.h */; };
 		49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */; };
 		49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */; };
@@ -32,6 +30,8 @@
 		90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B11012E11DD6002D4255 /* VariableInfo.h */; };
 		90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 90D9B11112E11DD6002D4255 /* VersionGLSL.cpp */; };
 		90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 90D9B11212E11DD6002D4255 /* VersionGLSL.h */; };
+		A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */; };
+		A08C3CDD16D6CB61003F0B83 /* ArrayBoundsClamper.h in Headers */ = {isa = PBXBuildFile; fileRef = A08C3CDB16D6CB61003F0B83 /* ArrayBoundsClamper.h */; };
 		A0AABE2C13AFE81000F2EBD1 /* ForLoopUnroll.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AABE2A13AFE81000F2EBD1 /* ForLoopUnroll.cpp */; };
 		A0AABE2D13AFE81000F2EBD1 /* ForLoopUnroll.h in Headers */ = {isa = PBXBuildFile; fileRef = A0AABE2B13AFE81000F2EBD1 /* ForLoopUnroll.h */; };
 		A0AABE3013AFE83000F2EBD1 /* MapLongVariableNames.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0AABE2E13AFE83000F2EBD1 /* MapLongVariableNames.cpp */; };
@@ -136,8 +136,6 @@
 /* Begin PBXFileReference section */
 		312BDB0915FEC91E0097EBC7 /* ANGLE.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ANGLE.plist; sourceTree = "<group>"; };
 		312BDB0A15FECA3A0097EBC7 /* ANGLE.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ANGLE.txt; sourceTree = "<group>"; };
-		3158EA0C1630968D006BE5EE /* ArrayBoundsClamper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArrayBoundsClamper.cpp; sourceTree = "<group>"; };
-		3158EA0D1630968D006BE5EE /* ArrayBoundsClamper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArrayBoundsClamper.h; sourceTree = "<group>"; };
 		443A3E1512ECF6CC0004F9D7 /* iOS.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = iOS.xcconfig; sourceTree = "<group>"; };
 		49951C0214B7AAB30060E96E /* length_limits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = length_limits.h; sourceTree = "<group>"; };
 		49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuiltInFunctionEmulator.cpp; sourceTree = "<group>"; };
@@ -163,6 +161,8 @@
 		90D9B11012E11DD6002D4255 /* VariableInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VariableInfo.h; sourceTree = "<group>"; };
 		90D9B11112E11DD6002D4255 /* VersionGLSL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VersionGLSL.cpp; sourceTree = "<group>"; };
 		90D9B11212E11DD6002D4255 /* VersionGLSL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VersionGLSL.h; sourceTree = "<group>"; };
+		A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ArrayBoundsClamper.cpp; path = src/third_party/compiler/ArrayBoundsClamper.cpp; sourceTree = "<group>"; };
+		A08C3CDB16D6CB61003F0B83 /* ArrayBoundsClamper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ArrayBoundsClamper.h; path = src/third_party/compiler/ArrayBoundsClamper.h; sourceTree = "<group>"; };
 		A0AABE2A13AFE81000F2EBD1 /* ForLoopUnroll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ForLoopUnroll.cpp; sourceTree = "<group>"; };
 		A0AABE2B13AFE81000F2EBD1 /* ForLoopUnroll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ForLoopUnroll.h; sourceTree = "<group>"; };
 		A0AABE2E13AFE83000F2EBD1 /* MapLongVariableNames.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MapLongVariableNames.cpp; sourceTree = "<group>"; };
@@ -296,6 +296,23 @@
 			path = Configurations;
 			sourceTree = "<group>";
 		};
+		A08C3CD816D6CB35003F0B83 /* third_party */ = {
+			isa = PBXGroup;
+			children = (
+				A08C3CD916D6CB43003F0B83 /* compiler */,
+			);
+			name = third_party;
+			sourceTree = "<group>";
+		};
+		A08C3CD916D6CB43003F0B83 /* compiler */ = {
+			isa = PBXGroup;
+			children = (
+				A08C3CDA16D6CB61003F0B83 /* ArrayBoundsClamper.cpp */,
+				A08C3CDB16D6CB61003F0B83 /* ArrayBoundsClamper.h */,
+			);
+			name = compiler;
+			sourceTree = "<group>";
+		};
 		A264F8CB169762AA006FAA5A /* KHR */ = {
 			isa = PBXGroup;
 			children = (
@@ -353,6 +370,7 @@
 		FB39D0841200EDEB00088E69 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				A08C3CD816D6CB35003F0B83 /* third_party */,
 				FB39D2201200F35A00088E69 /* compiler */,
 			);
 			name = src;
@@ -372,8 +390,6 @@
 				A265682C159C23E100398539 /* depgraph */,
 				FB39D2441200F35A00088E69 /* preprocessor */,
 				A2656834159C23E100398539 /* timing */,
-				3158EA0C1630968D006BE5EE /* ArrayBoundsClamper.cpp */,
-				3158EA0D1630968D006BE5EE /* ArrayBoundsClamper.h */,
 				FB39D2211200F35A00088E69 /* BaseTypes.h */,
 				49951C0514B7AAD70060E96E /* BuiltInFunctionEmulator.cpp */,
 				49951C0614B7AAD80060E96E /* BuiltInFunctionEmulator.h */,
@@ -509,7 +525,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3158EA0F1630968D006BE5EE /* ArrayBoundsClamper.h in Headers */,
 				49951C0A14B7AAD80060E96E /* BuiltInFunctionEmulator.h in Headers */,
 				A265683A159C23E100398539 /* DependencyGraph.h in Headers */,
 				A265683C159C23E100398539 /* DependencyGraphBuilder.h in Headers */,
@@ -553,6 +568,7 @@
 				90D9B11812E11DD6002D4255 /* VariableInfo.h in Headers */,
 				A264F8CA16974E2A006FAA5A /* VariablePacker.h in Headers */,
 				90D9B11A12E11DD6002D4255 /* VersionGLSL.h in Headers */,
+				A08C3CDD16D6CB61003F0B83 /* ArrayBoundsClamper.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -610,7 +626,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3158EA0E1630968D006BE5EE /* ArrayBoundsClamper.cpp in Sources */,
 				49951C0914B7AAD80060E96E /* BuiltInFunctionEmulator.cpp in Sources */,
 				FB39D2711200F35A00088E69 /* CodeGenGLSL.cpp in Sources */,
 				90D9B10212E11DCB002D4255 /* Compiler.cpp in Sources */,
@@ -665,6 +680,7 @@
 				90D9B11712E11DD6002D4255 /* VariableInfo.cpp in Sources */,
 				A264F8C916974E2A006FAA5A /* VariablePacker.cpp in Sources */,
 				90D9B11912E11DD6002D4255 /* VersionGLSL.cpp in Sources */,
+				A08C3CDC16D6CB61003F0B83 /* ArrayBoundsClamper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

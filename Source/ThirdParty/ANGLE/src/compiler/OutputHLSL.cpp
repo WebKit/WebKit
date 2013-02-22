@@ -8,13 +8,14 @@
 
 #include "common/angleutils.h"
 #include "compiler/debug.h"
-#include "compiler/InfoSink.h"
-#include "compiler/UnfoldShortCircuit.h"
-#include "compiler/SearchSymbol.h"
 #include "compiler/DetectDiscontinuity.h"
+#include "compiler/InfoSink.h"
+#include "compiler/SearchSymbol.h"
+#include "compiler/UnfoldShortCircuit.h"
 
-#include <stdio.h>
 #include <algorithm>
+#include <cfloat>
+#include <stdio.h>
 
 namespace sh
 {
@@ -98,7 +99,7 @@ OutputHLSL::~OutputHLSL()
 
 void OutputHLSL::output()
 {
-    mContainsLoopDiscontinuity = containsLoopDiscontinuity(mContext.treeRoot);
+    mContainsLoopDiscontinuity = mContext.shaderType == SH_FRAGMENT_SHADER && containsLoopDiscontinuity(mContext.treeRoot);
 
     mContext.treeRoot->traverse(this);   // Output the body first to determine what has to go in the header
     header();
@@ -1778,7 +1779,7 @@ bool OutputHLSL::visitLoop(Visit visit, TIntermLoop *node)
 {
     bool wasDiscontinuous = mInsideDiscontinuousLoop;
 
-    if (!mInsideDiscontinuousLoop)
+    if (mContainsLoopDiscontinuity && !mInsideDiscontinuousLoop)
     {
         mInsideDiscontinuousLoop = containsLoopDiscontinuity(node);
     }
@@ -2565,7 +2566,7 @@ const ConstantUnion *OutputHLSL::writeConstantUnion(const TType &type, const Con
         {
             switch (constUnion->getType())
             {
-              case EbtFloat: out << constUnion->getFConst(); break;
+              case EbtFloat: out << std::min(FLT_MAX, std::max(-FLT_MAX, constUnion->getFConst())); break;
               case EbtInt:   out << constUnion->getIConst(); break;
               case EbtBool:  out << constUnion->getBConst(); break;
               default: UNREACHABLE();

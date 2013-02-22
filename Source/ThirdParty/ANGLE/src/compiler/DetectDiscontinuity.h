@@ -23,8 +23,10 @@ class DetectLoopDiscontinuity : public TIntermTraverser
 
   protected:
     bool visitBranch(Visit visit, TIntermBranch *node);
+    bool visitLoop(Visit visit, TIntermLoop *loop);
     bool visitAggregate(Visit visit, TIntermAggregate *node);
 
+    int mLoopDepth;
     bool mLoopDiscontinuity;
 };
 

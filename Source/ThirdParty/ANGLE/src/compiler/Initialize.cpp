@@ -654,4 +654,6 @@ void InitExtensionBehavior(const ShBuiltInResources& resources,
         extBehavior["GL_OES_EGL_image_external"] = EBhUndefined;
     if (resources.ARB_texture_rectangle)
         extBehavior["GL_ARB_texture_rectangle"] = EBhUndefined;
+    if (resources.EXT_draw_buffers)
+        extBehavior["GL_EXT_draw_buffers"] = EBhUndefined;
 }

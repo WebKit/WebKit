@@ -16,9 +16,24 @@ namespace sh
 {
 bool DetectLoopDiscontinuity::traverse(TIntermNode *node)
 {
+    mLoopDepth = 0;
     mLoopDiscontinuity = false;
     node->traverse(this);
     return mLoopDiscontinuity;
+}
+
+bool DetectLoopDiscontinuity::visitLoop(Visit visit, TIntermLoop *loop)
+{
+    if (visit == PreVisit)
+    {
+        ++mLoopDepth;
+    }
+    else if (visit == PostVisit)
+    {
+        --mLoopDepth;
+    }
+
+    return true;
 }
 
 bool DetectLoopDiscontinuity::visitBranch(Visit visit, TIntermBranch *node)
@@ -28,14 +43,19 @@ bool DetectLoopDiscontinuity::visitBranch(Visit visit, TIntermBranch *node)
         return false;
     }
 
+    if (!mLoopDepth)
+    {
+        return true;
+    }
+
     switch (node->getFlowOp())
     {
       case EOpKill:
         break;
       case EOpBreak:
       case EOpContinue:
-        mLoopDiscontinuity = true;
       case EOpReturn:
+        mLoopDiscontinuity = true;
         break;
       default: UNREACHABLE();
     }

@@ -434,7 +434,7 @@ typedef short int yytype_int16;
 #define YYSIZE_MAXIMUM ((YYSIZE_T) -1)
 
 #ifndef YY_
-# if YYENABLE_NLS
+# if defined YYENABLE_NLS && YYENABLE_NLS
 #  if ENABLE_NLS
 #   include <libintl.h> /* INFRINGES ON USER NAME SPACE */
 #   define YY_(msgid) dgettext ("bison-runtime", msgid)
@@ -758,20 +758,20 @@ static const yytype_uint16 yyrline[] =
      762,   773,   777,   778,   788,   798,   808,   821,   822,   832,
      845,   849,   853,   857,   858,   871,   872,   885,   886,   899,
      900,   917,   918,   931,   932,   933,   934,   935,   939,   942,
-     953,   961,   988,   993,  1000,  1038,  1041,  1048,  1056,  1077,
-    1098,  1109,  1138,  1143,  1153,  1158,  1168,  1171,  1174,  1177,
-    1183,  1190,  1193,  1215,  1233,  1257,  1280,  1284,  1302,  1310,
-    1342,  1362,  1451,  1460,  1483,  1486,  1492,  1500,  1508,  1516,
-    1526,  1533,  1536,  1539,  1545,  1548,  1563,  1567,  1571,  1575,
-    1584,  1589,  1594,  1599,  1604,  1609,  1614,  1619,  1624,  1629,
-    1635,  1641,  1647,  1652,  1657,  1666,  1675,  1680,  1693,  1693,
-    1707,  1707,  1716,  1719,  1734,  1770,  1774,  1780,  1788,  1804,
-    1808,  1812,  1813,  1819,  1820,  1821,  1822,  1823,  1827,  1828,
-    1828,  1828,  1838,  1839,  1843,  1843,  1844,  1844,  1849,  1852,
-    1862,  1865,  1871,  1872,  1876,  1884,  1888,  1898,  1903,  1920,
-    1920,  1925,  1925,  1932,  1932,  1940,  1943,  1949,  1952,  1958,
-    1962,  1969,  1976,  1983,  1990,  2001,  2010,  2014,  2021,  2024,
-    2030,  2030
+     953,   961,   988,   993,  1003,  1041,  1044,  1051,  1059,  1080,
+    1101,  1112,  1141,  1146,  1156,  1161,  1171,  1174,  1177,  1180,
+    1186,  1193,  1196,  1218,  1236,  1260,  1283,  1287,  1305,  1313,
+    1345,  1365,  1454,  1463,  1486,  1489,  1495,  1503,  1511,  1519,
+    1529,  1536,  1539,  1542,  1548,  1551,  1566,  1570,  1574,  1578,
+    1587,  1592,  1597,  1602,  1607,  1612,  1617,  1622,  1627,  1632,
+    1638,  1644,  1650,  1655,  1660,  1669,  1678,  1683,  1696,  1696,
+    1710,  1710,  1719,  1722,  1737,  1773,  1777,  1783,  1791,  1807,
+    1811,  1815,  1816,  1822,  1823,  1824,  1825,  1826,  1830,  1831,
+    1831,  1831,  1841,  1842,  1846,  1846,  1847,  1847,  1852,  1855,
+    1865,  1868,  1874,  1875,  1879,  1887,  1891,  1901,  1906,  1923,
+    1923,  1928,  1928,  1935,  1935,  1943,  1946,  1952,  1955,  1961,
+    1965,  1972,  1979,  1986,  1993,  2004,  2013,  2017,  2024,  2027,
+    2033,  2033
 };
 #endif
 
@@ -1407,7 +1407,7 @@ while (YYID (0))
    we won't break user code: when these are the locations we know.  */
 
 #ifndef YY_LOCATION_PRINT
-# if YYLTYPE_IS_TRIVIAL
+# if defined YYLTYPE_IS_TRIVIAL && YYLTYPE_IS_TRIVIAL
 #  define YY_LOCATION_PRINT(File, Loc)			\
      fprintf (File, "%d.%d-%d.%d",			\
 	      (Loc).first_line, (Loc).first_column,	\
@@ -2554,7 +2554,7 @@ yyreduce:
                     (yyval.interm.intermTypedNode)->getAsAggregate()->setName(fnCandidate->getMangledName());
 
                     TQualifier qual;
-                    for (int i = 0; i < fnCandidate->getParamCount(); ++i) {
+                    for (size_t i = 0; i < fnCandidate->getParamCount(); ++i) {
                         qual = fnCandidate->getParam(i).type->getQualifier();
                         if (qual == EvqOut || qual == EvqInOut) {
                             if (context->lValueErrorCheck((yyval.interm.intermTypedNode)->getLine(), "assign", (yyval.interm.intermTypedNode)->getAsAggregate()->getSequence()[i]->getAsTyped())) {
@@ -3140,7 +3140,7 @@ yyreduce:
         prototype->setType(function.getReturnType());
         prototype->setName(function.getName());
         
-        for (int i = 0; i < function.getParamCount(); i++)
+        for (size_t i = 0; i < function.getParamCount(); i++)
         {
             const TParameter &param = function.getParam(i);
             if (param.name != 0)
@@ -3174,7 +3174,10 @@ yyreduce:
   case 73:
 
     {
-        context->symbolTable.setDefaultPrecision( (yyvsp[(3) - (4)].interm.type).type, (yyvsp[(2) - (4)].interm.precision) );
+        if (!context->symbolTable.setDefaultPrecision( (yyvsp[(3) - (4)].interm.type), (yyvsp[(2) - (4)].interm.precision) )) {
+            context->error((yyvsp[(1) - (4)].lex).line, "illegal type argument for default precision qualifier", getBasicString((yyvsp[(3) - (4)].interm.type).type));
+            context->recover();
+        }
         (yyval.interm.intermNode) = 0;
     ;}
     break;
@@ -3196,7 +3199,7 @@ yyreduce:
                 context->error((yyvsp[(2) - (2)].lex).line, "overloaded functions must have the same return type", (yyvsp[(1) - (2)].interm.function)->getReturnType().getBasicString());
                 context->recover();
             }
-            for (int i = 0; i < prevDec->getParamCount(); ++i) {
+            for (size_t i = 0; i < prevDec->getParamCount(); ++i) {
                 if (prevDec->getParam(i).type->getQualifier() != (yyvsp[(1) - (2)].interm.function)->getParam(i).type->getQualifier()) {
                     context->error((yyvsp[(2) - (2)].lex).line, "overloaded functions must have the same parameter qualifiers", (yyvsp[(1) - (2)].interm.function)->getParam(i).type->getQualifierString());
                     context->recover();
@@ -4562,7 +4565,7 @@ yyreduce:
         // knows where to find parameters.
         //
         TIntermAggregate* paramNodes = new TIntermAggregate;
-        for (int i = 0; i < function->getParamCount(); i++) {
+        for (size_t i = 0; i < function->getParamCount(); i++) {
             const TParameter& param = function->getParam(i);
             if (param.name != 0) {
                 TVariable *variable = new TVariable(param.name, *param.type);

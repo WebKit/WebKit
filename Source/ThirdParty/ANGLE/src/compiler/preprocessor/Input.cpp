@@ -17,32 +17,24 @@ Input::Input() : mCount(0), mString(0)
 {
 }
 
-Input::Input(int count, const char* const string[], const int length[]) :
+Input::Input(size_t count, const char* const string[], const int length[]) :
     mCount(count),
     mString(string)
 {
-    assert(mCount >= 0);
     mLength.reserve(mCount);
-    for (int i = 0; i < mCount; ++i)
+    for (size_t i = 0; i < mCount; ++i)
     {
         int len = length ? length[i] : -1;
-#if defined(__clang__)
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wshorten-64-to-32"
-#endif
         mLength.push_back(len < 0 ? std::strlen(mString[i]) : len);
-#if defined(__clang__)
-#pragma clang diagnostic pop
-#endif
     }
 }
 
-int Input::read(char* buf, int maxSize)
+size_t Input::read(char* buf, size_t maxSize)
 {
-    int nRead = 0;
+    size_t nRead = 0;
     while ((nRead < maxSize) && (mReadLoc.sIndex < mCount))
     {
-        int size = mLength[mReadLoc.sIndex] - mReadLoc.cIndex;
+        size_t size = mLength[mReadLoc.sIndex] - mReadLoc.cIndex;
         size = std::min(size, maxSize);
         std::memcpy(buf + nRead, mString[mReadLoc.sIndex] + mReadLoc.cIndex, size);
         nRead += size;

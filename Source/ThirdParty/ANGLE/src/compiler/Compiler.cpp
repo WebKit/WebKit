@@ -4,7 +4,6 @@
 // found in the LICENSE file.
 //
 
-#include "compiler/ArrayBoundsClamper.h"
 #include "compiler/BuiltInFunctionEmulator.h"
 #include "compiler/DetectRecursion.h"
 #include "compiler/ForLoopUnroll.h"
@@ -20,6 +19,7 @@
 #include "compiler/depgraph/DependencyGraphOutput.h"
 #include "compiler/timing/RestrictFragmentShaderTiming.h"
 #include "compiler/timing/RestrictVertexShaderTiming.h"
+#include "third_party/compiler/ArrayBoundsClamper.h"
 
 bool isWebGLBasedSpec(ShShaderSpec spec)
 {
@@ -102,6 +102,7 @@ TShHandleBase::~TShHandleBase() {
 TCompiler::TCompiler(ShShaderType type, ShShaderSpec spec)
     : shaderType(type),
       shaderSpec(spec),
+      clampingStrategy(SH_CLAMP_WITH_CLAMP_INTRINSIC),
       builtInFunctionEmulator(type)
 {
     longNameMap = LongNameMap::GetInstance();
@@ -125,13 +126,16 @@ bool TCompiler::Init(const ShBuiltInResources& resources)
         return false;
     InitExtensionBehavior(resources, extensionBehavior);
 
+    arrayBoundsClamper.SetClampingStrategy(resources.ArrayIndexClampingStrategy);
+    clampingStrategy = resources.ArrayIndexClampingStrategy;
+
     hashFunction = resources.HashFunction;
 
     return true;
 }
 
 bool TCompiler::compile(const char* const shaderStrings[],
-                        const int numStrings,
+                        size_t numStrings,
                         int compileOptions)
 {
     TScopedPoolAllocator scopedAlloc(&allocator, true);
@@ -146,7 +150,7 @@ bool TCompiler::compile(const char* const shaderStrings[],
 
     // First string is path of source file if flag is set. The actual source follows.
     const char* sourcePath = NULL;
-    int firstSource = 0;
+    size_t firstSource = 0;
     if (compileOptions & SH_SOURCE_PATH)
     {
         sourcePath = shaderStrings[0];
@@ -355,13 +359,17 @@ const TExtensionBehavior& TCompiler::getExtensionBehavior() const
     return extensionBehavior;
 }
 
-const BuiltInFunctionEmulator& TCompiler::getBuiltInFunctionEmulator() const
-{
-    return builtInFunctionEmulator;
-}
-
 const ArrayBoundsClamper& TCompiler::getArrayBoundsClamper() const
 {
     return arrayBoundsClamper;
 }
 
+ShArrayIndexClampingStrategy TCompiler::getArrayIndexClampingStrategy() const
+{
+    return clampingStrategy;
+}
+
+const BuiltInFunctionEmulator& TCompiler::getBuiltInFunctionEmulator() const
+{
+    return builtInFunctionEmulator;
+}

@@ -1,3 +1,139 @@
+2013-02-21  Zhenyao Mo  <zmo@google.com>
+
+        Roll ANGLE to r1833
+        https://bugs.webkit.org/show_bug.cgi?id=110513
+
+        Reviewed by Kenneth Russell.
+
+        Upstream ANGLE r1833 includes webkit side local fixes
+        1) r139758 build fix for -Wshorten-64-to-32
+        2) r139665 build fix for uninitialized variables
+
+        After this roll, WebKit side ANGLE is the same as upstream ANGLE r1833, except:
+        1) include/GLSLANG/ShaderLang.h, where "KHR" is removed from include path.
+
+        With this roll, we have EXT_draw_buffers support.
+        
+        * ANGLE.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * include/GLSLANG/ShaderLang.h:
+        * src/common/debug.cpp:
+        * src/common/system.h: Added.
+        * src/common/version.h:
+        * src/compiler/ArrayBoundsClamper.cpp: Removed.
+        * src/compiler/ArrayBoundsClamper.h: Removed.
+        * src/compiler/Compiler.cpp:
+        (TCompiler::TCompiler):
+        (TCompiler::Init):
+        (TCompiler::compile):
+        (TCompiler::getArrayBoundsClamper):
+        (TCompiler::getArrayIndexClampingStrategy):
+        (TCompiler::getBuiltInFunctionEmulator):
+        * src/compiler/DetectDiscontinuity.cpp:
+        (sh::DetectLoopDiscontinuity::traverse):
+        (sh::DetectLoopDiscontinuity::visitLoop):
+        (sh):
+        (sh::DetectLoopDiscontinuity::visitBranch):
+        * src/compiler/DetectDiscontinuity.h:
+        (DetectLoopDiscontinuity):
+        * src/compiler/Initialize.cpp:
+        (InitExtensionBehavior):
+        * src/compiler/Intermediate.cpp:
+        (TIntermConstantUnion::fold):
+        (TIntermTraverser::hash):
+        * src/compiler/MapLongVariableNames.cpp:
+        (LongNameMap::Size):
+        (MapLongVariableNames::mapGlobalLongName):
+        * src/compiler/MapLongVariableNames.h:
+        (LongNameMap):
+        * src/compiler/OutputESSL.cpp:
+        (TOutputESSL::TOutputESSL):
+        * src/compiler/OutputESSL.h:
+        (TOutputESSL):
+        * src/compiler/OutputGLSL.cpp:
+        (TOutputGLSL::TOutputGLSL):
+        * src/compiler/OutputGLSL.h:
+        (TOutputGLSL):
+        * src/compiler/OutputGLSLBase.cpp:
+        (TOutputGLSLBase::TOutputGLSLBase):
+        (TOutputGLSLBase::writeConstantUnion):
+        (TOutputGLSLBase::visitBinary):
+        * src/compiler/OutputGLSLBase.h:
+        (TOutputGLSLBase):
+        * src/compiler/OutputHLSL.cpp:
+        (sh::OutputHLSL::output):
+        (sh::OutputHLSL::visitLoop):
+        (sh::OutputHLSL::writeConstantUnion):
+        * src/compiler/ParseHelper.cpp:
+        (TParseContext::constructorErrorCheck):
+        (PaParseStrings):
+        * src/compiler/ParseHelper.h:
+        * src/compiler/ShHandle.h:
+        (TCompiler):
+        * src/compiler/ShaderLang.cpp:
+        (checkActiveUniformAndAttribMaxLengths):
+        (checkMappedNameMaxLength):
+        (getVariableInfo):
+        (ShInitBuiltInResources):
+        (ShCompile):
+        (ShGetInfo):
+        (ShGetActiveAttrib):
+        (ShGetActiveUniform):
+        (ShGetNameHashingEntry):
+        * src/compiler/SymbolTable.h:
+        (TFunction::getParamCount):
+        (TFunction::getParam):
+        (TSymbolTable::setDefaultPrecision):
+        * src/compiler/TranslatorESSL.cpp:
+        (TranslatorESSL::translate):
+        * src/compiler/TranslatorGLSL.cpp:
+        (TranslatorGLSL::translate):
+        * src/compiler/ValidateLimitations.cpp:
+        (ValidateLimitations::validateFunctionCall):
+        * src/compiler/VariablePacker.cpp:
+        (VariablePacker::GetNumRows):
+        * src/compiler/glslang.h:
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        (string_input):
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp:
+        * src/compiler/preprocessor/ExpressionParser.cpp:
+        * src/compiler/preprocessor/ExpressionParser.y:
+        * src/compiler/preprocessor/Input.cpp:
+        (pp::Input::Input):
+        (pp::Input::read):
+        * src/compiler/preprocessor/Input.h:
+        (Input):
+        (pp::Input::count):
+        (pp::Input::string):
+        (pp::Input::length):
+        (Location):
+        * src/compiler/preprocessor/Preprocessor.cpp:
+        (pp::Preprocessor::init):
+        * src/compiler/preprocessor/Preprocessor.h:
+        (Preprocessor):
+        * src/compiler/preprocessor/Tokenizer.cpp:
+        (pp::Tokenizer::init):
+        * src/compiler/preprocessor/Tokenizer.h:
+        (Tokenizer):
+        * src/compiler/preprocessor/Tokenizer.l:
+        * src/third_party: Added.
+        * src/third_party/compiler: Added.
+        * src/third_party/compiler/ArrayBoundsClamper.cpp: Added.
+        (ArrayBoundsClamper::ArrayBoundsClamper):
+        (ArrayBoundsClamper::SetClampingStrategy):
+        (ArrayBoundsClamper::MarkIndirectArrayBoundsForClamping):
+        (ArrayBoundsClamper::OutputClampingFunctionDefinition):
+        * src/third_party/compiler/ArrayBoundsClamper.h: Added.
+        (ArrayBoundsClamper):
+        (ArrayBoundsClamper::Cleanup):
+        (ArrayBoundsClamper::GetArrayBoundsClampDefinitionNeeded):
+        (ArrayBoundsClamper::SetArrayBoundsClampDefinitionNeeded):
+        * src/third_party/compiler/LICENSE: Added.
+        * src/third_party/compiler/README.angle: Added.
+
 2013-02-04  David Kilzer  <ddkilzer@apple.com>
 
         Sort ANGLE Xcode project file.
