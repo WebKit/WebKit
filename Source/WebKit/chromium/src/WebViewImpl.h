@@ -222,6 +222,7 @@ public:
     virtual double setZoomLevel(bool textOnly, double zoomLevel);
     virtual void zoomLimitsChanged(double minimumZoomLevel,
                                    double maximumZoomLevel);
+    virtual void setInitialPageScaleOverride(float);
     virtual float pageScaleFactor() const;
     virtual bool isPageScaleFactorSet() const;
     virtual void setPageScaleFactorPreservingScrollOffset(float);
@@ -758,6 +759,7 @@ private:
     float m_pageDefinedMaximumPageScaleFactor;
     float m_minimumPageScaleFactor;
     float m_maximumPageScaleFactor;
+    float m_initialPageScaleFactorOverride;
     float m_initialPageScaleFactor;
     bool m_ignoreViewportTagMaximumScale;
     bool m_pageScaleFactorIsSet;

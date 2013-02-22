@@ -639,7 +639,7 @@ void ChromeClientImpl::setToolTip(const String& tooltipText, TextDirection dir)
 void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArguments& arguments) const
 {
 #if ENABLE(VIEWPORT)
-    if (!m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
+    if (!m_webView->settings()->viewportEnabled() || !m_webView->isFixedLayoutModeEnabled() || !m_webView->client() || !m_webView->page())
         return;
 
     IntSize viewportSize = m_webView->dipSize();
@@ -649,15 +649,7 @@ void ChromeClientImpl::dispatchViewportPropertiesDidChange(const ViewportArgumen
     if (!viewportSize.width() || !viewportSize.height())
         return;
 
-    ViewportAttributes computed;
-    if (m_webView->settings()->viewportEnabled()) {
-        computed = arguments.resolve(viewportSize, viewportSize, m_webView->page()->settings()->layoutFallbackWidth());
-    } else {
-        // If viewport tag is disabled but fixed layout is still enabled, (for
-        // example, on Android WebView with UseWideViewport false), compute
-        // based on the default viewport arguments.
-        computed = ViewportArguments().resolve(viewportSize, viewportSize, viewportSize.width());
-    }
+    ViewportAttributes computed = arguments.resolve(viewportSize, viewportSize, m_webView->page()->settings()->layoutFallbackWidth());
     restrictScaleFactorToInitialScaleIfNotUserScalable(computed);
 
     if (m_webView->ignoreViewportTagMaximumScale()) {

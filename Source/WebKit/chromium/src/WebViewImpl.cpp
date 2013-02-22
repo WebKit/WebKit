@@ -395,6 +395,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_pageDefinedMaximumPageScaleFactor(-1)
     , m_minimumPageScaleFactor(minPageScaleFactor)
     , m_maximumPageScaleFactor(maxPageScaleFactor)
+    , m_initialPageScaleFactorOverride(-1)
     , m_initialPageScaleFactor(-1)
     , m_ignoreViewportTagMaximumScale(false)
     , m_pageScaleFactorIsSet(false)
@@ -2960,6 +2961,15 @@ double WebView::zoomFactorToZoomLevel(double factor)
     return log(factor) / log(textSizeMultiplierRatio);
 }
 
+void WebViewImpl::setInitialPageScaleOverride(float initialPageScaleFactorOverride)
+{
+    if (m_initialPageScaleFactorOverride == initialPageScaleFactorOverride)
+        return;
+    m_initialPageScaleFactorOverride = initialPageScaleFactorOverride;
+    m_pageScaleFactorIsSet = false;
+    computePageScaleFactorLimits();
+}
+
 float WebViewImpl::pageScaleFactor() const
 {
     if (!page())
@@ -3161,16 +3171,18 @@ IntSize WebViewImpl::layoutSize() const
 
 void WebViewImpl::computePageScaleFactorLimits()
 {
-    if (m_pageDefinedMinimumPageScaleFactor == -1 || m_pageDefinedMaximumPageScaleFactor == -1)
-        return;
-
     if (!mainFrame() || !page() || !page()->mainFrame() || !page()->mainFrame()->view())
         return;
 
     FrameView* view = page()->mainFrame()->view();
 
-    m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor);
-    m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor);
+    if (m_pageDefinedMinimumPageScaleFactor == -1 || m_pageDefinedMaximumPageScaleFactor == -1) {
+        m_minimumPageScaleFactor = minPageScaleFactor;
+        m_maximumPageScaleFactor = maxPageScaleFactor;
+    } else {
+        m_minimumPageScaleFactor = min(max(m_pageDefinedMinimumPageScaleFactor, minPageScaleFactor), maxPageScaleFactor);
+        m_maximumPageScaleFactor = max(min(m_pageDefinedMaximumPageScaleFactor, maxPageScaleFactor), minPageScaleFactor);
+    }
 
     if (settings()->viewportEnabled()) {
         if (!contentsSize().width() || !m_size.width)
@@ -3187,9 +3199,14 @@ void WebViewImpl::computePageScaleFactorLimits()
     ASSERT(m_minimumPageScaleFactor <= m_maximumPageScaleFactor);
 
     // Initialize and/or clamp the page scale factor if needed.
+    float initialPageScaleFactor = m_initialPageScaleFactor;
+    if (!settings()->viewportEnabled())
+        initialPageScaleFactor = 1;
+    if (m_initialPageScaleFactorOverride != -1)
+        initialPageScaleFactor = m_initialPageScaleFactorOverride;
     float newPageScaleFactor = pageScaleFactor();
-    if (!m_pageScaleFactorIsSet && m_initialPageScaleFactor != -1) {
-        newPageScaleFactor = m_initialPageScaleFactor;
+    if (!m_pageScaleFactorIsSet && initialPageScaleFactor != -1) {
+        newPageScaleFactor = initialPageScaleFactor;
         m_pageScaleFactorIsSet = true;
     }
     newPageScaleFactor = clampPageScaleFactorToLimits(newPageScaleFactor);

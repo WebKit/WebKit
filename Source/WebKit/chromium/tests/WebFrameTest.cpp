@@ -394,6 +394,84 @@ TEST_F(WebFrameTest, PageViewportInitialScaleOverridesInitializeAtMinimumScale)
     EXPECT_EQ(2.0f, m_webView->pageScaleFactor());
 }
 
+TEST_F(WebFrameTest, setInitialPageScaleFactorPermanently)
+{
+    registerMockedHttpURLLoad("fixed_layout.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    float enforcedPageScalePactor = 2.0f;
+
+    m_webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "fixed_layout.html", true, 0, &client);
+    m_webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    m_webView->settings()->setApplyPageScaleFactorInCompositor(true);
+    m_webView->setInitialPageScaleOverride(enforcedPageScalePactor);
+
+    EXPECT_EQ(enforcedPageScalePactor, m_webView->pageScaleFactor());
+
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+    m_webView->enableFixedLayoutMode(true);
+    m_webView->settings()->setViewportEnabled(true);
+    m_webView->resize(WebSize(viewportWidth, viewportHeight));
+    m_webView->layout();
+
+    EXPECT_EQ(enforcedPageScalePactor, m_webView->pageScaleFactor());
+
+    m_webView->enableFixedLayoutMode(false);
+    m_webView->settings()->setViewportEnabled(false);
+    m_webView->layout();
+
+    EXPECT_EQ(enforcedPageScalePactor, m_webView->pageScaleFactor());
+
+    m_webView->setInitialPageScaleOverride(-1);
+    m_webView->layout();
+    EXPECT_EQ(1.0f, m_webView->pageScaleFactor());
+}
+
+TEST_F(WebFrameTest, PermanentInitialPageScaleFactorOverridesInitializeAtMinimumScale)
+{
+    registerMockedHttpURLLoad("viewport-auto-initial-scale.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+    float enforcedPageScalePactor = 0.5f;
+
+    m_webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "viewport-auto-initial-scale.html", true, 0, &client);
+    m_webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    m_webView->settings()->setApplyPageScaleFactorInCompositor(true);
+    m_webView->enableFixedLayoutMode(true);
+    m_webView->settings()->setViewportEnabled(true);
+    m_webView->settings()->setInitializeAtMinimumPageScale(false);
+    m_webView->setInitialPageScaleOverride(enforcedPageScalePactor);
+    m_webView->resize(WebSize(viewportWidth, viewportHeight));
+
+    EXPECT_EQ(enforcedPageScalePactor, m_webView->pageScaleFactor());
+}
+
+TEST_F(WebFrameTest, PermanentInitialPageScaleFactorOverridesPageViewportInitialScale)
+{
+    registerMockedHttpURLLoad("viewport-2x-initial-scale.html");
+
+    FixedLayoutTestWebViewClient client;
+    client.m_screenInfo.deviceScaleFactor = 1;
+    int viewportWidth = 640;
+    int viewportHeight = 480;
+    float enforcedPageScalePactor = 0.5f;
+
+    m_webView = FrameTestHelpers::createWebViewAndLoad(m_baseURL + "viewport-2x-initial-scale.html", true, 0, &client);
+    m_webView->settings()->setApplyDeviceScaleFactorInCompositor(true);
+    m_webView->settings()->setApplyPageScaleFactorInCompositor(true);
+    m_webView->enableFixedLayoutMode(true);
+    m_webView->settings()->setViewportEnabled(true);
+    m_webView->setInitialPageScaleOverride(enforcedPageScalePactor);
+    m_webView->resize(WebSize(viewportWidth, viewportHeight));
+
+    EXPECT_EQ(enforcedPageScalePactor, m_webView->pageScaleFactor());
+}
+
 TEST_F(WebFrameTest, ScaleFactorShouldNotOscillate)
 {
     registerMockedHttpURLLoad("scale_oscillate.html");

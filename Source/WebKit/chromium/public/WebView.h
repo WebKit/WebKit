@@ -229,6 +229,10 @@ public:
     WEBKIT_EXPORT static double zoomLevelToZoomFactor(double zoomLevel);
     WEBKIT_EXPORT static double zoomFactorToZoomLevel(double factor);
 
+    // Sets the initial page scale to the given factor. This scale setting overrides
+    // page scale set in the page's viewport meta tag.
+    virtual void setInitialPageScaleOverride(float) = 0;
+
     // Gets the scale factor of the page, where 1.0 is the normal size, > 1.0
     // is scaled up, < 1.0 is scaled down.
     virtual float pageScaleFactor() const = 0;
