@@ -1,3 +1,22 @@
+2013-02-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Clean up PageViewportControllerClientEfl class
+        https://bugs.webkit.org/show_bug.cgi?id=110438
+
+        Reviewed by Andreas Kling.
+
+        Cleaned up PageViewportControllerClientEfl class from unused methods
+        and class members, eliminated access to WK2 internals from this class.
+
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        (WebKit::PageViewportControllerClientEfl::didChangeContentsSize):
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        (WebKit::PageViewportControllerClientEfl::~PageViewportControllerClientEfl):
+        (PageViewportControllerClientEfl):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::WebView):
+        (WebKit::WebView::updateViewportSize):
+
 2013-02-22  Michał Pakuła vel Rutka  <m.pakula@samsung.com>
 
         [WK2][EFL][GTK][Qt] Add context menu item tags for C API

@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2012 Samsung Electronics. All rights reserved.
+ * Copyright (C) 2013 Intel Corporation. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,11 +27,8 @@
 #include "config.h"
 #include "PageViewportControllerClientEfl.h"
 
-#include "CoordinatedLayerTreeHostProxy.h"
 #include "EwkView.h"
 #include "PageViewportController.h"
-#include "TransformationMatrix.h"
-#include <WebCore/CoordinatedGraphicsScene.h>
 
 using namespace WebCore;
 
@@ -43,32 +41,8 @@ PageViewportControllerClientEfl::PageViewportControllerClientEfl(EwkView* view)
     ASSERT(m_view);
 }
 
-PageViewportControllerClientEfl::~PageViewportControllerClientEfl()
+void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize&)
 {
-}
-
-DrawingAreaProxy* PageViewportControllerClientEfl::drawingArea() const
-{
-    return m_view->page()->drawingArea();
-}
-
-void PageViewportControllerClientEfl::setRendererActive(bool active)
-{
-    drawingArea()->coordinatedLayerTreeHostProxy()->coordinatedGraphicsScene()->setActive(active);
-}
-
-void PageViewportControllerClientEfl::updateViewportSize()
-{
-    ASSERT(m_controller);
-    FloatSize size = m_view->size();
-    // The viewport controller expects sizes in UI units, and not raw device units.
-    size.scale(1 / m_controller->deviceScaleFactor());
-    m_controller->didChangeViewportSize(size);
-}
-
-void PageViewportControllerClientEfl::didChangeContentsSize(const WebCore::IntSize& contentsSize)
-{
-    UNUSED_PARAM(contentsSize);
     m_view->scheduleUpdateDisplay();
 }
 

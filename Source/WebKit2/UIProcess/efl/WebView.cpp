@@ -196,7 +196,10 @@ void WebView::didCommitLoad()
 void WebView::updateViewportSize()
 {
     if (m_page->useFixedLayout()) {
-        m_ewkView->pageViewportControllerClient()->updateViewportSize();
+        FloatSize size = m_ewkView->size();
+        // The viewport controller expects sizes in UI units, and not raw device units.
+        size.scale(1 / m_page->deviceScaleFactor());
+        m_ewkView->pageViewportController()->didChangeViewportSize(size);
         return;
     }
     m_page->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_ewkView->pagePosition()), m_ewkView->size()), FloatPoint());

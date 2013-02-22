@@ -124,7 +124,6 @@ public:
     EwkSettings* settings() { return m_settings.get(); }
     EwkBackForwardList* backForwardList() { return m_backForwardList.get(); }
     EwkWindowFeatures* windowFeatures();
-    WebKit::PageViewportControllerClientEfl* pageViewportControllerClient() { return m_pageViewportControllerClient.get(); }
     WebKit::PageViewportController* pageViewportController() { return m_pageViewportController.get(); }
 
     bool isFocused() const;
