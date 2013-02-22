@@ -1,3 +1,15 @@
+2013-02-21  Andy Estes  <aestes@apple.com>
+
+        TriState.h should be a Project header
+        https://bugs.webkit.org/show_bug.cgi?id=110543
+
+        Rubber-stamped by Dan Bernstein.
+
+        WTF uses a script to copy headers to the build destination, so it isn't
+        necessary to mark headers as Private/Public (and doing so can be problematic).
+
+        * WTF.xcodeproj/project.pbxproj: Mark TriState.h as a Project header.
+
 2013-02-21  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Add executable property to cmd file.
