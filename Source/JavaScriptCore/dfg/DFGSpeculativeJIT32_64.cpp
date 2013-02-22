@@ -4047,7 +4047,7 @@ void SpeculativeJIT::compile(Node* node)
         m_jit.breakpoint();
         isOK.link(&m_jit);
 #else
-        speculaceCell(node->child1());
+        speculateCell(node->child1());
 #endif
 
         noResult(node);

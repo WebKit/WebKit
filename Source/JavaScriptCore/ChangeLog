@@ -1,3 +1,10 @@
+2013-02-21  Jessie Berlin  <jberlin@apple.com>
+
+        Fix a typo that broke the 32 bit build.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-02-21  Michael Saboff  <msaboff@apple.com>
 
         25-30% regression in V8 RayTrace test in 32 bit builds with JIT disabled
