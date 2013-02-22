@@ -47,7 +47,6 @@
 #include "ewk_touch.h"
 #endif
 
-
 #include "WebContext.h"
 #include "WebPageGroup.h"
 #include "WebPreferences.h"
@@ -136,9 +135,6 @@ public:
     WebCore::IntSize size() const { return m_size; }
 
     WebCore::AffineTransform transformToScreen() const;
-
-    void paintToCurrentGLContext();
-    void paintToCairoSurface(cairo_surface_t*);
 
     const char* url() const { return m_url; }
     Evas_Object* createFavicon() const;

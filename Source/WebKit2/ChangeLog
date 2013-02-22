@@ -1,5 +1,19 @@
 2013-02-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
+        [WK2][EFL] Remove declaration of non-existent functions from EwkView
+        https://bugs.webkit.org/show_bug.cgi?id=110572
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Removed declarations of non-existent EwkView::paintToCurrentGLContext() and
+        EwkView::paintToCairoSurface(cairo_surface_t*) that were accidentally
+        left at r143699.
+
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+
+2013-02-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
         [WK2][EFL] Clean up PageViewportControllerClientEfl class
         https://bugs.webkit.org/show_bug.cgi?id=110438
 
