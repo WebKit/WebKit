@@ -692,9 +692,10 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const LayoutPoint& p
     LayoutRect rect(paintOffset, size());
     subtractCaptionRect(rect);
 
-    if (!boxShadowShouldBeAppliedToBackground(determineBackgroundBleedAvoidance(paintInfo.context)))
+    BackgroundBleedAvoidance bleedAvoidance = determineBackgroundBleedAvoidance(paintInfo.context);
+    if (!boxShadowShouldBeAppliedToBackground(bleedAvoidance))
         paintBoxShadow(paintInfo, rect, style(), Normal);
-    paintBackground(paintInfo, rect);
+    paintBackground(paintInfo, rect, bleedAvoidance);
     paintBoxShadow(paintInfo, rect, style(), Inset);
 
     if (style()->hasBorder() && !collapseBorders())
