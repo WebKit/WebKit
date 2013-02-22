@@ -815,6 +815,10 @@ static void dumpDescendantFramesText(WKBundleFrameRef frame, StringBuilder& stri
         WKBundleFrameRef subframe = static_cast<WKBundleFrameRef>(WKArrayGetItemAtIndex(childFrames.get(), i));
         WKRetainPtr<WKStringRef> subframeName(AdoptWK, WKBundleFrameCopyName(subframe));
 
+        // DumpRenderTree ignores empty frames, so do the same thing here.
+        if (!hasDocumentElement(subframe))
+            continue;
+
         stringBuilder.appendLiteral("\n--------\nFrame: '");
         stringBuilder.append(toWTFString(subframeName));
         stringBuilder.appendLiteral("'\n--------\n");

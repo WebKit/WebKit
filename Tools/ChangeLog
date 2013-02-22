@@ -1,3 +1,18 @@
+2013-02-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [WTR] Do not dump information about empty subframes.
+        https://bugs.webkit.org/show_bug.cgi?id=110585
+
+        Reviewed by Simon Fraser.
+
+        Follow DumpRenderTree more closely by skipping empty frames
+        (frames which have no document). We are not really interested in
+        showing anything about them.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::dumpDescendantFramesText): Do not print subframe names when they
+        have no associated Document.
+
 2013-02-21  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [EFL][DRT] Do not dump empty frames.

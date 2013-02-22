@@ -270,8 +270,6 @@ http/tests/misc/submit-post-keygen.html
 http/tests/navigation/no-referrer-reset.html
 http/tests/navigation/no-referrer-target-blank.html
 http/tests/navigation/target-frame-from-window.html
-http/tests/security/cross-origin-xsl-BLOCKED.html
-http/tests/security/cross-origin-xsl-redirect-BLOCKED.html
 http/tests/security/drag-drop-same-unique-origin.html
 http/tests/security/frameNavigation/not-opener.html
 http/tests/security/originHeader/origin-header-for-empty.html
