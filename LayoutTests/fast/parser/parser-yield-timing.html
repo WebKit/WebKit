@@ -3,9 +3,7 @@
   <head>
     <script type="text/javascript" src="../js/resources/js-test-pre.js"></script>
     <script>
-      if (window.testRunner) {
-        window.testRunner.waitUntilDone();
-      }
+      window.jsTestIsAsync = true;
 
       description("Runs 3 separate 1 second &lt;script&gt; blocks with a setTimeout schedule before each. The execution time of the setTimeout is when the HTML yielded to the event loop. The yields also represent painting opportunities. We want the parser to yield every 0.5 seconds once it has seen a script.");
 
@@ -42,9 +40,7 @@
       setTimeout(function() { 
         expectElapsedTime(3000);
 
-        if (window.testRunner) {
-          testRunner.notifyDone();
-        }
+        finishJSTest();
       }, 0);
     </script>
     <script> 
