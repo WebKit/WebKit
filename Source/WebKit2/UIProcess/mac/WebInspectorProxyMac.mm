@@ -352,7 +352,6 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         0, // unavailablePluginButtonClicked
         0, // showColorPicker
         0, // hideColorPicker
-        0, // shouldInstantiatePlugin
     };
 
     inspectorPage->initializeUIClient(&uiClient);

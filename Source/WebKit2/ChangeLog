@@ -1,3 +1,30 @@
+2013-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Move pluginLoadPolicy to the page loader client
+        https://bugs.webkit.org/show_bug.cgi?id=110635
+        <rdar://problem/13265303>
+        
+        Reviewed by Sam Weinig.
+
+        Move the pluginLoadPolicy callback to the page loader client where it belongs.
+
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::toWKPluginLoadPolicy):
+        (WebKit):
+        (WebKit::toPluginModuleLoadPolicy):
+        (WebKit::WebLoaderClient::pluginLoadPolicy):
+        * UIProcess/WebLoaderClient.h:
+        (WebLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getPluginPath):
+        * UIProcess/WebUIClient.cpp:
+        (WebKit):
+        * UIProcess/WebUIClient.h:
+        (WebUIClient):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+
 2013-02-21  Jer Noble  <jer.noble@apple.com>
 
         Two video contollers appear after exiting the fullscreen video when using menubar to exit.

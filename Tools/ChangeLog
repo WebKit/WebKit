@@ -1,3 +1,16 @@
+2013-02-22  Anders Carlsson  <andersca@apple.com>
+
+        Move pluginLoadPolicy to the page loader client
+        https://bugs.webkit.org/show_bug.cgi?id=110635
+
+        Reviewed by Sam Weinig.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::createWebViewWithOptions):
+
 2013-02-22  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Changed gman's primary address for auto-complete in Bugzilla.

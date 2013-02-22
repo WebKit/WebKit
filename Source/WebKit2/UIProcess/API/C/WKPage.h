@@ -49,6 +49,13 @@ enum {
 };
 typedef uint32_t WKFocusDirection;
 
+enum {
+    kWKPluginLoadPolicyLoadNormally = 0,
+    kWKPluginLoadPolicyBlocked,
+    kWKPluginLoadPolicyInactive,
+};
+typedef uint32_t WKPluginLoadPolicy;
+
 typedef void (*WKPageCallback)(WKPageRef page, const void* clientInfo);
 
 // FrameLoad Client
@@ -75,6 +82,7 @@ typedef void (*WKPageDidNewFirstVisuallyNonEmptyLayoutCallback)(WKPageRef page, 
 typedef void (*WKPageWillGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPagePluginDidFailCallback)(WKPageRef page, WKErrorCode errorCode, WKStringRef mimeType, WKStringRef pluginIdentifier, WKStringRef pluginVersion, const void* clientInfo);
 typedef void (*WKPageDidLayoutCallback)(WKPageRef page, WKLayoutMilestones milestones, WKTypeRef userData, const void *clientInfo);
+typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKStringRef identifier, WKStringRef displayName, WKURLRef documentURL, WKPluginLoadPolicy currentPluginLoadPolicy, const void* clientInfo);
 
 // Deprecated
 typedef void (*WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
@@ -129,6 +137,7 @@ struct WKPageLoaderClient {
     void                                                                (*registerIntentServiceForFrame_unavailable)(void);
 
     WKPageDidLayoutCallback                                             didLayout;
+    WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
@@ -171,13 +180,6 @@ enum {
 };
 typedef uint32_t WKPluginUnavailabilityReason;
 
-enum {
-    kWKPluginLoadPolicyLoadNormally = 0,
-    kWKPluginLoadPolicyBlocked,
-    kWKPluginLoadPolicyInactive,
-};
-typedef uint32_t WKPluginLoadPolicy;
-
 // UI Client
 typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKURLRequestRef urlRequest, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void *clientInfo);
@@ -215,7 +217,6 @@ typedef void (*WKPageDecidePolicyForNotificationPermissionRequestCallback)(WKPag
 typedef void (*WKPageUnavailablePluginButtonClickedCallback)(WKPageRef page, WKPluginUnavailabilityReason pluginUnavailabilityReason, WKStringRef mimeType, WKStringRef url, WKStringRef pluginsPageURL, const void* clientInfo);
 typedef void (*WKPageShowColorPickerCallback)(WKPageRef page, WKStringRef initialColor, WKColorPickerResultListenerRef listener, const void* clientInfo);
 typedef void (*WKPageHideColorPickerCallback)(WKPageRef page, const void* clientInfo);
-typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKStringRef identifier, WKStringRef displayName, WKURLRef documentURL, WKPluginLoadPolicy currentPluginLoadPolicy, const void* clientInfo);
 
 // Deprecated    
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV0)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
@@ -276,7 +277,6 @@ struct WKPageUIClient {
     // Version 2
     WKPageShowColorPickerCallback                                       showColorPicker;
     WKPageHideColorPickerCallback                                       hideColorPicker;
-    WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

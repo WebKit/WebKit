@@ -237,7 +237,6 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // unavailablePluginButtonClicked
         0, // showColorPicker
         0, // hideColorPicker
-        0, // shouldInstantiatePlugin
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -428,7 +427,6 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         unavailablePluginButtonClicked,
         0, // showColorPicker
         0, // hideColorPicker
-        0, // shouldInstantiatePlugin
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 
@@ -468,6 +466,7 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // didReceiveIntentForFrame
         0, // registerIntentServiceForFrame
         0, // didLayout
+        0, // pluginLoadPolicy
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 

@@ -291,4 +291,43 @@ void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, const St
     m_client.pluginDidFail(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(mimeType.impl()), toAPI(pluginIdentifier.impl()), toAPI(pluginVersion.impl()), m_client.clientInfo);
 }
 
+static inline WKPluginLoadPolicy toWKPluginLoadPolicy(PluginModuleLoadPolicy pluginModuleLoadPolicy)
+{
+    switch (pluginModuleLoadPolicy) {
+    case PluginModuleLoadNormally:
+        return kWKPluginLoadPolicyLoadNormally;
+    case PluginModuleBlocked:
+        return kWKPluginLoadPolicyBlocked;
+    case PluginModuleInactive:
+        return kWKPluginLoadPolicyInactive;
+    }
+
+    ASSERT_NOT_REACHED();
+    return kWKPluginLoadPolicyBlocked;
+}
+
+static inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy pluginLoadPolicy)
+{
+    switch (pluginLoadPolicy) {
+    case kWKPluginLoadPolicyLoadNormally:
+        return PluginModuleLoadNormally;
+    case kWKPluginLoadPolicyBlocked:
+        return PluginModuleBlocked;
+    case kWKPluginLoadPolicyInactive:
+        return PluginModuleInactive;
+    }
+
+    ASSERT_NOT_REACHED();
+    return PluginModuleBlocked;
+}
+
+PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, const String& identifier, const String& displayName, const String& documentURLString, PluginModuleLoadPolicy currentPluginLoadPolicy)
+{
+    if (!m_client.pluginLoadPolicy)
+        return currentPluginLoadPolicy;
+
+    return toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toAPI(identifier.impl()), toAPI(displayName.impl()), toURLRef(documentURLString.impl()), toWKPluginLoadPolicy(currentPluginLoadPolicy), m_client.clientInfo));
+}
+
+
 } // namespace WebKit

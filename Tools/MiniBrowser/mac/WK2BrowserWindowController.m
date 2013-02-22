@@ -642,6 +642,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // didReceiveIntentForFrame
         0, // registerIntentServiceForFrame
         0, // didLayout
+        0, // pluginLoadPolicy
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     
@@ -703,7 +704,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // unavailablePluginButtonClicked
         0, // showColorPicker
         0, // hideColorPicker
-        0, // shouldInstantiatePlugin
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }
