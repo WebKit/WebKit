@@ -31,8 +31,11 @@
 #include "CompactHTMLToken.h"
 #include "HTMLToken.h"
 #include "SegmentedString.h"
+#include <wtf/Vector.h>
 
 namespace WebCore {
+
+typedef size_t TokenPreloadScannerCheckpoint;
 
 class HTMLParserOptions;
 class HTMLTokenizer;
@@ -50,6 +53,11 @@ public:
 #endif
 
     void setPredictedBaseElementURL(const KURL& url) { m_predictedBaseElementURL = url; }
+
+    // A TokenPreloadScannerCheckpoint is valid until the next call to rewindTo,
+    // at which point all outstanding checkpoints are invalidated.
+    TokenPreloadScannerCheckpoint createCheckpoint();
+    void rewindTo(TokenPreloadScannerCheckpoint);
 
     bool isSafeToSendToAnotherThread()
     {
@@ -85,14 +93,37 @@ private:
     template<typename Token>
     void updatePredictedBaseURL(const Token&);
 
+    struct Checkpoint {
+        Checkpoint(const KURL& predictedBaseElementURL, bool inStyle
+#if ENABLE(TEMPLATE_ELEMENT)
+            , size_t templateCount
+#endif
+            )
+            : predictedBaseElementURL(predictedBaseElementURL)
+            , inStyle(inStyle)
+#if ENABLE(TEMPLATE_ELEMENT)
+            , templateCount(templateCount)
+#endif
+        {
+        }
+
+        KURL predictedBaseElementURL;
+        bool inStyle;
+#if ENABLE(TEMPLATE_ELEMENT)
+        size_t templateCount;
+#endif
+    };
+
     CSSPreloadScanner m_cssScanner;
-    KURL m_documentURL;
+    const KURL m_documentURL;
     KURL m_predictedBaseElementURL;
     bool m_inStyle;
 
 #if ENABLE(TEMPLATE_ELEMENT)
     size_t m_templateCount;
 #endif
+
+    Vector<Checkpoint> m_checkpoints;
 };
 
 class HTMLPreloadScanner {

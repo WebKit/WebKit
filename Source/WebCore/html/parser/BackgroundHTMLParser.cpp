@@ -139,7 +139,7 @@ void BackgroundHTMLParser::resumeFrom(PassOwnPtr<Checkpoint> checkpoint)
     m_token = checkpoint->token.release();
     m_tokenizer = checkpoint->tokenizer.release();
     m_input.rewindTo(checkpoint->inputCheckpoint, checkpoint->unparsedInput);
-    m_preloadScanner.clear(); // FIXME: We should rewind the preload scanner rather than clearing it.
+    m_preloadScanner->rewindTo(checkpoint->preloadScannerCheckpoint);
     pumpTokenizer();
 }
 
@@ -234,8 +234,7 @@ void BackgroundHTMLParser::pumpTokenizer()
             if (xssInfo)
                 token.setXSSInfo(xssInfo.release());
 
-            if (m_preloadScanner)
-                m_preloadScanner->scan(token, m_pendingPreloads);
+            m_preloadScanner->scan(token, m_pendingPreloads);
 
             m_pendingTokens->append(token);
         }
@@ -262,7 +261,8 @@ void BackgroundHTMLParser::sendTokensToMainThread()
     OwnPtr<HTMLDocumentParser::ParsedChunk> chunk = adoptPtr(new HTMLDocumentParser::ParsedChunk);
     chunk->tokens = m_pendingTokens.release();
     chunk->preloads.swap(m_pendingPreloads);
-    chunk->checkpoint = m_input.createCheckpoint();
+    chunk->inputCheckpoint = m_input.createCheckpoint();
+    chunk->preloadScannerCheckpoint = m_preloadScanner->createCheckpoint();
     callOnMainThread(bind(&HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser, m_parser, chunk.release()));
 
     m_pendingTokens = adoptPtr(new CompactHTMLTokenStream);

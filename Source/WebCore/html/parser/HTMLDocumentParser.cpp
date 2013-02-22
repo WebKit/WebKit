@@ -315,7 +315,8 @@ void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwn
     checkpoint->parser = m_weakFactory.createWeakPtr();
     checkpoint->token = token;
     checkpoint->tokenizer = tokenizer;
-    checkpoint->inputCheckpoint = m_currentChunk->checkpoint;
+    checkpoint->inputCheckpoint = m_currentChunk->inputCheckpoint;
+    checkpoint->preloadScannerCheckpoint = m_currentChunk->preloadScannerCheckpoint;
     checkpoint->unparsedInput = m_input.current().toString().isolatedCopy();
     m_input.current().clear();
 

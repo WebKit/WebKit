@@ -67,6 +67,7 @@ public:
         OwnPtr<HTMLToken> token;
         OwnPtr<HTMLTokenizer> tokenizer;
         HTMLInputCheckpoint inputCheckpoint;
+        TokenPreloadScannerCheckpoint preloadScannerCheckpoint;
         String unparsedInput;
     };
 

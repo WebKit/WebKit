@@ -89,7 +89,8 @@ public:
     struct ParsedChunk {
         OwnPtr<CompactHTMLTokenStream> tokens;
         PreloadRequestStream preloads;
-        HTMLInputCheckpoint checkpoint;
+        HTMLInputCheckpoint inputCheckpoint;
+        TokenPreloadScannerCheckpoint preloadScannerCheckpoint;
     };
     void didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
 #endif

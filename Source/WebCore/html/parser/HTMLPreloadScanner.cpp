@@ -262,6 +262,33 @@ TokenPreloadScanner::~TokenPreloadScanner()
 {
 }
 
+TokenPreloadScannerCheckpoint TokenPreloadScanner::createCheckpoint()
+{
+    TokenPreloadScannerCheckpoint checkpoint = m_checkpoints.size();
+    m_checkpoints.append(Checkpoint(m_predictedBaseElementURL, m_inStyle
+#if ENABLE(TEMPLATE_ELEMENT)
+                                    , m_templateCount
+#endif
+                                    ));
+    return checkpoint;
+}
+
+void TokenPreloadScanner::rewindTo(TokenPreloadScannerCheckpoint checkpointIndex)
+{
+    ASSERT(checkpointIndex < m_checkpoints.size()); // If this ASSERT fires, checkpointIndex is invalid.
+    const Checkpoint& checkpoint = m_checkpoints[checkpointIndex];
+    m_predictedBaseElementURL = checkpoint.predictedBaseElementURL;
+    m_inStyle = checkpoint.inStyle;
+#if ENABLE(TEMPLATE_ELEMENT)
+    m_templateCount = checkpoint.templateCount;
+#endif
+    m_cssScanner.reset();
+
+    // FIXME: We should be able to actively invalidate all the outstanding checkpoints
+    // by clearing m_checkpoints, but that causes fast/tokenizer/write-before-load.html
+    // to hit the ASSERT at the beginning of this function.
+}
+
 void TokenPreloadScanner::scan(const HTMLToken& token, Vector<OwnPtr<PreloadRequest> >& requests)
 {
     scanCommon(token, requests);
