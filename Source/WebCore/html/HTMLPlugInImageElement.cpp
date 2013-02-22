@@ -53,13 +53,10 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-static const int autoStartPlugInSizeDimensionThreshold = 1;
-static const int autoShowLabelSizeWidthThreshold = 400;
-static const int autoShowLabelSizeHeightThreshold = 300;
-
 static const int sizingTinyDimensionThreshold = 40;
 static const int sizingSmallWidthThreshold = 250;
-static const int sizingMediumWidthThreshold = 600;
+static const int sizingMediumWidthThreshold = 450;
+static const int sizingMediumHeightThreshold = 300;
 
 // This delay should not exceed the snapshot delay in PluginView.cpp
 static const double simulatedMouseClickTimerDelay = .75;
@@ -73,7 +70,6 @@ HTMLPlugInImageElement::HTMLPlugInImageElement(const QualifiedName& tagName, Doc
     , m_needsWidgetUpdate(!createdByParser)
     , m_shouldPreferPlugInsForImages(preferPlugInsForImagesOption == ShouldPreferPlugInsForImages)
     , m_needsDocumentActivationCallbacks(false)
-    , m_shouldShowSnapshotLabelAutomatically(false)
     , m_simulatedMouseClickTimer(this, &HTMLPlugInImageElement::simulatedMouseClickTimerFired, simulatedMouseClickTimerDelay)
     , m_swapRendererTimer(this, &HTMLPlugInImageElement::swapRendererTimerFired)
 {
@@ -157,8 +153,6 @@ RenderObject* HTMLPlugInImageElement::createRenderer(RenderArena* arena, RenderS
     if (displayState() == DisplayingSnapshot) {
         RenderSnapshottedPlugIn* renderSnapshottedPlugIn = new (arena) RenderSnapshottedPlugIn(this);
         renderSnapshottedPlugIn->updateSnapshot(m_snapshotImage);
-        if (m_shouldShowSnapshotLabelAutomatically)
-            renderSnapshottedPlugIn->setShouldShowLabelAutomatically();
         return renderSnapshottedPlugIn;
     }
 
@@ -296,34 +290,25 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
     }
 }
 
-static AtomicString classNameForShadowRootSize(const IntSize& viewContentsSize, const Node* node)
+static AtomicString classNameForShadowRoot(const Node* node)
 {
     DEFINE_STATIC_LOCAL(const AtomicString, plugInTinySizeClassName, ("tiny", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInSmallSizeClassName, ("small", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInMediumSizeClassName, ("medium", AtomicString::ConstructFromLiteral));
     DEFINE_STATIC_LOCAL(const AtomicString, plugInLargeSizeClassName, ("large", AtomicString::ConstructFromLiteral));
 
-    LayoutRect plugInClipRect = node->renderer()->absoluteClippedOverflowRect();
-    LayoutRect viewContentsRect(LayoutPoint::zero(), LayoutSize(viewContentsSize));
-    if (!viewContentsRect.contains(plugInClipRect)) {
-        LOG(Plugins, "%p Plug-in rect: (%d %d, %d %d) not contained in document of size %d %d", node, plugInClipRect.pixelSnappedX(), plugInClipRect.pixelSnappedY(), plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight(), viewContentsSize.width(), viewContentsSize.height());
-        return nullAtom;
-    }
+    RenderBox* renderBox = static_cast<RenderBox*>(node->renderer());
+    LayoutUnit width = renderBox->contentWidth();
+    LayoutUnit height = renderBox->contentHeight();
 
-    if (plugInClipRect.pixelSnappedWidth() < sizingTinyDimensionThreshold || plugInClipRect.pixelSnappedHeight() < sizingTinyDimensionThreshold) {
-        LOG(Plugins, "%p Tiny Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
+    if (width < sizingTinyDimensionThreshold || height < sizingTinyDimensionThreshold)
         return plugInTinySizeClassName;
-    }
 
-    if (plugInClipRect.pixelSnappedWidth() < sizingSmallWidthThreshold) {
-        LOG(Plugins, "%p Small Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
+    if (width < sizingSmallWidthThreshold)
         return plugInSmallSizeClassName;
-    }
 
-    if (plugInClipRect.pixelSnappedWidth() < sizingMediumWidthThreshold) {
-        LOG(Plugins, "%p Medium Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
+    if (width < sizingMediumWidthThreshold || height < sizingMediumHeightThreshold)
         return plugInMediumSizeClassName;
-    }
 
     return plugInLargeSizeClassName;
 }
@@ -335,7 +320,7 @@ void HTMLPlugInImageElement::updateSnapshotInfo()
         return;
 
     Element* shadowContainer = static_cast<Element*>(root->firstChild());
-    shadowContainer->setAttribute(classAttr, classNameForShadowRootSize(document()->page()->mainFrame()->view()->contentsSize(), this));   
+    shadowContainer->setAttribute(classAttr, classNameForShadowRoot(this));
 }
 
 void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
@@ -419,25 +404,6 @@ void HTMLPlugInImageElement::simulatedMouseClickTimerFired(DeferrableOneShotTime
     m_pendingClickEventFromSnapshot = nullptr;
 }
 
-static bool shouldPlugInShowLabelAutomatically(const IntSize& viewContentsSize, const Node* node)
-{
-    LayoutRect plugInClipRect = node->renderer()->absoluteClippedOverflowRect();
-    LayoutRect viewContentsRect(LayoutPoint::zero(), LayoutSize(viewContentsSize));
-    if (!viewContentsRect.contains(plugInClipRect)) {
-        LOG(Plugins, "%p Plug-in rect: (%d %d, %d %d) not contained in document of size %d %d", node, plugInClipRect.pixelSnappedX(), plugInClipRect.pixelSnappedY(), plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight(), viewContentsSize.width(), viewContentsSize.height());
-        return false;
-    }
-
-    if (plugInClipRect.pixelSnappedWidth() < autoShowLabelSizeWidthThreshold
-        || plugInClipRect.pixelSnappedHeight() < autoShowLabelSizeHeightThreshold) {
-        LOG(Plugins, "%p Size: %d %d", node, plugInClipRect.pixelSnappedWidth(), plugInClipRect.pixelSnappedHeight());
-        return false;
-    }
-
-    LOG(Plugins, "%p Auto-show label", node);
-    return true;
-}
-
 void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
 {
     if (!document()->page()
@@ -457,7 +423,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
     LayoutRect rect = toRenderEmbeddedObject(renderer())->contentBoxRect();
     int width = rect.width();
     int height = rect.height();
-    if (!width || !height || (width <= autoStartPlugInSizeDimensionThreshold && height <= autoStartPlugInSizeDimensionThreshold)) {
+    if (!width || !height || (width <= sizingTinyDimensionThreshold || height <= sizingTinyDimensionThreshold)) {
         LOG(Plugins, "%p Plug-in is %dx%d, set to play", this, width, height);
         return;
     }
@@ -475,9 +441,6 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         LOG(Plugins, "%p Plug-in hash %x is auto-start, set to play", this, m_plugInOriginHash);
         return;
     }
-
-    if (shouldPlugInShowLabelAutomatically(document()->page()->mainFrame()->view()->contentsSize(), this))
-        setShouldShowSnapshotLabelAutomatically();
 
     LOG(Plugins, "%p Plug-in hash %x is %dx%d, origin is not auto-start, set to wait for snapshot", this, m_plugInOriginHash, width, height);
     // We may have got to this point by restarting a snapshotted plug-in, in which case we don't want to
