@@ -637,8 +637,8 @@ body.drawer-visible #floating-status-bar-container {
     pointer-events: none;
 }
 
-#panel-status-bar > div {
-    width: 100%;
+#drawer-view-anchor {
+    display: inline-block;
 }
 
 .status-bar-item:active {
@@ -3074,4 +3074,5 @@ body.platform-mac .progress-bar-container progress {
     pointer-events: auto;
     -webkit-user-select: text;
     font-size: 11px;
+    cursor: text;
 }

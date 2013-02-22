@@ -427,9 +427,15 @@
 }
 
 .timeline-records-stats {
-    float: right;
     margin-top: 5px;
-    margin-right: 6px;
+    margin-left: 6px;
+}
+
+.timeline-records-stats-container {
+    display: inline-block;
+    border-left: 1px solid rgb(202, 202, 202);
+    height: 24px;
+    margin-left: 6px;
 }
 
 .timeline-frames-stats {

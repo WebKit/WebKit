@@ -189,6 +189,15 @@ WebInspector.ScriptsPanel.prototype = {
         return [this.enableToggleButton.element, this._pauseOnExceptionButton.element, this._toggleFormatSourceButton.element, this._scriptViewStatusBarItemsContainer];
     },
 
+    /**
+     * @return {?Element}
+     */
+    statusBarText: function()
+    {
+        var sourceFrame = this.visibleView;
+        return sourceFrame ? sourceFrame.statusBarText() : null;
+    },
+
     defaultFocusedElement: function()
     {
         return this._navigator.view.defaultFocusedElement();

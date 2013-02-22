@@ -112,11 +112,19 @@ WebInspector.SourceFrame.prototype = {
     },
 
     /**
+     * @return {?Element}
+     */
+    statusBarText: function()
+    {
+        return this._sourcePositionElement;
+    },
+
+    /**
      * @return {Array.<Element>}
      */
     statusBarItems: function()
     {
-        return [this._sourcePositionElement];
+        return [];
     },
 
     defaultFocusedElement: function()

@@ -129,7 +129,9 @@ var WebInspector = {
         closeButton.addStyleClass("drawer-header-close-button");
         closeButton.addEventListener("click", this.closeViewInDrawer.bind(this), false);
 
-        document.getElementById("panel-status-bar").firstElementChild.appendChild(drawerStatusBarHeader);
+        var panelStatusBar = document.getElementById("panel-status-bar");
+        var drawerViewAnchor = document.getElementById("drawer-view-anchor");
+        panelStatusBar.insertBefore(drawerStatusBarHeader, drawerViewAnchor);
         this._drawerStatusBarHeader = drawerStatusBarHeader;
         this.drawer.show(view, WebInspector.Drawer.AnimationType.Immediately);
     },
