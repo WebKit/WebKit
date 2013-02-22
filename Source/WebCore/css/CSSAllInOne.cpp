@@ -74,6 +74,7 @@
 #include "InspectorCSSOMWrappers.cpp"
 #include "RuleFeature.cpp"
 #include "RuleSet.cpp"
+#include "SelectorCheckerFastPath.cpp"
 #include "SelectorFilter.cpp"
 #include "StyleBuilder.cpp"
 #include "StylePropertySet.cpp"

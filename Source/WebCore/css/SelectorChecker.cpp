@@ -50,6 +50,7 @@
 #include "RenderStyle.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
+#include "SelectorCheckerFastPath.h"
 #include "ShadowRoot.h"
 #include "SiblingTraversalStrategies.h"
 #include "StyledElement.h"
@@ -73,171 +74,14 @@ SelectorChecker::SelectorChecker(Document* document, Mode mode)
 bool SelectorChecker::matches(const CSSSelector* selector, Element* element, bool isFastCheckableSelector) const
 {
     if (isFastCheckableSelector && !element->isSVGElement()) {
-        if (!fastCheckRightmostSelector(selector, element, VisitedMatchDisabled))
+        SelectorCheckerFastPath selectorCheckerFastPath(selector, element);
+        if (!selectorCheckerFastPath.matchesRightmostSelector(VisitedMatchDisabled))
             return false;
-        return fastCheck(selector, element);
+        return selectorCheckerFastPath.matches();
     }
 
     PseudoId ignoreDynamicPseudo = NOPSEUDO;
     return match(SelectorCheckingContext(selector, element, SelectorChecker::VisitedMatchDisabled), ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorMatches;
-}
-
-namespace {
-
-template <bool checkValue(const Element*, const CSSSelector*)>
-inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*& element, const CSSSelector*& topChildOrSubselector, const Element*& topChildOrSubselectorMatchElement)
-{
-    for (; element; element = element->parentElement()) {
-        if (checkValue(element, selector)) {
-            if (selector->relation() == CSSSelector::Descendant)
-                topChildOrSubselector = 0;
-            else if (!topChildOrSubselector) {
-                ASSERT(selector->relation() == CSSSelector::Child || selector->relation() == CSSSelector::SubSelector);
-                topChildOrSubselector = selector;
-                topChildOrSubselectorMatchElement = element;
-            }
-            if (selector->relation() != CSSSelector::SubSelector)
-                element = element->parentElement();
-            selector = selector->tagHistory();
-            return true;
-        }
-        if (topChildOrSubselector) {
-            // Child or subselector check failed.
-            // If the match element is null, topChildOrSubselector was also the very topmost selector and had to match
-            // the original element we were checking.
-            if (!topChildOrSubselectorMatchElement)
-                return false;
-            // There may be other matches down the ancestor chain.
-            // Rewind to the topmost child or subselector and the element it matched, continue checking ancestors.
-            selector = topChildOrSubselector;
-            element = topChildOrSubselectorMatchElement->parentElement();
-            topChildOrSubselector = 0;
-            return true;
-        }
-    }
-    return false;
-}
-
-inline bool checkClassValue(const Element* element, const CSSSelector* selector)
-{
-    return element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(selector->value().impl());
-}
-
-inline bool checkIDValue(const Element* element, const CSSSelector* selector)
-{
-    return element->hasID() && element->idForStyleResolution().impl() == selector->value().impl();
-}
-
-inline bool checkExactAttributeValue(const Element* element, const CSSSelector* selector)
-{
-    return SelectorChecker::checkExactAttribute(element, selector->attribute(), selector->value().impl());
-}
-
-inline bool checkTagValue(const Element* element, const CSSSelector* selector)
-{
-    return SelectorChecker::tagMatches(element, selector->tagQName());
-}
-
-}
-
-bool SelectorChecker::fastCheckRightmostSelector(const CSSSelector* selector, const Element* element, SelectorChecker::VisitedMatchType visitedMatchType)
-{
-    ASSERT(SelectorChecker::isFastCheckableSelector(selector));
-
-    switch (selector->m_match) {
-    case CSSSelector::Tag:
-        return checkTagValue(element, selector);
-    case CSSSelector::Class:
-        return checkClassValue(element, selector);
-    case CSSSelector::Id:
-        return checkIDValue(element, selector);
-    case CSSSelector::Exact:
-    case CSSSelector::Set:
-        return checkExactAttributeValue(element, selector);
-    case CSSSelector::PseudoClass:
-        return commonPseudoClassSelectorMatches(element, selector, visitedMatchType);
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    return false;
-}
-
-bool SelectorChecker::fastCheck(const CSSSelector* selector, const Element* element)
-{
-    ASSERT(fastCheckRightmostSelector(selector, element, VisitedMatchEnabled));
-
-    const CSSSelector* topChildOrSubselector = 0;
-    const Element* topChildOrSubselectorMatchElement = 0;
-    if (selector->relation() == CSSSelector::Child || selector->relation() == CSSSelector::SubSelector)
-        topChildOrSubselector = selector;
-
-    if (selector->relation() != CSSSelector::SubSelector)
-        element = element->parentElement();
-
-    selector = selector->tagHistory();
-
-    // We know this compound selector has descendant, child and subselector combinators only and all components are simple.
-    while (selector) {
-        switch (selector->m_match) {
-        case CSSSelector::Class:
-            if (!fastCheckSingleSelector<checkClassValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
-                return false;
-            break;
-        case CSSSelector::Id:
-            if (!fastCheckSingleSelector<checkIDValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
-                return false;
-            break;
-        case CSSSelector::Tag:
-            if (!fastCheckSingleSelector<checkTagValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
-                return false;
-            break;
-        case CSSSelector::Set:
-        case CSSSelector::Exact:
-            if (!fastCheckSingleSelector<checkExactAttributeValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
-                return false;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-        }
-    }
-    return true;
-}
-
-static inline bool isFastCheckableRelation(CSSSelector::Relation relation)
-{
-    return relation == CSSSelector::Descendant || relation == CSSSelector::Child || relation == CSSSelector::SubSelector;
-}
-
-static inline bool isFastCheckableMatch(const CSSSelector* selector)
-{
-    if (selector->m_match == CSSSelector::Set) {
-        // Style attribute is generated lazily but the fast path doesn't trigger it.
-        // Disallow them here rather than making the fast path more branchy.
-        return selector->attribute() != styleAttr;
-    }
-    if (selector->m_match == CSSSelector::Exact)
-        return selector->attribute() != styleAttr && HTMLDocument::isCaseSensitiveAttribute(selector->attribute());
-    return selector->m_match == CSSSelector::Tag || selector->m_match == CSSSelector::Id || selector->m_match == CSSSelector::Class;
-}
-
-static inline bool isFastCheckableRightmostSelector(const CSSSelector* selector)
-{
-    if (!isFastCheckableRelation(selector->relation()))
-        return false;
-    return isFastCheckableMatch(selector) || SelectorChecker::isCommonPseudoClassSelector(selector);
-}
-
-bool SelectorChecker::isFastCheckableSelector(const CSSSelector* selector)
-{
-    if (!isFastCheckableRightmostSelector(selector))
-        return false;
-    for (selector = selector->tagHistory(); selector; selector = selector->tagHistory()) {
-        if (!isFastCheckableRelation(selector->relation()))
-            return false;
-        if (!isFastCheckableMatch(selector))
-            return false;
-    }
-    return true;
 }
 
 // Recursive check of selectors and combinators
@@ -1021,23 +865,6 @@ bool SelectorChecker::checkScrollbarPseudoClass(Document* document, const CSSSel
     default:
         return false;
     }
-}
-
-bool SelectorChecker::commonPseudoClassSelectorMatches(const Element* element, const CSSSelector* selector, VisitedMatchType visitedMatchType)
-{
-    ASSERT(isCommonPseudoClassSelector(selector));
-    switch (selector->pseudoType()) {
-    case CSSSelector::PseudoLink:
-    case CSSSelector::PseudoAnyLink:
-        return element->isLink();
-    case CSSSelector::PseudoVisited:
-        return element->isLink() && visitedMatchType == VisitedMatchEnabled;
-    case CSSSelector::PseudoFocus:
-        return matchesFocusPseudoClass(element);
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    return true;
 }
 
 unsigned SelectorChecker::determineLinkMatchType(const CSSSelector* selector)

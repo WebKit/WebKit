@@ -36,6 +36,7 @@
 #include "MediaQueryEvaluator.h"
 #include "SecurityOrigin.h"
 #include "SelectorChecker.h"
+#include "SelectorCheckerFastPath.h"
 #include "SelectorFilter.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
@@ -135,7 +136,7 @@ RuleData::RuleData(StyleRule* rule, unsigned selectorIndex, unsigned position, A
     : m_rule(rule)
     , m_selectorIndex(selectorIndex)
     , m_position(position)
-    , m_hasFastCheckableSelector((addRuleFlags & RuleCanUseFastCheckSelector) && SelectorChecker::isFastCheckableSelector(selector()))
+    , m_hasFastCheckableSelector((addRuleFlags & RuleCanUseFastCheckSelector) && SelectorCheckerFastPath::canUse(selector()))
     , m_specificity(selector()->specificity())
     , m_hasMultipartSelector(!!selector()->tagHistory())
     , m_hasRightmostSelectorMatchingHTMLBasedOnRuleHash(isSelectorMatchingHTMLBasedOnRuleHash(selector()))

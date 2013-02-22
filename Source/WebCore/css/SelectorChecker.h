@@ -83,9 +83,6 @@ public:
     template<typename SiblingTraversalStrategy>
     bool checkOne(const SelectorCheckingContext&, const SiblingTraversalStrategy&) const;
 
-    static bool isFastCheckableSelector(const CSSSelector*);
-    static bool fastCheck(const CSSSelector*, const Element*);
-
     bool strictParsing() const { return m_strictParsing; }
 
     Mode mode() const { return m_mode; }
@@ -93,7 +90,6 @@ public:
     static bool tagMatches(const Element*, const QualifiedName&);
     static bool isCommonPseudoClassSelector(const CSSSelector*);
     static bool matchesFocusPseudoClass(const Element*);
-    static bool fastCheckRightmostAttributeSelector(const Element*, const CSSSelector*);
     static bool checkExactAttribute(const Element*, const QualifiedName& selectorAttributeName, const AtomicStringImpl* value);
 
     enum LinkMatchMask { MatchLink = 1, MatchVisited = 2, MatchAll = MatchLink | MatchVisited };
@@ -103,9 +99,6 @@ private:
     bool checkScrollbarPseudoClass(Document*, const CSSSelector*) const;
 
     static bool isFrameFocused(const Element*);
-
-    static bool fastCheckRightmostSelector(const CSSSelector*, const Element*, VisitedMatchType);
-    static bool commonPseudoClassSelectorMatches(const Element*, const CSSSelector*, VisitedMatchType);
 
     bool m_strictParsing;
     bool m_documentIsHTML;
@@ -145,14 +138,6 @@ inline bool SelectorChecker::checkExactAttribute(const Element* element, const Q
             return true;
     }
     return false;
-}
-
-inline bool SelectorChecker::fastCheckRightmostAttributeSelector(const Element* element, const CSSSelector* selector)
-{
-    if (selector->m_match == CSSSelector::Exact || selector->m_match == CSSSelector::Set)
-        return checkExactAttribute(element, selector->attribute(), selector->value().impl());
-    ASSERT(!selector->isAttributeSelector());
-    return true;
 }
 
 }

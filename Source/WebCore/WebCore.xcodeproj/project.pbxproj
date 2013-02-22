@@ -1099,6 +1099,8 @@
 		419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */ = {isa = PBXBuildFile; fileRef = 419BC2DD1685329900D64D6D /* VisitedLinkState.h */; };
 		41A3D58E101C152D00316D07 /* DedicatedWorkerThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */; };
 		41A3D58F101C152D00316D07 /* DedicatedWorkerThread.h in Headers */ = {isa = PBXBuildFile; fileRef = 41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */; };
+		41B8CD4516D04591000E8CC0 /* SelectorCheckerFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41B8CD4316D04591000E8CC0 /* SelectorCheckerFastPath.cpp */; };
+		41B8CD4616D04591000E8CC0 /* SelectorCheckerFastPath.h in Headers */ = {isa = PBXBuildFile; fileRef = 41B8CD4416D04591000E8CC0 /* SelectorCheckerFastPath.h */; };
 		41BF700B0FE86F49005E8DEC /* MessagePortChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41BF70090FE86F49005E8DEC /* MessagePortChannel.cpp */; };
 		41BF700C0FE86F49005E8DEC /* MessagePortChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41BF700F0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */; };
@@ -8478,6 +8480,8 @@
 		419BC2DD1685329900D64D6D /* VisitedLinkState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisitedLinkState.h; sourceTree = "<group>"; };
 		41A3D58C101C152D00316D07 /* DedicatedWorkerThread.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DedicatedWorkerThread.cpp; path = workers/DedicatedWorkerThread.cpp; sourceTree = "<group>"; };
 		41A3D58D101C152D00316D07 /* DedicatedWorkerThread.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DedicatedWorkerThread.h; path = workers/DedicatedWorkerThread.h; sourceTree = "<group>"; };
+		41B8CD4316D04591000E8CC0 /* SelectorCheckerFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SelectorCheckerFastPath.cpp; sourceTree = "<group>"; };
+		41B8CD4416D04591000E8CC0 /* SelectorCheckerFastPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SelectorCheckerFastPath.h; sourceTree = "<group>"; };
 		41BF70090FE86F49005E8DEC /* MessagePortChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MessagePortChannel.cpp; sourceTree = "<group>"; };
 		41BF700A0FE86F49005E8DEC /* MessagePortChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessagePortChannel.h; sourceTree = "<group>"; };
 		41BF700D0FE86F61005E8DEC /* PlatformMessagePortChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PlatformMessagePortChannel.cpp; path = default/PlatformMessagePortChannel.cpp; sourceTree = "<group>"; };
@@ -22104,6 +22108,8 @@
 				A79BADA0161E7F3F00C2E652 /* RuleSet.h */,
 				E44B4BB1141650D7002B1D8B /* SelectorChecker.cpp */,
 				E44B4BB2141650D7002B1D8B /* SelectorChecker.h */,
+				41B8CD4316D04591000E8CC0 /* SelectorCheckerFastPath.cpp */,
+				41B8CD4416D04591000E8CC0 /* SelectorCheckerFastPath.h */,
 				415071551685067300C3C7B3 /* SelectorFilter.cpp */,
 				415071561685067300C3C7B3 /* SelectorFilter.h */,
 				A80E6CCA0A1989CA007FB8C5 /* ShadowValue.cpp */,
@@ -26601,6 +26607,7 @@
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				977E2E0F12F0FC9C00C13380 /* XSSAuditorDelegate.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				41B8CD4616D04591000E8CC0 /* SelectorCheckerFastPath.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29795,6 +29802,7 @@
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				977E2E0E12F0FC9C00C13380 /* XSSAuditorDelegate.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				41B8CD4516D04591000E8CC0 /* SelectorCheckerFastPath.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

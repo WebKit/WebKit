@@ -30,6 +30,7 @@
 #include "CSSSelectorList.h"
 #include "Document.h"
 #include "SelectorChecker.h"
+#include "SelectorCheckerFastPath.h"
 #include "StaticNodeList.h"
 #include "StyledElement.h"
 
@@ -45,7 +46,7 @@ void SelectorDataList::initialize(const CSSSelectorList& selectorList)
 
     m_selectors.reserveInitialCapacity(selectorCount);
     for (const CSSSelector* selector = selectorList.first(); selector; selector = CSSSelectorList::next(selector))
-        m_selectors.uncheckedAppend(SelectorData(selector, SelectorChecker::isFastCheckableSelector(selector)));
+        m_selectors.uncheckedAppend(SelectorData(selector, SelectorCheckerFastPath::canUse(selector)));
 }
 
 bool SelectorDataList::matches(Element* targetElement) const

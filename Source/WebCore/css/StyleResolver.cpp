@@ -103,6 +103,7 @@
 #include "SVGFontFaceElement.h"
 #include "ScaleTransformOperation.h"
 #include "SecurityOrigin.h"
+#include "SelectorCheckerFastPath.h"
 #include "Settings.h"
 #include "ShadowData.h"
 #include "ShadowRoot.h"
@@ -2084,10 +2085,11 @@ inline bool StyleResolver::ruleMatches(State& state, const RuleData& ruleData, c
         }
         if (ruleData.selector()->m_match == CSSSelector::Tag && !SelectorChecker::tagMatches(state.element(), ruleData.selector()->tagQName()))
             return false;
-        if (!SelectorChecker::fastCheckRightmostAttributeSelector(state.element(), ruleData.selector()))
+        SelectorCheckerFastPath selectorCheckerFastPath(ruleData.selector(), state.element());
+        if (!selectorCheckerFastPath.matchesRightmostAttributeSelector())
             return false;
 
-        return SelectorChecker::fastCheck(ruleData.selector(), state.element());
+        return selectorCheckerFastPath.matches();
     }
 
     // Slow path.
