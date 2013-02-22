@@ -38,7 +38,7 @@ public:
     virtual void layout();
 
 private:
-    int calcWidthArray(int tableWidth);
+    int calcWidthArray();
 
     Vector<Length> m_width;
 };
