@@ -2583,6 +2583,43 @@ bool Element::hasNamedNodeMap() const
 }
 #endif
 
+inline void Element::updateName(const AtomicString& oldName, const AtomicString& newName)
+{
+    if (!inDocument() || isInShadowTree())
+        return;
+
+    if (oldName == newName)
+        return;
+
+    if (shouldRegisterAsNamedItem())
+        updateNamedItemRegistration(oldName, newName);
+}
+
+inline void Element::updateId(const AtomicString& oldId, const AtomicString& newId)
+{
+    if (!isInTreeScope())
+        return;
+
+    if (oldId == newId)
+        return;
+
+    updateId(treeScope(), oldId, newId);
+}
+
+inline void Element::updateId(TreeScope* scope, const AtomicString& oldId, const AtomicString& newId)
+{
+    ASSERT(isInTreeScope());
+    ASSERT(oldId != newId);
+
+    if (!oldId.isEmpty())
+        scope->removeElementById(oldId, this);
+    if (!newId.isEmpty())
+        scope->addElementById(newId, this);
+
+    if (shouldRegisterAsExtraNamedItem())
+        updateExtraNamedItemRegistration(oldId, newId);
+}
+
 void Element::updateLabel(TreeScope* scope, const AtomicString& oldForAttributeValue, const AtomicString& newForAttributeValue)
 {
     ASSERT(hasTagName(labelTag));
