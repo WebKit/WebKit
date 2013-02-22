@@ -119,18 +119,25 @@ private:
     PassRefPtr<UniqueElementData> makeUniqueCopy() const;
 };
 
+#if COMPILER(MSVC)
+#pragma warning(push)
+#pragma warning(disable: 4200) // Disable "zero-sized array in struct/union" warning
+#endif
+
 class ShareableElementData : public ElementData {
 public:
     static PassRefPtr<ShareableElementData> createWithAttributes(const Vector<Attribute>&);
-
-    const Attribute* immutableAttributeArray() const { return reinterpret_cast<const Attribute*>(&m_attributeArray); }
 
     explicit ShareableElementData(const Vector<Attribute>&);
     explicit ShareableElementData(const UniqueElementData&);
     ~ShareableElementData();
 
-    void* m_attributeArray;
+    Attribute m_attributeArray[0];
 };
+
+#if COMPILER(MSVC)
+#pragma warning(pop)
+#endif
 
 class UniqueElementData : public ElementData {
 public:
@@ -999,7 +1006,7 @@ inline const Attribute* ElementData::attributeItem(unsigned index) const
     ASSERT_WITH_SECURITY_IMPLICATION(index < length());
     if (m_isUnique)
         return &static_cast<const UniqueElementData*>(this)->m_attributeVector.at(index);
-    return &static_cast<const ShareableElementData*>(this)->immutableAttributeArray()[index];
+    return &static_cast<const ShareableElementData*>(this)->m_attributeArray[index];
 }
 
 } // namespace

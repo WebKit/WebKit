@@ -69,6 +69,12 @@ public:
         info.addMember(m_value, "value");
     }
 
+#if COMPILER(MSVC)
+    // NOTE: This constructor is not actually implemented, it's just defined so MSVC
+    // will let us use a zero-length array of Attributes.
+    Attribute();
+#endif
+
 private:
     QualifiedName m_name;
     AtomicString m_value;
