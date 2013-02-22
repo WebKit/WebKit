@@ -199,7 +199,7 @@ void FileReaderLoader::didReceiveData(const char* data, int dataLength)
             memcpy(static_cast<char*>(newData->data()), static_cast<char*>(m_rawData->data()), m_bytesLoaded);
 
             m_rawData = newData;
-            m_totalBytes = newLength;
+            m_totalBytes = static_cast<unsigned>(newLength);
         } else
             length = remainingBufferSpace;
     }
