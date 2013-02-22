@@ -278,6 +278,13 @@ void DocumentLoader::commitIfReady()
     }
 }
 
+bool DocumentLoader::isLoading() const
+{
+    if (m_frame->document() && m_frame->document()->hasActiveParser())
+        return true;
+    return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
+}
+
 void DocumentLoader::finishedLoading()
 {
     commitIfReady();

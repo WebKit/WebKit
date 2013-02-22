@@ -586,6 +586,8 @@ http/tests/security/storage-blocking-loosened-shared-worker.html [ WontFix ]
 http/tests/security/storage-blocking-strengthened-shared-worker.html [ WontFix ]
 storage/indexeddb/basics-shared-workers.html [ WontFix ]
 
+webkit.org/b/110401 http/tests/security/feed-urls-from-remote.html [ Timeout ]
+
 # test_shell does not support message ports
 webkit.org/b/74459 fast/workers/termination-with-port-messages.html
 webkit.org/b/74459 fast/workers/worker-cloneport.html

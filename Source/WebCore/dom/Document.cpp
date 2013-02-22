@@ -5773,6 +5773,7 @@ void Document::decrementActiveParserCount()
     --m_activeParserCount;
     if (!frame())
         return;
+    loader()->checkLoadComplete();
     frame()->loader()->checkLoadComplete();
 }
 

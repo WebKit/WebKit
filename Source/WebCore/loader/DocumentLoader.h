@@ -114,7 +114,7 @@ namespace WebCore {
         void stopLoading();
         void setCommitted(bool committed) { m_committed = committed; }
         bool isCommitted() const { return m_committed; }
-        bool isLoading() const { return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty(); }
+        bool isLoading() const;
         void receivedData(const char*, int);
         void setupForReplace();
         void finishedLoading();
@@ -247,6 +247,7 @@ namespace WebCore {
         ApplicationCacheHost* applicationCacheHost() const { return m_applicationCacheHost.get(); }
 
         virtual void reportMemoryUsage(MemoryObjectInfo*) const;
+        void checkLoadComplete();
 
     protected:
         DocumentLoader(const ResourceRequest&, const SubstituteData&);
@@ -257,7 +258,6 @@ namespace WebCore {
         void commitIfReady();
         void setMainDocumentError(const ResourceError&);
         void commitLoad(const char*, int);
-        void checkLoadComplete();
         void clearMainResourceLoader();
         
         bool maybeCreateArchive();
