@@ -113,47 +113,100 @@ struct SourceCodeKeyHashTraits : SimpleClassHashTraits<SourceCodeKey> {
     static bool isEmptyValue(const SourceCodeKey& sourceCodeKey) { return sourceCodeKey.isNull(); }
 };
 
+struct SourceCodeValue {
+    SourceCodeValue()
+    {
+    }
+
+    SourceCodeValue(const Strong<JSCell>& cell, int64_t age)
+        : cell(cell)
+        , age(age)
+    {
+    }
+
+    Strong<JSCell> cell;
+    int64_t age;
+};
+
 class CodeCacheMap {
-    typedef HashMap<SourceCodeKey, Strong<JSCell>, SourceCodeKeyHash, SourceCodeKeyHashTraits> MapType;
+    typedef HashMap<SourceCodeKey, SourceCodeValue, SourceCodeKeyHash, SourceCodeKeyHashTraits> MapType;
     typedef MapType::iterator iterator;
 
 public:
-    CodeCacheMap(size_t capacity)
+    enum { MinCacheCapacity = 1000000 }; // Size in characters
+
+    CodeCacheMap()
         : m_size(0)
-        , m_capacity(capacity)
+        , m_capacity(MinCacheCapacity)
+        , m_age(0)
     {
     }
 
     const Strong<JSCell>* find(const SourceCodeKey& key)
     {
-        iterator result = m_map.find(key);
-        if (result == m_map.end())
+        iterator it = m_map.find(key);
+        if (it == m_map.end())
             return 0;
-        return &result->value;
+
+        size_t age = m_age - it->value.age;
+        if (age > m_capacity) {
+            // A requested object is older than the cache's capacity. We can
+            // infer that requested objects are subject to high eviction probability,
+            // so we grow the cache to improve our hit rate.
+            m_capacity += recencyBias * oldObjectSamplingMultiplier * key.length();
+        } else if (age < m_capacity / 2) {
+            // A requested object is much younger than the cache's capacity. We can
+            // infer that requested objects are subject to low eviction probability,
+            // so we shrink the cache to save memory.
+            m_capacity -= recencyBias * key.length();
+            if (m_capacity < MinCacheCapacity)
+                m_capacity = MinCacheCapacity;
+        }
+
+        it->value.age = m_age;
+        m_age += key.length();
+        return &it->value.cell;
     }
 
     void set(const SourceCodeKey& key, const Strong<JSCell>& value)
+    {
+        pruneIfNeeded();
+
+        m_size += key.length();
+        m_age += key.length();
+        m_map.set(key, SourceCodeValue(value, m_age));
+    }
+
+    void clear()
+    {
+        m_size = 0;
+        m_age = 0;
+        m_map.clear();
+    }
+
+private:
+    // This constant factor biases cache capacity toward recent activity. We
+    // want to adapt to changing workloads.
+    static const int64_t recencyBias = 4;
+
+    // This constant factor treats a sampled event for one old object as if it
+    // happened for many old objects. Most old objects are evicted before we can
+    // sample them, so we need to extrapolate from the ones we do sample.
+    static const int64_t oldObjectSamplingMultiplier = 32;
+
+    void pruneIfNeeded()
     {
         while (m_size >= m_capacity) {
             MapType::iterator it = m_map.begin();
             m_size -= it->key.length();
             m_map.remove(it);
         }
-
-        m_size += key.length();
-        m_map.set(key, value);
     }
 
-    void clear()
-    {
-        m_size = 0;
-        m_map.clear();
-    }
-
-private:
     MapType m_map;
     size_t m_size;
     size_t m_capacity;
+    int64_t m_age;
 };
 
 // Caches top-level code such as <script>, eval(), new Function, and JSEvaluateScript().
@@ -176,8 +229,6 @@ private:
 
     template <class UnlinkedCodeBlockType, class ExecutableType> 
     UnlinkedCodeBlockType* getCodeBlock(JSGlobalData&, ExecutableType*, const SourceCode&, JSParserStrictness, DebuggerMode, ProfilerMode, ParserError&);
-
-    enum { CacheSize = 16000000 }; // Size in characters
 
     CodeCacheMap m_sourceCode;
 };

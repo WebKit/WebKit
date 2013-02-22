@@ -1,3 +1,30 @@
+2013-02-21  Geoffrey Garen  <ggaren@apple.com>
+
+        Code cache size should adapt to workload
+        https://bugs.webkit.org/show_bug.cgi?id=110560
+
+        Reviewed by Antti Koivisto.
+
+        (*) 5% PLT arithmetic mean speedup
+        (*) 10% PLT geometric mean speedup
+        (*) 3.4X microbenchmark speedup
+        (*) Reduces initial cache capacity by 16X
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCache::CodeCache): Updated for interface change.
+
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeValue::SourceCodeValue):
+        (SourceCodeValue): Turned the cache value into a struct so it can track its age.
+
+        (CodeCacheMap):
+        (JSC::CodeCacheMap::CodeCacheMap):
+        (JSC::CodeCacheMap::find):
+        (JSC::CodeCacheMap::set):
+        (JSC::CodeCacheMap::clear):
+        (JSC::CodeCacheMap::pruneIfNeeded):
+        (CodeCache): Grow and shrink in response to usage.
+
 2013-02-21  Jessie Berlin  <jberlin@apple.com>
 
         Fix a typo that broke the 32 bit build.

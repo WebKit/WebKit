@@ -37,7 +37,6 @@
 namespace JSC {
 
 CodeCache::CodeCache()
-    : m_sourceCode(CacheSize)
 {
 }
 
