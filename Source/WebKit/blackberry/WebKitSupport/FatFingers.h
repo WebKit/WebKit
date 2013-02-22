@@ -103,7 +103,7 @@ private:
     bool isElementClickable(WebCore::Element*) const;
 
     inline WebCore::IntRect fingerRectForPoint(const WebCore::IntPoint&) const;
-    void getPaddings(unsigned& top, unsigned& right, unsigned& bottom, unsigned& left) const;
+    void getAdjustedPaddings(const WebCore::IntPoint&, unsigned& top, unsigned& right, unsigned& bottom, unsigned& left) const;
 
     WebPagePrivate* m_webPage;
     WebCore::IntPoint m_contentPos;

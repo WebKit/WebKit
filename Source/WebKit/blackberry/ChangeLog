@@ -1,3 +1,22 @@
+2013-02-22  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry]Adjust fatfinger detection rect size
+        https://bugs.webkit.org/show_bug.cgi?id=108678.
+
+        Reviewed by Antonio Gomes.
+
+        Changing HitTestRequest::IgnoreClipping does not solve the problem that
+        FatFinger rect detect the element out of the viewport. We have to clip
+        the fatfinger rect according to the current viewport size to avoid picking
+        the element out of the viewport.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::fingerRectForPoint):
+        (BlackBerry::WebKit::FatFingers::findBestPoint):
+        (BlackBerry::WebKit::FatFingers::getAdjustedPaddings):
+        (BlackBerry::WebKit::FatFingers::getNodesFromRect):
+        * WebKitSupport/FatFingers.h:
+
 2013-02-22  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Accept key events even when composing region is active.

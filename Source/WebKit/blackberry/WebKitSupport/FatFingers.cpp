@@ -66,7 +66,8 @@ IntPoint FatFingers::m_debugFatFingerAdjustedPosition;
 IntRect FatFingers::fingerRectForPoint(const IntPoint& point) const
 {
     unsigned topPadding, rightPadding, bottomPadding, leftPadding;
-    getPaddings(topPadding, rightPadding, bottomPadding, leftPadding);
+    IntPoint contentViewportPos = m_webPage->mapFromContentsToViewport(point);
+    getAdjustedPaddings(contentViewportPos, topPadding, rightPadding, bottomPadding, leftPadding);
 
     return HitTestResult::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding);
 }
@@ -150,6 +151,11 @@ const FatFingersResult FatFingers::findBestPoint()
 {
     ASSERT(m_webPage);
     ASSERT(m_webPage->m_mainFrame);
+
+    // Even though we have clamped the point in libwebview to viewport, but there might be a rounding difference for viewport rect.
+    // Clamp position to viewport to ensure we are inside viewport.
+    IntRect viewportRect = m_webPage->mainFrame()->view()->visibleContentRect();
+    m_contentPos = Platform::pointClampedToRect(m_contentPos, viewportRect);
 
     m_cachedRectHitTestResults.clear();
 
@@ -428,7 +434,7 @@ bool FatFingers::checkForText(Node* curNode, Vector<IntersectingRegion>& interse
     return false;
 }
 
-void FatFingers::getPaddings(unsigned& top, unsigned& right, unsigned& bottom, unsigned& left) const
+void FatFingers::getAdjustedPaddings(const IntPoint& contentViewportPos, unsigned& top, unsigned& right, unsigned& bottom, unsigned& left) const
 {
     static unsigned topPadding = Platform::Settings::instance()->topFatFingerPadding();
     static unsigned rightPadding = Platform::Settings::instance()->rightFatFingerPadding();
@@ -440,12 +446,21 @@ void FatFingers::getPaddings(unsigned& top, unsigned& right, unsigned& bottom, u
     right = rightPadding / currentScale;
     bottom = bottomPadding / currentScale;
     left = leftPadding / currentScale;
+
+    IntRect viewportRect = m_webPage->mainFrame()->view()->visibleContentRect();
+    // We clamp the event position inside the viewport. We should not expand the fat finger rect to the edge again.
+    top = std::min(unsigned(std::max(contentViewportPos.y() - 1, 0)), top);
+    left = std::min(unsigned(std::max(contentViewportPos.x() - 1, 0)), left);
+    bottom = std::min(unsigned(std::max(viewportRect.height() - contentViewportPos.y() - 1, 0)), bottom);
+    right = std::min(unsigned(std::max(viewportRect.width() - contentViewportPos.x() - 1, 0)), right);
 }
 
 void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos, ListHashSet<RefPtr<Node> >& intersectedNodes)
 {
     unsigned topPadding, rightPadding, bottomPadding, leftPadding;
-    getPaddings(topPadding, rightPadding, bottomPadding, leftPadding);
+    IntPoint contentViewportPos = m_webPage->mapFromContentsToViewport(m_contentPos);
+    // Do not allow fat fingers detect anything not visible(ie outside of the viewport)
+    adjustPaddings(contentViewportPos, topPadding, rightPadding, bottomPadding, leftPadding);
 
     // The user functions checkForText() and findIntersectingRegions() uses the Node.wholeText() to checkFingerIntersection()
     // not the text in its shadow tree.
