@@ -4013,7 +4013,7 @@ bool RenderLayer::hitTest(const HitTestRequest& request, const HitTestLocation& 
         // We didn't hit any layer. If we are the root layer and the mouse is -- or just was -- down, 
         // return ourselves. We do this so mouse events continue getting delivered after a drag has 
         // exited the WebView, and so hit testing over a scrollbar hits the content document.
-        if ((request.active() || request.release()) && isRootLayer()) {
+        if (!request.isChildFrameHitTest() && (request.active() || request.release()) && isRootLayer()) {
             renderer()->updateHitTestResult(result, toRenderView(renderer())->flipForWritingMode(hitTestLocation.point()));
             insideLayer = this;
         }

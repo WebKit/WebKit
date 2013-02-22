@@ -199,21 +199,21 @@ HitTestResult::HitTestResult()
 
 HitTestResult::HitTestResult(const LayoutPoint& point)
     : m_hitTestLocation(point)
-    , m_pointInMainFrame(point)
+    , m_pointInInnerNodeFrame(point)
     , m_isOverWidget(false)
 {
 }
 
 HitTestResult::HitTestResult(const LayoutPoint& centerPoint, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding)
     : m_hitTestLocation(centerPoint, topPadding, rightPadding, bottomPadding, leftPadding)
-    , m_pointInMainFrame(centerPoint)
+    , m_pointInInnerNodeFrame(centerPoint)
     , m_isOverWidget(false)
 {
 }
 
 HitTestResult::HitTestResult(const HitTestLocation& other)
     : m_hitTestLocation(other)
-    , m_pointInMainFrame(m_hitTestLocation.point())
+    , m_pointInInnerNodeFrame(m_hitTestLocation.point())
     , m_isOverWidget(false)
 {
 }
@@ -222,7 +222,7 @@ HitTestResult::HitTestResult(const HitTestResult& other)
     : m_hitTestLocation(other.m_hitTestLocation)
     , m_innerNode(other.innerNode())
     , m_innerNonSharedNode(other.innerNonSharedNode())
-    , m_pointInMainFrame(other.m_pointInMainFrame)
+    , m_pointInInnerNodeFrame(other.m_pointInInnerNodeFrame)
     , m_localPoint(other.localPoint())
     , m_innerURLElement(other.URLElement())
     , m_scrollbar(other.scrollbar())
@@ -241,7 +241,7 @@ HitTestResult& HitTestResult::operator=(const HitTestResult& other)
     m_hitTestLocation = other.m_hitTestLocation;
     m_innerNode = other.innerNode();
     m_innerNonSharedNode = other.innerNonSharedNode();
-    m_pointInMainFrame = other.m_pointInMainFrame;
+    m_pointInInnerNodeFrame = other.m_pointInInnerNodeFrame;
     m_localPoint = other.localPoint();
     m_innerURLElement = other.URLElement();
     m_scrollbar = other.scrollbar();
@@ -735,7 +735,7 @@ void HitTestResult::append(const HitTestResult& other)
         m_innerNode = other.innerNode();
         m_innerNonSharedNode = other.innerNonSharedNode();
         m_localPoint = other.localPoint();
-        m_pointInMainFrame = other.m_pointInMainFrame;
+        m_pointInInnerNodeFrame = other.m_pointInInnerNodeFrame;
         m_innerURLElement = other.URLElement();
         m_scrollbar = other.scrollbar();
         m_isOverWidget = other.isOverWidget();
@@ -768,7 +768,7 @@ Vector<String> HitTestResult::dictationAlternatives() const
     if (!m_innerNonSharedNode)
         return Vector<String>();
 
-    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(hitTestLocation().point(), DocumentMarker::DictationAlternatives);
+    DocumentMarker* marker = m_innerNonSharedNode->document()->markers()->markerContainingPoint(pointInInnerNodeFrame(), DocumentMarker::DictationAlternatives);
     if (!marker)
         return Vector<String>();
 

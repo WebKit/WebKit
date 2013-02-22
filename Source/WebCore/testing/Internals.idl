@@ -158,7 +158,7 @@
 
     NodeList nodesFromRect(in Document document, in long x, in long y,
         in unsigned long topPadding, in unsigned long rightPadding, in unsigned long bottomPadding, in unsigned long leftPadding,
-        in boolean ignoreClipping, in boolean allowShadowContent) raises (DOMException);
+        in boolean ignoreClipping, in boolean allowShadowContent, in boolean allowChildFrameContent) raises (DOMException);
 
     void emitInspectorDidBeginFrame();
     void emitInspectorDidCancelFrame();

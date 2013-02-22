@@ -1,7 +1,8 @@
 /*
  * Contributors:
  *     * Antonio Gomes <tonikitoo@webkit.org>
- **/
+ *     * Allan Sandfeld Jensen <allan.jensen@digia.com>
+**/
 
 function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list, doc)
 {
@@ -11,7 +12,7 @@ function check(x, y, topPadding, rightPadding, bottomPadding, leftPadding, list,
   if (!doc)
     doc = document;
 
-  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow shadow content */);
+  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow shadow content */, false /* allow child-frame content */);
   if (!nodes)
     return;
 
@@ -45,7 +46,7 @@ function checkShadowContent(x, y, topPadding, rightPadding, bottomPadding, leftP
   if (!doc)
     doc = document;
 
-  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, true /* allowShadowContent */);
+  var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, true /* allowShadowContent */, false /* allow child-frame content */);
   if (!nodes)
     return;
 
@@ -96,7 +97,7 @@ function checkRect(left, top, width, height, expectedNodeString, doc)
 function nodesFromRectAsString(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding)
 {
     var nodeString = "";
-    var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow shadow content */);
+    var nodes = internals.nodesFromRect(doc, x, y, topPadding, rightPadding, bottomPadding, leftPadding, true /* ignoreClipping */, false /* allow shadow content */, true /* allow child-frame content */);
     if (!nodes)
         return nodeString;
 
@@ -110,6 +111,8 @@ function nodesFromRectAsString(doc, x, y, topPadding, rightPadding, bottomPaddin
             }
         } else if (nodes[i].nodeType == 3) {
             nodeString += "'" + nodes[i].data + "'";
+        } else if (nodes[i].nodeType == 9) {
+            nodeString += "#document";
         } else {
             continue;
         }
@@ -119,7 +122,6 @@ function nodesFromRectAsString(doc, x, y, topPadding, rightPadding, bottomPaddin
     }
     return nodeString;
 }
-
 
 function getCenterFor(element)
 {

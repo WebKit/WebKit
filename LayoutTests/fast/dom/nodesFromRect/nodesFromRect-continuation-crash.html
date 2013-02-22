@@ -7,7 +7,7 @@ if (window.testRunner)
 window.onload = function() {
     if (!window.internals)
         alert("This test requires window.internals");
-    var nodes = internals.nodesFromRect(document, 100, 100, 20, 20, 20, 20, false, false);
+    var nodes = internals.nodesFromRect(document, 100, 100, 20, 20, 20, 20, false, false, false);
     alert("PASS: This test did not trigger an ASSERT");
 };
 </script>

@@ -125,12 +125,11 @@ public:
     bool isRectBasedTest() const { return m_hitTestLocation.isRectBasedTest(); }
 
     // The hit-tested point in the coordinates of the main frame.
-    const LayoutPoint& pointInMainFrame() const { return m_pointInMainFrame; }
+    const LayoutPoint& pointInMainFrame() const { return m_hitTestLocation.point(); }
     IntPoint roundedPointInMainFrame() const { return roundedIntPoint(pointInMainFrame()); }
-    void setPointInMainFrame(const LayoutPoint& p) { m_pointInMainFrame = p; }
 
     // The hit-tested point in the coordinates of the innerNode frame, the frame containing innerNode.
-    const LayoutPoint& pointInInnerNodeFrame() const { return m_hitTestLocation.point(); }
+    const LayoutPoint& pointInInnerNodeFrame() const { return m_pointInInnerNodeFrame; }
     IntPoint roundedPointInInnerNodeFrame() const { return roundedIntPoint(pointInInnerNodeFrame()); }
     Frame* innerNodeFrame() const;
 
@@ -203,7 +202,7 @@ private:
 
     RefPtr<Node> m_innerNode;
     RefPtr<Node> m_innerNonSharedNode;
-    LayoutPoint m_pointInMainFrame; // The hit-tested point in main-frame coordinates.
+    LayoutPoint m_pointInInnerNodeFrame; // The hit-tested point in innerNode frame coordinates.
     LayoutPoint m_localPoint; // A point in the local coordinate space of m_innerNonSharedNode's renderer. Allows us to efficiently
                               // determine where inside the renderer we hit on subsequent operations.
     RefPtr<Element> m_innerURLElement;

@@ -25,6 +25,7 @@
 #include "FloatPoint.h"
 #include "FloatQuad.h"
 #include "FrameView.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLInputElement.h"
 #include "HTMLLabelElement.h"
 #include "HTMLNames.h"
@@ -221,6 +222,15 @@ static inline void appendZoomableSubtargets(Node* node, SubtargetGeometryList& s
         subtargets.append(SubtargetGeometry(node, *it));
 }
 
+static inline Node* parentShadowHostOrOwner(const Node* node)
+{
+    if (Node* ancestor = node->parentOrShadowHostNode())
+        return ancestor;
+    if (node->isDocumentNode())
+        return static_cast<const Document*>(node)->ownerElement();
+    return 0;
+}
+
 // Compiles a list of subtargets of all the relevant target nodes.
 void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryList& subtargets, NodeFilter nodeFilter, AppendSubtargetsForNode appendSubtargetsForNode)
 {
@@ -248,7 +258,7 @@ void compileSubtargetList(const NodeList& intersectedNodes, SubtargetGeometryLis
             if (nodeFilter(visitedNode)) {
                 respondingNode = visitedNode;
                 // Continue the iteration to collect the ancestors of the responder, which we will need later.
-                for (visitedNode = visitedNode->parentOrShadowHostNode(); visitedNode; visitedNode = visitedNode->parentOrShadowHostNode()) {
+                for (visitedNode = parentShadowHostOrOwner(visitedNode); visitedNode; visitedNode = parentShadowHostOrOwner(visitedNode)) {
                     HashSet<Node*>::AddResult addResult = ancestorsToRespondersSet.add(visitedNode);
                     if (!addResult.isNewEntry)
                         break;
