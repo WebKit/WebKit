@@ -107,7 +107,7 @@ WebCore::IntRect SelectionHandler::clippingRectForVisibleContent() const
 {
     // Get the containing content rect for the frame.
     Frame* frame = m_webPage->focusedOrMainFrame();
-    WebCore::IntRect clipRect = WebCore::IntRect(WebCore::IntPoint(0, 0), m_webPage->contentsSize());
+    WebCore::IntRect clipRect = WebCore::IntRect(WebCore::IntPoint(0, 0), frame->view()->contentsSize());
     if (frame != m_webPage->mainFrame()) {
         clipRect = m_webPage->getRecursiveVisibleWindowRect(frame->view(), true /* no clip to main frame window */);
         clipRect = m_webPage->m_mainFrame->view()->windowToContents(clipRect);

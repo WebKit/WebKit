@@ -1218,11 +1218,17 @@ WebCore::IntRect InputHandler::boundingBoxForInputField()
         return WebCore::IntRect();
 
     // type="search" can have a 'X', so take the inner block bounding box to not include it.
-    if (HTMLInputElement* element = m_currentFocusElement->toInputElement())
+    if (HTMLInputElement* element = m_currentFocusElement->toInputElement()) {
         if (element->isSearchField())
             return element->innerBlockElement()->renderer()->absoluteBoundingBoxRect();
+        return m_currentFocusElement->renderer()->absoluteBoundingBoxRect();
+    }
 
-    return m_currentFocusElement->renderer()->absoluteBoundingBoxRect();
+    if (m_currentFocusElement->hasTagName(HTMLNames::textareaTag))
+        return m_currentFocusElement->renderer()->absoluteBoundingBoxRect();
+
+    // Content Editable can't rely on the bounding box since it isn't fixed.
+    return WebCore::IntRect();
 }
 
 void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)

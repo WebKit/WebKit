@@ -1,3 +1,24 @@
+2013-02-22  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Eliminate invalid clipping for content editable selections
+        https://bugs.webkit.org/show_bug.cgi?id=110630
+
+        Reviewed by Rob Buis.
+
+        PR 284629.
+
+        Remove selection clipping for content editable
+        fields as the bounds aren't valid and cause
+        clipping based on starting node rather than the
+        union of nodes.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::clippingRectForVisibleContent):
+
 2013-02-22  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry]Adjust fatfinger detection rect size
