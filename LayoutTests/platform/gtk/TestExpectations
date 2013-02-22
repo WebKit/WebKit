@@ -545,6 +545,10 @@ webkit.org/b/108927 http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-fo
 
 webkit.org/b/110222 fast/events/platform-wheelevent-with-delta-zero-crash.html [ Crash ]
 
+webkit.org/b/110588 http/tests/misc/iframe-reparenting-id-collision.html [ Crash ]
+webkit.org/b/110588 http/tests/misc/window-open-then-write.html [ Crash ]
+webkit.org/b/110588 http/tests/xmlhttprequest/request-from-popup.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
