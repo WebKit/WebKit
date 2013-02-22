@@ -1828,12 +1828,14 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
     if (isFullLayout)
         lineBoxes()->deleteLineBoxes(renderArena());
 
-    // Text truncation only kicks in if your overflow isn't visible and your text-overflow-mode isn't
-    // clip.
+    // Text truncation kicks in in two cases:
+    //     1) If your overflow isn't visible and your text-overflow-mode isn't clip.
+    //     2) If you're an anonymous block with a block parent that satisfies #1.
     // FIXME: CSS3 says that descendants that are clipped must also know how to truncate.  This is insanely
-    // difficult to figure out (especially in the middle of doing layout), and is really an esoteric pile of nonsense
-    // anyway, so we won't worry about following the draft here.
-    bool hasTextOverflow = style()->textOverflow() && hasOverflowClip();
+    // difficult to figure out in general (especially in the middle of doing layout), so we only handle the
+    // simple case of an anonymous block truncating when it's parent is clipped.
+    bool hasTextOverflow = (style()->textOverflow() && hasOverflowClip())
+        || (isAnonymousBlock() && parent() && parent()->isRenderBlock() && parent()->style()->textOverflow() && parent()->hasOverflowClip());
 
     // Walk all the lines and delete our ellipsis line boxes if they exist.
     if (hasTextOverflow)
