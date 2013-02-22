@@ -141,6 +141,18 @@ void WebMediaStreamSource::setExtraData(ExtraData* extraData)
     m_private->setExtraData(adoptRef(new ExtraDataContainer(extraData)));
 }
 
+WebString WebMediaStreamSource::deviceId() const
+{
+    ASSERT(!m_private.isNull());
+    return m_private->deviceId();
+}
+
+void WebMediaStreamSource::setDeviceId(const WebString& deviceId)
+{
+    ASSERT(!m_private.isNull());
+    m_private->setDeviceId(deviceId);
+}
+
 bool WebMediaStreamSource::requiresAudioConsumer() const
 {
     ASSERT(!m_private.isNull());

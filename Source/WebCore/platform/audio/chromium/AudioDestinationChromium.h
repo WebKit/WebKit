@@ -45,7 +45,7 @@ class AudioPullFIFO;
 
 class AudioDestinationChromium : public AudioDestination, public WebKit::WebAudioDevice::RenderCallback, public AudioSourceProvider {
 public:
-    AudioDestinationChromium(AudioIOCallback&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
+    AudioDestinationChromium(AudioIOCallback&, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate);
     virtual ~AudioDestinationChromium();
 
     virtual void start();

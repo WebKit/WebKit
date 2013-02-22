@@ -45,12 +45,12 @@ const unsigned renderBufferSize = 128;
 const size_t fifoSize = 8192;
 
 // Factory method: Chromium-implementation
-PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
-    return adoptPtr(new AudioDestinationChromium(callback, numberOfInputChannels, numberOfOutputChannels, sampleRate));
+    return adoptPtr(new AudioDestinationChromium(callback, inputDeviceId, numberOfInputChannels, numberOfOutputChannels, sampleRate));
 }
 
-AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, const String& inputDeviceId, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
     : m_callback(callback)
     , m_numberOfOutputChannels(numberOfOutputChannels)
     , m_inputBus(numberOfInputChannels, renderBufferSize)
@@ -66,6 +66,7 @@ AudioDestinationChromium::AudioDestinationChromium(AudioIOCallback& callback, un
     if (m_callbackBufferSize + renderBufferSize > fifoSize)
         return;
 
+    // FIXME: switch over to new method using inputDeviceId, once chromium supports it.
     m_audioDevice = adoptPtr(WebKit::Platform::current()->createAudioDevice(m_callbackBufferSize, numberOfInputChannels, numberOfOutputChannels, sampleRate, this));
     ASSERT(m_audioDevice);
 

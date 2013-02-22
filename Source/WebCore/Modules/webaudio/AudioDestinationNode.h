@@ -54,7 +54,9 @@ public:
 
     virtual unsigned numberOfChannels() const { return 2; } // FIXME: update when multi-channel (more than stereo) is supported
 
-    virtual void enableInput() = 0;
+    // Enable local/live input for the specified device.
+    virtual void enableInput(const String& inputDeviceId) = 0;
+
     virtual void startRendering() = 0;
 
     AudioSourceProvider* localAudioInputProvider() { return &m_localAudioInputProvider; }

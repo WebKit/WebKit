@@ -43,8 +43,10 @@ gboolean messageCallback(GstBus*, GstMessage* message, AudioDestinationGStreamer
     return destination->handleMessage(message);
 }
 
-PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
+PassOwnPtr<AudioDestination> AudioDestination::create(AudioIOCallback& callback, const String&, unsigned numberOfInputChannels, unsigned numberOfOutputChannels, float sampleRate)
 {
+    // FIXME: make use of inputDeviceId as appropriate.
+
     // FIXME: Add support for local/live audio input.
     if (numberOfInputChannels)
         LOG(Media, "AudioDestination::create(%u, %u, %f) - unhandled input channels", numberOfInputChannels, numberOfOutputChannels, sampleRate);

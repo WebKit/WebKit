@@ -47,12 +47,12 @@ public:
     virtual void uninitialize() OVERRIDE;
 
     // AudioDestinationNode
-    virtual void enableInput() OVERRIDE;
+    virtual void enableInput(const String& inputDeviceId) OVERRIDE;
     virtual void startRendering() OVERRIDE;
     
 private:
     explicit DefaultAudioDestinationNode(AudioContext*);
-    void createDestination();
+    void createDestination(const String& inputDeviceId);
 
     OwnPtr<AudioDestination> m_destination;
     unsigned m_numberOfInputChannels;

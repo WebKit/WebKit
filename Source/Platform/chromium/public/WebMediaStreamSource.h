@@ -92,6 +92,9 @@ public:
     WEBKIT_EXPORT ExtraData* extraData() const;
     WEBKIT_EXPORT void setExtraData(ExtraData*);
 
+    WEBKIT_EXPORT WebString deviceId() const;
+    WEBKIT_EXPORT void setDeviceId(const WebString&);
+
     // Only used if if this is a WebAudio source.
     // The WebAudioDestinationConsumer is not owned, and has to be disposed of separately
     // after calling removeAudioConsumer.
