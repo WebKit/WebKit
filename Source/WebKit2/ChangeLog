@@ -1,3 +1,15 @@
+2013-02-22  Balazs Kelemen  <kbalazs@webkit.org>
+
+        [CoordGfx] Minor cleanup in CoordinatedGraphicsScene::paintToGraphicsContext
+        https://bugs.webkit.org/show_bug.cgi?id=109824
+
+        Reviewed by Andreas Kling.
+
+        Avoid ugly ifdefs by using PlatformGraphicsContext.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::displayTimerFired):
+
 2013-02-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] Remove declaration of non-existent functions from EwkView

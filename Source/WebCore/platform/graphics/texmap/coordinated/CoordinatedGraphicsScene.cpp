@@ -143,11 +143,7 @@ void CoordinatedGraphicsScene::requestAnimationFrame()
 }
 #endif
 
-#if PLATFORM(QT)
-void CoordinatedGraphicsScene::paintToGraphicsContext(QPainter* painter)
-#elif USE(CAIRO)
-void CoordinatedGraphicsScene::paintToGraphicsContext(cairo_t* painter)
-#endif
+void CoordinatedGraphicsScene::paintToGraphicsContext(PlatformGraphicsContext* platformContext)
 {
     if (!m_textureMapper)
         m_textureMapper = TextureMapper::create();
@@ -158,7 +154,7 @@ void CoordinatedGraphicsScene::paintToGraphicsContext(cairo_t* painter)
     if (!layer)
         return;
 
-    GraphicsContext graphicsContext(painter);
+    GraphicsContext graphicsContext(platformContext);
     m_textureMapper->setGraphicsContext(&graphicsContext);
     m_textureMapper->beginPainting();
 

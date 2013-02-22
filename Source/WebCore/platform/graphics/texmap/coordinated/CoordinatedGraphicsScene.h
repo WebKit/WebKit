@@ -80,11 +80,7 @@ public:
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();
     void paintToCurrentGLContext(const TransformationMatrix&, float, const FloatRect&, TextureMapper::PaintFlags = 0);
-#if PLATFORM(QT)
-    void paintToGraphicsContext(QPainter*);
-#elif USE(CAIRO)
-    void paintToGraphicsContext(cairo_t*);
-#endif
+    void paintToGraphicsContext(PlatformGraphicsContext*);
     void setScrollPosition(const FloatPoint&);
 #if USE(GRAPHICS_SURFACE)
     void createCanvas(CoordinatedLayerID, const IntSize&, PassRefPtr<GraphicsSurface>);

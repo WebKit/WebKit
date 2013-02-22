@@ -111,15 +111,15 @@ void WebView::paintToCairoSurface(cairo_surface_t* surface)
     if (!scene)
         return;
 
-    RefPtr<cairo_t> graphicsContext = adoptRef(cairo_create(surface));
+    PlatformContextCairo context(cairo_create(surface.get()));
 
     const FloatPoint& pagePosition = m_ewkView->pagePosition();
     double effectiveScale = m_page->deviceScaleFactor() * m_ewkView->pageScaleFactor();
 
     cairo_matrix_t transform = { effectiveScale, 0, 0, effectiveScale, - pagePosition.x(), - pagePosition.y() };
-    cairo_set_matrix(graphicsContext.get(), &transform);
+    cairo_set_matrix(context.cr(), &transform);
 
-    scene->paintToGraphicsContext(graphicsContext.get());
+    scene->paintToGraphicsContext(&context);
 }
 
 Evas_Object* WebView::evasObject()

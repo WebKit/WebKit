@@ -66,6 +66,7 @@
 #include <Evas_GL.h>
 #include <WebCore/CairoUtilitiesEfl.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/PlatformContextCairo.h>
 #include <WebKit2/WKImageCairo.h>
 #include <wtf/MathExtras.h>
 
