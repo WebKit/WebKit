@@ -180,6 +180,7 @@ public:
 
 private:
     InspectorPageAgent(InstrumentingAgents*, Page*, InspectorAgent*, InspectorCompositeState*, InjectedScriptManager*, InspectorClient*, InspectorOverlay*);
+    bool deviceMetricsChanged(int width, int height, double fontScaleFactor, bool fitWindow);
     void updateViewMetrics(int, int, double, bool);
 #if ENABLE(TOUCH_EVENTS)
     void updateTouchEventEmulationInPage(bool);
