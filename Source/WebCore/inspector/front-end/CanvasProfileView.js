@@ -238,10 +238,13 @@ WebInspector.CanvasProfileView.prototype = {
 
     _replayTraceLog: function()
     {
+        if (this._pendingReplayTraceLogEvent)
+            return;
         var index = this._selectedCallIndex();
         if (index === -1 || index === this._lastReplayCallIndex)
             return;
         this._lastReplayCallIndex = index;
+        this._pendingReplayTraceLogEvent = true;
         var time = Date.now();
         /**
          * @param {?Protocol.Error} error
@@ -249,8 +252,12 @@ WebInspector.CanvasProfileView.prototype = {
          */
         function didReplayTraceLog(error, resourceState)
         {
-            if (index !== this._selectedCallIndex())
+            delete this._pendingReplayTraceLogEvent;
+
+            if (index !== this._selectedCallIndex()) {
+                this._replayTraceLog();
                 return;
+            }
 
             this._enableWaitIcon(false);
             if (error)
