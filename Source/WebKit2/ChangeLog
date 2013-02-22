@@ -1,3 +1,17 @@
+2013-02-21  Jer Noble  <jer.noble@apple.com>
+
+        Two video contollers appear after exiting the fullscreen video when using menubar to exit.
+        https://bugs.webkit.org/show_bug.cgi?id=110506
+
+        Reviewed by Eric Carlson.
+
+        When we are notified that the fullscreen window is about to exit fullscreen mode unrequested,
+        call requestExitFullScreen(), as that will result in Document::webkitExitFullScreen() correctly
+        tearing down the fullscreen state.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController _startExitFullScreenAnimationWithDuration:]):
+
 2013-02-22  Balazs Kelemen  <kbalazs@webkit.org>
 
         Yet another unreviewed buildfix after r143714.

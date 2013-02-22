@@ -577,6 +577,7 @@ static NSRect windowFrameFromApparentFrames(NSRect screenFrame, NSRect initialFr
     if (_isFullScreen) {
         // We still believe we're in full screen mode, so we must have been asked to exit full
         // screen by the system full screen button.
+        [self _manager]->requestExitFullScreen();
         [self exitFullScreen];
         _isExitingFullScreen = YES;
     }
