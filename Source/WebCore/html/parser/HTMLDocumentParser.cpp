@@ -697,8 +697,8 @@ void HTMLDocumentParser::finish()
         return;
     }
 
-    if (shouldUseThreading() && !wasCreatedByScript()) {
-        ASSERT(!m_tokenizer && !m_token);
+    if (!m_tokenizer) {
+        ASSERT(!m_token);
         // We're finishing before receiving any data. Rather than booting up
         // the background parser just to spin it down, we finish parsing
         // synchronously.
