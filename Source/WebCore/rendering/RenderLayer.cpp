@@ -448,6 +448,11 @@ void RenderLayer::updateLayerPositions(RenderGeometryMap* geometryMap, UpdateLay
         flags &= ~IsCompositingUpdateRoot;
 #endif
 
+    if (useRegionBasedColumns() && renderer()->isInFlowRenderFlowThread()) {
+        m_isPaginated = true;
+        flags |= UpdatePagination;
+    }
+    
     if (renderer()->hasColumns())
         flags |= UpdatePagination;
 
@@ -908,6 +913,12 @@ static bool checkContainingBlockChainForPagination(RenderLayerModelObject* rende
     return true;
 }
 
+bool RenderLayer::useRegionBasedColumns() const
+{
+    const Settings* settings = renderer()->document()->settings();
+    return settings && settings->regionBasedColumnsEnabled();
+}
+
 void RenderLayer::updatePagination()
 {
     m_isPaginated = false;
@@ -915,8 +926,39 @@ void RenderLayer::updatePagination()
         return; // FIXME: We will have to deal with paginated compositing layers someday.
                 // FIXME: For now the RenderView can't be paginated.  Eventually printing will move to a model where it is though.
     
+    // The main difference between the paginated booleans for the old column code and the new column code
+    // is that each paginated layer has to paint on its own with the new code. There is no
+    // recurring into child layers. This means that the m_isPaginated bits for the new column code can't just be set on
+    // "roots" that get split and paint all their descendants. Instead each layer has to be checked individually and
+    // genuinely know if it is going to have to split itself up when painting only its contents (and not any other descendant
+    // layers).
+    bool newColumnsUsed = useRegionBasedColumns();
+    if (newColumnsUsed && renderer()->isInFlowRenderFlowThread()) {
+        m_isPaginated = true;
+        return;
+    }
+
     if (isNormalFlowOnly()) {
-        m_isPaginated = parent()->renderer()->hasColumns();
+        if (newColumnsUsed)
+            m_isPaginated = parent()->isPaginated();
+        else
+            m_isPaginated = parent()->renderer()->hasColumns();
+        return;
+    }
+
+    // For the new columns code, we want to walk up our containing block chain looking for an enclosing layer. Once
+    // we find one, then we just check its pagination status.
+    if (newColumnsUsed) {
+        RenderView* view = renderer()->view();
+        RenderBlock* containingBlock;
+        for (containingBlock = renderer()->containingBlock();
+             containingBlock && containingBlock != view;
+             containingBlock = containingBlock->containingBlock()) {
+            if (containingBlock->hasLayer()) {
+                m_isPaginated = containingBlock->layer()->isPaginated();
+                return;
+            }
+        }
         return;
     }
 
@@ -3860,7 +3902,7 @@ void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context
 
     for (size_t i = 0; i < list->size(); ++i) {
         RenderLayer* childLayer = list->at(i);
-        if (!childLayer->isPaginated())
+        if (!childLayer->isPaginated() || useRegionBasedColumns())
             childLayer->paintLayer(context, paintingInfo, paintFlags);
         else
             paintPaginatedChildLayer(childLayer, context, paintingInfo, paintFlags);
@@ -4365,7 +4407,7 @@ RenderLayer* RenderLayer::hitTestList(Vector<RenderLayer*>* list, RenderLayer* r
         RenderLayer* childLayer = list->at(i);
         RenderLayer* hitLayer = 0;
         HitTestResult tempResult(result.hitTestLocation());
-        if (childLayer->isPaginated())
+        if (childLayer->isPaginated() && !useRegionBasedColumns())
             hitLayer = hitTestPaginatedChildLayer(childLayer, rootLayer, request, tempResult, hitTestRect, hitTestLocation, transformState, zOffsetForDescendants);
         else
             hitLayer = childLayer->hitTestLayer(rootLayer, this, request, tempResult, hitTestRect, hitTestLocation, false, transformState, zOffsetForDescendants);

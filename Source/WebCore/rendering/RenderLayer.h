@@ -1004,6 +1004,9 @@ private:
 
     void updatePagination();
     
+    // FIXME: Temporary. Remove when new columns come online.
+    bool useRegionBasedColumns() const;
+    
 #if USE(ACCELERATED_COMPOSITING)    
     bool hasCompositingDescendant() const { return m_hasCompositingDescendant; }
     void setHasCompositingDescendant(bool b)  { m_hasCompositingDescendant = b; }
