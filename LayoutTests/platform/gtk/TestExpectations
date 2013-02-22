@@ -484,7 +484,6 @@ webkit.org/b/107825 fullscreen/video-controls-drag.html [ Failure ]
 webkit.org/b/107825 media/audio-delete-while-step-button-clicked.html [ Failure ]
 webkit.org/b/107825 media/media-volume-slider-rendered-below.html [ Failure ]
 webkit.org/b/107825 media/nodesFromRect-shadowContent.html [ Failure ]
-webkit.org/b/107825 media/video-zoom-controls.html [ Failure ]
 webkit.org/b/107825 media/video-controls-fullscreen-volume.html [ Failure ]
 webkit.org/b/107825 media/media-controls-clone.html [ Failure ]
 
@@ -545,7 +544,7 @@ webkit.org/b/108927 http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-fo
 
 webkit.org/b/110222 fast/events/platform-wheelevent-with-delta-zero-crash.html [ Crash ]
 
-webkit.org/b/110588 http/tests/misc/iframe-reparenting-id-collision.html [ Crash ]
+webkit.org/b/110588 http/tests/misc/iframe-reparenting-id-collision.html [ Crash Pass ]
 webkit.org/b/110588 http/tests/misc/window-open-then-write.html [ Crash ]
 webkit.org/b/110588 http/tests/xmlhttprequest/request-from-popup.html [ Crash ]
 
@@ -756,6 +755,10 @@ Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_320/S7.6_A3.2.html [ Pass Slow ]
 Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_320/S7.6_A5.3_T2.html [ Pass Slow ]
 Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_410/S7.6_A3.1.html [ Pass Slow ]
 Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_500/S7.6_A5.3_T2.html [ Pass Slow ]
+Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_510/S7.6_A3.1.html [ Pass Slow ]
+Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_510/S7.6_A3.2.html [ Pass Slow ]
+Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T1.html [ Pass Slow ]
+Bug(GTK) [ Debug ] sputnik/Unicode/Unicode_510/S7.6_A5.3_T2.html [ Pass Slow ]
 Bug(GTK) tables/mozilla/other/slashlogo.html [ Pass Slow ]
 
 Bug(GTK) http/tests/xmlhttprequest/timeout/xmlhttprequest-timeout-aborted.html [ Pass Slow ] 
@@ -1390,7 +1393,6 @@ webkit.org/b/102586 media/video-src-blob.html [ Failure ]
 
 # Fix for https://bugs.webkit.org/show_bug.cgi?id=97192 introduces these regressions
 webkit.org/b/102776 webkit.org/b/102993 media/media-document-audio-repaint.html [ Failure ]
-webkit.org/b/102776 media/track/track-cue-container-rendering-position.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/102776 media/track/track-cue-rendering-vertical.html [ Failure ]
 
