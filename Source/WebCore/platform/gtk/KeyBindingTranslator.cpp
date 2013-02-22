@@ -134,8 +134,8 @@ static const char* const gtkMoveCommands[][4] = {
       "MoveUpAndModifySelection",                       "MoveDownAndModifySelection"                }, // Up/down line
     { "MoveToBeginningOfLine",                          "MoveToEndOfLine",
       "MoveToBeginningOfLineAndModifySelection",        "MoveToEndOfLineAndModifySelection"         }, // Up/down line ends
-    { "MoveParagraphForward",                           "MoveParagraphBackward",
-      "MoveParagraphForwardAndModifySelection",         "MoveParagraphBackwardAndModifySelection"   }, // Up/down paragraphs
+    { "MoveParagraphBackward",                          "MoveParagraphForward",
+      "MoveParagraphBackwardAndModifySelection",        "MoveParagraphForwardAndModifySelection"    }, // Up/down paragraphs
     { "MoveToBeginningOfParagraph",                     "MoveToEndOfParagraph",
       "MoveToBeginningOfParagraphAndModifySelection",   "MoveToEndOfParagraphAndModifySelection"    }, // Up/down paragraph ends.
     { "MovePageUp",                                     "MovePageDown",
