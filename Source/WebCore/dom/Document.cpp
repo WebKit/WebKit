@@ -2362,9 +2362,6 @@ void Document::implicitClose()
     // onLoad event handler, as in Radar 3206524.
     detachParser();
 
-    // Parser should have picked up all preloads by now
-    m_cachedResourceLoader->clearPreloads();
-
     // FIXME: We kick off the icon loader when the Document is done parsing.
     // There are earlier opportunities we could start it:
     //  -When the <head> finishes parsing
@@ -4405,6 +4402,9 @@ void Document::finishedParsing()
     // alive indefinitely by something innocuous like JS setting .innerHTML repeatedly on a timer.
     static const int timeToKeepSharedObjectPoolAliveAfterParsingFinishedInSeconds = 10;
     m_sharedObjectPoolClearTimer.startOneShot(timeToKeepSharedObjectPoolAliveAfterParsingFinishedInSeconds);
+
+    // Parser should have picked up all preloads by now
+    m_cachedResourceLoader->clearPreloads();
 }
 
 void Document::sharedObjectPoolClearTimerFired(Timer<Document>*)
