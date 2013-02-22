@@ -1044,7 +1044,9 @@ void FrameView::layout(bool allowSubtree)
     if (m_inLayout)
         return;
 
+#if PLATFORM(CHROMIUM)
     TRACE_EVENT0("webkit", "FrameView::layout");
+#endif
 
     // Protect the view from being deleted during layout (in recalcStyle)
     RefPtr<FrameView> protector(this);

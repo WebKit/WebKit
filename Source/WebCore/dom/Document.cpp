@@ -1755,7 +1755,9 @@ void Document::recalcStyle(StyleChange change)
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
 
+#if PLATFORM(CHROMIUM)
     TRACE_EVENT0("webkit", "Document::recalcStyle");
+#endif
 
     // FIXME: We should update style on our ancestor chain before proceeding (especially for seamless),
     // however doing so currently causes several tests to crash, as Frame::setDocument calls Document::attach
