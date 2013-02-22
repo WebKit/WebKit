@@ -72,7 +72,14 @@ static int printSeparators = true;
 
 static String dumpFramesAsText(Evas_Object* frame)
 {
+    if (!frame)
+        return String();
+
     String result;
+    const char* frameContents = ewk_frame_plain_text_get(frame);
+
+    if (!frameContents)
+        return String();
 
     if (browser->mainFrame() != frame) {
         result.append("\n--------\nFrame: '");
@@ -80,7 +87,6 @@ static String dumpFramesAsText(Evas_Object* frame)
         result.append("'\n--------\n");
     }
 
-    const char* frameContents = ewk_frame_plain_text_get(frame);
     result.append(String::fromUTF8(frameContents));
     result.append("\n");
     eina_stringshare_del(frameContents);
