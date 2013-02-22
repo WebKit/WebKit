@@ -1,3 +1,19 @@
+2013-02-22  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] WebKit::initialize should take a Platform* now that WebKitPlatformSupport is empty
+        https://bugs.webkit.org/show_bug.cgi?id=110605
+
+        Reviewed by Adam Barth.
+
+        Part of a larger refactoring series; see tracking bug 82948.
+
+        * public/WebKit.h:
+        (WebKit):
+        * src/WebKit.cpp:
+        (WebKit::initialize):
+        (WebKit::initializeWithoutV8):
+        (WebKit::webKitPlatformSupport):
+
 2013-02-22  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: [Chromium] add a browser test for frames on timeline
