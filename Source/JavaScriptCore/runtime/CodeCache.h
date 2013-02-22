@@ -148,7 +148,7 @@ public:
         if (it == m_map.end())
             return 0;
 
-        size_t age = m_age - it->value.age;
+        int64_t age = m_age - it->value.age;
         if (age > m_capacity) {
             // A requested object is older than the cache's capacity. We can
             // infer that requested objects are subject to high eviction probability,
