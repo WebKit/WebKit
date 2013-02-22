@@ -578,7 +578,7 @@ void RenderLayerCompositor::logLayerInfo(const RenderLayer* layer, int depth)
 
     LOG(Compositing, "%*p %dx%d %.2fKB (%s) %s\n", 12 + depth * 2, layer, backing->compositedBounds().width(), backing->compositedBounds().height(),
         backing->backingStoreMemoryEstimate() / 1024,
-        logReasonsForCompositing(layer), layer->name().utf8().data());
+        reasonForCompositing(layer), layer->name().utf8().data());
 }
 #endif
 
@@ -1713,13 +1713,9 @@ bool RenderLayerCompositor::requiresOwnBackingStore(const RenderLayer* layer, co
     return false;
 }
 
-CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLayer* layer) const
+#if !LOG_DISABLED
+const char* RenderLayerCompositor::reasonForCompositing(const RenderLayer* layer)
 {
-    CompositingReasons reasons = CompositingReasonNone;
-
-    if (!layer || !layer->isComposited())
-        return reasons;
-
     RenderObject* renderer = layer->renderer();
     if (layer->isReflection()) {
         renderer = renderer->parent();
@@ -1727,152 +1723,77 @@ CompositingReasons RenderLayerCompositor::reasonsForCompositing(const RenderLaye
     }
 
     if (requiresCompositingForTransform(renderer))
-        reasons |= CompositingReason3DTransform;
-
-    if (requiresCompositingForVideo(renderer))
-        reasons |= CompositingReasonVideo;
-
-    if (requiresCompositingForCanvas(renderer))
-        reasons |= CompositingReasonCanvas;
-
-    if (requiresCompositingForPlugin(renderer))
-        reasons |= CompositingReasonPlugin;
-
-    if (requiresCompositingForFrame(renderer))
-        reasons |= CompositingReasonIFrame;
-    
-    if ((canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden))
-        reasons |= CompositingReasonBackfaceVisibilityHidden;
-
-    if (clipsCompositingDescendants(layer))
-        reasons |= CompositingReasonClipsCompositingDescendants;
-
-    if (requiresCompositingForAnimation(renderer))
-        reasons |= CompositingReasonAnimation;
-
-    if (requiresCompositingForFilters(renderer))
-        reasons |= CompositingReasonFilters;
-
-    if (requiresCompositingForPosition(renderer, layer))
-        reasons |= renderer->style()->position() == FixedPosition ? CompositingReasonPositionFixed : CompositingReasonPositionSticky;
-
-    if (requiresCompositingForOverflowScrolling(layer))
-        reasons |= CompositingReasonOverflowScrollingTouch;
-
-    if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForStacking)
-        reasons |= CompositingReasonStacking;
-    else if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForOverlap)
-        reasons |= CompositingReasonOverlap;
-    else if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForBackgroundLayer)
-        reasons |= CompositingReasonNegativeZIndexChildren;
-    else if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForGraphicalEffect) {
-        if (layer->transform())
-            reasons |= CompositingReasonTransformWithCompositedDescendants;
-
-        if (renderer->isTransparent())
-            reasons |= CompositingReasonOpacityWithCompositedDescendants;
-
-        if (renderer->hasMask())
-            reasons |= CompositingReasonMaskWithCompositedDescendants;
-
-        if (renderer->hasReflection())
-            reasons |= CompositingReasonReflectionWithCompositedDescendants;
-
-        if (renderer->hasFilter())
-            reasons |= CompositingReasonFilterWithCompositedDescendants;
-            
-        if (renderer->hasBlendMode())
-            reasons |= CompositingReasonBlendingWithCompositedDescendants;
-    } else if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForPerspective)
-        reasons |= CompositingReasonPerspective;
-    else if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForPreserve3D)
-        reasons |= CompositingReasonPreserve3D;
-
-    if (inCompositingMode() && layer->isRootLayer())
-        reasons |= CompositingReasonRoot;
-
-    return reasons;
-}
-
-#if !LOG_DISABLED
-const char* RenderLayerCompositor::logReasonsForCompositing(const RenderLayer* layer)
-{
-    CompositingReasons reasons = reasonsForCompositing(layer);
-
-    if (!reasons)
-        return "";
-
-    if (reasons & CompositingReason3DTransform)
         return "3D transform";
 
-    if (reasons & CompositingReasonVideo)
+    if (requiresCompositingForVideo(renderer))
         return "video";
 
-    if (reasons & CompositingReasonCanvas)
+    if (requiresCompositingForCanvas(renderer))
         return "canvas";
 
-    if (reasons & CompositingReasonPlugin)
+    if (requiresCompositingForPlugin(renderer))
         return "plugin";
 
-    if (reasons & CompositingReasonIFrame)
+    if (requiresCompositingForFrame(renderer))
         return "iframe";
     
-    if (reasons & CompositingReasonBackfaceVisibilityHidden)
+    if ((canRender3DTransforms() && renderer->style()->backfaceVisibility() == BackfaceVisibilityHidden))
         return "backface-visibility: hidden";
 
-    if (reasons & CompositingReasonClipsCompositingDescendants)
+    if (clipsCompositingDescendants(layer))
         return "clips compositing descendants";
 
-    if (reasons & CompositingReasonAnimation)
+    if (requiresCompositingForAnimation(renderer))
         return "animation";
 
-    if (reasons & CompositingReasonFilters)
+    if (requiresCompositingForFilters(renderer))
         return "filters";
 
-    if (reasons & CompositingReasonPositionFixed)
-        return "position: fixed";
+    if (requiresCompositingForPosition(renderer, layer))
+        return renderer->style()->position() == FixedPosition ? "position: fixed" : "position: sticky";
 
-    if (reasons & CompositingReasonPositionSticky)
-        return "position: sticky";
-
-    if (reasons & CompositingReasonOverflowScrollingTouch)
+    if (requiresCompositingForOverflowScrolling(layer))
         return "-webkit-overflow-scrolling: touch";
 
-    if (reasons & CompositingReasonStacking)
+    if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForStacking)
         return "stacking";
 
-    if (reasons & CompositingReasonOverlap)
+    if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForOverlap)
         return "overlap";
 
-    if (reasons & CompositingReasonNegativeZIndexChildren)
+    if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForBackgroundLayer)
         return "negative z-index children";
 
-    if (reasons & CompositingReasonTransformWithCompositedDescendants)
-        return "transform with composited descendants";
+    if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForGraphicalEffect) {
+        if (layer->transform())
+            return "transform with composited descendants";
 
-    if (reasons & CompositingReasonOpacityWithCompositedDescendants)
-        return "opacity with composited descendants";
+        if (renderer->isTransparent())
+            return "opacity with composited descendants";
 
-    if (reasons & CompositingReasonMaskWithCompositedDescendants)
-        return "mask with composited descendants";
+        if (renderer->hasMask())
+            return "mask with composited descendants";
 
-    if (reasons & CompositingReasonReflectionWithCompositedDescendants)
-        return "reflection with composited descendants";
+        if (renderer->hasReflection())
+            return "reflection with composited descendants";
 
-    if (reasons & CompositingReasonFilterWithCompositedDescendants)
-        return "filter with composited descendants";
+        if (renderer->hasFilter())
+            return "filter with composited descendants";
             
-    if (reasons & CompositingReasonBlendingWithCompositedDescendants)
-        return "blending with composited descendants";
+        if (renderer->hasBlendMode())
+            return "blending with composited descendants";
+    }
 
-    if (reasons & CompositingReasonPerspective)
+    if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForPerspective)
         return "perspective";
 
-    if (reasons & CompositingReasonPreserve3D)
+    if (layer->indirectCompositingReason() == RenderLayer::IndirectCompositingForPreserve3D)
         return "preserve-3d";
 
-    if (reasons & CompositingReasonRoot)
+    if (inCompositingMode() && layer->isRootLayer())
         return "root";
+
+    return "";
 }
 #endif
 
