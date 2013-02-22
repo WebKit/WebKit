@@ -3,3 +3,4 @@ array-buffer-view-crash.html
 array-unit-tests.html
 data-view-crash.html
 data-view-test.html
+--min-version 1.0.3 typed-arrays-in-workers.html
