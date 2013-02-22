@@ -1,3 +1,27 @@
+2013-02-22  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: [Chromium] add a browser test for frames on timeline
+        https://bugs.webkit.org/show_bug.cgi?id=110592
+
+        - factor out timeline recording logic from testPageOverlayUpdate for reuse;
+        - record timeline while running a simple DOM-based animation;
+        - assure we have frames and Style Recalc/Layout/Paint events in between.
+
+        Reviewed by Yury Semikhatsky.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.assertHasKey):
+        (.TestSuite.prototype.testTimelineFrames.step1):
+        (.TestSuite.prototype.testTimelineFrames.onTimelineRecorded):
+        (.TestSuite.prototype.testTimelineFrames):
+        (.TestSuite.prototype.testPageOverlayUpdate.step4):
+        (.TestSuite.prototype.testPageOverlayUpdate.onTimelineRecorded):
+        (.TestSuite.prototype.recordTimeline.addRecord):
+        (.TestSuite.prototype.recordTimeline.innerAddRecord):
+        (.TestSuite.prototype.recordTimeline.done):
+        (.TestSuite.prototype.recordTimeline):
+        (.TestSuite.prototype.stopTimeline):
+
 2013-02-21  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Implement SharedBuffer version of put() / onSuccess()
