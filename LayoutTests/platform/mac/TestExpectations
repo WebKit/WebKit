@@ -1414,6 +1414,7 @@ webkit.org/b/108370 editing/spelling/spelling-subword-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-with-underscore-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
+webkit.org/b/108370 editing/spelling/spelling-changed-text.html [ Skip ]
 
 webkit.org/b/108257 [ Debug ] compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Crash ]
 webkit.org/b/108257 [ Debug ] compositing/overflow/automatically-opt-into-composited-scrolling.html [ Crash ]
