@@ -176,14 +176,16 @@ int FixedTableLayout::calcWidthArray()
     return usedWidth;
 }
 
-void FixedTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
+void FixedTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
 {
-    int bordersPaddingAndSpacing = m_table->bordersPaddingAndSpacingInRowDirection();
-    minWidth = maxWidth = calcWidthArray() + bordersPaddingAndSpacing;
+    minWidth = maxWidth = calcWidthArray();
+}
 
+void FixedTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
+{
     Length tableLogicalWidth = m_table->style()->logicalWidth();
     if (tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive())
-        minWidth = maxWidth = max<int>(minWidth, tableLogicalWidth.value() - bordersPaddingAndSpacing);
+        minWidth = maxWidth = max<int>(minWidth, tableLogicalWidth.value() - m_table->bordersPaddingAndSpacingInRowDirection());
 
     /*
         <table style="width:100%; background-color:red"><tr><td>

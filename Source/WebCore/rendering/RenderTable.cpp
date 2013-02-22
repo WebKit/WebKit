@@ -720,7 +720,13 @@ void RenderTable::computePreferredLogicalWidths()
     recalcSectionsIfNeeded();
     recalcBordersInRowDirection();
 
-    m_tableLayout->computePreferredLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+    m_tableLayout->computeIntrinsicLogicalWidths(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
+
+    int bordersPaddingAndSpacing = bordersPaddingAndSpacingInRowDirection();
+    m_minPreferredLogicalWidth += bordersPaddingAndSpacing;
+    m_maxPreferredLogicalWidth += bordersPaddingAndSpacing;
+
+    m_tableLayout->applyPreferredLogicalWidthQuirks(m_minPreferredLogicalWidth, m_maxPreferredLogicalWidth);
 
     for (unsigned i = 0; i < m_captions.size(); i++)
         m_minPreferredLogicalWidth = max(m_minPreferredLogicalWidth, m_captions[i]->minPreferredLogicalWidth());

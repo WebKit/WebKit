@@ -210,7 +210,7 @@ static bool shouldScaleColumns(RenderTable* table)
     return scale;
 }
 
-void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
+void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, LayoutUnit& maxWidth)
 {
     fullRecalc();
 
@@ -248,18 +248,16 @@ void AutoTableLayout::computePreferredLogicalWidths(LayoutUnit& minWidth, Layout
 
     maxWidth = max<int>(maxWidth, spanMaxLogicalWidth);
 
-    int bordersPaddingAndSpacing = m_table->bordersPaddingAndSpacingInRowDirection();
-    minWidth += bordersPaddingAndSpacing;
-    maxWidth += bordersPaddingAndSpacing;
-
-    Length tableLogicalWidth = m_table->style()->logicalWidth();
-    if (tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive()) {
-        minWidth = max<int>(minWidth, tableLogicalWidth.value());
-        maxWidth = minWidth;
-    } else if (!remainingPercent && maxNonPercent) {
-        // if there was no remaining percent, maxWidth is invalid
+    // If there was no remaining percent, maxWidth is invalid
+    if (!remainingPercent && maxNonPercent)
         maxWidth = tableMaxWidth;
-    }
+}
+
+void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
+{
+    Length tableLogicalWidth = m_table->style()->logicalWidth();
+    if (tableLogicalWidth.isFixed() && tableLogicalWidth.isPositive())
+        minWidth = maxWidth = max<int>(minWidth, tableLogicalWidth.value());
 }
 
 /*
