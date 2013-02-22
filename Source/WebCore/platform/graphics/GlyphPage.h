@@ -97,14 +97,14 @@ public:
     ~GlyphPage() { }
 
     static const size_t size = 256; // Covers Latin-1 in a single page.
+    static unsigned indexForCharacter(UChar32 c) { return c % GlyphPage::size; }
 
-    unsigned indexForCharacter(UChar32 c) const { return c % size; }
-    GlyphData glyphDataForCharacter(UChar32 c) const
+    ALWAYS_INLINE GlyphData glyphDataForCharacter(UChar32 c) const
     {
         return glyphDataForIndex(indexForCharacter(c));
     }
 
-    GlyphData glyphDataForIndex(unsigned index) const
+    ALWAYS_INLINE GlyphData glyphDataForIndex(unsigned index) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         Glyph glyph = m_glyphs[index];
@@ -113,13 +113,13 @@ public:
         return GlyphData(glyph, glyph ? m_fontDataForAllGlyphs : 0);
     }
 
-    Glyph glyphAt(unsigned index) const
+    ALWAYS_INLINE Glyph glyphAt(unsigned index) const
     {
         ASSERT_WITH_SECURITY_IMPLICATION(index < size);
         return m_glyphs[index];
     }
 
-    const SimpleFontData* fontDataForCharacter(UChar32 c) const
+    ALWAYS_INLINE const SimpleFontData* fontDataForCharacter(UChar32 c) const
     {
         unsigned index = indexForCharacter(c);
         if (hasPerGlyphFontData())
