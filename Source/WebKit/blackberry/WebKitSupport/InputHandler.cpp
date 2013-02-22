@@ -1686,7 +1686,7 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
     // while composing text. If IMF has failed, we should have already finished the
     // composition manually. There is a caveat for KeyUp which is explained above.
     if (!changeIsPartOfComposition && compositionActive())
-        return false;
+        removeAttributedTextMarker();
 
     ProcessingChangeGuard guard(this);
 
