@@ -1,3 +1,9 @@
+2013-02-22  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed. Changed gman's primary address for auto-complete in Bugzilla.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-22  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [WTR] Do not dump information about empty subframes.

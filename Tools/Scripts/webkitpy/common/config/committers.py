@@ -290,7 +290,7 @@ committers_unable_to_review = [
     Committer("Glenn Adams", "glenn@skynav.com", "gasubic"),
     Committer("Graham Dennis", ["Graham.Dennis@gmail.com", "gdennis@webkit.org"]),
     Committer("Greg Bolsinga", "bolsinga@apple.com"),
-    Committer("Gregg Tavares", ["gman@google.com", "gman@chromium.org"], "gman"),
+    Committer("Gregg Tavares", ["gman@chromium.org", "gman@google.com"], "gman"),
     Committer("Grzegorz Czajkowski", "g.czajkowski@samsung.com", "grzegorz"),
     Committer("Hans Muller", "giles_joplin@yahoo.com", "hansmuller"),
     Committer("Hans Wennborg", "hans@chromium.org", "hwennborg"),
