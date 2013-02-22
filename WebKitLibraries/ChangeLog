@@ -1,3 +1,9 @@
+2013-02-22  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Make WinTools.make stop copying vsprops into nested vsprops folders.
+
+        * win/tools/WinTools.make:
+
 2013-02-14  Anders Carlsson  <andersca@apple.com>
 
         Add WKContextIsPlugInUpdateAvailable
