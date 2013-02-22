@@ -155,7 +155,7 @@ void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& 
     case 24:
         if (value == 24) {
             dateTimeFieldsState.setHour(12);
-            dateTimeFieldsState.setHour(DateTimeFieldsState::AMPMValueAM);
+            dateTimeFieldsState.setAMPM(DateTimeFieldsState::AMPMValueAM);
             return;
         }
         dateTimeFieldsState.setHour(value == 12 ? 12 : value % 12);
@@ -209,9 +209,9 @@ void DateTimeHourFieldElement::setValueAsDateTimeFieldsState(const DateTimeField
     }
 }
 
-void DateTimeHourFieldElement::setValueAsInteger(int valueAsHour23, EventBehavior eventBehavior)
+void DateTimeHourFieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
 {
-    const int value = Range(0, 23).clampValue(valueAsHour23) % m_alignment;
+    value = Range(0, 24 - range().maximum % 2).clampValue(value) % m_alignment;
     DateTimeNumericFieldElement::setValueAsInteger(range().minimum && !value ? m_alignment : value, eventBehavior);
 }
 

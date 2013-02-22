@@ -373,6 +373,10 @@ void BaseMultipleFieldsDateAndTimeInputType::updateInnerTextValue()
 
     setupLayoutParameters(layoutParameters, date);
 
+    const AtomicString pattern = m_dateTimeEditElement->fastGetAttribute(HTMLNames::patternAttr);
+    if (!pattern.isEmpty())
+        layoutParameters.dateTimeFormat = pattern;
+
     if (hasValue)
         m_dateTimeEditElement->setValueAsDate(layoutParameters, date);
     else

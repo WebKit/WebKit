@@ -7,8 +7,8 @@
 <body>
 <script>
 description('Check stepping-up and -down for time input fields from renderer. No cases of empty initial values.');
-if (window.internals)
-    internals.settings.setLangAttributeAwareFormControlUIEnabled(true);
+if (!window.internals)
+    testFailed('This test requires window.internals.');
 
 var input = document.createElement('input');
 var invalidStateErr = '"Error: InvalidStateError: DOM Exception 11"';
@@ -20,6 +20,11 @@ function keyDown(key, modifiers)
     if (!window.eventSender)
         return;
     eventSender.keyDown(key, modifiers);
+}
+
+function setDateTimeFormat(pattern) {
+    getElementByPseudoId(internals.youngestShadowRoot(input), '-webkit-datetime-edit').setAttribute('pattern', pattern);
+    input.value = '';  // Updates the element for new format
 }
 
 function setInputAttributes(value, min, max, step) {
@@ -163,9 +168,23 @@ shouldBeEqualToString('getUserAgentShadowTextContent(input)', '12:00 AM');
 shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "upArrow"])', '01:00');
 shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "downArrow"])', '11:00');
 
+debug('Hours, 0-11');
+setDateTimeFormat('KK:mm a');
+shouldBeEqualToString('stepUp("11:00", 1, null, null)', '00:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '00:00 AM');
+shouldBeEqualToString('stepDown("00:00", 1, null, null)', '11:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '11:00 AM');
+shouldBeEqualToString('stepUp("23:00", 1, null, null)', '12:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '00:00 PM');
+shouldBeEqualToString('stepDown("12:00", 1, null, null)', '23:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '11:00 PM');
+shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "upArrow"])', '00:00');
+shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "downArrow"])', '10:00');
+shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "upArrow"])', '01:00');
+shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "downArrow"])', '11:00');
+
 debug('Hours, 0-23');
-debug('The tests in this block fail on platforms without the lang-attribute-aware-form-control-UI feature.');
-input.setAttribute('lang', 'ja');
+setDateTimeFormat('HH:mm');
 shouldBeEqualToString('stepUp("07:00", 1, null, null)', '08:00');
 shouldBeEqualToString('stepDown("07:00", 1, null, null)', '06:00');
 shouldBeEqualToString('stepUp("23:00", 1, null, null)', '00:00');
@@ -191,8 +210,23 @@ shouldBeEqualToString('getUserAgentShadowTextContent(input)', '00:00');
 shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "downArrow"])', '22:00');
 shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "upArrow"])', '01:00');
 shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "downArrow"])', '23:00');
-input.removeAttribute('lang');
 
+debug('Hours, 1-24');
+setDateTimeFormat('kk:mm');
+shouldBeEqualToString('stepUp("11:00", 1, null, null)', '12:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '12:00');
+shouldBeEqualToString('stepDown("00:00", 1, null, null)', '23:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '23:00');
+shouldBeEqualToString('stepUp("23:00", 1, null, null)', '00:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '24:00');
+shouldBeEqualToString('stepDown("12:00", 1, null, null)', '11:00');
+shouldBeEqualToString('getUserAgentShadowTextContent(input)', '11:00');
+shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "upArrow"])', '02:00');
+shouldBeEqualToString('test("06:00", 7200, null, null, ["delete", "downArrow"])', '00:00');
+shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "upArrow"])', '01:00');
+shouldBeEqualToString('test("06:00", 7200, "01:00", null, ["delete", "downArrow"])', '23:00');
+
+setDateTimeFormat('');
 debug('');
 document.body.removeChild(input);
 </script>
