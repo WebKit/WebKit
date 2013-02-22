@@ -141,7 +141,7 @@ ResourceRequest::TargetType ResourceRequest::targetTypeFromMimeType(const String
     return iter->value;
 }
 
-void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest, bool cookiesEnabled, bool isInitial, bool isRedirect) const
+void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest, bool cookiesEnabled, bool isInitial, bool rereadCookies) const
 {
     // If this is the initial load, skip the request body and headers.
     if (isInitial)
@@ -179,7 +179,7 @@ void ResourceRequest::initializePlatformRequest(NetworkRequest& platformRequest,
         }
 
         // When ResourceRequest is reused by CacheResourceLoader, page refreshing or redirection, its cookies may be dirtied. We won't use these cookies any more.
-        bool cookieHeaderMayBeDirty = isRedirect || cachePolicy() == WebCore::ReloadIgnoringCacheData || cachePolicy() == WebCore::ReturnCacheDataElseLoad;
+        bool cookieHeaderMayBeDirty = rereadCookies || cachePolicy() == WebCore::ReloadIgnoringCacheData || cachePolicy() == WebCore::ReturnCacheDataElseLoad;
 
         for (HTTPHeaderMap::const_iterator it = httpHeaderFields().begin(); it != httpHeaderFields().end(); ++it) {
             String key = it->key;

@@ -57,7 +57,7 @@ private:
 
     NetworkJob* findJobForHandle(PassRefPtr<ResourceHandle>);
     void deleteJob(NetworkJob*);
-    bool startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle>, const ResourceRequest&, BlackBerry::Platform::NetworkStreamFactory*, Frame*, int deferLoadingCount = 0, int redirectCount = 0);
+    bool startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle>, const ResourceRequest&, BlackBerry::Platform::NetworkStreamFactory*, Frame*, int deferLoadingCount = 0, int redirectCount = 0, bool rereadCookies = false);
 
     Vector<NetworkJob*> m_jobs;
     KURL m_initialURL;

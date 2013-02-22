@@ -612,7 +612,7 @@ bool NetworkJob::retryAsFTPDirectory()
     return startNewJobWithRequest(newRequest);
 }
 
-bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increaseRedirectCount)
+bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increaseRedirectCount, bool rereadCookies)
 {
     // m_frame can be null if this is a PingLoader job (See NetworkJob::initialize).
     // In this case we don't start new request.
@@ -640,7 +640,8 @@ bool NetworkJob::startNewJobWithRequest(ResourceRequest& newRequest, bool increa
         m_streamFactory,
         m_frame,
         m_deferLoadingCount,
-        increaseRedirectCount ? m_redirectCount + 1 : m_redirectCount);
+        increaseRedirectCount ? m_redirectCount + 1 : m_redirectCount,
+        rereadCookies);
     return true;
 }
 
@@ -683,7 +684,7 @@ bool NetworkJob::handleRedirect()
     m_handle->getInternal()->m_proxyWebChallenge.nullify();
     m_handle->getInternal()->m_hostWebChallenge.nullify();
 
-    return startNewJobWithRequest(newRequest, true);
+    return startNewJobWithRequest(newRequest, /* increaseRedirectCount */ true, /* rereadCookies */ true);
 }
 
 void NetworkJob::sendResponseIfNeeded()
@@ -1024,7 +1025,7 @@ void NetworkJob::notifyChallengeResult(const KURL& url, const ProtectionSpace& p
     ResourceRequest newRequest = m_handle->firstRequest();
     newRequest.setURL(url);
     newRequest.setMustHandleInternally(true);
-    m_newJobWithCredentialsStarted = startNewJobWithRequest(newRequest);
+    m_newJobWithCredentialsStarted = startNewJobWithRequest(newRequest, /* increaseRedirectCount */ false, /* rereadCookies */ true);
 }
 
 void NetworkJob::frameDestroyed()

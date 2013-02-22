@@ -138,7 +138,7 @@ static void setAuthCredentials(NetworkRequest& platformRequest, const Authentica
         platformRequest.setCredentials(authType, authProtocol, authScheme, username.utf8().data(), password.utf8().data());
 }
 
-bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, BlackBerry::Platform::NetworkStreamFactory* streamFactory, Frame* frame, int deferLoadingCount, int redirectCount)
+bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRefPtr<ResourceHandle> job, const ResourceRequest& request, BlackBerry::Platform::NetworkStreamFactory* streamFactory, Frame* frame, int deferLoadingCount, int redirectCount, bool rereadCookies)
 {
     // Make sure the ResourceHandle doesn't go out of scope while calling callbacks.
     RefPtr<ResourceHandle> guardJob(job);
@@ -150,8 +150,12 @@ bool NetworkManager::startJob(int playerId, const String& pageGroupName, PassRef
     if (isInitial)
         m_initialURL = KURL();
 
+    // Always reread cookies on a redirect
+    if (redirectCount)
+        rereadCookies = true;
+
     BlackBerry::Platform::NetworkRequest platformRequest;
-    request.initializePlatformRequest(platformRequest, frame->loader() && frame->loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->cookiesEnabled(), isInitial, redirectCount);
+    request.initializePlatformRequest(platformRequest, frame->loader() && frame->loader()->client() && static_cast<FrameLoaderClientBlackBerry*>(frame->loader()->client())->cookiesEnabled(), isInitial, rereadCookies);
 
     const String& documentUrl = frame->document()->url().string();
     if (!documentUrl.isEmpty()) {

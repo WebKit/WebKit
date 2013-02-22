@@ -123,7 +123,7 @@ private:
 
     bool retryAsFTPDirectory();
 
-    bool startNewJobWithRequest(ResourceRequest& newRequest, bool increasRedirectCount = false);
+    bool startNewJobWithRequest(ResourceRequest& newRequest, bool increasRedirectCount = false, bool rereadCookies = false);
 
     bool handleRedirect();
 
