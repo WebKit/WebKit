@@ -2288,7 +2288,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
             return;
         }
         case GeneratedOperandTypeUnknown:
-            RELEASE_ASSERT_NOT_REACHED();
+            RELEASE_ASSERT(!m_compileOkay);
             return;
         }
         RELEASE_ASSERT_NOT_REACHED();
@@ -3944,7 +3944,7 @@ void SpeculativeJIT::speculateNumber(Edge edge)
         m_jit.branchTest64(MacroAssembler::Zero, operand.gpr(), GPRInfo::tagTypeNumberRegister));
     isInteger.link(&m_jit);
 #else
-    JSValueOperand op1(this, edge);
+    JSValueOperand op1(this, edge, ManualOperandSpeculation);
     JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, operand.tagGPR(), TrustedImm32(JSValue::Int32Tag));
     typeCheck(
         JSValueRegs(operand.tagGPR(), op1.payloadGPR()), edge, SpecNumber,
