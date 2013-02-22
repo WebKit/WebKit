@@ -53,6 +53,7 @@ public:
     enum ReadType {
         ReadAsArrayBuffer,
         ReadAsBinaryString,
+        ReadAsBlob,
         ReadAsText,
         ReadAsDataURL
     };
@@ -72,13 +73,15 @@ public:
 
     String stringResult();
     PassRefPtr<ArrayBuffer> arrayBufferResult() const;
+    PassRefPtr<Blob> blobResult();
     unsigned bytesLoaded() const { return m_bytesLoaded; }
     unsigned totalBytes() const { return m_totalBytes; }
     int errorCode() const { return m_errorCode; }
 
     void setEncoding(const String&);
     void setDataType(const String& dataType) { m_dataType = dataType; }
-    
+    void setRange(unsigned, unsigned);
+
 private:
     void terminate();
     void cleanup();
@@ -102,12 +105,19 @@ private:
     bool m_isRawDataConverted;
 
     String m_stringResult;
+    RefPtr<Blob> m_blobResult;
 
     // The decoder used to decode the text data.
     RefPtr<TextResourceDecoder> m_decoder;
 
+    bool m_variableLength;
     unsigned m_bytesLoaded;
     unsigned m_totalBytes;
+
+    bool m_hasRange;
+    unsigned m_rangeStart;
+    unsigned m_rangeEnd;
+
     int m_errorCode;
 };
 
