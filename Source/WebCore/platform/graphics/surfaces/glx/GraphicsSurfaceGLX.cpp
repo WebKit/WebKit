@@ -88,7 +88,9 @@ struct GraphicsSurfacePrivate {
         UNUSED_PARAM(shareContext);
 #endif
 
-        m_configSelector = adoptPtr(new GLXConfigSelector());
+        GLPlatformSurface::SurfaceAttributes sharedSurfaceAttributes = GLPlatformSurface::DoubleBuffered |
+            GLPlatformSurface::SupportAlpha;
+        m_configSelector = adoptPtr(new GLXConfigSelector(sharedSurfaceAttributes));
 
         if (!m_configSelector->surfaceContextConfig()) {
             clear();
@@ -110,7 +112,6 @@ struct GraphicsSurfacePrivate {
         , m_isReceiver(true)
         , m_texture(0)
     {
-        m_configSelector = adoptPtr(new GLXConfigSelector());
     }
 
     ~GraphicsSurfacePrivate()
@@ -144,9 +145,6 @@ struct GraphicsSurfacePrivate {
 
     void createPixmap(uint32_t winId)
     {
-        if (!m_configSelector)
-            return;
-
         XWindowAttributes attr;
         if (!XGetWindowAttributes(display(), winId, &attr))
             return;
@@ -161,7 +159,15 @@ struct GraphicsSurfacePrivate {
         XRenderPictFormat* format = XRenderFindVisualFormat(display(), attr.visual);
         bool hasAlpha = (format->type == PictTypeDirect && format->direct.alphaMask);
         m_xPixmap = XCompositeNameWindowPixmap(display(), winId);
-        glxAttributes[1] = (format->depth == 32 || hasAlpha) ? GLX_TEXTURE_FORMAT_RGBA_EXT : GLX_TEXTURE_FORMAT_RGB_EXT;
+        glxAttributes[1] = (format->depth == 32 && hasAlpha) ? GLX_TEXTURE_FORMAT_RGBA_EXT : GLX_TEXTURE_FORMAT_RGB_EXT;
+
+        GLPlatformSurface::SurfaceAttributes sharedSurfaceAttributes = GLPlatformSurface::Default;
+        if (hasAlpha)
+            sharedSurfaceAttributes = GLPlatformSurface::SupportAlpha;
+
+        if (!m_configSelector)
+            m_configSelector = adoptPtr(new GLXConfigSelector(sharedSurfaceAttributes));
+
         m_glxPixmap = glXCreatePixmap(display(), m_configSelector->surfaceClientConfig(format->depth, XVisualIDFromVisual(attr.visual)), m_xPixmap, glxAttributes);
 
         if (!handler.isValidOperation())

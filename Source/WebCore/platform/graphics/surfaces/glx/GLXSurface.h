@@ -37,11 +37,12 @@ namespace WebCore {
 class GLXTransportSurface : public GLPlatformSurface {
 
 public:
-    GLXTransportSurface();
+    GLXTransportSurface(SurfaceAttributes);
     virtual ~GLXTransportSurface();
     virtual PlatformSurfaceConfig configuration() OVERRIDE;
     virtual void swapBuffers() OVERRIDE;
     virtual void setGeometry(const IntRect&) OVERRIDE;
+    virtual GLPlatformSurface::SurfaceAttributes attributes() const OVERRIDE;
     virtual void destroy() OVERRIDE;
 
 private:
@@ -52,13 +53,13 @@ private:
 class GLXOffScreenSurface : public GLPlatformSurface {
 
 public:
-    GLXOffScreenSurface();
+    GLXOffScreenSurface(SurfaceAttributes);
     virtual ~GLXOffScreenSurface();
     virtual PlatformSurfaceConfig configuration() OVERRIDE;
     virtual void destroy() OVERRIDE;
 
 private:
-    void initialize();
+    void initialize(SurfaceAttributes);
     void freeResources();
     OwnPtr<GLXConfigSelector> m_configSelector;
     Pixmap m_pixmap;

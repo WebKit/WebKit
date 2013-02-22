@@ -42,7 +42,7 @@ static EGLint configAttributeList[] = {
     EGL_GREEN_SIZE, 8,
     EGL_BLUE_SIZE, 8,
     EGL_STENCIL_SIZE, 8,
-    EGL_ALPHA_SIZE, 8,
+    EGL_ALPHA_SIZE, 0,
     EGL_SURFACE_TYPE, EGL_NONE,
     EGL_NONE
 };
@@ -104,9 +104,10 @@ SharedEGLDisplay::~SharedEGLDisplay()
     cleanup();
 }
 
-EGLConfigSelector::EGLConfigSelector(NativeSharedDisplay* display)
+EGLConfigSelector::EGLConfigSelector(GLPlatformSurface::SurfaceAttributes attributes, NativeSharedDisplay* display)
     : m_pbufferFBConfig(0)
     , m_surfaceContextFBConfig(0)
+    , m_attributes(attributes)
 {
     m_sharedDisplay = SharedEGLDisplay::create(display);
 }
@@ -123,6 +124,7 @@ PlatformDisplay EGLConfigSelector::display() const
 EGLConfig EGLConfigSelector::pBufferContextConfig()
 {
     if (!m_pbufferFBConfig) {
+        configAttributeList[11] = m_attributes & GLPlatformSurface::SupportAlpha ? 8 : 0;
         configAttributeList[13] = EGL_PIXMAP_BIT;
         m_pbufferFBConfig = createConfig(configAttributeList);
     }
@@ -133,6 +135,7 @@ EGLConfig EGLConfigSelector::pBufferContextConfig()
 EGLConfig EGLConfigSelector::surfaceContextConfig()
 {
     if (!m_surfaceContextFBConfig) {
+        configAttributeList[11] = m_attributes & GLPlatformSurface::SupportAlpha ? 8 : 0;
         configAttributeList[13] = EGL_WINDOW_BIT;
         m_surfaceContextFBConfig = createConfig(configAttributeList);
     }
@@ -149,6 +152,11 @@ EGLint EGLConfigSelector::nativeVisualId(const EGLConfig& config) const
     eglGetConfigAttrib(display(), config, EGL_NATIVE_VISUAL_ID, &eglValue);
 
     return eglValue;
+}
+
+GLPlatformSurface::SurfaceAttributes EGLConfigSelector::attributes() const
+{
+    return m_attributes;
 }
 
 void EGLConfigSelector::reset()

@@ -43,12 +43,13 @@ typedef X11Helper NativeWrapper;
 class EGLWindowTransportSurface : public GLPlatformSurface {
 
 public:
-    EGLWindowTransportSurface();
+    EGLWindowTransportSurface(SurfaceAttributes);
     virtual ~EGLWindowTransportSurface();
     virtual PlatformSurfaceConfig configuration() OVERRIDE;
     virtual void setGeometry(const IntRect& newRect) OVERRIDE;
     virtual void swapBuffers() OVERRIDE;
     virtual void destroy() OVERRIDE;
+    virtual GLPlatformSurface::SurfaceAttributes attributes() const OVERRIDE;
 
 private:
     void freeEGLResources();

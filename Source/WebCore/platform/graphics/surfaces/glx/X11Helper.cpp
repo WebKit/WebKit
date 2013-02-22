@@ -222,8 +222,9 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const XVisualInfo& vis
 }
 
 #if USE(EGL)
-void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, const IntSize& size)
+void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, bool supportsAlpha, const IntSize& size)
 {
+#if USE(GRAPHICS_SURFACE)
     VisualID visualId = static_cast<VisualID>(id);
 
     if (!visualId)
@@ -243,13 +244,22 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, const
 
             if (isXRenderExtensionSupported()) {
                 XRenderPictFormat* format = XRenderFindVisualFormat(nativeDisplay(), temp->visual);
-                if (format && format->direct.alphaMask > 0) {
-                    foundVisual = temp;
-                    break;
+
+                if (format) {
+                    if (supportsAlpha) {
+                        if (temp->depth == 32 && format->direct.alphaMask > 0)
+                            foundVisual = temp;
+                    } else if (!format->direct.alphaMask)
+                        foundVisual = temp;
                 }
+
+                if (foundVisual)
+                    break;
             }
 
-            if (temp->depth == 32) {
+            int matchingdepth = supportsAlpha ? 32 : 24;
+
+            if (temp->depth == matchingdepth) {
                 foundVisual = temp;
                 break;
             }
@@ -258,6 +268,11 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, const
         if (foundVisual)
             createOffScreenWindow(handleId, *foundVisual, size);
     }
+#else
+    UNUSED_PARAM(handleId);
+    UNUSED_PARAM(id);
+    UNUSED_PARAM(size);
+#endif
 }
 #endif
 

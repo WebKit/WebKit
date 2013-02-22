@@ -40,24 +40,26 @@
 
 namespace WebCore {
 
-PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface()
+PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createOffScreenSurface(SurfaceAttributes attributes)
 {
 #if USE(GLX)
-    OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXOffScreenSurface());
+    OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXOffScreenSurface(attributes));
 
     if (surface->drawable())
         return surface.release();
+#else
+    UNUSED_PARAM(attributes);
 #endif
 
     return nullptr;
 }
 
-PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createTransportSurface()
+PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createTransportSurface(SurfaceAttributes attributes)
 {
 #if USE(GLX)
-    OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXTransportSurface());
+    OwnPtr<GLPlatformSurface> surface = adoptPtr(new GLXTransportSurface(attributes));
 #elif USE(EGL)
-    OwnPtr<GLPlatformSurface> surface = adoptPtr(new EGLWindowTransportSurface());
+    OwnPtr<GLPlatformSurface> surface = adoptPtr(new EGLWindowTransportSurface(attributes));
 #endif
 
     if (surface && surface->handle() && surface->drawable())
@@ -66,7 +68,7 @@ PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createTransportSurface()
     return nullptr;
 }
 
-GLPlatformSurface::GLPlatformSurface()
+GLPlatformSurface::GLPlatformSurface(SurfaceAttributes)
     : m_fboId(0)
     , m_sharedDisplay(0)
     , m_drawable(0)
@@ -142,6 +144,11 @@ void GLPlatformSurface::destroy()
         glDeleteFramebuffers(1, &m_fboId);
         m_fboId = 0;
     }
+}
+
+GLPlatformSurface::SurfaceAttributes GLPlatformSurface::attributes() const
+{
+    return GLPlatformSurface::Default;
 }
 
 }

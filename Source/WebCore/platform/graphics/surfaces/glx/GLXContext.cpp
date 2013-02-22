@@ -84,8 +84,9 @@ bool GLXOffScreenContext::initialize(GLPlatformSurface* surface, PlatformContext
                 glXDestroyContext(x11Display, m_contextHandle);
         }
 
+        bool supportsAlpha = surface->attributes() & GLPlatformSurface::SupportAlpha;
         if (!m_contextHandle)
-            m_contextHandle = glXCreateNewContext(x11Display, config, GLX_RGBA_TYPE, sharedContext, true);
+            m_contextHandle = glXCreateNewContext(x11Display, config, supportsAlpha ? GLX_RGBA_TYPE : 0, sharedContext, true);
 
         if (m_contextHandle)
             return true;

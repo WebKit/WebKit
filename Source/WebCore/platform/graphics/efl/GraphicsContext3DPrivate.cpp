@@ -60,16 +60,6 @@ bool GraphicsContext3DPrivate::initialize()
         return false;
 
     if (m_context->m_renderStyle == GraphicsContext3D::RenderOffscreen) {
-#if USE(GRAPHICS_SURFACE)
-        m_sharedSurface = GLPlatformSurface::createTransportSurface();
-        if (!m_sharedSurface)
-            return false;
-
-        m_sharedContext = GLPlatformContext::createContext(m_context->m_renderStyle);
-        if (!m_sharedContext)
-            return false;
-#endif
-
         m_offScreenSurface = GLPlatformSurface::createOffScreenSurface();
 
         if (!m_offScreenSurface)
@@ -79,6 +69,23 @@ bool GraphicsContext3DPrivate::initialize()
             return false;
 
 #if USE(GRAPHICS_SURFACE)
+        if (!makeContextCurrent())
+            return false;
+
+        m_context->validateAttributes();
+        GLPlatformSurface::SurfaceAttributes sharedSurfaceAttributes = GLPlatformSurface::Default;
+        if (m_context->m_attrs.alpha)
+            sharedSurfaceAttributes = GLPlatformSurface::SupportAlpha;
+
+        m_offScreenContext->releaseCurrent();
+        m_sharedSurface = GLPlatformSurface::createTransportSurface(sharedSurfaceAttributes);
+        if (!m_sharedSurface)
+            return false;
+
+        m_sharedContext = GLPlatformContext::createContext(m_context->m_renderStyle);
+        if (!m_sharedContext)
+            return false;
+
         if (!m_sharedContext->initialize(m_sharedSurface.get(), m_offScreenContext->handle()))
             return false;
 

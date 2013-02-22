@@ -30,10 +30,10 @@
 
 namespace WebCore {
 
-EGLWindowTransportSurface::EGLWindowTransportSurface()
-    : GLPlatformSurface()
+EGLWindowTransportSurface::EGLWindowTransportSurface(SurfaceAttributes attributes)
+    : GLPlatformSurface(attributes)
 {
-    m_configSelector = adoptPtr(new EGLConfigSelector(NativeWrapper::nativeDisplay()));
+    m_configSelector = adoptPtr(new EGLConfigSelector(attributes, NativeWrapper::nativeDisplay()));
     m_sharedDisplay = m_configSelector->display();
 
     if (m_sharedDisplay == EGL_NO_DISPLAY) {
@@ -55,7 +55,7 @@ EGLWindowTransportSurface::EGLWindowTransportSurface()
         return;
     }
 
-    NativeWrapper::createOffScreenWindow(&m_bufferHandle, visualId);
+    NativeWrapper::createOffScreenWindow(&m_bufferHandle, (attributes & GLPlatformSurface::SupportAlpha), visualId);
 
     if (!m_bufferHandle) {
         destroy();
@@ -68,6 +68,11 @@ EGLWindowTransportSurface::EGLWindowTransportSurface()
         LOG_ERROR("Failed to create EGL surface(%d).", eglGetError());
         destroy();
     }
+}
+
+GLPlatformSurface::SurfaceAttributes EGLWindowTransportSurface::attributes() const
+{
+    return m_configSelector->attributes();
 }
 
 EGLWindowTransportSurface::~EGLWindowTransportSurface()

@@ -29,6 +29,7 @@
 #if USE(EGL)
 
 #include <opengl/GLDefs.h>
+#include <opengl/GLPlatformSurface.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -68,12 +69,13 @@ class EGLConfigSelector {
     WTF_MAKE_NONCOPYABLE(EGLConfigSelector);
 
 public:
-    EGLConfigSelector(NativeSharedDisplay* = 0);
+    EGLConfigSelector(GLPlatformSurface::SurfaceAttributes, NativeSharedDisplay* = 0);
     virtual ~EGLConfigSelector();
     PlatformDisplay display() const;
     virtual EGLConfig pBufferContextConfig();
     virtual EGLConfig surfaceContextConfig();
     EGLint nativeVisualId(const EGLConfig&) const;
+    GLPlatformSurface::SurfaceAttributes attributes() const;
     void reset();
 
 private:
@@ -83,6 +85,7 @@ protected:
     EGLConfig m_pbufferFBConfig;
     EGLConfig m_surfaceContextFBConfig;
     RefPtr<SharedEGLDisplay> m_sharedDisplay;
+    unsigned m_attributes : 3;
 };
 
 }

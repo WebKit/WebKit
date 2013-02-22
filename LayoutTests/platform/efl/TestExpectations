@@ -1719,7 +1719,6 @@ webkit.org/b/104571 http/tests/xmlhttprequest/origin-exact-matching.html [ Failu
 
 # Rendering failure, also missing expected results:
 webkit.org/b/105093 compositing/webgl/webgl-background-color.html [ Skip ]
-webkit.org/b/105093 compositing/webgl/webgl-no-alpha.html [ Skip ]
 webkit.org/b/105093 compositing/webgl/webgl-nonpremultiplied-blend.html [ Skip ]
 webkit.org/b/105093 compositing/webgl/webgl-reflection.html [ Skip ]
 

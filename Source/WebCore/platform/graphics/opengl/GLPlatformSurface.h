@@ -41,12 +41,19 @@ class GLPlatformSurface {
     WTF_MAKE_NONCOPYABLE(GLPlatformSurface);
 
 public:
+    enum Attributes {
+        Default = 0x00, // No Alpha channel. Only R,G,B values set.
+        SupportAlpha = 0x01,
+        DoubleBuffered = 0x04
+    };
+
+    typedef int SurfaceAttributes;
     // Creates a GL surface used for offscreen rendering.
-    static PassOwnPtr<GLPlatformSurface> createOffScreenSurface();
+    static PassOwnPtr<GLPlatformSurface> createOffScreenSurface(SurfaceAttributes = GLPlatformSurface::Default);
 
     // Creates a GL surface used for offscreen rendering. The results can be transported
     // to the UI process for display.
-    static PassOwnPtr<GLPlatformSurface> createTransportSurface();
+    static PassOwnPtr<GLPlatformSurface> createTransportSurface(SurfaceAttributes = GLPlatformSurface::Default);
 
     virtual ~GLPlatformSurface();
 
@@ -60,6 +67,8 @@ public:
     PlatformDrawable drawable() const;
 
     PlatformDisplay sharedDisplay() const;
+
+    virtual SurfaceAttributes attributes() const;
 
     virtual void swapBuffers();
 
@@ -77,7 +86,7 @@ public:
     virtual void destroy();
 
 protected:
-    GLPlatformSurface();
+    GLPlatformSurface(SurfaceAttributes);
     IntRect m_rect;
     GLuint m_fboId;
     PlatformDisplay m_sharedDisplay;
