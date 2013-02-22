@@ -42,7 +42,6 @@
 #include "V8Binding.h"
 #include "V8RecursionScope.h"
 #include "WebSocket.h"
-#include "platform/WebKitPlatformSupport.h"
 #include "v8.h"
 #include <public/Platform.h>
 #include <public/WebPrerenderingSupport.h>

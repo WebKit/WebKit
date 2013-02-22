@@ -291,7 +291,6 @@
                 'public/mac/WebSandboxSupport.h',
                 'public/mac/WebScreenInfoFactory.h',
                 'public/mac/WebSubstringUtil.h',
-                'public/platform/WebKitPlatformSupport.h',
                 'public/win/WebInputEventFactory.h',
                 'public/win/WebSandboxSupport.h',
                 'public/win/WebScreenInfoFactory.h',

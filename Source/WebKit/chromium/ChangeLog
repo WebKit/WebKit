@@ -1,3 +1,22 @@
+2013-02-21  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] Remove chromium/public/platform directory
+        https://bugs.webkit.org/show_bug.cgi?id=110471
+
+        Reviewed by Adam Barth.
+
+        Part of a larger refactoring series; see tracking bug 82948.
+        
+        * WebKit.gyp:
+        * public/platform: Removed.
+        * public/platform/WebKitPlatformSupport.h: Removed.
+        * public/platform/android: Removed.
+        * public/platform/default: Removed.
+        * public/platform/linux: Removed.
+        * public/platform/mac: Removed.
+        * public/platform/win: Removed.
+        * src/WebKit.cpp:
+
 2013-02-21  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] support the lucid version of freetype on precise in DRT
