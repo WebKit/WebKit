@@ -1346,8 +1346,6 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (!settings)
         return false;
 
-    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
-        return false;
     return settings->acceleratedCompositingEnabled();
 }
 

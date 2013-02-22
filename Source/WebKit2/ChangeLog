@@ -1,3 +1,17 @@
+2013-02-21  Dima Gorbik  <dgorbik@apple.com>
+
+        QuickTime plugin doesn't load when accelerated compositing is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=110534
+
+        Reviewed by Anders Carlsson.
+
+        We shouldn't disable accelerated compositing for plugins, because
+        plugins such as QuickTime rely on this and will try to set other drawing
+        models that we don't support.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::isAcceleratedCompositingEnabled):
+
 2013-02-21  Dean Jackson  <dino@apple.com>
 
         Plug-in snapshotting code always accepts first snapshot
