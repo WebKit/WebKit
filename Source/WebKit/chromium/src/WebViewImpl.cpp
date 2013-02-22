@@ -68,6 +68,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "GraphicsContext3DPrivate.h"
+#include "GraphicsLayerFactoryChromium.h"
 #include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
@@ -424,6 +425,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_layerTreeView(0)
     , m_rootLayer(0)
     , m_rootGraphicsLayer(0)
+    , m_graphicsLayerFactory(adoptPtr(new GraphicsLayerFactoryChromium(this)))
     , m_isAcceleratedCompositingActive(false)
     , m_layerTreeViewCommitsDeferred(false)
     , m_compositorCreationFailed(false)
@@ -4087,7 +4089,13 @@ void WebViewImpl::setBackgroundColor(const WebCore::Color& color)
 
 WebCore::GraphicsLayerFactory* WebViewImpl::graphicsLayerFactory() const
 {
-    return m_chromeClientImpl.graphicsLayerFactory();
+    return m_graphicsLayerFactory.get();
+}
+
+void WebViewImpl::registerForAnimations(WebLayer* layer)
+{
+    if (m_layerTreeView)
+        m_layerTreeView->registerForAnimations(layer);
 }
 
 WebCore::GraphicsLayer* WebViewImpl::rootGraphicsLayer()

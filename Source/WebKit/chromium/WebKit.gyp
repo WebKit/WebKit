@@ -350,6 +350,8 @@
                 'src/FrameNetworkingContextImpl.h',
                 'src/GeolocationClientProxy.cpp',
                 'src/GeolocationClientProxy.h',
+                'src/GraphicsLayerFactoryChromium.cpp',
+                'src/GraphicsLayerFactoryChromium.h',
                 'src/gtk/WebInputEventFactory.cpp',
                 'src/WebHelperPluginImpl.cpp',
                 'src/WebHelperPluginImpl.h',

@@ -172,6 +172,10 @@ public:
     // Prevents updates to layer tree from becoming visible.
     virtual void setDeferCommits(bool deferCommits) { }
 
+    // Take responsiblity for this layer's animations, even if this layer hasn't yet
+    // been added to the tree.
+    virtual void registerForAnimations(WebLayer* layer) { }
+
     // Debugging / dangerous ---------------------------------------------
 
     // Fills in a WebRenderingStats struct containing information about the state of the compositor.

@@ -548,6 +548,7 @@ public:
     NonCompositedContentHost* nonCompositedContentHost();
     void setBackgroundColor(const WebCore::Color&);
     WebCore::GraphicsLayerFactory* graphicsLayerFactory() const;
+    void registerForAnimations(WebLayer*);
 #endif
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     void scheduleAnimation();
@@ -863,6 +864,7 @@ private:
     WebLayerTreeView* m_layerTreeView;
     WebLayer* m_rootLayer;
     WebCore::GraphicsLayer* m_rootGraphicsLayer;
+    OwnPtr<WebCore::GraphicsLayerFactory> m_graphicsLayerFactory;
     bool m_isAcceleratedCompositingActive;
     bool m_layerTreeViewCommitsDeferred;
     bool m_compositorCreationFailed;

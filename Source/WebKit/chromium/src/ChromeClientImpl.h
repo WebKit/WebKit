@@ -38,7 +38,6 @@
 #include "SearchPopupMenu.h"
 #include "WebNavigationPolicy.h"
 #include <public/WebColor.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -251,10 +250,6 @@ private:
     WebNavigationPolicy m_nextNewWindowNavigationPolicy;
 #if ENABLE(PAGE_POPUP)
     WebCore::PagePopupDriver* m_pagePopupDriver;
-#endif
-
-#if USE(ACCELERATED_COMPOSITING)
-    OwnPtr<WebCore::GraphicsLayerFactory> m_graphicsLayerFactory;
 #endif
 };
 
