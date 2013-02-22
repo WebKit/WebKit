@@ -247,10 +247,6 @@ void AutoTableLayout::computeIntrinsicLogicalWidths(LayoutUnit& minWidth, Layout
     }
 
     maxWidth = max<int>(maxWidth, spanMaxLogicalWidth);
-
-    // If there was no remaining percent, maxWidth is invalid
-    if (!remainingPercent && maxNonPercent)
-        maxWidth = tableMaxWidth;
 }
 
 void AutoTableLayout::applyPreferredLogicalWidthQuirks(LayoutUnit& minWidth, LayoutUnit& maxWidth) const
