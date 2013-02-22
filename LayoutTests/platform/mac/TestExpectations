@@ -805,9 +805,6 @@ svg/filters/color-space-conversion.svg
 svg/filters/container-with-filters.svg
 svg/filters/feSpecularLight-premultiplied.svg
 
-# New test, needs platform results
-webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
-
 # https://bugs.webkit.org/show_bug.cgi?id=89680
 fast/canvas/canvas-imageSmoothingEnabled-repaint.html
 
