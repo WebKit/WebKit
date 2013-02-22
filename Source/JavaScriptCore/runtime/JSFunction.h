@@ -136,7 +136,6 @@ namespace JSC {
         {
             if (UNLIKELY(m_allocationProfile.isNull()))
                 return createAllocationProfile(exec, inlineCapacity);
-            ASSERT(inlineCapacity <= m_allocationProfile.structure()->inlineCapacity());
             return &m_allocationProfile;
         }
 

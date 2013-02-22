@@ -1,3 +1,14 @@
+2013-02-21  Filip Pizlo  <fpizlo@apple.com>
+
+        Object allocation profiling will refuse to create objects with more than JSFinalObject::maxInlineCapacity() inline slots, but JSFunction::allocationProfile() asserts that the number of inline slots is always what it asked for
+        https://bugs.webkit.org/show_bug.cgi?id=110519
+        <rdar://problem/13218566>
+
+        Reviewed by Geoffrey Garen.
+        
+        * runtime/JSFunction.h:
+        (JSC::JSFunction::allocationProfile):
+
 2013-02-21  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build fix for VS2010 WebKit solution.
