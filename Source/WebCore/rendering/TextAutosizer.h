@@ -29,6 +29,7 @@
 #if ENABLE(TEXT_AUTOSIZING)
 
 #include "HTMLNames.h"
+#include "WritingMode.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -62,7 +63,9 @@ private:
 
     explicit TextAutosizer(Document*);
 
-    void processClusterInternal(TextAutosizingClusterInfo&, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&, float textWidth, bool shouldBeAutosized);
+    float clusterMultiplier(WritingMode, const TextAutosizingWindowInfo&, float textWidth) const;
+
+    void processClusterInternal(TextAutosizingClusterInfo&, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&, float multiplier);
     void processCluster(TextAutosizingClusterInfo&, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);
     void processCompositeCluster(Vector<TextAutosizingClusterInfo>&, const TextAutosizingWindowInfo&);
     void processContainer(float multiplier, RenderBlock* container, TextAutosizingClusterInfo&, RenderObject* subtreeRoot, const TextAutosizingWindowInfo&);

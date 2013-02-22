@@ -141,20 +141,20 @@ bool TextAutosizer::processSubtree(RenderObject* layoutRoot)
     return true;
 }
 
-void TextAutosizer::processClusterInternal(TextAutosizingClusterInfo& clusterInfo, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo, float textWidth, bool shouldBeAutosized)
+float TextAutosizer::clusterMultiplier(WritingMode writingMode, const TextAutosizingWindowInfo& windowInfo, float textWidth) const
 {
-    float multiplier = 1;
-    if (shouldBeAutosized) {
-        int logicalWindowWidth = clusterInfo.root->isHorizontalWritingMode() ? windowInfo.windowSize.width() : windowInfo.windowSize.height();
-        int logicalLayoutWidth = clusterInfo.root->isHorizontalWritingMode() ? windowInfo.minLayoutSize.width() : windowInfo.minLayoutSize.height();
-        // Ignore box width in excess of the layout width, to avoid extreme multipliers.
-        float logicalClusterWidth = std::min<float>(textWidth, logicalLayoutWidth);
+    int logicalWindowWidth = isHorizontalWritingMode(writingMode) ? windowInfo.windowSize.width() : windowInfo.windowSize.height();
+    int logicalLayoutWidth = isHorizontalWritingMode(writingMode) ? windowInfo.minLayoutSize.width() : windowInfo.minLayoutSize.height();
+    // Ignore box width in excess of the layout width, to avoid extreme multipliers.
+    float logicalClusterWidth = std::min<float>(textWidth, logicalLayoutWidth);
 
-        multiplier = logicalClusterWidth / logicalWindowWidth;
-        multiplier *= m_document->settings()->textAutosizingFontScaleFactor();
-        multiplier = std::max(1.0f, multiplier);
-    }
+    float multiplier = logicalClusterWidth / logicalWindowWidth;
+    multiplier *= m_document->settings()->textAutosizingFontScaleFactor();
+    return std::max(1.0f, multiplier);
+}
 
+void TextAutosizer::processClusterInternal(TextAutosizingClusterInfo& clusterInfo, RenderBlock* container, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo, float multiplier)
+{
     processContainer(multiplier, container, clusterInfo, subtreeRoot, windowInfo);
 
     Vector<Vector<TextAutosizingClusterInfo> > narrowDescendantsGroups;
@@ -171,11 +171,17 @@ void TextAutosizer::processCluster(TextAutosizingClusterInfo& clusterInfo, Rende
     // text), and use its width instead.
     clusterInfo.blockContainingAllText = findDeepestBlockContainingAllText(clusterInfo.root);
     float textWidth = clusterInfo.blockContainingAllText->contentLogicalWidth();
-    processClusterInternal(clusterInfo, container, subtreeRoot, windowInfo, textWidth, clusterShouldBeAutosized(clusterInfo, textWidth));
+    float multiplier =  1.0;
+    if (clusterShouldBeAutosized(clusterInfo, textWidth))
+        multiplier = clusterMultiplier(clusterInfo.root->style()->writingMode(), windowInfo, textWidth);
+    processClusterInternal(clusterInfo, container, subtreeRoot, windowInfo, multiplier);
 }
 
 void TextAutosizer::processCompositeCluster(Vector<TextAutosizingClusterInfo>& clusterInfos, const TextAutosizingWindowInfo& windowInfo)
 {
+    if (clusterInfos.isEmpty())
+        return;
+
     float maxTextWidth = 0;
     for (size_t i = 0; i < clusterInfos.size(); ++i) {
         TextAutosizingClusterInfo& clusterInfo = clusterInfos[i];
@@ -183,9 +189,13 @@ void TextAutosizer::processCompositeCluster(Vector<TextAutosizingClusterInfo>& c
         maxTextWidth = max<float>(maxTextWidth, clusterInfo.blockContainingAllText->contentLogicalWidth());
     }
 
-    bool shouldBeAutosized = compositeClusterShouldBeAutosized(clusterInfos, maxTextWidth);
-    for (size_t i = 0; i < clusterInfos.size(); ++i)
-        processClusterInternal(clusterInfos[i], clusterInfos[i].root, clusterInfos[i].root, windowInfo, maxTextWidth, shouldBeAutosized);
+    float multiplier = 1.0;
+    if (compositeClusterShouldBeAutosized(clusterInfos, maxTextWidth))
+        multiplier = clusterMultiplier(clusterInfos[0].root->style()->writingMode(), windowInfo, maxTextWidth);
+    for (size_t i = 0; i < clusterInfos.size(); ++i) {
+        ASSERT(clusterInfos[i].root->style()->writingMode() == clusterInfos[0].root->style()->writingMode());
+        processClusterInternal(clusterInfos[i], clusterInfos[i].root, clusterInfos[i].root, windowInfo, multiplier);
+    }
 }
 
 void TextAutosizer::processContainer(float multiplier, RenderBlock* container, TextAutosizingClusterInfo& clusterInfo, RenderObject* subtreeRoot, const TextAutosizingWindowInfo& windowInfo)
