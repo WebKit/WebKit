@@ -1,3 +1,15 @@
+2013-02-21  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] support the lucid version of freetype on precise in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=107338
+
+        Reviewed by Tony Chang.
+
+        Add in a linux-only dependency on Freetype2 so that we can
+        match the version shipped in Ubuntu Lucid.
+
+        * DEPS:
+
 2013-02-21  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r183905.  Requested by

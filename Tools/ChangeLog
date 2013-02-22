@@ -1,3 +1,24 @@
+2013-02-21  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] support the lucid version of freetype on precise in DRT
+        https://bugs.webkit.org/show_bug.cgi?id=107338
+
+        Reviewed by Tony Chang.
+
+        Modify the DRT build so that we can optionally link against
+        a fixed version of Freetype2. This allows us to share pixel test
+        results across multiple versions of Ubuntu without having to
+        worry about differences in font rendering.
+
+        At the moment this feature is off by default. Eventually it will
+        be on by default on linux.
+
+        Note that this only affects DRT; the regular Chromium binary
+        (and, for now, content_shell) will still use the system version
+        of Freetype.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-02-21  Rouslan Solomakhin  <rouslan@chromium.org>
 
         [Chromium] Remove the word "cheher" from the list of misspelled words

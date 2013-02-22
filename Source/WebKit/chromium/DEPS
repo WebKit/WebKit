@@ -185,6 +185,8 @@ deps_os = {
     # Linux, actually.
     'tools/xdisplaycheck':
       Var('chromium_svn')+'/tools/xdisplaycheck@'+Var('chromium_rev'),
+    'third_party/freetype2/src':
+      From('chromium_deps', 'src/third_party/freetype2/src'),
     'third_party/gold':
       From('chromium_deps', 'src/third_party/gold'),
     'third_party/openssl':

@@ -44,6 +44,13 @@
                 # WebKit is checked out in src/chromium/third_party/WebKit
                 'chromium_src_dir': '<(tools_dir)/../../..',
             }],
+            ['OS=="linux"', {
+                # FIXME: This should be on by default.
+                # See https://bugs.webkit.org/show_bug.cgi?id=107338
+                'use_custom_freetype%': 0,
+            }, {
+                'use_custom_freetype%': 0,
+            }],
         ],
     },
     'includes': [
@@ -383,6 +390,11 @@
                     'sources/': [
                         ['exclude', 'Android\\.cpp$'],
                     ],
+                }],
+                ['use_custom_freetype==1', {
+                   'dependencies': [
+                       '<(chromium_src_dir)/third_party/freetype2/freetype2.gyp:freetype2',
+                   ],
                 }],
                 ['inside_chromium_build==0', {
                     'dependencies': [
