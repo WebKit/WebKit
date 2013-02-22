@@ -845,7 +845,6 @@ webkit.org/b/94877 fast/forms/listbox-hit-test-zoomed.html [ Pass ]
 # Intrusive theming overrides collide with style-related LayoutTests.
 webkit.org/b/85877 fast/forms/menulist-narrow-width.html [ Pass ]
 webkit.org/b/85877 fast/forms/menulist-style-color.html [ Pass ]
-webkit.org/b/85877 fast/forms/select-baseline.html [ Pass ]
 webkit.org/b/85877 fast/forms/select-style.html [ Pass ]
 
 # EFL port needs Pasteboard implementation, needs baselines.
@@ -1872,3 +1871,5 @@ webkit.org/b/109994 fast/forms/button-generated-content.html [ Failure ]
 webkit.org/b/109994 fast/forms/select-baseline.html [ Failure ]
 webkit.org/b/109994 svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/109994 tables/mozilla/bugs/bug92647-2.html [ Failure ]
+
+webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
