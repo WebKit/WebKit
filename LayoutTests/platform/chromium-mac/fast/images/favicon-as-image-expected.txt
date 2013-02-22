@@ -15,5 +15,6 @@ layer at (0,0) size 800x600
             RenderView at (0,0) size 16x16
           layer at (0,0) size 16x16
             RenderBlock {HTML} at (0,0) size 16x16
-              RenderBody {BODY} at (8,8) size 0x0
+              RenderBody {BODY} at (0,0) size 16x16
+                RenderImage {IMG} at (0,0) size 16x16
         RenderText {#text} at (0,0) size 0x0

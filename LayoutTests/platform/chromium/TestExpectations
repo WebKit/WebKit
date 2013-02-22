@@ -2656,7 +2656,6 @@ webkit.org/b/54051 [ Mac ] platform/chromium/virtual/softwarecompositing/plugins
 webkit.org/b/54051 [ Mac ] plugins/windowless_plugin_paint_test.html [ Timeout ]
 
 # Actual failures
-webkit.org/b/54322 [ SnowLeopard ] fast/images/favicon-as-image.html [ Failure ]
 webkit.org/b/54322 [ SnowLeopard ] fast/text/international/text-combine-image-test.html [ ImageOnlyFailure ]
 
 webkit.org/b/54322 [ SnowLeopard ] fast/loader/loadInProgress.html [ Pass Slow ]
@@ -2674,7 +2673,6 @@ webkit.org/b/55300 [ Mac Android ] fast/images/support-broken-image-delegate.htm
 # introduced by Dave Hyatt in WK r80582
 crbug.com/75561 [ Android ] fast/writing-mode/text-orientation-basic.html [ Failure ]
 
-webkit.org/b/56060 [ Linux ] fast/images/favicon-as-image.html [ Failure ]
 
 # Skip an overly restrictive cross-origin HTTPS test
 crbug.com/69594 http/tests/appcache/different-https-origin-resource-main.html
@@ -4043,7 +4041,6 @@ crbug.com/172970 fast/events/touch/emulate-touch-events.html [ Failure Pass ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/animated-gif-restored-from-bfcache.html [ Failure ]
 webkit.org/b/94240 [ Linux ] platform/chromium/virtual/deferred/fast/images/color-jpeg-with-color-profile.html [ ImageOnlyFailure ]
 webkit.org/b/94240 [ Android ] platform/chromium/virtual/deferred/fast/images/embed-image.html [ Failure ]
-webkit.org/b/94240 [ Linux SnowLeopard ] platform/chromium/virtual/deferred/fast/images/favicon-as-image.html [ Failure ]
 webkit.org/b/94240 [ Linux Win SnowLeopard ] platform/chromium/virtual/deferred/fast/images/gif-large-checkerboard.html [ ImageOnlyFailure ]
 webkit.org/b/94240 platform/chromium/virtual/deferred/fast/images/gif-loop-count.html [ ImageOnlyFailure ]
 webkit.org/b/94240 [ XP ] platform/chromium/virtual/deferred/fast/images/imagemap-circle-focus-ring.html [ Failure ]
