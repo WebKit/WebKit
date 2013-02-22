@@ -1,3 +1,13 @@
+2013-02-22  Xan Lopez  <xlopez@rim.com>
+
+        [BlackBerry] DomSupport: use NodeTraversal APIs
+        https://bugs.webkit.org/show_bug.cgi?id=110467
+
+        Reviewed by Antonio Gomes.
+
+        * WebKitSupport/DOMSupport.cpp:
+        (BlackBerry::WebKit::DOMSupport::visibleTextQuads):
+
 2013-02-21  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Allow to retrieve the request data from abstract TextCheckingRequest to be accessible for WK2
