@@ -93,6 +93,10 @@
 #include "TextAutosizer.h"
 #endif
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 namespace WebCore {
 
 using namespace HTMLNames;
@@ -1039,6 +1043,8 @@ void FrameView::layout(bool allowSubtree)
 {
     if (m_inLayout)
         return;
+
+    TRACE_EVENT0("webkit", "FrameView::layout");
 
     // Protect the view from being deleted during layout (in recalcStyle)
     RefPtr<FrameView> protector(this);

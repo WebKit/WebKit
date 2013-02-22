@@ -240,6 +240,10 @@
 #include "DOMSecurityPolicy.h"
 #endif
 
+#if PLATFORM(CHROMIUM)
+#include "TraceEvent.h"
+#endif
+
 using namespace std;
 using namespace WTF;
 using namespace Unicode;
@@ -1750,6 +1754,8 @@ void Document::recalcStyle(StyleChange change)
     
     if (m_inStyleRecalc)
         return; // Guard against re-entrancy. -dwh
+
+    TRACE_EVENT0("webkit", "Document::recalcStyle");
 
     // FIXME: We should update style on our ancestor chain before proceeding (especially for seamless),
     // however doing so currently causes several tests to crash, as Frame::setDocument calls Document::attach
