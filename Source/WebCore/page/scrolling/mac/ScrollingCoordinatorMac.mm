@@ -314,6 +314,9 @@ void ScrollingCoordinatorMac::setWheelEventHandlerCountForNode(unsigned wheelEve
 
 void ScrollingCoordinatorMac::setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons reasons)
 {
+    if (!m_scrollingStateTree->rootStateNode())
+        return;
+
     // The FrameView's GraphicsLayer is likely to be out-of-synch with the PlatformLayer
     // at this point. So we'll update it before we switch back to main thread scrolling
     // in order to avoid layer positioning bugs.
@@ -340,6 +343,9 @@ void ScrollingCoordinatorMac::updateMainFrameScrollLayerPosition()
 
 void ScrollingCoordinatorMac::syncChildPositions(const LayoutRect& viewportRect)
 {
+    if (!m_scrollingStateTree->rootStateNode())
+        return;
+
     Vector<OwnPtr<ScrollingStateNode> >* children = m_scrollingStateTree->rootStateNode()->children();
     if (!children)
         return;
