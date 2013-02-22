@@ -1,3 +1,56 @@
+2013-02-22  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Move AC code from EwkView to WebView
+        https://bugs.webkit.org/show_bug.cgi?id=110216
+
+        Reviewed by Anders Carlsson.
+
+        Accelerated compositing code is moved from EwkView to WebView.
+        Added new WKView API to be used from EwkView instead of direct accessing
+        to coordinated graphics scene.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewSetUserViewportTranslation):
+        (WKViewUserViewportToContents):
+        (WKViewPaintToCurrentGLContext):
+        (WKViewPaintToCairoSurface):
+        * UIProcess/API/C/efl/WKView.h:
+
+            Added WKView API functions.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+        (EwkView::displayTimerFired):
+        (EwkView::feedTouchEvent):
+        (EwkView::createGLSurface):
+        (EwkView::handleEvasObjectCalculate):
+        (EwkView::handleEwkViewMouseWheel):
+        (EwkView::handleEwkViewMouseDown):
+        (EwkView::handleEwkViewMouseUp):
+        (EwkView::handleEwkViewMouseMove):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+
+            Using new WKView API.
+
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::initialize):
+        (WebKit):
+        (WebKit::WebView::paintToCurrentGLContext):
+        (WebKit::WebView::paintToCairoSurface):
+        (WebKit::WebView::userViewportToContents):
+        (WebKit::WebView::transformFromScene):
+        (WebKit::WebView::transformToScene):
+        (WebKit::WebView::coordinatedGraphicsScene):
+        (WebKit::WebView::enterAcceleratedCompositingMode):
+        (WebKit::WebView::exitAcceleratedCompositingMode):
+        * UIProcess/efl/WebView.h:
+        (WebCore):
+        (WebKit::WebView::setUserViewportTranslation):
+        (WebView):
+
+            Added WebView methods to support new WKView API.
+
 2013-02-21  Dima Gorbik  <dgorbik@apple.com>
 
         QuickTime plugin doesn't load when accelerated compositing is disabled

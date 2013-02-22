@@ -22,7 +22,6 @@
 #include "EwkView.h"
 
 #include "ContextMenuClientEfl.h"
-#include "CoordinatedLayerTreeHostProxy.h"
 #include "EflScreenUtilities.h"
 #include "FindClientEfl.h"
 #include "FormClientEfl.h"
@@ -66,9 +65,7 @@
 #include <Edje.h>
 #include <Evas_GL.h>
 #include <WebCore/CairoUtilitiesEfl.h>
-#include <WebCore/CoordinatedGraphicsScene.h>
 #include <WebCore/Cursor.h>
-#include <WebCore/TransformationMatrix.h>
 #include <WebKit2/WKImageCairo.h>
 #include <wtf/MathExtras.h>
 
@@ -273,10 +270,7 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
 
     WKViewInitialize(wkView());
 
-    if (behavior == DefaultBehavior) {
-        coordinatedGraphicsScene()->setActive(true);
-        WKPageSetUseFixedLayout(wkPage(), true);
-    }
+    WKPageSetUseFixedLayout(wkPage(), behavior == DefaultBehavior);
 
     WKPageGroupRef wkPageGroup = WKPageGetPageGroup(wkPage());
     WKPreferencesRef wkPreferences = WKPageGroupGetPreferences(wkPageGroup);
@@ -477,22 +471,6 @@ void EwkView::setSize(const IntSize& size)
     webView()->updateViewportSize();
 }
 
-AffineTransform EwkView::transformFromScene() const
-{
-    return transformToScene().inverse();
-}
-
-AffineTransform EwkView::transformToScene() const
-{
-    TransformationMatrix transform = userViewportTransform();
-
-    transform.translate(-pagePosition().x(), -pagePosition().y());
-    transform.scale(deviceScaleFactor());
-    transform.scale(pageScaleFactor());
-
-    return transform.toAffineTransform();
-}
-
 AffineTransform EwkView::transformToScreen() const
 {
     AffineTransform transform;
@@ -526,50 +504,9 @@ AffineTransform EwkView::transformToScreen() const
     return transform;
 }
 
-CoordinatedGraphicsScene* EwkView::coordinatedGraphicsScene()
-{
-    DrawingAreaProxy* drawingArea = page()->drawingArea();
-    if (!drawingArea)
-        return 0;
-
-    WebKit::CoordinatedLayerTreeHostProxy* coordinatedLayerTreeHostProxy = drawingArea->coordinatedLayerTreeHostProxy();
-    if (!coordinatedLayerTreeHostProxy)
-        return 0;
-
-    return coordinatedLayerTreeHostProxy->coordinatedGraphicsScene();
-}
-
 inline Ewk_View_Smart_Data* EwkView::smartData() const
 {
     return toSmartData(m_evasObject);
-}
-
-void EwkView::paintToCurrentGLContext()
-{
-    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
-    if (!scene)
-        return;
-
-    // FIXME: We need to clean up this code as it is split over CoordGfx and Page.
-    scene->setDrawsBackground(WKViewGetDrawsBackground(wkView()));
-
-    FloatRect viewport = userViewportTransform().mapRect(IntRect(IntPoint(), size()));
-    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
-}
-
-void EwkView::paintToCairoSurface(cairo_surface_t* surface)
-{
-    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
-    if (!scene)
-        return;
-
-    RefPtr<cairo_t> graphicsContext = adoptRef(cairo_create(surface));
-
-    cairo_translate(graphicsContext.get(), - pagePosition().x(), - pagePosition().y());
-    cairo_scale(graphicsContext.get(), pageScaleFactor(), pageScaleFactor());
-    cairo_scale(graphicsContext.get(), deviceScaleFactor(), deviceScaleFactor());
-
-    scene->paintToGraphicsContext(graphicsContext.get());
 }
 
 void EwkView::displayTimerFired(Timer<EwkView>*)
@@ -589,14 +526,14 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
         if (!surface)
             return;
 
-        paintToCairoSurface(surface.get());
+        WKViewPaintToCairoSurface(wkView(), surface.get());
         evas_object_image_data_update_add(sd->image, 0, 0, sd->view.w, sd->view.h);
         return;
     }
 
     evas_gl_make_current(m_evasGL.get(), m_evasGLSurface->surface(), m_evasGLContext->context());
 
-    paintToCurrentGLContext();
+    WKViewPaintToCurrentGLContext(wkView());
 
     // sd->image is tied to a native surface, which is in the parent's coordinates.
     evas_object_image_data_update_add(sd->image, sd->view.x, sd->view.y, sd->view.w, sd->view.h);
@@ -754,7 +691,7 @@ void EwkView::setMouseEventsEnabled(bool enabled)
 #if ENABLE(TOUCH_EVENTS)
 void EwkView::feedTouchEvent(Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers)
 {
-    page()->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, transformFromScene(), transformToScreen(), ecore_time_get()));
+    page()->handleTouchEvent(NativeWebTouchEvent(type, points, modifiers, webView()->transformFromScene(), transformToScreen(), ecore_time_get()));
 }
 
 void EwkView::setTouchEventsEnabled(bool enabled)
@@ -814,37 +751,11 @@ bool EwkView::createGLSurface()
 
     Evas_GL_API* gl = evas_gl_api_get(m_evasGL.get());
 
-    IntPoint boundsEnd = userViewportTransform().mapPoint(IntPoint(size()));
-    gl->glViewport(0, 0, boundsEnd.x(), boundsEnd.y());
+    const WKPoint& boundsEnd = WKViewUserViewportToContents(wkView(), WKPointMake(size().width(), size().height()));
+    gl->glViewport(0, 0, boundsEnd.x, boundsEnd.y);
     gl->glClearColor(1.0, 1.0, 1.0, 0);
     gl->glClear(GL_COLOR_BUFFER_BIT);
 
-    return true;
-}
-
-bool EwkView::enterAcceleratedCompositingMode()
-{
-    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
-    if (!scene)
-        return false;
-
-    scene->setActive(true);
-
-    if (m_isAccelerated && !m_evasGLSurface && !createGLSurface()) {
-        WARN("Failed to create GLSurface.");
-        return false;
-    }
-
-    return true;
-}
-
-bool EwkView::exitAcceleratedCompositingMode()
-{
-    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
-    if (!scene)
-        return false;
-
-    scene->setActive(false);
     return true;
 }
 
@@ -1182,8 +1093,7 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         smartData->view.x = x;
         smartData->view.y = y;
         evas_object_move(smartData->image, x, y);
-
-        self->setUserViewportTransform(TransformationMatrix().translate(x, y));
+        WKViewSetUserViewportTranslation(self->wkView(), x, y);
     }
 
     if (smartData->changed.size) {
@@ -1250,21 +1160,21 @@ Eina_Bool EwkView::handleEwkViewFocusOut(Ewk_View_Smart_Data* smartData)
 Eina_Bool EwkView::handleEwkViewMouseWheel(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Wheel* wheelEvent)
 {
     EwkView* self = toEwkView(smartData);
-    self->page()->handleWheelEvent(NativeWebWheelEvent(wheelEvent, self->transformFromScene(), self->transformToScreen()));
+    self->page()->handleWheelEvent(NativeWebWheelEvent(wheelEvent, self->webView()->transformFromScene(), self->transformToScreen()));
     return true;
 }
 
 Eina_Bool EwkView::handleEwkViewMouseDown(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Down* downEvent)
 {
     EwkView* self = toEwkView(smartData);
-    self->page()->handleMouseEvent(NativeWebMouseEvent(downEvent, self->transformFromScene(), self->transformToScreen()));
+    self->page()->handleMouseEvent(NativeWebMouseEvent(downEvent, self->webView()->transformFromScene(), self->transformToScreen()));
     return true;
 }
 
 Eina_Bool EwkView::handleEwkViewMouseUp(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Up* upEvent)
 {
     EwkView* self = toEwkView(smartData);
-    self->page()->handleMouseEvent(NativeWebMouseEvent(upEvent, self->transformFromScene(), self->transformToScreen()));
+    self->page()->handleMouseEvent(NativeWebMouseEvent(upEvent, self->webView()->transformFromScene(), self->transformToScreen()));
 
     if (InputMethodContextEfl* inputMethodContext = self->inputMethodContext())
         inputMethodContext->handleMouseUpEvent(upEvent);
@@ -1275,7 +1185,7 @@ Eina_Bool EwkView::handleEwkViewMouseUp(Ewk_View_Smart_Data* smartData, const Ev
 Eina_Bool EwkView::handleEwkViewMouseMove(Ewk_View_Smart_Data* smartData, const Evas_Event_Mouse_Move* moveEvent)
 {
     EwkView* self = toEwkView(smartData);
-    self->page()->handleMouseEvent(NativeWebMouseEvent(moveEvent, self->transformFromScene(), self->transformToScreen()));
+    self->page()->handleMouseEvent(NativeWebMouseEvent(moveEvent, self->webView()->transformFromScene(), self->transformToScreen()));
     return true;
 }
 

@@ -31,12 +31,18 @@
 #include "DefaultUndoController.h"
 #include "PageClient.h"
 #include "WebContext.h"
+#include "WebGeometry.h"
 #include "WebPageGroup.h"
 #include "WebPageProxy.h"
 #include "WebPreferences.h"
 #include "WebViewClient.h"
+#include <WebCore/TransformationMatrix.h>
 
 class EwkView;
+
+namespace WebCore {
+class CoordinatedGraphicsScene;
+}
 
 namespace WebKit {
 
@@ -48,6 +54,12 @@ public:
     virtual ~WebView();
 
     void initialize();
+
+    void setUserViewportTranslation(double tx, double ty);
+    WebCore::IntPoint userViewportToContents(const WebCore::IntPoint&) const;
+
+    void paintToCurrentGLContext();
+    void paintToCairoSurface(cairo_surface_t*);
 
     WKPageRef pageRef() const { return toAPI(m_page.get()); }
 
@@ -79,7 +91,13 @@ public:
     void updateViewportSize();
     void didChangeContentsSize(const WebCore::IntSize&);
 
+    // FIXME: Should become private when Web Events creation is moved to WebView.
+    WebCore::AffineTransform transformFromScene() const;
+    WebCore::AffineTransform transformToScene() const;
+
 private:
+    WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
+
     // PageClient
     PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy() OVERRIDE;
 
@@ -160,6 +178,7 @@ private:
     EwkView* m_ewkView;
     RefPtr<WebPageProxy> m_page;
     DefaultUndoController m_undoController;
+    WebCore::TransformationMatrix m_userViewportTransform;
 };
 
 }

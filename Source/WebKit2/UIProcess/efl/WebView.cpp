@@ -27,6 +27,7 @@
 #include "config.h"
 #include "WebView.h"
 
+#include "CoordinatedLayerTreeHostProxy.h"
 #include "DownloadManagerEfl.h"
 #include "DrawingAreaProxyImpl.h"
 #include "EwkView.h"
@@ -38,6 +39,7 @@
 #include "WebPageProxy.h"
 #include "WebPopupMenuListenerEfl.h"
 #include "ewk_context_private.h"
+#include <WebCore/CoordinatedGraphicsScene.h>
 
 #if ENABLE(FULLSCREEN_API)
 #include "WebFullScreenManagerProxy.h"
@@ -76,6 +78,48 @@ WebView::~WebView()
 void WebView::initialize()
 {
     m_page->initializeWebPage();
+    if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
+        scene->setActive(true);
+}
+
+void WebView::setUserViewportTranslation(double tx, double ty)
+{
+    m_userViewportTransform = TransformationMatrix().translate(tx, ty);
+}
+
+IntPoint WebView::userViewportToContents(const IntPoint& point) const
+{
+    return m_userViewportTransform.mapPoint(point);
+}
+
+void WebView::paintToCurrentGLContext()
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    // FIXME: We need to clean up this code as it is split over CoordGfx and Page.
+    scene->setDrawsBackground(m_page->drawsBackground());
+
+    FloatRect viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_ewkView->size()));
+    scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
+}
+
+void WebView::paintToCairoSurface(cairo_surface_t* surface)
+{
+    CoordinatedGraphicsScene* scene = coordinatedGraphicsScene();
+    if (!scene)
+        return;
+
+    RefPtr<cairo_t> graphicsContext = adoptRef(cairo_create(surface));
+
+    const FloatPoint& pagePosition = m_ewkView->pagePosition();
+    double effectiveScale = m_page->deviceScaleFactor() * m_ewkView->pageScaleFactor();
+
+    cairo_matrix_t transform = { effectiveScale, 0, 0, effectiveScale, - pagePosition.x(), - pagePosition.y() };
+    cairo_set_matrix(graphicsContext.get(), &transform);
+
+    scene->paintToGraphicsContext(graphicsContext.get());
 }
 
 Evas_Object* WebView::evasObject()
@@ -165,6 +209,36 @@ void WebView::didChangeContentsSize(const WebCore::IntSize& size)
         return;
     }
     m_client.didChangeContentsSize(this, size);
+}
+
+AffineTransform WebView::transformFromScene() const
+{
+    return transformToScene().inverse();
+}
+
+AffineTransform WebView::transformToScene() const
+{
+    TransformationMatrix transform = m_userViewportTransform;
+
+    const FloatPoint& pagePosition = m_ewkView->pagePosition();
+    transform.translate(-pagePosition.x(), -pagePosition.y());
+    transform.scale(m_page->deviceScaleFactor());
+    transform.scale(m_ewkView->pageScaleFactor());
+
+    return transform.toAffineTransform();
+}
+
+CoordinatedGraphicsScene* WebView::coordinatedGraphicsScene()
+{
+    DrawingAreaProxy* drawingArea = m_page->drawingArea();
+    if (!drawingArea)
+        return 0;
+
+    WebKit::CoordinatedLayerTreeHostProxy* layerTreeHostProxy = drawingArea->coordinatedLayerTreeHostProxy();
+    if (!layerTreeHostProxy)
+        return 0;
+
+    return layerTreeHostProxy->coordinatedGraphicsScene();
 }
 
 // Page Client
@@ -339,12 +413,14 @@ void WebView::setFindIndicator(PassRefPtr<FindIndicator>, bool, bool)
 
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
-    m_ewkView->enterAcceleratedCompositingMode();
+    if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
+        scene->setActive(true);
 }
 
 void WebView::exitAcceleratedCompositingMode()
 {
-    m_ewkView->exitAcceleratedCompositingMode();
+    if (CoordinatedGraphicsScene* scene = coordinatedGraphicsScene())
+        scene->setActive(false);
 }
 
 void WebView::updateAcceleratedCompositingMode(const LayerTreeContext&)

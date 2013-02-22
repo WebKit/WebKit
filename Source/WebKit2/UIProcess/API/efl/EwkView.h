@@ -136,12 +136,6 @@ public:
     void setSize(const WebCore::IntSize&);
     WebCore::IntSize size() const { return m_size; }
 
-    void setUserViewportTransform(const WebCore::TransformationMatrix& transform) { m_userViewportTransform = transform; }
-    WebCore::TransformationMatrix userViewportTransform() const { return m_userViewportTransform; }
-
-    // FIXME: Convert to TransformationMatrix.
-    WebCore::AffineTransform transformToScene() const;
-    WebCore::AffineTransform transformFromScene() const;
     WebCore::AffineTransform transformToScreen() const;
 
     void paintToCurrentGLContext();
@@ -179,8 +173,6 @@ public:
     void setWindowGeometry(const WKRect&);
 
     bool createGLSurface();
-    bool enterAcceleratedCompositingMode();
-    bool exitAcceleratedCompositingMode();
     void setNeedsSurfaceResize() { m_pendingSurfaceResize = true; }
 
 #if ENABLE(INPUT_TYPE_COLOR)
@@ -232,8 +224,6 @@ private:
     Ewk_View_Smart_Data* smartData() const;
 
     void displayTimerFired(WebCore::Timer<EwkView>*);
-
-    WebCore::CoordinatedGraphicsScene* coordinatedGraphicsScene();
 
     // Evas_Smart_Class callback interface:
     static void handleEvasObjectAdd(Evas_Object*);
