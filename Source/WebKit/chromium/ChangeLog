@@ -1,3 +1,15 @@
+2013-02-21  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Remove copying WebIDBDatabase::put() stub
+        https://bugs.webkit.org/show_bug.cgi?id=109967
+
+        Reviewed by Darin Fisher.
+
+        Now that the chromium call to this method has
+        been removed, we can remove the stub.
+
+        * public/WebIDBDatabase.h:
+
 2013-02-21  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, roll chromium deps 183552 -> 183788
