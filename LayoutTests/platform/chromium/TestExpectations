@@ -4152,6 +4152,12 @@ webkit.org/b/101377 [ Linux MountainLion ] platform/chromium-linux/fast/text/int
 
 webkit.org/b/107423 platform/chromium/fast/forms/calendar-picker/calendar-picker-mouse-operations.html [ Failure Pass ]
 
+# Rebaseline after currentPath
+webkit.org/b/108246 [ XP ] fast/canvas/canvas-currentPath.html [ Failure ]
+webkit.org/b/108246 [ XP ] platform/chromium/virtual/gpu/fast/canvas/canvas-currentPath.html [ Failure ]
+webkit.org/b/108508 [ XP ] fast/canvas/canvas-path-constructors.html [ Failure ]
+webkit.org/b/108508 [ XP ] platform/chromium/virtual/gpu/fast/canvas/canvas-path-constructors.html [ Failure ]
+
 webkit.org/b/104993 [ XP ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Failure ]
 
 webkit.org/b/106518 compositing/iframes/iframe-content-flipping.html [ ImageOnlyFailure ]
