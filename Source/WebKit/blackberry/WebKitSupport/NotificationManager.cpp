@@ -57,7 +57,7 @@ bool NotificationManager::show(Notification* notification)
     m_notificationIDMap.set(notificationID, notification);
 
     NotificationContextMap::iterator it = m_notificationContextMap.add(notification->scriptExecutionContext(), Vector<String>()).iterator;
-    it->second.append(notificationID);
+    it->value.append(notificationID);
 
     m_webPagePrivate->client()->showNotification(notificationID, notification->title(), notification->body(), notification->iconURL().string(), notification->tag(), notification->scriptExecutionContext()->securityOrigin()->toString());
     return true;
@@ -78,7 +78,7 @@ void NotificationManager::clearNotifications(ScriptExecutionContext* context)
     if (it == m_notificationContextMap.end())
         return;
 
-    Vector<String>& notificationIDs = it->second;
+    Vector<String>& notificationIDs = it->value;
     std::vector<BlackBerry::Platform::String> ids;
     size_t count = notificationIDs.size();
     for (size_t i = 0; i < count; ++i) {
@@ -218,10 +218,10 @@ void NotificationManager::removeNotificationFromContextMap(const String& notific
     // This is a helper function for managing the hash maps.
     NotificationContextMap::iterator it = m_notificationContextMap.find(notification->scriptExecutionContext());
     ASSERT(it != m_notificationContextMap.end());
-    size_t index = it->second.find(notificationID);
+    size_t index = it->value.find(notificationID);
     ASSERT(index != notFound);
-    it->second.remove(index);
-    if (it->second.isEmpty())
+    it->value.remove(index);
+    if (it->value.isEmpty())
         m_notificationContextMap.remove(it);
 }
 

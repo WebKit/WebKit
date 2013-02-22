@@ -1,5 +1,19 @@
 2013-02-22  Carlos Garcia Campos  <cargarcia@rim.com>
 
+        [BlackBerry] Rename first/second to key/value in HashMap iterators
+        https://bugs.webkit.org/show_bug.cgi?id=110577
+
+        Reviewed by Rob Buis.
+
+        Iterators were renamed to key/value in r130612.
+
+        * WebKitSupport/NotificationManager.cpp:
+        (BlackBerry::WebKit::NotificationManager::show):
+        (BlackBerry::WebKit::NotificationManager::clearNotifications):
+        (BlackBerry::WebKit::NotificationManager::removeNotificationFromContextMap):
+
+2013-02-22  Carlos Garcia Campos  <cargarcia@rim.com>
+
         [BlackBerry] Remove ProtocolHandler methods from ChromeClientBlackBerry
         https://bugs.webkit.org/show_bug.cgi?id=110567
 

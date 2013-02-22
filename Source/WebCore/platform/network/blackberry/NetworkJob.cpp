@@ -418,14 +418,14 @@ void NetworkJob::handleNotifyMultipartHeaderReceived(const String& key, const St
             bool needsCopyfromOriginalResponse = true;
             int replaceHeadersIndex = 0;
             while (BlackBerry::Platform::MultipartStream::replaceHeaders[replaceHeadersIndex]) {
-                if (it->first.lower() == BlackBerry::Platform::MultipartStream::replaceHeaders[replaceHeadersIndex]) {
+                if (it->key.lower() == BlackBerry::Platform::MultipartStream::replaceHeaders[replaceHeadersIndex]) {
                     needsCopyfromOriginalResponse = false;
                     break;
                 }
                 replaceHeadersIndex++;
             }
             if (needsCopyfromOriginalResponse)
-                m_multipartResponse->setHTTPHeaderField(it->first, it->second);
+                m_multipartResponse->setHTTPHeaderField(it->key, it->value);
         }
 
         m_multipartResponse->setIsMultipartPayload(true);

@@ -140,10 +140,10 @@ void AuthenticationChallengeManager::pageVisibilityChanged(PageClientBlackBerry*
         return;
     }
 
-    if (iter->second == visible)
+    if (iter->value == visible)
         return;
 
-    iter->second = visible;
+    iter->value = visible;
     if (!visible)
         return;
 
