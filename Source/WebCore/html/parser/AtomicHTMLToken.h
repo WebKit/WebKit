@@ -201,8 +201,12 @@ private:
             break;
         case HTMLToken::StartTag:
             m_attributes.reserveInitialCapacity(token.attributes().size());
-            for (Vector<CompactHTMLToken::Attribute>::const_iterator it = token.attributes().begin(); it != token.attributes().end(); ++it)
-                m_attributes.append(Attribute(QualifiedName(nullAtom, it->name, nullAtom), it->value));
+            for (Vector<CompactHTMLToken::Attribute>::const_iterator it = token.attributes().begin(); it != token.attributes().end(); ++it) {
+                QualifiedName name(nullAtom, it->name, nullAtom);
+                // FIXME: This is N^2 for the number of attributes.
+                if (!findAttributeInVector(m_attributes, name))
+                    m_attributes.append(Attribute(name, it->value));
+            }
             // Fall through!
         case HTMLToken::EndTag:
             m_selfClosing = token.selfClosing();
@@ -300,6 +304,7 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
 
         AtomicString value(attribute.value);
         const QualifiedName& name = nameForAttribute(attribute);
+        // FIXME: This is N^2 for the number of attributes.
         if (!findAttributeInVector(m_attributes, name))
             m_attributes.append(Attribute(name, value));
     }
