@@ -222,7 +222,9 @@ bool GraphicsContext3DPrivate::makeSharedContextCurrent() const
 void GraphicsContext3DPrivate::didResizeCanvas(const IntSize& size)
 {
     m_size = size;
-    m_sharedSurface->setGeometry(IntRect(0, 0, m_size.width(), m_size.height()));
+
+    if (makeSharedContextCurrent())
+        m_sharedSurface->setGeometry(IntRect(0, 0, m_size.width(), m_size.height()));
 }
 
 uint32_t GraphicsContext3DPrivate::copyToGraphicsSurface()

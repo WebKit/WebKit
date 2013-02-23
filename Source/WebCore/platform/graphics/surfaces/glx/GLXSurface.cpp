@@ -33,7 +33,7 @@ namespace WebCore {
 static const int pbufferAttributes[] = { GLX_PBUFFER_WIDTH, 1, GLX_PBUFFER_HEIGHT, 1, 0 };
 
 GLXTransportSurface::GLXTransportSurface(SurfaceAttributes attributes)
-    : GLPlatformSurface(attributes)
+    : GLTransportSurface(attributes)
 {
     m_sharedDisplay = X11Helper::nativeDisplay();
     attributes |= GLPlatformSurface::DoubleBuffered;
@@ -66,7 +66,7 @@ PlatformSurfaceConfig GLXTransportSurface::configuration()
 
 void GLXTransportSurface::setGeometry(const IntRect& newRect)
 {
-    GLPlatformSurface::setGeometry(newRect);
+    GLTransportSurface::setGeometry(newRect);
     X11Helper::resizeWindow(newRect, m_drawable);
     // Force resize of GL surface after window resize.
     glXSwapBuffers(sharedDisplay(), m_drawable);
@@ -82,7 +82,7 @@ void GLXTransportSurface::swapBuffers()
 
 void GLXTransportSurface::destroy()
 {
-    GLPlatformSurface::destroy();
+    GLTransportSurface::destroy();
 
     if (m_bufferHandle) {
         X11Helper::destroyWindow(m_bufferHandle);
@@ -146,7 +146,6 @@ void GLXOffScreenSurface::destroy()
 
 void GLXOffScreenSurface::freeResources()
 {
-    GLPlatformSurface::destroy();
     Display* display = sharedDisplay();
 
     if (!display)

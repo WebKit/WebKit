@@ -313,6 +313,7 @@ if (WTF_USE_3D_GRAPHICS)
         platform/graphics/opengl/GLPlatformContext.cpp
         platform/graphics/opengl/GLPlatformSurface.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGLCommon.cpp
+        platform/graphics/surfaces/GLTransportSurface.cpp
         platform/graphics/surfaces/GraphicsSurface.cpp
         platform/graphics/surfaces/glx/X11Helper.cpp
         platform/graphics/texmap/TextureMapperGL.cpp

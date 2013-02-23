@@ -29,7 +29,7 @@
 #if USE(EGL) && USE(GRAPHICS_SURFACE)
 
 #include "EGLConfigSelector.h"
-#include "GLPlatformSurface.h"
+#include "GLTransportSurface.h"
 
 #include <glx/X11Helper.h>
 #include <wtf/Noncopyable.h>
@@ -40,7 +40,7 @@ namespace WebCore {
 typedef X11Helper NativeWrapper;
 
 // Contents of the surface are backed by native window.
-class EGLWindowTransportSurface : public GLPlatformSurface {
+class EGLWindowTransportSurface : public GLTransportSurface {
 
 public:
     EGLWindowTransportSurface(SurfaceAttributes);

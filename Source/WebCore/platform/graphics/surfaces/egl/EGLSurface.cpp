@@ -31,7 +31,7 @@
 namespace WebCore {
 
 EGLWindowTransportSurface::EGLWindowTransportSurface(SurfaceAttributes attributes)
-    : GLPlatformSurface(attributes)
+    : GLTransportSurface(attributes)
 {
     m_configSelector = adoptPtr(new EGLConfigSelector(attributes, NativeWrapper::nativeDisplay()));
     m_sharedDisplay = m_configSelector->display();
@@ -106,7 +106,7 @@ void EGLWindowTransportSurface::swapBuffers()
 
 void EGLWindowTransportSurface::destroy()
 {
-    GLPlatformSurface::destroy();
+    GLTransportSurface::destroy();
     NativeWrapper::destroyWindow(m_bufferHandle);
     freeEGLResources();
     m_bufferHandle = 0;
@@ -130,7 +130,7 @@ void EGLWindowTransportSurface::freeEGLResources()
 
 void EGLWindowTransportSurface::setGeometry(const IntRect& newRect)
 {
-    GLPlatformSurface::setGeometry(newRect);
+    GLTransportSurface::setGeometry(newRect);
     NativeWrapper::resizeWindow(newRect, m_bufferHandle);
 }
 

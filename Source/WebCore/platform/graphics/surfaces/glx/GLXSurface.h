@@ -28,13 +28,13 @@
 
 #if USE(ACCELERATED_COMPOSITING) && USE(GLX)
 
-#include "GLPlatformSurface.h"
+#include "GLTransportSurface.h"
 #include "GLXConfigSelector.h"
 #include "X11Helper.h"
 
 namespace WebCore {
 
-class GLXTransportSurface : public GLPlatformSurface {
+class GLXTransportSurface : public GLTransportSurface {
 
 public:
     GLXTransportSurface(SurfaceAttributes);

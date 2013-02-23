@@ -69,8 +69,7 @@ PassOwnPtr<GLPlatformSurface> GLPlatformSurface::createTransportSurface(SurfaceA
 }
 
 GLPlatformSurface::GLPlatformSurface(SurfaceAttributes)
-    : m_fboId(0)
-    , m_sharedDisplay(0)
+    : m_sharedDisplay(0)
     , m_drawable(0)
     , m_bufferHandle(0)
 {
@@ -110,40 +109,16 @@ void GLPlatformSurface::swapBuffers()
     notImplemented();
 }
 
-void GLPlatformSurface::updateContents(const uint32_t texture)
+void GLPlatformSurface::updateContents(const uint32_t)
 {
-    if (!m_fboId)
-        glGenFramebuffers(1, &m_fboId);
-
-    int x = 0;
-    int y = 0;
-    int width = m_rect.width();
-    int height = m_rect.height();
-
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, m_fboId);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glFramebufferTexture2D(GL_READ_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-    // Use NEAREST as no scale is performed during the blit.
-    glBlitFramebuffer(x, y, width, height, x, y, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-    swapBuffers();
 }
 
-void GLPlatformSurface::setGeometry(const IntRect& newRect)
+void GLPlatformSurface::setGeometry(const IntRect&)
 {
-    m_rect = newRect;
 }
 
 void GLPlatformSurface::destroy()
 {
-    m_rect = IntRect();
-
-    if (m_fboId) {
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDeleteFramebuffers(1, &m_fboId);
-        m_fboId = 0;
-    }
 }
 
 GLPlatformSurface::SurfaceAttributes GLPlatformSurface::attributes() const

@@ -31,7 +31,6 @@
 #include "GLDefs.h"
 #include "IntRect.h"
 #include <wtf/Noncopyable.h>
-#include <wtf/PassOwnPtr.h>
 
 // Encapsulates a surface that can be rendered to with GL, hiding platform
 // specific management.
@@ -77,9 +76,9 @@ public:
     // Function does the following(in order):
     // a) Blits texture contents to back buffer.
     // b) Calls Swap Buffers.
-    virtual void updateContents(const uint32_t texture);
+    virtual void updateContents(const uint32_t);
 
-    virtual void setGeometry(const IntRect& newRect);
+    virtual void setGeometry(const IntRect&);
 
     virtual PlatformSurfaceConfig configuration();
 
@@ -87,11 +86,11 @@ public:
 
 protected:
     GLPlatformSurface(SurfaceAttributes);
-    IntRect m_rect;
-    GLuint m_fboId;
+
     PlatformDisplay m_sharedDisplay;
     PlatformDrawable m_drawable;
     PlatformBufferHandle m_bufferHandle;
+    IntRect m_rect;
 };
 
 }
@@ -99,3 +98,4 @@ protected:
 #endif
 
 #endif
+
