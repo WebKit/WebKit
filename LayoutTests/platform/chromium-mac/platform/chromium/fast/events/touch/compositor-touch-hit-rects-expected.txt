@@ -1,15 +1,16 @@
 This tests verifies the hit test regions given to the compositor. It can only be run in DumpRenderTree. The outputted rects should cover the hit test regions of all the listed elements.
 
-normalFlow[0]: (8, 68, 784, 10)
-absoluteChildContainer[0]: (8, 96, 784, 10)
+normalFlow[0]: (8, 68, 769, 10)
+absoluteChildContainer[0]: (8, 96, 769, 10)
 absoluteChildContainer[1]: (118, 300, 140, 10)
-relativeChildContainer[0]: (8, 142, 784, 10)
+relativeChildContainer[0]: (8, 142, 769, 10)
 relativeChildContainer[1]: (128, 342, 140, 10)
-overhangingContainer[0]: (8, 188, 784, 10)
+overhangingContainer[0]: (8, 188, 769, 10)
 overhangingContainer[1]: (8, 188, 110, 80)
-transformedChildContainer[0]: (63, 222, 674, 34)
-transformedChildContainer[1]: (8, 234, 784, 10)
+transformedChildContainer[0]: (62, 223, 661, 32)
+transformedChildContainer[1]: (8, 234, 769, 10)
 continuation[0]: (108, 280, 110, 10)
 inlineAbsoluteChildContainer[0]: (378, 300, 250, 10)
 inlineAbsoluteChildContainer[1]: (108, 328, 270, 10)
+document[0]: (0, 0, 785, 1024)
 
