@@ -112,13 +112,13 @@ protected:
     void addHTMLLengthToStyle(StylePropertySet*, CSSPropertyID, const String& value);
     void addHTMLColorToStyle(StylePropertySet*, CSSPropertyID, const String& color);
 
-    void applyAlignmentAttributeToStyle(const Attribute&, StylePropertySet*);
-    void applyBorderAttributeToStyle(const Attribute&, StylePropertySet*);
+    void applyAlignmentAttributeToStyle(const AtomicString&, MutableStylePropertySet*);
+    void applyBorderAttributeToStyle(const AtomicString&, MutableStylePropertySet*);
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
-    unsigned parseBorderWidthAttribute(const QualifiedName&, const AtomicString& value) const;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
+    unsigned parseBorderWidthAttribute(const AtomicString&) const;
 
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     void calculateAndAdjustDirectionality();
@@ -128,7 +128,7 @@ protected:
 private:
     virtual String nodeName() const;
 
-    void mapLanguageAttributeToLocale(const Attribute&, StylePropertySet*);
+    void mapLanguageAttributeToLocale(const AtomicString&, MutableStylePropertySet*);
 
     virtual HTMLFormElement* virtualForm() const;
 

@@ -85,26 +85,26 @@ bool HTMLImageElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLImageElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLImageElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
-    else if (attribute.name() == heightAttr)
-        addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
-    else if (attribute.name() == borderAttr)
-        applyBorderAttributeToStyle(attribute, style);
-    else if (attribute.name() == vspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attribute.value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attribute.value());
-    } else if (attribute.name() == hspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attribute.value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attribute.value());
-    } else if (attribute.name() == alignAttr)
-        applyAlignmentAttributeToStyle(attribute, style);
-    else if (attribute.name() == valignAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
+    if (name == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+    else if (name == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, value);
+    else if (name == borderAttr)
+        applyBorderAttributeToStyle(value, style);
+    else if (name == vspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
+        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
+    } else if (name == hspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
+        addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
+    } else if (name == alignAttr)
+        applyAlignmentAttributeToStyle(value, style);
+    else if (name == valignAttr)
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, value);
     else
-        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 void HTMLImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

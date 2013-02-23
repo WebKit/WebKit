@@ -133,27 +133,25 @@ static inline int unicodeBidiAttributeForDirAuto(HTMLElement* element)
     return CSSValueWebkitIsolate;
 }
 
-unsigned HTMLElement::parseBorderWidthAttribute(const QualifiedName& name, const AtomicString& value) const
+unsigned HTMLElement::parseBorderWidthAttribute(const AtomicString& value) const
 {
-    ASSERT_UNUSED(name, name == borderAttr);
     unsigned borderWidth = 0;
     if (value.isEmpty() || !parseHTMLNonNegativeInteger(value, borderWidth))
         return hasLocalName(tableTag) ? 1 : borderWidth;
     return borderWidth;
 }
 
-void HTMLElement::applyBorderAttributeToStyle(const Attribute& attribute, StylePropertySet* style)
+void HTMLElement::applyBorderAttributeToStyle(const AtomicString& value, MutableStylePropertySet* style)
 {
-    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attribute.name(), attribute.value()), CSSPrimitiveValue::CSS_PX);
+    addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSPrimitiveValue::CSS_PX);
     addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderStyle, CSSValueSolid);
 }
 
-void HTMLElement::mapLanguageAttributeToLocale(const Attribute& attribute, StylePropertySet* style)
+void HTMLElement::mapLanguageAttributeToLocale(const AtomicString& value, MutableStylePropertySet* style)
 {
-    ASSERT((attribute.name() == langAttr || attribute.name().matches(XMLNames::langAttr)));
-    if (!attribute.isEmpty()) {
+    if (!value.isEmpty()) {
         // Have to quote so the locale id is treated as a string instead of as a CSS keyword.
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, quoteCSSString(attribute.value()));
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, quoteCSSString(value));
     } else {
         // The empty string means the language is explicitly unknown.
         addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLocale, CSSValueAuto);
@@ -167,50 +165,50 @@ bool HTMLElement::isPresentationAttribute(const QualifiedName& name) const
     return StyledElement::isPresentationAttribute(name);
 }
 
-void HTMLElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == alignAttr) {
-        if (equalIgnoringCase(attribute.value(), "middle"))
+    if (name == alignAttr) {
+        if (equalIgnoringCase(value, "middle"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, CSSValueCenter);
         else
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, attribute.value());
-    } else if (attribute.name() == contenteditableAttr) {
-        if (attribute.isEmpty() || equalIgnoringCase(attribute.value(), "true")) {
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyTextAlign, value);
+    } else if (name == contenteditableAttr) {
+        if (value.isEmpty() || equalIgnoringCase(value, "true")) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWrite);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
-        } else if (equalIgnoringCase(attribute.value(), "plaintext-only")) {
+        } else if (equalIgnoringCase(value, "plaintext-only")) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadWritePlaintextOnly);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitNbspMode, CSSValueSpace);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitLineBreak, CSSValueAfterWhiteSpace);
-        } else if (equalIgnoringCase(attribute.value(), "false"))
+        } else if (equalIgnoringCase(value, "false"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserModify, CSSValueReadOnly);
-    } else if (attribute.name() == hiddenAttr) {
+    } else if (name == hiddenAttr) {
         addPropertyToPresentationAttributeStyle(style, CSSPropertyDisplay, CSSValueNone);
-    } else if (attribute.name() == draggableAttr) {
-        if (equalIgnoringCase(attribute.value(), "true")) {
+    } else if (name == draggableAttr) {
+        if (equalIgnoringCase(value, "true")) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueElement);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserSelect, CSSValueNone);
-        } else if (equalIgnoringCase(attribute.value(), "false"))
+        } else if (equalIgnoringCase(value, "false"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitUserDrag, CSSValueNone);
-    } else if (attribute.name() == dirAttr) {
-        if (equalIgnoringCase(attribute.value(), "auto"))
+    } else if (name == dirAttr) {
+        if (equalIgnoringCase(value, "auto"))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, unicodeBidiAttributeForDirAuto(this));
         else {
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyDirection, attribute.value());
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyDirection, value);
             if (!hasTagName(bdiTag) && !hasTagName(bdoTag) && !hasTagName(outputTag))
                 addPropertyToPresentationAttributeStyle(style, CSSPropertyUnicodeBidi, CSSValueEmbed);
         }
-    } else if (attribute.name().matches(XMLNames::langAttr)) {
-        mapLanguageAttributeToLocale(attribute, style);
-    } else if (attribute.name() == langAttr) {
+    } else if (name.matches(XMLNames::langAttr))
+        mapLanguageAttributeToLocale(value, style);
+    else if (name == langAttr) {
         // xml:lang has a higher priority than lang.
         if (!fastHasAttribute(XMLNames::langAttr))
-            mapLanguageAttributeToLocale(attribute, style);
+            mapLanguageAttributeToLocale(value, style);
     } else
-        StyledElement::collectStyleForPresentationAttribute(attribute, style);
+        StyledElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 void HTMLElement::parseAttribute(const QualifiedName& name, const AtomicString& value)
@@ -601,14 +599,13 @@ void HTMLElement::insertAdjacentText(const String& where, const String& text, Ex
     insertAdjacent(where, textNode.get(), ec);
 }
 
-void HTMLElement::applyAlignmentAttributeToStyle(const Attribute& attribute, StylePropertySet* style)
+void HTMLElement::applyAlignmentAttributeToStyle(const AtomicString& alignment, MutableStylePropertySet* style)
 {
     // Vertical alignment with respect to the current baseline of the text
     // right or left means floating images.
     int floatValue = CSSValueInvalid;
     int verticalAlignValue = CSSValueInvalid;
 
-    const AtomicString& alignment = attribute.value();
     if (equalIgnoringCase(alignment, "absmiddle"))
         verticalAlignValue = CSSValueMiddle;
     else if (equalIgnoringCase(alignment, "absbottom"))

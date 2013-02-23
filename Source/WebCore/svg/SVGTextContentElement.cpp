@@ -233,14 +233,14 @@ bool SVGTextContentElement::isPresentationAttribute(const QualifiedName& name) c
     return SVGStyledElement::isPresentationAttribute(name);
 }
 
-void SVGTextContentElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void SVGTextContentElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (!isSupportedAttribute(attribute.name()))
-        SVGStyledElement::collectStyleForPresentationAttribute(attribute, style);
-    else if (attribute.name().matches(XMLNames::spaceAttr)) {
+    if (!isSupportedAttribute(name))
+        SVGStyledElement::collectStyleForPresentationAttribute(name, value, style);
+    else if (name.matches(XMLNames::spaceAttr)) {
         DEFINE_STATIC_LOCAL(const AtomicString, preserveString, ("preserve", AtomicString::ConstructFromLiteral));
 
-        if (attribute.value() == preserveString)
+        if (value == preserveString)
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePre);
         else
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueNowrap);

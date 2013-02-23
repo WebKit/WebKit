@@ -58,23 +58,23 @@ bool HTMLIFrameElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLFrameElementBase::isPresentationAttribute(name);
 }
 
-void HTMLIFrameElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLIFrameElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
-    else if (attribute.name() == heightAttr)
-        addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
-    else if (attribute.name() == alignAttr)
-        applyAlignmentAttributeToStyle(attribute, style);
-    else if (attribute.name() == frameborderAttr) {
+    if (name == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+    else if (name == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, value);
+    else if (name == alignAttr)
+        applyAlignmentAttributeToStyle(value, style);
+    else if (name == frameborderAttr) {
         // Frame border doesn't really match the HTML4 spec definition for iframes. It simply adds
         // a presentational hint that the border should be off if set to zero.
-        if (!attribute.value().toInt()) {
+        if (!value.toInt()) {
             // Add a rule that nulls out our border width.
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, 0, CSSPrimitiveValue::CSS_PX);
         }
     } else
-        HTMLFrameElementBase::collectStyleForPresentationAttribute(attribute, style);
+        HTMLFrameElementBase::collectStyleForPresentationAttribute(name, value, style);
 }
 
 void HTMLIFrameElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

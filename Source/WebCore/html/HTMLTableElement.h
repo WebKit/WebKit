@@ -73,7 +73,7 @@ private:
 
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
     virtual bool isURLAttribute(const Attribute&) const OVERRIDE;
 
     // Used to obtain either a solid or outset border decl and to deal with the frame and rules attributes.

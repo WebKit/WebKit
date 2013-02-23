@@ -55,8 +55,7 @@ public:
     virtual CSSStyleDeclaration* style() OVERRIDE;
 
     const StylePropertySet* presentationAttributeStyle();
-
-    virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) { }
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) { }
 
 protected:
     StyledElement(const QualifiedName& name, Document* document, ConstructionType type)

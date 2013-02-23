@@ -147,9 +147,9 @@ bool HTMLTextAreaElement::isPresentationAttribute(const QualifiedName& name) con
     return HTMLTextFormControlElement::isPresentationAttribute(name);
 }
 
-void HTMLTextAreaElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLTextAreaElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == wrapAttr) {
+    if (name == wrapAttr) {
         if (shouldWrapText()) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValuePreWrap);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueBreakWord);
@@ -158,7 +158,7 @@ void HTMLTextAreaElement::collectStyleForPresentationAttribute(const Attribute& 
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWordWrap, CSSValueNormal);
         }
     } else
-        HTMLTextFormControlElement::collectStyleForPresentationAttribute(attribute, style);
+        HTMLTextFormControlElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 void HTMLTextAreaElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

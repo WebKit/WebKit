@@ -336,7 +336,7 @@ void StyledElement::rebuildPresentationAttributeStyle()
         unsigned size = attributeCount();
         for (unsigned i = 0; i < size; ++i) {
             const Attribute* attribute = attributeItem(i);
-            collectStyleForPresentationAttribute(*attribute, style.get());
+            collectStyleForPresentationAttribute(attribute->name(), attribute->value(), static_cast<MutableStylePropertySet*>(style.get()));
         }
     }
 

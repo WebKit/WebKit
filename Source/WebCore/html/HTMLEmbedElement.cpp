@@ -81,15 +81,15 @@ bool HTMLEmbedElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLPlugInImageElement::isPresentationAttribute(name);
 }
 
-void HTMLEmbedElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLEmbedElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == hiddenAttr) {
-        if (equalIgnoringCase(attribute.value(), "yes") || equalIgnoringCase(attribute.value(), "true")) {
+    if (name == hiddenAttr) {
+        if (equalIgnoringCase(value, "yes") || equalIgnoringCase(value, "true")) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, 0, CSSPrimitiveValue::CSS_PX);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyHeight, 0, CSSPrimitiveValue::CSS_PX);
         }
     } else
-        HTMLPlugInImageElement::collectStyleForPresentationAttribute(attribute, style);
+        HTMLPlugInImageElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 void HTMLEmbedElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

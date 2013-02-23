@@ -98,14 +98,14 @@ bool SVGImageElement::isPresentationAttribute(const QualifiedName& name) const
     return SVGStyledTransformableElement::isPresentationAttribute(name);
 }
 
-void SVGImageElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void SVGImageElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (!isSupportedAttribute(attribute.name()))
-        SVGStyledTransformableElement::collectStyleForPresentationAttribute(attribute, style);
-    else if (attribute.name() == SVGNames::widthAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, attribute.value());
-    else if (attribute.name() == SVGNames::heightAttr)
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyHeight, attribute.value());
+    if (!isSupportedAttribute(name))
+        SVGStyledTransformableElement::collectStyleForPresentationAttribute(name, value, style);
+    else if (name == SVGNames::widthAttr)
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyWidth, value);
+    else if (name == SVGNames::heightAttr)
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyHeight, value);
 }
 
 void SVGImageElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

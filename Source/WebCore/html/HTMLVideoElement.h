@@ -75,7 +75,7 @@ private:
     virtual void attach();
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
     virtual bool isVideo() const { return true; }
     virtual bool hasVideo() const { return player() && player()->hasVideo(); }
     virtual bool supportsFullscreen() const;

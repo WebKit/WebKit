@@ -299,53 +299,53 @@ static bool getBordersFromFrameAttributeValue(const AtomicString& value, bool& b
     return true;
 }
 
-void HTMLTableElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLTableElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == widthAttr)
-        addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
-    else if (attribute.name() == heightAttr)
-        addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
-    else if (attribute.name() == borderAttr) 
-        addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(attribute.name(), attribute.value()), CSSPrimitiveValue::CSS_PX);
-    else if (attribute.name() == bordercolorAttr) {
-        if (!attribute.isEmpty())
-            addHTMLColorToStyle(style, CSSPropertyBorderColor, attribute.value());
-    } else if (attribute.name() == bgcolorAttr)
-        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attribute.value());
-    else if (attribute.name() == backgroundAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
+    if (name == widthAttr)
+        addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+    else if (name == heightAttr)
+        addHTMLLengthToStyle(style, CSSPropertyHeight, value);
+    else if (name == borderAttr) 
+        addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, parseBorderWidthAttribute(value), CSSPrimitiveValue::CSS_PX);
+    else if (name == bordercolorAttr) {
+        if (!value.isEmpty())
+            addHTMLColorToStyle(style, CSSPropertyBorderColor, value);
+    } else if (name == bgcolorAttr)
+        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
+    else if (name == backgroundAttr) {
+        String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty())
             style->setProperty(CSSProperty(CSSPropertyBackgroundImage, CSSImageValue::create(document()->completeURL(url).string())));
-    } else if (attribute.name() == valignAttr) {
-        if (!attribute.isEmpty())
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, attribute.value());
-    } else if (attribute.name() == cellspacingAttr) {
-        if (!attribute.isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyBorderSpacing, attribute.value());
-    } else if (attribute.name() == vspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attribute.value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attribute.value());
-    } else if (attribute.name() == hspaceAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attribute.value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attribute.value());
-    } else if (attribute.name() == alignAttr) {
-        if (!attribute.value().isEmpty()) {
-            if (equalIgnoringCase(attribute.value(), "center")) {
+    } else if (name == valignAttr) {
+        if (!value.isEmpty())
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyVerticalAlign, value);
+    } else if (name == cellspacingAttr) {
+        if (!value.isEmpty())
+            addHTMLLengthToStyle(style, CSSPropertyBorderSpacing, value);
+    } else if (name == vspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
+        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
+    } else if (name == hspaceAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
+        addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
+    } else if (name == alignAttr) {
+        if (!value.isEmpty()) {
+            if (equalIgnoringCase(value, "center")) {
                 addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarginStart, CSSValueAuto);
                 addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarginEnd, CSSValueAuto);
             } else
-                addPropertyToPresentationAttributeStyle(style, CSSPropertyFloat, attribute.value());
+                addPropertyToPresentationAttributeStyle(style, CSSPropertyFloat, value);
         }
-    } else if (attribute.name() == rulesAttr) {
+    } else if (name == rulesAttr) {
         // The presence of a valid rules attribute causes border collapsing to be enabled.
         if (m_rulesAttr != UnsetRules)
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderCollapse, CSSValueCollapse);
-    } else if (attribute.name() == frameAttr) {
+    } else if (name == frameAttr) {
         bool borderTop;
         bool borderRight;
         bool borderBottom;
         bool borderLeft;
-        if (getBordersFromFrameAttributeValue(attribute.value(), borderTop, borderRight, borderBottom, borderLeft)) {
+        if (getBordersFromFrameAttributeValue(value, borderTop, borderRight, borderBottom, borderLeft)) {
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderWidth, CSSValueThin);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderTopStyle, borderTop ? CSSValueSolid : CSSValueHidden);
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderBottomStyle, borderBottom ? CSSValueSolid : CSSValueHidden);
@@ -353,7 +353,7 @@ void HTMLTableElement::collectStyleForPresentationAttribute(const Attribute& att
             addPropertyToPresentationAttributeStyle(style, CSSPropertyBorderRightStyle, borderRight ? CSSValueSolid : CSSValueHidden);
         }
     } else
-        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 bool HTMLTableElement::isPresentationAttribute(const QualifiedName& name) const
@@ -370,7 +370,7 @@ void HTMLTableElement::parseAttribute(const QualifiedName& name, const AtomicStr
 
     if (name == borderAttr)  {
         // FIXME: This attribute is a mess.
-        m_borderAttr = parseBorderWidthAttribute(name, value);
+        m_borderAttr = parseBorderWidthAttribute(value);
     } else if (name == bordercolorAttr) {
         m_borderColorAttr = !value.isEmpty();
     } else if (name == frameAttr) {

@@ -85,24 +85,24 @@ bool HTMLTableCellElement::isPresentationAttribute(const QualifiedName& name) co
     return HTMLTablePartElement::isPresentationAttribute(name);
 }
 
-void HTMLTableCellElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLTableCellElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == nowrapAttr) {
+    if (name == nowrapAttr)
         addPropertyToPresentationAttributeStyle(style, CSSPropertyWhiteSpace, CSSValueWebkitNowrap);
-    } else if (attribute.name() == widthAttr) {
-        if (!attribute.value().isEmpty()) {
-            int widthInt = attribute.value().toInt();
+    else if (name == widthAttr) {
+        if (!value.isEmpty()) {
+            int widthInt = value.toInt();
             if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
-                addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
+                addHTMLLengthToStyle(style, CSSPropertyWidth, value);
         }
-    } else if (attribute.name() == heightAttr) {
-        if (!attribute.value().isEmpty()) {
-            int heightInt = attribute.value().toInt();
+    } else if (name == heightAttr) {
+        if (!value.isEmpty()) {
+            int heightInt = value.toInt();
             if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
-                addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
+                addHTMLLengthToStyle(style, CSSPropertyHeight, value);
         }
     } else
-        HTMLTablePartElement::collectStyleForPresentationAttribute(attribute, style);
+        HTMLTablePartElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 void HTMLTableCellElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

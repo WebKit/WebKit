@@ -185,19 +185,19 @@ bool HTMLFontElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLFontElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLFontElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == sizeAttr) {
+    if (name == sizeAttr) {
         int size = 0;
-        if (cssValueFromFontSizeNumber(attribute.value(), size))
+        if (cssValueFromFontSizeNumber(value, size))
             addPropertyToPresentationAttributeStyle(style, CSSPropertyFontSize, size);
-    } else if (attribute.name() == colorAttr)
-        addHTMLColorToStyle(style, CSSPropertyColor, attribute.value());
-    else if (attribute.name() == faceAttr) {
-        if (RefPtr<CSSValueList> fontFaceValue = cssValuePool().createFontFaceValue(attribute.value()))
+    } else if (name == colorAttr)
+        addHTMLColorToStyle(style, CSSPropertyColor, value);
+    else if (name == faceAttr) {
+        if (RefPtr<CSSValueList> fontFaceValue = cssValuePool().createFontFaceValue(value))
             style->setProperty(CSSProperty(CSSPropertyFontFamily, fontFaceValue.release()));
     } else
-        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 }

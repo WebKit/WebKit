@@ -49,7 +49,7 @@ private:
     virtual bool isMathMLElement() const { return true; }
 
     virtual bool isPresentationAttribute(const QualifiedName&) const OVERRIDE;
-    virtual void collectStyleForPresentationAttribute(const Attribute&, StylePropertySet*) OVERRIDE;
+    virtual void collectStyleForPresentationAttribute(const QualifiedName&, const AtomicString&, MutableStylePropertySet*) OVERRIDE;
 };
 
 inline MathMLElement* toMathMLElement(Node* node)

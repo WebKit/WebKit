@@ -68,30 +68,30 @@ bool HTMLBodyElement::isPresentationAttribute(const QualifiedName& name) const
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLBodyElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLBodyElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == backgroundAttr) {
-        String url = stripLeadingAndTrailingHTMLSpaces(attribute.value());
+    if (name == backgroundAttr) {
+        String url = stripLeadingAndTrailingHTMLSpaces(value);
         if (!url.isEmpty()) {
             RefPtr<CSSImageValue> imageValue = CSSImageValue::create(document()->completeURL(url).string());
             imageValue->setInitiator(localName());
             style->setProperty(CSSProperty(CSSPropertyBackgroundImage, imageValue));
         }
-    } else if (attribute.name() == marginwidthAttr || attribute.name() == leftmarginAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginRight, attribute.value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attribute.value());
-    } else if (attribute.name() == marginheightAttr || attribute.name() == topmarginAttr) {
-        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attribute.value());
-        addHTMLLengthToStyle(style, CSSPropertyMarginTop, attribute.value());
-    } else if (attribute.name() == bgcolorAttr) {
-        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attribute.value());
-    } else if (attribute.name() == textAttr) {
-        addHTMLColorToStyle(style, CSSPropertyColor, attribute.value());
-    } else if (attribute.name() == bgpropertiesAttr) {
-        if (equalIgnoringCase(attribute.value(), "fixed"))
+    } else if (name == marginwidthAttr || name == leftmarginAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
+        addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
+    } else if (name == marginheightAttr || name == topmarginAttr) {
+        addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
+        addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
+    } else if (name == bgcolorAttr) {
+        addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
+    } else if (name == textAttr) {
+        addHTMLColorToStyle(style, CSSPropertyColor, value);
+    } else if (name == bgpropertiesAttr) {
+        if (equalIgnoringCase(value, "fixed"))
            addPropertyToPresentationAttributeStyle(style, CSSPropertyBackgroundAttachment, CSSValueFixed);
     } else
-        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 void HTMLBodyElement::parseAttribute(const QualifiedName& name, const AtomicString& value)

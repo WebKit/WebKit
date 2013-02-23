@@ -65,48 +65,48 @@ bool HTMLMarqueeElement::isPresentationAttribute(const QualifiedName& name) cons
     return HTMLElement::isPresentationAttribute(name);
 }
 
-void HTMLMarqueeElement::collectStyleForPresentationAttribute(const Attribute& attribute, StylePropertySet* style)
+void HTMLMarqueeElement::collectStyleForPresentationAttribute(const QualifiedName& name, const AtomicString& value, MutableStylePropertySet* style)
 {
-    if (attribute.name() == widthAttr) {
-        if (!attribute.isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyWidth, attribute.value());
-    } else if (attribute.name() == heightAttr) {
-        if (!attribute.isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyHeight, attribute.value());
-    } else if (attribute.name() == bgcolorAttr) {
-        if (!attribute.isEmpty())
-            addHTMLColorToStyle(style, CSSPropertyBackgroundColor, attribute.value());
-    } else if (attribute.name() == vspaceAttr) {
-        if (!attribute.isEmpty()) {
-            addHTMLLengthToStyle(style, CSSPropertyMarginTop, attribute.value());
-            addHTMLLengthToStyle(style, CSSPropertyMarginBottom, attribute.value());
+    if (name == widthAttr) {
+        if (!value.isEmpty())
+            addHTMLLengthToStyle(style, CSSPropertyWidth, value);
+    } else if (name == heightAttr) {
+        if (!value.isEmpty())
+            addHTMLLengthToStyle(style, CSSPropertyHeight, value);
+    } else if (name == bgcolorAttr) {
+        if (!value.isEmpty())
+            addHTMLColorToStyle(style, CSSPropertyBackgroundColor, value);
+    } else if (name == vspaceAttr) {
+        if (!value.isEmpty()) {
+            addHTMLLengthToStyle(style, CSSPropertyMarginTop, value);
+            addHTMLLengthToStyle(style, CSSPropertyMarginBottom, value);
         }
-    } else if (attribute.name() == hspaceAttr) {
-        if (!attribute.isEmpty()) {
-            addHTMLLengthToStyle(style, CSSPropertyMarginLeft, attribute.value());
-            addHTMLLengthToStyle(style, CSSPropertyMarginRight, attribute.value());
+    } else if (name == hspaceAttr) {
+        if (!value.isEmpty()) {
+            addHTMLLengthToStyle(style, CSSPropertyMarginLeft, value);
+            addHTMLLengthToStyle(style, CSSPropertyMarginRight, value);
         }
-    } else if (attribute.name() == scrollamountAttr) {
-        if (!attribute.isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeIncrement, attribute.value());
-    } else if (attribute.name() == scrolldelayAttr) {
-        if (!attribute.isEmpty())
-            addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeSpeed, attribute.value());
-    } else if (attribute.name() == loopAttr) {
-        if (!attribute.isEmpty()) {
-            if (attribute.value() == "-1" || equalIgnoringCase(attribute.value(), "infinite"))
+    } else if (name == scrollamountAttr) {
+        if (!value.isEmpty())
+            addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeIncrement, value);
+    } else if (name == scrolldelayAttr) {
+        if (!value.isEmpty())
+            addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeSpeed, value);
+    } else if (name == loopAttr) {
+        if (!value.isEmpty()) {
+            if (value == "-1" || equalIgnoringCase(value, "infinite"))
                 addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeRepetition, CSSValueInfinite);
             else
-                addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeRepetition, attribute.value());
+                addHTMLLengthToStyle(style, CSSPropertyWebkitMarqueeRepetition, value);
         }
-    } else if (attribute.name() == behaviorAttr) {
-        if (!attribute.isEmpty())
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeStyle, attribute.value());
-    } else if (attribute.name() == directionAttr) {
-        if (!attribute.isEmpty())
-            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeDirection, attribute.value());
+    } else if (name == behaviorAttr) {
+        if (!value.isEmpty())
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeStyle, value);
+    } else if (name == directionAttr) {
+        if (!value.isEmpty())
+            addPropertyToPresentationAttributeStyle(style, CSSPropertyWebkitMarqueeDirection, value);
     } else
-        HTMLElement::collectStyleForPresentationAttribute(attribute, style);
+        HTMLElement::collectStyleForPresentationAttribute(name, value, style);
 }
 
 void HTMLMarqueeElement::start()
