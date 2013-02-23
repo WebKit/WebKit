@@ -44,7 +44,7 @@ NetworkInfoProviderEfl::NetworkInfoProviderEfl()
 void NetworkInfoProviderEfl::startUpdating()
 {
     if (!eeze_init())
-        fprintf(stderr, "Fail to start network information client.\n");
+        EINA_LOG_ERR("Fail to start network information client.");
 }
 
 void NetworkInfoProviderEfl::stopUpdating()
