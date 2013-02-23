@@ -31,7 +31,7 @@
 #ifndef ResourceLoaderOptions_h
 #define ResourceLoaderOptions_h
 
-#include "ResourceHandle.h"
+#include "ResourceHandleTypes.h"
 
 namespace WebCore {
     
