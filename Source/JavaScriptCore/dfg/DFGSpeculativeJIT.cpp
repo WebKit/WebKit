@@ -3936,21 +3936,7 @@ void SpeculativeJIT::speculateNumber(Edge edge)
     if (!needsTypeCheck(edge, SpecNumber))
         return;
     
-    JSValueOperand operand(this, edge, ManualOperandSpeculation);
-#if USE(JSVALUE64)
-    JITCompiler::Jump isInteger = m_jit.branch64(MacroAssembler::AboveOrEqual, operand.gpr(), GPRInfo::tagTypeNumberRegister);
-    typeCheck(
-        JSValueRegs(operand.gpr()), edge, SpecNumber,
-        m_jit.branchTest64(MacroAssembler::Zero, operand.gpr(), GPRInfo::tagTypeNumberRegister));
-    isInteger.link(&m_jit);
-#else
-    JSValueOperand op1(this, edge, ManualOperandSpeculation);
-    JITCompiler::Jump isInteger = m_jit.branch32(MacroAssembler::Equal, operand.tagGPR(), TrustedImm32(JSValue::Int32Tag));
-    typeCheck(
-        JSValueRegs(operand.tagGPR(), op1.payloadGPR()), edge, SpecNumber,
-        m_jit.branch32(MacroAssembler::AboveOrEqual, operand.tagGPR(), TrustedImm32(JSValue::LowestTag)));
-    isInteger.link(&m_jit);
-#endif
+    (SpeculateDoubleOperand(this, edge)).fpr();
 }
 
 void SpeculativeJIT::speculateRealNumber(Edge edge)

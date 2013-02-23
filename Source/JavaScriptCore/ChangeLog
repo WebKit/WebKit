@@ -1,5 +1,28 @@
 2013-02-22  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::SpeculativeJIT::speculateNumber() should just use SpeculateDoubleOperand instead of doing its own thing
+        https://bugs.webkit.org/show_bug.cgi?id=110659
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        This simplifies the code, and also has the effect that if speculateNumber() is called
+        prior to someone actually using the number in a double context, then the number will
+        already be up-converted to double and ready to go.
+
+        Previously if this ever came up, the subsequent use would have to again branch to see
+        if the value is tagged as int or tagged as double.
+
+        On the other hand, if you ever did speculateNumber() and then used the value as a
+        JSValue, this will be a slow down now.
+
+        I suspect that the former (speculateNumber() and then use as number) is more likely
+        than the latter (speculateNumber() and then use as JSValue).
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::speculateNumber):
+
+2013-02-22  Filip Pizlo  <fpizlo@apple.com>
+
         DFG FixupPhase should have one common hook for knowing if a node is ever being speculated a certain way
         https://bugs.webkit.org/show_bug.cgi?id=110650
 
