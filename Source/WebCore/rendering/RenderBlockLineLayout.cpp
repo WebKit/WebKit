@@ -359,13 +359,43 @@ static void checkMidpoints(LineMidpointState& lineMidpointState, InlineIterator&
     }
 }
 
-static void addMidpoint(LineMidpointState& lineMidpointState, const InlineIterator& midpoint)
+// Don't call this directly. Use one of the descriptive helper functions below.
+static void deprecatedAddMidpoint(LineMidpointState& lineMidpointState, const InlineIterator& midpoint)
 {
     if (lineMidpointState.midpoints.size() <= lineMidpointState.numMidpoints)
         lineMidpointState.midpoints.grow(lineMidpointState.numMidpoints + 10);
 
     InlineIterator* midpoints = lineMidpointState.midpoints.data();
     midpoints[lineMidpointState.numMidpoints++] = midpoint;
+}
+
+static inline void startIgnoringSpaces(LineMidpointState& lineMidpointState, const InlineIterator& midpoint)
+{
+    ASSERT(!(lineMidpointState.numMidpoints % 2));
+    deprecatedAddMidpoint(lineMidpointState, midpoint);
+}
+
+static inline void stopIgnoringSpaces(LineMidpointState& lineMidpointState, const InlineIterator& midpoint)
+{
+    ASSERT(lineMidpointState.numMidpoints % 2);
+    deprecatedAddMidpoint(lineMidpointState, midpoint);
+}
+
+// When ignoring spaces, this needs to be called for objects that need line boxes such as RenderInlines or
+// hard line breaks to ensure that they're not ignored.
+static inline void ensureLineBoxInsideIgnoredSpaces(LineMidpointState& lineMidpointState, RenderObject* renderer)
+{
+    InlineIterator midpoint(0, renderer, 0);
+    stopIgnoringSpaces(lineMidpointState, midpoint);
+    startIgnoringSpaces(lineMidpointState, midpoint);
+}
+
+// Adding a pair of midpoints before a character will split it out into a new line box.
+static inline void ensureCharacterGetsLineBox(LineMidpointState& lineMidpointState, InlineIterator& textParagraphSeparator)
+{
+    InlineIterator midpoint(0, textParagraphSeparator.m_obj, textParagraphSeparator.m_pos);
+    startIgnoringSpaces(lineMidpointState, InlineIterator(0, textParagraphSeparator.m_obj, textParagraphSeparator.m_pos - 1));
+    stopIgnoringSpaces(lineMidpointState, InlineIterator(0, textParagraphSeparator.m_obj, textParagraphSeparator.m_pos));
 }
 
 static inline BidiRun* createRun(int start, int end, RenderObject* obj, InlineBidiResolver& resolver)
@@ -2325,7 +2355,7 @@ static bool shouldSkipWhitespaceAfterStartObject(RenderBlock* block, RenderObjec
         RenderText* nextText = toRenderText(next);
         UChar nextChar = nextText->characterAt(0);
         if (nextText->style()->isCollapsibleWhiteSpace(nextChar)) {
-            addMidpoint(lineMidpointState, InlineIterator(0, o, 0));
+            startIgnoringSpaces(lineMidpointState, InlineIterator(0, o, 0));
             return true;
         }
     }
@@ -2478,9 +2508,7 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
         for (size_t i = 0; i < m_boxes.size(); ++i) {
             if (currentMidpoint >= lineMidpointState.numMidpoints) {
                 // We don't have a midpoint for this box yet.
-                InlineIterator ignoreStart(0, m_boxes[i], 0);
-                addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring.
-                addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
+                ensureLineBoxInsideIgnoredSpaces(lineMidpointState, m_boxes[i]);
             } else {
                 ASSERT(lineMidpointState.midpoints[currentMidpoint].m_obj == m_boxes[i]);
                 ASSERT(lineMidpointState.midpoints[currentMidpoint + 1].m_obj == m_boxes[i]);
@@ -2494,11 +2522,9 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
         unsigned length = m_whitespace->textLength();
         unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
         InlineIterator endMid(0, m_whitespace, pos);
-        addMidpoint(lineMidpointState, endMid);
+        startIgnoringSpaces(lineMidpointState, endMid);
         for (size_t i = 0; i < m_boxes.size(); ++i) {
-            InlineIterator ignoreStart(0, m_boxes[i], 0);
-            addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring spaces.
-            addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
+            ensureLineBoxInsideIgnoredSpaces(lineMidpointState, m_boxes[i]);
         }
     }
 }
@@ -2641,10 +2667,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                 // A <br> with clearance always needs a linebox in case the lines below it get dirtied later and 
                 // need to check for floats to clear - so if we're ignoring spaces, stop ignoring them and add a
                 // run for this object.
-                if (ignoringSpaces && currentStyle->clear() != CNONE) {
-                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0)); // Stop ignoring spaces.
-                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0)); // Start ignoring again.
-                }
+                if (ignoringSpaces && currentStyle->clear() != CNONE)
+                    ensureLineBoxInsideIgnoredSpaces(lineMidpointState, current.m_obj);
 
                 if (!lineInfo.isEmpty())
                     m_clear = currentStyle->clear();
@@ -2668,12 +2692,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // If we're ignoring spaces, we have to stop and include this object and
             // then start ignoring spaces again.
             if (isInlineType || current.m_obj->container()->isRenderInline()) {
-                if (ignoringSpaces) {
-                    ignoreStart.m_obj = current.m_obj;
-                    ignoreStart.m_pos = 0;
-                    addMidpoint(lineMidpointState, ignoreStart); // Stop ignoring spaces.
-                    addMidpoint(lineMidpointState, ignoreStart); // Start ignoring again.
-                }
+                if (ignoringSpaces)
+                    ensureLineBoxInsideIgnoredSpaces(lineMidpointState, current.m_obj);
                 trailingObjects.appendBoxIfNeeded(box);
             } else
                 m_positionedObjects.append(box);
@@ -2710,8 +2730,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     lineInfo.setEmpty(false, m_block, &width);
                 if (ignoringSpaces) {
                     trailingObjects.clear();
-                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0)); // Stop ignoring spaces.
-                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0)); // Start ignoring again.
+                    ensureLineBoxInsideIgnoredSpaces(lineMidpointState, current.m_obj);
                 } else if (blockStyle->collapseWhiteSpace() && resolver.position().m_obj == current.m_obj
                     && shouldSkipWhitespaceAfterStartObject(m_block, current.m_obj, lineMidpointState)) {
                     // Like with list markers, we start ignoring spaces to make sure that any
@@ -2736,7 +2755,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             }
 
             if (ignoringSpaces)
-                addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, 0));
+                stopIgnoringSpaces(lineMidpointState, InlineIterator(0, current.m_obj, 0));
 
             lineInfo.setEmpty(false, m_block, &width);
             ignoringSpaces = false;
@@ -2855,7 +2874,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                             ignoringSpaces = false;
                             wordSpacingForWordMeasurement = 0;
                             lastSpace = current.m_pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                            addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
+                            stopIgnoringSpaces(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
                             stoppedIgnoringSpaces = true;
                         } else {
                             // Just keep ignoring these spaces.
@@ -2913,11 +2932,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                                     goto end;
                             }
                             if (lBreak.atTextParagraphSeparator()) {
-                                if (!stoppedIgnoringSpaces && current.m_pos > 0) {
-                                    // We need to stop right before the newline and then start up again.
-                                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos - 1)); // Stop
-                                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos)); // Start
-                                }
+                                if (!stoppedIgnoringSpaces && current.m_pos > 0)
+                                    ensureCharacterGetsLineBox(lineMidpointState, current);
                                 lBreak.increment();
                                 lineInfo.setPreviousLineBrokeCleanly(true);
                                 wordMeasurement.endOffset = lBreak.m_pos;
@@ -2931,7 +2947,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                                 }
                             }
                             // Didn't fit. Jump to the end unless there's still an opportunity to collapse whitespace.
-                            if (ignoringSpaces || !currentStyle->collapseWhiteSpace() || !currentCharacterIsSpace || !previousCharacterIsSpace)
+                            if (ignoringSpaces || !collapseWhiteSpace || !currentCharacterIsSpace || !previousCharacterIsSpace)
                                 goto end;
                         } else {
                             if (!betweenWords || (midWordBreak && !autoWrap))
@@ -2945,11 +2961,8 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     }
 
                     if (c == '\n' && preserveNewline) {
-                        if (!stoppedIgnoringSpaces && current.m_pos > 0) {
-                            // We need to stop right before the newline and then start up again.
-                            addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos - 1)); // Stop
-                            addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos)); // Start
-                        }
+                        if (!stoppedIgnoringSpaces && current.m_pos > 0)
+                            ensureCharacterGetsLineBox(lineMidpointState, current);
                         lBreak.moveTo(current.m_obj, current.m_pos, current.m_nextBreakablePosition);
                         lBreak.increment();
                         lineInfo.setPreviousLineBrokeCleanly(true);
@@ -2988,7 +3001,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                             // We just entered a mode where we are ignoring
                             // spaces. Create a midpoint to terminate the run
                             // before the second space.
-                            addMidpoint(lineMidpointState, ignoreStart);
+                            startIgnoringSpaces(lineMidpointState, ignoreStart);
                             trailingObjects.updateMidpointsForTrailingBoxes(lineMidpointState, InlineIterator(), TrailingObjects::DoNotCollapseFirstSpace);
                         }
                     }
@@ -2999,16 +3012,14 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
                     lastSpaceWordSpacing = applyWordSpacing ? wordSpacing : 0;
                     wordSpacingForWordMeasurement = (applyWordSpacing && wordMeasurements.last().width) ? wordSpacing : 0;
                     lastSpace = current.m_pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
-                    addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
+                    stopIgnoringSpaces(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
                 }
 
 #if ENABLE(SVG)
                 if (isSVGText && current.m_pos > 0) {
                     // Force creation of new InlineBoxes for each absolute positioned character (those that start new text chunks).
-                    if (toRenderSVGInlineText(t)->characterStartsNewTextChunk(current.m_pos)) {
-                        addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos - 1));
-                        addMidpoint(lineMidpointState, InlineIterator(0, current.m_obj, current.m_pos));
-                    }
+                    if (toRenderSVGInlineText(t)->characterStartsNewTextChunk(current.m_pos))
+                        ensureCharacterGetsLineBox(lineMidpointState, current);
                 }
 #endif
 
