@@ -142,6 +142,7 @@ private:
     void checkForSpeculationFailure();
     void didFailSpeculation(PassOwnPtr<HTMLToken>, PassOwnPtr<HTMLTokenizer>);
     void processParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk>);
+    void pumpPendingSpeculations();
 #endif
 
     Document* contextForParsingSession();
