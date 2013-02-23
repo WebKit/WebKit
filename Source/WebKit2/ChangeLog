@@ -1,3 +1,19 @@
+2013-02-22  Tim Horton  <timothy_horton@apple.com>
+
+        [WK2] The root and page overlay layers should be the size of the view, not the content
+        https://bugs.webkit.org/show_bug.cgi?id=110660
+        <rdar://problem/13096456>
+
+        Reviewed by Simon Fraser.
+
+        Use the view size for the size of the root and page overlay layers.
+        For one, we never update these layers' sizes when the content size changes, causing size mismatches.
+        In addition, there's no reason an overlay shouldn't be able to draw outside of the bounds of the content.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updateGeometry):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+
 2013-02-22  Anders Carlsson  <andersca@apple.com>
 
         pluginLoadStrategy should take a WKDictionaryRef for extensibility
