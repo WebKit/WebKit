@@ -1,3 +1,16 @@
+2013-02-22  Sam Weinig  <sam@webkit.org>
+
+        Add temporary work around for 32-bit plugins not working in production builds as XPCServices
+        https://bugs.webkit.org/show_bug.cgi?id=110680
+        <rdar://problem/13236883>
+
+        Reviewed by Anders Carlsson.
+
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::shouldUseXPC):
+        Temporarily don't use XPC for plug-ins for Safari while we figure out why the
+        32-bit XPCService is being built universal.
+
 2013-02-22  Tim Horton  <timothy_horton@apple.com>
 
         [WK2] The root and page overlay layers should be the size of the view, not the content

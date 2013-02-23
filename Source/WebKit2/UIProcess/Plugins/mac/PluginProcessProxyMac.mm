@@ -33,6 +33,7 @@
 #import "PluginProcessMessages.h"
 #import "WebKitSystemInterface.h"
 #import <WebCore/FileSystem.h>
+#import <WebCore/RuntimeApplicationChecks.h>
 #import <spawn.h>
 #import <wtf/text/CString.h>
 
@@ -124,6 +125,10 @@ static bool shouldUseXPC()
         return [value boolValue];
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    // FIXME: Temporary workaround for <rdar://problem/13236883>
+    if (applicationIsSafari())
+        return false;
+
     return true;
 #else
     return false;
