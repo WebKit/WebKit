@@ -86,7 +86,6 @@ public:
     void setAppCacheMaximumSize(unsigned long long quota);
     void setApplicationCacheOriginQuota(unsigned long long);
     void setAuthorAndUserStylesEnabled(bool);
-    void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
     void setCacheModel(int);
     void setCustomPolicyDelegate(bool setDelegate, bool permissive);
     void setDatabaseQuota(unsigned long long quota);

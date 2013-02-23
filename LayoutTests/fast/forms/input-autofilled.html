@@ -12,8 +12,8 @@
         var originalForeground = computedStyle.color;
         var originalBackground = computedStyle.backgroundColor;
 
-        if (window.testRunner) {
-            testRunner.setAutofilled(tf, true);
+        if (window.internals) {
+            window.internals.setAutofilled(tf, true);
         }
 
         // Both the foreground and background colors should change.
@@ -29,8 +29,8 @@
             return;
         }
 
-        if (window.testRunner) {
-            testRunner.setAutofilled(tf, false);
+        if (window.internals) {
+            window.internals.setAutofilled(tf, false);
         }
 
         // Colors should be restored.

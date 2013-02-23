@@ -199,11 +199,6 @@ void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
     // FIXME: implement
 }
 
-void TestRunner::setAutofilled(JSContextRef, JSValueRef element, bool isAutofilled)
-{
-    // FIXME: implement
-}
-
 void TestRunner::setPopupBlockingEnabled(bool popupBlockingEnabled)
 {
     // FIXME: implement

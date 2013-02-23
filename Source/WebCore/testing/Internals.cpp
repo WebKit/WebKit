@@ -1141,6 +1141,16 @@ void Internals::setEditingValue(Element* element, const String& value, Exception
     inputElement->setEditingValue(value);
 }
 
+void Internals::setAutofilled(Element* element, bool enabled, ExceptionCode& ec)
+{
+    HTMLInputElement* inputElement = element->toInputElement();
+    if (!inputElement) {
+        ec = INVALID_ACCESS_ERR;
+        return;
+    }
+    inputElement->setAutofilled(enabled);
+}
+
 void Internals::scrollElementToRect(Element* element, long x, long y, long w, long h, ExceptionCode& ec)
 {
     if (!element || !element->document() || !element->document()->view()) {

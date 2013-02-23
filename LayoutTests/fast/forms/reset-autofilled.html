@@ -12,8 +12,8 @@
         }
 
         var field = document.getElementById('field');
-        if (window.testRunner) {
-            testRunner.setAutofilled(field, true);
+        if (window.internals) {
+            window.internals.setAutofilled(field, true);
         } else {
             testFailed('This test requires a LayoutTestController.');
             return;

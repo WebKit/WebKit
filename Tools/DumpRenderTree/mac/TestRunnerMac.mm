@@ -419,15 +419,6 @@ void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
     [[[mainFrame webView] preferences] setAuthorAndUserStylesEnabled:flag];
 }
 
-void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
-{
-    DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
-    if (!element || ![element isKindOfClass:[DOMHTMLInputElement class]])
-        return;
-
-    [(DOMHTMLInputElement *)element _setAutofilled:autofilled];
-}
-
 void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     if (setDelegate) {

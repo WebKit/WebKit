@@ -68,7 +68,6 @@ public:
     static AtkObject* getFocusedAccessibleElement(WebKitWebFrame*);
     static AtkObject* getRootAccessibleElement(WebKitWebFrame*);
     static void layoutFrame(WebKitWebFrame*);
-    static void setAutofilled(JSContextRef, JSValueRef, bool);
     static void setValueForUser(JSContextRef, JSValueRef, JSStringRef);
     static bool shouldClose(WebKitWebFrame*);
     static bool elementDoesAutoCompleteForElementWithId(WebKitWebFrame*, JSStringRef);

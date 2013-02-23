@@ -125,6 +125,7 @@
     DOMString suggestedValue(in Element inputElement) raises (DOMException);
     void setSuggestedValue(in Element inputElement, in DOMString value) raises (DOMException);
     void setEditingValue(in Element inputElement, in DOMString value) raises (DOMException);
+    void setAutofilled(in Element inputElement, in boolean enabled) raises(DOMException);
 
     void paintControlTints(in Document document) raises (DOMException);
 

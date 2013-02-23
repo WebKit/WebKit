@@ -68,7 +68,6 @@ public:
     static String suitableDRTFrameName(const Evas_Object* ewkFrame);
     static String layerTreeAsText(const Evas_Object* ewkFrame);
     static void setValueForUser(JSContextRef, JSValueRef nodeObject, const String& value);
-    static void setAutofilled(JSContextRef, JSValueRef nodeObject, bool autofilled);
     static void setDefersLoading(Evas_Object* ewkView, bool defers);
     static void setLoadsSiteIconsIgnoringImageLoadingSetting(Evas_Object* ewkView, bool loadsSiteIconsIgnoringImageLoadingPreferences);
     static void setMinimumLogicalFontSize(Evas_Object* ewkView, int size);

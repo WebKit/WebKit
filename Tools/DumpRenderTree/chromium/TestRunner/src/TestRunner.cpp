@@ -198,7 +198,6 @@ TestRunner::TestRunner(TestInterfaces* interfaces)
     bindMethod("startSpeechInput", &TestRunner::startSpeechInput);
     bindMethod("markerTextForListItem", &TestRunner::markerTextForListItem);
     bindMethod("findString", &TestRunner::findString);
-    bindMethod("setAutofilled", &TestRunner::setAutofilled);
     bindMethod("setValueForUser", &TestRunner::setValueForUser);
     bindMethod("enableFixedLayoutMode", &TestRunner::enableFixedLayoutMode);
     bindMethod("setFixedLayoutSize", &TestRunner::setFixedLayoutSize);
@@ -1375,23 +1374,6 @@ void TestRunner::findString(const CppArgumentList& arguments, CppVariant* result
     WebFrame* frame = m_webView->mainFrame();
     const bool findResult = frame->find(0, cppVariantToWebString(arguments[0]), findOptions, wrapAround, 0);
     result->set(findResult);
-}
-
-void TestRunner::setAutofilled(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() != 2 || !arguments[1].isBool())
-        return;
-
-    WebElement element;
-    if (!WebBindings::getElement(arguments[0].value.objectValue, &element))
-        return;
-
-    WebInputElement* input = toWebInputElement(&element);
-    if (!input)
-        return;
-
-    input->setAutofilled(arguments[1].value.boolValue);
 }
 
 void TestRunner::setValueForUser(const CppArgumentList& arguments, CppVariant* result)

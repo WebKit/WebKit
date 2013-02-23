@@ -616,19 +616,6 @@ void TestRunner::setAsynchronousSpellCheckingEnabled(bool)
     notImplemented();
 }
 
-void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
-{
-    JSC::ExecState* exec = toJS(context);
-    WebCore::Element* element = toElement(toJS(exec, nodeObject));
-    if (!element)
-        return;
-    WebCore::HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement)
-        return;
-
-    inputElement->setAutofilled(autofilled);
-}
-
 int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     return DumpRenderTreeSupport::numberOfPendingGeolocationPermissionRequests(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page());

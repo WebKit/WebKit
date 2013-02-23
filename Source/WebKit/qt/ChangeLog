@@ -1,3 +1,13 @@
+2013-02-23  Jason Anderssen  <janderssen@gmail.com>
+
+        Move setAutofilled from TestRunner to WebCore
+        https://bugs.webkit.org/show_bug.cgi?id=110521
+
+        Reviewed by Benjamin Poulain.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2013-02-21  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Replace QWebPageAdaptor::TouchAdjuster

@@ -414,11 +414,6 @@ void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
     // FIXME: implement
 }
 
-void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool isAutofilled)
-{
-    DumpRenderTreeSupportGtk::setAutofilled(context, nodeObject, isAutofilled);
-}
-
 void TestRunner::setMockDeviceOrientation(bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma)
 {
     // FIXME: Implement for DeviceOrientation layout tests.

@@ -335,27 +335,6 @@ void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
     prefsPrivate->setAuthorAndUserStylesEnabled(flag);
 }
 
-void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebViewPrivate> webViewPrivate(Query, webView);
-    if (!webViewPrivate)
-        return;
-
-    COMPtr<IDOMElement> element;
-    if (FAILED(webViewPrivate->elementFromJS(context, nodeObject, &element)))
-        return;
-
-    COMPtr<IFormsAutoFillTransition> autofillElement(Query, element);
-    if (!autofillElement)
-        return;
-
-    autofillElement->setAutofilled(autofilled);
-}
-
 void TestRunner::setCustomPolicyDelegate(bool setDelegate, bool permissive)
 {
     COMPtr<IWebView> webView;

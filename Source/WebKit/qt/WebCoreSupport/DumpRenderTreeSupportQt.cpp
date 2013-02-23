@@ -264,18 +264,6 @@ bool DumpRenderTreeSupportQt::hasDocumentElement(QWebFrameAdapter *adapter)
     return adapter->frame->document()->documentElement();
 }
 
-void DumpRenderTreeSupportQt::setAutofilled(const QWebElement& element, bool isAutofilled)
-{
-    WebCore::Element* webElement = element.m_element;
-    if (!webElement)
-        return;
-    HTMLInputElement* inputElement = webElement->toInputElement();
-    if (!inputElement)
-        return;
-
-    inputElement->setAutofilled(isAutofilled);
-}
-
 void DumpRenderTreeSupportQt::setValueForUser(const QWebElement& element, const QString& value)
 {
     WebCore::Element* webElement = element.m_element;

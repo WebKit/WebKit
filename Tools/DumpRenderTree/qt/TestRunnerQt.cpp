@@ -475,11 +475,6 @@ void TestRunnerQt::setAppCacheMaximumSize(unsigned long long quota)
     m_drt->webPage()->settings()->setOfflineWebApplicationCacheQuota(quota);
 }
 
-void TestRunnerQt::setAutofilled(const QWebElement& element, bool isAutofilled)
-{
-    return DumpRenderTreeSupportQt::setAutofilled(element, isAutofilled);
-}
-
 void TestRunnerQt::setValueForUser(const QWebElement& element, const QString& value)
 {
     DumpRenderTreeSupportQt::setValueForUser(element, value);

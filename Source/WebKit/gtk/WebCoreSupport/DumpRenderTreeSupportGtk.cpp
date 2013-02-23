@@ -548,19 +548,6 @@ CString DumpRenderTreeSupportGtk::accessibilityHelpText(AtkObject* axObject)
     return coreObject->helpText().utf8();
 }
 
-void DumpRenderTreeSupportGtk::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
-{
-    JSC::ExecState* exec = toJS(context);
-    Element* element = toElement(toJS(exec, nodeObject));
-    if (!element)
-        return;
-    HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement)
-        return;
-
-    inputElement->setAutofilled(autofilled);
-}
-
 void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef nodeObject, JSStringRef value)
 {
     JSC::ExecState* exec = toJS(context);

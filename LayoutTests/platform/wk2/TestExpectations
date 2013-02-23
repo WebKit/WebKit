@@ -504,10 +504,6 @@ storage/domstorage/localstorage/storagetracker/storage-tracker-5-delete-one.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-6-create.html
 storage/domstorage/localstorage/storagetracker/storage-tracker-7-usage.html
 
-# WebKitTestRunner needs layoutTestController.setAutofilled
-fast/forms/input-autofilled.html
-fast/forms/reset-autofilled.html
-
 # WebKitTestRunner needs eventSender.contextClick()
 # https://bugs.webkit.org/show_bug.cgi?id=86881
 editing/selection/context-menu-text-selection.html

@@ -338,11 +338,6 @@ void TestRunner::setAuthorAndUserStylesEnabled(bool flag)
     DumpRenderTreeSupportEfl::setAuthorAndUserStylesEnabled(browser->mainView(), flag);
 }
 
-void TestRunner::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
-{
-    DumpRenderTreeSupportEfl::setAutofilled(context, nodeObject, autofilled);
-}
-
 void TestRunner::setMockDeviceOrientation(bool, double, bool, double, bool, double)
 {
     // FIXME: Implement for DeviceOrientation layout tests.

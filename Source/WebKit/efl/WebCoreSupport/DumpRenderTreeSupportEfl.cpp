@@ -247,19 +247,6 @@ void DumpRenderTreeSupportEfl::setValueForUser(JSContextRef context, JSValueRef 
     inputElement->setValueForUser(value);
 }
 
-void DumpRenderTreeSupportEfl::setAutofilled(JSContextRef context, JSValueRef nodeObject, bool autofilled)
-{
-    JSC::ExecState* exec = toJS(context);
-    WebCore::Element* element = WebCore::toElement(toJS(exec, nodeObject));
-    if (!element)
-        return;
-    WebCore::HTMLInputElement* inputElement = element->toInputElement();
-    if (!inputElement)
-        return;
-
-    inputElement->setAutofilled(autofilled);
-}
-
 void DumpRenderTreeSupportEfl::setDefersLoading(Evas_Object* ewkView, bool defers)
 {
     DRT_SUPPRT_PAGE_GET_OR_RETURN(ewkView, page);
