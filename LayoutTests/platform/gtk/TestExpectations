@@ -492,6 +492,9 @@ webkit.org/b/110588 http/tests/misc/iframe-reparenting-id-collision.html [ Crash
 webkit.org/b/110588 http/tests/misc/window-open-then-write.html [ Crash ]
 webkit.org/b/110588 http/tests/xmlhttprequest/request-from-popup.html [ Crash ]
 
+webkit.org/b/110695 http/tests/security/cross-origin-local-storage-allowed.html [ Crash Pass ]
+webkit.org/b/110695 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Crash Pass ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1438,6 +1441,8 @@ webkit.org/b/110320 fast/dom/shadow/shadow-dom-event-dispatching-distributed-tex
 webkit.org/b/110320 fast/dom/shadow/shadow-dom-event-dispatching-text-node-in-shadow-root.html [ Failure ]
 
 webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
+
+webkit.org/b/110694 html5lib/runner.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
