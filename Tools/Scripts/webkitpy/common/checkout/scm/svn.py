@@ -249,7 +249,7 @@ class SVN(SCM, SVNRepository):
     def timestamp_of_latest_commit(self, path):
         # We use --xml to get timestamps like 2013-02-08T08:18:04.964409Z
         info_output = Executive().run_command([self.executable_name, 'info', '--xml'], cwd=path).rstrip()
-        match = re.search(r"^<date>(?P<value>.+)</date>$", info_output, re.MULTILINE)
+        match = re.search(r"^<date>(?P<value>.+)</date>\r?$", info_output, re.MULTILINE)
         return match.group('value')
 
     # FIXME: This method should be on Checkout.

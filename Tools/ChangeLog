@@ -1,3 +1,10 @@
+2013-02-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Windows Perf bot fix. Tolerate CR at the end of the line that contains the timestamp.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.timestamp_of_latest_commit):
+
 2013-02-23  Jason Anderssen  <janderssen@gmail.com>
 
         Move setAutofilled from TestRunner to WebCore
