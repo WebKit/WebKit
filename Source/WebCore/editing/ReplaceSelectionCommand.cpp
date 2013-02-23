@@ -356,6 +356,14 @@ inline void ReplaceSelectionCommand::InsertedNodes::willRemoveNode(Node* node)
         m_lastNodeInserted = NodeTraversal::previousSkippingChildren(m_lastNodeInserted.get());
 }
 
+inline void ReplaceSelectionCommand::InsertedNodes::didReplaceNode(Node* node, Node* newNode)
+{
+    if (m_firstNodeInserted == node)
+        m_firstNodeInserted = newNode;
+    if (m_lastNodeInserted == node)
+        m_lastNodeInserted = newNode;
+}
+
 ReplaceSelectionCommand::ReplaceSelectionCommand(Document* document, PassRefPtr<DocumentFragment> fragment, CommandOptions options, EditAction editAction)
     : CompositeEditCommand(document)
     , m_selectReplacement(options & SelectReplacement)
@@ -476,6 +484,23 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         const StylePropertySet* inlineStyle = element->inlineStyle();
         RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
         if (inlineStyle) {
+            if (element->isHTMLElement()) {
+                Vector<QualifiedName> attributes;
+                HTMLElement* htmlElement = static_cast<HTMLElement*>(element);
+
+                if (newInlineStyle->conflictsWithImplicitStyleOfElement(htmlElement)) {
+                    // e.g. <b style="font-weight: normal;"> is converted to <span style="font-weight: normal;">
+                    node = replaceElementWithSpanPreservingChildrenAndAttributes(htmlElement);
+                    element = static_cast<StyledElement*>(node.get());
+                    insertedNodes.didReplaceNode(htmlElement, node.get());
+                } else if (newInlineStyle->extractConflictingImplicitStyleOfAttributes(htmlElement, EditingStyle::PreserveWritingDirection, 0, attributes,
+                    EditingStyle::DoNotExtractMatchingStyle)) {
+                    // e.g. <font size="3" style="font-size: 20px;"> is converted to <font style="font-size: 20px;">
+                    for (size_t i = 0; i < attributes.size(); i++)
+                        removeNodeAttribute(element, attributes[i]);
+                }
+            }
+
             ContainerNode* context = element->parentNode();
 
             // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
@@ -488,12 +513,12 @@ void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline(Insert
         }
 
         if (!inlineStyle || newInlineStyle->isEmpty()) {
-            if (isStyleSpanOrSpanWithOnlyStyleAttribute(element)) {
+            if (isStyleSpanOrSpanWithOnlyStyleAttribute(element) || isEmptyFontTag(element, AllowNonEmptyStyleAttribute)) {
                 insertedNodes.willRemoveNodePreservingChildren(element);
                 removeNodePreservingChildren(element);
                 continue;
-            } else
-                removeNodeAttribute(element, styleAttr);
+            }
+            removeNodeAttribute(element, styleAttr);
         } else if (newInlineStyle->style()->propertyCount() != inlineStyle->propertyCount())
             setNodeAttribute(element, styleAttr, newInlineStyle->style()->asText());
 

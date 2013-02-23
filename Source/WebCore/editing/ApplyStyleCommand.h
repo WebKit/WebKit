@@ -132,6 +132,8 @@ private:
     IsInlineElementToRemoveFunction m_isInlineElementToRemoveFunction;
 };
 
+enum ShouldStyleAttributeBeEmpty { AllowNonEmptyStyleAttribute, StyleAttributeShouldBeEmpty };
+bool isEmptyFontTag(const Element*, ShouldStyleAttributeBeEmpty = StyleAttributeShouldBeEmpty);
 bool isLegacyAppleStyleSpan(const Node*);
 bool isStyleSpanOrSpanWithOnlyStyleAttribute(const Element*);
 PassRefPtr<HTMLElement> createStyleSpanElement(Document*);

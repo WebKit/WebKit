@@ -19,7 +19,7 @@ Original:
 "
 |   <em>
 |     style="color: blue;"
-|     title="font-style: normal; font-weight: bold; color: blue;"
+|     title="font-weight: bold; color: blue;"
 |     "WebKit"
 
 Pasted:
@@ -34,7 +34,7 @@ Pasted:
 |     title="font-size: 1em; font-weight: bold;"
 |     "world"
 |   " "
-|   <em>
-|     style="font-style: normal; font-weight: bold; color: blue;"
-|     title="font-style: normal; font-weight: bold; color: blue;"
+|   <span>
+|     style="font-weight: bold; color: blue;"
+|     title="font-weight: bold; color: blue;"
 |     "WebKit<#selection-caret>"

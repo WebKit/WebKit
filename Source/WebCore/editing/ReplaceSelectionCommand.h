@@ -63,6 +63,7 @@ private:
         void respondToNodeInsertion(Node*);
         void willRemoveNodePreservingChildren(Node*);
         void willRemoveNode(Node*);
+        void didReplaceNode(Node*, Node* newNode);
 
         Node* firstNodeInserted() const { return m_firstNodeInserted.get(); }
         Node* lastLeafInserted() const { return m_lastNodeInserted->lastDescendant(); }

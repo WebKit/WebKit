@@ -71,7 +71,6 @@ bool isLegacyAppleStyleSpan(const Node *node)
     return elem->hasLocalName(spanAttr) && elem->getAttribute(classAttr) == styleSpanClassString();
 }
 
-enum ShouldStyleAttributeBeEmpty { AllowNonEmptyStyleAttribute, StyleAttributeShouldBeEmpty };
 static bool hasNoAttributeOrOnlyStyleAttribute(const StyledElement* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
 {
     if (!element->hasAttributes())
@@ -102,15 +101,12 @@ static inline bool isSpanWithoutAttributesOrUnstyledStyleSpan(const Node* node)
     return hasNoAttributeOrOnlyStyleAttribute(toHTMLElement(node), StyleAttributeShouldBeEmpty);
 }
 
-static bool isEmptyFontTag(const Node *node)
+bool isEmptyFontTag(const Element* element, ShouldStyleAttributeBeEmpty shouldStyleAttributeBeEmpty)
 {
-    if (!node || !node->hasTagName(fontTag))
+    if (!element || !element->hasTagName(fontTag))
         return false;
 
-    const Element *elem = static_cast<const Element *>(node);
-    if (!elem->hasAttributes())
-        return true;
-    return elem->attributeCount() == 1 && elem->getAttribute(classAttr) == styleSpanClassString();
+    return hasNoAttributeOrOnlyStyleAttribute(static_cast<const HTMLElement*>(element), shouldStyleAttributeBeEmpty);
 }
 
 static PassRefPtr<Element> createFontElement(Document* document)
