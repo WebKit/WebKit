@@ -263,7 +263,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_MEDIA_SOURCE"
-		Value="ENABLE_MEDIA_SOURCE"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro

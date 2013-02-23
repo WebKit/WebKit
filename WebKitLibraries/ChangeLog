@@ -1,3 +1,12 @@
+2013-02-22  Aaron Colwell  <acolwell@chromium.org>
+
+        Disable MediaSource on Apple Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=110494
+
+        Reviewed by Tim Horton.
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2013-02-22  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Make WinTools.make stop copying vsprops into nested vsprops folders.

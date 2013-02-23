@@ -1,3 +1,12 @@
+2013-02-22  Aaron Colwell  <acolwell@chromium.org>
+
+        Disable MediaSource on Apple Windows port
+        https://bugs.webkit.org/show_bug.cgi?id=110494
+
+        Reviewed by Tim Horton.
+
+        * WebKit.vcxproj/FeatureDefines.props:
+
 2013-02-20  Roger Fong  <roger_fong@apple.com>
 
         Get VS2010 Solution B&I ready.
