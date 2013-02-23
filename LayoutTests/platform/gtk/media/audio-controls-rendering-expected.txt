@@ -1,3 +1,4 @@
+CONSOLE MESSAGE: line 27: TypeError: 'undefined' is not a function (evaluating 'element.canPlayType(codecs[i][0])')
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
@@ -6,73 +7,13 @@ layer at (0,0) size 800x600
       RenderBlock {P} at (0,0) size 784x18
         RenderText {#text} at (0,0) size 153x19
           text run at (0,0) width 153: "Test controls placement."
-      RenderBlock (anonymous) at (0,34) size 784x94
-        RenderMedia {AUDIO} at (0,0) size 300x20 [bgcolor=#0000FF]
-        RenderBR {BR} at (300,20) size 0x0
-        RenderBR {BR} at (0,20) size 0x19
-        RenderMedia {AUDIO} at (0,38) size 320x20 [bgcolor=#0000FF]
-        RenderBR {BR} at (320,58) size 0x0
-        RenderBR {BR} at (0,58) size 0x19
-        RenderBR {BR} at (0,76) size 0x19
-layer at (8,42) size 300x20
-  RenderFlexibleBox {DIV} at (0,0) size 300x20
-layer at (8,42) size 300x20 scrollHeight 30
-  RenderFlexibleBox {DIV} at (0,0) size 300x20
-    RenderButton {INPUT} at (0,0) size 20x20
-    RenderFlexibleBox {DIV} at (20,0) size 220x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 65x30
-        RenderFlexibleBox {DIV} at (0,0) size 65x30
-          RenderBlock (anonymous) at (5,5) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:07"
-      RenderSlider {INPUT} at (66,0) size 153x20
-        RenderFlexibleBox {DIV} at (2,0) size 149x20
-          RenderBlock {DIV} at (0,4) size 149x12
-            RenderBlock {DIV} at (0,0) size 12x12
-    RenderButton {INPUT} at (240,0) size 20x20
-    RenderButton {INPUT} at (260,0) size 20x20
-    RenderBlock {DIV} at (280,0) size 20x20
-layer at (288,42) size 20x20
-  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
-layer at (8,80) size 320x20
-  RenderFlexibleBox {DIV} at (0,0) size 320x20
-layer at (8,80) size 320x20 scrollHeight 30
-  RenderFlexibleBox {DIV} at (0,0) size 320x20
-    RenderButton {INPUT} at (0,0) size 20x20
-    RenderFlexibleBox {DIV} at (20,0) size 240x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 65x30
-        RenderFlexibleBox {DIV} at (0,0) size 65x30
-          RenderBlock (anonymous) at (5,5) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:07"
-      RenderSlider {INPUT} at (66,0) size 173x20
-        RenderFlexibleBox {DIV} at (2,0) size 169x20
-          RenderBlock {DIV} at (0,4) size 169x12
-            RenderBlock {DIV} at (0,0) size 12x12
-    RenderButton {INPUT} at (260,0) size 20x20
-    RenderButton {INPUT} at (280,0) size 20x20
-    RenderBlock {DIV} at (300,0) size 20x20
-layer at (308,80) size 20x20
-  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
-layer at (8,118) size 320x100
-  RenderMedia {AUDIO} at (8,118) size 320x100 [bgcolor=#0000FF]
-layer at (8,118) size 320x100
-  RenderFlexibleBox {DIV} at (0,0) size 320x100
-layer at (8,118) size 320x100 scrollHeight 110
-  RenderFlexibleBox {DIV} at (0,0) size 320x100
-    RenderButton {INPUT} at (0,80) size 20x20
-    RenderFlexibleBox {DIV} at (20,80) size 240x20 [border: none (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-      RenderBlock (anonymous) at (1,0) size 65x30
-        RenderFlexibleBox {DIV} at (0,0) size 65x30
-          RenderBlock (anonymous) at (5,5) size 55x20
-            RenderText {#text} at (0,0) size 55x12
-              text run at (0,0) width 55: "00:00 / 00:07"
-      RenderSlider {INPUT} at (66,0) size 173x20
-        RenderFlexibleBox {DIV} at (2,0) size 169x20
-          RenderBlock {DIV} at (0,4) size 169x12
-            RenderBlock {DIV} at (0,0) size 12x12
-    RenderButton {INPUT} at (260,80) size 20x20
-    RenderButton {INPUT} at (280,80) size 20x20
-    RenderBlock {DIV} at (300,80) size 20x20
-layer at (308,198) size 20x20
-  RenderButton zI: 2 {INPUT} at (0,0) size 20x20
+      RenderBlock (anonymous) at (0,34) size 784x90
+        RenderInline {AUDIO} at (0,0) size 0x0 [bgcolor=#0000FF]
+        RenderBR {BR} at (0,0) size 0x19
+        RenderBR {BR} at (0,18) size 0x19
+        RenderInline {AUDIO} at (0,0) size 0x0 [bgcolor=#0000FF]
+        RenderBR {BR} at (0,36) size 0x19
+        RenderBR {BR} at (0,54) size 0x19
+        RenderBR {BR} at (0,72) size 0x19
+layer at (8,114) size 320x100
+  RenderBlock (positioned) {AUDIO} at (8,114) size 320x100 [bgcolor=#0000FF]

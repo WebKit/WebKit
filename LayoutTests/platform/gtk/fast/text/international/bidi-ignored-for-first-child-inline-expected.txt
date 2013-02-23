@@ -107,7 +107,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (0,0) size 36x19
           text run at (0,0) width 24 RTL: "\x{5D3}\x{5D4}\x{5D5}"
           text run at (24,0) width 12: "(["
-        RenderInline {SPAN} at (0,0) size 0x19
+        RenderInline {SPAN} at (0,0) size 27x19
           RenderInline {SPAN} at (0,0) size 0x19
         RenderText {#text} at (36,0) size 27x19
           text run at (36,0) width 27 RTL: "\x{5D0}\x{5D1}\x{5D2}"

@@ -39,7 +39,7 @@ layer at (0,0) size 800x600
                 RenderInline {FONT} at (0,0) size 77x15
                   RenderText {#text} at (265,1) size 77x15
                     text run at (265,1) width 77: "View Results"
-              RenderInline {FONT} at (0,0) size 0x0
+              RenderInline {FONT} at (0,0) size 1x15
                 RenderText {#text} at (0,0) size 0x0
             RenderTableCell {TD} at (607,122) size 177x33 [r=3 c=2 rs=1 cs=2]
               RenderButton {INPUT} at (66,3) size 46x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]

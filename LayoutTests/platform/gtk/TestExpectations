@@ -41,62 +41,6 @@
 # Tests that require new results.
 #////////////////////////////////////////////////////////////////////////////////////////
 
-webkit.org/b/106920 accessibility/color-well.html [ Missing ]
-webkit.org/b/84044 accessibility/image-link.html [ Missing ]
-webkit.org/b/84045 accessibility/image-map1.html [ Missing ]
-webkit.org/b/84045 accessibility/image-map2.html [ Missing ]
-webkit.org/b/70606 accessibility/menu-list-sends-change-notification.html [ Missing ]
-webkit.org/b/70606 accessibility/multiselect-list-reports-active-option.html [ Missing ]
-webkit.org/b/70606 accessibility/notification-listeners.html [ Missing ]
-
-webkit.org/b/105639 fast/inline/justify-emphasis-inline-box.html [ Missing ]
-
-webkit.org/b/103955 fast/repaint/caret-with-transformation.html [ Missing ]
-
-# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=9221
-webkit.org/b/9221 fast/css/resize-corner-tracking.html [ Failure ]
-webkit.org/b/9221 fast/css/resize-corner-tracking-transformed-iframe.html [ Missing ]
-
-# Needs rebaseline after https://bugs.webkit.org/show_bug.cgi?id=14664
-webkit.org/b/107476 fast/block/float/024.html [ Failure ]
-webkit.org/b/107476 fast/block/margin-collapse/empty-clear-blocks.html [ Failure ]
-
-# Rebaseline required after https://webkit.org/b/31397
-webkit.org/b/107567 svg/batik/text/xmlSpace.svg [ Failure ] 
-webkit.org/b/107567 fast/text/capitalize-empty-generated-string.html [ Failure ] 
-webkit.org/b/107567 fast/text/whitespace/007.html [ Failure ] 
-webkit.org/b/107567 fast/text/whitespace/006.html [ Failure ] 
-webkit.org/b/107567 fast/inline/drawStyledEmptyInlinesWithWS.html [ Failure ] 
-webkit.org/b/107567 tables/mozilla/bugs/bug1318.html [ Failure ] 
-webkit.org/b/107567 fast/inline/drawStyledEmptyInlines.html [ Failure ] 
-webkit.org/b/107567 tables/mozilla/bugs/bug113235-3.html [ Failure ] 
-webkit.org/b/107567 css2.1/t0505-c16-descendant-01-e.html [ Failure ] 
-webkit.org/b/107567 tables/mozilla/bugs/bug1188.html [ Failure ] 
-webkit.org/b/107567 editing/selection/extend-by-sentence-001.html [ Failure ] 
-webkit.org/b/107567 svg/carto.net/combobox.svg [ Failure ] 
-
-# These tests need to be rebaselined after https://bugs.webkit.org/show_bug.cgi?id=99984
-webkit.org/b/99984 svg/as-image/image-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/99984 svg/filters/feImage-preserveAspectRatio-all.svg [ ImageOnlyFailure Pass ]
-webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr.html [ ImageOnlyFailure Pass ]
-webkit.org/b/99984 svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop.html [ ImageOnlyFailure Pass ]
-
-# Rebaseline required after https://webkit.org/b/95772
-webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.html [ Failure ]
-
-# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
-webkit.org/b/109775 media/audio-controls-rendering.html [ Failure ]
-webkit.org/b/109775 media/controls-after-reload.html [ Failure ]
-webkit.org/b/109775 media/controls-strict.html [ Failure ]
-webkit.org/b/109775 media/controls-styling-strict.html [ Failure ]
-webkit.org/b/109775 media/controls-without-preload.html [ Failure ]
-webkit.org/b/109775 media/video-controls-rendering.html [ Failure ]
-webkit.org/b/109775 media/video-display-toggle.html [ Failure ]
-webkit.org/b/109775 media/video-playing-and-pause.html [ Failure ]
-
-# New test, needs platform results
-webkit.org/b/106221 svg/filters/filter-hidden-content.svg [ Failure Pass ]
-
 #////////////////////////////////////////////////////////////////////////////////////////
 # Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -820,6 +764,13 @@ webkit.org/b/107194 storage/indexeddb/pending-version-change-on-exit.html [ Time
 webkit.org/b/107194 storage/indexeddb/transaction-complete-workers.html [ Timeout ]
 
 webkit.org/b/108925 http/tests/media/video-play-stall.html [ Timeout Failure ]
+webkit.org/b/110689 media/controls-after-reload.html [ Timeout Failure ]
+webkit.org/b/110689 media/controls-strict.html [ Timeout Failure ]
+webkit.org/b/110689 media/controls-styling-strict.html [ Timeout Failure ]
+webkit.org/b/110689 media/controls-without-preload.html [ Timeout Failure ]
+webkit.org/b/110689 media/video-controls-rendering.html [ Timeout Failure ]
+webkit.org/b/110689 media/video-display-toggle.html [ Timeout Failure ]
+webkit.org/b/110689 media/video-playing-and-pause.html [ Timeout Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests timing out
