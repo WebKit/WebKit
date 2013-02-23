@@ -2049,10 +2049,10 @@
         ['include', 'loader/appcache/DOMApplicationCache\.(cpp|h)$'],
       ],
       'conditions': [
-        # Shard this taret into ten parts to work around linker limitations.
+        # Shard this taret into parts to work around linker limitations.
         # on link time code generation builds.
         ['OS=="win" and buildtype=="Official"', {
-          'msvs_shard': 10,
+          'msvs_shard': 15,
         }],
         ['os_posix == 1 and OS != "mac" and gcc_version == 42', {
           # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
