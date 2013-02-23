@@ -1,3 +1,13 @@
+2013-02-22  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Expose all dependencies to the gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=110498
+
+        Reviewed by Dirk Pranke.
+
+        * gyp/Configuration.gypi.in: Add the missing configuration cflags here.
+        * gyp/Dependencies.gyp: Add targets for all missing dependencies.
+
 2013-02-21  George McCollister  <george.mccollister@gmail.com>
 
         [GTK] Remove subresource leaks from WebKit1 and WebKit2
