@@ -27,8 +27,10 @@
 #include "WebLoaderClient.h"
 
 #include "ImmutableArray.h"
+#include "ImmutableDictionary.h"
 #include "WKAPICast.h"
 #include "WebBackForwardListItem.h"
+#include "WebPageProxy.h"
 #include <string.h>
 
 using namespace WebCore;
@@ -321,12 +323,19 @@ static inline PluginModuleLoadPolicy toPluginModuleLoadPolicy(WKPluginLoadPolicy
     return PluginModuleBlocked;
 }
 
-PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, const String& identifier, const String& displayName, const String& documentURLString, PluginModuleLoadPolicy currentPluginLoadPolicy)
+
+PluginModuleLoadPolicy WebLoaderClient::pluginLoadPolicy(WebPageProxy* page, const String& identifier, const String& displayName, const String& frameURLString, const String& pageURLString, PluginModuleLoadPolicy currentPluginLoadPolicy)
 {
     if (!m_client.pluginLoadPolicy)
         return currentPluginLoadPolicy;
 
-    return toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toAPI(identifier.impl()), toAPI(displayName.impl()), toURLRef(documentURLString.impl()), toWKPluginLoadPolicy(currentPluginLoadPolicy), m_client.clientInfo));
+    HashMap<String, RefPtr<APIObject> > pluginInfoMap;
+    pluginInfoMap.set(WebPageProxy::pluginInformationBundleIdentifierKey(), WebString::create(identifier));
+    pluginInfoMap.set(WebPageProxy::pluginInformationDisplayNameKey(), WebString::create(displayName));
+    pluginInfoMap.set(WebPageProxy::pluginInformationFrameURLKey(), WebURL::create(frameURLString));
+    pluginInfoMap.set(WebPageProxy::pluginInformationPageURLKey(), WebURL::create(pageURLString));
+
+    return toPluginModuleLoadPolicy(m_client.pluginLoadPolicy(toAPI(page), toWKPluginLoadPolicy(currentPluginLoadPolicy), toAPI(ImmutableDictionary::adopt(pluginInfoMap).get()), m_client.clientInfo));
 }
 
 

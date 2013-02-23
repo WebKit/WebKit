@@ -815,3 +815,39 @@ void WKPageSetInvalidMessageFunction(WKPageInvalidMessageFunction)
 {
     // FIXME: Remove this function when doing so won't break WebKit nightlies.
 }
+
+WKStringRef WKPageGetPluginInformationBundleIdentifierKey()
+{
+    static WebString* key = WebString::create(WebPageProxy::pluginInformationBundleIdentifierKey()).leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPageGetPluginInformationBundleVersionKey()
+{
+    static WebString* key = WebString::create(WebPageProxy::pluginInformationBundleVersionKey()).leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPageGetPluginInformationDisplayNameKey()
+{
+    static WebString* key = WebString::create(WebPageProxy::pluginInformationDisplayNameKey()).leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPageGetPluginInformationFrameURLKey()
+{
+    static WebString* key = WebString::create(WebPageProxy::pluginInformationFrameURLKey()).leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPageGetPluginInformationMIMETypeKey()
+{
+    static WebString* key = WebString::create(WebPageProxy::pluginInformationMIMETypeKey()).leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPageGetPluginInformationPageURLKey()
+{
+    static WebString* key = WebString::create(WebPageProxy::pluginInformationPageURLKey()).leakRef();
+    return toAPI(key);
+}

@@ -753,6 +753,13 @@ public:
 
     void didReceiveAuthenticationChallengeProxy(uint64_t frameID, PassRefPtr<AuthenticationChallengeProxy>);
 
+    static String pluginInformationBundleIdentifierKey();
+    static String pluginInformationBundleVersionKey();
+    static String pluginInformationDisplayNameKey();
+    static String pluginInformationFrameURLKey();
+    static String pluginInformationMIMETypeKey();
+    static String pluginInformationPageURLKey();
+
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
 
@@ -1025,7 +1032,7 @@ private:
     void sendWheelEvent(const WebWheelEvent&);
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-    void getPluginPath(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, uint32_t& pluginLoadPolicy);
+    void getPluginPath(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, String& pluginPath, uint32_t& pluginLoadPolicy);
 #endif
 
     PageClient* m_pageClient;

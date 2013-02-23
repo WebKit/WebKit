@@ -1,5 +1,45 @@
 2013-02-22  Anders Carlsson  <andersca@apple.com>
 
+        pluginLoadStrategy should take a WKDictionaryRef for extensibility
+        https://bugs.webkit.org/show_bug.cgi?id=110656
+        <rdar://problem/13265303>
+
+        Reviewed by Jessie Berlin.
+
+        Change pluginLoadStrategy to take a WKDictionaryRef instead of a number of parameters;
+        this lets us add more plug-in information if needed. Also add the page URL and rename documentURL to frameURL.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetPluginInformationBundleIdentifierKey):
+        (WKPageGetPluginInformationBundleVersionKey):
+        (WKPageGetPluginInformationDisplayNameKey):
+        (WKPageGetPluginInformationFrameURLKey):
+        (WKPageGetPluginInformationMIMETypeKey):
+        (WKPageGetPluginInformationPageURLKey):
+        * UIProcess/API/C/WKPage.h:
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit):
+        (WebKit::WebLoaderClient::pluginLoadPolicy):
+        * UIProcess/WebLoaderClient.h:
+        (WebLoaderClient):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getPluginPath):
+        (WebKit::WebPageProxy::pluginInformationBundleIdentifierKey):
+        (WebKit):
+        (WebKit::WebPageProxy::pluginInformationBundleVersionKey):
+        (WebKit::WebPageProxy::pluginInformationDisplayNameKey):
+        (WebKit::WebPageProxy::pluginInformationFrameURLKey):
+        (WebKit::WebPageProxy::pluginInformationMIMETypeKey):
+        (WebKit::WebPageProxy::pluginInformationPageURLKey):
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        * UIProcess/WebPageProxy.messages.in:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::createPlugin):
+        (WebKit::WebPage::canPluginHandleResponse):
+
+2013-02-22  Anders Carlsson  <andersca@apple.com>
+
         Move pluginLoadPolicy to the page loader client
         https://bugs.webkit.org/show_bug.cgi?id=110635
         <rdar://problem/13265303>
