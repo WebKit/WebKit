@@ -35,7 +35,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Crypto::getRandomValuesCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Crypto::getRandomValuesMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());

@@ -71,7 +71,7 @@ namespace TestMediaQueryListListenerV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
-static v8::Handle<v8::Value> methodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -84,7 +84,7 @@ static v8::Handle<v8::Value> methodCallback(const v8::Arguments& args)
 } // namespace TestMediaQueryListListenerV8Internal
 
 static const V8DOMConfiguration::BatchedCallback V8TestMediaQueryListListenerCallbacks[] = {
-    {"method", TestMediaQueryListListenerV8Internal::methodCallback},
+    {"method", TestMediaQueryListListenerV8Internal::methodMethod},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

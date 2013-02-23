@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8InspectorFrontendHost::platformCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InspectorFrontendHost::platformMethodCustom(const v8::Arguments& args)
 {
 #if defined(OS_MACOSX)
     return v8::String::NewSymbol("mac");
@@ -62,7 +62,7 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::platformCallbackCustom(const v8::
 #endif
 }
 
-v8::Handle<v8::Value> V8InspectorFrontendHost::portCallbackCustom(const v8::Arguments&)
+v8::Handle<v8::Value> V8InspectorFrontendHost::portMethodCustom(const v8::Arguments&)
 {
     return v8::Undefined();
 }
@@ -106,7 +106,7 @@ static void populateContextMenuItems(v8::Local<v8::Array>& itemArray, ContextMen
     }
 }
 
-v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 2)
         return v8::Undefined();
@@ -146,17 +146,17 @@ static v8::Handle<v8::Value> histogramEnumeration(const char* name, const v8::Ar
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8InspectorFrontendHost::recordActionTakenCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InspectorFrontendHost::recordActionTakenMethodCustom(const v8::Arguments& args)
 {
     return histogramEnumeration("DevTools.ActionTaken", args, 100);
 }
 
-v8::Handle<v8::Value> V8InspectorFrontendHost::recordPanelShownCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InspectorFrontendHost::recordPanelShownMethodCustom(const v8::Arguments& args)
 {
     return histogramEnumeration("DevTools.PanelShown", args, 20);
 }
 
-v8::Handle<v8::Value> V8InspectorFrontendHost::recordSettingChangedCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InspectorFrontendHost::recordSettingChangedMethodCustom(const v8::Arguments& args)
 {
     return histogramEnumeration("DevTools.SettingChanged", args, 100);
 }

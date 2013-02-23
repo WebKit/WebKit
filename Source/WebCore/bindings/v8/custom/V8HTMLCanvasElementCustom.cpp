@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLCanvasElement::getContextMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Object> holder = args.Holder();
     HTMLCanvasElement* imp = V8HTMLCanvasElement::toNative(holder);
@@ -112,7 +112,7 @@ v8::Handle<v8::Value> V8HTMLCanvasElement::getContextCallbackCustom(const v8::Ar
     return v8Null(args.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8HTMLCanvasElement::toDataURLCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLCanvasElement::toDataURLMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Object> holder = args.Holder();
     HTMLCanvasElement* canvas = V8HTMLCanvasElement::toNative(holder);

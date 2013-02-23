@@ -77,7 +77,7 @@ static v8::Handle<v8::Value> excitingAttrAttrGetter(v8::Local<v8::String> name, 
     return v8Integer(imp->excitingAttr(), info.GetIsolate());
 }
 
-static v8::Handle<v8::Value> excitingFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> excitingFunctionMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -89,7 +89,7 @@ static v8::Handle<v8::Value> excitingFunctionCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> postMessageCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> postMessageMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -101,7 +101,7 @@ static v8::Handle<v8::Value> postMessageCallback(const v8::Arguments& args)
 
 static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
-    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageCallback, v8Undefined(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate(info.GetIsolate()))));
+    static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageMethod, v8Undefined(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate(info.GetIsolate()))));
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8TestActiveDOMObject::GetTemplate(info.GetIsolate()));
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
@@ -110,7 +110,7 @@ static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, c
     }
     TestActiveDOMObject* imp = V8TestActiveDOMObject::toNative(holder);
     if (!BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError)) {
-        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageCallback, v8Undefined(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate(info.GetIsolate()))));
+        static v8::Persistent<v8::FunctionTemplate> sharedTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::postMessageMethod, v8Undefined(), v8::Signature::New(V8TestActiveDOMObject::GetRawTemplate(info.GetIsolate()))));
         return sharedTemplate->GetFunction();
     }
 
@@ -159,7 +159,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestActiveDOMObjectTempla
     const int excitingFunctionArgc = 1;
     v8::Handle<v8::FunctionTemplate> excitingFunctionArgv[excitingFunctionArgc] = { V8Node::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> excitingFunctionSignature = v8::Signature::New(desc, excitingFunctionArgc, excitingFunctionArgv);
-    proto->Set(v8::String::NewSymbol("excitingFunction"), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::excitingFunctionCallback, v8Undefined(), excitingFunctionSignature));
+    proto->Set(v8::String::NewSymbol("excitingFunction"), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::excitingFunctionMethod, v8Undefined(), excitingFunctionSignature));
 
     // Function 'postMessage' (ExtAttr: 'DoNotCheckSecurity')
     proto->SetAccessor(v8::String::NewSymbol("postMessage"), TestActiveDOMObjectV8Internal::postMessageAttrGetter, TestActiveDOMObjectV8Internal::TestActiveDOMObjectDomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete));

@@ -46,7 +46,7 @@ using namespace WTF;
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8SQLTransaction::executeSqlCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8SQLTransaction::executeSqlMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() == 0)
         return setDOMException(SYNTAX_ERR, args.GetIsolate());

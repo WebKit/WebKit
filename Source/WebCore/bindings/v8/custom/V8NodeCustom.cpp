@@ -61,7 +61,7 @@
 namespace WebCore {
 
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
-v8::Handle<v8::Value> V8Node::insertBeforeCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Node::insertBeforeMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
@@ -77,7 +77,7 @@ v8::Handle<v8::Value> V8Node::insertBeforeCallbackCustom(const v8::Arguments& ar
 }
 
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
-v8::Handle<v8::Value> V8Node::replaceChildCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Node::replaceChildMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
@@ -92,7 +92,7 @@ v8::Handle<v8::Value> V8Node::replaceChildCallbackCustom(const v8::Arguments& ar
     return v8Null(args.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8Node::removeChildCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Node::removeChildMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);
@@ -107,7 +107,7 @@ v8::Handle<v8::Value> V8Node::removeChildCallbackCustom(const v8::Arguments& arg
 }
 
 // This function is customized to take advantage of the optional 4th argument: shouldLazyAttach
-v8::Handle<v8::Value> V8Node::appendChildCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Node::appendChildMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Object> holder = args.Holder();
     Node* imp = V8Node::toNative(holder);

@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::namedPropertyGetter(v8::Local<v8:
     return getNamedItems(imp, toWebCoreAtomicString(name), info);
 }
 
-v8::Handle<v8::Value> V8HTMLOptionsCollection::namedItemCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLOptionsCollection::namedItemMethodCustom(const v8::Arguments& args)
 {
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(args.Holder());
     v8::Handle<v8::Value> result = getNamedItems(imp, toWebCoreString(args[0]), args);
@@ -82,14 +82,14 @@ v8::Handle<v8::Value> V8HTMLOptionsCollection::namedItemCallbackCustom(const v8:
     return result;
 }
 
-v8::Handle<v8::Value> V8HTMLOptionsCollection::removeCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLOptionsCollection::removeMethodCustom(const v8::Arguments& args)
 {
     HTMLOptionsCollection* imp = V8HTMLOptionsCollection::toNative(args.Holder());
     HTMLSelectElement* base = static_cast<HTMLSelectElement*>(imp->ownerNode());
     return removeElement(base, args);
 }
 
-v8::Handle<v8::Value> V8HTMLOptionsCollection::addCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLOptionsCollection::addMethodCustom(const v8::Arguments& args)
 {
     if (!V8HTMLOptionElement::HasInstance(args[0], args.GetIsolate()))
         return setDOMException(TYPE_MISMATCH_ERR, args.GetIsolate());

@@ -64,7 +64,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Document::evaluateCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Document::evaluateMethodCustom(const v8::Arguments& args)
 {
     RefPtr<Document> document = V8Document::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -109,7 +109,7 @@ v8::Handle<v8::Object> wrap(Document* impl, v8::Handle<v8::Object> creationConte
 }
 
 #if ENABLE(TOUCH_EVENTS)
-v8::Handle<v8::Value> V8Document::createTouchListCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Document::createTouchListMethodCustom(const v8::Arguments& args)
 {
     RefPtr<TouchList> touchList = TouchList::create();
 

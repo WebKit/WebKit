@@ -128,7 +128,7 @@ static PassRefPtr<PositionOptions> createPositionOptions(v8::Local<v8::Value> va
     return options.release();
 }
 
-v8::Handle<v8::Value> V8Geolocation::getCurrentPositionCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Geolocation::getCurrentPositionMethodCustom(const v8::Arguments& args)
 {
     bool succeeded = false;
 
@@ -152,7 +152,7 @@ v8::Handle<v8::Value> V8Geolocation::getCurrentPositionCallbackCustom(const v8::
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8Geolocation::watchPositionCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Geolocation::watchPositionMethodCustom(const v8::Arguments& args)
 {
     bool succeeded = false;
 

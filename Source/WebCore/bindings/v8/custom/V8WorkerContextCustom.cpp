@@ -90,7 +90,7 @@ v8::Handle<v8::Value> SetTimeoutOrInterval(const v8::Arguments& args, bool singl
     return v8Integer(timerId, args.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8WorkerContext::importScriptsCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8WorkerContext::importScriptsMethodCustom(const v8::Arguments& args)
 {
     if (!args.Length())
         return v8::Undefined();
@@ -114,12 +114,12 @@ v8::Handle<v8::Value> V8WorkerContext::importScriptsCallbackCustom(const v8::Arg
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8WorkerContext::setTimeoutCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8WorkerContext::setTimeoutMethodCustom(const v8::Arguments& args)
 {
     return SetTimeoutOrInterval(args, true);
 }
 
-v8::Handle<v8::Value> V8WorkerContext::setIntervalCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8WorkerContext::setIntervalMethodCustom(const v8::Arguments& args)
 {
     return SetTimeoutOrInterval(args, false);
 }

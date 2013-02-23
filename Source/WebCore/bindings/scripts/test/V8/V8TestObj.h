@@ -43,9 +43,9 @@ public:
     }
     static void derefObject(void*);
     static WrapperTypeInfo info;
-    static v8::Handle<v8::Value> customMethodCallbackCustom(const v8::Arguments&);
-    static v8::Handle<v8::Value> customMethodWithArgsCallbackCustom(const v8::Arguments&);
-    static v8::Handle<v8::Value> classMethod2CallbackCustom(const v8::Arguments&);
+    static v8::Handle<v8::Value> customMethodMethodCustom(const v8::Arguments&);
+    static v8::Handle<v8::Value> customMethodWithArgsMethodCustom(const v8::Arguments&);
+    static v8::Handle<v8::Value> classMethod2MethodCustom(const v8::Arguments&);
     static v8::Handle<v8::Value> constructorCallback(const v8::Arguments&);
     static v8::Handle<v8::Value> customAttrAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo&);
     static void customAttrAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value>, const v8::AccessorInfo&);

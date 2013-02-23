@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8MessagePort::postMessageCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MessagePort::postMessageMethodCustom(const v8::Arguments& args)
 {
     MessagePort* messagePort = V8MessagePort::toNative(args.Holder());
     MessagePortArray portArray;

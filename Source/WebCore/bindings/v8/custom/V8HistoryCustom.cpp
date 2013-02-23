@@ -57,7 +57,7 @@ v8::Handle<v8::Value> V8History::stateAttrGetterCustom(v8::Local<v8::String> nam
     return value;
 }
 
-v8::Handle<v8::Value> V8History::pushStateCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8History::pushStateMethodCustom(const v8::Arguments& args)
 {
     bool didThrow = false;
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(args[0], 0, 0, didThrow, args.GetIsolate());
@@ -74,7 +74,7 @@ v8::Handle<v8::Value> V8History::pushStateCallbackCustom(const v8::Arguments& ar
     return setDOMException(ec, args.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8History::replaceStateCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8History::replaceStateMethodCustom(const v8::Arguments& args)
 {
     bool didThrow = false;
     RefPtr<SerializedScriptValue> historyState = SerializedScriptValue::create(args[0], 0, 0, didThrow, args.GetIsolate());

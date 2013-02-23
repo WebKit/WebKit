@@ -398,7 +398,7 @@ END
             my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
             push(@headerContent, "#if ${conditionalString}\n") if $conditionalString;
             push(@headerContent, <<END);
-    static v8::Handle<v8::Value> ${name}CallbackCustom(const v8::Arguments&);
+    static v8::Handle<v8::Value> ${name}MethodCustom(const v8::Arguments&);
 END
             push(@headerContent, "#endif // ${conditionalString}\n") if $conditionalString;
         }
@@ -791,7 +791,7 @@ sub GenerateDomainSafeFunctionGetter
         $signature = "v8::Local<v8::Signature>()";
     }
 
-    my $newTemplateString = "v8::FunctionTemplate::New(${interfaceName}V8Internal::${funcName}Callback, v8Undefined(), $signature)";
+    my $newTemplateString = "v8::FunctionTemplate::New(${interfaceName}V8Internal::${funcName}Method, v8Undefined(), $signature)";
 
     AddToImplIncludes("Frame.h");
     push(@implContentDecls, <<END);
@@ -1457,7 +1457,7 @@ sub GenerateOverloadedFunctionCallback
     my $leastNumMandatoryParams = 255;
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentDecls, <<END);
-static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> ${name}Method(const v8::Arguments& args)
 {
 END
     push(@implContentDecls, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
@@ -1466,7 +1466,7 @@ END
         my ($numMandatoryParams, $parametersCheck) = GenerateFunctionParametersCheck($overload);
         $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
         push(@implContentDecls, "    if ($parametersCheck)\n");
-        push(@implContentDecls, "        return ${name}$overload->{overloadIndex}Callback(args);\n");
+        push(@implContentDecls, "        return ${name}$overload->{overloadIndex}Method(args);\n");
     }
     if ($leastNumMandatoryParams >= 1) {
         push(@implContentDecls, "    if (args.Length() < $leastNumMandatoryParams)\n");
@@ -1496,7 +1496,7 @@ sub GenerateFunctionCallback
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
     push(@implContentDecls, <<END);
-static v8::Handle<v8::Value> ${name}Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> ${name}Method(const v8::Arguments& args)
 {
 END
     push(@implContentDecls, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
@@ -1504,7 +1504,7 @@ END
     if (HasCustomMethod($function->signature->extendedAttributes)) {
         $name = $function->signature->name;
         push(@implContentDecls, <<END);
-    return ${v8InterfaceName}::${name}CallbackCustom(args);
+    return ${v8InterfaceName}::${name}MethodCustom(args);
 }
 
 END
@@ -2418,7 +2418,7 @@ END
 
     my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
     push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
-    push(@implContent, "    ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}Callback, v8Undefined(), ${signature})$property_attributes);\n");
+    push(@implContent, "    ${conditional}$template->Set(v8::String::NewSymbol(\"$name\"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}Method, v8Undefined(), ${signature})$property_attributes);\n");
     push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;
 }
 
@@ -2842,7 +2842,7 @@ END
         my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
         push(@implContent, "#if ${conditionalString}\n") if $conditionalString;
         push(@implContent, <<END);
-    {"$name", ${interfaceName}V8Internal::${name}Callback},
+    {"$name", ${interfaceName}V8Internal::${name}Method},
 END
         push(@implContent, "#endif\n") if $conditionalString;
         $num_callbacks++;
@@ -3164,7 +3164,7 @@ END
             push(@implContent, "    if (context && context->isDocument() && ${enableFunction}(static_cast<Document*>(context))) {\n");
             my $name = $runtimeFunc->signature->name;
             push(@implContent, <<END);
-        proto->Set(v8::String::NewSymbol("${name}"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}Callback, v8Undefined(), defaultSignature)->GetFunction());
+        proto->Set(v8::String::NewSymbol("${name}"), v8::FunctionTemplate::New(${interfaceName}V8Internal::${name}Method, v8Undefined(), defaultSignature)->GetFunction());
 END
             push(@implContent, "    }\n");
             push(@implContent, "#endif // ${conditionalString}\n") if $conditionalString;

@@ -110,7 +110,7 @@ void V8HTMLInputElement::selectionDirectionAttrSetterCustom(v8::Local<v8::String
     imp->setSelectionDirection(toWebCoreString(value));
 }
 
-v8::Handle<v8::Value> V8HTMLInputElement::setSelectionRangeCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLInputElement::setSelectionRangeMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Object> holder = args.Holder();
     HTMLInputElement* imp = V8HTMLInputElement::toNative(holder);

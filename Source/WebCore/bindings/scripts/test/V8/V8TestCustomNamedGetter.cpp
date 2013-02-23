@@ -70,7 +70,7 @@ namespace TestCustomNamedGetterV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
-static v8::Handle<v8::Value> anotherFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> anotherFunctionMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -83,7 +83,7 @@ static v8::Handle<v8::Value> anotherFunctionCallback(const v8::Arguments& args)
 } // namespace TestCustomNamedGetterV8Internal
 
 static const V8DOMConfiguration::BatchedCallback V8TestCustomNamedGetterCallbacks[] = {
-    {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionCallback},
+    {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionMethod},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

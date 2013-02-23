@@ -226,7 +226,7 @@ void V8DOMWindow::openerAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v
     info.This()->Set(name, value);
 }
 
-v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::addEventListenerMethodCustom(const v8::Arguments& args)
 {
     String eventType = toWebCoreString(args[0]);
     bool useCapture = args[2]->BooleanValue();
@@ -256,7 +256,7 @@ v8::Handle<v8::Value> V8DOMWindow::addEventListenerCallbackCustom(const v8::Argu
 }
 
 
-v8::Handle<v8::Value> V8DOMWindow::removeEventListenerCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::removeEventListenerMethodCustom(const v8::Arguments& args)
 {
     String eventType = toWebCoreString(args[0]);
     bool useCapture = args[2]->BooleanValue();
@@ -292,7 +292,7 @@ static bool isLegacyTargetOriginDesignation(v8::Handle<v8::Value> value)
 }
 
 
-v8::Handle<v8::Value> V8DOMWindow::postMessageCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::postMessageMethodCustom(const v8::Arguments& args)
 {
     // None of these need to be RefPtr because args and context are guaranteed
     // to hold on to them.
@@ -342,7 +342,7 @@ v8::Handle<v8::Value> V8DOMWindow::postMessageCallbackCustom(const v8::Arguments
 // fix this by calling toString function on the receiver.
 // However, V8 implements toString in JavaScript, which requires
 // switching context of receiver. I consider it is dangerous.
-v8::Handle<v8::Value> V8DOMWindow::toStringCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::toStringMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Object> domWrapper = args.This()->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(args.GetIsolate()));
     if (domWrapper.IsEmpty())
@@ -350,12 +350,12 @@ v8::Handle<v8::Value> V8DOMWindow::toStringCallbackCustom(const v8::Arguments& a
     return domWrapper->ObjectProtoToString();
 }
 
-v8::Handle<v8::Value> V8DOMWindow::releaseEventsCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::releaseEventsMethodCustom(const v8::Arguments& args)
 {
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8DOMWindow::captureEventsCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::captureEventsMethodCustom(const v8::Arguments& args)
 {
     return v8::Undefined();
 }
@@ -402,7 +402,7 @@ static void setUpDialog(DOMWindow* dialog, void* handler)
     static_cast<DialogHandler*>(handler)->dialogCreated(dialog);
 }
 
-v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::showModalDialogMethodCustom(const v8::Arguments& args)
 {
     DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
     BindingState* state = BindingState::instance();
@@ -419,7 +419,7 @@ v8::Handle<v8::Value> V8DOMWindow::showModalDialogCallbackCustom(const v8::Argum
     return handler.returnValue();
 }
 
-v8::Handle<v8::Value> V8DOMWindow::openCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::openMethodCustom(const v8::Arguments& args)
 {
     DOMWindow* impl = V8DOMWindow::toNative(args.Holder());
     BindingState* state = BindingState::instance();
@@ -496,13 +496,13 @@ v8::Handle<v8::Value> V8DOMWindow::namedPropertyGetter(v8::Local<v8::String> nam
 }
 
 
-v8::Handle<v8::Value> V8DOMWindow::setTimeoutCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::setTimeoutMethodCustom(const v8::Arguments& args)
 {
     return WindowSetTimeoutImpl(args, true);
 }
 
 
-v8::Handle<v8::Value> V8DOMWindow::setIntervalCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMWindow::setIntervalMethodCustom(const v8::Arguments& args)
 {
     return WindowSetTimeoutImpl(args, false);
 }

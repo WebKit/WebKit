@@ -115,7 +115,7 @@ v8::Handle<v8::Value> V8XMLHttpRequest::responseAttrGetterCustom(v8::Local<v8::S
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8XMLHttpRequest::openCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8XMLHttpRequest::openMethodCustom(const v8::Arguments& args)
 {
     // Four cases:
     // open(method, url)
@@ -164,7 +164,7 @@ static bool isDocumentType(v8::Handle<v8::Value> value, v8::Isolate* isolate)
     return V8Document::HasInstance(value, isolate) || V8HTMLDocument::HasInstance(value, isolate);
 }
 
-v8::Handle<v8::Value> V8XMLHttpRequest::sendCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8XMLHttpRequest::sendMethodCustom(const v8::Arguments& args)
 {
     XMLHttpRequest* xmlHttpRequest = V8XMLHttpRequest::toNative(args.Holder());
 

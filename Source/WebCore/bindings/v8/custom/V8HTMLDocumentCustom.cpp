@@ -115,21 +115,21 @@ static String writeHelperGetString(const v8::Arguments& args)
     return builder.toString();
 }
 
-v8::Handle<v8::Value> V8HTMLDocument::writeCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLDocument::writeMethodCustom(const v8::Arguments& args)
 {
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
     htmlDocument->write(writeHelperGetString(args), activeDOMWindow(BindingState::instance())->document());
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8HTMLDocument::writelnCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLDocument::writelnMethodCustom(const v8::Arguments& args)
 {
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
     htmlDocument->writeln(writeHelperGetString(args), activeDOMWindow(BindingState::instance())->document());
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8HTMLDocument::openCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLDocument::openMethodCustom(const v8::Arguments& args)
 {
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(args.Holder());
 

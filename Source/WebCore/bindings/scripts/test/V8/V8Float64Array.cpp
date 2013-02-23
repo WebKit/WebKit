@@ -80,7 +80,7 @@ namespace Float64ArrayV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
-static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> fooMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -89,7 +89,7 @@ static v8::Handle<v8::Value> fooCallback(const v8::Arguments& args)
     return toV8(imp->foo(array), args.Holder(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> setCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> setMethod(const v8::Arguments& args)
 {
     return setWebGLArrayHelper<Float64Array, V8Float64Array>(args);
 }
@@ -106,7 +106,7 @@ v8::Handle<v8::Object> wrap(Float64Array* impl, v8::Handle<v8::Object> creationC
 }
 
 static const V8DOMConfiguration::BatchedCallback V8Float64ArrayCallbacks[] = {
-    {"set", Float64ArrayV8Internal::setCallback},
+    {"set", Float64ArrayV8Internal::setMethod},
 };
 
 v8::Handle<v8::Value> V8Float64Array::constructorCallback(const v8::Arguments& args)
@@ -134,7 +134,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::
     const int fooArgc = 1;
     v8::Handle<v8::FunctionTemplate> fooArgv[fooArgc] = { V8Float32Array::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> fooSignature = v8::Signature::New(desc, fooArgc, fooArgv);
-    proto->Set(v8::String::NewSymbol("foo"), v8::FunctionTemplate::New(Float64ArrayV8Internal::fooCallback, v8Undefined(), fooSignature));
+    proto->Set(v8::String::NewSymbol("foo"), v8::FunctionTemplate::New(Float64ArrayV8Internal::fooMethod, v8Undefined(), fooSignature));
 
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());

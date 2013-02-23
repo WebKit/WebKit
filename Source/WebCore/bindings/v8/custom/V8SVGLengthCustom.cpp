@@ -75,7 +75,7 @@ void V8SVGLength::valueAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8
         wrapper->commitChange();
 }
 
-v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8SVGLength::convertToSpecifiedUnitsMethodCustom(const v8::Arguments& args)
 {
     SVGPropertyTearOff<SVGLength>* wrapper = V8SVGLength::toNative(args.Holder());
     if (wrapper->isReadOnly())

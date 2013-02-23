@@ -79,7 +79,7 @@ ScriptValue InjectedScriptHost::nodeAsScriptValue(ScriptState* state, Node* node
     return ScriptValue(toV8(node, v8::Handle<v8::Object>(), context->GetIsolate()));
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -92,7 +92,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectedObjectCallbackCustom(const 
     return object->get(ScriptState::current()).v8Value();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -103,7 +103,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::internalConstructorNameCallbackCusto
     return args[0]->ToObject()->GetConstructorName();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -115,7 +115,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::isHTMLAllCollectionCallbackCustom(co
     return v8::Boolean::New(V8HTMLAllCollection::HasInstance(args[0], args.GetIsolate()));
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::typeCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::typeMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -150,7 +150,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::typeCallbackCustom(const v8::Argumen
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -189,7 +189,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::functionDetailsCallbackCustom(const 
     return result;
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::getInternalPropertiesCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::getInternalPropertiesMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -235,7 +235,7 @@ static v8::Handle<v8::Array> getJSListenerFunctions(Document* document, const Ev
     return result;
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::getEventListenersCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::getEventListenersMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -269,7 +269,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::getEventListenersCallbackCustom(cons
     return result;
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::inspectMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 2)
         return v8::Undefined();
@@ -282,7 +282,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectCallbackCustom(const v8::Argu
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::databaseIdCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::databaseIdMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -295,7 +295,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::databaseIdCallbackCustom(const v8::A
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::storageIdCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::storageIdMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::Undefined();
@@ -306,7 +306,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::storageIdCallbackCustom(const v8::Ar
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::evaluateCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::evaluateMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return v8::ThrowException(v8::Exception::Error(v8::String::New("One argument expected.")));
@@ -321,7 +321,7 @@ v8::Handle<v8::Value> V8InjectedScriptHost::evaluateCallbackCustom(const v8::Arg
     return script->Run();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::setFunctionVariableValueCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8InjectedScriptHost::setFunctionVariableValueMethodCustom(const v8::Arguments& args)
 {
     v8::Handle<v8::Value> functionValue = args[0];
     int scopeIndex = args[1]->Int32Value();

@@ -157,7 +157,7 @@ v8::Handle<v8::Value> V8DeviceMotionEvent::intervalAttrGetterCustom(v8::Local<v8
     return v8::Number::New(imp->deviceMotionData()->interval());
 }
 
-v8::Handle<v8::Value> V8DeviceMotionEvent::initDeviceMotionEventCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DeviceMotionEvent::initDeviceMotionEventMethodCustom(const v8::Arguments& args)
 {
     DeviceMotionEvent* imp = V8DeviceMotionEvent::toNative(args.Holder());
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, args[0]);

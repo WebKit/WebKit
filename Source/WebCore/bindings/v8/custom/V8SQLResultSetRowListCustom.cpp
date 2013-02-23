@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8SQLResultSetRowList::itemCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8SQLResultSetRowList::itemMethodCustom(const v8::Arguments& args)
 {
     if (!args.Length())
         return throwError(v8SyntaxError, "Item index is required.", args.GetIsolate());

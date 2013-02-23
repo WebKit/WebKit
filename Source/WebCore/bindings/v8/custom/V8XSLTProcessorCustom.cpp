@@ -48,7 +48,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8XSLTProcessor::setParameterCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8XSLTProcessor::setParameterMethodCustom(const v8::Arguments& args)
 {
     if (isUndefinedOrNull(args[1]) || isUndefinedOrNull(args[2]))
         return v8::Undefined();
@@ -63,7 +63,7 @@ v8::Handle<v8::Value> V8XSLTProcessor::setParameterCallbackCustom(const v8::Argu
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8XSLTProcessor::getParameterCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8XSLTProcessor::getParameterMethodCustom(const v8::Arguments& args)
 {
     if (isUndefinedOrNull(args[1]))
         return v8::Undefined();
@@ -79,7 +79,7 @@ v8::Handle<v8::Value> V8XSLTProcessor::getParameterCallbackCustom(const v8::Argu
     return v8String(result, args.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8XSLTProcessor::removeParameterCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8XSLTProcessor::removeParameterMethodCustom(const v8::Arguments& args)
 {
     if (isUndefinedOrNull(args[1]))
         return v8::Undefined();

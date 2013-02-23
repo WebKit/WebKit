@@ -143,7 +143,7 @@ static v8::Handle<v8::Value> cachedReadonlyValueAttrGetter(v8::Local<v8::String>
     return value;
 }
 
-static v8::Handle<v8::Value> acceptTransferListCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> acceptTransferListMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -166,7 +166,7 @@ static v8::Handle<v8::Value> acceptTransferListCallback(const v8::Arguments& arg
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> multiTransferListMethod(const v8::Arguments& args)
 {
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(args.Holder());
     if (args.Length() <= 0) {
@@ -225,8 +225,8 @@ static const V8DOMConfiguration::BatchedAttribute V8TestSerializedScriptValueInt
 };
 
 static const V8DOMConfiguration::BatchedCallback V8TestSerializedScriptValueInterfaceCallbacks[] = {
-    {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListCallback},
-    {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListCallback},
+    {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListMethod},
+    {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListMethod},
 };
 
 v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(const v8::Arguments& args)

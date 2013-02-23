@@ -40,7 +40,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Console::traceCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Console::traceMethodCustom(const v8::Arguments& args)
 {
     Console* imp = V8Console::toNative(args.Holder());
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 0));
@@ -48,7 +48,7 @@ v8::Handle<v8::Value> V8Console::traceCallbackCustom(const v8::Arguments& args)
     return v8Undefined();
 }
 
-v8::Handle<v8::Value> V8Console::assertCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Console::assertMethodCustom(const v8::Arguments& args)
 {
     Console* imp = V8Console::toNative(args.Holder());
     bool condition = args[0]->BooleanValue();
@@ -58,7 +58,7 @@ v8::Handle<v8::Value> V8Console::assertCallbackCustom(const v8::Arguments& args)
 }
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-v8::Handle<v8::Value> V8Console::profileCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Console::profileMethodCustom(const v8::Arguments& args)
 {
     Console* imp = V8Console::toNative(args.Holder());
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[0]);
@@ -66,7 +66,7 @@ v8::Handle<v8::Value> V8Console::profileCallbackCustom(const v8::Arguments& args
     return v8Undefined();
 }
 
-v8::Handle<v8::Value> V8Console::profileEndCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Console::profileEndMethodCustom(const v8::Arguments& args)
 {
     Console* imp = V8Console::toNative(args.Holder());
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<WithUndefinedOrNullCheck>, title, args[0]);

@@ -71,7 +71,7 @@ v8::Handle<v8::Value> V8DeviceOrientationEvent::absoluteAttrGetterCustom(v8::Loc
     return v8::Boolean::New(imp->orientation()->absolute());
 }
 
-v8::Handle<v8::Value> V8DeviceOrientationEvent::initDeviceOrientationEventCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DeviceOrientationEvent::initDeviceOrientationEventMethodCustom(const v8::Arguments& args)
 {
     DeviceOrientationEvent* imp = V8DeviceOrientationEvent::toNative(args.Holder());
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, type, args[0]);

@@ -60,7 +60,7 @@ v8::Handle<v8::Value> V8Clipboard::typesAttrGetterCustom(v8::Local<v8::String> n
     return result;
 }
 
-v8::Handle<v8::Value> V8Clipboard::clearDataCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Clipboard::clearDataMethodCustom(const v8::Arguments& args)
 {
     Clipboard* clipboard = V8Clipboard::toNative(args.Holder());
 
@@ -77,7 +77,7 @@ v8::Handle<v8::Value> V8Clipboard::clearDataCallbackCustom(const v8::Arguments& 
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8Clipboard::setDragImageCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Clipboard::setDragImageMethodCustom(const v8::Arguments& args)
 {
     Clipboard* clipboard = V8Clipboard::toNative(args.Holder());
 

@@ -192,7 +192,7 @@ static void TestTypedefsReplaceableAttrSetter(v8::Local<v8::String> name, v8::Lo
     info.This()->ForceSet(name, value);
 }
 
-static v8::Handle<v8::Value> funcCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> funcMethod(const v8::Arguments& args)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
     if (args.Length() <= 0) {
@@ -206,7 +206,7 @@ static v8::Handle<v8::Value> funcCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> multiTransferListMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -247,7 +247,7 @@ static v8::Handle<v8::Value> multiTransferListCallback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> setShadowCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> setShadowMethod(const v8::Arguments& args)
 {
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -269,7 +269,7 @@ static v8::Handle<v8::Value> setShadowCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithSequenceArgMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -278,7 +278,7 @@ static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& 
     return v8::Number::New(static_cast<double>(imp->methodWithSequenceArg(sequenceArg)));
 }
 
-static v8::Handle<v8::Value> nullableArrayArgCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> nullableArrayArgMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -288,7 +288,7 @@ static v8::Handle<v8::Value> nullableArrayArgCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> funcWithClampCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> funcWithClampMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -309,13 +309,13 @@ static v8::Handle<v8::Value> funcWithClampCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> immutablePointFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> immutablePointFunctionMethod(const v8::Arguments& args)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
     return toV8(WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(imp->immutablePointFunction())), args.Holder(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> stringArrayFunctionMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -332,7 +332,7 @@ static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& ar
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> stringArrayFunction2Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> stringArrayFunction2Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -349,7 +349,7 @@ static v8::Handle<v8::Value> stringArrayFunction2Callback(const v8::Arguments& a
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithExceptionMethod(const v8::Arguments& args)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -383,12 +383,12 @@ static const V8DOMConfiguration::BatchedAttribute V8TestTypedefsAttrs[] = {
 };
 
 static const V8DOMConfiguration::BatchedCallback V8TestTypedefsCallbacks[] = {
-    {"func", TestTypedefsV8Internal::funcCallback},
-    {"multiTransferList", TestTypedefsV8Internal::multiTransferListCallback},
-    {"setShadow", TestTypedefsV8Internal::setShadowCallback},
-    {"funcWithClamp", TestTypedefsV8Internal::funcWithClampCallback},
-    {"immutablePointFunction", TestTypedefsV8Internal::immutablePointFunctionCallback},
-    {"methodWithException", TestTypedefsV8Internal::methodWithExceptionCallback},
+    {"func", TestTypedefsV8Internal::funcMethod},
+    {"multiTransferList", TestTypedefsV8Internal::multiTransferListMethod},
+    {"setShadow", TestTypedefsV8Internal::setShadowMethod},
+    {"funcWithClamp", TestTypedefsV8Internal::funcWithClampMethod},
+    {"immutablePointFunction", TestTypedefsV8Internal::immutablePointFunctionMethod},
+    {"methodWithException", TestTypedefsV8Internal::methodWithExceptionMethod},
 };
 
 v8::Handle<v8::Value> V8TestTypedefs::constructorCallback(const v8::Arguments& args)
@@ -433,25 +433,25 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestTypedefsTemplate(v8::
     const int methodWithSequenceArgArgc = 1;
     v8::Handle<v8::FunctionTemplate> methodWithSequenceArgArgv[methodWithSequenceArgArgc] = { V8sequence<SerializedScriptValue>::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> methodWithSequenceArgSignature = v8::Signature::New(desc, methodWithSequenceArgArgc, methodWithSequenceArgArgv);
-    proto->Set(v8::String::NewSymbol("methodWithSequenceArg"), v8::FunctionTemplate::New(TestTypedefsV8Internal::methodWithSequenceArgCallback, v8Undefined(), methodWithSequenceArgSignature));
+    proto->Set(v8::String::NewSymbol("methodWithSequenceArg"), v8::FunctionTemplate::New(TestTypedefsV8Internal::methodWithSequenceArgMethod, v8Undefined(), methodWithSequenceArgSignature));
 
     // Custom Signature 'nullableArrayArg'
     const int nullableArrayArgArgc = 1;
     v8::Handle<v8::FunctionTemplate> nullableArrayArgArgv[nullableArrayArgArgc] = { V8DOMString[]::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> nullableArrayArgSignature = v8::Signature::New(desc, nullableArrayArgArgc, nullableArrayArgArgv);
-    proto->Set(v8::String::NewSymbol("nullableArrayArg"), v8::FunctionTemplate::New(TestTypedefsV8Internal::nullableArrayArgCallback, v8Undefined(), nullableArrayArgSignature));
+    proto->Set(v8::String::NewSymbol("nullableArrayArg"), v8::FunctionTemplate::New(TestTypedefsV8Internal::nullableArrayArgMethod, v8Undefined(), nullableArrayArgSignature));
 
     // Custom Signature 'stringArrayFunction'
     const int stringArrayFunctionArgc = 1;
     v8::Handle<v8::FunctionTemplate> stringArrayFunctionArgv[stringArrayFunctionArgc] = { V8DOMString[]::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> stringArrayFunctionSignature = v8::Signature::New(desc, stringArrayFunctionArgc, stringArrayFunctionArgv);
-    proto->Set(v8::String::NewSymbol("stringArrayFunction"), v8::FunctionTemplate::New(TestTypedefsV8Internal::stringArrayFunctionCallback, v8Undefined(), stringArrayFunctionSignature));
+    proto->Set(v8::String::NewSymbol("stringArrayFunction"), v8::FunctionTemplate::New(TestTypedefsV8Internal::stringArrayFunctionMethod, v8Undefined(), stringArrayFunctionSignature));
 
     // Custom Signature 'stringArrayFunction2'
     const int stringArrayFunction2Argc = 1;
     v8::Handle<v8::FunctionTemplate> stringArrayFunction2Argv[stringArrayFunction2Argc] = { V8DOMString[]::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> stringArrayFunction2Signature = v8::Signature::New(desc, stringArrayFunction2Argc, stringArrayFunction2Argv);
-    proto->Set(v8::String::NewSymbol("stringArrayFunction2"), v8::FunctionTemplate::New(TestTypedefsV8Internal::stringArrayFunction2Callback, v8Undefined(), stringArrayFunction2Signature));
+    proto->Set(v8::String::NewSymbol("stringArrayFunction2"), v8::FunctionTemplate::New(TestTypedefsV8Internal::stringArrayFunction2Method, v8Undefined(), stringArrayFunction2Signature));
 
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());

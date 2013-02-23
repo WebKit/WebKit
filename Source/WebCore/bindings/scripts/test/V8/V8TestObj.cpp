@@ -994,14 +994,14 @@ static void TestObjReplaceableAttrSetter(v8::Local<v8::String> name, v8::Local<v
     info.This()->ForceSet(name, value);
 }
 
-static v8::Handle<v8::Value> voidMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> voidMethodMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     imp->voidMethod();
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> voidMethodWithArgsCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> voidMethodWithArgsMethod(const v8::Arguments& args)
 {
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1013,13 +1013,13 @@ static v8::Handle<v8::Value> voidMethodWithArgsCallback(const v8::Arguments& arg
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> longMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> longMethodMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     return v8Integer(imp->longMethod(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> longMethodWithArgsCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> longMethodWithArgsMethod(const v8::Arguments& args)
 {
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1030,14 +1030,14 @@ static v8::Handle<v8::Value> longMethodWithArgsCallback(const v8::Arguments& arg
     return v8Integer(imp->longMethodWithArgs(longArg, strArg, objArg), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> objMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> objMethodMethod(const v8::Arguments& args)
 {
     FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::TestFeature);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     return toV8(imp->objMethod(), args.Holder(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> objMethodWithArgsMethod(const v8::Arguments& args)
 {
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1048,7 +1048,7 @@ static v8::Handle<v8::Value> objMethodWithArgsCallback(const v8::Arguments& args
     return toV8(imp->objMethodWithArgs(longArg, strArg, objArg), args.Holder(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithSequenceArgMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1058,7 +1058,7 @@ static v8::Handle<v8::Value> methodWithSequenceArgCallback(const v8::Arguments& 
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodReturningSequenceCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodReturningSequenceMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1067,7 +1067,7 @@ static v8::Handle<v8::Value> methodReturningSequenceCallback(const v8::Arguments
     return v8Array(imp->methodReturningSequence(longArg), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsMethod(const v8::Arguments& args)
 {
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1085,7 +1085,7 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> serializedValueMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1098,7 +1098,7 @@ static v8::Handle<v8::Value> serializedValueCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> optionsObjectMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1113,7 +1113,7 @@ static v8::Handle<v8::Value> optionsObjectCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithExceptionMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -1127,18 +1127,18 @@ static v8::Handle<v8::Value> methodWithExceptionCallback(const v8::Arguments& ar
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> customMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> customMethodMethod(const v8::Arguments& args)
 {
     FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::CustomTestFeature);
-    return V8TestObj::customMethodCallbackCustom(args);
+    return V8TestObj::customMethodMethodCustom(args);
 }
 
-static v8::Handle<v8::Value> customMethodWithArgsCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> customMethodWithArgsMethod(const v8::Arguments& args)
 {
-    return V8TestObj::customMethodWithArgsCallbackCustom(args);
+    return V8TestObj::customMethodWithArgsMethodCustom(args);
 }
 
-static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> addEventListenerMethod(const v8::Arguments& args)
 {
     RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFindOrCreate);
     if (listener) {
@@ -1149,7 +1149,7 @@ static v8::Handle<v8::Value> addEventListenerCallback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> removeEventListenerMethod(const v8::Arguments& args)
 {
     RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFindOnly);
     if (listener) {
@@ -1160,7 +1160,7 @@ static v8::Handle<v8::Value> removeEventListenerCallback(const v8::Arguments& ar
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> withScriptStateVoidCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptStateVoidMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ScriptState* currentState = ScriptState::current();
@@ -1176,7 +1176,7 @@ static v8::Handle<v8::Value> withScriptStateVoidCallback(const v8::Arguments& ar
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> withScriptStateObjCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptStateObjMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ScriptState* currentState = ScriptState::current();
@@ -1192,7 +1192,7 @@ static v8::Handle<v8::Value> withScriptStateObjCallback(const v8::Arguments& arg
     return toV8(result.release(), args.Holder(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> withScriptStateVoidExceptionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptStateVoidExceptionMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -1215,7 +1215,7 @@ static v8::Handle<v8::Value> withScriptStateVoidExceptionCallback(const v8::Argu
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> withScriptStateObjExceptionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptStateObjExceptionMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -1238,7 +1238,7 @@ static v8::Handle<v8::Value> withScriptStateObjExceptionCallback(const v8::Argum
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> withScriptExecutionContextCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptExecutionContextMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
@@ -1246,7 +1246,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextCallback(const v8::Argume
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ScriptState* currentState = ScriptState::current();
@@ -1263,7 +1263,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateCallback(co
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateObjExceptionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateObjExceptionMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -1287,7 +1287,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateObjExceptio
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ScriptState* currentState = ScriptState::current();
@@ -1304,7 +1304,7 @@ static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesC
     return toV8(result.release(), args.Holder(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> withScriptArgumentsAndCallStackCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> withScriptArgumentsAndCallStackMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     RefPtr<ScriptArguments> scriptArguments(createScriptArguments(args, 0));
@@ -1312,7 +1312,7 @@ static v8::Handle<v8::Value> withScriptArgumentsAndCallStackCallback(const v8::A
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithOptionalArgMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     if (args.Length() <= 0) {
@@ -1324,7 +1324,7 @@ static v8::Handle<v8::Value> methodWithOptionalArgCallback(const v8::Arguments& 
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithNonOptionalArgAndOptionalArgCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithNonOptionalArgAndOptionalArgMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1339,7 +1339,7 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndOptionalArgCallback(cons
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1359,7 +1359,7 @@ static v8::Handle<v8::Value> methodWithNonOptionalArgAndTwoOptionalArgsCallback(
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithOptionalStringCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithOptionalStringMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     if (args.Length() <= 0) {
@@ -1371,7 +1371,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringCallback(const v8::Argument
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithOptionalStringIsUndefinedCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithOptionalStringIsUndefinedMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, args[0]);
@@ -1379,7 +1379,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringIsUndefinedCallback(const v
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithOptionalStringIsNullStringCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithOptionalStringIsNullStringMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str, argumentOrNull(args, 0));
@@ -1387,7 +1387,7 @@ static v8::Handle<v8::Value> methodWithOptionalStringIsNullStringCallback(const 
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithCallbackArgCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithCallbackArgMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1399,7 +1399,7 @@ static v8::Handle<v8::Value> methodWithCallbackArgCallback(const v8::Arguments& 
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgMethod(const v8::Arguments& args)
 {
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1412,7 +1412,7 @@ static v8::Handle<v8::Value> methodWithNonCallbackArgAndCallbackArgCallback(cons
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     RefPtr<TestCallback> callback;
@@ -1427,7 +1427,7 @@ static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgCallback(const v8::
 
 #if ENABLE(Condition1)
 
-static v8::Handle<v8::Value> conditionalMethod1Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> conditionalMethod1Method(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     return v8String(imp->conditionalMethod1(), args.GetIsolate(), ReturnUnsafeHandle);
@@ -1437,7 +1437,7 @@ static v8::Handle<v8::Value> conditionalMethod1Callback(const v8::Arguments& arg
 
 #if ENABLE(Condition1) && ENABLE(Condition2)
 
-static v8::Handle<v8::Value> conditionalMethod2Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> conditionalMethod2Method(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     imp->conditionalMethod2();
@@ -1448,7 +1448,7 @@ static v8::Handle<v8::Value> conditionalMethod2Callback(const v8::Arguments& arg
 
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
-static v8::Handle<v8::Value> conditionalMethod3Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> conditionalMethod3Method(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     imp->conditionalMethod3();
@@ -1457,7 +1457,7 @@ static v8::Handle<v8::Value> conditionalMethod3Callback(const v8::Arguments& arg
 
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
 
-static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod1Method(const v8::Arguments& args)
 {
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1468,7 +1468,7 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod2Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod2Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1483,7 +1483,7 @@ static v8::Handle<v8::Value> overloadedMethod2Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod3Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod3Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1493,7 +1493,7 @@ static v8::Handle<v8::Value> overloadedMethod3Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod4Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1503,7 +1503,7 @@ static v8::Handle<v8::Value> overloadedMethod4Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod5Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod5Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1515,7 +1515,7 @@ static v8::Handle<v8::Value> overloadedMethod5Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod6Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod6Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1525,7 +1525,7 @@ static v8::Handle<v8::Value> overloadedMethod6Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod7Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod7Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1535,7 +1535,7 @@ static v8::Handle<v8::Value> overloadedMethod7Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod8Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod8Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1545,7 +1545,7 @@ static v8::Handle<v8::Value> overloadedMethod8Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod9Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod9Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1555,7 +1555,7 @@ static v8::Handle<v8::Value> overloadedMethod9Callback(const v8::Arguments& args
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod10Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod10Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1565,7 +1565,7 @@ static v8::Handle<v8::Value> overloadedMethod10Callback(const v8::Arguments& arg
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod11Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1575,42 +1575,42 @@ static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& arg
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> overloadedMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethodMethod(const v8::Arguments& args)
 {
     if ((args.Length() == 2 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0], args.GetIsolate())) && (args[1]->IsNull() || args[1]->IsUndefined() || args[1]->IsString() || args[1]->IsObject())))
-        return overloadedMethod1Callback(args);
+        return overloadedMethod1Method(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0], args.GetIsolate()))) || (args.Length() == 2 && (args[0]->IsNull() || V8TestObj::HasInstance(args[0], args.GetIsolate()))))
-        return overloadedMethod2Callback(args);
+        return overloadedMethod2Method(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsUndefined() || args[0]->IsString() || args[0]->IsObject())))
-        return overloadedMethod3Callback(args);
+        return overloadedMethod3Method(args);
     if (args.Length() == 1)
-        return overloadedMethod4Callback(args);
+        return overloadedMethod4Method(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsFunction())))
-        return overloadedMethod5Callback(args);
+        return overloadedMethod5Method(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || V8DOMStringList::HasInstance(args[0], args.GetIsolate()))))
-        return overloadedMethod6Callback(args);
+        return overloadedMethod6Method(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsArray())))
-        return overloadedMethod7Callback(args);
+        return overloadedMethod7Method(args);
     if ((args.Length() == 1 && (V8TestObj::HasInstance(args[0], args.GetIsolate()))))
-        return overloadedMethod8Callback(args);
+        return overloadedMethod8Method(args);
     if ((args.Length() == 1 && (args[0]->IsArray())))
-        return overloadedMethod9Callback(args);
+        return overloadedMethod9Method(args);
     if ((args.Length() == 1 && (args[0]->IsArray())))
-        return overloadedMethod10Callback(args);
+        return overloadedMethod10Method(args);
     if (args.Length() == 1)
-        return overloadedMethod11Callback(args);
+        return overloadedMethod11Method(args);
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     return throwTypeError(0, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> classMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> classMethodMethod(const v8::Arguments& args)
 {
     TestObj::classMethod();
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> classMethodWithOptionalMethod(const v8::Arguments& args)
 {
     if (args.Length() <= 0) {
         return v8Integer(TestObj::classMethodWithOptional(), args.GetIsolate());
@@ -1619,14 +1619,14 @@ static v8::Handle<v8::Value> classMethodWithOptionalCallback(const v8::Arguments
     return v8Integer(TestObj::classMethodWithOptional(arg), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> classMethod2Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> classMethod2Method(const v8::Arguments& args)
 {
-    return V8TestObj::classMethod2CallbackCustom(args);
+    return V8TestObj::classMethod2MethodCustom(args);
 }
 
 #if ENABLE(Condition1)
 
-static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod11Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1639,7 +1639,7 @@ static v8::Handle<v8::Value> overloadedMethod11Callback(const v8::Arguments& arg
 
 #if ENABLE(Condition1)
 
-static v8::Handle<v8::Value> overloadedMethod12Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod12Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1652,12 +1652,12 @@ static v8::Handle<v8::Value> overloadedMethod12Callback(const v8::Arguments& arg
 
 #if ENABLE(Condition1)
 
-static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> overloadedMethod1Method(const v8::Arguments& args)
 {
     if (args.Length() == 1)
-        return overloadedMethod11Callback(args);
+        return overloadedMethod11Method(args);
     if ((args.Length() == 1 && (args[0]->IsNull() || args[0]->IsUndefined() || args[0]->IsString() || args[0]->IsObject())))
-        return overloadedMethod12Callback(args);
+        return overloadedMethod12Method(args);
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     return throwTypeError(0, args.GetIsolate());
@@ -1665,7 +1665,7 @@ static v8::Handle<v8::Value> overloadedMethod1Callback(const v8::Arguments& args
 
 #endif // ENABLE(Condition1)
 
-static v8::Handle<v8::Value> classMethodWithClampCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> classMethodWithClampMethod(const v8::Arguments& args)
 {
     if (args.Length() < 2)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1682,7 +1682,7 @@ static v8::Handle<v8::Value> classMethodWithClampCallback(const v8::Arguments& a
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> enabledAtRuntimeMethod1Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1692,7 +1692,7 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod1Callback(const v8::Arguments
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> enabledAtRuntimeMethod2Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1702,7 +1702,7 @@ static v8::Handle<v8::Value> enabledAtRuntimeMethod2Callback(const v8::Arguments
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> enabledPerContextMethod1Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> enabledPerContextMethod1Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1712,7 +1712,7 @@ static v8::Handle<v8::Value> enabledPerContextMethod1Callback(const v8::Argument
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> enabledPerContextMethod2Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> enabledPerContextMethod2Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1722,7 +1722,7 @@ static v8::Handle<v8::Value> enabledPerContextMethod2Callback(const v8::Argument
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> stringArrayFunctionMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1739,7 +1739,7 @@ static v8::Handle<v8::Value> stringArrayFunctionCallback(const v8::Arguments& ar
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> domStringListFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> domStringListFunctionMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1756,7 +1756,7 @@ static v8::Handle<v8::Value> domStringListFunctionCallback(const v8::Arguments& 
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> getSVGDocumentCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> getSVGDocumentMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
@@ -1772,7 +1772,7 @@ static v8::Handle<v8::Value> getSVGDocumentCallback(const v8::Arguments& args)
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> convert1Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> convert1Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1782,7 +1782,7 @@ static v8::Handle<v8::Value> convert1Callback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> convert2Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> convert2Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1792,7 +1792,7 @@ static v8::Handle<v8::Value> convert2Callback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> convert4Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> convert4Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1802,7 +1802,7 @@ static v8::Handle<v8::Value> convert4Callback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> convert5Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> convert5Method(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1812,26 +1812,26 @@ static v8::Handle<v8::Value> convert5Callback(const v8::Arguments& args)
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> mutablePointFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> mutablePointFunctionMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     return toV8(WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(imp->mutablePointFunction())), args.Holder(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> immutablePointFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> immutablePointFunctionMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     return toV8(WTF::getPtr(SVGPropertyTearOff<FloatPoint>::create(imp->immutablePointFunction())), args.Holder(), args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> orangeCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> orangeMethod(const v8::Arguments& args)
 {
     TestObj* imp = V8TestObj::toNative(args.Holder());
     imp->banana();
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> strictFunctionMethod(const v8::Arguments& args)
 {
     if (args.Length() < 3)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1850,7 +1850,7 @@ static v8::Handle<v8::Value> strictFunctionCallback(const v8::Arguments& args)
     return setDOMException(ec, args.GetIsolate());
 }
 
-static v8::Handle<v8::Value> variadicStringMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> variadicStringMethodMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1861,7 +1861,7 @@ static v8::Handle<v8::Value> variadicStringMethodCallback(const v8::Arguments& a
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> variadicDoubleMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> variadicDoubleMethodMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -1872,7 +1872,7 @@ static v8::Handle<v8::Value> variadicDoubleMethodCallback(const v8::Arguments& a
     return v8Undefined();
 }
 
-static v8::Handle<v8::Value> variadicNodeMethodCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> variadicNodeMethodMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
@@ -2024,53 +2024,53 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
 };
 
 static const V8DOMConfiguration::BatchedCallback V8TestObjCallbacks[] = {
-    {"voidMethod", TestObjV8Internal::voidMethodCallback},
-    {"longMethod", TestObjV8Internal::longMethodCallback},
-    {"objMethod", TestObjV8Internal::objMethodCallback},
-    {"methodReturningSequence", TestObjV8Internal::methodReturningSequenceCallback},
-    {"serializedValue", TestObjV8Internal::serializedValueCallback},
-    {"optionsObject", TestObjV8Internal::optionsObjectCallback},
-    {"methodWithException", TestObjV8Internal::methodWithExceptionCallback},
-    {"customMethod", TestObjV8Internal::customMethodCallback},
-    {"customMethodWithArgs", TestObjV8Internal::customMethodWithArgsCallback},
-    {"addEventListener", TestObjV8Internal::addEventListenerCallback},
-    {"removeEventListener", TestObjV8Internal::removeEventListenerCallback},
-    {"withScriptStateVoid", TestObjV8Internal::withScriptStateVoidCallback},
-    {"withScriptStateObj", TestObjV8Internal::withScriptStateObjCallback},
-    {"withScriptStateVoidException", TestObjV8Internal::withScriptStateVoidExceptionCallback},
-    {"withScriptStateObjException", TestObjV8Internal::withScriptStateObjExceptionCallback},
-    {"withScriptExecutionContext", TestObjV8Internal::withScriptExecutionContextCallback},
-    {"withScriptExecutionContextAndScriptState", TestObjV8Internal::withScriptExecutionContextAndScriptStateCallback},
-    {"withScriptExecutionContextAndScriptStateObjException", TestObjV8Internal::withScriptExecutionContextAndScriptStateObjExceptionCallback},
-    {"withScriptExecutionContextAndScriptStateWithSpaces", TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesCallback},
-    {"withScriptArgumentsAndCallStack", TestObjV8Internal::withScriptArgumentsAndCallStackCallback},
-    {"methodWithOptionalArg", TestObjV8Internal::methodWithOptionalArgCallback},
-    {"methodWithNonOptionalArgAndOptionalArg", TestObjV8Internal::methodWithNonOptionalArgAndOptionalArgCallback},
-    {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjV8Internal::methodWithNonOptionalArgAndTwoOptionalArgsCallback},
-    {"methodWithOptionalString", TestObjV8Internal::methodWithOptionalStringCallback},
-    {"methodWithOptionalStringIsUndefined", TestObjV8Internal::methodWithOptionalStringIsUndefinedCallback},
-    {"methodWithOptionalStringIsNullString", TestObjV8Internal::methodWithOptionalStringIsNullStringCallback},
-    {"methodWithCallbackArg", TestObjV8Internal::methodWithCallbackArgCallback},
-    {"methodWithNonCallbackArgAndCallbackArg", TestObjV8Internal::methodWithNonCallbackArgAndCallbackArgCallback},
-    {"methodWithCallbackAndOptionalArg", TestObjV8Internal::methodWithCallbackAndOptionalArgCallback},
+    {"voidMethod", TestObjV8Internal::voidMethodMethod},
+    {"longMethod", TestObjV8Internal::longMethodMethod},
+    {"objMethod", TestObjV8Internal::objMethodMethod},
+    {"methodReturningSequence", TestObjV8Internal::methodReturningSequenceMethod},
+    {"serializedValue", TestObjV8Internal::serializedValueMethod},
+    {"optionsObject", TestObjV8Internal::optionsObjectMethod},
+    {"methodWithException", TestObjV8Internal::methodWithExceptionMethod},
+    {"customMethod", TestObjV8Internal::customMethodMethod},
+    {"customMethodWithArgs", TestObjV8Internal::customMethodWithArgsMethod},
+    {"addEventListener", TestObjV8Internal::addEventListenerMethod},
+    {"removeEventListener", TestObjV8Internal::removeEventListenerMethod},
+    {"withScriptStateVoid", TestObjV8Internal::withScriptStateVoidMethod},
+    {"withScriptStateObj", TestObjV8Internal::withScriptStateObjMethod},
+    {"withScriptStateVoidException", TestObjV8Internal::withScriptStateVoidExceptionMethod},
+    {"withScriptStateObjException", TestObjV8Internal::withScriptStateObjExceptionMethod},
+    {"withScriptExecutionContext", TestObjV8Internal::withScriptExecutionContextMethod},
+    {"withScriptExecutionContextAndScriptState", TestObjV8Internal::withScriptExecutionContextAndScriptStateMethod},
+    {"withScriptExecutionContextAndScriptStateObjException", TestObjV8Internal::withScriptExecutionContextAndScriptStateObjExceptionMethod},
+    {"withScriptExecutionContextAndScriptStateWithSpaces", TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesMethod},
+    {"withScriptArgumentsAndCallStack", TestObjV8Internal::withScriptArgumentsAndCallStackMethod},
+    {"methodWithOptionalArg", TestObjV8Internal::methodWithOptionalArgMethod},
+    {"methodWithNonOptionalArgAndOptionalArg", TestObjV8Internal::methodWithNonOptionalArgAndOptionalArgMethod},
+    {"methodWithNonOptionalArgAndTwoOptionalArgs", TestObjV8Internal::methodWithNonOptionalArgAndTwoOptionalArgsMethod},
+    {"methodWithOptionalString", TestObjV8Internal::methodWithOptionalStringMethod},
+    {"methodWithOptionalStringIsUndefined", TestObjV8Internal::methodWithOptionalStringIsUndefinedMethod},
+    {"methodWithOptionalStringIsNullString", TestObjV8Internal::methodWithOptionalStringIsNullStringMethod},
+    {"methodWithCallbackArg", TestObjV8Internal::methodWithCallbackArgMethod},
+    {"methodWithNonCallbackArgAndCallbackArg", TestObjV8Internal::methodWithNonCallbackArgAndCallbackArgMethod},
+    {"methodWithCallbackAndOptionalArg", TestObjV8Internal::methodWithCallbackAndOptionalArgMethod},
 #if ENABLE(Condition1)
-    {"conditionalMethod1", TestObjV8Internal::conditionalMethod1Callback},
+    {"conditionalMethod1", TestObjV8Internal::conditionalMethod1Method},
 #endif
 #if ENABLE(Condition1) && ENABLE(Condition2)
-    {"conditionalMethod2", TestObjV8Internal::conditionalMethod2Callback},
+    {"conditionalMethod2", TestObjV8Internal::conditionalMethod2Method},
 #endif
 #if ENABLE(Condition1) || ENABLE(Condition2)
-    {"conditionalMethod3", TestObjV8Internal::conditionalMethod3Callback},
+    {"conditionalMethod3", TestObjV8Internal::conditionalMethod3Method},
 #endif
-    {"overloadedMethod", TestObjV8Internal::overloadedMethodCallback},
-    {"classMethodWithClamp", TestObjV8Internal::classMethodWithClampCallback},
-    {"getSVGDocument", TestObjV8Internal::getSVGDocumentCallback},
-    {"mutablePointFunction", TestObjV8Internal::mutablePointFunctionCallback},
-    {"immutablePointFunction", TestObjV8Internal::immutablePointFunctionCallback},
-    {"orange", TestObjV8Internal::orangeCallback},
-    {"strictFunction", TestObjV8Internal::strictFunctionCallback},
-    {"variadicStringMethod", TestObjV8Internal::variadicStringMethodCallback},
-    {"variadicDoubleMethod", TestObjV8Internal::variadicDoubleMethodCallback},
+    {"overloadedMethod", TestObjV8Internal::overloadedMethodMethod},
+    {"classMethodWithClamp", TestObjV8Internal::classMethodWithClampMethod},
+    {"getSVGDocument", TestObjV8Internal::getSVGDocumentMethod},
+    {"mutablePointFunction", TestObjV8Internal::mutablePointFunctionMethod},
+    {"immutablePointFunction", TestObjV8Internal::immutablePointFunctionMethod},
+    {"orange", TestObjV8Internal::orangeMethod},
+    {"strictFunction", TestObjV8Internal::strictFunctionMethod},
+    {"variadicStringMethod", TestObjV8Internal::variadicStringMethodMethod},
+    {"variadicDoubleMethod", TestObjV8Internal::variadicDoubleMethodMethod},
 };
 
 static const V8DOMConfiguration::BatchedConstant V8TestObjConsts[] = {
@@ -2161,83 +2161,83 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     const int voidMethodWithArgsArgc = 3;
     v8::Handle<v8::FunctionTemplate> voidMethodWithArgsArgv[voidMethodWithArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> voidMethodWithArgsSignature = v8::Signature::New(desc, voidMethodWithArgsArgc, voidMethodWithArgsArgv);
-    proto->Set(v8::String::NewSymbol("voidMethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::voidMethodWithArgsCallback, v8Undefined(), voidMethodWithArgsSignature));
+    proto->Set(v8::String::NewSymbol("voidMethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::voidMethodWithArgsMethod, v8Undefined(), voidMethodWithArgsSignature));
 
     // Custom Signature 'longMethodWithArgs'
     const int longMethodWithArgsArgc = 3;
     v8::Handle<v8::FunctionTemplate> longMethodWithArgsArgv[longMethodWithArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> longMethodWithArgsSignature = v8::Signature::New(desc, longMethodWithArgsArgc, longMethodWithArgsArgv);
-    proto->Set(v8::String::NewSymbol("longMethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::longMethodWithArgsCallback, v8Undefined(), longMethodWithArgsSignature));
+    proto->Set(v8::String::NewSymbol("longMethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::longMethodWithArgsMethod, v8Undefined(), longMethodWithArgsSignature));
 
     // Custom Signature 'objMethodWithArgs'
     const int objMethodWithArgsArgc = 3;
     v8::Handle<v8::FunctionTemplate> objMethodWithArgsArgv[objMethodWithArgsArgc] = { v8::Handle<v8::FunctionTemplate>(), v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> objMethodWithArgsSignature = v8::Signature::New(desc, objMethodWithArgsArgc, objMethodWithArgsArgv);
-    proto->Set(v8::String::NewSymbol("objMethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::objMethodWithArgsCallback, v8Undefined(), objMethodWithArgsSignature));
+    proto->Set(v8::String::NewSymbol("objMethodWithArgs"), v8::FunctionTemplate::New(TestObjV8Internal::objMethodWithArgsMethod, v8Undefined(), objMethodWithArgsSignature));
 
     // Custom Signature 'methodWithSequenceArg'
     const int methodWithSequenceArgArgc = 1;
     v8::Handle<v8::FunctionTemplate> methodWithSequenceArgArgv[methodWithSequenceArgArgc] = { V8sequence<ScriptProfile>::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> methodWithSequenceArgSignature = v8::Signature::New(desc, methodWithSequenceArgArgc, methodWithSequenceArgArgv);
-    proto->Set(v8::String::NewSymbol("methodWithSequenceArg"), v8::FunctionTemplate::New(TestObjV8Internal::methodWithSequenceArgCallback, v8Undefined(), methodWithSequenceArgSignature));
+    proto->Set(v8::String::NewSymbol("methodWithSequenceArg"), v8::FunctionTemplate::New(TestObjV8Internal::methodWithSequenceArgMethod, v8Undefined(), methodWithSequenceArgSignature));
 
     // Custom Signature 'methodThatRequiresAllArgsAndThrows'
     const int methodThatRequiresAllArgsAndThrowsArgc = 2;
     v8::Handle<v8::FunctionTemplate> methodThatRequiresAllArgsAndThrowsArgv[methodThatRequiresAllArgsAndThrowsArgc] = { v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> methodThatRequiresAllArgsAndThrowsSignature = v8::Signature::New(desc, methodThatRequiresAllArgsAndThrowsArgc, methodThatRequiresAllArgsAndThrowsArgv);
-    proto->Set(v8::String::NewSymbol("methodThatRequiresAllArgsAndThrows"), v8::FunctionTemplate::New(TestObjV8Internal::methodThatRequiresAllArgsAndThrowsCallback, v8Undefined(), methodThatRequiresAllArgsAndThrowsSignature));
-    desc->Set(v8::String::NewSymbol("classMethod"), v8::FunctionTemplate::New(TestObjV8Internal::classMethodCallback, v8Undefined(), v8::Local<v8::Signature>()));
-    desc->Set(v8::String::NewSymbol("classMethodWithOptional"), v8::FunctionTemplate::New(TestObjV8Internal::classMethodWithOptionalCallback, v8Undefined(), v8::Local<v8::Signature>()));
-    desc->Set(v8::String::NewSymbol("classMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::classMethod2Callback, v8Undefined(), v8::Local<v8::Signature>()));
+    proto->Set(v8::String::NewSymbol("methodThatRequiresAllArgsAndThrows"), v8::FunctionTemplate::New(TestObjV8Internal::methodThatRequiresAllArgsAndThrowsMethod, v8Undefined(), methodThatRequiresAllArgsAndThrowsSignature));
+    desc->Set(v8::String::NewSymbol("classMethod"), v8::FunctionTemplate::New(TestObjV8Internal::classMethodMethod, v8Undefined(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::NewSymbol("classMethodWithOptional"), v8::FunctionTemplate::New(TestObjV8Internal::classMethodWithOptionalMethod, v8Undefined(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::NewSymbol("classMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::classMethod2Method, v8Undefined(), v8::Local<v8::Signature>()));
 #if ENABLE(Condition1)
-    desc->Set(v8::String::NewSymbol("overloadedMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::overloadedMethod1Callback, v8Undefined(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::NewSymbol("overloadedMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::overloadedMethod1Method, v8Undefined(), v8::Local<v8::Signature>()));
 #endif // ENABLE(Condition1)
     if (RuntimeEnabledFeatures::enabledAtRuntimeMethod1Enabled())
-        proto->Set(v8::String::NewSymbol("enabledAtRuntimeMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::enabledAtRuntimeMethod1Callback, v8Undefined(), defaultSignature));
+        proto->Set(v8::String::NewSymbol("enabledAtRuntimeMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::enabledAtRuntimeMethod1Method, v8Undefined(), defaultSignature));
     if (RuntimeEnabledFeatures::featureNameEnabled())
-        proto->Set(v8::String::NewSymbol("enabledAtRuntimeMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::enabledAtRuntimeMethod2Callback, v8Undefined(), defaultSignature));
+        proto->Set(v8::String::NewSymbol("enabledAtRuntimeMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::enabledAtRuntimeMethod2Method, v8Undefined(), defaultSignature));
 
     // Custom Signature 'stringArrayFunction'
     const int stringArrayFunctionArgc = 1;
     v8::Handle<v8::FunctionTemplate> stringArrayFunctionArgv[stringArrayFunctionArgc] = { V8DOMString[]::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> stringArrayFunctionSignature = v8::Signature::New(desc, stringArrayFunctionArgc, stringArrayFunctionArgv);
-    proto->Set(v8::String::NewSymbol("stringArrayFunction"), v8::FunctionTemplate::New(TestObjV8Internal::stringArrayFunctionCallback, v8Undefined(), stringArrayFunctionSignature));
+    proto->Set(v8::String::NewSymbol("stringArrayFunction"), v8::FunctionTemplate::New(TestObjV8Internal::stringArrayFunctionMethod, v8Undefined(), stringArrayFunctionSignature));
 
     // Custom Signature 'domStringListFunction'
     const int domStringListFunctionArgc = 1;
     v8::Handle<v8::FunctionTemplate> domStringListFunctionArgv[domStringListFunctionArgc] = { V8DOMStringList::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> domStringListFunctionSignature = v8::Signature::New(desc, domStringListFunctionArgc, domStringListFunctionArgv);
-    proto->Set(v8::String::NewSymbol("domStringListFunction"), v8::FunctionTemplate::New(TestObjV8Internal::domStringListFunctionCallback, v8Undefined(), domStringListFunctionSignature));
+    proto->Set(v8::String::NewSymbol("domStringListFunction"), v8::FunctionTemplate::New(TestObjV8Internal::domStringListFunctionMethod, v8Undefined(), domStringListFunctionSignature));
 
     // Custom Signature 'convert1'
     const int convert1Argc = 1;
     v8::Handle<v8::FunctionTemplate> convert1Argv[convert1Argc] = { V8a::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> convert1Signature = v8::Signature::New(desc, convert1Argc, convert1Argv);
-    proto->Set(v8::String::NewSymbol("convert1"), v8::FunctionTemplate::New(TestObjV8Internal::convert1Callback, v8Undefined(), convert1Signature));
+    proto->Set(v8::String::NewSymbol("convert1"), v8::FunctionTemplate::New(TestObjV8Internal::convert1Method, v8Undefined(), convert1Signature));
 
     // Custom Signature 'convert2'
     const int convert2Argc = 1;
     v8::Handle<v8::FunctionTemplate> convert2Argv[convert2Argc] = { V8b::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> convert2Signature = v8::Signature::New(desc, convert2Argc, convert2Argv);
-    proto->Set(v8::String::NewSymbol("convert2"), v8::FunctionTemplate::New(TestObjV8Internal::convert2Callback, v8Undefined(), convert2Signature));
+    proto->Set(v8::String::NewSymbol("convert2"), v8::FunctionTemplate::New(TestObjV8Internal::convert2Method, v8Undefined(), convert2Signature));
 
     // Custom Signature 'convert4'
     const int convert4Argc = 1;
     v8::Handle<v8::FunctionTemplate> convert4Argv[convert4Argc] = { V8d::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> convert4Signature = v8::Signature::New(desc, convert4Argc, convert4Argv);
-    proto->Set(v8::String::NewSymbol("convert4"), v8::FunctionTemplate::New(TestObjV8Internal::convert4Callback, v8Undefined(), convert4Signature));
+    proto->Set(v8::String::NewSymbol("convert4"), v8::FunctionTemplate::New(TestObjV8Internal::convert4Method, v8Undefined(), convert4Signature));
 
     // Custom Signature 'convert5'
     const int convert5Argc = 1;
     v8::Handle<v8::FunctionTemplate> convert5Argv[convert5Argc] = { V8e::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> convert5Signature = v8::Signature::New(desc, convert5Argc, convert5Argv);
-    proto->Set(v8::String::NewSymbol("convert5"), v8::FunctionTemplate::New(TestObjV8Internal::convert5Callback, v8Undefined(), convert5Signature));
+    proto->Set(v8::String::NewSymbol("convert5"), v8::FunctionTemplate::New(TestObjV8Internal::convert5Method, v8Undefined(), convert5Signature));
 
     // Custom Signature 'variadicNodeMethod'
     const int variadicNodeMethodArgc = 2;
     v8::Handle<v8::FunctionTemplate> variadicNodeMethodArgv[variadicNodeMethodArgc] = { V8Node::GetRawTemplate(isolate), V8Node::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> variadicNodeMethodSignature = v8::Signature::New(desc, variadicNodeMethodArgc, variadicNodeMethodArgv);
-    proto->Set(v8::String::NewSymbol("variadicNodeMethod"), v8::FunctionTemplate::New(TestObjV8Internal::variadicNodeMethodCallback, v8Undefined(), variadicNodeMethodSignature));
+    proto->Set(v8::String::NewSymbol("variadicNodeMethod"), v8::FunctionTemplate::New(TestObjV8Internal::variadicNodeMethodMethod, v8Undefined(), variadicNodeMethodSignature));
     V8DOMConfiguration::batchConfigureConstants(desc, proto, V8TestObjConsts, WTF_ARRAY_LENGTH(V8TestObjConsts), isolate);
 
     // Custom toString template
@@ -2304,10 +2304,10 @@ void V8TestObj::installPerContextPrototypeProperties(v8::Handle<v8::Object> prot
 
     ScriptExecutionContext* context = toScriptExecutionContext(proto->CreationContext());
     if (context && context->isDocument() && ContextFeatures::enabledPerContextMethod1Enabled(static_cast<Document*>(context))) {
-        proto->Set(v8::String::NewSymbol("enabledPerContextMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::enabledPerContextMethod1Callback, v8Undefined(), defaultSignature)->GetFunction());
+        proto->Set(v8::String::NewSymbol("enabledPerContextMethod1"), v8::FunctionTemplate::New(TestObjV8Internal::enabledPerContextMethod1Method, v8Undefined(), defaultSignature)->GetFunction());
     }
     if (context && context->isDocument() && ContextFeatures::featureNameEnabled(static_cast<Document*>(context))) {
-        proto->Set(v8::String::NewSymbol("enabledPerContextMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::enabledPerContextMethod2Callback, v8Undefined(), defaultSignature)->GetFunction());
+        proto->Set(v8::String::NewSymbol("enabledPerContextMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::enabledPerContextMethod2Method, v8Undefined(), defaultSignature)->GetFunction());
     }
 }
 

@@ -62,7 +62,7 @@ v8::Handle<v8::Value> V8HTMLSelectElement::indexedPropertySetter(uint32_t index,
     return toOptionsCollectionSetter(index, value, select, info.GetIsolate());
 }
 
-v8::Handle<v8::Value> V8HTMLSelectElement::removeCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8HTMLSelectElement::removeMethodCustom(const v8::Arguments& args)
 {
     HTMLSelectElement* imp = V8HTMLSelectElement::toNative(args.Holder());
     return removeElement(imp, args);

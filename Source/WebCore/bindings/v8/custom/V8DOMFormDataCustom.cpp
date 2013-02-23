@@ -51,7 +51,7 @@ v8::Handle<v8::Value> V8DOMFormData::constructorCallbackCustom(const v8::Argumen
     return wrapper;
 }
 
-v8::Handle<v8::Value> V8DOMFormData::appendCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMFormData::appendMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 2)
         return throwError(v8SyntaxError, "Not enough arguments", args.GetIsolate());

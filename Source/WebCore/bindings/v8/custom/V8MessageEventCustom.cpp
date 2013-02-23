@@ -103,7 +103,7 @@ v8::Handle<v8::Value> V8MessageEvent::portsAttrGetterCustom(v8::Local<v8::String
     return portArray;
 }
 
-v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MessageEvent::initMessageEventMethodCustom(const v8::Arguments& args)
 {
     MessageEvent* event = V8MessageEvent::toNative(args.Holder());
     String typeArg = toWebCoreString(args[0]);
@@ -131,9 +131,9 @@ v8::Handle<v8::Value> V8MessageEvent::initMessageEventCallbackCustom(const v8::A
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8MessageEvent::webkitInitMessageEventCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MessageEvent::webkitInitMessageEventMethodCustom(const v8::Arguments& args)
 {
-    return initMessageEventCallbackCustom(args);
+    return initMessageEventMethodCustom(args);
 }
 
 

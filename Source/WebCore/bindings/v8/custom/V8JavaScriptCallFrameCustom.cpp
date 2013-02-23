@@ -37,20 +37,20 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8JavaScriptCallFrame::evaluateCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8JavaScriptCallFrame::evaluateMethodCustom(const v8::Arguments& args)
 {
     JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(args.Holder());
     String expression = toWebCoreStringWithUndefinedOrNullCheck(args[0]);
     return impl->evaluate(expression);
 }
 
-v8::Handle<v8::Value> V8JavaScriptCallFrame::restartCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8JavaScriptCallFrame::restartMethodCustom(const v8::Arguments& args)
 {
     JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(args.Holder());
     return impl->restart();
 }
 
-v8::Handle<v8::Value> V8JavaScriptCallFrame::setVariableValueCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8JavaScriptCallFrame::setVariableValueMethodCustom(const v8::Arguments& args)
 {
     JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(args.Holder());
     int scopeIndex = args[0]->Int32Value();
@@ -65,7 +65,7 @@ v8::Handle<v8::Value> V8JavaScriptCallFrame::scopeChainAttrGetterCustom(v8::Loca
     return impl->scopeChain();
 }
 
-v8::Handle<v8::Value> V8JavaScriptCallFrame::scopeTypeCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8JavaScriptCallFrame::scopeTypeMethodCustom(const v8::Arguments& args)
 {
     JavaScriptCallFrame* impl = V8JavaScriptCallFrame::toNative(args.Holder());
     int scopeIndex = args[0]->Int32Value();

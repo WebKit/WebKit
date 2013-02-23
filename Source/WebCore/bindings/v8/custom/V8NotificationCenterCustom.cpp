@@ -46,7 +46,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8NotificationCenter::requestPermissionCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8NotificationCenter::requestPermissionMethodCustom(const v8::Arguments& args)
 {
     NotificationCenter* notificationCenter = V8NotificationCenter::toNative(args.Holder());
     ScriptExecutionContext* context = notificationCenter->scriptExecutionContext();
