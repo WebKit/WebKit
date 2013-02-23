@@ -1,5 +1,24 @@
 2013-02-22  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG FixupPhase should have one common hook for knowing if a node is ever being speculated a certain way
+        https://bugs.webkit.org/show_bug.cgi?id=110650
+
+        Reviewed by Mark Hahnenberg.
+        
+        Changes almost all calls to edge.setUseKind(kind) to be
+        setUseKindAndUnboxIfProfitable<kind>(edge). This will allow us to use the latter
+        as a hook for deciding which locals to unbox (webkit.org/b/110433).
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::setUseKindAndUnboxIfProfitable):
+        (JSC::DFG::FixupPhase::fixIntEdge):
+        (JSC::DFG::FixupPhase::fixDoubleEdge):
+        (JSC::DFG::FixupPhase::attemptToMakeIntegerAdd):
+
+2013-02-22  Filip Pizlo  <fpizlo@apple.com>
+
         REGRESSION(r143654): some fast/js test crashes on 32 bit build
         https://bugs.webkit.org/show_bug.cgi?id=110590
 
