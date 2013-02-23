@@ -308,11 +308,6 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
         addBehaviorRestriction(RequireUserGestureForLoadRestriction);
     }
 
-#if ENABLE(MEDIA_SOURCE)
-    m_mediaSourceURL.setProtocol(mediaSourceBlobProtocol);
-    m_mediaSourceURL.setPath(createCanonicalUUIDString());
-#endif
-
     setHasCustomStyleCallbacks();
     addElementToDocumentMap(this, document);
 
@@ -987,19 +982,6 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         return;
     }
     
-#if ENABLE(MEDIA_SOURCE)
-    ASSERT(!m_mediaSource);
-
-    if (url.protocolIs(mediaSourceBlobProtocol)) {
-        m_mediaSource = MediaSourceRegistry::registry().lookupMediaSource(url.string());
-
-        if (m_mediaSource) {
-            m_mediaSource->setMediaPlayer(m_player.get());
-            m_mediaSourceURL = url;
-        }
-    }
-#endif
-
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
 
@@ -1054,6 +1036,17 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
         m_muted = true;
     updateVolume();
 
+#if ENABLE(MEDIA_SOURCE)
+    ASSERT(!m_mediaSource);
+
+    if (url.protocolIs(mediaSourceBlobProtocol))
+        m_mediaSource = MediaSourceRegistry::registry().lookupMediaSource(url.string());
+
+    if (m_mediaSource) {
+        if (!m_player->load(url, m_mediaSource))
+            mediaLoadingFailed(MediaPlayer::FormatError);
+    } else
+#endif
     if (!m_player->load(url, contentType, keySystem))
         mediaLoadingFailed(MediaPlayer::FormatError);
 
@@ -1871,22 +1864,6 @@ void HTMLMediaElement::setReadyState(MediaPlayer::ReadyState state)
         updateActiveTextTrackCues(currentTime());
 #endif
 }
-
-#if ENABLE(MEDIA_SOURCE)
-void HTMLMediaElement::mediaPlayerSourceOpened()
-{
-    beginProcessingMediaPlayerCallback();
-
-    setSourceState(MediaSource::openKeyword());
-
-    endProcessingMediaPlayerCallback();
-}
-
-String HTMLMediaElement::mediaPlayerSourceURL() const
-{
-    return m_mediaSourceURL.string();
-}
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
 void HTMLMediaElement::mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem, const String& sessionId)
@@ -4494,12 +4471,12 @@ void HTMLMediaElement::createMediaPlayer()
         m_audioSourceNode->lock();
 #endif
 
-    m_player = MediaPlayer::create(this);
-
 #if ENABLE(MEDIA_SOURCE)
     if (m_mediaSource)
-        m_mediaSource->setMediaPlayer(m_player.get());
+        m_mediaSource->setReadyState(MediaSource::closedKeyword());
 #endif
+
+    m_player = MediaPlayer::create(this);
 
 #if ENABLE(WEB_AUDIO)
     if (m_audioSourceNode) {
@@ -4841,7 +4818,6 @@ void HTMLMediaElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
     info.addMember(m_proxyWidget, "proxyWidget");
 #endif
 #if ENABLE(MEDIA_SOURCE)
-    info.addMember(m_mediaSourceURL, "mediaSourceURL");
     info.addMember(m_mediaSource, "mediaSource");
 #endif
 #if ENABLE(VIDEO_TRACK)

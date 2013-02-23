@@ -61,7 +61,9 @@ class AudioSourceProvider;
 class Document;
 class GStreamerGWorld;
 class MediaPlayerPrivateInterface;
+#if ENABLE(MEDIA_SOURCE)
 class MediaSource;
+#endif
 class TextTrackRepresentation;
 
 // Structure that will hold every native
@@ -180,11 +182,6 @@ public:
     virtual GraphicsDeviceAdapter* mediaPlayerGraphicsDeviceAdapter(const MediaPlayer*) const { return 0; }
 #endif
 
-#if ENABLE(MEDIA_SOURCE)
-    virtual void mediaPlayerSourceOpened() { }
-    virtual String mediaPlayerSourceURL() const { return "x-media-source-unsupported:"; }
-#endif
-
 #if ENABLE(ENCRYPTED_MEDIA)
     enum MediaKeyErrorCode { UnknownError = 1, ClientError, ServiceError, OutputError, HardwareChangeError, DomainError };
     virtual void mediaPlayerKeyAdded(MediaPlayer*, const String& /* keySystem */, const String& /* sessionId */) { }
@@ -271,6 +268,9 @@ public:
     void setSize(const IntSize& size);
 
     bool load(const KURL&, const ContentType&, const String& keySystem);
+#if ENABLE(MEDIA_SOURCE)
+    bool load(const KURL&, PassRefPtr<MediaSource>);
+#endif
     void cancelLoad();
 
     bool visible() const;
@@ -279,19 +279,6 @@ public:
     void prepareToPlay();
     void play();
     void pause();    
-
-#if ENABLE(MEDIA_SOURCE)
-    enum AddIdStatus { Ok, NotSupported, ReachedIdLimit };
-    AddIdStatus sourceAddId(const String& id, const String& type, const Vector<String>& codecs);
-    bool sourceRemoveId(const String& id);
-    PassRefPtr<TimeRanges> sourceBuffered(const String& id);
-    bool sourceAppend(const String& id, const unsigned char* data, unsigned length);
-    void sourceSetDuration(double);
-    bool sourceAbort(const String& id);
-    enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
-    void sourceEndOfStream(EndOfStreamStatus);
-    bool sourceSetTimestampOffset(const String& id, double offset);
-#endif
 
 #if ENABLE(ENCRYPTED_MEDIA)
     // Represents synchronous exceptions that can be thrown from the Encrypted Media methods.
@@ -422,11 +409,6 @@ public:
     AudioSourceProvider* audioSourceProvider();
 #endif
 
-#if ENABLE(MEDIA_SOURCE)
-    void sourceOpened();
-    String sourceURL() const;
-#endif
-
 #if ENABLE(ENCRYPTED_MEDIA)
     void keyAdded(const String& keySystem, const String& sessionId);
     void keyError(const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode, unsigned short systemCode);
@@ -483,6 +465,10 @@ private:
     bool m_contentMIMETypeWasInferredFromExtension;
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     WebMediaPlayerProxy* m_playerProxy;    // not owned or used, passed to m_private
+#endif
+
+#if ENABLE(MEDIA_SOURCE)
+    RefPtr<MediaSource> m_mediaSource;
 #endif
 };
 

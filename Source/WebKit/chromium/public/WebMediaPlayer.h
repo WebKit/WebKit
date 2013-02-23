@@ -33,6 +33,7 @@
 
 #include "../../../Platform/chromium/public/WebCanvas.h"
 #include "../../../Platform/chromium/public/WebString.h"
+#include "WebMediaSource.h"
 #include "WebTimeRange.h"
 #include "WebVideoFrame.h"
 
@@ -109,6 +110,9 @@ public:
     virtual ~WebMediaPlayer() {}
 
     virtual void load(const WebURL&, CORSMode) = 0;
+    // FIXME: Remove the default implementation once the Chromium code implements this method.
+    // https://bugs.webkit.org/show_bug.cgi?id=110371
+    virtual void load(const WebURL& url, WebMediaSource* mediaSource, CORSMode corsMode) { delete mediaSource; load(url, corsMode); };
     virtual void cancelLoad() = 0;
 
     // Playback controls.

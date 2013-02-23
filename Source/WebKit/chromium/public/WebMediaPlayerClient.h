@@ -36,6 +36,7 @@
 namespace WebKit {
 
 class WebFrame;
+class WebMediaSource;
 class WebPlugin;
 class WebRequest;
 class WebURL;

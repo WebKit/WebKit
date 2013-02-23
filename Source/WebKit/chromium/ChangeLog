@@ -1,3 +1,72 @@
+2013-02-22  Aaron Colwell  <acolwell@chromium.org>
+
+        Factor MediaSource methods out of MediaPlayer & MediaPlayerPrivate and into a new MediaSourcePrivate interface.
+        https://bugs.webkit.org/show_bug.cgi?id=109857
+
+        Reviewed by Adam Barth.
+
+        WebMediaSource and WebMediaSource client were created to replace the MediaSource methods in WebMediaPlayer and
+        WebMediaPlayerClient. This allows the MediaSource implementation to be updated without further polluting the
+        media player interfaces.
+
+        * WebKit.gyp:
+        * public/WebMediaPlayer.h:
+        (WebMediaPlayer):
+        (WebKit::WebMediaPlayer::load):
+        * public/WebMediaPlayerClient.h:
+        (WebKit):
+        * public/WebMediaSource.h: Added.
+        (WebKit):
+        (WebMediaSource):
+        (WebKit::WebMediaSource::~WebMediaSource):
+        * public/WebMediaSourceClient.h: Added.
+        (WebKit):
+        (WebMediaSourceClient):
+        (WebKit::WebMediaSourceClient::~WebMediaSourceClient):
+        * src/AssertMatchingEnums.cpp:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit):
+        (WebMediaSourceClientImpl): Temporary WebMediaSourceClient implementation to keep things working until Chromium
+                                    changes land.
+        (WebKit::WebMediaSourceClientImpl::WebMediaSourceClientImpl):
+        (WebKit::WebMediaSourceClientImpl::~WebMediaSourceClientImpl):
+        (WebKit::WebMediaSourceClientImpl::addId):
+        (WebKit::WebMediaSourceClientImpl::removeId):
+        (WebKit::WebMediaSourceClientImpl::buffered):
+        (WebKit::WebMediaSourceClientImpl::append):
+        (WebKit::WebMediaSourceClientImpl::abort):
+        (WebKit::WebMediaSourceClientImpl::duration):
+        (WebKit::WebMediaSourceClientImpl::setDuration):
+        (WebKit::WebMediaSourceClientImpl::endOfStream):
+        (WebKit::WebMediaSourceClientImpl::setTimestampOffset):
+        (WebKit::WebMediaPlayerClientImpl::sourceOpened):
+        (WebKit::WebMediaPlayerClientImpl::sourceURL):
+        (WebKit::WebMediaPlayerClientImpl::load):
+        (WebKit::WebMediaPlayerClientImpl::loadRequested):
+        (WebKit::WebMediaPlayerClientImpl::loadInternal):
+        * src/WebMediaPlayerClientImpl.h:
+        (WebMediaPlayerClientImpl):
+        * src/WebMediaSourceImpl.cpp: Added.
+        (WebKit):
+        (MediaSourcePrivateImpl):
+        (WebKit::MediaSourcePrivateImpl::~MediaSourcePrivateImpl):
+        (WebKit::MediaSourcePrivateImpl::MediaSourcePrivateImpl):
+        (WebKit::MediaSourcePrivateImpl::addId):
+        (WebKit::MediaSourcePrivateImpl::removeId):
+        (WebKit::MediaSourcePrivateImpl::buffered):
+        (WebKit::MediaSourcePrivateImpl::append):
+        (WebKit::MediaSourcePrivateImpl::abort):
+        (WebKit::MediaSourcePrivateImpl::duration):
+        (WebKit::MediaSourcePrivateImpl::setDuration):
+        (WebKit::MediaSourcePrivateImpl::endOfStream):
+        (WebKit::MediaSourcePrivateImpl::setTimestampOffset):
+        (WebKit::WebMediaSourceImpl::WebMediaSourceImpl):
+        (WebKit::WebMediaSourceImpl::~WebMediaSourceImpl):
+        (WebKit::WebMediaSourceImpl::open):
+        * src/WebMediaSourceImpl.h: Added.
+        (WebKit):
+        (WebMediaSourceImpl):
+
 2013-02-22  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Remove old SerializedScriptValue-based get() callbacks

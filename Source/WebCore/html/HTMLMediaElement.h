@@ -442,11 +442,6 @@ private:
     virtual void mediaPlayerFirstVideoFrameAvailable(MediaPlayer*);
     virtual void mediaPlayerCharacteristicChanged(MediaPlayer*);
 
-#if ENABLE(MEDIA_SOURCE)
-    virtual void mediaPlayerSourceOpened();
-    virtual String mediaPlayerSourceURL() const;
-#endif
-
 #if ENABLE(ENCRYPTED_MEDIA)
     virtual void mediaPlayerKeyAdded(MediaPlayer*, const String& keySystem, const String& sessionId) OVERRIDE;
     virtual void mediaPlayerKeyError(MediaPlayer*, const String& keySystem, const String& sessionId, MediaPlayerClient::MediaKeyErrorCode, unsigned short systemCode) OVERRIDE;
@@ -639,7 +634,6 @@ private:
     int m_processingMediaPlayerCallback;
 
 #if ENABLE(MEDIA_SOURCE)
-    KURL m_mediaSourceURL;
     RefPtr<MediaSource> m_mediaSource;
 #endif
 

@@ -62,6 +62,9 @@
 #include "IDBMetadata.h"
 #include "IconURL.h"
 #include "MediaPlayer.h"
+#if ENABLE(MEDIA_SOURCE)
+#include "MediaSourcePrivate.h"
+#endif
 #include "MediaStreamSource.h"
 #include "NotificationClient.h"
 #include "PageVisibilityState.h"
@@ -105,6 +108,7 @@
 #include "WebInputElement.h"
 #include "WebMediaPlayer.h"
 #include "WebMediaPlayerClient.h"
+#include "WebMediaSourceClient.h"
 #include "WebNotificationPresenter.h"
 #include "WebPageVisibilityState.h"
 #include "WebSettings.h"
@@ -409,15 +413,13 @@ COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::PreloadMetaData, MediaPlayer::MetaD
 COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::PreloadAuto, MediaPlayer::Auto);
 
 #if ENABLE(MEDIA_SOURCE)
-COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::AddIdStatusOk, MediaPlayer::Ok);
-COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::AddIdStatusNotSupported, MediaPlayer::NotSupported);
-COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::AddIdStatusReachedIdLimit, MediaPlayer::ReachedIdLimit);
-#endif
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaSourceClient::AddIdStatusOk, MediaSourcePrivate::Ok);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaSourceClient::AddIdStatusNotSupported, MediaSourcePrivate::NotSupported);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaSourceClient::AddIdStatusReachedIdLimit, MediaSourcePrivate::ReachedIdLimit);
 
-#if ENABLE(ENCRYPTED_MEDIA)
-COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::EndOfStreamStatusNoError, MediaPlayer::EosNoError);
-COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::EndOfStreamStatusNetworkError, MediaPlayer::EosNetworkError);
-COMPILE_ASSERT_MATCHING_ENUM(WebMediaPlayer::EndOfStreamStatusDecodeError, MediaPlayer::EosDecodeError);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaSourceClient::EndOfStreamStatusNoError, MediaSourcePrivate::EosNoError);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaSourceClient::EndOfStreamStatusNetworkError, MediaSourcePrivate::EosNetworkError);
+COMPILE_ASSERT_MATCHING_ENUM(WebMediaSourceClient::EndOfStreamStatusDecodeError, MediaSourcePrivate::EosDecodeError);
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

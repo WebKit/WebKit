@@ -44,6 +44,9 @@ public:
     virtual ~MediaPlayerPrivateInterface() { }
 
     virtual void load(const String& url) = 0;
+#if ENABLE(MEDIA_SOURCE)
+    virtual void load(const String& url, PassRefPtr<MediaSource>) = 0;
+#endif
     virtual void cancelLoad() = 0;
     
     virtual void prepareToPlay() { }
@@ -165,17 +168,6 @@ public:
 
 #if ENABLE(WEB_AUDIO)
     virtual AudioSourceProvider* audioSourceProvider() { return 0; }
-#endif
-
-#if ENABLE(MEDIA_SOURCE)
-    virtual MediaPlayer::AddIdStatus sourceAddId(const String& id, const String& type, const Vector<String>& codecs) { return MediaPlayer::NotSupported; }
-    virtual PassRefPtr<TimeRanges> sourceBuffered(const String& id) { return TimeRanges::create(); }
-    virtual bool sourceRemoveId(const String& id) { return false; }
-    virtual bool sourceAppend(const String& id, const unsigned char* data, unsigned length) { return false; }
-    virtual bool sourceAbort(const String& id) { return false; }
-    virtual void sourceSetDuration(double) { }
-    virtual void sourceEndOfStream(MediaPlayer::EndOfStreamStatus) { }
-    virtual bool sourceSetTimestampOffset(const String& id, double offset) { return false; }
 #endif
 
 #if ENABLE(ENCRYPTED_MEDIA)

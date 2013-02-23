@@ -35,7 +35,7 @@
 
 #include "ActiveDOMObject.h"
 #include "GenericEventQueue.h"
-#include "MediaPlayer.h"
+#include "MediaSourcePrivate.h"
 #include "SourceBuffer.h"
 #include "SourceBufferList.h"
 #include <wtf/RefCounted.h>
@@ -65,7 +65,7 @@ public:
 
     void endOfStream(const String& error, ExceptionCode&);
 
-    void setMediaPlayer(MediaPlayer* player) { m_player = player; }
+    void setPrivateAndOpen(PassOwnPtr<MediaSourcePrivate>);
 
     PassRefPtr<TimeRanges> buffered(const String& id, ExceptionCode&) const;
     void append(const String& id, PassRefPtr<Uint8Array> data, ExceptionCode&);
@@ -97,7 +97,7 @@ private:
     EventTargetData m_eventTargetData;
 
     String m_readyState;
-    MediaPlayer* m_player;
+    OwnPtr<MediaSourcePrivate> m_private;
 
     RefPtr<SourceBufferList> m_sourceBuffers;
     RefPtr<SourceBufferList> m_activeSourceBuffers;
