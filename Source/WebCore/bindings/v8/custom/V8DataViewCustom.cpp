@@ -32,7 +32,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8DataView::constructorCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DataView::constructorCustom(const v8::Arguments& args)
 {
     if (!args.Length()) {
         // see constructWebGLArray -- we don't seem to be able to distingish between

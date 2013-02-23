@@ -51,7 +51,7 @@ v8::Handle<v8::Object> wrap(Blob* impl, v8::Handle<v8::Object> creationContext, 
     return V8Blob::createWrapper(impl, creationContext, isolate);
 }
 
-v8::Handle<v8::Value> V8Blob::constructorCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8Blob::constructorCustom(const v8::Arguments& args)
 {
     ScriptExecutionContext* context = getScriptExecutionContext();
 

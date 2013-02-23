@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8MessageChannel::constructorCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MessageChannel::constructorCustom(const v8::Arguments& args)
 {
     ScriptExecutionContext* context = getScriptExecutionContext();
 

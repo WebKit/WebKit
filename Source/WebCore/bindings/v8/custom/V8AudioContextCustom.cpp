@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8AudioContext::constructorCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8AudioContext::constructorCustom(const v8::Arguments& args)
 {
     Document* document = currentDocument(BindingState::instance());
 

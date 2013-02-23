@@ -47,7 +47,7 @@ V8ArrayBufferDeallocationObserver* V8ArrayBufferDeallocationObserver::instance()
 }
 
 
-v8::Handle<v8::Value> V8ArrayBuffer::constructorCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8ArrayBuffer::constructorCustom(const v8::Arguments& args)
 {
     // If we return a previously constructed ArrayBuffer,
     // e.g. from the call to ArrayBufferView.buffer, this code is called

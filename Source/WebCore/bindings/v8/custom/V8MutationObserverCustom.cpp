@@ -41,7 +41,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8MutationObserver::constructorCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8MutationObserver::constructorCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());

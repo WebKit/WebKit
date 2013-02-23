@@ -413,7 +413,7 @@ END
     }
     if (HasCustomConstructor($interface)) {
         push(@headerContent, <<END);
-    static v8::Handle<v8::Value> constructorCallbackCustom(const v8::Arguments&);
+    static v8::Handle<v8::Value> constructorCustom(const v8::Arguments&);
 END
     }
 
@@ -1990,7 +1990,7 @@ END
     push(@implContent, GenerateConstructorHeader());
     push(@implContent, <<END);
 
-    return V8${interfaceName}::constructorCallbackCustom(args);
+    return V8${interfaceName}::constructorCustom(args);
 }
 
 END

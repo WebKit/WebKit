@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8DOMFormData::constructorCallbackCustom(const v8::Arguments& args)
+v8::Handle<v8::Value> V8DOMFormData::constructorCustom(const v8::Arguments& args)
 {
     HTMLFormElement* form = 0;
     if (args.Length() > 0 && V8HTMLFormElement::HasInstance(args[0], args.GetIsolate()))
