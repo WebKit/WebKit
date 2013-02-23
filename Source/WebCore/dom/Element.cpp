@@ -808,13 +808,10 @@ inline void Element::setAttributeInternal(size_t index, const QualifiedName& nam
         willModifyAttribute(name, attributeItem(index)->value(), newValue);
 
     if (newValue != attributeItem(index)->value()) {
-        // If there is an Attr node hooked to this attribute, the Attr::setValue() call below
-        // will write into the ElementData.
-        // FIXME: Refactor this so it makes some sense.
+        ensureUniqueElementData()->attributeItem(index)->setValue(newValue);
+
         if (RefPtr<Attr> attrNode = inSynchronizationOfLazyAttribute ? 0 : attrIfExists(name))
-            attrNode->setValue(newValue);
-        else
-            ensureUniqueElementData()->attributeItem(index)->setValue(newValue);
+            attrNode->recreateTextChildAfterAttributeValueChanged();
     }
 
     if (!inSynchronizationOfLazyAttribute)

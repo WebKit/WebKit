@@ -3,7 +3,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2012, 2013 Apple Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include "StyledElement.h"
 #include "Text.h"
 #include "XMLNSNames.h"
+#include <wtf/TemporaryChange.h>
 #include <wtf/text/AtomicString.h>
 #include <wtf/text/StringBuilder.h>
 
@@ -41,6 +42,7 @@ Attr::Attr(Element* element, const QualifiedName& name)
     , m_element(element)
     , m_name(name)
     , m_ignoreChildrenChanged(0)
+    , m_inChildrenChanged(false)
     , m_specified(true)
 {
 }
@@ -51,6 +53,7 @@ Attr::Attr(Document* document, const QualifiedName& name, const AtomicString& st
     , m_name(name)
     , m_standaloneValue(standaloneValue)
     , m_ignoreChildrenChanged(0)
+    , m_inChildrenChanged(false)
     , m_specified(true)
 {
 }
@@ -107,30 +110,32 @@ void Attr::setPrefix(const AtomicString& prefix, ExceptionCode& ec)
     m_name.setPrefix(newPrefix);
 }
 
-void Attr::setValue(const AtomicString& value)
+void Attr::recreateTextChildAfterAttributeValueChanged()
 {
+    if (m_inChildrenChanged)
+        return;
     EventQueueScope scope;
     m_ignoreChildrenChanged++;
     removeChildren();
-    if (m_element)
-        elementAttribute().setValue(value);
-    else
-        m_standaloneValue = value;
     createTextChild();
     m_ignoreChildrenChanged--;
+}
 
+void Attr::setValue(const AtomicString& value)
+{
     invalidateNodeListCachesInAncestors(&m_name, m_element);
+
+    if (m_element) {
+        m_element->setAttribute(m_name, value);
+        return;
+    }
+    m_standaloneValue = value;
+    recreateTextChildAfterAttributeValueChanged();
 }
 
 void Attr::setValue(const AtomicString& value, ExceptionCode&)
 {
-    if (m_element)
-        m_element->willModifyAttribute(qualifiedName(), this->value(), value);
-
     setValue(value);
-
-    if (m_element)
-        m_element->didModifyAttribute(qualifiedName(), value);
 }
 
 void Attr::setNodeValue(const String& v, ExceptionCode& ec)
@@ -162,7 +167,7 @@ void Attr::childrenChanged(bool, Node*, Node*, int)
     if (m_ignoreChildrenChanged > 0)
         return;
 
-    invalidateNodeListCachesInAncestors(&qualifiedName(), m_element);
+    TemporaryChange<bool> changeInChildrenChanged(m_inChildrenChanged, true);
 
     // FIXME: We should include entity references in the value
 
@@ -172,17 +177,7 @@ void Attr::childrenChanged(bool, Node*, Node*, int)
             valueBuilder.append(toText(n)->data());
     }
 
-    AtomicString newValue = valueBuilder.toAtomicString();
-    if (m_element)
-        m_element->willModifyAttribute(qualifiedName(), value(), newValue);
-
-    if (m_element)
-        elementAttribute().setValue(newValue);
-    else
-        m_standaloneValue = newValue;
-
-    if (m_element)
-        m_element->attributeChanged(qualifiedName(), newValue);
+    setValue(valueBuilder.toAtomicString());
 }
 
 bool Attr::isId() const
