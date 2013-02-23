@@ -307,9 +307,19 @@ void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<Pa
         m_speculations.append(chunk);
         return;
     }
+
+    // processParsedChunkFromBackgroundParser can cause this parser to be detached from the Document,
+    // but we need to ensure it isn't deleted yet.
+    RefPtr<HTMLDocumentParser> protect(this);
+
+    // FIXME: Pass in current input length.
+    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), 0, lineNumber().zeroBasedInt());
+
     ASSERT(m_speculations.isEmpty());
     chunk->preloads.clear(); // We don't need to preload because we're going to parse immediately.
     processParsedChunkFromBackgroundParser(chunk);
+
+    InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
 }
 
 void HTMLDocumentParser::checkForSpeculationFailure()
@@ -347,17 +357,10 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
 {
     ASSERT(shouldUseThreading());
 
-    // This method can cause this parser to be detached from the Document,
-    // but we need to ensure it isn't deleted yet.
-    RefPtr<HTMLDocumentParser> protect(this);
-
     ActiveParserSession session(contextForParsingSession());
 
     m_currentChunk = chunk;
     OwnPtr<CompactHTMLTokenStream> tokens = m_currentChunk->tokens.release();
-
-    // FIXME: Pass in current input length.
-    InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), 0, lineNumber().zeroBasedInt());
 
     for (Vector<CompactHTMLToken>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
         ASSERT(!isWaitingForScripts());
@@ -389,8 +392,6 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
     }
 
     checkForSpeculationFailure();
-
-    InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
 }
 
 #endif // ENABLE(THREADED_HTML_PARSER)
@@ -791,11 +792,21 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
     if (m_haveBackgroundParser) {
         checkForSpeculationFailure();
 
+        // processParsedChunkFromBackgroundParser can cause this parser to be detached from the Document,
+        // but we need to ensure it isn't deleted yet.
+        RefPtr<HTMLDocumentParser> protect(this);
+
+        // FIXME: Pass in current input length.
+        InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), 0, lineNumber().zeroBasedInt());
+
         while (!m_speculations.isEmpty()) {
             processParsedChunkFromBackgroundParser(m_speculations.takeFirst());
             if (isWaitingForScripts() || isStopped())
-                return;
+                break;
         }
+
+        InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
+
         return;
     }
 #endif
