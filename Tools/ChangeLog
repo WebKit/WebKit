@@ -1,3 +1,9 @@
+2013-02-22  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Update bot config for OpenSource bots to add two new Win7 Debug testers and get rid of WinXP Debug testers.
+
+        * BuildSlaveSupport/build.webkit.org-config/config.json:
+
 2013-02-22  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, rolling out r143794.

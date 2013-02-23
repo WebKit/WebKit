@@ -29,9 +29,6 @@
                     { "name": "apple-windows-4", "platform": "win"},
                     { "name": "apple-windows-5", "platform": "win"},
                     { "name": "apple-windows-6", "platform": "win"},
-                    { "name": "apple-windows-13", "platform": "win"},
-                    { "name": "apple-windows-14", "platform": "win"},
-                    { "name": "apple-windows-15", "platform": "win"},
 
                     { "name": "gtk-linux-slave-1", "platform": "gtk"},
                     { "name": "gtk-linux-slave-2", "platform": "gtk"},
@@ -169,9 +166,9 @@
                       "slavenames": ["apple-windows-1"]
                     },
                     {
-                      "name": "Apple Win XP Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
+                      "name": "Apple Win 7 Debug (Tests)", "type": "Test", "builddir": "win-debug-tests",
                       "platform": "win", "configuration": "debug", "architectures": ["i386"],
-                      "slavenames": ["apple-windows-3", "apple-windows-4", "apple-windows-13", "apple-windows-14", "apple-windows-15"]
+                      "slavenames": ["apple-windows-3", "apple-windows-4"]
                     },
                     {
                       "name": "GTK Linux 32-bit Release", "type": "BuildAndTest", "builddir": "gtk-linux-32-release",
@@ -407,7 +404,7 @@
                       "builderNames": ["Apple Win 7 Release (Tests)"]
                     },
                     { "type": "Triggerable", "name": "win-debug-tests",
-                      "builderNames": ["Apple Win XP Debug (Tests)"]
+                      "builderNames": ["Apple Win 7 Debug (Tests)"]
                     },
                     { "type": "Triggerable", "name": "chromium-win-release-tests",
                       "builderNames": ["Chromium Win Release (Tests)"]
