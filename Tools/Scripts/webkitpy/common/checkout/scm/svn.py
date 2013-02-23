@@ -246,6 +246,12 @@ class SVN(SCM, SVNRepository):
     def svn_revision(self, path):
         return self.value_from_svn_info(path, 'Revision')
 
+    def timestamp_of_latest_commit(self, path):
+        # We use --xml to get timestamps like 2013-02-08T08:18:04.964409Z
+        info_output = Executive().run_command([self.executable_name, 'info', '--xml'], cwd=path).rstrip()
+        match = re.search(r"^<date>(?P<value>.+)</date>$", info_output, re.MULTILINE)
+        return match.group('value')
+
     # FIXME: This method should be on Checkout.
     def create_patch(self, git_commit=None, changed_files=None):
         """Returns a byte array (str()) representing the patch file.

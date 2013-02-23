@@ -29,6 +29,7 @@
 """Integration tests for run_perf_tests."""
 
 import StringIO
+import datetime
 import json
 import re
 import unittest2 as unittest
@@ -321,14 +322,17 @@ class MainTest(unittest.TestCase):
 
         uploaded = [False]
 
-        def mock_upload_json(hostname, json_path):
-            self.assertEqual(hostname, 'some.host')
-            self.assertEqual(json_path, '/mock-checkout/output.json')
+        def mock_upload_json(hostname, json_path, host_path=None):
+            # FIXME: Get rid of the hard-coded perf.webkit.org once we've completed the transition.
+            self.assertIn(hostname, ['some.host', 'perf.webkit.org'])
+            self.assertIn(json_path, ['/mock-checkout/output.json', '/mock-checkout/output-perf-webkit.json'])
+            self.assertIn(host_path, [None, '/api/report'])
             uploaded[0] = upload_suceeds
             return upload_suceeds
 
         runner._upload_json = mock_upload_json
         runner._timestamp = 123456789
+        runner._utc_timestamp = datetime.datetime(2013, 2, 8, 15, 19, 37, 460000)
         output_capture = OutputCapture()
         output_capture.capture_output()
         try:
@@ -521,41 +525,29 @@ class MainTest(unittest.TestCase):
 
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=False, expected_exit_code=PerfTestsRunner.EXIT_CODE_FAILED_UPLOADING)
 
-    def test_upload_json(self):
-        runner, port = self.create_runner()
-        port.host.filesystem.files['/mock-checkout/some.json'] = 'some content'
+    def test_run_with_upload_json_should_generate_perf_webkit_json(self):
+        runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
+            '--test-results-server', 'some.host', '--platform', 'platform1', '--builder-name', 'builder1', '--build-number', '123',
+            '--slave-config-json-path=/mock-checkout/slave-config.json'])
+        port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '{"key": "value1"}')
 
-        called = []
-        upload_single_text_file_throws = False
-        upload_single_text_file_return_value = StringIO.StringIO('OK')
+        self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
+        generated_json = json.loads(port.host.filesystem.files['/mock-checkout/output-perf-webkit.json'])
+        self.assertTrue(isinstance(generated_json, list))
+        self.assertEqual(len(generated_json), 1)
 
-        class MockFileUploader:
-            def __init__(mock, url, timeout):
-                self.assertEqual(url, 'https://some.host/api/test/report')
-                self.assertTrue(isinstance(timeout, int) and timeout)
-                called.append('FileUploader')
-
-            def upload_single_text_file(mock, filesystem, content_type, filename):
-                self.assertEqual(filesystem, port.host.filesystem)
-                self.assertEqual(content_type, 'application/json')
-                self.assertEqual(filename, 'some.json')
-                called.append('upload_single_text_file')
-                if upload_single_text_file_throws:
-                    raise "Some exception"
-                return upload_single_text_file_return_value
-
-        runner._upload_json('some.host', 'some.json', MockFileUploader)
-        self.assertEqual(called, ['FileUploader', 'upload_single_text_file'])
-
-        output = OutputCapture()
-        output.capture_output()
-        upload_single_text_file_return_value = StringIO.StringIO('Some error')
-        runner._upload_json('some.host', 'some.json', MockFileUploader)
-        _, _, logs = output.restore_output()
-        self.assertEqual(logs, 'Uploaded JSON but got a bad response:\nSome error\n')
-
-        # Throwing an exception upload_single_text_file shouldn't blow up _upload_json
-        called = []
-        upload_single_text_file_throws = True
-        runner._upload_json('some.host', 'some.json', MockFileUploader)
-        self.assertEqual(called, ['FileUploader', 'upload_single_text_file'])
+        output = generated_json[0]
+        self.maxDiff = None
+        self.assertEqual(output['platform'], 'platform1')
+        self.assertEqual(output['buildNumber'], '123')
+        self.assertEqual(output['buildTime'], '2013-02-08T15:19:37.460000')
+        self.assertEqual(output['builderName'], 'builder1')
+        self.assertEqual(output['builderKey'], 'value1')
+        self.assertEqual(output['revisions'], {'WebKit': {'revision': '5678', 'timestamp': '2013-02-01 08:48:05 +0000'}})
+        self.assertEqual(output['tests'].keys(), ['Bindings'])
+        self.assertEqual(sorted(output['tests']['Bindings'].keys()), ['tests', 'url'])
+        self.assertEqual(output['tests']['Bindings']['url'], 'http://trac.webkit.org/browser/trunk/PerformanceTests/Bindings')
+        self.assertEqual(output['tests']['Bindings']['tests'].keys(), ['event-target-wrapper'])
+        self.assertEqual(output['tests']['Bindings']['tests']['event-target-wrapper'], {
+            'url': 'http://trac.webkit.org/browser/trunk/PerformanceTests/Bindings/event-target-wrapper.html',
+            'metrics': {'Time': {'current': [1486.0, 1471.0, 1510.0, 1505.0, 1478.0, 1490.0]}}})

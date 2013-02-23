@@ -1577,3 +1577,15 @@ MOCK run_command: ['git', 'log', '-25', './MOCK output of child process'], cwd=%
 
     def test_push_local_commits_to_server_without_username_and_with_password(self):
         self.assertRaises(AuthenticationError, self.make_scm().push_local_commits_to_server, {'password': 'blah'})
+
+    def test_timestamp_of_latest_commit(self):
+        scm = self.make_scm()
+        scm.find_checkout_root = lambda path: ''
+        scm._run_git = lambda args: 'Date: 2013-02-08 08:05:49 +0000'
+        self.assertEqual(scm.timestamp_of_latest_commit('some-path'), '2013-02-08T08:05:49Z')
+
+        scm._run_git = lambda args: 'Date: 2013-02-08 01:02:03 +0130'
+        self.assertEqual(scm.timestamp_of_latest_commit('some-path'), '2013-02-07T23:32:03Z')
+
+        scm._run_git = lambda args: 'Date: 2013-02-08 01:55:21 -0800'
+        self.assertEqual(scm.timestamp_of_latest_commit('some-path'), '2013-02-08T09:55:21Z')

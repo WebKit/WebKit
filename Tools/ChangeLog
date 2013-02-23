@@ -1,3 +1,91 @@
+2013-02-22  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Upload results to perf.webkit.org in addition to the one specified by --test-results-server
+        https://bugs.webkit.org/show_bug.cgi?id=108577
+
+        Reviewed by Dirk Pranke.
+
+        Upload results to perf.webkit.org using new JSON format as well as the host specified by
+        --test-results-server. The new format is needed to provide extra information perf.webkit.org
+        need such as the subversion commit time and test URLs. This is a temporarily measure until
+        we complete the transition and the old JSON format and the code to upload results to
+        webkit-perf.appspot.com can be deleted.
+
+        This patch adds scm.timestamp_of_latest_commit to obtain the timestamp of the latest commit present
+        in a svn checkout or a git clone. This information is embedded in JSON submitted to perf.webkit.org
+        so that the app can sort performance test results based on the timestamp of the last commit.
+
+        It also changes the repository names returned by port objects to be properly capitalized
+        human readable names such as WebKit instead of lowercased names such as webkit since these names
+        are displayed on perf.webkit.org for humans. Several users of this feature has been updated
+        to explicitly lowercase the names.
+
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.timestamp_of_latest_commit): Added. Obtains the timestamp of the last commit. Unfortunately,
+        git's timestamp granularity is seconds so we're losing some information compared to using a regular
+        subversion client. To make matters worse, git doesn't have any option to show ISO-format timestamp in
+        UTC so we're going to manually fiddle with timezone.
+
+        * Scripts/webkitpy/common/checkout/scm/scm.py:
+        (SCM.timestamp_of_latest_commit): Added.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_mock.py:
+        (MockSCM.timestamp_of_latest_commit): Added.
+
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py:
+        (test_timestamp_of_latest_commit): Added a test for Git.timestamp_of_latest_commit.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.timestamp_of_latest_commit): Added. With svn, all we need to do is to use --xml option and parse
+        the timestamp which is always in UTC.
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        (JSONResultsGeneratorBase._insert_generic_metadata): Lowercase the name. Note that the name
+        'chromium' needs to be substituted by 'chrome' for historical reasons.
+
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        (Port.repository_paths): Return WebKit instead of webkit as noted above.
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        (ChromiumPort.repository_paths): Return Chromium instead of chromium as noted above.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__): Store the current time in UTC as well as in local time.
+        (PerfTestsRunner._collect_tests):
+
+        (PerfTestsRunner._generate_and_show_results): Retrieve both regular output and one for perf.webkit.org,
+        and upload them appropriately.
+
+        (PerfTestsRunner._generate_results_dict): Store WebKit and Chromium revisions at which tests were ran
+        in revisions_for_perf_webkit and construct an output for perf.webkit.org.
+
+        (PerfTestsRunner._datetime_in_ES5_compatible_iso_format): Added.
+
+        (PerfTestsRunner._merge_slave_config_json): Merge slave configuration files into both regular output
+        and one for perf.webkit.org. Here, we prefix each key with "builder" for perf.webkit.org.
+        e.g. "processor" would be renamed to "builderProcessor".
+
+        (PerfTestsRunner._generate_output_files):
+
+        (PerfTestsRunner._upload_json): Added a remote path as an argument since we upload JSONs to /api/report
+        on perf.webkit.org whereas we upload it to /api/test/report on webkit-perf.appspot.com. Also added the code
+        to parse response as JSON when possible since perf.webkit.org returns a JSON response as opposed to
+        webkit-perf.appspot.com which spits out a plaintext response.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (MainTest._test_run_with_json_output.mock_upload_json): Tolerate perf.webkit.org/api/report for now.
+        (MainTest._test_run_with_json_output): Store a UTC time as perftestrunner would do.
+        (MainTest.test_run_with_upload_json_should_generate_perf_webkit_json): Added.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_unittest.py:
+        (MainTest.test_upload_json): Moved from itegrationtest.py since it really is a unit test. Also added test
+        cases to parse JSON responses.
+        (MainTest.test_upload_json.MockFileUploader): Refactored.
+        (MainTest.test_upload_json.MockFileUploader.reset): Added.
+        (MainTest.test_upload_json.MockFileUploader.__init__):
+        (MainTest.test_upload_json.MockFileUploader.upload_single_text_file):
+
 2013-02-22  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Update bot config for OpenSource bots to add two new Win7 Debug testers and get rid of WinXP Debug testers.

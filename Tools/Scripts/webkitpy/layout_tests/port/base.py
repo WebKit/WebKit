@@ -1097,11 +1097,11 @@ class Port(object):
 
     def repository_paths(self):
         """Returns a list of (repository_name, repository_path) tuples of its depending code base.
-        By default it returns a list that only contains a ('webkit', <webkitRepossitoryPath>) tuple."""
+        By default it returns a list that only contains a ('WebKit', <webkitRepositoryPath>) tuple."""
 
-        # We use LayoutTest directory here because webkit_base isn't a part webkit repository in Chromium port
+        # We use LayoutTest directory here because webkit_base isn't a part of WebKit repository in Chromium port
         # where turnk isn't checked out as a whole.
-        return [('webkit', self.layout_tests_dir())]
+        return [('WebKit', self.layout_tests_dir())]
 
     _WDIFF_DEL = '##WDIFF_DEL##'
     _WDIFF_ADD = '##WDIFF_ADD##'

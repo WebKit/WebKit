@@ -34,6 +34,7 @@ import re
 import unittest2 as unittest
 
 from webkitpy.common.host_mock import MockHost
+from webkitpy.common.system.outputcapture import OutputCapture
 from webkitpy.layout_tests.port.test import TestPort
 from webkitpy.performance_tests.perftestsrunner import PerfTestsRunner
 
@@ -147,3 +148,64 @@ class MainTest(unittest.TestCase):
         self.assertEqual(options.output_json_path, 'a/output.json')
         self.assertEqual(options.slave_config_json_path, 'a/source.json')
         self.assertEqual(options.test_results_server, 'somehost')
+
+    def test_upload_json(self):
+        runner, port = self.create_runner()
+        port.host.filesystem.files['/mock-checkout/some.json'] = 'some content'
+
+        class MockFileUploader:
+            called = []
+            upload_single_text_file_throws = False
+            upload_single_text_file_return_value = None
+
+            @classmethod
+            def reset(cls):
+                cls.called = []
+                cls.upload_single_text_file_throws = False
+                cls.upload_single_text_file_return_value = None
+
+            def __init__(mock, url, timeout):
+                self.assertEqual(url, 'https://some.host/some/path')
+                self.assertTrue(isinstance(timeout, int) and timeout)
+                mock.called.append('FileUploader')
+
+            def upload_single_text_file(mock, filesystem, content_type, filename):
+                self.assertEqual(filesystem, port.host.filesystem)
+                self.assertEqual(content_type, 'application/json')
+                self.assertEqual(filename, 'some.json')
+                mock.called.append('upload_single_text_file')
+                if mock.upload_single_text_file_throws:
+                    raise Exception
+                return mock.upload_single_text_file_return_value
+
+        MockFileUploader.upload_single_text_file_return_value = StringIO.StringIO('OK')
+        self.assertTrue(runner._upload_json('some.host', 'some.json', '/some/path', MockFileUploader))
+        self.assertEqual(MockFileUploader.called, ['FileUploader', 'upload_single_text_file'])
+
+        MockFileUploader.reset()
+        MockFileUploader.upload_single_text_file_return_value = StringIO.StringIO('Some error')
+        output = OutputCapture()
+        output.capture_output()
+        self.assertFalse(runner._upload_json('some.host', 'some.json', '/some/path', MockFileUploader))
+        _, _, logs = output.restore_output()
+        self.assertEqual(logs, 'Uploaded JSON to https://some.host/some/path but got a bad response:\nSome error\n')
+
+        # Throwing an exception upload_single_text_file shouldn't blow up _upload_json
+        MockFileUploader.reset()
+        MockFileUploader.upload_single_text_file_throws = True
+        self.assertFalse(runner._upload_json('some.host', 'some.json', '/some/path', MockFileUploader))
+        self.assertEqual(MockFileUploader.called, ['FileUploader', 'upload_single_text_file'])
+
+        MockFileUploader.reset()
+        MockFileUploader.upload_single_text_file_return_value = StringIO.StringIO('{"status": "OK"}')
+        self.assertTrue(runner._upload_json('some.host', 'some.json', '/some/path', MockFileUploader))
+        self.assertEqual(MockFileUploader.called, ['FileUploader', 'upload_single_text_file'])
+
+        MockFileUploader.reset()
+        MockFileUploader.upload_single_text_file_return_value = StringIO.StringIO('{"status": "SomethingHasFailed", "failureStored": false}')
+        output = OutputCapture()
+        output.capture_output()
+        self.assertFalse(runner._upload_json('some.host', 'some.json', '/some/path', MockFileUploader))
+        _, _, logs = output.restore_output()
+        serialized_json = json.dumps({'status': 'SomethingHasFailed', 'failureStored': False}, indent=4)
+        self.assertEqual(logs, 'Uploaded JSON to https://some.host/some/path but got an error:\n%s\n' % serialized_json)

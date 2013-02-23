@@ -27,6 +27,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import datetime
 import logging
 import os
 import re
@@ -252,6 +253,21 @@ class Git(SCM, SVNRepository):
         if not match:
             return ""
         return str(match.group('svn_revision'))
+
+    def timestamp_of_latest_commit(self, path):
+        git_log = self._run_git(['log', '-1', '--date=iso', self.find_checkout_root(path)])
+        match = re.search("^Date:\s*(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})$", git_log, re.MULTILINE)
+        if not match:
+            return ""
+
+        # Manually modify the timezone since Git doesn't have an option to show it in UTC.
+        # Git also truncates milliseconds but we're going to ignore that for now.
+        time_with_timezone = datetime.datetime(int(match.group(1)), int(match.group(2)), int(match.group(3)),
+            int(match.group(4)), int(match.group(5)), int(match.group(6)), 0)
+
+        sign = 1 if match.group(7) == '+' else -1
+        time_without_timezone = time_with_timezone - datetime.timedelta(hours=sign * int(match.group(8)), minutes=int(match.group(9)))
+        return time_without_timezone.strftime('%Y-%m-%dT%H:%M:%SZ')
 
     def prepend_svn_revision(self, diff):
         revision = self.head_svn_revision()

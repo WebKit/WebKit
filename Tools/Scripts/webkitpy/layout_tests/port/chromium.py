@@ -364,7 +364,7 @@ class ChromiumPort(Port):
 
     def repository_paths(self):
         repos = super(ChromiumPort, self).repository_paths()
-        repos.append(('chromium', self.path_from_chromium_base('build')))
+        repos.append(('Chromium', self.path_from_chromium_base('build')))
         return repos
 
     def _get_crash_log(self, name, pid, stdout, stderr, newer_than):
