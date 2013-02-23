@@ -1,3 +1,15 @@
+2013-02-22  David Dorwin  <ddorwin@chromium.org>
+
+        [chromium] Remove call to detach WebHelperPluginImpl's frame since it is never attached
+        https://bugs.webkit.org/show_bug.cgi?id=110668
+
+        Reviewed by Adam Barth.
+
+        This fixes http://crbug.com/172764
+
+        * src/WebHelperPluginImpl.cpp:
+        (WebKit::WebHelperPluginImpl::destoryPage):
+
 2013-02-22  Aaron Colwell  <acolwell@chromium.org>
 
         Factor MediaSource methods out of MediaPlayer & MediaPlayerPrivate and into a new MediaSourcePrivate interface.
