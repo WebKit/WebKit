@@ -31,32 +31,30 @@
 #ifndef WebKit_h
 #define WebKit_h
 
-#include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/Platform.h"
 
 namespace WebKit {
 
-class WebKitPlatformSupport;
-
 // Must be called on the thread that will be the main WebKit thread before
-// using any other WebKit APIs. The provided WebKitPlatformSupport; must be
+// using any other WebKit APIs. The provided Platform; must be
 // non-null and must remain valid until the current thread calls shutdown.
-WEBKIT_EXPORT void initialize(WebKitPlatformSupport*);
+WEBKIT_EXPORT void initialize(Platform*);
 
 // Must be called on the thread that will be the main WebKit thread before
-// using any other WebKit APIs. The provided WebKitPlatformSupport; must be
+// using any other WebKit APIs. The provided Platform; must be
 // non-null and must remain valid until the current thread calls shutdown.
 //
 // This is a special variant of initialize that does not intitialize V8.
-WEBKIT_EXPORT void initializeWithoutV8(WebKitPlatformSupport*);
+WEBKIT_EXPORT void initializeWithoutV8(Platform*);
 
-// Once shutdown, the WebKitPlatformSupport passed to initialize will no longer
+// Once shutdown, the Platform passed to initialize will no longer
 // be accessed. No other WebKit objects should be in use when this function is
 // called. Any background threads created by WebKit are promised to be
 // terminated by the time this function returns.
 WEBKIT_EXPORT void shutdown();
 
-// Returns the WebKitPlatformSupport instance passed to initialize.
-WEBKIT_EXPORT WebKitPlatformSupport* webKitPlatformSupport();
+// Returns the Platform instance passed to initialize.
+WEBKIT_EXPORT Platform* webKitPlatformSupport();
 
 // Alters the rendering of content to conform to a fixed set of rules.
 WEBKIT_EXPORT void setLayoutTestMode(bool);
