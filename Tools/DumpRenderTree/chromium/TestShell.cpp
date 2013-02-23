@@ -33,7 +33,7 @@
 
 #include "DRTDevToolsAgent.h"
 #include "DRTDevToolsClient.h"
-#include "MockWebKitPlatformSupport.h"
+#include "MockPlatform.h"
 #include "MockWebPrerenderingSupport.h"
 #include "WebArrayBufferView.h"
 #include "WebDataSource.h"
@@ -159,7 +159,7 @@ TestShell::TestShell()
     m_timeout = 30 * 1000;
 }
 
-void TestShell::initialize(MockWebKitPlatformSupport* platformSupport)
+void TestShell::initialize(MockPlatform* platformSupport)
 {
     m_testInterfaces = adoptPtr(new WebTestInterfaces());
     platformSupport->setInterfaces(m_testInterfaces.get());

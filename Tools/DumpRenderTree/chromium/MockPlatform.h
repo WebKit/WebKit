@@ -28,55 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "MockWebKitPlatformSupport.h"
+#ifndef MockPlatform_h
+#define MockPlatform_h
 
-#include "WebTestInterfaces.h"
-#include <public/WebMediaStreamCenter.h>
-#include <wtf/Assertions.h>
+#include <public/Platform.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
-using namespace WebKit;
-using namespace WebTestRunner;
-
-PassOwnPtr<MockWebKitPlatformSupport> MockWebKitPlatformSupport::create()
-{
-    return adoptPtr(new MockWebKitPlatformSupport());
+namespace WebTestRunner {
+class WebTestInterfaces;
 }
 
-MockWebKitPlatformSupport::MockWebKitPlatformSupport()
-{
-}
+class MockPlatform : public WebKit::Platform {
+public:
+    static PassOwnPtr<MockPlatform> create();
+    ~MockPlatform();
 
-MockWebKitPlatformSupport::~MockWebKitPlatformSupport()
-{
-}
-
-void MockWebKitPlatformSupport::setInterfaces(WebTestInterfaces* interfaces)
-{
-    m_interfaces = interfaces;
-}
-
-void MockWebKitPlatformSupport::cryptographicallyRandomValues(unsigned char*, size_t)
-{
-    CRASH();
-}
+    void setInterfaces(WebTestRunner::WebTestInterfaces*);
+    virtual void cryptographicallyRandomValues(unsigned char* buffer, size_t length) OVERRIDE;
 
 #if ENABLE(MEDIA_STREAM)
-WebMediaStreamCenter* MockWebKitPlatformSupport::createMediaStreamCenter(WebMediaStreamCenterClient* client)
-{
-    ASSERT(m_interfaces);
-
-    if (!m_mockMediaStreamCenter)
-        m_mockMediaStreamCenter = adoptPtr(m_interfaces->createMediaStreamCenter(client));
-
-    return m_mockMediaStreamCenter.get();
-}
-
-WebRTCPeerConnectionHandler* MockWebKitPlatformSupport::createRTCPeerConnectionHandler(WebRTCPeerConnectionHandlerClient* client)
-{
-    ASSERT(m_interfaces);
-
-    return m_interfaces->createWebRTCPeerConnectionHandler(client);
-}
+    virtual WebKit::WebMediaStreamCenter* createMediaStreamCenter(WebKit::WebMediaStreamCenterClient*) OVERRIDE;
+    virtual WebKit::WebRTCPeerConnectionHandler* createRTCPeerConnectionHandler(WebKit::WebRTCPeerConnectionHandlerClient*) OVERRIDE;
 #endif // ENABLE(MEDIA_STREAM)
+
+private:
+    MockPlatform();
+
+    WebTestRunner::WebTestInterfaces* m_interfaces;
+
+#if ENABLE(MEDIA_STREAM)
+    OwnPtr<WebKit::WebMediaStreamCenter> m_mockMediaStreamCenter;
+#endif // ENABLE(MEDIA_STREAM)
+};
+
+#endif // MockPlatform_h

@@ -1,3 +1,36 @@
+2013-02-23  Mark Pilgrim  <pilgrim@chromium.org>
+
+        [Chromium] DumpRenderTree TestShell::initialize should take Platform* now that WebKitPlatformSupport is empty
+        https://bugs.webkit.org/show_bug.cgi?id=110606
+
+        Reviewed by Adam Barth.
+
+        Part of a larger refactoring series; see tracking bug 82948.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (WebKitSupportTestEnvironment::WebKitSupportTestEnvironment):
+        (WebKitSupportTestEnvironment::mockPlatform):
+        (WebKitSupportTestEnvironment):
+        * DumpRenderTree/chromium/MockPlatform.cpp: Copied from Tools/DumpRenderTree/chromium/MockWebKitPlatformSupport.cpp.
+        (MockPlatform::create):
+        (MockPlatform::MockPlatform):
+        (MockPlatform::~MockPlatform):
+        (MockPlatform::setInterfaces):
+        (MockPlatform::cryptographicallyRandomValues):
+        (MockPlatform::createMediaStreamCenter):
+        (MockPlatform::createRTCPeerConnectionHandler):
+        * DumpRenderTree/chromium/MockPlatform.h: Copied from Tools/DumpRenderTree/chromium/MockWebKitPlatformSupport.h.
+        (MockPlatform):
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.cpp: Removed.
+        * DumpRenderTree/chromium/MockWebKitPlatformSupport.h: Removed.
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestDelegate):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell):
+
 2013-02-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium Windows Perf bot fix. Tolerate CR at the end of the line that contains the timestamp.

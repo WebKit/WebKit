@@ -31,7 +31,7 @@
 #include "config.h"
 #include "DumpRenderTree.h"
 
-#include "MockWebKitPlatformSupport.h"
+#include "MockPlatform.h"
 #include "TestShell.h"
 #include "webkit/support/webkit_support.h"
 #include <public/WebCompositorSupport.h>
@@ -80,7 +80,7 @@ class WebKitSupportTestEnvironment {
 public:
     WebKitSupportTestEnvironment()
     {
-        m_mockPlatform = MockWebKitPlatformSupport::create();
+        m_mockPlatform = MockPlatform::create();
         webkit_support::SetUpTestEnvironment(m_mockPlatform.get());
     }
     ~WebKitSupportTestEnvironment()
@@ -88,10 +88,10 @@ public:
         webkit_support::TearDownTestEnvironment();
     }
 
-    MockWebKitPlatformSupport* mockPlatform() { return m_mockPlatform.get(); }
+    MockPlatform* mockPlatform() { return m_mockPlatform.get(); }
 
 private:
-    OwnPtr<MockWebKitPlatformSupport> m_mockPlatform;
+    OwnPtr<MockPlatform> m_mockPlatform;
 };
 
 static void runTest(TestShell& shell, TestParams& params, const string& inputLine, const bool forceDumpPixels)

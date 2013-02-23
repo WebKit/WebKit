@@ -58,7 +58,7 @@ public:
     virtual void clearEditCommand() = 0;
     virtual void setEditCommand(const std::string& name, const std::string& value) = 0;
 
-    // Set the gamepads to return from WebKitPlatformSupport::sampleGamepads().
+    // Set the gamepads to return from Platform::sampleGamepads().
     virtual void setGamepadData(const WebKit::WebGamepads&) = 0;
 
     // Add a message to the text dump for the layout test.
