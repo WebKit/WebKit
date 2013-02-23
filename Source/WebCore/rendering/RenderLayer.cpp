@@ -60,6 +60,7 @@
 #include "FloatRect.h"
 #include "FocusController.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
@@ -2165,6 +2166,7 @@ void RenderLayer::scrollTo(int x, int y)
         renderer()->node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(renderer()->node(), DocumentEventQueue::ScrollEventElementTarget);
 
     InspectorInstrumentation::didScrollLayer(frame);
+    frame->loader()->client()->didChangeScrollOffset();
 }
 
 static inline bool frameElementAndViewPermitScroll(HTMLFrameElement* frameElement, FrameView* frameView) 
