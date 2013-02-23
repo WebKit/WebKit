@@ -207,7 +207,7 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
         // a selector is invalid if something follows a pseudo-element
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        nextContext.hasScrollbarPseudo = RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER;
+        nextContext.hasScrollbarPseudo = dynamicPseudo != NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER);
         nextContext.hasSelectionPseudo = dynamicPseudo == SELECTION;
         if ((context.elementStyle || m_mode == CollectingRules || m_mode == QueryingRules) && dynamicPseudo != NOPSEUDO
             && !nextContext.hasSelectionPseudo
