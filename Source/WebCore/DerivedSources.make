@@ -694,29 +694,15 @@ ifneq ($(SDKROOT),)
 	SDK_FLAGS=-isysroot $(SDKROOT)
 endif
 
-ifeq ($(shell $(CC) -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_DASHBOARD_SUPPORT | cut -d' ' -f3), 1)
-    ENABLE_DASHBOARD_SUPPORT = 1
-else
-    ENABLE_DASHBOARD_SUPPORT = 0
-endif
-
 ifeq ($(shell $(CC) -x c++ -E -P -dM $(SDK_FLAGS) $(FRAMEWORK_FLAGS) $(HEADER_FLAGS) -include "wtf/Platform.h" /dev/null | grep ENABLE_ORIENTATION_EVENTS | cut -d' ' -f3), 1)
     ENABLE_ORIENTATION_EVENTS = 1
-else
-    ENABLE_ORIENTATION_EVENTS = 0
 endif
 
-else
-
-ifndef ENABLE_DASHBOARD_SUPPORT
-    ENABLE_DASHBOARD_SUPPORT = 0
-endif
+endif # MACOS
 
 ifndef ENABLE_ORIENTATION_EVENTS
     ENABLE_ORIENTATION_EVENTS = 0
 endif
-
-endif # MACOS
 
 ifndef ENABLE_DRAGGABLE_REGION
     ENABLE_DRAGGABLE_REGION = 0
