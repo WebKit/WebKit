@@ -1,5 +1,15 @@
 2013-02-22  Dirk Pranke  <dpranke@chromium.org>
 
+        Unreviewed, rolling out r143794.
+        http://trac.webkit.org/changeset/143794
+        https://bugs.webkit.org/show_bug.cgi?id=110542
+
+        debug linux builds broken?
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
+2013-02-22  Dirk Pranke  <dpranke@chromium.org>
+
         [chromium] enable the fixed version of freetype on linux
         https://bugs.webkit.org/show_bug.cgi?id=110542
 

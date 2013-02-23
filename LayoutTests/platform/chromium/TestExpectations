@@ -4418,7 +4418,3 @@ webkit.org/b/109994 [ Mac Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
 
 webkit.org/b/110568 [ MountainLion ] fast/multicol/newmulticol/positioned-split.html [ ImageOnlyFailure ]
 
-# These pass on Lucid and fail on Precise; font differences, maybe?
-# We can rebaseline them when we stop running on Lucid.
-webkit.org/b/110540 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ Failure Pass ]
-webkit.org/b/110540 [ Linux ] fast/text/international/thai-line-breaks.html [ ImageOnlyFailure Pass ]
