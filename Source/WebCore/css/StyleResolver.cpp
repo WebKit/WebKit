@@ -696,7 +696,7 @@ void StyleResolver::collectMatchingRulesForList(State& state, const Vector<RuleD
             }
             // If we're matching normal rules, set a pseudo bit if
             // we really just matched a pseudo-element.
-            if (dynamicPseudo != NOPSEUDO && state.pseudoStyle() == NOPSEUDO) {
+            if (dynamicPseudo != NOPSEUDO && state.pseudoStyleRequest().pseudoId == NOPSEUDO) {
                 if (state.mode() == SelectorChecker::CollectingRules) {
                     InspectorInstrumentation::didMatchRule(cookie, false);
                     continue;
@@ -803,9 +803,9 @@ inline void StyleResolver::initElement(State& state, Element* e)
     }
 }
 
-inline void StyleResolver::State::initForStyleResolve(Document* document, Element* e, RenderStyle* parentStyle, PseudoId pseudoId, RenderRegion* regionForStyling)
+inline void StyleResolver::State::initForStyleResolve(Document* document, Element* e, RenderStyle* parentStyle, const PseudoStyleRequest& pseudoStyleRequest, RenderRegion* regionForStyling)
 {
-    m_pseudoStyle = pseudoId;
+    m_pseudoStyleRequest = pseudoStyleRequest;
     m_regionForStyling = regionForStyling;
 
     if (e) {
@@ -1556,7 +1556,7 @@ void StyleResolver::keyframeStylesForAnimation(Element* e, const RenderStyle* el
     }
 }
 
-PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(PseudoId pseudo, Element* e, RenderStyle* parentStyle)
+PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(Element* e, const PseudoStyleRequest& pseudoStyleRequest, RenderStyle* parentStyle)
 {
     ASSERT(parentStyle);
     if (!e)
@@ -1564,7 +1564,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(PseudoId pseudo, El
 
     State state(document());
     initElement(state, e);
-    state.initForStyleResolve(document(), e, parentStyle, pseudo);
+    state.initForStyleResolve(document(), e, parentStyle, pseudoStyleRequest);
     state.setStyle(RenderStyle::create());
     state.style()->inheritFrom(state.parentStyle());
 
@@ -1583,7 +1583,7 @@ PassRefPtr<RenderStyle> StyleResolver::pseudoStyleForElement(PseudoId pseudo, El
     if (matchResult.matchedProperties.isEmpty())
         return 0;
 
-    state.style()->setStyleType(pseudo);
+    state.style()->setStyleType(pseudoStyleRequest.pseudoId);
 
     applyMatchedProperties(state, matchResult, e);
 
@@ -2075,7 +2075,7 @@ inline bool StyleResolver::ruleMatches(State& state, const RuleData& ruleData, c
 {
     if (ruleData.hasFastCheckableSelector()) {
         // We know this selector does not include any pseudo elements.
-        if (state.pseudoStyle() != NOPSEUDO)
+        if (state.pseudoStyleRequest().pseudoId != NOPSEUDO)
             return false;
         // We know a sufficiently simple single part selector matches simply because we found it from the rule hash.
         // This is limited to HTML only so we don't need to check the namespace.
@@ -2097,12 +2097,14 @@ inline bool StyleResolver::ruleMatches(State& state, const RuleData& ruleData, c
     SelectorChecker::SelectorCheckingContext context(ruleData.selector(), state.element(), SelectorChecker::VisitedMatchEnabled);
     context.elementStyle = state.style();
     context.scope = scope;
-    context.pseudoStyle = state.pseudoStyle();
+    context.pseudoId = state.pseudoStyleRequest().pseudoId;
+    context.scrollbar = state.pseudoStyleRequest().scrollbar;
+    context.scrollbarPart = state.pseudoStyleRequest().scrollbarPart;
     context.behaviorAtBoundary = behaviorAtBoundary;
     SelectorChecker::Match match = selectorChecker.match(context, dynamicPseudo, DOMSiblingTraversalStrategy());
     if (match != SelectorChecker::SelectorMatches)
         return false;
-    if (state.pseudoStyle() != NOPSEUDO && state.pseudoStyle() != dynamicPseudo)
+    if (state.pseudoStyleRequest().pseudoId != NOPSEUDO && state.pseudoStyleRequest().pseudoId != dynamicPseudo)
         return false;
     return true;
 }

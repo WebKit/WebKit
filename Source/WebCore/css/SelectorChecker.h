@@ -39,6 +39,7 @@
 namespace WebCore {
 
 class CSSSelector;
+class RenderScrollbar;
 class RenderStyle;
 
 class SelectorChecker {
@@ -57,8 +58,10 @@ public:
             , element(element)
             , scope(0)
             , visitedMatchType(visitedMatchType)
-            , pseudoStyle(NOPSEUDO)
+            , pseudoId(NOPSEUDO)
             , elementStyle(0)
+            , scrollbar(0)
+            , scrollbarPart(NoPart)
             , isSubSelector(false)
             , hasScrollbarPseudo(false)
             , hasSelectionPseudo(false)
@@ -69,8 +72,10 @@ public:
         Element* element;
         const ContainerNode* scope;
         VisitedMatchType visitedMatchType;
-        PseudoId pseudoStyle;
+        PseudoId pseudoId;
         RenderStyle* elementStyle;
+        RenderScrollbar* scrollbar;
+        ScrollbarPart scrollbarPart;
         bool isSubSelector;
         bool hasScrollbarPseudo;
         bool hasSelectionPseudo;
@@ -96,7 +101,7 @@ public:
     static unsigned determineLinkMatchType(const CSSSelector*);
 
 private:
-    bool checkScrollbarPseudoClass(Document*, const CSSSelector*) const;
+    bool checkScrollbarPseudoClass(const SelectorCheckingContext&, Document*, const CSSSelector*) const;
 
     static bool isFrameFocused(const Element*);
 

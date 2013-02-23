@@ -143,15 +143,15 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
         if (context.element == context.scope)
             return SelectorFailsCompletely;
 
-        // Bail-out if this selector is irrelevant for the pseudoStyle
-        if (context.pseudoStyle != NOPSEUDO && context.pseudoStyle != dynamicPseudo)
+        // Bail-out if this selector is irrelevant for the pseudoId
+        if (context.pseudoId != NOPSEUDO && context.pseudoId != dynamicPseudo)
             return SelectorFailsCompletely;
 
         // Disable :visited matching when we see the first link or try to match anything else than an ancestors.
         if (!context.isSubSelector && (context.element->isLink() || (relation != CSSSelector::Descendant && relation != CSSSelector::Child)))
             nextContext.visitedMatchType = VisitedMatchDisabled;
 
-        nextContext.pseudoStyle = NOPSEUDO;
+        nextContext.pseudoId = NOPSEUDO;
     }
 
     switch (relation) {
@@ -207,7 +207,7 @@ SelectorChecker::Match SelectorChecker::match(const SelectorCheckingContext& con
         // a selector is invalid if something follows a pseudo-element
         // We make an exception for scrollbar pseudo elements and allow a set of pseudo classes (but nothing else)
         // to follow the pseudo elements.
-        nextContext.hasScrollbarPseudo = dynamicPseudo != NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER);
+        nextContext.hasScrollbarPseudo = dynamicPseudo != NOPSEUDO && (context.scrollbar || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER);
         nextContext.hasSelectionPseudo = dynamicPseudo == SELECTION;
         if ((context.elementStyle || m_mode == CollectingRules || m_mode == QueryingRules) && dynamicPseudo != NOPSEUDO
             && !nextContext.hasSelectionPseudo
@@ -386,7 +386,7 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
         } else if (context.hasScrollbarPseudo) {
             // CSS scrollbars match a specific subset of pseudo classes, and they have specialized rules for each
             // (since there are no elements involved).
-            return checkScrollbarPseudoClass(element->document(), selector);
+            return checkScrollbarPseudoClass(context, element->document(), selector);
         } else if (context.hasSelectionPseudo) {
             if (selector->pseudoType() == CSSSelector::PseudoWindowInactive)
                 return !element->document()->page()->focusController()->isActive();
@@ -786,10 +786,10 @@ bool SelectorChecker::checkOne(const SelectorCheckingContext& context, const Sib
     return true;
 }
 
-bool SelectorChecker::checkScrollbarPseudoClass(Document* document, const CSSSelector* selector) const
+bool SelectorChecker::checkScrollbarPseudoClass(const SelectorCheckingContext& context, Document* document, const CSSSelector* selector) const
 {
-    RenderScrollbar* scrollbar = RenderScrollbar::scrollbarForStyleResolve();
-    ScrollbarPart part = RenderScrollbar::partForStyleResolve();
+    RenderScrollbar* scrollbar = context.scrollbar;
+    ScrollbarPart part = context.scrollbarPart;
 
     // FIXME: This is a temporary hack for resizers and scrollbar corners. Eventually :window-inactive should become a real
     // pseudo class and just apply to everything.

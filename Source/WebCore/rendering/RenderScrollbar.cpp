@@ -32,6 +32,7 @@
 #include "RenderScrollbarPart.h"
 #include "RenderScrollbarTheme.h"
 #include "StyleInheritedData.h"
+#include "StyleResolver.h"
 
 namespace WebCore {
 
@@ -145,30 +146,12 @@ void RenderScrollbar::setPressedPart(ScrollbarPart part)
     updateScrollbarPart(TrackBGPart);
 }
 
-static ScrollbarPart s_styleResolvePart;
-static RenderScrollbar* s_styleResolveScrollbar;
-
-RenderScrollbar* RenderScrollbar::scrollbarForStyleResolve()
-{
-    return s_styleResolveScrollbar;
-}
-
-ScrollbarPart RenderScrollbar::partForStyleResolve()
-{
-    return s_styleResolvePart;
-}
-
 PassRefPtr<RenderStyle> RenderScrollbar::getScrollbarPseudoStyle(ScrollbarPart partType, PseudoId pseudoId)
 {
     if (!owningRenderer())
         return 0;
 
-    s_styleResolvePart = partType;
-    s_styleResolveScrollbar = this;
-    RefPtr<RenderStyle> result = owningRenderer()->getUncachedPseudoStyle(pseudoId, owningRenderer()->style());
-    s_styleResolvePart = NoPart;
-    s_styleResolveScrollbar = 0;
-
+    RefPtr<RenderStyle> result = owningRenderer()->getUncachedPseudoStyle(PseudoStyleRequest(pseudoId, this, partType), owningRenderer()->style());
     // Scrollbars for root frames should always have background color 
     // unless explicitly specified as transparent. So we force it.
     // This is because WebKit assumes scrollbar to be always painted and missing background

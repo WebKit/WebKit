@@ -47,9 +47,6 @@ public:
     static PassRefPtr<Scrollbar> createCustomScrollbar(ScrollableArea*, ScrollbarOrientation, Node*, Frame* owningFrame = 0);
     virtual ~RenderScrollbar();
 
-    static ScrollbarPart partForStyleResolve();
-    static RenderScrollbar* scrollbarForStyleResolve();
-
     RenderBox* owningRenderer() const;
 
     void paintPart(GraphicsContext*, ScrollbarPart, const IntRect&);

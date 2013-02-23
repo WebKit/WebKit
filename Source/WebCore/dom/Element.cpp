@@ -1328,7 +1328,7 @@ bool Element::pseudoStyleCacheIsInvalid(const RenderStyle* currentStyle, RenderS
         if (pseudoId == FIRST_LINE || pseudoId == FIRST_LINE_INHERITED)
             newPseudoStyle = renderer()->uncachedFirstLineStyle(newStyle);
         else
-            newPseudoStyle = renderer()->getUncachedPseudoStyle(pseudoId, newStyle, newStyle);
+            newPseudoStyle = renderer()->getUncachedPseudoStyle(PseudoStyleRequest(pseudoId), newStyle, newStyle);
         if (!newPseudoStyle)
             return true;
         if (*newPseudoStyle != *pseudoStyleCache->at(i)) {
