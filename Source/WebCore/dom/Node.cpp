@@ -442,8 +442,7 @@ Node::~Node()
     if (m_next)
         m_next->setPreviousSibling(0);
 
-    if (doc)
-        doc->guardDeref();
+    m_treeScope->guardDeref();
 
     InspectorCounters::decrementCounter(InspectorCounters::NodeCounter);
 }
@@ -890,11 +889,6 @@ bool Node::isFocusable() const
         return false;
 
     return true;
-}
-
-bool Node::isTreeScope() const
-{
-    return treeScope()->rootNode() == this;
 }
 
 bool Node::isKeyboardFocusable(KeyboardEvent*) const
@@ -2561,6 +2555,31 @@ PassRefPtr<PropertyNodeList> Node::propertyNodeList(const String& name)
 }
 #endif
 
+// This is here for inlining
+inline void TreeScope::removedLastRefToScope()
+{
+    ASSERT(!deletionHasBegun());
+    if (m_guardRefCount) {
+        // If removing a child removes the last self-only ref, we don't
+        // want the scope to be destructed until after
+        // removeDetachedChildren returns, so we guard ourselves with an
+        // extra self-only ref.
+        guardRef();
+        dispose();
+#ifndef NDEBUG
+        // We need to do this right now since guardDeref() can delete this.
+        rootNode()->m_inRemovedLastRefFunction = false;
+#endif
+        guardDeref();
+    } else {
+#ifndef NDEBUG
+        rootNode()->m_inRemovedLastRefFunction = false;
+        beginDeletion();
+#endif
+        delete this;
+    }
+}
+
 // It's important not to inline removedLastRef, because we don't want to inline the code to
 // delete a Node at each deref call site.
 void Node::removedLastRef()
@@ -2568,10 +2587,11 @@ void Node::removedLastRef()
     // An explicit check for Document here is better than a virtual function since it is
     // faster for non-Document nodes, and because the call to removedLastRef that is inlined
     // at all deref call sites is smaller if it's a non-virtual function.
-    if (isDocumentNode()) {
-        static_cast<Document*>(this)->removedLastRef();
+    if (isTreeScope()) {
+        treeScope()->removedLastRefToScope();
         return;
     }
+
 #ifndef NDEBUG
     m_deletionHasBegun = true;
 #endif

@@ -34,11 +34,11 @@ namespace WebCore {
 DocumentFragment::DocumentFragment(Document* document, ConstructionType constructionType)
     : ContainerNode(document, constructionType)
 {
-    ASSERT(document);
 }
 
 PassRefPtr<DocumentFragment> DocumentFragment::create(Document* document)
 {
+    ASSERT(document);
     return adoptRef(new DocumentFragment(document, Node::CreateDocumentFragment));
 }
 

@@ -40,6 +40,8 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
 {
     ASSERT(needsScopeChange());
 
+    m_oldScope->guardRef();
+
     // If an element is moved from a document and then eventually back again the collection cache for
     // that element may contain stale data as changes made to it will have updated the DOMTreeVersion
     // of the document it was moved to. By increasing the DOMTreeVersion of the donating document here
@@ -51,7 +53,7 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
         oldDocument->incDOMTreeVersion();
 
     for (Node* node = root; node; node = NodeTraversal::next(node, root)) {
-        node->setTreeScope(m_newScope);
+        updateTreeScope(node);
 
         if (willMoveToNewDocument)
             moveNodeToNewDocument(node, oldDocument, newDocument);
@@ -76,6 +78,8 @@ void TreeScopeAdopter::moveTreeToNewScope(Node* root) const
                 moveTreeToNewDocument(shadow, oldDocument, newDocument);
         }
     }
+
+    m_oldScope->guardDeref();
 }
 
 void TreeScopeAdopter::moveTreeToNewDocument(Node* root, Document* oldDocument, Document* newDocument) const
@@ -99,6 +103,15 @@ void TreeScopeAdopter::ensureDidMoveToNewDocumentWasCalled(Document* oldDocument
 }
 #endif
 
+inline void TreeScopeAdopter::updateTreeScope(Node* node) const
+{
+    ASSERT(!node->isTreeScope());
+    ASSERT(node->treeScope() == m_oldScope);
+    m_newScope->guardRef();
+    m_oldScope->guardDeref();
+    node->setTreeScope(m_newScope);
+}
+
 inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDocument, Document* newDocument) const
 {
     ASSERT(!node->inDocument() || oldDocument != newDocument);
@@ -109,7 +122,6 @@ inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDoc
             rareData->nodeLists()->adoptDocument(oldDocument, newDocument);
     }
 
-    newDocument->guardRef();
     if (oldDocument)
         oldDocument->moveNodeIteratorsToNewDocument(node, newDocument);
 
@@ -123,9 +135,6 @@ inline void TreeScopeAdopter::moveNodeToNewDocument(Node* node, Document* oldDoc
 
     node->didMoveToNewDocument(oldDocument);
     ASSERT(didMoveToNewDocumentWasCalled);
-    
-    if (oldDocument)
-        oldDocument->guardDeref();
 }
 
 }

@@ -413,7 +413,6 @@ uint64_t Document::s_globalTreeVersion = 0;
 Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     : ContainerNode(0, CreateDocument)
     , TreeScope(this)
-    , m_guardRefCount(0)
     , m_styleResolverThrowawayTimer(this, &Document::styleResolverThrowawayTimerFired)
     , m_lastStyleResolverAccessTime(0)
     , m_activeParserCount(0)
@@ -485,8 +484,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_templateDocumentHost(0)
 #endif
 {
-    setTreeScope(this);
-
     m_printing = false;
     m_paginatedForScreen = false;
 
@@ -586,7 +583,7 @@ Document::~Document()
     ASSERT(m_ranges.isEmpty());
     ASSERT(!m_styleRecalcTimer.isActive());
     ASSERT(!m_parentTreeScope);
-    ASSERT(!m_guardRefCount);
+    ASSERT(!hasGuardRefCount());
 
 #if ENABLE(TEMPLATE_ELEMENT)
     if (m_templateDocument)
@@ -653,60 +650,40 @@ Document::~Document()
     InspectorCounters::decrementCounter(InspectorCounters::DocumentCounter);
 }
 
-void Document::removedLastRef()
+void Document::dispose()
 {
-    ASSERT(!m_deletionHasBegun);
-    if (m_guardRefCount) {
-        // If removing a child removes the last self-only ref, we don't
-        // want the scope to be destructed until after
-        // removeDetachedChildren returns, so we guard ourselves with an
-        // extra self-only ref.
-        guardRef();
-
-        // We must make sure not to be retaining any of our children through
-        // these extra pointers or we will create a reference cycle.
-        m_docType = 0;
-        m_focusedNode = 0;
-        m_hoverNode = 0;
-        m_activeElement = 0;
-        m_titleElement = 0;
-        m_documentElement = 0;
-        m_contextFeatures = ContextFeatures::defaultSwitch();
-        m_userActionElements.documentDidRemoveLastRef();
+    // We must make sure not to be retaining any of our children through
+    // these extra pointers or we will create a reference cycle.
+    m_docType = 0;
+    m_focusedNode = 0;
+    m_hoverNode = 0;
+    m_activeElement = 0;
+    m_titleElement = 0;
+    m_documentElement = 0;
+    m_contextFeatures = ContextFeatures::defaultSwitch();
+    m_userActionElements.documentDidRemoveLastRef();
 #if ENABLE(FULLSCREEN_API)
-        m_fullScreenElement = 0;
-        m_fullScreenElementStack.clear();
+    m_fullScreenElement = 0;
+    m_fullScreenElementStack.clear();
 #endif
 
-        detachParser();
+    detachParser();
 
-        // removeDetachedChildren() doesn't always unregister IDs,
-        // so tear down scope information upfront to avoid having stale references in the map.
-        destroyTreeScopeData();
-        removeDetachedChildren();
+    // removeDetachedChildren() doesn't always unregister IDs,
+    // so tear down scope information upfront to avoid having stale references in the map.
+    destroyTreeScopeData();
+    removeDetachedChildren();
 
-        m_markers->detach();
+    m_markers->detach();
 
-        m_cssCanvasElements.clear();
+    m_cssCanvasElements.clear();
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
-        // FIXME: consider using ActiveDOMObject.
-        if (m_scriptedAnimationController)
-            m_scriptedAnimationController->clearDocumentPointer();
-        m_scriptedAnimationController.clear();
+    // FIXME: consider using ActiveDOMObject.
+    if (m_scriptedAnimationController)
+        m_scriptedAnimationController->clearDocumentPointer();
+    m_scriptedAnimationController.clear();
 #endif
-
-#ifndef NDEBUG
-        m_inRemovedLastRefFunction = false;
-#endif
-
-        guardDeref();
-    } else {
-#ifndef NDEBUG 
-        m_deletionHasBegun = true; 
-#endif 
-        delete this;
-    }
 }
 
 Element* Document::getElementById(const AtomicString& id) const

@@ -52,7 +52,7 @@ enum ShadowRootUsageOriginType {
 };
 
 ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
-    : DocumentFragment(document, CreateShadowRoot)
+    : DocumentFragment(0, CreateShadowRoot)
     , TreeScope(this, document)
     , m_prev(0)
     , m_next(0)
@@ -63,7 +63,6 @@ ShadowRoot::ShadowRoot(Document* document, ShadowRootType type)
     , m_registeredWithParentShadowRoot(false)
 {
     ASSERT(document);
-    setTreeScope(this);
 
 #if PLATFORM(CHROMIUM)
     if (type == ShadowRoot::AuthorShadowRoot) {
@@ -87,6 +86,11 @@ ShadowRoot::~ShadowRoot()
     // as well as Node. See a comment on TreeScope.h for the reason.
     if (hasRareData())
         clearRareData();
+}
+
+void ShadowRoot::dispose()
+{
+    removeDetachedChildren();
 }
 
 PassRefPtr<Node> ShadowRoot::cloneNode(bool, ExceptionCode& ec)

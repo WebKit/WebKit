@@ -92,7 +92,7 @@ public:
     // Used by the basic DOM mutation methods (e.g., appendChild()).
     void adoptIfNeeded(Node*);
 
-    ContainerNode* rootNode() const { return m_rootNode; }
+    Node* rootNode() const { return m_rootNode; }
 
     IdTargetObserverRegistry& idTargetObserverRegistry() const { return *m_idTargetObserverRegistry.get(); }
 
@@ -103,6 +103,29 @@ public:
         DEFINE_STATIC_LOCAL(TreeScope, instance, ());
         return &instance;
     }
+
+    // Nodes belonging to this scope hold guard references -
+    // these are enough to keep the scope from being destroyed, but
+    // not enough to keep it from removing its children. This allows a
+    // node that outlives its scope to still have a valid document
+    // pointer without introducing reference cycles.
+    void guardRef()
+    {
+        ASSERT(!deletionHasBegun());
+        ++m_guardRefCount;
+    }
+
+    void guardDeref()
+    {
+        ASSERT(!deletionHasBegun());
+        --m_guardRefCount;
+        if (!m_guardRefCount && !refCount() && this != noDocumentInstance()) {
+            beginDeletion();
+            delete this;
+        }
+    }
+
+    void removedLastRefToScope();
 
 protected:
     TreeScope(ContainerNode*, Document*);
@@ -118,12 +141,26 @@ protected:
         m_documentScope = document;
     }
 
+    bool hasGuardRefCount() const { return m_guardRefCount; }
+
 private:
     TreeScope();
 
-    ContainerNode* m_rootNode;
+    virtual void dispose() { }
+
+    int refCount() const;
+#ifndef NDEBUG
+    bool deletionHasBegun();
+    void beginDeletion();
+#else
+    bool deletionHasBegun() { return false; }
+    void beginDeletion() { }
+#endif
+
+    Node* m_rootNode;
     Document* m_documentScope;
     TreeScope* m_parentTreeScope;
+    int m_guardRefCount;
 
     OwnPtr<DocumentOrderedMap> m_elementsById;
     OwnPtr<DocumentOrderedMap> m_imageMapsByName;
