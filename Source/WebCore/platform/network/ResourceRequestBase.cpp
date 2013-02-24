@@ -136,6 +136,9 @@ void ResourceRequestBase::removeCredentials()
 {
     updateResourceRequest(); 
 
+    if (m_url.user().isEmpty() && m_url.pass().isEmpty())
+        return;
+
     m_url.setUser(String());
     m_url.setPass(String());
 
@@ -152,6 +155,9 @@ ResourceRequestCachePolicy ResourceRequestBase::cachePolicy() const
 void ResourceRequestBase::setCachePolicy(ResourceRequestCachePolicy cachePolicy)
 {
     updateResourceRequest(); 
+
+    if (m_cachePolicy == cachePolicy)
+        return;
     
     m_cachePolicy = cachePolicy;
     
@@ -170,7 +176,10 @@ void ResourceRequestBase::setTimeoutInterval(double timeoutInterval)
 {
     updateResourceRequest(); 
     
-    m_timeoutInterval = timeoutInterval; 
+    if (m_timeoutInterval == timeoutInterval)
+        return;
+
+    m_timeoutInterval = timeoutInterval;
     
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
@@ -186,7 +195,10 @@ const KURL& ResourceRequestBase::firstPartyForCookies() const
 void ResourceRequestBase::setFirstPartyForCookies(const KURL& firstPartyForCookies)
 { 
     updateResourceRequest(); 
-    
+
+    if (m_firstPartyForCookies == firstPartyForCookies)
+        return;
+
     m_firstPartyForCookies = firstPartyForCookies;
     
     m_platformRequestUpdated = false;
@@ -202,6 +214,9 @@ const String& ResourceRequestBase::httpMethod() const
 void ResourceRequestBase::setHTTPMethod(const String& httpMethod) 
 {
     updateResourceRequest(); 
+
+    if (m_httpMethod == httpMethod)
+        return;
 
     m_httpMethod = httpMethod;
     
@@ -249,7 +264,11 @@ void ResourceRequestBase::clearHTTPAuthorization()
 {
     updateResourceRequest(); 
 
-    m_httpHeaderFields.remove("Authorization");
+    HTTPHeaderMap::iterator iter = m_httpHeaderFields.find("Authorization");
+    if (iter == m_httpHeaderFields.end())
+        return;
+
+    m_httpHeaderFields.remove(iter);
 
     if (url().protocolIsInHTTPFamily())
         m_platformRequestUpdated = false;
@@ -349,7 +368,10 @@ bool ResourceRequestBase::allowCookies() const
 void ResourceRequestBase::setAllowCookies(bool allowCookies)
 {
     updateResourceRequest(); 
-    
+
+    if (m_allowCookies == allowCookies)
+        return;
+
     m_allowCookies = allowCookies;
     
     if (url().protocolIsInHTTPFamily())
@@ -366,6 +388,9 @@ ResourceLoadPriority ResourceRequestBase::priority() const
 void ResourceRequestBase::setPriority(ResourceLoadPriority priority)
 {
     updateResourceRequest();
+
+    if (m_priority == priority)
+        return;
 
     m_priority = priority;
 
