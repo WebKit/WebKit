@@ -37,6 +37,7 @@
 #import "Language.h"
 #import "LocalizedStrings.h"
 #import "Logging.h"
+#import "MediaControlElements.h"
 #import "PageGroup.h"
 #import "SoftLinking.h"
 #import "TextTrackCue.h"
@@ -376,10 +377,7 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
 
     String windowColor = captionsWindowCSS();
     String windowCornerRadius = windowRoundedCornerRadiusCSS();
-    String captionsColor = captionsTextColorCSS();
-    String edgeStyle = captionsTextEdgeCSS();
-    String fontName = captionsDefaultFontCSS();
-    if (!captionsColor.isEmpty() || !windowColor.isEmpty() || !windowCornerRadius.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
+    if (!windowColor.isEmpty() || !windowCornerRadius.isEmpty()) {
         captionsOverrideStyleSheet.append(" video::");
         captionsOverrideStyleSheet.append(TextTrackCueBox::textTrackCueBoxShadowPseudoId());
         captionsOverrideStyleSheet.append('{');
@@ -388,6 +386,18 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
             captionsOverrideStyleSheet.append(windowColor);
         if (!windowCornerRadius.isEmpty())
             captionsOverrideStyleSheet.append(windowCornerRadius);
+
+        captionsOverrideStyleSheet.append('}');
+    }
+    
+    String captionsColor = captionsTextColorCSS();
+    String edgeStyle = captionsTextEdgeCSS();
+    String fontName = captionsDefaultFontCSS();
+    if (!captionsColor.isEmpty() || !edgeStyle.isEmpty() || !fontName.isEmpty()) {
+        captionsOverrideStyleSheet.append(" video::");
+        captionsOverrideStyleSheet.append(MediaControlTextTrackContainerElement::textTrackContainerElementShadowPseudoId());
+        captionsOverrideStyleSheet.append('{');
+
         if (!captionsColor.isEmpty())
             captionsOverrideStyleSheet.append(captionsColor);
         if (!edgeStyle.isEmpty())
@@ -397,7 +407,7 @@ String CaptionUserPreferencesMac::captionsStyleSheetOverride() const
 
         captionsOverrideStyleSheet.append('}');
     }
-
+    
     LOG(Media, "CaptionUserPreferencesMac::captionsStyleSheetOverrideSetting sytle to:\n%s", captionsOverrideStyleSheet.toString().utf8().data());
 
     return captionsOverrideStyleSheet.toString();

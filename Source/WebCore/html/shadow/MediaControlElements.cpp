@@ -1200,10 +1200,15 @@ RenderObject* MediaControlTextTrackContainerElement::createRenderer(RenderArena*
     return new (arena) RenderTextTrackContainerElement(this);
 }
 
-const AtomicString& MediaControlTextTrackContainerElement::shadowPseudoId() const
+const AtomicString& MediaControlTextTrackContainerElement::textTrackContainerElementShadowPseudoId()
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-text-track-container", AtomicString::ConstructFromLiteral));
     return id;
+}
+    
+const AtomicString& MediaControlTextTrackContainerElement::shadowPseudoId() const
+{
+    return textTrackContainerElementShadowPseudoId();
 }
 
 void MediaControlTextTrackContainerElement::updateDisplay()

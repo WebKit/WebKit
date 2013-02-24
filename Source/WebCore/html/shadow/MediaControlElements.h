@@ -440,6 +440,7 @@ public:
     void updateDisplay();
     void updateSizes(bool forceUpdate = false);
     void createSubtrees(Document*);
+    static const AtomicString& textTrackContainerElementShadowPseudoId();
 
 private:
     explicit MediaControlTextTrackContainerElement(Document*);
