@@ -82,7 +82,6 @@ public:
         BehaviorAtBoundary behaviorAtBoundary;
     };
 
-    bool matches(const CSSSelector*, Element*, bool isFastCheckableSelector = false) const;
     template<typename SiblingTraversalStrategy>
     Match match(const SelectorCheckingContext&, PseudoId&, const SiblingTraversalStrategy&) const;
     template<typename SiblingTraversalStrategy>

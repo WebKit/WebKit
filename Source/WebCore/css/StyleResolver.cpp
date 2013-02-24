@@ -2115,9 +2115,12 @@ bool StyleResolver::checkRegionSelector(const CSSSelector* regionSelector, Eleme
         return false;
 
     SelectorChecker selectorChecker(document(), SelectorChecker::QueryingRules);
-    for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s))
-        if (selectorChecker.matches(s, regionElement))
+    for (const CSSSelector* s = regionSelector; s; s = CSSSelectorList::next(s)) {
+        SelectorChecker::SelectorCheckingContext selectorCheckingContext(s, regionElement, SelectorChecker::VisitedMatchDisabled);
+        PseudoId ignoreDynamicPseudo = NOPSEUDO;
+        if (selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorChecker::SelectorMatches)
             return true;
+    }
 
     return false;
 }

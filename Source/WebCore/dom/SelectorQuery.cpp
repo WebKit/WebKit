@@ -31,6 +31,7 @@
 #include "Document.h"
 #include "SelectorChecker.h"
 #include "SelectorCheckerFastPath.h"
+#include "SiblingTraversalStrategies.h"
 #include "StaticNodeList.h"
 #include "StyledElement.h"
 
@@ -49,14 +50,28 @@ void SelectorDataList::initialize(const CSSSelectorList& selectorList)
         m_selectors.uncheckedAppend(SelectorData(selector, SelectorCheckerFastPath::canUse(selector)));
 }
 
+inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, Element* element) const
+{
+    if (selectorData.isFastCheckable && !element->isSVGElement()) {
+        SelectorCheckerFastPath selectorCheckerFastPath(selectorData.selector, element);
+        if (!selectorCheckerFastPath.matchesRightmostSelector(SelectorChecker::VisitedMatchDisabled))
+            return false;
+        return selectorCheckerFastPath.matches();
+    }
+
+    SelectorChecker selectorChecker(element->document(), SelectorChecker::ResolvingStyle);
+    SelectorChecker::SelectorCheckingContext selectorCheckingContext(selectorData.selector, element, SelectorChecker::VisitedMatchDisabled);
+    PseudoId ignoreDynamicPseudo = NOPSEUDO;
+    return selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorChecker::SelectorMatches;
+}
+
 bool SelectorDataList::matches(Element* targetElement) const
 {
     ASSERT(targetElement);
 
-    SelectorChecker selectorChecker(targetElement->document(), SelectorChecker::ResolvingStyle);
     unsigned selectorCount = m_selectors.size();
     for (unsigned i = 0; i < selectorCount; ++i) {
-        if (selectorChecker.matches(m_selectors[i].selector, targetElement, m_selectors[i].isFastCheckable))
+        if (selectorMatches(m_selectors[i], targetElement))
             return true;
     }
 
@@ -107,15 +122,13 @@ static inline bool isTreeScopeRoot(Node* node)
 template <bool firstMatchOnly>
 void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node> >& matchedElements) const
 {
-    SelectorChecker selectorChecker(rootNode->document(), SelectorChecker::QueryingRules);
-
     if (canUseIdLookup(rootNode)) {
         ASSERT(m_selectors.size() == 1);
         const CSSSelector* selector = m_selectors[0].selector;
         Element* element = rootNode->treeScope()->getElementById(selector->value());
         if (!element || !(isTreeScopeRoot(rootNode) || element->isDescendantOf(rootNode)))
             return;
-        if (selectorChecker.matches(m_selectors[0].selector, element, m_selectors[0].isFastCheckable))
+        if (selectorMatches(m_selectors[0], element))
             matchedElements.append(element);
         return;
     }
@@ -127,7 +140,7 @@ void SelectorDataList::execute(Node* rootNode, Vector<RefPtr<Node> >& matchedEle
         if (n->isElementNode()) {
             Element* element = static_cast<Element*>(n);
             for (unsigned i = 0; i < selectorCount; ++i) {
-                if (selectorChecker.matches(m_selectors[i].selector, element, m_selectors[i].isFastCheckable)) {
+                if (selectorMatches(m_selectors[i], element)) {
                     matchedElements.append(element);
                     if (firstMatchOnly)
                         return;

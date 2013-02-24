@@ -55,6 +55,7 @@ private:
         bool isFastCheckable;
     };
 
+    bool selectorMatches(const SelectorData&, Element*) const;
     bool canUseIdLookup(Node* rootNode) const;
     template <bool firstMatchOnly>
     void execute(Node* rootNode, Vector<RefPtr<Node> >&) const;

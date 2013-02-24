@@ -50,7 +50,6 @@
 #include "RenderStyle.h"
 #include "ScrollableArea.h"
 #include "ScrollbarTheme.h"
-#include "SelectorCheckerFastPath.h"
 #include "ShadowRoot.h"
 #include "SiblingTraversalStrategies.h"
 #include "StyledElement.h"
@@ -69,19 +68,6 @@ SelectorChecker::SelectorChecker(Document* document, Mode mode)
     , m_documentIsHTML(document->isHTMLDocument())
     , m_mode(mode)
 {
-}
-
-bool SelectorChecker::matches(const CSSSelector* selector, Element* element, bool isFastCheckableSelector) const
-{
-    if (isFastCheckableSelector && !element->isSVGElement()) {
-        SelectorCheckerFastPath selectorCheckerFastPath(selector, element);
-        if (!selectorCheckerFastPath.matchesRightmostSelector(VisitedMatchDisabled))
-            return false;
-        return selectorCheckerFastPath.matches();
-    }
-
-    PseudoId ignoreDynamicPseudo = NOPSEUDO;
-    return match(SelectorCheckingContext(selector, element, SelectorChecker::VisitedMatchDisabled), ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorMatches;
 }
 
 // Recursive check of selectors and combinators
