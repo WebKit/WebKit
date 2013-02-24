@@ -30,6 +30,7 @@
 #include "StorageManagerMessages.h"
 #include "StorageNamespaceProxy.h"
 #include "WebProcess.h"
+#include <WebCore/ExceptionCode.h>
 #include <WebCore/Frame.h>
 #include <WebCore/Page.h>
 #include <WebCore/SchemeRegistry.h>

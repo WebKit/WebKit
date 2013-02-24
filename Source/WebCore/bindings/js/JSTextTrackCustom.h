@@ -31,6 +31,7 @@
 
 #include "HTMLMediaElement.h"
 #include "HTMLTrackElement.h"
+#include "JSNodeCustom.h"
 #include "LoadableTextTrack.h"
 
 using namespace JSC;

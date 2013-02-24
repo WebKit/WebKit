@@ -1382,6 +1382,7 @@ sub Generate {
     $implIncludes{"${className}Private.h"} = 1;
     $implIncludes{"JSMainThreadExecState.h"} = 1;
     $implIncludes{"ExceptionCode.h"} = 1;
+    $implIncludes{"CSSImportRule.h"} = 1;
 
     $hdrIncludes{"webkitdom/${parentClassName}.h"} = 1;
 

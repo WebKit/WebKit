@@ -42,6 +42,7 @@
 #include "JSCSSStyleRule.h"
 #include "JSCSSSupportsRule.h"
 #include "JSNode.h"
+#include "JSStyleSheetCustom.h"
 #include "JSWebKitCSSFilterRule.h"
 #include "JSWebKitCSSKeyframeRule.h"
 #include "JSWebKitCSSKeyframesRule.h"

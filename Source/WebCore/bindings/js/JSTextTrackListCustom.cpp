@@ -29,6 +29,7 @@
 #include "JSTextTrackList.h"
 
 #include "HTMLMediaElement.h"
+#include "JSNodeCustom.h"
 
 using namespace JSC;
 

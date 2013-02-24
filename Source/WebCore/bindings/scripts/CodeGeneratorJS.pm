@@ -2512,6 +2512,8 @@ sub GenerateImplementation
                 $rootString .= "    if (!root)\n";
                 $rootString .= "        return false;\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplElementRoot") {
+                $implIncludes{"Element.h"} = 1;
+                $implIncludes{"JSNodeCustom.h"} = 1;
                 $rootString  = "    Element* element = js${interfaceName}->impl()->element();\n";
                 $rootString .= "    if (!element)\n";
                 $rootString .= "        return false;\n";
@@ -2519,6 +2521,8 @@ sub GenerateImplementation
             } elsif ($interfaceName eq "CanvasRenderingContext") {
                 $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl()->canvas());\n";
             } elsif (GetGenerateIsReachable($interface) eq "ImplOwnerNodeRoot") {
+                $implIncludes{"Element.h"} = 1;
+                $implIncludes{"JSNodeCustom.h"} = 1;
                 $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl()->ownerNode());\n";
             } else {
                 $rootString  = "    void* root = WebCore::root(js${interfaceName}->impl());\n";

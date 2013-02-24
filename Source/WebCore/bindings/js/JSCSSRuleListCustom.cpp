@@ -29,7 +29,8 @@
 #include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSStyleSheet.h"
-#include "JSNode.h"
+#include "JSCSSRuleCustom.h"
+#include "JSStyleSheetCustom.h"
 
 using namespace JSC;
 

@@ -80,6 +80,7 @@
 #import <WebCore/ColorMac.h>
 #import <WebCore/ContextMenu.h>
 #import <WebCore/ContextMenuController.h>
+#import <WebCore/CSSStyleDeclaration.h>
 #import <WebCore/Document.h>
 #import <WebCore/DocumentFragment.h>
 #import <WebCore/DocumentMarkerController.h>

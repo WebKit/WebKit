@@ -27,6 +27,7 @@
 #include "JSXPathResult.h"
 
 #include "JSDOMBinding.h"
+#include "JSNodeCustom.h"
 #include "XPathResult.h"
 #include "XPathValue.h"
 

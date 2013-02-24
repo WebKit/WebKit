@@ -28,6 +28,7 @@
 #include "SerializedScriptValue.h"
 
 #include "Blob.h"
+#include "ExceptionCode.h"
 #include "File.h"
 #include "FileList.h"
 #include "ImageData.h"

@@ -1,3 +1,14 @@
+2013-02-24  Andreas Kling  <akling@apple.com>
+
+        Reduce include graph of JSDOMBinding.h
+        <http://webkit.org/b/110709>
+
+        Reviewed by Antti Koivisto.
+
+        * Shared/WebRenderObject.cpp:
+        (WebKit::WebRenderObject::WebRenderObject):
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+
 2013-02-22  Sam Weinig  <sam@webkit.org>
 
         Add temporary work around for 32-bit plugins not working in production builds as XPCServices

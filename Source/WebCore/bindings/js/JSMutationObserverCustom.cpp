@@ -32,7 +32,9 @@
 
 #include "JSMutationObserver.h"
 
+#include "ExceptionCode.h"
 #include "JSMutationCallback.h"
+#include "JSNodeCustom.h"
 #include "MutationObserver.h"
 #include <runtime/Error.h>
 #include <runtime/PrivateName.h>

@@ -20,6 +20,7 @@
 
 // Introduced in DOM Level 2:
 [
+    JSCustomHeader,
     JSCustomMarkFunction,
     JSGenerateIsReachable,
     JSCustomGetOwnPropertySlotAndDescriptor,

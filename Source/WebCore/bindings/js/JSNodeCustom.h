@@ -27,8 +27,8 @@
 #define JSNodeCustom_h
 
 #include "JSDOMBinding.h"
+#include "JSNode.h"
 #include "ScriptState.h"
-#include <wtf/AlwaysInline.h>
 
 namespace WebCore {
 
@@ -60,6 +60,16 @@ inline void willCreatePossiblyOrphanedTreeByRemoval(Node* root)
         return;
 
     willCreatePossiblyOrphanedTreeByRemovalSlowCase(root);
+}
+
+inline void* root(Node* node)
+{
+    if (node->inDocument())
+        return node->document();
+
+    while (node->parentOrShadowHostNode())
+        node = node->parentOrShadowHostNode();
+    return node;
 }
 
 } // namespace WebCore

@@ -25,6 +25,7 @@
 
 // Introduced in DOM Level 2:
 [
+    JSCustomHeader,
     JSGenerateIsReachable,
     IndexedGetter,
     ImplementationLacksVTable

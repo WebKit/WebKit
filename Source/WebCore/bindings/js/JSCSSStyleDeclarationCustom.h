@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008 Apple Inc. All Rights Reserved.
+ * Copyright (C) 2008, 2013 Apple Inc. All Rights Reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,6 +26,23 @@
 #ifndef JSCSSStyleDeclarationCustom_h
 #define JSCSSStyleDeclarationCustom_h
 
+#include "CSSRule.h"
+#include "CSSStyleDeclaration.h"
+#include "CSSStyleSheet.h"
 #include "JSCSSStyleDeclaration.h"
+#include "JSStyleSheetCustom.h"
+
+namespace WebCore {
+
+inline void* root(CSSStyleDeclaration* style)
+{
+    if (CSSRule* parentRule = style->parentRule())
+        return root(parentRule);
+    if (CSSStyleSheet* styleSheet = style->parentStyleSheet())
+        return root(styleSheet);
+    return style;
+}
+
+}
 
 #endif // JSCSSStyleDeclarationCustom_h

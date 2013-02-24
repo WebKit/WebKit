@@ -47,6 +47,7 @@
 #import "RenderBlock.h"
 #import "RuntimeApplicationChecks.h"
 #import "Sound.h"
+#import "StylePropertySet.h"
 #import "Text.h"
 #import "TypingCommand.h"
 #import "htmlediting.h"

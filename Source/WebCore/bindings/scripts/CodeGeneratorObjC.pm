@@ -620,6 +620,7 @@ sub AddIncludesForType
     }
 
     # FIXME: won't compile without these
+    $implIncludes{"CSSImportRule.h"} = 1 if $type eq "CSSRule";
     $implIncludes{"StylePropertySet.h"} = 1 if $type eq "CSSStyleDeclaration";
     $implIncludes{"NameNodeList.h"} = 1 if $type eq "NodeList";
 
