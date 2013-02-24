@@ -111,6 +111,19 @@ function localizeNumber(number) {
 }
 
 /**
+ * @enum {number}
+ */
+var WeekDay = {
+    Sunday: 0,
+    Monday: 1,
+    Tuesday: 2,
+    Wednesday: 3,
+    Thursday: 4,
+    Friday: 5,
+    Saturday: 6
+};
+
+/**
  * @const
  * @type {number}
  */
@@ -143,24 +156,13 @@ function formatJapaneseImperialEra(year, month) {
     return "";
 }
 
-/**
- * @return {!string}
- */
-Month.prototype.toLocaleString = function() {
-    if (isNaN(this.year) || isNaN(this.year))
-        return "Invalid Month";
-    if (getLanguage() == "ja")
-        return "" + this.year + "年" + formatJapaneseImperialEra(this.year, this.month) + " " + (this.month + 1) + "月";
-    return window.pagePopupController.formatMonth(this.year, this.month);
-};
-
 function createUTCDate(year, month, date) {
     var newDate = new Date(0);
     newDate.setUTCFullYear(year);
     newDate.setUTCMonth(month);
     newDate.setUTCDate(date);
     return newDate;
-};
+}
 
 /**
  * @param {string} dateString
@@ -177,29 +179,70 @@ function parseDateString(dateString) {
 }
 
 /**
- * @constructor
- * @param {!number|Day} valueOrDayOrYear
- * @param {!number=} month
- * @param {!number=} date
+ * @const
+ * @type {number}
  */
-function Day(valueOrDayOrYear, month, date) {
-    var dateObject;
-    if (arguments.length == 3)
-        dateObject = createUTCDate(valueOrDayOrYear, month, date);
-    else if (valueOrDayOrYear instanceof Day)
-        dateObject = createUTCDate(valueOrDayOrYear.year, valueOrDayOrYear.month, valueOrDayOrYear.date);
-    else
-        dateObject = new Date(valueOrDayOrYear);
-    this.year = dateObject.getUTCFullYear();    
+var DaysPerWeek = 7;
+
+/**
+ * @const
+ * @type {number}
+ */
+var MonthsPerYear = 12;
+
+/**
+ * @const
+ * @type {number}
+ */
+var MillisecondsPerDay = 24 * 60 * 60 * 1000;
+
+/**
+ * @const
+ * @type {number}
+ */
+var MillisecondsPerWeek = DaysPerWeek * MillisecondsPerDay;
+
+/**
+ * @constructor
+ */
+function DateType() {
+}
+
+/**
+ * @constructor
+ * @extends DateType
+ * @param {!number} year
+ * @param {!number} month
+ * @param {!number} date
+ */
+function Day(year, month, date) {
+    var dateObject = createUTCDate(year, month, date);
+    if (isNaN(dateObject.valueOf()))
+        throw "Invalid date";
+    /**
+     * @type {number}
+     * @const
+     */
+    this.year = dateObject.getUTCFullYear();   
+     /**
+     * @type {number}
+     * @const
+     */  
     this.month = dateObject.getUTCMonth();
+    /**
+     * @type {number}
+     * @const
+     */
     this.date = dateObject.getUTCDate();
 };
+
+Day.prototype = Object.create(DateType.prototype);
 
 Day.ISOStringRegExp = /^(\d+)-(\d+)-(\d+)/;
 
 /**
  * @param {!string} str
- * @return {?Month}
+ * @return {?Day}
  */
 Day.parse = function(str) {
     var match = Day.ISOStringRegExp.exec(str);
@@ -212,11 +255,29 @@ Day.parse = function(str) {
 };
 
 /**
+ * @param {!number} value
+ * @return {!Day}
+ */
+Day.createFromValue = function(millisecondsSinceEpoch) {
+    return Day.createFromDate(new Date(millisecondsSinceEpoch))
+};
+
+/**
  * @param {!Date} date
  * @return {!Day}
  */
 Day.createFromDate = function(date) {
+    if (isNaN(date.valueOf()))
+        throw "Invalid date";
     return new Day(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate());
+};
+
+/**
+ * @param {!Day} day
+ * @return {!Day}
+ */
+Day.createFromDay = function(day) {
+    return day;
 };
 
 /**
@@ -228,25 +289,31 @@ Day.createFromToday = function() {
 };
 
 /**
- * @param {!Day} other
- * @return {!bool}
+ * @param {!DateType} other
+ * @return {!boolean}
  */
 Day.prototype.equals = function(other) {
-    return this.year === other.year && this.month === other.month && this.date === other.date;
+    return other instanceof Day && this.year === other.year && this.month === other.month && this.date === other.date;
 };
 
 /**
+ * @param {!number=} offset
  * @return {!Day}
  */
-Day.prototype.previous = function() {
-    return new Day(this.year, this.month, this.date - 1);
+Day.prototype.previous = function(offset) {
+    if (typeof offset === "undefined")
+        offset = 1;
+    return new Day(this.year, this.month, this.date - offset);
 };
 
 /**
+ * @param {!number=} offset
  * @return {!Day}
  */
-Day.prototype.next = function() {
-    return new Day(this.year, this.month, this.date + 1);
+Day.prototype.next = function(offset) {
+ if (typeof offset === "undefined")
+     offset = 1;
+    return new Day(this.year, this.month, this.date + offset);
 };
 
 /**
@@ -264,10 +331,38 @@ Day.prototype.endDate = function() {
 };
 
 /**
+ * @return {!Day}
+ */
+Day.prototype.firstDay = function() {
+    return this;
+};
+
+/**
+ * @return {!Day}
+ */
+Day.prototype.middleDay = function() {
+    return this;
+};
+
+/**
+ * @return {!Day}
+ */
+Day.prototype.lastDay = function() {
+    return this;
+};
+
+/**
  * @return {!number}
  */
 Day.prototype.valueOf = function() {
-    return this.startDate().getTime();
+    return createUTCDate(this.year, this.month, this.date).getTime();
+};
+
+/**
+ * @return {!WeekDay}
+ */
+Day.prototype.weekDay = function() {
+    return createUTCDate(this.year, this.month, this.date).getUTCDay();
 };
 
 /**
@@ -281,45 +376,49 @@ Day.prototype.toString = function() {
 };
 
 // See WebCore/platform/DateComponents.h.
-Day.Minimum = new Day(-62135596800000.0);
-Day.Maximum = new Day(8640000000000000.0);
+Day.Minimum = Day.createFromValue(-62135596800000.0);
+Day.Maximum = Day.createFromValue(8640000000000000.0);
+
 // See WebCore/html/DayInputType.cpp.
 Day.DefaultStep = 86400000;
 Day.DefaultStepBase = 0;
 
 /**
  * @constructor
- * @param {!number|Week} valueOrWeekOrYear
- * @param {!number=} week
+ * @extends DateType
+ * @param {!number} year
+ * @param {!number} week
  */
-function Week(valueOrWeekOrYear, week) {
-    if (arguments.length === 2) {
-        this.year = valueOrWeekOrYear;
-        this.week = week;
-        // Number of years per year is either 52 or 53.
-        if (this.week < 1 || (this.week > 52 && this.week > Week.numberOfWeeksInYear(this.year))) {
-            var normalizedWeek = Week.createFromDate(this.startDate());
-            this.year = normalizedWeek.year;
-            this.week = normalizedWeek.week;
-        }
-    } else if (valueOrWeekOrYear instanceof Week) {
-        this.year = valueOrWeekOrYear.year;
-        this.week = valueOrWeekOrYear.week;
-    } else {
-        var week = Week.createFromDate(new Date(valueOrWeekOrYear));
-        this.year = week.year;
-        this.week = week.week;
+function Week(year, week) { 
+    /**
+     * @type {number}
+     * @const
+     */
+    this.year = year;
+    /**
+     * @type {number}
+     * @const
+     */
+    this.week = week;
+    // Number of years per year is either 52 or 53.
+    if (this.week < 1 || (this.week > 52 && this.week > Week.numberOfWeeksInYear(this.year))) {
+        var normalizedWeek = Week.createFromDay(this.firstDay());
+        this.year = normalizedWeek.year;
+        this.week = normalizedWeek.week;
     }
 }
 
-Week.MillisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
 Week.ISOStringRegExp = /^(\d+)-[wW](\d+)$/;
+
 // See WebCore/platform/DateComponents.h.
 Week.Minimum = new Week(1, 1);
 Week.Maximum = new Week(275760, 37);
+
 // See WebCore/html/WeekInputType.cpp.
 Week.DefaultStep = 604800000;
 Week.DefaultStepBase = -259200000;
+
+Week.EpochWeekDay = createUTCDate(1970, 0, 0).getUTCDay();
 
 /**
  * @param {!string} str
@@ -335,16 +434,40 @@ Week.parse = function(str) {
 };
 
 /**
+ * @param {!number} millisecondsSinceEpoch
+ * @return {!Week}
+ */
+Week.createFromValue = function(millisecondsSinceEpoch) {
+    return Week.createFromDate(new Date(millisecondsSinceEpoch))
+};
+
+/**
  * @param {!Date} date
  * @return {!Week}
  */
 Week.createFromDate = function(date) {
+    if (isNaN(date.valueOf()))
+        throw "Invalid date";
     var year = date.getUTCFullYear();
     if (year <= Week.Maximum.year && Week.weekOneStartDateForYear(year + 1).getTime() <= date.getTime())
         year++;
     else if (year > 1 && Week.weekOneStartDateForYear(year).getTime() > date.getTime())
         year--;
     var week = 1 + Week._numberOfWeeksSinceDate(Week.weekOneStartDateForYear(year), date);
+    return new Week(year, week);
+};
+
+/**
+ * @param {!Day} day
+ * @return {!Week}
+ */
+Week.createFromDay = function(day) {
+    var year = day.year;
+    if (year <= Week.Maximum.year && Week.weekOneStartDayForYear(year + 1) <= day)
+        year++;
+    else if (year > 1 && Week.weekOneStartDayForYear(year) > day)
+        year--;
+    var week = Math.floor(1 + (day.valueOf() - Week.weekOneStartDayForYear(year).valueOf()) / MillisecondsPerWeek);
     return new Week(year, week);
 };
 
@@ -365,7 +488,19 @@ Week.weekOneStartDateForYear = function(year) {
         return createUTCDate(1, 0, 1);
     // The week containing January 4th is week one.
     var yearStartDay = createUTCDate(year, 0, 4).getUTCDay();
-    return createUTCDate(year, 0, 4 - (yearStartDay + 6) % 7);
+    return createUTCDate(year, 0, 4 - (yearStartDay + 6) % DaysPerWeek);
+};
+
+/**
+ * @param {!number} year
+ * @return {!Day}
+ */
+Week.weekOneStartDayForYear = function(year) {
+    if (year < 1)
+        return Day.Minimum;
+    // The week containing January 4th is week one.
+    var yearStartDay = createUTCDate(year, 0, 4).getUTCDay();
+    return new Day(year, 0, 4 - (yearStartDay + 6) % DaysPerWeek);
 };
 
 /**
@@ -386,29 +521,35 @@ Week.numberOfWeeksInYear = function(year) {
  * @return {!number}
  */
 Week._numberOfWeeksSinceDate = function(baseDate, date) {
-    return Math.floor((date.getTime() - baseDate.getTime()) / Week.MillisecondsPerWeek);
+    return Math.floor((date.getTime() - baseDate.getTime()) / MillisecondsPerWeek);
 };
 
 /**
- * @param {!Week} other
- * @return {!bool}
+ * @param {!DateType} other
+ * @return {!boolean}
  */
 Week.prototype.equals = function(other) {
-    return this.year === other.year && this.week === other.week;
+    return other instanceof Week && this.year === other.year && this.week === other.week;
 };
 
 /**
+ * @param {!number=} offset
  * @return {!Week}
  */
-Week.prototype.previous = function() {
-    return new Week(this.year, this.week - 1);
+Week.prototype.previous = function(offset) {
+    if (typeof offset === "undefined")
+        offset = 1;
+    return new Week(this.year, this.week - offset);
 };
 
 /**
+ * @param {!number=} offset
  * @return {!Week}
  */
-Week.prototype.next = function() {
-    return new Week(this.year, this.week + 1);
+Week.prototype.next = function(offset) {
+    if (typeof offset === "undefined")
+        offset = 1;
+    return new Week(this.year, this.week + offset);
 };
 
 /**
@@ -430,10 +571,34 @@ Week.prototype.endDate = function() {
 };
 
 /**
+ * @return {!Day}
+ */
+Week.prototype.firstDay = function() {
+    var weekOneStartDay = Week.weekOneStartDayForYear(this.year);
+    return weekOneStartDay.next((this.week - 1) * DaysPerWeek);
+};
+
+/**
+ * @return {!Day}
+ */
+Week.prototype.middleDay = function() {
+    return this.firstDay().next(3);
+};
+
+/**
+ * @return {!Day}
+ */
+Week.prototype.lastDay = function() {
+    if (this.equals(Week.Maximum))
+        return Day.Maximum;
+    return this.next().firstDay().previous();
+};
+
+/**
  * @return {!number}
  */
 Week.prototype.valueOf = function() {
-    return this.startDate().getTime() - createUTCDate(1970, 0, 1).getTime();
+    return this.firstDay().valueOf() - createUTCDate(1970, 0, 1).getTime();
 };
 
 /**
@@ -448,26 +613,21 @@ Week.prototype.toString = function() {
 
 /**
  * @constructor
- * @param {!number|Month} valueOrMonthOrYear
- * @param {!number=} month
+ * @extends DateType
+ * @param {!number} year
+ * @param {!number} month
  */
-function Month(valueOrMonthOrYear, month) {
-    if (arguments.length == 2) {
-        this.year = valueOrMonthOrYear;
-        this.month = month;
-    } else if (valueOrMonthOrYear instanceof Month) {
-        this.year = valueOrMonthOrYear.year;
-        this.month = valueOrMonthOrYear.month;
-    } else {
-        this.year = 1970;
-        this.month = valueOrMonthOrYear;
-    }
-    this.year = this.year + Math.floor(this.month / 12);
-    this.month = this.month < 0 ? this.month % 12 + 12 : this.month % 12;
-    if (this.year <= 0 || Month.Maximum < this) {
-        this.year = NaN;
-        this.month = NaN;
-    }
+function Month(year, month) { 
+    /**
+     * @type {number}
+     * @const
+     */
+    this.year = year + Math.floor(month / MonthsPerYear);
+    /**
+     * @type {number}
+     * @const
+     */
+    this.month = month % MonthsPerYear < 0 ? month % MonthsPerYear + MonthsPerYear : month % MonthsPerYear;
 };
 
 Month.ISOStringRegExp = /^(\d+)-(\d+)$/;
@@ -475,6 +635,7 @@ Month.ISOStringRegExp = /^(\d+)-(\d+)$/;
 // See WebCore/platform/DateComponents.h.
 Month.Minimum = new Month(1, 0);
 Month.Maximum = new Month(275760, 8);
+
 // See WebCore/html/MonthInputType.cpp.
 Month.DefaultStep = 1;
 Month.DefaultStepBase = 0;
@@ -493,11 +654,29 @@ Month.parse = function(str) {
 };
 
 /**
+ * @param {!number} value
+ * @return {!Month}
+ */
+Month.createFromValue = function(monthsSinceEpoch) {
+    return new Month(1970, monthsSinceEpoch)
+};
+
+/**
  * @param {!Date} date
  * @return {!Month}
  */
 Month.createFromDate = function(date) {
+    if (isNaN(date.valueOf()))
+        throw "Invalid date";
     return new Month(date.getUTCFullYear(), date.getUTCMonth());
+};
+
+/**
+ * @param {!Day} day
+ * @return {!Month}
+ */
+Month.createFromDay = function(day) {
+    return new Month(day.year, day.month);
 };
 
 /**
@@ -509,25 +688,38 @@ Month.createFromToday = function() {
 };
 
 /**
+ * @return {!boolean}
+ */
+Month.prototype.containsDay = function(day) {
+    return this.year === day.year && this.month === day.month;
+};
+
+/**
  * @param {!Month} other
- * @return {!bool}
+ * @return {!boolean}
  */
 Month.prototype.equals = function(other) {
-    return this.year === other.year && this.month === other.month;
+    return other instanceof Month && this.year === other.year && this.month === other.month;
 };
 
 /**
+ * @param {!number=} offset
  * @return {!Month}
  */
-Month.prototype.previous = function() {
-    return new Month(this.year, this.month - 1);
+Month.prototype.previous = function(offset) {
+    if (typeof offset === "undefined")
+        offset = 1;
+    return new Month(this.year, this.month - offset);
 };
 
 /**
+ * @param {!number=} offset
  * @return {!Month}
  */
-Month.prototype.next = function() {
-    return new Month(this.year, this.month + 1);
+Month.prototype.next = function(offset) {
+    if (typeof offset === "undefined")
+        offset = 1;
+    return new Month(this.year, this.month + offset);
 };
 
 /**
@@ -547,10 +739,33 @@ Month.prototype.endDate = function() {
 };
 
 /**
+ * @return {!Day}
+ */
+Month.prototype.firstDay = function() {
+    return new Day(this.year, this.month, 1);
+};
+
+/**
+ * @return {!Day}
+ */
+Month.prototype.middleDay = function() {
+    return new Day(this.year, this.month, this.month === 2 ? 14 : 15);
+};
+
+/**
+ * @return {!Day}
+ */
+Month.prototype.lastDay = function() {
+    if (this.equals(Month.Maximum))
+        return Day.Maximum;
+    return this.next().firstDay().previous();
+};
+
+/**
  * @return {!number}
  */
 Month.prototype.valueOf = function() {
-    return (this.year - 1970) * 12 + this.month;
+    return (this.year - 1970) * MonthsPerYear + this.month;
 };
 
 /**
@@ -561,6 +776,22 @@ Month.prototype.toString = function() {
     if (yearString.length < 4)
         yearString = ("000" + yearString).substr(-4, 4);
     return yearString + "-" + ("0" + (this.month + 1)).substr(-2, 2);
+};
+
+/**
+ * @return {!string}
+ */
+Month.prototype.toLocaleString = function() {
+    if (global.params.locale === "ja")
+        return "" + this.year + "年" + formatJapaneseImperialEra(this.year, this.month) + " " + (this.month + 1) + "月";
+    return window.pagePopupController.formatMonth(this.year, this.month);
+};
+
+/**
+ * @return {!string}
+ */
+Month.prototype.toShortLocaleString = function() {
+    return window.pagePopupController.formatShortMonth(this.year, this.month);
 };
 
 // ----------------------------------------------------------------
@@ -1173,9 +1404,9 @@ function CalendarPicker(element, config) {
     if (!initialSelection)
         initialSelection = this.selectionConstructor.createFromToday();
     if (initialSelection.valueOf() < this._minimumValue)
-        initialSelection = new this.selectionConstructor(this._minimumValue);
+        initialSelection = new this.selectionConstructor.createFromValue(this._minimumValue);
     else if (initialSelection.valueOf() > this._maximumValue)
-        initialSelection = new this.selectionConstructor(this._maximumValue);
+        initialSelection = new this.selectionConstructor.createFromValue(this._maximumValue);
     this.showMonth(Month.createFromDate(initialSelection.startDate()));
     this._daysTable.selectRangeAndShowEntireRange(initialSelection);
     this.fixWindowSize();
@@ -1463,19 +1694,19 @@ YearMonthController.prototype._attachRightButtonsTo = function(parent) {
 YearMonthController.prototype.setMonth = function(month) {
     var monthValue = month.valueOf();
     if (this._left3)
-        this._left3.disabled = !this.picker.shouldShowMonth(new Month(monthValue - 13));
-    this._left2.disabled = !this.picker.shouldShowMonth(new Month(monthValue - 2));
-    this._left1.disabled = !this.picker.shouldShowMonth(new Month(monthValue - 1));
-    this._right1.disabled = !this.picker.shouldShowMonth(new Month(monthValue + 1));
-    this._right2.disabled = !this.picker.shouldShowMonth(new Month(monthValue + 2));
+        this._left3.disabled = !this.picker.shouldShowMonth(Month.createFromValue(monthValue - 13));
+    this._left2.disabled = !this.picker.shouldShowMonth(Month.createFromValue(monthValue - 2));
+    this._left1.disabled = !this.picker.shouldShowMonth(Month.createFromValue(monthValue - 1));
+    this._right1.disabled = !this.picker.shouldShowMonth(Month.createFromValue(monthValue + 1));
+    this._right2.disabled = !this.picker.shouldShowMonth(Month.createFromValue(monthValue + 2));
     if (this._right3)
-        this._left3.disabled = !this.picker.shouldShowMonth(new Month(monthValue + 13));
+        this._left3.disabled = !this.picker.shouldShowMonth(Month.createFromValue(monthValue + 13));
     this._monthLabel.innerText = month.toLocaleString();
     while (this._monthPopupContents.hasChildNodes())
         this._monthPopupContents.removeChild(this._monthPopupContents.firstChild);
 
     for (var m = monthValue - 6; m <= monthValue + 6; m++) {
-        var month = new Month(m);
+        var month = Month.createFromValue(m);
         if (!this.picker.shouldShowMonth(month))
             continue;
         var option = createElement("div", ClassNames.MonthSelectorPopupEntry, month.toLocaleString());
@@ -1666,7 +1897,7 @@ YearMonthController.prototype._handleButtonClick = function(event) {
  */
 YearMonthController.prototype.moveRelatively = function(amount) {
     var current = this.picker.currentMonth().valueOf();
-    var updated = new Month(current + amount);
+    var updated = Month.createFromValue(current + amount);
     this.picker.showMonth(updated, CalendarPicker.NavigationBehaviour.Animate | CalendarPicker.NavigationBehaviour.KeepSelectionPosition);
 };
 
