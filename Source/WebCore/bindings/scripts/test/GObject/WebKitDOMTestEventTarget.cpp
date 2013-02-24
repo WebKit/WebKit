@@ -21,6 +21,7 @@
 #include "config.h"
 #include "WebKitDOMTestEventTarget.h"
 
+#include "CSSImportRule.h"
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "GObjectEventListener.h"

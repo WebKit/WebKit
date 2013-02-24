@@ -21,6 +21,7 @@
 #include "config.h"
 #include "WebKitDOMTestMediaQueryListListener.h"
 
+#include "CSSImportRule.h"
 #include "DOMObjectCache.h"
 #include "ExceptionCode.h"
 #include "JSMainThreadExecState.h"
