@@ -1,0 +1,10 @@
+CONSOLE MESSAGE: line 1: Error parsing header X-XSS-Protection: 12345678901234567: expected semicolon at character position 2. The default protections will be applied.
+CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
+
+CONSOLE MESSAGE: Entire page will be blocked.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-invalid.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/reflected-xss-and-xss-protection-block-invalid.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+
+ALERT: Loaded cross-origin frame.
+Testing behavior when "reflected-xss" is set to block, and "X-XSS-Protection" is set to invalid.

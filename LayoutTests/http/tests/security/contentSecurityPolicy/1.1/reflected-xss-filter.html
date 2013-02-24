@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner) {
+            testRunner.dumpAsText();
+            testRunner.setXSSAuditorEnabled(true);
+        }
+    </script>
+</head>
+<body>
+    <p>Tests that 'X-WebKit-CSP: reflected-xss filter;' enables the XSSAuditor.
+    This test passes if a console message is generated, and the script is blocked.</p>
+    <iframe src="http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?csp=filter&amp;q=<script>alert(String.fromCharCode(0x58,0x53,0x53))</script>"></iframe>
+</body>
+</html>

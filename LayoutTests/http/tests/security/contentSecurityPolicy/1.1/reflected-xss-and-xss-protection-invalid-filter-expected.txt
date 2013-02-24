@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: The 'reflected-xss' Content Security Policy directive has the invalid value "invalid". Value values are "allow", "filter", and "block".
+CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
+
+ALERT: Loaded http://127.0.0.1:8000/security/xssAuditor/resources/echo-intertag.pl?q=%3Cscript%3Ealert(String.fromCharCode(0x58,0x53,0x53))%3C/script%3E&csp=invalid&valid-header=2 into the IFrame.
+Testing behavior when "reflected-xss" is set to invalid, and "X-XSS-Protection" is set to filter.

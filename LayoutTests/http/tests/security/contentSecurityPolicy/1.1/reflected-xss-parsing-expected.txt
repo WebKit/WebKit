@@ -1,0 +1,42 @@
+CONSOLE MESSAGE: The 'reflected-xss' Content Security Policy directive has the invalid value "". Value values are "allow", "filter", and "block".
+CONSOLE MESSAGE: The 'reflected-xss' Content Security Policy directive has the invalid value "blah". Value values are "allow", "filter", and "block".
+CONSOLE MESSAGE: The 'reflected-xss' Content Security Policy directive has the invalid value "allow blah". Value values are "allow", "filter", and "block".
+CONSOLE MESSAGE: The 'reflected-xss' Content Security Policy directive has the invalid value "blah allow". Value values are "allow", "filter", and "block".
+Invalid 'reflected-xss' headers should generate console messages.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame1-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame2-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame3-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame4-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame5-->-->'
+--------
+PASS
+
+--------
+Frame: '<!--framePath //<!--frame6-->-->'
+--------
+PASS

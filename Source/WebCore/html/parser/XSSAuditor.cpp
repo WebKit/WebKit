@@ -28,6 +28,7 @@
 #include "XSSAuditor.h"
 
 #include "Console.h"
+#include "ContentSecurityPolicy.h"
 #include "DOMWindow.h"
 #include "DecodeEscapeSequences.h"
 #include "Document.h"
@@ -173,9 +174,19 @@ static String fullyDecodeString(const String& string, const TextEncoding& encodi
     return workingString;
 }
 
+static ContentSecurityPolicy::ReflectedXSSDisposition combineXSSProtectionHeaderAndCSP(ContentSecurityPolicy::ReflectedXSSDisposition xssProtection, ContentSecurityPolicy::ReflectedXSSDisposition reflectedXSS)
+{
+    ContentSecurityPolicy::ReflectedXSSDisposition result = std::max(xssProtection, reflectedXSS);
+
+    if (result == ContentSecurityPolicy::ReflectedXSSInvalid || result == ContentSecurityPolicy::FilterReflectedXSS || result == ContentSecurityPolicy::ReflectedXSSUnset)
+        return ContentSecurityPolicy::FilterReflectedXSS;
+
+    return result;
+}
+
 XSSAuditor::XSSAuditor()
     : m_isEnabled(false)
-    , m_xssProtection(XSSProtectionEnabled)
+    , m_xssProtection(ContentSecurityPolicy::FilterReflectedXSS)
     , m_state(Uninitialized)
     , m_scriptTagNestingLevel(0)
     , m_encoding(UTF8Encoding())
@@ -236,21 +247,23 @@ void XSSAuditor::init(Document* document)
         String errorDetails;
         unsigned errorPosition = 0;
         String reportURL;
-        m_xssProtection = parseXSSProtectionHeader(headerValue, errorDetails, errorPosition, reportURL);
+        KURL xssProtectionReportURL;
 
-        if ((m_xssProtection == XSSProtectionEnabled || m_xssProtection == XSSProtectionBlockEnabled) && !reportURL.isEmpty()) {
-            m_reportURL = document->completeURL(reportURL);
-            if (MixedContentChecker::isMixedContent(document->securityOrigin(), m_reportURL)) {
+        // Process the X-XSS-Protection header, then mix in the CSP header's value.
+        ContentSecurityPolicy::ReflectedXSSDisposition xssProtectionHeader = parseXSSProtectionHeader(headerValue, errorDetails, errorPosition, reportURL);
+        if ((xssProtectionHeader == ContentSecurityPolicy::FilterReflectedXSS || xssProtectionHeader == ContentSecurityPolicy::BlockReflectedXSS) && !reportURL.isEmpty()) {
+            xssProtectionReportURL = document->completeURL(reportURL);
+            if (MixedContentChecker::isMixedContent(document->securityOrigin(), xssProtectionReportURL)) {
                 errorDetails = "insecure reporting URL for secure page";
-                m_xssProtection = XSSProtectionInvalid;
-                m_reportURL = KURL();
+                xssProtectionHeader = ContentSecurityPolicy::ReflectedXSSInvalid;
+                xssProtectionReportURL = KURL();
             }
         }
-
-        if (m_xssProtection == XSSProtectionInvalid) {
+        if (xssProtectionHeader == ContentSecurityPolicy::ReflectedXSSInvalid)
             document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
-            m_xssProtection = XSSProtectionEnabled;
-        }
+
+        m_xssProtection = combineXSSProtectionHeaderAndCSP(xssProtectionHeader, document->contentSecurityPolicy()->reflectedXSSDisposition());
+        m_reportURL = xssProtectionReportURL; // FIXME: Combine the two report URLs in some reasonable way.
 
         FormData* httpBody = documentLoader->originalRequest().httpBody();
         if (httpBody && !httpBody->isEmpty()) {
@@ -280,7 +293,7 @@ void XSSAuditor::init(Document* document)
 PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
 {
     ASSERT(m_state == Initialized);
-    if (!m_isEnabled || m_xssProtection == XSSProtectionDisabled)
+    if (!m_isEnabled || m_xssProtection == ContentSecurityPolicy::AllowReflectedXSS)
         return nullptr;
 
     bool didBlockScript = false;
@@ -294,7 +307,7 @@ PassOwnPtr<XSSInfo> XSSAuditor::filterToken(const FilterTokenRequest& request)
     }
 
     if (didBlockScript) {
-        bool didBlockEntirePage = (m_xssProtection == XSSProtectionBlockEnabled);
+        bool didBlockEntirePage = (m_xssProtection == ContentSecurityPolicy::BlockReflectedXSS);
         OwnPtr<XSSInfo> xssInfo = XSSInfo::create(m_reportURL, m_originalURL, m_originalHTTPBody, didBlockEntirePage);
         if (!m_reportURL.isEmpty()) {
             m_reportURL = KURL();

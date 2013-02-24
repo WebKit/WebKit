@@ -120,6 +120,7 @@ static const char styleSrc[] = "style-src";
 static const char formAction[] = "form-action";
 static const char pluginTypes[] = "plugin-types";
 static const char scriptNonce[] = "script-nonce";
+static const char reflectedXSS[] = "reflected-xss";
 #endif
 
 bool isDirectiveName(const String& name)
@@ -139,6 +140,7 @@ bool isDirectiveName(const String& name)
         || equalIgnoringCase(name, formAction)
         || equalIgnoringCase(name, pluginTypes)
         || equalIgnoringCase(name, scriptNonce)
+        || equalIgnoringCase(name, reflectedXSS)
 #endif
     );
 }
@@ -839,6 +841,7 @@ public:
 
     void gatherReportURIs(DOMStringList&) const;
     const String& evalDisabledErrorMessage() { return m_evalDisabledErrorMessage; }
+    ContentSecurityPolicy::ReflectedXSSDisposition reflectedXSSDisposition() const { return m_reflectedXSSDisposition; }
 
 private:
     CSPDirectiveList(ContentSecurityPolicy*, ContentSecurityPolicy::HeaderType);
@@ -849,6 +852,7 @@ private:
     void parseReportURI(const String& name, const String& value);
     void parseScriptNonce(const String& name, const String& value);
     void parsePluginTypes(const String& name, const String& value);
+    void parseReflectedXSS(const String& name, const String& value);
     void addDirective(const String& name, const String& value);
     void applySandboxPolicy(const String& name, const String& sandboxPolicy);
 
@@ -883,6 +887,7 @@ private:
     bool m_experimental;
     bool m_reportOnly;
     bool m_haveSandboxPolicy;
+    ContentSecurityPolicy::ReflectedXSSDisposition m_reflectedXSSDisposition;
 
     OwnPtr<MediaListDirective> m_pluginTypes;
     OwnPtr<NonceDirective> m_scriptNonce;
@@ -908,6 +913,7 @@ CSPDirectiveList::CSPDirectiveList(ContentSecurityPolicy* policy, ContentSecurit
     , m_experimental(false)
     , m_reportOnly(false)
     , m_haveSandboxPolicy(false)
+    , m_reflectedXSSDisposition(ContentSecurityPolicy::ReflectedXSSUnset)
 {
     m_reportOnly = (type == ContentSecurityPolicy::ReportStableDirectives || type == ContentSecurityPolicy::ReportAllDirectives);
     m_experimental = (type == ContentSecurityPolicy::ReportAllDirectives || type == ContentSecurityPolicy::EnforceAllDirectives);
@@ -1315,6 +1321,51 @@ void CSPDirectiveList::applySandboxPolicy(const String& name, const String& sand
         m_policy->reportInvalidSandboxFlags(invalidTokens);
 }
 
+void CSPDirectiveList::parseReflectedXSS(const String& name, const String& value)
+{
+    if (m_reflectedXSSDisposition != ContentSecurityPolicy::ReflectedXSSUnset) {
+        m_policy->reportDuplicateDirective(name);
+        m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
+        return;
+    }
+
+    if (value.isEmpty()) {
+        m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
+        m_policy->reportInvalidReflectedXSS(value);
+        return;
+    }
+
+    const UChar* position = value.characters();
+    const UChar* end = position + value.length();
+
+    skipWhile<isASCIISpace>(position, end);
+    const UChar* begin = position;
+    skipWhile<isNotASCIISpace>(position, end);
+
+    // value1
+    //       ^
+    if (equalIgnoringCase("allow", begin, position - begin))
+        m_reflectedXSSDisposition = ContentSecurityPolicy::AllowReflectedXSS;
+    else if (equalIgnoringCase("filter", begin, position - begin))
+        m_reflectedXSSDisposition = ContentSecurityPolicy::FilterReflectedXSS;
+    else if (equalIgnoringCase("block", begin, position - begin))
+        m_reflectedXSSDisposition = ContentSecurityPolicy::BlockReflectedXSS;
+    else {
+        m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
+        m_policy->reportInvalidReflectedXSS(value);
+        return;
+    }
+
+    skipWhile<isASCIISpace>(position, end);
+    if (position == end && m_reflectedXSSDisposition != ContentSecurityPolicy::ReflectedXSSUnset)
+        return;
+
+    // value1 value2
+    //        ^
+    m_reflectedXSSDisposition = ContentSecurityPolicy::ReflectedXSSInvalid;
+    m_policy->reportInvalidReflectedXSS(value);
+}
+
 void CSPDirectiveList::addDirective(const String& name, const String& value)
 {
     ASSERT(!name.isEmpty());
@@ -1349,6 +1400,8 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
             setCSPDirective<MediaListDirective>(name, value, m_pluginTypes);
         else if (equalIgnoringCase(name, scriptNonce))
             setCSPDirective<NonceDirective>(name, value, m_scriptNonce);
+        else if (equalIgnoringCase(name, reflectedXSS))
+            parseReflectedXSS(name, value);
     }
 #endif
     else
@@ -1571,6 +1624,16 @@ bool ContentSecurityPolicy::isActive() const
     return !m_policies.isEmpty();
 }
 
+ContentSecurityPolicy::ReflectedXSSDisposition ContentSecurityPolicy::reflectedXSSDisposition() const
+{
+    ReflectedXSSDisposition disposition = ReflectedXSSUnset;
+    for (size_t i = 0; i < m_policies.size(); ++i) {
+        if (m_policies[i]->reflectedXSSDisposition() > disposition)
+            disposition = std::max(disposition, m_policies[i]->reflectedXSSDisposition());
+    }
+    return disposition;
+}
+
 void ContentSecurityPolicy::gatherReportURIs(DOMStringList& list) const
 {
     for (size_t i = 0; i < m_policies.size(); ++i)
@@ -1703,6 +1766,11 @@ void ContentSecurityPolicy::reportInvalidPluginTypes(const String& pluginType) c
 void ContentSecurityPolicy::reportInvalidSandboxFlags(const String& invalidFlags) const
 {
     logToConsole("Error while parsing the 'sandbox' Content Security Policy directive: " + invalidFlags);
+}
+
+void ContentSecurityPolicy::reportInvalidReflectedXSS(const String& invalidValue) const
+{
+    logToConsole("The 'reflected-xss' Content Security Policy directive has the invalid value \"" + invalidValue + "\". Value values are \"allow\", \"filter\", and \"block\".");
 }
 
 void ContentSecurityPolicy::reportInvalidDirectiveValueCharacter(const String& directiveName, const String& value) const

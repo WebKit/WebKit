@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
+
+Tests that 'X-WebKit-CSP: reflected-xss filter;' enables the XSSAuditor. This test passes if a console message is generated, and the script is blocked.
+
+

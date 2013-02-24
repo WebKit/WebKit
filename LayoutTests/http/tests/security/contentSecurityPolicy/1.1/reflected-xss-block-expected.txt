@@ -1,0 +1,14 @@
+CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
+
+CONSOLE MESSAGE: Entire page will be blocked.
+CONSOLE MESSAGE: Unsafe JavaScript attempt to access frame with URL data:text/html,<p></p> from frame with URL http://127.0.0.1:8000/security/contentSecurityPolicy/1.1/reflected-xss-block.html. The frame requesting access has a protocol of 'http', the frame being accessed has a protocol of ''. Protocols must match.
+
+ALERT: URL mismatch: undefined vs. http://localhost:8000/security/xssAuditor/resources/echo-intertag.pl?csp=block&q=%3Cscript%3Ealert(String.fromCharCode(0x58,0x53,0x53))%3C/script%3E
+Tests that 'X-WebKit-CSP: reflected-xss block;' enables the XSSAuditor. This test passes if a console message is generated, and the page is blocked. There should be no content in the IFrame below:
+
+
+
+--------
+Frame: 'frame'
+--------
+
