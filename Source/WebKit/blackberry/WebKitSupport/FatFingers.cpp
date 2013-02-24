@@ -69,7 +69,7 @@ IntRect FatFingers::fingerRectForPoint(const IntPoint& point) const
     IntPoint contentViewportPos = m_webPage->mapFromContentsToViewport(point);
     getAdjustedPaddings(contentViewportPos, topPadding, rightPadding, bottomPadding, leftPadding);
 
-    return HitTestResult::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding);
+    return HitTestLocation::rectForPoint(point, topPadding, rightPadding, bottomPadding, leftPadding);
 }
 
 static bool hasMousePressListener(Element* element)

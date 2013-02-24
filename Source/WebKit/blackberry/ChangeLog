@@ -1,3 +1,16 @@
+2013-02-24  Alberto Garcia  <albgarcia@rim.com>
+
+        [BlackBerry] FatFingers: move rectForPoint() from HitTestResult to HitTestLocation
+        https://bugs.webkit.org/show_bug.cgi?id=110570
+
+        Reviewed by Allan Sandfeld Jensen.
+
+        HitTestResult is no longer a HitTestLocation:
+        http://trac.webkit.org/changeset/135710/trunk/Source/WebCore/rendering/HitTestResult.h
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::fingerRectForPoint):
+
 2013-02-22  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Eliminate invalid clipping for content editable selections
