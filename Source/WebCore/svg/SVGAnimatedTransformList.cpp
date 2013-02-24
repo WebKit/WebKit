@@ -116,11 +116,12 @@ void SVGAnimatedTransformListAnimator::calculateAnimatedValue(float percentage, 
 
     unsigned fromTransformListSize = fromTransformList.size();
     const SVGTransform& toTransform = toTransformList[0];
-    SVGTransform effectiveFrom = fromTransformListSize ? fromTransformList[0] : SVGTransform(toTransform.type(), SVGTransform::ConstructZeroTransform);
+    const SVGTransform effectiveFrom = fromTransformListSize ? fromTransformList[0] : SVGTransform(toTransform.type(), SVGTransform::ConstructZeroTransform);
     SVGTransform currentTransform = SVGTransformDistance(effectiveFrom, toTransform).scaledDistance(percentage).addToSVGTransform(effectiveFrom);
-    if (m_animationElement->isAccumulated() && repeatCount)
-        animatedTransformList.append(SVGTransformDistance::addSVGTransforms(currentTransform, toAtEndOfDurationTransformList[0], repeatCount));
-    else
+    if (m_animationElement->isAccumulated() && repeatCount) {
+        const SVGTransform effectiveToAtEnd = toAtEndOfDurationTransformList.size() ? toAtEndOfDurationTransformList[0] : SVGTransform(toTransform.type(), SVGTransform::ConstructZeroTransform);
+        animatedTransformList.append(SVGTransformDistance::addSVGTransforms(currentTransform, effectiveToAtEnd, repeatCount));
+    } else
         animatedTransformList.append(currentTransform);
 }
 
