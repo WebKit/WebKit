@@ -1112,6 +1112,9 @@ webkit.org/b/76489 compositing/webgl/webgl-reflection.html [ ImageOnlyFailure ]
 webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-api.html [ Failure ]
 webkit.org/b/76439 [ Debug ] fast/dom/shadow/content-element-outside-shadow.html [ Failure ]
 
+# ENABLE(CUSTOM_ELEMENTS) is disabled.
+fast/dom/custom
+
 # CSS Variables are not yet enabled.
 webkit.org/b/85580 fast/css/variables
 webkit.org/b/85580 inspector/styles/variables

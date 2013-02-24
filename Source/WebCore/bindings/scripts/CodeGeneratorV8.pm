@@ -352,13 +352,20 @@ END
         push(@headerContent, "false;\n");
     }
 
+    my $fromFunctionOpening = "";
+    my $fromFunctionClosing = "";
+    if ($interface->extendedAttributes->{"V8WrapAsFunction"}) {
+        $fromFunctionOpening = "V8DOMWrapper::fromFunction(";
+        $fromFunctionClosing = ")";
+    }
+
     push(@headerContent, <<END);
     static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate*);
     static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*);
     static ${nativeType}* toNative(v8::Handle<v8::Object> object)
     {
-        return reinterpret_cast<${nativeType}*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
+        return reinterpret_cast<${nativeType}*>(${fromFunctionOpening}object${fromFunctionClosing}->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
     }
     static void derefObject(void*);
     static WrapperTypeInfo info;
@@ -539,6 +546,9 @@ END
     } else {
 
         my $createWrapperCall = $customWrap ? "${v8InterfaceName}::wrap" : "${v8InterfaceName}::createWrapper";
+        my $returningWrapper = $interface->extendedAttributes->{"V8WrapAsFunction"} ? "V8DOMWrapper::toFunction(wrapper)" : "wrapper";
+        my $returningCreatedWrapperOpening = $interface->extendedAttributes->{"V8WrapAsFunction"} ? "V8DOMWrapper::toFunction(" : "";
+        my $returningCreatedWrapperClosing = $interface->extendedAttributes->{"V8WrapAsFunction"} ? ", impl->name(), isolate)" : "";
 
         if ($customWrap) {
             push(@headerContent, <<END);
@@ -552,7 +562,7 @@ inline v8::Handle<v8::Object> wrap(${nativeType}* impl, v8::Handle<v8::Object> c
 {
     ASSERT(impl);
     ASSERT(DOMDataStore::getWrapper(impl, isolate).IsEmpty());
-    return $createWrapperCall(impl, creationContext, isolate);
+    return ${returningCreatedWrapperOpening}$createWrapperCall(impl, creationContext, isolate)${returningCreatedWrapperClosing};
 }
 END
         }
@@ -565,7 +575,7 @@ inline v8::Handle<v8::Value> toV8(${nativeType}* impl, v8::Handle<v8::Object> cr
         return v8NullWithCheck(isolate);
     v8::Handle<v8::Value> wrapper = DOMDataStore::getWrapper(impl, isolate);
     if (!wrapper.IsEmpty())
-        return wrapper;
+        return $returningWrapper;
     return wrap(impl, creationContext, isolate);
 }
 
@@ -576,7 +586,7 @@ inline v8::Handle<v8::Value> toV8Fast(${nativeType}* impl, const HolderContainer
         return v8Null(container.GetIsolate());
     v8::Handle<v8::Object> wrapper = DOMDataStore::getWrapperFast(impl, container, wrappable);
     if (!wrapper.IsEmpty())
-        return wrapper;
+        return $returningWrapper;
     return wrap(impl, container.Holder(), container.GetIsolate());
 }
 END

@@ -481,6 +481,25 @@ bool WebRuntimeFeatures::isShadowDOMEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableCustomDOMElements(bool enable)
+{
+#if ENABLE(CUSTOM_ELEMENTS)
+    RuntimeEnabledFeatures::setCustomDOMElements(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isCustomDOMElementsEnabled()
+{
+#if ENABLE(CUSTOM_ELEMENTS)
+    return RuntimeEnabledFeatures::customDOMElementsEnabled();
+#else
+    return false;
+#endif
+}
+
+
 void WebRuntimeFeatures::enableStyleScoped(bool enable)
 {
 #if ENABLE(STYLE_SCOPED)

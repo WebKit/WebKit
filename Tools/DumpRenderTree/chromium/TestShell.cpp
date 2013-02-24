@@ -145,6 +145,7 @@ TestShell::TestShell()
     WebRuntimeFeatures::enableVideoTrack(true);
     WebRuntimeFeatures::enableGamepad(true);
     WebRuntimeFeatures::enableShadowDOM(true);
+    WebRuntimeFeatures::enableCustomDOMElements(true);
     WebRuntimeFeatures::enableStyleScoped(true);
     WebRuntimeFeatures::enableScriptedSpeech(true);
     WebRuntimeFeatures::enableRequestAutocomplete(true);

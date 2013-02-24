@@ -1172,8 +1172,9 @@ END
 ;
     } elsif ($wrapperFactoryType eq "V8") {
         print F <<END
+#include "V8HTMLCustomElement.h"
 #include "V8$parameters{namespace}Element.h"
-        
+
 #include <v8.h>
 END
 ;
@@ -1272,6 +1273,11 @@ END
         if ($parameters{namespace} eq "SVG") {
             print F <<END
     return V8SVGElement::createWrapper(element, creationContext, isolate);
+END
+;
+        } elsif ($parameters{namespace} eq "HTML") {
+            print F <<END
+    return V8HTMLCustomElement::wrap(element, creationContext, isolate);
 END
 ;
         } else {

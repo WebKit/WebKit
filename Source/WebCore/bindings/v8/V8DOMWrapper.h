@@ -62,6 +62,13 @@ namespace WebCore {
 
         static bool isDOMWrapper(v8::Handle<v8::Value>);
         static bool isWrapperOfType(v8::Handle<v8::Value>, WrapperTypeInfo*);
+
+#if ENABLE(CUSTOM_ELEMENTS)
+        // Used for V8WrapAsFunction, which is used only by CUSTOM_ELEMENTS
+        static v8::Handle<v8::Function> toFunction(v8::Handle<v8::Value>);
+        static v8::Handle<v8::Function> toFunction(v8::Handle<v8::Object>, const AtomicString& name, v8::Isolate*);
+        static v8::Handle<v8::Object> fromFunction(v8::Handle<v8::Object>);
+#endif // ENABLE(CUSTOM_ELEMENTS)
     };
 
     inline void V8DOMWrapper::setNativeInfo(v8::Handle<v8::Object> wrapper, WrapperTypeInfo* type, void* object)

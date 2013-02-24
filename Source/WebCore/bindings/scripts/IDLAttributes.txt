@@ -129,3 +129,4 @@ V8MeasureAs=*
 V8ReadOnly
 V8SkipVTableValidation
 V8Unforgeable
+V8WrapAsFunction

@@ -45,6 +45,7 @@ namespace WebCore {
     V(scriptState) \
     V(sleepFunction) \
     V(state) \
+    V(adaptorFunctionPeer) \
     V(toStringString) \
     V(typedArrayHiddenCopyMethod)
 

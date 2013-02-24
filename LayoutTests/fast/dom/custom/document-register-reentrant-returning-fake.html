@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="./resources/document-register-fuzz.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+description("Fuzzing document.register() through getters. PASS uless crash.");
+
+var badPrototype = Image.prototype;
+var badConstructor = Image.prototype.constructor;
+
+setupObjectHooks({
+    prototypeGet: function() { return badPrototype; },
+    prototypeSet: function(value) {  },
+    constructorGet: function() { return badConstructor; },
+    constructorSet: function(value) {  }
+});
+
+exerciseDocumentRegister();
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

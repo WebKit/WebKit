@@ -1,0 +1,46 @@
+Testing document.register() basic behaviors.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS document.register('foo', createRegisterParamters()) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS document.register('xfoo', createRegisterParamters()) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS document.register('missing-glyph', createRegisterParamters()) threw exception Error: InvalidCharacterError: DOM Exception 5.
+PASS typeof fooConstructor is 'function'
+PASS fooConstructor.prototype.__proto__ is HTMLElement.prototype
+PASS fooConstructor.prototype.thisIsPrototype is true
+PASS document.register('x-foo', createRegisterParamters()) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS document.register('X-FOO', createRegisterParamters()) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS document.register('x-bad-a', { prototype: HTMLElement.prototype }) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS document.register('x-bad-b', { prototype: {} }) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS document.register('x-bad-c', { prototype: Object.create(Document.prototype) }) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS document.register('x-bad-d', { prototype: Object.create(HTMLSpanElement.prototype) }) threw exception Error: InvalidStateError: DOM Exception 11.
+PASS fooConstructor() threw exception TypeError: DOM object constructor cannot be called as a function..
+PASS createdFoo.__proto__ is fooConstructor.prototype
+PASS createdFoo.constructor is fooConstructor
+PASS createdFoo.tagName is 'X-FOO'
+PASS createdFoo.textContent is 'Hello'
+PASS createdFoo.lastChild is childDiv
+PASS parsedFoo.__proto__ is fooConstructor.prototype
+PASS parsedFoo.tagName is 'X-FOO'
+PASS parsedFoo.someProperty is container.firstChild.someProperty
+PASS createdBar.tagName is 'X-BAR'
+PASS createdBaz.tagName is 'X-BAZ'
+PASS createdBaz.thisIsPrototype is true
+PASS createdBaz.thisIsAlsoPrototype is true
+PASS createdUpperBar.constructor is barConstructor
+PASS createdUpperBar.tagName is 'X-BAR'
+PASS createdMixedBar.constructor is barConstructor
+PASS createdMixedBar.tagName is 'X-BAR'
+PASS container.firstChild.constructor is barConstructor
+PASS container.firstChild.tagName is 'X-BAR'
+PASS container.lastChild.constructor is barConstructor
+PASS container.lastChild.tagName is 'X-BAR'
+PASS (new (document.register('y-bar', createRegisterParamters()))()).tagName is 'Y-BAR'
+PASS (new (document.register('yz-bar', createRegisterParamters()))()).tagName is 'YZ-BAR'
+PASS (new (document.register('y-z-bar', createRegisterParamters()))()).tagName is 'Y-Z-BAR'
+PASS (new (document.register('y--bar', createRegisterParamters()))()).tagName is 'Y--BAR'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

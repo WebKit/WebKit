@@ -53,6 +53,11 @@
     readonly attribute Element activeElement;
     boolean hasFocus();
 
+#if defined(ENABLE_CUSTOM_ELEMENTS) && ENABLE_CUSTOM_ELEMENTS
+    [V8EnabledAtRuntime=customDOMElements, Conditional=CUSTOM_ELEMENTS, ImplementedAs=registerElement, CallWith=ScriptState]
+    CustomElementConstructor webkitRegister(in DOMString name, in [Optional] Dictionary options) raises(DOMException);
+#endif
+
     // Deprecated attributes
              [TreatNullAs=NullString] attribute DOMString bgColor;
              [TreatNullAs=NullString] attribute DOMString fgColor;

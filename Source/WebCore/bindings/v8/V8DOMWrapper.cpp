@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8DOMWrapper.h"
 
+#include "V8AdaptorFunction.h"
 #include "V8Binding.h"
 #include "V8DOMWindow.h"
 #include "V8HTMLCollection.h"
@@ -136,5 +137,26 @@ bool V8DOMWrapper::isWrapperOfType(v8::Handle<v8::Value> value, WrapperTypeInfo*
     WrapperTypeInfo* typeInfo = static_cast<WrapperTypeInfo*>(wrapper->GetAlignedPointerFromInternalField(v8DOMWrapperTypeIndex));
     return typeInfo == type;
 }
+
+#if ENABLE(CUSTOM_ELEMENTS)
+
+v8::Handle<v8::Function> V8DOMWrapper::toFunction(v8::Handle<v8::Value> object)
+{
+    return V8AdaptorFunction::get(v8::Handle<v8::Object>::Cast(object));
+}
+
+v8::Handle<v8::Function> V8DOMWrapper::toFunction(v8::Handle<v8::Object> object, const AtomicString& name, v8::Isolate* isolate)
+{
+    return V8AdaptorFunction::wrap(object, name, isolate);
+}
+
+v8::Handle<v8::Object> V8DOMWrapper::fromFunction(v8::Handle<v8::Object> object)
+{
+    if (!object->IsFunction())
+        return object;
+    return V8AdaptorFunction::unwrap(v8::Handle<v8::Function>::Cast(object));
+}
+
+#endif // ENABLE(CUSTOM_ELEMENTS)
 
 }  // namespace WebCore

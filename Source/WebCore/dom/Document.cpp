@@ -46,11 +46,14 @@
 #include "ContentSecurityPolicy.h"
 #include "ContextFeatures.h"
 #include "CookieJar.h"
+#include "CustomElementConstructor.h"
+#include "CustomElementRegistry.h"
 #include "DOMImplementation.h"
 #include "DOMNamedFlowCollection.h"
 #include "DOMSelection.h"
 #include "DOMWindow.h"
 #include "DateComponents.h"
+#include "Dictionary.h"
 #include "DocumentEventQueue.h"
 #include "DocumentFragment.h"
 #include "DocumentLoader.h"
@@ -669,6 +672,10 @@ void Document::dispose()
 
     detachParser();
 
+#if ENABLE(CUSTOM_ELEMENTS)
+        m_registry.clear();
+#endif
+
     // removeDetachedChildren() doesn't always unregister IDs,
     // so tear down scope information upfront to avoid having stale references in the map.
     destroyTreeScopeData();
@@ -822,6 +829,25 @@ PassRefPtr<Element> Document::createElement(const AtomicString& name, ExceptionC
 
     return createElement(QualifiedName(nullAtom, name, nullAtom), false);
 }
+
+#if ENABLE(CUSTOM_ELEMENTS)
+PassRefPtr<CustomElementConstructor> Document::registerElement(WebCore::ScriptState* state, const AtomicString& name, ExceptionCode& ec)
+{
+    return registerElement(state, name, Dictionary(), ec);
+}
+
+PassRefPtr<CustomElementConstructor> Document::registerElement(WebCore::ScriptState* state, const AtomicString& name, const Dictionary& options, ExceptionCode& ec)
+{
+    if (!m_registry)
+        m_registry = adoptRef(new CustomElementRegistry(this));
+    return m_registry->registerElement(state, name, options, ec);
+}
+
+PassRefPtr<CustomElementRegistry> Document::registry() const
+{
+    return m_registry;
+}
+#endif // ENABLE(CUSTOM_ELEMENTS)
 
 PassRefPtr<DocumentFragment> Document::createDocumentFragment()
 {

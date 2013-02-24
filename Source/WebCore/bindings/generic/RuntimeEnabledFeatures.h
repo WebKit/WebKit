@@ -218,6 +218,11 @@ public:
     static void setAuthorShadowDOMForAnyElementEnabled(bool isEnabled) { isAuthorShadowDOMForAnyElementEnabled = isEnabled; }
 #endif
 
+#if ENABLE(CUSTOM_ELEMENTS)
+    static bool customDOMElementsEnabled() { return isCustomDOMElementsEnabled; }
+    static void setCustomDOMElements(bool isEnabled) { isCustomDOMElementsEnabled = isEnabled; }
+#endif
+
 #if ENABLE(STYLE_SCOPED)
     static bool styleScopedEnabled() { return isStyleScopedEnabled; }
     static void setStyleScopedEnabled(bool isEnabled) { isStyleScopedEnabled = isEnabled; }
@@ -341,6 +346,10 @@ private:
     static bool isShadowDOMEnabled;
 
     static bool isAuthorShadowDOMForAnyElementEnabled;
+#endif
+
+#if ENABLE(CUSTOM_ELEMENTS)
+    static bool isCustomDOMElementsEnabled;
 #endif
 
 #if ENABLE(STYLE_SCOPED)

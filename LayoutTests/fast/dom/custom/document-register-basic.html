@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<div id="container"></div>
+<script>
+description("Testing document.register() basic behaviors.");
+
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.register = document.register || document.webkitRegister;
+
+function createRegisterParamters()
+{
+    return {
+        prototype: Object.create(HTMLElement.prototype, { thisIsPrototype: { value: true } })
+    };
+}
+
+// Invalid names
+shouldThrow("document.register('foo', createRegisterParamters())", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("document.register('xfoo', createRegisterParamters())", "'Error: InvalidCharacterError: DOM Exception 5'");
+shouldThrow("document.register('missing-glyph', createRegisterParamters())", "'Error: InvalidCharacterError: DOM Exception 5'");
+
+var fooConstructor = document.register("x-foo", createRegisterParamters());
+shouldBe("typeof fooConstructor", "'function'");
+shouldBe("fooConstructor.prototype.__proto__", "HTMLElement.prototype");
+shouldBeTrue("fooConstructor.prototype.thisIsPrototype");
+
+// Name conflicts
+shouldThrow("document.register('x-foo', createRegisterParamters())", "'Error: InvalidStateError: DOM Exception 11'");
+shouldThrow("document.register('X-FOO', createRegisterParamters())", "'Error: InvalidStateError: DOM Exception 11'");
+
+// Bad prototype: constructor property exists
+shouldThrow("document.register('x-bad-a', { prototype: HTMLElement.prototype })", "'Error: InvalidStateError: DOM Exception 11'");
+// Bad prototype: missing __proto__
+shouldThrow("document.register('x-bad-b', { prototype: {} })", "'Error: InvalidStateError: DOM Exception 11'");
+// Bad prototype: wrong __proto__
+shouldThrow("document.register('x-bad-c', { prototype: Object.create(Document.prototype) })", "'Error: InvalidStateError: DOM Exception 11'");
+// Bug 110436 - Elements other than HTMLEmement should be allowed as a superclass.
+shouldThrow("document.register('x-bad-d', { prototype: Object.create(HTMLSpanElement.prototype) })", "'Error: InvalidStateError: DOM Exception 11'");
+// Call as function
+shouldThrow("fooConstructor()", "'TypeError: DOM object constructor cannot be called as a function.'")
+
+// Constructor initiated instantiation
+var createdFoo = new fooConstructor();
+
+// JS built-in properties
+shouldBe("createdFoo.__proto__", "fooConstructor.prototype");
+shouldBe("createdFoo.constructor", "fooConstructor");
+
+// Native getter
+shouldBe("createdFoo.tagName", "'X-FOO'");
+
+// Native setter
+createdFoo.innerHTML = "Hello";
+shouldBe("createdFoo.textContent", "'Hello'");
+
+// Native method
+var childDiv = document.createElement("div");
+createdFoo.appendChild(childDiv);
+shouldBe("createdFoo.lastChild", "childDiv");
+
+// Parser initiated instantiation
+var container = document.getElementById("container");
+container.innerHTML = "<x-foo></x-foo>";
+parsedFoo = container.firstChild;
+
+shouldBe("parsedFoo.__proto__", "fooConstructor.prototype");
+shouldBe("parsedFoo.tagName", "'X-FOO'");
+
+// Ensuring the wrapper is retained
+parsedFoo.someProperty = "hello";
+shouldBe("parsedFoo.someProperty", "container.firstChild.someProperty");
+
+// Having another constructor
+var barConstructor = document.register("x-bar", createRegisterParamters());
+var createdBar = new barConstructor();
+shouldBe("createdBar.tagName", "'X-BAR'");
+
+// Having a subclass
+var bazConstructor = document.register("x-baz", { prototype: Object.create(fooConstructor.prototype, { thisIsAlsoPrototype: { value: true } }) });
+var createdBaz = new bazConstructor();
+shouldBe("createdBaz.tagName", "'X-BAZ'");
+shouldBeTrue("createdBaz.thisIsPrototype");
+shouldBeTrue("createdBaz.thisIsAlsoPrototype");
+
+// With irregular cases
+var createdUpperBar = document.createElement("X-BAR");
+var createdMixedBar = document.createElement("X-Bar");
+shouldBe("createdUpperBar.constructor", "barConstructor");
+shouldBe("createdUpperBar.tagName", "'X-BAR'");
+shouldBe("createdMixedBar.constructor", "barConstructor");
+shouldBe("createdMixedBar.tagName", "'X-BAR'");
+
+container.innerHTML = "<X-BAR></X-BAR><X-Bar></X-Bar>";
+shouldBe("container.firstChild.constructor", "barConstructor");
+shouldBe("container.firstChild.tagName", "'X-BAR'");
+shouldBe("container.lastChild.constructor", "barConstructor");
+shouldBe("container.lastChild.tagName", "'X-BAR'");
+
+// Strange but valid names
+shouldBe("(new (document.register('y-bar', createRegisterParamters()))()).tagName", "'Y-BAR'");
+shouldBe("(new (document.register('yz-bar', createRegisterParamters()))()).tagName", "'YZ-BAR'");
+shouldBe("(new (document.register('y-z-bar', createRegisterParamters()))()).tagName", "'Y-Z-BAR'");
+shouldBe("(new (document.register('y--bar', createRegisterParamters()))()).tagName", "'Y--BAR'");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

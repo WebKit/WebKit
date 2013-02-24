@@ -1,3 +1,15 @@
+2013-02-24  Hajime Morrita  <morrita@google.com>
+
+        [Custom Elements] Implement bare-bone document.register()
+        https://bugs.webkit.org/show_bug.cgi?id=100229
+
+        Reviewed by Adam Barth.
+
+        Added enableCustomDOMElements flag.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2013-02-23  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] DumpRenderTree TestShell::initialize should take Platform* now that WebKitPlatformSupport is empty

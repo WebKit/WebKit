@@ -190,6 +190,10 @@ bool RuntimeEnabledFeatures::isShadowDOMEnabled = false;
 bool RuntimeEnabledFeatures::isAuthorShadowDOMForAnyElementEnabled = false;
 #endif
 
+#if ENABLE(CUSTOM_ELEMENTS)
+bool RuntimeEnabledFeatures::isCustomDOMElementsEnabled = false;
+#endif
+
 #if ENABLE(STYLE_SCOPED)
 bool RuntimeEnabledFeatures::isStyleScopedEnabled = false;
 #endif

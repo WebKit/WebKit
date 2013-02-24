@@ -220,6 +220,7 @@ BINDING_IDLS = \
     $(WebCore)/dom/Clipboard.idl \
     $(WebCore)/dom/Comment.idl \
     $(WebCore)/dom/CompositionEvent.idl \
+    $(WebCore)/dom/CustomElementConstructor.idl \
     $(WebCore)/dom/CustomEvent.idl \
     $(WebCore)/dom/DOMCoreException.idl \
     $(WebCore)/dom/DOMError.idl \
