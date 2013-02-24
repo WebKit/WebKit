@@ -807,13 +807,16 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
     if (!propID)
         return QString();
 
-    const StylePropertySet* style = static_cast<StyledElement*>(m_element)->ensureMutableInlineStyle();
-
-    if (strategy == InlineStyle)
+    if (strategy == InlineStyle) {
+        const StylePropertySet* style = static_cast<StyledElement*>(m_element)->inlineStyle();
+        if (!style)
+            return QString();
         return style->getPropertyValue(propID);
+    }
 
     if (strategy == CascadedStyle) {
-        if (style->propertyIsImportant(propID))
+        const StylePropertySet* style = static_cast<StyledElement*>(m_element)->inlineStyle();
+        if (style && style->propertyIsImportant(propID))
             return style->getPropertyValue(propID);
 
         // We are going to resolve the style property by walking through the
@@ -832,11 +835,13 @@ QString QWebElement::styleProperty(const QString &name, StyleResolveStrategy str
                 if (rule->styleRule()->properties()->propertyIsImportant(propID))
                     return rule->styleRule()->properties()->getPropertyValue(propID);
 
-                if (style->getPropertyValue(propID).isEmpty())
+                if (!style || style->getPropertyValue(propID).isEmpty())
                     style = rule->styleRule()->properties();
             }
         }
 
+        if (!style)
+            return QString();
         return style->getPropertyValue(propID);
     }
 

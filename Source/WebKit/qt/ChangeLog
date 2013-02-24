@@ -1,3 +1,15 @@
+2013-02-24  Andreas Kling  <akling@apple.com>
+
+        StyledElement: Don't expose a mutable direct interface to the inline style.
+        <http://webkit.org/b/110711>
+
+        Reviewed by Antti Koivisto.
+
+        QWebElement::styleProperty() is a read-only method, so rewrite it to use StyledElement::inlineStyle().
+
+        * Api/qwebelement.cpp:
+        (QWebElement::styleProperty):
+
 2013-02-23  Jason Anderssen  <janderssen@gmail.com>
 
         Move setAutofilled from TestRunner to WebCore

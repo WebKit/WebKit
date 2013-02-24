@@ -41,9 +41,7 @@ public:
     void invalidateStyleAttribute();
 
     const StylePropertySet* inlineStyle() const { return elementData() ? elementData()->m_inlineStyle.get() : 0; }
-    StylePropertySet* ensureMutableInlineStyle();
     
-    // Unlike StylePropertySet setters, these implement invalidation.
     bool setInlineStyleProperty(CSSPropertyID, int identifier, bool important = false);
     bool setInlineStyleProperty(CSSPropertyID, double value, CSSPrimitiveValue::UnitTypes, bool important = false);
     bool setInlineStyleProperty(CSSPropertyID, const String& value, bool important = false);
@@ -79,6 +77,7 @@ private:
     void inlineStyleChanged();
     PropertySetCSSStyleDeclaration* inlineStyleCSSOMWrapper();
     void setInlineStyleFromString(const AtomicString&);
+    MutableStylePropertySet* ensureMutableInlineStyle();
 
     void makePresentationAttributeCacheKey(PresentationAttributeCacheKey&) const;
     void rebuildPresentationAttributeStyle();

@@ -146,14 +146,15 @@ CSSStyleDeclaration* StyledElement::style()
     return ensureMutableInlineStyle()->ensureInlineCSSStyleDeclaration(this);
 }
 
-StylePropertySet* StyledElement::ensureMutableInlineStyle()
+MutableStylePropertySet* StyledElement::ensureMutableInlineStyle()
 {
     RefPtr<StylePropertySet>& inlineStyle = ensureUniqueElementData()->m_inlineStyle;
     if (!inlineStyle)
         inlineStyle = StylePropertySet::create(strictToCSSParserMode(isHTMLElement() && !document()->inQuirksMode()));
     else if (!inlineStyle->isMutable())
         inlineStyle = inlineStyle->copy();
-    return inlineStyle.get();
+    ASSERT(inlineStyle->isMutable());
+    return static_cast<MutableStylePropertySet*>(inlineStyle.get());
 }
 
 void StyledElement::attributeChanged(const QualifiedName& name, const AtomicString& newValue)
