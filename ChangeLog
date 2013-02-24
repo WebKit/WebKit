@@ -1,3 +1,16 @@
+2013-02-24  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Stop generating UserAgentGtk.h
+        https://bugs.webkit.org/show_bug.cgi?id=110582
+
+        Reviewed by Martin Robinson.
+
+        * configure.ac: Provide the USER_AGENT_GTK_(MAJOR|MINOR)_VERSION defines in the autotoolsconfig.h
+        header, containing the user agent versions that are to be used in the user agent string. The
+        WEBKIT_USER_AGENT_(MAJOR|MINOR)_VERSION name is avoided as the same defines are specified in the
+        webkitversion.h API header (but are not accessible from the WebCore layer). The UserAgentGtk.h
+        header is also not generated anymore from the input file.
+
 2013-02-21  Tony Chang  <tony@chromium.org>
 
         Autogenerate Settings that call setNeedsRecalcStyleInAllFrames when set

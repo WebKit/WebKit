@@ -870,7 +870,6 @@ webcore_built_sources += \
 	DerivedSources/WebCore/MathMLNames.cpp \
 	DerivedSources/WebCore/MathMLNames.h \
 	DerivedSources/WebCore/SettingsMacros.h \
-	DerivedSources/WebCore/UserAgentGtk.h \
 	DerivedSources/WebCore/UserAgentStyleSheetsData.cpp \
 	DerivedSources/WebCore/UserAgentStyleSheets.h \
 	DerivedSources/WebCore/WebKitFontFamilyNames.cpp \
@@ -5740,6 +5739,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
 	Source/WebCore/platform/gtk/SharedBufferGtk.cpp \
 	Source/WebCore/platform/gtk/UserAgentGtk.cpp \
+	Source/WebCore/platform/gtk/UserAgentGtk.h \
 	Source/WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	Source/WebCore/platform/HostWindow.h \
 	Source/WebCore/platform/KillRing.h \

@@ -29,9 +29,6 @@
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
-#define WEBKIT_USER_AGENT_MAJOR_VERSION (@WEBKIT_USER_AGENT_MAJOR_VERSION@)
-#define WEBKIT_USER_AGENT_MINOR_VERSION (@WEBKIT_USER_AGENT_MINOR_VERSION@)
-
 namespace WebCore {
 
 String standardUserAgent(const String& applicationName = "", const String& applicationVersion = "");

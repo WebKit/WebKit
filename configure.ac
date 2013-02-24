@@ -19,6 +19,8 @@ AC_SUBST(WEBKIT_MINOR_VERSION)
 AC_SUBST(WEBKIT_MICRO_VERSION)
 AC_SUBST(WEBKIT_USER_AGENT_MAJOR_VERSION)
 AC_SUBST(WEBKIT_USER_AGENT_MINOR_VERSION)
+AC_DEFINE([USER_AGENT_GTK_MAJOR_VERSION], [webkit_user_agent_major_version], [The major version used in user agent string])
+AC_DEFINE([USER_AGENT_GTK_MINOR_VERSION], [webkit_user_agent_minor_version], [The minor version used in user agent string])
 
 m4_include([Source/autotools/CheckSystemAndBasicDependencies.m4])
 m4_include([Source/autotools/SetupLibtool.m4])
@@ -37,7 +39,6 @@ m4_include([Source/autotools/SetupAutomake.m4])
 ######################################################################################
 
 AC_CONFIG_FILES([GNUmakefile])
-AC_CONFIG_FILES([DerivedSources/WebCore/UserAgentGtk.h:Source/WebCore/platform/gtk/UserAgentGtk.h.in])
 AC_CONFIG_FILES(
     [Source/JavaScriptCore/javascriptcoregtk-${WEBKITGTK_API_VERSION}.pc:Source/JavaScriptCore/javascriptcoregtk.pc.in
         Source/WebKit/gtk/JSCore-${WEBKITGTK_API_VERSION}.gir:Source/WebKit/gtk/JSCore.gir.in],

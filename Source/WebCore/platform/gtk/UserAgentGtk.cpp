@@ -87,7 +87,7 @@ String standardUserAgent(const String& applicationName, const String& applicatio
     // browsers that are "Safari" but not running on OS X are the Safari iOS browser, so we
     // also claim to be  Chromium. Getting this wrong can cause sites to load the wrong JavaScript,
     // CSS, or custom fonts. In some cases sites won't load resources at all.
-    DEFINE_STATIC_LOCAL(const CString, uaVersion, (String::format("%i.%i", WEBKIT_USER_AGENT_MAJOR_VERSION, WEBKIT_USER_AGENT_MINOR_VERSION).utf8()));
+    DEFINE_STATIC_LOCAL(const CString, uaVersion, (String::format("%i.%i", USER_AGENT_GTK_MAJOR_VERSION, USER_AGENT_GTK_MINOR_VERSION).utf8()));
     DEFINE_STATIC_LOCAL(const String, staticUA, (String::format("Mozilla/5.0 (%s; %s) AppleWebKit/%s (KHTML, like Gecko) "
                                                                 "Chromium/25.0.1349.2 Chrome/25.0.1349.2 Safari/%s",
                                                                 platformForUAString(), platformVersionForUAString().utf8().data(),
