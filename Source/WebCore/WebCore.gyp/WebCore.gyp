@@ -1992,6 +1992,11 @@
         ['exclude', 'AllInOne\\.cpp$'],
       ],
       'conditions': [
+        # Shard this taret into parts to work around linker limitations.
+        # on link time code generation builds.
+        ['OS=="win" and buildtype=="Official"', {
+          'msvs_shard': 3,
+        }],
         ['use_default_render_theme==0', {
           'sources/': [
             ['exclude', 'rendering/RenderThemeChromiumDefault.*'],
