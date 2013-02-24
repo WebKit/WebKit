@@ -17,6 +17,7 @@
  * Boston, MA 02110-1301, USA.
  */
 
+#include "autotoolsconfig.h"
 #include <webkit/webkit.h>
 
 #if GTK_CHECK_VERSION(2, 14, 0)

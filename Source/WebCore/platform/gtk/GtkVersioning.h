@@ -21,6 +21,7 @@
 #ifndef GtkVersioning_h
 #define GtkVersioning_h
 
+#include "autotoolsconfig.h"
 #include <gtk/gtk.h>
 
 #ifndef GTK_API_VERSION_2

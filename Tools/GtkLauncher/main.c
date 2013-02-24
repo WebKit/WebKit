@@ -25,6 +25,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "autotoolsconfig.h"
 #include "LauncherInspectorWindow.h"
 #include <errno.h>
 #include <gst/gst.h>

@@ -1,3 +1,39 @@
+2013-02-24  Gustavo Noronha Silva  <gns@gnome.org>
+
+        [GTK] GTK+ 2 build broken since GTK_API_VERSION_2 moved to autoconfig.h
+        https://bugs.webkit.org/show_bug.cgi?id=110702
+
+        Reviewed by Martin Robinson.
+
+        * tests/testapplicationcache.c: include autotoolsconfig.h.
+        * tests/testatk.c: ditto.
+        * tests/testatkroles.c: ditto.
+        * tests/testcontextmenu.c: ditto.
+        * tests/testcopyandpaste.c: ditto.
+        * tests/testdomdocument.c: ditto.
+        * tests/testdomdomwindow.c: ditto.
+        * tests/testdomnode.c: ditto.
+        * tests/testdownload.c: ditto.
+        * tests/testfavicondatabase.c: ditto.
+        * tests/testglobals.c: ditto.
+        * tests/testhittestresult.c: ditto.
+        * tests/testhttpbackend.c: ditto.
+        * tests/testkeyevents.c: ditto.
+        * tests/testloading.c: ditto.
+        * tests/testmimehandling.c: ditto.
+        * tests/testnetworkrequest.c: ditto.
+        * tests/testnetworkresponse.c: ditto.
+        * tests/testwebbackforwardlist.c: ditto.
+        * tests/testwebdatasource.c: ditto.
+        * tests/testwebframe.c: ditto.
+        * tests/testwebhistoryitem.c: ditto.
+        * tests/testwebinspector.c: ditto.
+        * tests/testwebplugindatabase.c: ditto.
+        * tests/testwebresource.c: ditto.
+        * tests/testwebsettings.c: ditto.
+        * tests/testwebview.c: ditto.
+        * tests/testwindow.c: ditto.
+
 2013-02-23  Jason Anderssen  <janderssen@gmail.com>
 
         Move setAutofilled from TestRunner to WebCore
