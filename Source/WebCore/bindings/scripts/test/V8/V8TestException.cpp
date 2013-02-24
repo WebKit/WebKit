@@ -75,11 +75,16 @@ static v8::Handle<v8::Value> nameAttrGetter(v8::Local<v8::String> name, const v8
     return v8String(imp->name(), info.GetIsolate(), ReturnUnsafeHandle);
 }
 
+static v8::Handle<v8::Value> nameAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestExceptionV8Internal::nameAttrGetter(name, info);
+}
+
 } // namespace TestExceptionV8Internal
 
 static const V8DOMConfiguration::BatchedAttribute V8TestExceptionAttrs[] = {
     // Attribute 'name' (Type: 'readonly attribute' ExtAttr: '')
-    {"name", TestExceptionV8Internal::nameAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"name", TestExceptionV8Internal::nameAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestExceptionTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

@@ -77,6 +77,11 @@ static v8::Handle<v8::Value> excitingAttrAttrGetter(v8::Local<v8::String> name, 
     return v8Integer(imp->excitingAttr(), info.GetIsolate());
 }
 
+static v8::Handle<v8::Value> excitingAttrAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestActiveDOMObjectV8Internal::excitingAttrAttrGetter(name, info);
+}
+
 static v8::Handle<v8::Value> excitingFunctionMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
@@ -121,6 +126,11 @@ static v8::Handle<v8::Value> postMessageAttrGetter(v8::Local<v8::String> name, c
     return privateTemplate->GetFunction();
 }
 
+static v8::Handle<v8::Value> postMessageAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestActiveDOMObjectV8Internal::postMessageAttrGetter(name, info);
+}
+
 static void TestActiveDOMObjectDomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
     v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(V8TestActiveDOMObject::GetTemplate(info.GetIsolate()));
@@ -137,7 +147,7 @@ static void TestActiveDOMObjectDomainSafeFunctionSetter(v8::Local<v8::String> na
 
 static const V8DOMConfiguration::BatchedAttribute V8TestActiveDOMObjectAttrs[] = {
     // Attribute 'excitingAttr' (Type: 'readonly attribute' ExtAttr: '')
-    {"excitingAttr", TestActiveDOMObjectV8Internal::excitingAttrAttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"excitingAttr", TestActiveDOMObjectV8Internal::excitingAttrAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestActiveDOMObjectTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
@@ -162,7 +172,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestActiveDOMObjectTempla
     proto->Set(v8::String::NewSymbol("excitingFunction"), v8::FunctionTemplate::New(TestActiveDOMObjectV8Internal::excitingFunctionMethod, v8Undefined(), excitingFunctionSignature));
 
     // Function 'postMessage' (ExtAttr: 'DoNotCheckSecurity')
-    proto->SetAccessor(v8::String::NewSymbol("postMessage"), TestActiveDOMObjectV8Internal::postMessageAttrGetter, TestActiveDOMObjectV8Internal::TestActiveDOMObjectDomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete));
+    proto->SetAccessor(v8::String::NewSymbol("postMessage"), TestActiveDOMObjectV8Internal::postMessageAttrGetterCallback, TestActiveDOMObjectV8Internal::TestActiveDOMObjectDomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>(v8::DontDelete));
 
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());

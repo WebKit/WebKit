@@ -817,6 +817,11 @@ static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, c
     return privateTemplate->GetFunction();
 }
 
+static v8::Handle<v8::Value> ${funcName}AttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return ${interfaceName}V8Internal::${funcName}AttrGetter(name, info);
+}
+
 END
 }
 
@@ -871,6 +876,31 @@ sub GenerateFeatureObservation
     return "";
 }
 
+sub GenerateNormalAttrGetterCallback
+{
+    my $attribute = shift;
+    my $interface = shift;
+
+    my $interfaceName = $interface->name;
+    my $v8InterfaceName = "V8$interfaceName";
+    my $attrExt = $attribute->signature->extendedAttributes;
+    my $attrName = $attribute->signature->name;
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
+    push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
+
+    push(@implContentDecls, "static v8::Handle<v8::Value> ${attrName}AttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)\n");
+    push(@implContentDecls, "{\n");
+    push(@implContentDecls, GenerateFeatureObservation($attrExt->{"V8MeasureAs"}));
+    if (HasCustomGetter($attrExt)) {
+        push(@implContentDecls, "    return ${v8InterfaceName}::${attrName}AttrGetterCustom(name, info);\n");
+    } else {
+        push(@implContentDecls, "    return ${interfaceName}V8Internal::${attrName}AttrGetter(name, info);\n");
+    }
+    push(@implContentDecls, "}\n\n");
+    push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
+}
+
 sub GenerateNormalAttrGetter
 {
     my $attribute = shift;
@@ -881,32 +911,22 @@ sub GenerateNormalAttrGetter
     my $attrExt = $attribute->signature->extendedAttributes;
     my $attrName = $attribute->signature->name;
     my $attrType = $attribute->signature->type;
-    $codeGenerator->AssertNotSequenceType($attrType);
-    my $nativeType = GetNativeTypeFromSignature($attribute->signature, -1);
 
+    if (HasCustomGetter($attrExt)) {
+        return;
+    }
+
+    $codeGenerator->AssertNotSequenceType($attrType);
     my $getterStringUsesImp = $interfaceName ne "SVGNumber";
+    my $nativeType = GetNativeTypeFromSignature($attribute->signature, -1);
     my $svgNativeType = $codeGenerator->GetSVGTypeNeedingTearOff($interfaceName);
 
-    # Getter
     my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
     push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
-
     push(@implContentDecls, <<END);
 static v8::Handle<v8::Value> ${attrName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
 END
-    push(@implContentDecls, GenerateFeatureObservation($attrExt->{"V8MeasureAs"}));
-
-    if (HasCustomGetter($attrExt)) {
-        push(@implContentDecls, <<END);
-        return ${v8InterfaceName}::${attrName}AttrGetterCustom(name, info);
-}
-
-END
-        push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
-        return;
-    }
-
     if ($svgNativeType) {
         my $svgWrappedNativeType = $codeGenerator->GetSVGWrappedTypeNeedingTearOff($interfaceName);
         if ($svgWrappedNativeType =~ /List/) {
@@ -2300,7 +2320,7 @@ sub GenerateSingleBatchedAttribute
         $setter = "${interfaceName}V8Internal::${interfaceName}ReplaceableAttrSetter";
     } else {
         # Default Getter and Setter
-        $getter = "${interfaceName}V8Internal::${attrName}AttrGetter";
+        $getter = "${interfaceName}V8Internal::${attrName}AttrGetterCallback";
         $setter = "${interfaceName}V8Internal::${attrName}AttrSetter";
 
         if (!HasCustomSetter($attrExt) && $attrExt->{"Replaceable"}) {
@@ -2391,7 +2411,7 @@ sub GenerateNonStandardFunction
         push(@implContent, <<END);
 
     // $commentInfo
-    ${conditional}$template->SetAccessor(v8::String::NewSymbol("$name"), ${interfaceName}V8Internal::${name}AttrGetter, ${interfaceName}V8Internal::${interfaceName}DomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
+    ${conditional}$template->SetAccessor(v8::String::NewSymbol("$name"), ${interfaceName}V8Internal::${name}AttrGetterCallback, ${interfaceName}V8Internal::${interfaceName}DomainSafeFunctionSetter, v8Undefined(), v8::ALL_CAN_READ, static_cast<v8::PropertyAttribute>($property_attributes));
 END
         return;
     }
@@ -2707,6 +2727,7 @@ END
         }
 
         GenerateNormalAttrGetter($attribute, $interface);
+        GenerateNormalAttrGetterCallback($attribute, $interface);
 
         if (!HasCustomSetter($attrExt) && $attrExt->{"Replaceable"}) {
             $hasReplaceable = 1;

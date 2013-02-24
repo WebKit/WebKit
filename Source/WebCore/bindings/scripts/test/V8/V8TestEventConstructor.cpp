@@ -76,19 +76,29 @@ static v8::Handle<v8::Value> attr1AttrGetter(v8::Local<v8::String> name, const v
     return v8String(imp->attr1(), info.GetIsolate(), ReturnUnsafeHandle);
 }
 
+static v8::Handle<v8::Value> attr1AttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestEventConstructorV8Internal::attr1AttrGetter(name, info);
+}
+
 static v8::Handle<v8::Value> attr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestEventConstructor* imp = V8TestEventConstructor::toNative(info.Holder());
     return v8String(imp->attr2(), info.GetIsolate(), ReturnUnsafeHandle);
 }
 
+static v8::Handle<v8::Value> attr2AttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
+{
+    return TestEventConstructorV8Internal::attr2AttrGetter(name, info);
+}
+
 } // namespace TestEventConstructorV8Internal
 
 static const V8DOMConfiguration::BatchedAttribute V8TestEventConstructorAttrs[] = {
     // Attribute 'attr1' (Type: 'readonly attribute' ExtAttr: '')
-    {"attr1", TestEventConstructorV8Internal::attr1AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"attr1", TestEventConstructorV8Internal::attr1AttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attr2' (Type: 'readonly attribute' ExtAttr: 'InitializedByEventConstructor')
-    {"attr2", TestEventConstructorV8Internal::attr2AttrGetter, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"attr2", TestEventConstructorV8Internal::attr2AttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
 v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Arguments& args)
