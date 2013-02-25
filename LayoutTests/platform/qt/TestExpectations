@@ -2668,7 +2668,3 @@ webkit.org/b/110054 compositing/geometry/limit-layer-bounds-fixed.html [ Failure
 
 # [Qt] newly added svg/as-background-image/svg-transformed-background.html fails
 webkit.org/b/110442 svg/as-background-image/svg-transformed-background.html [ Skip ]
-
-# [Qt] REGRESSION(r143654): some fast/js test crashes on 32 bit build
-webkit.org/b/110590 fast/js/regress/HashMap-string-put-get-iterate.html [ Skip ]
-webkit.org/b/110590 fast/js/dfg-value-to-int32-with-side-effect.html [ Skip ]
