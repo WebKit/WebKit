@@ -1,5 +1,25 @@
 2013-02-25  Nico Weber  <thakis@chromium.org>
 
+        [chromium] try to unbreak run-chromium-webkit-unit-tests on the mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=110767
+
+        Reviewed by Eric Seidel.
+
+        The tester runs gyp, which generates out/Release/build.ninja. The bot
+        scripts use existence (and timestamp) of that file to decide if the
+        current build is supposed to be ninja or xcodebuild. The file exists,
+        so the snapshot is extracted to out/Release. The snapshot doesn't
+        contain build.ninja however due to
+        http://trac.webkit.org/changeset/140375 , so after extracting the
+        snapshot the scripts think that this is an xcodebuild build. So remove
+        the part of that revision that removed ninja files from the archive,
+        and the bots should be happy again.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+
+2013-02-25  Nico Weber  <thakis@chromium.org>
+
         Fix tests after r143910
         https://bugs.webkit.org/show_bug.cgi?id=110757
 

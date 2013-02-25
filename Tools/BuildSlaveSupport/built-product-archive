@@ -166,9 +166,12 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
         print "Archiving", configurationBuildDirectory
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
+        # The scripts use the existence of out/Release/build.ninja to decide
+        # if this is a ninja build, so don't exclude build.ninja from the
+        # archive.
         ignorePatterns = ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb',
                           'BuildLog.htm', '*.obj', '*.pdb', '*.pch', '*.tlog', '*.lastbuildstate',
-                          '*.h', '*.c', '*.cc', '*.cpp', '*.stamp', '*.ninja']
+                          '*.h', '*.c', '*.cc', '*.cpp', '*.stamp']
 
         if fullPlatform and fullPlatform == 'chromium-android':
             ignorePatterns.extend(['*.so', '*-unaligned.apk', '*-unsigned.apk'])
