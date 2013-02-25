@@ -200,15 +200,16 @@ static void addMediaEngine(CreateMediaEnginePlayer, MediaEngineSupportedTypes, M
 static MediaPlayerFactory* bestMediaEngineForTypeAndCodecs(const String& type, const String& codecs, const String& keySystem, const KURL&, MediaPlayerFactory* current = 0);
 static MediaPlayerFactory* nextMediaEngine(MediaPlayerFactory* current);
 
-enum RequeryEngineOptions { DoNotRequeryEngines, RequeryEngines };
-static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions requeryFlags = DoNotRequeryEngines )
+enum RequeryEngineOptions { DoNotResetEngines, ResetEngines };
+static Vector<MediaPlayerFactory*>& installedMediaEngines(RequeryEngineOptions requeryFlags = DoNotResetEngines )
 {
     DEFINE_STATIC_LOCAL(Vector<MediaPlayerFactory*>, installedEngines, ());
     static bool enginesQueried = false;
 
-    if (requeryFlags == RequeryEngines) {
+    if (requeryFlags == ResetEngines) {
         installedEngines.clear();
         enginesQueried = false;
+        return installedEngines;
     }
 
     if (!enginesQueried) {
@@ -1121,9 +1122,9 @@ void MediaPlayer::setTextTrackRepresentation(TextTrackRepresentation* representa
 }
 #endif
 
-void MediaPlayer::requeryMediaEngines()
+void MediaPlayer::resetMediaEngines()
 {
-    installedMediaEngines(RequeryEngines);
+    installedMediaEngines(ResetEngines);
 }
 
 }

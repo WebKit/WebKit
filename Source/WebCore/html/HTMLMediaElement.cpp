@@ -4316,9 +4316,9 @@ void HTMLMediaElement::clearMediaCacheForSite(const String& site)
     MediaPlayer::clearMediaCacheForSite(site);
 }
 
-void HTMLMediaElement::requeryMediaEngines()
+void HTMLMediaElement::resetMediaEngines()
 {
-    MediaPlayer::requeryMediaEngines();
+    MediaPlayer::resetMediaEngines();
 }
 
 void HTMLMediaElement::privateBrowsingStateDidChange()

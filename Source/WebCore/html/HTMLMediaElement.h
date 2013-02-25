@@ -316,7 +316,7 @@ public:
     static void getSitesInMediaCache(Vector<String>&);
     static void clearMediaCache();
     static void clearMediaCacheForSite(const String&);
-    static void requeryMediaEngines();
+    static void resetMediaEngines();
 
     bool isPlaying() const { return m_playing; }
 

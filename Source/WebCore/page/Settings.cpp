@@ -542,7 +542,7 @@ void Settings::setAVFoundationEnabled(bool enabled)
         return;
 
     gAVFoundationEnabled = enabled;
-    HTMLMediaElement::requeryMediaEngines();
+    HTMLMediaElement::resetMediaEngines();
 }
 #endif
 
@@ -553,7 +553,7 @@ void Settings::setQTKitEnabled(bool enabled)
         return;
 
     gQTKitEnabled = enabled;
-    HTMLMediaElement::requeryMediaEngines();
+    HTMLMediaElement::resetMediaEngines();
 }
 #endif
 

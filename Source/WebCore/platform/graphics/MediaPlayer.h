@@ -435,7 +435,7 @@ public:
     void setTextTrackRepresentation(TextTrackRepresentation*);
 #endif
 
-    static void requeryMediaEngines();
+    static void resetMediaEngines();
 
 private:
     MediaPlayer(MediaPlayerClient*);
