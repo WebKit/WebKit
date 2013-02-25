@@ -599,7 +599,7 @@ reviewers_list = [
     Reviewer("Vicki Murley", "vicki@apple.com"),
     Reviewer("Vsevolod Vlasov", "vsevik@chromium.org", "vsevik"),
     Reviewer("Xan Lopez", ["xan.lopez@gmail.com", "xan@gnome.org", "xan@webkit.org", "xlopez@igalia.com"], "xan"),
-    Reviewer("Yong Li", ["yoli@rim.com", "yong.li.webkit@gmail.com"], "yoli"),
+    Reviewer("Yong Li", ["yong.li.webkit@outlook.com"], "yoli"),
     Reviewer("Yury Semikhatsky", "yurys@chromium.org", "yurys"),
     Reviewer("Yuta Kitamura", "yutak@chromium.org", "yutak"),
     Reviewer("Zack Rusin", "zack@kde.org", "zackr"),
