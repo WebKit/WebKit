@@ -1,5 +1,17 @@
 2013-02-24  Alberto Garcia  <albgarcia@rim.com>
 
+        [BlackBerry] GeolocationClientBlackBerry: add missing headers
+        https://bugs.webkit.org/show_bug.cgi?id=110563
+
+        Reviewed by Benjamin Poulain.
+
+        Frame.h and SecurityOrigin.h are necessary since r136969.
+        GeolocationPosition.h since r132360.
+
+        * WebCoreSupport/GeolocationClientBlackBerry.cpp:
+
+2013-02-24  Alberto Garcia  <albgarcia@rim.com>
+
         [BlackBerry] FatFingers: move rectForPoint() from HitTestResult to HitTestLocation
         https://bugs.webkit.org/show_bug.cgi?id=110570
 

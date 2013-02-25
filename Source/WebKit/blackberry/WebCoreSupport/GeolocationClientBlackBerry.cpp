@@ -20,10 +20,13 @@
 #include "GeolocationClientBlackBerry.h"
 
 #include "Chrome.h"
+#include "Frame.h"
 #include "Geolocation.h"
 #include "GeolocationController.h"
 #include "GeolocationError.h"
+#include "GeolocationPosition.h"
 #include "Page.h"
+#include "SecurityOrigin.h"
 #include "WebPage_p.h"
 
 #include <BlackBerryPlatformString.h>
