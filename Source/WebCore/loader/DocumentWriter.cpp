@@ -78,10 +78,8 @@ void DocumentWriter::replaceDocument(const String& source, Document* ownerDocume
 
         // FIXME: This should call DocumentParser::appendBytes instead of append
         // to support RawDataDocumentParsers.
-        if (DocumentParser* parser = m_frame->document()->parser()) {
-            parser->pinToMainThread();
+        if (DocumentParser* parser = m_frame->document()->parser())
             parser->append(source);
-        }
     }
 
     end();

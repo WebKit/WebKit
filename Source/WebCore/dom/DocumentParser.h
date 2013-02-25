@@ -49,8 +49,6 @@ public:
     virtual void appendBytes(DocumentWriter*, const char* bytes, size_t length) = 0;
     virtual void flush(DocumentWriter*) = 0;
 
-    virtual void pinToMainThread() { }
-
     // FIXME: append() should be private, but DocumentWriter::replaceDocument
     // uses it for now.
     virtual void append(const SegmentedString&) = 0;

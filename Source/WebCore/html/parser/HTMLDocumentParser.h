@@ -96,9 +96,9 @@ public:
 #endif
 
 protected:
-    virtual void insert(const SegmentedString&) OVERRIDE;
-    virtual void append(const SegmentedString&) OVERRIDE;
-    virtual void finish() OVERRIDE;
+    virtual void insert(const SegmentedString&);
+    virtual void append(const SegmentedString&);
+    virtual void finish();
 
     HTMLDocumentParser(HTMLDocument*, bool reportErrors);
     HTMLDocumentParser(DocumentFragment*, Element* contextElement, FragmentScriptingPermission);
@@ -114,24 +114,21 @@ private:
     }
 
     // DocumentParser
-#if ENABLE(THREADED_HTML_PARSER)
-    virtual void pinToMainThread() OVERRIDE;
-#endif
-    virtual void detach() OVERRIDE;
-    virtual bool hasInsertionPoint() OVERRIDE;
-    virtual bool processingData() const OVERRIDE;
-    virtual void prepareToStopParsing() OVERRIDE;
-    virtual void stopParsing() OVERRIDE;
-    virtual bool isWaitingForScripts() const OVERRIDE;
-    virtual bool isExecutingScript() const OVERRIDE;
-    virtual void executeScriptsWaitingForStylesheets() OVERRIDE;
+    virtual void detach();
+    virtual bool hasInsertionPoint();
+    virtual bool processingData() const;
+    virtual void prepareToStopParsing();
+    virtual void stopParsing();
+    virtual bool isWaitingForScripts() const;
+    virtual bool isExecutingScript() const;
+    virtual void executeScriptsWaitingForStylesheets();
 
     // HTMLScriptRunnerHost
-    virtual void watchForLoad(CachedResource*) OVERRIDE;
-    virtual void stopWatchingForLoad(CachedResource*) OVERRIDE;
+    virtual void watchForLoad(CachedResource*);
+    virtual void stopWatchingForLoad(CachedResource*);
     virtual HTMLInputStream& inputStream() { return m_input; }
     virtual bool hasPreloadScanner() const { return m_preloadScanner.get() && !shouldUseThreading(); }
-    virtual void appendCurrentInputStreamToPreloadScannerAndScan() OVERRIDE;
+    virtual void appendCurrentInputStreamToPreloadScannerAndScan();
 
     // CachedResourceClient
     virtual void notifyFinished(CachedResource*);
@@ -167,7 +164,7 @@ private:
     void attemptToRunDeferredScriptsAndEnd();
     void end();
 
-    bool shouldUseThreading() const { return m_options.useThreading && !m_isPinnedToMainThread; }
+    bool shouldUseThreading() const { return m_options.useThreading && !isParsingFragment(); }
 
     bool isParsingFragment() const;
     bool isScheduledForResume() const;
@@ -199,7 +196,6 @@ private:
 #endif
     OwnPtr<HTMLResourcePreloader> m_preloader;
 
-    bool m_isPinnedToMainThread;
     bool m_endWasDelayed;
     bool m_haveBackgroundParser;
     unsigned m_pumpSessionNestingLevel;
