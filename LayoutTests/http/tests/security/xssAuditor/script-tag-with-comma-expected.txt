@@ -1,6 +1,0 @@
-CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
-
-CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
-
- 
-Test that the XSSAuditor catches the specific case where the IIS webserver resovles multiply occuring query parameters by concatenating them before passing the result to the application. Conceptually, its as if ?a=1&a=2 becomes ?a=1,2. The test passes if the XSSAuditor logs console messages and no alerts fire.
