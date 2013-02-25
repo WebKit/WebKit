@@ -122,13 +122,13 @@ static v8::Handle<v8::Value> constructor4(const v8::Arguments& args)
 static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 {
     if ((args.Length() == 1 && (V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()))))
-        return constructor1(args);
+        return TestOverloadedConstructorsV8Internal::constructor1(args);
     if ((args.Length() == 1 && (V8ArrayBufferView::HasInstance(args[0], args.GetIsolate()))))
-        return constructor2(args);
+        return TestOverloadedConstructorsV8Internal::constructor2(args);
     if ((args.Length() == 1 && (V8Blob::HasInstance(args[0], args.GetIsolate()))))
-        return constructor3(args);
+        return TestOverloadedConstructorsV8Internal::constructor3(args);
     if (args.Length() == 1)
-        return constructor4(args);
+        return TestOverloadedConstructorsV8Internal::constructor4(args);
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
     return throwTypeError(0, args.GetIsolate());

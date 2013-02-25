@@ -1927,7 +1927,7 @@ END
         my ($numMandatoryParams, $parametersCheck) = GenerateFunctionParametersCheck($constructor);
         $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
         push(@implContentDecls, "    if ($parametersCheck)\n");
-        push(@implContentDecls, "        return $interfaceNameV8Internal::$name(args);\n");
+        push(@implContentDecls, "        return ${interfaceName}V8Internal::${name}(args);\n");
     }
     if ($leastNumMandatoryParams >= 1) {
         push(@implContentDecls, "    if (args.Length() < $leastNumMandatoryParams)\n");
