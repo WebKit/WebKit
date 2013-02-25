@@ -179,6 +179,11 @@ static void staticStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8:
     return;
 }
 
+static void staticStringAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::staticStringAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> enumAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -201,6 +206,11 @@ static void enumAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> 
     return;
 }
 
+static void enumAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enumAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> shortAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -218,6 +228,11 @@ static void shortAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value>
     int v = toInt32(value);
     imp->setShortAttr(v);
     return;
+}
+
+static void shortAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::shortAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> unsignedShortAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -239,6 +254,11 @@ static void unsignedShortAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8
     return;
 }
 
+static void unsignedShortAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::unsignedShortAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> longAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -256,6 +276,11 @@ static void longAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> 
     int v = toInt32(value);
     imp->setLongAttr(v);
     return;
+}
+
+static void longAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::longAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> longLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -277,6 +302,11 @@ static void longLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Val
     return;
 }
 
+static void longLongAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::longLongAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> unsignedLongLongAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -294,6 +324,11 @@ static void unsignedLongLongAttrAttrSetter(v8::Local<v8::String> name, v8::Local
     unsigned long long v = toInt64(value);
     imp->setUnsignedLongLongAttr(v);
     return;
+}
+
+static void unsignedLongLongAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::unsignedLongLongAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> stringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -315,6 +350,11 @@ static void stringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
     return;
 }
 
+static void stringAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::stringAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> testObjAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -329,11 +369,16 @@ static v8::Handle<v8::Value> testObjAttrAttrGetterCallback(v8::Local<v8::String>
 
 static void testObjAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::TestFeature);
     TestObj* imp = V8TestObj::toNative(info.Holder());
     TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate()) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
     imp->setTestObjAttr(WTF::getPtr(v));
     return;
+}
+
+static void testObjAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    FeatureObserver::observe(activeDOMWindow(BindingState::instance()), FeatureObserver::TestFeature);
+    TestObjV8Internal::testObjAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> XMLObjAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -355,6 +400,11 @@ static void XMLObjAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
     return;
 }
 
+static void XMLObjAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::XMLObjAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> createAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -372,6 +422,11 @@ static void createAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> va
     bool v = value->BooleanValue();
     imp->setCreate(v);
     return;
+}
+
+static void createAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::createAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -393,6 +448,11 @@ static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<
     return;
 }
 
+static void reflectedStringAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedStringAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> reflectedIntegralAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -410,6 +470,11 @@ static void reflectedIntegralAttrAttrSetter(v8::Local<v8::String> name, v8::Loca
     int v = toInt32(value);
     imp->setIntegralAttribute(WebCore::HTMLNames::reflectedintegralattrAttr, v);
     return;
+}
+
+static void reflectedIntegralAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedIntegralAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> reflectedUnsignedIntegralAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -431,6 +496,11 @@ static void reflectedUnsignedIntegralAttrAttrSetter(v8::Local<v8::String> name, 
     return;
 }
 
+static void reflectedUnsignedIntegralAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedUnsignedIntegralAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> reflectedBooleanAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -448,6 +518,11 @@ static void reflectedBooleanAttrAttrSetter(v8::Local<v8::String> name, v8::Local
     bool v = value->BooleanValue();
     imp->setBooleanAttribute(WebCore::HTMLNames::reflectedbooleanattrAttr, v);
     return;
+}
+
+static void reflectedBooleanAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedBooleanAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> reflectedURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -469,6 +544,11 @@ static void reflectedURLAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8:
     return;
 }
 
+static void reflectedURLAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedURLAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> reflectedStringAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -486,6 +566,11 @@ static void reflectedStringAttrAttrSetter(v8::Local<v8::String> name, v8::Local<
     V8TRYCATCH_FOR_V8STRINGRESOURCE_VOID(V8StringResource<WithNullCheck>, v, value);
     imp->setAttribute(WebCore::HTMLNames::customContentStringAttrAttr, v);
     return;
+}
+
+static void reflectedStringAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedStringAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> reflectedCustomIntegralAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -507,6 +592,11 @@ static void reflectedCustomIntegralAttrAttrSetter(v8::Local<v8::String> name, v8
     return;
 }
 
+static void reflectedCustomIntegralAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedCustomIntegralAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> reflectedCustomBooleanAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -524,6 +614,11 @@ static void reflectedCustomBooleanAttrAttrSetter(v8::Local<v8::String> name, v8:
     bool v = value->BooleanValue();
     imp->setBooleanAttribute(WebCore::HTMLNames::customContentBooleanAttrAttr, v);
     return;
+}
+
+static void reflectedCustomBooleanAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedCustomBooleanAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> reflectedCustomURLAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -545,6 +640,11 @@ static void reflectedCustomURLAttrAttrSetter(v8::Local<v8::String> name, v8::Loc
     return;
 }
 
+static void reflectedCustomURLAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::reflectedCustomURLAttrAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> typedArrayAttrAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -562,6 +662,11 @@ static void typedArrayAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::V
     Float32Array* v = V8Float32Array::HasInstance(value, info.GetIsolate()) ? V8Float32Array::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
     imp->setTypedArrayAttr(WTF::getPtr(v));
     return;
+}
+
+static void typedArrayAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::typedArrayAttrAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> attrWithGetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -587,6 +692,11 @@ static void attrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Lo
     return;
 }
 
+static void attrWithGetterExceptionAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::attrWithGetterExceptionAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> attrWithSetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -607,6 +717,11 @@ static void attrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, v8::Lo
     if (UNLIKELY(ec))
         setDOMException(ec, info.GetIsolate());
     return;
+}
+
+static void attrWithSetterExceptionAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::attrWithSetterExceptionAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> stringAttrWithGetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -632,6 +747,11 @@ static void stringAttrWithGetterExceptionAttrSetter(v8::Local<v8::String> name, 
     return;
 }
 
+static void stringAttrWithGetterExceptionAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::stringAttrWithGetterExceptionAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> stringAttrWithSetterExceptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -654,14 +774,19 @@ static void stringAttrWithSetterExceptionAttrSetter(v8::Local<v8::String> name, 
     return;
 }
 
+static void stringAttrWithSetterExceptionAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::stringAttrWithSetterExceptionAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> customAttrAttrGetterCallback(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     return V8TestObj::customAttrAttrGetterCustom(name, info);
 }
 
-static void customAttrAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+static void customAttrAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-        V8TestObj::customAttrAttrSetterCustom(name, value, info);
+    V8TestObj::customAttrAttrSetterCustom(name, value, info);
 }
 
 static v8::Handle<v8::Value> withScriptStateAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -693,6 +818,11 @@ static void withScriptStateAttributeAttrSetter(v8::Local<v8::String> name, v8::L
     return;
 }
 
+static void withScriptStateAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::withScriptStateAttributeAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> withScriptExecutionContextAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -712,6 +842,11 @@ static void withScriptExecutionContextAttributeAttrSetter(v8::Local<v8::String> 
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     imp->setWithScriptExecutionContextAttribute(scriptContext, WTF::getPtr(v));
     return;
+}
+
+static void withScriptExecutionContextAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::withScriptExecutionContextAttributeAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> withScriptStateAttributeRaisesAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -749,6 +884,11 @@ static void withScriptStateAttributeRaisesAttrSetter(v8::Local<v8::String> name,
     return;
 }
 
+static void withScriptStateAttributeRaisesAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::withScriptStateAttributeRaisesAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> withScriptExecutionContextAttributeRaisesAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -772,6 +912,11 @@ static void withScriptExecutionContextAttributeRaisesAttrSetter(v8::Local<v8::St
     ScriptExecutionContext* scriptContext = getScriptExecutionContext();
     imp->setWithScriptExecutionContextAttributeRaises(scriptContext, WTF::getPtr(v));
     return;
+}
+
+static void withScriptExecutionContextAttributeRaisesAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::withScriptExecutionContextAttributeRaisesAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -803,6 +948,11 @@ static void withScriptExecutionContextAndScriptStateAttributeAttrSetter(v8::Loca
     if (state.hadException())
         throwError(state.exception(), info.GetIsolate());
     return;
+}
+
+static void withScriptExecutionContextAndScriptStateAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateAttributeRaisesAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -842,6 +992,11 @@ static void withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter(v8
     return;
 }
 
+static void withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -873,6 +1028,11 @@ static void withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSette
     return;
 }
 
+static void withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> withScriptArgumentsAndCallStackAttributeAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -890,6 +1050,11 @@ static void withScriptArgumentsAndCallStackAttributeAttrSetter(v8::Local<v8::Str
     TestObj* v = V8TestObj::HasInstance(value, info.GetIsolate()) ? V8TestObj::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
     imp->setWithScriptArgumentsAndCallStackAttribute(WTF::getPtr(v));
     return;
+}
+
+static void withScriptArgumentsAndCallStackAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrSetter(name, value, info);
 }
 
 #if ENABLE(Condition1)
@@ -919,6 +1084,15 @@ static void conditionalAttr1AttrSetter(v8::Local<v8::String> name, v8::Local<v8:
     int v = toInt32(value);
     imp->setConditionalAttr1(v);
     return;
+}
+
+#endif // ENABLE(Condition1)
+
+#if ENABLE(Condition1)
+
+static void conditionalAttr1AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::conditionalAttr1AttrSetter(name, value, info);
 }
 
 #endif // ENABLE(Condition1)
@@ -954,6 +1128,15 @@ static void conditionalAttr2AttrSetter(v8::Local<v8::String> name, v8::Local<v8:
 
 #endif // ENABLE(Condition1) && ENABLE(Condition2)
 
+#if ENABLE(Condition1) && ENABLE(Condition2)
+
+static void conditionalAttr2AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::conditionalAttr2AttrSetter(name, value, info);
+}
+
+#endif // ENABLE(Condition1) && ENABLE(Condition2)
+
 #if ENABLE(Condition1) || ENABLE(Condition2)
 
 static v8::Handle<v8::Value> conditionalAttr3AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -981,6 +1164,15 @@ static void conditionalAttr3AttrSetter(v8::Local<v8::String> name, v8::Local<v8:
     int v = toInt32(value);
     imp->setConditionalAttr3(v);
     return;
+}
+
+#endif // ENABLE(Condition1) || ENABLE(Condition2)
+
+#if ENABLE(Condition1) || ENABLE(Condition2)
+
+static void conditionalAttr3AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::conditionalAttr3AttrSetter(name, value, info);
 }
 
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
@@ -1026,6 +1218,11 @@ static void anyAttributeAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Val
     return;
 }
 
+static void anyAttributeAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::anyAttributeAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> enabledAtRuntimeAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -1043,6 +1240,11 @@ static void enabledAtRuntimeAttr1AttrSetter(v8::Local<v8::String> name, v8::Loca
     int v = toInt32(value);
     imp->setEnabledAtRuntimeAttr1(v);
     return;
+}
+
+static void enabledAtRuntimeAttr1AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enabledAtRuntimeAttr1AttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> enabledAtRuntimeAttr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -1064,6 +1266,11 @@ static void enabledAtRuntimeAttr2AttrSetter(v8::Local<v8::String> name, v8::Loca
     return;
 }
 
+static void enabledAtRuntimeAttr2AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enabledAtRuntimeAttr2AttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> enabledPerContextAttr1AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -1081,6 +1288,11 @@ static void enabledPerContextAttr1AttrSetter(v8::Local<v8::String> name, v8::Loc
     int v = toInt32(value);
     imp->setEnabledPerContextAttr1(v);
     return;
+}
+
+static void enabledPerContextAttr1AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enabledPerContextAttr1AttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> enabledPerContextAttr2AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -1102,6 +1314,11 @@ static void enabledPerContextAttr2AttrSetter(v8::Local<v8::String> name, v8::Loc
     return;
 }
 
+static void enabledPerContextAttr2AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::enabledPerContextAttr2AttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> floatArrayAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -1121,6 +1338,11 @@ static void floatArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
     return;
 }
 
+static void floatArrayAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::floatArrayAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> doubleArrayAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -1138,6 +1360,11 @@ static void doubleArrayAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Valu
     Vector<double> v = toNativeArray<double>(value);
     imp->setDoubleArray(v);
     return;
+}
+
+static void doubleArrayAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::doubleArrayAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> contentDocumentAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -1173,6 +1400,11 @@ static void mutablePointAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Val
     return;
 }
 
+static void mutablePointAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::mutablePointAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> immutablePointAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -1190,6 +1422,11 @@ static void immutablePointAttrSetter(v8::Local<v8::String> name, v8::Local<v8::V
     RefPtr<SVGPropertyTearOff<FloatPoint> > v = V8SVGPoint::HasInstance(value, info.GetIsolate()) ? V8SVGPoint::toNative(v8::Handle<v8::Object>::Cast(value)) : 0;
     imp->setImmutablePoint(WTF::getPtr(v));
     return;
+}
+
+static void immutablePointAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::immutablePointAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> strawberryAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -1211,6 +1448,11 @@ static void strawberryAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value
     return;
 }
 
+static void strawberryAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::strawberryAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> strictFloatAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     TestObj* imp = V8TestObj::toNative(info.Holder());
@@ -1228,6 +1470,11 @@ static void strictFloatAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Valu
     float v = static_cast<float>(value->NumberValue());
     imp->setStrictFloat(v);
     return;
+}
+
+static void strictFloatAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::strictFloatAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> descriptionAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -1258,6 +1505,11 @@ static void idAttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value,
     int v = toInt32(value);
     imp->setId(v);
     return;
+}
+
+static void idAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    TestObjV8Internal::idAttrSetter(name, value, info);
 }
 
 static v8::Handle<v8::Value> hashAttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
@@ -2202,86 +2454,86 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     // Attribute 'staticReadOnlyLongAttr' (Type: 'readonly attribute' ExtAttr: '')
     {"staticReadOnlyLongAttr", TestObjV8Internal::staticReadOnlyLongAttrAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'staticStringAttr' (Type: 'attribute' ExtAttr: '')
-    {"staticStringAttr", TestObjV8Internal::staticStringAttrAttrGetterCallback, TestObjV8Internal::staticStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"staticStringAttr", TestObjV8Internal::staticStringAttrAttrGetterCallback, TestObjV8Internal::staticStringAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'TestSubObj' (Type: 'readonly attribute' ExtAttr: '')
     {"TestSubObj", TestObjV8Internal::TestObjConstructorGetter, 0, &V8TestSubObj::info, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'enumAttr' (Type: 'attribute' ExtAttr: '')
-    {"enumAttr", TestObjV8Internal::enumAttrAttrGetterCallback, TestObjV8Internal::enumAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"enumAttr", TestObjV8Internal::enumAttrAttrGetterCallback, TestObjV8Internal::enumAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'shortAttr' (Type: 'attribute' ExtAttr: '')
-    {"shortAttr", TestObjV8Internal::shortAttrAttrGetterCallback, TestObjV8Internal::shortAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"shortAttr", TestObjV8Internal::shortAttrAttrGetterCallback, TestObjV8Internal::shortAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'unsignedShortAttr' (Type: 'attribute' ExtAttr: '')
-    {"unsignedShortAttr", TestObjV8Internal::unsignedShortAttrAttrGetterCallback, TestObjV8Internal::unsignedShortAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"unsignedShortAttr", TestObjV8Internal::unsignedShortAttrAttrGetterCallback, TestObjV8Internal::unsignedShortAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'longAttr' (Type: 'attribute' ExtAttr: '')
-    {"longAttr", TestObjV8Internal::longAttrAttrGetterCallback, TestObjV8Internal::longAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"longAttr", TestObjV8Internal::longAttrAttrGetterCallback, TestObjV8Internal::longAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'longLongAttr' (Type: 'attribute' ExtAttr: '')
-    {"longLongAttr", TestObjV8Internal::longLongAttrAttrGetterCallback, TestObjV8Internal::longLongAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"longLongAttr", TestObjV8Internal::longLongAttrAttrGetterCallback, TestObjV8Internal::longLongAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'unsignedLongLongAttr' (Type: 'attribute' ExtAttr: '')
-    {"unsignedLongLongAttr", TestObjV8Internal::unsignedLongLongAttrAttrGetterCallback, TestObjV8Internal::unsignedLongLongAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"unsignedLongLongAttr", TestObjV8Internal::unsignedLongLongAttrAttrGetterCallback, TestObjV8Internal::unsignedLongLongAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'stringAttr' (Type: 'attribute' ExtAttr: '')
-    {"stringAttr", TestObjV8Internal::stringAttrAttrGetterCallback, TestObjV8Internal::stringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"stringAttr", TestObjV8Internal::stringAttrAttrGetterCallback, TestObjV8Internal::stringAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'testObjAttr' (Type: 'attribute' ExtAttr: 'V8MeasureAs')
-    {"testObjAttr", TestObjV8Internal::testObjAttrAttrGetterCallback, TestObjV8Internal::testObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"testObjAttr", TestObjV8Internal::testObjAttrAttrGetterCallback, TestObjV8Internal::testObjAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'XMLObjAttr' (Type: 'attribute' ExtAttr: '')
-    {"XMLObjAttr", TestObjV8Internal::XMLObjAttrAttrGetterCallback, TestObjV8Internal::XMLObjAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"XMLObjAttr", TestObjV8Internal::XMLObjAttrAttrGetterCallback, TestObjV8Internal::XMLObjAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'create' (Type: 'attribute' ExtAttr: '')
-    {"create", TestObjV8Internal::createAttrGetterCallback, TestObjV8Internal::createAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"create", TestObjV8Internal::createAttrGetterCallback, TestObjV8Internal::createAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedStringAttr' (Type: 'attribute' ExtAttr: 'Reflect')
-    {"reflectedStringAttr", TestObjV8Internal::reflectedStringAttrAttrGetterCallback, TestObjV8Internal::reflectedStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedStringAttr", TestObjV8Internal::reflectedStringAttrAttrGetterCallback, TestObjV8Internal::reflectedStringAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
-    {"reflectedIntegralAttr", TestObjV8Internal::reflectedIntegralAttrAttrGetterCallback, TestObjV8Internal::reflectedIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedIntegralAttr", TestObjV8Internal::reflectedIntegralAttrAttrGetterCallback, TestObjV8Internal::reflectedIntegralAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedUnsignedIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
-    {"reflectedUnsignedIntegralAttr", TestObjV8Internal::reflectedUnsignedIntegralAttrAttrGetterCallback, TestObjV8Internal::reflectedUnsignedIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedUnsignedIntegralAttr", TestObjV8Internal::reflectedUnsignedIntegralAttrAttrGetterCallback, TestObjV8Internal::reflectedUnsignedIntegralAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedBooleanAttr' (Type: 'attribute' ExtAttr: 'Reflect')
-    {"reflectedBooleanAttr", TestObjV8Internal::reflectedBooleanAttrAttrGetterCallback, TestObjV8Internal::reflectedBooleanAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedBooleanAttr", TestObjV8Internal::reflectedBooleanAttrAttrGetterCallback, TestObjV8Internal::reflectedBooleanAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedURLAttr' (Type: 'attribute' ExtAttr: 'URL Reflect')
-    {"reflectedURLAttr", TestObjV8Internal::reflectedURLAttrAttrGetterCallback, TestObjV8Internal::reflectedURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedURLAttr", TestObjV8Internal::reflectedURLAttrAttrGetterCallback, TestObjV8Internal::reflectedURLAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedStringAttr' (Type: 'attribute' ExtAttr: 'Reflect')
-    {"reflectedStringAttr", TestObjV8Internal::reflectedStringAttrAttrGetterCallback, TestObjV8Internal::reflectedStringAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedStringAttr", TestObjV8Internal::reflectedStringAttrAttrGetterCallback, TestObjV8Internal::reflectedStringAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedCustomIntegralAttr' (Type: 'attribute' ExtAttr: 'Reflect')
-    {"reflectedCustomIntegralAttr", TestObjV8Internal::reflectedCustomIntegralAttrAttrGetterCallback, TestObjV8Internal::reflectedCustomIntegralAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedCustomIntegralAttr", TestObjV8Internal::reflectedCustomIntegralAttrAttrGetterCallback, TestObjV8Internal::reflectedCustomIntegralAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedCustomBooleanAttr' (Type: 'attribute' ExtAttr: 'Reflect')
-    {"reflectedCustomBooleanAttr", TestObjV8Internal::reflectedCustomBooleanAttrAttrGetterCallback, TestObjV8Internal::reflectedCustomBooleanAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedCustomBooleanAttr", TestObjV8Internal::reflectedCustomBooleanAttrAttrGetterCallback, TestObjV8Internal::reflectedCustomBooleanAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'reflectedCustomURLAttr' (Type: 'attribute' ExtAttr: 'URL Reflect')
-    {"reflectedCustomURLAttr", TestObjV8Internal::reflectedCustomURLAttrAttrGetterCallback, TestObjV8Internal::reflectedCustomURLAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"reflectedCustomURLAttr", TestObjV8Internal::reflectedCustomURLAttrAttrGetterCallback, TestObjV8Internal::reflectedCustomURLAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'typedArrayAttr' (Type: 'attribute' ExtAttr: '')
-    {"typedArrayAttr", TestObjV8Internal::typedArrayAttrAttrGetterCallback, TestObjV8Internal::typedArrayAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"typedArrayAttr", TestObjV8Internal::typedArrayAttrAttrGetterCallback, TestObjV8Internal::typedArrayAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithGetterException' (Type: 'attribute' ExtAttr: '')
-    {"attrWithGetterException", TestObjV8Internal::attrWithGetterExceptionAttrGetterCallback, TestObjV8Internal::attrWithGetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"attrWithGetterException", TestObjV8Internal::attrWithGetterExceptionAttrGetterCallback, TestObjV8Internal::attrWithGetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'attrWithSetterException' (Type: 'attribute' ExtAttr: '')
-    {"attrWithSetterException", TestObjV8Internal::attrWithSetterExceptionAttrGetterCallback, TestObjV8Internal::attrWithSetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"attrWithSetterException", TestObjV8Internal::attrWithSetterExceptionAttrGetterCallback, TestObjV8Internal::attrWithSetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'stringAttrWithGetterException' (Type: 'attribute' ExtAttr: '')
-    {"stringAttrWithGetterException", TestObjV8Internal::stringAttrWithGetterExceptionAttrGetterCallback, TestObjV8Internal::stringAttrWithGetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"stringAttrWithGetterException", TestObjV8Internal::stringAttrWithGetterExceptionAttrGetterCallback, TestObjV8Internal::stringAttrWithGetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'stringAttrWithSetterException' (Type: 'attribute' ExtAttr: '')
-    {"stringAttrWithSetterException", TestObjV8Internal::stringAttrWithSetterExceptionAttrGetterCallback, TestObjV8Internal::stringAttrWithSetterExceptionAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"stringAttrWithSetterException", TestObjV8Internal::stringAttrWithSetterExceptionAttrGetterCallback, TestObjV8Internal::stringAttrWithSetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'customAttr' (Type: 'attribute' ExtAttr: 'Custom')
-    {"customAttr", TestObjV8Internal::customAttrAttrGetterCallback, TestObjV8Internal::customAttrAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"customAttr", TestObjV8Internal::customAttrAttrGetterCallback, TestObjV8Internal::customAttrAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptStateAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
-    {"withScriptStateAttribute", TestObjV8Internal::withScriptStateAttributeAttrGetterCallback, TestObjV8Internal::withScriptStateAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"withScriptStateAttribute", TestObjV8Internal::withScriptStateAttributeAttrGetterCallback, TestObjV8Internal::withScriptStateAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptExecutionContextAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
-    {"withScriptExecutionContextAttribute", TestObjV8Internal::withScriptExecutionContextAttributeAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"withScriptExecutionContextAttribute", TestObjV8Internal::withScriptExecutionContextAttributeAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptStateAttributeRaises' (Type: 'attribute' ExtAttr: 'CallWith')
-    {"withScriptStateAttributeRaises", TestObjV8Internal::withScriptStateAttributeRaisesAttrGetterCallback, TestObjV8Internal::withScriptStateAttributeRaisesAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"withScriptStateAttributeRaises", TestObjV8Internal::withScriptStateAttributeRaisesAttrGetterCallback, TestObjV8Internal::withScriptStateAttributeRaisesAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptExecutionContextAttributeRaises' (Type: 'attribute' ExtAttr: 'CallWith')
-    {"withScriptExecutionContextAttributeRaises", TestObjV8Internal::withScriptExecutionContextAttributeRaisesAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAttributeRaisesAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"withScriptExecutionContextAttributeRaises", TestObjV8Internal::withScriptExecutionContextAttributeRaisesAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAttributeRaisesAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptExecutionContextAndScriptStateAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
-    {"withScriptExecutionContextAndScriptStateAttribute", TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"withScriptExecutionContextAndScriptStateAttribute", TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptExecutionContextAndScriptStateAttributeRaises' (Type: 'attribute' ExtAttr: 'CallWith')
-    {"withScriptExecutionContextAndScriptStateAttributeRaises", TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"withScriptExecutionContextAndScriptStateAttributeRaises", TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAndScriptStateAttributeRaisesAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptExecutionContextAndScriptStateWithSpacesAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
-    {"withScriptExecutionContextAndScriptStateWithSpacesAttribute", TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"withScriptExecutionContextAndScriptStateWithSpacesAttribute", TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrGetterCallback, TestObjV8Internal::withScriptExecutionContextAndScriptStateWithSpacesAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'withScriptArgumentsAndCallStackAttribute' (Type: 'attribute' ExtAttr: 'CallWith')
-    {"withScriptArgumentsAndCallStackAttribute", TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrGetterCallback, TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"withScriptArgumentsAndCallStackAttribute", TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrGetterCallback, TestObjV8Internal::withScriptArgumentsAndCallStackAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #if ENABLE(Condition1)
     // Attribute 'conditionalAttr1' (Type: 'attribute' ExtAttr: 'Conditional')
-    {"conditionalAttr1", TestObjV8Internal::conditionalAttr1AttrGetterCallback, TestObjV8Internal::conditionalAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"conditionalAttr1", TestObjV8Internal::conditionalAttr1AttrGetterCallback, TestObjV8Internal::conditionalAttr1AttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #endif // ENABLE(Condition1)
 #if ENABLE(Condition1) && ENABLE(Condition2)
     // Attribute 'conditionalAttr2' (Type: 'attribute' ExtAttr: 'Conditional')
-    {"conditionalAttr2", TestObjV8Internal::conditionalAttr2AttrGetterCallback, TestObjV8Internal::conditionalAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"conditionalAttr2", TestObjV8Internal::conditionalAttr2AttrGetterCallback, TestObjV8Internal::conditionalAttr2AttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #endif // ENABLE(Condition1) && ENABLE(Condition2)
 #if ENABLE(Condition1) || ENABLE(Condition2)
     // Attribute 'conditionalAttr3' (Type: 'attribute' ExtAttr: 'Conditional')
-    {"conditionalAttr3", TestObjV8Internal::conditionalAttr3AttrGetterCallback, TestObjV8Internal::conditionalAttr3AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"conditionalAttr3", TestObjV8Internal::conditionalAttr3AttrGetterCallback, TestObjV8Internal::conditionalAttr3AttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 #endif // ENABLE(Condition1) || ENABLE(Condition2)
 #if ENABLE(Condition1)
     // Attribute 'conditionalAttr4' (Type: 'attribute' ExtAttr: 'Conditional')
@@ -2300,25 +2552,25 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     // Attribute 'cachedAttribute2' (Type: 'readonly attribute' ExtAttr: 'CachedAttribute')
     {"cachedAttribute2", TestObjV8Internal::cachedAttribute2AttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'anyAttribute' (Type: 'attribute' ExtAttr: '')
-    {"anyAttribute", TestObjV8Internal::anyAttributeAttrGetterCallback, TestObjV8Internal::anyAttributeAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"anyAttribute", TestObjV8Internal::anyAttributeAttrGetterCallback, TestObjV8Internal::anyAttributeAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'floatArray' (Type: 'attribute' ExtAttr: '')
-    {"floatArray", TestObjV8Internal::floatArrayAttrGetterCallback, TestObjV8Internal::floatArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"floatArray", TestObjV8Internal::floatArrayAttrGetterCallback, TestObjV8Internal::floatArrayAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'doubleArray' (Type: 'attribute' ExtAttr: '')
-    {"doubleArray", TestObjV8Internal::doubleArrayAttrGetterCallback, TestObjV8Internal::doubleArrayAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"doubleArray", TestObjV8Internal::doubleArrayAttrGetterCallback, TestObjV8Internal::doubleArrayAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'contentDocument' (Type: 'readonly attribute' ExtAttr: 'CheckSecurityForNode')
     {"contentDocument", TestObjV8Internal::contentDocumentAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'mutablePoint' (Type: 'attribute' ExtAttr: '')
-    {"mutablePoint", TestObjV8Internal::mutablePointAttrGetterCallback, TestObjV8Internal::mutablePointAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"mutablePoint", TestObjV8Internal::mutablePointAttrGetterCallback, TestObjV8Internal::mutablePointAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'immutablePoint' (Type: 'attribute' ExtAttr: 'Immutable')
-    {"immutablePoint", TestObjV8Internal::immutablePointAttrGetterCallback, TestObjV8Internal::immutablePointAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"immutablePoint", TestObjV8Internal::immutablePointAttrGetterCallback, TestObjV8Internal::immutablePointAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'strawberry' (Type: 'attribute' ExtAttr: 'ImplementedAs')
-    {"strawberry", TestObjV8Internal::strawberryAttrGetterCallback, TestObjV8Internal::strawberryAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"strawberry", TestObjV8Internal::strawberryAttrGetterCallback, TestObjV8Internal::strawberryAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'strictFloat' (Type: 'attribute' ExtAttr: 'StrictTypeChecking')
-    {"strictFloat", TestObjV8Internal::strictFloatAttrGetterCallback, TestObjV8Internal::strictFloatAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"strictFloat", TestObjV8Internal::strictFloatAttrGetterCallback, TestObjV8Internal::strictFloatAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'description' (Type: 'readonly attribute' ExtAttr: '')
     {"description", TestObjV8Internal::descriptionAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'id' (Type: 'attribute' ExtAttr: '')
-    {"id", TestObjV8Internal::idAttrGetterCallback, TestObjV8Internal::idAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    {"id", TestObjV8Internal::idAttrGetterCallback, TestObjV8Internal::idAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'hash' (Type: 'readonly attribute' ExtAttr: '')
     {"hash", TestObjV8Internal::hashAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
     // Attribute 'replaceableAttribute' (Type: 'readonly attribute' ExtAttr: 'Replaceable')
@@ -2449,13 +2701,13 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     if (RuntimeEnabledFeatures::enabledAtRuntimeAttr1Enabled()) {
         static const V8DOMConfiguration::BatchedAttribute attrData =\
         // Attribute 'enabledAtRuntimeAttr1' (Type: 'attribute' ExtAttr: 'V8EnabledAtRuntime')
-        {"enabledAtRuntimeAttr1", TestObjV8Internal::enabledAtRuntimeAttr1AttrGetterCallback, TestObjV8Internal::enabledAtRuntimeAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        {"enabledAtRuntimeAttr1", TestObjV8Internal::enabledAtRuntimeAttr1AttrGetterCallback, TestObjV8Internal::enabledAtRuntimeAttr1AttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         V8DOMConfiguration::configureAttribute(instance, proto, attrData, isolate);
     }
     if (RuntimeEnabledFeatures::featureNameEnabled()) {
         static const V8DOMConfiguration::BatchedAttribute attrData =\
         // Attribute 'enabledAtRuntimeAttr2' (Type: 'attribute' ExtAttr: 'V8EnabledAtRuntime')
-        {"enabledAtRuntimeAttr2", TestObjV8Internal::enabledAtRuntimeAttr2AttrGetterCallback, TestObjV8Internal::enabledAtRuntimeAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        {"enabledAtRuntimeAttr2", TestObjV8Internal::enabledAtRuntimeAttr2AttrGetterCallback, TestObjV8Internal::enabledAtRuntimeAttr2AttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         V8DOMConfiguration::configureAttribute(instance, proto, attrData, isolate);
     }
 
@@ -2587,13 +2839,13 @@ void V8TestObj::installPerContextProperties(v8::Handle<v8::Object> instance, Tes
     if (ContextFeatures::enabledPerContextAttr1Enabled(impl->document())) {
         static const V8DOMConfiguration::BatchedAttribute attrData =\
         // Attribute 'enabledPerContextAttr1' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
-        {"enabledPerContextAttr1", TestObjV8Internal::enabledPerContextAttr1AttrGetterCallback, TestObjV8Internal::enabledPerContextAttr1AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        {"enabledPerContextAttr1", TestObjV8Internal::enabledPerContextAttr1AttrGetterCallback, TestObjV8Internal::enabledPerContextAttr1AttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         V8DOMConfiguration::configureAttribute(instance, proto, attrData, isolate);
     }
     if (ContextFeatures::featureNameEnabled(impl->document())) {
         static const V8DOMConfiguration::BatchedAttribute attrData =\
         // Attribute 'enabledPerContextAttr2' (Type: 'attribute' ExtAttr: 'V8EnabledPerContext')
-        {"enabledPerContextAttr2", TestObjV8Internal::enabledPerContextAttr2AttrGetterCallback, TestObjV8Internal::enabledPerContextAttr2AttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
+        {"enabledPerContextAttr2", TestObjV8Internal::enabledPerContextAttr2AttrGetterCallback, TestObjV8Internal::enabledPerContextAttr2AttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */};
         V8DOMConfiguration::configureAttribute(instance, proto, attrData, isolate);
     }
 }

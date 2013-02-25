@@ -1196,6 +1196,31 @@ END
 END
 }
 
+sub GenerateNormalAttrSetterCallback
+{
+    my $attribute = shift;
+    my $interface = shift;
+
+    my $interfaceName = $interface->name;
+    my $v8InterfaceName = "V8$interfaceName";
+    my $attrExt = $attribute->signature->extendedAttributes;
+    my $attrName = $attribute->signature->name;
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
+    push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
+
+    push(@implContentDecls, "static void ${attrName}AttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n");
+    push(@implContentDecls, "{\n");
+    push(@implContentDecls, GenerateFeatureObservation($attrExt->{"V8MeasureAs"}));
+    if (HasCustomSetter($attrExt)) {
+        push(@implContentDecls, "    ${v8InterfaceName}::${attrName}AttrSetterCustom(name, value, info);\n");
+    } else {
+        push(@implContentDecls, "    ${interfaceName}V8Internal::${attrName}AttrSetter(name, value, info);\n");
+    }
+    push(@implContentDecls, "}\n\n");
+    push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
+}
+
 sub GenerateNormalAttrSetter
 {
     my $attribute = shift;
@@ -1207,21 +1232,14 @@ sub GenerateNormalAttrSetter
     my $attrExt = $attribute->signature->extendedAttributes;
     my $attrType = $attribute->signature->type;
 
-    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
-    push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
-
-    push(@implContentDecls, "static void ${attrName}AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n{\n");
-    push(@implContentDecls, GenerateFeatureObservation($attribute->signature->extendedAttributes->{"V8MeasureAs"}));
-
     if (HasCustomSetter($attrExt)) {
-        push(@implContentDecls, <<END);
-        ${v8InterfaceName}::${attrName}AttrSetterCustom(name, value, info);
-}
-
-END
-        push(@implContentDecls, "#endif // ${conditionalString}\n\n") if $conditionalString;
         return;
     }
+
+    my $conditionalString = $codeGenerator->GenerateConditionalString($attribute->signature);
+    push(@implContentDecls, "#if ${conditionalString}\n\n") if $conditionalString;
+    push(@implContentDecls, "static void ${attrName}AttrSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)\n");
+    push(@implContentDecls, "{\n");
 
     # If the "StrictTypeChecking" extended attribute is present, and the attribute's type is an
     # interface type, then if the incoming value does not implement that interface, a TypeError is
@@ -2331,7 +2349,7 @@ sub GenerateSingleBatchedAttribute
     } else {
         # Default Getter and Setter
         $getter = "${interfaceName}V8Internal::${attrName}AttrGetterCallback";
-        $setter = "${interfaceName}V8Internal::${attrName}AttrSetter";
+        $setter = "${interfaceName}V8Internal::${attrName}AttrSetterCallback";
 
         if (!HasCustomSetter($attrExt) && $attrExt->{"Replaceable"}) {
             $setter = "${interfaceName}V8Internal::${interfaceName}ReplaceableAttrSetter";
@@ -2743,6 +2761,7 @@ END
             $hasReplaceable = 1;
         } elsif (!IsReadonly($attribute)) {
             GenerateNormalAttrSetter($attribute, $interface);
+            GenerateNormalAttrSetterCallback($attribute, $interface);
         }
     }
 
