@@ -1365,6 +1365,363 @@ ScrollView.prototype.contentPositionForContentOffset = function(offset) {
 
 /**
  * @constructor
+ * @extends View
+ */
+function ListCell() {
+    View.call(this, createElement("div", ListCell.ClassNameListCell));
+    
+    /**
+     * @type {!number}
+     */
+    this.row = NaN;
+    /**
+     * @type {!number}
+     */
+    this._width = 0;
+    /**
+     * @type {!number}
+     */
+    this._position = 0;
+}
+
+ListCell.prototype = Object.create(View.prototype);
+
+ListCell.DefaultRecycleBinLimit = 64;
+ListCell.ClassNameListCell = "list-cell";
+ListCell.ClassNameHidden = "hidden";
+
+/**
+ * @return {!Array} An array to keep thrown away cells.
+ */
+ListCell.prototype._recycleBin = function() {
+    console.assert(false, "NOT REACHED: ListCell.prototype._recycleBin needs to be overridden.");
+    return [];
+};
+
+ListCell.prototype.throwAway = function() {
+    this.hide();
+    var limit = typeof this.constructor.RecycleBinLimit === "undefined" ? ListCell.DefaultRecycleBinLimit : this.constructor.RecycleBinLimit;
+    var recycleBin = this._recycleBin();
+    if (recycleBin.length < limit)
+        recycleBin.push(this);
+};
+
+ListCell.prototype.show = function() {
+    this.element.classList.remove(ListCell.ClassNameHidden);
+};
+
+ListCell.prototype.hide = function() {
+    this.element.classList.add(ListCell.ClassNameHidden);
+};
+
+/**
+ * @return {!number} Width in pixels.
+ */
+ListCell.prototype.width = function(){
+    return this._width;
+};
+
+/**
+ * @param {!number} width Width in pixels.
+ */
+ListCell.prototype.setWidth = function(width){
+    if (this._width === width)
+        return;
+    this._width = width;
+    this.element.style.width = this._width + "px";
+};
+
+/**
+ * @return {!number} Position in pixels.
+ */
+ListCell.prototype.position = function(){
+    return this._position;
+};
+
+/**
+ * @param {!number} y Position in pixels.
+ */
+ListCell.prototype.setPosition = function(y) {
+    if (this._position === y)
+        return;
+    this._position = y;
+    this.element.style.webkitTransform = "translate(0, " + this._position + "px)";
+};
+
+/**
+ * @param {!boolean} selected
+ */
+ListCell.prototype.setSelected = function(selected) {
+    if (this._selected === selected)
+        return;
+    this._selected = selected;
+    if (this._selected)
+        this.element.classList.add("selected");
+    else
+        this.element.classList.remove("selected");
+};
+
+/**
+ * @constructor
+ * @extends View
+ */
+function ListView() {
+    View.call(this, createElement("div", ListView.ClassNameListView));
+    this.element.tabIndex = 0;
+
+    /**
+     * @type {!number}
+     * @private
+     */
+    this._width = 0;
+    /**
+     * @type {!Object}
+     * @private
+     */
+    this._cells = {};
+
+    /**
+     * @type {!number}
+     */
+    this.selectedRow = ListView.NoSelection;
+
+    /**
+     * @type {!ScrollView}
+     */
+    this.scrollView = new ScrollView();
+    this.scrollView.delegate = this;
+    this.scrollView.minimumContentOffset = 0;
+    this.scrollView.setWidth(0);
+    this.scrollView.setHeight(0);
+    this.scrollView.attachTo(this);
+
+    this.element.addEventListener("click", this.onClick, false);
+
+    /**
+     * @type {!boolean}
+     * @private
+     */
+    this._needsUpdateCells = false;
+}
+
+ListView.prototype = Object.create(View.prototype);
+
+ListView.NoSelection = -1;
+ListView.ClassNameListView = "list-view";
+
+ListView.prototype.onAnimationFrameWillFinish = function() {
+    if (this._needsUpdateCells)
+        this.updateCells();
+};
+
+/**
+ * @param {!boolean} needsUpdateCells
+ */
+ListView.prototype.setNeedsUpdateCells = function(needsUpdateCells) {
+    if (this._needsUpdateCells === needsUpdateCells)
+        return;
+    this._needsUpdateCells = needsUpdateCells;
+    if (this._needsUpdateCells)
+        AnimationManager.shared.on(AnimationManager.EventTypeAnimationFrameWillFinish, this.onAnimationFrameWillFinish);
+    else
+        AnimationManager.shared.removeListener(AnimationManager.EventTypeAnimationFrameWillFinish, this.onAnimationFrameWillFinish);
+};
+
+/**
+ * @param {!number} row
+ * @return {?ListCell}
+ */
+ListView.prototype.cellAtRow = function(row) {
+    return this._cells[row];
+};
+
+/**
+ * @param {!number} offset Scroll offset in pixels.
+ * @return {!number}
+ */
+ListView.prototype.rowAtScrollOffset = function(offset) {
+    console.assert(false, "NOT REACHED: ListView.prototype.rowAtScrollOffset needs to be overridden.");
+    return 0;
+};
+
+/**
+ * @param {!number} row
+ * @return {!number} Scroll offset in pixels.
+ */
+ListView.prototype.scrollOffsetForRow = function(row) {
+    console.assert(false, "NOT REACHED: ListView.prototype.scrollOffsetForRow needs to be overridden.");
+    return 0;
+};
+
+/**
+ * @param {!number} row
+ * @return {!ListCell}
+ */
+ListView.prototype.addCellIfNecessary = function(row) {
+    var cell = this._cells[row];
+    if (cell)
+        return cell;
+    cell = this.prepareNewCell(row);
+    cell.attachTo(this.scrollView.contentElement);
+    cell.setWidth(this._width);
+    cell.setPosition(this.scrollView.contentPositionForContentOffset(this.scrollOffsetForRow(row)));
+    this._cells[row] = cell;
+    return cell;
+};
+
+/**
+ * @param {!number} row
+ * @return {!ListCell}
+ */
+ListView.prototype.prepareNewCell = function(row) {
+    console.assert(false, "NOT REACHED: ListView.prototype.prepareNewCell should be overridden.");
+    return new ListCell();
+};
+
+/**
+ * @param {!ListCell} cell
+ */
+ListView.prototype.throwAwayCell = function(cell) {
+    delete this._cells[cell.row];
+    cell.throwAway();
+};
+
+/**
+ * @return {!number}
+ */
+ListView.prototype.firstVisibleRow = function() {
+    return this.rowAtScrollOffset(this.scrollView.contentOffset());
+};
+
+/**
+ * @return {!number}
+ */
+ListView.prototype.lastVisibleRow = function() {
+    return this.rowAtScrollOffset(this.scrollView.contentOffset() + this.scrollView.height() - 1);
+};
+
+/**
+ * @param {!ScrollView} scrollView
+ */
+ListView.prototype.scrollViewDidChangeContentOffset = function(scrollView) {
+    this.setNeedsUpdateCells(true);
+};
+
+/**
+ * @param {!ScrollView} scrollView
+ */
+ListView.prototype.scrollViewDidChangeHeight = function(scrollView) {
+    this.setNeedsUpdateCells(true);
+};
+
+/**
+ * @param {!ScrollView} scrollView
+ */
+ListView.prototype.scrollViewDidChangePartition = function(scrollView) {
+    this.setNeedsUpdateCells(true);
+};
+
+ListView.prototype.updateCells = function() {
+    var firstVisibleRow = this.firstVisibleRow();
+    var lastVisibleRow = this.lastVisibleRow();
+    console.assert(firstVisibleRow <= lastVisibleRow);
+    for (var c in this._cells) {
+        var cell = this._cells[c];
+        if (cell.row < firstVisibleRow || cell.row > lastVisibleRow)
+            this.throwAwayCell(cell);
+    }
+    for (var i = firstVisibleRow; i <= lastVisibleRow; ++i) {
+        var cell = this._cells[i];
+        if (cell)
+            cell.setPosition(this.scrollView.contentPositionForContentOffset(this.scrollOffsetForRow(cell.row)));
+        else
+            this.addCellIfNecessary(i);
+    }
+    this.setNeedsUpdateCells(false);
+};
+
+/**
+ * @return {!number} Width in pixels.
+ */
+ListView.prototype.width = function() {
+    return this._width;
+};
+
+/**
+ * @param {!number} width Width in pixels.
+ */
+ListView.prototype.setWidth = function(width) {
+    if (this._width === width)
+        return;
+    this._width = width;
+    this.scrollView.setWidth(this._width);
+    for (var c in this._cells) {
+        this._cells[c].setWidth(this._width);
+    }
+    this.element.style.width = this._width + "px";
+    this.setNeedsUpdateCells(true);
+};
+
+/**
+ * @return {!number} Height in pixels.
+ */
+ListView.prototype.height = function() {
+    return this.scrollView.height();
+};
+
+/**
+ * @param {!number} height Height in pixels.
+ */
+ListView.prototype.setHeight = function(height) {
+    this.scrollView.setHeight(height);
+};
+
+/**
+ * @param {?Event} event
+ */
+ListView.prototype.onClick = function(event) {
+    var clickedCellElement = enclosingNodeOrSelfWithClass(event.target, ListCell.ClassNameListCell);
+    if (!clickedCellElement)
+        return;
+    var clickedCell = clickedCellElement.$view;
+    if (clickedCell.row !== this.selectedRow)
+        this.select(clickedCell.row);
+};
+
+/**
+ * @param {!number} row
+ */
+ListView.prototype.select = function(row) {
+    if (this.selectedRow === row)
+        return;
+    this.deselect();
+    if (row === ListView.NoSelection)
+        return;
+    this.selectedRow = row;
+    var selectedCell = this._cells[this.selectedRow];
+    if (selectedCell)
+        selectedCell.setSelected(true);
+};
+
+ListView.prototype.deselect = function() {
+    if (this.selectedRow === ListView.NoSelection)
+        return;
+    var selectedCell = this._cells[this.selectedRow];
+    if (selectedCell)
+        selectedCell.setSelected(false);
+    this.selectedRow = ListView.NoSelection;
+};
+
+/**
+ * @param {!number} row
+ * @param {!boolean} animate
+ */
+ListView.prototype.scrollToRow = function(row, animate) {
+    this.scrollView.scrollTo(this.scrollOffsetForRow(row), animate);
+};
+
+/**
+ * @constructor
  * @param {!Element} element
  * @param {!Object} config
  */
