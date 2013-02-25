@@ -43,7 +43,6 @@
 #include "WebHistoryItem.h"
 #include "WebIDBFactory.h"
 #include "WebTestingSupport.h"
-#include "WebRuntimeFeatures.h"
 #include "WebSettings.h"
 #include "WebTestProxy.h"
 #include "WebTestRunner.h"
@@ -126,33 +125,6 @@ TestShell::TestShell()
     , m_dumpWhenFinished(true)
     , m_isDisplayingModalDialog(false)
 {
-    WebRuntimeFeatures::enableDataTransferItems(true);
-    WebRuntimeFeatures::enableDeviceMotion(false);
-    WebRuntimeFeatures::enableGeolocation(true);
-    WebRuntimeFeatures::enableIndexedDatabase(true);
-    WebRuntimeFeatures::enableInputTypeDateTime(true);
-    WebRuntimeFeatures::enableInputTypeDateTimeLocal(true);
-    WebRuntimeFeatures::enableInputTypeMonth(true);
-    WebRuntimeFeatures::enableInputTypeTime(true);
-    WebRuntimeFeatures::enableInputTypeWeek(true);
-    WebRuntimeFeatures::enableFileSystem(true);
-    WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
-    WebRuntimeFeatures::enableMediaSource(true);
-    WebRuntimeFeatures::enableEncryptedMedia(true);
-    WebRuntimeFeatures::enableMediaStream(true);
-    WebRuntimeFeatures::enablePeerConnection(true);
-    WebRuntimeFeatures::enableWebAudio(true);
-    WebRuntimeFeatures::enableVideoTrack(true);
-    WebRuntimeFeatures::enableGamepad(true);
-    WebRuntimeFeatures::enableShadowDOM(true);
-    WebRuntimeFeatures::enableCustomDOMElements(true);
-    WebRuntimeFeatures::enableStyleScoped(true);
-    WebRuntimeFeatures::enableScriptedSpeech(true);
-    WebRuntimeFeatures::enableRequestAutocomplete(true);
-    WebRuntimeFeatures::enableExperimentalContentSecurityPolicyFeatures(true);
-    WebRuntimeFeatures::enableSeamlessIFrames(true);
-    WebRuntimeFeatures::enableCanvasPath(true);
-
     // 30 second is the same as the value in Mac DRT.
     // If we use a value smaller than the timeout value of
     // (new-)run-webkit-tests, (new-)run-webkit-tests misunderstands that a
