@@ -1,3 +1,18 @@
+2013-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Add a new pluginDidFail callback that takes a WKDictionary of plug-in information
+        https://bugs.webkit.org/show_bug.cgi?id=110793
+        <rdar://problem/13265303>
+
+        Reviewed by Sam Weinig.
+
+        Update for WebKit2 API changes.
+
+        * MiniBrowser/mac/WK2BrowserWindowController.m:
+        (-[WK2BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions):
+
 2013-02-25  Nico Weber  <thakis@chromium.org>
 
         Fix python unit tests after yoli's email address update in http://trac.webkit.org/changeset/143922

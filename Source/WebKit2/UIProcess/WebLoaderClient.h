@@ -90,8 +90,8 @@ public:
     void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, APIObject*);
 
     PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& bundleIdentifier, const String& displayName, const String& frameURLString, const String& pageURLString, PluginModuleLoadPolicy currentPluginLoadPolicy);
-    void didFailToInitializePlugin(WebPageProxy*, const String& mimeType);
-    void didBlockInsecurePluginVersion(WebPageProxy*, const String& mimeType, const String& pluginIdentifier, const String& pluginVersion);
+    void didFailToInitializePlugin(WebPageProxy*, const String& mimeType, const String& frameURLString, const String& pageURLString);
+    void didBlockInsecurePluginVersion(WebPageProxy*, const String& mimeType, const String& bundleIdentifier, const String& bundleVersion, const String& frameURLString, const String& pageURLString);
 
 };
 
