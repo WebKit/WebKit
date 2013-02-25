@@ -559,7 +559,6 @@ WebInspector.NetworkLogView.prototype = {
             if (timelineColumn.ordinal === this._dataGrid.resizers[i].rightNeighboringColumnIndex) {
                 // Position timline grid location.
                 this._timelineGrid.element.style.left = this._dataGrid.resizers[i].style.left;
-                this._timelineGrid.element.style.right = "18px";
             }
         }
 
@@ -568,7 +567,7 @@ WebInspector.NetworkLogView.prototype = {
             this._scheduleRefresh();
             proceed = false;
         } else {
-            this.calculator.setDisplayWindow(this._timelineGrid.element.clientWidth);
+            this.calculator.setDisplayWindow(this._timelineGrid.dividersElement.clientWidth);
             proceed = this._timelineGrid.updateDividers(this.calculator);
         }
         if (!proceed)

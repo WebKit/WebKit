@@ -688,6 +688,10 @@ WebInspector.DataGrid.prototype = {
                     previousResizer.rightNeighboringColumnIndex = i;
                 previousResizer = resizer;
             } else {
+                if (previousResizer && previousResizer._position !== left) {
+                    previousResizer._position = left;
+                    previousResizer.style.left = left + "px";
+                }
                 resizer.style.setProperty("display", "none");
                 resizer.leftNeighboringColumnIndex = 0;
                 resizer.rightNeighboringColumnIndex = 0;
