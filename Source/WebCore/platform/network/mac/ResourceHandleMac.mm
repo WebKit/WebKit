@@ -143,22 +143,7 @@ ResourceHandle::~ResourceHandle()
     LOG(Network, "Handle %p destroyed", this);
 }
 
-static bool shouldRelaxThirdPartyCookiePolicy(NetworkingContext* context, const KURL& url)
-{
-    // If a URL already has cookies, then we'll relax the 3rd party cookie policy and accept new cookies.
-
-    RetainPtr<CFHTTPCookieStorageRef> cfCookieStorage = context->storageSession().cookieStorage();
-    NSHTTPCookieAcceptPolicy cookieAcceptPolicy = static_cast<NSHTTPCookieAcceptPolicy>(wkGetHTTPCookieAcceptPolicy(cfCookieStorage.get()));
-
-    if (cookieAcceptPolicy != NSHTTPCookieAcceptPolicyOnlyFromMainDocumentDomain)
-        return false;
-
-    NSArray *cookies = wkHTTPCookiesForURL(cfCookieStorage.get(), url);
-
-    return [cookies count];
-}
-
-void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldRelaxThirdPartyCookiePolicy, bool shouldContentSniff)
+void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff)
 {
     // Credentials for ftp can only be passed in URL, the connection:didReceiveAuthenticationChallenge: delegate call won't be made.
     if ((!d->m_user.isEmpty() || !d->m_pass.isEmpty()) && !firstRequest().url().protocolIsInHTTPFamily()) {
@@ -167,9 +152,6 @@ void ResourceHandle::createNSURLConnection(id delegate, bool shouldUseCredential
         urlWithCredentials.setPass(d->m_pass);
         firstRequest().setURL(urlWithCredentials);
     }
-
-    if (shouldRelaxThirdPartyCookiePolicy)
-        firstRequest().setFirstPartyForCookies(firstRequest().url());
 
     if (shouldUseCredentialStorage && firstRequest().url().protocolIsInHTTPFamily()) {
         if (d->m_user.isEmpty() && d->m_pass.isEmpty()) {
@@ -243,7 +225,6 @@ bool ResourceHandle::start()
     createNSURLConnection(
         d->m_proxy.get(),
         shouldUseCredentialStorage,
-        shouldRelaxThirdPartyCookiePolicy(d->m_context.get(), firstRequest().url()),
         d->m_shouldContentSniff || d->m_context->localFileContentSniffingEnabled());
 
     bool scheduled = false;
@@ -387,7 +368,6 @@ void ResourceHandle::platformLoadResourceSynchronously(NetworkingContext* contex
     handle->createNSURLConnection(
         handle->delegate(), // A synchronous request cannot turn into a download, so there is no need to proxy the delegate.
         storedCredentials == AllowStoredCredentials,
-        shouldRelaxThirdPartyCookiePolicy(context, request.url()),
         handle->shouldContentSniff() || context->localFileContentSniffingEnabled());
 
     [handle->connection() scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:(NSString *)synchronousLoadRunLoopMode()];

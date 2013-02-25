@@ -239,9 +239,9 @@ private:
     virtual void derefAuthenticationClient() { deref(); }
 
 #if PLATFORM(MAC) && !USE(CFNETWORK)
-    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldRelaxThirdPartyCookiePolicy, bool shouldContentSniff);
+    void createNSURLConnection(id delegate, bool shouldUseCredentialStorage, bool shouldContentSniff);
 #elif USE(CFNETWORK)
-    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldRelaxThirdPartyCookiePolicy, bool shouldContentSniff);
+    void createCFURLConnection(bool shouldUseCredentialStorage, bool shouldContentSniff);
 #endif
 
     friend class ResourceHandleInternal;
