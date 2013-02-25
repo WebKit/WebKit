@@ -63,12 +63,6 @@ void PageViewportControllerClientEfl::setPageScaleFactor(float newScale)
     m_view->setPageScaleFactor(newScale);
 }
 
-void PageViewportControllerClientEfl::didResumeContent()
-{
-    ASSERT(m_controller);
-    m_controller->didChangeContentsVisibility(m_contentPosition, m_view->pageScaleFactor());
-}
-
 void PageViewportControllerClientEfl::didChangeVisibleContents()
 {
     m_view->scheduleUpdateDisplay();

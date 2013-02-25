@@ -103,7 +103,7 @@ void PageViewportControllerClientQt::animateContentRectVisible(const QRectF& con
 
     QRectF viewportRectInContentCoords = m_viewportItem->mapRectToWebContent(m_viewportItem->boundingRect());
     if (contentRect == viewportRectInContentCoords) {
-        m_controller->resumeContent();
+        resumeAndUpdateContent();
         return;
     }
 
@@ -131,7 +131,7 @@ void PageViewportControllerClientQt::flickMoveEnded()
     // This method is called on the end of the pan or pan kinetic animation.
 
     if (!m_isUserInteracting)
-        m_controller->resumeContent();
+        resumeAndUpdateContent();
 }
 
 void PageViewportControllerClientQt::pageItemPositionChanged()
@@ -333,8 +333,9 @@ void PageViewportControllerClientQt::setContentsRectToNearestValidBounds()
     updateViewportController();
 }
 
-void PageViewportControllerClientQt::didResumeContent()
+void PageViewportControllerClientQt::resumeAndUpdateContent()
 {
+    m_controller->resumeContent();
     // Make sure that tiles all around the viewport will be requested.
     updateViewportController();
 }
@@ -467,7 +468,7 @@ void PageViewportControllerClientQt::pinchGestureEnded()
 void PageViewportControllerClientQt::pinchGestureCancelled()
 {
     m_pinchStartScale = -1;
-    m_controller->resumeContent();
+    resumeAndUpdateContent();
 }
 
 void PageViewportControllerClientQt::didChangeContentsSize(const IntSize& newSize)

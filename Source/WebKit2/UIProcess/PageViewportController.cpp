@@ -316,8 +316,6 @@ void PageViewportController::suspendContent()
 
 void PageViewportController::resumeContent()
 {
-    m_client->didResumeContent();
-
     if (!m_hasSuspendedContent)
         return;
 

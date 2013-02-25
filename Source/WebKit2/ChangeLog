@@ -1,3 +1,29 @@
+2013-02-25  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Remove unneeded method didResumeContent from PageViewportController clients
+        https://bugs.webkit.org/show_bug.cgi?id=110751
+
+        Reviewed by Jocelyn Turcotte.
+
+        This is a clean-up in the PageViewportController clients that removes leftover
+        code from previous design that is partially unused and unnecessary, to simplify
+        the interaction between PageViewportController and clients.
+
+        * UIProcess/PageViewportController.cpp:
+        (WebKit::PageViewportController::resumeContent):
+        * UIProcess/PageViewportControllerClient.h:
+        (PageViewportControllerClient):
+        * UIProcess/efl/PageViewportControllerClientEfl.cpp:
+        * UIProcess/efl/PageViewportControllerClientEfl.h:
+        (PageViewportControllerClientEfl):
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::animateContentRectVisible):
+        (WebKit::PageViewportControllerClientQt::flickMoveEnded):
+        (WebKit::PageViewportControllerClientQt::resumeAndUpdateContent):
+        (WebKit::PageViewportControllerClientQt::pinchGestureCancelled):
+        * UIProcess/qt/PageViewportControllerClientQt.h:
+        (PageViewportControllerClientQt):
+
 2013-02-25  Andreas Kling  <akling@apple.com>
 
         Reduce amount of code that includes StylePropertySet.h

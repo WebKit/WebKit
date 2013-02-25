@@ -46,7 +46,6 @@ public:
     virtual void setViewportPosition(const WebCore::FloatPoint&) OVERRIDE;
     virtual void setPageScaleFactor(float) OVERRIDE;
 
-    virtual void didResumeContent() OVERRIDE;
     virtual void didChangeContentsSize(const WebCore::IntSize&) OVERRIDE;
     virtual void didChangeVisibleContents() OVERRIDE;
     virtual void didChangeViewportAttributes() OVERRIDE;
