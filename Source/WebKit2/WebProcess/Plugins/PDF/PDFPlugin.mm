@@ -949,6 +949,16 @@ bool PDFPlugin::performDictionaryLookupAtLocation(const WebCore::FloatPoint& poi
     return true;
 }
 
+void PDFPlugin::focusNextAnnotation()
+{
+    [m_pdfLayerController.get() activateNextAnnotation:false];
+}
+
+void PDFPlugin::focusPreviousAnnotation()
+{
+    [m_pdfLayerController.get() activateNextAnnotation:true];
+}
+
 } // namespace WebKit
 
 #endif // ENABLE(PDFKIT_PLUGIN)

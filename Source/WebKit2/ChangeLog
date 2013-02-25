@@ -1,3 +1,39 @@
+2013-02-25  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Tab between text annotations
+        https://bugs.webkit.org/show_bug.cgi?id=106539
+        <rdar://problem/12751789>
+
+        Reviewed by Darin Adler.
+
+        Use [PDFLayerController activateNextAnnotation:] to advance focus when the tab key is hit while inside a PDF form.
+
+        Also, a drive-by fix to make the lifetime of PDFPluginAnnotationEventListener's m_annotation pointer more explicit.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h: Add activateNextAnnotation: SPI.
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin): Add focus(Next|Previous)Annotation.
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (WebKit::PDFPlugin::focusNextAnnotation): Ask PDFLayerController to focus the next annotation.
+        (WebKit::PDFPlugin::focusPreviousAnnotation): Ask PDFLayerController to focus the next annotation.
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.h: Drive-by, initialize m_parent to 0.
+        (WebKit::PDFPluginAnnotation::PDFPluginAnnotationEventListener::setAnnotation): Added.
+        * WebProcess/Plugins/PDF/PDFPluginAnnotation.mm:
+        (WebKit::PDFPluginAnnotation::attach): Use eventNames() instead of string literals.
+        (WebKit::PDFPluginAnnotation::~PDFPluginAnnotation): Clear the event listener's reference to its annotation.
+        (WebKit::PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent): Null-check the event listener's annotation.
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.h:
+        (WebKit::PDFPluginTextAnnotation::PDFPluginTextAnnotation): Create our PDFPluginTextAnnotationEventListener.
+        (PDFPluginTextAnnotationEventListener): Added an event listener (for keydown events in form fields).
+        (WebKit::PDFPluginTextAnnotation::PDFPluginTextAnnotationEventListener::create):
+        (WebKit::PDFPluginTextAnnotation::PDFPluginTextAnnotationEventListener::setTextAnnotation):
+        (WebKit::PDFPluginTextAnnotation::PDFPluginTextAnnotationEventListener::PDFPluginTextAnnotationEventListener):
+        * WebProcess/Plugins/PDF/PDFPluginTextAnnotation.mm:
+        (WebKit::PDFPluginTextAnnotation::~PDFPluginTextAnnotation): Unregister our keydown event listener.
+        (WebKit::PDFPluginTextAnnotation::createAnnotationElement): Register our keydown event listener.
+        (WebKit::PDFPluginTextAnnotation::PDFPluginTextAnnotationEventListener::handleEvent): Ask PDFPlugin to focus
+        the next/previous annotation when the tab key is pressed (Shift-Tab goes backwards).
+
 2013-02-25  Alexey Proskuryakov  <ap@apple.com>
 
         <rdar://problem/12976385> Remove rule to silence attempts to create the ~/Library/Caches/com.apple.WebKit2.WebProcessService directory

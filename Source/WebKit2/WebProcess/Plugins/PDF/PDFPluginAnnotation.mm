@@ -69,8 +69,8 @@ void PDFPluginAnnotation::attach(Element* parent)
     m_element = createAnnotationElement();
 
     m_element->setAttribute(classAttr, "annotation");
-    m_element->addEventListener("change", m_eventListener, false);
-    m_element->addEventListener("blur", m_eventListener, false);
+    m_element->addEventListener(eventNames().changeEvent, m_eventListener, false);
+    m_element->addEventListener(eventNames().blurEvent, m_eventListener, false);
 
     updateGeometry();
 
@@ -84,6 +84,8 @@ PDFPluginAnnotation::~PDFPluginAnnotation()
 {
     m_element->removeEventListener(eventNames().changeEvent, m_eventListener.get(), false);
     m_element->removeEventListener(eventNames().blurEvent, m_eventListener.get(), false);
+
+    m_eventListener->setAnnotation(0);
 
     m_parent->removeChild(element());
 }
@@ -103,6 +105,9 @@ void PDFPluginAnnotation::updateGeometry()
 
 void PDFPluginAnnotation::PDFPluginAnnotationEventListener::handleEvent(ScriptExecutionContext*, Event* event)
 {
+    if (!m_annotation)
+        return;
+
     if (event->type() == eventNames().blurEvent || event->type() == eventNames().changeEvent)
         m_annotation->plugin()->setActiveAnnotation(0);
 }

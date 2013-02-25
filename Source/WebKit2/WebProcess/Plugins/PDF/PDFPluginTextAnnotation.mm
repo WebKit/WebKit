@@ -31,15 +31,19 @@
 #import "PDFAnnotationTextWidgetDetails.h"
 #import "PDFKitImports.h"
 #import "PDFLayerControllerDetails.h"
+#import "PDFPlugin.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/CSSPrimitiveValue.h>
 #import <WebCore/CSSPropertyNames.h>
 #import <WebCore/ColorMac.h>
+#import <WebCore/Event.h>
 #import <WebCore/HTMLElement.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLNames.h>
 #import <WebCore/HTMLTextAreaElement.h>
+#import <WebCore/KeyboardEvent.h>
 #import <WebCore/Page.h>
+#import <WebCore/WindowsKeyboardCodes.h>
 
 using namespace WebCore;
 
@@ -71,6 +75,12 @@ PassRefPtr<PDFPluginTextAnnotation> PDFPluginTextAnnotation::create(PDFAnnotatio
     return adoptRef(new PDFPluginTextAnnotation(annotation, pdfLayerController, plugin));
 }
 
+PDFPluginTextAnnotation::~PDFPluginTextAnnotation()
+{
+    element()->removeEventListener(eventNames().keydownEvent, m_eventListener.get(), false);
+    m_eventListener->setTextAnnotation(0);
+}
+
 PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
 {
     RefPtr<Element> element;
@@ -83,6 +93,8 @@ PassRefPtr<Element> PDFPluginTextAnnotation::createAnnotationElement()
         element = document->createElement(textareaTag, false);
     else
         element = document->createElement(inputTag, false);
+
+    element->addEventListener(eventNames().keydownEvent, m_eventListener, false);
 
     StyledElement* styledElement = static_cast<StyledElement*>(element.get());
 
@@ -115,6 +127,28 @@ void PDFPluginTextAnnotation::commit()
         textAnnotation.stringValue = static_cast<HTMLTextAreaElement*>(element())->value();
     else
         textAnnotation.stringValue = static_cast<HTMLInputElement*>(element())->value();
+}
+
+void PDFPluginTextAnnotation::PDFPluginTextAnnotationEventListener::handleEvent(ScriptExecutionContext*, Event* event)
+{
+    if (!m_annotation)
+        return;
+
+    if (event->isKeyboardEvent() && event->type() == eventNames().keydownEvent) {
+        KeyboardEvent* keyboardEvent = static_cast<KeyboardEvent*>(event);
+
+        if (keyboardEvent->keyIdentifier() == "U+0009") {
+            if (keyboardEvent->ctrlKey() || keyboardEvent->metaKey() || keyboardEvent->altGraphKey())
+                return;
+
+            if (keyboardEvent->shiftKey())
+                m_annotation->plugin()->focusPreviousAnnotation();
+            else
+                m_annotation->plugin()->focusNextAnnotation();
+
+            event->preventDefault();
+        }
+    }
 }
 
 } // namespace WebKit

@@ -100,6 +100,7 @@
 - (BOOL)hudEnabled;
 
 - (CGRect)boundsForAnnotation:(PDFAnnotation *)annotation;
+- (void)activateNextAnnotation:(BOOL)previous;
 
 - (void)searchInDictionaryWithSelection:(PDFSelection *)selection;
 

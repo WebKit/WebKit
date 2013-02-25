@@ -60,7 +60,8 @@ public:
 
 protected:
     PDFPluginAnnotation(PDFAnnotation *annotation, PDFLayerController *pdfLayerController, PDFPlugin* plugin)
-        : m_annotation(annotation)
+        : m_parent(0)
+        , m_annotation(annotation)
         , m_eventListener(PDFPluginAnnotationEventListener::create(this))
         , m_pdfLayerController(pdfLayerController)
         , m_plugin(plugin)
@@ -81,6 +82,8 @@ private:
         }
 
         virtual bool operator==(const EventListener& listener) OVERRIDE { return this == &listener; }
+
+        void setAnnotation(PDFPluginAnnotation* annotation) { m_annotation = annotation; }
 
     private:
 

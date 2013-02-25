@@ -78,6 +78,9 @@ public:
     void writeItemsToPasteboard(NSArray *items, NSArray *types);
     void showDefinitionForAttributedString(NSAttributedString *, CGPoint);
 
+    void focusNextAnnotation();
+    void focusPreviousAnnotation();
+
 private:
     explicit PDFPlugin(WebFrame*);
 
