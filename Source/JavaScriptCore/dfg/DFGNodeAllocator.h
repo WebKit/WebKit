@@ -35,16 +35,7 @@
 
 namespace JSC { namespace DFG {
 
-// The second template argument to Allocator is the expected size of Node rounded up to
-// 16 bytes. This is baked in to give us assertion coverage for when Node increases in
-// size. We don't want its size to increase for no good reason. The multiple-of-16
-// property is asserted by DFG::Edge, which expects to never see any of the low 4 bits
-// of a Node* being non-zero.
-#if USE(JSVALUE64)
-typedef Allocator<Node, 112> NodeAllocator;
-#else
-typedef Allocator<Node, 80> NodeAllocator;
-#endif
+typedef Allocator<Node> NodeAllocator;
 
 } } // namespace JSC::DFG
 

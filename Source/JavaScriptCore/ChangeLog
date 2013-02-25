@@ -1,3 +1,53 @@
+2013-02-24  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG::Edge should have more bits for UseKind, and DFG::Allocator should be simpler
+        https://bugs.webkit.org/show_bug.cgi?id=110722
+
+        Reviewed by Oliver Hunt.
+        
+        This rolls out the DFG::Allocator part of http://trac.webkit.org/changeset/143654,
+        and changes Edge to have more room for UseKinds and possibly other things.
+        
+        This is performance-neutral on both 32-bit and 64-bit. It reduces the size of
+        DFG::Node on 64-bit (by virtue of getting rid of the 16-byte alignment of Node)
+        and increases it slightly on 32-bit (by 4 bytes total - 16-byte alignment led to
+        80 bytes, but the base size of Node plus the 12 bytes of new m_encodedWords in
+        Edge gets 84 bytes). But, it will mean that we don't have to increase Node by
+        another 16 bytes if we ever want to add more UseKinds or other things to Edge.
+
+        * dfg/DFGAllocator.h:
+        (DFG):
+        (Allocator):
+        (JSC::DFG::Allocator::Region::headerSize):
+        (JSC::DFG::Allocator::Region::numberOfThingsPerRegion):
+        (JSC::DFG::Allocator::Region::data):
+        (JSC::DFG::Allocator::Region::isInThisRegion):
+        (JSC::DFG::::Allocator):
+        (JSC::DFG::::~Allocator):
+        (JSC::DFG::::allocate):
+        (JSC::DFG::::free):
+        (JSC::DFG::::freeAll):
+        (JSC::DFG::::reset):
+        (JSC::DFG::::indexOf):
+        (JSC::DFG::::allocatorOf):
+        (JSC::DFG::::bumpAllocate):
+        (JSC::DFG::::freeListAllocate):
+        (JSC::DFG::::allocateSlow):
+        (JSC::DFG::::freeRegionsStartingAt):
+        (JSC::DFG::::startBumpingIn):
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::Edge):
+        (Edge):
+        (JSC::DFG::Edge::node):
+        (JSC::DFG::Edge::setNode):
+        (JSC::DFG::Edge::useKindUnchecked):
+        (JSC::DFG::Edge::setUseKind):
+        (JSC::DFG::Edge::operator==):
+        (JSC::DFG::Edge::operator!=):
+        (JSC::DFG::Edge::makeWord):
+        * dfg/DFGNodeAllocator.h:
+        (DFG):
+
 2013-02-22  Filip Pizlo  <fpizlo@apple.com>
 
         The DFG special case checks for isCreatedThisArgument are fragile

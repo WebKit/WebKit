@@ -43,11 +43,7 @@ namespace JSC { namespace DFG {
 //   anything. You can just call freeAll() instead.
 // - You call free() on all T's that you allocated, and never use freeAll().
 
-// forcedCellSize: set this to 0 if you're happy with the default alignment, or set it
-// to a non-zero value if you want to forcibly align the allocations to a certain
-// value. When you do this, Allocator will ASSERT that forcedCellAlignment >= sizeof(T).
-
-template<typename T, unsigned forcedCellAlignment>
+template<typename T>
 class Allocator {
 public:
     Allocator();
@@ -67,24 +63,13 @@ private:
     void* bumpAllocate();
     void* freeListAllocate();
     void* allocateSlow();
-    
-    static size_t cellSize()
-    {
-        if (!forcedCellAlignment)
-            return sizeof(T);
-        
-        ASSERT(forcedCellAlignment >= sizeof(T));
-        return forcedCellAlignment;
-    }
-    
+
     struct Region {
         static size_t size() { return 64 * KB; }
-        static size_t headerSize() { return std::max(sizeof(Region), cellSize()); }
-        static unsigned numberOfThingsPerRegion() { return (size() - headerSize()) / cellSize(); }
-        static size_t payloadSize() { return numberOfThingsPerRegion() * cellSize(); }
-        char* payloadBegin() { return bitwise_cast<char*>(this) + headerSize(); }
-        char* payloadEnd() { return payloadBegin() + payloadSize(); }
-        bool isInThisRegion(const T* pointer) { return static_cast<size_t>(bitwise_cast<char*>(pointer) - payloadBegin()) < payloadSize(); }
+        static size_t headerSize() { return std::max(sizeof(Region), sizeof(T)); }
+        static unsigned numberOfThingsPerRegion() { return (size() - headerSize()) / sizeof(T); }
+        T* data() { return bitwise_cast<T*>(bitwise_cast<char*>(this) + headerSize()); }
+        bool isInThisRegion(const T* pointer) { return static_cast<unsigned>(pointer - data()) < numberOfThingsPerRegion(); }
         static Region* regionFor(const T* pointer) { return bitwise_cast<Region*>(bitwise_cast<uintptr_t>(pointer) & ~(size() - 1)); }
         
         PageAllocationAligned m_allocation;
@@ -97,26 +82,26 @@ private:
     
     Region* m_regionHead;
     void** m_freeListHead;
-    char* m_bumpEnd;
-    size_t m_bumpRemaining;
+    T* m_bumpEnd;
+    unsigned m_bumpRemaining;
 };
 
-template<typename T, unsigned forcedCellAlignment>
-inline Allocator<T, forcedCellAlignment>::Allocator()
+template<typename T>
+inline Allocator<T>::Allocator()
     : m_regionHead(0)
     , m_freeListHead(0)
     , m_bumpRemaining(0)
 {
 }
 
-template<typename T, unsigned forcedCellAlignment>
-inline Allocator<T, forcedCellAlignment>::~Allocator()
+template<typename T>
+inline Allocator<T>::~Allocator()
 {
     reset();
 }
 
-template<typename T, unsigned forcedCellAlignment>
-ALWAYS_INLINE void* Allocator<T, forcedCellAlignment>::allocate()
+template<typename T>
+ALWAYS_INLINE void* Allocator<T>::allocate()
 {
     void* result = bumpAllocate();
     if (LIKELY(!!result))
@@ -124,8 +109,8 @@ ALWAYS_INLINE void* Allocator<T, forcedCellAlignment>::allocate()
     return freeListAllocate();
 }
 
-template<typename T, unsigned forcedCellAlignment>
-void Allocator<T, forcedCellAlignment>::free(T* object)
+template<typename T>
+void Allocator<T>::free(T* object)
 {
     object->~T();
     
@@ -134,8 +119,8 @@ void Allocator<T, forcedCellAlignment>::free(T* object)
     m_freeListHead = cell;
 }
 
-template<typename T, unsigned forcedCellAlignment>
-void Allocator<T, forcedCellAlignment>::freeAll()
+template<typename T>
+void Allocator<T>::freeAll()
 {
     if (!m_regionHead) {
         ASSERT(!m_bumpRemaining);
@@ -157,8 +142,8 @@ void Allocator<T, forcedCellAlignment>::freeAll()
     startBumpingIn(m_regionHead);
 }
 
-template<typename T, unsigned forcedCellAlignment>
-void Allocator<T, forcedCellAlignment>::reset()
+template<typename T>
+void Allocator<T>::reset()
 {
     freeRegionsStartingAt(m_regionHead);
     
@@ -167,38 +152,38 @@ void Allocator<T, forcedCellAlignment>::reset()
     m_bumpRemaining = 0;
 }
 
-template<typename T, unsigned forcedCellAlignment>
-unsigned Allocator<T, forcedCellAlignment>::indexOf(const T* object)
+template<typename T>
+unsigned Allocator<T>::indexOf(const T* object)
 {
     unsigned baseIndex = 0;
     for (Region* region = m_regionHead; region; region = region->m_next) {
         if (region->isInThisRegion(object))
-            return baseIndex + (bitwise_cast<char*>(object) - region->payloadBegin()) / cellSize();
+            return baseIndex + (object - region->data());
         baseIndex += Region::numberOfThingsPerRegion();
     }
     CRASH();
     return 0;
 }
 
-template<typename T, unsigned forcedCellAlignment>
-Allocator<T, forcedCellAlignment>* Allocator<T, forcedCellAlignment>::allocatorOf(const T* object)
+template<typename T>
+Allocator<T>* Allocator<T>::allocatorOf(const T* object)
 {
     return Region::regionFor(object)->m_allocator;
 }
 
-template<typename T, unsigned forcedCellAlignment>
-ALWAYS_INLINE void* Allocator<T, forcedCellAlignment>::bumpAllocate()
+template<typename T>
+ALWAYS_INLINE void* Allocator<T>::bumpAllocate()
 {
-    if (size_t remaining = m_bumpRemaining) {
-        remaining -= cellSize();
+    if (unsigned remaining = m_bumpRemaining) {
+        remaining--;
         m_bumpRemaining = remaining;
-        return m_bumpEnd - (remaining + cellSize());
+        return m_bumpEnd - (remaining + 1);
     }
     return 0;
 }
 
-template<typename T, unsigned forcedCellAlignment>
-void* Allocator<T, forcedCellAlignment>::freeListAllocate()
+template<typename T>
+void* Allocator<T>::freeListAllocate()
 {
     void** result = m_freeListHead;
     if (UNLIKELY(!result))
@@ -207,8 +192,8 @@ void* Allocator<T, forcedCellAlignment>::freeListAllocate()
     return result;
 }
 
-template<typename T, unsigned forcedCellAlignment>
-void* Allocator<T, forcedCellAlignment>::allocateSlow()
+template<typename T>
+void* Allocator<T>::allocateSlow()
 {
     ASSERT(!m_freeListHead);
     ASSERT(!m_bumpRemaining);
@@ -231,8 +216,8 @@ void* Allocator<T, forcedCellAlignment>::allocateSlow()
     return result;
 }
 
-template<typename T, unsigned forcedCellAlignment>
-void Allocator<T, forcedCellAlignment>::freeRegionsStartingAt(typename Allocator<T, forcedCellAlignment>::Region* region)
+template<typename T>
+void Allocator<T>::freeRegionsStartingAt(typename Allocator<T>::Region* region)
 {
     while (region) {
         Region* nextRegion = region->m_next;
@@ -241,11 +226,11 @@ void Allocator<T, forcedCellAlignment>::freeRegionsStartingAt(typename Allocator
     }
 }
 
-template<typename T, unsigned forcedCellAlignment>
-void Allocator<T, forcedCellAlignment>::startBumpingIn(typename Allocator<T, forcedCellAlignment>::Region* region)
+template<typename T>
+void Allocator<T>::startBumpingIn(typename Allocator<T>::Region* region)
 {
-    m_bumpEnd = region->payloadEnd();
-    m_bumpRemaining = Region::payloadSize();
+    m_bumpEnd = region->data() + Region::numberOfThingsPerRegion();
+    m_bumpRemaining = Region::numberOfThingsPerRegion();
 }
 
 } } // namespace JSC::DFG
