@@ -47,6 +47,8 @@ PassOwnPtr<DeviceProximityController> DeviceProximityController::create(DevicePr
 
 void DeviceProximityController::didChangeDeviceProximity(const double value, const double min, const double max)
 {
+    ASSERT(value >= min && value <= max);
+
     dispatchDeviceEvent(DeviceProximityEvent::create(eventNames().webkitdeviceproximityEvent, value, min, max));
 }
 

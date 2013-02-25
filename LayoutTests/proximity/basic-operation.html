@@ -12,12 +12,12 @@ var deviceProximityEvent;
 window.addEventListener('webkitdeviceproximity', function(e) {
     deviceProximityEvent = e;
     shouldBe('deviceProximityEvent.value', 'firedEvent.value');
-    shouldBe('deviceProximityEvent.min', 'firedEvent.max');
-    shouldBe('deviceProximityEvent.max', 'firedEvent.min');
+    shouldBe('deviceProximityEvent.min', 'firedEvent.min');
+    shouldBe('deviceProximityEvent.max', 'firedEvent.max');
     finishJSTest();
 });
 
-internals.setDeviceProximity(document, 'webkitdeviceproximity', firedEvent.value, firedEvent.max, firedEvent.min);
+internals.setDeviceProximity(document, 'webkitdeviceproximity', firedEvent.value, firedEvent.min, firedEvent.max);
 window.jsTestIsAsync = true;
 </script>
 <script src="../fast/js/resources/js-test-post.js"></script>
