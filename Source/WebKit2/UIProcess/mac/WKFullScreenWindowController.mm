@@ -109,7 +109,6 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 {
     [super windowDidLoad];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidResignActive:) name:NSApplicationDidResignActiveNotification object:NSApp];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeScreenParameters:) name:NSApplicationDidChangeScreenParametersNotification object:NSApp];
 }
 
@@ -155,21 +154,6 @@ static NSRect convertRectToScreen(NSWindow *window, NSRect rect)
 
 #pragma mark -
 #pragma mark Notifications
-
-- (void)applicationDidResignActive:(NSNotification*)notification
-{
-    // Check to see if the fullScreenWindow is on the active space; this function is available
-    // on 10.6 and later, so default to YES if the function is not available:
-    NSWindow* fullScreenWindow = [self window];
-    BOOL isOnActiveSpace = ([fullScreenWindow respondsToSelector:@selector(isOnActiveSpace)] ? [fullScreenWindow isOnActiveSpace] : YES);
-    
-    // Replicate the QuickTime Player (X) behavior when losing active application status:
-    // Is the fullScreen screen the main screen? (Note: this covers the case where only a 
-    // single screen is available.)  Is the fullScreen screen on the current space? IFF so, 
-    // then exit fullScreen mode. 
-    if ([fullScreenWindow screen] == [[NSScreen screens] objectAtIndex:0] && isOnActiveSpace)
-        [self cancelOperation:self];
-}
 
 - (void)applicationDidChangeScreenParameters:(NSNotification*)notification
 {

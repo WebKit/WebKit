@@ -1,5 +1,20 @@
 2013-02-25  Jer Noble  <jer.noble@apple.com>
 
+        Full screen mode should not exit when application resigns active state.
+        https://bugs.webkit.org/show_bug.cgi?id=106129
+
+        Reviewed by Darin Adler.
+
+        Now that full screen windows get their own full screen space, there is no reason to exit full
+        screen mode when the application resigns active state. Instead, the windowserver will bring the
+        space containing the newly active application to the foreground. The user can then swipe back
+        to the full screen space (or use Mission Control) to get back to the full screen window.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController windowDidLoad]): Remove the applicationDidResignActive: notification from WKFullScreenWindowController.
+
+2013-02-25  Jer Noble  <jer.noble@apple.com>
+
         Safari shows empty window and paints webpage in full-screen background
         https://bugs.webkit.org/show_bug.cgi?id=103712
 
