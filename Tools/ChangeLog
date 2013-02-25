@@ -1,3 +1,15 @@
+2013-02-25  Andreas Kling  <akling@apple.com>
+
+        Unreviewed, fix simple mistake in r143903.
+        <http://webkit.org/b/110746>
+
+        Reviewed by Andreas Kling.
+
+        Pass git revision, not svn revision, to git shell command.
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        (Git.timestamp_of_latest_commit):
+
 2013-02-25  Nico Weber  <thakis@chromium.org>
 
         [chromium] Let built-product-archive log which directory it's archiving from and extracting to
