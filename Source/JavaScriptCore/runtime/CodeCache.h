@@ -118,8 +118,8 @@ struct SourceCodeValue {
     {
     }
 
-    SourceCodeValue(const Strong<JSCell>& cell, int64_t age)
-        : cell(cell)
+    SourceCodeValue(JSGlobalData& globalData, JSCell* cell, int64_t age)
+        : cell(globalData, cell)
         , age(age)
     {
     }
@@ -129,10 +129,11 @@ struct SourceCodeValue {
 };
 
 class CodeCacheMap {
+public:
     typedef HashMap<SourceCodeKey, SourceCodeValue, SourceCodeKeyHash, SourceCodeKeyHashTraits> MapType;
     typedef MapType::iterator iterator;
+    typedef MapType::AddResult AddResult;
 
-public:
     enum { MinCacheCapacity = 1000000 }; // Size in characters
 
     CodeCacheMap()
@@ -142,13 +143,19 @@ public:
     {
     }
 
-    const Strong<JSCell>* find(const SourceCodeKey& key)
-    {
-        iterator it = m_map.find(key);
-        if (it == m_map.end())
-            return 0;
 
-        int64_t age = m_age - it->value.age;
+    AddResult add(const SourceCodeKey& key, const SourceCodeValue& value)
+    {
+        prune();
+
+        AddResult addResult = m_map.add(key, value);
+        if (addResult.isNewEntry) {
+            m_size += key.length();
+            m_age += key.length();
+            return addResult;
+        }
+
+        int64_t age = m_age - addResult.iterator->value.age;
         if (age > m_capacity) {
             // A requested object is older than the cache's capacity. We can
             // infer that requested objects are subject to high eviction probability,
@@ -163,18 +170,15 @@ public:
                 m_capacity = MinCacheCapacity;
         }
 
-        it->value.age = m_age;
+        addResult.iterator->value.age = m_age;
         m_age += key.length();
-        return &it->value.cell;
+        return addResult;
     }
 
-    void set(const SourceCodeKey& key, const Strong<JSCell>& value)
+    void remove(iterator it)
     {
-        pruneIfNeeded();
-
-        m_size += key.length();
-        m_age += key.length();
-        m_map.set(key, SourceCodeValue(value, m_age));
+        m_size -= it->key.length();
+        m_map.remove(it);
     }
 
     void clear()
@@ -183,6 +187,8 @@ public:
         m_age = 0;
         m_map.clear();
     }
+
+    int64_t age() { return m_age; }
 
 private:
     // This constant factor biases cache capacity toward recent activity. We
@@ -194,13 +200,12 @@ private:
     // sample them, so we need to extrapolate from the ones we do sample.
     static const int64_t oldObjectSamplingMultiplier = 32;
 
-    void pruneIfNeeded()
+    void pruneSlowCase();
+    void prune()
     {
-        while (m_size >= m_capacity) {
-            MapType::iterator it = m_map.begin();
-            m_size -= it->key.length();
-            m_map.remove(it);
-        }
+        if (m_size < m_capacity)
+            return;
+        pruneSlowCase();
     }
 
     MapType m_map;

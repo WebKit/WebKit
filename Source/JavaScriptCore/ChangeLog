@@ -1,3 +1,32 @@
+2013-02-25  Geoffrey Garen  <ggaren@apple.com>
+
+        Do one lookup per code cache insertion instead of two
+        https://bugs.webkit.org/show_bug.cgi?id=110674
+
+        Reviewed by Sam Weinig.
+
+        Deployed the idiomatic "add null value" trick to avoid a second hash
+        lookup when inserting an item.
+
+        * runtime/CodeCache.cpp:
+        (JSC::CodeCacheMap::pruneSlowCase): Factored this into a helper function
+        to improve clarity and get some code off the hot path.
+
+        (JSC::CodeCache::getCodeBlock):
+        (JSC::CodeCache::getFunctionExecutableFromGlobalCode): Use the add() API
+        to avoid two hash lookups. Be sure to remove items if parsing fails,
+        otherwise we'll leave nulls in the table. (I'm guessing that caching parse
+        errors is not a win.)
+
+        * runtime/CodeCache.h:
+        (JSC::SourceCodeValue::SourceCodeValue):
+        (CodeCacheMap):
+        (JSC::CodeCacheMap::add): Combined find() and set() into add().
+
+        (JSC::CodeCacheMap::remove):
+        (JSC::CodeCacheMap::age):
+        (JSC::CodeCacheMap::prune): Refactored to support above changes.
+
 2013-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry][ARM] Fix cast-align warnings in JavaScriptCore
