@@ -28,7 +28,6 @@
 
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
-#include "CachedResourceClient.h"
 #include "MediaPlayerPrivateAVFoundation.h"
 #include <wtf/HashMap.h>
 

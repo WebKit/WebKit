@@ -31,9 +31,9 @@
 
 #include "InbandTextTrackPrivateClient.h"
 #include "Logging.h"
-#include "MediaPlayerPrivateAVFoundation.h"
 #include "SoftLinking.h"
 #include <CoreMedia/CoreMedia.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
@@ -83,8 +83,12 @@ using namespace std;
 
 namespace WebCore {
 
-InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(MediaPlayerPrivateAVFoundation* player)
-    : m_player(player)
+AVFInbandTrackParent::~AVFInbandTrackParent()
+{
+}
+
+InbandTextTrackPrivateAVF::InbandTextTrackPrivateAVF(AVFInbandTrackParent* owner)
+    : m_owner(owner)
     , m_index(0)
     , m_havePartialCue(false)
     , m_hasBeenReported(false)
@@ -326,7 +330,7 @@ void InbandTextTrackPrivateAVF::processCueAttributes(CFAttributedStringRef attri
 
 void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double time)
 {
-    if (!m_player)
+    if (!client())
         return;
     
     if (m_havePartialCue) {
@@ -352,7 +356,8 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
                 if (cueData->position() >= 0 && cueData->size() > 0)
                     cueData->setPosition(cueData->position() - cueData->size() / 2);
                 
-                m_player->addGenericCue(this, cueData);
+                LOG(Media, "InbandTextTrackPrivateAVF::processCue(%p) - adding cue for time %.2f", this, cueData->startTime());
+                client()->addGenericCue(this, cueData);
             }
         } else
             LOG(Media, "InbandTextTrackPrivateAVF::processCue negative length cue(s) ignored: start=%.2f, end=%.2f\n", m_currentCueStartTime, m_currentCueEndTime);
@@ -379,7 +384,7 @@ void InbandTextTrackPrivateAVF::processCue(CFArrayRef attributedStrings, double 
 
 void InbandTextTrackPrivateAVF::disconnect()
 {
-    m_player = 0;
+    m_owner = 0;
     m_index = 0;
 }
 
@@ -396,7 +401,7 @@ void InbandTextTrackPrivateAVF::resetCueValues()
 
 void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
 {
-    if (!m_player)
+    if (!m_owner)
         return;
 
     InbandTextTrackPrivate::Mode oldMode = mode();
@@ -405,7 +410,7 @@ void InbandTextTrackPrivateAVF::setMode(InbandTextTrackPrivate::Mode newMode)
     if (oldMode == newMode)
         return;
 
-    m_player->trackModeChanged();
+    m_owner->trackModeChanged();
 }
 
 } // namespace WebCore

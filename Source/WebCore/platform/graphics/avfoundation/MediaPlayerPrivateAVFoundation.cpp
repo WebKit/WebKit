@@ -829,15 +829,6 @@ void MediaPlayerPrivateAVFoundation::dispatchNotification()
 }
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-void MediaPlayerPrivateAVFoundation::addGenericCue(InbandTextTrackPrivateAVF* track, GenericCueData* cueData)
-{
-    if (!track->client())
-        return;
-
-    LOG(Media, "MediaPlayerPrivateAVFoundation::addGenericCue(%p) - adding cue for time %.2f", this, cueData->startTime());
-    track->client()->addGenericCue(track, cueData);
-}
-
 void MediaPlayerPrivateAVFoundation::configureInbandTracks()
 {
     RefPtr<InbandTextTrackPrivateAVF> trackToEnable;

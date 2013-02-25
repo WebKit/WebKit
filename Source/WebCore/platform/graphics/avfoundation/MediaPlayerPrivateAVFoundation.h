@@ -29,6 +29,7 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "FloatSize.h"
+#include "InbandTextTrackPrivateAVF.h"
 #include "MediaPlayerPrivate.h"
 #include "Timer.h"
 #include <wtf/RetainPtr.h>
@@ -38,7 +39,11 @@ namespace WebCore {
 class InbandTextTrackPrivateAVF;
 class GenericCueData;
 
-class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface {
+class MediaPlayerPrivateAVFoundation : public MediaPlayerPrivateInterface
+#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    , public AVFInbandTrackParent
+#endif
+{
 public:
 
     virtual void repaint();
@@ -122,11 +127,6 @@ public:
     void scheduleMainThreadNotification(Notification::Type, bool completed);
     void dispatchNotification();
     void clearMainThreadPendingFlag();
-
-#if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
-    void addGenericCue(InbandTextTrackPrivateAVF*, GenericCueData*);
-    void trackModeChanged();
-#endif
 
 protected:
     MediaPlayerPrivateAVFoundation(MediaPlayer*);
@@ -265,6 +265,7 @@ protected:
     virtual String engineDescription() const { return "AVFoundation"; }
 
 #if HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
+    virtual void trackModeChanged() OVERRIDE;
     Vector<RefPtr<InbandTextTrackPrivateAVF> > m_textTracks;
 #endif
     

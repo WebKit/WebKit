@@ -29,13 +29,18 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION) && HAVE(AVFOUNDATION_TEXT_TRACK_SUPPORT)
 
 #include "InbandTextTrackPrivate.h"
-#include <wtf/RetainPtr.h>
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
-class MediaPlayerPrivateAVFoundation;
 class GenericCueData;
+
+class AVFInbandTrackParent {
+public:
+    virtual ~AVFInbandTrackParent();
+    
+    virtual void trackModeChanged() = 0;
+};
 
 class InbandTextTrackPrivateAVF : public InbandTextTrackPrivate {
 public:
@@ -56,7 +61,7 @@ public:
     void resetCueValues();
 
 protected:
-    InbandTextTrackPrivateAVF(MediaPlayerPrivateAVFoundation*);
+    InbandTextTrackPrivateAVF(AVFInbandTrackParent*);
 
     void processCueAttributes(CFAttributedStringRef, GenericCueData*);
 
@@ -65,7 +70,7 @@ protected:
 
     Vector<OwnPtr<GenericCueData> > m_cues;
 
-    MediaPlayerPrivateAVFoundation* m_player;
+    AVFInbandTrackParent* m_owner;
     int m_index;
     bool m_havePartialCue;
     bool m_hasBeenReported;
