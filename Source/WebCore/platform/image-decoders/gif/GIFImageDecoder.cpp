@@ -37,7 +37,6 @@ GIFImageDecoder::GIFImageDecoder(ImageSource::AlphaOption alphaOption,
     : ImageDecoder(alphaOption, gammaAndColorProfileOption)
     , m_alreadyScannedThisDataForFrameCount(true)
     , m_repetitionCount(cAnimationLoopOnce)
-    , m_readOffset(0)
 {
 }
 
@@ -51,6 +50,8 @@ void GIFImageDecoder::setData(SharedBuffer* data, bool allDataReceived)
         return;
 
     ImageDecoder::setData(data, allDataReceived);
+    if (m_reader)
+        m_reader->setData(data);
 
     // We need to rescan the frame count, as the new data may have changed it.
     m_alreadyScannedThisDataForFrameCount = false;
@@ -85,7 +86,8 @@ size_t GIFImageDecoder::frameCount()
         // all the data.  Note that this is no worse than what ImageIO does on
         // Mac right now (it also crawls all the data again).
         GIFImageReader reader(0);
-        reader.read((const unsigned char*)m_data->data(), m_data->size(), GIFFrameCountQuery, static_cast<unsigned>(-1));
+        reader.setData(m_data);
+        reader.decode(GIFFrameCountQuery, static_cast<unsigned>(-1));
         m_alreadyScannedThisDataForFrameCount = true;
         m_frameBufferCache.resize(reader.imagesCount());
         for (int i = 0; i < reader.imagesCount(); ++i)
@@ -191,11 +193,6 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     }
 }
 
-void GIFImageDecoder::decodingHalted(unsigned bytesLeft)
-{
-    m_readOffset = m_data->size() - bytesLeft;
-}
-
 bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, unsigned repeatCount, bool writeTransparentPixels)
 {
     const GIFFrameContext* frameContext = m_reader->frameContext();
@@ -216,8 +213,8 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuff
     const unsigned char* colorMap;
     unsigned colorMapSize;
     if (frameContext->isLocalColormapDefined) {
-        colorMap = frameContext->localColormap;
-        colorMapSize = (unsigned)frameContext->localColormapSize;
+        colorMap = m_reader->localColormap(frameContext);
+        colorMapSize = m_reader->localColormapSize(frameContext);
     } else {
         colorMap = m_reader->globalColormap();
         colorMapSize = m_reader->globalColormapSize();
@@ -319,12 +316,14 @@ void GIFImageDecoder::decode(unsigned haltAtFrame, GIFQuery query)
     if (failed())
         return;
 
-    if (!m_reader)
+    if (!m_reader) {
         m_reader = adoptPtr(new GIFImageReader(this));
+        m_reader->setData(m_data);
+    }
 
     // If we couldn't decode the image but we've received all the data, decoding
     // has failed.
-    if (!m_reader->read((const unsigned char*)m_data->data() + m_readOffset, m_data->size() - m_readOffset, query, haltAtFrame) && isAllDataReceived())
+    if (!m_reader->decode(query, haltAtFrame) && isAllDataReceived())
         setFailed();
 }
 
