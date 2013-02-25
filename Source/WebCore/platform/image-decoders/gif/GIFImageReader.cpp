@@ -201,7 +201,7 @@ bool GIFImageReader::outputRow()
 }
 
 // Perform Lempel-Ziv-Welch decoding.
-bool GIFImageReader::doLZW(const unsigned char* block, size_t bytesInBlock)
+bool GIFImageReader::doLZW(const unsigned char *q)
 {
     if (!m_frameContext)
         return true;
@@ -215,7 +215,7 @@ bool GIFImageReader::doLZW(const unsigned char* block, size_t bytesInBlock)
     // back into the GIF decoder structure when we exit.
     int avail = m_frameContext->avail;
     int bits = m_frameContext->bits;
-    size_t cnt = bytesInBlock;
+    int cnt = m_count;
     int codesize = m_frameContext->codesize;
     int codemask = m_frameContext->codemask;
     int oldcode = m_frameContext->oldcode;
@@ -249,7 +249,7 @@ bool GIFImageReader::doLZW(const unsigned char* block, size_t bytesInBlock)
             goto END; \
     } while (0)
 
-    for (ch = block; cnt-- > 0; ch++) {
+    for (ch = q; cnt-- > 0; ch++) {
         // Feed the next byte into the decoder's 32-bit input buffer.
         datum += ((int) *ch) << bits;
         bits += 8;
@@ -344,6 +344,7 @@ END:
     m_frameContext->bits = bits;
     m_frameContext->codesize = codesize;
     m_frameContext->codemask = codemask;
+    m_count = cnt;
     m_frameContext->oldcode = oldcode;
     m_frameContext->firstchar = firstchar;
     m_frameContext->datum = datum;
@@ -353,39 +354,68 @@ END:
     return true;
 }
 
-bool GIFImageReader::decode(GIFImageDecoder::GIFQuery query, unsigned haltAtFrame)
-{
-    ASSERT(m_bytesRead <= m_data->size());
-    return decodeInternal(m_bytesRead, m_data->size() - m_bytesRead, query, haltAtFrame);
-}
 
 // Process data arriving from the stream for the gif decoder.
-bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDecoder::GIFQuery query, unsigned haltAtFrame)
+bool GIFImageReader::read(const unsigned char *buf, unsigned len, GIFImageDecoder::GIFQuery query, unsigned haltAtFrame)
 {
     if (!len) {
         // No new data has come in since the last call, just ignore this call.
         return true;
     }
 
-    if (len < m_bytesToConsume)
-        return false;
+    const unsigned char *q = buf;
 
-    // This loop reads as many components from |m_data| as possible.
-    // At the beginning of each iteration, dataPosition will be advanced by m_bytesToConsume to
-    // point to the next component. len will be decremented accordingly.
-    while (len >= m_bytesToConsume) {
-        // FIXME: Rename this variable to currentComponent.
-        const unsigned char* q = data(dataPosition);
+    // Add what we have so far to the block.
+    // If previous call to me left something in the hold first complete current block
+    // or if we are filling the colormaps, first complete the colormap.
+    unsigned char* p = 0;
+    if (m_state == GIFGlobalColormap)
+        p = m_globalColormap;
+    else if (m_state == GIFImageColormap)
+        p = m_frameContext ? m_frameContext->localColormap : 0;
+    else if (m_bytesInHold)
+        p = m_hold;
+    else
+        p = 0;
 
-        // Mark the current component as consumed. Note that q will remain pointed at this
-        // component until the next loop iteration.
-        dataPosition += m_bytesToConsume;
+    if (p || (m_state == GIFGlobalColormap) || (m_state == GIFImageColormap)) {
+        // Add what we have sofar to the block
+        unsigned length = len < m_bytesToConsume ? len : m_bytesToConsume;
+        if (p)
+            memcpy(p + m_bytesInHold, buf, length);
+
+        if (length < m_bytesToConsume) {
+            // Not enough in 'buf' to complete current block, get more
+            m_bytesInHold += length;
+            m_bytesToConsume -= length;
+            if (m_client)
+                m_client->decodingHalted(0);
+            return false;
+        }
+
+        // Reset hold buffer count
+        m_bytesInHold = 0;
+
+        // Point 'q' to complete block in hold (or in colormap)
+        q = p;
+    }
+
+    // Invariant:
+    //    'q' is start of current to be processed block (hold, colormap or buf)
+    //    'm_bytesToConsume' is number of bytes to consume from 'buf'
+    //    'buf' points to the bytes to be consumed from the input buffer
+    //    'len' is number of bytes left in input buffer from position 'buf'.
+    //    At entrance of the for loop will 'buf' will be moved 'm_bytesToConsume'
+    //    to point to next buffer, 'len' is adjusted accordingly.
+    //    So that next round in for loop, q gets pointed to the next buffer.
+    for (;len >= m_bytesToConsume; q = buf) {
+        // Eat the current block from the buffer, q keeps pointed at current block.
+        buf += m_bytesToConsume;
         len -= m_bytesToConsume;
 
         switch (m_state) {
         case GIFLZW:
-            // m_bytesToConsume is the current component size because it hasn't been updated.
-            if (!doLZW(q, m_bytesToConsume))
+            if (!doLZW(q))
                 return false; // If doLZW() encountered an error, it has already called m_client->setFailed().
             GETN(1, GIFSubBlock);
             break;
@@ -458,18 +488,23 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
 
             if ((q[4] & 0x80) && m_globalColormapSize > 0) { /* global map */
                 // Get the global colormap
-                const size_t globalColormapBytes = 3 * m_globalColormapSize;
-                m_globalColormapPosition = dataPosition;
+                const unsigned size = 3*m_globalColormapSize;
 
-                if (len < globalColormapBytes) {
-                    // Wait until we have enough bytes to consume the entire colormap at once.
-                    GETN(globalColormapBytes, GIFGlobalColormap);
+                // Malloc the color map, but only if we're not just counting frames.
+                if (query != GIFImageDecoder::GIFFrameCountQuery)
+                    m_globalColormap = new unsigned char[size];
+
+                if (len < size) {
+                    // Use 'hold' pattern to get the global colormap
+                    GETN(size, GIFGlobalColormap);
                     break;
                 }
 
-                m_isGlobalColormapDefined = true;
-                dataPosition += globalColormapBytes;
-                len -= globalColormapBytes;
+                // Copy everything and go directly to GIFImage_start.
+                if (m_globalColormap)
+                    memcpy(m_globalColormap, buf, size);
+                buf += size;
+                len -= size;
             }
 
             GETN(1, GIFImageStart);
@@ -481,7 +516,7 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
         }
 
         case GIFGlobalColormap: {
-            m_isGlobalColormapDefined = true;
+            // Everything is already copied into m_globalColormap
             GETN(1, GIFImageStart);
             break;
         }
@@ -510,7 +545,7 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
         }
 
         case GIFExtension: {
-            size_t bytesInBlock = q[1];
+            m_count = q[1];
             GIFState es = GIFSkipBlock;
 
             // The GIF spec mandates lengths for three of the extensions below.
@@ -531,17 +566,17 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             switch (*q) {
             case 0xf9:
                 es = GIFControlExtension;
-                bytesInBlock = std::max(bytesInBlock, static_cast<size_t>(4));
+                m_count = std::max(m_count, 4);
                 break;
 
             case 0x01:
                 // ignoring plain text extension
-                bytesInBlock = std::max(bytesInBlock, static_cast<size_t>(12));
+                m_count = std::max(m_count, 12);
                 break;
 
             case 0xff:
                 es = GIFApplicationExtension;
-                bytesInBlock = std::max(bytesInBlock, static_cast<size_t>(11));
+                m_count = std::max(m_count, 11);
                 break;
 
             case 0xfe:
@@ -549,8 +584,8 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
                 break;
             }
 
-            if (bytesInBlock)
-                GETN(bytesInBlock, es);
+            if (m_count)
+                GETN(m_count, es);
             else
                 GETN(1, GIFImageStart);
             break;
@@ -694,7 +729,8 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             if (query == GIFImageDecoder::GIFSizeQuery || haltAtFrame == m_imagesDecoded) {
                 // The decoder needs to stop. Hand back the number of bytes we consumed from
                 // buffer minus 9 (the amount we consumed to read the header).
-                setRemainingBytes(len + 9);
+                if (m_client)
+                    m_client->decodingHalted(len + 9);
                 GETN(9, GIFImageHeader);
                 return true;
             }
@@ -758,24 +794,33 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             // has a local colormap?
             if (q[8] & 0x80) {
                 int numColors = 2 << (q[8] & 0x7);
-                const size_t localColormapBytes = 3 * numColors;
+                const unsigned size = 3 * numColors;
+                unsigned char *map = m_frameContext ? m_frameContext->localColormap : 0;
+                if (m_frameContext && (!map || (numColors > m_frameContext->localColormapSize))) {
+                    delete []map;
+                    map = new unsigned char[size];
+                    if (!map)
+                        return m_client ? m_client->setFailed() : false;
+                }
 
                 // Switch to the new local palette after it loads
                 if (m_frameContext) {
-                    m_frameContext->localColormapPosition = dataPosition;
+                    m_frameContext->localColormap = map;
                     m_frameContext->localColormapSize = numColors;
+                    m_frameContext->isLocalColormapDefined = true;
                 }
 
-                if (len < localColormapBytes) {
-                    // Wait until we have enough bytes to consume the entire colormap at once.
-                    GETN(localColormapBytes, GIFImageColormap);
+                if (len < size) {
+                    // Use 'hold' pattern to get the image colormap
+                    GETN(size, GIFImageColormap);
                     break;
                 }
 
+                // Copy everything and directly go to GIFLZWStart
                 if (m_frameContext)
-                    m_frameContext->isLocalColormapDefined = true;
-                dataPosition += localColormapBytes;
-                len -= localColormapBytes;
+                    memcpy(m_frameContext->localColormap, buf, size);
+                buf += size;
+                len -= size;
             } else if (m_frameContext) {
                 // Switch back to the global palette
                 m_frameContext->isLocalColormapDefined = false;
@@ -785,23 +830,21 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
         }
 
         case GIFImageColormap: {
-            if (m_frameContext)
-                m_frameContext->isLocalColormapDefined = true;
+            // Everything is already copied into localColormap
             GETN(1, GIFLZWStart);
             break;
         }
 
         case GIFSubBlock: {
             // Still working on the same image: Process next LZW data block.
-            const size_t bytesInBlock = *q;
-            if (bytesInBlock) {
+            if ((m_count = *q)) {
                 // Make sure there are still rows left. If the GIF data
                 // is corrupt, we may not get an explicit terminator.
                 if (m_frameContext && !m_frameContext->rowsRemaining) {
                     // This is an illegal GIF, but we remain tolerant.
                     GETN(1, GIFSubBlock);
                 }
-                GETN(bytesInBlock, GIFLZW);
+                GETN(m_count, GIFLZW);
             } else {
                 // See if there are any more images in this sequence.
                 m_imagesDecoded++;
@@ -834,12 +877,23 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
         }
     }
 
-    setRemainingBytes(len);
-    return false;
-}
+    // Copy the leftover into m_frameContext->m_hold
+    m_bytesInHold = len;
+    if (len) {
+        // Add what we have sofar to the block
+        unsigned char* p;
+        if (m_state == GIFGlobalColormap)
+            p = m_globalColormap;
+        else if (m_state == GIFImageColormap)
+            p = m_frameContext ? m_frameContext->localColormap : 0;
+        else
+            p = m_hold;
+        if (p)
+            memcpy(p, buf, len);
+        m_bytesToConsume -= len;
+    }
 
-void GIFImageReader::setRemainingBytes(size_t remainingBytes)
-{
-    ASSERT(remainingBytes <= m_data->size());
-    m_bytesRead = m_data->size() - remainingBytes;
+    if (m_client)
+        m_client->decodingHalted(0);
+    return false;
 }

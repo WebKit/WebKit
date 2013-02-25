@@ -41,12 +41,11 @@
 // Define ourselves as the clientPtr.  Mozilla just hacked their C++ callback class into this old C decoder,
 // so we will too.
 #include "GIFImageDecoder.h"
-#include "SharedBuffer.h"
 
 #define MAX_LZW_BITS          12
 #define MAX_BITS            4097 /* 2^MAX_LZW_BITS+1 */
 #define MAX_COLORS           256
-#define GIF_COLORS             3
+#define MAX_HOLD_SIZE        256
 
 const int cLoopCountNotSeen = -2;
 
@@ -104,7 +103,7 @@ public:
     unsigned height;
     int tpixel; // Index of transparent pixel.
     WebCore::ImageFrame::FrameDisposalMethod disposalMethod; // Restore to background, leave in place, etc.
-    size_t localColormapPosition; // Per-image colormap.
+    unsigned char *localColormap; // Per-image colormap.
     int localColormapSize; // Size of local colormap array.
     
     bool isLocalColormapDefined : 1;
@@ -141,7 +140,7 @@ public:
         , height(0)
         , tpixel(0)
         , disposalMethod(WebCore::ImageFrame::DisposeNotSpecified)
-        , localColormapPosition(0)
+        , localColormap(0)
         , localColormapSize(0)
         , isLocalColormapDefined(false)
         , progressiveDisplay(false)
@@ -157,6 +156,7 @@ public:
     ~GIFFrameContext()
     {
         delete [] rowbuf;
+        delete [] localColormap;
         delete [] prefix;
         delete [] suffix;
         delete [] stack;
@@ -169,87 +169,66 @@ public:
     GIFImageReader(WebCore::GIFImageDecoder* client = 0)
         : m_client(client)
         , m_state(GIFType)
-        , m_bytesToConsume(6) // Number of bytes for GIF type, either "GIF87a" or "GIF89a".
-        , m_bytesRead(0)
+        , m_bytesToConsume(6)
+        , m_bytesInHold(0)
+        , m_globalColormap(0)
         , m_screenBgcolor(0)
         , m_version(0)
         , m_screenWidth(0)
         , m_screenHeight(0)
-        , m_isGlobalColormapDefined(false)
-        , m_globalColormapPosition(0)
         , m_globalColormapSize(0)
         , m_imagesDecoded(0)
         , m_imagesCount(0)
         , m_loopCount(cLoopCountNotSeen)
+        , m_count(0)
         , m_frameContext(0)
     {
     }
 
     ~GIFImageReader()
     {
+        delete [] m_globalColormap;
+        m_globalColormap = 0;
+
         delete m_frameContext;
         m_frameContext = 0;
     }
 
-    void setData(PassRefPtr<WebCore::SharedBuffer> data) { m_data = data; }
-    bool decode(WebCore::GIFImageDecoder::GIFQuery, unsigned haltAtFrame);
+    bool read(const unsigned char* buf, unsigned numbytes, WebCore::GIFImageDecoder::GIFQuery = WebCore::GIFImageDecoder::GIFFullQuery, unsigned haltAtFrame = -1);
 
     int imagesCount() const { return m_imagesCount; }
     int loopCount() const { return m_loopCount; }
-
-    const unsigned char* globalColormap() const
-    {
-        return m_isGlobalColormapDefined ? data(m_globalColormapPosition) : 0;
-    }
-    int globalColormapSize() const
-    {
-        return m_isGlobalColormapDefined ? m_globalColormapSize : 0;
-    }
-
-    const unsigned char* localColormap(const GIFFrameContext* frame) const
-    {
-        return frame->isLocalColormapDefined ? data(frame->localColormapPosition) : 0;
-    }
-    int localColormapSize(const GIFFrameContext* frame) const
-    {
-        return frame->isLocalColormapDefined ? frame->localColormapSize : 0;
-    }
-
+    unsigned char* globalColormap() const { return m_globalColormap; }
+    int globalColormapSize() const { return m_globalColormapSize; }
     const GIFFrameContext* frameContext() const { return m_frameContext; }
 
 private:
-    bool decodeInternal(size_t dataPosition, size_t len, WebCore::GIFImageDecoder::GIFQuery, unsigned haltAtFrame);
     bool outputRow();
-    bool doLZW(const unsigned char *, size_t);
-    void setRemainingBytes(size_t);
-
-    const unsigned char* data(size_t dataPosition) const
-    {
-        return reinterpret_cast<const unsigned char*>(m_data->data()) + dataPosition;
-    }
+    bool doLZW(const unsigned char *q);
 
     WebCore::GIFImageDecoder* m_client;
 
     // Parsing state machine.
     GIFState m_state; // Current decoder master state.
-    size_t m_bytesToConsume; // Number of bytes to consume for next stage of parsing.
-    size_t m_bytesRead; // Number of bytes processed.
+    unsigned m_bytesToConsume; // Number of bytes to accumulate.
+    unsigned m_bytesInHold; // bytes accumulated so far.
+    unsigned char m_hold[MAX_HOLD_SIZE]; // Accumulation buffer.
+    unsigned char* m_globalColormap; // (3* MAX_COLORS in size) Default colormap if local not supplied, 3 bytes for each color.
     
     // Global (multi-image) state.
     int m_screenBgcolor; // Logical screen background color.
     int m_version; // Either 89 for GIF89 or 87 for GIF87.
     unsigned m_screenWidth; // Logical screen width & height.
     unsigned m_screenHeight;
-    bool m_isGlobalColormapDefined;
-    size_t m_globalColormapPosition; // (3* MAX_COLORS in size) Default colormap if local not supplied, 3 bytes for each color.
     int m_globalColormapSize; // Size of global colormap array.
     unsigned m_imagesDecoded; // Counts completed frames for animated GIFs.
     int m_imagesCount; // Counted all frames seen so far (including incomplete frames).
     int m_loopCount; // Netscape specific extension block to control the number of animation loops a GIF renders.
     
+    // Not really global, but convenient to locate here.
+    int m_count; // Remaining # bytes in sub-block.
+    
     GIFFrameContext* m_frameContext;
-
-    RefPtr<WebCore::SharedBuffer> m_data;
 };
 
 #endif

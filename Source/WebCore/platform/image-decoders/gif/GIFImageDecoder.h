@@ -56,6 +56,7 @@ namespace WebCore {
         virtual void clearFrameBufferCache(size_t clearBeforeFrame);
 
         // Callbacks from the GIF reader.
+        void decodingHalted(unsigned bytesLeft);
         bool haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, unsigned repeatCount, bool writeTransparentPixels);
         bool frameComplete(unsigned frameIndex, unsigned frameDuration, ImageFrame::FrameDisposalMethod disposalMethod);
         void gifComplete();
@@ -76,6 +77,7 @@ namespace WebCore {
         bool m_currentBufferSawAlpha;
         mutable int m_repetitionCount;
         OwnPtr<GIFImageReader> m_reader;
+        unsigned m_readOffset;
     };
 
 } // namespace WebCore

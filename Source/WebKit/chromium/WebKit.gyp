@@ -643,7 +643,6 @@
                                 # We should not include files depending on webkit_support.
                                 # These tests depend on webkit_support and
                                 # functions defined only in !WEBKIT_IMPLEMENTATION.
-                                'tests/GIFImageDecoderTest.cpp',
                                 'tests/LevelDBTest.cpp',
                             ],
                             'conditions': [

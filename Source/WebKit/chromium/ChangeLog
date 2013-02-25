@@ -1,3 +1,17 @@
+2013-02-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r143936.
+        http://trac.webkit.org/changeset/143936
+        https://bugs.webkit.org/show_bug.cgi?id=110789
+
+        Causes webkit_unit_tests failures on android dbg (Requested by
+        vollick on #webkit).
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * tests/GIFImageDecoderTest.cpp: Removed.
+        * tests/data/broken.gif: Removed.
+
 2013-02-25  Alpha Lam  <hclam@chromium.org>
 
         GIFImageReader to read from source data directly
