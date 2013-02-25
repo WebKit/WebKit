@@ -1722,6 +1722,165 @@ ListView.prototype.scrollToRow = function(row, animate) {
 
 /**
  * @constructor
+ * @extends View
+ * @param {!ScrollView} scrollView
+ */
+function ScrubbyScrollBar(scrollView) {
+    View.call(this, createElement("div", ScrubbyScrollBar.ClassNameScrubbyScrollBar));
+
+    /**
+     * @type {!Element}
+     * @const
+     */
+    this.thumb = createElement("div", ScrubbyScrollBar.ClassNameScrubbyScrollThumb);
+    this.element.appendChild(this.thumb);
+
+    /**
+     * @type {!ScrollView}
+     * @const
+     */
+    this.scrollView = scrollView;
+
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._height = 0;
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._thumbHeight = 0;
+    /**
+     * @type {!number}
+     * @protected
+     */
+    this._thumbPosition = 0;
+
+    this.setHeight(0);
+    this.setThumbHeight(ScrubbyScrollBar.ThumbHeight);
+
+    /**
+     * @type {?Animator}
+     * @protected
+     */
+    this._thumbStyleTopAnimator = null;
+
+    /** 
+     * @type {?number}
+     * @protected
+     */
+    this._timer = null;
+    
+    this.element.addEventListener("mousedown", this.onMouseDown, false);
+}
+
+ScrubbyScrollBar.prototype = Object.create(View.prototype);
+
+ScrubbyScrollBar.ScrollInterval = 16;
+ScrubbyScrollBar.ThumbMargin = 2;
+ScrubbyScrollBar.ThumbHeight = 30;
+ScrubbyScrollBar.ClassNameScrubbyScrollBar = "scrubby-scroll-bar";
+ScrubbyScrollBar.ClassNameScrubbyScrollThumb = "scrubby-scroll-thumb";
+
+/**
+ * @return {!number} Height of the view in pixels.
+ */
+ScrubbyScrollBar.prototype.height = function() {
+    return this._height;
+};
+
+/**
+ * @param {!number} height Height of the view in pixels.
+ */
+ScrubbyScrollBar.prototype.setHeight = function(height) {
+    if (this._height === height)
+        return;
+    this._height = height;
+    this.element.style.height = this._height + "px";
+    this.thumb.style.top = ((this._height - this._thumbHeight) / 2) + "px";
+    this._thumbPosition = 0;
+};
+
+/**
+ * @param {!number} height Height of the scroll bar thumb in pixels.
+ */
+ScrubbyScrollBar.prototype.setThumbHeight = function(height) {
+    if (this._thumbHeight === height)
+        return;
+    this._thumbHeight = height;
+    this.thumb.style.height = this._thumbHeight + "px";
+    this.thumb.style.top = ((this._height - this._thumbHeight) / 2) + "px";
+    this._thumbPosition = 0;
+};
+
+/**
+ * @param {?Event} event
+ */
+ScrubbyScrollBar.prototype._setThumbPositionFromEvent = function(event) {
+    var thumbMin = ScrubbyScrollBar.ThumbMargin;
+    var thumbMax = this._height - this._thumbHeight - ScrubbyScrollBar.ThumbMargin * 2;
+    var y = event.clientY - this.element.getBoundingClientRect().top - this.element.clientTop + this.element.scrollTop;
+    var thumbPosition = y - this._thumbHeight / 2;
+    thumbPosition = Math.max(thumbPosition, thumbMin);
+    thumbPosition = Math.min(thumbPosition, thumbMax);
+    this.thumb.style.top = thumbPosition + "px";
+    this._thumbPosition = 1.0 - (thumbPosition - thumbMin) / (thumbMax - thumbMin) * 2;
+};
+
+/**
+ * @param {?Event} event
+ */
+ScrubbyScrollBar.prototype.onMouseDown = function(event) {
+    this._setThumbPositionFromEvent(event);
+
+    window.addEventListener("mousemove", this.onWindowMouseMove, false);
+    window.addEventListener("mouseup", this.onWindowMouseUp, false);
+    if (this._thumbStyleTopAnimator)
+        this._thumbStyleTopAnimator.stop();
+    this._timer = setInterval(this.onScrollTimer, ScrubbyScrollBar.ScrollInterval);
+};
+
+/**
+ * @param {?Event} event
+ */
+ScrubbyScrollBar.prototype.onWindowMouseMove = function(event) {
+    this._setThumbPositionFromEvent(event);
+};
+
+/**
+ * @param {?Event} event
+ */
+ScrubbyScrollBar.prototype.onWindowMouseUp = function(event) {
+    this._thumbStyleTopAnimator = new Animator();
+    this._thumbStyleTopAnimator.step = this.onThumbStyleTopAnimationStep;
+    this._thumbStyleTopAnimator.setFrom(this.thumb.offsetTop);
+    this._thumbStyleTopAnimator.setTo((this._height - this._thumbHeight) / 2);
+    this._thumbStyleTopAnimator.timingFunction = AnimationTimingFunction.EaseInOut;
+    this._thumbStyleTopAnimator.duration = 100;
+    this._thumbStyleTopAnimator.start();
+    
+    window.removeEventListener("mousemove", this.onWindowMouseMove, false);
+    window.removeEventListener("mouseup", this.onWindowMouseUp, false);
+    clearInterval(this._timer);
+};
+
+/**
+ * @param {!Animator} animator
+ */
+ScrubbyScrollBar.prototype.onThumbStyleTopAnimationStep = function(animator) {
+    this.thumb.style.top = animator.currentValue + "px";
+};
+
+ScrubbyScrollBar.prototype.onScrollTimer = function() {
+    var scrollAmount = Math.pow(this._thumbPosition, 2) * 10;
+    if (this._thumbPosition > 0)
+        scrollAmount = -scrollAmount;
+    this.scrollView.scrollBy(scrollAmount, false);
+};
+
+/**
+ * @constructor
  * @param {!Element} element
  * @param {!Object} config
  */
