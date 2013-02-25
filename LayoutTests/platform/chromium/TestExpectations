@@ -4428,3 +4428,7 @@ webkit.org/b/110642 [ Debug Win7 Lion SnowLeopard Linux ] html5lib/runner.html [
 
 webkit.org/b/110739 [ Release MountainLion ] fast/regions/shape-inside-on-regions.html [ ImageOnlyFailure ]
 
+webkit.org/b/110749 [ Debug Linux ] fullscreen/full-screen-enabled-prefixed.html [ Pass Crash ]
+webkit.org/b/110749 [ Debug Win ] fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ Pass Crash ]
+webkit.org/b/110749 [ Debug Mac ] fast/forms/month/month-stepup-stepdown.html [ Pass Crash ]
+
