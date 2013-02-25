@@ -199,10 +199,11 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderP
 // -------------------------------------------------------------------------------------------------------
 
 RenderBlock::RenderBlock(ContainerNode* node)
-      : RenderBox(node)
-      , m_lineHeight(-1)
-      , m_beingDestroyed(false)
-      , m_hasMarkupTruncation(false)
+    : RenderBox(node)
+    , m_lineHeight(-1)
+    , m_beingDestroyed(false)
+    , m_hasMarkupTruncation(false)
+    , m_hasBorderOrPaddingLogicalWidthChanged(false)
 {
     setChildrenInline(true);
     COMPILE_ASSERT(sizeof(RenderBlock::FloatingObject) == sizeof(SameSizeAsFloatingObject), FloatingObject_should_stay_small);
@@ -408,36 +409,8 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
     
     // It's possible for our border/padding to change, but for the overall logical width of the block to
-    // end up being the same. When this happens, we won't understand to set |relayoutChildren| to true
-    // in layoutBlock. Longer-term, we should be figuring this stuff out over in layoutBlock, since
-    // we need to be able to handle the same situation in RenderRegions when we have distinct borders in
-    // those regions. For now, though, we just mark the children for relayout right here.
-    if (oldStyle && diff == StyleDifferenceLayout && needsLayout() && borderOrPaddingLogicalWidthChanged(oldStyle, newStyle)) {
-        // First walk our normal flow objects and see if there is any change.
-        if (!childrenInline()) {
-            for (RenderBox* childBox = firstChildBox(); childBox; childBox = childBox->nextSiblingBox()) {
-                // Positioned objects are checked below, since we only care about those objects for which we
-                // are the containing block. We skip floats completely, since this matches the behavior of
-                // the |relayoutChildren| boolean in layoutBlock. It is entirely possible there are bugs
-                // related to floats here, but for now we'll be consistent with layoutBlock, since those
-                // bugs would exist even without border/padding changes.
-                if (childBox->isFloatingOrOutOfFlowPositioned())
-                    continue;
-                childBox->setChildNeedsLayout(true, MarkOnlyThis);
-            }
-        }
-
-        // Now walk the positioned objects for which we are the containing block.
-        TrackedRendererListHashSet* positionedDescendants = positionedObjects();
-        if (positionedDescendants) {
-            RenderBox* positionedBox;
-            TrackedRendererListHashSet::iterator end = positionedDescendants->end();
-            for (TrackedRendererListHashSet::iterator it = positionedDescendants->begin(); it != end; ++it) {
-                positionedBox = *it;
-                positionedBox->setChildNeedsLayout(true, MarkContainingBlockChain);
-            }
-        }
-    }
+    // end up being the same. We keep track of this change so in layoutBlock, we can know to set relayoutChildren=true.
+    m_hasBorderOrPaddingLogicalWidthChanged = oldStyle && diff == StyleDifferenceLayout && needsLayout() && borderOrPaddingLogicalWidthChanged(oldStyle, newStyle);
 }
 
 RenderBlock* RenderBlock::continuationBefore(RenderObject* beforeChild)
@@ -1493,7 +1466,10 @@ bool RenderBlock::updateLogicalWidthAndColumnWidth()
     updateLogicalWidth();
     calcColumnWidth();
 
-    return oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth();
+    bool hasBorderOrPaddingLogicalWidthChanged = m_hasBorderOrPaddingLogicalWidthChanged;
+    m_hasBorderOrPaddingLogicalWidthChanged = false;
+
+    return oldWidth != logicalWidth() || oldColumnWidth != desiredColumnWidth() || hasBorderOrPaddingLogicalWidthChanged;
 }
 
 void RenderBlock::checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight)
