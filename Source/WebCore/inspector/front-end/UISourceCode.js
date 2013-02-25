@@ -51,9 +51,6 @@ WebInspector.UISourceCode = function(project, path, originURL, url, contentType,
      * @type Array.<function(?string,boolean,string)>
      */
     this._requestContentCallbacks = [];
-    /**
-     * @type {Object.<number, WebInspector.LiveLocation>}
-     */
     this._liveLocations = new Set();
     /**
      * @type {Array.<WebInspector.PresentationConsoleMessage>}
