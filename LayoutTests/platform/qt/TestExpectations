@@ -421,6 +421,9 @@ fast/dom/HTMLAnchorElement/anchor-download.html
 fast/dom/HTMLAnchorElement/anchor-nodownload-set.html
 fast/dom/HTMLAnchorElement/anchor-download-unset.html
 
+# Require ENABLE(CUSTOM_ELEMENTS) support
+webkit.org/b/110735 fast/dom/custom [ Skip ]
+
 # For now, Web Audio API is disabled
 webaudio/
 webkit.org/b/101729 inspector-protocol/nmi-webaudio.html
@@ -2273,6 +2276,7 @@ fast/regions/region-style-rule-position.html
 fast/forms/select/intrinsic-min-width-applies-with-fixed-width.html
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ ImageOnlyFailure ]
+webkit.org/b/110447 fast/regions/shape-inside-on-regions.html [ Skip ]
 
 # Failing fast/css/sticky/ tests with minor pixel differences
 # https://bugs.webkit.org/show_bug.cgi?id=92080
