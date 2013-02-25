@@ -81,10 +81,15 @@ static v8::Handle<v8::Value> methodMethod(const v8::Arguments& args)
     return v8Undefined();
 }
 
+static v8::Handle<v8::Value> methodMethodCallback(const v8::Arguments& args)
+{
+    return TestMediaQueryListListenerV8Internal::methodMethod(args);
+}
+
 } // namespace TestMediaQueryListListenerV8Internal
 
 static const V8DOMConfiguration::BatchedCallback V8TestMediaQueryListListenerCallbacks[] = {
-    {"method", TestMediaQueryListListenerV8Internal::methodMethod},
+    {"method", TestMediaQueryListListenerV8Internal::methodMethodCallback},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListenerTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

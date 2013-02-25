@@ -201,6 +201,11 @@ static v8::Handle<v8::Value> acceptTransferListMethod(const v8::Arguments& args)
     return v8Undefined();
 }
 
+static v8::Handle<v8::Value> acceptTransferListMethodCallback(const v8::Arguments& args)
+{
+    return TestSerializedScriptValueInterfaceV8Internal::acceptTransferListMethod(args);
+}
+
 static v8::Handle<v8::Value> multiTransferListMethod(const v8::Arguments& args)
 {
     TestSerializedScriptValueInterface* imp = V8TestSerializedScriptValueInterface::toNative(args.Holder());
@@ -244,6 +249,11 @@ static v8::Handle<v8::Value> multiTransferListMethod(const v8::Arguments& args)
     return v8Undefined();
 }
 
+static v8::Handle<v8::Value> multiTransferListMethodCallback(const v8::Arguments& args)
+{
+    return TestSerializedScriptValueInterfaceV8Internal::multiTransferListMethod(args);
+}
+
 static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 {
     if (args.Length() < 2)
@@ -283,8 +293,8 @@ static const V8DOMConfiguration::BatchedAttribute V8TestSerializedScriptValueInt
 };
 
 static const V8DOMConfiguration::BatchedCallback V8TestSerializedScriptValueInterfaceCallbacks[] = {
-    {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListMethod},
-    {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListMethod},
+    {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListMethodCallback},
+    {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListMethodCallback},
 };
 
 v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(const v8::Arguments& args)

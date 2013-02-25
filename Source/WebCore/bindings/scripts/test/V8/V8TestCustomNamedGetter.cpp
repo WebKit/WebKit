@@ -80,10 +80,15 @@ static v8::Handle<v8::Value> anotherFunctionMethod(const v8::Arguments& args)
     return v8Undefined();
 }
 
+static v8::Handle<v8::Value> anotherFunctionMethodCallback(const v8::Arguments& args)
+{
+    return TestCustomNamedGetterV8Internal::anotherFunctionMethod(args);
+}
+
 } // namespace TestCustomNamedGetterV8Internal
 
 static const V8DOMConfiguration::BatchedCallback V8TestCustomNamedGetterCallbacks[] = {
-    {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionMethod},
+    {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionMethodCallback},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

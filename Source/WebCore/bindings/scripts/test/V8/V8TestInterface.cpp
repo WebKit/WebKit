@@ -263,6 +263,15 @@ static v8::Handle<v8::Value> supplementalMethod1Method(const v8::Arguments& args
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
+static v8::Handle<v8::Value> supplementalMethod1MethodCallback(const v8::Arguments& args)
+{
+    return TestInterfaceV8Internal::supplementalMethod1Method(args);
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
 static v8::Handle<v8::Value> supplementalMethod2Method(const v8::Arguments& args)
 {
     if (args.Length() < 2)
@@ -286,7 +295,16 @@ static v8::Handle<v8::Value> supplementalMethod2Method(const v8::Arguments& args
 
 #if ENABLE(Condition11) || ENABLE(Condition12)
 
-static v8::Handle<v8::Value> supplementalMethod3Method(const v8::Arguments& args)
+static v8::Handle<v8::Value> supplementalMethod2MethodCallback(const v8::Arguments& args)
+{
+    return TestInterfaceV8Internal::supplementalMethod2Method(args);
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
+static v8::Handle<v8::Value> supplementalMethod3MethodCallback(const v8::Arguments& args)
 {
     return V8TestInterface::supplementalMethod3MethodCustom(args);
 }
@@ -299,6 +317,15 @@ static v8::Handle<v8::Value> supplementalMethod4Method(const v8::Arguments& args
 {
     TestSupplemental::supplementalMethod4();
     return v8Undefined();
+}
+
+#endif // ENABLE(Condition11) || ENABLE(Condition12)
+
+#if ENABLE(Condition11) || ENABLE(Condition12)
+
+static v8::Handle<v8::Value> supplementalMethod4MethodCallback(const v8::Arguments& args)
+{
+    return TestInterfaceV8Internal::supplementalMethod4Method(args);
 }
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
@@ -356,10 +383,10 @@ static const V8DOMConfiguration::BatchedAttribute V8TestInterfaceAttrs[] = {
 
 static const V8DOMConfiguration::BatchedCallback V8TestInterfaceCallbacks[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    {"supplementalMethod1", TestInterfaceV8Internal::supplementalMethod1Method},
+    {"supplementalMethod1", TestInterfaceV8Internal::supplementalMethod1MethodCallback},
 #endif
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    {"supplementalMethod3", TestInterfaceV8Internal::supplementalMethod3Method},
+    {"supplementalMethod3", TestInterfaceV8Internal::supplementalMethod3MethodCallback},
 #endif
 };
 
@@ -414,10 +441,10 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
     v8::Handle<v8::FunctionTemplate> supplementalMethod2Argv[supplementalMethod2Argc] = { v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> supplementalMethod2Signature = v8::Signature::New(desc, supplementalMethod2Argc, supplementalMethod2Argv);
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    proto->Set(v8::String::NewSymbol("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod2Method, v8Undefined(), supplementalMethod2Signature));
+    proto->Set(v8::String::NewSymbol("supplementalMethod2"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod2MethodCallback, v8Undefined(), supplementalMethod2Signature));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 #if ENABLE(Condition11) || ENABLE(Condition12)
-    desc->Set(v8::String::NewSymbol("supplementalMethod4"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod4Method, v8Undefined(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::NewSymbol("supplementalMethod4"), v8::FunctionTemplate::New(TestInterfaceV8Internal::supplementalMethod4MethodCallback, v8Undefined(), v8::Local<v8::Signature>()));
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
     V8DOMConfiguration::batchConfigureConstants(desc, proto, V8TestInterfaceConsts, WTF_ARRAY_LENGTH(V8TestInterfaceConsts), isolate);
 

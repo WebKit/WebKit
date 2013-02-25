@@ -92,6 +92,11 @@ static v8::Handle<v8::Value> itemMethod(const v8::Arguments& args)
     return setDOMException(ec, args.GetIsolate());
 }
 
+static v8::Handle<v8::Value> itemMethodCallback(const v8::Arguments& args)
+{
+    return TestEventTargetV8Internal::itemMethod(args);
+}
+
 static v8::Handle<v8::Value> addEventListenerMethod(const v8::Arguments& args)
 {
     RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFindOrCreate);
@@ -103,6 +108,11 @@ static v8::Handle<v8::Value> addEventListenerMethod(const v8::Arguments& args)
     return v8Undefined();
 }
 
+static v8::Handle<v8::Value> addEventListenerMethodCallback(const v8::Arguments& args)
+{
+    return TestEventTargetV8Internal::addEventListenerMethod(args);
+}
+
 static v8::Handle<v8::Value> removeEventListenerMethod(const v8::Arguments& args)
 {
     RefPtr<EventListener> listener = V8EventListenerList::getEventListener(args[1], false, ListenerFindOnly);
@@ -112,6 +122,11 @@ static v8::Handle<v8::Value> removeEventListenerMethod(const v8::Arguments& args
         removeHiddenDependency(args.Holder(), args[1], V8TestEventTarget::eventListenerCacheIndex, args.GetIsolate());
     }
     return v8Undefined();
+}
+
+static v8::Handle<v8::Value> removeEventListenerMethodCallback(const v8::Arguments& args)
+{
+    return TestEventTargetV8Internal::removeEventListenerMethod(args);
 }
 
 static v8::Handle<v8::Value> dispatchEventMethod(const v8::Arguments& args)
@@ -131,12 +146,17 @@ static v8::Handle<v8::Value> dispatchEventMethod(const v8::Arguments& args)
     return setDOMException(ec, args.GetIsolate());
 }
 
+static v8::Handle<v8::Value> dispatchEventMethodCallback(const v8::Arguments& args)
+{
+    return TestEventTargetV8Internal::dispatchEventMethod(args);
+}
+
 } // namespace TestEventTargetV8Internal
 
 static const V8DOMConfiguration::BatchedCallback V8TestEventTargetCallbacks[] = {
-    {"item", TestEventTargetV8Internal::itemMethod},
-    {"addEventListener", TestEventTargetV8Internal::addEventListenerMethod},
-    {"removeEventListener", TestEventTargetV8Internal::removeEventListenerMethod},
+    {"item", TestEventTargetV8Internal::itemMethodCallback},
+    {"addEventListener", TestEventTargetV8Internal::addEventListenerMethodCallback},
+    {"removeEventListener", TestEventTargetV8Internal::removeEventListenerMethodCallback},
 };
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
@@ -161,7 +181,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventTargetTemplate(v
     const int dispatchEventArgc = 1;
     v8::Handle<v8::FunctionTemplate> dispatchEventArgv[dispatchEventArgc] = { V8Event::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> dispatchEventSignature = v8::Signature::New(desc, dispatchEventArgc, dispatchEventArgv);
-    proto->Set(v8::String::NewSymbol("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetV8Internal::dispatchEventMethod, v8Undefined(), dispatchEventSignature));
+    proto->Set(v8::String::NewSymbol("dispatchEvent"), v8::FunctionTemplate::New(TestEventTargetV8Internal::dispatchEventMethodCallback, v8Undefined(), dispatchEventSignature));
 
     // Custom toString template
     desc->Set(v8::String::NewSymbol("toString"), V8PerIsolateData::current()->toStringTemplate());
