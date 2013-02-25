@@ -1,3 +1,17 @@
+2013-02-25  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Let built-product-archive log which directory it's archiving from and extracting to
+        https://bugs.webkit.org/show_bug.cgi?id=110748
+
+        Reviewed by Jochen Eisinger.
+
+        One of the mac testers runs DRT from out/ but WebKitUnitTests from
+        xcodebuild. I'm trying to understand what's going on.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+        (extractBuiltProduct):
+
 2013-02-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: replace String with const char* in MemoryObjectInfo
