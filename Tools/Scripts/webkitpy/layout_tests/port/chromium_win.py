@@ -115,11 +115,6 @@ class ChromiumWinPort(chromium.ChromiumPort):
         path = filename[len(self.layout_tests_dir()) + 1:]
         return path.replace('\\', '/')
 
-    def default_max_locked_shards(self):
-        # FIXME: lighttpd may be unstable with > 1 concurrent shards. See
-        # http://code.google.com/p/chromium/issues/detail?id=169530
-        return 1
-
     #
     # PROTECTED ROUTINES
     #

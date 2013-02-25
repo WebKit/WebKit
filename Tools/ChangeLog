@@ -1,5 +1,18 @@
 2013-02-25  Dirk Pranke  <dpranke@chromium.org>
 
+        nrwt: reenable multiple http shards on chromium win
+        https://bugs.webkit.org/show_bug.cgi?id=110814
+
+        Reviewed by Tony Chang.
+
+        The underlying bug in DumpRenderTree that was causing us to look for a
+        pac file and timeout under load was fixed a while ago.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win.py:
+        (ChromiumWinPort.relative_test_filename):
+
+2013-02-25  Dirk Pranke  <dpranke@chromium.org>
+
         Make ninja the default w/ build-webkit --chromium on windows.
         https://bugs.webkit.org/show_bug.cgi?id=110731
 
