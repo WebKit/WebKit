@@ -4434,5 +4434,6 @@ webkit.org/b/110749 [ Debug Win ] fast/dom/HTMLMeterElement/meter-element-repain
 webkit.org/b/110749 [ Debug Mac ] fast/forms/month/month-stepup-stepdown.html [ Pass Crash ]
 webkit.org/b/110749 [ Debug Linux ] ietestcenter/css3/namespaces/prefix-008.xml [ Pass Crash ]
 webkit.org/b/110749 [ Debug Linux ] ietestcenter/css3/grid/grid-column-001.htm [ Pass Crash ]
+webkit.org/b/110749 [ Debug Linux ] ietestcenter/Javascript/10.4.2-1-5.html [ Pass Crash ]
 webkit.org/b/110749 [ Debug Linux ] fast/dom/Range/acid3-surround-contents.html [ Pass Crash ]
 
