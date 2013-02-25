@@ -408,7 +408,7 @@ EXPORTS
         ?setDefaultFixedFontSize@Settings@WebCore@@QAEXH@Z
         ?setAuthorAndUserStylesEnabled@Settings@WebCore@@QAEX_N@Z
         ?setAcceleratedCompositingEnabled@Settings@WebCore@@QAEX_N@Z
-
+		?setAutofilled@HTMLInputElement@WebCore@@QAEX_N@Z
 #if ENABLE(WORKERS)
         ?workerThreadCount@WorkerThread@WebCore@@SAIXZ
 #endif

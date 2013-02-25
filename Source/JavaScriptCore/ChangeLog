@@ -1,3 +1,9 @@
+2013-02-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. VS2010 solution build fix.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorCommon.props:
+
 2013-02-24  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::Edge should have more bits for UseKind, and DFG::Allocator should be simpler
