@@ -1,3 +1,18 @@
+2013-02-25  Jer Noble  <jer.noble@apple.com>
+
+        Safari shows empty window and paints webpage in full-screen background
+        https://bugs.webkit.org/show_bug.cgi?id=103712
+
+        Reviewed by Darin Adler.
+
+        When canceling full screen mode due to a provisional load, exit normally instead of closing the
+        full screen window controller. Additionally, to ensure full screen is cancelled when the enclosing
+        frame around a full screen iframe is navigated, check to see if the navigating document contains
+        a full screen element, rather than checking whether the document itself is full screen.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+
 2013-02-25  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

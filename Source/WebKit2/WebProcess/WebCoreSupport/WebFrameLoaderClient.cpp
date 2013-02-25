@@ -383,8 +383,8 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
         return;
 
 #if ENABLE(FULLSCREEN_API)
-    if (m_frame->coreFrame()->document()->webkitIsFullScreen())
-        webPage->fullScreenManager()->close();
+    if (m_frame->coreFrame()->document()->documentElement()->containsFullScreenElement())
+        webPage->fullScreenManager()->exitFullScreenForElement(webPage->fullScreenManager()->element());
 #endif
 
     webPage->findController().hideFindUI();
