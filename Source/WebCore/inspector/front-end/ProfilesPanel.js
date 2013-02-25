@@ -640,7 +640,7 @@ WebInspector.ProfilesPanel.prototype = {
         var small = false;
         var alternateTitle;
 
-        if (!WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile(profile.title)) {
+        if (!WebInspector.ProfilesPanelDescriptor.isUserInitiatedProfile(profile.title) && !profile.isTemporary) {
             var profileTitleKey = this._makeTitleKey(profile.title, typeId);
             if (!(profileTitleKey in this._profileGroups))
                 this._profileGroups[profileTitleKey] = [];
@@ -704,12 +704,20 @@ WebInspector.ProfilesPanel.prototype = {
         var profileTitleKey = this._makeTitleKey(profile.title, profile.profileType().id);
         var group = this._profileGroups[profileTitleKey];
         if (group) {
-            var index = group.indexOf(profile);
-            sidebarParent = group._profilesTreeElement || sidebarParent;
-            if (index !== -1)
-                group.splice(index, 1);
+            group.splice(group.indexOf(profile), 1);
+            if (group.length === 1) {
+                // Move the last profile out of its group and remove the group.
+                var index = sidebarParent.children.indexOf(group._profilesTreeElement);
+                sidebarParent.insertChild(group[0]._profilesTreeElement, index);
+                group[0]._profilesTreeElement.small = false;
+                group[0]._profilesTreeElement.mainTitle = group[0].title;
+                sidebarParent.removeChild(group._profilesTreeElement);
+            }
+            if (group.length !== 0)
+                sidebarParent = group._profilesTreeElement;
+            else
+                delete this._profileGroups[profileTitleKey];
         }
-
         sidebarParent.removeChild(profile._profilesTreeElement);
 
         // No other item will be selected if there aren't any other profiles, so

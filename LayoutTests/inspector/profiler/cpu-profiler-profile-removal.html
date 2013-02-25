@@ -1,0 +1,46 @@
+<html>
+<head>
+  <script src="../../http/tests/inspector/inspector-test.js"></script>
+  <script src="profiler-test.js"></script>
+<script>
+
+function pageFunction() {
+    console.profile("p1");
+    console.profileEnd("p1");
+    console.profile("p1");
+    console.profileEnd("p1");
+    console.profile("p2");
+    console.profileEnd("p2");
+}
+
+function test()
+{
+    InspectorTest.startProfilerTest(function() {
+        function viewLoaded(view) {
+            var profiles = WebInspector.panels.profiles;
+            var type = profiles.getProfileType("CPU");
+            while (type.getProfiles().length !== 0)
+                profiles._removeProfileHeader(type.getProfiles()[0]);
+            InspectorTest.addResult("Profile groups after removal:");
+            for (var key in profiles._profileGroups)
+                InspectorTest.addResult(key + ": " + profiles._profileGroups[key].length);
+            InspectorTest.assertEquals(0, type.treeElement.children.length, "All children has been removed");
+            InspectorTest.completeProfilerTest();
+        }
+        WebInspector.showPanel("profiles");
+        InspectorTest.evaluateInConsole("pageFunction()", function() {});
+        InspectorTest.showProfileWhenAdded("p2");
+        InspectorTest.waitUntilProfileViewIsShown("p2", viewLoaded);
+    });
+}
+
+</script>
+</head>
+<body onload="runTest()">
+<p>
+Tests that CPU profile removal from a group works.
+
+<a href="https://bugs.webkit.org/show_bug.cgi?id=110466">Bug 110466</a>
+</p>
+</body>
+</html>
