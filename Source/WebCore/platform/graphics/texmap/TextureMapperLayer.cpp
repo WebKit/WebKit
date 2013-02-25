@@ -277,20 +277,17 @@ void TextureMapperLayer::paintSelfAndChildrenWithReplica(const TextureMapperPain
 
 void TextureMapperLayer::setAnimatedTransform(const TransformationMatrix& matrix)
 {
-    m_shouldUpdateCurrentTransformFromGraphicsLayer = false;
     m_currentTransform.setLocalTransform(matrix);
 }
 
 void TextureMapperLayer::setAnimatedOpacity(float opacity)
 {
-    m_shouldUpdateCurrentOpacityFromGraphicsLayer = false;
     m_currentOpacity = opacity;
 }
 
 #if ENABLE(CSS_FILTERS)
 void TextureMapperLayer::setAnimatedFilters(const FilterOperations& filters)
 {
-    m_shouldUpdateCurrentFiltersFromGraphicsLayer = false;
     m_currentFilters = filters;
 }
 
@@ -576,13 +573,13 @@ void TextureMapperLayer::applyAnimationsRecursively()
 void TextureMapperLayer::syncAnimations()
 {
     m_animations.apply(this);
-    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform) && m_shouldUpdateCurrentTransformFromGraphicsLayer)
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitTransform))
         m_currentTransform.setLocalTransform(m_state.transform);
-    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity) && m_shouldUpdateCurrentOpacityFromGraphicsLayer)
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyOpacity))
         m_currentOpacity = m_state.opacity;
 
 #if ENABLE(CSS_FILTERS)
-    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitFilter) && m_shouldUpdateCurrentFiltersFromGraphicsLayer)
+    if (!m_animations.hasActiveAnimationsOfType(AnimatedPropertyWebkitFilter))
         m_currentFilters = m_state.filters;
 #endif
 }

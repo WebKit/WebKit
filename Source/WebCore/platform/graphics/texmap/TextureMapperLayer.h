@@ -44,11 +44,6 @@ public:
         , m_contentsLayer(0)
         , m_currentOpacity(1)
         , m_centerZ(0)
-        , m_shouldUpdateCurrentTransformFromGraphicsLayer(true)
-        , m_shouldUpdateCurrentOpacityFromGraphicsLayer(true)
-#if ENABLE(CSS_FILTERS)
-        , m_shouldUpdateCurrentFiltersFromGraphicsLayer(true)
-#endif
         , m_textureMapper(0)
         , m_fixedToViewport(false)
     { }
@@ -149,12 +144,6 @@ private:
     FilterOperations m_currentFilters;
 #endif
     float m_centerZ;
-    
-    bool m_shouldUpdateCurrentTransformFromGraphicsLayer;
-    bool m_shouldUpdateCurrentOpacityFromGraphicsLayer;
-#if ENABLE(CSS_FILTERS)
-    bool m_shouldUpdateCurrentFiltersFromGraphicsLayer;
-#endif
 
     struct State {
         FloatPoint pos;
