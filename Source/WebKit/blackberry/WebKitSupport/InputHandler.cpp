@@ -991,8 +991,13 @@ void InputHandler::submitForm()
     InputLog(Platform::LogLevelInfo, "InputHandler::submitForm triggered");
     if (elementType(m_currentFocusElement.get()) == InputTypeTextArea)
         formElement->submit();
-    else
+    else {
         handleKeyboardInput(Platform::KeyboardEvent(KEYCODE_RETURN, Platform::KeyboardEvent::KeyChar, 0), false /* changeIsPartOfComposition */);
+
+        // Confirm that implicit submission was accepted.
+        if (isActiveTextEdit())
+            formElement->submit();
+    }
 }
 
 static void addInputStyleMaskForKeyboardType(int64_t& inputMask, VirtualKeyboardType keyboardType)

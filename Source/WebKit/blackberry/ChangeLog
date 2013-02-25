@@ -1,3 +1,20 @@
+2013-02-25  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Force form submission when implicit submission fails.
+        https://bugs.webkit.org/show_bug.cgi?id=110627
+
+        Reviewed by Rob Buis.
+
+        PR 286023.
+
+        When implicit form submission does not submit the form
+        do a direct submission of the form.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+
 2013-02-25  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry]Adjust fatfinger detection rect size.
