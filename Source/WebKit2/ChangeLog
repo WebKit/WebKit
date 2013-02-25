@@ -1,3 +1,12 @@
+2013-02-25  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/12976385> Remove rule to silence attempts to create the ~/Library/Caches/com.apple.WebKit2.WebProcessService directory
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/com.apple.WebProcess.sb.in: Remove the obsolete rule. We no longer
+        have a "WebProcessService".
+
 2013-02-25  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Remove unneeded method didResumeContent from PageViewportController clients

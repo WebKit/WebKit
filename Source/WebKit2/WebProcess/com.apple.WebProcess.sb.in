@@ -249,9 +249,3 @@
        (global-name "com.apple.coreservices.appleevents")
        (global-name "com.apple.pasteboard.1")
        (global-name "com.apple.speech.recognitionserver"))
-
-#if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-;; FIXME: This should be removed, see <rdar://problem/12976385>.
-(deny file-write-create (with no-log)
-       (home-literal "/Library/Caches/com.apple.WebKit2.WebProcessService"))
-#endif
