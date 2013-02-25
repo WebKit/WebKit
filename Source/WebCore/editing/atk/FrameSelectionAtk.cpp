@@ -16,7 +16,7 @@
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  * Boston, MA 02110-1301, USA.
  */
- 
+
 #include "config.h"
 #include "FrameSelection.h"
 
@@ -24,7 +24,11 @@
 #include "Frame.h"
 #include "WebKitAccessibleWrapperAtk.h"
 
+#if PLATFORM(EFL)
+#include <glib.h>
+#else
 #include <gtk/gtk.h>
+#endif
 
 #include <wtf/RefPtr.h>
 
@@ -81,14 +85,11 @@ void FrameSelection::notifyAccessibilityForSelectionChange()
     if (!AXObjectCache::accessibilityEnabled())
         return;
 
-    // Return for no valid selections.
     if (!m_selection.start().isNotNull() || !m_selection.end().isNotNull())
         return;
 
     RenderObject* focusedNode = m_selection.end().containerNode()->renderer();
     AccessibilityObject* accessibilityObject = m_frame->document()->axObjectCache()->getOrCreate(focusedNode);
-
-    // Need to check this as getOrCreate could return 0.
     if (!accessibilityObject)
         return;
 
@@ -97,7 +98,6 @@ void FrameSelection::notifyAccessibilityForSelectionChange()
     if (!object)
         return;
 
-    // Emit relatedsignals.
     emitTextSelectionChange(object.get(), m_selection, offset);
     maybeEmitTextFocusChange(object.release());
 }

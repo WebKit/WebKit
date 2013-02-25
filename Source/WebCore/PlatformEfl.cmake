@@ -1,4 +1,5 @@
 list(APPEND WebCore_INCLUDE_DIRECTORIES
+    "${WEBCORE_DIR}/editing/atk"
     "${WEBCORE_DIR}/page/efl"
     "${WEBCORE_DIR}/platform/cairo"
     "${WEBCORE_DIR}/platform/efl"
@@ -33,6 +34,8 @@ list(APPEND WebCore_SOURCES
     accessibility/atk/WebKitAccessibleWrapperAtk.cpp
 
     editing/SmartReplaceICU.cpp
+
+    editing/atk/FrameSelectionAtk.cpp
 
     page/efl/DragControllerEfl.cpp
     page/efl/EventHandlerEfl.cpp

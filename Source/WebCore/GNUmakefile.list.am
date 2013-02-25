@@ -6115,7 +6115,7 @@ webcoregtk_sources += \
 	Source/WebCore/accessibility/atk/WebKitAccessibleUtil.h \
 	Source/WebCore/accessibility/atk/WebKitAccessibleWrapperAtk.cpp \
 	Source/WebCore/accessibility/atk/WebKitAccessibleWrapperAtk.h \
-	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
+	Source/WebCore/editing/atk/FrameSelectionAtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
 	Source/WebCore/platform/audio/gtk/AudioBusGtk.cpp \
