@@ -46,10 +46,11 @@ public:
         , m_prediction(SpecNone)
         , m_argumentAwarePrediction(SpecNone)
         , m_flags(0)
-        , m_doubleFormatState(EmptyDoubleFormatState)
         , m_isCaptured(false)
+        , m_shouldNeverUnbox(false)
         , m_isArgumentsAlias(false)
         , m_structureCheckHoistingFailed(false)
+        , m_doubleFormatState(EmptyDoubleFormatState)
     {
         clearVotes();
     }
@@ -59,10 +60,11 @@ public:
         , m_prediction(SpecNone)
         , m_argumentAwarePrediction(SpecNone)
         , m_flags(0)
-        , m_doubleFormatState(EmptyDoubleFormatState)
         , m_isCaptured(isCaptured)
+        , m_shouldNeverUnbox(isCaptured)
         , m_isArgumentsAlias(false)
         , m_structureCheckHoistingFailed(false)
+        , m_doubleFormatState(EmptyDoubleFormatState)
     {
         clearVotes();
     }
@@ -80,6 +82,7 @@ public:
     
     bool mergeIsCaptured(bool isCaptured)
     {
+        m_shouldNeverUnbox |= isCaptured;
         bool newIsCaptured = m_isCaptured | isCaptured;
         if (newIsCaptured == m_isCaptured)
             return false;
@@ -90,6 +93,32 @@ public:
     bool isCaptured()
     {
         return m_isCaptured;
+    }
+    
+    bool mergeShouldNeverUnbox(bool shouldNeverUnbox)
+    {
+        bool newShouldNeverUnbox = m_shouldNeverUnbox | shouldNeverUnbox;
+        if (newShouldNeverUnbox == m_shouldNeverUnbox)
+            return false;
+        m_shouldNeverUnbox = newShouldNeverUnbox;
+        return true;
+    }
+    
+    // Returns true if it would be unsound to store the value in an unboxed fashion.
+    // If this returns false, it simply means that it is sound to unbox; it doesn't
+    // mean that we have actually done so.
+    bool shouldNeverUnbox()
+    {
+        ASSERT(!(m_isCaptured && !m_shouldNeverUnbox));
+        return m_shouldNeverUnbox;
+    }
+    
+    // Returns true if we should be unboxing the value provided that the predictions
+    // and double format vote say so. This may return false even if shouldNeverUnbox()
+    // returns false, since this incorporates heuristics of profitability.
+    bool shouldUnboxIfPossible()
+    {
+        return !shouldNeverUnbox();
     }
     
     bool mergeStructureCheckHoistingFailed(bool failed)
@@ -210,12 +239,18 @@ public:
     bool shouldUseDoubleFormat()
     {
         ASSERT(isRoot());
-        return m_doubleFormatState == UsingDoubleFormat;
+        bool result = m_doubleFormatState == UsingDoubleFormat;
+        ASSERT(!(result && shouldNeverUnbox()));
+        ASSERT(!(result && isCaptured()));
+        return result;
     }
     
     bool tallyVotesForShouldUseDoubleFormat()
     {
         ASSERT(isRoot());
+        
+        if (operandIsArgument(local()) || shouldNeverUnbox())
+            return DFG::mergeDoubleFormatState(m_doubleFormatState, NotUsingDoubleFormat);
         
         if (m_doubleFormatState == CantUseDoubleFormat)
             return false;
@@ -270,12 +305,13 @@ private:
     SpeculatedType m_argumentAwarePrediction;
     NodeFlags m_flags;
     
-    float m_votes[2]; // Used primarily for double voting but may be reused for other purposes.
-    DoubleFormatState m_doubleFormatState;
-    
     bool m_isCaptured;
+    bool m_shouldNeverUnbox;
     bool m_isArgumentsAlias;
     bool m_structureCheckHoistingFailed;
+
+    float m_votes[2]; // Used primarily for double voting but may be reused for other purposes.
+    DoubleFormatState m_doubleFormatState;
 };
 
 } } // namespace JSC::DFG

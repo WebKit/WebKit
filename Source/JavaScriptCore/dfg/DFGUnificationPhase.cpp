@@ -72,6 +72,7 @@ public:
             data->find()->predict(data->nonUnifiedPrediction());
             data->find()->mergeIsCaptured(data->isCaptured());
             data->find()->mergeStructureCheckHoistingFailed(data->structureCheckHoistingFailed());
+            data->find()->mergeShouldNeverUnbox(data->shouldNeverUnbox());
         }
         
         m_graph.m_unificationState = GloballyUnified;

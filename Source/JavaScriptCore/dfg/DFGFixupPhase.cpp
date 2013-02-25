@@ -82,8 +82,7 @@ private:
         case SetLocal: {
             VariableAccessData* variable = node->variableAccessData();
             
-            if (variable->isCaptured()
-                || m_graph.isCreatedThisArgument(variable->local()))
+            if (!variable->shouldUnboxIfPossible())
                 break;
             
             if (variable->shouldUseDoubleFormat()) {

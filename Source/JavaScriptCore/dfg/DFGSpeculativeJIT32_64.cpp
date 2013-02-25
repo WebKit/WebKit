@@ -1936,7 +1936,7 @@ void SpeculativeJIT::compile(Node* node)
 
     case GetLocal: {
         SpeculatedType prediction = node->variableAccessData()->prediction();
-        AbstractValue& value = block()->valuesAtHead.operand(node->local());
+        AbstractValue& value = m_state.variables().operand(node->local());
 
         // If we have no prediction for this local, then don't attempt to compile.
         if (prediction == SpecNone) {
@@ -1944,60 +1944,58 @@ void SpeculativeJIT::compile(Node* node)
             break;
         }
         
-        if (!node->variableAccessData()->isCaptured()) {
-            // If the CFA is tracking this variable and it found that the variable
-            // cannot have been assigned, then don't attempt to proceed.
-            if (value.isClear()) {
-                // FIXME: We should trap instead.
-                // https://bugs.webkit.org/show_bug.cgi?id=110383
-                terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
-                break;
-            }
-            
-            if (node->variableAccessData()->shouldUseDoubleFormat()) {
-                FPRTemporary result(this);
-                m_jit.loadDouble(JITCompiler::addressFor(node->local()), result.fpr());
-                VirtualRegister virtualRegister = node->virtualRegister();
-                m_fprs.retain(result.fpr(), virtualRegister, SpillOrderDouble);
-                m_generationInfo[virtualRegister].initDouble(node, node->refCount(), result.fpr());
-                break;
-            }
+        // If the CFA is tracking this variable and it found that the variable
+        // cannot have been assigned, then don't attempt to proceed.
+        if (value.isClear()) {
+            // FIXME: We should trap instead.
+            // https://bugs.webkit.org/show_bug.cgi?id=110383
+            terminateSpeculativeExecution(InadequateCoverage, JSValueRegs(), 0);
+            break;
+        }
         
-            if (isInt32Speculation(value.m_type)) {
-                GPRTemporary result(this);
-                m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
-
-                // Like integerResult, but don't useChildren - our children are phi nodes,
-                // and don't represent values within this dataflow with virtual registers.
-                VirtualRegister virtualRegister = node->virtualRegister();
-                m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
-                m_generationInfo[virtualRegister].initInteger(node, node->refCount(), result.gpr());
-                break;
-            }
-
-            if (isCellSpeculation(value.m_type)) {
-                GPRTemporary result(this);
-                m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
-
-                // Like cellResult, but don't useChildren - our children are phi nodes,
-                // and don't represent values within this dataflow with virtual registers.
-                VirtualRegister virtualRegister = node->virtualRegister();
-                m_gprs.retain(result.gpr(), virtualRegister, SpillOrderCell);
-                m_generationInfo[virtualRegister].initCell(node, node->refCount(), result.gpr());
-                break;
-            }
-
-            if (isBooleanSpeculation(value.m_type)) {
-                GPRTemporary result(this);
-                m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
-
-                // Like booleanResult, but don't useChildren - our children are phi nodes,
-                // and don't represent values within this dataflow with virtual registers.
-                VirtualRegister virtualRegister = node->virtualRegister();
-                m_gprs.retain(result.gpr(), virtualRegister, SpillOrderBoolean);
-                m_generationInfo[virtualRegister].initBoolean(node, node->refCount(), result.gpr());
-                break;
-            }
+        if (node->variableAccessData()->shouldUseDoubleFormat()) {
+            FPRTemporary result(this);
+            m_jit.loadDouble(JITCompiler::addressFor(node->local()), result.fpr());
+            VirtualRegister virtualRegister = node->virtualRegister();
+            m_fprs.retain(result.fpr(), virtualRegister, SpillOrderDouble);
+            m_generationInfo[virtualRegister].initDouble(node, node->refCount(), result.fpr());
+            break;
+        }
+        
+        if (isInt32Speculation(value.m_type)) {
+            GPRTemporary result(this);
+            m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
+            
+            // Like integerResult, but don't useChildren - our children are phi nodes,
+            // and don't represent values within this dataflow with virtual registers.
+            VirtualRegister virtualRegister = node->virtualRegister();
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderInteger);
+            m_generationInfo[virtualRegister].initInteger(node, node->refCount(), result.gpr());
+            break;
+        }
+        
+        if (isCellSpeculation(value.m_type)) {
+            GPRTemporary result(this);
+            m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
+            
+            // Like cellResult, but don't useChildren - our children are phi nodes,
+            // and don't represent values within this dataflow with virtual registers.
+            VirtualRegister virtualRegister = node->virtualRegister();
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderCell);
+            m_generationInfo[virtualRegister].initCell(node, node->refCount(), result.gpr());
+            break;
+        }
+        
+        if (isBooleanSpeculation(value.m_type)) {
+            GPRTemporary result(this);
+            m_jit.load32(JITCompiler::payloadFor(node->local()), result.gpr());
+            
+            // Like booleanResult, but don't useChildren - our children are phi nodes,
+            // and don't represent values within this dataflow with virtual registers.
+            VirtualRegister virtualRegister = node->virtualRegister();
+            m_gprs.retain(result.gpr(), virtualRegister, SpillOrderBoolean);
+            m_generationInfo[virtualRegister].initBoolean(node, node->refCount(), result.gpr());
+            break;
         }
 
         GPRTemporary result(this);
@@ -2011,13 +2009,7 @@ void SpeculativeJIT::compile(Node* node)
         m_gprs.retain(result.gpr(), virtualRegister, SpillOrderJS);
         m_gprs.retain(tag.gpr(), virtualRegister, SpillOrderJS);
 
-        DataFormat format;
-        if (isCellSpeculation(value.m_type)
-            && !node->variableAccessData()->isCaptured())
-            format = DataFormatJSCell;
-        else
-            format = DataFormatJS;
-        m_generationInfo[virtualRegister].initJSValue(node, node->refCount(), tag.gpr(), result.gpr(), format);
+        m_generationInfo[virtualRegister].initJSValue(node, node->refCount(), tag.gpr(), result.gpr(), DataFormatJS);
         break;
     }
         
@@ -2037,7 +2029,7 @@ void SpeculativeJIT::compile(Node* node)
         // stack.
         compileMovHint(node);
         
-        if (!node->variableAccessData()->isCaptured() && !m_jit.graph().isCreatedThisArgument(node->local())) {
+        if (node->variableAccessData()->shouldUnboxIfPossible()) {
             if (node->variableAccessData()->shouldUseDoubleFormat()) {
                 SpeculateDoubleOperand value(this, node->child1(), ForwardSpeculation);
                 m_jit.storeDouble(value.fpr(), JITCompiler::addressFor(node->local()));

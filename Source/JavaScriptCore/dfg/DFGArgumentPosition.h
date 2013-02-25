@@ -37,6 +37,7 @@ public:
     ArgumentPosition()
         : m_prediction(SpecNone)
         , m_doubleFormatState(EmptyDoubleFormatState)
+        , m_shouldNeverUnbox(false)
     {
     }
     
@@ -45,12 +46,22 @@ public:
         m_variables.append(variable);
     }
     
+    bool mergeShouldNeverUnbox(bool shouldNeverUnbox)
+    {
+        bool newShouldNeverUnbox = m_shouldNeverUnbox | shouldNeverUnbox;
+        if (newShouldNeverUnbox == m_shouldNeverUnbox)
+            return false;
+        m_shouldNeverUnbox = newShouldNeverUnbox;
+        return true;
+    }
+    
     bool mergeArgumentAwareness()
     {
         bool changed = false;
         for (unsigned i = 0; i < m_variables.size(); ++i) {
             changed |= mergeSpeculation(m_prediction, m_variables[i]->argumentAwarePrediction());
             changed |= mergeDoubleFormatState(m_doubleFormatState, m_variables[i]->doubleFormatState());
+            changed |= mergeShouldNeverUnbox(m_variables[i]->shouldNeverUnbox());
         }
         if (!changed)
             return false;
@@ -58,6 +69,7 @@ public:
         for (unsigned i = 0; i < m_variables.size(); ++i) {
             changed |= m_variables[i]->mergeArgumentAwarePrediction(m_prediction);
             changed |= m_variables[i]->mergeDoubleFormatState(m_doubleFormatState);
+            changed |= m_variables[i]->mergeShouldNeverUnbox(m_shouldNeverUnbox);
         }
         return changed;
     }
@@ -72,6 +84,7 @@ public:
 private:
     SpeculatedType m_prediction;
     DoubleFormatState m_doubleFormatState;
+    bool m_shouldNeverUnbox;
     
     Vector<VariableAccessData*, 2> m_variables;
 };

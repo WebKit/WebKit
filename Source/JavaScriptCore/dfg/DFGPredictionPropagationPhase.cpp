@@ -1022,9 +1022,6 @@ private:
             VariableAccessData* variableAccessData = &m_graph.m_variableAccessData[i];
             if (!variableAccessData->isRoot())
                 continue;
-            if (operandIsArgument(variableAccessData->local())
-                || variableAccessData->isCaptured())
-                continue;
             m_changed |= variableAccessData->tallyVotesForShouldUseDoubleFormat();
         }
         for (unsigned i = 0; i < m_graph.m_argumentPositions.size(); ++i)
@@ -1032,9 +1029,6 @@ private:
         for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
             VariableAccessData* variableAccessData = &m_graph.m_variableAccessData[i];
             if (!variableAccessData->isRoot())
-                continue;
-            if (operandIsArgument(variableAccessData->local())
-                || variableAccessData->isCaptured())
                 continue;
             m_changed |= variableAccessData->makePredictionForDoubleFormat();
         }

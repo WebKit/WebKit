@@ -199,10 +199,6 @@ private:
     template<PhiStackType stackType>
     void processPhiStack();
     
-    void fixVariableAccessPredictions();
-    // Add spill locations to nodes.
-    void allocateVirtualRegisters();
-    
     VariableAccessData* newVariableAccessData(int operand, bool isCaptured)
     {
         ASSERT(operand < FirstConstantRegisterIndex);
@@ -372,11 +368,16 @@ private:
         
         bool isCaptured = m_codeBlock->isCaptured(operand);
 
-        // Always flush arguments, except for 'this'.
-        if (argument && setMode == NormalSet)
-            flushDirect(operand);
-        
         VariableAccessData* variableAccessData = newVariableAccessData(operand, isCaptured);
+
+        // Always flush arguments, except for 'this'. If 'this' is created by us,
+        // then make sure that it's never unboxed.
+        if (argument) {
+            if (setMode == NormalSet)
+                flushDirect(operand);
+        } else if (m_codeBlock->specializationKind() == CodeForConstruct)
+            variableAccessData->mergeShouldNeverUnbox(true);
+        
         variableAccessData->mergeStructureCheckHoistingFailed(
             m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
         Node* node = addToGraph(SetLocal, OpInfo(variableAccessData), value);
@@ -1951,6 +1952,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
                 argumentToOperand(argument), m_codeBlock->isCaptured(argumentToOperand(argument)));
             variable->mergeStructureCheckHoistingFailed(
                 m_inlineStackTop->m_exitProfile.hasExitSite(m_currentIndex, BadCache));
+            
             Node* setArgument = addToGraph(SetArgument, OpInfo(variable));
             m_graph.m_arguments[argument] = setArgument;
             m_currentBlock->variablesAtTail.setArgumentFirstTime(argument, setArgument);
@@ -3339,16 +3341,6 @@ bool ByteCodeParser::parseBlock(unsigned limit)
             RELEASE_ASSERT_NOT_REACHED();
             return false;
         }
-    }
-}
-
-void ByteCodeParser::fixVariableAccessPredictions()
-{
-    for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
-        VariableAccessData* data = &m_graph.m_variableAccessData[i];
-        data->find()->predict(data->nonUnifiedPrediction());
-        data->find()->mergeIsCaptured(data->isCaptured());
-        data->find()->mergeStructureCheckHoistingFailed(data->structureCheckHoistingFailed());
     }
 }
 

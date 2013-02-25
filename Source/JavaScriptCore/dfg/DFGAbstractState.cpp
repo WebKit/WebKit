@@ -96,7 +96,7 @@ void AbstractState::initialize(Graph& graph)
             continue;
         }
         
-        if (node->variableAccessData()->isCaptured()) {
+        if (!node->variableAccessData()->shouldUnboxIfPossible()) {
             root->valuesAtHead.argument(i).makeTop();
             continue;
         }

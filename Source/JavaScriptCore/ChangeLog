@@ -1,3 +1,49 @@
+2013-02-22  Filip Pizlo  <fpizlo@apple.com>
+
+        The DFG special case checks for isCreatedThisArgument are fragile
+        https://bugs.webkit.org/show_bug.cgi?id=110535
+
+        Reviewed by Oliver Hunt.
+        
+        There may be many situations in which we want to force a variable to never be
+        unboxed. Capturing is one such case, and the created this argument is another.
+        Previously all code that dealt with this issue had to query both scenarios.
+        
+        Now DFG::VariableAccessData knows these things. You just have to ask
+        VariableAccessData for whether a variable should be unboxed. Anyone wishing to
+        force a variable to never be unboxed just tells VariableAccessData.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        (DFG):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (CFGSimplificationPhase):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+        * dfg/DFGGraph.h:
+        (Graph):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGUnificationPhase.cpp:
+        (JSC::DFG::UnificationPhase::run):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::mergeIsCaptured):
+        (JSC::DFG::VariableAccessData::mergeShouldNeverUnbox):
+        (VariableAccessData):
+        (JSC::DFG::VariableAccessData::shouldNeverUnbox):
+        (JSC::DFG::VariableAccessData::shouldUnboxIfPossible):
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormat):
+        (JSC::DFG::VariableAccessData::tallyVotesForShouldUseDoubleFormat):
+
 2013-02-25  Geoffrey Garen  <ggaren@apple.com>
 
         Do one lookup per code cache insertion instead of two

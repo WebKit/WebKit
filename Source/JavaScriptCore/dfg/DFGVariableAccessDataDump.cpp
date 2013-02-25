@@ -63,6 +63,10 @@ void VariableAccessDataDump::dump(PrintStream& out) const
     
     if (m_data->isCaptured())
         out.print("*");
+    else if (m_data->shouldNeverUnbox())
+        out.print("!");
+    else if (!m_data->shouldUnboxIfPossible())
+        out.print("~");
 
     out.print(AbbreviatedSpeculationDump(m_data->prediction()));
 }

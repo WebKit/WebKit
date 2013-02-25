@@ -1646,7 +1646,7 @@ void SpeculativeJIT::compile(BasicBlock& block)
             valueSource = ValueSource(SourceIsDead);
         else if (node->variableAccessData()->isArgumentsAlias())
             valueSource = ValueSource(ArgumentsSource);
-        else if (node->variableAccessData()->isCaptured())
+        else if (!node->variableAccessData()->shouldUnboxIfPossible())
             valueSource = ValueSource(ValueInJSStack);
         else if (!node->refCount())
             valueSource = ValueSource(SourceIsDead);

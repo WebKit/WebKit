@@ -514,15 +514,6 @@ public:
         return m_codeBlock->usesArguments();
     }
     
-    bool isCreatedThisArgument(int operand)
-    {
-        if (!operandIsArgument(operand))
-            return false;
-        if (operandToArgument(operand))
-            return false;
-        return m_codeBlock->specializationKind() == CodeForConstruct;
-    }
-    
     unsigned numSuccessors(BasicBlock* block)
     {
         return block->last()->numSuccessors();
