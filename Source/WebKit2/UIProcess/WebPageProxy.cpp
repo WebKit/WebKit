@@ -3978,7 +3978,7 @@ void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const S
     pluginBundleIdentifier = plugin.bundleIdentifier;
     pluginBundleVersion = plugin.versionString;
 #else
-    UNUSED_PARAM(urlString);
+    UNUSED_PARAM(pluginURLString);
 #endif
 
     m_loaderClient.didBlockInsecurePluginVersion(this, newMimeType, pluginBundleIdentifier, pluginBundleVersion, frameURLString, pageURLString);

@@ -1,5 +1,12 @@
 2013-02-25  Anders Carlsson  <andersca@apple.com>
 
+        Fix build.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didBlockInsecurePluginVersion):
+
+2013-02-25  Anders Carlsson  <andersca@apple.com>
+
         Add a new pluginDidFail callback that takes a WKDictionary of plug-in information
         https://bugs.webkit.org/show_bug.cgi?id=110793
         <rdar://problem/13265303>
