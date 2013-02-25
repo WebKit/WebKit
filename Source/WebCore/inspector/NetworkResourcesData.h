@@ -170,6 +170,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
 private:
+    ResourceData* resourceDataForRequestId(const String& requestId);
     void ensureNoDataForRequestId(const String& requestId);
     bool ensureFreeSpace(size_t);
 

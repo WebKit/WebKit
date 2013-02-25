@@ -199,7 +199,7 @@ static PassRefPtr<TextResourceDecoder> createOtherResourceTextDecoder(const Stri
 
 void NetworkResourcesData::responseReceived(const String& requestId, const String& frameId, const ResourceResponse& response)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
     resourceData->setFrameId(frameId);
@@ -210,7 +210,7 @@ void NetworkResourcesData::responseReceived(const String& requestId, const Strin
 
 void NetworkResourcesData::setResourceType(const String& requestId, InspectorPageAgent::ResourceType type)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
     resourceData->setType(type);
@@ -218,7 +218,7 @@ void NetworkResourcesData::setResourceType(const String& requestId, InspectorPag
 
 InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(const String& requestId)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return InspectorPageAgent::OtherResource;
     return resourceData->type();
@@ -226,7 +226,7 @@ InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(const String
 
 void NetworkResourcesData::setResourceContent(const String& requestId, const String& content, bool base64Encoded)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
     size_t dataLength = contentSizeInBytes(content);
@@ -246,7 +246,7 @@ void NetworkResourcesData::setResourceContent(const String& requestId, const Str
 
 void NetworkResourcesData::maybeAddResourceData(const String& requestId, const char* data, size_t dataLength)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
     if (!resourceData->decoder())
@@ -264,7 +264,7 @@ void NetworkResourcesData::maybeAddResourceData(const String& requestId, const c
 
 void NetworkResourcesData::maybeDecodeDataToContent(const String& requestId)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
     if (!resourceData->hasData())
@@ -277,16 +277,15 @@ void NetworkResourcesData::maybeDecodeDataToContent(const String& requestId)
 
 void NetworkResourcesData::addCachedResource(const String& requestId, CachedResource* cachedResource)
 {
-    if (!m_requestIdToResourceDataMap.contains(requestId))
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
+    if (!resourceData)
         return;
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
-
     resourceData->setCachedResource(cachedResource);
 }
 
 void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, PassRefPtr<SharedBuffer> buffer, const String& textEncodingName)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return;
     resourceData->setBuffer(buffer);
@@ -295,7 +294,7 @@ void NetworkResourcesData::addResourceSharedBuffer(const String& requestId, Pass
 
 NetworkResourcesData::ResourceData const* NetworkResourcesData::data(const String& requestId)
 {
-    return m_requestIdToResourceDataMap.get(requestId);
+    return resourceDataForRequestId(requestId);
 }
 
 XHRReplayData* NetworkResourcesData::xhrReplayData(const String& requestId)
@@ -303,7 +302,7 @@ XHRReplayData* NetworkResourcesData::xhrReplayData(const String& requestId)
     if (m_reusedXHRReplayDataRequestIds.contains(requestId))
         return xhrReplayData(m_reusedXHRReplayDataRequestIds.get(requestId));
 
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData)
         return 0;
     return resourceData->xhrReplayData();
@@ -311,7 +310,7 @@ XHRReplayData* NetworkResourcesData::xhrReplayData(const String& requestId)
 
 void NetworkResourcesData::setXHRReplayData(const String& requestId, XHRReplayData* xhrReplayData)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!resourceData) {
         Vector<String> result;
         ReusedRequestIds::iterator it;
@@ -328,8 +327,8 @@ void NetworkResourcesData::setXHRReplayData(const String& requestId, XHRReplayDa
 
 void NetworkResourcesData::reuseXHRReplayData(const String& requestId, const String& reusedRequestId)
 {
-    ResourceData* reusedResourceData = m_requestIdToResourceDataMap.get(reusedRequestId);
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+    ResourceData* reusedResourceData = resourceDataForRequestId(reusedRequestId);
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
     if (!reusedResourceData || !resourceData) {
         m_reusedXHRReplayDataRequestIds.set(requestId, reusedRequestId);
         return;
@@ -382,16 +381,22 @@ void NetworkResourcesData::setResourcesDataSizeLimits(size_t maximumResourcesCon
     m_maximumSingleResourceContentSize = maximumSingleResourceContentSize;
 }
 
+NetworkResourcesData::ResourceData* NetworkResourcesData::resourceDataForRequestId(const String& requestId)
+{
+    if (requestId.isNull())
+        return 0;
+    return m_requestIdToResourceDataMap.get(requestId);
+}
 
 void NetworkResourcesData::ensureNoDataForRequestId(const String& requestId)
 {
-    ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
-    if (resourceData) {
-        if (resourceData->hasContent() || resourceData->hasData())
-            m_contentSize -= resourceData->evictContent();
-        delete resourceData;
-        m_requestIdToResourceDataMap.remove(requestId);
-    }
+    ResourceData* resourceData = resourceDataForRequestId(requestId);
+    if (!resourceData)
+        return;
+    if (resourceData->hasContent() || resourceData->hasData())
+        m_contentSize -= resourceData->evictContent();
+    delete resourceData;
+    m_requestIdToResourceDataMap.remove(requestId);
 }
 
 bool NetworkResourcesData::ensureFreeSpace(size_t size)
@@ -401,7 +406,7 @@ bool NetworkResourcesData::ensureFreeSpace(size_t size)
 
     while (size > m_maximumResourcesContentSize - m_contentSize) {
         String requestId = m_requestIdsDeque.takeFirst();
-        ResourceData* resourceData = m_requestIdToResourceDataMap.get(requestId);
+        ResourceData* resourceData = resourceDataForRequestId(requestId);
         if (resourceData)
             m_contentSize -= resourceData->evictContent();
     }
