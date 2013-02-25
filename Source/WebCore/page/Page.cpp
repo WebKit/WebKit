@@ -162,6 +162,7 @@ Page::Page(PageClients& pageClients)
     , m_timerAlignmentInterval(Settings::defaultDOMTimerAlignmentInterval())
     , m_isEditable(false)
     , m_isOnscreen(true)
+    , m_isInWindow(true)
 #if ENABLE(PAGE_VISIBILITY_API)
     , m_visibilityState(PageVisibilityStateVisible)
 #endif
