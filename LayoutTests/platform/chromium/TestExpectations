@@ -4431,4 +4431,6 @@ webkit.org/b/110739 [ Release MountainLion ] fast/regions/shape-inside-on-region
 webkit.org/b/110749 [ Debug Linux ] fullscreen/full-screen-enabled-prefixed.html [ Pass Crash ]
 webkit.org/b/110749 [ Debug Win ] fast/dom/HTMLMeterElement/meter-element-repaint-on-update-value.html [ Pass Crash ]
 webkit.org/b/110749 [ Debug Mac ] fast/forms/month/month-stepup-stepdown.html [ Pass Crash ]
+webkit.org/b/110749 [ Debug Linux ] ietestcenter/css3/namespaces/prefix-008.xml [ Pass Crash ]
+webkit.org/b/110749 [ Debug Linux ] fast/dom/Range/acid3-surround-contents.html [ Pass Crash ]
 
