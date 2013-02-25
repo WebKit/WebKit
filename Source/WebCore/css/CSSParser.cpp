@@ -202,7 +202,7 @@ static PassRefPtr<CSSPrimitiveValue> createPrimitiveValuePair(PassRefPtr<CSSPrim
 class AnimationParseContext {
 public:
     AnimationParseContext()
-        : m_animationPropertyKeywordInShorthandAllowed(true)
+        : m_animationPropertyKeywordAllowed(true)
         , m_firstAnimationCommitted(false)
         , m_hasSeenAnimationPropertyKeyword(false)
     {
@@ -218,14 +218,14 @@ public:
         return m_firstAnimationCommitted;
     }
 
-    void commitAnimationPropertyKeywordInShorthand()
+    void commitAnimationPropertyKeyword()
     {
-        m_animationPropertyKeywordInShorthandAllowed = false;
+        m_animationPropertyKeywordAllowed = false;
     }
 
-    bool animationPropertyKeywordInShorthandAllowed() const
+    bool animationPropertyKeywordAllowed() const
     {
-        return m_animationPropertyKeywordInShorthandAllowed;
+        return m_animationPropertyKeywordAllowed;
     }
 
     bool hasSeenAnimationPropertyKeyword() const
@@ -239,7 +239,7 @@ public:
     }
 
 private:
-    bool m_animationPropertyKeywordInShorthandAllowed;
+    bool m_animationPropertyKeywordAllowed;
     bool m_firstAnimationCommitted;
     bool m_hasSeenAnimationPropertyKeyword;
 };
@@ -3308,7 +3308,7 @@ bool CSSParser::parseAnimationShorthand(bool important)
             }
 
             // There are more values to process but 'none' or 'all' were already defined as the animation property, the declaration becomes invalid.
-            if (!context.animationPropertyKeywordInShorthandAllowed() && context.hasCommittedFirstAnimation())
+            if (!context.animationPropertyKeywordAllowed() && context.hasCommittedFirstAnimation())
                 return false;
         }
 
@@ -3366,7 +3366,7 @@ bool CSSParser::parseTransitionShorthand(bool important)
                 }
 
                 // There are more values to process but 'none' or 'all' were already defined as the animation property, the declaration becomes invalid.
-                if (!context.animationPropertyKeywordInShorthandAllowed() && context.hasCommittedFirstAnimation())
+                if (!context.animationPropertyKeywordAllowed() && context.hasCommittedFirstAnimation())
                     return false;
             }
         }
@@ -4428,14 +4428,13 @@ PassRefPtr<CSSValue> CSSParser::parseAnimationProperty(AnimationParseContext& co
     if (result)
         return cssValuePool().createIdentifierValue(result);
     if (equalIgnoringCase(value, "all")) {
-        if (inShorthand() && context.hasSeenAnimationPropertyKeyword())
-            context.commitAnimationPropertyKeywordInShorthand();
+        if (context.hasSeenAnimationPropertyKeyword())
+            context.commitAnimationPropertyKeyword();
         context.sawAnimationPropertyKeyword();
         return cssValuePool().createIdentifierValue(CSSValueAll);
     }
     if (equalIgnoringCase(value, "none")) {
-        if (inShorthand())
-            context.commitAnimationPropertyKeywordInShorthand();
+        context.commitAnimationPropertyKeyword();
         context.sawAnimationPropertyKeyword();
         return cssValuePool().createIdentifierValue(CSSValueNone);
     }
@@ -4603,7 +4602,7 @@ bool CSSParser::parseAnimationProperty(CSSPropertyID propId, RefPtr<CSSValue>& r
                     break;
                 case CSSPropertyWebkitTransitionProperty:
                     currValue = parseAnimationProperty(context);
-                    if (value && context.hasSeenAnimationPropertyKeyword())
+                    if (value && !context.animationPropertyKeywordAllowed())
                         return false;
                     if (currValue)
                         m_valueList->next();

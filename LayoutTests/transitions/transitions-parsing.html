@@ -59,6 +59,24 @@ shouldBe("computedStyle.transitionProperty", "'background-position, font-size, c
 shouldBe("style.webkitTransitionProperty", "'background-position, font-size, color'");
 shouldBe("computedStyle.webkitTransitionProperty", "'background-position, font-size, color'");
 
+style.transitionProperty = "all, font-size, color";
+shouldBe("style.transitionProperty", "'all, font-size, color'");
+shouldBe("computedStyle.transitionProperty", "'all, font-size, color'");
+shouldBe("style.webkitTransitionProperty", "'all, font-size, color'");
+shouldBe("computedStyle.webkitTransitionProperty", "'all, font-size, color'");
+
+style.transitionProperty = "font-size, color, all";
+shouldBe("style.transitionProperty", "'font-size, color, all'");
+shouldBe("computedStyle.transitionProperty", "'font-size, color, all'");
+shouldBe("style.webkitTransitionProperty", "'font-size, color, all'");
+shouldBe("computedStyle.webkitTransitionProperty", "'font-size, color, all'");
+
+style.transitionProperty = "font-size, all, color";
+shouldBe("style.transitionProperty", "'font-size, all, color'");
+shouldBe("computedStyle.transitionProperty", "'font-size, all, color'");
+shouldBe("style.webkitTransitionProperty", "'font-size, all, color'");
+shouldBe("computedStyle.webkitTransitionProperty", "'font-size, all, color'");
+
 debug("Invalid transition-property values.");
 style.transitionProperty = "";
 
