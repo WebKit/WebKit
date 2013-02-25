@@ -4501,6 +4501,11 @@ void WebPage::selectAll()
     d->m_inputHandler->selectAll();
 }
 
+bool WebPage::isInputMode() const
+{
+    return d->m_inputHandler->isInputMode();
+}
+
 void WebPage::setDocumentSelection(const Platform::IntPoint& documentStartPoint, const Platform::IntPoint& documentEndPoint)
 {
     if (d->m_page->defersLoading())

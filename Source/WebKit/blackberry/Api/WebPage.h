@@ -257,6 +257,7 @@ public:
     void spellCheckingRequestProcessed(int32_t transactionId, spannable_string_t*);
     void spellCheckingRequestCancelled(int32_t transactionId);
 
+    bool isInputMode() const;
     void setDocumentSelection(const Platform::IntPoint& documentStartPoint, const Platform::IntPoint& documentEndPoint);
     void setDocumentCaretPosition(const Platform::IntPoint&);
     void selectAtDocumentPoint(const Platform::IntPoint&);

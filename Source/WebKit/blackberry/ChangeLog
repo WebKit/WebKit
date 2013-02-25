@@ -1,3 +1,23 @@
+2013-02-25  Yongxin Dai  <yodai@rim.com>
+
+        [BlackBerry] Add isInputMode() method to WebPage class.
+        https://bugs.webkit.org/show_bug.cgi?id=110754
+
+        Reviewed by Rob Buis.
+
+        PR #262569.
+
+        There is a case we need to know if the active node is content editable
+        from TouchHandlerWebKitThread class. WebPage::isInputMode() just delegates
+        InputHandler::isInputMode().
+
+        Reviewed Internally by Mike Fenton.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::isInputMode):
+        (WebKit):
+        * Api/WebPage.h:
+
 2013-02-25  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Force form submission when implicit submission fails.
