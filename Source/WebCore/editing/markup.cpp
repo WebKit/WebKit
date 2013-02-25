@@ -292,7 +292,7 @@ void StyledMarkupAccumulator::appendElement(StringBuilder& out, Element* element
     const unsigned length = element->hasAttributes() ? element->attributeCount() : 0;
     const bool shouldAnnotateOrForceInline = element->isHTMLElement() && (shouldAnnotate() || addDisplayInline);
     const bool shouldOverrideStyleAttr = shouldAnnotateOrForceInline || shouldApplyWrappingStyle(element);
-    for (unsigned int i = 0; i < length; i++) {
+    for (unsigned i = 0; i < length; ++i) {
         const Attribute* attribute = element->attributeItem(i);
         // We'll handle the style attribute separately, below.
         if (attribute->name() == styleAttr && shouldOverrideStyleAttr)

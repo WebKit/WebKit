@@ -34,18 +34,18 @@
 #include "HTMLBRElement.h"
 #include "HTMLDivElement.h"
 #include "HTMLElementFactory.h"
-#include "HTMLTextFormControlElement.h"
 #include "HTMLInterchange.h"
 #include "HTMLLIElement.h"
 #include "HTMLNames.h"
-#include "HTMLObjectElement.h"
 #include "HTMLOListElement.h"
+#include "HTMLObjectElement.h"
 #include "HTMLParagraphElement.h"
+#include "HTMLTextFormControlElement.h"
 #include "HTMLUListElement.h"
 #include "NodeTraversal.h"
 #include "PositionIterator.h"
-#include "RenderObject.h"
 #include "Range.h"
+#include "RenderObject.h"
 #include "ShadowRoot.h"
 #include "Text.h"
 #include "TextIterator.h"
@@ -133,7 +133,7 @@ Node* lowestEditableAncestor(Node* node)
     if (!node)
         return 0;
     
-    Node *lowestRoot = 0;
+    Node* lowestRoot = 0;
     while (node) {
         if (node->rendererIsEditable())
             return node->rootEditableElement();
@@ -315,7 +315,7 @@ bool isInline(const Node* node)
 }
 
 // FIXME: Deploy this in all of the places where enclosingBlockFlow/enclosingBlockFlowOrTableElement are used.
-// FIXME: Pass a position to this function.  The enclosing block of [table, x] for example, should be the 
+// FIXME: Pass a position to this function. The enclosing block of [table, x] for example, should be the 
 // block that contains the table and not the table, and this function should be the only one responsible for 
 // knowing about these kinds of special cases.
 Element* enclosingBlock(Node* node, EditingBoundaryCrossingRule rule)
@@ -334,8 +334,8 @@ TextDirection directionOfEnclosingBlock(const Position& position)
 }
 
 // This method is used to create positions in the DOM. It returns the maximum valid offset
-// in a node.  It returns 1 for some elements even though they do not have children, which
-// creates technically invalid DOM Positions.  Be sure to call parentAnchoredEquivalent
+// in a node. It returns 1 for some elements even though they do not have children, which
+// creates technically invalid DOM Positions. Be sure to call parentAnchoredEquivalent
 // on a Position before using it to create a DOM Range, or an exception will be thrown.
 int lastOffsetForEditing(const Node* node)
 {
@@ -404,7 +404,7 @@ bool isSpecialElement(const Node *n)
     if (n->isLink())
         return true;
 
-    RenderObject *renderer = n->renderer();
+    RenderObject* renderer = n->renderer();
     if (!renderer)
         return false;
         
@@ -706,7 +706,7 @@ Node* enclosingListChild(Node *node)
 {
     if (!node)
         return 0;
-    // Check for a list item element, or for a node whose parent is a list element.  Such a node
+    // Check for a list item element, or for a node whose parent is a list element. Such a node
     // will appear visually as a list item (but without a list marker)
     Node* root = highestEditableRoot(firstPositionInOrBeforeNode(node));
     
@@ -785,9 +785,9 @@ bool canMergeLists(Element* firstList, Element* secondList)
     if (!firstList || !secondList || !firstList->isHTMLElement() || !secondList->isHTMLElement())
         return false;
 
-    return firstList->hasTagName(secondList->tagQName())// make sure the list types match (ol vs. ul)
+    return firstList->hasTagName(secondList->tagQName()) // make sure the list types match (ol vs. ul)
     && firstList->rendererIsEditable() && secondList->rendererIsEditable() // both lists are editable
-    && firstList->rootEditableElement() == secondList->rootEditableElement()// don't cross editing boundaries
+    && firstList->rootEditableElement() == secondList->rootEditableElement() // don't cross editing boundaries
     && isVisiblyAdjacent(positionInParentAfterNode(firstList), positionInParentBeforeNode(secondList));
     // Make sure there is no visible content between this li and the previous list
 }
@@ -906,7 +906,7 @@ bool isTabSpanTextNode(const Node *node)
     return node && node->isTextNode() && node->parentNode() && isTabSpanNode(node->parentNode());
 }
 
-Node *tabSpanNode(const Node *node)
+Node* tabSpanNode(const Node *node)
 {
     return isTabSpanTextNode(node) ? node->parentNode() : 0;
 }
@@ -958,7 +958,7 @@ bool isNodeRendered(const Node *node)
     if (!node)
         return false;
 
-    RenderObject *renderer = node->renderer();
+    RenderObject* renderer = node->renderer();
     if (!renderer)
         return false;
 
@@ -1027,7 +1027,7 @@ int caretMaxOffset(const Node* n)
     // For rendered text nodes, return the last position that a caret could occupy.
     if (n->isTextNode() && n->renderer())
         return n->renderer()->caretMaxOffset();
-    // For containers return the number of children.  For others do the same as above.
+    // For containers return the number of children. For others do the same as above.
     return lastOffsetForEditing(n);
 }
 
@@ -1089,7 +1089,6 @@ VisibleSelection selectionForParagraphIteration(const VisibleSelection& original
 // opertion is unreliable. TextIterator's TextIteratorEmitsCharactersBetweenAllVisiblePositions mode needs to be fixed, 
 // or these functions need to be changed to iterate using actual VisiblePositions.
 // FIXME: Deploy these functions everywhere that TextIterators are used to convert between VisiblePositions and indices.
- 
 int indexForVisiblePosition(const VisiblePosition& visiblePosition, RefPtr<ContainerNode>& scope)
 {
     if (visiblePosition.isNull())
