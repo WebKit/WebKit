@@ -50,6 +50,7 @@
 #include "RenderWordBreak.h"
 #include "ScriptEventListener.h"
 #include "Settings.h"
+#include "StylePropertySet.h"
 #include "Text.h"
 #include "TextIterator.h"
 #include "XMLNames.h"
@@ -1049,7 +1050,7 @@ void HTMLElement::getItemRefElements(Vector<HTMLElement*>& itemRefElements)
 }
 #endif
 
-void HTMLElement::addHTMLLengthToStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& value)
+void HTMLElement::addHTMLLengthToStyle(MutableStylePropertySet* style, CSSPropertyID propertyID, const String& value)
 {
     // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
     // length unit and make the appropriate parsed value.
@@ -1140,7 +1141,7 @@ static RGBA32 parseColorStringWithCrazyLegacyRules(const String& colorString)
 }
 
 // Color parsing that matches HTML's "rules for parsing a legacy color value"
-void HTMLElement::addHTMLColorToStyle(StylePropertySet* style, CSSPropertyID propertyID, const String& attributeValue)
+void HTMLElement::addHTMLColorToStyle(MutableStylePropertySet* style, CSSPropertyID propertyID, const String& attributeValue)
 {
     // An empty string doesn't apply a color. (One containing only whitespace does, which is why this check occurs before stripping.)
     if (attributeValue.isEmpty())

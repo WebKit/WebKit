@@ -33,7 +33,7 @@
 #include "PaintInfo.h"
 #include "RenderTableCol.h"
 #include "RenderView.h"
-#include "StyleInheritedData.h"
+#include "StylePropertySet.h"
 #include "TransformState.h"
 
 #if ENABLE(MATHML)

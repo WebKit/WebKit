@@ -29,7 +29,7 @@
 #ifndef SelectorFilter_h
 #define SelectorFilter_h
 
-#include "StyledElement.h"
+#include "Element.h"
 #include <wtf/BloomFilter.h>
 #include <wtf/Vector.h>
 

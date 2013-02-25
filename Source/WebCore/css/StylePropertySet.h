@@ -200,7 +200,7 @@ private:
     void appendFontLonghandValueIfExplicit(CSSPropertyID, StringBuilder& result, String& value) const;
 
     bool removeShorthandProperty(CSSPropertyID);
-    bool propertyMatches(const PropertyReference&) const;
+    bool propertyMatches(CSSPropertyID, const CSSValue*) const;
 
     int findPropertyIndex(CSSPropertyID) const;
     CSSProperty* findMutableCSSPropertyWithID(CSSPropertyID);

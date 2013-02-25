@@ -1,3 +1,12 @@
+2013-02-25  Andreas Kling  <akling@apple.com>
+
+        Reduce amount of code that includes StylePropertySet.h
+        <http://webkit.org/b/101149>
+
+        Reviewed by Antti Koivisto.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+
 2013-02-24  Andreas Kling  <akling@apple.com>
 
         Reduce include graph of JSDOMBinding.h

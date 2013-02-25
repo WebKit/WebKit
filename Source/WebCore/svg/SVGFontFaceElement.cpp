@@ -38,6 +38,7 @@
 #include "SVGFontFaceSrcElement.h"
 #include "SVGGlyphElement.h"
 #include "SVGNames.h"
+#include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include <math.h>

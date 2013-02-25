@@ -28,17 +28,16 @@
 #ifndef SelectorChecker_h
 #define SelectorChecker_h
 
-#include "Attribute.h"
 #include "CSSSelector.h"
 #include "InspectorInstrumentation.h"
 #include "SpaceSplitString.h"
-#include "StyledElement.h"
 #include <wtf/HashSet.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
 class CSSSelector;
+class Element;
 class RenderScrollbar;
 class RenderStyle;
 

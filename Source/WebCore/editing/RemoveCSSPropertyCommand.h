@@ -28,9 +28,10 @@
 
 #include "EditCommand.h"
 #include "CSSPropertyNames.h"
-#include "StyledElement.h"
 
 namespace WebCore {
+
+class StyledElement;
 
 class RemoveCSSPropertyCommand : public SimpleEditCommand {
 public:
@@ -41,6 +42,7 @@ public:
 
 private:
     RemoveCSSPropertyCommand(Document*, PassRefPtr<StyledElement>, CSSPropertyID property);
+    ~RemoveCSSPropertyCommand();
 
     virtual void doApply() OVERRIDE;
     virtual void doUnapply() OVERRIDE;

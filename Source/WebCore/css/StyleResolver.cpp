@@ -113,6 +113,7 @@
 #include "StyleCachedImage.h"
 #include "StyleGeneratedImage.h"
 #include "StylePendingImage.h"
+#include "StylePropertySet.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"
 #include "StyleSheetContents.h"
@@ -5149,6 +5150,15 @@ void StyleResolver::loadPendingResources()
     // Start loading the SVG Documents referenced by this style.
     loadPendingSVGDocuments();
 #endif
+}
+
+inline StyleResolver::MatchedProperties::MatchedProperties()
+    : possiblyPaddedMember(0)
+{
+}
+
+inline StyleResolver::MatchedProperties::~MatchedProperties()
+{
 }
 
 void StyleResolver::MatchedProperties::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const

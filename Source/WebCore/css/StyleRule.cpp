@@ -31,6 +31,7 @@
 #include "CSSStyleRule.h"
 #include "CSSSupportsRule.h"
 #include "CSSUnknownRule.h"
+#include "StylePropertySet.h"
 #include "StyleRuleImport.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include "WebKitCSSFilterRule.h"

@@ -27,10 +27,11 @@
 #define WebKitCSSKeyframeRule_h
 
 #include "CSSRule.h"
-#include "StylePropertySet.h"
 
 namespace WebCore {
 
+class CSSStyleDeclaration;
+class StylePropertySet;
 class StyleRuleCSSStyleDeclaration;
 class WebKitCSSKeyframesRule;
 
@@ -41,6 +42,7 @@ public:
     {
         return adoptRef(new StyleKeyframe());
     }
+    ~StyleKeyframe();
 
     String keyText() const { return m_key; }
     void setKeyText(const String& s) { m_key = s; }
@@ -55,8 +57,8 @@ public:
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
-private:    
-    StyleKeyframe() { }
+private:
+    StyleKeyframe();
     
     static void parseKeyString(const String&, Vector<float>& keys);
     

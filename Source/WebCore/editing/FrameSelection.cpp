@@ -60,6 +60,7 @@
 #include "SecureTextInput.h"
 #include "Settings.h"
 #include "SpatialNavigation.h"
+#include "StylePropertySet.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
 #include "htmlediting.h"

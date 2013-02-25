@@ -25,12 +25,17 @@
 #ifndef StyledElement_h
 #define StyledElement_h
 
+#include "CSSPrimitiveValue.h"
+#include "CSSPropertyNames.h"
 #include "Element.h"
-#include "StylePropertySet.h"
 
 namespace WebCore {
 
 class Attribute;
+class MutableStylePropertySet;
+class PropertySetCSSStyleDeclaration;
+class StylePropertySet;
+
 struct PresentationAttributeCacheKey;
 
 class StyledElement : public Element {
@@ -65,9 +70,9 @@ protected:
 
     virtual bool isPresentationAttribute(const QualifiedName&) const { return false; }
 
-    void addPropertyToPresentationAttributeStyle(StylePropertySet*, CSSPropertyID, int identifier);
-    void addPropertyToPresentationAttributeStyle(StylePropertySet*, CSSPropertyID, double value, CSSPrimitiveValue::UnitTypes);
-    void addPropertyToPresentationAttributeStyle(StylePropertySet*, CSSPropertyID, const String& value);
+    void addPropertyToPresentationAttributeStyle(MutableStylePropertySet*, CSSPropertyID, int identifier);
+    void addPropertyToPresentationAttributeStyle(MutableStylePropertySet*, CSSPropertyID, double value, CSSPrimitiveValue::UnitTypes);
+    void addPropertyToPresentationAttributeStyle(MutableStylePropertySet*, CSSPropertyID, const String& value);
 
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
 

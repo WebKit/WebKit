@@ -31,6 +31,7 @@
 #include "CSSValuePool.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "StylePropertySet.h"
 #include <wtf/text/StringBuilder.h>
 
 using namespace WTF;

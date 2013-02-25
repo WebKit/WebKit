@@ -1,3 +1,12 @@
+2013-02-25  Andreas Kling  <akling@apple.com>
+
+        Reduce amount of code that includes StylePropertySet.h
+        <http://webkit.org/b/101149>
+
+        Reviewed by Antti Koivisto.
+
+        * WebCoreSupport/EditorClientGtk.cpp:
+
 2013-02-24  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] GTK+ 2 build broken since GTK_API_VERSION_2 moved to autoconfig.h

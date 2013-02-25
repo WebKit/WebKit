@@ -48,6 +48,10 @@ ViewportStyleResolver::ViewportStyleResolver(Document* document)
     ASSERT(m_document);
 }
 
+ViewportStyleResolver::~ViewportStyleResolver()
+{
+}
+
 void ViewportStyleResolver::addViewportRule(StyleRuleViewport* viewportRule)
 {
     StylePropertySet* propertySet = viewportRule->mutableProperties();

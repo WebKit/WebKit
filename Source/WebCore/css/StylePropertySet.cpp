@@ -1109,12 +1109,12 @@ CSSProperty* StylePropertySet::findMutableCSSPropertyWithID(CSSPropertyID proper
     return &mutablePropertyVector().at(foundPropertyIndex);
 }
     
-bool StylePropertySet::propertyMatches(const PropertyReference& property) const
+bool StylePropertySet::propertyMatches(CSSPropertyID propertyID, const CSSValue* propertyValue) const
 {
-    int foundPropertyIndex = findPropertyIndex(property.id());
+    int foundPropertyIndex = findPropertyIndex(propertyID);
     if (foundPropertyIndex == -1)
         return false;
-    return propertyAt(foundPropertyIndex).value()->equals(*property.value());
+    return propertyAt(foundPropertyIndex).value()->equals(*propertyValue);
 }
     
 void StylePropertySet::removeEquivalentProperties(const StylePropertySet* style)
@@ -1124,7 +1124,7 @@ void StylePropertySet::removeEquivalentProperties(const StylePropertySet* style)
     unsigned size = mutablePropertyVector().size();
     for (unsigned i = 0; i < size; ++i) {
         PropertyReference property = propertyAt(i);
-        if (style->propertyMatches(property))
+        if (style->propertyMatches(property.id(), property.value()))
             propertiesToRemove.append(property.id());
     }    
     // FIXME: This should use mass removal.
@@ -1139,7 +1139,7 @@ void StylePropertySet::removeEquivalentProperties(const CSSStyleDeclaration* sty
     unsigned size = mutablePropertyVector().size();
     for (unsigned i = 0; i < size; ++i) {
         PropertyReference property = propertyAt(i);
-        if (style->cssPropertyMatches(property))
+        if (style->cssPropertyMatches(property.id(), property.value()))
             propertiesToRemove.append(property.id());
     }    
     // FIXME: This should use mass removal.

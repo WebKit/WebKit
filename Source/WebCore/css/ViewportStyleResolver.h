@@ -51,6 +51,8 @@ public:
         return adoptRef(new ViewportStyleResolver(document));
     }
 
+    ~ViewportStyleResolver();
+
     void addViewportRule(StyleRuleViewport*);
 
     void clearDocument();

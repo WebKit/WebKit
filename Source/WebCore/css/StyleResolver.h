@@ -22,7 +22,6 @@
 #ifndef StyleResolver_h
 #define StyleResolver_h
 
-#include "CSSRule.h"
 #include "CSSRuleList.h"
 #include "CSSToStyleMap.h"
 #include "CSSValueList.h"
@@ -354,7 +353,8 @@ private:
     };
 
     struct MatchedProperties {
-        MatchedProperties() : possiblyPaddedMember(0) { }
+        MatchedProperties();
+        ~MatchedProperties();
         void reportMemoryUsage(MemoryObjectInfo*) const;
         
         RefPtr<StylePropertySet> properties;

@@ -36,6 +36,7 @@
 #include "HTMLParserIdioms.h"
 #include "Page.h"
 #include "ScriptEventListener.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 

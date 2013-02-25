@@ -35,6 +35,7 @@
 #include "CanvasPattern.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
+#include "StylePropertySet.h"
 #include <wtf/Assertions.h>
 #include <wtf/PassRefPtr.h>
 

@@ -39,6 +39,7 @@
 #include "MouseEvent.h"
 #include "RenderMedia.h"
 #include "RenderMediaControlElements.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 

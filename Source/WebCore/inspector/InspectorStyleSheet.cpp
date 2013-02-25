@@ -50,6 +50,7 @@
 #include "Node.h"
 #include "RegularExpression.h"
 #include "SVGNames.h"
+#include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyleRuleImport.h"

@@ -27,10 +27,19 @@
 #include "WebKitCSSKeyframeRule.h"
 
 #include "PropertySetCSSStyleDeclaration.h"
+#include "StylePropertySet.h"
 #include "WebKitCSSKeyframesRule.h"
 #include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+StyleKeyframe::StyleKeyframe()
+{
+}
+
+StyleKeyframe::~StyleKeyframe()
+{
+}
 
 StylePropertySet* StyleKeyframe::mutableProperties()
 {

@@ -26,6 +26,7 @@
 #include "ExceptionCode.h"
 #include "HTMLNames.h"
 #include "ScopedEventQueue.h"
+#include "StylePropertySet.h"
 #include "StyledElement.h"
 #include "Text.h"
 #include "XMLNSNames.h"

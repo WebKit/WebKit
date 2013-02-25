@@ -37,6 +37,7 @@
 #include "Page.h"
 #include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
+#include "StylePropertySet.h"
 #include "UndoStep.h"
 #include "WebKitDOMBinding.h"
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"

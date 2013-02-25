@@ -31,6 +31,7 @@
 
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
+#include "StyledElement.h"
 
 namespace WebCore {
 

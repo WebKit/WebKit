@@ -32,6 +32,7 @@
 #include "SVGAnimatorFactory.h"
 #include "SVGNames.h"
 #include "SVGStyledElement.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 

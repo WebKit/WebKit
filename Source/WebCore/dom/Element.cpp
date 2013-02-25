@@ -72,6 +72,7 @@
 #include "SelectorQuery.h"
 #include "Settings.h"
 #include "ShadowRoot.h"
+#include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include "Text.h"
 #include "TextIterator.h"

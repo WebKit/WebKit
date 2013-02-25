@@ -29,6 +29,7 @@
 #include "CSSStyleDeclaration.h"
 #include "ExceptionCodePlaceholder.h"
 #include "StylePropertySet.h"
+#include "StyledElement.h"
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -40,6 +41,10 @@ RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(Document* document, PassRefPt
     , m_important(false)
 {
     ASSERT(m_element);
+}
+
+RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand()
+{
 }
 
 void RemoveCSSPropertyCommand::doApply()

@@ -102,7 +102,7 @@ private:
     virtual String getPropertyValueInternal(CSSPropertyID);
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&);
 
-    virtual bool cssPropertyMatches(const StylePropertySet::PropertyReference&) const OVERRIDE;
+    virtual bool cssPropertyMatches(CSSPropertyID, const CSSValue*) const OVERRIDE;
 
     PassRefPtr<CSSValue> valueForShadow(const ShadowData*, CSSPropertyID, const RenderStyle*) const;
     PassRefPtr<CSSPrimitiveValue> currentColorOrValidColor(RenderStyle*, const Color&) const;

@@ -27,6 +27,7 @@
 #define PropertySetCSSStyleDeclaration_h
 
 #include "CSSStyleDeclaration.h"
+#include <wtf/HashMap.h>
 
 namespace WebCore {
 
@@ -67,7 +68,7 @@ private:
     virtual String getPropertyValueInternal(CSSPropertyID) OVERRIDE;
     virtual void setPropertyInternal(CSSPropertyID, const String& value, bool important, ExceptionCode&) OVERRIDE;
     
-    virtual bool cssPropertyMatches(const StylePropertySet::PropertyReference&) const OVERRIDE;
+    virtual bool cssPropertyMatches(CSSPropertyID, const CSSValue*) const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> copy() const OVERRIDE;
     virtual PassRefPtr<StylePropertySet> makeMutable() OVERRIDE;
 

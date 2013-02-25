@@ -62,6 +62,7 @@
 #import <WebCore/PlatformKeyboardEvent.h>
 #import <WebCore/RunLoop.h>
 #import <WebCore/SpellChecker.h>
+#import <WebCore/StylePropertySet.h>
 #import <WebCore/UndoStep.h>
 #import <WebCore/UserTypingGestureIndicator.h>
 #import <WebCore/WebCoreObjCExtras.h>

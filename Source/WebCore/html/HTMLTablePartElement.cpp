@@ -33,6 +33,7 @@
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "HTMLTableElement.h"
+#include "StylePropertySet.h"
 
 namespace WebCore {
 

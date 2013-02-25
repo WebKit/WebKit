@@ -21,6 +21,7 @@
 #define SVGElementRareData_h
 
 #include "CSSParserMode.h"
+#include "StylePropertySet.h"
 #include "StyleResolver.h"
 #include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
