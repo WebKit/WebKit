@@ -153,7 +153,7 @@ namespace JSC {
     {
         ASSERT(!isTornOff());
 
-        WriteBarrierBase<Unknown>* dst = reinterpret_cast<WriteBarrierBase<Unknown>*>(
+        WriteBarrierBase<Unknown>* dst = reinterpret_cast_ptr<WriteBarrierBase<Unknown>*>(
             reinterpret_cast<char*>(this) + registersOffset(symbolTable()));
         WriteBarrierBase<Unknown>* src = m_registers;
 
@@ -167,7 +167,7 @@ namespace JSC {
 
     inline bool JSActivation::isTornOff()
     {
-        return m_registers == reinterpret_cast<WriteBarrierBase<Unknown>*>(
+        return m_registers == reinterpret_cast_ptr<WriteBarrierBase<Unknown>*>(
             reinterpret_cast<char*>(this) + registersOffset(symbolTable()));
     }
 
@@ -178,7 +178,7 @@ namespace JSC {
 
     inline WriteBarrier<Unknown>* JSActivation::storage()
     {
-        return reinterpret_cast<WriteBarrier<Unknown>*>(
+        return reinterpret_cast_ptr<WriteBarrier<Unknown>*>(
             reinterpret_cast<char*>(this) + storageOffset());
     }
 

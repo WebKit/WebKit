@@ -116,7 +116,7 @@ inline void CopiedBlock::zeroFillWilderness()
 #else
     JSValue emptyValue;
     JSValue* limit = reinterpret_cast_ptr<JSValue*>(wildernessEnd());
-    for (JSValue* currentValue = reinterpret_cast<JSValue*>(wilderness()); currentValue < limit; currentValue++)
+    for (JSValue* currentValue = reinterpret_cast_ptr<JSValue*>(wilderness()); currentValue < limit; currentValue++)
         *currentValue = emptyValue;
 #endif
 }

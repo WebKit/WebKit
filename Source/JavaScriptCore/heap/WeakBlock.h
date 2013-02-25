@@ -97,7 +97,7 @@ inline bool WeakBlock::SweepResult::isNull() const
 
 inline WeakImpl* WeakBlock::asWeakImpl(FreeCell* freeCell)
 {
-    return reinterpret_cast<WeakImpl*>(freeCell);
+    return reinterpret_cast_ptr<WeakImpl*>(freeCell);
 }
 
 inline WeakBlock::SweepResult WeakBlock::takeSweepResult()
@@ -110,12 +110,12 @@ inline WeakBlock::SweepResult WeakBlock::takeSweepResult()
 
 inline WeakBlock::FreeCell* WeakBlock::asFreeCell(WeakImpl* weakImpl)
 {
-    return reinterpret_cast<FreeCell*>(weakImpl);
+    return reinterpret_cast_ptr<FreeCell*>(weakImpl);
 }
 
 inline WeakImpl* WeakBlock::weakImpls()
 {
-    return reinterpret_cast<WeakImpl*>(this) + ((sizeof(WeakBlock) + sizeof(WeakImpl) - 1) / sizeof(WeakImpl));
+    return reinterpret_cast_ptr<WeakImpl*>(this) + ((sizeof(WeakBlock) + sizeof(WeakImpl) - 1) / sizeof(WeakImpl));
 }
 
 inline size_t WeakBlock::weakImplCount()

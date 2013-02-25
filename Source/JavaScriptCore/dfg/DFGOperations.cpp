@@ -1622,7 +1622,7 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     char* scratchPointer = static_cast<char*>(scratch);
     for (unsigned i = 0; i < GPRInfo::numberOfRegisters; ++i) {
         GPRReg gpr = GPRInfo::toRegister(i);
-        dataLog(" ", GPRInfo::debugName(gpr), ":", RawPointer(*reinterpret_cast<void**>(scratchPointer)));
+        dataLog(" ", GPRInfo::debugName(gpr), ":", RawPointer(*reinterpret_cast_ptr<void**>(scratchPointer)));
         scratchPointer += sizeof(EncodedJSValue);
     }
     dataLog("\n");
@@ -1630,8 +1630,8 @@ void DFG_OPERATION debugOperationPrintSpeculationFailure(ExecState* exec, void* 
     for (unsigned i = 0; i < FPRInfo::numberOfRegisters; ++i) {
         FPRReg fpr = FPRInfo::toRegister(i);
         dataLog(" ", FPRInfo::debugName(fpr), ":");
-        uint64_t bits = *reinterpret_cast<uint64_t*>(scratchPointer);
-        double value = *reinterpret_cast<double*>(scratchPointer);
+        uint64_t bits = *reinterpret_cast_ptr<uint64_t*>(scratchPointer);
+        double value = *reinterpret_cast_ptr<double*>(scratchPointer);
         dataLogF("%llx:%lf", static_cast<long long>(bits), value);
         scratchPointer += sizeof(EncodedJSValue);
     }

@@ -121,7 +121,7 @@ public:
     void setVectorLength(uint32_t value) { indexingHeader()->setVectorLength(value); }
     
     template<typename T>
-    T* indexingPayload() { return reinterpret_cast<T*>(this); }
+    T* indexingPayload() { return reinterpret_cast_ptr<T*>(this); }
     ArrayStorage* arrayStorage() { return indexingPayload<ArrayStorage>(); }
     ContiguousJSValues contiguousInt32() { return ContiguousJSValues(indexingPayload<WriteBarrier<Unknown> >(), vectorLength()); }
 

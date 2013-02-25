@@ -113,7 +113,7 @@ namespace JSC {
         {
             char* base = static_cast<char*>(m_reservation.base());
             char* reservationEnd = base + m_reservation.size();
-            return reinterpret_cast<Register*>(reservationEnd);
+            return reinterpret_cast_ptr<Register*>(reservationEnd);
         }
 
 #if ENABLE(DEBUG_JSSTACK)

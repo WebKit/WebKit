@@ -1,3 +1,37 @@
+2013-02-25  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry][ARM] Fix cast-align warnings in JavaScriptCore
+        https://bugs.webkit.org/show_bug.cgi?id=110738
+
+        Reviewed by Rob Buis.
+
+        Use reinterpret_cast_ptr instead of reinterpret_cast for
+        pointers.
+
+        * dfg/DFGOperations.cpp:
+        * heap/CopiedBlock.h:
+        (JSC::CopiedBlock::zeroFillWilderness):
+        * heap/WeakBlock.h:
+        (JSC::WeakBlock::asWeakImpl):
+        (JSC::WeakBlock::asFreeCell):
+        (JSC::WeakBlock::weakImpls):
+        * heap/WeakImpl.h:
+        (JSC::WeakImpl::asWeakImpl):
+        * interpreter/JSStack.cpp:
+        (JSC::JSStack::disableErrorStackReserve):
+        * interpreter/JSStack.h:
+        (JSC::JSStack::reservationEnd):
+        * runtime/ArrayStorage.h:
+        (JSC::ArrayStorage::from):
+        * runtime/Butterfly.h:
+        (JSC::Butterfly::indexingPayload):
+        * runtime/IndexingHeader.h:
+        (JSC::IndexingHeader::propertyStorage):
+        * runtime/JSActivation.h:
+        (JSC::JSActivation::tearOff):
+        (JSC::JSActivation::isTornOff):
+        (JSC::JSActivation::storage):
+
 2013-02-22  Filip Pizlo  <fpizlo@apple.com>
 
         DFG::SpeculativeJIT::speculateNumber() should just use SpeculateDoubleOperand instead of doing its own thing

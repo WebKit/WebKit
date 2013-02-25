@@ -107,7 +107,7 @@ inline void* WeakImpl::context()
 
 inline WeakImpl* WeakImpl::asWeakImpl(JSValue* slot)
 {
-    return reinterpret_cast<WeakImpl*>(reinterpret_cast<char*>(slot) + OBJECT_OFFSETOF(WeakImpl, m_jsValue));
+    return reinterpret_cast_ptr<WeakImpl*>(reinterpret_cast_ptr<char*>(slot) + OBJECT_OFFSETOF(WeakImpl, m_jsValue));
 }
 
 } // namespace JSC
