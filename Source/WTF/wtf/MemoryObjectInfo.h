@@ -32,7 +32,6 @@
 #define MemoryObjectInfo_h
 
 #include <wtf/MemoryInstrumentation.h>
-#include <wtf/text/WTFString.h>
 
 namespace WTF {
 
@@ -51,6 +50,8 @@ public:
         , m_firstVisit(true)
         , m_customAllocation(false)
         , m_isRoot(false)
+        , m_classNameId(0)
+        , m_nameId(0)
     { }
 
     typedef MemoryClassInfo ClassInfo;
@@ -62,18 +63,18 @@ public:
     bool customAllocation() const { return m_customAllocation; }
     void setCustomAllocation(bool customAllocation) { m_customAllocation = customAllocation; }
 
-    void setClassName(const String& className)
+    void setClassName(const char* className)
     {
-        if (m_className.isEmpty())
-            m_className = className;
+        if (!m_classNameId)
+            m_classNameId = m_memoryInstrumentation->m_client->registerString(className);
     }
-    const String& className() const { return m_className; }
-    void setName(const String& name)
+    int classNameId() const { return m_classNameId; }
+    void setName(const char* name)
     {
-        if (m_name.isEmpty())
-            m_name = name;
+        if (!m_nameId)
+            m_nameId = m_memoryInstrumentation->m_client->registerString(name);
     }
-    const String& name() const { return m_name; }
+    int nameId() const { return m_nameId; }
     bool isRoot() const { return m_isRoot; }
     void markAsRoot() { m_isRoot = true; }
 
@@ -102,8 +103,8 @@ private:
     bool m_firstVisit;
     bool m_customAllocation;
     bool m_isRoot;
-    String m_className;
-    String m_name;
+    int m_classNameId;
+    int m_nameId;
 };
 
 } // namespace WTF

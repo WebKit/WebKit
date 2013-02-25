@@ -64,7 +64,7 @@ HeapGraphSerializer::HeapGraphSerializer(Client* client)
     // FIXME: It is used as a magic constant for 'object' node type.
     registerTypeString("object");
 
-    m_unknownClassNameId = addString("unknown");
+    m_unknownClassNameId = registerString("unknown");
 }
 
 HeapGraphSerializer::~HeapGraphSerializer()
@@ -116,9 +116,9 @@ void HeapGraphSerializer::reportNode(const WTF::MemoryObjectInfo& info)
 int HeapGraphSerializer::reportNodeImpl(const WTF::MemoryObjectInfo& info, int edgesCount)
 {
     int nodeId = toNodeId(info.reportedPointer());
-
-    m_nodes->addItem(info.className().isEmpty() ? m_unknownClassNameId : addString(info.className()));
-    m_nodes->addItem(addString(info.name()));
+    int classNameId = info.classNameId();
+    m_nodes->addItem(classNameId ? classNameId : m_unknownClassNameId);
+    m_nodes->addItem(info.nameId());
     m_nodes->addItem(nodeId);
     m_nodes->addItem(info.objectSize());
     m_nodes->addItem(edgesCount);
@@ -139,7 +139,7 @@ void HeapGraphSerializer::reportEdgeImpl(const int toNodeId, const char* name, i
     ASSERT(memberType < WTF::LastMemberTypeEntry);
 
     m_edges->addItem(memberType);
-    m_edges->addItem(addString(name));
+    m_edges->addItem(registerString(name));
     m_edges->addItem(toNodeId);
 
     ++m_nodeEdgesCount;
@@ -209,19 +209,22 @@ void HeapGraphSerializer::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) 
     info.ignoreMember(m_roots);
 }
 
-int HeapGraphSerializer::addString(const String& string)
+int HeapGraphSerializer::registerString(const char* string)
 {
-    if (string.isEmpty())
+    if (!string)
         return 0;
-    StringMap::AddResult result = m_stringToIndex.add(string.left(256), m_stringToIndex.size() + 1);
+    int length = strlen(string);
+    if (length > 256)
+        length = 256;
+    StringMap::AddResult result = m_stringToIndex.add(String(string, length), m_stringToIndex.size() + 1);
     if (result.isNewEntry)
         m_strings->addItem(string);
     return result.iterator->value;
 }
 
-int HeapGraphSerializer::registerTypeString(const String& string)
+int HeapGraphSerializer::registerTypeString(const char* string)
 {
-    int stringId = addString(string);
+    int stringId = registerString(string);
     m_typeStrings->setNumber(string, stringId);
     return stringId;
 }
@@ -240,7 +243,7 @@ void HeapGraphSerializer::addRootNode()
     for (size_t i = 0; i < m_roots.size(); i++)
         reportEdgeImpl(toNodeId(m_roots[i]), 0, m_edgeTypes[WTF::PointerMember]);
 
-    m_nodes->addItem(addString("Root"));
+    m_nodes->addItem(registerString("Root"));
     m_nodes->addItem(0);
     m_nodes->addItem(s_firstNodeId + m_address2NodeIdMap.size() + m_leafCount);
     m_nodes->addItem(0);

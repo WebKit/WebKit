@@ -119,6 +119,13 @@ void MemoryInstrumentationClientImpl::reportBaseAddress(const void* base, const 
         m_graphSerializer->reportBaseAddress(base, real);
 }
 
+int MemoryInstrumentationClientImpl::registerString(const char* string)
+{
+    if (m_graphSerializer)
+        return m_graphSerializer->registerString(string);
+    return -1;
+}
+
 void MemoryInstrumentationClientImpl::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::InspectorMemoryAgent);

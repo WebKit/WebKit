@@ -943,7 +943,7 @@ void CachedResource::CachedResourceCallback::timerFired(Timer<CachedResourceCall
 void CachedResource::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::CachedResource);
-    memoryObjectInfo->setName(url().string());
+    memoryObjectInfo->setName(url().string().utf8().data());
     info.addMember(m_resourceRequest, "resourceRequest");
     info.addMember(m_fragmentIdentifierForRequest, "fragmentIdentifierForRequest");
     info.addMember(m_clients, "clients");

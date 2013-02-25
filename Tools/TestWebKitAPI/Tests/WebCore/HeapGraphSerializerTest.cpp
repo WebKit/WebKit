@@ -177,10 +177,16 @@ private:
 
 class Helper {
 public:
-    Helper(HeapGraphSerializer* serializer) : m_serializer(serializer), m_currentPointer(0) { }
+    Helper(HeapGraphSerializer* serializer)
+        : m_serializer(serializer)
+        , m_memoryInstrumentationClient(serializer)
+        , m_memoryInstrumentation(&m_memoryInstrumentationClient)
+        , m_currentPointer(0)
+    { }
+
     void* addNode(const char* className, const char* name, bool isRoot)
     {
-        WTF::MemoryObjectInfo info(0, g_defaultObjectType, ++m_currentPointer);
+        WTF::MemoryObjectInfo info(&m_memoryInstrumentation, g_defaultObjectType, ++m_currentPointer);
         info.setClassName(className);
         info.setName(name);
         if (isRoot)
@@ -201,6 +207,8 @@ public:
 
 private:
     HeapGraphSerializer* m_serializer;
+    MemoryInstrumentationClientImpl m_memoryInstrumentationClient;
+    MemoryInstrumentationImpl m_memoryInstrumentation;
 
     class Object {
     public:
@@ -276,8 +284,8 @@ TEST(HeapGraphSerializerTest, hashSetWithTwoStrings)
     memoryInstrumentation.addRootObject(&owner);
     receiver.serializer()->finish();
     receiver.printGraph();
-    EXPECT_EQ(String("[5,0,1,0,0,8,0,4,0,3,9,0,3,0,0,9,0,2,0,0,10,0,5,0,1]"), receiver.dumpNodes());
-    EXPECT_EQ(String("[2,6,1,1,7,2,1,7,3,1,0,4]"), receiver.dumpEdges());
+    EXPECT_EQ(String("[6,0,1,0,0,5,0,4,0,3,9,0,3,0,0,9,0,2,0,0,10,0,5,0,1]"), receiver.dumpNodes());
+    EXPECT_EQ(String("[2,7,1,1,8,2,1,8,3,1,0,4]"), receiver.dumpEdges());
     EXPECT_EQ(String("[]"), receiver.dumpBaseToRealNodeId());
 }
 

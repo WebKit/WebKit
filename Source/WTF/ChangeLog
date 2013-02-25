@@ -1,3 +1,25 @@
+2013-02-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: replace String with const char* in MemoryObjectInfo
+        https://bugs.webkit.org/show_bug.cgi?id=110599
+
+        Reviewed by Yury Semikhatsky.
+
+        Due to potentially dynamic nature of names and classNames we need to make a copy of the strings
+        that were given us via MemoryInstrumentation calls.
+        So I extended client api with registerString method that pushes the strings
+        down to the serializer.
+
+        * wtf/MemoryInstrumentation.h:
+        (MemoryInstrumentationClient):
+        * wtf/MemoryObjectInfo.h:
+        (WTF::MemoryObjectInfo::MemoryObjectInfo):
+        (WTF::MemoryObjectInfo::setClassName):
+        (WTF::MemoryObjectInfo::classNameId):
+        (WTF::MemoryObjectInfo::setName):
+        (WTF::MemoryObjectInfo::nameId):
+        (MemoryObjectInfo):
+
 2013-02-21  Brady Eidson  <beidson@apple.com>
 
         Move fastlog2() to WTF/MathExtras.h so it can be used from multiple projects.

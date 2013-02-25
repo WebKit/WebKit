@@ -111,6 +111,7 @@ public:
         ++m_links[WTF::OwnPtrMember];
     }
     virtual void reportBaseAddress(const void*, const void*) OVERRIDE { }
+    virtual int registerString(const char*) OVERRIDE { return -1; }
 
     size_t visitedObjects() const { return m_visitedObjects.size(); }
     size_t totalSize(const MemoryObjectType objectType) const

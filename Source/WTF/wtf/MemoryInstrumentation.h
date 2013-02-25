@@ -66,6 +66,7 @@ public:
     virtual void reportEdge(const void* target, const char* edgeName, MemberType) = 0;
     virtual void reportLeaf(const MemoryObjectInfo&, const char* edgeName) = 0;
     virtual void reportBaseAddress(const void* base, const void* real) = 0;
+    virtual int registerString(const char*) = 0;
 };
 
 class MemoryInstrumentation {

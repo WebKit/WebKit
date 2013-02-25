@@ -59,6 +59,7 @@ public:
     void reportEdge(const void*, const char*, WTF::MemberType);
     void reportLeaf(const WTF::MemoryObjectInfo&, const char*);
     void reportBaseAddress(const void*, const void*);
+    int registerString(const char*);
 
     PassRefPtr<InspectorObject> finish();
 
@@ -70,9 +71,8 @@ private:
 
     int toNodeId(const void*);
 
-    int addString(const String&);
     void addRootNode();
-    int registerTypeString(const String&);
+    int registerTypeString(const char*);
 
     void reportEdgeImpl(const int toNodeId, const char* name, int memberType);
     int reportNodeImpl(const WTF::MemoryObjectInfo&, int edgesCount);

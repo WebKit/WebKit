@@ -89,6 +89,7 @@ public:
     virtual void reportEdge(const void*, const char*, MemberType) OVERRIDE;
     virtual void reportLeaf(const MemoryObjectInfo&, const char*) OVERRIDE;
     virtual void reportBaseAddress(const void*, const void*) OVERRIDE;
+    virtual int registerString(const char*) OVERRIDE;
 
     void reportMemoryUsage(MemoryObjectInfo*) const;
 

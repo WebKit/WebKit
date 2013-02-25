@@ -1,3 +1,22 @@
+2013-02-23  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: replace String with const char* in MemoryObjectInfo
+        https://bugs.webkit.org/show_bug.cgi?id=110599
+
+        Reviewed by Yury Semikhatsky.
+
+        Due to potentially dynamic nature of names and classNames we need to make a copy of the strings
+        that were given us via MemoryInstrumentation calls.
+        So I extended client api with registerString method that pushes the strings
+        down to the serializer.
+
+        * TestWebKitAPI/Tests/WTF/MemoryInstrumentationTest.cpp:
+        * TestWebKitAPI/Tests/WebCore/HeapGraphSerializerTest.cpp:
+        (TestWebKitAPI::Helper::Helper):
+        (Helper):
+        (TestWebKitAPI::Helper::addNode):
+        (TestWebKitAPI::TEST):
+
 2013-02-25  Nico Weber  <thakis@chromium.org>
 
         Make ScriptError not crash when args is a tuple
