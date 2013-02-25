@@ -301,7 +301,7 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackendB
     // effective quota will permanently become 2^64.
     unsigned long long maxSize = quota - diskUsage + databaseFileSize;
     if (maxSize > quota)
-        maxSize = 0;
+        maxSize = databaseFileSize;
     return maxSize;
 }
 
