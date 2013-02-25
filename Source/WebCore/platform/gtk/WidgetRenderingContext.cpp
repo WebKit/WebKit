@@ -26,10 +26,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifdef GTK_API_VERSION_2
-
 #include "config.h"
 #include "WidgetRenderingContext.h"
+
+#ifdef GTK_API_VERSION_2
 
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
