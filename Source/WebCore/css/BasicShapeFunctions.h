@@ -30,7 +30,6 @@
 #ifndef BasicShapeFunctions_h
 #define BasicShapeFunctions_h
 
-#include "StyleResolver.h"
 #include <wtf/PassRefPtr.h>
 
 namespace WebCore {
@@ -38,9 +37,10 @@ namespace WebCore {
 class BasicShape;
 class CSSBasicShape;
 class CSSValue;
+class StyleResolver;
 
 PassRefPtr<CSSValue> valueForBasicShape(const BasicShape*);
-PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver::State&, const CSSBasicShape*);
+PassRefPtr<BasicShape> basicShapeForValue(const StyleResolver*, const CSSBasicShape*);
 
 }
 #endif

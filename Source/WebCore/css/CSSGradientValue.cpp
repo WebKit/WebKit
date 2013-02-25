@@ -35,6 +35,7 @@
 #include "IntSizeHash.h"
 #include "NodeRenderStyle.h"
 #include "RenderObject.h"
+#include "StyleResolver.h"
 #include "WebCoreMemoryInstrumentation.h"
 #include <wtf/MemoryInstrumentationVector.h>
 #include <wtf/text/StringBuilder.h>
@@ -114,11 +115,11 @@ struct GradientStop {
     { }
 };
 
-PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleResolver::State& state)
+PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleResolver* styleResolver)
 {
     bool derived = false;
     for (unsigned i = 0; i < m_stops.size(); i++)
-        if (StyleResolver::colorFromPrimitiveValueIsDerivedFromElement(m_stops[i].m_color.get())) {
+        if (styleResolver->colorFromPrimitiveValueIsDerivedFromElement(m_stops[i].m_color.get())) {
             m_stops[i].m_colorIsDerivedFromElement = true;
             derived = true;
             break;
@@ -137,7 +138,7 @@ PassRefPtr<CSSGradientValue> CSSGradientValue::gradientWithStylesResolved(StyleR
     }
 
     for (unsigned i = 0; i < result->m_stops.size(); i++)
-        result->m_stops[i].m_resolvedColor = StyleResolver::colorFromPrimitiveValue(state, result->m_stops[i].m_color.get());
+        result->m_stops[i].m_resolvedColor = styleResolver->colorFromPrimitiveValue(result->m_stops[i].m_color.get());
 
     return result.release();
 }

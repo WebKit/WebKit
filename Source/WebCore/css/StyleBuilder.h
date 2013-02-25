@@ -26,7 +26,6 @@
 #define StyleBuilder_h
 
 #include "CSSPropertyNames.h"
-#include "StyleResolver.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -34,17 +33,18 @@ namespace WebCore {
 
 class CSSValue;
 class StyleBuilder;
+class StyleResolver;
 
 class PropertyHandler {
 public:
-    typedef void (*InheritFunction)(CSSPropertyID, StyleResolver::State&);
-    typedef void (*InitialFunction)(CSSPropertyID, StyleResolver::State&);
-    typedef void (*ApplyFunction)(CSSPropertyID, StyleResolver::State&, CSSValue*);
+    typedef void (*InheritFunction)(CSSPropertyID, StyleResolver*);
+    typedef void (*InitialFunction)(CSSPropertyID, StyleResolver*);
+    typedef void (*ApplyFunction)(CSSPropertyID, StyleResolver*, CSSValue*);
     PropertyHandler() : m_inherit(0), m_initial(0), m_apply(0) { }
     PropertyHandler(InheritFunction inherit, InitialFunction initial, ApplyFunction apply) : m_inherit(inherit), m_initial(initial), m_apply(apply) { }
-    void applyInheritValue(CSSPropertyID propertyID, StyleResolver::State& state) const { ASSERT(m_inherit); (*m_inherit)(propertyID, state); }
-    void applyInitialValue(CSSPropertyID propertyID, StyleResolver::State& state) const { ASSERT(m_initial); (*m_initial)(propertyID, state); }
-    void applyValue(CSSPropertyID propertyID, StyleResolver::State& state, CSSValue* value) const { ASSERT(m_apply); (*m_apply)(propertyID, state, value); }
+    void applyInheritValue(CSSPropertyID propertyID, StyleResolver* styleResolver) const { ASSERT(m_inherit); (*m_inherit)(propertyID, styleResolver); }
+    void applyInitialValue(CSSPropertyID propertyID, StyleResolver* styleResolver) const { ASSERT(m_initial); (*m_initial)(propertyID, styleResolver); }
+    void applyValue(CSSPropertyID propertyID, StyleResolver* styleResolver, CSSValue* value) const { ASSERT(m_apply); (*m_apply)(propertyID, styleResolver, value); }
     bool isValid() const { return m_inherit && m_initial && m_apply; }
     InheritFunction inheritFunction() const { return m_inherit; }
     InitialFunction initialFunction() { return m_initial; }
