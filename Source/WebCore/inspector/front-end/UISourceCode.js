@@ -485,7 +485,7 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {WebInspector.LiveLocation} liveLocation
+     * @param {!WebInspector.LiveLocation} liveLocation
      */
     addLiveLocation: function(liveLocation)
     {
@@ -493,7 +493,7 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {WebInspector.LiveLocation} liveLocation
+     * @param {!WebInspector.LiveLocation} liveLocation
      */
     removeLiveLocation: function(liveLocation)
     {

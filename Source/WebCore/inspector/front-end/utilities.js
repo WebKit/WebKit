@@ -763,7 +763,7 @@ Set.prototype = {
     },
 
     /**
-     * @param {Object} item
+     * @param {!Object} item
      * @return {?Object}
      */
     hasItem: function(item)
