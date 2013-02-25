@@ -1,0 +1,7 @@
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
+CONSOLE MESSAGE: line 1: SyntaxError: Unexpected token '<'
+../resources/tests7.dat: PASS
+
+Switching to data: url parser (threaded if available) and re-running...
+
+../resources/tests7.dat: PASS
