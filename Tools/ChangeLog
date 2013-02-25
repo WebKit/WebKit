@@ -1,3 +1,14 @@
+2013-02-25  Nico Weber  <thakis@chromium.org>
+
+        Make ninja the default build system for build-webkit --chromium on windows
+        https://bugs.webkit.org/show_bug.cgi?id=110731
+
+        Reviewed by Jochen Eisinger.
+
+        With http://crbug.com/169945 fixed, this should now work.
+
+        * Scripts/update-webkit-chromium:
+
 2013-02-24  Gustavo Noronha Silva  <gns@gnome.org>
 
         [GTK] GTK+ 2 build broken since GTK_API_VERSION_2 moved to autoconfig.h

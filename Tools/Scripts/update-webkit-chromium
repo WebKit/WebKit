@@ -66,7 +66,7 @@ if (isChromiumAndroid()) {
 }
 
 my $force = 0;
-my $useNinja = $^O eq "linux" || $^O eq "darwin";
+my $useNinja = 1;
 
 GetOptions(
   'force' => \$force,
