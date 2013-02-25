@@ -1,5 +1,19 @@
 2013-02-25  Nico Weber  <thakis@chromium.org>
 
+        Fix tests after r143910
+        https://bugs.webkit.org/show_bug.cgi?id=110757
+
+        Reviewed by Andreas Kling.
+
+        While here, also add a test for the bug r143910 fixed.
+
+        * Scripts/webkitpy/common/system/executive_unittest.py:
+        (ScriptErrorTest.test_message_with_output):
+        (ScriptErrorTest):
+        (ScriptErrorTest.test_message_with_tuple):
+
+2013-02-25  Nico Weber  <thakis@chromium.org>
+
         [chromium] Apparently built-product-archive is written in Python, not Perl :-/
         https://bugs.webkit.org/show_bug.cgi?id=110755
 

@@ -56,9 +56,13 @@ class ScriptErrorTest(unittest.TestCase):
         error = ScriptError('My custom message!', '', -1, 'My output.')
         self.assertEqual(error.message_with_output(), 'My custom message!\n\nMy output.')
         error = ScriptError('', 'my_command!', -1, 'My output.', '/Users/username/blah')
-        self.assertEqual(error.message_with_output(), 'Failed to run "my_command!" exit_code: -1 cwd: /Users/username/blah\n\nMy output.')
+        self.assertEqual(error.message_with_output(), 'Failed to run "\'my_command!\'" exit_code: -1 cwd: /Users/username/blah\n\nMy output.')
         error = ScriptError('', 'my_command!', -1, 'ab' + '1' * 499)
-        self.assertEqual(error.message_with_output(), 'Failed to run "my_command!" exit_code: -1\n\nLast 500 characters of output:\nb' + '1' * 499)
+        self.assertEqual(error.message_with_output(), 'Failed to run "\'my_command!\'" exit_code: -1\n\nLast 500 characters of output:\nb' + '1' * 499)
+
+    def test_message_with_tuple(self):
+        error = ScriptError('', ('my', 'command'), -1, 'My output.', '/Users/username/blah')
+        self.assertEqual(error.message_with_output(), 'Failed to run "(\'my\', \'command\')" exit_code: -1 cwd: /Users/username/blah\n\nMy output.')
 
 def never_ending_command():
     """Arguments for a command that will never end (useful for testing process
