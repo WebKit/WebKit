@@ -1,3 +1,16 @@
+2013-02-25  Alberto Garcia  <albgarcia@rim.com>
+
+        [BlackBerry] ChromeClientBlackBerry: fix variable names
+        https://bugs.webkit.org/show_bug.cgi?id=110562
+
+        Reviewed by Rob Buis.
+
+        manager was incorrectly renamed back to tracker in r138696:
+        http://trac.webkit.org/changeset/138696/trunk/Source/WebKit/blackberry/WebCoreSupport/ChromeClientBlackBerry.cpp
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::exceededDatabaseQuota):
+
 2013-02-24  Alberto Garcia  <albgarcia@rim.com>
 
         [BlackBerry] GeolocationClientBlackBerry: add missing headers
