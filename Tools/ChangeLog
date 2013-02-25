@@ -1,3 +1,14 @@
+2013-02-25  Nico Weber  <thakis@chromium.org>
+
+        [chromium] Apparently built-product-archive is written in Python, not Perl :-/
+        https://bugs.webkit.org/show_bug.cgi?id=110755
+
+        Reviewed by Jochen Eisinger.
+
+        * BuildSlaveSupport/built-product-archive:
+        (archiveBuiltProduct):
+        (extractBuiltProduct):
+
 2013-02-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r143895.

@@ -163,7 +163,7 @@ def archiveBuiltProduct(configuration, platform, fullPlatform):
             return 1
 
     elif platform == 'chromium':
-        print "Archiving $configurationBuildDirectory\n";
+        print "Archiving", configurationBuildDirectory
         thinDirectory = os.path.join(configurationBuildDirectory, "thin")
 
         ignorePatterns = ['.svn', '*.a', '*.d', '*.dSYM', '*.o', '*.ilk', '*.lib', '*.idb',
@@ -221,7 +221,7 @@ def extractBuiltProduct(configuration, platform):
 
         return unzipArchive(configurationBuildDirectory, configuration)
     elif platform == 'qt' or platform == 'gtk' or platform == 'efl' or platform == 'chromium':
-        print "Extracting $configurationBuildDirectory\n";
+        print "Extracting", configurationBuildDirectory
         return unzipArchive(configurationBuildDirectory, configuration)
 
 
