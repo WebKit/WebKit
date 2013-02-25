@@ -248,7 +248,7 @@ public:
     virtual bool isInsertionPointNode() const { return false; }
 
     bool isDocumentNode() const;
-    bool isTreeScope() const { return treeScope()->rootNode() == this; }
+    bool isTreeScope() const;
     bool isDocumentFragment() const { return getFlag(IsDocumentFragmentFlag); }
     bool isShadowRoot() const { return isDocumentFragment() && isTreeScope(); }
     bool isInsertionPoint() const { return getFlag(NeedsShadowTreeWalkerFlag) && isInsertionPointNode(); }

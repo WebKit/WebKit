@@ -45,7 +45,6 @@ public:
 #endif
 
 private:
-    void updateTreeScope(Node*) const;
     void moveTreeToNewScope(Node*) const;
     void moveTreeToNewDocument(Node*, Document* oldDocument, Document* newDocument) const;
     void moveNodeToNewDocument(Node*, Document* oldDocument, Document* newDocument) const;
