@@ -1,3 +1,15 @@
+2013-02-25  Laszlo Gombos  <l.gombos@samsung.com>
+
+        [EFL] Align feature defaults
+        https://bugs.webkit.org/show_bug.cgi?id=110715
+
+        Enable 3D_RENDERING in FeatureList.pm as it is enabled by default in
+        OptionsEfl.cmake.
+
+        Reviewed by Gyuyoung Kim.
+
+        * Scripts/webkitperl/FeatureList.pm:
+
 2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         run-perf-tests reports wrong commit time
