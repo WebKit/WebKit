@@ -235,10 +235,12 @@ WebInspector.NativeSnapshotNode.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileType}
+ * @implements {MemoryAgent.Dispatcher}
  */
 WebInspector.NativeSnapshotProfileType = function()
 {
     WebInspector.ProfileType.call(this, WebInspector.NativeSnapshotProfileType.TypeId, WebInspector.UIString("Take Native Heap Snapshot"));
+    InspectorBackend.registerMemoryDispatcher(this);
     this._nextProfileUid = 1;
 }
 
@@ -252,15 +254,14 @@ WebInspector.NativeSnapshotProfileType.prototype = {
 
     /**
      * @override
-     * @param {WebInspector.ProfilesPanel} profilesPanel
      * @return {boolean}
      */
-    buttonClicked: function(profilesPanel)
+    buttonClicked: function()
     {
         var profileHeader = new WebInspector.NativeSnapshotProfileHeader(this, WebInspector.UIString("Snapshot %d", this._nextProfileUid), this._nextProfileUid);
         ++this._nextProfileUid;
         profileHeader.isTemporary = true;
-        profilesPanel.addProfileHeader(profileHeader);
+        this.addProfile(profileHeader);
         profileHeader.load(function() { });
 
         /**
@@ -347,6 +348,17 @@ WebInspector.NativeSnapshotProfileType.prototype = {
         return new WebInspector.NativeSnapshotProfileHeader(this, profile.title, -1);
     },
 
+    /**
+     * @override
+     * @param {MemoryAgent.HeapSnapshotChunk} chunk
+     */
+    addNativeSnapshotChunk: function(chunk)
+    {
+        var tempProfile = this.findTemporaryProfile();
+        if (tempProfile)
+            tempProfile.addNativeSnapshotChunk(chunk);
+    },
+
     __proto__: WebInspector.ProfileType.prototype
 }
 
@@ -401,6 +413,8 @@ WebInspector.NativeSnapshotProfileHeader.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.HeapSnapshotView}
+ * @param {WebInspector.ProfilesPanel} parent
+ * @param {WebInspector.NativeSnapshotProfileHeader} profile
  */
 WebInspector.NativeHeapSnapshotView = function(parent, profile)
 {
@@ -439,15 +453,14 @@ WebInspector.NativeMemoryProfileType.prototype = {
 
     /**
      * @override
-     * @param {WebInspector.ProfilesPanel} profilesPanel
      * @return {boolean}
      */
-    buttonClicked: function(profilesPanel)
+    buttonClicked: function()
     {
         var profileHeader = new WebInspector.NativeMemoryProfileHeader(this, WebInspector.UIString("Snapshot %d", this._nextProfileUid), this._nextProfileUid);
         ++this._nextProfileUid;
         profileHeader.isTemporary = true;
-        profilesPanel.addProfileHeader(profileHeader);
+        this.addProfile(profileHeader);
         /**
          * @param {?string} error
          * @param {?MemoryAgent.MemoryBlock} memoryBlock

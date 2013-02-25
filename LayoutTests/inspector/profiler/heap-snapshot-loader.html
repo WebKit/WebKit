@@ -28,7 +28,7 @@ function test()
             maxJSObjectId: 6
         });
 
-        var profileHeader = panel._profiles[0];
+        var profileHeader = panel.getProfileType("HEAP").getProfiles()[0];
 
         function getHeapSnapshotMock(uid) {
             for (var i = 0, l = sourceStringified.length; i < l; i += partSize)

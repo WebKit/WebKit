@@ -11,6 +11,7 @@ localizedStrings["%.1f\u2009hrs"] = "%.1f\u2009hrs";
 localizedStrings["%.1f\u2009min"] = "%.1f\u2009min";
 localizedStrings["%.1f\u2009KB"] = "%.1f\u2009KB";
 localizedStrings["%.1f\u2009MB"] = "%.1f\u2009MB";
+localizedStrings["%.0f%"] = "%.0f%";
 localizedStrings["%.2f%"] = "%.2f%";
 localizedStrings["%.2f\u2009s"] = "%.2f\u2009s";
 localizedStrings["%.3f\u2009ms"] = "%.3f\u2009ms";

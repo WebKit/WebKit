@@ -18,16 +18,17 @@ function test()
 
     function step0()
     {
-        var profiles = WebInspector.panels.profiles.getProfiles("HEAP");
+        var heapProfileType =  WebInspector.panels.profiles.getProfileType("HEAP");
+        var profiles = heapProfileType.getProfiles();
         WebInspector.panels.profiles._showProfile(profiles[profiles.length - 1]);
-        InspectorTest.addSniffer(WebInspector.panels.profiles, "_finishHeapSnapshot", step1);
+        InspectorTest.addSniffer(heapProfileType, "finishHeapSnapshot", step1);
     }
 
     function step1(uid)
     {
-        InspectorTest.addResult("_finishHeapSnapshot " + uid);
+        InspectorTest.addResult("finishHeapSnapshot " + uid);
         var panel = WebInspector.panels.profiles;
-        var profile = panel._profilesIdMap[panel._makeKey(uid, WebInspector.HeapSnapshotProfileType.TypeId)];
+        var profile = panel.getProfile(WebInspector.HeapSnapshotProfileType.TypeId, uid);
         profile.load(step2.bind(this));
     }
 

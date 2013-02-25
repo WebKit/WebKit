@@ -732,12 +732,12 @@ InspectorTest.takeAndOpenSnapshot = function(generator, callback)
         snapshot.snapshot.typeId = "HEAP";
         snapshot.snapshot.title = profile.title;
         snapshot.snapshot.uid = profile.uid;
-        WebInspector.panels.profiles._addHeapSnapshotChunk(uid, JSON.stringify(snapshot));
-        WebInspector.panels.profiles._finishHeapSnapshot(uid);
+        profileType.addHeapSnapshotChunk(uid, JSON.stringify(snapshot));
+        profileType.finishHeapSnapshot(uid);
     }
     InspectorTest.override(HeapProfilerAgent, "getHeapSnapshot", pushGeneratedSnapshot);
     InspectorTest._takeAndOpenSnapshotCallback = callback;
-    WebInspector.panels.profiles.addProfileHeader(profile);
+    profileType.addProfile(profile);
     WebInspector.panels.profiles._showProfile(profile);
 };
 

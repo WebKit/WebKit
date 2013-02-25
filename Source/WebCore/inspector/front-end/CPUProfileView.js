@@ -571,10 +571,12 @@ WebInspector.CPUProfileView.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileType}
+ * @implements {ProfilerAgent.Dispatcher}
  */
 WebInspector.CPUProfileType = function()
 {
     WebInspector.ProfileType.call(this, WebInspector.CPUProfileType.TypeId, WebInspector.UIString("Collect JavaScript CPU Profile"));
+    InspectorBackend.registerProfilerDispatcher(this);
     this._recording = false;
     WebInspector.CPUProfileType.instance = this;
 }
@@ -612,6 +614,14 @@ WebInspector.CPUProfileType.prototype = {
         return WebInspector.UIString("CPU profiles show where the execution time is spent in your page's JavaScript functions.");
     },
 
+    /**
+     * @param {ProfilerAgent.ProfileHeader} profileHeader
+     */
+    addProfileHeader: function(profileHeader)
+    {
+        this.addProfile(this.createProfile(profileHeader));
+    },
+
     isRecordingProfile: function()
     {
         return this._recording;
@@ -630,6 +640,9 @@ WebInspector.CPUProfileType.prototype = {
         ProfilerAgent.stop();
     },
 
+    /**
+     * @param {boolean} isProfiling
+     */
     setRecordingProfile: function(isProfiling)
     {
         this._recording = isProfiling;
@@ -638,7 +651,7 @@ WebInspector.CPUProfileType.prototype = {
     /**
      * @override
      * @param {string=} title
-     * @return {WebInspector.ProfileHeader}
+     * @return {!WebInspector.ProfileHeader}
      */
     createTemporaryProfile: function(title)
     {
@@ -649,11 +662,57 @@ WebInspector.CPUProfileType.prototype = {
     /**
      * @override
      * @param {ProfilerAgent.ProfileHeader} profile
-     * @return {WebInspector.ProfileHeader}
+     * @return {!WebInspector.ProfileHeader}
      */
     createProfile: function(profile)
     {
         return new WebInspector.CPUProfileHeader(this, profile.title, profile.uid);
+    },
+
+    /**
+     * @override
+     * @param {!WebInspector.ProfileHeader} profile
+     */
+    removeProfile: function(profile)
+    {
+        WebInspector.ProfileType.prototype.removeProfile.call(this, profile);
+        if (!profile.isTemporary)
+            ProfilerAgent.removeProfile(this.id, profile.uid);
+    },
+
+    /**
+     * @override
+     * @param {function(this:WebInspector.ProfileType, ?string, Array.<ProfilerAgent.ProfileHeader>)} populateCallback
+     */
+    _requestProfilesFromBackend: function(populateCallback)
+    {
+        ProfilerAgent.getProfileHeaders(populateCallback);
+    },
+
+    /**
+     * @override
+     */
+    resetProfiles: function()
+    {
+        this._reset();
+    },
+
+    /** @deprecated To be removed from the protocol */
+    addHeapSnapshotChunk: function(uid, chunk)
+    {
+        throw new Error("Never called");
+    },
+
+    /** @deprecated To be removed from the protocol */
+    finishHeapSnapshot: function(uid)
+    {
+        throw new Error("Never called");
+    },
+
+    /** @deprecated To be removed from the protocol */
+    reportHeapSnapshotProgress: function(done, total)
+    {
+        throw new Error("Never called");
     },
 
     __proto__: WebInspector.ProfileType.prototype

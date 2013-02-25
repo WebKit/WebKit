@@ -427,7 +427,7 @@ WebInspector.HeapSnapshotView.prototype = {
      */
     _profiles: function()
     {
-        return this.parent.getProfiles(WebInspector.HeapSnapshotProfileType.TypeId);
+        return this.parent.getProfileType(WebInspector.HeapSnapshotProfileType.TypeId).getProfiles();
     },
 
     /**
@@ -754,10 +754,12 @@ WebInspector.HeapSnapshotView.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.ProfileType}
+ * @implements {HeapProfilerAgent.Dispatcher}
  */
 WebInspector.HeapSnapshotProfileType = function()
 {
     WebInspector.ProfileType.call(this, WebInspector.HeapSnapshotProfileType.TypeId, WebInspector.UIString("Take Heap Snapshot"));
+    InspectorBackend.registerHeapProfilerDispatcher(this);
 }
 
 WebInspector.HeapSnapshotProfileType.TypeId = "HEAP";
@@ -770,12 +772,11 @@ WebInspector.HeapSnapshotProfileType.prototype = {
 
     /**
      * @override
-     * @param {WebInspector.ProfilesPanel} profilesPanel
      * @return {boolean}
      */
-    buttonClicked: function(profilesPanel)
+    buttonClicked: function()
     {
-        profilesPanel.takeHeapSnapshot();
+        this._takeHeapSnapshot();
         return false;
     },
 
@@ -792,7 +793,7 @@ WebInspector.HeapSnapshotProfileType.prototype = {
     /**
      * @override
      * @param {string=} title
-     * @return {WebInspector.ProfileHeader}
+     * @return {!WebInspector.ProfileHeader}
      */
     createTemporaryProfile: function(title)
     {
@@ -803,11 +804,91 @@ WebInspector.HeapSnapshotProfileType.prototype = {
     /**
      * @override
      * @param {HeapProfilerAgent.ProfileHeader} profile
-     * @return {WebInspector.ProfileHeader}
+     * @return {!WebInspector.ProfileHeader}
      */
     createProfile: function(profile)
     {
         return new WebInspector.HeapProfileHeader(this, profile.title, profile.uid, profile.maxJSObjectId || 0);
+    },
+
+    _takeHeapSnapshot: function()
+    {
+        var temporaryProfile = this.findTemporaryProfile();
+        if (!temporaryProfile)
+            this.addProfile(this.createTemporaryProfile());
+        HeapProfilerAgent.takeHeapSnapshot(true, function() {});
+        WebInspector.userMetrics.ProfilesHeapProfileTaken.record();
+    },
+
+    /**
+     * @param {HeapProfilerAgent.ProfileHeader} profileHeader
+     */
+    addProfileHeader: function(profileHeader)
+    {
+        this.addProfile(this.createProfile(profileHeader));
+    },
+
+    /**
+     * @override
+     * @param {number} uid
+     * @param {string} chunk
+     */
+    addHeapSnapshotChunk: function(uid, chunk)
+    {
+        var profile = this._profilesIdMap[this._makeKey(uid)];
+        if (profile)
+            profile.transferChunk(chunk);
+    },
+
+    /**
+     * @override
+     * @param {number} uid
+     */
+    finishHeapSnapshot: function(uid)
+    {
+        var profile = this._profilesIdMap[this._makeKey(uid)];
+        if (profile)
+            profile.finishHeapSnapshot();
+    },
+
+    /**
+     * @override
+     * @param {number} done
+     * @param {number} total
+     */
+    reportHeapSnapshotProgress: function(done, total)
+    {
+        var profile = this.findTemporaryProfile();
+        if (profile)
+            this.dispatchEventToListeners(WebInspector.ProfileType.Events.ProgressUpdated, {"profile": profile, "done": done, "total": total});
+    },
+
+    /**
+     * @override
+     */
+    resetProfiles: function()
+    {
+        this._reset();
+    },
+
+    /**
+     * @override
+     * @param {!WebInspector.ProfileHeader} profile
+     */
+    removeProfile: function(profile)
+    {
+        WebInspector.ProfileType.prototype.removeProfile.call(this, profile);
+        if (!profile.isTemporary)
+            HeapProfilerAgent.removeProfile(profile.uid);
+    },
+
+    /**
+     * @override
+     * @param {function(this:WebInspector.ProfileType, ?string, Array.<ProfilerAgent.ProfileHeader>)} populateCallback
+     */
+    _requestProfilesFromBackend: function(populateCallback)
+    {
+        HeapProfilerAgent.getProfileHeaders(populateCallback);
     },
 
     __proto__: WebInspector.ProfileType.prototype
@@ -901,6 +982,9 @@ WebInspector.HeapProfileHeader.prototype = {
         this._receiver = loaderProxy;
     },
 
+    /**
+     * @override
+     */
     dispose: function()
     {
         if (this._receiver)
@@ -915,7 +999,7 @@ WebInspector.HeapProfileHeader.prototype = {
      */
     _updateTransferProgress: function(value, maxValue)
     {
-        var percentValue = ((maxValue ? (value / maxValue) : 0) * 100).toFixed(2);
+        var percentValue = ((maxValue ? (value / maxValue) : 0) * 100).toFixed(0);
         if (this._savingToFile)
             this.sidebarElement.subtitle = WebInspector.UIString("Saving\u2026 %d\%", percentValue);
         else

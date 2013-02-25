@@ -52,9 +52,9 @@ function test()
     var profileView;
     var dataGrid;
 
-    function didStartCapturingFrame(profilesPanel, frameId, error, traceLogId)
+    function didStartCapturingFrame(frameId, error, traceLogId)
     {
-        profileHeader = profilesPanel.getProfiles(WebInspector.CanvasProfileType.TypeId)[0];
+        profileHeader = profileType.getProfiles()[0]
         profilesPanel._showProfile(profileHeader);
         InspectorTest.addSniffer(profileHeader, "_updateCapturingStatus", didReceiveFirstFrame);
         InspectorTest.evaluateInConsole("doSomeCanvasCalls(2)");

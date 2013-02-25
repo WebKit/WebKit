@@ -286,16 +286,15 @@ WebInspector.CSSSelectorProfileType.prototype = {
 
     /**
      * @override
-     * @param {WebInspector.ProfilesPanel} profilesPanel
      * @return {boolean}
      */
-    buttonClicked: function(profilesPanel)
+    buttonClicked: function()
     {
         if (this._recording) {
-            this._stopRecordingProfile(profilesPanel);
+            this._stopRecordingProfile();
             return false;
         } else {
-            this._startRecordingProfile(profilesPanel);
+            this._startRecordingProfile();
             return true;
         }
     },
@@ -320,20 +319,13 @@ WebInspector.CSSSelectorProfileType.prototype = {
         this._recording = isProfiling;
     },
 
-    /**
-     * @param {WebInspector.ProfilesPanel} profilesPanel
-     */
-    _startRecordingProfile: function(profilesPanel)
+    _startRecordingProfile: function()
     {
         this._recording = true;
         CSSAgent.startSelectorProfiler();
-        profilesPanel.setRecordingProfile(WebInspector.CSSSelectorProfileType.TypeId, true);
     },
 
-    /**
-     * @param {WebInspector.ProfilesPanel} profilesPanel
-     */
-    _stopRecordingProfile: function(profilesPanel)
+    _stopRecordingProfile: function()
     {
         /**
          * @param {?Protocol.Error} error
@@ -346,9 +338,7 @@ WebInspector.CSSSelectorProfileType.prototype = {
 
             var uid = this._profileUid++;
             var title = WebInspector.UIString("Profile %d", uid) + String.sprintf(" (%s)", Number.secondsToString(profile.totalTime / 1000));
-            var profileHeader = new WebInspector.CSSProfileHeader(this, title, uid, profile);
-            profilesPanel.addProfileHeader(profileHeader);
-            profilesPanel.setRecordingProfile(WebInspector.CSSSelectorProfileType.TypeId, false);
+            this.addProfile(new WebInspector.CSSProfileHeader(this, title, uid, profile));
         }
 
         this._recording = false;
