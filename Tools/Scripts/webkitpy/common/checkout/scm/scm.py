@@ -169,7 +169,7 @@ class SCM:
     def svn_revision(self, path):
         self._subclass_must_implement()
 
-    def timestamp_of_latest_commit(self, path):
+    def timestamp_of_latest_commit(self, path, revision):
         self._subclass_must_implement()
 
     def create_patch(self, git_commit=None, changed_files=None):

@@ -254,8 +254,8 @@ class Git(SCM, SVNRepository):
             return ""
         return str(match.group('svn_revision'))
 
-    def timestamp_of_latest_commit(self, path):
-        git_log = self._run_git(['log', '-1', '--date=iso', self.find_checkout_root(path)])
+    def timestamp_of_latest_commit(self, path, revision):
+        git_log = self._run_git(['log', '-1', '-r', revision, '--date=iso', self.find_checkout_root(path)])
         match = re.search("^Date:\s*(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2}) ([+-])(\d{2})(\d{2})$", git_log, re.MULTILINE)
         if not match:
             return ""

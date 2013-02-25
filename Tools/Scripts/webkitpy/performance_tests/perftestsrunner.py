@@ -245,7 +245,7 @@ class PerfTestsRunner(object):
             scm = SCMDetector(self._host.filesystem, self._host.executive).detect_scm_system(path) or self._host.scm()
             revision = scm.svn_revision(path)
             contents[name.lower() + '-revision'] = revision
-            revisions_for_perf_webkit[name] = {'revision': str(revision), 'timestamp': scm.timestamp_of_latest_commit(path)}
+            revisions_for_perf_webkit[name] = {'revision': str(revision), 'timestamp': scm.timestamp_of_latest_commit(path, revision)}
 
         # FIXME: Add --branch or auto-detect the branch we're in
         for key, value in {'timestamp': int(timestamp), 'branch': self._default_branch, 'platform': platform,
