@@ -253,6 +253,7 @@ private:
 #endif
 };
 
+#if ENABLE(NAVIGATOR_CONTENT_UTILS)
 class NavigatorContentUtilsClientImpl : public WebCore::NavigatorContentUtilsClient {
 public:
     static PassOwnPtr<NavigatorContentUtilsClientImpl> create(WebViewImpl*);
@@ -265,6 +266,7 @@ private:
 
     WebViewImpl* m_webView;
 };
+#endif
 
 } // namespace WebKit
 

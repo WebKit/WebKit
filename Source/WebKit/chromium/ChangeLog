@@ -1,3 +1,19 @@
+2013-02-25  Anton Vayvod  <avayvod@chromium.org>
+
+        [Chromium] Disable registerProtocolHandler on Android
+        https://bugs.webkit.org/show_bug.cgi?id=110481
+
+        Reviewed by Julien Chaffraix.
+
+        Chromium for Android has been exposing registerProtocolHandler, but the feature wasn't
+        actually wired up internally. Disable the feature to avoid breaking feature detection until
+        we can implement it properly. Previous attempt is at http://trac.webkit.org/changeset/133465
+        See the discussion of the future implementation at http://crbug.com/156386
+
+        * features.gypi: Disable the flag for Android, enable it only for non-Android platforms.
+
+        * src/ChromeClientImpl.h: Declaration is now guarded by the flag, not to break Android.
+
 2013-02-24  Hajime Morrita  <morrita@google.com>
 
         [Custom Elements] Implement bare-bone document.register()

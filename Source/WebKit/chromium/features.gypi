@@ -95,7 +95,6 @@
       'ENABLE_MHTML=1',
       'ENABLE_MICRODATA=0',
       'ENABLE_MOUSE_CURSOR_SCALE=1',
-      'ENABLE_NAVIGATOR_CONTENT_UTILS=1',
       'ENABLE_NOSNIFF=1',
       'ENABLE_PAGE_VISIBILITY_API=1',
       'ENABLE_PERFORMANCE_TIMELINE=1',
@@ -178,7 +177,7 @@
           'ENABLE_ORIENTATION_EVENTS=1',
           'ENABLE_PAGE_POPUP=0',
           'ENABLE_PRINTING=0',
-          'ENABLE_REGISTER_PROTOCOL_HANDLER=0',
+          'ENABLE_NAVIGATOR_CONTENT_UTILS=0',
           # FIXME: Disable once the linking error has been resolved.
           # https://bugs.webkit.org/show_bug.cgi?id=88636
           'ENABLE_SHARED_WORKERS=1',
@@ -196,6 +195,7 @@
           'ENABLE_INPUT_MULTIPLE_FIELDS_UI=1',
           'ENABLE_LEGACY_NOTIFICATIONS=1',
           'ENABLE_MEDIA_CAPTURE=0',
+          'ENABLE_NAVIGATOR_CONTENT_UTILS=1',
           'ENABLE_NOTIFICATIONS=1',
           'ENABLE_ORIENTATION_EVENTS=0',
           'ENABLE_PAGE_POPUP=1',
