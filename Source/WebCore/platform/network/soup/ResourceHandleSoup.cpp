@@ -459,6 +459,7 @@ static void doRedirect(ResourceHandle* handle)
     KURL newURL = KURL(soupURIToKURL(soup_message_get_uri(message)), location);
     bool crossOrigin = !protocolHostAndPortAreEqual(handle->firstRequest().url(), newURL);
     newRequest.setURL(newURL);
+    newRequest.setFirstPartyForCookies(newURL);
 
     if (newRequest.httpMethod() != "GET") {
         // Change newRequest method to GET if change was made during a previous redirection
