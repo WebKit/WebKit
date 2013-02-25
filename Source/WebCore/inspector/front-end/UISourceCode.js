@@ -52,9 +52,9 @@ WebInspector.UISourceCode = function(project, path, originURL, url, contentType,
      */
     this._requestContentCallbacks = [];
     /**
-     * @type Array.<WebInspector.LiveLocation>
+     * @type {Object.<number, WebInspector.LiveLocation>}
      */
-    this._liveLocations = [];
+    this._liveLocations = new Set();
     /**
      * @type {Array.<WebInspector.PresentationConsoleMessage>}
      */
@@ -492,7 +492,7 @@ WebInspector.UISourceCode.prototype = {
      */
     addLiveLocation: function(liveLocation)
     {
-        this._liveLocations.push(liveLocation);
+        this._liveLocations.add(liveLocation);
     },
 
     /**
@@ -505,9 +505,9 @@ WebInspector.UISourceCode.prototype = {
 
     updateLiveLocations: function()
     {
-        var locationsCopy = this._liveLocations.slice();
-        for (var i = 0; i < locationsCopy.length; ++i)
-            locationsCopy[i].update();
+        var items = this._liveLocations.items();
+        for (var i = 0; i < items.length; ++i)
+            items[i].update();
     },
 
     /**

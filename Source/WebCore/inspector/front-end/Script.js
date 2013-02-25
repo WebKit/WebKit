@@ -48,7 +48,7 @@ WebInspector.Script = function(scriptId, sourceURL, startLine, startColumn, endL
     this.isContentScript = isContentScript;
     this.sourceMapURL = sourceMapURL;
     this.hasSourceURL = hasSourceURL;
-    this._locations = [];
+    this._locations = new Set();
     this._sourceMappings = [];
 }
 
@@ -288,8 +288,9 @@ WebInspector.Script.prototype = {
 
     updateLocations: function()
     {
-        for (var i = 0; i < this._locations.length; ++i)
-            this._locations[i].update();
+        var items = this._locations.items();
+        for (var i = 0; i < items.length; ++i)
+            items[i].update();
     },
 
     /**
@@ -301,7 +302,7 @@ WebInspector.Script.prototype = {
     {
         console.assert(rawLocation.scriptId === this.scriptId);
         var location = new WebInspector.Script.Location(this, rawLocation, updateDelegate);
-        this._locations.push(location);
+        this._locations.add(location);
         location.update();
         return location;
     },

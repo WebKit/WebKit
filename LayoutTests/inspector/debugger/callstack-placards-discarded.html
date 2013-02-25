@@ -57,7 +57,7 @@ var test = function()
         var count = 0;
         var scripts = WebInspector.debuggerModel.scripts;
         for (var id in scripts)
-            count += scripts[id]._locations.length;
+            count += scripts[id]._locations.size();
         return count;
     }
 }
