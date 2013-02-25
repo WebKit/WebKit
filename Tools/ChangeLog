@@ -1,5 +1,18 @@
 2013-02-25  Nico Weber  <thakis@chromium.org>
 
+        [chromium] Try to get the webkit builder to use msvs again
+        https://bugs.webkit.org/show_bug.cgi?id=110771
+
+        Reviewed by Eric Seidel.
+
+        The msvs gyp generator apparently doesn't write the sln file on every
+        run, so check the vcxproj file instead.
+
+        * Scripts/webkitdirs.pm:
+        (determineIsChromiumNinja):
+
+2013-02-25  Nico Weber  <thakis@chromium.org>
+
         [chromium] try to unbreak run-chromium-webkit-unit-tests on the mac bots
         https://bugs.webkit.org/show_bug.cgi?id=110767
 

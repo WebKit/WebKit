@@ -1260,8 +1260,8 @@ sub determineIsChromiumNinja()
         }
 
         my $statVisualStudio = 0;
-        if (-e 'Source/WebKit/chromium/All.sln') {
-          $statVisualStudio = stat('Source/WebKit/chromium/All.sln')->mtime;
+        if (-e 'Source/WebKit/chromium/webkit.vcxproj') {
+          $statVisualStudio = stat('Source/WebKit/chromium/webkit.vcxproj')->mtime;
         }
 
         $hasUpToDateNinjabuild = $statNinja > $statXcode && $statNinja > $statMake && $statNinja > $statVisualStudio;
