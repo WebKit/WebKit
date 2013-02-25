@@ -460,7 +460,7 @@ void FatFingers::getNodesFromRect(Document* document, const IntPoint& contentPos
     unsigned topPadding, rightPadding, bottomPadding, leftPadding;
     IntPoint contentViewportPos = m_webPage->mapFromContentsToViewport(m_contentPos);
     // Do not allow fat fingers detect anything not visible(ie outside of the viewport)
-    adjustPaddings(contentViewportPos, topPadding, rightPadding, bottomPadding, leftPadding);
+    getAdjustedPaddings(contentViewportPos, topPadding, rightPadding, bottomPadding, leftPadding);
 
     // The user functions checkForText() and findIntersectingRegions() uses the Node.wholeText() to checkFingerIntersection()
     // not the text in its shadow tree.

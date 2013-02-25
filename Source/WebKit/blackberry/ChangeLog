@@ -1,3 +1,15 @@
+2013-02-25  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry]Adjust fatfinger detection rect size.
+        https://bugs.webkit.org/show_bug.cgi?id=108678
+
+        Reviewed by Rob Buis.
+
+        Fix a typo in function names.
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::getNodesFromRect):
+
 2013-02-25  Alberto Garcia  <albgarcia@rim.com>
 
         [BlackBerry] ChromeClientBlackBerry: fix variable names
