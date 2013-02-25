@@ -1,3 +1,13 @@
+2013-02-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r143895.
+        http://trac.webkit.org/changeset/143895
+        https://bugs.webkit.org/show_bug.cgi?id=110758
+
+        broke a bunch of tests (Requested by thakis__ on #webkit).
+
+        * Scripts/update-webkit-chromium:
+
 2013-02-25  Andreas Kling  <akling@apple.com>
 
         Unreviewed, fix simple mistake in r143903.
