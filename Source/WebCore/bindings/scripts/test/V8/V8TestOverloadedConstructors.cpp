@@ -75,55 +75,66 @@ namespace TestOverloadedConstructorsV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
-} // namespace TestOverloadedConstructorsV8Internal
-
-v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor1Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> constructor1(const v8::Arguments& args)
 {
-    
     V8TRYCATCH(ArrayBuffer*, arrayBuffer, V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()) ? V8ArrayBuffer::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(arrayBuffer);
     v8::Handle<v8::Object> wrapper = args.Holder();
 
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestOverloadedConstructors::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     return wrapper;
 }
 
-v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor2Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> constructor2(const v8::Arguments& args)
 {
-    
     V8TRYCATCH(ArrayBufferView*, arrayBufferView, V8ArrayBufferView::HasInstance(args[0], args.GetIsolate()) ? V8ArrayBufferView::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(arrayBufferView);
     v8::Handle<v8::Object> wrapper = args.Holder();
 
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestOverloadedConstructors::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     return wrapper;
 }
 
-v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor3Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> constructor3(const v8::Arguments& args)
 {
-    
     V8TRYCATCH(Blob*, blob, V8Blob::HasInstance(args[0], args.GetIsolate()) ? V8Blob::toNative(v8::Handle<v8::Object>::Cast(args[0])) : 0);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(blob);
     v8::Handle<v8::Object> wrapper = args.Holder();
 
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestOverloadedConstructors::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     return wrapper;
 }
 
-v8::Handle<v8::Value> V8TestOverloadedConstructors::constructor4Callback(const v8::Arguments& args)
+static v8::Handle<v8::Value> constructor4(const v8::Arguments& args)
 {
-    
     V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, string, args[0]);
 
     RefPtr<TestOverloadedConstructors> impl = TestOverloadedConstructors::create(string);
     v8::Handle<v8::Object> wrapper = args.Holder();
 
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestOverloadedConstructors::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     return wrapper;
 }
+
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
+{
+    if ((args.Length() == 1 && (V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()))))
+        return constructor1(args);
+    if ((args.Length() == 1 && (V8ArrayBufferView::HasInstance(args[0], args.GetIsolate()))))
+        return constructor2(args);
+    if ((args.Length() == 1 && (V8Blob::HasInstance(args[0], args.GetIsolate()))))
+        return constructor3(args);
+    if (args.Length() == 1)
+        return constructor4(args);
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    return throwTypeError(0, args.GetIsolate());
+}
+
+} // namespace TestOverloadedConstructorsV8Internal
 
 v8::Handle<v8::Value> V8TestOverloadedConstructors::constructorCallback(const v8::Arguments& args)
 {
@@ -132,17 +143,8 @@ v8::Handle<v8::Value> V8TestOverloadedConstructors::constructorCallback(const v8
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
-    if ((args.Length() == 1 && (V8ArrayBuffer::HasInstance(args[0], args.GetIsolate()))))
-        return constructor1Callback(args);
-    if ((args.Length() == 1 && (V8ArrayBufferView::HasInstance(args[0], args.GetIsolate()))))
-        return constructor2Callback(args);
-    if ((args.Length() == 1 && (V8Blob::HasInstance(args[0], args.GetIsolate()))))
-        return constructor3Callback(args);
-    if (args.Length() == 1)
-        return constructor4Callback(args);
-    if (args.Length() < 1)
-        return throwNotEnoughArgumentsError(args.GetIsolate());
-    return throwTypeError(0, args.GetIsolate());
+
+    return TestOverloadedConstructorsV8Internal::constructor(args);
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestOverloadedConstructorsTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

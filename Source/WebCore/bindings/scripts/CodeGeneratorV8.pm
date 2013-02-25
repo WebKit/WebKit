@@ -419,9 +419,7 @@ END
 END
     }
     if (HasCustomConstructor($interface)) {
-        push(@headerContent, <<END);
-    static v8::Handle<v8::Value> constructorCustom(const v8::Arguments&);
-END
+        push(@headerContent, "    static v8::Handle<v8::Value> constructorCustom(const v8::Arguments&);\n");
     }
 
     my @enabledPerContextAttributes;
@@ -1902,28 +1900,26 @@ sub GenerateOverloadedConstructorCallback
     my $interface = shift;
     my $interfaceName = $interface->name;
 
-    push(@implContent, <<END);
-v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
+    push(@implContentDecls, <<END);
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 {
 END
-    push(@implContent, GenerateConstructorHeader());
-
     my $leastNumMandatoryParams = 255;
     foreach my $constructor (@{$interface->constructors}) {
-        my $name = "constructor" . $constructor->{overloadedIndex} . "Callback";
+        my $name = "constructor" . $constructor->{overloadedIndex};
         my ($numMandatoryParams, $parametersCheck) = GenerateFunctionParametersCheck($constructor);
         $leastNumMandatoryParams = $numMandatoryParams if ($numMandatoryParams < $leastNumMandatoryParams);
-        push(@implContent, "    if ($parametersCheck)\n");
-        push(@implContent, "        return $name(args);\n");
+        push(@implContentDecls, "    if ($parametersCheck)\n");
+        push(@implContentDecls, "        return $interfaceNameV8Internal::$name(args);\n");
     }
     if ($leastNumMandatoryParams >= 1) {
-        push(@implContent, "    if (args.Length() < $leastNumMandatoryParams)\n");
-        push(@implContent, "        return throwNotEnoughArgumentsError(args.GetIsolate());\n");
+        push(@implContentDecls, "    if (args.Length() < $leastNumMandatoryParams)\n");
+        push(@implContentDecls, "        return throwNotEnoughArgumentsError(args.GetIsolate());\n");
     }
-    push(@implContent, <<END);
+    push(@implContentDecls, <<END);
     return throwTypeError(0, args.GetIsolate());
 END
-    push(@implContent, "}\n\n");
+    push(@implContentDecls, "}\n\n");
 }
 
 sub GenerateSingleConstructorCallback
@@ -1949,35 +1945,31 @@ sub GenerateSingleConstructorCallback
         }
     }
 
-    my $maybeObserveFeature = GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"});
-
     my @beforeArgumentList;
     my @afterArgumentList;
-    push(@implContent, <<END);
-v8::Handle<v8::Value> V8${interfaceName}::constructor${overloadedIndexString}Callback(const v8::Arguments& args)
+    push(@implContentDecls, <<END);
+static v8::Handle<v8::Value> constructor${overloadedIndexString}(const v8::Arguments& args)
 {
-    ${maybeObserveFeature}
 END
 
     if ($function->{overloadedIndex} == 0) {
-        push(@implContent, GenerateConstructorHeader());
-        push(@implContent, GenerateArgumentsCountCheck($function, $interface));
+        push(@implContentDecls, GenerateArgumentsCountCheck($function, $interface));
     }
 
     if ($raisesExceptions) {
         AddToImplIncludes("ExceptionCode.h");
-        push(@implContent, "\n");
-        push(@implContent, "    ExceptionCode ec = 0;\n");
+        push(@implContentDecls, "\n");
+        push(@implContentDecls, "    ExceptionCode ec = 0;\n");
     }
 
     # FIXME: Currently [Constructor(...)] does not yet support [Optional] arguments.
     # It just supports [Optional=DefaultIsUndefined] or [Optional=DefaultIsNullString].
     my ($parameterCheckString, $paramIndex, %replacements) = GenerateParametersCheck($function, $interfaceName);
-    push(@implContent, $parameterCheckString);
+    push(@implContentDecls, $parameterCheckString);
 
     if ($interface->extendedAttributes->{"CallWith"} && $interface->extendedAttributes->{"CallWith"} eq "ScriptExecutionContext") {
         push(@beforeArgumentList, "context");
-        push(@implContent, <<END);
+        push(@implContentDecls, <<END);
 
     ScriptExecutionContext* context = getScriptExecutionContext();
 END
@@ -2000,51 +1992,48 @@ END
     }
 
     my $argumentString = join(", ", @beforeArgumentList, @argumentList, @afterArgumentList);
-    push(@implContent, "\n");
-    push(@implContent, "    RefPtr<${interfaceName}> impl = ${interfaceName}::create(${argumentString});\n");
-    push(@implContent, "    v8::Handle<v8::Object> wrapper = args.Holder();\n");
+    push(@implContentDecls, "\n");
+    push(@implContentDecls, "    RefPtr<${interfaceName}> impl = ${interfaceName}::create(${argumentString});\n");
+    push(@implContentDecls, "    v8::Handle<v8::Object> wrapper = args.Holder();\n");
 
     if ($interface->extendedAttributes->{"ConstructorRaisesException"}) {
-        push(@implContent, "    if (ec)\n");
-        push(@implContent, "        goto fail;\n");
+        push(@implContentDecls, "    if (ec)\n");
+        push(@implContentDecls, "        goto fail;\n");
     }
 
-    push(@implContent, <<END);
+    push(@implContentDecls, <<END);
 
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8${interfaceName}::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     return wrapper;
 END
 
     if ($raisesExceptions) {
-        push(@implContent, "  fail:\n");
-        push(@implContent, "    return setDOMException(ec, args.GetIsolate());\n");
+        push(@implContentDecls, "    fail:\n");
+        push(@implContentDecls, "    return setDOMException(ec, args.GetIsolate());\n");
     }
 
-    push(@implContent, "}\n");
-    push(@implContent, "\n");
+    push(@implContentDecls, "}\n");
+    push(@implContentDecls, "\n");
 }
 
-sub GenerateCustomConstructorCallback
+sub GenerateConstructorCallback
 {
     my $interface = shift;
 
     my $interfaceName = $interface->name;
-    my $maybeObserveFeature = GenerateFeatureObservation($interface->extendedAttributes->{"V8MeasureAs"});
-    push(@implContent, <<END);
-v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
-{
-    ${maybeObserveFeature}
-END
+    push(@implContent, "v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)\n");
+    push(@implContent, "{\n");
+    push(@implContent, GenerateFeatureObservation($interface->extendedAttributes->{"V8MeasureAs"}));
     push(@implContent, GenerateConstructorHeader());
-    push(@implContent, <<END);
-
-    return V8${interfaceName}::constructorCustom(args);
+    if (HasCustomConstructor($interface)) {
+        push(@implContent, "    return V8${interfaceName}::constructorCustom(args);\n");
+    } else {
+        push(@implContent, "    return ${interfaceName}V8Internal::constructor(args);\n");
+    }
+    push(@implContent, "}\n\n");
 }
 
-END
-}
-
-sub GenerateConstructorCallback
+sub GenerateConstructor
 {
     my $interface = shift;
     my $interfaceName = $interface->name;
@@ -2059,19 +2048,17 @@ sub GenerateConstructorCallback
     }
 }
 
-sub GenerateEventConstructorCallback
+sub GenerateEventConstructor
 {
     my $interface = shift;
     my $interfaceName = $interface->name;
 
     AddToImplIncludes("Dictionary.h");
-    push(@implContent, <<END);
-v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
+    push(@implContentDecls, <<END);
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 {
 END
-    push(@implContent, GenerateConstructorHeader());
-
-    push(@implContent, <<END);
+    push(@implContentDecls, <<END);
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -2086,10 +2073,12 @@ END
     RefPtr<${interfaceName}> event = ${interfaceName}::create(type, eventInit);
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::associateObjectWithWrapper(event.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper(event.release(), &V8${interfaceName}::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     return wrapper;
 }
+END
 
+    push(@implContent, <<END);
 bool fill${interfaceName}Init(${interfaceName}Init& eventInit, const Dictionary& options)
 {
 END
@@ -2117,7 +2106,7 @@ END
 END
 }
 
-sub GenerateTypedArrayConstructorCallback
+sub GenerateTypedArrayConstructor
 {
     my $interface = shift;
     my $interfaceName = $interface->name;
@@ -2125,16 +2114,16 @@ sub GenerateTypedArrayConstructorCallback
     my $type = $interface->extendedAttributes->{"TypedArray"};
     AddToImplIncludes("V8ArrayBufferViewCustom.h");
 
-    push(@implContent, <<END);
-v8::Handle<v8::Value> V8${interfaceName}::constructorCallback(const v8::Arguments& args)
+    push(@implContentDecls, <<END);
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 {
-    return constructWebGLArray<$interfaceName, V8${interfaceName}, $type>(args, &info, $viewType);
+    return constructWebGLArray<$interfaceName, V8${interfaceName}, $type>(args, &V8${interfaceName}::info, $viewType);
 }
 
 END
 }
 
-sub GenerateNamedConstructorCallback
+sub GenerateNamedConstructor
 {
     my $function = shift;
     my $interface = shift;
@@ -2232,7 +2221,7 @@ END
 END
 
     if ($raisesExceptions) {
-        push(@implContent, "  fail:\n");
+        push(@implContent, "    fail:\n");
         push(@implContent, "    return setDOMException(ec, args.GetIsolate());\n");
     }
 
@@ -2269,6 +2258,7 @@ sub GenerateConstructorHeader
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
+
 END
     return $content;
 }
@@ -2936,19 +2926,22 @@ END
         push(@implContent, $codeGenerator->GenerateCompileTimeCheckForEnumsIfNeeded($interface));
     }
 
-    push(@implContentDecls, "} // namespace ${interfaceName}V8Internal\n\n");
-
-    if (HasCustomConstructor($interface)) {
-        GenerateCustomConstructorCallback($interface);
-    } elsif ($interface->extendedAttributes->{"NamedConstructor"}) {
-        GenerateNamedConstructorCallback(@{$interface->constructors}[0], $interface);
-    } elsif ($interface->extendedAttributes->{"Constructor"}) {
-        GenerateConstructorCallback($interface);
-    } elsif ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
-        GenerateEventConstructorCallback($interface);
-    } elsif ($codeGenerator->IsConstructorTemplate($interface, "TypedArray")) {
-        GenerateTypedArrayConstructorCallback($interface);
+    if (!HasCustomConstructor($interface)) {
+        if ($interface->extendedAttributes->{"NamedConstructor"}) {
+            GenerateNamedConstructor(@{$interface->constructors}[0], $interface);
+        } elsif ($interface->extendedAttributes->{"Constructor"}) {
+            GenerateConstructor($interface);
+        } elsif ($codeGenerator->IsConstructorTemplate($interface, "Event")) {
+            GenerateEventConstructor($interface);
+        } elsif ($codeGenerator->IsConstructorTemplate($interface, "TypedArray")) {
+            GenerateTypedArrayConstructor($interface);
+        }
     }
+    if (IsConstructable($interface)) {
+        GenerateConstructorCallback($interface);
+    }
+
+    push(@implContentDecls, "} // namespace ${interfaceName}V8Internal\n\n");
 
     my $access_check = "";
     if ($interface->extendedAttributes->{"CheckSecurity"} && !($interfaceName eq "DOMWindow")) {

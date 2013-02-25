@@ -2442,6 +2442,21 @@ static v8::Handle<v8::Value> variadicNodeMethodMethod(const v8::Arguments& args)
     return v8Undefined();
 }
 
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    if (args.Length() <= 0 || !args[0]->IsFunction())
+        return throwTypeError(0, args.GetIsolate());
+    RefPtr<TestCallback> testCallback = V8TestCallback::create(args[0], getScriptExecutionContext());
+
+    RefPtr<TestObj> impl = TestObj::create(testCallback);
+    v8::Handle<v8::Object> wrapper = args.Holder();
+
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestObj::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    return wrapper;
+}
+
 } // namespace TestObjV8Internal
 
 static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
@@ -2664,23 +2679,13 @@ COMPILE_ASSERT(15 == TestObj::CONST_IMPL, TestObjEnumCONST_IMPLIsWrongUseDoNotCh
 
 v8::Handle<v8::Value> V8TestObj::constructorCallback(const v8::Arguments& args)
 {
-    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
-    if (args.Length() < 1)
-        return throwNotEnoughArgumentsError(args.GetIsolate());
-    if (args.Length() <= 0 || !args[0]->IsFunction())
-        return throwTypeError(0, args.GetIsolate());
-    RefPtr<TestCallback> testCallback = V8TestCallback::create(args[0], getScriptExecutionContext());
 
-    RefPtr<TestObj> impl = TestObj::create(testCallback);
-    v8::Handle<v8::Object> wrapper = args.Holder();
-
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
-    return wrapper;
+    return TestObjV8Internal::constructor(args);
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

@@ -70,22 +70,27 @@ namespace TestNodeV8Internal {
 
 template <typename T> void V8_USE(T) { }
 
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
+{
+
+    RefPtr<TestNode> impl = TestNode::create();
+    v8::Handle<v8::Object> wrapper = args.Holder();
+
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestNode::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    return wrapper;
+}
+
 } // namespace TestNodeV8Internal
 
 v8::Handle<v8::Value> V8TestNode::constructorCallback(const v8::Arguments& args)
 {
-    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
 
-    RefPtr<TestNode> impl = TestNode::create();
-    v8::Handle<v8::Object> wrapper = args.Holder();
-
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
-    return wrapper;
+    return TestNodeV8Internal::constructor(args);
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestNodeTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

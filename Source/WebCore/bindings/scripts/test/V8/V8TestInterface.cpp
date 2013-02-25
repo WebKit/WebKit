@@ -303,6 +303,28 @@ static v8::Handle<v8::Value> supplementalMethod4Method(const v8::Arguments& args
 
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+
+    ExceptionCode ec = 0;
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str1, args[0]);
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str2, args[1]);
+
+    ScriptExecutionContext* context = getScriptExecutionContext();
+
+    RefPtr<TestInterface> impl = TestInterface::create(context, str1, str2, ec);
+    v8::Handle<v8::Object> wrapper = args.Holder();
+    if (ec)
+        goto fail;
+
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestInterface::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    return wrapper;
+    fail:
+    return setDOMException(ec, args.GetIsolate());
+}
+
 } // namespace TestInterfaceV8Internal
 
 static const V8DOMConfiguration::BatchedAttribute V8TestInterfaceAttrs[] = {
@@ -360,30 +382,13 @@ COMPILE_ASSERT(2 == TestSupplemental::CONST_IMPL, TestInterfaceEnumCONST_IMPLIsW
 
 v8::Handle<v8::Value> V8TestInterface::constructorCallback(const v8::Arguments& args)
 {
-    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
-    if (args.Length() < 1)
-        return throwNotEnoughArgumentsError(args.GetIsolate());
 
-    ExceptionCode ec = 0;
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str1, args[0]);
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, str2, args[1]);
-
-    ScriptExecutionContext* context = getScriptExecutionContext();
-
-    RefPtr<TestInterface> impl = TestInterface::create(context, str1, str2, ec);
-    v8::Handle<v8::Object> wrapper = args.Holder();
-    if (ec)
-        goto fail;
-
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
-    return wrapper;
-  fail:
-    return setDOMException(ec, args.GetIsolate());
+    return TestInterfaceV8Internal::constructor(args);
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

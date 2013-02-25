@@ -94,6 +94,11 @@ static v8::Handle<v8::Value> setMethod(const v8::Arguments& args)
     return setWebGLArrayHelper<Float64Array, V8Float64Array>(args);
 }
 
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
+{
+    return constructWebGLArray<Float64Array, V8Float64Array, double>(args, &V8Float64Array::info, v8::kExternalDoubleArray);
+}
+
 } // namespace Float64ArrayV8Internal
 
 v8::Handle<v8::Object> wrap(Float64Array* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
@@ -111,7 +116,13 @@ static const V8DOMConfiguration::BatchedCallback V8Float64ArrayCallbacks[] = {
 
 v8::Handle<v8::Value> V8Float64Array::constructorCallback(const v8::Arguments& args)
 {
-    return constructWebGLArray<Float64Array, V8Float64Array, double>(args, &info, v8::kExternalDoubleArray);
+    if (!args.IsConstructCall())
+        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
+    return Float64ArrayV8Internal::constructor(args);
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8Float64ArrayTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

@@ -423,6 +423,22 @@ static v8::Handle<v8::Value> methodWithExceptionMethod(const v8::Arguments& args
     return setDOMException(ec, args.GetIsolate());
 }
 
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
+{
+    if (args.Length() < 2)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, hello, args[0]);
+    if (args.Length() <= 1 || !args[1]->IsFunction())
+        return throwTypeError(0, args.GetIsolate());
+    RefPtr<TestCallback> testCallback = V8TestCallback::create(args[1], getScriptExecutionContext());
+
+    RefPtr<TestTypedefs> impl = TestTypedefs::create(hello, testCallback);
+    v8::Handle<v8::Object> wrapper = args.Holder();
+
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestTypedefs::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    return wrapper;
+}
+
 } // namespace TestTypedefsV8Internal
 
 static const V8DOMConfiguration::BatchedAttribute V8TestTypedefsAttrs[] = {
@@ -453,24 +469,13 @@ static const V8DOMConfiguration::BatchedCallback V8TestTypedefsCallbacks[] = {
 
 v8::Handle<v8::Value> V8TestTypedefs::constructorCallback(const v8::Arguments& args)
 {
-    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
-    if (args.Length() < 2)
-        return throwNotEnoughArgumentsError(args.GetIsolate());
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, hello, args[0]);
-    if (args.Length() <= 1 || !args[1]->IsFunction())
-        return throwTypeError(0, args.GetIsolate());
-    RefPtr<TestCallback> testCallback = V8TestCallback::create(args[1], getScriptExecutionContext());
 
-    RefPtr<TestTypedefs> impl = TestTypedefs::create(hello, testCallback);
-    v8::Handle<v8::Object> wrapper = args.Holder();
-
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
-    return wrapper;
+    return TestTypedefsV8Internal::constructor(args);
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestTypedefsTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

@@ -92,22 +92,8 @@ static v8::Handle<v8::Value> attr2AttrGetterCallback(v8::Local<v8::String> name,
     return TestEventConstructorV8Internal::attr2AttrGetter(name, info);
 }
 
-} // namespace TestEventConstructorV8Internal
-
-static const V8DOMConfiguration::BatchedAttribute V8TestEventConstructorAttrs[] = {
-    // Attribute 'attr1' (Type: 'readonly attribute' ExtAttr: '')
-    {"attr1", TestEventConstructorV8Internal::attr1AttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-    // Attribute 'attr2' (Type: 'readonly attribute' ExtAttr: 'InitializedByEventConstructor')
-    {"attr2", TestEventConstructorV8Internal::attr2AttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
-};
-
-v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
 {
-    if (!args.IsConstructCall())
-        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
-
-    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
-        return args.Holder();
     if (args.Length() < 1)
         return throwNotEnoughArgumentsError(args.GetIsolate());
 
@@ -122,14 +108,33 @@ v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Argu
     RefPtr<TestEventConstructor> event = TestEventConstructor::create(type, eventInit);
 
     v8::Handle<v8::Object> wrapper = args.Holder();
-    V8DOMWrapper::associateObjectWithWrapper(event.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    V8DOMWrapper::associateObjectWithWrapper(event.release(), &V8TestEventConstructor::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     return wrapper;
 }
+} // namespace TestEventConstructorV8Internal
+
+static const V8DOMConfiguration::BatchedAttribute V8TestEventConstructorAttrs[] = {
+    // Attribute 'attr1' (Type: 'readonly attribute' ExtAttr: '')
+    {"attr1", TestEventConstructorV8Internal::attr1AttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+    // Attribute 'attr2' (Type: 'readonly attribute' ExtAttr: 'InitializedByEventConstructor')
+    {"attr2", TestEventConstructorV8Internal::attr2AttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
+};
 
 bool fillTestEventConstructorInit(TestEventConstructorInit& eventInit, const Dictionary& options)
 {
     options.get("attr2", eventInit.attr2);
     return true;
+}
+
+v8::Handle<v8::Value> V8TestEventConstructor::constructorCallback(const v8::Arguments& args)
+{
+    if (!args.IsConstructCall())
+        return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
+
+    if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
+        return args.Holder();
+
+    return TestEventConstructorV8Internal::constructor(args);
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestEventConstructorTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)

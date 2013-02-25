@@ -244,6 +244,29 @@ static v8::Handle<v8::Value> multiTransferListMethod(const v8::Arguments& args)
     return v8Undefined();
 }
 
+static v8::Handle<v8::Value> constructor(const v8::Arguments& args)
+{
+    if (args.Length() < 2)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, hello, args[0]);
+    MessagePortArray messagePortArrayTransferList;
+    ArrayBufferArray arrayBufferArrayTransferList;
+    if (args.Length() > 2) {
+        if (!extractTransferables(args[2], messagePortArrayTransferList, arrayBufferArrayTransferList, args.GetIsolate()))
+            return throwTypeError("Could not extract transferables", args.GetIsolate());
+    }
+    bool dataDidThrow = false;
+    RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[1], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow, args.GetIsolate());
+    if (dataDidThrow)
+        return v8Undefined();
+
+    RefPtr<TestSerializedScriptValueInterface> impl = TestSerializedScriptValueInterface::create(hello, data, messagePortArrayTransferList);
+    v8::Handle<v8::Object> wrapper = args.Holder();
+
+    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &V8TestSerializedScriptValueInterface::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
+    return wrapper;
+}
+
 } // namespace TestSerializedScriptValueInterfaceV8Internal
 
 static const V8DOMConfiguration::BatchedAttribute V8TestSerializedScriptValueInterfaceAttrs[] = {
@@ -266,31 +289,13 @@ static const V8DOMConfiguration::BatchedCallback V8TestSerializedScriptValueInte
 
 v8::Handle<v8::Value> V8TestSerializedScriptValueInterface::constructorCallback(const v8::Arguments& args)
 {
-    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
     if (ConstructorMode::current() == ConstructorMode::WrapExistingObject)
         return args.Holder();
-    if (args.Length() < 2)
-        return throwNotEnoughArgumentsError(args.GetIsolate());
-    V8TRYCATCH_FOR_V8STRINGRESOURCE(V8StringResource<>, hello, args[0]);
-    MessagePortArray messagePortArrayTransferList;
-    ArrayBufferArray arrayBufferArrayTransferList;
-    if (args.Length() > 2) {
-        if (!extractTransferables(args[2], messagePortArrayTransferList, arrayBufferArrayTransferList, args.GetIsolate()))
-            return throwTypeError("Could not extract transferables", args.GetIsolate());
-    }
-    bool dataDidThrow = false;
-    RefPtr<SerializedScriptValue> data = SerializedScriptValue::create(args[1], &messagePortArrayTransferList, &arrayBufferArrayTransferList, dataDidThrow, args.GetIsolate());
-    if (dataDidThrow)
-        return v8Undefined();
 
-    RefPtr<TestSerializedScriptValueInterface> impl = TestSerializedScriptValueInterface::create(hello, data, messagePortArrayTransferList);
-    v8::Handle<v8::Object> wrapper = args.Holder();
-
-    V8DOMWrapper::associateObjectWithWrapper(impl.release(), &info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
-    return wrapper;
+    return TestSerializedScriptValueInterfaceV8Internal::constructor(args);
 }
 
 static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValueInterfaceTemplate(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
