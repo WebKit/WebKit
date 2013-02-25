@@ -74,6 +74,24 @@ private:
     int m_integerPosition;
 };
 
+class GridPositions {
+public:
+    GridPositions()
+    {
+    }
+
+    const GridPosition& firstPosition() const { return m_firstPosition; }
+    GridPosition& firstPosition() { return m_firstPosition; }
+
+    bool operator==(const GridPositions& other) const
+    {
+        return m_firstPosition == other.m_firstPosition;
+    }
+
+private:
+    GridPosition m_firstPosition;
+};
+
 } // namespace WebCore
 
 #endif // GridPosition_h

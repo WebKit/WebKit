@@ -1067,6 +1067,12 @@ static PassRefPtr<CSSValue> valueForGridPosition(const GridPosition& position)
 
     return cssValuePool().createValue(position.integerPosition(), CSSPrimitiveValue::CSS_NUMBER);
 }
+
+static PassRefPtr<CSSValue> valueForGridPositions(const GridPositions& positions)
+{
+    return valueForGridPosition(positions.firstPosition());
+}
+
 static PassRefPtr<CSSValue> createTransitionPropertyValue(const Animation* animation)
 {
     RefPtr<CSSValue> propertyValue;
@@ -1925,9 +1931,9 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return valueForGridTrackList(style->gridRows(), style.get(), m_node->document()->renderView());
 
         case CSSPropertyWebkitGridColumn:
-            return valueForGridPosition(style->gridItemColumn());
+            return valueForGridPositions(style->gridItemColumn());
         case CSSPropertyWebkitGridRow:
-            return valueForGridPosition(style->gridItemRow());
+            return valueForGridPositions(style->gridItemRow());
 
         case CSSPropertyHeight:
             if (renderer) {

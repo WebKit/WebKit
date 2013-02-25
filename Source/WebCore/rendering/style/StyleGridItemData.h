@@ -54,8 +54,8 @@ public:
         return !(*this == o);
     }
 
-    GridPosition m_gridColumn;
-    GridPosition m_gridRow;
+    GridPositions m_gridColumn;
+    GridPositions m_gridRow;
 
 private:
     StyleGridItemData();

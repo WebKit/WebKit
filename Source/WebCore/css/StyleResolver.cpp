@@ -2692,7 +2692,7 @@ static bool createGridTrackList(CSSValue* value, Vector<GridTrackSize>& trackSiz
 }
 
 
-static bool createGridPosition(CSSValue* value, GridPosition& position)
+static bool createGridPositions(CSSValue* value, GridPositions& position)
 {
     // For now, we only accept: <integer> | 'auto'
     if (!value->isPrimitiveValue())
@@ -2703,7 +2703,7 @@ static bool createGridPosition(CSSValue* value, GridPosition& position)
         return true;
 
     ASSERT_WITH_SECURITY_IMPLICATION(primitiveValue->isNumber());
-    position.setIntegerPosition(primitiveValue->getIntValue());
+    position.firstPosition().setIntegerPosition(primitiveValue->getIntValue());
     return true;
 }
 
@@ -3563,15 +3563,15 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 
     case CSSPropertyWebkitGridColumn: {
-        GridPosition column;
-        if (!createGridPosition(value, column))
+        GridPositions column;
+        if (!createGridPositions(value, column))
             return;
         state.style()->setGridItemColumn(column);
         return;
     }
     case CSSPropertyWebkitGridRow: {
-        GridPosition row;
-        if (!createGridPosition(value, row))
+        GridPositions row;
+        if (!createGridPositions(value, row))
             return;
         state.style()->setGridItemRow(row);
         return;
