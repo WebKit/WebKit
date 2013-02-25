@@ -1,3 +1,10 @@
+2013-02-25  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed follow-up to r143725, reduce chances test flakes on a slow box.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testPageOverlayUpdate.step2):
+
 2013-02-25  Anton Vayvod  <avayvod@chromium.org>
 
         [Chromium] Disable registerProtocolHandler on Android

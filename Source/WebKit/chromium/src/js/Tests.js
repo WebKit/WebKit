@@ -626,7 +626,6 @@ TestSuite.prototype.testPageOverlayUpdate = function()
 
     function step1()
     {
-        test.recordTimeline(onTimelineRecorded);
         test.evaluateInConsole_(populatePage.toString() + "; populatePage();" +
                                 "inspect(document.getElementById('div1'))", function() {});
         WebInspector.notifications.addEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, step2);
@@ -635,6 +634,7 @@ TestSuite.prototype.testPageOverlayUpdate = function()
     function step2()
     {
         WebInspector.notifications.removeEventListener(WebInspector.ElementsTreeOutline.Events.SelectedNodeChanged, step2);
+        test.recordTimeline(onTimelineRecorded);
         setTimeout(step3, 500);
     }
 
