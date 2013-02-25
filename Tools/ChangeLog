@@ -1,3 +1,23 @@
+2013-02-25  Nico Weber  <thakis@chromium.org>
+
+        Make ScriptError not crash when args is a tuple
+        https://bugs.webkit.org/show_bug.cgi?id=110747
+
+        Reviewed by Jochen Eisinger.
+
+        I'm trying to understand the error on
+        http://build.webkit.org/builders/Chromium%20Win%20Release%20%28Tests%29/builds/34563/steps/layout-test/logs/stdio
+        better. I'll likely have to revert the ninja switch on windows, but
+        having error reporting code that doesn't itself crash sounds like a
+        good thing to have anyways.
+
+        The problem is that '%s' % (1, 2) errors out, and args is sometimes a
+        tuple not a list.
+
+        * Scripts/run-chromium-webkit-unit-tests:
+        * Scripts/webkitpy/common/system/executive.py:
+        (ScriptError.__init__):
+
 2013-02-25  Laszlo Gombos  <l.gombos@samsung.com>
 
         [EFL] Align feature defaults

@@ -53,7 +53,7 @@ class ScriptError(Exception):
                  output=None,
                  cwd=None):
         if not message:
-            message = 'Failed to run "%s"' % script_args
+            message = 'Failed to run "%s"' % repr(script_args)
             if exit_code:
                 message += " exit_code: %d" % exit_code
             if cwd:
