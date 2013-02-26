@@ -1936,6 +1936,8 @@
             'inspector/ScriptGCEventListener.h',
             'inspector/TimelineRecordFactory.cpp',
             'inspector/TimelineRecordFactory.h',
+            'inspector/TimelineTraceEventProcessor.cpp',
+            'inspector/TimelineTraceEventProcessor.h',
             'inspector/WorkerConsoleAgent.cpp',
             'inspector/WorkerConsoleAgent.h',
             'inspector/WorkerDebuggerAgent.cpp',

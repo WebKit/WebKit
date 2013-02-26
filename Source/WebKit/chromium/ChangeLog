@@ -1,5 +1,51 @@
 2013-02-26  Andrey Kosyakov  <caseq@chromium.org>
 
+        Plumbing trace events to Timeline
+
+        Web Inspector: plumb trace events to Timeline agent
+        https://bugs.webkit.org/show_bug.cgi?id=105796
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebDevToolsAgentClient.h:
+        (WebDevToolsAgentClient):
+        (WebKit::WebDevToolsAgentClient::setTraceEventCallback):
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::setTraceEventCallback):
+        (WebKit):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setTraceEventCallback):
+        (WebKit):
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+
+2013-02-01  Andrey Kosyakov  <caseq@chromium.org>
+
+        Web Inspector: plumb trace events to Timeline agent
+        https://bugs.webkit.org/show_bug.cgi?id=105796
+
+        Reviewed by Pavel Feldman.
+
+        Plumb trace events to Inspector.
+
+        * public/WebDevToolsAgentClient.h:
+        (WebDevToolsAgentClient):
+        (WebKit::WebDevToolsAgentClient::setTraceEventCallback):
+        * src/InspectorClientImpl.cpp:
+        (WebKit::InspectorClientImpl::setTraceEventCallback):
+        (WebKit):
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::setTraceEventCallback):
+        (WebKit):
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+
+2013-02-26  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed, rolling out r144041, r144044, and r144048.
         http://trac.webkit.org/changeset/144041
         http://trac.webkit.org/changeset/144044

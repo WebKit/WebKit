@@ -91,6 +91,7 @@ public:
     virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&);
 
     virtual bool captureScreenshot(WTF::String* data);
+    virtual void setTraceEventCallback(TraceEventCallback);
 
     virtual bool handleJavaScriptDialog(bool accept);
 

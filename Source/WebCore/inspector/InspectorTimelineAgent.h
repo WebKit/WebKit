@@ -42,6 +42,7 @@
 #include "ScriptGCEventListener.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
+#include <wtf/WeakPtr.h>
 
 namespace WebCore {
 class Event;
@@ -54,9 +55,11 @@ class InspectorState;
 class InstrumentingAgents;
 class IntRect;
 class KURL;
+class Page;
 class RenderObject;
 class ResourceRequest;
 class ResourceResponse;
+class TimelineTraceEventProcessor;
 
 typedef String ErrorString;
 
@@ -176,6 +179,8 @@ public:
     virtual void didResizeImage() OVERRIDE;
 
 private:
+    friend class TimelineTraceEventProcessor;
+
     struct TimelineRecordEntry {
         TimelineRecordEntry(PassRefPtr<InspectorObject> record, PassRefPtr<InspectorObject> data, PassRefPtr<InspectorArray> children, const String& type, const String& frameId, size_t usedHeapSizeAtStart)
             : record(record), data(data), children(children), type(type), frameId(frameId), usedHeapSizeAtStart(usedHeapSizeAtStart)
@@ -213,6 +218,7 @@ private:
 
     double timestamp();
     double timestampFromMicroseconds(double microseconds);
+    Page* page();
 
     InspectorPageAgent* m_pageAgent;
     InspectorMemoryAgent* m_memoryAgent;
@@ -239,6 +245,8 @@ private:
     RefPtr<InspectorObject> m_pendingFrameRecord;
     InspectorType m_inspectorType;
     InspectorClient* m_client;
+    WeakPtrFactory<InspectorTimelineAgent> m_weakFactory;
+    RefPtr<TimelineTraceEventProcessor> m_traceEventProcessor;
 };
 
 } // namespace WebCore
