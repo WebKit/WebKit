@@ -1,6 +1,4 @@
-CONSOLE MESSAGE: Invalid 'X-Frame-Options' header encountered when loading 'http://127.0.0.1:8000/security/XFrameOptions/resources/nph-cached-xfo.pl': 'allowall' is not a recognized directive. The header will be ignored.
 ALERT: This must fire twice
-CONSOLE MESSAGE: Invalid 'X-Frame-Options' header encountered when loading 'http://127.0.0.1:8000/security/XFrameOptions/resources/nph-cached-xfo.pl': 'allowall' is not a recognized directive. The header will be ignored.
 ALERT: This must fire twice
 Check that an X-Frame-Options header added by a 304 response does not override one from the original request.
 

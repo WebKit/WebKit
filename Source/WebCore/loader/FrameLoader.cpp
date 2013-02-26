@@ -2937,7 +2937,7 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
         RefPtr<SecurityOrigin> origin = SecurityOrigin::create(url);
         if (!origin->isSameSchemeHostPort(topFrame->document()->securityOrigin()))
             return true;
-    } else {
+    } else if (!equalIgnoringCase(content, "allowall")) {
         String message = "Invalid 'X-Frame-Options' header encountered when loading '" + url.string() + "': '" + content + "' is not a recognized directive. The header will be ignored.";
         m_frame->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message, requestIdentifier);
     }
