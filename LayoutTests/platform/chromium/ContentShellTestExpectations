@@ -1,0 +1,50 @@
+# These are additional layout test expectations for the Chromium port(s) of WebKit when using the content shell.
+#
+# See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
+
+# -----------------------------------------------------------------
+# Expected to crash, but passed
+# -----------------------------------------------------------------
+crbug.com/111316 [ Linux ] media/video-error-does-not-exist.html [ Pass ]
+crbug.com/111316 [ Linux ] plugins/destroy-on-setwindow.html [ Pass ]
+crbug.com/111316 [ Linux ] plugins/get-url-notify-with-url-that-fails-to-load.html [ Pass ]
+
+# -----------------------------------------------------------------
+# Expected to timeout, but passed
+# -----------------------------------------------------------------
+crbug.com/111316 [ Linux ] fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/loader/subresource-willSendRequest-null.html [ Pass ]
+crbug.com/111316 [ Linux ] http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm [ Pass ]
+crbug.com/111316 [ Linux ] platform/chromium/virtual/gpu/fast/canvas/webgl/framebuffer-bindings-unaffected-on-resize.html [ Pass ]
+crbug.com/111316 [ Linux ] plugins/get-url-with-javascript-url.html [ Pass ]
+
+# -----------------------------------------------------------------
+# Expected to fail, but passed
+# -----------------------------------------------------------------
+crbug.com/111316 [ Linux ] canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Pass ]
+crbug.com/111316 [ Linux ] compositing/color-matching/image-color-matching.html [ Pass ]
+crbug.com/111316 [ Linux ] compositing/visibility/visibility-image-layers.html [ Pass ]
+crbug.com/111316 [ Linux ] css3/selectors3/xhtml/css3-modsel-15c.xml [ Pass ]
+crbug.com/111316 [ Linux ] editing/spelling/grammar.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/backgrounds/background-opaque-clipped-gradients.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/backgrounds/background-opaque-images-over-color.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/backgrounds/gradient-background-shadow.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/borders/fieldsetBorderRadius.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/css/sticky/sticky-left-percentage.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/filesystem/op-restricted-names.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/images/gif-loop-count.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/js/cross-frame-bad-time.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/loader/javascript-url-in-embed.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/regions/seamless-iframe-flowed-into-regions.html [ Pass ]
+crbug.com/111316 [ Linux ] fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ Pass ]
+crbug.com/111316 [ Linux ] http/tests/cache/cancel-multiple-post-xhrs.html [ Pass ]
+crbug.com/111316 [ Linux ] http/tests/loading/redirect-methods.html [ Pass ]
+crbug.com/111316 [ Linux ] http/tests/loading/text-content-type-with-binary-extension.html [ Pass ]
+crbug.com/111316 [ Linux ] http/tests/misc/favicon-loads-with-images-disabled.html [ Pass ]
+crbug.com/111316 [ Linux ] platform/chromium/virtual/deferred/fast/images/gif-loop-count.html [ Pass ]
+crbug.com/111316 [ Linux ] platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Pass ]
+crbug.com/111316 [ Linux ] platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint-2.html [ Pass ]
+crbug.com/111316 [ Linux ] platform/chromium/virtual/gpu/fast/canvas/canvas-incremental-repaint.html [ Pass ]
+crbug.com/111316 [ Linux ] svg/custom/transform-with-shadow-and-gradient.svg [ Pass ]
+crbug.com/111316 [ Linux ] svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr.html [ Pass ]
+crbug.com/111316 [ Linux ] svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop.html [ Pass ]
