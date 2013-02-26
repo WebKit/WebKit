@@ -295,6 +295,29 @@ int RenderFlexibleBox::inlineBlockBaseline(LineDirectionMode direction) const
     return synthesizedBaselineFromContentBox(this, direction) + marginAscent;
 }
 
+static EAlignItems resolveAlignment(const RenderStyle* parentStyle, const RenderStyle* childStyle)
+{
+    EAlignItems align = childStyle->alignSelf();
+    if (align == AlignAuto)
+        align = parentStyle->alignItems();
+    return align;
+}
+
+void RenderFlexibleBox::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
+{
+    RenderBlock::styleDidChange(diff, oldStyle);
+
+    if (oldStyle && oldStyle->alignItems() == AlignStretch && diff == StyleDifferenceLayout) {
+        // Flex items that were previously stretching need to be relayed out so we can compute new available cross axis space.
+        // This is only necessary for stretching since other alignment values don't change the size of the box.
+        for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
+            EAlignItems previousAlignment = resolveAlignment(oldStyle, child->style());
+            if (previousAlignment == AlignStretch && previousAlignment != resolveAlignment(style(), child->style()))
+                child->setChildNeedsLayout(true, MarkOnlyThis);
+        }
+    }
+}
+
 void RenderFlexibleBox::layoutBlock(bool relayoutChildren, LayoutUnit)
 {
     ASSERT(needsLayout());
@@ -1059,9 +1082,7 @@ void RenderFlexibleBox::prepareChildForPositionedLayout(RenderBox* child, Layout
 
 EAlignItems RenderFlexibleBox::alignmentForChild(RenderBox* child) const
 {
-    EAlignItems align = child->style()->alignSelf();
-    if (align == AlignAuto)
-        align = style()->alignItems();
+    EAlignItems align = resolveAlignment(style(), child->style());
 
     if (align == AlignBaseline && hasOrthogonalFlow(child))
         align = AlignFlexStart;

@@ -93,28 +93,28 @@
 }
 
 .align-self-auto {
-    -webkit-align-items: auto;
-    -moz-align-items: auto;
+    -webkit-align-self: auto;
+    -moz-align-self: auto;
 }
 .align-self-flex-start {
-    -webkit-align-items: flex-start;
-    -moz-align-items: flex-start;
+    -webkit-align-self: flex-start;
+    -moz-align-self: flex-start;
 }
 .align-self-flex-end {
-    -webkit-align-items: flex-end;
-    -moz-align-items: flex-end;
+    -webkit-align-self: flex-end;
+    -moz-align-self: flex-end;
 }
 .align-self-center {
-    -webkit-align-items: center;
-    -moz-align-items: center;
+    -webkit-align-self: center;
+    -moz-align-self: center;
 }
 .align-self-baseline {
-    -webkit-align-items: baseline;
-    -moz-align-items: baseline;
+    -webkit-align-self: baseline;
+    -moz-align-self: baseline;
 }
 .align-self-stretch {
-    -webkit-align-items: stretch;
-    -moz-align-items: stretch;
+    -webkit-align-self: stretch;
+    -moz-align-self: stretch;
 }
 
 .justify-content-flex-start {
