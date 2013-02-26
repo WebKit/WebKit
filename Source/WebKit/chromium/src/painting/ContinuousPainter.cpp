@@ -31,6 +31,7 @@
 
 #include "GraphicsLayer.h"
 #include "PageOverlayList.h"
+#include "TraceEvent.h"
 
 using namespace WebCore;
 
@@ -44,6 +45,7 @@ void ContinuousPainter::setNeedsDisplayRecursive(GraphicsLayer* layer, PageOverl
     if (pageOverlays && pageOverlays->findGraphicsLayer(layer) != WTF::notFound)
         return;
 
+    TRACE_EVENT0("webkit", "ContinuousPainter::setNeedsDisplayRecursive");
     layer->setNeedsDisplay();
 
     setNeedsDisplayRecursive(layer->maskLayer(), pageOverlays);

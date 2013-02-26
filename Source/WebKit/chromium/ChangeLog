@@ -1,3 +1,25 @@
+2013-02-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Fix continuous painting mode
+        https://bugs.webkit.org/show_bug.cgi?id=110788
+
+        Reviewed by Adrienne Walker.
+
+        Recent instrumentation shuffling caused WebViewImpl::didBeginFrame to no longer be called, which
+        broke continuous painting.  Since continuous painting mode is meant to simply invalidate layers
+        on each frame, it's a better fit for the animation system. This moves the invalidation calls
+        into WebViewImpl::updateAnimations along with other animation type things.
+
+        Tested manually by enabling continuous painting mode in the inspector. There aren't any automated
+        tests in WebKit for this feature.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setContinuousPaintingEnabled):
+        (WebKit::WebViewImpl::didBeginFrame):
+        (WebKit::WebViewImpl::updateAnimations):
+        * src/painting/ContinuousPainter.cpp:
+        (WebKit::ContinuousPainter::setNeedsDisplayRecursive):
+
 2013-02-26  James Weatherall  <wez@chromium.org>
 
         keydown and keyup events have zero keycode for some numeric pad keys under Chromium on Linux

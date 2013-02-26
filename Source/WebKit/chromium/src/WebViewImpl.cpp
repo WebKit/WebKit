@@ -930,6 +930,7 @@ void WebViewImpl::setContinuousPaintingEnabled(bool enabled)
         m_layerTreeView->setContinuousPaintingEnabled(enabled);
     }
     m_continuousPaintingEnabled = enabled;
+    m_client->scheduleAnimation();
 }
 
 bool WebViewImpl::handleKeyEvent(const WebKeyboardEvent& event)
@@ -1852,9 +1853,6 @@ void WebViewImpl::didBeginFrame()
 {
     if (m_devToolsAgent)
         m_devToolsAgent->didComposite();
-
-    if (m_continuousPaintingEnabled)
-        ContinuousPainter::setNeedsDisplayRecursive(m_rootGraphicsLayer, m_pageOverlays.get());
 }
 
 void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
@@ -1875,6 +1873,11 @@ void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
 
     if (!m_page)
         return;
+
+    if (m_continuousPaintingEnabled) {
+        ContinuousPainter::setNeedsDisplayRecursive(m_rootGraphicsLayer, m_pageOverlays.get());
+        m_client->scheduleAnimation();
+    }
 
     PageWidgetDelegate::animate(m_page.get(), monotonicFrameBeginTime);
 #endif
