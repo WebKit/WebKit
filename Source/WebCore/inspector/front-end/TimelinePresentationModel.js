@@ -518,7 +518,10 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
     this._children = [];
     if (!hidden && parentRecord) {
         this.parent = parentRecord;
-        parentRecord.children.push(this);
+        if (this.isBackground && parentRecord === presentationModel._rootRecord)
+            WebInspector.TimelinePresentationModel.insertRetrospecitveRecord(parentRecord, this);
+        else
+            parentRecord.children.push(this);
     }
     if (origin)
         this._origin = origin;
@@ -618,12 +621,8 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
                 var openRecord = recordStack[index - 1];
                 if (openRecord.startTime > timeRecord.startTime)
                     continue;
-                function compareStartTime(value, record)
-                {
-                    return value < record.startTime ? -1 : 1;
-                }
                 timeRecord.parent.children.splice(timeRecord.parent.children.indexOf(timeRecord));
-                openRecord.children.splice(insertionIndexForObjectInListSortedByFunction(timeRecord.startTime, openRecord.children, compareStartTime), 0, timeRecord);
+                WebInspector.TimelinePresentationModel.insertRetrospecitveRecord(openRecord, timeRecord);
                 break;
             }
         }
@@ -682,6 +681,16 @@ WebInspector.TimelinePresentationModel.Record = function(presentationModel, reco
         }
         break;
     }
+}
+
+WebInspector.TimelinePresentationModel.insertRetrospecitveRecord = function(parent, record)
+{
+    function compareStartTime(value, record)
+    {
+        return value < record.startTime ? -1 : 1;
+    }
+    
+    parent.children.splice(insertionIndexForObjectInListSortedByFunction(record.startTime, parent.children, compareStartTime), 0, record);
 }
 
 WebInspector.TimelinePresentationModel.Record.prototype = {
@@ -781,6 +790,14 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     get endTime()
     {
         return WebInspector.TimelineModel.endTimeInSeconds(this._record);
+    },
+
+    /**
+     * @return {boolean}
+     */
+    get isBackground()
+    {
+        return !!this._record.thread;
     },
 
     /**

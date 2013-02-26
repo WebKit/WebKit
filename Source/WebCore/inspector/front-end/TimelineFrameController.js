@@ -62,6 +62,8 @@ WebInspector.TimelineFrameController.prototype = {
     _addRecord: function(record)
     {
         var records;
+        if (record.isBackground)
+            return;
         if (record.type === WebInspector.TimelineModel.RecordType.Program)
             records = record["children"] || [];
         else

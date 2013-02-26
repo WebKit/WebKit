@@ -650,6 +650,17 @@ void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, cons
     addRecordToTimeline(record.release(), type, frameId);
 }
 
+void InspectorTimelineAgent::appendBackgroundThreadRecord(PassRefPtr<InspectorObject> data, const String& type, double startTime, double endTime, const String& threadName)
+{
+    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestampFromMicroseconds(startTime), 0);
+    record->setObject("data", data);
+    record->setString("type", type);
+    record->setString("thread", threadName);
+    record->setNumber("endTime", timestampFromMicroseconds(endTime));
+    RefPtr<TypeBuilder::Timeline::TimelineEvent> recordChecked = TypeBuilder::Timeline::TimelineEvent::runtimeCast(record.release());
+    m_frontend->eventRecorded(recordChecked.release());
+}
+
 void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame* frame, bool hasLowLevelDetails)
 {
     pushGCEventRecords();

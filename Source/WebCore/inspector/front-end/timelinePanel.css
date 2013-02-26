@@ -267,6 +267,10 @@
     position: absolute;
 }
 
+.timeline-tree-item.background .timeline-tree-icon {
+    background: none !important;
+}
+
 .timeline-tree-item.even {
     background-color: rgba(0, 0, 0, 0.05);
 }
@@ -356,6 +360,11 @@
 
 .timeline-graph-bar.cpu {
     opacity: 0.7;
+}
+
+.timeline-graph-side.background .timeline-graph-bar {
+    background: transparent !important;
+    border-width: 2px;
 }
 
 .timeline-graph-side.even {

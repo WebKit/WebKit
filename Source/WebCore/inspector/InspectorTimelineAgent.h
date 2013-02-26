@@ -191,17 +191,20 @@ private:
         
     InspectorTimelineAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorMemoryAgent*, InspectorCompositeState*, InspectorType, InspectorClient*);
 
+    void appendBackgroundThreadRecord(PassRefPtr<InspectorObject> data, const String& type, double startTime, double endTime, const String& threadName);
+    void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame*);
     void pushCurrentRecord(PassRefPtr<InspectorObject>, const String& type, bool captureCallStack, Frame*, bool hasLowLevelDetails = false);
     void setDOMCounters(InspectorObject* record);
     void setNativeHeapStatistics(InspectorObject* record);
 
     void didCompleteCurrentRecord(const String& type);
+
+    void setHeapSizeStatistics(InspectorObject* record);
+    void pushGCEventRecords();
     void commitFrameRecord();
-    void appendRecord(PassRefPtr<InspectorObject> data, const String& type, bool captureCallStack, Frame*);
+
     void addRecordToTimeline(PassRefPtr<InspectorObject>, const String& type, const String& frameId);
     void innerAddRecordToTimeline(PassRefPtr<InspectorObject>, const String& type, const String& frameId);
-
-    void pushGCEventRecords();
     void clearRecordStack();
 
 #if ENABLE(WEB_SOCKETS)

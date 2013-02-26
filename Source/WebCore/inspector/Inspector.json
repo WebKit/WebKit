@@ -2595,6 +2595,7 @@
                 "type": "object",
                 "properties": [
                     { "name": "type", "type": "string", "description": "Event type." },
+                    { "name": "thread", "type": "string", "optional": true, "description": "If present, identifies the thread that produced the event." },
                     { "name": "data", "type": "object", "description": "Event data." },
                     { "name": "children", "type": "array", "optional": true, "items": { "$ref": "TimelineEvent" }, "description": "Nested records." }
                 ],
