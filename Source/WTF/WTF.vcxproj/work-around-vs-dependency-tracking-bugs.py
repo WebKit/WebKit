@@ -18,7 +18,7 @@ def main():
 
 
 def react_to_vsprops_changes():
-    vsprops_directory = os.path.join(WEBKIT_SOURCE, 'tools', 'vsprops')
+    vsprops_directory = os.path.join(WEBKIT_SOURCE, 'WebKit', 'WebKit.vcxproj')
     newest_vsprops_time = mtime_of_newest_file_matching_glob(os.path.join(vsprops_directory, '*.vsprops'))
 
     obj_directory = os.path.join(os.environ['CONFIGURATIONBUILDDIR'], 'obj')

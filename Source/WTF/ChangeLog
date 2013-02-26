@@ -1,3 +1,9 @@
+2013-02-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Unreviewed build fix for VS2010 solution.
+
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py:
+
 2013-02-26  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         Fix the atomicIncrement implementation for MIPS GCC
