@@ -82,8 +82,6 @@ public:
 
     virtual void interruptAllDatabasesForContext(const DatabaseBackendContext*) = 0;
 
-    virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackendBase*) = 0;
-
 protected:
     AbstractDatabaseServer() { }
     virtual ~AbstractDatabaseServer() { }

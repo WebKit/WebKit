@@ -677,8 +677,6 @@ SQLTransactionState SQLTransactionBackend::runCurrentStatementAndGetNextState()
         if (m_database->lastActionChangedDatabase()) {
             // Flag this transaction as having changed the database for later delegate notification
             m_modifiedDatabase = true;
-            // Also dirty the size of this database file for calculating quota usage
-            m_database->transactionClient()->didExecuteStatement(Database::from(database()));
         }
 
         if (m_currentStatementBackend->hasStatementCallback()) {

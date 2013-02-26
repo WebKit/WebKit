@@ -47,7 +47,6 @@ class SQLTransactionClient {
 public:
     SQLTransactionClient() { }
     void didCommitWriteTransaction(DatabaseBackendBase*);
-    void didExecuteStatement(DatabaseBackendBase*);
     bool didExceedQuota(DatabaseBackendBase*);
 };
 

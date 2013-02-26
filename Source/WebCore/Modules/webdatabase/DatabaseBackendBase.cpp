@@ -593,7 +593,7 @@ void DatabaseBackendBase::resetAuthorizer()
 
 unsigned long long DatabaseBackendBase::maximumSize() const
 {
-    return DatabaseManager::manager().getMaxSizeForDatabase(this);
+    return DatabaseTracker::tracker().getMaxSizeForDatabase(this);
 }
 
 void DatabaseBackendBase::incrementalVacuumIfNeeded()

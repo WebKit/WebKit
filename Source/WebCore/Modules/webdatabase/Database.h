@@ -73,9 +73,6 @@ public:
 
     virtual void closeImmediately();
 
-    unsigned long long databaseSize() const;
-    unsigned long long maximumSize() const;
-
     void scheduleTransactionCallback(SQLTransaction*);
 
 private:

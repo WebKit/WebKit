@@ -181,11 +181,6 @@ PassRefPtr<DatabaseBackendBase> DatabaseServer::createDatabase(RefPtr<DatabaseBa
     return database.release();
 }
 
-unsigned long long DatabaseServer::getMaxSizeForDatabase(const DatabaseBackendBase* database)
-{
-    return DatabaseTracker::tracker().getMaxSizeForDatabase(database);
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(SQL_DATABASE)

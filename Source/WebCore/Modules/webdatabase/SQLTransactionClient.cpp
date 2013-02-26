@@ -48,11 +48,6 @@ void SQLTransactionClient::didCommitWriteTransaction(DatabaseBackendBase* databa
         database->securityOrigin(), database->stringIdentifier());
 }
 
-void SQLTransactionClient::didExecuteStatement(DatabaseBackendBase* database)
-{
-    DatabaseTracker::tracker().databaseChanged(database);
-}
-
 bool SQLTransactionClient::didExceedQuota(DatabaseBackendBase* database)
 {
     ASSERT(database->databaseContext()->scriptExecutionContext()->isContextThread());

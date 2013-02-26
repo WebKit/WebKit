@@ -25530,22 +25530,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Modules\webdatabase\OriginQuotaManager.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\webdatabase\OriginQuotaManager.h"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\webdatabase\OriginUsageRecord.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Modules\webdatabase\OriginUsageRecord.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Modules\webdatabase\SQLCallbackWrapper.h"
 					>
 				</File>

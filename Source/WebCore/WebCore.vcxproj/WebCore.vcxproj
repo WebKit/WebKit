@@ -2765,8 +2765,6 @@
     <ClCompile Include="..\Modules\webdatabase\DatabaseThread.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseTracker.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DOMWindowWebDatabase.cpp" />
-    <ClCompile Include="..\Modules\webdatabase\OriginQuotaManager.cpp" />
-    <ClCompile Include="..\Modules\webdatabase\OriginUsageRecord.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLException.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLResultSet.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLResultSetRowList.cpp" />
@@ -8835,8 +8833,6 @@
     <ClInclude Include="..\Modules\webdatabase\DatabaseThread.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseTracker.h" />
     <ClInclude Include="..\Modules\webdatabase\DOMWindowWebDatabase.h" />
-    <ClInclude Include="..\Modules\webdatabase\OriginQuotaManager.h" />
-    <ClInclude Include="..\Modules\webdatabase\OriginUsageRecord.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLCallbackWrapper.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLError.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLException.h" />

@@ -110,8 +110,6 @@ public:
 
     void interruptAllDatabasesForContext(ScriptExecutionContext*);
 
-    unsigned long long getMaxSizeForDatabase(const DatabaseBackendBase*);
-
 private:
     DatabaseManager();
     ~DatabaseManager() { }

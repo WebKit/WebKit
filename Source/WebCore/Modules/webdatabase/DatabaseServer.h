@@ -70,8 +70,6 @@ public:
 
     virtual void interruptAllDatabasesForContext(const DatabaseBackendContext*);
 
-    virtual unsigned long long getMaxSizeForDatabase(const DatabaseBackendBase*);
-
 protected:
     virtual PassRefPtr<DatabaseBackendBase> createDatabase(RefPtr<DatabaseBackendContext>&, DatabaseType,
         const String& name, const String& expectedVersion, const String& displayName, unsigned long estimatedSize,

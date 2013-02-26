@@ -169,11 +169,6 @@ void Database::closeImmediately()
     }
 }
 
-unsigned long long Database::maximumSize() const
-{
-    return DatabaseManager::manager().getMaxSizeForDatabase(this);
-}
-
 void Database::changeVersion(const String& oldVersion, const String& newVersion,
                              PassRefPtr<SQLTransactionCallback> callback, PassRefPtr<SQLTransactionErrorCallback> errorCallback,
                              PassRefPtr<VoidCallback> successCallback)

@@ -428,11 +428,6 @@ void DatabaseManager::interruptAllDatabasesForContext(ScriptExecutionContext* co
         m_server->interruptAllDatabasesForContext(databaseContext->backend().get());
 }
 
-unsigned long long DatabaseManager::getMaxSizeForDatabase(const DatabaseBackendBase* database)
-{
-    return m_server->getMaxSizeForDatabase(database);
-}
-
 void DatabaseManager::logErrorMessage(ScriptExecutionContext* context, const String& message)
 {
     context->addConsoleMessage(OtherMessageSource, ErrorMessageLevel, message);

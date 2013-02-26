@@ -121,10 +121,8 @@ PassRefPtr<SQLResultSet> SQLTransactionBackendSync::executeSQL(const String& sql
         }
     }
 
-    if (m_database->lastActionChangedDatabase()) {
+    if (m_database->lastActionChangedDatabase())
         m_modifiedDatabase = true;
-        m_transactionClient->didExecuteStatement(database());
-    }
 
     return resultSet.release();
 }

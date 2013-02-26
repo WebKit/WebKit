@@ -80,7 +80,6 @@ public:
     void getOpenDatabases(SecurityOrigin*, const String& name, HashSet<RefPtr<DatabaseBackendBase> >* databases);
 
     unsigned long long getMaxSizeForDatabase(const DatabaseBackendBase*);
-    void databaseChanged(DatabaseBackendBase*);
 
     void interruptAllDatabasesForContext(const DatabaseBackendContext*);
 
@@ -121,7 +120,6 @@ private:
     bool hasEntryForOriginNoLock(SecurityOrigin* origin);
     String fullPathForDatabaseNoLock(SecurityOrigin*, const String& name, bool createIfDoesNotExist);
     bool databaseNamesForOriginNoLock(SecurityOrigin* origin, Vector<String>& resultVector);
-    unsigned long long usageForOriginNoLock(SecurityOrigin* origin);
     unsigned long long quotaForOriginNoLock(SecurityOrigin* origin);
 
     String trackerDatabasePath() const;

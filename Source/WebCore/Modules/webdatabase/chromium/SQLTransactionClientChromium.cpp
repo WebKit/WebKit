@@ -72,12 +72,6 @@ void SQLTransactionClient::didCommitWriteTransaction(DatabaseBackendBase* databa
     WebCore::DatabaseObserver::databaseModified(database);
 }
 
-void SQLTransactionClient::didExecuteStatement(DatabaseBackendBase* database)
-{
-    // This method is called after executing every statement that changes the DB.
-    // Chromium doesn't need to do anything at that point.
-}
-
 bool SQLTransactionClient::didExceedQuota(DatabaseBackendBase* database)
 {
     // Chromium does not allow users to manually change the quota for an origin (for now, at least).

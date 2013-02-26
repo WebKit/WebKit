@@ -3731,10 +3731,6 @@
 		97BC6A311505F081001B74AC /* DatabaseTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69EF1505F081001B74AC /* DatabaseTracker.cpp */; };
 		97BC6A321505F081001B74AC /* DatabaseTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F01505F081001B74AC /* DatabaseTracker.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC6A331505F081001B74AC /* DatabaseManagerClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F11505F081001B74AC /* DatabaseManagerClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		97BC6A371505F081001B74AC /* OriginQuotaManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69F51505F081001B74AC /* OriginQuotaManager.cpp */; };
-		97BC6A381505F081001B74AC /* OriginQuotaManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F61505F081001B74AC /* OriginQuotaManager.h */; };
-		97BC6A391505F081001B74AC /* OriginUsageRecord.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69F71505F081001B74AC /* OriginUsageRecord.cpp */; };
-		97BC6A3A1505F081001B74AC /* OriginUsageRecord.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F81505F081001B74AC /* OriginUsageRecord.h */; };
 		97BC6A3B1505F081001B74AC /* SQLCallbackWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */; };
 		97BC6A3C1505F081001B74AC /* SQLError.h in Headers */ = {isa = PBXBuildFile; fileRef = 97BC69FA1505F081001B74AC /* SQLError.h */; };
 		97BC6A3E1505F081001B74AC /* SQLException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC69FC1505F081001B74AC /* SQLException.cpp */; };
@@ -11211,10 +11207,6 @@
 		97BC69EF1505F081001B74AC /* DatabaseTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DatabaseTracker.cpp; path = Modules/webdatabase/DatabaseTracker.cpp; sourceTree = "<group>"; };
 		97BC69F01505F081001B74AC /* DatabaseTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseTracker.h; path = Modules/webdatabase/DatabaseTracker.h; sourceTree = "<group>"; };
 		97BC69F11505F081001B74AC /* DatabaseManagerClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DatabaseManagerClient.h; path = Modules/webdatabase/DatabaseManagerClient.h; sourceTree = "<group>"; };
-		97BC69F51505F081001B74AC /* OriginQuotaManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OriginQuotaManager.cpp; path = Modules/webdatabase/OriginQuotaManager.cpp; sourceTree = "<group>"; };
-		97BC69F61505F081001B74AC /* OriginQuotaManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OriginQuotaManager.h; path = Modules/webdatabase/OriginQuotaManager.h; sourceTree = "<group>"; };
-		97BC69F71505F081001B74AC /* OriginUsageRecord.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OriginUsageRecord.cpp; path = Modules/webdatabase/OriginUsageRecord.cpp; sourceTree = "<group>"; };
-		97BC69F81505F081001B74AC /* OriginUsageRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OriginUsageRecord.h; path = Modules/webdatabase/OriginUsageRecord.h; sourceTree = "<group>"; };
 		97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLCallbackWrapper.h; path = Modules/webdatabase/SQLCallbackWrapper.h; sourceTree = "<group>"; };
 		97BC69FA1505F081001B74AC /* SQLError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SQLError.h; path = Modules/webdatabase/SQLError.h; sourceTree = "<group>"; };
 		97BC69FB1505F081001B74AC /* SQLError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = SQLError.idl; path = Modules/webdatabase/SQLError.idl; sourceTree = "<group>"; };
@@ -18719,10 +18711,6 @@
 				A8CCBB46151F831600AB7CE9 /* DOMWindowWebDatabase.cpp */,
 				A8CCBB47151F831600AB7CE9 /* DOMWindowWebDatabase.h */,
 				A8CCBB4E151F835A00AB7CE9 /* DOMWindowWebDatabase.idl */,
-				97BC69F51505F081001B74AC /* OriginQuotaManager.cpp */,
-				97BC69F61505F081001B74AC /* OriginQuotaManager.h */,
-				97BC69F71505F081001B74AC /* OriginUsageRecord.cpp */,
-				97BC69F81505F081001B74AC /* OriginUsageRecord.h */,
 				97BC69F91505F081001B74AC /* SQLCallbackWrapper.h */,
 				97BC69FA1505F081001B74AC /* SQLError.h */,
 				97BC69FB1505F081001B74AC /* SQLError.idl */,
@@ -25555,8 +25543,6 @@
 				FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */,
 				F4EAF4AF10C742B1009100D3 /* OpenTypeSanitizer.h in Headers */,
 				0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */,
-				97BC6A381505F081001B74AC /* OriginQuotaManager.h in Headers */,
-				97BC6A3A1505F081001B74AC /* OriginUsageRecord.h in Headers */,
 				FD581FAF1520F91F003A7A75 /* OscillatorNode.h in Headers */,
 				BC5EB5DD0E81B8DD00B25965 /* OutlineValue.h in Headers */,
 				1A0D57370A5C77FE007EDD4C /* OverflowEvent.h in Headers */,
@@ -28949,8 +28935,6 @@
 				FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */,
 				F4EAF4AE10C742B1009100D3 /* OpenTypeSanitizer.cpp in Sources */,
 				0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */,
-				97BC6A371505F081001B74AC /* OriginQuotaManager.cpp in Sources */,
-				97BC6A391505F081001B74AC /* OriginUsageRecord.cpp in Sources */,
 				FD581FAE1520F91F003A7A75 /* OscillatorNode.cpp in Sources */,
 				1A0D57360A5C77FE007EDD4C /* OverflowEvent.cpp in Sources */,
 				65FEA86909833ADE00BED4AB /* Page.cpp in Sources */,

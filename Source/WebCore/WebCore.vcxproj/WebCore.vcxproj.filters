@@ -1875,12 +1875,6 @@
     <ClCompile Include="..\Modules\webdatabase\DOMWindowWebDatabase.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\OriginQuotaManager.cpp">
-      <Filter>Modules\webdatabase</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Modules\webdatabase\OriginUsageRecord.cpp">
-      <Filter>Modules\webdatabase</Filter>
-    </ClCompile>
     <ClCompile Include="..\Modules\webdatabase\SQLException.cpp">
       <Filter>Modules\webdatabase</Filter>
     </ClCompile>
@@ -8545,12 +8539,6 @@
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\DOMWindowWebDatabase.h">
-      <Filter>Modules\webdatabase</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\OriginQuotaManager.h">
-      <Filter>Modules\webdatabase</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Modules\webdatabase\OriginUsageRecord.h">
       <Filter>Modules\webdatabase</Filter>
     </ClInclude>
     <ClInclude Include="..\Modules\webdatabase\SQLCallbackWrapper.h">
