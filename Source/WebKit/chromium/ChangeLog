@@ -1,3 +1,14 @@
+2013-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r144065.
+        http://trac.webkit.org/changeset/144065
+        https://bugs.webkit.org/show_bug.cgi?id=110896
+
+        Causing failures and crashes on Chromium Win7 and Win XP
+        (Requested by schenney on #webkit).
+
+        * features.gypi:
+
 2013-02-26  Levi Weintraub  <leviw@chromium.org>
 
         Add support for 8 bit TextRuns for Chromium/HarfBuzz

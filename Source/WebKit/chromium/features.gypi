@@ -33,7 +33,6 @@
   'variables': {
     'feature_defines': [
       'ENABLE_3D_PLUGIN=1',
-      'ENABLE_8BIT_TEXTRUN=1',
       'ENABLE_BATTERY_STATUS=0',
       'ENABLE_BLOB=1',
       'ENABLE_BLOB_SLICE=1',

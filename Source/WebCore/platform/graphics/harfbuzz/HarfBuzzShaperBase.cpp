@@ -94,18 +94,10 @@ void HarfBuzzShaperBase::setNormalizedBuffer(NormalizeMode normalizeMode)
     icu::UnicodeString normalizedString;
     UErrorCode error = U_ZERO_ERROR;
 
-    const UChar* runCharacters;
-    String stringFor8BitRun;
-    if (m_run.is8Bit()) {
-        stringFor8BitRun = String::make16BitFrom8BitSource(m_run.characters8(), m_run.length());
-        runCharacters = stringFor8BitRun.characters16();
-    } else
-        runCharacters = m_run.characters16();
-
     for (int i = 0; i < m_run.length(); ++i) {
-        UChar ch = runCharacters[i];
+        UChar ch = m_run[i];
         if (::ublock_getCode(ch) == UBLOCK_COMBINING_DIACRITICAL_MARKS) {
-            icu::Normalizer::normalize(icu::UnicodeString(runCharacters,
+            icu::Normalizer::normalize(icu::UnicodeString(m_run.characters16(),
                                        m_run.length()), UNORM_NFC, 0 /* no options */,
                                        normalizedString, error);
             if (U_FAILURE(error))
@@ -117,7 +109,7 @@ void HarfBuzzShaperBase::setNormalizedBuffer(NormalizeMode normalizeMode)
     const UChar* sourceText;
     if (normalizedString.isEmpty()) {
         m_normalizedBufferLength = m_run.length();
-        sourceText = runCharacters;
+        sourceText = m_run.characters16();
     } else {
         m_normalizedBufferLength = normalizedString.length();
         sourceText = normalizedString.getBuffer();
