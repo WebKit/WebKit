@@ -29,6 +29,7 @@
 #include "StorageArea.h"
 #include "Timer.h"
 
+#include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -64,7 +65,7 @@ namespace WebCore {
         void close();
 
         // Only called from a background thread.
-        void importItem(const String& key, const String& value);
+        void importItems(const HashMap<String, String>& items);
 
         // Used to clear a StorageArea and close db before backing db file is deleted.
         void clearForOriginDeletion();

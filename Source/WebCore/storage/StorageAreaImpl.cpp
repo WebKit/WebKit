@@ -270,10 +270,11 @@ bool StorageAreaImpl::contains(const String& key, ExceptionCode& ec, Frame* fram
     return m_storageMap->contains(key);
 }
 
-void StorageAreaImpl::importItem(const String& key, const String& value)
+void StorageAreaImpl::importItems(const HashMap<String, String>& items)
 {
     ASSERT(!m_isShutdown);
-    m_storageMap->importItem(key, value);
+
+    m_storageMap->importItems(items);
 }
 
 void StorageAreaImpl::close()

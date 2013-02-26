@@ -47,7 +47,7 @@ namespace WebCore {
 
         bool contains(const String& key) const;
 
-        void importItem(const String& key, const String& value);
+        void importItems(const HashMap<String, String>&);
 
         unsigned quota() const { return m_quotaSize; }
 

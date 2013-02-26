@@ -341,11 +341,7 @@ void StorageAreaSync::performImport()
         return;
     }
 
-    HashMap<String, String>::iterator it = itemMap.begin();
-    HashMap<String, String>::iterator end = itemMap.end();
-
-    for (; it != end; ++it)
-        m_storageArea->importItem(it->key, it->value);
+    m_storageArea->importItems(itemMap);
 
     markImported();
 }
