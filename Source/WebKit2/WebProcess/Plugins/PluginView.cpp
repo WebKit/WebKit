@@ -71,7 +71,7 @@ namespace WebKit {
 
 // This simulated mouse click delay in HTMLPlugInImageElement.cpp should generally be the same or shorter than this delay.
 static const double pluginSnapshotTimerDelay = 1.1;
-static const unsigned maximumSnapshotRetries = 4;
+static const unsigned maximumSnapshotRetries = 60;
 
 class PluginView::URLRequest : public RefCounted<URLRequest> {
 public:
@@ -1349,6 +1349,8 @@ bool PluginView::isAcceleratedCompositingEnabled()
     if (!settings)
         return false;
 
+    if (m_pluginElement->displayState() < HTMLPlugInElement::PlayingWithPendingMouseClick)
+        return false;
     return settings->acceleratedCompositingEnabled();
 }
 

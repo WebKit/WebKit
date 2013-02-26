@@ -74,6 +74,8 @@ public:
 
     virtual bool willRespondToMouseClickEvents() OVERRIDE;
 
+    virtual bool isPlugInImageElement() const { return false; }
+
 protected:
     HTMLPlugInElement(const QualifiedName& tagName, Document*);
 

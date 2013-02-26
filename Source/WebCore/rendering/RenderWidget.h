@@ -85,6 +85,8 @@ protected:
     virtual CursorDirective getCursor(const LayoutPoint&, Cursor&) const;
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation& locationInContainer, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
+    virtual void paintContents(PaintInfo&, const LayoutPoint&);
+
 private:
     virtual bool isWidget() const { return true; }
 

@@ -75,6 +75,9 @@ private:
     virtual const char* renderName() const { return "RenderEmbeddedObject"; }
     virtual bool isEmbeddedObject() const { return true; }
 
+    void paintSnapshotImage(PaintInfo&, const LayoutPoint&, Image*);
+    virtual void paintContents(PaintInfo&, const LayoutPoint&) OVERRIDE;
+
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const;
 #endif

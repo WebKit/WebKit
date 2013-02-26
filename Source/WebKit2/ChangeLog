@@ -1,3 +1,21 @@
+2013-02-26  Dean Jackson  <dino@apple.com>
+
+        Draw intermediate snapshots if possible
+        https://bugs.webkit.org/show_bug.cgi?id=110811
+
+        Reviewed by Simon Fraser.
+
+        After http://webkit.org/b/110495 we delayed snapshotting until we've
+        received a nice image, but this made the page look like it is broken.
+        We should draw any intermediate snapshots that we find, which might
+        include content such as progress bars/spinners.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit): Reinstate 60 attempts at snapshots before giving up.
+        (WebKit::PluginView::isAcceleratedCompositingEnabled): We do not
+        want accelerated compositing enabled when we are trying to capture
+        snapshots.
+
 2013-02-26  Andras Becsi  <andras.becsi@digia.com>
 
         Remove nonexistent StringPairVector.h from Target.pri after r142839

@@ -284,10 +284,14 @@ void HTMLPlugInImageElement::updateSnapshot(PassRefPtr<Image> image)
         return;
 
     m_snapshotImage = image;
+
     if (renderer()->isSnapshottedPlugIn()) {
         toRenderSnapshottedPlugIn(renderer())->updateSnapshot(image);
         return;
     }
+
+    if (renderer()->isEmbeddedObject())
+        renderer()->repaint();
 }
 
 static AtomicString classNameForShadowRoot(const Node* node)

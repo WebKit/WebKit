@@ -235,6 +235,39 @@ void RenderWidget::notifyWidget(WidgetNotification notification)
         m_widget->notifyWidget(notification);
 }
 
+void RenderWidget::paintContents(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
+{
+    LayoutPoint adjustedPaintOffset = paintOffset + location();
+
+    // Tell the widget to paint now. This is the only time the widget is allowed
+    // to paint itself. That way it will composite properly with z-indexed layers.
+    IntPoint widgetLocation = m_widget->frameRect().location();
+    IntPoint paintLocation(roundToInt(adjustedPaintOffset.x() + borderLeft() + paddingLeft()),
+        roundToInt(adjustedPaintOffset.y() + borderTop() + paddingTop()));
+    IntRect paintRect = paintInfo.rect;
+
+    IntSize widgetPaintOffset = paintLocation - widgetLocation;
+    // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
+    // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
+    if (!widgetPaintOffset.isZero()) {
+        paintInfo.context->translate(widgetPaintOffset);
+        paintRect.move(-widgetPaintOffset);
+    }
+    m_widget->paint(paintInfo.context, paintRect);
+
+    if (!widgetPaintOffset.isZero())
+        paintInfo.context->translate(-widgetPaintOffset);
+
+    if (m_widget->isFrameView()) {
+        FrameView* frameView = static_cast<FrameView*>(m_widget.get());
+        bool runOverlapTests = !frameView->useSlowRepaintsIfNotOverlapped() || frameView->hasCompositedContentIncludingDescendants();
+        if (paintInfo.overlapTestRequests && runOverlapTests) {
+            ASSERT(!paintInfo.overlapTestRequests->contains(this));
+            paintInfo.overlapTestRequests->set(this, m_widget->frameRect());
+        }
+    }
+}
+
 void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
 {
     if (!shouldPaint(paintInfo, paintOffset))
@@ -274,35 +307,8 @@ void RenderWidget::paint(PaintInfo& paintInfo, const LayoutPoint& paintOffset)
         clipRoundedInnerRect(paintInfo.context, borderRect, roundedInnerRect);
     }
 
-    if (m_widget) {
-        // Tell the widget to paint now.  This is the only time the widget is allowed
-        // to paint itself.  That way it will composite properly with z-indexed layers.
-        IntPoint widgetLocation = m_widget->frameRect().location();
-        IntPoint paintLocation(roundToInt(adjustedPaintOffset.x() + borderLeft() + paddingLeft()),
-            roundToInt(adjustedPaintOffset.y() + borderTop() + paddingTop()));
-        IntRect paintRect = paintInfo.rect;
-
-        IntSize widgetPaintOffset = paintLocation - widgetLocation;
-        // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
-        // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
-        if (!widgetPaintOffset.isZero()) {
-            paintInfo.context->translate(widgetPaintOffset);
-            paintRect.move(-widgetPaintOffset);
-        }
-        m_widget->paint(paintInfo.context, paintRect);
-
-        if (!widgetPaintOffset.isZero())
-            paintInfo.context->translate(-widgetPaintOffset);
-
-        if (m_widget->isFrameView()) {
-            FrameView* frameView = static_cast<FrameView*>(m_widget.get());
-            bool runOverlapTests = !frameView->useSlowRepaintsIfNotOverlapped() || frameView->hasCompositedContentIncludingDescendants();
-            if (paintInfo.overlapTestRequests && runOverlapTests) {
-                ASSERT(!paintInfo.overlapTestRequests->contains(this));
-                paintInfo.overlapTestRequests->set(this, m_widget->frameRect());
-            }
-         }
-    }
+    if (m_widget)
+        paintContents(paintInfo, paintOffset);
 
     if (style()->hasBorderRadius())
         paintInfo.context->restore();

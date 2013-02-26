@@ -66,6 +66,7 @@ public:
 
     void userDidClickSnapshot(PassRefPtr<MouseEvent>);
     void updateSnapshotInfo();
+    Image* snapshotImage() const { return m_snapshotImage.get(); }
 
     // Plug-in URL might not be the same as url() with overriding parameters.
     void subframeLoaderWillCreatePlugIn(const KURL& plugInURL);
@@ -110,6 +111,8 @@ private:
     void simulatedMouseClickTimerFired(DeferrableOneShotTimer<HTMLPlugInImageElement>*);
 
     void swapRendererTimerFired(Timer<HTMLPlugInImageElement>*);
+
+    virtual bool isPlugInImageElement() const OVERRIDE { return true; }
 
     bool m_needsWidgetUpdate;
     bool m_shouldPreferPlugInsForImages;
