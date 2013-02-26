@@ -1820,7 +1820,7 @@ void Element::addAttributeInternal(const QualifiedName& name, const AtomicString
 {
     if (!inSynchronizationOfLazyAttribute)
         willModifyAttribute(name, nullAtom, value);
-    ensureUniqueElementData()->addAttribute(Attribute(name, value));
+    ensureUniqueElementData()->addAttribute(name, value);
     if (!inSynchronizationOfLazyAttribute)
         didAddAttribute(name, value);
 }
@@ -2969,7 +2969,7 @@ ShareableElementData::ShareableElementData(const UniqueElementData& other)
     }
 
     for (unsigned i = 0; i < m_arraySize; ++i)
-        new (&reinterpret_cast<Attribute*>(&m_attributeArray)[i]) Attribute(*other.attributeItem(i));
+        new (&m_attributeArray[i]) Attribute(other.m_attributeVector.at(i));
 }
 
 ElementData::ElementData(const ElementData& other, bool isUnique)
@@ -3019,21 +3019,19 @@ PassRefPtr<UniqueElementData> ElementData::makeUniqueCopy() const
 
 PassRefPtr<ShareableElementData> UniqueElementData::makeShareableCopy() const
 {
-    void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(mutableAttributeVector().size()));
+    void* slot = WTF::fastMalloc(sizeForShareableElementDataWithAttributeCount(m_attributeVector.size()));
     return adoptRef(new (slot) ShareableElementData(*this));
 }
 
-void ElementData::addAttribute(const Attribute& attribute)
+void UniqueElementData::addAttribute(const QualifiedName& attributeName, const AtomicString& value)
 {
-    ASSERT(isUnique());
-    mutableAttributeVector().append(attribute);
+    m_attributeVector.append(Attribute(attributeName, value));
 }
 
-void ElementData::removeAttribute(size_t index)
+void UniqueElementData::removeAttribute(size_t index)
 {
-    ASSERT(isUnique());
     ASSERT_WITH_SECURITY_IMPLICATION(index < length());
-    mutableAttributeVector().remove(index);
+    m_attributeVector.remove(index);
 }
 
 bool ElementData::isEquivalent(const ElementData* other) const
@@ -3063,8 +3061,9 @@ void ElementData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_classNames, "classNames");
     info.addMember(m_idForStyleResolution, "idForStyleResolution");
     if (m_isUnique) {
-        info.addMember(presentationAttributeStyle(), "presentationAttributeStyle()");
-        info.addMember(mutableAttributeVector(), "mutableAttributeVector");
+        const UniqueElementData* uniqueThis = static_cast<const UniqueElementData*>(this);
+        info.addMember(uniqueThis->m_presentationAttributeStyle, "presentationAttributeStyle");
+        info.addMember(uniqueThis->m_attributeVector, "attributeVector");
     }
     for (unsigned i = 0, len = length(); i < len; i++)
         info.addMember(*attributeItem(i), "*attributeItem");
@@ -3087,6 +3086,21 @@ size_t ElementData::getAttributeItemIndexSlowCase(const AtomicString& name, bool
         }
     }
     return notFound;
+}
+
+Attribute* UniqueElementData::getAttributeItem(const QualifiedName& name)
+{
+    for (unsigned i = 0; i < length(); ++i) {
+        if (m_attributeVector.at(i).name().matches(name))
+            return &m_attributeVector.at(i);
+    }
+    return 0;
+}
+
+Attribute* UniqueElementData::attributeItem(unsigned index)
+{
+    ASSERT_WITH_SECURITY_IMPLICATION(index < length());
+    return &m_attributeVector.at(index);
 }
 
 } // namespace WebCore

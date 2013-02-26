@@ -624,6 +624,7 @@ void HTMLDocumentParser::startBackgroundParser()
     config->preloadScanner = adoptPtr(new TokenPreloadScanner(document()->url().copy()));
 
     ASSERT(config->xssAuditor->isSafeToSendToAnotherThread());
+    ASSERT(config->preloadScanner->isSafeToSendToAnotherThread());
     HTMLParserThread::shared()->postTask(bind(&BackgroundHTMLParser::create, reference.release(), config.release()));
 }
 

@@ -50,20 +50,29 @@ void CSSPreloadScanner::reset()
     m_ruleValue.clear();
 }
 
-void CSSPreloadScanner::scan(const UChar* begin, const UChar* end, Vector<OwnPtr<PreloadRequest> >& requests)
+template<typename Char>
+void CSSPreloadScanner::scanCommon(const Char* begin, const Char* end, PreloadRequestStream& requests)
 {
     m_requests = &requests;
-    for (const UChar* it = begin; it != end && m_state != DoneParsingImportRules; ++it)
+    for (const Char* it = begin; it != end && m_state != DoneParsingImportRules; ++it)
         tokenize(*it);
     m_requests = 0;
 }
 
-void CSSPreloadScanner::scan(const LChar* begin, const LChar* end, Vector<OwnPtr<PreloadRequest> >& requests)
+void CSSPreloadScanner::scan(const HTMLToken::DataVector& data, PreloadRequestStream& requests)
 {
-    m_requests = &requests;
-    for (const LChar* it = begin; it != end && m_state != DoneParsingImportRules; ++it)
-        tokenize(*it);
-    m_requests = 0;
+    scanCommon(data.data(), data.data() + data.size(), requests);
+}
+
+void CSSPreloadScanner::scan(const String& data, PreloadRequestStream& requests)
+{
+    if (data.is8Bit()) {
+        const LChar* begin = data.characters8();
+        scanCommon(begin, begin + data.length(), requests);
+        return;
+    }
+    const UChar* begin = data.characters16();
+    scanCommon(begin, begin + data.length(), requests);
 }
 
 inline void CSSPreloadScanner::tokenize(UChar c)
@@ -204,8 +213,7 @@ void CSSPreloadScanner::emitRule()
         String url = parseCSSStringOrURL(m_ruleValue.characters(), m_ruleValue.length());
         if (!url.isEmpty()) {
             KURL baseElementURL; // FIXME: This should be passed in from the HTMLPreloadScaner via scan()!
-            OwnPtr<PreloadRequest> request = PreloadRequest::create(
-                cachedResourceRequestInitiators().css, url, baseElementURL, CachedResource::CSSStyleSheet);
+            OwnPtr<PreloadRequest> request = PreloadRequest::create("css", url, baseElementURL, CachedResource::CSSStyleSheet);
             // FIXME: Should this be including the charset in the preload request?
             m_requests->append(request.release());
         }
