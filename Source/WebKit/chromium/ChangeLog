@@ -1,3 +1,17 @@
+2013-02-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove unused WebWidget::instrument calls
+        https://bugs.webkit.org/show_bug.cgi?id=110906
+
+        Reviewed by Jochen Eisinger.
+
+        These calls are now routed through WebDevToolsAgent.
+
+        * public/WebWidget.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::willBeginFrame):
+        * src/WebViewImpl.h:
+
 2013-02-20  Alpha Lam  <hclam@chromium.org>
 
         GIFImageReader to read from source data directly

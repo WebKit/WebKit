@@ -1808,18 +1808,6 @@ void WebViewImpl::didExitFullScreen()
 #endif
 }
 
-void WebViewImpl::instrumentBeginFrame()
-{
-    if (m_devToolsAgent)
-        m_devToolsAgent->didBeginFrame();
-}
-
-void WebViewImpl::instrumentCancelFrame()
-{
-    if (m_devToolsAgent)
-        m_devToolsAgent->didCancelFrame();
-}
-
 #if ENABLE(BATTERY_STATUS)
 void WebViewImpl::updateBatteryStatus(const WebBatteryStatus& status)
 {
@@ -1845,7 +1833,6 @@ void WebViewImpl::animate(double)
 
 void WebViewImpl::willBeginFrame()
 {
-    instrumentBeginFrame();
     m_client->willBeginCompositorFrame();
 }
 
