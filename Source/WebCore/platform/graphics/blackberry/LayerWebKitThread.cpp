@@ -171,8 +171,12 @@ void LayerWebKitThread::commitPendingTextureUploads()
 void LayerWebKitThread::setContents(Image* contents)
 {
     // Check if the image has changed.
-    if (m_contents == contents)
+    if (m_contents == contents) {
+        // Set needs display for animated images.
+        if (contents)
+            setNeedsDisplay();
         return;
+    }
     m_contents = contents;
     setNeedsTexture(m_isDrawable && (this->contents() || drawsContent() || pluginView()));
 
