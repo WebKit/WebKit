@@ -4412,3 +4412,22 @@ crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ ImageOnlyFailure ]
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ ImageOnlyFailure ]
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ ImageOnlyFailure ]
+
+# These tests are timing out since r144032
+webkit.org/b/110876 html5lib/generated/run-doctype01-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-domjs-unsafe-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-entities01-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-plain-text-unsafe-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-scriptdata01-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-template-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests1-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests10-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests16-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests19-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests2-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests20-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests6-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests7-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-tests9-data.html [ Timeout Pass ]
+webkit.org/b/110876 html5lib/generated/run-webkit01-data.html [ Timeout Pass ]
+
