@@ -705,6 +705,7 @@
 		A7FB60A4103F7DC20017A286 /* PropertyDescriptor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A7FB60A3103F7DC20017A286 /* PropertyDescriptor.cpp */; };
 		A7FB61001040C38B0017A286 /* PropertyDescriptor.h in Headers */ = {isa = PBXBuildFile; fileRef = A7FB604B103F5EAB0017A286 /* PropertyDescriptor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		A8A4748E151A8306004123FF /* libWTF.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A8A4748D151A8306004123FF /* libWTF.a */; };
+		ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */; };
 		BC02E90D0E1839DB000F9297 /* ErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9050E1839DB000F9297 /* ErrorConstructor.h */; };
 		BC02E90F0E1839DB000F9297 /* ErrorPrototype.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9070E1839DB000F9297 /* ErrorPrototype.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC02E9110E1839DB000F9297 /* NativeErrorConstructor.h in Headers */ = {isa = PBXBuildFile; fileRef = BC02E9090E1839DB000F9297 /* NativeErrorConstructor.h */; };
@@ -1622,6 +1623,7 @@
 		A8A4748D151A8306004123FF /* libWTF.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWTF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		A8E894310CD0602400367179 /* JSCallbackObjectFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSCallbackObjectFunctions.h; sourceTree = "<group>"; };
 		A8E894330CD0603F00367179 /* JSGlobalObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSGlobalObject.h; sourceTree = "<group>"; };
+		AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PropertyTable.cpp; sourceTree = "<group>"; };
 		BC021BF2136900C300FC5467 /* ToolExecutable.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ToolExecutable.xcconfig; sourceTree = "<group>"; };
 		BC02E9040E1839DB000F9297 /* ErrorConstructor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ErrorConstructor.cpp; sourceTree = "<group>"; };
 		BC02E9050E1839DB000F9297 /* ErrorConstructor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ErrorConstructor.h; sourceTree = "<group>"; };
@@ -2512,6 +2514,7 @@
 				65621E6B089E859700760F35 /* PropertySlot.cpp */,
 				65621E6C089E859700760F35 /* PropertySlot.h */,
 				0FB7F39015ED8E3800F167B2 /* PropertyStorage.h */,
+				AD1CF06816DCAB2D00B97123 /* PropertyTable.cpp */,
 				65C02FBB0637462A003E7EE6 /* Protect.h */,
 				14D844A216AA2C7000A65AF0 /* PrototypeMap.cpp */,
 				14D844A316AA2C7000A65AF0 /* PrototypeMap.h */,
@@ -4031,6 +4034,7 @@
 				0FBE0F7416C1DB090082C5E8 /* DFGPredictionInjectionPhase.cpp in Sources */,
 				0FBE0F7616C1DB0F0082C5E8 /* DFGUnificationPhase.cpp in Sources */,
 				0F493AFA16D0CAD30084508B /* SourceProvider.cpp in Sources */,
+				ADE39FFF16DD144B0003CD4A /* PropertyTable.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
