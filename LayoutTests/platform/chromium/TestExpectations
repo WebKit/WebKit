@@ -169,7 +169,6 @@ crbug.com/89468 css3/selectors3/xhtml/css3-modsel-d1b.xml [ Failure ImageOnlyFai
 crbug.com/89468 css3/selectors3/xhtml/css3-modsel-d2.xml [ Failure ImageOnlyFailure ]
 crbug.com/89468 css3/selectors3/xhtml/css3-modsel-d3.xml [ Failure ImageOnlyFailure ]
 crbug.com/89468 css3/selectors3/xhtml/css3-modsel-d4.xml [ Failure ImageOnlyFailure ]
-crbug.com/89468 css3/selectors3/xml/css3-modsel-15c.xml [ Failure ImageOnlyFailure ]
 crbug.com/89468 webkit.org/b/82122 css3/selectors3/xml/css3-modsel-d1.xml [ Failure ImageOnlyFailure ]
 crbug.com/89468 webkit.org/b/82122 css3/selectors3/xml/css3-modsel-d1b.xml [ Failure ImageOnlyFailure ]
 crbug.com/89468 webkit.org/b/82122 css3/selectors3/xml/css3-modsel-d2.xml [ Failure ImageOnlyFailure ]
@@ -1281,9 +1280,6 @@ webkit.org/b/60118 [ Mac ] svg/dom/SVGScriptElement/script-set-href.svg [ Failur
 
 # Introduced due to BUGWK53512, fails under Skia right now
 webkit.org/b/65939 svg/custom/getBBox-path.svg [ Failure ]
-
-# Failure: drawing a filled shadow for a fill=transparent rectangle.
-webkit.org/b/76557 svg/custom/transform-with-shadow-and-gradient.svg [ ImageOnlyFailure ]
 
 webkit.org/b/78422 [ Android Linux Win ] svg/animations/animate-text-nested-transforms.html [ Failure ]
 
@@ -3158,7 +3154,6 @@ webkit.org/b/79862 fast/js/read-modify-eval.html [ Failure ]
 code.google.com/p/v8/issues/detail?id=1973 fast/js/caller-property.html [ Failure ]
 
 webkit.org/b/78684 [ Android ] fast/block/basic/fieldset-stretch-to-legend.html [ Failure ]
-webkit.org/b/78684 fast/borders/fieldsetBorderRadius.html [ Failure ]
 
 webkit.org/b/80498 [ Linux Win ] fast/workers/worker-multi-startup.html [ Crash Pass ]
 
@@ -3925,7 +3920,6 @@ webkit.org/b/96953 http/tests/inspector/network/network-xhr-replay.html [ Timeou
 
 webkit.org/b/96596 fast/js/array-bad-time.html [ Failure ]
 webkit.org/b/96596 fast/js/array-slow-put.html [ Failure ]
-webkit.org/b/96596 fast/js/cross-frame-bad-time.html [ Failure ]
 webkit.org/b/96596 fast/js/object-bad-time.html [ Failure ]
 webkit.org/b/96596 fast/js/object-slow-put.html [ Failure ]
 webkit.org/b/96962 fast/js/cross-frame-really-bad-time.html [ Failure ]
@@ -3997,7 +3991,6 @@ webkit.org/b/100324 css3/supports-dom-api.html
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
 # Require rebaselining after webkit.org/b/97800
-webkit.org/b/89167 media/track/track-cue-rendering-horizontal.html [ Failure ]
 webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
 # [Chromium-Android] Subtitles (and video) do not work on Android (Disabled to make linter happy)
 #webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
@@ -4324,11 +4317,6 @@ webkit.org/b/108065 [ Debug ] tables/mozilla_expected_failures/bugs/bug2479-5.ht
 
 webkit.org/b/106609 [ Win ] animations/fill-mode-iteration-count-non-integer.html [ Failure ]
 
-# Ref tests that now fail with Skia changes
-crbug.com/169602 fast/backgrounds/background-opaque-clipped-gradients.html [ ImageOnlyFailure ]
-crbug.com/169602 fast/backgrounds/background-opaque-images-over-color.html [ ImageOnlyFailure ]
-crbug.com/169602 fast/backgrounds/gradient-background-shadow.html [ ImageOnlyFailure ]
-
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Crash ]
 webkit.org/b/106858 [ Linux Win Debug ] scrollingcoordinator/non-fast-scrollable-region-transformed-iframe.html [ ImageOnlyFailure Pass ]
 webkit.org/b/106858 [ Mac Debug ] scrollingcoordinator/non-fast-scrollable-region-scaled-iframe.html [ ImageOnlyFailure ]
@@ -4352,14 +4340,11 @@ webkit.org/b/109507 compositing/layer-creation/fixed-position-out-of-view-scaled
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
 webkit.org/b/109507 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
 
-# New clamping logic in the tile shader will causes slight diffs. These images must be rebaselined.
-crbug.com/170722 [ Mac Win Linux ] compositing/color-matching/image-color-matching.html [ ImageOnlyFailure ]
-crbug.com/170722 [ Mac Win Linux ] compositing/visibility/visibility-image-layers.html [ ImageOnlyFailure ]
-crbug.com/170722 fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ ImageOnlyFailure ]
+# Flaky on most platforms
+webkit.org/b/110873 fast/sub-pixel/transformed-iframe-copy-on-scroll.html [ ImageOnlyFailure Pass ]
 
 webkit.org/b/107899 [ Linux Win Android ] fast/repaint/selection-clear.html [ ImageOnlyFailure ]
 
-webkit.org/b/107962 http/tests/misc/favicon-loads-with-images-disabled.html [ Failure ]
 webkit.org/b/107962 http/tests/loading/redirect-methods.html [ Failure ]
 webkit.org/b/107962 http/tests/cache/cached-main-resource.html [ Failure ]
 webkit.org/b/107962 http/tests/cache/iframe-304-crash.html [ Failure ]
@@ -4374,8 +4359,6 @@ webkit.org/b/107953 inspector-protocol/debugger-terminate-dedicated-worker-while
 
 webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-down.html [ ImageOnlyFailure ]
 webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale-down.html [ ImageOnlyFailure ]
-
-webkit.org/b/108424 media/video-error-does-not-exist.html [ Failure Crash ]
 
 webkit.org/b/108781 [ Win ] fast/css-grid-layout/grid-preferred-logical-widths.html [ Timeout ]
 webkit.org/b/108789 [ Win Mac ] http/tests/workers/terminate-during-sync-operation.html [ Pass Timeout ]
@@ -4400,8 +4383,6 @@ webkit.org/b/109416 [ Mac ] inspector/editor/text-editor-home-button.html [ Fail
 webkit.org/b/109963 [ Debug ] inspector/profiler/heap-snapshot-get-profile-crash.html [ Pass Crash ]
 
 webkit.org/b/109581 [ Win ] inspector/debugger/debugger-script-preprocessor.html [ Pass Crash ]
-
-crbug.com/176843 fast/filesystem/op-restricted-names.html [ Failure ]
 
 webkit.org/b/110247 [ Debug ] fast/workers/storage/interrupt-database.html [ Pass Crash Slow ]
 
