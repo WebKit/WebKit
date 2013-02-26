@@ -114,13 +114,13 @@ void DOMURL::revokeObjectURL(ScriptExecutionContext* scriptExecutionContext, con
     if (!scriptExecutionContext)
         return;
 
-    ResourceRequest request(urlString);
+    KURL url(KURL(), urlString);
+    ResourceRequest request(url);
 #if ENABLE(CACHE_PARTITIONING)
     request.setCachePartition(scriptExecutionContext->topOrigin()->cachePartition());
 #endif
     MemoryCache::removeRequestFromCache(scriptExecutionContext, request);
 
-    KURL url(KURL(), urlString);
     HashSet<String>& blobURLs = scriptExecutionContext->publicURLManager().blobURLs();
     if (blobURLs.contains(url.string())) {
         ThreadableBlobRegistry::unregisterBlobURL(url);
