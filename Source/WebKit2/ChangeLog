@@ -1,3 +1,15 @@
+2013-02-25  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION(r143981): Crash in WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
+        https://bugs.webkit.org/show_bug.cgi?id=110848
+
+        Reviewed by Ryosuke Niwa.
+
+        NULL-check the result of document->documentElement().
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidStartProvisionalLoad):
+
 2013-02-25  Anders Carlsson  <andersca@apple.com>
 
         Add a new unavailablePluginButtonClicked callback that takes a WKDictionary of plug-in information

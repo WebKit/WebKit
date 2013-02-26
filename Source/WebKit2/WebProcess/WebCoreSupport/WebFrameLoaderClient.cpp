@@ -383,7 +383,8 @@ void WebFrameLoaderClient::dispatchDidStartProvisionalLoad()
         return;
 
 #if ENABLE(FULLSCREEN_API)
-    if (m_frame->coreFrame()->document()->documentElement()->containsFullScreenElement())
+    Element* documentElement = m_frame->coreFrame()->document()->documentElement();
+    if (documentElement && documentElement->containsFullScreenElement())
         webPage->fullScreenManager()->exitFullScreenForElement(webPage->fullScreenManager()->element());
 #endif
 
