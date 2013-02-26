@@ -1,3 +1,14 @@
+2013-02-25  James Robinson  <jamesr@chromium.org>
+
+        [chromium] WebViewImpl::m_client can be null in some unit tests, check it before calling
+        https://bugs.webkit.org/show_bug.cgi?id=110834
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::suppressInvalidations):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+
 2013-02-25  Ken Kania  <kkania@chromium.org>
 
         Remove browser patching mechanism for handling javascript dialogs in chromium port
