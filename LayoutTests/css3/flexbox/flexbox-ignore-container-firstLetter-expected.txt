@@ -1,0 +1,7 @@
+This test flex item should ignore container's firstLetter pseudo element.
+
+The first item.
+
+The second item.
+
+PASS
