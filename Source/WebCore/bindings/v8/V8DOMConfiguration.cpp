@@ -50,14 +50,14 @@ void V8DOMConfiguration::batchConfigureConstants(v8::Handle<v8::FunctionTemplate
     }
 }
 
-void V8DOMConfiguration::batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> prototype, v8::Handle<v8::Signature> signature, v8::PropertyAttribute attributes, const BatchedCallback* callbacks, size_t callbackCount, v8::Isolate*)
+void V8DOMConfiguration::batchConfigureCallbacks(v8::Handle<v8::ObjectTemplate> prototype, v8::Handle<v8::Signature> signature, v8::PropertyAttribute attributes, const BatchedMethod* callbacks, size_t callbackCount, v8::Isolate*)
 {
     for (size_t i = 0; i < callbackCount; ++i)
         prototype->Set(v8::String::NewSymbol(callbacks[i].name), v8::FunctionTemplate::New(callbacks[i].callback, v8Undefined(), signature), attributes);
 }
 
 v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8::FunctionTemplate> functionDescriptor, const char* interfaceName, v8::Persistent<v8::FunctionTemplate> parentClass,
-    size_t fieldCount, const BatchedAttribute* attributes, size_t attributeCount, const BatchedCallback* callbacks, size_t callbackCount, v8::Isolate* isolate)
+    size_t fieldCount, const BatchedAttribute* attributes, size_t attributeCount, const BatchedMethod* callbacks, size_t callbackCount, v8::Isolate* isolate)
 {
     functionDescriptor->SetClassName(v8::String::NewSymbol(interfaceName));
     v8::Local<v8::ObjectTemplate> instance = functionDescriptor->InstanceTemplate();

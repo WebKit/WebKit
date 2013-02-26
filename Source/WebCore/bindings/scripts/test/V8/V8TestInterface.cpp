@@ -381,7 +381,7 @@ static const V8DOMConfiguration::BatchedAttribute V8TestInterfaceAttrs[] = {
 #endif // ENABLE(Condition11) || ENABLE(Condition12)
 };
 
-static const V8DOMConfiguration::BatchedCallback V8TestInterfaceCallbacks[] = {
+static const V8DOMConfiguration::BatchedMethod V8TestInterfaceMethods[] = {
 #if ENABLE(Condition11) || ENABLE(Condition12)
     {"supplementalMethod1", TestInterfaceV8Internal::supplementalMethod1MethodCallback},
 #endif
@@ -425,7 +425,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestInterface::internalFieldCount,
         V8TestInterfaceAttrs, WTF_ARRAY_LENGTH(V8TestInterfaceAttrs),
-        V8TestInterfaceCallbacks, WTF_ARRAY_LENGTH(V8TestInterfaceCallbacks), isolate);
+        V8TestInterfaceMethods, WTF_ARRAY_LENGTH(V8TestInterfaceMethods), isolate);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
 #if ENABLE(TEST_INTERFACE)
     desc->SetCallHandler(V8TestInterface::constructorCallback);

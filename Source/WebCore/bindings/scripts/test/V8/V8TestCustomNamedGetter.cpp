@@ -87,7 +87,7 @@ static v8::Handle<v8::Value> anotherFunctionMethodCallback(const v8::Arguments& 
 
 } // namespace TestCustomNamedGetterV8Internal
 
-static const V8DOMConfiguration::BatchedCallback V8TestCustomNamedGetterCallbacks[] = {
+static const V8DOMConfiguration::BatchedMethod V8TestCustomNamedGetterMethods[] = {
     {"anotherFunction", TestCustomNamedGetterV8Internal::anotherFunctionMethodCallback},
 };
 
@@ -98,7 +98,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestCustomNamedGetterTemp
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestCustomNamedGetter", v8::Persistent<v8::FunctionTemplate>(), V8TestCustomNamedGetter::internalFieldCount,
         0, 0,
-        V8TestCustomNamedGetterCallbacks, WTF_ARRAY_LENGTH(V8TestCustomNamedGetterCallbacks), isolate);
+        V8TestCustomNamedGetterMethods, WTF_ARRAY_LENGTH(V8TestCustomNamedGetterMethods), isolate);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();

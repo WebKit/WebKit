@@ -2898,7 +2898,7 @@ static const V8DOMConfiguration::BatchedAttribute V8TestObjAttrs[] = {
     {"replaceableAttribute", TestObjV8Internal::replaceableAttributeAttrGetterCallback, TestObjV8Internal::TestObjReplaceableAttrSetter, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static const V8DOMConfiguration::BatchedCallback V8TestObjCallbacks[] = {
+static const V8DOMConfiguration::BatchedMethod V8TestObjMethods[] = {
     {"voidMethod", TestObjV8Internal::voidMethodMethodCallback},
     {"longMethod", TestObjV8Internal::longMethodMethodCallback},
     {"objMethod", TestObjV8Internal::objMethodMethodCallback},
@@ -3001,7 +3001,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestObject", v8::Persistent<v8::FunctionTemplate>(), V8TestObj::internalFieldCount,
         V8TestObjAttrs, WTF_ARRAY_LENGTH(V8TestObjAttrs),
-        V8TestObjCallbacks, WTF_ARRAY_LENGTH(V8TestObjCallbacks), isolate);
+        V8TestObjMethods, WTF_ARRAY_LENGTH(V8TestObjMethods), isolate);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8TestObj::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();

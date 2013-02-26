@@ -292,7 +292,7 @@ static const V8DOMConfiguration::BatchedAttribute V8TestSerializedScriptValueInt
     {"cachedReadonlyValue", TestSerializedScriptValueInterfaceV8Internal::cachedReadonlyValueAttrGetterCallback, 0, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static const V8DOMConfiguration::BatchedCallback V8TestSerializedScriptValueInterfaceCallbacks[] = {
+static const V8DOMConfiguration::BatchedMethod V8TestSerializedScriptValueInterfaceMethods[] = {
     {"acceptTransferList", TestSerializedScriptValueInterfaceV8Internal::acceptTransferListMethodCallback},
     {"multiTransferList", TestSerializedScriptValueInterfaceV8Internal::multiTransferListMethodCallback},
 };
@@ -315,7 +315,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestSerializedScriptValue
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestSerializedScriptValueInterface", v8::Persistent<v8::FunctionTemplate>(), V8TestSerializedScriptValueInterface::internalFieldCount,
         V8TestSerializedScriptValueInterfaceAttrs, WTF_ARRAY_LENGTH(V8TestSerializedScriptValueInterfaceAttrs),
-        V8TestSerializedScriptValueInterfaceCallbacks, WTF_ARRAY_LENGTH(V8TestSerializedScriptValueInterfaceCallbacks), isolate);
+        V8TestSerializedScriptValueInterfaceMethods, WTF_ARRAY_LENGTH(V8TestSerializedScriptValueInterfaceMethods), isolate);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8TestSerializedScriptValueInterface::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();

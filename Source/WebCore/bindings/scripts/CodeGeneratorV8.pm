@@ -2888,7 +2888,7 @@ END
         next if !IsStandardFunction($interface, $function);
         if (!$has_callbacks) {
             $has_callbacks = 1;
-            push(@implContent, "static const V8DOMConfiguration::BatchedCallback ${v8InterfaceName}Callbacks[] = {\n");
+            push(@implContent, "static const V8DOMConfiguration::BatchedMethod ${v8InterfaceName}Methods[] = {\n");
         }
         my $name = $function->signature->name;
         my $conditionalString = $codeGenerator->GenerateConditionalString($function->signature);
@@ -3012,7 +3012,7 @@ END
 
     if ($has_callbacks) {
         push(@implContent, <<END);
-        ${v8InterfaceName}Callbacks, WTF_ARRAY_LENGTH(${v8InterfaceName}Callbacks), isolate);
+        ${v8InterfaceName}Methods, WTF_ARRAY_LENGTH(${v8InterfaceName}Methods), isolate);
 END
     } else {
         push(@implContent, <<END);

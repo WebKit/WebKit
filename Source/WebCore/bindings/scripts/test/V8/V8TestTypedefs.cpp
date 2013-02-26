@@ -508,7 +508,7 @@ static const V8DOMConfiguration::BatchedAttribute V8TestTypedefsAttrs[] = {
     {"stringAttrWithSetterException", TestTypedefsV8Internal::stringAttrWithSetterExceptionAttrGetterCallback, TestTypedefsV8Internal::stringAttrWithSetterExceptionAttrSetterCallback, 0 /* no data */, static_cast<v8::AccessControl>(v8::DEFAULT), static_cast<v8::PropertyAttribute>(v8::None), 0 /* on instance */},
 };
 
-static const V8DOMConfiguration::BatchedCallback V8TestTypedefsCallbacks[] = {
+static const V8DOMConfiguration::BatchedMethod V8TestTypedefsMethods[] = {
     {"func", TestTypedefsV8Internal::funcMethodCallback},
     {"multiTransferList", TestTypedefsV8Internal::multiTransferListMethodCallback},
     {"setShadow", TestTypedefsV8Internal::setShadowMethodCallback},
@@ -535,7 +535,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestTypedefsTemplate(v8::
     v8::Local<v8::Signature> defaultSignature;
     defaultSignature = V8DOMConfiguration::configureTemplate(desc, "TestTypedefs", v8::Persistent<v8::FunctionTemplate>(), V8TestTypedefs::internalFieldCount,
         V8TestTypedefsAttrs, WTF_ARRAY_LENGTH(V8TestTypedefsAttrs),
-        V8TestTypedefsCallbacks, WTF_ARRAY_LENGTH(V8TestTypedefsCallbacks), isolate);
+        V8TestTypedefsMethods, WTF_ARRAY_LENGTH(V8TestTypedefsMethods), isolate);
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
     desc->SetCallHandler(V8TestTypedefs::constructorCallback);
     v8::Local<v8::ObjectTemplate> instance = desc->InstanceTemplate();
