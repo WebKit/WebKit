@@ -383,8 +383,14 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
             break;
 
         if (!isParsingFragment()
-            && document()->frame() && document()->frame()->navigationScheduler()->locationChangePending())
+            && document()->frame() && document()->frame()->navigationScheduler()->locationChangePending()) {
+
+            // To match main-thread parser behavior (which never checks locationChangePending on the EOF path)
+            // we peek to see if this chunk has an EOF and process it anyway.
+            if (tokens->last().type() == HTMLToken::EndOfFile)
+                prepareToStopParsing();
             break;
+        }
 
         if (isWaitingForScripts()) {
             ASSERT(it + 1 == tokens->end()); // The </script> is assumed to be the last token of this bunch.
