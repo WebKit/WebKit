@@ -114,6 +114,7 @@ public:
 
     virtual void getAllocatedObjects(HashSet<const void*>&);
     virtual void dumpUncountedAllocatedObjects(const HashMap<const void*, size_t>&);
+    virtual void setTraceEventCallback(TraceEventCallback);
 
     virtual bool captureScreenshot(WTF::String* data);
 
