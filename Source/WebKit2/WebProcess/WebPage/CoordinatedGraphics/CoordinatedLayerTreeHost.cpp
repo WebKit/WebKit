@@ -195,9 +195,9 @@ void CoordinatedLayerTreeHost::setNonCompositedContentsNeedDisplayInRect(const W
     scheduleLayerFlush();
 }
 
-void CoordinatedLayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect& scrollRect)
+void CoordinatedLayerTreeHost::scrollNonCompositedContents(const WebCore::IntRect&)
 {
-    setNonCompositedContentsNeedDisplayInRect(scrollRect);
+    // Do nothing because we scroll using TiledBackingStore.
 }
 
 void CoordinatedLayerTreeHost::forceRepaint()
