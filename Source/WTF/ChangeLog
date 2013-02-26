@@ -1,3 +1,15 @@
+2013-02-26  Oliver Hunt  <oliver@apple.com>
+
+        Appease static analyzer warning about null string passed to strlen
+        https://bugs.webkit.org/show_bug.cgi?id=110658
+
+        Reviewed by Benjamin Poulain.
+
+        Add a null check before calling strlen
+
+        * wtf/Threading.cpp:
+        (WTF::createThread):
+
 2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix attempt after r143996.
