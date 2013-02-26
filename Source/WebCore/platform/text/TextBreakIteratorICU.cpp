@@ -23,8 +23,6 @@
 #include "TextBreakIterator.h"
 
 #include "LineBreakIteratorPoolICU.h"
-#include <unicode/ubrk.h>
-#include <unicode/uloc.h>
 #include <wtf/Atomics.h>
 #include <wtf/text/WTFString.h>
 
@@ -262,9 +260,9 @@ TextBreakIterator* wordBreakIterator(const UChar* string, int length)
         staticWordBreakIterator, UBRK_WORD, string, length);
 }
 
-TextBreakIterator* acquireLineBreakIterator(const LChar* string, int length, const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
+TextBreakIterator* acquireLineBreakIterator(const LChar* string, int length, const AtomicString& locale)
 {
-    TextBreakIterator* iterator = LineBreakIteratorPool::sharedPool().take(locale, mode, isCJK);
+    UBreakIterator* iterator = LineBreakIteratorPool::sharedPool().take(locale);
     if (!iterator)
         return 0;
 
@@ -280,9 +278,8 @@ TextBreakIterator* acquireLineBreakIterator(const LChar* string, int length, con
         return 0;
     }
 
-    UBreakIterator* ubrkIter = reinterpret_cast<UBreakIterator*>(iterator);
     UErrorCode setTextStatus = U_ZERO_ERROR;
-    ubrk_setUText(ubrkIter, uTextLatin1, &setTextStatus);
+    ubrk_setUText(iterator, uTextLatin1, &setTextStatus);
     if (U_FAILURE(setTextStatus)) {
         LOG_ERROR("ubrk_setUText failed with status %d", setTextStatus);
         return 0;
@@ -290,101 +287,30 @@ TextBreakIterator* acquireLineBreakIterator(const LChar* string, int length, con
 
     utext_close(uTextLatin1);
 
-    return iterator;
+    return reinterpret_cast<TextBreakIterator*>(iterator);
 }
 
-TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
+TextBreakIterator* acquireLineBreakIterator(const UChar* string, int length, const AtomicString& locale)
 {
-    TextBreakIterator* iterator = LineBreakIteratorPool::sharedPool().take(locale, mode, isCJK);
+    UBreakIterator* iterator = LineBreakIteratorPool::sharedPool().take(locale);
     if (!iterator)
         return 0;
 
-    UBreakIterator* ubrkIter = reinterpret_cast<UBreakIterator*>(iterator);
     UErrorCode setTextStatus = U_ZERO_ERROR;
-    ubrk_setText(ubrkIter, string, length, &setTextStatus);
+    ubrk_setText(iterator, string, length, &setTextStatus);
     if (U_FAILURE(setTextStatus)) {
         LOG_ERROR("ubrk_setText failed with status %d", setTextStatus);
         return 0;
     }
 
-    return iterator;
+    return reinterpret_cast<TextBreakIterator*>(iterator);
 }
 
 void releaseLineBreakIterator(TextBreakIterator* iterator)
 {
     ASSERT_ARG(iterator, iterator);
 
-    LineBreakIteratorPool::sharedPool().put(iterator);
-}
-
-// Recognize BCP47 compliant primary language values of 'zh', 'ja', 'ko'
-// (in any combination of case), optionally followed by subtags. Don't
-// recognize 3-letter variants 'chi'/'zho', 'jpn', or 'kor' since BCP47
-// requires use of shortest language tag.
-template<typename T>
-static bool isCJKLocale(const T* s, size_t length)
-{
-    if (!s || length < 2)
-        return false;
-    T c1 = s[0];
-    T c2 = s[1];
-    T c3 = length == 2 ? 0 : s[2];
-    if (!c3 || c3 == '-' || c3 == '_' || c3 == '@') {
-        if (c1 == 'z' || c1 == 'Z')
-            return c2 == 'h' || c2 == 'H';
-        if (c1 == 'j' || c1 == 'J')
-            return c2 == 'a' || c2 == 'A';
-        if (c1 == 'k' || c1 == 'K')
-            return c2 == 'o' || c2 == 'O';
-    }
-    return false;
-}
-
-bool isCJKLocale(const AtomicString& locale)
-{
-    if (locale.isEmpty())
-        return false;
-    size_t length = locale.length();
-    if (locale.is8Bit())
-        return isCJKLocale<LChar>(locale.characters8(), length);
-    return isCJKLocale<UChar>(locale.characters16(), length);
-}
-
-static void mapLineIteratorModeToRules(LineBreakIteratorMode, bool isCJK, String& rules);
-
-TextBreakIterator* openLineBreakIterator(const AtomicString& locale, LineBreakIteratorMode mode, bool isCJK)
-{
-    UBreakIterator* ubrkIter;
-    UErrorCode openStatus = U_ZERO_ERROR;
-    bool isLocaleEmpty = locale.isEmpty();
-    if ((mode == LineBreakIteratorModeUAX14) && !isCJK)
-        ubrkIter = ubrk_open(UBRK_LINE, isLocaleEmpty ? currentTextBreakLocaleID() : locale.string().utf8().data(), 0, 0, &openStatus);
-    else {
-        UParseError parseStatus;
-        String rules;
-        mapLineIteratorModeToRules(mode, isCJK, rules);
-        ubrkIter = ubrk_openRules(rules.characters(), rules.length(), 0, 0, &parseStatus, &openStatus);
-    }
-    // Locale comes from a web page and it can be invalid, leading ICU
-    // to fail, in which case we fall back to the default locale (with default rules).
-    if (!isLocaleEmpty && U_FAILURE(openStatus)) {
-        openStatus = U_ZERO_ERROR;
-        ubrkIter = ubrk_open(UBRK_LINE, currentTextBreakLocaleID(), 0, 0, &openStatus);
-    }
-
-    if (U_FAILURE(openStatus)) {
-        LOG_ERROR("ubrk_open failed with status %d", openStatus);
-        ASSERT(!ubrkIter);
-    }
-    return reinterpret_cast<TextBreakIterator*>(ubrkIter);
-}
-
-void closeLineBreakIterator(TextBreakIterator*& iterator)
-{
-    UBreakIterator* ubrkIter = reinterpret_cast<UBreakIterator*>(iterator);
-    ASSERT(ubrkIter);
-    ubrk_close(ubrkIter);
-    iterator = 0;
+    LineBreakIteratorPool::sharedPool().put(reinterpret_cast<UBreakIterator*>(iterator));
 }
 
 static TextBreakIterator* nonSharedCharacterBreakIterator;
@@ -582,414 +508,6 @@ TextBreakIterator* cursorMovementIterator(const UChar* string, int length)
     static bool createdCursorMovementIterator = false;
     static TextBreakIterator* staticCursorMovementIterator;
     return setUpIteratorWithRules(createdCursorMovementIterator, staticCursorMovementIterator, kRules, string, length);
-}
-
-static const char* uax14Prologue =
-    "!!chain;"
-    "!!LBCMNoChain;"
-    "!!lookAheadHardBreak;";
-
-static const char* uax14AssignmentsBefore =
-    // explicitly enumerate $CJ since ICU versions prior to 49 don't support :LineBreak=Conditional_Japanese_Starter:
-    "$CJ = ["
-#if (U_ICU_VERSION_MAJOR_NUM >= 4) && (U_ICU_VERSION_MINOR_NUM >= 9)
-    ":LineBreak=Conditional_Japanese_Starter:"
-#else
-    "\\u3041\\u3043\\u3045\\u3047\\u3049\\u3063\\u3083\\u3085\\u3087\\u308E\\u3095\\u3096\\u30A1\\u30A3\\u30A5\\u30A7"
-    "\\u30A9\\u30C3\\u30E3\\u30E5\\u30E7\\u30EE\\u30F5\\u30F6\\u30FC"
-    "\\u31F0\\u31F1\\u31F2\\u31F3\\u31F4\\u31F5\\u31F6\\u31F7\\u31F8\\u31F9\\u31FA\\u31FB\\u31FC\\u31FD\\u31FE\\u31FF"
-    "\\uFF67\\uFF68\\uFF69\\uFF6A\\uFF6B\\uFF6C\\uFF6D\\uFF6E\\uFF6F\\uFF70"
-#endif
-    "];";
-
-static const char* uax14AssignmentsCustomLooseCJK =
-    "$BA_SUB = [\\u2010\\u2013];"
-    "$EX_SUB = [\\u0021\\u003F\\uFF01\\uFF1F];"
-    "$ID_SUB = '';"
-    "$IN_SUB = [\\u2025\\u2026];"
-    "$IS_SUB = [\\u003A\\u003B];"
-    "$NS_SUB = [\\u203C\\u2047\\u2048\\u2049\\u3005\\u301C\\u303B\\u309D\\u309E\\u30A0\\u30FB\\u30FD\\u30FE\\uFF1A\\uFF1B\\uFF65];"
-    "$PO_SUB = [\\u0025\\u00A2\\u00B0\\u2030\\u2032\\u2033\\u2103\\uFF05\\uFFE0];"
-    "$PR_SUB = [\\u0024\\u00A3\\u00A5\\u20AC\\u2116\\uFF04\\uFFE1\\uFFE5];"
-    "$ID_ADD = [$CJ $BA_SUB $EX_SUB $IN_SUB $IS_SUB $NS_SUB $PO_SUB $PR_SUB];"
-    "$NS_ADD = '';";
-
-static const char* uax14AssignmentsCustomLooseNonCJK =
-    "$BA_SUB = '';"
-    "$EX_SUB = '';"
-    "$ID_SUB = '';"
-    "$IN_SUB = [\\u2025\\u2026];"
-    "$IS_SUB = '';"
-    "$NS_SUB = [\\u3005\\u303B\\u309D\\u309E\\u30FD\\u30FE];"
-    "$PO_SUB = '';"
-    "$PR_SUB = '';"
-    "$ID_ADD = [$CJ $IN_SUB $NS_SUB];"
-    "$NS_ADD = '';";
-
-static const char* uax14AssignmentsCustomNormalCJK =
-    "$BA_SUB = [\\u2010\\u2013];"
-    "$EX_SUB = '';"
-    "$IN_SUB = '';"
-    "$ID_SUB = '';"
-    "$IS_SUB = '';"
-    "$NS_SUB = [\\u301C\\u30A0];"
-    "$PO_SUB = '';"
-    "$PR_SUB = '';"
-    "$ID_ADD = [$CJ $BA_SUB $NS_SUB];"
-    "$NS_ADD = '';";
-
-static const char* uax14AssignmentsCustomNormalNonCJK =
-    "$BA_SUB = '';"
-    "$EX_SUB = '';"
-    "$ID_SUB = '';"
-    "$IN_SUB = '';"
-    "$IS_SUB = '';"
-    "$NS_SUB = '';"
-    "$PO_SUB = '';"
-    "$PR_SUB = '';"
-    "$ID_ADD = [$CJ];"
-    "$NS_ADD = '';";
-
-static const char* uax14AssignmentsCustomStrictCJK =
-    "$BA_SUB = '';"
-    "$EX_SUB = '';"
-    "$ID_SUB = '';"
-    "$IN_SUB = '';"
-    "$IS_SUB = '';"
-    "$NS_SUB = '';"
-    "$PO_SUB = '';"
-    "$PR_SUB = '';"
-    "$ID_ADD = '';"
-    "$NS_ADD = [$CJ];";
-
-#define uax14AssignmentsCustomStrictNonCJK      uax14AssignmentsCustomStrictCJK
-#define uax14AssignmentsCustomDefaultCJK        uax14AssignmentsCustomNormalCJK
-#define uax14AssignmentsCustomDefaultNonCJK     uax14AssignmentsCustomStrictNonCJK
-
-static const char* uax14AssignmentsAfter =
-    "$AI = [:LineBreak = Ambiguous:];"
-    "$AL = [:LineBreak = Alphabetic:];"
-    "$BA = [[:LineBreak = Break_After:] - $BA_SUB];"
-    "$BB = [:LineBreak = Break_Before:];"
-    "$BK = [:LineBreak = Mandatory_Break:];"
-    "$B2 = [:LineBreak = Break_Both:];"
-    "$CB = [:LineBreak = Contingent_Break:];"
-    "$CL = [:LineBreak = Close_Punctuation:];"
-    "$CM = [:LineBreak = Combining_Mark:];"
-    "$CP = [:LineBreak = Close_Parenthesis:];"
-    "$CR = [:LineBreak = Carriage_Return:];"
-    "$EX = [[:LineBreak = Exclamation:] - $EX_SUB];"
-    "$GL = [:LineBreak = Glue:];"
-#if (U_ICU_VERSION_MAJOR_NUM >= 4) && (U_ICU_VERSION_MINOR_NUM >= 9)
-    "$HL = [:LineBreak = Hebrew_Letter:];"
-#else
-    "$HL = [[:Hebrew:] & [:Letter:]];"
-#endif
-    "$HY = [:LineBreak = Hyphen:];"
-    "$H2 = [:LineBreak = H2:];"
-    "$H3 = [:LineBreak = H3:];"
-    "$ID = [[[[:LineBreak = Ideographic:] - $CJ] $ID_ADD] - $ID_SUB];"
-    "$IN = [[:LineBreak = Inseparable:] - $IN_SUB];"
-    "$IS = [[:LineBreak = Infix_Numeric:] - $IS_SUB];"
-    "$JL = [:LineBreak = JL:];"
-    "$JV = [:LineBreak = JV:];"
-    "$JT = [:LineBreak = JT:];"
-    "$LF = [:LineBreak = Line_Feed:];"
-    "$NL = [:LineBreak = Next_Line:];"
-    "$NS = [[[[:LineBreak = Nonstarter:] - $CJ] $NS_ADD] - $NS_SUB];"
-    "$NU = [:LineBreak = Numeric:];"
-    "$OP = [:LineBreak = Open_Punctuation:];"
-    "$PO = [[:LineBreak = Postfix_Numeric:] - $PO_SUB];"
-    "$PR = [[:LineBreak = Prefix_Numeric:] - $PR_SUB];"
-    "$QU = [:LineBreak = Quotation:];"
-    "$SA = [:LineBreak = Complex_Context:];"
-    "$SG = [:LineBreak = Surrogate:];"
-    "$SP = [:LineBreak = Space:];"
-    "$SY = [:LineBreak = Break_Symbols:];"
-    "$WJ = [:LineBreak = Word_Joiner:];"
-    "$XX = [:LineBreak = Unknown:];"
-    "$ZW = [:LineBreak = ZWSpace:];"
-    "$dictionary = [:LineBreak = Complex_Context:];"
-    "$ALPlus = [$AL $AI $SA $SG $XX];"
-    "$ALcm = $ALPlus $CM*;"
-    "$BAcm = $BA $CM*;"
-    "$BBcm = $BB $CM*;"
-    "$B2cm = $B2 $CM*;"
-    "$CLcm = $CL $CM*;"
-    "$CPcm = $CP $CM*;"
-    "$EXcm = $EX $CM*;"
-    "$GLcm = $GL $CM*;"
-    "$HLcm = $HL $CM*;"
-    "$HYcm = $HY $CM*;"
-    "$H2cm = $H2 $CM*;"
-    "$H3cm = $H3 $CM*;"
-    "$IDcm = $ID $CM*;"
-    "$INcm = $IN $CM*;"
-    "$IScm = $IS $CM*;"
-    "$JLcm = $JL $CM*;"
-    "$JVcm = $JV $CM*;"
-    "$JTcm = $JT $CM*;"
-    "$NScm = $NS $CM*;"
-    "$NUcm = $NU $CM*;"
-    "$OPcm = $OP $CM*;"
-    "$POcm = $PO $CM*;"
-    "$PRcm = $PR $CM*;"
-    "$QUcm = $QU $CM*;"
-    "$SYcm = $SY $CM*;"
-    "$WJcm = $WJ $CM*;";
-
-static const char* uax14Forward =
-    "!!forward;"
-    "$CAN_CM = [^$SP $BK $CR $LF $NL $ZW $CM];"
-    "$CANT_CM = [$SP $BK $CR $LF $NL $ZW $CM];"
-    "$AL_FOLLOW_NOCM = [$BK $CR $LF $NL $ZW $SP];"
-    "$AL_FOLLOW_CM = [$CL $CP $EX $HL $IS $SY $WJ $GL $OP $QU $BA $HY $NS $IN $NU $ALPlus];"
-    "$AL_FOLLOW = [$AL_FOLLOW_NOCM $AL_FOLLOW_CM];"
-    "$LB4Breaks = [$BK $CR $LF $NL];"
-    "$LB4NonBreaks = [^$BK $CR $LF $NL];"
-    "$LB8Breaks = [$LB4Breaks $ZW];"
-    "$LB8NonBreaks = [[$LB4NonBreaks] - [$ZW]];"
-    "$LB18NonBreaks = [$LB8NonBreaks - [$SP]];"
-    "$LB18Breaks = [$LB8Breaks $SP];"
-    "$LB20NonBreaks = [$LB18NonBreaks - $CB];"
-    "$ALPlus $CM+;"
-    "$BA $CM+;"
-    "$BB $CM+;"
-    "$B2 $CM+;"
-    "$CL $CM+;"
-    "$CP $CM+;"
-    "$EX $CM+;"
-    "$GL $CM+;"
-    "$HL $CM+;"
-    "$HY $CM+;"
-    "$H2 $CM+;"
-    "$H3 $CM+;"
-    "$ID $CM+;"
-    "$IN $CM+;"
-    "$IS $CM+;"
-    "$JL $CM+;"
-    "$JV $CM+;"
-    "$JT $CM+;"
-    "$NS $CM+;"
-    "$NU $CM+;"
-    "$OP $CM+;"
-    "$PO $CM+;"
-    "$PR $CM+;"
-    "$QU $CM+;"
-    "$SY $CM+;"
-    "$WJ $CM+;"
-    "$CR $LF {100};"
-    "$LB4NonBreaks? $LB4Breaks {100};"
-    "$CAN_CM $CM* $LB4Breaks {100};"
-    "$CM+ $LB4Breaks {100};"
-    "$LB4NonBreaks [$SP $ZW];"
-    "$CAN_CM $CM* [$SP $ZW];"
-    "$CM+ [$SP $ZW];"
-    "$CAN_CM $CM+;"
-    "$CM+;"
-    "$CAN_CM $CM* $WJcm;"
-    "$LB8NonBreaks $WJcm;"
-    "$CM+ $WJcm;"
-    "$WJcm $CANT_CM;"
-    "$WJcm $CAN_CM $CM*;"
-    "$GLcm $CAN_CM $CM*;"
-    "$GLcm $CANT_CM;"
-    "[[$LB8NonBreaks] - [$SP $BA $HY]] $CM* $GLcm;"
-    "$CM+ GLcm;"
-    "$LB8NonBreaks $CL;"
-    "$CAN_CM $CM* $CL;"
-    "$CM+ $CL;"
-    "$LB8NonBreaks $CP;"
-    "$CAN_CM $CM* $CP;"
-    "$CM+ $CP;"
-    "$LB8NonBreaks $EX;"
-    "$CAN_CM $CM* $EX;"
-    "$CM+ $EX;"
-    "$LB8NonBreaks $IS;"
-    "$CAN_CM $CM* $IS;"
-    "$CM+ $IS;"
-    "$LB8NonBreaks $SY;"
-    "$CAN_CM $CM* $SY;"
-    "$CM+ $SY;"
-    "$OPcm $SP* $CAN_CM $CM*;"
-    "$OPcm $SP* $CANT_CM;"
-    "$OPcm $SP+ $CM+ $AL_FOLLOW?;"
-    "$QUcm $SP* $OPcm;"
-    "($CLcm | $CPcm) $SP* $NScm;"
-    "$B2cm $SP* $B2cm;"
-    "$LB18NonBreaks $CM* $QUcm;"
-    "$CM+ $QUcm;"
-    "$QUcm .?;"
-    "$QUcm $LB18NonBreaks $CM*;"
-    "$LB20NonBreaks $CM* ($BAcm | $HYcm | $NScm); "
-    "$BBcm [^$CB];"
-    "$BBcm $LB20NonBreaks $CM*;"
-    "$HLcm ($HYcm | $BAcm) [^$CB]?;"
-    "($ALcm | $HLcm) $INcm;"
-    "$CM+ $INcm;"
-    "$IDcm $INcm;"
-    "$INcm $INcm;"
-    "$NUcm $INcm;"
-    "$IDcm $POcm;"
-    "$ALcm $NUcm;"
-    "$HLcm $NUcm;"
-    "$CM+ $NUcm;"
-    "$NUcm $ALcm;"
-    "$NUcm $HLcm;"
-    "$PRcm $IDcm;"
-    "$PRcm ($ALcm | $HLcm);"
-    "$POcm ($ALcm | $HLcm);"
-    "($PRcm | $POcm)? ($OPcm | $HYcm)? $NUcm ($NUcm | $SYcm | $IScm)* ($CLcm | $CPcm)? ($PRcm | $POcm)?;"
-    "$JLcm ($JLcm | $JVcm | $H2cm | $H3cm);"
-    "($JVcm | $H2cm) ($JVcm | $JTcm);"
-    "($JTcm | $H3cm) $JTcm;"
-    "($JLcm | $JVcm | $JTcm | $H2cm | $H3cm) $INcm;"
-    "($JLcm | $JVcm | $JTcm | $H2cm | $H3cm) $POcm;"
-    "$PRcm ($JLcm | $JVcm | $JTcm | $H2cm | $H3cm);"
-    "($ALcm | $HLcm) ($ALcm | $HLcm);"
-    "$CM+ ($ALcm | $HLcm);"
-    "$IScm ($ALcm | $HLcm);"
-    "($ALcm | $HLcm | $NUcm) $OPcm;"
-    "$CM+ $OPcm;"
-    "$CPcm ($ALcm | $HLcm | $NUcm);";
-
-static const char* uax14Reverse =
-    "!!reverse;"
-    "$CM+ $ALPlus;"
-    "$CM+ $BA;"
-    "$CM+ $BB;"
-    "$CM+ $B2;"
-    "$CM+ $CL;"
-    "$CM+ $CP;"
-    "$CM+ $EX;"
-    "$CM+ $GL;"
-    "$CM+ $HL;"
-    "$CM+ $HY;"
-    "$CM+ $H2;"
-    "$CM+ $H3;"
-    "$CM+ $ID;"
-    "$CM+ $IN;"
-    "$CM+ $IS;"
-    "$CM+ $JL;"
-    "$CM+ $JV;"
-    "$CM+ $JT;"
-    "$CM+ $NS;"
-    "$CM+ $NU;"
-    "$CM+ $OP;"
-    "$CM+ $PO;"
-    "$CM+ $PR;"
-    "$CM+ $QU;"
-    "$CM+ $SY;"
-    "$CM+ $WJ;"
-    "$CM+;"
-    "$AL_FOLLOW $CM+ / ([$BK $CR $LF $NL $ZW {eof}] | $SP+ $CM+ $SP | $SP+ $CM* ([^$OP $CM $SP] | [$AL {eof}]));"
-    "[$PR] / $CM+ [$BK $CR $LF $NL $ZW $SP {eof}];"
-    "$LB4Breaks [$LB4NonBreaks-$CM];"
-    "$LB4Breaks $CM+ $CAN_CM;"
-    "$LF $CR;"
-    "[$SP $ZW] [$LB4NonBreaks-$CM];"
-    "[$SP $ZW] $CM+ $CAN_CM;"
-    "$CM+ $CAN_CM;"
-    "$CM* $WJ $CM* $CAN_CM;"
-    "$CM* $WJ [$LB8NonBreaks-$CM];"
-    "$CANT_CM $CM* $WJ;"
-    "$CM* $CAN_CM $CM* $WJ;"
-    "$CM* $GL $CM* [$LB8NonBreaks-[$CM $SP $BA $HY]];"
-    "$CANT_CM $CM* $GL;"
-    "$CM* $CAN_CM $CM* $GL;"
-    "$CL $CM+ $CAN_CM;"
-    "$CP $CM+ $CAN_CM;"
-    "$EX $CM+ $CAN_CM;"
-    "$IS $CM+ $CAN_CM;"
-    "$SY $CM+ $CAN_CM;"
-    "$CL [$LB8NonBreaks-$CM];"
-    "$CP [$LB8NonBreaks-$CM];"
-    "$EX [$LB8NonBreaks-$CM];"
-    "$IS [$LB8NonBreaks-$CM];"
-    "$SY [$LB8NonBreaks-$CM];"
-    "[$CL $CP $EX $IS $SY] $CM+ $SP+ $CM* $OP; "
-    "$CM* $CAN_CM $SP* $CM* $OP;"
-    "$CANT_CM $SP* $CM* $OP;"
-    "$AL_FOLLOW? $CM+ $SP $SP* $CM* $OP;"
-    "$AL_FOLLOW_NOCM $CM+ $SP+ $CM* $OP;"
-    "$CM* $AL_FOLLOW_CM $CM+ $SP+ $CM* $OP;"
-    "$SY $CM $SP+ $OP;"
-    "$CM* $OP $SP* $CM* $QU;"
-    "$CM* $NS $SP* $CM* ($CL | $CP);"
-    "$CM* $B2 $SP* $CM* $B2;"
-    "$CM* $QU $CM* $CAN_CM;"
-    "$CM* $QU $LB18NonBreaks;"
-    "$CM* $CAN_CM $CM* $QU;"
-    "$CANT_CM $CM* $QU;"
-    "$CM* ($BA | $HY | $NS) $CM* [$LB20NonBreaks-$CM];"
-    "$CM* [$LB20NonBreaks-$CM] $CM* $BB;"
-    "[^$CB] $CM* $BB;"
-    "[^$CB] $CM* ($HY | $BA) $CM* $HL;"
-    "$CM* $IN $CM* ($ALPlus | $HL);"
-    "$CM* $IN $CM* $ID;"
-    "$CM* $IN $CM* $IN;"
-    "$CM* $IN $CM* $NU;"
-    "$CM* $PO $CM* $ID;"
-    "$CM* $NU $CM* ($ALPlus | $HL);"
-    "$CM* ($ALPlus | $HL) $CM* $NU;"
-    "$CM* $ID $CM* $PR;"
-    "$CM* ($ALPlus | $HL) $CM* $PR;"
-    "$CM* ($ALPlus | $HL) $CM* $PO;"
-    "($CM* ($PR | $PO))? ($CM* ($CL | $CP))? ($CM* ($NU | $IS | $SY))* $CM* $NU ($CM* ($OP | $HY))? ($CM* ($PR | $PO))?;"
-    "$CM* ($H3 | $H2 | $JV | $JL) $CM* $JL;"
-    "$CM* ($JT | $JV) $CM* ($H2 | $JV);"
-    "$CM* $JT $CM* ($H3 | $JT);"
-    "$CM* $IN $CM* ($H3 | $H2 | $JT | $JV | $JL);"
-    "$CM* $PO $CM* ($H3 | $H2 | $JT | $JV | $JL);"
-    "$CM* ($H3 | $H2 | $JT | $JV | $JL) $CM* $PR;"
-    "$CM* ($ALPlus | $HL) $CM* ($ALPlus | $HL);"
-    "$CM* ($ALPlus | $HL) $CM* $IS;"
-    "$CM* $OP $CM* ($ALPlus | $HL | $NU);"
-    "$CM* ($ALPlus | $HL | $NU) $CM* $CP;";
-
-static const char* uax14SafeForward =
-    "!!safe_forward;"
-    "[$CM $OP $QU $CL $CP $B2 $PR $HY $BA $SP $dictionary]+ [^$CM $OP $QU $CL $CP $B2 $PR $HY $BA $dictionary];"
-    "$dictionary $dictionary;";
-
-static const char* uax14SafeReverse =
-    "!!safe_reverse;"
-    "$CM+ [^$CM $BK $CR $LF $NL $ZW $SP];"
-    "$CM+ $SP / .;"
-    "$SP+ $CM* $OP;"
-    "$SP+ $CM* $QU;"
-    "$SP+ $CM* ($CL | $CP);"
-    "$SP+ $CM* $B2;"
-    "$CM* ($HY | $BA) $CM* $HL;"
-    "($CM* ($IS | $SY))+ $CM* $NU;"
-    "($CL | $CP) $CM* ($NU | $IS | $SY);"
-    "$dictionary $dictionary;";
-
-static void mapLineIteratorModeToRules(LineBreakIteratorMode mode, bool isCJK, String& rules)
-{
-    StringBuilder rulesBuilder;
-    rulesBuilder.append(uax14Prologue);
-    rulesBuilder.append(uax14AssignmentsBefore);
-    switch (mode) {
-    case LineBreakIteratorModeUAX14:
-        rulesBuilder.append(isCJK ? uax14AssignmentsCustomDefaultCJK : uax14AssignmentsCustomDefaultNonCJK);
-        break;
-    case LineBreakIteratorModeUAX14Loose:
-        rulesBuilder.append(isCJK ? uax14AssignmentsCustomLooseCJK : uax14AssignmentsCustomLooseNonCJK);
-        break;
-    case LineBreakIteratorModeUAX14Normal:
-        rulesBuilder.append(isCJK ? uax14AssignmentsCustomNormalCJK : uax14AssignmentsCustomNormalNonCJK);
-        break;
-    case LineBreakIteratorModeUAX14Strict:
-        rulesBuilder.append(isCJK ? uax14AssignmentsCustomStrictCJK : uax14AssignmentsCustomStrictNonCJK);
-        break;
-    }
-    rulesBuilder.append(uax14AssignmentsAfter);
-    rulesBuilder.append(uax14Forward);
-    rulesBuilder.append(uax14Reverse);
-    rulesBuilder.append(uax14SafeForward);
-    rulesBuilder.append(uax14SafeReverse);
-    rules = rulesBuilder.toString();
 }
 
 }

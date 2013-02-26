@@ -223,8 +223,6 @@ inline void RenderText::checkConsistency() const
 
 void applyTextTransform(const RenderStyle*, String&, UChar);
 
-LineBreakIteratorMode mapLineBreakToIteratorMode(LineBreak);
-
 } // namespace WebCore
 
 #endif // RenderText_h

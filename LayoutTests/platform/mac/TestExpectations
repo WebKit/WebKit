@@ -1299,9 +1299,6 @@ webkit.org/b/99221 fast/js/random-array-gc-stress.html [ Pass Timeout ]
 # User Timing is not enable yet. so skip it.
 webkit.org/b/84893 http/tests/w3c/webperf/submission/Intel/user-timing [ Skip ]
 
-# Verified passing, so override generic skip
-webkit.org/b/89235 css3/line-break [ Pass ]
-
 # Expected to fail until WebGL extension implementation lands
 webkit.org/b/98257 fast/canvas/webgl/oes-element-index-uint.html [ Failure Pass ]
 
