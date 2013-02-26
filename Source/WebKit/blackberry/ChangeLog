@@ -1,3 +1,16 @@
+2013-02-26  Yong Li  <yoli@rim.com>
+
+        [BlackBerry] Use APIEntryShim when making JS call
+        https://bugs.webkit.org/show_bug.cgi?id=110787
+
+        Reviewed by Rob Buis.
+
+        PR# 301451.
+        Use APIEntryShim to fix an assert and ensure it is thread-safe.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::executeJavaScriptFunction):
+
 2013-02-26  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Upstream the datalist support UI

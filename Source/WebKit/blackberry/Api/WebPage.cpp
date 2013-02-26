@@ -19,6 +19,7 @@
 #include "config.h"
 #include "WebPage.h"
 
+#include "APIShims.h"
 #include "ApplicationCacheStorage.h"
 #include "AuthenticationChallengeManager.h"
 #include "AutofillManager.h"
@@ -888,7 +889,7 @@ void WebPage::executeJavaScriptFunction(const std::vector<BlackBerry::Platform::
     JSC::ExecState* exec = root->globalObject()->globalExec();
     JSGlobalContextRef ctx = toGlobalRef(exec);
 
-    JSC::JSLockHolder lock(exec);
+    JSC::APIEntryShim shim(exec);
     WTF::Vector<JSValueRef> argListRef(args.size());
     for (unsigned i = 0; i < args.size(); ++i)
         argListRef[i] = BlackBerryJavaScriptVariantToJSValueRef(ctx, args[i]);
