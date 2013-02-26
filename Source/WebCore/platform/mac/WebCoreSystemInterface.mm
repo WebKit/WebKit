@@ -222,3 +222,11 @@ CGFloat (*wkNSElasticDeltaForTimeDelta)(CGFloat initialPosition, CGFloat initial
 CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
+
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+bool (*wkIsPublicSuffix)(NSString *host);
+#endif
+
+#if ENABLE(CACHE_PARTITIONING)
+CFStringRef (*wkCachePartitionKey)(void);
+#endif

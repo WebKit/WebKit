@@ -253,6 +253,23 @@ void ResourceRequest::setHTTPPipeliningEnabled(bool flag)
     s_httpPipeliningEnabled = flag;
 }
 
+PassOwnPtr<CrossThreadResourceRequestData> ResourceRequest::doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const
+{
+#if ENABLE(CACHE_PARTITIONING)
+    data->m_cachePartition = m_cachePartition;
+#endif
+    return data;
+}
+
+void ResourceRequest::doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData> data)
+{
+#if ENABLE(CACHE_PARTITIONING)
+    m_cachePartition = data->m_cachePartition;
+#else
+    UNUSED_PARAM(data);
+#endif
+}
+
 unsigned initializeMaximumHTTPConnectionCountPerHost()
 {
     static const unsigned preferredConnectionCount = 6;

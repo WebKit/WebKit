@@ -112,6 +112,12 @@ void ResourceRequest::doUpdateResourceRequest()
     else if (NSInputStream* bodyStream = [m_nsRequest.get() HTTPBodyStream])
         if (FormData* formData = httpBodyFromStream(bodyStream))
             m_httpBody = formData;
+
+#if ENABLE(CACHE_PARTITIONING)
+    NSString* cachePartition = [NSURLProtocol propertyForKey:(NSString *)wkCachePartitionKey() inRequest:m_nsRequest.get()];
+    if (cachePartition)
+        m_cachePartition = cachePartition;
+#endif
 }
 
 void ResourceRequest::doUpdatePlatformRequest()
@@ -175,7 +181,11 @@ void ResourceRequest::doUpdatePlatformRequest()
     RefPtr<FormData> formData = httpBody();
     if (formData && !formData->isEmpty())
         WebCore::setHTTPBody(nsRequest, formData);
-    
+
+#if ENABLE(CACHE_PARTITIONING)
+    [NSURLProtocol setProperty:m_cachePartition forKey:(NSString *)wkCachePartitionKey() inRequest:nsRequest];
+#endif
+
     m_nsRequest.adoptNS(nsRequest);
 }
 

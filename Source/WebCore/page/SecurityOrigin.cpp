@@ -438,6 +438,19 @@ void SecurityOrigin::grantUniversalAccess()
     m_universalAccess = true;
 }
 
+#if ENABLE(CACHE_PARTITIONING)
+String SecurityOrigin::cachePartition() const
+{
+    if (m_storageBlockingPolicy != BlockThirdPartyStorage)
+        return String();
+
+    if (m_protocol != "http" && m_protocol != "https")
+        return String();
+
+    return host();
+}
+#endif
+
 void SecurityOrigin::enforceFilePathSeparation()
 {
     ASSERT(isLocal());

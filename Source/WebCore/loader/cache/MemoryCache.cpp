@@ -36,6 +36,7 @@
 #include "FrameView.h"
 #include "Image.h"
 #include "Logging.h"
+#include "PublicSuffix.h"
 #include "ResourceHandle.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
@@ -60,6 +61,22 @@ static const int cDefaultCacheCapacity = 8192 * 1024;
 static const double cMinDelayBeforeLiveDecodedPrune = 1; // Seconds.
 static const float cTargetPrunePercentage = .95f; // Percentage of capacity toward which we prune, to avoid immediately pruning again.
 static const double cDefaultDecodedDataDeletionInterval = 0;
+
+#if ENABLE(CACHE_PARTITIONING)
+static String partitionName(String domain)
+{
+    if (domain.isNull())
+        return emptyString();
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String highLevel = topPrivatelyControlledDomain(domain);
+    if (highLevel.isNull())
+        return emptyString();
+    return highLevel;
+#else
+    return domain;
+#endif
+}
+#endif
 
 MemoryCache* memoryCache()
 {
@@ -103,7 +120,16 @@ bool MemoryCache::add(CachedResource* resource)
 
     ASSERT(WTF::isMainThread());
 
+#if ENABLE(CACHE_PARTITIONING)
+    CachedResourceItem* originMap = m_resources.get(resource->url());
+    if (!originMap) {
+        originMap = new CachedResourceItem;
+        m_resources.set(resource->url(), adoptPtr(originMap));
+    }
+    originMap->set(partitionName(resource->cachePartition()), resource);
+#else
     m_resources.set(resource->url(), resource);
+#endif
     resource->setInCache(true);
     
     resourceAccessed(resource);
@@ -127,8 +153,18 @@ void MemoryCache::revalidationSucceeded(CachedResource* revalidatingResource, co
 
     evict(revalidatingResource);
 
+#if ENABLE(CACHE_PARTITIONING)
+    ASSERT(!m_resources.get(resource->url()) || !m_resources.get(resource->url())->get(partitionName(resource->cachePartition())));
+    CachedResourceItem* originMap = m_resources.get(resource->url());
+    if (!originMap) {
+        originMap = new CachedResourceItem;
+        m_resources.set(resource->url(), adoptPtr(originMap));
+    }
+    originMap->set(partitionName(resource->cachePartition()), resource);
+#else
     ASSERT(!m_resources.get(resource->url()));
     m_resources.set(resource->url(), resource);
+#endif
     resource->setInCache(true);
     resource->updateResponseAfterRevalidation(response);
     insertInLRUList(resource);
@@ -154,9 +190,21 @@ void MemoryCache::revalidationFailed(CachedResource* revalidatingResource)
 
 CachedResource* MemoryCache::resourceForURL(const KURL& resourceURL)
 {
+    return resourceForRequest(ResourceRequest(resourceURL));
+}
+
+CachedResource* MemoryCache::resourceForRequest(const ResourceRequest& request)
+{
     ASSERT(WTF::isMainThread());
-    KURL url = removeFragmentIdentifierIfNeeded(resourceURL);
+    KURL url = removeFragmentIdentifierIfNeeded(request.url());
+#if ENABLE(CACHE_PARTITIONING)
+    CachedResourceItem* item = m_resources.get(url);
+    CachedResource* resource = 0;
+    if (item)
+        resource = item->get(partitionName(request.cachePartition()));
+#else
     CachedResource* resource = m_resources.get(url);
+#endif
     bool wasPurgeable = MemoryCache::shouldMakeResourcePurgeableOnEviction() && resource && resource->isPurgeable();
     if (resource && !resource->makePurgeable(false)) {
         ASSERT(!resource->hasClients());
@@ -395,7 +443,16 @@ void MemoryCache::evict(CachedResource* resource)
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
     if (resource->inCache()) {
         // Remove from the resource map.
+#if ENABLE(CACHE_PARTITIONING)
+        CachedResourceItem* item = m_resources.get(resource->url());
+        if (item) {
+            item->remove(partitionName(resource->cachePartition()));
+            if (!item->size())
+                m_resources.remove(resource->url());
+        }
+#else
         m_resources.remove(resource->url());
+#endif
         resource->setInCache(false);
 
         // Remove from the appropriate LRU list.
@@ -408,7 +465,11 @@ void MemoryCache::evict(CachedResource* resource)
         if (!MemoryCache::shouldMakeResourcePurgeableOnEviction() || !resource->isPurgeable())
             adjustSize(resource->hasClients(), -static_cast<int>(resource->size()));
     } else
+#if ENABLE(CACHE_PARTITIONING)
+        ASSERT(!m_resources.get(resource->url()) || m_resources.get(resource->url())->get(partitionName(resource->cachePartition())) != resource);
+#else
         ASSERT(m_resources.get(resource->url()) != resource);
+#endif
 
     resource->deleteIfPossible();
 }
@@ -529,12 +590,20 @@ void MemoryCache::removeResourcesWithOrigin(SecurityOrigin* origin)
 
     CachedResourceMap::iterator e = m_resources.end();
     for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it) {
-        CachedResource* resource = it->value;
-        RefPtr<SecurityOrigin> resourceOrigin = SecurityOrigin::createFromString(resource->url());
-        if (!resourceOrigin)
-            continue;
-        if (resourceOrigin->equal(origin))
-            resourcesWithOrigin.append(resource);
+#if ENABLE(CACHE_PARTITIONING)
+        for (CachedResourceItem::iterator itemIterator = it->value->begin(); itemIterator != it->value->end(); ++itemIterator) {
+            CachedResource* resource = itemIterator->value;
+#else
+            CachedResource* resource = it->value;
+#endif
+            RefPtr<SecurityOrigin> resourceOrigin = SecurityOrigin::createFromString(resource->url());
+            if (!resourceOrigin)
+                continue;
+            if (resourceOrigin->equal(origin))
+                resourcesWithOrigin.append(resource);
+#if ENABLE(CACHE_PARTITIONING)
+        }
+#endif
     }
 
     for (size_t i = 0; i < resourcesWithOrigin.size(); ++i)
@@ -545,7 +614,11 @@ void MemoryCache::getOriginsWithCache(SecurityOriginSet& origins)
 {
     CachedResourceMap::iterator e = m_resources.end();
     for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it)
+#if ENABLE(CACHE_PARTITIONING)
+        origins.add(SecurityOrigin::createFromString(it->value->begin()->value->url()));
+#else
         origins.add(SecurityOrigin::createFromString(it->value->url()));
+#endif
 }
 
 void MemoryCache::removeFromLiveDecodedResourcesList(CachedResource* resource)
@@ -638,26 +711,34 @@ void MemoryCache::adjustSize(bool live, int delta)
     }
 }
 
+void MemoryCache::removeUrlFromCache(ScriptExecutionContext* context, const String& urlString)
+{
+    removeRequestFromCache(context, ResourceRequest(urlString));
+}
 
-void MemoryCache::removeUrlFromCache(ScriptExecutionContext* context, const String& urlString) 
+void MemoryCache::removeRequestFromCache(ScriptExecutionContext* context, const ResourceRequest& request)
 {
 #if ENABLE(WORKERS)
     if (context->isWorkerContext()) {
-      WorkerContext* workerContext = static_cast<WorkerContext*>(context);
-      workerContext->thread()->workerLoaderProxy().postTaskToLoader(
-          createCallbackTask(&removeUrlFromCacheImpl, urlString));
-      return;
+        WorkerContext* workerContext = static_cast<WorkerContext*>(context);
+        workerContext->thread()->workerLoaderProxy().postTaskToLoader(createCallbackTask(&crossThreadRemoveRequestFromCache, request));
+        return;
     }
 #endif
-    removeUrlFromCacheImpl(context, urlString);
+
+    removeRequestFromCacheImpl(context, request);
 }
 
-void MemoryCache::removeUrlFromCacheImpl(ScriptExecutionContext*, const String& urlString)
+void MemoryCache::removeRequestFromCacheImpl(ScriptExecutionContext*, const ResourceRequest& request)
 {
-    KURL url(KURL(), urlString);
-
-    if (CachedResource* resource = memoryCache()->resourceForURL(url))
+    if (CachedResource* resource = memoryCache()->resourceForRequest(request))
         memoryCache()->remove(resource);
+}
+
+void MemoryCache::crossThreadRemoveRequestFromCache(ScriptExecutionContext* context, PassOwnPtr<WebCore::CrossThreadResourceRequestData> requestData)
+{
+    OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
+    MemoryCache::removeRequestFromCacheImpl(context, *request);
 }
 
 void MemoryCache::TypeStatistic::addResource(CachedResource* o)
@@ -678,28 +759,36 @@ MemoryCache::Statistics MemoryCache::getStatistics()
     Statistics stats;
     CachedResourceMap::iterator e = m_resources.end();
     for (CachedResourceMap::iterator i = m_resources.begin(); i != e; ++i) {
-        CachedResource* resource = i->value;
-        switch (resource->type()) {
-        case CachedResource::ImageResource:
-            stats.images.addResource(resource);
-            break;
-        case CachedResource::CSSStyleSheet:
-            stats.cssStyleSheets.addResource(resource);
-            break;
-        case CachedResource::Script:
-            stats.scripts.addResource(resource);
-            break;
-#if ENABLE(XSLT)
-        case CachedResource::XSLStyleSheet:
-            stats.xslStyleSheets.addResource(resource);
-            break;
+#if ENABLE(CACHE_PARTITIONING)
+        for (CachedResourceItem::iterator itemIterator = i->value->begin(); itemIterator != i->value->end(); ++itemIterator) {
+            CachedResource* resource = itemIterator->value;
+#else
+            CachedResource* resource = i->value;
 #endif
-        case CachedResource::FontResource:
-            stats.fonts.addResource(resource);
-            break;
-        default:
-            break;
+            switch (resource->type()) {
+            case CachedResource::ImageResource:
+                stats.images.addResource(resource);
+                break;
+            case CachedResource::CSSStyleSheet:
+                stats.cssStyleSheets.addResource(resource);
+                break;
+            case CachedResource::Script:
+                stats.scripts.addResource(resource);
+                break;
+#if ENABLE(XSLT)
+            case CachedResource::XSLStyleSheet:
+                stats.xslStyleSheets.addResource(resource);
+                break;
+#endif
+            case CachedResource::FontResource:
+                stats.fonts.addResource(resource);
+                break;
+            default:
+                break;
+            }
+#if ENABLE(CACHE_PARTITIONING)
         }
+#endif
     }
     return stats;
 }
@@ -720,10 +809,15 @@ void MemoryCache::setDisabled(bool disabled)
         return;
 
     for (;;) {
-        CachedResourceMap::iterator i = m_resources.begin();
-        if (i == m_resources.end())
+        CachedResourceMap::iterator outerIterator = m_resources.begin();
+        if (outerIterator == m_resources.end())
             break;
-        evict(i->value);
+#if ENABLE(CACHE_PARTITIONING)
+        CachedResourceItem::iterator innerIterator = outerIterator->value->begin();
+        evict(innerIterator->value);
+#else
+        evict(outerIterator->value);
+#endif
     }
 }
 

@@ -247,7 +247,7 @@ CachedResource::~CachedResource()
     ASSERT(canDelete());
     ASSERT(!inCache());
     ASSERT(!m_deleted);
-    ASSERT(url().isNull() || memoryCache()->resourceForURL(KURL(ParsedURLString, url())) != this);
+    ASSERT(url().isNull() || memoryCache()->resourceForRequest(resourceRequest()) != this);
 
 #ifndef NDEBUG
     m_deleted = true;

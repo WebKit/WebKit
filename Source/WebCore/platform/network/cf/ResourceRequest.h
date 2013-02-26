@@ -94,6 +94,11 @@ namespace WebCore {
         NSURLRequest *nsURLRequest() const;
 #endif
 
+#if ENABLE(CACHE_PARTITIONING)
+        const String& cachePartition() const { return m_cachePartition; }
+        void setCachePartition(const String& cachePartition) { m_cachePartition = cachePartition; }
+#endif
+
 #if PLATFORM(MAC) || USE(CFNETWORK)
         void setStorageSession(CFURLStorageSessionRef);
 #endif
@@ -111,8 +116,8 @@ namespace WebCore {
         void doUpdatePlatformRequest();
         void doUpdateResourceRequest();
 
-        PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const { return data; }
-        void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>) { }
+        PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData>) const;
+        void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>);
 
 #if USE(CFNETWORK)
         RetainPtr<CFURLRequestRef> m_cfRequest;
@@ -120,11 +125,17 @@ namespace WebCore {
 #if PLATFORM(MAC)
         RetainPtr<NSURLRequest> m_nsRequest;
 #endif
+#if ENABLE(CACHE_PARTITIONING)
+        String m_cachePartition;
+#endif
 
         static bool s_httpPipeliningEnabled;
     };
 
     struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {
+#if ENABLE(CACHE_PARTITIONING)
+        String m_cachePartition;
+#endif
     };
 
 } // namespace WebCore

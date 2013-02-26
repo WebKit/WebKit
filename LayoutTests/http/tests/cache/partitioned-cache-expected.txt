@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 10: localhost
+CONSOLE MESSAGE: line 10: localhost
+FAIL response should be 127.0.0.1. Was localhost.
+

@@ -1,3 +1,17 @@
+2013-02-21  Jeffrey Pfau  <jpfau@apple.com>
+
+        Optionally partition cache to prevent using cache for tracking
+        https://bugs.webkit.org/show_bug.cgi?id=110269
+
+        Reviewed by Maciej Stachowiak.
+
+        Add test suite for public suffix functions on Mac.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/mac/PublicSuffix.mm: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST_F):
+
 2013-02-25  Dirk Pranke  <dpranke@chromium.org>
 
         nrwt: reenable multiple http shards on chromium win

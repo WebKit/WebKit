@@ -48,6 +48,8 @@
 		0014628A103CD1DE000B20DB /* OriginAccessEntry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */; };
 		0014628B103CD1DE000B20DB /* OriginAccessEntry.h in Headers */ = {isa = PBXBuildFile; fileRef = 00146289103CD1DE000B20DB /* OriginAccessEntry.h */; };
 		003F1FEA11E6AB43008258D9 /* UserContentTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 003F1FE911E6AB43008258D9 /* UserContentTypes.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		0081FEFF16B0A2B6008AAA7A /* PublicSuffixMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0081FEFE16B0A2B6008AAA7A /* PublicSuffixMac.mm */; };
+		0081FF0016B0A2D3008AAA7A /* PublicSuffix.h in Headers */ = {isa = PBXBuildFile; fileRef = 0081FEFD16B0A244008AAA7A /* PublicSuffix.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		00B9318713BA8DB30035A948 /* XMLDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00B9318113BA867F0035A948 /* XMLDocumentParser.cpp */; };
 		00B9318813BA8DBA0035A948 /* XMLDocumentParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 00B9318213BA867F0035A948 /* XMLDocumentParser.h */; };
 		00B9318913BA8DBC0035A948 /* XMLDocumentParserLibxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 00B9318313BA867F0035A948 /* XMLDocumentParserLibxml2.cpp */; };
@@ -7324,6 +7326,8 @@
 		00146288103CD1DE000B20DB /* OriginAccessEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OriginAccessEntry.cpp; sourceTree = "<group>"; };
 		00146289103CD1DE000B20DB /* OriginAccessEntry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OriginAccessEntry.h; sourceTree = "<group>"; };
 		003F1FE911E6AB43008258D9 /* UserContentTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UserContentTypes.h; sourceTree = "<group>"; };
+		0081FEFD16B0A244008AAA7A /* PublicSuffix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PublicSuffix.h; sourceTree = "<group>"; };
+		0081FEFE16B0A2B6008AAA7A /* PublicSuffixMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = PublicSuffixMac.mm; path = ../mac/PublicSuffixMac.mm; sourceTree = "<group>"; };
 		00B9318113BA867F0035A948 /* XMLDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParser.cpp; sourceTree = "<group>"; };
 		00B9318213BA867F0035A948 /* XMLDocumentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XMLDocumentParser.h; sourceTree = "<group>"; };
 		00B9318313BA867F0035A948 /* XMLDocumentParserLibxml2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XMLDocumentParserLibxml2.cpp; sourceTree = "<group>"; };
@@ -16289,6 +16293,7 @@
 				29E4D8E016B0959800C84704 /* PlatformSpeechSynthesizerMac.mm */,
 				D39D006C11F8E308006041F2 /* PopupMenuMac.h */,
 				0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */,
+				0081FEFE16B0A2B6008AAA7A /* PublicSuffixMac.mm */,
 				E4D687760ED7AE3D006EA978 /* PurgeableBufferMac.cpp */,
 				BC0B358214C4F9540055E22A /* RunLoopMac.mm */,
 				1CE24F960D7CAF0E007E04C2 /* SchedulePairMac.mm */,
@@ -21655,6 +21660,7 @@
 				BC3BE12A0E98092F00835588 /* PopupMenuStyle.h */,
 				986EA88215FFF29000985E5E /* PrerenderClient.h */,
 				9856F8D01549E84F00B04F3A /* PrerenderHandle.h */,
+				0081FEFD16B0A244008AAA7A /* PublicSuffix.h */,
 				E4D687780ED7AE4F006EA978 /* PurgeableBuffer.h */,
 				7E33CD00127F340D00BE8F17 /* PurgePriority.h */,
 				A72EA3BA1585CF55004FAA26 /* RefCountedSupplement.h */,
@@ -25664,6 +25670,7 @@
 				51A052561058874000CC9E95 /* ProtectionSpaceHash.h in Headers */,
 				1AF8E11A1256592600230FF7 /* ProxyServer.h in Headers */,
 				FF945ECC161F7F3600971BC8 /* PseudoElement.h in Headers */,
+				0081FF0016B0A2D3008AAA7A /* PublicSuffix.h in Headers */,
 				10FB084B14E15C7E00A3DB98 /* PublicURLManager.h in Headers */,
 				E4D687790ED7AE4F006EA978 /* PurgeableBuffer.h in Headers */,
 				7E33CD01127F340D00BE8F17 /* PurgePriority.h in Headers */,
@@ -29024,6 +29031,7 @@
 				1AF8E13312565A4400230FF7 /* ProxyServer.cpp in Sources */,
 				1AF8E1C3125673E000230FF7 /* ProxyServerCFNet.cpp in Sources */,
 				FF945ECB161F7F3600971BC8 /* PseudoElement.cpp in Sources */,
+				0081FEFF16B0A2B6008AAA7A /* PublicSuffixMac.mm in Sources */,
 				E4D687770ED7AE3D006EA978 /* PurgeableBufferMac.cpp in Sources */,
 				550A0BC9085F6039007353D6 /* QualifiedName.cpp in Sources */,
 				379E371613736A6600B9E919 /* QuotedPrintable.cpp in Sources */,

@@ -351,6 +351,13 @@ extern CGFloat (*wkNSElasticDeltaForReboundDelta)(CGFloat delta);
 extern CGFloat (*wkNSReboundDeltaForElasticDelta)(CGFloat delta);
 #endif
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+extern bool (*wkIsPublicSuffix)(NSString *host);
+#endif
+
+#if ENABLE(CACHE_PARTITIONING)
+extern CFStringRef (*wkCachePartitionKey)(void);
+#endif
 }
 
 #endif

@@ -200,7 +200,11 @@ CachedResourceHandle<CachedCSSStyleSheet> CachedResourceLoader::requestUserCSSSt
 {
     KURL url = MemoryCache::removeFragmentIdentifierIfNeeded(request.resourceRequest().url());
 
-    if (CachedResource* existing = memoryCache()->resourceForURL(url)) {
+#if ENABLE(CACHE_PARTITIONING)
+    request.mutableResourceRequest().setCachePartition(document()->topOrigin()->cachePartition());
+#endif
+
+    if (CachedResource* existing = memoryCache()->resourceForRequest(request.resourceRequest())) {
         if (existing->type() == CachedResource::CSSStyleSheet)
             return static_cast<CachedCSSStyleSheet*>(existing);
         memoryCache()->remove(existing);
@@ -443,7 +447,13 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
     }
 
     // See if we can use an existing resource from the cache.
-    CachedResourceHandle<CachedResource> resource = memoryCache()->resourceForURL(url);
+    CachedResourceHandle<CachedResource> resource;
+#if ENABLE(CACHE_PARTITIONING)
+    if (document())
+        request.mutableResourceRequest().setCachePartition(document()->topOrigin()->cachePartition());
+#endif
+
+    resource = memoryCache()->resourceForRequest(request.resourceRequest());
 
     const RevalidationPolicy policy = determineRevalidationPolicy(type, request.mutableResourceRequest(), request.forPreload(), resource.get(), request.defer());
     switch (policy) {
@@ -529,7 +539,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::revalidateResource(co
 
 CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedResource::Type type, CachedResourceRequest& request, const String& charset)
 {
-    ASSERT(!memoryCache()->resourceForURL(request.resourceRequest().url()));
+    ASSERT(!memoryCache()->resourceForRequest(request.resourceRequest()));
 
     LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().string().latin1().data());
 

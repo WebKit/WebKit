@@ -1,3 +1,16 @@
+2013-02-21  Jeffrey Pfau  <jpfau@apple.com>
+
+        Optionally partition cache to prevent using cache for tracking
+        https://bugs.webkit.org/show_bug.cgi?id=110269
+
+        Reviewed by Maciej Stachowiak.
+
+        Update WKSI bindings and add feature defines.
+
+        * Configurations/FeatureDefines.xcconfig: Add defines for cache partitioning and public suffix list usage
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2013-02-25  Jer Noble  <jer.noble@apple.com>
 
         Normalize ENABLE_ENCRYPTED_MEDIA definitions across all FeatureDefines files.

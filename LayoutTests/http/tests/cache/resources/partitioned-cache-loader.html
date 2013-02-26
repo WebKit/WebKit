@@ -1,0 +1,24 @@
+<html>
+<head>
+<script src="../../resources/js-test-pre.js"></script>
+<script>
+	var scriptElement = document.createElement('script');
+	document.cookie = 'value=' + document.domain;
+	scriptElement.setAttribute('src', 'http://localhost:8000/cache/resources/echo-cookie.cgi');
+	document.head.appendChild(scriptElement);
+	window.onload = function() {
+		console.log(response);
+		shouldBeEqualToString('response',  document.domain);
+		if (document.domain == 'localhost') {
+			document.cookie = 'value=127.0.0.1';
+			document.location = 'http://127.0.0.1:8000/cache/resources/partitioned-cache-loader.html';
+		} else if (window.testRunner) {
+			internals.settings.setStorageBlockingPolicy('AllowAll');
+			testRunner.notifyDone();
+		}
+	};
+</script>
+</head>
+<body>
+</body>
+</html>

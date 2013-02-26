@@ -220,6 +220,14 @@ void InitWebCoreSystemInterface(void)
     INIT(NSReboundDeltaForElasticDelta);
 #endif
 
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    INIT(IsPublicSuffix);
+#endif
+
+#if ENABLE(CACHE_PARTITIONING)
+    INIT(CachePartitionKey);
+#endif
+
 #endif
     didInit = true;
 }
