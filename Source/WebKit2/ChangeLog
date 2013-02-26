@@ -1,3 +1,13 @@
+2013-02-26  Simon Hausmann  <simon.hausmann@digia.com>
+
+        Unreviewed trivial !ENABLE(NETSCAPE_PLUGIN_API) build fix
+
+        Add an intermediate pluginName string variable instead of
+        accessing plugin.info outside the feature #ifdef.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+
 2013-02-25  Huang Dongsung  <luxtella@company100.net>
 
         Coordinated Graphics: remove redundant update of non compositing layer.

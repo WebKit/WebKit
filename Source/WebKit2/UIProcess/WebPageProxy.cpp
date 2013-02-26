@@ -2617,6 +2617,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
 
     String pluginBundleIdentifier;
     String pluginBundleVersion;
+    String pluginName;
     String newMimeType = mimeType;
 #if ENABLE(NETSCAPE_PLUGIN_API)
     PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), pluginURLString));
@@ -2624,6 +2625,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
     pluginBundleIdentifier = plugin.bundleIdentifier;
     pluginBundleVersion = plugin.versionString;
 #endif
+    pluginName = plugin.info.name;
 #endif
 
     WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
@@ -2652,7 +2654,7 @@ void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailab
         ASSERT_NOT_REACHED();
     }
 
-    m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, mimeType, pluginBundleIdentifier, pluginBundleVersion, plugin.info.name, pluginURLString, pluginspageAttributeURLString, frameURLString, pageURLString);
+    m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, mimeType, pluginBundleIdentifier, pluginBundleVersion, pluginName, pluginURLString, pluginspageAttributeURLString, frameURLString, pageURLString);
 }
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
