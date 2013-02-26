@@ -57,7 +57,8 @@ namespace WebCore {
 // GraphicsContext3DPrivate
 
 GraphicsContext3DPrivate::GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphicsContext3D> webContext, bool preserveDrawingBuffer)
-    : m_impl(webContext)
+    : m_impl(webContext.get())
+    , m_ownedWebContext(webContext)
     , m_initializedAvailableExtensions(false)
     , m_layerComposited(false)
     , m_preserveDrawingBuffer(preserveDrawingBuffer)
@@ -65,6 +66,17 @@ GraphicsContext3DPrivate::GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphic
     , m_grContext(0)
 {
 }
+
+GraphicsContext3DPrivate::GraphicsContext3DPrivate(WebKit::WebGraphicsContext3D* webContext, GrContext* grContext, bool preserveDrawingBuffer)
+    : m_impl(webContext)
+    , m_initializedAvailableExtensions(false)
+    , m_layerComposited(false)
+    , m_preserveDrawingBuffer(preserveDrawingBuffer)
+    , m_resourceSafety(ResourceSafetyUnknown)
+    , m_grContext(grContext)
+{
+}
+
 
 GraphicsContext3DPrivate::~GraphicsContext3DPrivate()
 {
@@ -79,6 +91,15 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFro
     RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(GraphicsContext3D::Attributes(), 0));
 
     OwnPtr<GraphicsContext3DPrivate> priv = adoptPtr(new GraphicsContext3DPrivate(webContext, preserveDrawingBuffer));
+    context->m_private = priv.release();
+    return context.release();
+}
+
+PassRefPtr<GraphicsContext3D> GraphicsContext3DPrivate::createGraphicsContextFromExternalWebContextAndGrContext(WebKit::WebGraphicsContext3D* webContext, GrContext* grContext, bool preserveDrawingBuffer)
+{
+    RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(GraphicsContext3D::Attributes(), 0));
+
+    OwnPtr<GraphicsContext3DPrivate> priv = adoptPtr(new GraphicsContext3DPrivate(webContext, grContext, preserveDrawingBuffer));
     context->m_private = priv.release();
     return context.release();
 }
@@ -130,9 +151,10 @@ GrContext* GraphicsContext3DPrivate::grContext()
         return 0;
 
     interface->fCallback = bindWebGraphicsContext3DGLContextCallback;
-    interface->fCallbackData = reinterpret_cast<GrGLInterfaceCallbackData>(m_impl.get());
+    interface->fCallbackData = reinterpret_cast<GrGLInterfaceCallbackData>(m_impl);
 
-    m_grContext.reset(GrContext::Create(kOpenGL_GrBackend, reinterpret_cast<GrBackendContext>(interface.get())));
+    m_ownedGrContext.reset(GrContext::Create(kOpenGL_GrBackend, reinterpret_cast<GrBackendContext>(interface.get())));
+    m_grContext = m_ownedGrContext;
     if (!m_grContext)
         return 0;
 

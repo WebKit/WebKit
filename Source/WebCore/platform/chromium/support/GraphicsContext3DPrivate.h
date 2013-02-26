@@ -54,6 +54,8 @@ public:
     // be used on any other thread.
     static PassRefPtr<GraphicsContext3D> createGraphicsContextFromWebContext(PassOwnPtr<WebKit::WebGraphicsContext3D>, bool preserveDrawingBuffer = false);
 
+    static PassRefPtr<GraphicsContext3D> createGraphicsContextFromExternalWebContextAndGrContext(WebKit::WebGraphicsContext3D*, GrContext*, bool preserveDrawingBuffer = false);
+
     // Helper function to provide access to the lower-level WebGraphicsContext3D,
     // which is needed for subordinate contexts like WebGL's to share resources
     // with the compositor's context.
@@ -61,7 +63,7 @@ public:
 
     virtual ~GraphicsContext3DPrivate();
 
-    WebKit::WebGraphicsContext3D* webContext() const { return m_impl.get(); }
+    WebKit::WebGraphicsContext3D* webContext() const { return m_impl; }
 
     GrContext* grContext();
 
@@ -86,10 +88,12 @@ public:
 
 private:
     GraphicsContext3DPrivate(PassOwnPtr<WebKit::WebGraphicsContext3D>, bool preserveDrawingBuffer);
+    GraphicsContext3DPrivate(WebKit::WebGraphicsContext3D*, GrContext*, bool preserveDrawingBuffer);
 
     void initializeExtensions();
 
-    OwnPtr<WebKit::WebGraphicsContext3D> m_impl;
+    WebKit::WebGraphicsContext3D* m_impl;
+    OwnPtr<WebKit::WebGraphicsContext3D> m_ownedWebContext;
     OwnPtr<Extensions3DChromium> m_extensions;
     OwnPtr<GraphicsContext3DContextLostCallbackAdapter> m_contextLostCallbackAdapter;
     OwnPtr<GraphicsContext3DErrorMessageCallbackAdapter> m_errorMessageCallbackAdapter;
@@ -114,7 +118,8 @@ private:
     // used to resize the Canvas.
     SkBitmap m_resizingBitmap;
 
-    SkAutoTUnref<GrContext> m_grContext;
+    GrContext* m_grContext;
+    SkAutoTUnref<GrContext> m_ownedGrContext;
 };
 
 } // namespace WebCore

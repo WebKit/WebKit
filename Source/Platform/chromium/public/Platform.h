@@ -44,6 +44,8 @@
 #include "WebString.h"
 #include "WebVector.h"
 
+class GrContext;
+
 namespace WebKit {
 
 class WebAudioBus;
@@ -450,6 +452,20 @@ public:
     // May return null if GPU is not supported.
     // Returns newly allocated and initialized offscreen WebGraphicsContext3D instance.
     virtual WebGraphicsContext3D* createOffscreenGraphicsContext3D(const WebGraphicsContext3D::Attributes&) { return 0; }
+
+    // May return null if GPU is not supported.
+    // Returns the shared WebGraphicsContext3D. This is a singleton object for
+    // the entire process. Calling this function may destroy both the shared
+    // offscreen WebGraphicsContext3D and GrContext pointers last returned, so
+    // it should only be called from a single site. The implementor should
+    // create a new context before destroying its current context, if required,
+    // to ensure the same pointer can not be returned twice in a row for two
+    // different contexts.
+    virtual WebGraphicsContext3D* sharedOffscreenGraphicsContext3D() { return 0; }
+
+    // May return null if GPU is not supported.
+    // Returns the shared GrContext. This is a singleton object for the entire process.
+    virtual GrContext* sharedOffscreenGrContext() { return 0; }
 
     // Returns true if the platform is capable of producing an offscreen context suitable for accelerating 2d canvas.
     // This will return false if the platform cannot promise that contexts will be preserved across operations like

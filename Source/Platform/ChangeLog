@@ -1,3 +1,17 @@
+2013-02-26  Dana Jansens  <danakj@chromium.org>
+
+        Create the SharedGraphicsContext3D through its own method.
+        https://bugs.webkit.org/show_bug.cgi?id=109345
+
+        Reviewed by James Robinson.
+
+        Add Platform API methods to get shared contexts from the embedder.
+
+        * chromium/public/Platform.h:
+        (Platform):
+        (WebKit::Platform::sharedOffscreenGraphicsContext3D):
+        (WebKit::Platform::sharedOffscreenGrContext):
+
 2013-02-22  Ali Juma  <ajuma@chromium.org>
 
         [chromium] Register newly-created layers for animation
