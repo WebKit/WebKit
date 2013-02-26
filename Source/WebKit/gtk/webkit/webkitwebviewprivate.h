@@ -129,7 +129,7 @@ void webkit_web_view_request_download(WebKitWebView*, WebKitNetworkRequest*, con
 
 void webkit_web_view_add_resource(WebKitWebView*, const char*, WebKitWebResource*);
 void webkit_web_view_add_main_resource(WebKitWebView*, const char*, WebKitWebResource*);
-void webkit_web_view_remove_resource(WebKitWebView*, const char*);
+void webkitWebViewRemoveSubresource(WebKitWebView*, const char*);
 WebKitWebResource* webkit_web_view_get_resource(WebKitWebView*, char*);
 WebKitWebResource* webkit_web_view_get_main_resource(WebKitWebView*);
 void webkit_web_view_clear_resources(WebKitWebView*);

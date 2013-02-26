@@ -5066,14 +5066,15 @@ void webkit_web_view_add_resource(WebKitWebView* webView, const char* identifier
     g_hash_table_insert(priv->subResources.get(), g_strdup(identifier), webResource);
 }
 
-void webkit_web_view_remove_resource(WebKitWebView* webView, const char* identifier)
+void webkitWebViewRemoveSubresource(WebKitWebView* webView, const char* identifier)
 {
-    WebKitWebViewPrivate* priv = webView->priv;
-    if (g_str_equal(identifier, priv->mainResourceIdentifier.data())) {
-        priv->mainResourceIdentifier = "";
-        priv->mainResource = 0;
-    } else
-      g_hash_table_remove(priv->subResources.get(), identifier);
+    ASSERT(identifier);
+
+    // Don't remove the main resource.
+    const CString& mainResource = webView->priv->mainResourceIdentifier;
+    if (!mainResource.isNull() && g_str_equal(identifier, mainResource.data()))
+        return;
+    g_hash_table_remove(webView->priv->subResources.get(), identifier);
 }
 
 WebKitWebResource* webkit_web_view_get_resource(WebKitWebView* webView, char* identifier)
