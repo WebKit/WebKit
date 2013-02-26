@@ -76854,30 +76854,6 @@
 				RelativePath="..\inspector\TimelineRecordFactory.h"
 				>
 			</File>
-                        <File
-                                RelativePath="..\inspector\TimelineTraceEventProcessor.cpp"
-                                >
-                                <FileConfiguration
-                                        Name="Release|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Production|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                        </File>
-                        <File
-                                RelativePath="..\inspector\TimelineTraceEventProcessor.h"
-                                >
-                        </File>
 			<File
 				RelativePath="..\inspector\WorkerConsoleAgent.cpp"
 				>

@@ -3907,8 +3907,6 @@ webcore_sources += \
 	Source/WebCore/inspector/ScriptGCEventListener.h \
 	Source/WebCore/inspector/TimelineRecordFactory.cpp \
 	Source/WebCore/inspector/TimelineRecordFactory.h \
-	Source/WebCore/inspector/TimelineTraceEventProcessor.cpp \
-	Source/WebCore/inspector/TimelineTraceEventProcessor.h \
 	Source/WebCore/inspector/WorkerConsoleAgent.cpp \
 	Source/WebCore/inspector/WorkerConsoleAgent.h \
 	Source/WebCore/inspector/WorkerDebuggerAgent.cpp \

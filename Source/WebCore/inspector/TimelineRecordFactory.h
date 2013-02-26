@@ -106,7 +106,6 @@ namespace WebCore {
             return data.release();
         }
 #endif
-        static PassRefPtr<InspectorObject> createRasterData(double totalCPUTime, int threadsUsed);
 
     private:
         TimelineRecordFactory() { }

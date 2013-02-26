@@ -1,3 +1,21 @@
+2013-02-26  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed, rolling out r144041, r144044, and r144048.
+        http://trac.webkit.org/changeset/144041
+        http://trac.webkit.org/changeset/144044
+        http://trac.webkit.org/changeset/144048
+        https://bugs.webkit.org/show_bug.cgi?id=105796
+
+        Broke build
+
+        * public/WebDevToolsAgentClient.h:
+        * src/InspectorClientImpl.cpp:
+        * src/InspectorClientImpl.h:
+        (InspectorClientImpl):
+        * src/WebDevToolsAgentImpl.cpp:
+        * src/WebDevToolsAgentImpl.h:
+        (WebDevToolsAgentImpl):
+
 2013-02-01  Andrey Kosyakov  <caseq@chromium.org>
 
         Web Inspector: plumb trace events to Timeline agent

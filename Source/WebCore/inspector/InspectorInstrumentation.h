@@ -500,19 +500,6 @@ private:
 #endif
 };
 
-namespace InstrumentationEvents {
-extern const char PaintLayer[];
-extern const char RasterTask[];
-extern const char Paint[];
-extern const char Layer[];
-extern const char BeginFrame[];
-};
-
-namespace InstrumentationEventArguments {
-extern const char LayerId[];
-extern const char PageId[];
-};
-
 inline void InspectorInstrumentation::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
 {
 #if ENABLE(INSPECTOR)

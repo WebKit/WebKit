@@ -612,11 +612,6 @@ bool WebDevToolsAgentImpl::handleJavaScriptDialog(bool accept)
     return true;
 }
 
-void WebDevToolsAgentImpl::setTraceEventCallback(TraceEventCallback callback)
-{
-    m_client->setTraceEventCallback(callback);
-}
-
 void WebDevToolsAgentImpl::dispatchOnInspectorBackend(const WebString& message)
 {
     inspectorController()->dispatchMessageFromFrontend(message);

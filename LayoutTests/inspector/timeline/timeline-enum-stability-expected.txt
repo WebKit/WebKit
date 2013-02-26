@@ -19,7 +19,6 @@ Applications outside of WebKit depend on the stability of the mapping of these t
     Paint : "Paint"
     ParseHTML : "ParseHTML"
     Program : "Program"
-    Rasterize : "Rasterize"
     RecalculateStyles : "RecalculateStyles"
     RequestAnimationFrame : "RequestAnimationFrame"
     ResizeImage : "ResizeImage"

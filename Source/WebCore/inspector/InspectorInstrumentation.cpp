@@ -78,10 +78,6 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 
-#if PLATFORM(CHROMIUM)
-#include "platform/chromium/TraceEvent.h"
-#endif
-
 namespace WebCore {
 
 static const char* const requestAnimationFrameEventName = "requestAnimationFrame";
@@ -527,10 +523,6 @@ void InspectorInstrumentation::didDispatchXHRLoadEventImpl(const InspectorInstru
 
 InspectorInstrumentationCookie InspectorInstrumentation::willPaintImpl(InstrumentingAgents* instrumentingAgents, Frame* frame)
 {
-#if PLATFORM(CHROMIUM)
-    TRACE_EVENT_INSTANT1("instrumentation", InstrumentationEvents::Paint, InstrumentationEventArguments::PageId, frame ? reinterpret_cast<unsigned long long>(frame->page()) : 0);
-#endif
-
     int timelineAgentId = 0;
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent()) {
         timelineAgent->willPaint(frame);
@@ -1368,19 +1360,6 @@ void InspectorInstrumentation::renderLayerDestroyedImpl(InstrumentingAgents* ins
         layerTreeAgent->renderLayerDestroyed(renderLayer);
 }
 #endif
-
-namespace InstrumentationEvents {
-const char PaintLayer[] = "PaintLayer";
-const char RasterTask[] = "RasterTask";
-const char Paint[] = "Paint";
-const char Layer[] = "Layer";
-const char BeginFrame[] = "BeginFrame";
-};
-
-namespace InstrumentationEventArguments {
-const char LayerId[] = "layerId";
-const char PageId[] = "pageId";
-};
 
 } // namespace WebCore
 

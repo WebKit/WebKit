@@ -77,12 +77,6 @@ public:
     };
     virtual void dumpUncountedAllocatedObjects(const InstrumentedObjectSizeProvider*) { }
 
-    typedef void (*TraceEventCallback)(char phase, const unsigned char*, const char* name, unsigned long long id,
-        int numArgs, const char* const* argNames, const unsigned char* argTypes, const unsigned long long* argValues,
-        unsigned char flags);
-
-    virtual void setTraceEventCallback(TraceEventCallback) { }
-
 protected:
     ~WebDevToolsAgentClient() { }
 };

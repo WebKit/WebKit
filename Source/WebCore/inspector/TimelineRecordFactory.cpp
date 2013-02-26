@@ -207,14 +207,6 @@ void TimelineRecordFactory::addRectData(InspectorObject* data, const LayoutRect&
     data->setNumber("height", rect.height());
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createRasterData(double totalCPUTime, int threadsUsed)
-{
-    RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setNumber("totalCPUTime", totalCPUTime);
-    data->setNumber("threadsUsed", threadsUsed);
-    return data.release();
-}
-
 } // namespace WebCore
 
 #endif // ENABLE(INSPECTOR)

@@ -1283,8 +1283,6 @@
 		46F9D5DF0B0D60170028EE36 /* progressCursor.png in Resources */ = {isa = PBXBuildFile; fileRef = 46F9D5DC0B0D60170028EE36 /* progressCursor.png */; };
 		490707E61219C04300D90E51 /* ANGLEWebKitBridge.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */; };
 		490707E71219C04300D90E51 /* ANGLEWebKitBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = 490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */; };
-		49140256168E02E8002D6C6A /* TimelineTraceEventProcessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49140254168E02B4002D6C6A /* TimelineTraceEventProcessor.cpp */; };
-		49140257168E02EC002D6C6A /* TimelineTraceEventProcessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 49140255168E02B4002D6C6A /* TimelineTraceEventProcessor.h */; };
 		49182B5215DCE6F000548418 /* PlatformInstrumentation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49182B5015DCE6F000548418 /* PlatformInstrumentation.cpp */; };
 		49182B5315DCE6F000548418 /* PlatformInstrumentation.h in Headers */ = {isa = PBXBuildFile; fileRef = 49182B5115DCE6F000548418 /* PlatformInstrumentation.h */; };
 		492863991253B8FC00F792D6 /* ResourceLoadInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 492863981253B8FC00F792D6 /* ResourceLoadInfo.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -8697,8 +8695,6 @@
 		46F9D5DC0B0D60170028EE36 /* progressCursor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = progressCursor.png; sourceTree = "<group>"; };
 		490707E41219C04300D90E51 /* ANGLEWebKitBridge.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ANGLEWebKitBridge.cpp; sourceTree = "<group>"; };
 		490707E51219C04300D90E51 /* ANGLEWebKitBridge.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ANGLEWebKitBridge.h; sourceTree = "<group>"; };
-		49140254168E02B4002D6C6A /* TimelineTraceEventProcessor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TimelineTraceEventProcessor.cpp; sourceTree = "<group>"; };
-		49140255168E02B4002D6C6A /* TimelineTraceEventProcessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimelineTraceEventProcessor.h; sourceTree = "<group>"; };
 		49182B5015DCE6F000548418 /* PlatformInstrumentation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlatformInstrumentation.cpp; sourceTree = "<group>"; };
 		49182B5115DCE6F000548418 /* PlatformInstrumentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlatformInstrumentation.h; sourceTree = "<group>"; };
 		492863981253B8FC00F792D6 /* ResourceLoadInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceLoadInfo.h; sourceTree = "<group>"; };
@@ -15346,8 +15342,6 @@
 				9FA37EF01172FD4100C4CD55 /* ScriptProfileNode.idl */,
 				7553CFE7108F473F00EA281E /* TimelineRecordFactory.cpp */,
 				7553CFE6108F473F00EA281E /* TimelineRecordFactory.h */,
-				49140254168E02B4002D6C6A /* TimelineTraceEventProcessor.cpp */,
-				49140255168E02B4002D6C6A /* TimelineTraceEventProcessor.h */,
 				F382088E147D35F90010BC06 /* WorkerConsoleAgent.cpp */,
 				F382088F147D35F90010BC06 /* WorkerConsoleAgent.h */,
 				F34742DE1343631F00531BC2 /* WorkerDebuggerAgent.cpp */,
@@ -26621,7 +26615,6 @@
 				977E2E0F12F0FC9C00C13380 /* XSSAuditorDelegate.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				41B8CD4616D04591000E8CC0 /* SelectorCheckerFastPath.h in Headers */,
-				49140257168E02EC002D6C6A /* TimelineTraceEventProcessor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -29816,7 +29809,6 @@
 				977E2E0E12F0FC9C00C13380 /* XSSAuditorDelegate.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				41B8CD4516D04591000E8CC0 /* SelectorCheckerFastPath.cpp in Sources */,
-				49140256168E02E8002D6C6A /* TimelineTraceEventProcessor.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
