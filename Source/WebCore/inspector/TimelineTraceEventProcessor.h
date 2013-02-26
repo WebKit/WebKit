@@ -101,6 +101,7 @@ private:
             : m_timestamp(timestamp)
             , m_phase(phase)
             , m_name(name)
+            , m_id(id)
             , m_threadIdentifier(threadIdentifier)
             , m_argumentCount(argumentCount)
         {
