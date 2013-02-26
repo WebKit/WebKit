@@ -40,7 +40,7 @@ _log = logging.getLogger(__name__)
 
 class StatusServer:
     # FIXME: This should probably move to common.config.urls.
-    default_host = "queues.webkit.org"
+    default_host = "webkit-commit-queue.appspot.com"
 
     def __init__(self, host=default_host, browser=None, bot_id=None):
         self.set_host(host)

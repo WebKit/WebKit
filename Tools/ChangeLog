@@ -1,3 +1,16 @@
+2013-02-25  Alan Cutter  <alancutter@chromium.org>
+
+        GCE EWS bots failing intermittently on HTTP 502 error while updating their status
+        https://bugs.webkit.org/show_bug.cgi?id=110845
+
+        Unreviewed EWS bot fix.
+
+        Switch the Queue Status Server address the EWS bots use to a more direct URL that
+        doesn't seem to be having problems from GCE like queues.webkit.org.
+
+        * Scripts/webkitpy/common/net/statusserver.py:
+        (StatusServer):
+
 2013-02-25  Dirk Pranke  <dpranke@chromium.org>
 
         Forgot to delete a no-longer-needed unit test after r143980.
