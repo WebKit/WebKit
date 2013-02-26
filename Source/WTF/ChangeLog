@@ -1,3 +1,10 @@
+2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix attempt after r143996.
+
+        * wtf/FastMalloc.cpp:
+        (WTF):
+
 2013-02-25  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Fix script to use WEBKIT_SOURCE for VS2010 property sheets instead of WEBKIT_LIBRARIES.

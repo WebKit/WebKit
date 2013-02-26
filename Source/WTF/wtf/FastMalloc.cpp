@@ -512,6 +512,7 @@ namespace WTF {
 #define MESSAGE LOG_ERROR
 #define CHECK_CONDITION ASSERT
 
+static const char kLLHardeningMask = 0;
 template <unsigned> struct EntropySource;
 template <> struct EntropySource<4> {
     static uint32_t value()
@@ -539,7 +540,6 @@ template <> struct EntropySource<8> {
  * kLLHardeningMask should be sufficiently randomized to make direct
  * freelist manipulation much more difficult.
  */
-static const char kLLHardeningMask = 0;
 enum {
     MaskKeyShift = 13
 };
