@@ -1074,10 +1074,11 @@ void InspectorPageAgent::scriptsEnabled(bool isEnabled)
 PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Frame* frame)
 {
     RefPtr<TypeBuilder::Page::Frame> frameObject = TypeBuilder::Page::Frame::create()
-         .setId(frameId(frame))
-         .setLoaderId(loaderId(frame->loader()->documentLoader()))
-         .setUrl(frame->document()->url().string())
-         .setMimeType(frame->loader()->documentLoader()->responseMIMEType());
+        .setId(frameId(frame))
+        .setLoaderId(loaderId(frame->loader()->documentLoader()))
+        .setUrl(frame->document()->url().string())
+        .setMimeType(frame->loader()->documentLoader()->responseMIMEType())
+        .setSecurityOrigin(frame->document()->securityOrigin()->toRawString());
     if (frame->tree()->parent())
         frameObject->setParentId(frameId(frame->tree()->parent()));
     if (frame->ownerElement()) {
@@ -1086,8 +1087,6 @@ PassRefPtr<TypeBuilder::Page::Frame> InspectorPageAgent::buildObjectForFrame(Fra
             name = frame->ownerElement()->getAttribute(HTMLNames::idAttr);
         frameObject->setName(name);
     }
-    // FIXME: Make this field non-optional. https://bugs.webkit.org/show_bug.cgi?id=80857
-    frameObject->setSecurityOrigin(frame->document()->securityOrigin()->toRawString());
 
     return frameObject;
 }
