@@ -1,3 +1,16 @@
+2013-02-26  Oliver Hunt  <oliver@apple.com>
+
+        Kill another analyzer warning in javascriptcore
+        https://bugs.webkit.org/show_bug.cgi?id=110802
+
+        Reviewed by Benjamin Poulain.
+
+        Add null checks.
+        
+        * profiler/LegacyProfiler.cpp:
+        (JSC::LegacyProfiler::startProfiling):
+        (JSC::LegacyProfiler::stopProfiling):
+
 2013-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r144004.

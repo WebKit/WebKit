@@ -63,9 +63,12 @@ void LegacyProfiler::startProfiling(ExecState* exec, const String& title)
 {
     ASSERT_ARG(title, !title.isNull());
 
+    if (!exec)
+        return;
+
     // Check if we currently have a Profile for this global ExecState and title.
     // If so return early and don't create a new Profile.
-    JSGlobalObject* origin = exec ? exec->lexicalGlobalObject() : 0;
+    JSGlobalObject* origin = exec->lexicalGlobalObject();
 
     for (size_t i = 0; i < m_currentProfiles.size(); ++i) {
         ProfileGenerator* profileGenerator = m_currentProfiles[i].get();
@@ -80,7 +83,10 @@ void LegacyProfiler::startProfiling(ExecState* exec, const String& title)
 
 PassRefPtr<Profile> LegacyProfiler::stopProfiling(ExecState* exec, const String& title)
 {
-    JSGlobalObject* origin = exec ? exec->lexicalGlobalObject() : 0;
+    if (!exec)
+        return 0;
+
+    JSGlobalObject* origin = exec->lexicalGlobalObject();
     for (ptrdiff_t i = m_currentProfiles.size() - 1; i >= 0; --i) {
         ProfileGenerator* profileGenerator = m_currentProfiles[i].get();
         if (profileGenerator->origin() == origin && (title.isNull() || profileGenerator->title() == title)) {
