@@ -45,9 +45,7 @@
                 'chromium_src_dir': '<(tools_dir)/../../..',
             }],
             ['OS=="linux"', {
-                # FIXME: This should be on by default.
-                # See https://bugs.webkit.org/show_bug.cgi?id=107338
-                'use_custom_freetype%': 0,
+                'use_custom_freetype%': 1,
             }, {
                 'use_custom_freetype%': 0,
             }],

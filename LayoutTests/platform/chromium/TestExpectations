@@ -4437,3 +4437,10 @@ webkit.org/b/110654 [ Mac Win ] svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/110654 [ Mac Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
 # New test
 webkit.org/b/110654 [ Mac Win ] css3/flexbox/button.html [ Failure ]
+
+# This is possibly a bug in the version of fontconfig on Precise, not sure.
+webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-fontconfig-renderstyle.html [ Failure Pass ]
+
+# This fails on Precise due to a difference in Garuda.ttf between Lucid and Precise.
+# We can rebaseline when we drop Lucid support.
+webkit.org/b/110540 [ Linux ] fast/text/international/thai-line-breaks.html [ ImageOnlyFailure Pass ]
