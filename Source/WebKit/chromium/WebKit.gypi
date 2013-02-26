@@ -86,7 +86,6 @@
             'tests/MockDiscardablePixelRef.h',
             'tests/MockImageDecoder.h',
             'tests/KeyboardTest.cpp',
-            'tests/KeyCodeConversionTest.cpp',
             'tests/KURLTest.cpp',
             'tests/LevelDBTest.cpp',
             'tests/LinkHighlightTest.cpp',
