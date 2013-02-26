@@ -285,7 +285,7 @@ void XSSAuditor::init(Document* document)
 
     if (!m_reportURL.isEmpty()) {
         // May need these for reporting later on.
-        m_originalURL = m_documentURL.copy();
+        m_originalURL = m_documentURL.string().isolatedCopy();
         m_originalHTTPBody = httpBodyAsString;
     }
 }
