@@ -1,3 +1,9 @@
+2013-02-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. AppleWin VS2010 build fix.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExportGeneratorCommon.props:
+
 2013-02-26  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; use correct macro for platform name in FeatureDefines.xcconfig.
