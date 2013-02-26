@@ -1,3 +1,15 @@
+2013-02-26  Vivek Galatage  <vivek.vg@samsung.com>
+
+        new-commit-bot: Some IRC clients doesn't linkify rollout messages
+        https://bugs.webkit.org/show_bug.cgi?id=110861
+
+        Reviewed by Ryosuke Niwa.
+
+        Adding the space before ':' in order to fix the links shown for the rollout message.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot.py:
+        (NewCommitBot._summarize_commit_log):
+
 2013-02-26  Joone Hur  <joone.hur@intel.com>
 
         [GTK] Add Clutter to jhbuild

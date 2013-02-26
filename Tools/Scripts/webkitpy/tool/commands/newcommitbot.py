@@ -147,7 +147,7 @@ class NewCommitBot(AbstractQueue, StepSequenceErrorHandler):
                 contributor = committer_list.contributor_by_irc_nickname(author)
                 if contributor:
                     author = "%s (%s)" % (contributor.full_name, contributor.irc_nicknames[0])
-                return '%s rolled out %s in %s: %s' % (author, rollout.group('revisions'),
+                return '%s rolled out %s in %s : %s' % (author, rollout.group('revisions'),
                     linkified_revision, requested_by.group('reason'))
             lines[0] = '%s rolled out %s in %s' % (author, rollout.group('revisions'), linkified_revision)
 
