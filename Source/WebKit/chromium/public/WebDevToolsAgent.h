@@ -53,8 +53,6 @@ public:
     enum BrowserDataHint {
         BrowserDataHintNone,
         BrowserDataHintScreenshot,
-        BrowserDataHintAcceptJavaScriptDialog,
-        BrowserDataHintDismissJavaScriptDialog,
     };
 
     virtual ~WebDevToolsAgent() {}

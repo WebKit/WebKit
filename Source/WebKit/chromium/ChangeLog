@@ -1,3 +1,17 @@
+2013-02-25  Ken Kania  <kkania@chromium.org>
+
+        Remove browser patching mechanism for handling javascript dialogs in chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=110531
+
+        Reviewed by Pavel Feldman.
+
+        * public/WebDevToolsAgent.h:
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::handleJavaScriptDialog):
+        (WebKit::browserHintToString):
+        (WebKit::browserHintFromString):
+        (WebKit::WebDevToolsAgent::patchWithBrowserData):
+
 2013-02-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] Plumb WebViewImpl's compositor scheduling suppression out to WebWidgetClient

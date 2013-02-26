@@ -83,8 +83,6 @@ namespace WebKit {
 
 namespace BrowserDataHintStringValues {
 static const char screenshot[] = "screenshot";
-static const char acceptJavaScriptDialog[] = "acceptJavaScriptDialog";
-static const char dismissJavaScriptDialog[] = "dismissJavaScriptDialog";
 }
 
 class ClientMessageLoopAdapter : public PageScriptDebugServer::ClientMessageLoop {
@@ -610,8 +608,7 @@ bool WebDevToolsAgentImpl::captureScreenshot(String* data)
 
 bool WebDevToolsAgentImpl::handleJavaScriptDialog(bool accept)
 {
-    // Operation is going to be performed in the browser process.
-    m_sendWithBrowserDataHint = accept ? BrowserDataHintAcceptJavaScriptDialog : BrowserDataHintDismissJavaScriptDialog;
+    // Operation was already performed in the browser process.
     return true;
 }
 
@@ -694,10 +691,6 @@ static String browserHintToString(WebDevToolsAgent::BrowserDataHint dataHint)
     switch (dataHint) {
     case WebDevToolsAgent::BrowserDataHintScreenshot:
         return BrowserDataHintStringValues::screenshot;
-    case WebDevToolsAgent::BrowserDataHintAcceptJavaScriptDialog:
-        return BrowserDataHintStringValues::acceptJavaScriptDialog;
-    case WebDevToolsAgent::BrowserDataHintDismissJavaScriptDialog:
-        return BrowserDataHintStringValues::dismissJavaScriptDialog;
     case WebDevToolsAgent::BrowserDataHintNone:
     default:
         ASSERT_NOT_REACHED();
@@ -709,10 +702,6 @@ static WebDevToolsAgent::BrowserDataHint browserHintFromString(const String& val
 {
     if (value == BrowserDataHintStringValues::screenshot)
         return WebDevToolsAgent::BrowserDataHintScreenshot;
-    if (value == BrowserDataHintStringValues::acceptJavaScriptDialog)
-        return WebDevToolsAgent::BrowserDataHintAcceptJavaScriptDialog;
-    if (value == BrowserDataHintStringValues::dismissJavaScriptDialog)
-        return WebDevToolsAgent::BrowserDataHintDismissJavaScriptDialog;
     ASSERT_NOT_REACHED();
     return WebDevToolsAgent::BrowserDataHintNone;
 }
@@ -867,10 +856,6 @@ WebString WebDevToolsAgent::patchWithBrowserData(const WebString& message, Brows
     switch (dataHint) {
     case BrowserDataHintScreenshot:
         resultObject->setString("data", hintData);
-        break;
-    case BrowserDataHintAcceptJavaScriptDialog:
-        break;
-    case BrowserDataHintDismissJavaScriptDialog:
         break;
     case BrowserDataHintNone:
     default:
