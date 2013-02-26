@@ -46,13 +46,7 @@
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
 #include "LocalizedStrings.h"
-#if ENABLE(MATHML)
-#include "MathMLNames.h"
-#endif
 #include "NotImplemented.h"
-#if ENABLE(SVG)
-#include "SVGNames.h"
-#endif
 #include "Settings.h"
 #include "Text.h"
 #include <wtf/UnusedParam.h>
