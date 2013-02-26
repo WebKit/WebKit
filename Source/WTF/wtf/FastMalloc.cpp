@@ -103,7 +103,7 @@
 #endif
 
 // Harden the pointers stored in the TCMalloc linked lists
-#if COMPILER(GCC)
+#if COMPILER(GCC) && !PLATFORM(QT)
 #define ENABLE_TCMALLOC_HARDENING 1
 #endif
 

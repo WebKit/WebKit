@@ -1,3 +1,9 @@
+2013-02-26  Oliver Hunt  <oliver@apple.com>
+
+        Appease the QT bots.
+
+        * wtf/FastMalloc.cpp:
+
 2013-02-26  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
 
         Implement JIT on Windows 64 bits
