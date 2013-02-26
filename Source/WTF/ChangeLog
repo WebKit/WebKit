@@ -1,5 +1,11 @@
 2013-02-26  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Build fix for VS2010 solution, take 2.
+
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py:
+
+2013-02-26  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Unreviewed build fix for VS2010 solution.
 
         * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py:
