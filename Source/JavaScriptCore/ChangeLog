@@ -1,3 +1,15 @@
+2013-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        REGRESSION(r143654): some jquery test asserts on 32 bit debug build
+        https://bugs.webkit.org/show_bug.cgi?id=110756
+
+        Reviewed by Geoffrey Garen.
+        
+        TypeOf does speculations manually, so it should mark its JSValueOperand as doing ManualOperandSpeculation.
+
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+
 2013-02-25  Benjamin Poulain  <bpoulain@apple.com>
 
         [JSC] Upstream iOS Stack bound checking

@@ -4388,7 +4388,7 @@ void SpeculativeJIT::compile(Node* node)
         break;
     }
     case TypeOf: {
-        JSValueOperand value(this, node->child1());
+        JSValueOperand value(this, node->child1(), ManualOperandSpeculation);
         GPRReg tagGPR = value.tagGPR();
         GPRReg payloadGPR = value.payloadGPR();
         GPRTemporary temp(this);
