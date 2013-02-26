@@ -1,5 +1,52 @@
 2013-02-26  Andreas Kling  <akling@apple.com>
 
+        Unreviewed, rolling out r144054.
+        http://trac.webkit.org/changeset/144054
+        https://bugs.webkit.org/show_bug.cgi?id=110854
+
+        broke builds
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/PropertyMapHashTable.h:
+        (PropertyTable):
+        (JSC::PropertyTable::PropertyTable):
+        (JSC):
+        (JSC::PropertyTable::~PropertyTable):
+        (JSC::PropertyTable::copy):
+        * runtime/PropertyTable.cpp: Removed.
+        * runtime/Structure.cpp:
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::copyPropertyTableForPinning):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::createPropertyMap):
+        (JSC::Structure::visitChildren):
+        * runtime/Structure.h:
+        (JSC):
+        (JSC::Structure::putWillGrowOutOfLineStorage):
+        (JSC::Structure::checkOffsetConsistency):
+        (Structure):
+        * runtime/StructureInlines.h:
+
+2013-02-26  Andreas Kling  <akling@apple.com>
+
         Unused Structure property tables waste 14MB on Membuster.
         <http://webkit.org/b/110854>
         <rdar://problem/13292104>

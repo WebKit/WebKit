@@ -722,7 +722,6 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/PropertyOffset.h \
 	Source/JavaScriptCore/runtime/PropertySlot.cpp \
 	Source/JavaScriptCore/runtime/PropertySlot.h \
-	Source/JavaScriptCore/runtime/PropertyTable.cpp \
 	Source/JavaScriptCore/runtime/PrototypeMap.cpp \
 	Source/JavaScriptCore/runtime/PrototypeMap.h \
 	Source/JavaScriptCore/runtime/PropertyStorage.h \
