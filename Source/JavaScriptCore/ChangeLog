@@ -1,3 +1,15 @@
+2013-02-25  Michael Saboff  <msaboff@apple.com>
+
+        For JSVALUE32_64, maxOffsetRelativeToPatchedStorage() doesn't compute the maximum negative offset
+        https://bugs.webkit.org/show_bug.cgi?id=110828
+
+        Reviewed by Oliver Hunt.
+
+        * runtime/JSObject.h:
+        (JSC::maxOffsetRelativeToPatchedStorage): Only add the OBJECT_OFFSETOF(tag) for positive offsets.
+        That way this function will return the offset farthest from 0 needed to access either the payload
+        or tag.
+
 2013-02-25  Jeffrey Pfau  <jpfau@apple.com>
 
         Optionally partition cache to prevent using cache for tracking

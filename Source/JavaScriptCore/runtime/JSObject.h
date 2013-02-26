@@ -1421,15 +1421,15 @@ inline size_t offsetRelativeToPatchedStorage(PropertyOffset offset)
     return JSObject::offsetOfInlineStorage() - JSObject::butterflyOffset() + sizeof(EncodedJSValue) * offsetInInlineStorage(offset);
 }
 
-// Returns the maximum offset a load instruction will encode.
+// Returns the maximum offset (away from zero) a load instruction will encode.
 inline size_t maxOffsetRelativeToPatchedStorage(PropertyOffset offset)
 {
+    ptrdiff_t addressOffset = static_cast<ptrdiff_t>(offsetRelativeToPatchedStorage(offset));
 #if USE(JSVALUE32_64)
-    return offsetRelativeToPatchedStorage(offset)
-        + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag);
-#else
-    return offsetRelativeToPatchedStorage(offset);
+    if (addressOffset >= 0)
+        return static_cast<size_t>(addressOffset) + OBJECT_OFFSETOF(EncodedValueDescriptor, asBits.tag);
 #endif
+    return static_cast<size_t>(addressOffset);
 }
 
 inline int indexRelativeToBase(PropertyOffset offset)
