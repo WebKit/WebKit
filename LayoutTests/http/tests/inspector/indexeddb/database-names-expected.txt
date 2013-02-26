@@ -5,6 +5,7 @@ CONSOLE MESSAGE: line 108: InspectorTest.IndexedDB_callback4
 Tests that database names are correctly loaded and saved in IndexedDBModel.
 
 Dumping database names:
+
 Dumping database names:
     testDatabase1
 
@@ -16,4 +17,5 @@ Dumping database names:
     testDatabase1
 
 Dumping database names:
+
 

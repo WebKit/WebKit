@@ -147,6 +147,14 @@ WebInspector.ResourceTreeModel.prototype = {
     },
 
     /**
+     * @return {Array.<string>}
+     */
+    securityOrigins: function()
+    {
+        return Object.keys(this._securityOriginFrameCount);
+    },
+
+    /**
      * @param {WebInspector.ResourceTreeFrame} mainFrame
      */
     _handleMainFrameDetached: function(mainFrame)

@@ -1283,15 +1283,6 @@
         "hidden": true,
         "types": [
             {
-                "id": "SecurityOriginWithDatabaseNames",
-                "type": "object",
-                "description": "Security origin with database names.",
-                "properties": [
-                    { "name": "securityOrigin", "type": "string", "description": "Security origin." },
-                    { "name": "databaseNames", "type": "array", "items": { "type": "string" }, "description": "Database names for this origin." }
-                ]
-            },
-            {
                 "id": "DatabaseWithObjectStores",
                 "type": "object",
                 "description": "Database with an array of object stores.",
@@ -1378,21 +1369,21 @@
                 "description": "Disables events from backend."
             },
             {
-                "name": "requestDatabaseNamesForFrame",
+                "name": "requestDatabaseNames",
                 "async": true,
                 "parameters": [
-                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id." }
+                    { "name": "securityOrigin", "type": "string", "description": "Security origin." }
                 ],
                 "returns": [
-                    { "name": "securityOriginWithDatabaseNames", "$ref": "SecurityOriginWithDatabaseNames", "description": "Frame with database names." }
+                    { "name": "databaseNames", "type": "array", "items": { "type": "string" }, "description": "Database names for origin." }
                 ],
-                "description": "Requests database names for given frame's security origin."
+                "description": "Requests database names for given security origin."
             },
             {
                 "name": "requestDatabase",
                 "async": true,
                 "parameters": [
-                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id." },
+                    { "name": "securityOrigin", "type": "string", "description": "Security origin." },
                     { "name": "databaseName", "type": "string", "description": "Database name." }
                 ],
                 "returns": [
@@ -1404,7 +1395,7 @@
                 "name": "requestData",
                 "async": true,
                 "parameters": [
-                    { "name": "frameId", "$ref": "Network.FrameId", "description": "Frame id." },
+                    { "name": "securityOrigin", "type": "string", "description": "Security origin." },
                     { "name": "databaseName", "type": "string", "description": "Database name." },
                     { "name": "objectStoreName", "type": "string", "description": "Object store name." },
                     { "name": "indexName", "type": "string", "description": "Index name, empty string for object store data requests." },

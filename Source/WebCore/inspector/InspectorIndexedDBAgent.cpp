@@ -68,7 +68,6 @@
 #include <wtf/Vector.h>
 
 using WebCore::TypeBuilder::Array;
-using WebCore::TypeBuilder::IndexedDB::SecurityOriginWithDatabaseNames;
 using WebCore::TypeBuilder::IndexedDB::DatabaseWithObjectStores;
 using WebCore::TypeBuilder::IndexedDB::DataEntry;
 using WebCore::TypeBuilder::IndexedDB::Key;
@@ -77,7 +76,7 @@ using WebCore::TypeBuilder::IndexedDB::KeyRange;
 using WebCore::TypeBuilder::IndexedDB::ObjectStore;
 using WebCore::TypeBuilder::IndexedDB::ObjectStoreIndex;
 
-typedef WebCore::InspectorBackendDispatcher::IndexedDBCommandHandler::RequestDatabaseNamesForFrameCallback RequestDatabaseNamesForFrameCallback;
+typedef WebCore::InspectorBackendDispatcher::IndexedDBCommandHandler::RequestDatabaseNamesCallback RequestDatabaseNamesCallback;
 typedef WebCore::InspectorBackendDispatcher::IndexedDBCommandHandler::RequestDatabaseCallback RequestDatabaseCallback;
 typedef WebCore::InspectorBackendDispatcher::IndexedDBCommandHandler::RequestDataCallback RequestDataCallback;
 typedef WebCore::InspectorBackendDispatcher::CallbackBase RequestCallback;
@@ -93,7 +92,7 @@ namespace {
 class GetDatabaseNamesCallback : public EventListener {
     WTF_MAKE_NONCOPYABLE(GetDatabaseNamesCallback);
 public:
-    static PassRefPtr<GetDatabaseNamesCallback> create(PassRefPtr<RequestDatabaseNamesForFrameCallback> requestCallback, const String& securityOrigin)
+    static PassRefPtr<GetDatabaseNamesCallback> create(PassRefPtr<RequestDatabaseNamesCallback> requestCallback, const String& securityOrigin)
     {
         return adoptRef(new GetDatabaseNamesCallback(requestCallback, securityOrigin));
     }
@@ -125,23 +124,20 @@ public:
             m_requestCallback->sendFailure("Unexpected result type.");
             return;
         }
+
         RefPtr<DOMStringList> databaseNamesList = requestResult->domStringList();
         RefPtr<TypeBuilder::Array<String> > databaseNames = TypeBuilder::Array<String>::create();
         for (size_t i = 0; i < databaseNamesList->length(); ++i)
             databaseNames->addItem(databaseNamesList->item(i));
-
-        RefPtr<SecurityOriginWithDatabaseNames> result = SecurityOriginWithDatabaseNames::create()
-            .setSecurityOrigin(m_securityOrigin)
-            .setDatabaseNames(databaseNames);
-        m_requestCallback->sendSuccess(result);
+        m_requestCallback->sendSuccess(databaseNames.release());
     }
 
 private:
-    GetDatabaseNamesCallback(PassRefPtr<RequestDatabaseNamesForFrameCallback> requestCallback, const String& securityOrigin)
+    GetDatabaseNamesCallback(PassRefPtr<RequestDatabaseNamesCallback> requestCallback, const String& securityOrigin)
         : EventListener(EventListener::CPPEventListenerType)
         , m_requestCallback(requestCallback)
         , m_securityOrigin(securityOrigin) { }
-    RefPtr<RequestDatabaseNamesForFrameCallback> m_requestCallback;
+    RefPtr<RequestDatabaseNamesCallback> m_requestCallback;
     String m_securityOrigin;
 };
 
@@ -590,29 +586,8 @@ void InspectorIndexedDBAgent::disable(ErrorString*)
     m_state->setBoolean(IndexedDBAgentState::indexedDBAgentEnabled, false);
 }
 
-static Frame* assertFrame(ErrorString* errorString, const String& frameId, InspectorPageAgent* pageAgent)
-{
-    Frame* frame = pageAgent->frameForId(frameId);
-
-    if (!frame)
-        *errorString = "Frame not found";
-
-    return frame;
-}
-
 static Document* assertDocument(ErrorString* errorString, Frame* frame)
 {
-    Document* document = frame ? frame->document() : 0;
-
-    if (!document)
-        *errorString = "No document for given frame found";
-
-    return document;
-}
-
-static Document* assertDocument(ErrorString* errorString, const String& frameId, InspectorPageAgent* pageAgent)
-{
-    Frame* frame = pageAgent->frameForId(frameId);
     Document* document = frame ? frame->document() : 0;
 
     if (!document)
@@ -636,9 +611,10 @@ static IDBFactory* assertIDBFactory(ErrorString* errorString, Document* document
     return idbFactory;
 }
 
-void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* errorString, const String& frameId, PassRefPtr<RequestDatabaseNamesForFrameCallback> requestCallback)
+void InspectorIndexedDBAgent::requestDatabaseNames(ErrorString* errorString, const String& securityOrigin, PassRefPtr<RequestDatabaseNamesCallback> requestCallback)
 {
-    Document* document = assertDocument(errorString, frameId, m_pageAgent);
+    Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
+    Document* document = assertDocument(errorString, frame);
     if (!document)
         return;
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
@@ -661,9 +637,10 @@ void InspectorIndexedDBAgent::requestDatabaseNamesForFrame(ErrorString* errorStr
     idbRequest->addEventListener(eventNames().successEvent, GetDatabaseNamesCallback::create(requestCallback, document->securityOrigin()->toRawString()), false);
 }
 
-void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, const String& frameId, const String& databaseName, PassRefPtr<RequestDatabaseCallback> requestCallback)
+void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, const String& securityOrigin, const String& databaseName, PassRefPtr<RequestDatabaseCallback> requestCallback)
 {
-    Document* document = assertDocument(errorString, frameId, m_pageAgent);
+    Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
+    Document* document = assertDocument(errorString, frame);
     if (!document)
         return;
     IDBFactory* idbFactory = assertIDBFactory(errorString, document);
@@ -681,11 +658,9 @@ void InspectorIndexedDBAgent::requestDatabase(ErrorString* errorString, const St
     databaseLoader->start(idbFactory, document->securityOrigin(), databaseName);
 }
 
-void InspectorIndexedDBAgent::requestData(ErrorString* errorString, const String& frameId, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const RefPtr<InspectorObject>* keyRange, PassRefPtr<RequestDataCallback> requestCallback)
+void InspectorIndexedDBAgent::requestData(ErrorString* errorString, const String& securityOrigin, const String& databaseName, const String& objectStoreName, const String& indexName, int skipCount, int pageSize, const RefPtr<InspectorObject>* keyRange, PassRefPtr<RequestDataCallback> requestCallback)
 {
-    Frame* frame = assertFrame(errorString, frameId, m_pageAgent);
-    if (!frame)
-        return;
+    Frame* frame = m_pageAgent->findFrameWithSecurityOrigin(securityOrigin);
     Document* document = assertDocument(errorString, frame);
     if (!document)
         return;
