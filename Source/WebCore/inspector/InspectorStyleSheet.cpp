@@ -780,8 +780,10 @@ void InspectorStyleSheet::reparseStyleSheet(const String& text)
     }
 }
 
-bool InspectorStyleSheet::setText(const String& text)
+bool InspectorStyleSheet::setText(const String& text, ExceptionCode& ec)
 {
+    if (!checkPageStyleSheet(ec))
+        return false;
     if (!m_parsedStyleSheet)
         return false;
 
@@ -803,6 +805,8 @@ String InspectorStyleSheet::ruleSelector(const InspectorCSSId& id, ExceptionCode
 
 bool InspectorStyleSheet::setRuleSelector(const InspectorCSSId& id, const String& selector, ExceptionCode& ec)
 {
+    if (!checkPageStyleSheet(ec))
+        return false;
     CSSStyleRule* rule = ruleForId(id);
     if (!rule) {
         ec = NOT_FOUND_ERR;
@@ -837,6 +841,8 @@ static bool checkStyleRuleSelector(Document* document, const String& selector)
 
 CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode& ec)
 {
+    if (!checkPageStyleSheet(ec))
+        return 0;
     if (!checkStyleRuleSelector(m_pageStyleSheet->ownerDocument(), selector)) {
         ec = SYNTAX_ERR;
         return 0;
@@ -874,7 +880,7 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
     styleSheetText.append(selector);
     styleSheetText.appendLiteral(" {}");
     // Using setText() as this operation changes the style sheet rule set.
-    setText(styleSheetText.toString());
+    setText(styleSheetText.toString(), ASSERT_NO_EXCEPTION);
 
     fireStyleSheetChanged();
 
@@ -883,6 +889,8 @@ CSSStyleRule* InspectorStyleSheet::addRule(const String& selector, ExceptionCode
 
 bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec)
 {
+    if (!checkPageStyleSheet(ec))
+        return false;
     RefPtr<CSSStyleRule> rule = ruleForId(id);
     if (!rule) {
         ec = NOT_FOUND_ERR;
@@ -908,7 +916,7 @@ bool InspectorStyleSheet::deleteRule(const InspectorCSSId& id, ExceptionCode& ec
 
     String sheetText = m_parsedStyleSheet->text();
     sheetText.remove(sourceData->ruleHeaderRange.start, sourceData->ruleBodyRange.end - sourceData->ruleHeaderRange.start + 1);
-    setText(sheetText);
+    setText(sheetText, ASSERT_NO_EXCEPTION);
     fireStyleSheetChanged();
     return true;
 }
@@ -1177,6 +1185,15 @@ unsigned InspectorStyleSheet::ruleIndexByStyle(CSSStyleDeclaration* pageStyle) c
     return UINT_MAX;
 }
 
+bool InspectorStyleSheet::checkPageStyleSheet(ExceptionCode& ec) const
+{
+    if (!m_pageStyleSheet) {
+        ec = NOT_SUPPORTED_ERR;
+        return false;
+    }
+    return true;
+}
+
 bool InspectorStyleSheet::ensureParsedDataReady()
 {
     return ensureText() && ensureSourceData();
@@ -1222,7 +1239,7 @@ void InspectorStyleSheet::ensureFlatRules() const
 
 bool InspectorStyleSheet::setStyleText(CSSStyleDeclaration* style, const String& text)
 {
-    if (!pageStyleSheet())
+    if (!m_pageStyleSheet)
         return false;
     if (!ensureParsedDataReady())
         return false;

@@ -118,7 +118,7 @@ function test()
             InspectorTest.addResult("");
             InspectorTest.addResult("=== Attributes style for table ===");
             InspectorTest.dumpStyle(attributesStyle);
-            test_styleSheets();
+            test_inlineStyleSheetModification(inlineStyle);
         }
 
         function nodeCallback(node)
@@ -126,6 +126,27 @@ function test()
             CSSAgent.getInlineStylesForNode(node.id, callback);
         }
         InspectorTest.nodeWithId("thetable", nodeCallback);
+    }
+
+    function test_inlineStyleSheetModification(inlineStyle)
+    {
+        CSSAgent.getStyleSheetText(inlineStyle.styleId.styleSheetId, textCallback);
+
+        function textCallback(error, result)
+        {
+            InspectorTest.addResult("");
+            InspectorTest.addResult("=== Stylesheet-for-inline-style text ===");
+            InspectorTest.addResult(result);
+            CSSAgent.setStyleSheetText(inlineStyle.styleId.styleSheetId, "", setTextCallback);
+        }
+
+        function setTextCallback(error, result)
+        {
+            InspectorTest.addResult("");
+            InspectorTest.addResult("=== Stylesheet-for-inline-style modification result ===");
+            InspectorTest.addResult(error);
+            test_styleSheets();
+        }
     }
 
     function test_styleSheets()

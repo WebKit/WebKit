@@ -318,18 +318,18 @@ public:
         return redo(ec);
     }
 
-    virtual bool undo(ExceptionCode&)
+    virtual bool undo(ExceptionCode& ec)
     {
-        if (m_styleSheet->setText(m_oldText)) {
+        if (m_styleSheet->setText(m_oldText, ec)) {
             m_styleSheet->reparseStyleSheet(m_oldText);
             return true;
         }
         return false;
     }
 
-    virtual bool redo(ExceptionCode&)
+    virtual bool redo(ExceptionCode& ec)
     {
-        if (m_styleSheet->setText(m_text)) {
+        if (m_styleSheet->setText(m_text, ec)) {
             m_styleSheet->reparseStyleSheet(m_text);
             return true;
         }

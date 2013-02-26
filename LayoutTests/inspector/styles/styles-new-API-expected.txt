@@ -134,6 +134,12 @@ body:hover: [regular] {
 === Attributes style for table ===
 ['width':'50%'] @[undefined-undefined] style
 
+=== Stylesheet-for-inline-style text ===
+
+
+=== Stylesheet-for-inline-style modification result ===
+NotSupportedError
+
 === All stylesheets ===
 
 StyleSheet: '@charset "UTF-8";

@@ -185,7 +185,7 @@ public:
     String finalURL() const;
     CSSStyleSheet* pageStyleSheet() const { return m_pageStyleSheet.get(); }
     void reparseStyleSheet(const String&);
-    bool setText(const String&);
+    bool setText(const String&, ExceptionCode&);
     String ruleSelector(const InspectorCSSId&, ExceptionCode&);
     bool setRuleSelector(const InspectorCSSId&, const String& selector, ExceptionCode&);
     CSSStyleRule* addRule(const String& selector, ExceptionCode&);
@@ -226,6 +226,7 @@ private:
     friend class InspectorStyle;
 
     static void collectFlatRules(PassRefPtr<CSSRuleList>, CSSStyleRuleVector* result);
+    bool checkPageStyleSheet(ExceptionCode&) const;
     bool ensureText() const;
     bool ensureSourceData();
     void ensureFlatRules() const;
