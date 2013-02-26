@@ -1,3 +1,9 @@
+2013-02-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed AppleWin build fix.
+
+        * WebKit.vcxproj/WebKitExportGenerator/WebKitExportGeneratorCommon.props:
+
 2013-02-26  Alberto Garcia  <agarcia@igalia.com>
 
         [BlackBerry] Upstream the datalist support UI

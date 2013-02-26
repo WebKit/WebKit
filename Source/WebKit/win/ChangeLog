@@ -1,3 +1,9 @@
+2013-02-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed AppleWin build fix.
+
+        * WebKit.vcproj/WebKitExportGeneratorCommon.vsprops:
+
 2013-02-24  Alexey Proskuryakov  <ap@apple.com>
 
         Clarify meaning of default default encoding localizable string

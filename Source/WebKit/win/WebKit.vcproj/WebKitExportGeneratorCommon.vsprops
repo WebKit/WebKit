@@ -11,7 +11,7 @@
 	/>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="WTF$(WebKitConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib"
+		AdditionalDependencies="WTF$(WebKitConfigSuffix).lib pthreadVC2$(LibraryConfigSuffix).lib winmm.lib"
 		SubSystem="1"
 	/>
 </VisualStudioPropertySheet>
