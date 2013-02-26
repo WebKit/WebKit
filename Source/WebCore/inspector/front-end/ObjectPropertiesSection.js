@@ -28,9 +28,9 @@
  * @constructor
  * @extends {WebInspector.PropertiesSection}
  * @param {WebInspector.RemoteObject} object
- * @param {string|Element=} title
+ * @param {?string|Element=} title
  * @param {string=} subtitle
- * @param {string=} emptyPlaceholder
+ * @param {?string=} emptyPlaceholder
  * @param {boolean=} ignoreHasOwnProperty
  * @param {Array.<WebInspector.RemoteObjectProperty>=} extraProperties
  * @param {function(new:TreeElement, WebInspector.RemoteObjectProperty)=} treeElementConstructor
@@ -550,6 +550,9 @@ WebInspector.FunctionScopeMainTreeElement.prototype = {
                         title = WebInspector.UIString("Global");
                         isTrueObject = true;
                         break;
+                    default:
+                        console.error("Unknown scope type: " + scope.type);
+                        continue;
                 }
 
                 var remoteObject = WebInspector.RemoteObject.fromPayload(scope.object);

@@ -28,9 +28,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
  /**
  * @param {string} string
  * @param {...*} vararg
+ * @return {string}
  */
 WebInspector.UIString = function(string, vararg)
 {
@@ -42,7 +44,7 @@ WebInspector.UIString = function(string, vararg)
                 console.warn("Localized string \"" + string + "\" not found.");
                 WebInspector._missingLocalizedStrings[string] = true;
             }
-    
+
             if (Preferences.showMissingLocalizedStrings)
                 string += " (not localized)";
         }
