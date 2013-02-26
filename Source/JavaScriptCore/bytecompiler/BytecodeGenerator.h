@@ -47,7 +47,6 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/SegmentedVector.h>
 #include <wtf/Vector.h>
-#include <wtf/WTFThreadData.h>
 
 namespace JSC {
 
@@ -312,12 +311,9 @@ namespace JSC {
             // Node::emitCode assumes that dst, if provided, is either a local or a referenced temporary.
             ASSERT(!dst || dst == ignoredResult() || !dst->isTemporary() || dst->refCount());
             addLineInfo(n->lineNo());
-#if USE(WEB_THREAD)
-            bool isSafeToRecurse = wtfThreadData().stack().isSafeToRecurse();
-#else
-            bool isSafeToRecurse = m_stack.isSafeToRecurse();
-#endif
-            return isSafeToRecurse ? n->emitBytecode(*this, dst) : emitThrowExpressionTooDeepException();
+            return m_stack.isSafeToRecurse()
+                ? n->emitBytecode(*this, dst)
+                : emitThrowExpressionTooDeepException();
         }
 
         RegisterID* emitNode(Node* n)
@@ -328,12 +324,7 @@ namespace JSC {
         void emitNodeInConditionContext(ExpressionNode* n, Label* trueTarget, Label* falseTarget, bool fallThroughMeansTrue)
         {
             addLineInfo(n->lineNo());
-#if USE(WEB_THREAD)
-            bool isSafeToRecurse = wtfThreadData().stack().isSafeToRecurse();
-#else
-            bool isSafeToRecurse = m_stack.isSafeToRecurse();
-#endif
-            if (isSafeToRecurse)
+            if (m_stack.isSafeToRecurse())
                 n->emitBytecodeInConditionContext(*this, trueTarget, falseTarget, fallThroughMeansTrue);
             else
                 emitThrowExpressionTooDeepException();
@@ -783,9 +774,8 @@ namespace JSC {
 #ifndef NDEBUG
         size_t m_lastOpcodePosition;
 #endif
-#if !USE(WEB_THREAD)
+
         StackBounds m_stack;
-#endif
 
         bool m_usesExceptions;
         bool m_expressionTooDeep;
