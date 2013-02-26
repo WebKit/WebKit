@@ -1,3 +1,20 @@
+2013-02-25  Rouslan Solomakhin  <rouslan@chromium.org>
+
+        Add expandedToParagraph() method to WebRange
+        https://bugs.webkit.org/show_bug.cgi?id=110618
+
+        Reviewed by Adam Barth.
+
+        Add a method expandedToParagraph() to WebRange to return a copy of the
+        range expanded to paragraph boundaries. This method is to be used to
+        query the spelling context around the misspelled word under cursor.
+
+        * public/WebRange.h:
+        (WebRange): Added expandedToParagraph() method declaration.
+        * src/WebRange.cpp:
+        (WebKit::WebRange::expandedToParagraph): Added method to copy range, expand the copied range to paragraph boundaries, and return the resulting range.
+        (WebKit): Added expandedToParagraph() method definition.
+
 2013-02-25  James Robinson  <jamesr@chromium.org>
 
         [chromium] WebViewImpl::m_client can be null in some unit tests, check it before calling

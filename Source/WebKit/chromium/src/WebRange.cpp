@@ -94,6 +94,13 @@ WebString WebRange::toPlainText() const
     return m_private->text();
 }
 
+WebRange WebRange::expandedToParagraph() const
+{
+    WebRange copy(*this);
+    copy.m_private->expand("block", IGNORE_EXCEPTION);
+    return copy;
+}
+
 // static
 WebRange WebRange::fromDocumentRange(WebFrame* frame, int start, int length)
 {
