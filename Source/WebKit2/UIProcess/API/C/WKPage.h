@@ -216,14 +216,15 @@ typedef void (*WKPagePrintFrameCallback)(WKPageRef page, WKFrameRef frame, const
 typedef void (*WKPageSaveDataToFileInDownloadsFolderCallback)(WKPageRef page, WKStringRef suggestedFilename, WKStringRef mimeType, WKURLRef originatingURL, WKDataRef data, const void* clientInfo);
 typedef bool (*WKPageShouldInterruptJavaScriptCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageDecidePolicyForNotificationPermissionRequestCallback)(WKPageRef page, WKSecurityOriginRef origin, WKNotificationPermissionRequestRef permissionRequest, const void *clientInfo);
-typedef void (*WKPageUnavailablePluginButtonClickedCallback)(WKPageRef page, WKPluginUnavailabilityReason pluginUnavailabilityReason, WKStringRef mimeType, WKStringRef url, WKStringRef pluginsPageURL, const void* clientInfo);
 typedef void (*WKPageShowColorPickerCallback)(WKPageRef page, WKStringRef initialColor, WKColorPickerResultListenerRef listener, const void* clientInfo);
 typedef void (*WKPageHideColorPickerCallback)(WKPageRef page, const void* clientInfo);
+typedef void (*WKPageUnavailablePluginButtonClickedCallback)(WKPageRef page, WKPluginUnavailabilityReason pluginUnavailabilityReason, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
 
 // Deprecated    
 typedef WKPageRef (*WKPageCreateNewPageCallback_deprecatedForUseWithV0)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
 typedef void      (*WKPageMouseDidMoveOverElementCallback_deprecatedForUseWithV0)(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPageMissingPluginButtonClickedCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, WKStringRef url, WKStringRef pluginsPageURL, const void* clientInfo);
+typedef void (*WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1)(WKPageRef page, WKPluginUnavailabilityReason pluginUnavailabilityReason, WKStringRef mimeType, WKStringRef url, WKStringRef pluginsPageURL, const void* clientInfo);
 
 struct WKPageUIClient {
     int                                                                 version;
@@ -274,11 +275,12 @@ struct WKPageUIClient {
     WKPageCreateNewPageCallback                                         createNewPage;
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
-    WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
+    WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
 
     // Version 2
     WKPageShowColorPickerCallback                                       showColorPicker;
     WKPageHideColorPickerCallback                                       hideColorPicker;
+    WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 
@@ -538,6 +540,12 @@ WK_EXPORT WKStringRef WKPageGetPluginInformationMIMETypeKey();
 
 /* Value type: WKURLRef */
 WK_EXPORT WKStringRef WKPageGetPluginInformationPageURLKey();
+
+/* Value type: WKURLRef */
+WK_EXPORT WKStringRef WKPageGetPluginInformationPluginspageAttributeURLKey();
+
+/* Value type: WKURLRef */
+WK_EXPORT WKStringRef WKPageGetPluginInformationPluginURLKey();
 
 
 #ifdef __cplusplus

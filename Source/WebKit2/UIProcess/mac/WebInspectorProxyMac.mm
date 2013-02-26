@@ -349,9 +349,10 @@ WebPageProxy* WebInspectorProxy::platformCreateInspectorPage()
         0, // createPage
         0, // mouseDidMoveOverElement
         0, // decidePolicyForNotificationPermissionRequest
-        0, // unavailablePluginButtonClicked
+        0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
         0, // showColorPicker
         0, // hideColorPicker
+        0, // unavailablePluginButtonClicked
     };
 
     inspectorPage->initializeUIClient(&uiClient);

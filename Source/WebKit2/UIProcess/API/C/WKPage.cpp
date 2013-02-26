@@ -851,3 +851,15 @@ WKStringRef WKPageGetPluginInformationPageURLKey()
     static WebString* key = WebString::create(WebPageProxy::pluginInformationPageURLKey()).leakRef();
     return toAPI(key);
 }
+
+WKStringRef WKPageGetPluginInformationPluginspageAttributeURLKey()
+{
+    static WebString* key = WebString::create(WebPageProxy::pluginInformationPluginspageAttributeURLKey()).leakRef();
+    return toAPI(key);
+}
+
+WKStringRef WKPageGetPluginInformationPluginURLKey()
+{
+    static WebString* key = WebString::create(WebPageProxy::pluginInformationPluginURLKey()).leakRef();
+    return toAPI(key);
+}

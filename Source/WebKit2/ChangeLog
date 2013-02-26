@@ -1,3 +1,56 @@
+2013-02-25  Anders Carlsson  <andersca@apple.com>
+
+        Add a new unavailablePluginButtonClicked callback that takes a WKDictionary of plug-in information
+        https://bugs.webkit.org/show_bug.cgi?id=110821
+
+        Reviewed by Beth Dakin.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageGetPluginInformationPluginspageAttributeURLKey):
+        (WKPageGetPluginInformationPluginURLKey):
+        Add two new API key getters.
+        
+        * UIProcess/API/C/WKPage.h:
+        Add a new callback and deprecate the old callback.
+        
+        * UIProcess/WebLoaderClient.cpp:
+        (WebKit::WebLoaderClient::didFailToInitializePlugin):
+        (WebKit::WebLoaderClient::didBlockInsecurePluginVersion):
+        (WebKit::WebLoaderClient::pluginLoadPolicy):
+        Make the pluginInformationDictionary a static member function of WebPageProxy so it
+        can be called from WebUIClient as well.
+        
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getPluginPath):
+        Pass the bundle version as well.
+
+        (WebKit::WebPageProxy::pluginInformationPluginspageAttributeURLKey):
+        (WebKit::WebPageProxy::pluginInformationPluginURLKey):
+        Add two new keys.
+
+        (WebKit::WebPageProxy::pluginInformationDictionary):
+        Handle more keys.
+
+        (WebKit::WebPageProxy::unavailablePluginButtonClicked):
+        Get the plug-in bundle identifier and version.
+
+        * UIProcess/WebPageProxy.messages.in:
+        Pass along more information; the frame and page URLs.
+
+        * UIProcess/WebUIClient.cpp:
+        (WebKit::WebUIClient::unavailablePluginButtonClicked):
+        Call the new callback if it's supported.
+
+        * UIProcess/WebUIClient.h:
+        (WebUIClient):
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformCreateInspectorPage):
+        Update for API changes.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked):
+        Ensure that the pluginspage attribute is a valid URL.
+
 2013-02-21  Jeffrey Pfau  <jpfau@apple.com>
 
         Optionally partition cache to prevent using cache for tracking
