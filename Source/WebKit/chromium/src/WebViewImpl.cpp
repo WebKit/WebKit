@@ -4002,6 +4002,7 @@ bool WebViewImpl::tabsToLinks() const
 void WebViewImpl::suppressInvalidations(bool enable)
 {
     m_suppressInvalidations = enable;
+    m_client->suppressCompositorScheduling(enable);
 }
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -4012,6 +4013,7 @@ bool WebViewImpl::allowsAcceleratedCompositing()
 
 void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
 {
+    m_client->suppressCompositorScheduling(true);
     TemporaryChange<bool> change(m_suppressInvalidations, true);
 
     m_rootGraphicsLayer = layer;
@@ -4036,9 +4038,7 @@ void WebViewImpl::setRootGraphicsLayer(GraphicsLayer* layer)
             m_layerTreeView->clearRootLayer();
     }
 
-    IntRect damagedRect(0, 0, m_size.width, m_size.height);
-    if (!m_isAcceleratedCompositingActive && !m_suppressInvalidations)
-        m_client->didInvalidateRect(damagedRect);
+    m_client->suppressCompositorScheduling(false);
 }
 
 void WebViewImpl::scheduleCompositingLayerSync()

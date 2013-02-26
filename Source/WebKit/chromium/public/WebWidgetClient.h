@@ -75,6 +75,12 @@ public:
     // WebWidgetClient.
     virtual WebLayerTreeView* layerTreeView() { return 0; }
 
+    // Sometimes the WebWidget enters a state where it will generate a sequence
+    // of invalidations that should not, by themselves, trigger the compositor
+    // to schedule a new frame. This call indicates to the embedder that it
+    // should suppress compositor scheduling temporarily.
+    virtual void suppressCompositorScheduling(bool enable) { }
+
     // Indicates to the embedder that the compositor is about to begin a
     // frame. This is primarily to signal to flow control mechanisms that a
     // frame is beginning, not to perform actual painting work.
