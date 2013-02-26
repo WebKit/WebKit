@@ -2139,6 +2139,39 @@ static v8::Handle<v8::Value> methodWithCallbackAndOptionalArgMethodCallback(cons
     return TestObjV8Internal::methodWithCallbackAndOptionalArgMethod(args);
 }
 
+static v8::Handle<v8::Value> staticMethodWithCallbackAndOptionalArgMethod(const v8::Arguments& args)
+{
+    RefPtr<TestCallback> callback;
+    if (args.Length() > 0 && !args[0]->IsNull() && !args[0]->IsUndefined()) {
+        if (!args[0]->IsFunction())
+            return throwTypeError(0, args.GetIsolate());
+        callback = V8TestCallback::create(args[0], getScriptExecutionContext());
+    }
+    TestObj::staticMethodWithCallbackAndOptionalArg(callback);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> staticMethodWithCallbackAndOptionalArgMethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::staticMethodWithCallbackAndOptionalArgMethod(args);
+}
+
+static v8::Handle<v8::Value> staticMethodWithCallbackArgMethod(const v8::Arguments& args)
+{
+    if (args.Length() < 1)
+        return throwNotEnoughArgumentsError(args.GetIsolate());
+    if (args.Length() <= 0 || !args[0]->IsFunction())
+        return throwTypeError(0, args.GetIsolate());
+    RefPtr<TestCallback> callback = V8TestCallback::create(args[0], getScriptExecutionContext());
+    TestObj::staticMethodWithCallbackArg(callback);
+    return v8Undefined();
+}
+
+static v8::Handle<v8::Value> staticMethodWithCallbackArgMethodCallback(const v8::Arguments& args)
+{
+    return TestObjV8Internal::staticMethodWithCallbackArgMethod(args);
+}
+
 #if ENABLE(Condition1)
 
 static v8::Handle<v8::Value> conditionalMethod1Method(const v8::Arguments& args)
@@ -3051,6 +3084,8 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
     v8::Handle<v8::FunctionTemplate> methodThatRequiresAllArgsAndThrowsArgv[methodThatRequiresAllArgsAndThrowsArgc] = { v8::Handle<v8::FunctionTemplate>(), V8TestObj::GetRawTemplate(isolate) };
     v8::Handle<v8::Signature> methodThatRequiresAllArgsAndThrowsSignature = v8::Signature::New(desc, methodThatRequiresAllArgsAndThrowsArgc, methodThatRequiresAllArgsAndThrowsArgv);
     proto->Set(v8::String::NewSymbol("methodThatRequiresAllArgsAndThrows"), v8::FunctionTemplate::New(TestObjV8Internal::methodThatRequiresAllArgsAndThrowsMethodCallback, v8Undefined(), methodThatRequiresAllArgsAndThrowsSignature));
+    desc->Set(v8::String::NewSymbol("staticMethodWithCallbackAndOptionalArg"), v8::FunctionTemplate::New(TestObjV8Internal::staticMethodWithCallbackAndOptionalArgMethodCallback, v8Undefined(), v8::Local<v8::Signature>()));
+    desc->Set(v8::String::NewSymbol("staticMethodWithCallbackArg"), v8::FunctionTemplate::New(TestObjV8Internal::staticMethodWithCallbackArgMethodCallback, v8Undefined(), v8::Local<v8::Signature>()));
     desc->Set(v8::String::NewSymbol("classMethod"), v8::FunctionTemplate::New(TestObjV8Internal::classMethodMethodCallback, v8Undefined(), v8::Local<v8::Signature>()));
     desc->Set(v8::String::NewSymbol("classMethodWithOptional"), v8::FunctionTemplate::New(TestObjV8Internal::classMethodWithOptionalMethodCallback, v8Undefined(), v8::Local<v8::Signature>()));
     desc->Set(v8::String::NewSymbol("classMethod2"), v8::FunctionTemplate::New(TestObjV8Internal::classMethod2MethodCallback, v8Undefined(), v8::Local<v8::Signature>()));

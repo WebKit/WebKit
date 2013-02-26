@@ -2703,12 +2703,20 @@ sub GenerateParametersCheck
                 push(@$outputArray, "    if (exec->argumentCount() > $argsIndex && !exec->argument($argsIndex).isUndefinedOrNull()) {\n");
                 push(@$outputArray, "        if (!exec->argument($argsIndex).isFunction())\n");
                 push(@$outputArray, "            return throwVMTypeError(exec);\n");
-                push(@$outputArray, "        $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                if ($function->isStatic) {
+                    push(@$outputArray, "        $name = createFunctionOnlyCallback<${callbackClassName}>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument($argsIndex));\n");
+                } else {
+                    push(@$outputArray, "        $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                }
                 push(@$outputArray, "    }\n");
             } else {
                 push(@$outputArray, "    if (exec->argumentCount() <= $argsIndex || !exec->argument($argsIndex).isFunction())\n");
                 push(@$outputArray, "        return throwVMTypeError(exec);\n");
-                push(@$outputArray, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                if ($function->isStatic) {
+                    push(@$outputArray, "    RefPtr<$argType> $name = createFunctionOnlyCallback<${callbackClassName}>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument($argsIndex));\n");
+                } else {
+                    push(@$outputArray, "    RefPtr<$argType> $name = ${callbackClassName}::create(asObject(exec->argument($argsIndex)), castedThis->globalObject());\n");
+                }
             }
         } elsif ($parameter->extendedAttributes->{"Clamp"}) {
             my $nativeValue = "${name}NativeValue";

@@ -145,6 +145,9 @@ enum TestEnumType { "", "EnumValue1", "EnumValue2", "EnumValue3" };
     void    methodWithCallbackArg(in [Callback] TestCallback callback);
     void    methodWithNonCallbackArgAndCallbackArg(in long nonCallback, in [Callback] TestCallback callback);
     void    methodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
+    // static methods with 'Callback' extended attribute
+    static void    staticMethodWithCallbackAndOptionalArg(in [Callback, Optional] TestCallback callback);
+    static void    staticMethodWithCallbackArg(in [Callback] TestCallback callback);
 #endif
 
     // 'Conditional' extended attribute
