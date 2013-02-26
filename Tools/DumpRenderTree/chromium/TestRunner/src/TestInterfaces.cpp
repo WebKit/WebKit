@@ -37,6 +37,7 @@
 #include "TestRunner.h"
 #include "TextInputController.h"
 #include "WebCache.h"
+#include "WebKit.h"
 #include "WebRuntimeFeatures.h"
 #include <public/WebString.h>
 #include <public/WebURL.h>
@@ -56,6 +57,8 @@ TestInterfaces::TestInterfaces()
     , m_webView(0)
     , m_delegate(0)
 {
+    WebKit::setLayoutTestMode(true);
+
     WebRuntimeFeatures::enableDataTransferItems(true);
     WebRuntimeFeatures::enableDeviceMotion(false);
     WebRuntimeFeatures::enableGeolocation(true);

@@ -1,3 +1,18 @@
+2013-02-26  Nico Weber  <thakis@chromium.org>
+
+        [chromium] content shell drt: Enable WebKit::setLayoutTestMode()
+        https://bugs.webkit.org/show_bug.cgi?id=110890
+
+        Reviewed by Jochen Eisinger.
+
+        Several functions in webkit check that bit to change rendering
+        in layout test mode. For example, platform/graphics/skia/FrontSkia.cpp
+        disables font smoothing in this mode. TestShell and DRT both set
+        this flag, so content shell drt should set it too.
+
+        * DumpRenderTree/chromium/TestRunner/src/TestInterfaces.cpp:
+        (WebTestRunner::TestInterfaces::TestInterfaces):
+
 2013-02-26  Vivek Galatage  <vivek.vg@samsung.com>
 
         new-commit-bot: Fix the unit test newcommitbot-unittest.py due to r144040
