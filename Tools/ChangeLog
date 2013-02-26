@@ -1,3 +1,13 @@
+2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Build fix. run-perf-tests was reporting with revision numbers ending with \r.
+        Don't include \r at the end of svn info lines on Windows.
+
+        This is similar to r143839.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.value_from_svn_info):
+
 2013-02-25  James Simonsen  <simonjam@chromium.org>
 
         [Resource Timing] Update test suite so it can be exported to the W3C
