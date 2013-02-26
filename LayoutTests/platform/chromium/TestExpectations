@@ -4431,3 +4431,9 @@ webkit.org/b/110876 html5lib/generated/run-tests7-data.html [ Timeout Pass ]
 webkit.org/b/110876 html5lib/generated/run-tests9-data.html [ Timeout Pass ]
 webkit.org/b/110876 html5lib/generated/run-webkit01-data.html [ Timeout Pass ]
 
+# Need rebaseline
+webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
+webkit.org/b/110654 [ Mac Win ] svg/custom/foreign-object-skew.svg [ Failure ]
+webkit.org/b/110654 [ Mac Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
+# New test
+webkit.org/b/110654 [ Mac Win ] css3/flexbox/button.html [ Failure ]

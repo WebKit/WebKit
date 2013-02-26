@@ -61,7 +61,7 @@ private:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    virtual bool hasLineIfEmpty() const { return true; }
+    virtual bool hasLineIfEmpty() const { return node() && node()->toInputElement(); }
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
