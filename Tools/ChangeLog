@@ -1,3 +1,12 @@
+2013-02-25  Dirk Pranke  <dpranke@chromium.org>
+
+        Forgot to delete a no-longer-needed unit test after r143980.
+
+        Unreviewed, build fix.
+
+        * Scripts/webkitpy/layout_tests/port/chromium_win_unittest.py:
+        (ChromiumWinTest.test_path_to_image_diff):
+
 2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix. run-perf-tests was reporting with revision numbers ending with \r.
