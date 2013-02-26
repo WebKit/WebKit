@@ -75,8 +75,7 @@ public:
             ASSERT_NOT_REACHED();
             return;
         }
-        m_processors[index] = m_processors.last();
-        m_processors.removeLast();
+        m_processors.remove(index);
         if (m_processors.isEmpty())
             client->setTraceEventCallback(0);
     }
@@ -109,76 +108,148 @@ TimelineTraceEventProcessor::TimelineTraceEventProcessor(WeakPtr<InspectorTimeli
     : m_timelineAgent(timelineAgent)
     , m_inspectorClient(client)
     , m_pageId(reinterpret_cast<unsigned long long>(m_timelineAgent.get()->page()))
+    , m_firstRasterStartTime(0)
+    , m_lastRasterEndTime(0)
+    , m_frameRasterTime(0)
+    , m_layerId(0)
 {
+    registerHandler(InstrumentationEvents::BeginFrame, TracePhaseInstant, &TimelineTraceEventProcessor::onBeginFrame);
+    registerHandler(InstrumentationEvents::PaintLayer, TracePhaseBegin, &TimelineTraceEventProcessor::onPaintLayerBegin);
+    registerHandler(InstrumentationEvents::PaintLayer, TracePhaseEnd, &TimelineTraceEventProcessor::onPaintLayerEnd);
+    registerHandler(InstrumentationEvents::RasterTask, TracePhaseBegin, &TimelineTraceEventProcessor::onRasterTaskBegin);
+    registerHandler(InstrumentationEvents::RasterTask, TracePhaseEnd, &TimelineTraceEventProcessor::onRasterTaskEnd);
+    registerHandler(InstrumentationEvents::Layer, TracePhaseDeleteObject, &TimelineTraceEventProcessor::onLayerDeleted);
+    registerHandler(InstrumentationEvents::Paint, TracePhaseInstant, &TimelineTraceEventProcessor::onPaint);
+
     TraceEventDispatcher::instance()->addProcessor(this, m_inspectorClient);
 }
 
 TimelineTraceEventProcessor::~TimelineTraceEventProcessor()
 {
+}
+
+void TimelineTraceEventProcessor::registerHandler(const char* name, TraceEventPhase phase, TraceEventHandler handler)
+{
+    m_handlersByType.set(std::make_pair(name, phase), handler);
+}
+
+void TimelineTraceEventProcessor::shutdown()
+{
     TraceEventDispatcher::instance()->removeProcessor(this, m_inspectorClient);
+}
+
+size_t TimelineTraceEventProcessor::TraceEvent::findParameter(const char* name) const
+{
+    for (int i = 0; i < m_argumentCount; ++i) {
+        if (!strcmp(name, m_argumentNames[i]))
+            return i;
+    }
+    return notFound;
 }
 
 const TimelineTraceEventProcessor::TraceValueUnion& TimelineTraceEventProcessor::TraceEvent::parameter(const char* name, TraceValueTypes expectedType) const
 {
     static TraceValueUnion missingValue;
-
-    for (int i = 0; i < m_argumentCount; ++i) {
-        if (!strcmp(name, m_argumentNames[i])) {
-            if (m_argumentTypes[i] != expectedType) {
-                ASSERT_NOT_REACHED();
-                return missingValue;
-            }
-            return *reinterpret_cast<const TraceValueUnion*>(m_argumentValues + i);
-        }
+    size_t index = findParameter(name);
+    if (index == notFound || m_argumentTypes[index] != expectedType) {
+        ASSERT_NOT_REACHED();
+        return missingValue;
     }
-    ASSERT_NOT_REACHED();
-    return missingValue;
+    return *reinterpret_cast<const TraceValueUnion*>(m_argumentValues + index);
 }
 
-void TimelineTraceEventProcessor::processEventOnAnyThread(TraceEventPhase phase, const char* name, unsigned long long,
+void TimelineTraceEventProcessor::processEventOnAnyThread(TraceEventPhase phase, const char* name, unsigned long long id,
     int numArgs, const char* const* argNames, const unsigned char* argTypes, const unsigned long long* argValues,
     unsigned char)
 {
-    HashMap<String, EventTypeEntry>::iterator it = m_handlersByType.find(name);
+    HandlersMap::iterator it = m_handlersByType.find(std::make_pair(name, phase));
     if (it == m_handlersByType.end())
         return;
 
-    TraceEvent event(WTF::monotonicallyIncreasingTime(), phase, name, currentThread(), numArgs, argNames, argTypes, argValues);
+    TraceEvent event(WTF::monotonicallyIncreasingTime(), phase, name, id, currentThread(), numArgs, argNames, argTypes, argValues);
 
     if (!isMainThread()) {
         MutexLocker locker(m_backgroundEventsMutex);
         m_backgroundEvents.append(event);
         return;
     }
-
-    processEvent(it->value, event);
+    (this->*(it->value))(event);
 }
 
-void TimelineTraceEventProcessor::processEvent(const EventTypeEntry& eventTypeEntry, const TraceEvent& event)
+void TimelineTraceEventProcessor::onBeginFrame(const TraceEvent& event)
 {
-    TraceEventHandler handler = 0;
-    switch (event.phase()) {
-    case TracePhaseBegin:
-        handler = eventTypeEntry.m_begin;
-        break;
-    case TracePhaseEnd:
-        handler = eventTypeEntry.m_end;
-        break;
-    case TracePhaseInstant:
-        handler = eventTypeEntry.m_instant;
-        break;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-    if (!handler) {
-        ASSERT_NOT_REACHED();
+    flushRasterizerStatistics();
+}
+
+void TimelineTraceEventProcessor::onPaintLayerBegin(const TraceEvent& event)
+{
+    m_layerId = event.asUInt(InstrumentationEventArguments::LayerId);
+    ASSERT(m_layerId);
+}
+
+void TimelineTraceEventProcessor::onPaintLayerEnd(const TraceEvent&)
+{
+    m_layerId = 0;
+}
+
+void TimelineTraceEventProcessor::onRasterTaskBegin(const TraceEvent& event)
+{
+    unsigned long long layerId = event.asUInt(InstrumentationEventArguments::LayerId);
+    ThreadIdentifier threadIdentifier = event.threadIdentifier();
+    ASSERT(m_rasterStartTimeByThread.get(threadIdentifier) == HashTraits<double>::emptyValue());
+    double timestamp = m_knownLayers.contains(layerId) ? event.timestamp() : 0;
+    m_rasterStartTimeByThread.set(threadIdentifier, timestamp);
+}
+
+void TimelineTraceEventProcessor::onRasterTaskEnd(const TraceEvent& event)
+{
+    HashMap<ThreadIdentifier, double>::iterator it = m_rasterStartTimeByThread.find(event.threadIdentifier());
+    if (it == m_rasterStartTimeByThread.end())
         return;
+    double startTime = it->value;
+    double endTime = event.timestamp();
+    if (startTime == HashTraits<double>::emptyValue()) // Rasterizing unknown layer.
+        return;
+    m_frameRasterTime += endTime - startTime;
+    it->value = HashTraits<double>::emptyValue();
+    if (!m_firstRasterStartTime || m_firstRasterStartTime > startTime)
+        m_firstRasterStartTime = startTime;
+    m_lastRasterEndTime = endTime;
+}
+
+void TimelineTraceEventProcessor::onLayerDeleted(const TraceEvent& event)
+{
+    unsigned long long id = event.id();
+    ASSERT(id);
+    processBackgroundEvents();
+    m_knownLayers.remove(id);
+}
+
+void TimelineTraceEventProcessor::onPaint(const TraceEvent& event)
+{
+    if (!m_layerId)
+        return;
+
+    unsigned long long pageId = event.asUInt(InstrumentationEventArguments::PageId);
+    if (pageId == m_pageId)
+        m_knownLayers.add(m_layerId);
+}
+
+void TimelineTraceEventProcessor::flushRasterizerStatistics()
+{
+    processBackgroundEvents();
+    if (m_lastRasterEndTime) {
+        RefPtr<InspectorObject> data = TimelineRecordFactory::createRasterData(m_frameRasterTime, m_rasterStartTimeByThread.size());
+        sendTimelineRecord(data, TimelineRecordType::Rasterize, m_firstRasterStartTime, m_lastRasterEndTime, "multiple");
     }
-    (this->*handler)(event);
+    m_firstRasterStartTime = 0;
+    m_lastRasterEndTime = 0;
+    m_frameRasterTime = 0;
 }
 
 void TimelineTraceEventProcessor::sendTimelineRecord(PassRefPtr<InspectorObject> data, const String& recordType, double startTime, double endTime, const String& thread)
 {
+    ASSERT(isMainThread());
     InspectorTimelineAgent* timelineAgent = m_timelineAgent.get();
     if (!timelineAgent)
         return;
@@ -187,6 +258,7 @@ void TimelineTraceEventProcessor::sendTimelineRecord(PassRefPtr<InspectorObject>
 
 void TimelineTraceEventProcessor::processBackgroundEvents()
 {
+    ASSERT(isMainThread());
     Vector<TraceEvent> events;
     {
         MutexLocker locker(m_backgroundEventsMutex);
@@ -195,7 +267,9 @@ void TimelineTraceEventProcessor::processBackgroundEvents()
     }
     for (size_t i = 0, size = events.size(); i < size; ++i) {
         const TraceEvent& event = events[i];
-        processEvent(m_handlersByType.find(event.name())->value, event);
+        HandlersMap::iterator it = m_handlersByType.find(std::make_pair(event.name(), event.phase()));
+        ASSERT(it != m_handlersByType.end() && it->value);
+        (this->*(it->value))(event);
     }
 }
 

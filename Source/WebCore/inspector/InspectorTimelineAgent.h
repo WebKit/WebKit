@@ -63,6 +63,10 @@ class TimelineTraceEventProcessor;
 
 typedef String ErrorString;
 
+namespace TimelineRecordType {
+extern const char Rasterize[];
+};
+
 class InspectorTimelineAgent
     : public InspectorBaseAgent<InspectorTimelineAgent>,
       public ScriptGCEventListener,
