@@ -87,7 +87,7 @@ void GraphicsLayerTextureMapper::willBeDestroyed()
 */
 void GraphicsLayerTextureMapper::setNeedsDisplay()
 {
-    if (!m_hasOwnBackingStore)
+    if (!drawsContent() || !m_hasOwnBackingStore)
         return;
 
     m_needsDisplay = true;
@@ -107,7 +107,7 @@ void GraphicsLayerTextureMapper::setContentsNeedsDisplay()
 */
 void GraphicsLayerTextureMapper::setNeedsDisplayInRect(const FloatRect& rect)
 {
-    if (!m_hasOwnBackingStore)
+    if (!drawsContent() || !m_hasOwnBackingStore)
         return;
 
     if (m_needsDisplay)
@@ -277,8 +277,8 @@ void GraphicsLayerTextureMapper::setDrawsContent(bool value)
 {
     if (value == drawsContent())
         return;
-    notifyChange(DrawsContentChange);
     GraphicsLayer::setDrawsContent(value);
+    notifyChange(DrawsContentChange);
 
     if (value && m_hasOwnBackingStore)
         setNeedsDisplay();
