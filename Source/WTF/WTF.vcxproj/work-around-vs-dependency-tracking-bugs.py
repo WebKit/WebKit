@@ -10,6 +10,7 @@ import sys
 # source directory.
 TOP_LEVEL_DIRECTORY = os.environ['WEBKIT_SOURCE'];
 WEBKIT_LIBRARIES = os.environ['WEBKIT_LIBRARIES'];
+WEBKIT_SOURCE = os.environ['WEBKIT_SOURCE'];
 
 def main():
     react_to_vsprops_changes()
@@ -17,7 +18,7 @@ def main():
 
 
 def react_to_vsprops_changes():
-    vsprops_directory = os.path.join(WEBKIT_LIBRARIES, 'tools', 'vsprops')
+    vsprops_directory = os.path.join(WEBKIT_SOURCE, 'tools', 'vsprops')
     newest_vsprops_time = mtime_of_newest_file_matching_glob(os.path.join(vsprops_directory, '*.vsprops'))
 
     obj_directory = os.path.join(os.environ['CONFIGURATIONBUILDDIR'], 'obj')

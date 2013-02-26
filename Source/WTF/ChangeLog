@@ -1,3 +1,9 @@
+2013-02-25  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Fix script to use WEBKIT_SOURCE for VS2010 property sheets instead of WEBKIT_LIBRARIES.
+
+        * WTF.vcxproj/work-around-vs-dependency-tracking-bugs.py:
+
 2013-02-25  Oliver Hunt  <oliver@apple.com>
 
         Add cookies to FastMalloc spans
