@@ -295,7 +295,7 @@ void WebLoaderClient::didBlockInsecurePluginVersion(WebPageProxy* page, const St
 
     if (m_client.pluginDidFail) {
         RefPtr<ImmutableDictionary> pluginInformation = WebPageProxy::pluginInformationDictionary(pluginBundleIdentifier, pluginBundleVersion, String(), frameURLString, mimeType, pageURLString, String(), String());
-        m_client.pluginDidFail(toAPI(page), kWKErrorCodeCannotLoadPlugIn, toAPI(pluginInformation.get()), m_client.clientInfo);
+        m_client.pluginDidFail(toAPI(page), kWKErrorCodeInsecurePlugInVersion, toAPI(pluginInformation.get()), m_client.clientInfo);
     }
 }
 
