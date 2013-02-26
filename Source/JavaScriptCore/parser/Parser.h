@@ -39,6 +39,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/RefPtr.h>
+#include <wtf/WTFThreadData.h>
 namespace JSC {
 struct Scope;
 }
@@ -881,7 +882,11 @@ private:
     
     bool canRecurse()
     {
+#if USE(WEB_THREAD)
+        return wtfThreadData().stack().isSafeToRecurse();
+#else
         return m_stack.isSafeToRecurse();
+#endif
     }
     
     int lastTokenEnd() const
@@ -893,8 +898,10 @@ private:
     const SourceCode* m_source;
     ParserArena* m_arena;
     OwnPtr<LexerType> m_lexer;
-    
+
+#if !USE(WEB_THREAD)
     StackBounds m_stack;
+#endif
     bool m_hasStackOverflow;
     bool m_error;
     String m_errorMessage;

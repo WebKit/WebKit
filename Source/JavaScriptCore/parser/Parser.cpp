@@ -33,7 +33,6 @@
 #include <utility>
 #include <wtf/HashFunctions.h>
 #include <wtf/OwnPtr.h>
-#include <wtf/WTFThreadData.h>
 
 #define fail() do { if (!m_error) updateErrorMessage(); return 0; } while (0)
 #define failWithToken(tok) do { if (!m_error) updateErrorMessage(tok); return 0; } while (0)
@@ -65,7 +64,9 @@ template <typename LexerType>
 Parser<LexerType>::Parser(JSGlobalData* globalData, const SourceCode& source, FunctionParameters* parameters, const Identifier& name, JSParserStrictness strictness, JSParserMode parserMode)
     : m_globalData(globalData)
     , m_source(&source)
+#if !USE(WEB_THREAD)
     , m_stack(wtfThreadData().stack())
+#endif
     , m_hasStackOverflow(false)
     , m_error(false)
     , m_errorMessage("Parse error")

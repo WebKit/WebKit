@@ -248,7 +248,9 @@ BytecodeGenerator::BytecodeGenerator(JSGlobalData& globalData, ProgramNode* prog
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
+#if !USE(WEB_THREAD)
     , m_stack(wtfThreadData().stack())
+#endif
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
@@ -295,7 +297,9 @@ BytecodeGenerator::BytecodeGenerator(JSGlobalData& globalData, FunctionBodyNode*
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
+#if !USE(WEB_THREAD)
     , m_stack(wtfThreadData().stack())
+#endif
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {
@@ -490,7 +494,9 @@ BytecodeGenerator::BytecodeGenerator(JSGlobalData& globalData, EvalNode* evalNod
 #ifndef NDEBUG
     , m_lastOpcodePosition(0)
 #endif
+#if !USE(WEB_THREAD)
     , m_stack(wtfThreadData().stack())
+#endif
     , m_usesExceptions(false)
     , m_expressionTooDeep(false)
 {

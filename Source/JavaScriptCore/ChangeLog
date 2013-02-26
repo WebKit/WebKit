@@ -1,3 +1,28 @@
+2013-02-25  Benjamin Poulain  <bpoulain@apple.com>
+
+        [JSC] Upstream iOS Stack bound checking
+        https://bugs.webkit.org/show_bug.cgi?id=110813
+
+        Reviewed by Filip Pizlo.
+
+        On iOS, the StackBounds cannot be cached because the stack
+        can be in one of two threads (the web thread or the UI thread).
+
+        We simply always consider the current stack bound when testing
+        stack boundaries.
+
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::BytecodeGenerator):
+        * bytecompiler/BytecodeGenerator.h:
+        (JSC::BytecodeGenerator::emitNode):
+        (JSC::BytecodeGenerator::emitNodeInConditionContext):
+        (BytecodeGenerator):
+        * parser/Parser.cpp:
+        (JSC::::Parser):
+        * parser/Parser.h:
+        (JSC::Parser::canRecurse):
+        (Parser):
+
 2013-02-25  Michael Saboff  <msaboff@apple.com>
 
         For JSVALUE32_64, maxOffsetRelativeToPatchedStorage() doesn't compute the maximum negative offset
