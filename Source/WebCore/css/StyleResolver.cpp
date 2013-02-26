@@ -875,7 +875,11 @@ Node* StyleResolver::locateCousinList(Element* parent, unsigned& visitedNodeCoun
         while (currentNode) {
             ++subcount;
             if (currentNode->renderStyle() == parentStyle && currentNode->lastChild()
-                && currentNode->isElementNode() && !parentElementPreventsSharing(toElement(currentNode))) {
+                && currentNode->isElementNode() && !parentElementPreventsSharing(toElement(currentNode))
+#if ENABLE(SHADOW_DOM)
+                && !toElement(currentNode)->shadow()
+#endif
+                ) {
                 // Adjust for unused reserved tries.
                 visitedNodeCount -= cStyleSearchThreshold - subcount;
                 return currentNode->lastChild();
