@@ -1,3 +1,17 @@
+2013-02-26  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WK2][GTK] REGRESSION (r143463): unit test failure in WebKit2APITests/TestContextMenu
+        https://bugs.webkit.org/show_bug.cgi?id=110869
+
+        Reviewed by Martin Robinson.
+
+        Test was failing because of new media controls needs more space to be
+        painted than just 10x10 pixels.
+
+        * UIProcess/API/gtk/tests/TestContextMenu.cpp:
+        (testContextMenuDefaultMenu): Modified test in order to give more space
+        to the media controls.
+
 2013-02-26  Dean Jackson  <dino@apple.com>
 
         Draw intermediate snapshots if possible
