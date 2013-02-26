@@ -1,3 +1,47 @@
+2013-02-26  Alberto Garcia  <agarcia@igalia.com>
+
+        [BlackBerry] Upstream the datalist support UI
+        https://bugs.webkit.org/show_bug.cgi?id=110736
+
+        Reviewed by Rob Buis.
+
+        Original code by Otto Derek Cheung <otcheung@rim.com>
+
+        * WebCoreSupport/SuggestionBoxElement.cpp: Added.
+        (WebCore):
+        (WebCore::SuggestionBoxElement::SuggestionBoxElement):
+        (WebCore::SuggestionBoxElement::~SuggestionBoxElement):
+        (WebCore::SuggestionBoxElement::create):
+        (WebCore::SuggestionBoxElement::defaultEventHandler):
+        * WebCoreSupport/SuggestionBoxElement.h: Added.
+        (WebCore):
+        (SuggestionBoxElement):
+        * WebCoreSupport/SuggestionBoxHandler.cpp: Added.
+        (WebCore):
+        (WebCore::SuggestionBoxHandler::SuggestionBoxHandler):
+        (WebCore::SuggestionBoxHandler::~SuggestionBoxHandler):
+        (WebCore::SuggestionBoxHandler::create):
+        (WebCore::SuggestionBoxHandler::setInputElementAndUpdateDisplay):
+        (WebCore::SuggestionBoxHandler::showDropdownBox):
+        (WebCore::SuggestionBoxHandler::hideDropdownBox):
+        (WebCore::SuggestionBoxHandler::changeInputElementInnerTextValue):
+        (WebCore::SuggestionBoxHandler::parseSuggestions):
+        (WebCore::SuggestionBoxHandler::insertSuggestionsToDropdownBox):
+        (WebCore::adjustDropdownBoxPosition):
+        (WebCore::SuggestionBoxHandler::buildDropdownBoxTree):
+        * WebCoreSupport/SuggestionBoxHandler.h: Added.
+        (WebCore):
+        (SuggestionBoxHandler):
+        (WebCore::SuggestionBoxHandler::focusedElement):
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::setElementUnfocused):
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+        * WebKitSupport/InputHandler.h:
+        (WebCore):
+        (InputHandler):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2013-02-25  Yongxin Dai  <yodai@rim.com>
 
         [BlackBerry] Add isInputMode() method to WebPage class.

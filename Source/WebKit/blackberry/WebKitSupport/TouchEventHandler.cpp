@@ -117,6 +117,8 @@ void TouchEventHandler::handleTouchPoint(const Platform::TouchPoint& point, unsi
                 m_shouldRequestSpellCheckOptions = m_webPage->m_inputHandler->shouldRequestSpellCheckingOptionsForPoint(m_lastFatFingersResult.adjustedPosition(), elementUnderFatFinger, m_spellCheckOptionRequest);
             }
 
+            m_webPage->m_inputHandler->elementTouched(lastFatFingersResult().nodeAsElementIfApplicable(FatFingersResult::ShadowContentNotAllowed));
+
             handleFatFingerPressed(shiftActive, altActive, ctrlActive);
             break;
         }

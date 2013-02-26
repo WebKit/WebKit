@@ -50,6 +50,7 @@ class SpellCheckRequest;
 class TextCheckingRequest;
 class VisiblePosition;
 class VisibleSelection;
+class SuggestionBoxHandler;
 }
 
 namespace BlackBerry {
@@ -158,6 +159,7 @@ public:
     void callRequestCheckingFor(PassRefPtr<WebCore::SpellCheckRequest>);
     void setSystemSpellCheckStatus(bool enabled) { m_spellCheckStatusConfirmed = true; m_globalSpellCheckStatus = enabled; }
 
+    void elementTouched(WebCore::Element*);
     void restoreViewState();
 
 private:
@@ -223,6 +225,9 @@ private:
 
     bool shouldNotifyWebView(const Platform::KeyboardEvent&);
 
+    void showTextInputTypeSuggestionBox(bool allowEmptyPrefix = false);
+    void hideTextInputTypeSuggestionBox();
+
     WebPagePrivate* m_webPage;
 
     RefPtr<WebCore::Element> m_currentFocusElement;
@@ -256,6 +261,8 @@ private:
     SpellingHandler* m_spellingHandler;
     bool m_spellCheckStatusConfirmed;
     bool m_globalSpellCheckStatus;
+
+    OwnPtr<WebCore::SuggestionBoxHandler> m_suggestionDropdownBoxHandler;
 
     DISABLE_COPY(InputHandler);
 };

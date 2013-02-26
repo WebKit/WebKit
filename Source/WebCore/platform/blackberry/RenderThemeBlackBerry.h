@@ -96,6 +96,8 @@ public:
     virtual Color platformActiveTextSearchHighlightColor() const;
     virtual Color platformInactiveTextSearchHighlightColor() const;
 
+    virtual bool supportsDataListUI(const AtomicString&) const;
+
 private:
     static const String& defaultGUIFont();
 

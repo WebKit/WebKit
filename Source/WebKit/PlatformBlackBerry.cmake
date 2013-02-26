@@ -118,6 +118,8 @@ list(APPEND WebKit_SOURCES
     blackberry/WebCoreSupport/PagePopupBlackBerry.cpp
     blackberry/WebCoreSupport/NavigatorContentUtilsClientBlackBerry.cpp
     blackberry/WebCoreSupport/SelectPopupClient.cpp
+    blackberry/WebCoreSupport/SuggestionBoxHandler.cpp
+    blackberry/WebCoreSupport/SuggestionBoxElement.cpp
     blackberry/WebCoreSupport/VibrationClientBlackBerry.cpp
     blackberry/WebCoreSupport/DatePickerClient.cpp
     blackberry/WebCoreSupport/ColorPickerClient.cpp

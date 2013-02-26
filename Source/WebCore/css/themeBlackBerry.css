@@ -62,6 +62,49 @@ select[size="1"] {
     font-weight: normal;
 }
 
+
+/* Suggestion Box */
+
+input::-webkit-suggestion-dropdown-box {
+    position: absolute;
+    z-index: 2147483647;
+    opacity: 0.98;
+    max-height: 200px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    border: 1px solid #e0e0e0;
+    border-top: none;
+    background-color: #fcfcfc;
+    -webkit-box-shadow: 0px 5px 5px -2px #606060 inset;
+    -webkit-box-shadow: 2px 0px 8px -5px #AEAEAE;
+}
+
+input::-webkit-suggestion-dropdown-box-item {
+    display: block;
+    width: 100%;
+    padding: 10px 5px;
+    color: #363636;
+    text-decoration: none;
+    border-bottom: 1px solid #e8e8e8;
+    text-overflow: -blackberry-fade;
+    overflow: hidden;
+}
+
+input::-webkit-suggestion-prefix-text {
+    font-weight: bold;
+}
+
+input::-webkit-suggestion-dropdown-box-item-last {
+    display: block;
+    width: 100%;
+    padding: 10px 5px;
+    color: #363636;
+    text-decoration: none;
+    text-overflow: -blackberry-fade;
+    overflow: hidden;
+    border-bottom: none;
+}
+
 input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="time"], input[type="month"] {
     font-family: "Slate Pro";
     -webkit-appearance: button;

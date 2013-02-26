@@ -57,6 +57,7 @@
 #include "SelectionHandler.h"
 #include "SpellChecker.h"
 #include "SpellingHandler.h"
+#include "SuggestionBoxHandler.h"
 #include "TextCheckerClient.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
@@ -871,6 +872,9 @@ void InputHandler::setElementUnfocused(bool refocusOccuring)
 
         m_webPage->m_client->inputFocusLost();
 
+        // Hide the suggestion box if it is visible.
+        hideTextInputTypeSuggestionBox();
+
         // Repaint the element absent of the caret.
         if (m_currentFocusElement->renderer())
             m_currentFocusElement->renderer()->repaint();
@@ -1087,6 +1091,9 @@ void InputHandler::setElementFocused(Element* element)
     m_webPage->m_client->inputFocusGained(m_currentFocusElementTextEditMask, keyboardType, enterKeyType);
 
     handleInputLocaleChanged(m_webPage->m_webSettings->isWritingDirectionRTL());
+
+    // update the suggestion box
+    showTextInputTypeSuggestionBox();
 
     if (!m_delayKeyboardVisibilityChange)
         notifyClientOfKeyboardVisibilityChange(true, true /* triggeredByFocusChange */);
@@ -1733,6 +1740,10 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
         if (!changeIsPartOfComposition && type == Platform::KeyboardEvent::KeyUp)
             ensureFocusTextElementVisible(EdgeIfNeeded);
     }
+
+    if (m_currentFocusElement && keyboardEventHandled)
+        showTextInputTypeSuggestionBox();
+
     return keyboardEventHandled;
 }
 
@@ -2545,6 +2556,39 @@ void InputHandler::restoreViewState()
 {
     setInputModeEnabled();
     focusedNodeChanged();
+}
+
+void InputHandler::showTextInputTypeSuggestionBox(bool allowEmptyPrefix)
+{
+    HTMLInputElement* focusedInputElement = static_cast<HTMLInputElement*>(m_currentFocusElement->toInputElement());
+    if (!focusedInputElement || !focusedInputElement->isTextField())
+        return;
+
+    if (!focusedInputElement)
+        return;
+
+    if (!m_suggestionDropdownBoxHandler)
+        m_suggestionDropdownBoxHandler = SuggestionBoxHandler::create(focusedInputElement);
+
+    // If the focused input element isn't the same as the one inside the handler, reset and display.
+    // If the focused element is the same, display the suggestions.
+    if ((m_suggestionDropdownBoxHandler->focusedElement()) && m_suggestionDropdownBoxHandler->focusedElement() != focusedInputElement)
+        m_suggestionDropdownBoxHandler->setInputElementAndUpdateDisplay(focusedInputElement);
+    else
+        m_suggestionDropdownBoxHandler->showDropdownBox(allowEmptyPrefix);
+}
+
+void InputHandler::hideTextInputTypeSuggestionBox()
+{
+    if (m_suggestionDropdownBoxHandler)
+        m_suggestionDropdownBoxHandler->hideDropdownBox();
+}
+
+void InputHandler::elementTouched(WebCore::Element* nonShadowElementUnderFatFinger)
+{
+    // Attempt to show all suggestions when the input field is empty and a tap is registered when the element is focused.
+    if (isActiveTextEdit() && nonShadowElementUnderFatFinger == m_currentFocusElement)
+        showTextInputTypeSuggestionBox(true /* allowEmptyPrefix */);
 }
 
 }

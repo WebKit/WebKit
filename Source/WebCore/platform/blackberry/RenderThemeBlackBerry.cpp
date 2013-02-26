@@ -1267,4 +1267,10 @@ Color RenderThemeBlackBerry::platformInactiveTextSearchHighlightColor() const
     return Color(255, 255, 0); // Yellow.
 }
 
+bool RenderThemeBlackBerry::supportsDataListUI(const AtomicString& type) const
+{
+    // TODO: support other input types in the future.
+    return type == InputTypeNames::text();
+}
+
 } // namespace WebCore
