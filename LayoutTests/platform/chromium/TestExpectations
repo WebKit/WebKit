@@ -4186,13 +4186,13 @@ webkit.org/b/102542 [ Linux Mac Win ] compositing/checkerboard.html [ ImageOnlyF
 
 webkit.org/b/102724 [ Linux ] svg/carto.net/colourpicker.svg [ ImageOnlyFailure Pass ]
 
-webkit.org/b/103927 http/tests/w3c/webperf/submission/resource-timing/html/test_resource_frame_initiator_type.html [ Failure ]
-webkit.org/b/103927 [ Mac Linux ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_dynamic_insertion.html [ Failure ]
-webkit.org/b/103927 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_dynamic_insertion.html [ Failure Timeout ]
-webkit.org/b/103927 [ Mac Linux ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types.html [ Failure ]
-webkit.org/b/103927 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_initiator_types.html [ Failure Timeout ]
-webkit.org/b/103927 [ Mac Linux ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_redirects.html [ Failure ]
-webkit.org/b/103927 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_redirects.html [ Failure Timeout ]
+webkit.org/b/103927 http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_frame_initiator_type.html [ Failure ]
+webkit.org/b/103927 [ Mac Linux ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_dynamic_insertion.html [ Failure ]
+webkit.org/b/103927 [ Win ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_dynamic_insertion.html [ Failure Timeout ]
+webkit.org/b/103927 [ Mac Linux ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_initiator_types.html [ Failure ]
+webkit.org/b/103927 [ Win ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_initiator_types.html [ Failure Timeout ]
+webkit.org/b/103927 [ Mac Linux ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_redirects.html [ Failure ]
+webkit.org/b/103927 [ Win ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_redirects.html [ Failure Timeout ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_cross_origin_resource_request.html [ Failure ]
 webkit.org/b/103927 http/tests/w3c/webperf/submission/Intel/resource-timing/test_resource_timing_timing_allow_cross_origin_resource_request.html [ Failure ]
 
@@ -4265,8 +4265,8 @@ webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band-cues-added-once
 webkit.org/b/103767  [ Win Mac Linux ] media/track/track-in-band-style.html [ Skip ]
 
 # Flaky on Win (perhaps due to lighttpd?)
-webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]
-webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/resource-timing/html/test_resource_script_types.html [ Timeout Pass ]
+webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_attribute_order.html [ Failure Pass ]
+webkit.org/b/104489 [ Win ] http/tests/w3c/webperf/submission/Google/resource-timing/html/test_resource_script_types.html [ Timeout Pass ]
 
 # New test added in r137331
 webkit.org/b/104715 [ MountainLion ] fast/block/float/floats-wrap-inside-inline-007.html [ ImageOnlyFailure ]

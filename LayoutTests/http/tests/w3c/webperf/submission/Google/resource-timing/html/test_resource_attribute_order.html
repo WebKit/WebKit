@@ -8,6 +8,7 @@
 <script src="/w3c/resources/testharness.js"></script>
 <script src="/w3c/resources/testharnessreport.js"></script>
 <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
 <script>
 function setup_iframe() {
     iframe = document.getElementById('frameContext');
@@ -20,7 +21,8 @@ function setup_iframe() {
     body.appendChild(image);
 }
 function onload_test() {
-    var entries = iframe.contentWindow.performance.webkitGetEntriesByName(window.location.origin + '/w3c/webperf/resources/generate_resource.php?type=image');
+    var context = new PerformanceContext(iframe.contentWindow.performance);
+    var entries = context.getEntriesByName(window.location.origin + '/w3c/webperf/resources/generate_resource.php?type=image');
     test_equals(entries.length, 1, 'Only 1 PerformanceEntry should match');
     var entry = entries[0];
 

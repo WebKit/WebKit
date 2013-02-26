@@ -8,6 +8,7 @@
 <script src="/w3c/resources/testharness.js"></script>
 <script src="/w3c/resources/testharnessreport.js"></script>
 <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
 <script>
 setup({explicit_done: true});
 var iframe;
@@ -34,7 +35,8 @@ function first_image_loaded() {
 }
 
 function second_image_loaded() {
-    var entries = iframe.contentWindow.performance.webkitGetEntries();
+    var context = new PerformanceContext(iframe.contentWindow.performance);
+    var entries = context.getEntries();
     test_equals(entries.length, 2, 'There should be 2 PerformanceEntries');
 
     var entry = entries[0];

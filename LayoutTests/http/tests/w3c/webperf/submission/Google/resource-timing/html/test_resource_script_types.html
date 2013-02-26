@@ -8,6 +8,7 @@
 <script src="/w3c/resources/testharness.js"></script>
 <script src="/w3c/resources/testharnessreport.js"></script>
 <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
 <script>
 var iframe;
 function setup_iframe() {
@@ -38,7 +39,8 @@ function setup_iframe() {
     iframe.contentWindow.document.write(iframe_content);
 }
 function onload_test() {
-    var entries = iframe.contentWindow.performance.webkitGetEntries();
+    var context = new PerformanceContext(iframe.contentWindow.performance);
+    var entries = context.getEntries();
 
     var expected_entries = {
         '/w3c/webperf/resources/generate_resource.php?type=script&id=1': 'script',

@@ -42,7 +42,7 @@ import os
 import sys
 
 if len(sys.argv) != 3:
-    print 'USAGE: %s path_to_webperf_checkout_root path_to_webkit_checkout_root'
+    print 'USAGE: %s path_to_webperf_checkout_root path_to_webkit_checkout_root' % sys.argv[0]
     sys.exit(1)
 
 source_directory = os.path.join(sys.argv[1], 'tests')

@@ -42,6 +42,51 @@ function test_noless_than(value, greater_than, msg, properties)
     wp_test(function () { assert_true(value >= greater_than, msg); }, msg, properties);
 }
 
+function test_fail(msg, properties)
+{
+    wp_test(function() { assert_unreached(); }, msg, properties);
+}
+
+function test_resource_entries(entries, expected_entries)
+{
+    // This is slightly convoluted so that we can sort the output.
+    var actual_entries = {};
+
+    for (var i = 0; i < entries.length; ++i) {
+        var entry = entries[i];
+        var found = false;
+        for (var expected_entry in expected_entries) {
+            if (entry.name == window.location.origin + expected_entry) {
+                found = true;
+                if (expected_entry in actual_entries) {
+                    test_fail(expected_entry + ' is not expected to have duplicate entries');
+                }
+                actual_entries[expected_entry] = entry;
+                break;
+            }
+        }
+        if (!found) {
+            test_fail(entries[i].name + ' is not expected to be in the Resource Timing buffer');
+        }
+    }
+
+    sorted_urls = [];
+    for (var i in actual_entries) {
+        sorted_urls.push(i);
+    }
+    sorted_urls.sort();
+    for (var i in sorted_urls) {
+        var url = sorted_urls[i];
+        test_equals(actual_entries[url].initiatorType,
+                    expected_entries[url],
+                    url + ' is expected to have initiatorType ' + expected_entries[url]);
+    }
+    for (var j in expected_entries) {
+        if (!(j in actual_entries)) {
+            test_fail(j + ' is expected to be in the Resource Timing buffer');
+        }
+    }
+}
 function performance_entrylist_checker(type)
 {
     var entryType = type;

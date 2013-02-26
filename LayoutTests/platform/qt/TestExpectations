@@ -2576,7 +2576,7 @@ webkit.org/b/102675 [ Debug ] fast/block/float/overhanging-tall-block.html
 webkit.org/b/102877 fast/frames/frame-unload-crash2.html
 
 # Fails until we enable the Resource Timing API.
-webkit.org/b/61138 http/tests/w3c/webperf/submission/resource-timing [ Skip ]
+webkit.org/b/61138 http/tests/w3c/webperf/submission/Google/resource-timing [ Skip ]
 
 # [Qt] A new compositing bug uncovered by r135859
 webkit.org/b/103424 fast/backgrounds/background-opaque-images-over-color.html

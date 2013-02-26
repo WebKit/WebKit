@@ -43,7 +43,7 @@ import shutil
 import sys
 
 if len(sys.argv) != 3:
-    print 'USAGE: %s path_to_webkit_checkout_root path_to_webperf_checkout_root'
+    print 'USAGE: %s path_to_webkit_checkout_root path_to_webperf_checkout_root' % sys.argv[0]
     sys.exit(1)
 
 source_directory = os.path.join(sys.argv[1], 'LayoutTests', 'http', 'tests', 'w3c', 'webperf')
@@ -63,7 +63,6 @@ for directory_to_copy in directories_to_copy:
     if not os.path.exists(destination_subdirectory):
         os.makedirs(destination_subdirectory)
     for root, dirs, files in os.walk(os.path.join(source_directory, directory_to_copy)):
-        print root, dirs, files
         root = os.path.relpath(root, source_directory)
         for dirname in dirs:
             destination_subdirectory = os.path.join(destination_directory, root, dirname)
@@ -78,3 +77,4 @@ for directory_to_copy in directories_to_copy:
                         for to_find, replace_with in replacements:
                             line = line.replace(to_find, replace_with)
                         out_file.write(line)
+                print 'Exported %s' % os.path.join(root, filename)

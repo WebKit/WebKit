@@ -8,11 +8,13 @@
 <script src="/w3c/resources/testharness.js"></script>
 <script src="/w3c/resources/testharnessreport.js"></script>
 <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
 <script>
 setup({explicit_done: true});
 
 function onload_test() {
-    var entries = document.getElementById('frameContext').contentWindow.performance.webkitGetEntries();
+    var context = new PerformanceContext(iframe.contentWindow.performance);
+    var entries = context.getEntries();
 
     var expected_entries = {
         '/w3c/webperf/resources/blank_page_green.htm': 'frame',

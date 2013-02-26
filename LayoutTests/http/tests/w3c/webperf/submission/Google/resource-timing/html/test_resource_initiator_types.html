@@ -8,6 +8,7 @@
 <script src="/w3c/resources/testharness.js"></script>
 <script src="/w3c/resources/testharnessreport.js"></script>
 <script src="/w3c/webperf/resources/webperftestharness.js"></script>
+<script src="/w3c/webperf/resources/webperftestharnessextension.js"></script>
 <script>
 setup({explicit_done: true});
 
@@ -61,7 +62,8 @@ function onload_test() {
 }
 
 function perform_test() {
-    var entries = document.getElementById('frameContext').contentWindow.performance.webkitGetEntries();
+    var context = new PerformanceContext(document.getElementById('frameContext').contentWindow.performance);
+    var entries = context.getEntries();
 
     var expected_entries = {
         '/w3c/webperf/resources/Ahem.ttf': 'css',
