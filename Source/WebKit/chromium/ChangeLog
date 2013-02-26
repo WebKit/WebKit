@@ -1,3 +1,18 @@
+2013-02-26  James Weatherall  <wez@chromium.org>
+
+        keydown and keyup events have zero keycode for some numeric pad keys under Chromium on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=85642
+
+        Add tests to verify that the fixed keys generate the same keyCode values
+        as their equivalents.
+
+        Reviewed by Ojan Vafai.
+
+        * WebKit.gypi:
+        * tests/KeyCodeConversionTest.cpp: Added.
+        (WebCore):
+        (WebCore::TEST):
+
 2013-02-25  Rouslan Solomakhin  <rouslan@chromium.org>
 
         Add expandedToParagraph() method to WebRange
