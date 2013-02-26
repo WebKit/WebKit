@@ -1,3 +1,11 @@
+2013-02-26  Dirk Pranke  <dpranke@chromium.org>
+
+        Roll Chromium DEPS from r183905 -> r184646.
+
+        Unreviewed.
+
+        * DEPS:
+
 2013-02-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused WebWidget::instrument calls
