@@ -594,7 +594,7 @@ webkit.org/b/98133 fast/css/sticky/sticky-writing-mode-vertical-rl.html [ ImageO
 
 webkit.org/b/104809 media/adopt-node-crash.html [ Crash Timeout Pass ]
 webkit.org/b/104809 media/encrypted-media/encrypted-media-not-loaded.html [ Crash Failure ]
-webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Crash Failure ]
+webkit.org/b/104809 media/encrypted-media/encrypted-media-syntax.html [ Crash Failure Timeout ]
 webkit.org/b/104809 media/event-queue-crash.html [ Crash Pass ]
 webkit.org/b/104809 media/track/track-cues-pause-on-exit.html [ Timeout Pass ]
 webkit.org/b/104809 media/video-source-type-params.html [ Crash Timeout Pass ]
@@ -619,6 +619,8 @@ webkit.org/b/107194 storage/indexeddb/intversion-close-in-oncomplete.html [ Fail
 webkit.org/b/107194 storage/indexeddb/intversion-close-in-upgradeneeded.html [ Failure Pass ]
 webkit.org/b/107194 storage/indexeddb/key-generator.html [ Failure Pass ]
 webkit.org/b/107194 storage/indexeddb/lazy-index-population.html [ Failure Pass ]
+
+webkit.org/b/110864 svg/custom/animation-currentColor.svg [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Flaky tests
@@ -964,7 +966,7 @@ webkit.org/b/53003 http/tests/inspector/compiler-source-mapping-debug.html [ Tim
 
 # JSC doesn't support heap profiling
 webkit.org/b/50485 inspector/profiler/heap-snapshot-comparison-dom-groups-change.html [ Failure ]
-webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Timeout ]
+webkit.org/b/50485 inspector/profiler/heap-snapshot-inspect-dom-wrapper.html [ Timeout Failure ]
 webkit.org/b/50485 inspector/profiler/heap-snapshot-loader.html [ Failure ]
 webkit.org/b/50485 inspector/profiler/heap-snapshot-reveal-in-dominators-view.html [ Failure ]
 webkit.org/b/50485 inspector/profiler/heap-snapshot-summary-retainers.html [ Failure ]
@@ -977,7 +979,7 @@ webkit.org/b/99001 inspector/profiler/memory-instrumentation-canvas.html [ Failu
 
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-has-uninstrumented-canvases.html [ Failure ]
 webkit.org/b/73936 inspector/profiler/canvas2d/canvas-stack-trace.html [ Failure ]
-webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html [ Timeout ]
+webkit.org/b/73936 inspector/profiler/canvas2d/canvas-replay-log-grid.html [ Timeout Failure ]
 
 webkit.org/b/37613 webkit.org/b/20011 printing [ Skip ]
 webkit.org/b/37613 editing/execCommand/print.html [ Skip ]
