@@ -83,7 +83,7 @@ Patch by Sheriff Bot <webkit.review.bot@gmail.com> on 2013-02-16
 Source/WebCore:
 
 ------------------------------------------------------------------------"""),
-            "Geoffrey Garen (ggaren) rolled out r142734 in https://trac.webkit.org/r143104: Triggered crashes on lots of websites")
+            "Geoffrey Garen (ggaren) rolled out r142734 in https://trac.webkit.org/r143104 : Triggered crashes on lots of websites")
 
         self.assertEqual(NewCommitBot._summarize_commit_log("""------------------------------------------------------------------------
 r139884 | kov@webkit.org | 2013-01-16 08:26:10 -0800 (Wed, 16 Jan 2013) | 23 lines
@@ -125,5 +125,5 @@ Patch by Sheriff Bot <webkit.review.bot@gmail.com> on 2012-11-22
 * inspector/front-end/CallStackSidebarPane.js:
 
 ------------------------------------------------------------------------"""),
-            "Vsevolod Vlasov (vsevik) rolled out r134927 and r134944 in https://trac.webkit.org/r135487:"
+            "Vsevolod Vlasov (vsevik) rolled out r134927 and r134944 in https://trac.webkit.org/r135487 :"
             " Reverting the reverts after merging.")

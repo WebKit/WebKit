@@ -1,5 +1,16 @@
 2013-02-26  Vivek Galatage  <vivek.vg@samsung.com>
 
+        new-commit-bot: Fix the unit test newcommitbot-unittest.py due to r144040
+        https://bugs.webkit.org/show_bug.cgi?id=110884
+
+        Reviewed by Csaba Osztrogonác.
+
+        Adding the missing spaces before ':' in the unit test.
+
+        * Scripts/webkitpy/tool/commands/newcommitbot_unittest.py:
+
+2013-02-26  Vivek Galatage  <vivek.vg@samsung.com>
+
         new-commit-bot: Some IRC clients doesn't linkify rollout messages
         https://bugs.webkit.org/show_bug.cgi?id=110861
 
