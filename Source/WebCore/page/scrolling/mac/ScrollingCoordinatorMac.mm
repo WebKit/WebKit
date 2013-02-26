@@ -190,23 +190,12 @@ void ScrollingCoordinatorMac::frameViewRootLayerDidChange(FrameView* frameView)
     setCounterScrollingLayerForNode(counterScrollingLayerForFrameView(frameView), node);
 }
 
-void ScrollingCoordinatorMac::frameViewHorizontalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer*)
+void ScrollingCoordinatorMac::scrollableAreaScrollbarLayerDidChange(ScrollableArea* scrollableArea, ScrollbarOrientation)
 {
     ASSERT(isMainThread());
     ASSERT(m_page);
 
-    if (frameView->frame() != m_page->mainFrame())
-        return;
-
-    // FIXME: Implement.
-}
-
-void ScrollingCoordinatorMac::frameViewVerticalScrollbarLayerDidChange(FrameView* frameView, GraphicsLayer*)
-{
-    ASSERT(isMainThread());
-    ASSERT(m_page);
-    
-    if (frameView->frame() != m_page->mainFrame())
+    if (scrollableArea != static_cast<ScrollableArea*>(m_page->mainFrame()->view()))
         return;
 
     // FIXME: Implement.

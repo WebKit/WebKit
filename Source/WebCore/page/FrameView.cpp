@@ -364,6 +364,11 @@ void FrameView::prepareForDetach()
     // When the view is no longer associated with a frame, it needs to be removed from the ax object cache
     // right now, otherwise it won't be able to reach the topDocument()'s axObject cache later.
     removeFromAXObjectCache();
+
+    if (m_frame && m_frame->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = m_frame->page()->scrollingCoordinator())
+            scrollingCoordinator->willDestroyScrollableArea(this);
+    }
 }
 
 void FrameView::detachCustomScrollbars()
@@ -789,6 +794,14 @@ bool FrameView::usesCompositedScrolling() const
     if (m_frame->settings() && m_frame->settings()->compositedScrollingForFramesEnabled())
         return renderView->compositor()->inForcedCompositingMode();
     return false;
+}
+
+GraphicsLayer* FrameView::layerForScrolling() const
+{
+    RenderView* renderView = this->renderView();
+    if (!renderView)
+        return 0;
+    return renderView->compositor()->scrollLayer();
 }
 
 GraphicsLayer* FrameView::layerForHorizontalScrollbar() const

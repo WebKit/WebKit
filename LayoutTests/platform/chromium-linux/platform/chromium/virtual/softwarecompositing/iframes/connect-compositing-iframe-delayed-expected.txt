@@ -1,0 +1,63 @@
+
+When the parent document becomes composited, the layer trees should get connected together.
+
+(GraphicsLayer
+  (bounds 800.00 600.00)
+  (children 1
+    (GraphicsLayer
+      (bounds 800.00 600.00)
+      (contentsOpaque 1)
+      (children 2
+        (GraphicsLayer
+          (position 8.00 108.00)
+          (bounds 370.00 220.00)
+          (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 35.00 35.00)
+              (children 2
+                (GraphicsLayer
+                  (bounds 285.00 150.00)
+                  (children 1
+                    (GraphicsLayer
+                      (children 1
+                        (GraphicsLayer
+                          (bounds 285.00 230.00)
+                          (children 1
+                            (GraphicsLayer
+                              (bounds 285.00 230.00)
+                              (drawsContent 1)
+                              (children 1
+                                (GraphicsLayer
+                                  (position 18.00 10.00)
+                                  (bounds 210.00 210.00)
+                                  (contentsOpaque 1)
+                                  (drawsContent 1)
+                                )
+                              )
+                            )
+                          )
+                        )
+                      )
+                    )
+                  )
+                )
+                (GraphicsLayer
+                  (position 285.00 0.00)
+                  (bounds 15.00 150.00)
+                )
+              )
+            )
+          )
+        )
+        (GraphicsLayer
+          (position 8.00 8.00)
+          (bounds 100.00 100.00)
+          (contentsOpaque 1)
+          (drawsContent 1)
+        )
+      )
+    )
+  )
+)
+

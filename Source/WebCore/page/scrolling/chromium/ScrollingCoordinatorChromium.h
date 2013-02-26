@@ -36,7 +36,6 @@ class WebLayer;
 namespace WebCore {
 
 class Scrollbar;
-class ScrollingCoordinatorPrivate;
 
 class ScrollingCoordinatorChromium : public ScrollingCoordinator {
 public:
@@ -45,15 +44,6 @@ public:
 
     // Should be called whenever the given frame view has been laid out.
     virtual void frameViewLayoutUpdated(FrameView*);
-
-    // Should be called whenever the root layer for the given frame view changes.
-    virtual void frameViewRootLayerDidChange(FrameView*);
-
-    // Should be called whenever the horizontal scrollbar layer for the given frame view changes.
-    virtual void frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer*);
-
-    // Should be called whenever the vertical scrollbar layer for the given frame view changes.
-    virtual void frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer*);
 
     // Return whether this scrolling coordinator can keep fixed position layers fixed to their
     // containers while scrolling.
@@ -65,8 +55,14 @@ public:
     // Attach/detach layer position to ancestor fixed position container.
     virtual void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool);
 
+    // Should be called when a ScrollableArea is getting destroyed.
+    virtual void willDestroyScrollableArea(ScrollableArea*);
+
     // Should be called whenever the scrollable layer for the given scroll area changes.
-    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*);
+    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*);
+
+    // Should be called whenever the scrollbar layer for the given scrollable area changes.
+    virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea*, ScrollbarOrientation);
 
     // Should be called whenever touch handlers are registered, removed, or moved.
     virtual void touchEventTargetRectsDidChange(const Document*) OVERRIDE;
@@ -75,13 +71,19 @@ private:
     virtual void recomputeWheelEventHandlerCountForFrameView(FrameView*);
     virtual void setShouldUpdateScrollLayerPositionOnMainThread(MainThreadScrollingReasons);
 
-    void setScrollLayer(GraphicsLayer*);
+    static WebKit::WebLayer* scrollingWebLayerForScrollableArea(ScrollableArea*);
+
     void setNonFastScrollableRegion(const Region&);
     void setTouchEventTargetRects(const Vector<IntRect>&);
     void setWheelEventHandlerCount(unsigned);
-    PassOwnPtr<WebKit::WebScrollbarLayer> createScrollbarLayer(Scrollbar*, WebKit::WebLayer* scrollLayer, GraphicsLayer* scrollbarGraphicsLayer, FrameView*);
 
-    ScrollingCoordinatorPrivate* m_private;
+    WebKit::WebScrollbarLayer* addWebScrollbarLayer(ScrollableArea*, ScrollbarOrientation, PassOwnPtr<WebKit::WebScrollbarLayer>);
+    WebKit::WebScrollbarLayer* getWebScrollbarLayer(ScrollableArea*, ScrollbarOrientation);
+    void removeWebScrollbarLayer(ScrollableArea*, ScrollbarOrientation);
+
+    typedef HashMap<ScrollableArea*, OwnPtr<WebKit::WebScrollbarLayer> > ScrollbarMap;
+    ScrollbarMap m_horizontalScrollbars;
+    ScrollbarMap m_verticalScrollbars;
 };
 
 } // namespace WebCore

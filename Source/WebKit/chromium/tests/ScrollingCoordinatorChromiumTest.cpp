@@ -91,6 +91,8 @@ public:
         m_webViewImpl->settings()->setAcceleratedCompositingEnabled(true);
         m_webViewImpl->settings()->setAcceleratedCompositingForFixedPositionEnabled(true);
         m_webViewImpl->settings()->setAcceleratedCompositingForOverflowScrollEnabled(true);
+        m_webViewImpl->settings()->setAcceleratedCompositingForScrollableFramesEnabled(true);
+        m_webViewImpl->settings()->setCompositedScrollingForFramesEnabled(true);
         m_webViewImpl->settings()->setFixedPositionCreatesStackingContext(true);
         m_webViewImpl->initializeMainFrame(&m_mockWebFrameClient);
         m_webViewImpl->resize(IntSize(320, 240));
@@ -235,6 +237,57 @@ TEST_F(ScrollingCoordinatorChromiumTest, overflowScrolling)
 
     WebLayer* webScrollLayer = static_cast<WebLayer*>(layerBacking->scrollingContentsLayer()->platformLayer());
     ASSERT_TRUE(webScrollLayer->scrollable());
+
+#if !OS(DARWIN) && !OS(WINDOWS)
+    // Now verify we've attached impl-side scrollbars onto the scrollbar layers
+    ASSERT_TRUE(layerBacking->layerForHorizontalScrollbar());
+    ASSERT_TRUE(layerBacking->layerForHorizontalScrollbar()->hasContentsLayer());
+    ASSERT_TRUE(layerBacking->layerForVerticalScrollbar());
+    ASSERT_TRUE(layerBacking->layerForVerticalScrollbar()->hasContentsLayer());
+#endif
+}
+
+TEST_F(ScrollingCoordinatorChromiumTest, iframeScrolling)
+{
+    registerMockedHttpURLLoad("iframe-scrolling.html");
+    registerMockedHttpURLLoad("iframe-scrolling-inner.html");
+    navigateTo(m_baseURL + "iframe-scrolling.html");
+
+    // Verify the properties of the accelerated scrolling element starting from the RenderObject
+    // all the way to the WebLayer.
+    Element* scrollableFrame = m_webViewImpl->mainFrameImpl()->frame()->document()->getElementById("scrollable");
+    ASSERT_TRUE(scrollableFrame);
+
+    RenderObject* renderer = scrollableFrame->renderer();
+    ASSERT_TRUE(renderer);
+    ASSERT_TRUE(renderer->isWidget());
+
+    RenderWidget* renderWidget = toRenderWidget(renderer);
+    ASSERT_TRUE(renderWidget);
+    ASSERT_TRUE(renderWidget->widget());
+    ASSERT_TRUE(renderWidget->widget()->isFrameView());
+
+    FrameView* innerFrameView = static_cast<FrameView*>(renderWidget->widget());
+    RenderView* innerRenderView = innerFrameView->renderView();
+    ASSERT_TRUE(innerRenderView);
+
+    RenderLayerCompositor* innerCompositor = innerRenderView->compositor();
+    ASSERT_TRUE(innerCompositor->inCompositingMode());
+    ASSERT_TRUE(innerCompositor->scrollLayer());
+
+    GraphicsLayerChromium* scrollLayer = static_cast<GraphicsLayerChromium*>(innerCompositor->scrollLayer());
+    ASSERT_EQ(innerFrameView, scrollLayer->scrollableArea());
+
+    WebLayer* webScrollLayer = static_cast<WebLayer*>(scrollLayer->platformLayer());
+    ASSERT_TRUE(webScrollLayer->scrollable());
+
+#if !OS(DARWIN) && !OS(WINDOWS)
+    // Now verify we've attached impl-side scrollbars onto the scrollbar layers
+    ASSERT_TRUE(innerCompositor->layerForHorizontalScrollbar());
+    ASSERT_TRUE(innerCompositor->layerForHorizontalScrollbar()->hasContentsLayer());
+    ASSERT_TRUE(innerCompositor->layerForVerticalScrollbar());
+    ASSERT_TRUE(innerCompositor->layerForVerticalScrollbar()->hasContentsLayer());
+#endif
 }
 
 } // namespace

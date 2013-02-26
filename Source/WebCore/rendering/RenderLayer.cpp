@@ -240,6 +240,11 @@ RenderLayer::~RenderLayer()
     destroyScrollbar(HorizontalScrollbar);
     destroyScrollbar(VerticalScrollbar);
 
+    if (renderer()->frame() && renderer()->frame()->page()) {
+        if (ScrollingCoordinator* scrollingCoordinator = renderer()->frame()->page()->scrollingCoordinator())
+            scrollingCoordinator->willDestroyScrollableArea(this);
+    }
+
     if (m_reflection)
         removeReflection();
     
@@ -5116,6 +5121,11 @@ void RenderLayer::clearBacking(bool layerBeingDestroyed)
 bool RenderLayer::hasCompositedMask() const
 {
     return m_backing && m_backing->hasMaskLayer();
+}
+
+GraphicsLayer* RenderLayer::layerForScrolling() const
+{
+    return m_backing ? m_backing->scrollingContentsLayer() : 0;
 }
 
 GraphicsLayer* RenderLayer::layerForHorizontalScrollbar() const

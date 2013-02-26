@@ -77,6 +77,7 @@
 #include "ScriptController.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "ScrollingCoordinator.h"
 #include "Settings.h"
 #include "StylePropertySet.h"
 #include "TextIterator.h"
@@ -689,6 +690,9 @@ void Frame::willDetachPage()
     // so page() could be NULL.
     if (page() && page()->focusController()->focusedFrame() == this)
         page()->focusController()->setFocusedFrame(0);
+
+    if (page() && page()->scrollingCoordinator() && m_view)
+        page()->scrollingCoordinator()->willDestroyScrollableArea(m_view.get());
 
     script()->clearScriptObjects();
     script()->updatePlatformScriptObjects();

@@ -193,6 +193,8 @@ protected:
     virtual void invalidateScrollCornerRect(const IntRect&) = 0;
 
 #if USE(ACCELERATED_COMPOSITING)
+    friend class ScrollingCoordinator;
+    virtual GraphicsLayer* layerForScrolling() const { return 0; }
     virtual GraphicsLayer* layerForHorizontalScrollbar() const { return 0; }
     virtual GraphicsLayer* layerForVerticalScrollbar() const { return 0; }
     virtual GraphicsLayer* layerForScrollCorner() const { return 0; }

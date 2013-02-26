@@ -349,6 +349,9 @@ public:
     // Pass an invalid color to remove the contents layer.
     virtual void setContentsToSolidColor(const Color&) { }
     virtual void setContentsToCanvas(PlatformLayer*) { }
+    // FIXME: webkit.org/b/109658
+    // Should unify setContentsToMedia and setContentsToCanvas
+    virtual void setContentsToPlatformLayer(PlatformLayer* layer) { setContentsToMedia(layer); }
     virtual bool hasContentsLayer() const { return false; }
 
     // Callback from the underlying graphics system to draw layer contents.

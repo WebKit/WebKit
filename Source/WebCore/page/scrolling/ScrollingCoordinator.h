@@ -149,9 +149,9 @@ public:
 
     // These virtual functions are currently unique to Chromium's WebLayer approach. Their meaningful
     // implementations are in ScrollingCoordinatorChromium.
-    virtual void frameViewHorizontalScrollbarLayerDidChange(FrameView*, GraphicsLayer*) { }
-    virtual void frameViewVerticalScrollbarLayerDidChange(FrameView*, GraphicsLayer*) { }
-    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*, GraphicsLayer*) { }
+    virtual void willDestroyScrollableArea(ScrollableArea*) { }
+    virtual void scrollableAreaScrollLayerDidChange(ScrollableArea*) { }
+    virtual void scrollableAreaScrollbarLayerDidChange(ScrollableArea*, ScrollbarOrientation) { }
     virtual void setLayerIsContainerForFixedPositionLayers(GraphicsLayer*, bool) { }
     virtual void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool) { }
     virtual void touchEventTargetRectsDidChange(const Document*) { }
@@ -167,6 +167,10 @@ public:
 
 protected:
     explicit ScrollingCoordinator(Page*);
+
+    static GraphicsLayer* scrollLayerForScrollableArea(ScrollableArea*);
+    static GraphicsLayer* horizontalScrollbarLayerForScrollableArea(ScrollableArea*);
+    static GraphicsLayer* verticalScrollbarLayerForScrollableArea(ScrollableArea*);
 
     unsigned computeCurrentWheelEventHandlerCount();
     GraphicsLayer* scrollLayerForFrameView(FrameView*);
