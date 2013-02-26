@@ -175,7 +175,7 @@ TextureMapperGLData::~TextureMapperGLData()
         context->deleteBuffer(it->value);
 }
 
-void TextureMapperGL::ClipStack::init(const IntRect& rect)
+void TextureMapperGL::ClipStack::reset(const IntRect& rect)
 {
     clipStack.clear();
     clipState = TextureMapperGL::ClipState(rect);
@@ -270,7 +270,7 @@ void TextureMapperGL::beginPainting(PaintFlags flags)
     m_context3D->depthMask(0);
     m_context3D->getIntegerv(GraphicsContext3D::VIEWPORT, data().viewport);
     m_context3D->getIntegerv(GraphicsContext3D::SCISSOR_BOX, data().previousScissor);
-    m_clipStack.init(IntRect(0, 0, data().viewport[2], data().viewport[3]));
+    m_clipStack.reset(IntRect(0, 0, data().viewport[2], data().viewport[3]));
     m_context3D->getIntegerv(GraphicsContext3D::FRAMEBUFFER_BINDING, &data().targetFrameBuffer);
     data().PaintFlags = flags;
     bindSurface(0);
@@ -1030,7 +1030,7 @@ void BitmapTextureGL::clearIfNeeded()
     if (!m_shouldClear)
         return;
 
-    m_clipStack.init(IntRect(IntPoint::zero(), m_textureSize));
+    m_clipStack.reset(IntRect(IntPoint::zero(), m_textureSize));
     m_clipStack.apply(m_context3D.get());
     m_context3D->clearColor(0, 0, 0, 0);
     m_context3D->clear(GraphicsContext3D::COLOR_BUFFER_BIT);
