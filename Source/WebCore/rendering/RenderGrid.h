@@ -82,8 +82,8 @@ private:
     void placeSpecifiedMajorAxisItemsOnGrid(Vector<RenderBox*>);
     void placeAutoMajorAxisItemsOnGrid(Vector<RenderBox*>);
     void placeAutoMajorAxisItemOnGrid(RenderBox*);
-    const GridPositions& autoPlacementMajorAxisPositionsForChild(const RenderBox*) const;
-    const GridPositions& autoPlacementMinorAxisPositionsForChild(const RenderBox*) const;
+    const GridPosition& autoPlacementMajorAxisPositionForChild(const RenderBox*) const;
+    const GridPosition& autoPlacementMinorAxisPositionForChild(const RenderBox*) const;
     TrackSizingDirection autoPlacementMajorAxisDirection() const;
     TrackSizingDirection autoPlacementMinorAxisDirection() const;
 
