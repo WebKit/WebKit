@@ -808,6 +808,16 @@ WebInspector.DataGrid.prototype = {
             if (this._deleteCallback) {
                 handled = true;
                 this._deleteCallback(this.selectedNode);
+
+                nextSelectedNode = this.selectedNode.traverseNextNode(true);
+                while (nextSelectedNode && !nextSelectedNode.selectable)
+                    nextSelectedNode = nextSelectedNode.traverseNextNode(true);
+
+                if (!nextSelectedNode || nextSelectedNode.isCreationNode) {
+                    nextSelectedNode = this.selectedNode.traversePreviousNode(true);
+                    while (nextSelectedNode && !nextSelectedNode.selectable)
+                        nextSelectedNode = nextSelectedNode.traversePreviousNode(true);
+                }
             }
         } else if (isEnterKey(event)) {
             if (this._editCallback) {
@@ -1192,7 +1202,7 @@ WebInspector.DataGridNode.prototype = {
     {
         if (typeof this._leftPadding === "number")
             return this._leftPadding;
-        
+
         this._leftPadding = this.depth * this.dataGrid.indentWidth;
         return this._leftPadding;
     },
@@ -1636,7 +1646,7 @@ WebInspector.DataGridNode.prototype = {
         var cell = event.target.enclosingNodeOrSelfWithNodeName("td");
         if (!cell.hasStyleClass("disclosure"))
             return false;
-        
+
         var left = cell.totalOffsetLeft() + this.leftPadding;
         return event.pageX >= left && event.pageX <= left + this.disclosureToggleWidth;
     },
