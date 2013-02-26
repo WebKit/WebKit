@@ -1,3 +1,16 @@
+2013-02-26  Joone Hur  <joone.hur@intel.com>
+
+        [GTK] Add Clutter to jhbuild
+        https://bugs.webkit.org/show_bug.cgi?id=110245
+
+        Reviewed by Martin Robinson.
+
+        Add clutter, cogl, clutter-gtk, and atk to the optional moduleset.
+        This allows to build WebKitGtk+ with clutter as an acceleration backend
+        within the jhbuild environment. 
+
+        * gtk/jhbuild-optional.modules:
+
 2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another fix attempt after r143991 since having \r? after a greedy match doesn't help.

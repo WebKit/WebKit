@@ -7,13 +7,61 @@
        certain distributions. Feel free to add more here, within reason,
        as long as they are not built by default. -->
 
+  <metamodule id="webkitgtk-clutter-dependencies">
+    <dependencies>
+      <dep package="atk"/>
+      <dep package="clutter"/>
+      <dep package="clutter-gtk"/>
+      <dep package="cogl"/>
+    </dependencies>
+  </metamodule>
+
   <repository type="tarball" name="ftp.gnome.org"
-      href="http://ftp.gnome.org/mirror/gnome.org/"/>
+      href="http://ftp.gnome.org"/>
 
   <autotools id="libsecret" autogen-sh="configure">
     <branch repo="ftp.gnome.org"
-            module="core/3.6/3.6.2/sources/libsecret-0.11.tar.xz" version="0.11"
-            size="474716" md5sum="8e8b72fdbdafbb54381b7a0085be9b0c"/>
+            module="/pub/GNOME/sources/libsecret/0.11/libsecret-0.11.tar.xz" version="0.11"
+            hash="sha256:e5399dfb61376a7500d20cb22715152780aa3a2c8a64281ec6bc8f0ebeb8b689"/>
+  </autotools>
+
+  <autotools id="cogl"
+            autogen-sh="configure"
+            autogenargs="--disable-introspection">
+    <branch module="/pub/GNOME/sources/cogl/1.12/cogl-1.12.0.tar.xz" version="1.12.0"
+            repo="ftp.gnome.org" 
+            hash="sha256:4e7b5abbf0a1e51d74618db1b513551e7c71b486e17e98373f4db93e7710e2f2"/>
+  </autotools>
+
+  <autotools id="clutter"
+           autogen-sh="configure"
+           autogenargs="--disable-introspection">
+    <dependencies>
+      <dep package="cogl"/>
+      <dep package="atk"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/clutter/1.12/clutter-1.12.0.tar.xz" version="1.12.0"
+            repo="ftp.gnome.org" 
+            hash="sha256:e75130a5df6dbe97e8d350259278331c6352b2d213230712127160e42053e558"/>
+  </autotools>
+
+  <autotools id="clutter-gtk"
+           autogen-sh="configure"
+           autogenargs="--disable-introspection">
+    <dependencies>
+      <dep package="clutter"/>
+    </dependencies>
+    <branch module="/pub/GNOME/sources/clutter-gtk/1.3/clutter-gtk-1.3.2.tar.xz" version="1.3.2"
+            repo="ftp.gnome.org"             
+            hash="sha256:ee50538daca9447be6ad1ed0d049fbb2dc5a1bcaecd13fda847b9b66f922ee37"/>
+  </autotools>
+
+  <autotools id="atk"
+           autogen-sh="configure"
+           autogenargs="--disable-introspection">
+    <branch module="/pub/GNOME/sources/atk/2.5/atk-2.5.3.tar.xz" version="2.5.3"
+            repo="ftp.gnome.org"
+            hash="sha256:ac118ef34ef5490fa113cf50cffdff7735d6293723bf35df958a89fbda876313"/>
   </autotools>
 
 </moduleset>
