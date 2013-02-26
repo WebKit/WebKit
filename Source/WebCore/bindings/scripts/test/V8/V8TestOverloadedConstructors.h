@@ -48,10 +48,6 @@ public:
     static void installPerContextProperties(v8::Handle<v8::Object>, TestOverloadedConstructors*, v8::Isolate*) { }
     static void installPerContextPrototypeProperties(v8::Handle<v8::Object>, v8::Isolate*) { }
 private:
-    static v8::Handle<v8::Value> constructor1Callback(const v8::Arguments&);
-    static v8::Handle<v8::Value> constructor2Callback(const v8::Arguments&);
-    static v8::Handle<v8::Value> constructor3Callback(const v8::Arguments&);
-    static v8::Handle<v8::Value> constructor4Callback(const v8::Arguments&);
     friend v8::Handle<v8::Object> wrap(TestOverloadedConstructors*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
     static v8::Handle<v8::Object> createWrapper(PassRefPtr<TestOverloadedConstructors>, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 };

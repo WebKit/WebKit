@@ -503,14 +503,6 @@ END
 private:
 END
 
-    if (IsConstructable($interface) && @{$interface->constructors} > 1) {
-        for (my $i = 1; $i <= @{$interface->constructors}; $i++) {
-           push(@headerContent, <<END);
-    static v8::Handle<v8::Value> constructor${i}Callback(const v8::Arguments&);
-END
-        }
-    }
-
     my $noToV8 = $interface->extendedAttributes->{"SuppressToJSObject"};
     my $noWrap = $interface->extendedAttributes->{"V8NoWrapperCache"} || $noToV8;
     if (!$noWrap) {
