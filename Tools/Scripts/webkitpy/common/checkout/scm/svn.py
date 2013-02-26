@@ -109,10 +109,10 @@ class SVN(SCM, SVNRepository):
         svn_info_args = [cls.executable_name, 'info']
         # FIXME: This method should use a passed in executive or be made an instance method and use self._executive.
         info_output = Executive().run_command(svn_info_args, cwd=path).rstrip()
-        match = re.search("^%s: (?P<value>.+)\r?$" % field_name, info_output, re.MULTILINE)
+        match = re.search("^%s: (?P<value>.+)$" % field_name, info_output, re.MULTILINE)
         if not match:
             raise ScriptError(script_args=svn_info_args, message='svn info did not contain a %s.' % field_name)
-        return match.group('value')
+        return match.group('value').rstrip('\r')
 
     def find_checkout_root(self, path):
         uuid = self.find_uuid(path)

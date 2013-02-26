@@ -1,3 +1,10 @@
+2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another fix attempt after r143991 since having \r? after a greedy match doesn't help.
+
+        * Scripts/webkitpy/common/checkout/scm/svn.py:
+        (SVN.value_from_svn_info):
+
 2013-02-25  Alan Cutter  <alancutter@chromium.org>
 
         GCE EWS bots failing intermittently on HTTP 502 error while updating their status
