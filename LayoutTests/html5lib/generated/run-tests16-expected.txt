@@ -1,5 +1,0 @@
-../resources/tests16.dat: PASS
-
-Switching to data: url parser (threaded if available) and re-running...
-
-../resources/tests16.dat: PASS

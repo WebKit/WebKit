@@ -1,0 +1,5 @@
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+CONSOLE MESSAGE: line 1: Uncaught SyntaxError: Unexpected token <
+../resources/tests18.dat: PASS

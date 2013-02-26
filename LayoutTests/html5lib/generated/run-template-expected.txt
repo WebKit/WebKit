@@ -1,5 +1,0 @@
-../resources/template.dat: PASS
-
-Switching to data: url parser (threaded if available) and re-running...
-
-../resources/template.dat: PASS

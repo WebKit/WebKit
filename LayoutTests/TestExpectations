@@ -5,8 +5,3 @@
 # pending functional patch and per-port verification
 webkit.org/b/109954 css3/line-break [ Skip ]
 
-# This runs all subtests through both the document.write
-# parser and the (threaded) data: url parser.  The data: url
-# harness is much slower, and the test should be broken
-# up into smaller tests.
-webkit.org/b/110642 html5lib/runner.html [ Slow ]
