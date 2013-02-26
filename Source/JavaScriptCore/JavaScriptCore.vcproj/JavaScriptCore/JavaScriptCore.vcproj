@@ -1174,10 +1174,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\runtime\PropertyTable.cpp"
-				>
-			</File>
-			<File
 				RelativePath="..\..\runtime\PrototypeMap.cpp"
 				>
 			</File>

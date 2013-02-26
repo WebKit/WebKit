@@ -280,7 +280,6 @@ set(JavaScriptCore_SOURCES
     runtime/PropertyDescriptor.cpp
     runtime/PropertyNameArray.cpp
     runtime/PropertySlot.cpp
-    runtime/PropertyTable.cpp
     runtime/PrototypeMap.cpp
     runtime/RegExp.cpp
     runtime/RegExpCache.cpp

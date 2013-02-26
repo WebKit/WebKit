@@ -305,7 +305,6 @@
     <ClCompile Include="..\runtime\PropertyDescriptor.cpp" />
     <ClCompile Include="..\runtime\PropertyNameArray.cpp" />
     <ClCompile Include="..\runtime\PropertySlot.cpp" />
-    <ClCompile Include="..\runtime\PropertyTable.cpp" />
     <ClCompile Include="..\runtime\PrototypeMap.cpp" />
     <ClCompile Include="..\runtime\RegExp.cpp" />
     <ClCompile Include="..\runtime\RegExpCache.cpp" />
