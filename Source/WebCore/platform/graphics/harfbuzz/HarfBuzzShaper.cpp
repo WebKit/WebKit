@@ -156,10 +156,18 @@ float HarfBuzzShaper::HarfBuzzRun::xPositionForOffset(unsigned offset)
     return position;
 }
 
-static void normalizeCharacters(const UChar* source, UChar* destination, int length)
+static void normalizeCharacters(const TextRun& run, UChar* destination, int length)
 {
     int position = 0;
     bool error = false;
+    const UChar* source;
+    String stringFor8BitRun;
+    if (run.is8Bit()) {
+        stringFor8BitRun = String::make16BitFrom8BitSource(run.characters8(), run.length());
+        source = stringFor8BitRun.characters16();
+    } else
+        source = run.characters16();
+
     while (position < length) {
         UChar32 character;
         int nextPosition = position;
@@ -182,7 +190,7 @@ HarfBuzzShaper::HarfBuzzShaper(const Font* font, const TextRun& run)
 {
     m_normalizedBuffer = adoptArrayPtr(new UChar[m_run.length() + 1]);
     m_normalizedBufferLength = m_run.length();
-    normalizeCharacters(m_run.characters16(), m_normalizedBuffer.get(), m_normalizedBufferLength);
+    normalizeCharacters(m_run, m_normalizedBuffer.get(), m_normalizedBufferLength);
     setPadding(m_run.expansion());
     setFontFeatures();
 }
