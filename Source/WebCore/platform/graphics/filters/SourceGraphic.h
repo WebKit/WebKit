@@ -49,7 +49,7 @@ private:
     SourceGraphic(Filter* filter)
         : FilterEffect(filter)
     {
-        setColorSpace(ColorSpaceDeviceRGB);
+        setOperatingColorSpace(ColorSpaceDeviceRGB);
     }
 };
 

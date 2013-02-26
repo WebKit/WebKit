@@ -164,14 +164,16 @@ public:
     bool clipsToBounds() const { return m_clipsToBounds; }
     void setClipsToBounds(bool value) { m_clipsToBounds = value; }
 
-    ColorSpace colorSpace() const { return m_colorSpace; }
-    void setColorSpace(ColorSpace colorSpace) { m_colorSpace = colorSpace; }
+    ColorSpace operatingColorSpace() const { return m_operatingColorSpace; }
+    virtual void setOperatingColorSpace(ColorSpace colorSpace) { m_operatingColorSpace = colorSpace; }
+    ColorSpace resultColorSpace() const { return m_resultColorSpace; }
+    virtual void setResultColorSpace(ColorSpace colorSpace) { m_resultColorSpace = colorSpace; }
+
+    virtual void transformResultColorSpace(FilterEffect* in, const int) { in->transformResultColorSpace(m_operatingColorSpace); }
     void transformResultColorSpace(ColorSpace);
 
 protected:
     FilterEffect(Filter*);
-
-    void setResultColorSpace(ColorSpace colorSpace) { m_resultColorSpace = colorSpace; }
 
     ImageBuffer* createImageBufferResult();
     Uint8ClampedArray* createUnmultipliedImageResult();
@@ -226,7 +228,7 @@ private:
     // Should the effect clip to its primitive region, or expand to use the combined region of its inputs.
     bool m_clipsToBounds;
 
-    ColorSpace m_colorSpace;
+    ColorSpace m_operatingColorSpace;
     ColorSpace m_resultColorSpace;
 };
 

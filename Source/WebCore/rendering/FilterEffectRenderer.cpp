@@ -363,7 +363,7 @@ bool FilterEffectRenderer::build(RenderObject* renderer, const FilterOperations&
         if (effect) {
             // Unlike SVG, filters applied here should not clip to their primitive subregions.
             effect->setClipsToBounds(false);
-            effect->setColorSpace(ColorSpaceDeviceRGB);
+            effect->setOperatingColorSpace(ColorSpaceDeviceRGB);
             
             if (filterOperation->getOperationType() != FilterOperation::REFERENCE) {
                 effect->inputEffects().append(previousEffect);

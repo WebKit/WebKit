@@ -78,9 +78,6 @@ void FEFlood::platformApplySoftware()
 
     Color color = colorWithOverrideAlpha(floodColor().rgb(), floodOpacity());
     resultImage->context()->fillRect(FloatRect(FloatPoint(), absolutePaintRect().size()), color, ColorSpaceDeviceRGB);
-    // feFlood does not perform color interpolation of any kind, so the result is always in ColorSpaceDeviceRGB
-    // regardless of the value of color-interpolation-filters.
-    setResultColorSpace(ColorSpaceDeviceRGB);
 }
 
 void FEFlood::dump()

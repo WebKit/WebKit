@@ -88,6 +88,22 @@ bool FEDisplacementMap::setScale(float scale)
     return true;
 }
 
+void FEDisplacementMap::setResultColorSpace(ColorSpace)
+{
+    // Spec: The 'color-interpolation-filters' property only applies to the 'in2' source image
+    // and does not apply to the 'in' source image. The 'in' source image must remain in its
+    // current color space.
+    // The result is in that smae color space because it is a displacement of the 'in' image.
+    FilterEffect::setResultColorSpace(inputEffect(0)->resultColorSpace());
+}
+
+void FEDisplacementMap::transformResultColorSpace(FilterEffect* in, const int index)
+{
+    // Do not transform the first primitive input, as per the spec.
+    if (index)
+        in->transformResultColorSpace(operatingColorSpace());
+}
+
 void FEDisplacementMap::platformApplySoftware()
 {
     FilterEffect* in = inputEffect(0);
@@ -110,17 +126,19 @@ void FEDisplacementMap::platformApplySoftware()
 
     Filter* filter = this->filter();
     IntSize paintSize = absolutePaintRect().size();
-    float scaleX = filter->applyHorizontalScale(m_scale / 255);
-    float scaleY = filter->applyVerticalScale(m_scale / 255);
-    float scaleAdjustmentX = filter->applyHorizontalScale(0.5f - 0.5f * m_scale);
-    float scaleAdjustmentY = filter->applyVerticalScale(0.5f - 0.5f * m_scale);
+    float scaleX = filter->applyHorizontalScale(m_scale);
+    float scaleY = filter->applyVerticalScale(m_scale);
+    float scaleForColorX = scaleX / 255.0;
+    float scaleForColorY = scaleY / 255.0;
+    float scaledOffsetX = 0.5 - scaleX * 0.5;
+    float scaledOffsetY = 0.5 - scaleY * 0.5;
     int stride = paintSize.width() * 4;
     for (int y = 0; y < paintSize.height(); ++y) {
         int line = y * stride;
         for (int x = 0; x < paintSize.width(); ++x) {
             int dstIndex = line + x * 4;
-            int srcX = x + static_cast<int>(scaleX * srcPixelArrayB->item(dstIndex + m_xChannelSelector - 1) + scaleAdjustmentX);
-            int srcY = y + static_cast<int>(scaleY * srcPixelArrayB->item(dstIndex + m_yChannelSelector - 1) + scaleAdjustmentY);
+            int srcX = x + static_cast<int>(scaleForColorX * srcPixelArrayB->item(dstIndex + m_xChannelSelector - 1) + scaledOffsetX);
+            int srcY = y + static_cast<int>(scaleForColorY * srcPixelArrayB->item(dstIndex + m_yChannelSelector - 1) + scaledOffsetY);
             for (unsigned channel = 0; channel < 4; ++channel) {
                 if (srcX < 0 || srcX >= paintSize.width() || srcY < 0 || srcY >= paintSize.height())
                     dstPixelArray->set(dstIndex + channel, static_cast<unsigned char>(0));

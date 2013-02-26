@@ -44,7 +44,7 @@ FilterEffect::FilterEffect(Filter* filter)
     , m_hasWidth(false)
     , m_hasHeight(false)
     , m_clipsToBounds(true)
-    , m_colorSpace(ColorSpaceLinearRGB)
+    , m_operatingColorSpace(ColorSpaceLinearRGB)
     , m_resultColorSpace(ColorSpaceDeviceRGB)
 {
     ASSERT(m_filter);
@@ -127,11 +127,11 @@ void FilterEffect::apply()
             return;
 
         // Convert input results to the current effect's color space.
-        in->transformResultColorSpace(m_colorSpace);
+        transformResultColorSpace(in, i);
     }
 
     determineAbsolutePaintRect();
-    m_resultColorSpace = m_colorSpace;
+    setResultColorSpace(m_operatingColorSpace);
 
     if (!isFilterSizeValid(m_absolutePaintRect))
         return;
@@ -428,7 +428,7 @@ ImageBuffer* FilterEffect::createImageBufferResult()
     ASSERT(!hasResult());
     if (m_absolutePaintRect.isEmpty())
         return 0;
-    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), 1, m_colorSpace, m_filter->renderingMode());
+    m_imageBufferResult = ImageBuffer::create(m_absolutePaintRect.size(), 1, m_resultColorSpace, m_filter->renderingMode());
     if (!m_imageBufferResult)
         return 0;
     ASSERT(m_imageBufferResult->context());

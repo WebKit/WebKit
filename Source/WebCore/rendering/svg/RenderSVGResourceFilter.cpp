@@ -121,8 +121,8 @@ PassRefPtr<SVGFilterBuilder> RenderSVGResourceFilter::buildPrimitives(SVGFilter*
         builder->appendEffectToEffectReferences(effect, effectElement->renderer());
         effectElement->setStandardAttributes(effect.get());
         effect->setEffectBoundaries(SVGLengthContext::resolveRectangle<SVGFilterPrimitiveStandardAttributes>(effectElement, filterElement->primitiveUnits(), targetBoundingBox));
-        effect->setColorSpace(effectElement->renderer()->style()->svgStyle()->colorInterpolationFilters() == CI_LINEARRGB
-                ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB);
+        effect->setOperatingColorSpace(
+            effectElement->renderer()->style()->svgStyle()->colorInterpolationFilters() == CI_LINEARRGB ? ColorSpaceLinearRGB : ColorSpaceDeviceRGB);
         builder->add(effectElement->result(), effect);
     }
     return builder.release();
