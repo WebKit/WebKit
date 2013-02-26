@@ -1,3 +1,14 @@
+2013-02-25  Jer Noble  <jer.noble@apple.com>
+
+        Normalize ENABLE_ENCRYPTED_MEDIA definitions across all FeatureDefines files.
+        https://bugs.webkit.org/show_bug.cgi?id=110806
+
+        Reviewed by Alexey Proskuryakov.
+
+        Ensure both ENCRYPTED_MEDIA and ENCRYPTED_MEDIA_V2 are enabled on macosx_1090.
+
+        * wtf/FeatureDefines.h:
+
 2013-02-23  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: replace String with const char* in MemoryObjectInfo

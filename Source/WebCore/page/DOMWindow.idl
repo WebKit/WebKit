@@ -485,10 +485,9 @@
     [JSCustomGetter, CustomConstructor] attribute HTMLImageElementConstructorConstructor Image; // Usable with new operator
     [JSCustomGetter] attribute HTMLOptionElementConstructorConstructor Option; // Usable with new operator
 
-    [Conditional=ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] attribute MediaKeyErrorConstructor MediaKeyError;
     [Conditional=ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] attribute MediaKeyEventConstructor MediaKeyEvent;
     attribute [Conditional=ENCRYPTED_MEDIA_V2, V8EnabledAtRuntime=encryptedMedia] MediaKeysConstructor MediaKeys;
-    attribute [Conditional=ENCRYPTED_MEDIA_V2, V8EnabledAtRuntime=encryptedMedia] MediaKeyErrorConstructor MediaKeyError;
+    attribute [Conditional=ENCRYPTED_MEDIA_V2|ENCRYPTED_MEDIA, V8EnabledAtRuntime=encryptedMedia] MediaKeyErrorConstructor MediaKeyError;
     attribute [Conditional=ENCRYPTED_MEDIA_V2, V8EnabledAtRuntime=encryptedMedia] MediaKeyMessageEventConstructor MediaKeyMessageEvent;
     attribute [Conditional=ENCRYPTED_MEDIA_V2, V8EnabledAtRuntime=encryptedMedia] MediaKeyNeededEventConstructor MediaKeyNeededEvent;
 

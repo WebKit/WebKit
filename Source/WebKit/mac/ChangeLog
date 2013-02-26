@@ -1,3 +1,14 @@
+2013-02-25  Jer Noble  <jer.noble@apple.com>
+
+        Normalize ENABLE_ENCRYPTED_MEDIA definitions across all FeatureDefines files.
+        https://bugs.webkit.org/show_bug.cgi?id=110806
+
+        Reviewed by Alexey Proskuryakov.
+    
+        Ensure both ENCRYPTED_MEDIA and ENCRYPTED_MEDIA_V2 are enabled on macosx_1090.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-25  Andreas Kling  <akling@apple.com>
 
         Reduce amount of code that includes StylePropertySet.h
