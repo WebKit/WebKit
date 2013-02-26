@@ -443,10 +443,24 @@ void InspectorDOMAgent::pushChildNodesToFrontend(int nodeId, int depth)
     Node* node = nodeForId(nodeId);
     if (!node || (node->nodeType() != Node::ELEMENT_NODE && node->nodeType() != Node::DOCUMENT_NODE && node->nodeType() != Node::DOCUMENT_FRAGMENT_NODE))
         return;
-    if (m_childrenRequested.contains(nodeId))
-        return;
 
     NodeToIdMap* nodeMap = m_idToNodesMap.get(nodeId);
+
+    if (m_childrenRequested.contains(nodeId)) {
+        if (depth <= 1)
+            return;
+
+        depth--;
+
+        for (node = innerFirstChild(node); node; node = innerNextSibling(node)) {
+            int childNodeId = nodeMap->get(node);
+            ASSERT(childNodeId);
+            pushChildNodesToFrontend(childNodeId, depth);
+        }
+
+        return;
+    }
+
     RefPtr<TypeBuilder::Array<TypeBuilder::DOM::Node> > children = buildArrayForContainerChildren(node, depth, nodeMap);
     m_frontend->setChildNodes(nodeId, children.release());
 }

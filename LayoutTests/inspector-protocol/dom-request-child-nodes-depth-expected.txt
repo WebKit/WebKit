@@ -9,7 +9,11 @@ PASS: First child is div#depth-1
 PASS: First child has one child
 PASS: First child has no .children property
 
-=== Get all children of div#depth-1 ===
+=== Get children of div#depth-1 three levels deep ===
+
+PASS: div#depth-1 has nodes 3 levels deep
+
+=== Get all children of body ===
 
 PASS: div#depth-1 has nodes 9 levels deep
 

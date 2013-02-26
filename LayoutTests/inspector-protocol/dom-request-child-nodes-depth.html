@@ -5,7 +5,7 @@
 
 function test()
 {
-
+    var firstDiv;
     var eventsCount = 0;
 
     getDocument();
@@ -17,7 +17,11 @@ function test()
         if (eventsCount === 1)
             gotImmediateChildren(messageObject);
         else if (eventsCount === 2)
+            gotAdditionalChildren(messageObject);
+        else if (eventsCount === 3)
             gotAllChildren(messageObject);
+        else
+            InspectorTest.log(JSON.stringify(messageObject, null, "    "));
     };
     
     function getDocument()
@@ -43,16 +47,35 @@ function test()
 
     function gotImmediateChildren(messageObject)
     {
-        var firstChild = messageObject.params.nodes[0];
-        assert("First child is a div", firstChild.localName, "div");
-        assert("First child is div#depth-1", firstChild.attributes[1], "depth-1");
-        assert("First child has one child", firstChild.childNodeCount, 1);
-        assert("First child has no .children property", firstChild.children, undefined);
+        firstDiv = messageObject.params.nodes[0];
+        assert("First child is a div", firstDiv.localName, "div");
+        assert("First child is div#depth-1", firstDiv.attributes[1], "depth-1");
+        assert("First child has one child", firstDiv.childNodeCount, 1);
+        assert("First child has no .children property", firstDiv.children, undefined);
 
         step({
-            name: "Get all children of div#depth-1",
+            name: "Get children of div#depth-1 three levels deep",
             command: "DOM.requestChildNodes",
-            parameters: {"nodeId": firstChild.nodeId, "depth": -1}
+            parameters: {"nodeId": firstDiv.nodeId, "depth": 3}
+        });
+    };
+
+    function gotAdditionalChildren(messageObject)
+    {
+        var depth = 1;
+        var firstChild = messageObject.params.nodes[0];
+        var node = firstChild;
+        while (node && node.children) {
+            depth++;
+            node = node.children[0];
+        }
+
+        assert("div#depth-1 has nodes 3 levels deep", depth, 3);
+
+        step({
+            name: "Get all children of body",
+            command: "DOM.requestChildNodes",
+            parameters: {"nodeId": firstDiv.nodeId, "depth": -1}
         });
     };
 
@@ -66,19 +89,21 @@ function test()
             node = node.children[0];
         }
 
-        assert("div#depth-1 has nodes 9 levels deep", depth, 9);
+        // We have requested nodes 3-level deep so far, so
+        // we should have gotten an additional 6 levels of depth.
+        assert("div#depth-1 has nodes 9 levels deep", depth, 6);
 
         step({
             name: "Pass an invalid depth",
             command: "DOM.requestChildNodes",
-            parameters: {"nodeId": firstChild.nodeId, "depth": 0},
+            parameters: {"nodeId": firstDiv.nodeId, "depth": 0},
             callback: finishTest
         });
     };
     
     function finishTest()
     {
-        assert("Expected number of setChildNodes events", eventsCount, 2);
+        assert("Expected number of setChildNodes events", eventsCount, 3);
         
         InspectorTest.completeTest();
     };
