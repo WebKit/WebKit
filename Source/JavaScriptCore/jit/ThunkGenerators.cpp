@@ -264,6 +264,7 @@ static MacroAssemblerCodeRef nativeForGenerator(JSGlobalData* globalData, CodeSp
     jit.peek(JSInterfaceJIT::regT1);
     jit.emitPutToCallFrameHeader(JSInterfaceJIT::regT1, JSStack::ReturnPC);
 
+#if !OS(WINDOWS)
     // Calling convention:      f(edi, esi, edx, ecx, ...);
     // Host function signature: f(ExecState*);
     jit.move(JSInterfaceJIT::callFrameRegister, X86Registers::edi);
@@ -276,6 +277,21 @@ static MacroAssemblerCodeRef nativeForGenerator(JSGlobalData* globalData, CodeSp
     jit.call(JSInterfaceJIT::Address(X86Registers::r9, executableOffsetToFunction));
 
     jit.addPtr(JSInterfaceJIT::TrustedImm32(16 - sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
+#else
+    // Calling convention:      f(ecx, edx, r8, r9, ...);
+    // Host function signature: f(ExecState*);
+    jit.move(JSInterfaceJIT::callFrameRegister, X86Registers::ecx);
+
+    // Leave space for the callee parameter home addresses and align the stack.
+    jit.subPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t) + 16 - sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
+
+    jit.emitGetFromCallFrameHeaderPtr(JSStack::Callee, X86Registers::edx);
+    jit.loadPtr(JSInterfaceJIT::Address(X86Registers::edx, JSFunction::offsetOfExecutable()), X86Registers::r9);
+    jit.move(JSInterfaceJIT::regT0, JSInterfaceJIT::callFrameRegister); // Eagerly restore caller frame register to avoid loading from stack.
+    jit.call(JSInterfaceJIT::Address(X86Registers::r9, executableOffsetToFunction));
+
+    jit.addPtr(JSInterfaceJIT::TrustedImm32(4 * sizeof(int64_t) + 16 - sizeof(int64_t)), JSInterfaceJIT::stackPointerRegister);
+#endif
 
 #elif CPU(ARM)
     // Load caller frame's scope chain into this callframe so that whatever we call can

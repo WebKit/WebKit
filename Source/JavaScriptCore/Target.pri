@@ -335,6 +335,19 @@ linux-*:if(isEqual(QT_ARCH, "i386")|isEqual(QT_ARCH, "x86_64")) {
         disassembler/udis86/udis86_syn.c \
 }
 
+win32:!win32-g++*:isEqual(QT_ARCH, "x86_64"):{
+    asm_compiler.commands = ml64 /c
+    asm_compiler.commands +=  /Fo ${QMAKE_FILE_OUT} ${QMAKE_FILE_IN}
+    asm_compiler.output = ${QMAKE_VAR_OBJECTS_DIR}${QMAKE_FILE_BASE}$${first(QMAKE_EXT_OBJ)}
+    asm_compiler.input = ASM_SOURCES
+    asm_compiler.variable_out = OBJECTS
+    asm_compiler.name = compiling[asm] ${QMAKE_FILE_IN}
+    silent:asm_compiler.commands = @echo compiling[asm] ${QMAKE_FILE_IN} && $$asm_compiler.commands
+    QMAKE_EXTRA_COMPILERS += asm_compiler
+
+    ASM_SOURCES += jit/JITStubsMSVC64.asm
+}
+
 HEADERS += $$files(*.h, true)
 
 *sh4* {

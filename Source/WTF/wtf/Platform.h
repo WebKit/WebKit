@@ -756,12 +756,6 @@
 #define ENABLE_JIT 0
 #endif
 
-/* JIT is not implemented for Windows 64-bit */
-#if !defined(ENABLE_JIT) && OS(WINDOWS) && CPU(X86_64)
-#define ENABLE_JIT 0
-#define ENABLE_YARR_JIT 0
-#endif
-
 #if !defined(ENABLE_JIT) && CPU(SH4) && PLATFORM(QT)
 #define ENABLE_JIT 1
 #endif
@@ -906,7 +900,7 @@
 /* Pick which allocator to use; we only need an executable allocator if the assembler is compiled in.
    On x86-64 we use a single fixed mmap, on other platforms we mmap on demand. */
 #if ENABLE(ASSEMBLER)
-#if CPU(X86_64) || PLATFORM(IOS)
+#if CPU(X86_64) && !OS(WINDOWS) || PLATFORM(IOS)
 #define ENABLE_EXECUTABLE_ALLOCATOR_FIXED 1
 #else
 #define ENABLE_EXECUTABLE_ALLOCATOR_DEMAND 1

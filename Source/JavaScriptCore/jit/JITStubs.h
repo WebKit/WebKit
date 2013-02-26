@@ -87,7 +87,7 @@ union JITStubArg {
     ArrayAllocationProfile* arrayAllocationProfile() { return static_cast<ArrayAllocationProfile*>(asPointer); }
 };
     
-#if CPU(X86_64)
+#if !OS(WINDOWS) && CPU(X86_64)
 struct JITStackFrame {
     void* reserved; // Unused
     JITStubArg args[6];
@@ -107,6 +107,34 @@ struct JITStackFrame {
     void* savedR12;
     void* savedRBP;
     void* savedRIP;
+
+    // When JIT code makes a call, it pushes its return address just below the rest of the stack.
+    ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }
+};
+#elif OS(WINDOWS) && CPU(X86_64)
+struct JITStackFrame {
+    void* shadow[4]; // Shadow space reserved for a callee's parameters home addresses
+    void* reserved; // Unused, also maintains the 16-bytes stack alignment
+    JITStubArg args[6];
+
+    void* savedRBX;
+    void* savedR15;
+    void* savedR14;
+    void* savedR13;
+    void* savedR12;
+    void* savedRBP;
+    void* savedRIP;
+
+    // Home addresses for our register passed parameters
+    // http://msdn.microsoft.com/en-us/library/ew5tede7.aspx
+    void* code;
+    JSStack* stack;
+    CallFrame* callFrame;
+    void* unused1;
+
+    // Passed on the stack
+    void* unused2;
+    JSGlobalData* globalData;
 
     // When JIT code makes a call, it pushes its return address just below the rest of the stack.
     ReturnAddressPtr* returnAddressSlot() { return reinterpret_cast<ReturnAddressPtr*>(this) - 1; }

@@ -1,3 +1,35 @@
+2013-02-26  Jocelyn Turcotte  <jocelyn.turcotte@digia.com>
+
+        Implement JIT on Windows 64 bits
+        https://bugs.webkit.org/show_bug.cgi?id=107965
+
+        Reviewed by Simon Hausmann.
+
+        1. MSVC doesn't support inline assembly for 64 bits, implements the trampoline in a separate ASM file.
+
+        2. Windows 64 bits has a different calling convention than other OSes following the AMD64 ABI.
+        Differences that we have to handle here:
+        - Registers passed parameters are RCX, RDX, R8 and R9 instead of RDI, RSI, RDX, RCX, R8 and R9
+        - RDI and RSI must be preserved by callee
+        - Only return values <= 8 bytes can be returned by register (RDX can't be used to return a second word)
+        - There is no red-zone after RIP on the stack, but instead 4 reserved words before it
+
+        * Target.pri:
+        * jit/JITStubs.cpp:
+        * jit/JITStubs.h:
+        (JSC):
+        (JITStackFrame):
+        (JSC::JITStackFrame::returnAddressSlot):
+        * jit/JITStubsMSVC64.asm: Added.
+        * jit/JSInterfaceJIT.h:
+        (JSInterfaceJIT):
+        * jit/ThunkGenerators.cpp:
+        (JSC::nativeForGenerator):
+        * yarr/YarrJIT.cpp:
+        (YarrGenerator):
+        (JSC::Yarr::YarrGenerator::generateEnter):
+        (JSC::Yarr::YarrGenerator::generateReturn):
+
 2013-02-26  Oliver Hunt  <oliver@apple.com>
 
         Kill another analyzer warning in javascriptcore
