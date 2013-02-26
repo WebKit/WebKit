@@ -143,8 +143,9 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
         return false;
 
     IntRect clipRect = roundedIntRect(enclosingLayer()->childrenClipRect());
+    IntRect newFrame = roundedIntRect(frame);
     bool clipChanged = m_clipRect != clipRect;
-    bool boundsChanged = m_widget->frameRect() != frame;
+    bool boundsChanged = m_widget->frameRect() != newFrame;
 
     if (!boundsChanged && !clipChanged)
         return false;
@@ -153,7 +154,7 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
 
     RenderWidgetProtector protector(this);
     RefPtr<Node> protectedNode(node());
-    m_widget->setFrameRect(roundedIntRect(frame));
+    m_widget->setFrameRect(newFrame);
     
 #if USE(ACCELERATED_COMPOSITING)
     if (hasLayer() && layer()->isComposited())
