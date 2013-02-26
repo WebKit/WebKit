@@ -101,7 +101,6 @@ HEADERS += \
     Shared/SecurityOriginData.h \
     Shared/SessionState.h \
     Shared/StatisticsData.h \
-    Shared/StringPairVector.h \
     Shared/UpdateInfo.h \
     Shared/UserMessageCoders.h \
     Shared/VisitedLinkTable.h \

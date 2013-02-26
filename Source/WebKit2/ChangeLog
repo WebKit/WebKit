@@ -1,3 +1,11 @@
+2013-02-26  Andras Becsi  <andras.becsi@digia.com>
+
+        Remove nonexistent StringPairVector.h from Target.pri after r142839
+
+        Unreviewed gardening.
+
+        * Target.pri:
+
 2013-02-26  Simon Hausmann  <simon.hausmann@digia.com>
 
         Unreviewed trivial !ENABLE(NETSCAPE_PLUGIN_API) build fix
