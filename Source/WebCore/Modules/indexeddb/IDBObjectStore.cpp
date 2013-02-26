@@ -469,6 +469,7 @@ PassRefPtr<IDBIndex> IDBObjectStore::index(const String& name, ExceptionCode& ec
 
 void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 {
+    IDB_TRACE("IDBObjectStore::deleteIndex");
     if (!m_transaction->isVersionChange() || m_deleted) {
         ec = IDBDatabaseException::InvalidStateError;
         return;
@@ -485,9 +486,9 @@ void IDBObjectStore::deleteIndex(const String& name, ExceptionCode& ec)
 
     backendDB()->deleteIndex(m_transaction->id(), id(), indexId);
 
+    m_metadata.indexes.remove(indexId);
     IDBIndexMap::iterator it = m_indexMap.find(name);
     if (it != m_indexMap.end()) {
-        m_metadata.indexes.remove(it->value->id());
         it->value->markDeleted();
         m_indexMap.remove(name);
     }

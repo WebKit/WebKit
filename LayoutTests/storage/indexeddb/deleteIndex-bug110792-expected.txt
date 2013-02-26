@@ -1,0 +1,33 @@
+Ensure IndexedDB's IDBObjectStore.deleteIndex() works if IDBIndex object has not been fetched - regression test for bug 110792.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+indexedDB = self.indexedDB || self.webkitIndexedDB || self.mozIndexedDB || self.msIndexedDB || self.OIndexedDB;
+
+dbname = "deleteIndex-bug110792.html"
+indexedDB.deleteDatabase(dbname)
+indexedDB.open(dbname, 1)
+
+onFirstUpgradeNeeded():
+db = event.target.result
+store = db.createObjectStore('store')
+store.createIndex('index', 'keyPath')
+
+closeAndReOpen():
+db.close()
+
+indexedDB.open(dbname, 2)
+
+onSecondUpgradeNeeded():
+db = event.target.result
+store = event.target.transaction.objectStore('store')
+store.deleteIndex('index')
+Expecting exception from store.index('index')
+PASS Exception was thrown.
+PASS code is DOMException.NOT_FOUND_ERR
+PASS ename is 'NotFoundError'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
