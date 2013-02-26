@@ -1,3 +1,27 @@
+2013-02-25  Oliver Hunt  <oliver@apple.com>
+
+        Add cookies to FastMalloc spans
+        https://bugs.webkit.org/show_bug.cgi?id=110827
+
+        Reviewed by Michael Saboff.
+
+        Add a cookie to spans, and move some of the hardening around so
+        that it's more useful.
+
+        * wtf/FastMalloc.cpp:
+        (WTF::internalEntropyValue):
+        (WTF::spanInitializerCookie):
+        (WTF::Span::initCookie):
+        (WTF::Span::clearCookie):
+        (WTF::Span::isValid):
+        (Span):
+        (WTF::NewSpan):
+        (WTF::DeleteSpan):
+        (WTF::TCMalloc_ThreadCache_FreeList::Validate):
+        (WTF::TCMalloc_Central_FreeList::Populate):
+        (WTF::TCMalloc_ThreadCache::Deallocate):
+        (WTF::TCMalloc_ThreadCache::CreateCacheIfNecessary):
+
 2013-02-25  Jer Noble  <jer.noble@apple.com>
 
         Normalize ENABLE_ENCRYPTED_MEDIA definitions across all FeatureDefines files.
