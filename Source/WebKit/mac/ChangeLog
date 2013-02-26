@@ -1,3 +1,18 @@
+2013-02-26  Dmitry Zvorygin  <zvorygin@chromium.org>
+
+        Merged Tip and Debug log levels for web console.
+        https://bugs.webkit.org/show_bug.cgi?id=109919
+
+        Reviewed by Pavel Feldman.
+
+        In every component either TIP or DEBUG level was used for reporting,
+        but not both. This patch is prerequisite for Web Inspector console log filtering.
+
+        * WebCoreSupport/WebChromeClient.mm:
+        (stringForMessageLevel):
+        * WebView/WebUIDelegatePrivate.h:
+
+
 2013-02-21  Jeffrey Pfau  <jpfau@apple.com>
 
         Optionally partition cache to prevent using cache for tracking

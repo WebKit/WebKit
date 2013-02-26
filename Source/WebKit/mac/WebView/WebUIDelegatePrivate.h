@@ -112,11 +112,10 @@ extern NSString *WebConsoleMessageConsoleAPIMessageSource;
 extern NSString *WebConsoleMessageOtherMessageSource;
 
 // Message Levels.
-extern NSString *WebConsoleMessageTipMessageLevel;
+extern NSString *WebConsoleMessageDebugMessageLevel;
 extern NSString *WebConsoleMessageLogMessageLevel;
 extern NSString *WebConsoleMessageWarningMessageLevel;
 extern NSString *WebConsoleMessageErrorMessageLevel;
-extern NSString *WebConsoleMessageDebugMessageLevel;
 
 @class DOMElement;
 @class DOMNode;
@@ -161,8 +160,8 @@ extern NSString *WebConsoleMessageDebugMessageLevel;
         </dd>
         <dt>MessageLevel</dt>
         <dd>
-            Severity level of the message. Tip, Log, Warning, etc.
-            See WebConsoleMessageTipMessageLevel and similar constants.
+            Severity level of the message. Debug, Log, Warning, etc.
+            See WebConsoleMessageDebugMessageLevel and similar constants.
         </dd>
     </dl>
 */

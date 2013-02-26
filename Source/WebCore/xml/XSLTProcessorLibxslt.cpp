@@ -89,7 +89,7 @@ void XSLTProcessor::parseErrorFunc(void* userData, xmlError* error)
     MessageLevel level;
     switch (error->level) {
     case XML_ERR_NONE:
-        level = TipMessageLevel;
+        level = DebugMessageLevel;
         break;
     case XML_ERR_WARNING:
         level = WarningMessageLevel;

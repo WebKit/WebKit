@@ -474,7 +474,7 @@ void ApplicationCacheGroup::abort(Frame* frame)
     if (m_completionType != None)
         return;
 
-    frame->document()->addConsoleMessage(OtherMessageSource, TipMessageLevel, "Application Cache download process was aborted.");
+    frame->document()->addConsoleMessage(OtherMessageSource, DebugMessageLevel, "Application Cache download process was aborted.");
     cacheUpdateFailed();
 }
 

@@ -170,11 +170,10 @@ static TypeBuilder::Console::ConsoleMessage::Type::Enum messageTypeValue(Message
 static TypeBuilder::Console::ConsoleMessage::Level::Enum messageLevelValue(MessageLevel level)
 {
     switch (level) {
-    case TipMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Tip;
+    case DebugMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Debug;
     case LogMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Log;
     case WarningMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Warning;
     case ErrorMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Error;
-    case DebugMessageLevel: return TypeBuilder::Console::ConsoleMessage::Level::Debug;
     }
     return TypeBuilder::Console::ConsoleMessage::Level::Log;
 }

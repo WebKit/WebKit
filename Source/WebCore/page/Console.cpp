@@ -114,8 +114,8 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
 
     const char* levelString;
     switch (level) {
-    case TipMessageLevel:
-        levelString = "TIP";
+    case DebugMessageLevel:
+        levelString = "DEBUG";
         break;
     case LogMessageLevel:
         levelString = "LOG";
@@ -125,9 +125,6 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
         break;
     case ErrorMessageLevel:
         levelString = "ERROR";
-        break;
-    case DebugMessageLevel:
-        levelString = "DEBUG";
         break;
     default:
         ASSERT_NOT_REACHED();

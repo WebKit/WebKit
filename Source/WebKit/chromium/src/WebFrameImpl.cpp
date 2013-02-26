@@ -819,8 +819,8 @@ void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
 
     MessageLevel webCoreMessageLevel;
     switch (message.level) {
-    case WebConsoleMessage::LevelTip:
-        webCoreMessageLevel = TipMessageLevel;
+    case WebConsoleMessage::LevelDebug:
+        webCoreMessageLevel = DebugMessageLevel;
         break;
     case WebConsoleMessage::LevelLog:
         webCoreMessageLevel = LogMessageLevel;
@@ -830,9 +830,6 @@ void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
         break;
     case WebConsoleMessage::LevelError:
         webCoreMessageLevel = ErrorMessageLevel;
-        break;
-    case WebConsoleMessage::LevelDebug:
-        webCoreMessageLevel = DebugMessageLevel;
         break;
     default:
         ASSERT_NOT_REACHED();

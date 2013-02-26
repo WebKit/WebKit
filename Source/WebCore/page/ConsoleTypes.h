@@ -38,11 +38,10 @@ enum MessageSource {
 };
 
 enum MessageLevel {
-    TipMessageLevel,
-    LogMessageLevel,
-    WarningMessageLevel,
-    ErrorMessageLevel,
-    DebugMessageLevel
+    DebugMessageLevel = 4,
+    LogMessageLevel = 1,
+    WarningMessageLevel = 2,
+    ErrorMessageLevel = 3
 };
 
 } // namespace WebCore

@@ -69,7 +69,7 @@ void XSLTMessageHandler::handleMessage(QtMsgType type, const QString& descriptio
     MessageLevel level;
     switch (type) {
     case QtDebugMsg:
-        level = TipMessageLevel;
+        level = DebugMessageLevel;
         break;
     case QtWarningMsg:
         level = WarningMessageLevel;

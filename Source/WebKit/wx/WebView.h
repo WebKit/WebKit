@@ -419,10 +419,10 @@ private:
 
 // copied from page/Console.h
 enum WebViewConsoleMessageLevel {
-    TipMessageLevel,
-    LogMessageLevel,
-    WarningMessageLevel,
-    ErrorMessageLevel
+    DebugMessageLevel = 4,
+    LogMessageLevel = 1,
+    WarningMessageLevel = 2,
+    ErrorMessageLevel = 3
 };
 
 class WXDLLIMPEXP_WEBKIT WebViewConsoleMessageEvent : public wxCommandEvent

@@ -1,3 +1,18 @@
+2013-02-26  Dmitry Zvorygin  <zvorygin@chromium.org>
+
+        Merged Tip and Debug log levels for web console.
+        https://bugs.webkit.org/show_bug.cgi?id=109919
+
+        Reviewed by Pavel Feldman.
+
+        In every component either TIP or DEBUG level was used for reporting,
+        but not both. This patch is prerequisite for Web Inspector console log filtering.
+
+        * public/WebConsoleMessage.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::addMessageToConsole):
+
 2013-02-26  Andrey Kosyakov  <caseq@chromium.org>
 
         Plumbing trace events to Timeline

@@ -37,11 +37,10 @@ namespace WebKit {
 
 struct WebConsoleMessage {
     enum Level {
-        LevelTip,
-        LevelLog,
-        LevelWarning,
-        LevelError,
-        LevelDebug
+        LevelDebug = 4,
+        LevelLog = 1,
+        LevelWarning = 2,
+        LevelError = 3,
     };
 
     Level level;
