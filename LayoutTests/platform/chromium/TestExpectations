@@ -4425,3 +4425,16 @@ webkit.org/b/110642 [ Debug Win7 Lion SnowLeopard Linux ] html5lib/runner.html [
 
 webkit.org/b/110739 [ Release MountainLion ] fast/regions/shape-inside-on-regions.html [ ImageOnlyFailure ]
 
+# The following tests are are failing since chromium r184584 
+webkit.org/b/110851 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
+webkit.org/b/110851 compositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/110851 compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/110851 compositing/overflow/overflow-scaled-descendant-overlapping.html [ ImageOnlyFailure ]
+webkit.org/b/110851 compositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
+webkit.org/b/110851 platform/chromium/virtual/gpu/compositedscrolling/overflow/overflow-scaled-descendant-overlapping.html [ ImageOnlyFailure ]
+webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
+webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
+webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/overflow/overflow-scaled-descendant-overlapping.html [ ImageOnlyFailure ]
+webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/repaint/page-scale-repaint.html [ ImageOnlyFailure ]
+
