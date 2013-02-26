@@ -89,6 +89,7 @@ HTMLDocumentParser::HTMLDocumentParser(HTMLDocument* document, bool reportErrors
     , m_weakFactory(this)
 #endif
     , m_preloader(adoptPtr(new HTMLResourcePreloader(document)))
+    , m_isPinnedToMainThread(false)
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
     , m_pumpSessionNestingLevel(0)
@@ -108,6 +109,7 @@ HTMLDocumentParser::HTMLDocumentParser(DocumentFragment* fragment, Element* cont
 #if ENABLE(THREADED_HTML_PARSER)
     , m_weakFactory(this)
 #endif
+    , m_isPinnedToMainThread(true)
     , m_endWasDelayed(false)
     , m_haveBackgroundParser(false)
     , m_pumpSessionNestingLevel(0)
@@ -125,6 +127,20 @@ HTMLDocumentParser::~HTMLDocumentParser()
     ASSERT(!m_insertionPreloadScanner);
     ASSERT(!m_haveBackgroundParser);
 }
+
+#if ENABLE(THREADED_HTML_PARSER)
+void HTMLDocumentParser::pinToMainThread()
+{
+    ASSERT(!m_haveBackgroundParser);
+    ASSERT(!m_isPinnedToMainThread);
+    m_isPinnedToMainThread = true;
+    if (!m_tokenizer) {
+        ASSERT(!m_token);
+        m_token = adoptPtr(new HTMLToken);
+        m_tokenizer = HTMLTokenizer::create(m_options);
+    }
+}
+#endif
 
 void HTMLDocumentParser::detach()
 {
