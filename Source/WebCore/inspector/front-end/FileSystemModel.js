@@ -36,119 +36,67 @@ WebInspector.FileSystemModel = function()
 {
     WebInspector.Object.call(this);
 
-    this._originForFrameId = {};
-    this._frameIdsForOrigin = {};
     this._fileSystemsForOrigin = {};
 
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, this._frameAdded, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, this._frameNavigated, this);
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.FrameDetached, this._frameDetached, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.SecurityOriginAdded, this._securityOriginAdded, this);
+    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.SecurityOriginRemoved, this._securityOriginRemoved, this);
 
     FileSystemAgent.enable();
 
-    if (WebInspector.resourceTreeModel.mainFrame)
-        this._attachFrameRecursively(WebInspector.resourceTreeModel.mainFrame);
+    this._reset();
 }
 
 WebInspector.FileSystemModel.prototype = {
-    /**
-     * @param {WebInspector.Event} event
-     */
-    _frameAdded: function(event)
+    _reset: function()
     {
-        var frame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
-        this._attachFrameRecursively(frame);
+        for (var securityOrigin in this._fileSystemsForOrigin)
+            this._removeOrigin(securityOrigin);
+        var securityOrigins = WebInspector.resourceTreeModel.securityOrigins();
+        for (var i = 0; i < securityOrigins.length; ++i)
+            this._addOrigin(securityOrigins[i]);
     },
 
     /**
      * @param {WebInspector.Event} event
      */
-    _frameNavigated: function(event)
+    _securityOriginAdded: function(event)
     {
-        var frame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
-        this._attachFrameRecursively(frame);
+        var securityOrigin = /** @type {string} */ (event.data);
+        this._addOrigin(securityOrigin);
     },
 
     /**
      * @param {WebInspector.Event} event
      */
-    _frameDetached: function(event)
+    _securityOriginRemoved: function(event)
     {
-        var frame = /** @type {WebInspector.ResourceTreeFrame} */ (event.data);
-        this._detachFrameRecursively(frame);
+        var securityOrigin = /** @type {string} */ (event.data);
+        this._removeOrigin(securityOrigin);
     },
 
     /**
-     * @param {WebInspector.ResourceTreeFrame} frame
+     * @param {string} securityOrigin
      */
-    _attachFrame: function(frame)
+    _addOrigin: function(securityOrigin)
     {
-        if (this._originForFrameId[frame.id])
-            this._detachFrameRecursively(frame);
-
-        if (frame.securityOrigin === "null")
-            return;
-
-        this._originForFrameId[frame.id] = frame.securityOrigin;
-
-        var newOrigin = false;
-        if (!this._frameIdsForOrigin[frame.securityOrigin]) {
-            this._frameIdsForOrigin[frame.securityOrigin] = {};
-            newOrigin = true;
-        }
-        this._frameIdsForOrigin[frame.securityOrigin][frame.id] = frame.id;
-        if (newOrigin)
-            this._originAdded(frame.securityOrigin);
-    },
-
-    /**
-     * @param {WebInspector.ResourceTreeFrame} frame
-     */
-    _attachFrameRecursively: function(frame)
-    {
-        this._attachFrame(frame);
-        for (var i = 0; i < frame.childFrames.length; ++i)
-            this._attachFrameRecursively(frame.childFrames[i]);
-    },
-
-    /**
-     * @param {WebInspector.ResourceTreeFrame} frame
-     */
-    _detachFrame: function(frame)
-    {
-        if (!this._originForFrameId[frame.id])
-            return;
-        var origin = this._originForFrameId[frame.id];
-        delete this._originForFrameId[frame.id];
-        delete this._frameIdsForOrigin[origin][frame.id];
-
-        var lastOrigin = Object.isEmpty(this._frameIdsForOrigin[origin]);
-        if (lastOrigin) {
-            delete this._frameIdsForOrigin[origin];
-            this._originRemoved(origin);
-        }
-    },
-
-    /**
-     * @param {WebInspector.ResourceTreeFrame} frame
-     */
-    _detachFrameRecursively: function(frame)
-    {
-        for (var i = 0; i < frame.childFrames.length; ++i)
-            this._detachFrameRecursively(frame.childFrames[i]);
-        this._detachFrame(frame);
-    },
-
-    /**
-     * @param {string} origin
-     */
-    _originAdded: function(origin)
-    {
-        this._fileSystemsForOrigin[origin] = {};
+        this._fileSystemsForOrigin[securityOrigin] = {};
 
         var types = ["persistent", "temporary"];
         for (var i = 0; i < types.length; ++i)
-            this._requestFileSystemRoot(origin, types[i], this._fileSystemRootReceived.bind(this, origin, types[i], this._fileSystemsForOrigin[origin]));
+            this._requestFileSystemRoot(securityOrigin, types[i], this._fileSystemRootReceived.bind(this, securityOrigin, types[i], this._fileSystemsForOrigin[securityOrigin]));
+    },
+
+    /**
+     * @param {string} securityOrigin
+     */
+    _removeOrigin: function(securityOrigin)
+    {
+        for (var type in this._fileSystemsForOrigin[securityOrigin]) {
+            var fileSystem = this._fileSystemsForOrigin[securityOrigin][type];
+            delete this._fileSystemsForOrigin[securityOrigin][type];
+            this._fileSystemRemoved(fileSystem);
+        }
+        delete this._fileSystemsForOrigin[securityOrigin];
     },
 
     /**
@@ -177,19 +125,6 @@ WebInspector.FileSystemModel.prototype = {
     },
 
     /**
-     * @param {string} origin
-     */
-    _originRemoved: function(origin)
-    {
-        for (var type in this._fileSystemsForOrigin[origin]) {
-            var fileSystem = this._fileSystemsForOrigin[origin][type];
-            delete this._fileSystemsForOrigin[origin][type];
-            this._fileSystemRemoved(fileSystem);
-        }
-        delete this._fileSystemsForOrigin[origin];
-    },
-
-    /**
      * @param {WebInspector.FileSystemModel.FileSystem} fileSystem
      */
     _fileSystemAdded: function(fileSystem)
@@ -207,10 +142,7 @@ WebInspector.FileSystemModel.prototype = {
 
     refreshFileSystemList: function()
     {
-        if (WebInspector.resourceTreeModel.mainFrame) {
-            this._detachFrameRecursively(WebInspector.resourceTreeModel.mainFrame);
-            this._attachFrameRecursively(WebInspector.resourceTreeModel.mainFrame);
-        }
+        this._reset();
     },
 
     /**
