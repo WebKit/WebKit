@@ -1,3 +1,9 @@
+2013-02-26  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; use correct macro for platform name in FeatureDefines.xcconfig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-26  Michael Saboff  <msaboff@apple.com>
 
         Potential crash in YARR JIT generated code when building 64 bit

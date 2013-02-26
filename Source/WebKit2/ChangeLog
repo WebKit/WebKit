@@ -1,3 +1,9 @@
+2013-02-26  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; use correct macro for platform name in FeatureDefines.xcconfig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WK2][GTK] REGRESSION (r143463): unit test failure in WebKit2APITests/TestContextMenu

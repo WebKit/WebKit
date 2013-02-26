@@ -1,3 +1,9 @@
+2013-02-26  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; use correct macro for platform name in FeatureDefines.xcconfig.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-26  Dmitry Zvorygin  <zvorygin@chromium.org>
 
         Merged Tip and Debug log levels for web console.
