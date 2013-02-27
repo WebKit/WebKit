@@ -501,11 +501,6 @@ protected:
     virtual ~Platform() { }
 };
 
-class WebKitPlatformSupport : public Platform {
-protected:
-    ~WebKitPlatformSupport() { }
-};
-
 } // namespace WebKit
 
 #endif
