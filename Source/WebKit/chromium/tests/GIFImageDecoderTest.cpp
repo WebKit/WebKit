@@ -47,6 +47,8 @@ using namespace WebKit;
 
 namespace {
 
+#if !OS(ANDROID)
+
 static PassRefPtr<SharedBuffer> readFile(const char* fileName)
 {
     String filePath = Platform::current()->unitTestSupport()->webKitRootDir();
@@ -86,8 +88,6 @@ TEST(GIFImageDecoderTest, decodeTwoFrames)
     EXPECT_EQ(2u, decoder->frameCount());
     EXPECT_EQ(cAnimationLoopInfinite, decoder->repetitionCount());
 }
-
-#if !OS(ANDROID)
 
 TEST(GIFImageDecoderTest, parseAndDecode)
 {

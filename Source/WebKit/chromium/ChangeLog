@@ -1,3 +1,14 @@
+2013-02-27  Stephen Chenney  <schenney@chromium.org>
+
+        [chromium] GIFImageDecoderTest.parseAndDecodeByteByByte failing on Android
+        https://bugs.webkit.org/show_bug.cgi?id=110922
+
+        Unreviewed build fix.
+
+        * tests/GIFImageDecoderTest.cpp:
+        (WebKit):
+        (WebKit::TEST): Disable the entire test on Android.
+
 2013-02-27  Seigo Nonaka  <nona@chromium.org>
 
         [Chromium] Should not return WebTextInputTypeNone for date input element.
