@@ -221,6 +221,15 @@ enum OperandSpeculationMode { AutomaticOperandSpeculation, ManualOperandSpeculat
 
 enum SpeculationDirection { ForwardSpeculation, BackwardSpeculation };
 
+template<typename T, typename U>
+bool checkAndSet(T& left, U right)
+{
+    if (left == right)
+        return false;
+    left = right;
+    return true;
+}
+
 } } // namespace JSC::DFG
 
 namespace WTF {

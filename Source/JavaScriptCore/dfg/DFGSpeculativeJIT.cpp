@@ -1646,10 +1646,10 @@ void SpeculativeJIT::compile(BasicBlock& block)
             valueSource = ValueSource(SourceIsDead);
         else if (node->variableAccessData()->isArgumentsAlias())
             valueSource = ValueSource(ArgumentsSource);
-        else if (!node->variableAccessData()->shouldUnboxIfPossible())
-            valueSource = ValueSource(ValueInJSStack);
         else if (!node->refCount())
             valueSource = ValueSource(SourceIsDead);
+        else if (!node->variableAccessData()->shouldUnboxIfPossible())
+            valueSource = ValueSource(ValueInJSStack);
         else if (node->variableAccessData()->shouldUseDoubleFormat())
             valueSource = ValueSource(DoubleInJSStack);
         else
@@ -1712,7 +1712,9 @@ void SpeculativeJIT::compile(BasicBlock& block)
                         ArgumentPosition& argumentPosition =
                             m_jit.graph().m_argumentPositions[argumentPositionStart + i];
                         ValueSource valueSource;
-                        if (argumentPosition.shouldUseDoubleFormat())
+                        if (!argumentPosition.shouldUnboxIfPossible())
+                            valueSource = ValueSource(ValueInJSStack);
+                        else if (argumentPosition.shouldUseDoubleFormat())
                             valueSource = ValueSource(DoubleInJSStack);
                         else if (isInt32Speculation(argumentPosition.prediction()))
                             valueSource = ValueSource(Int32InJSStack);
@@ -1839,6 +1841,9 @@ void SpeculativeJIT::checkArgumentTypes()
         }
         
         VariableAccessData* variableAccessData = node->variableAccessData();
+        if (!variableAccessData->isProfitableToUnbox())
+            continue;
+        
         VirtualRegister virtualRegister = variableAccessData->local();
         SpeculatedType predictedType = variableAccessData->prediction();
 

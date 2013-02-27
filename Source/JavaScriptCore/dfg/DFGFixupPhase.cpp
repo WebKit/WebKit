@@ -31,6 +31,7 @@
 #include "DFGGraph.h"
 #include "DFGInsertionSet.h"
 #include "DFGPhase.h"
+#include "DFGVariableAccessDataDump.h"
 #include "Operations.h"
 
 namespace JSC { namespace DFG {
@@ -48,8 +49,20 @@ public:
         ASSERT(m_graph.m_fixpointState == BeforeFixpoint);
         ASSERT(m_graph.m_form == ThreadedCPS);
         
+        m_profitabilityChanged = false;
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex)
             fixupBlock(m_graph.m_blocks[blockIndex].get());
+        
+        while (m_profitabilityChanged) {
+            m_profitabilityChanged = false;
+            
+            for (unsigned i = m_graph.m_argumentPositions.size(); i--;)
+                m_graph.m_argumentPositions[i].mergeArgumentUnboxingAwareness();
+            
+            for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex)
+                fixupSetLocalsInBlock(m_graph.m_blocks[blockIndex].get());
+        }
+        
         return true;
     }
 
@@ -80,23 +93,7 @@ private:
         
         switch (op) {
         case SetLocal: {
-            VariableAccessData* variable = node->variableAccessData();
-            
-            if (!variable->shouldUnboxIfPossible())
-                break;
-            
-            if (variable->shouldUseDoubleFormat()) {
-                fixDoubleEdge<NumberUse>(node->child1(), ForwardSpeculation);
-                break;
-            }
-            
-            SpeculatedType predictedType = variable->argumentAwarePrediction();
-            if (isInt32Speculation(predictedType))
-                setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
-            else if (isCellSpeculation(predictedType))
-                setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
-            else if (isBooleanSpeculation(predictedType))
-                setUseKindAndUnboxIfProfitable<BooleanUse>(node->child1());
+            // This gets handled by fixupSetLocalsInBlock().
             break;
         }
             
@@ -807,6 +804,40 @@ private:
 #endif
     }
     
+    void fixupSetLocalsInBlock(BasicBlock* block)
+    {
+        if (!block)
+            return;
+        ASSERT(block->isReachable);
+        m_block = block;
+        for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
+            Node* node = m_currentNode = block->at(m_indexInBlock);
+            if (node->op() != SetLocal)
+                continue;
+            if (!node->shouldGenerate())
+                continue;
+            
+            VariableAccessData* variable = node->variableAccessData();
+            
+            if (!variable->shouldUnboxIfPossible())
+                continue;
+            
+            if (variable->shouldUseDoubleFormat()) {
+                fixDoubleEdge<NumberUse>(node->child1(), ForwardSpeculation);
+                continue;
+            }
+            
+            SpeculatedType predictedType = variable->argumentAwarePrediction();
+            if (isInt32Speculation(predictedType))
+                setUseKindAndUnboxIfProfitable<Int32Use>(node->child1());
+            else if (isCellSpeculation(predictedType))
+                setUseKindAndUnboxIfProfitable<CellUse>(node->child1());
+            else if (isBooleanSpeculation(predictedType))
+                setUseKindAndUnboxIfProfitable<BooleanUse>(node->child1());
+        }
+        m_insertionSet.execute(block);
+    }
+    
     Node* checkArray(ArrayMode arrayMode, CodeOrigin codeOrigin, Node* array, Node* index, bool (*storageCheck)(const ArrayMode&) = canCSEStorage, bool shouldGenerate = true)
     {
         ASSERT(arrayMode.isSpecific());
@@ -895,11 +926,52 @@ private:
         } }
     }
     
+    bool alwaysUnboxSimplePrimitives()
+    {
+#if USE(JSVALUE64)
+        return false;
+#else
+        // Any boolean, int, or cell value is profitable to unbox on 32-bit because it
+        // reduces traffic.
+        return true;
+#endif
+    }
+    
     // Set the use kind of the edge. In the future (https://bugs.webkit.org/show_bug.cgi?id=110433),
     // this can be used to notify the GetLocal that the variable is profitable to unbox.
     template<UseKind useKind>
     void setUseKindAndUnboxIfProfitable(Edge& edge)
     {
+        if (edge->op() == GetLocal) {
+            VariableAccessData* variable = edge->variableAccessData();
+            switch (useKind) {
+            case Int32Use:
+                if (alwaysUnboxSimplePrimitives()
+                    || isInt32Speculation(variable->prediction()))
+                    m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+                break;
+            case NumberUse:
+            case RealNumberUse:
+                if (variable->doubleFormatState() == UsingDoubleFormat)
+                    m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+                break;
+            case BooleanUse:
+                if (alwaysUnboxSimplePrimitives()
+                    || isBooleanSpeculation(variable->prediction()))
+                    m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+                break;
+            case CellUse:
+            case ObjectUse:
+            case StringUse:
+                if (alwaysUnboxSimplePrimitives()
+                    || isCellSpeculation(variable->prediction()))
+                    m_profitabilityChanged |= variable->mergeIsProfitableToUnbox(true);
+                break;
+            default:
+                break;
+            }
+        }
+        
         edge.setUseKind(useKind);
     }
     
@@ -1001,6 +1073,7 @@ private:
     unsigned m_indexInBlock;
     Node* m_currentNode;
     InsertionSet m_insertionSet;
+    bool m_profitabilityChanged;
 };
     
 bool performFixup(Graph& graph)

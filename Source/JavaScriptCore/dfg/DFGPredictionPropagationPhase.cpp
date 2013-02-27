@@ -1025,7 +1025,7 @@ private:
             m_changed |= variableAccessData->tallyVotesForShouldUseDoubleFormat();
         }
         for (unsigned i = 0; i < m_graph.m_argumentPositions.size(); ++i)
-            m_changed |= m_graph.m_argumentPositions[i].mergeArgumentAwareness();
+            m_changed |= m_graph.m_argumentPositions[i].mergeArgumentPredictionAwareness();
         for (unsigned i = 0; i < m_graph.m_variableAccessData.size(); ++i) {
             VariableAccessData* variableAccessData = &m_graph.m_variableAccessData[i];
             if (!variableAccessData->isRoot())

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011, 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2011, 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -50,6 +50,7 @@ public:
         , m_shouldNeverUnbox(false)
         , m_isArgumentsAlias(false)
         , m_structureCheckHoistingFailed(false)
+        , m_isProfitableToUnbox(false)
         , m_doubleFormatState(EmptyDoubleFormatState)
     {
         clearVotes();
@@ -64,6 +65,7 @@ public:
         , m_shouldNeverUnbox(isCaptured)
         , m_isArgumentsAlias(false)
         , m_structureCheckHoistingFailed(false)
+        , m_isProfitableToUnbox(false)
         , m_doubleFormatState(EmptyDoubleFormatState)
     {
         clearVotes();
@@ -82,17 +84,23 @@ public:
     
     bool mergeIsCaptured(bool isCaptured)
     {
-        m_shouldNeverUnbox |= isCaptured;
-        bool newIsCaptured = m_isCaptured | isCaptured;
-        if (newIsCaptured == m_isCaptured)
-            return false;
-        m_isCaptured = newIsCaptured;
-        return true;
+        return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox | isCaptured)
+            | checkAndSet(m_isCaptured, m_isCaptured | isCaptured);
     }
     
     bool isCaptured()
     {
         return m_isCaptured;
+    }
+    
+    bool mergeIsProfitableToUnbox(bool isProfitableToUnbox)
+    {
+        return checkAndSet(m_isProfitableToUnbox, m_isProfitableToUnbox | isProfitableToUnbox);
+    }
+    
+    bool isProfitableToUnbox()
+    {
+        return m_isProfitableToUnbox;
     }
     
     bool mergeShouldNeverUnbox(bool shouldNeverUnbox)
@@ -118,16 +126,12 @@ public:
     // returns false, since this incorporates heuristics of profitability.
     bool shouldUnboxIfPossible()
     {
-        return !shouldNeverUnbox();
+        return !shouldNeverUnbox() && isProfitableToUnbox();
     }
-    
+
     bool mergeStructureCheckHoistingFailed(bool failed)
     {
-        bool newFailed = m_structureCheckHoistingFailed | failed;
-        if (newFailed == m_structureCheckHoistingFailed)
-            return false;
-        m_structureCheckHoistingFailed = newFailed;
-        return true;
+        return checkAndSet(m_structureCheckHoistingFailed, m_structureCheckHoistingFailed | failed);
     }
     
     bool structureCheckHoistingFailed()
@@ -137,11 +141,7 @@ public:
     
     bool mergeIsArgumentsAlias(bool isArgumentsAlias)
     {
-        bool newIsArgumentsAlias = m_isArgumentsAlias | isArgumentsAlias;
-        if (newIsArgumentsAlias == m_isArgumentsAlias)
-            return false;
-        m_isArgumentsAlias = newIsArgumentsAlias;
-        return true;
+        return checkAndSet(m_isArgumentsAlias, m_isArgumentsAlias | isArgumentsAlias);
     }
     
     bool isArgumentsAlias()
@@ -239,10 +239,10 @@ public:
     bool shouldUseDoubleFormat()
     {
         ASSERT(isRoot());
-        bool result = m_doubleFormatState == UsingDoubleFormat;
-        ASSERT(!(result && shouldNeverUnbox()));
-        ASSERT(!(result && isCaptured()));
-        return result;
+        bool doubleState = m_doubleFormatState == UsingDoubleFormat;
+        ASSERT(!(doubleState && shouldNeverUnbox()));
+        ASSERT(!(doubleState && isCaptured()));
+        return doubleState && isProfitableToUnbox();
     }
     
     bool tallyVotesForShouldUseDoubleFormat()
@@ -287,11 +287,7 @@ public:
     
     bool mergeFlags(NodeFlags newFlags)
     {
-        newFlags |= m_flags;
-        if (newFlags == m_flags)
-            return false;
-        m_flags = newFlags;
-        return true;
+        return checkAndSet(m_flags, m_flags | newFlags);
     }
     
 private:
@@ -304,11 +300,12 @@ private:
     SpeculatedType m_prediction;
     SpeculatedType m_argumentAwarePrediction;
     NodeFlags m_flags;
-    
+
     bool m_isCaptured;
     bool m_shouldNeverUnbox;
     bool m_isArgumentsAlias;
     bool m_structureCheckHoistingFailed;
+    bool m_isProfitableToUnbox;
 
     float m_votes[2]; // Used primarily for double voting but may be reused for other purposes.
     DoubleFormatState m_doubleFormatState;

@@ -1,3 +1,52 @@
+2013-02-25  Filip Pizlo  <fpizlo@apple.com>
+
+        The DFG backend's and OSR's decision to unbox a variable should be based on whether it's used in a typed context
+        https://bugs.webkit.org/show_bug.cgi?id=110433
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        This introduces the equivalent of a liveness analysis, except for type checking.
+        A variable is said to be "profitable for unboxing" (i.e. live at a type check)
+        if there exists a type check on a GetLocal of that variable, and the type check
+        is consistent with the variable's prediction. Variables that are not profitable
+        for unboxing aren't unboxed. Previously they would have been.
+        
+        This is a slight speed-up on some things but mostly neutral.
+
+        * dfg/DFGArgumentPosition.h:
+        (JSC::DFG::ArgumentPosition::ArgumentPosition):
+        (JSC::DFG::ArgumentPosition::mergeShouldNeverUnbox):
+        (JSC::DFG::ArgumentPosition::mergeArgumentPredictionAwareness):
+        (JSC::DFG::ArgumentPosition::mergeArgumentUnboxingAwareness):
+        (ArgumentPosition):
+        (JSC::DFG::ArgumentPosition::isProfitableToUnbox):
+        (JSC::DFG::ArgumentPosition::shouldUseDoubleFormat):
+        * dfg/DFGCommon.h:
+        (JSC::DFG::checkAndSet):
+        (DFG):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::run):
+        (JSC::DFG::FixupPhase::fixupNode):
+        (JSC::DFG::FixupPhase::fixupSetLocalsInBlock):
+        (FixupPhase):
+        (JSC::DFG::FixupPhase::alwaysUnboxSimplePrimitives):
+        (JSC::DFG::FixupPhase::setUseKindAndUnboxIfProfitable):
+        * dfg/DFGPredictionPropagationPhase.cpp:
+        (JSC::DFG::PredictionPropagationPhase::doRoundOfDoubleVoting):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        * dfg/DFGVariableAccessData.h:
+        (JSC::DFG::VariableAccessData::VariableAccessData):
+        (JSC::DFG::VariableAccessData::mergeIsCaptured):
+        (JSC::DFG::VariableAccessData::mergeIsProfitableToUnbox):
+        (VariableAccessData):
+        (JSC::DFG::VariableAccessData::isProfitableToUnbox):
+        (JSC::DFG::VariableAccessData::shouldUnboxIfPossible):
+        (JSC::DFG::VariableAccessData::mergeStructureCheckHoistingFailed):
+        (JSC::DFG::VariableAccessData::mergeIsArgumentsAlias):
+        (JSC::DFG::VariableAccessData::shouldUseDoubleFormat):
+        (JSC::DFG::VariableAccessData::mergeFlags):
+
 2013-02-26  Oliver Hunt  <oliver@apple.com>
 
         Fix windows build.

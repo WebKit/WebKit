@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2012, 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,6 +37,7 @@ public:
     ArgumentPosition()
         : m_prediction(SpecNone)
         , m_doubleFormatState(EmptyDoubleFormatState)
+        , m_isProfitableToUnbox(false)
         , m_shouldNeverUnbox(false)
     {
     }
@@ -48,14 +49,10 @@ public:
     
     bool mergeShouldNeverUnbox(bool shouldNeverUnbox)
     {
-        bool newShouldNeverUnbox = m_shouldNeverUnbox | shouldNeverUnbox;
-        if (newShouldNeverUnbox == m_shouldNeverUnbox)
-            return false;
-        m_shouldNeverUnbox = newShouldNeverUnbox;
-        return true;
+        return checkAndSet(m_shouldNeverUnbox, m_shouldNeverUnbox | shouldNeverUnbox);
     }
     
-    bool mergeArgumentAwareness()
+    bool mergeArgumentPredictionAwareness()
     {
         bool changed = false;
         for (unsigned i = 0; i < m_variables.size(); ++i) {
@@ -74,16 +71,32 @@ public:
         return changed;
     }
     
+    bool mergeArgumentUnboxingAwareness()
+    {
+        bool changed = false;
+        for (unsigned i = 0; i < m_variables.size(); ++i)
+            changed |= checkAndSet(m_isProfitableToUnbox, m_isProfitableToUnbox | m_variables[i]->isProfitableToUnbox());
+        if (!changed)
+            return false;
+        changed = false;
+        for (unsigned i = 0; i < m_variables.size(); ++i)
+            changed |= m_variables[i]->mergeIsProfitableToUnbox(m_isProfitableToUnbox);
+        return changed;
+    }
+    
+    bool shouldUnboxIfPossible() const { return m_isProfitableToUnbox && !m_shouldNeverUnbox; }
+    
     SpeculatedType prediction() const { return m_prediction; }
     DoubleFormatState doubleFormatState() const { return m_doubleFormatState; }
     bool shouldUseDoubleFormat() const
     {
-        return doubleFormatState() == UsingDoubleFormat;
+        return doubleFormatState() == UsingDoubleFormat && shouldUnboxIfPossible();
     }
     
 private:
     SpeculatedType m_prediction;
     DoubleFormatState m_doubleFormatState;
+    bool m_isProfitableToUnbox;
     bool m_shouldNeverUnbox;
     
     Vector<VariableAccessData*, 2> m_variables;
