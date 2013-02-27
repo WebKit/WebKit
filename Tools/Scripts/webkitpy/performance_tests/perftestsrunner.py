@@ -330,7 +330,7 @@ class PerfTestsRunner(object):
 
             filesystem.write_text_file(results_page_path, results_page)
 
-    def _upload_json(self, test_results_server, json_path, host_path="/api/test/report", file_uploader=FileUploader):
+    def _upload_json(self, test_results_server, json_path, host_path="/api/report", file_uploader=FileUploader):
         url = "https://%s%s" % (test_results_server, host_path)
         uploader = file_uploader(url, 120)
         try:

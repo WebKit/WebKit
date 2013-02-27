@@ -1,5 +1,12 @@
 2013-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Build fix after r144155. The report page is located at /api/report, not /api/test/report.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._upload_json):
+
+2013-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
         Stop uploading results to webkit-perf.appspot.com
         https://bugs.webkit.org/show_bug.cgi?id=110954
 
