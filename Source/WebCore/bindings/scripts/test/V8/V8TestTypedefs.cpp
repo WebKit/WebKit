@@ -252,6 +252,11 @@ static void TestTypedefsReplaceableAttrSetter(v8::Local<v8::String> name, v8::Lo
     info.This()->ForceSet(name, value);
 }
 
+static void TestTypedefsReplaceableAttrSetterCallback(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
+{
+    return TestTypedefsV8Internal::TestTypedefsReplaceableAttrSetter(name, value, info);
+}
+
 static v8::Handle<v8::Value> funcMethod(const v8::Arguments& args)
 {
     TestTypedefs* imp = V8TestTypedefs::toNative(args.Holder());
