@@ -131,7 +131,7 @@ CustomProtocolManagerProxy::CustomProtocolManagerProxy(ChildProcessProxy* childP
 
 void CustomProtocolManagerProxy::startLoading(uint64_t customProtocolID, const ResourceRequest& coreRequest)
 {
-    NSURLRequest *request = coreRequest.nsURLRequest();
+    NSURLRequest *request = coreRequest.nsURLRequest(DoNotUpdateHTTPBody);
     if (!request)
         return;
 

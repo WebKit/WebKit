@@ -1,3 +1,36 @@
+2013-02-26  Alexey Proskuryakov  <ap@apple.com>
+
+        Don't add a body to platform request until necessary
+        https://bugs.webkit.org/show_bug.cgi?id=110900
+
+        Reviewed by Brady Eidson.
+
+        * NetworkProcess/NetworkResourceLoader.cpp:
+        (WebKit::NetworkResourceLoader::willSendRequest): Restore body after IPC. There
+        is no way for the client to change it.
+
+        * Shared/Downloads/mac/DownloadMac.mm:
+        (WebKit::Download::start):
+        (WebKit::Download::startWithHandle):
+        Pass UpdateHTTPBody when passing a request to NSURLConnection.
+
+        * Shared/mac/WebCoreArgumentCodersMac.mm: (CoreIPC::::encodePlatformData):
+        Never serialize the request body. It's slow, and sometimes impossible, so just
+        keeping things consistent.
+
+        * Shared/mac/WebURLRequestMac.mm: (WebKit::WebURLRequest::platformRequest):
+        Pass DoNotUpdateHTTPBody, as we can't update it outside NetworkProcess.
+
+        * UIProcess/Network/CustomProtocols/mac/CustomProtocolManagerProxyMac.mm:
+        (WebKit::CustomProtocolManagerProxy::startLoading): Ditto.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.cpp:
+        (WebKit::InjectedBundlePageResourceLoadClient::willSendRequestForFrame):
+        Restore existing body after a client call..
+
+        * WebProcess/WebPage/mac/WebPageMac.mm: (WebKit::WebPage::platformCanHandleRequest):
+        Pass DoNotUpdateHTTPBody, as we can't update it outside NetworkProcess.
+
 2013-02-27  Glenn Adams  <glenn@skynav.com>
 
         Add ENABLE_CSS3_TEXT_LINE_BREAK flag.

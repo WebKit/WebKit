@@ -341,22 +341,24 @@ void ResourceRequestBase::setResponseContentDispositionEncodingFallbackArray(con
         m_platformRequestUpdated = false;
 }
 
-FormData* ResourceRequestBase::httpBody() const 
-{ 
-    updateResourceRequest(); 
-    
-    return m_httpBody.get(); 
+FormData* ResourceRequestBase::httpBody() const
+{
+    updateResourceRequest(UpdateHTTPBody);
+
+    return m_httpBody.get();
 }
 
 void ResourceRequestBase::setHTTPBody(PassRefPtr<FormData> httpBody)
 {
-    updateResourceRequest(); 
-    
-    m_httpBody = httpBody; 
-    
+    updateResourceRequest();
+
+    m_httpBody = httpBody;
+
+    m_resourceRequestBodyUpdated = true;
+
     if (url().protocolIsInHTTPFamily())
-        m_platformRequestUpdated = false;
-} 
+        m_platformRequestBodyUpdated = false;
+}
 
 bool ResourceRequestBase::allowCookies() const
 {
@@ -494,24 +496,34 @@ void ResourceRequestBase::setDefaultTimeoutInterval(double timeoutInterval)
     s_defaultTimeoutInterval = timeoutInterval;
 }
 
-void ResourceRequestBase::updatePlatformRequest() const
+void ResourceRequestBase::updatePlatformRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
-    if (m_platformRequestUpdated)
-        return;
+    if (!m_platformRequestUpdated) {
+        ASSERT(m_resourceRequestUpdated);
+        const_cast<ResourceRequest&>(asResourceRequest()).doUpdatePlatformRequest();
+        m_platformRequestUpdated = true;
+    }
 
-    ASSERT(m_resourceRequestUpdated);
-    const_cast<ResourceRequest&>(asResourceRequest()).doUpdatePlatformRequest();
-    m_platformRequestUpdated = true;
+    if (!m_platformRequestBodyUpdated && bodyPolicy == UpdateHTTPBody) {
+        ASSERT(m_resourceRequestBodyUpdated);
+        const_cast<ResourceRequest&>(asResourceRequest()).doUpdatePlatformHTTPBody();
+        m_platformRequestBodyUpdated = true;
+    }
 }
 
-void ResourceRequestBase::updateResourceRequest() const
+void ResourceRequestBase::updateResourceRequest(HTTPBodyUpdatePolicy bodyPolicy) const
 {
-    if (m_resourceRequestUpdated)
-        return;
+    if (!m_resourceRequestUpdated) {
+        ASSERT(m_platformRequestUpdated);
+        const_cast<ResourceRequest&>(asResourceRequest()).doUpdateResourceRequest();
+        m_resourceRequestUpdated = true;
+    }
 
-    ASSERT(m_platformRequestUpdated);
-    const_cast<ResourceRequest&>(asResourceRequest()).doUpdateResourceRequest();
-    m_resourceRequestUpdated = true;
+    if (!m_resourceRequestBodyUpdated && bodyPolicy == UpdateHTTPBody) {
+        ASSERT(m_platformRequestBodyUpdated);
+        const_cast<ResourceRequest&>(asResourceRequest()).doUpdateResourceHTTPBody();
+        m_resourceRequestBodyUpdated = true;
+    }
 }
 
 #if !PLATFORM(MAC) && !USE(CFNETWORK) && !USE(SOUP) && !PLATFORM(CHROMIUM) && !PLATFORM(QT) && !PLATFORM(BLACKBERRY)

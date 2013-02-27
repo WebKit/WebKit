@@ -26,6 +26,8 @@
 #import "config.h"
 #import "WebURLRequest.h"
 
+using namespace WebCore;
+
 namespace WebKit {
 
 WebURLRequest::WebURLRequest(PlatformRequest platformRequest)
@@ -35,7 +37,7 @@ WebURLRequest::WebURLRequest(PlatformRequest platformRequest)
 
 PlatformRequest WebURLRequest::platformRequest() const
 {
-    return m_request.nsURLRequest();
+    return m_request.nsURLRequest(DoNotUpdateHTTPBody);
 }
 
 } // namespace WebKit

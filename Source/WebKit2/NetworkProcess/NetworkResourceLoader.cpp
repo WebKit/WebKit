@@ -189,7 +189,10 @@ void NetworkResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& re
     // If this message changes to be asynchronous we might introduce a situation where the NetworkProcess is deadlocked waiting for 6 connections
     // to complete while the WebProcess is waiting for a 7th to complete.
     // If we ever change this message to be asynchronous we have to include safeguards to make sure the new design interacts well with sync XHR.
-    if (!sendSync(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(request)))
+    ResourceRequest returnedRequest;
+    if (sendSync(Messages::WebResourceLoader::WillSendRequest(request, redirectResponse), Messages::WebResourceLoader::WillSendRequest::Reply(returnedRequest)))
+        request.updateFromDelegatePreservingOldHTTPBody(returnedRequest.nsURLRequest(DoNotUpdateHTTPBody));
+    else
         request = ResourceRequest();
 
     RunLoop::main()->dispatch(bind(&NetworkResourceLoadScheduler::receivedRedirect, &NetworkProcess::shared().networkResourceLoadScheduler(), this, request.url()));

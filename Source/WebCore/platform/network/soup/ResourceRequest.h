@@ -67,6 +67,8 @@ namespace WebCore {
             updateFromSoupMessage(soupMessage);
         }
 
+        void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
+
         void updateSoupMessage(SoupMessage*) const;
         SoupMessage* toSoupMessage() const;
         void updateFromSoupMessage(SoupMessage*);
@@ -81,8 +83,10 @@ namespace WebCore {
 
         SoupMessageFlags m_soupFlags;
 
-        void doUpdatePlatformRequest() {};
-        void doUpdateResourceRequest() {};
+        void doUpdatePlatformRequest() { }
+        void doUpdateResourceRequest() { }
+        void doUpdatePlatformHTTPBody() { }
+        void doUpdateResourceHTTPBody() { }
 
         PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const { return data; }
         void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>) { }

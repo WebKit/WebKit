@@ -84,7 +84,7 @@ void WebDownload::init(ResourceHandle* handle, const ResourceRequest& request, c
         decideDestinationWithSuggestedObjectNameCallback, didCreateDestinationCallback, didFinishCallback, didFailCallback};
 
     m_request.adoptRef(WebMutableURLRequest::createInstance(request));
-    m_download.adoptCF(CFURLDownloadCreateAndStartWithLoadingConnection(0, connection, request.cfURLRequest(), response.cfURLResponse(), &client));
+    m_download.adoptCF(CFURLDownloadCreateAndStartWithLoadingConnection(0, connection, request.cfURLRequest(UpdateHTTPBody), response.cfURLResponse(), &client));
 
     // It is possible for CFURLDownloadCreateAndStartWithLoadingConnection() to fail if the passed in CFURLConnection is not in a "downloadable state"
     // However, we should never hit that case
@@ -107,7 +107,7 @@ void WebDownload::init(const KURL& url, IWebDownloadDelegate* delegate)
     LOG_ERROR("Delegate is %p", m_delegate.get());
 
     ResourceRequest request(url);
-    CFURLRequestRef cfRequest = request.cfURLRequest();
+    CFURLRequestRef cfRequest = request.cfURLRequest(UpdateHTTPBody);
 
     CFURLDownloadClient client = {0, this, 0, 0, 0, didStartCallback, willSendRequestCallback, didReceiveAuthenticationChallengeCallback, 
                                   didReceiveResponseCallback, willResumeWithResponseCallback, didReceiveDataCallback, shouldDecodeDataOfMIMETypeCallback, 
@@ -138,7 +138,7 @@ HRESULT STDMETHODCALLTYPE WebDownload::initWithRequest(
     m_delegate = delegate;
     LOG(Download, "Delegate is %p", m_delegate.get());
 
-    RetainPtr<CFURLRequestRef> cfRequest = webRequest->resourceRequest().cfURLRequest();
+    RetainPtr<CFURLRequestRef> cfRequest = webRequest->resourceRequest().cfURLRequest(UpdateHTTPBody);
 
     CFURLDownloadClient client = {0, this, 0, 0, 0, didStartCallback, willSendRequestCallback, didReceiveAuthenticationChallengeCallback, 
                                   didReceiveResponseCallback, willResumeWithResponseCallback, didReceiveDataCallback, shouldDecodeDataOfMIMETypeCallback, 
@@ -373,7 +373,7 @@ CFURLRequestRef WebDownload::willSendRequest(CFURLRequestRef request, CFURLRespo
 
     COMPtr<WebMutableURLRequest> finalWebRequest(AdoptCOM, WebMutableURLRequest::createInstance(finalRequest.get()));
     m_request = finalWebRequest.get();
-    CFURLRequestRef result = finalWebRequest->resourceRequest().cfURLRequest();
+    CFURLRequestRef result = finalWebRequest->resourceRequest().cfURLRequest(UpdateHTTPBody);
     CFRetain(result);
     return result;
 }

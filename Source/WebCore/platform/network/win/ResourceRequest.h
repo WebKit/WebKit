@@ -58,6 +58,8 @@ private:
 
     void doUpdatePlatformRequest() { }
     void doUpdateResourceRequest() { }
+    void doUpdatePlatformHTTPBody() { }
+    void doUpdateResourceHTTPBody() { }
 
     PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const { return data; }
     void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>) { }

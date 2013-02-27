@@ -282,7 +282,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(MainResourceLoader*
     WebView *webView = getWebView(m_webFrame.get());
     CFURLConnectionRef connection = handle->connection();
     [WebDownload _downloadWithLoadingCFURLConnection:connection
-                                                                     request:request.cfURLRequest()
+                                                                     request:request.cfURLRequest(UpdateHTTPBody)
                                                                     response:response.cfURLResponse()
                                                                     delegate:[webView downloadDelegate]
                                                                        proxy:nil];
@@ -296,7 +296,7 @@ void WebFrameLoaderClient::convertMainResourceLoadToDownload(MainResourceLoader*
     
     WebView *webView = getWebView(m_webFrame.get());
     [WebDownload _downloadWithLoadingConnection:handle->connection()
-                                                                request:request.nsURLRequest()
+                                                                request:request.nsURLRequest(UpdateHTTPBody)
                                                                response:response.nsURLResponse()
                                                                delegate:[webView downloadDelegate]
                                                                   proxy:proxy];
@@ -312,7 +312,7 @@ bool WebFrameLoaderClient::dispatchDidLoadResourceFromMemoryCache(DocumentLoader
     if (!implementations->didLoadResourceFromMemoryCacheFunc)
         return false;
 
-    CallResourceLoadDelegate(implementations->didLoadResourceFromMemoryCacheFunc, webView, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:), request.nsURLRequest(), response.nsURLResponse(), length, dataSource(loader));
+    CallResourceLoadDelegate(implementations->didLoadResourceFromMemoryCacheFunc, webView, @selector(webView:didLoadResourceFromMemoryCache:response:length:fromDataSource:), request.nsURLRequest(UpdateHTTPBody), response.nsURLResponse(), length, dataSource(loader));
     return true;
 }
 
@@ -324,7 +324,7 @@ void WebFrameLoaderClient::assignIdentifierToInitialRequest(unsigned long identi
     id object = nil;
     BOOL shouldRelease = NO;
     if (implementations->identifierForRequestFunc)
-        object = CallResourceLoadDelegate(implementations->identifierForRequestFunc, webView, @selector(webView:identifierForInitialRequest:fromDataSource:), request.nsURLRequest(), dataSource(loader));
+        object = CallResourceLoadDelegate(implementations->identifierForRequestFunc, webView, @selector(webView:identifierForInitialRequest:fromDataSource:), request.nsURLRequest(UpdateHTTPBody), dataSource(loader));
     else {
         object = [[NSObject alloc] init];
         shouldRelease = YES;
@@ -346,7 +346,7 @@ void WebFrameLoaderClient::dispatchWillSendRequest(DocumentLoader* loader, unsig
     if (redirectResponse.isNull())
         static_cast<WebDocumentLoaderMac*>(loader)->increaseLoadCount(identifier);
 
-    NSURLRequest *currentURLRequest = request.nsURLRequest();
+    NSURLRequest *currentURLRequest = request.nsURLRequest(UpdateHTTPBody);
     NSURLRequest *newURLRequest = currentURLRequest;
     if (implementations->willSendRequestFunc)
         newURLRequest = (NSURLRequest *)CallResourceLoadDelegate(implementations->willSendRequestFunc, webView, @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:), [webView _objectForIdentifier:identifier], currentURLRequest, redirectResponse.nsURLResponse(), dataSource(loader));
@@ -724,7 +724,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForResponse(FramePolicyFunction f
 
     [[webView _policyDelegateForwarder] webView:webView
                         decidePolicyForMIMEType:response.mimeType()
-                                        request:request.nsURLRequest()
+                                        request:request.nsURLRequest(UpdateHTTPBody)
                                           frame:m_webFrame.get()
                                decisionListener:setUpPolicyListener(function).get()];
 }
@@ -735,7 +735,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNewWindowAction(FramePolicyFun
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
             decidePolicyForNewWindowAction:actionDictionary(action, formState)
-                                   request:request.nsURLRequest()
+                                   request:request.nsURLRequest(UpdateHTTPBody)
                               newFrameName:frameName
                           decisionListener:setUpPolicyListener(function).get()];
 }
@@ -746,7 +746,7 @@ void WebFrameLoaderClient::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     WebView *webView = getWebView(m_webFrame.get());
     [[webView _policyDelegateForwarder] webView:webView
                 decidePolicyForNavigationAction:actionDictionary(action, formState)
-                                        request:request.nsURLRequest()
+                                        request:request.nsURLRequest(UpdateHTTPBody)
                                           frame:m_webFrame.get()
                                decisionListener:setUpPolicyListener(function).get()];
 }
@@ -870,7 +870,7 @@ void WebFrameLoaderClient::updateGlobalHistory()
         if (implementations->navigatedFunc) {
             WebNavigationData *data = [[WebNavigationData alloc] initWithURLString:loader->urlForHistory()
                                                                              title:nilOrNSString(loader->title().string())
-                                                                   originalRequest:loader->originalRequestCopy().nsURLRequest()
+                                                                   originalRequest:loader->originalRequestCopy().nsURLRequest(UpdateHTTPBody)
                                                                           response:loader->response().nsURLResponse()
                                                                  hasSubstituteData:loader->substituteData().isValid()
                                                               clientRedirectSource:loader->clientRedirectSourceForHistory()];
@@ -1026,7 +1026,7 @@ bool WebFrameLoaderClient::canHandleRequest(const ResourceRequest& request) cons
     Frame* frame = core(m_webFrame.get());
     Page* page = frame->page();
     BOOL forMainFrame = page && page->mainFrame() == frame;
-    return [WebView _canHandleRequest:request.nsURLRequest() forMainFrame:forMainFrame];
+    return [WebView _canHandleRequest:request.nsURLRequest(UpdateHTTPBody) forMainFrame:forMainFrame];
 }
 
 bool WebFrameLoaderClient::canShowMIMEType(const String& MIMEType) const

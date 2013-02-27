@@ -59,13 +59,17 @@ class NetworkingContext;
         {
         }
 
+        void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
+
         QNetworkRequest toNetworkRequest(NetworkingContext* = 0) const;
 
     private:
         friend class ResourceRequestBase;
 
-        void doUpdatePlatformRequest() {}
-        void doUpdateResourceRequest() {}
+        void doUpdatePlatformRequest() { }
+        void doUpdateResourceRequest() { }
+        void doUpdatePlatformHTTPBody() { }
+        void doUpdateResourceHTTPBody() { }
 
         PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData> data) const { return data; }
         void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>) { }

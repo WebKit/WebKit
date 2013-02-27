@@ -192,7 +192,7 @@ static CFURLRequestRef willSendRequest(CFURLConnectionRef conn, CFURLRequestRef 
     if (request.isNull())
         return 0;
 
-    cfRequest = request.cfURLRequest();
+    cfRequest = request.cfURLRequest(UpdateHTTPBody);
 
     CFRetain(cfRequest);
     return cfRequest;
@@ -218,7 +218,7 @@ static void didReceiveResponse(CFURLConnectionRef conn, CFURLResponseRef cfRespo
     if (statusCode != 304)
         adjustMIMETypeIfNecessary(cfResponse);
 
-    if (_CFURLRequestCopyProtocolPropertyForKey(handle->firstRequest().cfURLRequest(), CFSTR("ForceHTMLMIMEType")))
+    if (_CFURLRequestCopyProtocolPropertyForKey(handle->firstRequest().cfURLRequest(DoNotUpdateHTTPBody), CFSTR("ForceHTMLMIMEType")))
         wkSetCFURLResponseMIMEType(cfResponse, CFSTR("text/html"));
 #else
     if (!CFURLResponseGetMIMEType(cfResponse)) {
@@ -425,7 +425,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
         applyBasicAuthorizationHeader(firstRequest(), d->m_initialCredential);
     }
 
-    RetainPtr<CFMutableURLRequestRef> request = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, firstRequest().cfURLRequest()));
+    RetainPtr<CFMutableURLRequestRef> request = adoptCF(CFURLRequestCreateMutableCopy(kCFAllocatorDefault, firstRequest().cfURLRequest(UpdateHTTPBody)));
     wkSetRequestStorageSession(d->m_storageSession.get(), request.get());
     
     if (!shouldContentSniff)

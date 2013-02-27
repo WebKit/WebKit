@@ -366,7 +366,7 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::setClientCertificate(
 
 CFURLRequestRef STDMETHODCALLTYPE WebMutableURLRequest::cfRequest()
 {
-    return m_request.cfURLRequest();
+    return m_request.cfURLRequest(UpdateHTTPBody);
 }
 
 HRESULT STDMETHODCALLTYPE WebMutableURLRequest::mutableCopy(
@@ -376,7 +376,7 @@ HRESULT STDMETHODCALLTYPE WebMutableURLRequest::mutableCopy(
         return E_POINTER;
 
 #if USE(CFNETWORK)
-    RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(kCFAllocatorDefault, m_request.cfURLRequest()));
+    RetainPtr<CFMutableURLRequestRef> mutableRequest(AdoptCF, CFURLRequestCreateMutableCopy(kCFAllocatorDefault, m_request.cfURLRequest(UpdateHTTPBody)));
     *result = createInstance(ResourceRequest(mutableRequest.get()));
     return S_OK;
 #else

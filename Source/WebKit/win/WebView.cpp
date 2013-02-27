@@ -1286,7 +1286,7 @@ bool WebView::canHandleRequest(const WebCore::ResourceRequest& request)
         return true;
 
 #if USE(CFNETWORK)
-    if (CFURLProtocolCanHandleRequest(request.cfURLRequest()))
+    if (CFURLProtocolCanHandleRequest(request.cfURLRequest(UpdateHTTPBody)))
         return true;
 
     // FIXME: Mac WebKit calls _representationExistsForURLScheme here

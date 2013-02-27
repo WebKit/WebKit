@@ -52,7 +52,6 @@
 extern "C" void CFURLRequestSetHTTPRequestBody(CFMutableURLRequestRef mutableHTTPRequest, CFDataRef httpBody);
 extern "C" void CFURLRequestSetHTTPHeaderFieldValue(CFMutableURLRequestRef mutableHTTPRequest, CFStringRef httpHeaderField, CFStringRef httpHeaderFieldValue);
 extern "C" void CFURLRequestSetHTTPRequestBodyStream(CFMutableURLRequestRef req, CFReadStreamRef bodyStream);
-extern "C" CFReadStreamRef CFURLRequestCopyHTTPRequestBodyStream(CFURLRequestRef request);
 #elif PLATFORM(WIN)
 #include <CFNetwork/CFURLRequest.h>
 #endif
@@ -89,6 +88,11 @@ namespace WebCore {
 static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, void* context);
 
 static CFStringRef formDataPointerPropertyName = CFSTR("WebKitFormDataPointer");
+
+CFStringRef formDataStreamLengthPropertyName()
+{
+    return CFSTR("WebKitFormDataStreamLength");
+}
 
 struct FormCreationContext {
     RefPtr<FormData> formData;
@@ -306,11 +310,15 @@ static CFTypeRef formCopyProperty(CFReadStreamRef, CFStringRef propertyName, voi
 {
     FormStreamFields* form = static_cast<FormStreamFields*>(context);
 
-    if (kCFCompareEqualTo != CFStringCompare(propertyName, formDataPointerPropertyName, 0))
-        return 0;
+    if (kCFCompareEqualTo == CFStringCompare(propertyName, formDataPointerPropertyName, 0)) {
+        long formDataAsNumber = static_cast<long>(reinterpret_cast<intptr_t>(form->formData.get()));
+        return CFNumberCreate(0, kCFNumberLongType, &formDataAsNumber);
+    }
 
-    long formDataAsNumber = static_cast<long>(reinterpret_cast<intptr_t>(form->formData.get()));
-    return CFNumberCreate(0, kCFNumberLongType, &formDataAsNumber);
+    if (kCFCompareEqualTo == CFStringCompare(propertyName, formDataStreamLengthPropertyName(), 0))
+        return CFStringCreateWithFormat(0, 0, CFSTR("%llu"), form->streamLength);
+
+    return 0;
 }
 
 static void formSchedule(CFReadStreamRef, CFRunLoopRef runLoop, CFStringRef runLoopMode, void* context)
@@ -405,10 +413,6 @@ void setHTTPBody(CFMutableURLRequestRef request, PassRefPtr<FormData> prpFormDat
         }
     }
 
-    // Set the length.
-    RetainPtr<CFStringRef> lengthString = adoptCF(CFStringCreateWithFormat(0, 0, CFSTR("%lld"), length));
-    CFURLRequestSetHTTPHeaderFieldValue(request, CFSTR("Content-Length"), lengthString.get());
-
     // Create and set the stream.
 
     // Pass the length along with the formData so it does not have to be recomputed.
@@ -440,12 +444,6 @@ FormData* httpBodyFromStream(CFReadStreamRef stream)
         return 0;
 
     return reinterpret_cast<FormData*>(static_cast<intptr_t>(formDataPointerAsNumber));
-}
-
-PassRefPtr<FormData> httpBodyFromRequest(CFURLRequestRef request)
-{
-    RetainPtr<CFReadStreamRef> bodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(request));
-    return httpBodyFromStream(bodyStream.get());
 }
 
 } // namespace WebCore

@@ -40,13 +40,23 @@ namespace CoreIPC {
 
 void ArgumentCoder<ResourceRequest>::encodePlatformData(ArgumentEncoder& encoder, const ResourceRequest& resourceRequest)
 {
-    bool requestIsPresent = resourceRequest.nsURLRequest();
+    RetainPtr<NSURLRequest> requestToSerialize = resourceRequest.nsURLRequest(DoNotUpdateHTTPBody);
+
+    bool requestIsPresent = requestToSerialize;
     encoder << requestIsPresent;
 
     if (!requestIsPresent)
         return;
 
-    RetainPtr<CFDictionaryRef> dictionary(AdoptCF, WKNSURLRequestCreateSerializableRepresentation(resourceRequest.nsURLRequest(), CoreIPC::tokenNullTypeRef()));
+    // We don't send HTTP body over IPC for better performance.
+    // Also, it's not always possible to do, as streams can only be created in process that does networking.
+    if ([requestToSerialize.get() HTTPBody] || [requestToSerialize.get() HTTPBodyStream]) {
+        requestToSerialize.adoptNS([requestToSerialize.get() mutableCopy]);
+        [(NSMutableURLRequest *)requestToSerialize.get() setHTTPBody:nil];
+        [(NSMutableURLRequest *)requestToSerialize.get() setHTTPBodyStream:nil];
+    }
+
+    RetainPtr<CFDictionaryRef> dictionary(AdoptCF, WKNSURLRequestCreateSerializableRepresentation(requestToSerialize.get(), CoreIPC::tokenNullTypeRef()));
     CoreIPC::encode(encoder, dictionary.get());
 }
 

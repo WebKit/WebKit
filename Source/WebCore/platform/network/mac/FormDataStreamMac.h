@@ -43,6 +43,8 @@ namespace WebCore {
     void setHTTPBody(NSMutableURLRequest *, PassRefPtr<FormData>);
     FormData* httpBodyFromStream(NSInputStream *);
 
+    CFStringRef formDataStreamLengthPropertyName();
+
 } // namespace WebCore
 
 #endif // !USE(CFNETWORK)

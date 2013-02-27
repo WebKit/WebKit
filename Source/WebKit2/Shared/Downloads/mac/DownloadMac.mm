@@ -59,7 +59,7 @@ void Download::start()
     ASSERT(!m_delegate);
 
     m_delegate.adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
-    m_nsURLDownload.adoptNS([[NSURLDownload alloc] initWithRequest:m_request.nsURLRequest() delegate:m_delegate.get()]);
+    m_nsURLDownload.adoptNS([[NSURLDownload alloc] initWithRequest:m_request.nsURLRequest(UpdateHTTPBody) delegate:m_delegate.get()]);
 
     // FIXME: Allow this to be changed by the client.
     [m_nsURLDownload.get() setDeletesFileUponFailure:NO];
@@ -75,7 +75,7 @@ void Download::startWithHandle(ResourceHandle* handle, const ResourceResponse& r
 
     m_delegate.adoptNS([[WKDownloadAsDelegate alloc] initWithDownload:this]);
     m_nsURLDownload = [NSURLDownload _downloadWithLoadingConnection:handle->connection()
-                                                            request:m_request.nsURLRequest()
+                                                            request:m_request.nsURLRequest(UpdateHTTPBody)
                                                            response:response.nsURLResponse()
                                                             delegate:m_delegate.get()
                                                                proxy:proxy];

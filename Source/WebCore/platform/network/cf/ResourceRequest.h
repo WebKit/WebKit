@@ -80,18 +80,22 @@ namespace WebCore {
 #endif
         }
 
+        void updateFromDelegatePreservingOldHTTPBody(CFURLRequestRef);
 
-        CFURLRequestRef cfURLRequest() const;
+        CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
 #else
         ResourceRequest(NSURLRequest *nsRequest)
             : ResourceRequestBase()
-            , m_nsRequest(nsRequest) { }
+            , m_nsRequest(nsRequest)
+        {
+        }
 
+        void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest&);
 #endif
 
 #if PLATFORM(MAC)
         void applyWebArchiveHackForMail();
-        NSURLRequest *nsURLRequest() const;
+        NSURLRequest *nsURLRequest(HTTPBodyUpdatePolicy) const;
 #endif
 
 #if ENABLE(CACHE_PARTITIONING)
@@ -115,6 +119,8 @@ namespace WebCore {
 
         void doUpdatePlatformRequest();
         void doUpdateResourceRequest();
+        void doUpdatePlatformHTTPBody();
+        void doUpdateResourceHTTPBody();
 
         PassOwnPtr<CrossThreadResourceRequestData> doPlatformCopyData(PassOwnPtr<CrossThreadResourceRequestData>) const;
         void doPlatformAdopt(PassOwnPtr<CrossThreadResourceRequestData>);
