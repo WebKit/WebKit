@@ -321,6 +321,38 @@ function shouldNotBe(_a, _b, quiet)
     testFailed(_a + " should not be " + _bv + ".");
 }
 
+function shouldBecomeDifferent(_a, _b, completionHandler, timeout)
+{
+  if (typeof _a != "string" || typeof _b != "string")
+    debug("WARN: shouldBecomeDifferent() expects string arguments");
+  if (timeout === undefined)
+    timeout = 500;
+
+  var condition = function() {
+    var exception;
+    var _av;
+    try {
+      _av = eval(_a);
+    } catch (e) {
+      exception = e;
+    }
+    var _bv = eval(_b);
+    if (exception)
+      testFailed(_a + " should became not equal to " + _bv + ". Threw exception " + exception);
+    if (!isResultCorrect(_av, _bv)) {
+      testPassed(_a + " became different from " + _b);
+      return true;
+    }
+    return false;
+  };
+  var failureTime = Date.now() + timeout;
+  var failureHandler = function () {
+    testFailed(_a + " did not become different from " + _b + " in " + (timeout / 1000) + " seconds.");
+    completionHandler();
+  };
+  _waitForCondition(condition, failureTime, completionHandler, failureHandler);
+}
+
 function shouldBeTrue(_a) { shouldBe(_a, "true"); }
 function shouldBeTrueQuiet(_a) { shouldBe(_a, "true", true); }
 function shouldBeFalse(_a) { shouldBe(_a, "false"); }

@@ -280,11 +280,6 @@ fast/forms/validation-message-on-radio.html
 fast/forms/validation-message-on-range.html
 fast/forms/validation-message-on-textarea.html
 
-# Misbehaving computedStyleIncludingVisitedInfo or keepWebHistory API in WebKitTestRunner
-# http://webkit.org/b/58334
-fast/history/nested-visited-test.html
-fast/history/self-is-visited.html
-fast/history/sibling-visited-test.html
 platform/mac/accessibility/search-predicate.html
 
 # [WK2] CSP reporting doesn't work
@@ -655,9 +650,6 @@ http/tests/security/cross-frame-access-history-get.html
 http/tests/security/cross-frame-access-location-get.html
 http/tests/security/cross-frame-access-protocol-explicit-domain.html
 http/tests/security/cross-frame-access-protocol.html
-
-# Wrong color for visited link
-fast/history/multiple-classes-visited.html
 
 # Flaky tests (slow)
 fast/workers/storage/interrupt-database.html

@@ -1,27 +1,20 @@
 <html>
 <head>
+<script src="../js/resources/js-test-pre.js"></script>
 <script>
-if (window.testRunner) {
+jsTestIsAsync = true;
+
+if (window.testRunner)
     window.testRunner.keepWebHistory();
-    window.testRunner.dumpAsText();
-}
 
 function compareStyles()
 {
     if (window.testRunner) {
-        var firstStyle = window.testRunner.computedStyleIncludingVisitedInfo(document.getElementById('one'));
-        var secondStyle = window.testRunner.computedStyleIncludingVisitedInfo(document.getElementById('two'));
-        if (firstStyle.color == secondStyle.color || firstStyle.backgroundColor == secondStyle.backgroundColor) {
-            document.getElementById('result').innerHTML = 'FAIL';
-            return;
-        }
-    }
-    
-    var firstStyle = window.getComputedStyle(document.getElementById('one'), "");
-    var secondStyle = window.getComputedStyle(document.getElementById('two'), "");
-    if (firstStyle.color != secondStyle.color || firstStyle.backgroundColor != secondStyle.backgroundColor) {
-        document.getElementById('result').innerHTML = 'FAIL';
-        return;
+        firstStyle = testRunner.computedStyleIncludingVisitedInfo(document.getElementById('one'));
+        secondStyle = testRunner.computedStyleIncludingVisitedInfo(document.getElementById('two'));
+        shouldBecomeDifferent('firstStyle.color', 'secondStyle.color', function() {
+            shouldBecomeDifferent('firstStyle.backgroundColor', 'secondStyle.backgroundColor', finishJSTest);
+        });
     }
 }
 </script>
@@ -33,15 +26,12 @@ function compareStyles()
 <body onload="compareStyles()">
 <iframe src="resources/dummy.html" style="display:none"></iframe>
 
-<p>
-These two links should be different colors (green and orange):
-</p>
+<p>These two links should be different colors (green and orange):</p>
 <p>
 <a href="http://madeup.site.com" id="one">One</a> 
 <a href="resources/dummy.html" id="two">Two</a><br>
 </p>
-<p id=result>
-PASS
-</p>
+<div id=console></div>
 </body>
+<script src="../js/resources/js-test-post.js"></script>
 </html>

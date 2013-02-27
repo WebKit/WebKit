@@ -1,4 +1,9 @@
 These two links should be different colors (green and orange):
 
 One Two
-PASS
+PASS firstStyle.color became different from secondStyle.color
+PASS firstStyle.backgroundColor became different from secondStyle.backgroundColor
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
