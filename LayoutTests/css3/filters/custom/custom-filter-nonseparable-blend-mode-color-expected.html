@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <title>Test that blends the source and the backdrop with the color blend mode.</title>
+    <style type="text/css">
+        /* These are exactly the color values we expect. Some platforms may have slightly different
+           color result. */
+        #solid-solid {
+            background-color: rgb(108, 157, 255);
+            width: 100px;
+            height: 100px;
+        }
+        #alpha-solid {
+            background-color: rgb(167, 192, 242);
+            width: 100px;
+            height: 100px;
+        }
+        #solid-alpha {
+            background-color: rgb(169, 142, 166);
+            width: 100px;
+            height: 100px;
+        }
+        #alpha-alpha {
+            background-color: rgb(205, 192, 204);
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div id="solid-solid"></div>
+    <div id="alpha-solid"></div>
+    <div id="solid-alpha"></div>
+    <div id="alpha-alpha"></div>
+</body>
+</html>

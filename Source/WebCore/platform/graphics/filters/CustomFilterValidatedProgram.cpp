@@ -291,6 +291,8 @@ String CustomFilterValidatedProgram::blendFunctionString(BlendMode blendMode)
     // Cb: is the backdrop color in css_BlendColor() and the backdrop color component in css_BlendComponent()
     const char* blendColorExpression = "vec3(css_BlendComponent(Cb.r, Cs.r), css_BlendComponent(Cb.g, Cs.g), css_BlendComponent(Cb.b, Cs.b))";
     const char* blendComponentExpression = "Co = 0.0;";
+    bool needsLuminosityHelperFunctions = false;
+    String blendFunctionString;
     switch (blendMode) {
     case BlendModeNormal:
         blendColorExpression = "Cs";
@@ -405,15 +407,46 @@ String CustomFilterValidatedProgram::blendFunctionString(BlendMode blendMode)
                 Co = Cb + (2.0 * Cs - 1.0) * (D - Cb);
         );
         break;
+    case BlendModeColor:
+        needsLuminosityHelperFunctions = true;
+        blendColorExpression = "css_SetLum(Cs, css_Lum(Cb))";
+        break;
+    case BlendModeLuminosity:
+        needsLuminosityHelperFunctions = true;
+        blendColorExpression = "css_SetLum(Cb, css_Lum(Cs))";
+        break;
     case BlendModeHue:
     case BlendModeSaturation:
-    case BlendModeColor:
-    case BlendModeLuminosity:
         notImplemented();
         return String();
     }
 
-    return String::format(SHADER(
+    if (needsLuminosityHelperFunctions) {
+        blendFunctionString.append(SHADER(
+            mediump float css_Lum(mediump vec3 C)
+            {
+                return 0.3 * C.r + 0.59 * C.g + 0.11 * C.b;
+            }
+            mediump vec3 css_ClipColor(mediump vec3 C)
+            {
+                mediump float L = css_Lum(C);
+                mediump float n = min(min(C.r, C.g), C.b);
+                mediump float x = max(max(C.r, C.g), C.b);
+                if (n < 0.0)
+                    C = L + (((C - L) * L) / (L - n));
+                if (x > 1.0)
+                    C = L + (((C - L) * (1.0 - L) / (x - L)));
+                return C;
+            }
+            mediump vec3 css_SetLum(mediump vec3 C, mediump float l)
+            {
+                C += l - css_Lum(C);
+                return css_ClipColor(C);
+            }
+        ));
+    }
+
+    blendFunctionString.append(String::format(SHADER(
         mediump float css_BlendComponent(mediump float Cb, mediump float Cs)
         {
             mediump float Co;
@@ -424,7 +457,9 @@ String CustomFilterValidatedProgram::blendFunctionString(BlendMode blendMode)
         {
             return %s;
         }
-    ), blendComponentExpression, blendColorExpression);
+    ), blendComponentExpression, blendColorExpression));
+
+    return blendFunctionString;
 }
 
 String CustomFilterValidatedProgram::compositeFunctionString(CompositeOperator compositeOperator)
