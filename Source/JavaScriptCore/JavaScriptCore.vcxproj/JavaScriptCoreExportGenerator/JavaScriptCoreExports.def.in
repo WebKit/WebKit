@@ -234,6 +234,7 @@ EXPORTS
     ?getCallableObjectSlow@JSC@@YAPAVJSCell@1@PAV21@@Z
     ?getCallData@JSCell@JSC@@SA?AW4CallType@2@PAV12@AATCallData@2@@Z
     ?getConstructData@JSCell@JSC@@SA?AW4ConstructType@2@PAV12@AATConstructData@2@@Z
+    ?getID@SourceProvider@JSC@@AAEXXZ
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ
     ?getObjectType@MemoryInstrumentation@WTF@@CAPBDPAVMemoryObjectInfo@2@@Z
     ?getOwnNonIndexPropertyNames@JSObject@JSC@@SAXPAV12@PAVExecState@2@AAVPropertyNameArray@2@W4EnumerationMode@2@@Z

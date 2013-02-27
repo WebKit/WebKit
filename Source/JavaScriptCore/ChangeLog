@@ -1,3 +1,9 @@
+2013-02-26  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. AppleWin VS2010 build fix.
+
+        * JavaScriptCore.vcxproj/JavaScriptCoreExportGenerator/JavaScriptCoreExports.def.in:
+
 2013-02-25  Filip Pizlo  <fpizlo@apple.com>
 
         The DFG backend's and OSR's decision to unbox a variable should be based on whether it's used in a typed context
