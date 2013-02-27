@@ -1082,8 +1082,8 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
             break;
         }
 
-        if (typeof details === "string")
-            return this._createSpanWithText(details);
+        if (details && !(details instanceof Node))
+            return this._createSpanWithText("" + details);
 
         return details ? details : null;
     },
@@ -1118,11 +1118,15 @@ WebInspector.TimelinePresentationModel.Record.prototype = {
     },
 
     /**
-     * @param {string=} defaultValue
+     * @param {*=} defaultValue
+     * @return {Element|string}
      */
     _linkifyScriptLocation: function(defaultValue)
     {
-        return this.scriptName ? this._linkifyLocation(this.scriptName, this.scriptLine, 0) : defaultValue;
+        if (this.scriptName)
+            return this._linkifyLocation(this.scriptName, this.scriptLine, 0);
+        else
+            return defaultValue ? "" + defaultValue : null;
     },
 
     calculateAggregatedStats: function(categories)
