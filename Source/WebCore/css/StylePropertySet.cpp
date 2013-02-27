@@ -168,6 +168,8 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
         return fontValue();
     case CSSPropertyMargin:
         return get4Values(marginShorthand());
+    case CSSPropertyWebkitMarginCollapse:
+        return getShorthandValue(webkitMarginCollapseShorthand());
     case CSSPropertyOverflow:
         return getCommonValue(overflowShorthand());
     case CSSPropertyPadding:

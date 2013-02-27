@@ -1,0 +1,16 @@
+Bug 110903: getPropertyValue for -webkit-margin-collapse returns null, should compute the shorthand value
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS webkitMarginCollapseValue("margin-collapse1") is 'collapse separate'
+PASS webkitMarginCollapseValue("margin-collapse2") is 'discard discard'
+PASS webkitMarginCollapseValue("margin-collapse3") is 'discard separate'
+NOTE: 'foo' is an illegal CSS value for '-webkit-margin-collapse'.
+PASS webkitMarginCollapseValue("margin-collapse4") is null
+NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.
+PASS webkitMarginCollapseValue("margin-collapse5") is null
+PASS successfullyParsed is true
+
+TEST COMPLETE
+    
