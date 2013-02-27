@@ -431,6 +431,11 @@ void DocumentLoader::checkLoadComplete()
 {
     if (!m_frame || isLoading())
         return;
+#if !ENABLE(THREADED_HTML_PARSER)
+    // This ASSERT triggers with the threaded HTML parser.
+    // See https://bugs.webkit.org/show_bug.cgi?id=110937
+    ASSERT(this == frameLoader()->activeDocumentLoader());
+#endif
     m_frame->document()->domWindow()->finishedLoading();
 }
 
