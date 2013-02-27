@@ -1028,7 +1028,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data.uiSourceCode);
         var name = /** @type {string} */ (event.data.name);
-        if (!uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
+        if (uiSourceCode.project().type() !== WebInspector.projectTypes.Snippets)
             return;
         WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, name);
     },

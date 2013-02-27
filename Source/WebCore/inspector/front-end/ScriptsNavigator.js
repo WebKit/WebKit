@@ -210,7 +210,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     _handleEvaluateSnippet: function(uiSourceCode)
     {
-        if (!uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
+        if (uiSourceCode.project().type() !== WebInspector.projectTypes.Snippets)
             return;
         WebInspector.scriptSnippetModel.evaluateScriptSnippet(uiSourceCode);
     },
@@ -228,7 +228,7 @@ WebInspector.SnippetsNavigatorView.prototype = {
      */
     _handleRemoveSnippet: function(uiSourceCode)
     {
-        if (!uiSourceCode.project().type() === WebInspector.projectTypes.Snippets)
+        if (uiSourceCode.project().type() !== WebInspector.projectTypes.Snippets)
             return;
         WebInspector.scriptSnippetModel.deleteScriptSnippet(uiSourceCode);
     },
