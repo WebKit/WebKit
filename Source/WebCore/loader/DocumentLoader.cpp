@@ -133,6 +133,13 @@ PassRefPtr<ResourceBuffer> DocumentLoader::mainResourceData() const
     return 0;
 }
 
+Document* DocumentLoader::document() const
+{
+    if (m_frame && m_frame->loader()->documentLoader() == this)
+        return m_frame->document();
+    return 0;
+}
+
 const ResourceRequest& DocumentLoader::originalRequest() const
 {
     return m_originalRequest;
@@ -284,7 +291,7 @@ bool DocumentLoader::isLoading() const
     // http/tests/security/feed-urls-from-remote.html to timeout on Mac WK1
     // see http://webkit.org/b/110554 and http://webkit.org/b/110401
 #if ENABLE(THREADED_HTML_PARSER)
-    if (m_frame && m_frame->document() && m_frame->document()->hasActiveParser())
+    if (document() && document()->hasActiveParser())
         return true;
 #endif
     return isLoadingMainResource() || !m_subresourceLoaders.isEmpty() || !m_plugInStreamLoaders.isEmpty();
