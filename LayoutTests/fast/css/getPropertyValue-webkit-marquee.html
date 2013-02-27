@@ -1,0 +1,62 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <title>-webkit-marquee shorthand getPropertyValue test</title>
+    <style type="text/css">
+      .test {
+        display: inline-block;
+        height: 5em;
+        width: 10em;
+        overflow-x: -webkit-marquee;
+      }
+    </style>
+    <script src="../js/resources/js-test-pre.js"></script>
+    <script>
+      if (window.testRunner)
+        testRunner.dumpAsText();
+    </script>
+  </head>
+  <body>
+    <div id="marquee1" class="test" style="-webkit-marquee: forwards medium 10 slide normal;"></div>
+    <div id="marquee2" class="test" style="-webkit-marquee: auto large 10 slide;"></div>
+    <div id="marquee3" class="test" style="-webkit-marquee: forwards infinite slide normal;"></div>
+    <div id="marquee4" class="test" style="-webkit-marquee: forwards medium slide normal;"></div>
+    <div id="marquee5" class="test" style="-webkit-marquee: medium 10 slide normal;"></div>
+    <div id="marquee6" class="test" style="-webkit-marquee: forwards small normal;"></div>
+    <div id="marquee7" class="test" style="-webkit-marquee: forwards medium infinite;"></div>
+    <div id="marquee8" class="test" style="-webkit-marquee: slide fast;"></div>
+    <div id="marquee9" class="test" style="-webkit-marquee: forwards;"></div>
+    <div id="marquee10" class="test" style="-webkit-marquee: alternate;"></div>
+    <div id="marquee11" class="test" style="-webkit-marquee: infinite;"></div>
+    <div id="marquee12" class="test" style="-webkit-marquee: foo;"></div>
+    <div id="marquee13" class="test" style="-webkit-marquee-direction: forwards; -webkit-marquee-speed: fast;"></div>
+    <div id="marquee14" class="test" style="-webkit-marquee-repetition: infinite; -webkit-marquee-style: none;"></div>
+
+    <script>
+      description("<a href=\"https://bugs.webkit.org/show_bug.cgi?id=110816\">Bug 110816: getPropertyValue for -webkit-marquee returns null, should compute the shorthand value</a>");
+
+      function webkitMarqueeValue(id) {
+        var element = document.getElementById(id);
+        return element.style.getPropertyValue("-webkit-marquee");
+      }
+
+      shouldBe('webkitMarqueeValue("marquee1")', "'forwards medium 10 slide normal'");
+      shouldBe('webkitMarqueeValue("marquee2")', "'auto large 10 slide'");
+      shouldBe('webkitMarqueeValue("marquee3")', "'forwards infinite slide normal'");
+      shouldBe('webkitMarqueeValue("marquee4")', "'forwards medium slide normal'");
+      shouldBe('webkitMarqueeValue("marquee5")', "'medium 10 slide normal'");
+      shouldBe('webkitMarqueeValue("marquee6")', "'forwards small normal'");
+      shouldBe('webkitMarqueeValue("marquee7")', "'forwards medium infinite'");
+      shouldBe('webkitMarqueeValue("marquee8")', "'slide fast'");
+      shouldBe('webkitMarqueeValue("marquee9")', "'forwards'");
+      shouldBe('webkitMarqueeValue("marquee10")', "'alternate'");
+      shouldBe('webkitMarqueeValue("marquee11")', "'infinite'");
+      debug("NOTE: 'foo' is an illegal CSS value for '-webkit-marquee'.");
+      shouldBe('webkitMarqueeValue("marquee12")', "null");
+      debug("NOTE: If only few longhand properties are specified, getPropertyValue for shorthand property returns null.")
+      shouldBe('webkitMarqueeValue("marquee13")', "null");
+      shouldBe('webkitMarqueeValue("marquee14")', "null");
+    </script>
+    <script src="../js/resources/js-test-post.js"></script>
+  </body>
+</html>

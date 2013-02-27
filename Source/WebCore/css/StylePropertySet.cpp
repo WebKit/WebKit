@@ -174,6 +174,8 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
         return get4Values(paddingShorthand());
     case CSSPropertyListStyle:
         return getShorthandValue(listStyleShorthand());
+    case CSSPropertyWebkitMarquee:
+        return getShorthandValue(webkitMarqueeShorthand());
     case CSSPropertyWebkitMaskPosition:
         return getLayeredShorthandValue(webkitMaskPositionShorthand());
     case CSSPropertyWebkitMaskRepeat:
