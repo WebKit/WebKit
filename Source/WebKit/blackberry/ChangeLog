@@ -1,3 +1,27 @@
+2013-02-27  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
+        [BlackBerry] The virtual keyboard hides part of Signing In dialog
+        https://bugs.webkit.org/show_bug.cgi?id=110836
+
+        Reviewed by Yong Li.
+
+        PR # 283427 Internally reviewed by Mike Fenton.
+
+        Store form credentials before javascript "onSubmit" event and notify
+        webpage client to save credentials after that event since javascript
+        may check credentials and stop the submission in its event handler.
+
+        * WebCoreSupport/CredentialTransformData.cpp:
+        (WebCore::CredentialTransformData::CredentialTransformData):
+        (WebCore):
+        * WebCoreSupport/CredentialTransformData.h:
+        (CredentialTransformData):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSubmitForm):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.h:
+        (FrameLoaderClientBlackBerry):
+
 2013-02-27  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Accept key events even when composing region is active.

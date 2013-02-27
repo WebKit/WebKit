@@ -772,16 +772,23 @@ void FrameLoaderClientBlackBerry::dispatchWillSubmitForm(FramePolicyFunction fun
 {
     // FIXME: Stub.
     (m_frame->loader()->policyChecker()->*function)(PolicyUse);
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    if (m_formCredentials.isValid())
+        credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, m_formCredentials);
+#endif
 }
 
 void FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent(PassRefPtr<FormState> prpFormState)
 {
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    m_formCredentials = CredentialTransformData();
+#endif
     if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled()) {
         if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled())
             m_webPagePrivate->m_autofillManager->saveTextFields(prpFormState->form());
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
         if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled())
-            credentialManager().saveCredentialIfConfirmed(m_webPagePrivate, CredentialTransformData(prpFormState->form(), true));
+            m_formCredentials = CredentialTransformData(prpFormState->form(), true);
 #endif
     }
 }

@@ -29,6 +29,7 @@ namespace WebCore {
 struct CredentialTransformData {
     // If the provided form is suitable for password completion, isValid() will
     // return true;
+    CredentialTransformData();
     CredentialTransformData(HTMLFormElement*, bool isForSaving = false);
     CredentialTransformData(const KURL&, const ProtectionSpace&, const Credential&);
 

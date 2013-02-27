@@ -19,6 +19,7 @@
 #ifndef FrameLoaderClientBlackBerry_h
 #define FrameLoaderClientBlackBerry_h
 
+#include "CredentialTransformData.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
@@ -218,6 +219,9 @@ private:
     bool m_cancelLoadOnNextData;
 
     bool m_wasProvisionalLoadTriggeredByUserGesture;
+#if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
+    CredentialTransformData m_formCredentials;
+#endif
 };
 
 } // WebCore

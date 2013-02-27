@@ -111,6 +111,14 @@ bool locateSpecificPasswords(Vector<HTMLInputElement*>& passwords, HTMLInputElem
 
 } // namespace
 
+CredentialTransformData::CredentialTransformData()
+    : m_userNameElement(0)
+    , m_passwordElement(0)
+    , m_oldPasswordElement(0)
+    , m_isValid(false)
+{
+}
+
 CredentialTransformData::CredentialTransformData(HTMLFormElement* form, bool isForSaving)
     : m_userNameElement(0)
     , m_passwordElement(0)
