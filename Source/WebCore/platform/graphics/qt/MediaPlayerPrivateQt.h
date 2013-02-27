@@ -109,7 +109,7 @@ public:
     virtual void acceleratedRenderingStateChanged() { }
     // Const-casting here is safe, since all of TextureMapperPlatformLayer's functions are const.g
     virtual PlatformLayer* platformLayer() const { return 0; }
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity);
 #endif
 
     virtual PlatformMedia platformMedia() const;

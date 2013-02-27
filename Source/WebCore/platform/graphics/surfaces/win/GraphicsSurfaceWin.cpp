@@ -421,7 +421,7 @@ void GraphicsSurface::platformCopyFromTexture(uint32_t texture, const IntRect& s
     m_private->copyFromTexture(texture, sourceRect);
 }
 
-void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     IntSize size = m_private->size();
     FloatRect rectOnContents(FloatPoint::zero(), size);

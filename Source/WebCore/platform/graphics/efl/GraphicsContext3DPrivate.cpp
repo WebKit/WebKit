@@ -197,7 +197,7 @@ bool GraphicsContext3DPrivate::prepareBuffer() const
 }
 
 #if USE(TEXTURE_MAPPER_GL)
-void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatRect& /* target */, const TransformationMatrix&, float /* opacity */, BitmapTexture* /* mask */)
+void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper*, const FloatRect& /* target */, const TransformationMatrix&, float /* opacity */)
 {
     notImplemented();
 }

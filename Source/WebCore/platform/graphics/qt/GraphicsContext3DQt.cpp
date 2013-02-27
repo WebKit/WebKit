@@ -66,7 +66,7 @@ public:
     ~GraphicsContext3DPrivate();
 
 #if USE(ACCELERATED_COMPOSITING)
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity, BitmapTexture* mask);
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect& target, const TransformationMatrix&, float opacity);
 #endif
 #if USE(GRAPHICS_SURFACE)
     virtual IntSize platformLayerSize() const;
@@ -209,7 +209,7 @@ static inline quint32 swapBgrToRgb(quint32 pixel)
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture* mask)
+void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     m_context->markLayerComposited();
     blitMultisampleFramebufferAndRestoreContext();
@@ -231,7 +231,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
         currentContext->makeCurrent(currentSurface);
 
         TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
-        m_graphicsSurface->paintToTextureMapper(texmapGL, targetRect, matrix, opacity, mask);
+        m_graphicsSurface->paintToTextureMapper(texmapGL, targetRect, matrix, opacity);
 #endif
         return;
     }

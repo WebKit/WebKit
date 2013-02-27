@@ -127,7 +127,6 @@ static const char* vertexTemplate =
         uniform mat4 u_textureSpaceMatrix;
 
         varying vec2 v_texCoord;
-        varying vec2 v_maskTexCoord;
         varying float v_antialias;
 
         void noop(inout vec2 dummyParameter) { }
@@ -176,8 +175,6 @@ static const char* vertexTemplate =
             // The texture position needs to be clamped to 0..1 before the texture matrix is applied.
             vec4 clampedPosition = clamp(vec4(position, 0., 1.), 0., 1.);
             v_texCoord = (u_textureSpaceMatrix * clampedPosition).xy;
-
-            v_maskTexCoord = position;
             gl_Position = u_projectionMatrix * u_modelViewMatrix * vec4(position, 0., 1.);
         }
     );
@@ -204,12 +201,10 @@ static const char* fragmentTemplate =
     STRINGIFY(
         precision mediump float;
         uniform SamplerType s_sampler;
-        uniform sampler2D s_mask;
         uniform sampler2D s_contentTexture;
         uniform float u_opacity;
         varying float v_antialias;
         varying vec2 v_texCoord;
-        varying vec2 v_maskTexCoord;
         uniform float u_filterAmount;
         uniform vec2 u_blurRadius;
         uniform vec2 u_shadowOffset;
@@ -223,7 +218,6 @@ static const char* fragmentTemplate =
         void applyTexture(inout vec4 color) { color = SamplerFunction(s_sampler, v_texCoord); }
         void applyOpacity(inout vec4 color) { color *= u_opacity; }
         void applyAntialiasing(inout vec4 color) { color *= antialias(); }
-        void applyMask(inout vec4 color) { color *= texture2D(s_mask, v_maskTexCoord).a; }
 
         void applyGrayscaleFilter(inout vec4 color)
         {
@@ -334,7 +328,6 @@ static const char* fragmentTemplate =
             applyTextureIfNeeded(color);
             applySolidColorIfNeeded(color);
             applyAntialiasingIfNeeded(color);
-            applyMaskIfNeeded(color);
             applyOpacityIfNeeded(color);
             applyGrayscaleFilterIfNeeded(color);
             applySepiaFilterIfNeeded(color);
@@ -362,7 +355,6 @@ PassRefPtr<TextureMapperShaderProgram> TextureMapperShaderProgram::create(PassRe
     SET_APPLIER_FROM_OPTIONS(Rect);
     SET_APPLIER_FROM_OPTIONS(SolidColor);
     SET_APPLIER_FROM_OPTIONS(Opacity);
-    SET_APPLIER_FROM_OPTIONS(Mask);
     SET_APPLIER_FROM_OPTIONS(Antialiasing);
     SET_APPLIER_FROM_OPTIONS(GrayscaleFilter);
     SET_APPLIER_FROM_OPTIONS(SepiaFilter);

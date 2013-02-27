@@ -79,7 +79,7 @@ public:
     static PassRefPtr<GraphicsSurface> create(const IntSize&, Flags, const GraphicsSurfaceToken&);
     void copyToGLTexture(uint32_t target, uint32_t texture, const IntRect& targetRect, const IntPoint& sourceOffset);
     void copyFromTexture(uint32_t texture, const IntRect& sourceRect);
-    void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
+    void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity);
     uint32_t frontBuffer();
     uint32_t swapBuffers();
     GraphicsSurfaceToken exportToken();
@@ -99,7 +99,7 @@ protected:
     void platformUnlock();
     void platformCopyToGLTexture(uint32_t target, uint32_t texture, const IntRect&, const IntPoint&);
     void platformCopyFromTexture(uint32_t texture, const IntRect& sourceRect);
-    void platformPaintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask);
+    void platformPaintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity);
     uint32_t platformFrontBuffer() const;
     uint32_t platformSwapBuffers();
     IntSize platformSize() const;

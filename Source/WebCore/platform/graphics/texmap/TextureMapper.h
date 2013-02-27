@@ -132,7 +132,7 @@ public:
     virtual void drawBorder(const Color&, float borderWidth, const FloatRect&, const TransformationMatrix&) = 0;
     virtual void drawNumber(int number, const Color&, const FloatPoint&, const TransformationMatrix&) = 0;
 
-    virtual void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, const BitmapTexture* maskTexture = 0, unsigned exposedEdges = AllEdges) = 0;
+    virtual void drawTexture(const BitmapTexture&, const FloatRect& target, const TransformationMatrix& modelViewMatrix = TransformationMatrix(), float opacity = 1.0f, unsigned exposedEdges = AllEdges) = 0;
     virtual void drawSolidColor(const FloatRect&, const TransformationMatrix&, const Color&) = 0;
 
     // makes a surface the target for the following drawTexture calls.
@@ -153,6 +153,8 @@ public:
     virtual void beginPainting(PaintFlags = 0) { }
     virtual void endPainting() { }
 
+    void setMaskMode(bool m) { m_isMaskMode = m; }
+
     virtual IntSize maxTextureSize() const = 0;
 
     virtual PassRefPtr<BitmapTexture> acquireTextureFromPool(const IntSize&);
@@ -165,6 +167,8 @@ protected:
     explicit TextureMapper(AccelerationMode);
 
     GraphicsContext* m_context;
+
+    bool isInMaskMode() const { return m_isMaskMode; }
 
 private:
 #if USE(TEXTURE_MAPPER_GL)
@@ -179,6 +183,7 @@ private:
     TextDrawingModeFlags m_textDrawingMode;
     OwnPtr<BitmapTexturePool> m_texturePool;
     AccelerationMode m_accelerationMode;
+    bool m_isMaskMode;
 };
 
 }

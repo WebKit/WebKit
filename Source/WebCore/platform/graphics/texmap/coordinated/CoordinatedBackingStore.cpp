@@ -106,10 +106,10 @@ void CoordinatedBackingStore::setSize(const FloatSize& size)
     m_pendingSize = size;
 }
 
-void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask, const FloatRect& rect)
+void CoordinatedBackingStore::paintTilesToTextureMapper(Vector<TextureMapperTile*>& tiles, TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, const FloatRect& rect)
 {
     for (size_t i = 0; i < tiles.size(); ++i)
-        tiles[i]->paint(textureMapper, transform, opacity, mask, calculateExposedTileEdges(rect, tiles[i]->rect()));
+        tiles[i]->paint(textureMapper, transform, opacity, calculateExposedTileEdges(rect, tiles[i]->rect()));
 }
 
 TransformationMatrix CoordinatedBackingStore::adjustedTransformForRect(const FloatRect& targetRect)
@@ -117,7 +117,7 @@ TransformationMatrix CoordinatedBackingStore::adjustedTransformForRect(const Flo
     return TransformationMatrix::rectToRect(rect(), targetRect);
 }
 
-void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     if (m_tiles.isEmpty())
         return;
@@ -152,8 +152,8 @@ void CoordinatedBackingStore::paintToTextureMapper(TextureMapper* textureMapper,
     // See TiledBackingStore.
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
 
-    paintTilesToTextureMapper(previousTilesToPaint, textureMapper, adjustedTransform, opacity, mask, rect());
-    paintTilesToTextureMapper(tilesToPaint, textureMapper, adjustedTransform, opacity, mask, rect());
+    paintTilesToTextureMapper(previousTilesToPaint, textureMapper, adjustedTransform, opacity, rect());
+    paintTilesToTextureMapper(tilesToPaint, textureMapper, adjustedTransform, opacity, rect());
 }
 
 void CoordinatedBackingStore::drawBorder(TextureMapper* textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)

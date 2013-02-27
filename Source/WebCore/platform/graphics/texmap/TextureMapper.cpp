@@ -141,6 +141,7 @@ TextureMapper::TextureMapper(AccelerationMode accelerationMode)
     , m_textDrawingMode(TextModeFill)
     , m_texturePool(adoptPtr(new BitmapTexturePool()))
     , m_accelerationMode(accelerationMode)
+    , m_isMaskMode(false)
 { }
 
 TextureMapper::~TextureMapper()

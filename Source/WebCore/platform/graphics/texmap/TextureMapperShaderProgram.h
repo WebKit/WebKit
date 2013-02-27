@@ -42,7 +42,6 @@ public:
         Rect             = 1L << 1,
         SolidColor       = 1L << 2,
         Opacity          = 1L << 3,
-        Mask             = 1L << 4,
         Antialiasing     = 1L << 5,
         GrayscaleFilter  = 1L << 6,
         SepiaFilter      = 1L << 7,

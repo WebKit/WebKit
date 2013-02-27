@@ -31,6 +31,7 @@
 
 namespace WebCore {
 
+class Region;
 class TextureMapperPaintOptions;
 class TextureMapperPlatformLayer;
 
@@ -73,6 +74,16 @@ public:
 #if ENABLE(CSS_FILTERS)
     void setFilters(const FilterOperations&);
 #endif
+
+    bool hasFilters() const
+    {
+#if ENABLE(CSS_FILTERS)
+        return !m_currentFilters.isEmpty();
+#else
+        return false;
+#endif
+    }
+
     void setDebugVisuals(bool showDebugBorders, const Color& debugBorderColor, float debugBorderWidth, bool showRepaintCounter);
     void setRepaintCount(int);
     void setContentsLayer(TextureMapperPlatformLayer*);
@@ -92,8 +103,6 @@ public:
 private:
     const TextureMapperLayer* rootLayer() const;
     void computeTransformsRecursive();
-    IntRect intermediateSurfaceRect(const TransformationMatrix&);
-    IntRect intermediateSurfaceRect();
 
     static int compareGraphicsLayersZValue(const void* a, const void* b);
     static void sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last);
@@ -101,15 +110,21 @@ private:
     PassRefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
     FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta; }
     bool isAncestorFixedToViewport() const;
-
+    TransformationMatrix replicaTransform();
     void addChild(TextureMapperLayer*);
     void removeFromParent();
     void removeAllChildren();
 
+    void computeOverlapRegions(Region& overlapRegion, Region& nonOverlapRegion, bool alwaysResolveSelfOverlap = true);
+
     void paintRecursive(const TextureMapperPaintOptions&);
+    void paintUsingOverlapRegions(const TextureMapperPaintOptions&);
+    PassRefPtr<BitmapTexture> paintIntoSurface(const TextureMapperPaintOptions&, const IntSize&);
+    void paintWithIntermediateSurface(const TextureMapperPaintOptions&, const IntRect&);
     void paintSelf(const TextureMapperPaintOptions&);
     void paintSelfAndChildren(const TextureMapperPaintOptions&);
     void paintSelfAndChildrenWithReplica(const TextureMapperPaintOptions&);
+    void applyMask(const TextureMapperPaintOptions&);
 
     // GraphicsLayerAnimation::Client
     virtual void setAnimatedTransform(const TransformationMatrix&) OVERRIDE;
@@ -125,8 +140,7 @@ private:
         MultipleLayersWithContents
     };
 
-    ContentsLayerCount countPotentialLayersWithContents() const;
-    bool shouldPaintToIntermediateSurface() const;
+    bool shouldBlend() const;
 
     inline FloatRect layerRect() const
     {

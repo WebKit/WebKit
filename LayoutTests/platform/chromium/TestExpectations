@@ -3805,6 +3805,9 @@ webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overfl
 webkit.org/b/94353 compositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 webkit.org/b/94353 platform/chromium/virtual/softwarecompositing/overflow/overflow-overlay-with-touch.html [ Failure ]
 
+webkit.org/b/110871 compositing/overlap-blending/ [ Skip ]
+webkit.org/b/110871 platform/chromium/virtual/softwarecompositing/overlap-blending/ [ Skip ]
+
 webkit.org/b/90488 [ Win ] http/tests/inspector/network-preflight-options.html [ Pass Slow ]
 webkit.org/b/90488 [ Win ] inspector/extensions/extensions-reload.html [ Pass Slow ]
 

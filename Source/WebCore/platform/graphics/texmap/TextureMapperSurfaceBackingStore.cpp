@@ -44,10 +44,10 @@ PassRefPtr<BitmapTexture> TextureMapperSurfaceBackingStore::texture() const
     return emptyTexture;
 }
 
-void TextureMapperSurfaceBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void TextureMapperSurfaceBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     if (m_graphicsSurface)
-        m_graphicsSurface->paintToTextureMapper(textureMapper, targetRect, transform, opacity, mask);
+        m_graphicsSurface->paintToTextureMapper(textureMapper, targetRect, transform, opacity);
 }
 
 } // namespace WebCore

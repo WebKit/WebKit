@@ -47,12 +47,12 @@ TransformationMatrix TextureMapperTiledBackingStore::adjustedTransformForRect(co
     return TransformationMatrix::rectToRect(rect(), targetRect);
 }
 
-void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void TextureMapperTiledBackingStore::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     updateContentsFromImageIfNeeded(textureMapper);
     TransformationMatrix adjustedTransform = transform * adjustedTransformForRect(targetRect);
     for (size_t i = 0; i < m_tiles.size(); ++i)
-        m_tiles[i].paint(textureMapper, adjustedTransform, opacity, mask, calculateExposedTileEdges(rect(), m_tiles[i].rect()));
+        m_tiles[i].paint(textureMapper, adjustedTransform, opacity, calculateExposedTileEdges(rect(), m_tiles[i].rect()));
 }
 
 void TextureMapperTiledBackingStore::drawBorder(TextureMapper* textureMapper, const Color& borderColor, float borderWidth, const FloatRect& targetRect, const TransformationMatrix& transform)

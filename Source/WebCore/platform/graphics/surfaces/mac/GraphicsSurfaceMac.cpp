@@ -333,13 +333,13 @@ void GraphicsSurface::platformCopyFromTexture(uint32_t texture, const IntRect& s
     m_private->copyFromTexture(texture, sourceRect);
 }
 
-void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity, BitmapTexture* mask)
+void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& transform, float opacity)
 {
     IntSize size = m_private->size();
     FloatRect rectOnContents(FloatPoint::zero(), size);
     TransformationMatrix adjustedTransform = transform;
     adjustedTransform.multiply(TransformationMatrix::rectToRect(rectOnContents, targetRect));
-    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(m_private->frontBufferTextureID(), TextureMapperGL::ShouldBlend | TextureMapperGL::ShouldUseARBTextureRect, size, rectOnContents, adjustedTransform, opacity, mask);
+    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(m_private->frontBufferTextureID(), TextureMapperGL::ShouldBlend | TextureMapperGL::ShouldUseARBTextureRect, size, rectOnContents, adjustedTransform, opacity);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const

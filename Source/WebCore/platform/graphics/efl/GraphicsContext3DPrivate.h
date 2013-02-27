@@ -48,7 +48,7 @@ public:
     PlatformGraphicsContext3D platformGraphicsContext3D() const;
     void setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback>);
 #if USE(TEXTURE_MAPPER_GL)
-    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float, BitmapTexture*) OVERRIDE;
+    virtual void paintToTextureMapper(TextureMapper*, const FloatRect&, const TransformationMatrix&, float) OVERRIDE;
 #endif
 #if USE(GRAPHICS_SURFACE)
     virtual IntSize platformLayerSize() const OVERRIDE;

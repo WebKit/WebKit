@@ -78,7 +78,7 @@ PlatformGraphicsContext3D GraphicsContext3DPrivate::platformContext()
 }
 
 #if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture* mask)
+void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
     if (!m_glContext)
         return;
@@ -142,7 +142,7 @@ void GraphicsContext3DPrivate::paintToTextureMapper(TextureMapper* textureMapper
     TextureMapperGL* texmapGL = static_cast<TextureMapperGL*>(textureMapper);
     TextureMapperGL::Flags flags = TextureMapperGL::ShouldFlipTexture | (m_context->m_attrs.alpha ? TextureMapperGL::ShouldBlend : 0);
     IntSize textureSize(m_context->m_currentWidth, m_context->m_currentHeight);
-    texmapGL->drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity, mask);
+    texmapGL->drawTexture(m_context->m_texture, flags, textureSize, targetRect, matrix, opacity);
 #endif // USE(ACCELERATED_COMPOSITING_GL)
 }
 #endif // USE(ACCELERATED_COMPOSITING)

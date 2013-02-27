@@ -69,10 +69,10 @@ void TextureMapperTile::updateContents(TextureMapper* textureMapper, GraphicsLay
     m_texture->updateContents(textureMapper, sourceLayer, targetRect, sourceOffset, updateContentsFlag);
 }
 
-void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, BitmapTexture* mask, const unsigned exposedEdges)
+void TextureMapperTile::paint(TextureMapper* textureMapper, const TransformationMatrix& transform, float opacity, const unsigned exposedEdges)
 {
     if (texture().get())
-        textureMapper->drawTexture(*texture().get(), rect(), transform, opacity, mask, exposedEdges);
+        textureMapper->drawTexture(*texture().get(), rect(), transform, opacity, exposedEdges);
 }
 
 } // namespace WebCore

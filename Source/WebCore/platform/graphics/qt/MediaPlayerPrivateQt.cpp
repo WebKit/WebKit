@@ -645,7 +645,7 @@ void MediaPlayerPrivateQt::paintCurrentFrameInContext(GraphicsContext* context, 
 }
 
 #if USE(ACCELERATED_COMPOSITING)
-void MediaPlayerPrivateQt::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity, BitmapTexture*)
+void MediaPlayerPrivateQt::paintToTextureMapper(TextureMapper* textureMapper, const FloatRect& targetRect, const TransformationMatrix& matrix, float opacity)
 {
 }
 #endif

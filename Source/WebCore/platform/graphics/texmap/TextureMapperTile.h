@@ -41,7 +41,7 @@ public:
 
     void updateContents(TextureMapper*, Image*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData);
     void updateContents(TextureMapper*, GraphicsLayer*, const IntRect&, BitmapTexture::UpdateContentsFlag UpdateCanModifyOriginalImageData);
-    virtual void paint(TextureMapper*, const TransformationMatrix&, float, BitmapTexture*, const unsigned exposedEdges);
+    virtual void paint(TextureMapper*, const TransformationMatrix&, float, const unsigned exposedEdges);
     virtual ~TextureMapperTile() { }
 
     explicit TextureMapperTile(const FloatRect& rect)
