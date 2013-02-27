@@ -117,6 +117,9 @@ static const char WebSocketCreate[] = "WebSocketCreate";
 static const char WebSocketSendHandshakeRequest[] = "WebSocketSendHandshakeRequest";
 static const char WebSocketReceiveHandshakeResponse[] = "WebSocketReceiveHandshakeResponse";
 static const char WebSocketDestroy[] = "WebSocketDestroy";
+
+// Event names visible to other modules.
+const char Rasterize[] = "Rasterize";
 }
 
 void InspectorTimelineAgent::pushGCEventRecords()
@@ -189,6 +192,7 @@ void InspectorTimelineAgent::stop(ErrorString*)
     if (!m_state->getBoolean(TimelineAgentState::timelineAgentEnabled))
         return;
 
+    m_traceEventProcessor->shutdown();
     m_traceEventProcessor.clear();
     m_weakFactory.revokeAll();
     m_instrumentingAgents->setInspectorTimelineAgent(0);
@@ -222,6 +226,9 @@ void InspectorTimelineAgent::supportsFrameInstrumentation(ErrorString*, bool* re
 
 void InspectorTimelineAgent::didBeginFrame()
 {
+#if PLATFORM(CHROMIUM)
+    TRACE_EVENT_INSTANT0("webkit", InstrumentationEvents::BeginFrame);
+#endif
     m_pendingFrameRecord = TimelineRecordFactory::createGenericRecord(timestamp(), 0);
 }
 

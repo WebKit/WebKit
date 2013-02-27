@@ -55,12 +55,15 @@ public:
     enum TraceEventPhase {
         TracePhaseBegin = 'B',
         TracePhaseEnd = 'E',
-        TracePhaseInstant = 'I'
+        TracePhaseInstant = 'I',
+        TracePhaseCreateObject = 'N',
+        TracePhaseDeleteObject = 'D'
     };
 
     TimelineTraceEventProcessor(WeakPtr<InspectorTimelineAgent>, InspectorClient*);
     ~TimelineTraceEventProcessor();
 
+    void shutdown();
     void processEventOnAnyThread(TraceEventPhase, const char* name, unsigned long long id,
         int numArgs, const char* const* argNames, const unsigned char* argTypes, const unsigned long long* argValues,
         unsigned char flags);
@@ -93,22 +96,30 @@ private:
         {
         }
 
-        TraceEvent(double timestamp, TraceEventPhase phase, const char* name, ThreadIdentifier threadIdentifier,
+        TraceEvent(double timestamp, TraceEventPhase phase, const char* name, unsigned long long id, ThreadIdentifier threadIdentifier,
             int argumentCount, const char* const* argumentNames, const unsigned char* argumentTypes, const unsigned long long* argumentValues)
             : m_timestamp(timestamp)
             , m_phase(phase)
             , m_name(name)
+            , m_id(id)
             , m_threadIdentifier(threadIdentifier)
             , m_argumentCount(argumentCount)
-            , m_argumentNames(argumentNames)
-            , m_argumentTypes(argumentTypes)
-            , m_argumentValues(argumentValues)
         {
+            if (m_argumentCount > MaxArguments) {
+                ASSERT_NOT_REACHED();
+                m_argumentCount = MaxArguments;
+            }
+            for (int i = 0; i < m_argumentCount; ++i) {
+                m_argumentNames[i] = argumentNames[i];
+                m_argumentTypes[i] = argumentTypes[i];
+                m_argumentValues[i] = argumentValues[i];
+            }
         }
 
         double timestamp() const { return m_timestamp; }
         TraceEventPhase phase() const { return m_phase; }
         const char* name() const { return m_name; }
+        unsigned long long id() const { return m_id; }
         ThreadIdentifier threadIdentifier() const { return m_threadIdentifier; }
         int argumentCount() const { return m_argumentCount; }
 
@@ -118,11 +129,16 @@ private:
         }
         long long asInt(const char* name) const
         {
-            return parameter(name, TypeInt).m_int;
+            size_t index = findParameter(name);
+            if (index == notFound || (m_argumentTypes[index] != TypeInt && m_argumentTypes[index] != TypeUInt)) {
+                ASSERT_NOT_REACHED();
+                return 0;
+            }
+            return reinterpret_cast<const TraceValueUnion*>(m_argumentValues + index)->m_int;
         }
         unsigned long long asUInt(const char* name) const
         {
-            return parameter(name, TypeUInt).m_uint;
+            return asInt(name);
         }
         double asDouble(const char* name) const
         {
@@ -134,58 +150,56 @@ private:
         }
 
     private:
+        enum { MaxArguments = 2 };
+
+        size_t findParameter(const char*) const;
         const TraceValueUnion& parameter(const char* name, TraceValueTypes expectedType) const;
 
         double m_timestamp;
         TraceEventPhase m_phase;
         const char* m_name;
+        unsigned long long m_id;
         ThreadIdentifier m_threadIdentifier;
         int m_argumentCount;
-        const char* const* m_argumentNames;
-        const unsigned char* m_argumentTypes;
-        const unsigned long long* m_argumentValues;
+        const char* m_argumentNames[MaxArguments];
+        unsigned char m_argumentTypes[MaxArguments];
+        unsigned long long m_argumentValues[MaxArguments];
     };
 
     typedef void (TimelineTraceEventProcessor::*TraceEventHandler)(const TraceEvent&);
 
-    struct EventTypeEntry {
-        EventTypeEntry()
-            : m_begin(0)
-            , m_end(0)
-            , m_instant(0)
-        {
-        }
-        explicit EventTypeEntry(TraceEventHandler instant)
-            : m_begin(0)
-            , m_end(0)
-            , m_instant(instant)
-        {
-        }
-        EventTypeEntry(TraceEventHandler begin, TraceEventHandler end)
-            : m_begin(begin)
-            , m_end(end)
-            , m_instant(0)
-        {
-        }
-
-        TraceEventHandler m_begin;
-        TraceEventHandler m_end;
-        TraceEventHandler m_instant;
-    };
-
     void processBackgroundEvents();
-    void sendTimelineRecord(PassRefPtr<InspectorObject> data, const String& recordType, double startTime, double endTime, const String& thread);
-    void processEvent(const EventTypeEntry&, const TraceEvent&);
+    void sendTimelineRecord(PassRefPtr<InspectorObject> data, const String& recordType, double startTime, double endTime, const String& Thread);
+
+    void onBeginFrame(const TraceEvent&);
+    void onPaintLayerBegin(const TraceEvent&);
+    void onPaintLayerEnd(const TraceEvent&);
+    void onRasterTaskBegin(const TraceEvent&);
+    void onRasterTaskEnd(const TraceEvent&);
+    void onLayerDeleted(const TraceEvent&);
+    void onPaint(const TraceEvent&);
+
+    void flushRasterizerStatistics();
+
+    void registerHandler(const char* name, TraceEventPhase, TraceEventHandler);
 
     WeakPtr<InspectorTimelineAgent> m_timelineAgent;
     InspectorClient* m_inspectorClient;
 
-    HashMap<String, EventTypeEntry> m_handlersByType;
+    typedef HashMap<std::pair<String, int>, TraceEventHandler> HandlersMap;
+    HandlersMap m_handlersByType;
     Mutex m_backgroundEventsMutex;
     Vector<TraceEvent> m_backgroundEvents;
     unsigned long long m_pageId;
-};
 
+    HashSet<unsigned long long> m_knownLayers;
+    HashMap<ThreadIdentifier, double> m_rasterStartTimeByThread;
+    double m_firstRasterStartTime;
+    double m_lastRasterEndTime;
+    double m_frameRasterTime;
+
+    unsigned long long m_layerId;
+};
 
 } // namespace WebCore
 
