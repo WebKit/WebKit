@@ -2,5 +2,8 @@
 #
 # See http://trac.webkit.org/wiki/TestExpectations for more information on this file.
 
+# New test in need of pixel baselines
+webkit.org/b/110889 fast/borders/border-radius-percent.html [ ImageOnlyFailure Pass ]
+
 # pending functional patch and per-port verification
 webkit.org/b/109954 css3/line-break [ Skip ]
