@@ -1851,6 +1851,9 @@ webkit.org/b/109507 compositing/contents-opaque/contents-opaque-layer-opacity.ht
 webkit.org/b/109507 compositing/contents-opaque/contents-opaque-layer-transform.html [ Failure ]
 webkit.org/b/109507 compositing/layer-creation/fixed-position-change-out-of-view-in-view.html [ Failure ]
 
+# CUSTOM_ELEMENTS is not enabled.
+webkit.org/b/110958 fast/dom/custom [ Failure ]
+
 # Failing after r143256.
 webkit.org/b/110282 fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
 
