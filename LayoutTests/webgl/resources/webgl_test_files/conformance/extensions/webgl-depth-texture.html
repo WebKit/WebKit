@@ -71,12 +71,23 @@ var vao = null;
 var tex;
 var name;
 var supportedFormats;
+var res = 8;
 var canvas2;
+var imageData;
 
 if (!gl) {
     testFailed("WebGL context does not exist");
 } else {
     testPassed("WebGL context exists");
+
+    // make canvas for testing.
+    canvas2 = document.createElement("canvas");
+    canvas2.width = res;
+    canvas2.height = res;
+    var ctx = canvas2.getContext("2d");
+    ctx.fillStyle = "blue";
+    ctx.fillRect(0, 0, canvas2.width, canvas2.height);
+    imageData = ctx.getImageData(0, 0, canvas2.width, canvas2.height);
 
     // Run tests with extension disabled
     runTestDisabled();
@@ -119,8 +130,11 @@ function runTestDisabled() {
     gl.bindTexture(gl.TEXTURE_2D, tex);
     shouldGenerateGLError(gl, gl.INVALID_ENUM, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, null)');
     shouldGenerateGLError(gl, gl.INVALID_ENUM, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, 1, 1, 0, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, null)');
+    shouldGenerateGLError(gl, gl.INVALID_ENUM, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, imageData)');
+    shouldGenerateGLError(gl, gl.INVALID_ENUM, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, imageData)');
+    shouldGenerateGLError(gl, gl.INVALID_ENUM, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_SHORT, canvas2)');
+    shouldGenerateGLError(gl, gl.INVALID_ENUM, 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.DEPTH_COMPONENT, gl.DEPTH_COMPONENT, gl.UNSIGNED_INT, canvas2)');
 }
-
 
 function dumpIt(gl, res, msg) {
   return;  // comment out to debug
@@ -139,16 +153,6 @@ function dumpIt(gl, res, msg) {
 }
 function runTestExtension() {
     debug("Testing WEBGL_depth_texture");
-
-    var res = 8;
-
-    // make canvas for testing.
-    canvas2 = document.createElement("canvas");
-    canvas2.width = res;
-    canvas2.height = res;
-    var ctx = canvas2.getContext("2d");
-    ctx.fillStyle = "blue";
-    ctx.fillRect(0, 0, canvas2.width, canvas2.height);
 
     var program = wtu.setupProgram(gl, ['vshader', 'fshader'], ['a_position']);
     gl.useProgram(program);
@@ -216,6 +220,15 @@ function runTestExtension() {
         // test with canvas
         shouldGenerateGLError(gl, [gl.INVALID_VALUE, gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.' + typeInfo.format + ', gl.' + typeInfo.format + ', ' + typeStr  + ', canvas2)');
 
+        // test with canvas with illegal internal format
+        shouldGenerateGLError(gl, [gl.INVALID_VALUE, gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.texImage2D(gl.TEXTURE_2D, 0, 0, gl.' + typeInfo.format + ', ' + typeStr  + ', canvas2)');
+
+        // test with ImageData
+        shouldGenerateGLError(gl, [gl.INVALID_VALUE, gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.texImage2D(gl.TEXTURE_2D, 0, gl.' + typeInfo.format + ', gl.' + typeInfo.format + ', ' + typeStr  + ', imageData)');
+
+        // test with ImageData with illegal internal format
+        shouldGenerateGLError(gl, [gl.INVALID_VALUE, gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.texImage2D(gl.TEXTURE_2D, 0, 0, gl.' + typeInfo.format + ', ' + typeStr  + ', imageData)');
+
         // test copyTexImage2D
         shouldGenerateGLError(gl, [gl.INVALID_ENUM, gl.INVALID_OPERATION], 'gl.copyTexImage2D(gl.TEXTURE_2D, 0, gl.' + typeInfo.format + ', 0, 0, 1, 1, 0)');
 
@@ -224,6 +237,12 @@ function runTestExtension() {
 
         // test texSubImage2D
         shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 1, 1, gl.' + typeInfo.format + ', ' + typeStr  + ', ' + typeInfo.data + ')');
+
+        // test texSubImage2D with canvas
+        shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.' + typeInfo.format + ', ' + typeStr  + ', canvas2)');
+
+        // test texSubImage2D with ImageData
+        shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.' + typeInfo.format + ', ' + typeStr  + ', imageData)');
 
         // test copyTexSubImage2D
         shouldGenerateGLError(gl, gl.INVALID_OPERATION, 'gl.copyTexSubImage2D(gl.TEXTURE_2D, 0, 0, 0, 0, 0, 1, 1)');
