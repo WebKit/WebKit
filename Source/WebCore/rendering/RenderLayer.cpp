@@ -3574,26 +3574,8 @@ void RenderLayer::paintLayer(GraphicsContext* context, const LayerPaintingInfo& 
             parent()->clipToRect(paintingInfo.rootLayer, context, paintingInfo.paintDirtyRect, clipRect);
         }
 
-        // Adjust the transform such that the renderer's upper left corner will paint at (0,0) in user space.
-        // This involves subtracting out the position of the layer in our current coordinate space, but preserving
-        // the accumulated error for sub-pixel layout.
-        LayoutPoint delta;
-        convertToLayerCoords(paintingInfo.rootLayer, delta);
-        TransformationMatrix transform(layerTransform);
-        IntPoint roundedDelta = roundedIntPoint(delta);
-        transform.translateRight(roundedDelta.x(), roundedDelta.y());
-        LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + (delta - roundedDelta);
+        paintLayerByApplyingTransform(context, paintingInfo, paintFlags);
         
-        // Apply the transform.
-        {
-            GraphicsContextStateSaver stateSaver(*context);
-            context->concatCTM(transform.toAffineTransform());
-
-            // Now do a paint with the root layer shifted to be us.
-            LayerPaintingInfo transformedPaintingInfo(this, enclosingIntRect(transform.inverse().mapRect(paintingInfo.paintDirtyRect)), paintingInfo.paintBehavior, adjustedSubPixelAccumulation, paintingInfo.paintingRoot, paintingInfo.region, paintingInfo.overlapTestRequests);
-            paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
-        }        
-
         // Restore the clip.
         if (parent())
             parent()->restoreClip(context, paintingInfo.paintDirtyRect, clipRect);
@@ -3895,6 +3877,28 @@ void RenderLayer::paintLayerContents(GraphicsContext* context, const LayerPainti
         context->restore();
 }
 
+void RenderLayer::paintLayerByApplyingTransform(GraphicsContext* context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags, const LayoutPoint& translationOffset)
+{
+    // This involves subtracting out the position of the layer in our current coordinate space, but preserving
+    // the accumulated error for sub-pixel layout.
+    LayoutPoint delta;
+    convertToLayerCoords(paintingInfo.rootLayer, delta);
+    delta.moveBy(translationOffset);
+    TransformationMatrix transform(renderableTransform(paintingInfo.paintBehavior));
+    IntPoint roundedDelta = roundedIntPoint(delta);
+    transform.translateRight(roundedDelta.x(), roundedDelta.y());
+    LayoutSize adjustedSubPixelAccumulation = paintingInfo.subPixelAccumulation + (delta - roundedDelta);
+
+    // Apply the transform.
+    GraphicsContextStateSaver stateSaver(*context);
+    context->concatCTM(transform.toAffineTransform());
+
+    // Now do a paint with the root layer shifted to be us.
+    LayerPaintingInfo transformedPaintingInfo(this, enclosingIntRect(transform.inverse().mapRect(paintingInfo.paintDirtyRect)), paintingInfo.paintBehavior,
+        adjustedSubPixelAccumulation, paintingInfo.paintingRoot, paintingInfo.region, paintingInfo.overlapTestRequests);
+    paintLayerContentsAndReflection(context, transformedPaintingInfo, paintFlags);
+}
+
 void RenderLayer::paintList(Vector<RenderLayer*>* list, GraphicsContext* context, const LayerPaintingInfo& paintingInfo, PaintLayerFlags paintFlags)
 {
     if (!list)
@@ -4124,7 +4128,8 @@ static double computeZOffset(const HitTestingTransformState& transformState)
 
 PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(RenderLayer* rootLayer, RenderLayer* containerLayer,
                                         const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation,
-                                        const HitTestingTransformState* containerTransformState) const
+                                        const HitTestingTransformState* containerTransformState,
+                                        const LayoutPoint& translationOffset) const
 {
     RefPtr<HitTestingTransformState> transformState;
     LayoutPoint offset;
@@ -4138,7 +4143,8 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
         transformState = HitTestingTransformState::create(hitTestLocation.transformedPoint(), hitTestLocation.transformedRect(), FloatQuad(hitTestRect));
         convertToLayerCoords(rootLayer, offset);
     }
-    
+    offset.moveBy(translationOffset);
+
     RenderObject* containerRenderer = containerLayer ? containerLayer->renderer() : 0;
     if (renderer()->shouldUseTransformFromContainer(containerRenderer)) {
         TransformationMatrix containerTransform;
@@ -4204,30 +4210,7 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
                 return 0;
         }
 
-        // Create a transform state to accumulate this transform.
-        RefPtr<HitTestingTransformState> newTransformState = createLocalTransformState(rootLayer, containerLayer, hitTestRect, hitTestLocation, transformState);
-
-        // If the transform can't be inverted, then don't hit test this layer at all.
-        if (!newTransformState->m_accumulatedTransform.isInvertible())
-            return 0;
-
-        // Compute the point and the hit test rect in the coords of this layer by using the values
-        // from the transformState, which store the point and quad in the coords of the last flattened
-        // layer, and the accumulated transform which lets up map through preserve-3d layers.
-        //
-        // We can't just map hitTestLocation and hitTestRect because they may have been flattened (losing z)
-        // by our container.
-        FloatPoint localPoint = newTransformState->mappedPoint();
-        FloatQuad localPointQuad = newTransformState->mappedQuad();
-        LayoutRect localHitTestRect = newTransformState->boundsOfMappedArea();
-        HitTestLocation newHitTestLocation;
-        if (hitTestLocation.isRectBasedTest())
-            newHitTestLocation = HitTestLocation(localPoint, localPointQuad);
-        else
-            newHitTestLocation = HitTestLocation(localPoint);
-
-        // Now do a hit test with the root layer shifted to be us.
-        return hitTestLayer(this, containerLayer, request, result, localHitTestRect, newHitTestLocation, true, newTransformState.get(), zOffset);
+        return hitTestLayerByApplyingTransform(rootLayer, containerLayer, request, result, hitTestRect, hitTestLocation, transformState, zOffset);
     }
 
     // Ensure our lists and 3d status are up-to-date.
@@ -4365,6 +4348,36 @@ RenderLayer* RenderLayer::hitTestLayer(RenderLayer* rootLayer, RenderLayer* cont
     }
 
     return 0;
+}
+
+RenderLayer* RenderLayer::hitTestLayerByApplyingTransform(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
+    const LayoutRect& hitTestRect, const HitTestLocation& hitTestLocation, const HitTestingTransformState* transformState, double* zOffset,
+    const LayoutPoint& translationOffset)
+{
+    // Create a transform state to accumulate this transform.
+    RefPtr<HitTestingTransformState> newTransformState = createLocalTransformState(rootLayer, containerLayer, hitTestRect, hitTestLocation, transformState, translationOffset);
+
+    // If the transform can't be inverted, then don't hit test this layer at all.
+    if (!newTransformState->m_accumulatedTransform.isInvertible())
+        return 0;
+
+    // Compute the point and the hit test rect in the coords of this layer by using the values
+    // from the transformState, which store the point and quad in the coords of the last flattened
+    // layer, and the accumulated transform which lets up map through preserve-3d layers.
+    //
+    // We can't just map hitTestLocation and hitTestRect because they may have been flattened (losing z)
+    // by our container.
+    FloatPoint localPoint = newTransformState->mappedPoint();
+    FloatQuad localPointQuad = newTransformState->mappedQuad();
+    LayoutRect localHitTestRect = newTransformState->boundsOfMappedArea();
+    HitTestLocation newHitTestLocation;
+    if (hitTestLocation.isRectBasedTest())
+        newHitTestLocation = HitTestLocation(localPoint, localPointQuad);
+    else
+        newHitTestLocation = HitTestLocation(localPoint);
+
+    // Now do a hit test with the root layer shifted to be us.
+    return hitTestLayer(this, containerLayer, request, result, localHitTestRect, newHitTestLocation, true, newTransformState.get(), zOffset);
 }
 
 bool RenderLayer::hitTestContents(const HitTestRequest& request, HitTestResult& result, const LayoutRect& layerBounds, const HitTestLocation& hitTestLocation, HitTestFilter hitTestFilter) const
