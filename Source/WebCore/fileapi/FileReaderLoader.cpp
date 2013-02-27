@@ -274,6 +274,7 @@ PassRefPtr<ArrayBuffer> FileReaderLoader::arrayBufferResult() const
     return ArrayBuffer::create(m_rawData.get());
 }
 
+#if ENABLE(STREAM)
 PassRefPtr<Blob> FileReaderLoader::blobResult()
 {
     ASSERT(m_readType == ReadAsBlob);
@@ -294,6 +295,7 @@ PassRefPtr<Blob> FileReaderLoader::blobResult()
     }
     return m_blobResult;
 }
+#endif // ENABLE(STREAM)
 
 String FileReaderLoader::stringResult()
 {
@@ -382,6 +384,7 @@ void FileReaderLoader::setEncoding(const String& encoding)
         m_encoding = TextEncoding(encoding);
 }
 
+#if ENABLE(STREAM)
 void FileReaderLoader::setRange(unsigned start, unsigned length)
 {
     ASSERT(length > 0);
@@ -389,6 +392,7 @@ void FileReaderLoader::setRange(unsigned start, unsigned length)
     m_rangeStart = start;
     m_rangeEnd = start + length - 1;
 }
+#endif // ENABLE(STREAM)
 
 } // namespace WebCore
  

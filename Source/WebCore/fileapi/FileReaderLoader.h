@@ -73,14 +73,18 @@ public:
 
     String stringResult();
     PassRefPtr<ArrayBuffer> arrayBufferResult() const;
+#if ENABLE(STREAM)
     PassRefPtr<Blob> blobResult();
+#endif // ENABLE(STREAM)
     unsigned bytesLoaded() const { return m_bytesLoaded; }
     unsigned totalBytes() const { return m_totalBytes; }
     int errorCode() const { return m_errorCode; }
 
     void setEncoding(const String&);
     void setDataType(const String& dataType) { m_dataType = dataType; }
+#if ENABLE(STREAM)
     void setRange(unsigned, unsigned);
+#endif // ENABLE(STREAM)
 
 private:
     void terminate();
