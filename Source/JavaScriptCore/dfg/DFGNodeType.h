@@ -79,12 +79,12 @@ namespace JSC { namespace DFG {
     macro(InlineStart, 0 | NodeDoesNotExit) \
     \
     /* Nodes for bitwise operations. */\
-    macro(BitAnd, NodeResultInt32) \
-    macro(BitOr, NodeResultInt32) \
-    macro(BitXor, NodeResultInt32) \
-    macro(BitLShift, NodeResultInt32) \
-    macro(BitRShift, NodeResultInt32) \
-    macro(BitURShift, NodeResultInt32) \
+    macro(BitAnd, NodeResultInt32 | NodeMustGenerate) \
+    macro(BitOr, NodeResultInt32 | NodeMustGenerate) \
+    macro(BitXor, NodeResultInt32 | NodeMustGenerate) \
+    macro(BitLShift, NodeResultInt32 | NodeMustGenerate) \
+    macro(BitRShift, NodeResultInt32 | NodeMustGenerate) \
+    macro(BitURShift, NodeResultInt32 | NodeMustGenerate) \
     /* Bitwise operators call ToInt32 on their operands. */\
     macro(ValueToInt32, NodeResultInt32) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\

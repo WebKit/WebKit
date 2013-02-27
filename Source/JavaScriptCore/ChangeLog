@@ -1,3 +1,23 @@
+2013-02-26  Filip Pizlo  <fpizlo@apple.com>
+
+        Disable some unsound DFG DCE
+        https://bugs.webkit.org/show_bug.cgi?id=110948
+
+        Reviewed by Michael Saboff.
+        
+        DCE of bitops is not sound since the bitops might call some variant of valueOf.
+        
+        This used to work right because ValueToInt32 was MustGenerate. From the DFG IR
+        standpoint it feels weird to make ValueToInt32 be MustGenerate since that node is
+        implemented entirely as a pure conversion. If we ever gave the DFG the ability to
+        do effectful bitops, we would most likely implement them as special nodes not
+        related to the ValueToInt32 and bitop nodes we have now.
+        
+        This change is performance neutral.
+
+        * dfg/DFGNodeType.h:
+        (DFG):
+
 2013-02-27  Glenn Adams  <glenn@skynav.com>
 
         Add ENABLE_CSS3_TEXT_LINE_BREAK flag.
