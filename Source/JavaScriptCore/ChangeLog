@@ -1,3 +1,14 @@
+2013-02-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r144168.
+        http://trac.webkit.org/changeset/144168
+        https://bugs.webkit.org/show_bug.cgi?id=111019
+
+        It broke the build and tronical is unavailable (Requested by
+        Ossy_night on #webkit).
+
+        * LLIntOffsetsExtractor.pro:
+
 2013-02-26  Filip Pizlo  <fpizlo@apple.com>
 
         Disable some unsound DFG DCE
