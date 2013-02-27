@@ -137,6 +137,11 @@
     m_synthesizerObject->client()->didResumeSpeaking(m_utterance);
 }
 
+- (void)cancel
+{
+    [m_synthesizer stopSpeakingAtBoundary:NSSpeechImmediateBoundary];
+}
+
 - (void)speechSynthesizer:(NSSpeechSynthesizer *)sender didFinishSpeaking:(BOOL)finishedSpeaking
 {
     ASSERT(m_utterance);
@@ -196,6 +201,11 @@ void PlatformSpeechSynthesizer::speak(const PlatformSpeechSynthesisUtterance& ut
     [m_platformSpeechWrapper.get() speakUtterance:&utterance];
 }
 
+void PlatformSpeechSynthesizer::cancel()
+{
+    [m_platformSpeechWrapper.get() cancel];
+}
+    
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

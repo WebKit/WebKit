@@ -69,6 +69,13 @@ void PlatformSpeechSynthesizerMock::speak(const PlatformSpeechSynthesisUtterance
     // Give the fake speech job some time so that pause and other functions have time to be called.
     m_speakingFinishedTimer.startOneShot(.1);
 }
+    
+void PlatformSpeechSynthesizerMock::cancel()
+{
+    m_speakingFinishedTimer.stop();
+    client()->speakingErrorOccurred(m_utterance);
+    m_utterance = 0;
+}
 
 void PlatformSpeechSynthesizerMock::pause()
 {

@@ -64,6 +64,7 @@ public:
     virtual void speak(const PlatformSpeechSynthesisUtterance&);
     virtual void pause();
     virtual void resume();
+    virtual void cancel();
     
     PlatformSpeechSynthesizerClient* client() const { return m_speechSynthesizerClient; }
     

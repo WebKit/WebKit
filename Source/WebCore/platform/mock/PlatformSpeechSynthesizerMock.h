@@ -42,6 +42,7 @@ public:
     virtual void speak(const PlatformSpeechSynthesisUtterance&);
     virtual void pause();
     virtual void resume();
+    virtual void cancel();
     
 private:
     explicit PlatformSpeechSynthesizerMock(PlatformSpeechSynthesizerClient*);

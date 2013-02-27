@@ -111,6 +111,9 @@ void SpeechSynthesis::speak(SpeechSynthesisUtterance* utterance)
 
 void SpeechSynthesis::cancel()
 {
+    // Remove all the items from the utterance queue.
+    m_utteranceQueue.clear();
+    m_platformSpeechSynthesizer->cancel();
 }
 
 void SpeechSynthesis::pause()
@@ -137,14 +140,16 @@ void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance* utteranc
 
     fireEvent(errorOccurred ? eventNames().errorEvent : eventNames().endEvent, utterance, 0, String());
 
-    RefPtr<SpeechSynthesisUtterance> firstUtterance = m_utteranceQueue.first();
-    ASSERT(firstUtterance == utterance);
-    if (firstUtterance == utterance)
-        m_utteranceQueue.removeFirst();
-
-    // Start the next job if there is one pending.
-    if (!m_utteranceQueue.isEmpty())
-        startSpeakingImmediately(m_utteranceQueue.first().get());
+    if (m_utteranceQueue.size()) {
+        RefPtr<SpeechSynthesisUtterance> firstUtterance = m_utteranceQueue.first();
+        ASSERT(firstUtterance == utterance);
+        if (firstUtterance == utterance)
+            m_utteranceQueue.removeFirst();
+        
+        // Start the next job if there is one pending.
+        if (!m_utteranceQueue.isEmpty())
+            startSpeakingImmediately(m_utteranceQueue.first().get());
+    }
 }
 
 void SpeechSynthesis::didStartSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
