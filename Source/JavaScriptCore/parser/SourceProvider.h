@@ -58,7 +58,9 @@ namespace JSC {
             ASSERT(this);
             if (!this) // Be defensive in release mode.
                 return nullID;
-            return reinterpret_cast<intptr_t>(this);
+            if (!m_id)
+                getID();
+            return m_id;
         }
 
         bool isValid() const { return m_validated; }
@@ -66,9 +68,12 @@ namespace JSC {
 
     private:
 
+        JS_EXPORT_PRIVATE void getID();
+
         String m_url;
         TextPosition m_startPosition;
-        bool m_validated;
+        bool m_validated : 1;
+        uintptr_t m_id : sizeof(uintptr_t) * 8 - 1;
     };
 
     class StringSourceProvider : public SourceProvider {
