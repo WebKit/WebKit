@@ -33,7 +33,7 @@
     EventTarget,
     JSNoStaticTables
 ] interface IDBRequest {
-    readonly attribute IDBAny result
+    [V8Custom] readonly attribute IDBAny result
         getter raises (DOMException);
     readonly attribute DOMError error
         getter raises (DOMException);

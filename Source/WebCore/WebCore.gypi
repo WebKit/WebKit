@@ -1384,6 +1384,7 @@
             'bindings/v8/custom/V8HTMLSelectElementCustom.h',
             'bindings/v8/custom/V8HistoryCustom.cpp',
             'bindings/v8/custom/V8IDBAnyCustom.cpp',
+            'bindings/v8/custom/V8IDBRequestCustom.cpp',
             'bindings/v8/custom/V8ImageDataCustom.cpp',
             'bindings/v8/custom/V8InjectedScriptHostCustom.cpp',
             'bindings/v8/custom/V8InjectedScriptManager.cpp',
