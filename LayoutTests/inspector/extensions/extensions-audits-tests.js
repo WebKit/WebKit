@@ -25,7 +25,7 @@ var initialize_ExtensionsAuditsTest = function()
                 callback();
             });
         }
-        InspectorTest.addSniffer(WebInspector.panels.audits, "_auditFinishedCallback", onAuditsDone, true);
+        InspectorTest.addSniffer(WebInspector.panels.audits, "auditFinishedCallback", onAuditsDone, true);
 
         launcherView._launchButtonClicked();
     }

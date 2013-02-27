@@ -76942,6 +76942,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\AuditController.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\AuditFormatters.js"
 					>
 				</File>

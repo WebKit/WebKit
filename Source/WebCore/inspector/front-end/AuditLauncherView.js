@@ -30,14 +30,15 @@
 
 /**
  * @constructor
- * @param {function(Array.<string>, WebInspector.Progress, boolean, function(), function()):undefined} runnerCallback
+ * @param {WebInspector.AuditController} auditController
  * @extends {WebInspector.View}
  */
-WebInspector.AuditLauncherView = function(runnerCallback)
+WebInspector.AuditLauncherView = function(auditController)
 {
     WebInspector.View.call(this);
 
-    this._runnerCallback = runnerCallback;
+    this._auditController = auditController;
+
     this._categoryIdPrefix = "audit-category-item-";
     this._auditRunning = false;
 
@@ -156,7 +157,7 @@ WebInspector.AuditLauncherView.prototype = {
         {
             this._displayResourceLoadingProgress = false;
         }
-        this._runnerCallback(catIds, this._progressIndicator, this._auditPresentStateElement.checked, onAuditStarted.bind(this), this._setAuditRunning.bind(this, false));
+        this._auditController.initiateAudit(catIds, this._progressIndicator, this._auditPresentStateElement.checked, onAuditStarted.bind(this), this._setAuditRunning.bind(this, false));
     },
 
     _stopAudit: function()

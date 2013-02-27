@@ -5455,6 +5455,7 @@
 
         'webinspector_audits_js_files': [
             'inspector/front-end/AuditCategories.js',
+            'inspector/front-end/AuditController.js',
             'inspector/front-end/AuditFormatters.js',
             'inspector/front-end/AuditLauncherView.js',
             'inspector/front-end/AuditResultView.js',

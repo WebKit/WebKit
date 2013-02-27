@@ -57,11 +57,10 @@ WebInspector.AuditsPanel = function()
 
     this._constructCategories();
 
-    this._launcherView = new WebInspector.AuditLauncherView(this.initiateAudit.bind(this));
+    this._auditController = new WebInspector.AuditController(this);
+    this._launcherView = new WebInspector.AuditLauncherView(this._auditController);
     for (var id in this.categoriesById)
         this._launcherView.addCategory(this.categoriesById[id]);
-
-    WebInspector.resourceTreeModel.addEventListener(WebInspector.ResourceTreeModel.EventTypes.OnLoad, this._didMainResourceLoad, this);
 }
 
 WebInspector.AuditsPanel.prototype = {
@@ -107,52 +106,10 @@ WebInspector.AuditsPanel.prototype = {
     },
 
     /**
-     * @param {!Array.<!WebInspector.AuditCategory>} categories
-     * @param {function(string, !Array.<!WebInspector.AuditCategoryResult>)} resultCallback
-     */
-    _executeAudit: function(categories, resultCallback)
-    {
-        this._progress.setTitle(WebInspector.UIString("Running audit"));
-
-        function ruleResultReadyCallback(categoryResult, ruleResult)
-        {
-            if (ruleResult && ruleResult.children)
-                categoryResult.addRuleResult(ruleResult);
-
-            if (this._progress.isCanceled())
-                this._progress.done();
-        }
-
-        var results = [];
-        var mainResourceURL = WebInspector.inspectedPageURL;
-        var categoriesDone = 0;
-        function categoryDoneCallback()
-        {
-            if (++categoriesDone !== categories.length)
-                return;
-            this._progress.done();
-            resultCallback(mainResourceURL, results)
-        }
-
-        var requests = WebInspector.networkLog.requests.slice();
-        var compositeProgress = new WebInspector.CompositeProgress(this._progress);
-        var subprogresses = [];
-        for (var i = 0; i < categories.length; ++i)
-            subprogresses.push(compositeProgress.createSubProgress());
-        for (var i = 0; i < categories.length; ++i) {
-            var category = categories[i];
-            var result = new WebInspector.AuditCategoryResult(category);
-            results.push(result);
-            category.run(requests, ruleResultReadyCallback.bind(this, result), categoryDoneCallback.bind(this), subprogresses[i]);
-        }
-    },
-
-    /**
-     * @param {function()} launcherCallback
      * @param {string} mainResourceURL
      * @param {!Array.<!WebInspector.AuditCategoryResult>} results
      */
-    _auditFinishedCallback: function(launcherCallback, mainResourceURL, results)
+    auditFinishedCallback: function(mainResourceURL, results)
     {
         var children = this.auditResultsTreeElement.children;
         var ordinal = 1;
@@ -164,55 +121,6 @@ WebInspector.AuditsPanel.prototype = {
         var resultTreeElement = new WebInspector.AuditResultSidebarTreeElement(this, results, mainResourceURL, ordinal);
         this.auditResultsTreeElement.appendChild(resultTreeElement);
         resultTreeElement.revealAndSelect();
-        if (!this._progress.isCanceled())
-            launcherCallback();
-    },
-
-    /**
-     * @param {Array.<string>} categoryIds
-     * @param {WebInspector.Progress} progress
-     * @param {boolean} runImmediately
-     * @param {function()} startedCallback
-     * @param {function()} finishedCallback
-     */
-    initiateAudit: function(categoryIds, progress, runImmediately, startedCallback, finishedCallback)
-    {
-        if (!categoryIds || !categoryIds.length)
-            return;
-
-        this._progress = progress;
-
-        var categories = [];
-        for (var i = 0; i < categoryIds.length; ++i)
-            categories.push(this.categoriesById[categoryIds[i]]);
-
-        function startAuditWhenResourcesReady()
-        {
-            startedCallback();
-            this._executeAudit(categories, this._auditFinishedCallback.bind(this, finishedCallback));
-        }
-
-        if (runImmediately)
-            startAuditWhenResourcesReady.call(this);
-        else
-            this._reloadResources(startAuditWhenResourcesReady.bind(this));
-
-        WebInspector.userMetrics.AuditsStarted.record();
-    },
-
-    _reloadResources: function(callback)
-    {
-        this._pageReloadCallback = callback;
-        PageAgent.reload(false);
-    },
-
-    _didMainResourceLoad: function()
-    {
-        if (this._pageReloadCallback) {
-            var callback = this._pageReloadCallback;
-            delete this._pageReloadCallback;
-            callback();
-        }
     },
 
     /**
@@ -607,6 +515,7 @@ WebInspector.AuditRules = {};
 WebInspector.AuditCategories = {};
 
 importScript("AuditCategories.js");
+importScript("AuditController.js");
 importScript("AuditFormatters.js");
 importScript("AuditLauncherView.js");
 importScript("AuditResultView.js");

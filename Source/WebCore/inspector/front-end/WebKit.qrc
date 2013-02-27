@@ -5,6 +5,7 @@
     <file>ApplicationCacheItemsView.js</file>
     <file>ApplicationCacheModel.js</file>
     <file>AuditCategories.js</file>
+    <file>AuditController.js</file>
     <file>AuditFormatters.js</file>
     <file>AuditLauncherView.js</file>
     <file>AuditResultView.js</file>

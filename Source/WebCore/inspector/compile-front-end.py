@@ -295,6 +295,7 @@ modules = [
         "dependencies": ["components"],
         "sources": [
             "AuditCategories.js",
+            "AuditController.js",
             "AuditFormatters.js",
             "AuditLauncherView.js",
             "AuditResultView.js",
