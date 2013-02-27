@@ -367,9 +367,6 @@ http/tests/misc/link-rel-icon-beforeload.html
 # WebKitTestRunner should dump text/plain content as text
 http/tests/incremental/slow-utf8-text.pl
 
-# WebKitTestRunner needs layoutTestController.setSmartInsertDeleteEnabled
-editing/deleting/smart-editing-disabled.html
-
 # WebKitTestRunner needs plainText.plainText
 editing/text-iterator/basic-iteration.html
 

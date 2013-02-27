@@ -194,3 +194,5 @@ touchDragDropEnabled initial=false
 unifiedTextCheckerEnabled initial=defaultUnifiedTextCheckerEnabled
 
 logsPageMessagesToSystemConsoleEnabled initial=false
+
+smartInsertDeleteEnabled initial=true

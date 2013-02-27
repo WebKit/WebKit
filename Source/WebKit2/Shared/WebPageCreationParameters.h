@@ -88,7 +88,6 @@ struct WebPageCreationParameters {
     bool mayStartMediaWhenInWindow;
 
 #if PLATFORM(MAC)
-    bool isSmartInsertDeleteEnabled;
     LayerHostingMode layerHostingMode;
     ColorSpaceData colorSpace;
 #endif

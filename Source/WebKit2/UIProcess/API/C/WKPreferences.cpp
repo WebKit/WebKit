@@ -1033,3 +1033,13 @@ bool WKPreferencesGetPageVisibilityBasedProcessSuppressionEnabled(WKPreferencesR
 {
     return toImpl(preferencesRef)->pageVisibilityBasedProcessSuppressionEnabled();
 }
+
+void WKPreferencesSetSmartInsertDeleteEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setSmartInsertDeleteEnabled(enabled);
+}
+
+bool WKPreferencesGetSmartInsertDeleteEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->smartInsertDeleteEnabled();
+}

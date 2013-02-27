@@ -1,3 +1,47 @@
+2013-02-27  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        Add smartInsertDeleteEnabled setting to WebCore::Page
+        https://bugs.webkit.org/show_bug.cgi?id=107840
+
+        Reviewed by Ryosuke Niwa.
+
+        * Shared/WebPageCreationParameters.cpp:
+        (WebKit::WebPageCreationParameters::encode):
+        (WebKit::WebPageCreationParameters::decode): Remove code related to
+        isSmartInsertDeleteEnabled.
+        * Shared/WebPageCreationParameters.h:
+        (WebPageCreationParameters): Remove isSmartInsertDeleteEnabled.
+        * Shared/WebPreferencesStore.h:
+        (WebKit): Add macro for smartInsertDeleteEnabled setting.
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetSmartInsertDeleteEnabled):
+        (WKPreferencesGetSmartInsertDeleteEnabled): Implement methods using the
+        new setting.
+        * UIProcess/API/C/WKPreferencesPrivate.h: Add new methods headers.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::initializeWebPage): Set smartInsertDeleteEnabled
+        setting using m_isSmartInsertDeleteEnabled to keep initial value on Mac.
+        (WebKit::WebPageProxy::creationParameters): Remove usage of
+        parameters.isSmartInsertDeleteEnabled.
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::smartInsertDeleteEnabled): Enable method for
+        all platforms.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::WebPage): Remove m_isSmartInsertDeleteEnabled
+        initialization.
+        (WebKit::WebPage::updatePreferences): Set smartInsertDeleteEnabled
+        setting.
+        (WebKit::WebPage::isSmartInsertDeleteEnabled): Implement method using
+        settings.
+        (WebKit):
+        (WebKit::WebPage::setSmartInsertDeleteEnabled): Implement method using
+        settings.
+        * WebProcess/WebPage/WebPage.h:
+        (WebPage): Enable methods dealing with smartInsertDeleteEnabled for all
+        platforms and remove m_isSmartInsertDeleteEnabled as it will be a
+        setting.
+
+
 2013-02-27  Anders Carlsson  <andersca@apple.com>
 
         More storage scaffolding
