@@ -1,3 +1,17 @@
+2013-02-27  John Griggs  <jgriggs@rim.com>
+
+        2013-02-27  John Griggs  <jgriggs@rim.com>
+
+        Fix bug in HTML5 Fullscreen API implementation that was preventing YouTube HTML5 media controls fullscreen button from working properly.
+        https://bugs.webkit.org/show_bug.cgi?id=110905
+
+        Reviewed by Yong Li.
+
+        Return true from ChromeClientBlackBerry::supportsFullScreenForElement instead of the negation of the boolean flag (withKeyboard) passed in.
+
+        * WebCoreSupport/ChromeClientBlackBerry.cpp:
+        (WebCore::ChromeClientBlackBerry::supportsFullScreenForElement):
+
 2013-02-27  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
         [BlackBerry] Context menu cannot be invoked after doing text selection in landscape mode

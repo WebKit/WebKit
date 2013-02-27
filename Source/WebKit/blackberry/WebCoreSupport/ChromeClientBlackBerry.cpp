@@ -740,9 +740,9 @@ void ChromeClientBlackBerry::exitFullscreenForNode(Node* node)
 }
 
 #if ENABLE(FULLSCREEN_API)
-bool ChromeClientBlackBerry::supportsFullScreenForElement(const WebCore::Element* element, bool withKeyboard)
+bool ChromeClientBlackBerry::supportsFullScreenForElement(const WebCore::Element*, bool)
 {
-    return !withKeyboard;
+    return true;
 }
 
 void ChromeClientBlackBerry::enterFullScreenForElement(WebCore::Element* element)
