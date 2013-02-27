@@ -1,0 +1,53 @@
+
+<html>
+    <head>
+        <title>Bug 92497 - [CSS Regions] Region overset property is not properly computed when there is a region break</title>
+        <style type="text/css">
+            .content {
+                -webkit-flow-into: flow;
+                background-color: #ddd;
+            }
+
+            .content p:first-child {
+                -webkit-region-break-after: always;
+                margin-bottom: 4em; /*shouldn't spill over the forced break*/
+            }
+
+            .container {
+                -webkit-flow-from: flow;
+                width:250px;
+                height:120px;
+                border: 1px solid #444;
+                margin-top: 1em;
+            }
+
+            .fail #pass, .pass #fail { display: none; }
+        </style>
+    </head>
+
+    <body>
+        <div class="content"><div><div><p>content with break-after: always;</p></div></div></div>
+
+        <div class="container" id="r1"></div> <div id="overset1">explanation goes here</div>
+        <div class="container" id="r2"></div> <div id="overset2">explanation goes here</div>
+        <div class="container" id="r3"></div> <div id="overset3">explanation goes here</div>
+
+        <script type="text/javascript">
+            if(window.testRunner)
+                testRunner.dumpAsText();
+            var r1 = document.getElementById("r1").webkitRegionOverset;
+            document.getElementById("overset1").innerHTML = r1 + " vs fit";
+            var r2 = document.getElementById("r2").webkitRegionOverset;
+            document.getElementById("overset2").innerHTML = r2 + " vs empty";
+            var r3 = document.getElementById("r3").webkitRegionOverset;
+            document.getElementById("overset3").innerHTML = r3 + " vs empty";
+            document.body.className = (r1 == "fit" && r2 == "empty" && r3 == "empty") ? "pass" : "fail";
+        </script>
+
+        <div id="pass">PASS</div>
+        <div id="fail">FAIL</div>
+
+        <p><a href="https://bugs.webkit.org/show_bug.cgi?id=92497">Bug 92497</a> - [CSS Regions] Region overset property is not properly computed when there is a region break</p>
+
+    </body>
+</html>
