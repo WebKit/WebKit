@@ -1,3 +1,16 @@
+2013-02-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        Switch QtWebKit to GStreamer 1.0.
+        https://bugs.webkit.org/show_bug.cgi?id=106669.
+
+        Original patch by Sebastian Dröge.
+        Reviewed by Csaba Osztrogonác.
+
+        Build with GStreamer 1.0 if available, but support GStreamer 0.10 
+        temporarily to make upgrading easy and the patch suitable for Qt5.
+
+        * qmake/mkspecs/features/features.prf:
+
 2013-02-27  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         Unreviewed. Added myself to committers.py
