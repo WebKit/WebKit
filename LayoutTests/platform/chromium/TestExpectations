@@ -126,22 +126,23 @@ webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.ht
 webkit.org/b/110324 [ Debug ] fast/js/regress/nested-function-parsing.html [ Pass Slow ]
 
 # These tests are slow since r144032
-webkit.org/b/110876 html5lib/generated/run-doctype01-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-domjs-unsafe-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-entities01-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-plain-text-unsafe-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-scriptdata01-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-template-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests1-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests10-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests16-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests19-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests2-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests20-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests6-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests7-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests9-data.html [ Pass Slow ]
-webkit.org/b/110876 html5lib/generated/run-webkit01-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-doctype01-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-domjs-unsafe-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-entities01-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-entities02-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-html5test-com-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-plain-text-unsafe-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-scriptdata01-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests2-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests3-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests6-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests7-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests9-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug Linux SnowLeopard ] html5lib/generated/run-tests10-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug Linux ] html5lib/generated/run-tests19-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests20-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests21-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-webkit01-data.html [ Pass Slow ]
 
 webkit.org/b/110924 fast/js/regress/inlined-put-by-id-transition.html [ Pass Crash ]
 
@@ -4449,4 +4450,11 @@ webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-f
 # This fails on Precise due to a difference in Garuda.ttf between Lucid and Precise.
 # We can rebaseline when we drop Lucid support.
 webkit.org/b/110540 [ Linux ] fast/text/international/thai-line-breaks.html [ ImageOnlyFailure Pass ]
+
+# These tests are timing out since r144032
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-template-data.html [ Timeout ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests1-data.html [ Timeout ]
+webkit.org/b/110876 [ Debug Win Lion ] html5lib/generated/run-tests10-data.html [ Timeout  ]
+webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests16-data.html [ Timeout ]
+webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests19-data.html [ Timeout ]
 
