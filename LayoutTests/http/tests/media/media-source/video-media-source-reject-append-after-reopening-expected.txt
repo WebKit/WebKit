@@ -1,0 +1,12 @@
+Verify that append() calls on old SourceBuffers always fail when the MediaSource is closed and reopened.
+
+EVENT(webkitsourceopen)
+Adding SourceBuffers.
+Triggering MediaSource to close and reopen.
+EVENT(webkitsourceclose)
+EVENT(webkitsourceopen)
+Attempting to append to the old SourceBuffers.
+Got an exception while appending: InvalidStateError
+Got an exception while appending: InvalidStateError
+END OF TEST
+

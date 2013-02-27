@@ -79,7 +79,9 @@ bool SourceBufferList::remove(SourceBuffer* buffer)
 void SourceBufferList::clear()
 {
     for (size_t i = 0; i < m_list.size(); ++i)
-        remove(m_list[i].get());
+        m_list[i]->clear();
+    m_list.clear();
+    createAndFireEvent(eventNames().webkitremovesourcebufferEvent);
 }
 
 String SourceBufferList::generateUniqueId()

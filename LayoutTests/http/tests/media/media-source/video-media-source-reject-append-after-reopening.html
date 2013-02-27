@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="/media-resources/video-test.js"></script>
+        <script src="/media/resources/media-source/webm/segment-info.js"></script>
+        <script src="media-source.js"></script>
+        <script>
+            var segmentHelper = new MediaSourceTest.SegmentHelper(WebMSegmentInfo.testWebM);
+
+            var sourceBuffer1;
+            var sourceBuffer2;
+            var isFirstOpen = true;
+
+            function tryToAppend(sourceBuffer)
+            {
+                try {
+                    sourceBuffer.append(segmentHelper.mediaSegments[0]);
+                } catch (e) {
+                    consoleWrite('Got an exception while appending: ' + e.name);
+                }
+            }
+
+            function onSourceOpen(event)
+            {
+                if (!isFirstOpen) {
+                   consoleWrite('Attempting to append to the old SourceBuffers.');
+                   tryToAppend(sourceBuffer1);
+                   tryToAppend(sourceBuffer2);
+                   endTest();
+                   return;
+                }
+
+                isFirstOpen = false;
+
+                consoleWrite('Adding SourceBuffers.');
+                sourceBuffer1 = mediaSource.addSourceBuffer('audio/webm; codecs="vorbis"');
+                sourceBuffer2 = mediaSource.addSourceBuffer('video/webm; codecs="vp8"');
+
+                consoleWrite('Triggering MediaSource to close and reopen.');
+                MediaSourceTest.setSrcToMediaSourceTestURL(video);
+            }
+
+            function onSourceClosed(event)
+            {
+                consoleWrite('onSourceOpen');
+            }
+
+            function onLoad()
+            {
+                findMediaElement();
+
+                mediaSource = new WebKitMediaSource();
+
+                waitForEventAndFail('error');
+                waitForEvent('webkitsourceopen', "", false, false, mediaSource);
+                waitForEvent('webkitsourceclose', "", false, false, mediaSource);
+                waitForEvent('webkitsourceended', "", false, false, mediaSource);
+                mediaSource.addEventListener('webkitsourceopen', onSourceOpen);
+
+                segmentHelper.init(video, function(success)
+                {
+                    if (!success) {
+                        failTest("Failed to load segment data");
+                        return;
+                    }
+
+                    MediaSourceTest.setSrcToMediaSourceTestURL(video);
+                });
+            }
+        </script>
+    </head>
+    <body onload="onLoad()">
+        <video autoplay> </video>
+        <p>Verify that append() calls on old SourceBuffers always fail when the MediaSource is closed and reopened.</p>
+    </body>
+</html>
