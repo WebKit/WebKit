@@ -61,6 +61,7 @@ private:
     void createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&);
     void destroyStorageArea(CoreIPC::Connection*, uint64_t storageAreaID);
     void getValues(CoreIPC::Connection*, uint64_t storageAreaID, HashMap<String, String>& values);
+    void setItem(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& value);
 
     void createSessionStorageNamespaceInternal(uint64_t storageNamespaceID);
     void destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID);

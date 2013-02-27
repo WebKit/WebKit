@@ -146,6 +146,11 @@ void StorageManager::getValues(CoreIPC::Connection*, uint64_t, HashMap<String, S
     // FIXME: Implement this.
 }
 
+void StorageManager::setItem(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& value)
+{
+    // FIXME: Find the right storage area and set the item.
+}
+
 void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID)
 {
     ASSERT(!m_sessionStorageNamespaces.contains(storageNamespaceID));

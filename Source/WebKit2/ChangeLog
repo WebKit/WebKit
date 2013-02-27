@@ -1,5 +1,27 @@
 2013-02-26  Anders Carlsson  <andersca@apple.com>
 
+        Implement StorageAreaProxy::getItem and StorageAreaProxy::setItem
+        https://bugs.webkit.org/show_bug.cgi?id=110927
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::setItem):
+        * UIProcess/Storage/StorageManager.h:
+        Add empty stub.
+        
+        * UIProcess/Storage/StorageManager.messages.in:
+        Add SetItem message.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::getItem):
+        Fill the storage map and get the item from it.
+
+        (WebKit::StorageAreaProxy::setItem):
+        Update the storage map and send a SetItem message to the UI process.
+
+2013-02-26  Anders Carlsson  <andersca@apple.com>
+
         StorageAreaProxy should hold on to a StorageMap and not a HashMap
         https://bugs.webkit.org/show_bug.cgi?id=110919
 

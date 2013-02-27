@@ -25,4 +25,6 @@ messages -> StorageManager {
     DestroyStorageArea(uint64_t storageAreaID) WantsConnection
 
     GetValues(uint64_t storageAreaID) -> (WTF::HashMap<WTF::String, WTF::String> values) WantsConnection
+
+    SetItem(uint64_t storageAreaID, WTF::String key, WTF::String value) WantsConnection
 }
