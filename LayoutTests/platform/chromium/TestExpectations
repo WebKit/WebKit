@@ -187,7 +187,6 @@ crbug.com/89468 css3/selectors3/html/css3-modsel-d1.html [ Failure ImageOnlyFail
 crbug.com/89468 css3/selectors3/html/css3-modsel-d1b.html [ Failure ImageOnlyFailure ]
 crbug.com/89468 css3/selectors3/html/css3-modsel-d2.html [ Failure ImageOnlyFailure ]
 crbug.com/89468 css3/selectors3/html/css3-modsel-d4.html [ Failure ImageOnlyFailure ]
-crbug.com/89468 css3/selectors3/xhtml/css3-modsel-15c.xml [ Failure ImageOnlyFailure ]
 crbug.com/89468 css3/selectors3/xhtml/css3-modsel-d1.xml [ Failure ImageOnlyFailure ]
 crbug.com/89468 css3/selectors3/xhtml/css3-modsel-d1b.xml [ Failure ImageOnlyFailure ]
 crbug.com/89468 css3/selectors3/xhtml/css3-modsel-d2.xml [ Failure ImageOnlyFailure ]
@@ -1408,11 +1407,9 @@ webkit.org/b/101396 svg/css/clippath-with-shadow.svg
 webkit.org/b/101396 svg/css/arrow-with-shadow.svg
 
 # Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
-webkit.org/b/109775 [ Win Mac ] media/audio-controls-rendering.html [ Failure ]
 webkit.org/b/109775 [ Lion MountainLion Win7 ] media/controls-after-reload.html [ Failure ]
 webkit.org/b/109775 [ Lion MountainLion Win ] media/controls-strict.html [ Failure ]
 webkit.org/b/109775 [ Lion MountainLion Win ] media/controls-styling-strict.html [ Failure ]
-webkit.org/b/109775 [ Win Mac ] media/controls-without-preload.html [ Failure ]
 webkit.org/b/109775 [ MountainLion Win ] media/video-controls-rendering.html [ Failure ]
 webkit.org/b/109775 [ MountainLion XP ] media/video-display-toggle.html [ Failure ]
 webkit.org/b/109775 [ Lion MountainLion Win7 ] media/video-playing-and-pause.html [ Failure ]
@@ -1613,14 +1610,14 @@ webkit.org/b/110138 platform/chromium/virtual/softwarecompositing/geometry/limit
 webkit.org/b/110079 [ Win Debug ] storage/websql/sql-data-types.html [ Crash ]
 
 # Newly introduced Reftest fails on Chrome/Mac
-webkit.org/b/110203 [ Mac ] fast/multicol/seamless-flowed-through-columns.html [ ImageOnlyFailure ]
+webkit.org/b/110203 [ MountainLion ] fast/multicol/seamless-flowed-through-columns.html [ ImageOnlyFailure ]
 
 # Test fails for some reason.
-webkit.org/b/110296 fast/multicol/newmulticol/column-rules-fixed-height.html [ ImageOnlyFailure ]
-webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/layers-in-multicol.html [ ImageOnlyFailure ]
-webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/float-paginate-complex.html [ ImageOnlyFailure ]
-webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/float-paginate.html [ ImageOnlyFailure ]
-webkit.org/b/110377 [ Mac ] fast/multicol/newmulticol/positioned-with-constrained-height.html [ ImageOnlyFailure ]
+webkit.org/b/110296 [ Linux Lion MountainLion ] fast/multicol/newmulticol/column-rules-fixed-height.html [ ImageOnlyFailure ]
+webkit.org/b/110377 [ MountainLion ] fast/multicol/newmulticol/layers-in-multicol.html [ ImageOnlyFailure ]
+webkit.org/b/110377 [ MountainLion ] fast/multicol/newmulticol/float-paginate-complex.html [ ImageOnlyFailure ]
+webkit.org/b/110377 [ MountainLion ] fast/multicol/newmulticol/float-paginate.html [ ImageOnlyFailure ]
+webkit.org/b/110377 [ MountainLion ] fast/multicol/newmulticol/positioned-with-constrained-height.html [ ImageOnlyFailure ]
 
 # -----------------------------------------------------------------
 # MAC PORT TESTS
@@ -3590,8 +3587,6 @@ webkit.org/b/88124 [ Debug ] fast/css/absolute-child-with-percent-height-inside-
 webkit.org/b/88131 [ Debug ] fast/dom/HTMLMeterElement/meter-element-crash.html [ Failure Pass ]
 
 webkit.org/b/88593 fast/table/multiple-captions-display.xhtml [ Failure ImageOnlyFailure Pass ]
-
-webkit.org/b/88900 [ Lion SnowLeopard ] http/tests/misc/embed-image-load-outlives-gc-without-crashing.html [ Failure ]
 
 webkit.org/b/88939 [ Debug ] fast/events/before-unload-adopt-subframe-to-outside.html [ Failure Pass ]
 
