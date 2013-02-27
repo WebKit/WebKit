@@ -1011,7 +1011,6 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     double blur = blurFloat;
 
     uint32_t mfFlags = SkBlurMaskFilter::kHighQuality_BlurFlag;
-    SkXfermode::Mode colorMode = SkXfermode::kSrc_Mode;
 
     if (m_state.shadowsIgnoreTransforms)  {
         // Currently only the GraphicsContext associated with the
@@ -1019,12 +1018,6 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
         // Transforms. So with this flag set, we know this state is associated
         // with a CanvasRenderingContext.
         mfFlags |= SkBlurMaskFilter::kIgnoreTransform_BlurFlag;
-
-        // CSS wants us to ignore the original's alpha, but Canvas wants us to
-        // modulate with it. Using shadowsIgnoreTransforms to tell us that we're
-        // in a Canvas, we change the colormode to kDst_Mode, so we don't overwrite
-        // it with our layer's (default opaque-black) color.
-        colorMode = SkXfermode::kDst_Mode;
 
         // CG uses natural orientation for Y axis, but the HTML5 canvas spec
         // does not.
@@ -1051,9 +1044,13 @@ void GraphicsContext::setPlatformShadow(const FloatSize& size,
     // lower layer contains our offset, blur, and colorfilter
     SkLayerDrawLooper::LayerInfo info;
 
+    // Since CSS box-shadow ignores the original alpha, we used to default to kSrc_Mode here and
+    // only switch to kDst_Mode for Canvas. But that precaution is not really necessary because
+    // RenderBoxModelObject performs a dedicated shadow fill with opaque black to ensure
+    // cross-platform consistent results.
+    info.fColorMode = SkXfermode::kDst_Mode;
     info.fPaintBits |= SkLayerDrawLooper::kMaskFilter_Bit; // our blur
     info.fPaintBits |= SkLayerDrawLooper::kColorFilter_Bit;
-    info.fColorMode = colorMode;
     info.fOffset.set(width, height);
     info.fPostTranslate = m_state.shadowsIgnoreTransforms;
 
