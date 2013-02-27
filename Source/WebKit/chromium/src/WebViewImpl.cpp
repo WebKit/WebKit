@@ -4250,32 +4250,6 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
     }
 }
 
-void WebViewImpl::willCommit()
-{
-    if (m_devToolsAgent)
-        m_devToolsAgent->willComposite();
-}
-
-void WebViewImpl::didCommit()
-{
-    if (m_client) {
-        m_client->didCommitCompositorFrame();
-        m_client->didBecomeReadyForAdditionalInput();
-    }
-}
-
-void WebViewImpl::didCommitAndDrawFrame()
-{
-    if (m_client)
-        m_client->didCommitAndDrawCompositorFrame();
-}
-
-void WebViewImpl::didCompleteSwapBuffers()
-{
-    if (m_client)
-        m_client->didCompleteSwapBuffers();
-}
-
 void WebViewImpl::didRecreateOutputSurface(bool success)
 {
     // Switch back to software rendering mode, if necessary

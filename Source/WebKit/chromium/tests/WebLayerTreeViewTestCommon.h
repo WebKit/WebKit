@@ -47,11 +47,6 @@ public:
         return Platform::current()->compositorSupport()->createOutputSurfaceFor3D(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr());
     }
     virtual void didRecreateOutputSurface(bool) OVERRIDE { }
-
-    MOCK_METHOD0(willCommit, void());
-    MOCK_METHOD0(didCommit, void());
-    virtual void didCommitAndDrawFrame() OVERRIDE { }
-    virtual void didCompleteSwapBuffers() OVERRIDE { }
 };
 
 }

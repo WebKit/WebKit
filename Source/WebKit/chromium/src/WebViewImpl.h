@@ -322,10 +322,6 @@ public:
     virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE;
     virtual void didRecreateOutputSurface(bool success) OVERRIDE;
     virtual WebInputHandler* createInputHandler() OVERRIDE;
-    virtual void willCommit();
-    virtual void didCommit();
-    virtual void didCommitAndDrawFrame();
-    virtual void didCompleteSwapBuffers();
     virtual void scheduleComposite();
 
     // WebViewImpl
