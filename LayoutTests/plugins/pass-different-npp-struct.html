@@ -11,8 +11,10 @@
     This tests that no assertions fire when a plugin passes a different NPP struct to one of the NPN* functions (specifically, NPN_GetValue).
 </div>
 <script>
-  if (window.testRunner)
+  if (window.testRunner) {
       testRunner.dumpAsText();
+      testRunner.waitUntilDone();
+  }
 </script>
 </body>
 </html>

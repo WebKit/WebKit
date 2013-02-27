@@ -1,3 +1,18 @@
+2013-02-27  Jochen Eisinger  <jochen@chromium.org>
+
+        plugins/netscape-plugin-setwindow-size*.html and plugins/pass-different-npp-struct.html should be async
+        https://bugs.webkit.org/show_bug.cgi?id=110973
+
+        Reviewed by Adam Barth.
+
+        There is nothing that ensures that the log messages from the plugin
+        come in before the layout test finished loading.
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp:
+        (PassDifferentNPPStruct::NPP_SetWindow):
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_SetWindow):
+
 2013-02-27  Glenn Adams  <glenn@skynav.com>
 
         Add ENABLE_CSS3_TEXT_LINE_BREAK flag.

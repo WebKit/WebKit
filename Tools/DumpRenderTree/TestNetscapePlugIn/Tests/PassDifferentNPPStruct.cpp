@@ -58,9 +58,11 @@ private:
 
         if (error != NPERR_NO_ERROR) {
             log("NPN_GetValue(NPNVprivateModeBool) with a different NPP struct failed with error %d", error);
+            notifyDone();
             return NPERR_GENERIC_ERROR;
         }
         log("NPN_GetValue(NPNVprivateModeBool) with a different NPP struct succeeded");
+        notifyDone();
         return NPERR_NO_ERROR;
     }
 
