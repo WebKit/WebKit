@@ -1,3 +1,14 @@
+2013-02-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebLayerTreeViewClient::(will|did)BeginFrame
+        https://bugs.webkit.org/show_bug.cgi?id=110928
+
+        Reviewed by Adrienne Walker.
+
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+        * tests/WebLayerTreeViewTestCommon.h:
+
 2013-02-26  Alpha Lam  <hclam@chromium.org>
 
         [chromium] GIFImageDecoderTest.parseAndDecodeByteByByte failing on Android

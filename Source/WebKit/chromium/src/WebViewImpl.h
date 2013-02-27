@@ -315,8 +315,6 @@ public:
     virtual void setContinuousPaintingEnabled(bool);
 
     // WebLayerTreeViewClient
-    virtual void willBeginFrame();
-    virtual void didBeginFrame();
     virtual void updateAnimations(double monotonicFrameBeginTime);
     virtual void applyScrollAndScale(const WebSize&, float);
     virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE;
