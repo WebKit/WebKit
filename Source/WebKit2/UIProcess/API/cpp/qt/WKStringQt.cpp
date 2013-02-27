@@ -22,6 +22,7 @@
 #include "WKStringQt.h"
 
 #include "WKAPICast.h"
+#include "WKRetainPtr.h"
 #include <QString>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
@@ -41,3 +42,10 @@ QString WKStringCopyQString(WKStringRef stringRef)
     const WTF::String& string = toImpl(stringRef)->string();
     return QString(reinterpret_cast<const QChar*>(string.characters()), string.length());
 }
+
+namespace WebKit {
+QString adoptToQString(WKStringRef stringRef)
+{
+    return WKStringCopyQString(adoptWK(stringRef).get());
+}
+} /* namespace WebKit */

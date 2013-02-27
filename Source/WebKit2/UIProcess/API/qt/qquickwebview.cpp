@@ -65,6 +65,7 @@
 #include <QtQuick/QQuickView>
 #include <WKOpenPanelResultListener.h>
 #include <WKPageGroup.h>
+#include <WKPreferences.h>
 #include <WKSerializedScriptValue.h>
 #include <WKString.h>
 #include <WKStringQt.h>
@@ -357,13 +358,14 @@ void QQuickWebViewPrivate::initialize(WKContextRef contextRef, WKPageGroupRef pa
     QObject::connect(iconDatabase, SIGNAL(iconChangedForPageURL(QString)), q_ptr, SLOT(_q_onIconChangedForPageURL(QString)));
 
     // Any page setting should preferrable be set before creating the page.
-    webPageProxy->pageGroup()->preferences()->setAcceleratedCompositingEnabled(true);
-    webPageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
+    WKPreferencesRef preferencesRef = WKPageGroupGetPreferences(pageGroup.get());
+    WKPreferencesSetAcceleratedCompositingEnabled(preferencesRef, true);
     bool showDebugVisuals = qgetenv("WEBKIT_SHOW_COMPOSITING_DEBUG_VISUALS") == "1";
-    webPageProxy->pageGroup()->preferences()->setCompositingBordersVisible(showDebugVisuals);
-    webPageProxy->pageGroup()->preferences()->setCompositingRepaintCountersVisible(showDebugVisuals);
-    webPageProxy->pageGroup()->preferences()->setFrameFlatteningEnabled(true);
-    webPageProxy->pageGroup()->preferences()->setWebGLEnabled(true);
+    WKPreferencesSetCompositingBordersVisible(preferencesRef, showDebugVisuals);
+    WKPreferencesSetCompositingRepaintCountersVisible(preferencesRef, showDebugVisuals);
+    WKPreferencesSetFrameFlatteningEnabled(preferencesRef, true);
+    WKPreferencesSetWebGLEnabled(preferencesRef, true);
+    webPageProxy->pageGroup()->preferences()->setForceCompositingMode(true);
 
     pageClient.initialize(q_ptr, pageViewPrivate->eventHandler.data(), &undoController);
     webPageProxy->initializeWebPage();

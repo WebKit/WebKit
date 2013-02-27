@@ -45,7 +45,6 @@ public:
     Q_PROPERTY(bool developerExtrasEnabled READ developerExtrasEnabled WRITE setDeveloperExtrasEnabled NOTIFY developerExtrasEnabledChanged FINAL)
     Q_PROPERTY(bool webGLEnabled READ webGLEnabled WRITE setWebGLEnabled NOTIFY webGLEnabledChanged FINAL)
     Q_PROPERTY(bool webAudioEnabled READ webAudioEnabled WRITE setWebAudioEnabled NOTIFY webAudioEnabledChanged FINAL)
-    Q_PROPERTY(bool scrollAnimatorEnabled READ scrollAnimatorEnabled WRITE setScrollAnimatorEnabled NOTIFY scrollAnimatorEnabledChanged FINAL)
     Q_PROPERTY(bool caretBrowsingEnabled READ caretBrowsingEnabled WRITE setCaretBrowsingEnabled NOTIFY caretBrowsingEnabledChanged FINAL)
     Q_PROPERTY(bool notificationsEnabled READ notificationsEnabled WRITE setNotificationsEnabled NOTIFY notificationsEnabledChanged FINAL)
 
@@ -102,9 +101,6 @@ public:
     bool webAudioEnabled() const;
     void setWebAudioEnabled(bool enable);
 
-    bool scrollAnimatorEnabled() const;
-    void setScrollAnimatorEnabled(bool enable);
-
     bool caretBrowsingEnabled() const;
     void setCaretBrowsingEnabled(bool enable);
 
@@ -153,7 +149,6 @@ Q_SIGNALS:
     void developerExtrasEnabledChanged();
     void webGLEnabledChanged();
     void webAudioEnabledChanged();
-    void scrollAnimatorEnabledChanged();
     void caretBrowsingEnabledChanged();
     void notificationsEnabledChanged();
 

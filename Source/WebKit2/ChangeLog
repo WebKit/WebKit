@@ -1,3 +1,38 @@
+2013-02-27  Michael Brüning  <michael.bruning@digia.com>
+
+        [Qt][WK2] Replace use of WebPreferences with use of WKPrefences C API
+        https://bugs.webkit.org/show_bug.cgi?id=108952
+
+        Reviewed by Simon Hausmann.
+
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        This patch moves the view classes and preferences in the Qt API
+        to use the C API for accessing and manipulating preferences as
+        part of the cleanup and move towards using the C API as base for
+        the Qt WebKit2 API.
+
+        Adds the function WebKit::adoptToQString for convenience when
+        dealing with QString and copied String objects.
+
+        Removes the ScrollAnimatorEnabled options from QWebPreferences.
+
+        * UIProcess/API/cpp/qt/WKStringQt.cpp:
+        (WebKit::adoptToQString):
+        * UIProcess/API/cpp/qt/WKStringQt.h:
+        (WebKit):
+        * UIProcess/API/qt/qquickwebview.cpp:
+        (QQuickWebViewPrivate::initialize):
+        * UIProcess/API/qt/qwebpreferences.cpp:
+        (QWebPreferencesPrivate::testAttribute):
+        (QWebPreferencesPrivate::setAttribute):
+        (QWebPreferencesPrivate::setFontFamily):
+        (QWebPreferencesPrivate::fontFamily):
+        (QWebPreferencesPrivate::setFontSize):
+        (QWebPreferencesPrivate::fontSize):
+        * UIProcess/API/qt/qwebpreferences_p.h:
+        * UIProcess/API/qt/qwebpreferences_p_p.h:
+
 2013-02-26  Anders Carlsson  <andersca@apple.com>
 
         Implement StorageAreaProxy::getItem and StorageAreaProxy::setItem

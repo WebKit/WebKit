@@ -27,4 +27,9 @@
 WK_EXPORT WKStringRef WKStringCreateWithQString(const QString& string);
 WK_EXPORT QString WKStringCopyQString(WKStringRef string);
 
+namespace WebKit {
+QString adoptToQString(WKStringRef);
+} /* namespace WebKit */
+
+using WebKit::adoptToQString;
 #endif /* WKStringQt_h */
