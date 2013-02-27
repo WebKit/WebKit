@@ -378,6 +378,8 @@ public:
     void notificationError(const BlackBerry::Platform::String& notificationId);
     void notificationShown(const BlackBerry::Platform::String& notificationId);
 
+    void animateToScaleAndDocumentScrollPosition(double destinationZoomScale, const BlackBerry::Platform::FloatPoint& destinationScrollPosition, bool shouldConstrainScrollingToContentEdge = true);
+
 private:
     virtual ~WebPage();
 

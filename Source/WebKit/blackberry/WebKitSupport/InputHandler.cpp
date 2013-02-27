@@ -1381,22 +1381,13 @@ void InputHandler::ensureFocusTextElementVisible(CaretScrollType scrollType)
         }
     }
 
-    if (destinationScrollLocation != mainFrameView->scrollPosition() || zoomScaleRequired != m_webPage->currentScale()) {
-        InputLog(Platform::LogLevelInfo,
-            "InputHandler::ensureFocusTextElementVisible zooming in to %f from %f and scrolling to point %s from %s",
-            zoomScaleRequired, m_webPage->currentScale(),
-            Platform::IntPoint(destinationScrollLocation).toString().c_str(),
-            Platform::IntPoint(mainFrameView->scrollPosition()).toString().c_str());
+    InputLog(Platform::LogLevelInfo,
+        "InputHandler::ensureFocusTextElementVisible zooming in to %f from %f and scrolling to point %s from %s",
+        zoomScaleRequired, m_webPage->currentScale(),
+        Platform::IntPoint(destinationScrollLocation).toString().c_str(),
+        Platform::IntPoint(mainFrameView->scrollPosition()).toString().c_str());
 
-        // Animate to given scroll position & zoom level
-        m_webPage->m_finalBlockPoint = WebCore::FloatPoint(destinationScrollLocation);
-        m_webPage->m_blockZoomFinalScale = zoomScaleRequired;
-        m_webPage->m_shouldReflowBlock = false;
-        m_webPage->m_userPerformedManualZoom = true;
-        m_webPage->m_userPerformedManualScroll = true;
-        m_webPage->m_shouldConstrainScrollingToContentEdge = shouldConstrainScrollingToContentEdge;
-        m_webPage->client()->animateBlockZoom(zoomScaleRequired, m_webPage->m_finalBlockPoint);
-    }
+    m_webPage->animateToScaleAndDocumentScrollPosition(zoomScaleRequired, WebCore::FloatPoint(destinationScrollLocation), shouldConstrainScrollingToContentEdge);
 }
 
 void InputHandler::ensureFocusPluginElementVisible()

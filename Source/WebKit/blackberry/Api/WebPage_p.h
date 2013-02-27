@@ -471,6 +471,8 @@ public:
     NotificationManager& notificationManager() { return m_notificationManager; };
 #endif
 
+    void animateToScaleAndDocumentScrollPosition(double destinationZoomScale, const WebCore::FloatPoint& destinationScrollPosition, bool shouldConstrainScrollingToContentEdge = true);
+
     WebPage* m_webPage;
     WebPageClient* m_client;
     WebCore::InspectorClientBlackBerry* m_inspectorClient;
@@ -540,10 +542,10 @@ public:
     double m_maximumScale;
     bool m_forceRespectViewportArguments;
 
-    // Block zoom animation data.
-    WebCore::FloatPoint m_finalBlockPoint;
-    WebCore::FloatPoint m_finalBlockPointReflowOffset;
-    double m_blockZoomFinalScale;
+    // Block zoom & zoom/scroll animation data.
+    WebCore::FloatPoint m_finalAnimationDocumentScrollPosition;
+    WebCore::FloatPoint m_finalAnimationDocumentScrollPositionReflowOffset;
+    double m_finalAnimationScale;
     RefPtr<WebCore::Node> m_currentPinchZoomNode;
     WebCore::FloatPoint m_anchorInNodeRectRatio;
     RefPtr<WebCore::Node> m_currentBlockZoomNode;
