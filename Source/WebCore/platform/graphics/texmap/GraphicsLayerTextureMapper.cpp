@@ -56,7 +56,7 @@ GraphicsLayerTextureMapper::GraphicsLayerTextureMapper(GraphicsLayerClient* clie
     , m_fixedToViewport(false)
     , m_debugBorderWidth(0)
     , m_contentsLayer(0)
-    , m_animationStartedTimer(this, &GraphicsLayerTextureMapper::animationStartedTimerFired)
+    , m_animationStartTime(0)
 {
 }
 
@@ -537,6 +537,9 @@ void GraphicsLayerTextureMapper::commitLayerChanges()
     if (m_changeMask & AnimationChange)
         m_layer->setAnimations(m_animations);
 
+    if (m_changeMask & AnimationStarted)
+        client()->notifyAnimationStarted(this, m_animationStartTime);
+
     if (m_changeMask & FixedToViewporChange)
         m_layer->setFixedToViewport(fixedToViewport());
 
@@ -610,9 +613,10 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
     if (valueList.property() == AnimatedPropertyWebkitTransform)
         listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
 
-    m_animations.add(GraphicsLayerAnimation(keyframesName, valueList, boxSize, anim, WTF::currentTime() - timeOffset, listsMatch));
+    m_animationStartTime = WTF::currentTime() - timeOffset;
+    m_animations.add(GraphicsLayerAnimation(keyframesName, valueList, boxSize, anim, m_animationStartTime, listsMatch));
     notifyChange(AnimationChange);
-    m_animationStartedTimer.startOneShot(0);
+    notifyChange(AnimationStarted);
     return true;
 }
 
@@ -631,11 +635,6 @@ void GraphicsLayerTextureMapper::pauseAnimation(const String& animationName, dou
 void GraphicsLayerTextureMapper::removeAnimation(const String& animationName)
 {
     m_animations.remove(animationName);
-}
-
-void GraphicsLayerTextureMapper::animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*)
-{
-    client()->notifyAnimationStarted(this, /* DOM time */ WTF::currentTime());
 }
 
 #if ENABLE(CSS_FILTERS)

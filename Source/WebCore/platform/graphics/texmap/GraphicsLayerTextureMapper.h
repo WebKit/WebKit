@@ -104,7 +104,6 @@ private:
     void updateBackingStoreIfNeeded();
     void prepareBackingStoreIfNeeded();
     bool shouldHaveBackingStore() const;
-    void animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*);
 
     // This set of flags help us defer which properties of the layer have been
     // modified by the compositor, so we can know what to look for in the next flush.
@@ -143,7 +142,8 @@ private:
         DebugVisualsChange =        (1L << 24),
         RepaintCountChange =        (1L << 25),
 
-        FixedToViewporChange =      (1L << 26)
+        FixedToViewporChange =      (1L << 26),
+        AnimationStarted =          (1L << 27)
     };
     void notifyChange(ChangeMask);
 
@@ -164,7 +164,7 @@ private:
     TextureMapperPlatformLayer* m_contentsLayer;
     FloatRect m_needsDisplayRect;
     GraphicsLayerAnimations m_animations;
-    Timer<GraphicsLayerTextureMapper> m_animationStartedTimer;
+    double m_animationStartTime;
 };
 
 inline static GraphicsLayerTextureMapper* toGraphicsLayerTextureMapper(GraphicsLayer* layer)
