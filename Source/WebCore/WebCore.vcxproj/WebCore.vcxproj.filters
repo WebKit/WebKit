@@ -6051,9 +6051,6 @@
     <ClCompile Include="..\bindings\js\JSNodeListCustom.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
-    <ClCompile Include="..\bindings\js\JSNotificationCustom.cpp">
-      <Filter>bindings\js</Filter>
-    </ClCompile>
     <ClCompile Include="..\bindings\js\JSPluginElementFunctions.cpp">
       <Filter>bindings\js</Filter>
     </ClCompile>
