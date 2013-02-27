@@ -1,3 +1,14 @@
+2013-02-27  Balazs Kilvady  <kilvadyb@homejinni.com>
+
+        Bug in atomicIncrement implementation for MIPS GCC
+        https://bugs.webkit.org/show_bug.cgi?id=110969
+
+        Reviewed by Csaba Osztrogonác.
+
+        Fix of __sync_[add|sub]_and_fetch_8 for GCC patch.
+
+        * wtf/Atomics.cpp:
+
 2013-02-27  Simon Hausmann  <simon.hausmann@digia.com>
 
         REGRESSION(r137994): It made JSC tests hang and layout tests fail on ARM Thumb2 / Linux
