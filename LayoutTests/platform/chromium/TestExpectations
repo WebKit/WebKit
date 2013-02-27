@@ -4447,4 +4447,6 @@ webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-f
 # We can rebaseline when we drop Lucid support.
 webkit.org/b/110540 [ Linux ] fast/text/international/thai-line-breaks.html [ ImageOnlyFailure Pass ]
 
-webkit.org/b/108196 fast/notifications/notifications-request-permission.html [ Pass Crash Failure ]
+webkit.org/b/110956 fast/notifications/notifications-request-permission.html [ Pass Crash Failure ]
+webkit.org/b/110956 fast/notifications/notifications-request-permission-optional.html [ Pass Crash ]
+
