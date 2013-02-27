@@ -1,3 +1,14 @@
+2013-02-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r144192.
+        http://trac.webkit.org/changeset/144192
+        https://bugs.webkit.org/show_bug.cgi?id=110984
+
+        Stored svn password on wrong computer (Requested by kkristof
+        on #webkit).
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-27  Szilard Ledan  <szledan@inf.u-szeged.hu>
 
         Unreviewed. Added myself to committers.py
