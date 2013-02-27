@@ -179,6 +179,7 @@ void TextureMapperGL::ClipStack::reset(const IntRect& rect)
 {
     clipStack.clear();
     clipState = TextureMapperGL::ClipState(rect);
+    clipStateDirty = true;
 }
 
 void TextureMapperGL::ClipStack::push()
@@ -192,6 +193,7 @@ void TextureMapperGL::ClipStack::pop()
         return;
     clipState = clipStack.last();
     clipStack.removeLast();
+    clipStateDirty = true;
 }
 
 static void scissorClip(GraphicsContext3D* context, const IntRect& rect)
@@ -206,6 +208,10 @@ static void scissorClip(GraphicsContext3D* context, const IntRect& rect)
 
 void TextureMapperGL::ClipStack::apply(GraphicsContext3D* context)
 {
+    if (!clipStateDirty)
+        return;
+    clipStateDirty = false;
+
     scissorClip(context, clipState.scissorBox);
     context->stencilOp(GraphicsContext3D::KEEP, GraphicsContext3D::KEEP, GraphicsContext3D::KEEP);
     context->stencilFunc(GraphicsContext3D::EQUAL, clipState.stencilIndex - 1, clipState.stencilIndex - 1);

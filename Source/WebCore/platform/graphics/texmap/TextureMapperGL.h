@@ -89,6 +89,10 @@ private:
 
     class ClipStack {
     public:
+        ClipStack()
+            : clipStateDirty(false)
+        { }
+
         void push();
         void pop();
         void apply(GraphicsContext3D*);
@@ -98,6 +102,7 @@ private:
     private:
         ClipState clipState;
         Vector<ClipState> clipStack;
+        bool clipStateDirty;
     };
 
     TextureMapperGL();
