@@ -52,6 +52,7 @@ my (
     $cspNextSupport,
     $css3ConditionalRulesSupport,
     $css3TextSupport,
+    $css3TextLineBreakSupport,
     $cssBoxDecorationBreakSupport,
     $cssDeviceAdaptation,
     $cssExclusionsSupport,
@@ -190,6 +191,9 @@ my @features = (
 
     { option => "css3-text", desc => "Toggle CSS3 Text support",
       define => "ENABLE_CSS3_TEXT", default => (isEfl() || isGtk()), value => \$css3TextSupport },
+
+    { option => "css3-text-line-break", desc => "Toggle CSS3 Text Line Break support",
+      define => "ENABLE_CSS3_TEXT_LINE_BREAK", default => 0, value => \$css3TextLineBreakSupport },
 
     { option => "css-box-decoration-break", desc => "Toggle CSS box-decoration-break support",
       define => "ENABLE_CSS_BOX_DECORATION_BREAK", default => 1, value => \$cssBoxDecorationBreakSupport },

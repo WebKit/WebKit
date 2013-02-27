@@ -1,3 +1,12 @@
+2013-02-27  Glenn Adams  <glenn@skynav.com>
+
+        Add ENABLE_CSS3_TEXT_LINE_BREAK flag.
+        https://bugs.webkit.org/show_bug.cgi?id=110944
+
+        Reviewed by Dean Jackson.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-02-27  Michael Brüning  <michael.bruning@digia.com>
 
         [Qt][WK2] Replace use of WebPreferences with use of WKPrefences C API
