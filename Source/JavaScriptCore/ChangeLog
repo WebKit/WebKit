@@ -1,5 +1,11 @@
 2013-02-26  Oliver Hunt  <oliver@apple.com>
 
+        Fix windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCoreExports.def:
+
+2013-02-26  Oliver Hunt  <oliver@apple.com>
+
         Web Inspector: REGRESSION: [JSC] SourceProvider reuses IDs
         https://bugs.webkit.org/show_bug.cgi?id=99674
 
