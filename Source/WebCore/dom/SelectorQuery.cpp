@@ -59,7 +59,7 @@ inline bool SelectorDataList::selectorMatches(const SelectorData& selectorData, 
         return selectorCheckerFastPath.matches();
     }
 
-    SelectorChecker selectorChecker(element->document(), SelectorChecker::ResolvingStyle);
+    SelectorChecker selectorChecker(element->document(), SelectorChecker::QueryingRules);
     SelectorChecker::SelectorCheckingContext selectorCheckingContext(selectorData.selector, element, SelectorChecker::VisitedMatchDisabled);
     PseudoId ignoreDynamicPseudo = NOPSEUDO;
     return selectorChecker.match(selectorCheckingContext, ignoreDynamicPseudo, DOMSiblingTraversalStrategy()) == SelectorChecker::SelectorMatches;
