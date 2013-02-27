@@ -1,3 +1,12 @@
+2013-02-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        Unreviewed (speculative) build fixes for EFL, GTK and Qt after r144218.
+
+        * CMakeLists.txt:
+        * DerivedSources.pri:
+        * GNUmakefile.list.am:
+        * Target.pri:
+
 2013-02-27  John Bauman  <jbauman@chromium.org>
 
         Plugin in iframe may not display
