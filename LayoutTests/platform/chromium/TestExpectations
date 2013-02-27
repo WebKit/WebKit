@@ -125,6 +125,8 @@ webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.ht
 
 webkit.org/b/110324 [ Debug ] fast/js/regress/nested-function-parsing.html [ Pass Slow ]
 
+webkit.org/b/110924 fast/js/regress/inlined-put-by-id-transition.html [ Pass Crash ]
+
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------
