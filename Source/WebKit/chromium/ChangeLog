@@ -1,3 +1,16 @@
+2013-02-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r144179.
+        http://trac.webkit.org/changeset/144179
+        https://bugs.webkit.org/show_bug.cgi?id=110980
+
+        Breaks compilation (Requested by vsevik on #webkit).
+
+        * public/WebTextInputType.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputInfo):
+        (WebKit::WebViewImpl::textInputType):
+
 2013-02-27  Stephen Chenney  <schenney@chromium.org>
 
         [chromium] GIFImageDecoderTest.parseAndDecodeByteByByte failing on Android

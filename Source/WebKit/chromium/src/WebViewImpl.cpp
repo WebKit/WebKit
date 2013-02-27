@@ -2291,10 +2291,6 @@ WebTextInputInfo WebViewImpl::textInputInfo()
     if (!focused)
         return info;
 
-    info.type = textInputType();
-    if (info.type == WebTextInputTypeNone)
-        return info;
-
     Editor* editor = focused->editor();
     if (!editor || !editor->canEdit())
         return info;
@@ -2305,6 +2301,10 @@ WebTextInputInfo WebViewImpl::textInputInfo()
 
     Node* node = selection->selection().rootEditableElement();
     if (!node)
+        return info;
+
+    info.type = textInputType();
+    if (info.type == WebTextInputTypeNone)
         return info;
 
     info.value = plainText(rangeOfContents(node).get());
@@ -2375,14 +2375,6 @@ WebTextInputType WebViewImpl::textInputType()
             return WebTextInputTypeNone;
         return WebTextInputTypeTextArea;
     }
-
-#if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
-    if (node->isHTMLElement()) {
-        HTMLElement* element = toHTMLElement(node);
-        if (element->isDateTimeFieldElement())
-            return WebTextInputTypeDateTimeField;
-    }
-#endif
 
     if (node->shouldUseInputMethod())
         return WebTextInputTypeContentEditable;
