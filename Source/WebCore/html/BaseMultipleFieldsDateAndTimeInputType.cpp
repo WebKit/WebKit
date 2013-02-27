@@ -47,6 +47,7 @@
 #include "Page.h"
 #include "PickerIndicatorElement.h"
 #include "PlatformLocale.h"
+#include "RenderFlexibleBox.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
 #include <wtf/DateMath.h>
@@ -187,6 +188,11 @@ void BaseMultipleFieldsDateAndTimeInputType::blur()
 {
     if (m_dateTimeEditElement)
         m_dateTimeEditElement->blurByOwner();
+}
+
+RenderObject* BaseMultipleFieldsDateAndTimeInputType::createRenderer(RenderArena* arena, RenderStyle*) const
+{
+    return new (arena) RenderFlexibleBox(element());
 }
 
 void BaseMultipleFieldsDateAndTimeInputType::createShadowSubtree()

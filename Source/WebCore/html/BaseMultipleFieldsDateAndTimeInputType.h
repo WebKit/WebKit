@@ -78,6 +78,7 @@ private:
     // InputType functions
     virtual String badInputText() const OVERRIDE;
     virtual void blur() OVERRIDE FINAL;
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) const OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE FINAL;
     virtual void destroyShadowSubtree() OVERRIDE FINAL;
     virtual void disabledAttributeChanged() OVERRIDE FINAL;
