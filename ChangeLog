@@ -1,3 +1,13 @@
+2013-02-27  Zan Dobersek  <zdobersek@igalia.com>
+
+        [GTK] Disable MathML support in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=110981
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/SetupWebKitFeatures.m4: Disable the MathML support in release builds
+        as the code is not yet deemed production-ready.
+
 2013-02-27  Glenn Adams  <glenn@skynav.com>
 
         Add ENABLE_CSS3_TEXT_LINE_BREAK flag.
