@@ -3,6 +3,15 @@
         RenderTableCellDeathTest unit test fails on mac
         https://bugs.webkit.org/show_bug.cgi?id=110992
 
+        Unreviewed second attempt. Trying to get the right define for the OS.
+
+        * tests/RenderTableCellTest.cpp:
+
+2013-02-27  Stephen Chenney  <schenney@chromium.org>
+
+        RenderTableCellDeathTest unit test fails on mac
+        https://bugs.webkit.org/show_bug.cgi?id=110992
+
         Unreviewed disabling of test that is hanging or crashing on Mac.
 
         * tests/RenderTableCellTest.cpp:

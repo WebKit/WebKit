@@ -84,7 +84,7 @@ protected:
     RenderTableCell* m_cell;
 };
 
-#if !OS(DARWIN)
+#if !OS(MAC_OS_X)
 
 TEST_F(RenderTableCellDeathTest, CanSetColumn)
 {
