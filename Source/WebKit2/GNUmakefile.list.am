@@ -1121,6 +1121,7 @@ webkit2_sources += \
 	Source/WebKit2/WebProcess/ResourceCache/WebResourceCacheManager.cpp \
 	Source/WebKit2/WebProcess/Storage/StorageAreaProxy.cpp \
 	Source/WebKit2/WebProcess/Storage/StorageAreaProxy.h \
+	Source/WebKit2/WebProcess/Storage/StorageNamespaceProxy.cpp \
 	Source/WebKit2/WebProcess/Storage/StorageNamespaceProxy.h \
 	Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.cpp \
 	Source/WebKit2/WebProcess/Storage/WebKeyValueStorageManager.h \

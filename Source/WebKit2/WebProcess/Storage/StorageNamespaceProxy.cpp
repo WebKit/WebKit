@@ -68,7 +68,7 @@ PassRefPtr<StorageNamespace> StorageNamespaceProxy::copy()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
-    return nullptr;
+    return 0;
 }
 
 void StorageNamespaceProxy::close()

@@ -1,3 +1,13 @@
+2013-02-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] One more unreviewed buildfix for EFL, GTK and Qt after r144218.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * Target.pri:
+        * WebProcess/Storage/StorageNamespaceProxy.cpp:
+        (WebKit::StorageNamespaceProxy::copy):
+
 2013-02-27  Zan Dobersek  <zdobersek@igalia.com>
 
         Unreviewed (speculative) build fixes for EFL, GTK and Qt after r144218.

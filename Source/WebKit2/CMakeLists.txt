@@ -452,6 +452,7 @@ set(WebKit2_SOURCES
     WebProcess/ResourceCache/WebResourceCacheManager.cpp
 
     WebProcess/Storage/StorageAreaProxy.cpp
+    WebProcess/Storage/StorageNamespaceProxy.cpp
     WebProcess/Storage/WebKeyValueStorageManager.cpp
 
     WebProcess/WebCoreSupport/WebBatteryClient.cpp
