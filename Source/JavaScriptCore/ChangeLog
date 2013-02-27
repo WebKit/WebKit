@@ -1,3 +1,15 @@
+2013-02-27  Simon Hausmann  <simon.hausmann@digia.com>
+
+        [Qt][Mac] Fix massive parallel builds
+
+        Reviewed by Tor Arne Vestbø.
+
+        There exists a race condition that LLIntDesiredOffsets.h is written to
+        by two parllel instances of the ruby script. This patch ensures that similar to the output file,
+        the generated file is also prefixed according to the build configuration.
+
+        * LLIntOffsetsExtractor.pro:
+
 2013-02-26  Filip Pizlo  <fpizlo@apple.com>
 
         DFG OSR exit doesn't know which virtual register to use for the last result register for post_inc and post_dec
