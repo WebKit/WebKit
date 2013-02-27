@@ -431,7 +431,6 @@ void DocumentLoader::checkLoadComplete()
 {
     if (!m_frame || isLoading())
         return;
-    ASSERT(this == frameLoader()->activeDocumentLoader());
     m_frame->document()->domWindow()->finishedLoading();
 }
 
