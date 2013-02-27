@@ -207,25 +207,25 @@ class PerfTestsRunner(object):
 
     def _generate_and_show_results(self):
         options = self._options
-        output_json_path = self._output_json_path()
-        output, perf_webkit_output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
+        perf_webkit_json_path = self._output_json_path()
+        legacy_output, perf_webkit_output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
 
         if options.slave_config_json_path:
-            output, perf_webkit_output = self._merge_slave_config_json(options.slave_config_json_path, output, perf_webkit_output)
-            if not output:
+            legacy_output, perf_webkit_output = self._merge_slave_config_json(options.slave_config_json_path, legacy_output, perf_webkit_output)
+            if not legacy_output:
                 return self.EXIT_CODE_BAD_SOURCE_JSON
 
-        output = self._merge_outputs_if_needed(output_json_path, output)
-        if not output:
+        perf_webkit_output = self._merge_outputs_if_needed(perf_webkit_json_path, perf_webkit_output)
+        if not perf_webkit_output:
             return self.EXIT_CODE_BAD_MERGE
-        perf_webkit_output = [perf_webkit_output]
+        legacy_output = [legacy_output]
 
-        results_page_path = self._host.filesystem.splitext(output_json_path)[0] + '.html'
-        perf_webkit_json_path = self._host.filesystem.splitext(output_json_path)[0] + '-perf-webkit.json' if options.test_results_server else None
-        self._generate_output_files(output_json_path, perf_webkit_json_path, results_page_path, output, perf_webkit_output)
+        results_page_path = self._host.filesystem.splitext(perf_webkit_json_path)[0] + '.html'
+        legacy_output_json_path = self._host.filesystem.splitext(perf_webkit_json_path)[0] + '-legacy.json' if options.test_results_server else None
+        self._generate_output_files(legacy_output_json_path, perf_webkit_json_path, results_page_path, legacy_output, perf_webkit_output)
 
         if options.test_results_server:
-            if not self._upload_json(options.test_results_server, output_json_path):
+            if not self._upload_json(options.test_results_server, legacy_output_json_path):
                 return self.EXIT_CODE_FAILED_UPLOADING
 
             # FIXME: Remove this code once we've made transition to use perf.webkit.org
@@ -253,13 +253,20 @@ class PerfTestsRunner(object):
             if value:
                 contents[key] = value
 
-        contents_for_perf_webkit = {
-            'builderName': builder_name,
-            'buildNumber': str(build_number),
+        contents_for_perf_webkit = {'tests': {}}
+        if description:
+            contents_for_perf_webkit['description'] = description
+
+        meta_info = {
             'buildTime': self._datetime_in_ES5_compatible_iso_format(self._utc_timestamp),
             'platform': platform,
             'revisions': revisions_for_perf_webkit,
-            'tests': {}}
+            'builderName': builder_name,
+            'buildNumber': int(build_number) if build_number else None}
+
+        for key, value in meta_info.items():
+            if value:
+                contents_for_perf_webkit[key] = value
 
         # FIXME: Make this function shorter once we've transitioned to use perf.webkit.org.
         for metric_full_name, result in self._results.iteritems():
@@ -322,12 +329,13 @@ class PerfTestsRunner(object):
             _log.error("Failed to merge output JSON file %s: %s" % (output_json_path, error))
         return None
 
-    def _generate_output_files(self, output_json_path, perf_webkit_json_path, results_page_path, output, perf_webkit_output):
+    def _generate_output_files(self, output_json_path, perf_webkit_json_path, results_page_path, legacy_output, perf_webkit_output):
         filesystem = self._host.filesystem
 
-        json_output = json.dumps(output)
-        filesystem.write_text_file(output_json_path, json_output)
+        if output_json_path:
+            filesystem.write_text_file(output_json_path, json.dumps(legacy_output))
 
+        json_output = json.dumps(perf_webkit_output)
         if perf_webkit_json_path:
             filesystem.write_text_file(perf_webkit_json_path, json.dumps(perf_webkit_output))
 

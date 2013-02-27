@@ -92,8 +92,8 @@ Finished: 0.1 s
 
 """
 
-    results = {"max": 1510, "avg": 1490, "median": 1488, "min": 1471, "stdev": 15.13935, "unit": "ms",
-       "values": [1486, 1471, 1510, 1505, 1478, 1490]}
+    results = {'url': 'http://trac.webkit.org/browser/trunk/PerformanceTests/Bindings/event-target-wrapper.html',
+        'metrics': {'Time': {'current': [1486.0, 1471.0, 1510.0, 1505.0, 1478.0, 1490.0]}}}
 
 
 class SomeParserTestData:
@@ -157,12 +157,9 @@ median= 529000.0 bytes, stdev= 14124.44689 bytes, min= 511000.0 bytes, max= 5480
 Finished: 0.1 s
 """
 
-    results = {'values': [1080, 1120, 1095, 1101, 1104], 'avg': 1100, 'min': 1080, 'max': 1120,
-        'stdev': 14.50861, 'median': 1101, 'unit': 'ms'}
-    js_heap_results = {'values': [825000, 811000, 848000, 837000, 829000], 'avg': 830000, 'min': 811000, 'max': 848000,
-        'stdev': 13784.04875, 'median': 829000, 'unit': 'bytes'}
-    malloc_results = {'values': [529000, 511000, 548000, 536000, 521000], 'avg': 529000, 'min': 511000, 'max': 548000,
-        'stdev': 14124.44689, 'median': 529000, 'unit': 'bytes'}
+    results = {'current': [1080, 1120, 1095, 1101, 1104]}
+    js_heap_results = {'current': [825000, 811000, 848000, 837000, 829000]}
+    malloc_results = {'current': [529000, 511000, 548000, 536000, 521000]}
 
 
 class TestDriver:
@@ -302,19 +299,10 @@ class MainTest(unittest.TestCase):
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, 0)
         self.assertEqual(self._normalize_output(log), MemoryTestData.output + '\nMOCK: user.open_url: file://...\n')
-        results = self._load_output_json(runner)[0]['results']
-        values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19]
-
-        # Stdev for test doesn't match on some bots
-        self.assertEqual(sorted(results['Parser/memory-test'].keys()), sorted(MemoryTestData.results.keys()))
-        for key in MemoryTestData.results:
-            if key == 'stdev':
-                self.assertAlmostEqual(results['Parser/memory-test'][key], MemoryTestData.results[key], places=4)
-            else:
-                self.assertEqual(results['Parser/memory-test'][key], MemoryTestData.results[key])
-        self.assertEqual(results['Parser/memory-test'], MemoryTestData.results)
-        self.assertEqual(results['Parser/memory-test:JSHeap'], MemoryTestData.js_heap_results)
-        self.assertEqual(results['Parser/memory-test:Malloc'], MemoryTestData.malloc_results)
+        parser_tests = self._load_output_json(runner)[0]['tests']['Parser']['tests']
+        self.assertEqual(parser_tests['memory-test']['metrics']['Time'], MemoryTestData.results)
+        self.assertEqual(parser_tests['memory-test']['metrics']['JSHeap'], MemoryTestData.js_heap_results)
+        self.assertEqual(parser_tests['memory-test']['metrics']['Malloc'], MemoryTestData.malloc_results)
 
     def _test_run_with_json_output(self, runner, filesystem, upload_suceeds=False, results_shown=True, expected_exit_code=0):
         filesystem.write_text_file(runner._base_path + '/inspector/pass.html', 'some content')
@@ -325,7 +313,7 @@ class MainTest(unittest.TestCase):
         def mock_upload_json(hostname, json_path, host_path=None):
             # FIXME: Get rid of the hard-coded perf.webkit.org once we've completed the transition.
             self.assertIn(hostname, ['some.host', 'perf.webkit.org'])
-            self.assertIn(json_path, ['/mock-checkout/output.json', '/mock-checkout/output-perf-webkit.json'])
+            self.assertIn(json_path, ['/mock-checkout/output.json', '/mock-checkout/output-legacy.json'])
             self.assertIn(host_path, [None, '/api/report'])
             uploaded[0] = upload_suceeds
             return upload_suceeds
@@ -351,16 +339,17 @@ class MainTest(unittest.TestCase):
         return logs
 
     _event_target_wrapper_and_inspector_results = {
-        "Bindings/event-target-wrapper": EventTargetWrapperTestData.results,
-        "inspector/pass.html:group_name:test_name": 42}
+        "Bindings":
+            {"url": "http://trac.webkit.org/browser/trunk/PerformanceTests/Bindings",
+            "tests": {"event-target-wrapper": EventTargetWrapperTestData.results}}}
 
     def test_run_with_json_output(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
             '--test-results-server=some.host'])
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(self._load_output_json(runner), [{
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
-            "webkit-revision": "5678", "branch": "webkit-trunk"}])
+            "buildTime": "2013-02-08T15:19:37.460000", "tests": self._event_target_wrapper_and_inspector_results,
+            "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}}])
 
         filesystem = port.host.filesystem
         self.assertTrue(filesystem.isfile(runner._output_json_path()))
@@ -371,9 +360,9 @@ class MainTest(unittest.TestCase):
             '--test-results-server=some.host', '--description', 'some description'])
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(self._load_output_json(runner), [{
-            "timestamp": 123456789, "description": "some description",
-            "results": self._event_target_wrapper_and_inspector_results,
-            "webkit-revision": "5678", "branch": "webkit-trunk"}])
+            "buildTime": "2013-02-08T15:19:37.460000", "description": "some description",
+            "tests": self._event_target_wrapper_and_inspector_results,
+            "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}}])
 
     def create_runner_and_setup_results_template(self, args=[]):
         runner, port = self.create_runner(args)
@@ -402,8 +391,8 @@ class MainTest(unittest.TestCase):
         self._test_run_with_json_output(runner, port.host.filesystem)
 
         self.assertEqual(self._load_output_json(runner), [{
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
-            "webkit-revision": "5678", "branch": "webkit-trunk"}])
+            "buildTime": "2013-02-08T15:19:37.460000", "tests": self._event_target_wrapper_and_inspector_results,
+            "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}}])
 
         self.assertTrue(filesystem.isfile(output_json_path))
         self.assertTrue(filesystem.isfile(results_page_path))
@@ -418,8 +407,8 @@ class MainTest(unittest.TestCase):
         self._test_run_with_json_output(runner, port.host.filesystem)
 
         self.assertEqual(self._load_output_json(runner), [{"previous": "results"}, {
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
-            "webkit-revision": "5678", "branch": "webkit-trunk"}])
+            "buildTime": "2013-02-08T15:19:37.460000", "tests": self._event_target_wrapper_and_inspector_results,
+            "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}}])
         self.assertTrue(filesystem.isfile(filesystem.splitext(output_json_path)[0] + '.html'))
 
     def test_run_respects_reset_results(self):
@@ -432,8 +421,8 @@ class MainTest(unittest.TestCase):
         self._test_run_with_json_output(runner, port.host.filesystem)
 
         self.assertEqual(self._load_output_json(runner), [{
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
-            "webkit-revision": "5678", "branch": "webkit-trunk"}])
+            "buildTime": "2013-02-08T15:19:37.460000", "tests": self._event_target_wrapper_and_inspector_results,
+            "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}}])
         self.assertTrue(filesystem.isfile(filesystem.splitext(output_json_path)[0] + '.html'))
         pass
 
@@ -444,8 +433,8 @@ class MainTest(unittest.TestCase):
         filesystem = port.host.filesystem
         self._test_run_with_json_output(runner, filesystem, results_shown=False)
 
-        expected_entry = {"timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
-            "webkit-revision": "5678", "branch": "webkit-trunk"}
+        expected_entry = {"buildTime": "2013-02-08T15:19:37.460000", "tests": self._event_target_wrapper_and_inspector_results,
+            "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}}
 
         self.maxDiff = None
         self.assertEqual(runner._output_json_path(), '/mock-checkout/output.json')
@@ -491,8 +480,8 @@ class MainTest(unittest.TestCase):
         port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '{"key": "value"}')
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(self._load_output_json(runner), [{
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
-            "webkit-revision": "5678", "branch": "webkit-trunk", "key": "value"}])
+            "buildTime": "2013-02-08T15:19:37.460000", "tests": self._event_target_wrapper_and_inspector_results,
+            "revisions": {"WebKit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}, "builderKey": "value"}])
 
     def test_run_with_bad_slave_config_json(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
@@ -510,8 +499,9 @@ class MainTest(unittest.TestCase):
         port.repository_paths = lambda: [('webkit', '/mock-checkout'), ('some', '/mock-checkout/some')]
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         self.assertEqual(self._load_output_json(runner), [{
-            "timestamp": 123456789, "results": self._event_target_wrapper_and_inspector_results,
-            "webkit-revision": "5678", "some-revision": "5678", "branch": "webkit-trunk"}])
+            "buildTime": "2013-02-08T15:19:37.460000", "tests": self._event_target_wrapper_and_inspector_results,
+            "revisions": {"webkit": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"},
+            "some": {"timestamp": "2013-02-01 08:48:05 +0000", "revision": "5678"}}}])
 
     def test_run_with_upload_json(self):
         runner, port = self.create_runner_and_setup_results_template(args=['--output-json-path=/mock-checkout/output.json',
@@ -520,8 +510,8 @@ class MainTest(unittest.TestCase):
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
         generated_json = json.loads(port.host.filesystem.files['/mock-checkout/output.json'])
         self.assertEqual(generated_json[0]['platform'], 'platform1')
-        self.assertEqual(generated_json[0]['builder-name'], 'builder1')
-        self.assertEqual(generated_json[0]['build-number'], 123)
+        self.assertEqual(generated_json[0]['builderName'], 'builder1')
+        self.assertEqual(generated_json[0]['buildNumber'], 123)
 
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=False, expected_exit_code=PerfTestsRunner.EXIT_CODE_FAILED_UPLOADING)
 
@@ -532,14 +522,14 @@ class MainTest(unittest.TestCase):
         port.host.filesystem.write_text_file('/mock-checkout/slave-config.json', '{"key": "value1"}')
 
         self._test_run_with_json_output(runner, port.host.filesystem, upload_suceeds=True)
-        generated_json = json.loads(port.host.filesystem.files['/mock-checkout/output-perf-webkit.json'])
+        generated_json = json.loads(port.host.filesystem.files['/mock-checkout/output.json'])
         self.assertTrue(isinstance(generated_json, list))
         self.assertEqual(len(generated_json), 1)
 
         output = generated_json[0]
         self.maxDiff = None
         self.assertEqual(output['platform'], 'platform1')
-        self.assertEqual(output['buildNumber'], '123')
+        self.assertEqual(output['buildNumber'], 123)
         self.assertEqual(output['buildTime'], '2013-02-08T15:19:37.460000')
         self.assertEqual(output['builderName'], 'builder1')
         self.assertEqual(output['builderKey'], 'value1')

@@ -1,3 +1,45 @@
+2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use perf.webkit.org JSON format in results page
+        https://bugs.webkit.org/show_bug.cgi?id=110842
+
+        Reviewed by Benjamin Poulain.
+
+        Updated the results page template to use the new JSON format.
+
+        Since new JSON format doesn't contain statistics such as stdev and min, added statistics.js to compute
+        these values. Also use 95% percentile confidence interval instead of standard deviation in various places.
+
+        * resources/results-template.html: Added statistics.js as dependency.
+        (TestResult): Updated to take a metric instead of its test. Replaced stdev() with confidenceIntervalDelta()
+        now that we have a fancy Statistics class.
+
+        (TestRun.webkitRevision):
+        (PerfTestMetric): Renamed from PerfTest since this object now encapsulates each measurement (such as time,
+        JS heap, and malloc) in test. Also added a conversion table from a metric name to a unit since new format
+        doesn't contain units.
+        (PerfTestMetric.name): Updated to compute the full metric name from test name and metric name, matching
+        the old behavior.
+        (PerfTestMetric.isMemoryTest): Explicitly look for 'JSHeap' and 'Malloc' tests.
+        (PerfTestMetric.smallerIsBetter):
+
+        (attachPlot): Deleted the code to deal with tests that don't provide individual iteration measurement
+        since such tests no longer exist. Also fixed up the code compute y-axis range.
+
+        (createTableRow.markupForRun): Updated to use confidenceIntervalDelta() instead of stdev().
+        
+        (init.addTests): Added. Recursively add metrics.
+
+        * resources/statistics.js: Added. Imported from perf.webkit.org.
+        (Statistics.max):
+        (Statistics.min):
+        (Statistics.sum):
+        (Statistics.squareSum):
+        (Statistics.sampleStandardDeviation):
+        (Statistics.supportedConfidenceLevels):
+        (Statistics.confidenceIntervalDelta):
+        (Statistics.confidenceInterval):
+
 2013-02-11  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Split Profiler domain in protocol into Profiler and HeapProfiler

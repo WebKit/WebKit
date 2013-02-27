@@ -137,8 +137,9 @@ Reference <span id="reference" class="checkbox"></span>
 <script>
 
 (function () {
-    var jQuery = ['PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js'];
-    var plugins = ['PerformanceTests/resources/jquery.flot.min.js', 'PerformanceTests/resources/jquery.tablesorter.min.js'];
+    var jQuery = 'PerformanceTests/Dromaeo/resources/dromaeo/web/lib/jquery-1.6.4.js';
+    var plugins = ['PerformanceTests/resources/jquery.flot.min.js', 'PerformanceTests/resources/jquery.tablesorter.min.js',
+        'PerformanceTests/resources/statistics.js'];
     var localPath = '%AbsolutePathToWebKitTrunk%';
     var remotePath = 'https://svn.webkit.org/repository/webkit/trunk';
     var numberOfFailures = 0;
@@ -183,27 +184,29 @@ Reference <span id="reference" class="checkbox"></span>
         });
 })();
 
-function TestResult(associatedTest, result, associatedRun) {
-    this.unit = function () { return result.unit; }
-    this.test = function () { return associatedTest; }
-    this.values = function () { return result.values ? result.values.map(function (value) { return associatedTest.scalingFactor() * value; }) : undefined; }
-    this.unscaledMean = function () { return result.avg; }
-    this.mean = function () { return associatedTest.scalingFactor() * result.avg; }
-    this.min = function () { return associatedTest.scalingFactor() * result.min; }
-    this.max = function () { return associatedTest.scalingFactor() * result.max; }
-    this.stdev = function () { return associatedTest.scalingFactor() * result.stdev; }
-    this.stdevRatio = function () { return result.stdev / result.avg; }
-    this.percentDifference = function(other) { return (other.mean() - this.mean()) / this.mean(); }
+function TestResult(metric, values, associatedRun) {
+    this.test = function () { return metric; }
+    this.values = function () { return values.map(function (value) { return metric.scalingFactor() * value; }); }
+    this.unscaledMean = function () { return Statistics.sum(values) / values.length; }
+    this.mean = function () { return metric.scalingFactor() * this.unscaledMean(); }
+    this.min = function () { return metric.scalingFactor() * Statistics.min(values); }
+    this.max = function () { return metric.scalingFactor() * Statistics.max(values); }
+    this.confidenceIntervalDelta = function () {
+        return metric.scalingFactor() * Statistics.confidenceIntervalDelta(0.95, values.length,
+            Statistics.sum(values), Statistics.squareSum(values));
+    }
+    this.confidenceIntervalDeltaRatio = function () { return this.confidenceIntervalDelta() / this.mean(); }
+    this.percentDifference = function(other) { return (other.unscaledMean() - this.unscaledMean()) / this.unscaledMean(); }
     this.isStatisticallySignificant = function (other) {
         var diff = Math.abs(other.mean() - this.mean());
-        return diff > this.stdev() && diff > other.stdev();
+        return diff > this.confidenceIntervalDelta() && diff > other.confidenceIntervalDelta();
     }
     this.run = function () { return associatedRun; }
 }
 
 function TestRun(entry) {
     this.description = function () { return entry['description']; }
-    this.webkitRevision = function () { return entry['webkit-revision']; }
+    this.webkitRevision = function () { return entry['revisions']['WebKit']['revision']; }
     this.label = function () {
         var label = 'r' + this.webkitRevision();
         if (this.description())
@@ -212,10 +215,11 @@ function TestRun(entry) {
     }
 }
 
-function PerfTest(name) {
+function PerfTestMetric(name, metric) {
     var testResults = [];
     var cachedUnit = null;
     var cachedScalingFactor = null;
+    var unit = {'FrameRate': 'fps', 'Runs': 'runs/s', 'Time': 'ms', 'Malloc': 'bytes', 'JSHeap': 'bytes'}[metric];
 
     // We can't do this in TestResult because all results for each test need to share the same unit and the same scaling factor.
     function computeScalingFactorIfNeeded() {
@@ -224,7 +228,6 @@ function PerfTest(name) {
         if (!testResults.length || cachedUnit)
             return;
 
-        var unit = testResults[0].unit(); // FIXME: We should verify that all results have the same unit.
         var mean = testResults[0].unscaledMean(); // FIXME: We should look at all values.
         var kilo = unit == 'bytes' ? 1024 : 1000;
         if (mean > 10 * kilo * kilo && unit != 'ms') {
@@ -239,8 +242,8 @@ function PerfTest(name) {
         }
     }
 
-    this.name = function () { return name; }
-    this.isMemoryTest = function () { return name.indexOf(':') >= 0; }
+    this.name = function () { return name + ':' + metric; }
+    this.isMemoryTest = function () { return metric == 'JSHeap' || metric == 'Malloc'; }
     this.addResult = function (newResult) {
         testResults.push(newResult);
         cachedUnit = null;
@@ -255,7 +258,7 @@ function PerfTest(name) {
         computeScalingFactorIfNeeded();
         return cachedUnit;
     }
-    this.smallerIsBetter = function () { return testResults[0].unit() == 'ms' || testResults[0].unit() == 'bytes'; }
+    this.smallerIsBetter = function () { return unit == 'ms' || unit == 'bytes'; }
 }
 
 var plotColor = 'rgb(230,50,50)';
@@ -353,22 +356,15 @@ function attachPlot(test, plotContainer, minIsZero) {
         return newValues ? values.concat(newValues.map(function (value) { return [index, value]; })) : values;
     }, []);
 
-    var plotData = [];
-    if (values.length)
-        plotData = [$.extend(true, {}, subpointsPlotOptions, {data: values})];
-    else {
-        function makeSubpoints(id, callback) { return $.extend(true, {}, subpointsPlotOptions, {id: id, data: results.map(callback)}); }
-        plotData = [makeSubpoints('min', function (result, index) { return [index, result.min()]; }),
-        makeSubpoints('max', function (result, index) { return [index, result.max()]; }),
-        makeSubpoints('-&#963;', function (result, index) { return [index, result.mean() - result.stdev()]; }),
-        makeSubpoints('+&#963;', function (result, index) { return [index, result.mean() + result.stdev()]; })];
-    }
-
+    var plotData = [$.extend(true, {}, subpointsPlotOptions, {data: values})];
     plotData.push({id: '&mu;', data: results.map(function (result, index) { return [index, result.mean()]; }), color: plotColor});
 
+    var overallMax = Statistics.max(results.map(function (result, index) { return result.max(); }));
+    var overallMin = Statistics.min(results.map(function (result, index) { return result.min(); }));
+    var margin = (overallMax - overallMin) * 0.1;
     var currentPlotOptions = $.extend(true, {}, mainPlotOptions, {yaxis: {
-        min: minIsZero ? 0 : Math.min.apply(Math, results.map(function (result, index) { return result.min(); })) * 0.98,
-        max: Math.max.apply(Math, results.map(function (result, index) { return result.max(); })) * (minIsZero ? 1.1 : 1.01)}});
+        min: minIsZero ? 0 : overallMin - margin,
+        max: minIsZero ? overallMax * 1.1 : overallMax + margin}});
 
     currentPlotOptions.xaxis.max = results.length - 0.5;
     currentPlotOptions.xaxis.ticks = results.map(function (result, index) { return [index, result.run().label()]; });
@@ -475,13 +471,13 @@ function createTableRow(runs, test, referenceIndex) {
             }
         }
 
-        var statistics = '&sigma;=' + toFixedWidthPrecision(result.stdev()) + ', min=' + toFixedWidthPrecision(result.min())
+        var statistics = '&sigma;=' + toFixedWidthPrecision(result.confidenceIntervalDelta()) + ', min=' + toFixedWidthPrecision(result.min())
             + ', max=' + toFixedWidthPrecision(result.max()) + '\n' + regressionAnalysis;
 
         // Tablesorter doesn't know about the second cell so put the comparison in the invisible element.
         return '<td class="result" title="' + statistics + '">' + toFixedWidthPrecision(result.mean()) + hiddenValue
-            + '</td><td class="stdev" title="' + statistics + '">&plusmn; '
-            + formatPercentage(result.stdevRatio()) + warning + '</td>' + comparisonCell;
+            + '</td><td class="confidenceIntervalDelta" title="' + statistics + '">&plusmn; '
+            + formatPercentage(result.confidenceIntervalDeltaRatio()) + warning + '</td>' + comparisonCell;
     }
 
     function markupForMissingRun(isReference) {
@@ -547,24 +543,42 @@ function init() {
     });
 
     var runs = [];
-    var tests = {};
+    var metrics = {};
     $.each(JSON.parse(document.getElementById('json').textContent), function (index, entry) {
         var run = new TestRun(entry);
         runs.push(run);
-        $.each(entry.results, function (test, result) {
-            if (!tests[test])
-                tests[test] = new PerfTest(test);
-            tests[test].addResult(new TestResult(tests[test], result, run));
-        });
+
+        function addTests(tests, parentFullName) {
+            for (var testName in tests) {
+                var fullTestName = parentFullName + '/' + testName;
+                var rawMetrics = tests[testName].metrics;
+
+                for (var metricName in rawMetrics) {
+                    var fullMetricName = fullTestName + ':' + metricName;
+                    var metric = metrics[fullMetricName];
+                    if (!metric) {
+                        metric = new PerfTestMetric(fullTestName, metricName);
+                        metrics[fullMetricName] = metric;
+                    }
+                    metric.addResult(new TestResult(metric, rawMetrics[metricName].current, run));
+                }
+
+                if (tests[testName].tests)
+                    addTests(tests[testName].tests, fullTestName);
+            }
+        }
+
+        addTests(entry.tests, '');
     });
 
     var shouldIgnoreMemory= true;
     var referenceIndex = 0;
-    createTable(tests, runs, shouldIgnoreMemory, referenceIndex);
+
+    createTable(metrics, runs, shouldIgnoreMemory, referenceIndex);
 
     $('#time-memory').bind('change', function (event, checkedElement) {
         shouldIgnoreMemory = checkedElement.textContent == 'Time';
-        createTable(tests, runs, shouldIgnoreMemory, referenceIndex);
+        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex);
     });
 
     runs.map(function (run, index) {
@@ -573,7 +587,7 @@ function init() {
 
     $('#reference').bind('change', function (event, checkedElement) {
         referenceIndex = parseInt(checkedElement.getAttribute('value'));
-        createTable(tests, runs, shouldIgnoreMemory, referenceIndex);
+        createTable(metrics, runs, shouldIgnoreMemory, referenceIndex);
     });
 
     $('.checkbox').each(function (index, checkbox) {

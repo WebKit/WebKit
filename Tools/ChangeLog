@@ -1,3 +1,36 @@
+2013-02-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Use perf.webkit.org JSON format in results page
+        https://bugs.webkit.org/show_bug.cgi?id=110842
+
+        Reviewed by Benjamin Poulain.
+
+        Change the default JSON format from that of webkit-perf.appspot.com to that of perf.webkit.org.
+
+        A whole bunch of integration tests have been updated to use the new JSON format.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._generate_and_show_results): Renamed output and output_path to legacy_output
+        and legacy_output_json_path respectively.
+        (PerfTestsRunner._generate_results_dict): Don't assume meta build information is always available.
+        (PerfTestsRunner._generate_output_files): Make json_output, which is used to generate the default
+        JSON file and the results page out of perf_webkit_output instead of legacy_output.
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (MainTest.test_run_memory_test):
+        (MainTest._test_run_with_json_output.mock_upload_json):
+        (MainTest):
+        (MainTest.test_run_with_json_output):
+        (MainTest.test_run_with_description):
+        (MainTest.test_run_generates_json_by_default):
+        (MainTest.test_run_merges_output_by_default):
+        (MainTest.test_run_respects_reset_results):
+        (MainTest.test_run_generates_and_show_results_page):
+        (MainTest.test_run_with_slave_config_json):
+        (MainTest.test_run_with_multiple_repositories):
+        (MainTest.test_run_with_upload_json):
+        (MainTest.test_run_with_upload_json_should_generate_perf_webkit_json):
+
 2013-02-26  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Enable threaded HTML parser by default in DumpRenderTree
