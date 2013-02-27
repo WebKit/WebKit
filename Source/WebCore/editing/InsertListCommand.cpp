@@ -376,9 +376,11 @@ PassRefPtr<HTMLElement> InsertListCommand::listifyParagraph(const VisiblePositio
         // We inserted the list at the start of the content we're about to move
         // Update the start of content, so we don't try to move the list into itself.  bug 19066
         // Layout is necessary since start's node's inline renderers may have been destroyed by the insertion
+        // The end of the content may have changed after the insertion and layout so update it as well.
         if (insertionPos == start.deepEquivalent()) {
             listElement->document()->updateLayoutIgnorePendingStylesheets();
             start = startOfParagraph(originalStart, CanSkipOverEditingBoundary);
+            end = endOfParagraph(start, CanSkipOverEditingBoundary);
         }
     }
 

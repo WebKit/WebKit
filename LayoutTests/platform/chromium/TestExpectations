@@ -3741,8 +3741,6 @@ webkit.org/b/85856 [ Lion MountainLion ] platform/chromium/virtual/gpu/composite
 webkit.org/b/85856 scrollbars/rtl/div-horizontal.html [ Failure ]
 webkit.org/b/85856 platform/chromium/virtual/gpu/compositedscrolling/scrollbars/rtl/div-horizontal.html [ Failure ]
 
-webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
-
 webkit.org/b/93565 [ Debug ] fast/dom/Document/document-reopen.html [ Failure Pass ]
 webkit.org/b/93566 [ Debug ] fast/parser/iframe-sets-parent-to-javascript-url.html [ Failure Pass ]
 webkit.org/b/93567 [ Debug ] fast/parser/javascript-url-compat-mode.html [ Failure Pass ]

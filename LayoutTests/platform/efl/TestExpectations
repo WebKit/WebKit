@@ -1495,8 +1495,6 @@ fast/forms/week-multiple-fields
 
 webkit.org/b/93976 fast/css-generated-content/quotes-lang.html [ ImageOnlyFailure ]
 
-webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
-
 # This has always failed on Gtk/Efl - exposed by bug 89826
 webkit.org/b/94009 css2.1/20110323/c541-word-sp-000.htm [ ImageOnlyFailure ]
 

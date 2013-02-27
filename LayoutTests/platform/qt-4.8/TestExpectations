@@ -748,8 +748,6 @@ webkit.org/b/80219 compositing/overflow/clip-descendents.html [ Failure ]
 # Require rebaseline after bug 93148
 webkit.org/b/93148 fast/css/nested-layers-with-hover.html [ Failure ]
 
-webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
-
 webkit.org/b/93654 [ Debug ] fast/events/keyevent-iframe-removed-crash.html [ Crash ]
 
 # This has always failed on Qt - exposed by bug 89826

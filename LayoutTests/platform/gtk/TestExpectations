@@ -440,8 +440,6 @@ webkit.org/b/86443 [ Debug ] plugins/npruntime/delete-plugin-within-invoke.html 
 
 webkit.org/b/86176 [ Debug ] ietestcenter/css3/valuesandunits/units-000.htm [ Crash ]
 
-webkit.org/b/93247 [ Debug ] fast/lists/list-marker-remove-crash.html [ Crash ]
-
 webkit.org/b/93812 [ Debug ] svg/custom/use-instanceRoot-as-event-target.xhtml [ Crash Pass ]
 
 webkit.org/b/90957 [ Release ] fast/js/random-array-gc-stress.html [ Crash Pass ]
