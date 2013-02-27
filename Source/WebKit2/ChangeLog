@@ -1,5 +1,21 @@
 2013-02-26  Anders Carlsson  <andersca@apple.com>
 
+        StorageAreaProxy should hold on to a StorageMap and not a HashMap
+        https://bugs.webkit.org/show_bug.cgi?id=110919
+
+        Reviewed by Jessie Berlin.
+
+        Create a storage map instead of a hash map.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::length):
+        (WebKit::StorageAreaProxy::loadValuesIfNeeded):
+        * WebProcess/Storage/StorageAreaProxy.h:
+        (WebCore):
+        (StorageAreaProxy):
+
+2013-02-26  Anders Carlsson  <andersca@apple.com>
+
         Fix a copy/paste error in WebLoaderClient::didBlockInsecurePluginVersion
         https://bugs.webkit.org/show_bug.cgi?id=110914
         <rdar://problem/13297581>

@@ -29,6 +29,10 @@
 #include <WebCore/StorageArea.h>
 #include <wtf/HashMap.h>
 
+namespace WebCore {
+class StorageMap;
+}
+
 namespace WebKit {
 
 class StorageNamespaceProxy;
@@ -62,7 +66,7 @@ private:
     WebCore::StorageType m_storageType;
     unsigned m_quotaInBytes;
     uint64_t m_storageAreaID;
-    OwnPtr<HashMap<String, String> > m_values;
+    RefPtr<WebCore::StorageMap> m_storageMap;
 };
 
 } // namespace WebKit

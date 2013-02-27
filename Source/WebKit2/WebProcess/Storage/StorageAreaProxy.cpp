@@ -35,6 +35,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/SchemeRegistry.h>
 #include <WebCore/SecurityOrigin.h>
+#include <WebCore/StorageMap.h>
 
 using namespace WebCore;
 
@@ -76,7 +77,7 @@ unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* sourceFrame)
         return 0;
 
     loadValuesIfNeeded();
-    return m_values->size();
+    return m_storageMap->length();
 }
 
 String StorageAreaProxy::key(unsigned index, ExceptionCode&, Frame* sourceFrame)
@@ -173,7 +174,7 @@ bool StorageAreaProxy::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame
 
 void StorageAreaProxy::loadValuesIfNeeded()
 {
-    if (m_values)
+    if (m_storageMap)
         return;
 
     HashMap<String, String> values;
@@ -181,8 +182,8 @@ void StorageAreaProxy::loadValuesIfNeeded()
     // (This flag does not yet exist).
     WebProcess::shared().connection()->sendSync(Messages::StorageManager::GetValues(m_storageAreaID), Messages::StorageManager::GetValues::Reply(values), 0);
 
-    // FIXME: Don't copy the hash map.
-    m_values = adoptPtr(new HashMap<String, String>(values));
+    m_storageMap = StorageMap::create(m_quotaInBytes);
+    m_storageMap->importItems(values);
 }
 
 } // namespace WebKit
