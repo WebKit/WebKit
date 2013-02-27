@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+        if (window.testRunner)
+            testRunner.dumpAsText();
+
+        var req = new XMLHttpRequest();
+        req.open("GET", "resources/endlessxml.php");
+        req.onerror = function () {
+            console.log("FAIL: Expected 'abort', got 'error'.");
+        };
+        req.onabort = function () {
+            console.log("PASS: Expected 'abort', got 'abort'.");
+        };
+        req.send(null);
+
+        if (window.testRunner)
+            testRunner.queueLoad("data:text/html,<p>This page should load, and the XMLHttpRequest from the previous page should have aborted and fired a 'PASS' message to the console.</p>");
+    </script>
+</head>
+<body>
+</body>
