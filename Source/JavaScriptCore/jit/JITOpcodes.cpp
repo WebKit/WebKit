@@ -53,7 +53,7 @@ void JIT::emit_op_mov(Instruction* currentInstruction)
     int dst = currentInstruction[1].u.operand;
     int src = currentInstruction[2].u.operand;
 
-    if (canBeOptimized()) {
+    if (canBeOptimizedOrInlined()) {
         // Use simpler approach, since the DFG thinks that the last result register
         // is always set to the destination on every operation.
         emitGetVirtualRegister(src, regT0);

@@ -168,6 +168,7 @@ fast/js/dfg-obvious-constant-cfa
 fast/js/dfg-osr-entry-hoisted-clobbered-structure-check
 fast/js/dfg-other-branch
 fast/js/dfg-phantom-get-local
+fast/js/dfg-post-inc-then-exit
 fast/js/dfg-proto-access-inline-osr-exit
 fast/js/dfg-proven-sqrt-backwards-propagation
 fast/js/dfg-put-by-id-prototype-check

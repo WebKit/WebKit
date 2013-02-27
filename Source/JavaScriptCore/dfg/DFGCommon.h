@@ -246,7 +246,7 @@ namespace JSC { namespace DFG {
 
 // Put things here that must be defined even if ENABLE(DFG_JIT) is false.
 
-enum CapabilityLevel { CannotCompile, ShouldProfile, CanCompile, CapabilityLevelNotSet };
+enum CapabilityLevel { CannotCompile, MayInline, CanCompile, CapabilityLevelNotSet };
 
 // Unconditionally disable DFG disassembly support if the DFG is not compiled in.
 inline bool shouldShowDisassembly()

@@ -193,7 +193,7 @@ inline CapabilityLevel canCompileOpcode(OpcodeID opcodeID, CodeBlock*, Instructi
         return CanCompile;
         
     case op_call_varargs:
-        return ShouldProfile;
+        return MayInline;
 
     case op_resolve:
     case op_resolve_global_property:

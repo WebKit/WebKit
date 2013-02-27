@@ -56,7 +56,7 @@ void JIT::emit_op_call_put_result(Instruction* instruction)
     int dst = instruction[1].u.operand;
     emitValueProfilingSite();
     emitPutVirtualRegister(dst);
-    if (canBeOptimized())
+    if (canBeOptimizedOrInlined())
         killLastResultRegister(); // Make lastResultRegister tracking simpler in the DFG.
 }
 
@@ -168,7 +168,7 @@ void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned ca
         int argCount = instruction[2].u.operand;
         int registerOffset = instruction[3].u.operand;
 
-        if (opcodeID == op_call && canBeOptimized()) {
+        if (opcodeID == op_call && shouldEmitProfiling()) {
             emitGetVirtualRegister(registerOffset + CallFrame::argumentOffsetIncludingThis(0), regT0);
             Jump done = emitJumpIfNotJSCell(regT0);
             loadPtr(Address(regT0, JSCell::structureOffset()), regT0);

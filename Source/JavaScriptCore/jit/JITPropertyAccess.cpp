@@ -535,7 +535,7 @@ void JIT::compileGetByIdHotPath(int baseVReg, Identifier* ident)
 
     emitJumpSlowCaseIfNotJSCell(regT0, baseVReg);
     
-    if (*ident == m_globalData->propertyNames->length && canBeOptimized()) {
+    if (*ident == m_globalData->propertyNames->length && shouldEmitProfiling()) {
         loadPtr(Address(regT0, JSCell::structureOffset()), regT1);
         emitArrayProfilingSiteForBytecodeIndex(regT1, regT2, m_bytecodeOffset);
     }
@@ -705,7 +705,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     // If we succeed in all of our checks, and the code was optimizable, then make sure we
     // decrement the rare case counter.
 #if ENABLE(VALUE_PROFILER)
-    if (m_codeBlock->canCompileWithDFG() >= DFG::ShouldProfile) {
+    if (m_codeBlock->canCompileWithDFG() >= DFG::MayInline) {
         sub32(
             TrustedImm32(1),
             AbsoluteAddress(&m_codeBlock->rareCaseProfileForBytecodeOffset(stubInfo->bytecodeIndex)->m_counter));

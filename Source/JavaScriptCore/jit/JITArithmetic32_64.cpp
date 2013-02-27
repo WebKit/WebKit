@@ -467,6 +467,8 @@ void JIT::emit_op_post_inc(Instruction* currentInstruction)
     emitStoreInt32(srcDst, regT2, true);
 
     emitStoreAndMapInt32(dst, regT1, regT0, false, OPCODE_LENGTH(op_post_inc));
+    if (canBeOptimizedOrInlined())
+        unmap();
 }
 
 void JIT::emitSlow_op_post_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -502,6 +504,8 @@ void JIT::emit_op_post_dec(Instruction* currentInstruction)
     emitStoreInt32(srcDst, regT2, true);
 
     emitStoreAndMapInt32(dst, regT1, regT0, false, OPCODE_LENGTH(op_post_dec));
+    if (canBeOptimizedOrInlined())
+        unmap();
 }
 
 void JIT::emitSlow_op_post_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

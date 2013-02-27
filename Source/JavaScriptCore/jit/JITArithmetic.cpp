@@ -641,6 +641,8 @@ void JIT::emit_op_post_inc(Instruction* currentInstruction)
     emitFastArithIntToImmNoCheck(regT1, regT1);
     emitPutVirtualRegister(srcDst, regT1);
     emitPutVirtualRegister(result);
+    if (canBeOptimizedOrInlined())
+        killLastResultRegister();
 }
 
 void JIT::emitSlow_op_post_inc(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
@@ -668,6 +670,8 @@ void JIT::emit_op_post_dec(Instruction* currentInstruction)
     emitFastArithIntToImmNoCheck(regT1, regT1);
     emitPutVirtualRegister(srcDst, regT1);
     emitPutVirtualRegister(result);
+    if (canBeOptimizedOrInlined())
+        killLastResultRegister();
 }
 
 void JIT::emitSlow_op_post_dec(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)

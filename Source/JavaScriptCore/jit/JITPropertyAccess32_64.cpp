@@ -477,7 +477,7 @@ void JIT::compileGetByIdHotPath(Identifier* ident)
     // to array-length / prototype access tranpolines, and finally we also the the property-map access offset as a label
     // to jump back to if one of these trampolies finds a match.
     
-    if (*ident == m_globalData->propertyNames->length && canBeOptimized()) {
+    if (*ident == m_globalData->propertyNames->length && shouldEmitProfiling()) {
         loadPtr(Address(regT0, JSCell::structureOffset()), regT2);
         emitArrayProfilingSiteForBytecodeIndex(regT2, regT3, m_bytecodeOffset);
     }
@@ -648,7 +648,7 @@ void JIT::privateCompilePutByIdTransition(StructureStubInfo* stubInfo, Structure
     // If we succeed in all of our checks, and the code was optimizable, then make sure we
     // decrement the rare case counter.
 #if ENABLE(VALUE_PROFILER)
-    if (m_codeBlock->canCompileWithDFG() >= DFG::ShouldProfile) {
+    if (m_codeBlock->canCompileWithDFG() >= DFG::MayInline) {
         sub32(
             TrustedImm32(1),
             AbsoluteAddress(&m_codeBlock->rareCaseProfileForBytecodeOffset(stubInfo->bytecodeIndex)->m_counter));

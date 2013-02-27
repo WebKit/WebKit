@@ -1,3 +1,63 @@
+2013-02-26  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG OSR exit doesn't know which virtual register to use for the last result register for post_inc and post_dec
+        https://bugs.webkit.org/show_bug.cgi?id=109036
+        <rdar://problem/13292139>
+
+        Reviewed by Gavin Barraclough.
+        
+        This was a two-fold problem:
+        
+        1) post_inc/dec has two results - the new value of the variable, and the old value of the variable. DFG OSR exit
+           assumed that the "last result" used for the Baseline JIT's register allocation would be the new value. It was
+           wrong in this assumption.
+        
+        2) The Baseline JIT knew to disable its last result optimization in cases where it might confuse the DFG. But it
+           was doing this only for code blocks that could be totally optimized, but not code blocks that could only be
+           optimized when inlined.
+        
+        This patch introduces a more rigorous notion of when the Baseline JIT emits profiling, when it does extra work
+        to account for the possibility of OSR exit, and when it does extra work to account for the possibility of OSR
+        entry. These notions are called shouldEmitProfiling(), canBeOptimizedOrInlined(), and canBeOptimized(),
+        respectively.
+        
+        This is performance-neutral and fixes the reported bug. It probably fixes other bugs as well, since previously
+        we for example weren't doing the more conservative implementation of op_mov in the Baseline JIT for code blocks
+        that could be inlined but not optimized. So, if such a code block OSR exited at just the right point, you'd get
+        symptoms similar to this bug.
+
+        * dfg/DFGCapabilities.h:
+        (JSC::DFG::canCompileOpcode):
+        * dfg/DFGCommon.h:
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        (JSC::JIT::compilePatchGetArrayLength):
+        (JSC::JIT::canBeOptimizedOrInlined):
+        (JIT):
+        * jit/JITArithmetic.cpp:
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_post_inc):
+        (JSC::JIT::emit_op_post_dec):
+        * jit/JITCall.cpp:
+        (JSC::JIT::emit_op_call_put_result):
+        (JSC::JIT::compileOpCall):
+        * jit/JITCall32_64.cpp:
+        (JSC::JIT::compileOpCall):
+        * jit/JITInlines.h:
+        (JSC::JIT::emitArrayProfilingSite):
+        (JSC::JIT::map):
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_mov):
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::privateCompilePutByIdTransition):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::privateCompilePutByIdTransition):
+
 2013-02-26  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. AppleWin VS2010 build fix.

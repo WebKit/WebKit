@@ -386,7 +386,7 @@ inline void JIT::emitArrayProfilingSite(RegisterID structureAndIndexingType, Reg
     RegisterID structure = structureAndIndexingType;
     RegisterID indexingType = structureAndIndexingType;
     
-    if (canBeOptimized())
+    if (shouldEmitProfiling())
         storePtr(structure, arrayProfile->addressOfLastSeenStructure());
 
     load8(Address(structure, Structure::indexingTypeOffset()), indexingType);
@@ -624,8 +624,8 @@ inline void JIT::map(unsigned bytecodeOffset, int virtualRegisterIndex, Register
     m_mappedTag = tag;
     m_mappedPayload = payload;
     
-    ASSERT(!canBeOptimized() || m_mappedPayload == regT0);
-    ASSERT(!canBeOptimized() || m_mappedTag == regT1);
+    ASSERT(!canBeOptimizedOrInlined() || m_mappedPayload == regT0);
+    ASSERT(!canBeOptimizedOrInlined() || m_mappedTag == regT1);
 }
 
 inline void JIT::unmap(RegisterID registerID)
