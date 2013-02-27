@@ -459,6 +459,20 @@ bool inScopeCommon(HTMLElementStack::ElementRecord* top, const AtomicString& tar
     return false;
 }
 
+template <bool isMarker(HTMLStackItem*)>
+bool inScopeCommon(HTMLElementStack::ElementRecord* top, const QualifiedName& targetTag)
+{
+    for (HTMLElementStack::ElementRecord* pos = top; pos; pos = pos->next()) {
+        HTMLStackItem* item = pos->stackItem().get();
+        if (item->hasTagName(targetTag))
+            return true;
+        if (isMarker(item))
+            return false;
+    }
+    ASSERT_NOT_REACHED(); // <html> is always on the stack and is a scope marker.
+    return false;
+}
+
 bool HTMLElementStack::hasNumberedHeaderElementInScope() const
 {
     for (ElementRecord* record = m_top.get(); record; record = record->next()) {
@@ -514,8 +528,7 @@ bool HTMLElementStack::inTableScope(const AtomicString& targetTag) const
 
 bool HTMLElementStack::inTableScope(const QualifiedName& tagName) const
 {
-    // FIXME: Is localName() right for non-html elements?
-    return inTableScope(tagName.localName());
+    return inScopeCommon<isTableScopeMarker>(m_top.get(), tagName);
 }
 
 bool HTMLElementStack::inButtonScope(const AtomicString& targetTag) const

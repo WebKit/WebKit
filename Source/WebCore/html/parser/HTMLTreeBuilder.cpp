@@ -1234,7 +1234,7 @@ void HTMLTreeBuilder::processStartTag(AtomicHTMLToken* token)
         }
         if (isCaptionColOrColgroupTag(token->name()) || isTableBodyContextTag(token->name())) {
             // FIXME: This is slow.
-            if (!m_tree.openElements()->inTableScope(tbodyTag.localName()) && !m_tree.openElements()->inTableScope(theadTag.localName()) && !m_tree.openElements()->inTableScope(tfootTag.localName())) {
+            if (!m_tree.openElements()->inTableScope(tbodyTag) && !m_tree.openElements()->inTableScope(theadTag) && !m_tree.openElements()->inTableScope(tfootTag)) {
                 ASSERT(isParsingFragmentOrTemplateContents());
                 parseError(token);
                 return;
@@ -1723,7 +1723,7 @@ void HTMLTreeBuilder::processEndTagForInTableBody(AtomicHTMLToken* token)
     }
     if (token->name() == tableTag) {
         // FIXME: This is slow.
-        if (!m_tree.openElements()->inTableScope(tbodyTag.localName()) && !m_tree.openElements()->inTableScope(theadTag.localName()) && !m_tree.openElements()->inTableScope(tfootTag.localName())) {
+        if (!m_tree.openElements()->inTableScope(tbodyTag) && !m_tree.openElements()->inTableScope(theadTag) && !m_tree.openElements()->inTableScope(tfootTag)) {
             ASSERT(isParsingFragmentOrTemplateContents());
             parseError(token);
             return;
@@ -1978,7 +1978,7 @@ bool HTMLTreeBuilder::processCaptionEndTagForInCaption()
 
 bool HTMLTreeBuilder::processTrEndTagForInRow()
 {
-    if (!m_tree.openElements()->inTableScope(trTag.localName())) {
+    if (!m_tree.openElements()->inTableScope(trTag)) {
         ASSERT(isParsingFragmentOrTemplateContents());
         // FIXME: parse error
         return false;
