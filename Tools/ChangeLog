@@ -1,3 +1,9 @@
+2013-02-27  Yong Li  <yong.li.webkit@outlook.com>
+
+        Unreviewed. Remove myself from watchlist.
+
+        * Scripts/webkitpy/common/config/watchlist:
+
 2013-02-27  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         Switch QtWebKit to GStreamer 1.0.
