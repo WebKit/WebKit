@@ -1,5 +1,31 @@
 2013-02-27  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
 
+        [BlackBerry] Context menu cannot be invoked after doing text selection in landscape mode
+        https://bugs.webkit.org/show_bug.cgi?id=110860
+
+        Reviewed by Yong Li.
+
+        PR 290248 Internally reviewed by Mike Fenton
+
+        Add a parameter to notify the webpage client which parts of selection have
+        changed in visual or in its selected DOM content. Refactor the selection details
+        parameter to platform repo.
+
+        The reason of this issue is that when javascript triggers webpage layout, the selection
+        will update its apperance event when the selected content is not changed. We want
+        to hide the context menu only when the selected content is changed not when only its
+        visual is changed.
+
+* Api/WebPageClient.h:
+        (Platform):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::cancelSelection):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
+2013-02-27  Sean Wang  <Xuewen.Wang@torchmobile.com.cn>
+
         [BlackBerry] The virtual keyboard hides part of Signing In dialog
         https://bugs.webkit.org/show_bug.cgi?id=110836
 

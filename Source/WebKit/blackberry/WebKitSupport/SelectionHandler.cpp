@@ -87,8 +87,7 @@ void SelectionHandler::cancelSelection()
         m_webPage->m_selectionOverlay->hide();
     // Notify client with empty selection to ensure the handles are removed if
     // rendering happened prior to processing on webkit thread
-    m_webPage->m_client->notifySelectionDetailsChanged(WebCore::IntRect(DOMSupport::InvalidPoint, WebCore::IntSize()),
-        WebCore::IntRect(DOMSupport::InvalidPoint, WebCore::IntSize()), IntRectRegion());
+    m_webPage->m_client->notifySelectionDetailsChanged(SelectionDetails());
 
     SelectionLog(Platform::LogLevelInfo, "SelectionHandler::cancelSelection");
 
@@ -1019,7 +1018,13 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
     if (m_webPage->m_selectionOverlay)
         m_webPage->m_selectionOverlay->draw(visibleSelectionRegion);
 
-    m_webPage->m_client->notifySelectionDetailsChanged(startCaret, endCaret, visibleSelectionRegion, inputNodeOverridesTouch(), requestedSelectionHandlePosition(frame->selection()->selection()));
+
+    VisibleSelection currentSelection = frame->selection()->selection();
+    SelectionDetails details(startCaret, endCaret, visibleSelectionRegion, inputNodeOverridesTouch(),
+        m_lastSelection != currentSelection, requestedSelectionHandlePosition(frame->selection()->selection()));
+
+    m_webPage->m_client->notifySelectionDetailsChanged(details);
+    m_lastSelection = currentSelection;
     SelectionTimingLog(Platform::LogLevelInfo,
         "SelectionHandler::selectionPositionChanged completed at %f",
         m_timer.elapsed());

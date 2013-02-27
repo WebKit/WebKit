@@ -102,6 +102,7 @@ private:
     BlackBerry::Platform::IntRectRegion m_lastSelectionRegion;
 
     BlackBerry::Platform::StopWatch m_timer;
+    WebCore::VisibleSelection m_lastSelection;
 };
 
 }
