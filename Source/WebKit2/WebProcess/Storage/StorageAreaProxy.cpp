@@ -27,6 +27,7 @@
 #include "StorageAreaProxy.h"
 
 #include "SecurityOriginData.h"
+#include "StorageAreaProxyMessages.h"
 #include "StorageManagerMessages.h"
 #include "StorageNamespaceProxy.h"
 #include "WebProcess.h"
@@ -58,11 +59,13 @@ StorageAreaProxy::StorageAreaProxy(StorageNamespaceProxy* storageNamespaceProxy,
     , m_storageAreaID(generateStorageAreaID())
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::CreateStorageArea(m_storageAreaID, storageNamespaceProxy->storageNamespaceID(), SecurityOriginData::fromSecurityOrigin(securityOrigin.get())), 0);
+    WebProcess::shared().addMessageReceiver(Messages::StorageAreaProxy::messageReceiverName(), m_storageAreaID, this);
 }
 
 StorageAreaProxy::~StorageAreaProxy()
 {
     WebProcess::shared().connection()->send(Messages::StorageManager::DestroyStorageArea(m_storageAreaID), 0);
+    WebProcess::shared().removeMessageReceiver(Messages::StorageAreaProxy::messageReceiverName(), m_storageAreaID);
 }
 
 unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* sourceFrame)
@@ -178,6 +181,12 @@ void StorageAreaProxy::closeDatabaseIfIdle()
 {
     // FIXME: Implement this.
     ASSERT_NOT_REACHED();
+}
+
+
+void StorageAreaProxy::didSetItem(const String& key, bool quotaError)
+{
+    // FIXME: Implement this.
 }
 
 bool StorageAreaProxy::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const

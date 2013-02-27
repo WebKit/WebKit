@@ -1,3 +1,34 @@
+2013-02-27  Anders Carlsson  <andersca@apple.com>
+
+        More storage scaffolding
+        https://bugs.webkit.org/show_bug.cgi?id=110997
+
+        Reviewed by Andreas Kling.
+
+        * DerivedSources.make:
+        Add StorageAreaProxy.
+        
+        * UIProcess/Storage/StorageManager.cpp:
+        (WebKit::StorageManager::setItem):
+        Send back a DidSetItem message.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add generated files.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::StorageAreaProxy):
+        Add the message receiver.
+        
+        (WebKit::StorageAreaProxy::~StorageAreaProxy):
+        Remove the message receiver.
+        
+        (WebKit::StorageAreaProxy::didSetItem):
+        add stub.
+
+        * WebProcess/Storage/StorageAreaProxy.h:
+        (StorageAreaProxy):
+        * WebProcess/Storage/StorageAreaProxy.messages.in: Added.
+
 2013-02-27  Sam Weinig  <sam@webkit.org>
 
         REGRESSION: Loading flash switches to discrete graphics, 100 MB on membuster

@@ -89,6 +89,7 @@ MESSAGE_RECEIVERS = \
     RemoteLayerTreeHost \
     SecItemShim \
     SecItemShimProxy \
+    StorageAreaProxy \
     WebContext \
     WebDatabaseManager \
     WebDatabaseManagerProxy \

@@ -26,6 +26,7 @@
 #ifndef StorageAreaProxy_h
 #define StorageAreaProxy_h
 
+#include "MessageReceiver.h"
 #include <WebCore/StorageArea.h>
 #include <wtf/HashMap.h>
 
@@ -37,7 +38,7 @@ namespace WebKit {
 
 class StorageNamespaceProxy;
 
-class StorageAreaProxy : public WebCore::StorageArea {
+class StorageAreaProxy : public WebCore::StorageArea, private CoreIPC::MessageReceiver {
 public:
     static PassRefPtr<StorageAreaProxy> create(StorageNamespaceProxy*, PassRefPtr<WebCore::SecurityOrigin>);
     virtual ~StorageAreaProxy();
@@ -58,6 +59,11 @@ private:
     virtual void incrementAccessCount() OVERRIDE;
     virtual void decrementAccessCount() OVERRIDE;
     virtual void closeDatabaseIfIdle() OVERRIDE;
+
+    // CoreIPC::MessageReceiver
+    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
+
+    void didSetItem(const String& key, bool quotaError);
 
     bool disabledByPrivateBrowsingInFrame(const WebCore::Frame* sourceFrame) const;
 

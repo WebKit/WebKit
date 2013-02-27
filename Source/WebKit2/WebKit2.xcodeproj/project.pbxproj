@@ -121,6 +121,8 @@
 		1A2D957012848564001EB962 /* ChildProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A2D956E12848564001EB962 /* ChildProcess.cpp */; };
 		1A30066E1110F4F70031937C /* ResponsivenessTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A30066C1110F4F70031937C /* ResponsivenessTimer.h */; };
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
+		1A334DED16DE8F88006A8E38 /* StorageAreaProxyMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A334DEB16DE8F88006A8E38 /* StorageAreaProxyMessageReceiver.cpp */; };
+		1A334DEE16DE8F88006A8E38 /* StorageAreaProxyMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A334DEC16DE8F88006A8E38 /* StorageAreaProxyMessages.h */; };
 		1A3979F61332983A00E00300 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		1A3979F71332983F00E00300 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
 		1A3D610113A7CC2A00F95D4E /* PluginModuleInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */; };
@@ -1463,6 +1465,9 @@
 		1A2D956E12848564001EB962 /* ChildProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildProcess.cpp; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
+		1A334DEA16DE8B68006A8E38 /* StorageAreaProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaProxy.messages.in; sourceTree = "<group>"; };
+		1A334DEB16DE8F88006A8E38 /* StorageAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageAreaProxyMessageReceiver.cpp; path = StorageAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+    		1A334DEC16DE8F88006A8E38 /* StorageAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAreaProxyMessages.h; path = StorageAreaProxyMessages.h; sourceTree = "<group>"; };
 		1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginModuleInfo.cpp; sourceTree = "<group>"; };
 		1A3D610013A7CC2A00F95D4E /* PluginModuleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginModuleInfo.h; sourceTree = "<group>"; };
 		1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgumentCoders.cpp; sourceTree = "<group>"; };
@@ -3046,6 +3051,7 @@
 			children = (
 				1AD3306C16B1D991004F60E7 /* StorageAreaProxy.cpp */,
 				1AD3306D16B1D991004F60E7 /* StorageAreaProxy.h */,
+				1A334DEA16DE8B68006A8E38 /* StorageAreaProxy.messages.in */,
 				1A17635416B1D5D000D88FD6 /* StorageNamespaceProxy.cpp */,
 				1A17635516B1D5D000D88FD6 /* StorageNamespaceProxy.h */,
 				1AAC4DE116B1CBF6009425E3 /* WebKeyValueStorageManager.cpp */,
@@ -4845,6 +4851,8 @@
 				E1EDFDB21628AD730039ECDA /* SharedWorkerProcessMessages.h */,
 				E1EDFDB31628AD730039ECDA /* SharedWorkerProcessProxyMessageReceiver.cpp */,
 				E1EDFDB41628AD730039ECDA /* SharedWorkerProcessProxyMessages.h */,
+				1A334DEB16DE8F88006A8E38 /* StorageAreaProxyMessageReceiver.cpp */,
+				1A334DEC16DE8F88006A8E38 /* StorageAreaProxyMessages.h */,
 				1AB31A9416BC688100F6DBC9 /* StorageManagerMessageReceiver.cpp */,
 				1AB31A9516BC688100F6DBC9 /* StorageManagerMessages.h */,
 				512E3568130B57F000ABD19A /* WebApplicationCacheManagerMessageReceiver.cpp */,
@@ -5370,6 +5378,7 @@
 				1A3E736111CC2659007BD539 /* WebPlatformStrategies.h in Headers */,
 				31D5929F166E060000E6BF02 /* WebPlugInClient.h in Headers */,
 				1AC8702D130B49A2002C1257 /* WebPluginSiteDataManager.h in Headers */,
+				1A334DEE16DE8F88006A8E38 /* StorageAreaProxyMessages.h in Headers */,
 				BCB9F8B01124E07700A137E0 /* WebPolicyClient.h in Headers */,
 				BC5744F012638FB3006F0F12 /* WebPopupItem.h in Headers */,
 				D3B9484711FF4B6500032B39 /* WebPopupMenu.h in Headers */,
@@ -6233,6 +6242,7 @@
 				BCEE966C112FAF57006BCC24 /* Attachment.cpp in Sources */,
 				E1A31735134CEA80007C9A4F /* AttributedString.mm in Sources */,
 				512F589612A8838800629530 /* AuthenticationChallengeProxy.cpp in Sources */,
+				1A334DED16DE8F88006A8E38 /* StorageAreaProxyMessageReceiver.cpp in Sources */,
 				512F589812A8838800629530 /* AuthenticationDecisionListener.cpp in Sources */,
 				518E8EF816B2091C00E91429 /* AuthenticationManager.cpp in Sources */,
 				518E8EFB16B2091C00E91429 /* AuthenticationManager.mac.mm in Sources */,
