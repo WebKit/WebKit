@@ -1,3 +1,9 @@
+2013-02-27  Szilard Ledan  <szledan@inf.u-szeged.hu>
+
+        Unreviewed. Added myself to committers.py
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Build fix after r144155. The report page is located at /api/report, not /api/test/report.
