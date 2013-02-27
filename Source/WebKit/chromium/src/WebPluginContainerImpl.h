@@ -92,6 +92,7 @@ public:
     virtual void setParentVisible(bool);
     virtual void setParent(WebCore::ScrollView*);
     virtual void widgetPositionsUpdated();
+    virtual void clipRectChanged() OVERRIDE;
     virtual bool isPluginContainer() const { return true; }
 
     // WebPluginContainer methods

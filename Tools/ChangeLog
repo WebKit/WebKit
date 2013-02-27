@@ -1,3 +1,15 @@
+2013-02-27  John Bauman  <jbauman@chromium.org>
+
+        Plugin in iframe may not display
+        https://bugs.webkit.org/show_bug.cgi?id=109879
+
+        Reviewed by Simon Fraser.
+
+        LogNPPSetWindow will be used with other ports as well.
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/TestNetscapePlugIn/CMakeLists.txt:
+
 2013-02-27  Jochen Eisinger  <jochen@chromium.org>
 
         plugins/netscape-plugin-setwindow-size*.html and plugins/pass-different-npp-struct.html should be async

@@ -160,6 +160,7 @@ private:
     virtual void show();
     virtual void hide();
     virtual bool transformsAffectFrameRect();
+    virtual void clipRectChanged() OVERRIDE;
 
     // WebCore::MediaCanStartListener
     virtual void mediaCanStart();

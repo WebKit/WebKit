@@ -243,6 +243,9 @@ public:
     // Widget override to update our scrollbars and notify our contents of the resize.
     virtual void setFrameRect(const IntRect&);
 
+    // Widget override to notify our contents of a cliprect change.
+    virtual void clipRectChanged() OVERRIDE;
+
     // For platforms that need to hit test scrollbars from within the engine's event handlers (like Win32).
     Scrollbar* scrollbarAtPoint(const IntPoint& windowPoint);
 

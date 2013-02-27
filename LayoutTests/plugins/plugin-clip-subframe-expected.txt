@@ -1,0 +1,3 @@
+CONSOLE MESSAGE: line 3: NPP_SetWindow: non-NULL window, Rect {18, 218, 300, 150}, Clip Rect {65518, 65318, 65518, 65318}, Type 1
+CONSOLE MESSAGE: line 3: NPP_SetWindow: non-NULL window, Rect {18, 218, 300, 150}, Clip Rect {0, 0, 90, 150}, Type 1
+

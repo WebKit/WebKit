@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+<script>
+function test() {
+    // Increase the size of the container so the iframe becomes visible.
+    document.getElementById("container").style.height = "400px";
+    setTimeout(done, 10);
+}
+
+function done() {
+    if (testRunner) {
+        testRunner.dumpAsText();
+        testRunner.notifyDone();
+    }
+}
+
+function runTest() {
+    if (testRunner)
+        testRunner.waitUntilDone();
+    setTimeout(test, 10);
+}
+</script>
+<body onload="runTest()">
+
+<div id = "container" style="overflow: hidden; width:100px; height:100px">
+<iframe id='subframe' src='resources/plugin-clip-subframe-iframe.html' width=500 height=500 style="margin-top:200px"></iframe>
+</div>
+</body>
+</html>

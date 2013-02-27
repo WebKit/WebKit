@@ -1,3 +1,16 @@
+2013-02-27  John Bauman  <jbauman@chromium.org>
+
+        Plugin in iframe may not display
+        https://bugs.webkit.org/show_bug.cgi?id=109879
+
+        Reviewed by Simon Fraser.
+
+        Ensure NetscapePluginWidget informs the plugin view of the cliprect change directly.
+
+        * Plugins/WebBaseNetscapePluginView.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (NetscapePluginWidget::clipRectChanged):
+
 2013-02-26  Alexey Proskuryakov  <ap@apple.com>
 
         Don't add a body to platform request until necessary

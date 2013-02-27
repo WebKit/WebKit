@@ -1585,6 +1585,12 @@ public:
             event->setDefaultHandled(); // We don't know if the plug-in has handled mousedown event by displaying a context menu, so we never want WebKit to show a default one.
     }
 
+    virtual void clipRectChanged()
+    {
+        // Changing the clip rect doesn't affect the view hierarchy, so the plugin must be told about the change directly.
+        [(WebBaseNetscapePluginView *)platformWidget() updateAndSetWindow];
+    }
+
 private:
     virtual void notifyWidget(WidgetNotification notification)
     {

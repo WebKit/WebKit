@@ -155,6 +155,9 @@ bool RenderWidget::setWidgetGeometry(const LayoutRect& frame)
     RenderWidgetProtector protector(this);
     RefPtr<Node> protectedNode(node());
     m_widget->setFrameRect(newFrame);
+
+    if (clipChanged && !boundsChanged)
+        m_widget->clipRectChanged();
     
 #if USE(ACCELERATED_COMPOSITING)
     if (hasLayer() && layer()->isComposited())

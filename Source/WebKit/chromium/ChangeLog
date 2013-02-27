@@ -1,3 +1,16 @@
+2013-02-27  John Bauman  <jbauman@chromium.org>
+
+        Plugin in iframe may not display
+        https://bugs.webkit.org/show_bug.cgi?id=109879
+
+        Reviewed by Simon Fraser.
+
+        Use clipRectChanged to update the geometry.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::clipRectChanged):
+        * src/WebPluginContainerImpl.h:
+
 2013-02-27  Stephen Chenney  <schenney@chromium.org>
 
         RenderTableCellDeathTest unit test fails on mac

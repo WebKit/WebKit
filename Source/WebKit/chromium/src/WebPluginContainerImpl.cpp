@@ -222,6 +222,11 @@ void WebPluginContainerImpl::widgetPositionsUpdated()
     reportGeometry();
 }
 
+void WebPluginContainerImpl::clipRectChanged()
+{
+    reportGeometry();
+}
+
 void WebPluginContainerImpl::setParentVisible(bool parentVisible)
 {
     // We override this function to make sure that geometry updates are sent

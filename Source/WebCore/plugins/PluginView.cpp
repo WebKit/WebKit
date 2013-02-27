@@ -158,6 +158,11 @@ void PluginView::frameRectsChanged()
     updatePluginWidget();
 }
 
+void PluginView::clipRectChanged()
+{
+    updatePluginWidget();
+}
+
 void PluginView::handleEvent(Event* event)
 {
     if (!m_plugin || m_isWindowed)

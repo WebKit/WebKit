@@ -99,6 +99,7 @@ namespace WebCore {
 - (void)handleMouseExited:(NSEvent *)event;
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
 - (void)focusChanged;
+- (void)updateAndSetWindow;
 
 - (WebFrame *)webFrame;
 - (WebDataSource *)dataSource;
