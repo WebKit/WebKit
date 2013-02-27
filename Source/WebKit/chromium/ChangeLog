@@ -1,3 +1,19 @@
+2013-02-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove suppression invalidation logic from WebViewImpl
+        https://bugs.webkit.org/show_bug.cgi?id=110999
+
+        Reviewed by Adrienne Walker.
+
+        This suppression logic is now handled on the embedder side. In fact, scheduleComposite() is now only used
+        by DumpRenderTree.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::suppressInvalidations):
+        (WebKit::WebViewImpl::scheduleComposite):
+        * src/WebViewImpl.h:
+
 2013-02-27  Glenn Adams  <glenn@skynav.com>
 
         Add ENABLE_CSS3_TEXT_LINE_BREAK flag.

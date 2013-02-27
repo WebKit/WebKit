@@ -453,7 +453,6 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_flingModifier(0)
     , m_flingSourceDevice(false)
     , m_validationMessage(ValidationMessageClientImpl::create(*client))
-    , m_suppressInvalidations(false)
     , m_showFPSCounter(false)
     , m_showPaintRects(false)
     , m_showDebugBorders(false)
@@ -3983,7 +3982,6 @@ bool WebViewImpl::tabsToLinks() const
 
 void WebViewImpl::suppressInvalidations(bool enable)
 {
-    m_suppressInvalidations = enable;
     if (m_client)
         m_client->suppressCompositorScheduling(enable);
 }
@@ -4262,11 +4260,6 @@ void WebViewImpl::didRecreateOutputSurface(bool success)
 
 void WebViewImpl::scheduleComposite()
 {
-    if  (m_suppressInvalidations) {
-        TRACE_EVENT_INSTANT0("webkit", "WebViewImpl invalidations suppressed");
-        return;
-    }
-
     ASSERT(!Platform::current()->compositorSupport()->isThreadingEnabled());
     m_client->scheduleComposite();
 }

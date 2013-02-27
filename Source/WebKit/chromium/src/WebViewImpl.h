@@ -899,8 +899,6 @@ private:
 #endif
     OwnPtr<ValidationMessageClientImpl> m_validationMessage;
 
-    bool m_suppressInvalidations;
-
     bool m_showFPSCounter;
     bool m_showPaintRects;
     bool m_showDebugBorders;
