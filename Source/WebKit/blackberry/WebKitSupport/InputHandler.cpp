@@ -1674,6 +1674,14 @@ void InputHandler::cancelSelection()
     setCursorPosition(selectionStartPosition);
 }
 
+bool InputHandler::isNavigationKey(unsigned character) const
+{
+    return character == KEYCODE_UP
+        || character == KEYCODE_DOWN
+        || character == KEYCODE_LEFT
+        || character == KEYCODE_RIGHT;
+}
+
 bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEvent, bool changeIsPartOfComposition)
 {
     InputLog(Platform::LogLevelInfo,
@@ -1703,8 +1711,12 @@ bool InputHandler::handleKeyboardInput(const Platform::KeyboardEvent& keyboardEv
     // If we aren't specifically part of a composition, fail, IMF should never send key input
     // while composing text. If IMF has failed, we should have already finished the
     // composition manually. There is a caveat for KeyUp which is explained above.
-    if (!changeIsPartOfComposition && compositionActive())
-        removeAttributedTextMarker();
+    if (!changeIsPartOfComposition && compositionActive()) {
+        if (type == Platform::KeyboardEvent::KeyDown && isNavigationKey(keyboardEvent.character()))
+            removeAttributedTextMarker();
+        else
+            return false;
+    }
 
     ProcessingChangeGuard guard(this);
 

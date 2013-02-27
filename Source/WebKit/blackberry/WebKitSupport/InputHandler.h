@@ -228,6 +228,8 @@ private:
     void showTextInputTypeSuggestionBox(bool allowEmptyPrefix = false);
     void hideTextInputTypeSuggestionBox();
 
+    bool isNavigationKey(unsigned character) const;
+
     WebPagePrivate* m_webPage;
 
     RefPtr<WebCore::Element> m_currentFocusElement;

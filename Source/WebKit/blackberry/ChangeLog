@@ -1,3 +1,23 @@
+2013-02-27  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Accept key events even when composing region is active.
+        https://bugs.webkit.org/show_bug.cgi?id=110617
+
+        Reviewed by Rob Buis.
+
+        PR 293598.
+
+        Fix a regression in the previous patch caused
+        by an unhandled Alt key down being sent through
+        by IMF.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+        * WebKitSupport/InputHandler.h:
+        (InputHandler):
+
 2013-02-26  Yong Li  <yoli@rim.com>
 
         [BlackBerry] Use APIEntryShim when making JS call
