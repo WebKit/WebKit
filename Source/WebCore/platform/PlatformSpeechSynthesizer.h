@@ -45,6 +45,8 @@ class PlatformSpeechSynthesizerClient {
 public:
     virtual void didStartSpeaking(const PlatformSpeechSynthesisUtterance*) = 0;
     virtual void didFinishSpeaking(const PlatformSpeechSynthesisUtterance*) = 0;
+    virtual void didPauseSpeaking(const PlatformSpeechSynthesisUtterance*) = 0;
+    virtual void didResumeSpeaking(const PlatformSpeechSynthesisUtterance*) = 0;
     virtual void speakingErrorOccurred(const PlatformSpeechSynthesisUtterance*) = 0;
     
     virtual void voicesDidChange() = 0;
@@ -60,6 +62,8 @@ public:
     
     const Vector<RefPtr<PlatformSpeechSynthesisVoice> >& voiceList() const { return m_voiceList; }
     virtual void speak(const PlatformSpeechSynthesisUtterance&);
+    virtual void pause();
+    virtual void resume();
     
     PlatformSpeechSynthesizerClient* client() const { return m_speechSynthesizerClient; }
     

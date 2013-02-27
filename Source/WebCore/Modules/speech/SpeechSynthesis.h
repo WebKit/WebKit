@@ -66,6 +66,8 @@ private:
     // PlatformSpeechSynthesizerClient override methods.
     virtual void voicesDidChange() OVERRIDE;
     virtual void didStartSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
+    virtual void didPauseSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
+    virtual void didResumeSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
     virtual void didFinishSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
     virtual void speakingErrorOccurred(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
 
@@ -77,7 +79,7 @@ private:
     Vector<RefPtr<SpeechSynthesisVoice> > m_voiceList;
     SpeechSynthesisUtterance* m_currentSpeechUtterance;
     Deque<RefPtr<SpeechSynthesisUtterance> > m_utteranceQueue;
-
+    bool m_isPaused;
 };
     
 } // namespace WebCore

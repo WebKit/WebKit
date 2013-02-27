@@ -65,9 +65,22 @@ void PlatformSpeechSynthesizerMock::speak(const PlatformSpeechSynthesisUtterance
 {
     m_utterance = &utterance;
     client()->didStartSpeaking(m_utterance);
-    m_speakingFinishedTimer.startOneShot(0);
+    
+    // Give the fake speech job some time so that pause and other functions have time to be called.
+    m_speakingFinishedTimer.startOneShot(.1);
 }
 
+void PlatformSpeechSynthesizerMock::pause()
+{
+    client()->didPauseSpeaking(m_utterance);
+}
+
+void PlatformSpeechSynthesizerMock::resume()
+{
+    client()->didResumeSpeaking(m_utterance);
+}
+
+    
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

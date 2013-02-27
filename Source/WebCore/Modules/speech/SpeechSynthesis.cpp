@@ -44,6 +44,7 @@ PassRefPtr<SpeechSynthesis> SpeechSynthesis::create()
 SpeechSynthesis::SpeechSynthesis()
     : m_platformSpeechSynthesizer(PlatformSpeechSynthesizer::create(this))
     , m_currentSpeechUtterance(0)
+    , m_isPaused(false)
 {
 }
     
@@ -80,12 +81,14 @@ bool SpeechSynthesis::speaking() const
 
 bool SpeechSynthesis::pending() const
 {
-    return false;
+    // This is true if there are any utterances that have not started.
+    // That means there will be more than one in the queue.
+    return m_utteranceQueue.size() > 1;
 }
 
 bool SpeechSynthesis::paused() const
 {
-    return false;
+    return m_isPaused;
 }
 
 void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance* utterance)
@@ -93,6 +96,7 @@ void SpeechSynthesis::startSpeakingImmediately(SpeechSynthesisUtterance* utteran
     ASSERT(!m_currentSpeechUtterance);
     utterance->setStartTime(monotonicallyIncreasingTime());
     m_currentSpeechUtterance = utterance;
+    m_isPaused = false;
     m_platformSpeechSynthesizer->speak(utterance->platformUtterance());
 }
 
@@ -111,10 +115,13 @@ void SpeechSynthesis::cancel()
 
 void SpeechSynthesis::pause()
 {
+    if (!m_isPaused)
+        m_platformSpeechSynthesizer->pause();
 }
 
 void SpeechSynthesis::resume()
 {
+    m_platformSpeechSynthesizer->resume();
 }
 
 void SpeechSynthesis::fireEvent(const AtomicString& type, SpeechSynthesisUtterance* utterance, unsigned long charIndex, const String& name)
@@ -143,6 +150,18 @@ void SpeechSynthesis::handleSpeakingCompleted(SpeechSynthesisUtterance* utteranc
 void SpeechSynthesis::didStartSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
 {
     fireEvent(eventNames().startEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
+}
+    
+void SpeechSynthesis::didPauseSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
+{
+    m_isPaused = true;
+    fireEvent(eventNames().pauseEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
+}
+
+void SpeechSynthesis::didResumeSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
+{
+    m_isPaused = false;
+    fireEvent(eventNames().resumeEvent, static_cast<SpeechSynthesisUtterance*>(utterance->client()), 0, String());
 }
 
 void SpeechSynthesis::didFinishSpeaking(const PlatformSpeechSynthesisUtterance* utterance)
