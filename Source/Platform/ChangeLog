@@ -1,3 +1,24 @@
+2013-02-27  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] Introduce WebHyphenator class to consolidate hyphenation related method on WebKit::Platform
+        https://bugs.webkit.org/show_bug.cgi?id=110953
+
+        Reviewed by Adam Barth.
+
+        This patch makes it easier to mock the hyphenation related methods.
+
+        * Platform.gypi:
+        * chromium/public/Platform.h:
+        (WebKit):
+        (Platform):
+        (WebKit::Platform::hyphenator):
+        * chromium/public/WebHyphenator.h: Added.
+        (WebKit):
+        (WebHyphenator):
+        (WebKit::WebHyphenator::canHyphenate):
+        (WebKit::WebHyphenator::computeLastHyphenLocation):
+        (WebKit::WebHyphenator::~WebHyphenator):
+
 2013-02-27  Mark Pilgrim  <pilgrim@chromium.org>
 
         [Chromium] Remove unused WebKitPlatformSupport class

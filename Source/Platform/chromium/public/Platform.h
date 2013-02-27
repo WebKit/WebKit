@@ -59,6 +59,7 @@ class WebFileUtilities;
 class WebFlingAnimator;
 class WebGestureCurveTarget;
 class WebGestureCurve;
+class WebHyphenator;
 class WebMediaStreamCenter;
 class WebMediaStreamCenterClient;
 class WebMessagePortChannel;
@@ -110,6 +111,9 @@ public:
 
     // May return null on some platforms.
     virtual WebThemeEngine* themeEngine() { return 0; }
+
+    // Must return non-null.
+    virtual WebHyphenator* hyphenator() { return 0; }
 
 
     // Audio --------------------------------------------------------------
@@ -181,6 +185,8 @@ public:
 
 
     // Hyphenation ---------------------------------------------------------
+
+    // FIXME: Remove deprecated API.
 
     // Returns whether we can support hyphenation for the given locale.
     virtual bool canHyphenate(const WebString& locale) { return false; }

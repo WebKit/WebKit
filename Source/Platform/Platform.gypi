@@ -74,6 +74,7 @@
             'chromium/public/WebHTTPBody.h',
             'chromium/public/WebHTTPHeaderVisitor.h',
             'chromium/public/WebHTTPLoadInfo.h',
+            'chromium/public/WebHyphenator.h',
             'chromium/public/WebImage.h',
             'chromium/public/WebImageLayer.h',
             'chromium/public/WebIOSurfaceLayer.h',
