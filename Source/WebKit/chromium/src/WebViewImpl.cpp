@@ -1831,6 +1831,17 @@ void WebViewImpl::animate(double)
 #endif
 }
 
+void WebViewImpl::willBeginFrame()
+{
+    m_client->willBeginCompositorFrame();
+}
+
+void WebViewImpl::didBeginFrame()
+{
+    if (m_devToolsAgent)
+        m_devToolsAgent->didComposite();
+}
+
 void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
 {
 #if ENABLE(REQUEST_ANIMATION_FRAME)

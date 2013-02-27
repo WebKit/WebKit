@@ -37,6 +37,8 @@ class MockWebLayerTreeViewClient : public WebLayerTreeViewClient {
 public:
     MOCK_METHOD0(scheduleComposite, void());
     virtual void updateAnimations(double frameBeginTime) OVERRIDE { }
+    MOCK_METHOD0(willBeginFrame, void());
+    MOCK_METHOD0(didBeginFrame, void());
     virtual void layout() OVERRIDE { }
     virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) OVERRIDE { }
 

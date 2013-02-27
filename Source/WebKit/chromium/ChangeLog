@@ -1,5 +1,21 @@
 2013-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
+        Unreviewed, rolling out r144129.
+        http://trac.webkit.org/changeset/144129
+        https://bugs.webkit.org/show_bug.cgi?id=110947
+
+        Breaks compilation on chromium mac and win (Requested by
+        vsevik on #webkit).
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::willBeginFrame):
+        (WebKit):
+        (WebKit::WebViewImpl::didBeginFrame):
+        * src/WebViewImpl.h:
+        * tests/WebLayerTreeViewTestCommon.h:
+
+2013-02-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
         Unreviewed.  Rolled Chromium DEPS to r184829.  Requested by
         "Mark Pilgrim" <pilgrim@chromium.org> via sheriffbot.
 
