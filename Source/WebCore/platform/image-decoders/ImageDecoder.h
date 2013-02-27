@@ -422,6 +422,23 @@ namespace WebCore {
                 m_frameBufferCache.resize(1);
             m_frameBufferCache[0].setMemoryAllocator(allocator);
         }
+
+        virtual bool lockFrameBuffers()
+        {
+            bool ret = true;
+            for (unsigned i = 0; i < m_frameBufferCache.size(); ++i) {
+                const SkBitmap& bitmap = m_frameBufferCache[i].getSkBitmap();
+                bitmap.lockPixels();
+                ret = ret && bitmap.getPixels();
+            }
+            return ret;
+        }
+
+        virtual void unlockFrameBuffers()
+        {
+            for (unsigned i = 0; i < m_frameBufferCache.size(); ++i)
+                m_frameBufferCache[i].getSkBitmap().unlockPixels();
+        }
 #endif
     protected:
         void prepareScaleDataIfNecessary();

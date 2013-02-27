@@ -1,3 +1,25 @@
+2013-02-27  Min Qin  <qinmin@chromium.org>
+
+        Unlock partially decoded images after passing them to the ImageDecodingStore
+        https://bugs.webkit.org/show_bug.cgi?id=110778
+
+        Reviewed by Stephen White.
+
+        Test for testing that image frames are unlocked after passing to ImageDecodingStore.
+
+        * tests/ImageFrameGeneratorTest.cpp:
+        (WebCore::ImageFrameGeneratorTest::SetUp):
+        (WebCore::ImageFrameGeneratorTest::frameBuffersUnlocked):
+        (ImageFrameGeneratorTest):
+        (WebCore::ImageFrameGeneratorTest::frameBuffersLocked):
+        (WebCore::TEST_F):
+        * tests/MockImageDecoder.h:
+        (WebCore::MockImageDecoderClient::frameBuffersLocked):
+        (WebCore::MockImageDecoderClient::frameBuffersUnlocked):
+        (WebCore::MockImageDecoder::unlockFrameBuffers):
+        (WebCore::MockImageDecoder::lockFrameBuffers):
+        (MockImageDecoder):
+
 2013-02-27  John Bauman  <jbauman@chromium.org>
 
         Plugin in iframe may not display

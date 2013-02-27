@@ -142,9 +142,21 @@ const ScaledImageFragment* ImageFrameGenerator::tryToResumeDecodeAndScale(const 
     ASSERT(cachedDecoder);
 
     if (m_data.hasNewData()) {
+        // For single frame images, the above ImageDecodingStore::lockCache()
+        // call should lock the pixelRef. As a result, this lockFrameBuffers()
+        // call should always succeed.
+        // TODO: this does not work for the multiframe images, which are not
+        // yet supported by this class.
+        bool frameBuffersLocked = cachedDecoder->lockFrameBuffers();
+        ASSERT_UNUSED(frameBuffersLocked, frameBuffersLocked);
         // Only do decoding if there is new data.
         OwnPtr<ScaledImageFragment> fullSizeImage = decode(&cachedDecoder);
         cachedImage = ImageDecodingStore::instance()->overwriteAndLockCache(this, cachedImage, fullSizeImage.release());
+        // If the image is partially decoded, unlock the frames so that it
+        // can be evicted from the memory. For fully decoded images,
+        // ImageDecodingStore should have deleted the decoder here.
+        if (!cachedImage->isComplete())
+            cachedDecoder->unlockFrameBuffers();
     }
 
     if (m_fullSize == scaledSize)
@@ -171,6 +183,10 @@ const ScaledImageFragment* ImageFrameGenerator::tryToDecodeAndScale(const SkISiz
 
     const ScaledImageFragment* cachedFullSizeImage = ImageDecodingStore::instance()->insertAndLockCache(
         this, fullSizeImage.release(), decoderContainer.release());
+    // The newly created SkBitmap in the decoder is locked. Unlock it here
+    // if the image is partially decoded.
+    if (!cachedFullSizeImage->isComplete())
+        decoder->unlockFrameBuffers();
 
     if (m_fullSize == scaledSize)
         return cachedFullSizeImage;
@@ -201,9 +217,8 @@ PassOwnPtr<ScaledImageFragment> ImageFrameGenerator::decode(ImageDecoder** decod
     (*decoder)->setData(data, allDataReceived);
     // If this call returns a newly allocated DiscardablePixelRef, then
     // ImageFrame::m_bitmap and the contained DiscardablePixelRef are locked.
-    // They will be unlocked when ImageDecoder is destroyed since ImageDecoder
-    // owns the ImageFrame. Partially decoded SkBitmap is thus inserted into the
-    // ImageDecodingStore while locked.
+    // They will be unlocked after the image fragment is inserted into
+    // ImageDecodingStore.
     ImageFrame* frame = (*decoder)->frameBufferAtIndex(0);
     (*decoder)->setData(0, false); // Unref SharedBuffer from ImageDecoder.
 
