@@ -607,6 +607,8 @@ public:
     void setMinimumLayoutWidth(double);
     double minimumLayoutWidth() const { return m_minimumLayoutWidth; }
 
+    bool canShowMIMEType(const String& MIMEType) const;
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 

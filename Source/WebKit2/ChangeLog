@@ -1,3 +1,18 @@
+2013-02-27  Jer Noble  <jer.noble@apple.com>
+
+        REGRESSION (48533): Full-frame plugins stopped working (download instead of loading the plugin)
+        https://bugs.webkit.org/show_bug.cgi?id=111003
+
+        Reviewed by Anders Carlsson.
+
+        Also query the Page's pluginData when determining whether a given MIME type can be shown.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageCanShowMIMEType):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::canShowMIMEType):
+        * WebProcess/WebPage/WebPage.h:
+
 2013-02-27  Manuel Rego Casasnovas  <rego@igalia.com>
 
         Add smartInsertDeleteEnabled setting to WebCore::Page

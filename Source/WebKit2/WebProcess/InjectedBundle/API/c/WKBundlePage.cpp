@@ -50,7 +50,6 @@
 #include <WebCore/AccessibilityObject.h>
 #include <WebCore/Frame.h>
 #include <WebCore/KURL.h>
-#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/Page.h>
 #include <wtf/UnusedParam.h>
 
@@ -446,11 +445,9 @@ void WKBundlePageConfirmCompositionWithText(WKBundlePageRef pageRef, WKStringRef
     toImpl(pageRef)->confirmCompositionForTesting(toWTFString(text));
 }
 
-bool WKBundlePageCanShowMIMEType(WKBundlePageRef, WKStringRef mimeTypeRef)
+bool WKBundlePageCanShowMIMEType(WKBundlePageRef pageRef, WKStringRef mimeTypeRef)
 {
-    const String mimeType = toWTFString(mimeTypeRef);
-
-    return WebCore::MIMETypeRegistry::canShowMIMEType(mimeType);
+    return toImpl(pageRef)->canShowMIMEType(toWTFString(mimeTypeRef));
 }
 
 void WKBundlePageSetViewMode(WKBundlePageRef pageRef, WKStringRef mode)

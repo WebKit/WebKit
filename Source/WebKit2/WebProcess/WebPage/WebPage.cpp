@@ -103,6 +103,7 @@
 #include <WebCore/HTMLPlugInElement.h>
 #include <WebCore/HistoryItem.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/MIMETypeRegistry.h>
 #include <WebCore/MouseEvent.h>
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
@@ -3791,6 +3792,19 @@ bool WebPage::isSmartInsertDeleteEnabled()
 void WebPage::setSmartInsertDeleteEnabled(bool enabled)
 {
     m_page->settings()->setSmartInsertDeleteEnabled(enabled);
+}
+
+bool WebPage::canShowMIMEType(const String& MIMEType) const
+{
+    if (MIMETypeRegistry::canShowMIMEType(MIMEType))
+        return true;
+
+    if (PluginData* pluginData = m_page->pluginData()) {
+        if (pluginData->supportsMimeType(MIMEType) && m_page->settings()->arePluginsEnabled())
+            return true;
+    }
+
+    return false;
 }
 
 } // namespace WebKit
