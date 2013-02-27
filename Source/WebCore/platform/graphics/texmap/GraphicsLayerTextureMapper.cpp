@@ -613,8 +613,13 @@ bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList
     if (valueList.property() == AnimatedPropertyWebkitTransform)
         listsMatch = validateTransformOperations(valueList, hasBigRotation) >= 0;
 
-    m_animationStartTime = WTF::currentTime() - timeOffset;
-    m_animations.add(GraphicsLayerAnimation(keyframesName, valueList, boxSize, anim, m_animationStartTime, listsMatch));
+    const double currentTime = WTF::currentTime();
+    m_animations.add(GraphicsLayerAnimation(keyframesName, valueList, boxSize, anim, currentTime - timeOffset, listsMatch));
+    // m_animationStartTime is the time of the first real frame of animation, now or delayed by a negative offset.
+    if (timeOffset > 0)
+        m_animationStartTime = currentTime;
+    else
+        m_animationStartTime = currentTime - timeOffset;
     notifyChange(AnimationChange);
     notifyChange(AnimationStarted);
     return true;
