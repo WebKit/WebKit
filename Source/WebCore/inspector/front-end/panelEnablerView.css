@@ -119,7 +119,6 @@
     padding: 3px 20px;
     height: 24px;
     color: rgb(6, 6, 6);
-    background-color: transparent;
     border: 1px solid rgb(165, 165, 165);
     background-color: rgb(237, 237, 237);
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(252, 252, 252)), to(rgb(223, 223, 223)));
@@ -127,11 +126,16 @@
     -webkit-appearance: none;
 }
 
-body.inactive .panel-enabler-view button, .panel-enabler-view button:disabled {
+body.inactive .panel-enabler-view button:not(.status-bar-item), .panel-enabler-view button:disabled:not(.status-bar-item) {
     color: rgb(130, 130, 130);
     border-color: rgb(212, 212, 212);
     background-color: rgb(239, 239, 239);
     background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(250, 250, 250)), to(rgb(235, 235, 235)));
+}
+
+.panel-enabler-view button:active:not(.status-bar-item) {
+    background-color: rgb(215, 215, 215);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(194, 194, 194)), to(rgb(239, 239, 239)));
 }
 
 .panel-enabler-view input[type="radio"] {
