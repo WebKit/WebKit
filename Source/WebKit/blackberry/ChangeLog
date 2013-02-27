@@ -1,3 +1,24 @@
+2013-02-27  Lianghui Chen  <liachen@rim.com>
+
+        [BlackBerry] User credentials is not correctly handled
+        https://bugs.webkit.org/show_bug.cgi?id=110994
+
+        Reviewed by Yong Li.
+
+        Following change are made:
+            Remove url from CredentialTransformData, as url is not used anymore.
+            Adapt to updated CredentialBackingStore API about removing url.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        * WebCoreSupport/CredentialManager.cpp:
+        (WebCore::CredentialManager::autofillPasswordForms):
+        (WebCore::CredentialManager::saveCredentialIfConfirmed):
+        * WebCoreSupport/CredentialTransformData.cpp:
+        (WebCore::CredentialTransformData::CredentialTransformData):
+        * WebCoreSupport/CredentialTransformData.h:
+        (CredentialTransformData):
+
 2013-02-27  John Griggs  <jgriggs@rim.com>
 
         2013-02-27  John Griggs  <jgriggs@rim.com>

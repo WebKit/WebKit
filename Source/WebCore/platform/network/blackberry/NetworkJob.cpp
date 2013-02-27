@@ -839,6 +839,7 @@ NetworkJob::SendRequestResult NetworkJob::sendRequestWithCredentials(ProtectionS
 
     // We've got the scheme and realm. Now we need a username and password.
     Credential credential;
+
     if (!requireCredentials) {
         // Don't overwrite any existing credentials with the empty credential
         updateCurrentWebChallenge(AuthenticationChallenge(protectionSpace, credential, 0, m_response, ResourceError()), /* allowOverwrite */ false);
@@ -983,7 +984,8 @@ void NetworkJob::purgeCredentials(AuthenticationChallenge& challenge)
     CredentialStorage::remove(challenge.protectionSpace());
     challenge.setStored(false);
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    credentialBackingStore().removeLogin(m_response.url(), challenge.protectionSpace());
+    if (challenge.proposedCredential() == credentialBackingStore().getLogin(challenge.protectionSpace()))
+        credentialBackingStore().removeLogin(challenge.protectionSpace(), challenge.proposedCredential().user());
 #endif
 }
 

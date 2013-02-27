@@ -31,12 +31,11 @@ struct CredentialTransformData {
     // return true;
     CredentialTransformData();
     CredentialTransformData(HTMLFormElement*, bool isForSaving = false);
-    CredentialTransformData(const KURL&, const ProtectionSpace&, const Credential&);
+    CredentialTransformData(const ProtectionSpace&, const Credential&);
 
     // If creation failed, return false.
     bool isValid() const { return m_isValid; }
 
-    KURL url() const;
     ProtectionSpace protectionSpace() const { return m_protectionSpace; }
     Credential credential() const;
     void setCredential(const Credential&);
@@ -44,7 +43,6 @@ struct CredentialTransformData {
 private:
     bool findPasswordFormFields(HTMLFormElement*);
 
-    KURL m_url;
     KURL m_action;
     ProtectionSpace m_protectionSpace;
     mutable Credential m_credential;

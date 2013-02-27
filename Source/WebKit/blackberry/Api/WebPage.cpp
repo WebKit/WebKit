@@ -2218,7 +2218,7 @@ void WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSp
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     Credential credential(username, password, CredentialPersistencePermanent);
     if (m_webSettings->isCredentialAutofillEnabled() && !m_webSettings->isPrivateBrowsingEnabled() && isConfirmed)
-        credentialManager().saveCredentialIfConfirmed(this, CredentialTransformData(url, protectionSpace, credential));
+        credentialManager().saveCredentialIfConfirmed(this, CredentialTransformData(protectionSpace, credential));
 #else
     Credential credential(username, password, CredentialPersistenceNone);
 #endif

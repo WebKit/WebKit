@@ -60,9 +60,9 @@ void CredentialManager::autofillPasswordForms(PassRefPtr<HTMLCollection> docForm
         Node* node = forms->item(i);
         if (node && node->isHTMLElement()) {
             CredentialTransformData data(static_cast<HTMLFormElement*>(node));
-            if (!data.isValid() || !credentialBackingStore().hasLogin(data.url(), data.protectionSpace()))
+            if (!data.isValid() || !credentialBackingStore().hasLogin(data.protectionSpace()))
                 continue;
-            Credential savedCredential = credentialBackingStore().getLogin(data.url());
+            Credential savedCredential = credentialBackingStore().getLogin(data.protectionSpace());
             data.setCredential(savedCredential);
         }
     }
@@ -75,19 +75,19 @@ void CredentialManager::saveCredentialIfConfirmed(PageClientBlackBerry* pageClie
     if (!data.isValid() || data.credential().isEmpty() || credentialBackingStore().hasNeverRemember(data.protectionSpace()))
         return;
 
-    Credential savedCredential = credentialBackingStore().getLogin(data.url());
+    Credential savedCredential = credentialBackingStore().getLogin(data.protectionSpace());
     if (savedCredential == data.credential())
         return;
 
     PageClientBlackBerry::SaveCredentialType type = pageClient->notifyShouldSaveCredential(savedCredential.isEmpty());
     if (type == PageClientBlackBerry::SaveCredentialYes) {
         if (savedCredential.isEmpty())
-            credentialBackingStore().addLogin(data.url(), data.protectionSpace(), data.credential());
+            credentialBackingStore().addLogin(data.protectionSpace(), data.credential());
         else
-            credentialBackingStore().updateLogin(data.url(), data.protectionSpace(), data.credential());
+            credentialBackingStore().updateLogin(data.protectionSpace(), data.credential());
     } else if (type == PageClientBlackBerry::SaveCredentialNeverForThisSite) {
-        credentialBackingStore().addNeverRemember(data.url(), data.protectionSpace());
-        credentialBackingStore().removeLogin(data.url(), data.protectionSpace());
+        credentialBackingStore().addNeverRemember(data.protectionSpace());
+        credentialBackingStore().removeLogin(data.protectionSpace(), data.credential().user());
     }
 }
 
