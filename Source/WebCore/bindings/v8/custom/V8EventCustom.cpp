@@ -42,16 +42,6 @@
 
 namespace WebCore {
 
-v8::Handle<v8::Value> V8Event::dataTransferAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
-{
-    Event* event = V8Event::toNative(info.Holder());
-
-    if (event->isDragEvent())
-        return toV8Fast(static_cast<MouseEvent*>(event)->clipboard(), info, event);
-
-    return v8::Undefined();
-}
-
 v8::Handle<v8::Value> V8Event::clipboardDataAttrGetterCustom(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     Event* event = V8Event::toNative(info.Holder());
