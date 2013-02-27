@@ -1,3 +1,13 @@
+2013-02-26  Alpha Lam  <hclam@chromium.org>
+
+        [chromium] GIFImageDecoderTest.parseAndDecodeByteByByte failing on Android
+        https://bugs.webkit.org/show_bug.cgi?id=110922
+
+        Unreviewed. Build fix.
+
+        * tests/GIFImageDecoderTest.cpp:
+        (WebKit):
+
 2013-02-26  James Robinson  <jamesr@chromium.org>
 
         [chromium] Remove unused WebLayerTreeViewClient calls

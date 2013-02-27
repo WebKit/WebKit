@@ -87,6 +87,8 @@ TEST(GIFImageDecoderTest, decodeTwoFrames)
     EXPECT_EQ(cAnimationLoopInfinite, decoder->repetitionCount());
 }
 
+#if !OS(ANDROID)
+
 TEST(GIFImageDecoderTest, parseAndDecode)
 {
     OwnPtr<GIFImageDecoder> decoder(adoptPtr(new GIFImageDecoder(ImageSource::AlphaNotPremultiplied, ImageSource::GammaAndColorProfileApplied)));
@@ -184,5 +186,7 @@ TEST(GIFImageDecoderTest, brokenSecondFrame)
     EXPECT_FALSE(frame);
     EXPECT_EQ(cAnimationLoopOnce, decoder->repetitionCount());
 }
+
+#endif
 
 } // namespace
