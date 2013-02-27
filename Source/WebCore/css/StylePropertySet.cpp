@@ -160,6 +160,8 @@ String StylePropertySet::getPropertyValue(CSSPropertyID propertyID) const
         return get4Values(borderWidthShorthand());
     case CSSPropertyBorderStyle:
         return get4Values(borderStyleShorthand());
+    case CSSPropertyWebkitColumnRule:
+        return getShorthandValue(webkitColumnRuleShorthand());
     case CSSPropertyWebkitFlex:
         return getShorthandValue(webkitFlexShorthand());
     case CSSPropertyWebkitFlexFlow:
