@@ -125,6 +125,24 @@ webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.ht
 
 webkit.org/b/110324 [ Debug ] fast/js/regress/nested-function-parsing.html [ Pass Slow ]
 
+# These tests are slow since r144032
+webkit.org/b/110876 html5lib/generated/run-doctype01-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-domjs-unsafe-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-entities01-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-plain-text-unsafe-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-scriptdata01-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-template-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests1-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests10-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests16-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests19-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests2-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests20-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests6-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests7-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests9-data.html [ Pass Slow ]
+webkit.org/b/110876 html5lib/generated/run-webkit01-data.html [ Pass Slow ]
+
 webkit.org/b/110924 fast/js/regress/inlined-put-by-id-transition.html [ Pass Crash ]
 
 # -----------------------------------------------------------------
@@ -4414,24 +4432,6 @@ crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ ImageOnlyFailure ]
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ ImageOnlyFailure ]
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ ImageOnlyFailure ]
-
-# These tests are timing out since r144032
-webkit.org/b/110876 html5lib/generated/run-doctype01-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-domjs-unsafe-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-entities01-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-plain-text-unsafe-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-scriptdata01-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-template-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests1-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests10-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests16-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests19-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests2-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests20-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests6-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests7-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-tests9-data.html [ Timeout Pass ]
-webkit.org/b/110876 html5lib/generated/run-webkit01-data.html [ Timeout Pass ]
 
 # Need rebaseline
 webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
