@@ -75,14 +75,6 @@ http/tests/xmlhttprequest/default-content-type-dashboard.html [ WontFix Failure 
 # ENABLE(DRAGGABLE_REGION) is disabled
 Bug(GTK) fast/css/draggable-region-parser.html [ Failure ]
 
-# ENABLE(TEMPLATE_ELEMENT) is disabled.
-webkit.org/b/103547 fast/dom/HTMLTemplateElement [ Skip ]
-webkit.org/b/103547 html5lib/generated/run-template-data.html [ Skip ]
-webkit.org/b/103547 html5lib/generated/run-template-write.html [ Skip ]
-webkit.org/b/103547 fast/xsl/xslt-xhtml-template.xml [ Skip ]
-webkit.org/b/103547 fast/xpath/xpath-template-element.html [ Skip ]
-webkit.org/b/103547 fast/xsl/xslt-processor-template.html [ Skip ]
-
 # X-Content-Type-Options (ENABLE_NOSNIFF) is not enabled.
 webkit.org/b/71851 http/tests/security/contentTypeOptions [ Skip ]
 
