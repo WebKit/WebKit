@@ -1,3 +1,30 @@
+2013-02-26  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Remove WebViewImpl::animate shimmy out through compositor
+        https://bugs.webkit.org/show_bug.cgi?id=110935
+
+        Reviewed by Adrienne Walker.
+
+        WebViewImpl::animate() and WebViewImpl::updateAnimations() are confusingly similar. ::animate() implements
+        the WebWidget API and is called by content::RenderWidget and WebViewHost. ::updateAnimations() implements
+        the WebLayerTreeViewClient API and is called by content::RenderWidgetCompositor and by ::animate(). The
+        important part of this indirection is that whenever the compositor is active, all animation calls must
+        route through cc::LayerTreeHost before entering into WebCore's animation code so that the compositor
+        can set the appropriate rate limiting state. Animations may originate from
+        content::RenderWidget::AnimateIfNeeded when in software and single threaded mode or from
+        cc::LayerTreeHost::updateAnimations in threaded compositing mode. In the long ago, content::RenderWidget had no
+        idea if compositing was active or not and always called WebWidget::animate(), so WebViewImpl::animate() had to
+        redirect to the compositor when appropriate.
+        
+        Now (as of chromium r180947) RenderWidget calls WebWidget::animate only when in software mode and otherwise
+        calls directly into the compositor. Thus WebViewImpl::animate() no longer needs to do this check. In a
+        follow-up, WebViewImpl::updateAnimations will go away completely in favor of just calling WebWidget::animate in
+        all cases.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::updateAnimations):
+
 2013-02-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r144179.

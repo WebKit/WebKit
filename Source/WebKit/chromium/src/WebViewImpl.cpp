@@ -1815,20 +1815,9 @@ void WebViewImpl::updateBatteryStatus(const WebBatteryStatus& status)
 }
 #endif
 
-void WebViewImpl::animate(double)
+void WebViewImpl::animate(double monotonicFrameBeginTime)
 {
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    double monotonicFrameBeginTime = monotonicallyIncreasingTime();
-
-#if USE(ACCELERATED_COMPOSITING)
-    // In composited mode, we always go through the compositor so it can apply
-    // appropriate flow-control mechanisms.
-    if (isAcceleratedCompositingActive())
-        m_layerTreeView->updateAnimations(monotonicFrameBeginTime);
-    else
-#endif
-        updateAnimations(monotonicFrameBeginTime);
-#endif
+    updateAnimations(monotonicFrameBeginTime);
 }
 
 void WebViewImpl::willBeginFrame()
@@ -1844,6 +1833,9 @@ void WebViewImpl::didBeginFrame()
 
 void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
 {
+    if (!monotonicFrameBeginTime)
+        monotonicFrameBeginTime = monotonicallyIncreasingTime();
+
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     TRACE_EVENT0("webkit", "WebViewImpl::updateAnimations");
 
