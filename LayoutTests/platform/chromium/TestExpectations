@@ -143,6 +143,9 @@ webkit.org/b/110876 [ Debug Linux ] html5lib/generated/run-tests19-data.html [ P
 webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests20-data.html [ Pass Slow ]
 webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests21-data.html [ Pass Slow ]
 webkit.org/b/110876 [ Debug ] html5lib/generated/run-webkit01-data.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests1-write.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug Linux ] html5lib/generated/run-tests16-write.html [ Pass Slow ]
+webkit.org/b/110876 [ Debug Mac ] html5lib/generated/run-tests19-write.html [ Pass Slow ]
 
 webkit.org/b/110924 fast/js/regress/inlined-put-by-id-transition.html [ Pass Crash ]
 
@@ -4457,4 +4460,8 @@ webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests1-data.html [ Timeout 
 webkit.org/b/110876 [ Debug Win Lion ] html5lib/generated/run-tests10-data.html [ Timeout  ]
 webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests16-data.html [ Timeout ]
 webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests19-data.html [ Timeout ]
+# These html5lib/ tests are also failing
+webkit.org/b/110876 [ Debug Win ] html5lib/generated/run-tests10-write.html [ Pass Crash ]
+webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests16-write.html [ Pass Crash ]
+webkit.org/b/110876 [ Debug Win ] html5lib/generated/run-tests19-write.html [ Pass Crash ]
 
