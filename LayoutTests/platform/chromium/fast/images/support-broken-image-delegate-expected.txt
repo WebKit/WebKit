@@ -1,4 +1,5 @@
 resources/broken-image-with-invalid-format.png - willSendRequest <NSURLRequest URL resources/broken-image-with-invalid-format.png, main document URL support-broken-image-delegate.html, http method GET> redirectResponse (null)
+<unknown> - didFinishLoading
 resources/broken-image-with-invalid-format.png - didReceiveResponse <NSURLResponse resources/broken-image-with-invalid-format.png, http status code 0>
 resources/broken-image-with-invalid-format.png - shouldPaintBrokenImage: NO
 resources/broken-image-with-invalid-format.png - didFinishLoading
