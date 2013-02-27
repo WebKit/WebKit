@@ -1865,7 +1865,6 @@ webkit.org/b/110447 editing/spelling/spelling-changed-text.html [ Failure ]
 
 webkit.org/b/110446 svg/as-background-image/svg-transformed-background.html [ ImageOnlyFailure ]
 
-webkit.org/b/110694 html5lib/runner.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-domjs-unsafe-data.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-pending-spec-changes-plain-text-unsafe-data.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-plain-text-unsafe-data.html [ Failure ]
