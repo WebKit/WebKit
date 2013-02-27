@@ -1,3 +1,18 @@
+2013-02-27  Simon Hausmann  <simon.hausmann@digia.com>
+
+        REGRESSION(r137994): It made JSC tests hang and layout tests fail on ARM Thumb2 / Linux
+        https://bugs.webkit.org/show_bug.cgi?id=108632
+
+        Reviewed by Csaba Osztrogonác.
+
+        It appears that mprotect() is very slow on ARM/Linux, so disable the
+        approach of unreserved mappings there and fall back to overcomitting
+        memory, based on Uli Schlachter's recommendation.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::decommit):
+
 2013-02-26  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Build fix for VS2010 solution, take 2.

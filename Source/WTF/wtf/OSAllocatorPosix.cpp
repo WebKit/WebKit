@@ -43,7 +43,7 @@ void* OSAllocator::reserveUncommitted(size_t bytes, Usage usage, bool writable, 
     void* result = mmap(0, bytes, PROT_NONE, MAP_LAZY | MAP_PRIVATE | MAP_ANON, -1, 0);
     if (result == MAP_FAILED)
         CRASH();
-#elif OS(LINUX)
+#elif OS(LINUX) && !CPU(ARM)
     UNUSED_PARAM(usage);
     UNUSED_PARAM(writable);
     UNUSED_PARAM(executable);
@@ -165,7 +165,7 @@ void OSAllocator::decommit(void* address, size_t bytes)
 #if OS(QNX)
     // Use PROT_NONE and MAP_LAZY to decommit the pages.
     mmap(address, bytes, PROT_NONE, MAP_FIXED | MAP_LAZY | MAP_PRIVATE | MAP_ANON, -1, 0);
-#elif OS(LINUX)
+#elif OS(LINUX) && !CPU(ARM)
     madvise(address, bytes, MADV_DONTNEED);
     if (mprotect(address, bytes, PROT_NONE))
         CRASH();
