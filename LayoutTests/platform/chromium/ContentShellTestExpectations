@@ -48,3 +48,15 @@ crbug.com/111316 [ Linux ] platform/chromium/virtual/gpu/fast/canvas/canvas-incr
 crbug.com/111316 [ Linux ] svg/custom/transform-with-shadow-and-gradient.svg [ Pass ]
 crbug.com/111316 [ Linux ] svg/dynamic-updates/SVGLinearGradientElement-dom-y1-attr.html [ Pass ]
 crbug.com/111316 [ Linux ] svg/dynamic-updates/SVGLinearGradientElement-svgdom-y1-prop.html [ Pass ]
+
+# -----------------------------------------------------------------
+# Triaged failures
+# -----------------------------------------------------------------
+crbug.com/178709 plugins/document-open.html [ Text ]
+crbug.com/178719 plugins/reloadplugins-and-pages.html [ Timeout ]
+crbug.com/178724 platform/chromium/plugins/get-url-with-iframe-target-no-crash.html [ Timeout ]
+crbug.com/178744 plugins/npruntime/browser-object-identity.html [ Text ]
+crbug.com/178745 [ Debug ] plugins/geturlnotify-during-document-teardown.html [ Crash ]
+crbug.com/178745 [ Debug ] plugins/open-and-close-window-with-plugin.html [ Crash ]
+crbug.com/178745 [ Release ] plugins/geturlnotify-during-document-teardown.html [ Text ]
+crbug.com/178745 [ Release ] plugins/open-and-close-window-with-plugin.html [ Text ]
