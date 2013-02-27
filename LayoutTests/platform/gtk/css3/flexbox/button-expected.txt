@@ -1,0 +1,35 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x260
+  RenderBlock {HTML} at (0,0) size 800x260
+    RenderBody {BODY} at (8,8) size 784x244
+      RenderBlock (anonymous) at (0,0) size 784x36
+        RenderText {#text} at (0,0) size 765x37
+          text run at (0,0) width 403: "Test for empty buttons, which inherit from RenderFlexibleBox. "
+          text run at (403,0) width 362: "Empty <input> buttons should not collapse, which makes"
+          text run at (0,18) width 487: "them different from most flex boxes. Empty <button>s should collapse. Note "
+        RenderInline {A} at (0,0) size 76x19 [color=#0000EE]
+          RenderText {#text} at (487,18) size 76x19
+            text run at (487,18) width 76: "bug 110654"
+        RenderText {#text} at (563,18) size 4x19
+          text run at (563,18) width 4: "."
+      RenderBlock {HR} at (0,44) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,54) size 784x71
+        RenderText {#text} at (0,0) size 79x19
+          text run at (0,0) width 79: "Simple case."
+        RenderBR {BR} at (79,0) size 0x19
+        RenderButton {BUTTON} at (2,29) size 16x9 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBR {BR} at (20,18) size 0x19
+        RenderButton {INPUT} at (2,42) size 16x27 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+        RenderBR {BR} at (20,49) size 0x19
+      RenderBlock {HR} at (0,133) size 784x2 [border: (1px inset #000000)]
+      RenderBlock (anonymous) at (0,143) size 784x101
+        RenderText {#text} at (0,0) size 778x19
+          text run at (0,0) width 778: "Empty <button> and <input type=button> with overflow: scroll;. The presence of the scrollbar should not shrink the button."
+        RenderBR {BR} at (778,0) size 0x19
+        RenderBR {BR} at (35,18) size 0x19
+        RenderBR {BR} at (35,64) size 0x19
+layer at (10,180) size 31x24 clip at (12,182) size 12x5
+  RenderButton {BUTTON} at (2,29) size 31x24 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
+layer at (10,208) size 31x42 clip at (12,210) size 12x23
+  RenderButton {INPUT} at (2,57) size 31x42 [bgcolor=#C0C0C0] [border: (2px outset #C0C0C0)]
