@@ -413,10 +413,19 @@ void SQLTransactionBackend::doCleanup()
     // There is no harm in letting it finish making the request. It'll set
     // m_requestedState, but we won't execute a transition to that state because
     // we've already shut down the transaction.
+    //
+    // We also can't clear m_currentStatementBackend and m_transactionError.
+    // m_currentStatementBackend may be accessed asynchronously by the
+    // frontend's deliverStatementCallback() state. Similarly,
+    // m_transactionError may be accessed by deliverTransactionErrorCallback().
+    // This occurs if requests for transition to those states have already been
+    // registered with the frontend just prior to a clean up request arriving.
+    //
+    // So instead, let our destructor handle their clean up since this
+    // SQLTransactionBackend is guaranteed to not destruct until the frontend
+    // is also destructing.
 
-    m_currentStatementBackend = 0;
     m_wrapper = 0;
-    m_transactionError = 0;
 }
 
 AbstractSQLStatement* SQLTransactionBackend::currentStatement()
