@@ -197,6 +197,25 @@ string URLDescription(const GURL& url)
     return url.possibly_invalid_spec();
 }
 
+string PriorityDescription(const WebURLRequest::Priority& priority)
+{
+    switch (priority) {
+    case WebURLRequest::PriorityVeryLow:
+        return "VeryLow";
+    case WebURLRequest::PriorityLow:
+        return "Low";
+    case WebURLRequest::PriorityMedium:
+        return "Medium";
+    case WebURLRequest::PriorityHigh:
+        return "High";
+    case WebURLRequest::PriorityVeryHigh:
+        return "VeryHigh";
+    case WebURLRequest::PriorityUnresolved:
+    default:
+        return "Unresolved";
+    }
+}
+
 void blockRequest(WebURLRequest& request)
 {
     request.setURL(WebURL());
@@ -1196,7 +1215,7 @@ void WebTestProxyBase::didDetectXSS(WebFrame*, const WebURL&, bool)
 
 void WebTestProxyBase::assignIdentifierToRequest(WebFrame*, unsigned identifier, const WebKit::WebURLRequest& request)
 {
-    if (m_testInterfaces->testRunner()->shouldDumpResourceLoadCallbacks()) {
+    if (m_testInterfaces->testRunner()->shouldDumpResourceLoadCallbacks() || m_testInterfaces->testRunner()->shouldDumpResourcePriorities()) {
         WEBKIT_ASSERT(m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end());
         m_resourceIdentifierMap[identifier] = descriptionSuitableForTestResult(request.url().spec());
     }
@@ -1268,6 +1287,13 @@ void WebTestProxyBase::willSendRequest(WebFrame*, unsigned identifier, WebKit::W
         m_delegate->printMessage("\n");
     }
 
+    if (m_testInterfaces->testRunner()->shouldDumpResourcePriorities()) {
+        m_delegate->printMessage(descriptionSuitableForTestResult(requestURL).c_str());
+        m_delegate->printMessage(" has priority ");
+        m_delegate->printMessage(PriorityDescription(request.priority()));
+        m_delegate->printMessage("\n");
+    }
+
     if (!redirectResponse.isNull() && m_testInterfaces->testRunner()->shouldBlockRedirects()) {
         m_delegate->printMessage("Returning null for this redirect\n");
         blockRequest(request);
@@ -1318,6 +1344,19 @@ void WebTestProxyBase::didReceiveResponse(WebFrame*, unsigned identifier, const 
         m_delegate->printMessage(" has MIME type ");
         // Simulate NSURLResponse's mapping of empty/unknown MIME types to application/octet-stream
         m_delegate->printMessage(mimeType.isEmpty() ? "application/octet-stream" : mimeType.utf8().data());
+        m_delegate->printMessage("\n");
+    }
+}
+
+void WebTestProxyBase::didChangeResourcePriority(WebFrame*, unsigned identifier, const WebKit::WebURLRequest::Priority& priority)
+{
+    if (m_testInterfaces->testRunner()->shouldDumpResourcePriorities()) {
+        if (m_resourceIdentifierMap.find(identifier) == m_resourceIdentifierMap.end())
+            m_delegate->printMessage("<unknown>");
+        else
+            m_delegate->printMessage(m_resourceIdentifierMap[identifier]);
+        m_delegate->printMessage(" changed priority to ");
+        m_delegate->printMessage(PriorityDescription(priority));
         m_delegate->printMessage("\n");
     }
 }

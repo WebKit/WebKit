@@ -364,6 +364,14 @@ void ResourceLoader::didFail(const ResourceError& error)
     releaseResources();
 }
 
+void ResourceLoader::didChangePriority(ResourceLoadPriority loadPriority)
+{
+    if (handle()) {
+        frameLoader()->client()->dispatchDidChangeResourcePriority(identifier(), loadPriority);
+        handle()->didChangePriority(loadPriority);
+    }
+}
+
 void ResourceLoader::cancel()
 {
     cancel(ResourceError());

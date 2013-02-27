@@ -2998,3 +2998,6 @@ webkit.org/b/108370 editing/spelling/spelling-subword-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-with-punctuation-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-with-underscore-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
+
+# Need support for ResourceHandle::didChangePriority and DRT support
+webkit.org/b/?????? http/tests/loading/promote-img-preload-priority.html [ Failure ]

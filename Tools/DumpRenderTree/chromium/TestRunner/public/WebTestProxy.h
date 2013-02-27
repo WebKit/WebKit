@@ -33,6 +33,7 @@
 
 #include "Platform/chromium/public/WebRect.h"
 #include "Platform/chromium/public/WebURLError.h"
+#include "Platform/chromium/public/WebURLRequest.h"
 #include "WebKit/chromium/public/WebAccessibilityNotification.h"
 #include "WebKit/chromium/public/WebDOMMessageEvent.h"
 #include "WebKit/chromium/public/WebDragOperation.h"
@@ -69,7 +70,6 @@ class WebSpeechRecognizer;
 class WebSpellCheckClient;
 class WebString;
 class WebURL;
-class WebURLRequest;
 class WebURLResponse;
 class WebUserMediaClient;
 class WebView;
@@ -183,6 +183,7 @@ protected:
     void didCreateDataSource(WebKit::WebFrame*, WebKit::WebDataSource*);
     void willSendRequest(WebKit::WebFrame*, unsigned identifier, WebKit::WebURLRequest&, const WebKit::WebURLResponse& redirectResponse);
     void didReceiveResponse(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLResponse&);
+    void didChangeResourcePriority(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLRequest::Priority&);
     void didFinishResourceLoad(WebKit::WebFrame*, unsigned identifier);
     void didFailResourceLoad(WebKit::WebFrame*, unsigned identifier, const WebKit::WebURLError&);
     void unableToImplementPolicyWithError(WebKit::WebFrame*, const WebKit::WebURLError&);
@@ -213,6 +214,7 @@ private:
     WebKit::WebRect m_paintRect;
     bool m_isPainting;
     std::map<unsigned, std::string> m_resourceIdentifierMap;
+    std::map<unsigned, WebKit::WebURLRequest> m_requestMap;
 
     bool m_logConsoleOutput;
 
@@ -526,6 +528,11 @@ public:
     {
         WebTestProxyBase::didReceiveResponse(frame, identifier, response);
         Base::didReceiveResponse(frame, identifier, response);
+    }
+    virtual void didChangeResourcePriority(WebKit::WebFrame* frame, unsigned identifier, const WebKit::WebURLRequest::Priority& priority)
+    {
+        WebTestProxyBase::didChangeResourcePriority(frame, identifier, priority);
+        Base::didChangeResourcePriority(frame, identifier, priority);
     }
     virtual void didFinishResourceLoad(WebKit::WebFrame* frame, unsigned identifier)
     {

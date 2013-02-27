@@ -1403,6 +1403,9 @@ webkit.org/b/110694 html5lib/generated/run-domjs-unsafe-data.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-pending-spec-changes-plain-text-unsafe-data.html [ Failure ]
 webkit.org/b/110694 html5lib/generated/run-plain-text-unsafe-data.html [ Failure ]
 
+# Need support for ResourceHandle::didChangePriority and DRT support
+webkit.org/b/?????? http/tests/loading/promote-img-preload-priority.html [ Failure ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
 #////////////////////////////////////////////////////////////////////////////////////////

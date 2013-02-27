@@ -833,6 +833,11 @@ void CachedResourceLoader::preload(CachedResource::Type type, CachedResourceRequ
 #if PLATFORM(IOS) || PLATFORM(CHROMIUM)
     delaySubresourceLoad = false;
 #endif
+#if PLATFORM(CHROMIUM)
+    // FIXME: All ports should take advantage of this, but first must support ResourceHandle::didChangePriority().
+    if (type == CachedResource::ImageResource)
+        request.setPriority(ResourceLoadPriorityVeryLow);
+#endif
     if (delaySubresourceLoad) {
         bool hasRendering = m_document->body() && m_document->body()->renderer();
         bool canBlockParser = type == CachedResource::Script || type == CachedResource::CSSStyleSheet;

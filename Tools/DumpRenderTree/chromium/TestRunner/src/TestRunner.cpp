@@ -266,6 +266,7 @@ TestRunner::TestRunner(TestInterfaces* interfaces)
     bindMethod("setWillSendRequestClearHeader", &TestRunner::setWillSendRequestClearHeader);
     bindMethod("setWillSendRequestReturnsNull", &TestRunner::setWillSendRequestReturnsNull);
     bindMethod("setWillSendRequestReturnsNullOnRedirect", &TestRunner::setWillSendRequestReturnsNullOnRedirect);
+    bindMethod("dumpResourceRequestPriorities", &TestRunner::dumpResourceRequestPriorities);
 
     // The following methods interact with the WebTestProxy.
     // The following methods interact with the WebTestDelegate.
@@ -416,6 +417,7 @@ void TestRunner::reset()
 #else
     m_selectTrailingWhitespaceEnabled = false;
 #endif
+    m_shouldDumpResourcePriorities = false;
 
     m_httpHeadersToClear.clear();
 
@@ -681,6 +683,11 @@ bool TestRunner::isSmartInsertDeleteEnabled() const
 bool TestRunner::isSelectTrailingWhitespaceEnabled() const
 {
     return m_selectTrailingWhitespaceEnabled;
+}
+
+bool TestRunner::shouldDumpResourcePriorities() const
+{
+    return m_shouldDumpResourcePriorities;
 }
 
 #if ENABLE_NOTIFICATIONS
@@ -1504,6 +1511,12 @@ void TestRunner::setSelectTrailingWhitespaceEnabled(const CppArgumentList& argum
 {
     if (arguments.size() > 0 && arguments[0].isBool())
         m_selectTrailingWhitespaceEnabled = arguments[0].value.boolValue;
+    result->setNull();
+}
+
+void TestRunner::dumpResourceRequestPriorities(const CppArgumentList& arguments, CppVariant* result)
+{
+    m_shouldDumpResourcePriorities = true;
     result->setNull();
 }
 

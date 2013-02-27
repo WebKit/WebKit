@@ -1,3 +1,22 @@
+2013-02-27  James Simonsen  <simonjam@chromium.org>
+
+        [chromium] Lower priority of preloaded images
+        https://bugs.webkit.org/show_bug.cgi?id=110527
+
+        Plumb the didChangePriority signal into DRT so it can be tested.
+
+        Reviewed by Nate Chapin.
+
+        * public/WebFrameClient.h:
+        (WebKit):
+        (WebKit::WebFrameClient::didChangeResourcePriority):
+        (WebFrameClient):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::dispatchDidChangeResourcePriority):
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+
 2013-02-27  Min Qin  <qinmin@chromium.org>
 
         Unlock partially decoded images after passing them to the ImageDecodingStore

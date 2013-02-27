@@ -438,6 +438,13 @@ void FrameLoaderClientImpl::dispatchDidReceiveContentLength(
 {
 }
 
+void FrameLoaderClientImpl::dispatchDidChangeResourcePriority(unsigned long identifier,
+                                                              ResourceLoadPriority priority)
+{
+    if (m_webFrame->client())
+        m_webFrame->client()->didChangeResourcePriority(m_webFrame, identifier, static_cast<WebKit::WebURLRequest::Priority>(priority));
+}
+
 // Called when a particular resource load completes
 void FrameLoaderClientImpl::dispatchDidFinishLoading(DocumentLoader* loader,
                                                     unsigned long identifier)

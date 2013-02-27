@@ -34,6 +34,7 @@
 #include "../../../Platform/chromium/public/WebCommon.h"
 #include "../../../Platform/chromium/public/WebFileSystem.h"
 #include "../../../Platform/chromium/public/WebURLError.h"
+#include "../../../Platform/chromium/public/WebURLRequest.h"
 #include "WebDOMMessageEvent.h"
 #include "WebIconURL.h"
 #include "WebNavigationPolicy.h"
@@ -68,7 +69,6 @@ class WebStorageQuotaCallbacks;
 class WebString;
 class WebURL;
 class WebURLLoader;
-class WebURLRequest;
 class WebURLResponse;
 class WebWorker;
 struct WebPluginParams;
@@ -271,6 +271,9 @@ public:
     // by identifier.
     virtual void didReceiveResponse(
         WebFrame*, unsigned identifier, const WebURLResponse&) { }
+
+    virtual void didChangeResourcePriority(
+        WebFrame*, unsigned identifier, const WebKit::WebURLRequest::Priority&) { }
 
     // The resource request given by identifier succeeded.
     virtual void didFinishResourceLoad(
