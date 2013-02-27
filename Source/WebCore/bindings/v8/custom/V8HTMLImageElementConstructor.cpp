@@ -45,7 +45,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8HTMLImageElementConstructor::info = { V8HTMLImageElementConstructor::GetTemplate, V8HTMLImageElement::derefObject, 0, V8HTMLImageElement::toEventTarget, 0, V8HTMLImageElement::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
 
-static v8::Handle<v8::Value> v8HTMLImageElementConstructorMethodCustom(const v8::Arguments& args)
+static v8::Handle<v8::Value> namedConstructor(const v8::Arguments& args)
 {
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
@@ -81,6 +81,11 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorMethodCustom(const v8:
     return wrapper;
 }
 
+static v8::Handle<v8::Value> namedConstructorCallback(const v8::Arguments& args)
+{
+    return namedConstructor(args);
+}
+
 v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(v8::Isolate* isolate)
 {
     static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
@@ -88,7 +93,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(
         return cachedTemplate;
 
     v8::HandleScope scope;
-    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(v8HTMLImageElementConstructorMethodCustom);
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(namedConstructorCallback);
 
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(V8HTMLImageElement::internalFieldCount);

@@ -2147,11 +2147,8 @@ sub GenerateNamedConstructor
         }
     }
 
-    my $maybeObserveFeature = GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"});
-
     my @beforeArgumentList;
     my @afterArgumentList;
-
     my $toActiveDOMObject = "0";
     if ($codeGenerator->InheritsExtendedAttribute($interface, "ActiveDOMObject")) {
         $toActiveDOMObject = "${v8InterfaceName}::toActiveDOMObject";
@@ -2166,10 +2163,10 @@ sub GenerateNamedConstructor
     push(@implContent, <<END);
 WrapperTypeInfo ${v8InterfaceName}Constructor::info = { ${v8InterfaceName}Constructor::GetTemplate, ${v8InterfaceName}::derefObject, $toActiveDOMObject, $toEventTarget, 0, ${v8InterfaceName}::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
 
-static v8::Handle<v8::Value> ${v8InterfaceName}ConstructorCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> namedConstructor(const v8::Arguments& args)
 {
-    ${maybeObserveFeature}
 END
+    push(@implContent, GenerateFeatureObservation($function->signature->extendedAttributes->{"V8MeasureAs"}));
     push(@implContent, GenerateConstructorHeader());
     push(@implContent, <<END);
     Document* document = currentDocument(BindingState::instance());
@@ -2224,15 +2221,17 @@ END
     V8DOMWrapper::associateObjectWithWrapper(impl.release(), &${v8InterfaceName}Constructor::info, wrapper, args.GetIsolate(), WrapperConfiguration::Dependent);
     return wrapper;
 END
-
     if ($raisesExceptions) {
         push(@implContent, "    fail:\n");
         push(@implContent, "    return setDOMException(ec, args.GetIsolate());\n");
     }
-
-    push(@implContent, "}\n");
-
     push(@implContent, <<END);
+}
+
+static v8::Handle<v8::Value> namedConstructorCallback(const v8::Arguments& args)
+{
+    return namedConstructor(args);
+}
 
 v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}Constructor::GetTemplate(v8::Isolate* isolate)
 {
@@ -2241,7 +2240,7 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}Constructor::GetTemplate(
         return cachedTemplate;
 
     v8::HandleScope scope;
-    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(${v8InterfaceName}ConstructorCallback);
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(namedConstructorCallback);
 
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(${v8InterfaceName}::internalFieldCount);

@@ -74,9 +74,8 @@ template <typename T> void V8_USE(T) { }
 
 WrapperTypeInfo V8TestNamedConstructorConstructor::info = { V8TestNamedConstructorConstructor::GetTemplate, V8TestNamedConstructor::derefObject, V8TestNamedConstructor::toActiveDOMObject, 0, 0, V8TestNamedConstructor::installPerContextPrototypeProperties, 0, WrapperTypeObjectPrototype };
 
-static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8::Arguments& args)
+static v8::Handle<v8::Value> namedConstructor(const v8::Arguments& args)
 {
-    
     if (!args.IsConstructCall())
         return throwTypeError("DOM object constructor cannot be called as a function.", args.GetIsolate());
 
@@ -108,6 +107,11 @@ static v8::Handle<v8::Value> V8TestNamedConstructorConstructorCallback(const v8:
     return setDOMException(ec, args.GetIsolate());
 }
 
+static v8::Handle<v8::Value> namedConstructorCallback(const v8::Arguments& args)
+{
+    return namedConstructor(args);
+}
+
 v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTemplate(v8::Isolate* isolate)
 {
     static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
@@ -115,7 +119,7 @@ v8::Persistent<v8::FunctionTemplate> V8TestNamedConstructorConstructor::GetTempl
         return cachedTemplate;
 
     v8::HandleScope scope;
-    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(V8TestNamedConstructorConstructorCallback);
+    v8::Local<v8::FunctionTemplate> result = v8::FunctionTemplate::New(namedConstructorCallback);
 
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(V8TestNamedConstructor::internalFieldCount);
