@@ -1,5 +1,4 @@
 http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php, main document URL http://127.0.0.1:8000/misc/will-send-request-returns-null-on-redirect.html, http method GET> redirectResponse (null)
-<unknown> - didFinishLoading
 http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php - willSendRequest <NSURLRequest URL http://www.example.com/, main document URL http://127.0.0.1:8000/misc/will-send-request-returns-null-on-redirect.html, http method GET> redirectResponse <NSURLResponse http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php, http status code 302>
 Returning null for this redirect
 http://127.0.0.1:8000/misc/resources/redirect-to-http-url.php - didFailLoadingWithError: <NSError domain NSURLErrorDomain, code -999, failing URL "(null)">
