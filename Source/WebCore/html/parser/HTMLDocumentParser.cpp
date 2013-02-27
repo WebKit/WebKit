@@ -308,7 +308,7 @@ bool HTMLDocumentParser::canTakeNextToken(SynchronousMode mode, PumpSession& ses
 
 void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<ParsedChunk> chunk)
 {
-    if (isWaitingForScripts()) {
+    if (isWaitingForScripts() || !m_speculations.isEmpty()) {
         m_preloader->takeAndPreload(chunk->preloads);
         m_speculations.append(chunk);
         return;
