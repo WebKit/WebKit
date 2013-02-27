@@ -427,7 +427,7 @@ void GraphicsSurface::platformPaintToTextureMapper(TextureMapper* textureMapper,
     FloatRect rectOnContents(FloatPoint::zero(), size);
     TransformationMatrix adjustedTransform = transform;
     adjustedTransform.multiply(TransformationMatrix::rectToRect(rectOnContents, targetRect));
-    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(platformGetTextureID(), 0, size, rectOnContents, adjustedTransform, opacity, mask);
+    static_cast<TextureMapperGL*>(textureMapper)->drawTexture(platformGetTextureID(), 0, size, rectOnContents, adjustedTransform, opacity);
 }
 
 uint32_t GraphicsSurface::platformFrontBuffer() const
