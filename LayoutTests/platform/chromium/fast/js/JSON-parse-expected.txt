@@ -69,7 +69,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject){
         return jsonObject.parse('{"__proto__":5}');
     }
-PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
+FAIL JSON.stringify(tests[i](nativeJSON)) should be {}. Was {"__proto__":5}.
 function (jsonObject){
         return jsonObject.parse('{"a":5,}');
     }
@@ -446,7 +446,7 @@ PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
 function (jsonObject){
         return jsonObject.parse('{"__proto__":{"a":5}}', log);
     }
-PASS JSON.stringify(tests[i](nativeJSON)) is JSON.stringify(tests[i](JSON))
+FAIL JSON.stringify(tests[i](nativeJSON)) should be {"":{},"keyType":"string"}. Was {"":{"__proto__":{"keyType":"string"}},"keyType":"string"}.
 function (jsonObject){
         logOrderString = "";
         return jsonObject.parse("true", logOrder);

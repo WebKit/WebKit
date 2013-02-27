@@ -14,7 +14,7 @@ PASS __proto__ = 'a string'; __proto__ is anotherObject
 PASS __proto__ = anotherObject; __proto__ is anotherObject
 PASS __proto__ = originalWindowPrototype; __proto__ is originalWindowPrototype
 PASS anotherObject.__proto__ = window; anotherObject.__proto__ is window
-PASS __proto__ = null; __proto__ is null
+FAIL __proto__ = null; __proto__ should be null. Threw exception ReferenceError: __proto__ is not defined
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1581,6 +1581,11 @@ crbug.com/10343 [ Android Linux ] fast/text/large-text-composed-char.html
 # Missing text -- slow font path unimplemented?
 crbug.com/10344 [ Android Linux ] fast/text/should-use-atsui.html [ ImageOnlyFailure ]
 
+# Failure due to changes of V8's __proto__ property.
+webkit.org/b/110887 fast/dom/Window/window-custom-prototype.html [ Failure ]
+webkit.org/b/110887 fast/js/JSON-parse.html [ Failure ]
+webkit.org/b/110887 fast/js/cyclic-prototypes.html [ Failure ]
+
 # Needs V8 fix. V8 bug: http://code.google.com/p/v8/issues/detail?id=1992
 webkit.org/b/80335 fast/js/mozilla/strict/15.4.4.8.html [ Failure ]
 webkit.org/b/80335 fast/js/mozilla/strict/15.4.4.9.html [ Failure ]
