@@ -4,7 +4,3 @@
 
 # pending functional patch and per-port verification
 webkit.org/b/109954 css3/line-break [ Skip ]
-
-# REGRESSION(r144032) - it needs more investigation
-webkit.org/b/110734 html5lib/generated/run-template-data.html [ Failure ]
-webkit.org/b/110734 html5lib/generated/run-template-write.html [ Failure ]
