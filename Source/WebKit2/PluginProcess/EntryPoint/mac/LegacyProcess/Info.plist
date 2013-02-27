@@ -28,5 +28,7 @@
 	<string>NSApplication</string>
 	<key>WebKitEntryPoint</key>
 	<string>PluginProcessMain</string>
+	<key>NSSupportsAutomaticGraphicsSwitching</key>
+	<true/>
 </dict>
 </plist>

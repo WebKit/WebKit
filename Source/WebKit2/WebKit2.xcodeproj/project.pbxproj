@@ -2248,8 +2248,6 @@
 		BC8283AB16B4BEAD00A278FE /* NetworkService.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = NetworkService.xcconfig; sourceTree = "<group>"; };
 		BC8283B116B4BF7700A278FE /* com.apple.WebKit.Networking.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Networking.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
 		BC8283C516B4BFA800A278FE /* com.apple.WebKit.Networking.Development.xpc */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = com.apple.WebKit.Networking.Development.xpc; sourceTree = BUILT_PRODUCTS_DIR; };
-		BC8283E416B4F8E200A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BC8283EA16B4F8E200A278FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = PluginServiceEntryPoint.mm; sourceTree = "<group>"; };
 		BC8283F216B4FC5300A278FE /* PluginService.32.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.32.xcconfig; sourceTree = "<group>"; };
 		BC8283F416B4FC5300A278FE /* PluginService.64.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = PluginService.64.xcconfig; sourceTree = "<group>"; };
@@ -2465,6 +2463,7 @@
 		BCF69FA11176D01400471A52 /* WebNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebNavigationData.cpp; sourceTree = "<group>"; };
 		BCF69FA71176D1CB00471A52 /* WKNavigationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKNavigationData.h; sourceTree = "<group>"; };
 		BCF69FA81176D1CB00471A52 /* WKNavigationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKNavigationData.cpp; sourceTree = "<group>"; };
+		BCFCA89516DE96CB00074069 /* PluginService.32-64.Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "PluginService.32-64.Info.plist"; path = "PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist"; sourceTree = SOURCE_ROOT; };
 		BCFD5489132D82680055D816 /* WKErrorCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKErrorCF.cpp; sourceTree = "<group>"; };
 		BCFD548A132D82680055D816 /* WKErrorCF.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKErrorCF.h; sourceTree = "<group>"; };
 		BFA6179E12F0B99D0033E0CA /* WKViewPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKViewPrivate.h; sourceTree = "<group>"; };
@@ -4447,8 +4446,7 @@
 		BC8283E216B4F8E200A278FE /* XPCService */ = {
 			isa = PBXGroup;
 			children = (
-				BC8283E316B4F8E200A278FE /* PluginService.32 */,
-				BC8283E916B4F8E200A278FE /* PluginService.64 */,
+				BC8283E916B4F8E200A278FE /* PluginService */,
 				BCBECDBF16B5CE0D00047A1A /* PluginService.Development */,
 				BC8283EF16B4F8E200A278FE /* PluginServiceEntryPoint.mm */,
 			);
@@ -4456,19 +4454,12 @@
 			path = mac/XPCService;
 			sourceTree = "<group>";
 		};
-		BC8283E316B4F8E200A278FE /* PluginService.32 */ = {
+		BC8283E916B4F8E200A278FE /* PluginService */ = {
 			isa = PBXGroup;
 			children = (
-				BC8283E416B4F8E200A278FE /* Info.plist */,
+				BCFCA89516DE96CB00074069 /* PluginService.32-64.Info.plist */,
 			);
-			path = PluginService.32;
-			sourceTree = "<group>";
-		};
-		BC8283E916B4F8E200A278FE /* PluginService.64 */ = {
-			isa = PBXGroup;
-			children = (
-				BC8283EA16B4F8E200A278FE /* Info.plist */,
-			);
+			name = PluginService;
 			path = PluginService.64;
 			sourceTree = "<group>";
 		};

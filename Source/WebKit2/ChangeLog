@@ -1,3 +1,25 @@
+2013-02-27  Sam Weinig  <sam@webkit.org>
+
+        REGRESSION: Loading flash switches to discrete graphics, 100 MB on membuster
+        <rdar://problem/13229828>
+
+        Reviewed by Dan Bernstein.
+
+        Due the change in CFBundleIdentifier, the WebProcess and PluginProcess were
+        unnecessarily muxing (they used to be whitelisted by OpenGL) to the discrete
+        GPU.
+
+        * PluginProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.32-64.Info.plist:
+        * PluginProcess/EntryPoint/mac/XPCService/PluginService.Development/Info.plist:
+        * WebProcess/EntryPoint/mac/LegacyProcess/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService.Development/Info.plist:
+        * WebProcess/EntryPoint/mac/XPCService/WebContentService/Info.plist:
+        Add NSSupportsAutomaticGraphicsSwitching YES.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Re-add the PluginService.32-64.Info.plist plist to the project file.
+
 2013-02-26  Alexey Proskuryakov  <ap@apple.com>
 
         Don't add a body to platform request until necessary

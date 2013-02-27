@@ -30,6 +30,8 @@
 	<string>WebContentServiceInitializer</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSSupportsAutomaticGraphicsSwitching</key>
+	<true/>
 	<key>XPCService</key>
 	<dict>
 		<key>ServiceType</key>
