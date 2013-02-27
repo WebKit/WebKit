@@ -29,6 +29,15 @@
     readonly attribute unsigned long numberOfInputs;
     readonly attribute unsigned long numberOfOutputs;
 
+    attribute unsigned long channelCount
+        setter raises(DOMException);
+
+    attribute DOMString channelCountMode
+        setter raises(DOMException);
+
+    attribute DOMString channelInterpretation
+        setter raises(DOMException);
+
     void connect(in AudioNode? destination, in [Optional=DefaultIsUndefined] unsigned long output, in [Optional=DefaultIsUndefined] unsigned long input)
         raises(DOMException);
 

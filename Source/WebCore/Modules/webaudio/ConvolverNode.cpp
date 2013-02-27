@@ -51,7 +51,12 @@ ConvolverNode::ConvolverNode(AudioContext* context, float sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
-    
+
+    // Node-specific default mixing rules.
+    m_channelCount = 2;
+    m_channelCountMode = ClampedMax;
+    m_channelInterpretation = AudioBus::Speakers;
+
     setNodeType(NodeTypeConvolver);
     
     initialize();

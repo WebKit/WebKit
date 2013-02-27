@@ -294,9 +294,9 @@ void AudioBus::speakersCopyFrom(const AudioBus& sourceBus)
         channel(4)->zero();
         channel(5)->zero();
     } else if (numberOfDestinationChannels == 1 && numberOfSourceChannels == 6) {
-        // Handle 5.1 -> mono case, copy center channel into mono.
-        // FIXME: We should have a better algorithm for this down mixing.
-        channel(0)->copyFrom(sourceBus.channel(2));
+        // Handle 5.1 -> mono case.
+        zero();
+        speakersSumFrom5_1_ToMono(sourceBus);
     } else {
         // Fallback for unknown combinations.
         discreteCopyFrom(sourceBus);
@@ -331,13 +331,43 @@ void AudioBus::speakersSumFrom(const AudioBus& sourceBus)
         // Handle mono -> 5.1 case, sum mono channel into center.
         channel(2)->sumFrom(sourceBus.channel(0));
     } else if (numberOfDestinationChannels == 1 && numberOfSourceChannels == 6) {
-        // Handle 5.1 -> mono case, sum center channel into mono.
-        // FIXME: We should have a better algorithm for this down mixing.
-        channel(0)->sumFrom(sourceBus.channel(2));
+        // Handle 5.1 -> mono case.
+        speakersSumFrom5_1_ToMono(sourceBus);
     } else {
         // Fallback for unknown combinations.
         discreteSumFrom(sourceBus);
     }
+}
+
+void AudioBus::speakersSumFrom5_1_ToMono(const AudioBus& sourceBus)
+{
+    AudioBus& sourceBusSafe = const_cast<AudioBus&>(sourceBus);
+
+    const float* sourceL = sourceBusSafe.channelByType(ChannelLeft)->data();
+    const float* sourceR = sourceBusSafe.channelByType(ChannelRight)->data();
+    const float* sourceC = sourceBusSafe.channelByType(ChannelCenter)->data();
+    const float* sourceSL = sourceBusSafe.channelByType(ChannelSurroundLeft)->data();
+    const float* sourceSR = sourceBusSafe.channelByType(ChannelSurroundRight)->data();
+
+    float* destination = channelByType(ChannelLeft)->mutableData();
+
+    AudioFloatArray temp(length());
+    float* tempData = temp.data();
+
+    // Sum in L and R.
+    vadd(sourceL, 1, sourceR, 1, tempData, 1, length());
+    float scale = 0.7071;
+    vsmul(tempData, 1, &scale, tempData, 1, length());
+    vadd(tempData, 1, destination, 1, destination, 1, length());
+
+    // Sum in SL and SR.
+    vadd(sourceSL, 1, sourceSR, 1, tempData, 1, length());
+    scale = 0.5;
+    vsmul(tempData, 1, &scale, tempData, 1, length());
+    vadd(tempData, 1, destination, 1, destination, 1, length());
+
+    // Sum in center.
+    vadd(sourceC, 1, destination, 1, destination, 1, length());
 }
 
 void AudioBus::discreteCopyFrom(const AudioBus& sourceBus)

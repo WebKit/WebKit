@@ -55,6 +55,9 @@ AudioNode::AudioNode(AudioContext* context, float sampleRate)
     , m_connectionRefCount(0)
     , m_isMarkedForDeletion(false)
     , m_isDisabled(false)
+    , m_channelCount(2)
+    , m_channelCountMode(Max)
+    , m_channelInterpretation(AudioBus::Speakers)
 {
 #if DEBUG_AUDIONODE_REFERENCES
     if (!s_isNodeCountInitialized) {
@@ -192,6 +195,91 @@ void AudioNode::disconnect(unsigned outputIndex, ExceptionCode& ec)
 
     AudioNodeOutput* output = this->output(outputIndex);
     output->disconnectAll();
+}
+
+unsigned long AudioNode::channelCount()
+{
+    return m_channelCount;
+}
+
+void AudioNode::setChannelCount(unsigned long channelCount, ExceptionCode& ec)
+{
+    ASSERT(isMainThread());
+    AudioContext::AutoLocker locker(context());
+
+    if (channelCount > 0 && channelCount <= AudioContext::maxNumberOfChannels()) {
+        if (m_channelCount != channelCount) {
+            m_channelCount = channelCount;
+            if (m_channelCountMode != Max)
+                updateChannelsForInputs();
+        }
+    } else
+        ec = INVALID_STATE_ERR;
+}
+
+String AudioNode::channelCountMode()
+{
+    switch (m_channelCountMode) {
+    case Max:
+        return "max";
+    case ClampedMax:
+        return "clamped-max";
+    case Explicit:
+        return "explicit";
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+void AudioNode::setChannelCountMode(const String& mode, ExceptionCode& ec)
+{
+    ASSERT(isMainThread());
+    AudioContext::AutoLocker locker(context());
+
+    ChannelCountMode oldMode = m_channelCountMode;
+
+    if (mode == "max")
+        m_channelCountMode = Max;
+    else if (mode == "clamped-max")
+        m_channelCountMode = ClampedMax;
+    else if (mode == "explicit")
+        m_channelCountMode = Explicit;
+    else
+        ec = INVALID_STATE_ERR;
+
+    if (m_channelCountMode != oldMode)
+        updateChannelsForInputs();
+}
+
+String AudioNode::channelInterpretation()
+{
+    switch (m_channelInterpretation) {
+    case AudioBus::Speakers:
+        return "speakers";
+    case AudioBus::Discrete:
+        return "discrete";
+    }
+    ASSERT_NOT_REACHED();
+    return "";
+}
+
+void AudioNode::setChannelInterpretation(const String& interpretation, ExceptionCode& ec)
+{
+    ASSERT(isMainThread());
+    AudioContext::AutoLocker locker(context());
+
+    if (interpretation == "speakers")
+        m_channelInterpretation = AudioBus::Speakers;
+    else if (interpretation == "discrete")
+        m_channelInterpretation = AudioBus::Discrete;
+    else
+        ec = INVALID_STATE_ERR;
+}
+
+void AudioNode::updateChannelsForInputs()
+{
+    for (unsigned i = 0; i < m_inputs.size(); ++i)
+        input(i)->changedOutputs();
 }
 
 void AudioNode::processIfNecessary(size_t framesToProcess)

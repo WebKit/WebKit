@@ -82,9 +82,6 @@ public:
 private:
     AudioNode* m_node;
 
-    // The number of channels of the rendering connection with the largest number of channels.
-    unsigned numberOfRenderingChannels();
-
     // m_disabledOutputs contains the AudioNodeOutputs which are disabled (will not be processed) by the audio graph rendering.
     // But, from JavaScript's perspective, these outputs are still connected to us.
     // Generally, these represent disabled connections from "notes" which have finished playing but are not yet garbage collected.

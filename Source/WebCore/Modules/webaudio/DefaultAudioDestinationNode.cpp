@@ -39,6 +39,10 @@ DefaultAudioDestinationNode::DefaultAudioDestinationNode(AudioContext* context)
     : AudioDestinationNode(context, AudioDestination::hardwareSampleRate())
     , m_numberOfInputChannels(0)
 {
+    // Node-specific default mixing rules.
+    m_channelCount = 2;
+    m_channelCountMode = Explicit;
+    m_channelInterpretation = AudioBus::Speakers;
 }
 
 DefaultAudioDestinationNode::~DefaultAudioDestinationNode()

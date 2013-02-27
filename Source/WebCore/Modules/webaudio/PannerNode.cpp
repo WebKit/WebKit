@@ -56,7 +56,12 @@ PannerNode::PannerNode(AudioContext* context, float sampleRate)
 {
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 2)));
-    
+
+    // Node-specific default mixing rules.
+    m_channelCount = 2;
+    m_channelCountMode = ClampedMax;
+    m_channelInterpretation = AudioBus::Speakers;
+
     m_distanceGain = AudioGain::create(context, "distanceGain", 1.0, 0.0, 1.0);
     m_coneGain = AudioGain::create(context, "coneGain", 1.0, 0.0, 1.0);
 
