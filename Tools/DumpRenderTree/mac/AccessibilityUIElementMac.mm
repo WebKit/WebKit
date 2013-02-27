@@ -1439,7 +1439,9 @@ AccessibilityUIElement AccessibilityUIElement::accessibilityElementForTextMarker
 
 void AccessibilityUIElement::scrollToMakeVisible()
 {
-    // FIXME: implement
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element accessibilityPerformAction:@"AXScrollToVisible"];
+    END_AX_OBJC_EXCEPTIONS
 }
 
 void AccessibilityUIElement::scrollToMakeVisibleWithSubFocus(int x, int y, int width, int height)

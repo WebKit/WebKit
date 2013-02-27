@@ -1098,6 +1098,13 @@ PassRefPtr<AccessibilityUIElement> AccessibilityUIElement::verticalScrollbar() c
     return 0;
 }
 
+void AccessibilityUIElement::scrollToMakeVisible()
+{
+    BEGIN_AX_OBJC_EXCEPTIONS
+    [m_element accessibilityPerformAction:@"AXScrollToVisible"];
+    END_AX_OBJC_EXCEPTIONS
+}
+    
 JSRetainPtr<JSStringRef> AccessibilityUIElement::selectedTextRange()
 {
     NSRange range = NSMakeRange(NSNotFound, 0);

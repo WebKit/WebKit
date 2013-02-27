@@ -211,6 +211,8 @@ public:
     PassRefPtr<AccessibilityUIElement> horizontalScrollbar() const;
     PassRefPtr<AccessibilityUIElement> verticalScrollbar() const;
 
+    void scrollToMakeVisible();
+    
     // Text markers.
     PassRefPtr<AccessibilityTextMarkerRange> textMarkerRangeForElement(AccessibilityUIElement*);    
     PassRefPtr<AccessibilityTextMarkerRange> textMarkerRangeForMarkers(AccessibilityTextMarker* startMarker, AccessibilityTextMarker* endMarker);

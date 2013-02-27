@@ -1,3 +1,24 @@
+2013-02-27  Chris Fleizach  <cfleizach@apple.com>
+
+        AX: Mac platform should support ability to scroll an element into visible
+        https://bugs.webkit.org/show_bug.cgi?id=109860
+
+        Reviewed by Beth Dakin.
+
+        * DumpRenderTree/AccessibilityUIElement.cpp:
+        (scrollToMakeVisibleCallback):
+        (AccessibilityUIElement::getJSClass):
+        * DumpRenderTree/mac/AccessibilityUIElementMac.mm:
+        (AccessibilityUIElement::scrollToMakeVisible):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.cpp:
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+        * WebKitTestRunner/InjectedBundle/AccessibilityUIElement.h:
+        (AccessibilityUIElement):
+        * WebKitTestRunner/InjectedBundle/Bindings/AccessibilityUIElement.idl:
+        * WebKitTestRunner/InjectedBundle/mac/AccessibilityUIElementMac.mm:
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+        (WTR):
+
 2013-02-27  John Bauman  <jbauman@chromium.org>
 
         Plugin in iframe may not display

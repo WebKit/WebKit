@@ -338,6 +338,10 @@ using namespace std;
 #define NSAccessibilityIndexForTextMarkerParameterizedAttribute @"AXIndexForTextMarker"
 #define NSAccessibilityTextMarkerForIndexParameterizedAttribute @"AXTextMarkerForIndex"
 
+#ifndef NSAccessibilityScrollToVisibleAction
+#define NSAccessibilityScrollToVisibleAction @"AXScrollToVisible"
+#endif
+
 // Math attributes
 #define NSAccessibilityMathRootRadicandAttribute @"AXMathRootRadicand"
 #define NSAccessibilityMathRootIndexAttribute @"AXMathRootIndex"
@@ -911,10 +915,17 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
     if (![self updateObjectBackingStore])
         return nil;
     
-    static NSArray* actionElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, NSAccessibilityShowMenuAction, nil];
-    static NSArray* defaultElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityShowMenuAction, nil];
-    static NSArray* menuElementActions = [[NSArray alloc] initWithObjects: NSAccessibilityCancelAction, NSAccessibilityPressAction, nil];
-    static NSArray* sliderActions = [[NSArray alloc] initWithObjects: NSAccessibilityIncrementAction, NSAccessibilityDecrementAction, nil];
+    // All elements should get ShowMenu and ScrollToVisible.
+    static NSArray *defaultElementActions = [[NSArray alloc] initWithObjects:NSAccessibilityShowMenuAction, NSAccessibilityScrollToVisibleAction, nil];
+
+    // Action elements allow Press.
+    static NSArray *actionElementActions = [[defaultElementActions arrayByAddingObject:NSAccessibilityPressAction] retain];
+
+    // Menu elements allow Press and Cancel.
+    static NSArray *menuElementActions = [[actionElementActions arrayByAddingObject:NSAccessibilityCancelAction] retain];
+
+    // Slider elements allow Increment/Decrement.
+    static NSArray *sliderActions = [[defaultElementActions arrayByAddingObjectsFromArray:[NSArray arrayWithObjects:NSAccessibilityIncrementAction, NSAccessibilityDecrementAction, nil]] retain];
     
     NSArray *actions;
     if (m_object->actionElement() || m_object->isButton())
@@ -2900,6 +2911,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     page->contextMenuController()->showContextMenuAt(page->mainFrame(), rect.center());
 }
 
+- (void)accessibilityScrollToVisible
+{
+    m_object->scrollToMakeVisible();
+}
+
 - (void)accessibilityPerformAction:(NSString*)action
 {
     if (![self updateObjectBackingStore])
@@ -2916,6 +2932,9 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     else if ([action isEqualToString:NSAccessibilityDecrementAction])
         [self accessibilityPerformDecrementAction];
+    
+    else if ([action isEqualToString:NSAccessibilityScrollToVisibleAction])
+        [self accessibilityScrollToVisible];
 }
 
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString*)attributeName

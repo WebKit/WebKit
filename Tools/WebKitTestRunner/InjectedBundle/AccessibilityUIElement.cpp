@@ -179,7 +179,7 @@ bool AccessibilityUIElement::attributedStringForTextMarkerRangeContainsAttribute
 int AccessibilityUIElement::indexForTextMarker(AccessibilityTextMarker*) { return -1; }
 bool AccessibilityUIElement::isTextMarkerValid(AccessibilityTextMarker*) { return false; }
 PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(int) { return 0; }
-
+void AccessibilityUIElement::scrollToMakeVisible() { }
 #endif
 
 } // namespace WTR

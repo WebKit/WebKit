@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="group" style="overflow: scroll; width:100px; height:100px;">
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+test test test test <br>
+<button id="button">button</button>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the scrollToMakeVisible accessibility action works as expected on the Mac.");
+
+    if (window.accessibilityController) {
+
+          var button = accessibilityController.accessibleElementById("button");
+          var buttonX = button.x;
+          var buttonY = button.y;
+          
+          button.scrollToMakeVisible();
+
+          var newButtonX = button.x;
+          var newButtonY = button.y;
+
+          debug("Scroll to make visible is performed. The X position should be the same, but the Y position should have changed.");
+          shouldBeTrue("newButtonX == buttonX");
+          shouldBeTrue("newButtonY > buttonY");
+
+          document.getElementById("group").style.visibility = "hidden";
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
