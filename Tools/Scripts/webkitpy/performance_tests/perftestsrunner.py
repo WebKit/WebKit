@@ -207,66 +207,52 @@ class PerfTestsRunner(object):
 
     def _generate_and_show_results(self):
         options = self._options
-        perf_webkit_json_path = self._output_json_path()
-        legacy_output, perf_webkit_output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
+        output_json_path = self._output_json_path()
+        output = self._generate_results_dict(self._timestamp, options.description, options.platform, options.builder_name, options.build_number)
 
         if options.slave_config_json_path:
-            legacy_output, perf_webkit_output = self._merge_slave_config_json(options.slave_config_json_path, legacy_output, perf_webkit_output)
-            if not legacy_output:
+            output = self._merge_slave_config_json(options.slave_config_json_path, output)
+            if not output:
                 return self.EXIT_CODE_BAD_SOURCE_JSON
 
-        perf_webkit_output = self._merge_outputs_if_needed(perf_webkit_json_path, perf_webkit_output)
-        if not perf_webkit_output:
+        output = self._merge_outputs_if_needed(output_json_path, output)
+        if not output:
             return self.EXIT_CODE_BAD_MERGE
-        legacy_output = [legacy_output]
 
-        results_page_path = self._host.filesystem.splitext(perf_webkit_json_path)[0] + '.html'
-        legacy_output_json_path = self._host.filesystem.splitext(perf_webkit_json_path)[0] + '-legacy.json' if options.test_results_server else None
-        self._generate_output_files(legacy_output_json_path, perf_webkit_json_path, results_page_path, legacy_output, perf_webkit_output)
+        results_page_path = self._host.filesystem.splitext(output_json_path)[0] + '.html'
+        self._generate_output_files(output_json_path, results_page_path, output)
 
         if options.test_results_server:
-            if not self._upload_json(options.test_results_server, legacy_output_json_path):
-                return self.EXIT_CODE_FAILED_UPLOADING
+            if options.test_results_server == 'webkit-perf.appspot.com':
+                options.test_results_server = 'perf.webkit.org'
 
-            # FIXME: Remove this code once we've made transition to use perf.webkit.org
-            if not self._upload_json('perf.webkit.org', perf_webkit_json_path, "/api/report"):
+            if not self._upload_json(options.test_results_server, output_json_path):
                 return self.EXIT_CODE_FAILED_UPLOADING
 
         if options.show_results:
             self._port.show_results_html_file(results_page_path)
 
     def _generate_results_dict(self, timestamp, description, platform, builder_name, build_number):
-        contents = {'results': self._results}
+        contents = {'tests': {}}
         if description:
             contents['description'] = description
 
-        revisions_for_perf_webkit = {}
+        revisions = {}
         for (name, path) in self._port.repository_paths():
             scm = SCMDetector(self._host.filesystem, self._host.executive).detect_scm_system(path) or self._host.scm()
             revision = scm.svn_revision(path)
-            contents[name.lower() + '-revision'] = revision
-            revisions_for_perf_webkit[name] = {'revision': str(revision), 'timestamp': scm.timestamp_of_latest_commit(path, revision)}
-
-        # FIXME: Add --branch or auto-detect the branch we're in
-        for key, value in {'timestamp': int(timestamp), 'branch': self._default_branch, 'platform': platform,
-            'builder-name': builder_name, 'build-number': int(build_number) if build_number else None}.items():
-            if value:
-                contents[key] = value
-
-        contents_for_perf_webkit = {'tests': {}}
-        if description:
-            contents_for_perf_webkit['description'] = description
+            revisions[name] = {'revision': str(revision), 'timestamp': scm.timestamp_of_latest_commit(path, revision)}
 
         meta_info = {
             'buildTime': self._datetime_in_ES5_compatible_iso_format(self._utc_timestamp),
             'platform': platform,
-            'revisions': revisions_for_perf_webkit,
+            'revisions': revisions,
             'builderName': builder_name,
             'buildNumber': int(build_number) if build_number else None}
 
         for key, value in meta_info.items():
             if value:
-                contents_for_perf_webkit[key] = value
+                contents[key] = value
 
         # FIXME: Make this function shorter once we've transitioned to use perf.webkit.org.
         for metric_full_name, result in self._results.iteritems():
@@ -278,7 +264,7 @@ class PerfTestsRunner(object):
             if not metric:
                 metric = {'fps': 'FrameRate', 'runs/s': 'Runs', 'ms': 'Time'}[result['unit']]
 
-            tests = contents_for_perf_webkit['tests']
+            tests = contents['tests']
             path = test_full_name.split('/')
             for i in range(0, len(path)):
                 # FIXME: We shouldn't assume HTML extension.
@@ -297,27 +283,26 @@ class PerfTestsRunner(object):
                     current_test.setdefault('tests', {})
                     tests = current_test['tests']
 
-        return contents, contents_for_perf_webkit
+        return contents
 
     @staticmethod
     def _datetime_in_ES5_compatible_iso_format(datetime):
         return datetime.strftime('%Y-%m-%dT%H:%M:%S.%f')
 
-    def _merge_slave_config_json(self, slave_config_json_path, contents, contents_for_perf_webkit):
+    def _merge_slave_config_json(self, slave_config_json_path, contents):
         if not self._host.filesystem.isfile(slave_config_json_path):
             _log.error("Missing slave configuration JSON file: %s" % slave_config_json_path)
-            return None, None
+            return None
 
         try:
             slave_config_json = self._host.filesystem.open_text_file_for_reading(slave_config_json_path)
             slave_config = json.load(slave_config_json)
-            contents = dict(slave_config.items() + contents.items())
             for key in slave_config:
-                contents_for_perf_webkit['builder' + key.capitalize()] = slave_config[key]
-            return contents, contents_for_perf_webkit
+                contents['builder' + key.capitalize()] = slave_config[key]
+            return contents
         except Exception, error:
             _log.error("Failed to merge slave configuration JSON file %s: %s" % (slave_config_json_path, error))
-        return None, None
+        return None
 
     def _merge_outputs_if_needed(self, output_json_path, output):
         if self._options.reset_results or not self._host.filesystem.isfile(output_json_path):
@@ -329,15 +314,11 @@ class PerfTestsRunner(object):
             _log.error("Failed to merge output JSON file %s: %s" % (output_json_path, error))
         return None
 
-    def _generate_output_files(self, output_json_path, perf_webkit_json_path, results_page_path, legacy_output, perf_webkit_output):
+    def _generate_output_files(self, output_json_path, results_page_path, output):
         filesystem = self._host.filesystem
 
-        if output_json_path:
-            filesystem.write_text_file(output_json_path, json.dumps(legacy_output))
-
-        json_output = json.dumps(perf_webkit_output)
-        if perf_webkit_json_path:
-            filesystem.write_text_file(perf_webkit_json_path, json.dumps(perf_webkit_output))
+        json_output = json.dumps(output)
+        filesystem.write_text_file(output_json_path, json_output)
 
         if results_page_path:
             template_path = filesystem.join(self._port.perf_tests_dir(), 'resources/results-template.html')
