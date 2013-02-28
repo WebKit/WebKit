@@ -3994,12 +3994,6 @@ webkit.org/b/100324 css3/supports-dom-api.html
 # CSS Device Adaptation is not enabled.
 webkit.org/b/95959 css3/device-adapt [ Skip ]
 
-# Require rebaselining after webkit.org/b/97800
-webkit.org/b/89167 media/track/track-cue-rendering-vertical.html [ Failure ]
-# [Chromium-Android] Subtitles (and video) do not work on Android (Disabled to make linter happy)
-#webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-vertical.html [ Failure ]
-#webkit.org/b/98766 [ Android ] media/track/track-cue-rendering-horizontal.html [ Failure ]
-
 webkit.org/b/23166 ietestcenter/css3/bordersbackgrounds/border-radius-clip-002.htm [ Pass ImageOnlyFailure ]
 
 webkit.org/b/98699 [ Lion ] fast/writing-mode/vertical-subst-font-vert-no-dflt.html [ Crash ]
