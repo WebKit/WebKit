@@ -2503,6 +2503,238 @@ MonthPopupView.prototype.onClick = function(event) {
 
 /**
  * @constructor
+ * @extends View
+ * @param {!number} maxWidth Maximum width in pixels.
+ */
+function MonthPopupButton(maxWidth) {
+    View.call(this, createElement("button", MonthPopupButton.ClassNameMonthPopupButton));
+
+    /**
+     * @type {!Element}
+     * @const
+     */
+    this.labelElement = createElement("span", MonthPopupButton.ClassNameMonthPopupButtonLabel, "-----");
+    this.element.appendChild(this.labelElement);
+
+    /**
+     * @type {!Element}
+     * @const
+     */
+    this.disclosureTriangleIcon = createElement("span", MonthPopupButton.ClassNameDisclosureTriangle);
+    this.disclosureTriangleIcon.innerHTML = "<svg width='7' height='5'><polygon points='0,1 7,1 3.5,5' style='fill:#000000;' /></svg>";
+    this.element.appendChild(this.disclosureTriangleIcon);
+
+    /**
+     * @type {!boolean}
+     * @protected
+     */
+    this._useShortMonth = this._shouldUseShortMonth(maxWidth);
+    this.element.style.maxWidth = maxWidth + "px";
+
+    this.element.addEventListener("click", this.onClick, false);
+}
+
+MonthPopupButton.prototype = Object.create(View.prototype);
+
+MonthPopupButton.ClassNameMonthPopupButton = "month-popup-button";
+MonthPopupButton.ClassNameMonthPopupButtonLabel = "month-popup-button-label";
+MonthPopupButton.ClassNameDisclosureTriangle = "disclosure-triangle";
+MonthPopupButton.EventTypeButtonClick = "buttonClick";
+
+/**
+ * @param {!number} maxWidth Maximum available width in pixels.
+ * @return {!boolean}
+ */
+MonthPopupButton.prototype._shouldUseShortMonth = function(maxWidth) {
+    document.body.appendChild(this.element);
+    var month = Month.Maximum;
+    for (var i = 0; i < MonthsPerYear; ++i) {
+        this.labelElement.textContent = month.toLocaleString();
+        if (this.element.offsetWidth > maxWidth)
+            return true;
+        month = month.previous();
+    }
+    document.body.removeChild(this.element);
+    return false;
+};
+
+/**
+ * @param {!Month} month
+ */
+MonthPopupButton.prototype.setCurrentMonth = function(month) {
+    this.labelElement.textContent = this._useShortMonth ? month.toShortLocaleString() : month.toLocaleString();
+};
+
+/**
+ * @param {?Event} event
+ */
+MonthPopupButton.prototype.onClick = function(event) {
+    this.dispatchEvent(MonthPopupButton.EventTypeButtonClick, this);
+};
+
+/**
+ * @constructor
+ * @extends View
+ */
+function CalendarNavigationButton() {
+    View.call(this, createElement("button", CalendarNavigationButton.ClassNameCalendarNavigationButton));
+    /**
+     * @type {number} Threshold for starting repeating clicks in milliseconds.
+     */
+    this.repeatingClicksStartingThreshold = CalendarNavigationButton.DefaultRepeatingClicksStartingThreshold;
+    /**
+     * @type {number} Interval between reapeating clicks in milliseconds.
+     */
+    this.reapeatingClicksInterval = CalendarNavigationButton.DefaultRepeatingClicksInterval;
+    this._timer = null;
+    this.element.addEventListener("click", this.onClick, false);
+    this.element.addEventListener("mousedown", this.onMouseDown, false);
+};
+
+CalendarNavigationButton.prototype = Object.create(View.prototype);
+
+CalendarNavigationButton.DefaultRepeatingClicksStartingThreshold = 600;
+CalendarNavigationButton.DefaultRepeatingClicksInterval = 300;
+CalendarNavigationButton.LeftMargin = 4;
+CalendarNavigationButton.Width = 24;
+CalendarNavigationButton.ClassNameCalendarNavigationButton = "calendar-navigation-button";
+CalendarNavigationButton.EventTypeButtonClick = "buttonClick";
+CalendarNavigationButton.EventTypeRepeatingButtonClick = "repeatingButtonClick";
+
+/**
+ * @param {!boolean} disabled
+ */
+CalendarNavigationButton.prototype.setDisabled = function(disabled) {
+    this.element.disabled = disabled;
+};
+
+/**
+ * @param {?Event} event
+ */
+CalendarNavigationButton.prototype.onClick = function(event) {
+    this.dispatchEvent(CalendarNavigationButton.EventTypeButtonClick, this);
+};
+
+/**
+ * @param {?Event} event
+ */
+CalendarNavigationButton.prototype.onMouseDown = function(event) {
+    this._timer = setTimeout(this.onRepeatingClick, this.repeatingClicksStartingThreshold);
+    window.addEventListener("mouseup", this.onWindowMouseUp, false);
+};
+
+/**
+ * @param {?Event} event
+ */
+CalendarNavigationButton.prototype.onWindowMouseUp = function(event) {
+    clearTimeout(this._timer);
+    window.removeEventListener("mouseup", this.onWindowMouseUp, false);
+};
+
+/**
+ * @param {?Event} event
+ */
+CalendarNavigationButton.prototype.onRepeatingClick = function(event) {
+    this.dispatchEvent(CalendarNavigationButton.EventTypeRepeatingButtonClick, this);
+    this._timer = setTimeout(this.onRepeatingClick, this.reapeatingClicksInterval);
+};
+
+/**
+ * @constructor
+ * @extends View
+ * @param {!CalendarPicker} calendarPicker
+ */
+function CalendarHeaderView(calendarPicker) {
+    View.call(this, createElement("div", CalendarHeaderView.ClassNameCalendarHeaderView));
+    this.calendarPicker = calendarPicker;
+    this.calendarPicker.on(CalendarPicker.EventTypeCurrentMonthChanged, this.onCurrentMonthChanged);
+    
+    var titleElement = createElement("div", CalendarHeaderView.ClassNameCalendarTitle);
+    this.element.appendChild(titleElement);
+
+    /**
+     * @type {!MonthPopupButton}
+     */
+    this.monthPopupButton = new MonthPopupButton(this.calendarPicker.calendarTableView.width() - CalendarTableView.BorderWidth * 2 - CalendarNavigationButton.Width * 3 - CalendarNavigationButton.LeftMargin * 2);
+    this.monthPopupButton.attachTo(titleElement);
+
+    /**
+     * @type {!CalendarNavigationButton}
+     * @const
+     */
+    this._previousMonthButton = new CalendarNavigationButton();
+    this._previousMonthButton.attachTo(this);
+    this._previousMonthButton.on(CalendarNavigationButton.EventTypeButtonClick, this.onNavigationButtonClick);
+    this._previousMonthButton.on(CalendarNavigationButton.EventTypeRepeatingButtonClick, this.onNavigationButtonClick);
+
+    /**
+     * @type {!CalendarNavigationButton}
+     * @const
+     */
+    this._todayButton = new CalendarNavigationButton();
+    this._todayButton.attachTo(this);
+    this._todayButton.on(CalendarNavigationButton.EventTypeButtonClick, this.onNavigationButtonClick);
+    this._todayButton.element.classList.add(CalendarHeaderView.ClassNameTodayButton);
+    var monthContainingToday = Month.createFromToday();
+    this._todayButton.setDisabled(monthContainingToday < this.calendarPicker.minimumMonth || monthContainingToday > this.calendarPicker.maximumMonth);
+
+    /**
+     * @type {!CalendarNavigationButton}
+     * @const
+     */
+    this._nextMonthButton = new CalendarNavigationButton();
+    this._nextMonthButton.attachTo(this);
+    this._nextMonthButton.on(CalendarNavigationButton.EventTypeButtonClick, this.onNavigationButtonClick);
+    this._nextMonthButton.on(CalendarNavigationButton.EventTypeRepeatingButtonClick, this.onNavigationButtonClick);
+
+    if (global.params.isLocaleRTL) {
+        this._nextMonthButton.element.innerHTML = CalendarHeaderView._BackwardTriangle;
+        this._previousMonthButton.element.innerHTML = CalendarHeaderView._ForwardTriangle;
+    } else {
+        this._nextMonthButton.element.innerHTML = CalendarHeaderView._ForwardTriangle;
+        this._previousMonthButton.element.innerHTML = CalendarHeaderView._BackwardTriangle;
+    }
+}
+
+CalendarHeaderView.prototype = Object.create(View.prototype);
+
+CalendarHeaderView.Height = 24;
+CalendarHeaderView.BottomMargin = 10;
+CalendarHeaderView._ForwardTriangle = "<svg width='4' height='7'><polygon points='0,7 0,0, 4,3.5' style='fill:#6e6e6e;' /></svg>";
+CalendarHeaderView._BackwardTriangle = "<svg width='4' height='7'><polygon points='0,3.5 4,7 4,0' style='fill:#6e6e6e;' /></svg>";
+CalendarHeaderView.ClassNameCalendarHeaderView = "calendar-header-view";
+CalendarHeaderView.ClassNameCalendarTitle = "calendar-title";
+CalendarHeaderView.ClassNameTodayButton = "today-button";
+
+CalendarHeaderView.prototype.onCurrentMonthChanged = function() {
+    this.monthPopupButton.setCurrentMonth(this.calendarPicker.currentMonth());
+    this._previousMonthButton.setDisabled(this.disabled || this.calendarPicker.currentMonth() <= this.calendarPicker.minimumMonth);
+    this._nextMonthButton.setDisabled(this.disabled || this.calendarPicker.currentMonth() >= this.calendarPicker.maximumMonth);
+};
+
+CalendarHeaderView.prototype.onNavigationButtonClick = function(sender) {
+    if (sender === this._previousMonthButton)
+        this.calendarPicker.setCurrentMonth(this.calendarPicker.currentMonth().previous(), CalendarPicker.NavigationBehaviour.WithAnimation);
+    else if (sender === this._nextMonthButton)
+        this.calendarPicker.setCurrentMonth(this.calendarPicker.currentMonth().next(), CalendarPicker.NavigationBehaviour.WithAnimation);
+    else
+        this.calendarPicker.selectRangeContainingDay(Day.createFromToday());
+};
+
+/**
+ * @param {!boolean} disabled
+ */
+CalendarHeaderView.prototype.setDisabled = function(disabled) {
+    this.disabled = disabled;
+    this.monthPopupButton.element.disabled = this.disabled;
+    this._previousMonthButton.setDisabled(this.disabled || this.calendarPicker.currentMonth() <= this.calendarPicker.minimumMonth);
+    this._nextMonthButton.setDisabled(this.disabled || this.calendarPicker.currentMonth() >= this.calendarPicker.maximumMonth);
+    var monthContainingToday = Month.createFromToday();
+    this._todayButton.setDisabled(this.disabled || monthContainingToday < this.calendarPicker.minimumMonth || monthContainingToday > this.calendarPicker.maximumMonth);
+};
+
+/**
+ * @constructor
  * @param {!Element} element
  * @param {!Object} config
  */
