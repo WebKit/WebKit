@@ -860,6 +860,8 @@ plugins/npruntime/delete-plugin-within-setProperty.html
 plugins/npruntime/delete-plugin-within-getProperty.html
 plugins/npruntime/delete-plugin-within-invoke.html
 
+webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Skip ]
+
 # =========================================================================== #
 # Failing Sputnik tests                                                       #
 # =========================================================================== #
