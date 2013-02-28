@@ -1,3 +1,15 @@
+2013-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Stop uploading results to webkit-perf.appspot.com
+        https://bugs.webkit.org/show_bug.cgi?id=110954
+
+        Reviewed by Benjamin Poulain.
+
+        Pass in perf.webkit.org instead of webkit-perf.appspot.com as the test results server.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+        (RunAndUploadPerfTests):
+
 2013-02-27  James Simonsen  <simonjam@chromium.org>
 
         [chromium] Lower priority of preloaded images
