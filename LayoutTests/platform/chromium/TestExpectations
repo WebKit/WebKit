@@ -151,6 +151,9 @@ webkit.org/b/110924 fast/js/regress/inlined-put-by-id-transition.html [ Pass Cra
 webkit.org/b/111038 [ Debug Win ] fast/loader/policy-delegate-action-hit-test-zoomed.html [ Pass Slow ]
 webkit.org/b/111046 [ Debug Mac ] plugins/pass-different-npp-struct.html [ Pass Slow ]
 
+# This test os slow since r144263
+webkit.org/b/111054 [ Debug Win7 ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Pass Slow ]
+
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------
@@ -4181,8 +4184,6 @@ webkit.org/b/108246 [ XP ] fast/canvas/canvas-currentPath.html [ Failure ]
 webkit.org/b/108246 [ XP ] platform/chromium/virtual/gpu/fast/canvas/canvas-currentPath.html [ Failure ]
 webkit.org/b/108508 [ XP ] fast/canvas/canvas-path-constructors.html [ Failure ]
 webkit.org/b/108508 [ XP ] platform/chromium/virtual/gpu/fast/canvas/canvas-path-constructors.html [ Failure ]
-
-webkit.org/b/104993 [ XP ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Failure ]
 
 webkit.org/b/106518 compositing/iframes/iframe-content-flipping.html [ ImageOnlyFailure ]
 webkit.org/b/106518 platform/chromium/virtual/softwarecompositing/iframes/iframe-content-flipping.html [ ImageOnlyFailure ]
