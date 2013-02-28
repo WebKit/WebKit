@@ -3679,6 +3679,18 @@ void WebViewImpl::performCustomContextMenuAction(unsigned action)
     m_page->contextMenuController()->clearContextMenu();
 }
 
+void WebViewImpl::showContextMenu()
+{
+    if (!page())
+        return;
+
+    page()->contextMenuController()->clearContextMenu();
+    m_contextMenuAllowed = true;
+    if (Frame* focusedFrame = page()->focusController()->focusedOrMainFrame())
+        focusedFrame->eventHandler()->sendContextMenuEventForKey();
+    m_contextMenuAllowed = false;
+}
+
 // WebView --------------------------------------------------------------------
 
 void WebViewImpl::setIsTransparent(bool isTransparent)

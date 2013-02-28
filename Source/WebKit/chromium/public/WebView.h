@@ -411,6 +411,9 @@ public:
 
     virtual void performCustomContextMenuAction(unsigned action) = 0;
 
+    // Shows a context menu for the currently focused element.
+    virtual void showContextMenu() = 0;
+
 
     // Popup menu ----------------------------------------------------------
 

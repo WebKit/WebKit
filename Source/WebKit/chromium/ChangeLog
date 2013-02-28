@@ -1,3 +1,17 @@
+2013-02-28  Varun Jain  <varunjain@chromium.org>
+
+        Add new webkit API to invoke a context menu.
+        https://bugs.webkit.org/show_bug.cgi?id=111040
+
+        Reviewed by Adam Barth.
+
+        * public/WebView.h:
+        (WebView):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::showContextMenu):
+        (WebKit):
+        * src/WebViewImpl.h:
+
 2013-02-28  Aaron Colwell  <acolwell@chromium.org>
 
         Factor SourceBuffer methods out of MediaSourcePrivate & WebMediaSource
