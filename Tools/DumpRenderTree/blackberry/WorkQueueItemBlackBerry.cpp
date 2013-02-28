@@ -21,6 +21,7 @@
 
 #include "DumpRenderTreeBlackBerry.h"
 #include "Frame.h"
+#include "FrameLoadRequest.h"
 #include "KURL.h"
 #include "WebPage.h"
 #include <wtf/OwnArrayPtr.h>
@@ -46,7 +47,7 @@ bool LoadItem::invoke() const
         return false;
 
     KURL kurl = KURL(KURL(), url.get());
-    frame->loader()->load(kurl, false);
+    frame->loader()->load(FrameLoadRequest(frame, ResourceRequest(kurl)));
     return true;
 }
 

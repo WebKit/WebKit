@@ -1,3 +1,13 @@
+2013-02-28  Xan Lopez  <xlopez@rim.com>
+
+        [BlackBerry] WorkQueueItemBlackBerry: use the new FrameLoader API
+        https://bugs.webkit.org/show_bug.cgi?id=110465
+
+        Reviewed by Rob Buis.
+
+        * DumpRenderTree/blackberry/WorkQueueItemBlackBerry.cpp:
+        (LoadItem::invoke):
+
 2013-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         PerfTestRunner doesn't need _needs_http and _has_http_lock
