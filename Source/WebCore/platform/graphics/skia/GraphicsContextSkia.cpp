@@ -750,7 +750,8 @@ void GraphicsContext::drawLineForText(const FloatPoint& pt,
     SkRect r;
     r.fLeft = WebCoreFloatToSkScalar(pt.x());
     // Avoid anti-aliasing lines. Currently, these are always horizontal.
-    r.fTop = WebCoreFloatToSkScalar(floorf(pt.y()));
+    // Round to nearest pixel to match text and other content.
+    r.fTop = WebCoreFloatToSkScalar(floorf(pt.y() + 0.5f));
     r.fRight = r.fLeft + WebCoreFloatToSkScalar(width);
     r.fBottom = r.fTop + SkIntToScalar(thickness);
 

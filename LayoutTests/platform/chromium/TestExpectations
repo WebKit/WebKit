@@ -157,6 +157,9 @@ webkit.org/b/111054 [ Debug Mac Win7 ] fast/forms/time-multiple-fields/time-mult
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------
 
+# Underline placement needs to be rounded to match other content.
+webkit.org/b/111005 fast/text/decorations-with-text-combine.html [ ImageOnlyFailure ]
+
 # Context menu behavior differs on Mac. This test needs to be adjusted for Mac.
 webkit.org/b/102987 [ Mac ] fast/events/context-nodrag.html [ Skip ]
 
