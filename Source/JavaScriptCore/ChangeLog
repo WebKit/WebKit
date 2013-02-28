@@ -1,3 +1,19 @@
+2013-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG Phantom node should be honest about the fact that it can exit
+        https://bugs.webkit.org/show_bug.cgi?id=111115
+
+        Reviewed by Mark Hahnenberg.
+        
+        The chances of this having cause serious issues are low, since most clients of the
+        NodeDoesNotExit flag run after CFA and CFA updates this properly. But one possible
+        case of badness is if the ByteCodeParser inserted a Phantom with a type check in
+        between a LogicalNot and a Branch; then that peephole optimization in Fixup might
+        go slightly wrong.
+
+        * dfg/DFGNodeType.h:
+        (DFG):
+
 2013-02-28  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Add casts in DFGGPRInfo.h to suppress warnings

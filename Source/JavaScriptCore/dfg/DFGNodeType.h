@@ -59,7 +59,7 @@ namespace JSC { namespace DFG {
     /* VariableAccessData, and thus will share predictions. */\
     macro(GetLocal, NodeResultJS) \
     macro(SetLocal, NodeExitsForward) \
-    macro(Phantom, NodeMustGenerate | NodeDoesNotExit) \
+    macro(Phantom, NodeMustGenerate) \
     macro(Nop, NodeDoesNotExit) \
     macro(Phi, NodeDoesNotExit | NodeRelevantToOSR) \
     macro(Flush, NodeMustGenerate | NodeDoesNotExit) \
