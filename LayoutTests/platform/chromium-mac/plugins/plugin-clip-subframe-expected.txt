@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 3: NPP_SetWindow: NULL window, Rect {0, 0, 300, 150}, Clip Rect {0, 0, 0, 0}, Type 2
+
