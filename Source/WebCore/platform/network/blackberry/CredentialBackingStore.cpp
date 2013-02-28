@@ -409,7 +409,7 @@ bool CredentialBackingStore::clearNeverRemember()
 
 String CredentialBackingStore::encryptedString(const String& plainText) const
 {
-    WTF::CString utf8 = plainText.utf8(true);
+    WTF::CString utf8 = plainText.utf8(String::StrictConversion);
     std::string cipherText;
     BlackBerry::Platform::Encryptor::encryptString(std::string(utf8.data(), utf8.length()), &cipherText);
     return String(cipherText.data(), cipherText.length());
