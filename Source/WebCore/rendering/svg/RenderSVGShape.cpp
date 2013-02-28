@@ -297,13 +297,13 @@ void RenderSVGShape::paint(PaintInfo& paintInfo, const LayoutPoint&)
         }
 
         if (drawsOutline)
-            paintOutline(childPaintInfo.context, IntRect(boundingBox));
+            paintOutline(childPaintInfo, IntRect(boundingBox));
     }
 }
 
 // This method is called from inside paintOutline() since we call paintOutline()
 // while transformed to our coord system, return local coords
-void RenderSVGShape::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&)
+void RenderSVGShape::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&, const RenderLayerModelObject*)
 {
     IntRect rect = enclosingIntRect(repaintRectInLocalCoordinates());
     if (!rect.isEmpty())

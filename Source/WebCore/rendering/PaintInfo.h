@@ -42,6 +42,7 @@ namespace WebCore {
 
 class OverlapTestRequestClient;
 class RenderInline;
+class RenderLayerModelObject;
 class RenderObject;
 class RenderRegion;
 
@@ -53,8 +54,8 @@ typedef HashMap<OverlapTestRequestClient*, IntRect> OverlapTestRequestMap;
  */
 struct PaintInfo {
     PaintInfo(GraphicsContext* newContext, const IntRect& newRect, PaintPhase newPhase, PaintBehavior newPaintBehavior,
-              RenderObject* newPaintingRoot = 0, RenderRegion* region = 0, ListHashSet<RenderInline*>* newOutlineObjects = 0,
-              OverlapTestRequestMap* overlapTestRequests = 0)
+        RenderObject* newPaintingRoot = 0, RenderRegion* region = 0, ListHashSet<RenderInline*>* newOutlineObjects = 0,
+        OverlapTestRequestMap* overlapTestRequests = 0, const RenderLayerModelObject* newPaintContainer = 0)
         : context(newContext)
         , rect(newRect)
         , phase(newPhase)
@@ -63,6 +64,7 @@ struct PaintInfo {
         , renderRegion(region)
         , outlineObjects(newOutlineObjects)
         , overlapTestRequests(overlapTestRequests)
+        , paintContainer(newPaintContainer)
     {
     }
 
@@ -114,6 +116,7 @@ struct PaintInfo {
     RenderRegion* renderRegion;
     ListHashSet<RenderInline*>* outlineObjects; // used to list outlines that should be painted by a block with inline children
     OverlapTestRequestMap* overlapTestRequests;
+    const RenderLayerModelObject* paintContainer; // the layer object that originates the current painting
 };
 
 } // namespace WebCore

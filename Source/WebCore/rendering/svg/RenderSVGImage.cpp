@@ -144,7 +144,7 @@ void RenderSVGImage::paint(PaintInfo& paintInfo, const LayoutPoint&)
         }
 
         if (drawsOutline)
-            paintOutline(childPaintInfo.context, IntRect(boundingBox));
+            paintOutline(childPaintInfo, IntRect(boundingBox));
     }
 }
 
@@ -191,7 +191,7 @@ void RenderSVGImage::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderSVGImage::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&)
+void RenderSVGImage::addFocusRingRects(Vector<IntRect>& rects, const LayoutPoint&, const RenderLayerModelObject*)
 {
     // this is called from paint() after the localTransform has already been applied
     IntRect contentRect = enclosingIntRect(repaintRectInLocalCoordinates());

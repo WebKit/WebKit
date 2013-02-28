@@ -60,7 +60,7 @@ private:
     virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
     virtual FloatRect repaintRectInLocalCoordinatesExcludingSVGShadow() const OVERRIDE { return m_repaintBoundingBoxExcludingShadow; }
 
-    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint&);
+    virtual void addFocusRingRects(Vector<IntRect>&, const LayoutPoint& additionalOffset, const RenderLayerModelObject* paintContainer = 0) OVERRIDE;
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
