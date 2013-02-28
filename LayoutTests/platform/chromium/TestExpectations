@@ -157,9 +157,6 @@ webkit.org/b/111054 [ Debug Mac Win7 ] fast/forms/time-multiple-fields/time-mult
 # TEMPORARILY SKIPPED TESTS
 # -----------------------------------------------------------------
 
-# Underline placement needs to be rounded to match other content.
-webkit.org/b/111005 fast/text/decorations-with-text-combine.html [ ImageOnlyFailure ]
-
 # Context menu behavior differs on Mac. This test needs to be adjusted for Mac.
 webkit.org/b/102987 [ Mac ] fast/events/context-nodrag.html [ Skip ]
 
@@ -615,7 +612,7 @@ http/tests/security/storage-blocking-loosened-shared-worker.html [ WontFix ]
 http/tests/security/storage-blocking-strengthened-shared-worker.html [ WontFix ]
 storage/indexeddb/basics-shared-workers.html [ WontFix ]
 
-webkit.org/b/110401 http/tests/security/feed-urls-from-remote.html [ Timeout ]
+webkit.org/b/110401 [ Lion Win7 Debug ] http/tests/security/feed-urls-from-remote.html [ Timeout ]
 
 # test_shell does not support message ports
 webkit.org/b/74459 fast/workers/termination-with-port-messages.html
@@ -1326,7 +1323,7 @@ webkit.org/b/79454 [ Android Linux Mac ] svg/text/text-viewbox-rescale.html [ Im
 webkit.org/b/80517 [ Android Lion SnowLeopard ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Android XP ] svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Android Lion SnowLeopard ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop.html [ ImageOnlyFailure ]
-webkit.org/b/80517 [ Android MountainLion XP ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html [ ImageOnlyFailure ]
+webkit.org/b/80517 [ Android XP ] svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Android ] svg/dynamic-updates/SVGFETurbulenceElement-svgdom-baseFrequency-prop.html [ ImageOnlyFailure ]
 webkit.org/b/80517 [ Debug ] svg/dynamic-updates/SVGFESpecularLightingElement-remove-lightSource.html [ ImageOnlyFailure Pass ]
@@ -1411,14 +1408,6 @@ webkit.org/b/101396 svg/css/composite-shadow-text.svg
 webkit.org/b/101396 svg/custom/simple-text-double-shadow.svg
 webkit.org/b/101396 svg/css/clippath-with-shadow.svg
 webkit.org/b/101396 svg/css/arrow-with-shadow.svg
-
-# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=109775
-webkit.org/b/109775 [ Lion MountainLion Win7 ] media/controls-after-reload.html [ Failure ]
-webkit.org/b/109775 [ Lion MountainLion Win ] media/controls-strict.html [ Failure ]
-webkit.org/b/109775 [ Lion MountainLion Win ] media/controls-styling-strict.html [ Failure ]
-webkit.org/b/109775 [ MountainLion Win ] media/video-controls-rendering.html [ Failure ]
-webkit.org/b/109775 [ MountainLion XP ] media/video-display-toggle.html [ Failure ]
-webkit.org/b/109775 [ Lion MountainLion Win7 ] media/video-playing-and-pause.html [ Failure ]
 
 # -----------------------------------------------------------------
 # End SVG TESTS
@@ -1578,11 +1567,6 @@ crbug.com/10343 [ Android Linux ] fast/text/large-text-composed-char.html
 
 # Missing text -- slow font path unimplemented?
 crbug.com/10344 [ Android Linux ] fast/text/should-use-atsui.html [ ImageOnlyFailure ]
-
-# Failure due to changes of V8's __proto__ property.
-webkit.org/b/110887 fast/dom/Window/window-custom-prototype.html [ Failure ]
-webkit.org/b/110887 fast/js/JSON-parse.html [ Failure ]
-webkit.org/b/110887 fast/js/cyclic-prototypes.html [ Failure ]
 
 # Needs V8 fix. V8 bug: http://code.google.com/p/v8/issues/detail?id=1992
 webkit.org/b/80335 fast/js/mozilla/strict/15.4.4.8.html [ Failure ]
@@ -2876,9 +2860,6 @@ webkit.org/b/98315 css3/compositing/should-have-compositing-layer.html [ Failure
 
 webkit.org/b/96267 fast/regions/autoheight-regions-mark.html [ Pass ]
 
-#something is hosed with seamless iframe repainting
-webkit.org/b/106125 fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
-
 webkit.org/b/74137 [ SnowLeopard ] fast/regions/outline-sides-in-region.html [ Pass Timeout ]
 webkit.org/b/74137 fast/regions/float-pushed-width-change.html [ ImageOnlyFailure Pass ]
 
@@ -3017,12 +2998,12 @@ webkit.org/b/72039 [ Release ] fast/forms/formaction-attribute.html [ Missing Pa
 webkit.org/b/78620 [ Android Linux Debug ] fast/forms/formaction-attribute.html [ Failure Pass Slow ]
 
 webkit.org/b/110929 http/tests/multipart/policy-ignore-crash.php [ Missing Failure ]
-webkit.org/b/110929 http/tests/multipart/multipart-html.php [ Missing Failure ]
-webkit.org/b/111023 fast/loader/unload-hyperlink-targeted.html [ Timeout ]
-webkit.org/b/111023 fast/dom/Window/Location/set-location-after-close.html [ Timeout ]
+webkit.org/b/110929 http/tests/multipart/multipart-html.php [ Missing Failure Pass ]
+webkit.org/b/111023 fast/loader/unload-hyperlink-targeted.html [ Pass Timeout ]
+webkit.org/b/111023 fast/dom/Window/Location/set-location-after-close.html [ Pass Timeout ]
 webkit.org/b/111043 fast/encoding/script-in-head.html [ Pass Timeout ]
-webkit.org/b/111044 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Timeout ]
-webkit.org/b/111044 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html [ Timeout ]
+webkit.org/b/111044 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Pass Timeout ]
+webkit.org/b/111044 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html [ Pass Timeout ]
 webkit.org/b/110907 inspector/timeline/timeline-script-tag-1.html [ Pass Failure ]
 
 webkit.org/b/70988 [ Mac Win Debug ] fast/forms/submit-to-blank-multiple-times.html [ Failure Pass ]
@@ -3926,7 +3907,6 @@ webkit.org/b/96628 [ Lion Debug ] fast/frames/calculate-order.html [ Failure ]
 webkit.org/b/96550 http/tests/media/media-source/seek-to-end-after-duration-change.html [ Pass Timeout ]
 
 crbug.com/63921 platform/chromium/virtual/gpu/fast/canvas/canvas-fillPath-shadow.html [ Failure ]
-webkit.org/b/77550 canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Failure ]
 webkit.org/b/77550 platform/chromium/virtual/gpu/canvas/philip/tests/2d.gradient.interpolate.colouralpha.html [ Failure ]
 
 webkit.org/b/97816 [ Linux ] platform/chromium/compositing/filters/background-filter-blur-off-axis.html [ Pass ImageOnlyFailure ]
@@ -4191,9 +4171,6 @@ webkit.org/b/102131 [ Win ] fast/workers/worker-exception-during-navigation.html
 webkit.org/b/102264 [ Debug ] css3/filters/custom/custom-filter-property-computed-style.html [ Pass Timeout ]
 webkit.org/b/102277 fast/events/frame-scroll-fake-mouse-move.html [ Pass Failure ]
 webkit.org/b/102277 fast/events/overflow-scroll-fake-mouse-move.html [ Pass Failure ]
-webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/exif-orientation.html [ ImageOnlyFailure ]
-webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/exif-orientation-css.html [ ImageOnlyFailure ]
-webkit.org/b/102294 [ Mac ] platform/chromium/virtual/deferred/fast/images/gray-scale-jpeg-with-color-profile.html [ ImageOnlyFailure ]
 
 # This test is consistently leaking state into the next test.
 webkit.org/b/85522 http/tests/security/sandboxed-iframe-form-top.html [ Skip ]
@@ -4226,7 +4203,6 @@ webkit.org/b/103308 [ SnowLeopard Lion ] css3/filters/custom/custom-filter-trans
 
 webkit.org/b/103363 [ Mac ] touchadjustment/touch-links-longpress.html [ Failure ]
 webkit.org/b/103446 [ Mac ] http/tests/canvas/canvas-slow-font-loading.html [ ImageOnlyFailure ]
-webkit.org/b/103447 [ MountainLion ] fast/canvas/font-update.html [ ImageOnlyFailure ]
 webkit.org/b/103449 [ MountainLion Win  ] platform/chromium/virtual/gpu/fast/canvas/font-update.html [ ImageOnlyFailure Pass ]
 webkit.org/b/103451 [ Release Mac Win  ] fast/frames/frame-name-reset.html [ Crash Pass ]
 webkit.org/b/103471 [ Win Mac Linux ] http/tests/navigation/slowmetaredirect-basic.html [ Pass Timeout ]
@@ -4436,8 +4412,8 @@ crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl
 
 # Need rebaseline
 webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
-webkit.org/b/109413 [ Mac Win Linux ] svg/custom/foreign-object-skew.svg [ Failure ]
-webkit.org/b/110654 [ Mac Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
+webkit.org/b/109413 [ SnowLeopard Win Linux ] svg/custom/foreign-object-skew.svg [ Failure ]
+webkit.org/b/110654 [ Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
 # New test
 webkit.org/b/110654 [ Mac Win ] css3/flexbox/button.html [ Failure ]
 
