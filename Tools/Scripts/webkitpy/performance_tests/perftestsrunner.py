@@ -69,8 +69,6 @@ class PerfTestsRunner(object):
         self._results = {}
         self._timestamp = time.time()
         self._utc_timestamp = datetime.datetime.utcnow()
-        self._needs_http = None
-        self._has_http_lock = False
 
     @staticmethod
     def _parse_args(args=None):
@@ -163,21 +161,18 @@ class PerfTestsRunner(object):
 
         return tests
 
-    def _start_servers(self):
-        if self._needs_http:
-            self._port.acquire_http_lock()
-            self._port.start_http_server(number_of_servers=2)
-            self._has_http_lock = True
+    def _start_http_servers(self):
+        self._port.acquire_http_lock()
+        self._port.start_http_server(number_of_servers=2)
 
-    def _stop_servers(self):
-        if self._has_http_lock:
-            self._port.stop_http_server()
-            self._port.release_http_lock()
+    def _stop_http_servers(self):
+        self._port.stop_http_server()
+        self._port.release_http_lock()
 
     def run(self):
-        self._needs_http = self._port.requires_http_server()
+        needs_http = self._port.requires_http_server()
 
-        if not self._port.check_build(needs_http=self._needs_http):
+        if not self._port.check_build(needs_http=needs_http):
             _log.error("Build not up to date for %s" % self._port._path_to_driver())
             return self.EXIT_CODE_BAD_BUILD
 
@@ -189,11 +184,13 @@ class PerfTestsRunner(object):
                 return self.EXIT_CODE_BAD_PREPARATION
 
         try:
-            self._start_servers()
+            if needs_http:
+                self._start_http_servers()
             unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()), self._port)
 
         finally:
-            self._stop_servers()
+            if needs_http:
+                self._stop_http_servers()
 
         if self._options.generate_results and not self._options.profile:
             exit_code = self._generate_and_show_results()
