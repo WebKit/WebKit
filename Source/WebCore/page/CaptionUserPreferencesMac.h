@@ -40,7 +40,7 @@ public:
     static PassOwnPtr<CaptionUserPreferencesMac> create(PageGroup* group) { return adoptPtr(new CaptionUserPreferencesMac(group)); }
     virtual ~CaptionUserPreferencesMac();
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     virtual bool userHasCaptionPreferences() const OVERRIDE;
     virtual bool userPrefersCaptions() const OVERRIDE;
     virtual void setUserPrefersCaptions(bool) OVERRIDE;
@@ -60,7 +60,7 @@ public:
 private:
     CaptionUserPreferencesMac(PageGroup*);
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     String captionsWindowCSS() const;
     String captionsBackgroundCSS() const;
     String captionsTextColorCSS() const;

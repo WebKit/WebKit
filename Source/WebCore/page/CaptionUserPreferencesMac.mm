@@ -45,11 +45,11 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/text/StringBuilder.h>
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 #import "MediaAccessibility/MediaAccessibility.h"
 #endif
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 
 SOFT_LINK_FRAMEWORK_OPTIONAL(MediaAccessibility)
 
@@ -77,7 +77,7 @@ using namespace std;
 
 namespace WebCore {
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef, const void *, CFDictionaryRef)
 {
     static_cast<CaptionUserPreferencesMac*>(observer)->captionPreferencesChanged();
@@ -86,7 +86,7 @@ static void userCaptionPreferencesChangedNotificationCallback(CFNotificationCent
 
 CaptionUserPreferencesMac::CaptionUserPreferencesMac(PageGroup* group)
     : CaptionUserPreferences(group)
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     , m_listeningForPreferenceChanges(false)
 #endif
 {
@@ -94,13 +94,13 @@ CaptionUserPreferencesMac::CaptionUserPreferencesMac(PageGroup* group)
 
 CaptionUserPreferencesMac::~CaptionUserPreferencesMac()
 {
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
     if (kMAXCaptionAppearanceSettingsChangedNotification)
         CFNotificationCenterRemoveObserver(CFNotificationCenterGetLocalCenter(), this, kMAXCaptionAppearanceSettingsChangedNotification, NULL);
 #endif
 }
 
-#if MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+#if HAVE(MEDIA_ACCESSIBILITY_FRAMEWORK)
 bool CaptionUserPreferencesMac::userPrefersCaptions() const
 {
     if (testingMode() || !MediaAccessibilityLibrary())

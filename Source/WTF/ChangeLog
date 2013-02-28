@@ -1,3 +1,12 @@
+2013-02-28  Eric Carlson  <eric.carlson@apple.com>
+
+        [Mac] use HAVE() macro instead of version check
+        https://bugs.webkit.org/show_bug.cgi?id=111087
+
+        Reviewed by Dean Jackson.
+
+        * wtf/Platform.h: Define HAVE_MEDIA_ACCESSIBILITY_FRAMEWORK.
+
 2013-02-27  Balazs Kilvady  <kilvadyb@homejinni.com>
 
         Bug in atomicIncrement implementation for MIPS GCC
