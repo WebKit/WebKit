@@ -1,3 +1,11 @@
+2013-02-28  Philip Rogers  <pdr@google.com>
+
+        Add Philip Rogers as a reviewer.
+
+        Unreviewed update of committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge more methods on PerfTest
