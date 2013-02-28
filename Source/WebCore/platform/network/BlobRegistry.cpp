@@ -33,10 +33,9 @@
 #include "PlatformStrategies.h"
 #include <wtf/MainThread.h>
 
-#if !PLATFORM(CHROMIUM)
-
 namespace WebCore {
 
+#if !PLATFORM(CHROMIUM)
 BlobRegistry& blobRegistry()
 {
     ASSERT(isMainThread());
@@ -48,6 +47,7 @@ BlobRegistry& blobRegistry()
 #endif
     return instance;
 }
+#endif
 
 BlobRegistry::~BlobRegistry()
 {
@@ -55,5 +55,4 @@ BlobRegistry::~BlobRegistry()
 
 }
 
-#endif
 #endif
