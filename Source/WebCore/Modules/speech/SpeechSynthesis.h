@@ -70,6 +70,7 @@ private:
     virtual void didResumeSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
     virtual void didFinishSpeaking(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
     virtual void speakingErrorOccurred(const PlatformSpeechSynthesisUtterance*) OVERRIDE;
+    virtual void boundaryEventOccurred(const PlatformSpeechSynthesisUtterance*, SpeechBoundary, unsigned charIndex) OVERRIDE;
 
     void startSpeakingImmediately(SpeechSynthesisUtterance*);
     void handleSpeakingCompleted(SpeechSynthesisUtterance*, bool errorOccurred);

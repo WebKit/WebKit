@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a speech job will generate the correct boundary events.");
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    if (window.internals)
+        window.internals.enableMockSpeechSynthesizer();
+
+    window.jsTestIsAsync = true;
+
+    var u = new SpeechSynthesisUtterance("this is a test");
+    u.onstart = function(event) {
+       debug("Speech started");
+    }
+
+    u.onboundary = function(event) {
+       debug("Boundary event: " + event.name + ", Character index: " + event.charIndex);
+    }
+
+    u.onend = function(event) {
+       finishJSTest();
+    }
+
+    // Queue the first job which will start speaking immediately.
+    speechSynthesis.speak(u);
+
+</script>
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

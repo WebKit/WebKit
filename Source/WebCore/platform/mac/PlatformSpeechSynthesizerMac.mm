@@ -157,6 +157,16 @@
         m_synthesizerObject->client()->speakingErrorOccurred(utterance);
 }
 
+- (void)speechSynthesizer:(NSSpeechSynthesizer *)sender willSpeakWord:(NSRange)characterRange ofString:(NSString *)string
+{
+    ASSERT(m_utterance);
+    UNUSED_PARAM(sender);
+    UNUSED_PARAM(string);
+
+    // Mac platform only supports word boundaries.
+    m_synthesizerObject->client()->boundaryEventOccurred(m_utterance, WebCore::SpeechWordBoundary, characterRange.location);
+}
+
 @end
 
 namespace WebCore {

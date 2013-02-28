@@ -38,7 +38,12 @@ OBJC_CLASS WebSpeechSynthesisWrapper;
 #endif
 
 namespace WebCore {
-    
+
+enum SpeechBoundary {
+    SpeechWordBoundary,
+    SpeechSentenceBoundary
+};
+
 class PlatformSpeechSynthesisUtterance;
 
 class PlatformSpeechSynthesizerClient {
@@ -48,7 +53,7 @@ public:
     virtual void didPauseSpeaking(const PlatformSpeechSynthesisUtterance*) = 0;
     virtual void didResumeSpeaking(const PlatformSpeechSynthesisUtterance*) = 0;
     virtual void speakingErrorOccurred(const PlatformSpeechSynthesisUtterance*) = 0;
-    
+    virtual void boundaryEventOccurred(const PlatformSpeechSynthesisUtterance*, SpeechBoundary, unsigned charIndex) = 0;
     virtual void voicesDidChange() = 0;
 protected:
     virtual ~PlatformSpeechSynthesizerClient() { }
