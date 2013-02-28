@@ -122,7 +122,7 @@ void WebPreferences::reset()
     deferred2dCanvasEnabled = false;
     acceleratedPaintingEnabled = false;
     forceCompositingMode = false;
-    threadedHTMLParser = false;
+    threadedHTMLParser = true;
     perTilePaintingEnabled = false;
     acceleratedAnimationEnabled = false;
     deferredImageDecodingEnabled = false;

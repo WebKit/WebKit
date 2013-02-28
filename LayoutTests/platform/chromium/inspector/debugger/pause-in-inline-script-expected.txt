@@ -1,0 +1,18 @@
+Tests that main resource script text is correct when paused in inline script on reload. Bug 77548.
+
+Debugger was enabled.
+Did load front-end
+Paused: false
+didPauseAfterReload
+Source strings corresponding to the call stack:
+Script execution paused.
+Frame 0) line 6, content: </script><script>function f1() { debugger; }</script> (must be part of function 'f1')
+Frame 1) line 8, content: function f2() { return f1(); } (must be part of function 'f2')
+Frame 2) line 14, content:     return f2(); (must be part of function 'f3')
+Frame 3) line 16, content: f3(); (must be part of function '')
+Script execution resumed.
+didResume
+Page reloaded.
+didReload
+Debugger was disabled.
+

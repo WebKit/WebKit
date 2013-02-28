@@ -1,0 +1,11 @@
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi - willSendRequest <NSURLRequest URL http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi, main document URL http://127.0.0.1:8000/security/XFrameOptions/x-frame-options-parent-same-origin-allow.html, http method GET> redirectResponse (null)
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi - didReceiveResponse <NSURLResponse http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi, http status code 200>
+http://127.0.0.1:8000/security/XFrameOptions/resources/x-frame-options-parent-same-origin-allow.cgi - didFinishLoading
+There should be content in the iframe below
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+PASS: This should show up as the parent is in the same origin.

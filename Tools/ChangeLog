@@ -1,3 +1,20 @@
+2013-02-27  Adam Barth  <abarth@webkit.org>
+
+        [Chromium] Enable threaded HTML parser by default in DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=110907
+
+        Reviewed by Eric Seidel.
+
+        This patch changes --enable-threaded-html-parser into
+        --disable-threaded-html-parser and thereby enables the threaded HTML
+        parser by default for the Chromium port.
+
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        * DumpRenderTree/chromium/TestRunner/src/WebPreferences.cpp:
+        (WebTestRunner::WebPreferences::reset):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+
 2013-02-27  Kiran Muppala  <cmuppala@apple.com>
 
         Initialize page visibility after creating WebKitTestRunner WebView on Mac
