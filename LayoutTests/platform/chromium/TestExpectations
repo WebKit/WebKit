@@ -3214,10 +3214,7 @@ webkit.org/b/81721 [ Win ] fullscreen/full-screen-restrictions.html [ Pass Timeo
 
 webkit.org/b/81697 fast/notifications/notifications-check-permission.html [ Failure ]
 webkit.org/b/81697 fast/notifications/notifications-without-permission.html [ Failure ]
-# webkit.org/b/81697 fast/notifications/notifications-request-permission.html [ Failure ]
-# Failing since r144126, please uncomment the line above before removing these.
-webkit.org/b/110956 fast/notifications/notifications-request-permission.html [ Pass Crash Failure ]
-webkit.org/b/110956 fast/notifications/notifications-request-permission-optional.html [ Pass Crash ]
+webkit.org/b/81697 fast/notifications/notifications-request-permission.html [ Failure ]
 
 webkit.org/b/81732 fast/js/integer-division-neg2tothe32-by-neg1.html [ Crash Pass ]
 
