@@ -959,6 +959,37 @@ void RenderFlowThread::decrementAutoLogicalHeightRegions()
         view()->flowThreadController()->decrementFlowThreadsWithAutoLogicalHeightRegions();
 }
 
+void RenderFlowThread::collectLayerFragments(LayerFragments& layerFragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
+{
+    ASSERT(!m_regionsInvalidated);
+    
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        region->collectLayerFragments(layerFragments, layerBoundingBox, dirtyRect);
+    }
+}
+
+LayoutRect RenderFlowThread::fragmentsBoundingBox(const LayoutRect& layerBoundingBox)
+{
+    ASSERT(!m_regionsInvalidated);
+    
+    LayoutRect result;
+    for (RenderRegionList::const_iterator iter = m_regionList.begin(); iter != m_regionList.end(); ++iter) {
+        RenderRegion* region = *iter;
+        LayerFragments fragments;
+        region->collectLayerFragments(fragments, layerBoundingBox, PaintInfo::infiniteRect());
+        for (size_t i = 0; i < fragments.size(); ++i) {
+            const LayerFragment& fragment = fragments.at(i);
+            LayoutRect fragmentRect(layerBoundingBox);
+            fragmentRect.intersect(fragment.paginationClip);
+            fragmentRect.moveBy(fragment.paginationOffset);
+            result.unite(fragmentRect);
+        }
+    }
+    
+    return result;
+}
+
 CurrentRenderFlowThreadMaintainer::CurrentRenderFlowThreadMaintainer(RenderFlowThread* renderFlowThread)
     : m_renderFlowThread(renderFlowThread)
 {

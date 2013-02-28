@@ -381,7 +381,8 @@ public:
 
     virtual bool isRenderFlowThread() const { return false; }
     virtual bool isRenderNamedFlowThread() const { return false; }
-    virtual bool isInFlowRenderFlowThread() const { return false; }
+    bool isInFlowRenderFlowThread() const { return isRenderFlowThread() && !isOutOfFlowPositioned(); }
+    bool isOutOfFlowRenderFlowThread() const { return isRenderFlowThread() && isOutOfFlowPositioned(); }
 
     virtual bool isRenderMultiColumnBlock() const { return false; }
     virtual bool isRenderMultiColumnSet() const { return false; }
@@ -732,7 +733,7 @@ public:
 #if ENABLE(SVG)
                 || isSVGForeignObject()
 #endif
-                || isRenderFlowThread();
+                || isOutOfFlowRenderFlowThread();
     }
 
     // Convert the given local point to absolute coordinates

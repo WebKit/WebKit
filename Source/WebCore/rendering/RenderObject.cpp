@@ -2317,7 +2317,7 @@ RenderObject* RenderObject::container(const RenderLayerModelObject* repaintConta
 #endif
             // The render flow thread is the top most containing block
             // for the fixed positioned elements.
-            if (o->isRenderFlowThread())
+            if (o->isOutOfFlowRenderFlowThread())
                 break;
 
             if (repaintContainerSkipped && o == repaintContainer)

@@ -95,7 +95,6 @@ private:
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
     virtual void paintObject(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const HitTestLocation&, const LayoutPoint& accumulatedOffset, HitTestAction) OVERRIDE;
 
     virtual LayoutUnit pageLogicalWidth() const OVERRIDE { return m_computedColumnWidth; }
     virtual LayoutUnit pageLogicalHeight() const OVERRIDE { return m_computedColumnHeight; }
@@ -111,10 +110,11 @@ private:
     
     virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const OVERRIDE;
 
+    virtual void collectLayerFragments(Vector<LayerFragment>&, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect) OVERRIDE;
+
     virtual const char* renderName() const;
     
     void paintColumnRules(PaintInfo&, const LayoutPoint& paintOffset);
-    void paintColumnContents(PaintInfo&, const LayoutPoint& paintOffset);
 
     LayoutUnit columnGap() const;
     LayoutRect columnRectAt(unsigned index) const;

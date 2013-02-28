@@ -62,6 +62,7 @@ class FilterOperations;
 class HitTestRequest;
 class HitTestResult;
 class HitTestingTransformState;
+class RenderFlowThread;
 class RenderGeometryMap;
 class RenderMarquee;
 class RenderReplica;
@@ -114,10 +115,11 @@ public:
     }
     void move(LayoutUnit x, LayoutUnit y) { m_rect.move(x, y); }
     void move(const LayoutSize& size) { m_rect.move(size); }
+    void moveBy(const LayoutPoint& point) { m_rect.moveBy(point); }
 
     bool isEmpty() const { return m_rect.isEmpty(); }
-    bool intersects(const LayoutRect& rect) { return m_rect.intersects(rect); }
-    bool intersects(const HitTestLocation&);
+    bool intersects(const LayoutRect& rect) const { return m_rect.intersects(rect); }
+    bool intersects(const HitTestLocation&) const;
 
 private:
     LayoutRect m_rect;
@@ -250,6 +252,52 @@ public:
     OverlayScrollbarSizeRelevancy m_scrollbarRelevancy[NumCachedClipRectsTypes];
 #endif
 };
+
+struct LayerFragment {
+public:
+    LayerFragment()
+        : shouldPaintContent(false)
+    { }
+
+    void setRects(const LayoutRect& bounds, const ClipRect& background, const ClipRect& foreground, const ClipRect& outline)
+    {
+        layerBounds = bounds;
+        backgroundRect = background;
+        foregroundRect = foreground;
+        outlineRect = outline;
+    }
+    
+    void moveBy(const LayoutPoint& offset)
+    {
+        layerBounds.moveBy(offset);
+        backgroundRect.moveBy(offset);
+        foregroundRect.moveBy(offset);
+        outlineRect.moveBy(offset);
+        paginationClip.moveBy(offset);
+    }
+    
+    void intersect(const LayoutRect& rect)
+    {
+        backgroundRect.intersect(rect);
+        foregroundRect.intersect(rect);
+        outlineRect.intersect(rect);
+    }
+    
+    bool shouldPaintContent;
+    LayoutRect layerBounds;
+    ClipRect backgroundRect;
+    ClipRect foregroundRect;
+    ClipRect outlineRect;
+    
+    // Unique to paginated fragments. The physical translation to apply to shift the layer when painting/hit-testing.
+    LayoutPoint paginationOffset;
+    
+    // Also unique to paginated fragments. An additional clip that applies to the layer. It is in layer-local
+    // (physical) coordinates.
+    LayoutRect paginationClip;
+};
+
+typedef Vector<LayerFragment> LayerFragments;
 
 class RenderLayer : public ScrollableArea {
 public:
@@ -418,6 +466,7 @@ public:
 #endif
     
     bool isPaginated() const { return m_isPaginated; }
+    RenderLayer* enclosingPaginationLayer() const { return m_enclosingPaginationLayer; }
 
     void updateTransform();
     
@@ -622,12 +671,13 @@ public:
         ExcludeHiddenDescendants = 1 << 3,
         DontConstrainForMask = 1 << 4,
         IncludeCompositedDescendants = 1 << 5,
-        DefaultCalculateLayerBoundsFlags =  IncludeSelfTransform | UseLocalClipRectIfPossible | IncludeLayerFilterOutsets
+        UseFragmentBoxes = 1 << 6,
+        DefaultCalculateLayerBoundsFlags =  IncludeSelfTransform | UseLocalClipRectIfPossible | IncludeLayerFilterOutsets | UseFragmentBoxes
     };
     typedef unsigned CalculateLayerBoundsFlags;
 
     // Bounding box relative to some ancestor layer. Pass offsetFromRoot if known.
-    LayoutRect boundingBox(const RenderLayer* rootLayer, const LayoutPoint* offsetFromRoot = 0) const;
+    LayoutRect boundingBox(const RenderLayer* rootLayer, CalculateLayerBoundsFlags = 0, const LayoutPoint* offsetFromRoot = 0) const;
     // Bounding box in the coordinates of this layer.
     LayoutRect localBoundingBox(CalculateLayerBoundsFlags = 0) const;
     // Pixel snapped bounding box relative to the root.
@@ -782,6 +832,8 @@ public:
     void setViewportConstrainedNotCompositedReason(ViewportConstrainedNotCompositedReason reason) { m_viewportConstrainedNotCompositedReason = reason; }
     ViewportConstrainedNotCompositedReason viewportConstrainedNotCompositedReason() const { return static_cast<ViewportConstrainedNotCompositedReason>(m_viewportConstrainedNotCompositedReason); }
 #endif
+    
+    bool isOutOfFlowRenderFlowThread() const { return renderer()->isOutOfFlowRenderFlowThread(); }
 
 private:
     enum CollectLayersBehavior { StopAtStackingContexts, StopAtStackingContainers };
@@ -892,6 +944,21 @@ private:
     void paintPaginatedChildLayer(RenderLayer* childLayer, GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
     void paintChildLayerIntoColumns(RenderLayer* childLayer, GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags, const Vector<RenderLayer*>& columnLayers, size_t columnIndex);
 
+    void collectFragments(LayerFragments&, const RenderLayer* rootLayer, RenderRegion*, const LayoutRect& dirtyRect,
+        ClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize,
+        ShouldRespectOverflowClip = RespectOverflowClip, const LayoutPoint* offsetFromRoot = 0);
+    void updatePaintingInfoForFragments(LayerFragments&, const LayerPaintingInfo&, PaintLayerFlags, bool shouldPaintContent, const LayoutPoint* offsetFromRoot);
+    void paintBackgroundForFragments(const LayerFragments&, GraphicsContext*, GraphicsContext* transparencyLayerContext,
+        const LayoutRect& transparencyPaintDirtyRect, bool haveTransparency, const LayerPaintingInfo&, PaintBehavior, RenderObject* paintingRootForRenderer);
+    void paintForegroundForFragments(const LayerFragments&, GraphicsContext*, GraphicsContext* transparencyLayerContext,
+        const LayoutRect& transparencyPaintDirtyRect, bool haveTransparency, const LayerPaintingInfo&, PaintBehavior, RenderObject* paintingRootForRenderer,
+        bool selectionOnly, bool forceBlackText);
+    void paintForegroundForFragmentsWithPhase(PaintPhase, const LayerFragments&, GraphicsContext*, const LayerPaintingInfo&, PaintBehavior, RenderObject* paintingRootForRenderer);
+    void paintOutlineForFragments(const LayerFragments&, GraphicsContext*, const LayerPaintingInfo&, PaintBehavior, RenderObject* paintingRootForRenderer);
+    void paintOverflowControlsForFragments(const LayerFragments&, GraphicsContext*, const LayerPaintingInfo&);
+    void paintMaskForFragments(const LayerFragments&, GraphicsContext*, const LayerPaintingInfo&, RenderObject* paintingRootForRenderer);
+    void paintTransformedLayerIntoFragments(GraphicsContext*, const LayerPaintingInfo&, PaintLayerFlags);
+
     RenderLayer* hitTestLayer(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest& request, HitTestResult& result,
                               const LayoutRect& hitTestRect, const HitTestLocation&, bool appliedTransform,
                               const HitTestingTransformState* transformState = 0, double* zOffset = 0);
@@ -916,6 +983,10 @@ private:
                             const LayoutPoint& translationOffset = LayoutPoint()) const;
     
     bool hitTestContents(const HitTestRequest&, HitTestResult&, const LayoutRect& layerBounds, const HitTestLocation&, HitTestFilter) const;
+    bool hitTestContentsForFragments(const LayerFragments&, const HitTestRequest&, HitTestResult&, const HitTestLocation&, HitTestFilter, bool& insideClipRect) const;
+    bool hitTestResizerInFragments(const LayerFragments&, const HitTestLocation&) const;
+    RenderLayer* hitTestTransformedLayerInFragments(RenderLayer* rootLayer, RenderLayer* containerLayer, const HitTestRequest&, HitTestResult&,
+        const LayoutRect& hitTestRect, const HitTestLocation&, const HitTestingTransformState* = 0, double* zOffset = 0);
 
     bool listContentsOpaqueInRect(const Vector<RenderLayer*>*, const LayoutRect&) const;
 
@@ -1189,6 +1260,9 @@ protected:
     // Renderers to hold our custom scroll corner and resizer.
     RenderScrollbarPart* m_scrollCorner;
     RenderScrollbarPart* m_resizer;
+
+    // Pointer to the enclosing RenderLayer that caused us to be paginated. It is 0 if we are not paginated.
+    RenderLayer* m_enclosingPaginationLayer;
 
 private:
     IntRect m_blockSelectionGapsBounds;

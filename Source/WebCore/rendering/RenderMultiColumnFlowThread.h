@@ -37,8 +37,6 @@ public:
     ~RenderMultiColumnFlowThread();
 
 private:
-    virtual bool isInFlowRenderFlowThread() const OVERRIDE { return true; }
-
     virtual const char* renderName() const OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 };
