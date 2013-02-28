@@ -30,15 +30,14 @@
  */
 
 #include "config.h"
+#include "BlobRegistryImpl.h"
 
 #if ENABLE(BLOB)
 
-#include "BlobRegistryImpl.h"
-
 #include "BlobResourceHandle.h"
+#include "BlobStorageData.h"
 #include "ResourceError.h"
 #include "ResourceHandle.h"
-#include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/MainThread.h>
@@ -46,14 +45,11 @@
 
 namespace WebCore {
 
-#if !PLATFORM(CHROMIUM)
-BlobRegistry& blobRegistry()
+BlobRegistryImpl::~BlobRegistryImpl()
 {
-    ASSERT(isMainThread());
-    DEFINE_STATIC_LOCAL(BlobRegistryImpl, instance, ());
-    return instance;
 }
 
+#if !PLATFORM(CHROMIUM)
 static PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
     return static_cast<BlobRegistryImpl&>(blobRegistry()).createResourceHandle(request, client);

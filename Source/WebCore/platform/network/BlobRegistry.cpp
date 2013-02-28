@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,37 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LoaderStrategy_h
-#define LoaderStrategy_h
+#include "config.h"
+#include "BlobRegistry.h"
 
-#if USE(PLATFORM_STRATEGIES)
+#if ENABLE(BLOB)
 
-#include "ResourceHandleTypes.h"
-#include <wtf/Vector.h>
+#include "BlobRegistryImpl.h"
+#include "LoaderStrategy.h"
+#include "PlatformStrategies.h"
+#include <wtf/MainThread.h>
+
+#if !PLATFORM(CHROMIUM)
 
 namespace WebCore {
 
-class BlobRegistry;
-class NetworkingContext;
-class ResourceError;
-class ResourceLoadScheduler;
-class ResourceRequest;
-class ResourceResponse;
+BlobRegistry& blobRegistry()
+{
+    ASSERT(isMainThread());
 
-class LoaderStrategy {
-public:
-    virtual ResourceLoadScheduler* resourceLoadScheduler();
-
-    virtual void loadResourceSynchronously(NetworkingContext*, unsigned long identifier, const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
-
-#if ENABLE(BLOB)
-    virtual BlobRegistry* createBlobRegistry();
+#if USE(PLATFORM_STRATEGIES)
+    static BlobRegistry& instance = *platformStrategies()->loaderStrategy()->createBlobRegistry();
+#else
+    DEFINE_STATIC_LOCAL(BlobRegistryImpl, instance, ());
 #endif
+    return instance;
+}
 
-protected:
-    virtual ~LoaderStrategy()
-    {
-    }
-};
+BlobRegistry::~BlobRegistry()
+{
+}
 
-} // namespace WebCore
+}
 
-#endif // USE(PLATFORM_STRATEGIES)
-
-#endif // LoaderStrategy_h
+#endif
+#endif

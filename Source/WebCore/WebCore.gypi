@@ -4442,6 +4442,7 @@
             'platform/network/BlobData.cpp',
             'platform/network/BlobData.h',
             'platform/network/BlobRegistry.h',
+            'platform/network/BlobRegistry.cpp',
             'platform/network/BlobRegistryImpl.cpp',
             'platform/network/BlobRegistryImpl.h',
             'platform/network/BlobResourceHandle.cpp',

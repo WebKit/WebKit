@@ -30,7 +30,6 @@
 
 #import "AuthenticationChallenge.h"
 #import "AuthenticationMac.h"
-#import "BlobRegistry.h"
 #import "BlockExceptions.h"
 #import "CookieStorage.h"
 #import "CredentialStorage.h"

@@ -27,7 +27,6 @@
 #include "ResourceHandle.h"
 #include "ResourceHandleInternal.h"
 
-#include "BlobRegistry.h"
 #include "Logging.h"
 #include "NetworkingContext.h"
 #include "ResourceHandleClient.h"

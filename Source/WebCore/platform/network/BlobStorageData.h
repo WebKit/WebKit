@@ -31,6 +31,8 @@
 #ifndef BlobStorageData_h
 #define BlobStorageData_h
 
+#if ENABLE(BLOB)
+
 #include "BlobData.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -61,5 +63,7 @@ private:
 };
 
 } // namespace WebCore
+
+#endif
 
 #endif // BlobStorageData_h

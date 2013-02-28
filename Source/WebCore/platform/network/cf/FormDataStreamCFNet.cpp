@@ -29,7 +29,7 @@
 #include "config.h"
 #include "FormDataStreamCFNet.h"
 
-#include "BlobRegistryImpl.h"
+#include "BlobData.h"
 #include "FileSystem.h"
 #include "FormData.h"
 #include "SchedulePair.h"

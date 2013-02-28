@@ -31,32 +31,26 @@
 #ifndef BlobRegistryImpl_h
 #define BlobRegistryImpl_h
 
-#include "BlobData.h"
+#if ENABLE(BLOB)
+
 #include "BlobRegistry.h"
 #include "BlobStorageData.h"
 #include <wtf/HashMap.h>
-#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 class KURL;
-class ResourceError;
 class ResourceHandle;
 class ResourceHandleClient;
 class ResourceRequest;
-class ResourceResponse;
 
 // BlobRegistryImpl is not thread-safe. It should only be called from main thread.
 class BlobRegistryImpl : public BlobRegistry {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    virtual ~BlobRegistryImpl() { }
-
-    virtual void registerBlobURL(const KURL&, PassOwnPtr<BlobData>);
-    virtual void registerBlobURL(const KURL&, const KURL& srcURL);
-    virtual void unregisterBlobURL(const KURL&);
+    virtual ~BlobRegistryImpl();
 
     PassRefPtr<BlobStorageData> getBlobDataFromURL(const KURL&) const;
 
@@ -66,9 +60,16 @@ private:
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&);
     void appendStorageItems(BlobStorageData*, const BlobDataItemList&, long long offset, long long length);
 
+    virtual void registerBlobURL(const KURL&, PassOwnPtr<BlobData>) OVERRIDE;
+    virtual void registerBlobURL(const KURL&, const KURL& srcURL) OVERRIDE;
+    virtual void unregisterBlobURL(const KURL&) OVERRIDE;
+    virtual bool isBlobRegistryImpl() const OVERRIDE { return true; }
+
     HashMap<String, RefPtr<BlobStorageData> > m_blobs;
 };
 
 } // namespace WebCore
+
+#endif // ENABLE(BLOB)
 
 #endif // BlobRegistryImpl_h

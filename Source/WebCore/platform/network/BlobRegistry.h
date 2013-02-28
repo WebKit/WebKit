@@ -32,22 +32,15 @@
 #define BlobRegistry_h
 
 #include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/Vector.h>
 
 namespace WebCore {
 
 class BlobData;
+class BlobStorageData;
 class BlobRegistry;
 class KURL;
-class ResourceError;
-class ResourceHandle;
-class ResourceHandleClient;
-class ResourceRequest;
-class ResourceResponse;
 
-// Returns a single instance of BlobRegistry.
-BlobRegistry& blobRegistry(); 
+BlobRegistry& blobRegistry();
 
 // BlobRegistry is not thread-safe. It should only be called from main thread.
 class BlobRegistry {
@@ -55,13 +48,15 @@ public:
     // Registers a blob URL referring to the specified blob data.
     virtual void registerBlobURL(const KURL&, PassOwnPtr<BlobData>) = 0;
     
-    // Registers a blob URL referring to the blob data identified by the specified srcURL.
+    // Registers a new blob URL referring to the blob data identified by the specified srcURL.
     virtual void registerBlobURL(const KURL&, const KURL& srcURL) = 0;
 
     virtual void unregisterBlobURL(const KURL&) = 0;
 
+    virtual bool isBlobRegistryImpl() const { return false; }
+
 protected:
-    virtual ~BlobRegistry() { }
+    virtual ~BlobRegistry();
 };
 
 } // namespace WebCore

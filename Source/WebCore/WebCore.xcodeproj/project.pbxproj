@@ -6193,6 +6193,7 @@
 		E145349716A9BB6A000F6FD2 /* DOMTransitionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = E145349416A9BB6A000F6FD2 /* DOMTransitionEvent.h */; };
 		E145349816A9BB6A000F6FD2 /* DOMTransitionEvent.mm in Sources */ = {isa = PBXBuildFile; fileRef = E145349516A9BB6A000F6FD2 /* DOMTransitionEvent.mm */; };
 		E145349916A9BB6A000F6FD2 /* DOMTransitionEventInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = E145349616A9BB6A000F6FD2 /* DOMTransitionEventInternal.h */; };
+		E14A94D716DFDF950068DE82 /* BlobRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14A94D616DFDF950068DE82 /* BlobRegistry.cpp */; };
 		E14F1C4414B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14F1C4214B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp */; };
 		E14F1C4514B5DAC600EA9009 /* HTMLFormControlElementWithState.h in Headers */ = {isa = PBXBuildFile; fileRef = E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1513D4F1677EA8300149FCB /* InitializeLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = E1513D4E1677EA8300149FCB /* InitializeLogging.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -13852,6 +13853,7 @@
 		E145349416A9BB6A000F6FD2 /* DOMTransitionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTransitionEvent.h; sourceTree = "<group>"; };
 		E145349516A9BB6A000F6FD2 /* DOMTransitionEvent.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DOMTransitionEvent.mm; sourceTree = "<group>"; };
 		E145349616A9BB6A000F6FD2 /* DOMTransitionEventInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMTransitionEventInternal.h; sourceTree = "<group>"; };
+		E14A94D616DFDF950068DE82 /* BlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlobRegistry.cpp; sourceTree = "<group>"; };
 		E14F1C4214B5DAC600EA9009 /* HTMLFormControlElementWithState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HTMLFormControlElementWithState.cpp; sourceTree = "<group>"; };
 		E14F1C4314B5DAC600EA9009 /* HTMLFormControlElementWithState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLFormControlElementWithState.h; sourceTree = "<group>"; };
 		E1513D4E1677EA8300149FCB /* InitializeLogging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitializeLogging.h; sourceTree = "<group>"; };
@@ -16160,6 +16162,7 @@
 				2EDEF1ED121B0EFC00726DB2 /* BlobData.cpp */,
 				2EDEF1EE121B0EFC00726DB2 /* BlobData.h */,
 				2EDEF1EF121B0EFC00726DB2 /* BlobRegistry.h */,
+				E14A94D616DFDF950068DE82 /* BlobRegistry.cpp */,
 				2EDEF1F0121B0EFC00726DB2 /* BlobRegistryImpl.cpp */,
 				2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */,
 				2EB4BCD0121F03E300EC4885 /* BlobResourceHandle.cpp */,
@@ -29817,6 +29820,7 @@
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				41B8CD4516D04591000E8CC0 /* SelectorCheckerFastPath.cpp in Sources */,
 				49140256168E02E8002D6C6A /* TimelineTraceEventProcessor.cpp in Sources */,
+				E14A94D716DFDF950068DE82 /* BlobRegistry.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

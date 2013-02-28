@@ -32814,6 +32814,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\platform\network\BlobRegistry.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\platform\network\BlobRegistryImpl.cpp"
 					>
 				</File>
