@@ -1,3 +1,10 @@
+2013-02-28  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r184931.  Requested by
+        "Takashi Toyoshima" <toyoshim@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-02-27  Seigo Nonaka  <nona@chromium.org>
 
         [Chromium] Should not return WebTextInputTypeNone for date input element.
