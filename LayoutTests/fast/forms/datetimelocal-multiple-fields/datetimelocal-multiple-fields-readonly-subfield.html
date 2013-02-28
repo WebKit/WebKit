@@ -28,6 +28,7 @@ var pseudoMinute = '-webkit-datetime-edit-minute-field';
 var pseudoHour = '-webkit-datetime-edit-hour-field';
 var pseudoAMPM = '-webkit-datetime-edit-ampm-field';
 var step1day = '86400';
+var step1min = '60';
 
 description('Sub-fields in input[type=datetime-local] should be read-only in some cases. This requires window.internals.');
 debug('createInput argument order: min, max, step, value');
@@ -59,8 +60,16 @@ shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T23:00
 shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T23:00", step1day, "2013-01-16T11:30"), pseudoMinute)');
 
 shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoHour)');
-shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoAMPM)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoAMPM)');
 shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoMinute)');
+
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1min, ""), pseudoHour)');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1min, ""), pseudoAMPM)');
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1min, ""), pseudoMinute)');
+
+debug('AM/PM field:');
+shouldBeTrue('isReadOnlyField(createInput("2013-01-16T08:00", "2013-01-16T11:00", step1min, ""), pseudoAMPM)');
+shouldBeFalse('isReadOnlyField(createInput("2013-01-16T08:00", "2013-01-17T11:00", step1min, ""), pseudoAMPM)');
 
 </script>
 <script src="../../js/resources/js-test-post.js"></script>

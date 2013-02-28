@@ -117,22 +117,154 @@ int DateTimeDayFieldElement::clampValueForHardLimits(int value) const
 
 // ----------------------------
 
-DateTimeHourFieldElement::DateTimeHourFieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters& parameters)
+DateTimeHourFieldElementBase::DateTimeHourFieldElementBase(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters& parameters)
     : DateTimeNumericFieldElement(document, fieldOwner, minimum, maximum, "--", parameters)
-    , m_alignment(maximum + maximum % 2)
 {
-    ASSERT((!minimum && (maximum == 11 || maximum == 23)) || (minimum == 1 && (maximum == 12 || maximum == 24)));
 }
 
-PassRefPtr<DateTimeHourFieldElement> DateTimeHourFieldElement::create(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters& parameters)
+void DateTimeHourFieldElementBase::initialize()
 {
     DEFINE_STATIC_LOCAL(AtomicString, hourPsuedoId, ("-webkit-datetime-edit-hour-field", AtomicString::ConstructFromLiteral));
-    RefPtr<DateTimeHourFieldElement> field = adoptRef(new DateTimeHourFieldElement(document, fieldOwner, minimum, maximum, parameters));
-    field->initialize(hourPsuedoId, AXHourFieldText());
+    DateTimeNumericFieldElement::initialize(hourPsuedoId, AXHourFieldText());
+}
+
+void DateTimeHourFieldElementBase::setValueAsDate(const DateComponents& date)
+{
+    setValueAsInteger(date.hour());
+}
+
+void DateTimeHourFieldElementBase::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
+{
+    if (!dateTimeFieldsState.hasHour()) {
+        setEmptyValue();
+        return;
+    }
+
+    const int hour12 = dateTimeFieldsState.hour();
+    if (hour12 < 1 || hour12 > 12) {
+        setEmptyValue();
+        return;
+    }
+
+    if (dateTimeFieldsState.ampm() == DateTimeFieldsState::AMPMValuePM)
+        setValueAsInteger((hour12 + 12) % 24);
+    else
+        setValueAsInteger(hour12 % 12);
+}
+// ----------------------------
+
+DateTimeHour11FieldElement::DateTimeHour11FieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters& parameters)
+    : DateTimeHourFieldElementBase(document, fieldOwner, minimum, maximum, parameters)
+{
+}
+
+PassRefPtr<DateTimeHour11FieldElement> DateTimeHour11FieldElement::create(Document* document, FieldOwner& fieldOwner, int minimumHour23, int maximumHour23, const DateTimeNumericFieldElement::Parameters& parameters)
+{
+    ASSERT(minimumHour23 >= 0);
+    ASSERT(maximumHour23 <= 23);
+    ASSERT(minimumHour23 <= maximumHour23);
+    int minimum = 0, maximum = 11;
+    if (maximumHour23 < 12) {
+        minimum = minimumHour23;
+        maximum = maximumHour23;
+    } else if (minimumHour23 >= 12) {
+        minimum = minimumHour23 - 12;
+        maximum = maximumHour23 - 12;
+    }
+
+    RefPtr<DateTimeHour11FieldElement> field = adoptRef(new DateTimeHour11FieldElement(document, fieldOwner, minimum, maximum, parameters));
+    field->initialize();
     return field.release();
 }
 
-void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+void DateTimeHour11FieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    if (!hasValue()) {
+        dateTimeFieldsState.setHour(DateTimeFieldsState::emptyValue);
+        return;
+    }
+    const int value = valueAsInteger();
+    dateTimeFieldsState.setHour(value ? value : 12);
+}
+
+void DateTimeHour11FieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
+{
+    value = Range(0, 23).clampValue(value) % 12;
+    DateTimeNumericFieldElement::setValueAsInteger(value, eventBehavior);
+}
+
+int DateTimeHour11FieldElement::clampValueForHardLimits(int value) const
+{
+    return Range(0, 11).clampValue(value);
+}
+
+// ----------------------------
+
+DateTimeHour12FieldElement::DateTimeHour12FieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters& parameters)
+    : DateTimeHourFieldElementBase(document, fieldOwner, minimum, maximum, parameters)
+{
+}
+
+PassRefPtr<DateTimeHour12FieldElement> DateTimeHour12FieldElement::create(Document* document, FieldOwner& fieldOwner, int minimumHour23, int maximumHour23, const DateTimeNumericFieldElement::Parameters& parameters)
+{
+    ASSERT(minimumHour23 >= 0);
+    ASSERT(maximumHour23 <= 23);
+    ASSERT(minimumHour23 <= maximumHour23);
+    int minimum = 1, maximum = 12;
+    if (maximumHour23 < 12) {
+        minimum = minimumHour23;
+        maximum = maximumHour23;
+    } else if (minimumHour23 >= 12) {
+        minimum = minimumHour23 - 12;
+        maximum = maximumHour23 - 12;
+    }
+    if (!minimum)
+        minimum = 12;
+    if (!maximum)
+        maximum = 12;
+    if (minimum > maximum) {
+        minimum = 1;
+        maximum = 12;
+    }
+    RefPtr<DateTimeHour12FieldElement> field = adoptRef(new DateTimeHour12FieldElement(document, fieldOwner, minimum, maximum, parameters));
+    field->initialize();
+    return field.release();
+}
+
+void DateTimeHour12FieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    dateTimeFieldsState.setHour(hasValue() ? valueAsInteger() : DateTimeFieldsState::emptyValue);
+}
+
+void DateTimeHour12FieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
+{
+    value = Range(0, 24).clampValue(value) % 12;
+    DateTimeNumericFieldElement::setValueAsInteger(value ? value : 12, eventBehavior);
+}
+
+int DateTimeHour12FieldElement::clampValueForHardLimits(int value) const
+{
+    return Range(1, 12).clampValue(value);
+}
+
+// ----------------------------
+
+DateTimeHour23FieldElement::DateTimeHour23FieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters& parameters)
+    : DateTimeHourFieldElementBase(document, fieldOwner, minimum, maximum, parameters)
+{
+}
+
+PassRefPtr<DateTimeHour23FieldElement> DateTimeHour23FieldElement::create(Document* document, FieldOwner& fieldOwner, int minimumHour23, int maximumHour23, const DateTimeNumericFieldElement::Parameters& parameters)
+{
+    ASSERT(minimumHour23 >= 0);
+    ASSERT(maximumHour23 <= 23);
+    ASSERT(minimumHour23 <= maximumHour23);
+    RefPtr<DateTimeHour23FieldElement> field = adoptRef(new DateTimeHour23FieldElement(document, fieldOwner, minimumHour23, maximumHour23, parameters));
+    field->initialize();
+    return field.release();
+}
+
+void DateTimeHour23FieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
 {
     if (!hasValue()) {
         dateTimeFieldsState.setHour(DateTimeFieldsState::emptyValue);
@@ -141,78 +273,72 @@ void DateTimeHourFieldElement::populateDateTimeFieldsState(DateTimeFieldsState& 
 
     const int value = valueAsInteger();
 
-    switch (maximum()) {
-    case 11:
-        dateTimeFieldsState.setHour(value ? value : 12);
+    dateTimeFieldsState.setHour(value ? value % 12 : 12);
+    dateTimeFieldsState.setAMPM(value >= 12 ? DateTimeFieldsState::AMPMValuePM : DateTimeFieldsState::AMPMValueAM);
+}
+
+void DateTimeHour23FieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
+{
+    value = Range(0, 23).clampValue(value);
+    DateTimeNumericFieldElement::setValueAsInteger(value, eventBehavior);
+}
+
+int DateTimeHour23FieldElement::clampValueForHardLimits(int value) const
+{
+    return Range(0, 23).clampValue(value);
+}
+
+// ----------------------------
+
+DateTimeHour24FieldElement::DateTimeHour24FieldElement(Document* document, FieldOwner& fieldOwner, int minimum, int maximum, const DateTimeNumericFieldElement::Parameters& parameters)
+    : DateTimeHourFieldElementBase(document, fieldOwner, minimum, maximum, parameters)
+{
+}
+
+PassRefPtr<DateTimeHour24FieldElement> DateTimeHour24FieldElement::create(Document* document, FieldOwner& fieldOwner, int minimumHour23, int maximumHour23, const DateTimeNumericFieldElement::Parameters& parameters)
+{
+    ASSERT(minimumHour23 >= 0);
+    ASSERT(maximumHour23 <= 23);
+    ASSERT(minimumHour23 <= maximumHour23);
+    int minimum = minimumHour23 ? minimumHour23 : 24;
+    int maximum = maximumHour23 ? maximumHour23 : 24;
+    if (minimum > maximum) {
+        minimum = 1;
+        maximum = 24;
+    }
+
+    RefPtr<DateTimeHour24FieldElement> field = adoptRef(new DateTimeHour24FieldElement(document, fieldOwner, minimum, maximum, parameters));
+    field->initialize();
+    return field.release();
+}
+
+void DateTimeHour24FieldElement::populateDateTimeFieldsState(DateTimeFieldsState& dateTimeFieldsState)
+{
+    if (!hasValue()) {
+        dateTimeFieldsState.setHour(DateTimeFieldsState::emptyValue);
         return;
-    case 12:
-        dateTimeFieldsState.setHour(value);
-        return;
-    case 23:
-        dateTimeFieldsState.setHour(value ? value % 12 : 12);
-        dateTimeFieldsState.setAMPM(value >= 12 ? DateTimeFieldsState::AMPMValuePM : DateTimeFieldsState::AMPMValueAM);
-        return;
-    case 24:
-        if (value == 24) {
-            dateTimeFieldsState.setHour(12);
-            dateTimeFieldsState.setAMPM(DateTimeFieldsState::AMPMValueAM);
-            return;
-        }
+    }
+
+    const int value = valueAsInteger();
+
+    if (value == 24) {
+        dateTimeFieldsState.setHour(12);
+        dateTimeFieldsState.setAMPM(DateTimeFieldsState::AMPMValueAM);
+    } else {
         dateTimeFieldsState.setHour(value == 12 ? 12 : value % 12);
         dateTimeFieldsState.setAMPM(value >= 12 ? DateTimeFieldsState::AMPMValuePM : DateTimeFieldsState::AMPMValueAM);
-        return;
-    default:
-        ASSERT_NOT_REACHED();
     }
 }
 
-void DateTimeHourFieldElement::setValueAsDate(const DateComponents& date)
+void DateTimeHour24FieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
 {
-    setValueAsInteger(date.hour());
+    value = Range(0, 24).clampValue(value);
+    DateTimeNumericFieldElement::setValueAsInteger(value ? value : 24, eventBehavior);
 }
 
-void DateTimeHourFieldElement::setValueAsDateTimeFieldsState(const DateTimeFieldsState& dateTimeFieldsState)
+int DateTimeHour24FieldElement::clampValueForHardLimits(int value) const
 {
-    if (!dateTimeFieldsState.hasHour()) {
-        setEmptyValue();
-        return;
-    }
-
-    const int hour12 = dateTimeFieldsState.hour();
-
-    if (hour12 < 1 || hour12 > 12) {
-        setEmptyValue();
-        return;
-    }
-
-    switch (maximum()) {
-    case 11:
-        DateTimeNumericFieldElement::setValueAsInteger(hour12 % 12);
-        return;
-    case 12:
-        DateTimeNumericFieldElement::setValueAsInteger(hour12);
-        return;
-    case 23:
-        if (dateTimeFieldsState.ampm() == DateTimeFieldsState::AMPMValuePM)
-            DateTimeNumericFieldElement::setValueAsInteger((hour12 + 12) % 24);
-        else
-            DateTimeNumericFieldElement::setValueAsInteger(hour12 % 12);
-        return;
-    case 24:
-        if (dateTimeFieldsState.ampm() == DateTimeFieldsState::AMPMValuePM)
-            DateTimeNumericFieldElement::setValueAsInteger(hour12 == 12 ? 12 : hour12 + 12);
-        else
-            DateTimeNumericFieldElement::setValueAsInteger(hour12);
-        return;
-    default:
-        ASSERT_NOT_REACHED();
-    }
-}
-
-void DateTimeHourFieldElement::setValueAsInteger(int value, EventBehavior eventBehavior)
-{
-    value = Range(0, 24 - range().maximum % 2).clampValue(value) % m_alignment;
-    DateTimeNumericFieldElement::setValueAsInteger(range().minimum && !value ? m_alignment : value, eventBehavior);
+    return Range(1, 24).clampValue(value);
 }
 
 // ----------------------------

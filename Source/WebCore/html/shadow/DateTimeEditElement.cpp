@@ -59,9 +59,9 @@ public:
     bool build(const String&);
 
 private:
-    void getRangeOfDayOfMonthField(int& minDay, int& maxDay) const;
     bool needMillisecondField() const;
-    bool shouldDayOfMonthFieldDisabled(int minDay, int maxDay) const;
+    bool shouldAMPMFieldDisabled() const;
+    bool shouldDayOfMonthFieldDisabled() const;
     bool shouldHourFieldDisabled() const;
     bool shouldMillisecondFieldDisabled() const;
     bool shouldMinuteFieldDisabled() const;
@@ -77,33 +77,48 @@ private:
     DateTimeEditElement& m_editElement;
     const DateComponents m_dateValue;
     const DateTimeEditElement::LayoutParameters& m_parameters;
+    int m_minDay;
+    int m_maxDay;
+    int m_minHour23;
+    int m_maxHour23;
 };
 
 DateTimeEditBuilder::DateTimeEditBuilder(DateTimeEditElement& elemnt, const DateTimeEditElement::LayoutParameters& layoutParameters, const DateComponents& dateValue)
     : m_editElement(elemnt)
     , m_dateValue(dateValue)
     , m_parameters(layoutParameters)
+    , m_minDay(1)
+    , m_maxDay(31)
+    , m_minHour23(0)
+    , m_maxHour23(23)
 {
+    if (m_dateValue.type() == DateComponents::Date
+        || m_dateValue.type() == DateComponents::DateTimeLocal
+        || m_dateValue.type() == DateComponents::DateTime) {
+        if (m_parameters.minimum.type() != DateComponents::Invalid
+            && m_parameters.maximum.type() != DateComponents::Invalid
+            && m_parameters.minimum.fullYear() == m_parameters.maximum.fullYear()
+            && m_parameters.minimum.month() == m_parameters.maximum.month()
+            && m_parameters.minimum.monthDay() <= m_parameters.maximum.monthDay()) {
+            m_minDay = m_parameters.minimum.monthDay();
+            m_maxDay = m_parameters.maximum.monthDay();
+        }
+    }
+
+    if (m_dateValue.type() == DateComponents::Time || m_minDay == m_maxDay) {
+        if (m_parameters.minimum.type() != DateComponents::Invalid
+            && m_parameters.maximum.type() != DateComponents::Invalid
+            && m_parameters.minimum.hour() <= m_parameters.maximum.hour()) {
+            m_minHour23 = m_parameters.minimum.hour();
+            m_maxHour23 = m_parameters.maximum.hour();
+        }
+    }
 }
 
 bool DateTimeEditBuilder::build(const String& formatString)
 {
     m_editElement.resetFields();
     return DateTimeFormat::parse(formatString, *this);
-}
-
-void DateTimeEditBuilder::getRangeOfDayOfMonthField(int& minDay, int& maxDay) const
-{
-    minDay = 1;
-    maxDay = 31;
-    if (m_parameters.minimum.type() != DateComponents::Invalid
-        && m_parameters.maximum.type() != DateComponents::Invalid
-        && m_parameters.minimum.fullYear() == m_parameters.maximum.fullYear()
-        && m_parameters.minimum.month() == m_parameters.maximum.month()
-        && m_parameters.minimum.monthDay() <= m_parameters.maximum.monthDay()) {
-        minDay = m_parameters.minimum.monthDay();
-        maxDay = m_parameters.maximum.monthDay();
-    }
 }
 
 bool DateTimeEditBuilder::needMillisecondField() const
@@ -122,11 +137,9 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     switch (fieldType) {
     case DateTimeFormat::FieldTypeDayOfMonth: {
-        int minDay, maxDay;
-        getRangeOfDayOfMonthField(minDay, maxDay);
-        RefPtr<DateTimeFieldElement> field = DateTimeDayFieldElement::create(document, m_editElement, m_parameters.placeholderForDay, minDay, maxDay);
+        RefPtr<DateTimeFieldElement> field = DateTimeDayFieldElement::create(document, m_editElement, m_parameters.placeholderForDay, m_minDay, m_maxDay);
         m_editElement.addField(field);
-        if (shouldDayOfMonthFieldDisabled(minDay, maxDay)) {
+        if (shouldDayOfMonthFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
             field->setDisabled();
         }
@@ -135,7 +148,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     case DateTimeFormat::FieldTypeHour11: {
         DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(static_cast<int>(msPerHour), static_cast<int>(msPerHour * 12));
-        RefPtr<DateTimeFieldElement> field = DateTimeHourFieldElement::create(document, m_editElement, 0, 11, parameters);
+        RefPtr<DateTimeFieldElement> field = DateTimeHour11FieldElement::create(document, m_editElement, m_minHour23, m_maxHour23, parameters);
         m_editElement.addField(field);
         if (shouldHourFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
@@ -146,7 +159,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     case DateTimeFormat::FieldTypeHour12: {
         DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(static_cast<int>(msPerHour), static_cast<int>(msPerHour * 12));
-        RefPtr<DateTimeFieldElement> field = DateTimeHourFieldElement::create(document, m_editElement, 1, 12, parameters);
+        RefPtr<DateTimeFieldElement> field = DateTimeHour12FieldElement::create(document, m_editElement, m_minHour23, m_maxHour23, parameters);
         m_editElement.addField(field);
         if (shouldHourFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
@@ -157,7 +170,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     case DateTimeFormat::FieldTypeHour23: {
         DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(static_cast<int>(msPerHour), static_cast<int>(msPerDay));
-        RefPtr<DateTimeFieldElement> field = DateTimeHourFieldElement::create(document, m_editElement, 0, 23, parameters);
+        RefPtr<DateTimeFieldElement> field = DateTimeHour23FieldElement::create(document, m_editElement, m_minHour23, m_maxHour23, parameters);
         m_editElement.addField(field);
         if (shouldHourFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
@@ -168,7 +181,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
 
     case DateTimeFormat::FieldTypeHour24: {
         DateTimeNumericFieldElement::Parameters parameters = createNumericFieldParameters(static_cast<int>(msPerHour), static_cast<int>(msPerDay));
-        RefPtr<DateTimeFieldElement> field = DateTimeHourFieldElement::create(document, m_editElement, 1, 24, parameters);
+        RefPtr<DateTimeFieldElement> field = DateTimeHour24FieldElement::create(document, m_editElement, m_minHour23, m_maxHour23, parameters);
         m_editElement.addField(field);
         if (shouldHourFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
@@ -222,7 +235,7 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     case DateTimeFormat::FieldTypePeriod: {
         RefPtr<DateTimeFieldElement> field = DateTimeAMPMFieldElement::create(document, m_editElement, m_parameters.locale.timeAMPMLabels());
         m_editElement.addField(field);
-        if (shouldHourFieldDisabled()) {
+        if (shouldAMPMFieldDisabled()) {
             field->setValueAsDate(m_dateValue);
             field->setDisabled();
         }
@@ -305,19 +318,28 @@ void DateTimeEditBuilder::visitField(DateTimeFormat::FieldType fieldType, int co
     }
 }
 
-bool DateTimeEditBuilder::shouldDayOfMonthFieldDisabled(int minDay, int maxDay) const
+bool DateTimeEditBuilder::shouldAMPMFieldDisabled() const
 {
-    return minDay == maxDay && minDay == m_dateValue.monthDay() && m_dateValue.type() != DateComponents::Date;
+    return shouldHourFieldDisabled()
+        || (m_minHour23 < 12 && m_maxHour23 < 12 && m_dateValue.hour() < 12)
+        || (m_minHour23 >= 12 && m_maxHour23 >= 12 && m_dateValue.hour() >= 12);
+}
+
+bool DateTimeEditBuilder::shouldDayOfMonthFieldDisabled() const
+{
+    return m_minDay == m_maxDay && m_minDay == m_dateValue.monthDay() && m_dateValue.type() != DateComponents::Date;
 }
 
 bool DateTimeEditBuilder::shouldHourFieldDisabled() const
 {
+    if (m_minHour23 == m_maxHour23 && m_minHour23 == m_dateValue.hour() && !shouldMinuteFieldDisabled())
+        return true;
+
     if (m_dateValue.type() == DateComponents::Time)
         return false;
     ASSERT(m_dateValue.type() == DateComponents::DateTimeLocal || m_dateValue.type() == DateComponents::DateTime);
-    int minDay, maxDay;
-    getRangeOfDayOfMonthField(minDay, maxDay);
-    if (shouldDayOfMonthFieldDisabled(minDay, maxDay)) {
+
+    if (shouldDayOfMonthFieldDisabled()) {
         ASSERT(m_parameters.minimum.fullYear() == m_parameters.maximum.fullYear());
         ASSERT(m_parameters.minimum.month() == m_parameters.maximum.month());
         return false;

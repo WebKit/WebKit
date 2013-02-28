@@ -165,6 +165,10 @@ void TimeInputType::setupLayoutParameters(DateTimeEditElement::LayoutParameters&
         layoutParameters.dateTimeFormat = layoutParameters.locale.shortTimeFormat();
         layoutParameters.fallbackDateTimeFormat = "HH:mm";
     }
+    if (!parseToDateComponents(element()->fastGetAttribute(minAttr), &layoutParameters.minimum))
+        layoutParameters.minimum = DateComponents();
+    if (!parseToDateComponents(element()->fastGetAttribute(maxAttr), &layoutParameters.maximum))
+        layoutParameters.maximum = DateComponents();
 }
 #endif
 

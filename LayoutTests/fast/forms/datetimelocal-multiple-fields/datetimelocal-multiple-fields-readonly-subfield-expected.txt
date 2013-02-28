@@ -25,8 +25,14 @@ PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T23:00", step1da
 PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T23:00", step1day, "2013-01-16T11:30"), pseudoAMPM) is false
 PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T23:00", step1day, "2013-01-16T11:30"), pseudoMinute) is true
 PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoHour) is false
-PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoAMPM) is false
+PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoAMPM) is true
 PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1day, "2013-01-16T11:30"), pseudoMinute) is true
+PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1min, ""), pseudoHour) is true
+PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1min, ""), pseudoAMPM) is true
+PASS isReadOnlyField(createInput("2013-01-16T11:30", "2013-01-16T11:59", step1min, ""), pseudoMinute) is false
+AM/PM field:
+PASS isReadOnlyField(createInput("2013-01-16T08:00", "2013-01-16T11:00", step1min, ""), pseudoAMPM) is true
+PASS isReadOnlyField(createInput("2013-01-16T08:00", "2013-01-17T11:00", step1min, ""), pseudoAMPM) is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

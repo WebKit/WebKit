@@ -1,0 +1,16 @@
+Check stepping-up and -down for datetime-local input fields from renderer.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Function arguments are (value, step, min, max, [keySequence]).
+The hour field respects min/max attributes when they have the same date.
+PASS stepUp("2013-01-16T17:00", 1, "2013-01-16T15:00", "2013-01-16T17:00") is "2013-01-16T15:00"
+PASS stepDown("2013-01-16T15:00", 1, "2013-01-16T15:00", "2013-01-16T17:00") is "2013-01-16T17:00"
+PASS stepUp("2013-01-16T17:00", 1, "2013-01-16T15:00", "2013-01-17T17:00") is "2013-01-16T18:00"
+PASS stepDown("2013-01-16T17:00", 1, "2013-01-16T17:00", "2013-01-17T20:00") is "2013-01-16T16:00"
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
