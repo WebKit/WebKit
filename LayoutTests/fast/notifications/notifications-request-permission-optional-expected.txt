@@ -1,6 +1,0 @@
-PASS window.webkitNotifications is not undefined
-PASS window.webkitNotifications.requestPermission() did not throw exception.
-PASS successfullyParsed is true
-
-TEST COMPLETE
-

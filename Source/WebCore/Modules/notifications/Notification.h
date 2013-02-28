@@ -147,7 +147,7 @@ public:
 #if ENABLE(NOTIFICATIONS)
     static const String& permission(ScriptExecutionContext*);
     static const String& permissionString(NotificationClient::Permission);
-    static void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback> = 0);
+    static void requestPermission(ScriptExecutionContext*, PassRefPtr<NotificationPermissionCallback>);
 #endif
 
 private:

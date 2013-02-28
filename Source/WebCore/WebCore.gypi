@@ -1401,6 +1401,7 @@
             'bindings/v8/custom/V8NamedNodesCollection.h',
             'bindings/v8/custom/V8NodeCustom.cpp',
             'bindings/v8/custom/V8NodeListCustom.cpp',
+            'bindings/v8/custom/V8NotificationCustom.cpp',
             'bindings/v8/custom/V8NotificationCenterCustom.cpp',
             'bindings/v8/custom/V8OscillatorNodeCustom.cpp',
             'bindings/v8/custom/V8PannerNodeCustom.cpp',

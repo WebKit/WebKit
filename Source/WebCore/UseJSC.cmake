@@ -121,6 +121,7 @@ list(APPEND WebCore_SOURCES
     bindings/js/JSNodeFilterCustom.cpp
     bindings/js/JSNodeIteratorCustom.cpp
     bindings/js/JSNodeListCustom.cpp
+    bindings/js/JSNotificationCustom.cpp
     bindings/js/JSPluginElementFunctions.cpp
     bindings/js/JSPopStateEventCustom.cpp
     bindings/js/JSProcessingInstructionCustom.cpp
@@ -236,6 +237,7 @@ endif ()
 if (ENABLE_NOTIFICATIONS)
     list(APPEND WebCore_SOURCES
         bindings/js/JSDesktopNotificationsCustom.cpp
+        bindings/js/JSNotificationCustom.cpp
     )
 endif ()
 
