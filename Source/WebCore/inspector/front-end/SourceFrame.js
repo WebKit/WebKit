@@ -44,7 +44,7 @@ WebInspector.SourceFrame = function(contentProvider)
     var textEditorDelegate = new WebInspector.TextEditorDelegateForSourceFrame(this);
 
     if (WebInspector.experimentsSettings.codemirror.isEnabled()) {
-        importScript("CodeMirrorTextEditor.js");
+        loadScript("CodeMirrorTextEditor.js");
         this._textEditor = new WebInspector.CodeMirrorTextEditor(this._url, textEditorDelegate);
     } else
         this._textEditor = new WebInspector.DefaultTextEditor(this._url, textEditorDelegate);

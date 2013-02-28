@@ -328,7 +328,7 @@ WebInspector.PanelDescriptor.prototype = {
         if (this._panel)
             return this._panel;
         if (this._scriptName)
-            importScript(this._scriptName);
+            loadScript(this._scriptName);
         this._panel = new WebInspector[this._className];
         return this._panel;
     },
