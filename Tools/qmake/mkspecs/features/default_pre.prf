@@ -92,6 +92,8 @@ CONFIG += include_webinspector
 # used by bots and developers, will disable it, to enable warnings etc.
 CONFIG += production_build
 
+!debug_and_release:*-g++*: CONFIG += gnu_thin_archives
+
 # Pick up Qt's defaults for debug/release/debug_and_release
 if(win32|mac):!macx-xcode {
     contains(QT_CONFIG, debug_and_release): CONFIG += debug_and_release

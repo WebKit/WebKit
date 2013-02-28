@@ -1,3 +1,17 @@
+2013-02-28  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt] Enable thin archives before parsing the project files
+
+        Rubber-stamped by Simon Hausmann.
+
+        The targetSubDir() function can be called before default_post.prf has been
+        parsed therefore the gnu_thin_archives option has to be set in default_pre.prf
+        which is parsed before the main project file.
+        This issue was revealed by r144299 and fixes the clean build.
+
+        * qmake/mkspecs/features/default_post.prf:
+        * qmake/mkspecs/features/default_pre.prf:
+
 2013-02-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Enable CANVAS_PATH flag

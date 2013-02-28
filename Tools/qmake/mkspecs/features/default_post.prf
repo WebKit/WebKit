@@ -14,7 +14,6 @@ CONFIG += config_step
 # Avoid it with debug_and_release, it can cause the application to load both the debug and release
 # dependent libraries when using frameworks on Mac.
 !production_build:!debug_and_release:!buildbot:!win*:!build?(webkit2): CONFIG += force_static_libs_as_shared
-!debug_and_release:*-g++*: CONFIG += gnu_thin_archives
 
 # Don't create .prl files for intermediate libraries because their contents get used when linking against
 # them, breaking "-Wl,-whole-archive -lMyIntermediateLib --Wl,-no-whole-archive"
