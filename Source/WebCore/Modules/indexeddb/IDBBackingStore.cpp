@@ -360,7 +360,7 @@ IDBBackingStore::~IDBBackingStore()
 }
 
 enum IDBLevelDBBackingStoreOpenResult {
-    IDBLevelDBBackingStoreOpenMemory,
+    IDBLevelDBBackingStoreOpenMemorySuccess,
     IDBLevelDBBackingStoreOpenSuccess,
     IDBLevelDBBackingStoreOpenFailedDirectory,
     IDBLevelDBBackingStoreOpenFailedUnknownSchema,
@@ -368,6 +368,8 @@ enum IDBLevelDBBackingStoreOpenResult {
     IDBLevelDBBackingStoreOpenCleanupReopenFailed,
     IDBLevelDBBackingStoreOpenCleanupReopenSuccess,
     IDBLevelDBBackingStoreOpenFailedIOErrCheckingSchema,
+    IDBLevelDBBackingStoreOpenFailedUnknownErr,
+    IDBLevelDBBackingStoreOpenMemoryFailed,
     IDBLevelDBBackingStoreOpenMax,
 };
 
@@ -386,8 +388,13 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
     OwnPtr<LevelDBDatabase> db;
 
     if (pathBase.isEmpty()) {
-        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemory, IDBLevelDBBackingStoreOpenMax);
         db = LevelDBDatabase::openInMemory(comparator.get());
+        if (!db) {
+            LOG_ERROR("LevelDBDatabase::openInMemory failed.");
+            HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemoryFailed, IDBLevelDBBackingStoreOpenMax);
+            return PassRefPtr<IDBBackingStore>();
+        }
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenMemorySuccess, IDBLevelDBBackingStoreOpenMax);
     } else {
         if (!makeAllDirectories(pathBase)) {
             LOG_ERROR("Unable to create IndexedDB database path %s", pathBase.utf8().data());
@@ -434,8 +441,11 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
         }
     }
 
-    if (!db)
+    if (!db) {
+        ASSERT_NOT_REACHED();
+        HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownErr, IDBLevelDBBackingStoreOpenMax);
         return PassRefPtr<IDBBackingStore>();
+    }
 
     // FIXME: Handle comparator name changes.
 
