@@ -185,6 +185,7 @@ void TextureMapperGL::ClipStack::reset(const IntRect& rect)
 void TextureMapperGL::ClipStack::push()
 {
     clipStack.append(clipState);
+    clipStateDirty = true;
 }
 
 void TextureMapperGL::ClipStack::pop()
