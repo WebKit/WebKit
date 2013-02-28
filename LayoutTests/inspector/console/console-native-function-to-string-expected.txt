@@ -1,0 +1,63 @@
+Tests that command-line API methods behave similarly to native code by returning '[WebInspector console function]' via toString().
+
+
+
+$
+function $() { [Command Line API] }
+
+
+$$
+function $$() { [Command Line API] }
+
+
+$x
+function $x() { [Command Line API] }
+
+
+dir
+function dir() { [Command Line API] }
+
+
+dirxml
+function dirxml() { [Command Line API] }
+
+
+keys
+function keys() { [Command Line API] }
+
+
+values
+function values() { [Command Line API] }
+
+
+profile
+function profile() { [Command Line API] }
+
+
+profileEnd
+function profileEnd() { [Command Line API] }
+
+
+monitorEvents
+function monitorEvents() { [Command Line API] }
+
+
+unmonitorEvents
+function unmonitorEvents() { [Command Line API] }
+
+
+inspect
+function inspect() { [Command Line API] }
+
+
+copy
+function copy() { [Command Line API] }
+
+
+clear
+function clear() { [Command Line API] }
+
+
+getEventListeners
+function getEventListeners() { [Command Line API] }
+

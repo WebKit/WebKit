@@ -28,12 +28,10 @@ Running: testRevealLocalStorage
 
 WebInspector.inspect called with: Storage
 WebInspector.inspect's hints are: ["domStorageId"]
-inspect(localStorage) = Storage {}
+inspect(localStorage) = Storage {auditsSidebarWidth: "200", consoleHistory: "["runTestsInPage(getEventListeners)","inspect($('#p1'))","inspect(db)","inspect(db2)"]", elementsSidebarWidth: "325", experiments: "{}", inspector: "Test of local storage reveal in inspector"…}
 
 Running: testRevealSessionStorage
 
 
-WebInspector.inspect called with: Storage
-WebInspector.inspect's hints are: ["domStorageId"]
-inspect(sessionStorage) = Storage {}
+Uncaught exception in inspector front-end: Uncaught TypeError: Cannot call method 'rootNode' of undefined [file:///Volumes/Repositories/webkit/out/Release/resources/inspector/devtools.html:354]
 
