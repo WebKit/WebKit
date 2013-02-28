@@ -1,0 +1,1 @@
+This tests that a hidden plug-in gets a correct NPP_SetWindow the first time.

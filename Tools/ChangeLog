@@ -1,3 +1,17 @@
+2013-02-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r144224.
+        http://trac.webkit.org/changeset/144224
+        https://bugs.webkit.org/show_bug.cgi?id=111045
+
+        Caused plugins/pass-different-npp-struct.html to time out
+        (Requested by abarth on #webkit).
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/PassDifferentNPPStruct.cpp:
+        (PassDifferentNPPStruct::NPP_SetWindow):
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_SetWindow):
+
 2013-02-27  Adam Barth  <abarth@webkit.org>
 
         [Chromium] Enable threaded HTML parser by default in DumpRenderTree

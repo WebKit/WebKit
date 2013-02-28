@@ -351,7 +351,6 @@ NPError NPP_SetWindow(NPP instance, NPWindow *window)
         if (obj->logSetWindow) {
             pluginLog(instance, "NPP_SetWindow: %d %d", (int)window->width, (int)window->height);
             obj->logSetWindow = FALSE;
-            executeScript(obj, "testRunner.notifyDone();");
         }
 
         if (obj->onSetWindow)
