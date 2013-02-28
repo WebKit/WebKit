@@ -8,8 +8,6 @@
 TEMPLATE = app
 TARGET = LLIntOffsetsExtractor
 
-macx: DESTDIR = $$targetSubDir()
-
 debug_and_release {
     CONFIG += force_build_all
     CONFIG += build_all
@@ -58,6 +56,12 @@ llint.depends = $$LLINT_DEPENDENCY
 llint.commands = ruby $$llint.script ${QMAKE_FILE_NAME} ${QMAKE_FILE_OUT}
 llint.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += llint
+
+macx {
+    DESTDIR = $$targetSubDir()
+    llint.output = $$targetSubDir()/$$llint.output
+    INCLUDEPATH += $$targetSubDir()
+}
 
 # Compilation of this file will automatically depend on LLIntDesiredOffsets.h
 # due to qmake scanning the source file for header dependencies.
