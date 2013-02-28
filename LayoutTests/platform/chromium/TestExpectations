@@ -152,7 +152,7 @@ webkit.org/b/111038 [ Debug Win ] fast/loader/policy-delegate-action-hit-test-zo
 webkit.org/b/111046 [ Debug Mac ] plugins/pass-different-npp-struct.html [ Pass Slow ]
 
 # This test os slow since r144263
-webkit.org/b/111054 [ Debug Win7 ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Pass Slow ]
+webkit.org/b/111054 [ Debug Mac Win7 ] fast/forms/time-multiple-fields/time-multiple-fields-stepup-stepdown-from-renderer.html [ Pass Slow ]
 
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
@@ -1475,7 +1475,7 @@ webkit.org/b/109056 accessibility/html-html-element-is-ignored.html [ Skip ]
 
 webkit.org/b/73912 accessibility/aria-checkbox-sends-notification.html [ Failure Pass ]
 #webkit.org/b/98787 accessibility/aria-hidden-negates-no-visibility.html [ Skip ]
-webkit.org/b/111062 [ Linux Win7 Debug ] accessibility/svg-remote-element.html [ Failure ]
+webkit.org/b/111062 [ Linux Win Debug ] accessibility/svg-remote-element.html [ Failure ]
 
 # -----------------------------------------------------------------
 # Test failures with Skia GPU rendering of canvas 2D
@@ -3838,7 +3838,7 @@ crbug.com/145087 [ Android ] compositing/geometry/fixed-position-composited-swit
 crbug.com/145087 [ Android ] compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
 crbug.com/145087 [ Android ] compositing/reflections/nested-reflection-animated.html [ Failure Pass ]
 crbug.com/145087 [ Android ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure Pass ]
-crbug.com/145087 [ Android ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure Pass ]
+crbug.com/145087 [ Android Linux ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure Pass ]
 crbug.com/145087 [ Android ] compositing/rtl/rtl-iframe-fixed.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-switch.html [ Failure ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
@@ -3847,7 +3847,7 @@ crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/r
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure Pass ]
-crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure Pass ]
+crbug.com/145087 [ Android Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed.html [ Failure Pass ]
 
 # Failing media tests on Android.
