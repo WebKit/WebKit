@@ -965,6 +965,7 @@ void InputHandler::updateFormState()
     if (!m_nextFocusableTextElement && !m_previousFocusableTextElement) {
         m_hasSubmitButton = false;
         InputLog(Platform::LogLevelInfo, "InputHandler::updateFormState no valid elements found, clearing state.");
+    }
 }
 
 void InputHandler::focusNextField()

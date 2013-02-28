@@ -1,3 +1,21 @@
+2013-02-28  Alberto Garcia  <albgarcia@rim.com>
+
+        [BlackBerry] Misc build fixes
+        https://bugs.webkit.org/show_bug.cgi?id=110448
+
+        Reviewed by Rob Buis.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::executeJavaScript):
+        WebString was replaced with BlackBerry::Platform::String in r131316.
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+        Some webdatabase APIs are encapuslated in DatabaseManager since r137520.
+        (BlackBerry::WebKit::WebPagePrivate::postponeDocumentStyleRecalc):
+        Document::isPendingStyleRecalc() was renamed to hasPendingStyleRecalc() in r129844.
+        * WebKitSupport/InputHandler.cpp:
+        (BlackBerry::WebKit::InputHandler::updateFormState):
+        Add closing brace that was missing in r142482.
+
 2013-02-28  Xan Lopez  <xlopez@rim.com>
 
         [BlackBerry] DumpRenderTreeSupport: update the set position methods
