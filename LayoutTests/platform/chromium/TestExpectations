@@ -3650,8 +3650,7 @@ webkit.org/b/90896 [ Win Debug ] fast/js/dfg-cross-global-object-inline-new-arra
 
 webkit.org/b/90900 [ SnowLeopard Lion ] tables/mozilla_expected_failures/other/empty_cells.html [ Failure Pass ]
 
-webkit.org/b/90980 [ Android Linux Mac Debug ] fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
-webkit.org/b/90980 [ Win ] fast/forms/textarea/textarea-state-restore.html [ Pass Timeout ]
+webkit.org/b/90980 fast/forms/textarea/textarea-state-restore.html [ Pass Failure Timeout ]
 
 webkit.org/b/91183 http/tests/w3c/webperf/approved/navigation-timing/html/test_performance_attributes_exist_in_object.html [ Failure Pass ]
 webkit.org/b/91183 http/tests/w3c/webperf/approved/HighResolutionTime/test_cross_frame_start.html [ Failure Pass ]
@@ -4422,7 +4421,7 @@ webkit.org/b/110851 platform/chromium/virtual/softwarecompositing/repaint/page-s
 # Impl-side scrolling is broken for RTL. Causing impl-side scrollbar artifacts.
 crbug.com/175926 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
 crbug.com/175926 [ Linux ] compositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
-crbug.com/175926 [ Linux ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
+crbug.com/175926 [ Linux Win ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
 crbug.com/175926 [ Linux Win ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow-scrolled.html [ Failure ImageOnlyFailure ]
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-absolute-overflow.html [ Failure ImageOnlyFailure ]
