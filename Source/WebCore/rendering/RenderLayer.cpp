@@ -4368,8 +4368,6 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
     }
     offset.moveBy(translationOffset);
 
-    offset.moveBy(translationOffset);
-
     RenderObject* containerRenderer = containerLayer ? containerLayer->renderer() : 0;
     if (renderer()->shouldUseTransformFromContainer(containerRenderer)) {
         TransformationMatrix containerTransform;
