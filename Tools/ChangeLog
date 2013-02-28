@@ -1,3 +1,17 @@
+2013-02-27  Kiran Muppala  <cmuppala@apple.com>
+
+        Initialize page visibility after creating WebKitTestRunner WebView on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=111025
+
+        Reviewed by Simon Fraser.
+
+        Set page visibility to "visible" after creating WebView to override
+        visibility state inferred from window occlusion notifications on Mac.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions): Add call to
+        setVisibilityState.
+
 2013-02-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge PageLoadingPerfTest into ReplayPerfTest

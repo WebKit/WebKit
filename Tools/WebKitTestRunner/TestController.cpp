@@ -482,6 +482,10 @@ void TestController::createWebViewWithOptions(WKDictionaryRef options)
         0, // unableToImplementPolicy
     };
     WKPageSetPagePolicyClient(m_mainWebView->page(), &pagePolicyClient);
+
+#if PLATFORM(MAC) && __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    setVisibilityState(kWKPageVisibilityStateVisible, true);
+#endif
 }
 
 void TestController::ensureViewSupportsOptions(WKDictionaryRef options)
