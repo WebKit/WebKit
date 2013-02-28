@@ -4446,11 +4446,13 @@ webkit.org/b/110915 [ Linux ] platform/chromium-linux/fast/text/chromium-linux-f
 webkit.org/b/110540 [ Linux ] fast/text/international/thai-line-breaks.html [ ImageOnlyFailure Pass ]
 
 # These tests are timing out since r144032
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-template-data.html [ Timeout ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests1-data.html [ Timeout ]
-webkit.org/b/110876 [ Debug Win Lion ] html5lib/generated/run-tests10-data.html [ Timeout  ]
-webkit.org/b/110876 html5lib/generated/run-tests16-data.html [ Timeout ]
-webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests19-data.html [ Timeout ]
+webkit.org/b/110876 html5lib/generated/run-template-data.html [ Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests1-data.html [ Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests2-data.html [ Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests10-data.html [ Slow  ]
+webkit.org/b/110876 html5lib/generated/run-tests16-data.html [ Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests18-data.html [ Slow ]
+webkit.org/b/110876 html5lib/generated/run-tests19-data.html [ Slow ]
 # These html5lib/ tests are also failing
 webkit.org/b/110876 [ Debug Win ] html5lib/generated/run-tests10-write.html [ Pass Crash ]
 webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests16-write.html [ Pass Crash ]
