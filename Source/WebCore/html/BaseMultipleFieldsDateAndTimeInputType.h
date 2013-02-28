@@ -78,6 +78,7 @@ private:
     // InputType functions
     virtual String badInputText() const OVERRIDE;
     virtual void blur() OVERRIDE FINAL;
+    virtual PassRefPtr<RenderStyle> customStyleForRenderer(PassRefPtr<RenderStyle>) OVERRIDE;
     virtual void createShadowSubtree() OVERRIDE FINAL;
     virtual void destroyShadowSubtree() OVERRIDE FINAL;
     virtual void disabledAttributeChanged() OVERRIDE FINAL;
@@ -93,7 +94,6 @@ private:
     virtual void restoreFormControlState(const FormControlState&) OVERRIDE FINAL;
     virtual FormControlState saveFormControlState() const OVERRIDE FINAL;
     virtual void setValue(const String&, bool valueChanged, TextFieldEventBehavior) OVERRIDE FINAL;
-    virtual bool shouldApplyLocaleDirection() const OVERRIDE;
     virtual bool shouldUseInputMethod() const OVERRIDE FINAL;
     virtual void stepAttributeChanged() OVERRIDE FINAL;
     virtual void updateInnerTextValue() OVERRIDE FINAL;

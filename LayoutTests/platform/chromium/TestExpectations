@@ -3993,6 +3993,9 @@ webkit.org/b/11645 [ Mac Android ] fast/table/025.html [ Failure ]
 webkit.org/b/98687 fast/css-generated-content/table-row-group-to-inline.html [ Failure ]
 webkit.org/b/104595 fast/css/empty-generated-content.html [ Failure ]
 
+# Needs rebaseline
+webkit.org/b/110974 fast/forms/date/date-appearance-basic.html [ ImageOnlyFailure ]
+
 # These are real failues due to 95121.
 # This is spilling caused by LANCZOS3 scaling algorithm that samples outside the source rect.
 webkit.org/b/95121 [ Win Mac Android ] fast/images/pixel-crack-image-background-webkit-transform-scale.html [ ImageOnlyFailure ]

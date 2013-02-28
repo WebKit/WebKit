@@ -914,6 +914,7 @@ input[type="color"][list]::-webkit-color-swatch {
 
 #if defined(ENABLE_CALENDAR_PICKER) && ENABLE_CALENDAR_PICKER
 input::-webkit-calendar-picker-indicator {
+    display: inline-block;
     width: 0.66em;
     height: 0.66em;
     padding: 0.17em 0.34em;

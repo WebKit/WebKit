@@ -466,6 +466,11 @@ RenderObject* InputType::createRenderer(RenderArena*, RenderStyle* style) const
     return RenderObject::createObject(element(), style);
 }
 
+PassRefPtr<RenderStyle> InputType::customStyleForRenderer(PassRefPtr<RenderStyle> originalStyle)
+{
+    return originalStyle;
+}
+
 void InputType::blur()
 {
     element()->defaultBlur();
@@ -733,11 +738,6 @@ Icon* InputType::icon() const
 {
     ASSERT_NOT_REACHED();
     return 0;
-}
-
-bool InputType::shouldApplyLocaleDirection() const
-{
-    return false;
 }
 
 bool InputType::shouldResetOnDocumentActivation()

@@ -1963,15 +1963,7 @@ void HTMLInputElement::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) con
 #if ENABLE(INPUT_MULTIPLE_FIELDS_UI)
 PassRefPtr<RenderStyle> HTMLInputElement::customStyleForRenderer()
 {
-    RefPtr<RenderStyle> originalStyle = document()->styleResolver()->styleForElement(this);
-    if (!m_inputType->shouldApplyLocaleDirection())
-        return originalStyle.release();
-    TextDirection contentDirection = locale().isRTL() ? RTL : LTR;
-    if (originalStyle->direction() == contentDirection)
-        return originalStyle.release();
-    RefPtr<RenderStyle> style = RenderStyle::clone(originalStyle.get());
-    style->setDirection(contentDirection);
-    return style.release();
+    return m_inputType->customStyleForRenderer(document()->styleResolver()->styleForElement(this));
 }
 #endif
 
