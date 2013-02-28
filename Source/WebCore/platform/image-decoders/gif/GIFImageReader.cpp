@@ -374,10 +374,9 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
     // At the beginning of each iteration, dataPosition will be advanced by m_bytesToConsume to
     // point to the next component. len will be decremented accordingly.
     while (len >= m_bytesToConsume) {
-        // FIXME: Rename this variable to currentComponent.
-        const unsigned char* q = data(dataPosition);
+        const unsigned char* currentComponent = data(dataPosition);
 
-        // Mark the current component as consumed. Note that q will remain pointed at this
+        // Mark the current component as consumed. Note that currentComponent will remain pointed at this
         // component until the next loop iteration.
         dataPosition += m_bytesToConsume;
         len -= m_bytesToConsume;
@@ -385,14 +384,14 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
         switch (m_state) {
         case GIFLZW:
             // m_bytesToConsume is the current component size because it hasn't been updated.
-            if (!doLZW(q, m_bytesToConsume))
+            if (!doLZW(currentComponent, m_bytesToConsume))
                 return false; // If doLZW() encountered an error, it has already called m_client->setFailed().
             GETN(1, GIFSubBlock);
             break;
 
         case GIFLZWStart: {
             // Initialize LZW parser/decoder.
-            int datasize = *q;
+            int datasize = *currentComponent;
 
             // Since we use a codesize of 1 more than the datasize, we need to ensure
             // that our datasize is strictly less than the MAX_LZW_BITS value (12).
@@ -432,9 +431,9 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
 
         case GIFType: {
             // All GIF files begin with "GIF87a" or "GIF89a".
-            if (!strncmp((char*)q, "GIF89a", 6))
+            if (!strncmp((char*)currentComponent, "GIF89a", 6))
                 m_version = 89;
-            else if (!strncmp((char*)q, "GIF87a", 6))
+            else if (!strncmp((char*)currentComponent, "GIF87a", 6))
                 m_version = 87;
             else
                 return m_client ? m_client->setFailed() : false;
@@ -446,17 +445,17 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             // This is the height and width of the "screen" or frame into which images are rendered. The
             // individual images can be smaller than the screen size and located with an origin anywhere
             // within the screen.
-            m_screenWidth = GETINT16(q);
-            m_screenHeight = GETINT16(q + 2);
+            m_screenWidth = GETINT16(currentComponent);
+            m_screenHeight = GETINT16(currentComponent + 2);
 
             // CALLBACK: Inform the decoderplugin of our size.
             if (m_client && !m_client->setSize(m_screenWidth, m_screenHeight))
                 return false;
 
-            m_screenBgcolor = q[5];
-            m_globalColormapSize = 2 << (q[4] & 0x07);
+            m_screenBgcolor = currentComponent[5];
+            m_globalColormapSize = 2 << (currentComponent[4] & 0x07);
 
-            if ((q[4] & 0x80) && m_globalColormapSize > 0) { /* global map */
+            if ((currentComponent[4] & 0x80) && m_globalColormapSize > 0) { /* global map */
                 // Get the global colormap
                 const size_t globalColormapBytes = 3 * m_globalColormapSize;
                 m_globalColormapPosition = dataPosition;
@@ -474,9 +473,9 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
 
             GETN(1, GIFImageStart);
 
-            // q[6] = Pixel Aspect Ratio
+            // currentComponent[6] = Pixel Aspect Ratio
             //   Not used
-            //   float aspect = (float)((q[6] + 15) / 64.0);
+            //   float aspect = (float)((currentComponent[6] + 15) / 64.0);
             break;
         }
 
@@ -487,12 +486,12 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
         }
 
         case GIFImageStart: {
-            if (*q == ';') { // terminator.
+            if (*currentComponent == ';') { // terminator.
                 GETN(0, GIFDone);
                 break;
             }
 
-            if (*q == '!') { // extension.
+            if (*currentComponent == '!') { // extension.
                 GETN(2, GIFExtension);
                 break;
             }
@@ -502,7 +501,7 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             // between blocks. The GIF87a spec tells us to keep reading
             // until we find an image separator, but GIF89a says such
             // a file is corrupt. We follow GIF89a and bail out.
-            if (*q != ',')
+            if (*currentComponent != ',')
                 return m_client ? m_client->setFailed() : false;
 
             GETN(9, GIFImageHeader);
@@ -510,7 +509,7 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
         }
 
         case GIFExtension: {
-            size_t bytesInBlock = q[1];
+            size_t bytesInBlock = currentComponent[1];
             GIFState es = GIFSkipBlock;
 
             // The GIF spec mandates lengths for three of the extensions below.
@@ -528,7 +527,7 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             // bytes available, and if we don't ensure that, they could read off the
             // end of the heap buffer. (In this case, it's likely the GIF is corrupt
             // and we'll soon fail to decode anyway.)
-            switch (*q) {
+            switch (*currentComponent) {
             case 0xf9:
                 es = GIFControlExtension;
                 bytesInBlock = std::max(bytesInBlock, static_cast<size_t>(4));
@@ -557,10 +556,10 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
         }
 
         case GIFConsumeBlock: {
-            if (!*q)
+            if (!*currentComponent)
                 GETN(1, GIFImageStart);
             else
-                GETN(*q, GIFSkipBlock);
+                GETN(*currentComponent, GIFSkipBlock);
             break;
         }
 
@@ -576,8 +575,8 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             }
 
             if (m_frameContext) {
-                if (*q & 0x1) {
-                    m_frameContext->tpixel = q[3];
+                if (*currentComponent & 0x1) {
+                    m_frameContext->tpixel = currentComponent[3];
                     m_frameContext->isTransparent = true;
                 } else {
                     m_frameContext->isTransparent = false;
@@ -585,22 +584,22 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
                 }
                 // NOTE: This relies on the values in the FrameDisposalMethod enum
                 // matching those in the GIF spec!
-                int disposalMethod = ((*q) >> 2) & 0x7;
+                int disposalMethod = ((*currentComponent) >> 2) & 0x7;
                 m_frameContext->disposalMethod = (WebCore::ImageFrame::FrameDisposalMethod)disposalMethod;
 
                 // Some specs say 3rd bit (value 4), other specs say value 3
                 // Let's choose 3 (the more popular)
                 if (disposalMethod == 4)
                     m_frameContext->disposalMethod = WebCore::ImageFrame::DisposeOverwritePrevious;
-                m_frameContext->delayTime = GETINT16(q + 1) * 10;
+                m_frameContext->delayTime = GETINT16(currentComponent + 1) * 10;
             }
             GETN(1, GIFConsumeBlock);
             break;
         }
 
         case GIFCommentExtension: {
-            if (*q)
-                GETN(*q, GIFConsumeComment);
+            if (*currentComponent)
+                GETN(*currentComponent, GIFConsumeComment);
             else
                 GETN(1, GIFImageStart);
             break;
@@ -613,7 +612,7 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
 
         case GIFApplicationExtension: {
             // Check for netscape application extension.
-            if (!strncmp((char*)q, "NETSCAPE2.0", 11) || !strncmp((char*)q, "ANIMEXTS1.0", 11))
+            if (!strncmp((char*)currentComponent, "NETSCAPE2.0", 11) || !strncmp((char*)currentComponent, "ANIMEXTS1.0", 11))
                 GETN(1, GIFNetscapeExtensionBlock);
             else
                 GETN(1, GIFConsumeBlock);
@@ -622,8 +621,8 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
 
         // Netscape-specific GIF extension: animation looping.
         case GIFNetscapeExtensionBlock: {
-            if (*q)
-                GETN(*q, GIFConsumeNetscapeExtension);
+            if (*currentComponent)
+                GETN(*currentComponent, GIFConsumeNetscapeExtension);
             else
                 GETN(1, GIFImageStart);
             break;
@@ -631,11 +630,11 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
 
         // Parse netscape-specific application extensions
         case GIFConsumeNetscapeExtension: {
-            int netscapeExtension = q[0] & 7;
+            int netscapeExtension = currentComponent[0] & 7;
 
             // Loop entire animation specified # of times. Only read the loop count during the first iteration.
             if (netscapeExtension == 1) {
-                m_loopCount = GETINT16(q + 1);
+                m_loopCount = GETINT16(currentComponent + 1);
 
                 // Zero loop count is infinite animation loop request.
                 if (!m_loopCount)
@@ -660,12 +659,12 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             unsigned height, width, xOffset, yOffset;
 
             /* Get image offsets, with respect to the screen origin */
-            xOffset = GETINT16(q);
-            yOffset = GETINT16(q + 2);
+            xOffset = GETINT16(currentComponent);
+            yOffset = GETINT16(currentComponent + 2);
 
             /* Get image width and height. */
-            width  = GETINT16(q + 4);
-            height = GETINT16(q + 6);
+            width  = GETINT16(currentComponent + 4);
+            height = GETINT16(currentComponent + 6);
 
             /* Work around broken GIF files where the logical screen
              * size has weird width or height.  We assume that GIF87a
@@ -726,7 +725,7 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
                 if (m_screenHeight < height)
                     m_screenHeight = height;
 
-                if (q[8] & 0x40) {
+                if (currentComponent[8] & 0x40) {
                     m_frameContext->interlaced = true;
                     m_frameContext->ipass = 1;
                 } else {
@@ -752,12 +751,12 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
                 m_frameContext->rowend = m_frameContext->rowbuf + m_frameContext->width;
                 m_frameContext->rowp = m_frameContext->rowbuf;
 
-                // bits per pixel is q[8]&0x07
+                // bits per pixel is currentComponent[8]&0x07
             }
 
             // has a local colormap?
-            if (q[8] & 0x80) {
-                int numColors = 2 << (q[8] & 0x7);
+            if (currentComponent[8] & 0x80) {
+                int numColors = 2 << (currentComponent[8] & 0x7);
                 const size_t localColormapBytes = 3 * numColors;
 
                 // Switch to the new local palette after it loads
@@ -793,7 +792,7 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
 
         case GIFSubBlock: {
             // Still working on the same image: Process next LZW data block.
-            const size_t bytesInBlock = *q;
+            const size_t bytesInBlock = *currentComponent;
             if (bytesInBlock) {
                 // Make sure there are still rows left. If the GIF data
                 // is corrupt, we may not get an explicit terminator.
