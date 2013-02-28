@@ -16,7 +16,7 @@ SOURCES += \
     $$PWD/qt/PlatformUtilitiesQt.cpp \
     $$PWD/qt/PlatformWebViewQt.cpp
 
-LIBS += -L$${ROOT_BUILD_DIR}/Source/ThirdParty/gtest/$$activeBuildConfig() -lgtest
+LIBS += -L$${ROOT_BUILD_DIR}/Source/ThirdParty/gtest/$$targetSubDir() -lgtest
 
 DEFINES += ROOT_BUILD_DIR=\\\"$${ROOT_BUILD_DIR}\\\"
 

@@ -1,3 +1,15 @@
+2013-02-28  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][TestWebKitAPI] The activeBuildConfig() function has been replaced with targetSubDir()
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        Besides suppressing a warning about the non-existing function this
+        fixes the build if there is a subdirectory (eg. debug-and-release).
+
+        * TestWebKitAPI/InjectedBundle.pri:
+        * TestWebKitAPI/TestWebKitAPI.pri:
+
 2013-02-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [EFL][WTR] WTR cannot load injected bundle

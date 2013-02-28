@@ -50,7 +50,7 @@ WEBKIT += wtf javascriptcore webcore webkit2
 
 CONFIG += plugin rpath compiling_thirdparty_code
 
-LIBS += -L$${ROOT_BUILD_DIR}/Source/ThirdParty/gtest/$$activeBuildConfig() -lgtest
+LIBS += -L$${ROOT_BUILD_DIR}/Source/ThirdParty/gtest/$$targetSubDir() -lgtest
 
 DEFINES += APITEST_SOURCE_DIR=\\\"$$PWD\\\" \
            ROOT_BUILD_DIR=\\\"$${ROOT_BUILD_DIR}\\\"
