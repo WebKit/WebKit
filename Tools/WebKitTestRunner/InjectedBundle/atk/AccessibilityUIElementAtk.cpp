@@ -1129,6 +1129,10 @@ PassRefPtr<AccessibilityTextMarker> AccessibilityUIElement::textMarkerForIndex(i
     return 0;
 }
 
+void AccessibilityUIElement::scrollToMakeVisible()
+{
+    // FIXME: implement
+}
 
 } // namespace WTR
 

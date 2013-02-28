@@ -1,3 +1,18 @@
+2013-02-28  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [EFL][WTR] WTR cannot load injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=111063
+
+        Reviewed by Csaba Osztrogonác.
+
+        WTR was not able to load injected bundle because of undefined 
+        symbols for AccessibilityUIElement::scrollToMakeVisible(). 
+        Adding empty implementation of this function to AccessibilityUIElementAtk.cpp
+        solves the problem.
+
+        * WebKitTestRunner/InjectedBundle/atk/AccessibilityUIElementAtk.cpp:
+        (WTR::AccessibilityUIElement::scrollToMakeVisible):
+
 2013-02-28  Alberto Garcia  <albgarcia@rim.com>
 
         [BlackBerry] TestRunnerBlackBerry: remove layerTreeAsText, it's gone from upstream
