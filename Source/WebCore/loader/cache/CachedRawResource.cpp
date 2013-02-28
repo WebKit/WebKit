@@ -128,6 +128,7 @@ void CachedRawResource::willSendRequest(ResourceRequest& request, const Resource
 
 void CachedRawResource::responseReceived(const ResourceResponse& response)
 {
+    CachedResourceHandle<CachedRawResource> protect(this);
     if (!m_identifier)
         m_identifier = m_loader->identifier();
     CachedResource::responseReceived(response);
