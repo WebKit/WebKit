@@ -1,3 +1,25 @@
+2013-02-28  Anders Carlsson  <andersca@apple.com>
+
+        Implement more StorageAreaProxy member functions
+        https://bugs.webkit.org/show_bug.cgi?id=111103
+
+        Reviewed by Sam Weinig.
+
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::securityOrigin):
+        * Shared/SecurityOriginData.h:
+        Add helper to create a WebCore::SecurityOrigin from a SecurityOriginData object.
+
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::key):
+        Fill the storage map and call through to StorageMap::key.
+
+        (WebKit::StorageAreaProxy::contains):
+        Fill the storage map and call through to StorageMap::contains.
+
+        (WebKit::StorageAreaProxy::memoryBytesUsedByCache):
+        Return 0; this matches StorageAreaImpl.
+
 2013-02-28  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: PDF orientation isn't respected when printing or print-previewing

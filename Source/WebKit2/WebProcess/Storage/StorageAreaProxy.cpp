@@ -83,11 +83,19 @@ unsigned StorageAreaProxy::length(ExceptionCode& ec, Frame* sourceFrame)
     return m_storageMap->length();
 }
 
-String StorageAreaProxy::key(unsigned index, ExceptionCode&, Frame* sourceFrame)
+String StorageAreaProxy::key(unsigned index, ExceptionCode& ec, Frame* sourceFrame)
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
-    return String();
+    ec = 0;
+    if (!canAccessStorage(sourceFrame)) {
+        ec = SECURITY_ERR;
+        return String();
+    }
+    if (disabledByPrivateBrowsingInFrame(sourceFrame))
+        return String();
+
+    loadValuesIfNeeded();
+
+    return m_storageMap->key(index);
 }
 
 String StorageAreaProxy::getItem(const String& key, ExceptionCode& ec, Frame* sourceFrame)
@@ -149,10 +157,19 @@ void StorageAreaProxy::clear(ExceptionCode&, Frame* sourceFrame)
     ASSERT_NOT_REACHED();
 }
 
-bool StorageAreaProxy::contains(const String& key, ExceptionCode&, Frame* sourceFrame)
+bool StorageAreaProxy::contains(const String& key, ExceptionCode& ec, Frame* sourceFrame)
 {
-    // FIXME: Implement this.
-    return false;
+    ec = 0;
+    if (!canAccessStorage(sourceFrame)) {
+        ec = SECURITY_ERR;
+        return false;
+    }
+    if (disabledByPrivateBrowsingInFrame(sourceFrame))
+        return false;
+
+    loadValuesIfNeeded();
+
+    return m_storageMap->contains(key);
 }
 
 bool StorageAreaProxy::canAccessStorage(Frame* frame)
@@ -162,8 +179,6 @@ bool StorageAreaProxy::canAccessStorage(Frame* frame)
 
 size_t StorageAreaProxy::memoryBytesUsedByCache()
 {
-    // FIXME: Implement this.
-    ASSERT_NOT_REACHED();
     return 0;
 }
 

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "StorageManager.h"
 
+#include "SecurityOriginData.h"
 #include "StorageAreaProxyMessages.h"
 #include "StorageManagerMessages.h"
 #include "WebProcessProxy.h"

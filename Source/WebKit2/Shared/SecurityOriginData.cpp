@@ -46,6 +46,11 @@ SecurityOriginData SecurityOriginData::fromSecurityOrigin(SecurityOrigin* securi
     return securityOriginData;
 }
 
+PassRefPtr<SecurityOrigin> SecurityOriginData::securityOrigin() const
+{
+    return SecurityOrigin::create(protocol, host, port);
+}
+
 void SecurityOriginData::encode(CoreIPC::ArgumentEncoder& encoder) const
 {
     encoder << protocol;
