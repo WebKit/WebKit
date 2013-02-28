@@ -40,6 +40,6 @@
    [V8MeasureAs=LegacyTextNotifications] Notification createNotification(in DOMString iconUrl, in DOMString title, in DOMString body) raises(DOMException);
 
    int checkPermission();
-   [Custom] void requestPermission(in VoidCallback callback);
+   void requestPermission(in [Optional, Callback] VoidCallback callback);
 };
 

@@ -83,7 +83,7 @@ public:
 
 #if ENABLE(LEGACY_NOTIFICATIONS)
     int checkPermission();
-    void requestPermission(PassRefPtr<VoidCallback>);
+    void requestPermission(PassRefPtr<VoidCallback> = 0);
 #endif
 
     virtual void stop() OVERRIDE;

@@ -131,7 +131,8 @@ void NotificationCenter::NotificationRequestCallback::startTimer()
 
 void NotificationCenter::NotificationRequestCallback::timerFired(Timer<NotificationCenter::NotificationRequestCallback>*)
 {
-    m_callback->handleEvent();
+    if (m_callback)
+        m_callback->handleEvent();
     m_notificationCenter->requestTimedOut(this);
 }
 
