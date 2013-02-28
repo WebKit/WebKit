@@ -31,107 +31,12 @@
 #include "config.h"
 #include "WebMediaSourceImpl.h"
 
-#include "MediaSourcePrivate.h"
+#include "MediaSourcePrivateImpl.h"
 #include "WebMediaSourceClient.h"
 
 #if ENABLE(MEDIA_SOURCE)
 
 namespace WebKit {
-
-class MediaSourcePrivateImpl : public WebCore::MediaSourcePrivate {
-public:
-    explicit MediaSourcePrivateImpl(PassOwnPtr<WebMediaSourceClient>);
-    virtual ~MediaSourcePrivateImpl() { }
-
-    // MediaSourcePrivate methods.
-    virtual WebCore::MediaSourcePrivate::AddIdStatus addId(const String& id, const String& type, const Vector<String>& codecs);
-    virtual bool removeId(const String& id);
-    virtual PassRefPtr<WebCore::TimeRanges> buffered(const String& id);
-    virtual bool append(const String& id, const unsigned char* data, unsigned length);
-    virtual bool abort(const String& id);
-    virtual double duration();
-    virtual void setDuration(double);
-    virtual void endOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus);
-    virtual bool setTimestampOffset(const String& id, double offset);
-
-private:
-    OwnPtr<WebKit::WebMediaSourceClient> m_client;
-};
-
-MediaSourcePrivateImpl::MediaSourcePrivateImpl(PassOwnPtr<WebKit::WebMediaSourceClient> client)
-    : m_client(client)
-{
-}
-
-WebCore::MediaSourcePrivate::AddIdStatus MediaSourcePrivateImpl::addId(const String& id, const String& type, const Vector<String>& codecs)
-{
-    if (!m_client)
-        return WebCore::MediaSourcePrivate::NotSupported;
-
-    return static_cast<WebCore::MediaSourcePrivate::AddIdStatus>(m_client->addId(id, type, codecs));
-}
-
-bool MediaSourcePrivateImpl::removeId(const String& id)
-{
-    if (!m_client)
-        return false;
-
-    return m_client->removeId(id);
-}
-
-PassRefPtr<WebCore::TimeRanges> MediaSourcePrivateImpl::buffered(const String& id)
-{
-    if (!m_client)
-        return WebCore::TimeRanges::create();
-
-    WebTimeRanges webRanges = m_client->buffered(id);
-    RefPtr<WebCore::TimeRanges> ranges = WebCore::TimeRanges::create();
-    for (size_t i = 0; i < webRanges.size(); ++i)
-        ranges->add(webRanges[i].start, webRanges[i].end);
-    return ranges.release();
-}
-
-bool MediaSourcePrivateImpl::append(const String& id, const unsigned char* data, unsigned length)
-{
-    if (!m_client)
-        return false;
-
-    return m_client->append(id, data, length);
-}
-
-bool MediaSourcePrivateImpl::abort(const String& id)
-{
-    if (!m_client)
-        return false;
-
-    return m_client->abort(id);
-}
-
-double MediaSourcePrivateImpl::duration()
-{
-    if (!m_client)
-        return std::numeric_limits<float>::quiet_NaN();
-    return m_client->duration();
-}
-
-void MediaSourcePrivateImpl::setDuration(double duration)
-{
-    if (m_client)
-        m_client->setDuration(duration);
-}
-
-void MediaSourcePrivateImpl::endOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status)
-{
-    if (m_client)
-        m_client->endOfStream(static_cast<WebMediaSourceClient::EndOfStreamStatus>(status));
-}
-
-bool MediaSourcePrivateImpl::setTimestampOffset(const String& id, double offset)
-{
-    if (!m_client)
-        return false;
-    return m_client->setTimestampOffset(id, offset);
-}
 
 
 WebMediaSourceImpl::WebMediaSourceImpl(PassRefPtr<WebCore::MediaSource> mediaSource)

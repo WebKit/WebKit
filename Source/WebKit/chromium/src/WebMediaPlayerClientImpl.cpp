@@ -21,6 +21,7 @@
 #include "PlatformContextSkia.h"
 #include "RenderView.h"
 #include "TimeRanges.h"
+#include "UUID.h"
 #include "WebAudioSourceProvider.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
@@ -28,6 +29,7 @@
 #include "WebMediaPlayer.h"
 #include "WebMediaSourceClient.h"
 #include "WebMediaSourceImpl.h"
+#include "WebSourceBuffer.h"
 #include "WebViewImpl.h"
 #include <public/Platform.h>
 #include <public/WebCString.h>
@@ -60,18 +62,32 @@ public:
     virtual ~WebMediaSourceClientImpl();
 
     // WebMediaSourceClient methods.
-    virtual AddIdStatus addId(const WebString& id, const WebString& type, const WebVector<WebString>& codecs);
-    virtual bool removeId(const WebString& id);
-    virtual WebTimeRanges buffered(const WebString& id);
-    virtual bool append(const WebString& id, const unsigned char* data, unsigned length);
-    virtual bool abort(const WebString& id);
+    virtual AddStatus addSourceBuffer(const WebString& type, const WebVector<WebString>& codecs, WebSourceBuffer**);
     virtual double duration();
     virtual void setDuration(double);
     virtual void endOfStream(EndOfStreamStatus);
-    virtual bool setTimestampOffset(const WebString& id, double offset);
 
 private:
     WebMediaPlayer* m_webMediaPlayer;
+};
+
+// FIXME: Remove this class once the Chromium code implements its own
+// version of WebMediaPlayer::load(WebURL, WebMediaSource, CORSMode).
+// https://bugs.webkit.org/show_bug.cgi?id=110371
+class WebSourceBufferImpl : public WebSourceBuffer {
+public:
+    WebSourceBufferImpl(WebMediaPlayer*, const WebString& id);
+
+    // WebSourceBuffer methods.
+    virtual WebTimeRanges buffered();
+    virtual void append(const unsigned char* data, unsigned length);
+    virtual bool abort();
+    virtual bool setTimestampOffset(double);
+    virtual void removedFromMediaSource();
+
+private:
+    WebMediaPlayer* m_webMediaPlayer;
+    WebString m_id;
 };
 
 WebMediaSourceClientImpl::WebMediaSourceClientImpl(WebMediaPlayer* webMediaPlayer)
@@ -83,29 +99,15 @@ WebMediaSourceClientImpl::~WebMediaSourceClientImpl()
 {
 }
 
-WebMediaSourceClient::AddIdStatus WebMediaSourceClientImpl::addId(const WebString& id, const WebString& type, const WebVector<WebString>& codecs)
+WebMediaSourceClient::AddStatus WebMediaSourceClientImpl::addSourceBuffer(const WebString& type, const WebVector<WebString>& codecs,
+    WebSourceBuffer** sourceBuffer)
 {
-    return static_cast<WebMediaSourceClient::AddIdStatus>(m_webMediaPlayer->sourceAddId(id, type, codecs));
-}
+    WebString id = WebCore::createCanonicalUUIDString();
+    WebMediaSourceClient::AddStatus result = static_cast<WebMediaSourceClient::AddStatus>(m_webMediaPlayer->sourceAddId(id, type, codecs));
+    if (result == WebMediaSourceClient::AddStatusOk)
+        *sourceBuffer = new WebSourceBufferImpl(m_webMediaPlayer, id);
 
-bool WebMediaSourceClientImpl::removeId(const WebString& id)
-{
-    return m_webMediaPlayer->sourceRemoveId(id);
-}
-
-WebTimeRanges WebMediaSourceClientImpl::buffered(const WebString& id)
-{
-    return m_webMediaPlayer->sourceBuffered(id);
-}
-
-bool WebMediaSourceClientImpl::append(const WebString& id, const unsigned char* data, unsigned length)
-{
-    return m_webMediaPlayer->sourceAppend(id, data, length);
-}
-
-bool WebMediaSourceClientImpl::abort(const WebString& id)
-{
-    return m_webMediaPlayer->sourceAbort(id);
+    return result;
 }
 
 double WebMediaSourceClientImpl::duration()
@@ -123,9 +125,39 @@ void WebMediaSourceClientImpl::endOfStream(EndOfStreamStatus status)
     m_webMediaPlayer->sourceEndOfStream(static_cast<WebMediaPlayer::EndOfStreamStatus>(status));
 }
 
-bool WebMediaSourceClientImpl::setTimestampOffset(const WebString& id, double offset)
+WebSourceBufferImpl::WebSourceBufferImpl(WebMediaPlayer* webMediaPlayer, const WebString& id)
+    : m_webMediaPlayer(webMediaPlayer)
+    , m_id(id)
 {
-    return m_webMediaPlayer->sourceSetTimestampOffset(id, offset);
+}
+
+WebTimeRanges WebSourceBufferImpl::buffered()
+{
+    return m_webMediaPlayer->sourceBuffered(m_id);
+}
+
+void WebSourceBufferImpl::append(const unsigned char* data, unsigned length)
+{
+    m_webMediaPlayer->sourceAppend(m_id, data, length);
+}
+
+bool WebSourceBufferImpl::abort()
+{
+    return m_webMediaPlayer->sourceAbort(m_id);
+}
+
+bool WebSourceBufferImpl::setTimestampOffset(double offset)
+{
+    return m_webMediaPlayer->sourceSetTimestampOffset(m_id, offset);
+}
+
+void WebSourceBufferImpl::removedFromMediaSource()
+{
+    if (!m_webMediaPlayer)
+        return;
+
+    m_webMediaPlayer->sourceRemoveId(m_id);
+    m_webMediaPlayer = 0;
 }
 
 static PassOwnPtr<WebMediaPlayer> createWebMediaPlayer(WebMediaPlayerClient* client, const WebURL& url, Frame* frame)

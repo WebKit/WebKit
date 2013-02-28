@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,62 +28,37 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SourceBufferList_h
-#define SourceBufferList_h
+#ifndef SourceBufferPrivateImpl_h
+#define SourceBufferPrivateImpl_h
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "EventTarget.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "SourceBufferPrivate.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class SourceBuffer;
-class GenericEventQueue;
+class WebSourceBuffer;
 
-class SourceBufferList : public RefCounted<SourceBufferList>, public EventTarget {
+class SourceBufferPrivateImpl : public WebCore::SourceBufferPrivate {
 public:
-    static PassRefPtr<SourceBufferList> create(ScriptExecutionContext* context, GenericEventQueue* asyncEventQueue)
-    {
-        return adoptRef(new SourceBufferList(context, asyncEventQueue));
-    }
-    virtual ~SourceBufferList() { }
+    explicit SourceBufferPrivateImpl(PassOwnPtr<WebSourceBuffer>);
+    virtual ~SourceBufferPrivateImpl() { }
 
-    unsigned long length() const;
-    SourceBuffer* item(unsigned index) const;
-
-    void add(PassRefPtr<SourceBuffer>);
-    bool remove(SourceBuffer*);
-    void clear();
-
-    // EventTarget interface
-    virtual const AtomicString& interfaceName() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
-
-    using RefCounted<SourceBufferList>::ref;
-    using RefCounted<SourceBufferList>::deref;
-
-protected:
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+    // SourceBufferPrivate methods.
+    virtual PassRefPtr<WebCore::TimeRanges> buffered();
+    virtual void append(const unsigned char* data, unsigned length);
+    virtual bool abort();
+    virtual bool setTimestampOffset(double);
+    virtual void removedFromMediaSource();
 
 private:
-    SourceBufferList(ScriptExecutionContext*, GenericEventQueue*);
-
-    void createAndFireEvent(const AtomicString&);
-
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-
-    EventTargetData m_eventTargetData;
-    ScriptExecutionContext* m_scriptExecutionContext;
-    GenericEventQueue* m_asyncEventQueue;
-
-    Vector<RefPtr<SourceBuffer> > m_list;
+    OwnPtr<WebSourceBuffer> m_sourceBuffer;
 };
 
-} // namespace WebCore
+
+}
 
 #endif
 #endif

@@ -27,33 +27,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MediaSourcePrivate_h
-#define MediaSourcePrivate_h
 
-#if ENABLE(MEDIA_SOURCE)
+#ifndef WebSourceBuffer_h
+#define WebSourceBuffer_h
 
-#include <wtf/Forward.h>
+#include "WebTimeRange.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class SourceBufferPrivate;
-
-class MediaSourcePrivate {
+class WebSourceBuffer {
 public:
-    typedef Vector<String, 0> CodecsArray;
+    virtual ~WebSourceBuffer() { }
 
-    MediaSourcePrivate() { }
-    virtual ~MediaSourcePrivate() { }
-
-    enum AddStatus { Ok, NotSupported, ReachedIdLimit };
-    virtual AddStatus addSourceBuffer(const String& type, const CodecsArray&, OwnPtr<SourceBufferPrivate>*) = 0;
-    virtual double duration() = 0;
-    virtual void setDuration(double) = 0;
-    enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
-    virtual void endOfStream(EndOfStreamStatus) = 0;
+    virtual WebTimeRanges buffered() = 0;
+    virtual void append(const unsigned char* data, unsigned length) = 0;
+    virtual bool abort() = 0;
+    virtual bool setTimestampOffset(double) = 0;
+    virtual void removedFromMediaSource() = 0;
 };
 
-}
+} // namespace WebKit
 
-#endif
 #endif

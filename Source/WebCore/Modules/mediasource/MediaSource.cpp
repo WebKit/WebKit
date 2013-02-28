@@ -35,6 +35,7 @@
 
 #include "ContentType.h"
 #include "Event.h"
+#include "SourceBufferPrivate.h"
 #include "TimeRanges.h"
 #include <wtf/Uint8Array.h>
 
@@ -131,21 +132,18 @@ SourceBuffer* MediaSource::addSourceBuffer(const String& type, ExceptionCode& ec
     }
 
     // 5. Create a new SourceBuffer object and associated resources.
-    String id = m_sourceBuffers->generateUniqueId();
-    if (id == emptyString()) {
-        ec = QUOTA_EXCEEDED_ERR;
-        return 0;
-    }
+    OwnPtr<SourceBufferPrivate> sourceBufferPrivate;
+    switch (m_private->addSourceBuffer(contentType.type(), codecs, &sourceBufferPrivate)) {
+    case MediaSourcePrivate::Ok: {
+        ASSERT(sourceBufferPrivate);
+        RefPtr<SourceBuffer> buffer = SourceBuffer::create(sourceBufferPrivate.release(), this);
 
-    RefPtr<SourceBuffer> buffer = SourceBuffer::create(id, this);
-
-    switch (m_private->addId(buffer->id(), contentType.type(), codecs)) {
-    case MediaSourcePrivate::Ok:
         // 6. Add the new object to sourceBuffers and fire a addsourcebuffer on that object.
         m_sourceBuffers->add(buffer);
         m_activeSourceBuffers->add(buffer);
         // 7. Return the new object to the caller.
         return buffer.get();
+    }
     case MediaSourcePrivate::NotSupported:
         // 2 (cont). If type contains a MIME type ... that is not supported with the types 
         // specified for the other SourceBuffer objects in sourceBuffers, then throw
@@ -191,7 +189,6 @@ void MediaSource::removeSourceBuffer(SourceBuffer* buffer, ExceptionCode& ec)
 
     // 7. Destroy all resources for sourceBuffer.
     m_activeSourceBuffers->remove(buffer);
-    m_private->removeId(buffer->id());
 
     // 4. Remove track information from audioTracks, videoTracks, and textTracks for all tracks 
     // associated with sourceBuffer and fire a simple event named change on the modified lists.
@@ -261,62 +258,6 @@ void MediaSource::endOfStream(const String& error, ExceptionCode& ec)
     // 2. Change the readyState attribute value to "ended".
     setReadyState(endedKeyword());
     m_private->endOfStream(eosStatus);
-}
-
-PassRefPtr<TimeRanges> MediaSource::buffered(const String& id, ExceptionCode& ec) const
-{
-    if (!m_private || m_readyState == closedKeyword()) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
-    return m_private->buffered(id);
-}
-
-void MediaSource::append(const String& id, PassRefPtr<Uint8Array> data, ExceptionCode& ec)
-{
-    if (!data.get()) {
-        ec = INVALID_ACCESS_ERR;
-        return;
-    }
-
-    if (!m_private || m_readyState == closedKeyword()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    if (m_readyState == endedKeyword())
-        setReadyState(openKeyword());
-
-    if (!m_private->append(id, data->data(), data->length())) {
-        ec = SYNTAX_ERR;
-        return;
-    }
-}
-
-void MediaSource::abort(const String& id, ExceptionCode& ec)
-{
-    if (!m_private || m_readyState != openKeyword()) {
-        ec = INVALID_STATE_ERR;
-        return;
-    }
-
-    if (!m_private->abort(id))
-        ASSERT_NOT_REACHED();
-}
-
-bool MediaSource::setTimestampOffset(const String& id, double offset, ExceptionCode& ec)
-{
-    if (!m_private || m_readyState == closedKeyword()) {
-        ec = INVALID_STATE_ERR;
-        return false;
-    }
-
-    if (!m_private->setTimestampOffset(id, offset)) {
-        ec = INVALID_STATE_ERR;
-        return false;
-    }
-    return true;
 }
 
 void MediaSource::setPrivateAndOpen(PassOwnPtr<MediaSourcePrivate> mediaSourcePrivate)

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -28,62 +28,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SourceBufferList_h
-#define SourceBufferList_h
+#ifndef MediaSourcePrivateImpl_h
+#define MediaSourcePrivateImpl_h
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include "EventTarget.h"
-#include <wtf/RefCounted.h>
-#include <wtf/Vector.h>
+#include "MediaSourcePrivate.h"
+#include <wtf/OwnPtr.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class SourceBuffer;
-class GenericEventQueue;
+class WebMediaSourceClient;
 
-class SourceBufferList : public RefCounted<SourceBufferList>, public EventTarget {
+class MediaSourcePrivateImpl : public WebCore::MediaSourcePrivate {
 public:
-    static PassRefPtr<SourceBufferList> create(ScriptExecutionContext* context, GenericEventQueue* asyncEventQueue)
-    {
-        return adoptRef(new SourceBufferList(context, asyncEventQueue));
-    }
-    virtual ~SourceBufferList() { }
+    explicit MediaSourcePrivateImpl(PassOwnPtr<WebMediaSourceClient>);
+    virtual ~MediaSourcePrivateImpl() { }
 
-    unsigned long length() const;
-    SourceBuffer* item(unsigned index) const;
-
-    void add(PassRefPtr<SourceBuffer>);
-    bool remove(SourceBuffer*);
-    void clear();
-
-    // EventTarget interface
-    virtual const AtomicString& interfaceName() const OVERRIDE;
-    virtual ScriptExecutionContext* scriptExecutionContext() const OVERRIDE;
-
-    using RefCounted<SourceBufferList>::ref;
-    using RefCounted<SourceBufferList>::deref;
-
-protected:
-    virtual EventTargetData* eventTargetData() OVERRIDE;
-    virtual EventTargetData* ensureEventTargetData() OVERRIDE;
+    // MediaSourcePrivate methods.
+    virtual WebCore::MediaSourcePrivate::AddStatus addSourceBuffer(const String& type, const CodecsArray&,
+        OwnPtr<WebCore::SourceBufferPrivate>*);
+    virtual double duration();
+    virtual void setDuration(double);
+    virtual void endOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus);
 
 private:
-    SourceBufferList(ScriptExecutionContext*, GenericEventQueue*);
-
-    void createAndFireEvent(const AtomicString&);
-
-    virtual void refEventTarget() OVERRIDE { ref(); }
-    virtual void derefEventTarget() OVERRIDE { deref(); }
-
-    EventTargetData m_eventTargetData;
-    ScriptExecutionContext* m_scriptExecutionContext;
-    GenericEventQueue* m_asyncEventQueue;
-
-    Vector<RefPtr<SourceBuffer> > m_list;
+    OwnPtr<WebKit::WebMediaSourceClient> m_client;
 };
 
-} // namespace WebCore
+}
 
 #endif
+
 #endif

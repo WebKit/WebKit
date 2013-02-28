@@ -27,33 +27,63 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MediaSourcePrivate_h
-#define MediaSourcePrivate_h
+
+#include "config.h"
+#include "SourceBufferPrivateImpl.h"
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include <wtf/Forward.h>
+#include "WebSourceBuffer.h"
 
-namespace WebCore {
+namespace WebKit {
 
-class SourceBufferPrivate;
+SourceBufferPrivateImpl::SourceBufferPrivateImpl(PassOwnPtr<WebSourceBuffer> sourceBuffer)
+    : m_sourceBuffer(sourceBuffer)
+{
+}
 
-class MediaSourcePrivate {
-public:
-    typedef Vector<String, 0> CodecsArray;
+PassRefPtr<WebCore::TimeRanges> SourceBufferPrivateImpl::buffered()
+{
+    if (!m_sourceBuffer)
+        return WebCore::TimeRanges::create();
 
-    MediaSourcePrivate() { }
-    virtual ~MediaSourcePrivate() { }
+    WebTimeRanges webRanges = m_sourceBuffer->buffered();
+    RefPtr<WebCore::TimeRanges> ranges = WebCore::TimeRanges::create();
+    for (size_t i = 0; i < webRanges.size(); ++i)
+        ranges->add(webRanges[i].start, webRanges[i].end);
+    return ranges.release();
+}
 
-    enum AddStatus { Ok, NotSupported, ReachedIdLimit };
-    virtual AddStatus addSourceBuffer(const String& type, const CodecsArray&, OwnPtr<SourceBufferPrivate>*) = 0;
-    virtual double duration() = 0;
-    virtual void setDuration(double) = 0;
-    enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
-    virtual void endOfStream(EndOfStreamStatus) = 0;
-};
+void SourceBufferPrivateImpl::append(const unsigned char* data, unsigned length)
+{
+    if (!m_sourceBuffer)
+        return;
+    m_sourceBuffer->append(data, length);
+}
+
+bool SourceBufferPrivateImpl::abort()
+{
+    if (!m_sourceBuffer)
+        return false;
+    return m_sourceBuffer->abort();
+}
+
+bool SourceBufferPrivateImpl::setTimestampOffset(double offset)
+{
+    if (!m_sourceBuffer)
+        return false;
+
+    return m_sourceBuffer->setTimestampOffset(offset);
+}
+
+void SourceBufferPrivateImpl::removedFromMediaSource()
+{
+    if (!m_sourceBuffer)
+        return;
+    m_sourceBuffer->removedFromMediaSource();
+    m_sourceBuffer.clear();
+}
 
 }
 
-#endif
 #endif

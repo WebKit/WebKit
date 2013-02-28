@@ -27,33 +27,61 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef MediaSourcePrivate_h
-#define MediaSourcePrivate_h
+
+#include "config.h"
+#include "MediaSourcePrivateImpl.h"
 
 #if ENABLE(MEDIA_SOURCE)
 
-#include <wtf/Forward.h>
+#include "SourceBufferPrivateImpl.h"
+#include "WebMediaSourceClient.h"
+#include "WebSourceBuffer.h"
+#include <wtf/PassOwnPtr.h>
+#include <wtf/text/WTFString.h>
 
-namespace WebCore {
+namespace WebKit {
 
-class SourceBufferPrivate;
+MediaSourcePrivateImpl::MediaSourcePrivateImpl(PassOwnPtr<WebKit::WebMediaSourceClient> client)
+    : m_client(client)
+{
+}
 
-class MediaSourcePrivate {
-public:
-    typedef Vector<String, 0> CodecsArray;
+WebCore::MediaSourcePrivate::AddStatus MediaSourcePrivateImpl::addSourceBuffer(const String& type, const CodecsArray& codecs,
+    OwnPtr<WebCore::SourceBufferPrivate>* sourceBuffer)
+{
+    if (!m_client)
+        return WebCore::MediaSourcePrivate::NotSupported;
 
-    MediaSourcePrivate() { }
-    virtual ~MediaSourcePrivate() { }
+    WebSourceBuffer* webSourceBuffer = 0;
+    WebCore::MediaSourcePrivate::AddStatus result =
+        static_cast<WebCore::MediaSourcePrivate::AddStatus>(m_client->addSourceBuffer(type, codecs, &webSourceBuffer));
 
-    enum AddStatus { Ok, NotSupported, ReachedIdLimit };
-    virtual AddStatus addSourceBuffer(const String& type, const CodecsArray&, OwnPtr<SourceBufferPrivate>*) = 0;
-    virtual double duration() = 0;
-    virtual void setDuration(double) = 0;
-    enum EndOfStreamStatus { EosNoError, EosNetworkError, EosDecodeError };
-    virtual void endOfStream(EndOfStreamStatus) = 0;
-};
+    if (result == WebCore::MediaSourcePrivate::Ok) {
+        ASSERT(webSourceBuffer);
+        *sourceBuffer = adoptPtr(new SourceBufferPrivateImpl(adoptPtr(webSourceBuffer)));
+    }
+    return result;
+}
+
+double MediaSourcePrivateImpl::duration()
+{
+    if (!m_client)
+        return std::numeric_limits<float>::quiet_NaN();
+    return m_client->duration();
+}
+
+void MediaSourcePrivateImpl::setDuration(double duration)
+{
+    if (m_client)
+        m_client->setDuration(duration);
+}
+
+void MediaSourcePrivateImpl::endOfStream(WebCore::MediaSourcePrivate::EndOfStreamStatus status)
+{
+    if (m_client)
+        m_client->endOfStream(static_cast<WebMediaSourceClient::EndOfStreamStatus>(status));
+}
 
 }
 
-#endif
 #endif

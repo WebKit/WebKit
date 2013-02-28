@@ -36,12 +36,14 @@
 
 namespace WebKit {
 
+class WebSourceBuffer;
+
 class WebMediaSourceClient {
 public:
-    enum AddIdStatus {
-        AddIdStatusOk,
-        AddIdStatusNotSupported,
-        AddIdStatusReachedIdLimit
+    enum AddStatus {
+        AddStatusOk,
+        AddStatusNotSupported,
+        AddStatusReachedIdLimit
     };
 
     enum EndOfStreamStatus {
@@ -52,15 +54,10 @@ public:
 
     virtual ~WebMediaSourceClient() { }
 
-    virtual AddIdStatus addId(const WebString& id, const WebString& type, const WebVector<WebString>& codecs) = 0;
-    virtual bool removeId(const WebString& id) = 0;
-    virtual WebTimeRanges buffered(const WebString& id) = 0;
-    virtual bool append(const WebString& id, const unsigned char* data, unsigned length) = 0;
-    virtual bool abort(const WebString& id) = 0;
+    virtual AddStatus addSourceBuffer(const WebString& type, const WebVector<WebString>& codecs, WebSourceBuffer**) = 0;
     virtual double duration() = 0;
     virtual void setDuration(double) = 0;
     virtual void endOfStream(EndOfStreamStatus) = 0;
-    virtual bool setTimestampOffset(const WebString& id, double offset) = 0;
 };
 
 } // namespace WebKit

@@ -1,3 +1,60 @@
+2013-02-28  Aaron Colwell  <acolwell@chromium.org>
+
+        Factor SourceBuffer methods out of MediaSourcePrivate & WebMediaSource
+        into SourceBufferPrivate & WebSourceBuffer respectively.
+        https://bugs.webkit.org/show_bug.cgi?id=110798
+
+        Reviewed by Adam Barth, Jer Noble.
+
+        * WebKit.gyp:
+        * public/WebMediaSourceClient.h:
+        (WebKit):
+        (WebMediaSourceClient):
+        * public/WebSourceBuffer.h: 
+        (WebKit):
+        (WebSourceBuffer): Contains SourceBuffer methods extracted from WebMediaSource.
+        (WebKit::WebSourceBuffer::~WebSourceBuffer):
+        * src/AssertMatchingEnums.cpp:
+        * src/MediaSourcePrivateImpl.cpp:
+        (WebKit):
+        (WebKit::MediaSourcePrivateImpl::MediaSourcePrivateImpl):
+        (WebKit::MediaSourcePrivateImpl::addSourceBuffer):
+        (WebKit::MediaSourcePrivateImpl::duration):
+        (WebKit::MediaSourcePrivateImpl::setDuration):
+        (WebKit::MediaSourcePrivateImpl::endOfStream):
+        * src/MediaSourcePrivateImpl.h:
+        (WebKit):
+        (MediaSourcePrivateImpl): Adapts MediaSourcePrivate interface to WebMediaSourceClient.
+        (WebKit::MediaSourcePrivateImpl::~MediaSourcePrivateImpl):
+        * src/SourceBufferPrivateImpl.cpp:
+        (WebKit):
+        (WebKit::SourceBufferPrivateImpl::SourceBufferPrivateImpl):
+        (WebKit::SourceBufferPrivateImpl::buffered):
+        (WebKit::SourceBufferPrivateImpl::append):
+        (WebKit::SourceBufferPrivateImpl::abort):
+        (WebKit::SourceBufferPrivateImpl::setTimestampOffset):
+        (WebKit::SourceBufferPrivateImpl::removedFromMediaSource):
+        * src/SourceBufferPrivateImpl.h:
+        (WebKit):
+        (SourceBufferPrivateImpl): Adapts SourceBufferPrivate interface to WebSourceBuffer.
+        (WebKit::SourceBufferPrivateImpl::~SourceBufferPrivateImpl):
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebMediaSourceClientImpl):
+        (WebKit):
+        (WebSourceBufferImpl): Temporary implementation of WebSourceBuffer to keep things working
+                               until the Chromium side changes land.
+        (WebKit::WebMediaSourceClientImpl::addSourceBuffer):
+        (WebKit::WebMediaSourceClientImpl::duration):
+        (WebKit::WebMediaSourceClientImpl::setDuration):
+        (WebKit::WebMediaSourceClientImpl::endOfStream):
+        (WebKit::WebSourceBufferImpl::WebSourceBufferImpl):
+        (WebKit::WebSourceBufferImpl::buffered):
+        (WebKit::WebSourceBufferImpl::append):
+        (WebKit::WebSourceBufferImpl::abort):
+        (WebKit::WebSourceBufferImpl::setTimestampOffset):
+        (WebKit::WebSourceBufferImpl::removedFromMediaSource):
+        * src/WebMediaSourceImpl.cpp:
+
 2013-02-28  David Grogan  <dgrogan@chromium.org>
 
         IndexedDB: IO error when checking schema should destroy LevelDB directory
