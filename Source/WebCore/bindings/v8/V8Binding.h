@@ -458,22 +458,6 @@ namespace WebCore {
         return DOMWrapperWorld::getWorld(context);
     }
 
-    // This is a slightly different version of worldForEnteredContext().
-    // The difference is just that worldForEnteredContextWithoutContextCheck()
-    // does not call assertContextHasCorrectPrototype() (which is enabled on
-    // Debug builds only). Because assertContextHasCorrectPrototype() crashes
-    // if it is called when a current context is not completely initialized,
-    // you have to use worldForEnteredContextWithoutContextCheck() if you need
-    // to get a DOMWrapperWorld while a current context is being initialized.
-    // See https://bugs.webkit.org/show_bug.cgi?id=108579#c15 for more details.
-    inline DOMWrapperWorld* worldForEnteredContextWithoutContextCheck()
-    {
-        v8::Handle<v8::Context> context = v8::Context::GetEntered();
-        if (context.IsEmpty())
-            return 0;
-        return DOMWrapperWorld::getWorldWithoutContextCheck(context);
-    }
-
     // If the current context causes out of memory, JavaScript setting
     // is disabled and it returns true.
     bool handleOutOfMemory();

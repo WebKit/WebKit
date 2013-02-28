@@ -67,10 +67,6 @@ public:
         assertContextHasCorrectPrototype(context);
         return static_cast<DOMWrapperWorld*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWorld));
     }
-    static DOMWrapperWorld* getWorldWithoutContextCheck(v8::Handle<v8::Context> context)
-    {
-        return static_cast<DOMWrapperWorld*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWorld));
-    }
 
     // Associates an isolated world (see above for description) with a security
     // origin. XMLHttpRequest instances used in that world will be considered

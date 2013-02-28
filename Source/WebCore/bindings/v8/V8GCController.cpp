@@ -258,8 +258,13 @@ public:
         ASSERT(V8DOMWrapper::maybeDOMWrapper(value));
         ASSERT(V8Node::HasInstance(wrapper, m_isolate));
         Node* node = V8Node::toNative(wrapper);
-        m_nodesInNewSpace.append(node);
-        node->setV8CollectableDuringMinorGC(true);
+        // A minor DOM GC can handle only node wrappers in the main world.
+        // Note that node->wrapper().IsEmpty() returns true for nodes that
+        // do not have wrappers in the main world.
+        if (!node->wrapper().IsEmpty()) {
+            m_nodesInNewSpace.append(node);
+            node->setV8CollectableDuringMinorGC(true);
+        }
     }
 
     void notifyFinished()
@@ -364,13 +369,9 @@ void V8GCController::minorGCPrologue(v8::Isolate* isolate)
         v8::Isolate* isolate = v8::Isolate::GetCurrent();
         v8::HandleScope scope;
 
-        // A minor GC can handle the main world only.
-        DOMWrapperWorld* world = worldForEnteredContextWithoutContextCheck();
-        if (world && world->isMainWorld()) {
-            MinorGCWrapperVisitor visitor(isolate);
-            v8::V8::VisitHandlesForPartialDependence(isolate, &visitor);
-            visitor.notifyFinished();
-        }
+        MinorGCWrapperVisitor visitor(isolate);
+        v8::V8::VisitHandlesForPartialDependence(isolate, &visitor);
+        visitor.notifyFinished();
     }
 }
 
