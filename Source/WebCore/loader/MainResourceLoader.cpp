@@ -39,6 +39,7 @@
 #include "Document.h"
 #include "DocumentLoadTiming.h"
 #include "DocumentLoader.h"
+#include "FeatureObserver.h"
 #include "FormState.h"
 #include "Frame.h"
 #include "FrameLoader.h"
@@ -427,8 +428,10 @@ void MainResourceLoader::responseReceived(CachedResource* resource, const Resour
         m_resource->clear();
     }
     
-    if (r.isMultipart())
+    if (r.isMultipart()) {
+        FeatureObserver::observe(m_documentLoader->frame()->document(), FeatureObserver::MultipartMainResource);
         m_loadingMultipartContent = true;
+    }
         
     // The additional processing can do anything including possibly removing the last
     // reference to this object; one example of this is 3266216.
