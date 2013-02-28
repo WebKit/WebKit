@@ -151,81 +151,17 @@ class PerfTest(object):
 
         return results
 
+    _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
+    _metrics_regex = re.compile(r'^(?P<metric>Time|Malloc|JS Heap):')
+    _statistics_keys = ['avg', 'median', 'stdev', 'min', 'max', 'unit', 'values']
+    _score_regex = re.compile(r'^(?P<key>' + r'|'.join(_statistics_keys) + r')\s+(?P<value>([0-9\.]+(,\s+)?)+)\s*(?P<unit>.*)')
+
     def _run_with_driver(self, driver, time_out_ms):
         output = self.run_single(driver, self.test_path(), time_out_ms)
         self._filter_output(output)
         if self.run_failed(output):
             return None
 
-        return self.parse_output(output)
-
-    def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
-        return driver.run_test(DriverInput(test_path, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
-
-    def run_failed(self, output):
-        if output.text == None or output.error:
-            pass
-        elif output.timeout:
-            _log.error('timeout: %s' % self.test_name())
-        elif output.crash:
-            _log.error('crash: %s' % self.test_name())
-        else:
-            return False
-
-        if output.error:
-            _log.error('error: %s\n%s' % (self.test_name(), output.error))
-
-        return True
-
-    def _should_ignore_line(self, regexps, line):
-        if not line:
-            return True
-        for regexp in regexps:
-            if regexp.search(line):
-                return True
-        return False
-
-    _lines_to_ignore_in_stderr = [
-        re.compile(r'^Unknown option:'),
-        re.compile(r'^\[WARNING:proxy_service.cc'),
-        re.compile(r'^\[INFO:'),
-    ]
-
-    def _should_ignore_line_in_stderr(self, line):
-        return self._should_ignore_line(self._lines_to_ignore_in_stderr, line)
-
-    _lines_to_ignore_in_parser_result = [
-        re.compile(r'^Running \d+ times$'),
-        re.compile(r'^Ignoring warm-up '),
-        re.compile(r'^Info:'),
-        re.compile(r'^\d+(.\d+)?(\s*(runs\/s|ms|fps))?$'),
-        # Following are for handle existing test like Dromaeo
-        re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),
-        re.compile(re.escape("""frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)""")),
-        re.compile(re.escape("""frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)""")),
-        # Following is for html5.html
-        re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/""")),
-        re.compile(r"CONSOLE MESSAGE: (line \d+: )?Blocked script execution in '[A-Za-z0-9\-\.:]+' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."),
-        # Dromaeo reports values for subtests. Ignore them for now.
-        re.compile(r'(?P<name>.+): \[(?P<values>(\d+(.\d+)?,\s+)*\d+(.\d+)?)\]'),
-    ]
-
-    def _should_ignore_line_in_parser_test_result(self, line):
-        return self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)
-
-    def _filter_output(self, output):
-        if output.error:
-            filtered_error = '\n'.join([line for line in re.split('\n', output.error) if not self._should_ignore_line_in_stderr(line)])
-            output.error = filtered_error if filtered_error else None
-        if output.text:
-            output.text = '\n'.join([line for line in re.split('\n', output.text) if not self._should_ignore_line_in_parser_test_result(line)])
-
-    _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
-    _metrics_regex = re.compile(r'^(?P<metric>Time|Malloc|JS Heap):')
-    _statistics_keys = ['avg', 'median', 'stdev', 'min', 'max', 'unit', 'values']
-    _score_regex = re.compile(r'^(?P<key>' + r'|'.join(_statistics_keys) + r')\s+(?P<value>([0-9\.]+(,\s+)?)+)\s*(?P<unit>.*)')
-
-    def parse_output(self, output):
         current_metric = None
         results = []
         for line in re.split('\n', output.text):
@@ -250,6 +186,61 @@ class PerfTest(object):
                 _log.error('ERROR: ' + line)
 
         return results
+
+    def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
+        return driver.run_test(DriverInput(test_path, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
+
+    def run_failed(self, output):
+        if output.text == None or output.error:
+            pass
+        elif output.timeout:
+            _log.error('timeout: %s' % self.test_name())
+        elif output.crash:
+            _log.error('crash: %s' % self.test_name())
+        else:
+            return False
+
+        if output.error:
+            _log.error('error: %s\n%s' % (self.test_name(), output.error))
+
+        return True
+
+    @staticmethod
+    def _should_ignore_line(regexps, line):
+        if not line:
+            return True
+        for regexp in regexps:
+            if regexp.search(line):
+                return True
+        return False
+
+    _lines_to_ignore_in_stderr = [
+        re.compile(r'^Unknown option:'),
+        re.compile(r'^\[WARNING:proxy_service.cc'),
+        re.compile(r'^\[INFO:'),
+    ]
+
+    _lines_to_ignore_in_parser_result = [
+        re.compile(r'^Running \d+ times$'),
+        re.compile(r'^Ignoring warm-up '),
+        re.compile(r'^Info:'),
+        re.compile(r'^\d+(.\d+)?(\s*(runs\/s|ms|fps))?$'),
+        # Following are for handle existing test like Dromaeo
+        re.compile(re.escape("""main frame - has 1 onunload handler(s)""")),
+        re.compile(re.escape("""frame "<!--framePath //<!--frame0-->-->" - has 1 onunload handler(s)""")),
+        re.compile(re.escape("""frame "<!--framePath //<!--frame0-->/<!--frame0-->-->" - has 1 onunload handler(s)""")),
+        # Following is for html5.html
+        re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/""")),
+        re.compile(r"CONSOLE MESSAGE: (line \d+: )?Blocked script execution in '[A-Za-z0-9\-\.:]+' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."),
+        # Dromaeo reports values for subtests. Ignore them for now.
+        re.compile(r'(?P<name>.+): \[(?P<values>(\d+(.\d+)?,\s+)*\d+(.\d+)?)\]'),
+    ]
+
+    def _filter_output(self, output):
+        if output.error:
+            output.error = '\n'.join([line for line in re.split('\n', output.error) if not self._should_ignore_line(self._lines_to_ignore_in_stderr, line)])
+        if output.text:
+            output.text = '\n'.join([line for line in re.split('\n', output.text) if not self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)])
 
     def output_statistics(self, test_name, results):
         unit = results['unit']

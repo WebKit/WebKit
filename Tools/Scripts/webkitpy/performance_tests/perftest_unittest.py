@@ -106,8 +106,8 @@ class TestPerfTestMetric(unittest.TestCase):
 
 class TestPerfTest(unittest.TestCase):
     def _assert_results_are_correct(self, test, output):
-        test._filter_output(output)
-        parsed_results = test.parse_output(output)
+        test.run_single = lambda driver, path, time_out_ms: output
+        parsed_results = test._run_with_driver(None, None)
         self.assertEqual(len(parsed_results), 1)
         some_test_results = parsed_results[0].to_dict()
         self.assertItemsEqual(some_test_results.keys(), ['avg', 'max', 'median', 'min', 'stdev', 'unit', 'values'])
@@ -162,8 +162,8 @@ max 1120 ms
         output_capture.capture_output()
         try:
             test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
-            test._filter_output(output)
-            self.assertIsNone(test.parse_output(output))
+            test.run_single = lambda driver, path, time_out_ms: output
+            self.assertIsNone(test._run_with_driver(None, None))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertEqual(actual_stdout, '')
@@ -190,21 +190,18 @@ max 1120 ms""", image=None, image_hash=None, audio=None)
 
     def test_ignored_stderr_lines(self):
         test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
-        ignored_lines = [
-            "Unknown option: --foo-bar",
-            "[WARNING:proxy_service.cc] bad moon a-rising",
-            "[INFO:SkFontHost_android.cpp(1158)] Use Test Config File Main /data/local/tmp/drt/android_main_fonts.xml, Fallback /data/local/tmp/drt/android_fallback_fonts.xml, Font Dir /data/local/tmp/drt/fonts/",
-        ]
-        for line in ignored_lines:
-            self.assertTrue(test._should_ignore_line_in_stderr(line))
-
-        non_ignored_lines = [
-            "Should not be ignored",
-            "[WARNING:chrome.cc] Something went wrong",
-            "[ERROR:main.cc] The sky has fallen",
-        ]
-        for line in non_ignored_lines:
-            self.assertFalse(test._should_ignore_line_in_stderr(line))
+        output_with_lines_to_ignore = DriverOutput('', image=None, image_hash=None, audio=None, error="""
+Unknown option: --foo-bar
+Should not be ignored
+[WARNING:proxy_service.cc] bad moon a-rising
+[WARNING:chrome.cc] Something went wrong
+[INFO:SkFontHost_android.cpp(1158)] Use Test Config File Main /data/local/tmp/drt/android_main_fonts.xml, Fallback /data/local/tmp/drt/android_fallback_fonts.xml, Font Dir /data/local/tmp/drt/fonts/
+[ERROR:main.cc] The sky has fallen""")
+        test._filter_output(output_with_lines_to_ignore)
+        self.assertEqual(output_with_lines_to_ignore.error,
+            "Should not be ignored\n"
+            "[WARNING:chrome.cc] Something went wrong\n"
+            "[ERROR:main.cc] The sky has fallen")
 
     def test_parse_output_with_subtests(self):
         output = DriverOutput("""

@@ -1,3 +1,24 @@
+2013-02-28  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge more methods on PerfTest
+        https://bugs.webkit.org/show_bug.cgi?id=111030
+
+        Reviewed by Dirk Pranke.
+
+        Merged parse_output into _run_with_driver as it was the only caller. Also merged _should_ignore_line_in_stderr
+        and _should_ignore_line_in_parser_test_result into _filter_output since it was their only caller.
+
+        This makes the control flow a lot more comprehensible.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest._run_with_driver):
+        (PerfTest._should_ignore_line):
+        (PerfTest._filter_output):
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTest._assert_results_are_correct):
+        (test_ignored_stderr_lines):
+
 2013-02-28  Robert Hogan  <robert@webkit.org>
 
         Update my IRC nick
