@@ -80,8 +80,6 @@ namespace WebCore {
 #endif
         }
 
-        void updateFromDelegatePreservingOldHTTPBody(CFURLRequestRef);
-
         CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const;
 #else
         ResourceRequest(NSURLRequest *nsRequest)

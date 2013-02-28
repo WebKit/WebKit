@@ -190,13 +190,13 @@ void ResourceRequest::doUpdatePlatformHTTPBody()
 
     RefPtr<FormData> formData = httpBody();
     if (formData && !formData->isEmpty())
-        WebCore::setHTTPBody(nsRequest, formData);
+        WebCore::setHTTPBody(cfRequest, formData);
 
-    if (RetainPtr<CFReadStreamRef> bodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(request))) {
+    if (RetainPtr<CFReadStreamRef> bodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(cfRequest))) {
         // For streams, provide a Content-Length to avoid using chunked encoding, and to get accurate total length in callbacks.
-        RetainPtr<CFStringRef> lengthString = adoptCF(CFReadStreamCopyProperty(bodyStream.get(), formDataStreamLengthPropertyName()));
+        RetainPtr<CFStringRef> lengthString = adoptCF(static_cast<CFStringRef>(CFReadStreamCopyProperty(bodyStream.get(), formDataStreamLengthPropertyName())));
         if (lengthString) {
-            CFURLRequestSetHTTPHeaderFieldValue(cfRequest, CFSTR("Contemt-Length", lengthString.get()));
+            CFURLRequestSetHTTPHeaderFieldValue(cfRequest, CFSTR("Content-Length"), lengthString.get());
             // Since resource request is already marked updated, we need to keep it up to date too.
             ASSERT(m_resourceRequestUpdated);
             m_httpHeaderFields.set("Content-Length", lengthString.get());
@@ -262,7 +262,7 @@ void ResourceRequest::doUpdateResourceHTTPBody()
 
     if (RetainPtr<CFDataRef> bodyData = adoptCF(CFURLRequestCopyHTTPRequestBody(m_cfRequest.get())))
         m_httpBody = FormData::create(CFDataGetBytePtr(bodyData.get()), CFDataGetLength(bodyData.get()));
-    else if (RetainPtr<CFReadStreamRef> bodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(request))) {
+    else if (RetainPtr<CFReadStreamRef> bodyStream = adoptCF(CFURLRequestCopyHTTPRequestBodyStream(m_cfRequest.get()))) {
         FormData* formData = httpBodyFromStream(bodyStream.get());
         // There is no FormData object if a client provided a custom data stream.
         // We shouldn't be looking at http body after client callbacks.
