@@ -215,6 +215,7 @@ WebInspector.ExperimentsSettings = function()
     this.fileSystemProject = this._createExperiment("fileSystemProject", "File system folders in Sources Panel");
     this.showWhitespaceInEditor = this._createExperiment("showWhitespaceInEditor", "Show whitespace characters in editor");
     this.textEditorSmartBraces = this._createExperiment("textEditorSmartBraces", "Enable smart braces in text editor");
+    this.separateProfilers = this._createExperiment("separateProfilers", "Separate profiler tools");
 
     this._cleanUpSetting();
 }

@@ -475,6 +475,30 @@ body.dock-to-bottom .toolbar-item.timeline .toolbar-icon {
     background-position-x: -160px;
 }
 
+.toolbar-item.cpu-profiler .toolbar-icon {
+    background-position-x: -160px;
+}
+
+.toolbar-item.css-profiler .toolbar-icon {
+    background-position-x: -160px;
+}
+
+.toolbar-item.heap-profiler .toolbar-icon {
+    background-position-x: -160px;
+}
+
+.toolbar-item.canvas-profiler .toolbar-icon {
+    background-position-x: -160px;
+}
+
+.toolbar-item.memory-chart-profiler .toolbar-icon {
+    background-position-x: -160px;
+}
+
+.toolbar-item.memory-snapshot-profiler .toolbar-icon {
+    background-position-x: -160px;
+}
+
 body.dock-to-bottom .toolbar-item.profiles .toolbar-icon {
     background-position-x: -120px;
 }

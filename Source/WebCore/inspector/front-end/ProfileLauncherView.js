@@ -31,12 +31,15 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
+ * @param {!WebInspector.ProfilesPanel} profilesPanel
+ * @param {boolean} singleProfileMode
  */
-WebInspector.ProfileLauncherView = function(profilesPanel)
+WebInspector.ProfileLauncherView = function(profilesPanel, singleProfileMode)
 {
     WebInspector.View.call(this);
 
     this._panel = profilesPanel;
+    this._singleProfileMode = singleProfileMode;
     this._profileRunning = false;
 
     this.element.addStyleClass("profile-launcher-view");
@@ -44,8 +47,10 @@ WebInspector.ProfileLauncherView = function(profilesPanel)
 
     this._contentElement = this.element.createChild("div", "profile-launcher-view-content");
 
-    var header = this._contentElement.createChild("h1");
-    header.textContent = WebInspector.UIString("Select profiling type");
+    if (!singleProfileMode) {
+        var header = this._contentElement.createChild("h1");
+        header.textContent = WebInspector.UIString("Select profiling type");
+    }
 
     this._profileTypeSelectorForm = this._contentElement.createChild("form");
 
@@ -73,22 +78,30 @@ WebInspector.ProfileLauncherView.prototype = {
     addProfileType: function(profileType)
     {
         var checked = !this._profileTypeSelectorForm.children.length;
-        var labelElement = this._profileTypeSelectorForm.createChild("label");
-        labelElement.textContent = profileType.name;
-        var optionElement = document.createElement("input");
-        labelElement.insertBefore(optionElement, labelElement.firstChild);
-        optionElement.type = "radio";
-        optionElement.name = "profile-type";
-        if (checked) {
-            optionElement.checked = checked;
-            this.dispatchEventToListeners(WebInspector.ProfileLauncherView.EventTypes.ProfileTypeSelected, profileType);
+        var labelElement;
+        if (this._singleProfileMode)
+            labelElement = this._profileTypeSelectorForm.createChild("h1");
+        else {
+            labelElement = this._profileTypeSelectorForm.createChild("label");
+            labelElement.textContent = profileType.name;
+            var optionElement = document.createElement("input");
+            labelElement.insertBefore(optionElement, labelElement.firstChild);
+            optionElement.type = "radio";
+            optionElement.name = "profile-type";
+            optionElement.style.hidden = true;
+            if (checked) {
+                optionElement.checked = checked;
+                this.dispatchEventToListeners(WebInspector.ProfileLauncherView.EventTypes.ProfileTypeSelected, profileType);
+            }
+            optionElement.addEventListener("change", this._profileTypeChanged.bind(this, profileType), false);
         }
-        optionElement.addEventListener("change", this._profileTypeChanged.bind(this, profileType), false);
         var descriptionElement = labelElement.createChild("p");
         descriptionElement.textContent = profileType.description;
         var decorationElement = profileType.decorationElement();
         if (decorationElement)
             labelElement.appendChild(decorationElement);
+        if (this._singleProfileMode)
+            this._profileTypeChanged(profileType);
     },
 
     _controlButtonClicked: function()
