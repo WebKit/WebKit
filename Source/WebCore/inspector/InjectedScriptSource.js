@@ -1089,7 +1089,7 @@ InjectedScript.CallFrameProxy._createScopeJson = function(scopeTypeCode, scopeOb
 
     return {
         object: injectedScript._wrapObject(scopeObject, groupId),
-        type: scopeTypeNames[scopeTypeCode]
+        type: /** @type {DebuggerAgent.ScopeType} */ (scopeTypeNames[scopeTypeCode])
     };
 }
 

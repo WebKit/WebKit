@@ -263,7 +263,7 @@ WebInspector.NetworkDispatcher.prototype = {
             // FIXME: move this check to the backend.
             if (!redirectResponse)
                 return;
-            this.responseReceived(requestId, frameId, loaderId, time, "Other", redirectResponse);
+            this.responseReceived(requestId, frameId, loaderId, time, PageAgent.ResourceType.Other, redirectResponse);
             networkRequest = this._appendRedirect(requestId, time, request.url);
         } else
             networkRequest = this._createNetworkRequest(requestId, frameId, loaderId, request.url, documentURL, initiator);

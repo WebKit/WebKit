@@ -60,16 +60,32 @@ InspectorBackendClass.prototype = {
         return callbackId;
     },
 
+    _getAgent: function(domain)
+    {
+        var agentName = domain + "Agent";
+        if (!window[agentName])
+            window[agentName] = {};
+        return window[agentName];
+    },
+
     registerCommand: function(method, signature, replyArgs)
     {
         var domainAndMethod = method.split(".");
-        var agentName = domainAndMethod[0] + "Agent";
-        if (!window[agentName])
-            window[agentName] = {};
+        var agent = this._getAgent(domainAndMethod[0]);
 
-        window[agentName][domainAndMethod[1]] = this._sendMessageToBackend.bind(this, method, signature);
-        window[agentName][domainAndMethod[1]]["invoke"] = this._invoke.bind(this, method, signature);
+        agent[domainAndMethod[1]] = this._sendMessageToBackend.bind(this, method, signature);
+        agent[domainAndMethod[1]]["invoke"] = this._invoke.bind(this, method, signature);
         this._replyArgs[method] = replyArgs;
+
+        this._initialized = true;
+    },
+
+    registerEnum: function(type, values)
+    {
+        var domainAndMethod = type.split(".");
+        var agent = this._getAgent(domainAndMethod[0]);
+
+        agent[domainAndMethod[1]] = values;
 
         this._initialized = true;
     },
@@ -277,10 +293,41 @@ InspectorBackendClass.prototype = {
                 rawTypes[domain.domain + "." + type.id] = jsTypes[type.type] || type.type;
             }
         }
+
+        function toUpperCase(groupIndex, group0, group1)
+        {
+            return [group0, group1][groupIndex].toUpperCase();
+        }
+        function generateEnum(enumName, items)
+        {
+            var members = []
+            for (var m = 0; m < items.length; ++m) {
+                var value = items[m];
+                var name = value.replace(/-(\w)/g, toUpperCase.bind(null, 1)).toTitleCase();
+                name = name.replace(/HTML|XML|WML|API/ig, toUpperCase.bind(null, 0));
+                members.push(name + ": \"" + value +"\"");
+            }
+            return "InspectorBackend.registerEnum(\"" + enumName + "s\", {" + members.join(", ") + "});\n";
+        }
     
         var result = [];
         for (var i = 0; i < domains.length; ++i) {
             var domain = domains[i];
+
+            var types = domain["types"] || [];
+            for (var j = 0; j < types.length; ++j) {
+                var type = types[j];
+                if ((type["type"] === "string") && type["enum"])
+                    result.push(generateEnum(domain.domain + "." + type.id, type["enum"]));
+                else if (type["type"] === "object") {
+                    var properties = type["properties"] || [];
+                    for (var k = 0; k < properties.length; ++k) {
+                        var property = properties[k];
+                        if ((property["type"] === "string") && property["enum"])
+                            result.push(generateEnum(domain.domain + "." + type.id + property["name"].toTitleCase(), property["enum"]));
+                    }
+                }
+            }
 
             var commands = domain["commands"] || [];    
             for (var j = 0; j < commands.length; ++j) {

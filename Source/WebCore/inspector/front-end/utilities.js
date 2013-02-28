@@ -138,6 +138,11 @@ String.prototype.trimURL = function(baseURLDomain)
     return result;
 }
 
+String.prototype.toTitleCase = function()
+{
+    return this.substring(0, 1).toUpperCase() + this.substring(1);
+}
+
 /**
  * @param {string} other
  * @return {number}

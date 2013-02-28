@@ -27,6 +27,8 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+import re
+
 type_traits = {
     "any": "*",
     "string": "string",
@@ -44,6 +46,23 @@ def full_qualified_type_id(domain_name, type_id):
     if type_id.find(".") == -1:
         return "%s.%s" % (domain_name, type_id)
     return type_id
+
+
+def fix_camel_case(name):
+    refined = re.sub(r'-(\w)', lambda pat: pat.group(1).upper(), name)
+    refined = to_title_case(refined)
+    return re.sub(r'(?i)HTML|XML|WML|API', lambda pat: pat.group(0).upper(), refined)
+
+
+def to_title_case(name):
+    return name[:1].upper() + name[1:]
+
+
+def generate_enum(name, json):
+    enum_members = []
+    for member in json["enum"]:
+        enum_members.append("    %s: \"%s\"" % (fix_camel_case(member), member))
+    return "\n/** @enum {string} */\n%s = {\n%s\n};\n" % (name, (",\n".join(enum_members)))
 
 
 def param_type(domain_name, param):
@@ -97,11 +116,18 @@ Protocol.Error;
                             suffix = ""
                             if ("optional" in property):
                                 suffix = "|undefined"
-                            typedef_args.append("%s:(%s%s)" % (property["name"], param_type(domain_name, property), suffix))
+                            if "enum" in property:
+                                enum_name = "%sAgent.%s%s" % (domain_name, type["id"], to_title_case(property["name"]))
+                                output_file.write(generate_enum(enum_name, property))
+                                typedef_args.append("%s:(%s%s)" % (property["name"], enum_name, suffix))
+                            else:
+                                typedef_args.append("%s:(%s%s)" % (property["name"], param_type(domain_name, property), suffix))
                     if (typedef_args):
                         output_file.write("\n/** @typedef {{%s}|null} */\n%sAgent.%s;\n" % (", ".join(typedef_args), domain_name, type["id"]))
                     else:
                         output_file.write("\n/** @typedef {Object} */\n%sAgent.%s;\n" % (domain_name, type["id"]))
+                elif type["type"] == "string" and "enum" in type:
+                    output_file.write(generate_enum("%sAgent.%s" % (domain_name, type["id"]), type))
                 elif type["type"] == "array":
                     suffix = ""
                     if ("optional" in property):
