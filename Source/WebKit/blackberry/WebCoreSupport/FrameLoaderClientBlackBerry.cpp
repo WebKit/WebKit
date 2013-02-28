@@ -663,7 +663,8 @@ void FrameLoaderClientBlackBerry::dispatchDidFinishLoad()
     }
 
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-    if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled()
+    if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled()
+        && m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled()
         && !m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled())
         credentialManager().autofillPasswordForms(m_frame->document()->forms());
 #endif
@@ -784,12 +785,13 @@ void FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent(PassRefPtr<FormSta
     m_formCredentials = CredentialTransformData();
 #endif
     if (!m_webPagePrivate->m_webSettings->isPrivateBrowsingEnabled()) {
-        if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled())
+        if (m_webPagePrivate->m_webSettings->isFormAutofillEnabled()) {
             m_webPagePrivate->m_autofillManager->saveTextFields(prpFormState->form());
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
-        if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled())
-            m_formCredentials = CredentialTransformData(prpFormState->form(), true);
+            if (m_webPagePrivate->m_webSettings->isCredentialAutofillEnabled())
+                m_formCredentials = CredentialTransformData(prpFormState->form(), true);
 #endif
+        }
     }
 }
 

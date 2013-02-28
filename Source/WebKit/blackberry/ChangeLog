@@ -1,3 +1,19 @@
+2013-02-28  Lianghui Chen  <liachen@rim.com>
+
+        [BlackBerry] Disable auto-filling password in forms when auto-form-filling is not enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=111006
+
+        Internal PR: 295181
+        Internal reviewed by Joe Mason.
+
+        Reviewed by Yong Li.
+
+        Check WebSettings::isFormAutofillEnabled() before doing user credential form fill stuff.
+
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::dispatchDidFinishLoad):
+        (WebCore::FrameLoaderClientBlackBerry::dispatchWillSendSubmitEvent):
+
 2013-02-28  Alberto Garcia  <albgarcia@rim.com>
 
         [BlackBerry] Misc build fixes
