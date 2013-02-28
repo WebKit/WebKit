@@ -774,6 +774,9 @@ public:
     typedef void* (HardenedSLL::*UnspecifiedBoolType);
     ALWAYS_INLINE operator UnspecifiedBoolType() const { return m_value ? &HardenedSLL::m_value : 0; }
 
+    bool operator!=(const HardenedSLL& other) const { return m_value != other.m_value; }
+    bool operator==(const HardenedSLL& other) const { return m_value == other.m_value; }
+
 private:
     void* m_value;
 };
