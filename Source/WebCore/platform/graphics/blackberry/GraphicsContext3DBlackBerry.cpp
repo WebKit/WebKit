@@ -62,9 +62,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     , m_depthStencilBuffer(0)
     , m_layerComposited(false)
     , m_internalColorFormat(GL_RGBA)
-    , m_boundFBO(0)
-    , m_activeTexture(GL_TEXTURE0)
-    , m_boundTexture0(0)
     , m_isImaginationHardware(0)
 {
     if (renderStyle != RenderDirectlyToHostWindow) {
@@ -87,7 +84,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         if (m_attrs.stencil || m_attrs.depth)
             ::glGenRenderbuffers(1, &m_depthStencilBuffer);
-        m_boundFBO = m_fbo;
+        m_state.boundFBO = m_fbo;
 
 #if USE(ACCELERATED_COMPOSITING)
         static_cast<WebGLLayerWebKitThread*>(m_compositingLayer.get())->setWebGLContext(this);
@@ -185,7 +182,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     }
 
     bool mustRestoreFBO = false;
-    if (m_boundFBO != m_fbo) {
+    if (m_state.boundFBO != m_fbo) {
         mustRestoreFBO = true;
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     }

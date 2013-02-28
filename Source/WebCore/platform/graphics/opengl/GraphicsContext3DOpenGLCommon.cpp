@@ -169,10 +169,10 @@ void GraphicsContext3D::prepareTexture()
     ::glActiveTexture(GL_TEXTURE0);
     ::glBindTexture(GL_TEXTURE_2D, m_compositorTexture);
     ::glCopyTexImage2D(GL_TEXTURE_2D, 0, m_internalColorFormat, 0, 0, m_currentWidth, m_currentHeight, 0);
-    ::glBindTexture(GL_TEXTURE_2D, m_boundTexture0);
-    ::glActiveTexture(m_activeTexture);
-    if (m_boundFBO != m_fbo)
-        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_boundFBO);
+    ::glBindTexture(GL_TEXTURE_2D, m_state.boundTexture0);
+    ::glActiveTexture(m_state.activeTexture);
+    if (m_state.boundFBO != m_fbo)
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
     ::glFinish();
     m_layerComposited = true;
 }
@@ -191,7 +191,7 @@ void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSi
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         mustRestoreFBO = true;
     } else {
-        if (m_boundFBO != m_fbo) {
+        if (m_state.boundFBO != m_fbo) {
             mustRestoreFBO = true;
             ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         }
@@ -211,7 +211,7 @@ void GraphicsContext3D::readRenderingResults(unsigned char *pixels, int pixelsSi
         ::glPixelStorei(GL_PACK_ALIGNMENT, packAlignment);
 
     if (mustRestoreFBO)
-        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_boundFBO);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
 }
 
 void GraphicsContext3D::reshape(int width, int height)
@@ -288,7 +288,7 @@ void GraphicsContext3D::reshape(int width, int height)
         ::glDisable(GL_DITHER);
 
     if (mustRestoreFBO)
-        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_boundFBO);
+        ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_state.boundFBO);
 
     ::glFlush();
 }
@@ -301,7 +301,7 @@ IntSize GraphicsContext3D::getInternalFramebufferSize() const
 void GraphicsContext3D::activeTexture(GC3Denum texture)
 {
     makeContextCurrent();
-    m_activeTexture = texture;
+    m_state.activeTexture = texture;
     ::glActiveTexture(texture);
 }
 
@@ -338,9 +338,9 @@ void GraphicsContext3D::bindFramebuffer(GC3Denum target, Platform3DObject buffer
 #else
         fbo = (m_attrs.antialias ? m_multisampleFBO : m_fbo);
 #endif
-    if (fbo != m_boundFBO) {
+    if (fbo != m_state.boundFBO) {
         ::glBindFramebufferEXT(target, fbo);
-        m_boundFBO = fbo;
+        m_state.boundFBO = fbo;
     }
 }
 
@@ -354,8 +354,8 @@ void GraphicsContext3D::bindRenderbuffer(GC3Denum target, Platform3DObject rende
 void GraphicsContext3D::bindTexture(GC3Denum target, Platform3DObject texture)
 {
     makeContextCurrent();
-    if (m_activeTexture == GL_TEXTURE0 && target == GL_TEXTURE_2D)
-        m_boundTexture0 = texture;
+    if (m_state.activeTexture == GL_TEXTURE0 && target == GL_TEXTURE_2D)
+        m_state.boundTexture0 = texture;
     ::glBindTexture(target, texture);
 }
 
@@ -487,14 +487,14 @@ void GraphicsContext3D::copyTexImage2D(GC3Denum target, GC3Dint level, GC3Denum 
 {
     makeContextCurrent();
 #if !PLATFORM(BLACKBERRY)
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
+    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     }
 #endif
     ::glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
 #if !PLATFORM(BLACKBERRY)
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
+    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 #endif
 }
@@ -503,14 +503,14 @@ void GraphicsContext3D::copyTexSubImage2D(GC3Denum target, GC3Dint level, GC3Din
 {
     makeContextCurrent();
 #if !PLATFORM(BLACKBERRY)
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
+    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     }
 #endif
     ::glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
 #if !PLATFORM(BLACKBERRY)
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
+    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 #endif
 }
@@ -1377,7 +1377,7 @@ void GraphicsContext3D::deleteBuffer(Platform3DObject buffer)
 void GraphicsContext3D::deleteFramebuffer(Platform3DObject framebuffer)
 {
     makeContextCurrent();
-    if (framebuffer == m_boundFBO) {
+    if (framebuffer == m_state.boundFBO) {
         // Make sure the framebuffer is not going to be used for drawing
         // operations after it gets deleted.
         bindFramebuffer(FRAMEBUFFER, 0);
@@ -1406,8 +1406,8 @@ void GraphicsContext3D::deleteShader(Platform3DObject shader)
 void GraphicsContext3D::deleteTexture(Platform3DObject texture)
 {
     makeContextCurrent();
-    if (m_boundTexture0 == texture)
-        m_boundTexture0 = 0;
+    if (m_state.boundTexture0 == texture)
+        m_state.boundTexture0 = 0;
     glDeleteTextures(1, &texture);
 }
 

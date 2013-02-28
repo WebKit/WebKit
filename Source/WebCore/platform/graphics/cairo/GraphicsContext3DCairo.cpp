@@ -79,9 +79,6 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
     , m_texture(0)
     , m_fbo(0)
     , m_depthStencilBuffer(0)
-    , m_boundFBO(0)
-    , m_activeTexture(GL_TEXTURE0)
-    , m_boundTexture0(0)
     , m_multisampleFBO(0)
     , m_multisampleDepthStencilBuffer(0)
     , m_multisampleColorBuffer(0)
@@ -105,7 +102,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
         ::glGenFramebuffers(1, &m_fbo);
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 
-        m_boundFBO = m_fbo;
+        m_state.boundFBO = m_fbo;
         if (!m_attrs.antialias && (m_attrs.stencil || m_attrs.depth))
             ::glGenRenderbuffers(1, &m_depthStencilBuffer);
 
@@ -113,7 +110,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attributes, H
         if (m_attrs.antialias) {
             ::glGenFramebuffers(1, &m_multisampleFBO);
             ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
-            m_boundFBO = m_multisampleFBO;
+            m_state.boundFBO = m_multisampleFBO;
             ::glGenRenderbuffers(1, &m_multisampleColorBuffer);
             if (m_attrs.stencil || m_attrs.depth)
                 ::glGenRenderbuffers(1, &m_multisampleDepthStencilBuffer);

@@ -1081,10 +1081,19 @@ private:
     bool m_layerComposited;
     GC3Duint m_internalColorFormat;
 
-    // For tracking which FBO/texture is bound
-    GC3Duint m_boundFBO;
-    GC3Denum m_activeTexture;
-    GC3Duint m_boundTexture0;
+    struct GraphicsContext3DState {
+        GraphicsContext3DState()
+            : boundFBO(0)
+            , activeTexture(GraphicsContext3D::TEXTURE0)
+            , boundTexture0(0)
+        { }
+
+        GC3Duint boundFBO;
+        GC3Denum activeTexture;
+        GC3Duint boundTexture0;
+    };
+
+    GraphicsContext3DState m_state;
 
     // For multisampling
     GC3Duint m_multisampleFBO;

@@ -98,7 +98,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
         GLint sampleCount = std::min(8, maxSampleCount);
         if (sampleCount > maxSampleCount)
             sampleCount = maxSampleCount;
-        if (m_boundFBO != m_multisampleFBO) {
+        if (m_state.boundFBO != m_multisampleFBO) {
             ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
             mustRestoreFBO = true;
         }
@@ -121,7 +121,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
     }
 
     // resize regular FBO
-    if (m_boundFBO != m_fbo) {
+    if (m_state.boundFBO != m_fbo) {
         mustRestoreFBO = true;
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_fbo);
     }
@@ -147,7 +147,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
     if (m_attrs.antialias) {
         ::glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_multisampleFBO);
-        if (m_boundFBO == m_multisampleFBO)
+        if (m_state.boundFBO == m_multisampleFBO)
             mustRestoreFBO = false;
     }
 
@@ -287,13 +287,13 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     // all previous rendering calls should be done before reading pixels.
     makeContextCurrent();
     ::glFlush();
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
+    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
         resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_fbo);
         ::glFlush();
     }
     ::glReadPixels(x, y, width, height, format, type, data);
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
+    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebufferEXT(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
 }
 

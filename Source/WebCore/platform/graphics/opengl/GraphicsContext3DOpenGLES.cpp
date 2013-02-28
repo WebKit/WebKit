@@ -55,7 +55,7 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     // all previous rendering calls should be done before reading pixels.
     ::glFlush();
 #if PLATFORM(BLACKBERRY)
-    if (m_isImaginationHardware && m_fbo == m_boundFBO) {
+    if (m_isImaginationHardware && m_fbo == m_state.boundFBO) {
         // FIXME: This workaround should always be used until the
         // driver alignment bug is fixed, even when we aren't
         // drawing to the canvas.
@@ -63,7 +63,7 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
     } else
         ::glReadPixels(x, y, width, height, format, type, data);
 #else
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO) {
+    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO) {
          resolveMultisamplingIfNecessary(IntRect(x, y, width, height));
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
         ::glFlush();
@@ -71,7 +71,7 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 
     ::glReadPixels(x, y, width, height, format, type, data);
 
-    if (m_attrs.antialias && m_boundFBO == m_multisampleFBO)
+    if (m_attrs.antialias && m_state.boundFBO == m_multisampleFBO)
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_multisampleFBO);
 #endif
 }
@@ -79,7 +79,7 @@ void GraphicsContext3D::readPixels(GC3Dint x, GC3Dint y, GC3Dsizei width, GC3Dsi
 void GraphicsContext3D::readPixelsAndConvertToBGRAIfNecessary(int x, int y, int width, int height, unsigned char* pixels)
 {
 #if PLATFORM(BLACKBERRY)
-    if (m_isImaginationHardware && m_fbo == m_boundFBO) {
+    if (m_isImaginationHardware && m_fbo == m_state.boundFBO) {
         // FIXME: This workaround should always be used until the
         // driver alignment bug is fixed, even when we aren't
         // drawing to the canvas.
@@ -119,7 +119,7 @@ bool GraphicsContext3D::reshapeFBOs(const IntSize& size)
 
     // Resize regular FBO.
     bool mustRestoreFBO = false;
-    if (m_boundFBO != m_fbo) {
+    if (m_state.boundFBO != m_fbo) {
         mustRestoreFBO = true;
         ::glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
     }
