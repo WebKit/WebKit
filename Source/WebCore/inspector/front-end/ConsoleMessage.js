@@ -387,7 +387,7 @@ WebInspector.ConsoleMessageImpl.prototype = {
     _renderPropertyPreview: function(property)
     {
         var span = document.createElement("span");
-        span.className = "console-formatted-";
+        span.className = "console-formatted-" + property.type;
 
         if (property.type === "function") {
             span.textContent = "function";
