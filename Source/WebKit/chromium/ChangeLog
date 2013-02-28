@@ -1,3 +1,12 @@
+2013-02-28  Stephen Chenney  <schenney@chromium.org>
+
+        RenderTableCellDeathTest unit test fails on mac
+        https://bugs.webkit.org/show_bug.cgi?id=110992
+
+        Unreviewed revert of all changes. The problem seems to have resolved.
+
+        * tests/RenderTableCellTest.cpp: Remove Mac disable code.
+
 2013-02-28  Takashi Toyoshima  <toyoshim@chromium.org>
 
         Unreviewed, quick test breakage fix for android

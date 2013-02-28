@@ -84,8 +84,6 @@ protected:
     RenderTableCell* m_cell;
 };
 
-#if !OS(MAC_OS_X)
-
 TEST_F(RenderTableCellDeathTest, CanSetColumn)
 {
     static const unsigned columnIndex = 10;
@@ -112,8 +110,6 @@ TEST_F(RenderTableCellDeathTest, CrashIfSettingUnsetColumnIndex)
 {
     ASSERT_DEATH(m_cell->setCol(unsetColumnIndex), "");
 }
-
-#endif
 
 #endif
 
