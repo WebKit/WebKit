@@ -1,3 +1,21 @@
+2013-02-28  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Maintain the directionality of the selection after modifying the selection using key events.
+        https://bugs.webkit.org/show_bug.cgi?id=111078
+
+        Reviewed by Yong Li.
+
+        PR 295224.
+
+        When using the key navigation to modify the selection, reset the
+        directionality of the selection to the original to prevent
+        changing the anchor.
+
+        Reviewed Internally by Nima Ghanavatian.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::updateOrHandleInputSelection):
+
 2013-02-28  Lianghui Chen  <liachen@rim.com>
 
         [BlackBerry] Disable auto-filling password in forms when auto-form-filling is not enabled.

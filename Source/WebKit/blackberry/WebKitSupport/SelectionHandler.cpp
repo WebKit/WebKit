@@ -439,15 +439,17 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
         return false;
 
     unsigned character = 0;
+    bool needToInvertDirection = false;
     if (startIsOutsideOfField) {
         character = extendSelectionToFieldBoundary(true /* isStartHandle */, relativeStart, newSelection);
-        if (character) {
+        if (character && controller->selection().isBaseFirst()) {
             // Invert the selection so that the cursor point is at the beginning.
             controller->setSelection(VisibleSelection(controller->selection().end(), controller->selection().start(), true /* isDirectional */));
+            needToInvertDirection = true;
         }
     } else if (endIsOutsideOfField) {
         character = extendSelectionToFieldBoundary(false /* isStartHandle */, relativeEnd, newSelection);
-        if (character) {
+        if (character && !controller->selection().isBaseFirst()) {
             // Reset the selection so that the end is the edit point.
             controller->setSelection(VisibleSelection(controller->selection().start(), controller->selection().end(), true /* isDirectional */));
         }
@@ -462,6 +464,9 @@ bool SelectionHandler::updateOrHandleInputSelection(VisibleSelection& newSelecti
 
     if (shouldExtendSelectionInDirection(controller->selection(), character))
         m_webPage->m_inputHandler->handleKeyboardInput(Platform::KeyboardEvent(character, Platform::KeyboardEvent::KeyDown, KEYMOD_SHIFT));
+
+    if (needToInvertDirection)
+        controller->setSelection(VisibleSelection(controller->selection().extent(), controller->selection().base(), true /* isDirectional */));
 
     // Send the selection changed in case this does not trigger a selection change to
     // ensure the caret position is accurate. This may be a duplicate event.
