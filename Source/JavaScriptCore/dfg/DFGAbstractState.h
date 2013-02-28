@@ -183,7 +183,7 @@ public:
     void executeEdges(Node*);
     void executeEdges(unsigned indexInBlock);
     
-    ALWAYS_INLINE void filterEdgeByUse(Node* node, Edge edge)
+    ALWAYS_INLINE void filterEdgeByUse(Node* node, Edge& edge)
     {
 #if !ASSERT_DISABLED
         switch (edge.useKind()) {
@@ -197,7 +197,7 @@ public:
         }
 #endif // !ASSERT_DISABLED
         
-        filterByType(node, edge.node(), typeFilterFor(edge.useKind()));
+        filterByType(node, edge, typeFilterFor(edge.useKind()));
     }
     
     // Abstractly execute the effects of the given node. This changes the abstract
@@ -260,11 +260,15 @@ private:
         return true;
     }
     
-    ALWAYS_INLINE void filterByType(Node* node, Node* child, SpeculatedType type)
+    ALWAYS_INLINE void filterByType(Node* node, Edge& edge, SpeculatedType type)
     {
-        AbstractValue& value = forNode(child);
-        if (value.m_type & ~type)
+        AbstractValue& value = forNode(edge);
+        if (value.m_type & ~type) {
             node->setCanExit(true);
+            edge.setProofStatus(NeedsCheck);
+        } else
+            edge.setProofStatus(IsProved);
+        
         value.filter(type);
     }
     

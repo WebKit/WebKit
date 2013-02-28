@@ -39,32 +39,12 @@ class AdjacencyList;
 
 class Edge {
 public:
-    Edge()
+    explicit Edge(Node* node = 0, UseKind useKind = UntypedUse, ProofStatus proofStatus = NeedsCheck)
 #if USE(JSVALUE64)
-        : m_encodedWord(makeWord(0, UntypedUse))
-#else
-        : m_node(0)
-        , m_encodedWord(UntypedUse)
-#endif
-    {
-    }
-    
-    explicit Edge(Node* node)
-#if USE(JSVALUE64)
-        : m_encodedWord(makeWord(node, UntypedUse))
+        : m_encodedWord(makeWord(node, useKind, proofStatus))
 #else
         : m_node(node)
-        , m_encodedWord(UntypedUse)
-#endif
-    {
-    }
-    
-    Edge(Node* node, UseKind useKind)
-#if USE(JSVALUE64)
-        : m_encodedWord(makeWord(node, useKind))
-#else
-        : m_node(node)
-        , m_encodedWord(useKind)
+        , m_encodedWord(makeWord(useKind, proofStatus))
 #endif
     {
     }
@@ -81,7 +61,7 @@ public:
     void setNode(Node* node)
     {
 #if USE(JSVALUE64)
-        m_encodedWord = makeWord(node, useKind());
+        m_encodedWord = makeWord(node, useKind(), proofStatus());
 #else
         m_node = node;
 #endif
@@ -91,11 +71,12 @@ public:
     {
 #if USE(JSVALUE64)
         unsigned masked = m_encodedWord & (((1 << shift()) - 1));
-        ASSERT(masked < LastUseKind);
-        UseKind result = static_cast<UseKind>(masked);
+        unsigned shifted = masked >> 1;
 #else
-        UseKind result = static_cast<UseKind>(m_encodedWord);
+        unsigned shifted = static_cast<UseKind>(m_encodedWord) >> 1;
 #endif
+        ASSERT(shifted < static_cast<unsigned>(LastUseKind));
+        UseKind result = static_cast<UseKind>(shifted);
         ASSERT(node() || result == UntypedUse);
         return result;
     }
@@ -108,10 +89,37 @@ public:
     {
         ASSERT(node());
 #if USE(JSVALUE64)
-        m_encodedWord = makeWord(node(), useKind);
+        m_encodedWord = makeWord(node(), useKind, proofStatus());
 #else
-        m_encodedWord = useKind;
+        m_encodedWord = makeWord(useKind, proofStatus());
 #endif
+    }
+    
+    ProofStatus proofStatusUnchecked() const
+    {
+        return proofStatusForIsProved(m_encodedWord & 1);
+    }
+    ProofStatus proofStatus() const
+    {
+        ASSERT(node());
+        return proofStatusUnchecked();
+    }
+    void setProofStatus(ProofStatus proofStatus)
+    {
+        ASSERT(node());
+#if USE(JSVALUE64)
+        m_encodedWord = makeWord(node(), useKind(), proofStatus);
+#else
+        m_encodedWord = makeWord(useKind(), proofStatus);
+#endif
+    }
+    bool isProved() const
+    {
+        return proofStatus() == IsProved;
+    }
+    bool needsCheck() const
+    {
+        return proofStatus() == NeedsCheck;
     }
     
     bool isSet() const { return !!node(); }
@@ -140,19 +148,24 @@ private:
     friend class AdjacencyList;
     
 #if USE(JSVALUE64)
-    static uint32_t shift() { return 4; }
+    static uint32_t shift() { return 5; }
     
-    static uintptr_t makeWord(Node* node, UseKind useKind)
+    static uintptr_t makeWord(Node* node, UseKind useKind, ProofStatus proofStatus)
     {
         ASSERT(sizeof(node) == 8);
         uintptr_t shiftedValue = bitwise_cast<uintptr_t>(node) << shift();
         ASSERT((shiftedValue >> shift()) == bitwise_cast<uintptr_t>(node));
         ASSERT(useKind >= 0 && useKind < LastUseKind);
-        ASSERT(LastUseKind <= (1 << shift()));
-        return shiftedValue | static_cast<uintptr_t>(useKind);
+        ASSERT((static_cast<uintptr_t>(LastUseKind) << 1) <= (1 << shift()));
+        return shiftedValue | (static_cast<uintptr_t>(useKind) << 1) | DFG::isProved(proofStatus);
     }
     
 #else
+    static uintptr_t makeWord(UseKind useKind, ProofStatus proofStatus)
+    {
+        return (static_cast<uintptr_t>(useKind) << 1) | DFG::isProved(proofStatus);
+    }
+    
     Node* m_node;
 #endif
     // On 64-bit this holds both the pointer and the use kind, while on 32-bit

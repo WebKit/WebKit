@@ -41,16 +41,18 @@ void NodePointerTraits::dump(Node* value, PrintStream& out)
 
 namespace WTF {
 
-void printInternal(PrintStream& out, JSC::DFG::OptimizationFixpointState state)
+using namespace JSC::DFG;
+
+void printInternal(PrintStream& out, OptimizationFixpointState state)
 {
     switch (state) {
-    case JSC::DFG::BeforeFixpoint:
+    case BeforeFixpoint:
         out.print("BeforeFixpoint");
         break;
-    case JSC::DFG::FixpointNotConverged:
+    case FixpointNotConverged:
         out.print("FixpointNotConverged");
         break;
-    case JSC::DFG::FixpointConverged:
+    case FixpointConverged:
         out.print("FixpointConverged");
         break;
     default:
@@ -59,13 +61,13 @@ void printInternal(PrintStream& out, JSC::DFG::OptimizationFixpointState state)
     }
 }
 
-void printInternal(PrintStream& out, JSC::DFG::GraphForm form)
+void printInternal(PrintStream& out, GraphForm form)
 {
     switch (form) {
-    case JSC::DFG::LoadStore:
+    case LoadStore:
         out.print("LoadStore");
         break;
-    case JSC::DFG::ThreadedCPS:
+    case ThreadedCPS:
         out.print("ThreadedCPS");
         break;
     default:
@@ -74,14 +76,29 @@ void printInternal(PrintStream& out, JSC::DFG::GraphForm form)
     }
 }
 
-void printInternal(PrintStream& out, JSC::DFG::UnificationState state)
+void printInternal(PrintStream& out, UnificationState state)
 {
     switch (state) {
-    case JSC::DFG::LocallyUnified:
+    case LocallyUnified:
         out.print("LocallyUnified");
         break;
-    case JSC::DFG::GloballyUnified:
+    case GloballyUnified:
         out.print("GloballyUnified");
+        break;
+    default:
+        RELEASE_ASSERT_NOT_REACHED();
+        break;
+    }
+}
+
+void printInternal(PrintStream& out, ProofStatus status)
+{
+    switch (status) {
+    case IsProved:
+        out.print("IsProved");
+        break;
+    case NeedsCheck:
+        out.print("NeedsCheck");
         break;
     default:
         RELEASE_ASSERT_NOT_REACHED();
