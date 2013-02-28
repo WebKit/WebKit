@@ -1,3 +1,14 @@
+2013-02-28  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Enable CANVAS_PATH flag
+        https://bugs.webkit.org/show_bug.cgi?id=108508
+
+        Reviewed by Simon Hausmann.
+
+        Also enable CANVAS_PATH flag for Qt.
+
+        * qmake/mkspecs/features/features.pri:
+
 2013-02-28  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][TestWebKitAPI] The activeBuildConfig() function has been replaced with targetSubDir()
