@@ -3017,7 +3017,7 @@ webkit.org/b/110929 http/tests/multipart/policy-ignore-crash.php [ Missing Failu
 webkit.org/b/110929 http/tests/multipart/multipart-html.php [ Missing Failure ]
 webkit.org/b/111023 fast/loader/unload-hyperlink-targeted.html [ Timeout ]
 webkit.org/b/111023 fast/dom/Window/Location/set-location-after-close.html [ Timeout ]
-webkit.org/b/111043 [ Debug ] fast/encoding/script-in-head.html [ Pass Timeout ]
+webkit.org/b/111043 fast/encoding/script-in-head.html [ Pass Timeout ]
 webkit.org/b/111044 fast/loader/display-image-unset-can-block-image-and-can-reload-in-place.html [ Timeout ]
 webkit.org/b/111044 fast/loader/images-enabled-unset-can-block-image-and-can-reload-in-place.html [ Timeout ]
 webkit.org/b/110907 inspector/timeline/timeline-script-tag-1.html [ Pass Failure ]
