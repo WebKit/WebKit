@@ -904,7 +904,7 @@ namespace JSC {
         bool canBeOptimizedOrInlined() { return false; }
         // Enables use of value profiler with tiered compilation turned off,
         // in which case all code gets profiled.
-        bool shouldEmitProfiling() { return true; }
+        bool shouldEmitProfiling() { return false; }
 #endif
 
         Interpreter* m_interpreter;
