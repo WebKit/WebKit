@@ -142,6 +142,15 @@ public:
     void setHasMarkupTruncation(bool b) { m_hasMarkupTruncation = b; }
     bool hasMarkupTruncation() const { return m_hasMarkupTruncation; }
 
+    void setHasMarginBeforeQuirk(bool b) { m_hasMarginBeforeQuirk = b; }
+    void setHasMarginAfterQuirk(bool b) { m_hasMarginAfterQuirk = b; }
+
+    bool hasMarginBeforeQuirk() const { return m_hasMarginBeforeQuirk; }
+    bool hasMarginAfterQuirk() const { return m_hasMarginAfterQuirk; }
+
+    bool hasMarginBeforeQuirk(const RenderBox* child) const;
+    bool hasMarginAfterQuirk(const RenderBox* child) const;
+
     RootInlineBox* createAndAppendRootInlineBox();
 
     bool generatesLineBoxesForInlineChild(RenderObject*);
@@ -962,8 +971,8 @@ private:
 
         // These variables are used to detect quirky margins that we need to collapse away (in table cells
         // and in the body element).
-        bool m_marginBeforeQuirk : 1;
-        bool m_marginAfterQuirk : 1;
+        bool m_hasMarginBeforeQuirk : 1;
+        bool m_hasMarginAfterQuirk : 1;
         bool m_determinedMarginBeforeQuirk : 1;
 
         bool m_discardMargin : 1;
@@ -982,8 +991,8 @@ private:
             m_positiveMargin = 0;
             m_negativeMargin = 0;
         }
-        void setMarginBeforeQuirk(bool b) { m_marginBeforeQuirk = b; }
-        void setMarginAfterQuirk(bool b) { m_marginAfterQuirk = b; }
+        void setHasMarginBeforeQuirk(bool b) { m_hasMarginBeforeQuirk = b; }
+        void setHasMarginAfterQuirk(bool b) { m_hasMarginAfterQuirk = b; }
         void setDeterminedMarginBeforeQuirk(bool b) { m_determinedMarginBeforeQuirk = b; }
         void setPositiveMargin(LayoutUnit p) { ASSERT(!m_discardMargin); m_positiveMargin = p; }
         void setNegativeMargin(LayoutUnit n) { ASSERT(!m_discardMargin); m_negativeMargin = n; }
@@ -1011,8 +1020,8 @@ private:
         bool canCollapseMarginAfterWithChildren() const { return m_canCollapseMarginAfterWithChildren; }
         bool quirkContainer() const { return m_quirkContainer; }
         bool determinedMarginBeforeQuirk() const { return m_determinedMarginBeforeQuirk; }
-        bool marginBeforeQuirk() const { return m_marginBeforeQuirk; }
-        bool marginAfterQuirk() const { return m_marginAfterQuirk; }
+        bool hasMarginBeforeQuirk() const { return m_hasMarginBeforeQuirk; }
+        bool hasMarginAfterQuirk() const { return m_hasMarginAfterQuirk; }
         LayoutUnit positiveMargin() const { return m_positiveMargin; }
         LayoutUnit negativeMargin() const { return m_negativeMargin; }
         bool discardMargin() const { return m_discardMargin; }
@@ -1235,7 +1244,9 @@ protected:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the root line boxes created for this block flow.  For example, <div>Hello<br>world.</div> will have two total lines for the <div>.
 
-    mutable signed m_lineHeight : 29;
+    mutable signed m_lineHeight : 27;
+    bool m_hasMarginBeforeQuirk : 1; // Note these quirk values can't be put in RenderBlockRareData since they are set too frequently.
+    bool m_hasMarginAfterQuirk : 1;
     unsigned m_beingDestroyed : 1;
     unsigned m_hasMarkupTruncation : 1;
     unsigned m_hasBorderOrPaddingLogicalWidthChanged : 1;

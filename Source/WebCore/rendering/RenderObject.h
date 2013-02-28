@@ -903,11 +903,6 @@ public:
      */
     virtual LayoutRect localCaretRect(InlineBox*, int caretOffset, LayoutUnit* extraWidthToEndOfLine = 0);
 
-    bool isMarginBeforeQuirk() const { return m_bitfields.marginBeforeQuirk(); }
-    bool isMarginAfterQuirk() const { return m_bitfields.marginAfterQuirk(); }
-    void setMarginBeforeQuirk(bool b = true) { m_bitfields.setMarginBeforeQuirk(b); }
-    void setMarginAfterQuirk(bool b = true) { m_bitfields.setMarginAfterQuirk(b); }
-
     // When performing a global document tear-down, the renderer of the document is cleared.  We use this
     // as a hook to detect the case of document destruction and don't waste time doing unnecessary work.
     bool documentBeingDestroyed() const;
@@ -1073,15 +1068,13 @@ private:
             , m_everHadLayout(false)
             , m_inRenderFlowThread(false)
             , m_childrenInline(false)
-            , m_marginBeforeQuirk(false) 
-            , m_marginAfterQuirk(false)
             , m_hasColumns(false)
             , m_positionedState(IsStaticlyPositioned)
             , m_selectionState(SelectionNone)
         {
         }
         
-        // 32 bits have been used here. THERE ARE NO FREE BITS AVAILABLE.
+        // 29 bits have been used here. There are three bits available.
         ADD_BOOLEAN_BITFIELD(needsLayout, NeedsLayout);
         ADD_BOOLEAN_BITFIELD(needsPositionedMovementLayout, NeedsPositionedMovementLayout);
         ADD_BOOLEAN_BITFIELD(normalChildNeedsLayout, NormalChildNeedsLayout);
@@ -1115,8 +1108,6 @@ private:
 
         // from RenderBlock
         ADD_BOOLEAN_BITFIELD(childrenInline, ChildrenInline);
-        ADD_BOOLEAN_BITFIELD(marginBeforeQuirk, MarginBeforeQuirk);
-        ADD_BOOLEAN_BITFIELD(marginAfterQuirk, MarginAfterQuirk);
         ADD_BOOLEAN_BITFIELD(hasColumns, HasColumns);
 
     private:

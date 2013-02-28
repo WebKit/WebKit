@@ -377,8 +377,8 @@ public:
     bool hasBorder() const { return surround->border.hasBorder(); }
     bool hasPadding() const { return surround->padding.nonZero(); }
     bool hasOffset() const { return surround->offset.nonZero(); }
-    bool isMarginBeforeQuirk() const { return marginBefore().quirk(); }
-    bool isMarginAfterQuirk() const { return marginAfter().quirk(); }
+    bool hasMarginBeforeQuirk() const { return marginBefore().quirk(); }
+    bool hasMarginAfterQuirk() const { return marginAfter().quirk(); }
 
     bool hasBackgroundImage() const { return m_background->background().hasImage(); }
     bool hasFixedBackgroundImage() const { return m_background->background().hasFixedImage(); }

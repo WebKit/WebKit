@@ -167,8 +167,8 @@ private:
 RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderPadding, LayoutUnit afterBorderPadding)
     : m_atBeforeSideOfBlock(true)
     , m_atAfterSideOfBlock(false)
-    , m_marginBeforeQuirk(false)
-    , m_marginAfterQuirk(false)
+    , m_hasMarginBeforeQuirk(false)
+    , m_hasMarginAfterQuirk(false)
     , m_determinedMarginBeforeQuirk(false)
     , m_discardMargin(false)
 {
@@ -201,6 +201,8 @@ RenderBlock::MarginInfo::MarginInfo(RenderBlock* block, LayoutUnit beforeBorderP
 RenderBlock::RenderBlock(ContainerNode* node)
     : RenderBox(node)
     , m_lineHeight(-1)
+    , m_hasMarginBeforeQuirk(false)
+    , m_hasMarginAfterQuirk(false)
     , m_beingDestroyed(false)
     , m_hasMarkupTruncation(false)
     , m_hasBorderOrPaddingLogicalWidthChanged(false)
@@ -1553,8 +1555,8 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
     if (!isCell) {
         initMaxMarginValues();
         
-        setMarginBeforeQuirk(styleToUse->isMarginBeforeQuirk());
-        setMarginAfterQuirk(styleToUse->isMarginAfterQuirk());
+        setHasMarginBeforeQuirk(styleToUse->hasMarginBeforeQuirk());
+        setHasMarginAfterQuirk(styleToUse->hasMarginAfterQuirk());
         setPaginationStrut(0);
     }
 
@@ -1989,7 +1991,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     
     // See if the top margin is quirky. We only care if this child has
     // margins that will collapse with us.
-    bool topQuirk = child->isMarginBeforeQuirk();
+    bool topQuirk = hasMarginBeforeQuirk(child);
 
     if (marginInfo.canCollapseWithMarginBefore()) {
         if (!childDiscardMarginBefore && !marginInfo.discardMargin()) {
@@ -2004,7 +2006,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
             // has an example of this, a <dt> with 0.8em author-specified inside
             // a <dl> inside a <td>.
             if (!marginInfo.determinedMarginBeforeQuirk() && !topQuirk && (posTop - negTop)) {
-                setMarginBeforeQuirk(false);
+                setHasMarginBeforeQuirk(false);
                 marginInfo.setDeterminedMarginBeforeQuirk(true);
             }
 
@@ -2014,7 +2016,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
                 // This deals with the <td><div><p> case.
                 // Don't do this for a block that split two inlines though. You do
                 // still apply margins in this case.
-                setMarginBeforeQuirk(true);
+                setHasMarginBeforeQuirk(true);
         } else
             // The before margin of the container will also discard all the margins it is collapsing with.
             setMustDiscardMarginBefore();
@@ -2027,7 +2029,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
     }
 
     if (marginInfo.quirkContainer() && marginInfo.atBeforeSideOfBlock() && (posTop - negTop))
-        marginInfo.setMarginBeforeQuirk(topQuirk);
+        marginInfo.setHasMarginBeforeQuirk(topQuirk);
 
     LayoutUnit beforeCollapseLogicalTop = logicalHeight();
     LayoutUnit logicalTop = beforeCollapseLogicalTop;
@@ -2065,7 +2067,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
             logicalTop = logicalHeight();
         } else if (!marginInfo.discardMargin() && (!marginInfo.atBeforeSideOfBlock()
             || (!marginInfo.canCollapseMarginBeforeWithChildren()
-            && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginBeforeQuirk())))) {
+            && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.hasMarginBeforeQuirk())))) {
             // We're collapsing with a previous sibling's margins and not
             // with the top of the block.
             setLogicalHeight(logicalHeight() + max(marginInfo.positiveMargin(), posTop) - max(marginInfo.negativeMargin(), negTop));
@@ -2081,7 +2083,7 @@ LayoutUnit RenderBlock::collapseMargins(RenderBox* child, MarginInfo& marginInfo
             marginInfo.clearMargin();
 
         if (marginInfo.margin())
-            marginInfo.setMarginAfterQuirk(child->isMarginAfterQuirk());
+            marginInfo.setHasMarginAfterQuirk(hasMarginAfterQuirk(child));
     }
     
     // If margins would pull us past the top of the next page, then we need to pull back and pretend like the margins
@@ -2181,7 +2183,7 @@ void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& pos
     // Give up if in quirks mode and we're a body/table cell and the top margin of the child box is quirky.
     // Give up if the child specified -webkit-margin-collapse: separate that prevents collapsing.
     // FIXME: Use writing mode independent accessor for marginBeforeCollapse.
-    if ((document()->inQuirksMode() && child->isMarginBeforeQuirk() && (isTableCell() || isBody())) || child->style()->marginBeforeCollapse() == MSEPARATE)
+    if ((document()->inQuirksMode() && hasMarginAfterQuirk(child) && (isTableCell() || isBody())) || child->style()->marginBeforeCollapse() == MSEPARATE)
         return;
 
     // The margins are discarded by a child that specified -webkit-margin-collapse: discard.
@@ -2221,8 +2223,11 @@ void RenderBlock::marginBeforeEstimateForChild(RenderBox* child, LayoutUnit& pos
     // Make sure to update the block margins now for the grandchild box so that we're looking at current values.
     if (grandchildBox->needsLayout()) {
         grandchildBox->computeAndSetBlockDirectionMargins(this);
-        grandchildBox->setMarginBeforeQuirk(grandchildBox->style()->isMarginBeforeQuirk());
-        grandchildBox->setMarginAfterQuirk(grandchildBox->style()->isMarginAfterQuirk());
+        if (grandchildBox->isRenderBlock()) {
+            RenderBlock* grandchildBlock = toRenderBlock(grandchildBox);
+            grandchildBlock->setHasMarginBeforeQuirk(grandchildBox->style()->hasMarginBeforeQuirk());
+            grandchildBlock->setHasMarginAfterQuirk(grandchildBox->style()->hasMarginAfterQuirk());
+        }
     }
 
     // Collapse the margin of the grandchild box with our own to produce an estimate.
@@ -2338,14 +2343,14 @@ void RenderBlock::setCollapsedBottomMargin(const MarginInfo& marginInfo)
         // with our children.
         setMaxMarginAfterValues(max(maxPositiveMarginAfter(), marginInfo.positiveMargin()), max(maxNegativeMarginAfter(), marginInfo.negativeMargin()));
 
-        if (!marginInfo.marginAfterQuirk())
-            setMarginAfterQuirk(false);
+        if (!marginInfo.hasMarginAfterQuirk())
+            setHasMarginAfterQuirk(false);
 
-        if (marginInfo.marginAfterQuirk() && marginAfter() == 0)
+        if (marginInfo.hasMarginAfterQuirk() && !marginAfter())
             // We have no bottom margin and our last child has a quirky margin.
             // We will pick up this quirky margin and pass it through.
             // This deals with the <td><div><p> case.
-            setMarginAfterQuirk(true);
+            setHasMarginAfterQuirk(true);
     }
 }
 
@@ -2358,7 +2363,7 @@ void RenderBlock::handleAfterSideOfBlock(LayoutUnit beforeSide, LayoutUnit after
     // its margin.
     if (!marginInfo.discardMargin() && (!marginInfo.canCollapseWithMarginAfter() && !marginInfo.canCollapseWithMarginBefore()
         && (!isAnonymousBlock() || isAnonymousColumnsBlock() || isAnonymousColumnSpanBlock())
-        && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.marginAfterQuirk())))
+        && (!document()->inQuirksMode() || !marginInfo.quirkContainer() || !marginInfo.hasMarginAfterQuirk())))
         setLogicalHeight(logicalHeight() + marginInfo.margin());
         
     // Now add in our bottom border/padding.
@@ -7637,6 +7642,40 @@ LayoutUnit RenderBlock::collapsedMarginAfterForChild(const  RenderBox* child) co
     // The child is perpendicular to us, which means its margins don't collapse but are on the
     // "logical left/right" side of the child box.  We can just return the raw margin in this case.  
     return marginAfterForChild(child);
+}
+
+bool RenderBlock::hasMarginBeforeQuirk(const RenderBox* child) const
+{
+    // If the child has the same directionality as we do, then we can just return its
+    // margin quirk.
+    if (!child->isWritingModeRoot())
+        return child->isRenderBlock() ? toRenderBlock(child)->hasMarginBeforeQuirk() : child->style()->hasMarginBeforeQuirk();
+    
+    // The child has a different directionality. If the child is parallel, then it's just
+    // flipped relative to us. We can use the opposite edge.
+    if (child->isHorizontalWritingMode() == isHorizontalWritingMode())
+        return child->isRenderBlock() ? toRenderBlock(child)->hasMarginAfterQuirk() : child->style()->hasMarginAfterQuirk();
+    
+    // The child is perpendicular to us and box sides are never quirky in html.css, and we don't really care about
+    // whether or not authors specified quirky ems, since they're an implementation detail.
+    return false;
+}
+
+bool RenderBlock::hasMarginAfterQuirk(const RenderBox* child) const
+{
+    // If the child has the same directionality as we do, then we can just return its
+    // margin quirk.
+    if (!child->isWritingModeRoot())
+        return child->isRenderBlock() ? toRenderBlock(child)->hasMarginAfterQuirk() : child->style()->hasMarginAfterQuirk();
+    
+    // The child has a different directionality. If the child is parallel, then it's just
+    // flipped relative to us. We can use the opposite edge.
+    if (child->isHorizontalWritingMode() == isHorizontalWritingMode())
+        return child->isRenderBlock() ? toRenderBlock(child)->hasMarginBeforeQuirk() : child->style()->hasMarginBeforeQuirk();
+    
+    // The child is perpendicular to us and box sides are never quirky in html.css, and we don't really care about
+    // whether or not authors specified quirky ems, since they're an implementation detail.
+    return false;
 }
 
 RenderBlock::MarginValues RenderBlock::marginValuesForChild(RenderBox* child) const
