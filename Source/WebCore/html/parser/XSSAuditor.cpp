@@ -343,6 +343,10 @@ bool XSSAuditor::filterStartToken(const FilterTokenRequest& request)
         didBlockScript |= filterBaseToken(request);
     else if (hasName(request.token, formTag))
         didBlockScript |= filterFormToken(request);
+    else if (hasName(request.token, inputTag))
+        didBlockScript |= filterInputToken(request);
+    else if (hasName(request.token, buttonTag))
+        didBlockScript |= filterButtonToken(request);
 
     return didBlockScript;
 }
@@ -475,6 +479,22 @@ bool XSSAuditor::filterFormToken(const FilterTokenRequest& request)
     ASSERT(hasName(request.token, formTag));
 
     return eraseAttributeIfInjected(request, actionAttr, blankURL().string());
+}
+
+bool XSSAuditor::filterInputToken(const FilterTokenRequest& request)
+{
+    ASSERT(request.token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(request.token, inputTag));
+
+    return eraseAttributeIfInjected(request, formactionAttr, blankURL().string(), SrcLikeAttribute);
+}
+
+bool XSSAuditor::filterButtonToken(const FilterTokenRequest& request)
+{
+    ASSERT(request.token.type() == HTMLToken::StartTag);
+    ASSERT(hasName(request.token, buttonTag));
+
+    return eraseAttributeIfInjected(request, formactionAttr, blankURL().string(), SrcLikeAttribute);
 }
 
 bool XSSAuditor::eraseDangerousAttributesIfInjected(const FilterTokenRequest& request)

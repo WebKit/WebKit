@@ -1,0 +1,4 @@
+CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
+
+ALERT: formaction present on INPUT with value of about:blank
+

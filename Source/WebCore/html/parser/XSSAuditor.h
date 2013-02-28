@@ -87,6 +87,8 @@ private:
     bool filterMetaToken(const FilterTokenRequest&);
     bool filterBaseToken(const FilterTokenRequest&);
     bool filterFormToken(const FilterTokenRequest&);
+    bool filterInputToken(const FilterTokenRequest&);
+    bool filterButtonToken(const FilterTokenRequest&);
 
     bool eraseDangerousAttributesIfInjected(const FilterTokenRequest&);
     bool eraseAttributeIfInjected(const FilterTokenRequest&, const QualifiedName&, const String& replacementValue = String(), AttributeKind treatment = NormalAttribute);
