@@ -1,3 +1,25 @@
+2013-02-27  Seigo Nonaka  <nona@chromium.org>
+
+        [Chromium] Should not return WebTextInputTypeNone for date input element.
+        https://bugs.webkit.org/show_bug.cgi?id=110740
+
+        Reviewed by Kent Tamura.
+
+        In the case of Windows 8, text input state including on-screen keyboard is controlled by the
+        value of WebTextInputType returned from WebViewImpl::textInputType().
+        In past, it returned WebTextInputTypeDate for date text input but now it returns
+        WebTextInputTypeNone.
+        WebTextInputTypeNone is used for non editable node, so on-screen keyboard will be hidden if
+        the date text input is focused.  So there is no way to input on Windows 8 tablet without
+        physical keyboard except tapping small up/down arrow.
+
+        * public/WebTextInputType.h: Introduces WebTextInputTypeDateTimeField.
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::textInputInfo): Fills type filed regardless of editable or not. It is
+        safe because textInputType returns editable type only for known editable element.
+        (WebKit::WebViewImpl::textInputType): Returns WebTextInputTypeDateTimeField for the date
+        time field element.
+
 2013-02-27  James Simonsen  <simonjam@chromium.org>
 
         [chromium] Lower priority of preloaded images
