@@ -135,6 +135,8 @@ class MainTest(unittest.TestCase):
                 '--output-json-path=a/output.json',
                 '--slave-config-json-path=a/source.json',
                 '--test-results-server=somehost',
+                '--additional-drt-flag=--enable-threaded-parser',
+                '--additional-drt-flag=--awesomesauce',
                 '--debug'])
         self.assertTrue(options.build)
         self.assertEqual(options.build_directory, 'folder42')
@@ -148,6 +150,7 @@ class MainTest(unittest.TestCase):
         self.assertEqual(options.output_json_path, 'a/output.json')
         self.assertEqual(options.slave_config_json_path, 'a/source.json')
         self.assertEqual(options.test_results_server, 'somehost')
+        self.assertEqual(options.additional_drt_flag, ['--enable-threaded-parser', '--awesomesauce'])
 
     def test_upload_json(self):
         runner, port = self.create_runner()

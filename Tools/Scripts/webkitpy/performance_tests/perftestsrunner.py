@@ -124,6 +124,9 @@ class PerfTestsRunner(object):
                 help="Output per-test profile information."),
             optparse.make_option("--profiler", action="store",
                 help="Output per-test profile information, using the specified profiler."),
+            optparse.make_option("--additional-drt-flag", action="append",
+                default=[], help="Additional command line flag to pass to DumpRenderTree "
+                     "Specify multiple times to add multiple flags."),
             ]
         return optparse.OptionParser(option_list=(perf_option_list)).parse_args(args)
 
