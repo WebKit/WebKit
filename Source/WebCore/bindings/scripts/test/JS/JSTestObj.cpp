@@ -21,6 +21,7 @@
 #include "config.h"
 #include "JSTestObj.h"
 
+#include "CallbackFunction.h"
 #include "DOMStringList.h"
 #include "Dictionary.h"
 #include "Document.h"
