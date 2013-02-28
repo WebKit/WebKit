@@ -197,7 +197,8 @@ messages -> WebPage LegacyReceiver {
     UppercaseWord()
     LowercaseWord()
     CapitalizeWord()
-
+#endif
+#if PLATFORM(MAC)
     SetSmartInsertDeleteEnabled(bool isSmartInsertDeleteEnabled)
 #endif
 

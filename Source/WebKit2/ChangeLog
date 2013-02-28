@@ -1,3 +1,10 @@
+2013-02-28  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r144221): SetSmartInsertDeleteEnabled should be wrapped in PLATFORM(MAC)
+
+        * WebProcess/WebPage/WebPage.messages.in: Move
+        SetSmartInsertDeleteEnabled from USE(APPKIT) to PLATFORM(MAC).
+
 2013-02-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] One more unreviewed buildfix for EFL, GTK and Qt after r144218.
