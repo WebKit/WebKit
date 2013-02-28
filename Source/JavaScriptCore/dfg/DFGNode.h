@@ -196,6 +196,17 @@ struct Node {
         m_op = op;
         m_flags = defaultFlags(op);
     }
+    
+    void setOpAndDefaultNonExitFlags(NodeType op)
+    {
+        m_op = op;
+        m_flags = (defaultFlags(op) & ~NodeExitsForward) | (m_flags & NodeExitsForward);
+    }
+    
+    void convertToPhantom()
+    {
+        setOpAndDefaultNonExitFlags(Phantom);
+    }
 
     bool mustGenerate()
     {
@@ -1250,8 +1261,8 @@ struct Node {
     AdjacencyList children;
 
 private:
-    uint16_t m_op; // real type is NodeType
-    NodeFlags m_flags;
+    unsigned m_op : 10; // real type is NodeType
+    unsigned m_flags : 22;
     // The virtual register number (spill location) associated with this .
     VirtualRegister m_virtualRegister;
     // The number of uses of the result of this operation (+1 for 'must generate' nodes, which have side-effects).

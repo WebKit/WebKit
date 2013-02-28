@@ -469,7 +469,7 @@ public:
                     if (!isOKToOptimize(node->child1().node()))
                         break;
                     m_graph.deref(node->child1());
-                    node->setOpAndDefaultFlags(Phantom);
+                    node->convertToPhantom();
                     node->children.setChild1(Edge());
                     break;
                 }

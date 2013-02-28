@@ -89,7 +89,7 @@ private:
                             m_graph.argumentsRegisterFor(node->codeOrigin)).m_type))
                     break;
                 ASSERT(node->refCount() == 1);
-                node->setOpAndDefaultFlags(Phantom);
+                node->convertToPhantom();
                 eliminated = true;
                 break;
             }
@@ -106,7 +106,7 @@ private:
                 if (value.m_currentKnownStructure.isSubsetOf(set)) {
                     ASSERT(node->refCount() == 1);
                     m_state.execute(indexInBlock); // Catch the fact that we may filter on cell.
-                    node->setOpAndDefaultFlags(Phantom);
+                    node->convertToPhantom();
                     eliminated = true;
                     break;
                 }
@@ -127,7 +127,7 @@ private:
                 if (!node->arrayMode().alreadyChecked(m_graph, node, m_state.forNode(node->child1())))
                     break;
                 ASSERT(node->refCount() == 1);
-                node->setOpAndDefaultFlags(Phantom);
+                node->convertToPhantom();
                 eliminated = true;
                 break;
             }
@@ -135,7 +135,7 @@ private:
             case CheckFunction: {
                 if (m_state.forNode(node->child1()).value() != node->function())
                     break;
-                node->setOpAndDefaultFlags(Phantom);
+                node->convertToPhantom();
                 eliminated = true;
                 break;
             }

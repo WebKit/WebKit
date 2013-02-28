@@ -295,11 +295,11 @@ public:
 
     // Called by the speculative operand types, below, to fill operand to
     // machine registers, implicitly generating speculation checks as needed.
-    GPRReg fillSpeculateInt(Edge, DataFormat& returnFormat, SpeculationDirection);
+    GPRReg fillSpeculateInt(Edge, DataFormat& returnFormat);
     GPRReg fillSpeculateIntStrict(Edge);
-    FPRReg fillSpeculateDouble(Edge, SpeculationDirection);
-    GPRReg fillSpeculateCell(Edge, SpeculationDirection);
-    GPRReg fillSpeculateBoolean(Edge, SpeculationDirection);
+    FPRReg fillSpeculateDouble(Edge);
+    GPRReg fillSpeculateCell(Edge);
+    GPRReg fillSpeculateBoolean(Edge);
     GeneratedOperandType checkGeneratedTypeForToInt32(Node*);
 
     void addSlowPathGenerator(PassOwnPtr<SlowPathGenerator>);
@@ -2140,19 +2140,23 @@ public:
 #elif USE(JSVALUE32_64)
     JITCompiler::Jump convertToDouble(JSValueOperand&, FPRReg result);
 #endif
+    
+    // Add a backward speculation check.
+    void backwardSpeculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail);
+    void backwardSpeculationCheck(ExitKind, JSValueSource, Node*, const MacroAssembler::JumpList& jumpsToFail);
 
     // Add a speculation check without additional recovery.
     void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail);
     void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail);
     // Add a speculation check without additional recovery, and with a promise to supply a jump later.
-    OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, Node*);
-    OSRExitJumpPlaceholder speculationCheck(ExitKind, JSValueSource, Edge);
+    OSRExitJumpPlaceholder backwardSpeculationCheck(ExitKind, JSValueSource, Node*);
+    OSRExitJumpPlaceholder backwardSpeculationCheck(ExitKind, JSValueSource, Edge);
     // Add a set of speculation checks without additional recovery.
     void speculationCheck(ExitKind, JSValueSource, Node*, const MacroAssembler::JumpList& jumpsToFail);
     void speculationCheck(ExitKind, JSValueSource, Edge, const MacroAssembler::JumpList& jumpsToFail);
     // Add a speculation check with additional recovery.
-    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
-    void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
+    void backwardSpeculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
+    void backwardSpeculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
     // Use this like you would use speculationCheck(), except that you don't pass it a jump
     // (because you don't have to execute a branch; that's kind of the whole point), and you
     // must register the returned Watchpoint with something relevant. In general, this should
@@ -2171,24 +2175,17 @@ public:
     // that you've ensured that there exists a MovHint prior to your use of forwardSpeculationCheck().
     void forwardSpeculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const ValueRecovery& = ValueRecovery());
     void forwardSpeculationCheck(ExitKind, JSValueSource, Node*, const MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& = ValueRecovery());
-    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, SpeculationDirection);
-    void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, SpeculationDirection);
-    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&, SpeculationDirection);
-    void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&, SpeculationDirection);
+    void speculationCheck(ExitKind, JSValueSource, Node*, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
+    void speculationCheck(ExitKind, JSValueSource, Edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery&);
     // Called when we statically determine that a speculation will fail.
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Node*);
     void terminateSpeculativeExecution(ExitKind, JSValueRegs, Edge);
-    void terminateSpeculativeExecution(ExitKind, JSValueRegs, Node*, SpeculationDirection);
-    // Issue a forward speculation watchpoint, which will exit to the next instruction rather
-    // than the current one.
-    JumpReplacementWatchpoint* forwardSpeculationWatchpoint(ExitKind = UncountableWatchpoint);
-    JumpReplacementWatchpoint* speculationWatchpoint(ExitKind, SpeculationDirection);
     
     // Helpers for performing type checks on an edge stored in the given registers.
     bool needsTypeCheck(Edge edge, SpeculatedType typesPassedThrough) { return m_state.forNode(edge).m_type & ~typesPassedThrough; }
+    void backwardTypeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail);
     void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail);
     void forwardTypeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, const ValueRecovery&);
-    void typeCheck(JSValueSource, Edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, SpeculationDirection);
 
     void speculateInt32(Edge);
     void speculateNumber(Edge);
@@ -2211,7 +2208,7 @@ public:
     void arrayify(Node*);
     
     template<bool strict>
-    GPRReg fillSpeculateIntInternal(Edge, DataFormat& returnFormat, SpeculationDirection);
+    GPRReg fillSpeculateIntInternal(Edge, DataFormat& returnFormat);
     
     // It is possible, during speculative generation, to reach a situation in which we
     // can statically determine a speculation will fail (for example, when two nodes
@@ -2261,6 +2258,7 @@ public:
     // The current node being generated.
     BlockIndex m_block;
     Node* m_currentNode;
+    SpeculationDirection m_speculationDirection;
 #if !ASSERT_DISABLED
     bool m_canExit;
 #endif
@@ -2673,14 +2671,13 @@ private:
 
 class SpeculateIntegerOperand {
 public:
-    explicit SpeculateIntegerOperand(SpeculativeJIT* jit, Edge edge, SpeculationDirection direction = BackwardSpeculation, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateIntegerOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
 #ifndef NDEBUG
         , m_format(DataFormatNone)
 #endif
-        , m_direction(direction)
     {
         ASSERT(m_jit);
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == Int32Use || edge.useKind() == KnownInt32Use));
@@ -2714,7 +2711,7 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateInt(edge(), m_format, m_direction);
+            m_gprOrInvalid = m_jit->fillSpeculateInt(edge(), m_format);
         return m_gprOrInvalid;
     }
     
@@ -2728,7 +2725,6 @@ private:
     Edge m_edge;
     GPRReg m_gprOrInvalid;
     DataFormat m_format;
-    SpeculationDirection m_direction;
 };
 
 class SpeculateStrictInt32Operand {
@@ -2780,11 +2776,10 @@ private:
 
 class SpeculateDoubleOperand {
 public:
-    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, Edge edge, SpeculationDirection direction = BackwardSpeculation, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateDoubleOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
         , m_edge(edge)
         , m_fprOrInvalid(InvalidFPRReg)
-        , m_direction(direction)
     {
         ASSERT(m_jit);
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == NumberUse || edge.useKind() == KnownNumberUse || edge.useKind() == RealNumberUse));
@@ -2811,7 +2806,7 @@ public:
     FPRReg fpr()
     {
         if (m_fprOrInvalid == InvalidFPRReg)
-            m_fprOrInvalid = m_jit->fillSpeculateDouble(edge(), m_direction);
+            m_fprOrInvalid = m_jit->fillSpeculateDouble(edge());
         return m_fprOrInvalid;
     }
     
@@ -2824,16 +2819,14 @@ private:
     SpeculativeJIT* m_jit;
     Edge m_edge;
     FPRReg m_fprOrInvalid;
-    SpeculationDirection m_direction;
 };
 
 class SpeculateCellOperand {
 public:
-    explicit SpeculateCellOperand(SpeculativeJIT* jit, Edge edge, SpeculationDirection direction = BackwardSpeculation, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateCellOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
-        , m_direction(direction)
     {
         ASSERT(m_jit);
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || (edge.useKind() == CellUse || edge.useKind() == KnownCellUse || edge.useKind() == ObjectUse || edge.useKind() == StringUse));
@@ -2860,7 +2853,7 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateCell(edge(), m_direction);
+            m_gprOrInvalid = m_jit->fillSpeculateCell(edge());
         return m_gprOrInvalid;
     }
     
@@ -2873,16 +2866,14 @@ private:
     SpeculativeJIT* m_jit;
     Edge m_edge;
     GPRReg m_gprOrInvalid;
-    SpeculationDirection m_direction;
 };
 
 class SpeculateBooleanOperand {
 public:
-    explicit SpeculateBooleanOperand(SpeculativeJIT* jit, Edge edge, SpeculationDirection direction = BackwardSpeculation, OperandSpeculationMode mode = AutomaticOperandSpeculation)
+    explicit SpeculateBooleanOperand(SpeculativeJIT* jit, Edge edge, OperandSpeculationMode mode = AutomaticOperandSpeculation)
         : m_jit(jit)
         , m_edge(edge)
         , m_gprOrInvalid(InvalidGPRReg)
-        , m_direction(direction)
     {
         ASSERT(m_jit);
         ASSERT_UNUSED(mode, mode == ManualOperandSpeculation || edge.useKind() == BooleanUse);
@@ -2909,7 +2900,7 @@ public:
     GPRReg gpr()
     {
         if (m_gprOrInvalid == InvalidGPRReg)
-            m_gprOrInvalid = m_jit->fillSpeculateBoolean(edge(), m_direction);
+            m_gprOrInvalid = m_jit->fillSpeculateBoolean(edge());
         return m_gprOrInvalid;
     }
     
@@ -2922,7 +2913,6 @@ private:
     SpeculativeJIT* m_jit;
     Edge m_edge;
     GPRReg m_gprOrInvalid;
-    SpeculationDirection m_direction;
 };
 
 #define DFG_TYPE_CHECK(source, edge, typesPassedThrough, jumpToFail) do { \

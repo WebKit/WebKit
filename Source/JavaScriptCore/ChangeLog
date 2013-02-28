@@ -1,5 +1,89 @@
 2013-02-28  Filip Pizlo  <fpizlo@apple.com>
 
+        It should be easy to determine if a DFG node exits forward or backward when doing type checks
+        https://bugs.webkit.org/show_bug.cgi?id=111102
+
+        Reviewed by Mark Hahnenberg.
+        
+        This adds a NodeExitsForward flag, which tells you the exit directionality of
+        type checks performed by the node. Even if you convert the node to a Phantom
+        and use the Edge UseKind for type checks, you'll still get the same exit
+        directionality that the original node would have wanted.
+
+        * dfg/DFGArgumentsSimplificationPhase.cpp:
+        (JSC::DFG::ArgumentsSimplificationPhase::run):
+        * dfg/DFGArrayifySlowPathGenerator.h:
+        (JSC::DFG::ArrayifySlowPathGenerator::ArrayifySlowPathGenerator):
+        * dfg/DFGCFGSimplificationPhase.cpp:
+        (JSC::DFG::CFGSimplificationPhase::run):
+        (JSC::DFG::CFGSimplificationPhase::mergeBlocks):
+        * dfg/DFGCPSRethreadingPhase.cpp:
+        (JSC::DFG::CPSRethreadingPhase::canonicalizeFlushOrPhantomLocalFor):
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::setReplacement):
+        (JSC::DFG::CSEPhase::eliminate):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        * dfg/DFGConstantFoldingPhase.cpp:
+        (JSC::DFG::ConstantFoldingPhase::foldConstants):
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::checkArray):
+        * dfg/DFGNode.h:
+        (Node):
+        (JSC::DFG::Node::setOpAndDefaultNonExitFlags):
+        (JSC::DFG::Node::convertToPhantom):
+        * dfg/DFGNodeFlags.cpp:
+        (JSC::DFG::nodeFlagsAsString):
+        * dfg/DFGNodeFlags.h:
+        (DFG):
+        * dfg/DFGNodeType.h:
+        (DFG):
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::backwardSpeculationCheck):
+        (DFG):
+        (JSC::DFG::SpeculativeJIT::speculationCheck):
+        (JSC::DFG::SpeculativeJIT::speculationWatchpoint):
+        (JSC::DFG::SpeculativeJIT::forwardSpeculationCheck):
+        (JSC::DFG::SpeculativeJIT::backwardTypeCheck):
+        (JSC::DFG::SpeculativeJIT::typeCheck):
+        (JSC::DFG::SpeculativeJIT::forwardTypeCheck):
+        (JSC::DFG::SpeculativeJIT::fillStorage):
+        (JSC::DFG::SpeculativeJIT::compile):
+        (JSC::DFG::SpeculativeJIT::checkArgumentTypes):
+        (JSC::DFG::SpeculativeJIT::compileValueToInt32):
+        (JSC::DFG::SpeculativeJIT::compileInt32ToDouble):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+        (JSC::DFG::SpeculateIntegerOperand::SpeculateIntegerOperand):
+        (JSC::DFG::SpeculateIntegerOperand::gpr):
+        (SpeculateIntegerOperand):
+        (JSC::DFG::SpeculateDoubleOperand::SpeculateDoubleOperand):
+        (JSC::DFG::SpeculateDoubleOperand::fpr):
+        (SpeculateDoubleOperand):
+        (JSC::DFG::SpeculateCellOperand::SpeculateCellOperand):
+        (JSC::DFG::SpeculateCellOperand::gpr):
+        (SpeculateCellOperand):
+        (JSC::DFG::SpeculateBooleanOperand::SpeculateBooleanOperand):
+        (JSC::DFG::SpeculateBooleanOperand::gpr):
+        (SpeculateBooleanOperand):
+        * dfg/DFGSpeculativeJIT32_64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntStrict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT64.cpp:
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntInternal):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateInt):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateIntStrict):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateDouble):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateCell):
+        (JSC::DFG::SpeculativeJIT::fillSpeculateBoolean):
+        (JSC::DFG::SpeculativeJIT::compile):
+
+2013-02-28  Filip Pizlo  <fpizlo@apple.com>
+
         CodeBlock::valueProfile() has a bogus assertion
         https://bugs.webkit.org/show_bug.cgi?id=111106
         <rdar://problem/13131427>

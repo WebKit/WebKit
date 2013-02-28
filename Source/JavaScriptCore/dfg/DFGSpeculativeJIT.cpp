@@ -104,7 +104,7 @@ void SpeculativeJIT::emitAllocateJSArray(GPRReg resultGPR, Structure* structure,
             structure, numElements)));
 }
 
-void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail)
+void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail)
 {
     if (!m_compileOkay)
         return;
@@ -113,13 +113,31 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
     m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
 }
 
+void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, const MacroAssembler::JumpList& jumpsToFail)
+{
+    if (!m_compileOkay)
+        return;
+    ASSERT(m_isCheckingArgumentTypes || m_canExit);
+    m_jit.appendExitInfo(jumpsToFail);
+    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
+}
+
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail)
+{
+    if (!m_compileOkay)
+        return;
+    backwardSpeculationCheck(kind, jsValueSource, node, jumpToFail);
+    if (m_speculationDirection == ForwardSpeculation)
+        convertLastOSRExitToForward();
+}
+
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail)
 {
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
     speculationCheck(kind, jsValueSource, nodeUse.node(), jumpToFail);
 }
 
-OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node)
+OSRExitJumpPlaceholder SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node)
 {
     if (!m_compileOkay)
         return OSRExitJumpPlaceholder();
@@ -130,19 +148,19 @@ OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSo
     return OSRExitJumpPlaceholder(index);
 }
 
-OSRExitJumpPlaceholder SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse)
+OSRExitJumpPlaceholder SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse)
 {
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
-    return speculationCheck(kind, jsValueSource, nodeUse.node());
+    return backwardSpeculationCheck(kind, jsValueSource, nodeUse.node());
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, const MacroAssembler::JumpList& jumpsToFail)
 {
     if (!m_compileOkay)
         return;
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
-    m_jit.appendExitInfo(jumpsToFail);
-    m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size()));
+    backwardSpeculationCheck(kind, jsValueSource, node, jumpsToFail);
+    if (m_speculationDirection == ForwardSpeculation)
+        convertLastOSRExitToForward();
 }
 
 void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, const MacroAssembler::JumpList& jumpsToFail)
@@ -151,7 +169,7 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
     speculationCheck(kind, jsValueSource, nodeUse.node(), jumpsToFail);
 }
 
-void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
 {
     if (!m_compileOkay)
         return;
@@ -161,22 +179,24 @@ void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource
     m_jit.codeBlock()->appendOSRExit(OSRExit(kind, jsValueSource, m_jit.graph().methodOfGettingAValueProfileFor(node), this, m_stream->size(), m_jit.codeBlock()->numberOfSpeculationRecoveries()));
 }
 
-void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
+void SpeculativeJIT::backwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge nodeUse, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
 {
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
-    speculationCheck(kind, jsValueSource, nodeUse.node(), jumpToFail, recovery);
+    backwardSpeculationCheck(kind, jsValueSource, nodeUse.node(), jumpToFail, recovery);
 }
 
-void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery, SpeculationDirection direction)
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
 {
-    speculationCheck(kind, jsValueSource, node, jumpToFail, recovery);
-    if (direction == ForwardSpeculation)
+    if (!m_compileOkay)
+        return;
+    backwardSpeculationCheck(kind, jsValueSource, node, jumpToFail, recovery);
+    if (m_speculationDirection == ForwardSpeculation)
         convertLastOSRExitToForward();
 }
 
-void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery, SpeculationDirection direction)
+void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge edge, MacroAssembler::Jump jumpToFail, const SpeculationRecovery& recovery)
 {
-    speculationCheck(kind, jsValueSource, edge.node(), jumpToFail, recovery, direction);
+    speculationCheck(kind, jsValueSource, edge.node(), jumpToFail, recovery);
 }
 
 JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, JSValueSource jsValueSource, Node* node)
@@ -192,6 +212,8 @@ JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, 
             this, m_stream->size())));
     exit.m_watchpointIndex = m_jit.codeBlock()->appendWatchpoint(
         JumpReplacementWatchpoint(m_jit.watchpointLabel()));
+    if (m_speculationDirection == ForwardSpeculation)
+        convertLastOSRExitToForward();
     return &m_jit.codeBlock()->watchpoint(exit.m_watchpointIndex);
 }
 
@@ -268,46 +290,18 @@ void SpeculativeJIT::convertLastOSRExitToForward(const ValueRecovery& valueRecov
         new ValueRecoveryOverride(setLocal->local(), valueRecovery));
 }
 
-JumpReplacementWatchpoint* SpeculativeJIT::forwardSpeculationWatchpoint(ExitKind kind)
-{
-    JumpReplacementWatchpoint* result = speculationWatchpoint(kind);
-    convertLastOSRExitToForward();
-    return result;
-}
-
-JumpReplacementWatchpoint* SpeculativeJIT::speculationWatchpoint(ExitKind kind, SpeculationDirection direction)
-{
-    JumpReplacementWatchpoint* result = speculationWatchpoint(kind);
-    if (direction == ForwardSpeculation)
-        convertLastOSRExitToForward();
-    return result;
-}
-
 void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
 {
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
-    speculationCheck(kind, jsValueSource, node, jumpToFail);
+    backwardSpeculationCheck(kind, jsValueSource, node, jumpToFail);
     convertLastOSRExitToForward(valueRecovery);
 }
 
 void SpeculativeJIT::forwardSpeculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, const MacroAssembler::JumpList& jumpsToFail, const ValueRecovery& valueRecovery)
 {
     ASSERT(m_isCheckingArgumentTypes || m_canExit);
-    speculationCheck(kind, jsValueSource, node, jumpsToFail);
+    backwardSpeculationCheck(kind, jsValueSource, node, jumpsToFail);
     convertLastOSRExitToForward(valueRecovery);
-}
-
-void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Node* node, MacroAssembler::Jump jumpToFail, SpeculationDirection direction)
-{
-    if (direction == ForwardSpeculation)
-        forwardSpeculationCheck(kind, jsValueSource, node, jumpToFail);
-    else
-        speculationCheck(kind, jsValueSource, node, jumpToFail);
-}
-
-void SpeculativeJIT::speculationCheck(ExitKind kind, JSValueSource jsValueSource, Edge edge, MacroAssembler::Jump jumpToFail, SpeculationDirection direction)
-{
-    speculationCheck(kind, jsValueSource, edge.node(), jumpToFail, direction);
 }
 
 void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, Node* node)
@@ -328,36 +322,24 @@ void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs js
     terminateSpeculativeExecution(kind, jsValueRegs, nodeUse.node());
 }
 
-void SpeculativeJIT::terminateSpeculativeExecution(ExitKind kind, JSValueRegs jsValueRegs, Node* node, SpeculationDirection direction)
+void SpeculativeJIT::backwardTypeCheck(JSValueSource source, Edge edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail)
 {
-    ASSERT(m_isCheckingArgumentTypes || m_canExit);
-#if DFG_ENABLE(DEBUG_VERBOSE)
-    dataLogF("SpeculativeJIT was terminated.\n");
-#endif
-    if (!m_compileOkay)
-        return;
-    speculationCheck(kind, jsValueRegs, node, m_jit.jump(), direction);
-    m_compileOkay = false;
+    ASSERT(needsTypeCheck(edge, typesPassedThrough));
+    m_state.forNode(edge).filter(typesPassedThrough);
+    backwardSpeculationCheck(BadType, source, edge.node(), jumpToFail);
 }
 
 void SpeculativeJIT::typeCheck(JSValueSource source, Edge edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail)
 {
-    ASSERT(needsTypeCheck(edge, typesPassedThrough));
-    m_state.forNode(edge).filter(typesPassedThrough);
-    speculationCheck(BadType, source, edge, jumpToFail);
+    backwardTypeCheck(source, edge, typesPassedThrough, jumpToFail);
+    if (m_speculationDirection == ForwardSpeculation)
+        convertLastOSRExitToForward();
 }
 
 void SpeculativeJIT::forwardTypeCheck(JSValueSource source, Edge edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, const ValueRecovery& valueRecovery)
 {
-    typeCheck(source, edge, typesPassedThrough, jumpToFail);
+    backwardTypeCheck(source, edge, typesPassedThrough, jumpToFail);
     convertLastOSRExitToForward(valueRecovery);
-}
-
-void SpeculativeJIT::typeCheck(JSValueSource source, Edge edge, SpeculatedType typesPassedThrough, MacroAssembler::Jump jumpToFail, SpeculationDirection direction)
-{
-    typeCheck(source, edge, typesPassedThrough, jumpToFail);
-    if (direction == ForwardSpeculation)
-        convertLastOSRExitToForward();
 }
 
 void SpeculativeJIT::addSlowPathGenerator(PassOwnPtr<SlowPathGenerator> slowPathGenerator)
@@ -918,7 +900,7 @@ GPRReg SpeculativeJIT::fillStorage(Edge edge)
         }
         
         // Must be a cell; fill it as a cell and then return the pointer.
-        return fillSpeculateCell(edge, BackwardSpeculation);
+        return fillSpeculateCell(edge);
     }
         
     case DataFormatStorage: {
@@ -928,7 +910,7 @@ GPRReg SpeculativeJIT::fillStorage(Edge edge)
     }
         
     default:
-        return fillSpeculateCell(edge, BackwardSpeculation);
+        return fillSpeculateCell(edge);
     }
 }
 
@@ -1766,6 +1748,9 @@ void SpeculativeJIT::compile(BasicBlock& block)
             m_jit.xorPtr(JITCompiler::TrustedImm32(m_currentNode->index()), GPRInfo::regT0);
 #endif
             checkConsistency();
+            
+            m_speculationDirection = (m_currentNode->flags() & NodeExitsForward) ? ForwardSpeculation : BackwardSpeculation;
+            
             compile(m_currentNode);
             if (!m_compileOkay) {
                 m_compileOkay = true;
@@ -1825,6 +1810,7 @@ void SpeculativeJIT::checkArgumentTypes()
 {
     ASSERT(!m_currentNode);
     m_isCheckingArgumentTypes = true;
+    m_speculationDirection = BackwardSpeculation;
     m_codeOriginForOSR = CodeOrigin(0);
 
     for (size_t i = 0; i < m_arguments.size(); ++i)
@@ -2162,7 +2148,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
     case NotCellUse: {
         switch (checkGeneratedTypeForToInt32(node->child1().node())) {
         case GeneratedOperandInteger: {
-            SpeculateIntegerOperand op1(this, node->child1(), BackwardSpeculation, ManualOperandSpeculation);
+            SpeculateIntegerOperand op1(this, node->child1(), ManualOperandSpeculation);
             GPRTemporary result(this, op1);
             m_jit.move(op1.gpr(), result.gpr());
             integerResult(result.gpr(), node, op1.format());
@@ -2170,7 +2156,7 @@ void SpeculativeJIT::compileValueToInt32(Node* node)
         }
         case GeneratedOperandDouble: {
             GPRTemporary result(this);
-            SpeculateDoubleOperand op1(this, node->child1(), BackwardSpeculation, ManualOperandSpeculation);
+            SpeculateDoubleOperand op1(this, node->child1(), ManualOperandSpeculation);
             FPRReg fpr = op1.fpr();
             GPRReg gpr = result.gpr();
             JITCompiler::Jump notTruncatedToInteger = m_jit.branchTruncateDoubleToInt32(fpr, gpr, JITCompiler::BranchIfTruncateFailed);
@@ -2376,7 +2362,7 @@ void SpeculativeJIT::compileInt32ToDouble(Node* node)
     ASSERT(!isInt32Constant(node->child1().node())); // This should have been constant folded.
     
     if (isInt32Speculation(m_state.forNode(node->child1()).m_type)) {
-        SpeculateIntegerOperand op1(this, node->child1(), BackwardSpeculation, ManualOperandSpeculation);
+        SpeculateIntegerOperand op1(this, node->child1(), ManualOperandSpeculation);
         FPRTemporary result(this);
         m_jit.convertInt32ToDouble(op1.gpr(), result.fpr());
         doubleResult(result.fpr(), node);
@@ -2403,7 +2389,7 @@ void SpeculativeJIT::compileInt32ToDouble(Node* node)
                 m_jit.branchTest64(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister),
                 ValueRecovery::inGPR(op1GPR, DataFormatJS));
         } else {
-            typeCheck(
+            backwardTypeCheck(
                 JSValueRegs(op1GPR), node->child1(), SpecNumber,
                 m_jit.branchTest64(MacroAssembler::Zero, op1GPR, GPRInfo::tagTypeNumberRegister));
         }
@@ -2434,7 +2420,7 @@ void SpeculativeJIT::compileInt32ToDouble(Node* node)
                 m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)),
                 ValueRecovery::inPair(op1TagGPR, op1PayloadGPR));
         } else {
-            typeCheck(
+            backwardTypeCheck(
                 JSValueRegs(op1TagGPR, op1PayloadGPR), node->child1(), SpecNumber,
                 m_jit.branch32(MacroAssembler::AboveOrEqual, op1TagGPR, TrustedImm32(JSValue::LowestTag)));
         }

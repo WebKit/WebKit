@@ -134,7 +134,7 @@ public:
                         
                             ASSERT(block->last()->isTerminal());
                             CodeOrigin boundaryCodeOrigin = block->last()->codeOrigin;
-                            block->last()->setOpAndDefaultFlags(Phantom);
+                            block->last()->convertToPhantom();
                             ASSERT(block->last()->refCount() == 1);
                         
                             jettisonBlock(blockIndex, notTakenBlockIndex, boundaryCodeOrigin);
@@ -167,7 +167,7 @@ public:
                             Node* branch = block->last();
                             ASSERT(branch->isTerminal());
                             ASSERT(branch->op() == Branch);
-                            branch->setOpAndDefaultFlags(Phantom);
+                            branch->convertToPhantom();
                             ASSERT(branch->refCount() == 1);
                             
                             block->appendNode(
@@ -321,7 +321,7 @@ private:
         // really remove it; we actually turn it into a Phantom.
         ASSERT(firstBlock->last()->isTerminal());
         CodeOrigin boundaryCodeOrigin = firstBlock->last()->codeOrigin;
-        firstBlock->last()->setOpAndDefaultFlags(Phantom);
+        firstBlock->last()->convertToPhantom();
         ASSERT(firstBlock->last()->refCount() == 1);
         
         if (jettisonedBlockIndex != NoBlock) {

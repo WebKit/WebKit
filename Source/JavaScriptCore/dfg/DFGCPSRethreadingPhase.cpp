@@ -252,7 +252,7 @@ private:
                 
                 // So we turn this into a Phantom on the child of the SetLocal.
                 
-                node->setOpAndDefaultFlags(Phantom);
+                node->convertToPhantom();
                 node->children.setChild1(otherNode->child1());
                 return;
             }

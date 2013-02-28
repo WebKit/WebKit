@@ -58,7 +58,7 @@ namespace JSC { namespace DFG {
     /* Any two nodes that are part of the same Phi graph will share the same */\
     /* VariableAccessData, and thus will share predictions. */\
     macro(GetLocal, NodeResultJS) \
-    macro(SetLocal, 0) \
+    macro(SetLocal, NodeExitsForward) \
     macro(Phantom, NodeMustGenerate | NodeDoesNotExit) \
     macro(Nop, NodeDoesNotExit) \
     macro(Phi, NodeDoesNotExit | NodeRelevantToOSR) \
@@ -88,14 +88,14 @@ namespace JSC { namespace DFG {
     /* Bitwise operators call ToInt32 on their operands. */\
     macro(ValueToInt32, NodeResultInt32) \
     /* Used to box the result of URShift nodes (result has range 0..2^32-1). */\
-    macro(UInt32ToNumber, NodeResultNumber) \
+    macro(UInt32ToNumber, NodeResultNumber | NodeExitsForward) \
     \
     /* Used to cast known integers to doubles, so as to separate the double form */\
     /* of the value from the integer form. */\
     macro(Int32ToDouble, NodeResultNumber) \
-    macro(ForwardInt32ToDouble, NodeResultNumber) \
+    macro(ForwardInt32ToDouble, NodeResultNumber | NodeExitsForward) \
     /* Used to speculate that a double value is actually an integer. */\
-    macro(DoubleAsInt32, NodeResultInt32) \
+    macro(DoubleAsInt32, NodeResultInt32 | NodeExitsForward) \
     \
     /* Nodes for arithmetic operations. */\
     macro(ArithAdd, NodeResultNumber | NodeMustGenerate) \
@@ -126,7 +126,7 @@ namespace JSC { namespace DFG {
     macro(PutByIdDirect, NodeMustGenerate | NodeClobbersWorld) \
     macro(CheckStructure, NodeMustGenerate) \
     macro(CheckExecutable, NodeMustGenerate) \
-    macro(ForwardCheckStructure, NodeMustGenerate) \
+    macro(ForwardCheckStructure, NodeMustGenerate | NodeExitsForward) \
     /* Transition watchpoints are a contract between the party setting the watchpoint */\
     /* and the runtime system, where the party promises that the child object once had */\
     /* the structure being watched, and the runtime system in turn promises that the */\
@@ -139,7 +139,7 @@ namespace JSC { namespace DFG {
     /* the object's structure does not need to be rechecked due to side-effecting */\
     /* (clobbering) operations. */\
     macro(StructureTransitionWatchpoint, NodeMustGenerate) \
-    macro(ForwardStructureTransitionWatchpoint, NodeMustGenerate) \
+    macro(ForwardStructureTransitionWatchpoint, NodeMustGenerate | NodeExitsForward) \
     macro(PutStructure, NodeMustGenerate) \
     macro(PhantomPutStructure, NodeMustGenerate | NodeDoesNotExit) \
     macro(AllocatePropertyStorage, NodeMustGenerate | NodeDoesNotExit | NodeResultStorage) \

@@ -855,7 +855,7 @@ private:
                     if (previousNode->op() == CheckStructure
                         && previousNode->child1() == array
                         && previousNode->codeOrigin == codeOrigin)
-                        previousNode->setOpAndDefaultFlags(Phantom);
+                        previousNode->convertToPhantom();
                 }
                 
                 m_insertionSet.insertNode(

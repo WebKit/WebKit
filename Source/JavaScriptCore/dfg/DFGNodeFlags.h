@@ -67,7 +67,9 @@ namespace JSC { namespace DFG {
 
 #define NodeRelevantToOSR        0x8000
 
-typedef uint16_t NodeFlags;
+#define NodeExitsForward        0x10000
+
+typedef uint32_t NodeFlags;
 
 static inline bool nodeUsedAsNumber(NodeFlags flags)
 {
