@@ -253,6 +253,7 @@ committers_unable_to_review = [
     Committer("Claudio Saavedra", "csaavedra@igalia.com", "claudio___"),
     Committer("Collin Jackson", "collinj@webkit.org", "collinjackson"),
     Committer("Cris Neckar", "cdn@chromium.org", "cneckar"),
+    Committer("Damian Kaleta", "dkaleta@apple.com", "kaleta"),
     Committer("Dan Winship", "danw@gnome.org", "danw"),
     Committer("Dana Jansens", "danakj@chromium.org", "danakj"),
     Committer("Daniel Cheng", "dcheng@chromium.org", "dcheng"),
