@@ -324,6 +324,18 @@ WARN_UNUSED_RETURN static bool getMaxObjectStoreId(DBOrTransaction* db, const Ve
     return true;
 }
 
+class DefaultLevelDBFactory : public LevelDBFactory {
+public:
+    virtual PassOwnPtr<LevelDBDatabase> openLevelDB(const String& fileName, const LevelDBComparator* comparator)
+    {
+        return LevelDBDatabase::open(fileName, comparator);
+    }
+    virtual bool destroyLevelDB(const String& fileName)
+    {
+        return LevelDBDatabase::destroy(fileName);
+    }
+};
+
 IDBBackingStore::IDBBackingStore(const String& identifier, IDBFactoryBackendImpl* factory, PassOwnPtr<LevelDBDatabase> db)
     : m_identifier(identifier)
     , m_factory(factory)
@@ -361,6 +373,12 @@ enum IDBLevelDBBackingStoreOpenResult {
 
 PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, IDBFactoryBackendImpl* factory)
 {
+    DefaultLevelDBFactory levelDBFactory;
+    return IDBBackingStore::open(securityOrigin, pathBaseArg, fileIdentifier, factory, &levelDBFactory);
+}
+
+PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin, const String& pathBaseArg, const String& fileIdentifier, IDBFactoryBackendImpl* factory, LevelDBFactory* levelDBFactory)
+{
     IDB_TRACE("IDBBackingStore::open");
     String pathBase = pathBaseArg;
 
@@ -379,15 +397,15 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
 
         String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
 
-        db = LevelDBDatabase::open(path, comparator.get());
+        db = levelDBFactory->openLevelDB(path, comparator.get());
         if (db) {
             bool known = false;
             bool ok = isSchemaKnown(db.get(), known);
             if (!ok) {
+                LOG_ERROR("IndexedDB had IO error checking schema, treating it as failure to open");
                 HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedIOErrCheckingSchema, IDBLevelDBBackingStoreOpenMax);
-                return PassRefPtr<IDBBackingStore>();
-            }
-            if (!known) {
+                db.clear();
+            } else if (!known) {
                 LOG_ERROR("IndexedDB backing store had unknown schema, treating it as failure to open");
                 HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenFailedUnknownSchema, IDBLevelDBBackingStoreOpenMax);
                 db.clear();
@@ -398,7 +416,7 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
             HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenSuccess, IDBLevelDBBackingStoreOpenMax);
         else {
             LOG_ERROR("IndexedDB backing store open failed, attempting cleanup");
-            bool success = LevelDBDatabase::destroy(path);
+            bool success = levelDBFactory->destroyLevelDB(path);
             if (!success) {
                 LOG_ERROR("IndexedDB backing store cleanup failed");
                 HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupDestroyFailed, IDBLevelDBBackingStoreOpenMax);
@@ -406,7 +424,7 @@ PassRefPtr<IDBBackingStore> IDBBackingStore::open(SecurityOrigin* securityOrigin
             }
 
             LOG_ERROR("IndexedDB backing store cleanup succeeded, reopening");
-            db = LevelDBDatabase::open(path, comparator.get());
+            db = levelDBFactory->openLevelDB(path, comparator.get());
             if (!db) {
                 LOG_ERROR("IndexedDB backing store reopen after recovery failed");
                 HistogramSupport::histogramEnumeration("WebCore.IndexedDB.BackingStore.OpenStatus", IDBLevelDBBackingStoreOpenCleanupReopenFailed, IDBLevelDBBackingStoreOpenMax);

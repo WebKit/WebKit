@@ -45,12 +45,19 @@ class IDBKeyRange;
 class SecurityOrigin;
 class SharedBuffer;
 
+class LevelDBFactory {
+public:
+    virtual PassOwnPtr<LevelDBDatabase> openLevelDB(const String& fileName, const LevelDBComparator*) = 0;
+    virtual bool destroyLevelDB(const String& fileName) = 0;
+};
+
 class IDBBackingStore : public RefCounted<IDBBackingStore> {
 public:
     class Transaction;
 
     virtual ~IDBBackingStore();
     static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, IDBFactoryBackendImpl*);
+    static PassRefPtr<IDBBackingStore> open(SecurityOrigin*, const String& pathBase, const String& fileIdentifier, IDBFactoryBackendImpl*, LevelDBFactory*);
 
     virtual Vector<String> getDatabaseNames();
     virtual bool getIDBDatabaseMetaData(const String& name, IDBDatabaseMetadata*, bool& success) WARN_UNUSED_RETURN;

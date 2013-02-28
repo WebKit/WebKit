@@ -1,3 +1,16 @@
+2013-02-28  David Grogan  <dgrogan@chromium.org>
+
+        IndexedDB: IO error when checking schema should destroy LevelDB directory
+        https://bugs.webkit.org/show_bug.cgi?id=110675
+
+        Reviewed by Adam Barth.
+
+        * WebKit.gyp:
+        This was cargo-culted. The component build wouldn't run otherwise.
+
+        * WebKit.gypi:
+        * tests/IDBCleanupOnIOErrorTest.cpp: Added.
+
 2013-02-28  Stephen Chenney  <schenney@chromium.org>
 
         RenderTableCellDeathTest unit test fails on mac

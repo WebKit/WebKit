@@ -65,18 +65,20 @@ public:
     static PassOwnPtr<LevelDBDatabase> open(const String& fileName, const LevelDBComparator*);
     static PassOwnPtr<LevelDBDatabase> openInMemory(const LevelDBComparator*);
     static bool destroy(const String& fileName);
-    ~LevelDBDatabase();
+    virtual ~LevelDBDatabase();
 
     bool put(const LevelDBSlice& key, const Vector<char>& value);
     bool remove(const LevelDBSlice& key);
-    bool safeGet(const LevelDBSlice& key, Vector<char>& value, bool& found, const LevelDBSnapshot* = 0);
+    virtual bool safeGet(const LevelDBSlice& key, Vector<char>& value, bool& found, const LevelDBSnapshot* = 0);
     bool write(LevelDBWriteBatch&);
     PassOwnPtr<LevelDBIterator> createIterator(const LevelDBSnapshot* = 0);
     const LevelDBComparator* comparator() const;
 
+protected:
+    LevelDBDatabase();
+
 private:
     friend class LevelDBSnapshot;
-    LevelDBDatabase();
 
     OwnPtr<leveldb::Env> m_env;
     OwnPtr<leveldb::Comparator> m_comparatorAdapter;
