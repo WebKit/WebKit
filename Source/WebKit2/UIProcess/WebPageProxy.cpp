@@ -267,7 +267,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
 #endif
 
     m_process->addMessageReceiver(Messages::WebPageProxy::messageReceiverName(), m_pageID, this);
-    m_process->context()->storageManager().createSessionStorageNamespace(m_pageID);
+    m_process->context()->storageManager().createSessionStorageNamespace(m_pageID, m_process->isValid() ? m_process->connection() : 0);
 }
 
 WebPageProxy::~WebPageProxy()
@@ -2547,6 +2547,20 @@ void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTest
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
 
     m_uiClient.mouseDidMoveOverElement(this, hitTestResultData, modifiers, userData.get());
+}
+
+void WebPageProxy::connectionWillOpen(CoreIPC::Connection* connection)
+{
+    ASSERT(connection == m_process->connection());
+
+    m_process->context()->storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, connection);
+}
+
+void WebPageProxy::connectionWillClose(CoreIPC::Connection* connection)
+{
+    ASSERT(connection == m_process->connection());
+
+    m_process->context()->storageManager().setAllowedSessionStorageNamespaceConnection(m_pageID, 0);
 }
 
 String WebPageProxy::pluginInformationBundleIdentifierKey()

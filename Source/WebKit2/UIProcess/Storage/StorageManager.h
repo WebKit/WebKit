@@ -43,8 +43,9 @@ public:
     static PassRefPtr<StorageManager> create();
     ~StorageManager();
 
-    void createSessionStorageNamespace(uint64_t storageNamespaceID);
+    void createSessionStorageNamespace(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection);
     void destroySessionStorageNamespace(uint64_t storageNamespaceID);
+    void setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection);
     void cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
     void processWillOpenConnection(WebProcessProxy*);
@@ -63,8 +64,9 @@ private:
     void getValues(CoreIPC::Connection*, uint64_t storageAreaID, HashMap<String, String>& values);
     void setItem(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& value);
 
-    void createSessionStorageNamespaceInternal(uint64_t storageNamespaceID);
+    void createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection);
     void destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID);
+    void setAllowedSessionStorageNamespaceConnectionInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection);
     void cloneSessionStorageNamespaceInternal(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID);
 
     RefPtr<WorkQueue> m_queue;

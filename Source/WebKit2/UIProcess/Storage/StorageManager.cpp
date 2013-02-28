@@ -61,30 +61,42 @@ StorageManager::StorageArea::~StorageArea()
 
 class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
 public:
-    static PassRefPtr<SessionStorageNamespace> create();
+    static PassRefPtr<SessionStorageNamespace> create(CoreIPC::Connection* allowedConnection);
     ~SessionStorageNamespace();
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
 
+    CoreIPC::Connection* allowedConnection() const { return m_allowedConnection.get(); }
+    void setAllowedConnection(CoreIPC::Connection*);
+
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 
 private:
-    SessionStorageNamespace();
+    explicit SessionStorageNamespace(CoreIPC::Connection* allowedConnection);
 
+    RefPtr<CoreIPC::Connection> m_allowedConnection;
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea> > m_storageAreaMap;
 };
 
-PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create()
+PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(CoreIPC::Connection* allowedConnection)
 {
-    return adoptRef(new SessionStorageNamespace());
+    return adoptRef(new SessionStorageNamespace(allowedConnection));
 }
 
-StorageManager::SessionStorageNamespace::SessionStorageNamespace()
+StorageManager::SessionStorageNamespace::SessionStorageNamespace(CoreIPC::Connection* allowedConnection)
+    : m_allowedConnection(allowedConnection)
 {
 }
 
 StorageManager::SessionStorageNamespace::~SessionStorageNamespace()
 {
+}
+
+void StorageManager::SessionStorageNamespace::setAllowedConnection(CoreIPC::Connection* allowedConnection)
+{
+    ASSERT(!allowedConnection || !m_allowedConnection);
+
+    m_allowedConnection = allowedConnection;
 }
 
 void StorageManager::SessionStorageNamespace::cloneTo(SessionStorageNamespace& newSessionStorageNamespace)
@@ -108,14 +120,19 @@ StorageManager::~StorageManager()
 {
 }
 
-void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID)
+void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection)
 {
-    m_queue->dispatch(bind(&StorageManager::createSessionStorageNamespaceInternal, this, storageNamespaceID));
+    m_queue->dispatch(bind(&StorageManager::createSessionStorageNamespaceInternal, this, storageNamespaceID, RefPtr<CoreIPC::Connection>(allowedConnection)));
 }
 
 void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
 {
     m_queue->dispatch(bind(&StorageManager::destroySessionStorageNamespaceInternal, this, storageNamespaceID));
+}
+
+void StorageManager::setAllowedSessionStorageNamespaceConnection(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection)
+{
+    m_queue->dispatch(bind(&StorageManager::setAllowedSessionStorageNamespaceConnectionInternal, this, storageNamespaceID, RefPtr<CoreIPC::Connection>(allowedConnection)));
 }
 
 void StorageManager::cloneSessionStorageNamespace(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)
@@ -133,11 +150,16 @@ void StorageManager::processWillCloseConnection(WebProcessProxy* webProcessProxy
     webProcessProxy->connection()->removeWorkQueueMessageReceiver(Messages::StorageManager::messageReceiverName());
 }
 
-void StorageManager::createStorageArea(CoreIPC::Connection*, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData&)
+void StorageManager::createStorageArea(CoreIPC::Connection* connection, uint64_t storageAreaID, uint64_t storageNamespaceID, const SecurityOriginData& securityOriginData)
 {
     UNUSED_PARAM(storageAreaID);
     UNUSED_PARAM(storageNamespaceID);
-}
+
+    if (!storageNamespaceID) {
+        // FIXME: This is a local storage namespace. Do something.
+        ASSERT_NOT_REACHED();
+    }
+}O
 
 void StorageManager::destroyStorageArea(CoreIPC::Connection*, uint64_t)
 {
@@ -157,11 +179,11 @@ void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageAr
     connection->send(Messages::StorageAreaProxy::DidSetItem(key, quotaError), storageAreaID);
 }
 
-void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID)
+void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection)
 {
     ASSERT(!m_sessionStorageNamespaces.contains(storageNamespaceID));
 
-    m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create());
+    m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(allowedConnection));
 }
 
 void StorageManager::destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID)
@@ -169,6 +191,13 @@ void StorageManager::destroySessionStorageNamespaceInternal(uint64_t storageName
     ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
 
     m_sessionStorageNamespaces.remove(storageNamespaceID);
+}
+
+void StorageManager::setAllowedSessionStorageNamespaceConnectionInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection)
+{
+    ASSERT(m_sessionStorageNamespaces.contains(storageNamespaceID));
+
+    m_sessionStorageNamespaces.get(storageNamespaceID)->setAllowedConnection(allowedConnection);
 }
 
 void StorageManager::cloneSessionStorageNamespaceInternal(uint64_t storageNamespaceID, uint64_t newStorageNamespaceID)

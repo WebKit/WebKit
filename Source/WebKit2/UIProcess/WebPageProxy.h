@@ -753,6 +753,9 @@ public:
 
     void didReceiveAuthenticationChallengeProxy(uint64_t frameID, PassRefPtr<AuthenticationChallengeProxy>);
 
+    void connectionWillOpen(CoreIPC::Connection*);
+    void connectionWillClose(CoreIPC::Connection*);
+
     static String pluginInformationBundleIdentifierKey();
     static String pluginInformationBundleVersionKey();
     static String pluginInformationDisplayNameKey();
