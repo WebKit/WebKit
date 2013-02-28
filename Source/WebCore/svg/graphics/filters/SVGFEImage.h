@@ -39,6 +39,9 @@ public:
     static PassRefPtr<FEImage> createWithIRIReference(Filter*, Document*, const String&, const SVGPreserveAspectRatio&);
 
     virtual void platformApplySoftware();
+#if ENABLE(OPENCL)
+    virtual bool platformApplyOpenCL();
+#endif
     virtual void dump();
 
     virtual void determineAbsolutePaintRect();
