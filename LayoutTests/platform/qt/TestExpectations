@@ -2255,13 +2255,9 @@ fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
 
 # Failing reftests, we skip them until we find out how we have to gardening after them
-compositing/overlap-blending/children-opacity-no-overlap.html
-compositing/overlap-blending/reflection-opacity-huge.html
 css3/flexbox/flexbox-overflow-auto.html
 fast/block/line-layout/selection-highlight-overlap.html
 fast/css/empty-cell-baseline.html
-fast/exclusions/shape-inside/shape-inside-circle-padding.html
-fast/exclusions/shape-inside/shape-inside-ellipse-padding.html
 fast/forms/datalist/input-appearance-range-with-datalist-rtl.html
 fast/forms/datalist/update-range-with-datalist.html
 fast/multicol/cell-shrinkback.html
@@ -2279,8 +2275,12 @@ svg/transforms/transformed-text-fill-gradient.html
 fast/regions/floats-basic-in-variable-width-regions.html
 fast/regions/region-style-rule-position.html
 fast/forms/select/intrinsic-min-width-applies-with-fixed-width.html
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ ImageOnlyFailure ]
-webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ ImageOnlyFailure ]
+webkit.org/b/110762 compositing/overlap-blending/children-opacity-no-overlap.html [ Skip ]
+webkit.org/b/110762 compositing/overlap-blending/reflection-opacity-huge.html [ Skip ]
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ Skip ]
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle-padding.html [ Skip ]
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ Skip ]
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse-padding.html [ Skip ]
 webkit.org/b/110447 fast/regions/shape-inside-on-regions.html [ Skip ]
 
 # Failing fast/css/sticky/ tests with minor pixel differences
@@ -2298,6 +2298,10 @@ plugins/npruntime/object-from-destroyed-plugin-in-subframe.html
 # [Qt] New inspector/debugger/linkifier.html is flakey from the beginning (r115064).
 # https://bugs.webkit.org/show_bug.cgi?id=84866
 inspector/debugger/linkifier.html
+
+webkit.org/b/111057 http/tests/inspector/extensions-network-redirect.html
+webkit.org/b/111057 http/tests/inspector/console-resource-errors.html
+webkit.org/b/111057 http/tests/inspector/resource-har-pages.html
 
 # REGRESSION(r115379) - https://bugs.webkit.org/show_bug.cgi?id=85004
 http/tests/inspector/network/network-initiator.html
