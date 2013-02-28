@@ -148,6 +148,8 @@ webkit.org/b/110876 [ Debug Linux ] html5lib/generated/run-tests16-write.html [ 
 webkit.org/b/110876 [ Debug Mac ] html5lib/generated/run-tests19-write.html [ Pass Slow ]
 
 webkit.org/b/110924 fast/js/regress/inlined-put-by-id-transition.html [ Pass Crash ]
+webkit.org/b/111038 [ Debug Win ] fast/loader/policy-delegate-action-hit-test-zoomed.html [ Pass Slow ]
+webkit.org/b/111046 [ Debug Mac ] plugins/pass-different-npp-struct.html [ Pass Slow ]
 
 # -----------------------------------------------------------------
 # TEMPORARILY SKIPPED TESTS
