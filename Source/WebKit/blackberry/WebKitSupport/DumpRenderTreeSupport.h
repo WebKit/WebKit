@@ -55,7 +55,7 @@ public:
     static void resetGeolocationMock(BlackBerry::WebKit::WebPage*);
     static void setMockGeolocationPositionUnavailableError(BlackBerry::WebKit::WebPage*, const WTF::String message);
     static void setMockGeolocationPermission(BlackBerry::WebKit::WebPage*, bool allowed);
-    static void setMockGeolocationPosition(BlackBerry::WebKit::WebPage*, double latitude, double longitude, double accuracy);
+    static void setMockGeolocationPosition(BlackBerry::WebKit::WebPage*, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);
     static void setMockDeviceOrientation(BlackBerry::WebKit::WebPage*, bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
     static void scalePageBy(BlackBerry::WebKit::WebPage*, float, float, float);
     static JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);

@@ -375,15 +375,15 @@ void TestRunner::setAlwaysAcceptCookies(bool alwaysAcceptCookies)
     notImplemented();
 }
 
-void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy)
+void TestRunner::setMockGeolocationPosition(double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed)
 {
-    DumpRenderTreeSupport::setMockGeolocationPosition(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), latitude, longitude, accuracy);
+    DumpRenderTreeSupport::setMockGeolocationPosition(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), latitude, longitude, accuracy, providesAltitude, altitude, providesAltitudeAccuracy, altitudeAccuracy, providesHeading, heading, providesSpeed, speed);
 }
 
-void TestRunner::setMockGeolocationError(int code, JSStringRef message)
+void TestRunner::setMockGeolocationPositionUnavailableError(JSStringRef message)
 {
     String messageStr = jsStringRefToWebCoreString(message);
-    DumpRenderTreeSupport::setMockGeolocationError(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), code, messageStr);
+    DumpRenderTreeSupport::setMockGeolocationPositionUnavailableError(BlackBerry::WebKit::DumpRenderTree::currentInstance()->page(), messageStr);
 }
 
 void TestRunner::showWebInspector()

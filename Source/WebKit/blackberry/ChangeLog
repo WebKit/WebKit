@@ -1,3 +1,18 @@
+2013-02-28  Xan Lopez  <xlopez@rim.com>
+
+        [BlackBerry] DumpRenderTreeSupport: update the set position methods
+        https://bugs.webkit.org/show_bug.cgi?id=110578
+
+        Reviewed by Rob Buis.
+
+        TestRunner::setMockGeolocationPosition() changed in r130416:
+        http://trac.webkit.org/changeset/130416/trunk/Tools/DumpRenderTree/TestRunner.h
+
+        * WebKitSupport/DumpRenderTreeSupport.cpp:
+        (DumpRenderTreeSupport::setMockGeolocationPosition):
+        * WebKitSupport/DumpRenderTreeSupport.h:
+        (DumpRenderTreeSupport):
+
 2013-02-27  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Need WebPage API for animating scroll position & zoom changes
