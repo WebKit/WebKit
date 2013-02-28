@@ -171,7 +171,13 @@ bool CredentialBackingStore::addLogin(const ProtectionSpace& protectionSpace, co
     m_addLoginStatement->bindText(4, protectionSpace.realm());
     m_addLoginStatement->bindInt(5, static_cast<int>(protectionSpace.authenticationScheme()));
     m_addLoginStatement->bindText(6, credential.user());
-    m_addLoginStatement->bindBlob(7, certMgrWrapper()->isReady() ? "" : encryptedString(credential.password()));
+    if (certMgrWrapper()->isReady())
+        m_addLoginStatement->bindBlob(7, "");
+    else {
+        String ciphertext = encryptedString(credential.password());
+        ASSERT(ciphertext.is8Bit());
+        m_addLoginStatement->bindBlob(7, ciphertext.characters8(), ciphertext.length());
+    }
 
     int result = m_addLoginStatement->step();
     m_addLoginStatement->reset();
@@ -196,7 +202,13 @@ bool CredentialBackingStore::updateLogin(const ProtectionSpace& protectionSpace,
         return false;
 
     m_updateLoginStatement->bindText(1, credential.user());
-    m_updateLoginStatement->bindBlob(2, certMgrWrapper()->isReady() ? "" : encryptedString(credential.password()));
+    if (certMgrWrapper()->isReady())
+        m_updateLoginStatement->bindBlob(2, "");
+    else {
+        String ciphertext = encryptedString(credential.password());
+        ASSERT(ciphertext.is8Bit());
+        m_updateLoginStatement->bindBlob(2, ciphertext.characters8(), ciphertext.length());
+    }
     m_updateLoginStatement->bindText(3, protectionSpace.host());
     m_updateLoginStatement->bindInt(4, protectionSpace.port());
     m_updateLoginStatement->bindInt(5, static_cast<int>(protectionSpace.serverType()));
