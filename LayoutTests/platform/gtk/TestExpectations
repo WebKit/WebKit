@@ -1386,7 +1386,9 @@ webkit.org/b/109469 fast/css/cursor-parsing-image-set.html [ Failure ]
 webkit.org/b/109469 fast/events/mouse-cursor-image-set.html [ Timeout ]
 
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ ImageOnlyFailure ]
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle-padding.html [ ImageOnlyFailure ]
 webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse.html [ ImageOnlyFailure ]
+webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-ellipse-padding.html [ ImageOnlyFailure ]
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Failure ]
 
@@ -1404,7 +1406,9 @@ webkit.org/b/110694 html5lib/generated/run-pending-spec-changes-plain-text-unsaf
 webkit.org/b/110694 html5lib/generated/run-plain-text-unsafe-data.html [ Failure ]
 
 # Need support for ResourceHandle::didChangePriority and DRT support
-webkit.org/b/?????? http/tests/loading/promote-img-preload-priority.html [ Failure ]
+webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
+
+webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
