@@ -32814,14 +32814,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\network\BlobRegistry.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\platform\network\BlobRegistryImpl.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\network\BlobRegistryImpl.h"
 					>
 				</File>
@@ -38023,62 +38015,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\css\DOMWindowCSS.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Cairo_CFLite|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_All|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Production|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath="..\css\DOMWindowCSS.h"
-				>
-			</File>
-			<File
 				RelativePath="..\css\CSSValuePool.cpp"
 				>
 				<FileConfiguration
@@ -38140,6 +38076,62 @@
 			</File>
 			<File
 				RelativePath="..\css\DashboardRegion.h"
+				>
+			</File>
+			<File
+				RelativePath="..\css\DOMWindowCSS.cpp"
+				>
+				<FileConfiguration
+					Name="Debug|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release_Cairo_CFLite|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_All|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\css\DOMWindowCSS.h"
 				>
 			</File>
 			<File
@@ -76754,30 +76746,30 @@
 				RelativePath="..\inspector\TimelineRecordFactory.h"
 				>
 			</File>
-                        <File
-                                RelativePath="..\inspector\TimelineTraceEventProcessor.cpp"
-                                >
-                                <FileConfiguration
-                                        Name="Release|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                                <FileConfiguration
-                                        Name="Production|Win32"
-                                        ExcludedFromBuild="true"
-                                        >
-                                        <Tool
-                                                Name="VCCLCompilerTool"
-                                        />
-                                </FileConfiguration>
-                        </File>
-                        <File
-                                RelativePath="..\inspector\TimelineTraceEventProcessor.h"
-                                >
-                        </File>
+			<File
+				RelativePath="..\inspector\TimelineTraceEventProcessor.cpp"
+				>
+				<FileConfiguration
+					Name="Release|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Production|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="..\inspector\TimelineTraceEventProcessor.h"
+				>
+			</File>
 			<File
 				RelativePath="..\inspector\WorkerConsoleAgent.cpp"
 				>
@@ -77206,11 +77198,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\FileSystemView.js"
+					RelativePath="..\inspector\front-end\FileSystemProjectDelegate.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\FileSystemProjectDelegate.js"
+					RelativePath="..\inspector\front-end\FileSystemView.js"
 					>
 				</File>
 				<File
@@ -77354,11 +77346,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
-					RelativePath="..\inspector\front-end\JavaScriptFormatter.js"
+					RelativePath="..\inspector\front-end\UglifyJS\JavaScriptFormatter.js"
 					>
 				</File>
 				<File
@@ -77798,6 +77790,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\SuggestBox.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\SummaryBar.js"
 					>
 				</File>
@@ -77835,10 +77831,6 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\textPrompt.css"
-					>
-				</File>
-				<File
-					RelativePath="..\inspector\front-end\SuggestBox.js"
 					>
 				</File>
 				<File
