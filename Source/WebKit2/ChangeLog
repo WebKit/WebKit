@@ -1,3 +1,15 @@
+2013-02-28  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: PDF orientation isn't respected when printing or print-previewing
+        https://bugs.webkit.org/show_bug.cgi?id=110925
+        <rdar://problem/13008621>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::drawPDFPage): Teach drawPDFPage about PDFPage's rotation property, and use it
+        to swap the PDF's cropbox. Painting now matches PDFViewController's historical behavior.
+
 2013-02-28  Sam Weinig  <sam@webkit.org>
 
         Don't install unused XPCServices on Lion

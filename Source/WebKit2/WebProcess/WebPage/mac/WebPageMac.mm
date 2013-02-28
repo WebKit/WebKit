@@ -807,6 +807,11 @@ static void drawPDFPage(PDFDocument *pdfDocument, CFIndex pageIndex, CGContextRe
     else
         cropBox = NSIntersectionRect(cropBox, [pdfPage boundsForBox:kPDFDisplayBoxMediaBox]);
 
+    // Always auto-rotate PDF content regardless of the paper orientation.
+    NSInteger rotation = [pdfPage rotation];
+    if (rotation == 90 || rotation == 270)
+        std::swap(cropBox.size.width, cropBox.size.height);
+
     bool shouldRotate = (paperSize.width < paperSize.height) != (cropBox.size.width < cropBox.size.height);
     if (shouldRotate)
         swap(cropBox.size.width, cropBox.size.height);
