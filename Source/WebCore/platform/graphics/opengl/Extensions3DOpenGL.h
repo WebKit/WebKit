@@ -51,6 +51,7 @@ public:
     virtual void insertEventMarkerEXT(const String&);
     virtual void pushGroupMarkerEXT(const String&);
     virtual void popGroupMarkerEXT(void);
+    virtual void drawBuffersEXT(GC3Dsizei, const GC3Denum*);
 
 protected:
     // This class only needs to be instantiated by GraphicsContext3D implementations.

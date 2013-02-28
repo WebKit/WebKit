@@ -118,6 +118,15 @@ void Extensions3DOpenGLCommon::ensureEnabled(const String& name)
             ANGLEResources.OES_standard_derivatives = 1;
             compiler.setResources(ANGLEResources);
         }
+    } else if (name == "GL_EXT_draw_buffers") {
+        // Enable support in ANGLE (if not enabled already)
+        ANGLEWebKitBridge& compiler = m_context->m_compiler;
+        ShBuiltInResources ANGLEResources = compiler.getResources();
+        if (!ANGLEResources.EXT_draw_buffers) {
+            ANGLEResources.EXT_draw_buffers = 1;
+            m_context->getIntegerv(Extensions3D::MAX_DRAW_BUFFERS_EXT, &ANGLEResources.MaxDrawBuffers);
+            compiler.setResources(ANGLEResources);
+        }
     }
 }
 

@@ -1389,6 +1389,21 @@ unsigned GraphicsContext3D::getClearBitsByAttachmentType(GC3Denum attachment)
 {
     switch (attachment) {
     case GraphicsContext3D::COLOR_ATTACHMENT0:
+    case Extensions3D::COLOR_ATTACHMENT1_EXT:
+    case Extensions3D::COLOR_ATTACHMENT2_EXT:
+    case Extensions3D::COLOR_ATTACHMENT3_EXT:
+    case Extensions3D::COLOR_ATTACHMENT4_EXT:
+    case Extensions3D::COLOR_ATTACHMENT5_EXT:
+    case Extensions3D::COLOR_ATTACHMENT6_EXT:
+    case Extensions3D::COLOR_ATTACHMENT7_EXT:
+    case Extensions3D::COLOR_ATTACHMENT8_EXT:
+    case Extensions3D::COLOR_ATTACHMENT9_EXT:
+    case Extensions3D::COLOR_ATTACHMENT10_EXT:
+    case Extensions3D::COLOR_ATTACHMENT11_EXT:
+    case Extensions3D::COLOR_ATTACHMENT12_EXT:
+    case Extensions3D::COLOR_ATTACHMENT13_EXT:
+    case Extensions3D::COLOR_ATTACHMENT14_EXT:
+    case Extensions3D::COLOR_ATTACHMENT15_EXT:
         return GraphicsContext3D::COLOR_BUFFER_BIT;
     case GraphicsContext3D::DEPTH_ATTACHMENT:
         return GraphicsContext3D::DEPTH_BUFFER_BIT;

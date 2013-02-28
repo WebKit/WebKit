@@ -243,6 +243,38 @@ namespace WebCore {
 
     v8::Handle<v8::Value> v8Array(PassRefPtr<DOMStringList>, v8::Isolate*);
 
+    // Convert a value to a 32-bit integer. The conversion fails if the
+    // value cannot be converted to an integer or converts to nan or to an infinity.
+    int toInt32(v8::Handle<v8::Value>, bool& ok);
+
+    // Convert a value to a 32-bit integer assuming the conversion cannot fail.
+    inline int toInt32(v8::Handle<v8::Value> value)
+    {
+        bool ok;
+        return toInt32(value, ok);
+    }
+
+    // Convert a value to a 32-bit unsigned integer. The conversion fails if the
+    // value cannot be converted to an unsigned integer or converts to nan or to an infinity.
+    uint32_t toUInt32(v8::Handle<v8::Value>, bool& ok);
+
+    // Convert a value to a 32-bit unsigned integer assuming the conversion cannot fail.
+    inline uint32_t toUInt32(v8::Handle<v8::Value> value)
+    {
+        bool ok;
+        return toUInt32(value, ok);
+    }
+
+    inline float toFloat(v8::Local<v8::Value> value)
+    {
+        return static_cast<float>(value->NumberValue());
+    }
+
+    inline long long toInt64(v8::Local<v8::Value> value)
+    {
+        return static_cast<long long>(value->IntegerValue());
+    }
+
     template<class T> struct NativeValueTraits;
 
     template<>
@@ -250,6 +282,14 @@ namespace WebCore {
         static inline String nativeValue(const v8::Handle<v8::Value>& value)
         {
             return toWebCoreString(value);
+        }
+    };
+
+    template<>
+    struct NativeValueTraits<unsigned> {
+        static inline unsigned nativeValue(const v8::Handle<v8::Value>& value)
+        {
+            return toUInt32(value);
         }
     };
 
@@ -347,38 +387,6 @@ namespace WebCore {
     }
 
     PassRefPtr<NodeFilter> toNodeFilter(v8::Handle<v8::Value>);
-
-    // Convert a value to a 32-bit integer.  The conversion fails if the
-    // value cannot be converted to an integer or converts to nan or to an infinity.
-    int toInt32(v8::Handle<v8::Value> value, bool& ok);
-
-    // Convert a value to a 32-bit integer assuming the conversion cannot fail.
-    inline int toInt32(v8::Handle<v8::Value> value)
-    {
-        bool ok;
-        return toInt32(value, ok);
-    }
-
-    // Convert a value to a 32-bit unsigned integer.  The conversion fails if the
-    // value cannot be converted to an unsigned integer or converts to nan or to an infinity.
-    uint32_t toUInt32(v8::Handle<v8::Value> value, bool& ok);
-
-    // Convert a value to a 32-bit unsigned integer assuming the conversion cannot fail.
-    inline uint32_t toUInt32(v8::Handle<v8::Value> value)
-    {
-        bool ok;
-        return toUInt32(value, ok);
-    }
-
-    inline float toFloat(v8::Local<v8::Value> value)
-    {
-        return static_cast<float>(value->NumberValue());
-    }
-
-    inline long long toInt64(v8::Local<v8::Value> value)
-    {
-        return static_cast<long long>(value->IntegerValue());
-    }
 
     inline bool isUndefinedOrNull(v8::Handle<v8::Value> value)
     {

@@ -42,6 +42,7 @@
 
 namespace WebCore {
 
+class EXTDrawBuffers;
 class EXTTextureFilterAnisotropic;
 class HTMLImageElement;
 class HTMLVideoElement;
@@ -323,6 +324,7 @@ public:
     virtual void stop();
 
   private:
+    friend class EXTDrawBuffers;
     friend class WebGLFramebuffer;
     friend class WebGLObject;
     friend class OESVertexArrayObject;
@@ -476,6 +478,9 @@ public:
     GC3Dint m_maxTextureLevel;
     GC3Dint m_maxCubeMapTextureLevel;
 
+    GC3Dint m_maxDrawBuffers;
+    GC3Dint m_maxColorAttachments;
+
     GC3Dint m_packAlignment;
     GC3Dint m_unpackAlignment;
     bool m_unpackFlipY;
@@ -509,6 +514,7 @@ public:
     int m_numGLErrorsToConsoleAllowed;
 
     // Enabled extension objects.
+    OwnPtr<EXTDrawBuffers> m_extDrawBuffers;
     OwnPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
     OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
@@ -731,6 +737,11 @@ public:
 
     // Clamp the width and height to GL_MAX_VIEWPORT_DIMS.
     IntSize clampedCanvasSize();
+
+    // First time called, if EXT_draw_buffers is supported, query the value; otherwise return 0.
+    // Later, return the cached value.
+    GC3Dint getMaxDrawBuffers();
+    GC3Dint getMaxColorAttachments();
 
     friend class WebGLStateRestorer;
 };

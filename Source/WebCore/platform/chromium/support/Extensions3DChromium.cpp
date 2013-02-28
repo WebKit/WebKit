@@ -215,4 +215,9 @@ void Extensions3DChromium::popGroupMarkerEXT(void)
     m_private->webContext()->popGroupMarkerEXT();
 }
 
+void Extensions3DChromium::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
+{
+    m_private->webContext()->drawBuffersEXT(n, bufs);
+}
+
 } // namespace WebCore

@@ -90,6 +90,7 @@ public:
     virtual void deleteVertexArrayOES(Platform3DObject);
     virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
     virtual void bindVertexArrayOES(Platform3DObject);
+    virtual void drawBuffersEXT(GC3Dsizei, const GC3Denum*);
 
     // EXT Robustness - reset
     virtual int getGraphicsResetStatusARB();

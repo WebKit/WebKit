@@ -95,6 +95,9 @@ public:
 
     bool hasStencilBuffer() const;
 
+    // Wrapper for drawBuffersEXT/drawBuffersARB to work around a driver bug.
+    void drawBuffers(const Vector<GC3Denum>& bufs);
+
 protected:
     WebGLFramebuffer(WebGLRenderingContext*);
 
@@ -114,11 +117,17 @@ private:
     // attach 'attachment' at 'attachmentPoint'.
     void attach(GC3Denum attachment, GC3Denum attachmentPoint);
 
+    // Check if a new drawBuffers call should be issued. This is called when we add or remove an attachment.
+    void drawBuffersIfNecessary(bool force);
+
     typedef WTF::HashMap<GC3Denum, RefPtr<WebGLAttachment> > AttachmentMap;
 
     AttachmentMap m_attachments;
 
     bool m_hasEverBeenBound;
+
+    Vector<GC3Denum> m_drawBuffers;
+    Vector<GC3Denum> m_filteredDrawBuffers;
 };
 
 } // namespace WebCore

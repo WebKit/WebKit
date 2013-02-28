@@ -160,6 +160,11 @@ void Extensions3DOpenGLES::bindVertexArrayOES(Platform3DObject array)
         m_context->synthesizeGLError(GL_INVALID_OPERATION);
 }
 
+void Extensions3DOpenGLES::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
+{
+    // FIXME: implement the support.
+}
+
 int Extensions3DOpenGLES::getGraphicsResetStatusARB()
 {
     // FIXME: This does not call getGraphicsResetStatusARB, but instead getGraphicsResetStatusEXT.
@@ -250,6 +255,9 @@ bool Extensions3DOpenGLES::supportsExtension(const String& name)
             m_glReadnPixelsEXT = reinterpret_cast<PFNGLREADNPIXELSEXTPROC>(eglGetProcAddress("glReadnPixelsEXT"));
             m_glGetnUniformfvEXT = reinterpret_cast<PFNGLGETNUNIFORMFVEXTPROC>(eglGetProcAddress("glGetnUniformfvEXT"));
             m_glGetnUniformivEXT = reinterpret_cast<PFNGLGETNUNIFORMIVEXTPROC>(eglGetProcAddress("glGetnUniformivEXT"));
+        } else if (name == "GL_EXT_draw_buffers") {
+            // FIXME: implement the support.
+            return false;
         }
         return true;
     }

@@ -29,6 +29,8 @@
 
 #include "WebGLFramebuffer.h"
 
+#include "EXTDrawBuffers.h"
+#include "Extensions3D.h"
 #include "WebGLContextGroup.h"
 #include "WebGLRenderingContext.h"
 
@@ -292,6 +294,7 @@ void WebGLFramebuffer::setAttachmentForBoundFramebuffer(GC3Denum attachment, GC3
         return;
     if (texture && texture->object()) {
         m_attachments.add(attachment, WebGLTextureAttachment::create(texture, texTarget, level));
+        drawBuffersIfNecessary(false);
         texture->onAttached();
     }
 }
@@ -304,6 +307,7 @@ void WebGLFramebuffer::setAttachmentForBoundFramebuffer(GC3Denum attachment, Web
         return;
     if (renderbuffer && renderbuffer->object()) {
         m_attachments.add(attachment, WebGLRenderbufferAttachment::create(renderbuffer));
+        drawBuffersIfNecessary(false);
         renderbuffer->onAttached();
     }
 }
@@ -340,6 +344,7 @@ void WebGLFramebuffer::removeAttachmentFromBoundFramebuffer(GC3Denum attachment)
     if (attachmentObject) {
         attachmentObject->onDetached(context()->graphicsContext3D());
         m_attachments.remove(attachment);
+        drawBuffersIfNecessary(false);
         switch (attachment) {
         case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
             attach(GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::DEPTH_ATTACHMENT);
@@ -583,6 +588,40 @@ bool WebGLFramebuffer::initializeAttachments(GraphicsContext3D* g3d, const char*
 bool WebGLFramebuffer::isBound() const
 {
     return (context()->m_framebufferBinding.get() == this);
+}
+
+void WebGLFramebuffer::drawBuffers(const Vector<GC3Denum>& bufs)
+{
+    m_drawBuffers = bufs;
+    m_filteredDrawBuffers.resize(m_drawBuffers.size());
+    for (size_t i = 0; i < m_filteredDrawBuffers.size(); ++i)
+        m_filteredDrawBuffers[i] = GraphicsContext3D::NONE;
+    drawBuffersIfNecessary(true);
+}
+
+void WebGLFramebuffer::drawBuffersIfNecessary(bool force)
+{
+    if (!context()->m_extDrawBuffers)
+        return;
+    bool reset = force;
+    // This filtering works around graphics driver bugs on Mac OS X.
+    for (size_t i = 0; i < m_drawBuffers.size(); ++i) {
+        if (m_drawBuffers[i] != GraphicsContext3D::NONE && getAttachment(m_drawBuffers[i])) {
+            if (m_filteredDrawBuffers[i] != m_drawBuffers[i]) {
+                m_filteredDrawBuffers[i] = m_drawBuffers[i];
+                reset = true;
+            }
+        } else {
+            if (m_filteredDrawBuffers[i] != GraphicsContext3D::NONE) {
+                m_filteredDrawBuffers[i] = GraphicsContext3D::NONE;
+                reset = true;
+            }
+        }
+    }
+    if (reset) {
+        context()->graphicsContext3D()->getExtensions()->drawBuffersEXT(
+            m_filteredDrawBuffers.size(), m_filteredDrawBuffers.data());
+    }
 }
 
 }

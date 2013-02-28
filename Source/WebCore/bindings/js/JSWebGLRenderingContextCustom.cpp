@@ -29,10 +29,12 @@
 
 #include "JSWebGLRenderingContext.h"
 
+#include "EXTDrawBuffers.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "ExceptionCode.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
+#include "JSEXTDrawBuffers.h"
 #include "JSEXTTextureFilterAnisotropic.h"
 #include "JSFloat32Array.h"
 #include "JSHTMLCanvasElement.h"
@@ -194,6 +196,8 @@ static JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, WebGLExten
     switch (extension->getName()) {
     case WebGLExtension::WebGLLoseContextName:
         return toJS(exec, globalObject, static_cast<WebGLLoseContext*>(extension));
+    case WebGLExtension::EXTDrawBuffersName:
+        return toJS(exec, globalObject, static_cast<EXTDrawBuffers*>(extension));
     case WebGLExtension::EXTTextureFilterAnisotropicName:
         return toJS(exec, globalObject, static_cast<EXTTextureFilterAnisotropic*>(extension));
     case WebGLExtension::OESStandardDerivativesName:

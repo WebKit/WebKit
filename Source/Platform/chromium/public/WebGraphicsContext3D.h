@@ -472,6 +472,9 @@ public:
     virtual void asyncTexImage2DCHROMIUM(WGC3Denum target, WGC3Dint level, WGC3Denum internalformat, WGC3Dsizei width, WGC3Dsizei height, WGC3Dint border, WGC3Denum format, WGC3Denum type, const void* pixels) { }
     virtual void asyncTexSubImage2DCHROMIUM(WGC3Denum target, WGC3Dint level, WGC3Dint xoffset, WGC3Dint yoffset, WGC3Dsizei width, WGC3Dsizei height, WGC3Denum format, WGC3Denum type, const void* pixels) { }
 
+    // GL_EXT_draw_buffers
+    virtual void drawBuffersEXT(WGC3Dsizei n, const WGC3Denum* bufs) { }
+
     // FIXME: Make implementations of this class override this method instead and then remove onCreateGrGLInterface().
     virtual GrGLInterface* createGrGLInterface() { return onCreateGrGLInterface(); }
 

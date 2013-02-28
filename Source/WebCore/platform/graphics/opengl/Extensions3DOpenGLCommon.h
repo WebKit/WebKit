@@ -50,6 +50,8 @@ public:
     virtual GC3Dboolean isVertexArrayOES(Platform3DObject) = 0;
     virtual void bindVertexArrayOES(Platform3DObject) = 0;
 
+    virtual void drawBuffersEXT(GC3Dsizei, const GC3Denum*) = 0;
+
     virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
 
     // EXT Robustness - uses getGraphicsResetStatusARB()

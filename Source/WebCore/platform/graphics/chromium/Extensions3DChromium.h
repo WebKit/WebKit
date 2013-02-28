@@ -65,6 +65,7 @@ public:
     virtual GC3Dboolean isVertexArrayOES(Platform3DObject);
     virtual void bindVertexArrayOES(Platform3DObject);
     virtual String getTranslatedShaderSourceANGLE(Platform3DObject);
+    virtual void drawBuffersEXT(GC3Dsizei, const GC3Denum*);
 
     enum {
         // GL_OES_EGL_image_external

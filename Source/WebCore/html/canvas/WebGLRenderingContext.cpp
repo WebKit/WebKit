@@ -32,6 +32,7 @@
 #include "CachedImage.h"
 #include "CheckedInt.h"
 #include "DOMWindow.h"
+#include "EXTDrawBuffers.h"
 #include "EXTTextureFilterAnisotropic.h"
 #include "ExceptionCode.h"
 #include "Extensions3D.h"
@@ -537,6 +538,10 @@ void WebGLRenderingContext::initializeNewContext()
     m_maxCubeMapTextureLevel = WebGLTexture::computeLevelCount(m_maxCubeMapTextureSize, m_maxCubeMapTextureSize);
     m_maxRenderbufferSize = 0;
     m_context->getIntegerv(GraphicsContext3D::MAX_RENDERBUFFER_SIZE, &m_maxRenderbufferSize);
+
+    // These two values from EXT_draw_buffers are lazily queried.
+    m_maxDrawBuffers = 0;
+    m_maxColorAttachments = 0;
 
     m_defaultVertexArrayObject = WebGLVertexArrayObjectOES::create(this, WebGLVertexArrayObjectOES::VaoTypeDefault);
     addContextObject(m_defaultVertexArrayObject.get());
@@ -2153,12 +2158,6 @@ void WebGLRenderingContext::framebufferRenderbuffer(GC3Denum target, GC3Denum at
         m_context->framebufferRenderbuffer(target, GraphicsContext3D::DEPTH_ATTACHMENT, renderbuffertarget, bufferObject);
         m_context->framebufferRenderbuffer(target, GraphicsContext3D::STENCIL_ATTACHMENT, renderbuffertarget, bufferObject);
         break;
-    case GraphicsContext3D::DEPTH_ATTACHMENT:
-        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
-        break;
-    case GraphicsContext3D::STENCIL_ATTACHMENT:
-        m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
-        break;
     default:
         m_context->framebufferRenderbuffer(target, attachment, renderbuffertarget, bufferObject);
     }
@@ -2425,6 +2424,13 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_webglDepthTexture = WebGLDepthTexture::create(this);
         }
         return m_webglDepthTexture.get();
+    }
+    if (equalIgnoringCase(name, "EXT_draw_buffers") && EXTDrawBuffers::supported(this)) {
+        if (!m_extDrawBuffers) {
+            m_context->getExtensions()->ensureEnabled("GL_EXT_draw_buffers");
+            m_extDrawBuffers = EXTDrawBuffers::create(this);
+        }
+        return m_extDrawBuffers.get();
     }
     if (allowPrivilegedExtensions()) {
         if (equalIgnoringCase(name, "WEBGL_debug_renderer_info")) {
@@ -2709,6 +2715,50 @@ WebGLGetInfo WebGLRenderingContext::getParameter(GC3Denum pname, ExceptionCode& 
             return getUnsignedIntParameter(Extensions3D::MAX_TEXTURE_MAX_ANISOTROPY_EXT);
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_texture_filter_anisotropic not enabled");
         return WebGLGetInfo();
+    case Extensions3D::MAX_COLOR_ATTACHMENTS_EXT: // EXT_draw_buffers BEGIN
+        if (m_extDrawBuffers)
+            return WebGLGetInfo(getMaxColorAttachments());
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_draw_buffers not enabled");
+        return WebGLGetInfo();
+    case Extensions3D::MAX_DRAW_BUFFERS_EXT:
+        if (m_extDrawBuffers)
+            return WebGLGetInfo(getMaxDrawBuffers());
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_draw_buffers not enabled");
+        return WebGLGetInfo();
+    case Extensions3D::DRAW_BUFFER0_EXT: // DRAW_BUFFER0_EXT is special as the backbuffer is simulated.
+        if (m_extDrawBuffers) {
+            GC3Dint value = 0;
+            m_context->getIntegerv(pname, &value);
+            if (!m_framebufferBinding && value != GraphicsContext3D::NONE)
+                value = GraphicsContext3D::BACK;
+            return WebGLGetInfo(value);
+        }
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_draw_buffers not enabled");
+        return WebGLGetInfo();
+    case Extensions3D::DRAW_BUFFER1_EXT:
+    case Extensions3D::DRAW_BUFFER2_EXT:
+    case Extensions3D::DRAW_BUFFER3_EXT:
+    case Extensions3D::DRAW_BUFFER4_EXT:
+    case Extensions3D::DRAW_BUFFER5_EXT:
+    case Extensions3D::DRAW_BUFFER6_EXT:
+    case Extensions3D::DRAW_BUFFER7_EXT:
+    case Extensions3D::DRAW_BUFFER8_EXT:
+    case Extensions3D::DRAW_BUFFER9_EXT:
+    case Extensions3D::DRAW_BUFFER10_EXT:
+    case Extensions3D::DRAW_BUFFER11_EXT:
+    case Extensions3D::DRAW_BUFFER12_EXT:
+    case Extensions3D::DRAW_BUFFER13_EXT:
+    case Extensions3D::DRAW_BUFFER14_EXT:
+    case Extensions3D::DRAW_BUFFER15_EXT: // EXT_draw_buffers END
+        if (m_extDrawBuffers) {
+            if (static_cast<GC3Denum>(Extensions3D::DRAW_BUFFER0_EXT + getMaxDrawBuffers()) <= pname) {
+                synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter, exceeds MAX_COLOR_ATTACHMENTS_EXT");
+                return WebGLGetInfo();
+            }
+            return getIntParameter(pname);
+        }
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name, EXT_draw_buffers not enabled");
+        return WebGLGetInfo();
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, "getParameter", "invalid parameter name");
         return WebGLGetInfo();
@@ -2913,6 +2963,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
         result.append("WEBKIT_WEBGL_compressed_texture_s3tc");
     if (WebGLDepthTexture::supported(graphicsContext3D()))
         result.append("WEBKIT_WEBGL_depth_texture");
+    if (EXTDrawBuffers::supported(this))
+        result.append("EXT_draw_buffers");
 
     if (allowPrivilegedExtensions()) {
         if (m_context->getExtensions()->supports("GL_ANGLE_translated_shader_source"))
@@ -5346,6 +5398,31 @@ bool WebGLRenderingContext::validateFramebufferFuncParameters(const char* functi
     case GraphicsContext3D::STENCIL_ATTACHMENT:
     case GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT:
         break;
+    case Extensions3D::COLOR_ATTACHMENT1_EXT: // EXT_draw_buffers BEGIN
+    case Extensions3D::COLOR_ATTACHMENT2_EXT:
+    case Extensions3D::COLOR_ATTACHMENT3_EXT:
+    case Extensions3D::COLOR_ATTACHMENT4_EXT:
+    case Extensions3D::COLOR_ATTACHMENT5_EXT:
+    case Extensions3D::COLOR_ATTACHMENT6_EXT:
+    case Extensions3D::COLOR_ATTACHMENT7_EXT:
+    case Extensions3D::COLOR_ATTACHMENT8_EXT:
+    case Extensions3D::COLOR_ATTACHMENT9_EXT:
+    case Extensions3D::COLOR_ATTACHMENT10_EXT:
+    case Extensions3D::COLOR_ATTACHMENT11_EXT:
+    case Extensions3D::COLOR_ATTACHMENT12_EXT:
+    case Extensions3D::COLOR_ATTACHMENT13_EXT:
+    case Extensions3D::COLOR_ATTACHMENT14_EXT:
+    case Extensions3D::COLOR_ATTACHMENT15_EXT: // EXT_draw_buffers END
+        // COLOR_ATTACHMENT0_EXT is equal to COLOR_ATTACHMENT0.
+        if (!m_extDrawBuffers) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment, EXT_draw_buffers not enabled");
+            return false;
+        }
+        if (static_cast<GC3Denum>(Extensions3D::COLOR_ATTACHMENT0_EXT + getMaxColorAttachments()) <= attachment) {
+            synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment, exceeds MAX_DRAW_BUFFERS_EXT");
+            return false;
+        }
+        break;
     default:
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid attachment");
         return false;
@@ -5860,6 +5937,20 @@ IntSize WebGLRenderingContext::clampedCanvasSize()
 {
     return IntSize(clamp(canvas()->width(), 1, m_maxViewportDims[0]),
                    clamp(canvas()->height(), 1, m_maxViewportDims[1]));
+}
+
+GC3Dint WebGLRenderingContext::getMaxDrawBuffers()
+{
+    if (!m_maxDrawBuffers && EXTDrawBuffers::supported(this))
+        m_context->getIntegerv(Extensions3D::MAX_DRAW_BUFFERS_EXT, &m_maxDrawBuffers);
+    return m_maxDrawBuffers;
+}
+
+GC3Dint WebGLRenderingContext::getMaxColorAttachments()
+{
+    if (!m_maxColorAttachments && EXTDrawBuffers::supported(this))
+        m_context->getIntegerv(Extensions3D::MAX_COLOR_ATTACHMENTS_EXT, &m_maxColorAttachments);
+    return m_maxColorAttachments;
 }
 
 } // namespace WebCore
