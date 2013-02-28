@@ -31,8 +31,6 @@
 #ifndef BlobData_h
 #define BlobData_h
 
-#if ENABLE(BLOB)
-
 #include "FileSystem.h"
 #include "KURL.h"
 #include <wtf/Forward.h>
@@ -205,7 +203,5 @@ private:
 };
 
 } // namespace WebCore
-
-#endif // ENABLE(BLOB)
 
 #endif // BlobData_h
