@@ -1439,7 +1439,6 @@ webkit.org/b/110173 media/video-controls-captions-trackmenu.html [ Crash Pass ]
 
 webkit.org/b/110186 inspector-protocol/page/javascriptDialogEvents.html [ Skip ]
 
-webkit.org/b/110554 http/tests/security/feed-urls-from-remote.html [ Failure ]
 webkit.org/b/110555 fast/canvas/canvas-currentPath.html [ Failure ]
 webkit.org/b/110555 fast/canvas/canvas-path-constructors.html [ Failure ]
 
