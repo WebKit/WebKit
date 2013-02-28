@@ -510,12 +510,6 @@ JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, J
     return DumpRenderTreeSupport::computedStyleIncludingVisitedInfo(context, value);
 }
 
-JSRetainPtr<JSStringRef> TestRunner::layerTreeAsText() const
-{
-    notImplemented();
-    return 0;
-}
-
 JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
 {
     WebCore::Element* element = toElement(toJS(toJS(context), nodeObject));
