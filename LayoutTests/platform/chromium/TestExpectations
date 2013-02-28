@@ -4450,7 +4450,7 @@ webkit.org/b/110540 [ Linux ] fast/text/international/thai-line-breaks.html [ Im
 webkit.org/b/110876 [ Debug ] html5lib/generated/run-template-data.html [ Timeout ]
 webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests1-data.html [ Timeout ]
 webkit.org/b/110876 [ Debug Win Lion ] html5lib/generated/run-tests10-data.html [ Timeout  ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests16-data.html [ Timeout ]
+webkit.org/b/110876 html5lib/generated/run-tests16-data.html [ Timeout ]
 webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests19-data.html [ Timeout ]
 # These html5lib/ tests are also failing
 webkit.org/b/110876 [ Debug Win ] html5lib/generated/run-tests10-write.html [ Pass Crash ]
