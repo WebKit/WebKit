@@ -1,3 +1,11 @@
+2013-02-28  Robert Hogan  <robert@webkit.org>
+
+        Update my IRC nick
+
+        Unreviewed.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2013-02-28  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt] Enable thin archives before parsing the project files
