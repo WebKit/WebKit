@@ -31,7 +31,6 @@ crbug.com/24182 [ Android ] fast/parser/nested-fragment-parser-crash.html [ Pass
 crbug.com/24182 [ Debug ] html5lib/webkit-resumer.html [ Pass Slow ]
 crbug.com/24182 [ Win Debug ] http/tests/cache/stopped-revalidation.html [ Pass Slow Failure ]
 crbug.com/24182 [ Win Release ] http/tests/loading/onload-vs-immediate-refresh.pl [ Pass Slow ]
-crbug.com/24182 [ Win Debug ] http/tests/loading/redirect-methods.html [ Pass Slow ]
 crbug.com/24182 [ Win ] http/tests/local/file-url-sent-as-referer.html [ Pass Slow ]
 crbug.com/24182 [ SnowLeopard Debug ] http/tests/misc/dns-prefetch-control.html [ Pass Slow ]
 crbug.com/24182 [ Win Debug ] http/tests/misc/uncacheable-script-repeated.html [ Pass Slow ]
@@ -215,11 +214,11 @@ webkit.org/b/63933 fast/canvas/canvas-webkitLineDash-invalid.html [ Failure ]
 webkit.org/b/63933 platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash.html [ Failure ]
 webkit.org/b/63933 platform/chromium/virtual/gpu/fast/canvas/canvas-webkitLineDash-invalid.html [ Failure ]
 
-# Overflowing LayoutUnits cause RenderGeometryMap assertions 
-webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Skip ] 
-webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Skip ] 
-webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash3.html [ Skip ] 
-webkit.org/b/67434 [ Debug ] fast/block/float/overhanging-tall-block.html [ Skip ] 
+# Overflowing LayoutUnits cause RenderGeometryMap assertions
+webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash.html [ Skip ]
+webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash2.html [ Skip ]
+webkit.org/b/67434 [ Debug ] fast/overflow/overflow-height-float-not-removed-crash3.html [ Skip ]
+webkit.org/b/67434 [ Debug ] fast/block/float/overhanging-tall-block.html [ Skip ]
 
 # Microdata DOM API is not yet enabled.
 webkit.org/b/68610 fast/dom/MicroData
@@ -962,6 +961,7 @@ fast/dom/timer-throttling-hidden-page.html [ WontFix ]
 crbug.com/22554 mathml [ Skip ]
 
 # We disabled INPUT_TYPE_DATETIME.
+# crbug.com/164561 Chromium-Android disable fast/forms/datetime
 webkit.org/b/109272 fast/forms/datetime [ Skip ]
 webkit.org/b/109272 fast/forms/datetime-multiple-fields [ Skip ]
 webkit.org/b/109272 platform/chromium/fast/forms/suggestion-picker/datetime-suggestion-picker-appearance-rtl.html [ Skip ]
@@ -1377,8 +1377,6 @@ webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-container.xhtml [ ImageO
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-root-standalone.svg [ ImageOnlyFailure Pass ]
 webkit.org/b/83303 [ Win ] svg/custom/mouse-move-on-svg-root.xhtml [ ImageOnlyFailure Pass ]
 
-webkit.org/b/109413 [ Linux Mac ] svg/custom/foreign-object-skew.svg [ ImageOnlyFailure Pass ]
-
 # This fails image 5-10% of the time. Probably a race condition on timers.
 webkit.org/b/83471 svg/as-image/animated-svg-as-image-same-image.html [ ImageOnlyFailure Pass ]
 
@@ -1418,12 +1416,6 @@ webkit.org/b/109775 [ Lion MountainLion Win ] media/controls-styling-strict.html
 webkit.org/b/109775 [ MountainLion Win ] media/video-controls-rendering.html [ Failure ]
 webkit.org/b/109775 [ MountainLion XP ] media/video-display-toggle.html [ Failure ]
 webkit.org/b/109775 [ Lion MountainLion Win7 ] media/video-playing-and-pause.html [ Failure ]
-
-# Need rebaseline after https://bugs.webkit.org/show_bug.cgi?id=110294
-webkit.org/b/110294 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
-webkit.org/b/110294 platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
-webkit.org/b/110294 compositing/layer-creation/fixed-position-out-of-view-scaled-scroll.html [ Failure ]
-webkit.org/b/110294 compositing/layer-creation/fixed-position-out-of-view-scaled.html [ Failure ]
 
 # -----------------------------------------------------------------
 # End SVG TESTS
@@ -1772,8 +1764,6 @@ webkit.org/b/98762 [ Android ] compositing/z-order/negative-z-index.html [ Image
 # [Chromium-Android] Some tests don't display a scrollbar, while they probably should
 webkit.org/b/98763 [ Android ] platform/chromium/compositing/layout-width-change.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] platform/chromium/compositing/img-layer-grow.html [ ImageOnlyFailure ]
-webkit.org/b/98763 [ Android ] compositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/98763 [ Android ] compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/geometry/horizontal-scroll-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/geometry/tall-page-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
@@ -1787,8 +1777,6 @@ webkit.org/b/98763 [ Android ] compositing/overflow/fixed-position-ancestor-clip
 webkit.org/b/98763 [ Android ] compositing/repaint/newly-composited-on-scroll.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] compositing/rtl/rtl-overflow-invalidation.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/fixed-in-composited.html [ ImageOnlyFailure ]
-webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
-webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/horizontal-scroll-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/tall-page-composited.html [ ImageOnlyFailure ]
 webkit.org/b/98763 [ Android ] platform/chromium/virtual/softwarecompositing/layer-creation/fixed-position-and-transform.html [ ImageOnlyFailure ]
@@ -1962,8 +1950,6 @@ webkit.org/b/98781 [ Android ] fast/block/float/shrink-to-avoid-float-complexity
 # [Chromium-Android] getComputedStyle for scrolling returns "visible" instead of "scroll" in some cases
 webkit.org/b/98782 [ Android ] fast/css/getComputedStyle/computed-style-select-overflow.html [ Failure ]
 
-# [Chromium-Android] Disable <input type=datetime> implementation.
-crbug.com/164561 [ Android ] fast/forms/datetime/ [ Failure Pass ]
 # [Chromium-Android] No <input type=week> implementation.
 crbug.com/135938 [ Android ] fast/forms/week/ [ Failure Pass ]
 
@@ -2964,8 +2950,6 @@ webkit.org/b/66419 http/tests/loading/authentication-after-redirect-stores-wrong
 
 webkit.org/b/66795 [ Android Linux Mac ] fast/js/reentrant-caching.html [ Pass Slow ]
 
-webkit.org/b/66873 [ Win Release ] http/tests/loading/redirect-methods.html [ Failure Pass Slow ]
-
 webkit.org/b/66900 [ Android Linux Debug ] fast/writing-mode/japanese-rl-text-with-broken-font.html [ Failure Pass ]
 
 webkit.org/b/66974 [ Debug ] fast/events/keydown-1.html [ Pass Timeout ]
@@ -3838,7 +3822,6 @@ crbug.com/145087 [ Android ] compositing/geometry/fixed-position-composited-swit
 crbug.com/145087 [ Android ] compositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
 crbug.com/145087 [ Android ] compositing/reflections/nested-reflection-animated.html [ Failure Pass ]
 crbug.com/145087 [ Android ] compositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure Pass ]
-crbug.com/145087 [ Android Linux ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Failure Pass ]
 crbug.com/145087 [ Android ] compositing/rtl/rtl-iframe-fixed.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/fixed-position-composited-switch.html [ Failure ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/geometry/limit-layer-bounds-opacity-transition.html [ Failure ]
@@ -3847,7 +3830,6 @@ crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/r
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed-overflow.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-fixed.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure Pass ]
-crbug.com/145087 [ Android Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure Pass ]
 crbug.com/145087 [ Android ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed.html [ Failure Pass ]
 
 # Failing media tests on Android.
@@ -4400,7 +4382,6 @@ webkit.org/b/108286 platform/chromium/virtual/softwarecompositing/geometry/fixed
 
 webkit.org/b/108781 [ Win ] fast/css-grid-layout/grid-preferred-logical-widths.html [ Timeout ]
 webkit.org/b/108789 [ Win Mac ] http/tests/workers/terminate-during-sync-operation.html [ Pass Timeout ]
-webkit.org/b/108790 [ Win7 Debug ] platform/chromium/virtual/gpu/fast/hidpi/gradient-with-scaled-ancestor.html [ Pass Timeout ]
 
 webkit.org/b/108876 [ Linux ] media/track/track-cues-cuechange.html [ Slow ]
 webkit.org/b/108876 [ Linux ] media/track/track-cues-enter-exit.html [ Slow ]
@@ -4428,7 +4409,7 @@ webkit.org/b/110568 [ MountainLion ] fast/multicol/newmulticol/positioned-split.
 
 webkit.org/b/110739 [ Release MountainLion ] fast/regions/shape-inside-on-regions.html [ ImageOnlyFailure ]
 
-# The following tests are are failing since chromium r184584 
+# The following tests are are failing since chromium r184584
 webkit.org/b/110851 compositing/geometry/fixed-position-composited-page-scale-smaller-than-viewport.html [ ImageOnlyFailure ]
 webkit.org/b/110851 compositing/geometry/fixed-position-composited-page-scale.html [ ImageOnlyFailure ]
 webkit.org/b/110851 compositing/geometry/fixed-position-iframe-composited-page-scale.html [ ImageOnlyFailure ]
@@ -4453,7 +4434,7 @@ crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl
 
 # Need rebaseline
 webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
-webkit.org/b/110654 [ Mac Win ] svg/custom/foreign-object-skew.svg [ Failure ]
+webkit.org/b/109413 [ Mac Win Linux ] svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/110654 [ Mac Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
 # New test
 webkit.org/b/110654 [ Mac Win ] css3/flexbox/button.html [ Failure ]
