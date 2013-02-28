@@ -1,3 +1,30 @@
+2013-02-28  Filip Pizlo  <fpizlo@apple.com>
+
+        CodeBlock::valueProfile() has a bogus assertion
+        https://bugs.webkit.org/show_bug.cgi?id=111106
+        <rdar://problem/13131427>
+
+        Reviewed by Mark Hahnenberg.
+        
+        This was just a bad assertion: m_bytecodeOffset == -1 means that the value profile is constructed but not initialized.
+        ValueProfile constructs itself in a safe way; you can call any method you want on a constructed but not initialized
+        ValueProfile. CodeBlock first constructs all ValueProfiles (by growing the ValueProfile vector) and then initializes
+        their m_bytecodeOffset later. This is necessary because the initialization is linking bytecode instructions to their
+        ValueProfiles, so at that point we don't want the ValueProfile vector to resize, which implies that we want all of
+        them to already be constructed. A GC can happen during this phase, and the GC may want to walk all ValueProfiles.
+        This is safe, but one of the ValueProfile getters (CodeBlock::valueProfile()) was asserting that any value profile
+        you get has had its m_bytecodeOffset initialized. This need not be the case and nothing will go wrong if it isn't.
+
+        The solution is to remove the assertion, which I believe was put there to ensure that my m_valueProfiles refactoring
+        a long time ago was sound: it used to be that a ValueProfile with m_bytecodeOffset == -1 was an argument profile; now
+        all argument profiles are in m_argumentValueProfiles instead. I think it's safe to say that this refactoring was done
+        soundly since it was a long time ago. So we should kill the assertion - I don't see an easy way to make the assertion
+        sound with respect to the GC-during-CodeBlock-construction issue, and I don't believe that the assertion is buying us
+        anything at this point.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::valueProfile):
+
 2013-02-27  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA should leave behind information in Edge that says if the Edge's type check is proven to succeed

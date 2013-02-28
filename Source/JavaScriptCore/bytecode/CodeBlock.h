@@ -605,12 +605,7 @@ namespace JSC {
         }
 
         unsigned numberOfValueProfiles() { return m_valueProfiles.size(); }
-        ValueProfile* valueProfile(int index)
-        {
-            ValueProfile* result = &m_valueProfiles[index];
-            ASSERT(result->m_bytecodeOffset != -1);
-            return result;
-        }
+        ValueProfile* valueProfile(int index) { return &m_valueProfiles[index]; }
         ValueProfile* valueProfileForBytecodeOffset(int bytecodeOffset)
         {
             ValueProfile* result = binarySearch<ValueProfile, int>(
