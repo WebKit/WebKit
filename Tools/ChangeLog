@@ -1,3 +1,32 @@
+2013-02-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Merge PageLoadingPerfTest into ReplayPerfTest
+        https://bugs.webkit.org/show_bug.cgi?id=111027
+
+        Reviewed by Dirk Pranke.
+
+        Merged two classes.
+
+        We should really move ahead with the bug 100991 and get rid of PageLoadingPerfTest
+        part of ReplayPerfTest.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (ReplayPerfTest): Moved _FORCE_GC_FILE here.
+        (ReplayPerfTest.__init__):
+        (ReplayPerfTest._run_with_driver): Moved from PageLoadingPerfTest.
+        (ReplayPerfTest.run_single): Load the GC page as run_single on PageLoadingPerfTest did.
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestReplayPerfTest):
+        (TestReplayPerfTest.test_run_single.run_test):
+        (TestReplayPerfTest.test_run_single): Make sure test_time is passed down properly from output.
+        (TestReplayPerfTest.test_run_with_driver_accumulates_results): Renamed from
+        TestPageLoadingPerfTest.test_run.
+        (TestReplayPerfTest.test_run_with_driver_accumulates_results.mock_run_signle):
+        (TestReplayPerfTest.test_run_with_driver_accumulates_memory_results): Renamed from
+        TestPageLoadingPerfTest.test_run_with_memory_output
+        (TestReplayPerfTest.test_run_with_driver_accumulates_memory_results.mock_run_signle):
+        (TestReplayPerfTest.test_prepare_calls_run_single):
+
 2013-02-27  Eric Seidel  <eric@webkit.org>
 
         Add --additional-drt-flag option to run-perf-tests to make it easy to test runtime options

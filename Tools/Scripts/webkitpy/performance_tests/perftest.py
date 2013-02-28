@@ -291,44 +291,6 @@ class ChromiumStylePerfTest(PerfTest):
         return results if results and not test_failed else None
 
 
-class PageLoadingPerfTest(PerfTest):
-    _FORCE_GC_FILE = 'resources/force-gc.html'
-
-    def __init__(self, port, test_name, test_path):
-        super(PageLoadingPerfTest, self).__init__(port, test_name, test_path)
-        self.force_gc_test = self._port.host.filesystem.join(self._port.perf_tests_dir(), self._FORCE_GC_FILE)
-
-    def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
-        # Force GC to prevent pageload noise. See https://bugs.webkit.org/show_bug.cgi?id=98203
-        super(PageLoadingPerfTest, self).run_single(driver, self.force_gc_test, time_out_ms, False)
-        return super(PageLoadingPerfTest, self).run_single(driver, test_path, time_out_ms, should_run_pixel_test)
-
-    def _run_with_driver(self, driver, time_out_ms):
-        times = PerfTestMetric('Time')
-        malloc = PerfTestMetric('Malloc')
-        js_heap = PerfTestMetric('JSHeap')
-
-        for i in range(0, 20):
-            output = self.run_single(driver, self.test_path(), time_out_ms)
-            if not output or self.run_failed(output):
-                return None
-            if i == 0:
-                continue
-
-            times.append(output.test_time * 1000)
-            if not output.measurements:
-                continue
-
-            for metric, result in output.measurements.items():
-                assert metric == 'Malloc' or metric == 'JSHeap'
-                if metric == 'Malloc':
-                    malloc.append(result)
-                else:
-                    js_heap.append(result)
-
-        return filter(lambda metric: metric.has_values(), [times, malloc, js_heap])
-
-
 class ReplayServer(object):
     def __init__(self, archive, record):
         self._process = None
@@ -364,9 +326,12 @@ class ReplayServer(object):
         self.stop()
 
 
-class ReplayPerfTest(PageLoadingPerfTest):
+class ReplayPerfTest(PerfTest):
+    _FORCE_GC_FILE = 'resources/force-gc.html'
+
     def __init__(self, port, test_name, test_path):
         super(ReplayPerfTest, self).__init__(port, test_name, test_path)
+        self.force_gc_test = self._port.host.filesystem.join(self._port.perf_tests_dir(), self._FORCE_GC_FILE)
 
     def _start_replay_server(self, archive, record):
         try:
@@ -405,6 +370,31 @@ class ReplayPerfTest(PageLoadingPerfTest):
 
         return True
 
+    def _run_with_driver(self, driver, time_out_ms):
+        times = PerfTestMetric('Time')
+        malloc = PerfTestMetric('Malloc')
+        js_heap = PerfTestMetric('JSHeap')
+
+        for i in range(0, 20):
+            output = self.run_single(driver, self.test_path(), time_out_ms)
+            if not output or self.run_failed(output):
+                return None
+            if i == 0:
+                continue
+
+            times.append(output.test_time * 1000)
+            if not output.measurements:
+                continue
+
+            for metric, result in output.measurements.items():
+                assert metric == 'Malloc' or metric == 'JSHeap'
+                if metric == 'Malloc':
+                    malloc.append(result)
+                else:
+                    js_heap.append(result)
+
+        return filter(lambda metric: metric.has_values(), [times, malloc, js_heap])
+
     def run_single(self, driver, url, time_out_ms, record=False):
         server = self._start_replay_server(self._archive_path, record)
         if not server:
@@ -418,6 +408,8 @@ class ReplayPerfTest(PageLoadingPerfTest):
                 return None
 
             _log.debug("Web page replay started. Loading the page.")
+            # Force GC to prevent pageload noise. See https://bugs.webkit.org/show_bug.cgi?id=98203
+            super(ReplayPerfTest, self).run_single(driver, self.force_gc_test, time_out_ms, False)
             output = super(ReplayPerfTest, self).run_single(driver, self._url, time_out_ms, should_run_pixel_test=True)
             if self.run_failed(output):
                 return None

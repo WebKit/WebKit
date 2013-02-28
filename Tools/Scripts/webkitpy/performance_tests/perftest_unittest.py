@@ -37,7 +37,6 @@ from webkitpy.layout_tests.port.driver import DriverOutput
 from webkitpy.layout_tests.port.test import TestDriver
 from webkitpy.layout_tests.port.test import TestPort
 from webkitpy.performance_tests.perftest import ChromiumStylePerfTest
-from webkitpy.performance_tests.perftest import PageLoadingPerfTest
 from webkitpy.performance_tests.perftest import PerfTest
 from webkitpy.performance_tests.perftest import PerfTestMetric
 from webkitpy.performance_tests.perftest import PerfTestFactory
@@ -234,89 +233,7 @@ max 1120 ms
         self.assertEqual(actual_logs, '')
 
 
-class TestPageLoadingPerfTest(unittest.TestCase):
-    class MockDriver(object):
-        def __init__(self, values, test, measurements=None):
-            self._values = values
-            self._index = 0
-            self._test = test
-            self._measurements = measurements
-
-        def run_test(self, input, stop_when_done):
-            if input.test_name == self._test.force_gc_test:
-                return
-            value = self._values[self._index]
-            self._index += 1
-            if isinstance(value, str):
-                return DriverOutput('some output', image=None, image_hash=None, audio=None, error=value)
-            else:
-                return DriverOutput('some output', image=None, image_hash=None, audio=None, test_time=self._values[self._index - 1], measurements=self._measurements)
-
-    def test_run(self):
-        port = MockPort()
-        test = PageLoadingPerfTest(port, 'some-test', '/path/some-dir/some-test')
-        driver = TestPageLoadingPerfTest.MockDriver(range(1, 21), test)
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
-            metrics = test._run_with_driver(driver, None)
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
-
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, '')
-
-        self.assertEqual(len(metrics), 1)
-        self.assertEqual(metrics[0].metric(), 'Time')
-        self.assertEqual(metrics[0].to_dict(), {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
-            'values': [float(i * 1000) for i in range(2, 21)]})
-
-    def test_run_with_memory_output(self):
-        port = MockPort()
-        test = PageLoadingPerfTest(port, 'some-test', '/path/some-dir/some-test')
-        memory_results = {'Malloc': 10, 'JSHeap': 5}
-        self.maxDiff = None
-        driver = TestPageLoadingPerfTest.MockDriver(range(1, 21), test, memory_results)
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
-            metrics = test._run_with_driver(driver, None)
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
-
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, '')
-
-        self.assertEqual(len(metrics), 3)
-        self.assertEqual(metrics[0].metric(), 'Time')
-        self.assertEqual(metrics[0].to_dict(), {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
-            'values': [float(i * 1000) for i in range(2, 21)]})
-        self.assertEqual(metrics[1].metric(), 'Malloc')
-        self.assertEqual(metrics[1].to_dict(), {'max': 10, 'avg': 10.0, 'median': 10, 'min': 10, 'stdev': 0.0, 'unit': 'bytes',
-            'values': [float(10)] * 19})
-        self.assertEqual(metrics[2].metric(), 'JSHeap')
-        self.assertEqual(metrics[2].to_dict(), {'max': 5, 'avg': 5.0, 'median': 5, 'min': 5, 'stdev': 0.0, 'unit': 'bytes',
-            'values': [float(5)] * 19})
-
-    def test_run_with_bad_output(self):
-        output_capture = OutputCapture()
-        output_capture.capture_output()
-        try:
-            port = MockPort()
-            test = PageLoadingPerfTest(port, 'some-test', '/path/some-dir/some-test')
-            driver = TestPageLoadingPerfTest.MockDriver([1, 2, 3, 4, 5, 6, 7, 'some error', 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20], test)
-            self.assertIsNone(test._run_with_driver(driver, None))
-        finally:
-            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
-        self.assertEqual(actual_stdout, '')
-        self.assertEqual(actual_stderr, '')
-        self.assertEqual(actual_logs, 'error: some-test\nsome error\n')
-
-
 class TestReplayPerfTest(unittest.TestCase):
-
     class ReplayTestPort(MockPort):
         def __init__(self, custom_run_test=None):
 
@@ -363,7 +280,7 @@ class TestReplayPerfTest(unittest.TestCase):
             loaded_pages.append(test_input)
             self._add_file(port, '/path/some-dir', 'some-test.wpr', 'wpr content')
             return DriverOutput('actual text', 'actual image', 'actual checksum',
-                audio=None, crash=False, timeout=False, error=False)
+                audio=None, crash=False, timeout=False, error=False, test_time=12345)
 
         test, port = self._setup_test(run_test)
         test._archive_path = '/path/some-dir/some-test.wpr'
@@ -371,7 +288,8 @@ class TestReplayPerfTest(unittest.TestCase):
 
         try:
             driver = port.create_driver(worker_number=1, no_timeout=True)
-            self.assertTrue(test.run_single(driver, '/path/some-dir/some-test.replay', time_out_ms=100))
+            output = test.run_single(driver, '/path/some-dir/some-test.replay', time_out_ms=100)
+            self.assertTrue(output)
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
@@ -382,6 +300,7 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, '')
         self.assertEqual(port.host.filesystem.read_binary_file('/path/some-dir/some-test-actual.png'), 'actual image')
+        self.assertEqual(output.test_time, 12345)
 
     def test_run_single_fails_without_webpagereplay(self):
         output_capture = OutputCapture()
@@ -400,6 +319,66 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, "Web page replay didn't start.\n")
+
+    def test_run_with_driver_accumulates_results(self):
+        port = MockPort()
+        test, port = self._setup_test()
+        counter = [0]
+
+        def mock_run_signle(drive, path, timeout):
+            counter[0] += 1
+            return DriverOutput('some output', image=None, image_hash=None, audio=None, test_time=counter[0], measurements={})
+
+        test.run_single = mock_run_signle
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            driver = port.create_driver(worker_number=1, no_timeout=True)
+            metrics = test._run_with_driver(driver, None)
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, '')
+
+        self.assertEqual(len(metrics), 1)
+        self.assertEqual(metrics[0].metric(), 'Time')
+        self.assertEqual(metrics[0].to_dict(), {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
+            'values': [float(i * 1000) for i in range(2, 21)]})
+
+    def test_run_with_driver_accumulates_memory_results(self):
+        port = MockPort()
+        test, port = self._setup_test()
+        counter = [0]
+
+        def mock_run_signle(drive, path, timeout):
+            counter[0] += 1
+            return DriverOutput('some output', image=None, image_hash=None, audio=None, test_time=counter[0], measurements={'Malloc': 10, 'JSHeap': 5})
+
+        test.run_single = mock_run_signle
+        output_capture = OutputCapture()
+        output_capture.capture_output()
+        try:
+            driver = port.create_driver(worker_number=1, no_timeout=True)
+            metrics = test._run_with_driver(driver, None)
+        finally:
+            actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
+
+        self.assertEqual(actual_stdout, '')
+        self.assertEqual(actual_stderr, '')
+        self.assertEqual(actual_logs, '')
+
+        self.assertEqual(len(metrics), 3)
+        self.assertEqual(metrics[0].metric(), 'Time')
+        self.assertEqual(metrics[0].to_dict(), {'max': 20000, 'avg': 11000.0, 'median': 11000, 'stdev': 5627.314338711378, 'min': 2000, 'unit': 'ms',
+            'values': [float(i * 1000) for i in range(2, 21)]})
+        self.assertEqual(metrics[1].metric(), 'Malloc')
+        self.assertEqual(metrics[1].to_dict(), {'max': 10, 'avg': 10.0, 'median': 10, 'min': 10, 'stdev': 0.0, 'unit': 'bytes',
+            'values': [float(10)] * 19})
+        self.assertEqual(metrics[2].metric(), 'JSHeap')
+        self.assertEqual(metrics[2].to_dict(), {'max': 5, 'avg': 5.0, 'median': 5, 'min': 5, 'stdev': 0.0, 'unit': 'bytes',
+            'values': [float(5)] * 19})
 
     def test_prepare_fails_when_wait_until_ready_fails(self):
         output_capture = OutputCapture()
@@ -494,6 +473,7 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, "Preparing replay for some-test.replay\nFailed to prepare a replay for some-test.replay\n")
+
 
 class TestPerfTestFactory(unittest.TestCase):
     def test_regular_test(self):
