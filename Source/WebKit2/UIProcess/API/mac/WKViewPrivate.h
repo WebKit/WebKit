@@ -59,4 +59,7 @@
 - (void)endDeferringViewInWindowChanges;
 - (BOOL)isDeferringViewInWindowChanges;
 
+- (BOOL)windowOcclusionDetectionEnabled;
+- (void)setWindowOcclusionDetectionEnabled:(BOOL)flag;
+
 @end

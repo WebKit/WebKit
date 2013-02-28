@@ -227,6 +227,7 @@ struct WKViewInterpretKeyEventsParameters {
     NSSize _intrinsicContentSize;
     BOOL _expandsToFitContentViaAutoLayout;
     BOOL _isWindowOccluded;
+    BOOL _windowOcclusionDetectionEnabled;
 }
 
 @end
@@ -2262,6 +2263,9 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (void)_enableWindowOcclusionNotifications
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
+    if (![self windowOcclusionDetectionEnabled])
+        return;
+
     NSWindow *window = [self window];
     if (!window)
         return;
@@ -2320,7 +2324,7 @@ static void windowBecameOccluded(uint32_t, void* data, uint32_t dataLength, void
     Vector<WKView *>& allViews = [WKView _allViews];
     for (size_t i = 0, size = allViews.size(); i < size; ++i) {
         WKView *view = allViews[i];
-        if ([[view window] windowNumber] == windowID)
+        if ([[view window] windowNumber] == windowID && [view windowOcclusionDetectionEnabled])
             [view _setIsWindowOccluded:YES];
     }
 }
@@ -3133,6 +3137,7 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_expandsToFitContentViaAutoLayout = NO;
 
     _data->_intrinsicContentSize = NSMakeSize(NSViewNoInstrinsicMetric, NSViewNoInstrinsicMetric);
+    _data->_windowOcclusionDetectionEnabled = YES;
 
     [self _registerDraggedTypes];
 
@@ -3319,6 +3324,22 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
 - (BOOL)isDeferringViewInWindowChanges
 {
     return _data->_viewInWindowChangesDeferredCount;
+}
+
+- (BOOL)windowOcclusionDetectionEnabled
+{
+    return _data->_windowOcclusionDetectionEnabled;
+}
+
+- (void)setWindowOcclusionDetectionEnabled:(BOOL)flag
+{
+    if (_data->_windowOcclusionDetectionEnabled == flag)
+        return;
+    _data->_windowOcclusionDetectionEnabled = flag;
+    if (flag)
+        [self _enableWindowOcclusionNotifications];
+    else
+        [self _disableWindowOcclusionNotifications];
 }
 
 @end
