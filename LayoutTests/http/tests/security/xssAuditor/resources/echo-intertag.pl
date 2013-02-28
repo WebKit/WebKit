@@ -94,7 +94,6 @@ if ($cgi->param('q2')) {
 }
 if ($cgi->param('showAction')) {
     print "<script>\n";
-    print "if (window.testRunner)\n";
     print "    alert('Form action set to ' + document.forms[0].action);\n";
     print "</script>\n";
 }
