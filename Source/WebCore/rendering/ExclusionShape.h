@@ -59,10 +59,12 @@ typedef Vector<LineSegment> SegmentList;
 
 class ExclusionShape {
 public:
-    static PassOwnPtr<ExclusionShape> createExclusionShape(const BasicShape*, float logicalBoxWidth, float logicalBoxHeight, WritingMode);
+    static PassOwnPtr<ExclusionShape> createExclusionShape(const BasicShape*, float logicalBoxWidth, float logicalBoxHeight, WritingMode, Length margin, Length padding);
 
     virtual ~ExclusionShape() { }
 
+    float shapeMargin() const { return m_margin; }
+    float shapePadding() const { return m_padding; }
     virtual FloatRect shapeLogicalBoundingBox() const = 0;
     virtual bool isEmpty() const = 0;
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const = 0;
@@ -74,6 +76,8 @@ private:
     float m_logicalBoxWidth;
     float m_logicalBoxHeight;
     FloatRect m_boundingBox;
+    float m_margin;
+    float m_padding;
 };
 
 } // namespace WebCore

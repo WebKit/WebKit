@@ -50,7 +50,7 @@ const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter>::computedShape
 
     ASSERT(shape);
 
-    m_shape = ExclusionShape::createExclusionShape(shape, m_shapeLogicalWidth, m_shapeLogicalHeight, m_renderer->style()->writingMode());
+    m_shape = ExclusionShape::createExclusionShape(shape, m_shapeLogicalWidth, m_shapeLogicalHeight, m_renderer->style()->writingMode(), m_renderer->style()->shapeMargin(), m_renderer->style()->shapePadding());
     ASSERT(m_shape);
     return m_shape.get();
 }

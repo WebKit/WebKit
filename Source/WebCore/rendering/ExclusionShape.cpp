@@ -90,7 +90,7 @@ static inline FloatSize physicalSizeToLogical(const FloatSize& size, WritingMode
     return size.transposedSize();
 }
 
-PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape* basicShape, float logicalBoxWidth, float logicalBoxHeight, WritingMode writingMode)
+PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape* basicShape, float logicalBoxWidth, float logicalBoxHeight, WritingMode writingMode, Length margin, Length padding)
 {
     ASSERT(basicShape);
 
@@ -175,6 +175,8 @@ PassOwnPtr<ExclusionShape> ExclusionShape::createExclusionShape(const BasicShape
     exclusionShape->m_logicalBoxWidth = logicalBoxWidth;
     exclusionShape->m_logicalBoxHeight = logicalBoxHeight;
     exclusionShape->m_writingMode = writingMode;
+    exclusionShape->m_margin = floatValueForLength(margin, 0);
+    exclusionShape->m_padding = floatValueForLength(padding, 0);
 
     return exclusionShape.release();
 }

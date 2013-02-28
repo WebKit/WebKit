@@ -46,31 +46,87 @@ static inline float ellipseYIntercept(float x, float rx, float ry)
     return ry * sqrt(1 - (x * x) / (rx * rx));
 }
 
+FloatRoundedRect FloatRoundedRect::paddingBounds(float padding) const
+{
+    ASSERT(padding >= 0);
+    if (!padding || isEmpty())
+        return *this;
+
+    float boundsX = x() + std::min(width() / 2, padding);
+    float boundsY = y() + std::min(height() / 2, padding);
+    float boundsWidth = std::max(0.0f, width() - padding * 2);
+    float boundsHeight = std::max(0.0f, height() - padding * 2);
+    float boundsRadiusX = std::max(0.0f, rx() - padding);
+    float boundsRadiusY = std::max(0.0f, ry() - padding);
+    return FloatRoundedRect(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
+}
+
+FloatRoundedRect FloatRoundedRect::marginBounds(float margin) const
+{
+    ASSERT(margin >= 0);
+    if (!margin)
+        return *this;
+
+    float boundsX = x() - margin;
+    float boundsY = y() - margin;
+    float boundsWidth = width() + margin * 2;
+    float boundsHeight = height() + margin * 2;
+    float boundsRadiusX = std::max(rx(), margin);
+    float boundsRadiusY = std::max(ry(), margin);
+    return FloatRoundedRect(FloatRect(boundsX, boundsY, boundsWidth, boundsHeight), FloatSize(boundsRadiusX, boundsRadiusY));
+}
+
+FloatPoint FloatRoundedRect::cornerInterceptForWidth(float widthAtIntercept) const
+{
+    float xi = (width() - widthAtIntercept) / 2;
+    float yi = ry() - ellipseYIntercept(rx() - xi, rx(), ry());
+    return FloatPoint(xi, yi);
+}
+
+FloatRoundedRect ExclusionRectangle::shapePaddingBounds() const
+{
+    if (!m_haveInitializedPaddingBounds) {
+        m_haveInitializedPaddingBounds = true;
+        m_paddingBounds = m_bounds.paddingBounds(shapePadding());
+    }
+    return m_paddingBounds;
+}
+
+FloatRoundedRect ExclusionRectangle::shapeMarginBounds() const
+{
+    if (!m_haveInitializedMarginBounds) {
+        m_haveInitializedMarginBounds = true;
+        m_marginBounds = m_bounds.marginBounds(shapeMargin());
+    }
+    return m_marginBounds;
+}
+
 void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
 {
-    if (isEmpty())
+    const FloatRoundedRect& bounds = shapeMarginBounds();
+    if (bounds.isEmpty())
         return;
 
     float y1 = logicalTop;
     float y2 = y1 + logicalHeight;
 
-    if (y2 < m_y || y1 >= m_y + m_height)
+    if (y2 < bounds.y() || y1 >= bounds.maxY())
         return;
 
-    float x1 = m_x;
-    float x2 = m_x + m_width;
+    float x1 = bounds.x();
+    float x2 = bounds.maxX();
 
-    if (m_ry > 0) {
-        if (y2 < m_y + m_ry) {
-            float yi = y2 - m_y - m_ry;
-            float xi = ellipseXIntercept(yi, m_rx, m_ry);
-            x1 = m_x + m_rx - xi;
-            x2 = m_x + m_width - m_rx + xi;
-        } else if (y1 > m_y + m_height - m_ry) {
-            float yi =  y1 - (m_y + m_height - m_ry);
-            float xi = ellipseXIntercept(yi, m_rx, m_ry);
-            x1 = m_x + m_rx - xi;
-            x2 = m_x + m_width - m_rx + xi;
+    if (bounds.ry() > 0) {
+        if (y2 < bounds.y() + bounds.ry()) {
+            float yi = y2 - bounds.y() - bounds.ry();
+            float xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
+            x1 = bounds.x() + bounds.rx() - xi;
+            x2 = bounds.maxX() - bounds.rx() + xi;
+        } else if (y1 > bounds.maxY() - bounds.ry()) {
+            float yi =  y1 - (bounds.maxY() - bounds.ry());
+            float xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
+            x1 = bounds.x() + bounds.rx() - xi;
+            x2 = bounds.maxX() - bounds.rx() + xi;
         }
     }
 
@@ -79,92 +135,87 @@ void ExclusionRectangle::getExcludedIntervals(float logicalTop, float logicalHei
 
 void ExclusionRectangle::getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList& result) const
 {
-    if (isEmpty())
+    const FloatRoundedRect& bounds = shapePaddingBounds();
+    if (bounds.isEmpty())
         return;
 
     float y1 = logicalTop;
     float y2 = y1 + logicalHeight;
 
-    if (y1 < m_y || y2 > m_y + m_height)
+    if (y1 < bounds.y() || y2 > bounds.maxY())
         return;
 
-    float x1 = m_x;
-    float x2 = m_x + m_width;
+    float x1 = bounds.x();
+    float x2 = bounds.maxX();
 
-    if (m_ry > 0) {
-        bool y1InterceptsCorner = y1 < m_y + m_ry;
-        bool y2InterceptsCorner = y2 > m_y + m_height - m_ry;
+    if (bounds.ry() > 0) {
+        bool y1InterceptsCorner = y1 < bounds.y() + bounds.ry();
+        bool y2InterceptsCorner = y2 > bounds.maxY() - bounds.ry();
         float xi = 0;
 
         if (y1InterceptsCorner && y2InterceptsCorner) {
-            if  (y1 < m_height + 2*m_y - y2) {
-                float yi = y1 - m_y - m_ry;
-                xi = ellipseXIntercept(yi, m_rx, m_ry);
+            if  (y1 < bounds.height() + 2 * bounds.y() - y2) {
+                float yi = y1 - bounds.y() - bounds.ry();
+                xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
             } else {
-                float yi =  y2 - (m_y + m_height - m_ry);
-                xi = ellipseXIntercept(yi, m_rx, m_ry);
+                float yi =  y2 - (bounds.maxY() - bounds.ry());
+                xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
             }
         } else if (y1InterceptsCorner) {
-            float yi = y1 - m_y - m_ry;
-            xi = ellipseXIntercept(yi, m_rx, m_ry);
+            float yi = y1 - bounds.y() - bounds.ry();
+            xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
         } else if (y2InterceptsCorner) {
-            float yi =  y2 - (m_y + m_height - m_ry);
-            xi = ellipseXIntercept(yi, m_rx, m_ry);
+            float yi =  y2 - (bounds.maxY() - bounds.ry());
+            xi = ellipseXIntercept(yi, bounds.rx(), bounds.ry());
         }
 
         if (y1InterceptsCorner || y2InterceptsCorner) {
-            x1 = m_x + m_rx - xi;
-            x2 = m_x + m_width - m_rx + xi;
+            x1 = bounds.x() + bounds.rx() - xi;
+            x2 = bounds.maxX() - bounds.rx() + xi;
         }
     }
 
     result.append(LineSegment(x1, x2));
 }
 
-FloatPoint ExclusionRectangle::cornerInterceptForWidth(float width) const
-{
-    float xi = (m_width - width) / 2;
-    float yi = m_ry - ellipseYIntercept(m_rx - xi, m_rx, m_ry);
-    return FloatPoint(xi, yi);
-}
-
 bool ExclusionRectangle::firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float& result) const
 {
-    if (minLogicalIntervalSize.width() > m_width)
+    const FloatRoundedRect& bounds = shapePaddingBounds();
+    if (bounds.isEmpty() || minLogicalIntervalSize.width() > bounds.width())
         return false;
 
-    float minY = std::max(m_y, minLogicalIntervalTop);
+    float minY = std::max(bounds.y(), minLogicalIntervalTop);
     float maxY = minY + minLogicalIntervalSize.height();
 
-    if (maxY > m_y + m_height)
+    if (maxY > bounds.maxY())
         return false;
 
-    bool intervalOverlapsMinCorner = minY < m_y + m_ry;
-    bool intervalOverlapsMaxCorner = maxY > m_y + m_height - m_ry;
+    bool intervalOverlapsMinCorner = minY < bounds.y() + bounds.ry();
+    bool intervalOverlapsMaxCorner = maxY > bounds.maxY() - bounds.ry();
 
     if (!intervalOverlapsMinCorner && !intervalOverlapsMaxCorner) {
         result = minY;
         return true;
     }
 
-    float centerY = m_y + m_height / 2;
+    float centerY = bounds.y() + bounds.height() / 2;
     bool minCornerDefinesX = fabs(centerY - minY) > fabs(centerY - maxY);
-    bool intervalFitsWithinCorners = minLogicalIntervalSize.width() + 2 * m_rx <= m_width;
-    FloatPoint cornerIntercept = cornerInterceptForWidth(minLogicalIntervalSize.width());
+    bool intervalFitsWithinCorners = minLogicalIntervalSize.width() + 2 * bounds.rx() <= bounds.width();
+    FloatPoint cornerIntercept = bounds.cornerInterceptForWidth(minLogicalIntervalSize.width());
 
     if (intervalOverlapsMinCorner && (!intervalOverlapsMaxCorner || minCornerDefinesX)) {
-        if (intervalFitsWithinCorners || m_y + cornerIntercept.y() < minY) {
+        if (intervalFitsWithinCorners || bounds.y() + cornerIntercept.y() < minY) {
             result = minY;
             return true;
         }
-        if (minLogicalIntervalSize.height() < m_height - (2 * cornerIntercept.y())) {
-            result = m_y + cornerIntercept.y();
+        if (minLogicalIntervalSize.height() < bounds.height() - (2 * cornerIntercept.y())) {
+            result = bounds.y() + cornerIntercept.y();
             return true;
         }
     }
 
     if (intervalOverlapsMaxCorner && (!intervalOverlapsMinCorner || !minCornerDefinesX)) {
-        if (intervalFitsWithinCorners || minY <=  m_y + m_height - cornerIntercept.y() - minLogicalIntervalSize.height()) {
+        if (intervalFitsWithinCorners || minY <=  bounds.maxY() - cornerIntercept.y() - minLogicalIntervalSize.height()) {
             result = minY;
             return true;
         }

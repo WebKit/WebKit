@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    /* This test is the same as ellipse-shape-inside except that the ellipse radii are 250px,150px instead 
+       of 200px,100px and shape-padding 50px has been specified. The expected result is the same as the original test.
+    */
+    #shape-inside {
+        position: relative;
+        width: 500px;
+        height: 500px;
+        -webkit-shape-inside: ellipse(220px, 220px, 250px, 150px);
+        -webkit-shape-padding: 50px;
+        font: 178px/1 Ahem, sans-serif;
+        color: green;
+    }
+
+    #shape-outline {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 500px;
+        height: 500px;
+    }
+</style>
+</head>
+<body>
+    <div id="shape-inside">
+        <svg id="shape-outline" xmlns="http://www.w3.org/2000/svg">
+            <ellipse cx="220" cy="220" rx="200" ry="100"  stroke="blue" fill="none"/>
+        </svg>
+        X
+    </div>
+</body>
+</html>

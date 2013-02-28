@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    #shape-inside {
+        position: relative;
+    }
+
+    #shape-outline {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        width: 500px;
+        height: 500px;
+    }
+
+    #shape-content {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 300px;
+        height: 300px;
+        font: 100px/1 Ahem, sans-serif;
+        color: green;
+    }
+</style>
+</head>
+<body>
+    <p>The blue rounded rectangle should just contain a cross of five green squares.</p>
+    <div id="shape-inside">
+        <div id="shape-content">&nbsp;X<br/>XXX<br/>&nbsp;X</div>
+        <svg id="shape-outline" xmlns="http://www.w3.org/2000/svg">
+            <rect x="50" y="50" width="300" height="300" rx="100" ry="100" stroke="blue" fill="none"/>
+        </svg>
+    </div>
+</body>
+</html>

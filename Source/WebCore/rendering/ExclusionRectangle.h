@@ -32,40 +32,57 @@
 
 #include "ExclusionShape.h"
 #include "FloatPoint.h"
+#include "FloatRect.h"
 #include "FloatSize.h"
 #include <wtf/Assertions.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class FloatRoundedRect : public FloatRect {
+public:
+    FloatRoundedRect() { }
+    FloatRoundedRect(const FloatRect& bounds, const FloatSize& radii)
+        : FloatRect(bounds)
+        , m_radii(radii)
+    {
+    }
+
+    float rx() const { return m_radii.width(); }
+    float ry() const { return m_radii.height(); }
+    FloatRoundedRect marginBounds(float margin) const;
+    FloatRoundedRect paddingBounds(float padding) const;
+    FloatPoint cornerInterceptForWidth(float width) const;
+
+private:
+    FloatSize m_radii;
+};
+
 class ExclusionRectangle : public ExclusionShape {
 public:
     ExclusionRectangle(const FloatRect& bounds, const FloatSize& radii)
         : ExclusionShape()
-        , m_x(bounds.x())
-        , m_y(bounds.y())
-        , m_width(bounds.width())
-        , m_height(bounds.height())
-        , m_rx(radii.width())
-        , m_ry(radii.height())
+        , m_bounds(bounds, radii)
+        , m_haveInitializedMarginBounds(false)
+        , m_haveInitializedPaddingBounds(false)
     {
     }
 
-    virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return FloatRect(m_x, m_y, m_width, m_height); }
-    virtual bool isEmpty() const OVERRIDE { return m_width <= 0 || m_height <= 0; }
+    virtual FloatRect shapeLogicalBoundingBox() const OVERRIDE { return m_bounds; }
+    virtual bool isEmpty() const OVERRIDE { return m_bounds.isEmpty(); }
     virtual void getExcludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
     virtual void getIncludedIntervals(float logicalTop, float logicalHeight, SegmentList&) const OVERRIDE;
     virtual bool firstIncludedIntervalLogicalTop(float minLogicalIntervalTop, const FloatSize& minLogicalIntervalSize, float&) const OVERRIDE;
 
-private:
-    FloatPoint cornerInterceptForWidth(float width) const;
+    FloatRoundedRect shapeMarginBounds() const;
+    FloatRoundedRect shapePaddingBounds() const;
 
-    float m_x;
-    float m_y;
-    float m_width;
-    float m_height;
-    float m_rx; // corner X radius
-    float m_ry; // corner Y radius
+private:
+    FloatRoundedRect m_bounds;
+    mutable FloatRoundedRect m_marginBounds;
+    mutable FloatRoundedRect m_paddingBounds;
+    mutable bool m_haveInitializedMarginBounds : 1;
+    mutable bool m_haveInitializedPaddingBounds : 1;
 };
 
 } // namespace WebCore
