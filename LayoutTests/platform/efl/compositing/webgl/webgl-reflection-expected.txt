@@ -1,0 +1,12 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x306
+  RenderBlock {HTML} at (0,0) size 800x306
+    RenderBody {BODY} at (8,16) size 784x282
+      RenderBlock {P} at (0,0) size 784x18
+        RenderText {#text} at (0,0) size 311x17
+          text run at (0,0) width 311: "You should see a green triangle and its reflection."
+      RenderBlock (anonymous) at (0,34) size 784x248
+        RenderText {#text} at (0,0) size 0x0
+layer at (28,70) size 244x204
+  RenderHTMLCanvas {CANVAS} at (20,20) size 244x204 [border: (2px solid #000000)]
