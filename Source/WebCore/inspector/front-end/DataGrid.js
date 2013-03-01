@@ -1252,6 +1252,7 @@ WebInspector.DataGridNode.prototype = {
 
         this._element.removeChildren();
         this.createCells();
+        this._element.createChild("td", "corner");
     },
 
     /**
