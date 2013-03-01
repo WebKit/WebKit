@@ -73,12 +73,15 @@ WebInspector.SimpleProjectDelegate.prototype = {
         if (typeof this._displayName !== "undefined")
             return this._displayName;
         if (!this._name) {
-            this._displayName = "";
+            this._displayName = this._type !== WebInspector.projectTypes.Snippets ? WebInspector.UIString("(no domain)") : "";
             return this._displayName;
         }
         var parsedURL = new WebInspector.ParsedURL(this._name);
-        if (parsedURL.isValid)
+        if (parsedURL.isValid) {
             this._displayName = parsedURL.host + (parsedURL.port ? (":" + parsedURL.port) : "");
+            if (!this._displayName)
+                this._displayName = this._name;
+        }
         else
             this._displayName = this._name;
         return this._displayName;

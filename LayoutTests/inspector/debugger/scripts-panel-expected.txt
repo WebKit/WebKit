@@ -3,30 +3,43 @@ Tests that scripts panel UI elements work as intended.
 
 Running: testInitialLoad
 Dumping ScriptsNavigator 'Scripts' tab:
-  bar.js
-  baz.js
-  foo.js
-  foobar.js
+  (no domain)
+    bar.js
+    baz.js
+    foo.js
+    foobar.js
 Dumping ScriptsNavigator 'Content scripts' tab:
+
 Source requested for baz.js
 
 Running: testReset
 Source requested for baz.js
 Dumping ScriptsNavigator 'Scripts' tab:
-  bar.js
-  baz.js
-  foo.js
+  (no domain)
+    bar.js
+    baz.js
+    foo.js
 Dumping ScriptsNavigator 'Content scripts' tab:
+
 Dumping ScriptsNavigator 'Scripts' tab:
-  bar.js
 Dumping ScriptsNavigator 'Content scripts' tab:
+
+Dumping ScriptsNavigator 'Scripts' tab:
+  (no domain)
+    bar.js
+Dumping ScriptsNavigator 'Content scripts' tab:
+
 
 Running: testDebuggerUISourceCodeAddedAndRemoved
 Dumping ScriptsNavigator 'Scripts' tab:
-  foo.js
+  (no domain)
+    foo.js
 Dumping ScriptsNavigator 'Content scripts' tab:
+
 Dumping ScriptsNavigator 'Scripts' tab:
-  foo.js
-  source.js
+  (no domain)
+    foo.js
+    source.js
 Dumping ScriptsNavigator 'Content scripts' tab:
+
 

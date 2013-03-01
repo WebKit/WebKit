@@ -2,18 +2,12 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="../../http/tests/inspector/workspace-test.js"></script>
 <script>
 function test()
 {
-    // Always use indentation in scripts drop box
-    WebInspector._isMac = false;
     WebInspector.showPanel("scripts");
-
-    var persistentBreakpoints = [];
-    var breakpointStorage = {
-        get: function() { return persistentBreakpoints; },
-        set: function(breakpoints) { persistentBreakpoints = breakpoints; }
-    };
+    InspectorTest.createWorkspace(true);
 
     function createContentProvider(url)
     {
@@ -28,20 +22,19 @@ function test()
 
     function createMockWorkspace()
     {
-        var workspace = new WebInspector.Workspace();
-        workspace.networkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Network);
-        workspace.debuggerWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Debugger);
-        return workspace;
+        InspectorTest.createWorkspace(true);
+        InspectorTest.testDebuggerWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(InspectorTest.testWorkspace, WebInspector.projectTypes.Debugger);
+        return InspectorTest.testWorkspace;
     }
 
     function addNetworkFile(workspace, url)
     {
-        workspace.networkWorkspaceProvider.addFileForURL(url, createContentProvider(url), false);
+        return InspectorTest.testNetworkWorkspaceProvider.addFileForURL(url, createContentProvider(url), false);
     }
 
     function addDebuggerFile(workspace, url)
     {
-        workspace.debuggerWorkspaceProvider.addUniqueFileForURL(url, createContentProvider(url), false);
+        return InspectorTest.testDebuggerWorkspaceProvider.addFileForURL(url, createContentProvider(url), false);
     }
 
     InspectorTest.runTestSuite([
@@ -56,7 +49,8 @@ function test()
 
             addNetworkFile(workspace, "foo.js");
             addNetworkFile(workspace, "bar.js");
-            addNetworkFile(workspace, "baz.js");
+            var uiSourceCode = addNetworkFile(workspace, "baz.js");
+            panel._navigator.revealUISourceCode(uiSourceCode);
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
@@ -80,8 +74,10 @@ function test()
 
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
-            workspace.networkWorkspaceProvider.reset();
-            addNetworkFile(workspace, "bar.js");
+            InspectorTest.testNetworkWorkspaceProvider.reset();
+            InspectorTest.dumpScriptsNavigator(panel._navigator);
+            var uiSourceCode = addNetworkFile(workspace, "bar.js");
+            panel._navigator.revealUISourceCode(uiSourceCode);
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             panel.detach();
@@ -94,9 +90,10 @@ function test()
             var panel = new WebInspector.ScriptsPanel(workspace);
             panel.show();
 
-            addNetworkFile(workspace, "foo.js");
-            addDebuggerFile(workspace, "compiled.js");
-
+            var uiSourceCode = addNetworkFile(workspace, "foo.js");
+            var debuggerUISourceCode = addDebuggerFile(workspace, "compiled.js");
+            panel._navigator.revealUISourceCode(uiSourceCode);
+            panel._navigator.revealUISourceCode(debuggerUISourceCode);
             InspectorTest.dumpScriptsNavigator(panel._navigator);
 
             // Plug compiler source mapping.

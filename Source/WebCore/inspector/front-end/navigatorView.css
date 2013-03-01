@@ -52,6 +52,11 @@
     content: url(Images/resourcePlainIcon.png);
 }
 
+.navigator > ol {
+    min-height: 100%;
+    display: inline-block;
+}
+
 .navigator li {
     height: 17px;
     white-space: nowrap;
@@ -90,8 +95,7 @@
 }
 
 .navigator .base-navigator-tree-element-title {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: inline-block;
     position: relative;
     padding-left: 2px;
     top: 1px;
@@ -128,8 +132,7 @@
 }
 
 .navigator-tabbed-pane .navigator-container {
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow: auto;
 }
 
 .navigator-tabbed-pane .navigator {

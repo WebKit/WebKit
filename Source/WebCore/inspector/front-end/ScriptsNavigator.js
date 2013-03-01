@@ -181,14 +181,6 @@ WebInspector.SnippetsNavigatorView.Events = {
 
 WebInspector.SnippetsNavigatorView.prototype = {
     /**
-     * @param {WebInspector.UISourceCode} uiSourceCode
-     */
-    getOrCreateFolderTreeElement: function(uiSourceCode)
-    {
-        return this._scriptsTree;
-    },
-
-    /**
      * @param {Event} event
      * @param {WebInspector.UISourceCode=} uiSourceCode
      */

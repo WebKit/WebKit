@@ -2,19 +2,32 @@ Tests scripts sorting in the scripts panel.
 
 
 Dumping ScriptsNavigator 'Scripts' tab:
+  (no domain)
   bar.com
-    foo/path
+  foo.com
+Dumping ScriptsNavigator 'Content scripts' tab:
+  (no domain)
+  extension-name
+
+Dumping ScriptsNavigator 'Scripts' tab:
+  (no domain)
+  bar.com
   foo.com
     _js/production
     foo/path
     i
-    i/js
-  *Non*URL*path
+    block.js?block=foo
+    ga.js
+    lenta.ban?pg=4883&ifr=1
+    lenta.ban?pg=5309&ifr=1
+    top100.jcn?80674
 Dumping ScriptsNavigator 'Content scripts' tab:
+  (no domain)
   extension-name
-    folder
-  *Another*Non*URL*path
+
 Dumping ScriptsNavigator 'Scripts' tab:
+  (no domain)
+    *Non*URL*path
   bar.com
     foo/path
       bar.js?file=bar/zzz.js
@@ -26,20 +39,21 @@ Dumping ScriptsNavigator 'Scripts' tab:
       bar.js?file=bar/zzz.js
       foo.js?file=bar/aaa.js
     i
+      js
+        jquery-1.5.1.min.js
+        jquery.cookie.js
       xgemius.js
-    i/js
-      jquery-1.5.1.min.js
-      jquery.cookie.js
     block.js?block=foo
     ga.js
     lenta.ban?pg=4883&ifr=1
     lenta.ban?pg=5309&ifr=1
     top100.jcn?80674
-  *Non*URL*path
 Dumping ScriptsNavigator 'Content scripts' tab:
+  (no domain)
+    *Another*Non*URL*path
   extension-name
     folder
       baz.js
     bar.js
-  *Another*Non*URL*path
+
 

@@ -2,30 +2,29 @@
 <head>
 <script src="../../http/tests/inspector/inspector-test.js"></script>
 <script src="../../http/tests/inspector/debugger-test.js"></script>
+<script src="../../http/tests/inspector/workspace-test.js"></script>
 
 <script>
 function test()
 {
-    // Always use indentation in scripts drop box
-    WebInspector._isMac = false;
     WebInspector.showPanel("scripts");
-
-    var navigator = new WebInspector.ScriptsNavigator();
-    var workspace = new WebInspector.Workspace();
-    var workspaceProvider = new WebInspector.SimpleWorkspaceProvider(workspace, WebInspector.projectTypes.Network);
+    InspectorTest.createWorkspace(true);
+    var panel = new WebInspector.ScriptsPanel(InspectorTest.testWorkspace);
+    var navigator = panel._navigator;
 
     var uiSourceCodes = [];
     function addUISourceCode(url, isContentScript)
     {
         var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Script, "", "text/javascript");
-        var uiSourceCode = workspaceProvider.addFileForURL(url, contentProvider, false, isContentScript);
-        navigator.addUISourceCode(uiSourceCode);
+        var uiSourceCode = InspectorTest.testNetworkWorkspaceProvider.addFileForURL(url, contentProvider, false, isContentScript);
         uiSourceCodes.push(uiSourceCode);
     }
 
     function dumpScriptsList()
     {
         InspectorTest.addResult("");
+        InspectorTest.dumpScriptsNavigator(navigator);
+        navigator.revealUISourceCode(uiSourceCodes[0]);
         InspectorTest.dumpScriptsNavigator(navigator);
         for (var i = 0; i < uiSourceCodes.length; ++i)
             navigator.revealUISourceCode(uiSourceCodes[i]);

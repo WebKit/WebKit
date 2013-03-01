@@ -1,6 +1,6 @@
 var initialize_WorkspaceTest = function() {
 
-InspectorTest.createWorkspace = function()
+InspectorTest.createWorkspace = function(ignoreEvents)
 {
     InspectorTest.testFileMapping = new WebInspector.FileMapping();
     InspectorTest.testFileSystemMapping = new WebInspector.FileSystemMappingImpl();
@@ -8,6 +8,8 @@ InspectorTest.createWorkspace = function()
 
     InspectorTest.testWorkspace = new WebInspector.Workspace(InspectorTest.testFileMapping, InspectorTest.testFileSystemMapping);
     InspectorTest.testNetworkWorkspaceProvider = new WebInspector.SimpleWorkspaceProvider(InspectorTest.testWorkspace, WebInspector.projectTypes.Network);
+    if (ignoreEvents)
+        return;
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, InspectorTest._defaultUISourceCodeProviderEventHandler);
     InspectorTest.testWorkspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeRemoved, InspectorTest._defaultUISourceCodeProviderEventHandler);
 }
