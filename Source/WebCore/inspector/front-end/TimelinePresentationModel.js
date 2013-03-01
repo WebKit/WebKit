@@ -140,9 +140,8 @@ WebInspector.TimelinePresentationModel.isEventDivider = function(record)
     if (record.type === recordTypes.TimeStamp)
         return true;
     if (record.type === recordTypes.MarkDOMContent || record.type === recordTypes.MarkLoad) {
-        var mainFrame = WebInspector.resourceTreeModel.mainFrame;
-        if (mainFrame && mainFrame.id === record.frameId)
-            return true;
+        if (record.data && ((typeof record.data.isMainFrame) === "boolean"))
+            return record.data.isMainFrame;
     }
     return false;
 }

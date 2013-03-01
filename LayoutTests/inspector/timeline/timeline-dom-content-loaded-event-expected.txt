@@ -5,6 +5,7 @@ MarkDOMContent Properties:
 {
     counters : <object>
     data : {
+        isMainFrame : true
     }
     frameId : <string>
     startTime : <number>

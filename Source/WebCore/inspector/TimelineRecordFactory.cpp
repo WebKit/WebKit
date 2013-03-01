@@ -184,6 +184,13 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createResizeImageData(bool sh
     return data.release();
 }
 
+PassRefPtr<InspectorObject> TimelineRecordFactory::createMarkData(bool isMainFrame)
+{
+    RefPtr<InspectorObject> data = InspectorObject::create();
+    data->setBoolean("isMainFrame", isMainFrame);
+    return data.release();
+}
+
 PassRefPtr<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned int length, unsigned int startLine)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();

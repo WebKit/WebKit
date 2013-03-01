@@ -465,12 +465,14 @@ void InspectorTimelineAgent::timeEnd(Frame* frame, const String& message)
 
 void InspectorTimelineAgent::didMarkDOMContentEvent(Frame* frame)
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::MarkDOMContent, false, frame);
+    bool isMainFrame = frame && m_pageAgent && (frame == m_pageAgent->mainFrame());
+    appendRecord(TimelineRecordFactory::createMarkData(isMainFrame), TimelineRecordType::MarkDOMContent, false, frame);
 }
 
 void InspectorTimelineAgent::didMarkLoadEvent(Frame* frame)
 {
-    appendRecord(InspectorObject::create(), TimelineRecordType::MarkLoad, false, frame);
+    bool isMainFrame = frame && m_pageAgent && (frame == m_pageAgent->mainFrame());
+    appendRecord(TimelineRecordFactory::createMarkData(isMainFrame), TimelineRecordType::MarkLoad, false, frame);
 }
 
 void InspectorTimelineAgent::didCommitLoad()
