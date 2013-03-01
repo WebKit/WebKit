@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="textrole" tabindex=0 role="text" aria-label="all at once">
+<b>hello world</b>
+<i>this is a test</i>
+<a href="#">more test</a>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test ensures that the \"text\" role works as expected. That is, it creates a static text object that can be controlled with aria-label.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("textrole").focus();
+        var textrole = accessibilityController.rootElement.childAtIndex(0);
+        shouldBe("textrole.iphoneLabel", "'AXLabel: all at once'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

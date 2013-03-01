@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div><a href="#">text line</a><img alt="" width=1 height=10 src=""><a href="#">text line</a></div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test ensures that when asking for a line of text, we do not include objects that should be ignored. The image in this example should not appear so the array of elements should be size of 2.");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.rootElement;
+        var array = obj.elementsForRange(0, 16);
+        shouldBe("array.length", "2");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

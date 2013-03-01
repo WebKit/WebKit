@@ -1,0 +1,60 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+item 1
+
+<ol>
+<li>list item 1</li>
+</ol>
+
+<table border=1>
+<tr><td>table item 1</td>
+<td>table item 2</td>
+<td>table item 3</td></tr>
+</table>
+
+<div role="main">
+<b>landmark 1</b>
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that items in lists, tables and landmarks have different traits on them, because they're contained in different items.");
+
+    if (window.accessibilityController) {
+
+        var root = accessibilityController.rootElement;
+       
+        var initialItem = root.childAtIndex(0).childAtIndex(0);
+        var listItem = root.childAtIndex(1).childAtIndex(0).childAtIndex(0);
+        var tableItem = root.childAtIndex(2).childAtIndex(0);
+        var landmarkItem = root.childAtIndex(5).childAtIndex(0).childAtIndex(0);
+
+        shouldBe("listItem.iphoneTraits != initialItem.iphoneTraits", "true");
+        shouldBe("listItem.iphoneTraits != tableItem.iphoneTraits", "true");
+        shouldBe("listItem.iphoneTraits != landmarkItem.iphoneTraits", "true");
+
+        shouldBe("tableItem.iphoneTraits != initialItem.iphoneTraits", "true");
+        shouldBe("tableItem.iphoneTraits != landmarkItem.iphoneTraits", "true");
+
+        shouldBe("landmarkItem.iphoneTraits != initialItem.iphoneTraits", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

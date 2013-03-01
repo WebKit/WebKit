@@ -1,0 +1,40 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<input type="text" placeholder="place" id="pass" value='val'>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test that a text field with a place holder returns the placeholder as expected.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("pass").focus();
+        var pass = accessibilityController.focusedElement;
+
+        shouldBe("pass.stringAttributeValue('AXPlaceholderValue')", "'place'");
+        shouldBe("pass.iphoneValue", "'AXValue: val'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

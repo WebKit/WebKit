@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body>
+
+<div>element 1</div>
+<div>element 2</div>
+<div>element 3</div>
+<div>element 4</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test ensures that a text range can be found for an element within a web page. ");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.rootElement.childAtIndex(2);
+
+        var textPos = obj.iphoneElementTextPosition;
+        var textLen = obj.iphoneElementTextLength;
+
+        var succeeded = textPos == 20 && textLen == 9;
+        shouldBe("succeeded", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

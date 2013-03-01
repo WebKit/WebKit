@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<table border=1>
+<tr><th>header 1</th><th>header 2</th><th tabindex=0 id="header">header 3</th></tr>
+<tr><td>cell 1</td><td>cell 2</td><td>cell 3</td></tr>
+<tr><td>cell 4</td><td>cell 5</td><td>cell <div role="button" id="button" tabindex=0>6</div></td></tr>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure asking for the header element for a cell, will return the header element");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("button").focus();
+        var button = accessibilityController.focusedElement;
+
+        document.getElementById("header").focus();
+        var header = accessibilityController.focusedElement;
+        shouldBeTrue("button.headerElementAtIndex(0).isEqual(header)");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

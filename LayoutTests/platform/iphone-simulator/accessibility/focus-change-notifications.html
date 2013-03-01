@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<h1 tabindex=0 id="h1">H1</h1>
+<h2 tabindex=0 id="h2">H2</h2>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that notifications are fired for focus changes");
+
+    var focusChangeCount = 0;
+    var rootElement = 0;
+    function focusCallback(notification) {
+        if (notification == "AXFocusChanged") {
+            focusChangeCount++;
+
+            // We should get a total of 2 focus changes.
+            if (focusChangeCount == 2) {
+               rootElement.removeNotificationListener();
+               window.testRunner.notifyDone();
+            }
+        }
+    }
+
+    if (window.accessibilityController) {
+        // Make sure AX gets turned on.
+        rootElement = accessibilityController.rootElement;
+        window.testRunner.waitUntilDone();
+
+        var addedNotification = rootElement.addNotificationListener(focusCallback);
+        shouldBe("addedNotification", "true");
+
+        // Switch focus from h1.
+        document.getElementById("h2").focus();
+        // Cause focus change to be sent to h1.
+        document.getElementById("h1").focus();
+
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

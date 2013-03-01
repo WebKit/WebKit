@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<table border=1>
+<tr><th>header 1</th><th>header 2</th><th tabindex=0 id="header">header 3</th></tr>
+<tr><td>cell 1</td><td colspan=2><div role="button" id="cell2" tabindex=0>cell</div> 2</td></tr>
+<tr><td>cell 4</td><td>cell 5</td><td>cell <div role="button" id="cell6" tabindex=0>6</div></td></tr>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that elements within tables cells return the correct row, col ranges");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("cell2").focus();
+        var cell2 = accessibilityController.focusedElement;
+        shouldBe("cell2.rowIndexRange()", "'{1, 1}'");
+        shouldBe("cell2.columnIndexRange()", "'{1, 2}'");
+
+        document.getElementById("cell6").focus();
+        var cell6 = accessibilityController.focusedElement;
+        shouldBe("cell6.rowIndexRange()", "'{2, 1}'");
+        shouldBe("cell6.columnIndexRange()", "'{2, 1}'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

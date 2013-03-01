@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="image" src="url-test1.html"><BR>
+<a href="#url-test2.html">test</a><BR>
+<img src="url-test3.png" width=100 height=100 alt="test"><BR>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test ensures that we can retrieve URLs for appropriate elements.");
+
+    if (window.accessibilityController) {
+
+        var element = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        shouldBe("element.url.indexOf('url-test1.html') != -1", "true");
+
+        element = accessibilityController.rootElement.childAtIndex(0).childAtIndex(1);
+        shouldBe("element.url.indexOf('url-test2.html') != -1", "true");
+
+        element = accessibilityController.rootElement.childAtIndex(0).childAtIndex(2);
+        shouldBe("element.url.indexOf('url-test3.png') != -1", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

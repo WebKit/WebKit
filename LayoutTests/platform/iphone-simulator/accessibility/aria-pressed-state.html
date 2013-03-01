@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div id="button1" tabindex=0 role="button" aria-pressed="true">button 1</div>
+<div id="button2" tabindex=0 role="button" aria-pressed="false">button 2</div>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test thats aria-pressed changes the traits returned by buttons");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("button1").focus();
+        var btn1 = accessibilityController.focusedElement;
+
+        document.getElementById("button2").focus();
+        var btn2 = accessibilityController.focusedElement;
+ 
+        shouldBe("btn1.iphoneTraits != btn2.iphoneTraits", "true");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

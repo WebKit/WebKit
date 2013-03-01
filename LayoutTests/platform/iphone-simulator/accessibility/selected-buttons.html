@@ -1,0 +1,54 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div tabindex="0" id="button1" role="button" aria-selected="true">button 1</div>
+<div tabindex="0" id="button2" role="button" aria-selected="false">button 2</div>
+
+<div tabindex="0" id="tab1" role="tab" aria-selected="true">tab 1</div>
+<div tabindex="0" id="tab2" role="tab" aria-selected="false">tab 2</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that aria-selected behaves as expected (by returning the right traits) on tabs and buttons.");
+
+    if (window.accessibilityController) {
+
+        // Make sure a checkbox with a label DOES NOT have the same center point as the frame
+        document.getElementById("button1").focus();
+        var button1 = accessibilityController.focusedElement;
+        shouldBeTrue("button1.isSelected");
+
+        document.getElementById("button2").focus();
+        var button2 = accessibilityController.focusedElement;
+        shouldBeFalse("button2.isSelected");
+
+        document.getElementById("tab1").focus();
+        var tab1 = accessibilityController.focusedElement;
+        shouldBeTrue("tab1.isSelected");
+
+        document.getElementById("tab2").focus();
+        var tab2 = accessibilityController.focusedElement;
+        shouldBeFalse("tab2.isSelected");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

@@ -1,0 +1,19 @@
+item 1
+list item 1
+table item 1	table item 2	table item 3
+landmark 1
+This test makes sure that items in lists, tables and landmarks have different traits on them, because they're contained in different items.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS listItem.iphoneTraits != initialItem.iphoneTraits is true
+PASS listItem.iphoneTraits != tableItem.iphoneTraits is true
+PASS listItem.iphoneTraits != landmarkItem.iphoneTraits is true
+PASS tableItem.iphoneTraits != initialItem.iphoneTraits is true
+PASS tableItem.iphoneTraits != landmarkItem.iphoneTraits is true
+PASS landmarkItem.iphoneTraits != initialItem.iphoneTraits is true
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

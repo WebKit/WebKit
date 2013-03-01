@@ -1,0 +1,38 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div tabindex="0" id="button1" role="button" aria-selected="true">button 1</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that id maps to AXIdentifier correctly");
+
+    if (window.accessibilityController) {
+
+        // Make sure a checkbox with a label DOES NOT have the same center point as the frame
+        document.getElementById("button1").focus();
+        var button1 = accessibilityController.focusedElement;
+        shouldBe("button1.iphoneIdentifier", "'AXIdentifier: button1'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

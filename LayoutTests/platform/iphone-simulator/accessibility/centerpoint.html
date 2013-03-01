@@ -1,0 +1,69 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<label for="check1">blah</label>
+
+<input type="checkbox" id="check1">
+
+<br><br>
+
+<input type="checkbox" id="check2">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that the center point for a checkbox with a label is not the same as the mid point of the frame (because the frame includes the bounds of the label)");
+
+    if (window.accessibilityController) {
+
+        // Make sure a checkbox with a label DOES NOT have the same center point as the frame
+        document.getElementById("check1").focus();
+        var pass = accessibilityController.focusedElement;
+
+        var clickPointX = pass.clickPointX;
+        var clickPointY = pass.clickPointY;
+
+        var x = pass.x;
+        var y = pass.y;
+        var w = pass.width;
+        var h = pass.height;
+
+        shouldBeFalse("(x + w/2) == clickPointX");
+        shouldBeFalse("(y + h/2) == clickPointY");
+
+        // Now make sure a checkbox without a label DOES have the same centerpoint as the frame
+        document.getElementById("check2").focus();
+        pass = accessibilityController.focusedElement;
+
+        var clickPointX = pass.clickPointX;
+        var clickPointY = pass.clickPointY;
+
+        var x = pass.x;
+        var y = pass.y;
+        var w = pass.width;
+        var h = pass.height;
+
+        shouldBeTrue("(x + w/2) == clickPointX");
+        shouldBeTrue("(y + h/2) == clickPointY");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

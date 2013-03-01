@@ -1,0 +1,47 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../../editing/editing.js" language="JavaScript" type="text/JavaScript" ></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+Text before
+<div tabindex=0 id="container">This is a test of Safari web selection</div>
+Text after
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that accessibility can pull out the selected text");
+
+    if (window.accessibilityController) {
+        document.getElementById("container").focus();
+        setSelectionCommand(document.getElementById('container'), 0, document.getElementById('container'), 0);
+
+        var focusedElement = accessibilityController.focusedElement;
+
+        // Select: "This is"
+        for (var k = 0; k < 7; k++) 
+            focusedElement.increaseTextSelection();
+
+        // "Unselect: " is"
+        for (var k = 0; k < 3; k++) 
+            focusedElement.decreaseTextSelection();
+
+        shouldBe("focusedElement.stringForSelection", "'This'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

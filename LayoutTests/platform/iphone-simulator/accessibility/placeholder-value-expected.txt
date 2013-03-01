@@ -1,0 +1,12 @@
+
+This test that a text field with a place holder returns the placeholder as expected.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS pass.stringAttributeValue('AXPlaceholderValue') is 'place'
+PASS pass.iphoneValue is 'AXValue: val'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

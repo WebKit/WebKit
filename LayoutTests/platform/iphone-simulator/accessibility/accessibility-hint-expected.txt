@@ -1,0 +1,11 @@
+link label
+This makes sure that the title attribute is used as accessibilityHint
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS link.iphoneHint is 'AXHint: This is a hint'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

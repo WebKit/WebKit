@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ol>
+<li>item 1</li>
+</ol>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test ensures that when asking for the string for a range, it includes the list item marker");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.rootElement;
+        var text = obj.stringForRange(0, 6);
+        shouldBe("text", "'1. item 1'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="checkbox" id="checkbox">
+<input id="radio1" type="radio" checked name="group">
+<input id="radio2" type="radio" name="group">
+<input id="radio3" type="radio" name="group">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that radio buttons are exposed as distinct types from checkboxes, that they can report the right value whether it's checked, and they can report they're part of a group.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("checkbox").focus();
+        var checkbox = accessibilityController.focusedElement;
+
+        document.getElementById("radio1").focus();
+        var radio1 = accessibilityController.focusedElement;
+
+        document.getElementById("radio2").focus();
+        var radio2 = accessibilityController.focusedElement;
+
+        document.getElementById("radio3").focus();
+        var radio3 = accessibilityController.focusedElement;
+
+        // Verify checkbox and radio have different traits.
+        shouldBeTrue("checkbox.iphoneTraits != radio1.iphoneTraits");
+
+        // Verify the value of the checked radio item is correct.
+        shouldBe("radio1.iphoneValue", "'AXValue: 1'");
+        shouldBe("radio2.iphoneValue", "'AXValue: 0'");
+        shouldBe("radio3.iphoneValue", "'AXValue: 0'");
+
+        // Verify the radio buttons are part of a group.
+        shouldBe("radio1.rowIndexRange()", "'{0, 3}'");
+        shouldBe("radio2.rowIndexRange()", "'{1, 3}'");
+        shouldBe("radio3.rowIndexRange()", "'{2, 3}'");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+  testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div class="contents" id="group" tabindex="0">
+      Raman scattering study of the  
+      <span role="math" aria-label=" F e sub 1  minus x, end subscript. C o sub x, S b sub 2">
+        <math alttext=" F e sub 1  minus x, end subscript. C o sub x, S b sub 2" aria-hidden="true">
+          <mrow>
+            <msub>
+              <mrow>
+                <mtext>Fe</mtext>
+              </mrow>
+              <mrow>
+                <mn>1</mn>
+                <mo>&#x2212;</mo>
+                <mi>x</mi>
+              </mrow>
+            </msub>
+            <msub>
+              <mrow>
+                <mtext>Co</mtext>
+              </mrow>
+              <mi>x</mi>
+            </msub>
+            <msub>
+              <mrow>
+                <mtext>Sb</mtext>
+              </mrow>
+              <mn>2</mn>
+            </msub>
+          </mrow>
+        </math>
+      </span>
+      and 
+      <span role="math" aria-label="  open, 0  less than or equal to x  less than or equal to 1,  close">
+        <math role="presentation" alttext="  open, 0  less than or equal to x  less than or equal to 1,  close" aria-hidden="true">
+          <mrow>
+            <mrow>
+              <mo>(</mo>
+              <mrow>
+                <mn>0</mn>
+                <mo>&#x2264;</mo>
+                <mi>x</mi>
+                <mo>&#x2264;</mo>
+                <mn>1</mn>
+              </mrow>
+              <mo>)</mo>
+            </mrow>
+          </mrow>
+        </math>
+      </span>
+      single crystals.
+    </div>
+  
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+   description("This test the math role type will be an accessibility element.");
+
+   if (window.accessibilityController) {
+
+       document.getElementById("group").focus();
+       var group = accessibilityController.focusedElement;
+       shouldBe("group.childrenCount", "5");
+       shouldBe("group.childAtIndex(0).iphoneLabel", "'AXLabel: Raman scattering study of the '");
+       shouldBe("group.childAtIndex(1).iphoneLabel", "'AXLabel:  F e sub 1  minus x, end subscript. C o sub x, S b sub 2'");
+       shouldBe("group.childAtIndex(2).iphoneLabel", "'AXLabel: and '");
+       shouldBe("group.childAtIndex(3).iphoneLabel", "'AXLabel:   open, 0  less than or equal to x  less than or equal to 1,  close'");
+       shouldBe("group.childAtIndex(4).iphoneLabel", "'AXLabel: single crystals.'");
+
+       shouldBeTrue("group.childAtIndex(0).iphoneIsElement");
+       shouldBeTrue("group.childAtIndex(1).iphoneIsElement");
+       shouldBeTrue("group.childAtIndex(2).iphoneIsElement");
+       shouldBeTrue("group.childAtIndex(3).iphoneIsElement");
+       shouldBeTrue("group.childAtIndex(4).iphoneIsElement");
+   }
+
+   successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>

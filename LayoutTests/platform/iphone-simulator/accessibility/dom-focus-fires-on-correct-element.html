@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+
+<a id="link1" href="#">link1</a>
+
+<h1 id="heading1" tabindex=0>heading1</h1>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that accessibilityElementDidBecomeFocused will be propagated to the correct parent and cause DOM focus to fire on the correct elements.");
+
+
+    if (window.accessibilityController) {
+
+        var body = accessibilityController.rootElement;
+
+        // Get access to the text inside the link.
+        var textInsideLink = body.childAtIndex(0).childAtIndex(0).childAtIndex(0);
+        shouldBe("textInsideLink.iphoneLabel", "'AXLabel: link1'");
+
+        // Simulate VoiceOver focus onto the element.
+        textInsideLink.assistiveTechnologySimulatedFocus();
+
+        // The new focused element should now be the link itself.
+        shouldBeTrue("accessibilityController.focusedElement.childAtIndex(0).isEqual(textInsideLink)");
+
+        // Repeat for text inside link inside heading.
+
+        // Get access to the text inside the link.
+        var textInsideHeading = body.childAtIndex(1).childAtIndex(0);
+        shouldBe("textInsideHeading.iphoneLabel", "'AXLabel: heading1'");
+
+        // Simulate VoiceOver focus onto the element.
+        textInsideHeading.assistiveTechnologySimulatedFocus();
+
+        // The new focused element should now be the link itself.
+        shouldBeTrue("accessibilityController.focusedElement.childAtIndex(0).isEqual(textInsideHeading)");
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

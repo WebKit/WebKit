@@ -1,0 +1,18 @@
+Name 
+
+
+
+
+
+
+Linked Element
+This test thats internal links return their linked elements
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS link.linkedElement().iphoneLabel is 'AXLabel: Linked Element'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

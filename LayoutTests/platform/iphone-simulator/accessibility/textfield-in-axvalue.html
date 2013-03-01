@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<input type="text" id="textfield" size="20" value="hello" aria-label="Search" tabindex="0"><BR>
+<h1 tabindex="0" id="h1">H1 Test</h1><BR>
+<input type="button" id="button" value="Button Title" tabindex="0">
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test ensures that textfields return their content in accessibilityValue, and label in axLabel. Likewise, other elements and text still return their info through axLabel.");
+
+    if (window.accessibilityController) {
+
+        var textfield = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        shouldBe("textfield.iphoneLabel", "'AXLabel: Search'");
+        shouldBe("textfield.iphoneValue", "'AXValue: hello'");
+
+        var h1 = accessibilityController.rootElement.childAtIndex(1);
+        shouldBe("h1.iphoneLabel", "'AXLabel: H1 Test'");
+        // Should be 1 for the heading level.
+        shouldBe("h1.iphoneValue", "'AXValue: 1'");
+
+        var button = accessibilityController.rootElement.childAtIndex(2).childAtIndex(0);
+        shouldBe("button.iphoneLabel", "'AXLabel: Button Title'");
+        shouldBe("button.iphoneValue", "'AXValue: '");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

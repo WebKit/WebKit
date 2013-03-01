@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<a href="#name1" id="name">Name</a>
+
+<BR><BR><BR><BR>
+<BR><BR><BR>
+<a name="name1">Linked Element</a>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test thats internal links return their linked elements");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("name").focus();
+        var link = accessibilityController.focusedElement;
+        shouldBe("link.linkedElement().iphoneLabel", "'AXLabel: Linked Element'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

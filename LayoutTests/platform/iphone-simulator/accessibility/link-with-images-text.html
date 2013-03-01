@@ -1,0 +1,41 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<a href="store.html">
+<span>
+<img src="image.gif" width=100 height=100 alt="">
+<strong>iPhone</strong>From $99</span>                                                     
+</a>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that a link with images and text appears as a link.");
+
+    if (window.accessibilityController) {
+
+        var obj = accessibilityController.rootElement.childAtIndex(0).childAtIndex(0);
+        shouldBe("obj.iphoneIsElement", "true");
+        shouldBe("obj.iphoneLabel", "'AXLabel:   iPhoneFrom $99'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

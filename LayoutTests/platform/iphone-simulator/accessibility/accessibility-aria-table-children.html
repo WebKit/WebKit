@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<div role="grid" tabindex="0" id="grid">
+
+<div role="columnheader" aria-label="test1">test1</div>
+<div role="columnheader" aria-label="test2">test2</div>
+<div role="columnheader" aria-label="test3">test3</div>
+
+<div role="row">
+   <div role="gridcell">test1</div>
+   <div role="gridcell">test2</div>
+   <div role="gridcell">test3</div>
+</div>
+
+</div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This makes sure that if an ARIA table is used, the table's children does NOT include the column headers.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("grid").focus();
+        var grid = accessibilityController.focusedElement;
+
+        // We should have 1 child, for the row. Column headers should not be exposed as children on iOS.
+        shouldBe("grid.childrenCount", "1");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<div id="fakeButton" tabindex=0 role="tab" aria-selected="true">tab1</div>
+
+<input type="button" tabindex=0 id="realButton" value="button">
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that role='tab' shows up as a distinct element from button.");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("fakeButton").focus();
+        var tab = accessibilityController.focusedElement;
+        shouldBe("tab.iphoneLabel", "'AXLabel: tab1'");
+
+        // Now make sure it has the same traits as a button.
+        document.getElementById("realButton").focus();
+        var button = accessibilityController.focusedElement;
+
+        shouldBeTrue("button.iphoneTraits != tab.iphoneTraits");
+        shouldBeTrue("tab.iphoneTraits != 0");
+
+        shouldBeTrue("tab.isSelected");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

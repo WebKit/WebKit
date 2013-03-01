@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+
+<div id="check1" tabindex=0 role="checkbox" aria-checked="false">1</div>
+<div id="check2" tabindex=0 role="checkbox" aria-checked="true">1</div>
+<div id="check3" tabindex=0 role="checkbox" aria-checked="mixed">1</div>
+
+<input type="checkbox" id="check4" checked><br>
+<input type="checkbox" id="check5"><br>
+
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This test makes sure that a checkbox (ARIA or otherwise) returns its status through accessibilityValue");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("check1").focus();
+        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 0'");
+
+        document.getElementById("check2").focus();
+        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 1'");
+
+        document.getElementById("check3").focus();
+        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 2'");
+
+        document.getElementById("check4").focus();
+        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 1'");
+
+        document.getElementById("check5").focus();
+        shouldBe("accessibilityController.focusedElement.iphoneValue", "'AXValue: 0'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

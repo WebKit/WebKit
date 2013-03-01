@@ -1,0 +1,17 @@
+   
+This tests that radio buttons are exposed as distinct types from checkboxes, that they can report the right value whether it's checked, and they can report they're part of a group.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS checkbox.iphoneTraits != radio1.iphoneTraits is true
+PASS radio1.iphoneValue is 'AXValue: 1'
+PASS radio2.iphoneValue is 'AXValue: 0'
+PASS radio3.iphoneValue is 'AXValue: 0'
+PASS radio1.rowIndexRange() is '{0, 3}'
+PASS radio2.rowIndexRange() is '{1, 3}'
+PASS radio3.rowIndexRange() is '{2, 3}'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

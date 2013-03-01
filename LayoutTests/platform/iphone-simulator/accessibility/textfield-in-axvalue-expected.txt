@@ -1,0 +1,20 @@
+
+H1 Test
+
+
+
+This test ensures that textfields return their content in accessibilityValue, and label in axLabel. Likewise, other elements and text still return their info through axLabel.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS textfield.iphoneLabel is 'AXLabel: Search'
+PASS textfield.iphoneValue is 'AXValue: hello'
+PASS h1.iphoneLabel is 'AXLabel: H1 Test'
+PASS h1.iphoneValue is 'AXValue: 1'
+PASS button.iphoneLabel is 'AXLabel: Button Title'
+PASS button.iphoneValue is 'AXValue: '
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

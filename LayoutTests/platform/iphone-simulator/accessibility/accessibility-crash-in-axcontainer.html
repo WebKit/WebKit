@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<img src="resources/cake.png" usemap="#map" id="backImg" alt="" width="225" height="206">
+
+<map name="map" aria-labelledby="papercolor">
+        <area shape="rect" tabindex="0" alt="yellow" href="#" coords="19,28,46,52" id="yellow">
+        <area shape="rect" tabindex="0" alt="orange" href="#" coords="58,28,85,52" id="orange">
+</map>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This makes sure that we don't crash when asking for the parent element of an object that has no document() because its parent was detached");
+
+    if (window.accessibilityController) {
+
+        document.getElementById("body").focus();
+        var link = accessibilityController.focusedElement.childAtIndex(0).childAtIndex(0);
+        shouldBe("link.iphoneLabel", "'AXLabel: yellow'");
+
+        document.getElementById("backImg").parentNode.removeChild(document.getElementById("backImg"));
+
+        // Should not crash here when asking for parentElement (even though it was removed).
+        shouldBe("link.parentElement().iphoneLabel", "'AXLabel: '");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

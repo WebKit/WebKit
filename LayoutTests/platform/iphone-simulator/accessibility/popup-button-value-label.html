@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+if (window.testRunner)
+   testRunner.dumpAsText();
+</script>
+</head>
+<body>
+
+<select id="pop">
+<option>item 1</option>
+<option>item 2</option>
+</select>
+
+<select id="pop2" aria-label="Popup">
+<option>item 1</option>
+<option selected>item 2</option>
+</select>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that a popup button will return the selected item through its value attribute instead of its label attribute.");
+
+    if (window.accessibilityController) {
+
+        // Check the first popup button.
+        document.getElementById("pop").focus();
+        var pass = accessibilityController.focusedElement;
+
+        shouldBe("pass.iphoneValue", "'AXValue: item 1'");
+        shouldBe("pass.iphoneLabel", "'AXLabel: '");
+
+        // Check the second popup button.
+        document.getElementById("pop2").focus();
+        pass = accessibilityController.focusedElement;
+
+        shouldBe("pass.iphoneValue", "'AXValue: item 2'");
+        shouldBe("pass.iphoneLabel", "'AXLabel: Popup'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+
