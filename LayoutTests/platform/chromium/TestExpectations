@@ -4403,7 +4403,7 @@ crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl
 
 # Need rebaseline
 webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
-webkit.org/b/109413 [ SnowLeopard Win Linux ] svg/custom/foreign-object-skew.svg [ Failure ]
+webkit.org/b/109413 [ Linux Win ] svg/custom/foreign-object-skew.svg [ Failure ]
 webkit.org/b/110654 [ Win ] tables/mozilla/bugs/bug92647-2.html [ Failure ]
 # New test
 webkit.org/b/110654 [ Mac Win ] css3/flexbox/button.html [ Failure ]
