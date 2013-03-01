@@ -1,2 +1,2 @@
 CONSOLE MESSAGE: line 14: PASS: Expected 'abort', got 'abort'.
-This page should load, and the XMLHttpRequest from the previous page should have aborted and fired a 'PASS' message to the console.
+If this text shows up, you've successfully navigated to 'navigation-target.html'.

@@ -313,8 +313,6 @@ webkit.org/b/107356 fast/css/sticky/sticky-top-zoomed.html [ ImageOnlyFailure ]
 
 webkit.org/b/109890 [ Debug ] platform/mac-wk2/plugins/destroy-during-async-npp-new.html [ Crash ]
 
-webkit.org/b/111052 http/tests/xmlhttprequest/navigation-should-abort.html [ Pass ]
-
 ### END OF (1) Classified failures with bug reports
 ########################################
 

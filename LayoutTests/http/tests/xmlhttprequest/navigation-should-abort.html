@@ -16,8 +16,10 @@
         req.send(null);
 
         if (window.testRunner)
-            testRunner.queueLoad("data:text/html,<p>This page should load, and the XMLHttpRequest from the previous page should have aborted and fired a 'PASS' message to the console.</p>");
+            testRunner.queueLoad("resources/navigation-target.html");
     </script>
 </head>
 <body>
+    <p>This test requires TestRunner. To execute it manually, open the console, and navigate to <a href="resources/navigation-target.html">resources/navigation-target.html</a>. You should see a "PASS" message in the console.</p>
 </body>
+</html>
