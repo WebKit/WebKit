@@ -30,13 +30,13 @@
 
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
-#include "CachedTextTrack.h"
 #include "Timer.h"
 #include "WebVTTParser.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
 
+class CachedTextTrack;
 class Document;
 class TextTrackLoader;
 class ScriptExecutionContext;

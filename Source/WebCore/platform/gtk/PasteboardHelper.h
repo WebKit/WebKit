@@ -26,6 +26,7 @@
 #define PasteboardHelper_h
 
 #include "Frame.h"
+#include <glib-object.h>
 
 namespace WebCore {
 

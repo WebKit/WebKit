@@ -3100,6 +3100,7 @@
     <ClCompile Include="..\loader\cache\CachedScript.cpp" />
     <ClCompile Include="..\loader\cache\CachedShader.cpp" />
     <ClCompile Include="..\loader\cache\CachedSVGDocument.cpp" />
+    <ClCompile Include="..\loader\cache\CachedSVGDocumentReference.cpp" />
     <ClCompile Include="..\loader\cache\CachedTextTrack.cpp" />
     <ClCompile Include="..\loader\cache\CachedXSLStyleSheet.cpp" />
     <ClCompile Include="..\loader\cache\MemoryCache.cpp" />
@@ -4968,6 +4969,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\rendering\style\StyleCachedShader.cpp" />
+    <ClCompile Include="..\rendering\style\StyleCustomFilterProgram.cpp" />
     <ClCompile Include="..\rendering\style\StyleDeprecatedFlexibleBoxData.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='DebugSuffix|Win32'">true</ExcludedFromBuild>
@@ -9049,8 +9051,10 @@
     <ClInclude Include="..\loader\archive\mhtml\MHTMLParser.h" />
     <ClInclude Include="..\loader\cache\CachedCSSStyleSheet.h" />
     <ClInclude Include="..\loader\cache\CachedFont.h" />
+    <ClInclude Include="..\loader\cache\CachedFontClient.h" />
     <ClInclude Include="..\loader\cache\CachedImage.h" />
     <ClInclude Include="..\loader\cache\CachedRawResource.h" />
+    <ClInclude Include="..\loader\cache\CachedRawResourceClient.h" />
     <ClInclude Include="..\loader\cache\CachedResource.h" />
     <ClInclude Include="..\loader\cache\CachedResourceClient.h" />
     <ClInclude Include="..\loader\cache\CachedResourceClientWalker.h" />
@@ -9062,6 +9066,7 @@
     <ClInclude Include="..\loader\cache\CachedShader.h" />
     <ClInclude Include="..\loader\cache\CachedStyleSheetClient.h" />
     <ClInclude Include="..\loader\cache\CachedSVGDocument.h" />
+    <ClInclude Include="..\loader\cache\CachedSVGDocumentClient.h" />
     <ClInclude Include="..\loader\cache\CachedSVGDocumentReference.h" />
     <ClInclude Include="..\loader\cache\CachedTextTrack.h" />
     <ClInclude Include="..\loader\cache\CachedXSLStyleSheet.h" />
@@ -10502,8 +10507,10 @@
     <ClInclude Include="..\plugins\PlugInOriginHash.h" />
     <ClInclude Include="..\plugins\PluginPackage.h" />
     <ClInclude Include="..\plugins\PluginQuirkSet.h" />
+    <ClInclude Include="..\plugins\PluginRequest.h" />
     <ClInclude Include="..\plugins\PluginStrategy.h" />
     <ClInclude Include="..\plugins\PluginStream.h" />
+    <ClInclude Include="..\plugins\PluginStreamClient.h" />
     <ClInclude Include="..\plugins\PluginView.h" />
     <ClInclude Include="..\plugins\win\PluginMessageThrottlerWin.h" />
     <ClInclude Include="..\svg\ColorDistance.h" />

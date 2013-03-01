@@ -33,11 +33,11 @@
 #include "SchedulableLoader.h"
 #include <WebCore/ResourceHandleClient.h>
 #include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/ResourceRequest.h>
 
 namespace WebCore {
 class ResourceBuffer;
 class ResourceHandle;
+class ResourceRequest;
 }
 
 namespace WebKit {

@@ -31,16 +31,16 @@
 #define StyleCustomFilterProgram_h
 
 #if ENABLE(CSS_SHADERS)
+
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
-#include "CachedShader.h"
 #include "CustomFilterProgram.h"
 #include "StyleShader.h"
 #include <wtf/FastAllocBase.h>
 
 namespace WebCore {
 
-// CSS Shaders
+class CachedShader;
 
 class StyleCustomFilterProgram : public CustomFilterProgram, public CachedResourceClient {
     WTF_MAKE_FAST_ALLOCATED;
@@ -56,64 +56,12 @@ public:
     void setFragmentShader(PassRefPtr<StyleShader> shader) { m_fragmentShader = shader; }
     StyleShader* fragmentShader() const { return m_fragmentShader.get(); }
     
-    virtual String vertexShaderString() const
-    {
-        ASSERT(isLoaded());
-        return m_cachedVertexShader.get() ? m_cachedVertexShader->shaderString() : String();
-    }
-    
-    virtual String fragmentShaderString() const
-    {
-        ASSERT(isLoaded());
-        return m_cachedFragmentShader.get() ? m_cachedFragmentShader->shaderString() : String();
-    }
-
-    virtual bool isLoaded() const
-    {
-        // Do not use the CachedResource:isLoaded method here, because it actually means !isLoading(),
-        // so missing and canceled resources will have isLoaded set to true, even if they are not loaded yet.
-        return (!m_cachedVertexShader.get() || m_isVertexShaderLoaded)
-            && (!m_cachedFragmentShader.get() || m_isFragmentShaderLoaded);
-    }
-
-    virtual void willHaveClients()
-    {
-        if (m_vertexShader) {
-            m_cachedVertexShader = m_vertexShader->cachedShader();
-            m_cachedVertexShader->addClient(this);
-        }
-        if (m_fragmentShader) {
-            m_cachedFragmentShader = m_fragmentShader->cachedShader();
-            m_cachedFragmentShader->addClient(this);
-        }
-    }
-    
-    virtual void didRemoveLastClient()
-    {
-        if (m_cachedVertexShader.get()) {
-            m_cachedVertexShader->removeClient(this);
-            m_cachedVertexShader = 0;
-            m_isVertexShaderLoaded = false;
-        }
-        if (m_cachedFragmentShader.get()) {
-            m_cachedFragmentShader->removeClient(this);
-            m_cachedFragmentShader = 0;
-            m_isFragmentShaderLoaded = false;
-        }
-    }
-    
-    virtual void notifyFinished(CachedResource* resource)
-    {
-        if (resource->errorOccurred())
-            return;
-        // Note that m_cachedVertexShader might be equal to m_cachedFragmentShader and it would only get one event in that case.
-        if (resource == m_cachedVertexShader.get())
-            m_isVertexShaderLoaded = true;
-        if (resource == m_cachedFragmentShader.get())
-            m_isFragmentShaderLoaded = true;
-        if (isLoaded())
-            notifyClients();
-    }
+    virtual String vertexShaderString() const OVERRIDE;
+    virtual String fragmentShaderString() const OVERRIDE;
+    virtual bool isLoaded() const OVERRIDE;
+    virtual void willHaveClients() OVERRIDE;
+    virtual void didRemoveLastClient() OVERRIDE;
+    virtual void notifyFinished(CachedResource*) OVERRIDE;
     
     CachedShader* cachedVertexShader() const { return m_vertexShader ? m_vertexShader->cachedShader() : 0; }
     CachedShader* cachedFragmentShader() const { return m_fragmentShader ? m_fragmentShader->cachedShader() : 0; }

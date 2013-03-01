@@ -45,11 +45,7 @@
 #include "NotificationClient.h"
 #include "NotificationController.h"
 #include "NotificationPermissionCallback.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "ThreadableLoader.h"
 #include "WindowFocusAllowedIndicator.h"
-#include "WorkerContext.h"
 
 namespace WebCore {
 

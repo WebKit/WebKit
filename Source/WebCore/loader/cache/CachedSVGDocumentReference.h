@@ -28,14 +28,16 @@
 
 #if ENABLE(SVG) && ENABLE(CSS_FILTERS)
 #include "CachedResourceHandle.h"
-#include "CachedSVGDocument.h"
+#include "CachedSVGDocumentClient.h"
 
 namespace WebCore {
 
+class CachedSVGDocument;
+
 class CachedSVGDocumentReference : public CachedSVGDocumentClient {
 public:
-    CachedSVGDocumentReference(CachedSVGDocument* document) : m_document(document) { m_document->addClient(this); }
-    virtual ~CachedSVGDocumentReference() { m_document->removeClient(this); }
+    CachedSVGDocumentReference(CachedSVGDocument*);
+    virtual ~CachedSVGDocumentReference();
     CachedSVGDocument* document() { return m_document.get(); }
 private:
     CachedResourceHandle<CachedSVGDocument> m_document;

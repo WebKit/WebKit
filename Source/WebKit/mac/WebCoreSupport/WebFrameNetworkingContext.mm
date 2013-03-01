@@ -20,6 +20,7 @@
 
 #import "WebFrameNetworkingContext.h"
 
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Page.h>

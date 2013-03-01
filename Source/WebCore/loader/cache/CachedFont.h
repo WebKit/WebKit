@@ -76,14 +76,6 @@ private:
     friend class MemoryCache;
 };
 
-class CachedFontClient : public CachedResourceClient {
-public:
-    virtual ~CachedFontClient() { }
-    static CachedResourceClientType expectedType() { return FontType; }
-    virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
-    virtual void fontLoaded(CachedFont*) { }
-};
-
 }
 
 #endif

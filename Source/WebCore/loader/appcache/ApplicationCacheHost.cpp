@@ -37,6 +37,7 @@
 #include "InspectorInstrumentation.h"
 #include "MainResourceLoader.h"
 #include "ProgressEvent.h"
+#include "ResourceHandle.h"
 #include "ResourceLoader.h"
 #include "ResourceRequest.h"
 #include "Settings.h"

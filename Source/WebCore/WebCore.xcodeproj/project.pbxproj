@@ -6283,6 +6283,15 @@
 		E1ED8AC30CC49BE000BFC557 /* CSSPrimitiveValueMappings.h in Headers */ = {isa = PBXBuildFile; fileRef = E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */; };
 		E1F1E82F0C3C2BB9006DB391 /* XSLTExtensions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */; };
 		E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */; };
+		E1FC456E16DCB9010010F7B2 /* CachedSVGDocumentClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FC456D16DCB9000010F7B2 /* CachedSVGDocumentClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1FC457016DCB9770010F7B2 /* CachedSVGDocumentReference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FC456F16DCB9770010F7B2 /* CachedSVGDocumentReference.cpp */; };
+		E1FC457216DDF7250010F7B2 /* CachedRawResourceClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FC457116DDF7220010F7B2 /* CachedRawResourceClient.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		E1FC457416DDF7E60010F7B2 /* CachedFontClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FC457316DDF7E30010F7B2 /* CachedFontClient.h */; };
+		E1FC457616DE00100010F7B2 /* StyleCustomFilterProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FC457516DE000F0010F7B2 /* StyleCustomFilterProgram.cpp */; };
+		E1FC457816DF0A750010F7B2 /* PluginView.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FC457716DF0A750010F7B2 /* PluginView.h */; };
+		E1FC457A16DF0ADA0010F7B2 /* PluginStream.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FC457916DF0AD90010F7B2 /* PluginStream.h */; };
+		E1FC457C16DF0AF10010F7B2 /* PluginStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FC457B16DF0AF10010F7B2 /* PluginStreamClient.h */; };
+		E1FC457E16DF0B880010F7B2 /* PluginRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FC457D16DF0B880010F7B2 /* PluginRequest.h */; };
 		E1FF57A30F01255B00891EBB /* ThreadGlobalData.h in Headers */ = {isa = PBXBuildFile; fileRef = E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */; };
 		E415F1690D9A165D0033CE97 /* DOMElementTimeControl.h in Headers */ = {isa = PBXBuildFile; fileRef = E415F1680D9A165D0033CE97 /* DOMElementTimeControl.h */; };
@@ -13971,6 +13980,15 @@
 		E1ED8AC20CC49BE000BFC557 /* CSSPrimitiveValueMappings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CSSPrimitiveValueMappings.h; sourceTree = "<group>"; };
 		E1F1E82D0C3C2BB9006DB391 /* XSLTExtensions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = XSLTExtensions.cpp; sourceTree = "<group>"; };
 		E1F1E82E0C3C2BB9006DB391 /* XSLTExtensions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XSLTExtensions.h; sourceTree = "<group>"; };
+		E1FC456D16DCB9000010F7B2 /* CachedSVGDocumentClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedSVGDocumentClient.h; sourceTree = "<group>"; };
+		E1FC456F16DCB9770010F7B2 /* CachedSVGDocumentReference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CachedSVGDocumentReference.cpp; sourceTree = "<group>"; };
+		E1FC457116DDF7220010F7B2 /* CachedRawResourceClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedRawResourceClient.h; sourceTree = "<group>"; };
+		E1FC457316DDF7E30010F7B2 /* CachedFontClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CachedFontClient.h; sourceTree = "<group>"; };
+		E1FC457516DE000F0010F7B2 /* StyleCustomFilterProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StyleCustomFilterProgram.cpp; path = style/StyleCustomFilterProgram.cpp; sourceTree = "<group>"; };
+		E1FC457716DF0A750010F7B2 /* PluginView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginView.h; sourceTree = "<group>"; };
+		E1FC457916DF0AD90010F7B2 /* PluginStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginStream.h; sourceTree = "<group>"; };
+		E1FC457B16DF0AF10010F7B2 /* PluginStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginStreamClient.h; sourceTree = "<group>"; };
+		E1FC457D16DF0B880010F7B2 /* PluginRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginRequest.h; sourceTree = "<group>"; };
 		E1FF57A20F01255B00891EBB /* ThreadGlobalData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadGlobalData.h; sourceTree = "<group>"; };
 		E1FF57A50F01256B00891EBB /* ThreadGlobalData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadGlobalData.cpp; sourceTree = "<group>"; };
 		E406F3FB1198307D009D59D6 /* ColorData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorData.cpp; sourceTree = "<group>"; };
@@ -16091,7 +16109,11 @@
 				1ADA140F0E1AE5D900023EE5 /* PluginMainThreadScheduler.h */,
 				31D591B9166C2E6C00E6BF02 /* PlugInOriginHash.cpp */,
 				31D591BA166C2E6C00E6BF02 /* PlugInOriginHash.h */,
+				E1FC457D16DF0B880010F7B2 /* PluginRequest.h */,
 				1AA8798F11CBE846003C664F /* PluginStrategy.h */,
+				E1FC457916DF0AD90010F7B2 /* PluginStream.h */,
+				E1FC457B16DF0AF10010F7B2 /* PluginStreamClient.h */,
+				E1FC457716DF0A750010F7B2 /* PluginView.h */,
 				0AFDAC3C10F5448C00E1F3D2 /* PluginViewBase.h */,
 				76FF17E211235673001D61B5 /* PluginViewNone.cpp */,
 			);
@@ -19859,11 +19881,13 @@
 				BCB16C010979C3BD00467741 /* CachedCSSStyleSheet.h */,
 				BC64B4C90CB4295D005F2B62 /* CachedFont.cpp */,
 				BC64B4CA0CB4295D005F2B62 /* CachedFont.h */,
+				E1FC457316DDF7E30010F7B2 /* CachedFontClient.h */,
 				BCB16C020979C3BD00467741 /* CachedImage.cpp */,
 				BCB16C030979C3BD00467741 /* CachedImage.h */,
 				319FBD5D15D2F444009640A6 /* CachedImageClient.h */,
 				D0EDA772143E303C0028E383 /* CachedRawResource.cpp */,
 				D0EDA773143E303C0028E383 /* CachedRawResource.h */,
+				E1FC457116DDF7220010F7B2 /* CachedRawResourceClient.h */,
 				BCB16C060979C3BD00467741 /* CachedResource.cpp */,
 				BCB16C070979C3BD00467741 /* CachedResource.h */,
 				BCFB2E5D0979E46400BA703D /* CachedResourceClient.h */,
@@ -19883,6 +19907,8 @@
 				D0BC54481443AC4A00E105DA /* CachedStyleSheetClient.h */,
 				A104F24114C71F7A009E2C23 /* CachedSVGDocument.cpp */,
 				A104F24214C71F7A009E2C23 /* CachedSVGDocument.h */,
+				E1FC456D16DCB9000010F7B2 /* CachedSVGDocumentClient.h */,
+				E1FC456F16DCB9770010F7B2 /* CachedSVGDocumentReference.cpp */,
 				FB2C15C2165D64900039C9F8 /* CachedSVGDocumentReference.h */,
 				0753860014489E9800B78452 /* CachedTextTrack.cpp */,
 				0753860114489E9800B78452 /* CachedTextTrack.h */,
@@ -21286,6 +21312,7 @@
 				5038BE2D1472AD230095E0D1 /* StyleCachedShader.cpp */,
 				5038BE2E1472AD230095E0D1 /* StyleCachedShader.h */,
 				503D0CAD14B5B0BA00F32F57 /* StyleCustomFilterProgram.h */,
+				E1FC457516DE000F0010F7B2 /* StyleCustomFilterProgram.cpp */,
 				BC5EB67E0E81D4A700B25965 /* StyleDashboardRegion.h */,
 				BC5EB8B60E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.cpp */,
 				BC5EB8B70E8201BD00B25965 /* StyleDeprecatedFlexibleBoxData.h */,
@@ -26634,6 +26661,13 @@
 				977E2E0F12F0FC9C00C13380 /* XSSAuditorDelegate.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				41B8CD4616D04591000E8CC0 /* SelectorCheckerFastPath.h in Headers */,
+				E1FC456E16DCB9010010F7B2 /* CachedSVGDocumentClient.h in Headers */,
+				E1FC457216DDF7250010F7B2 /* CachedRawResourceClient.h in Headers */,
+				E1FC457416DDF7E60010F7B2 /* CachedFontClient.h in Headers */,
+				E1FC457816DF0A750010F7B2 /* PluginView.h in Headers */,
+				E1FC457A16DF0ADA0010F7B2 /* PluginStream.h in Headers */,
+				E1FC457C16DF0AF10010F7B2 /* PluginStreamClient.h in Headers */,
+				E1FC457E16DF0B880010F7B2 /* PluginRequest.h in Headers */,
 				49140257168E02EC002D6C6A /* TimelineTraceEventProcessor.h in Headers */,
                                 A024575216CEAA27000E5671 /* EXTDrawBuffers.h in Headers */,
 			);
@@ -29829,6 +29863,8 @@
 				977E2E0E12F0FC9C00C13380 /* XSSAuditorDelegate.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				41B8CD4516D04591000E8CC0 /* SelectorCheckerFastPath.cpp in Sources */,
+				E1FC457016DCB9770010F7B2 /* CachedSVGDocumentReference.cpp in Sources */,
+				E1FC457616DE00100010F7B2 /* StyleCustomFilterProgram.cpp in Sources */,
 				49140256168E02E8002D6C6A /* TimelineTraceEventProcessor.cpp in Sources */,
 				E14A94D716DFDF950068DE82 /* BlobRegistry.cpp in Sources */,
                                 A024575116CEAA27000E5671 /* EXTDrawBuffers.cpp in Sources */,

@@ -33,6 +33,7 @@
 #include "NotificationPresenterClientQt.h"
 
 #include "Document.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "KURL.h"
 #include "Page.h"

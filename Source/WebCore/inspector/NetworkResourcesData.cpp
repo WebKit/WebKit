@@ -32,7 +32,9 @@
 
 #include "NetworkResourcesData.h"
 
+#include "CachedResource.h"
 #include "DOMImplementation.h"
+#include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include "TextResourceDecoder.h"
 #include <wtf/MemoryInstrumentationHashMap.h>

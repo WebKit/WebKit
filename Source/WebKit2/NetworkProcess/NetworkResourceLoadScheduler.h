@@ -28,7 +28,6 @@
 
 #include "SchedulableLoader.h"
 #include <WebCore/ResourceLoaderOptions.h>
-#include <WebCore/ResourceRequest.h>
 #include <WebCore/Timer.h>
 #include <wtf/HashSet.h>
 

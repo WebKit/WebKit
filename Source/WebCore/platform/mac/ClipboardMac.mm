@@ -26,6 +26,7 @@
 #import "config.h"
 #import "ClipboardMac.h"
 
+#import "CachedImage.h"
 #import "CachedImageClient.h"
 #import "DOMElementInternal.h"
 #import "DragClient.h"

@@ -29,6 +29,7 @@
 #include "DOMWindow.h"
 #include "DOMWrapperWorld.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 
 namespace WebCore {

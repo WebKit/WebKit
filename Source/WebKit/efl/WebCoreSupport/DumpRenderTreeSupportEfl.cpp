@@ -38,6 +38,7 @@
 #include <FindOptions.h>
 #include <FloatSize.h>
 #include <FocusController.h>
+#include <FrameLoader.h>
 #include <FrameView.h>
 #include <HTMLInputElement.h>
 #include <InspectorController.h>

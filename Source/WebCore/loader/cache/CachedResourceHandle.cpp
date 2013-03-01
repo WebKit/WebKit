@@ -26,9 +26,30 @@
 #include "config.h"
 #include "CachedResourceHandle.h"
 
+#include "CachedResource.h"
 #include "WebCoreMemoryInstrumentation.h"
 
 namespace WebCore {
+
+CachedResourceHandleBase::CachedResourceHandleBase(CachedResource* resource)
+{
+    m_resource = resource;
+    if (m_resource)
+        m_resource->registerHandle(this);
+}
+
+CachedResourceHandleBase::CachedResourceHandleBase(const CachedResourceHandleBase& o)
+    : m_resource(o.m_resource)
+{
+    if (m_resource)
+        m_resource->registerHandle(this);
+}
+
+CachedResourceHandleBase::~CachedResourceHandleBase()
+{
+    if (m_resource)
+        m_resource->unregisterHandle(this);
+}
 
 void CachedResourceHandleBase::setResource(CachedResource* resource) 
 {

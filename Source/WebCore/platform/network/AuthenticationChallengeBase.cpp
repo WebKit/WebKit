@@ -25,8 +25,6 @@
 #include "config.h"
 #include "AuthenticationChallenge.h"
 
-#include "ResourceHandle.h"
-
 namespace WebCore {
 
 AuthenticationChallengeBase::AuthenticationChallengeBase()

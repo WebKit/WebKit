@@ -33,6 +33,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "SchemeRegistry.h"
 #include "SecurityOrigin.h"

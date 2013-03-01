@@ -26,13 +26,15 @@
 #ifndef CachedResourceHandle_h
 #define CachedResourceHandle_h
 
-#include "CachedResource.h"
+#include <wtf/Forward.h>
 
 namespace WebCore {
 
+    class CachedResource;
+
     class CachedResourceHandleBase {
     public:
-        ~CachedResourceHandleBase() { if (m_resource) m_resource->unregisterHandle(this); }
+        ~CachedResourceHandleBase();
         CachedResource* get() const { return m_resource; }
         
         bool operator!() const { return !m_resource; }
@@ -44,9 +46,9 @@ namespace WebCore {
         void reportMemoryUsage(MemoryObjectInfo*) const;
 
     protected:
-        CachedResourceHandleBase() : m_resource(0) {}
-        CachedResourceHandleBase(CachedResource* res) { m_resource = res; if (m_resource) m_resource->registerHandle(this); }
-        CachedResourceHandleBase(const CachedResourceHandleBase& o) : m_resource(o.m_resource) { if (m_resource) m_resource->registerHandle(this); }
+        CachedResourceHandleBase() : m_resource(0) { }
+        CachedResourceHandleBase(CachedResource*);
+        CachedResourceHandleBase(const CachedResourceHandleBase&);
 
         void setResource(CachedResource*);
         

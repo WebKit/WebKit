@@ -29,6 +29,7 @@
 #include "DocumentLoader.h"
 #include "DocumentParser.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "HTMLNames.h"
 
 namespace WebCore {

@@ -26,7 +26,6 @@
 #ifndef CSSCrossfadeValue_h
 #define CSSCrossfadeValue_h
 
-#include "CachedImage.h"
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include "CSSImageGeneratorValue.h"
@@ -75,15 +74,17 @@ private:
         : CSSImageGeneratorValue(CrossfadeClass)
         , m_fromValue(fromValue)
         , m_toValue(toValue)
-        , m_cachedFromImage(0)
-        , m_cachedToImage(0)
-        , m_crossfadeSubimageObserver(this) { }
+        , m_crossfadeSubimageObserver(this)
+    {
+    }
 
     class CrossfadeSubimageObserverProxy : public CachedImageClient {
     public:
         CrossfadeSubimageObserverProxy(CSSCrossfadeValue* ownerValue)
-        : m_ownerValue(ownerValue)
-        , m_ready(false) { }
+            : m_ownerValue(ownerValue)
+            , m_ready(false)
+        {
+        }
 
         virtual ~CrossfadeSubimageObserverProxy() { }
         virtual void imageChanged(CachedImage*, const IntRect* = 0) OVERRIDE;

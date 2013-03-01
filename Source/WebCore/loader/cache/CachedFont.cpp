@@ -31,6 +31,7 @@
 #define STORE_FONT_CUSTOM_PLATFORM_DATA
 #endif
 
+#include "CachedFontClient.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 #include "CachedResourceLoader.h"

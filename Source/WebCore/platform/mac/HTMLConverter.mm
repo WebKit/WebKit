@@ -27,6 +27,7 @@
 #import "HTMLConverter.h"
 
 #import "ArchiveResource.h"
+#import "CachedImage.h"
 #import "ColorMac.h"
 #import "Document.h"
 #import "DocumentLoader.h"
@@ -38,6 +39,7 @@
 #import "Element.h"
 #import "Font.h"
 #import "Frame.h"
+#import "FrameLoader.h"
 #import "HTMLNames.h"
 #import "HTMLParserIdioms.h"
 #import "LoaderNSURLExtras.h"

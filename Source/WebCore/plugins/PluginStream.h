@@ -31,6 +31,7 @@
 #include "KURL.h"
 #include "NetscapePlugInStreamLoader.h"
 #include "PluginQuirkSet.h"
+#include "PluginStreamClient.h"
 #include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "Timer.h"
@@ -48,12 +49,6 @@ namespace WebCore {
     class PluginStream;
 
     enum PluginStreamState { StreamBeforeStarted, StreamStarted, StreamStopped };
-
-    class PluginStreamClient {
-    public:
-        virtual ~PluginStreamClient() {}
-        virtual void streamDidFinishLoading(PluginStream*) {}
-    };
 
     class PluginStream : public RefCounted<PluginStream>, private NetscapePlugInStreamLoaderClient {
     public:

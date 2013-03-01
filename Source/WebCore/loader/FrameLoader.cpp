@@ -87,6 +87,7 @@
 #include "PluginData.h"
 #include "PluginDatabase.h"
 #include "PluginDocument.h"
+#include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"
@@ -210,7 +211,7 @@ private:
 FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     : m_frame(frame)
     , m_client(client)
-    , m_policyChecker(frame)
+    , m_policyChecker(adoptPtr(new PolicyChecker(frame)))
     , m_history(frame)
     , m_notifer(frame)
     , m_subframeLoader(frame)
