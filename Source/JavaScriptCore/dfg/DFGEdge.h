@@ -156,7 +156,7 @@ private:
         uintptr_t shiftedValue = bitwise_cast<uintptr_t>(node) << shift();
         ASSERT((shiftedValue >> shift()) == bitwise_cast<uintptr_t>(node));
         ASSERT(useKind >= 0 && useKind < LastUseKind);
-        ASSERT((static_cast<uintptr_t>(LastUseKind) << 1) <= (1 << shift()));
+        ASSERT((static_cast<uintptr_t>(LastUseKind) << 1) <= (static_cast<uintptr_t>(1) << shift()));
         return shiftedValue | (static_cast<uintptr_t>(useKind) << 1) | DFG::isProved(proofStatus);
     }
     

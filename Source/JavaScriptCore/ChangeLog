@@ -1,3 +1,18 @@
+2013-03-01  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        [JSC] Fix sign comparison warning/error after r144340.
+        https://bugs.webkit.org/show_bug.cgi?id=111164
+
+        Reviewed by Mark Hahnenberg.
+
+        gcc (both 4.2.1 and 4.7.2) complain about comparing signed and
+        unsigned terms (clang accepts it just fine).
+
+        Work around that by casting the 1 to an uintptr_t as well.
+
+        * dfg/DFGEdge.h:
+        (JSC::DFG::Edge::makeWord):
+
 2013-02-28  Filip Pizlo  <fpizlo@apple.com>
 
         DFG CFA should not do liveness pruning
