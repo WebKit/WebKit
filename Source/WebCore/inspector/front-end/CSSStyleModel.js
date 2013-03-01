@@ -554,29 +554,6 @@ WebInspector.CSSStyleModel.prototype = {
         return new WebInspector.UILocation(uiSourceCode, rawLocation.lineNumber, rawLocation.columnNumber);
     },
 
-    /**
-     * @param {DOMAgent.NodeId} nodeId
-     */
-    toggleInlineVisibility: function(nodeId)
-    {
-        /**
-         * @param {WebInspector.CSSStyleDeclaration} inlineStyles
-         */
-        function callback(inlineStyles)
-        {
-            var visibility = inlineStyles.getLiveProperty("visibility");
-            if (visibility) {
-                if (visibility.value === "hidden")
-                    visibility.setText("", false, true);
-                else
-                    visibility.setValue("hidden", false, true);
-            } else
-                inlineStyles.appendProperty("visibility", "hidden");
-        }
-
-        this.getInlineStylesAsync(nodeId, callback.bind(this));
-    },
-
     __proto__: WebInspector.Object.prototype
 }
 

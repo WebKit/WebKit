@@ -1,0 +1,128 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+
+function test()
+{
+    var treeOutline;
+    var parentNode;
+    var childNode;
+    var frameNode;
+
+    WebInspector.showPanel("elements");
+    InspectorTest.runTestSuite([
+        function testSetUp(next)
+        {
+            treeOutline = WebInspector.panels.elements.treeOutline;
+
+            InspectorTest.nodeWithId("parent-node", callback);
+
+            function callback(node)
+            {
+                parentNode = node
+                InspectorTest.nodeWithId("child-node", callback2);
+            }
+
+            function callback2(node)
+            {
+                childNode = node;
+                InspectorTest.nodeWithId("frame-node", callback3);
+            }
+
+            function callback3(node)
+            {
+                frameNode = node;
+                next();
+            }
+        },
+
+        function testToggleHideShortcutOn(next)
+        {
+            treeOutline._toggleHideShortcut(parentNode, callback);
+
+            function callback()
+            {
+                InspectorTest.addResult("=== Added hide shortcut ===");
+                WebInspector.cssModel.getComputedStyleAsync(parentNode.id, callback2);
+            }
+
+            function callback2(style)
+            {
+                InspectorTest.addResult("=== Parent node is hidden ===");
+                InspectorTest.addResult(style.getLiveProperty("visibility").propertyText);
+                WebInspector.cssModel.getComputedStyleAsync(childNode.id, callback3);
+            }
+
+            function callback3(style)
+            {
+                InspectorTest.addResult("=== Child node is hidden ===");
+                InspectorTest.addResult(style.getLiveProperty("visibility").propertyText);
+                next();
+            }
+        },
+
+        function testToggleHideShortcutOff(next)
+        {
+            treeOutline._toggleHideShortcut(parentNode, callback);
+
+            function callback()
+            {
+                InspectorTest.addResult("=== Removed hide shortcut ===");
+                WebInspector.cssModel.getComputedStyleAsync(parentNode.id, callback2);
+            }
+
+            function callback2(style)
+            {
+                InspectorTest.addResult("=== Parent node is visible ===");
+                InspectorTest.addResult(style.getLiveProperty("visibility").propertyText);
+                WebInspector.cssModel.getComputedStyleAsync(childNode.id, callback3);
+            }
+
+            function callback3(style)
+            {
+                InspectorTest.addResult("=== Child node is visible ===");
+                InspectorTest.addResult(style.getLiveProperty("visibility").propertyText);
+                next();
+            }
+        },
+
+        function testToggleHideShortcutOnInFrame(next)
+        {
+            treeOutline._toggleHideShortcut(frameNode, callback);
+
+            function callback()
+            {
+                InspectorTest.addResult("=== Added hide shortcut in frame ===");
+                WebInspector.cssModel.getComputedStyleAsync(frameNode.id, callback2);
+            }
+
+            function callback2(style)
+            {
+                InspectorTest.addResult("=== Frame node is hidden ===");
+                InspectorTest.addResult(style.getLiveProperty("visibility").propertyText);
+                next();
+            }
+        }
+    ]);
+}
+</script>
+</head>
+
+<body>
+<p>
+Tests the hide shortcut, which toggles visibility:hidden on the node and it's ancestors.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=110641">Bug 110641</a>
+</p>
+
+<div id="parent-node">parent
+    <div style="visibility:hidden">hidden
+        <div id="child-node" style="visibility:visible">child</div>
+    </div>
+</div>
+
+<iframe src="resources/hide-shortcut-iframe.html" onload="runTest()">
+
+</body>
+</html>
