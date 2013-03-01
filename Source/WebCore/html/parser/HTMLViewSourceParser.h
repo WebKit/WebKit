@@ -59,7 +59,7 @@ protected:
 private:
     // DocumentParser
     virtual void insert(const SegmentedString&);
-    virtual void append(const SegmentedString&);
+    virtual void append(PassRefPtr<StringImpl>);
     virtual void finish();
 
     HTMLViewSourceDocument* document() const { return static_cast<HTMLViewSourceDocument*>(DecodedDataDocumentParser::document()); }

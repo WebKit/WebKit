@@ -57,7 +57,7 @@ public:
         return adoptRef(new FTPDirectoryDocumentParser(document));
     }
 
-    virtual void append(const SegmentedString&);
+    virtual void append(PassRefPtr<StringImpl>);
     virtual void finish();
 
     virtual bool isWaitingForScripts() const { return false; }
@@ -346,8 +346,10 @@ void FTPDirectoryDocumentParser::createBasicDocument()
     bodyElement->appendChild(m_tableElement, IGNORE_EXCEPTION);
 }
 
-void FTPDirectoryDocumentParser::append(const SegmentedString& source)
+void FTPDirectoryDocumentParser::append(PassRefPtr<StringImpl> inputSource)
 {
+    String source(inputSource);
+
     // Make sure we have the table element to append to by loading the template set in the pref, or
     // creating a very basic document with the appropriate table
     if (!m_tableElement) {

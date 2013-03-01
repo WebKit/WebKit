@@ -62,9 +62,9 @@ void HTMLViewSourceParser::pumpTokenizer()
     }
 }
 
-void HTMLViewSourceParser::append(const SegmentedString& input)
+void HTMLViewSourceParser::append(PassRefPtr<StringImpl> input)
 {
-    m_input.appendToEnd(input);
+    m_input.appendToEnd(String(input));
     pumpTokenizer();
 }
 

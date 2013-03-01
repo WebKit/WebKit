@@ -44,7 +44,7 @@ TextDocumentParser::~TextDocumentParser()
 {
 }
 
-void TextDocumentParser::append(const SegmentedString& text)
+void TextDocumentParser::append(PassRefPtr<StringImpl> text)
 {
     if (!m_haveInsertedFakePreElement)
         insertFakePreElement();

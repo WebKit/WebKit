@@ -24,6 +24,7 @@
 #ifndef DocumentParser_h
 #define DocumentParser_h
 
+#include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
@@ -51,9 +52,10 @@ public:
 
     virtual void pinToMainThread() { }
 
-    // FIXME: append() should be private, but DocumentWriter::replaceDocument
-    // uses it for now.
-    virtual void append(const SegmentedString&) = 0;
+    // FIXME: append() should be private, but DocumentWriter::replaceDocument uses it for now.
+    // FIXME: This really should take a PassOwnPtr to signify that it expects to take
+    // ownership of the buffer. The parser expects the PassRefPtr to hold the only ref of the StringImpl.
+    virtual void append(PassRefPtr<StringImpl>) = 0;
 
     virtual void finish() = 0;
 

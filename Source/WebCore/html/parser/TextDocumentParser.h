@@ -41,7 +41,7 @@ public:
 private:
     explicit TextDocumentParser(HTMLDocument*);
 
-    virtual void append(const SegmentedString&);
+    virtual void append(PassRefPtr<StringImpl>);
     void insertFakePreElement();
 
     bool m_haveInsertedFakePreElement;

@@ -654,7 +654,7 @@ void HTMLDocumentParser::stopBackgroundParser()
 
 #endif
 
-void HTMLDocumentParser::append(const SegmentedString& source)
+void HTMLDocumentParser::append(PassRefPtr<StringImpl> inputSource)
 {
     if (isStopped())
         return;
@@ -664,8 +664,12 @@ void HTMLDocumentParser::append(const SegmentedString& source)
         if (!m_haveBackgroundParser)
             startBackgroundParser();
 
-        HTMLParserThread::shared()->postTask(bind(
-            &BackgroundHTMLParser::append, m_backgroundParser, source.toString().isolatedCopy()));
+        ASSERT(inputSource->hasOneRef());
+        Closure closure = bind(&BackgroundHTMLParser::append, m_backgroundParser, String(inputSource));
+        // NOTE: Important that the String temporary is destroyed before we post the task
+        // otherwise the String could call deref() on a StringImpl now owned by the background parser.
+        // We would like to ASSERT(closure.arg3()->hasOneRef()) but sadly the args are private.
+        HTMLParserThread::shared()->postTask(closure);
         return;
     }
 #endif
@@ -673,6 +677,7 @@ void HTMLDocumentParser::append(const SegmentedString& source)
     // pumpTokenizer can cause this parser to be detached from the Document,
     // but we need to ensure it isn't deleted yet.
     RefPtr<HTMLDocumentParser> protect(this);
+    String source(inputSource);
 
     if (m_preloadScanner) {
         if (m_input.current().isEmpty() && !isWaitingForScripts()) {

@@ -47,7 +47,7 @@ void DecodedDataDocumentParser::appendBytes(DocumentWriter* writer, const char* 
         return;
 
     writer->reportDataReceived();
-    append(decoded);
+    append(decoded.releaseImpl());
 }
 
 void DecodedDataDocumentParser::flush(DocumentWriter* writer)
@@ -57,7 +57,7 @@ void DecodedDataDocumentParser::flush(DocumentWriter* writer)
         return;
 
     writer->reportDataReceived();
-    append(remainingData);
+    append(remainingData.releaseImpl());
 }
 
 };

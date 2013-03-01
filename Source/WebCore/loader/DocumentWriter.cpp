@@ -80,7 +80,9 @@ void DocumentWriter::replaceDocument(const String& source, Document* ownerDocume
         // to support RawDataDocumentParsers.
         if (DocumentParser* parser = m_frame->document()->parser()) {
             parser->pinToMainThread();
-            parser->append(source);
+            // Because we're pinned to the main thread we don't need to worry about
+            // passing ownership of the source string.
+            parser->append(source.impl());
         }
     }
 

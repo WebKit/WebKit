@@ -56,7 +56,7 @@ private:
         ASSERT_NOT_REACHED();
     }
 
-    virtual void append(const SegmentedString&)
+    virtual void append(PassRefPtr<StringImpl>)
     {
         ASSERT_NOT_REACHED();
     }

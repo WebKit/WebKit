@@ -41,7 +41,7 @@ protected:
 
 private:
     // append is used by DocumentWriter::replaceDocument.
-    virtual void append(const SegmentedString&) = 0;
+    virtual void append(PassRefPtr<StringImpl>) = 0;
 
     // appendBytes and flush are used by DocumentWriter (the loader).
     virtual void appendBytes(DocumentWriter*, const char* bytes, size_t length);

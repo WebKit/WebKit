@@ -107,7 +107,7 @@ class Text;
 
         // From DocumentParser
         virtual void insert(const SegmentedString&);
-        virtual void append(const SegmentedString&);
+        virtual void append(PassRefPtr<StringImpl>);
         virtual void finish();
         virtual bool isWaitingForScripts() const;
         virtual void stopParsing();

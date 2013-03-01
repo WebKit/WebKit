@@ -1,3 +1,18 @@
+2013-03-01  Eric Seidel  <eric@webkit.org>
+
+        Threaded HTML Parser has an extra copy of every byte from the network
+        https://bugs.webkit.org/show_bug.cgi?id=111135
+
+        Reviewed by Adam Barth.
+
+        The threaded html parser needs to accept ownership
+        of a string buffer.  The easiest way to do this seemed
+        to be to use a PassRefPtr<StringImpl>, but there was no way
+        to generated one from a String (easily), so I added one.
+
+        * wtf/text/WTFString.h:
+        (WTF::String::releaseImpl):
+
 2013-02-28  Oliver Hunt  <oliver@apple.com>
 
         Crash in JSC::MarkedBlock::FreeList JSC::MarkedBlock::sweepHelper

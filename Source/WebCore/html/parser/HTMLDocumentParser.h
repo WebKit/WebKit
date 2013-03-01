@@ -98,7 +98,7 @@ public:
 
 protected:
     virtual void insert(const SegmentedString&) OVERRIDE;
-    virtual void append(const SegmentedString&) OVERRIDE;
+    virtual void append(PassRefPtr<StringImpl>) OVERRIDE;
     virtual void finish() OVERRIDE;
 
     HTMLDocumentParser(HTMLDocument*, bool reportErrors);

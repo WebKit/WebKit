@@ -167,6 +167,7 @@ public:
     bool isEmpty() const { return !m_impl || !m_impl->length(); }
 
     StringImpl* impl() const { return m_impl.get(); }
+    PassRefPtr<StringImpl> releaseImpl() { return m_impl.release(); }
 
     unsigned length() const
     {
