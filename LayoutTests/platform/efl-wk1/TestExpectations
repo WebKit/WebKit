@@ -155,6 +155,7 @@ webkit.org/b/86498 http/tests/appcache/origins-with-appcache.html [ Failure ]
 webkit.org/b/84589 fast/animation/request-animation-frame-during-modal.html [ Failure ]
 webkit.org/b/84589 fast/dom/Window/open-window-min-size.html [ Failure ]
 webkit.org/b/84589 http/tests/security/cross-frame-access-call.html [ Failure ]
+webkit.org/b/84589 inspector/console/console-long-eval-crash.html [ Failure ]
 
 # Needs custom policy delegate enhancement to log DOM node info - EFL port is missing DOM node abstraction
 webkit.org/b/87972 fast/forms/mailto/formenctype-attribute-button-html.html [ Failure ]
@@ -235,8 +236,7 @@ fast/block/lineboxcontain/block-glyphs.html
 fast/block/lineboxcontain/font.html
 
 # following tests started failing on EFL after r122952.
-inspector/styles/override-screen-size.html
-inspector/console/console-long-eval-crash.html
+webkit.org/b/82886 inspector/styles/override-screen-size.html
 inspector/timeline/timeline-paint.html
 
 # Incorrect rendering results after r115846
