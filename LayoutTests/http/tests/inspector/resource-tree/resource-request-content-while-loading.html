@@ -3,38 +3,45 @@
 <script src="../inspector-test.js"></script>
 <script src="../resources-test.js"></script>
 <script src="resource-tree-test.js"></script>
-<link rel="stylesheet" href="resources/styles-initial.css">
 <script>
+function loadStylesheet()
+{
+    var styleElement = document.createElement("link");
+    styleElement.rel = "stylesheet";
+    styleElement.href = "resources/styles-initial.css";
+    document.head.appendChild(styleElement);
+}
+
 function test()
 {
-      var contentWasRequested = false;
-      var resource;
-      InspectorTest.addSniffer(WebInspector.ResourceTreeFrame.prototype, "_addRequest", requestAdded, true);
-      InspectorTest.addSniffer(PageAgent, "getResourceContent", pageAgentGetResourceContentCalled, true);
-      InspectorTest.reloadPage(function() {});
+    InspectorTest.addSniffer(WebInspector.ResourceTreeFrame.prototype, "_addRequest", requestAdded, true);
+    InspectorTest.addSniffer(PageAgent, "getResourceContent", pageAgentGetResourceContentCalled, true);
+    InspectorTest.evaluateInPage("loadStylesheet()");
+    var contentWasRequested = false;
+    var resource;
 
-      function requestAdded(request)
-      {
-          if (request.url.indexOf("styles-initial") === -1)
-              return;
-          resource = InspectorTest.resourceMatchingURL("styles-initial");
-          if (!resource || !resource.request || contentWasRequested)
-              return;
-          resource.requestContent(contentLoaded);
-          contentWasRequested = true;
-      }
+    function requestAdded(request)
+    {
+        if (request.url.indexOf("styles-initial") === -1)
+            return;
+        resource = InspectorTest.resourceMatchingURL("styles-initial");
+        if (!resource || !resource.request || contentWasRequested)
+            return;
+        resource.requestContent(contentLoaded);
+        contentWasRequested = true;
+    }
 
-      function pageAgentGetResourceContentCalled()
-      {
-          InspectorTest.assertTrue(resource.request.finished);
-      }
+    function pageAgentGetResourceContentCalled()
+    {
+        InspectorTest.assertTrue(resource.request.finished);
+    }
 
-      function contentLoaded(content)
-      {
-          InspectorTest.addResult("Resource url: " + resource.url);
-          InspectorTest.addResult("Resource content: " + content);
-          InspectorTest.completeTest();
-      }
+    function contentLoaded(content)
+    {
+        InspectorTest.addResult("Resource url: " + resource.url);
+        InspectorTest.addResult("Resource content: " + content);
+        InspectorTest.completeTest();
+    }
 }
 </script>
 </head>

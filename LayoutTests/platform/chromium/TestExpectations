@@ -1086,7 +1086,6 @@ http/tests/inspector/network/network-size-sync.html [ WontFix ]
 webkit.org/b/65770 http/tests/inspector/resource-main-cookies.php
 
 webkit.org/b/83890 http/tests/inspector/resource-tree/resource-tree-document-url.html [ Failure Pass Timeout ]
-webkit.org/b/83890 http/tests/inspector/resource-tree/resource-request-content-while-loading.html [ Failure Pass Timeout ]
 webkit.org/b/83890 [ Win Linux Release ] http/tests/inspector/resource-tree/resource-tree-frame-add.html [ Pass Timeout ]
 webkit.org/b/83890 [ Win Linux Release ] http/tests/inspector/resource-tree/resource-tree-events.html [ Pass Timeout ]
 webkit.org/b/83890 [ Win Linux Release ] http/tests/inspector/resource-tree/resource-tree-non-unique-url.html [ Pass Failure ]

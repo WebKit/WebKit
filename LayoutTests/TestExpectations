@@ -5,4 +5,3 @@
 # pending functional patch and per-port verification
 webkit.org/b/109954 css3/line-break [ Skip ]
 
-webkit.org/b/111123 http/tests/inspector/resource-tree/resource-request-content-while-loading.html [ Failure Pass ]
