@@ -1054,7 +1054,7 @@ private:
 
     class RenderObjectBitfields {
         enum PositionedState {
-            IsStaticlyPositioned = 0,
+            IsStaticallyPositioned = 0,
             IsRelativelyPositioned = 1,
             IsOutOfFlowPositioned = 2,
             IsStickyPositioned = 3
@@ -1085,7 +1085,7 @@ private:
             , m_everHadLayout(false)
             , m_childrenInline(false)
             , m_hasColumns(false)
-            , m_positionedState(IsStaticlyPositioned)
+            , m_positionedState(IsStaticallyPositioned)
             , m_selectionState(SelectionNone)
             , m_flowThreadState(NotInsideFlowThread)
         {
@@ -1132,7 +1132,7 @@ private:
         bool isOutOfFlowPositioned() const { return m_positionedState == IsOutOfFlowPositioned; }
         bool isRelPositioned() const { return m_positionedState == IsRelativelyPositioned; }
         bool isStickyPositioned() const { return m_positionedState == IsStickyPositioned; }
-        bool isPositioned() const { return m_positionedState != IsStaticlyPositioned; }
+        bool isPositioned() const { return m_positionedState != IsStaticallyPositioned; }
 
         void setPositionedState(int positionState)
         {
