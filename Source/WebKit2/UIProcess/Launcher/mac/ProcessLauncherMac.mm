@@ -188,6 +188,15 @@ static void connectToService(const ProcessLauncher::LaunchOptions& launchOptions
     xpc_connection_set_event_handler(connection, ^(xpc_object_t event) { });
     xpc_connection_resume(connection);
 
+#if ENABLE(NETWORK_PROCESS)
+    if (launchOptions.processType == ProcessLauncher::NetworkProcess) {
+        xpc_object_t preBootstrapMessage = xpc_dictionary_create(0, 0, 0);
+        xpc_dictionary_set_string(preBootstrapMessage, "message-name", "pre-bootstrap");
+        xpc_connection_send_message(connection, preBootstrapMessage);
+        xpc_release(preBootstrapMessage);
+    }
+#endif
+
     // Create the listening port.
     mach_port_t listeningPort;
     mach_port_allocate(mach_task_self(), MACH_PORT_RIGHT_RECEIVE, &listeningPort);
