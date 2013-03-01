@@ -255,14 +255,12 @@ class PerfTestsRunner(object):
                 contents[key] = value
 
         # FIXME: Make this function shorter once we've transitioned to use perf.webkit.org.
-        for metric_full_name, result in self._results.iteritems():
-            if not isinstance(result, dict):  # We can't reports results without indivisual measurements.
+        for metric_full_name, iteration_values in self._results.iteritems():
+            if not isinstance(iteration_values, list):  # We can't reports results without individual measurements.
                 continue
 
             assert metric_full_name.count(':') <= 1
             test_full_name, _, metric = metric_full_name.partition(':')
-            if not metric:
-                metric = {'fps': 'FrameRate', 'runs/s': 'Runs', 'ms': 'Time'}[result['unit']]
 
             tests = contents['tests']
             path = test_full_name.split('/')
@@ -278,7 +276,7 @@ class PerfTestsRunner(object):
                 if is_last_token:
                     current_test.setdefault('metrics', {})
                     assert metric not in current_test['metrics']
-                    current_test['metrics'][metric] = {'current': result['values']}
+                    current_test['metrics'][metric] = {'current': iteration_values}
                 else:
                     current_test.setdefault('tests', {})
                     tests = current_test['tests']

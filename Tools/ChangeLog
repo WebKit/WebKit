@@ -1,3 +1,47 @@
+2013-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't return statistics in PerfTest.run
+        https://bugs.webkit.org/show_bug.cgi?id=111145
+
+        Reviewed by Dirk Pranke.
+
+        Simply return a list of values obtained in each iteration from PerfTest.run.
+        Also simplify various methods as needed.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTestMetric.__init__): Moved the code to convert 'Time' metric to 'FrameRate' and 'Runs'
+        as needed from PerfTestsRunner._generate_results_dict.
+
+        (PerfTestMetric.legacy_chromium_bot_compatible_test_name): Always append the metric name now
+        that we don't have to worry about the backward compatibility here.
+
+        (PerfTestMetric.iteration_values): Added.
+        (PerfTestMetric.unit): Added.
+        (PerfTestMetric.metric_to_unit):
+        (PerfTestMetric.time_unit_to_metric): Extracted from PerfTestsRunner._generate_results_dict.
+
+        (PerfTest.run):
+        (PerfTest.log_statistics): Merged compute_statistics and self.output_statistics.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTestMetric.test_init_set_missing_unit):
+        (TestPerfTestMetric.test_init_set_time_metric): Added.
+        (TestPerfTestMetric.test_legacy_chromium_bot_compatible_test_name):
+        (TestPerfTestMetric.test_append):
+        (TestPerfTestMetric.test_compute_statistics): Removed. Integration tests check some of these
+        test cases and it's not critical to keep math right as they're not used in output JSON anymore.
+        (TestPerfTest._assert_results_are_correct):
+        (TestReplayPerfTest.test_run_with_driver_accumulates_results):
+        (TestReplayPerfTest.test_run_with_driver_accumulates_memory_results):
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner._generate_results_dict):
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py:
+        (EventTargetWrapperTestData): The metric name shows up at the end of the test name as expected.
+        (SomeParserTestData): Ditto.
+        (MemoryTestData): Ditto.
+
 2013-03-01  Allan Sandfeld Jensen  <allan.jensen@digia.com>
 
         [Qt] Enable LINK_PREFETCH

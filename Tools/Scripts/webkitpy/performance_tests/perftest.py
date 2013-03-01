@@ -54,9 +54,10 @@ _log = logging.getLogger(__name__)
 
 class PerfTestMetric(object):
     def __init__(self, metric, unit=None, iterations=None):
-        self._metric = metric
+        # FIXME: Fix runner.js to report correct metric names
         self._iterations = iterations or []
         self._unit = unit or self.metric_to_unit(metric)
+        self._metric = self.time_unit_to_metric(self._unit) if metric == 'Time' else metric
 
     def metric(self):
         return self._metric
@@ -67,43 +68,25 @@ class PerfTestMetric(object):
     # FIXME: We don't need to support this anymore. Make outputs more human friendly.
     def legacy_chromium_bot_compatible_test_name(self, test_name_with_extension):
         test_name = re.sub(r'\.\w+$', '', test_name_with_extension)
-        return test_name if self._metric == 'Time' else test_name + ':' + self._metric
+        return test_name + ':' + self._metric
 
     def append(self, value):
         self._iterations.append(value)
 
-    def to_dict(self):
-        assert self.has_values()
-        statistics = self.compute_statistics(self._iterations)
-        statistics['unit'] = self._unit
-        statistics['values'] = self._iterations
-        return statistics
+    def iteration_values(self):
+        return self._iterations
 
-    @classmethod
-    def metric_to_unit(cls, metric):
+    def unit(self):
+        return self._unit
+
+    @staticmethod
+    def metric_to_unit(metric):
         assert metric in ('Time', 'Malloc', 'JSHeap')
         return 'ms' if metric == 'Time' else 'bytes'
 
     @staticmethod
-    def compute_statistics(values):
-        sorted_values = sorted(values)
-
-        # Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
-        squareSum = 0
-        mean = 0
-        for i, time in enumerate(sorted_values):
-            delta = time - mean
-            sweep = i + 1.0
-            mean += delta / sweep
-            squareSum += delta * (time - mean)
-
-        middle = int(len(sorted_values) / 2)
-        result = {'avg': sum(sorted_values) / len(values),
-            'min': sorted_values[0],
-            'max': sorted_values[-1],
-            'median': sorted_values[middle] if len(sorted_values) % 2 else (sorted_values[middle - 1] + sorted_values[middle]) / 2,
-            'stdev': math.sqrt(squareSum / (len(sorted_values) - 1)) if len(sorted_values) > 1 else 0}
-        return result
+    def time_unit_to_metric(unit):
+        return {'fps': 'FrameRate', 'runs/s': 'Runs', 'ms': 'Time'}[unit]
 
 
 class PerfTest(object):
@@ -138,18 +121,41 @@ class PerfTest(object):
         if not metrics:
             return metrics
 
+        should_log = not self._port.get_option('profile')
+        if should_log and self._description:
+            _log.info('DESCRIPTION: %s' % self._description)
+
         results = {}
         for metric in metrics:
             legacy_test_name = metric.legacy_chromium_bot_compatible_test_name(self.test_name())
-            results[legacy_test_name] = metric.to_dict()
-
-        if not self._port.get_option('profile'):
-            if self._description:
-                _log.info('DESCRIPTION: %s' % self._description)
-            for result_name in sorted(results.keys()):
-                self.output_statistics(result_name, results[result_name])
+            results[legacy_test_name] = metric.iteration_values()
+            if should_log:
+                self.log_statistics(legacy_test_name.replace(':', ': ').replace('/', ': '),
+                    metric.iteration_values(), metric.unit())
 
         return results
+
+    @staticmethod
+    def log_statistics(test_name, values, unit):
+        sorted_values = sorted(values)
+
+        # Compute the mean and variance using Knuth's online algorithm (has good numerical stability).
+        square_sum = 0
+        mean = 0
+        for i, time in enumerate(sorted_values):
+            delta = time - mean
+            sweep = i + 1.0
+            mean += delta / sweep
+            square_sum += delta * (time - mean)
+
+        middle = int(len(sorted_values) / 2)
+        mean = sum(sorted_values) / len(values)
+        median = sorted_values[middle] if len(sorted_values) % 2 else (sorted_values[middle - 1] + sorted_values[middle]) / 2
+        stdev = math.sqrt(square_sum / (len(sorted_values) - 1)) if len(sorted_values) > 1 else 0
+
+        _log.info('RESULT %s= %s %s' % (test_name, mean, unit))
+        _log.info('median= %s %s, stdev= %s %s, min= %s %s, max= %s %s' %
+            (median, unit, stdev, unit, sorted_values[0], unit, sorted_values[-1], unit))
 
     _description_regex = re.compile(r'^Description: (?P<description>.*)$', re.IGNORECASE)
     _metrics_regex = re.compile(r'^(?P<metric>Time|Malloc|JS Heap):')
@@ -241,11 +247,6 @@ class PerfTest(object):
             output.error = '\n'.join([line for line in re.split('\n', output.error) if not self._should_ignore_line(self._lines_to_ignore_in_stderr, line)])
         if output.text:
             output.text = '\n'.join([line for line in re.split('\n', output.text) if not self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)])
-
-    def output_statistics(self, test_name, results):
-        unit = results['unit']
-        _log.info('RESULT %s= %s %s' % (test_name.replace(':', ': ').replace('/', ': '), results['avg'], unit))
-        _log.info(', '.join(['%s= %s %s' % (key, results[key], unit) for key in self._statistics_keys[1:5]]))
 
 
 class ChromiumStylePerfTest(PerfTest):

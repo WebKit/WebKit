@@ -86,7 +86,7 @@ max 1510 ms
 """
 
     output = """Running Bindings/event-target-wrapper.html (1 of 2)
-RESULT Bindings: event-target-wrapper= 1490.0 ms
+RESULT Bindings: event-target-wrapper: Time= 1490.0 ms
 median= 1488.0 ms, stdev= 15.13935 ms, min= 1471.0 ms, max= 1510.0 ms
 Finished: 0.1 s
 
@@ -110,7 +110,7 @@ max 1120 ms
 """
 
     output = """Running Parser/some-parser.html (2 of 2)
-RESULT Parser: some-parser= 1100.0 ms
+RESULT Parser: some-parser: Time= 1100.0 ms
 median= 1101.0 ms, stdev= 14.50861 ms, min= 1080.0 ms, max= 1120.0 ms
 Finished: 0.1 s
 
@@ -148,7 +148,7 @@ max 548000 bytes
 
     output = """Running 1 tests
 Running Parser/memory-test.html (1 of 1)
-RESULT Parser: memory-test= 1100.0 ms
+RESULT Parser: memory-test: Time= 1100.0 ms
 median= 1101.0 ms, stdev= 14.50861 ms, min= 1080.0 ms, max= 1120.0 ms
 RESULT Parser: memory-test: JSHeap= 830000.0 bytes
 median= 829000.0 bytes, stdev= 13784.04875 bytes, min= 811000.0 bytes, max= 848000.0 bytes
