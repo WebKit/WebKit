@@ -1897,6 +1897,8 @@ webkit.org/b/110089 fast/exclusions/shape-inside/shape-inside-circle.html [ Skip
 
 webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Skip ]
 
+webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
