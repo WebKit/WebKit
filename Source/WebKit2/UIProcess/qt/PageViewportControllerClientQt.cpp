@@ -156,7 +156,7 @@ void PageViewportControllerClientQt::scaleAnimationStateChanged(QAbstractAnimati
         break;
     case QAbstractAnimation::Stopped:
         m_ignoreViewportChanges = false;
-        m_controller->resumeContent();
+        resumeAndUpdateContent();
         break;
     default:
         break;

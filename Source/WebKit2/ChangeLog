@@ -1,3 +1,17 @@
+2013-03-01  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Fix failing API tests after r143935
+        https://bugs.webkit.org/show_bug.cgi?id=111086
+
+        Reviewed by Jocelyn Turcotte.
+
+        Convert a leftorver resume call to the new resumeAndUpdateContent() call
+        in PageViewportControllerClientQt so that the notifications about zoom
+        animation state changes reach the API tests.
+
+        * UIProcess/qt/PageViewportControllerClientQt.cpp:
+        (WebKit::PageViewportControllerClientQt::scaleAnimationStateChanged):
+
 2013-03-01  Grzegorz Czajkowski  <g.czajkowski@samsung.com>, Mariusz Grzegorczyk <mariusz.g@samsung.com>
 
         [WK2] Asynchronous spell checking implementation
