@@ -1604,6 +1604,8 @@ webkit.org/b/110377 [ MountainLion ] fast/multicol/newmulticol/float-paginate-co
 webkit.org/b/110377 [ MountainLion ] fast/multicol/newmulticol/float-paginate.html [ ImageOnlyFailure ]
 webkit.org/b/110377 [ MountainLion ] fast/multicol/newmulticol/positioned-with-constrained-height.html [ ImageOnlyFailure ]
 
+webkit.org/b/111141 [ Debug ] fast/regions/seamless-iframe-flowed-into-regions.html [ ImageOnlyFailure ]
+
 # -----------------------------------------------------------------
 # MAC PORT TESTS
 # -----------------------------------------------------------------
