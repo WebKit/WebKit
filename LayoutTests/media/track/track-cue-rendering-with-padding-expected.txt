@@ -1,0 +1,9 @@
+Rendering text track cue line with padding set.
+
+EVENT(canplaythrough)
+EVENT(seeked)
+
+** Cue should be displayed entirely within the container. **
+EXPECTED (cueDisplayBottomPoint <= cueContainerBottomPoint == 'true') OK
+END OF TEST
+

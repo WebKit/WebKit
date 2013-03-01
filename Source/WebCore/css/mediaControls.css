@@ -249,6 +249,7 @@ video::-webkit-media-text-track-display {
     position: absolute;
     overflow: hidden;
     white-space: pre-wrap;
+    -webkit-box-sizing: border-box;
 }
 
 video::cue(:future) {
