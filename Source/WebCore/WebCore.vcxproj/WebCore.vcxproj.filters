@@ -3237,12 +3237,6 @@
     <ClCompile Include="..\platform\network\BlobData.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\platform\network\BlobRegistry.cpp">
-      <Filter>platform\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\platform\network\BlobRegistryImpl.cpp">
-      <Filter>platform\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\platform\network\BlobResourceHandle.cpp">
       <Filter>platform\network</Filter>
     </ClCompile>
