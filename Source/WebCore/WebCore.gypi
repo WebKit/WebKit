@@ -1270,6 +1270,7 @@
             'bindings/v8/V8Collection.h',
             'bindings/v8/V8DOMConfiguration.cpp',
             'bindings/v8/V8DOMConfiguration.h',
+            'bindings/v8/V8DOMActivityLogger.h',
             'bindings/v8/V8DOMWindowShell.cpp',
             'bindings/v8/V8DOMWindowShell.h',
             'bindings/v8/V8DOMWrapper.cpp',

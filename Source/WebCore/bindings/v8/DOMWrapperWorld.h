@@ -32,6 +32,7 @@
 #define DOMWrapperWorld_h
 
 #include "SecurityOrigin.h"
+#include "V8DOMActivityLogger.h"
 #include "V8PerContextData.h"
 #include <v8.h>
 #include <wtf/PassRefPtr.h>
@@ -86,6 +87,11 @@ public:
     static void setIsolatedWorldContentSecurityPolicy(int worldID, const String& policy);
     static void clearIsolatedWorldContentSecurityPolicy(int worldID);
     bool isolatedWorldHasContentSecurityPolicy();
+
+    // Associate a logger with the world identified by worldId (worlId may be 0
+    // identifying the main world).  
+    static void setActivityLogger(int worldId, PassOwnPtr<V8DOMActivityLogger>);
+    static V8DOMActivityLogger* activityLogger(int worldId);
 
     // FIXME: this is a workaround for a problem in WebViewImpl.
     // Do not use this anywhere else!!

@@ -33,8 +33,10 @@
 
 #include "DOMDataStore.h"
 #include "V8Binding.h"
+#include "V8DOMActivityLogger.h"
 #include "V8DOMWindow.h"
 #include "V8DOMWrapper.h"
+#include <wtf/HashTraits.h>
 #include <wtf/MainThread.h>
 #include <wtf/StdLibExtras.h>
 
@@ -219,5 +221,25 @@ void DOMWrapperWorld::clearIsolatedWorldContentSecurityPolicy(int worldID)
     ASSERT(DOMWrapperWorld::isIsolatedWorldId(worldID));
     isolatedWorldContentSecurityPolicies().remove(worldID);
 }
+
+typedef HashMap<int, OwnPtr<V8DOMActivityLogger>, WTF::IntHash<int>, WTF::UnsignedWithZeroKeyHashTraits<int> > DOMActivityLoggerMap; 
+static DOMActivityLoggerMap& domActivityLoggers()
+{
+    ASSERT(isMainThread());
+    DEFINE_STATIC_LOCAL(DOMActivityLoggerMap, map, ());
+    return map;
+}
+
+void DOMWrapperWorld::setActivityLogger(int worldId, PassOwnPtr<V8DOMActivityLogger> logger)
+{
+    domActivityLoggers().set(worldId, logger);
+} 
+
+V8DOMActivityLogger* DOMWrapperWorld::activityLogger(int worldId)
+{
+    DOMActivityLoggerMap& loggers = domActivityLoggers();
+    DOMActivityLoggerMap::iterator it = loggers.find(worldId);   
+    return it == loggers.end() ? 0 : it->value.get();
+} 
 
 } // namespace WebCore
