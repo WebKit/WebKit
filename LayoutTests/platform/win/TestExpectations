@@ -2298,6 +2298,7 @@ media/video-set-rate-from-pause.html
 media/video-src-change.html
 media/video-timeupdate-reverse-play.html
 media/W3C/video/src/src_removal_does_not_trigger_loadstart.html
+media/video-src-remove.html
 
 # Interactive form validation not enabled on Windows
 fast/forms/number/number-interactive-validation-required.html
@@ -2379,6 +2380,8 @@ http/tests/inspector/network/network-xhr-replay.html
 
 #AX role needs to be updated on Windows, many test cases involve AX role crash or fail
 accessibility/svg-bounds.html
+accessibility/html-html-element-is-ignored.html
+accessibility/loading-iframe-updates-axtree.html
 
 #https://bugs.webkit.org/show_bug.cgi?id=97485
 http/tests/security/sandboxed-iframe-form-top.html
