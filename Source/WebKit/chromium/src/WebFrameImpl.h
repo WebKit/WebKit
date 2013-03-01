@@ -42,7 +42,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-class FrameLoadRequest;
 class GraphicsContext;
 class HTMLInputElement;
 class HistoryItem;
@@ -51,6 +50,7 @@ class KURL;
 class Node;
 class Range;
 class SubstituteData;
+struct FrameLoadRequest;
 struct WindowFeatures;
 }
 
