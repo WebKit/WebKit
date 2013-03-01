@@ -81,7 +81,7 @@ typedef void (*WKPageDidNewFirstVisuallyNonEmptyLayoutCallback)(WKPageRef page, 
 typedef void (*WKPageWillGoToBackForwardListItemCallback)(WKPageRef page, WKBackForwardListItemRef item, WKTypeRef userData, const void *clientInfo);
 typedef void (*WKPagePluginDidFailCallback)(WKPageRef page, WKErrorCode errorCode, WKStringRef mimeType, WKStringRef pluginIdentifier, WKStringRef pluginVersion, const void* clientInfo);
 
-typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKStringRef identifier, WKStringRef displayName, WKURLRef documentURL, WKPluginLoadPolicy currentPluginLoadPolicy, const void* clientInfo);
+typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKPluginLoadPolicy currentPluginLoadPolicy, WKDictionaryRef pluginInfoDictionary, const void* clientInfo);
 
 // Deprecated
 typedef void (*WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, const void* clientInfo);
@@ -488,6 +488,25 @@ WK_EXPORT void WKPageForceRepaint(WKPageRef page, void* context, WKPageForceRepa
 typedef void (*WKPageValidateCommandCallback)(WKStringRef command, bool isEnabled, int32_t state, WKErrorRef, void* context);
 WK_EXPORT void WKPageValidateCommand(WKPageRef page, WKStringRef command, void* context, WKPageValidateCommandCallback callback);
 WK_EXPORT void WKPageExecuteCommand(WKPageRef page, WKStringRef command);
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPageGetPluginInformationBundleIdentifierKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPageGetPluginInformationBundleVersionKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPageGetPluginInformationDisplayNameKey();
+
+/* Value type: WKURLRef */
+WK_EXPORT WKStringRef WKPageGetPluginInformationFrameURLKey();
+
+/* Value type: WKStringRef */
+WK_EXPORT WKStringRef WKPageGetPluginInformationMIMETypeKey();
+
+/* Value type: WKURLRef */
+WK_EXPORT WKStringRef WKPageGetPluginInformationPageURLKey();
+
 
 #ifdef __cplusplus
 }

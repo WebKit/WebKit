@@ -1122,7 +1122,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, uint32_t& pluginLoadPolicy)
+void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, String& pluginPath, uint32_t& pluginLoadPolicy)
 {
     MESSAGE_CHECK_URL(urlString);
 
@@ -1137,7 +1137,10 @@ void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString
 
 #if PLATFORM(MAC)
     PluginModuleLoadPolicy currentPluginLoadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
-    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, documentURLString, currentPluginLoadPolicy);
+    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, frameURLString, pageURLString, currentPluginLoadPolicy);
+#else
+    UNUSED_PARAM(frameURLString);
+    UNUSED_PARAM(pageURLString);
 #endif
 
     if (pluginLoadPolicy != PluginModuleLoadNormally)
@@ -2429,6 +2432,36 @@ void WebPageProxy::mouseDidMoveOverElement(const WebHitTestResult::Data& hitTest
     WebEvent::Modifiers modifiers = static_cast<WebEvent::Modifiers>(opaqueModifiers);
 
     m_uiClient.mouseDidMoveOverElement(this, hitTestResultData, modifiers, userData.get());
+}
+
+String WebPageProxy::pluginInformationBundleIdentifierKey()
+{
+    return "PluginInformationBundleIdentifier";
+}
+
+String WebPageProxy::pluginInformationBundleVersionKey()
+{
+    return "PluginInformationBundleVersion";
+}
+
+String WebPageProxy::pluginInformationDisplayNameKey()
+{
+    return "PluginInformationDisplayName";
+}
+
+String WebPageProxy::pluginInformationFrameURLKey()
+{
+    return "PluginInformationFrameURL";
+}
+
+String WebPageProxy::pluginInformationMIMETypeKey()
+{
+    return "PluginInformationMIMEType";
+}
+
+String WebPageProxy::pluginInformationPageURLKey()
+{
+    return "PluginInformationPageURL";
 }
 
 void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& url, const String& pluginsPageURL)
