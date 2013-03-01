@@ -279,6 +279,7 @@ void BackgroundHTMLParser::sendTokensToMainThread()
     OwnPtr<HTMLDocumentParser::ParsedChunk> chunk = adoptPtr(new HTMLDocumentParser::ParsedChunk);
     chunk->tokens = m_pendingTokens.release();
     chunk->preloads.swap(m_pendingPreloads);
+    chunk->tokenizerState = m_tokenizer->state();
     chunk->inputCheckpoint = m_input.createCheckpoint();
     chunk->preloadScannerCheckpoint = m_preloadScanner->createCheckpoint();
     callOnMainThread(bind(&HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser, m_parser, chunk.release()));

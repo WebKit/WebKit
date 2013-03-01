@@ -332,16 +332,24 @@ void HTMLDocumentParser::checkForSpeculationFailure()
 {
     if (!m_tokenizer)
         return;
-    // FIXME: If the tokenizer is in the same state as when we started this function,
-    // then we haven't necessarily failed our speculation.
+    if (!m_currentChunk)
+        return;
+    // Currently we're only smart enough to reuse the speculation buffer if the tokenizer
+    // both starts and ends in the DataState. That state is simplest because the HTMLToken
+    // is always in the Uninitialized state. We should consider whether we can reuse the
+    // speculation buffer in other states, but we'd likely need to do something more
+    // sophisticated with the HTMLToken.
+    if (m_currentChunk->tokenizerState == HTMLTokenizer::DataState && m_tokenizer->state() == HTMLTokenizer::DataState && m_input.current().isEmpty()) {
+        ASSERT(m_token->isUninitialized());
+        m_tokenizer.clear();
+        m_token.clear();
+        return;
+    }
     didFailSpeculation(m_token.release(), m_tokenizer.release());
 }
 
 void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwnPtr<HTMLTokenizer> tokenizer)
 {
-    if (!m_currentChunk)
-        return;
-
     m_weakFactory.revokeAll();
     m_speculations.clear();
 
