@@ -1,3 +1,16 @@
+2013-03-01  Alberto Garcia  <albgarcia@rim.com>
+
+        Fix definition of DatePickerClient::setValue()
+        https://bugs.webkit.org/show_bug.cgi?id=110336
+
+        Reviewed by Carlos Garcia Campos.
+
+        The definition of DatePickerClient::setValue() introduced in
+        r142987 does not match the prototype.
+
+        * WebCoreSupport/DatePickerClient.cpp:
+        (WebCore::DatePickerClient::setValue):
+
 2013-02-28  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Maintain the directionality of the selection after modifying the selection using key events.

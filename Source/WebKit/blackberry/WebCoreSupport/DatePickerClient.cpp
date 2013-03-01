@@ -138,7 +138,7 @@ void DatePickerClient::setValueAndClosePopup(int, const String& value)
     closePopup();
 }
 
-void DatePickerClient::setValue(int, const String& value)
+void DatePickerClient::setValue(const String& value)
 {
     notImplemented();
 }
