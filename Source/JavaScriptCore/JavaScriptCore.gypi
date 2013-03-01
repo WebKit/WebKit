@@ -39,7 +39,6 @@
             'API/JSBase.cpp',
             'API/JSBase.h',
             'API/JSBasePrivate.h',
-            'API/JSBlockAdaptor.h',
             'API/JSCallbackConstructor.cpp',
             'API/JSCallbackConstructor.h',
             'API/JSCallbackFunction.cpp',

@@ -618,8 +618,6 @@
 		86EC9DD31328DF82002B2AD7 /* DFGSpeculativeJIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86ECA3EA132DEF1C002B2AD7 /* DFGNode.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86ECA3FA132DF25A002B2AD7 /* DFGScoreBoard.h in Headers */ = {isa = PBXBuildFile; fileRef = 86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		86F3EEBB168CDE930077B92A /* JSBlockAdaptor.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F3EEB7168CCF750077B92A /* JSBlockAdaptor.h */; };
-		86F3EEBC168CDE930077B92A /* JSBlockAdaptor.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86F3EEB8168CCF750077B92A /* JSBlockAdaptor.mm */; };
 		86F3EEBD168CDE930077B92A /* ObjCCallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F3EEB9168CCF750077B92A /* ObjCCallbackFunction.h */; };
 		86F3EEBE168CDE930077B92A /* ObjCCallbackFunction.mm in Sources */ = {isa = PBXBuildFile; fileRef = 86F3EEBA168CCF750077B92A /* ObjCCallbackFunction.mm */; };
 		86F3EEBF168CDE930077B92A /* ObjcRuntimeExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 86F3EEB616855A5B0077B92A /* ObjcRuntimeExtras.h */; };
@@ -1508,8 +1506,6 @@
 		86ECA3E9132DEF1C002B2AD7 /* DFGNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGNode.h; path = dfg/DFGNode.h; sourceTree = "<group>"; };
 		86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGScoreBoard.h; path = dfg/DFGScoreBoard.h; sourceTree = "<group>"; };
 		86F3EEB616855A5B0077B92A /* ObjcRuntimeExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjcRuntimeExtras.h; sourceTree = "<group>"; };
-		86F3EEB7168CCF750077B92A /* JSBlockAdaptor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlockAdaptor.h; sourceTree = "<group>"; };
-		86F3EEB8168CCF750077B92A /* JSBlockAdaptor.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = JSBlockAdaptor.mm; sourceTree = "<group>"; };
 		86F3EEB9168CCF750077B92A /* ObjCCallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjCCallbackFunction.h; sourceTree = "<group>"; };
 		86F3EEBA168CCF750077B92A /* ObjCCallbackFunction.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ObjCCallbackFunction.mm; sourceTree = "<group>"; };
 		86F75EFB151C062F007C9BA3 /* RegExpCachedResult.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RegExpCachedResult.cpp; sourceTree = "<group>"; };
@@ -2159,8 +2155,6 @@
 				1421359A0A677F4F00A8195E /* JSBase.cpp */,
 				142711380A460BBB0080EEEA /* JSBase.h */,
 				140D17D60E8AD4A9000CD17D /* JSBasePrivate.h */,
-				86F3EEB7168CCF750077B92A /* JSBlockAdaptor.h */,
-				86F3EEB8168CCF750077B92A /* JSBlockAdaptor.mm */,
 				1440F8AD0A508D200005F061 /* JSCallbackConstructor.cpp */,
 				1440F8AC0A508D200005F061 /* JSCallbackConstructor.h */,
 				1440F8900A508B100005F061 /* JSCallbackFunction.cpp */,
@@ -3122,7 +3116,6 @@
 				BC18C4170E16F5CD00B34460 /* JSArray.h in Headers */,
 				BC18C4180E16F5CD00B34460 /* JSBase.h in Headers */,
 				140D17D70E8AD4A9000CD17D /* JSBasePrivate.h in Headers */,
-				86F3EEBB168CDE930077B92A /* JSBlockAdaptor.h in Headers */,
 				86FA9E92142BBB2E001773B7 /* JSBoundFunction.h in Headers */,
 				BC18C4190E16F5CD00B34460 /* JSCallbackConstructor.h in Headers */,
 				BC18C41A0E16F5CD00B34460 /* JSCallbackFunction.h in Headers */,
@@ -3867,7 +3860,6 @@
 				140566C4107EC255005DBC8D /* JSAPIValueWrapper.cpp in Sources */,
 				147F39D0107EC37600427A48 /* JSArray.cpp in Sources */,
 				1421359B0A677F4F00A8195E /* JSBase.cpp in Sources */,
-				86F3EEBC168CDE930077B92A /* JSBlockAdaptor.mm in Sources */,
 				86FA9E91142BBB2E001773B7 /* JSBoundFunction.cpp in Sources */,
 				1440F8AF0A508D200005F061 /* JSCallbackConstructor.cpp in Sources */,
 				1440F8920A508B100005F061 /* JSCallbackFunction.cpp in Sources */,

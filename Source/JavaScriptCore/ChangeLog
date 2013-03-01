@@ -1,3 +1,27 @@
+2013-03-01  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: Passing JS functions to Objective-C callbacks causes JSValue to leak
+        https://bugs.webkit.org/show_bug.cgi?id=107836
+
+        Reviewed by Oliver Hunt.
+
+        We've decided to remove support for this feature from the API because there's no way to automatically manage 
+        the memory for clients in a satisfactory manner. Clients can still pass JS functions to Objective-C methods, 
+        but the methods must accept plain JSValues instead of Objective-C blocks.
+
+        We now ignore functions that are part of a protocol that inherits from JSExport that accept blocks as arguments.
+
+        * API/JSBlockAdaptor.h: Removed.
+        * API/JSBlockAdaptor.mm: Removed.
+        * API/ObjCCallbackFunction.mm:
+        (ArgumentTypeDelegate::typeBlock): Return nil to signal that we want to ignore this function when copying it
+        to the object from the protocol.
+        * API/tests/testapi.mm: Added a test to make sure that we ignore methods declared as part of a JSExport-ed protocol
+        that have block arguments.
+        (-[TestObject bogusCallback:]):
+        * JavaScriptCore.gypi: Updated build files.
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2013-03-01  Filip Pizlo  <fpizlo@apple.com>
 
         DFG Branch(LogicalNot) peephole should not try to optimize and work-around the case where LogicalNot may be otherwise live

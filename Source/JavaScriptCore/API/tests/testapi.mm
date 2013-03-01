@@ -58,6 +58,7 @@ JSExportAs(testArgumentTypes,
 - (NSString *)testArgumentTypesWithInt:(int)i double:(double)d boolean:(BOOL)b string:(NSString *)s number:(NSNumber *)n array:(NSArray *)a dictionary:(NSDictionary *)o
 );
 - (void)callback:(JSValue *)function;
+- (void)bogusCallback:(void(^)(int))function;
 @end
 
 @interface TestObject : ParentObject <TestObject>
@@ -88,6 +89,10 @@ JSExportAs(testArgumentTypes,
 - (void)callback:(JSValue *)function
 {
     [function callWithArguments:[NSArray arrayWithObject:[NSNumber numberWithInt:42]]];
+}
+- (void)bogusCallback:(void(^)(int))function
+{
+    function(42);
 }
 @end
 
@@ -476,6 +481,8 @@ void testObjectiveCAPI()
         context[@"testObject"] = testObject;
         JSValue *result = [context evaluateScript:@"var result = 0; testObject.callback(function(x){ result = x; }); result"];
         checkResult(@"testObject.callback", [result isNumber] && [result toInt32] == 42);
+        result = [context evaluateScript:@"testObject.bogusCallback"];
+        checkResult(@"testObject.bogusCallback == undefined", [result isUndefined]);
     }
 
     @autoreleasepool {

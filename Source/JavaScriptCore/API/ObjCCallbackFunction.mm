@@ -31,7 +31,6 @@
 #import "APICast.h"
 #import "APIShims.h"
 #import "Error.h"
-#import "JSBlockAdaptor.h"
 #import "JSCJSValueInlines.h"
 #import "JSCell.h"
 #import "JSCellInlines.h"
@@ -195,33 +194,6 @@ private:
     StructBuffer m_buffer;
 };
 
-class CallbackArgumentBlockCallback : public CallbackArgument {
-public:
-    static CallbackArgumentBlockCallback* createAdoptingJSBlockAdaptor(JSBlockAdaptor *adaptor)
-    {
-        return new CallbackArgumentBlockCallback(adaptor);
-    }
-
-private:
-    CallbackArgumentBlockCallback(JSBlockAdaptor *adaptor)
-        : m_adaptor(adaptor)
-    {
-    }
-    
-    virtual ~CallbackArgumentBlockCallback()
-    {
-        [m_adaptor release];
-    }
-    
-    virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
-    {
-        id block = [m_adaptor blockFromValue:argument inContext:context withException:exception];
-        [invocation setArgument:&block atIndex:argumentNumber];
-    }
-
-    JSBlockAdaptor *m_adaptor;
-};
-
 class ArgumentTypeDelegate {
 public:
     typedef CallbackArgument* ResultType;
@@ -277,10 +249,9 @@ public:
         return new CallbackArgumentOfClass(cls);
     }
 
-    static ResultType typeBlock(const char* begin, const char* end)
+    static ResultType typeBlock(const char*, const char*)
     {
-        StringRange copy(begin, end);
-        return CallbackArgumentBlockCallback::createAdoptingJSBlockAdaptor([[JSBlockAdaptor alloc] initWithBlockSignatureFromProtocol:copy]);
+        return nil;
     }
 
     static ResultType typeStruct(const char* begin, const char* end)
