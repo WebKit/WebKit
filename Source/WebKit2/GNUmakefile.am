@@ -572,10 +572,10 @@ Programs_WebKitPluginProcess_LDADD = \
 	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libWebCore.la
 
-#if ENABLE_SVG
+if ENABLE_SVG
 Programs_WebKitPluginProcess_LDADD += \
 	libWebCoreSVG.la
-#endif
+endif
 
 Programs_WebKitPluginProcess_LDADD += \
 	libWebCorePlatform.la \
