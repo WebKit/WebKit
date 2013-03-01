@@ -1,3 +1,13 @@
+2013-02-28  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [EFL] Focus problem in inspector/extensions/extensions-panel.html
+        https://bugs.webkit.org/show_bug.cgi?id=97077
+
+        Reviewed by Laszlo Gombos.
+
+        * WebCoreSupport/InspectorClientEfl.cpp:
+        (WebCore::InspectorFrontendClientEfl::bringToFront): Set focus on inspectorView.
+
 2013-02-23  Jason Anderssen  <janderssen@gmail.com>
 
         Move setAutofilled from TestRunner to WebCore

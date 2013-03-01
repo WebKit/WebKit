@@ -262,9 +262,6 @@ webkit.org/b/102517 css3/device-adapt/opera [ Skip ]
 webkit.org/b/87972 fast/loader/policy-delegate-action-hit-test-zoomed.html [ Failure ]
 webkit.org/b/87972 fast/encoding/mailto-always-utf-8.html [ Failure ]
 
-# Frame does not get focus as expected
-webkit.org/b/97077 inspector/extensions/extensions-panel.html [ Failure ]
-
 # Fails after r133322
 webkit.org/b/98523 fast/images/repaint-subrect-grid.html [ Failure ]
 

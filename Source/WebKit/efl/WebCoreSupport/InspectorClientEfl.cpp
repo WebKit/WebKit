@@ -175,7 +175,7 @@ String InspectorFrontendClientEfl::hiddenPanels()
 
 void InspectorFrontendClientEfl::bringToFront()
 {
-    notImplemented();
+    evas_object_focus_set(m_inspectorView, true);
 }
 
 void InspectorFrontendClientEfl::closeWindow()
