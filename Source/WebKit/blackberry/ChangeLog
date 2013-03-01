@@ -1,3 +1,21 @@
+2013-03-01  Mike Fenton  <mifenton@rim.com>
+
+        [BlackBerry] Improve input bounds clipping for search fields.
+        https://bugs.webkit.org/show_bug.cgi?id=111204
+
+        Reviewed by Rob Buis.
+
+        PR 292673.
+
+        Use the standardized InputHandler function to get the
+        bounds of an input field so that search fields are
+        truncated smaller to account for the X.
+
+        Reviewed Internally by Gen Mak.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::setCaretPosition):
+
 2013-03-01  Nima Ghanavatian  <nghanavatian@rim.com>
 
         [BlackBerry] Reverse the base and extent of a selection when reversing its handles
