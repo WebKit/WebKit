@@ -858,6 +858,17 @@ void WebPageProxy::setDrawsTransparentBackground(bool drawsTransparentBackground
         m_process->send(Messages::WebPage::SetDrawsTransparentBackground(drawsTransparentBackground), m_pageID);
 }
 
+void WebPageProxy::setUnderlayColor(const Color& color)
+{
+    if (m_underlayColor == color)
+        return;
+
+    m_underlayColor = color;
+
+    if (isValid())
+        m_process->send(Messages::WebPage::SetUnderlayColor(color), m_pageID);
+}
+
 void WebPageProxy::viewWillStartLiveResize()
 {
     if (!isValid())
@@ -3834,6 +3845,7 @@ WebPageCreationParameters WebPageProxy::creationParameters() const
     parameters.pageGroupData = m_pageGroup->data();
     parameters.drawsBackground = m_drawsBackground;
     parameters.drawsTransparentBackground = m_drawsTransparentBackground;
+    parameters.underlayColor = m_underlayColor;
     parameters.areMemoryCacheClientCallsEnabled = m_areMemoryCacheClientCallsEnabled;
     parameters.useFixedLayout = m_useFixedLayout;
     parameters.fixedLayoutSize = m_fixedLayoutSize;

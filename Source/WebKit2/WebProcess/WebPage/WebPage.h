@@ -328,6 +328,9 @@ public:
     bool drawsBackground() const { return m_drawsBackground; }
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
 
+    void setUnderlayColor(const WebCore::Color& color) { m_underlayColor = color; }
+    WebCore::Color underlayColor() const { return m_underlayColor; }
+
     void stopLoading();
     void stopLoadingFrame(uint64_t frameID);
     void setDefersLoading(bool deferLoading);
@@ -802,6 +805,8 @@ private:
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;
+
+    WebCore::Color m_underlayColor;
 
     bool m_isInRedo;
     bool m_isClosed;

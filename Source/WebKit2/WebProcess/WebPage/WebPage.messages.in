@@ -29,6 +29,8 @@ messages -> WebPage LegacyReceiver {
     SetDrawsBackground(bool drawsBackground)
     SetDrawsTransparentBackground(bool drawsTransparentBackground)
 
+    SetUnderlayColor(WebCore::Color color)
+
     ViewWillStartLiveResize()
     ViewWillEndLiveResize()
 

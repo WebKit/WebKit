@@ -62,6 +62,8 @@ struct WebPageCreationParameters {
     bool drawsBackground;
     bool drawsTransparentBackground;
 
+    WebCore::Color underlayColor;
+
     bool areMemoryCacheClientCallsEnabled;
 
     bool useFixedLayout;

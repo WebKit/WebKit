@@ -785,6 +785,11 @@ bool WebChromeClient::shouldRubberBandInDirection(WebCore::ScrollDirection direc
     return true;
 }
 
+Color WebChromeClient::underlayColor() const
+{
+    return m_page->underlayColor();
+}
+
 void WebChromeClient::numWheelEventHandlersChanged(unsigned count)
 {
     m_page->numWheelEventHandlersChanged(count);

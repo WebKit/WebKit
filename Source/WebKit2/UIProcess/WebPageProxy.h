@@ -318,6 +318,9 @@ public:
     bool drawsTransparentBackground() const { return m_drawsTransparentBackground; }
     void setDrawsTransparentBackground(bool);
 
+    WebCore::Color underlayColor() const { return m_underlayColor; }
+    void setUnderlayColor(const WebCore::Color&);
+
     void viewWillStartLiveResize();
     void viewWillEndLiveResize();
 
@@ -1135,6 +1138,8 @@ private:
 
     bool m_drawsBackground;
     bool m_drawsTransparentBackground;
+
+    WebCore::Color m_underlayColor;
 
     bool m_areMemoryCacheClientCallsEnabled;
 

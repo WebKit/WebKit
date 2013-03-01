@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ScrollbarThemeMac.h"
 
+#include "ColorMac.h"
 #include "ImageBuffer.h"
 #include "GraphicsLayer.h"
 #include "LocalCurrentGraphicsContext.h"
@@ -611,13 +612,12 @@ static RetainPtr<CGColorRef> linenBackgroundColor()
     return adoptCF(CGColorCreateWithPattern(colorSpace.get(), pattern.get(), &alpha));
 }
 
-void ScrollbarThemeMac::setUpOverhangAreasLayerContents(GraphicsLayer* graphicsLayer)
+void ScrollbarThemeMac::setUpOverhangAreasLayerContents(GraphicsLayer* graphicsLayer, const Color& backgroundColor)
 {
     static CGColorRef cachedLinenBackgroundColor = linenBackgroundColor().leakRef();
-
     // We operate on the CALayer directly here, since GraphicsLayer doesn't have the concept
     // of pattern images, and we know that WebCore won't touch this layer.
-    graphicsLayer->platformLayer().backgroundColor = cachedLinenBackgroundColor;
+    graphicsLayer->platformLayer().backgroundColor = backgroundColor.isValid() ? cachedCGColor(backgroundColor, ColorSpaceDeviceRGB) : cachedLinenBackgroundColor;
 }
 
 void ScrollbarThemeMac::setUpContentShadowLayer(GraphicsLayer* graphicsLayer)

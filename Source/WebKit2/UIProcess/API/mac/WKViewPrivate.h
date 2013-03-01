@@ -53,6 +53,8 @@
 @property (readwrite) CGFloat minimumLayoutWidth;
 @property (readwrite) CGFloat minimumWidthForAutoLayout;
 
+@property(copy, nonatomic) NSColor *underlayColor;
+
 - (NSView*)fullScreenPlaceholderView;
 
 - (void)beginDeferringViewInWindowChanges;

@@ -3292,6 +3292,20 @@ static NSString *pathWithUniqueFilenameForPath(NSString *path)
     _data->_page->setMainFrameIsScrollable(!expandsToFit);
 }
 
+- (NSColor *)underlayColor
+{
+    Color webColor = _data->_page->underlayColor();
+    if (!webColor.isValid())
+        return nil;
+
+    return nsColor(webColor);
+}
+
+- (void)setUnderlayColor:(NSColor *)underlayColor
+{
+    _data->_page->setUnderlayColor(colorFromNSColor(underlayColor));
+}
+
 - (NSView*)fullScreenPlaceholderView
 {
 #if ENABLE(FULLSCREEN_API)

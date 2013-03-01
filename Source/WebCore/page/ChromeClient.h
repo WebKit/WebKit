@@ -187,6 +187,8 @@ public:
     virtual void print(Frame*) = 0;
     virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
+    virtual Color underlayColor() const { return Color(); }
+
 #if ENABLE(SQL_DATABASE)
     virtual void exceededDatabaseQuota(Frame*, const String& databaseName, DatabaseDetails) = 0;
 #endif
