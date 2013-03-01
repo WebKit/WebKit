@@ -447,6 +447,7 @@ public:
 
 #if ENABLE(CSS_EXCLUSIONS)
     ExclusionShapeInsideInfo* exclusionShapeInsideInfo() const;
+    ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo() const;
     bool allowsExclusionShapeInsideInfoSharing() const { return !isInline() && !isFloating(); }
 #endif
 
@@ -557,7 +558,7 @@ protected:
     }
 #endif
 
-    void updateRegionsAndExclusionsLogicalSize();
+    bool updateRegionsAndExclusionsLogicalSize();
     void computeRegionRangeForBlock();
 
     void updateBlockChildDirtyBitsBeforeLayout(bool relayoutChildren, RenderBox*);

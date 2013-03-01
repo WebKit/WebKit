@@ -86,14 +86,21 @@ public:
     LayoutUnit logicalLineTop() const { return m_shapeLineTop + logicalTopOffset(); }
     LayoutUnit logicalLineBottom() const { return m_shapeLineTop + m_lineHeight + logicalTopOffset(); }
 
+    void setNeedsLayout(bool value) { m_needsLayout = value; }
+    bool needsLayout() { return m_needsLayout; }
+
 private:
-    ExclusionShapeInsideInfo(const RenderBlock* renderer) : ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside>(renderer) { }
+    ExclusionShapeInsideInfo(const RenderBlock* renderer)
+    : ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside> (renderer)
+    , m_needsLayout(false)
+    { }
 
     LayoutUnit m_shapeLineTop;
     LayoutUnit m_lineHeight;
 
     SegmentList m_segments;
     SegmentRangeList m_segmentRanges;
+    bool m_needsLayout;
 };
 
 }

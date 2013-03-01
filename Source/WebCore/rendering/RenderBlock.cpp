@@ -1414,14 +1414,28 @@ void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const Exclusion
 }
 #endif
 
-void RenderBlock::updateRegionsAndExclusionsLogicalSize()
+static inline bool exclusionInfoRequiresRelayout(const RenderBlock* block)
+{
+#if !ENABLE(CSS_EXCLUSIONS)
+    return false;
+#else
+    ExclusionShapeInsideInfo* info = block->exclusionShapeInsideInfo();
+    if (info)
+        info->setNeedsLayout(info->shapeSizeDirty());
+    else
+        info = block->layoutExclusionShapeInsideInfo();
+    return info && info->needsLayout();
+#endif
+}
+
+bool RenderBlock::updateRegionsAndExclusionsLogicalSize()
 {
 #if ENABLE(CSS_EXCLUSIONS)
     if (!inRenderFlowThread() && !exclusionShapeInsideInfo())
 #else
     if (!inRenderFlowThread())
 #endif
-        return;
+        return exclusionInfoRequiresRelayout(this);
 
     LayoutUnit oldHeight = logicalHeight();
     LayoutUnit oldTop = logicalTop();
@@ -1441,6 +1455,8 @@ void RenderBlock::updateRegionsAndExclusionsLogicalSize()
 
     setLogicalHeight(oldHeight);
     setLogicalTop(oldTop);
+    
+    return exclusionInfoRequiresRelayout(this);
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
@@ -1539,7 +1555,9 @@ void RenderBlock::layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeigh
         if (logicalWidthChangedInRegions())
             relayoutChildren = true;
     }
-    updateRegionsAndExclusionsLogicalSize();
+
+    if (updateRegionsAndExclusionsLogicalSize())
+        relayoutChildren = true;
 
     // We use four values, maxTopPos, maxTopNeg, maxBottomPos, and maxBottomNeg, to track
     // our current maximal positive and negative margins.  These values are used when we

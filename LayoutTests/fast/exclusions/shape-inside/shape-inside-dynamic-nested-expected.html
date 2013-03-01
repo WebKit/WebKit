@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+    if (window.internals)
+        window.internals.settings.setCSSExclusionsEnabled(true);
+</script>
+<style>
+    .container {
+        position: relative;
+        width: 200px;
+        height: 200px;
+        overflow-wrap: break-word;
+        border: 2px solid blue;
+        font: 40px/1 Ahem, sans-serif;
+        color: green;
+    }
+    .container.shape {
+        border-color: white;
+    }
+    .shape::before {
+        position: absolute;
+        display: block;
+        top: 8px; left: 8px;
+        width: 180px;
+        height: 180px;
+        border: 2px solid blue;
+        content: ' ';
+    }
+    .inside {
+        -webkit-shape-inside: rectangle(10px, 10px, 180px, 180px);
+    }
+    .outside {
+        -webkit-shape-outside: rectangle(10px, 10px, 180px, 180px);
+    }
+</style>
+</head>
+<body>
+    <p>This test ensures layout properly respects shape-inside when it is set/unset, or when shape-outside is set/unset for a value of "outside-shape". The test requires the Ahem font, and in each case the green squares should be contained by a blue outline.</p>
+
+    <p>Setting shape-inside with no prior entry</p>
+    <div id='set-inside-shape' class='container shape inside'><div><div>xxxxxxxxxx</div></div></div>
+
+    <p>Setting shape-inside with a prior entry</p>
+    <div id='reset-inside-shape' class='container shape inside'><div><div>xxxxxxxxxx</div></div></div>
+
+    <p>Setting outside-shape with no prior entry</p>
+    <div id='set-outside-shape' class='container shape outside'><div><div>xxxxxxxxxx</div></div></div>
+
+    <p>Setting outside-shape with a prior entry</p>
+    <div id='reset-outside-shape' class='container shape outside'><div><div>xxxxxxxxxx</div></div></div>
+</body>
+</html>

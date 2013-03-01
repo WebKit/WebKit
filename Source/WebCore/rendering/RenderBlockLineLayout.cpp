@@ -77,12 +77,12 @@ static LayoutUnit logicalHeightForLine(const RenderBlock* block, bool isFirstLin
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
-static inline ExclusionShapeInsideInfo* layoutExclusionShapeInsideInfo(const RenderBlock* block)
+ExclusionShapeInsideInfo* RenderBlock::layoutExclusionShapeInsideInfo() const
 {
-    ExclusionShapeInsideInfo* shapeInsideInfo = block->view()->layoutState()->exclusionShapeInsideInfo();
-    if (!shapeInsideInfo && block->inRenderFlowThread()) {
-        LayoutUnit offset = block->logicalHeight() + logicalHeightForLine(block, false);
-        RenderRegion* region = block->regionAtBlockOffset(offset);
+    ExclusionShapeInsideInfo* shapeInsideInfo = view()->layoutState()->exclusionShapeInsideInfo();
+    if (!shapeInsideInfo && inRenderFlowThread()) {
+        LayoutUnit offset = logicalHeight() + logicalHeightForLine(this, false);
+        RenderRegion* region = regionAtBlockOffset(offset);
         return region ? region->exclusionShapeInsideInfo() : 0;
     }
     return shapeInsideInfo;
@@ -106,7 +106,7 @@ public:
     {
         ASSERT(block);
 #if ENABLE(CSS_EXCLUSIONS)
-        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(m_block);
+        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = m_block->layoutExclusionShapeInsideInfo();
         if (exclusionShapeInsideInfo)
             m_segment = exclusionShapeInsideInfo->currentSegment();
 #endif
@@ -951,7 +951,7 @@ void RenderBlock::computeInlineDirectionPositionsForLine(RootInlineBox* lineBox,
     updateLogicalInlinePositions(this, lineLogicalLeft, lineLogicalRight, availableLogicalWidth, firstLine, 0);
     bool needsWordSpacing;
 #if ENABLE(CSS_EXCLUSIONS)
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
     if (exclusionShapeInsideInfo && exclusionShapeInsideInfo->hasSegments()) {
         BidiRun* segmentStart = firstRun;
         const SegmentList& segments = exclusionShapeInsideInfo->segments();
@@ -1274,7 +1274,7 @@ static inline void constructBidiRunsForLine(const RenderBlock* block, InlineBidi
     UNUSED_PARAM(block);
     constructBidiRunsForSegment(topResolver, bidiRuns, endOfLine, override, previousLineBrokeCleanly);
 #else
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(block);
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = block->layoutExclusionShapeInsideInfo();
     if (!exclusionShapeInsideInfo || !exclusionShapeInsideInfo->hasSegments()) {
         constructBidiRunsForSegment(topResolver, bidiRuns, endOfLine, override, previousLineBrokeCleanly);
         return;
@@ -1540,7 +1540,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 
 #if ENABLE(CSS_EXCLUSIONS)
     LayoutUnit absoluteLogicalTop;
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
     if (exclusionShapeInsideInfo) {
         ASSERT(exclusionShapeInsideInfo->owner() == this || allowsExclusionShapeInsideInfoSharing());
         if (exclusionShapeInsideInfo != this->exclusionShapeInsideInfo()) {
@@ -1576,7 +1576,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
         // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which
         // case these segments may be incorrect.
         if (inRenderFlowThread())
-            exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(this);
+            exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
         if (exclusionShapeInsideInfo) {
             LayoutUnit lineTop = logicalHeight() + absoluteLogicalTop;
             exclusionShapeInsideInfo->computeSegmentsForLine(lineTop, lineHeight(layoutState.lineInfo().isFirstLine(), isHorizontalWritingMode() ? HorizontalLine : VerticalLine, PositionOfInteriorLineBoxes));
@@ -2541,7 +2541,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 #if !ENABLE(CSS_EXCLUSIONS)
     return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
 #else
-    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo(m_block);
+    ExclusionShapeInsideInfo* exclusionShapeInsideInfo = m_block->layoutExclusionShapeInsideInfo();
     if (!exclusionShapeInsideInfo || !exclusionShapeInsideInfo->hasSegments())
         return nextSegmentBreak(resolver, lineInfo, renderTextInfo, lastFloatFromPreviousLine, consecutiveHyphenatedLines, wordMeasurements);
 

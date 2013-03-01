@@ -92,6 +92,7 @@ public:
     LayoutUnit shapeLogicalHeight() const { return computedShape()->shapeLogicalBoundingBox().height(); }
 
     void dirtyShapeSize() { m_shape.clear(); }
+    bool shapeSizeDirty() { return !m_shape.get(); }
     const RenderType* owner() const { return m_renderer; }
 
 protected:
