@@ -1,3 +1,23 @@
+2013-02-28  Sam Weinig  <sam@webkit.org>
+
+        Add SPI for marking a WebView as doing things on behalf of another process
+        https://bugs.webkit.org/show_bug.cgi?id=111125
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebCoreSupport/WebFrameNetworkingContext.h:
+        (WebFrameNetworkingContext):
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        (WebFrameNetworkingContext::sourceApplicationAuditData):
+        * WebView/WebView.mm:
+        (-[WebView _setSourceApplicationAuditData:]):
+        (-[WebView _sourceApplicationAuditData]):
+        * WebView/WebViewData.h:
+        * WebView/WebViewData.mm:
+        (-[WebViewPrivate dealloc]):
+        * WebView/WebViewPrivate.h:
+        Add SPI for setting a source application for a WebView.
+
 2013-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r144422 and r144424.

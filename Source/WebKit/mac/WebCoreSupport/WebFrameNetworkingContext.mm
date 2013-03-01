@@ -20,6 +20,8 @@
 
 #import "WebFrameNetworkingContext.h"
 
+#import "WebFrameInternal.h"
+#import "WebViewPrivate.h"
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/NetworkStorageSession.h>
 #import <WebCore/Page.h>
@@ -48,6 +50,21 @@ bool WebFrameNetworkingContext::localFileContentSniffingEnabled() const
 SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
 {
     return frame() && frame()->page() ? frame()->page()->scheduledRunLoopPairs() : 0;
+}
+
+RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() const
+{
+    if (!frame())
+        return nil;
+
+    if (!frame()->page())
+        return nil;
+
+    WebView *webView = kit(frame()->page());
+    if (!webView)
+        return nil;
+
+    return (CFDataRef)webView._sourceApplicationAuditData;
 }
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const

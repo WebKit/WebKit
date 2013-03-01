@@ -48,6 +48,7 @@ private:
     virtual bool localFileContentSniffingEnabled() const OVERRIDE;
     virtual WebCore::NetworkStorageSession& storageSession() const OVERRIDE;
     virtual WebCore::SchedulePairHashSet* scheduledRunLoopPairs() const OVERRIDE;
+    virtual RetainPtr<CFDataRef> sourceApplicationAuditData() const OVERRIDE;
     virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&) const OVERRIDE;
 };
 

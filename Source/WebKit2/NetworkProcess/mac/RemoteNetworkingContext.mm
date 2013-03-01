@@ -26,8 +26,8 @@
 #import "config.h"
 #import "RemoteNetworkingContext.h"
 
-#import "WebCore/ResourceError.h"
 #import "WebErrors.h"
+#import <WebCore/ResourceError.h>
 #import <WebKitSystemInterface.h>
 #import <wtf/MainThread.h>
 
@@ -99,6 +99,11 @@ NSOperationQueue *RemoteNetworkingContext::scheduledOperationQueue() const
         [queue setMaxConcurrentOperationCount:NSIntegerMax];
     }
     return queue;
+}
+
+RetainPtr<CFDataRef> RemoteNetworkingContext::sourceApplicationAuditData() const
+{
+    return nil;
 }
 
 ResourceError RemoteNetworkingContext::blockedError(const ResourceRequest& request) const

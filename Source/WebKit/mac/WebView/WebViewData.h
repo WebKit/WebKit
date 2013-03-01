@@ -205,5 +205,7 @@ private:
 #if USE(DICTATION_ALTERNATIVES)
     OwnPtr<WebCore::AlternativeTextUIController> m_alternativeTextUIController;
 #endif
+
+    RetainPtr<NSData> sourceApplicationAuditData;
 }
 @end

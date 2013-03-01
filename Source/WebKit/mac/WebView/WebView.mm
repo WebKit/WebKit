@@ -3087,6 +3087,19 @@ static Vector<String> toStringVector(NSArray* patterns)
     ResourceRequest::setHTTPPipeliningEnabled(enabled);
 }
 
+- (void)_setSourceApplicationAuditData:(NSData *)sourceApplicationAuditData
+{
+    if (_private->sourceApplicationAuditData == sourceApplicationAuditData)
+        return;
+
+    _private->sourceApplicationAuditData = adoptNS([sourceApplicationAuditData copy]);
+}
+
+- (NSData *)_sourceApplicationAuditData
+{
+    return _private->sourceApplicationAuditData.get();
+}
+
 @end
 
 @implementation _WebSafeForwarder

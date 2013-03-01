@@ -52,6 +52,11 @@ SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
     return frame() && frame()->page() ? frame()->page()->scheduledRunLoopPairs() : 0;
 }
 
+RetainPtr<CFDataRef> WebFrameNetworkingContext::sourceApplicationAuditData() const
+{
+    return nil;
+}
+
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
 {
     return frame()->loader()->client()->blockedError(request);
