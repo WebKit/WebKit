@@ -84,6 +84,8 @@ private:
 
     void initializeHandle(ResourceHandle*);
 
+    void initCookieSession();
+
     Timer<ResourceHandleManager> m_downloadTimer;
     CURLM* m_curlMultiHandle;
     CURLSH* m_curlShareHandle;
