@@ -159,7 +159,7 @@ void StorageManager::createStorageArea(CoreIPC::Connection* connection, uint64_t
         // FIXME: This is a local storage namespace. Do something.
         ASSERT_NOT_REACHED();
     }
-}O
+}
 
 void StorageManager::destroyStorageArea(CoreIPC::Connection*, uint64_t)
 {

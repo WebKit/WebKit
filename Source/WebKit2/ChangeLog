@@ -1,3 +1,54 @@
+2013-02-28  Anders Carlsson  <andersca@apple.com>
+
+        Add the notion of an allowed connection to SessionStorageNamespace
+        https://bugs.webkit.org/show_bug.cgi?id=111122
+
+        Reviewed by Sam Weinig.
+
+        Group together each session storage namespace with an allowed connection.
+        This will help ensure that rouge web processes will not be able to access session storage
+        from pages in other processes.
+        
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::SessionStorageNamespace):
+        (WebKit::StorageManager::SessionStorageNamespace::allowedConnection):
+        (WebKit::StorageManager::SessionStorageNamespace::create):
+        (WebKit::StorageManager::SessionStorageNamespace::SessionStorageNamespace):
+        (WebKit::StorageManager::SessionStorageNamespace::setAllowedConnection):
+        Add an m_allowedConnection member variable, as well as setters and getters.
+
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        Take an optional allowed connection. (It can be null if the process has not finished launching).
+
+        (WebKit::StorageManager::setAllowedSessionStorageNamespaceConnection):
+        New function to set the allowed connection for a session storage namespace.
+
+        (WebKit::StorageManager::createStorageArea):
+        Add another FIXME.
+
+        (WebKit::StorageManager::createSessionStorageNamespaceInternal):
+        Pass the connection to the SessionStorageNamespace constructor.
+
+        (WebKit::StorageManager::setAllowedSessionStorageNamespaceConnectionInternal):
+        Set the allowed connection.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+        Pass the connection to createSessionStorageNamespace.
+
+        (WebKit::WebPageProxy::connectionWillOpen):
+        Call setAllowedSessionStorageNamespaceConnection.
+        
+        (WebKit::WebPageProxy::connectionWillClose):
+        Call setAllowedSessionStorageNamespaceConnection with a null connection.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::connectionWillOpen):
+        Call connectionWillOpen on all pages.
+
+        (WebKit::WebProcessProxy::connectionWillClose):
+        Call connectionWillClose on all pages.
+
 2013-02-28  Kiran Muppala  <cmuppala@apple.com>
 
         Add private API to disable WKView window occlusion detection
