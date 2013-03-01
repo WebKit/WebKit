@@ -2671,6 +2671,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
             return getCSSPropertyValuesForShorthandProperties(borderTopShorthand());
         case CSSPropertyBorderWidth:
             return getCSSPropertyValuesForSidesShorthand(borderWidthShorthand());
+        case CSSPropertyWebkitColumnRule:
+            return getCSSPropertyValuesForShorthandProperties(webkitColumnRuleShorthand());
         case CSSPropertyListStyle:
             return getCSSPropertyValuesForShorthandProperties(listStyleShorthand());
         case CSSPropertyMargin:
@@ -2753,7 +2755,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitAnimation:
         case CSSPropertyWebkitBorderRadius:
         case CSSPropertyWebkitColumns:
-        case CSSPropertyWebkitColumnRule:
         case CSSPropertyWebkitMarginCollapse:
         case CSSPropertyWebkitMarquee:
         case CSSPropertyWebkitMarqueeSpeed:
