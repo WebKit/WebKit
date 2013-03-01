@@ -1837,12 +1837,9 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
     EPosition position = renderer->style()->position();
 
     // FIXME: Special casing RenderFlowThread so much for fixed positioning here is not great.
-    RenderFlowThread* fixedFlowThreadContainer = 0;
-    if (position == FixedPosition && renderer->inRenderFlowThread()) {
-        fixedFlowThreadContainer = renderer->enclosingRenderFlowThread();
-        if (!fixedFlowThreadContainer->isOutOfFlowPositioned())
-            fixedFlowThreadContainer = 0;
-    }
+    RenderFlowThread* fixedFlowThreadContainer = position == FixedPosition ? renderer->flowThreadContainingBlock() : 0;
+    if (fixedFlowThreadContainer && !fixedFlowThreadContainer->isOutOfFlowPositioned())
+        fixedFlowThreadContainer = 0;
 
     // FIXME: Positioning of out-of-flow(fixed, absolute) elements collected in a RenderFlowThread
     // may need to be revisited in a future patch.
@@ -1913,7 +1910,7 @@ static inline const RenderLayer* accumulateOffsetTowardsAncestor(const RenderLay
 
         // We should not reach RenderView layer past the RenderFlowThread layer for any
         // children of the RenderFlowThread.
-        if (renderer->inRenderFlowThread() && !layer->isOutOfFlowRenderFlowThread())
+        if (renderer->flowThreadContainingBlock() && !layer->isOutOfFlowRenderFlowThread())
             ASSERT(parentLayer != renderer->view()->layer());
 
         if (foundAncestorFirst) {

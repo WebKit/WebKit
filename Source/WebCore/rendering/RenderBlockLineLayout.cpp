@@ -80,7 +80,7 @@ static LayoutUnit logicalHeightForLine(const RenderBlock* block, bool isFirstLin
 ExclusionShapeInsideInfo* RenderBlock::layoutExclusionShapeInsideInfo() const
 {
     ExclusionShapeInsideInfo* shapeInsideInfo = view()->layoutState()->exclusionShapeInsideInfo();
-    if (!shapeInsideInfo && inRenderFlowThread()) {
+    if (!shapeInsideInfo && flowThreadContainingBlock()) {
         LayoutUnit offset = logicalHeight() + logicalHeightForLine(this, false);
         RenderRegion* region = regionAtBlockOffset(offset);
         return region ? region->exclusionShapeInsideInfo() : 0;
@@ -1357,7 +1357,7 @@ RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bi
 // during an entire linebox tree layout pass (aka layoutInlineChildren).
 class LineLayoutState {
 public:
-    LineLayoutState(bool fullLayout, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom)
+    LineLayoutState(bool fullLayout, LayoutUnit& repaintLogicalTop, LayoutUnit& repaintLogicalBottom, RenderFlowThread* flowThread)
         : m_lastFloat(0)
         , m_endLine(0)
         , m_floatIndex(0)
@@ -1368,6 +1368,7 @@ public:
         , m_repaintLogicalTop(repaintLogicalTop)
         , m_repaintLogicalBottom(repaintLogicalBottom)
         , m_usesRepaintBounds(false)
+        , m_flowThread(flowThread)
     { }
 
     void markForFullLayout() { m_isFullLayout = true; }
@@ -1411,6 +1412,9 @@ public:
     unsigned floatIndex() const { return m_floatIndex; }
     void setFloatIndex(unsigned floatIndex) { m_floatIndex = floatIndex; }
     
+    RenderFlowThread* flowThread() const { return m_flowThread; }
+    void setFlowThread(RenderFlowThread* thread) { m_flowThread = thread; }
+
 private:
     Vector<RenderBlock::FloatWithRect> m_floats;
     RenderBlock::FloatingObject* m_lastFloat;
@@ -1428,6 +1432,8 @@ private:
     LayoutUnit& m_repaintLogicalBottom;
 
     bool m_usesRepaintBounds;
+    
+    RenderFlowThread* m_flowThread;
 };
 
 static void deleteLineRange(LineLayoutState& layoutState, RenderArena* arena, RootInlineBox* startLine, RootInlineBox* stopLine = 0)
@@ -1575,7 +1581,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 #if ENABLE(CSS_EXCLUSIONS)
         // FIXME: Bug 95361: It is possible for a line to grow beyond lineHeight, in which
         // case these segments may be incorrect.
-        if (inRenderFlowThread())
+        if (layoutState.flowThread())
             exclusionShapeInsideInfo = layoutExclusionShapeInsideInfo();
         if (exclusionShapeInsideInfo) {
             LayoutUnit lineTop = logicalHeight() + absoluteLogicalTop;
@@ -1644,7 +1650,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
 
                 if (paginated) {
                     LayoutUnit adjustment = 0;
-                    adjustLinePositionForPagination(lineBox, adjustment);
+                    adjustLinePositionForPagination(lineBox, adjustment, layoutState.flowThread());
                     if (adjustment) {
                         LayoutUnit oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, layoutState.lineInfo().isFirstLine());
                         lineBox->adjustBlockDirectionPosition(adjustment);
@@ -1661,7 +1667,7 @@ void RenderBlock::layoutRunsAndFloatsInRange(LineLayoutState& layoutState, Inlin
                         setLogicalHeight(lineBox->lineBottomWithLeading());
                     }
 
-                    if (inRenderFlowThread())
+                    if (layoutState.flowThread())
                         lineBox->setContainingRegion(regionAtBlockOffset(lineBox->lineTopWithLeading()));
                 }
             }
@@ -1770,13 +1776,13 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
                 line->attachLine();
                 if (paginated) {
                     delta -= line->paginationStrut();
-                    adjustLinePositionForPagination(line, delta);
+                    adjustLinePositionForPagination(line, delta, layoutState.flowThread());
                 }
                 if (delta) {
                     layoutState.updateRepaintRangeFromBox(line, delta);
                     line->adjustBlockDirectionPosition(delta);
                 }
-                if (inRenderFlowThread())
+                if (layoutState.flowThread())
                     line->setContainingRegion(regionAtBlockOffset(line->lineTopWithLeading()));
                 if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
                     Vector<RenderBox*>::iterator end = cleanLineFloats->end();
@@ -1815,7 +1821,7 @@ void RenderBlock::linkToEndLineIfNeeded(LineLayoutState& layoutState)
             LayoutRect logicalLayoutOverflow(0, blockLogicalHeight, 1, bottomLayoutOverflow - blockLogicalHeight);
             LayoutRect logicalVisualOverflow(0, blockLogicalHeight, 1, bottomVisualOverflow - blockLogicalHeight);
             trailingFloatsLineBox->setOverflowFromLogicalRects(logicalLayoutOverflow, logicalVisualOverflow, trailingFloatsLineBox->lineTop(), trailingFloatsLineBox->lineBottom());
-            if (inRenderFlowThread())
+            if (layoutState.flowThread())
                 trailingFloatsLineBox->setContainingRegion(regionAtBlockOffset(trailingFloatsLineBox->lineTopWithLeading()));
         }
 
@@ -1857,12 +1863,13 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, LayoutUnit& repain
     if (view()->layoutState() && view()->layoutState()->lineGrid() == this)
         layoutLineGridBox();
 
-    bool clearLinesForPagination = firstLineBox() && inRenderFlowThread() && !enclosingRenderFlowThread()->hasRegions();
+    RenderFlowThread* flowThread = flowThreadContainingBlock();
+    bool clearLinesForPagination = firstLineBox() && flowThread && !flowThread->hasRegions();
 
     // Figure out if we should clear out our line boxes.
     // FIXME: Handle resize eventually!
     bool isFullLayout = !firstLineBox() || selfNeedsLayout() || relayoutChildren || clearLinesForPagination;
-    LineLayoutState layoutState(isFullLayout, repaintLogicalTop, repaintLogicalBottom);
+    LineLayoutState layoutState(isFullLayout, repaintLogicalTop, repaintLogicalBottom, flowThread);
 
     if (isFullLayout)
         lineBoxes()->deleteLineBoxes(renderArena());
@@ -1997,12 +2004,12 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
         size_t floatIndex = 0;
         for (curr = firstRootBox(); curr && !curr->isDirty(); curr = curr->nextRootBox()) {
             if (paginated) {
-                if (lineWidthForPaginatedLineChanged(curr)) {
+                if (lineWidthForPaginatedLineChanged(curr, 0, layoutState.flowThread())) {
                     curr->markDirty();
                     break;
                 }
                 paginationDelta -= curr->paginationStrut();
-                adjustLinePositionForPagination(curr, paginationDelta);
+                adjustLinePositionForPagination(curr, paginationDelta, layoutState.flowThread());
                 if (paginationDelta) {
                     if (containsFloats() || !layoutState.floats().isEmpty()) {
                         // FIXME: Do better eventually.  For now if we ever shift because of pagination and floats are present just go to a full layout.
@@ -2013,7 +2020,7 @@ RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState,
                     layoutState.updateRepaintRangeFromBox(curr, paginationDelta);
                     curr->adjustBlockDirectionPosition(paginationDelta);
                 }
-                if (inRenderFlowThread())
+                if (layoutState.flowThread())
                     curr->setContainingRegion(regionAtBlockOffset(curr->lineTopWithLeading()));
             }
 
@@ -2149,7 +2156,7 @@ bool RenderBlock::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutState
     LayoutUnit lineDelta = logicalHeight() - layoutState.endLineLogicalTop();
 
     bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
-    if (paginated && inRenderFlowThread()) {
+    if (paginated && layoutState.flowThread()) {
         // Check all lines from here to the end, and see if the hypothetical new position for the lines will result
         // in a different available line width.
         for (RootInlineBox* lineBox = layoutState.endLine(); lineBox; lineBox = lineBox->nextRootBox()) {
@@ -2158,10 +2165,10 @@ bool RenderBlock::checkPaginationAndFloatsAtEndLine(LineLayoutState& layoutState
                 // strut yet.
                 LayoutUnit oldPaginationStrut = lineBox->paginationStrut();
                 lineDelta -= oldPaginationStrut;
-                adjustLinePositionForPagination(lineBox, lineDelta);
+                adjustLinePositionForPagination(lineBox, lineDelta, layoutState.flowThread());
                 lineBox->setPaginationStrut(oldPaginationStrut);
             }
-            if (lineWidthForPaginatedLineChanged(lineBox, lineDelta))
+            if (lineWidthForPaginatedLineChanged(lineBox, lineDelta, layoutState.flowThread()))
                 return false;
         }
     }

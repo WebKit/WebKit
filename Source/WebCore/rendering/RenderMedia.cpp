@@ -70,9 +70,8 @@ void RenderMedia::layout()
     bool controlsNeedLayout = controlsRenderer->needsLayout();
     // If the region chain has changed we also need to relayout the controls to update the region box info.
     // FIXME: We can do better once we compute region box info for RenderReplaced, not only for RenderBlock.
-    if (inRenderFlowThread() && !controlsNeedLayout) {
-        const RenderFlowThread* flowThread = enclosingRenderFlowThread();
-        ASSERT(flowThread);
+    const RenderFlowThread* flowThread = flowThreadContainingBlock();
+    if (flowThread && !controlsNeedLayout) {
         if (flowThread->pageLogicalSizeChanged())
             controlsNeedLayout = true;
     }

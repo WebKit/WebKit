@@ -162,7 +162,7 @@ void RenderView::addChild(RenderObject* newChild, RenderObject* beforeChild)
     // up regions in the parent document during layout.
     if (newChild && !newChild->isRenderFlowThread()) {
         RenderBox* seamlessBox = enclosingSeamlessRenderer(document());
-        if (seamlessBox && seamlessBox->inRenderFlowThread())
+        if (seamlessBox && seamlessBox->flowThreadContainingBlock())
             newChild->setFlowThreadState(seamlessBox->flowThreadState());
     }
     RenderBlock::addChild(newChild, beforeChild);
@@ -200,7 +200,7 @@ bool RenderView::initializeLayoutState(LayoutState& state)
         
         // Set the current render flow thread to point to our ancestor. This will allow the seamless document to locate the correct
         // regions when doing a layout.
-        if (seamlessAncestor->inRenderFlowThread()) {
+        if (seamlessAncestor->flowThreadContainingBlock()) {
             flowThreadController()->setCurrentRenderFlowThread(seamlessAncestor->view()->flowThreadController()->currentRenderFlowThread());
             isSeamlessAncestorInFlowThread = true;
         }
@@ -676,7 +676,7 @@ void RenderView::setSelection(RenderObject* start, int startPos, RenderObject* e
         m_selectionEnd == end && m_selectionEndPos == endPos)
         return;
 
-    if ((start && end) && (start->enclosingRenderFlowThread() != end->enclosingRenderFlowThread()))
+    if ((start && end) && (start->flowThreadContainingBlock() != end->flowThreadContainingBlock()))
         return;
 
     // Record the old selected objects.  These will be used later

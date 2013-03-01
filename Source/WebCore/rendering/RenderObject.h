@@ -217,8 +217,14 @@ public:
     RenderBox* enclosingBox() const;
     RenderBoxModelObject* enclosingBoxModelObject() const;
 
-    // Function to return our enclosing flow thread if we are contained inside one.
-    RenderFlowThread* enclosingRenderFlowThread() const;
+    // Function to return our enclosing flow thread if we are contained inside one. This
+    // function follows the containing block chain.
+    RenderFlowThread* flowThreadContainingBlock() const
+    {
+        if (flowThreadState() == NotInsideFlowThread)
+            return 0;
+        return locateFlowThreadContainingBlock();
+    }
 
     RenderNamedFlowThread* renderNamedFlowThreadWrapper() const;
 
@@ -441,12 +447,6 @@ public:
         InsideOutOfFlowThread = 1,
         InsideInFlowThread = 2,
     };
-
-    bool inRenderFlowThread() const
-    {
-        FlowThreadState state = flowThreadState();
-        return state != NotInsideFlowThread;
-    }
 
     void setFlowThreadStateIncludingDescendants(FlowThreadState);
 
@@ -1018,6 +1018,7 @@ protected:
     void setDocumentForAnonymous(Document* document) { ASSERT(isAnonymous()); m_node = document; }
 
 private:
+    RenderFlowThread* locateFlowThreadContainingBlock() const;
     void removeFromRenderFlowThread();
     void removeFromRenderFlowThreadRecursive(RenderFlowThread*);
 

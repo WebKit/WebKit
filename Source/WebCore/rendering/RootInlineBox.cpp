@@ -256,7 +256,7 @@ RenderRegion* RootInlineBox::containingRegion() const
 
 #ifndef NDEBUG
     if (region) {
-        RenderFlowThread* flowThread = block()->enclosingRenderFlowThread();
+        RenderFlowThread* flowThread = block()->flowThreadContainingBlock();
         const RenderRegionList& regionList = flowThread->renderRegionList();
         ASSERT(regionList.contains(region));
     }
@@ -268,7 +268,7 @@ RenderRegion* RootInlineBox::containingRegion() const
 void RootInlineBox::setContainingRegion(RenderRegion* region)
 {
     ASSERT(!isDirty());
-    ASSERT(block()->inRenderFlowThread());
+    ASSERT(block()->flowThreadContainingBlock());
     LineFragmentationData* fragmentationData  = ensureLineFragmentationData();
     fragmentationData->m_containingRegion = region;
 }
