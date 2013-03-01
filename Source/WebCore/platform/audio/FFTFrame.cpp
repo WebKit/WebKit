@@ -290,8 +290,11 @@ void FFTFrame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #endif // USE(WEBAUDIO_GSTREAMER)
 
 #if USE(WEBAUDIO_IPP)
-    info.addMember(m_buffer, "buffer");
-    info.addMember(m_DFTSpec, "DFTSpec");
+    int size = 0;
+    ippsDFTGetBufSize_R_32f(m_DFTSpec, &size);
+    info.addRawBuffer(m_buffer, size * sizeof(Ipp8u), "buffer");
+    ippsDFTGetSize_R_32f(m_FFTSize, IPP_FFT_NODIV_BY_ANY, ippAlgHintFast, &size, 0, 0);
+    info.addRawBuffer(m_DFTSpec, size, "DFTSpec");
     info.addMember(m_complexData, "complexData");
     info.addMember(m_realData, "realData");
     info.addMember(m_imagData, "imagData");
