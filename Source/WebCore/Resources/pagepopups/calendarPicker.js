@@ -31,6 +31,7 @@
 
 // FIXME:
 //  - Touch event
+//  - Adjust hit target size for touch
 
 /**
  * CSS class names.
@@ -2731,6 +2732,550 @@ CalendarHeaderView.prototype.setDisabled = function(disabled) {
     this._nextMonthButton.setDisabled(this.disabled || this.calendarPicker.currentMonth() >= this.calendarPicker.maximumMonth);
     var monthContainingToday = Month.createFromToday();
     this._todayButton.setDisabled(this.disabled || monthContainingToday < this.calendarPicker.minimumMonth || monthContainingToday > this.calendarPicker.maximumMonth);
+};
+
+/**
+ * @constructor
+ * @extends ListCell
+ */
+function DayCell() {
+    ListCell.call(this);
+    this.element.classList.add(DayCell.ClassNameDayCell);
+    this.element.style.width = DayCell.Width + "px";
+    this.element.style.height = DayCell.Height + "px";
+    this.element.style.lineHeight = (DayCell.Height - DayCell.BorderWidth * 2) + "px";
+    /**
+     * @type {?Day}
+     */
+    this.day = null;
+};
+
+DayCell.prototype = Object.create(ListCell.prototype);
+
+DayCell.Width = 34;
+DayCell.Height = 20;
+DayCell.BorderWidth = 1;
+DayCell.ClassNameDayCell = "day-cell";
+DayCell.ClassNameHighlighted = "highlighted";
+DayCell.ClassNameDisabled = "disabled";
+DayCell.ClassNameCurrentMonth = "current-month";
+DayCell.ClassNameToday = "today";
+
+DayCell._recycleBin = [];
+
+DayCell.recycleOrCreate = function() {
+    return DayCell._recycleBin.pop() || new DayCell();
+};
+
+/**
+ * @return {!Array}
+ * @override
+ */
+DayCell.prototype._recycleBin = function() {
+    return DayCell._recycleBin;
+};
+
+/**
+ * @override
+ */
+DayCell.prototype.throwAway = function() {
+    ListCell.prototype.throwAway.call(this);
+    this.day = null;
+};
+
+/**
+ * @param {!boolean} highlighted
+ */
+DayCell.prototype.setHighlighted = function(highlighted) {
+    if (highlighted)
+        this.element.classList.add(DayCell.ClassNameHighlighted);
+    else
+        this.element.classList.remove(DayCell.ClassNameHighlighted);
+};
+
+/**
+ * @param {!boolean} disabled
+ */
+DayCell.prototype.setDisabled = function(disabled) {
+    if (disabled)
+        this.element.classList.add(DayCell.ClassNameDisabled);
+    else
+        this.element.classList.remove(DayCell.ClassNameDisabled);
+};
+
+/**
+ * @param {!boolean} selected
+ */
+DayCell.prototype.setIsInCurrentMonth = function(selected) {
+    if (selected)
+        this.element.classList.add(DayCell.ClassNameCurrentMonth);
+    else
+        this.element.classList.remove(DayCell.ClassNameCurrentMonth);
+};
+
+/**
+ * @param {!boolean} selected
+ */
+DayCell.prototype.setIsToday = function(selected) {
+    if (selected)
+        this.element.classList.add(DayCell.ClassNameToday);
+    else
+        this.element.classList.remove(DayCell.ClassNameToday);
+};
+
+/**
+ * @param {!Day} day
+ */
+DayCell.prototype.reset = function(day) {
+    this.day = day;
+    this.element.textContent = localizeNumber(this.day.date.toString());
+    this.show();
+};
+
+/**
+ * @constructor
+ * @extends ListCell
+ */
+function WeekNumberCell() {
+    ListCell.call(this);
+    this.element.classList.add(WeekNumberCell.ClassNameWeekNumberCell);
+    this.element.style.width = (WeekNumberCell.Width - WeekNumberCell.RightBorderWidth) + "px";
+    this.element.style.height = WeekNumberCell.Height + "px";
+    /**
+     * @type {?Week}
+     */
+    this.week = null;
+};
+
+WeekNumberCell.prototype = Object.create(ListCell.prototype);
+
+WeekNumberCell.Width = 48;
+WeekNumberCell.Height = DayCell.Height;
+WeekNumberCell.RightBorderWidth = 1;
+WeekNumberCell.ClassNameWeekNumberCell = "week-number-cell";
+WeekNumberCell.ClassNameHighlighted = "highlighted";
+WeekNumberCell.ClassNameDisabled = "disabled";
+
+WeekNumberCell._recycleBin = [];
+
+/**
+ * @return {!Array}
+ * @override
+ */
+WeekNumberCell.prototype._recycleBin = function() {
+    return WeekNumberCell._recycleBin;
+};
+
+/**
+ * @return {!WeekNumberCell}
+ */
+WeekNumberCell.recycleOrCreate = function() {
+    return WeekNumberCell._recycleBin.pop() || new WeekNumberCell();
+};
+
+/**
+ * @param {!Week} week
+ */
+WeekNumberCell.prototype.reset = function(week) {
+    this.week = week;
+    this.element.textContent = localizeNumber(this.week.week.toString());
+    this.show();
+};
+
+/**
+ * @override
+ */
+WeekNumberCell.prototype.throwAway = function() {
+    ListCell.prototype.throwAway.call(this);
+    this.week = null;
+};
+
+WeekNumberCell.prototype.setHighlighted = function(highlighted) {
+    if (highlighted)
+        this.element.classList.add(WeekNumberCell.ClassNameHighlighted);
+    else
+        this.element.classList.remove(WeekNumberCell.ClassNameHighlighted);
+};
+
+WeekNumberCell.prototype.setDisabled = function(disabled) {
+    if (disabled)
+        this.element.classList.add(WeekNumberCell.ClassNameDisabled);
+    else
+        this.element.classList.remove(WeekNumberCell.ClassNameDisabled);
+};
+
+/**
+ * @constructor
+ * @extends View
+ * @param {!boolean} hasWeekNumberColumn
+ */
+function CalendarTableHeaderView(hasWeekNumberColumn) {
+    View.call(this, createElement("div", "calendar-table-header-view"));
+    if (hasWeekNumberColumn) {
+        var weekNumberLabelElement = createElement("div", "week-number-label", global.params.weekLabel);
+        weekNumberLabelElement.style.width = WeekNumberCell.Width + "px";
+        this.element.appendChild(weekNumberLabelElement);
+    }
+    for (var i = 0; i < DaysPerWeek; ++i) {
+        var weekDayNumber = (global.params.weekStartDay + i) % DaysPerWeek;
+        var labelElement = createElement("div", "week-day-label", global.params.dayLabels[weekDayNumber]);
+        labelElement.style.width = DayCell.Width + "px";
+        this.element.appendChild(labelElement);
+        if (getLanguage() === "ja") {
+            if (weekDayNumber === 0)
+                labelElement.style.color = "red";
+            else if (weekDayNumber === 6)
+                labelElement.style.color = "blue";
+        }
+    }
+}
+
+CalendarTableHeaderView.prototype = Object.create(View.prototype);
+
+CalendarTableHeaderView.Height = 25;
+
+/**
+ * @constructor
+ * @extends ListCell
+ */
+function CalendarRowCell() {
+    ListCell.call(this);
+    this.element.classList.add(CalendarRowCell.ClassNameCalendarRowCell);
+    this.element.style.height = CalendarRowCell.Height + "px";
+
+    /**
+     * @type {!Array}
+     * @protected
+     */
+    this._dayCells = [];
+    /**
+     * @type {!number}
+     */
+    this.row = 0;
+    /**
+     * @type {?CalendarTableView}
+     */
+    this.calendarTableView = null;
+}
+
+CalendarRowCell.prototype = Object.create(ListCell.prototype);
+
+CalendarRowCell.Height = DayCell.Height;
+CalendarRowCell.ClassNameCalendarRowCell = "calendar-row-cell";
+
+CalendarRowCell._recycleBin = [];
+
+/**
+ * @return {!Array}
+ * @override
+ */
+CalendarRowCell.prototype._recycleBin = function() {
+    return CalendarRowCell._recycleBin;
+};
+
+/**
+ * @param {!number} row
+ * @param {!CalendarTableView} calendarTableView
+ */
+CalendarRowCell.prototype.reset = function(row, calendarTableView) {
+    this.row = row;
+    this.calendarTableView = calendarTableView;
+    if (this.calendarTableView.hasWeekNumberColumn) {
+        var middleDay = this.calendarTableView.dayAtColumnAndRow(3, row);
+        var week = Week.createFromDay(middleDay);
+        this.weekNumberCell = this.calendarTableView.prepareNewWeekNumberCell(week);
+        this.weekNumberCell.attachTo(this);
+    }
+    var day = calendarTableView.dayAtColumnAndRow(0, row);
+    for (var i = 0; i < DaysPerWeek; ++i) {
+        var dayCell = this.calendarTableView.prepareNewDayCell(day);
+        dayCell.attachTo(this);
+        this._dayCells.push(dayCell);
+        day = day.next();
+    }
+    this.show();
+};
+
+/**
+ * @override
+ */
+CalendarRowCell.prototype.throwAway = function() {
+    ListCell.prototype.throwAway.call(this);
+    if (this.weekNumberCell)
+        this.calendarTableView.throwAwayWeekNumberCell(this.weekNumberCell);
+    this._dayCells.forEach(this.calendarTableView.throwAwayDayCell, this.calendarTableView);
+    this._dayCells.length = 0;
+};
+
+/**
+ * @constructor
+ * @extends ListView
+ * @param {!CalendarPicker} calendarPicker
+ */
+function CalendarTableView(calendarPicker) {
+    ListView.call(this);
+    this.element.classList.add(CalendarTableView.ClassNameCalendarTableView);
+    this.element.tabIndex = 0;
+
+    /**
+     * @type {!boolean}
+     * @const
+     */
+    this.hasWeekNumberColumn = calendarPicker.type === "week";
+    /**
+     * @type {!CalendarPicker}
+     * @const
+     */
+    this.calendarPicker = calendarPicker;
+    /**
+     * @type {!Object}
+     * @const
+     */
+    this._dayCells = {};
+    var headerView = new CalendarTableHeaderView(this.hasWeekNumberColumn);
+    headerView.attachTo(this, this.scrollView);
+
+    if (this.hasWeekNumberColumn) {
+        this.setWidth(DayCell.Width * DaysPerWeek + WeekNumberCell.Width);
+        /**
+         * @type {?Array}
+         * @const
+         */
+        this._weekNumberCells = [];
+    } else {
+        this.setWidth(DayCell.Width * DaysPerWeek);
+    }
+    
+    /**
+     * @type {!boolean}
+     * @protected
+     */
+    this._ignoreMouseOutUntillNextMouseOver = false;
+
+    this.element.addEventListener("click", this.onClick, false);
+    this.element.addEventListener("mouseover", this.onMouseOver, false);
+    this.element.addEventListener("mouseout", this.onMouseOut, false);
+
+    // you shouldn't be able to use the mouse wheel to scroll.
+    this.scrollView.element.removeEventListener("mousewheel", this.scrollView.onMouseWheel, false);
+}
+
+CalendarTableView.prototype = Object.create(ListView.prototype);
+
+CalendarTableView.BorderWidth = 1;
+CalendarTableView.ClassNameCalendarTableView = "calendar-table-view";
+
+/**
+ * @param {!number} scrollOffset
+ * @return {!number}
+ */
+CalendarTableView.prototype.rowAtScrollOffset = function(scrollOffset) {
+    return Math.floor(scrollOffset / CalendarRowCell.Height);
+};
+
+/**
+ * @param {!number} row
+ * @return {!number}
+ */
+CalendarTableView.prototype.scrollOffsetForRow = function(row) {
+    return row * CalendarRowCell.Height;
+};
+
+/**
+ * @param {?Event} event
+ */
+CalendarTableView.prototype.onClick = function(event) {
+    if (this.hasWeekNumberColumn) {
+        var weekNumberCellElement = enclosingNodeOrSelfWithClass(event.target, WeekNumberCell.ClassNameWeekNumberCell);
+        if (weekNumberCellElement) {
+            var weekNumberCell = weekNumberCellElement.$view;
+            this.calendarPicker.selectRangeContainingDay(weekNumberCell.week.firstDay());
+            return;
+        }
+    }
+    var dayCellElement = enclosingNodeOrSelfWithClass(event.target, DayCell.ClassNameDayCell);
+    if (!dayCellElement)
+        return;
+    var dayCell = dayCellElement.$view;
+    this.calendarPicker.selectRangeContainingDay(dayCell.day);
+};
+
+/**
+ * @param {?Event} event
+ */
+CalendarTableView.prototype.onMouseOver = function(event) {
+    if (this.hasWeekNumberColumn) {
+        var weekNumberCellElement = enclosingNodeOrSelfWithClass(event.target, WeekNumberCell.ClassNameWeekNumberCell);
+        if (weekNumberCellElement) {
+            var weekNumberCell = weekNumberCellElement.$view;
+            this.calendarPicker.highlightRangeContainingDay(weekNumberCell.week.firstDay());
+            this._ignoreMouseOutUntillNextMouseOver = false;
+            return;
+        }
+    }
+    var dayCellElement = enclosingNodeOrSelfWithClass(event.target, DayCell.ClassNameDayCell);
+    if (!dayCellElement)
+        return;
+    var dayCell = dayCellElement.$view;
+    this.calendarPicker.highlightRangeContainingDay(dayCell.day);
+    this._ignoreMouseOutUntillNextMouseOver = false;
+};
+
+/**
+ * @param {?Event} event
+ */
+CalendarTableView.prototype.onMouseOut = function(event) {
+    if (this._ignoreMouseOutUntillNextMouseOver)
+        return;
+    var dayCellElement = enclosingNodeOrSelfWithClass(event.target, DayCell.ClassNameDayCell);
+    if (!dayCellElement) {
+        this.calendarPicker.highlightRangeContainingDay(null);
+    }
+};
+
+/**
+ * @param {!number} row
+ * @return {!CalendarRowCell}
+ */
+CalendarTableView.prototype.prepareNewCell = function(row) {
+    var cell = CalendarRowCell._recycleBin.pop() || new CalendarRowCell();
+    cell.reset(row, this);
+    return cell;
+};
+
+/**
+ * @return {!number} Height in pixels.
+ */
+CalendarTableView.prototype.height = function() {
+    return this.scrollView.height() + CalendarTableHeaderView.Height + CalendarTableView.BorderWidth * 2;
+};
+
+/**
+ * @param {!number} height Height in pixels.
+ */
+CalendarTableView.prototype.setHeight = function(height) {
+    this.scrollView.setHeight(height - CalendarTableHeaderView.Height - CalendarTableView.BorderWidth * 2);
+};
+
+/**
+ * @param {!Month} month
+ * @param {!boolean} animate
+ */
+CalendarTableView.prototype.scrollToMonth = function(month, animate) {
+    var rowForFirstDayInMonth = this.columnAndRowForDay(month.firstDay()).row;
+    this.scrollView.scrollTo(this.scrollOffsetForRow(rowForFirstDayInMonth), animate);
+};
+
+/**
+ * @param {!number} column
+ * @param {!number} row
+ * @return {!Day}
+ */
+CalendarTableView.prototype.dayAtColumnAndRow = function(column, row) {
+    var daysSinceMinimum = row * DaysPerWeek + column + global.params.weekStartDay - CalendarTableView._MinimumDayWeekDay;
+    return Day.createFromValue(daysSinceMinimum * MillisecondsPerDay + CalendarTableView._MinimumDayValue);
+};
+
+CalendarTableView._MinimumDayValue = Day.Minimum.valueOf();
+CalendarTableView._MinimumDayWeekDay = Day.Minimum.weekDay();
+
+/**
+ * @param {!Day} day
+ * @return {!Object} Object with properties column and row.
+ */
+CalendarTableView.prototype.columnAndRowForDay = function(day) {
+    var daysSinceMinimum = (day.valueOf() - CalendarTableView._MinimumDayValue) / MillisecondsPerDay;
+    var offset = daysSinceMinimum + CalendarTableView._MinimumDayWeekDay - global.params.weekStartDay;
+    var row = Math.floor(offset / DaysPerWeek);
+    var column = offset - row * DaysPerWeek;
+    return {
+        column: column,
+        row: row
+    };
+};
+
+CalendarTableView.prototype.updateCells = function() {
+    ListView.prototype.updateCells.call(this);
+
+    var selection = this.calendarPicker.selection();
+    var firstDayInSelection;
+    var lastDayInSelection;
+    if (selection) {
+        firstDayInSelection = selection.firstDay().valueOf();
+        lastDayInSelection = selection.lastDay().valueOf();
+    } else {
+        firstDayInSelection = Infinity;
+        lastDayInSelection = Infinity;
+    }
+    var highlight = this.calendarPicker.highlight();
+    var firstDayInHighlight;
+    var lastDayInHighlight;
+    if (highlight) {
+        firstDayInHighlight = highlight.firstDay().valueOf();
+        lastDayInHighlight = highlight.lastDay().valueOf();
+    } else {
+        firstDayInHighlight = Infinity;
+        lastDayInHighlight = Infinity;
+    }
+    var currentMonth = this.calendarPicker.currentMonth();
+    var firstDayInCurrentMonth = currentMonth.firstDay().valueOf();
+    var lastDayInCurrentMonth = currentMonth.lastDay().valueOf();
+    for (var dayString in this._dayCells) {
+        var dayCell = this._dayCells[dayString];
+        var day = dayCell.day;
+        dayCell.setIsToday(Day.createFromToday().equals(day));
+        dayCell.setSelected(day >= firstDayInSelection && day <= lastDayInSelection);
+        dayCell.setHighlighted(day >= firstDayInHighlight && day <= lastDayInHighlight);
+        dayCell.setIsInCurrentMonth(day >= firstDayInCurrentMonth && day <= lastDayInCurrentMonth);
+        dayCell.setDisabled(!this.calendarPicker.isValidDay(day));
+    }
+    if (this.hasWeekNumberColumn) {
+        for (var weekString in this._weekNumberCells) {
+            var weekNumberCell = this._weekNumberCells[weekString];
+            var week = weekNumberCell.week;
+            weekNumberCell.setSelected(selection && selection.equals(week));
+            weekNumberCell.setHighlighted(highlight && highlight.equals(week));
+            weekNumberCell.setDisabled(!this.calendarPicker.isValid(week));
+        }
+    }
+};
+
+/**
+ * @param {!Day} day
+ * @return {!DayCell}
+ */
+CalendarTableView.prototype.prepareNewDayCell = function(day) {
+    var dayCell = DayCell.recycleOrCreate();
+    dayCell.reset(day);
+    this._dayCells[dayCell.day.toString()] = dayCell;
+    return dayCell;
+};
+
+/**
+ * @param {!Week} week
+ * @return {!WeekNumberCell}
+ */
+CalendarTableView.prototype.prepareNewWeekNumberCell = function(week) {
+    var weekNumberCell = WeekNumberCell.recycleOrCreate();
+    weekNumberCell.reset(week);
+    this._weekNumberCells[weekNumberCell.week.toString()] = weekNumberCell;
+    return weekNumberCell;
+};
+
+/**
+ * @param {!DayCell} dayCell
+ */
+CalendarTableView.prototype.throwAwayDayCell = function(dayCell) {
+    delete this._dayCells[dayCell.day.toString()];
+    dayCell.throwAway();
+};
+
+/**
+ * @param {!WeekNumberCell} weekNumberCell
+ */
+CalendarTableView.prototype.throwAwayWeekNumberCell = function(weekNumberCell) {
+    delete this._weekNumberCells[weekNumberCell.week.toString()];
+    weekNumberCell.throwAway();
 };
 
 /**
