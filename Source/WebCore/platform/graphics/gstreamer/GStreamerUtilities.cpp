@@ -20,10 +20,9 @@
 #include "config.h"
 #include "GStreamerUtilities.h"
 
+#if USE(GSTREAMER)
 #include <gst/gst.h>
 #include <wtf/gobject/GOwnPtr.h>
-
-#if USE(GSTREAMER)
 
 namespace WebCore {
 
@@ -43,4 +42,4 @@ bool initializeGStreamer()
 
 }
 
-#endif // ENABLE(WEB_AUDIO) && USE(GSTREAMER)
+#endif // USE(GSTREAMER)
