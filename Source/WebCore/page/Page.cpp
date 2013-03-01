@@ -438,9 +438,7 @@ void Page::setGroupName(const String& name)
 
 const String& Page::groupName() const
 {
-    DEFINE_STATIC_LOCAL(String, nullString, ());
-    // FIXME: Why not just return String()?
-    return m_group ? m_group->name() : nullString;
+    return m_group ? m_group->name() : nullAtom.string();
 }
 
 void Page::initGroup()

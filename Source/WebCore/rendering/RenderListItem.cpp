@@ -395,8 +395,7 @@ const String& RenderListItem::markerText() const
 {
     if (m_marker)
         return m_marker->text();
-    DEFINE_STATIC_LOCAL(String, staticNullString, ());
-    return staticNullString;
+    return nullAtom.string();
 }
 
 String RenderListItem::markerTextWithSuffix() const
