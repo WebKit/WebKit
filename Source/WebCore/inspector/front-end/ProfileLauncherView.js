@@ -101,7 +101,7 @@ WebInspector.ProfileLauncherView.prototype = {
         if (decorationElement)
             labelElement.appendChild(decorationElement);
         if (this._singleProfileMode)
-            this._profileTypeChanged(profileType);
+            this._profileTypeChanged(profileType, null);
     },
 
     _controlButtonClicked: function()

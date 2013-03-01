@@ -1357,7 +1357,9 @@ WebInspector.CPUProfilerPanel = function()
     this._registerProfileType(new WebInspector.CPUProfileType());
 }
 
-WebInspector.CPUProfilerPanel.prototype.__proto__ = WebInspector.ProfilesPanel.prototype;
+WebInspector.CPUProfilerPanel.prototype = {
+    __proto__: WebInspector.ProfilesPanel.prototype
+}
 
 
 /**
@@ -1370,7 +1372,9 @@ WebInspector.CSSSelectorProfilerPanel = function()
     this._registerProfileType(new WebInspector.CSSSelectorProfileType());
 }
 
-WebInspector.CSSSelectorProfilerPanel.prototype.__proto__ = WebInspector.ProfilesPanel.prototype;
+WebInspector.CSSSelectorProfilerPanel.prototype = {
+    __proto__: WebInspector.ProfilesPanel.prototype
+}
 
 
 /**
@@ -1383,7 +1387,9 @@ WebInspector.HeapProfilerPanel = function()
     this._registerProfileType(new WebInspector.HeapSnapshotProfileType());
 }
 
-WebInspector.HeapProfilerPanel.prototype.__proto__ = WebInspector.ProfilesPanel.prototype;
+WebInspector.HeapProfilerPanel.prototype = {
+    __proto__: WebInspector.ProfilesPanel.prototype
+}
 
 
 /**
@@ -1396,7 +1402,9 @@ WebInspector.CanvasProfilerPanel = function()
     this._registerProfileType(new WebInspector.CanvasProfileType());
 }
 
-WebInspector.CanvasProfilerPanel.prototype.__proto__ = WebInspector.ProfilesPanel.prototype;
+WebInspector.CanvasProfilerPanel.prototype = {
+    __proto__: WebInspector.ProfilesPanel.prototype
+}
 
 
 /**
@@ -1409,7 +1417,9 @@ WebInspector.MemoryChartProfilerPanel = function()
     this._registerProfileType(new WebInspector.NativeMemoryProfileType());
 }
 
-WebInspector.MemoryChartProfilerPanel.prototype.__proto__ = WebInspector.ProfilesPanel.prototype;
+WebInspector.MemoryChartProfilerPanel.prototype = {
+    __proto__: WebInspector.ProfilesPanel.prototype
+}
 
 
 /**
@@ -1422,7 +1432,9 @@ WebInspector.NativeMemoryProfilerPanel = function()
     this._registerProfileType(new WebInspector.NativeSnapshotProfileType());
 }
 
-WebInspector.NativeMemoryProfilerPanel.prototype.__proto__ = WebInspector.ProfilesPanel.prototype;
+WebInspector.NativeMemoryProfilerPanel.prototype = {
+    __proto__: WebInspector.ProfilesPanel.prototype
+}
 
 
 importScript("ProfileDataGridTree.js");
