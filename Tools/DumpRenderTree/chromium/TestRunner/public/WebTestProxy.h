@@ -108,6 +108,7 @@ public:
 
     void setLogConsoleOutput(bool enabled);
 
+    // FIXME: Make this private again.
     void scheduleComposite();
 
 #if WEBTESTRUNNER_IMPLEMENTATION
@@ -251,6 +252,11 @@ public:
     {
         WebTestProxyBase::didScrollRect(dx, dy, clipRect);
         Base::didScrollRect(dx, dy, clipRect);
+    }
+    virtual void scheduleComposite()
+    {
+        WebTestProxyBase::scheduleComposite();
+        Base::scheduleComposite();
     }
     virtual void scheduleAnimation()
     {

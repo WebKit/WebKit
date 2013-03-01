@@ -1,3 +1,16 @@
+2013-03-01  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] put WebTestProxy::scheduleComposite back in place
+        https://bugs.webkit.org/show_bug.cgi?id=111146
+
+        Reviewed by Nico Weber.
+
+        The call was removed in http://trac.webkit.org/changeset/144398 because
+        DRT doesn't need it. However, content shell depends on this call.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebTestRunner::WebTestProxy::scheduleComposite):
+
 2013-02-28  Ryosuke Niwa  <rniwa@webkit.org>
 
         Merge PerfTestRunner._run_single_test into PerfTestRunner._run_tests_set
