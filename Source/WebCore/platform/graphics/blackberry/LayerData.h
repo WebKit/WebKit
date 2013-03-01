@@ -56,27 +56,31 @@ class LayerData {
 public:
     enum LayerType { Layer, TransformLayer, WebGLLayer, CanvasLayer, CustomLayer };
     enum FilterType { Linear, Nearest, Trilinear, Lanczos };
-    enum LayerProgramShader { LayerProgramShaderRGBA = 0,
-                              LayerProgramShaderBGRA,
-                              NumberOfLayerProgramShaders };
+    enum LayerProgram {
+        LayerProgramRGBA = 0,
+        LayerProgramBGRA,
+        NumberOfLayerPrograms
+    };
 
 #if ENABLE(CSS_FILTERS)
-    enum CSSFilterShaders { CSSFilterShaderGrayscale = 0,
-                            CSSFilterShaderSepia,
-                            CSSFilterShaderSaturate,
-                            CSSFilterShaderHueRotate,
-                            CSSFilterShaderInvert,
-                            CSSFilterShaderBrightness,
-                            CSSFilterShaderContrast,
-                            CSSFilterShaderOpacity,
-                            CSSFilterShaderBlurY,
-                            CSSFilterShaderBlurX,
-                            CSSFilterShaderShadow,
-                            CSSFilterShaderPassthrough,
+    enum CSSFilterShaders {
+        CSSFilterShaderGrayscale = 0,
+        CSSFilterShaderSepia,
+        CSSFilterShaderSaturate,
+        CSSFilterShaderHueRotate,
+        CSSFilterShaderInvert,
+        CSSFilterShaderBrightness,
+        CSSFilterShaderContrast,
+        CSSFilterShaderOpacity,
+        CSSFilterShaderBlurY,
+        CSSFilterShaderBlurX,
+        CSSFilterShaderShadow,
+        CSSFilterShaderPassthrough,
 #if ENABLE(CSS_SHADERS)
-                            CSSFilterShaderCustom,
+        CSSFilterShaderCustom,
 #endif
-                            NumberOfCSSFilterShaders };
+        NumberOfCSSFilterShaders
+    };
 #endif
 
     LayerData(LayerType type)
@@ -87,12 +91,13 @@ public:
         , m_opacity(1.0)
         , m_anchorPointZ(0.0)
         , m_borderWidth(0.0)
-        , m_layerProgramShader(LayerProgramShaderBGRA)
+        , m_layerProgram(LayerProgramBGRA)
         , m_pluginView(0)
 #if ENABLE(VIDEO)
         , m_mediaPlayer(0)
 #endif
         , m_suspendTime(0)
+        , m_contentsScale(1.0)
         , m_doubleSided(true)
         , m_masksToBounds(false)
         , m_isOpaque(false)
@@ -102,8 +107,10 @@ public:
         , m_isFixedPosition(false)
         , m_hasFixedContainer(false)
         , m_hasFixedAncestorInDOMTree(false)
-        , m_isVisible(true)
+        , m_isContainerForFixedPositionLayers(false)
         , m_sizeIsScaleInvariant(false)
+        , m_contentsResolutionIndependent(false)
+        , m_isVisible(true)
     {
     }
 
@@ -124,6 +131,8 @@ public:
     IntSize bounds() const { return m_bounds; }
 
     bool sizeIsScaleInvariant() const { return m_sizeIsScaleInvariant; }
+
+    bool contentsResolutionIndependent() const { return m_contentsResolutionIndependent; }
 
     bool doubleSided() const { return m_doubleSided; }
 
@@ -150,16 +159,24 @@ public:
 
     bool needsTexture() const { return m_layerType == WebGLLayer || m_layerType == CanvasLayer || m_needsTexture; }
 
-    LayerProgramShader layerProgramShader() const { return m_layerProgramShader; }
+    LayerProgram layerProgram() const { return m_layerProgram; }
 
     bool isFixedPosition() const { return m_isFixedPosition; }
     bool hasFixedContainer() const { return m_hasFixedContainer; }
     bool hasFixedAncestorInDOMTree() const { return m_hasFixedAncestorInDOMTree; }
+    bool isContainerForFixedPositionLayers() const { return m_isContainerForFixedPositionLayers; }
+    bool isFixedToTop() const { return m_isFixedToTop; }
+    bool isFixedToLeft() const { return m_isFixedToLeft; }
+
+    IntRect frameVisibleRect() const { return m_frameVisibleRect; }
+    IntSize frameContentsSize() const { return m_frameContentsSize; }
 
     PluginView* pluginView() const { return m_pluginView; }
 
     IntRect holePunchRect() const { return m_holePunchRect; }
     bool hasHolePunchRect() const { return !m_holePunchRect.isEmpty(); }
+
+    double contentsScale() const { return m_contentsScale; }
 
 #if ENABLE(VIDEO)
     MediaPlayer* mediaPlayer() const { return m_mediaPlayer; }
@@ -202,7 +219,7 @@ protected:
     float m_anchorPointZ;
     float m_borderWidth;
 
-    LayerProgramShader m_layerProgramShader;
+    LayerProgram m_layerProgram;
 
     PluginView* m_pluginView;
 #if ENABLE(VIDEO)
@@ -211,7 +228,11 @@ protected:
 #endif
     IntRect m_holePunchRect;
 
+    IntRect m_frameVisibleRect;
+    IntSize m_frameContentsSize;
+
     double m_suspendTime;
+    double m_contentsScale;
 
     unsigned m_doubleSided : 1;
     unsigned m_masksToBounds : 1;
@@ -223,10 +244,15 @@ protected:
     unsigned m_isFixedPosition : 1;
     unsigned m_hasFixedContainer : 1;
     unsigned m_hasFixedAncestorInDOMTree : 1;
+    unsigned m_isContainerForFixedPositionLayers: 1;
+    unsigned m_isFixedToTop : 1;
+    unsigned m_isFixedToLeft : 1;
+
+    unsigned m_sizeIsScaleInvariant : 1;
+    unsigned m_contentsResolutionIndependent : 1;
 
     // The following is only available for media (video) and plugin layers.
     unsigned m_isVisible : 1;
-    unsigned m_sizeIsScaleInvariant : 1;
 
     // CAUTION: all the data members are copied from one instance to another
     // i.e. from one thread to another in the replicate method.

@@ -21,9 +21,17 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+namespace BlackBerry {
+namespace Platform {
+namespace Graphics {
+class GLES2Program;
+}
+}
+}
 namespace WebCore {
 
 class LayerCompositingThread;
+class Texture;
 
 class LayerCompositingThreadClient {
 public:
@@ -34,15 +42,14 @@ public:
     virtual void layerVisibilityChanged(LayerCompositingThread*, bool visible) = 0;
 
     virtual void uploadTexturesIfNeeded(LayerCompositingThread*) = 0;
-    virtual void drawTextures(LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation) = 0;
+    virtual void drawTextures(LayerCompositingThread*, double scale, const BlackBerry::Platform::Graphics::GLES2Program&) = 0;
     virtual void deleteTextures(LayerCompositingThread*) = 0;
 
     // Optional. Allows layers to serve as a mask for other layers
-    virtual void bindContentsTexture(LayerCompositingThread*) { }
+    virtual Texture* contentsTexture(LayerCompositingThread*) { return 0; }
 
-    // Optional. Allows layers to have uncached regions, typically drawn as checkerboard
-    virtual bool hasMissingTextures(const LayerCompositingThread*) const { return false; }
-    virtual void drawMissingTextures(LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation) { }
+    // Optional. Allow the layer to commit thread sensitive content during a sync point
+    virtual void commitPendingTextureUploads(LayerCompositingThread*) { }
 
     // Unlike the other methods here, this one will be called on the WebKit thread
     virtual void scheduleCommit() { }

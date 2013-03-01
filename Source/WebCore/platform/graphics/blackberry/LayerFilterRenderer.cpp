@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@
 
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformLog.h>
-#include <wtf/Vector.h>
+#include <Vector.h>
 
 #include <cstring>
 #include <limits>
@@ -242,7 +242,6 @@ PassRefPtr<LayerFilterRendererAction> LayerFilterRendererAction::create(int prog
 
 LayerFilterRendererAction::LayerFilterRendererAction(int c_programId)
     : m_programId(c_programId)
-    , m_customId(-1)
     , m_pushSnapshot(false)
     , m_popSnapshot(false)
     , m_drawingMode(DrawTriangleFanArrays)
@@ -302,7 +301,7 @@ bool LayerFilterRenderer::initializeSharedGLObjects()
 {
     // See also TextureMapperShaderManager.cpp
 
-    char vertexShaderString[] =
+    char standardVertexShaderString[] =
         "attribute vec4 a_position;   \n"
         "attribute vec2 a_texCoord;   \n"
         "varying vec2 v_texCoord;     \n"
@@ -312,6 +311,17 @@ bool LayerFilterRenderer::initializeSharedGLObjects()
         "  v_texCoord = a_texCoord;   \n"
         "}                            \n";
 
+    char offsetVertexShaderString[] =
+        "attribute vec4 a_position;              \n"
+        "attribute vec2 a_texCoord;              \n"
+        "uniform mediump vec2 u_offset;          \n"
+        "varying vec2 v_texCoord;                \n"
+        "void main()                             \n"
+        "{                                       \n"
+        "  gl_Position = a_position;             \n"
+        "  v_texCoord = a_texCoord - u_offset;   \n"
+        "}                                       \n";
+
 #define STANDARD_FILTER(x...) \
         "precision mediump float; \n"\
         "\n"\
@@ -320,16 +330,6 @@ bool LayerFilterRenderer::initializeSharedGLObjects()
         "uniform highp float u_amount;\n"\
         #x\
         "void main(void)\n { gl_FragColor = shade(texture2D(s_texture, v_texCoord)); }"
-
-#define OFFSET_FILTER(x...) \
-        "precision mediump float; \n"\
-        "\n"\
-        "varying mediump vec2 v_texCoord;\n"\
-        "uniform lowp sampler2D s_texture;\n"\
-        "uniform highp float u_amount;\n"\
-        "uniform mediump vec2 u_offset;\n"\
-        #x\
-        "void main(void)\n { gl_FragColor = shade(texture2D(s_texture, v_texCoord - u_offset)); }"
 
 #define BLUR_FILTER(x...) \
         "precision highp float; \n"\
@@ -354,7 +354,7 @@ bool LayerFilterRenderer::initializeSharedGLObjects()
         "coefficientSum += incr.x;\n"\
         "incr.xy *= incr.yz;\n"\
         "\n"\
-        "for (float i = 1.0; i <= numBlurPixelsPerSide; i++) {\n"\
+        "for (float i = 1.0; i <= u_amount; i++) {\n"\
         "    avg += texture2D(s_texture, v_texCoord.xy - i * u_blurSize * blurMultiplyVec) * incr.x;\n"\
         "    avg += texture2D(s_texture, v_texCoord.xy + i * u_blurSize * blurMultiplyVec) * incr.x;\n"\
         "    coefficientSum += 2.0 * incr.x;\n"\
@@ -442,16 +442,14 @@ bool LayerFilterRenderer::initializeSharedGLObjects()
     );
 
     shaderStrs[LayerData::CSSFilterShaderBlurX] = BLUR_FILTER(
-        const float numBlurPixelsPerSide = 2.0;
         const vec2  blurMultiplyVec      = vec2(1.0, 0.0);
     );
 
     shaderStrs[LayerData::CSSFilterShaderBlurY] = BLUR_FILTER(
-        const float numBlurPixelsPerSide = 2.0;
         const vec2  blurMultiplyVec      = vec2(0.0, 1.0);
     );
 
-    shaderStrs[LayerData::CSSFilterShaderShadow] = OFFSET_FILTER(
+    shaderStrs[LayerData::CSSFilterShaderShadow] = STANDARD_FILTER(
         uniform lowp vec3 u_color;
         lowp vec4 shade(lowp vec4 color)
         {
@@ -469,7 +467,10 @@ bool LayerFilterRenderer::initializeSharedGLObjects()
     );
 
     for (int i = 0; i < LayerData::NumberOfCSSFilterShaders; i++) {
-        m_cssFilterProgramObject[i] = LayerRenderer::loadShaderProgram(vertexShaderString, shaderStrs[i]);
+        if (i == LayerData::CSSFilterShaderShadow)
+            m_cssFilterProgramObject[i] = LayerRenderer::loadShaderProgram(offsetVertexShaderString, shaderStrs[i]);
+        else
+            m_cssFilterProgramObject[i] = LayerRenderer::loadShaderProgram(standardVertexShaderString, shaderStrs[i]);
         if (!m_cssFilterProgramObject[i]) {
             BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelWarn, "Could not load CSS Filter Shader %i", i);
             return false;
@@ -499,19 +500,55 @@ bool LayerFilterRenderer::initializeSharedGLObjects()
 
 void LayerFilterRenderer::ping(LayerRendererSurface* surface)
 {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture->textureId(), 0);
-    glBindTexture(GL_TEXTURE_2D, surface->texture()->textureId());
+    GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(m_texture->textureId()));
+    if (!texid) {
+        BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(m_texture->textureId(), GL_TEXTURE_2D);
+        texid = reinterpret_cast<GLuint>(platformBufferHandle(m_texture->textureId()));
+    }
+
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D,
+        texid,
+        0
+    );
+    glBindTexture(
+        GL_TEXTURE_2D,
+        reinterpret_cast<GLuint>(platformBufferHandle(surface->texture()->textureId()))
+    );
 }
 
 void LayerFilterRenderer::pong(LayerRendererSurface* surface)
 {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, surface->texture()->textureId(), 0);
-    glBindTexture(GL_TEXTURE_2D, m_texture->textureId());
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D,
+        reinterpret_cast<GLuint>(platformBufferHandle(surface->texture()->textureId())),
+        0
+    );
+    glBindTexture(
+        GL_TEXTURE_2D,
+        reinterpret_cast<GLuint>(platformBufferHandle(m_texture->textureId()))
+    );
 }
 
 void LayerFilterRenderer::pushSnapshot(LayerRendererSurface* surface, int sourceId)
 {
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_snapshotTexture->textureId(), 0);
+    GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(m_snapshotTexture->textureId()));
+    if (!texid) {
+        BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(m_snapshotTexture->textureId(), GL_TEXTURE_2D);
+        texid = reinterpret_cast<GLuint>(platformBufferHandle(m_snapshotTexture->textureId()));
+    }
+
+    glFramebufferTexture2D(
+        GL_FRAMEBUFFER,
+        GL_COLOR_ATTACHMENT0,
+        GL_TEXTURE_2D,
+        texid,
+        0
+    );
 
     glBindTexture(GL_TEXTURE_2D, sourceId);
     glClear(GL_COLOR_BUFFER_BIT); // to transparency
@@ -529,7 +566,10 @@ void LayerFilterRenderer::popSnapshot()
     // to the snapshot texture. Next time glDrawArrays is called, the snapshot will be drawn.
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-    glBindTexture(GL_TEXTURE_2D, m_snapshotTexture->textureId());
+    glBindTexture(
+        GL_TEXTURE_2D,
+        reinterpret_cast<GLuint>(platformBufferHandle(m_snapshotTexture->textureId()))
+    );
 }
 
 Vector<RefPtr<LayerFilterRendererAction> > LayerFilterRenderer::actionsForOperations(LayerRendererSurface* surface, const Vector<RefPtr<FilterOperation> >& ops)
@@ -659,9 +699,9 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds() );
     glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
 
-    m_texture->protect(surface->texture()->size());
+    m_texture->protect(surface->texture()->size(), BlackBerry::Platform::Graphics::AlwaysBacked);
     if (requireSnapshot)
-        m_snapshotTexture->protect(surface->texture()->size());
+        m_snapshotTexture->protect(surface->texture()->size(), BlackBerry::Platform::Graphics::AlwaysBacked);
 
     if (!fbo)
         glGenFramebuffers(1, &fbo);
@@ -678,9 +718,16 @@ void LayerFilterRenderer::applyActions(unsigned& fbo, LayerCompositingThread* la
         // Because we eventually have to end on the parent texture, we need an even number of actions.
         // actionsForOperations takes care of that.
 
-        if (actions[i]->shouldPushSnapshot())
-            pushSnapshot(surface, (!(i % 2) ? surface->texture()->textureId() : m_texture->textureId()));
+        if (actions[i]->shouldPushSnapshot()) {
+            RefPtr<Texture> currentTexture = (!(i % 2) ? surface->texture() : m_texture);
+            GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(currentTexture->textureId()));
+            if (!texid) {
+                BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(currentTexture->textureId(), GL_TEXTURE_2D);
+                texid = reinterpret_cast<GLuint>(platformBufferHandle(currentTexture->textureId()));
+            }
 
+            pushSnapshot(surface, texid);
+        }
         if (!(i % 2))
             ping(surface); // Set framebuffer to ours, and texture to parent
         else

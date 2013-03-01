@@ -18,56 +18,94 @@
 
 #include "config.h"
 #include "CanvasLayerWebKitThread.h"
+#include "LayerCompositingThread.h"
 
 #if USE(ACCELERATED_COMPOSITING) && ENABLE(ACCELERATED_2D_CANVAS)
 
-#include "SharedGraphicsContext3D.h"
-#include <GLES2/gl2.h>
-#include <SkGpuDevice.h>
+#include <BlackBerryPlatformGLES2Program.h>
+
+using BlackBerry::Platform::Graphics::GLES2Program;
 
 namespace WebCore {
 
-CanvasLayerWebKitThread::CanvasLayerWebKitThread(SkGpuDevice* device)
-    : EGLImageLayerWebKitThread(CanvasLayer)
+void CanvasLayerWebKitThread::deleteTextures()
 {
-    setDevice(device);
+}
+
+class CanvasLayerCompositingThreadClient : public LayerCompositingThreadClient {
+public:
+    CanvasLayerCompositingThreadClient(BlackBerry::Platform::Graphics::Buffer*, const IntSize&);
+
+    void layerCompositingThreadDestroyed(LayerCompositingThread*) { }
+    void layerVisibilityChanged(LayerCompositingThread*, bool) { }
+    void uploadTexturesIfNeeded(LayerCompositingThread*) { }
+
+    void drawTextures(LayerCompositingThread*, double scale, const GLES2Program&);
+    void deleteTextures(LayerCompositingThread*);
+
+    void commitPendingTextureUploads(LayerCompositingThread*);
+
+    void clearBuffer() { m_buffer = 0; }
+
+private:
+    BlackBerry::Platform::Graphics::Buffer* m_buffer;
+    IntSize m_size;
+};
+
+CanvasLayerCompositingThreadClient::CanvasLayerCompositingThreadClient(BlackBerry::Platform::Graphics::Buffer* buffer, const IntSize& size)
+    : m_buffer(buffer)
+    , m_size(size)
+{
+}
+
+void CanvasLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double scale, const GLES2Program&)
+{
+    if (!m_buffer)
+        return;
+
+    TransformationMatrix dt = layer->drawTransform();
+    dt.translate(-layer->bounds().width() / 2.0, -layer->bounds().height() / 2.0);
+    dt.scaleNonUniform(static_cast<double>(layer->bounds().width()) / m_size.width(), static_cast<double>(layer->bounds().height()) / m_size.height());
+    blitToBuffer(0, m_buffer, reinterpret_cast<BlackBerry::Platform::TransformationMatrix&>(dt),
+        BlackBerry::Platform::Graphics::SourceOver, static_cast<unsigned char>(layer->drawOpacity() * 255));
+}
+
+void CanvasLayerCompositingThreadClient::deleteTextures(LayerCompositingThread* layer)
+{
+    // Nothing to do here, the buffer is not owned by us.
+}
+
+void CanvasLayerCompositingThreadClient::commitPendingTextureUploads(LayerCompositingThread* layer)
+{
+    if (!m_buffer)
+        return;
+
+    // This method is called during a synchronization point between WebKit and compositing thread.
+    // This is our only chance to transfer the back display list to the front display list without
+    // race conditions.
+    // 1. Flush back display list to front
+    BlackBerry::Platform::Graphics::releaseBufferDrawable(m_buffer);
+    // 2. Draw front display list to FBO
+    BlackBerry::Platform::Graphics::updateBufferBackingSurface(m_buffer);
+}
+
+
+CanvasLayerWebKitThread::CanvasLayerWebKitThread(BlackBerry::Platform::Graphics::Buffer* buffer, const IntSize& size)
+    : LayerWebKitThread(CanvasLayer, 0)
+{
+    m_compositingThreadClient = new CanvasLayerCompositingThreadClient(buffer, size);
+    layerCompositingThread()->setClient(m_compositingThreadClient);
 }
 
 CanvasLayerWebKitThread::~CanvasLayerWebKitThread()
 {
-    if (SharedGraphicsContext3D::get()->makeContextCurrent())
-        deleteFrontBuffer();
+    layerCompositingThread()->setClient(0);
+    delete m_compositingThreadClient;
 }
 
-void CanvasLayerWebKitThread::setDevice(SkGpuDevice* device)
+void CanvasLayerWebKitThread::clearBuffer(CanvasLayerWebKitThread* layer)
 {
-    m_device = device;
-    setNeedsDisplay();
-}
-
-void CanvasLayerWebKitThread::updateTextureContentsIfNeeded()
-{
-    if (!m_device)
-        return;
-
-    if (!SharedGraphicsContext3D::get()->makeContextCurrent())
-        return;
-
-    GrRenderTarget* renderTarget = reinterpret_cast<GrRenderTarget*>(m_device->accessRenderTarget());
-    if (!renderTarget)
-        return;
-
-    GrTexture* texture = renderTarget->asTexture();
-    if (!texture)
-        return;
-
-    updateFrontBuffer(IntSize(m_device->width(), m_device->height()), texture->getTextureHandle());
-}
-
-void CanvasLayerWebKitThread::deleteTextures()
-{
-    if (SharedGraphicsContext3D::get()->makeContextCurrent())
-        deleteFrontBuffer();
+    layer->m_compositingThreadClient->clearBuffer();
 }
 
 }

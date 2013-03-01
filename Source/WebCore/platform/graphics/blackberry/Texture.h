@@ -23,10 +23,9 @@
 
 #include "IntSize.h"
 
+#include <BlackBerryPlatformGraphics.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
-
-class SkBitmap;
 
 namespace WebCore {
 
@@ -48,10 +47,12 @@ public:
 
     ~Texture();
 
-    unsigned textureId() const { return m_textureId; }
+    typedef BlackBerry::Platform::Graphics::Buffer* GpuHandle;
+    typedef BlackBerry::Platform::Graphics::Buffer* HostType;
 
-    bool isDirty() const { return !m_textureId; }
-    bool hasTexture() const { return m_textureId; }
+    GpuHandle textureId() const { return m_handle; }
+    bool isDirty() const { return !m_handle; }
+    bool hasTexture() const { return m_handle; }
 
     bool isColor() const { return m_isColor; }
     bool isOpaque() const { return m_isOpaque; }
@@ -59,9 +60,11 @@ public:
     bool isProtected() const { return m_protectionCount > 0; }
     void protect() { ++m_protectionCount; }
     void unprotect() { --m_protectionCount; }
-    bool protect(const IntSize&);
 
-    void updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tile, bool isOpaque);
+    // This will ensure the texture has backing with the specified size
+    bool protect(const IntSize&, BlackBerry::Platform::Graphics::BufferType = BlackBerry::Platform::Graphics::BackedWhenNecessary);
+
+    void updateContents(const HostType& contents, const IntRect& dirtyRect, const IntRect& tile, bool isOpaque);
     void setContentsToColor(const Color&);
 
     IntSize size() const { return m_size; }
@@ -69,26 +72,31 @@ public:
     int height() const { return m_size.height(); }
     static int bytesPerPixel() { return 4; }
 
+    size_t sizeInBytes() const { return m_bufferSizeInBytes; }
+
 private:
     friend class TextureCacheCompositingThread;
 
     Texture(bool isColor = false);
-
-    void setTextureId(unsigned id)
+    void setTextureId(GpuHandle id)
     {
-        m_textureId = id;
+        m_handle = id;
 
         // We assume it is a newly allocated texture,
         // and thus empty, or 0, which would of course
         // be empty.
         m_size = IntSize();
+        m_bufferSizeInBytes = 0;
     }
 
+    void setSize(const IntSize& size) { m_size = size; }
+
     int m_protectionCount;
-    unsigned m_textureId;
+    GpuHandle m_handle;
     IntSize m_size;
     bool m_isColor;
     bool m_isOpaque;
+    size_t m_bufferSizeInBytes;
 };
 
 } // namespace WebCore

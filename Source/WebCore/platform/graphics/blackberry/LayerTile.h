@@ -25,8 +25,6 @@
 
 #include <wtf/RefPtr.h>
 
-class SkBitmap;
-
 namespace WebCore {
 
 class Color;
@@ -48,15 +46,22 @@ public:
 
     bool hasTexture() const { return m_texture && m_texture->hasTexture(); }
 
-    void setContents(const SkBitmap& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
+    void setContents(const Texture::HostType& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
     void setContentsToColor(const Color&);
-    void updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
+    void updateContents(const Texture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
     void discardContents();
 
     // The current texture is an accurate preview of this layer, but a more
     // detailed texture could be obtained by repainting the layer. Used when
     // zoom level changes.
     void setContentsDirty() { m_contentsDirty = true; }
+
+    enum RenderState { DoesNotNeedRender = 0, NeedsRender = 1, RenderPending = 2 };
+    RenderState renderState() const { return static_cast<RenderState>(m_needsRender); }
+    bool needsRender() { return m_needsRender == NeedsRender; }
+    void setNeedsRender(bool needsRender) { m_needsRender = needsRender; }
+    void setRenderPending() { m_needsRender = RenderPending; }
+    void setRenderDone() { m_needsRender = DoesNotNeedRender; }
 
 private:
     void setTexture(PassRefPtr<Texture>);
@@ -65,6 +70,7 @@ private:
     RefPtr<Texture> m_texture;
     bool m_contentsDirty : 1;
     bool m_visible : 1;
+    unsigned m_needsRender : 2;
 };
 
 }

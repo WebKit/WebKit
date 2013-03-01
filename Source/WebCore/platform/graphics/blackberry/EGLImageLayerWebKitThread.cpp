@@ -25,41 +25,36 @@
 #include "LayerRenderer.h"
 #include "SharedGraphicsContext3D.h"
 #include <BlackBerryPlatformGLES2ContextState.h>
+#include <BlackBerryPlatformGLES2SharedTexture.h>
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformLog.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
 #include <GLES2/gl2.h>
 
-using BlackBerry::Platform::Graphics::GLES2Program;
-using BlackBerry::Platform::Graphics::GLES2ContextState;
+using namespace BlackBerry::Platform::Graphics;
 
 namespace WebCore {
-
-static PFNEGLCREATEIMAGEKHRPROC eglCreateImageKHR = 0;
-static PFNEGLDESTROYIMAGEKHRPROC eglDestroyImageKHR = 0;
 
 EGLImageLayerWebKitThread::EGLImageLayerWebKitThread(LayerType type)
     : LayerWebKitThread(type, 0)
     , m_client(EGLImageLayerCompositingThreadClient::create())
     , m_needsDisplay(false)
-    , m_frontBufferTexture(0)
-    , m_fbo(0)
     , m_program(0)
-    , m_image(0)
+    , m_texture(0)
+    , m_textureAccessor(0)
 {
     layerCompositingThread()->setClient(m_client.get());
-    setLayerProgramShader(LayerProgramShaderRGBA);
+    setLayerProgram(LayerProgramRGBA);
 }
 
 EGLImageLayerWebKitThread::~EGLImageLayerWebKitThread()
 {
     // The subclass is responsible for calling deleteFrontBuffer()
     // before we get this far.
-    ASSERT(!m_frontBufferTexture);
-    ASSERT(!m_fbo);
     ASSERT(!m_program);
-    ASSERT(!m_image);
+    ASSERT(!m_texture);
+    ASSERT(!m_textureAccessor);
 }
 
 void EGLImageLayerWebKitThread::setNeedsDisplay()
@@ -76,25 +71,9 @@ void EGLImageLayerWebKitThread::updateFrontBuffer(const IntSize& size, unsigned 
     if (size.isEmpty()) {
         if (size != m_size) {
             deleteFrontBuffer();
-            if (m_image)
-                m_garbage.append(m_image);
-            m_image = 0;
             m_size = size;
         }
 
-        m_needsDisplay = false;
-        return;
-    }
-
-    if (!eglCreateImageKHR) {
-        eglCreateImageKHR = reinterpret_cast<PFNEGLCREATEIMAGEKHRPROC>(eglGetProcAddress("eglCreateImageKHR"));
-        eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
-    }
-
-    ASSERT(eglCreateImageKHR && eglDestroyImageKHR);
-    if (!eglCreateImageKHR || !eglDestroyImageKHR) {
-        using namespace BlackBerry::Platform;
-        logAlways(LogLevelWarn, "eglGetProcAddress for eglCreate/DestroyImageKHR FAILED");
         m_needsDisplay = false;
         return;
     }
@@ -106,7 +85,7 @@ void EGLImageLayerWebKitThread::updateFrontBuffer(const IntSize& size, unsigned 
     {
         GLES2ContextState::TextureAndFBOStateSaver textureAndFBOStateSaver;
 
-        if (!createImageIfNeeded(size))
+        if (!createTextureIfNeeded(size))
             return;
 
         m_needsDisplay = false;
@@ -119,16 +98,14 @@ void EGLImageLayerWebKitThread::updateFrontBuffer(const IntSize& size, unsigned 
 
 void EGLImageLayerWebKitThread::deleteFrontBuffer()
 {
-    glDeleteTextures(1, &m_frontBufferTexture);
-    m_frontBufferTexture = 0;
-    glDeleteFramebuffers(1, &m_fbo);
-    m_fbo = 0;
+    delete m_texture;
+    m_texture = 0;
     glDeleteProgram(m_program);
     m_program = 0;
 
-    // The image is in our EGLImageLayerCompositingThreadClient's custody
+    // The texture accessor is in our EGLImageLayerCompositingThreadClient's custody
     // at this point, and that object is responsible for deleting it.
-    m_image = 0;
+    m_textureAccessor = 0;
 
     // If anyone tries to render us after this, we're certainly going to need display.
     m_needsDisplay = true;
@@ -139,55 +116,21 @@ void EGLImageLayerWebKitThread::commitPendingTextureUploads()
     // This call is serialized with the compositing thread, so it's safe to update the
     // image and destroy any old images.
 
-    m_client->setImage(m_image);
-
-    // Destroy the garbage images in a thread-safe way
-    for (size_t i = 0; i < m_garbage.size(); ++i)
-        eglDestroyImageKHR(BlackBerry::Platform::Graphics::eglDisplay(), m_garbage[i]);
+    m_client->setTextureAccessor(m_textureAccessor);
 }
 
-bool EGLImageLayerWebKitThread::createImageIfNeeded(const IntSize& size)
+bool EGLImageLayerWebKitThread::createTextureIfNeeded(const IntSize& size)
 {
-    // We use a texture rather than a renderbuffer as the basis of the FBO and EGLImage,
-    // since the EGLImage will be used as a texture on the compositing thread in the end.
-
-    if (!m_frontBufferTexture) {
-        glGenTextures(1, &m_frontBufferTexture);
-        glBindTexture(GL_TEXTURE_2D, m_frontBufferTexture);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    }
-
-    if (!m_fbo)
-        glGenFramebuffers(1, &m_fbo);
-
-    if (!m_image || size != m_size) {
-        IntSize fboSize = size;
-
-        // Imagination-specific fix
-        static bool isImaginationHardware = std::strstr(reinterpret_cast<const char*>(glGetString(GL_RENDERER)), "PowerVR SGX");
-        if (isImaginationHardware)
-            fboSize = fboSize.expandedTo(IntSize(16, 16));
-
-        glBindTexture(GL_TEXTURE_2D, m_frontBufferTexture);
-        glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, fboSize.width(), fboSize.height(), 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_frontBufferTexture, 0);
-
-        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if (!m_texture || size != m_size) {
+        delete m_texture;
+        m_texture = new GLES2SharedTexture(size);
+        if (!m_texture->isValid()) {
+            delete m_texture;
+            m_texture = 0;
             return false;
-        if (glGetError() != GL_NO_ERROR)
-            return false;
+        }
 
-        // The sibling is orphaned after glTexImage2D, recreate the image.
-        if (m_image)
-            m_garbage.append(m_image);
-        m_image = eglCreateImageKHR(BlackBerry::Platform::Graphics::eglDisplay(), eglGetCurrentContext(),
-                EGL_GL_TEXTURE_2D_KHR, (EGLClientBuffer)m_frontBufferTexture, 0);
-        if (!m_image)
-            return false;
+        m_textureAccessor = m_texture->createTextureAccessor();
 
         m_size = size;
     }
@@ -234,17 +177,12 @@ void EGLImageLayerWebKitThread::blitToFrontBuffer(unsigned backBufferTexture)
     if (!backBufferTexture)
         return;
 
-    GLuint currentProgram = 0;
-    glGetIntegerv(GL_CURRENT_PROGRAM, reinterpret_cast<GLint*>(&currentProgram));
+    GLES2ContextState::ProgramStateSaver programStateSaver;
 
     createShaderIfNeeded();
 
-    GLuint currentArrayBufferBinding = 0, currentElementArrayBufferBinding = 0;
-    GLint currentViewport[4] = { 0, 0, 0, 0 };
-    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&currentArrayBufferBinding));
-    glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&currentElementArrayBufferBinding));
-    glGetIntegerv(GL_VIEWPORT, &currentViewport[0]);
-
+    GLES2ContextState::BufferBindingSaver bufferBindingSaver;
+    GLES2ContextState::ViewportSaver viewportSaver;
     GLES2ContextState::GlobalFlagStateSaver flagStateSaver(GLES2ContextState::GlobalFlagState::DontRestoreBlendFunc);
 
     glDisable(GL_DEPTH_TEST);
@@ -254,7 +192,7 @@ void EGLImageLayerWebKitThread::blitToFrontBuffer(unsigned backBufferTexture)
     glDisable(GL_BLEND);
 
     glViewport(0, 0, m_size.width(), m_size.height());
-    glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+    makeBufferCurrent(m_texture->buffer(), GLES2);
     glUseProgram(m_program);
     glBindTexture(GL_TEXTURE_2D, backBufferTexture);
     glColorMask(true, true, true, true);
@@ -277,18 +215,7 @@ void EGLImageLayerWebKitThread::blitToFrontBuffer(unsigned backBufferTexture)
 
         glDisableVertexAttribArray(GLES2Program::PositionAttributeIndex);
         glDisableVertexAttribArray(GLES2Program::TexCoordAttributeIndex);
-
-        glBindBuffer(GL_ARRAY_BUFFER, currentArrayBufferBinding);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, currentElementArrayBufferBinding);
     }
-
-    // The previous program might have been deleted by refcount destruction
-    // with another one now in use. Don't try to restore it later.
-    if (currentProgram && !glIsProgram(currentProgram))
-        currentProgram = 0;
-
-    glUseProgram(currentProgram);
-    glViewport(currentViewport[0], currentViewport[1], currentViewport[2], currentViewport[3]);
 }
 
 }

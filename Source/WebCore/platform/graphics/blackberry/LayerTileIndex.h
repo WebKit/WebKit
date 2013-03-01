@@ -66,7 +66,7 @@ inline bool operator!=(const TileIndex& a, const TileIndex& b)
 namespace WTF {
 
 template<> struct IntHash<WebCore::TileIndex> {
-    static unsigned hash(const WebCore::TileIndex& key) { return pairIntHash(key.i(), key.j()); }
+    static unsigned hash(const WebCore::TileIndex& key) { return intHash((static_cast<uint64_t>(key.i()) << 32 | key.j())); }
     static bool equal(const WebCore::TileIndex& a, const WebCore::TileIndex& b) { return a == b; }
     static const bool safeToCompareToEmptyOrDeleted = true;
 };

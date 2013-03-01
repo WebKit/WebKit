@@ -36,10 +36,8 @@
 #include "LayerWebKitThread.h"
 
 #include "GraphicsContext.h"
-#include "InstrumentedPlatformCanvas.h"
 #include "LayerCompositingThread.h"
 #include "LayerMessage.h"
-#include "PlatformContextSkia.h"
 #include "RenderLayerBacking.h"
 #include "TransformationMatrix.h"
 
@@ -60,7 +58,6 @@ LayerWebKitThread::LayerWebKitThread(LayerType type, GraphicsLayerBlackBerry* ow
     , m_owner(owner)
     , m_superlayer(0)
     , m_contents(0)
-    , m_scale(1.0)
     , m_isDrawable(false)
     , m_isMask(false)
     , m_animationsChanged(false)
@@ -68,6 +65,7 @@ LayerWebKitThread::LayerWebKitThread(LayerType type, GraphicsLayerBlackBerry* ow
 #if ENABLE(CSS_FILTERS)
     , m_filtersChanged(false)
 #endif
+    , m_didStartAnimations(false)
 {
     if (type == Layer)
         m_tiler = LayerTiler::create(this);
@@ -84,76 +82,46 @@ LayerWebKitThread::~LayerWebKitThread()
     ASSERT(!superlayer());
 
     // Remove the superlayer reference from all sublayers.
-    removeAllSublayers();
+    removeAll(m_sublayers);
+    removeAll(m_overlays);
 }
 
-SkBitmap LayerWebKitThread::paintContents(const IntRect& contentsRect, double scale, bool* isSolidColor, Color* color)
+void LayerWebKitThread::paintContents(BlackBerry::Platform::Graphics::Buffer* buffer, const IntRect& contentsRect, double scale)
 {
-    // Don't try to allocate image data bigger than this. This should be big
-    // enough to accomodate a huge iScroll use case.
-    // FIXME: This is a hack to work around a crash bug on maps.bing.com where
-    // a (visually empty) layer becomes too big.
-    static const int maximumBitmapSizeInBytes = 40 * 1024 * 1024;
-    static const int bytesPerPixel = 4;
+    if (!drawsContent() && !contents())
+        return;
 
-    if (isSolidColor)
-        *isSolidColor = false;
+    if (!buffer)
+        return;
 
-    if (contentsRect.width() * contentsRect.height() * bytesPerPixel > maximumBitmapSizeInBytes)
-        return SkBitmap();
+    IntRect untransformedContentsRect = contentsRect;
+    FloatRect clipRect = contentsRect;
+    if (scale != 1.0) {
+        TransformationMatrix matrix;
+        matrix.scale(1.0 / scale);
+        untransformedContentsRect = matrix.mapRect(contentsRect);
+        clipRect = matrix.mapRect(clipRect);
 
-    SkBitmap bitmap;
-
-    // Keep the canvas alive until we're done extracting its pixels
-    OwnPtr<InstrumentedPlatformCanvas> canvas;
-
-    if (drawsContent()) { // Layer contents must be drawn into a canvas.
-        IntRect untransformedContentsRect = mapFromTransformed(contentsRect, scale);
-
-        SkBitmap canvasBitmap;
-        canvasBitmap.setConfig(SkBitmap::kARGB_8888_Config, contentsRect.width(), contentsRect.height());
-        if (!canvasBitmap.allocPixels())
-            return SkBitmap();
-        canvasBitmap.setIsOpaque(false);
-        canvasBitmap.eraseColor(0);
-
-        canvas = adoptPtr(new InstrumentedPlatformCanvas(canvasBitmap));
-        PlatformContextSkia skiaContext(canvas.get());
-
-        GraphicsContext graphicsContext(&skiaContext);
-        graphicsContext.translate(-contentsRect.x(), -contentsRect.y());
-
-        if (scale != 1.0)
-            graphicsContext.scale(FloatSize(scale, scale));
-
-        // RenderLayerBacking doesn't always clip, so we need to do this by ourselves.
-        graphicsContext.clip(untransformedContentsRect);
-        m_owner->paintGraphicsLayerContents(graphicsContext, untransformedContentsRect);
-
-        bitmap = canvas->getDevice()->accessBitmap(false);
-        if (isSolidColor) {
-            *isSolidColor = canvas->isSolidColor();
-            if (color)
-                *color = canvas->solidColor();
-        }
+        // We extract from the contentsRect but draw a slightly larger region than
+        // we were told to, in order to avoid pixels being rendered only partially.
+        const int atLeastOneDevicePixel = static_cast<int>(ceilf(1.0 / scale));
+        untransformedContentsRect.inflate(atLeastOneDevicePixel);
     }
 
-    ASSERT(!bitmap.isNull());
+    PlatformGraphicsContext* platformContext = lockBufferDrawable(buffer);
+    GraphicsContext graphicsContext(platformContext);
+    if (contents()) {
+        // Images needs to be centered and will be scaled to fit the bounds on the compositing thread
+        if (!contents()->size().isEmpty())
+            graphicsContext.drawImage(contents(), ColorSpaceDeviceRGB, IntPoint(0, 0));
+    } else {
+        graphicsContext.translate(-contentsRect.x(), -contentsRect.y());
+        graphicsContext.scale(FloatSize(scale, scale));
+        graphicsContext.clip(clipRect);
+        m_owner->paintGraphicsLayerContents(graphicsContext, untransformedContentsRect);
+    }
 
-    // FIXME: do we need to support more image configurations?
-    ASSERT(bitmap.config() == SkBitmap::kARGB_8888_Config);
-    if (bitmap.config() != SkBitmap::kARGB_8888_Config)
-        return SkBitmap();
-
-    return bitmap;
-}
-
-bool LayerWebKitThread::contentsVisible(const IntRect& contentsRect) const
-{
-    if (!m_owner)
-        return false;
-
-    return m_owner->contentsVisible(contentsRect);
+    releaseBufferDrawable(buffer);
 }
 
 void LayerWebKitThread::updateTextureContentsIfNeeded()
@@ -164,8 +132,7 @@ void LayerWebKitThread::updateTextureContentsIfNeeded()
 
 void LayerWebKitThread::commitPendingTextureUploads()
 {
-    if (m_tiler)
-        m_tiler->commitPendingTextureUploads();
+    layerCompositingThread()->commitPendingTextureUploads();
 }
 
 void LayerWebKitThread::setContents(Image* contents)
@@ -184,6 +151,9 @@ void LayerWebKitThread::setContents(Image* contents)
         setNeedsDisplay();
     else
         setNeedsCommit();
+
+    // If this layer contains a bitmap image it isn't rerendered at different scale (it is resolution independent)
+    m_contentsResolutionIndependent = static_cast<bool>(m_contents);
 }
 
 void LayerWebKitThread::setDrawable(bool isDrawable)
@@ -199,50 +169,61 @@ void LayerWebKitThread::setDrawable(bool isDrawable)
 
 void LayerWebKitThread::setNeedsCommit()
 {
-    // Call notifyFlushRequired(), which in this implementation plumbs through to
+    // Call notifySyncRequired(), which in this implementation plumbs through to
     // call scheduleRootLayerCommit() on the WebView, which will cause us to commit
     // changes done on the WebKit thread for display on the Compositing thread.
     if (m_owner)
-        m_owner->notifyFlushRequired();
+        m_owner->notifySyncRequired();
 }
 
-void LayerWebKitThread::notifyAnimationStarted(double time)
+void LayerWebKitThread::notifyAnimationsStarted(double time)
 {
-    if (m_owner)
-        m_owner->notifyAnimationStarted(time);
+    if (m_didStartAnimations) {
+        m_didStartAnimations = false;
+        if (m_owner)
+            m_owner->notifyAnimationStarted(time);
+    }
+
+    size_t listSize = m_sublayers.size();
+    for (size_t i = 0; i < listSize; ++i)
+        m_sublayers[i]->notifyAnimationsStarted(time);
+
+    listSize = m_overlays.size();
+    for (size_t i = 0; i < listSize; ++i)
+        m_overlays[i]->notifyAnimationsStarted(time);
 }
 
 void LayerWebKitThread::commitOnWebKitThread(double scale)
 {
     // Updating texture contents require the latest visibility info.
     updateTextureContents(scale);
-
-    // Make sure all animations are started at the same time
-    // to avoid showing animations out-of-sync.
-    // Do this after updating texture contents, because that can be a slow
-    // operation.
-    startAnimations(currentTime());
 }
 
-void LayerWebKitThread::startAnimations(double time)
+bool LayerWebKitThread::startAnimations(double time)
 {
+    bool didStartAnimations = false;
     for (size_t i = 0; i < m_runningAnimations.size(); ++i) {
         if (!m_runningAnimations[i]->startTime()) {
-            m_animationsChanged = true;
             m_runningAnimations[i]->setStartTime(time);
-            notifyAnimationStarted(time);
+            m_didStartAnimations = didStartAnimations = true;
         }
     }
 
     size_t listSize = m_sublayers.size();
-    for (size_t i = 0; i < listSize; i++)
-        m_sublayers[i]->startAnimations(time);
+    for (size_t i = 0; i < listSize; ++i)
+        didStartAnimations |= m_sublayers[i]->startAnimations(time);
+
+    listSize = m_overlays.size();
+    for (size_t i = 0; i < listSize; ++i)
+        didStartAnimations |= m_overlays[i]->startAnimations(time);
+
+    return didStartAnimations;
 }
 
 void LayerWebKitThread::updateTextureContents(double scale)
 {
-    if (m_scale != scale) {
-        m_scale = scale;
+    if (m_contentsScale != scale) {
+        m_contentsScale = scale;
 
         // Only web content can redraw at the new scale.
         // Canvas, images, video etc can't.
@@ -265,8 +246,12 @@ void LayerWebKitThread::updateTextureContents(double scale)
     }
 
     size_t listSize = m_sublayers.size();
-    for (size_t i = 0; i < listSize; i++)
+    for (size_t i = 0; i < listSize; ++i)
         m_sublayers[i]->updateTextureContents(scale);
+
+    listSize = m_overlays.size();
+    for (size_t i = 0; i < listSize; ++i)
+        m_overlays[i]->updateTextureContents(scale);
 
     if (maskLayer())
         maskLayer()->updateTextureContents(scale);
@@ -298,11 +283,16 @@ void LayerWebKitThread::commitOnCompositingThread()
     }
     m_position = oldPosition;
     updateLayerHierarchy();
+
     commitPendingTextureUploads();
 
     size_t listSize = m_sublayers.size();
-    for (size_t i = 0; i < listSize; i++)
+    for (size_t i = 0; i < listSize; ++i)
         m_sublayers[i]->commitOnCompositingThread();
+
+    listSize = m_overlays.size();
+    for (size_t i = 0; i < listSize; ++i)
+        m_overlays[i]->commitOnCompositingThread();
 
     if (maskLayer()) {
         maskLayer()->commitOnCompositingThread();
@@ -319,15 +309,20 @@ void LayerWebKitThread::commitOnCompositingThread()
 
 void LayerWebKitThread::addSublayer(PassRefPtr<LayerWebKitThread> sublayer)
 {
-    insertSublayer(sublayer, numSublayers());
+    insert(m_sublayers, sublayer, m_sublayers.size());
 }
 
-void LayerWebKitThread::insertSublayer(PassRefPtr<LayerWebKitThread> sublayer, size_t index)
+void LayerWebKitThread::addOverlay(PassRefPtr<LayerWebKitThread> overlay)
+{
+    insert(m_overlays, overlay, m_overlays.size());
+}
+
+void LayerWebKitThread::insert(Vector<RefPtr<LayerWebKitThread> >& list, PassRefPtr<LayerWebKitThread> sublayer, size_t index)
 {
     sublayer->removeFromSuperlayer();
-    index = min(index, m_sublayers.size());
+    index = min(index, list.size());
     sublayer->setSuperlayer(this);
-    m_sublayers.insert(index, sublayer);
+    list.insert(index, sublayer);
 
     setNeedsCommit();
 }
@@ -335,17 +330,23 @@ void LayerWebKitThread::insertSublayer(PassRefPtr<LayerWebKitThread> sublayer, s
 void LayerWebKitThread::removeFromSuperlayer()
 {
     if (m_superlayer)
-        m_superlayer->removeSublayer(this);
+        m_superlayer->removeSublayerOrOverlay(this);
 }
 
-void LayerWebKitThread::removeSublayer(LayerWebKitThread* sublayer)
+void LayerWebKitThread::removeSublayerOrOverlay(LayerWebKitThread* sublayer)
 {
-    int foundIndex = indexOfSublayer(sublayer);
-    if (foundIndex == -1)
+    remove(m_sublayers, sublayer);
+    remove(m_overlays, sublayer);
+}
+
+void LayerWebKitThread::remove(Vector<RefPtr<LayerWebKitThread> >& vector, LayerWebKitThread* sublayer)
+{
+    int foundIndex = vector.find(sublayer);
+    if (foundIndex == notFound)
         return;
 
     sublayer->setSuperlayer(0);
-    m_sublayers.remove(foundIndex);
+    vector.remove(foundIndex);
 
     setNeedsCommit();
 }
@@ -358,8 +359,8 @@ void LayerWebKitThread::replaceSublayer(LayerWebKitThread* reference, PassRefPtr
     if (reference == newLayer)
         return;
 
-    int referenceIndex = indexOfSublayer(reference);
-    if (referenceIndex == -1) {
+    int referenceIndex = m_sublayers.find(reference);
+    if (referenceIndex == notFound) {
         ASSERT_NOT_REACHED();
         return;
     }
@@ -370,15 +371,6 @@ void LayerWebKitThread::replaceSublayer(LayerWebKitThread* reference, PassRefPtr
         newLayer->removeFromSuperlayer();
         insertSublayer(newLayer, referenceIndex);
     }
-}
-
-int LayerWebKitThread::indexOfSublayer(const LayerWebKitThread* reference)
-{
-    for (size_t i = 0; i < m_sublayers.size(); i++) {
-        if (m_sublayers[i] == reference)
-            return i;
-    }
-    return -1;
 }
 
 void LayerWebKitThread::setBounds(const IntSize& size)
@@ -421,7 +413,6 @@ bool LayerWebKitThread::filtersCanBeComposited(const FilterOperations& filters)
         case FilterOperation::REFERENCE:
 #if ENABLE(CSS_SHADERS)
         case FilterOperation::CUSTOM:
-        case FilterOperation::VALIDATED_CUSTOM:
 #endif
             return false;
         default:
@@ -445,13 +436,17 @@ const LayerWebKitThread* LayerWebKitThread::rootLayer() const
     return layer;
 }
 
-void LayerWebKitThread::removeAllSublayers()
+void LayerWebKitThread::removeAll(Vector<RefPtr<LayerWebKitThread> >& vector)
 {
-    while (m_sublayers.size()) {
-        RefPtr<LayerWebKitThread> layer = m_sublayers[0].get();
-        ASSERT(layer->superlayer());
+    if (!vector.size())
+        return;
+
+    while (vector.size()) {
+        RefPtr<LayerWebKitThread> layer = vector[0].get();
+        ASSERT(layer->superlayer() == this);
         layer->removeFromSuperlayer();
     }
+
     setNeedsCommit();
 }
 
@@ -462,7 +457,7 @@ void LayerWebKitThread::setSublayers(const Vector<RefPtr<LayerWebKitThread> >& s
 
     removeAllSublayers();
     size_t listSize = sublayers.size();
-    for (size_t i = 0; i < listSize; i++)
+    for (size_t i = 0; i < listSize; ++i)
         addSublayer(sublayers[i]);
 }
 
@@ -485,8 +480,11 @@ void LayerWebKitThread::updateLayerHierarchy()
     m_layerCompositingThread->setSuperlayer(superlayer() ? superlayer()->m_layerCompositingThread.get() : 0);
 
     Vector<RefPtr<LayerCompositingThread> > sublayers;
-    size_t listSize = m_sublayers.size();
-    for (size_t i = 0; i < listSize; i++)
+    size_t listSize = m_overlays.size();
+    for (size_t i = 0; i < listSize; ++i)
+        sublayers.append(m_overlays[i]->m_layerCompositingThread.get());
+    listSize = m_sublayers.size();
+    for (size_t i = 0; i < listSize; ++i)
         sublayers.append(m_sublayers[i]->m_layerCompositingThread.get());
     m_layerCompositingThread->setSublayers(sublayers);
 }
@@ -495,7 +493,7 @@ void LayerWebKitThread::setIsMask(bool isMask)
 {
     m_isMask = isMask;
     if (isMask && m_tiler)
-        m_tiler->disableTiling(true);
+        m_tiler->setNeedsBacking(true);
 }
 
 void LayerWebKitThread::setRunningAnimations(const Vector<RefPtr<LayerAnimation> >& animations)
@@ -517,8 +515,12 @@ void LayerWebKitThread::releaseLayerResources()
     deleteTextures();
 
     size_t listSize = m_sublayers.size();
-    for (size_t i = 0; i < listSize; i++)
+    for (size_t i = 0; i < listSize; ++i)
         m_sublayers[i]->releaseLayerResources();
+
+    listSize = m_overlays.size();
+    for (size_t i = 0; i < listSize; ++i)
+        m_overlays[i]->releaseLayerResources();
 
     if (maskLayer())
         maskLayer()->releaseLayerResources();

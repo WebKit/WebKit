@@ -21,38 +21,24 @@
 #if ENABLE(VIDEO)
 #include "MediaPlayerPrivateBlackBerry.h"
 
-#include "AuthenticationChallengeManager.h"
 #include "CookieManager.h"
-#include "Credential.h"
 #include "CredentialStorage.h"
-#include "ExceptionCodePlaceholder.h"
-#include "Frame.h"
-#include "FrameView.h"
-#include "GraphicsContext.h"
-#include "HTMLNames.h"
 #include "HostWindow.h"
-#include "Logging.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamRegistry.h"
-#include "NotImplemented.h"
-#include "PlatformContextSkia.h"
-#include "ProtectionSpace.h"
-#include "RenderBox.h"
-#include "TimeRanges.h"
-#include "WebPageClient.h"
 
 #include <BlackBerryPlatformDeviceInfo.h>
 #include <BlackBerryPlatformPrimitives.h>
 #include <BlackBerryPlatformSettings.h>
 #include <FrameLoaderClientBlackBerry.h>
-#include <set>
-#include <wtf/text/CString.h>
 
 #if USE(ACCELERATED_COMPOSITING)
-#include "NativeImageSkia.h"
 #include "VideoLayerWebKitThread.h"
+#include <BlackBerryPlatformGLES2Program.h>
 #include <GLES2/gl2.h>
 #endif
+
+#include <TiledImage.h>
 
 using namespace std;
 using namespace BlackBerry::Platform;
@@ -115,7 +101,6 @@ MediaPlayerPrivate::MediaPlayerPrivate(MediaPlayer* player)
 #if USE(ACCELERATED_COMPOSITING)
     , m_bufferingTimer(this, &MediaPlayerPrivate::bufferingTimerFired)
     , m_showBufferingImage(false)
-    , m_mediaIsBuffering(false)
 #endif
     , m_userDrivenSeekTimer(this, &MediaPlayerPrivate::userDrivenSeekTimerFired)
     , m_lastSeekTime(0)
@@ -202,8 +187,6 @@ void MediaPlayerPrivate::play()
 {
     if (m_platformPlayer) {
         m_platformPlayer->play();
-        if (m_platformPlayer->isMetadataReady())
-            conditionallyGoFullscreenAfterPlay();
     }
 }
 
@@ -215,7 +198,7 @@ void MediaPlayerPrivate::pause()
 
 bool MediaPlayerPrivate::supportsFullscreen() const
 {
-    return true;
+    return hasVideo();
 }
 
 IntSize MediaPlayerPrivate::naturalSize() const
@@ -407,13 +390,12 @@ void MediaPlayerPrivate::paintCurrentFrameInContext(GraphicsContext* context, co
     if (!hasVideo() || context->paintingDisabled() || !m_webCorePlayer->visible())
         return;
 
-    PlatformGraphicsContext* graphics = context->platformContext();
-    ASSERT(graphics);
+    BlackBerry::Platform::Graphics::Drawable* dst = context->platformContext();
 
     BlackBerry::Platform::IntRect platformRect(rect.x(), rect.y(), rect.width(), rect.height());
     IntRect clippedRect = m_webCorePlayer->mediaPlayerClient()->mediaPlayerWindowClipRect();
     BlackBerry::Platform::IntRect platformWindowClipRect(clippedRect.x(), clippedRect.y(), clippedRect.width(), clippedRect.height());
-    m_platformPlayer->paint(graphics->canvas(), platformRect, platformWindowClipRect);
+    m_platformPlayer->paint(dst, platformRect, platformWindowClipRect);
 }
 
 bool MediaPlayerPrivate::hasAvailableVideoFrame() const
@@ -435,6 +417,12 @@ MediaPlayer::MovieLoadType MediaPlayerPrivate::movieLoadType() const
     return MediaPlayer::Unknown;
 }
 
+void MediaPlayerPrivate::prepareForRendering()
+{
+    if (m_platformPlayer)
+        m_platformPlayer->prepareForRendering();
+}
+
 void MediaPlayerPrivate::resizeSourceDimensions()
 {
     if (!m_webCorePlayer)
@@ -443,22 +431,10 @@ void MediaPlayerPrivate::resizeSourceDimensions()
     if (!m_webCorePlayer->mediaPlayerClient()->mediaPlayerIsVideo())
         return;
 
-    // If we have an HTMLVideoElement but the source has no video, then we need to resize the media element.
-    if (!hasVideo() && PlatformPlayer::MediaOK == m_platformPlayer->error()) {
-        LayoutRect rect = m_webCorePlayer->mediaPlayerClient()->mediaPlayerContentBoxRect();
-
-        static const int playbookMinAudioElementWidth = 300;
-        static const int playbookMinAudioElementHeight = 32;
-        // If the rect dimensions are less than the allowed minimum, use the minimum instead.
-        int newWidth = max(rect.width().toInt(), playbookMinAudioElementWidth);
-        int newHeight = max(rect.height().toInt(), playbookMinAudioElementHeight);
-
-        m_webCorePlayer->mediaPlayerClient()->mediaPlayerSetSize(IntSize(newWidth, newHeight));
-    }
-
     // If we don't know what the width and height of the video source is, then we need to set it to something sane.
     if (m_platformPlayer->sourceWidth() && m_platformPlayer->sourceHeight())
         return;
+
     LayoutRect rect = m_webCorePlayer->mediaPlayerClient()->mediaPlayerContentBoxRect();
     m_platformPlayer->setSourceDimension(rect.width().toUnsigned(), rect.height().toUnsigned());
 }
@@ -509,8 +485,9 @@ float MediaPlayerPrivate::percentLoaded()
     float buffered = 0;
     RefPtr<TimeRanges> timeRanges = this->buffered();
     for (unsigned i = 0; i < timeRanges->length(); ++i) {
-        float start = timeRanges->start(i, IGNORE_EXCEPTION);
-        float end = timeRanges->end(i, IGNORE_EXCEPTION);
+        ExceptionCode ignoredException;
+        float start = timeRanges->start(i, ignoredException);
+        float end = timeRanges->end(i, ignoredException);
         buffered += end - start;
     }
 
@@ -567,26 +544,10 @@ void MediaPlayerPrivate::updateStates()
 
         switch (m_platformPlayer->state()) {
         case PlatformPlayer::MP_STATE_IDLE:
-#if USE(ACCELERATED_COMPOSITING)
-            setBuffering(false);
-            m_mediaIsBuffering = false;
-            // Remove media player from platform layer (remove hole punch rect).
-            if (m_platformLayer) {
-                static_cast<VideoLayerWebKitThread*>(m_platformLayer.get())->setMediaPlayer(0);
-                m_platformLayer.clear();
-            }
-#endif
             if (isFullscreen())
                 m_webCorePlayer->mediaPlayerClient()->mediaPlayerExitFullscreen();
             break;
         case PlatformPlayer::MP_STATE_ACTIVE:
-#if USE(ACCELERATED_COMPOSITING)
-            m_showBufferingImage = false;
-            m_mediaIsBuffering = false;
-            // Create platform layer for video (create hole punch rect).
-            if (!m_platformLayer && supportsAcceleratedRendering())
-                m_platformLayer = VideoLayerWebKitThread::create(m_webCorePlayer);
-#endif
             break;
         case PlatformPlayer::MP_STATE_UNSUPPORTED:
             break;
@@ -699,7 +660,6 @@ void MediaPlayerPrivate::onWaitMetadataNotified(bool hasFinished, int timeWaited
 void MediaPlayerPrivate::waitMetadataTimerFired(Timer<MediaPlayerPrivate>*)
 {
     if (m_platformPlayer->isMetadataReady()) {
-        conditionallyGoFullscreenAfterPlay();
         m_waitMetadataPopDialogCounter = 0;
         m_platformPlayer->playWithMetadataReady();
         return;
@@ -721,7 +681,6 @@ void MediaPlayerPrivate::waitMetadataTimerFired(Timer<MediaPlayerPrivate>*)
     else {
         if (m_platformPlayer->isMetadataReady()) {
             m_platformPlayer->playWithMetadataReady();
-            conditionallyGoFullscreenAfterPlay();
         } else
             m_waitMetadataTimer.startOneShot(checkMetadataReadyInterval);
     }
@@ -758,12 +717,9 @@ void MediaPlayerPrivate::onAuthenticationNeeded(MMRAuthChallenge& authChallenge)
         return;
     }
 
-    if (!frameView() || !frameView()->hostWindow())
-        return;
-
     m_isAuthenticationChallenging = true;
     AuthenticationChallengeManager::instance()->authenticationChallenge(url, protectionSpace, credential,
-        this, frameView()->hostWindow()->platformPageClient());
+        this, m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient());
 }
 
 void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const ProtectionSpace& protectionSpace, AuthenticationChallengeResult result, const Credential& credential)
@@ -773,8 +729,8 @@ void MediaPlayerPrivate::notifyChallengeResult(const KURL& url, const Protection
     if (result != AuthenticationChallengeSuccess || !url.isValid())
         return;
 
-    m_platformPlayer->reloadWithCredential(credential.user().utf8(String::StrictConversion).data(),
-        credential.password().utf8(String::StrictConversion).data(),
+    m_platformPlayer->reloadWithCredential(credential.user().utf8(true).data(),
+        credential.password().utf8(true).data(),
         static_cast<MMRAuthChallenge::CredentialPersistence>(credential.persistence()));
 }
 
@@ -859,6 +815,11 @@ BlackBerry::Platform::Graphics::Window* MediaPlayerPrivate::platformWindow()
     return m_webCorePlayer->mediaPlayerClient()->mediaPlayerHostWindow()->platformPageClient()->platformWindow();
 }
 
+bool MediaPlayerPrivate::isProcessingUserGesture() const
+{
+    return m_webCorePlayer->mediaPlayerClient()->mediaPlayerIsProcessingUserGesture();
+}
+
 bool MediaPlayerPrivate::isFullscreen() const
 {
     return m_fullscreenWebPageClient;
@@ -883,7 +844,7 @@ bool MediaPlayerPrivate::supportsAcceleratedRendering() const
 
 #if USE(ACCELERATED_COMPOSITING)
 static const double BufferingAnimationDelay = 1.0 / 24;
-static char* s_bufferingImageData = 0;
+static unsigned* s_bufferingImageData = 0;
 static int s_bufferingImageWidth = 0;
 static int s_bufferingImageHeight = 0;
 
@@ -907,23 +868,19 @@ static void loadBufferingImageData()
     static bool loaded = false;
     if (!loaded) {
         static Image* bufferingIcon = Image::loadPlatformResource("vidbuffer").leakRef();
-        NativeImageSkia* nativeImage = bufferingIcon->nativeImageForCurrentFrame();
+
+        NativeImagePtr nativeImage = bufferingIcon->nativeImageForCurrentFrame();
         if (!nativeImage)
             return;
 
-        if (!nativeImage->isDataComplete())
-            return;
-
         loaded = true;
-        nativeImage->bitmap().lockPixels();
+        s_bufferingImageWidth = bufferingIcon->width();
+        s_bufferingImageHeight = bufferingIcon->height();
+        int bufSize = bufferingIcon->decodedSize();
+        s_bufferingImageData = static_cast<unsigned*>(malloc(bufSize));
 
-        int bufSize = nativeImage->bitmap().width() * nativeImage->bitmap().height() * 4;
-        s_bufferingImageWidth = nativeImage->bitmap().width();
-        s_bufferingImageHeight = nativeImage->bitmap().height();
-        s_bufferingImageData = static_cast<char*>(malloc(bufSize));
-        memcpy(s_bufferingImageData, nativeImage->bitmap().getPixels(), bufSize);
+        nativeImage->readPixels(s_bufferingImageData, s_bufferingImageWidth * s_bufferingImageHeight);
 
-        nativeImage->bitmap().unlockPixels();
         bufferingIcon->deref();
     }
 }
@@ -939,8 +896,9 @@ void MediaPlayerPrivate::bufferingTimerFired(Timer<MediaPlayerPrivate>*)
 
 void MediaPlayerPrivate::setBuffering(bool buffering)
 {
-    if (!hasVideo())
+    if (!m_webCorePlayer || !m_webCorePlayer->mediaPlayerClient() || !m_webCorePlayer->mediaPlayerClient()->mediaPlayerIsVideo())
         buffering = false; // Buffering animation not visible for audio.
+
     if (buffering != m_showBufferingImage) {
         m_showBufferingImage = buffering;
         if (buffering) {
@@ -968,7 +926,7 @@ static unsigned allocateTextureId()
     return texid;
 }
 
-void MediaPlayerPrivate::drawBufferingAnimation(const TransformationMatrix& matrix, int positionLocation, int texCoordLocation)
+void MediaPlayerPrivate::drawBufferingAnimation(const TransformationMatrix& matrix, const Graphics::GLES2Program& program)
 {
     if (m_showBufferingImage && s_bufferingImageData && !isFullscreen()) {
         TransformationMatrix renderMatrix = matrix;
@@ -997,34 +955,67 @@ void MediaPlayerPrivate::drawBufferingAnimation(const TransformationMatrix& matr
         vertices[2] = renderMatrix.mapPoint(FloatPoint(bx, by));
         vertices[3] = renderMatrix.mapPoint(FloatPoint(bx, -by));
 
-        glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, vertices);
-        glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        glUniform1f(program.opacityLocation(), 1.0);
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, vertices);
+        glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, texcoords);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     }
 }
 #endif
 
-void MediaPlayerPrivate::conditionallyGoFullscreenAfterPlay()
+void MediaPlayerPrivate::onConditionallyEnterFullscreen()
 {
+    Document* owningDocument = m_webCorePlayer->mediaPlayerClient()->mediaPlayerOwningDocument();
     BlackBerry::Platform::DeviceInfo* info = BlackBerry::Platform::DeviceInfo::instance();
-    if (hasVideo() && m_webCorePlayer->mediaPlayerClient()->mediaPlayerIsFullscreenPermitted() && info->isMobile()) {
+
+    // Don't allow video in <embed> and <object> containers to go fullscreen
+    // on play because this does not currently work. Detect this by checking
+    // for MediaDocument with a parent document.
+    if (owningDocument->isMediaDocument() && owningDocument->parentDocument())
+        return;
+
+    if (info->isMobile()) {
         // This is a mobile device (small screen), not a tablet, so we
         // enter fullscreen video on user-initiated plays.
         bool nothingIsFullscreen = !m_webCorePlayer->mediaPlayerClient()->mediaPlayerIsFullscreen();
 #if ENABLE(FULLSCREEN_API)
-        if (m_webCorePlayer->mediaPlayerClient()->mediaPlayerOwningDocument()->webkitIsFullScreen())
+        if (owningDocument->webkitIsFullScreen())
             nothingIsFullscreen = false;
 #endif
-        if (nothingIsFullscreen && currentTime() == 0.0f) {
-            // Only enter fullscreen when playing from the beginning. Doing
-            // so on every play is sure to annoy the user who does not want
-            // to watch the video fullscreen. Note that the following call
-            // will fail if we are not here due to a user gesture, as per the
-            // check in Document::requestFullScreenForElement() to prevent
-            // popups.
+        if (nothingIsFullscreen)
             m_webCorePlayer->mediaPlayerClient()->mediaPlayerEnterFullscreen();
-        }
     }
+}
+
+void MediaPlayerPrivate::onExitFullscreen()
+{
+    if (m_webCorePlayer->mediaPlayerClient()->mediaPlayerIsFullscreen())
+        m_webCorePlayer->mediaPlayerClient()->mediaPlayerExitFullscreen();
+}
+
+void MediaPlayerPrivate::onCreateHolePunchRect()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    // Create platform layer for video (create hole punch rect).
+    if (!m_platformLayer && supportsAcceleratedRendering()) {
+        m_showBufferingImage = false;
+        m_platformLayer = VideoLayerWebKitThread::create(m_webCorePlayer);
+    }
+#endif
+}
+
+void MediaPlayerPrivate::onDestroyHolePunchRect()
+{
+#if USE(ACCELERATED_COMPOSITING)
+    setBuffering(false);
+    // Remove media player from platform layer (remove hole punch rect).
+    if (m_platformLayer) {
+        static_cast<VideoLayerWebKitThread*>(m_platformLayer.get())->setMediaPlayer(0);
+        m_platformLayer.clear();
+    }
+#endif
 }
 
 } // namespace WebCore

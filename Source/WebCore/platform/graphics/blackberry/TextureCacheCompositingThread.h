@@ -25,6 +25,7 @@
 #include "LayerTileIndex.h"
 #include "Texture.h"
 
+#include <BlackBerryPlatformGraphics.h>
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/Noncopyable.h>
@@ -50,11 +51,11 @@ public:
     }
 
     // Retrieve a texture from the cache.
-    PassRefPtr<Texture> textureForTiledContents(const SkBitmap& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
+    PassRefPtr<Texture> textureForTiledContents(const Texture::HostType& contents, const IntRect& tileRect, const TileIndex&, bool isOpaque);
     PassRefPtr<Texture> textureForColor(const Color&);
 
     // Update contents of an existing texture, or create a new one if texture is 0.
-    PassRefPtr<Texture> updateContents(const RefPtr<Texture>&, const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
+    PassRefPtr<Texture> updateContents(const RefPtr<Texture>&, const Texture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque);
 
     size_t memoryUsage() const { return m_memoryUsage; }
     size_t memoryLimit() const { return m_memoryLimit; }
@@ -77,37 +78,37 @@ public:
 
     void textureDestroyed(Texture*);
     void textureResized(Texture*, const IntSize& oldSize);
+    void textureSizeInBytesChanged(Texture*, int delta);
 
     // Undo the effects of eviction, if possible.
-    bool install(Texture*);
+    bool install(Texture*, const IntSize& textureSize = IntSize(0, 0), BlackBerry::Platform::Graphics::BufferType = BlackBerry::Platform::Graphics::BackedWhenNecessary);
+    bool resizeTexture(Texture*, const IntSize& newSize, BlackBerry::Platform::Graphics::BufferType = BlackBerry::Platform::Graphics::BackedWhenNecessary);
 
 private:
     struct ZombieTexture {
         explicit ZombieTexture(Texture* texture)
             : id(texture->textureId())
             , size(texture->size())
+            , sizeInBytes(texture->sizeInBytes())
         {
         }
 
-        unsigned id;
+        Texture::GpuHandle id;
         IntSize size;
+        size_t sizeInBytes;
     };
     typedef ListHashSet<Texture* > TextureSet;
-    typedef std::pair<uint32_t, size_t> ContentsKey;
     typedef HashMap<TileIndex, RefPtr<Texture> > TextureMap;
     typedef Vector<ZombieTexture> Garbage;
 
     TextureCacheCompositingThread();
     ~TextureCacheCompositingThread();
 
-    unsigned allocateTextureId();
-    void freeTextureId(unsigned id);
+    Texture::GpuHandle allocateTextureId(const IntSize& textureSize, BlackBerry::Platform::Graphics::BufferType);
 
     void incMemoryUsage(int delta) { setMemoryUsage(memoryUsage() + delta); }
     void decMemoryUsage(int delta) { setMemoryUsage(memoryUsage() - delta); }
     void setMemoryUsage(size_t);
-
-    ContentsKey key(const SkBitmap& contents);
 
     void evict(const TextureSet::iterator&);
 
@@ -116,8 +117,6 @@ private:
     size_t m_memoryUsage;
     size_t m_memoryLimit;
 
-    // Map of refCounted pointers to textures.
-    HashMap<ContentsKey, TextureMap> m_cache;
     struct ColorHash {
         static unsigned hash(const Color& key) { return WTF::intHash(key.rgb()); }
         static bool equal(const Color& a, const Color& b) { return a == b; }

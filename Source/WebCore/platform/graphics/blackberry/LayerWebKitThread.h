@@ -45,8 +45,6 @@
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
-class SkBitmap;
-
 namespace WebCore {
 
 class LayerCompositingThread;
@@ -58,9 +56,11 @@ public:
     virtual ~LayerWebKitThread();
 
     void addSublayer(PassRefPtr<LayerWebKitThread>);
-    void insertSublayer(PassRefPtr<LayerWebKitThread>, size_t index);
+    void insertSublayer(PassRefPtr<LayerWebKitThread> layer, size_t index) { insert(m_sublayers, layer, index); }
     void replaceSublayer(LayerWebKitThread* reference, PassRefPtr<LayerWebKitThread> newLayer);
     void removeFromSuperlayer();
+
+    void addOverlay(PassRefPtr<LayerWebKitThread>);
 
     void setAnchorPoint(const FloatPoint& anchorPoint) { m_anchorPoint = anchorPoint; setNeedsCommit(); }
 
@@ -84,6 +84,8 @@ public:
 
     void setMaskLayer(LayerWebKitThread* maskLayer) { m_maskLayer = maskLayer; }
     LayerWebKitThread* maskLayer() const { return m_maskLayer.get(); }
+
+    bool isMask() const { return m_isMask; }
     void setIsMask(bool);
 
     void setReplicaLayer(LayerWebKitThread* layer) { m_replicaLayer = layer; }
@@ -109,7 +111,7 @@ public:
 
     const LayerWebKitThread* rootLayer() const;
 
-    void removeAllSublayers();
+    void removeAllSublayers() { removeAll(m_sublayers); }
 
     void setSublayers(const Vector<RefPtr<LayerWebKitThread> >&);
 
@@ -123,9 +125,43 @@ public:
 
     void setPreserves3D(bool preserves3D) { m_preserves3D = preserves3D; setNeedsCommit(); }
 
-    void setFixedPosition(bool fixed) { m_isFixedPosition = fixed; setNeedsCommit(); }
+    void setFixedPosition(bool fixed)
+    {
+        if (m_isFixedPosition == fixed)
+            return;
+        m_isFixedPosition = fixed;
+        setNeedsCommit();
+    }
+
     void setHasFixedContainer(bool fixed) { m_hasFixedContainer = fixed; setNeedsCommit(); }
     void setHasFixedAncestorInDOMTree(bool fixed) { m_hasFixedAncestorInDOMTree = fixed; setNeedsCommit(); }
+
+    void setIsContainerForFixedPositionLayers(bool fixed)
+    {
+        if (m_isContainerForFixedPositionLayers == fixed)
+            return;
+        m_isContainerForFixedPositionLayers = fixed;
+        setNeedsCommit();
+    }
+
+    void setFixedToTop(bool fixedToTop)
+    {
+        if (m_isFixedToTop == fixedToTop)
+            return;
+        m_isFixedToTop = fixedToTop;
+        setNeedsCommit();
+    }
+
+    void setFixedToLeft(bool fixedToLeft)
+    {
+        if (m_isFixedToLeft == fixedToLeft)
+            return;
+        m_isFixedToLeft = fixedToLeft;
+        setNeedsCommit();
+    }
+
+    void setFrameVisibleRect(const IntRect& rect) { m_frameVisibleRect = rect; setNeedsCommit(); }
+    void setFrameContentsSize(const IntSize& size) { m_frameContentsSize = size; setNeedsCommit(); }
 
     void setContents(Image*);
     Image* contents() const { return m_contents.get(); }
@@ -137,20 +173,24 @@ public:
     bool drawsContent() const { return m_owner && m_owner->drawsContent(); }
     void setDrawable(bool);
 
+    // 1. Commit on WebKit thread
     void commitOnWebKitThread(double scale);
+
+    // 2. Commit on Compositing thread
     void commitOnCompositingThread();
+    bool startAnimations(double time);
+
+    // 3. Notify when returning to WebKit thread
+    void notifyAnimationsStarted(double time);
+
     LayerCompositingThread* layerCompositingThread() const { return m_layerCompositingThread.get(); }
 
     // Only used when this layer is the root layer of a frame.
     void setAbsoluteOffset(const FloatSize& offset) { m_absoluteOffset = offset; }
 
-    double contentsScale() const { return m_scale; }
-
-    SkBitmap paintContents(const IntRect& transformedContentsRect, double scale, bool* isSolidColor = 0, Color* = 0);
-    bool contentsVisible(const IntRect& contentsRect) const;
+    void paintContents(BlackBerry::Platform::Graphics::Buffer*, const IntRect& transformedContentsRect, double scale);
 
     void setNeedsCommit();
-    void notifyAnimationStarted(double time);
 
     void setRunningAnimations(const Vector<RefPtr<LayerAnimation> >&);
     void setSuspendedAnimations(const Vector<RefPtr<LayerAnimation> >&);
@@ -166,10 +206,9 @@ protected:
     LayerWebKitThread(LayerType, GraphicsLayerBlackBerry* owner);
 
     void setNeedsTexture(bool needsTexture) { m_needsTexture = needsTexture; }
-    void setLayerProgramShader(LayerData::LayerProgramShader shader) { m_layerProgramShader = shader; }
+    void setLayerProgram(LayerData::LayerProgram layerProgram) { m_layerProgram = layerProgram; }
     bool isDrawable() const { return m_isDrawable; }
 
-    void startAnimations(double time);
     void updateVisibility();
     void updateTextureContents(double scale);
 
@@ -183,16 +222,11 @@ private:
 
     void setSuperlayer(LayerWebKitThread* superlayer) { m_superlayer = superlayer; }
 
-    size_t numSublayers() const
-    {
-        return m_sublayers.size();
-    }
-
-    // Returns the index of the sublayer or -1 if not found.
-    int indexOfSublayer(const LayerWebKitThread*);
-
     // This should only be called from removeFromSuperlayer.
-    void removeSublayer(LayerWebKitThread*);
+    void removeSublayerOrOverlay(LayerWebKitThread*);
+    void remove(Vector<RefPtr<LayerWebKitThread> >&, LayerWebKitThread*);
+    void removeAll(Vector<RefPtr<LayerWebKitThread> >&);
+    void insert(Vector<RefPtr<LayerWebKitThread> >&, PassRefPtr<LayerWebKitThread>, size_t index);
 
     GraphicsLayerBlackBerry* m_owner;
 
@@ -200,6 +234,7 @@ private:
     Vector<RefPtr<LayerAnimation> > m_suspendedAnimations;
 
     Vector<RefPtr<LayerWebKitThread> > m_sublayers;
+    Vector<RefPtr<LayerWebKitThread> > m_overlays;
     LayerWebKitThread* m_superlayer;
     RefPtr<LayerWebKitThread> m_maskLayer;
     RefPtr<LayerWebKitThread> m_replicaLayer;
@@ -209,7 +244,6 @@ private:
     RefPtr<LayerCompositingThread> m_layerCompositingThread;
     RefPtr<LayerTiler> m_tiler;
     FloatSize m_absoluteOffset;
-    double m_scale; // Scale applies only to content layers
     unsigned m_isDrawable : 1;
     unsigned m_isMask : 1;
     unsigned m_animationsChanged : 1;
@@ -217,6 +251,7 @@ private:
 #if ENABLE(CSS_FILTERS)
     unsigned m_filtersChanged : 1;
 #endif
+    unsigned m_didStartAnimations : 1;
 };
 
 }

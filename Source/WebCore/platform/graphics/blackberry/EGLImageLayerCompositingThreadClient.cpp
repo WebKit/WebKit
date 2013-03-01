@@ -22,6 +22,8 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerCompositingThread.h"
+#include <BlackBerryPlatformGLES2Program.h>
+#include <BlackBerryPlatformGLES2SharedTexture.h>
 #include <BlackBerryPlatformGraphics.h>
 #include <BlackBerryPlatformLog.h>
 #include <EGL/egl.h>
@@ -29,96 +31,56 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 
-namespace WebCore {
+using namespace BlackBerry::Platform::Graphics;
 
-static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES = 0;
-static PFNEGLDESTROYIMAGEKHRPROC eglDestroyImageKHR = 0;
+namespace WebCore {
 
 EGLImageLayerCompositingThreadClient::~EGLImageLayerCompositingThreadClient()
 {
     // Someone should have called deleteTextures() by now
-    ASSERT(!m_texture && !m_image);
+    ASSERT(!m_textureAccessor);
 }
 
 void EGLImageLayerCompositingThreadClient::uploadTexturesIfNeeded(LayerCompositingThread*)
 {
-    if (!m_imageChanged)
-        return;
-
-    if (!glEGLImageTargetTexture2DOES) {
-        glEGLImageTargetTexture2DOES = reinterpret_cast<PFNGLEGLIMAGETARGETTEXTURE2DOESPROC>(eglGetProcAddress("glEGLImageTargetTexture2DOES"));
-        ASSERT(glEGLImageTargetTexture2DOES);
-        if (!glEGLImageTargetTexture2DOES) {
-            using namespace BlackBerry::Platform;
-            logAlways(LogLevelWarn, "eglGetProcAddress for glEGLImageTargetTexture2DOES FAILED");
-            m_imageChanged = false;
-            return;
-        }
-    }
-
-    if (m_image) {
-        if (!m_texture) {
-            m_texture = Texture::create();
-            m_texture->protect();
-        }
-
-        // Connect to the new image
-        glBindTexture(GL_TEXTURE_2D, m_texture->textureId());
-        glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, m_image);
-    } else if (m_texture) {
-        m_texture->unprotect();
-        m_texture.clear();
-    }
-
-    m_imageChanged = false;
 }
 
-void EGLImageLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double /*scale*/, int positionLocation, int texCoordLocation)
+void EGLImageLayerCompositingThreadClient::drawTextures(LayerCompositingThread* layer, double /*scale*/, const GLES2Program& program)
 {
     static float upsideDown[4 * 2] = { 0, 1,  0, 0,  1, 0,  1, 1 };
 
-    if (!m_texture)
+    if (!m_textureAccessor || !m_textureAccessor->textureID())
         return;
 
-    glVertexAttribPointer(positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
-    glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, upsideDown);
-    glBindTexture(GL_TEXTURE_2D, m_texture->textureId());
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    glUseProgram(program.m_program);
+    glUniform1f(program.opacityLocation(), layer->drawOpacity());
+    glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
+    glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, upsideDown);
+    glBindTexture(GL_TEXTURE_2D, m_textureAccessor->textureID());
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 void EGLImageLayerCompositingThreadClient::deleteTextures(LayerCompositingThread*)
 {
-    if (m_texture) {
-        m_texture->unprotect();
-        m_texture.clear();
-    }
-
-    if (!m_image)
-        return;
-
-    // If the image is still with us, it was never destroyed by the EGLImageLayerWebKitThread.
-    if (!eglDestroyImageKHR)
-        eglDestroyImageKHR = reinterpret_cast<PFNEGLDESTROYIMAGEKHRPROC>(eglGetProcAddress("eglDestroyImageKHR"));
-
-    ASSERT(eglDestroyImageKHR);
-    if (eglDestroyImageKHR)
-        eglDestroyImageKHR(BlackBerry::Platform::Graphics::eglDisplay(), m_image);
-
-    m_image = 0;
+    delete m_textureAccessor;
+    m_textureAccessor = 0;
 }
 
 void EGLImageLayerCompositingThreadClient::bindContentsTexture(LayerCompositingThread*)
 {
-    glBindTexture(GL_TEXTURE_2D, m_texture->textureId());
+    if (m_textureAccessor)
+        glBindTexture(GL_TEXTURE_2D, m_textureAccessor->textureID());
 }
 
-void EGLImageLayerCompositingThreadClient::setImage(void* image)
+void EGLImageLayerCompositingThreadClient::setTextureAccessor(GLES2SharedTextureAccessor* textureAccessor)
 {
-    if (m_image == image)
+    if (m_textureAccessor == textureAccessor)
         return;
 
-    m_image = image;
-    m_imageChanged = true;
+    delete m_textureAccessor;
+    m_textureAccessor = textureAccessor;
 }
 
 } // namespace WebCore

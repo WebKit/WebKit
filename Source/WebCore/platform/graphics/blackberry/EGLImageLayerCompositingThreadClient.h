@@ -22,10 +22,17 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "LayerCompositingThreadClient.h"
-#include "Texture.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/ThreadSafeRefCounted.h>
+
+namespace BlackBerry {
+namespace Platform {
+namespace Graphics {
+class GLES2SharedTextureAccessor;
+}
+}
+}
 
 namespace WebCore {
 
@@ -48,25 +55,21 @@ public:
     virtual void layerVisibilityChanged(LayerCompositingThread*, bool visible) { }
 
     virtual void uploadTexturesIfNeeded(LayerCompositingThread*);
-    virtual void drawTextures(LayerCompositingThread*, double scale, int positionLocation, int texCoordLocation);
+    virtual void drawTextures(LayerCompositingThread*, double scale, const BlackBerry::Platform::Graphics::GLES2Program&);
     virtual void deleteTextures(LayerCompositingThread*);
 
     virtual void bindContentsTexture(LayerCompositingThread*);
 
-    // The image must not be deleted while in our custody, however after changing image you are free to delete the old one.
-    void setImage(void*);
+    void setTextureAccessor(BlackBerry::Platform::Graphics::GLES2SharedTextureAccessor*);
 
 private:
     EGLImageLayerCompositingThreadClient()
-        : m_image(0)
-        , m_imageChanged(false)
+        : m_textureAccessor(0)
     {
         ref(); // Matched by deref() in layerCompositingThreadDestroyed()
     }
 
-    void* m_image;
-    bool m_imageChanged;
-    RefPtr<Texture> m_texture;
+    BlackBerry::Platform::Graphics::GLES2SharedTextureAccessor* m_textureAccessor;
 };
 
 } // namespace WebCore

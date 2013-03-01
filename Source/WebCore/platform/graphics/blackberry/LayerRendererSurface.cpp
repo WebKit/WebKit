@@ -75,7 +75,7 @@ bool LayerRendererSurface::ensureTexture()
     if (!m_texture)
         m_texture = textureCacheCompositingThread()->createTexture();
 
-    return m_texture->protect(m_size);
+    return m_texture->protect(m_size, BlackBerry::Platform::Graphics::AlwaysBacked);
 }
 
 void LayerRendererSurface::releaseTexture()

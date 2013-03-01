@@ -51,17 +51,20 @@
 #define DEBUG_CLIPPING 0
 
 using BlackBerry::Platform::Graphics::GLES2Context;
+using BlackBerry::Platform::Graphics::GLES2Program;
 using namespace std;
 
 namespace WebCore {
 
-static void checkGLError()
-{
 #ifndef NDEBUG
-    if (GLenum error = glGetError())
-        LOG_ERROR("GL Error: 0x%x " , error);
-#endif
+#define checkGLError() \
+{ \
+    if (GLenum error = glGetError()) \
+        BlackBerry::Platform::logAlways(BlackBerry::Platform::LogLevelCritical, "%s:%d GL Error: 0x%x ", __FILE__, __LINE__, error); \
 }
+#else
+#define checkGLError()
+#endif
 
 GLuint LayerRenderer::loadShader(GLenum type, const char* shaderSource)
 {
@@ -145,11 +148,7 @@ PassOwnPtr<LayerRenderer> LayerRenderer::create(GLES2Context* context)
 }
 
 LayerRenderer::LayerRenderer(GLES2Context* context)
-    : m_colorProgramObject(0)
-    , m_checkerProgramObject(0)
-    , m_positionLocation(0)
-    , m_texCoordLocation(1)
-    , m_scale(1.0)
+    : m_scale(1.0)
     , m_animationTime(-numeric_limits<double>::infinity())
     , m_fbo(0)
     , m_currentLayerRendererSurface(0)
@@ -159,16 +158,14 @@ LayerRenderer::LayerRenderer(GLES2Context* context)
     , m_needsCommit(false)
     , m_stencilCleared(false)
 {
-    if (makeContextCurrent()) {
+    // We're now initializing lazily, so a check if the context can be made current
+    // will have to suffice to determine if hardware compositing is possible.
+    m_hardwareCompositing = makeContextCurrent();
+    if (m_hardwareCompositing) {
         m_isRobustnessSupported = String(reinterpret_cast<const char*>(::glGetString(GL_EXTENSIONS))).contains("GL_EXT_robustness");
         if (m_isRobustnessSupported)
             m_glGetGraphicsResetStatusEXT = reinterpret_cast<PFNGLGETGRAPHICSRESETSTATUSEXTPROC>(eglGetProcAddress("glGetGraphicsResetStatusEXT"));
     }
-
-    for (int i = 0; i < LayerData::NumberOfLayerProgramShaders; ++i)
-        m_layerProgramObject[i] = 0;
-
-    m_hardwareCompositing = initializeSharedGLObjects();
 }
 
 LayerRenderer::~LayerRenderer()
@@ -177,10 +174,9 @@ LayerRenderer::~LayerRenderer()
         makeContextCurrent();
         if (m_fbo)
             glDeleteFramebuffers(1, &m_fbo);
-        glDeleteProgram(m_colorProgramObject);
-        glDeleteProgram(m_checkerProgramObject);
-        for (int i = 0; i < LayerData::NumberOfLayerProgramShaders; ++i)
-            glDeleteProgram(m_layerProgramObject[i]);
+
+        for (size_t i = 0; i < NumberOfPrograms; ++i)
+            glDeleteProgram(m_programs[i].m_program);
 
         // Free up all GL textures.
         while (m_layers.begin() != m_layers.end()) {
@@ -273,8 +269,6 @@ void LayerRenderer::setViewport(const IntRect& targetRect, const IntRect& clipRe
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    glEnableVertexAttribArray(m_positionLocation);
-    glEnableVertexAttribArray(m_texCoordLocation);
     glActiveTexture(GL_TEXTURE0);
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
@@ -282,18 +276,9 @@ void LayerRenderer::setViewport(const IntRect& targetRect, const IntRect& clipRe
 
     // If culling is enabled then we will cull the backface.
     glCullFace(GL_BACK);
-    // The orthographic projection is setup such that Y starts at zero and
-    // increases going down the page which flips the winding order of triangles.
-    // The layer quads are drawn in clock-wise order so the front face is CCW.
-    glFrontFace(GL_CCW);
 
-    // Update the parameters for the checkerboard drawing.
-    glUseProgram(m_checkerProgramObject);
-    float bitmapScale = static_cast<float>(m_layoutRect.width()) / static_cast<float>(m_visibleRect.width());
-    glUniform1f(m_checkerScaleLocation, bitmapScale);
-    float scale = static_cast<float>(m_viewport.width()) / static_cast<float>(m_visibleRect.width());
-    glUniform2f(m_checkerOriginLocation, m_visibleRect.x()*scale, m_visibleRect.y()*scale);
-    glUniform1f(m_checkerSurfaceHeightLocation, m_context->surfaceSize().height());
+    // The BlackBerry::Platform::GraphicsContext uses OpenGL conventions, so everything is upside down
+    glFrontFace(GL_CW);
 
     checkGLError();
 
@@ -351,11 +336,6 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
     if (!makeContextCurrent())
         return;
 
-    // The shader used to render layers returns pre-multiplied alpha colors
-    // so we need to send the blending mode appropriately.
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-
     // If some layers should be drawed on temporary surfaces, we should do it first.
     drawLayersOnSurfaces(surfaceLayers);
 
@@ -382,9 +362,6 @@ void LayerRenderer::compositeLayers(const TransformationMatrix& matrix, LayerCom
     // backing the EGLImage was deleted in between. Make this easier for the
     // driver by unbinding early (when the pixmap is hopefully still around).
     glBindTexture(GL_TEXTURE_2D, 0);
-
-    // Turn off blending again
-    glDisable(GL_BLEND);
 
     LayerSet::iterator iter = m_layersLockingTextureResources.begin();
     for (; iter != m_layersLockingTextureResources.end(); ++iter)
@@ -415,28 +392,28 @@ void LayerRenderer::compositeBuffer(const TransformationMatrix& transform, const
     if (!vertices.boundingBox().intersects(m_clipRect))
         return;
 
-    bool blending = !contentsOpaque || opacity < 1.0f;
-    if (blending) {
+    if (!contentsOpaque || opacity < 1.0f) {
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    } else {
+        glDisable(GL_BLEND);
     }
 
-    glUseProgram(m_layerProgramObject[LayerData::LayerProgramShaderRGBA]);
-    glUniform1f(m_alphaLocation[LayerData::LayerProgramShaderRGBA], opacity);
-
-    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &vertices);
-    glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
-
     if (BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(buffer, GL_TEXTURE_2D)) {
+        const GLES2Program& program = useProgram(LayerProgramRGBA);
+        glUniform1f(program.opacityLocation(), opacity);
+
+        glEnableVertexAttribArray(program.positionLocation());
+        glEnableVertexAttribArray(program.texCoordLocation());
+        glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &vertices);
+        glVertexAttribPointer(program.texCoordLocation(), 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
         BlackBerry::Platform::Graphics::releaseBufferGLTexture(buffer);
     }
-
-    if (blending)
-        glDisable(GL_BLEND);
 }
 
-void LayerRenderer::drawCheckerboardPattern(const TransformationMatrix& transform, const FloatRect& contents)
+void LayerRenderer::drawColor(const TransformationMatrix& transform, const FloatRect& contents, const Color& color)
 {
     FloatQuad vertices(transform.mapPoint(contents.minXMinYCorner()),
                        transform.mapPoint(contents.minXMaxYCorner()),
@@ -446,10 +423,17 @@ void LayerRenderer::drawCheckerboardPattern(const TransformationMatrix& transfor
     if (!vertices.boundingBox().intersects(m_clipRect))
         return;
 
-    glUseProgram(m_checkerProgramObject);
+    const GLES2Program& program = useProgram(ColorProgram);
 
-    glVertexAttribPointer(m_positionLocation, 2, GL_FLOAT, GL_FALSE, 0, &vertices);
-    glVertexAttribPointer(m_texCoordLocation, 2, GL_FLOAT, GL_FALSE, 0, texcoords);
+    if (color.alpha() < 255) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    } else
+        glDisable(GL_BLEND);
+
+    glEnableVertexAttribArray(program.positionLocation());
+    glUniform4f(m_colorColorLocation, color.red() / 255.0, color.green() / 255.0, color.blue() / 255.0, color.alpha() / 255.0);
+    glVertexAttribPointer(program.positionLocation(), 2, GL_FLOAT, GL_FALSE, 0, &vertices);
 
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
@@ -468,10 +452,17 @@ bool LayerRenderer::useSurface(LayerRendererSurface* surface)
 
     surface->ensureTexture();
 
+    GLuint texid = reinterpret_cast<GLuint>(platformBufferHandle(surface->texture()->textureId()));
+    if (!texid) {
+        BlackBerry::Platform::Graphics::lockAndBindBufferGLTexture(surface->texture()->textureId(), GL_TEXTURE_2D);
+        texid = reinterpret_cast<GLuint>(platformBufferHandle(surface->texture()->textureId()));
+    }
+
     if (!m_fbo)
         glGenFramebuffers(1, &m_fbo);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, surface->texture()->textureId(), 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texid, 0);
 
 #ifndef NDEBUG
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -503,7 +494,7 @@ void LayerRenderer::drawLayersOnSurfaces(const Vector<RefPtr<LayerCompositingThr
 
 #if ENABLE(CSS_FILTERS)
         if (!m_filterRenderer)
-            m_filterRenderer = LayerFilterRenderer::create(m_positionLocation, m_texCoordLocation);
+            m_filterRenderer = LayerFilterRenderer::create(GLES2Program::PositionAttributeIndex, GLES2Program::TexCoordAttributeIndex);
         if (layer->filterOperationsChanged()) {
             layer->setFilterOperationsChanged(false);
             layer->setFilterActions(m_filterRenderer->actionsForOperations(surface, layer->filters().operations()));
@@ -541,6 +532,11 @@ void LayerRenderer::addLayerToReleaseTextureResourcesList(LayerCompositingThread
     m_layersLockingTextureResources.add(layer);
 }
 
+static int glRound(float f)
+{
+    return floorf(f + 0.5f);
+}
+
 // Transform normalized device coordinates to window coordinates
 // as specified in the OpenGL ES 2.0 spec section 2.12.1.
 IntRect LayerRenderer::toOpenGLWindowCoordinates(const FloatRect& r) const
@@ -549,7 +545,7 @@ IntRect LayerRenderer::toOpenGLWindowCoordinates(const FloatRect& r) const
     float vh2 = m_viewport.height() / 2.0;
     float ox = m_viewport.x() + vw2;
     float oy = m_viewport.y() + vh2;
-    return enclosingIntRect(FloatRect(r.x() * vw2 + ox, r.y() * vh2 + oy, r.width() * vw2, r.height() * vh2));
+    return IntRect(glRound(r.x() * vw2 + ox), glRound(r.y() * vh2 + oy), glRound(r.width() * vw2), glRound(r.height() * vh2));
 }
 
 // Transform normalized device coordinates to window coordinates as WebKit understands them.
@@ -592,26 +588,32 @@ void LayerRenderer::drawDebugBorder(LayerCompositingThread* layer)
     if (!borderColor.alpha())
         return;
 
-    glUseProgram(m_colorProgramObject);
+    if (borderColor.alpha() < 255) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+    } else
+        glDisable(GL_BLEND);
+
+    useProgram(ColorProgram);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
     glUniform4f(m_colorColorLocation, borderColor.red() / 255.0, borderColor.green() / 255.0, borderColor.blue() / 255.0, 1);
 
-    glLineWidth(layer->borderWidth());
+    glLineWidth(std::max(1.0f, layer->borderWidth()));
     glDrawArrays(GL_LINE_LOOP, 0, 4);
 }
 
 // Clears a rectangle inside the layer's bounds.
 void LayerRenderer::drawHolePunchRect(LayerCompositingThread* layer)
 {
-    glUseProgram(m_colorProgramObject);
+    useProgram(ColorProgram);
     glUniform4f(m_colorColorLocation, 0, 0, 0, 0);
 
+    glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ZERO);
     FloatQuad hole = layer->getTransformedHolePunchRect();
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &hole);
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
     checkGLError();
-    glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void LayerRenderer::prepareFrameRecursive(LayerCompositingThread* layer, double animationTime, bool isContextCurrent)
@@ -681,28 +683,53 @@ void LayerRenderer::updateLayersRecursive(LayerCompositingThread* layer, const T
     // Layer whose hasFixedContainer is true will get scrolled relative to
     // the fixed positioned parent.
     if (!layer->hasFixedContainer() && (layer->isFixedPosition() || layer->hasFixedAncestorInDOMTree())) {
-        // The basic idea here is to set visible y to the value we want, and
-        // layout y to the value WebCore layouted the fixed element to.
-        float maximumScrollY = m_contentsSize.height() - m_visibleRect.height();
-        float visibleY = max(0.0f, m_visibleRect.y());
-        float layoutY = max(0.0f, min(maximumScrollY, (float)m_layoutRect.y()));
+        FloatRect layoutRect = m_layoutRect;
+        FloatSize contentsSize = m_contentsSize;
+        FloatRect visibleRect = m_visibleRect;
+        for (LayerCompositingThread* curr = layer->superlayer(); curr; curr = curr->superlayer()) {
 
-        // For stuff located on the lower half of the screen, we zoom relative to bottom.
-        // This trick allows us to display fixed positioned elements aligned to top or
-        // bottom correctly when panning and zooming, without actually knowing the
-        // numeric values of the top and bottom CSS attributes.
-        // In fact, the position is the location of the anchor, so to find the mid-point
-        // we have to subtract the anchor offset from the middle (0.5) times the bounds.
-        // The anchor defaults to (0.5, 0.5) for most layers.
-        if (position.y() + (0.5 - anchorPoint.y()) * bounds.height() > layoutY + m_layoutRect.height() / 2) {
-            visibleY = min<float>(m_contentsSize.height(), m_visibleRect.y() + m_visibleRect.height());
-            layoutY = min(m_contentsSize.height(), max(0, m_layoutRect.y()) + m_layoutRect.height());
+            // If we reach a container for fixed position layers, and it has its override's position set, it means it is a scrollable iframe
+            if (curr->isContainerForFixedPositionLayers() && curr->override()->isPositionSet()) {
+                layoutRect = curr->frameVisibleRect();
+                contentsSize = curr->frameContentsSize();
+
+                // Inverted logic of
+                // FloatPoint layerPosition(-scrollPosition.x() + anchor.x() * bounds.width(),
+                //                          -scrollPosition.y() + anchor.y() * bounds.height());
+                FloatPoint scrollPosition(
+                    -(curr->override()->position().x() - (curr->anchorPoint().x() * curr->bounds().width())),
+                    -(curr->override()->position().y() - (curr->anchorPoint().y() * curr->bounds().height())));
+                visibleRect = FloatRect(scrollPosition, layoutRect.size());
+                break;
+            }
         }
 
+        FloatPoint maximumScrollPosition = FloatPoint(0, 0) + (contentsSize - visibleRect.size());
+        FloatPoint maximumLayoutScrollPosition = FloatPoint(0, 0) + (contentsSize - layoutRect.size());
+
+        // The basic idea here is to set visible x/y to the value we want, and
+        // layout x/y to the value WebCore layouted the fixed element to.
+        float visibleY;
+        float layoutY;
+        if (layer->isFixedToTop()) {
+            visibleY = max(0.0f, min(maximumScrollPosition.y(), visibleRect.y()));
+            layoutY = max(0.0f, min(maximumLayoutScrollPosition.y(), layoutRect.y()));
+        } else {
+            visibleY = min(contentsSize.height(), visibleRect.y() + visibleRect.height());
+            layoutY = min(contentsSize.height(), max(0.0f, layoutRect.y()) + layoutRect.height());
+        }
         position.setY(position.y() + (visibleY - layoutY));
 
-        float visibleX = max(0.0f, visibleRect.x());
-        position.setX(position.x() + visibleX);
+        float visibleX;
+        float layoutX;
+        if (layer->isFixedToLeft()) {
+            visibleX = max(0.0f, min(maximumScrollPosition.x(), visibleRect.x()));
+            layoutX = max(0.0f, min(maximumLayoutScrollPosition.x(), layoutRect.x()));
+        } else {
+            visibleX = min(contentsSize.width(), visibleRect.x() + visibleRect.width());
+            layoutX = min(contentsSize.width(), max(0.0f, layoutRect.x()) + layoutRect.width());
+        }
+        position.setX(position.x() + (visibleX - layoutX));
     }
 
     // Offset between anchor point and the center of the quad.
@@ -866,12 +893,11 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         // Draw the surface onto another surface or screen.
         bool drawSurface = layerAlreadyOnSurface(layer);
         // The texture format for the surface is RGBA.
-        LayerData::LayerProgramShader shader = drawSurface ? LayerData::LayerProgramShaderRGBA : layer->layerProgramShader();
+        LayerData::LayerProgram layerProgram = drawSurface ? LayerData::LayerProgramRGBA : layer->layerProgram();
 
         if (!drawSurface) {
-            glUseProgram(m_layerProgramObject[shader]);
-            glUniform1f(m_alphaLocation[shader], layer->drawOpacity());
-            layer->drawTextures(m_scale, m_positionLocation, m_texCoordLocation, m_visibleRect);
+            const GLES2Program& program = useLayerProgram(layerProgram);
+            layer->drawTextures(m_scale, program, m_visibleRect);
         } else {
             // Draw the reflection if it exists.
             if (layer->replicaLayer()) {
@@ -882,22 +908,12 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
                 if (!mask && layer->replicaLayer())
                     mask = layer->replicaLayer()->maskLayer();
 
-                glUseProgram(mask ? m_layerMaskProgramObject[shader] : m_layerProgramObject[shader]);
-                glUniform1f(mask ? m_maskAlphaLocation[shader] : m_alphaLocation[shader], layer->layerRendererSurface()->drawOpacity());
-                layer->drawSurface(layer->layerRendererSurface()->replicaDrawTransform(), mask, m_positionLocation, m_texCoordLocation);
+                const GLES2Program& program = useLayerProgram(layerProgram, mask);
+                layer->drawSurface(layer->layerRendererSurface()->replicaDrawTransform(), mask, program);
             }
 
-            glUseProgram(layer->maskLayer() ? m_layerMaskProgramObject[shader] : m_layerProgramObject[shader]);
-            glUniform1f(layer->maskLayer() ? m_maskAlphaLocation[shader] : m_alphaLocation[shader], layer->layerRendererSurface()->drawOpacity());
-            layer->drawSurface(layer->layerRendererSurface()->drawTransform(), layer->maskLayer(), m_positionLocation, m_texCoordLocation);
-        }
-
-        if (layer->hasMissingTextures()) {
-            glDisable(GL_BLEND);
-            glUseProgram(m_checkerProgramObject);
-            layer->drawMissingTextures(m_scale, m_positionLocation, m_texCoordLocation, m_visibleRect);
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            const GLES2Program& program = useLayerProgram(layerProgram, layer->maskLayer());
+            layer->drawSurface(layer->layerRendererSurface()->drawTransform(), layer->maskLayer(), program);
         }
     }
 
@@ -916,6 +932,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
 
     if (stencilClip) {
         if (!m_stencilCleared) {
+            glStencilMask(0xffffffff);
             glClearStencil(0);
             glClear(GL_STENCIL_BUFFER_BIT);
             m_stencilCleared = true;
@@ -926,7 +943,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         glStencilOp(GL_KEEP, GL_INCR, GL_INCR);
 
         updateScissorIfNeeded(clipRect);
-        glUseProgram(m_colorProgramObject);
+        useProgram(ColorProgram);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
@@ -969,7 +986,7 @@ void LayerRenderer::compositeLayersRecursive(LayerCompositingThread* layer, int 
         glStencilOp(GL_KEEP, GL_REPLACE, GL_REPLACE);
 
         updateScissorIfNeeded(clipRect);
-        glUseProgram(m_colorProgramObject);
+        useProgram(ColorProgram);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, &layer->getTransformedBounds());
         glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
@@ -1010,24 +1027,10 @@ bool LayerRenderer::makeContextCurrent()
     return ret;
 }
 
-// Binds the given attribute name to a common location across all programs
-// used by the compositor. This allows the code to bind the attributes only once
-// even when switching between programs.
-void LayerRenderer::bindCommonAttribLocation(int location, const char* attribName)
-{
-    for (int i = 0; i < LayerData::NumberOfLayerProgramShaders; ++i) {
-        glBindAttribLocation(m_layerProgramObject[i], location, attribName);
-        glBindAttribLocation(m_layerMaskProgramObject[i], location, attribName);
-    }
-
-    glBindAttribLocation(m_colorProgramObject, location, attribName);
-    glBindAttribLocation(m_checkerProgramObject, location, attribName);
-}
-
-bool LayerRenderer::initializeSharedGLObjects()
+bool LayerRenderer::createProgram(ProgramIndex program)
 {
     // Shaders for drawing the layer contents.
-    char vertexShaderString[] =
+    const char* vertexShaderString =
         "attribute vec4 a_position;   \n"
         "attribute vec2 a_texCoord;   \n"
         "varying vec2 v_texCoord;     \n"
@@ -1037,7 +1040,7 @@ bool LayerRenderer::initializeSharedGLObjects()
         "  v_texCoord = a_texCoord;   \n"
         "}                            \n";
 
-    char fragmentShaderStringRGBA[] =
+    const char* fragmentShaderStringRGBA =
         "varying mediump vec2 v_texCoord;                           \n"
         "uniform lowp sampler2D s_texture;                          \n"
         "uniform lowp float alpha;                                  \n"
@@ -1046,7 +1049,7 @@ bool LayerRenderer::initializeSharedGLObjects()
         "  gl_FragColor = texture2D(s_texture, v_texCoord) * alpha; \n"
         "}                                                          \n";
 
-    char fragmentShaderStringBGRA[] =
+    const char* fragmentShaderStringBGRA =
         "varying mediump vec2 v_texCoord;                                \n"
         "uniform lowp sampler2D s_texture;                               \n"
         "uniform lowp float alpha;                                       \n"
@@ -1055,7 +1058,7 @@ bool LayerRenderer::initializeSharedGLObjects()
         "  gl_FragColor = texture2D(s_texture, v_texCoord).bgra * alpha; \n"
         "}                                                               \n";
 
-    char fragmentShaderStringMaskRGBA[] =
+    const char* fragmentShaderStringMaskRGBA =
         "varying mediump vec2 v_texCoord;                           \n"
         "uniform lowp sampler2D s_texture;                          \n"
         "uniform lowp sampler2D s_mask;                             \n"
@@ -1067,7 +1070,7 @@ bool LayerRenderer::initializeSharedGLObjects()
         "  gl_FragColor = vec4(texColor.x, texColor.y, texColor.z, texColor.w) * alpha * maskColor.w;           \n"
         "}                                                          \n";
 
-    char fragmentShaderStringMaskBGRA[] =
+    const char* fragmentShaderStringMaskBGRA =
         "varying mediump vec2 v_texCoord;                                \n"
         "uniform lowp sampler2D s_texture;                               \n"
         "uniform lowp sampler2D s_mask;                                  \n"
@@ -1080,119 +1083,129 @@ bool LayerRenderer::initializeSharedGLObjects()
         "}                                                               \n";
 
     // Shaders for drawing the debug borders around the layers.
-    char colorVertexShaderString[] =
+    const char* colorVertexShaderString =
         "attribute vec4 a_position;   \n"
         "void main()                  \n"
         "{                            \n"
         "   gl_Position = a_position; \n"
         "}                            \n";
 
-    char colorFragmentShaderString[] =
+    const char* colorFragmentShaderString =
         "uniform lowp vec4 color;     \n"
         "void main()                  \n"
         "{                            \n"
         "  gl_FragColor = color;      \n"
         "}                            \n";
 
-    // FIXME: get screen size, get light/dark color, use
-    // string manipulation methods to insert those constants into
-    // the shader source.
-    static Color lightColor(0xfb, 0xfd, 0xff);
-    // checkerboardColorDark()
-    static Color darkColor(0xe8, 0xee, 0xf7);
-    int checkerSize = 20;
-    String tmp(
-        "uniform mediump float scale;                  \n"
-        "uniform mediump vec2 origin;                  \n"
-        "uniform mediump float surfaceHeight;          \n"
-        "void main()                                   \n"
-        "{                                             \n"
-        "  const mediump float grid = GRID;            \n"
-        "  const lowp vec4 lightColor = LIGHT_COLOR;   \n"
-        "  const lowp vec4 darkColor = DARK_COLOR;     \n"
-        "  mediump float tmp = grid * scale;           \n"
-        "  gl_FragColor = mod(floor((gl_FragCoord.x + origin.x) / tmp) + floor((surfaceHeight - gl_FragCoord.y + origin.y) / tmp), 2.0) > 0.99 \n"
-        "    ? lightColor : darkColor;                 \n"
-        "}                                             \n");
+    const char* vertexShader = 0;
+    const char* fragmentShader = 0;
 
-    // Let WTF::String be our preprocessor
-    tmp.replace("LIGHT_COLOR", String::format("vec4(%.4f, %.4f, %.4f, 1.0)", lightColor.red() / 255.0, lightColor.green() / 255.0, lightColor.blue() / 255.0));
-    tmp.replace("DARK_COLOR", String::format("vec4(%.4f, %.4f, %.4f, 1.0)", darkColor.red() / 255.0, darkColor.green() / 255.0, darkColor.blue() / 255.0));
-    tmp.replace("GRID", String::format("%.3f", (float)checkerSize));
-    CString checkerFragmentShaderString = tmp.latin1();
+    switch (program) {
+    case LayerProgramRGBA:
+    case LayerProgramBGRA:
+    case LayerMaskProgramRGBA:
+    case LayerMaskProgramBGRA:
+        vertexShader = vertexShaderString;
+        break;
+    case ColorProgram:
+        vertexShader = colorVertexShaderString;
+        break;
+    case NumberOfPrograms:
+        return false;
+    }
 
-    if (!makeContextCurrent())
+    switch (program) {
+    case LayerProgramRGBA:
+        fragmentShader = fragmentShaderStringRGBA;
+        break;
+    case LayerProgramBGRA:
+        fragmentShader = fragmentShaderStringBGRA;
+        break;
+    case LayerMaskProgramRGBA:
+        fragmentShader = fragmentShaderStringMaskRGBA;
+        break;
+    case LayerMaskProgramBGRA:
+        fragmentShader = fragmentShaderStringMaskBGRA;
+        break;
+    case ColorProgram:
+        fragmentShader = colorFragmentShaderString;
+        break;
+    case NumberOfPrograms:
+        return false;
+    }
+
+    if (!vertexShader || !fragmentShader)
         return false;
 
-    m_layerProgramObject[LayerData::LayerProgramShaderRGBA] =
-        loadShaderProgram(vertexShaderString, fragmentShaderStringRGBA);
-    if (!m_layerProgramObject[LayerData::LayerProgramShaderRGBA])
-        LOG_ERROR("Failed to create shader program for RGBA layers");
+    GLuint programObject = loadShaderProgram(vertexShader, fragmentShader);
+    if (!programObject) {
+        LOG_ERROR("Failed to create program %u", program);
+        return false;
+    }
 
-    m_layerProgramObject[LayerData::LayerProgramShaderBGRA] =
-        loadShaderProgram(vertexShaderString, fragmentShaderStringBGRA);
-    if (!m_layerProgramObject[LayerData::LayerProgramShaderBGRA])
-        LOG_ERROR("Failed to create shader program for BGRA layers");
+    m_programs[program].m_program = programObject;
 
-    m_layerMaskProgramObject[LayerData::LayerProgramShaderRGBA] =
-        loadShaderProgram(vertexShaderString, fragmentShaderStringMaskRGBA);
-    if (!m_layerMaskProgramObject[LayerData::LayerProgramShaderRGBA])
-        LOG_ERROR("Failed to create shader mask program for RGBA layers");
-
-    m_layerMaskProgramObject[LayerData::LayerProgramShaderBGRA] =
-        loadShaderProgram(vertexShaderString, fragmentShaderStringMaskBGRA);
-    if (!m_layerMaskProgramObject[LayerData::LayerProgramShaderBGRA])
-        LOG_ERROR("Failed to create shader mask program for BGRA layers");
-
-    m_colorProgramObject = loadShaderProgram(colorVertexShaderString, colorFragmentShaderString);
-    if (!m_colorProgramObject)
-        LOG_ERROR("Failed to create shader program for debug borders");
-
-    m_checkerProgramObject = loadShaderProgram(colorVertexShaderString, checkerFragmentShaderString.data());
-    if (!m_checkerProgramObject)
-        LOG_ERROR("Failed to create shader program for checkerboard pattern");
-
-    // Specify the attrib location for the position and make it the same for all programs to
-    // avoid binding re-binding the vertex attributes.
-    bindCommonAttribLocation(m_positionLocation, "a_position");
-    bindCommonAttribLocation(m_texCoordLocation, "a_texCoord");
+    // Binds the given attribute name to a common location across all programs
+    // used by the compositor. This allows the code to bind the attributes only once
+    // even when switching between programs.
+    glBindAttribLocation(programObject, GLES2Program::PositionAttributeIndex, "a_position");
+    glBindAttribLocation(programObject, GLES2Program::TexCoordAttributeIndex, "a_texCoord");
 
     checkGLError();
 
-    // Re-link the shaders to get the new attrib location to take effect.
-    for (int i = 0; i < LayerData::NumberOfLayerProgramShaders; ++i) {
-        glLinkProgram(m_layerProgramObject[i]);
-        glLinkProgram(m_layerMaskProgramObject[i]);
-    }
-
-    glLinkProgram(m_colorProgramObject);
-    glLinkProgram(m_checkerProgramObject);
+    // Re-link the shader to get the new attrib location to take effect.
+    glLinkProgram(programObject);
 
     checkGLError();
 
     // Get locations of uniforms for the layer content shader program.
-    for (int i = 0; i < LayerData::NumberOfLayerProgramShaders; ++i) {
-        m_samplerLocation[i] = glGetUniformLocation(m_layerProgramObject[i], "s_texture");
-        m_alphaLocation[i] = glGetUniformLocation(m_layerProgramObject[i], "alpha");
-        glUseProgram(m_layerProgramObject[i]);
-        glUniform1i(m_samplerLocation[i], 0);
-        m_maskSamplerLocation[i] = glGetUniformLocation(m_layerMaskProgramObject[i], "s_texture");
-        m_maskSamplerLocationMask[i] = glGetUniformLocation(m_layerMaskProgramObject[i], "s_mask");
-        m_maskAlphaLocation[i] = glGetUniformLocation(m_layerMaskProgramObject[i], "alpha");
-        glUseProgram(m_layerMaskProgramObject[i]);
-        glUniform1i(m_maskSamplerLocation[i], 0);
-        glUniform1i(m_maskSamplerLocationMask[i], 1);
+    m_programs[program].m_locations[GLES2Program::OpacityUniform] = glGetUniformLocation(programObject, "alpha");
+    switch (program) {
+    case LayerProgramRGBA:
+    case LayerProgramBGRA: {
+        GLint samplerLocation = glGetUniformLocation(programObject, "s_texture");
+        glUseProgram(programObject);
+        glUniform1i(samplerLocation, 0);
+        break;
+    }
+    case LayerMaskProgramRGBA:
+    case LayerMaskProgramBGRA: {
+        GLint maskSamplerLocation = glGetUniformLocation(programObject, "s_texture");
+        GLint maskSamplerLocationMask = glGetUniformLocation(programObject, "s_mask");
+        glUseProgram(programObject);
+        glUniform1i(maskSamplerLocation, 0);
+        glUniform1i(maskSamplerLocationMask, 1);
+        break;
+    }
+    case ColorProgram:
+        // Get locations of uniforms for the debug border shader program.
+        m_colorColorLocation = glGetUniformLocation(programObject, "color");
+        break;
+    case NumberOfPrograms:
+        return false;
     }
 
-    // Get locations of uniforms for the debug border shader program.
-    m_colorColorLocation = glGetUniformLocation(m_colorProgramObject, "color");
-
-    // Get locations of uniforms for the checkerboard shader program.
-    m_checkerScaleLocation = glGetUniformLocation(m_checkerProgramObject, "scale");
-    m_checkerOriginLocation = glGetUniformLocation(m_checkerProgramObject, "origin");
-    m_checkerSurfaceHeightLocation = glGetUniformLocation(m_checkerProgramObject, "surfaceHeight");
-
     return true;
+}
+
+const GLES2Program& LayerRenderer::useProgram(ProgramIndex index)
+{
+    ASSERT(index < NumberOfPrograms);
+    const GLES2Program& program = m_programs[index];
+    if (!program.isValid() && !createProgram(index))
+        return program;
+
+    glUseProgram(program.m_program);
+
+    return program;
+}
+
+const GLES2Program& LayerRenderer::useLayerProgram(LayerData::LayerProgram layerProgram, bool isMask /* = false */)
+{
+    int program = layerProgram;
+    if (isMask)
+        program += MaskPrograms;
+    return useProgram(static_cast<ProgramIndex>(program));
 }
 
 void LayerRenderingResults::addDirtyRect(const IntRect& rect)

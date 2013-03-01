@@ -24,6 +24,15 @@
 #include "EGLImageLayerCompositingThreadClient.h"
 #include "LayerWebKitThread.h"
 
+namespace BlackBerry {
+namespace Platform {
+namespace Graphics {
+class GLES2SharedTexture;
+class GLES2SharedTextureAccessor;
+}
+}
+}
+
 namespace WebCore {
 
 // Base class for EGLImage based layers
@@ -48,17 +57,15 @@ protected:
     void deleteFrontBuffer();
 
 private:
-    bool createImageIfNeeded(const IntSize&);
+    bool createTextureIfNeeded(const IntSize&);
     void createShaderIfNeeded();
     void blitToFrontBuffer(unsigned backBufferTexture);
 
     RefPtr<EGLImageLayerCompositingThreadClient> m_client;
     bool m_needsDisplay;
-    unsigned m_frontBufferTexture;
-    unsigned m_fbo;
     unsigned m_program;
-    void* m_image;
-    Vector<void*> m_garbage;
+    BlackBerry::Platform::Graphics::GLES2SharedTexture* m_texture;
+    BlackBerry::Platform::Graphics::GLES2SharedTextureAccessor* m_textureAccessor;
     IntSize m_size;
 };
 

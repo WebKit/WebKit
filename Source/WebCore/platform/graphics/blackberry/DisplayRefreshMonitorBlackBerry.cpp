@@ -84,7 +84,7 @@ void DisplayRefreshMonitor::displayLinkFired()
 
     m_previousFrameDone = false;
 
-    m_monotonicAnimationStartTime = monotonicallyIncreasingTime();
+    m_timestamp = currentTime();
 
     callOnMainThread(handleDisplayRefreshedNotificationOnMainThread, this);
     m_mutex.unlock();

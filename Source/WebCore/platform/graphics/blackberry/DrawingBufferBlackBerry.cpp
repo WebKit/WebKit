@@ -67,8 +67,6 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context, const IntSize& size)
     : m_context(context)
     , m_size(size)
     , m_fbo(context->createFramebuffer())
-    , m_frontColorBuffer(0)
-    , m_separateFrontTexture(false)
 {
     m_internal = adoptPtr(new DrawingBufferInternal);
 
@@ -86,6 +84,25 @@ DrawingBuffer::~DrawingBuffer()
 
     clear();
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void DrawingBuffer::publishToPlatformLayer()
+{
+    if (!m_context)
+        return;
+
+    if (m_callback)
+        m_callback->willPublish();
+
+    // FIXME: We do the copy in the canvas' (child) context so that it executes in the correct order relative to
+    // other commands in the child context. This ensures that the parent texture always contains a complete
+    // frame and not some intermediate result. However, there is no synchronization to ensure that this copy
+    // happens before the compositor draws. This means we might draw stale frames sometimes. Ideally this
+    // would insert a fence into the child command stream that the compositor could wait for.
+    m_context->makeContextCurrent();
+    m_context->flush();
+}
+#endif
 
 bool DrawingBuffer::reset(const IntSize& newSize)
 {
@@ -107,24 +124,6 @@ bool DrawingBuffer::reset(const IntSize& newSize)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
     return m_internal->platformLayer.get();
-}
-
-void DrawingBuffer::prepareBackBuffer()
-{
-}
-
-bool DrawingBuffer::requiresCopyFromBackToFrontBuffer() const
-{
-    return false;
-}
-
-unsigned DrawingBuffer::frontColorBuffer() const
-{
-    return colorBuffer();
-}
-
-void DrawingBuffer::clearPlatformLayer()
-{
 }
 #endif
 

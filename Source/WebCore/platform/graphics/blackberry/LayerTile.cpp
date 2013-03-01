@@ -29,6 +29,7 @@ namespace WebCore {
 LayerTile::LayerTile()
     : m_contentsDirty(false)
     , m_visible(false)
+    , m_needsRender(false)
 {
 }
 
@@ -38,7 +39,7 @@ LayerTile::~LayerTile()
     setVisible(false);
 }
 
-void LayerTile::setContents(const SkBitmap& contents, const IntRect& tileRect, const TileIndex& index, bool isOpaque)
+void LayerTile::setContents(const Texture::HostType& contents, const IntRect& tileRect, const TileIndex& index, bool isOpaque)
 {
     setTexture(textureCacheCompositingThread()->textureForTiledContents(contents, tileRect, index, isOpaque));
 }
@@ -48,7 +49,7 @@ void LayerTile::setContentsToColor(const Color& color)
     setTexture(textureCacheCompositingThread()->textureForColor(color));
 }
 
-void LayerTile::updateContents(const SkBitmap& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque)
+void LayerTile::updateContents(const Texture::HostType& contents, const IntRect& dirtyRect, const IntRect& tileRect, bool isOpaque)
 {
     setTexture(textureCacheCompositingThread()->updateContents(m_texture, contents, dirtyRect, tileRect, isOpaque));
 }
