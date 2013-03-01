@@ -1,3 +1,12 @@
+2013-03-01  Allan Sandfeld Jensen  <allan.jensen@digia.com>
+
+        [Qt] Update features.pri with new features
+        https://bugs.webkit.org/show_bug.cgi?id=111157
+
+        Reviewed by Jocelyn Turcotte.
+
+        * qmake/mkspecs/features/features.pri:
+
 2013-03-01  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] put WebTestProxy::scheduleComposite back in place
