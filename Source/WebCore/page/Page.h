@@ -486,7 +486,8 @@ private:
     LayoutMilestones m_layoutMilestones;
 
     HashSet<RenderObject*> m_relevantUnpaintedRenderObjects;
-    Region m_relevantPaintedRegion;
+    Region m_topRelevantPaintedRegion;
+    Region m_bottomRelevantPaintedRegion;
     Region m_relevantUnpaintedRegion;
     bool m_isCountingRelevantRepaintedObjects;
 #ifndef NDEBUG
