@@ -1031,6 +1031,7 @@ WebInspector.ScriptsPanel.prototype = {
         if (uiSourceCode.project().type() !== WebInspector.projectTypes.Snippets)
             return;
         WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, name);
+        uiSourceCode.rename(name);
     },
         
     /**

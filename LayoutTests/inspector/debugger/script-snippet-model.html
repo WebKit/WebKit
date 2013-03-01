@@ -26,6 +26,7 @@ function test()
             var snippetName = "TestSnippet" + Math.random();
             InspectorTest.addResult("Snippet created.");
             WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode, snippetName);
+            uiSourceCode.rename(snippetName);
             InspectorTest.assertEquals(1, workspace.uiSourceCodes().length, "Only one snippet uiSourceCode should be present.");
             var uiSourceCode = workspace.uiSourceCodes()[0];
             if (uiSourceCode.originURL().indexOf(snippetName) === -1)
@@ -40,6 +41,7 @@ function test()
 
             var uiSourceCode1 = WebInspector.scriptSnippetModel.createScriptSnippet();
             WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode1, "Snippet1");
+            uiSourceCode1.rename("Snippet1");
             var content = "";
             content += "// This snippet does nothing.\n";
             content += "var i = 2+2;\n";
@@ -47,6 +49,7 @@ function test()
 
             var uiSourceCode2 = WebInspector.scriptSnippetModel.createScriptSnippet();
             WebInspector.scriptSnippetModel.renameScriptSnippet(uiSourceCode2, "Snippet2");
+            uiSourceCode2.rename("Snippet2");
             content = "";
             content += "// This snippet creates a function that does nothing and returns it.\n";
             content += "function doesNothing() {\n";

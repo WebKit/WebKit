@@ -236,7 +236,7 @@ WebInspector.NavigatorView.prototype = {
      */
     rename: function(uiSourceCode, callback)
     {
-        var scriptTreeElement = this._getScriptTreeElement[uiSourceCode.uri()];
+        var scriptTreeElement = this._getScriptTreeElement(uiSourceCode);
         if (!scriptTreeElement)
             return;
 

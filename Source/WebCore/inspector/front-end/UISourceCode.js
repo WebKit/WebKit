@@ -132,12 +132,15 @@ WebInspector.UISourceCode.prototype = {
     },
 
     /**
-     * @param {string} url
+     * @param {string} newName
      */
-    urlChanged: function(url)
+    rename: function(newName)
     {
-        this._url = url;
-        this._originURL = url;
+        if (!this._path.length)
+            return;
+        this._path[this._path.length - 1] = newName;
+        this._url = newName;
+        this._originURL = newName;
         this.dispatchEventToListeners(WebInspector.UISourceCode.Events.TitleChanged, null);
     },
 

@@ -119,7 +119,6 @@ WebInspector.ScriptSnippetModel.prototype = {
             return;
         snippet.name = newName;
         this._restoreBreakpoints(uiSourceCode, breakpointLocations);
-        uiSourceCode.urlChanged(snippet.name);
     },
 
     /**
