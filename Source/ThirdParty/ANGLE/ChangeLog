@@ -1,3 +1,15 @@
+2013-03-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Add ANGLE to the GTK+ gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=111128
+
+        Reviewed by Dirk Pranke.
+
+        Add files that build an ANGLE static library for GTK+ using gyp.
+
+        * ANGLE.gyp/ANGLE.gyp: Added.
+        * ANGLE.gypi: Added.
+
 2013-02-22  Kenneth Russell  <kbr@google.com>
 
         Mac OS build broken by new ExpressionParser.cpp
