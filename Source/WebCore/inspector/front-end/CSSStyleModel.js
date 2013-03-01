@@ -882,17 +882,6 @@ WebInspector.CSSRule.prototype = {
     get isRegular()
     {
         return this.origin === "regular";
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isSourceNavigable: function()
-    {
-        if (!this.sourceURL)
-            return false;
-        var resource = WebInspector.resourceTreeModel.resourceForURL(this.sourceURL);
-        return !!resource && resource.contentType() === WebInspector.resourceTypes.Stylesheet;
     }
 }
 
@@ -1081,23 +1070,6 @@ WebInspector.CSSProperty.prototype = {
 
         WebInspector.cssModel._pendingCommandsMajorState.push(false);
         CSSAgent.toggleProperty(this.ownerStyle.id, this.index, disabled, callback.bind(this));
-    },
-
-    /**
-     * @param {boolean} forName
-     * @return {WebInspector.UILocation}
-     */
-    uiLocation: function(forName)
-    {
-        if (!this.range || !this.ownerStyle || !this.ownerStyle.parentRule || !this.ownerStyle.parentRule.sourceURL)
-            return null;
-
-        var range = this.range;
-        var line = forName ? range.startLine : range.endLine;
-        // End of range is exclusive, so subtract 1 from the end offset.
-        var column = forName ? range.startColumn : range.endColumn - 1;
-        var rawLocation = new WebInspector.CSSLocation(this.ownerStyle.parentRule.sourceURL, line, column);
-        return WebInspector.cssModel.rawLocationToUILocation(rawLocation);
     }
 }
 

@@ -376,7 +376,7 @@ WebInspector.StylesSidebarPane.prototype = {
         this.sections[0] = this._rebuildSectionsForStyleRules(styleRules, usedProperties, 0, null);
         var anchorElement = this.sections[0].inheritedPropertiesSeparatorElement;
 
-        if (styles.computedStyle)
+        if (styles.computedStyle)        
             this.sections[0][0].rebuildComputedTrace(this.sections[0]);
 
         for (var i = 0; i < styles.pseudoElements.length; ++i) {
@@ -894,8 +894,6 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
         // Prevent editing the user agent and user rules.
         if (this.rule.isUserAgent || this.rule.isUser)
             this.editable = false;
-        else
-            this.navigable = this.rule.isSourceNavigable();
         this.titleElement.addStyleClass("styles-selector");
     }
 
@@ -910,9 +908,6 @@ WebInspector.StylePropertiesSection = function(parentPane, styleRule, editable, 
 
     if (isInherited)
         this.element.addStyleClass("show-inherited"); // This one is related to inherited rules, not computed style.
-
-    if (this.navigable)
-        this.element.addStyleClass("navigable");
 
     if (!this.editable)
         this.element.addStyleClass("read-only");
@@ -2050,7 +2045,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
             if (!newStyle)
                 return;
 
-            newStyle.parentRule = this.style.parentRule;
             this.style = newStyle;
             this._styleRule.style = newStyle;
 
@@ -2164,25 +2158,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             return;
         }
 
-        if (WebInspector.KeyboardShortcut.eventHasCtrlOrMeta(event) && this.section().navigable) {
-            this._navigateToSource(event.target);
-            return;
-        }
-
         this.startEditing(event.target);
-    },
-
-    /**
-     * @param {Element} element
-     */
-    _navigateToSource: function(element)
-    {
-        console.assert(this.section().navigable);
-        var propertyNameClicked = element === this.nameElement;
-        var uiLocation = this.property.uiLocation(propertyNameClicked);
-        if (!uiLocation)
-            return;
-        WebInspector.showPanel("scripts").showUISourceCode(uiLocation.uiSourceCode, uiLocation.lineNumber);
     },
 
     _isNameElement: function(element)
@@ -2604,7 +2580,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
 
             if (this._newProperty)
                 this._newPropertyInStyle = true;
-            newStyle.parentRule = this.style.parentRule;
             this.style = newStyle;
             this.property = newStyle.propertyAt(this.property.index);
             this._styleRule.style = this.style;
@@ -2698,7 +2673,7 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
             // Synthesize property text disregarding any comments, custom whitespace etc.
             this._sidebarPane.applyStyleText(this._sidebarPane.nameElement.textContent + ": " + this._sidebarPane.valueElement.textContent, false, false, false);
         }
-
+    
         // Handle numeric value increment/decrement only at this point.
         if (!this._isEditingName && WebInspector.handleElementValueModifications(event, this._sidebarPane.valueElement, finishHandler.bind(this), this._isValueSuggestion.bind(this)))
             return true;
