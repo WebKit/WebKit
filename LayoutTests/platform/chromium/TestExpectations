@@ -3797,6 +3797,10 @@ webkit.org/b/94793 http/tests/notifications/event-listener-crash.html [ Failure 
 # Failing tests with 2d canvas acceleration.
 crbug.com/145084 [ Android ] platform/chromium/virtual/gpu/canvas/philip [ Failure Pass ]
 crbug.com/145084 [ Android ] platform/chromium/virtual/gpu/fast/canvas [ Failure Pass Timeout ]
+# Following tests start to fail in all platform from CR r185467:185470 and WK r144413
+crbug.com/179337 platform/chromium/virtual/gpu/fast/canvas/webgl/canvas-2d-webgl-texture.html [ Failure ]
+crbug.com/179337 platform/chromium/virtual/gpu/fast/canvas/webgl/gl-teximage.html [ Failure ]
+crbug.com/179337 platform/chromium/virtual/gpu/fast/canvas/webgl/tex-sub-image-2d-bad-args.html [ Failure ]
 
 # Failing compositing tests.
 crbug.com/145087 [ Android ] compositing/geometry/fixed-position-composited-switch.html [ Failure ]
