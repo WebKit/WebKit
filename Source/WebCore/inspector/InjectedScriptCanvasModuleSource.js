@@ -1847,7 +1847,7 @@ WebGLRenderingContextResource.prototype = {
     addExtension: function(name)
     {
         // FIXME: Wrap OES_vertex_array_object extension.
-        this._extensions[name] = true;
+        this._extensions[name.toLowerCase()] = true;
     },
 
     /**
