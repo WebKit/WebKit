@@ -671,6 +671,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         mouseDidMoveOverElement,
         0, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked
+        0, // shouldInstantiatePlugin
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }
