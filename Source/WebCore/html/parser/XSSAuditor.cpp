@@ -115,7 +115,7 @@ static bool startsMultiLineCommentAt(const String& string, size_t start)
 
 static bool hasName(const HTMLToken& token, const QualifiedName& name)
 {
-    return equalIgnoringNullity(token.name(), static_cast<const String&>(name.localName()));
+    return threadSafeMatch(token.nameString(), name);
 }
 
 static bool findAttributeWithName(const HTMLToken& token, const QualifiedName& name, size_t& indexOfMatchingAttribute)
