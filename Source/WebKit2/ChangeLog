@@ -1,3 +1,122 @@
+2013-03-01  Grzegorz Czajkowski  <g.czajkowski@samsung.com>, Mariusz Grzegorczyk <mariusz.g@samsung.com>
+
+        [WK2] Asynchronous spell checking implementation
+        https://bugs.webkit.org/show_bug.cgi?id=109577
+
+        Reviewed by Enrica Casucci.
+
+        Associate the abstract 'WebCore::TextCheckingRequest' object with the unique identifier
+        on WebProcess side. The request data from the 'TextCheckingRequest' are retrieved and
+        passed to the UIProcess. The WK2 client (TextChecker{Gtk/Mac/Efl/Qt}.cpp) gets
+        the 'TextCheckerCompletion' object with the request data and possibility to notify
+        the WebProcess about the spelling results.
+        Finally, the WebPage object calls on the proper 'TextCheckingRequest' object
+        didSuccess/didCancel method to notify the WebCore about the spelling result.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        Add 'TextCheckerCompletion.{h/cpp}' to the WebKit2 cmake based and
+        WK2-Gtk+ builds.
+
+        * Scripts/webkit2/messages.py:
+        (headers_for_type):
+        Add exception for 'TextCheckingRequestData' class to properly find header
+        file for it.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        * Shared/WebCoreArgumentCoders.h:
+        Teach 'ArgumentCoder' how to encode/decode 'TextCheckingRequestData' class.
+
+        * Target.pri:
+        Add 'TextCheckerCompletion.{h/cpp}' to the WK2-Qt build.
+
+        * UIProcess/TextChecker.h:
+        Add 'requestCheckingOfString' method to the TextChecker's interface.
+
+        * UIProcess/TextCheckerCompletion.cpp: Added.
+        (WebKit::TextCheckerCompletion::create):
+        (WebKit::TextCheckerCompletion::TextCheckerCompletion):
+
+        (WebKit::TextCheckerCompletion::spellDocumentTag):
+        Return the WebPageProxy's spellDocumentTag as the client might be
+        interested in from which page the request came.
+
+        (WebKit::TextCheckerCompletion::textCheckingRequestData):
+        Allow to retrieve 'TextCheckingRequestData' object.
+
+        (WebKit::TextCheckerCompletion::didFinishCheckingText):
+        (WebKit::TextCheckerCompletion::didCancelCheckingText):
+        Notify the 'WebPageProxy' object that the given request has been
+        handled or canceled.
+
+        * UIProcess/TextCheckerCompletion.h: Added.
+        Introduce a new class for WK2 to retrieve the request data and
+        call didFinishCheckingText/didCancelCheckingText.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::requestCheckingOfString):
+        Create 'TextCheckerCompletion' object and pass it
+        to the 'TextChecker::requestCheckingOfString' method.
+
+        (WebKit::WebPageProxy::didFinishCheckingText):
+        (WebKit::WebPageProxy::didCancelCheckingText):
+        Send the messages to WebProcess that the given request has been
+        handled or canceled.
+
+        * UIProcess/WebPageProxy.h:
+        (WebPageProxy):
+        Add public declarations for 'didFinishCheckingText', 'didCancelCheckingText'.
+        Add private declarations for 'requestCheckingOfString'.
+        Move the 'spellDocumentTag()' method to to the public section to be
+        accessible from 'TextCheckerCompletion' class.
+
+        * UIProcess/WebPageProxy.messages.in:
+        A new entry for 'RequestCheckingOfString'.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::requestCheckingOfString):
+        (WebKit):
+        * UIProcess/gtk/TextCheckerGtk.cpp:
+        (WebKit::TextChecker::requestCheckingOfString):
+        (WebKit):
+        * UIProcess/mac/TextCheckerMac.mm:
+        (WebKit::TextChecker::requestCheckingOfString):
+        (WebKit):
+        * UIProcess/qt/TextCheckerQt.cpp:
+        (WebKit::TextChecker::requestCheckingOfString):
+        (WebKit):
+        Add dummy implementations for 'requestCheckingOfString'.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add 'TextCheckerCompletion.{h/cpp} to Mac build.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::generateTextCheckingRequestID):
+        Helper function to generate the unique identifier for the abstract
+        'TextCheckingRequest' object.
+
+        (WebKit::WebEditorClient::requestCheckingOfString):
+        Associate 'TextCheckingRequest' with the unique identifier and add them
+        to the map object.
+        Get the request data and send it to the UIProcess.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::addTextCheckingRequest):
+        Add the identifier and the request to the map object.
+
+        (WebKit::WebPage::didFinishCheckingText):
+        (WebKit::WebPage::didCancelCheckingText):
+        Call didSucceed/didCancel on the 'TextCheckingRequest' to notify the WebCore
+        about spellcheking results.
+        Remove the request from the map object.
+
+        * WebProcess/WebPage/WebPage.h:
+        Add declarations for 'addTextCheckingRequest', 'didFinishCheckingText' and
+        'didCancelCheckingText.'
+
+        * WebProcess/WebPage/WebPage.messages.in:
+        Add a new entry for DidFinishCheckingText, DidCancelCheckingText.
+
 2013-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reduce amount of rebuilding when touching networking headers

@@ -209,6 +209,8 @@
 		1AA3D7621651B7D3008713D0 /* RemoteLayerTreeHostMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA3D7601651B7D3008713D0 /* RemoteLayerTreeHostMessages.h */; };
 		1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA417C912C00CCA002BE67B /* TextChecker.h */; };
 		1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA417ED12C00D87002BE67B /* TextCheckerMac.mm */; };
+		1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1BB417C912C00CCA002BE67B /* TextCheckerCompletion.cpp */; };
+		1QQ417CB12C00CCA002BE67B /* TextCheckerCompletion.h in Headers */ = {isa = PBXBuildFile; fileRef = 1CC417C912C00CCA002BE67B /* TextCheckerCompletion.h */; };
 		1AA41AB512C02EC4002BE67B /* EditorState.h in Headers */ = {isa = PBXBuildFile; fileRef = 1AA41AB412C02EC4002BE67B /* EditorState.h */; };
 		1AA4792312A59FD9008236C3 /* PluginProcessMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 1AA4792212A59FD9008236C3 /* PluginProcessMac.mm */; };
 		1AA479B012A5A436008236C3 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CD06100FA1BA0078DEBC /* Carbon.framework */; };
@@ -1495,6 +1497,8 @@
 		1A50DB1E110A3BDC000D3FE5 /* WebProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A594AB8112A1FB6009DE7C7 /* WebUIClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebUIClient.cpp; sourceTree = "<group>"; };
 		1A594AB9112A1FB6009DE7C7 /* WebUIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebUIClient.h; sourceTree = "<group>"; };
+		1BB417C912C00CCA002BE67B /* TextCheckerCompletion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextCheckerCompletion.cpp; sourceTree = "<group>"; };
+		1CC417C912C00CCA002BE67B /* TextCheckerCompletion.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerCompletion.h; sourceTree = "<group>"; };
 		1A5E4DA312D3BD3D0099A2BB /* TextCheckerState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextCheckerState.h; sourceTree = "<group>"; };
 		1A6420E212DCE2FF00CAAE2C /* ShareableBitmap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShareableBitmap.cpp; sourceTree = "<group>"; };
 		1A6420E312DCE2FF00CAAE2C /* ShareableBitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShareableBitmap.h; sourceTree = "<group>"; };
@@ -3828,6 +3832,8 @@
 				51A4D5A816CAC4FF000E615E /* StatisticsRequest.cpp */,
 				514BDED216C98EDD00E4E25E /* StatisticsRequest.h */,
 				1AA417C912C00CCA002BE67B /* TextChecker.h */,
+				1BB417C912C00CCA002BE67B /* TextCheckerCompletion.cpp */,
+				1CC417C912C00CCA002BE67B /* TextCheckerCompletion.h */,
 				1A0F29E1120B44420053D1B9 /* VisitedLinkProvider.cpp */,
 				1A0F29E2120B44420053D1B9 /* VisitedLinkProvider.h */,
 				512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */,
@@ -5246,6 +5252,7 @@
 				296BD85D15019BC30071F424 /* StringUtilities.h in Headers */,
 				51815BA016A622210054501F /* SyncNetworkResourceLoader.h in Headers */,
 				1AA417CB12C00CCA002BE67B /* TextChecker.h in Headers */,
+				1QQ417CB12C00CCA002BE67B /* TextCheckerCompletion.h in Headers */,
 				1A5E4DA412D3BD3D0099A2BB /* TextCheckerState.h in Headers */,
 				1AAF263914687C39004A1E8A /* TiledCoreAnimationDrawingArea.h in Headers */,
 				1AF05D8714688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.h in Headers */,
@@ -6461,6 +6468,7 @@
 				1A13BEB31635A9C800F19C03 /* StringReference.cpp in Sources */,
 				296BD85E15019BC30071F424 /* StringUtilities.mm in Sources */,
 				51815B9F16A622210054501F /* SyncNetworkResourceLoader.cpp in Sources */,
+				1ZZ417EF12C00D87002BE67B /* TextCheckerCompletion.cpp in Sources */,
 				1AA417EF12C00D87002BE67B /* TextCheckerMac.mm in Sources */,
 				1AAF263814687C39004A1E8A /* TiledCoreAnimationDrawingArea.mm in Sources */,
 				1AF05D8614688348008B1E81 /* TiledCoreAnimationDrawingAreaProxy.mm in Sources */,

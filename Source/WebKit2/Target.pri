@@ -232,6 +232,7 @@ HEADERS += \
     UIProcess/StatisticsRequest.h \
     UIProcess/Storage/StorageManager.h \
     UIProcess/TextChecker.h \
+    UIProcess/TextCheckerCompletion.h \
     UIProcess/VisitedLinkProvider.h \
     UIProcess/WebApplicationCacheManagerProxy.h \
     UIProcess/WebBackForwardList.h \
@@ -563,6 +564,7 @@ SOURCES += \
     UIProcess/FindIndicator.cpp \
     UIProcess/GeolocationPermissionRequestManagerProxy.cpp \
     UIProcess/GeolocationPermissionRequestProxy.cpp \
+    UIProcess/TextCheckerCompletion.cpp \
     UIProcess/Launcher/ProcessLauncher.cpp \
     UIProcess/Launcher/qt/ProcessLauncherQt.cpp \
     UIProcess/Notifications/NotificationPermissionRequest.cpp \

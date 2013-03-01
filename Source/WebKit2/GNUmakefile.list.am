@@ -858,6 +858,8 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerProxy.cpp \
 	Source/WebKit2/UIProcess/soup/WebSoupRequestManagerProxy.h \
 	Source/WebKit2/UIProcess/TextChecker.h \
+	Source/WebKit2/UIProcess/TextCheckerCompletion.h \
+	Source/WebKit2/UIProcess/TextCheckerCompletion.cpp \
 	Source/WebKit2/UIProcess/VisitedLinkProvider.cpp \
 	Source/WebKit2/UIProcess/VisitedLinkProvider.h \
 	Source/WebKit2/UIProcess/WebApplicationCacheManagerProxy.h \

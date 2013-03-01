@@ -29,6 +29,7 @@
 
 #include "TextCheckerState.h"
 #include "WebTextChecker.h"
+#include <WebCore/NotImplemented.h>
 
 using namespace WebCore;
  
@@ -135,6 +136,11 @@ void TextChecker::learnWord(int64_t spellDocumentTag, const String& word)
 void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
 {
     WebTextChecker::shared()->client().ignoreWord(spellDocumentTag, word);
+}
+
+void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>)
+{
+    notImplemented();
 }
 
 } // namespace WebKit

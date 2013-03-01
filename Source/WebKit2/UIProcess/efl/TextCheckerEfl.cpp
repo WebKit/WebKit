@@ -28,6 +28,7 @@
 #include "config.h"
 #include "TextChecker.h"
 
+#include "NotImplemented.h"
 #include "TextCheckerState.h"
 
 #if ENABLE(SPELLCHECK)
@@ -288,6 +289,11 @@ void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
     UNUSED_PARAM(spellDocumentTag);
     UNUSED_PARAM(word);
 #endif
+}
+
+void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>)
+{
+    notImplemented();
 }
 
 } // namespace WebKit

@@ -59,6 +59,7 @@
 #include <WebCore/PageVisibilityState.h>
 #include <WebCore/PlatformScreen.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/TextChecking.h>
 #include <WebCore/WebCoreKeyboardUIMode.h>
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
@@ -116,8 +117,10 @@ namespace WebCore {
     class ResourceResponse;
     class ResourceRequest;
     class SharedBuffer;
+    class TextCheckingRequest;
     class VisibleSelection;
     struct KeypressCommand;
+    struct TextCheckingResult;
 }
 
 namespace WebKit {
@@ -612,6 +615,10 @@ public:
 
     bool canShowMIMEType(const String& MIMEType) const;
 
+    void addTextCheckingRequest(uint64_t requestID, PassRefPtr<WebCore::TextCheckingRequest>);
+    void didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>&);
+    void didCancelCheckingText(uint64_t requestID);
+
 private:
     WebPage(uint64_t pageID, const WebPageCreationParameters&);
 
@@ -800,6 +807,8 @@ private:
     OwnPtr<DrawingArea> m_drawingArea;
 
     HashSet<PluginView*> m_pluginViews;
+
+    HashMap<uint64_t, RefPtr<WebCore::TextCheckingRequest> > m_pendingTextCheckingRequestMap;
 
     bool m_useFixedLayout;
 

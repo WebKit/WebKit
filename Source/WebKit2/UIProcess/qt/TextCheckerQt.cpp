@@ -126,4 +126,9 @@ void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
     notImplemented();
 }
 
+void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>)
+{
+    notImplemented();
+}
+
 } // namespace WebKit

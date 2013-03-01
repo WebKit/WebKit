@@ -45,6 +45,7 @@
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/NotImplemented.h>
 #include <WebCore/Page.h>
+#include <WebCore/SpellChecker.h>
 #include <WebCore/StylePropertySet.h>
 #include <WebCore/TextIterator.h>
 #include <WebCore/UndoStep.h>
@@ -60,6 +61,12 @@ using namespace WebCore;
 using namespace HTMLNames;
 
 namespace WebKit {
+
+static uint64_t generateTextCheckingRequestID()
+{
+    static uint64_t uniqueTextCheckingRequestID = 1;
+    return uniqueTextCheckingRequestID++;
+}
 
 void WebEditorClient::pageDestroyed()
 {
@@ -468,6 +475,16 @@ void WebEditorClient::getGuessesForWord(const String& word, const String& contex
     m_page->sendSync(Messages::WebPageProxy::GetGuessesForWord(word, context), Messages::WebPageProxy::GetGuessesForWord::Reply(guesses));
 }
 
+void WebEditorClient::requestCheckingOfString(WTF::PassRefPtr<TextCheckingRequest> prpRequest)
+{
+    RefPtr<TextCheckingRequest> request = prpRequest;
+
+    uint64_t requestID = generateTextCheckingRequestID();
+    m_page->addTextCheckingRequest(requestID, request);
+
+    m_page->send(Messages::WebPageProxy::RequestCheckingOfString(requestID, request->data()));
+}
+
 void WebEditorClient::willSetInputMethodState()
 {
 #if PLATFORM(QT)
@@ -478,11 +495,6 @@ void WebEditorClient::willSetInputMethodState()
 }
 
 void WebEditorClient::setInputMethodState(bool)
-{
-    notImplemented();
-}
-
-void WebEditorClient::requestCheckingOfString(WTF::PassRefPtr<WebCore::TextCheckingRequest>)
 {
     notImplemented();
 }

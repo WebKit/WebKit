@@ -49,6 +49,7 @@ namespace WebCore {
     class ResourceError;
     class ResourceRequest;
     class ResourceResponse;
+    class TextCheckingRequestData;
     class UserStyleSheet;
     class UserScript;
     struct CompositionUnderline;
@@ -231,6 +232,11 @@ template<> struct ArgumentCoder<WebCore::FileChooserSettings> {
 template<> struct ArgumentCoder<WebCore::GrammarDetail> {
     static void encode(ArgumentEncoder&, const WebCore::GrammarDetail&);
     static bool decode(ArgumentDecoder&, WebCore::GrammarDetail&);
+};
+
+template<> struct ArgumentCoder<WebCore::TextCheckingRequestData> {
+    static void encode(ArgumentEncoder&, const WebCore::TextCheckingRequestData&);
+    static bool decode(ArgumentDecoder&, WebCore::TextCheckingRequestData&);
 };
 
 template<> struct ArgumentCoder<WebCore::TextCheckingResult> {

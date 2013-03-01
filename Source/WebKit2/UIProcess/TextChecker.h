@@ -26,6 +26,7 @@
 #ifndef TextChecker_h
 #define TextChecker_h
 
+#include "TextCheckerCompletion.h"
 #include <WebCore/EditorClient.h>
 #include <WebCore/TextCheckerClient.h>
 
@@ -72,6 +73,7 @@ public:
     static void getGuessesForWord(int64_t spellDocumentTag, const String& word, const String& context, Vector<String>& guesses);
     static void learnWord(int64_t spellDocumentTag, const String& word);
     static void ignoreWord(int64_t spellDocumentTag, const String& word);
+    static void requestCheckingOfString(PassRefPtr<TextCheckerCompletion>);
 };
 
 } // namespace WebKit

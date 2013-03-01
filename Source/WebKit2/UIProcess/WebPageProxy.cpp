@@ -3401,6 +3401,20 @@ void WebPageProxy::ignoreWord(const String& word)
     TextChecker::ignoreWord(spellDocumentTag(), word);
 }
 
+void WebPageProxy::requestCheckingOfString(uint64_t requestID, const TextCheckingRequestData& request)
+{
+    TextChecker::requestCheckingOfString(TextCheckerCompletion::create(requestID, request, this));
+}
+
+void WebPageProxy::didFinishCheckingText(uint64_t requestID, const Vector<WebCore::TextCheckingResult>& result) const
+{
+    m_process->send(Messages::WebPage::DidFinishCheckingText(requestID, result), m_pageID);
+}
+
+void WebPageProxy::didCancelCheckingText(uint64_t requestID) const
+{
+    m_process->send(Messages::WebPage::DidCancelCheckingText(requestID), m_pageID);
+}
 // Other
 
 void WebPageProxy::setFocus(bool focused)

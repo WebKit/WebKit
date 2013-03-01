@@ -829,6 +829,35 @@ bool ArgumentCoder<GrammarDetail>::decode(ArgumentDecoder& decoder, GrammarDetai
     return true;
 }
 
+void ArgumentCoder<TextCheckingRequestData>::encode(ArgumentEncoder& encoder, const TextCheckingRequestData& request)
+{
+    encoder << request.sequence();
+    encoder << request.text();
+    encoder << request.mask();
+    encoder.encodeEnum(request.processType());
+}
+
+bool ArgumentCoder<TextCheckingRequestData>::decode(ArgumentDecoder& decoder, TextCheckingRequestData& request)
+{
+    int sequence;
+    if (!decoder.decode(sequence))
+        return false;
+
+    String text;
+    if (!decoder.decode(text))
+        return false;
+
+    TextCheckingTypeMask mask;
+    if (!decoder.decode(mask))
+        return false;
+
+    TextCheckingProcessType processType;
+    if (!decoder.decodeEnum(processType))
+        return false;
+
+    request = TextCheckingRequestData(sequence, text, mask, processType);
+    return true;
+}
 
 void ArgumentCoder<TextCheckingResult>::encode(ArgumentEncoder& encoder, const TextCheckingResult& result)
 {

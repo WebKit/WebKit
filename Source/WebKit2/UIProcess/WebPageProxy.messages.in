@@ -233,6 +233,7 @@ messages -> WebPageProxy {
     GetGuessesForWord(WTF::String word, WTF::String context) -> (Vector<WTF::String> guesses)
     LearnWord(WTF::String word);
     IgnoreWord(WTF::String word);
+    RequestCheckingOfString(uint64_t requestID, WebCore::TextCheckingRequestData request)
 
     # Drag and drop messages
 #if ENABLE(DRAG_SUPPORT)

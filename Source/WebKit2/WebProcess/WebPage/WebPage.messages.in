@@ -195,6 +195,8 @@ messages -> WebPage LegacyReceiver {
     # Spelling and grammar.
     AdvanceToNextMisspelling(bool startBeforeSelection)
     ChangeSpellingToWord(WTF::String word)
+    DidFinishCheckingText(uint64_t requestID, WTF::Vector<WebCore::TextCheckingResult> result)
+    DidCancelCheckingText(uint64_t requestID)
 #if USE(APPKIT)
     UppercaseWord()
     LowercaseWord()
