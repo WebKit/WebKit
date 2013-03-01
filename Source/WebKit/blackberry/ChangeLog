@@ -1,3 +1,26 @@
+2013-03-01  Jacky Jiang  <zhajiang@rim.com>
+
+        [BlackBerry] Screen went black while navigating back/forward on the reddit.com page
+        https://bugs.webkit.org/show_bug.cgi?id=111192
+
+        Reviewed by Rob Buis.
+        Internally reviewed by Jakob Petsovits.
+
+        PR: 299783
+        When going back to the previous reddit.com page, the actual contents
+        size was much less than the history contents size. However, we expanded
+        the actual contents size to history contents size which caused a huge
+        black area below the actual contents.
+        To fix that, don't restore the contents size from history contents size
+        and scroll back to the valid contents area if we are about to overscroll.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::restoreHistoryViewState):
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebCoreSupport/FrameLoaderClientBlackBerry.cpp:
+        (WebCore::FrameLoaderClientBlackBerry::restoreViewState):
+
 2013-03-01  Mike Fenton  <mifenton@rim.com>
 
         [BlackBerry] Improve input bounds clipping for search fields.
