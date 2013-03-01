@@ -132,6 +132,8 @@ AudioBus* AudioNodeOutput::pull(AudioBus* inPlaceBus, size_t framesToProcess)
 
 AudioBus* AudioNodeOutput::bus() const
 {
+    // FIXME: Add ASSERTs/checkings to restrict the calling of bus(), because the calling is 
+    // only safe after setting the in-place bus in pull() and before updating the referred bus.
     ASSERT(const_cast<AudioNodeOutput*>(this)->context()->isAudioThread());
     ASSERT(m_actualDestinationBus);
     return m_actualDestinationBus;

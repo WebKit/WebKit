@@ -158,7 +158,9 @@ unsigned AudioNodeInput::numberOfChannels() const
 
     for (HashSet<AudioNodeOutput*>::iterator i = m_outputs.begin(); i != m_outputs.end(); ++i) {
         AudioNodeOutput* output = *i;
-        maxChannels = max(maxChannels, output->bus()->numberOfChannels());
+        // Use output()->numberOfChannels() instead of output->bus()->numberOfChannels(),
+        // because the calling of AudioNodeOutput::bus() is not safe here.
+        maxChannels = max(maxChannels, output->numberOfChannels());
     }
 
     if (mode == AudioNode::ClampedMax)
