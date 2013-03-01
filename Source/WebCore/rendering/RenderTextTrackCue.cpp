@@ -123,7 +123,7 @@ void RenderTextTrackCue::placeBoxInDefaultPosition(LayoutUnit position, bool& sw
 
 bool RenderTextTrackCue::isOutside() const
 {
-    return !containingBlock()->absoluteBoundingBoxRect().contains(absoluteContentBox());
+    return !containingBlock()->absoluteBoundingBoxRect().contains(absoluteBoundingBoxRect());
 }
 
 bool RenderTextTrackCue::isOverlapping() const
@@ -224,25 +224,6 @@ void RenderTextTrackCue::repositionCueSnapToLinesSet()
             break;
 
         // 19. Jump back to the step labeled step loop.
-    }
-
-    // Acommodate extra top and bottom padding, border or margin.
-    // Note: this is supported only for internal UA styling, not through the cue selector.
-    if (hasInlineDirectionBordersPaddingOrMargin()) {
-        IntRect containerRect = containingBlock()->absoluteBoundingBoxRect();
-        IntRect cueRect = absoluteBoundingBoxRect();
-
-        int topOverflow = cueRect.y() - containerRect.y();
-        int bottomOverflow = containerRect.y() + containerRect.height() - cueRect.y() - cueRect.height();
-
-        int adjustment = 0;
-        if (topOverflow < 0)
-            adjustment = -topOverflow;
-        else if (bottomOverflow < 0)
-            adjustment = bottomOverflow;
-
-        if (adjustment)
-            setY(y() + adjustment);
     }
 }
 
