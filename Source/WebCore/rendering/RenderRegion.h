@@ -36,6 +36,7 @@
 namespace WebCore {
 
 struct LayerFragment;
+typedef Vector<LayerFragment, 1> LayerFragments;
 class RenderBox;
 class RenderBoxRegionInfo;
 class RenderFlowThread;
@@ -128,7 +129,7 @@ public:
     
     virtual void repaintFlowThreadContent(const LayoutRect& repaintRect, bool immediate) const;
 
-    virtual void collectLayerFragments(Vector<LayerFragment>&, const LayoutRect&, const LayoutRect&) { }
+    virtual void collectLayerFragments(LayerFragments&, const LayoutRect&, const LayoutRect&) { }
 
 protected:
     void setRegionObjectsRegionStyle();

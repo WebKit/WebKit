@@ -297,7 +297,7 @@ public:
     LayoutRect paginationClip;
 };
 
-typedef Vector<LayerFragment> LayerFragments;
+typedef Vector<LayerFragment, 1> LayerFragments;
 
 class RenderLayer : public ScrollableArea {
 public:

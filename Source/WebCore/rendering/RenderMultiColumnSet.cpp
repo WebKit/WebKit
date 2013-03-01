@@ -344,7 +344,7 @@ void RenderMultiColumnSet::repaintFlowThreadContent(const LayoutRect& repaintRec
     }
 }
 
-void RenderMultiColumnSet::collectLayerFragments(Vector<LayerFragment>& fragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
+void RenderMultiColumnSet::collectLayerFragments(LayerFragments& fragments, const LayoutRect& layerBoundingBox, const LayoutRect& dirtyRect)
 {
     // Put the layer bounds into flow thread-local coordinates by flipping it first.
     LayoutRect layerBoundsInFlowThread(layerBoundingBox);
