@@ -40,6 +40,7 @@
     const WebCore::PlatformSpeechSynthesisUtterance* m_utterance;
     
     RetainPtr<NSSpeechSynthesizer> m_synthesizer;
+    float m_basePitch;
 }
 
 - (WebSpeechSynthesisWrapper *)initWithSpeechSynthesizer:(WebCore::PlatformSpeechSynthesizer *)synthesizer;
@@ -55,6 +56,7 @@
         return nil;
     
     m_synthesizerObject = synthesizer;
+    [self updateBasePitchForSynthesizer];
     return self;
 }
 
@@ -64,6 +66,19 @@
 {
     // We'll say 200 WPM is the default 1x value.
     return 200.0f * rate;
+}
+
+- (float)convertPitchToNSSpeechValue:(float)pitch
+{
+    // This allows the base pitch to range from 0% - 200% of the normal pitch.
+    return m_basePitch * pitch;
+}
+
+- (void)updateBasePitchForSynthesizer
+{
+    // Reset the base pitch whenever we change voices, since the base pitch is different for each voice.
+    [m_synthesizer setObject:nil forProperty:NSSpeechResetProperty error:nil];
+    m_basePitch = [[m_synthesizer objectForProperty:NSSpeechPitchBaseProperty error:nil] floatValue];
 }
 
 - (void)speakUtterance:(const WebCore::PlatformSpeechSynthesisUtterance *)utterance
@@ -108,9 +123,17 @@
 
     // Don't set the voice unless necessary. There's a bug in NSSpeechSynthesizer such that
     // setting the voice for the first time will cause the first speechDone callback to report it was unsuccessful.
-    if (![[m_synthesizer voice] isEqualToString:voiceURI])
+    BOOL updatePitch = NO;
+    if (![[m_synthesizer voice] isEqualToString:voiceURI]) {
         [m_synthesizer setVoice:voiceURI];
+        // Reset the base pitch whenever we change voices.
+        updatePitch = YES;
+    }
     
+    if (m_basePitch == 0 || updatePitch)
+        [self updateBasePitchForSynthesizer];    
+    
+    [m_synthesizer setObject:[NSNumber numberWithFloat:[self convertPitchToNSSpeechValue:utterance->pitch()]] forProperty:NSSpeechPitchBaseProperty error:nil];
     [m_synthesizer setRate:[self convertRateToWPM:utterance->rate()]];
     [m_synthesizer setVolume:utterance->volume()];
     
