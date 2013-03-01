@@ -33,7 +33,7 @@ do
 	echo "TASK: kill orphaned tasks"
 	taskkill.exe /f /im cl.exe
 	echo "TASK: webkit-patch win-ews"
-	~/WebKit/Tools/Scripts/webkit-patch win-ews --bot-id=$BOT_ID --no-confirm --exit-after-iteration 10
+	~/WebKit/Tools/Scripts/webkit-patch win-ews --bot-id=$BOT_ID --no-confirm --exit-after-iteration 15
 	echo "TASK: reboot"
 	shutdown /r /t 0
 done

@@ -1,3 +1,9 @@
+2013-03-01  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Increase number of patches processed before clean building on WinEWS bots.
+
+        * EWSTools/start-queue-win.sh:
+
 2013-03-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Don't return statistics in PerfTest.run
