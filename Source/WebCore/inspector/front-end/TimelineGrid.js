@@ -39,21 +39,15 @@ WebInspector.TimelineGrid = function()
     this._itemsGraphsElement.id = "resources-graphs";
     this.element.appendChild(this._itemsGraphsElement);
 
-    this._dividersElement = document.createElement("div");
-    this._dividersElement.className = "resources-dividers";
-    this.element.appendChild(this._dividersElement);
+    this._dividersElement = this.element.createChild("div", "resources-dividers");
 
     this._gridHeaderElement = document.createElement("div"); 
-
-    this._eventDividersElement = document.createElement("div");
-    this._eventDividersElement.className = "resources-event-dividers";
-    this._gridHeaderElement.appendChild(this._eventDividersElement);
-
-    this._dividersLabelBarElement = document.createElement("div");
-    this._dividersLabelBarElement.className = "resources-dividers-label-bar";
-    this._gridHeaderElement.appendChild(this._dividersLabelBarElement);
-
+    this._eventDividersElement = this._gridHeaderElement.createChild("div", "resources-event-dividers");
+    this._dividersLabelBarElement = this._gridHeaderElement.createChild("div", "resources-dividers-label-bar");
     this.element.appendChild(this._gridHeaderElement);
+
+    this._leftCurtainElement = this.element.createChild("div", "timeline-cpu-curtain-left");
+    this._rightCurtainElement = this.element.createChild("div", "timeline-cpu-curtain-right");
 }
 
 WebInspector.TimelineGrid.prototype = {
@@ -195,9 +189,29 @@ WebInspector.TimelineGrid.prototype = {
         this._eventDividersElement.removeStyleClass("hidden");
     },
 
+    hideCurtains: function()
+    {
+        this._leftCurtainElement.addStyleClass("hidden");
+        this._rightCurtainElement.addStyleClass("hidden");
+    },
+
+    /**
+     * @param {number} gapOffset
+     * @param {number} gapWidth
+     */
+    showCurtains: function(gapOffset, gapWidth)
+    {
+        this._leftCurtainElement.style.width = gapOffset + "px";
+        this._leftCurtainElement.removeStyleClass("hidden");
+        this._rightCurtainElement.style.left = (gapOffset + gapWidth) + "px";
+        this._rightCurtainElement.removeStyleClass("hidden");
+    },
+
     setScrollAndDividerTop: function(scrollTop, dividersTop)
     {
         this._dividersElement.style.top = scrollTop + "px";
+        this._leftCurtainElement.style.top = scrollTop + "px";
+        this._rightCurtainElement.style.top = scrollTop + "px";
     }
 }
 

@@ -1053,6 +1053,12 @@ WebInspector.TimelinePanel.prototype = {
             this._highlightRect(anchor.row._record);
         else
             this._hideRectHighlight();
+
+        if (anchor && anchor._tasksInfo) {
+            var offset = anchor.offsetLeft;
+            this._timelineGrid.showCurtains(offset >= 0 ? offset : 0, anchor.offsetWidth);
+        } else
+            this._timelineGrid.hideCurtains();
     },
 
     _highlightRect: function(record)
@@ -1084,7 +1090,7 @@ WebInspector.TimelinePanel.prototype = {
             if (anchor.row && anchor.row._record)
                 anchor.row._record.generatePopupContent(showCallback);
             else if (anchor._tasksInfo)
-                popover.show(this._presentationModel.generateMainThreadBarPopupContent(anchor._tasksInfo), anchor);
+                popover.show(this._presentationModel.generateMainThreadBarPopupContent(anchor._tasksInfo), anchor, null, null, WebInspector.Popover.Orientation.Bottom);
         }
 
         function showCallback(popupContent)
