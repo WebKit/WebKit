@@ -6817,6 +6817,9 @@
     <ClCompile Include="..\svg\graphics\SVGImageForContainer.cpp">
       <Filter>rendering\svg\graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\inspector\TimelineTraceEventProcessor.cpp">
+      <Filter>inspector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(ConfigurationBuildDir)\obj\$(ProjectName)\DerivedSources\CSSGrammar.h">
@@ -14320,6 +14323,9 @@
     </ClInclude>
     <ClInclude Include="..\svg\graphics\SVGImageForContainer.h">
       <Filter>rendering\svg\graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\inspector\TimelineTraceEventProcessor.h">
+      <Filter>inspector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

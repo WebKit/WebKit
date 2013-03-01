@@ -2693,6 +2693,7 @@
     <ClCompile Include="..\html\canvas\CanvasPathMethods.cpp" />
     <ClCompile Include="..\html\track\TextTrackCueGeneric.cpp" />
     <ClCompile Include="..\html\track\WebVTTElement.cpp" />
+    <ClCompile Include="..\inspector\TimelineTraceEventProcessor.cpp" />
     <ClCompile Include="..\Modules\filesystem\DirectoryEntry.cpp" />
     <ClCompile Include="..\Modules\filesystem\DirectoryEntrySync.cpp" />
     <ClCompile Include="..\Modules\filesystem\DirectoryReader.cpp" />
@@ -8709,6 +8710,7 @@
     <ClInclude Include="..\html\canvas\CanvasPathMethods.h" />
     <ClInclude Include="..\html\track\TextTrackCueGeneric.h" />
     <ClInclude Include="..\html\track\WebVTTElement.h" />
+    <ClInclude Include="..\inspector\TimelineTraceEventProcessor.h" />
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriter.h" />
     <ClInclude Include="..\Modules\filesystem\AsyncFileWriterClient.h" />
     <ClInclude Include="..\Modules\filesystem\DirectoryEntry.h" />
