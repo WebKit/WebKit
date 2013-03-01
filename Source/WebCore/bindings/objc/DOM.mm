@@ -29,7 +29,6 @@
 #import "DOMInternal.h" // import first to make the private/public trick work
 #import "DOM.h"
 
-#import "CachedImage.h"
 #import "DOMElementInternal.h"
 #import "DOMHTMLCanvasElement.h"
 #import "DOMHTMLTableCellElementInternal.h"

@@ -21,7 +21,6 @@
 #import "config.h"
 #import "WebFrameNetworkingContext.h"
 
-#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceError.h>

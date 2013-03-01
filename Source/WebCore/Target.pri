@@ -851,7 +851,7 @@ SOURCES += \
     loader/cache/CachedScript.cpp \
     loader/cache/CachedShader.cpp \
     loader/cache/CachedSVGDocument.cpp \
-    loader/cache/CachedSVGDocumentReference.cpp \
+    loader/cache/CachedSVGDocument.h \
     loader/cache/CachedXSLStyleSheet.cpp \
     loader/CookieJar.cpp \
     loader/CrossOriginAccessControl.cpp \
@@ -1276,7 +1276,6 @@ SOURCES += \
     rendering/style/StyleCachedImage.cpp \
     rendering/style/StyleCachedImageSet.cpp \
     rendering/style/StyleCachedShader.cpp \
-    rendering/style/StyleCustomFilterProgram.cpp \
     rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
     rendering/style/StyleFilterData.cpp \
     rendering/style/StyleFlexibleBoxData.cpp \
@@ -2039,17 +2038,13 @@ HEADERS += \
     loader/archive/ArchiveResource.h \
     loader/cache/CachedCSSStyleSheet.h \
     loader/cache/CachedFont.h \
-    loader/cache/CachedFontClient.h \
     loader/cache/CachedImage.h \
-    loader/cache/CachedRawResource.h \
-    loader/cache/CachedRawResourceClient.h \
     loader/cache/CachedResourceClientWalker.h \
     loader/cache/CachedResource.h \
     loader/cache/CachedResourceHandle.h \
     loader/cache/CachedScript.h \
     loader/cache/CachedShader.h \
     loader/cache/CachedSVGDocument.h \
-    loader/cache/CachedSVGDocumentClient.h \
     loader/cache/CachedXSLStyleSheet.h \
     loader/cache/MemoryCache.h \
     loader/CookieJar.h \
@@ -2439,9 +2434,7 @@ HEADERS += \
     plugins/PlugInOriginHash.h \
     plugins/PluginMainThreadScheduler.h \
     plugins/PluginPackage.h \
-    plugins/PluginRequest.h \
     plugins/PluginStream.h \
-    plugins/PluginStreamClient.h \
     plugins/PluginView.h \
     plugins/win/PluginMessageThrottlerWin.h \
     rendering/AutoTableLayout.h \

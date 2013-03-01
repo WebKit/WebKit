@@ -29,7 +29,6 @@
 #include "EventHandler.h"
 #include "FocusController.h"
 #include "FrameLoadRequest.h"
-#include "FrameLoader.h"
 #include "FrameLoaderClientEfl.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"

@@ -32,6 +32,7 @@
 
 #include "FrameLoaderTypes.h"
 #include "PolicyCallback.h"
+#include "ResourceRequest.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -42,7 +43,6 @@ class FormState;
 class Frame;
 class NavigationAction;
 class ResourceError;
-class ResourceRequest;
 class ResourceResponse;
 
 class PolicyChecker {

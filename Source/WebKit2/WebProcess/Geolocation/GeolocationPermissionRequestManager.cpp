@@ -33,7 +33,6 @@
 #include "WebPage.h"
 #include "WebPageProxyMessages.h"
 #include <WebCore/Frame.h>
-#include <WebCore/FrameLoader.h>
 #include <WebCore/Geolocation.h>
 #include <WebCore/SecurityOrigin.h>
 

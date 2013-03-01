@@ -32,7 +32,6 @@
 
 #include "FrameLoaderClientImpl.h"
 
-#include "FrameLoader.h"
 #include "KURL.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"

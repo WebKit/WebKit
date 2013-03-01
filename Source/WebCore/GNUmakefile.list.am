@@ -3952,7 +3952,6 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedCSSStyleSheet.h \
 	Source/WebCore/loader/cache/CachedFont.cpp \
 	Source/WebCore/loader/cache/CachedFont.h \
-	Source/WebCore/loader/cache/CachedFontClient.h \
 	Source/WebCore/loader/cache/CachedImage.cpp \
 	Source/WebCore/loader/cache/CachedImage.h \
 	Source/WebCore/loader/cache/CachedImageClient.h \
@@ -3960,7 +3959,6 @@ webcore_sources += \
 	Source/WebCore/loader/cache/CachedResourceClientWalker.h \
 	Source/WebCore/loader/cache/CachedRawResource.cpp \
 	Source/WebCore/loader/cache/CachedRawResource.h \
-	Source/WebCore/loader/cache/CachedRawResourceClient.h \
 	Source/WebCore/loader/cache/CachedResource.cpp \
 	Source/WebCore/loader/cache/CachedResource.h \
 	Source/WebCore/loader/cache/CachedResourceHandle.cpp \
@@ -4323,11 +4321,9 @@ webcore_sources += \
 	Source/WebCore/plugins/PluginPackage.cpp \
 	Source/WebCore/plugins/PluginPackage.h \
 	Source/WebCore/plugins/PluginQuirkSet.h \
-	Source/WebCore/plugins/PluginRequest.h \
 	Source/WebCore/plugins/PluginStrategy.h \
 	Source/WebCore/plugins/PluginStream.cpp \
 	Source/WebCore/plugins/PluginStream.h \
-	Source/WebCore/plugins/PluginStreamClient.h \
 	Source/WebCore/plugins/PluginViewBase.h \
 	Source/WebCore/plugins/PluginView.cpp \
 	Source/WebCore/plugins/PluginView.h \
@@ -4628,7 +4624,6 @@ webcore_sources += \
 	Source/WebCore/rendering/style/StyleCachedImageSet.h \
 	Source/WebCore/rendering/style/StyleCachedShader.cpp \
 	Source/WebCore/rendering/style/StyleCachedShader.h \
-	Source/WebCore/rendering/style/StyleCustomFilterProgram.cpp \
 	Source/WebCore/rendering/style/StyleCustomFilterProgram.h \
 	Source/WebCore/rendering/style/StyleDashboardRegion.h \
 	Source/WebCore/rendering/style/StyleDeprecatedFlexibleBoxData.cpp \
@@ -4813,8 +4808,6 @@ webcore_svg_sources += \
 	Source/WebCore/css/WebKitCSSSVGDocumentValue.h \
 	Source/WebCore/loader/cache/CachedSVGDocument.cpp \
 	Source/WebCore/loader/cache/CachedSVGDocument.h \
-	Source/WebCore/loader/cache/CachedSVGDocumentClient.h \
-	Source/WebCore/loader/cache/CachedSVGDocumentReference.cpp \
 	Source/WebCore/loader/cache/CachedSVGDocumentReference.h \
 	Source/WebCore/platform/graphics/SVGGlyph.cpp \
 	Source/WebCore/platform/graphics/SVGGlyph.h \

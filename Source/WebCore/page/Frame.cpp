@@ -41,7 +41,6 @@
 #include "CachedResourceLoader.h"
 #include "DocumentType.h"
 #include "EditorClient.h"
-#include "Event.h"
 #include "EventNames.h"
 #include "FloatQuad.h"
 #include "FocusController.h"
@@ -92,7 +91,6 @@
 #include "markup.h"
 #include "npruntime_impl.h"
 #include "visible_units.h"
-#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 
@@ -152,7 +150,7 @@ static inline float parentTextZoomFactor(Frame* frame)
 inline Frame::Frame(Page* page, HTMLFrameOwnerElement* ownerElement, FrameLoaderClient* frameLoaderClient)
     : m_page(page)
     , m_treeNode(this, parentFromOwnerElement(ownerElement))
-    , m_loader(adoptPtr(new FrameLoader(this, frameLoaderClient)))
+    , m_loader(this, frameLoaderClient)
     , m_navigationScheduler(this)
     , m_ownerElement(ownerElement)
     , m_script(this)
@@ -206,11 +204,6 @@ PassRefPtr<Frame> Frame::create(Page* page, HTMLFrameOwnerElement* ownerElement,
     if (!ownerElement)
         page->setMainFrame(frame);
     return frame.release();
-}
-
-void Frame::init()
-{
-    m_loader->init();
 }
 
 Frame::~Frame()
@@ -680,7 +673,7 @@ void Frame::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.ignoreMember(m_view);
     info.addMember(m_ownerElement, "ownerElement");
     info.addMember(m_page, "page");
-    info.addMember(*m_loader, "loader");
+    info.addMember(m_loader, "loader");
     info.ignoreMember(m_destructionObservers);
 }
 

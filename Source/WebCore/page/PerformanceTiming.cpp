@@ -38,7 +38,6 @@
 #include "DocumentLoader.h"
 #include "DocumentTiming.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "ResourceLoadTiming.h"
 #include "ResourceResponse.h"
 #include <wtf/CurrentTime.h>

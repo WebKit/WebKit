@@ -27,7 +27,6 @@
 #include "DragController.h"
 
 #if ENABLE(DRAG_SUPPORT)
-#include "CachedImage.h"
 #include "Clipboard.h"
 #include "ClipboardAccessPolicy.h"
 #include "CachedResourceLoader.h"

@@ -34,7 +34,6 @@
 #include "WebFrame.h"
 #include "WebSecurityOrigin.h"
 #include <WebCore/Frame.h>
-#include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
 
 using namespace WebCore;

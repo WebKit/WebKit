@@ -32,7 +32,6 @@
 #include "DocumentLoader.h"
 #include "DocumentWriter.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "HTMLIFrameElement.h"
 #include "PagePopup.h"
 #include "PagePopupClient.h"

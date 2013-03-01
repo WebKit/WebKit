@@ -26,6 +26,7 @@
 #ifndef ClipboardMac_h
 #define ClipboardMac_h
 
+#include "CachedImage.h"
 #include "CachedImageClient.h"
 #include "Clipboard.h"
 #include <wtf/RetainPtr.h>

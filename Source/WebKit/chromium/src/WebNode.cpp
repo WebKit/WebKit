@@ -33,7 +33,6 @@
 
 #include "Document.h"
 #include "Element.h"
-#include "Event.h"
 #include "Frame.h"
 #include "FrameLoaderClientImpl.h"
 #include "Node.h"

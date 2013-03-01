@@ -32,7 +32,6 @@
 #include "AnimationController.h"
 #include "CanvasRenderingContext.h"
 #include "CSSPropertyNames.h"
-#include "CachedImage.h"
 #include "Chrome.h"
 #include "FontCache.h"
 #include "FrameView.h"

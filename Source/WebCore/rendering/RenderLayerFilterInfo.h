@@ -32,8 +32,10 @@
 
 #if ENABLE(CSS_FILTERS)
 
-#include "CachedResourceHandle.h"
-#include "CachedSVGDocumentClient.h"
+#if ENABLE(SVG)
+#include "CachedSVGDocument.h"
+#endif
+#include "FilterOperation.h"
 #include "LayoutRect.h"
 #include <wtf/HashMap.h>
 #include <wtf/PassRefPtr.h>
@@ -45,8 +47,6 @@
 
 namespace WebCore {
 
-class CachedSVGDocument;
-class Element;
 class FilterEffectRenderer;
 class FilterOperations;
 class RenderLayer;

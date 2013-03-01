@@ -28,7 +28,6 @@
 #include "config.h"
 #include "RenderImageResourceStyleImage.h"
 
-#include "CachedImage.h"
 #include "RenderObject.h"
 #include "StyleCachedImage.h"
 

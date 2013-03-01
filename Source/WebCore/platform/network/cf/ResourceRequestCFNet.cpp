@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ResourceRequestCFNet.h"
 
+#include "ResourceHandle.h"
 #include "ResourceRequest.h"
 
 #if USE(CFNETWORK)

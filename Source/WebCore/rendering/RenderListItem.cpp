@@ -24,6 +24,7 @@
 #include "config.h"
 #include "RenderListItem.h"
 
+#include "CachedImage.h"
 #include "HTMLNames.h"
 #include "HTMLOListElement.h"
 #include "RenderListMarker.h"

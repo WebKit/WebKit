@@ -25,6 +25,7 @@
 #ifndef Cache_h
 #define Cache_h
 
+#include "CachedResource.h"
 #include "SecurityOriginHash.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -39,11 +40,8 @@ class CachedCSSStyleSheet;
 class CachedResource;
 class CachedResourceLoader;
 class KURL;
-class ResourceRequest;
-class ResourceResponse;
 class ScriptExecutionContext;
 class SecurityOrigin;
-struct CrossThreadResourceRequestData;
 struct SecurityOriginHash;
 
 // This cache holds subresources used by Web pages: images, scripts, stylesheets, etc.
@@ -206,7 +204,7 @@ private:
     void evict(CachedResource*);
 
     static void removeRequestFromCacheImpl(ScriptExecutionContext*, const ResourceRequest&);
-    static void crossThreadRemoveRequestFromCache(ScriptExecutionContext*, PassOwnPtr<CrossThreadResourceRequestData>);
+    static void crossThreadRemoveRequestFromCache(ScriptExecutionContext*, PassOwnPtr<WebCore::CrossThreadResourceRequestData>);
 
     bool m_disabled;  // Whether or not the cache is enabled.
     bool m_pruneEnabled;

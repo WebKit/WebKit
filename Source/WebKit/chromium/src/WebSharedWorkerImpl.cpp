@@ -35,7 +35,6 @@
 #include "DatabaseTask.h"
 #include "Document.h"
 #include "FrameLoadRequest.h"
-#include "FrameLoader.h"
 #include "GroupSettings.h"
 #include "KURL.h"
 #include "MessageEvent.h"

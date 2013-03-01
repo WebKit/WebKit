@@ -48,9 +48,6 @@
 #include "InspectorFrontendClient.h"
 #include "Page.h"
 #include "Pasteboard.h"
-#include "ResourceError.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
 #include "ScriptFunctionCall.h"
 #include "UserGestureIndicator.h"
 

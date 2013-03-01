@@ -27,6 +27,8 @@
 #include "JSNode.h"
 
 #include "Attr.h"
+#include "CachedImage.h"
+#include "CachedScript.h"
 #include "CDATASection.h"
 #include "Comment.h"
 #include "Document.h"

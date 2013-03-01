@@ -41,7 +41,6 @@
 #include "DragSession.h"
 #include "EditorClientQt.h"
 #include "FocusController.h"
-#include "FrameLoadRequest.h"
 #include "FrameView.h"
 #if ENABLE(GEOLOCATION)
 #include "GeolocationClientMock.h"

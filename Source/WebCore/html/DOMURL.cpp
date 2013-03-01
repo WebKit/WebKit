@@ -36,7 +36,6 @@
 #include "KURL.h"
 #include "MemoryCache.h"
 #include "PublicURLManager.h"
-#include "ResourceRequest.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
 #include "ThreadableBlobRegistry.h"

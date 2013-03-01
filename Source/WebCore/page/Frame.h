@@ -33,7 +33,7 @@
 #include "DragImage.h"
 #include "Editor.h"
 #include "EventHandler.h"
-#include "FrameLoaderClient.h"
+#include "FrameLoader.h"
 #include "FrameSelection.h"
 #include "FrameTree.h"
 #include "NavigationScheduler.h"
@@ -64,7 +64,6 @@ namespace WebCore {
 
     class Document;
     class FrameDestructionObserver;
-    class FrameLoader;
     class FrameView;
     class HTMLTableCellElement;
     class RegularExpression;
@@ -216,7 +215,7 @@ namespace WebCore {
 
         Page* m_page;
         mutable FrameTree m_treeNode;
-        mutable OwnPtr<FrameLoader> m_loader;
+        mutable FrameLoader m_loader;
         mutable NavigationScheduler m_navigationScheduler;
 
         HTMLFrameOwnerElement* m_ownerElement;
@@ -261,9 +260,14 @@ namespace WebCore {
         int m_activeDOMObjectsAndAnimationsSuspendedCount;
     };
 
+    inline void Frame::init()
+    {
+        m_loader.init();
+    }
+
     inline FrameLoader* Frame::loader() const
     {
-        return m_loader.get();
+        return &m_loader;
     }
 
     inline NavigationScheduler* Frame::navigationScheduler() const

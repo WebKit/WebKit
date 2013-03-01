@@ -29,7 +29,6 @@
 #if ENABLE(VIDEO) && USE(AVFOUNDATION)
 
 #include "MediaPlayerPrivateAVFoundation.h"
-#include <objc/objc.h>
 #include <wtf/HashMap.h>
 
 OBJC_CLASS AVURLAsset;

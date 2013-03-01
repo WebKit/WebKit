@@ -49,7 +49,6 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameView.h"
 #include "GeolocationController.h"
 #include "GeolocationError.h"

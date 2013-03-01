@@ -26,12 +26,12 @@
 #include "config.h"
 #include "RenderSnapshottedPlugIn.h"
 
-#include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Cursor.h"
 #include "FEGaussianBlur.h"
 #include "Filter.h"
+#include "FrameLoaderClient.h"
 #include "FrameView.h"
 #include "Gradient.h"
 #include "HTMLPlugInImageElement.h"

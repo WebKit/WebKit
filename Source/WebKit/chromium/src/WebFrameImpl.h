@@ -50,7 +50,6 @@ class KURL;
 class Node;
 class Range;
 class SubstituteData;
-struct FrameLoadRequest;
 struct WindowFeatures;
 }
 

@@ -28,7 +28,7 @@
 
 #if ENABLE(NETWORK_PROCESS)
 
-#include <WebCore/ResourceLoadPriority.h>
+#include <WebCore/ResourceRequest.h>
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
 #include <wtf/RefCounted.h>

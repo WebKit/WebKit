@@ -31,7 +31,7 @@
 #ifndef DocumentThreadableLoader_h
 #define DocumentThreadableLoader_h
 
-#include "CachedRawResourceClient.h"
+#include "CachedRawResource.h"
 #include "CachedResourceHandle.h"
 #include "FrameLoaderTypes.h"
 #include "ThreadableLoader.h"
@@ -43,7 +43,6 @@
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-    class CachedRawResource;
     class Document;
     class KURL;
     class ResourceRequest;

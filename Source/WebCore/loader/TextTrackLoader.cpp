@@ -36,6 +36,7 @@
 #include "Document.h"
 #include "Logging.h"
 #include "ResourceBuffer.h"
+#include "ResourceHandle.h"
 #include "ScriptCallStack.h"
 #include "SecurityOrigin.h"
 #include "WebVTTParser.h"

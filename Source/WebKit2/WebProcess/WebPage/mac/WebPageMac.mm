@@ -45,7 +45,6 @@
 #import <WebCore/AXObjectCache.h>
 #import <WebCore/FocusController.h>
 #import <WebCore/Frame.h>
-#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameView.h>
 #import <WebCore/HitTestResult.h>
 #import <WebCore/HTMLConverter.h>

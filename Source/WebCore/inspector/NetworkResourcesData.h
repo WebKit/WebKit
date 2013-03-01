@@ -29,9 +29,9 @@
 #ifndef NetworkResourcesData_h
 #define NetworkResourcesData_h
 
-#include "HTTPHeaderMap.h"
 #include "InspectorPageAgent.h"
 #include "TextResourceDecoder.h"
+
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
@@ -43,7 +43,6 @@
 namespace WebCore {
 
 class CachedResource;
-class FormData;
 class SharedBuffer;
 class TextResourceDecoder;
 

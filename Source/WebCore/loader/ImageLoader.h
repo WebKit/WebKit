@@ -23,6 +23,7 @@
 #ifndef ImageLoader_h
 #define ImageLoader_h
 
+#include "CachedImage.h"
 #include "CachedImageClient.h"
 #include "CachedResourceHandle.h"
 #include <wtf/text/AtomicString.h>

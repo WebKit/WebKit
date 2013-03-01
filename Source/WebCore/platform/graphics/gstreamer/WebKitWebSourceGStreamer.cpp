@@ -24,7 +24,6 @@
 
 #include "Document.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "GRefPtrGStreamer.h"
 #include "GStreamerVersioning.h"
 #include "MediaPlayer.h"

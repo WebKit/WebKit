@@ -50,6 +50,13 @@ protected:
     RefPtr<TextResourceDecoder> m_decoder;
 };
 
+class CachedSVGDocumentClient : public CachedResourceClient {
+public:
+    virtual ~CachedSVGDocumentClient() { }
+    static CachedResourceClientType expectedType() { return SVGDocumentType; }
+    virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
+};
+
 }
 
 #endif
