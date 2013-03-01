@@ -1,5 +1,17 @@
 2013-03-01  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG Branch(LogicalNot) peephole should not try to optimize and work-around the case where LogicalNot may be otherwise live
+        https://bugs.webkit.org/show_bug.cgi?id=111209
+
+        Reviewed by Oliver Hunt.
+        
+        Even if it is then everything will work just fine. It's not necessary to check the ref count here.
+
+        * dfg/DFGFixupPhase.cpp:
+        (JSC::DFG::FixupPhase::fixupNode):
+
+2013-03-01  Filip Pizlo  <fpizlo@apple.com>
+
         DFG CSE phase shouldn't rely on ref count of nodes, since it doesn't have to
         https://bugs.webkit.org/show_bug.cgi?id=111205
 
