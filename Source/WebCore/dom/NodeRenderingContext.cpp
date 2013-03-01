@@ -268,7 +268,7 @@ void NodeRenderingContext::createRendererForElementIfNeeded()
 
     // Make sure the RenderObject already knows it is going to be added to a RenderFlowThread before we set the style
     // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
-    newRenderer->setInRenderFlowThread(parentRenderer->inRenderFlowThread());
+    newRenderer->setFlowThreadState(parentRenderer->flowThreadState());
 
     element->setRenderer(newRenderer);
     newRenderer->setAnimatableStyle(m_style.release()); // setAnimatableStyle() can depend on renderer() already being set.
@@ -314,7 +314,7 @@ void NodeRenderingContext::createRendererForTextIfNeeded()
 
     // Make sure the RenderObject already knows it is going to be added to a RenderFlowThread before we set the style
     // for the first time. Otherwise code using inRenderFlowThread() in the styleWillChange and styleDidChange will fail.
-    newRenderer->setInRenderFlowThread(parentRenderer->inRenderFlowThread());
+    newRenderer->setFlowThreadState(parentRenderer->flowThreadState());
 
     RenderObject* nextRenderer = this->nextRenderer();
     textNode->setRenderer(newRenderer);

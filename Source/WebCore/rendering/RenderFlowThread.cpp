@@ -59,7 +59,7 @@ RenderFlowThread::RenderFlowThread(Document* document)
     , m_pageLogicalSizeChanged(false)
 {
     ASSERT(document->cssRegionsEnabled());
-    setInRenderFlowThread();
+    setFlowThreadState(InsideOutOfFlowThread);
 }
 
 PassRefPtr<RenderStyle> RenderFlowThread::createFlowThreadStyle(RenderStyle* parentStyle)

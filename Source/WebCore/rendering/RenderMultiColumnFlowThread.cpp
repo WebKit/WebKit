@@ -33,6 +33,7 @@ namespace WebCore {
 RenderMultiColumnFlowThread::RenderMultiColumnFlowThread(Document* document)
     : RenderFlowThread(document)
 {
+    setFlowThreadState(InsideInFlowThread);
 }
 
 RenderMultiColumnFlowThread::~RenderMultiColumnFlowThread()

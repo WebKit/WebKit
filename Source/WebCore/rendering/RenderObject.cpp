@@ -276,13 +276,13 @@ bool RenderObject::isHTMLMarquee() const
     return node() && node()->renderer() == this && node()->hasTagName(marqueeTag);
 }
 
-void RenderObject::setInRenderFlowThreadIncludingDescendants(bool b)
+void RenderObject::setFlowThreadStateIncludingDescendants(FlowThreadState state)
 {
-    setInRenderFlowThread(b);
+    setFlowThreadState(state);
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
-        ASSERT(b != child->inRenderFlowThread());
-        child->setInRenderFlowThreadIncludingDescendants(b);
+        ASSERT(state != child->flowThreadState());
+        child->setFlowThreadStateIncludingDescendants(state);
     }
 }
 
@@ -2507,7 +2507,7 @@ void RenderObject::removeFromRenderFlowThreadRecursive(RenderFlowThread* renderF
             child->removeFromRenderFlowThreadRecursive(renderFlowThread);
     }
     renderFlowThread->removeFlowChildInfo(this);
-    setInRenderFlowThread(false);
+    setFlowThreadState(NotInsideFlowThread);
 }
 
 void RenderObject::destroyAndCleanupAnonymousWrappers()

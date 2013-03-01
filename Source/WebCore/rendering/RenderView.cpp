@@ -163,7 +163,7 @@ void RenderView::addChild(RenderObject* newChild, RenderObject* beforeChild)
     if (newChild && !newChild->isRenderFlowThread()) {
         RenderBox* seamlessBox = enclosingSeamlessRenderer(document());
         if (seamlessBox && seamlessBox->inRenderFlowThread())
-            newChild->setInRenderFlowThread();
+            newChild->setFlowThreadState(seamlessBox->flowThreadState());
     }
     RenderBlock::addChild(newChild, beforeChild);
 }

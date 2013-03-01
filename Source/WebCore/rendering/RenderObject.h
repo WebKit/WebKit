@@ -264,11 +264,15 @@ protected:
     void setParent(RenderObject* parent)
     {
         m_parent = parent;
-        if (parent && parent->inRenderFlowThread() && !inRenderFlowThread())
-            setInRenderFlowThreadIncludingDescendants(true);
-        else if (!parent && inRenderFlowThread())
-            setInRenderFlowThreadIncludingDescendants(false);
+        
+        // Only update if our flow thread state is different from our new parent and if we're not a RenderFlowThread.
+        // A RenderFlowThread is always considered to be inside itself, so it never has to change its state
+        // in response to parent changes.
+        FlowThreadState newState = parent ? parent->flowThreadState() : NotInsideFlowThread;
+        if (newState != flowThreadState() && !isRenderFlowThread())
+            setFlowThreadStateIncludingDescendants(newState);
     }
+
     //////////////////////////////////////////
 private:
 #ifndef NDEBUG
@@ -432,10 +436,22 @@ public:
         }
     }
 
-    bool inRenderFlowThread() const { return m_bitfields.inRenderFlowThread(); }
-    void setInRenderFlowThread(bool b = true) { m_bitfields.setInRenderFlowThread(b); }
+    enum FlowThreadState {
+        NotInsideFlowThread = 0,
+        InsideOutOfFlowThread = 1,
+        InsideInFlowThread = 2,
+    };
 
-    void setInRenderFlowThreadIncludingDescendants(bool = true);
+    bool inRenderFlowThread() const
+    {
+        FlowThreadState state = flowThreadState();
+        return state != NotInsideFlowThread;
+    }
+
+    void setFlowThreadStateIncludingDescendants(FlowThreadState);
+
+    FlowThreadState flowThreadState() const { return m_bitfields.flowThreadState(); }
+    void setFlowThreadState(FlowThreadState state) { m_bitfields.setFlowThreadState(state); }
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return false; }
 
@@ -1043,6 +1059,7 @@ private:
             IsOutOfFlowPositioned = 2,
             IsStickyPositioned = 3
         };
+
     public:
         RenderObjectBitfields(Node* node)
             : m_needsLayout(false)
@@ -1066,15 +1083,15 @@ private:
             , m_hasReflection(false)
             , m_hasCounterNodeMap(false)
             , m_everHadLayout(false)
-            , m_inRenderFlowThread(false)
             , m_childrenInline(false)
             , m_hasColumns(false)
             , m_positionedState(IsStaticlyPositioned)
             , m_selectionState(SelectionNone)
+            , m_flowThreadState(NotInsideFlowThread)
         {
         }
         
-        // 29 bits have been used here. There are three bits available.
+        // 30 bits have been used here. There are two bits available.
         ADD_BOOLEAN_BITFIELD(needsLayout, NeedsLayout);
         ADD_BOOLEAN_BITFIELD(needsPositionedMovementLayout, NeedsPositionedMovementLayout);
         ADD_BOOLEAN_BITFIELD(normalChildNeedsLayout, NormalChildNeedsLayout);
@@ -1102,10 +1119,6 @@ private:
         ADD_BOOLEAN_BITFIELD(hasCounterNodeMap, HasCounterNodeMap);
         ADD_BOOLEAN_BITFIELD(everHadLayout, EverHadLayout);
 
-        // These bitfields are moved here from subclasses to pack them together.
-        // from RenderFlowThread
-        ADD_BOOLEAN_BITFIELD(inRenderFlowThread, InRenderFlowThread);
-
         // from RenderBlock
         ADD_BOOLEAN_BITFIELD(childrenInline, ChildrenInline);
         ADD_BOOLEAN_BITFIELD(hasColumns, HasColumns);
@@ -1113,6 +1126,7 @@ private:
     private:
         unsigned m_positionedState : 2; // PositionedState
         unsigned m_selectionState : 3; // SelectionState
+        unsigned m_flowThreadState : 2; // FlowThreadState
 
     public:
         bool isOutOfFlowPositioned() const { return m_positionedState == IsOutOfFlowPositioned; }
@@ -1129,6 +1143,9 @@ private:
 
         ALWAYS_INLINE SelectionState selectionState() const { return static_cast<SelectionState>(m_selectionState); }
         ALWAYS_INLINE void setSelectionState(SelectionState selectionState) { m_selectionState = selectionState; }
+        
+        ALWAYS_INLINE FlowThreadState flowThreadState() const { return static_cast<FlowThreadState>(m_flowThreadState); }
+        ALWAYS_INLINE void setFlowThreadState(FlowThreadState flowThreadState) { m_flowThreadState = flowThreadState; }
     };
 
 #undef ADD_BOOLEAN_BITFIELD
