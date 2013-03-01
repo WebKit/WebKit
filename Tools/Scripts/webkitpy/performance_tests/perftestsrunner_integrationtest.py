@@ -214,7 +214,8 @@ class MainTest(unittest.TestCase):
 
     def run_test(self, test_name):
         runner, port = self.create_runner()
-        return runner._run_single_test(ChromiumStylePerfTest(port, test_name, runner._host.filesystem.join('some-dir', test_name)))
+        tests = [ChromiumStylePerfTest(port, test_name, runner._host.filesystem.join('some-dir', test_name))]
+        return runner._run_tests_set(tests) == 0
 
     def test_run_passing_test(self):
         self.assertTrue(self.run_test('pass.html'))
@@ -253,7 +254,7 @@ class MainTest(unittest.TestCase):
         output = OutputCapture()
         output.capture_output()
         try:
-            unexpected_result_count = runner._run_tests_set(tests, port)
+            unexpected_result_count = runner._run_tests_set(tests)
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, len(tests) - 1)
@@ -270,7 +271,7 @@ class MainTest(unittest.TestCase):
 
         tests = self._tests_for_runner(runner, ['inspector/pass.html', 'inspector/silent.html', 'inspector/failed.html',
             'inspector/tonguey.html', 'inspector/timeout.html', 'inspector/crash.html'])
-        unexpected_result_count = runner._run_tests_set(tests, port)
+        unexpected_result_count = runner._run_tests_set(tests)
 
         self.assertEqual(TestDriverWithStopCount.stop_count, 6)
 
@@ -280,7 +281,7 @@ class MainTest(unittest.TestCase):
         output = OutputCapture()
         output.capture_output()
         try:
-            unexpected_result_count = runner._run_tests_set(tests, port)
+            unexpected_result_count = runner._run_tests_set(tests)
         finally:
             stdout, stderr, log = output.restore_output()
         self.assertEqual(unexpected_result_count, 0)

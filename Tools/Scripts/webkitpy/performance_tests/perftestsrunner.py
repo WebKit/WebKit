@@ -186,7 +186,7 @@ class PerfTestsRunner(object):
         try:
             if needs_http:
                 self._start_http_servers()
-            unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()), self._port)
+            unexpected = self._run_tests_set(sorted(list(tests), key=lambda test: test.test_name()))
 
         finally:
             if needs_http:
@@ -356,40 +356,21 @@ class PerfTestsRunner(object):
         _log.info("JSON file uploaded to %s." % url)
         return True
 
-    def _print_status(self, tests, expected, unexpected):
-        if len(tests) == expected + unexpected:
-            status = "Ran %d tests" % len(tests)
-        else:
-            status = "Running %d of %d tests" % (expected + unexpected + 1, len(tests))
-        if unexpected:
-            status += " (%d didn't run)" % unexpected
-        _log.info(status)
-
-    def _run_tests_set(self, tests, port):
+    def _run_tests_set(self, tests):
         result_count = len(tests)
-        expected = 0
-        unexpected = 0
-        driver = None
+        failures = 0
 
-        for test in tests:
-            _log.info('Running %s (%d of %d)' % (test.test_name(), expected + unexpected + 1, len(tests)))
-            if self._run_single_test(test):
-                expected = expected + 1
+        for i, test in enumerate(tests):
+            _log.info('Running %s (%d of %d)' % (test.test_name(), i + 1, len(tests)))
+            start_time = time.time()
+            new_results = test.run(self._options.time_out_ms)
+            if new_results:
+                self._results.update(new_results)
             else:
-                unexpected = unexpected + 1
+                failures += 1
+                _log.error('FAILED')
 
+            _log.info('Finished: %f s' % (time.time() - start_time))
             _log.info('')
 
-        return unexpected
-
-    def _run_single_test(self, test):
-        start_time = time.time()
-        new_results = test.run(self._options.time_out_ms)
-        if new_results:
-            self._results.update(new_results)
-        else:
-            _log.error('FAILED')
-
-        _log.info("Finished: %f s" % (time.time() - start_time))
-
-        return new_results != None
+        return failures
