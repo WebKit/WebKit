@@ -1,3 +1,18 @@
+2013-02-28  Seokju Kwon  <seokju.kwon@gmail.com>
+
+        [WK2] Refactoring : Fix indentation and braces in WebInspectorClient.h|cpp
+        https://bugs.webkit.org/show_bug.cgi?id=109925
+
+        Reviewed by Benjamin Poulain.
+
+        The contents of an outermost namespace block should not be indented.
+        And One-line control clauses should not use braces.
+
+        * WebProcess/WebCoreSupport/WebInspectorClient.cpp:
+        (WebKit::WebInspectorClient::closeInspectorFrontend):
+        * WebProcess/WebCoreSupport/WebInspectorClient.h:
+        (WebCore):
+
 2013-02-28  Kiran Muppala  <cmuppala@apple.com>
 
         Add a pre-bootstrap message for NetworkProcess XPC service

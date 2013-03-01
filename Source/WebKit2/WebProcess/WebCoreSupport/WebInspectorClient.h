@@ -34,8 +34,8 @@
 #include <WebCore/InspectorFrontendChannel.h>
 
 namespace WebCore {
-    class GraphicsContext;
-    class IntRect;
+class GraphicsContext;
+class IntRect;
 }
 
 namespace WebKit {
