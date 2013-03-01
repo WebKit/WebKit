@@ -1,3 +1,15 @@
+2013-02-28  Li Yin  <li.yin@intel.com>
+
+        [chromium] Events can't be triggered on MediaStreamTrack
+        https://bugs.webkit.org/show_bug.cgi?id=110930
+
+        Reviewed by Kentaro Hara.
+
+        Related code was moved to MediaStreamCenterChromium::didStopLocalMediaStream
+
+        * DumpRenderTree/chromium/TestRunner/src/MockWebMediaStreamCenter.cpp:
+        (WebTestRunner::MockWebMediaStreamCenter::didStopLocalMediaStream):
+
 2013-02-27  James Robinson  <jamesr@chromium.org>
 
         [chromium] Use DumpRenderTree-specific interface for DRT's compositor embedding

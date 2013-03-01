@@ -94,8 +94,13 @@ bool MediaStreamCenterChromium::didRemoveMediaStreamTrack(MediaStreamDescriptor*
 
 void MediaStreamCenterChromium::didStopLocalMediaStream(MediaStreamDescriptor* stream)
 {
-    if (m_private)
+    if (m_private) {
         m_private->didStopLocalMediaStream(stream);
+        for (unsigned i = 0; i < stream->numberOfAudioComponents(); i++)
+            stream->audioComponent(i)->source()->setReadyState(MediaStreamSource::ReadyStateEnded);
+        for (unsigned i = 0; i < stream->numberOfVideoComponents(); i++)
+            stream->videoComponent(i)->source()->setReadyState(MediaStreamSource::ReadyStateEnded);
+    }
 }
 
 void MediaStreamCenterChromium::didCreateMediaStream(MediaStreamDescriptor* stream)

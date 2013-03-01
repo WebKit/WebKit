@@ -77,15 +77,6 @@ bool MockWebMediaStreamCenter::didRemoveMediaStreamTrack(const WebMediaStream&, 
 
 void MockWebMediaStreamCenter::didStopLocalMediaStream(const WebMediaStream& stream)
 {
-    WebVector<WebMediaStreamTrack> audioComponents;
-    stream.audioSources(audioComponents);
-    for (size_t i = 0; i < audioComponents.size(); ++i)
-        audioComponents[i].source().setReadyState(WebMediaStreamSource::ReadyStateEnded);
-
-    WebVector<WebMediaStreamTrack> videoComponents;
-    stream.videoSources(videoComponents);
-    for (size_t i = 0; i < videoComponents.size(); ++i)
-        videoComponents[i].source().setReadyState(WebMediaStreamSource::ReadyStateEnded);
 }
 
 class MockWebAudioDestinationConsumer : public WebAudioDestinationConsumer {
