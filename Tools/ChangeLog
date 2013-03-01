@@ -1,3 +1,23 @@
+2013-02-27  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Use DumpRenderTree-specific interface for DRT's compositor embedding
+        https://bugs.webkit.org/show_bug.cgi?id=111017
+
+        Reviewed by Adam Barth.
+
+        This decouples DumpRenderTree from WebLayerTreeViewClient.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHostDRTLayerTreeViewClient):
+        (WebViewHostDRTLayerTreeViewClient::WebViewHostDRTLayerTreeViewClient):
+        (WebViewHostDRTLayerTreeViewClient::~WebViewHostDRTLayerTreeViewClient):
+        (WebViewHostDRTLayerTreeViewClient::Layout):
+        (WebViewHostDRTLayerTreeViewClient::ScheduleComposite):
+        (WebViewHost::initializeLayerTreeView):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (webkit_support):
+        (WebViewHost):
+
 2013-02-28  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Unreviewed, add my secondary email address to the list.

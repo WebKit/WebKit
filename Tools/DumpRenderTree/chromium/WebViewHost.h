@@ -58,6 +58,7 @@ struct WebWindowFeatures;
 }
 
 namespace webkit_support {
+class DRTLayerTreeViewClient;
 class MediaStreamUtil;
 class TestMediaStreamClient;
 }
@@ -278,6 +279,7 @@ private:
     WebTestRunner::WebTaskList m_taskList;
     Vector<WebKit::WebWidget*> m_popupmenus;
 
+    OwnPtr<webkit_support::DRTLayerTreeViewClient> m_layerTreeViewClient;
     OwnPtr<WebKit::WebLayerTreeView> m_layerTreeView;
 };
 

@@ -108,6 +108,8 @@ public:
 
     void setLogConsoleOutput(bool enabled);
 
+    void scheduleComposite();
+
 #if WEBTESTRUNNER_IMPLEMENTATION
     void display();
     void displayInvalidatedRegion();
@@ -125,7 +127,6 @@ protected:
 
     void didInvalidateRect(const WebKit::WebRect&);
     void didScrollRect(int, int, const WebKit::WebRect&);
-    void scheduleComposite();
     void scheduleAnimation();
     void setWindowRect(const WebKit::WebRect&);
     void show(WebKit::WebNavigationPolicy);
@@ -250,11 +251,6 @@ public:
     {
         WebTestProxyBase::didScrollRect(dx, dy, clipRect);
         Base::didScrollRect(dx, dy, clipRect);
-    }
-    virtual void scheduleComposite()
-    {
-        WebTestProxyBase::scheduleComposite();
-        Base::scheduleComposite();
     }
     virtual void scheduleAnimation()
     {

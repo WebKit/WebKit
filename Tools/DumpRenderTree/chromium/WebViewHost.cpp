@@ -262,12 +262,26 @@ void WebViewHost::didAutoResize(const WebSize& newSize)
     setWindowRect(WebRect(0, 0, newSize.width, newSize.height));
 }
 
+class WebViewHostDRTLayerTreeViewClient : public webkit_support::DRTLayerTreeViewClient {
+public:
+    explicit WebViewHostDRTLayerTreeViewClient(WebViewHost* host)
+        : m_host(host) { }
+    virtual ~WebViewHostDRTLayerTreeViewClient() { }
+
+    virtual void Layout() { m_host->webView()->layout(); }
+    virtual void ScheduleComposite() { m_host->proxy()->scheduleComposite(); }
+
+private:
+    WebViewHost* m_host;
+};
+
 void WebViewHost::initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
 {
+    m_layerTreeViewClient = adoptPtr(new WebViewHostDRTLayerTreeViewClient(this));
     if (m_shell->softwareCompositingEnabled())
-        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeViewSoftware(client));
+        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeViewSoftware(m_layerTreeViewClient.get()));
     else
-        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeView3d(client));
+        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeView3d(m_layerTreeViewClient.get()));
 
     ASSERT(m_layerTreeView);
     m_layerTreeView->setRootLayer(rootLayer);
