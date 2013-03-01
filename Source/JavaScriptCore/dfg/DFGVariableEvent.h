@@ -57,9 +57,9 @@ enum VariableEventKind {
     // Death of a node - after this we no longer care about this node.
     Death,
     
-    // A MovHint means that a node is being associated with a bytecode operand,
+    // A MovHintEvent means that a node is being associated with a bytecode operand,
     // but that it has not been stored into that operand.
-    MovHint,
+    MovHintEvent,
     
     // A SetLocalEvent means that a node's value has actually been stored into the
     // bytecode operand that it's associated with.
@@ -169,7 +169,7 @@ public:
         VariableEvent event;
         event.m_id = id;
         event.u.virtualReg = operand;
-        event.m_kind = MovHint;
+        event.m_kind = MovHintEvent;
         return event;
     }
     
@@ -182,7 +182,7 @@ public:
     {
         ASSERT(m_kind == BirthToFill || m_kind == Fill
                || m_kind == BirthToSpill || m_kind == Spill
-               || m_kind == Death || m_kind == MovHint);
+               || m_kind == Death || m_kind == MovHintEvent);
         return m_id;
     }
     
@@ -235,7 +235,7 @@ public:
     
     int operand() const
     {
-        ASSERT(m_kind == SetLocalEvent || m_kind == MovHint);
+        ASSERT(m_kind == SetLocalEvent || m_kind == MovHintEvent);
         return u.virtualReg;
     }
     
@@ -253,7 +253,7 @@ private:
     //   - The GPR or FPR, or a GPR pair.
     // For BirthToSpill, Spill:
     //   - The virtual register.
-    // For MovHint, SetLocalEvent:
+    // For MovHintEvent, SetLocalEvent:
     //   - The bytecode operand.
     // For Death:
     //   - Unused.

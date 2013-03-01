@@ -54,7 +54,7 @@ void VariableEvent::dump(PrintStream& out) const
     case Death:
         out.print("Death(", id(), ")");
         break;
-    case MovHint:
+    case MovHintEvent:
         out.print("MovHint(", id(), ", r", operand(), ")");
         break;
     case SetLocalEvent:

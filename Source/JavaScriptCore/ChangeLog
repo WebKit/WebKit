@@ -1,3 +1,22 @@
+2013-03-01  Filip Pizlo  <fpizlo@apple.com>
+
+        Rename MovHint to MovHintEvent so I can create a NodeType called MovHint
+
+        Rubber stamped by Mark Hahnenberg.
+        
+        This is similar to the SetLocal/SetLocalEvent naming scheme, where SetLocal is the
+        NodeType and SetLocalEvent is the VariableEventKind.
+
+        * dfg/DFGVariableEvent.cpp:
+        (JSC::DFG::VariableEvent::dump):
+        * dfg/DFGVariableEvent.h:
+        (JSC::DFG::VariableEvent::movHint):
+        (JSC::DFG::VariableEvent::id):
+        (JSC::DFG::VariableEvent::operand):
+        (VariableEvent):
+        * dfg/DFGVariableEventStream.cpp:
+        (JSC::DFG::VariableEventStream::reconstruct):
+
 2013-03-01  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         [JSC] Fix sign comparison warning/error after r144340.

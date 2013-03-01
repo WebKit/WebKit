@@ -161,7 +161,7 @@ void VariableEventStream::reconstruct(
             iter->value.update(event);
             break;
         }
-        case MovHint:
+        case MovHintEvent:
             if (operandSources.hasOperand(event.operand()))
                 operandSources.setOperand(event.operand(), ValueSource(event.id()));
             break;
