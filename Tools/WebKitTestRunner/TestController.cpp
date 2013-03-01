@@ -212,6 +212,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         createOtherPage,
         0, // mouseDidMoveOverElement
         0, // decidePolicyForNotificationPermissionRequest
+        0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
@@ -372,6 +373,7 @@ void TestController::initialize(int argc, const char* argv[])
         createOtherPage,
         0, // mouseDidMoveOverElement
         0, // decidePolicyForNotificationPermissionRequest
+        0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
