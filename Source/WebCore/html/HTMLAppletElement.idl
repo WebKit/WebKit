@@ -21,6 +21,7 @@
 [
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
+    V8CustomIndexedGetter,
     CustomCall
 ] interface HTMLAppletElement : HTMLElement {
     [Reflect] attribute DOMString align;

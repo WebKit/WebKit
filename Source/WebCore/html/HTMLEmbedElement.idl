@@ -22,6 +22,7 @@
     CustomNamedSetter,
     JSCustomGetOwnPropertySlotAndDescriptor,
     CustomCall,
+    V8CustomIndexedGetter,
     V8SkipVTableValidation
 ] interface HTMLEmbedElement : HTMLElement {
 attribute [Reflect] DOMString align;

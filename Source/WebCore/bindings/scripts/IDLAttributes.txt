@@ -116,6 +116,7 @@ V8CacheAttributeForGC
 V8Custom
 V8CustomConstructor
 V8CustomGetter
+V8CustomIndexedGetter
 V8CustomIsReachable
 V8CustomSetter
 V8CustomToJSObject

@@ -40,6 +40,7 @@
     JSLegacyParent=JSDOMWindowBase,
     V8CustomToJSObject,
     V8NoWrapperCache,
+    V8CustomIndexedGetter,
     InterfaceName=Window
 ] interface DOMWindow {
     // DOM Level 0
