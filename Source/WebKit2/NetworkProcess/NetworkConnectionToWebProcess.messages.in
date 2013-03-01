@@ -40,6 +40,10 @@ messages -> NetworkConnectionToWebProcess LegacyReceiver {
     CookieRequestHeaderFieldValue(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (WTF::String result)
     GetRawCookies(bool privateBrowsingEnabled, WebCore::KURL firstParty, WebCore::KURL url) -> (WTF::Vector<WebCore::Cookie> cookies)
     DeleteCookie(bool privateBrowsingEnabled, WebCore::KURL url, WTF::String cookieName)
+
+    RegisterBlobURL(WebCore::KURL url, WebKit::BlobRegistrationData data)
+    RegisterBlobURLFromURL(WebCore::KURL url, WebCore::KURL srcURL)
+    UnregisterBlobURL(WebCore::KURL url)
 }
 
 #endif // ENABLE(NETWORK_PROCESS)

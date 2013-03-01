@@ -1,3 +1,46 @@
+2013-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Make in-memory blobs work in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=111132
+
+        Reviewed by Sam Weinig.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLFromURL):
+        (WebKit::NetworkConnectionToWebProcess::unregisterBlobURL):
+        * NetworkProcess/NetworkConnectionToWebProcess.h:
+        Implement BlobRegistry interface by using BlobRegistryImpl (same one as used in
+        WebProcess in non-PPT mode).
+
+        * NetworkProcess/NetworkConnectionToWebProcess.messages.in: Added three messages
+        needed for BlobRegistry.
+
+        * NetworkProcess/NetworkProcess.cpp:
+        * NetworkProcess/NetworkProcessPlatformStrategies.cpp: Added.
+        * NetworkProcess/NetworkProcessPlatformStrategies.h: Added.
+        Added a mostly empty platform strategy, just for FormData to talk to BlobRegistry.
+        Perhaps we'll find a way to avoid this WebCore code path in NetworkProcess, because
+        we obviously know which registry implementation is in use in this process.
+
+        * Shared/FileAPI: Added.
+        * Shared/FileAPI/BlobRegistrationData.cpp: Added.
+        * Shared/FileAPI/BlobRegistrationData.h: Added.
+        Added a class for passing BlobData and extension handles over IPC.
+        This uses a trick with mutable a member to avoid copying decoded BlobStorageData.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/FileAPI: Added.
+        * WebProcess/FileAPI/BlobRegistryProxy.cpp: Added.
+        * WebProcess/FileAPI/BlobRegistryProxy.h: Added.
+        A proxy implementation of BlobRegistry that just sends requests over IPC. We only
+        need async ones.
+
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.cpp:
+        (WebKit::WebPlatformStrategies::createBlobRegistry):
+        * WebProcess/WebCoreSupport/WebPlatformStrategies.h:
+        Create an appropriate BlobRegistry.
+
 2013-03-01  Zan Dobersek  <zdobersek@igalia.com>
 
         Uncomment ENABLE_SVG guards to avoid having WebKitPluginProcess link

@@ -871,11 +871,11 @@
 		2ED609BC1145B07100C8684E /* DOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2ED609BA1145B07100C8684E /* DOMFormData.cpp */; };
 		2ED609BD1145B07100C8684E /* DOMFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2ED609BB1145B07100C8684E /* DOMFormData.h */; };
 		2EDEF1F3121B0EFC00726DB2 /* BlobData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDEF1ED121B0EFC00726DB2 /* BlobData.cpp */; };
-		2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1EE121B0EFC00726DB2 /* BlobData.h */; };
-		2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1EF121B0EFC00726DB2 /* BlobRegistry.h */; };
+		2EDEF1F4121B0EFC00726DB2 /* BlobData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1EE121B0EFC00726DB2 /* BlobData.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2EDEF1F5121B0EFC00726DB2 /* BlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1EF121B0EFC00726DB2 /* BlobRegistry.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EDEF1F6121B0EFC00726DB2 /* BlobRegistryImpl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDEF1F0121B0EFC00726DB2 /* BlobRegistryImpl.cpp */; };
-		2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */; };
-		2EDEF1F8121B0EFC00726DB2 /* BlobStorageData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */; };
+		2EDEF1F7121B0EFC00726DB2 /* BlobRegistryImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F1121B0EFC00726DB2 /* BlobRegistryImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		2EDEF1F8121B0EFC00726DB2 /* BlobStorageData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDEF1F2121B0EFC00726DB2 /* BlobStorageData.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		2EDF369C122C94B4002F7D4E /* FileReaderSync.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2EDF369A122C94B4002F7D4E /* FileReaderSync.cpp */; };
 		2EDF369D122C94B4002F7D4E /* FileReaderSync.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDF369B122C94B4002F7D4E /* FileReaderSync.h */; };
 		2EDF369F122C94C8002F7D4E /* FileException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2EDF369E122C94C8002F7D4E /* FileException.h */; };

@@ -26,12 +26,15 @@
 #include "config.h"
 #include "NetworkConnectionToWebProcess.h"
 
+#include "BlobRegistrationData.h"
 #include "ConnectionStack.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
 #include "RemoteNetworkingContext.h"
 #include "SyncNetworkResourceLoader.h"
+#include <WebCore/BlobData.h>
+#include <WebCore/BlobRegistry.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -175,6 +178,23 @@ void NetworkConnectionToWebProcess::getRawCookies(bool privateBrowsingEnabled, c
 void NetworkConnectionToWebProcess::deleteCookie(bool privateBrowsingEnabled, const KURL& url, const String& cookieName)
 {
     WebCore::deleteCookie(storageSession(privateBrowsingEnabled), url, cookieName);
+}
+
+void NetworkConnectionToWebProcess::registerBlobURL(const KURL& url, const BlobRegistrationData& data)
+{
+    // FIXME: Track sandbox extensions.
+    // FIXME: unregister all URLs when process connection closes.
+    blobRegistry().registerBlobURL(url, data.releaseData());
+}
+
+void NetworkConnectionToWebProcess::registerBlobURLFromURL(const KURL& url, const KURL& srcURL)
+{
+    blobRegistry().registerBlobURL(url, srcURL);
+}
+
+void NetworkConnectionToWebProcess::unregisterBlobURL(const KURL& url)
+{
+    blobRegistry().unregisterBlobURL(url);
 }
 
 } // namespace WebKit

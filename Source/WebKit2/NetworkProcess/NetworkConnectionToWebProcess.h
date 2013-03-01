@@ -41,6 +41,7 @@ class ResourceRequest;
 
 namespace WebKit {
 
+class BlobRegistrationData;
 class NetworkConnectionToWebProcess;
 class NetworkResourceLoader;
 class SyncNetworkResourceLoader;
@@ -82,6 +83,10 @@ private:
     void cookieRequestHeaderFieldValue(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, String& result);
     void getRawCookies(bool privateBrowsingEnabled, const WebCore::KURL& firstParty, const WebCore::KURL&, Vector<WebCore::Cookie>&);
     void deleteCookie(bool privateBrowsingEnabled, const WebCore::KURL&, const String& cookieName);
+
+    void registerBlobURL(const WebCore::KURL&, const BlobRegistrationData&);
+    void registerBlobURLFromURL(const WebCore::KURL&, const WebCore::KURL& srcURL);
+    void unregisterBlobURL(const WebCore::KURL&);
 
     RefPtr<CoreIPC::Connection> m_connection;
 

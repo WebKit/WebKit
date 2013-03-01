@@ -74,6 +74,9 @@ private:
 #if ENABLE(NETWORK_PROCESS)
     virtual WebCore::ResourceLoadScheduler* resourceLoadScheduler() OVERRIDE;
     virtual void loadResourceSynchronously(WebCore::NetworkingContext*, unsigned long resourceLoadIdentifier, const WebCore::ResourceRequest&, WebCore::StoredCredentials, WebCore::ResourceError&, WebCore::ResourceResponse&, Vector<char>& data) OVERRIDE;
+#if ENABLE(BLOB)
+    virtual WebCore::BlobRegistry* createBlobRegistry() OVERRIDE;
+#endif
 #endif
 
     // WebCore::PluginStrategy

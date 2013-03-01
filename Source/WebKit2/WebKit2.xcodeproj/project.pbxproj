@@ -1092,8 +1092,14 @@
 		E133FD8A1423DD7F00FC7BFB /* WebKit.icns in Resources */ = {isa = PBXBuildFile; fileRef = E133FD891423DD7F00FC7BFB /* WebKit.icns */; };
 		E134F01712EA5D33004EC58D /* WKPrintingView.h in Headers */ = {isa = PBXBuildFile; fileRef = E134F01512EA5D11004EC58D /* WKPrintingView.h */; };
 		E134F01A12EA5D99004EC58D /* WKPrintingView.mm in Sources */ = {isa = PBXBuildFile; fileRef = E134F01912EA5D99004EC58D /* WKPrintingView.mm */; };
+		E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */; };
+		E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */ = {isa = PBXBuildFile; fileRef = E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */; };
 		E1513C66166EABB200149FCB /* ChildProcessProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */; };
 		E1513C67166EABB200149FCB /* ChildProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E1513C65166EABB200149FCB /* ChildProcessProxy.h */; };
+		E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */; };
+		E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */; };
+		E170877016D6CFE500F99226 /* BlobRegistrationData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E170876E16D6CFE400F99226 /* BlobRegistrationData.cpp */; };
+		E170877116D6CFE500F99226 /* BlobRegistrationData.h in Headers */ = {isa = PBXBuildFile; fileRef = E170876F16D6CFE500F99226 /* BlobRegistrationData.h */; };
 		E179088D169BAA62006904C7 /* SecItemShim.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6947169B77C8009B6670 /* SecItemShim.cpp */; };
 		E179088F169BAA6A006904C7 /* SecItemShim.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6948169B77C8009B6670 /* SecItemShim.h */; };
 		E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */; };
@@ -1468,8 +1474,8 @@
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
 		1A334DEA16DE8B68006A8E38 /* StorageAreaProxy.messages.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = StorageAreaProxy.messages.in; sourceTree = "<group>"; };
-		1A334DEB16DE8F88006A8E38 /* StorageAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StorageAreaProxyMessageReceiver.cpp; path = StorageAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
-    		1A334DEC16DE8F88006A8E38 /* StorageAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StorageAreaProxyMessages.h; path = StorageAreaProxyMessages.h; sourceTree = "<group>"; };
+		1A334DEB16DE8F88006A8E38 /* StorageAreaProxyMessageReceiver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StorageAreaProxyMessageReceiver.cpp; sourceTree = "<group>"; };
+		1A334DEC16DE8F88006A8E38 /* StorageAreaProxyMessages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageAreaProxyMessages.h; sourceTree = "<group>"; };
 		1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginModuleInfo.cpp; sourceTree = "<group>"; };
 		1A3D610013A7CC2A00F95D4E /* PluginModuleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginModuleInfo.h; sourceTree = "<group>"; };
 		1A3D610413A7F03A00F95D4E /* ArgumentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ArgumentCoders.cpp; sourceTree = "<group>"; };
@@ -2534,8 +2540,14 @@
 		E134F01912EA5D99004EC58D /* WKPrintingView.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WKPrintingView.mm; sourceTree = "<group>"; };
 		E13A8A2C162879AC00392929 /* SharedWorkerProcess.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SharedWorkerProcess.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E13A8A4B16287A1B00392929 /* SharedWorkerProcess.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = SharedWorkerProcess.xcconfig; sourceTree = "<group>"; };
+		E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkProcessPlatformStrategies.cpp; path = NetworkProcess/NetworkProcessPlatformStrategies.cpp; sourceTree = "<group>"; };
+		E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkProcessPlatformStrategies.h; path = NetworkProcess/NetworkProcessPlatformStrategies.h; sourceTree = "<group>"; };
 		E1513C64166EABB200149FCB /* ChildProcessProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildProcessProxy.cpp; sourceTree = "<group>"; };
 		E1513C65166EABB200149FCB /* ChildProcessProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChildProcessProxy.h; sourceTree = "<group>"; };
+		E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobRegistryProxy.cpp; path = WebProcess/FileAPI/BlobRegistryProxy.cpp; sourceTree = "<group>"; };
+		E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobRegistryProxy.h; path = WebProcess/FileAPI/BlobRegistryProxy.h; sourceTree = "<group>"; };
+		E170876E16D6CFE400F99226 /* BlobRegistrationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobRegistrationData.cpp; path = FileAPI/BlobRegistrationData.cpp; sourceTree = "<group>"; };
+		E170876F16D6CFE500F99226 /* BlobRegistrationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobRegistrationData.h; path = FileAPI/BlobRegistrationData.h; sourceTree = "<group>"; };
 		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
 		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
 		E17AE2C116B9C139001C42F1 /* com.apple.WebKit.NetworkProcess.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.NetworkProcess.sb.in; sourceTree = "<group>"; };
@@ -3075,6 +3087,7 @@
 				BC111B5F112F635E00337BAB /* CoreIPCSupport */,
 				518E8EF216B208F800E91429 /* Downloads */,
 				BC82836816B3587900A278FE /* EntryPointUtilities */,
+				E170877216D6CFEC00F99226 /* FileAPI */,
 				BC111B5A112F628200337BAB /* mac */,
 				51A8A60D1627F2AC000D90E9 /* Network */,
 				BCAF35E516CA253B00D4E9FC /* OfflineStorage */,
@@ -3471,6 +3484,8 @@
 				513A164B1630A9BF005D7D22 /* NetworkConnectionToWebProcess.messages.in */,
 				510CC7DF16138E2900D03ED3 /* NetworkProcess.cpp */,
 				510CC7E016138E2900D03ED3 /* NetworkProcess.h */,
+				E14A954716E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp */,
+				E14A954816E016A40068DE82 /* NetworkProcessPlatformStrategies.h */,
 				51A8A6171627F5BB000D90E9 /* NetworkProcess.messages.in */,
 				51FD18B31651FBAD00DBE1CE /* NetworkResourceLoader.cpp */,
 				51FD18B41651FBAD00DBE1CE /* NetworkResourceLoader.h */,
@@ -3686,6 +3701,7 @@
 				512E352A130B559900ABD19A /* ApplicationCache */,
 				3309344B1315B93A0097A7BC /* Cookies */,
 				BCACC43B16B24C5D00B6E092 /* EntryPoint */,
+				E170876D16D6CA7200F99226 /* FileAPI */,
 				CD73BA3D131A2A2100EEDED2 /* FullScreen */,
 				BC0E5FCB12D696DD0012A72A /* Geolocation */,
 				51FBB9C1132E079200F327B4 /* IconDatabase */,
@@ -4973,6 +4989,25 @@
 			path = SharedWorkerProcess;
 			sourceTree = "<group>";
 		};
+		E170876D16D6CA7200F99226 /* FileAPI */ = {
+			isa = PBXGroup;
+			children = (
+				E170876916D6CA6900F99226 /* BlobRegistryProxy.cpp */,
+				E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */,
+			);
+			name = FileAPI;
+			path = ..;
+			sourceTree = "<group>";
+		};
+		E170877216D6CFEC00F99226 /* FileAPI */ = {
+			isa = PBXGroup;
+			children = (
+				E170876E16D6CFE400F99226 /* BlobRegistrationData.cpp */,
+				E170876F16D6CFE500F99226 /* BlobRegistrationData.h */,
+			);
+			name = FileAPI;
+			sourceTree = "<group>";
+		};
 		E199875B142BF9CF00BB2DE7 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
@@ -5569,6 +5604,9 @@
 				BC5D24C216CD706D007D5461 /* WKDOMNodePrivate.h in Headers */,
 				BC5D24C516CD7088007D5461 /* WKDOMRangePrivate.h in Headers */,
 				BC5D24C716CD73C5007D5461 /* WKBundleRangeHandlePrivate.h in Headers */,
+				E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */,
+				E170877116D6CFE500F99226 /* BlobRegistrationData.h in Headers */,
+				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6771,6 +6809,9 @@
 				BCAF35E816CA253B00D4E9FC /* OfflineStorageProcessCreationParameters.cpp in Sources */,
 				BCAF362516CA29A200D4E9FC /* OfflineStorageProcessMessageReceiver.cpp in Sources */,
 				51A4D5A916CAC4FF000E615E /* StatisticsRequest.cpp in Sources */,
+				E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */,
+				E170877016D6CFE500F99226 /* BlobRegistrationData.cpp in Sources */,
+				E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

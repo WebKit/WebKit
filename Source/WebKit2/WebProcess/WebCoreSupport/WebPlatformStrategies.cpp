@@ -53,6 +53,7 @@
 #include <wtf/Atomics.h>
 
 #if ENABLE(NETWORK_PROCESS)
+#include "BlobRegistryProxy.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcessConnection.h"
 #include "WebResourceLoadScheduler.h"
@@ -247,6 +248,14 @@ void WebPlatformStrategies::loadResourceSynchronously(NetworkingContext* context
     memcpy(data.data(), dataReference.data(), dataReference.size());
 }
 
+#if ENABLE(BLOB)
+BlobRegistry* WebPlatformStrategies::createBlobRegistry()
+{
+    if (!WebProcess::shared().usesNetworkProcess())
+        return LoaderStrategy::createBlobRegistry();
+    return new BlobRegistryProxy;    
+}
+#endif
 #endif
 
 // PluginStrategy
