@@ -345,11 +345,13 @@ String Pasteboard::plainText(Frame* frame)
 
     if (types.contains(String(NSRTFDPboardType))) {
         RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFDPboardType, m_pasteboardName);
-        attributedString = [[NSAttributedString alloc] initWithRTFD:[data->createNSData() autorelease] documentAttributes:NULL];
+        if (data)
+            attributedString = [[NSAttributedString alloc] initWithRTFD:[data->createNSData() autorelease] documentAttributes:NULL];
     }
     if (attributedString == nil && types.contains(String(NSRTFPboardType))) {
         RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFPboardType, m_pasteboardName);
-        attributedString = [[NSAttributedString alloc] initWithRTF:[data->createNSData() autorelease] documentAttributes:NULL];
+        if (data)
+            attributedString = [[NSAttributedString alloc] initWithRTF:[data->createNSData() autorelease] documentAttributes:NULL];
     }
     if (attributedString != nil) {
         string = [[attributedString string] precomposedStringWithCanonicalMapping];
@@ -411,11 +413,13 @@ static PassRefPtr<DocumentFragment> documentFragmentWithRTF(Frame* frame, NSStri
     NSAttributedString *string = nil;
     if (pasteboardType == NSRTFDPboardType) {
         RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFDPboardType, pastebordName);
-        string = [[NSAttributedString alloc] initWithRTFD:[data->createNSData() autorelease] documentAttributes:NULL];
+        if (data)
+            string = [[NSAttributedString alloc] initWithRTFD:[data->createNSData() autorelease] documentAttributes:NULL];
     }
     if (string == nil) {
         RefPtr<SharedBuffer> data = platformStrategies()->pasteboardStrategy()->bufferForType(NSRTFPboardType, pastebordName);
-        string = [[NSAttributedString alloc] initWithRTF:[data->createNSData() autorelease] documentAttributes:NULL];
+        if (data)
+            string = [[NSAttributedString alloc] initWithRTF:[data->createNSData() autorelease] documentAttributes:NULL];
     }
     if (string == nil)
         return nil;
