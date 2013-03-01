@@ -289,7 +289,8 @@ static void writeFileWrapperAsRTFDAttachment(NSFileWrapper* wrapper, const Strin
     [attachment release];
     
     NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
-    platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData((NSData *)RTFDData).get(), NSRTFDPboardType, pasteboardName);
+    if (RTFDData)
+        platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData(RTFDData).get(), NSRTFDPboardType, pasteboardName);
 }
 
 void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
@@ -310,9 +311,12 @@ void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
     writeURLForTypes(writableTypesForImage(), m_pasteboardName, cocoaURL, nsStringNilIfEmpty(title), node->document()->frame());
     
     Image* image = cachedImage->imageForRenderer(renderer);
-    ASSERT(image);
-    
-    platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData((NSData *)[image->getNSImage() TIFFRepresentation]), NSTIFFPboardType, m_pasteboardName);
+    if (!image)
+        return;
+    NSData *imageData = (NSData *)[image->getNSImage() TIFFRepresentation];
+    if (!imageData)
+        return;
+    platformStrategies()->pasteboardStrategy()->setBufferForType(SharedBuffer::wrapNSData(imageData), NSTIFFPboardType, m_pasteboardName);
 
     String MIMEType = cachedImage->response().mimeType();
     ASSERT(MIMETypeRegistry::isSupportedImageResourceMIMEType(MIMEType));
