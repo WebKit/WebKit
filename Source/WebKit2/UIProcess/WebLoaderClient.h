@@ -27,6 +27,7 @@
 #define WebLoaderClient_h
 
 #include "APIClient.h"
+#include "PluginModuleInfo.h"
 #include "SameDocumentNavigationType.h"
 #include "WKPage.h"
 #include <wtf/Forward.h>
@@ -86,8 +87,10 @@ public:
     bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
     void willGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*, APIObject*);
 
+    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& identifier, const String& displayName, const String& documentURLString, PluginModuleLoadPolicy currentPluginLoadPolicy);
     void didFailToInitializePlugin(WebPageProxy*, const String& mimeType);
     void didBlockInsecurePluginVersion(WebPageProxy*, const String& mimeType, const String& pluginIdentifier, const String& pluginVersion);
+
 };
 
 } // namespace WebKit

@@ -27,7 +27,6 @@
 #define WebUIClient_h
 
 #include "APIClient.h"
-#include "PluginModuleInfo.h"
 #include "WKPage.h"
 #include "WebEvent.h"
 #include "WebHitTestResult.h"
@@ -116,8 +115,6 @@ public:
     void saveDataToFileInDownloadsFolder(WebPageProxy*, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
 
     bool shouldInterruptJavaScript(WebPageProxy*);
-
-    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& identifier, const String& displayName, const String& documentURLString, PluginModuleLoadPolicy currentPluginLoadPolicy);
 };
 
 } // namespace WebKit
