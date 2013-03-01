@@ -226,6 +226,7 @@ WebInspector.SASSSourceMapping.prototype = {
      */
     _bindUISourceCode: function(rawURL, sourceMap)
     {
+        this._cssModel.setSourceMapping(rawURL, this);
         var sources = sourceMap.sources();
         for (var i = 0; i < sources.length; ++i) {
             var url = sources[i];
@@ -233,12 +234,10 @@ WebInspector.SASSSourceMapping.prototype = {
                 var content = InspectorFrontendHost.loadResourceSynchronously(url);
                 var contentProvider = new WebInspector.StaticContentProvider(WebInspector.resourceTypes.Stylesheet, content, "text/x-scss");
                 var uiSourceCode = this._networkWorkspaceProvider.addFileForURL(url, contentProvider, true);
-                uiSourceCode.setSourceMapping(this);
                 this._addCSSURLforSASSURL(rawURL, url);
+                uiSourceCode.setSourceMapping(this);
             }
         }
-
-        this._cssModel.setSourceMapping(rawURL, this);
     },
 
     /**

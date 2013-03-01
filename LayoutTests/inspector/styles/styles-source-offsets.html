@@ -18,7 +18,7 @@ function test()
             if (ruleOrStyle.origin !== "regular")
                 return;
             style = ruleOrStyle.style;
-            header = ruleOrStyle.selectorList.text + ": [" + (ruleOrStyle.selectorList.range ? ruleOrStyle.selectorList.range.start + "-" + ruleOrStyle.selectorList.range.end : "")  + "]";
+            header = ruleOrStyle.selectorList.text + ": " + (ruleOrStyle.selectorList.range ? InspectorTest.rangeText(ruleOrStyle.selectorList.range) : "");
         } else {
             style = ruleOrStyle;
             header = "element.style:";

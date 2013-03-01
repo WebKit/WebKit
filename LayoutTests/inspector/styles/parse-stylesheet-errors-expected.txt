@@ -1,36 +1,36 @@
 Tests that CSSParser produces source data consistent with CSSOM when parsing broken stylesheets. Bug 98246
 
-body: [regular] {
-    ['color':'black'] @[5-18] active
+body: [regular, 1:0-1:4] {
+    ['color':'black'] @[2:4-2:17] active
 }
-body: [regular] {
-    ['background-color':'broken-declaration' non-parsed] @[5-42] active
+body: [regular, 12:0-12:4] {
+    ['background-color':'broken-declaration' non-parsed] @[13:4-13:41] active
 }
-body: [regular] {
-    ['color':'import-error' non-parsed] @[5-25] active
+body: [regular, 2:0-2:4] {
+    ['color':'import-error' non-parsed] @[3:4-3:24] active
 }
-body: [regular] {
-    ['color':'import-error-block' non-parsed] @[5-31] active
+body: [regular, 2:0-2:4] {
+    ['color':'import-error-block' non-parsed] @[3:4-3:30] active
 }
-body: [regular] {
-    ['color':'media-empty' non-parsed] @[5-24] active
+body: [regular, 2:0-2:4] {
+    ['color':'media-empty' non-parsed] @[3:4-3:23] active
 }
-body: [regular] {
-    ['color':'page-error' non-parsed] @[5-23] active
+body: [regular, 2:0-2:4] {
+    ['color':'page-error' non-parsed] @[3:4-3:22] active
 }
-body: [regular] {
-    ['color':'page-block' non-parsed] @[5-23] active
+body: [regular, 2:0-2:4] {
+    ['color':'page-block' non-parsed] @[3:4-3:22] active
 }
-body: [regular] {
-    ['color':'before-import' non-parsed] @[5-26] active
+body: [regular, 1:0-1:4] {
+    ['color':'before-import' non-parsed] @[2:4-2:25] active
 }
-body: [regular] {
-    ['color':'after-import' non-parsed] @[5-25] active
+body: [regular, 5:0-5:4] {
+    ['color':'after-import' non-parsed] @[6:4-6:24] active
 }
-body: [regular] {
-    ['color':'after-invalid-font-face' non-parsed] @[5-36] active
+body: [regular, 4:0-4:4] {
+    ['color':'after-invalid-font-face' non-parsed] @[5:4-5:35] active
 }
-body: [regular] {
-    ['color':'after-invalid-region' non-parsed] @[5-33] active
+body: [regular, 3:0-3:4] {
+    ['color':'after-invalid-region' non-parsed] @[4:4-4:32] active
 }
 

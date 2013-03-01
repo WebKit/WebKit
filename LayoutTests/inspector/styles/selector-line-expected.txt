@@ -1,0 +1,21 @@
+Tests that selector line is computed correctly regardless of its start column. Bug 110732.
+
+Text
+[expanded] 
+element.style  { ()
+
+======== Matched CSS Rules ========
+[expanded] 
+#container #inspected  { (selector-line.scss:4)
+color: green;
+
+[expanded] 
+#inspected  { (selector-line.html:5)
+/-- overloaded --/ color: green;
+
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+

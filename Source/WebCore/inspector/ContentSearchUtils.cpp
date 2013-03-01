@@ -36,6 +36,7 @@
 #include "RegularExpression.h"
 
 #include <wtf/BumpPointerAllocator.h>
+#include <wtf/StdLibExtras.h>
 #include <yarr/Yarr.h>
 
 using namespace std;
@@ -63,38 +64,65 @@ static String createSearchRegexSource(const String& text)
     return result;
 }
 
+static inline size_t sizetExtractor(const size_t* value)
+{
+    return *value;
+}
+
+TextPosition textPositionFromOffset(size_t offset, const Vector<size_t>& lineEndings)
+{
+    const size_t* foundLineEnding = approximateBinarySearch<size_t, size_t>(lineEndings, lineEndings.size(), offset, sizetExtractor);
+    size_t lineIndex = foundLineEnding - &lineEndings.at(0);
+    if (offset > *foundLineEnding)
+        ++lineIndex;
+    size_t lineStartOffset = lineIndex > 0 ? lineEndings.at(lineIndex - 1) + 1 : 0;
+    size_t column = offset - lineStartOffset;
+    return TextPosition(OrdinalNumber::fromZeroBasedInt(lineIndex), OrdinalNumber::fromZeroBasedInt(column));
+}
+
 static Vector<pair<int, String> > getRegularExpressionMatchesByLines(const RegularExpression& regex, const String& text)
 {
     Vector<pair<int, String> > result;
     if (text.isEmpty())
         return result;
 
-    int lineNumber = 0;
+    OwnPtr<Vector<size_t> > endings(lineEndings(text));
+    size_t size = endings->size();
     unsigned start = 0;
-    while (start < text.length()) {
-        size_t lineEnd = text.find('\n', start);
-        if (lineEnd == notFound)
-            lineEnd = text.length();
-        else
-            lineEnd++;
-
+    for (size_t lineNumber = 0; lineNumber < size; ++lineNumber) {
+        size_t lineEnd = endings->at(lineNumber);
         String line = text.substring(start, lineEnd - start);
-        if (line.endsWith("\r\n"))
-            line = line.left(line.length() - 2);
-        if (line.endsWith('\n'))
+        if (line.endsWith('\r'))
             line = line.left(line.length() - 1);
 
         int matchLength;
         if (regex.match(line, 0, &matchLength) != -1)
             result.append(pair<int, String>(lineNumber, line));
 
-        start = lineEnd;
-        lineNumber++;
+        start = lineEnd + 1;
     }
     return result;
 }
 
-static PassRefPtr<TypeBuilder::Page::SearchMatch> buildObjectForSearchMatch(int lineNumber, String lineContent)
+PassOwnPtr<Vector<size_t> > lineEndings(const String& text)
+{
+    OwnPtr<Vector<size_t> > result(adoptPtr(new Vector<size_t>()));
+
+    unsigned start = 0;
+    while (start < text.length()) {
+        size_t lineEnd = text.find('\n', start);
+        if (lineEnd == notFound)
+            break;
+
+        result->append(lineEnd);
+        start = lineEnd + 1;
+    }
+    result->append(text.length());
+
+    return result.release();
+}
+
+static PassRefPtr<TypeBuilder::Page::SearchMatch> buildObjectForSearchMatch(int lineNumber, const String& lineContent)
 {
     return TypeBuilder::Page::SearchMatch::create()
         .setLineNumber(lineNumber)

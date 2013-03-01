@@ -2262,8 +2262,10 @@
                 "id": "SourceRange",
                 "type": "object",
                 "properties": [
-                    { "name": "start", "type": "integer", "description": "Start of range (inclusive)."},
-                    { "name": "end", "type": "integer", "description": "End of range (exclusive)."}
+                    { "name": "startLine", "type": "integer", "description": "Start line of range." },
+                    { "name": "startColumn", "type": "integer", "description": "Start column of range (inclusive)." },
+                    { "name": "endLine", "type": "integer", "description": "End line of range" },
+                    { "name": "endColumn", "type": "integer", "description": "End column of range (exclusive)." }
                 ],
                 "description": "Text range within a resource."
             },

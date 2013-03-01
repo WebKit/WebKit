@@ -371,23 +371,15 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
 
                 for (var i = 0; i < styleSheets.length; ++i) {
                     var styleSheet = styleSheets[i];
-                    var stylesheetSize = 0;
-                    var unusedStylesheetSize = 0;
                     var unusedRules = [];
                     for (var curRule = 0; curRule < styleSheet.rules.length; ++curRule) {
                         var rule = styleSheet.rules[curRule];
-                        // Exact computation whenever source ranges are available.
-                        var textLength = (rule.selectorRange && rule.style.range && rule.style.range.end) ? rule.style.range.end - rule.selectorRange.start + 1 : 0;
-                        if (!textLength && rule.style.cssText)
-                            textLength = rule.style.cssText.length + rule.selectorText.length;
-                        stylesheetSize += textLength;
                         if (!testedSelectors[rule.selectorText] || foundSelectors[rule.selectorText])
                             continue;
-                        unusedStylesheetSize += textLength;
                         unusedRules.push(rule.selectorText);
                     }
-                    totalStylesheetSize += stylesheetSize;
-                    totalUnusedStylesheetSize += unusedStylesheetSize;
+                    totalStylesheetSize += styleSheet.rules.length;
+                    totalUnusedStylesheetSize += unusedRules.length;
 
                     if (!unusedRules.length)
                         continue;
@@ -395,10 +387,10 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     var resource = WebInspector.resourceForURL(styleSheet.sourceURL);
                     var isInlineBlock = resource && resource.request && resource.request.type == WebInspector.resourceTypes.Document;
                     var url = !isInlineBlock ? WebInspector.AuditRuleResult.linkifyDisplayName(styleSheet.sourceURL) : String.sprintf("Inline block #%d", ++inlineBlockOrdinal);
-                    var pctUnused = Math.round(100 * unusedStylesheetSize / stylesheetSize);
+                    var pctUnused = Math.round(100 * unusedRules.length / styleSheet.rules.length);
                     if (!summary)
                         summary = result.addChild("", true);
-                    var entry = summary.addFormatted("%s: %s (%d%) is not used by the current page.", url, Number.bytesToString(unusedStylesheetSize), pctUnused);
+                    var entry = summary.addFormatted("%s: %d% is not used by the current page.", url, pctUnused);
 
                     for (var j = 0; j < unusedRules.length; ++j)
                         entry.addSnippet(unusedRules[j]);
@@ -410,7 +402,7 @@ WebInspector.AuditRules.UnusedCssRule.prototype = {
                     return callback(null);
 
                 var totalUnusedPercent = Math.round(100 * totalUnusedStylesheetSize / totalStylesheetSize);
-                summary.value = String.sprintf("%s (%d%) of CSS is not used by the current page.", Number.bytesToString(totalUnusedStylesheetSize), totalUnusedPercent);
+                summary.value = String.sprintf("%s rules (%d%) of CSS not used by the current page.", totalUnusedStylesheetSize, totalUnusedPercent);
 
                 callback(result);
             }

@@ -40,5 +40,5 @@ h1: [user-agent]
 
 rule
 h1: [regular]
-['COLOR':'Red'] @[1-12] active
+['COLOR':'Red'] @[0:5-0:16] active
 

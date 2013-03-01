@@ -471,7 +471,7 @@ InspectorTest.rangeText = function(range)
 {
     if (!range)
         return "[undefined-undefined]";
-    return "[" + range.start + "-" + range.end + "]";
+    return "[" + range.startLine + ":" + range.startColumn + "-" + range.endLine + ":" + range.endColumn + "]";
 }
 
 InspectorTest.generateUndoTest = function(testBody)
@@ -534,10 +534,18 @@ InspectorTest.dumpRuleMatchesArray = function(matches, currentIndent)
 
 InspectorTest.dumpRule = function(rule, currentIndent)
 {
+    function selectorRange()
+    {
+        if (!rule.selectorList || !rule.selectorList.range)
+            return "";
+        var range = rule.selectorList.range;
+        return ", " + range.startLine + ":" + range.startColumn + "-" + range.endLine + ":" + range.endColumn;
+    }
+
     currentIndent = currentIndent || "";
 
     if (!rule.type || rule.type === "style") {
-        InspectorTest.addResult(currentIndent + rule.selectorList.text + ": [" + rule.origin + "] {");
+        InspectorTest.addResult(currentIndent + rule.selectorList.text + ": [" + rule.origin + selectorRange() + "] {");
         InspectorTest.dumpStyle(rule.style, currentIndent + indent);
         InspectorTest.addResult(currentIndent + "}");
         return;

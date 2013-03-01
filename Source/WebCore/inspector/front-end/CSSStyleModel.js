@@ -831,13 +831,12 @@ WebInspector.CSSRule = function(payload, matchingSelectors)
     this.selectorRange = payload.selectorList.range;
     this.sourceLine = payload.sourceLine;
     this.sourceURL = payload.sourceURL;
-    if (payload.sourceURL)
-        this._rawLocation = new WebInspector.CSSLocation(payload.sourceURL, payload.sourceLine);
     this.origin = payload.origin;
     this.style = WebInspector.CSSStyleDeclaration.parsePayload(payload.style);
     this.style.parentRule = this;
     if (payload.media)
         this.media = WebInspector.CSSMedia.parseMediaArrayPayload(payload.media);
+    this._setRawLocation(payload);
 }
 
 /**
@@ -851,6 +850,20 @@ WebInspector.CSSRule.parsePayload = function(payload, matchingIndices)
 }
 
 WebInspector.CSSRule.prototype = {
+    _setRawLocation: function(payload)
+    {
+        if (!payload.sourceURL)
+            return;
+        if (this.selectorRange) {
+            var resource = WebInspector.resourceTreeModel.resourceForURL(payload.sourceURL);
+            if (resource && resource.type === WebInspector.resourceTypes.Stylesheet) {
+                this._rawLocation = new WebInspector.CSSLocation(payload.sourceURL, this.selectorRange.startLine, this.selectorRange.startColumn);
+                return;
+            }
+        }
+        this._rawLocation = new WebInspector.CSSLocation(payload.sourceURL, payload.sourceLine);
+    },
+
     get isUserAgent()
     {
         return this.origin === "user-agent";

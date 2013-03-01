@@ -152,6 +152,7 @@ private:
     bool styleText(String* result) const;
     bool populateAllProperties(Vector<InspectorStyleProperty>* result) const;
     PassRefPtr<TypeBuilder::CSS::CSSStyle> styleWithProperties() const;
+    PassRefPtr<CSSRuleSourceData> extractSourceData() const;
     bool applyStyleText(const String&);
     String shorthandValue(const String& shorthandProperty) const;
     String shorthandPriority(const String& shorthandProperty) const;
@@ -220,6 +221,7 @@ protected:
 
     // Also accessed by friend class InspectorStyle.
     virtual bool setStyleText(CSSStyleDeclaration*, const String&);
+    virtual PassOwnPtr<Vector<size_t> > lineEndings() const;
 
 private:
     typedef Vector<RefPtr<CSSStyleRule> > CSSStyleRuleVector;
@@ -271,6 +273,7 @@ protected:
 
     // Also accessed by friend class InspectorStyle.
     virtual bool setStyleText(CSSStyleDeclaration*, const String&);
+    virtual PassOwnPtr<Vector<size_t> > lineEndings() const;
 
 private:
     CSSStyleDeclaration* inlineStyle() const;
