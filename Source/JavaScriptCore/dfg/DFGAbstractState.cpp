@@ -89,13 +89,6 @@ void AbstractState::initialize(Graph& graph)
     for (size_t i = 0; i < root->valuesAtHead.numberOfArguments(); ++i) {
         Node* node = root->variablesAtHead.argument(i);
         ASSERT(node->op() == SetArgument);
-        if (!node->shouldGenerate()) {
-            // The argument is dead. We don't do any checks for such arguments, and so
-            // for the purpose of the analysis, they contain no value.
-            root->valuesAtHead.argument(i).clear();
-            continue;
-        }
-        
         if (!node->variableAccessData()->shouldUnboxIfPossible()) {
             root->valuesAtHead.argument(i).makeTop();
             continue;
@@ -1616,20 +1609,6 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
         dataLogF(" from last access due to captured variable.\n");
 #endif
     } else {
-        if (!node->shouldGenerate()) {
-            // If the node at tail is a GetLocal that is dead, then skip it to get to the Phi.
-            // The Phi may be live.
-            if (node->op() != GetLocal)
-                return false;
-            
-            node = node->child1().node();
-            ASSERT(node->op() == Phi);
-            if (!node->shouldGenerate())
-                return false;
-        }
-        
-        ASSERT(node->shouldGenerate());
-
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF("          It's live, node @%u.\n", node->index());
 #endif
@@ -1649,6 +1628,18 @@ inline bool AbstractState::mergeStateAtTail(AbstractValue& destination, Abstract
             break;
             
         case GetLocal:
+            // If the GetLocal is dead, then we transfer from head to tail.
+            // FIXME: We can get rid of this case after https://bugs.webkit.org/show_bug.cgi?id=109389
+            if (!node->shouldGenerate()) {
+                // The block transfers the value from head to tail.
+                source = inVariable;
+#if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+                dataLogF("          Transfering ");
+                source.dump(WTF::dataFile());
+                dataLogF(" from head to tail (dead GetLocal case).\n");
+#endif
+                break;
+            }
             // The block refines the value with additional speculations.
             source = forNode(node);
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)

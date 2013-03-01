@@ -1,5 +1,20 @@
 2013-02-28  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG CFA should not do liveness pruning
+        https://bugs.webkit.org/show_bug.cgi?id=111119
+
+        Reviewed by Mark Hahnenberg.
+        
+        It adds complexity and probably buys nothing.  Moreover, I'm transitioning to having
+        liveness only available at the bitter end of compilation, so this will stop working
+        after https://bugs.webkit.org/show_bug.cgi?id=109389 anyway.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::initialize):
+        (JSC::DFG::AbstractState::mergeStateAtTail):
+
+2013-02-28  Filip Pizlo  <fpizlo@apple.com>
+
         Don't try to emit profiling if you don't have the DFG JIT.
 
         Rubber stamped by Mark Hahnenberg.
