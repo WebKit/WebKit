@@ -472,7 +472,7 @@ void ResourceHandle::createCFURLConnection(bool shouldUseCredentialStorage, bool
     RetainPtr<CFDictionaryRef> propertiesDictionary = adoptCF(CFDictionaryCreate(0, (const void**)&kCFURLConnectionSocketStreamProperties, (const void**)&streamProperties, 1, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks));
     CFRelease(streamProperties);
 
-    d->m_connection.adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), connectionProperties.get()));
+    d->m_connection.adoptCF(CFURLConnectionCreateWithProperties(0, request.get(), reinterpret_cast<CFURLConnectionClient*>(&client), propertiesDictionary.get()));
 }
 
 bool ResourceHandle::start()
