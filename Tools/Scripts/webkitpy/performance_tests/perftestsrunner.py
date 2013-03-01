@@ -37,6 +37,7 @@ import datetime
 
 from webkitpy.common import find_files
 from webkitpy.common.checkout.scm.detection import SCMDetector
+from webkitpy.common.config.urls import view_source_url
 from webkitpy.common.host import Host
 from webkitpy.common.net.file_uploader import FileUploader
 from webkitpy.performance_tests.perftest import PerfTestFactory
@@ -66,9 +67,9 @@ class PerfTestsRunner(object):
         self._host.initialize_scm()
         self._webkit_base_dir_len = len(self._port.webkit_base())
         self._base_path = self._port.perf_tests_dir()
-        self._results = {}
         self._timestamp = time.time()
         self._utc_timestamp = datetime.datetime.utcnow()
+
 
     @staticmethod
     def _parse_args(args=None):
@@ -233,10 +234,6 @@ class PerfTestsRunner(object):
             self._port.show_results_html_file(results_page_path)
 
     def _generate_results_dict(self, timestamp, description, platform, builder_name, build_number):
-        contents = {'tests': {}}
-        if description:
-            contents['description'] = description
-
         revisions = {}
         for (name, path) in self._port.repository_paths():
             scm = SCMDetector(self._host.filesystem, self._host.executive).detect_scm_system(path) or self._host.scm()
@@ -244,42 +241,37 @@ class PerfTestsRunner(object):
             revisions[name] = {'revision': str(revision), 'timestamp': scm.timestamp_of_latest_commit(path, revision)}
 
         meta_info = {
+            'description': description,
             'buildTime': self._datetime_in_ES5_compatible_iso_format(self._utc_timestamp),
             'platform': platform,
             'revisions': revisions,
             'builderName': builder_name,
             'buildNumber': int(build_number) if build_number else None}
 
+        contents = {'tests': {}}
         for key, value in meta_info.items():
             if value:
                 contents[key] = value
 
-        # FIXME: Make this function shorter once we've transitioned to use perf.webkit.org.
-        for metric_full_name, iteration_values in self._results.iteritems():
-            if not isinstance(iteration_values, list):  # We can't reports results without individual measurements.
-                continue
+        for test, metrics in self._results:
+            for metric_name, iteration_values in metrics.iteritems():
+                if not isinstance(iteration_values, list):  # We can't reports results without individual measurements.
+                    continue
 
-            assert metric_full_name.count(':') <= 1
-            test_full_name, _, metric = metric_full_name.partition(':')
-
-            tests = contents['tests']
-            path = test_full_name.split('/')
-            for i in range(0, len(path)):
-                # FIXME: We shouldn't assume HTML extension.
-                is_last_token = i + 1 == len(path)
-                url = 'http://trac.webkit.org/browser/trunk/PerformanceTests/' + '/'.join(path[0:i + 1])
-                if is_last_token:
-                    url += '.html'
-
-                tests.setdefault(path[i], {'url': url})
-                current_test = tests[path[i]]
-                if is_last_token:
-                    current_test.setdefault('metrics', {})
-                    assert metric not in current_test['metrics']
-                    current_test['metrics'][metric] = {'current': iteration_values}
-                else:
-                    current_test.setdefault('tests', {})
-                    tests = current_test['tests']
+                tests = contents['tests']
+                path = test.test_name_without_file_extension().split('/')
+                for i in range(0, len(path)):
+                    is_last_token = i + 1 == len(path)
+                    url = view_source_url('PerformanceTests/' + (test.test_name() if is_last_token else '/'.join(path[0:i + 1])))
+                    tests.setdefault(path[i], {'url': url})
+                    current_test = tests[path[i]]
+                    if is_last_token:
+                        current_test.setdefault('metrics', {})
+                        assert metric_name not in current_test['metrics']
+                        current_test['metrics'][metric_name] = {'current': iteration_values}
+                    else:
+                        current_test.setdefault('tests', {})
+                        tests = current_test['tests']
 
         return contents
 
@@ -357,13 +349,14 @@ class PerfTestsRunner(object):
     def _run_tests_set(self, tests):
         result_count = len(tests)
         failures = 0
+        self._results = []
 
         for i, test in enumerate(tests):
             _log.info('Running %s (%d of %d)' % (test.test_name(), i + 1, len(tests)))
             start_time = time.time()
-            new_results = test.run(self._options.time_out_ms)
-            if new_results:
-                self._results.update(new_results)
+            metrics = test.run(self._options.time_out_ms)
+            if metrics:
+                self._results.append((test, metrics))
             else:
                 failures += 1
                 _log.error('FAILED')

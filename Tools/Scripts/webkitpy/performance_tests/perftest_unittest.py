@@ -55,15 +55,9 @@ class TestPerfTestMetric(unittest.TestCase):
         self.assertEqual(PerfTestMetric('JSHeap', iterations=[1, 2, 3, 4, 5]).unit(), 'bytes')
 
     def test_init_set_time_metric(self):
-        self.assertEqual(PerfTestMetric('Time', 'ms').metric(), 'Time')
-        self.assertEqual(PerfTestMetric('Time', 'fps').metric(), 'FrameRate')
-        self.assertEqual(PerfTestMetric('Time', 'runs/s').metric(), 'Runs')
-
-    def test_legacy_chromium_bot_compatible_test_name(self):
-        self.assertEqual(PerfTestMetric('Time').legacy_chromium_bot_compatible_test_name('test'), 'test:Time')
-        self.assertEqual(PerfTestMetric('Malloc').legacy_chromium_bot_compatible_test_name('test'), 'test:Malloc')
-        self.assertEqual(PerfTestMetric('JSHeap').legacy_chromium_bot_compatible_test_name('test'), 'test:JSHeap')
-        self.assertEqual(PerfTestMetric('FontSize', unit='em').legacy_chromium_bot_compatible_test_name('test'), 'test:FontSize')
+        self.assertEqual(PerfTestMetric('Time', 'ms').name(), 'Time')
+        self.assertEqual(PerfTestMetric('Time', 'fps').name(), 'FrameRate')
+        self.assertEqual(PerfTestMetric('Time', 'runs/s').name(), 'Runs')
 
     def test_has_values(self):
         self.assertFalse(PerfTestMetric('Time').has_values())
@@ -316,7 +310,7 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_logs, '')
 
         self.assertEqual(len(metrics), 1)
-        self.assertEqual(metrics[0].metric(), 'Time')
+        self.assertEqual(metrics[0].name(), 'Time')
         self.assertEqual(metrics[0].iteration_values(), [float(i * 1000) for i in range(2, 21)])
 
     def test_run_with_driver_accumulates_memory_results(self):
@@ -342,11 +336,11 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_logs, '')
 
         self.assertEqual(len(metrics), 3)
-        self.assertEqual(metrics[0].metric(), 'Time')
+        self.assertEqual(metrics[0].name(), 'Time')
         self.assertEqual(metrics[0].iteration_values(), [float(i * 1000) for i in range(2, 21)])
-        self.assertEqual(metrics[1].metric(), 'Malloc')
+        self.assertEqual(metrics[1].name(), 'Malloc')
         self.assertEqual(metrics[1].iteration_values(), [float(10)] * 19)
-        self.assertEqual(metrics[2].metric(), 'JSHeap')
+        self.assertEqual(metrics[2].name(), 'JSHeap')
         self.assertEqual(metrics[2].iteration_values(), [float(5)] * 19)
 
     def test_prepare_fails_when_wait_until_ready_fails(self):

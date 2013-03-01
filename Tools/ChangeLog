@@ -1,3 +1,28 @@
+2013-03-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Don't use legacy test names when returning results from PerfTest.run
+        https://bugs.webkit.org/show_bug.cgi?id=111148
+
+        Reviewed by Dirk Pranke.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTestMetric.name): Renamed from metric.
+        (PerfTest.test_name_without_file_extension): Extracted from legacy_chromium_bot_compatible_test_name.
+        (PerfTest.run): Use metric name instead of the legacy name to store iteration values.
+        (ChromiumStylePerfTest.parse_and_log_output): Use the metric name to store results as done in PerfTest.run.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py:
+        (TestPerfTestMetric.test_init_set_time_metric):
+        (TestPerfTestMetric.legacy_chromium_bot_compatible_test_name): Removed. The integration tests test this.
+        (TestReplayPerfTest.test_run_with_driver_accumulates_results):
+        (TestReplayPerfTest.test_run_with_driver_accumulates_memory_results):
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner.py:
+        (PerfTestsRunner.__init__):
+        (PerfTestsRunner._generate_results_dict): Updated to iterate over (test, metrics) pair. Use view_source_url
+        to obtain the trac URL instead of hard coding it.
+        (PerfTestsRunner._run_tests_set):
+
 2013-03-01  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Add an extra project that assembles all project build logs on Windows into a single file.

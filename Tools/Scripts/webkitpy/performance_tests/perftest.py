@@ -59,16 +59,11 @@ class PerfTestMetric(object):
         self._unit = unit or self.metric_to_unit(metric)
         self._metric = self.time_unit_to_metric(self._unit) if metric == 'Time' else metric
 
-    def metric(self):
+    def name(self):
         return self._metric
 
     def has_values(self):
         return bool(self._iterations)
-
-    # FIXME: We don't need to support this anymore. Make outputs more human friendly.
-    def legacy_chromium_bot_compatible_test_name(self, test_name_with_extension):
-        test_name = re.sub(r'\.\w+$', '', test_name_with_extension)
-        return test_name + ':' + self._metric
 
     def append(self, value):
         self._iterations.append(value)
@@ -99,6 +94,9 @@ class PerfTest(object):
     def test_name(self):
         return self._test_name
 
+    def test_name_without_file_extension(self):
+        return re.sub(r'\.\w+$', '', self.test_name())
+
     def test_path(self):
         return self._test_path
 
@@ -127,10 +125,10 @@ class PerfTest(object):
 
         results = {}
         for metric in metrics:
-            legacy_test_name = metric.legacy_chromium_bot_compatible_test_name(self.test_name())
-            results[legacy_test_name] = metric.iteration_values()
+            results[metric.name()] = metric.iteration_values()
             if should_log:
-                self.log_statistics(legacy_test_name.replace(':', ': ').replace('/', ': '),
+                legacy_chromium_bot_compatible_name = self.test_name_without_file_extension().replace('/', ': ')
+                self.log_statistics(legacy_chromium_bot_compatible_name + ': ' + metric.name(),
                     metric.iteration_values(), metric.unit())
 
         return results
@@ -275,7 +273,7 @@ class ChromiumStylePerfTest(PerfTest):
             resultLine = ChromiumStylePerfTest._chromium_style_result_regex.match(line)
             if resultLine:
                 # FIXME: Store the unit
-                results[self.test_name() + ':' + resultLine.group('name').replace(' ', '')] = float(resultLine.group('value'))
+                results[resultLine.group('name').replace(' ', '')] = float(resultLine.group('value'))
                 _log.info(line)
             elif not len(line) == 0:
                 test_failed = True
