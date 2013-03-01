@@ -8,7 +8,7 @@ function test()
     var IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;
     var indexedDBModel = new WebInspector.IndexedDBModel();
     var mainFrameId = WebInspector.resourceTreeModel.mainFrame.id;
-    var securityOrigin = "http://127.0.0.1:8000";
+    var securityOrigin = new WebInspector.SecurityOrigin("1", "http://127.0.0.1:8000");
     var databaseName = "testDatabase";
     var objectStoreName = "testObjectStore";
     var indexName = "testIndexName";

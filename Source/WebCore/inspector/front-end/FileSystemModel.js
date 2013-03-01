@@ -49,8 +49,8 @@ WebInspector.FileSystemModel = function()
 WebInspector.FileSystemModel.prototype = {
     _reset: function()
     {
-        for (var securityOrigin in this._fileSystemsForOrigin)
-            this._removeOrigin(securityOrigin);
+        for (var securityOriginId in this._fileSystemsForOrigin)
+            this._removeOrigin(WebInspector.resourceTreeModel.securityOriginForId(securityOriginId));
         var securityOrigins = WebInspector.resourceTreeModel.securityOrigins();
         for (var i = 0; i < securityOrigins.length; ++i)
             this._addOrigin(securityOrigins[i]);
@@ -61,7 +61,7 @@ WebInspector.FileSystemModel.prototype = {
      */
     _securityOriginAdded: function(event)
     {
-        var securityOrigin = /** @type {string} */ (event.data);
+        var securityOrigin = /** @type {WebInspector.SecurityOrigin} */ (event.data);
         this._addOrigin(securityOrigin);
     },
 
@@ -70,37 +70,39 @@ WebInspector.FileSystemModel.prototype = {
      */
     _securityOriginRemoved: function(event)
     {
-        var securityOrigin = /** @type {string} */ (event.data);
+        var securityOrigin = /** @type {WebInspector.SecurityOrigin} */ (event.data);
         this._removeOrigin(securityOrigin);
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      */
     _addOrigin: function(securityOrigin)
     {
-        this._fileSystemsForOrigin[securityOrigin] = {};
+        var securityOriginId = securityOrigin.id();
+        this._fileSystemsForOrigin[securityOriginId] = {};
 
         var types = ["persistent", "temporary"];
         for (var i = 0; i < types.length; ++i)
-            this._requestFileSystemRoot(securityOrigin, types[i], this._fileSystemRootReceived.bind(this, securityOrigin, types[i], this._fileSystemsForOrigin[securityOrigin]));
+            this._requestFileSystemRoot(securityOrigin, types[i], this._fileSystemRootReceived.bind(this, securityOrigin, types[i], this._fileSystemsForOrigin[securityOriginId]));
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      */
     _removeOrigin: function(securityOrigin)
     {
-        for (var type in this._fileSystemsForOrigin[securityOrigin]) {
-            var fileSystem = this._fileSystemsForOrigin[securityOrigin][type];
-            delete this._fileSystemsForOrigin[securityOrigin][type];
+        var securityOriginId = securityOrigin.id();
+        for (var type in this._fileSystemsForOrigin[securityOriginId]) {
+            var fileSystem = this._fileSystemsForOrigin[securityOriginId][type];
+            delete this._fileSystemsForOrigin[securityOriginId][type];
             this._fileSystemRemoved(fileSystem);
         }
-        delete this._fileSystemsForOrigin[securityOrigin];
+        delete this._fileSystemsForOrigin[securityOriginId];
     },
 
     /**
-     * @param {string} origin
+     * @param {WebInspector.SecurityOrigin} origin
      * @param {string} type
      * @param {function(number, FileSystemAgent.Entry=)} callback
      */
@@ -121,7 +123,7 @@ WebInspector.FileSystemModel.prototype = {
             callback(errorCode, backendRootEntry);
         }
 
-        FileSystemAgent.requestFileSystemRoot(origin, type, innerCallback.bind(this));
+        FileSystemAgent.requestFileSystemRoot(origin.toProtocol(), type, innerCallback.bind(this));
     },
 
     /**
@@ -146,7 +148,7 @@ WebInspector.FileSystemModel.prototype = {
     },
 
     /**
-     * @param {string} origin
+     * @param {WebInspector.SecurityOrigin} origin
      * @param {string} type
      * @param {Object.<WebInspector.FileSystemModel.FileSystem>} store
      * @param {number} errorCode
@@ -154,7 +156,7 @@ WebInspector.FileSystemModel.prototype = {
      */
     _fileSystemRootReceived: function(origin, type, store, errorCode, backendRootEntry)
     {
-        if (!errorCode && backendRootEntry && this._fileSystemsForOrigin[origin] === store) {
+        if (!errorCode && backendRootEntry && this._fileSystemsForOrigin[origin.id()] === store) {
             var fileSystem = new WebInspector.FileSystemModel.FileSystem(this, origin, type, backendRootEntry);
             store[type] = fileSystem;
             this._fileSystemAdded(fileSystem);
@@ -335,14 +337,14 @@ WebInspector.FileSystemModel.prototype = {
      */
     _removeFileSystem: function(fileSystem)
     {
-        var origin = fileSystem.origin;
+        var originId = fileSystem.origin.id();
         var type = fileSystem.type;
-        if (this._fileSystemsForOrigin[origin] && this._fileSystemsForOrigin[origin][type]) {
-            delete this._fileSystemsForOrigin[origin][type];
+        if (this._fileSystemsForOrigin[originId] && this._fileSystemsForOrigin[originId][type]) {
+            delete this._fileSystemsForOrigin[originId][type];
             this._fileSystemRemoved(fileSystem);
 
-            if (Object.isEmpty(this._fileSystemsForOrigin[origin]))
-                delete this._fileSystemsForOrigin[origin];
+            if (Object.isEmpty(this._fileSystemsForOrigin[originId]))
+                delete this._fileSystemsForOrigin[originId];
         }
     },
 
@@ -358,7 +360,7 @@ WebInspector.FileSystemModel.EventTypes = {
 /**
  * @constructor
  * @param {WebInspector.FileSystemModel} fileSystemModel
- * @param {string} origin
+ * @param {WebInspector.SecurityOrigin} origin
  * @param {string} type
  * @param {FileSystemAgent.Entry} backendRootEntry
  */
@@ -376,7 +378,7 @@ WebInspector.FileSystemModel.FileSystem.prototype = {
      */
     get name()
     {
-        return "filesystem:" + this.origin + "/" + this.type;
+        return "filesystem:" + this.origin.url() + "/" + this.type;
     }
 }
 

@@ -141,8 +141,8 @@ WebInspector.IndexedDBModel.EventTypes = {
 WebInspector.IndexedDBModel.prototype = {
     _reset: function()
     {
-        for (var securityOrigin in this._databaseNamesBySecurityOrigin)
-            this._removeOrigin(securityOrigin);
+        for (var securityOriginId in this._databaseNamesBySecurityOrigin)
+            this._removeOrigin(WebInspector.resourceTreeModel.securityOriginForId(securityOriginId));
         var securityOrigins = WebInspector.resourceTreeModel.securityOrigins();
         for (var i = 0; i < securityOrigins.length; ++i)
             this._addOrigin(securityOrigins[i]);
@@ -150,8 +150,8 @@ WebInspector.IndexedDBModel.prototype = {
 
     refreshDatabaseNames: function()
     {
-        for (var securityOrigin in this._databaseNamesBySecurityOrigin)
-            this._loadDatabaseNames(securityOrigin);
+        for (var securityOriginId in this._databaseNamesBySecurityOrigin)
+            this._loadDatabaseNames(WebInspector.resourceTreeModel.securityOriginForId(securityOriginId));
     },
 
     /**
@@ -167,7 +167,7 @@ WebInspector.IndexedDBModel.prototype = {
      */
     _securityOriginAdded: function(event)
     {
-        var securityOrigin = /** @type {string} */ (event.data);
+        var securityOrigin = /** @type {WebInspector.SecurityOrigin} */ (event.data);
         this._addOrigin(securityOrigin);
     },
 
@@ -176,33 +176,35 @@ WebInspector.IndexedDBModel.prototype = {
      */
     _securityOriginRemoved: function(event)
     {
-        var securityOrigin = /** @type {string} */ (event.data);
+        var securityOrigin = /** @type {WebInspector.SecurityOrigin} */ (event.data);
         this._removeOrigin(securityOrigin);
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      */
     _addOrigin: function(securityOrigin)
     {
-        console.assert(!this._databaseNamesBySecurityOrigin[securityOrigin]);
-        this._databaseNamesBySecurityOrigin[securityOrigin] = [];
+        var securityOriginId = securityOrigin.id();
+        console.assert(!this._databaseNamesBySecurityOrigin[securityOriginId]);
+        this._databaseNamesBySecurityOrigin[securityOriginId] = [];
         this._loadDatabaseNames(securityOrigin);
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      */
     _removeOrigin: function(securityOrigin)
     {
-        console.assert(this._databaseNamesBySecurityOrigin[securityOrigin]);
-        for (var i = 0; i < this._databaseNamesBySecurityOrigin[securityOrigin].length; ++i)
-            this._databaseRemoved(securityOrigin, this._databaseNamesBySecurityOrigin[securityOrigin][i]);
-        delete this._databaseNamesBySecurityOrigin[securityOrigin];
+        var securityOriginId = securityOrigin.id();
+        console.assert(this._databaseNamesBySecurityOrigin[securityOriginId]);
+        for (var i = 0; i < this._databaseNamesBySecurityOrigin[securityOriginId].length; ++i)
+            this._databaseRemoved(securityOrigin, this._databaseNamesBySecurityOrigin[securityOriginId][i]);
+        delete this._databaseNamesBySecurityOrigin[securityOriginId];
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      * @param {Array.<string>} databaseNames
      */
     _updateOriginDatabaseNames: function(securityOrigin, databaseNames)
@@ -211,10 +213,11 @@ WebInspector.IndexedDBModel.prototype = {
         for (var i = 0; i < databaseNames.length; ++i)
             newDatabaseNames[databaseNames[i]] = true;
         var oldDatabaseNames = {};
-        for (var i = 0; i < this._databaseNamesBySecurityOrigin[securityOrigin].length; ++i)
-            oldDatabaseNames[this._databaseNamesBySecurityOrigin[securityOrigin][i]] = true;
+        var securityOriginId = securityOrigin.id();
+        for (var i = 0; i < this._databaseNamesBySecurityOrigin[securityOriginId].length; ++i)
+            oldDatabaseNames[this._databaseNamesBySecurityOrigin[securityOriginId][i]] = true;
 
-        this._databaseNamesBySecurityOrigin[securityOrigin] = databaseNames;
+        this._databaseNamesBySecurityOrigin[securityOriginId] = databaseNames;
 
         for (var databaseName in oldDatabaseNames) {
             if (!newDatabaseNames[databaseName])
@@ -227,7 +230,7 @@ WebInspector.IndexedDBModel.prototype = {
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      * @param {string} databaseName
      */
     _databaseAdded: function(securityOrigin, databaseName)
@@ -237,7 +240,7 @@ WebInspector.IndexedDBModel.prototype = {
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      * @param {string} databaseName
      */
     _databaseRemoved: function(securityOrigin, databaseName)
@@ -247,7 +250,7 @@ WebInspector.IndexedDBModel.prototype = {
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      */
     _loadDatabaseNames: function(securityOrigin)
     {
@@ -262,12 +265,12 @@ WebInspector.IndexedDBModel.prototype = {
                 return;
             }
 
-            if (!this._databaseNamesBySecurityOrigin[securityOrigin])
+            if (!this._databaseNamesBySecurityOrigin[securityOrigin.id()])
                 return;
             this._updateOriginDatabaseNames(securityOrigin, databaseNames);
         }
 
-        IndexedDBAgent.requestDatabaseNames(securityOrigin, callback.bind(this));
+        IndexedDBAgent.requestDatabaseNames(securityOrigin.toProtocol(), callback.bind(this));
     },
 
     /**
@@ -286,7 +289,7 @@ WebInspector.IndexedDBModel.prototype = {
                 return;
             }
 
-            if (!this._databaseNamesBySecurityOrigin[databaseId.securityOrigin])
+            if (!this._databaseNamesBySecurityOrigin[databaseId.securityOrigin.id()])
                 return;
             var databaseModel = new WebInspector.IndexedDBModel.Database(databaseId, databaseWithObjectStores.version, databaseWithObjectStores.intVersion);
             this._databases.put(databaseId, databaseModel); 
@@ -306,7 +309,7 @@ WebInspector.IndexedDBModel.prototype = {
             this.dispatchEventToListeners(WebInspector.IndexedDBModel.EventTypes.DatabaseLoaded, databaseModel);
         }
 
-        IndexedDBAgent.requestDatabase(databaseId.securityOrigin, databaseId.name, callback.bind(this));
+        IndexedDBAgent.requestDatabase(databaseId.securityOrigin.toProtocol(), databaseId.name, callback.bind(this));
     },
 
     /**
@@ -360,7 +363,7 @@ WebInspector.IndexedDBModel.prototype = {
                 return;
             }
             
-            if (!this._databaseNamesBySecurityOrigin[databaseId.securityOrigin])
+            if (!this._databaseNamesBySecurityOrigin[databaseId.securityOrigin.id()])
                 return;
             var entries = [];
             for (var i = 0; i < dataEntries.length; ++i) {
@@ -373,7 +376,7 @@ WebInspector.IndexedDBModel.prototype = {
         }
 
         var keyRange = WebInspector.IndexedDBModel.keyRangeFromIDBKeyRange(idbKeyRange);
-        IndexedDBAgent.requestData(databaseId.securityOrigin, databaseName, objectStoreName, indexName, skipCount, pageSize, keyRange ? keyRange : undefined, innerCallback.bind(this));
+        IndexedDBAgent.requestData(databaseId.securityOrigin.toProtocol(), databaseName, objectStoreName, indexName, skipCount, pageSize, keyRange ? keyRange : undefined, innerCallback.bind(this));
     },
 
     __proto__: WebInspector.Object.prototype
@@ -394,7 +397,7 @@ WebInspector.IndexedDBModel.Entry = function(key, primaryKey, value)
 
 /**
  * @constructor
- * @param {string} securityOrigin
+ * @param {WebInspector.SecurityOrigin} securityOrigin
  * @param {string} name
  */
 WebInspector.IndexedDBModel.DatabaseId = function(securityOrigin, name)
@@ -409,7 +412,7 @@ WebInspector.IndexedDBModel.DatabaseId.prototype = {
      */
     equals: function(databaseId)
     {
-        return this.name === databaseId.name && this.securityOrigin === databaseId.securityOrigin;
+        return this.name === databaseId.name && this.securityOrigin.id() === databaseId.securityOrigin.id();
     },
 }
 /**

@@ -29,7 +29,7 @@
 
 /**
  * @constructor
- * @param {string} securityOrigin
+ * @param {WebInspector.SecurityOrigin} securityOrigin
  * @param {boolean} isLocalStorage
  */
 WebInspector.DOMStorage = function(securityOrigin, isLocalStorage)
@@ -39,24 +39,24 @@ WebInspector.DOMStorage = function(securityOrigin, isLocalStorage)
 }
 
 /**
- * @param {string} securityOrigin
+ * @param {WebInspector.SecurityOrigin} securityOrigin
  * @param {boolean} isLocalStorage
  * @return {DOMStorageAgent.StorageId}
  */
 WebInspector.DOMStorage.storageId = function(securityOrigin, isLocalStorage)
 {
-    return { securityOrigin: securityOrigin, isLocalStorage: isLocalStorage };
+    return { securityOrigin: securityOrigin.toProtocol(), isLocalStorage: isLocalStorage };
 }
 
 WebInspector.DOMStorage.prototype = {
 
     /** @return {DOMStorageAgent.StorageId} */
-    get id()
+    id: function()
     {
         return WebInspector.DOMStorage.storageId(this._securityOrigin, this._isLocalStorage);
     },
 
-    /** @return {string} */
+    /** @return {WebInspector.SecurityOrigin} */
     get securityOrigin()
     {
         return this._securityOrigin;
@@ -73,7 +73,7 @@ WebInspector.DOMStorage.prototype = {
      */
     getItems: function(callback)
     {
-        DOMStorageAgent.getDOMStorageItems(this.id, callback);
+        DOMStorageAgent.getDOMStorageItems(this.id(), callback);
     },
 
     /**
@@ -83,7 +83,7 @@ WebInspector.DOMStorage.prototype = {
      */
     setItem: function(key, value, callback)
     {
-        DOMStorageAgent.setDOMStorageItem(this.id, key, value, callback);
+        DOMStorageAgent.setDOMStorageItem(this.id(), key, value, callback);
     },
 
     /**
@@ -92,7 +92,7 @@ WebInspector.DOMStorage.prototype = {
      */
     removeItem: function(key, callback)
     {
-        DOMStorageAgent.removeDOMStorageItem(this.id, key, callback);
+        DOMStorageAgent.removeDOMStorageItem(this.id(), key, callback);
     }
 }
 
@@ -125,7 +125,7 @@ WebInspector.DOMStorageModel.prototype = {
      */
     _securityOriginAdded: function(event)
     {
-        var securityOrigin = /** @type {string} */ (event.data);
+        var securityOrigin = /** @type {WebInspector.SecurityOrigin} */ (event.data);
         var localStorageKey = this._storageKey(securityOrigin, true);
         console.assert(!this._storages[localStorageKey]);
         var localStorage = new WebInspector.DOMStorage(securityOrigin, true);
@@ -144,7 +144,7 @@ WebInspector.DOMStorageModel.prototype = {
      */
     _securityOriginRemoved: function(event)
     {
-        var securityOrigin = /** @type {string} */ (event.data);
+        var securityOrigin = /** @type {WebInspector.SecurityOrigin} */ (event.data);
         var localStorageKey = this._storageKey(securityOrigin, true);
         var localStorage = this._storages[localStorageKey];
         console.assert(localStorage);
@@ -159,13 +159,13 @@ WebInspector.DOMStorageModel.prototype = {
     },
 
     /**
-     * @param {string} securityOrigin
+     * @param {WebInspector.SecurityOrigin} securityOrigin
      * @param {boolean} isLocalStorage
      * @return {string}
      */
     _storageKey: function(securityOrigin, isLocalStorage)
     {
-        return JSON.stringify(WebInspector.DOMStorage.storageId(securityOrigin, isLocalStorage));
+        return securityOrigin.id() + "|" + isLocalStorage;
     },
 
     /**

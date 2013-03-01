@@ -13,7 +13,7 @@ function test()
         InspectorTest.addResult("Dumping database names:");
         var securityOrigins = WebInspector.resourceTreeModel.securityOrigins();
         var securityOrigin = securityOrigins[0];
-        var names = indexedDBModel._databaseNamesBySecurityOrigin[securityOrigin];
+        var names = indexedDBModel._databaseNamesBySecurityOrigin[securityOrigin.id()];
         for (var i = 0; i < names.length; ++i)
             InspectorTest.addResult("    " + names[i]);
         InspectorTest.addResult("");

@@ -1610,7 +1610,7 @@ WebInspector.FileSystemListTreeElement.prototype = {
  */
 WebInspector.IDBDatabaseTreeElement = function(storagePanel, model, databaseId)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, databaseId.name + " - " + databaseId.securityOrigin, ["indexed-db-storage-tree-item"]);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, databaseId.name + " - " + databaseId.securityOrigin.uiTitle(), ["indexed-db-storage-tree-item"]);
     this._model = model;
     this._databaseId = databaseId;
     this._idbObjectStoreTreeElements = {};
@@ -1619,7 +1619,8 @@ WebInspector.IDBDatabaseTreeElement = function(storagePanel, model, databaseId)
 WebInspector.IDBDatabaseTreeElement.prototype = {
     get itemURL()
     {
-        return "indexedDB://" + this._databaseId.securityOrigin + "/" + this._databaseId.name;
+        var origin = this._databaseId.securityOrigin;
+        return "indexedDB://" + origin.url() + "/" + this._databaseId.name;
     },
 
     onattach: function()
@@ -1726,7 +1727,7 @@ WebInspector.IDBObjectStoreTreeElement = function(storagePanel, model, databaseI
 WebInspector.IDBObjectStoreTreeElement.prototype = {
     get itemURL()
     {
-        return "indexedDB://" + this._databaseId.securityOrigin + "/" + this._databaseId.name + "/" + this._objectStore.name;
+        return "indexedDB://" + this._databaseId.securityOrigin.url() + "/" + this._databaseId.name + "/" + this._objectStore.name;
     },
 
    /**
@@ -1831,7 +1832,7 @@ WebInspector.IDBIndexTreeElement = function(storagePanel, model, databaseId, obj
 WebInspector.IDBIndexTreeElement.prototype = {
     get itemURL()
     {
-        return "indexedDB://" + this._databaseId.securityOrigin + "/" + this._databaseId.name + "/" + this._objectStore.name + "/" + this._index.name;
+        return "indexedDB://" + this._databaseId.securityOrigin.url() + "/" + this._databaseId.name + "/" + this._objectStore.name + "/" + this._index.name;
     },
 
     /**
@@ -1883,14 +1884,15 @@ WebInspector.IDBIndexTreeElement.prototype = {
  */
 WebInspector.DOMStorageTreeElement = function(storagePanel, domStorage, className)
 {
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, domStorage.securityOrigin ? domStorage.securityOrigin : WebInspector.UIString("Local Files"), ["domstorage-storage-tree-item", className]);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, domStorage.securityOrigin.uiTitle(), ["domstorage-storage-tree-item", className]);
     this._domStorage = domStorage;
 }
 
 WebInspector.DOMStorageTreeElement.prototype = {
     get itemURL()
     {
-        return "storage://" + this._domStorage.securityOrigin + "/" + (this._domStorage.isLocalStorage ? "local" : "session");
+        var origin = this._domStorage.securityOrigin;
+        return "storage://" + origin.url() + "/" + (this._domStorage.isLocalStorage ? "local" : "session");
     },
 
     onselect: function(selectedByUser)
@@ -2020,7 +2022,7 @@ WebInspector.ApplicationCacheFrameTreeElement.prototype = {
  */
 WebInspector.FileSystemTreeElement = function(storagePanel, fileSystem)
 {
-    var displayName = fileSystem.type + " - " + fileSystem.origin;
+    var displayName = fileSystem.type + " - " + fileSystem.origin.uiTitle();
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, displayName, ["file-system-storage-tree-item"]);
     this._fileSystem = fileSystem;
 }

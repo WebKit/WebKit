@@ -63,7 +63,7 @@ function test()
         function(errorCode)
         {
             InspectorTest.addResult("errorCode: " + errorCode);
-            fileSystemModel._requestFileSystemRoot("http://127.0.0.1:8000", "temporary", testStep.shift());
+            fileSystemModel._requestFileSystemRoot(new WebInspector.SecurityOrigin("1", "http://127.0.0.1:8000"), "temporary", testStep.shift());
         },
 
         function(errorCode, backendRootEntry)

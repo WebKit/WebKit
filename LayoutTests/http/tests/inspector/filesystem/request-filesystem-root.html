@@ -9,6 +9,12 @@ document.addEventListener("DOMContentLoaded", runTest);
 function test()
 {
     var fileSystemModel = new WebInspector.FileSystemModel;
+    var lastOriginId = 0;
+
+    function createSecurityOrigin(url)
+    {
+        return new WebInspector.SecurityOrigin(String(++lastOriginId), url);
+    }
 
     var testStep = [
         function()
@@ -20,19 +26,19 @@ function test()
 
         function()
         {
-            fileSystemModel._requestFileSystemRoot("http://127.0.0.1:8000", "temporary", testStep.shift());
+            fileSystemModel._requestFileSystemRoot(createSecurityOrigin("http://127.0.0.1:8000"), "temporary", testStep.shift());
         },
 
         function(errorCode, backendRootEntry)
         {
             InspectorTest.dumpFileSystemRootRequestResult(errorCode, backendRootEntry);
-            fileSystemModel._requestFileSystemRoot("http://127.0.0.1:8000", "fizzbuzz", testStep.shift());
+            fileSystemModel._requestFileSystemRoot(createSecurityOrigin("http://127.0.0.1:8000"), "fizzbuzz", testStep.shift());
         },
 
         function(errorCode, backendRootEntry)
         {
             InspectorTest.dumpFileSystemRootRequestResult(errorCode, backendRootEntry);
-            fileSystemModel._requestFileSystemRoot("http://example.com", "temporary", testStep.shift());
+            fileSystemModel._requestFileSystemRoot(createSecurityOrigin("http://example.com"), "temporary", testStep.shift());
         },
 
         function(errorCode, backendRootEntry)

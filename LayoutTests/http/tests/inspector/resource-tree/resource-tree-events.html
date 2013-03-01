@@ -30,7 +30,7 @@ function test()
             case "SecurityOriginAdded":
             case "SecurityOriginRemoved":
                 var securityOrigin = event.data;
-                InspectorTest.addResult("    " + eventName + " : " + securityOrigin);
+                InspectorTest.addResult("    " + eventName + " : " + securityOrigin.uiTitle());
                 break;
             default:
             }
