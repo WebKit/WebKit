@@ -194,6 +194,9 @@ void Extensions3DOpenGL::drawBuffersEXT(GC3Dsizei n, const GC3Denum* bufs)
     //  FIXME: implement support for other platforms.
 #if PLATFORM(MAC)
     ::glDrawBuffersARB(n, bufs);
+#else
+    UNUSED_PARAM(n);
+    UNUSED_PARAM(bufs);
 #endif
 }
 
