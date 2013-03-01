@@ -1,3 +1,24 @@
+2013-02-28  Kiran Muppala  <cmuppala@apple.com>
+
+        Disable window occlusion detection for WebKitTestRunner Web View on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=111116
+
+        Reviewed by Simon Fraser.
+
+        Window occlusion notifications were causing WebKitTestRunner's Web View
+        to be detected as occluded and causing a few JavaScript timer layout
+        tests to fail.  https://bugs.webkit.org/show_bug.cgi?id=111025, fixed this
+        by initializing the page visibility to "visible" after creating the view.
+        But a better solution is to disable window occlusion detection, so that
+        not only the page but also the view is treated as visible.
+
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createWebViewWithOptions): Remove call to
+        setVisibilityState, since it is no longer necessary.
+        * WebKitTestRunner/mac/PlatformWebViewMac.mm:
+        (WTR::PlatformWebView::PlatformWebView): Disable window occlusion
+        detection for the created WKView.
+
 2013-02-28  Li Yin  <li.yin@intel.com>
 
         [chromium] Events can't be triggered on MediaStreamTrack
