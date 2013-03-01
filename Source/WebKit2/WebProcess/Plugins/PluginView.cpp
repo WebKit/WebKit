@@ -487,7 +487,10 @@ void PluginView::initializePlugin()
         // We failed to initialize the plug-in.
         m_plugin = 0;
 
-        m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType));
+        String frameURLString = frame()->loader()->documentLoader()->responseURL().string();
+        String pageURLString = m_webPage->corePage()->mainFrame()->loader()->documentLoader()->responseURL().string();
+        m_webPage->send(Messages::WebPageProxy::DidFailToInitializePlugin(m_parameters.mimeType, frameURLString, pageURLString));
+
         return;
     }
     

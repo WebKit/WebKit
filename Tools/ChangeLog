@@ -1,5 +1,24 @@
 2013-03-01  Brady Eidson  <beidson@apple.com>
 
+        Merge 143976
+
+    2013-02-25  Anders Carlsson  <andersca@apple.com>
+
+            Add a new pluginDidFail callback that takes a WKDictionary of plug-in information
+            https://bugs.webkit.org/show_bug.cgi?id=110793
+            <rdar://problem/13265303>
+
+            Reviewed by Sam Weinig.
+
+            Update for WebKit2 API changes.
+
+            * MiniBrowser/mac/WK2BrowserWindowController.m:
+            (-[WK2BrowserWindowController awakeFromNib]):
+            * WebKitTestRunner/TestController.cpp:
+            (WTR::TestController::createWebViewWithOptions):
+
+2013-03-01  Brady Eidson  <beidson@apple.com>
+
         Merge r143790
 
     2013-02-22  Anders Carlsson  <andersca@apple.com>
