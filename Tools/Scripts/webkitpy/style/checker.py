@@ -165,6 +165,11 @@ _PATH_RULES_SPECIFIER = [
       "Source/WebKit2/UIProcess/API/qt"],
      ["-readability/parameter_name"]),
 
+    ([# The GTK+ port uses the autotoolsconfig.h header in some C sources
+      # to serve the same purpose of config.h.
+      "Tools/GtkLauncher/main.c"],
+     ["-build/include_order"]),
+
     ([# The GTK+ APIs use GTK+ naming style, which includes
       # lower-cased, underscore-separated values, whitespace before
       # parens for function calls, and always having variable names.
