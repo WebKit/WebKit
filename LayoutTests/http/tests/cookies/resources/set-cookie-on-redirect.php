@@ -9,6 +9,9 @@ if ($_GET['step'] == 1) {
 } else if ($_GET['step'] == 3) {
   header("HTTP/1.0 200 OK");
   if (isset($_COOKIE['test_cookie'])) {
+    /* Clear cookie in order not to affect other tests. */
+    setcookie("test_cookie", "", time() - 1);
+
     echo "PASSED: Cookie successfully set\n";
   } else {
     echo "FAILED: Cookie not set\n";
