@@ -416,7 +416,7 @@ committers_unable_to_review = [
     Committer("Robert Kroeger", "rjkroege@chromium.org", "rjkroege"),
     Committer("Roger Fong", "roger_fong@apple.com", "rfong"),
     Committer("Roland Steiner", "rolandsteiner@chromium.org"),
-    Committer("Ryuan Choi", "ryuan.choi@samsung.com", "ryuan"),
+    Committer("Ryuan Choi", ["ryuan.choi@samsung.com", "ryuan.choi@gmail.com"],"ryuan"),
     Committer("Sadrul Habib Chowdhury", "sadrul@chromium.org", ["sadrul", "sadrulhc"]),
     Committer("Satish Sampath", "satish@chromium.org"),
     Committer("Scott Violet", "sky@chromium.org", "sky"),
