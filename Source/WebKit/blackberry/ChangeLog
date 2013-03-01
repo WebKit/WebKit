@@ -1,3 +1,18 @@
+2013-03-01  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Reverse the base and extent of a selection when reversing its handles
+        https://bugs.webkit.org/show_bug.cgi?id=111098
+
+        Reviewed by Yong Li.
+
+        PR283969
+        Swap the base and extent if base does not come first, and set the new selection.
+
+        Internally reviewed by Mike Fenton
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::setSelection):
+
 2013-03-01  Alberto Garcia  <albgarcia@rim.com>
 
         Fix definition of DatePickerClient::setValue()

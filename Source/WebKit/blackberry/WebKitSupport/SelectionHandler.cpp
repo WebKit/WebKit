@@ -568,8 +568,10 @@ void SelectionHandler::setSelection(const WebCore::IntPoint& start, const WebCor
     }
 
     // Check if the handles reversed position.
-    if (m_selectionActive && !newSelection.isBaseFirst())
+    if (m_selectionActive && !newSelection.isBaseFirst()) {
         m_webPage->m_client->notifySelectionHandlesReversed();
+        newSelection = VisibleSelection(newSelection.extent(), newSelection.base());
+    }
 
     controller->setSelection(newSelection);
     SelectionLog(Platform::LogLevelInfo, "SelectionHandler::setSelection selection points valid, selection updated.");
