@@ -939,8 +939,6 @@ private:
                     break;
                 if (node != expectedNode)
                     result.mayBeAccessed = true;
-                if (node->refCount() > 1)
-                    result.mayBeAccessed = true;
                 return result;
             }
                 
@@ -1043,7 +1041,6 @@ private:
         dataLogF("   Eliminating @%u", m_currentNode->index());
 #endif
         
-        ASSERT(m_currentNode->refCount() == 1);
         ASSERT(m_currentNode->mustGenerate());
         m_currentNode->convertToPhantom();
         eliminateIrrelevantPhantomChildren(m_currentNode);
@@ -1054,8 +1051,6 @@ private:
     void eliminate(Node* node, NodeType phantomType = Phantom)
     {
         if (!node)
-            return;
-        if (node->refCount() != 1)
             return;
         ASSERT(node->mustGenerate());
         node->setOpAndDefaultNonExitFlags(phantomType);
@@ -1208,7 +1203,6 @@ private:
             if (result.mayBeAccessed || result.mayClobberWorld)
                 break;
             ASSERT(replacement->op() == SetLocal);
-            ASSERT(replacement->refCount() == 1);
             ASSERT(replacement->shouldGenerate());
             // FIXME: Investigate using mayExit as a further optimization.
             node->convertToPhantom();

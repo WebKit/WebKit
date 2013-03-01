@@ -1,5 +1,26 @@
 2013-03-01  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG CSE phase shouldn't rely on ref count of nodes, since it doesn't have to
+        https://bugs.webkit.org/show_bug.cgi?id=111205
+
+        Reviewed by Oliver Hunt.
+        
+        I don't understand the intuition behind setLocalStoreElimination() validating that the SetLocal's ref count
+        is 1. I believe this is a hold-over from when setLocalStoreElimination() would match one SetLocal to another,
+        and then try to eliminate the first SetLocal. But that's not how it works now. Now, setLocalStoreElimination()
+        is actually Flush elimination: it eliminates any Flush that anchors a SetLocal if it proves that every path
+        from the SetLocal to the Flush is devoid of operations that may observe the local. It doesn't actually kill
+        the SetLocal itself: if the SetLocal is live because of other things (other Flushes or GetLocals in other
+        basic blocks), then the SetLocal will naturally still be alive because th Flush was only keeping the SetLocal
+        alive by one count rather than being solely responsible for its liveness.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::setLocalStoreElimination):
+        (JSC::DFG::CSEPhase::eliminate):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+
+2013-03-01  Filip Pizlo  <fpizlo@apple.com>
+
         Rename MovHint to MovHintEvent so I can create a NodeType called MovHint
 
         Rubber stamped by Mark Hahnenberg.
