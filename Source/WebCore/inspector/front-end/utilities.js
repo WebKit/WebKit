@@ -980,10 +980,17 @@ function importScript(scriptName)
 {
     if (_importedScripts[scriptName])
         return;
-    _importedScripts[scriptName] = true;
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", scriptName, false);
-    xhr.send(null);
+    _importedScripts[scriptName] = true;
+    try {
+        xhr.open("GET", scriptName, false);
+        xhr.send(null);
+    } catch (e) {
+        // Try to load file from the root directory
+        scriptName = scriptName.split("/").reverse()[0];
+        xhr.open("GET", scriptName, false);
+        xhr.send(null);
+    }
     var sourceURL = WebInspector.ParsedURL.completeURL(window.location.href, scriptName); 
     window.eval(xhr.responseText + "\n//@ sourceURL=" + sourceURL);
 }
