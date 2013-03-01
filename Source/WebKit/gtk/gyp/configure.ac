@@ -23,6 +23,11 @@ m4_include([WebKitMacros/ReadCommandLineArguments.m4])
 m4_include([WebKitMacros/FindDependencies.m4])
 m4_include([WebKitMacros/SetupCompilerFlags.m4])
 m4_include([WebKitMacros/SetupAutoconfHeader.m4])
+m4_include([WebKitMacros/SetupWebKitFeatures.m4])
+
+# Expose the WebKit features as one long string to the configure template processor.
+WEBKIT_FEATURES=`cat WebKitFeatures.txt | tr -d '\n'`
+AC_SUBST(WEBKIT_FEATURES)
 
 AC_SUBST(TOPLEVEL_DIRECTORY)
 AC_CONFIG_FILES([Configuration.gypi:Configuration.gypi.in])

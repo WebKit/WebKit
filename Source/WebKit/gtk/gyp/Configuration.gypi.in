@@ -26,6 +26,15 @@
       '-I.',
     ],
 
+    'BISON': '@BISON@',
+    'FLEX': '@FLEX@',
+    'GPERF': '@GPERF@',
+    'PERL': '@PERL@',
+    'PYTHON': '@PYTHON@',
+    'RUBY': '@RUBY@',
+
+    'feature_defines': '@WEBKIT_FEATURES@',
+
     # We use intermediate variables so that gyp properly handles white space.
     'ATSPI2_CFLAGS': '@ATSPI2_CFLAGS@',
     'ATSPI2_LIBS': '@ATSPI2_LIBS@',

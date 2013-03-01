@@ -22,6 +22,14 @@ if [ ! -d Macros ]; then
     cp  "$TOPLEVEL_DIRECTORY/Source/autotools/acinclude.m4" Macros
 fi
 
+if [ ! -d Tools ]; then
+    mkdir Tools
+fi
+
+if [ ! -e Tools/gtk ]; then
+    ln -s "../$TOPLEVEL_DIRECTORY/Tools/gtk" Tools/gtk
+fi
+
 autoreconf --verbose --install -I Macros $ACLOCAL_FLAGS
 
 # Automake is bizarrely responsible for copying some of the files necessary

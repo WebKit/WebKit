@@ -1,3 +1,18 @@
+2013-03-01  Martin Robinson  <mrobinson@igalia.com>
+
+        [GTK] Expose more of the configuration step to the gyp build
+        https://bugs.webkit.org/show_bug.cgi?id=111213
+
+        Reviewed by Dirk Pranke.
+
+        Expose more of the configuration phase to the gyp build, including WebKit features
+        and binary paths.
+
+        * gyp/Configuration.gypi.in: Add templatized gyp variables for the new configuration bits.
+        * gyp/autogen.sh: Properly link up the WebKit features script. So we can access it
+        relatively as if we were at the top-level of the source directory.
+        * gyp/configure.ac: Export the WebKit features.
+
 2013-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r144422 and r144424.
