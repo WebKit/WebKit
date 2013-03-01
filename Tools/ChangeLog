@@ -1,5 +1,20 @@
 2013-03-01  Roger Fong  <roger_fong@apple.com>
 
+        Unreviewed. Add an extra project that assembles all project build logs on Windows into a single file.
+        https://bugs.webkit.org/show_bug.cgi?id=111202
+
+        This is useful for running VCExpress builds from command line because there is
+        no unified solution output, only per project build logs.
+        The project will be run as the last project in the solution.
+
+        * win/AssembleBuildLogs: Added.
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj: Added.
+        * win/AssembleBuildLogs/AssembleBuildLogs.vcxproj.filters: Added.
+        * win/AssembleBuildLogs/AssembleLogs.cmd: Added.
+        * win/AssembleBuildLogs/README: Added.
+
+2013-03-01  Roger Fong  <roger_fong@apple.com>
+
         Unreviewed. Increase number of patches processed before clean building on WinEWS bots.
 
         * EWSTools/start-queue-win.sh:

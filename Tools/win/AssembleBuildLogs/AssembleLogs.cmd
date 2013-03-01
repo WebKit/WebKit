@@ -1,0 +1,165 @@
+if exist "%CONFIGURATIONBUILDDIR%\BuildOutput.htm" del "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WTFGenerated...                                 >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WTFGenerated\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WTF...                                          >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WTF\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING JavaScriptCoreGenerated...                      >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\JavaScriptCoreGenerated\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING LLIntDesiredOffsets...                          >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\LLIntDesiredOffsets\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING LLIntOffsetsExtractor...                        >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\LLIntOffsetsExtractor\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING LLIntAssembly...                                >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\LLIntAssembly\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING JavaScriptCoreExportGenerator...                >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\JavaScriptCoreExportGenerator\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING JavaScriptCore...                               >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\JavaScriptCore\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING jsc...                                          >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\jsc\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING testRegExp...                                   >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\testRegExp\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING testapi...                                      >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\testapi\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebKitSystemInterfaceGenerated...               >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebKitSystemInterfaceGenerated\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebKitSystemInterface...                        >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebKitSystemInterface\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebKitQuartzCoreAdditionsGenerated...           >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebKitQuartzCoreAdditionsGenerated\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebKitQuartzCoreAdditions...                    >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebKitQuartzCoreAdditions\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebCoreGenerated...                             >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebCoreGenerated\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING QTMovieWin...                                   >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\QTMovieWin\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebCore...                                      >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebCore\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebCoreTestSupport...                           >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebCoreTestSupport\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING Interfaces...                                   >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\Interfaces\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebKitGUID...                                   >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebKitGUID\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebKitExportGenerator...                        >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebKitExportGenerator\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WebKit...                                       >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WebKit\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WinLauncherLib...                               >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WinLauncherLib\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING WinLauncher...                                  >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\WinLauncher\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING TestNetscapePlugin...                           >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\TestNetscapePlugin\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING ImageDiff...                                    >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\ImageDiff\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING ImageDiffLauncher...                            >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\ImageDiffLauncher\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING DumpRenderTree...                               >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\DumpRenderTree\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING DumpRenderTreeLauncher...                       >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\DumpRenderTreeLauncher\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING record-memory...                                >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\record-memory\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING gtest-md...                                     >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\gtest-md\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo COMPILING TestWebKitAPI...                                >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+echo _________________________________________________________ >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
+type "%CONFIGURATIONBUILDDIR%\obj\TestWebKitAPI\BuildLog.htm" >> "%CONFIGURATIONBUILDDIR%\BuildOutput.htm"
