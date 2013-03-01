@@ -4403,6 +4403,12 @@ crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow-scrolled.html [ Failure ImageOnlyFailure ]
 crbug.com/175926 [ Linux ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Failure ImageOnlyFailure ]
 
+# Need rebaseline after compositor edge AA changes land.
+webkit.org/b/111224 platform/chromium/virtual/softwarecompositing/geometry/layer-due-to-layer-children-deep.html [ ImageOnlyFailure ]
+webkit.org/b/111224 platform/chromium/virtual/softwarecompositing/geometry/layer-due-to-layer-children.html [ ImageOnlyFailure ]
+webkit.org/b/111224 platform/chromium/virtual/softwarecompositing/geometry/vertical-scroll-composited.html [ ImageOnlyFailure ]
+webkit.org/b/111224 platform/chromium/virtual/softwarecompositing/reflections/animation-inside-reflection.html [ ImageOnlyFailure ]
+
 # Need rebaseline
 webkit.org/b/110654 [ Mac Win ] css2.1/20110323/replaced-elements-001.htm [ Failure ]
 webkit.org/b/109413 [ Linux Win ] svg/custom/foreign-object-skew.svg [ Failure ]
