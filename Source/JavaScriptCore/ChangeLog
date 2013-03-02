@@ -1,3 +1,11 @@
+2013-03-01  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX: testapi should link to Foundation, not CoreFoundation
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Change testapi to
+        link to Foundation.framework instead of CoreFoundation.framework
+        since it uses NS types.
+
 2013-03-01  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Objective-C API: Passing JS functions to Objective-C callbacks causes JSValue to leak
