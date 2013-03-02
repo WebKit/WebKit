@@ -77,7 +77,6 @@ interface TestRunner {
     object computedStyleIncludingVisitedInfo(in object element);
     void execCommand(in DOMString name, in DOMString argument);
     boolean isCommandEnabled(in DOMString name);
-    DOMString markerTextForListItem(in object element);
     unsigned long windowCount();
 
     // Special DOM variables.

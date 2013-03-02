@@ -745,11 +745,6 @@ bool TestRunnerQt::findString(const QString& string, const QStringList& optionAr
     return DumpRenderTreeSupportQt::findString(m_drt->pageAdapter(), string, optionArray);
 }
 
-QString TestRunnerQt::markerTextForListItem(const QWebElement& listItem)
-{
-    return DumpRenderTreeSupportQt::markerTextForListItem(listItem);
-}
-
 QVariantMap TestRunnerQt::computedStyleIncludingVisitedInfo(const QWebElement& element) const
 {
     return DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(element);

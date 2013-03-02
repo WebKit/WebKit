@@ -282,6 +282,8 @@ public:
 
     String getCurrentCursorInfo(Document*, ExceptionCode&);
 
+    String markerTextForListItem(Element*, ExceptionCode&);
+
 #if ENABLE(ENCRYPTED_MEDIA_V2)
     void initializeMockCDM();
 #endif

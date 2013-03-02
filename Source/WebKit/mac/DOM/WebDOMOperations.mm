@@ -72,11 +72,6 @@ using namespace JSC;
     return kit(toElement(toJS(exec, value)));
 }
 
-- (NSString *)_markerTextForListItem
-{
-    return WebCore::markerTextForListItem(core(self));
-}
-
 @end
 
 class WebFrameFilter : public WebCore::FrameFilter {

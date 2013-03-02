@@ -113,7 +113,6 @@ public:
     JSValueRef jsWrapperForWorld(InjectedBundleRangeHandle*, InjectedBundleScriptWorld*);
 
     static String counterValue(JSObjectRef element);
-    static String markerText(JSObjectRef element);
 
     String layerTreeAsText() const;
     

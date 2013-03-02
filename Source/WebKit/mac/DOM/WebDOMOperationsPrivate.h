@@ -31,7 +31,6 @@
 
 @interface DOMElement (WebDOMElementOperationsPrivate)
 + (DOMElement *)_DOMElementFromJSContext:(JSContextRef)context value:(JSValueRef)value;
-- (NSString *)_markerTextForListItem;
 @end
 
 @interface DOMDocument (WebDOMDocumentOperationsPrivate)

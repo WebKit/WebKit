@@ -196,7 +196,6 @@ TestRunner::TestRunner(TestInterfaces* interfaces)
     bindMethod("addUserScript", &TestRunner::addUserScript);
     bindMethod("addUserStyleSheet", &TestRunner::addUserStyleSheet);
     bindMethod("startSpeechInput", &TestRunner::startSpeechInput);
-    bindMethod("markerTextForListItem", &TestRunner::markerTextForListItem);
     bindMethod("findString", &TestRunner::findString);
     bindMethod("setValueForUser", &TestRunner::setValueForUser);
     bindMethod("enableFixedLayoutMode", &TestRunner::enableFixedLayoutMode);
@@ -1344,15 +1343,6 @@ void TestRunner::startSpeechInput(const CppArgumentList& arguments, CppVariant* 
         return;
 
     input->startSpeechInput();
-}
-
-void TestRunner::markerTextForListItem(const CppArgumentList& args, CppVariant* result)
-{
-    WebElement element;
-    if (!WebBindings::getElement(args[0].value.objectValue, &element))
-        result->setNull();
-    else
-        result->set(element.document().frame()->markerTextForListItem(element).utf8());
 }
 
 void TestRunner::findString(const CppArgumentList& arguments, CppVariant* result)

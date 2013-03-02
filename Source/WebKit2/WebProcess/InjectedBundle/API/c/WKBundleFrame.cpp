@@ -132,11 +132,6 @@ WKStringRef WKBundleFrameCopyCounterValue(WKBundleFrameRef frameRef, JSObjectRef
     return toCopiedAPI(toImpl(frameRef)->counterValue(element));
 }
 
-WKStringRef WKBundleFrameCopyMarkerText(WKBundleFrameRef frameRef, JSObjectRef element)
-{
-    return toCopiedAPI(toImpl(frameRef)->markerText(element));
-}
-
 WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frameRef)
 {
     return toCopiedAPI(toImpl(frameRef)->innerText());

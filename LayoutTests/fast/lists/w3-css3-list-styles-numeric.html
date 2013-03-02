@@ -64,7 +64,7 @@
         {
             var isNegativeNumber = listItemElement.parentNode.className && listItemElement.parentNode.className.split(" ").indexOf("negative-number") > -1;
             var expectedMarkerText = (isNegativeNumber ? "-" : "") + listItemElement.innerText;
-            return testListItemMarkerEquals(testRunner.markerTextForListItem(listItemElement), expectedMarkerText);
+            return testListItemMarkerEquals(internals.markerTextForListItem(listItemElement), expectedMarkerText);
         }
 
         function runTest()

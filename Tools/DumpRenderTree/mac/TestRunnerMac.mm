@@ -278,16 +278,6 @@ JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, J
     return [[mainFrame webView] _computedStyleIncludingVisitedInfo:context forElement:value];
 }
 
-JSRetainPtr<JSStringRef> TestRunner::markerTextForListItem(JSContextRef context, JSValueRef nodeObject) const
-{
-    DOMElement *element = [DOMElement _DOMElementFromJSContext:context value:nodeObject];
-    if (!element)
-        return JSRetainPtr<JSStringRef>();
-
-    JSRetainPtr<JSStringRef> markerText(Adopt, JSStringCreateWithCFString((CFStringRef)[element _markerTextForListItem]));
-    return markerText;
-}
-
 int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     return [[[mainFrame webView] UIDelegate] numberOfPendingGeolocationPermissionRequests];

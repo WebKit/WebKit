@@ -35,13 +35,13 @@ function processList(element, processListItemFunction, depth)
 
 function dumpListItemAsHTML(listItemElement, depth)
 {
-    var marker = testRunner.markerTextForListItem(listItemElement);
+    var marker = internals.markerTextForListItem(listItemElement);
     return marker ? indent(depth) + ' ' + marker + ' ' + listItemElement.innerText.trim() + '<br/>' : '';
 }
 
 function testListItemMarkerEqualsListItemText(listItemElement, depth)
 {
-    return testListItemMarkerEquals(testRunner.markerTextForListItem(listItemElement), listItemElement.innerText.trim());
+    return testListItemMarkerEquals(internals.markerTextForListItem(listItemElement), listItemElement.innerText.trim());
 }
 
 function testListItemMarkerEquals(actualMarkerText, expectedMarkerText)

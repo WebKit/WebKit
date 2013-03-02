@@ -239,7 +239,6 @@ private:
 
     void startSpeechInput(const CppArgumentList&, CppVariant*);
 
-    void markerTextForListItem(const CppArgumentList&, CppVariant*);
     void findString(const CppArgumentList&, CppVariant*);
 
     // Expects the first argument to be an input element and the second argument to be a string value.

@@ -247,7 +247,6 @@ public Q_SLOTS:
     */
     void setScrollbarPolicy(const QString& orientation, const QString& policy);
 
-    QString markerTextForListItem(const QWebElement& listItem);
     QVariantMap computedStyleIncludingVisitedInfo(const QWebElement&) const;
 
     // Simulate a request an embedding application could make, populating per-session credential storage.

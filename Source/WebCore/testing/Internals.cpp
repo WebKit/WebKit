@@ -2010,4 +2010,13 @@ void Internals::initializeMockCDM()
 }
 #endif
 
+String Internals::markerTextForListItem(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+    return WebCore::markerTextForListItem(element);
+}
+
 }

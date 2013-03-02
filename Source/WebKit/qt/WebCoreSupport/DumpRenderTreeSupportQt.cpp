@@ -375,11 +375,6 @@ bool DumpRenderTreeSupportQt::findString(QWebPageAdapter *adapter, const QString
     return frame && frame->editor()->findString(string, options);
 }
 
-QString DumpRenderTreeSupportQt::markerTextForListItem(const QWebElement& listItem)
-{
-    return WebCore::markerTextForListItem(listItem.m_element);
-}
-
 static QString convertToPropertyName(const QString& name)
 {
     QStringList parts = name.split(QLatin1Char('-'));
