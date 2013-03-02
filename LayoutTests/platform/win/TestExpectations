@@ -2670,3 +2670,6 @@ fast/dom/custom
 
 # bugs.webkit.org/show_bug.cgi?id=111235
 css3/filters/custom-with-at-rule-syntax
+
+# bugs.webkit.org/show_bug.cgi?id=110447
+editing/spelling/spelling-changed-text.html
