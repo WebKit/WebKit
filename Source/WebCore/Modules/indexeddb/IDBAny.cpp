@@ -40,26 +40,24 @@ namespace WebCore {
 
 PassRefPtr<IDBAny> IDBAny::createInvalid()
 {
-    return adoptRef(new IDBAny());
+    return adoptRef(new IDBAny(UndefinedType));
 }
 
 PassRefPtr<IDBAny> IDBAny::createNull()
 {
-    RefPtr<IDBAny> idbAny = adoptRef(new IDBAny());
-    idbAny->setNull();
-    return idbAny.release();
+    return adoptRef(new IDBAny(NullType));
 }
 
 PassRefPtr<IDBAny> IDBAny::createString(const String& value)
 {
-    RefPtr<IDBAny> idbAny = adoptRef(new IDBAny());
-    idbAny->set(value);
-    return idbAny.release();
+    return adoptRef(new IDBAny(value));
 }
 
-IDBAny::IDBAny()
-    : m_type(UndefinedType)
+IDBAny::IDBAny(Type type)
+    : m_type(type)
+    , m_integer(0)
 {
+    ASSERT(type == UndefinedType || type == NullType);
 }
 
 IDBAny::~IDBAny()
@@ -114,7 +112,7 @@ PassRefPtr<IDBTransaction> IDBAny::idbTransaction()
     return m_idbTransaction;
 }
 
-ScriptValue IDBAny::scriptValue()
+const ScriptValue& IDBAny::scriptValue()
 {
     ASSERT(m_type == ScriptValueType);
     return m_scriptValue;
@@ -132,108 +130,87 @@ int64_t IDBAny::integer()
     return m_integer;
 }
 
-void IDBAny::setNull()
+IDBAny::IDBAny(PassRefPtr<DOMStringList> value)
+    : m_type(DOMStringListType)
+    , m_domStringList(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = NullType;
 }
 
-void IDBAny::set(PassRefPtr<DOMStringList> value)
+IDBAny::IDBAny(PassRefPtr<IDBCursorWithValue> value)
+    : m_type(IDBCursorWithValueType)
+    , m_idbCursorWithValue(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = DOMStringListType;
-    m_domStringList = value;
 }
 
-void IDBAny::set(PassRefPtr<IDBCursorWithValue> value)
+IDBAny::IDBAny(PassRefPtr<IDBCursor> value)
+    : m_type(IDBCursorType)
+    , m_idbCursor(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = IDBCursorWithValueType;
-    m_idbCursorWithValue = value;
 }
 
-void IDBAny::set(PassRefPtr<IDBCursor> value)
+IDBAny::IDBAny(PassRefPtr<IDBDatabase> value)
+    : m_type(IDBDatabaseType)
+    , m_idbDatabase(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = IDBCursorType;
-    m_idbCursor = value;
 }
 
-void IDBAny::set(PassRefPtr<IDBDatabase> value)
+IDBAny::IDBAny(PassRefPtr<IDBFactory> value)
+    : m_type(IDBFactoryType)
+    , m_idbFactory(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = IDBDatabaseType;
-    m_idbDatabase = value;
 }
 
-void IDBAny::set(PassRefPtr<IDBFactory> value)
+IDBAny::IDBAny(PassRefPtr<IDBIndex> value)
+    : m_type(IDBIndexType)
+    , m_idbIndex(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = IDBFactoryType;
-    m_idbFactory = value;
 }
 
-void IDBAny::set(PassRefPtr<IDBIndex> value)
+IDBAny::IDBAny(PassRefPtr<IDBTransaction> value)
+    : m_type(IDBTransactionType)
+    , m_idbTransaction(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = IDBIndexType;
-    m_idbIndex = value;
 }
 
-void IDBAny::set(PassRefPtr<IDBTransaction> value)
+IDBAny::IDBAny(PassRefPtr<IDBObjectStore> value)
+    : m_type(IDBObjectStoreType)
+    , m_idbObjectStore(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = IDBTransactionType;
-    m_idbTransaction = value;
 }
 
-void IDBAny::set(PassRefPtr<IDBObjectStore> value)
+IDBAny::IDBAny(const ScriptValue& value)
+    : m_type(ScriptValueType)
+    , m_scriptValue(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = IDBObjectStoreType;
-    m_idbObjectStore = value;
 }
 
-void IDBAny::set(const ScriptValue& value)
+IDBAny::IDBAny(const IDBKeyPath& value)
+    : m_type(KeyPathType)
+    , m_idbKeyPath(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = ScriptValueType;
-    m_scriptValue = value;
 }
 
-void IDBAny::set(const IDBKeyPath& value)
+IDBAny::IDBAny(const String& value)
+    : m_type(StringType)
+    , m_string(value)
+    , m_integer(0)
 {
-    ASSERT(m_type == UndefinedType);
-    switch (value.type()) {
-    case IDBKeyPath::NullType:
-        m_type = NullType;
-        break;
-    case IDBKeyPath::StringType:
-        m_type = StringType;
-        m_string = value.string();
-        break;
-    case IDBKeyPath::ArrayType:
-        RefPtr<DOMStringList> keyPaths = DOMStringList::create();
-        for (Vector<String>::const_iterator it = value.array().begin(); it != value.array().end(); ++it)
-            keyPaths->append(*it);
-        m_type = DOMStringListType;
-        m_domStringList = keyPaths.release();
-        break;
-    }
 }
 
-void IDBAny::set(const String& value)
+IDBAny::IDBAny(int64_t value)
+    : m_type(IntegerType)
+    , m_integer(value)
 {
-    ASSERT(m_type == UndefinedType);
-    m_type = StringType;
-    m_string = value;
-}
-
-void IDBAny::set(int64_t value)
-{
-    ASSERT(m_type == UndefinedType);
-    m_type = IntegerType;
-    m_integer = value;
 }
 
 } // namespace WebCore
