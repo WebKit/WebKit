@@ -1,3 +1,47 @@
+2013-03-01  Iris Wu  <shuwu@rim.com>
+
+        [BlackBerry] Upstream smart selection
+        https://bugs.webkit.org/show_bug.cgi?id=111226
+
+        Reviewed by Rob Buis.
+
+        1.  Extend the touch hold text selection to next paragraph.
+        2.  Draw and expand overlay over text as touch hold selection expands.
+            Select paragraph when it's entirely covered by overlay.
+        3.  Start scrolling at a constant rate when the end of
+            next pargraph is not in the viewport.
+
+        Reviewed Internally By Genevieve Mak and Mike Fenton.
+        PR 217897 238485 258279 279042 299779
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPage::selectAtDocumentPoint):
+        (BlackBerry::WebKit::WebPage::expandSelection):
+        (WebKit):
+        (BlackBerry::WebKit::WebPage::setOverlayExpansionPixelHeight):
+        (BlackBerry::WebKit::WebPagePrivate::setOverlayExpansionPixelHeight):
+        (BlackBerry::WebKit::WebPage::setParagraphExpansionPixelScrollMargin):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::cancelSelection):
+        (BlackBerry::WebKit::SelectionHandler::selectAtPoint):
+        (BlackBerry::WebKit::isInvalidLine):
+        (WebKit):
+        (BlackBerry::WebKit::isInvalidParagraph):
+        (BlackBerry::WebKit::SelectionHandler::selectNextParagraph):
+        (BlackBerry::WebKit::SelectionHandler::drawOverlay):
+        (BlackBerry::WebKit::SelectionHandler::findNextOverlayRegion):
+        (BlackBerry::WebKit::SelectionHandler::expandSelection):
+        (BlackBerry::WebKit::SelectionHandler::ensureSelectedTextVisible):
+        (BlackBerry::WebKit::SelectionHandler::setParagraphExpansionScrollMargin):
+        (BlackBerry::WebKit::SelectionHandler::expandSelectionToGranularity):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+        (BlackBerry::WebKit::SelectionHandler::setOverlayExpansionHeight):
+
 2013-03-01  Jacky Jiang  <zhajiang@rim.com>
 
         [BlackBerry] Screen went black while navigating back/forward on the reddit.com page

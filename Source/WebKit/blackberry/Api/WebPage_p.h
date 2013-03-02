@@ -321,6 +321,7 @@ public:
 #endif
 
     void selectionChanged(WebCore::Frame*);
+    void setOverlayExpansionPixelHeight(int);
 
     void updateDelegatedOverlays(bool dispatched = false);
 

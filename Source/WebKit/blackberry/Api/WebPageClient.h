@@ -279,6 +279,8 @@ public:
     virtual void cancelNotification(const BlackBerry::Platform::String& /*id*/) = 0;
     virtual void clearNotifications(const std::vector<BlackBerry::Platform::String>& /*notificationIds*/) = 0;
     virtual void notificationDestroyed(const BlackBerry::Platform::String& /*notificationId*/) = 0;
+    virtual void startSelectionScroll() = 0;
+    virtual void stopExpandingSelection() = 0;
 };
 } // namespace WebKit
 } // namespace BlackBerry

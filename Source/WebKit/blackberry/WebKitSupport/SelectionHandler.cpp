@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -29,6 +29,7 @@
 #include "HitTestResult.h"
 #include "InputHandler.h"
 #include "IntRect.h"
+#include "RenderLayer.h"
 #include "SelectionOverlay.h"
 #include "TouchEventHandler.h"
 #include "WebPageClient.h"
@@ -39,6 +40,7 @@
 
 #include <BlackBerryPlatformKeyboardEvent.h>
 #include <BlackBerryPlatformLog.h>
+#include <BlackBerryPlatformViewportAccessor.h>
 
 #include <sys/keycodes.h>
 
@@ -82,6 +84,8 @@ void SelectionHandler::cancelSelection()
 {
     m_selectionActive = false;
     m_lastSelectionRegion = IntRectRegion();
+    m_currentOverlayRegion = IntRectRegion();
+    m_nextOverlayRegion = IntRectRegion();
 
     if (m_webPage->m_selectionOverlay)
         m_webPage->m_selectionOverlay->hide();
@@ -600,7 +604,7 @@ bool SelectionHandler::selectNodeIfFatFingersResultIsLink(FatFingersResult fatFi
     return false;
 }
 
-void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location)
+void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location, SelectionExpansionType selectionExpansionType)
 {
     // If point is invalid trigger selection based expansion.
     if (location == DOMSupport::InvalidPoint) {
@@ -628,11 +632,156 @@ void SelectionHandler::selectAtPoint(const WebCore::IntPoint& location)
         targetPosition = newFatFingersResult.adjustedPosition();
     }
 
-    // selectAtPoint API currently only supports WordGranularity but may be extended in the future.
-    selectObject(targetPosition, WordGranularity);
+    m_currentOverlayRegion = IntRectRegion();
+    m_nextOverlayRegion = IntRectRegion();
+    selectObject(targetPosition, textGranularityFromSelectionExpansionType(selectionExpansionType));
 }
 
-static bool expandSelectionToGranularity(Frame* frame, VisibleSelection selection, TextGranularity granularity, bool isInputMode)
+static bool isInvalidLine(const VisiblePosition& pos)
+{
+    return endOfLine(pos).isNull() || pos == endOfLine(pos) || !inSameLine(pos, endOfLine(pos));
+}
+
+static bool isInvalidParagraph(const VisiblePosition& pos)
+{
+    return endOfParagraph(pos).isNull() || pos == endOfParagraph(pos);
+}
+
+void SelectionHandler::selectNextParagraph()
+{
+    FrameSelection* controller = m_webPage->focusedOrMainFrame()->selection();
+
+    VisiblePosition startPos = VisiblePosition(controller->start(), controller->affinity());
+    if (isStartOfLine(startPos) && isEndOfEditableOrNonEditableContent(startPos))
+        startPos = startPos.previous();
+
+    // Find next paragraph end position.
+    VisiblePosition endPos(controller->end(), controller->affinity()); // endPos here indicates the end of current paragraph
+    endPos = endPos.next(); // find the start of next paragraph
+    while (!isEndOfDocument(endPos.deepEquivalent()) && endPos.isNotNull() && isInvalidParagraph(endPos))
+        endPos = endPos.next(); // go to next position
+    endPos = endOfParagraph(endPos); // find the end of paragraph
+
+    // Set selection if the paragraph is covered by overlay and endPos is not null.
+    if (m_currentOverlayRegion.extents().bottom() >= endPos.absoluteCaretBounds().maxY() && endPos.isNotNull()) {
+        VisibleSelection selection = VisibleSelection(startPos, endPos);
+        selection.setAffinity(controller->affinity());
+        controller->setSelection(selection);
+
+        // Stop expansion if reaching the end of page.
+        if (isEndOfDocument(endPos.deepEquivalent()))
+            m_webPage->m_client->stopExpandingSelection();
+    }
+}
+
+void SelectionHandler::drawOverlay(IntRectRegion overlayRegion, bool isExpandingOverlayAtConstantRate)
+{
+    Element* element = m_overlayStartPos.deepEquivalent().element();
+    if (!element)
+        return;
+
+    if (isExpandingOverlayAtConstantRate) {
+        // When overlay expands at a constant rate, the current overlay height increases
+        // m_overlayExpansionHeight each time and the width is always same as next overlay region.
+        WebCore::IntRect currentOverlayRect = m_currentOverlayRegion.extents();
+        WebCore::IntRect nextOverlayRect = m_nextOverlayRegion.extents();
+        WebCore::IntRect overlayRect(WebCore::IntRect(nextOverlayRect.location(), WebCore::IntSize(nextOverlayRect.width(), currentOverlayRect.height() + m_overlayExpansionHeight)));
+        overlayRegion = IntRectRegion(overlayRect);
+    }
+
+    Color highlightColor = element->renderStyle()->initialTapHighlightColor();
+    m_webPage->m_tapHighlight->draw(overlayRegion,
+        highlightColor.red(), highlightColor.green(), highlightColor.blue(), highlightColor.alpha(),
+        false /* do not hide after scroll */);
+    m_currentOverlayRegion = overlayRegion;
+}
+
+bool SelectionHandler::findNextOverlayRegion()
+{
+    // If overlay is at the end of document, stop overlay expansion.
+    if (isEndOfDocument(m_overlayEndPos.deepEquivalent()) || m_overlayEndPos.isNull())
+        return false;
+
+    m_overlayEndPos = m_overlayEndPos.next();
+    while (!isEndOfDocument(m_overlayEndPos.deepEquivalent()) && m_overlayEndPos.isNotNull() && isInvalidLine(m_overlayEndPos))
+        m_overlayEndPos = m_overlayEndPos.next(); // go to next position
+    m_overlayEndPos = endOfLine(m_overlayEndPos); // find end of line
+
+    VisibleSelection selection(m_overlayStartPos, m_overlayEndPos);
+    Vector<FloatQuad> quads;
+    DOMSupport::visibleTextQuads(selection, quads);
+    regionForTextQuads(quads, m_nextOverlayRegion);
+    return true;
+}
+
+void SelectionHandler::expandSelection(bool isScrollStarted)
+{
+    WebCore::IntPoint nextOverlayBottomRightPoint = WebCore::IntPoint(m_currentOverlayRegion.extents().bottomRight()) + WebCore::IntPoint(0, m_overlayExpansionHeight);
+    if (nextOverlayBottomRightPoint.y() > m_nextOverlayRegion.extents().bottom())
+        // Find next overlay region so that we can update overlay region's width while expanding.
+        if (!findNextOverlayRegion()) {
+            drawOverlay(m_nextOverlayRegion, false);
+            selectNextParagraph();
+            m_webPage->m_client->stopExpandingSelection();
+            return;
+        }
+
+    // Draw overlay if the position is in the viewport and is not null.
+    // Otherwise, start scrolling if it hasn't started.
+    if (ensureSelectedTextVisible(nextOverlayBottomRightPoint, false /* do not scroll */) && m_overlayEndPos.isNotNull())
+        drawOverlay(IntRectRegion(), true /* isExpandingOverlayAtConstantRate */);
+    else if (!isScrollStarted) {
+        m_webPage->m_client->startSelectionScroll();
+        return;
+    }
+
+    selectNextParagraph();
+}
+
+bool SelectionHandler::ensureSelectedTextVisible(const WebCore::IntPoint& point, bool scrollIfNeeded)
+{
+    WebCore::IntPoint scrollPosition = m_webPage->scrollPosition();
+    WebCore::IntSize actualVisibleSize = m_webPage->client()->userInterfaceViewportAccessor()->documentViewportRect().size(); // viewport size for both Cascades and browser
+    WebCore::IntRect actualScreenRect = WebCore::IntRect(scrollPosition, actualVisibleSize);
+
+    if (!scrollIfNeeded)
+        return actualScreenRect.maxY() >= point.y() + m_scrollMargin.height();
+
+    WebCore::IntRect endLocation = m_overlayEndPos.absoluteCaretBounds();
+    Node* anchorNode = m_overlayEndPos.deepEquivalent().anchorNode();
+    if (!anchorNode || !anchorNode->renderer())
+        return false;
+
+    RenderLayer* layer = anchorNode->renderer()->enclosingLayer();
+    if (!layer)
+        return false;
+
+    endLocation.inflateX(m_scrollMargin.width());
+    endLocation.inflateY(m_scrollMargin.height());
+
+    WebCore::IntRect revealRect(layer->getRectToExpose(actualScreenRect, endLocation, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded));
+    revealRect.setX(std::min(std::max(revealRect.x(), 0), m_webPage->maximumScrollPosition().x()));
+    revealRect.setY(std::min(std::max(revealRect.y(), 0), m_webPage->maximumScrollPosition().y()));
+
+    if (revealRect.location() != scrollPosition) {
+        // Animate scroll position to revealRect.
+        m_webPage->m_finalBlockPoint = WebCore::FloatPoint(revealRect.x(), revealRect.y());
+        m_webPage->m_blockZoomFinalScale = m_webPage->m_webPage->currentScale(); // Don't zoom.
+        m_webPage->m_shouldReflowBlock = false;
+        m_webPage->m_userPerformedManualZoom = true;
+        m_webPage->m_userPerformedManualScroll = true;
+        m_webPage->client()->animateBlockZoom(m_webPage->m_webPage->currentScale(), m_webPage->m_finalBlockPoint);
+    }
+    return true;
+}
+
+void SelectionHandler::setParagraphExpansionScrollMargin(const WebCore::IntSize& scrollMargin)
+{
+    m_scrollMargin.setWidth(scrollMargin.width());
+    m_scrollMargin.setHeight(scrollMargin.height());
+}
+
+bool SelectionHandler::expandSelectionToGranularity(Frame* frame, VisibleSelection selection, TextGranularity granularity, bool isInputMode)
 {
     ASSERT(frame);
     ASSERT(frame->selection());
@@ -649,7 +798,18 @@ static bool expandSelectionToGranularity(Frame* frame, VisibleSelection selectio
     if (isInputMode && !frame->selection()->shouldChangeSelection(selection))
         return false;
 
+    m_overlayStartPos = selection.visibleStart();
+    m_overlayEndPos = selection.visibleEnd();
+    Vector<FloatQuad> quads;
+    DOMSupport::visibleTextQuads(selection, quads);
+    regionForTextQuads(quads, m_currentOverlayRegion);
+
+    ensureSelectedTextVisible(WebCore::IntPoint(), true /* scroll if needed */);
+    drawOverlay(m_currentOverlayRegion, false /* isExpandingOverlayAtConstantRate */);
     frame->selection()->setSelection(selection);
+    if (granularity == ParagraphGranularity)
+        findNextOverlayRegion();
+
     return true;
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, 2011, 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2010, 2011, 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -63,7 +63,7 @@ public:
     bool selectionContains(const WebCore::IntPoint&);
 
     void setSelection(const WebCore::IntPoint& start, const WebCore::IntPoint& end);
-    void selectAtPoint(const WebCore::IntPoint&);
+    void selectAtPoint(const WebCore::IntPoint&, SelectionExpansionType);
     void selectObject(const WebCore::IntPoint&, WebCore::TextGranularity);
     void selectObject(WebCore::TextGranularity);
     void selectObject(WebCore::Node*);
@@ -75,6 +75,10 @@ public:
     bool lastUpdatedEndPointIsValid() const { return m_lastUpdatedEndPointIsValid; }
 
     void inputHandlerDidFinishProcessingChange();
+
+    void expandSelection(bool isScrollStarted);
+    void setOverlayExpansionHeight(int dy) { m_overlayExpansionHeight = dy; }
+    void setParagraphExpansionScrollMargin(const WebCore::IntSize&);
 
 private:
     void notifyCaretPositionChangedIfNeeded(bool userTouchTriggered = true);
@@ -88,6 +92,12 @@ private:
     unsigned extendSelectionToFieldBoundary(bool isStartHandle, const WebCore::IntPoint& selectionPoint, WebCore::VisibleSelection& newSelection);
     WebCore::IntPoint clipPointToVisibleContainer(const WebCore::IntPoint&) const;
 
+    void selectNextParagraph();
+    void drawOverlay(BlackBerry::Platform::IntRectRegion, bool);
+    bool findNextOverlayRegion();
+    bool ensureSelectedTextVisible(const WebCore::IntPoint&, bool scrollIfNeeded);
+    bool expandSelectionToGranularity(WebCore::Frame*, WebCore::VisibleSelection, WebCore::TextGranularity, bool isInputMode);
+
     bool inputNodeOverridesTouch() const;
     BlackBerry::Platform::RequestedHandlePosition requestedSelectionHandlePosition(const WebCore::VisibleSelection&) const;
 
@@ -100,9 +110,15 @@ private:
     bool m_lastUpdatedEndPointIsValid;
     bool m_didSuppressCaretPositionChangedNotification;
     BlackBerry::Platform::IntRectRegion m_lastSelectionRegion;
+    WebCore::VisiblePosition m_overlayStartPos;
+    WebCore::VisiblePosition m_overlayEndPos;
+    BlackBerry::Platform::IntRectRegion m_currentOverlayRegion;
+    BlackBerry::Platform::IntRectRegion m_nextOverlayRegion;
+    int m_overlayExpansionHeight;
 
     BlackBerry::Platform::StopWatch m_timer;
-    WebCore::VisibleSelection m_lastSelection;
+
+    WebCore::IntSize m_scrollMargin;
 };
 
 }
