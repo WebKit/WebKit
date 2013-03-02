@@ -157,6 +157,7 @@ namespace WebCore {
 
 #if PLATFORM(MAC) || PLATFORM(CHROMIUM)
         bool hasPreciseScrollingDeltas() const { return m_hasPreciseScrollingDeltas; }
+        void setHasPreciseScrollingDeltas(bool b) { m_hasPreciseScrollingDeltas = b; }
 #endif
 #if PLATFORM(MAC) || (PLATFORM(CHROMIUM) && OS(DARWIN))
         PlatformWheelEventPhase phase() const { return m_phase; }

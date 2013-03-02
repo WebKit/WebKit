@@ -181,6 +181,7 @@ public:
     bool handleGestureTwoFingerTap(const PlatformGestureEvent&);
     bool handleGestureScrollUpdate(const PlatformGestureEvent&);
     bool handleGestureScrollBegin(const PlatformGestureEvent&);
+    void clearGestureScrollNodes();
     bool isScrollbarHandlingGestures() const;
 #endif
 
@@ -378,6 +379,7 @@ private:
     bool handleGestureForTextSelectionOrContextMenu(const PlatformGestureEvent&);
     bool passGestureEventToWidget(const PlatformGestureEvent&, Widget*);
     bool passGestureEventToWidgetIfPossible(const PlatformGestureEvent&, RenderObject*);
+    bool sendScrollEventToView(const PlatformGestureEvent&, const FloatSize&);
 #endif
 
     void setLastKnownMousePosition(const PlatformMouseEvent&);
@@ -469,6 +471,7 @@ private:
 #if ENABLE(GESTURE_EVENTS)
     RefPtr<Node> m_scrollGestureHandlingNode;
     bool m_lastHitTestResultOverWidget;
+    RefPtr<Node> m_previousGestureScrolledNode;
     RefPtr<Scrollbar> m_scrollbarHandlingScrollGesture;
 #endif
 

@@ -71,25 +71,6 @@ var scrolledElement = 'movedbox'
 var scrollEventsOccurred = 0;
 var expectedScrollEventsOccurred = '1';
 
-
-function recordScroll(event) {
-	debug('scroll event ' + scrollEventsOccurred + '+> ' + event.target);
-	scrollEventsOccurred++;
-
-	if (window.eventSender) {
-		// Because scroll events arrive asynchronously, only one will arrive.
-	    if (gesturesOccurred == expectedGesturesTotal) {
-			shouldBe('scrollEventsOccurred', expectedScrollEventsOccurred);
-	        // If we've got here, we've passed.
-	        successfullyParsed = true;
-	        isSuccessfullyParsed();
-	        if (window.testRunner)
-	            testRunner.notifyDone();
-		}
-    }
-}
-
-
 function firstGestureScroll()
 {
     debug("first gesture");
@@ -105,7 +86,8 @@ function secondGestureScroll()
 {
     debug("second gesture");
     eventSender.gestureScrollBegin(12, 40);
-    eventSender.gestureScrollUpdate(0, -100);
+    eventSender.gestureScrollUpdate(0, -10);
+    eventSender.gestureScrollUpdate(0, -50);
     eventSender.gestureScrollEnd(0, 0);
 
     // Wait for layout.

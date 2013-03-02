@@ -1,0 +1,19 @@
+This tests that a page cannot be scrolled vertically with touch (but can still be scrolled horizontally) if its body has style overflow-y:hidden. The scroll events in this test have both an x and y component.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+first gesture
+PASS document.body.scrollTop is 0
+PASS document.body.scrollLeft is 55
+PASS wheelEventsOccurred is 0
+second gesture
+PASS document.body.scrollTop is 0
+PASS document.body.scrollLeft is 97
+PASS wheelEventsOccurred is 0
+scroll event 0+> [object HTMLDocument]
+PASS scrollEventsOccurred is 1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

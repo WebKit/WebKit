@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../../js/resources/js-test-style.css">
+<script src="../../../js/resources/js-test-pre.js"></script>
+<script src="resources/gesture-helpers.js"></script>
+<style type="text/css">
+#touchtarget {
+  width: 100px;
+  height: 100px;
+  background: white;
+  overflow:hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    height: 0px;
+}
+
+#greenbox {
+  width: 100px;
+  height: 100px;
+  background: green;
+  padding: 0px;
+  margin: 0px;
+}
+
+#redbox {
+  width: 100px;
+  height: 100px;
+  background: red;
+  padding: 0px;
+  margin: 0px;
+}
+
+td {
+  padding: 0px;
+}
+</style>
+</head>
+<body style="margin:0; overflow-x:hidden;" onload="runTest();">
+
+<table id="horizontal_table_to_fill">
+  <tr id="firstrow">
+    <td><div id="redbox"></div></td>
+    <td><div id="greenbox"></div></td>
+  </tr>
+</table>
+
+<table id="vertical_table_to_fill">
+    <tr><td><div id="greenbox"></div></td></tr>
+    <tr><td><div id="redbox"></div></td></tr>
+</table>
+
+<p id="description"></p>
+<div id="console"></div>
+<script type="text/javascript">
+
+var expectedGesturesTotal = 2;
+var gesturesOccurred = 0;
+var scrollAmountX = ['0', '0'];
+var scrollAmountY = ['110', '205'];
+var wheelEventsOccurred = 0;
+var expectedWheelEventsOccurred = ['0', '0'];
+var scrollEventsOccurred = 0;
+var expectedScrollEventsOccurred = '1';
+var scrolledElement = 'document.body'
+
+// Always construct a page larger than the vertical height of the window.
+function buildPage()
+{
+    // build vertical table
+    var table = document.getElementById('vertical_table_to_fill');
+    var targetHeight = document.body.offsetHeight;
+    var cellPairHeight = table.offsetHeight;
+    var numberOfReps = targetHeight / cellPairHeight * 2;
+    var i;
+    for (i = 0; i < numberOfReps; i++) {
+        var p = document.createElement('tr');
+        p.innerHTML = '<td><div id="greenbox"></div></td>';
+        table.appendChild(p);
+        var p = document.createElement('tr');
+        p.innerHTML = '<td><div id="redbox"></div></td>';
+        table.appendChild(p);
+    }
+
+    // build horizontal table
+    var horizontalTable = document.getElementById('horizontal_table_to_fill');
+    var tableRow = document.getElementById('firstrow');
+    var targetWidth = document.body.offsetWidth;
+    var cellPairWidth = horizontalTable.offsetWidth;
+    numberOfReps = targetWidth / cellPairWidth * 2;
+    for (i = 0; i < numberOfReps; i++) {
+        var p = document.createElement('td');
+        p.innerHTML = '<div id="redbox"></div>';
+        tableRow.appendChild(p);
+        var p = document.createElement('td');
+        p.innerHTML = '<div id="greenbox"></div>';
+        tableRow.appendChild(p);
+    }
+
+    window.addEventListener("scroll", recordScroll);
+    window.addEventListener("mousewheel", recordWheel);
+}
+
+function firstGestureScroll()
+{
+    debug("first gesture");
+    eventSender.gestureScrollBegin(95, 12);
+    eventSender.gestureScrollUpdate(-55, -110);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+
+function secondGestureScroll()
+{
+    debug("second gesture");
+    eventSender.gestureScrollBegin(12, 97);
+    eventSender.gestureScrollUpdate(-42, -95);
+    eventSender.gestureScrollEnd(0, 0);
+
+    // Wait for layout.
+    checkScrollOffset();
+}
+
+if (window.testRunner)
+    testRunner.waitUntilDone();
+
+function runTest()
+{
+    buildPage();
+    if (window.eventSender) {
+        description('This tests that a page cannot be scrolled horizontally with touch ' +
+                    '(but can still be scrolled vertically) if its body has style overflow-x:hidden. ' +
+                    'The scroll events in this test have both an x and y component.');
+
+        if (checkTestDependencies())
+            firstGestureScroll();
+        else
+            exitIfNecessary();
+    } else {
+        debug("This test requires DumpRenderTree.  Touch scroll the red rect to log.");
+    }
+}
+</script>
+</body>
+</html>

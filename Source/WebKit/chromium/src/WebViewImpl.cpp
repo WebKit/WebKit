@@ -1846,6 +1846,8 @@ void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
             m_gestureAnimation.clear();
             if (m_layerTreeView)
                 m_layerTreeView->didStopFlinging();
+
+            mainFrameImpl()->frame()->eventHandler()->clearGestureScrollNodes();
         }
     }
 

@@ -1,3 +1,16 @@
+2013-03-01  Terry Anderson  <tdanderson@chromium.org>
+
+        EventHandler::handleGestureScrollUpdate() should invoke the user-generated scroll routines 
+        so its behavior matches other user-initiated scrolls
+        https://bugs.webkit.org/show_bug.cgi?id=109769
+
+        Reviewed by James Robinson.
+
+        Clear the nodes corresponding to a fling scroll event when the event ends.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::updateAnimations):
+
 2013-03-01  David Dorwin  <ddorwin@chromium.org>
 
         [chromium] Revert r143827 to restore WebHelperPluginImpl's call to frameDetached()

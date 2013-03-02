@@ -1,0 +1,18 @@
+This tests that a page cannot be scrolled with touch if its body has style overflow:hidden.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+first gesture
+PASS document.body.scrollTop is 0
+PASS document.body.scrollLeft is 0
+PASS wheelEventsOccurred is 0
+second gesture
+PASS document.body.scrollTop is 0
+PASS document.body.scrollLeft is 0
+PASS wheelEventsOccurred is 0
+PASS scrollEventsOccurred is 0
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
