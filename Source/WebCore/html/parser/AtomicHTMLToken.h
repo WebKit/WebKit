@@ -153,7 +153,7 @@ private:
             ASSERT_NOT_REACHED();
             break;
         case HTMLToken::DOCTYPE:
-            m_name = AtomicString(token.nameString()); // FIXME: Should be AtomicString(token.name()) to avoid mallocing every time.
+            m_name = AtomicString(token.name());
             m_doctypeData = token.releaseDoctypeData();
             break;
         case HTMLToken::EndOfFile:
@@ -161,7 +161,7 @@ private:
         case HTMLToken::StartTag:
         case HTMLToken::EndTag: {
             m_selfClosing = token.selfClosing();
-            m_name = AtomicString(token.nameString()); // FIXME: Should be AtomicString(token.name()) to avoid mallocing every time.
+            m_name = AtomicString(token.name());
             initializeAttributes(token.attributes());
             break;
         }

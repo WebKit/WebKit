@@ -113,9 +113,16 @@ static bool startsMultiLineCommentAt(const String& string, size_t start)
     return (start + 1 < string.length() && string[start] == '/' && string[start+1] == '*');
 }
 
+// If other files need this, we should move this to HTMLParserIdioms.h
+template<size_t inlineCapacity>
+bool threadSafeMatch(const Vector<UChar, inlineCapacity>& vector, const QualifiedName& qname)
+{
+    return equalIgnoringNullity(vector, qname.localName().impl());
+}
+
 static bool hasName(const HTMLToken& token, const QualifiedName& name)
 {
-    return threadSafeMatch(token.nameString(), name);
+    return threadSafeMatch(token.name(), name);
 }
 
 static bool findAttributeWithName(const HTMLToken& token, const QualifiedName& name, size_t& indexOfMatchingAttribute)

@@ -151,16 +151,6 @@ public:
         m_orAllData |= character;
     }
 
-    // FIXME: Rename this to copyNameAsString().
-    String nameString() const
-    {
-        if (!m_data.size())
-            return emptyString();
-        if (isAll8BitData())
-            return String::make8BitFrom16BitSource(m_data.data(), m_data.size());
-        return String(m_data);
-    }
-
     /* DOCTYPE Tokens */
 
     bool forceQuirks() const
