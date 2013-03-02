@@ -33,7 +33,6 @@
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/PluginDatabase.h>
 #if USE(CFNETWORK)
-#include <WebCore/ResourceHandle.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 

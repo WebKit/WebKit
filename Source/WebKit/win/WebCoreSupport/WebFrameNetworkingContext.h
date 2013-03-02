@@ -24,6 +24,10 @@
 #include <WebCore/FrameNetworkingContext.h>
 #include <WebCore/ResourceError.h>
 
+#if USE(CFNETWORK)
+#include <WebCore/ResourceHandle.h>
+#endif
+
 class WebFrameNetworkingContext : public WebCore::FrameNetworkingContext {
 public:
     static PassRefPtr<WebFrameNetworkingContext> create(WebCore::Frame*, const WTF::String& userAgent);
