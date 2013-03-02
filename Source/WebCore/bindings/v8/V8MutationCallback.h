@@ -27,10 +27,11 @@
 #define V8MutationCallback_h
 
 #include "ActiveDOMCallback.h"
+#include "DOMWrapperWorld.h"
 #include "MutationCallback.h"
 #include "ScopedPersistent.h"
-#include "WorldContextHandle.h"
 #include <v8.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -58,7 +59,7 @@ private:
     }
 
     ScopedPersistent<v8::Object> m_callback;
-    WorldContextHandle m_worldContext;
+    RefPtr<DOMWrapperWorld> m_world;
 };
 
 }

@@ -266,6 +266,26 @@ v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, const WorldC
     return v8::Local<v8::Context>();
 }
 
+v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, DOMWrapperWorld* world)
+{
+    if (context->isDocument()) {
+        if (Frame* frame = static_cast<Document*>(context)->frame()) {
+            // FIXME: Store the DOMWrapperWorld for the main world in the v8::Context so callers
+            // that are looking up their world with DOMWrapperWorld::getWorld(v8::Context::GetCurrent())
+            // won't end up passing null here when later trying to get their v8::Context back.
+            if (!world)
+                return frame->script()->mainWorldContext();
+            return v8::Local<v8::Context>::New(frame->script()->windowShell(world)->context());
+        }
+#if ENABLE(WORKERS)
+    } else if (context->isWorkerContext()) {
+        if (WorkerScriptController* script = static_cast<WorkerContext*>(context)->script())
+            return script->context();
+#endif
+    }
+    return v8::Local<v8::Context>();
+}
+
 bool handleOutOfMemory()
 {
     v8::Local<v8::Context> context = v8::Context::GetCurrent();
