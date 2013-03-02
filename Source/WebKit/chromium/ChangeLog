@@ -1,3 +1,10 @@
+2013-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r185662.  Requested by
+        "James Robinson" <jamesr@chromium.org> via sheriffbot.
+
+        * DEPS:
+
 2013-03-01  Terry Anderson  <tdanderson@chromium.org>
 
         EventHandler::handleGestureScrollUpdate() should invoke the user-generated scroll routines 
