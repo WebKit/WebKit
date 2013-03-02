@@ -1,3 +1,16 @@
+2013-03-01  Kiran Muppala  <cmuppala@apple.com>
+
+        Remove call to set task priority of WebKit2 processes on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=111239
+
+        Reviewed by Darin Adler.
+
+        Remove call to set task prioirty of WebKit2 processes on Mac as it
+        is no longer necessary.
+
+        * Shared/mac/ChildProcessMac.mm:
+        (WebKit::ChildProcess::platformInitialize): Remove call to setpriority().
+
 2013-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         Make in-memory blobs work in NetworkProcess

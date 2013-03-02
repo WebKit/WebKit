@@ -92,7 +92,6 @@ void ChildProcess::shutdownWindowServerConnection()
 void ChildProcess::platformInitialize()
 {
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
-    setpriority(PRIO_DARWIN_PROCESS, 0, 0);
     initializeTimerCoalescingPolicy();
 #endif
     // Starting with process suppression disabled.  The proxy for this process will enable if appropriate from didFinishLaunching().
