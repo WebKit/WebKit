@@ -22,6 +22,7 @@
 #include "config.h"
 #include "HitTestResult.h"
 
+#include "CachedImage.h"
 #include "DocumentMarkerController.h"
 #include "Frame.h"
 #include "FrameSelection.h"

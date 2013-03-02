@@ -25,7 +25,6 @@
 
 #include "config.h"
 #include "RenderTableSection.h"
-#include "CachedImage.h"
 #include "Document.h"
 #include "HitTestResult.h"
 #include "HTMLNames.h"

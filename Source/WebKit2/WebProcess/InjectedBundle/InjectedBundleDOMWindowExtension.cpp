@@ -31,6 +31,7 @@
 #include "WebFrameLoaderClient.h"
 #include <WebCore/DOMWindowExtension.h>
 #include <WebCore/Frame.h>
+#include <WebCore/FrameLoader.h>
 #include <wtf/HashMap.h>
 
 using namespace WebCore;

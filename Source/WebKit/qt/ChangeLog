@@ -1,3 +1,16 @@
+2013-02-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reduce amount of rebuilding when touching networking headers
+        https://bugs.webkit.org/show_bug.cgi?id=111035
+
+        Reviewed by Eric Seidel.
+
+        Adding includes that are now necessary because WebCore headers don't have them
+        any more.
+
+        * WebCoreSupport/NotificationPresenterClientQt.cpp:
+        * WebCoreSupport/QWebPageAdapter.cpp:
+
 2013-03-01  Jason Anderssen  <janderssen@gmail.com>
 
         Move markerTextForListItem from TestRunner to Internals

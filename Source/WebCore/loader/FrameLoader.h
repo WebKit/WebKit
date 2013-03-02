@@ -40,8 +40,7 @@
 #include "IconURL.h"
 #include "LayoutMilestones.h"
 #include "MixedContentChecker.h"
-#include "PolicyChecker.h"
-#include "ResourceHandle.h"
+#include "ResourceHandleTypes.h"
 #include "ResourceLoadNotifier.h"
 #include "SecurityContext.h"
 #include "SubframeLoader.h"
@@ -65,6 +64,7 @@ class FrameLoaderClient;
 class FrameNetworkingContext;
 class NavigationAction;
 class NetworkingContext;
+class PolicyChecker;
 class Page;
 class ResourceError;
 class ResourceRequest;
@@ -89,7 +89,7 @@ public:
 
     Frame* frame() const { return m_frame; }
 
-    PolicyChecker* policyChecker() const { return &m_policyChecker; }
+    PolicyChecker* policyChecker() const { return m_policyChecker.get(); }
     HistoryController* history() const { return &m_history; }
     ResourceLoadNotifier* notifier() const { return &m_notifer; }
     SubframeLoader* subframeLoader() const { return &m_subframeLoader; }
@@ -380,7 +380,7 @@ private:
     // FIXME: These should be OwnPtr<T> to reduce build times and simplify
     // header dependencies unless performance testing proves otherwise.
     // Some of these could be lazily created for memory savings on devices.
-    mutable PolicyChecker m_policyChecker;
+    mutable OwnPtr<PolicyChecker> m_policyChecker;
     mutable HistoryController m_history;
     mutable ResourceLoadNotifier m_notifer;
     mutable SubframeLoader m_subframeLoader;

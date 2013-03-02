@@ -20,6 +20,7 @@
 #include "config.h"
 #include "Pasteboard.h"
 
+#include "CachedImage.h"
 #include "ClipboardGtk.h"
 #include "DataObjectGtk.h"
 #include "DocumentFragment.h"

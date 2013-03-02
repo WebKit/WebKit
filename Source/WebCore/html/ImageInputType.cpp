@@ -23,6 +23,7 @@
 #include "config.h"
 #include "ImageInputType.h"
 
+#include "CachedImage.h"
 #include "FormDataList.h"
 #include "HTMLFormElement.h"
 #include "HTMLImageLoader.h"

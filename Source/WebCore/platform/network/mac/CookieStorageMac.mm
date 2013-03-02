@@ -26,8 +26,6 @@
 #include "config.h"
 #include "CookieStorage.h"
 
-#import "ResourceHandle.h"
-
 #import "WebCoreSystemInterface.h"
 #import <wtf/RetainPtr.h>
 #import <wtf/UnusedParam.h>

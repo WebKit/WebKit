@@ -43,6 +43,7 @@
 #include "EntryArray.h"
 #include "EntryCallback.h"
 #include "ErrorCallback.h"
+#include "Event.h"
 #include "File.h"
 #include "FileCallback.h"
 #include "FileEntry.h"

@@ -28,6 +28,7 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "Element.h"
+#include "Event.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "VoidCallback.h"

@@ -29,7 +29,7 @@
 #include "config.h"
 #include "LegacyWebArchive.h"
 
-#include "MemoryCache.h"
+#include "CachedResource.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -42,14 +42,12 @@
 #include "Image.h"
 #include "KURLHash.h"
 #include "Logging.h"
-#include "markup.h"
-#include "Node.h"
+#include "MemoryCache.h"
 #include "Page.h"
 #include "Range.h"
 #include "ResourceBuffer.h"
 #include "Settings.h"
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include "markup.h"
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 

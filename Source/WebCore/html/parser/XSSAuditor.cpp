@@ -36,7 +36,7 @@
 #include "FormData.h"
 #include "FormDataList.h"
 #include "Frame.h"
-#include "FrameLoaderClient.h"
+#include "FrameLoader.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLNames.h"
 #include "HTMLTokenizer.h"

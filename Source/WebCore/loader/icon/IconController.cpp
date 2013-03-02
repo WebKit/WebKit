@@ -38,6 +38,7 @@
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "IconDatabase.h"
 #include "IconDatabaseBase.h"

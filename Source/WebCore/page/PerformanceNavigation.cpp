@@ -35,7 +35,7 @@
 
 #include "DocumentLoader.h"
 #include "Frame.h"
-#include "FrameLoaderTypes.h"
+#include "FrameLoader.h"
 
 namespace WebCore {
 

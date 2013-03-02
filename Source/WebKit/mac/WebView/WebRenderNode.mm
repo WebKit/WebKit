@@ -30,6 +30,7 @@
 
 #import "WebFrameInternal.h"
 #import <WebCore/Frame.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/FrameLoaderClient.h>
 #import <WebCore/RenderText.h>
 #import <WebCore/RenderWidget.h>

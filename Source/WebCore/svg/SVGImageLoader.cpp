@@ -23,6 +23,7 @@
 #if ENABLE(SVG)
 #include "SVGImageLoader.h"
 
+#include "CachedImage.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLParserIdioms.h"

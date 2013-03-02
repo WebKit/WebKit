@@ -27,11 +27,11 @@
 
 #include "CSSValue.h"
 #include "CachedResourceHandle.h"
-#include "CachedSVGDocument.h"
 
 namespace WebCore {
 
 class CachedResourceLoader;
+class CachedSVGDocument;
 
 class WebKitCSSSVGDocumentValue : public CSSValue {
 public:

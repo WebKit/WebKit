@@ -31,6 +31,7 @@
 #include "config.h"
 #include "Pasteboard.h"
 
+#include "CachedImage.h"
 #include "ClipboardChromium.h"
 #include "ClipboardUtilitiesChromium.h"
 #include "Document.h"

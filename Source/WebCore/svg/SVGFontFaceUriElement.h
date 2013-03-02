@@ -21,7 +21,8 @@
 #define SVGFontFaceUriElement_h
 
 #if ENABLE(SVG_FONTS)
-#include "CachedFont.h"
+
+#include "CachedFontClient.h"
 #include "CachedResourceHandle.h"
 #include "SVGElement.h"
 
@@ -41,7 +42,7 @@ private:
     SVGFontFaceUriElement(const QualifiedName&, Document*);
     
     virtual void parseAttribute(const QualifiedName&, const AtomicString&) OVERRIDE;
-    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
+    virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0) OVERRIDE;
     virtual InsertionNotificationRequest insertedInto(ContainerNode*) OVERRIDE;
 
     void loadFont();

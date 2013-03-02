@@ -25,7 +25,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameLoaderClient.h"
+#include "FrameLoader.h"
 #include "GCController.h"
 #include "HTMLPlugInElement.h"
 #include "InspectorInstrumentation.h"

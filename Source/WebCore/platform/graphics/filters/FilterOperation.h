@@ -41,16 +41,14 @@
 #include <wtf/ThreadSafeRefCounted.h>
 #endif
 
-#if ENABLE(SVG)
-#include "CachedSVGDocumentReference.h"
-#endif
-
 // Annoyingly, wingdi.h #defines this.
 #ifdef PASSTHROUGH
 #undef PASSTHROUGH
 #endif
 
 namespace WebCore {
+
+class CachedSVGDocumentReference;
 
 // CSS Filters
 
@@ -175,7 +173,7 @@ public:
 
 #if ENABLE(SVG)
     CachedSVGDocumentReference* cachedSVGDocumentReference() const { return m_cachedSVGDocumentReference.get(); }
-    void setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference> cachedSVGDocumentReference) { m_cachedSVGDocumentReference = cachedSVGDocumentReference; }
+    void setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference>);
 #endif
 
     FilterEffect* filterEffect() const { return m_filterEffect.get(); }
@@ -191,12 +189,9 @@ private:
         return m_url == other->m_url;
     }
 
-    ReferenceFilterOperation(const String& url, const String& fragment, OperationType type)
-        : FilterOperation(type)
-        , m_url(url)
-        , m_fragment(fragment)
-    {
-    }
+    ReferenceFilterOperation(const String& url, const String& fragment, OperationType);
+
+    virtual ~ReferenceFilterOperation();
 
     String m_url;
     String m_fragment;

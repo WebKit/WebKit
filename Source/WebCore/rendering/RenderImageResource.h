@@ -26,7 +26,6 @@
 #ifndef RenderImageResource_h
 #define RenderImageResource_h
 
-#include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "Image.h"
 #include "LayoutSize.h"
@@ -55,15 +54,15 @@ public:
 
     void resetAnimation();
 
-    virtual PassRefPtr<Image> image(int /* width */ = 0, int /* height */ = 0) const { return m_cachedImage ? m_cachedImage->imageForRenderer(m_renderer) : nullImage(); }
-    virtual bool errorOccurred() const { return m_cachedImage && m_cachedImage->errorOccurred(); }
+    virtual PassRefPtr<Image> image(int width = 0, int height = 0) const;
+    virtual bool errorOccurred() const;
 
     virtual void setContainerSizeForRenderer(const IntSize&);
-    virtual bool usesImageContainerSize() const { return m_cachedImage ? m_cachedImage->usesImageContainerSize() : false; }
-    virtual bool imageHasRelativeWidth() const { return m_cachedImage ? m_cachedImage->imageHasRelativeWidth() : false; }
-    virtual bool imageHasRelativeHeight() const { return m_cachedImage ? m_cachedImage->imageHasRelativeHeight() : false; }
+    virtual bool usesImageContainerSize() const;
+    virtual bool imageHasRelativeWidth() const;
+    virtual bool imageHasRelativeHeight() const;
 
-    virtual LayoutSize imageSize(float multiplier) const { return m_cachedImage ? m_cachedImage->imageSizeForRenderer(m_renderer, multiplier) : LayoutSize(); }
+    virtual LayoutSize imageSize(float multiplier) const;
 
     virtual WrappedImagePtr imagePtr() const { return m_cachedImage.get(); }
 

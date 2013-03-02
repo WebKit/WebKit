@@ -29,6 +29,7 @@
 #include "FilterOperation.h"
 
 #include "AnimationUtilities.h"
+#include "CachedSVGDocumentReference.h"
 
 namespace WebCore {
 
@@ -148,6 +149,24 @@ PassRefPtr<FilterOperation> DropShadowFilterOperation::blend(const FilterOperati
         WebCore::blend(fromStdDeviation, m_stdDeviation, progress),
         WebCore::blend(fromColor, m_color, progress), m_type);
 }
+
+ReferenceFilterOperation::ReferenceFilterOperation(const String& url, const String& fragment, OperationType type)
+    : FilterOperation(type)
+    , m_url(url)
+    , m_fragment(fragment)
+{
+}
+
+ReferenceFilterOperation::~ReferenceFilterOperation()
+{
+}
+
+#if ENABLE(SVG)
+void ReferenceFilterOperation::setCachedSVGDocumentReference(PassOwnPtr<CachedSVGDocumentReference> cachedSVGDocumentReference)
+{
+    m_cachedSVGDocumentReference = cachedSVGDocumentReference;
+}
+#endif
 
 } // namespace WebCore
 

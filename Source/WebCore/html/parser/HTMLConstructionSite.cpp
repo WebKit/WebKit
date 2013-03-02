@@ -33,6 +33,7 @@
 #include "DocumentType.h"
 #include "Element.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLDocument.h"
 #include "HTMLElementFactory.h"

@@ -28486,6 +28486,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\loader\cache\CachedFontClient.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\cache\CachedImage.cpp"
 					>
 				</File>
@@ -28499,6 +28503,10 @@
 				</File>
 				<File
 					RelativePath="..\loader\cache\CachedRawResource.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedRawResourceClient.h"
 					>
 				</File>
 				<File
@@ -28575,6 +28583,14 @@
 				</File>
 				<File
 					RelativePath="..\loader\cache\CachedSVGDocument.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedSVGDocumentClient.h"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\cache\CachedSVGDocumentReference.cpp"
 					>
 				</File>
 				<File
@@ -46693,6 +46709,10 @@
 				</File>
 				<File
 					RelativePath="..\rendering\style\StyleCachedShader.h"
+					>
+				</File>
+				<File
+					RelativePath="..\rendering\style\StyleCustomFilterProgram.cpp"
 					>
 				</File>
 				<File
@@ -73307,6 +73327,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\plugins\PluginRequest.h"
+				>
+			</File>
+			<File
 				RelativePath="..\plugins\PluginStrategy.h"
 				>
 			</File>
@@ -73316,6 +73340,10 @@
 			</File>
 			<File
 				RelativePath="..\plugins\PluginStream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\plugins\PluginStreamClient.h"
 				>
 			</File>
 			<File

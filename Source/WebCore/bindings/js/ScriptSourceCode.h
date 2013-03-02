@@ -32,7 +32,6 @@
 #define ScriptSourceCode_h
 
 #include "CachedResourceHandle.h"
-#include "CachedScript.h"
 #include "CachedScriptSourceProvider.h"
 #include "KURL.h"
 #include <parser/SourceProvider.h>
@@ -40,6 +39,8 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+class CachedScript;
 
 class ScriptSourceCode {
 public:
