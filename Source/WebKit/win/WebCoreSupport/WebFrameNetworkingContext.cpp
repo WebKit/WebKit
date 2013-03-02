@@ -20,6 +20,7 @@
 #include "config.h"
 #include "WebFrameNetworkingContext.h"
 
+#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #if USE(CFNETWORK)
 #include <CFNetwork/CFHTTPCookiesPriv.h>
