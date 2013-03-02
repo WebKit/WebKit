@@ -9,7 +9,6 @@ layer at (0,0) size 800x600
           RenderText {#text} at (24,8) size 58x19
             text run at (24,8) width 4: " "
             text run at (28,8) width 54: "summary"
-        RenderBlock (anonymous) at (8,43) size 768x0
         RenderBlock {DETAILS} at (8,43) size 768x70 [border: (8px solid #995555)]
           RenderBlock {SUMMARY} at (8,8) size 752x35 [border: (8px solid #CC9999)]
             RenderDetailsMarker {DIV} at (8,13) size 10x10: down

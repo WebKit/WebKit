@@ -1068,7 +1068,6 @@ void Node::attach()
     ASSERT(!attached());
     ASSERT(!renderer() || (renderer()->style() && renderer()->parent()));
 
-    // FIXME: This is O(N^2) for the innerHTML case, where all children are replaced at once (and not attached).
     // If this node got a renderer it may be the previousRenderer() of sibling text nodes and thus affect the
     // result of Text::textRendererIsNeeded() for those nodes.
     if (renderer()) {
@@ -1076,9 +1075,16 @@ void Node::attach()
             if (next->renderer())
                 break;
             if (!next->attached())
-                break;  // Assume this means none of the following siblings are attached.
-            if (next->isTextNode())
-                toText(next)->createTextRendererIfNeeded();
+                break; // Assume this means none of the following siblings are attached.
+            if (!next->isTextNode())
+                continue;
+            ASSERT(!next->renderer());
+            toText(next)->createTextRendererIfNeeded();
+            // If we again decided not to create a renderer for next, we can bail out the loop,
+            // because it won't affect the result of Text::textRendererIsNeeded() for the rest
+            // of sibling nodes.
+            if (!next->renderer())
+                break;
         }
     }
 
