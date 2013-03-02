@@ -50,6 +50,7 @@
 #include "OESElementIndexUint.h"
 #include "OESStandardDerivatives.h"
 #include "OESTextureFloat.h"
+#include "OESTextureHalfFloat.h"
 #include "OESVertexArrayObject.h"
 #include "Page.h"
 #include "RenderBox.h"
@@ -2383,6 +2384,14 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
         }
         return m_oesTextureFloat.get();
     }
+    if (equalIgnoringCase(name, "OES_texture_half_float")
+        && m_context->getExtensions()->supports("GL_OES_texture_half_float")) {
+        if (!m_oesTextureHalfFloat) {
+            m_context->getExtensions()->ensureEnabled("GL_OES_texture_half_float");
+            m_oesTextureHalfFloat = OESTextureHalfFloat::create(this);
+        }
+        return m_oesTextureHalfFloat.get();
+    }
     if (equalIgnoringCase(name, "OES_vertex_array_object")
         && m_context->getExtensions()->supports("GL_OES_vertex_array_object")) {
         if (!m_oesVertexArrayObject) {
@@ -3768,6 +3777,13 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
         return;
     if (!validateSettableTexFormat("texImage2D", format))
         return;
+    // FIXME: Uploading ImageData to half floating point texture is not supported yet
+    // https://bugs.webkit.org/show_bug.cgi?id=110936
+    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texImage2D", "Operation not supported yet");
+        return;
+    }
+
     bool needConversion = true;
     // The data from ImageData is always of format RGBA8.
     // No conversion is needed if destination format is RGBA and type is USIGNED_BYTE and no Flip or Premultiply operation is required.
@@ -3798,6 +3814,12 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
         ec = SECURITY_ERR;
         return;
     }
+    // FIXME: Uploading ImageElement to half floating point texture is not supported yet
+    // https://bugs.webkit.org/show_bug.cgi?id=110936
+    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texImage2D", "Operation not supported yet");
+        return;
+    }
 
     texImage2DImpl(target, level, internalformat, format, type, image->cachedImage()->imageForRenderer(image->renderer()), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
@@ -3820,6 +3842,12 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
         return;
     if (!validateSettableTexFormat("texImage2D", format))
         return;
+    // FIXME: Uploading HTMLCanvasElement to half floating point texture is not supported yet
+    // https://bugs.webkit.org/show_bug.cgi?id=110936
+    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texImage2D", "Operation not supported yet");
+        return;
+    }
 
     WebGLTexture* texture = validateTextureBinding("texImage2D", target, true);
     // If possible, copy from the canvas element directly to the texture
@@ -3876,6 +3904,13 @@ void WebGLRenderingContext::texImage2D(GC3Denum target, GC3Dint level, GC3Denum 
     RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode(), ec);
     if (!image)
         return;
+    // FIXME: Uploading HTMLVideoElement to half floating point texture is not supported yet
+    // https://bugs.webkit.org/show_bug.cgi?id=110936
+    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texImage2D", "Operation not supported yet");
+        return;
+    }
+
     texImage2DImpl(target, level, internalformat, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 #endif
@@ -4030,6 +4065,13 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
         return;
     if (!validateSettableTexFormat("texSubImage2D", format))
         return;
+    // FIXME: Uploading ImageData to half floating point texture is not supported yet
+    // https://bugs.webkit.org/show_bug.cgi?id=110936
+    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "Operation not supported yet");
+        return;
+    }
+
     Vector<uint8_t> data;
     bool needConversion = true;
     // The data from ImageData is always of format RGBA8.
@@ -4061,6 +4103,13 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
         ec = SECURITY_ERR;
         return;
     }
+    // FIXME: Uploading HTMLImageElement to half floating point texture is not supported yet
+    // https://bugs.webkit.org/show_bug.cgi?id=110936
+    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "Operation not supported yet");
+        return;
+    }
+
     texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image->cachedImage()->imageForRenderer(image->renderer()), GraphicsContext3D::HtmlDomImage, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 
@@ -4082,6 +4131,13 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
         return;
     if (!validateSettableTexFormat("texSubImage2D", format))
         return;
+    // FIXME: Uploading HTMLCanvasElement to half floating point texture is not supported yet
+    // https://bugs.webkit.org/show_bug.cgi?id=110936
+    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "Operation not supported yet");
+        return;
+    }
+
     RefPtr<ImageData> imageData = canvas->getImageData();
     if (imageData)
         texSubImage2D(target, level, xoffset, yoffset, format, type, imageData.get(), ec);
@@ -4099,6 +4155,13 @@ void WebGLRenderingContext::texSubImage2D(GC3Denum target, GC3Dint level, GC3Din
     RefPtr<Image> image = videoFrameToImage(video, ImageBuffer::fastCopyImageMode(), ec);
     if (!image)
         return;
+    // FIXME: Uploading HTMLVideoElement to half floating point texture is not supported yet
+    // https://bugs.webkit.org/show_bug.cgi?id=110936
+    if (type == GraphicsContext3D::HALF_FLOAT_OES) {
+        synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, "texSubImage2D", "Operation not supported yet");
+        return;
+    }
+
     texSubImage2DImpl(target, level, xoffset, yoffset, format, type, image.get(), GraphicsContext3D::HtmlDomVideo, m_unpackFlipY, m_unpackPremultiplyAlpha, ec);
 }
 #endif
@@ -4981,6 +5044,11 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
             break;
         synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture type");
         return false;
+    case GraphicsContext3D::HALF_FLOAT_OES:
+        if (m_oesTextureHalfFloat)
+            break;
+        synthesizeGLError(GraphicsContext3D::INVALID_ENUM, functionName, "invalid texture type");
+        return false;
     case GraphicsContext3D::UNSIGNED_INT:
     case GraphicsContext3D::UNSIGNED_INT_24_8:
     case GraphicsContext3D::UNSIGNED_SHORT:
@@ -4999,7 +5067,8 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
     case GraphicsContext3D::LUMINANCE:
     case GraphicsContext3D::LUMINANCE_ALPHA:
         if (type != GraphicsContext3D::UNSIGNED_BYTE
-            && type != GraphicsContext3D::FLOAT) {
+            && type != GraphicsContext3D::FLOAT
+            && type != GraphicsContext3D::HALF_FLOAT_OES) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid type for format");
             return false;
         }
@@ -5007,7 +5076,8 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
     case GraphicsContext3D::RGB:
         if (type != GraphicsContext3D::UNSIGNED_BYTE
             && type != GraphicsContext3D::UNSIGNED_SHORT_5_6_5
-            && type != GraphicsContext3D::FLOAT) {
+            && type != GraphicsContext3D::FLOAT
+            && type != GraphicsContext3D::HALF_FLOAT_OES) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid type for RGB format");
             return false;
         }
@@ -5016,7 +5086,8 @@ bool WebGLRenderingContext::validateTexFuncFormatAndType(const char* functionNam
         if (type != GraphicsContext3D::UNSIGNED_BYTE
             && type != GraphicsContext3D::UNSIGNED_SHORT_4_4_4_4
             && type != GraphicsContext3D::UNSIGNED_SHORT_5_5_5_1
-            && type != GraphicsContext3D::FLOAT) {
+            && type != GraphicsContext3D::FLOAT
+            && type != GraphicsContext3D::HALF_FLOAT_OES) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "invalid type for RGBA format");
             return false;
         }
@@ -5183,6 +5254,14 @@ bool WebGLRenderingContext::validateTexFuncData(const char* functionName, GC3Din
     case GraphicsContext3D::FLOAT: // OES_texture_float
         if (pixels->getType() != ArrayBufferView::TypeFloat32) {
             synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type FLOAT but ArrayBufferView not Float32Array");
+            return false;
+        }
+        break;
+    case GraphicsContext3D::HALF_FLOAT_OES: // OES_texture_half_float
+        // As per the specification, ArrayBufferView should be null when
+        // OES_texture_half_float is enabled.
+        if (pixels) {
+            synthesizeGLError(GraphicsContext3D::INVALID_OPERATION, functionName, "type HALF_FLOAT_OES but ArrayBufferView is not NULL");
             return false;
         }
         break;

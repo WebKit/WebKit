@@ -251,6 +251,7 @@ public:
         INT = 0x1404,
         UNSIGNED_INT = 0x1405,
         FLOAT = 0x1406,
+        HALF_FLOAT_OES = 0x8D61,
         FIXED = 0x140C,
         DEPTH_COMPONENT = 0x1902,
         ALPHA = 0x1906,

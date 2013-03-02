@@ -176,6 +176,9 @@ bool GraphicsContext3D::computeFormatAndTypeParameters(GC3Denum format,
     case GraphicsContext3D::FLOAT: // OES_texture_float
         *bytesPerComponent = sizeof(GC3Dfloat);
         break;
+    case GraphicsContext3D::HALF_FLOAT_OES: // OES_texture_half_float
+        *bytesPerComponent = sizeof(GC3Dhalffloat);
+        break;
     default:
         return false;
     }

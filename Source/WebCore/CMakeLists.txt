@@ -522,6 +522,7 @@ set(WebCore_IDL_FILES
     html/canvas/Int8Array.idl
     html/canvas/OESStandardDerivatives.idl
     html/canvas/OESTextureFloat.idl
+    html/canvas/OESTextureHalfFloat.idl
     html/canvas/OESVertexArrayObject.idl
     html/canvas/OESElementIndexUint.idl
     html/canvas/Uint16Array.idl
@@ -1511,6 +1512,7 @@ set(WebCore_SOURCES
     html/canvas/EXTTextureFilterAnisotropic.cpp
     html/canvas/OESStandardDerivatives.cpp
     html/canvas/OESTextureFloat.cpp
+    html/canvas/OESTextureHalfFloat.cpp
     html/canvas/OESVertexArrayObject.cpp
     html/canvas/OESElementIndexUint.cpp
     html/canvas/WebGLBuffer.cpp
@@ -2627,6 +2629,7 @@ if (ENABLE_WEBGL)
     list(APPEND WebCore_SOURCES
         html/canvas/OESStandardDerivatives.cpp
         html/canvas/OESTextureFloat.cpp
+        html/canvas/OESTextureHalfFloat.cpp
         html/canvas/OESVertexArrayObject.cpp
         html/canvas/OESElementIndexUint.cpp
         html/canvas/WebGLBuffer.cpp
@@ -2656,6 +2659,7 @@ if (ENABLE_WEBGL)
         html/canvas/EXTTextureFilterAnisotropic.cpp
         html/canvas/OESStandardDerivatives.cpp
         html/canvas/OESTextureFloat.cpp
+        html/canvas/OESTextureHalfFloat.cpp
         html/canvas/OESVertexArrayObject.cpp
         html/canvas/OESElementIndexUint.cpp
     )
@@ -2664,6 +2668,7 @@ if (ENABLE_WEBGL)
         html/canvas/EXTTextureFilterAnisotropic.idl
         html/canvas/OESStandardDerivatives.idl
         html/canvas/OESTextureFloat.idl
+        html/canvas/OESTextureHalfFloat.idl
         html/canvas/OESVertexArrayObject.idl
         html/canvas/OESElementIndexUint.idl
         html/canvas/WebGLActiveInfo.idl

@@ -51,6 +51,7 @@ class ImageData;
 class IntSize;
 class OESStandardDerivatives;
 class OESTextureFloat;
+class OESTextureHalfFloat;
 class OESVertexArrayObject;
 class OESElementIndexUint;
 class WebGLActiveInfo;
@@ -517,6 +518,7 @@ public:
     OwnPtr<EXTDrawBuffers> m_extDrawBuffers;
     OwnPtr<EXTTextureFilterAnisotropic> m_extTextureFilterAnisotropic;
     OwnPtr<OESTextureFloat> m_oesTextureFloat;
+    OwnPtr<OESTextureHalfFloat> m_oesTextureHalfFloat;
     OwnPtr<OESStandardDerivatives> m_oesStandardDerivatives;
     OwnPtr<OESVertexArrayObject> m_oesVertexArrayObject;
     OwnPtr<OESElementIndexUint> m_oesElementIndexUint;

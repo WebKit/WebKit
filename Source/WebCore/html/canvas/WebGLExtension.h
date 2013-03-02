@@ -39,6 +39,7 @@ public:
         EXTDrawBuffersName,
         EXTTextureFilterAnisotropicName,
         OESTextureFloatName,
+        OESTextureHalfFloatName,
         OESStandardDerivativesName,
         OESVertexArrayObjectName,
         WebGLDebugRendererInfoName,

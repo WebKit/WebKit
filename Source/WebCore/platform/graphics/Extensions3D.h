@@ -53,6 +53,7 @@ public:
     //   GL_EXT_packed_depth_stencil / GL_OES_packed_depth_stencil
     //   GL_ANGLE_framebuffer_blit / GL_ANGLE_framebuffer_multisample
     //   GL_OES_texture_float
+    //   GL_OES_texture_half_float
     //   GL_OES_standard_derivatives
     //   GL_OES_rgb8_rgba8
     //   GL_OES_vertex_array_object

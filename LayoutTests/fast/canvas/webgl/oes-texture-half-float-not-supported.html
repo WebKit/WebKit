@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>WebGL OES_texture_half_float not yet implemented Conformance Tests</title>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css"/>
+<script src="resources/desktop-gl-constants.js" type="text/javascript"></script>
+<script src="../../js/resources/js-test-pre.js"></script>
+<script src="resources/webgl-test.js"></script>
+<script src="resources/webgl-test-utils.js"></script>
+</head>
+<body>
+<canvas id="texcanvas" width="1" height="2"></canvas>
+<script>
+description("Testing not yet supported texture uploads");
+debug("");
+
+if (window.initNonKhronosFramework) {
+    window.initNonKhronosFramework(true);
+}
+
+if (window.internals)
+    window.internals.settings.setWebGLErrorsToConsoleEnabled(false);
+
+var wtu = WebGLTestUtils;
+var canvas = document.getElementById("canvas");
+var gl = wtu.create3DContext(canvas);
+var successfullyParsed = false;
+
+if (!gl) {
+    testFailed("WebGL context does not exists");
+} else {
+    testPassed("WebGL context exists");
+
+    if(!gl.getExtension("OES_texture_half_float")) {
+        testPassed("No OES_texture_half_float support. This is legal");
+    } else {
+        testPassed("Successfully enabled OES_texture_half_float extension");
+        
+        var canvas2d = document.getElementById("texcanvas");
+        var context2d = canvas2d.getContext("2d");
+
+        runImageDataUnsupportedTest(canvas2d, context2d);
+        runHTMLImageElementUnsupportedTest(canvas2d, context2d);
+        runHTMLCanvasElementUnsupportedTest(canvas2d, context2d);
+        runHTMLVideoElementUnsupportedTest(canvas2d, context2d);
+    }
+}
+
+function allocateTexture()
+{
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    glErrorShouldBe(gl, gl.NO_ERROR, "texture parameter setup should succeed");
+    return texture;
+}
+
+function runTextureUploadTest(image)
+{
+    var texture = allocateTexture();
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.HALF_FLOAT_OES, image);
+    glErrorShouldBe(gl, gl.INVALID_OPERATION, "Uploading to half float texture is not yet supported");
+
+    // Check if uploading ImageData via texSubImage2D is supported
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 2, 0, gl.RGBA, gl.HALF_FLOAT_OES, null);
+    glErrorShouldBe(gl, gl.NO_ERROR, "Uploading null ArrayBufferView to half float texture should succeed");
+    gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.HALF_FLOAT_OES, image);
+    glErrorShouldBe(gl, gl.INVALID_OPERATION, "Uploading to half float texture using texSubImage2D is not supported yet");
+}
+
+function runImageDataUnsupportedTest(canvas2d, context2d)
+{
+    debug("");
+    debug("Verify whether uploading ImageData via texImage2D/texSubImage2D is supported");
+    
+    // Check if uploading ImageData via texImage2D is supported
+    var imageData = context2d.createImageData(1, 2);
+    var data = imageData.data;
+    data[0] = 255;
+    data[1] = 0;
+    data[2] = 0;
+    data[3] = 255;
+    data[4] = 0;
+    data[5] = 255;
+    data[6] = 0;
+    data[7] = 0;
+
+    runTextureUploadTest(imageData);    
+}
+
+function runHTMLImageElementUnsupportedTest(canvas2d, context2d)
+{
+    debug("");
+    debug("Verify whether uploading HTMLImageElement via texImage2D/texSubImage2D is supported");
+
+    var imageData = context2d.createImageData(1, 2);
+    var data = imageData.data;
+    data[0] = 255;
+    data[1] = 0;
+    data[2] = 0;
+    data[3] = 255;
+    data[4] = 0;
+    data[5] = 255;
+    data[6] = 0;
+    data[7] = 0;
+    context2d.putImageData(imageData, 0, 0);
+
+    var newImage = document.createElement("img");
+    newImage.onload = function() {
+        runTextureUploadTest(newImage);
+    }
+    newImage.src = canvas2d.toDataURL();
+}
+
+function setCanvasToRedGreen(ctx) {
+    var width = ctx.canvas.width;
+    var height = ctx.canvas.height;
+    var halfHeight = Math.floor(height / 2);
+    ctx.fillStyle = "#ff0000";
+    ctx.fillRect(0, 0, width, halfHeight);
+    ctx.fillStyle = "#00ff00";
+    ctx.fillRect(0, halfHeight, width, height - halfHeight);
+}
+
+function runHTMLCanvasElementUnsupportedTest(canvas2d, context2d)
+{
+    debug("");
+    debug("Verify whether uploading HTMLCanvasElement via texImage2D/texSubImage2D is supported");
+    
+    context2d.width = 1;
+    context2d.height = 2;
+    setCanvasToRedGreen(context2d);
+
+    runTextureUploadTest(canvas2d);
+}
+
+function runHTMLVideoElementUnsupportedTest(canvas2d, context2d)
+{
+    debug("");
+    debug("Verify whether uploading HTMLVideoElement via texImage2D/texSubImage2D is supported");
+
+    var info = { src: "resources/red-green.mp4", type: 'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'};
+    var video = document.createElement("video");
+    if (!video.canPlayType) {
+        testFailed("video.canPlayType required method is missing");
+        return;
+    }
+    document.body.appendChild(video);
+    video.addEventListener(
+        "playing", function() { runTextureUploadTest(video); finishTest(); }, true);
+    video.type = info.type;
+    video.src = info.src;
+    video.loop = true;
+    video.width = 1;
+    video.height = 2;
+    video.play();
+
+}
+
+debug("");
+
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>
+

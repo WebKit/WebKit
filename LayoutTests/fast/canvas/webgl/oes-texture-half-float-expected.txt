@@ -1,0 +1,84 @@
+This test verifies the functionality of OES_texture_half_float with null/non-null ArrayBufferView
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS WebGL context exists
+Testing texture creation with extension disabled, format RGBA, and data null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_ENUM : Half floating point texture must be diallowed if OES_texture_half_float isn't enabled
+PASS Successfully enabled OES_texture_half_float extension
+Testing texture creation with extension enabled, format RGBA, and data null. Expect Success
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+Testing texture creation with extension enabled, format RGB, and data null. Expect Success
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+Testing texture creation with extension enabled, format LUMINANCE, and data null. Expect Success
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+Testing texture creation with extension enabled, format ALPHA, and data null. Expect Success
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+Testing texture creation with extension enabled, format LUMINANCE_ALPHA, and data null. Expect Success
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+Testing texture creation with extension enabled, format RGBA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format RGBA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format RGBA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format RGB, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format RGB, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format RGB, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format LUMINANCE, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format LUMINANCE, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format LUMINANCE, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format ALPHA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format ALPHA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format ALPHA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format LUMINANCE_ALPHA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format LUMINANCE_ALPHA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+Testing texture creation with extension enabled, format LUMINANCE_ALPHA, and data non-null. Expect Failure
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Half floating point texture allocation must be diallowed when ArrayBufferView is not-null
+
+Testing half floating point render target
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: NO_ERROR : Half floating point texture allocation should succeed if OES_texture_half_float is enabled
+PASS getError was expected value: NO_ERROR : Rendering to half floating point texture should succeed
+PASS getError was expected value: NO_ERROR : rendering from half floating point texture should succeed
+PASS should be green
+Testing that getExtension() returns the same object each time
+PASS gl.getExtension("OES_texture_half_float").myProperty is 2
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

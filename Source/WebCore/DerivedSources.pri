@@ -313,6 +313,7 @@ IDL_BINDINGS += \
     $$PWD/html/canvas/EXTTextureFilterAnisotropic.idl \
     $$PWD/html/canvas/OESStandardDerivatives.idl \
     $$PWD/html/canvas/OESTextureFloat.idl \
+    $$PWD/html/canvas/OESTextureHalfFloat.idl \
     $$PWD/html/canvas/OESVertexArrayObject.idl \
     $$PWD/html/canvas/OESElementIndexUint.idl \
     $$PWD/html/canvas/WebGLActiveInfo.idl \

@@ -256,8 +256,19 @@ bool GraphicsContext3D::texImage2D(GC3Denum target, GC3Dint level, GC3Denum inte
             openGLInternalFormat = GL_RGBA32F_ARB;
         else if (format == GL_RGB)
             openGLInternalFormat = GL_RGB32F_ARB;
+    } else if (type == HALF_FLOAT_OES) {
+        if (format == GL_RGBA)
+            openGLInternalFormat = GL_RGBA16F_ARB;
+        else if (format == GL_RGB)
+            openGLInternalFormat = GL_RGB16F_ARB;
+        else if (format == GL_LUMINANCE)
+            openGLInternalFormat = GL_LUMINANCE16F_ARB;
+        else if (format == GL_ALPHA)
+            openGLInternalFormat = GL_ALPHA16F_ARB;
+        else if (format == GL_LUMINANCE_ALPHA)
+            openGLInternalFormat = GL_LUMINANCE_ALPHA16F_ARB;
+        type = GL_HALF_FLOAT_ARB;
     }
-
     texImage2DDirect(target, level, openGLInternalFormat, width, height, border, format, type, pixels);
     return true;
 }

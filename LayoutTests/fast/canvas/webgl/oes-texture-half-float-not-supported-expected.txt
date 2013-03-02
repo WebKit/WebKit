@@ -1,0 +1,40 @@
+Testing not yet supported texture uploads
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+PASS WebGL context exists
+PASS Successfully enabled OES_texture_half_float extension
+
+Verify whether uploading ImageData via texImage2D/texSubImage2D is supported
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Uploading to half float texture is not yet supported
+PASS getError was expected value: NO_ERROR : Uploading null ArrayBufferView to half float texture should succeed
+PASS getError was expected value: INVALID_OPERATION : Uploading to half float texture using texSubImage2D is not supported yet
+
+Verify whether uploading HTMLImageElement via texImage2D/texSubImage2D is supported
+
+Verify whether uploading HTMLCanvasElement via texImage2D/texSubImage2D is supported
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Uploading to half float texture is not yet supported
+PASS getError was expected value: NO_ERROR : Uploading null ArrayBufferView to half float texture should succeed
+PASS getError was expected value: INVALID_OPERATION : Uploading to half float texture using texSubImage2D is not supported yet
+
+Verify whether uploading HTMLVideoElement via texImage2D/texSubImage2D is supported
+
+PASS successfullyParsed is true
+
+TEST COMPLETE
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Uploading to half float texture is not yet supported
+PASS getError was expected value: NO_ERROR : Uploading null ArrayBufferView to half float texture should succeed
+PASS getError was expected value: INVALID_OPERATION : Uploading to half float texture using texSubImage2D is not supported yet
+PASS getError was expected value: NO_ERROR : texture parameter setup should succeed
+PASS getError was expected value: INVALID_OPERATION : Uploading to half float texture is not yet supported
+PASS getError was expected value: NO_ERROR : Uploading null ArrayBufferView to half float texture should succeed
+PASS getError was expected value: INVALID_OPERATION : Uploading to half float texture using texSubImage2D is not supported yet
+PASS successfullyParsed is true
+
+TEST COMPLETE
+ 
