@@ -1,3 +1,22 @@
+2013-03-01  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Web Inspector: Native Memory Instrumentation: do not visit raw pointers by default.
+        https://bugs.webkit.org/show_bug.cgi?id=110943
+
+        Reviewed by Yury Semikhatsky.
+
+        Unfortunately in many cases raw pointer may point to an object that has been deleted.
+        There is no working solution to solve this problem in general.
+        It could be solved only on case by case basis.
+
+        * wtf/MemoryInstrumentation.h:
+        (WTF::MemoryInstrumentation::addObject):
+        (WTF::MemoryInstrumentation::MemberTypeTraits::addObject):
+        (WTF::MemoryClassInfo::addMember):
+        (WTF::MemoryInstrumentation::addObjectImpl):
+        * wtf/MemoryInstrumentationString.h:
+        (WTF::reportMemoryUsage):
+
 2013-03-01  Eric Seidel  <eric@webkit.org>
 
         Threaded HTML Parser has an extra copy of every byte from the network

@@ -59,7 +59,7 @@ HeapGraphSerializer::HeapGraphSerializer(Client* client)
     memset(m_edgeTypes, 0, sizeof(m_edgeTypes));
 
     m_edgeTypes[WTF::PointerMember] = registerTypeString("weak");
-    m_edgeTypes[WTF::OwnPtrMember] = m_edgeTypes[WTF::RefPtrMember] = registerTypeString("property");
+    m_edgeTypes[WTF::RetainingPointer] = registerTypeString("property");
 
     // FIXME: It is used as a magic constant for 'object' node type.
     registerTypeString("object");
@@ -148,7 +148,7 @@ void HeapGraphSerializer::reportEdgeImpl(const int toNodeId, const char* name, i
 void HeapGraphSerializer::reportLeaf(const WTF::MemoryObjectInfo& info, const char* edgeName)
 {
     int nodeId = reportNodeImpl(info, 0);
-    reportEdgeImpl(nodeId, edgeName, m_edgeTypes[WTF::OwnPtrMember]);
+    reportEdgeImpl(nodeId, edgeName, m_edgeTypes[WTF::RetainingPointer]);
     pushUpdateIfNeeded();
 }
 

@@ -54,7 +54,7 @@ inline void reportMemoryUsage(const StringImpl* stringImpl, MemoryObjectInfo* me
     MemoryClassInfo info(memoryObjectInfo, stringImpl, 0, selfSize);
 
     if (StringImpl* baseString = stringImpl->baseString())
-        info.addMember(baseString, "baseString");
+        info.addMember(baseString, "baseString", RetainingPointer);
     else {
         if (stringImpl->hasOwnedBuffer())
             info.addRawBuffer(buffer, bufferSize, "char[]", "ownedBuffer");
@@ -67,7 +67,7 @@ inline void reportMemoryUsage(const StringImpl* stringImpl, MemoryObjectInfo* me
 inline void reportMemoryUsage(const String* string, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, string);
-    info.addMember(string->impl(), "stringImpl");
+    info.addMember(string->impl(), "stringImpl", RetainingPointer);
 }
 
 inline void reportMemoryUsage(const AtomicString* atomicString, MemoryObjectInfo* memoryObjectInfo)
@@ -84,7 +84,7 @@ inline void reportMemoryUsage(const CStringBuffer* cStringBuffer, MemoryObjectIn
 inline void reportMemoryUsage(const CString* cString, MemoryObjectInfo* memoryObjectInfo)
 {
     MemoryClassInfo info(memoryObjectInfo, cString);
-    info.addMember(cString->buffer(), "buffer");
+    info.addMember(cString->buffer(), "buffer", RetainingPointer);
 }
 
 }

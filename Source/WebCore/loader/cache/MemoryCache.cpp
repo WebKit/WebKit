@@ -800,6 +800,10 @@ void MemoryCache::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_resources, "resources");
     info.addMember(m_allResources, "allResources");
     info.addMember(m_liveDecodedResources, "liveDecodedResources");
+#if !ENABLE(CACHE_PARTITIONING)
+    for (CachedResourceMap::const_iterator i = m_resources.begin(); i != m_resources.end(); ++i)
+        info.addMember(i->value, "cachedResourceItem", WTF::RetainingPointer);
+#endif
 }
 
 void MemoryCache::setDisabled(bool disabled)

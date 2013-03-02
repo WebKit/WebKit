@@ -48,8 +48,7 @@ typedef const char* MemoryObjectType;
 enum MemberType {
     PointerMember,
     ReferenceMember,
-    OwnPtrMember,
-    RefPtrMember,
+    RetainingPointer,
     LastMemberTypeEntry
 };
 
@@ -167,7 +166,10 @@ private:
         virtual void callReportMemoryUsage(MemoryObjectInfo*) OVERRIDE;
     };
 
-    template<typename T> void addObject(const T& t, MemoryObjectInfo* ownerObjectInfo, const char* edgeName) { MemberTypeTraits<T>::addObject(this, t, ownerObjectInfo, edgeName); }
+    template<typename T> void addObject(const T& t, MemoryObjectInfo* ownerObjectInfo, const char* edgeName, MemberType memberType)
+    {
+        MemberTypeTraits<T>::addObject(this, t, ownerObjectInfo, edgeName, memberType);
+    }
     void addRawBuffer(const void* buffer, MemoryObjectType ownerObjectType, size_t size, const char* className = 0, const char* edgeName = 0)
     {
         if (!buffer || visited(buffer))
@@ -179,7 +181,7 @@ private:
 
     template<typename T>
     struct MemberTypeTraits { // Default ReferenceMember implementation.
-        static void addObject(MemoryInstrumentation* instrumentation, const T& t, MemoryObjectInfo* ownerObjectInfo, const char* edgeName)
+        static void addObject(MemoryInstrumentation* instrumentation, const T& t, MemoryObjectInfo* ownerObjectInfo, const char* edgeName, MemberType)
         {
             instrumentation->addObjectImpl(&t, ownerObjectInfo, ReferenceMember, edgeName);
         }
@@ -192,9 +194,9 @@ private:
 
     template<typename T>
     struct MemberTypeTraits<T*> { // Custom PointerMember implementation.
-        static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectInfo* ownerObjectInfo, const char* edgeName)
+        static void addObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectInfo* ownerObjectInfo, const char* edgeName, MemberType memberType)
         {
-            instrumentation->addObjectImpl(t, ownerObjectInfo, PointerMember, edgeName);
+            instrumentation->addObjectImpl(t, ownerObjectInfo, memberType != LastMemberTypeEntry ? memberType : PointerMember, edgeName);
         }
 
         static void addRootObject(MemoryInstrumentation* instrumentation, const T* const& t, MemoryObjectType objectType)
@@ -237,10 +239,10 @@ public:
         init(pointer, fn<T>(), objectType, actualSize);
     }
 
-    template<typename M> void addMember(const M& member, const char* edgeName = 0)
+    template<typename M> void addMember(const M& member, const char* edgeName = 0, MemberType memberType = LastMemberTypeEntry)
     {
         if (!m_skipMembers)
-            m_memoryInstrumentation->addObject(member, m_memoryObjectInfo, edgeName);
+            m_memoryInstrumentation->addObject(member, m_memoryObjectInfo, edgeName, memberType);
     }
 
     WTF_EXPORT_PRIVATE void addRawBuffer(const void* buffer, size_t, const char* className = 0, const char* edgeName = 0);
@@ -284,6 +286,8 @@ void reportMemoryUsage(const T* object, MemoryObjectInfo* memoryObjectInfo)
 template<typename T>
 void MemoryInstrumentation::addObjectImpl(const T* object, MemoryObjectInfo* ownerObjectInfo, MemberType memberType, const char* edgeName)
 {
+    if (memberType == PointerMember)
+        return;
     if (memberType == ReferenceMember)
         reportMemoryUsage(object, ownerObjectInfo);
     else {
@@ -301,7 +305,7 @@ void MemoryInstrumentation::addObjectImpl(const OwnPtr<T>* object, MemoryObjectI
 {
     if (memberType == PointerMember && !visited(object))
         countObjectSize(object, getObjectType(ownerObjectInfo), sizeof(*object));
-    addObjectImpl(object->get(), ownerObjectInfo, OwnPtrMember, edgeName);
+    addObjectImpl(object->get(), ownerObjectInfo, RetainingPointer, edgeName);
 }
 
 template<typename T>
@@ -309,7 +313,7 @@ void MemoryInstrumentation::addObjectImpl(const RefPtr<T>* object, MemoryObjectI
 {
     if (memberType == PointerMember && !visited(object))
         countObjectSize(object, getObjectType(ownerObjectInfo), sizeof(*object));
-    addObjectImpl(object->get(), ownerObjectInfo, RefPtrMember, edgeName);
+    addObjectImpl(object->get(), ownerObjectInfo, RetainingPointer, edgeName);
 }
 
 template<typename T>

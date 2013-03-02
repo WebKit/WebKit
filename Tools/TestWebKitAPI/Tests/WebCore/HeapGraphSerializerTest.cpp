@@ -248,7 +248,7 @@ TEST(HeapGraphSerializerTest, twoUserObjectsWithEdge)
     HeapGraphReceiver receiver;
     Helper helper(receiver.serializer());
     void* childObject = helper.addNode("Child", "child", false);
-    helper.addEdge(childObject, "pointerToChild", WTF::OwnPtrMember);
+    helper.addEdge(childObject, "pointerToChild", WTF::RetainingPointer);
     helper.addNode("Parent", "parent", true);
     helper.done();
     receiver.printGraph();
@@ -285,7 +285,7 @@ TEST(HeapGraphSerializerTest, hashSetWithTwoStrings)
     receiver.serializer()->finish();
     receiver.printGraph();
     EXPECT_EQ(String("[6,0,1,0,0,5,0,4,0,3,9,0,3,0,0,9,0,2,0,0,10,0,5,0,1]"), receiver.dumpNodes());
-    EXPECT_EQ(String("[2,7,1,1,8,2,1,8,3,1,0,4]"), receiver.dumpEdges());
+    EXPECT_EQ(String("[2,7,1,2,8,2,2,8,3,1,0,4]"), receiver.dumpEdges());
     EXPECT_EQ(String("[]"), receiver.dumpBaseToRealNodeId());
 }
 

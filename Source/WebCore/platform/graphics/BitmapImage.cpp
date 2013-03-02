@@ -591,7 +591,7 @@ void FrameData::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 #if OS(WINCE) && !PLATFORM(QT)
     info.addRawBuffer(m_frame.get(), m_frameBytes, "NativeImage", "frame");
 #elif USE(SKIA)
-    info.addMember(m_frame, "frame");
+    info.addMember(m_frame, "frame", WTF::RetainingPointer);
 #else
     info.addRawBuffer(m_frame, m_frameBytes, "NativeImage", "frame");
 #endif
