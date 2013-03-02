@@ -34,6 +34,10 @@
 @class WebScriptObject;
 @class WebView;
 
+#if JSC_OBJC_API_ENABLED
+@class JSContext;
+#endif
+
 /*!
     @category WebFrameLoadDelegate
     @discussion A WebView's WebFrameLoadDelegate tracks the loading progress of its frames.

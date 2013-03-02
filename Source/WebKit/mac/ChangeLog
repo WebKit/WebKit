@@ -1,3 +1,20 @@
+2013-03-02  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r143637): Predeclare JSContext as an Objective-C class
+        <http://webkit.org/b/106059>
+
+        Fixes the following build failure:
+
+            In file included from Source/WebKit/ios/DefaultDelegates/WebDefaultFrameLoadDelegate.m:11:
+            In file included from Source/WebKit/mac/WebView/WebFrameLoadDelegatePrivate.h:29:
+            Source/WebKit/mac/WebView/WebFrameLoadDelegate.h:215:64: error: expected a type
+            - (void)webView:(WebView *)webView didCreateJavaScriptContext:(JSContext *)context forFrame:(WebFrame *)frame;
+                                                                           ^
+            1 error generated.
+
+        * WebView/WebFrameLoadDelegate.h: Add @class JSContext
+        declaration.
+
 2013-02-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reduce amount of rebuilding when touching networking headers
