@@ -1,3 +1,16 @@
+2013-03-01  David Dorwin  <ddorwin@chromium.org>
+
+        [chromium] Revert r143827 to restore WebHelperPluginImpl's call to frameDetached()
+        https://bugs.webkit.org/show_bug.cgi?id=111232
+
+        Reviewed by Adam Barth.
+
+        This patch reverts r143827, which causes a crash in failure conditions:
+        http://crbug.com/178848
+
+        * src/WebHelperPluginImpl.cpp:
+        (WebKit::WebHelperPluginImpl::destoryPage):
+
 2013-03-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r144422 and r144424.

@@ -209,6 +209,9 @@ void WebHelperPluginImpl::destoryPage()
     if (!m_page)
         return;
 
+    if (m_page->mainFrame())
+        m_page->mainFrame()->loader()->frameDetached();
+
     m_page.clear();
 }
 
