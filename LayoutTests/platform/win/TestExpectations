@@ -2664,3 +2664,9 @@ webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failu
 # Disable storage tests
 fast/workers/storage/
 storage/
+
+# Disable document.register tests, ENABLE_CUSTOM_ELEMENT disabled
+fast/dom/custom
+
+# bugs.webkit.org/show_bug.cgi?id=111235
+css3/filters/custom-with-at-rule-syntax
