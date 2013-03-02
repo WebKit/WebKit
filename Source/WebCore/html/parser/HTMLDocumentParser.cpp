@@ -570,6 +570,7 @@ void HTMLDocumentParser::constructTreeFromCompactHTMLToken(const CompactHTMLToke
 {
     RefPtr<AtomicHTMLToken> token = AtomicHTMLToken::create(compactToken);
     m_treeBuilder->constructTree(token.get());
+    token->clearExternalCharacters(); // The compact token could be destroyed any time after this method returns.
 }
 
 #endif
