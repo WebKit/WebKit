@@ -1,3 +1,11 @@
+2013-03-01  Benjamin Poulain  <bpoulain@apple.com>
+
+        Add a missing symbol after r144524.
+
+        Unreviewed.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-02-26  Alexey Proskuryakov  <ap@apple.com>
 
         Don't add a body to platform request until necessary
