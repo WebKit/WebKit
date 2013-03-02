@@ -1,5 +1,12 @@
 2013-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another build fix attempt after r144530.
+
+        * WebCoreSupport/WebFrameNetworkingContext.cpp:
+        * WebCoreSupport/WebPlatformStrategies.cpp:
+
+2013-03-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Another build fix attempt after r144530.
 
         * WebCoreSupport/WebFrameNetworkingContext.cpp:

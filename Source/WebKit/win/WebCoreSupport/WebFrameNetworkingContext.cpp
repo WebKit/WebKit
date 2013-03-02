@@ -24,6 +24,7 @@
 #include "FrameLoaderClient.h"
 #if USE(CFNETWORK)
 #include <CFNetwork/CFHTTPCookiesPriv.h>
+#include <WebCore/ResourceHandle.h>
 #endif
 #include <WebCore/Settings.h>
 #if USE(CFNETWORK)
