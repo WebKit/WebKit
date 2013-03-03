@@ -63,6 +63,9 @@
     <ClCompile Include="..\Tests\WTF\SaturatedArithmeticOperations.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>
+    <ClCompile Include="..\Tests\WTF\StringHasher.cpp">
+      <Filter>Tests\WTF</Filter>
+    </ClCompile>
     <ClCompile Include="..\Tests\WTF\StringOperators.cpp">
       <Filter>Tests\WTF</Filter>
     </ClCompile>

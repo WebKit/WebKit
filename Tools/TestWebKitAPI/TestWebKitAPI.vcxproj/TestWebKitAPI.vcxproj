@@ -116,6 +116,7 @@
     <ClCompile Include="..\Tests\WTF\MathExtras.cpp" />
     <ClCompile Include="..\Tests\WTF\MediaTime.cpp" />
     <ClCompile Include="..\Tests\WTF\SaturatedArithmeticOperations.cpp" />
+    <ClCompile Include="..\Tests\WTF\StringHasher.cpp" />
     <ClCompile Include="..\Tests\WTF\StringOperators.cpp" />
     <ClCompile Include="..\Tests\WTF\Vector.cpp" />
     <ClCompile Include="..\Tests\WTF\VectorBasic.cpp" />

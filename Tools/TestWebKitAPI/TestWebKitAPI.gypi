@@ -45,6 +45,7 @@
             'Tests/WTF/RedBlackTree.cpp',
             'Tests/WTF/SaturatedArithmeticOperations.cpp',
             'Tests/WTF/StringBuilder.cpp',
+            'Tests/WTF/StringHasher.cpp',
             'Tests/WTF/StringImpl.cpp',
             'Tests/WTF/StringOperators.cpp',
             'Tests/WTF/TemporaryChange.cpp',

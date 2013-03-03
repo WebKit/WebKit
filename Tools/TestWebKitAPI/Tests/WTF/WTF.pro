@@ -15,6 +15,7 @@ SOURCES += \
     RedBlackTree.cpp \
     SaturatedArithmeticOperations.cpp \
     StringBuilder.cpp \
+    StringHasher.cpp \
     StringImpl.cpp \
     StringOperators.cpp \
     TemporaryChange.cpp \

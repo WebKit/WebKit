@@ -1,3 +1,23 @@
+2013-02-27  Darin Adler  <darin@apple.com>
+
+        StringHasher functions require alignment that call sites do not all guarantee
+        https://bugs.webkit.org/show_bug.cgi?id=110171
+
+        Reviewed by Benjamin Poulain.
+
+        * TestWebKitAPI/CMakeLists.txt:
+        * TestWebKitAPI/GNUmakefile.am:
+        * TestWebKitAPI/TestWebKitAPI.gypi:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj:
+        * TestWebKitAPI/TestWebKitAPI.vcxproj/TestWebKitAPI.vcxproj.filters:
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/WTF.pro:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        Added the StringHasher.cpp file.
+
+        * TestWebKitAPI/Tests/WTF/StringHasher.cpp: Added. Contains a bunch of tests
+        for the functions in the StringHasher class.
+
 2013-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Move computedStyleIncludingVisitedInfo from TestRunner to Internals

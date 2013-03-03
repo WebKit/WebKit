@@ -58,6 +58,7 @@ Programs_TestWebKitAPI_TestWTF_SOURCES = \
 	Tools/TestWebKitAPI/Tests/WTF/RedBlackTree.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/SaturatedArithmeticOperations.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/StringBuilder.cpp \
+	Tools/TestWebKitAPI/Tests/WTF/StringHasher.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/StringImpl.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/StringOperators.cpp \
 	Tools/TestWebKitAPI/Tests/WTF/TemporaryChange.cpp \

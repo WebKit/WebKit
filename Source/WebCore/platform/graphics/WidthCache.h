@@ -58,6 +58,7 @@ private:
             : m_length(length)
         {
             ASSERT(length <= s_capacity);
+
             StringHasher hasher;
 
             bool remainder = length & 1;
@@ -67,7 +68,7 @@ private:
             while (length--) {
                 m_characters[i] = characters[i];
                 m_characters[i + 1] = characters[i + 1];
-                hasher.addCharacters(characters[i], characters[i + 1]);
+                hasher.addCharactersAssumingAligned(characters[i], characters[i + 1]);
                 i += 2;
             }
 

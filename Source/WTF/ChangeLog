@@ -1,3 +1,42 @@
+2013-02-27  Darin Adler  <darin@apple.com>
+
+        StringHasher functions require alignment that call sites do not all guarantee
+        https://bugs.webkit.org/show_bug.cgi?id=110171
+
+        Reviewed by Benjamin Poulain.
+
+        The StringHasher class is optimized for clients who pass it two characters at
+        a time. However, the function named addCharacters did not make this clear to
+        clients, and one calculateStringHashAndLengthFromUTF8MaskingTop8Bits got it wrong.
+        Fix by making addCharacters work regardless of hasher alignment and adding a new
+        function, addCharactersAssumingAligned, for use when we want a faster path and can
+        guarantee we are adding characters two at a time.
+
+        * wtf/StringHasher.h:
+        (WTF::StringHasher::addCharactersAssumingAligned): Renamed the addCharacters function
+        addCharactersAssumingAligned, since it only works if the hasher is currently aligned,
+        meaning it contains an even number of characters. The function already asserts
+        that this is true, but the calculateStringHashAndLengthFromUTF8MaskingTop8Bits
+        function was using it in cases where the assertion could fire. Also updated to
+        call addCharactersInternal by its new name. Also added some new overloads that take
+        data pointers and lengths so callers can always use addCharactersAssumingAligned
+        instead of addCharacters if they know the hasher is aligned.
+        (WTF::StringHasher::addCharacter): Updated to call the public
+        addCharactersAssumingAligned function since that's simpler and a bit cleaner.
+        (WTF::StringHasher::addCharacters): Added functions with this name that handle
+        the case where the hasher is not aligned. These will be called by existing call sites
+        that were formerly using the function named addCharactersAssumingAligned above.
+        Also add an overload that works with the default converter automatically.
+        (WTF::StringHasher::computeHashAndMaskTop8Bits): Changed to call
+        addCharactersAssumingAligned to eliminate copied and pasted code. The hasher is empty,
+        so definitely aligned.
+        (WTF::StringHasher::computeHash): Ditto.
+        (WTF::StringHasher::addCharactersInternal): Renamed from addCharactersToHash, since
+        the former name did not make clear how this differs from the public functions.
+        The real difference is that this is like addCharactersAssumingAligned, but without
+        the assertion, so addCharactersAssumingAligned is called instead, even within the
+        class's implementation.
+
 2013-03-01  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Web Inspector: Native Memory Instrumentation: do not visit raw pointers by default.

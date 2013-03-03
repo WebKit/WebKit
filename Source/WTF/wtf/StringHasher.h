@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2005, 2006, 2008, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2005, 2006, 2008, 2010, 2013 Apple Inc. All rights reserved.
  * Copyright (C) 2010 Patrick Gansterer <paroga@paroga.com>
  *
  * This library is free software; you can redistribute it and/or
@@ -48,17 +48,22 @@ public:
     {
     }
 
-    void addCharacters(UChar a, UChar b)
+    // The hasher hashes two characters at a time, and thus an "aligned" hasher is one
+    // where an even number of characters have been added. Callers that always add
+    // characters two at a time can use the "assuming aligned" functions.
+    void addCharactersAssumingAligned(UChar a, UChar b)
     {
         ASSERT(!m_hasPendingCharacter);
-        addCharactersToHash(a, b);
+        m_hash += a;
+        m_hash = (m_hash << 16) ^ ((b << 11) ^ m_hash);
+        m_hash += m_hash >> 11;
     }
 
     void addCharacter(UChar character)
     {
         if (m_hasPendingCharacter) {
-            addCharactersToHash(m_pendingCharacter, character);
             m_hasPendingCharacter = false;
+            addCharactersAssumingAligned(m_pendingCharacter, character);
             return;
         }
 
@@ -66,27 +71,90 @@ public:
         m_hasPendingCharacter = true;
     }
 
-    template<typename T, UChar Converter(T)> void addCharacters(const T* data, unsigned length)
+    void addCharacters(UChar a, UChar b)
     {
-        if (!length)
-            return;
-
         if (m_hasPendingCharacter) {
-            addCharactersToHash(m_pendingCharacter, Converter(*data++));
+#if !ASSERT_DISABLED
             m_hasPendingCharacter = false;
-            --length;
+#endif
+            addCharactersAssumingAligned(m_pendingCharacter, a);
+            m_pendingCharacter = b;
+#if !ASSERT_DISABLED
+            m_hasPendingCharacter = true;
+#endif
+            return;
         }
+
+        addCharactersAssumingAligned(a, b);
+    }
+
+    template<typename T, UChar Converter(T)> void addCharactersAssumingAligned(const T* data, unsigned length)
+    {
+        ASSERT(!m_hasPendingCharacter);
 
         bool remainder = length & 1;
         length >>= 1;
 
         while (length--) {
-            addCharactersToHash(Converter(data[0]), Converter(data[1]));
+            addCharactersAssumingAligned(Converter(data[0]), Converter(data[1]));
             data += 2;
         }
 
         if (remainder)
             addCharacter(Converter(*data));
+    }
+
+    template<typename T> void addCharactersAssumingAligned(const T* data, unsigned length)
+    {
+        addCharactersAssumingAligned<T, defaultConverter>(data, length);
+    }
+
+    template<typename T, UChar Converter(T)> void addCharactersAssumingAligned(const T* data)
+    {
+        ASSERT(!m_hasPendingCharacter);
+
+        while (T a = *data++) {
+            T b = *data++;
+            if (!b) {
+                addCharacter(Converter(a));
+                break;
+            }
+            addCharactersAssumingAligned(Converter(a), Converter(b));
+        }
+    }
+
+    template<typename T> void addCharactersAssumingAligned(const T* data)
+    {
+        addCharactersAssumingAligned<T, defaultConverter>(data);
+    }
+
+    template<typename T, UChar Converter(T)> void addCharacters(const T* data, unsigned length)
+    {
+        if (m_hasPendingCharacter && length) {
+            m_hasPendingCharacter = false;
+            addCharactersAssumingAligned(m_pendingCharacter, Converter(*data++));
+            --length;
+        }
+        addCharactersAssumingAligned<T, Converter>(data, length);
+    }
+
+    template<typename T> void addCharacters(const T* data, unsigned length)
+    {
+        addCharacters<T, defaultConverter>(data, length);
+    }
+
+    template<typename T, UChar Converter(T)> void addCharacters(const T* data)
+    {
+        if (m_hasPendingCharacter && *data) {
+            m_hasPendingCharacter = false;
+            addCharactersAssumingAligned(m_pendingCharacter, Converter(*data++));
+        }
+        addCharactersAssumingAligned<T, Converter>(data);
+    }
+
+    template<typename T> void addCharacters(const T* data)
+    {
+        addCharacters<T, defaultConverter>(data);
     }
 
     unsigned hashWithTop8BitsMasked() const
@@ -124,37 +192,14 @@ public:
     template<typename T, UChar Converter(T)> static unsigned computeHashAndMaskTop8Bits(const T* data, unsigned length)
     {
         StringHasher hasher;
-        bool remainder = length & 1;
-        length >>= 1;
-
-        while (length--) {
-            hasher.addCharacters(Converter(data[0]), Converter(data[1]));
-            data += 2;
-        }
-
-        if (remainder)
-            hasher.addCharacter(Converter(*data));
-
+        hasher.addCharactersAssumingAligned<T, Converter>(data, length);
         return hasher.hashWithTop8BitsMasked();
     }
 
     template<typename T, UChar Converter(T)> static unsigned computeHashAndMaskTop8Bits(const T* data)
     {
         StringHasher hasher;
-
-        while (true) {
-            UChar b0 = Converter(*data++);
-            if (!b0)
-                break;
-            UChar b1 = Converter(*data++);
-            if (!b1) {
-                hasher.addCharacter(b0);
-                break;
-            }
-
-            hasher.addCharacters(b0, b1);
-        }
-
+        hasher.addCharactersAssumingAligned<T, Converter>(data);
         return hasher.hashWithTop8BitsMasked();
     }
 
@@ -171,27 +216,14 @@ public:
     template<typename T, UChar Converter(T)> static unsigned computeHash(const T* data, unsigned length)
     {
         StringHasher hasher;
-        hasher.addCharacters<T, Converter>(data, length);
+        hasher.addCharactersAssumingAligned<T, Converter>(data, length);
         return hasher.hash();
     }
 
     template<typename T, UChar Converter(T)> static unsigned computeHash(const T* data)
     {
         StringHasher hasher;
-
-        while (true) {
-            UChar b0 = Converter(*data++);
-            if (!b0)
-                break;
-            UChar b1 = Converter(*data++);
-            if (!b1) {
-                hasher.addCharacter(b0);
-                break;
-            }
-
-            hasher.addCharacters(b0, b1);
-        }
-
+        hasher.addCharactersAssumingAligned<T, Converter>(data);
         return hasher.hash();
     }
 
@@ -229,13 +261,6 @@ private:
     static UChar defaultConverter(LChar character)
     {
         return character;
-    }
-
-    void addCharactersToHash(UChar a, UChar b)
-    {
-        m_hash += a;
-        m_hash = (m_hash << 16) ^ ((b << 11) ^ m_hash);
-        m_hash += m_hash >> 11;
     }
 
     unsigned avalancheBits() const

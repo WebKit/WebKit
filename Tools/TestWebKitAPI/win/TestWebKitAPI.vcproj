@@ -448,6 +448,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Tests\WTF\StringHasher.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WTF\StringOperators.cpp"
 					>
 				</File>
