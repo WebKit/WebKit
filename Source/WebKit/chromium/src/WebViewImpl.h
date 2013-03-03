@@ -454,7 +454,6 @@ public:
     }
 
     WebCore::IntSize dipSize() const;
-    WebCore::IntSize layoutSize() const;
     WebCore::IntSize scaledSize(float) const;
 
     // Set the disposition for how this webview is to be initially shown.

@@ -234,6 +234,8 @@ private:
 
     bool hasWindow() const { return m_hasWindow; }
 
+    void updateViewportSize();
+
 #if ENABLE(MEDIA_STREAM)
     webkit_support::TestMediaStreamClient* testMediaStreamClient();
 #endif
