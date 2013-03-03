@@ -1,3 +1,20 @@
+2013-03-02  Sam Weinig  <sam@webkit.org>
+
+        WebKit2 is missing the setShowsURLsInToolTips preference
+        https://bugs.webkit.org/show_bug.cgi?id=111259
+        <rdar://problem/12991891>
+
+        Reviewed by Maciej Stachowiak.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetShowsURLsInToolTipsEnabled):
+        (WKPreferencesGetShowsURLsInToolTipsEnabled):
+        * UIProcess/API/C/WKPreferencesPrivate.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+        Pipe it through.
+
 2013-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Move computedStyleIncludingVisitedInfo from TestRunner to Internals

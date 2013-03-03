@@ -1043,3 +1043,13 @@ bool WKPreferencesGetSmartInsertDeleteEnabled(WKPreferencesRef preferencesRef)
 {
     return toImpl(preferencesRef)->smartInsertDeleteEnabled();
 }
+
+void WKPreferencesSetShowsURLsInToolTipsEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setShowsURLsInToolTipsEnabled(enabled);
+}
+
+bool WKPreferencesGetShowsURLsInToolTipsEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->showsURLsInToolTipsEnabled();
+}
