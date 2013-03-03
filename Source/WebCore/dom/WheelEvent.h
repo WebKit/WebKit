@@ -30,6 +30,8 @@
 
 namespace WebCore {
 
+class PlatformWheelEvent;
+
 struct WheelEventInit : public MouseEventInit {
     WheelEventInit();
 

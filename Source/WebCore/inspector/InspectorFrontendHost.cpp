@@ -53,8 +53,6 @@
 #include "ResourceResponse.h"
 #include "ScriptFunctionCall.h"
 #include "UserGestureIndicator.h"
-
-#include <wtf/RefPtr.h>
 #include <wtf/StdLibExtras.h>
 
 using namespace std;

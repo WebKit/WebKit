@@ -23,6 +23,7 @@
 #include "config.h"
 #include "MouseEvent.h"
 
+#include "Clipboard.h"
 #include "EventDispatcher.h"
 #include "EventNames.h"
 #include "EventRetargeter.h"
@@ -65,6 +66,39 @@ PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& eventType, PassRef
 #endif
         event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey(), event.button(),
         relatedTarget, 0, false);
+}
+
+PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+    int detail, int screenX, int screenY, int pageX, int pageY,
+#if ENABLE(POINTER_LOCK)
+    int movementX, int movementY,
+#endif
+    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
+    PassRefPtr<EventTarget> relatedTarget)
+
+{
+    return MouseEvent::create(type, canBubble, cancelable, view,
+        detail, screenX, screenY, pageX, pageY,
+#if ENABLE(POINTER_LOCK)
+        movementX, movementY,
+#endif
+        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, 0, false);
+}
+
+PassRefPtr<MouseEvent> MouseEvent::create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+    int detail, int screenX, int screenY, int pageX, int pageY,
+#if ENABLE(POINTER_LOCK)
+    int movementX, int movementY,
+#endif
+    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
+    PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard, bool isSimulated)
+{
+    return adoptRef(new MouseEvent(type, canBubble, cancelable, view,
+        detail, screenX, screenY, pageX, pageY,
+#if ENABLE(POINTER_LOCK)
+        movementX, movementY,
+#endif
+        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, clipboard, isSimulated));
 }
 
 MouseEvent::MouseEvent()

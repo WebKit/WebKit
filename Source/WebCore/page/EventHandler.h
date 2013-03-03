@@ -28,9 +28,9 @@
 
 #include "Cursor.h"
 #include "DragActions.h"
-#include "DragState.h"
 #include "FocusDirection.h"
 #include "HitTestRequest.h"
+#include "LayoutPoint.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ScrollTypes.h"
@@ -54,6 +54,8 @@ namespace WebCore {
 
 class AutoscrollController;
 class Clipboard;
+class Document;
+class Element;
 class Event;
 class EventTarget;
 class FloatPoint;
@@ -79,6 +81,8 @@ class TouchEvent;
 class VisibleSelection;
 class WheelEvent;
 class Widget;
+
+struct DragState;
 
 #if ENABLE(GESTURE_EVENTS)
 class PlatformGestureEvent;

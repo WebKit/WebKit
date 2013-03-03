@@ -1,3 +1,13 @@
+2013-02-18  Darin Adler  <darin@apple.com>
+
+        Cut down the number of source files that depend on Clipboard.h
+        https://bugs.webkit.org/show_bug.cgi?id=110030
+
+        Reviewed by Ryosuke Niwa.
+
+        * WebView/WebPDFView.mm: Add include of Clipboard.h since we use it
+        here and the world no longer includes it everywhere.
+
 2013-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Move computedStyleIncludingVisitedInfo from TestRunner to Internals

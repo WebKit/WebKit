@@ -23,6 +23,7 @@
 #include "config.h"
 #include "ClipboardEvent.h"
 
+#include "Clipboard.h"
 #include "EventNames.h"
 
 namespace WebCore {

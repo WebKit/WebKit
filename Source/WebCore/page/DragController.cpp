@@ -27,6 +27,7 @@
 #include "DragController.h"
 
 #if ENABLE(DRAG_SUPPORT)
+
 #include "CachedImage.h"
 #include "Clipboard.h"
 #include "ClipboardAccessPolicy.h"
@@ -37,6 +38,7 @@
 #include "DragClient.h"
 #include "DragData.h"
 #include "DragSession.h"
+#include "DragState.h"
 #include "Editor.h"
 #include "EditorClient.h"
 #include "Element.h"

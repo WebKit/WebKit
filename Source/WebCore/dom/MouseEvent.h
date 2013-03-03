@@ -24,12 +24,12 @@
 #ifndef MouseEvent_h
 #define MouseEvent_h
 
-#include "Clipboard.h"
 #include "EventDispatchMediator.h"
 #include "MouseRelatedEvent.h"
 
 namespace WebCore {
 
+class Clipboard;
 class EventDispatcher;
 class PlatformMouseEvent;
 
@@ -55,20 +55,21 @@ public:
         return adoptRef(new MouseEvent);
     }
 
-    static PassRefPtr<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView> view,
+    static PassRefPtr<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
         int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
         int movementX, int movementY,
 #endif
         bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
-        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard> clipboard = 0, bool isSimulated = false)
-    {
-        return adoptRef(new MouseEvent(type, canBubble, cancelable, view, detail, screenX, screenY, pageX, pageY,
+        PassRefPtr<EventTarget> relatedTarget);
+
+    static PassRefPtr<MouseEvent> create(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
+        int detail, int screenX, int screenY, int pageX, int pageY,
 #if ENABLE(POINTER_LOCK)
-        movementX, movementY,
+        int movementX, int movementY,
 #endif
-        ctrlKey, altKey, shiftKey, metaKey, button, relatedTarget, clipboard, isSimulated));
-    }
+        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, unsigned short button,
+        PassRefPtr<EventTarget> relatedTarget, PassRefPtr<Clipboard>, bool isSimulated = false);
 
     static PassRefPtr<MouseEvent> create(const AtomicString& eventType, PassRefPtr<AbstractView>, const PlatformMouseEvent&, int detail, PassRefPtr<Node> relatedTarget);
 

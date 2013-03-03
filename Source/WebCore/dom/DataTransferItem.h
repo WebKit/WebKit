@@ -33,8 +33,6 @@
 
 #if ENABLE(DATA_TRANSFER_ITEMS)
 
-#include "Clipboard.h"
-
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
 
