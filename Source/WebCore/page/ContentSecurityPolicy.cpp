@@ -148,13 +148,13 @@ bool isDirectiveName(const String& name)
 FeatureObserver::Feature getFeatureObserverType(ContentSecurityPolicy::HeaderType type)
 {
     switch (type) {
-    case ContentSecurityPolicy::EnforceAllDirectives:
+    case ContentSecurityPolicy::PrefixedEnforce:
         return FeatureObserver::PrefixedContentSecurityPolicy;
-    case ContentSecurityPolicy::EnforceStableDirectives:
+    case ContentSecurityPolicy::Enforce:
         return FeatureObserver::ContentSecurityPolicy;
-    case ContentSecurityPolicy::ReportAllDirectives:
+    case ContentSecurityPolicy::PrefixedReport:
         return FeatureObserver::PrefixedContentSecurityPolicyReportOnly;
-    case ContentSecurityPolicy::ReportStableDirectives:
+    case ContentSecurityPolicy::Report:
         return FeatureObserver::ContentSecurityPolicyReportOnly;
     }
     ASSERT_NOT_REACHED();
@@ -886,7 +886,6 @@ private:
     String m_header;
     ContentSecurityPolicy::HeaderType m_headerType;
 
-    bool m_experimental;
     bool m_reportOnly;
     bool m_haveSandboxPolicy;
     ContentSecurityPolicy::ReflectedXSSDisposition m_reflectedXSSDisposition;
@@ -912,13 +911,11 @@ private:
 CSPDirectiveList::CSPDirectiveList(ContentSecurityPolicy* policy, ContentSecurityPolicy::HeaderType type)
     : m_policy(policy)
     , m_headerType(type)
-    , m_experimental(false)
     , m_reportOnly(false)
     , m_haveSandboxPolicy(false)
     , m_reflectedXSSDisposition(ContentSecurityPolicy::ReflectedXSSUnset)
 {
-    m_reportOnly = (type == ContentSecurityPolicy::ReportStableDirectives || type == ContentSecurityPolicy::ReportAllDirectives);
-    m_experimental = (type == ContentSecurityPolicy::ReportAllDirectives || type == ContentSecurityPolicy::EnforceAllDirectives);
+    m_reportOnly = (type == ContentSecurityPolicy::Report || type == ContentSecurityPolicy::PrefixedReport);
 }
 
 PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* policy, const String& header, ContentSecurityPolicy::HeaderType type)
@@ -1398,7 +1395,7 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
     else if (equalIgnoringCase(name, reportURI))
         parseReportURI(name, value);
 #if ENABLE(CSP_NEXT)
-    else if (m_experimental && m_policy->experimentalFeaturesEnabled()) {
+    else if (m_policy->experimentalFeaturesEnabled()) {
         if (equalIgnoringCase(name, formAction))
             setCSPDirective<SourceListDirective>(name, value, m_formAction);
         else if (equalIgnoringCase(name, pluginTypes))
@@ -1407,6 +1404,8 @@ void CSPDirectiveList::addDirective(const String& name, const String& value)
             setCSPDirective<NonceDirective>(name, value, m_scriptNonce);
         else if (equalIgnoringCase(name, reflectedXSS))
             parseReflectedXSS(name, value);
+        else
+            m_policy->reportUnsupportedDirective(name);
     }
 #endif
     else
@@ -1473,7 +1472,7 @@ const String& ContentSecurityPolicy::deprecatedHeader() const
 
 ContentSecurityPolicy::HeaderType ContentSecurityPolicy::deprecatedHeaderType() const
 {
-    return m_policies.isEmpty() ? EnforceStableDirectives : m_policies[0]->headerType();
+    return m_policies.isEmpty() ? Enforce : m_policies[0]->headerType();
 }
 
 template<bool (CSPDirectiveList::*allowed)(ContentSecurityPolicy::ReportingStatus) const>

@@ -1,3 +1,18 @@
+2013-03-03  Mike West  <mkwst@chromium.org>
+
+        CSP 1.1: Support CSP 1.1 directives on the unprefixed header.
+        https://bugs.webkit.org/show_bug.cgi?id=111254
+
+        Reviewed by Adam Barth.
+
+        The enum names no longer made sense: the difference between the
+        canonical 'Content-Security-Policy' header and 'X-WebKit-CSP' is the
+        prefix, not the functionality. This patch renames them for clarity.
+
+        * public/WebContentSecurityPolicy.h:
+        * src/AssertMatchingEnums.cpp:
+            Rename the Chromium side of the enums.
+
 2013-03-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempted build fix. Adds back some includes removed in

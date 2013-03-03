@@ -60,10 +60,10 @@ public:
     void copyStateFrom(const ContentSecurityPolicy*);
 
     enum HeaderType {
-        ReportStableDirectives,
-        EnforceStableDirectives,
-        ReportAllDirectives,
-        EnforceAllDirectives
+        Report,
+        Enforce,
+        PrefixedReport,
+        PrefixedEnforce
     };
 
     enum ReportingStatus {

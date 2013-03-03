@@ -658,19 +658,19 @@ void FrameLoader::didBeginDocument(bool dispatch)
 
         String policyValue = m_documentLoader->response().httpHeaderField("Content-Security-Policy");
         if (!policyValue.isEmpty())
-            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::EnforceStableDirectives);
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::Enforce);
 
         policyValue = m_documentLoader->response().httpHeaderField("Content-Security-Policy-Report-Only");
         if (!policyValue.isEmpty())
-            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::ReportStableDirectives);
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::Report);
 
         policyValue = m_documentLoader->response().httpHeaderField("X-WebKit-CSP");
         if (!policyValue.isEmpty())
-            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::EnforceAllDirectives);
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::PrefixedEnforce);
 
         policyValue = m_documentLoader->response().httpHeaderField("X-WebKit-CSP-Report-Only");
         if (!policyValue.isEmpty())
-            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::ReportAllDirectives);
+            m_frame->document()->contentSecurityPolicy()->didReceiveHeader(policyValue, ContentSecurityPolicy::PrefixedReport);
 
         String headerContentLanguage = m_documentLoader->response().httpHeaderField("Content-Language");
         if (!headerContentLanguage.isEmpty()) {

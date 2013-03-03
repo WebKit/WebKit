@@ -34,10 +34,10 @@
 namespace WebKit {
 
 enum WebContentSecurityPolicyType {
-    WebContentSecurityPolicyTypeReportStableDirectives,
-    WebContentSecurityPolicyTypeEnforceStableDirectives,
-    WebContentSecurityPolicyTypeReportAllDirectives,
-    WebContentSecurityPolicyTypeEnforceAllDirectives,
+    WebContentSecurityPolicyTypeReport,
+    WebContentSecurityPolicyTypeEnforce,
+    WebContentSecurityPolicyTypePrefixedReport,
+    WebContentSecurityPolicyTypePrefixedEnforce,
 };
 
 } // namespace WebKit
