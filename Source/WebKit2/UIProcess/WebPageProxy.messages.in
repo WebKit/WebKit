@@ -30,7 +30,7 @@ messages -> WebPageProxy {
     RunJavaScriptPrompt(uint64_t frameID, WTF::String message, WTF::String defaultValue) -> (WTF::String result)
     ShouldInterruptJavaScript() -> (bool shouldInterupt)
     MouseDidMoveOverElement(uint32_t modifiers, WebKit::InjectedBundleUserMessageEncoder userData);
-    UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, WTF::String mimeType, WTF::String url, WTF::String pluginsPageURL)
+    UnavailablePluginButtonClicked(uint32_t pluginUnavailabilityReason, WTF::String mimeType, WTF::String pluginURLString, WTF::String pluginspageAttributeURLString, WTF::String frameURLString, WTF::String pageURLString)
     DidChangeViewportData(WebCore::ViewportArguments arguments)
     DidReceiveEvent(uint32_t type, bool handled)
     StopResponsivenessTimer()

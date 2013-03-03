@@ -179,6 +179,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
+        0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
@@ -323,6 +324,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
+        0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);

@@ -80,9 +80,9 @@ public:
     void didChangeBackForwardList(WebPageProxy*, WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
     bool shouldGoToBackForwardListItem(WebPageProxy*, WebBackForwardListItem*);
 
-    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& bundleIdentifier, const String& displayName, const String& frameURLString, const String& pageURLString, PluginModuleLoadPolicy currentPluginLoadPolicy);
+    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& pluginBundleIdentifier, const String& pluginBundleVersion, const String& displayName, const String& frameURLString, const String& pageURLString, PluginModuleLoadPolicy currentPluginLoadPolicy);
     void didFailToInitializePlugin(WebPageProxy*, const String& mimeType, const String& frameURLString, const String& pageURLString);
-    void didBlockInsecurePluginVersion(WebPageProxy*, const String& mimeType, const String& bundleIdentifier, const String& bundleVersion, const String& frameURLString, const String& pageURLString);
+    void didBlockInsecurePluginVersion(WebPageProxy*, const String& mimeType, const String& pluginBundleIdentifier, const String& pluginBundleVersion, const String& frameURLString, const String& pageURLString);
 
 };
 

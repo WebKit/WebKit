@@ -74,6 +74,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/RenderEmbeddedObject.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 
@@ -934,7 +935,7 @@ void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString
     pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
 
     PluginModuleLoadPolicy currentPluginLoadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
-    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, frameURLString, pageURLString, currentPluginLoadPolicy);
+    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.versionString, plugin.info.name, frameURLString, pageURLString, currentPluginLoadPolicy);
 
     if (pluginLoadPolicy != PluginModuleLoadNormally)
         return;
@@ -2065,10 +2066,39 @@ void WebPageProxy::mouseDidMoveOverElement(uint32_t opaqueModifiers, CoreIPC::Ar
     m_uiClient.mouseDidMoveOverElement(this, modifiers, userData.get());
 }
 
-void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& url, const String& pluginsPageURL)
+void WebPageProxy::unavailablePluginButtonClicked(uint32_t opaquePluginUnavailabilityReason, const String& mimeType, const String& pluginURLString, const String& pluginspageAttributeURLString, const String& frameURLString, const String& pageURLString)
 {
-    WKPluginUnavailabilityReason pluginUnavailabilityReason = static_cast<WKPluginUnavailabilityReason>(opaquePluginUnavailabilityReason);
-    m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, mimeType, url, pluginsPageURL);
+    MESSAGE_CHECK(pluginURLString);
+    MESSAGE_CHECK(pluginspageAttributeURLString);
+    MESSAGE_CHECK(frameURLString);
+    MESSAGE_CHECK(pageURLString);
+
+    String pluginBundleIdentifier;
+    String pluginBundleVersion;
+    String newMimeType = mimeType;
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    PluginInfoStore::Plugin plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), pluginURLString));
+#if PLATFORM(MAC)
+    pluginBundleIdentifier = plugin.bundleIdentifier;
+    pluginBundleVersion = plugin.versionString;
+#endif
+#endif
+ 
+    WKPluginUnavailabilityReason pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
+
+    switch (static_cast<RenderEmbeddedObject::PluginUnavailabilityReason>(opaquePluginUnavailabilityReason)) {
+    case RenderEmbeddedObject::PluginMissing:
+        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginMissing;
+        break;
+    case RenderEmbeddedObject::InsecurePluginVersion:
+        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonInsecurePluginVersion;
+        break;
+    case RenderEmbeddedObject::PluginCrashed:
+        pluginUnavailabilityReason = kWKPluginUnavailabilityReasonPluginCrashed;
+        break;
+    }
+
+    m_uiClient.unavailablePluginButtonClicked(this, pluginUnavailabilityReason, mimeType, pluginBundleIdentifier, pluginBundleVersion, plugin.info.name, pluginURLString, pluginspageAttributeURLString, frameURLString, pageURLString);
 }
 
 void WebPageProxy::setToolbarsAreVisible(bool toolbarsAreVisible)
@@ -3404,6 +3434,39 @@ String WebPageProxy::pluginInformationMIMETypeKey()
 String WebPageProxy::pluginInformationPageURLKey()
 {
     return "PluginInformationPageURL";
+}
+
+String WebPageProxy::pluginInformationPluginspageAttributeURLKey()
+{
+    return "PluginInformationPluginspageAttributeURL";
+}
+
+String WebPageProxy::pluginInformationPluginURLKey()
+{
+    return "PluginInformationPluginURL";
+}
+
+PassRefPtr<ImmutableDictionary> WebPageProxy::pluginInformationDictionary(const String& bundleIdentifier, const String& bundleVersion, const String& displayName, const String& frameURLString, const String& mimeType, const String& pageURLString, const String& pluginspageAttributeURLString, const String& pluginURLString)
+{
+    HashMap<String, RefPtr<APIObject> > pluginInfoMap;
+    if (!bundleIdentifier.isEmpty())
+        pluginInfoMap.set(WebPageProxy::pluginInformationBundleIdentifierKey(), WebString::create(bundleIdentifier));
+    if (!bundleVersion.isEmpty())
+        pluginInfoMap.set(WebPageProxy::pluginInformationBundleVersionKey(), WebString::create(bundleVersion));
+    if (!displayName.isEmpty())
+        pluginInfoMap.set(WebPageProxy::pluginInformationDisplayNameKey(), WebString::create(displayName));
+    if (!frameURLString.isEmpty())
+        pluginInfoMap.set(WebPageProxy::pluginInformationFrameURLKey(), WebURL::create(frameURLString));
+    if (!mimeType.isEmpty())
+        pluginInfoMap.set(WebPageProxy::pluginInformationMIMETypeKey(), WebString::create(mimeType));
+    if (!pageURLString.isEmpty())
+        pluginInfoMap.set(WebPageProxy::pluginInformationPageURLKey(), WebURL::create(pageURLString));
+    if (!pluginspageAttributeURLString.isEmpty())
+        pluginInfoMap.set(WebPageProxy::pluginInformationPluginspageAttributeURLKey(), WebURL::create(pluginspageAttributeURLString));
+    if (!pluginURLString.isEmpty())
+        pluginInfoMap.set(WebPageProxy::pluginInformationPluginURLKey(), WebURL::create(pluginURLString));
+
+    return ImmutableDictionary::adopt(pluginInfoMap);
 }
 
 } // namespace WebKit
