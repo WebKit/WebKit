@@ -470,8 +470,8 @@ webkit.org/b/107377 storage/indexeddb/cursor-advance-workers.html [ Crash Pass ]
 webkit.org/b/107377 storage/indexeddb/index-get-key-argument-required.html [ Crash Pass ]
 webkit.org/b/107377 storage/indexeddb/keypath-basics.html [ Crash Pass ]
 webkit.org/b/107377 storage/indexeddb/mozilla/remove-index.html [ Crash Pass ]
-webkit.org/b/107377 storage/indexeddb/mozilla/create-index-unique.html [ Crash Failure ]
-webkit.org/b/107377 storage/indexeddb/objectstore-basics.html [ Crash Failure ]
+webkit.org/b/107377 storage/indexeddb/mozilla/create-index-unique.html [ Crash Pass ]
+webkit.org/b/107377 storage/indexeddb/objectstore-basics.html [ Crash Pass ]
 webkit.org/b/107194 storage/indexeddb/objectstore-basics-workers.html [ Crash Failure ]
 
 webkit.org/b/108682 [ Debug ] media/video-controls-fullscreen-volume.html [ Crash ]
@@ -1400,13 +1400,6 @@ webkit.org/b/110694 html5lib/generated/run-plain-text-unsafe-data.html [ Failure
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
 webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
-
-webkit.org/b/111243 storage/indexeddb/index-basics.html [ Failure ]
-webkit.org/b/111243 storage/indexeddb/mozilla/create-objectstore-basics.html [ Failure ]
-webkit.org/b/111243 storage/indexeddb/mozilla/global-data.html [ Failure ]
-webkit.org/b/111243 storage/indexeddb/mozilla/indexes.html [ Failure ]
-webkit.org/b/111243 storage/indexeddb/objectstore-autoincrement.html [ Failure ]
-webkit.org/b/111243 storage/indexeddb/readonly.html [ Failure ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
