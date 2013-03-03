@@ -1284,10 +1284,8 @@ static inline void constructBidiRunsForLine(const RenderBlock* block, InlineBidi
     ASSERT(segmentRanges.size());
 
     for (size_t i = 0; i < segmentRanges.size(); i++) {
-        LineSegmentIterator iterator = segmentRanges[i].start;
-        InlineIterator segmentStart(iterator.root, iterator.object, iterator.offset);
-        iterator = segmentRanges[i].end;
-        InlineIterator segmentEnd(iterator.root, iterator.object, iterator.offset);
+        InlineIterator segmentStart = segmentRanges[i].start;
+        InlineIterator segmentEnd = segmentRanges[i].end;
         if (i) {
             ASSERT(segmentStart.m_obj);
             BidiRun* segmentMarker = createRun(segmentStart.m_pos, segmentStart.m_pos, segmentStart.m_obj, topResolver);

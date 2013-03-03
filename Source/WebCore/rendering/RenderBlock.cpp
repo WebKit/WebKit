@@ -296,6 +296,10 @@ void RenderBlock::willBeDestroyed()
     if (lineGridBox())
         lineGridBox()->destroy(renderArena());
 
+#if ENABLE(CSS_EXCLUSIONS)
+    ExclusionShapeInsideInfo::removeInfo(this);
+#endif
+
     if (UNLIKELY(gDelayedUpdateScrollInfoSet != 0))
         gDelayedUpdateScrollInfoSet->remove(this);
 
@@ -1390,6 +1394,11 @@ void RenderBlock::layout()
 }
 
 #if ENABLE(CSS_EXCLUSIONS)
+ExclusionShapeInsideInfo* RenderBlock::exclusionShapeInsideInfo() const
+{
+    return style()->resolvedShapeInside() && ExclusionShapeInsideInfo::isEnabledFor(this) ? ExclusionShapeInsideInfo::info(this) : 0;
+}
+
 void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const ExclusionShapeValue* shapeInside, const ExclusionShapeValue* oldShapeInside)
 {
     // FIXME: A future optimization would do a deep comparison for equality.
@@ -1397,10 +1406,10 @@ void RenderBlock::updateExclusionShapeInsideInfoAfterStyleChange(const Exclusion
         return;
 
     if (shapeInside) {
-        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = ensureExclusionShapeInsideInfo();
+        ExclusionShapeInsideInfo* exclusionShapeInsideInfo = ExclusionShapeInsideInfo::ensureInfo(this);
         exclusionShapeInsideInfo->dirtyShapeSize();
     } else
-        setExclusionShapeInsideInfo(nullptr);
+        ExclusionShapeInsideInfo::removeInfo(this);
 }
 #endif
 

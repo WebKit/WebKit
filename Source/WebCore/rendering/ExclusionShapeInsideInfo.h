@@ -33,40 +33,34 @@
 #if ENABLE(CSS_EXCLUSIONS)
 
 #include "ExclusionShapeInfo.h"
+#include "InlineIterator.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
-class InlineIterator;
 class RenderBlock;
-class RenderObject;
 
-struct LineSegmentIterator {
-    RenderObject* root;
-    RenderObject* object;
-    unsigned offset;
-    LineSegmentIterator(RenderObject* root, RenderObject* object, unsigned offset)
-        : root(root)
-        , object(object)
-        , offset(offset)
+struct LineSegmentRange {
+    InlineIterator start;
+    InlineIterator end;
+    LineSegmentRange(InlineIterator start, InlineIterator end)
+        : start(start)
+        , end(end)
     {
     }
 };
-
-struct LineSegmentRange {
-    LineSegmentIterator start;
-    LineSegmentIterator end;
-    LineSegmentRange(const InlineIterator& start, const InlineIterator& end);
-};
-
 typedef Vector<LineSegmentRange> SegmentRangeList;
 
-class ExclusionShapeInsideInfo : public ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside> {
+class ExclusionShapeInsideInfo : public ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside>, public MappedInfo<RenderBlock, ExclusionShapeInsideInfo> {
 public:
     static PassOwnPtr<ExclusionShapeInsideInfo> createInfo(const RenderBlock* renderer) { return adoptPtr(new ExclusionShapeInsideInfo(renderer)); }
 
-    static bool isEnabledFor(const RenderBlock* renderer);
+    static bool isEnabledFor(const RenderBlock* renderer)
+    {
+        ExclusionShapeValue* shapeValue = renderer->style()->resolvedShapeInside();
+        return (shapeValue && shapeValue->type() == ExclusionShapeValue::SHAPE) ? shapeValue->shape() : 0;
+    }
     bool lineOverlapsShapeBounds() const { return logicalLineTop() < shapeLogicalBottom() && logicalLineBottom() >= shapeLogicalTop(); }
 
     bool hasSegments() const

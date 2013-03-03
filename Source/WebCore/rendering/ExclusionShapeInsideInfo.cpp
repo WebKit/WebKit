@@ -32,23 +32,9 @@
 
 #if ENABLE(CSS_EXCLUSIONS)
 
-#include "InlineIterator.h"
 #include "RenderBlock.h"
 
 namespace WebCore {
-
-LineSegmentRange::LineSegmentRange(const InlineIterator& start, const InlineIterator& end)
-    : start(start.root(), start.object(), start.offset())
-    , end(end.root(), end.object(), end.offset())
-    {
-    }
-
-bool ExclusionShapeInsideInfo::isEnabledFor(const RenderBlock* renderer)
-{
-    ExclusionShapeValue* shapeValue = renderer->style()->resolvedShapeInside();
-    return (shapeValue && shapeValue->type() == ExclusionShapeValue::SHAPE) ? shapeValue->shape() : 0;
-}
-
 bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
 {
     ASSERT(lineHeight >= 0);
