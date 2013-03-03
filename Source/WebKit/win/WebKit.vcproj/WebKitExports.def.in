@@ -293,6 +293,7 @@ EXPORTS
         ?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@5@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVArrayBuffer@WTF@@@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVCSSStyleDeclaration@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRectList@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
