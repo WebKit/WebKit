@@ -22,8 +22,7 @@
 #define SVGUseElement_h
 
 #if ENABLE(SVG)
-#include "CachedResourceHandle.h"
-#include "CachedSVGDocumentClient.h"
+#include "CachedSVGDocument.h"
 #include "SVGAnimatedBoolean.h"
 #include "SVGAnimatedLength.h"
 #include "SVGExternalResourcesRequired.h"

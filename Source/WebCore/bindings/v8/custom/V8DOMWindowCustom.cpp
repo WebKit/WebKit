@@ -39,7 +39,6 @@
 #include "ExceptionCode.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
-#include "FrameLoader.h"
 #include "FrameView.h"
 #include "HTMLCollection.h"
 #include "HTMLDocument.h"

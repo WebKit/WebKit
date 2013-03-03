@@ -26,7 +26,7 @@
 #ifndef IconLoader_h
 #define IconLoader_h
 
-#include "CachedRawResourceClient.h"
+#include "CachedRawResource.h"
 #include "CachedResourceHandle.h"
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>

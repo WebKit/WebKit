@@ -24,10 +24,11 @@
 #define CachedRawResource_h
 
 #include "CachedResource.h"
+#include "CachedResourceClient.h"
 
 namespace WebCore {
-
-class CachedResourceClient;
+class CachedRawResourceCallback;
+class CachedRawResourceClient;
 class SubresourceLoader;
 
 class CachedRawResource : public CachedResource {
@@ -80,6 +81,22 @@ private:
     };
 
     Vector<RedirectPair> m_redirectChain;
+};
+
+
+class CachedRawResourceClient : public CachedResourceClient {
+public:
+    virtual ~CachedRawResourceClient() { }
+    static CachedResourceClientType expectedType() { return RawResourceType; }
+    virtual CachedResourceClientType resourceClientType() const { return expectedType(); }
+
+    virtual void dataSent(CachedResource*, unsigned long long /* bytesSent */, unsigned long long /* totalBytesToBeSent */) { }
+    virtual void responseReceived(CachedResource*, const ResourceResponse&) { }
+    virtual void dataReceived(CachedResource*, const char* /* data */, int /* length */) { }
+    virtual void redirectReceived(CachedResource*, ResourceRequest&, const ResourceResponse&) { }
+#if PLATFORM(CHROMIUM)
+    virtual void dataDownloaded(CachedResource*, int) { }
+#endif
 };
 
 }

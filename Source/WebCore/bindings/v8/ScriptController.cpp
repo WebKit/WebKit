@@ -40,7 +40,6 @@
 #include "EventListener.h"
 #include "EventNames.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HistogramSupport.h"
 #include "InspectorInstrumentation.h"

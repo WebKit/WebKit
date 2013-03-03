@@ -1,3 +1,12 @@
+2013-03-03  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed rollout of http://trac.webkit.org/r144530
+        As described in https://bugs.webkit.org/show_bug.cgi?id=111167 and
+        https://bugs.webkit.org/show_bug.cgi?id=111035, this patch caused a
+        large number of ASSERTs in chromium-win.
+
+        * webkit/webkitwebpolicydecision.cpp:
+
 2013-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Move computedStyleIncludingVisitedInfo from TestRunner to Internals

@@ -28,9 +28,8 @@
 
 #include "PendingScript.h"
 #include <wtf/Deque.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/text/TextPosition.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

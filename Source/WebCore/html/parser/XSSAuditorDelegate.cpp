@@ -31,7 +31,6 @@
 #include "Document.h"
 #include "FormData.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorValues.h"

@@ -39,6 +39,7 @@
 #include "InsertionPoint.h"
 #include "InspectorInstrumentation.h"
 #include "LoaderStrategy.h"
+#include "MemoryCache.h"
 #include "MutationEvent.h"
 #include "NodeRenderStyle.h"
 #include "NodeTraversal.h"

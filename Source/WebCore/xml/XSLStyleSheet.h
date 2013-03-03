@@ -37,7 +37,6 @@
 
 namespace WebCore {
 
-class CachedResourceLoader;
 class XSLImportRule;
     
 class XSLStyleSheet : public StyleSheet {

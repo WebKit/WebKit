@@ -24,7 +24,6 @@
 #include "CachedResourceClient.h"
 #include "CachedResourceHandle.h"
 #include <wtf/text/TextPosition.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

@@ -34,7 +34,6 @@
 
 #include "CachedResourceHandle.h"
 #include "StyleShader.h"
-#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 

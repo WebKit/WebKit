@@ -20,8 +20,8 @@
 #include "config.h"
 #include "webkitwebpolicydecision.h"
 
-#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "FrameLoaderTypes.h"
 #include "webkitwebframeprivate.h"
 #include "webkitwebpolicydecisionprivate.h"
 

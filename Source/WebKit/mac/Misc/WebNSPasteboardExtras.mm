@@ -36,7 +36,6 @@
 #import "WebResourcePrivate.h"
 #import "WebURLsWithTitles.h"
 #import "WebViewPrivate.h"
-#import <WebCore/CachedImage.h>
 #import <WebCore/Element.h>
 #import <WebCore/Image.h>
 #import <WebCore/MIMETypeRegistry.h>

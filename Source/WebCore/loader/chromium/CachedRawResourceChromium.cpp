@@ -31,7 +31,6 @@
 #include "config.h"
 #include "CachedRawResource.h"
 
-#include "CachedRawResourceClient.h"
 #include "CachedResourceClient.h"
 #include "CachedResourceClientWalker.h"
 

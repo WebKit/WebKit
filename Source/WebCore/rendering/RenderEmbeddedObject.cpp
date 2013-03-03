@@ -31,6 +31,7 @@
 #include "Font.h"
 #include "FontSelector.h"
 #include "Frame.h"
+#include "FrameLoaderClient.h"
 #include "GraphicsContext.h"
 #include "HTMLEmbedElement.h"
 #include "HTMLIFrameElement.h"

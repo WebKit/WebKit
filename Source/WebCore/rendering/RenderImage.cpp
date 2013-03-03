@@ -29,7 +29,6 @@
 #include "RenderImage.h"
 
 #include "BitmapImage.h"
-#include "CachedImage.h"
 #include "Font.h"
 #include "FontCache.h"
 #include "Frame.h"

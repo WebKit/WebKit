@@ -1,3 +1,21 @@
+2013-03-03  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed rollout of http://trac.webkit.org/r144530
+        As described in https://bugs.webkit.org/show_bug.cgi?id=111167 and
+        https://bugs.webkit.org/show_bug.cgi?id=111035, this patch caused a
+        large number of ASSERTs in chromium-win.
+
+        * src/ApplicationCacheHost.cpp:
+        * src/AssociatedURLLoader.cpp:
+        * src/EditorClientImpl.cpp:
+        * src/SharedWorkerRepository.cpp:
+        * src/WebDataSourceImpl.cpp:
+        * src/WebFrameImpl.h:
+        (WebCore):
+        * src/WebNode.cpp:
+        * src/WebSharedWorkerImpl.cpp:
+        * tests/FrameLoaderClientImplTest.cpp:
+
 2013-03-03  Ankur Taly  <ataly@google.com>
 
         WebKit API for enabling DOM logging for certain worlds

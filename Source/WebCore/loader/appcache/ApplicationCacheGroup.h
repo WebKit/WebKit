@@ -28,6 +28,7 @@
 
 #include "DOMApplicationCache.h"
 #include "KURL.h"
+#include "ResourceHandle.h"
 #include "ResourceHandleClient.h"
 #include "SharedBuffer.h"
 #include <wtf/Noncopyable.h>
@@ -42,7 +43,6 @@ class ApplicationCacheResource;
 class Document;
 class DocumentLoader;
 class Frame;
-class ResourceHandle;
 class SecurityOrigin;
 
 enum ApplicationCacheUpdateOption {

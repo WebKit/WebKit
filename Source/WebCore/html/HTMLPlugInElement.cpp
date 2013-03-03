@@ -28,7 +28,6 @@
 #include "ChromeClient.h"
 #include "CSSPropertyNames.h"
 #include "Document.h"
-#include "Event.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameTree.h"

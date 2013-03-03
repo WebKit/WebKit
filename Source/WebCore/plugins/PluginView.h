@@ -28,10 +28,11 @@
 #ifndef PluginView_h
 #define PluginView_h
 
+#include "FrameLoadRequest.h"
 #include "IntRect.h"
-#include "KURL.h"
 #include "MediaCanStartListener.h"
 #include "PluginViewBase.h"
+#include "ResourceRequest.h"
 #include "Timer.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -42,7 +43,7 @@
 #include <wtf/text/CString.h>
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-#include "PluginStreamClient.h"
+#include "PluginStream.h"
 #include "npruntime_internal.h"
 #endif
 
@@ -83,12 +84,12 @@ namespace JSC {
 #endif
 
 namespace WebCore {
-
     class Frame;
     class Image;
     class HTMLPlugInElement;
     class KeyboardEvent;
     class MouseEvent;
+    class KURL;
 #if OS(WINDOWS) && ENABLE(NETSCAPE_PLUGIN_API)
     class PluginMessageThrottlerWin;
 #endif
@@ -98,12 +99,31 @@ namespace WebCore {
     class ResourceError;
     class ResourceResponse;
     class WheelEvent;
-    struct FrameLoadRequest;
 
     enum PluginStatus {
         PluginStatusCanNotFindPlugin,
         PluginStatusCanNotLoadPlugin,
         PluginStatusLoadedSuccessfully
+    };
+
+    class PluginRequest {
+        WTF_MAKE_NONCOPYABLE(PluginRequest); WTF_MAKE_FAST_ALLOCATED;
+    public:
+        PluginRequest(const FrameLoadRequest& frameLoadRequest, bool sendNotification, void* notifyData, bool shouldAllowPopups)
+            : m_frameLoadRequest(frameLoadRequest)
+            , m_notifyData(notifyData)
+            , m_sendNotification(sendNotification)
+            , m_shouldAllowPopups(shouldAllowPopups) { }
+    public:
+        const FrameLoadRequest& frameLoadRequest() const { return m_frameLoadRequest; }
+        void* notifyData() const { return m_notifyData; }
+        bool sendNotification() const { return m_sendNotification; }
+        bool shouldAllowPopups() const { return m_shouldAllowPopups; }
+    private:
+        FrameLoadRequest m_frameLoadRequest;
+        void* m_notifyData;
+        bool m_sendNotification;
+        bool m_shouldAllowPopups;
     };
 
     class PluginManualLoader {

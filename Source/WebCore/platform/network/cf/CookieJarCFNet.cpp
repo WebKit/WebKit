@@ -31,6 +31,7 @@
 #include "Cookie.h"
 #include "KURL.h"
 #include "NetworkStorageSession.h"
+#include "ResourceHandle.h"
 #include "SoftLinking.h"
 #include <CFNetwork/CFHTTPCookiesPriv.h>
 #include <CoreFoundation/CoreFoundation.h>

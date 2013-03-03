@@ -25,6 +25,7 @@
 #include "config.h"
 #include "RenderListMarker.h"
 
+#include "CachedImage.h"
 #include "Document.h"
 #include "Font.h"
 #include "GraphicsContext.h"

@@ -41,7 +41,6 @@
 #include "Document.h"
 #include "FontCache.h"
 #include "Frame.h"
-#include "FrameLoader.h"
 #include "RenderObject.h"
 #include "Settings.h"
 #include "SimpleFontData.h"

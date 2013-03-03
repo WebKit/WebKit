@@ -29,7 +29,7 @@
 #ifndef MainResourceLoader_h
 #define MainResourceLoader_h
 
-#include "CachedRawResourceClient.h"
+#include "CachedRawResource.h"
 #include "CachedResourceHandle.h"
 #include "FrameLoaderTypes.h"
 #include "ResourceLoader.h"
@@ -44,7 +44,6 @@
 
 namespace WebCore {
 
-class CachedRawResource;
 class FormState;
 class ResourceRequest;
     

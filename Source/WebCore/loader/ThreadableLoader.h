@@ -31,6 +31,7 @@
 #ifndef ThreadableLoader_h
 #define ThreadableLoader_h
 
+#include "ResourceHandle.h"
 #include "ResourceLoaderOptions.h"
 #include "SecurityOrigin.h"
 #include <wtf/Noncopyable.h>

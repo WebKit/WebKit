@@ -28,7 +28,7 @@
 #define CrossOriginPreflightResultCache_h
 
 #include "KURLHash.h"
-#include "ResourceHandleTypes.h"
+#include "ResourceHandle.h"
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/PassOwnPtr.h>

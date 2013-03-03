@@ -28,7 +28,6 @@
 #include "config.h"
 #include "Pasteboard.h"
 
-#include "CachedImage.h"
 #include "ClipboardQt.h"
 #include "DocumentFragment.h"
 #include "Editor.h"

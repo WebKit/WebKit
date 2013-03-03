@@ -37,7 +37,6 @@
 #include <WebCore/PageCache.h>
 #include <WebCore/ResourceHandle.h>
 #include <libsoup/soup-cache.h>
-#include <libsoup/soup.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/gobject/GRefPtr.h>
 #include <wtf/text/CString.h>

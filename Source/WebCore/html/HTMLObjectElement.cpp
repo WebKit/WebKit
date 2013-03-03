@@ -26,7 +26,6 @@
 
 #include "Attribute.h"
 #include "CSSValueKeywords.h"
-#include "CachedImage.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "EventNames.h"

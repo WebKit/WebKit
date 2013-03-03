@@ -22,6 +22,7 @@
 #define SVGFEImageElement_h
 
 #if ENABLE(SVG) && ENABLE(FILTERS)
+#include "CachedImage.h"
 #include "CachedResourceHandle.h"
 #include "ImageBuffer.h"
 #include "SVGAnimatedBoolean.h"

@@ -2427,9 +2427,6 @@
     <ClCompile Include="..\loader\cache\CachedSVGDocument.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
-    <ClCompile Include="..\loader\cache\CachedSVGDocumentReference.cpp">
-      <Filter>loader\cache</Filter>
-    </ClCompile>
     <ClCompile Include="..\loader\cache\CachedTextTrack.cpp">
       <Filter>loader\cache</Filter>
     </ClCompile>
@@ -4306,9 +4303,6 @@
       <Filter>rendering\style</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\style\StyleCachedShader.cpp">
-      <Filter>rendering\style</Filter>
-    </ClCompile>
-    <ClCompile Include="..\rendering\style\StyleCustomFilterProgram.cpp">
       <Filter>rendering\style</Filter>
     </ClCompile>
     <ClCompile Include="..\rendering\style\StyleDeprecatedFlexibleBoxData.cpp">
@@ -9153,16 +9147,10 @@
     <ClInclude Include="..\loader\cache\CachedFont.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
-    <ClInclude Include="..\loader\cache\CachedFontClient.h">
-      <Filter>loader\cache</Filter>
-    </ClInclude>
     <ClInclude Include="..\loader\cache\CachedImage.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\cache\CachedRawResource.h">
-      <Filter>loader\cache</Filter>
-    </ClInclude>
-    <ClInclude Include="..\loader\cache\CachedRawResourceClient.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\cache\CachedResource.h">
@@ -9196,9 +9184,6 @@
       <Filter>loader\cache</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\cache\CachedSVGDocument.h">
-      <Filter>loader\cache</Filter>
-    </ClInclude>
-    <ClInclude Include="..\loader\cache\CachedSVGDocumentClient.h">
       <Filter>loader\cache</Filter>
     </ClInclude>
     <ClInclude Include="..\loader\cache\CachedSVGDocumentReference.h">
@@ -12966,16 +12951,10 @@
     <ClInclude Include="..\plugins\PluginQuirkSet.h">
       <Filter>plugins</Filter>
     </ClInclude>
-    <ClInclude Include="..\plugins\PluginRequest.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
     <ClInclude Include="..\plugins\PluginStrategy.h">
       <Filter>plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\plugins\PluginStream.h">
-      <Filter>plugins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\plugins\PluginStreamClient.h">
       <Filter>plugins</Filter>
     </ClInclude>
     <ClInclude Include="..\plugins\PluginView.h">

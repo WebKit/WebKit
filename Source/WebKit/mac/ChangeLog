@@ -1,3 +1,16 @@
+2013-03-03  Adam Barth  <abarth@webkit.org>
+
+        Unreviewed rollout of http://trac.webkit.org/r144530
+        As described in https://bugs.webkit.org/show_bug.cgi?id=111167 and
+        https://bugs.webkit.org/show_bug.cgi?id=111035, this patch caused a
+        large number of ASSERTs in chromium-win.
+
+        * DOM/WebDOMOperations.mm:
+        * Misc/WebNSPasteboardExtras.mm:
+        * WebCoreSupport/WebFrameNetworkingContext.mm:
+        * WebView/WebRenderLayer.mm:
+        * WebView/WebRenderNode.mm:
+
 2013-02-18  Darin Adler  <darin@apple.com>
 
         Cut down the number of source files that depend on Clipboard.h
