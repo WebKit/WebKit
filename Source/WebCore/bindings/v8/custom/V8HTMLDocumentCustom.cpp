@@ -80,27 +80,6 @@ v8::Local<v8::Object> V8HTMLDocument::wrapInShadowObject(v8::Local<v8::Object> w
     return shadow;
 }
 
-v8::Handle<v8::Value> V8HTMLDocument::getNamedProperty(HTMLDocument* htmlDocument, const AtomicString& key, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
-{
-    if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
-        return v8Undefined();
-
-    RefPtr<HTMLCollection> items = htmlDocument->documentNamedItems(key);
-    if (items->isEmpty())
-        return v8Undefined();
-
-    if (items->hasExactlyOneItem()) {
-        Node* node = items->item(0);
-        Frame* frame = 0;
-        if (node->hasTagName(HTMLNames::iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
-            return toV8(frame->document()->domWindow(), creationContext, isolate);
-
-        return toV8(node, creationContext, isolate);
-    }
-
-    return toV8(items.release(), creationContext, isolate);
-}
-
 // HTMLDocument ----------------------------------------------------------------
 
 // Concatenates "args" to a string. If args is empty, returns empty string.

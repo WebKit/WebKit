@@ -37,6 +37,8 @@
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClient.h"
+#include "HTMLCollection.h"
+#include "HTMLIFrameElement.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "RuntimeEnabledFeatures.h"
@@ -46,6 +48,7 @@
 #include "V8DOMWindow.h"
 #include "V8Document.h"
 #include "V8GCForContextDispose.h"
+#include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8HiddenPropertyName.h"
 #include "V8Initializer.h"
@@ -427,13 +430,32 @@ void V8DOMWindowShell::updateDocument()
     updateSecurityOrigin();
 }
 
+static v8::Handle<v8::Value> getNamedProperty(HTMLDocument* htmlDocument, const AtomicString& key, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
+{
+    if (!htmlDocument->hasNamedItem(key.impl()) && !htmlDocument->hasExtraNamedItem(key.impl()))
+        return v8Undefined();
+
+    RefPtr<HTMLCollection> items = htmlDocument->documentNamedItems(key);
+    if (items->isEmpty())
+        return v8Undefined();
+
+    if (items->hasExactlyOneItem()) {
+        Node* node = items->item(0);
+        Frame* frame = 0;
+        if (node->hasTagName(HTMLNames::iframeTag) && (frame = static_cast<HTMLIFrameElement*>(node)->contentFrame()))
+            return toV8(frame->document()->domWindow(), creationContext, isolate);
+        return toV8(node, creationContext, isolate);
+    }
+    return toV8(items.release(), creationContext, isolate);
+}
+
 static v8::Handle<v8::Value> getter(v8::Local<v8::String> property, const v8::AccessorInfo& info)
 {
     // FIXME: Consider passing AtomicStringImpl directly.
     AtomicString name = toWebCoreAtomicString(property);
     HTMLDocument* htmlDocument = V8HTMLDocument::toNative(info.Holder());
     ASSERT(htmlDocument);
-    v8::Handle<v8::Value> result = V8HTMLDocument::getNamedProperty(htmlDocument, name, info.Holder(), info.GetIsolate());
+    v8::Handle<v8::Value> result = getNamedProperty(htmlDocument, name, info.Holder(), info.GetIsolate());
     if (!result.IsEmpty())
         return result;
     v8::Handle<v8::Value> prototype = info.Holder()->GetPrototype();
