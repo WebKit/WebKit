@@ -193,8 +193,6 @@ sub Parse
     };
     die $@ . " in $fileName" if $@;
 
-    die "No definitions founds" unless @definitions;
-
     my $document = idlDocument->new();
     $document->fileName($fileName);
     foreach my $definition (@definitions) {
