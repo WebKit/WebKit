@@ -3188,25 +3188,25 @@ void WebPageProxy::didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSid
     m_mainFrameIsPinnedToRightSide = pinnedToRightSide;
 }
 
-void WebPageProxy::didFailToInitializePlugin(const String& mimeType)
+void WebPageProxy::didFailToInitializePlugin(const String& mimeType, const String& frameURLString, const String& pageURLString)
 {
-    m_loaderClient.didFailToInitializePlugin(this, mimeType);
+    m_loaderClient.didFailToInitializePlugin(this, mimeType, frameURLString, pageURLString);
 }
 
-void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& urlString)
+void WebPageProxy::didBlockInsecurePluginVersion(const String& mimeType, const String& pluginURLString, const String& frameURLString, const String& pageURLString)
 {
-    String pluginIdentifier;
-    String pluginVersion;
+    String pluginBundleIdentifier;
+    String pluginBundleVersion;
+    String newMimeType = mimeType;
 
 #if PLATFORM(MAC)
-    String newMimeType = mimeType;
-    PluginInfoStore::Plugin plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), urlString));
+    PluginInfoStore::Plugin plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL(KURL(), pluginURLString));
 
-    pluginIdentifier = plugin.bundleIdentifier;
-    pluginVersion = plugin.versionString;
+    pluginBundleIdentifier = plugin.bundleIdentifier;
+    pluginBundleVersion = plugin.versionString;
 #endif
 
-    m_loaderClient.didBlockInsecurePluginVersion(this, newMimeType, pluginIdentifier, pluginVersion);
+    m_loaderClient.didBlockInsecurePluginVersion(this, newMimeType, pluginBundleIdentifier, pluginBundleVersion, frameURLString, pageURLString);
 }
 
 bool WebPageProxy::willHandleHorizontalScrollEvents() const

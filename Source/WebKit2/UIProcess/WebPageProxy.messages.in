@@ -65,8 +65,8 @@ messages -> WebPageProxy {
     RecommendedScrollbarStyleDidChange(int32_t newStyle)
     DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangeScrollOffsetPinningForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
-    DidFailToInitializePlugin(WTF::String mimeType)
-    DidBlockInsecurePluginVersion(WTF::String mimeType, WTF::String urlString)
+    DidFailToInitializePlugin(WTF::String mimeType, WTF::String frameURLString, WTF::String pageURLString)
+    DidBlockInsecurePluginVersion(WTF::String mimeType, WTF::String pluginURLString, WTF::String frameURLString, WTF::String pageURLString)
     NumWheelEventHandlersChanged(unsigned count)
 
 #if ENABLE(TILED_BACKING_STORE)

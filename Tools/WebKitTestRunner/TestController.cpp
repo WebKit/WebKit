@@ -355,8 +355,9 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didChangeBackForwardList
         0, // shouldGoToBackForwardListItem
         0, // didFailToInitializePlugin
-        0, // pluginDidFail
+        0, // pluginDidFail_deprecatedForUseWithV1
         0, // pluginLoadPolicy
+        0, // pluginDidFail
     };
     WKPageSetPageLoaderClient(m_mainWebView->page(), &pageLoaderClient);
 }
