@@ -920,7 +920,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, uint32_t& pluginLoadPolicy)
+void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, uint32_t& pluginLoadPolicy)
 {
     MESSAGE_CHECK(urlString);
 
@@ -934,7 +934,7 @@ void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString
     pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
 
     PluginModuleLoadPolicy currentPluginLoadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
-    pluginLoadPolicy = m_uiClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, currentPluginLoadPolicy);
+    pluginLoadPolicy = m_uiClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, documentURLString, currentPluginLoadPolicy);
 
     if (pluginLoadPolicy != PluginModuleLoadNormally)
         return;

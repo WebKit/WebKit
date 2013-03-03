@@ -332,10 +332,8 @@ PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* plu
 {
     String pluginPath;
     uint32_t pluginLoadPolicy;
-
-    if (!sendSync(
-            Messages::WebPageProxy::GetPluginPath(parameters.mimeType, parameters.url.string()),
-            Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy))) {
+    String documentURLString = pluginElement->document()->url().string();
+    if (!sendSync(Messages::WebPageProxy::GetPluginPath(parameters.mimeType, parameters.url.string(), documentURLString), Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy))) {
         return 0;
     }
 
