@@ -920,7 +920,7 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 }
 
 #if ENABLE(NETSCAPE_PLUGIN_API)
-void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, const String& documentURLString, String& pluginPath, uint32_t& pluginLoadPolicy)
+void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, String& pluginPath, uint32_t& pluginLoadPolicy)
 {
     MESSAGE_CHECK(urlString);
 
@@ -934,7 +934,7 @@ void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString
     pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
 
     PluginModuleLoadPolicy currentPluginLoadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
-    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, documentURLString, currentPluginLoadPolicy);
+    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, frameURLString, pageURLString, currentPluginLoadPolicy);
 
     if (pluginLoadPolicy != PluginModuleLoadNormally)
         return;
@@ -3375,5 +3375,35 @@ void WebPageProxy::handleCorrectionPanelResult(const String& result)
 #endif
 }
 #endif // PLATFORM(MAC)
+
+String WebPageProxy::pluginInformationBundleIdentifierKey()
+{
+    return "PluginInformationBundleIdentifier";
+}
+
+String WebPageProxy::pluginInformationBundleVersionKey()
+{
+    return "PluginInformationBundleVersion";
+}
+
+String WebPageProxy::pluginInformationDisplayNameKey()
+{
+    return "PluginInformationDisplayName";
+}
+
+String WebPageProxy::pluginInformationFrameURLKey()
+{
+    return "PluginInformationFrameURL";
+}
+
+String WebPageProxy::pluginInformationMIMETypeKey()
+{
+    return "PluginInformationMIMEType";
+}
+
+String WebPageProxy::pluginInformationPageURLKey()
+{
+    return "PluginInformationPageURL";
+}
 
 } // namespace WebKit

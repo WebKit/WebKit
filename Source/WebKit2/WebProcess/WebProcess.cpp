@@ -735,7 +735,7 @@ bool WebProcess::canPluginHandleResponse(const ResourceResponse& response) const
     String pluginPath;
     uint32_t pluginLoadPolicy;
 
-    if (!m_connection->sendSync(Messages::WebPageProxy::GetPluginPath(response.mimeType(), response.url().string(), response.url().string()), Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy), 0))
+    if (!m_connection->sendSync(Messages::WebPageProxy::GetPluginPath(response.mimeType(), response.url().string(), response.url().string(), response.url().string()), Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy), 0))
         return false;
 
     return pluginLoadPolicy != PluginModuleBlocked && !pluginPath.isEmpty();
