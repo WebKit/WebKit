@@ -934,7 +934,7 @@ void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString
     pluginLoadPolicy = PluginInfoStore::policyForPlugin(plugin);
 
     PluginModuleLoadPolicy currentPluginLoadPolicy = static_cast<PluginModuleLoadPolicy>(pluginLoadPolicy);
-    pluginLoadPolicy = m_uiClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, documentURLString, currentPluginLoadPolicy);
+    pluginLoadPolicy = m_loaderClient.pluginLoadPolicy(this, plugin.bundleIdentifier, plugin.info.name, documentURLString, currentPluginLoadPolicy);
 
     if (pluginLoadPolicy != PluginModuleLoadNormally)
         return;

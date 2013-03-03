@@ -599,8 +599,9 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         processDidExit,
         didChangeBackForwardList,
         0, // shouldGoToBackForwardItem
-        0,  // didFailToInitializePlugin
+        0, // didFailToInitializePlugin
         0, // pluginDidFail
+        0, // pluginLoadPolicy
     };
     WKPageSetPageLoaderClient(_webView.pageRef, &loadClient);
     
@@ -657,7 +658,6 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
         0, // unavailablePluginButtonClicked
-        0, // shouldInstantiatePlugin
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }
