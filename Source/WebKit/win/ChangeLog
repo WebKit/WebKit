@@ -1,3 +1,9 @@
+2013-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows build fix attempt after r144567.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-03-02  Benjamin Poulain  <benjamin@webkit.org>
 
         Export a missing symbol after r144547.
