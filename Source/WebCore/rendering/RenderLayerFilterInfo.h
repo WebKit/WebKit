@@ -32,9 +32,6 @@
 
 #if ENABLE(CSS_FILTERS)
 
-#if ENABLE(SVG)
-#include "CachedSVGDocument.h"
-#endif
 #include "FilterOperation.h"
 #include "LayoutRect.h"
 #include <wtf/HashMap.h>
@@ -43,6 +40,11 @@
 
 #if ENABLE(CSS_SHADERS)
 #include "CustomFilterProgramClient.h"
+#endif
+
+#if ENABLE(SVG)
+#include "CachedSVGDocument.h"
+#include "Element.h"
 #endif
 
 namespace WebCore {
