@@ -196,14 +196,14 @@ void WebView::didCommitLoad()
 
 void WebView::updateViewportSize()
 {
+    FloatSize size = m_ewkView->size();
+    // The viewport controller expects sizes in UI units, and not raw device units.
+    size.scale(1 / m_page->deviceScaleFactor());
     if (m_page->useFixedLayout()) {
-        FloatSize size = m_ewkView->size();
-        // The viewport controller expects sizes in UI units, and not raw device units.
-        size.scale(1 / m_page->deviceScaleFactor());
         m_ewkView->pageViewportController()->didChangeViewportSize(size);
         return;
     }
-    m_page->drawingArea()->setVisibleContentsRect(IntRect(roundedIntPoint(m_ewkView->pagePosition()), m_ewkView->size()), FloatPoint());
+    m_page->drawingArea()->setVisibleContentsRect(FloatRect(m_ewkView->pagePosition(), size), FloatPoint());
 }
 
 void WebView::didChangeContentsSize(const WebCore::IntSize& size)

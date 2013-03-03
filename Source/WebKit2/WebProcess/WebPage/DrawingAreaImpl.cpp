@@ -73,7 +73,6 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
 
 #if USE(COORDINATED_GRAPHICS)
     m_alwaysUseCompositing = true;
-    webPage->corePage()->settings()->setScrollingCoordinatorEnabled(true);
 #endif
 
     if (m_alwaysUseCompositing)

@@ -93,6 +93,9 @@ CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
     , m_forceRepaintAsyncCallbackID(0)
     , m_animationsLocked(false)
 {
+    m_webPage->corePage()->settings()->setScrollingCoordinatorEnabled(true);
+    m_webPage->corePage()->settings()->setApplyDeviceScaleFactorInCompositor(true);
+
     // Create a root layer.
     m_rootLayer = GraphicsLayer::create(this, this);
     CoordinatedGraphicsLayer* coordinatedRootLayer = toCoordinatedGraphicsLayer(m_rootLayer.get());

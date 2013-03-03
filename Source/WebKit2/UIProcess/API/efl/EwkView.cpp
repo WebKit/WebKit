@@ -453,6 +453,9 @@ void EwkView::setCursor(const Cursor& cursor)
 void EwkView::setDeviceScaleFactor(float scale)
 {
     page()->setIntrinsicDeviceScaleFactor(scale);
+
+    // Update internal viewport size after device-scale change.
+    setSize(m_size);
 }
 
 float EwkView::deviceScaleFactor() const
@@ -468,7 +471,10 @@ void EwkView::setSize(const IntSize& size)
     if (!drawingArea)
         return;
 
-    drawingArea->setSize(m_size, IntSize());
+    FloatSize dipSize(m_size);
+    // Web Process expects sizes in UI units, and not raw device units.
+    dipSize.scale(1 / deviceScaleFactor());
+    drawingArea->setSize(roundedIntSize(dipSize), IntSize());
     webView()->updateViewportSize();
 }
 

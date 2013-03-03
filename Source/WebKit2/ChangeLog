@@ -1,3 +1,35 @@
+2013-03-03  Huang Dongsung  <luxtella@company100.net>
+
+        [EFL][QT][WK2] Turn on ApplyDeviceScaleFactorInCompositor always.
+        https://bugs.webkit.org/show_bug.cgi?id=110298
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Currently, EFL and Qt turn on ApplyDeviceScaleFactorInCompositor when using
+        fixed layout, but ApplyDeviceScaleFactorInCompositor is not related to fixed
+        layout. It is confusing that a platform WebView deals with device view size or
+        DIP view size case by case. So this patch always turns on
+        ApplyDeviceScaleFactorInCompositor.
+
+        In addition, move the code that turns on ScrollingCoordinatorEnabled to
+        CoordinatedLayerTreeHost.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::setDeviceScaleFactor):
+            We should make WebPage know new DIP size.
+        (EwkView::setSize):
+            When we set ApplyDeviceScaleFactorInCompositor to true, make WebPage
+            know the DIP size as a view size.
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::updateViewportSize):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::CoordinatedLayerTreeHost):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::setUseFixedLayout):
+            WebPage sends the DIP size to Web Process even when we don't use fixed layout.
+
 2013-03-03  Sam Weinig  <sam@webkit.org>
 
         Shared Web Workers have an incorrect visible process name
