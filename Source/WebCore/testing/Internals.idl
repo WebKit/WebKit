@@ -217,7 +217,8 @@
 
     DOMString counterValue(in Element element);
     long pageNumber(in Element element, in [Optional] float pageWidth, in [Optional] float pageHeight);
-    DOMString[] iconURLs(in Document document);
+    DOMString[] shortcutIconURLs(in Document document);
+    DOMString[] allIconURLs(in Document document);
     long numberOfPages(in [Optional] double pageWidthInPixels, in [Optional] double pageHeightInPixels);
     DOMString pageProperty(in DOMString propertyName, in long pageNumber) raises (DOMException);
     DOMString pageSizeAndMarginsInPixels(in long pageIndex, in long width, in long height, in long marginTop, in long marginRight, in long marginBottom, in long marginLeft) raises (DOMException);
