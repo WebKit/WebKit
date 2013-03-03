@@ -388,6 +388,8 @@
 		51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */ = {isa = PBXBuildFile; fileRef = 51D130521382EAC000351EDD /* SecItemResponseData.h */; };
 		51D130581382F10500351EDD /* WebProcessProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51D130571382F10500351EDD /* WebProcessProxyMac.mm */; };
 		51EA7D0116E2EFAC00BA328A /* PluginModuleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EA7D0016E2EFAC00BA328A /* PluginModuleInfo.h */; };
+		51EA7D1116E32A2200BA328A /* WKContextPrivateMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 51EA7D0F16E32A2200BA328A /* WKContextPrivateMac.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		51EA7D1216E32A2200BA328A /* WKContextPrivateMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51EA7D1016E32A2200BA328A /* WKContextPrivateMac.mm */; };
 		5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5272B2881406985D0096A5D0 /* StatisticsData.cpp */; };
 		5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5272B2891406985D0096A5D0 /* StatisticsData.h */; };
 		5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */; };
@@ -1336,6 +1338,8 @@
 		51D130521382EAC000351EDD /* SecItemResponseData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecItemResponseData.h; sourceTree = "<group>"; };
 		51D130571382F10500351EDD /* WebProcessProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebProcessProxyMac.mm; sourceTree = "<group>"; };
 		51EA7D0016E2EFAC00BA328A /* PluginModuleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginModuleInfo.h; sourceTree = "<group>"; };
+		51EA7D0F16E32A2200BA328A /* WKContextPrivateMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WKContextPrivateMac.h; path = mac/WKContextPrivateMac.h; sourceTree = "<group>"; };
+		51EA7D1016E32A2200BA328A /* WKContextPrivateMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WKContextPrivateMac.mm; path = mac/WKContextPrivateMac.mm; sourceTree = "<group>"; };
 		5272B2881406985D0096A5D0 /* StatisticsData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StatisticsData.cpp; sourceTree = "<group>"; };
 		5272B2891406985D0096A5D0 /* StatisticsData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StatisticsData.h; sourceTree = "<group>"; };
 		5DA6ED081490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicLinkerEnvironmentExtractor.h; sourceTree = "<group>"; };
@@ -2517,6 +2521,8 @@
 		6EE849C41368D9040038D481 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				51EA7D0F16E32A2200BA328A /* WKContextPrivateMac.h */,
+				51EA7D1016E32A2200BA328A /* WKContextPrivateMac.mm */,
 				6EE849C61368D92D0038D481 /* WKInspectorMac.h */,
 				BCE17B7B1381F1170012A641 /* WKPagePrivateMac.cpp */,
 				BCE17B7C1381F1170012A641 /* WKPagePrivateMac.h */,
@@ -3883,6 +3889,7 @@
 				5272B28B1406985D0096A5D0 /* StatisticsData.h in Headers */,
 				5DA6ED0A1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.h in Headers */,
 				51EA7D0116E2EFAC00BA328A /* PluginModuleInfo.h in Headers */,
+				51EA7D1116E32A2200BA328A /* WKContextPrivateMac.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4559,6 +4566,7 @@
 				E199875E142C045400BB2DE7 /* BuiltInPDFView.cpp in Sources */,
 				5272B28A1406985D0096A5D0 /* StatisticsData.cpp in Sources */,
 				5DA6ED0B1490606900B41D12 /* DynamicLinkerEnvironmentExtractor.mm in Sources */,
+				51EA7D1216E32A2200BA328A /* WKContextPrivateMac.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -88,6 +88,7 @@ AXUIElementRef WKCreateAXUIElementRef(id element);
 void WKUnregisterUniqueIdForElement(id element);
 
 BOOL WKShouldBlockPlugin(NSString *bundleIdentifier, NSString *bundleVersionString);
+BOOL WKIsPluginUpdateAvailable(NSString *bundleIdentifier);
 
 #if !defined(BUILDING_ON_LEOPARD)
 // Remote Accessibility API.
