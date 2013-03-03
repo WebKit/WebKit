@@ -57,6 +57,7 @@ static const int sizingTinyDimensionThreshold = 40;
 static const int sizingSmallWidthThreshold = 250;
 static const int sizingMediumWidthThreshold = 450;
 static const int sizingMediumHeightThreshold = 300;
+static const float sizingFullPageAreaRatioThreshold = 0.96;
 
 // This delay should not exceed the snapshot delay in PluginView.cpp
 static const double simulatedMouseClickTimerDelay = .75;
@@ -414,7 +415,9 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         || !document()->page()->settings()->plugInSnapshottingEnabled())
         return;
 
-    if (document()->isPluginDocument() && document()->frame() == document()->page()->mainFrame()) {
+    bool inMainFrame = document()->frame() == document()->page()->mainFrame();
+
+    if (document()->isPluginDocument() && inMainFrame) {
         LOG(Plugins, "%p Plug-in document in main frame", this);
         return;
     }
@@ -424,11 +427,25 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    LayoutRect rect = toRenderEmbeddedObject(renderer())->contentBoxRect();
-    int width = rect.width();
-    int height = rect.height();
-    if (width <= sizingTinyDimensionThreshold || height <= sizingTinyDimensionThreshold) {
-        LOG(Plugins, "%p Plug-in is %dx%d, set to play", this, width, height);
+    RenderBox* renderEmbeddedObject = toRenderBox(renderer());
+    Length styleWidth = renderEmbeddedObject->style()->width();
+    Length styleHeight = renderEmbeddedObject->style()->height();
+    LayoutRect contentBoxRect = renderEmbeddedObject->contentBoxRect();
+    int contentWidth = contentBoxRect.width();
+    int contentHeight = contentBoxRect.height();
+    int contentArea = contentWidth * contentHeight;
+    IntSize visibleViewSize = document()->frame()->view()->visibleSize();
+    int visibleArea = visibleViewSize.width() * visibleViewSize.height();
+
+    if (inMainFrame && styleWidth.isPercent() && (styleWidth.percent() == 100)
+        && styleHeight.isPercent() && (styleHeight.percent() == 100)
+        && (static_cast<float>(contentArea) / visibleArea > sizingFullPageAreaRatioThreshold)) {
+        LOG(Plugins, "%p Plug-in is top level full page, set to play", this);
+        return;
+    }
+
+    if (contentWidth <= sizingTinyDimensionThreshold || contentHeight <= sizingTinyDimensionThreshold) {
+        LOG(Plugins, "%p Plug-in is %dx%d, set to play", this, contentWidth, contentHeight);
         return;
     }
 
@@ -446,7 +463,7 @@ void HTMLPlugInImageElement::subframeLoaderWillCreatePlugIn(const KURL& url)
         return;
     }
 
-    LOG(Plugins, "%p Plug-in hash %x is %dx%d, origin is not auto-start, set to wait for snapshot", this, m_plugInOriginHash, width, height);
+    LOG(Plugins, "%p Plug-in hash %x is %dx%d, origin is not auto-start, set to wait for snapshot", this, m_plugInOriginHash, contentWidth, contentHeight);
     // We may have got to this point by restarting a snapshotted plug-in, in which case we don't want to
     // reset the display state.
     if (displayState() != PlayingWithPendingMouseClick)
