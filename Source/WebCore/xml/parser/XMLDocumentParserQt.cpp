@@ -262,7 +262,7 @@ void XMLDocumentParser::resumeParsing()
     // Then, write any pending data
     SegmentedString rest = m_pendingSrc;
     m_pendingSrc.clear();
-    append(rest);
+    append(rest.toString().impl());
 
     // Finally, if finish() has been called and append() didn't result
     // in any further callbacks being queued, call end()
@@ -273,9 +273,9 @@ void XMLDocumentParser::resumeParsing()
 bool XMLDocumentParser::appendFragmentSource(const String& source)
 {
     ASSERT(!m_sawFirstElement);
-    append(String("<qxmlstreamdummyelement>"));
-    append(source);
-    append(String("</qxmlstreamdummyelement>"));
+    append(String("<qxmlstreamdummyelement>").impl());
+    append(source.impl());
+    append(String("</qxmlstreamdummyelement>").impl());
     return !hasError();
 }
 
