@@ -24,6 +24,7 @@
 #include "MemoryCache.h"
 
 #include "CachedResource.h"
+#include "CachedResourceHandle.h"
 #include "CrossThreadTask.h"
 #include "Document.h"
 #include "FrameLoader.h"
