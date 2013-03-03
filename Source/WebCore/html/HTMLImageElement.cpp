@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "CachedImage.h"
 #include "EventNames.h"
 #include "FrameView.h"
 #include "HTMLDocument.h"

@@ -41,6 +41,7 @@
 #include "CachedResourceLoader.h"
 #include "DocumentType.h"
 #include "EditorClient.h"
+#include "Event.h"
 #include "EventNames.h"
 #include "FloatQuad.h"
 #include "FocusController.h"
@@ -91,6 +92,7 @@
 #include "markup.h"
 #include "npruntime_impl.h"
 #include "visible_units.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/StdLibExtras.h>
 

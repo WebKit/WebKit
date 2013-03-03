@@ -32,6 +32,7 @@
 #include "WebDataSourceImpl.h"
 
 #include "ApplicationCacheHostInternal.h"
+#include "FrameLoader.h"
 #include <public/WebURL.h>
 #include <public/WebURLError.h>
 #include <public/WebVector.h>

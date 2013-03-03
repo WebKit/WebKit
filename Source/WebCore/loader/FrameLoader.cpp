@@ -87,6 +87,7 @@
 #include "PluginData.h"
 #include "PluginDatabase.h"
 #include "PluginDocument.h"
+#include "PolicyChecker.h"
 #include "ProgressTracker.h"
 #include "ResourceHandle.h"
 #include "ResourceRequest.h"

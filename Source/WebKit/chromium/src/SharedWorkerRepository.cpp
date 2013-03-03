@@ -41,6 +41,7 @@
 #include "InspectorInstrumentation.h"
 #include "MessagePortChannel.h"
 #include "PlatformMessagePortChannelChromium.h"
+#include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "SharedWorker.h"
 #include "WebContentSecurityPolicy.h"

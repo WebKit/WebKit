@@ -44,6 +44,7 @@
 #include "ManifestParser.h"
 #include "Page.h"
 #include "ResourceBuffer.h"
+#include "ResourceHandle.h"
 #include "ScriptProfile.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"

@@ -1,5 +1,27 @@
 2013-03-03  Adam Barth  <abarth@webkit.org>
 
+        Unreviewed attempted build fix. Adds back some includes removed in
+        http://trac.webkit.org/changeset/144565.
+
+        * Shared/WebRenderLayer.cpp:
+        * Shared/WebRenderObject.cpp:
+        * WebProcess/Geolocation/GeolocationPermissionRequestManager.cpp:
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        * WebProcess/InjectedBundle/DOM/InjectedBundleNodeHandle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        * WebProcess/InjectedBundle/InjectedBundleDOMWindowExtension.cpp:
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        * WebProcess/Plugins/PluginView.cpp:
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        * WebProcess/WebCoreSupport/mac/WebFrameNetworkingContext.mm:
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        * WebProcess/WebProcess.cpp:
+        * WebProcess/soup/WebProcessSoup.cpp:
+
+2013-03-03  Adam Barth  <abarth@webkit.org>
+
         Unreviewed rollout of http://trac.webkit.org/r144530
         As described in https://bugs.webkit.org/show_bug.cgi?id=111167 and
         https://bugs.webkit.org/show_bug.cgi?id=111035, this patch caused a

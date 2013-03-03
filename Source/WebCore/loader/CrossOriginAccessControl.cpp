@@ -28,6 +28,7 @@
 #include "CrossOriginAccessControl.h"
 
 #include "HTTPParsers.h"
+#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include "SecurityOrigin.h"
 #include <wtf/Threading.h>

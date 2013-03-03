@@ -41,6 +41,7 @@
 #import <JavaScriptCore/APICast.h>
 #import <WebCore/Document.h>
 #import <WebCore/Frame.h>
+#import <WebCore/FrameLoader.h>
 #import <WebCore/HTMLInputElement.h>
 #import <WebCore/HTMLParserIdioms.h>
 #import <WebCore/JSElement.h>

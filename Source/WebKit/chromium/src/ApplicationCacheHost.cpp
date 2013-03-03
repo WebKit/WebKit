@@ -35,6 +35,7 @@
 #include "DOMApplicationCache.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "InspectorApplicationCacheAgent.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"

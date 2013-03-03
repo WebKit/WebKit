@@ -32,6 +32,7 @@
 
 #include "ApplicationCacheHost.h"
 #include "BackForwardController.h"
+#include "CachedRawResource.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
 #include "Console.h"

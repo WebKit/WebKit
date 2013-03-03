@@ -38,6 +38,7 @@
 #include "ContentSecurityPolicy.h"
 #include "DiagnosticLoggingKeys.h"
 #include "Frame.h"
+#include "FrameLoader.h"
 #include "FrameLoaderClient.h"
 #include "HTMLAppletElement.h"
 #include "HTMLFrameElementBase.h"
