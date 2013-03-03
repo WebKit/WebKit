@@ -1,3 +1,11 @@
+2013-03-02  Benjamin Poulain  <benjamin@webkit.org>
+
+        Export a missing symbol after r144547.
+
+        Unreviewed.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
 2013-03-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Redo r144538 (after r144530).

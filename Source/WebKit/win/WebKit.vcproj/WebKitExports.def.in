@@ -110,6 +110,7 @@ EXPORTS
         ?fastZeroedMalloc@WTF@@YAPAXI@Z
         ?fastFree@WTF@@YAXPAX@Z
         ?fastCalloc@WTF@@YAPAXII@Z
+        ??0CSSComputedStyleDeclaration@WebCore@@AAE@V?$PassRefPtr@VNode@WebCore@@@WTF@@_NABVString@3@@Z
         ??0Mutex@WTF@@QAE@XZ
         ??0ThreadCondition@WTF@@QAE@XZ
         ??1Mutex@WTF@@QAE@XZ
