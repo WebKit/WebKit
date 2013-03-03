@@ -574,12 +574,12 @@ long long WebFrameImpl::identifier() const
     return m_identifier;
 }
 
-WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypesMask) const
+WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
 {
     // The URL to the icon may be in the header. As such, only
     // ask the loader for the icon if it's finished loading.
     if (frame()->loader()->state() == FrameStateComplete)
-        return frame()->loader()->icon()->urlsForTypes(iconTypesMask);
+        return frame()->loader()->icon()->urlsForTypes(iconTypes);
     return WebVector<WebIconURL>();
 }
 

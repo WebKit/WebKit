@@ -45,7 +45,7 @@ function runTests() {
 
     // check that the URL list in the document is as we expect
     var expectedURLs = "http://test.com/oldfavicon.ico";
-    var iconURLs = window.internals.shortcutIconURLs(document);
+    var iconURLs = window.internals.iconURLs(document);
     if (expectedURLs == iconURLs[0])
         testPassed('URL list matches expected');
     else

@@ -130,10 +130,10 @@ public:
     virtual long long identifier() const = 0;
 
     // The urls of the given combination types of favicon (if any) specified by
-    // the document loaded in this frame. The iconTypesMask is a bit-mask of
+    // the document loaded in this frame. The iconTypes is a bit-mask of
     // WebIconURL::Type values, used to select from the available set of icon
     // URLs
-    virtual WebVector<WebIconURL> iconURLs(int iconTypesMask) const = 0;
+    virtual WebVector<WebIconURL> iconURLs(int iconTypes) const = 0;
 
 
     // Geometry -----------------------------------------------------------

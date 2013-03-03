@@ -4499,19 +4499,14 @@ PassRefPtr<XPathResult> Document::evaluate(const String& expression,
     return m_xpathEvaluator->evaluate(expression, contextNode, resolver, type, result, ec);
 }
 
-const Vector<IconURL>& Document::shortcutIconURLs()
-{
-    // Include any icons where type = link, rel = "shortcut icon".
-    return iconURLs(Favicon);
-}
-
-const Vector<IconURL>& Document::iconURLs(int iconTypesMask)
+const Vector<IconURL>& Document::iconURLs()
 {
     m_iconURLs.clear();
 
     if (!head() || !(head()->children()))
         return m_iconURLs;
 
+    // Include any icons where type = link, rel = "shortcut icon".
     RefPtr<HTMLCollection> children = head()->children();
     unsigned int length = children->length();
     for (unsigned int i = 0; i < length; ++i) {
@@ -4519,7 +4514,7 @@ const Vector<IconURL>& Document::iconURLs(int iconTypesMask)
         if (!child->hasTagName(linkTag))
             continue;
         HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(child);
-        if (!(linkElement->iconType() & iconTypesMask))
+        if (linkElement->iconType() != Favicon)
             continue;
         if (linkElement->href().isEmpty())
             continue;

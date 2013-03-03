@@ -48,7 +48,7 @@ public:
     ~IconController();
 
     KURL url();
-    IconURLs urlsForTypes(int iconTypesMask);
+    IconURLs urlsForTypes(int iconTypes);
     IconURL iconURL(IconType) const;
 
     void startLoader();

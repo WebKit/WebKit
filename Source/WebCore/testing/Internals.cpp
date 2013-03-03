@@ -1766,9 +1766,9 @@ int Internals::pageNumber(Element* element, float pageWidth, float pageHeight)
     return PrintContext::pageNumberForElement(element, FloatSize(pageWidth, pageHeight));
 }
 
-Vector<String> Internals::iconURLs(Document* document, int iconTypesMask) const
+Vector<String> Internals::iconURLs(Document* document) const
 {
-    Vector<IconURL> iconURLs = document->iconURLs(iconTypesMask);
+    Vector<IconURL> iconURLs = document->iconURLs();
     Vector<String> array;
 
     Vector<IconURL>::const_iterator iter(iconURLs.begin());
@@ -1776,16 +1776,6 @@ Vector<String> Internals::iconURLs(Document* document, int iconTypesMask) const
         array.append(iter->m_iconURL.string());
 
     return array;
-}
-
-Vector<String> Internals::shortcutIconURLs(Document* document) const
-{
-    return iconURLs(document, Favicon);
-}
-
-Vector<String> Internals::allIconURLs(Document* document) const
-{
-    return iconURLs(document, Favicon | TouchIcon | TouchPrecomposedIcon);
 }
 
 int Internals::numberOfPages(float pageWidth, float pageHeight)

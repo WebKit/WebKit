@@ -1,3 +1,18 @@
+2013-03-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r144567.
+        http://trac.webkit.org/changeset/144567
+        https://bugs.webkit.org/show_bug.cgi?id=111266
+
+        Does not compile on apple-win (Requested by abarth on
+        #webkit).
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::iconURLs):
+        * src/WebFrameImpl.h:
+        (WebFrameImpl):
+
 2013-03-03  Mike West  <mkwst@chromium.org>
 
         CSP 1.1: Support CSP 1.1 directives on the unprefixed header.
