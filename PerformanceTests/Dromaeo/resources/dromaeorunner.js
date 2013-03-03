@@ -3,10 +3,11 @@
          baseURL: "./resources/dromaeo/web/index.html",
 
          setup: function(testName) {
-             PerfTestRunner.prepareToMeasureValuesAsync({iterationCount: 5, doNotMeasureMemoryUsage: true, doNotIgnoreInitialRun: true, unit: 'runs/s'});
+             var ITERATION_COUNT = 5;
+             PerfTestRunner.prepareToMeasureValuesAsync({dromaeoIterationCount: ITERATION_COUNT, doNotMeasureMemoryUsage: true, doNotIgnoreInitialRun: true, unit: 'runs/s'});
 
              var iframe = document.createElement("iframe");
-             var url = DRT.baseURL + "?" + testName + '&numTests=' + PerfTestRunner.iterationCount();
+             var url = DRT.baseURL + "?" + testName + '&numTests=' + ITERATION_COUNT;
              iframe.setAttribute("src", url);
              document.body.insertBefore(iframe, document.body.firstChild);
              iframe.addEventListener(

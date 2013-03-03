@@ -185,6 +185,13 @@ Reference <span id="reference" class="checkbox"></span>
 })();
 
 function TestResult(metric, values, associatedRun) {
+    if (values[0] instanceof Array) {
+        var flattenedValues = [];
+        for (var i = 0; i < values.length; i++)
+            flattenedValues = flattenedValues.concat(values[i]);
+        values = flattenedValues;
+    }
+
     this.test = function () { return metric; }
     this.values = function () { return values.map(function (value) { return metric.scalingFactor() * value; }); }
     this.unscaledMean = function () { return Statistics.sum(values) / values.length; }

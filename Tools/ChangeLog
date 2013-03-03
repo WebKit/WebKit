@@ -1,3 +1,68 @@
+2013-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Some perf. tests have variances that differ greatly between runs
+        https://bugs.webkit.org/show_bug.cgi?id=97510
+
+        Reviewed by Benjamin Poulain.
+
+        Use multiple instances of DumpRenderTree or WebKitTestRunner to amortize the effect of the runtime
+        environment on test results (we run each instance after one another, not in parallel).
+
+        We use 4 instances of the test runner, each executing 5 in-process iterations, for the total of 20
+        iterations as it was done previously in single process. These values are hard-coded in perftest.py
+        and runner.js but they are to be configurable in the future.
+
+        Set of 5 iterations obtained by the same test runner is treated as an "iteration group" and each
+        metric now reports an array of the length 4 with each element containing an array of 5 iteration
+        values obtained by each test runner instance as opposed to a flattened array of 20 iteration values.
+
+        Unfortunately, we can use the same trick on Dromaeo because we're already doing only 5 iterations
+        and repeating the entire Dromaeo 4 times will take too long. We need to disable more Dromaeo tests
+        as needed. To this end, added SingleProcessPerfTest to preserve the old behavior.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTestMetric.append_group): Renamed from append.
+        (PerfTestMetric.grouped_iteration_values): Added.
+        (PerfTestMetric.flattened_iteration_values): Renamed from iteration_values.
+
+        (PerfTest.__init__): Takes the number of processes (drivers) to run tests with.
+        This parameter is only used by SingleProcessPerfTest.
+
+        (PerfTest.run): Repeat tests using different driver processes.
+        (PerfTest._run_with_driver): Returns a boolean instead of a list of measured metrics
+        since metrics are shared between multiple drivers (i.e. multiple calls to _run_with_driver).
+        We instead use _ensure_metrics to obtain the matched metrics and store the data there.
+        (PerfTest._ensure_metrics): Added.
+
+        (SingleProcessPerfTest): Added. Used to run Dromaeo tests where running it on 4 different
+        instances of DumpRenderTree/WebKitTestRunner takes too long.
+        (SingleProcessPerfTest.__init__):
+
+        (ReplayPerfTest._run_with_driver): Updated to use _ensure_metrics.
+
+        (PerfTestFactory): Use SingleProcessPerfTest to run Dromaeo tests.
+
+        * Scripts/webkitpy/performance_tests/perftest_unittest.py: Updated various tests that expect
+        _run_with_driver to return a list of metrics. Now it returns a boolean indicating whether
+        the test succeeded or not. Obtain the dictionary of metrics via test._metrics instead.
+
+        (TestPerfTestMetric.test_append): Updated per name and added some test cases for
+        grouped_iteration_values.
+
+        (TestPerfTest._assert_results_are_correct):
+
+        (TestSingleProcessPerfTest): Added.
+        (TestSingleProcessPerfTest.test_use_only_one_process):
+        (TestSingleProcessPerfTest.test_use_only_one_process.run_single):
+
+        (TestReplayPerfTest.test_run_with_driver_accumulates_results):
+        (TestReplayPerfTest.test_run_with_driver_accumulates_memory_results):
+
+        * Scripts/webkitpy/performance_tests/perftestsrunner_integrationtest.py: Updated values of
+        sample standard deviations since we're now running tests 4 times.
+        (MainTest._test_run_with_json_output.mock_upload_json):
+        (MainTest.test_run_with_upload_json_should_generate_perf_webkit_json):
+
 2013-03-03  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Remove WebLayerTreeView::setViewportSize call

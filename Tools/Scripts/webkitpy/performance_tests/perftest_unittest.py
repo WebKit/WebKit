@@ -41,6 +41,7 @@ from webkitpy.performance_tests.perftest import PerfTest
 from webkitpy.performance_tests.perftest import PerfTestMetric
 from webkitpy.performance_tests.perftest import PerfTestFactory
 from webkitpy.performance_tests.perftest import ReplayPerfTest
+from webkitpy.performance_tests.perftest import SingleProcessPerfTest
 
 
 class MockPort(TestPort):
@@ -69,25 +70,32 @@ class TestPerfTestMetric(unittest.TestCase):
         self.assertFalse(metric.has_values())
         self.assertFalse(metric2.has_values())
 
-        metric.append(1)
+        metric.append_group([1])
         self.assertTrue(metric.has_values())
         self.assertFalse(metric2.has_values())
-        self.assertEqual(metric.iteration_values(), [1])
-        metric.append(2)
-        self.assertEqual(metric.iteration_values(), [1, 2])
+        self.assertEqual(metric.grouped_iteration_values(), [[1]])
+        self.assertEqual(metric.flattened_iteration_values(), [1])
 
-        metric2.append(3)
+        metric.append_group([2])
+        self.assertEqual(metric.grouped_iteration_values(), [[1], [2]])
+        self.assertEqual(metric.flattened_iteration_values(), [1, 2])
+
+        metric2.append_group([3])
         self.assertTrue(metric2.has_values())
-        self.assertEqual(metric.iteration_values(), [1, 2])
-        self.assertEqual(metric2.iteration_values(), [3])
+        self.assertEqual(metric.flattened_iteration_values(), [1, 2])
+        self.assertEqual(metric2.flattened_iteration_values(), [3])
+
+        metric.append_group([4, 5])
+        self.assertEqual(metric.grouped_iteration_values(), [[1], [2], [4, 5]])
+        self.assertEqual(metric.flattened_iteration_values(), [1, 2, 4, 5])
 
 
 class TestPerfTest(unittest.TestCase):
     def _assert_results_are_correct(self, test, output):
         test.run_single = lambda driver, path, time_out_ms: output
-        parsed_results = test._run_with_driver(None, None)
-        self.assertEqual(len(parsed_results), 1)
-        self.assertEqual(parsed_results[0].iteration_values(), [1080, 1120, 1095, 1101, 1104])
+        self.assertTrue(test._run_with_driver(None, None))
+        self.assertEqual(test._metrics.keys(), ['Time'])
+        self.assertEqual(test._metrics['Time'].flattened_iteration_values(), [1080, 1120, 1095, 1101, 1104])
 
     def test_parse_output(self):
         output = DriverOutput("""
@@ -133,7 +141,7 @@ max 1120 ms
         try:
             test = PerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
             test.run_single = lambda driver, path, time_out_ms: output
-            self.assertIsNone(test._run_with_driver(None, None))
+            self.assertFalse(test._run_with_driver(None, None))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
         self.assertEqual(actual_stdout, '')
@@ -198,6 +206,30 @@ max 1120 ms
         self.assertEqual(actual_stdout, '')
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, '')
+
+
+class TestSingleProcessPerfTest(unittest.TestCase):
+    def test_use_only_one_process(self):
+        called = [0]
+
+        def run_single(driver, path, time_out_ms):
+            called[0] += 1
+            return DriverOutput("""
+Running 20 times
+Ignoring warm-up run (1115)
+
+Time:
+values 1080, 1120, 1095, 1101, 1104 ms
+avg 1100 ms
+median 1101 ms
+stdev 14.50862 ms
+min 1080 ms
+max 1120 ms""", image=None, image_hash=None, audio=None)
+
+        test = SingleProcessPerfTest(MockPort(), 'some-test', '/path/some-dir/some-test')
+        test.run_single = run_single
+        self.assertTrue(test.run(0))
+        self.assertEqual(called[0], 1)
 
 
 class TestReplayPerfTest(unittest.TestCase):
@@ -301,7 +333,7 @@ class TestReplayPerfTest(unittest.TestCase):
         output_capture.capture_output()
         try:
             driver = port.create_driver(worker_number=1, no_timeout=True)
-            metrics = test._run_with_driver(driver, None)
+            self.assertTrue(test._run_with_driver(driver, None))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
@@ -309,9 +341,8 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, '')
 
-        self.assertEqual(len(metrics), 1)
-        self.assertEqual(metrics[0].name(), 'Time')
-        self.assertEqual(metrics[0].iteration_values(), [float(i * 1000) for i in range(2, 21)])
+        self.assertEqual(test._metrics.keys(), ['Time'])
+        self.assertEqual(test._metrics['Time'].flattened_iteration_values(), [float(i * 1000) for i in range(2, 7)])
 
     def test_run_with_driver_accumulates_memory_results(self):
         port = MockPort()
@@ -327,7 +358,7 @@ class TestReplayPerfTest(unittest.TestCase):
         output_capture.capture_output()
         try:
             driver = port.create_driver(worker_number=1, no_timeout=True)
-            metrics = test._run_with_driver(driver, None)
+            self.assertTrue(test._run_with_driver(driver, None))
         finally:
             actual_stdout, actual_stderr, actual_logs = output_capture.restore_output()
 
@@ -335,13 +366,11 @@ class TestReplayPerfTest(unittest.TestCase):
         self.assertEqual(actual_stderr, '')
         self.assertEqual(actual_logs, '')
 
-        self.assertEqual(len(metrics), 3)
-        self.assertEqual(metrics[0].name(), 'Time')
-        self.assertEqual(metrics[0].iteration_values(), [float(i * 1000) for i in range(2, 21)])
-        self.assertEqual(metrics[1].name(), 'Malloc')
-        self.assertEqual(metrics[1].iteration_values(), [float(10)] * 19)
-        self.assertEqual(metrics[2].name(), 'JSHeap')
-        self.assertEqual(metrics[2].iteration_values(), [float(5)] * 19)
+        metrics = test._metrics
+        self.assertEqual(sorted(metrics.keys()), ['JSHeap', 'Malloc', 'Time'])
+        self.assertEqual(metrics['Time'].flattened_iteration_values(), [float(i * 1000) for i in range(2, 7)])
+        self.assertEqual(metrics['Malloc'].flattened_iteration_values(), [float(10)] * 5)
+        self.assertEqual(metrics['JSHeap'].flattened_iteration_values(), [float(5)] * 5)
 
     def test_prepare_fails_when_wait_until_ready_fails(self):
         output_capture = OutputCapture()

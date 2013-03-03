@@ -106,7 +106,7 @@
     var particles = [];
 
     window.onload = function () {
-        PerfTestRunner.prepareToMeasureValuesAsync({iterationCount: 10, done: onCompletedRun, unit: 'fps'});
+        PerfTestRunner.prepareToMeasureValuesAsync({done: onCompletedRun, unit: 'fps'});
 
         // Create the particles
         for (var i = 0; i < MAX_PARTICLES; i++)

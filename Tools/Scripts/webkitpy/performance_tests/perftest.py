@@ -65,11 +65,15 @@ class PerfTestMetric(object):
     def has_values(self):
         return bool(self._iterations)
 
-    def append(self, value):
-        self._iterations.append(value)
+    def append_group(self, group_values):
+        assert isinstance(group_values, list)
+        self._iterations.append(group_values)
 
-    def iteration_values(self):
+    def grouped_iteration_values(self):
         return self._iterations
+
+    def flattened_iteration_values(self):
+        return [value for group_values in self._iterations for value in group_values]
 
     def unit(self):
         return self._unit
@@ -85,11 +89,14 @@ class PerfTestMetric(object):
 
 
 class PerfTest(object):
-    def __init__(self, port, test_name, test_path):
+    def __init__(self, port, test_name, test_path, process_run_count=4):
         self._port = port
         self._test_name = test_name
         self._test_path = test_path
         self._description = None
+        self._metrics = {}
+        self._ordered_metrics_name = []
+        self._process_run_count = process_run_count
 
     def test_name(self):
         return self._test_name
@@ -110,26 +117,26 @@ class PerfTest(object):
         return self._port.create_driver(worker_number=0, no_timeout=True)
 
     def run(self, time_out_ms):
-        driver = self._create_driver()
-        try:
-            metrics = self._run_with_driver(driver, time_out_ms)
-        finally:
-            driver.stop()
-
-        if not metrics:
-            return metrics
+        for _ in xrange(self._process_run_count):
+            driver = self._create_driver()
+            try:
+                if not self._run_with_driver(driver, time_out_ms):
+                    return None
+            finally:
+                driver.stop()
 
         should_log = not self._port.get_option('profile')
         if should_log and self._description:
             _log.info('DESCRIPTION: %s' % self._description)
 
         results = {}
-        for metric in metrics:
-            results[metric.name()] = metric.iteration_values()
+        for metric_name in self._ordered_metrics_name:
+            metric = self._metrics[metric_name]
+            results[metric.name()] = metric.grouped_iteration_values()
             if should_log:
                 legacy_chromium_bot_compatible_name = self.test_name_without_file_extension().replace('/', ': ')
                 self.log_statistics(legacy_chromium_bot_compatible_name + ': ' + metric.name(),
-                    metric.iteration_values(), metric.unit())
+                    metric.flattened_iteration_values(), metric.unit())
 
         return results
 
@@ -164,14 +171,10 @@ class PerfTest(object):
         output = self.run_single(driver, self.test_path(), time_out_ms)
         self._filter_output(output)
         if self.run_failed(output):
-            return None
+            return False
 
         current_metric = None
-        results = []
         for line in re.split('\n', output.text):
-            if not line:
-                continue
-
             description_match = self._description_regex.match(line)
             metric_match = self._metrics_regex.match(line)
             score = self._score_regex.match(line)
@@ -181,15 +184,22 @@ class PerfTest(object):
             elif metric_match:
                 current_metric = metric_match.group('metric').replace(' ', '')
             elif score:
-                key = score.group('key')
-                if key == 'values' and results != None:
-                    values = [float(number) for number in score.group('value').split(', ')]
-                    results.append(PerfTestMetric(current_metric, score.group('unit'), values))
-            else:
-                results = None
-                _log.error('ERROR: ' + line)
+                if score.group('key') != 'values':
+                    continue
 
-        return results
+                metric = self._ensure_metrics(current_metric, score.group('unit'))
+                metric.append_group(map(lambda value: float(value), score.group('value').split(', ')))
+            else:
+                _log.error('ERROR: ' + line)
+                return False
+
+        return True
+
+    def _ensure_metrics(self, metric_name, unit=None):
+        if metric_name not in self._metrics:
+            self._metrics[metric_name] = PerfTestMetric(metric_name, unit)
+            self._ordered_metrics_name.append(metric_name)
+        return self._metrics[metric_name]
 
     def run_single(self, driver, test_path, time_out_ms, should_run_pixel_test=False):
         return driver.run_test(DriverInput(test_path, time_out_ms, image_hash=None, should_run_pixel_test=should_run_pixel_test), stop_when_done=False)
@@ -245,6 +255,11 @@ class PerfTest(object):
             output.error = '\n'.join([line for line in re.split('\n', output.error) if not self._should_ignore_line(self._lines_to_ignore_in_stderr, line)])
         if output.text:
             output.text = '\n'.join([line for line in re.split('\n', output.text) if not self._should_ignore_line(self._lines_to_ignore_in_parser_result, line)])
+
+
+class SingleProcessPerfTest(PerfTest):
+    def __init__(self, port, test_name, test_path):
+        super(SingleProcessPerfTest, self).__init__(port, test_name, test_path, process_run_count=1)
 
 
 class ChromiumStylePerfTest(PerfTest):
@@ -361,18 +376,19 @@ class ReplayPerfTest(PerfTest):
         return True
 
     def _run_with_driver(self, driver, time_out_ms):
-        times = PerfTestMetric('Time')
-        malloc = PerfTestMetric('Malloc')
-        js_heap = PerfTestMetric('JSHeap')
+        times = []
+        malloc = []
+        js_heap = []
 
-        for i in range(0, 20):
+        for i in range(0, 6):
             output = self.run_single(driver, self.test_path(), time_out_ms)
             if not output or self.run_failed(output):
-                return None
+                return False
             if i == 0:
                 continue
 
             times.append(output.test_time * 1000)
+
             if not output.measurements:
                 continue
 
@@ -383,7 +399,14 @@ class ReplayPerfTest(PerfTest):
                 else:
                     js_heap.append(result)
 
-        return filter(lambda metric: metric.has_values(), [times, malloc, js_heap])
+        if times:
+            self._ensure_metrics('Time').append_group(times)
+        if malloc:
+            self._ensure_metrics('Malloc').append_group(malloc)
+        if js_heap:
+            self._ensure_metrics('JSHeap').append_group(js_heap)
+
+        return True
 
     def run_single(self, driver, url, time_out_ms, record=False):
         server = self._start_replay_server(self._archive_path, record)
@@ -426,6 +449,7 @@ class ReplayPerfTest(PerfTest):
 class PerfTestFactory(object):
 
     _pattern_map = [
+        (re.compile(r'^Dromaeo/'), SingleProcessPerfTest),
         (re.compile(r'^inspector/'), ChromiumStylePerfTest),
         (re.compile(r'(.+)\.replay$'), ReplayPerfTest),
     ]
