@@ -113,6 +113,8 @@ public:
     void saveDataToFileInDownloadsFolder(WebPageProxy*, const String& suggestedFilename, const String& mimeType, const String& originatingURLString, WebData*);
 
     bool shouldInterruptJavaScript(WebPageProxy*);
+
+    bool shouldInstantiatePlugin(WebPageProxy*, const String& identifier, const String& displayName);
 };
 
 } // namespace WebKit

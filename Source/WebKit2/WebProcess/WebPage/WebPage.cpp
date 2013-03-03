@@ -331,15 +331,15 @@ void WebPage::initializeInjectedBundleFullScreenClient(WKBundlePageFullScreenCli
 PassRefPtr<Plugin> WebPage::createPlugin(WebFrame* frame, HTMLPlugInElement* pluginElement, const Plugin::Parameters& parameters)
 {
     String pluginPath;
-    bool blocked;
+    uint32_t pluginLoadPolicy;
 
-    if (!WebProcess::shared().connection()->sendSync(
-            Messages::WebContext::GetPluginPath(parameters.mimeType, parameters.url.string()), 
-            Messages::WebContext::GetPluginPath::Reply(pluginPath, blocked), 0)) {
+    if (!sendSync(
+            Messages::WebPageProxy::GetPluginPath(parameters.mimeType, parameters.url.string()),
+            Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy))) {
         return 0;
     }
 
-    if (blocked) {
+    if (pluginLoadPolicy == PluginModuleBlocked) {
         if (pluginElement->renderer()->isEmbeddedObject())
             toRenderEmbeddedObject(pluginElement->renderer())->setPluginUnavailabilityReason(RenderEmbeddedObject::InsecurePluginVersion);
 

@@ -657,6 +657,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
         0, // unavailablePluginButtonClicked
+        0, // shouldInstantiatePlugin
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);
 }

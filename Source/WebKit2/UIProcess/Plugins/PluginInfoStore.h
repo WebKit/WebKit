@@ -26,6 +26,7 @@
 #ifndef PluginInfoStore_h
 #define PluginInfoStore_h
 
+#include "PluginModuleInfo.h"
 #include <WebCore/PluginData.h>
 
 namespace WebCore {
@@ -69,6 +70,8 @@ public:
     // Return whether this plug-in should be blocked from being instantiated.
     // Note that the plug-in will still be seen by e.g. navigator.plugins
     bool shouldBlockPlugin(const PluginInfoStore::Plugin&) const;
+
+    static PluginModuleLoadPolicy policyForPlugin(const Plugin&);
 
 private:
     Plugin findPluginForMIMEType(const String& mimeType);

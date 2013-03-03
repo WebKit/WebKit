@@ -135,4 +135,12 @@ String PluginInfoStore::getMIMETypeForExtension(const String& extension)
     return WKGetMIMETypeForExtension((NSString *)extensionCFString.get());
 }
 
+PluginModuleLoadPolicy PluginInfoStore::policyForPlugin(const Plugin& plugin)
+{
+    if (WKShouldBlockPlugin(plugin.bundleIdentifier, plugin.versionString))
+        return PluginModuleBlocked;
+    
+    return PluginModuleLoadNormally;
+}
+
 } // namespace WebKit

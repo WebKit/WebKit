@@ -31,6 +31,7 @@
 #include "InjectedBundle.h"
 #include "InjectedBundleMessageKinds.h"
 #include "InjectedBundleUserMessageCoders.h"
+#include "PluginModuleInfo.h"
 #include "RunLoop.h"
 #include "SandboxExtension.h"
 #include "StatisticsData.h"
@@ -45,6 +46,7 @@
 #include "WebMediaCacheManager.h"
 #include "WebMemorySampler.h"
 #include "WebPage.h"
+#include "WebPageProxyMessages.h"
 #include "WebPageCreationParameters.h"
 #include "WebPlatformStrategies.h"
 #include "WebPreferencesStore.h"
@@ -728,15 +730,15 @@ WebPageGroupProxy* WebProcess::webPageGroup(const WebPageGroupData& pageGroupDat
     return result.first->second.get();
 }
 
-static bool canPluginHandleResponse(const ResourceResponse& response)
+bool WebProcess::canPluginHandleResponse(const ResourceResponse& response) const
 {
     String pluginPath;
-    bool blocked;
+    uint32_t pluginLoadPolicy;
 
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebContext::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebContext::GetPluginPath::Reply(pluginPath, blocked), 0))
+    if (!m_connection->sendSync(Messages::WebPageProxy::GetPluginPath(response.mimeType(), response.url().string()), Messages::WebPageProxy::GetPluginPath::Reply(pluginPath, pluginLoadPolicy), 0))
         return false;
 
-    return !blocked && !pluginPath.isEmpty();
+    return pluginLoadPolicy != PluginModuleBlocked && !pluginPath.isEmpty();
 }
 
 bool WebProcess::shouldUseCustomRepresentationForResponse(const ResourceResponse& response) const

@@ -549,23 +549,6 @@ void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& pluginInfos)
 #endif
 }
 
-void WebContext::getPluginPath(const String& mimeType, const String& urlString, String& pluginPath, bool& blocked)
-{
-    String newMimeType = mimeType.lower();
-
-    blocked = false;
-    PluginInfoStore::Plugin plugin = pluginInfoStore().findPlugin(newMimeType, KURL(ParsedURLString, urlString));
-    if (!plugin.path)
-        return;
-
-    if (pluginInfoStore().shouldBlockPlugin(plugin)) {
-        blocked = true;
-        return;
-    }
-
-    pluginPath = plugin.path;
-}
-
 #if !ENABLE(PLUGIN_PROCESS)
 void WebContext::didGetSitesWithPluginData(const Vector<String>& sites, uint64_t callbackID)
 {

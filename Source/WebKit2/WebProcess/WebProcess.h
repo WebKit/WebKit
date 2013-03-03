@@ -201,6 +201,8 @@ private:
     bool willProcessWebProcessMessageOnClientRunLoop(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     void didReceiveWebProcessMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
+    bool canPluginHandleResponse(const WebCore::ResourceResponse&) const;
+
     RefPtr<CoreIPC::Connection> m_connection;
     HashMap<uint64_t, RefPtr<WebPage> > m_pageMap;
     HashMap<uint64_t, RefPtr<WebPageGroupProxy> > m_pageGroupMap;

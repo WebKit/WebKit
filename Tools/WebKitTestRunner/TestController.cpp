@@ -180,6 +180,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
         0, // unavailablePluginButtonClicked
+        0, // shouldInstantiatePlugin
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
 
@@ -324,6 +325,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
         0, // unavailablePluginButtonClicked
+        0, // shouldInstantiatePlugin
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 
