@@ -163,6 +163,13 @@ enum {
 };
 typedef uint32_t WKPluginUnavailabilityReason;
 
+enum {
+    kWKPluginLoadPolicyLoadNormally = 0,
+    kWKPluginLoadPolicyBlocked,
+    kWKPluginLoadPolicyInactive,
+};
+typedef uint32_t WKPluginLoadPolicy;
+
 // UI Client
 typedef WKPageRef (*WKPageCreateNewPageCallback)(WKPageRef page, WKDictionaryRef features, WKEventModifiers modifiers, WKEventMouseButton mouseButton, const void *clientInfo);
 typedef void (*WKPageRunJavaScriptAlertCallback)(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void *clientInfo);
@@ -198,7 +205,7 @@ typedef void (*WKPageDidCompleteRubberBandForMainFrameCallback)(WKPageRef page, 
 typedef void (*WKPageSaveDataToFileInDownloadsFolderCallback)(WKPageRef page, WKStringRef suggestedFilename, WKStringRef mimeType, WKURLRef originatingURL, WKDataRef data, const void* clientInfo);
 typedef bool (*WKPageShouldInterruptJavaScriptCallback)(WKPageRef page, const void *clientInfo);
 typedef void (*WKPageUnavailablePluginButtonClickedCallback)(WKPageRef page, WKPluginUnavailabilityReason pluginUnavailabilityReason, WKStringRef mimeType, WKStringRef url, WKStringRef pluginsPageURL, const void* clientInfo);
-typedef bool (*WKPageShouldInstantiatePluginCallback)(WKPageRef page, WKStringRef identifier, WKStringRef displayName, const void* clientInfo);
+typedef WKPluginLoadPolicy (*WKPagePluginLoadPolicyCallback)(WKPageRef page, WKStringRef identifier, WKStringRef displayName, WKPluginLoadPolicy currentPluginLoadPolicy, const void* clientInfo);
 
 // Deprecated
 typedef void (*WKPageMissingPluginButtonClickedCallback_deprecatedForUseWithV0)(WKPageRef page, WKStringRef mimeType, WKStringRef url, WKStringRef pluginsPageURL, const void* clientInfo);
@@ -246,7 +253,7 @@ struct WKPageUIClient {
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
     WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;
     WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
-    WKPageShouldInstantiatePluginCallback                               shouldInstantiatePlugin;
+    WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
 };
 typedef struct WKPageUIClient WKPageUIClient;
 

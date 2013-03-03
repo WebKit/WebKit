@@ -27,6 +27,7 @@
 #define WebUIClient_h
 
 #include "APIClient.h"
+#include "PluginModuleInfo.h"
 #include "WKPage.h"
 #include "WebEvent.h"
 #include "WebOpenPanelParameters.h"
@@ -114,7 +115,7 @@ public:
 
     bool shouldInterruptJavaScript(WebPageProxy*);
 
-    bool shouldInstantiatePlugin(WebPageProxy*, const String& identifier, const String& displayName);
+    PluginModuleLoadPolicy pluginLoadPolicy(WebPageProxy*, const String& identifier, const String& displayName, PluginModuleLoadPolicy currentPluginLoadPolicy);
 };
 
 } // namespace WebKit
