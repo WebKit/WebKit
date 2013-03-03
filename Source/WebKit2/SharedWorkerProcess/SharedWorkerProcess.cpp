@@ -113,8 +113,6 @@ void SharedWorkerProcess::initializeSharedWorkerProcess(const SharedWorkerProces
 {
     setMinimumLifetime(parameters.minimumLifetime);
     setTerminationTimeout(parameters.terminationTimeout);
-
-    platformInitializeSharedWorkerProcess(parameters);
 }
 
 void SharedWorkerProcess::createWebProcessConnection()

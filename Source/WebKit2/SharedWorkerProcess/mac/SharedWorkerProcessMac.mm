@@ -28,20 +28,14 @@
 
 #if ENABLE(SHARED_WORKER_PROCESS)
 
-#import "SharedWorkerProcessProxyMessages.h"
-#import "SharedWorkerProcessCreationParameters.h"
 #import <WebCore/LocalizedStrings.h>
 #import <WebKitSystemInterface.h>
 
-
 namespace WebKit {
 
-void SharedWorkerProcess::platformInitializeSharedWorkerProcess(const SharedWorkerProcessCreationParameters& parameters)
+void SharedWorkerProcess::initializeProcessName(const ChildProcessInitializationParameters& parameters)
 {
-    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("Shared Web Worker (%@ Internet plug-in)",
-        "visible name of the plug-in host process. The argument is the application name."),
-        (NSString *)parameters.parentProcessName];
-    
+    NSString *applicationName = [NSString stringWithFormat:WEB_UI_STRING("%@ Shared Worker", "Visible name of the shared worker process. The argument is the application name."), (NSString *)parameters.uiProcessName];
     WKSetVisibleApplicationName((CFStringRef)applicationName);
 
     // Having a window server connection in this process would result in spin logs (<rdar://problem/13239119>).

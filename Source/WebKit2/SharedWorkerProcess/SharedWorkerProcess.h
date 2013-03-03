@@ -48,6 +48,7 @@ private:
     ~SharedWorkerProcess();
 
     // ChildProcess
+    virtual void initializeProcessName(const ChildProcessInitializationParameters&) OVERRIDE;
     virtual bool shouldTerminate() OVERRIDE;
 
     // CoreIPC::Connection::Client
@@ -60,8 +61,6 @@ private:
     void initializeSharedWorkerProcess(const SharedWorkerProcessCreationParameters&);
     void createWebProcessConnection();
 
-    void platformInitializeSharedWorkerProcess(const SharedWorkerProcessCreationParameters&);
-    
     void setMinimumLifetime(double);
     void minimumLifetimeTimerFired();
 

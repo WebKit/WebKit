@@ -1,3 +1,18 @@
+2013-03-03  Sam Weinig  <sam@webkit.org>
+
+        Shared Web Workers have an incorrect visible process name
+        https://bugs.webkit.org/show_bug.cgi?id=111277
+
+        Reviewed by Dan Bernstein.
+
+        * SharedWorkerProcess/SharedWorkerProcess.cpp:
+        (WebKit::SharedWorkerProcess::initializeSharedWorkerProcess):
+        * SharedWorkerProcess/SharedWorkerProcess.h:
+        (SharedWorkerProcess):
+        * SharedWorkerProcess/mac/SharedWorkerProcessMac.mm:
+        (WebKit::SharedWorkerProcess::initializeProcessName):
+        The SharedWorkerProcess is not an internet plug-in!
+
 2013-03-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempted build fix. Adds back some includes removed in
