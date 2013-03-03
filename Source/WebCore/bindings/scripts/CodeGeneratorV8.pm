@@ -1762,7 +1762,6 @@ sub GenerateParametersCheck
     my %replacements = ();
 
     foreach my $parameter (@{$function->parameters}) {
-        TranslateParameter($parameter);
         my $nativeType = GetNativeTypeFromSignature($parameter, $paramIndex);
 
         # Optional arguments with [Optional] should generate an early call with fewer arguments.
@@ -3933,16 +3932,6 @@ sub GetNativeTypeForCallbacks
 
     # Callbacks use raw pointers, so pass isParameter = 1
     return GetNativeType($type, 1);
-}
-
-sub TranslateParameter
-{
-    my $signature = shift;
-
-    # The IDL uses some pseudo-types which don't really exist.
-    if ($signature->type eq "TimeoutHandler") {
-        $signature->type("DOMString");
-    }
 }
 
 sub TypeCanFailConversion

@@ -51,11 +51,9 @@
              [Replaceable] readonly attribute WorkerNavigator navigator;
 
     // Timers
-    [Custom] long setTimeout(in TimeoutHandler handler, in long timeout);
-    // [Custom] long setTimeout(in DOMString code, in long timeout);
+    [Custom] long setTimeout(in any handler, in [Optional=DefaultIsUndefined] long timeout);
     void clearTimeout(in [Optional=DefaultIsUndefined] long handle);
-    [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
-    // [Custom] long setInterval(in DOMString code, in long timeout);
+    [Custom] long setInterval(in any handler, in [Optional=DefaultIsUndefined] long timeout);
     void clearInterval(in [Optional=DefaultIsUndefined] long handle);
 
 

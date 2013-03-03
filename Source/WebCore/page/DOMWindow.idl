@@ -194,14 +194,9 @@
 #endif
 
     // Timers
-    [Custom] long setTimeout(in [Optional=DefaultIsUndefined] TimeoutHandler handler, 
-                             in [Optional=DefaultIsUndefined] long timeout);
-    // [Custom] long setTimeout(in TimeoutHandler handler, in long timeout, arguments...);
-    // [Custom] long setTimeout(in DOMString code, in long timeout);
+    [Custom] long setTimeout(in any handler, in [Optional=DefaultIsUndefined] long timeout);
     void clearTimeout(in [Optional=DefaultIsUndefined] long handle);
-    [Custom] long setInterval(in TimeoutHandler handler, in long timeout);
-    // [Custom] long setInterval(in TimeoutHandler handler, in long timeout, arguments...);
-    // [Custom] long setInterval(in DOMString code, in long timeout);
+    [Custom] long setInterval(in any handler, in [Optional=DefaultIsUndefined] long timeout);
     void clearInterval(in [Optional=DefaultIsUndefined] long handle);
 
 #if defined(ENABLE_REQUEST_ANIMATION_FRAME) && ENABLE_REQUEST_ANIMATION_FRAME
