@@ -25,7 +25,6 @@
 
 #include "APICast.h"
 #include "ApplicationCacheStorage.h"
-#include "CSSComputedStyleDeclaration.h"
 #include "ChromeClientQt.h"
 #include "ContainerNode.h"
 #include "ContextMenu.h"
@@ -373,38 +372,6 @@ bool DumpRenderTreeSupportQt::findString(QWebPageAdapter *adapter, const QString
     // 2. find the string
     WebCore::Frame* frame = adapter->page->focusController()->focusedOrMainFrame();
     return frame && frame->editor()->findString(string, options);
-}
-
-static QString convertToPropertyName(const QString& name)
-{
-    QStringList parts = name.split(QLatin1Char('-'));
-    QString camelCaseName;
-    for (int j = 0; j < parts.count(); ++j) {
-        QString part = parts.at(j);
-        if (j)
-            camelCaseName.append(part.replace(0, 1, part.left(1).toUpper()));
-        else
-            camelCaseName.append(part);
-    }
-    return camelCaseName;
-}
-
-QVariantMap DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(const QWebElement& element)
-{
-    QVariantMap res;
-
-    WebCore::Element* webElement = element.m_element;
-    if (!webElement)
-        return res;
-
-    RefPtr<WebCore::CSSComputedStyleDeclaration> computedStyleDeclaration = CSSComputedStyleDeclaration::create(webElement, true);
-    CSSStyleDeclaration* style = static_cast<WebCore::CSSStyleDeclaration*>(computedStyleDeclaration.get());
-    for (unsigned i = 0; i < style->length(); i++) {
-        QString name = style->item(i);
-        QString value = style->getPropertyValue(name);
-        res[convertToPropertyName(name)] = QVariant(value);
-    }
-    return res;
 }
 
 QVariantList DumpRenderTreeSupportQt::selectedRange(QWebPageAdapter *adapter)

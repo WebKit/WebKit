@@ -112,11 +112,6 @@ void TestRunner::keepWebHistory()
     DumpRenderTreeSupportEfl::setShouldTrackVisitedLinks(true);
 }
 
-JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
-{
-    return DumpRenderTreeSupportEfl::computedStyleIncludingVisitedInfo(context, value);
-}
-
 size_t TestRunner::webHistoryItemCount()
 {
     const Ewk_History* history = ewk_view_history_get(browser->mainView());

@@ -139,8 +139,6 @@ public:
     static void setMockGeolocationPositionUnavailableError(QWebPageAdapter*, const QString& message);
     static int numberOfPendingGeolocationPermissionRequests(QWebPageAdapter*);
 
-    static QVariantMap computedStyleIncludingVisitedInfo(const QWebElement&);
-
     static void dumpFrameLoader(bool);
     static void dumpProgressFinishedCallback(bool);
     static void dumpUserGestureInFrameLoader(bool);

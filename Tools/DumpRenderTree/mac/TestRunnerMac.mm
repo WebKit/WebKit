@@ -273,11 +273,6 @@ void TestRunner::keepWebHistory()
     }
 }
 
-JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
-{   
-    return [[mainFrame webView] _computedStyleIncludingVisitedInfo:context forElement:value];
-}
-
 int TestRunner::numberOfPendingGeolocationPermissionRequests()
 {
     return [[[mainFrame webView] UIDelegate] numberOfPendingGeolocationPermissionRequests];

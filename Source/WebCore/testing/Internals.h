@@ -27,6 +27,7 @@
 #ifndef Internals_h
 #define Internals_h
 
+#include "CSSComputedStyleDeclaration.h"
 #include "ContextDestructionObserver.h"
 #include "ExceptionCodePlaceholder.h"
 #include "NodeList.h"
@@ -76,6 +77,7 @@ public:
     bool isLoadingFromMemoryCache(const String& url);
 
     size_t numberOfScopedHTMLStyleChildren(const Node*, ExceptionCode&) const;
+    PassRefPtr<CSSComputedStyleDeclaration> computedStyleIncludingVisitedInfo(Node*, ExceptionCode&) const;
 
 #if ENABLE(SHADOW_DOM)
     typedef ShadowRoot ShadowRootIfShadowDOMEnabledOrNode;

@@ -34,6 +34,7 @@
     boolean isLoadingFromMemoryCache(in DOMString url);
 
     unsigned long numberOfScopedHTMLStyleChildren(in Node scope) raises(DOMException);
+    CSSStyleDeclaration computedStyleIncludingVisitedInfo(in Node node) raises(DOMException);
 
 #if defined(ENABLE_SHADOW_DOM) && ENABLE_SHADOW_DOM
     ShadowRoot ensureShadowRoot(in Element host) raises (DOMException);

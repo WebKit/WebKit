@@ -109,7 +109,6 @@ public:
     static void deliverAllMutationsIfNecessary();
     static void setInteractiveFormValidationEnabled(Evas_Object* ewkView, bool enabled);
     static void setValidationMessageTimerMagnification(Evas_Object* ewkView, int value);
-    static JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);
     static void setAuthorAndUserStylesEnabled(Evas_Object* ewkView, bool);
     static void setDomainRelaxationForbiddenForURLScheme(bool forbidden, const String& scheme);
     static void setSerializeHTTPLoads(bool);

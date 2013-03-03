@@ -43,7 +43,6 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSValueRef.h>
 #include <WebCore/ArchiveResource.h>
-#include <WebCore/CSSComputedStyleDeclaration.h>
 #include <WebCore/Chrome.h>
 #include <WebCore/DocumentLoader.h>
 #include <WebCore/Frame.h>
@@ -619,23 +618,6 @@ JSValueRef WebFrame::jsWrapperForWorld(InjectedBundleRangeHandle* rangeHandle, I
 
     JSLockHolder lock(exec);
     return toRef(exec, toJS(exec, globalObject, rangeHandle->coreRange()));
-}
-
-JSValueRef WebFrame::computedStyleIncludingVisitedInfo(JSObjectRef element)
-{
-    if (!m_coreFrame)
-        return 0;
-
-    JSDOMWindow* globalObject = m_coreFrame->script()->globalObject(mainThreadNormalWorld());
-    ExecState* exec = globalObject->globalExec();
-
-    if (!toJS(element)->inherits(&JSElement::s_info))
-        return JSValueMakeUndefined(toRef(exec));
-
-    RefPtr<CSSComputedStyleDeclaration> style = CSSComputedStyleDeclaration::create(static_cast<JSElement*>(toJS(element))->impl(), true);
-
-    JSLockHolder lock(exec);
-    return toRef(exec, toJS(exec, globalObject, style.get()));
 }
 
 String WebFrame::counterValue(JSObjectRef element)

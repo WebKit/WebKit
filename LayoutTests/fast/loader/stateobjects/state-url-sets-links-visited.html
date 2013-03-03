@@ -14,9 +14,9 @@ function loaded()
     window.history.replaceState(null, "Title", "replacedURL.html");
     window.history.pushState(null, "Title", "pushedURL.html");
 
-    if (window.testRunner) {
-        style1 = testRunner.computedStyleIncludingVisitedInfo(document.getElementById('link1'));
-        style2 = testRunner.computedStyleIncludingVisitedInfo(document.getElementById('link2'));
+    if (window.internals) {
+        style1 = internals.computedStyleIncludingVisitedInfo(document.getElementById('link1'));
+        style2 = internals.computedStyleIncludingVisitedInfo(document.getElementById('link2'));
 
         // The style is not necessarily updated synchronously in response to history.replaceState and history.pushState.
         shouldBecomeEqualToString("style1.color", "rgb(255, 165, 0)", function() {

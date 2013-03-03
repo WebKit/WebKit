@@ -458,11 +458,6 @@ bool TestRunner::callShouldCloseOnWebView()
     return false;
 }
 
-JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef)
-{
-    return 0;
-}
-
 void TestRunner::authenticateSession(JSStringRef, JSStringRef, JSStringRef)
 {
 }

@@ -74,7 +74,6 @@ interface TestRunner {
 
     // Special DOM functions.
     void clearBackForwardList();
-    object computedStyleIncludingVisitedInfo(in object element);
     void execCommand(in DOMString name, in DOMString argument);
     boolean isCommandEnabled(in DOMString name);
     unsigned long windowCount();

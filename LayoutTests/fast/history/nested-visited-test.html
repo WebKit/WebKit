@@ -15,9 +15,9 @@ function compareStyles()
     anchor.innerHTML = "One";
     document.getElementById('enclosure').appendChild(anchor);
 
-    if (window.testRunner) {
-        firstStyle = testRunner.computedStyleIncludingVisitedInfo(document.getElementById('one'));
-        secondStyle = testRunner.computedStyleIncludingVisitedInfo(document.getElementById('two'));
+    if (window.internals) {
+        firstStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById('one'));
+        secondStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById('two'));
         shouldBecomeDifferent('firstStyle.color', 'secondStyle.color', finishJSTest);
     }
 }

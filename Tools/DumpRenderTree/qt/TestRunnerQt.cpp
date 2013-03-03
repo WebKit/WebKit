@@ -745,11 +745,6 @@ bool TestRunnerQt::findString(const QString& string, const QStringList& optionAr
     return DumpRenderTreeSupportQt::findString(m_drt->pageAdapter(), string, optionArray);
 }
 
-QVariantMap TestRunnerQt::computedStyleIncludingVisitedInfo(const QWebElement& element) const
-{
-    return DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo(element);
-}
-
 bool TestRunnerQt::elementDoesAutoCompleteForElementWithId(const QString& elementId)
 {
     return DumpRenderTreeSupportQt::elementDoesAutoCompleteForElementWithId(m_drt->mainFrameAdapter(), elementId);

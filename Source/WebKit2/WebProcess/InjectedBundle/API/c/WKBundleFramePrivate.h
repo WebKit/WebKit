@@ -39,7 +39,6 @@ extern "C" {
 
 WK_EXPORT WKStringRef WKBundleFrameCopyInnerText(WKBundleFrameRef frame);
 WK_EXPORT WKStringRef WKBundleFrameCopyCounterValue(WKBundleFrameRef frame, JSObjectRef element);
-WK_EXPORT JSValueRef WKBundleFrameGetComputedStyleIncludingVisitedInfo(WKBundleFrameRef frame, JSObjectRef element);
 WK_EXPORT unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frame);
 WK_EXPORT WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frame);
 WK_EXPORT void WKBundleFrameClearOpener(WKBundleFrameRef frame);

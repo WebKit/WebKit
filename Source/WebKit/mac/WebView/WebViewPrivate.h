@@ -747,10 +747,6 @@ Could be worth adding to the API.
 - (uint64_t)_notificationIDForTesting:(JSValueRef)jsNotification;
 @end
 
-@interface WebView (WebViewPrivateStyleInfo)
-- (JSValueRef)_computedStyleIncludingVisitedInfo:(JSContextRef)context forElement:(JSValueRef)value;
-@end
-
 @interface NSObject (WebViewFrameLoadDelegatePrivate)
 - (void)webView:(WebView *)sender didFirstLayoutInFrame:(WebFrame *)frame;
 

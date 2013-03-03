@@ -505,11 +505,6 @@ void TestRunner::setJavaScriptCanAccessClipboard(bool flag)
     BlackBerry::WebKit::DumpRenderTree::currentInstance()->page()->setJavaScriptCanAccessClipboard(flag);
 }
 
-JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
-{
-    return DumpRenderTreeSupport::computedStyleIncludingVisitedInfo(context, value);
-}
-
 void TestRunner::setPluginsEnabled(bool flag)
 {
     notImplemented();

@@ -92,7 +92,6 @@ public:
     bool isFrameSet() const;
     WebFrame* parentFrame() const;
     PassRefPtr<ImmutableArray> childFrames();
-    JSValueRef computedStyleIncludingVisitedInfo(JSObjectRef element);
     JSGlobalContextRef jsContext();
     JSGlobalContextRef jsContextForWorld(InjectedBundleScriptWorld*);
     WebCore::IntRect contentBounds() const;

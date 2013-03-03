@@ -2201,15 +2201,14 @@ webkit.org/b/36666 storage/websql/open-database-over-quota.html [ Failure ]
 
 webkit.org/b/37283 fast/overflow/scrollbar-restored-and-then-locked.html [ Failure ]
 
-webkit.org/b/37297 fast/history/nested-visited-test.html [ Failure Timeout ]
-webkit.org/b/37297 fast/history/self-is-visited.html [ Failure Timeout ]
-webkit.org/b/37297 fast/history/sibling-visited-test.html [ Failure Timeout ]
-webkit.org/b/37297 fast/loader/stateobjects/state-url-sets-links-visited.html [ Failure Timeout ]
-webkit.org/b/58000 [ Mac Android ] fast/history/visited-link-background-color.html [ Failure ]
-
-# Added in http://trac.webkit.org/changeset/57476. Fails in Chromium because
-# LayoutTestController::computedStyleWithVisitedInfo() is missing.
-crbug.com/41206 fast/history/multiple-classes-visited.html [ Failure Timeout ]
+# Chromium DumpRenderTree does not have support for visited links.
+# It always return false in response to isLinkVisited().
+webkit.org/b/111031 fast/history/multiple-classes-visited.html [ Failure ]
+webkit.org/b/111031 fast/history/nested-visited-test.html [ Failure ]
+webkit.org/b/111031 fast/history/self-is-visited.html [ Failure ]
+webkit.org/b/111031 fast/history/sibling-visited-test.html [ Failure ]
+webkit.org/b/111031 fast/loader/stateobjects/state-url-sets-links-visited.html [ Failure ]
+webkit.org/b/111031 [ Mac Android ] fast/history/visited-link-background-color.html [ Failure ]
 
 # Tests that work with KURL, but fail with GURL
 webkit.org/b/71758 fast/url/invalid-urls-utf8.html [ Failure ]

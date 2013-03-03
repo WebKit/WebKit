@@ -58,7 +58,6 @@ public:
     static void setMockGeolocationPosition(BlackBerry::WebKit::WebPage*, double latitude, double longitude, double accuracy, bool providesAltitude, double altitude, bool providesAltitudeAccuracy, double altitudeAccuracy, bool providesHeading, double heading, bool providesSpeed, double speed);
     static void setMockDeviceOrientation(BlackBerry::WebKit::WebPage*, bool canProvideAlpha, double alpha, bool canProvideBeta, double beta, bool canProvideGamma, double gamma);
     static void scalePageBy(BlackBerry::WebKit::WebPage*, float, float, float);
-    static JSValueRef computedStyleIncludingVisitedInfo(JSContextRef, JSValueRef);
 
 private:
     static bool s_linksIncludedInTabChain;

@@ -9,9 +9,9 @@ if (window.testRunner)
 
 function compareStyles()
 {
-    if (window.testRunner) {
-        firstStyle = testRunner.computedStyleIncludingVisitedInfo(document.getElementById('one'));
-        secondStyle = testRunner.computedStyleIncludingVisitedInfo(document.getElementById('two'));
+    if (window.internals) {
+        firstStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById('one'));
+        secondStyle = internals.computedStyleIncludingVisitedInfo(document.getElementById('two'));
         shouldBecomeDifferent('firstStyle.color', 'secondStyle.color', function() {
             shouldBecomeDifferent('firstStyle.backgroundColor', 'secondStyle.backgroundColor', finishJSTest);
         });

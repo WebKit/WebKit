@@ -160,12 +160,6 @@ void TestRunner::keepWebHistory()
     history->setOptionalSharedHistory(sharedHistory.get());
 }
 
-JSValueRef TestRunner::computedStyleIncludingVisitedInfo(JSContextRef context, JSValueRef value)
-{
-    // FIXME: Implement this.
-    return JSValueMakeUndefined(context);
-}
-
 void TestRunner::waitForPolicyDelegate()
 {
     COMPtr<IWebView> webView;
