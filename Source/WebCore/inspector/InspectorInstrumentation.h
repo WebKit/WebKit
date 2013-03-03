@@ -52,6 +52,7 @@
 namespace WebCore {
 
 class CSSRule;
+class CachedResource;
 class CharacterData;
 class DOMWindow;
 class DOMWrapperWorld;
