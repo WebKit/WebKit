@@ -1,3 +1,12 @@
+2013-03-03  Ankur Taly  <ataly@google.com>
+
+        WebKit API for enabling DOM logging for certain worlds
+        https://bugs.webkit.org/show_bug.cgi?id=110779
+
+        Reviewed by Kentaro Hara.
+
+        * WebKit.gyp:
+
 2013-03-03  James Weatherall  <wez@chromium.org>
 
         keydown and keyup events have zero keycode for some numeric pad keys under Chromium on Linux
