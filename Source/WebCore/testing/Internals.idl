@@ -256,6 +256,6 @@
     void setUsesOverlayScrollbars(in boolean enabled);
 
     [Conditional=ENCRYPTED_MEDIA_V2] void initializeMockCDM();
-    
+
     [Conditional=SPEECH_SYNTHESIS] void enableMockSpeechSynthesizer();
 };

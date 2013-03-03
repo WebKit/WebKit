@@ -1,5 +1,11 @@
 2013-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
+        That was a wrong fix. Revert r144569.
+
+        * WebKit.vcproj/WebKitExports.def.in:
+
+2013-03-03  Ryosuke Niwa  <rniwa@webkit.org>
+
         Windows build fix attempt after r144567.
 
         * WebKit.vcproj/WebKitExports.def.in:
