@@ -842,6 +842,8 @@ public:
     void gatherReportURIs(DOMStringList&) const;
     const String& evalDisabledErrorMessage() { return m_evalDisabledErrorMessage; }
     ContentSecurityPolicy::ReflectedXSSDisposition reflectedXSSDisposition() const { return m_reflectedXSSDisposition; }
+    bool isReportOnly() const { return m_reportOnly; }
+    const Vector<KURL>& reportURIs() const { return m_reportURIs; }
 
 private:
     CSPDirectiveList(ContentSecurityPolicy*, ContentSecurityPolicy::HeaderType);
@@ -928,6 +930,9 @@ PassOwnPtr<CSPDirectiveList> CSPDirectiveList::create(ContentSecurityPolicy* pol
         String message = makeString("Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"", directives->operativeDirective(directives->m_scriptSrc.get())->text(), "\".\n");
         directives->setEvalDisabledErrorMessage(message);
     }
+
+    if (directives->isReportOnly() && directives->reportURIs().isEmpty())
+        policy->reportMissingReportURI(header);
 
     return directives.release();
 }
@@ -1802,6 +1807,11 @@ void ContentSecurityPolicy::reportInvalidSourceExpression(const String& directiv
     if (equalIgnoringCase(source, "'none'"))
         message = makeString(message, " Note that 'none' has no effect unless it is the only expression in the source list.");
     logToConsole(message);
+}
+
+void ContentSecurityPolicy::reportMissingReportURI(const String& policy) const
+{
+    logToConsole("The Content Security Policy '" + policy + "' was delivered in report-only mode, but does not specify a 'report-uri'; the policy will have no effect. Please either add a 'report-uri' directive, or deliver the policy via the 'Content-Security-Policy' header.");
 }
 
 void ContentSecurityPolicy::logToConsole(const String& message, const String& contextURL, const WTF::OrdinalNumber& contextLine, ScriptState* state) const
