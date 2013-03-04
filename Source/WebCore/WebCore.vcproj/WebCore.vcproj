@@ -77218,6 +77218,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\FlameChart.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\FontView.js"
 					>
 				</File>

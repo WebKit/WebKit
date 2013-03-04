@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -10950,6 +10950,7 @@
     <None Include="..\inspector\front-end\FileUtils.js" />
     <None Include="..\inspector\front-end\filteredItemSelectionDialog.css" />
     <None Include="..\inspector\front-end\FilteredItemSelectionDialog.js" />
+    <None Include="..\inspector\front-end\FlameChart.js" />
     <None Include="..\inspector\front-end\FontView.js" />
     <None Include="..\inspector\front-end\GoToLineDialog.js" />
     <None Include="..\inspector\front-end\HandlerRegistry.js" />

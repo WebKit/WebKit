@@ -83,6 +83,7 @@
     <file>FileSystemProjectDelegate.js</file>
     <file>FileUtils.js</file>
     <file>FilteredItemSelectionDialog.js</file>
+    <file>FlameChart.js</file>
     <file>FontView.js</file>
     <file>GoToLineDialog.js</file>
     <file>HAREntry.js</file>
@@ -244,6 +245,7 @@
     <file>dialog.css</file>
     <file>elementsPanel.css</file>
     <file>filteredItemSelectionDialog.css</file>
+    <file>flameChart.css</file>
     <file>heapProfiler.css</file>
     <file>helpScreen.css</file>
     <file>indexedDBViews.css</file>
