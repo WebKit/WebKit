@@ -1,3 +1,13 @@
+2013-03-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
+
+        Unreviewed build fix after r144675.
+
+        Work around picky/old C++ compilers by separating the '>>' in
+        nested templates with a space.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::StorageArea):
+
 2013-03-04  Anders Carlsson  <andersca@apple.com>
 
         More work on UI side storage

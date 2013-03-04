@@ -52,7 +52,7 @@ private:
 
     void dispatchEvents(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
-    HashSet<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>> m_eventListeners;
+    HashSet<std::pair<RefPtr<CoreIPC::Connection>, uint64_t> > m_eventListeners;
 };
 
 PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create()
