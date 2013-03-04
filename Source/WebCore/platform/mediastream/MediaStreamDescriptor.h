@@ -109,6 +109,9 @@ private:
 
         for (size_t i = 0; i < videoSources.size(); i++)
             m_videoComponents.append(MediaStreamComponent::create(this, videoSources[i]));
+
+        if (!audioSources.size() && !videoSources.size())
+            m_ended = true;
     }
 
     MediaStreamDescriptor(const String& id, const MediaStreamComponentVector& audioComponents, const MediaStreamComponentVector& videoComponents)
