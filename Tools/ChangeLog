@@ -1,3 +1,15 @@
+2013-03-04  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/13337144> - Update 536.29 branch Loader and UI client layouts
+
+        Rubberstamped by Anders Carlsson.
+
+        * MiniBrowser/mac/BrowserWindowController.m:
+        (-[BrowserWindowController awakeFromNib]):
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::createOtherPage):
+        (WTR::TestController::initialize):
+
 2013-03-03  Brady Eidson  <beidson@apple.com>
 
         Merge r143988

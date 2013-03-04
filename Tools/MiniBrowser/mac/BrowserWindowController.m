@@ -573,7 +573,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     [_webView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
     
     WKPageLoaderClient loadClient = {
-        0,      /* version */
+        kWKPageLoaderClientCurrentVersion,
         self,   /* clientInfo */
         didStartProvisionalLoadForFrame,
         didReceiveServerRedirectForProvisionalLoadForFrame,
@@ -599,8 +599,15 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         processDidExit,
         didChangeBackForwardList,
         0, // shouldGoToBackForwardItem
-        0, // didFailToInitializePlugin
+        0, // didFailToInitializePlugin_deprecatedForUseWithV0
+        0, // unused1
+        0, // unused2
+        0, // unused3
+        0, // unused4
         0, // pluginDidFail_deprecatedForUseWithV1
+        0, // didReceiveIntentForFrame_unavailable
+        0, // registerIntentServiceForFrame_unavailable
+        0, // unused5
         0, // pluginLoadPolicy
         0, // pluginDidFail
     };
@@ -617,7 +624,7 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
     WKPageSetPagePolicyClient(_webView.pageRef, &policyClient);
 
     WKPageUIClient uiClient = {
-        0,          /* version */
+        kWKPageUIClientCurrentVersion,
         self,       /* clientInfo */
         createNewPage,
         showPage,
@@ -658,7 +665,12 @@ static void runOpenPanel(WKPageRef page, WKFrameRef frame, WKOpenPanelParameters
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
+        0, // unused1
+        0, // unused2
+        0, // unused3
         0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
+        0, // unused4
+        0, // unused5
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(_webView.pageRef, &uiClient);

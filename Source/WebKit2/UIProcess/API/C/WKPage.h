@@ -115,11 +115,24 @@ struct WKPageLoaderClient {
     WKPageDidChangeBackForwardListCallback                              didChangeBackForwardList;
     WKPageShouldGoToBackForwardListItemCallback                         shouldGoToBackForwardListItem;
     WKPageDidFailToInitializePluginCallback_deprecatedForUseWithV0      didFailToInitializePlugin_deprecatedForUseWithV0;
+
+    // Version 1
+    void                                                                (*unused1)(void); // didDetectXSSForFrame in trunk
+    void                                                                (*unused2)(void); // didNewFirstVisuallyNonEmptyLayout in trunk
+    void                                                                (*unused3)(void); // willGoToBackForwardListItem in trunk
+    void                                                                (*unused4)(void); // interactionOccurredWhileProcessUnresponsive in trunk
     WKPagePluginDidFailCallback_deprecatedForUseWithV1                  pluginDidFail_deprecatedForUseWithV1;
+
+    // Version 2
+    void                                                                (*didReceiveIntentForFrame_unavailable)(void);
+    void                                                                (*registerIntentServiceForFrame_unavailable)(void);
+    void                                                                (*unused5)(void); // didLayout in trunk.
     WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
     WKPagePluginDidFailCallback                                         pluginDidFail;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
+
+enum { kWKPageLoaderClientCurrentVersion = 2 };
 
 // Policy Client.
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
@@ -256,12 +269,21 @@ struct WKPageUIClient {
     WKPageDidCompleteRubberBandForMainFrameCallback                     didCompleteRubberBandForMainFrame;
     WKPageSaveDataToFileInDownloadsFolderCallback                       saveDataToFileInDownloadsFolder;
     WKPageShouldInterruptJavaScriptCallback                             shouldInterruptJavaScript;
+    
+    // Version 1
+    void                                                                (*unused1)(void); // createNewPage in trunk
+    void                                                                (*unused2)(void); // mouseDidMoveOverElement in trunk
+    void                                                                (*unused3)(void); // decidePolicyForNotificationPermissionRequest in trunk
     WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
 
     // Version 2
+    void                                                                (*unused4)(void); // showColorPicker in trunk
+    void                                                                (*unused5)(void); // hideColorPicker in trunk
     WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
 };
 typedef struct WKPageUIClient WKPageUIClient;
+
+enum { kWKPageUIClientCurrentVersion = 2 };
 
 // Find client.
 typedef void (*WKPageDidFindStringCallback)(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo);

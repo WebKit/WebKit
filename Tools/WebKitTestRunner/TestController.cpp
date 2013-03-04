@@ -138,7 +138,7 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
     view->resizeTo(800, 600);
 
     WKPageUIClient otherPageUIClient = {
-        0,
+        kWKPageUIClientCurrentVersion,
         view,
         createOtherPage,
         0, // showPage
@@ -179,7 +179,12 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKDictionaryRef, WK
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
+        0, // unused1
+        0, // unused2
+        0, // unused3
         0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
+        0, // unused4
+        0, // unused5
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
@@ -283,7 +288,7 @@ void TestController::initialize(int argc, const char* argv[])
     m_mainWebView = adoptPtr(new PlatformWebView(m_context.get(), m_pageGroup.get()));
 
     WKPageUIClient pageUIClient = {
-        0,
+        kWKPageUIClientCurrentVersion,
         this,
         createOtherPage,
         0, // showPage
@@ -324,13 +329,18 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
+        0, // unused1
+        0, // unused2
+        0, // unused3
         0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
+        0, // unused4
+        0, // unused5
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
 
     WKPageLoaderClient pageLoaderClient = {
-        0,
+        kWKPageLoaderClientCurrentVersion,
         this,
         0, // didStartProvisionalLoadForFrame
         0, // didReceiveServerRedirectForProvisionalLoadForFrame
@@ -355,9 +365,16 @@ void TestController::initialize(int argc, const char* argv[])
         0, // didBecomeResponsive
         processDidCrash,
         0, // didChangeBackForwardList
-        0, // shouldGoToBackForwardListItem
-        0, // didFailToInitializePlugin
+        0, // shouldGoToBackForwardItem
+        0, // didFailToInitializePlugin_deprecatedForUseWithV0
+        0, // unused1
+        0, // unused2
+        0, // unused3
+        0, // unused4
         0, // pluginDidFail_deprecatedForUseWithV1
+        0, // didReceiveIntentForFrame_unavailable
+        0, // registerIntentServiceForFrame_unavailable
+        0, // unused5
         0, // pluginLoadPolicy
         0, // pluginDidFail
     };
