@@ -74,7 +74,7 @@ void ScriptGCEvent::removeEventListener(ScriptGCEventListener* eventListener)
 void ScriptGCEvent::getHeapSize(HeapInfo& info)
 {
     v8::HeapStatistics heapStatistics;
-    v8::V8::GetHeapStatistics(&heapStatistics);
+    v8::Isolate::GetCurrent()->GetHeapStatistics(&heapStatistics);
     info.usedJSHeapSize = heapStatistics.used_heap_size();
     info.totalJSHeapSize = heapStatistics.total_physical_size();
     info.jsHeapSizeLimit = heapStatistics.heap_size_limit();
@@ -83,7 +83,7 @@ void ScriptGCEvent::getHeapSize(HeapInfo& info)
 size_t ScriptGCEvent::getUsedHeapSize()
 {
     v8::HeapStatistics heapStatistics;
-    v8::V8::GetHeapStatistics(&heapStatistics);
+    v8::Isolate::GetCurrent()->GetHeapStatistics(&heapStatistics);
     return heapStatistics.used_heap_size();
 }
 
