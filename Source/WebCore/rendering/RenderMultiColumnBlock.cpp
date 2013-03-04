@@ -103,20 +103,11 @@ bool RenderMultiColumnBlock::relayoutForPagination(bool, LayoutUnit, LayoutState
     return false;
 }
 
-static PassRefPtr<RenderStyle> createMultiColumnFlowThreadStyle(RenderStyle* parentStyle)
-{
-    RefPtr<RenderStyle> newStyle(RenderStyle::create());
-    newStyle->inheritFrom(parentStyle);
-    newStyle->setDisplay(BLOCK);
-    newStyle->font().update(0);
-    return newStyle.release();
-}
-
 void RenderMultiColumnBlock::addChild(RenderObject* newChild, RenderObject* beforeChild)
 {
     if (!m_flowThread) {
         m_flowThread = new (renderArena()) RenderMultiColumnFlowThread(document());
-        m_flowThread->setStyle(createMultiColumnFlowThreadStyle(style()));
+        m_flowThread->setStyle(RenderStyle::createAnonymousStyleWithDisplay(style(), BLOCK));
         RenderBlock::addChild(m_flowThread); // Always put the flow thread at the end.
     }
 
