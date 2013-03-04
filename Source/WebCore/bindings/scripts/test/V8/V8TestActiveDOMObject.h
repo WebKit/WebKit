@@ -44,8 +44,6 @@ public:
     static void derefObject(void*);
     static WrapperTypeInfo info;
     static const int internalFieldCount = v8DefaultWrapperInternalFieldCount + 0;
-    static bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
-    static bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
     static void installPerContextProperties(v8::Handle<v8::Object>, TestActiveDOMObject*, v8::Isolate*) { }
     static void installPerContextPrototypeProperties(v8::Handle<v8::Object>, v8::Isolate*) { }
 private:

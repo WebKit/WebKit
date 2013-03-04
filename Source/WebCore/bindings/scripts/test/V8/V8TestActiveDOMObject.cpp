@@ -82,6 +82,18 @@ static v8::Handle<v8::Value> excitingAttrAttrGetterCallback(v8::Local<v8::String
     return TestActiveDOMObjectV8Internal::excitingAttrAttrGetter(name, info);
 }
 
+bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value>)
+{
+    TestActiveDOMObject* imp =  V8TestActiveDOMObject::toNative(host);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
+}
+
+bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value>)
+{
+    TestActiveDOMObject* imp =  V8TestActiveDOMObject::toNative(host);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
+}
+
 static v8::Handle<v8::Value> excitingFunctionMethod(const v8::Arguments& args)
 {
     if (args.Length() < 1)
@@ -173,7 +185,7 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestActiveDOMObjectTempla
     v8::Local<v8::ObjectTemplate> proto = desc->PrototypeTemplate();
     UNUSED_PARAM(instance); // In some cases, it will not be used.
     UNUSED_PARAM(proto); // In some cases, it will not be used.
-    instance->SetAccessCheckCallbacks(V8TestActiveDOMObject::namedSecurityCheck, V8TestActiveDOMObject::indexedSecurityCheck, v8::External::New(&V8TestActiveDOMObject::info));
+    instance->SetAccessCheckCallbacks(TestActiveDOMObjectV8Internal::namedSecurityCheck, TestActiveDOMObjectV8Internal::indexedSecurityCheck, v8::External::New(&V8TestActiveDOMObject::info));
 
     // Custom Signature 'excitingFunction'
     const int excitingFunctionArgc = 1;
