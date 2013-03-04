@@ -5951,7 +5951,8 @@ static inline bool fastParseColorInternal(RGBA32& rgb, const CharacterType* char
     return false;
 }
 
-bool CSSParser::fastParseColor(RGBA32& rgb, const String& name, bool strict)
+template<typename StringType>
+bool CSSParser::fastParseColor(RGBA32& rgb, const StringType& name, bool strict)
 {
     unsigned length = name.length();
     bool parseResult;
@@ -5962,7 +5963,7 @@ bool CSSParser::fastParseColor(RGBA32& rgb, const String& name, bool strict)
     if (name.is8Bit())
         parseResult = fastParseColorInternal(rgb, name.characters8(), length, strict);
     else
-        parseResult = fastParseColorInternal(rgb, name.characters(), length, strict);
+        parseResult = fastParseColorInternal(rgb, name.characters16(), length, strict);
 
     if (parseResult)
         return true;
@@ -5975,7 +5976,6 @@ bool CSSParser::fastParseColor(RGBA32& rgb, const String& name, bool strict)
         return true;
     }
     return false;
-
 }
     
 inline double CSSParser::parsedDouble(CSSParserValue *v, ReleaseParsedCalcValueCondition releaseCalc)

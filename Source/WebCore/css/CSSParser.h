@@ -183,7 +183,8 @@ public:
     bool parseColorFromValue(CSSParserValue*, RGBA32&);
     void parseSelector(const String&, CSSSelectorList&);
 
-    static bool fastParseColor(RGBA32&, const String&, bool strict);
+    template<typename StringType>
+    static bool fastParseColor(RGBA32&, const StringType&, bool strict);
 
     bool parseLineHeight(bool important);
     bool parseFontSize(bool important);
