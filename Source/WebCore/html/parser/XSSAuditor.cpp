@@ -88,7 +88,7 @@ static bool isRequiredForInjection(UChar c)
 
 static bool isTerminatingCharacter(UChar c)
 {
-    return (c == '&' || c == '/' || c == '"' || c == '\'' || c == '<');
+    return (c == '&' || c == '/' || c == '"' || c == '\'' || c == '<' || c == '>');
 }
 
 static bool isHTMLQuote(UChar c)
