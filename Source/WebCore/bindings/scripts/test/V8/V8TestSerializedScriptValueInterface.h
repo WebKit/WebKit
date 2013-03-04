@@ -37,7 +37,7 @@ public:
     static const bool hasDependentLifetime = false;
     static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate*);
-    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*);
+    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*, WrapperWorldType);
     static TestSerializedScriptValueInterface* toNative(v8::Handle<v8::Object> object)
     {
         return reinterpret_cast<TestSerializedScriptValueInterface*>(object->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
