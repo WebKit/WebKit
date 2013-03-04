@@ -1,0 +1,42 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<div id="console"></div>
+
+<script>
+    description("This tests that we can get synthesizer voices on the Mac");
+
+    if (window.internals)
+        window.internals.enableMockSpeechSynthesizer();
+
+    if (window.testRunner)
+        testRunner.waitUntilDone();
+
+    window.jsTestIsAsync = true;
+
+    var list = speechSynthesis.getVoices();
+    var voice = list[0];
+
+    // Start a very short speaking job that will finish quickly.
+    var u = new SpeechSynthesisUtterance("this is a test string.");
+    u.voice = voice;
+
+    debug("Verify that setting and retrieving the voice works.");
+    shouldBeTrue("u.voice.name == voice.name");
+
+    u.onend = function(event) {
+       debug("Speech job finished successfully.");
+       finishJSTest();
+    }
+
+    speechSynthesis.speak(u);    
+
+</script>
+
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

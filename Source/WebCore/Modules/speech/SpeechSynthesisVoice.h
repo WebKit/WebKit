@@ -45,6 +45,8 @@ public:
     bool localService() const { return m_platformVoice->localService(); }
     bool isDefault() const { return m_platformVoice->isDefault(); }
     
+    PlatformSpeechSynthesisVoice* platformVoice() const { return m_platformVoice.get(); }
+
 private:
     explicit SpeechSynthesisVoice(PassRefPtr<PlatformSpeechSynthesisVoice>);
     

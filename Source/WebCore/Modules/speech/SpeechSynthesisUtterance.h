@@ -31,6 +31,7 @@
 #include "ContextDestructionObserver.h"
 #include "EventTarget.h"
 #include "PlatformSpeechSynthesisUtterance.h"
+#include "SpeechSynthesisVoice.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -46,8 +47,8 @@ public:
     const String& lang() const { return m_platformUtterance.lang(); }
     void setLang(const String& lang) { m_platformUtterance.setLang(lang); }
 
-    const String& voiceURI() const { return m_platformUtterance.voiceURI(); }
-    void setVoiceURI(const String& voiceURI) { m_platformUtterance.setVoiceURI(voiceURI); }
+    SpeechSynthesisVoice* voice() const;
+    void setVoice(SpeechSynthesisVoice*);
 
     float volume() const { return m_platformUtterance.volume(); }
     void setVolume(float volume) { m_platformUtterance.setVolume(volume); }
@@ -79,6 +80,7 @@ public:
 private:
     SpeechSynthesisUtterance(ScriptExecutionContext*, const String&);
     PlatformSpeechSynthesisUtterance m_platformUtterance;
+    RefPtr<SpeechSynthesisVoice> m_voice;
     
     // EventTarget
     EventTargetData m_eventTargetData;

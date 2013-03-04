@@ -28,6 +28,7 @@
 
 #if ENABLE(SPEECH_SYNTHESIS)
 
+#include "PlatformSpeechSynthesisVoice.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -49,9 +50,9 @@ public:
     const String& lang() const { return m_lang; }
     void setLang(const String& lang) { m_lang = lang; }
     
-    const String& voiceURI() const { return m_voiceURI; }
-    void setVoiceURI(const String& voiceURI) { m_voiceURI = voiceURI; }
-    
+    PlatformSpeechSynthesisVoice* voice() const { return m_voice.get(); }
+    void setVoice(PlatformSpeechSynthesisVoice* voice) { m_voice = voice; }
+
     // Range = [0, 1] where 1 is the default.
     float volume() const { return m_volume; }
     void setVolume(float volume) { m_volume = std::max(std::min(1.0f, volume), 0.0f); }
@@ -73,7 +74,7 @@ private:
     PlatformSpeechSynthesisUtteranceClient* m_client;
     String m_text;
     String m_lang;
-    String m_voiceURI;
+    RefPtr<PlatformSpeechSynthesisVoice> m_voice;
     float m_volume;
     float m_rate;
     float m_pitch;

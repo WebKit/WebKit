@@ -51,7 +51,22 @@ const AtomicString& SpeechSynthesisUtterance::interfaceName() const
 {
     return eventNames().interfaceForSpeechSynthesisUtterance;
 }
+
+SpeechSynthesisVoice* SpeechSynthesisUtterance::voice() const
+{
+    return m_voice.get();
+}
+
+void SpeechSynthesisUtterance::setVoice(SpeechSynthesisVoice* voice)
+{
+    // Cache our own version of the SpeechSynthesisVoice so that we don't have to do some lookup
+    // to go from the platform voice back to the speech synthesis voice in the read property.
+    m_voice = voice;
     
+    if (voice)
+        m_platformUtterance.setVoice(voice->platformVoice());
+}
+
 } // namespace WebCore
 
 #endif // ENABLE(SPEECH_SYNTHESIS)

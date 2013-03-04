@@ -31,7 +31,7 @@
 ] interface SpeechSynthesisUtterance {
     attribute DOMString text;
     attribute DOMString lang;
-    attribute DOMString voiceURI;
+    attribute SpeechSynthesisVoice voice;
     attribute float volume;
     attribute float rate;
     attribute float pitch;
