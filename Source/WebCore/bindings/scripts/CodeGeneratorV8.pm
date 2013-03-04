@@ -3595,7 +3595,7 @@ sub GenerateSecurityCheckFunctions
     my $interfaceName = $interface->name;
     my $v8InterfaceName = "V8$interfaceName";
 
-    push(@implContentDecls, <<END);
+    push(@implContentInternals, <<END);
 bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value>)
 {
     $interfaceName* imp =  ${v8InterfaceName}::toNative(host);
