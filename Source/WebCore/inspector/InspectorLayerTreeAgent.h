@@ -44,15 +44,14 @@ namespace WebCore {
 
 class InspectorState;
 class InstrumentingAgents;
-class Page;
 
 typedef String ErrorString;
 
 class InspectorLayerTreeAgent : public InspectorBaseAgent<InspectorLayerTreeAgent>, public InspectorBackendDispatcher::LayerTreeCommandHandler {
 public:
-    static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, Page* page)
+    static PassOwnPtr<InspectorLayerTreeAgent> create(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
     {
-        return adoptPtr(new InspectorLayerTreeAgent(instrumentingAgents, state, page));
+        return adoptPtr(new InspectorLayerTreeAgent(instrumentingAgents, state));
     }
     ~InspectorLayerTreeAgent();
 
@@ -69,7 +68,7 @@ public:
     virtual void disable(ErrorString*);
 
 private:
-    InspectorLayerTreeAgent(InstrumentingAgents*, InspectorCompositeState*, Page*);
+    InspectorLayerTreeAgent(InstrumentingAgents*, InspectorCompositeState*);
 
     // RenderLayer-related methods.
     String bind(const RenderLayer*);
@@ -78,7 +77,6 @@ private:
     PassRefPtr<TypeBuilder::LayerTree::Layer> buildObjectForLayer(RenderLayer*);
     PassRefPtr<TypeBuilder::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
         
-    Page* m_inspectedPage;
     InspectorFrontend::LayerTree* m_frontend;
 
     HashMap<const RenderLayer*, String> m_documentLayerToIdMap;

@@ -41,7 +41,6 @@
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
 #include "IntRect.h"
-#include "Page.h"
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
 #include "RenderView.h"
@@ -52,9 +51,8 @@ namespace LayerTreeAgentState {
 static const char layerTreeAgentEnabled[] = "layerTreeAgentEnabled";
 };
 
-InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state, Page* page)
+InspectorLayerTreeAgent::InspectorLayerTreeAgent(InstrumentingAgents* instrumentingAgents, InspectorCompositeState* state)
     : InspectorBaseAgent<InspectorLayerTreeAgent>("LayerTree", instrumentingAgents, state)
-    , m_inspectedPage(page)
     , m_frontend(0)
 {
 }
