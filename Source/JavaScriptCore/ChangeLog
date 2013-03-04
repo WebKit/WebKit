@@ -1,3 +1,16 @@
+2013-03-04  Andreas Kling  <akling@apple.com>
+
+        Add simple vector traits for JSC::Identifier.
+        <http://webkit.org/b/111323>
+
+        Reviewed by Geoffrey Garen.
+
+        Identifiers are really just Strings, giving them simple vector traits makes
+        Vector move them with memcpy() instead of churning the refcounts.
+
+        * runtime/Identifier.h:
+        (WTF):
+
 2013-03-04  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Add build flag for FontLoader
