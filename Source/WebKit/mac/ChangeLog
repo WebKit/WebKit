@@ -1,3 +1,15 @@
+2013-03-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Mac] Get rid of a useless method from DOMHTMLInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=111279
+
+        Reviewed by Sam Weinig.
+
+        * DOM/WebDOMOperations.mm:
+        * DOM/WebDOMOperationsPrivate.h:
+        setValueForUser: is already privately exposed by DOMHTMLInputElement,
+        no need to have it twice.
+
 2013-03-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed attempted build fix. Adds back some includes removed in

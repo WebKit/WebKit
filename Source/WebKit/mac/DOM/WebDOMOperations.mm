@@ -237,11 +237,6 @@ bool WebFrameFilter::shouldIncludeSubframe(Frame* frame) const
     static_cast<HTMLInputElement*>(core((DOMElement *)self))->setAutofilled(autofilled);
 }
 
-- (void)_setValueForUser:(NSString *)value
-{
-    static_cast<HTMLInputElement*>(core((DOMElement *)self))->setValueForUser(value);
-}
-
 @end
 
 @implementation DOMHTMLObjectElement (WebDOMHTMLObjectElementOperations)

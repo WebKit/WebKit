@@ -45,6 +45,7 @@
 #import <WebCore/GeolocationPosition.h>
 #import <WebKit/DOMDocument.h>
 #import <WebKit/DOMElement.h>
+#import <WebKit/DOMHTMLInputElementPrivate.h>
 #import <WebKit/WebApplicationCache.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebCoreStatistics.h>
@@ -587,7 +588,7 @@ void TestRunner::setValueForUser(JSContextRef context, JSValueRef nodeObject, JS
         return;
 
     RetainPtr<CFStringRef> valueCF(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, value));
-    [(DOMHTMLInputElement *)element _setValueForUser:(NSString *)valueCF.get()];
+    [(DOMHTMLInputElement *)element setValueForUser:(NSString *)valueCF.get()];
 }
 
 void TestRunner::setViewModeMediaFeature(JSStringRef mode)

@@ -1,3 +1,17 @@
+2013-03-03  Benjamin Poulain  <benjamin@webkit.org>
+
+        [Mac] Get rid of a useless method from DOMHTMLInputElement
+        https://bugs.webkit.org/show_bug.cgi?id=111279
+
+        Reviewed by Sam Weinig.
+
+        * DumpRenderTree/mac/TestRunnerMac.mm:
+        (TestRunner::setValueForUser):
+        The method _setValueForUser: was added for testing. This feature is already
+        exposed by DOMHTMLInputElement as a private API and it is how this code is exercised
+        in real use cases. Get rid of the method created for testing, use the real thing
+        instead.
+
 2013-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some perf. tests have variances that differ greatly between runs
