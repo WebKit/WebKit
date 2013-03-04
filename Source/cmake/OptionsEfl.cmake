@@ -186,6 +186,7 @@ if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
 
     if (EGL_FOUND)
         set(WTF_USE_EGL 1)
+        set(USE_GRAPHICS_SURFACE 1)
         add_definitions(-DWTF_USE_EGL=1)
         option(ENABLE_GLES2 ON)
 
@@ -199,11 +200,14 @@ if (ENABLE_WEBGL OR WTF_USE_TILED_BACKING_STORE)
         endif ()
      elseif (OPENGLX_FOUND)
          add_definitions(-DWTF_USE_GLX=1)
-    endif ()
 
-     if ((OPENGLX_FOUND OR EGL_FOUND) AND X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
-         set(USE_GRAPHICS_SURFACE 1)
-     endif ()
+         if (X11_Xcomposite_FOUND AND X11_Xrender_FOUND)
+             set(USE_GRAPHICS_SURFACE 1)
+         elseif (ENABLE_WEBGL)
+             # FIXME: Add support for NOT X11_Xcomposite for GLX
+             message(FATAL_ERROR "To use WebGL with GLX support requires X11_Xcomposite.")
+         endif ()
+    endif ()
 endif ()
 
 if (ENABLE_INSPECTOR)

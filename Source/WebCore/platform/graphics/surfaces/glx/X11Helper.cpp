@@ -183,7 +183,7 @@ void X11Helper::destroyPixmap(const uint32_t pixmapId)
 
 void X11Helper::createOffScreenWindow(uint32_t* handleId, const XVisualInfo& visInfo, const IntSize& size)
 {
-#if USE(GRAPHICS_SURFACE)
+#if USE(GRAPHICS_SURFACE) && USE(GLX)
     Display* display = nativeDisplay();
     if (!display)
         return;
@@ -241,22 +241,6 @@ void X11Helper::createOffScreenWindow(uint32_t* handleId, const EGLint id, bool 
     if (matchingVisuals) {
         for (int i = 0; i< matchingCount; i++) {
             XVisualInfo* temp = &matchingVisuals[i];
-
-            if (isXRenderExtensionSupported()) {
-                XRenderPictFormat* format = XRenderFindVisualFormat(nativeDisplay(), temp->visual);
-
-                if (format) {
-                    if (supportsAlpha) {
-                        if (temp->depth == 32 && format->direct.alphaMask > 0)
-                            foundVisual = temp;
-                    } else if (!format->direct.alphaMask)
-                        foundVisual = temp;
-                }
-
-                if (foundVisual)
-                    break;
-            }
-
             int matchingdepth = supportsAlpha ? 32 : 24;
 
             if (temp->depth == matchingdepth) {
@@ -295,7 +279,7 @@ bool X11Helper::isXRenderExtensionSupported()
 
     if (!queryDone) {
         queryDone = true;
-#if USE(GRAPHICS_SURFACE)
+#if USE(GRAPHICS_SURFACE) && USE(GLX)
         Display* display = nativeDisplay();
 
         if (display) {
@@ -322,3 +306,4 @@ Window X11Helper::offscreenRootWindow()
 }
 
 }
+

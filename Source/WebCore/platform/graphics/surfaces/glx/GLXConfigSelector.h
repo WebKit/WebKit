@@ -151,7 +151,7 @@ private:
             if (!scopedVisualInfo.get())
                 continue;
 
-#if USE(GRAPHICS_SURFACE)
+#if USE(GRAPHICS_SURFACE) && USE(GLX)
             if (X11Helper::isXRenderExtensionSupported()) {
                 XRenderPictFormat* format = XRenderFindVisualFormat(X11Helper::nativeDisplay(), scopedVisualInfo->visual);
 
@@ -208,3 +208,4 @@ private:
 #endif
 
 #endif
+

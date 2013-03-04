@@ -29,17 +29,17 @@
 #include "IntRect.h"
 #include "OwnPtrX11.h"
 
-#if USE(GRAPHICS_SURFACE)
-
 #if USE(EGL)
 #include <opengl/GLDefs.h>
 #endif
 
+#if USE(GRAPHICS_SURFACE) && USE(GLX)
 #include <X11/extensions/Xcomposite.h>
 #include <X11/extensions/Xrender.h>
-#endif
-
+#else
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#endif
 
 namespace WebCore {
 
@@ -73,3 +73,4 @@ private:
 }
 
 #endif
+

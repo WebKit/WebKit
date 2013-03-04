@@ -28,7 +28,7 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
-#if HAVE(GLX)
+#if USE(GLX)
 #include "GLXSurface.h"
 #endif
 
