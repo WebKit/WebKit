@@ -1,0 +1,16 @@
+CONSOLE MESSAGE: line 4: Refused to execute a JavaScript script. Source code of script found within request.
+
+This test passes if the element displayed in the frame below has a 'values' attribute containing only 'javascript:void(0)'.
+
+
+
+--------
+Frame: '<!--framePath //<!--frame0-->-->'
+--------
+animate => animate
+* attributeName: xlink:href
+* values: javascript:void(0)
+* begin: 0s
+* end: 0.1s
+* fill: freeze
+

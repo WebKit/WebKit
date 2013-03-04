@@ -52,6 +52,10 @@
 #include "TextResourceDecoder.h"
 #include "XLinkNames.h"
 
+#if ENABLE(SVG)
+#include "SVGNames.h"
+#endif
+
 #include <wtf/Functional.h>
 #include <wtf/MainThread.h>
 #include <wtf/text/CString.h>
@@ -187,6 +191,25 @@ static ContentSecurityPolicy::ReflectedXSSDisposition combineXSSProtectionHeader
         return ContentSecurityPolicy::FilterReflectedXSS;
 
     return result;
+}
+
+static bool isSemicolonSeparatedAttribute(const HTMLToken::Attribute& attribute)
+{
+#if ENABLE(SVG)
+    return threadSafeMatch(attribute.name, SVGNames::valuesAttr);
+#endif
+    return false;
+}
+
+static bool semicolonSeparatedValueContainsJavaScriptURL(const String& value)
+{
+    Vector<String> valueList;
+    value.split(';', valueList);
+    for (size_t i = 0; i < valueList.size(); ++i) {
+        if (protocolIsJavaScript(valueList[i]))
+            return true;
+    }
+    return false;
 }
 
 XSSAuditor::XSSAuditor()
@@ -510,7 +533,9 @@ bool XSSAuditor::eraseDangerousAttributesIfInjected(const FilterTokenRequest& re
     for (size_t i = 0; i < request.token.attributes().size(); ++i) {
         const HTMLToken::Attribute& attribute = request.token.attributes().at(i);
         bool isInlineEventHandler = isNameOfInlineEventHandler(attribute.name);
-        bool valueContainsJavaScriptURL = !isInlineEventHandler && protocolIsJavaScript(stripLeadingAndTrailingHTMLSpaces(String(attribute.value)));
+        // FIXME: It would be better if we didn't create a new String for every attribute in the document.
+        String strippedValue = stripLeadingAndTrailingHTMLSpaces(String(attribute.value));
+        bool valueContainsJavaScriptURL = (!isInlineEventHandler && protocolIsJavaScript(strippedValue)) || (isSemicolonSeparatedAttribute(attribute) && semicolonSeparatedValueContainsJavaScriptURL(strippedValue));
         if (!isInlineEventHandler && !valueContainsJavaScriptURL)
             continue;
         if (!isContainedInRequest(decodedSnippetForAttribute(request, attribute, ScriptLikeAttribute)))

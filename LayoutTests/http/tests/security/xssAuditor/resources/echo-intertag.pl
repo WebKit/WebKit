@@ -104,6 +104,20 @@ if ($cgi->param('showFormaction')) {
     print "        alert('formaction present on ' + e.nodeName + ' with value of ' + e.getAttribute('formaction'));\n";
     print "</script>\n";
 }
+if ($cgi->param('dumpElementBySelector')) {
+    print "<pre id='console'></pre>\n";
+    print "<script>\n";
+    print "    var e = document.querySelector('" . $cgi->param('dumpElementBySelector') . "');\n";
+    print "    if (e) {\n";
+    print "        var log = '" . $cgi->param('dumpElementBySelector') . " => ' + e.nodeName + '\\n';\n";
+    print "        for (var i = 0; i < e.attributes.length; i++) {\n";
+    print "            log += '* ' + e.attributes[i].name + ': ' + e.attributes[i].value + '\\n';\n";
+    print "        }\n";
+    print "        document.getElementById('console').innerText = log;\n";
+    print "    } else\n";
+    print "        alert('No element matched the given selector.');\n";
+    print "</script>\n";
+}
 if ($cgi->param('notifyDone')) {
     print "<script>\n";
     print "if (window.testRunner)\n";
