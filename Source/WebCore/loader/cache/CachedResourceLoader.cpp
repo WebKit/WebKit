@@ -309,7 +309,7 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
 {
     if (document() && !document()->securityOrigin()->canDisplay(url)) {
         if (!forPreload)
-            FrameLoader::reportLocalLoadFailed(frame(), url.string());
+            FrameLoader::reportLocalLoadFailed(frame(), url.elidedString());
         LOG(ResourceLoading, "CachedResourceLoader::requestResource URL was not allowed by SecurityOrigin::canDisplay");
         return 0;
     }
@@ -424,7 +424,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::requestResource(Cache
 {
     KURL url = request.resourceRequest().url();
     
-    LOG(ResourceLoading, "CachedResourceLoader::requestResource '%s', charset '%s', priority=%d, forPreload=%u", url.string().latin1().data(), request.charset().latin1().data(), request.priority(), request.forPreload());
+    LOG(ResourceLoading, "CachedResourceLoader::requestResource '%s', charset '%s', priority=%d, forPreload=%u", url.elidedString().latin1().data(), request.charset().latin1().data(), request.priority(), request.forPreload());
     
     // If only the fragment identifiers differ, it is the same resource.
     url = MemoryCache::removeFragmentIdentifierIfNeeded(url);
@@ -541,7 +541,7 @@ CachedResourceHandle<CachedResource> CachedResourceLoader::loadResource(CachedRe
 {
     ASSERT(!memoryCache()->resourceForRequest(request.resourceRequest()));
 
-    LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().string().latin1().data());
+    LOG(ResourceLoading, "Loading CachedResource for '%s'.", request.resourceRequest().url().elidedString().latin1().data());
 
     CachedResourceHandle<CachedResource> resource = createResource(type, request.mutableResourceRequest(), charset);
 
@@ -658,9 +658,9 @@ void CachedResourceLoader::printAccessDeniedMessage(const KURL& url) const
 
     String message;
     if (!m_document || m_document->url().isNull())
-        message = "Unsafe attempt to load URL " + url.string() + '.';
+        message = "Unsafe attempt to load URL " + url.elidedString() + '.';
     else
-        message = "Unsafe attempt to load URL " + url.string() + " from frame with URL " + m_document->url().string() + ". Domains, protocols and ports must match.\n";
+        message = "Unsafe attempt to load URL " + url.elidedString() + " from frame with URL " + m_document->url().elidedString() + ". Domains, protocols and ports must match.\n";
 
     frame()->document()->addConsoleMessage(OtherMessageSource, ErrorMessageLevel, message);
 }

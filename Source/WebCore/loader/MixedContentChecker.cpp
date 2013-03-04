@@ -53,11 +53,6 @@ FrameLoaderClient* MixedContentChecker::client() const
     return m_frame->loader()->client();
 }
 
-static inline CString asUTF8(const KURL& url)
-{
-    return url.string().utf8();
-}
-
 // static
 bool MixedContentChecker::isMixedContent(SecurityOrigin* securityOrigin, const KURL& url)
 {
@@ -100,9 +95,7 @@ bool MixedContentChecker::canRunInsecureContent(SecurityOrigin* securityOrigin, 
 
 void MixedContentChecker::logWarning(bool allowed, const String& action, const KURL& target) const
 {
-    // FIXME: Why does this message not have a source URL or a line number? webkit.org/b/97979
-    String message = String::format("%sThe page at %s %s insecure content from %s.\n",
-        (allowed ? "" : "[blocked] "), asUTF8(m_frame->document()->url()).data(), action.utf8().data(), asUTF8(target).data());
+    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame->document()->url().elidedString(), " ", action, " insecure content from ", target.elidedString(), ".\n");
     m_frame->document()->addConsoleMessage(HTMLMessageSource, WarningMessageLevel, message);
 }
 

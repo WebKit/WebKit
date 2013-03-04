@@ -336,7 +336,7 @@ void FrameLoader::submitForm(PassRefPtr<FormSubmission> submission)
 
     if (isDocumentSandboxed(m_frame, SandboxForms)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        m_frame->document()->addConsoleMessage(HTMLMessageSource, ErrorMessageLevel, "Blocked form submission to '" + submission->action().string() + "' because the form's frame is sandboxed and the 'allow-forms' permission is not set.");
+        m_frame->document()->addConsoleMessage(HTMLMessageSource, ErrorMessageLevel, "Blocked form submission to '" + submission->action().elidedString() + "' because the form's frame is sandboxed and the 'allow-forms' permission is not set.");
         return;
     }
 
@@ -1142,7 +1142,7 @@ void FrameLoader::loadFrameRequest(const FrameLoadRequest& request, bool lockHis
 
     ASSERT(m_frame->document());
     if (!request.requester()->canDisplay(url)) {
-        reportLocalLoadFailed(m_frame, url.string());
+        reportLocalLoadFailed(m_frame, url.elidedString());
         return;
     }
 
@@ -1682,8 +1682,8 @@ void FrameLoader::commitProvisionalLoad()
     RefPtr<Frame> protect(m_frame);
 
     LOG(PageCache, "WebCoreLoading %s: About to commit provisional load from previous URL '%s' to new URL '%s'", m_frame->tree()->uniqueName().string().utf8().data(),
-        m_frame->document() ? m_frame->document()->url().string().utf8().data() : "", 
-        pdl ? pdl->url().string().utf8().data() : "<no provisional DocumentLoader>");
+        m_frame->document() ? m_frame->document()->url().elidedString().utf8().data() : "",
+        pdl ? pdl->url().elidedString().utf8().data() : "<no provisional DocumentLoader>");
 
     // Check to see if we need to cache the page we are navigating away from into the back/forward cache.
     // We are doing this here because we know for sure that a new page is about to be loaded.
@@ -1734,7 +1734,7 @@ void FrameLoader::commitProvisionalLoad()
     }
 
     LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame->tree()->uniqueName().string().utf8().data(),
-        m_frame->document() ? m_frame->document()->url().string().utf8().data() : "");
+        m_frame->document() ? m_frame->document()->url().elidedString().utf8().data() : "");
 
     if (m_loadType == FrameLoadTypeStandard && m_documentLoader->isClientRedirect())
         history()->updateForClientRedirect();
@@ -2937,7 +2937,7 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
         if (!origin->isSameSchemeHostPort(topFrame->document()->securityOrigin()))
             return true;
     } else if (!equalIgnoringCase(content, "allowall")) {
-        String message = "Invalid 'X-Frame-Options' header encountered when loading '" + url.string() + "': '" + content + "' is not a recognized directive. The header will be ignored.";
+        String message = "Invalid 'X-Frame-Options' header encountered when loading '" + url.elidedString() + "': '" + content + "' is not a recognized directive. The header will be ignored.";
         m_frame->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message, requestIdentifier);
     }
 
@@ -2947,7 +2947,7 @@ bool FrameLoader::shouldInterruptLoadForXFrameOptions(const String& content, con
 void FrameLoader::loadProvisionalItemFromCachedPage()
 {
     DocumentLoader* provisionalLoader = provisionalDocumentLoader();
-    LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().string().utf8().data());
+    LOG(PageCache, "WebCorePageCache: Loading provisional DocumentLoader %p with URL '%s' from CachedPage", provisionalDocumentLoader(), provisionalDocumentLoader()->url().elidedString().utf8().data());
 
     prepareForLoadStart();
 
@@ -3342,7 +3342,7 @@ Frame* createWindow(Frame* openerFrame, Frame* lookupFrame, const FrameLoadReque
     // Sandboxed frames cannot open new auxiliary browsing contexts.
     if (isDocumentSandboxed(openerFrame, SandboxPopups)) {
         // FIXME: This message should be moved off the console once a solution to https://bugs.webkit.org/show_bug.cgi?id=103274 exists.
-        openerFrame->document()->addConsoleMessage(HTMLMessageSource, ErrorMessageLevel, "Blocked opening '" + request.resourceRequest().url().string() + "' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.");
+        openerFrame->document()->addConsoleMessage(HTMLMessageSource, ErrorMessageLevel, "Blocked opening '" + request.resourceRequest().url().elidedString() + "' in a new window because the request was made in a sandboxed frame whose 'allow-popups' permission is not set.");
         return 0;
     }
 

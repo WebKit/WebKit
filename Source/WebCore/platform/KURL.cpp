@@ -1925,4 +1925,12 @@ bool KURL::isSafeToSendToAnotherThread() const
 #endif
 }
 
+String KURL::elidedString() const
+{
+    if (string().length() <= 1024)
+        return string();
+
+    return string().left(511) + "..." + string().right(510);
+}
+
 }

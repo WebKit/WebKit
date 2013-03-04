@@ -702,7 +702,7 @@ String HTMLMediaElement::canPlayType(const String& mimeType, const String& keySy
             break;
     }
     
-    LOG(Media, "HTMLMediaElement::canPlayType(%s, %s, %s) -> %s", mimeType.utf8().data(), keySystem.utf8().data(), url.string().utf8().data(), canPlay.utf8().data());
+    LOG(Media, "HTMLMediaElement::canPlayType(%s, %s, %s) -> %s", mimeType.utf8().data(), keySystem.utf8().data(), url.elidedString().utf8().data(), canPlay.utf8().data());
 
     return canPlay;
 }
@@ -1463,7 +1463,7 @@ bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidURLAction actionI
     Frame* frame = document()->frame();
     if (!frame || !document()->securityOrigin()->canDisplay(url)) {
         if (actionIfInvalid == Complain)
-            FrameLoader::reportLocalLoadFailed(frame, url.string());
+            FrameLoader::reportLocalLoadFailed(frame, url.elidedString());
         LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE rejected by SecurityOrigin", urlForLoggingMedia(url).utf8().data());
         return false;
     }

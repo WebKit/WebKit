@@ -131,6 +131,8 @@ public:
     const String& string() const { return m_string; }
 #endif
 
+    String elidedString() const;
+
     String protocol() const;
     String host() const;
     unsigned short port() const;

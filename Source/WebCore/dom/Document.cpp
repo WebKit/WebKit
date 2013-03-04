@@ -2893,7 +2893,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
             if (frameLoader->activeDocumentLoader() && frameLoader->activeDocumentLoader()->mainResourceLoader())
                 requestIdentifier = frameLoader->activeDocumentLoader()->mainResourceLoader()->identifier();
             if (frameLoader->shouldInterruptLoadForXFrameOptions(content, url(), requestIdentifier)) {
-                String message = "Refused to display '" + url().string() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
+                String message = "Refused to display '" + url().elidedString() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
                 frameLoader->stopAllLoaders();
                 frame->navigationScheduler()->scheduleLocationChange(securityOrigin(), blankURL(), String());
                 addConsoleMessage(JSMessageSource, ErrorMessageLevel, message, requestIdentifier);

@@ -158,7 +158,7 @@ ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const ArrayBuffer&
 
 ThreadableWebSocketChannel::SendResult WebSocketChannel::send(const Blob& binaryData)
 {
-    LOG(Network, "WebSocketChannel %p send blob %s", this, binaryData.url().string().utf8().data());
+    LOG(Network, "WebSocketChannel %p send blob %s", this, binaryData.url().elidedString().utf8().data());
     enqueueBlobFrame(WebSocketFrame::OpCodeBinary, binaryData);
     return ThreadableWebSocketChannel::SendSuccess;
 }
@@ -195,7 +195,7 @@ void WebSocketChannel::fail(const String& reason)
     ASSERT(!m_suspended);
     if (m_document) {
         InspectorInstrumentation::didReceiveWebSocketFrameError(m_document, m_identifier, reason);
-        m_document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "WebSocket connection to '" + m_handshake->url().string() + "' failed: " + reason);
+        m_document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "WebSocket connection to '" + m_handshake->url().elidedString() + "' failed: " + reason);
     }
 
     // Hybi-10 specification explicitly states we must not continue to handle incoming data
