@@ -57,7 +57,7 @@ static PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest& re
 
 static void loadResourceSynchronously(NetworkingContext*, const ResourceRequest& request, StoredCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
-    RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
+    BlobStorageData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(request.url());
     BlobResourceHandle::loadResourceSynchronously(blobData, request, error, response, data);
 }
 
@@ -80,7 +80,7 @@ static void registerBlobResourceHandleConstructor()
 
 PassRefPtr<ResourceHandle> BlobRegistryImpl::createResourceHandle(const ResourceRequest& request, ResourceHandleClient* client)
 {
-    RefPtr<BlobResourceHandle> handle = BlobResourceHandle::createAsync(m_blobs.get(request.url().string()), request, client);
+    RefPtr<BlobResourceHandle> handle = BlobResourceHandle::createAsync(getBlobDataFromURL(request.url()), request, client);
     if (!handle)
         return 0;
 
@@ -191,10 +191,10 @@ void BlobRegistryImpl::unregisterBlobURL(const KURL& url)
     m_blobs.remove(url.string());
 }
 
-PassRefPtr<BlobStorageData> BlobRegistryImpl::getBlobDataFromURL(const KURL& url) const
+BlobStorageData* BlobRegistryImpl::getBlobDataFromURL(const KURL& url) const
 {
     ASSERT(isMainThread());
-    return m_blobs.get(url.string());
+    return m_blobs.get(url.string()).get();
 }
 
 } // namespace WebCore

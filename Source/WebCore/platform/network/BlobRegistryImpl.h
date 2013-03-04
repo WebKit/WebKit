@@ -50,7 +50,7 @@ class BlobRegistryImpl : public BlobRegistry {
 public:
     virtual ~BlobRegistryImpl();
 
-    PassRefPtr<BlobStorageData> getBlobDataFromURL(const KURL&) const;
+    BlobStorageData* getBlobDataFromURL(const KURL&) const;
 
     PassRefPtr<ResourceHandle> createResourceHandle(const ResourceRequest&, ResourceHandleClient*);
 

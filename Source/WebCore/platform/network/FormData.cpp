@@ -326,7 +326,7 @@ static void appendBlobResolved(FormData* formData, const KURL& url)
         LOG_ERROR("Tried to resolve a blob without a usable registry");
         return;
     }
-    RefPtr<BlobStorageData> blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, url));
+    BlobStorageData* blobData = static_cast<BlobRegistryImpl&>(blobRegistry()).getBlobDataFromURL(KURL(ParsedURLString, url));
     if (!blobData) {
         LOG_ERROR("Could not get blob data from a registry");
         return;

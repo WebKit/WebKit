@@ -147,7 +147,7 @@ void ResourceHandle::setClient(ResourceHandleClient* client)
     d->m_client = client;
 }
 
-ResourceRequest& ResourceHandle::firstRequest()
+ResourceRequest& ResourceHandle::firstRequest() const
 {
     return d->m_firstRequest;
 }
