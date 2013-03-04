@@ -208,6 +208,8 @@
       }],
       ['OS=="linux" or OS=="mac"', {
         'feature_defines': [
+          # 8Bit text runs should be enabled for all platforms webkit.org/b/111348
+          'ENABLE_8BIT_TEXTRUN=1',
           'ENABLE_BINDING_INTEGRITY=1',
         ],
       }, { # OS!="linux"

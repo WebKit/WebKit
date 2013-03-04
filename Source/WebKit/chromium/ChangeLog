@@ -1,3 +1,14 @@
+2013-03-04  Levi Weintraub  <leviw@chromium.org>
+
+        Add support for 8 bit TextRuns on Chromium Linux & Mac
+        https://bugs.webkit.org/show_bug.cgi?id=99393
+
+        Reviewed by Eric Seidel.
+
+        Enabling 8 bit text runs for Linux and Mac platforms.
+
+        * features.gypi:
+
 2013-03-04  Peter Beverloo  <peter@chromium.org>
 
         [Chromium] Add a new dependency on jsr-305 for Android
