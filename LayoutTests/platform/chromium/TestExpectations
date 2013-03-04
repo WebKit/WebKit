@@ -124,25 +124,6 @@ webkit.org/b/101362 [ Debug ] fast/dom/Window/customized-property-survives-gc.ht
 
 webkit.org/b/110324 [ Debug ] fast/js/regress/nested-function-parsing.html [ Pass Slow ]
 
-# These tests are slow since r144032
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-doctype01-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-domjs-unsafe-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-entities01-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-entities02-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-html5test-com-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-plain-text-unsafe-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-scriptdata01-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests3-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests6-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests7-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests9-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests20-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-tests21-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug ] html5lib/generated/run-webkit01-data.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests1-write.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug Linux ] html5lib/generated/run-tests16-write.html [ Pass Slow ]
-webkit.org/b/110876 [ Debug Mac ] html5lib/generated/run-tests19-write.html [ Pass Slow ]
-
 webkit.org/b/110924 fast/js/regress/inlined-put-by-id-transition.html [ Pass Crash ]
 webkit.org/b/111038 [ Debug Win ] fast/loader/policy-delegate-action-hit-test-zoomed.html [ Pass Slow ]
 webkit.org/b/111046 [ Debug Mac ] plugins/pass-different-npp-struct.html [ Pass Slow ]
@@ -4419,18 +4400,8 @@ webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecomposit
 webkit.org/b/111199 [ Debug Mac ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 
-# These tests are timing out since r144032
-webkit.org/b/110876 html5lib/generated/run-template-data.html [ Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests1-data.html [ Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests2-data.html [ Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests10-data.html [ Slow  ]
-webkit.org/b/110876 html5lib/generated/run-tests16-data.html [ Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests18-data.html [ Slow ]
-webkit.org/b/110876 html5lib/generated/run-tests19-data.html [ Slow ]
-# These html5lib/ tests are also failing
-webkit.org/b/110876 [ Debug Win ] html5lib/generated/run-tests10-write.html [ Pass Crash ]
-webkit.org/b/110876 [ Debug Win Mac ] html5lib/generated/run-tests16-write.html [ Pass Crash ]
-webkit.org/b/110876 [ Debug Win ] html5lib/generated/run-tests19-write.html [ Pass Crash ]
+# These tests are timing out and crashing since r144032
+webkit.org/b/110876 html5lib/generated/ [ Pass Slow Crash ]
 
 # HALF_FLOAT_OES is not yet working in chromium.
 crbug.com/179503 fast/canvas/webgl/oes-texture-half-float.html [ Failure ]
