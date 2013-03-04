@@ -1,3 +1,20 @@
+2013-03-04  Laszlo Gombos  <l.gombos@samsung.com>
+
+        JSC_OBJC_API_ENABLED should be removed from FeatureDefines.h
+        https://bugs.webkit.org/show_bug.cgi?id=111269
+
+        Reviewed by Mark Hahnenberg.
+
+        JSC_OBJC_API_ENABLED flag was added to FeatureDefines.h (r143637) 
+        so that it could be used in WebCore.exp.in to determine whether 
+        or not we should be exporting certain symbols based on whether 
+        the WebKit-related portion of the JSC ObjC API was enabled.
+        
+        It turned out conditionally including certain symbols didn't
+        work when building fat binaries, so it's not even necessary any more.
+
+        * wtf/FeatureDefines.h: Remove JSC_OBJC_API_ENABLED.
+
 2013-03-04  Andreas Kling  <akling@apple.com>
 
         Deque: Free internal buffer in clear().
