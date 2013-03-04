@@ -109,6 +109,8 @@
 		A8B91BFF0CF522B4008F91FF /* CheckedMalloc.h in Headers */ = {isa = PBXBuildFile; fileRef = A8B91BF90CF522B4008F91FF /* CheckedMalloc.h */; };
 		A8D79CEA0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.h in Headers */ = {isa = PBXBuildFile; fileRef = A8D79CE80FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.h */; };
 		A8D79CEB0FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m in Sources */ = {isa = PBXBuildFile; fileRef = A8D79CE90FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m */; };
+		AA5A15EF16E15CD000F7C561 /* AccessibilityControllerIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA5A15ED16E15CD000F7C561 /* AccessibilityControllerIOS.mm */; };
+		AA5A15F016E15CD000F7C561 /* AccessibilityUIElementIOS.mm in Sources */ = {isa = PBXBuildFile; fileRef = AA5A15EE16E15CD000F7C561 /* AccessibilityUIElementIOS.mm */; };
 		AE8259F308D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		AE8259F408D22463000507AB /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE8257EF08D22389000507AB /* Carbon.framework */; };
 		B5A752A208AF5D1F00138E45 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B5A752A108AF5D1F00138E45 /* QuartzCore.framework */; };
@@ -319,6 +321,8 @@
 		A8B91BF90CF522B4008F91FF /* CheckedMalloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CheckedMalloc.h; path = mac/CheckedMalloc.h; sourceTree = "<group>"; };
 		A8D79CE80FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DumpRenderTreeFileDraggingSource.h; sourceTree = "<group>"; };
 		A8D79CE90FC28B2C004AC8FE /* DumpRenderTreeFileDraggingSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DumpRenderTreeFileDraggingSource.m; sourceTree = "<group>"; };
+		AA5A15ED16E15CD000F7C561 /* AccessibilityControllerIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityControllerIOS.mm; path = ios/AccessibilityControllerIOS.mm; sourceTree = "<group>"; };
+		AA5A15EE16E15CD000F7C561 /* AccessibilityUIElementIOS.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AccessibilityUIElementIOS.mm; path = ios/AccessibilityUIElementIOS.mm; sourceTree = "<group>"; };
 		AA7F10C20CB3C1030003BDC9 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "qt/fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		AE8257EF08D22389000507AB /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		B5A7526708AF4A4A00138E45 /* ImageDiff */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageDiff; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -498,6 +502,7 @@
 				BC0E26140E2DA4C6001B6BC3 /* AccessibilityCommonMac.mm */,
 				BCD08B390E1057EF00A7D0C1 /* AccessibilityController.cpp */,
 				BCD08A580E10496B00A7D0C1 /* AccessibilityController.h */,
+				AA5A15ED16E15CD000F7C561 /* AccessibilityControllerIOS.mm */,
 				BCD08B700E1059D200A7D0C1 /* AccessibilityControllerMac.mm */,
 				80045AEB147718E7008290A8 /* AccessibilityNotificationHandler.h */,
 				80045AEC147718E7008290A8 /* AccessibilityNotificationHandler.mm */,
@@ -506,6 +511,7 @@
 				29CFBA2D12273A1000BC30C0 /* AccessibilityTextMarkerMac.mm */,
 				BC0E24DF0E2D9451001B6BC2 /* AccessibilityUIElement.cpp */,
 				BC0E24DE0E2D9451001B6BC2 /* AccessibilityUIElement.h */,
+				AA5A15EE16E15CD000F7C561 /* AccessibilityUIElementIOS.mm */,
 				BC0E26140E2DA4C6001B6BC2 /* AccessibilityUIElementMac.mm */,
 				BCA18B360C9B021900114369 /* AppleScriptController.h */,
 				BCA18B370C9B021900114369 /* AppleScriptController.m */,
@@ -864,6 +870,8 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+			};
 			buildConfigurationList = 149C29C308902C6D008A9EFC /* Build configuration list for PBXProject "DumpRenderTree" */;
 			compatibilityVersion = "Xcode 2.4";
 			developmentRegion = English;
@@ -971,6 +979,7 @@
 				BCA18B640C9B08C200114369 /* FrameLoadDelegate.mm in Sources */,
 				BCF6C6500C98E9C000AC063E /* GCController.cpp in Sources */,
 				BCA18B230C9B014B00114369 /* GCControllerMac.mm in Sources */,
+				AA5A15EF16E15CD000F7C561 /* AccessibilityControllerIOS.mm in Sources */,
 				5185F6B210714E07007AA393 /* HistoryDelegate.mm in Sources */,
 				BC4741410D038A570072B006 /* JavaScriptThreadingPthreads.cpp in Sources */,
 				E1B7816511AF31B7007E1BC2 /* MockGeolocationProvider.mm in Sources */,
@@ -983,6 +992,7 @@
 				BCB284CD0CFA83C8007E533E /* PixelDumpSupportCG.cpp in Sources */,
 				BCB284D60CFA83D1007E533E /* PixelDumpSupportMac.mm in Sources */,
 				BCA18B660C9B08C200114369 /* PolicyDelegate.mm in Sources */,
+				AA5A15F016E15CD000F7C561 /* AccessibilityUIElementIOS.mm in Sources */,
 				BCA18B680C9B08C200114369 /* ResourceLoadDelegate.mm in Sources */,
 				3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */,
 				BC0131DA0C9772010087317D /* TestRunner.cpp in Sources */,

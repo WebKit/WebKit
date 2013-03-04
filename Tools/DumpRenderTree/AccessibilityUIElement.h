@@ -200,7 +200,14 @@ public:
     JSStringRef attributedStringForRange(unsigned location, unsigned length);
     bool attributedStringRangeIsMisspelled(unsigned location, unsigned length);
     AccessibilityUIElement uiElementForSearchPredicate(AccessibilityUIElement* startElement, bool isDirectionNext, JSStringRef searchKey, JSStringRef searchText);
-    
+#if PLATFORM(IOS)
+    void elementsForRange(unsigned location, unsigned length, Vector<AccessibilityUIElement>& elements);
+    JSStringRef stringForSelection();
+    void increaseTextSelection();
+    void decreaseTextSelection();
+    AccessibilityUIElement linkedElement();
+#endif
+
     // Table-specific
     AccessibilityUIElement cellForColumnAndRow(unsigned column, unsigned row);
 
@@ -234,6 +241,20 @@ public:
     // Make sure you call remove, because you can't rely on objects being deallocated in a timely fashion.
     void removeNotificationListener();
     
+#if PLATFORM(IOS)
+    JSStringRef iphoneLabel();
+    JSStringRef iphoneValue();
+    JSStringRef iphoneTraits();
+    JSStringRef iphoneHint();
+    JSStringRef iphoneIdentifier();
+    bool iphoneIsElement();
+    int iphoneElementTextPosition();
+    int iphoneElementTextLength();
+    AccessibilityUIElement headerElementAtIndex(unsigned);
+    // This will simulate the accessibilityDidBecomeFocused API in UIKit.
+    void assistiveTechnologySimulatedFocus();
+#endif // PLATFORM(IOS)
+
 private:
     static JSClassRef getJSClass();
     PlatformUIElement m_element;
