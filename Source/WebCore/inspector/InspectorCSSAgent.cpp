@@ -40,6 +40,7 @@
 #include "DOMWindow.h"
 #include "ExceptionCodePlaceholder.h"
 #include "HTMLHeadElement.h"
+#include "HTMLStyleElement.h"
 #include "InspectorDOMAgent.h"
 #include "InspectorHistory.h"
 #include "InspectorState.h"
@@ -1080,11 +1081,16 @@ InspectorStyleSheet* InspectorCSSAgent::viaInspectorStyleSheet(Document* documen
     }
     if (ec)
         return 0;
-    StyleSheetList* styleSheets = document->styleSheets();
-    StyleSheet* styleSheet = styleSheets->item(styleSheets->length() - 1);
-    if (!styleSheet || !styleSheet->isCSSStyleSheet())
+
+    HTMLElement* htmlElement = toHTMLElement(styleElement.get());
+    if (!htmlElement || !htmlElement->hasTagName(HTMLNames::styleTag))
         return 0;
-    CSSStyleSheet* cssStyleSheet = static_cast<CSSStyleSheet*>(styleSheet);
+
+    HTMLStyleElement* htmlStyleElement = static_cast<HTMLStyleElement*>(htmlElement);
+    CSSStyleSheet* cssStyleSheet = htmlStyleElement->sheet();
+    if (!cssStyleSheet)
+        return 0;
+
     String id = String::number(m_lastStyleSheetId++);
     inspectorStyleSheet = InspectorStyleSheet::create(m_domAgent->pageAgent(), id, cssStyleSheet, TypeBuilder::CSS::StyleSheetOrigin::Inspector, InspectorDOMAgent::documentURLString(document), this);
     m_idToInspectorStyleSheet.set(id, inspectorStyleSheet);

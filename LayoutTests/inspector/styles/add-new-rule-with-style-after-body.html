@@ -1,0 +1,67 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/elements-test.js"></script>
+<script>
+function addStyle()
+{
+    var style = document.createElement("style");
+    document.documentElement.appendChild(style);
+    style.sheet.insertRule("foo {display: none;}", 0);
+}
+
+function test()
+{
+    WebInspector.showPanel("elements");
+    InspectorTest.evaluateInPage("addStyle()", step0);
+
+    function step0()
+    {
+        InspectorTest.selectNodeAndWaitForStyles("inspected", step1);
+    }
+
+    var treeElement;
+    var hasResourceChanged;
+
+    function step1()
+    {
+        // Click "Add new rule".
+        document.getElementById("add-style-button-test-id").click();
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        section._selectorElement.textContent = "inspected";
+        section._selectorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.runAfterPendingDispatches(step2);
+    }
+
+    function step2()
+    {
+        var section = WebInspector.panels.elements.sidebarPanes.styles.sections[0][2];
+        var newProperty = section.addNewBlankProperty();
+        newProperty.startEditing();
+        newProperty.nameElement.textContent = "color";
+        newProperty.nameElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        newProperty.valueElement.textContent = "maroon";
+        newProperty.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+        InspectorTest.waitForStyles("inspected", step3);
+    }
+
+    function step3()
+    {
+        InspectorTest.addResult("After adding new rule:");
+        InspectorTest.dumpSelectedElementStyles(true, false, true);
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that adding a new rule works when there is a STYLE element after BODY. TIMEOUT SHOULD NOT OCCUR! <a href="https://bugs.webkit.org/show_bug.cgi?id=111299">Bug 111299</a>
+</p>
+
+<div id="inspected" style="font-size: 12px">Text</div>
+
+</body>
+</html>

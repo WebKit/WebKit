@@ -1,0 +1,20 @@
+Tests that adding a new rule works when there is a STYLE element after BODY. TIMEOUT SHOULD NOT OCCUR! Bug 111299
+
+Text
+After adding new rule:
+[expanded] 
+element.style  { ()
+font-size: 12px;
+
+[expanded] [no-affect] 
+inspected  { (inspector-stylesheet:1)
+color: maroon;
+: ;
+
+======== Matched CSS Rules ========
+[expanded] 
+div  { (user agent stylesheet)
+display: block;
+
+
+
