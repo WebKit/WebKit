@@ -57,7 +57,7 @@ CallbackArgument::~CallbackArgument()
 class CallbackArgumentBoolean : public CallbackArgument {
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef*) override
     {
-        bool value = JSValueToBoolean(contextInternalContext(context), argument);
+        bool value = JSValueToBoolean([context globalContextRef], argument);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -66,7 +66,7 @@ template<typename T>
 class CallbackArgumentInteger : public CallbackArgument {
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
-        T value = (T)JSC::toInt32(JSValueToNumber(contextInternalContext(context), argument, exception));
+        T value = (T)JSC::toInt32(JSValueToNumber([context globalContextRef], argument, exception));
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -75,7 +75,7 @@ template<typename T>
 class CallbackArgumentDouble : public CallbackArgument {
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
-        T value = (T)JSValueToNumber(contextInternalContext(context), argument, exception);
+        T value = (T)JSValueToNumber([context globalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -113,7 +113,7 @@ private:
 
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
-        JSGlobalContextRef contextRef = contextInternalContext(context);
+        JSGlobalContextRef contextRef = [context globalContextRef];
 
         id object = tryUnwrapObjcObject(contextRef, argument);
         if (object && [object isKindOfClass:m_class]) {
@@ -136,7 +136,7 @@ private:
 class CallbackArgumentNSNumber : public CallbackArgument {
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
-        id value = valueToNumber(contextInternalContext(context), argument, exception);
+        id value = valueToNumber([context globalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -144,7 +144,7 @@ class CallbackArgumentNSNumber : public CallbackArgument {
 class CallbackArgumentNSString : public CallbackArgument {
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
-        id value = valueToString(contextInternalContext(context), argument, exception);
+        id value = valueToString([context globalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -152,7 +152,7 @@ class CallbackArgumentNSString : public CallbackArgument {
 class CallbackArgumentNSDate : public CallbackArgument {
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
-        id value = valueToDate(contextInternalContext(context), argument, exception);
+        id value = valueToDate([context globalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -160,7 +160,7 @@ class CallbackArgumentNSDate : public CallbackArgument {
 class CallbackArgumentNSArray : public CallbackArgument {
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
-        id value = valueToArray(contextInternalContext(context), argument, exception);
+        id value = valueToArray([context globalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -168,7 +168,7 @@ class CallbackArgumentNSArray : public CallbackArgument {
 class CallbackArgumentNSDictionary : public CallbackArgument {
     virtual void set(NSInvocation *invocation, NSInteger argumentNumber, JSContext *context, JSValueRef argument, JSValueRef* exception) override
     {
-        id value = valueToDictionary(contextInternalContext(context), argument, exception);
+        id value = valueToDictionary([context globalContextRef], argument, exception);
         [invocation setArgument:&value atIndex:argumentNumber];
     }
 };
@@ -275,7 +275,7 @@ public:
 class CallbackResultVoid : public CallbackResult {
     virtual JSValueRef get(NSInvocation *, JSContext *context, JSValueRef*) override
     {
-        return JSValueMakeUndefined(contextInternalContext(context));
+        return JSValueMakeUndefined([context globalContextRef]);
     }
 };
 
@@ -294,7 +294,7 @@ class CallbackResultNumeric : public CallbackResult {
     {
         T value;
         [invocation getReturnValue:&value];
-        return JSValueMakeNumber(contextInternalContext(context), value);
+        return JSValueMakeNumber([context globalContextRef], value);
     }
 };
 
@@ -303,7 +303,7 @@ class CallbackResultBoolean : public CallbackResult {
     {
         bool value;
         [invocation getReturnValue:&value];
-        return JSValueMakeBoolean(contextInternalContext(context), value);
+        return JSValueMakeBoolean([context globalContextRef], value);
     }
 };
 
@@ -489,7 +489,7 @@ static JSClassRef objCCallbackFunctionClass()
 
 JSValueRef ObjCCallbackFunction::call(JSContext *context, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSGlobalContextRef contextRef = contextInternalContext(context);
+    JSGlobalContextRef contextRef = [context globalContextRef];
 
     size_t firstArgument;
     switch (m_type) {
@@ -582,10 +582,10 @@ static JSObjectRef objCCallbackFunctionForInvocation(JSContext *context, NSInvoc
     // The result should be a regular host function, rather than a callable C API object.
     // Patch in the right length & [Prototype] values for now, but should fix this.
     // Function.prototype.toString currently fails, since this is not yet a subclass of functon, but call & apply do work.
-    JSObjectRef functionObject = JSObjectMake(contextInternalContext(context), objCCallbackFunctionClass(), new ObjCCallbackFunction(context, invocation, type, instanceClass, arguments.release(), result.release()));
+    JSObjectRef functionObject = JSObjectMake([context globalContextRef], objCCallbackFunctionClass(), new ObjCCallbackFunction(context, invocation, type, instanceClass, arguments.release(), result.release()));
     JSValue *value = [JSValue valueWithValue:functionObject inContext:context];
     value[@"length"] = @(argumentCount);
-    JSObjectSetPrototype(contextInternalContext(context), functionObject, valueInternalValue(context[@"Function"][@"prototype"]));
+    JSObjectSetPrototype([context globalContextRef], functionObject, valueInternalValue(context[@"Function"][@"prototype"]));
     value[@"toString"] = [context evaluateScript:@"(function(){ return '"
         "function <Objective-C>() {" "\\n"
         "    [native code]"          "\\n"

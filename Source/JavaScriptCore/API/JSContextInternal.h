@@ -61,8 +61,6 @@ private:
 
 - (id)initWithGlobalContextRef:(JSGlobalContextRef)context;
 
-JS_EXPORT_PRIVATE JSGlobalContextRef contextInternalContext(JSContext *);
-
 - (void)notifyException:(JSValueRef)exception;
 - (JSValue *)valueFromNotifyException:(JSValueRef)exception;
 - (BOOL)boolFromNotifyException:(JSValueRef)exception;

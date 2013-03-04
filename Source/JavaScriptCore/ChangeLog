@@ -1,3 +1,65 @@
+2013-03-04  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Remove contextInternalContext from JSContextInternal.h
+        https://bugs.webkit.org/show_bug.cgi?id=111356
+
+        Reviewed by Geoffrey Garen.
+
+        We don't need it any more since we have globalContextRef in JSContext.
+
+        * API/JSContext.mm:
+        * API/JSContextInternal.h:
+        * API/JSValue.mm:
+        (+[JSValue valueWithBool:inContext:]):
+        (+[JSValue valueWithDouble:inContext:]):
+        (+[JSValue valueWithInt32:inContext:]):
+        (+[JSValue valueWithUInt32:inContext:]):
+        (+[JSValue valueWithNewObjectInContext:]):
+        (+[JSValue valueWithNewArrayInContext:]):
+        (+[JSValue valueWithNewRegularExpressionFromPattern:flags:inContext:]):
+        (+[JSValue valueWithNewErrorFromMessage:inContext:]):
+        (+[JSValue valueWithNullInContext:]):
+        (+[JSValue valueWithUndefinedInContext:]):
+        (-[JSValue toBool]):
+        (-[JSValue toDouble]):
+        (-[JSValue toNumber]):
+        (-[JSValue toString]):
+        (-[JSValue toDate]):
+        (-[JSValue toArray]):
+        (-[JSValue toDictionary]):
+        (-[JSValue valueForProperty:]):
+        (-[JSValue setValue:forProperty:]):
+        (-[JSValue deleteProperty:]):
+        (-[JSValue hasProperty:]):
+        (-[JSValue valueAtIndex:]):
+        (-[JSValue setValue:atIndex:]):
+        (-[JSValue isUndefined]):
+        (-[JSValue isNull]):
+        (-[JSValue isBoolean]):
+        (-[JSValue isNumber]):
+        (-[JSValue isString]):
+        (-[JSValue isObject]):
+        (-[JSValue isEqualToObject:]):
+        (-[JSValue isEqualWithTypeCoercionToObject:]):
+        (-[JSValue isInstanceOf:]):
+        (-[JSValue callWithArguments:]):
+        (-[JSValue constructWithArguments:]):
+        (-[JSValue invokeMethod:withArguments:]):
+        (valueToObject):
+        (objectToValueWithoutCopy):
+        (objectToValue):
+        (-[JSValue initWithValue:inContext:]):
+        (-[JSValue dealloc]):
+        (-[JSValue description]):
+        * API/JSWrapperMap.mm:
+        (createObjectWithCustomBrand):
+        (-[JSObjCClassInfo allocateConstructorAndPrototypeWithSuperClassInfo:]):
+        (-[JSObjCClassInfo wrapperForObject:]):
+        (-[JSWrapperMap jsWrapperForObject:]):
+        * API/ObjCCallbackFunction.mm:
+        (ObjCCallbackFunction::call):
+        (objCCallbackFunctionForInvocation):
+
 2013-03-04  Andreas Kling  <akling@apple.com>
 
         Add simple vector traits for JSC::Identifier.

@@ -190,11 +190,6 @@
     return self;
 }
 
-JSGlobalContextRef contextInternalContext(JSContext *context)
-{
-    return context->m_context;
-}
-
 - (void)dealloc
 {
     [m_wrapperMap release];
