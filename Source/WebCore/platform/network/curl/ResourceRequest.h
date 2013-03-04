@@ -64,7 +64,7 @@ namespace WebCore {
         void updateFromDelegatePreservingOldHTTPBody(const ResourceRequest& delegateProvidedRequest) { *this = delegateProvidedRequest; }
 
         // Needed for compatibility.
-        CFURLRequestRef cfURLRequest() const { return 0; }
+        CFURLRequestRef cfURLRequest(HTTPBodyUpdatePolicy) const { return 0; }
 
         // The following two stubs are for compatibility with CFNetwork, and are not used.
         static bool httpPipeliningEnabled() { return false; }
