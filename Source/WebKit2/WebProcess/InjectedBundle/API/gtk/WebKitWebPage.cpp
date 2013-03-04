@@ -33,11 +33,24 @@
 using namespace WebKit;
 using namespace WebCore;
 
+enum {
+    DOCUMENT_LOADED,
+
+    LAST_SIGNAL
+};
+
 struct _WebKitWebPagePrivate {
     WebPage* webPage;
 };
 
+static guint signals[LAST_SIGNAL] = { 0, };
+
 WEBKIT_DEFINE_TYPE(WebKitWebPage, webkit_web_page, G_TYPE_OBJECT)
+
+static void didFinishDocumentLoadForFrame(WKBundlePageRef, WKBundleFrameRef, WKTypeRef*, const void *clientInfo)
+{
+    g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[DOCUMENT_LOADED], 0);
+}
 
 static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef frame, uint64_t identifier, WKURLRequestRef request, bool pageLoadIsProvisional, const void*)
 {
@@ -100,12 +113,66 @@ static void didFailLoadForResource(WKBundlePageRef page, WKBundleFrameRef, uint6
 
 static void webkit_web_page_class_init(WebKitWebPageClass* klass)
 {
+    /**
+     * WebKitWebPage::document-loaded:
+     * @web_page: the #WebKitWebPage on which the signal is emitted
+     *
+     * This signal is emitted when the DOM document of a #WebKitWebPage has been
+     * loaded.
+     *
+     * You can wait for this signal to get the DOM document with
+     * webkit_web_page_get_dom_document().
+     */
+    signals[DOCUMENT_LOADED] = g_signal_new(
+        "document-loaded",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0, 0, 0,
+        g_cclosure_marshal_VOID__OBJECT,
+        G_TYPE_NONE, 0);
 }
 
 WebKitWebPage* webkitWebPageCreate(WebPage* webPage)
 {
     WebKitWebPage* page = WEBKIT_WEB_PAGE(g_object_new(WEBKIT_TYPE_WEB_PAGE, NULL));
     page->priv->webPage = webPage;
+
+    WKBundlePageLoaderClient loaderClient = {
+        kWKBundlePageResourceLoadClientCurrentVersion,
+        page,
+        0, // didStartProvisionalLoadForFrame
+        0, // didReceiveServerRedirectForProvisionalLoadForFrame
+        0, // didFailProvisionalLoadWithErrorForFrame
+        0, // didCommitLoadForFrame
+        didFinishDocumentLoadForFrame,
+        0, // didFinishLoadForFrame,
+        0, // didFailLoadWithErrorForFrame
+        0, // didSameDocumentNavigationForFrame
+        0, // didReceiveTitleForFrame
+        0, // didFirstLayoutForFrame
+        0, // didFirstVisuallyNonEmptyLayoutForFrame
+        0, // didRemoveFrameFromHierarchy
+        0, // didDisplayInsecureContentForFrame
+        0, // didRunInsecureContentForFrame
+        0, // didClearWindowObjectForFrame
+        0, // didCancelClientRedirectForFrame
+        0, // willPerformClientRedirectForFrame
+        0, // didHandleOnloadEventsForFrame
+        0, // didLayoutForFrame
+        0, // didNewFirstVisuallyNonEmptyLayout
+        0, // didDetectXSSForFrame
+        0, // shouldGoToBackForwardListItem
+        0, // globalObjectIsAvailableForFrame
+        0, // willDisconnectDOMWindowExtensionFromGlobalObject
+        0, // didReconnectDOMWindowExtensionToGlobalObject
+        0, // willDestroyGlobalObjectForDOMWindowExtension
+        0, // didFinishProgress
+        0, // shouldForceUniversalAccessFromLocalURL
+        0, // didReceiveIntentForFrame_unavailable
+        0, // registerIntentServiceForFrame_unavailable
+        0 // didLayout
+    };
+    WKBundlePageSetPageLoaderClient(toAPI(webPage), &loaderClient);
 
     WKBundlePageResourceLoadClient resourceLoadClient = {
         kWKBundlePageResourceLoadClientCurrentVersion,

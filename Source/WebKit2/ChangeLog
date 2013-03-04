@@ -1,3 +1,27 @@
+2013-03-04  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WK2] Add document-loaded signal to WebKitWebPage
+        https://bugs.webkit.org/show_bug.cgi?id=110614
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add a new signal document-loaded to WebKitWebPage that will be emitted
+        when the DOM document has been loaded.
+
+        * UIProcess/API/gtk/tests/TestWebExtensions.cpp:
+        (documentLoadedCallback):
+        (testDocumentLoadedSignal):
+        (beforeAll): Add test for document-loaded signal.
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp:
+        (documentLoadedCallback):
+        (pageCreatedCallback):
+        (methodCallCallback): Add new D-Bus signal DocumentLoaded in order to
+        test document-loaded signal.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (webkit_web_page_class_init):
+        (webkitWebPageCreate): Add document-loaded signal and emit it when
+        didFinishDocumentLoadForFrame is called.
+
 2013-02-26  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WK2][GTK] REGRESSION (r143463): unit test failure in WebKit2APITests/TestContextMenu
