@@ -348,6 +348,7 @@ namespace WTF {
         destroyAll();
         m_start = 0;
         m_end = 0;
+        m_buffer.deallocateBuffer(m_buffer.buffer());
         checkValidity();
     }
 
