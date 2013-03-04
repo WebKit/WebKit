@@ -305,8 +305,11 @@ WebInspector.SourceFrame.prototype = {
     {
         this._textEditor.mimeType = mimeType;
 
-        this._loaded = true;
-        this._textEditor.setText(content || "");
+        if (!this._loaded) {
+            this._loaded = true;
+            this._textEditor.setText(content || "");
+        } else
+            this._textEditor.editRange(this._textEditor.range(), content || "");
 
         this._textEditor.beginUpdates();
 

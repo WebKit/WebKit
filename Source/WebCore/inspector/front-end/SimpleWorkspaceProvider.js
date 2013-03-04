@@ -99,6 +99,16 @@ WebInspector.SimpleProjectDelegate.prototype = {
 
     /**
      * @param {Array.<string>} path
+     * @param {string} currentContent
+     * @param {function(?string)} callback
+     */
+    requestUpdatedFileContent: function(path, currentContent, callback)
+    {
+        callback(null);
+    },
+
+    /**
+     * @param {Array.<string>} path
      * @param {string} newContent
      * @param {function(?string)} callback
      */

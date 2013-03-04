@@ -350,7 +350,7 @@ WebInspector.DefaultTextEditor.prototype = {
      */
     editRange: function(range, text)
     {
-        return this._textModel.editRange(range, text);
+        return this._textModel.editRange(range, text, this.lastSelection());
     },
 
     _updatePanelOffsets: function()

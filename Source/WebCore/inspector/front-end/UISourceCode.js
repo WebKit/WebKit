@@ -214,6 +214,26 @@ WebInspector.UISourceCode.prototype = {
             this._project.requestFileContent(this, this._fireContentAvailable.bind(this));
     },
 
+    checkContentUpdated: function()
+    {
+        this._project.requestUpdatedFileContent(this, updatedContentLoaded.bind(this));
+
+        function updatedContentLoaded(updatedContent)
+        {
+            if (typeof updatedContent !== "string")
+                return;
+
+            if (!this.isDirty()) {
+                this.addRevision(updatedContent);
+                return;
+            }
+
+            var shouldUpdate = window.confirm(WebInspector.UIString("This file was changed externally. Would you like to reload it?"));
+            if (shouldUpdate)
+                this.addRevision(updatedContent);
+        }
+    },
+
     /**
      * @param {function(?string,boolean,string)} callback
      */

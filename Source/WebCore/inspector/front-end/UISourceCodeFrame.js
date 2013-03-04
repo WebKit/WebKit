@@ -41,12 +41,39 @@ WebInspector.UISourceCodeFrame = function(uiSourceCode)
 }
 
 WebInspector.UISourceCodeFrame.prototype = {
+    wasShown: function()
+    {
+        WebInspector.SourceFrame.prototype.wasShown.call(this);
+        this._boundWindowFocused = this._windowFocused.bind(this);
+        window.addEventListener("focus", this._boundWindowFocused, false);
+        this._checkContentUpdated();
+    },
+
+    willHide: function()
+    {
+        WebInspector.SourceFrame.prototype.willHide.call(this);
+        window.removeEventListener("focus", this._boundWindowFocused, false);
+        delete this._boundWindowFocused;
+    },
+
     /**
      * @return {boolean}
      */
     canEditSource: function()
     {
         return this._uiSourceCode.isEditable();
+    },
+
+    _windowFocused: function(event)
+    {
+        this._checkContentUpdated();
+    },
+
+    _checkContentUpdated: function()
+    {
+        if (!this.loaded || !this.isShowing())
+            return;
+        this._uiSourceCode.checkContentUpdated();
     },
 
     /**

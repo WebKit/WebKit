@@ -68,12 +68,12 @@ WebInspector.JavaScriptSourceFrame.prototype = {
     // View events
     wasShown: function()
     {
-        WebInspector.SourceFrame.prototype.wasShown.call(this);
+        WebInspector.UISourceCodeFrame.prototype.wasShown.call(this);
     },
 
     willHide: function()
     {
-        WebInspector.SourceFrame.prototype.willHide.call(this);
+        WebInspector.UISourceCodeFrame.prototype.willHide.call(this);
         this._popoverHelper.hidePopover();
     },
 
@@ -110,7 +110,6 @@ WebInspector.JavaScriptSourceFrame.prototype = {
 
     populateTextAreaContextMenu: function(contextMenu, lineNumber)
     {
-        WebInspector.SourceFrame.prototype.populateTextAreaContextMenu.call(this, contextMenu, lineNumber);
         var selection = window.getSelection();
         if (selection.type === "Range" && !selection.isCollapsed) {
             var addToWatchLabel = WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Add to watch" : "Add to Watch");

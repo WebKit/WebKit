@@ -91,8 +91,43 @@ WebInspector.FileSystemProjectDelegate.prototype = {
          */
         function innerCallback(content)
         {
+            this._contentRequestFinished(path, content);
             var contentType = this._contentTypeForPath(path);
             callback(content, false, contentType.canonicalMimeType());
+        }
+    },
+
+    /**
+     * @param {Array.<string>} path
+     * @param {string} content
+     * @return {string}
+     */
+    _contentRequestFinished: function(path, content)
+    {
+        this._lastContentRequestPath = path;
+        this._lastContentRequestContent = content;
+    },
+
+    /**
+     * @param {Array.<string>} path
+     * @param {string} currentContent
+     * @param {function(?string)} callback
+     */
+    requestUpdatedFileContent: function(path, currentContent, callback)
+    {
+        var filePath = this._filePathForPath(path);
+        this._fileSystem.requestFileContent(filePath, innerCallback.bind(this));
+
+        /**
+         * @param {?string} content
+         */
+        function innerCallback(content)
+        {
+            var previousContent = this._lastContentRequestPath === path ? this._lastContentRequestContent : null;
+            if (typeof previousContent !== "string")
+                previousContent = currentContent;
+            this._contentRequestFinished(path, content);
+            callback(content !== previousContent ? content : null);
         }
     },
 
@@ -116,14 +151,13 @@ WebInspector.FileSystemProjectDelegate.prototype = {
      */
     searchInFileContent: function(path, query, caseSensitive, isRegex, callback)
     {
-        this.requestFileContent(path, contentCallback.bind(this));
+        var filePath = this._filePathForPath(path);
+        this._fileSystem.requestFileContent(filePath, contentCallback.bind(this));
 
         /**
          * @param {?string} content
-         * @param {boolean} base64Encoded
-         * @param {string} mimeType
          */
-        function contentCallback(content, base64Encoded, mimeType)
+        function contentCallback(content)
         {
             var result = [];
             if (content !== null)
