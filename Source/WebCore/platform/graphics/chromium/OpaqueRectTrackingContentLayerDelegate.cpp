@@ -57,6 +57,7 @@ void OpaqueRectTrackingContentLayerDelegate::paintContents(SkCanvas* canvas, con
         platformContext.setHintingScaleFactor(canvas->getTotalMatrix().getScaleX());
 #endif
     platformContext.setTrackOpaqueRegion(!m_opaque);
+    platformContext.setDrawingToImageBuffer(!m_opaque);
     GraphicsContext context(&platformContext);
     context.setShouldSmoothFonts(canPaintLCDText && m_opaque);
 
