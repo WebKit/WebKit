@@ -1,3 +1,19 @@
+2013-03-04  Sami Kyostila  <skyostil@chromium.org>
+
+        [chromium] Add ability to wait on async upload completion
+        https://bugs.webkit.org/show_bug.cgi?id=110987
+
+        Reviewed by James Robinson.
+
+        Add a graphics context entry point for waiting on asynchronous upload
+        completion. The wait is performed server-side so the call is
+        non-blocking.
+
+        See https://codereview.chromium.org/12210129/
+
+        * chromium/public/WebGraphicsContext3D.h:
+        (WebKit::WebGraphicsContext3D::waitAsyncTexImage2DCHROMIUM):
+
 2013-02-26  Zhenyao Mo  <zmo@google.com>
 
         EXT_draw_buffers needs implementation
