@@ -28,7 +28,7 @@
     #define TEXMAP_OPENGL_ES_2
 #endif
 #endif
-#if PLATFORM(GTK) && USE(OPENGL_ES_2)
+#if (PLATFORM(GTK) || PLATFORM(EFL)) && USE(OPENGL_ES_2)
 #define TEXMAP_OPENGL_ES_2
 #endif
 

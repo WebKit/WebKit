@@ -36,10 +36,6 @@
 
 #include "NotImplemented.h"
 
-#if HAVE(GLX)
-#include <GL/glx.h>
-#endif
-
 namespace WebCore {
 
 #if USE(OPENGL_ES_2)
@@ -55,8 +51,7 @@ public:
     GLCurrentContextWrapper()
         : GLPlatformContext()
     {
-        // FIXME:: This is a workaround until support to build evas with EGL has been added.
-#if USE(GLX) || PLATFORM(EFL)
+#if USE(GLX)
         m_contextHandle = glXGetCurrentContext();
 #elif USE(EGL)
         m_contextHandle = eglGetCurrentContext();
