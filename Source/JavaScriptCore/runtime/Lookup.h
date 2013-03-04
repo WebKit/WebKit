@@ -53,7 +53,7 @@ namespace JSC {
             m_attributes = attributes;
             m_u.store.value1 = v1;
             m_u.store.value2 = v2;
-            m_u.function.intrinsic = intrinsic;
+            m_intrinsic = intrinsic;
             m_next = 0;
         }
 
@@ -65,7 +65,7 @@ namespace JSC {
         Intrinsic intrinsic() const
         {
             ASSERT(m_attributes & Function);
-            return m_u.function.intrinsic;
+            return m_intrinsic;
         }
 
         NativeFunction function() const { ASSERT(m_attributes & Function); return m_u.function.functionValue; }
@@ -82,6 +82,7 @@ namespace JSC {
     private:
         StringImpl* m_key;
         unsigned char m_attributes; // JSObject attributes
+        Intrinsic m_intrinsic;
 
         union {
             struct {
@@ -91,7 +92,6 @@ namespace JSC {
             struct {
                 NativeFunction functionValue;
                 intptr_t length; // number of arguments for function
-                Intrinsic intrinsic;
             } function;
             struct {
                 GetFunction get;

@@ -1,3 +1,21 @@
+2013-03-03  Andreas Kling  <akling@apple.com>
+
+        Shrink JSC::HashTable entries.
+        <http://webkit.org/b/111275>
+        <rdar://problem/13333511>
+
+        Reviewed by Anders Carlsson.
+
+        Move the Intrinsic value out of the function-specific part of the union,
+        and store it next to m_attributes. Reduces the size of HashEntry by 8 bytes.
+
+        990 kB progression on Membuster3. (PTUS: 797 kB)
+
+        * runtime/Lookup.h:
+        (JSC::HashEntry::initialize):
+        (JSC::HashEntry::intrinsic):
+        (HashEntry):
+
 2013-03-01  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX: testapi should link to Foundation, not CoreFoundation
