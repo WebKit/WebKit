@@ -129,6 +129,11 @@ WebInspector.FlameChart.prototype = {
         this._forEachNode(this._drawNode.bind(this));
     },
 
+    /**
+     * @param {!number} offset
+     * @param {!number} level
+     * @param {!ProfilerAgent.CPUProfileNode} node
+     */
     _drawNode: function(offset, level, node)
     {
         ++this._colorIndex;
@@ -138,6 +143,9 @@ WebInspector.FlameChart.prototype = {
         this._drawBar(this._context, offset, level, node, color);
     },
 
+    /**
+     * @param {!function(!number, !number, !ProfilerAgent.CPUProfileNode)} callback
+     */
     _forEachNode: function(callback)
     {
         var nodes = this._rootNodes();
@@ -169,7 +177,7 @@ WebInspector.FlameChart.prototype = {
      * @param {number} offset
      * @param {number} level
      * @param {!ProfilerAgent.CPUProfileNode} node
-     * @param {!WebInspector.Color} hslColor
+     * @param {!string} hslColor
      */
     _drawBar: function(context, offset, level, node, hslColor)
     {
@@ -190,5 +198,3 @@ WebInspector.FlameChart.prototype = {
 
     __proto__: WebInspector.View.prototype
 };
-
-//@ sourceURL=http://localhost/inspector/front-end/FlameChart.js
