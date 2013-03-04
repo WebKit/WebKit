@@ -1,0 +1,16 @@
+Test for Bugzilla bug: 90341: createAttribute/setAttributeNode does not properly normalize case.
+This test verifies that the setAttributeNode() API checks for existing attributes case-insensitively. Thus the value of an existing attribute with the same name but in a different case should get replaced by the new value specified via the setAttributeNode() method. The issue can be manually verified if a green colored block is displayed instead of a red one.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+PASS test.getAttribute('style') is test.getAttribute('STYLE')
+PASS test.getAttributeNode('style').value is test.getAttributeNode('STYLE').value
+Verifying that attributes with the same name but different namespaces are treated as unique entities. For the following test two different attribute values should be returned.
+PASS test.getAttributeNodeNS('ns1', 'newattr').value is 'newattr1'
+PASS test.getAttributeNodeNS('ns2', 'newattr').value is 'newattr2'
+Verifying that attributes with same name but different case and having same namespaces are treated as same. In the following test the new attribute should overwrite the value of the existing one.
+PASS test.getAttributeNodeNS('ns1', 'newattr').value is 'newattr3'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
