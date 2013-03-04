@@ -368,6 +368,14 @@ void HTMLPlugInImageElement::didAddUserAgentShadowRoot(ShadowRoot* root)
 
     container->appendChild(label, ASSERT_NO_EXCEPTION);
 
+    // Make this into a button for accessibility clients.
+    String combinedText = titleText;
+    if (!combinedText.isEmpty() && !subtitleText.isEmpty())
+        combinedText.append(" ");
+    combinedText.append(subtitleText);
+    container->setAttribute(aria_labelAttr, combinedText);
+    container->setAttribute(roleAttr, "button");
+    
     shadowContainer->appendChild(container, ASSERT_NO_EXCEPTION);
     root->appendChild(shadowContainer, ASSERT_NO_EXCEPTION);
 }
