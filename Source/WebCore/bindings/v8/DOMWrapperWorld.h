@@ -63,7 +63,7 @@ public:
     void setIsolatedWorldField(v8::Handle<v8::Context>);
 
     static void assertContextHasCorrectPrototype(v8::Handle<v8::Context>);
-    static DOMWrapperWorld* getWorld(v8::Handle<v8::Context> context)
+    static DOMWrapperWorld* isolatedWorld(v8::Handle<v8::Context> context)
     {
         assertContextHasCorrectPrototype(context);
         return static_cast<DOMWrapperWorld*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWorld));

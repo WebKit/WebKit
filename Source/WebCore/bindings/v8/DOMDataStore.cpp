@@ -66,7 +66,7 @@ DOMDataStore* DOMDataStore::current(v8::Isolate* isolate)
         return data->domDataStore();
 
     if (DOMWrapperWorld::isolatedWorldsExist()) {
-        DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::getWorld(v8::Context::GetEntered());
+        DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::isolatedWorld(v8::Context::GetEntered());
         if (UNLIKELY(!!isolatedWorld))
             return isolatedWorld->isolatedWorldDOMDataStore();
     }

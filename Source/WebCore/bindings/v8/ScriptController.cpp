@@ -419,7 +419,7 @@ void ScriptController::evaluateInIsolatedWorld(int worldID, const Vector<ScriptS
 
 bool ScriptController::shouldBypassMainWorldContentSecurityPolicy()
 {
-    if (DOMWrapperWorld* world = worldForEnteredContext())
+    if (DOMWrapperWorld* world = isolatedWorldForEnteredContext())
         return world->isolatedWorldHasContentSecurityPolicy();
     return false;
 }
@@ -447,7 +447,7 @@ v8::Local<v8::Context> ScriptController::currentWorldContext()
         return contextForWorld(this, mainThreadNormalWorld());
 
     v8::Handle<v8::Context> context = v8::Context::GetEntered();
-    DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::getWorld(context);
+    DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::isolatedWorld(context);
     if (!isolatedWorld)
         return contextForWorld(this, mainThreadNormalWorld());
 

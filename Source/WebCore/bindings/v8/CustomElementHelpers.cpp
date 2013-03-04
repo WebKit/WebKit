@@ -115,7 +115,7 @@ bool CustomElementHelpers::isFeatureAllowed(ScriptState* state)
 
 bool CustomElementHelpers::isFeatureAllowed(v8::Handle<v8::Context> context)
 {
-    if (DOMWrapperWorld* world = DOMWrapperWorld::getWorld(context))
+    if (DOMWrapperWorld* world = DOMWrapperWorld::isolatedWorld(context))
         return world->isMainWorld();
     return true;
 }

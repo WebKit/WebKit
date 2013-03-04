@@ -85,7 +85,7 @@ static void isolatedWorldWeakCallback(v8::Isolate* isolate, v8::Persistent<v8::V
 void DOMWrapperWorld::makeContextWeak(v8::Handle<v8::Context> context)
 {
     ASSERT(isIsolatedWorld());
-    ASSERT(getWorld(context) == this);
+    ASSERT(isolatedWorld(context) == this);
     v8::Isolate* isolate = context->GetIsolate();
     v8::Persistent<v8::Context>::New(isolate, context).MakeWeak(isolate, this, isolatedWorldWeakCallback);
     // Matching deref is in weak callback.

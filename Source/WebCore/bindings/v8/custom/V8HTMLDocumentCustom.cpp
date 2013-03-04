@@ -150,7 +150,7 @@ v8::Handle<v8::Object> wrap(HTMLDocument* impl, v8::Handle<v8::Object> creationC
     v8::Handle<v8::Object> wrapper = V8HTMLDocument::createWrapper(impl, creationContext, isolate);
     if (wrapper.IsEmpty())
         return wrapper;
-    if (!worldForEnteredContext()) {
+    if (!isolatedWorldForEnteredContext()) {
         if (Frame* frame = impl->frame())
             frame->script()->windowShell(mainThreadNormalWorld())->updateDocumentWrapper(wrapper);
     }
