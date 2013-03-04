@@ -61,11 +61,11 @@ void SourceBufferPrivateImpl::append(const unsigned char* data, unsigned length)
     m_sourceBuffer->append(data, length);
 }
 
-bool SourceBufferPrivateImpl::abort()
+void SourceBufferPrivateImpl::abort()
 {
     if (!m_sourceBuffer)
-        return false;
-    return m_sourceBuffer->abort();
+        return;
+    m_sourceBuffer->abort();
 }
 
 bool SourceBufferPrivateImpl::setTimestampOffset(double offset)

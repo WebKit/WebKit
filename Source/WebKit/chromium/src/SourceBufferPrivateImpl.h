@@ -49,7 +49,7 @@ public:
     // SourceBufferPrivate methods.
     virtual PassRefPtr<WebCore::TimeRanges> buffered();
     virtual void append(const unsigned char* data, unsigned length);
-    virtual bool abort();
+    virtual void abort();
     virtual bool setTimestampOffset(double);
     virtual void removedFromMediaSource();
 

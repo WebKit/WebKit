@@ -81,7 +81,7 @@ public:
     // WebSourceBuffer methods.
     virtual WebTimeRanges buffered();
     virtual void append(const unsigned char* data, unsigned length);
-    virtual bool abort();
+    virtual void abort();
     virtual bool setTimestampOffset(double);
     virtual void removedFromMediaSource();
 
@@ -141,9 +141,9 @@ void WebSourceBufferImpl::append(const unsigned char* data, unsigned length)
     m_webMediaPlayer->sourceAppend(m_id, data, length);
 }
 
-bool WebSourceBufferImpl::abort()
+void WebSourceBufferImpl::abort()
 {
-    return m_webMediaPlayer->sourceAbort(m_id);
+    m_webMediaPlayer->sourceAbort(m_id);
 }
 
 bool WebSourceBufferImpl::setTimestampOffset(double offset)

@@ -41,7 +41,7 @@ public:
 
     virtual WebTimeRanges buffered() = 0;
     virtual void append(const unsigned char* data, unsigned length) = 0;
-    virtual bool abort() = 0;
+    virtual void abort() = 0;
     virtual bool setTimestampOffset(double) = 0;
     virtual void removedFromMediaSource() = 0;
 };
