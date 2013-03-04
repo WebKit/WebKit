@@ -79,6 +79,10 @@ template<> struct APIClientTraits<WKBundlePageEditorClient> {
     static const size_t interfaceSizesByVersion[2];
 };
 
+template<> struct APIClientTraits<WKContextClient> {
+    static const size_t interfaceSizesByVersion[2];
+};
+
 template<> struct APIClientTraits<WKContextInjectedBundleClient> {
     static const size_t interfaceSizesByVersion[2];
 };

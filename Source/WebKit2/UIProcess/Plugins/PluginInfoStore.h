@@ -36,6 +36,17 @@ namespace WebCore {
 
 namespace WebKit {
 
+class PluginInfoStore;
+
+class PluginInfoStoreClient {
+    WTF_MAKE_NONCOPYABLE(PluginInfoStoreClient);
+public:
+    virtual ~PluginInfoStoreClient() { }
+    virtual void pluginInfoStoreDidLoadPlugins(PluginInfoStore*) = 0;
+protected:
+    PluginInfoStoreClient() { }
+};
+
 class PluginInfoStore {
     WTF_MAKE_NONCOPYABLE(PluginInfoStore);
 
@@ -57,6 +68,9 @@ public:
 
     static PluginModuleLoadPolicy policyForPlugin(const PluginModuleInfo&);
     static bool reactivateInactivePlugin(const PluginModuleInfo&);
+
+    void setClient(PluginInfoStoreClient* client) { m_client = client; }
+    PluginInfoStoreClient* client() const { return m_client; }
 
 private:
     PluginModuleInfo findPluginForMIMEType(const String& mimeType) const;
@@ -88,6 +102,7 @@ private:
     Vector<String> m_additionalPluginsDirectories;
     Vector<PluginModuleInfo> m_plugins;
     bool m_pluginListIsUpToDate;
+    PluginInfoStoreClient* m_client;
 };
     
 } // namespace WebKit

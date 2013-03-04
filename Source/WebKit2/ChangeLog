@@ -1,3 +1,39 @@
+2013-03-04  Jer Noble  <jer.noble@apple.com>
+
+        Add API to allow WK2 clients to query the list of installed plug-ins.
+        https://bugs.webkit.org/show_bug.cgi?id=111245
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add API in WKContext, implemented by WebContext, that allows callers to register a callback 
+        retrieve an array containing installed plugin information. This API is exposed through WebContext 
+        because it owns the PluginInfoStore used to fulfill the request.
+
+        Bump the WKContextClient API by 1:
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        * UIProcess/API/C/WKContext.h:
+
+        Add a client protocol to PluginInfoStore to notify the client when plugIn information has been
+        successfully loaded:
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::PluginInfoStore): Initialize m_client to 0.
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary): If the client is present, notify after loading the plugin store.
+        * UIProcess/Plugins/PluginInfoStore.h:
+        (WebKit::PluginInfoStoreClient::~PluginInfoStoreClient): Default destructor.
+        (WebKit::PluginInfoStoreClient::PluginInfoStoreClient): Default constructor.
+        (WebKit::PluginInfoStore::setClient): Simple setter.
+        (WebKit::PluginInfoStore::client): Simple getter.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Set self as the client of PluginInfoStore.
+        (WebKit::WebContext::~WebContext): Clear the client of PluginInfoStore.
+        (WebKit::WebContext::pluginInfoStoreDidLoadPlugins): Pass the callback to own client.
+        * UIProcess/WebContext.h:
+        * UIProcess/WebContextClient.cpp:
+        (WebKit::WebContextClient::plugInInformationBecameAvailable): Pass the callback to the registered WK callback, if present.
+        * UIProcess/WebContextClient.h:
+
 2013-03-04  Tim Horton  <timothy_horton@apple.com>
 
         PDFPlugin: Hook up Services

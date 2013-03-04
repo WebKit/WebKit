@@ -42,16 +42,22 @@ typedef uint32_t WKCacheModel;
 // Context Client
 typedef void (*WKContextPlugInAutoStartOriginHashesChangedCallback)(WKContextRef context, const void *clientInfo);
 typedef void (*WKContextNetworkProcessDidCrashCallback)(WKContextRef context, const void *clientInfo);
+typedef void (*WKContextPlugInInformationBecameAvailableCallback)(WKContextRef context, WKArrayRef plugIn, const void *clientInfo);
 
 struct WKContextClient {
     int                                                                 version;
     const void *                                                        clientInfo;
+
+    // Version 0.
     WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
     WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
+
+    // Version 1.
+    WKContextPlugInInformationBecameAvailableCallback                         plugInInformationBecameAvailable;
 };
 typedef struct WKContextClient WKContextClient;
 
-enum { kWKContextClientCurrentVersion = 0 };
+enum { kWKContextClientCurrentVersion = 1 };
 
 // Injected Bundle Client
 typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);

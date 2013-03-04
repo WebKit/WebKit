@@ -31,12 +31,14 @@
 
 namespace WebKit {
 
+class ImmutableArray;
 class WebContext;
 
 class WebContextClient : public APIClient<WKContextClient, kWKContextClientCurrentVersion> {
 public:
     void plugInAutoStartOriginHashesChanged(WebContext*);
     void networkProcessDidCrash(WebContext*);
+    void plugInInformationBecameAvailable(WebContext*, ImmutableArray*);
 };
 
 } // namespace WebKit
