@@ -61,6 +61,7 @@ WebInspector.CPUProfileView = function(profile)
         this.dataGrid.show(this._splitView.firstElement());
 
         this.flameChart = new WebInspector.FlameChart(this);
+        this.flameChart.addEventListener(WebInspector.FlameChart.Events.SelectedNode, this._revealProfilerNode.bind(this));
         this.flameChart.show(this._splitView.secondElement());
     } else
         this.dataGrid.show(this.element);
@@ -98,6 +99,17 @@ WebInspector.CPUProfileView._TypeTree = "Tree";
 WebInspector.CPUProfileView._TypeHeavy = "Heavy";
 
 WebInspector.CPUProfileView.prototype = {
+    _revealProfilerNode: function(event)
+    {
+        var current = this.profileDataGridTree.children[0];
+
+        while (current && current.profileNode !== event.data)
+            current = current.traverseNextNode(false, null, false);
+
+        if (current)
+            current.revealAndSelect();
+    },
+
     /**
      * @param {?Protocol.Error} error
      * @param {ProfilerAgent.CPUProfile} profile

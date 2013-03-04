@@ -45,9 +45,21 @@ WebInspector.FlameChart = function(cpuProfileView)
     this._yScaleFactor = 10;
     this._minWidth = 3;
     this.element.onmousemove = this._onMouseMove.bind(this);
+    this.element.onclick = this._onClick.bind(this);
+}
+
+WebInspector.FlameChart.Events = {
+    SelectedNode: "SelectedNode"
 }
 
 WebInspector.FlameChart.prototype = {
+    _onClick: function(e)
+    {
+        if (!this._highlightedNode)
+            return;
+        this.dispatchEventToListeners(WebInspector.FlameChart.Events.SelectedNode, this._highlightedNode);
+    },
+
     _onMouseMove: function(e)
     {
         var node = this._coordinatesToNode(e.offsetX, e.offsetY);
