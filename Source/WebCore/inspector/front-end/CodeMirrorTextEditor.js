@@ -47,8 +47,8 @@ WebInspector.CodeMirrorTextEditor = function(url, delegate)
     this._delegate = delegate;
     this._url = url;
 
-    this.registerRequiredCSS("codemirror.css");
-    this.registerRequiredCSS("cmdevtools.css");
+    this.registerRequiredCSS("cm/codemirror.css");
+    this.registerRequiredCSS("cm/cmdevtools.css");
 
     this._codeMirror = window.CodeMirror(this.element, {
         lineNumbers: true,

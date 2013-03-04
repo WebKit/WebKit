@@ -956,7 +956,7 @@
                             '<(PRODUCT_DIR)/resources/inspector/ScriptFormatterWorker.js',
                             '<(PRODUCT_DIR)/resources/inspector/devTools.css',
                             '<(PRODUCT_DIR)/resources/inspector/devtools_extension_api.js',
-                            '<@(webinspector_standalone_css_files)',
+                            '<@(webinspector_standalone_files)',
                         ],
                         'images': [
                             '<@(webinspector_image_files)',
@@ -1251,7 +1251,7 @@
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)/resources/inspector',
                         'files': [
-                            '<@(webinspector_standalone_css_files)',
+                            '<@(webinspector_standalone_files)',
                         ],
                     }],
                 },

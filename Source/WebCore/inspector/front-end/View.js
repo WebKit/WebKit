@@ -299,6 +299,8 @@ WebInspector.View.prototype = {
 
     registerRequiredCSS: function(cssFile)
     {
+        if (window.flattenImports)
+            cssFile = cssFile.split("/").reverse()[0];
         this._cssFiles.push(cssFile);
     },
 

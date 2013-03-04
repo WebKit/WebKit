@@ -1,3 +1,16 @@
+2013-03-04  Andrey Lushnikov  <lushnikov@chromium.org>
+
+        Web Inspector: add runtime flag to determine if inspector's source files were flattened.
+        https://bugs.webkit.org/show_bug.cgi?id=111184
+
+        Reviewed by Pavel Feldman.
+
+        Included "buildSystemOnly.js" in devtools.html by generate_devtools_html.py script.
+
+        * WebKit.gyp:
+        * scripts/generate_devtools_html.py: Add script tag to include buildSystemOnly.js
+        (write_devtools_html):
+
 2013-03-03  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Remove WebLayerTreeView::setViewportSize call

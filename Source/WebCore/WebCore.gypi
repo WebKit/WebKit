@@ -5431,11 +5431,12 @@
             'inspector/front-end/inspectorSyntaxHighlight.css',
             'inspector/front-end/popover.css',
             '<@(webinspector_modules_js_files)',
-            '<@(webinspector_standalone_css_files)',
+            '<@(webinspector_standalone_files)',
         ],
-        'webinspector_standalone_css_files': [
+        'webinspector_standalone_files': [
             'inspector/front-end/auditsPanel.css',
             'inspector/front-end/breadcrumbList.css',
+            'inspector/front-end/buildSystemOnly.js',
             'inspector/front-end/cm/cmdevtools.css',
             'inspector/front-end/cm/codemirror.css',
             'inspector/front-end/cssNamedFlows.css',
