@@ -291,7 +291,8 @@ EXPORTS
         ?toDOMStringList@WebCore@@YA?AV?$PassRefPtr@VDOMStringList@WebCore@@@WTF@@PAVExecState@JSC@@VJSValue@5@@Z
         ?toElement@WebCore@@YAPAVElement@1@VJSValue@JSC@@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVArrayBuffer@WTF@@@Z
-        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
+        ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVCSSStyleDeclaration@1@@Z
+		?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRect@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVClientRectList@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVNode@1@@Z
         ?toJS@WebCore@@YA?AVJSValue@JSC@@PAVExecState@3@PAVJSDOMGlobalObject@1@PAVRange@1@@Z
@@ -376,6 +377,7 @@ EXPORTS
         ?frameCount@BitmapImage@WebCore@@MAEIXZ
         ?addAuthorSheet@DocumentStyleSheetCollection@WebCore@@QAEXV?$PassRefPtr@VStyleSheetContents@WebCore@@@WTF@@@Z
         ?parseString@StyleSheetContents@WebCore@@QAE_NABVString@WTF@@@Z
+		??0CSSComputedStyleDeclaration@WebCore@@AAE@V?$PassRefPtr@VNode@WebCore@@@WTF@@_NABVString@3@@Z
         ??0CSSParserContext@WebCore@@QAE@PAVDocument@1@ABVKURL@1@ABVString@WTF@@@Z
         ?emptyString@WTF@@YAABVString@1@XZ
         ?invalidate@KURL@WebCore@@AAEXXZ
@@ -394,6 +396,7 @@ EXPORTS
         ?resourceForURL@MemoryCache@WebCore@@QAEPAVCachedResource@2@ABVKURL@2@@Z
         ?nonFastScrollableRects@Page@WebCore@@QAE?AV?$PassRefPtr@VClientRectList@WebCore@@@WTF@@PBVFrame@2@@Z
         ?numberOfActiveAnimations@AnimationController@WebCore@@QBEIPAVDocument@2@@Z
+		?markerTextForListItem@WebCore@@YA?AVString@WTF@@PAVElement@1@@Z
         ?minDOMTimerInterval@Settings@WebCore@@QAENXZ
         ?setMinDOMTimerInterval@Settings@WebCore@@QAEXN@Z
         ?setApplicationChromeMode@Settings@WebCore@@QAEX_N@Z

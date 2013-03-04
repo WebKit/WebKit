@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="DebugSuffix|Win32">
@@ -2693,7 +2693,9 @@
     <ClCompile Include="..\html\canvas\CanvasPathMethods.cpp" />
     <ClCompile Include="..\html\track\TextTrackCueGeneric.cpp" />
     <ClCompile Include="..\html\track\WebVTTElement.cpp" />
-    <ClCompile Include="..\inspector\TimelineTraceEventProcessor.cpp" />
+    <ClCompile Include="..\inspector\TimelineTraceEventProcessor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Production|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Modules\filesystem\DirectoryEntry.cpp" />
     <ClCompile Include="..\Modules\filesystem\DirectoryEntrySync.cpp" />
     <ClCompile Include="..\Modules\filesystem\DirectoryReader.cpp" />
