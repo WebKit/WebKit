@@ -47,7 +47,7 @@ public:
 
     virtual ~DefaultTapHighlight();
 
-    virtual void draw(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll);
+    virtual void draw(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll, bool isStartOfSelection = false);
     virtual void hide();
 
     virtual bool isVisible() const { return m_visible; }

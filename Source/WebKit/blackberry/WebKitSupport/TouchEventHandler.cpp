@@ -136,6 +136,7 @@ void TouchEventHandler::handleTouchPoint(const Platform::TouchPoint& point, unsi
                 m_webPage->m_inputHandler->notifyClientOfKeyboardVisibilityChange(true);
 
             m_webPage->m_tapHighlight->hide();
+            m_webPage->m_selectionHighlight->hide();
 
             IntPoint adjustedPoint = m_webPage->mapFromContentsToViewport(m_lastFatFingersResult.adjustedPosition());
             PlatformMouseEvent mouseEvent(adjustedPoint, m_lastScreenPoint, PlatformEvent::MouseReleased, 1, LeftButton, shiftActive, ctrlActive, altActive, TouchScreen);

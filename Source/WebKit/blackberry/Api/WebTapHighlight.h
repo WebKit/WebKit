@@ -30,7 +30,7 @@ class BLACKBERRY_EXPORT WebTapHighlight {
 public:
     virtual ~WebTapHighlight() { }
 
-    virtual void draw(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll) = 0;
+    virtual void draw(const Platform::IntRectRegion&, int red, int green, int blue, int alpha, bool hideAfterScroll, bool isStartOfSelection = false) = 0;
     virtual void hide() = 0;
 
     virtual bool isVisible() const = 0;

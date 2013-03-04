@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -24,6 +24,7 @@
 #include "GraphicsLayer.h"
 #include "LayerCompositingThread.h"
 #include "LayerWebKitThread.h"
+#include "ScaleTransformOperation.h"
 #include "WebAnimation_p.h"
 
 #include <BlackBerryPlatformMessageClient.h>
@@ -43,6 +44,25 @@ WebAnimation WebAnimation::fadeAnimation(const BlackBerry::Platform::String& nam
     tmp.d->keyframes = KeyframeValueList(AnimatedPropertyOpacity);
     tmp.d->keyframes.insert(new FloatAnimationValue(0, from));
     tmp.d->keyframes.insert(new FloatAnimationValue(1.0, to));
+
+    return tmp;
+}
+
+WebAnimation WebAnimation::shrinkAnimation(const BlackBerry::Platform::String& name, float from, float to, double duration)
+{
+    WebAnimation tmp;
+    tmp.d->name = name;
+    tmp.d->animation = Animation::create();
+    tmp.d->animation->setDuration(duration);
+    tmp.d->keyframes = KeyframeValueList(AnimatedPropertyWebkitTransform);
+
+    TransformOperations startOperation;
+    startOperation.operations().append(ScaleTransformOperation::create(from, from, TransformOperation::SCALE));
+    tmp.d->keyframes.insert(new TransformAnimationValue(0, &startOperation));
+
+    TransformOperations endOperation;
+    endOperation.operations().append(ScaleTransformOperation::create(to, to, TransformOperation::SCALE));
+    tmp.d->keyframes.insert(new TransformAnimationValue(1.0, &endOperation));
 
     return tmp;
 }

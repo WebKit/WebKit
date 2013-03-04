@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2012 Research In Motion Limited. All rights reserved.
+ * Copyright (C) 2012, 2013 Research In Motion Limited. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,8 +36,11 @@ namespace BlackBerry {
 namespace WebKit {
 
 const double ActiveTextFadeAnimationDuration = 0.3;
+const double OverlayShrinkAnimationDuration = 0.5;
+const double OverlayInitialScale = 2.0;
 
 static const char* fadeAnimationName() { return "fade"; }
+static const char* shrinkAnimationName() { return "shrink"; }
 
 DefaultTapHighlight::DefaultTapHighlight(WebPagePrivate* page)
     : m_page(page)
@@ -50,7 +53,7 @@ DefaultTapHighlight::~DefaultTapHighlight()
 {
 }
 
-void DefaultTapHighlight::draw(const Platform::IntRectRegion& region, int red, int green, int blue, int alpha, bool hideAfterScroll)
+void DefaultTapHighlight::draw(const Platform::IntRectRegion& region, int red, int green, int blue, int alpha, bool hideAfterScroll, bool isStartOfSelection)
 {
     ASSERT(BlackBerry::Platform::webKitThreadMessageClient()->isCurrentThread());
 
@@ -77,6 +80,7 @@ void DefaultTapHighlight::draw(const Platform::IntRectRegion& region, int red, i
         m_page->m_webPage->addOverlay(m_overlay.get());
     }
 
+    m_overlay->removeAnimation(shrinkAnimationName());
     m_overlay->resetOverrides();
     m_overlay->setPosition(rect.location());
     m_overlay->setSize(rect.size());
@@ -84,6 +88,12 @@ void DefaultTapHighlight::draw(const Platform::IntRectRegion& region, int red, i
     m_overlay->removeAnimation(fadeAnimationName());
     m_overlay->setOpacity(1.0);
     m_overlay->invalidate();
+
+    // Animate overlay scale to indicate selection is started.
+    if (isStartOfSelection) {
+        WebAnimation shrinkAnimation = WebAnimation::shrinkAnimation(shrinkAnimationName(), OverlayInitialScale, 1, OverlayShrinkAnimationDuration);
+        m_overlay->addAnimation(shrinkAnimation);
+    }
 }
 
 void DefaultTapHighlight::hide()

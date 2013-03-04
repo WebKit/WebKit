@@ -1,3 +1,47 @@
+2013-03-04  Iris Wu  <shuwu@rim.com>
+
+        [BlackBerry] Upstream selection start animation.
+        https://bugs.webkit.org/show_bug.cgi?id=111335
+
+        Reviewed by Rob Buis.
+
+        PR 219960
+
+        To indicate selection starts, we draw an overlay rect larger than
+        the selected word at the start of selection. Then shrink it down
+        to the actual size.
+
+        Reviewed Internally by Genevieve Mak and Andrew Lo and Mike Fenton.
+
+        * Api/WebAnimation.cpp:
+        (BlackBerry::WebKit::WebAnimation::shrinkAnimation):
+        (WebKit):
+        * Api/WebAnimation.h:
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::init):
+        (BlackBerry::WebKit::WebPage::selectionHighlight):
+        (WebKit):
+        * Api/WebPage.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+        * Api/WebTapHighlight.h:
+        * WebKitSupport/DefaultTapHighlight.cpp:
+        (WebKit):
+        (BlackBerry::WebKit::shrinkAnimationName):
+        (BlackBerry::WebKit::DefaultTapHighlight::draw):
+        * WebKitSupport/DefaultTapHighlight.h:
+        (DefaultTapHighlight):
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::cancelSelection):
+        (BlackBerry::WebKit::textGranularityFromSelectionExpansionType):
+        (WebKit):
+        (BlackBerry::WebKit::SelectionHandler::selectNodeIfFatFingersResultIsLink):
+        (BlackBerry::WebKit::SelectionHandler::selectAtPoint):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+        * WebKitSupport/TouchEventHandler.cpp:
+        (BlackBerry::WebKit::TouchEventHandler::handleTouchPoint):
+
 2013-03-02  Benjamin Poulain  <bpoulain@apple.com>
 
         Move computedStyleIncludingVisitedInfo from TestRunner to Internals
