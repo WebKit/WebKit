@@ -106,7 +106,7 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     virtual void clearAllDatabases() OVERRIDE;
     virtual void setDatabaseQuota(int) OVERRIDE;
     virtual void setDeviceScaleFactor(float) OVERRIDE;
-    virtual void setFocus(bool) OVERRIDE;
+    virtual void setFocus(WebTestRunner::WebTestProxyBase*, bool) OVERRIDE;
     virtual void setAcceptAllCookies(bool) OVERRIDE;
     virtual std::string pathToLocalResource(const std::string& url) OVERRIDE;
     virtual void setLocale(const std::string&) OVERRIDE;

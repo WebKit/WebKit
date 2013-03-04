@@ -302,12 +302,10 @@ void WebViewHost::scheduleAnimation()
 
 void WebViewHost::didFocus()
 {
-    m_shell->setFocus(webWidget(), true);
 }
 
 void WebViewHost::didBlur()
 {
-    m_shell->setFocus(webWidget(), false);
 }
 
 WebScreenInfo WebViewHost::screenInfo()
@@ -622,9 +620,12 @@ void WebViewHost::setDeviceScaleFactor(float deviceScaleFactor)
     updateViewportSize();
 }
 
-void WebViewHost::setFocus(bool focused)
+void WebViewHost::setFocus(WebTestProxyBase* proxy, bool focused)
 {
-    m_shell->setFocus(m_shell->webView(), focused);
+    for (size_t i = 0; i < m_shell->windowList().size(); ++i) {
+        if (m_shell->windowList()[i]->proxy() == proxy)
+            m_shell->setFocus(m_shell->windowList()[i]->webWidget(), focused);
+    }
 }
 
 void WebViewHost::setAcceptAllCookies(bool acceptCookies)

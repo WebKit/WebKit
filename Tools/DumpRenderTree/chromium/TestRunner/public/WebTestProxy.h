@@ -162,6 +162,8 @@ protected:
     bool requestPointerLock();
     void requestPointerUnlock();
     bool isPointerLocked();
+    void didFocus();
+    void didBlur();
 
     void willPerformClientRedirect(WebKit::WebFrame*, const WebKit::WebURL& from, const WebKit::WebURL& to, double interval, double fire_time);
     void didCancelClientRedirect(WebKit::WebFrame*);
@@ -418,6 +420,16 @@ public:
     virtual bool isPointerLocked()
     {
         return WebTestProxyBase::isPointerLocked();
+    }
+    virtual void didFocus()
+    {
+        WebTestProxyBase::didFocus();
+        Base::didFocus();
+    }
+    virtual void didBlur()
+    {
+        WebTestProxyBase::didBlur();
+        Base::didBlur();
     }
 
     // WebFrameClient implementation.

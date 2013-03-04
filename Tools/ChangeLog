@@ -1,3 +1,33 @@
+2013-03-04  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] pass all focus handling methods through the WebTestDelegate
+        https://bugs.webkit.org/show_bug.cgi?id=111328
+
+        Reviewed by Nico Weber.
+
+        In content_shell, the focus handling is asynchronous. To allow for
+        switching the focus synchronously between WebViews, we need to intercept
+        didFocus and didBlur and forward it to the WebTestDelegate.
+
+        * DumpRenderTree/chromium/TestRunner/public/WebTestDelegate.h:
+        (WebTestDelegate):
+        (WebTestRunner::WebTestDelegate::setFocus):
+        * DumpRenderTree/chromium/TestRunner/public/WebTestProxy.h:
+        (WebTestRunner::WebTestProxy::didFocus):
+        (WebTestRunner::WebTestProxy::didBlur):
+        * DumpRenderTree/chromium/TestRunner/src/TestRunner.cpp:
+        (WebTestRunner::TestRunner::setWindowIsKey):
+        * DumpRenderTree/chromium/TestRunner/src/WebTestProxy.cpp:
+        (WebTestRunner::WebTestProxyBase::didFocus):
+        (WebTestRunner):
+        (WebTestRunner::WebTestProxyBase::didBlur):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::didFocus):
+        (WebViewHost::didBlur):
+        (WebViewHost::setFocus):
+        * DumpRenderTree/chromium/WebViewHost.h:
+        (WebViewHost):
+
 2013-03-04  Claudio Saavedra  <csaavedra@igalia.com>
 
         [GTK] No need to manually add system paths to jhbuildrc

@@ -1770,7 +1770,7 @@ void TestRunner::setAlwaysAcceptCookies(const CppArgumentList& arguments, CppVar
 void TestRunner::setWindowIsKey(const CppArgumentList& arguments, CppVariant* result)
 {
     if (arguments.size() > 0 && arguments[0].isBool())
-        m_delegate->setFocus(arguments[0].value.boolValue);
+        m_delegate->setFocus(m_proxy, arguments[0].value.boolValue);
     result->setNull();
 }
 

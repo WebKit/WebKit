@@ -1066,6 +1066,16 @@ bool WebTestProxyBase::isPointerLocked()
     return m_testInterfaces->testRunner()->isPointerLocked();
 }
 
+void WebTestProxyBase::didFocus()
+{
+    m_delegate->setFocus(this, true);
+}
+
+void WebTestProxyBase::didBlur()
+{
+    m_delegate->setFocus(this, false);
+}
+
 void WebTestProxyBase::willPerformClientRedirect(WebFrame* frame, const WebURL&, const WebURL& to, double, double)
 {
     if (m_testInterfaces->testRunner()->shouldDumpFrameLoadCallbacks()) {
