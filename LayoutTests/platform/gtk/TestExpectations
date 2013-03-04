@@ -483,6 +483,7 @@ webkit.org/b/108927 http/tests/xmlhttprequest/workers/xmlhttprequest-file-not-fo
 webkit.org/b/110222 fast/events/platform-wheelevent-with-delta-zero-crash.html [ Crash ]
 
 webkit.org/b/110695 http/tests/security/cross-origin-local-storage-allowed.html [ Crash Pass ]
+webkit.org/b/110695 http/tests/security/cross-origin-plugin-allowed.html [ Crash Pass ]
 webkit.org/b/110695 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Crash Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -526,12 +527,12 @@ webkit.org/b/86971 svg/custom/non-scaling-stroke-markers.svg [ Failure Pass ]
 
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-05-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-06-t.svg [ Failure Pass ]
-webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-07-t.svg [ Failure Pass ]
+webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-07-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-08-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-10-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-11-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-12-t.svg [ Failure Pass ]
-webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-15-t.svg [ Failure Pass ]
+webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-15-t.svg [ Failure Pass ]
 webkit.org/b/89650 [ Debug ] svg/W3C-SVG-1.1/animate-elem-16-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-17-t.svg [ Failure Pass ]
 webkit.org/b/89650 svg/W3C-SVG-1.1/animate-elem-19-t.svg [ Failure Pass ]
