@@ -271,7 +271,7 @@ v8::Local<v8::Context> toV8Context(ScriptExecutionContext* context, DOMWrapperWo
     if (context->isDocument()) {
         if (Frame* frame = static_cast<Document*>(context)->frame()) {
             // FIXME: Store the DOMWrapperWorld for the main world in the v8::Context so callers
-            // that are looking up their world with DOMWrapperWorld::getWorld(v8::Context::GetCurrent())
+            // that are looking up their world with DOMWrapperWorld::isolatedWorld(v8::Context::GetCurrent())
             // won't end up passing null here when later trying to get their v8::Context back.
             if (!world)
                 return frame->script()->mainWorldContext();

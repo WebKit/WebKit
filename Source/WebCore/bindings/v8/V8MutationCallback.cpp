@@ -38,7 +38,7 @@ namespace WebCore {
 V8MutationCallback::V8MutationCallback(v8::Handle<v8::Object> callback, ScriptExecutionContext* context, v8::Handle<v8::Object> owner, v8::Isolate* isolate)
     : ActiveDOMCallback(context)
     , m_callback(callback)
-    , m_world(DOMWrapperWorld::getWorld(v8::Context::GetCurrent()))
+    , m_world(DOMWrapperWorld::isolatedWorld(v8::Context::GetCurrent()))
 {
     owner->SetHiddenValue(V8HiddenPropertyName::callback(), callback);
     m_callback.get().MakeWeak(isolate, this, &V8MutationCallback::weakCallback);
