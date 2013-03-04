@@ -467,6 +467,10 @@
 #define ENABLE_FILTERS 0
 #endif
 
+#if !defined(ENABLE_FONT_LOAD_EVENTS)
+#define ENABLE_FONT_LOAD_EVENTS 0
+#endif
+
 #if !defined(ENABLE_FTPDIR)
 #define ENABLE_FTPDIR 1
 #endif
