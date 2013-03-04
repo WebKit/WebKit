@@ -1899,6 +1899,8 @@ webkit.org/b/110090 fast/events/clientXY-in-zoom-and-scroll.html [ Skip ]
 
 webkit.org/b/108508 fast/canvas/canvas-currentPath.html [ Skip ]
 
+webkit.org/b/111290 fast/regions/seamless-iframe-flowed-into-regions.html [ Skip ]
+
 # ============================================================================= #
 # failing security tests
 # ============================================================================= #
