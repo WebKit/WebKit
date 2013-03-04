@@ -100,7 +100,6 @@ WebInspector.FileSystemProjectDelegate.prototype = {
     /**
      * @param {Array.<string>} path
      * @param {string} content
-     * @return {string}
      */
     _contentRequestFinished: function(path, content)
     {

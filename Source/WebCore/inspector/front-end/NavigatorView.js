@@ -191,7 +191,7 @@ WebInspector.NavigatorView.prototype = {
         parentNode.removeChild(node);
         node = parentNode;
         while (node) {
-            var parentNode = node.parent;
+            parentNode = node.parent;
             if (!parentNode || !node.isEmpty())
                 break;
             parentNode.removeChild(node);
@@ -640,7 +640,7 @@ WebInspector.NavigatorTreeNode.prototype = {
         node.dispose();
     },
 
-    reset: function(uiSourceCode)
+    reset: function()
     {
         this._children = {};
     }
@@ -667,7 +667,7 @@ WebInspector.NavigatorRootTreeNode.prototype = {
     },
 
     /**
-     * @return {TreeElement}
+     * @return {TreeOutline}
      */
     treeElement: function()
     {
@@ -699,7 +699,6 @@ WebInspector.NavigatorRootTreeNode.prototype = {
  * @constructor
  * @extends {WebInspector.NavigatorTreeNode}
  * @param {WebInspector.NavigatorView} navigatorView
- * @param {string} id
  * @param {WebInspector.UISourceCode} uiSourceCode
  */
 WebInspector.NavigatorUISourceCodeTreeNode = function(navigatorView, uiSourceCode)
@@ -841,7 +840,6 @@ WebInspector.NavigatorUISourceCodeTreeNode.prototype = {
  * @param {string} id
  * @param {string} type
  * @param {string} title
- * @param {WebInspector.UISourceCode} uiSourceCode
  */
 WebInspector.NavigatorFolderTreeNode = function(navigatorView, id, type, title)
 {
@@ -934,7 +932,7 @@ WebInspector.NavigatorFolderTreeNode.prototype = {
             treeNode = oldNode;
             do {
                 nodes.push(treeNode);
-                var children = treeNode.children();
+                children = treeNode.children();
                 treeNode = children.length === 1 ? children[0] : null;
             } while (treeNode && treeNode._isMerged);
 

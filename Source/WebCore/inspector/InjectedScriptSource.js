@@ -1119,7 +1119,7 @@ function CommandLineAPI(commandLineAPIImpl, callFrame)
 
     /**
      * @param {string} name The name of the method for which a toString method should be generated.
-     * @return {string}
+     * @return {function():string}
      */
     function customToStringMethod(name)
     {
