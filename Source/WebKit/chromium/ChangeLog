@@ -1,3 +1,14 @@
+2013-03-04  Andrey Lushnikov  <lushnikov@chromium.org>
+
+        Web Inspector: add Ace editor experiment
+        https://bugs.webkit.org/show_bug.cgi?id=111191
+
+        Reviewed by Pavel Feldman.
+
+        Add target to concatenate js files for Ace Text Editor.
+
+        * WebKit.gyp:
+
 2013-03-04  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Add build flag for FontLoader

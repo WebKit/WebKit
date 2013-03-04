@@ -1,0 +1,7 @@
+.ace_editor * {
+    -webkit-box-sizing: content-box;
+}
+
+.ace-editor-container {
+    height: 100%;
+}

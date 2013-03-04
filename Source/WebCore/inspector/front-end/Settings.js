@@ -210,6 +210,7 @@ WebInspector.ExperimentsSettings = function()
     this.canvasInspection = this._createExperiment("canvasInspection ", "Canvas inspection");
     this.sass = this._createExperiment("sass", "Support for Sass");
     this.codemirror = this._createExperiment("codemirror", "Use CodeMirror editor");
+    this.aceTextEditor = this._createExperiment("aceTextEditor", "Use Ace editor");
     this.cssRegions = this._createExperiment("cssRegions", "CSS Regions Support");
     this.showOverridesInDrawer = this._createExperiment("showOverridesInDrawer", "Show Overrides in drawer");
     this.fileSystemProject = this._createExperiment("fileSystemProject", "File system folders in Sources Panel");

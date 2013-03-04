@@ -5434,6 +5434,11 @@
             '<@(webinspector_standalone_files)',
         ],
         'webinspector_standalone_files': [
+            'inspector/front-end/ace/acedevtools.css',
+            'inspector/front-end/ace/mode_css.js',
+            'inspector/front-end/ace/mode_html.js',
+            'inspector/front-end/ace/mode_javascript.js',
+            'inspector/front-end/ace/theme_textmate.js',
             'inspector/front-end/auditsPanel.css',
             'inspector/front-end/breadcrumbList.css',
             'inspector/front-end/buildSystemOnly.js',
@@ -5566,6 +5571,11 @@
             'inspector/front-end/cm/xml.js',
         ],
 
+        'webinspector_ace_editor_js_files': [
+            'inspector/front-end/AceTextEditor.js',
+            'inspector/front-end/ace/ace.js',
+        ],
+
         'webinspector_modules_js_files': [
             '<@(webinspector_elements_js_files)',
             '<@(webinspector_resources_js_files)',
@@ -5575,6 +5585,7 @@
             '<@(webinspector_profiles_js_files)',
             '<@(webinspector_audits_js_files)',
             '<@(webinspector_codemirror_js_files)',
+            '<@(webinspector_ace_editor_js_files)',
         ],
         'webinspector_uglifyjs_files': [
             'inspector/front-end/UglifyJS/parse-js.js',
