@@ -6,13 +6,13 @@
 # are met:
 #
 # 1.  Redistributions of source code must retain the above copyright
-#     notice, this list of conditions and the following disclaimer. 
+#     notice, this list of conditions and the following disclaimer.
 # 2.  Redistributions in binary form must reproduce the above copyright
 #     notice, this list of conditions and the following disclaimer in the
-#     documentation and/or other materials provided with the distribution. 
+#     documentation and/or other materials provided with the distribution.
 # 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
 #     its contributors may be used to endorse or promote products derived
-#     from this software without specific prior written permission. 
+#     from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
 # EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -58,7 +58,7 @@ platform/mac/accessibility/iframe-with-title-correct-hierarchy.html
 # Some compositing tests flakey
 # <https://bugs.webkit.org/show_bug.cgi?id=48354>
 compositing/iframes/iframe-size-from-zero.html
-compositing/iframes/iframe-src-change.html 
+compositing/iframes/iframe-src-change.html
 
 # Flakey on Snow Leopard Intel WebKit2 Release Tests
 # <https://bugs.webkit.org/show_bug.cgi?id=57638>
@@ -78,7 +78,7 @@ http/tests/inspector/extensions-headers.html
 http/tests/inspector/extensions-network-redirect.html
 
 # Inspector only supports evaluation in content script world with v8, see https://bugs.webkit.org/show_bug.cgi?id=85709
-inspector/extensions/extensions-eval-content-script.html 
+inspector/extensions/extensions-eval-content-script.html
 inspector/extensions/extensions-audits-content-script.html
 
 # A bunch of inspector tests time out on Lion Intel Debug WebKit2 testers.
@@ -881,6 +881,7 @@ http/tests/local/fileapi/file-last-modified.html
 http/tests/local/fileapi/send-dragged-file.html
 http/tests/local/formdata/form-data-with-unknown-file-extension.html
 http/tests/local/formdata/send-form-data-constructed-from-form.html
+http/tests/local/formdata/send-form-data-with-filename.html
 http/tests/local/formdata/send-form-data-with-sliced-file.html
 http/tests/local/formdata/send-form-data.html
 http/tests/local/formdata/upload-events.html

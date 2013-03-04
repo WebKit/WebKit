@@ -12,7 +12,7 @@ file=blob:application/octet-stream:23456
 Sending FormData containing one sliced file with optional non-null filename:
 file=filename:application/octet-stream:23456
 Sending FormData containing one complete file with optional non-null filename:
-file=file-for-drag-to-send.txt:text/plain:1234567890
+file=filename:text/plain:1234567890
 Sending FormData containing one string and one sliced file:
 string1=foo&file1=blob:application/octet-stream:23456
 Sending FormData containing two strings and two sliced files:

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script src="resources/send-form-data-common.js"></script>
+<script>
+description("Test for sending FormData via XMLHttpRequest.");
+
+function runTest()
+{
+    debug("Sending FormData containing one file with custom filename:");
+    testSendingFormData([
+        { 'type': 'file', 'name': 'file1', 'value': '../resources/file-for-drag-to-send.txt', 'filename': 'custom-name.txt' }
+    ]);
+}
+
+if (window.eventSender) {
+    runTest();
+    formDataTestingCleanup();
+} else {
+    testFailed("This test is not interactive, please run using DumpRenderTree");
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
+

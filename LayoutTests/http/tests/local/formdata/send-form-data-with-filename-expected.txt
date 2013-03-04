@@ -1,0 +1,11 @@
+Test for sending FormData via XMLHttpRequest.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Sending FormData containing one file with custom filename:
+file1=custom-name.txt:text/plain:1234567890
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
