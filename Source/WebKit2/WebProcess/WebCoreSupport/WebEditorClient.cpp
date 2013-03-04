@@ -195,9 +195,7 @@ void WebEditorClient::respondToChangedSelection(Frame* frame)
     if (!frame)
         return;
 
-    EditorState state = m_page->editorState();
-
-    m_page->send(Messages::WebPageProxy::EditorStateChanged(state));
+    m_page->didChangeSelection();
 
 #if PLATFORM(GTK) || PLATFORM(QT)
     updateGlobalSelection(frame);

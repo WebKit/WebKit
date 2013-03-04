@@ -136,6 +136,8 @@ private:
     virtual bool getResourceData(const unsigned char*& /* bytes */, unsigned& /* length */) const OVERRIDE { return false; }
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) OVERRIDE { return false; }
 
+    virtual String getSelectionString() const OVERRIDE { return String(); }
+
     float contentsScaleFactor();
     bool needsBackingStore() const;
     bool updateBackingStore();

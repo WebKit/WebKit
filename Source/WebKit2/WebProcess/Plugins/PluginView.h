@@ -97,6 +97,8 @@ public:
     unsigned countFindMatches(const String& target, WebCore::FindOptions, unsigned maxMatchCount);
     bool findString(const String& target, WebCore::FindOptions, unsigned maxMatchCount);
 
+    String getSelectionString() const;
+
     bool shouldAllowScripting();
 
     bool getResourceData(const unsigned char*& bytes, unsigned& length) const;

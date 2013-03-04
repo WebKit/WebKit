@@ -39,6 +39,7 @@ void EditorState::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder << isContentEditable;
     encoder << isContentRichlyEditable;
     encoder << isInPasswordField;
+    encoder << isInPlugin;
     encoder << hasComposition;
 
 #if PLATFORM(QT)
@@ -74,6 +75,9 @@ bool EditorState::decode(CoreIPC::ArgumentDecoder& decoder, EditorState& result)
         return false;
 
     if (!decoder.decode(result.isInPasswordField))
+        return false;
+
+    if (!decoder.decode(result.isInPlugin))
         return false;
 
     if (!decoder.decode(result.hasComposition))

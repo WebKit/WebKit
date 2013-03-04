@@ -267,6 +267,8 @@ public:
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) = 0;
 
+    virtual String getSelectionString() const = 0;
+
 protected:
     Plugin();
 

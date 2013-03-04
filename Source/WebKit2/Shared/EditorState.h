@@ -41,6 +41,7 @@ struct EditorState {
         , isContentEditable(false)
         , isContentRichlyEditable(false)
         , isInPasswordField(false)
+        , isInPlugin(false)
         , hasComposition(false)
 #if PLATFORM(QT)
         , cursorPosition(0)
@@ -57,6 +58,7 @@ struct EditorState {
     bool isContentEditable;
     bool isContentRichlyEditable;
     bool isInPasswordField;
+    bool isInPlugin;
     bool hasComposition;
 #if PLATFORM(QT)
     // The anchor, cursor represent either the selection or composition, depending

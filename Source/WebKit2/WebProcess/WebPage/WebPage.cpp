@@ -561,6 +561,16 @@ EditorState WebPage::editorState() const
     ASSERT(frame);
 
     EditorState result;
+
+    if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
+        if (!pluginView->getSelectionString().isNull()) {
+            result.selectionIsNone = false;
+            result.selectionIsRange = true;
+            result.isInPlugin = true;
+            return result;
+        }
+    }
+
     result.selectionIsNone = frame->selection()->isNone();
     result.selectionIsRange = frame->selection()->isRange();
     result.isContentEditable = frame->selection()->isContentEditable();
@@ -693,7 +703,7 @@ PassRefPtr<ImmutableArray> WebPage::trackedRepaintRects()
     return ImmutableArray::adopt(vector);
 }
 
-static PluginView* focusedPluginViewForFrame(Frame* frame)
+PluginView* WebPage::focusedPluginViewForFrame(Frame* frame)
 {
     if (!frame->document()->isPluginDocument())
         return 0;
@@ -707,7 +717,7 @@ static PluginView* focusedPluginViewForFrame(Frame* frame)
     return pluginView;
 }
 
-static PluginView* pluginViewForFrame(Frame* frame)
+PluginView* WebPage::pluginViewForFrame(Frame* frame)
 {
     if (!frame->document()->isPluginDocument())
         return 0;
@@ -3765,6 +3775,11 @@ void WebPage::cancelComposition()
     send(Messages::WebPageProxy::EditorStateChanged(editorState()));
 }
 #endif
+
+void WebPage::didChangeSelection()
+{
+    send(Messages::WebPageProxy::EditorStateChanged(editorState()));
+}
 
 void WebPage::setMainFrameInViewSourceMode(bool inViewSourceMode)
 {

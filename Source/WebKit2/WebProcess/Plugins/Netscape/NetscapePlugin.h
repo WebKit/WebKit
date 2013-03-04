@@ -252,6 +252,8 @@ private:
 
     virtual bool performDictionaryLookupAtLocation(const WebCore::FloatPoint&) OVERRIDE { return false; }
 
+    virtual String getSelectionString() const OVERRIDE { return String(); }
+
     void updateNPNPrivateMode();
 
 #if PLUGIN_ARCHITECTURE(WIN)

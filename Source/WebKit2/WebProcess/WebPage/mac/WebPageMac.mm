@@ -473,10 +473,7 @@ void WebPage::performDictionaryLookupAtLocation(const FloatPoint& floatPoint)
     if (!frame)
         return;
 
-    if (frame->document()->isPluginDocument()) {
-        PluginDocument* pluginDocument = static_cast<PluginDocument*>(frame->document());
-        PluginView* pluginView = static_cast<PluginView*>(pluginDocument->pluginWidget());
-
+    if (PluginView* pluginView = pluginViewForFrame(frame)) {
         if (pluginView->performDictionaryLookupAtLocation(floatPoint))
             return;
     }
@@ -656,7 +653,19 @@ void WebPage::readSelectionFromPasteboard(const String& pasteboardName, bool& re
 void WebPage::getStringSelectionForPasteboard(String& stringValue)
 {
     Frame* frame = m_page->focusController()->focusedOrMainFrame();
-    if (!frame || frame->selection()->isNone())
+
+    if (!frame)
+        return;
+
+    if (PluginView* pluginView = focusedPluginViewForFrame(frame)) {
+        String selection = pluginView->getSelectionString();
+        if (!selection.isNull()) {
+            stringValue = selection;
+            return;
+        }
+    }
+
+    if (frame->selection()->isNone())
         return;
 
     stringValue = frame->editor()->stringSelectionForPasteboard();

@@ -433,6 +433,8 @@ public:
     void cancelComposition();
 #endif
 
+    void didChangeSelection();
+
 #if PLATFORM(MAC)
     void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
     WKAccessibilityWebPageObject* accessibilityRemoteObject();
@@ -794,6 +796,9 @@ private:
     void setMainFrameInViewSourceMode(bool);
 
     static bool platformCanHandleRequest(const WebCore::ResourceRequest&);
+
+    static PluginView* focusedPluginViewForFrame(WebCore::Frame*);
+    static PluginView* pluginViewForFrame(WebCore::Frame*);
 
     OwnPtr<WebCore::Page> m_page;
     RefPtr<WebFrame> m_mainFrame;

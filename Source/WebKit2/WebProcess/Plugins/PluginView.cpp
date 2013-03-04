@@ -754,12 +754,26 @@ void PluginView::setParent(ScrollView* scrollView)
 
 unsigned PluginView::countFindMatches(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
+    if (!m_isInitialized || !m_plugin)
+        return 0;
+
     return m_plugin->countFindMatches(target, options, maxMatchCount);
 }
 
 bool PluginView::findString(const String& target, WebCore::FindOptions options, unsigned maxMatchCount)
 {
+    if (!m_isInitialized || !m_plugin)
+        return false;
+
     return m_plugin->findString(target, options, maxMatchCount);
+}
+
+String PluginView::getSelectionString() const
+{
+    if (!m_isInitialized || !m_plugin)
+        return String();
+
+    return m_plugin->getSelectionString();
 }
 
 PassOwnPtr<WebEvent> PluginView::createWebEvent(MouseEvent* event) const

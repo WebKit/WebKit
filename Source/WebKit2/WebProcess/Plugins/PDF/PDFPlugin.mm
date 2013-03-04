@@ -193,6 +193,11 @@ static const char* annotationStyle =
     _pdfPlugin->notifyDisplayModeChanged(mode);
 }
 
+- (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeSelection:(PDFSelection *)selection
+{
+    _pdfPlugin->notifySelectionChanged(selection);
+}
+
 @end
 
 namespace WebKit {
@@ -958,6 +963,16 @@ void PDFPlugin::focusNextAnnotation()
 void PDFPlugin::focusPreviousAnnotation()
 {
     [m_pdfLayerController.get() activateNextAnnotation:true];
+}
+
+void PDFPlugin::notifySelectionChanged(PDFSelection *)
+{
+    webFrame()->page()->didChangeSelection();
+}
+
+String PDFPlugin::getSelectionString() const
+{
+    return [[m_pdfLayerController.get() currentSelection] string];
 }
 
 } // namespace WebKit

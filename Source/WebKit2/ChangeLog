@@ -1,3 +1,81 @@
+2013-03-04  Tim Horton  <timothy_horton@apple.com>
+
+        PDFPlugin: Hook up Services
+        https://bugs.webkit.org/show_bug.cgi?id=111246
+        <rdar://problem/13062672>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Make the Application->Services menu work when the focused selection is a PDFPlugin.
+
+        * Shared/EditorState.cpp:
+        (WebKit::EditorState::encode):
+        (WebKit::EditorState::decode):
+        * Shared/EditorState.h:
+        (WebKit::EditorState::EditorState):
+        (EditorState):
+        Add isInPlugin property to EditorState.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView validRequestorForSendType:returnType:]):
+        If the selection is currently in a Plugin, we only currently have the ability
+        to retrieve the selection as a plain-text string, so restrict sendType to NSStringPboardType.
+
+        * WebProcess/Plugins/PDF/SimplePDFPlugin.h:
+        * WebProcess/Plugins/Plugin.h:
+        * WebProcess/Plugins/PluginView.h:
+        * WebProcess/Plugins/PluginProxy.h:
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        Add getStringSelection.
+
+        * WebProcess/Plugins/PDF/PDFLayerControllerDetails.h:
+        Add pdfLayerController:didChangeSelection: delegate method.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.h:
+        (PDFPlugin):
+        Add getStringSelection and notifySelectionChanged.
+
+        * WebProcess/Plugins/PDF/PDFPlugin.mm:
+        (-[WKPDFLayerControllerDelegate pdfLayerController:didChangeSelection:]):
+        Forward selection change notifications to our PDFPlugin.
+
+        (WebKit::PDFPlugin::notifySelectionChanged):
+        Forward selection change notifications to our WebPage.
+
+        (WebKit::PDFPlugin::getStringSelection):
+        Retrieve PDFLayerController's selection as a plain text string.
+        
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::countFindMatches):
+        (WebKit::PluginView::findString):
+        Drive-bys, check for existance and initialization of the plugin before using it.
+
+        (WebKit::PluginView::getStringSelection): Added.
+
+        * WebProcess/WebCoreSupport/WebEditorClient.cpp:
+        (WebKit::WebEditorClient::respondToChangedSelection):
+        Use didChangeSelection instead of sending the EditorStateChanged message directly.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::editorState):
+        If a plugin is focused and has a selection, return a EditorState that reflects that.
+        Since PDFs aren't editable (when editing annotations, the plugin doesn't have focus),
+        I'm not adding support for the editing-related properties when a plugin has focus.
+
+        (WebKit::WebPage::focusedPluginViewForFrame):
+        (WebKit::WebPage::pluginViewForFrame):
+        Make these class methods instead of static functions so we can use them from
+        WebPageMac too, instead of duplicating code there.
+
+        (WebKit::WebPage::didChangeSelection): Added.
+
+        * WebProcess/WebPage/WebPage.h:
+        Add didChangeSelection and [focused]PluginViewForFrame.
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::WebPage::getStringSelectionForPasteboard):
+        Defer to the focused plugin (if it exists) when retrieving the plain-text selection.
+
 2013-03-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] Add callbacks to the WKViewClient to handle Web Process crash and relaunch
