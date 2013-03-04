@@ -449,10 +449,10 @@ END
     GenerateHeaderCustomCall($interface);
     GenerateHeaderCustomInternalFieldIndices($interface);
 
-    if ($interface->extendedAttributes->{"CheckSecurity"}) {
+    if ($interface->name eq "DOMWindow") {
         push(@headerContent, <<END);
-    static bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
-    static bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
+    static bool namedSecurityCheckCustom(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType, v8::Local<v8::Value> data);
+    static bool indexedSecurityCheckCustom(v8::Local<v8::Object> host, uint32_t index, v8::AccessType, v8::Local<v8::Value> data);
 END
     }
 
@@ -2781,6 +2781,10 @@ END
         GenerateOpaqueRootForGC($interface);
     }
 
+    if ($interface->extendedAttributes->{"CheckSecurity"} && $interface->name ne "DOMWindow") {
+        GenerateSecurityCheckFunctions($interface);
+    }
+
     if ($interface->extendedAttributes->{"TypedArray"}) {
         my $viewType = GetTypeNameOfExternalTypedArray($interface);
         push(@implContent, <<END);
@@ -2961,8 +2965,8 @@ END
     push(@implContentInternals, "} // namespace ${interfaceName}V8Internal\n\n");
 
     my $access_check = "";
-    if ($interface->extendedAttributes->{"CheckSecurity"} && !($interfaceName eq "DOMWindow")) {
-        $access_check = "instance->SetAccessCheckCallbacks(${v8InterfaceName}::namedSecurityCheck, ${v8InterfaceName}::indexedSecurityCheck, v8::External::New(&${v8InterfaceName}::info));";
+    if ($interface->extendedAttributes->{"CheckSecurity"} && $interfaceName ne "DOMWindow") {
+        $access_check = "instance->SetAccessCheckCallbacks(${interfaceName}V8Internal::namedSecurityCheck, ${interfaceName}V8Internal::indexedSecurityCheck, v8::External::New(&${v8InterfaceName}::info));";
     }
 
     # For the DOMWindow interface, generate the shadow object template
@@ -2974,7 +2978,7 @@ static v8::Persistent<v8::ObjectTemplate> ConfigureShadowObjectTemplate(v8::Pers
     V8DOMConfiguration::batchConfigureAttributes(templ, v8::Handle<v8::ObjectTemplate>(), shadowAttrs, WTF_ARRAY_LENGTH(shadowAttrs), isolate);
 
     // Install a security handler with V8.
-    templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::New(&V8DOMWindow::info));
+    templ->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheckCustom, V8DOMWindow::indexedSecurityCheckCustom, v8::External::New(&V8DOMWindow::info));
     templ->SetInternalFieldCount(V8DOMWindow::internalFieldCount);
     return templ;
 }
@@ -3114,7 +3118,7 @@ END
     // Set access check callbacks, but turned off initially.
     // When a context is detached from a frame, turn on the access check.
     // Turning on checks also invalidates inline caches of the object.
-    instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheck, V8DOMWindow::indexedSecurityCheck, v8::External::New(&V8DOMWindow::info), false);
+    instance->SetAccessCheckCallbacks(V8DOMWindow::namedSecurityCheckCustom, V8DOMWindow::indexedSecurityCheckCustom, v8::External::New(&V8DOMWindow::info), false);
 END
     }
     if ($interfaceName eq "HTMLDocument" or $interfaceName eq "DedicatedWorkerContext" or $interfaceName eq "SharedWorkerContext") {
@@ -3582,6 +3586,28 @@ END
     V8DOMWrapper::associateObjectWithWrapper(impl, &info, wrapper, isolate, hasDependentLifetime ? WrapperConfiguration::Dependent : WrapperConfiguration::Independent);
     return wrapper;
 }
+END
+}
+
+sub GenerateSecurityCheckFunctions
+{
+    my $interface = shift;
+    my $interfaceName = $interface->name;
+    my $v8InterfaceName = "V8$interfaceName";
+
+    push(@implContentDecls, <<END);
+bool indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value>)
+{
+    $interfaceName* imp =  ${v8InterfaceName}::toNative(host);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
+}
+
+bool namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value>)
+{
+    $interfaceName* imp =  ${v8InterfaceName}::toNative(host);
+    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
+}
+
 END
 }
 

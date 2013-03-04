@@ -244,18 +244,4 @@ v8::Handle<v8::Value> V8Location::toStringMethodCustom(const v8::Arguments& args
     return v8String(result, args.GetIsolate());
 }
 
-bool V8Location::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value>)
-{
-    // Only allow same origin access
-    Location* imp =  V8Location::toNative(host);
-    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
-}
-
-bool V8Location::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value>)
-{
-    // Only allow same origin access
-    Location* imp = V8Location::toNative(host);
-    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), imp->frame(), DoNotReportSecurityError);
-}
-
 }  // namespace WebCore

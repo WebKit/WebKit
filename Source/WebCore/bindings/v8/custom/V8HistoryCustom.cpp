@@ -91,16 +91,4 @@ v8::Handle<v8::Value> V8History::replaceStateMethodCustom(const v8::Arguments& a
     return setDOMException(ec, args.GetIsolate());
 }
 
-bool V8History::indexedSecurityCheck(v8::Local<v8::Object> host, uint32_t index, v8::AccessType type, v8::Local<v8::Value>)
-{
-    History* history = V8History::toNative(host);
-    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), history->frame(), DoNotReportSecurityError);
-}
-
-bool V8History::namedSecurityCheck(v8::Local<v8::Object> host, v8::Local<v8::Value> key, v8::AccessType type, v8::Local<v8::Value>)
-{
-    History* history = V8History::toNative(host);
-    return BindingSecurity::shouldAllowAccessToFrame(BindingState::instance(), history->frame(), DoNotReportSecurityError);
-}
-
 } // namespace WebCore
