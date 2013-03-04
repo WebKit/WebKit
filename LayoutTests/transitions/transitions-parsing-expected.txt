@@ -6,6 +6,8 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 Valid transition-property values.
 PASS computedStyle.transitionProperty is 'all'
 PASS computedStyle.webkitTransitionProperty is 'all'
+PASS Object.keys(style).indexOf('transitionProperty') is not -1
+PASS Object.keys(style).indexOf('webkitTransitionProperty') is not -1
 PASS style.transitionProperty is 'none'
 PASS computedStyle.transitionProperty is 'none'
 PASS style.webkitTransitionProperty is 'none'
@@ -98,6 +100,8 @@ PASS computedStyle.webkitTransitionProperty is 'all'
 Valid transition-duration values.
 PASS computedStyle.transitionDuration is '0s'
 PASS computedStyle.webkitTransitionDuration is '0s'
+PASS Object.keys(style).indexOf('transitionDuration') is not -1
+PASS Object.keys(style).indexOf('webkitTransitionDuration') is not -1
 PASS style.transitionDuration is '0s'
 PASS computedStyle.transitionDuration is '0s'
 PASS style.webkitTransitionDuration is '0s'
@@ -146,6 +150,8 @@ PASS computedStyle.webkitTransitionDuration is '0s'
 Valid transition-timing-function values.
 PASS computedStyle.transitionTimingFunction is 'ease'
 PASS computedStyle.webkitTransitionTimingFunction is 'ease'
+PASS Object.keys(style).indexOf('transitionTimingFunction') is not -1
+PASS Object.keys(style).indexOf('webkitTransitionTimingFunction') is not -1
 PASS style.transitionTimingFunction is 'linear'
 PASS computedStyle.transitionTimingFunction is 'linear'
 PASS style.webkitTransitionTimingFunction is 'linear'
@@ -290,6 +296,8 @@ PASS computedStyle.webkitTransitionTimingFunction is 'ease'
 Valid transition-delay values.
 PASS computedStyle.transitionDelay is '0s'
 PASS computedStyle.webkitTransitionDelay is '0s'
+PASS Object.keys(style).indexOf('transitionDelay') is not -1
+PASS Object.keys(style).indexOf('webkitTransitionDelay') is not -1
 PASS style.transitionDelay is '0s'
 PASS computedStyle.transitionDelay is '0s'
 PASS style.webkitTransitionDelay is '0s'
@@ -338,6 +346,8 @@ PASS computedStyle.webkitTransitionDelay is '0s'
 Valid transition shorthand values.
 PASS computedStyle.transition is 'all 0s ease 0s'
 PASS computedStyle.webkitTransition is 'all 0s ease 0s'
+PASS Object.keys(style).indexOf('transition') is not -1
+PASS Object.keys(style).indexOf('webkitTransition') is not -1
 PASS style.transition is 'none'
 PASS computedStyle.transition is 'none 0s ease 0s'
 PASS style.webkitTransition is 'none'

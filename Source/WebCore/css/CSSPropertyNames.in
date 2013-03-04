@@ -182,11 +182,11 @@ text-underline-mode
 text-underline-style
 text-underline-width
 top
-transition = -webkit-transition
-transition-delay = -webkit-transition-delay
-transition-duration = -webkit-transition-duration
-transition-property = -webkit-transition-property
-transition-timing-function = -webkit-transition-timing-function
+transition
+transition-delay
+transition-duration
+transition-property
+transition-timing-function
 
 unicode-bidi
 unicode-range

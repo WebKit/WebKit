@@ -198,6 +198,10 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyTextOverflow,
     CSSPropertyTextTransform,
     CSSPropertyTop,
+    CSSPropertyTransitionDelay,
+    CSSPropertyTransitionDuration,
+    CSSPropertyTransitionProperty,
+    CSSPropertyTransitionTimingFunction,
     CSSPropertyUnicodeBidi,
     CSSPropertyVerticalAlign,
     CSSPropertyVisibility,
@@ -2517,14 +2521,19 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         }
         case CSSPropertyWebkitTransformStyle:
             return cssValuePool().createIdentifierValue((style->transformStyle3D() == TransformStyle3DPreserve3D) ? CSSValuePreserve3d : CSSValueFlat);
+        case CSSPropertyTransitionDelay:
         case CSSPropertyWebkitTransitionDelay:
             return getDelayValue(style->transitions());
+        case CSSPropertyTransitionDuration:
         case CSSPropertyWebkitTransitionDuration:
             return getDurationValue(style->transitions());
+        case CSSPropertyTransitionProperty:
         case CSSPropertyWebkitTransitionProperty:
             return getTransitionPropertyValue(style->transitions());
+        case CSSPropertyTransitionTimingFunction:
         case CSSPropertyWebkitTransitionTimingFunction:
             return getTimingFunctionValue(style->transitions());
+        case CSSPropertyTransition:
         case CSSPropertyWebkitTransition: {
             const AnimationList* animList = style->transitions();
             if (animList) {

@@ -30,6 +30,8 @@ shouldBe("computedStyle.transitionProperty", "'all'");
 shouldBe("computedStyle.webkitTransitionProperty", "'all'");
 
 style.transitionProperty = "none";
+shouldNotBe("Object.keys(style).indexOf('transitionProperty')", "-1");
+shouldNotBe("Object.keys(style).indexOf('webkitTransitionProperty')", "-1");
 shouldBe("style.transitionProperty", "'none'");
 shouldBe("computedStyle.transitionProperty", "'none'");
 shouldBe("style.webkitTransitionProperty", "'none'");
@@ -172,6 +174,8 @@ shouldBe("computedStyle.transitionDuration", "'0s'");
 shouldBe("computedStyle.webkitTransitionDuration", "'0s'");
 
 style.transitionDuration = "0s";
+shouldNotBe("Object.keys(style).indexOf('transitionDuration')", "-1");
+shouldNotBe("Object.keys(style).indexOf('webkitTransitionDuration')", "-1");
 shouldBe("style.transitionDuration", "'0s'");
 shouldBe("computedStyle.transitionDuration", "'0s'");
 shouldBe("style.webkitTransitionDuration", "'0s'");
@@ -250,6 +254,8 @@ shouldBe("computedStyle.transitionTimingFunction", "'ease'");
 shouldBe("computedStyle.webkitTransitionTimingFunction", "'ease'");
 
 style.transitionTimingFunction = "linear";
+shouldNotBe("Object.keys(style).indexOf('transitionTimingFunction')", "-1");
+shouldNotBe("Object.keys(style).indexOf('webkitTransitionTimingFunction')", "-1");
 shouldBe("style.transitionTimingFunction", "'linear'");
 shouldBe("computedStyle.transitionTimingFunction", "'linear'");
 shouldBe("style.webkitTransitionTimingFunction", "'linear'");
@@ -471,6 +477,8 @@ shouldBe("computedStyle.transitionDelay", "'0s'");
 shouldBe("computedStyle.webkitTransitionDelay", "'0s'");
 
 style.transitionDelay = "0s";
+shouldNotBe("Object.keys(style).indexOf('transitionDelay')", "-1");
+shouldNotBe("Object.keys(style).indexOf('webkitTransitionDelay')", "-1");
 shouldBe("style.transitionDelay", "'0s'");
 shouldBe("computedStyle.transitionDelay", "'0s'");
 shouldBe("style.webkitTransitionDelay", "'0s'");
@@ -549,6 +557,8 @@ shouldBe("computedStyle.transition", "'all 0s ease 0s'");
 shouldBe("computedStyle.webkitTransition", "'all 0s ease 0s'");
 
 style.transition = "none";
+shouldNotBe("Object.keys(style).indexOf('transition')", "-1");
+shouldNotBe("Object.keys(style).indexOf('webkitTransition')", "-1");
 shouldBe("style.transition", "'none'");
 shouldBe("computedStyle.transition", "'none 0s ease 0s'");
 shouldBe("style.webkitTransition", "'none'");

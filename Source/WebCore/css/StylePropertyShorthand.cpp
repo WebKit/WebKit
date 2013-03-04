@@ -246,6 +246,18 @@ const StylePropertyShorthand& paddingShorthand()
     return paddingLonghands;
 }
 
+const StylePropertyShorthand& transitionShorthand()
+{
+    static const CSSPropertyID transitionProperties[] = {
+        CSSPropertyTransitionProperty,
+        CSSPropertyTransitionDuration,
+        CSSPropertyTransitionTimingFunction,
+        CSSPropertyTransitionDelay
+    };
+    DEFINE_STATIC_LOCAL(StylePropertyShorthand, transitionLonghands, (transitionProperties, WTF_ARRAY_LENGTH(transitionProperties)));
+    return transitionLonghands;
+}
+
 const StylePropertyShorthand& webkitAnimationShorthand()
 {
     static const CSSPropertyID animationProperties[] = {
@@ -493,6 +505,8 @@ const StylePropertyShorthand& shorthandForProperty(CSSPropertyID propertyID)
         return overflowShorthand();
     case CSSPropertyPadding:
         return paddingShorthand();
+    case CSSPropertyTransition:
+        return transitionShorthand();
     case CSSPropertyWebkitAnimation:
         return webkitAnimationShorthand();
     case CSSPropertyWebkitBorderAfter:

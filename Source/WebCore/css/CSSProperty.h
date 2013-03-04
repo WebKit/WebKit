@@ -92,6 +92,48 @@ private:
     RefPtr<CSSValue> m_value;
 };
 
+inline CSSPropertyID prefixingVariantForPropertyId(CSSPropertyID propId)
+{
+    CSSPropertyID propertyId = CSSPropertyInvalid;
+    switch (propId) {
+    case CSSPropertyTransitionDelay:
+        propertyId = CSSPropertyWebkitTransitionDelay;
+        break;
+    case CSSPropertyTransitionDuration:
+        propertyId = CSSPropertyWebkitTransitionDuration;
+        break;
+    case CSSPropertyTransitionProperty:
+        propertyId = CSSPropertyWebkitTransitionProperty;
+        break;
+    case CSSPropertyTransitionTimingFunction:
+        propertyId = CSSPropertyWebkitTransitionTimingFunction;
+        break;
+    case CSSPropertyTransition:
+        propertyId = CSSPropertyWebkitTransition;
+        break;
+    case CSSPropertyWebkitTransitionDelay:
+        propertyId = CSSPropertyTransitionDelay;
+        break;
+    case CSSPropertyWebkitTransitionDuration:
+        propertyId = CSSPropertyTransitionDuration;
+        break;
+    case CSSPropertyWebkitTransitionProperty:
+        propertyId = CSSPropertyTransitionProperty;
+        break;
+    case CSSPropertyWebkitTransitionTimingFunction:
+        propertyId = CSSPropertyTransitionTimingFunction;
+        break;
+    case CSSPropertyWebkitTransition:
+        propertyId = CSSPropertyTransition;
+        break;
+    default:
+        propertyId = propId;
+        break;
+    }
+    ASSERT(propertyId != CSSPropertyInvalid);
+    return propertyId;
+}
+
 } // namespace WebCore
 
 namespace WTF {
