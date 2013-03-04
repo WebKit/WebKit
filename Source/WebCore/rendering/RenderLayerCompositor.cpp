@@ -2868,7 +2868,7 @@ FixedPositionViewportConstraints RenderLayerCompositor::computeFixedViewportCons
     FrameView* frameView = m_renderView->frameView();
     LayoutRect viewportRect = frameView->viewportConstrainedVisibleContentRect();
 
-    FixedPositionViewportConstraints constraints = FixedPositionViewportConstraints();
+    FixedPositionViewportConstraints constraints;
 
     GraphicsLayer* graphicsLayer = layer->backing()->graphicsLayer();
 
@@ -2906,7 +2906,7 @@ StickyPositionViewportConstraints RenderLayerCompositor::computeStickyViewportCo
     FrameView* frameView = m_renderView->frameView();
     LayoutRect viewportRect = frameView->viewportConstrainedVisibleContentRect();
 
-    StickyPositionViewportConstraints constraints = StickyPositionViewportConstraints();
+    StickyPositionViewportConstraints constraints;
 
     RenderBoxModelObject* renderer = toRenderBoxModelObject(layer->renderer());
 

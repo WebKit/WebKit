@@ -47,6 +47,11 @@ public:
     };
     typedef unsigned AnchorEdges;
 
+    ViewportConstraints(const ViewportConstraints& other)
+        : m_alignmentOffset(other.m_alignmentOffset)
+        , m_anchorEdges(other.m_anchorEdges)
+    { }
+    
     virtual ~ViewportConstraints() { }
     
     virtual ConstraintType constraintType() const = 0;
@@ -70,6 +75,16 @@ protected:
 
 class FixedPositionViewportConstraints : public ViewportConstraints {
 public:
+    FixedPositionViewportConstraints()
+        : ViewportConstraints()
+    { }
+
+    FixedPositionViewportConstraints(const FixedPositionViewportConstraints& other)
+        : ViewportConstraints(other)
+        , m_viewportRectAtLastLayout(other.m_viewportRectAtLastLayout)
+        , m_layerPositionAtLastLayout(other.m_layerPositionAtLastLayout)
+    { }
+    
     FloatPoint layerPositionForViewportRect(const FloatRect& viewportRect) const;
 
     const FloatRect& viewportRectAtLastLayout() const { return m_viewportRectAtLastLayout; }
@@ -102,6 +117,18 @@ public:
         , m_rightOffset(0)
         , m_topOffset(0)
         , m_bottomOffset(0)
+    { }
+
+    StickyPositionViewportConstraints(const StickyPositionViewportConstraints& other)
+        : ViewportConstraints(other)
+        , m_leftOffset(other.m_leftOffset)
+        , m_rightOffset(other.m_rightOffset)
+        , m_topOffset(other.m_topOffset)
+        , m_bottomOffset(other.m_bottomOffset)
+        , m_absoluteContainingBlockRect(other.m_absoluteContainingBlockRect)
+        , m_absoluteStickyBoxRect(other.m_absoluteStickyBoxRect)
+        , m_stickyOffsetAtLastLayout(other.m_stickyOffsetAtLastLayout)
+        , m_layerPositionAtLastLayout(other.m_layerPositionAtLastLayout)
     { }
 
     FloatSize computeStickyOffset(const FloatRect& viewportRect) const;
