@@ -36,7 +36,7 @@
 
 #if defined(LANGUAGE_JAVASCRIPT) && LANGUAGE_JAVASCRIPT
     // FIXME: This should eventually be available (if they are wanted) for all languages.
-    [JSCustomGetter, CustomSetter, Deletable] attribute HTMLAllCollection all;
+    [JSCustom, Replaceable, Deletable] attribute HTMLAllCollection all;
 #endif
 
     void clear();

@@ -138,12 +138,6 @@ v8::Handle<v8::Value> V8HTMLDocument::openMethodCustom(const v8::Arguments& args
     return args.Holder();
 }
 
-void V8HTMLDocument::allAttrSetterCustom(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
-{
-    // Just emulate a normal JS behaviour---install a property on this.
-    info.This()->ForceSet(name, value);
-}
-
 v8::Handle<v8::Object> wrap(HTMLDocument* impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
     ASSERT(impl);
