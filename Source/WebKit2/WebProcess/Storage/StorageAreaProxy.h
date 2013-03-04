@@ -64,6 +64,7 @@ private:
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&) OVERRIDE;
 
     void didSetItem(const String& key, bool quotaError);
+    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
     bool disabledByPrivateBrowsingInFrame(const WebCore::Frame* sourceFrame) const;
 

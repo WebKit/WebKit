@@ -142,7 +142,7 @@ void StorageAreaProxy::setItem(const String& key, const String& value, Exception
     if (oldValue == value)
         return;
 
-    WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageAreaID, key, value), 0);
+    WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageAreaID, key, value, sourceFrame->document()->url()), 0);
 }
 
 void StorageAreaProxy::removeItem(const String& key, ExceptionCode&, Frame* sourceFrame)
@@ -200,6 +200,11 @@ void StorageAreaProxy::closeDatabaseIfIdle()
 
 
 void StorageAreaProxy::didSetItem(const String& key, bool quotaError)
+{
+    // FIXME: Implement this.
+}
+
+void StorageAreaProxy::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
     // FIXME: Implement this.
 }

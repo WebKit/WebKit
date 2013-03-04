@@ -1,3 +1,30 @@
+2013-03-04  Anders Carlsson  <andersca@apple.com>
+
+        More work on UI side storage
+        https://bugs.webkit.org/show_bug.cgi?id=111370
+
+        Reviewed by Andreas Kling.
+
+        Add a DispatchStorageEvent message and begin hooking it up.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::StorageArea):
+        (WebKit::StorageManager::StorageArea::setItem):
+        (WebKit):
+        (WebKit::StorageManager::StorageArea::dispatchEvents):
+        (WebKit::StorageManager::setItem):
+        (WebKit::StorageManager::findStorageArea):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/Storage/StorageManager.messages.in:
+        * WebProcess/Storage/StorageAreaProxy.cpp:
+        (WebKit::StorageAreaProxy::setItem):
+        (WebKit::StorageAreaProxy::dispatchStorageEvent):
+        (WebKit):
+        * WebProcess/Storage/StorageAreaProxy.h:
+        (StorageAreaProxy):
+        * WebProcess/Storage/StorageAreaProxy.messages.in:
+
 2013-03-04  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix: wrap references to PluginInfoStore with 

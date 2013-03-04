@@ -22,4 +22,6 @@
 
 messages -> StorageAreaProxy {
     DidSetItem(WTF::String key, bool quotaException)
+
+    DispatchStorageEvent(WTF::String key, WTF::String oldValue, WTF::String newValue, WTF::String urlString)
 }
