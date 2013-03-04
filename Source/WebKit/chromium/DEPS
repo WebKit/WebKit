@@ -197,6 +197,8 @@ deps_os = {
       From('chromium_deps', 'src/third_party/android_tools'),
     'third_party/freetype':
       From('chromium_deps', 'src/third_party/freetype'),
+    'third_party/jsr-305/src':
+      From('chromium_deps', 'src/third_party/jsr-305/src'),
     'tools/android':
       Var('chromium_svn') + '/tools/android@' + Var('chromium_rev'),
   },

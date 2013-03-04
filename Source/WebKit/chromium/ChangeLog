@@ -1,3 +1,13 @@
+2013-03-04  Peter Beverloo  <peter@chromium.org>
+
+        [Chromium] Add a new dependency on jsr-305 for Android
+        https://bugs.webkit.org/show_bug.cgi?id=111340
+
+        Unreviewed build fix; new Android dependency. This is
+        currently breaking gyp generation on the Android bots.
+
+        * DEPS:
+
 2013-03-04  Aaron Colwell  <acolwell@chromium.org>
 
         Remove unused return value from SourceBufferPrivate::abort() and WebSourceBuffer::abort().
