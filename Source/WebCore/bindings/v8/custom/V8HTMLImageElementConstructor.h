@@ -39,7 +39,7 @@ namespace WebCore {
 
 class V8HTMLImageElementConstructor {
 public:
-    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate* = 0);
+    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*, WrapperWorldType);
     static WrapperTypeInfo info;
 };
 

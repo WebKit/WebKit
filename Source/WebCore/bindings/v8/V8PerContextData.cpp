@@ -115,7 +115,7 @@ v8::Local<v8::Function> V8PerContextData::constructorForTypeSlowCase(WrapperType
     ASSERT(!m_objectPrototype.isEmpty());
 
     v8::Context::Scope scope(m_context);
-    v8::Handle<v8::FunctionTemplate> functionTemplate = type->getTemplate(m_context->GetIsolate());
+    v8::Handle<v8::FunctionTemplate> functionTemplate = type->getTemplate(m_context->GetIsolate(), worldType(m_context->GetIsolate()));
     // Getting the function might fail if we're running out of stack or memory.
     v8::TryCatch tryCatch;
     v8::Local<v8::Function> function = functionTemplate->GetFunction();

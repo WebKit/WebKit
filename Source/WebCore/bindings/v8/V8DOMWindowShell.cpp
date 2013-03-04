@@ -32,6 +32,7 @@
 #include "V8DOMWindowShell.h"
 
 #include "ContentSecurityPolicy.h"
+#include "DOMWrapperWorld.h"
 #include "DateExtension.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
@@ -157,7 +158,7 @@ void V8DOMWindowShell::clearForNavigation()
     // will be protected by the security checks on the DOMWindow wrapper.
     clearDocumentProperty();
 
-    v8::Handle<v8::Object> windowWrapper = m_global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(m_isolate));
+    v8::Handle<v8::Object> windowWrapper = m_global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(m_isolate, worldTypeInMainThread(m_isolate)));
     ASSERT(!windowWrapper.IsEmpty());
     windowWrapper->TurnOnAccessCheck();
     m_context->DetachGlobal();
@@ -314,6 +315,7 @@ void V8DOMWindowShell::createContext()
 
 bool V8DOMWindowShell::installDOMWindow()
 {
+    DOMWrapperWorld::setInitializingWindow(true);
     DOMWindow* window = m_frame->document()->domWindow();
     v8::Local<v8::Object> windowWrapper = V8ObjectConstructor::newInstance(V8PerContextData::from(m_context.get())->constructorForType(&V8DOMWindow::info));
     if (windowWrapper.IsEmpty())
@@ -340,6 +342,7 @@ bool V8DOMWindowShell::installDOMWindow()
     V8DOMWrapper::setNativeInfo(innerGlobalObject, &V8DOMWindow::info, window);
     innerGlobalObject->SetPrototype(windowWrapper);
     V8DOMWrapper::associateObjectWithWrapper(PassRefPtr<DOMWindow>(window), &V8DOMWindow::info, windowWrapper, m_isolate, WrapperConfiguration::Dependent);
+    DOMWrapperWorld::setInitializingWindow(false);
     return true;
 }
 

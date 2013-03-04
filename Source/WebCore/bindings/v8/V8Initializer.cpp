@@ -51,7 +51,7 @@ static Frame* findFrame(v8::Local<v8::Object> host, v8::Local<v8::Value> data, v
     WrapperTypeInfo* type = WrapperTypeInfo::unwrap(data);
 
     if (V8DOMWindow::info.equals(type)) {
-        v8::Handle<v8::Object> windowWrapper = host->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(isolate));
+        v8::Handle<v8::Object> windowWrapper = host->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(isolate, worldTypeInMainThread(isolate)));
         if (windowWrapper.IsEmpty())
             return 0;
         return V8DOMWindow::toNative(windowWrapper)->frame();

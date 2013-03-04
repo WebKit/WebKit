@@ -79,7 +79,7 @@ v8::Local<v8::Object> V8DOMWrapper::createWrapper(v8::Handle<v8::Object> creatio
     V8WrapperInstantiationScope scope(creationContext);
 
     V8PerContextData* perContextData = V8PerContextData::from(scope.context());
-    v8::Local<v8::Object> wrapper = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate(isolate)->GetFunction());
+    v8::Local<v8::Object> wrapper = perContextData ? perContextData->createWrapperFromCache(type) : V8ObjectConstructor::newInstance(type->getTemplate(isolate, worldTypeInMainThread(isolate))->GetFunction());
 
     if (type == &V8HTMLDocument::info && !wrapper.IsEmpty())
         wrapper = V8HTMLDocument::wrapInShadowObject(wrapper, static_cast<Node*>(impl), isolate);

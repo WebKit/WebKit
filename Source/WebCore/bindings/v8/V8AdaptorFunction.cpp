@@ -40,7 +40,7 @@ namespace WebCore {
 
 WrapperTypeInfo V8AdaptorFunction::info = { V8AdaptorFunction::getTemplate, 0, 0, 0, 0, 0, 0, WrapperTypeObjectPrototype };
 
-v8::Persistent<v8::FunctionTemplate> V8AdaptorFunction::getTemplate(v8::Isolate* isolate)
+v8::Persistent<v8::FunctionTemplate> V8AdaptorFunction::getTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     ASSERT(isolate);
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
@@ -76,7 +76,7 @@ v8::Handle<v8::Function> V8AdaptorFunction::wrap(v8::Handle<v8::Object> object, 
 {
     if (object.IsEmpty() || !object->IsObject())
         return v8::Handle<v8::Function>();
-    v8::Handle<v8::Function> adaptor = v8::Handle<v8::Function>::Cast(getTemplate(isolate)->GetFunction());
+    v8::Handle<v8::Function> adaptor = v8::Handle<v8::Function>::Cast(getTemplate(isolate, worldType(isolate))->GetFunction());
     if (adaptor.IsEmpty())
         return v8::Handle<v8::Function>();
     adaptor->SetName(v8String(name.string(), isolate));

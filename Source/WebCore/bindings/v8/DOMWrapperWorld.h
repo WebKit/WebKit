@@ -62,10 +62,9 @@ public:
     void makeContextWeak(v8::Handle<v8::Context>);
     void setIsolatedWorldField(v8::Handle<v8::Context>);
 
-    static void assertContextHasCorrectPrototype(v8::Handle<v8::Context>);
     static DOMWrapperWorld* isolatedWorld(v8::Handle<v8::Context> context)
     {
-        assertContextHasCorrectPrototype(context);
+        ASSERT(contextHasCorrectPrototype(context));
         return static_cast<DOMWrapperWorld*>(context->GetAlignedPointerFromEmbedderData(v8ContextIsolatedWorld));
     }
 
@@ -109,9 +108,12 @@ public:
         return m_domDataStore.get();
     }
 
+    static void setInitializingWindow(bool);
+
 private:
     static int isolatedWorldCount;
     static PassRefPtr<DOMWrapperWorld> createMainWorld();
+    static bool contextHasCorrectPrototype(v8::Handle<v8::Context>);
 
     DOMWrapperWorld(int worldId, int extensionGroup);
 

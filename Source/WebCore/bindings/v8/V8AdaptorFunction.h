@@ -55,7 +55,7 @@ public:
     static v8::Handle<v8::Function> wrap(v8::Handle<v8::Object>, const AtomicString& name, v8::Isolate*);
     static v8::Handle<v8::Function> get(v8::Handle<v8::Object>);
 
-    static v8::Persistent<v8::FunctionTemplate> getTemplate(v8::Isolate* = 0);
+    static v8::Persistent<v8::FunctionTemplate> getTemplate(v8::Isolate*, WrapperWorldType);
     static v8::Persistent<v8::FunctionTemplate> configureTemplate(v8::Persistent<v8::FunctionTemplate>);
     static v8::Handle<v8::Value> invocationCallback(const v8::Arguments&);
 };

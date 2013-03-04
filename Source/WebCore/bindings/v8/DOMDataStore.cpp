@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-DOMDataStore::DOMDataStore(Type type)
+DOMDataStore::DOMDataStore(WrapperWorldType type)
     : m_type(type)
     , m_wrapperMap(v8::Isolate::GetCurrent()) // FIXME Don't call GetCurrent twice.
 {

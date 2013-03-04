@@ -324,7 +324,7 @@ sub GenerateHeader
         push(@headerContent, <<END);
 class V8${nativeType}Constructor {
 public:
-    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*);
+    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*, WrapperWorldType);
     static WrapperTypeInfo info;
 };
 
@@ -362,7 +362,7 @@ END
     push(@headerContent, <<END);
     static bool HasInstance(v8::Handle<v8::Value>, v8::Isolate*);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate(v8::Isolate*);
-    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*);
+    static v8::Persistent<v8::FunctionTemplate> GetTemplate(v8::Isolate*, WrapperWorldType);
     static ${nativeType}* toNative(v8::Handle<v8::Object> object)
     {
         return reinterpret_cast<${nativeType}*>(${fromFunctionOpening}object${fromFunctionClosing}->GetAlignedPointerFromInternalField(v8DOMWrapperObjectIndex));
@@ -793,7 +793,7 @@ sub GenerateDomainSafeFunctionGetter
 static v8::Handle<v8::Value> ${funcName}AttrGetter(v8::Local<v8::String> name, const v8::AccessorInfo& info)
 {
     static v8::Persistent<v8::FunctionTemplate> privateTemplate = v8::Persistent<v8::FunctionTemplate>::New(info.GetIsolate(), $newTemplateString);
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate()));
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate(), worldType(info.GetIsolate())));
     if (holder.IsEmpty()) {
         // can only reach here by 'object.__proto__.func', and it should passed
         // domain security check already
@@ -828,7 +828,7 @@ sub GenerateDomainSafeFunctionSetter
     push(@implContentInternals, <<END);
 static void ${interfaceName}DomainSafeFunctionSetter(v8::Local<v8::String> name, v8::Local<v8::Value> value, const v8::AccessorInfo& info)
 {
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate()));
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate(), worldType(info.GetIsolate())));
     if (holder.IsEmpty())
         return;
     ${interfaceName}* imp = ${v8InterfaceName}::toNative(holder);
@@ -947,7 +947,7 @@ END
         } else {
             # perform lookup first
             push(@implContentInternals, <<END);
-    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate()));
+    v8::Handle<v8::Object> holder = info.This()->FindInstanceInPrototypeChain(${v8InterfaceName}::GetTemplate(info.GetIsolate(), worldType(info.GetIsolate())));
     if (holder.IsEmpty())
         return v8Undefined();
 END
@@ -2242,7 +2242,7 @@ END
 
     push(@implContent, <<END);
 
-v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}Constructor::GetTemplate(v8::Isolate* isolate)
+v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}Constructor::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
     if (!cachedTemplate.IsEmpty())
@@ -2254,7 +2254,7 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}Constructor::GetTemplate(
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(${v8InterfaceName}::internalFieldCount);
     result->SetClassName(v8::String::NewSymbol("${interfaceName}"));
-    result->Inherit(${v8InterfaceName}::GetTemplate(isolate));
+    result->Inherit(${v8InterfaceName}::GetTemplate(isolate, worldType));
 
     cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, result);
     return cachedTemplate;
@@ -2678,7 +2678,7 @@ sub GenerateImplementation
         my $parent = $_;
         AddToImplIncludes("V8${parent}.h");
         $parentClass = "V8" . $parent;
-        $parentClassTemplate = $parentClass . "::GetTemplate(isolate)";
+        $parentClassTemplate = $parentClass . "::GetTemplate(isolate, worldType)";
         last;
     }
 
@@ -2991,7 +2991,7 @@ END
 
     # Generate the template configuration method
     push(@implContent,  <<END);
-static v8::Persistent<v8::FunctionTemplate> Configure${v8InterfaceName}Template(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate)
+static v8::Persistent<v8::FunctionTemplate> Configure${v8InterfaceName}Template(v8::Persistent<v8::FunctionTemplate> desc, v8::Isolate* isolate, WrapperWorldType worldType)
 {
     desc->ReadOnlyPrototype();
 
@@ -3157,7 +3157,7 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetRawTemplate(v8::Isol
     return templ;
 }
 
-v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetTemplate(v8::Isolate* isolate)
+v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     V8PerIsolateData* data = V8PerIsolateData::from(isolate);
     V8PerIsolateData::TemplateMap::iterator result = data->templateMap().find(&info);
@@ -3166,7 +3166,7 @@ v8::Persistent<v8::FunctionTemplate> ${v8InterfaceName}::GetTemplate(v8::Isolate
 
     v8::HandleScope handleScope;
     v8::Persistent<v8::FunctionTemplate> templ =
-        Configure${v8InterfaceName}Template(GetRawTemplate(isolate), isolate);
+        Configure${v8InterfaceName}Template(GetRawTemplate(isolate), isolate, worldType);
     data->templateMap().add(&info, templ);
     return templ;
 }
@@ -3215,7 +3215,7 @@ void ${v8InterfaceName}::installPerContextPrototypeProperties(v8::Handle<v8::Obj
 END
         # Setup the enable-by-settings functions if we have them
         push(@implContent,  <<END);
-    v8::Local<v8::Signature> defaultSignature = v8::Signature::New(GetTemplate(isolate));
+    v8::Local<v8::Signature> defaultSignature = v8::Signature::New(GetTemplate(isolate, worldType(isolate)));
     UNUSED_PARAM(defaultSignature); // In some cases, it will not be used.
 
     ScriptExecutionContext* context = toScriptExecutionContext(proto->CreationContext());

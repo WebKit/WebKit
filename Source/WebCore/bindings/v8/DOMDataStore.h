@@ -35,6 +35,7 @@
 #include "DOMWrapperWorld.h"
 #include "Node.h"
 #include "V8GCController.h"
+#include "WrapperTypeInfo.h"
 #include <v8.h>
 #include <wtf/HashMap.h>
 #include <wtf/MainThread.h>
@@ -50,13 +51,7 @@ namespace WebCore {
 class DOMDataStore {
     WTF_MAKE_NONCOPYABLE(DOMDataStore);
 public:
-    enum Type {
-        MainWorld,
-        IsolatedWorld,
-        Worker,
-    };
-
-    explicit DOMDataStore(Type);
+    explicit DOMDataStore(WrapperWorldType);
     ~DOMDataStore();
 
     static DOMDataStore* current(v8::Isolate*);
@@ -163,7 +158,7 @@ private:
         object->setWrapper(wrapper, isolate, configuration);
     }
 
-    Type m_type;
+    WrapperWorldType m_type;
     DOMWrapperMap<void> m_wrapperMap;
 };
 

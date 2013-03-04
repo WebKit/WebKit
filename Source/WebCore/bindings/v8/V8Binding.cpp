@@ -221,7 +221,10 @@ DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 {
     v8::Handle<v8::Object> global = context->Global();
     ASSERT(!global.IsEmpty());
-    global = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate()));
+    global = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), MainWorld));
+    if (!global.IsEmpty())
+        return V8DOMWindow::toNative(global);
+    global = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), IsolatedWorld));
     ASSERT(!global.IsEmpty());
     return V8DOMWindow::toNative(global);
 }
@@ -229,11 +232,14 @@ DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 ScriptExecutionContext* toScriptExecutionContext(v8::Handle<v8::Context> context)
 {
     v8::Handle<v8::Object> global = context->Global();
-    v8::Handle<v8::Object> windowWrapper = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate()));
+    v8::Handle<v8::Object> windowWrapper = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), MainWorld));
+    if (!windowWrapper.IsEmpty())
+        return V8DOMWindow::toNative(windowWrapper)->scriptExecutionContext();
+    windowWrapper = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), IsolatedWorld));
     if (!windowWrapper.IsEmpty())
         return V8DOMWindow::toNative(windowWrapper)->scriptExecutionContext();
 #if ENABLE(WORKERS)
-    v8::Handle<v8::Object> workerWrapper = global->FindInstanceInPrototypeChain(V8WorkerContext::GetTemplate(context->GetIsolate()));
+    v8::Handle<v8::Object> workerWrapper = global->FindInstanceInPrototypeChain(V8WorkerContext::GetTemplate(context->GetIsolate(), WorkerWorld));
     if (!workerWrapper.IsEmpty())
         return V8WorkerContext::toNative(workerWrapper)->scriptExecutionContext();
 #endif
@@ -323,6 +329,26 @@ void crashIfV8IsDead()
         // such as out-of-memory by crashing the renderer.
         CRASH();
     }
+}
+
+WrapperWorldType worldType(v8::Isolate* isolate)
+{
+    V8PerIsolateData* data = V8PerIsolateData::from(isolate);
+    // FIXME: Rename domDataStore() to workerDataStore().
+    if (!data->domDataStore())
+        return worldTypeInMainThread(isolate);
+    return WorkerWorld;
+}
+
+WrapperWorldType worldTypeInMainThread(v8::Isolate* isolate)
+{
+    if (!DOMWrapperWorld::isolatedWorldsExist())
+        return MainWorld;
+    ASSERT(!v8::Context::GetEntered().IsEmpty());
+    DOMWrapperWorld* isolatedWorld = DOMWrapperWorld::isolatedWorld(v8::Context::GetEntered());
+    if (isolatedWorld)
+        return IsolatedWorld;
+    return MainWorld;
 }
 
 } // namespace WebCore

@@ -467,6 +467,9 @@ namespace WebCore {
 
     void crashIfV8IsDead();
 
+    WrapperWorldType worldType(v8::Isolate*);
+    WrapperWorldType worldTypeInMainThread(v8::Isolate*);
+
 } // namespace WebCore
 
 #endif // V8Binding_h

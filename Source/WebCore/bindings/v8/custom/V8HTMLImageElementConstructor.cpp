@@ -81,7 +81,7 @@ static v8::Handle<v8::Value> v8HTMLImageElementConstructorMethodCustom(const v8:
     return wrapper;
 }
 
-v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(v8::Isolate* isolate)
+v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(v8::Isolate* isolate, WrapperWorldType worldType)
 {
     static v8::Persistent<v8::FunctionTemplate> cachedTemplate;
     if (!cachedTemplate.IsEmpty())
@@ -93,7 +93,7 @@ v8::Persistent<v8::FunctionTemplate> V8HTMLImageElementConstructor::GetTemplate(
     v8::Local<v8::ObjectTemplate> instance = result->InstanceTemplate();
     instance->SetInternalFieldCount(V8HTMLImageElement::internalFieldCount);
     result->SetClassName(v8::String::NewSymbol("HTMLImageElement"));
-    result->Inherit(V8HTMLImageElement::GetTemplate(isolate));
+    result->Inherit(V8HTMLImageElement::GetTemplate(isolate, worldType));
 
     cachedTemplate = v8::Persistent<v8::FunctionTemplate>::New(isolate, result);
     return cachedTemplate;
