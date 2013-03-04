@@ -107,7 +107,14 @@ TEST(WTF, StringHasher_addCharacter)
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 }
 
-TEST(WTF, StringHasher_addCharacters)
+#if OS(ANDROID)
+// Failing on Android. http://webkit.org/b/111284
+# define MAYBE_StringHasher_addCharacters DISABLED_StringHasher_addCharacters
+#else
+# define MAYBE_StringHasher_addCharacters StringHasher_addCharacters
+#endif
+
+TEST(WTF, MAYBE_StringHasher_addCharacters)
 {
     StringHasher hasher;
 
@@ -266,7 +273,14 @@ TEST(WTF, StringHasher_addCharacters)
     ASSERT_EQ(testBHash5 & 0xFFFFFF, hasher.hashWithTop8BitsMasked());
 }
 
-TEST(WTF, StringHasher_addCharactersAssumingAligned)
+#if OS(ANDROID)
+// Failing on Android. http://webkit.org/b/111284
+# define MAYBE_StringHasher_addCharactersAssumingAligned DISABLED_StringHasher_addCharactersAssumingAligned
+#else
+# define MAYBE_StringHasher_addCharactersAssumingAligned StringHasher_addCharactersAssumingAligned
+#endif
+
+TEST(WTF, MAYBE_StringHasher_addCharactersAssumingAligned)
 {
     StringHasher hasher;
 

@@ -1,3 +1,16 @@
+2013-03-04  Kinuko Yasuda  <kinuko@chromium.org>
+
+        [chromium] TestWebKitAPI WTF.StringHasher_addCharacters is broken on Chromium Android
+        https://bugs.webkit.org/show_bug.cgi?id=111284
+
+        Disabling the failing two tests on Android.
+
+        Reviewed by Jochen Eisinger.
+
+        * TestWebKitAPI/Tests/WTF/StringHasher.cpp:
+        (TestWebKitAPI):
+        (TestWebKitAPI::TEST):
+
 2013-03-04  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Add build flag for FontLoader
