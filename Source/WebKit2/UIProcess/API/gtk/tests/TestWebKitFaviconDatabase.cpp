@@ -202,9 +202,9 @@ static void testGetFaviconURI(FaviconDatabaseTest* test, gconstpointer)
 {
     WebKitFaviconDatabase* database = webkit_web_context_get_favicon_database(test->m_webContext);
 
-    const char* baseURI = kServer->getURIForPath("/foo").data();
-    GOwnPtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, baseURI));
-    g_assert_cmpstr(iconURI.get(), ==, kServer->getURIForPath("/icon/favicon.ico").data());
+    CString baseURI = kServer->getURIForPath("/foo");
+    GOwnPtr<char> iconURI(webkit_favicon_database_get_favicon_uri(database, baseURI.data()));
+    ASSERT_CMP_CSTRING(iconURI.get(), ==, kServer->getURIForPath("/icon/favicon.ico"));
 }
 
 static void testWebViewFavicon(FaviconDatabaseTest* test, gconstpointer)

@@ -40,6 +40,12 @@
         g_test_add(testPath.get(), ClassName, 0, ClassName::setUp, testFunc, ClassName::tearDown); \
     }
 
+#define ASSERT_CMP_CSTRING(s1, cmp, s2) \
+    do { CString __s1 = (s1); CString __s2 = (s2); \
+        if (g_strcmp0(__s1.data(), __s2.data()) cmp 0) ; else \
+            g_assertion_message_cmpstr(G_LOG_DOMAIN, __FILE__, __LINE__, G_STRFUNC, \
+                #s1 " " #cmp " " #s2, __s1.data(), #cmp, __s2.data()); } while (0)
+
 class Test {
 public:
     MAKE_GLIB_TEST_FIXTURE(Test);

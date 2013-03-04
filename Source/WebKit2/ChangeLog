@@ -1,3 +1,33 @@
+2013-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Some WebKit2 GTK+ unit tests are failing in 32 bits bot
+        https://bugs.webkit.org/show_bug.cgi?id=111346
+
+        Reviewed by Martin Robinson.
+
+        The problem is the use of a temporary CString object in the macro
+        g_assert_cmpstr. It's a common mistake because we usually forget
+        that g_assert_cmpstr is not a function but a macro, that expands
+        to multiple lines. This patch adds a new macro ASSERT_CMP_CSTRING
+        with the same implementation that g_assert_cmpstr, but using
+        CStrings instead of const char*. It fixes all the cases where a
+        temporary CString was used in g_assert_cmpstr, and uses the new
+        macro also for the cases where we were caching the CString just
+        for g_assert_cmpstr.
+
+        * UIProcess/API/gtk/tests/TestDownloads.cpp:
+        (testDownloadRemoteFile):
+        * UIProcess/API/gtk/tests/TestInspectorServer.cpp:
+        (testInspectorServerPageList):
+        * UIProcess/API/gtk/tests/TestLoaderClient.cpp:
+        * UIProcess/API/gtk/tests/TestMain.h:
+        * UIProcess/API/gtk/tests/TestResources.cpp:
+        * UIProcess/API/gtk/tests/TestWebKitFaviconDatabase.cpp:
+        (testGetFaviconURI):
+        * UIProcess/API/gtk/tests/TestWebKitSettings.cpp:
+        (assertThatUserAgentIsSentInHeaders):
+        (testWebKitSettingsUserAgent):
+
 2013-03-04  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Add build flag for FontLoader

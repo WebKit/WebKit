@@ -190,7 +190,7 @@ static void testInspectorServerPageList(InspectorServerTest* test, gconstpointer
     g_assert(!error.get());
     valueString.set(WebViewTest::javascriptResultToCString(javascriptResult));
     String validInspectorURL = String("/webinspector/inspector.html?page=") + String::number(pageId);
-    g_assert_cmpstr(valueString.get(), ==, validInspectorURL.utf8().data());
+    ASSERT_CMP_CSTRING(valueString.get(), ==, validInspectorURL.utf8());
 }
 
 // Test sending a raw remote debugging message through our web socket server.

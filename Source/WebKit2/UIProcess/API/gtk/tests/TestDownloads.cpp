@@ -341,8 +341,7 @@ static void testDownloadRemoteFile(DownloadTest* test, gconstpointer)
 
     WebKitURIRequest* request = webkit_download_get_request(download.get());
     g_assert(request);
-    CString requestURI = kServer->getURIForPath("/test.pdf");
-    g_assert_cmpstr(webkit_uri_request_get_uri(request), ==, requestURI.data());
+    ASSERT_CMP_CSTRING(webkit_uri_request_get_uri(request), ==, kServer->getURIForPath("/test.pdf"));
 
     g_assert(webkit_download_get_destination(download.get()));
     g_assert_cmpfloat(webkit_download_get_estimated_progress(download.get()), ==, 1);
