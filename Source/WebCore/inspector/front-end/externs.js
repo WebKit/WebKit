@@ -329,5 +329,8 @@ difflib.SequenceMatcher.prototype.get_opcodes = function() { return []; }
 /** @constructor */
 WebInspector.CodeMirrorTextEditor = function(url, delegate) { }
 
+/** @constructor */
+WebInspector.AceTextEditor = function(url, delegate) { }
+
 /** @type {boolean} */
 window.dispatchStandaloneTestRunnerMessages;
