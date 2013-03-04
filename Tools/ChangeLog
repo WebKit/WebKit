@@ -1,3 +1,13 @@
+2013-03-04  Claudio Saavedra  <csaavedra@igalia.com>
+
+        [GTK] No need to manually add system paths to jhbuildrc
+        https://bugs.webkit.org/show_bug.cgi?id=110850
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * gtk/jhbuildrc: Remove calls to addpath() for items that jhbuild
+        already takes care of.
+
 2013-03-04  Kinuko Yasuda  <kinuko@chromium.org>
 
         [chromium] TestWebKitAPI WTF.StringHasher_addCharacters is broken on Chromium Android
