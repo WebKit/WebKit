@@ -25,6 +25,7 @@
 
 /**
  * @constructor
+ * @implements {WebInspector.EventTarget}
  */
 WebInspector.Object = function() {
 }
@@ -109,7 +110,7 @@ WebInspector.Object.prototype = {
 
 /**
  * @constructor
- * @param {WebInspector.Object} target
+ * @param {WebInspector.EventTarget} target
  * @param {string} type
  * @param {*=} data
  */
@@ -142,6 +143,44 @@ WebInspector.Event.prototype = {
         if (preventDefault)
             this.preventDefault();
     }
+}
+
+/**
+ * @interface
+ */
+WebInspector.EventTarget = function()
+{
+}
+
+WebInspector.EventTarget.prototype = {
+    /**
+     * @param {string} eventType
+     * @param {function(WebInspector.Event)} listener
+     * @param {Object=} thisObject
+     */
+    addEventListener: function(eventType, listener, thisObject) { },
+
+    /**
+     * @param {string} eventType
+     * @param {function(WebInspector.Event)} listener
+     * @param {Object=} thisObject
+     */
+    removeEventListener: function(eventType, listener, thisObject) { },
+
+    removeAllListeners: function() { },
+
+    /**
+     * @param {string} eventType
+     * @return {boolean}
+     */
+    hasEventListeners: function(eventType) { },
+
+    /**
+     * @param {string} eventType
+     * @param {*=} eventData
+     * @return {boolean}
+     */
+    dispatchEventToListeners: function(eventType, eventData) { },
 }
 
 WebInspector.notifications = new WebInspector.Object();
