@@ -5,31 +5,51 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Test getting -webkit-grid-column and -webkit-grid-row set through CSS
 PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-start') is 'auto'
 PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-row') is 'auto'
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-before') is 'auto'
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-column') is '10'
+PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-start') is '10'
 PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-row') is '15'
+PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-before') is '15'
 PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-column') is '-10'
+PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-start') is '-10'
 PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-row') is '-15'
+PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-before') is '-15'
 PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-start') is 'auto'
 PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-row') is 'auto'
+PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-before') is 'auto'
 
 Test the initial value
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-start') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-before') is 'auto'
 
 Test getting and setting grid-column and grid-row through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is '18'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-start') is '18'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is '66'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-before') is '66'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is '-55'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-start') is '-55'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is '-40'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-before') is '-40'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-start') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-before') is 'auto'
 
 Test setting grid-column and grid-row back to 'auto' through JS
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is '18'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-start') is '18'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is '66'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-before') is '66'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-start') is 'auto'
 PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-before') is 'auto'
 PASS successfullyParsed is true
 
 TEST COMPLETE

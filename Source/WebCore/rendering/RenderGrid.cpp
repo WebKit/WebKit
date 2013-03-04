@@ -334,7 +334,7 @@ size_t RenderGrid::maximumIndexInDirection(TrackSizingDirection direction) const
     size_t maximumIndex = std::max<size_t>(1, trackStyles.size());
 
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        const GridPosition& position = (direction == ForColumns) ? child->style()->gridItemColumn() : child->style()->gridItemRow();
+        const GridPosition& position = (direction == ForColumns) ? child->style()->gridItemStart() : child->style()->gridItemBefore();
         // 'auto' items will need to be resolved in seperate phases anyway. Note that because maximumIndex is at least 1,
         // the grid-auto-flow == none case is automatically handled.
         if (position.isAuto())
@@ -526,9 +526,9 @@ void RenderGrid::placeItemsOnGrid()
     Vector<RenderBox*> specifiedMajorAxisAutoGridItems;
     GridAutoFlow autoFlow = style()->gridAutoFlow();
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
-        const GridPosition& columnPosition = child->style()->gridItemColumn();
-        const GridPosition& rowPosition = child->style()->gridItemRow();
-        if (autoFlow != AutoFlowNone && (columnPosition.isAuto() || rowPosition.isAuto())) {
+        const GridPosition& startPosition = child->style()->gridItemStart();
+        const GridPosition& beforePosition = child->style()->gridItemBefore();
+        if (autoFlow != AutoFlowNone && (startPosition.isAuto() || beforePosition.isAuto())) {
             const GridPosition& majorAxisPosition = autoPlacementMajorAxisPositionForChild(child);
             if (majorAxisPosition.isAuto())
                 autoMajorAxisAutoGridItems.append(child);
@@ -536,8 +536,8 @@ void RenderGrid::placeItemsOnGrid()
                 specifiedMajorAxisAutoGridItems.append(child);
             continue;
         }
-        size_t columnTrack = resolveGridPositionFromStyle(columnPosition);
-        size_t rowTrack = resolveGridPositionFromStyle(rowPosition);
+        size_t columnTrack = resolveGridPositionFromStyle(startPosition);
+        size_t rowTrack = resolveGridPositionFromStyle(beforePosition);
         insertItemIntoGrid(child, rowTrack, columnTrack);
     }
 
@@ -615,14 +615,14 @@ const GridPosition& RenderGrid::autoPlacementMajorAxisPositionForChild(const Ren
 {
     GridAutoFlow flow = style()->gridAutoFlow();
     ASSERT(flow != AutoFlowNone);
-    return (flow == AutoFlowColumn) ? gridItem->style()->gridItemColumn() : gridItem->style()->gridItemRow();
+    return (flow == AutoFlowColumn) ? gridItem->style()->gridItemStart() : gridItem->style()->gridItemBefore();
 }
 
 const GridPosition& RenderGrid::autoPlacementMinorAxisPositionForChild(const RenderBox* gridItem) const
 {
     GridAutoFlow flow = style()->gridAutoFlow();
     ASSERT(flow != AutoFlowNone);
-    return (flow == AutoFlowColumn) ? gridItem->style()->gridItemRow() : gridItem->style()->gridItemColumn();
+    return (flow == AutoFlowColumn) ? gridItem->style()->gridItemBefore() : gridItem->style()->gridItemStart();
 }
 
 RenderGrid::TrackSizingDirection RenderGrid::autoPlacementMajorAxisDirection() const
