@@ -203,7 +203,6 @@ public:
 
     // Methods called from other agents.
     InspectorPageAgent* pageAgent() { return m_pageAgent; }
-    int pushNodePathForRenderLayerToFrontend(const RenderLayer*);
 
 private:
     InspectorDOMAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorCompositeState*, InjectedScriptManager*, InspectorOverlay*, InspectorClient*);

@@ -599,18 +599,6 @@ int InspectorDOMAgent::pushNodePathToFrontend(Node* nodeToPush)
     return map->get(nodeToPush);
 }
 
-int InspectorDOMAgent::pushNodePathForRenderLayerToFrontend(const RenderLayer* renderLayer)
-{
-    Node* node = renderLayer->renderer()->node();
-
-    // RenderLayers may not be associated with a Node, for instance
-    // in the case of CSS generated content.
-    if (!node)
-        return 0;
-
-    return pushNodePathToFrontend(node);
-}
-
 int InspectorDOMAgent::boundNodeId(Node* node)
 {
     return m_documentNodeToIdMap.get(node);

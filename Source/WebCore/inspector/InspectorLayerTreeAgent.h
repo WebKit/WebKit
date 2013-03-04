@@ -67,8 +67,6 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
-    virtual void getLayerTree(ErrorString*, RefPtr<TypeBuilder::LayerTree::Layer>&);
-    virtual void nodeIdForLayerId(ErrorString*, const String& layerId, int* resultNodeId);
 
 private:
     InspectorLayerTreeAgent(InstrumentingAgents*, InspectorCompositeState*, Page*);
@@ -77,7 +75,6 @@ private:
     String bind(const RenderLayer*);
     void unbind(const RenderLayer*);
 
-    PassRefPtr<TypeBuilder::LayerTree::Layer> buildObjectForRootLayer();   
     PassRefPtr<TypeBuilder::LayerTree::Layer> buildObjectForLayer(RenderLayer*);
     PassRefPtr<TypeBuilder::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
         

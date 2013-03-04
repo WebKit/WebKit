@@ -3663,11 +3663,10 @@
                 "properties": [
                     { "name": "layerId", "$ref": "LayerId", "description": "The unique id for this layer." },
                     { "name": "bounds", "$ref": "IntRect", "description": "Bounds of the layer." },
-                    { "name": "isComposited", "type": "boolean", "description": "Indicates whether this layer is composited." },
+                    { "name": "isComposited", "type": "boolean", "optional": true, "description": "Indicates whether this layer is composited." },
                     { "name": "paintCount", "type": "integer", "optional": true, "description": "Indicates how many time this layer has painted." },
                     { "name": "memory", "type": "integer", "optional": true, "description": "Estimated memory used by this layer." },
-                    { "name": "compositedBounds", "$ref": "IntRect", "optional": true, "description": "The bounds of the composited layer." },
-                    { "name": "childLayers", "type": "array", "optional": true, "items": { "$ref": "Layer" }, "description": "Child layers." }
+                    { "name": "compositedBounds", "$ref": "IntRect", "optional": true, "description": "The bounds of the composited layer." }
                 ]
             }
         ],
@@ -3679,23 +3678,6 @@
             {
                 "name": "disable",
                 "description": "Disables compositing tree inspection."
-            },
-            {
-                "name": "getLayerTree",
-                "description": "Returns the layer tree structure of the current page.",
-                "returns": [
-                    { "name": "layerTree", "$ref": "Layer", "description": "Layer tree structure of the current page." }
-                ]
-            },
-            {
-                "name": "nodeIdForLayerId",
-                "description": "Returns the node id for a given layer id.",
-                "parameters": [
-                    { "name": "layerId", "$ref": "LayerId" }
-                ],
-                "returns": [
-                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The node id for the given layer id." }
-                ]
             }
         ],
         "events": [
