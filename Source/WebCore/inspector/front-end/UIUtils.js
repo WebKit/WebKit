@@ -137,11 +137,14 @@ WebInspector.GlassPane = function()
     this.element.style.cssText = "position:absolute;top:0;bottom:0;left:0;right:0;background-color:transparent;z-index:1000;";
     this.element.id = "glass-pane-for-drag";
     document.body.appendChild(this.element);
+    WebInspector._glassPane = this;
 }
 
 WebInspector.GlassPane.prototype = {
     dispose: function()
     {
+        delete WebInspector._glassPane;
+        WebInspector.inspectorView.focus();
         if (this.element.parentElement)
             this.element.parentElement.removeChild(this.element);
     }
@@ -861,6 +864,8 @@ WebInspector._isTextEditingElement = function(element)
 
 WebInspector.setCurrentFocusElement = function(x)
 {
+    if (WebInspector._glassPane && x && !WebInspector._glassPane.element.isAncestor(x))
+        return;
     if (WebInspector._currentFocusElement !== x)
         WebInspector._previousFocusElement = WebInspector._currentFocusElement;
     WebInspector._currentFocusElement = x;

@@ -124,6 +124,14 @@ WebInspector.InspectorView.prototype = {
         }
     },
 
+    /**
+     * @return {Element}
+     */
+    defaultFocusedElement: function()
+    {
+        return this._currentPanel ? this._currentPanel.defaultFocusedElement() : null;
+    },
+
     _keyPress: function(event)
     {
         // BUG 104250: Windows 7 posts a WM_CHAR message upon the Ctrl+']' keypress.

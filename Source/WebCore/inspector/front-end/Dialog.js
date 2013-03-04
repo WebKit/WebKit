@@ -38,13 +38,12 @@ WebInspector.Dialog = function(relativeToElement, delegate)
     this._delegate = delegate;
     this._relativeToElement = relativeToElement;
 
+    this._glassPane = new WebInspector.GlassPane();
     // Install glass pane capturing events.
-    this._glassPaneElement = document.body.createChild("div");
-    this._glassPaneElement.className = "dialog-glass-pane";
-    this._glassPaneElement.tabIndex = 0;
-    this._glassPaneElement.addEventListener("focus", this._onGlassPaneFocus.bind(this), false);
+    this._glassPane.element.tabIndex = 0;
+    this._glassPane.element.addEventListener("focus", this._onGlassPaneFocus.bind(this), false);
 
-    this._element = this._glassPaneElement.createChild("div");
+    this._element = this._glassPane.element.createChild("div");
     this._element.tabIndex = 0;
     this._element.addEventListener("focus", this._onFocus.bind(this), false);
     this._element.addEventListener("keydown", this._onKeyDown.bind(this), false);
@@ -58,8 +57,6 @@ WebInspector.Dialog = function(relativeToElement, delegate)
     this._position();
     this._windowResizeHandler = this._position.bind(this);
     window.addEventListener("resize", this._windowResizeHandler, true);
-
-    this._previousFocusElement = WebInspector.currentFocusElement();
     this._delegate.focus();
 }
 
@@ -98,10 +95,8 @@ WebInspector.Dialog.prototype = {
 
         this._delegate.willHide();
 
-        if (this._element.isSelfOrAncestor(document.activeElement))
-            WebInspector.setCurrentFocusElement(this._previousFocusElement);
         delete WebInspector.Dialog._instance;
-        document.body.removeChild(this._glassPaneElement);
+        this._glassPane.dispose();
         window.removeEventListener("resize", this._windowResizeHandler, true);
     },
 
