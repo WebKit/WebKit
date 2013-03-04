@@ -2,6 +2,7 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
  * Copyright (C) 2009, 2012 Igalia S.L.
+ * Copyright (C) 2013 Samsung Electronics
  *
  * Portions from Mozilla a11y, copyright as follows:
  *
@@ -56,7 +57,7 @@ static void webkitAccessibleImageGetImagePosition(AtkImage* image, gint* x, gint
 
 static const gchar* webkitAccessibleImageGetImageDescription(AtkImage* image)
 {
-    return returnString(accessibilityDescription(core(image)));
+    return cacheAndReturnAtkProperty(ATK_OBJECT(image), AtkCachedImageDescription, accessibilityDescription(core(image)));
 }
 
 static void webkitAccessibleImageGetImageSize(AtkImage* image, gint* width, gint* height)

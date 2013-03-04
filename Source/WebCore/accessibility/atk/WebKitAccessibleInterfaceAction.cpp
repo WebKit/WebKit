@@ -2,6 +2,7 @@
  * Copyright (C) 2008 Nuanti Ltd.
  * Copyright (C) 2009 Jan Alonzo
  * Copyright (C) 2012 Igalia S.L.
+ * Copyright (C) 2013 Samsung Electronics
  *
  * Portions from Mozilla a11y, copyright as follows:
  *
@@ -70,13 +71,13 @@ static const gchar* webkitAccessibleActionGetKeybinding(AtkAction* action, gint 
 {
     g_return_val_if_fail(!index, 0);
     // FIXME: Construct a proper keybinding string.
-    return returnString(core(action)->accessKey().string());
+    return cacheAndReturnAtkProperty(ATK_OBJECT(action), AtkCachedActionKeyBinding, core(action)->accessKey().string());
 }
 
 static const gchar* webkitAccessibleActionGetName(AtkAction* action, gint index)
 {
     g_return_val_if_fail(!index, 0);
-    return returnString(core(action)->actionVerb());
+    return cacheAndReturnAtkProperty(ATK_OBJECT(action), AtkCachedActionName, core(action)->actionVerb());
 }
 
 void webkitAccessibleActionInterfaceInit(AtkActionIface* iface)
