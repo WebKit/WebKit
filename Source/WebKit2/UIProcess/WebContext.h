@@ -84,7 +84,11 @@ extern NSString *SchemeForCustomProtocolRegisteredNotificationName;
 extern NSString *SchemeForCustomProtocolUnregisteredNotificationName;
 #endif
 
-class WebContext : public APIObject, private PluginInfoStoreClient, private CoreIPC::MessageReceiver {
+class WebContext : public APIObject, private CoreIPC::MessageReceiver
+#if ENABLE(NETSCAPE_PLUGIN_API)
+    , private PluginInfoStoreClient
+#endif
+    {
 public:
     static const Type APIType = TypeContext;
 
@@ -371,8 +375,10 @@ private:
     void addPlugInAutoStartOriginHash(const String& pageOrigin, unsigned plugInOriginHash);
     void plugInDidReceiveUserInteraction(unsigned plugInOriginHash);
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     // PluginInfoStoreClient:
     virtual void pluginInfoStoreDidLoadPlugins(PluginInfoStore*) OVERRIDE;
+#endif
 
     CoreIPC::MessageReceiverMap m_messageReceiverMap;
 

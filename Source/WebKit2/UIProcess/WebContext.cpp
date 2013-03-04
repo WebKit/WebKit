@@ -189,7 +189,9 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
     WebKit::initializeLogChannelsIfNecessary();
 #endif // !LOG_DISABLED
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginInfoStore.setClient(this);
+#endif
 
 #ifndef NDEBUG
     webContextCounter.increment();
@@ -240,7 +242,9 @@ WebContext::~WebContext()
 
     platformInvalidateContext();
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
     m_pluginInfoStore.setClient(0);
+#endif
 
 #ifndef NDEBUG
     webContextCounter.decrement();
@@ -1191,6 +1195,7 @@ void WebContext::unregisterSchemeForCustomProtocol(const String& scheme)
 }
 #endif
 
+#if ENABLE(NETSCAPE_PLUGIN_API)
 void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
 {
     ASSERT(store == &m_pluginInfoStore);
@@ -1219,5 +1224,6 @@ void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store)
 
     m_client.plugInInformationBecameAvailable(this, ImmutableArray::adopt(pluginArray).leakRef());
 }
+#endif
 
 } // namespace WebKit

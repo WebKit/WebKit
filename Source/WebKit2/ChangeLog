@@ -1,3 +1,13 @@
+2013-03-04  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix: wrap references to PluginInfoStore with 
+        guards for platforms which do not enable NETSCAPE_PLUGIN_AP.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext):
+        (WebKit::WebContext::~WebContext):
+        * UIProcess/WebContext.h:
+
 2013-03-04  Anders Carlsson  <andersca@apple.com>
 
         Create and destroy storage areas in the UI process
