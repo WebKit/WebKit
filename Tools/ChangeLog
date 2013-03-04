@@ -1,3 +1,28 @@
+2013-03-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Add callbacks to the WKViewClient to handle Web Process crash and relaunch
+        https://bugs.webkit.org/show_bug.cgi?id=109828
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Added API test for newly added Web Process crash and Web Process relaunch WKViewClient
+        callbacks.
+
+        * TestWebKitAPI/CMakeLists.txt:
+
+            Tests located in 'TestWebKitAPI/Tests/WebKit2' subdirectories are also
+            considered.
+
+        * TestWebKitAPI/PlatformEfl.cmake:
+        * TestWebKitAPI/Tests/WebKit2/efl/WKViewClientWebProcessCallbacks.cpp: Added.
+        (TestWebKitAPI):
+        (TestWebKitAPI::didFinishLoadForFrame):
+        (TestWebKitAPI::setPageLoaderClient):
+        (TestWebKitAPI::webProcessCrashed):
+        (TestWebKitAPI::webProcessDidRelaunch):
+        (TestWebKitAPI::setViewClient):
+        (TestWebKitAPI::TEST):
+
 2013-03-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: Upstream iOS Accessibility DumpRenderTree changes

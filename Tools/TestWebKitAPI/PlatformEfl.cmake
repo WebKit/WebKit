@@ -86,6 +86,7 @@ set(test_webkit2_api_BINARIES
     WKStringJSString
     WKURL
     WillSendSubmitEvent
+    efl/WKViewClientWebProcessCallbacks
 )
 
 set(test_webkit2_api_fail_BINARIES

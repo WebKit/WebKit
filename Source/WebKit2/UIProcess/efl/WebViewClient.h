@@ -28,6 +28,7 @@
 
 #include "APIClient.h"
 #include "WKView.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 class IntRect;
@@ -42,6 +43,8 @@ class WebViewClient: public APIClient<WKViewClient, kWKViewClientCurrentVersion>
 public:
     void viewNeedsDisplay(WebView*, const WebCore::IntRect&);
     void didChangeContentsSize(WebView*, const WebCore::IntSize&);
+    void webProcessCrashed(WebView*, const String& url);
+    void webProcessDidRelaunch(WebView*);
 };
 
 } // namespace WebKit

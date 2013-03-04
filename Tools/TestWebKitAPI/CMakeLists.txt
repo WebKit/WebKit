@@ -128,10 +128,11 @@ set(test_webkit2_api_LIBRARIES
 )
 
 foreach (testName ${test_webkit2_api_BINARIES})
-    add_executable(test_webkit2_api_${testName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
-    add_test(test_webkit2_api_${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_webkit2_api_${testName})
-    set_tests_properties(test_webkit2_api_${testName} PROPERTIES TIMEOUT 60)
-    target_link_libraries(test_webkit2_api_${testName} ${test_webkit2_api_LIBRARIES})
+    get_filename_component(testBaseName ${testName} NAME)
+    add_executable(test_webkit2_api_${testBaseName} ${TESTWEBKITAPI_DIR}/Tests/WebKit2/${testName}.cpp)
+    add_test(test_webkit2_api_${testBaseName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/test_webkit2_api_${testBaseName})
+    set_tests_properties(test_webkit2_api_${testBaseName} PROPERTIES TIMEOUT 60)
+    target_link_libraries(test_webkit2_api_${testBaseName} ${test_webkit2_api_LIBRARIES})
 endforeach ()
 
 # We don't run tests that are expected to fail. We could use the WILL_FAIL

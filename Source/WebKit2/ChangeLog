@@ -1,3 +1,42 @@
+2013-03-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
+
+        [WK2][EFL] Add callbacks to the WKViewClient to handle Web Process crash and relaunch
+        https://bugs.webkit.org/show_bug.cgi?id=109828
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Providing WKViewClient with Web Process crash and Web Process relaunch
+        callbacks brings better design as WebView should not be aware of
+        EFL-specific code handling the corresponding events.
+
+        The implementation of the mentioned Web Process callbacks was also added.
+
+        * UIProcess/API/C/efl/WKView.cpp:
+        (WKViewSetThemePath):
+        * UIProcess/API/C/efl/WKView.h:
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::webProcessCrashed):
+        (WebKit):
+        (WebKit::ViewClientEfl::webProcessDidRelaunch):
+        (WebKit::ViewClientEfl::ViewClientEfl):
+        * UIProcess/efl/ViewClientEfl.h:
+        (ViewClientEfl):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::setThemePath):
+
+            Accepts WTF::String instead of WKStringRef as it is
+            more appropriate for C++ API implementation class.
+
+        (WebKit::WebView::processDidCrash):
+        (WebKit::WebView::didRelaunchProcess):
+        * UIProcess/efl/WebView.h:
+        (WebView):
+        * UIProcess/efl/WebViewClient.cpp:
+        (WebKit::WebViewClient::webProcessCrashed):
+        (WebKit):
+        (WebKit::WebViewClient::webProcessDidRelaunch):
+        * UIProcess/efl/WebViewClient.h:
+
 2013-03-04  Anders Carlsson  <andersca@apple.com>
 
         Complete the plug-in URL string before sending it to the UI process

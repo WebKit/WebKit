@@ -27,7 +27,8 @@
 #include "ViewClientEfl.h"
 
 #include "EwkView.h"
-#include "WKView.h"
+#include <WebKit2/WKString.h>
+#include <WebKit2/WKView.h>
 
 using namespace EwkViewCallbacks;
 
@@ -50,6 +51,37 @@ void ViewClientEfl::didChangeContentsSize(WKViewRef, WKSize size, const void* cl
     ewkView->smartCallback<ContentsSizeChanged>().call(size);
 }
 
+void ViewClientEfl::webProcessCrashed(WKViewRef, WKURLRef url, const void* clientInfo)
+{
+    EwkView* ewkView = toEwkView(clientInfo);
+
+    // Check if loading was ongoing, when web process crashed.
+    double loadProgress = WKPageGetEstimatedProgress(ewkView->wkPage());
+    if (loadProgress >= 0 && loadProgress < 1) {
+        loadProgress = 1;
+        ewkView->smartCallback<LoadProgress>().call(&loadProgress);
+    }
+
+    ewkView->smartCallback<TooltipTextUnset>().call();
+
+    bool handled = false;
+    ewkView->smartCallback<WebProcessCrashed>().call(&handled);
+
+    if (!handled) {
+        WKEinaSharedString urlString(url);
+        WARN("WARNING: The web process experienced a crash on '%s'.\n", static_cast<const char*>(urlString));
+
+        // Display an error page
+        ewk_view_html_string_load(ewkView->evasObject(), "The web process has crashed.", 0, urlString);
+    }
+}
+
+void ViewClientEfl::webProcessDidRelaunch(WKViewRef viewRef, const void* clientInfo)
+{
+    if (const char* themePath = toEwkView(clientInfo)->themePath())
+        WKViewSetThemePath(viewRef, adoptWK(WKStringCreateWithUTF8CString(themePath)).get());
+}
+
 ViewClientEfl::ViewClientEfl(EwkView* view)
     : m_view(view)
 {
@@ -61,6 +93,8 @@ ViewClientEfl::ViewClientEfl(EwkView* view)
     viewClient.clientInfo = this;
     viewClient.didChangeContentsSize = didChangeContentsSize;
     viewClient.viewNeedsDisplay = viewNeedsDisplay;
+    viewClient.webProcessCrashed = webProcessCrashed;
+    viewClient.webProcessDidRelaunch = webProcessDidRelaunch;
 
     WKViewSetViewClient(m_view->wkView(), &viewClient);
 }

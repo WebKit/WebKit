@@ -27,6 +27,7 @@
 #include "WebViewClient.h"
 
 #include "WKAPICast.h"
+#include "WKRetainPtr.h"
 
 using namespace WebCore;
 
@@ -46,6 +47,22 @@ void WebViewClient::didChangeContentsSize(WebView* view, const IntSize& size)
         return;
 
     m_client.didChangeContentsSize(toAPI(view), toAPI(size), m_client.clientInfo);
+}
+
+void WebViewClient::webProcessCrashed(WebView* view, const String& url)
+{
+    if (!m_client.webProcessCrashed)
+        return;
+
+    m_client.webProcessCrashed(toAPI(view), adoptWK(toCopiedURLAPI(url)).get(), m_client.clientInfo);
+}
+
+void WebViewClient::webProcessDidRelaunch(WebView* view)
+{
+    if (!m_client.webProcessDidRelaunch)
+        return;
+
+    m_client.webProcessDidRelaunch(toAPI(view), m_client.clientInfo);
 }
 
 } // namespace WebKit

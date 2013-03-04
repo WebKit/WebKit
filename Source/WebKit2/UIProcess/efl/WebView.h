@@ -68,7 +68,7 @@ public:
     void setDrawsTransparentBackground(bool);
     bool drawsTransparentBackground() const;
 
-    void setThemePath(WKStringRef);
+    void setThemePath(const String&);
 
     void suspendActiveDOMObjectsAndAnimations();
     void resumeActiveDOMObjectsAndAnimations();

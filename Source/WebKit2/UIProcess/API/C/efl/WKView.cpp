@@ -106,7 +106,7 @@ bool WKViewGetDrawsTransparentBackground(WKViewRef viewRef)
 
 void WKViewSetThemePath(WKViewRef viewRef, WKStringRef theme)
 {
-    toImpl(viewRef)->setThemePath(theme);
+    toImpl(viewRef)->setThemePath(toImpl(theme)->string());
 }
 
 void WKViewSuspendActiveDOMObjectsAndAnimations(WKViewRef viewRef)

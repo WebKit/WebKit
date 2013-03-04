@@ -49,6 +49,8 @@ private:
     static EwkView* toEwkView(const void* clientInfo);
     static void viewNeedsDisplay(WKViewRef, WKRect area, const void* clientInfo);
     static void didChangeContentsSize(WKViewRef, WKSize, const void* clientInfo);
+    static void webProcessCrashed(WKViewRef, WKURLRef, const void* clientInfo);
+    static void webProcessDidRelaunch(WKViewRef, const void* clientInfo);
 
     EwkView* m_view;
 };

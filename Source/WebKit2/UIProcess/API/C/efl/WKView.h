@@ -38,8 +38,10 @@ typedef struct _cairo_surface cairo_surface_t;
 extern "C" {
 #endif
 
+typedef void (*WKViewCallback)(WKViewRef view, const void* clientInfo);
 typedef void (*WKViewViewNeedsDisplayCallback)(WKViewRef view, WKRect area, const void* clientInfo);
 typedef void (*WKViewPageDidChangeContentsSizeCallback)(WKViewRef view, WKSize size, const void* clientInfo);
+typedef void (*WKViewWebProcessCrashedCallback)(WKViewRef view, WKURLRef url, const void* clientInfo);
 
 struct WKViewClient {
     int                                              version;
@@ -48,6 +50,8 @@ struct WKViewClient {
     // Version 0
     WKViewViewNeedsDisplayCallback                   viewNeedsDisplay;
     WKViewPageDidChangeContentsSizeCallback          didChangeContentsSize;
+    WKViewWebProcessCrashedCallback                  webProcessCrashed;
+    WKViewCallback                                   webProcessDidRelaunch;
 };
 typedef struct WKViewClient WKViewClient;
 
