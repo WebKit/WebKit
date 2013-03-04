@@ -22,7 +22,7 @@ function test()
     {
         var storages = WebInspector.domStorageModel.storages();
         for (var i = 0; i < storages.length; ++i) {
-            InspectorTest.addResult("SecurityOrigin: " + storages[i].securityOrigin.uiTitle());
+            InspectorTest.addResult("SecurityOrigin: " + storages[i].securityOrigin);
             InspectorTest.addResult("IsLocalStorage: " + storages[i].isLocalStorage);
         }
         InspectorTest.completeTest();

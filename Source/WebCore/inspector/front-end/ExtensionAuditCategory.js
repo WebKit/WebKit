@@ -31,7 +31,7 @@
 /**
  * @constructor
  * @extends {WebInspector.AuditCategory}
- * @param {WebInspector.SecurityOrigin} extensionOrigin
+ * @param {string} extensionOrigin
  * @param {string} id
  * @param {string} displayName
  * @param {number=} ruleCount

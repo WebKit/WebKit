@@ -49,8 +49,8 @@ WebInspector.ResourceTreeModel = function(networkManager)
 
     InspectorBackend.registerPageDispatcher(new WebInspector.PageDispatcher(this));
 
-    this._securityOriginTracker = new WebInspector.ResourceTreeModel.SecurityOriginTracker(this);
     this._pendingConsoleMessages = {};
+    this._securityOriginFrameCount = {};
 }
 
 WebInspector.ResourceTreeModel.EventTypes = {
@@ -114,31 +114,62 @@ WebInspector.ResourceTreeModel.prototype = {
             this.mainFrame = frame;
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, frame);
         if (!aboutToNavigate)
-            this._securityOriginTracker._addSecurityOrigin(frame.securityOrigin);
+            this._addSecurityOrigin(frame.securityOrigin);
         if (frame.isMainFrame())
             this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.MainFrameCreatedOrNavigated, frame);
     },
 
     /**
-     * @param {string} id
-     * @return {WebInspector.SecurityOrigin}
+     * @param {string} securityOrigin
      */
-    securityOriginForId: function(id)
+    _addSecurityOrigin: function(securityOrigin)
     {
-        return this._securityOriginTracker._securityOriginForId(id);
+        if (!this._securityOriginFrameCount[securityOrigin]) {
+            this._securityOriginFrameCount[securityOrigin] = 1;
+            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.SecurityOriginAdded, securityOrigin);
+            return;
+        }
+        this._securityOriginFrameCount[securityOrigin] += 1;
     },
 
     /**
-     * @return {Array.<WebInspector.SecurityOrigin>}
+     * @param {string} securityOrigin
+     */
+    _removeSecurityOrigin: function(securityOrigin)
+    {
+        console.assert(this._securityOriginFrameCount[securityOrigin]);
+        if (this._securityOriginFrameCount[securityOrigin] === 1) {
+            delete this._securityOriginFrameCount[securityOrigin];
+            this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.SecurityOriginRemoved, securityOrigin);
+            return;
+        }
+        this._securityOriginFrameCount[securityOrigin] -= 1;
+    },
+
+    /**
+     * @return {Array.<string>}
      */
     securityOrigins: function()
     {
-        return this._securityOriginTracker._securityOrigins();
+        return Object.keys(this._securityOriginFrameCount);
     },
 
-    _handleMainFrameDetached: function()
+    /**
+     * @param {WebInspector.ResourceTreeFrame} mainFrame
+     */
+    _handleMainFrameDetached: function(mainFrame)
     {
-        this._securityOriginTracker._detachMainFrame(this.mainFrame);
+        /**
+         * @param {WebInspector.ResourceTreeFrame} frame
+         */
+        function removeOriginForFrame(frame)
+        {
+            for (var i = 0; i < frame.childFrames.length; ++i)
+                removeOriginForFrame.call(this, frame.childFrames[i]);
+            if (!frame.isMainFrame())
+                this._removeSecurityOrigin(frame.securityOrigin);
+        }
+        removeOriginForFrame.call(this, WebInspector.resourceTreeModel.mainFrame);
     },
 
     /**
@@ -153,7 +184,7 @@ WebInspector.ResourceTreeModel.prototype = {
         var addedOrigin;
         if (frame) {
             // Navigation within existing frame.
-            this._securityOriginTracker._removeSecurityOrigin(frame.securityOrigin);
+            this._removeSecurityOrigin(frame.securityOrigin);
             frame._navigate(framePayload);
             addedOrigin = frame.securityOrigin;
         } else {
@@ -161,7 +192,7 @@ WebInspector.ResourceTreeModel.prototype = {
             var parentFrame = this._frames[framePayload.parentId];
             frame = new WebInspector.ResourceTreeFrame(this, parentFrame, framePayload);
             if (frame.isMainFrame() && this.mainFrame) {
-                this._handleMainFrameDetached();
+                this._handleMainFrameDetached(this.mainFrame);
                 // Definitely a navigation to the new backend process.
                 this._frameDetached(this.mainFrame.id);
             }
@@ -178,7 +209,7 @@ WebInspector.ResourceTreeModel.prototype = {
             this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.MainFrameCreatedOrNavigated, frame);
         }
         if (addedOrigin)
-            this._securityOriginTracker._addSecurityOrigin(addedOrigin);
+            this._addSecurityOrigin(addedOrigin);
 
         // Fill frame with retained resources (the ones loaded using new loader).
         var resources = frame.resources();
@@ -202,7 +233,7 @@ WebInspector.ResourceTreeModel.prototype = {
         if (!frame)
             return;
 
-        this._securityOriginTracker._removeSecurityOrigin(frame.securityOrigin);
+        this._removeSecurityOrigin(frame.securityOrigin);
         if (frame.parentFrame)
             frame.parentFrame._removeChildFrame(frame);
         else
@@ -388,133 +419,6 @@ WebInspector.ResourceTreeModel.prototype = {
 /**
  * @constructor
  * @param {WebInspector.ResourceTreeModel} model
- */
-WebInspector.ResourceTreeModel.SecurityOriginTracker = function(model)
-{
-    this._model = model;
-    this._securityOriginFrameCount = {};
-    this._securityOriginsById = {};
-    this._urlToDOMDomains = {};
-    this._lastOriginId = 0;
-}
-
-WebInspector.ResourceTreeModel.SecurityOriginTracker.prototype = {
-    /**
-     * @param {WebInspector.SecurityOrigin} securityOrigin
-     */
-    _addSecurityOrigin: function(securityOrigin)
-    {
-        var securityOriginId = securityOrigin.id();
-        if (!this._securityOriginFrameCount[securityOriginId]) {
-            this._securityOriginFrameCount[securityOriginId] = 1;
-            this._model.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.SecurityOriginAdded, securityOrigin);
-            return;
-        }
-        this._securityOriginFrameCount[securityOriginId] += 1;
-    },
-
-    /**
-     * @param {WebInspector.SecurityOrigin} securityOrigin
-     */
-    _removeSecurityOrigin: function(securityOrigin)
-    {
-        var securityOriginId = securityOrigin.id();
-        console.assert(this._securityOriginFrameCount[securityOriginId]);
-        if (this._securityOriginFrameCount[securityOriginId] === 1) {
-            this._unbindSecurityOrigin(securityOrigin);
-            this._model.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.SecurityOriginRemoved, securityOrigin);
-            return;
-        }
-        this._securityOriginFrameCount[securityOriginId] -= 1;
-    },
-
-    /**
-     * @param {string} payload
-     * @return {WebInspector.SecurityOrigin}
-     */
-    _bindSecurityOrigin: function(payload)
-    {
-        var url = payload;
-        // FIXME: Use the actual domainSetInDOM once it gets introduced into the protocol.
-        var domain = "";
-        var domainMap = this._urlToDOMDomains[url];
-        if (!domainMap) {
-            domainMap = {};
-            this._urlToDOMDomains[url] = domainMap;
-        }
-        var origin = domainMap[domain];
-        if (!origin) {
-            origin = new WebInspector.SecurityOrigin(String(++this._lastOriginId), url);
-            domainMap[domain] = origin;
-            this._securityOriginsById[origin.id()] = origin;
-        }
-        return origin || null;
-    },
-
-    /**
-     * @param {WebInspector.SecurityOrigin} securityOrigin
-     */
-    _unbindSecurityOrigin: function(securityOrigin)
-    {
-        var securityOriginId = securityOrigin.id();
-        delete this._securityOriginFrameCount[securityOriginId];
-        delete this._securityOriginsById[securityOriginId];
-
-        var url = securityOrigin.url();
-        var domainMap = this._urlToDOMDomains[url];
-        console.assert(domainMap);
-        // FIXME: Use the actual domainSetInDOM once it gets introduced into the protocol.
-        var domain = "";
-        console.assert(domainMap[domain]);
-        delete domainMap[domain];
-        if (!Object.keys(domainMap).length)
-            delete this._urlToDOMDomains[url];
-    },
-
-    _detachMainFrame: function(mainFrame)
-    {
-        /**
-         * @param {WebInspector.ResourceTreeFrame} frame
-         */
-        function removeOriginForFrame(frame)
-        {
-            for (var i = 0; i < frame.childFrames.length; ++i)
-                removeOriginForFrame.call(this, frame.childFrames[i]);
-            if (!frame.isMainFrame())
-                this._removeSecurityOrigin(frame.securityOrigin);
-        }
-        removeOriginForFrame.call(this, mainFrame);
-    },
-
-    /**
-     * @param {string} id
-     * @return {WebInspector.SecurityOrigin}
-     */
-    _securityOriginForId: function(id)
-    {
-        return this._securityOriginsById[id] || null;
-    },
-
-    /**
-     * @return {Array.<WebInspector.SecurityOrigin>}
-     */
-    _securityOrigins: function()
-    {
-        /**
-         * @param {string} id
-         * @return {WebInspector.SecurityOrigin}
-         */
-        function converter(id)
-        {
-            return this._securityOriginsById[id];
-        }
-        return Object.keys(this._securityOriginFrameCount).map(converter.bind(this));
-    }
-}
-
-/**
- * @constructor
- * @param {WebInspector.ResourceTreeModel} model
  * @param {?WebInspector.ResourceTreeFrame} parentFrame
  * @param {PageAgent.Frame} payload
  */
@@ -527,7 +431,7 @@ WebInspector.ResourceTreeFrame = function(model, parentFrame, payload)
     this._loaderId = payload.loaderId;
     this._name = payload.name;
     this._url = payload.url;
-    this._securityOrigin = model._securityOriginTracker._bindSecurityOrigin(payload.securityOrigin);
+    this._securityOrigin = payload.securityOrigin;
     this._mimeType = payload.mimeType;
 
     /**
@@ -570,7 +474,7 @@ WebInspector.ResourceTreeFrame.prototype = {
     },
 
     /**
-     * @return {WebInspector.SecurityOrigin}
+     * @return {string}
      */
     get securityOrigin()
     {
@@ -617,7 +521,7 @@ WebInspector.ResourceTreeFrame.prototype = {
         this._loaderId = framePayload.loaderId;
         this._name = framePayload.name;
         this._url = framePayload.url;
-        this._securityOrigin = this._model._securityOriginTracker._bindSecurityOrigin(framePayload.securityOrigin);
+        this._securityOrigin = framePayload.securityOrigin;
         this._mimeType = framePayload.mimeType;
 
         var mainResource = this._resourcesMap[this._url];
@@ -733,57 +637,6 @@ WebInspector.ResourceTreeFrame.prototype = {
                 return true;
         }
         return false;
-    }
-}
-
-/**
- * @constructor
- * @param {string} id
- * @param {string} url
- */
-WebInspector.SecurityOrigin = function(id, url)
-{
-    this._id = id;
-    this._url = url;
-}
-
-WebInspector.SecurityOrigin.prototype = {
-    /**
-     * @return {string}
-     */
-    id: function()
-    {
-        return this._id;
-    },
-
-    /**
-     * @return {string}
-     */
-    url: function()
-    {
-        return this._url;
-    },
-
-    /**
-     * @return {string}
-     */
-    uiTitle: function()
-    {
-      if (this._url === "file://")
-          return WebInspector.UIString("Local Files");
-
-      // FIXME: Use the actual domainSetInDOM once it gets introduced into the protocol.
-      var domain = "";
-      var suffix = domain ? String.sprintf(" (%s)", domain) : "";
-      return this._url + suffix;
-    },
-
-    /**
-     * @return {string}
-     */
-    toProtocol: function()
-    {
-        return this._url;
     }
 }
 
