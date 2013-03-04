@@ -159,7 +159,6 @@
             }],
             ['toolkit_uses_gtk == 1', {
                 'webkit_unittest_files': [
-                    'tests/KeyCodeConversionTestGtk.cpp',
                     'tests/WebInputEventFactoryTestGtk.cpp',
                 ],
             }],
