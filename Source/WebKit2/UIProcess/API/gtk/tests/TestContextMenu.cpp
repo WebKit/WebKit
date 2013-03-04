@@ -354,8 +354,8 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
         " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK+ Title'>WebKitGTK+ Website</a>"
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
-        " <video style='position:absolute; left:1; top:30' width=10 height=10 controls='controls'><source src='movie.ogg' type='video/ogg' /></video>"
-        " <input style='position:absolute; left:1; top:50' size='10'></input>"
+        " <input style='position:absolute; left:1; top:30' size='10'></input>"
+        " <video style='position:absolute; left:1; top:50' width='300' height='300' controls='controls'><source src='movie.ogg' type='video/ogg' /></video>"
         "</body></html>";
     test->loadHtml(linksHTML, "file:///");
     test->waitUntilLoadFinished();
@@ -382,11 +382,11 @@ static void testContextMenuDefaultMenu(ContextMenuDefaultTest* test, gconstpoint
 
     // Context menu for image video.
     test->m_expectedMenuType = ContextMenuDefaultTest::Video;
-    test->showContextMenuAtPositionAndWaitUntilFinished(1, 30);
+    test->showContextMenuAtPositionAndWaitUntilFinished(1, 50);
 
     // Context menu for editable.
     test->m_expectedMenuType = ContextMenuDefaultTest::Editable;
-    test->showContextMenuAtPositionAndWaitUntilFinished(5, 55);
+    test->showContextMenuAtPositionAndWaitUntilFinished(5, 35);
 }
 
 class ContextMenuCustomTest: public ContextMenuTest {
