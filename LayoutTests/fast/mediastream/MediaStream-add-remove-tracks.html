@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<script src="../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("Test adding and removing tracks.");
+
+var stream1;
+var stream2;
+var audioTrack;
+var videoTrack;
+
+function error() {
+    testFailed('Stream generation failed.');
+    finishJSTest();
+}
+
+function getUserMedia(dictionary, callback) {
+    try {
+        navigator.webkitGetUserMedia(dictionary, callback, error);
+    } catch (e) {
+        testFailed('webkitGetUserMedia threw exception :' + e);
+        finishJSTest();
+    }
+}
+
+function tryAddTrack(stream, track) {
+    try {
+        stream.addTrack(track);
+    } catch (exception) {
+        testFailed("addTrack threw an exception.");
+        finishJSTest();
+    }
+}
+
+function tryRemoveTrack(stream, track) {
+    try {
+        stream.removeTrack(track);
+    } catch (exception) {
+        testFailed("removeTrack threw an exception.");
+        finishJSTest();
+    }
+}
+
+function shouldNotFire() {
+    testFailed("\"addtrack\" or \"removetrack\" events should not fire as a result of local addTrack() or removeTrack() operations.");
+}
+
+function gotStream2(s) {
+    stream2 = s;
+
+    shouldBe('stream1.getAudioTracks().length', '1');
+    shouldBe('stream1.getVideoTracks().length', '1');
+
+    shouldBe('stream2.getAudioTracks().length', '1');
+    shouldBe('stream2.getVideoTracks().length', '1');
+
+    stream1.onaddtrack = shouldNotFire;
+    stream1.onremovetrack = shouldNotFire;
+
+    // remove a track of each kind
+    audioTrack = stream1.getAudioTracks()[0];
+    videoTrack = stream1.getVideoTracks()[0];
+
+    tryRemoveTrack(stream1, audioTrack);
+    tryRemoveTrack(stream1, videoTrack);
+
+    // verify removed tracks
+    shouldBe('stream1.getAudioTracks().length', '0');
+    shouldBe('stream1.getVideoTracks().length', '0');
+
+    shouldBeNull('stream1.getTrackById(audioTrack.id)');
+    shouldBeNull('stream1.getTrackById(videoTrack.id)');
+
+    // remove a non-existent (already removed) track (should not throw)
+    tryRemoveTrack(stream1, audioTrack);
+    tryRemoveTrack(stream1, videoTrack);
+
+    // (re-)add tracks
+    tryAddTrack(stream1, audioTrack);
+    tryAddTrack(stream1, videoTrack);    
+
+    // verify added tracks
+    shouldBe('stream1.getAudioTracks().length', '1');
+    shouldBe('stream1.getVideoTracks().length', '1');
+
+    // verify that kind and label is preserved
+    shouldBe('stream1.getAudioTracks()[0].kind', 'audioTrack.kind');
+    shouldBe('stream1.getAudioTracks()[0].label', 'audioTrack.label');
+    shouldBe('stream1.getVideoTracks()[0].kind', 'videoTrack.kind');
+    shouldBe('stream1.getVideoTracks()[0].label', 'videoTrack.label');
+
+    // try adding stream1's own tracks
+    tryAddTrack(stream1, stream1.getAudioTracks()[0]);
+    tryAddTrack(stream1, stream1.getVideoTracks()[0]);
+
+    // verify that nothing has changed
+    shouldBe('stream1.getAudioTracks().length', '1');
+    shouldBe('stream1.getVideoTracks().length', '1');
+
+    // add new tracks (from stream2)
+    tryAddTrack(stream1, stream2.getAudioTracks()[0]);
+    tryAddTrack(stream1, stream2.getVideoTracks()[0]);
+
+    // verify added tracks
+    shouldBe('stream1.getAudioTracks().length', '2');
+    shouldBe('stream1.getVideoTracks().length', '2');
+
+    stream1.stop();
+
+    shouldThrow('stream1.addTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
+    shouldThrow('stream1.removeTrack(audioTrack)', '"Error: InvalidStateError: DOM Exception 11"');
+
+    setTimeout(finishJSTest, 0);
+}
+
+function gotStream1(s) {
+    stream1 = s;
+    getUserMedia({audio:true, video:true}, gotStream2);
+}
+
+getUserMedia({audio:true, video:true}, gotStream1);
+
+window.jsTestIsAsync = true;
+window.successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
