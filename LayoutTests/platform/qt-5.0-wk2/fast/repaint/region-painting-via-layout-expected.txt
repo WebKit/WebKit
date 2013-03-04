@@ -1,0 +1,17 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x600
+  RenderBlock {HTML} at (0,0) size 800x600
+    RenderBody {BODY} at (8,8) size 784x584
+      RenderRegion {DIV} at (0,0) size 786x182 [bgcolor=#FF0000] [border: (1px solid #000000)]
+Flow Threads
+  Thread with flow-name 'flow1'
+    layer at (0,0) size 784x1180 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+      RenderNamedFlowThread at (0,0) size 784x1180
+    layer at (0,0) size 784x1200 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+      RenderBlock (relative positioned) {DIV} at (0,0) size 784x1200
+        RenderBlock {DIV} at (0,1000) size 784x200
+          RenderBlock {DIV} at (0,0) size 784x200 [bgcolor=#008000]
+  Regions for flow 'flow1'
+    RenderRegion {DIV} #region1
+    RenderRegion {DIV} #region2
