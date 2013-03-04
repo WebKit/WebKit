@@ -31,7 +31,7 @@
 - (void)writeItemsToPasteboard:(NSArray *)items withTypes:(NSArray *)types;
 - (void)showDefinitionForAttributedString:(NSAttributedString *)string atPoint:(CGPoint)point;
 - (void)performWebSearch:(NSString *)string;
-- (void)openWithPreview;
+- (void)openWithNativeApplication;
 - (void)saveToPDF;
 
 - (void)pdfLayerController:(PDFLayerController *)pdfLayerController didChangeActiveAnnotation:(PDFAnnotation *)annotation;

@@ -163,7 +163,7 @@ static const char* annotationStyle =
     // FIXME: Implement.
 }
 
-- (void)openWithPreview
+- (void)openWithNativeApplication
 {
     _pdfPlugin->openWithNativeApplication();
 }
