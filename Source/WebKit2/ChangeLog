@@ -1,3 +1,16 @@
+2013-03-04  Anders Carlsson  <andersca@apple.com>
+
+        Complete the plug-in URL string before sending it to the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=111355
+        <rdar://problem/13326713>
+
+        Reviewed by Andreas Kling.
+
+        If the URL is not absolute, we won't be able to find it by path extension in the plug-in info store.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::unavailablePluginButtonClicked):
+
 2013-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Some WebKit2 GTK+ unit tests are failing in 32 bits bot

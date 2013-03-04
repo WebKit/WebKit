@@ -501,10 +501,11 @@ void WebChromeClient::unavailablePluginButtonClicked(Element* element, RenderEmb
 
     String frameURLString = pluginElement->document()->frame()->loader()->documentLoader()->responseURL().string();
     String pageURLString = m_page->mainFrame()->loader()->documentLoader()->responseURL().string();
+    String pluginURLString = pluginElement->document()->completeURL(pluginElement->url()).string();
     KURL pluginspageAttributeURL = element->document()->completeURL(stripLeadingAndTrailingHTMLSpaces(pluginElement->getAttribute(pluginspageAttr)));
     if (!pluginspageAttributeURL.protocolIsInHTTPFamily())
         pluginspageAttributeURL = KURL();
-    m_page->send(Messages::WebPageProxy::UnavailablePluginButtonClicked(pluginUnavailabilityReason, pluginElement->serviceType(), pluginElement->url(), pluginspageAttributeURL.string(), frameURLString, pageURLString));
+    m_page->send(Messages::WebPageProxy::UnavailablePluginButtonClicked(pluginUnavailabilityReason, pluginElement->serviceType(), pluginURLString, pluginspageAttributeURL.string(), frameURLString, pageURLString));
 }
 
 void WebChromeClient::scrollbarsModeDidChange() const
