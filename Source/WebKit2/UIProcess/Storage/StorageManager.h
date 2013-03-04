@@ -75,6 +75,7 @@ private:
     HashMap<uint64_t, RefPtr<SessionStorageNamespace> > m_sessionStorageNamespaces;
 
     class StorageArea;
+    HashMap<std::pair<RefPtr<CoreIPC::Connection>, uint64_t>, RefPtr<StorageArea> > m_storageAreas;
 };
 
 } // namespace WebKit

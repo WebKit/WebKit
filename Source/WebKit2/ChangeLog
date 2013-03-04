@@ -1,3 +1,35 @@
+2013-03-04  Anders Carlsson  <andersca@apple.com>
+
+        Create and destroy storage areas in the UI process
+        https://bugs.webkit.org/show_bug.cgi?id=111361
+
+        Reviewed by Sam Weinig.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::StorageArea):
+        Keep track of listener connection and storage area ID pairs.
+        
+        (WebKit::StorageManager::StorageArea::~StorageArea):
+        Assert that we don't have any listeners left.
+
+        (WebKit::StorageManager::StorageArea::addListener):
+        Add the pair to the set of listeners.
+        
+        (WebKit::StorageManager::StorageArea::removeListener):
+        Remove the pair from the set of listeners.
+        
+        (WebKit::StorageManager::SessionStorageNamespace::getOrCreateStorageArea):
+        Given an origin, look up or create the storage area.
+
+        (WebKit::StorageManager::createStorageArea):
+        Create the storage area if it doesn't already exist.
+
+        (WebKit::StorageManager::destroyStorageArea):
+        Look up the storage area and destroy it.
+
+        * UIProcess/Storage/StorageManager.h:
+        Add a map of open storage areas.
+
 2013-03-04  Jer Noble  <jer.noble@apple.com>
 
         Add API to allow WK2 clients to query the list of installed plug-ins.
