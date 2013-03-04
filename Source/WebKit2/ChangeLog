@@ -1,3 +1,13 @@
+2013-03-04  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/13337144> - Update 536.29 branch Loader and UI client layouts
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/APIClientTraits.cpp:
+        * Shared/APIClientTraits.h:
+        * UIProcess/API/C/WKPage.h:
+
 2013-03-01  Brady Eidson  <beidson@apple.com>
 
         Merge 143988

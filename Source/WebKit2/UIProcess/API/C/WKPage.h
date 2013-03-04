@@ -122,21 +122,23 @@ struct WKPageLoaderClient {
 
     // Version 1
     WKPageDidDetectXSSForFrameCallback                                  didDetectXSSForFrame;
-
-    // FIXME: didFirstVisuallyNonEmptyLayoutForFrame and didNewFirstVisuallyNonEmptyLayout should be merged.
+    // FIXME: didNewFirstVisuallyNonEmptyLayout should be removed. We should consider removing didFirstVisuallyNonEmptyLayoutForFrame
+    // as well. Their functionality is replaced by didLayout.
     WKPageDidNewFirstVisuallyNonEmptyLayoutCallback                     didNewFirstVisuallyNonEmptyLayout;
-
     WKPageWillGoToBackForwardListItemCallback                           willGoToBackForwardListItem;
-
     WKPageCallback                                                      interactionOccurredWhileProcessUnresponsive;
     WKPagePluginDidFailCallback_deprecatedForUseWithV1                  pluginDidFail_deprecatedForUseWithV1;
 
+    // Version 2
+    void                                                                (*didReceiveIntentForFrame_unavailable)(void);
+    void                                                                (*registerIntentServiceForFrame_unavailable)(void);
+    void                                                                (*unused1)(void); // didLayout in trunk.
     WKPagePluginLoadPolicyCallback                                      pluginLoadPolicy;
     WKPagePluginDidFailCallback                                         pluginDidFail;
 };
 typedef struct WKPageLoaderClient WKPageLoaderClient;
 
-enum { kWKPageLoaderClientCurrentVersion = 1 };
+enum { kWKPageLoaderClientCurrentVersion = 2 };
 
 // Policy Client.
 typedef void (*WKPageDecidePolicyForNavigationActionCallback)(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo);
@@ -289,12 +291,15 @@ struct WKPageUIClient {
     WKPageMouseDidMoveOverElementCallback                               mouseDidMoveOverElement;
     WKPageDecidePolicyForNotificationPermissionRequestCallback          decidePolicyForNotificationPermissionRequest;
     WKPageUnavailablePluginButtonClickedCallback_deprecatedForUseWithV1 unavailablePluginButtonClicked_deprecatedForUseWithV1;
+
+    // Version 2
+    void                                                                (*unused2)(void); // showColorPicker in trunk
+    void                                                                (*unused3)(void); // hideColorPicker in trunk
     WKPageUnavailablePluginButtonClickedCallback                        unavailablePluginButtonClicked;
-    
 };
 typedef struct WKPageUIClient WKPageUIClient;
 
-enum { kWKPageUIClientCurrentVersion = 1 };
+enum { kWKPageUIClientCurrentVersion = 2 };
 
 // Find client.
 typedef void (*WKPageDidFindStringCallback)(WKPageRef page, WKStringRef string, unsigned matchCount, const void* clientInfo);

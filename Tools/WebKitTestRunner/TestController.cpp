@@ -213,6 +213,8 @@ WKPageRef TestController::createOtherPage(WKPageRef oldPage, WKURLRequestRef, WK
         0, // mouseDidMoveOverElement
         0, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
+        0, // unused2
+        0, // unused3
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(newPage, &otherPageUIClient);
@@ -374,6 +376,8 @@ void TestController::initialize(int argc, const char* argv[])
         0, // mouseDidMoveOverElement
         0, // decidePolicyForNotificationPermissionRequest
         0, // unavailablePluginButtonClicked_deprecatedForUseWithV1
+        0, // unused2
+        0, // unused3
         0, // unavailablePluginButtonClicked
     };
     WKPageSetPageUIClient(m_mainWebView->page(), &pageUIClient);
@@ -411,6 +415,9 @@ void TestController::initialize(int argc, const char* argv[])
         0, // willGoToBackForwardListItem
         0, // interactionOccurredWhileProcessUnresponsive
         0, // pluginDidFail_deprecatedForUseWithV1
+        0, // didReceiveIntentForFrame_unavailable
+        0, // registerIntentServiceForFrame_unavailable
+        0, // unused1
         0, // pluginLoadPolicy
         0, // pluginDidFail
     };

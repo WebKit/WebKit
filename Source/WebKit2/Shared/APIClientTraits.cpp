@@ -54,11 +54,13 @@ const size_t APIClientTraits<WKPageContextMenuClient>::interfaceSizesByVersion[]
 
 const size_t APIClientTraits<WKPageLoaderClient>::interfaceSizesByVersion[] = {
     offsetof(WKPageLoaderClient, didFailToInitializePlugin_deprecatedForUseWithV0),
+    offsetof(WKPageLoaderClient, didReceiveIntentForFrame_unavailable),
     sizeof(WKPageLoaderClient)
 };
 
 const size_t APIClientTraits<WKPageUIClient>::interfaceSizesByVersion[] = {
     offsetof(WKPageUIClient, createNewPage),
+    offsetof(WKPageUIClient, unused2),
     sizeof(WKPageUIClient)
 };
     
