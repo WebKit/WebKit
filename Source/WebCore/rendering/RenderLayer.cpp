@@ -4896,9 +4896,8 @@ void RenderLayer::updateClipRects(const ClipRectsContext& clipRectsContext)
 {
     ClipRectsType clipRectsType = clipRectsContext.clipRectsType;
     ASSERT(clipRectsType < NumCachedClipRectsTypes);
-    if (m_clipRectsCache && m_clipRectsCache->m_clipRects[clipRectsType]) {
+    if (m_clipRectsCache && m_clipRectsCache->getClipRects(clipRectsType, clipRectsContext.respectOverflowClip)) {
         ASSERT(clipRectsContext.rootLayer == m_clipRectsCache->m_clipRectsRoot[clipRectsType]);
-        ASSERT(m_clipRectsCache->m_respectingOverflowClip[clipRectsType] == (clipRectsContext.respectOverflowClip == RespectOverflowClip));
         ASSERT(m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] == clipRectsContext.overlayScrollbarSizeRelevancy);
         
 #ifdef CHECK_CACHED_CLIP_RECTS
@@ -4907,7 +4906,7 @@ void RenderLayer::updateClipRects(const ClipRectsContext& clipRectsContext)
         tempContext.clipRectsType = TemporaryClipRects;
         ClipRects clipRects;
         calculateClipRects(tempContext, clipRects);
-        ASSERT(clipRects == *m_clipRectsCache->m_clipRects[clipRectsType].get());
+        ASSERT(clipRects == *m_clipRectsCache->getClipRects(clipRectsType, clipRectsContext.respectOverflowClip).get());
 #endif
         return; // We have the correct cached value.
     }
@@ -4924,14 +4923,13 @@ void RenderLayer::updateClipRects(const ClipRectsContext& clipRectsContext)
     if (!m_clipRectsCache)
         m_clipRectsCache = adoptPtr(new ClipRectsCache);
 
-    if (parentLayer && parentLayer->clipRects(clipRectsType) && clipRects == *parentLayer->clipRects(clipRectsType))
-        m_clipRectsCache->m_clipRects[clipRectsType] = parentLayer->clipRects(clipRectsType);
+    if (parentLayer && parentLayer->clipRects(clipRectsContext) && clipRects == *parentLayer->clipRects(clipRectsContext))
+        m_clipRectsCache->setClipRects(clipRectsType, clipRectsContext.respectOverflowClip, parentLayer->clipRects(clipRectsContext));
     else
-        m_clipRectsCache->m_clipRects[clipRectsType] = ClipRects::create(clipRects);
+        m_clipRectsCache->setClipRects(clipRectsType, clipRectsContext.respectOverflowClip, ClipRects::create(clipRects));
 
 #ifndef NDEBUG
     m_clipRectsCache->m_clipRectsRoot[clipRectsType] = clipRectsContext.rootLayer;
-    m_clipRectsCache->m_respectingOverflowClip[clipRectsType] = clipRectsContext.respectOverflowClip == RespectOverflowClip;
     m_clipRectsCache->m_scrollbarRelevancy[clipRectsType] = clipRectsContext.overlayScrollbarSizeRelevancy;
 #endif
 }
@@ -4953,8 +4951,8 @@ void RenderLayer::calculateClipRects(const ClipRectsContext& clipRectsContext, C
     
     // Ensure that our parent's clip has been calculated so that we can examine the values.
     if (parentLayer) {
-        if (useCached && parentLayer->clipRects(clipRectsType))
-            clipRects = *parentLayer->clipRects(clipRectsType);
+        if (useCached && parentLayer->clipRects(clipRectsContext))
+            clipRects = *parentLayer->clipRects(clipRectsContext);
         else {
             ClipRectsContext parentContext(clipRectsContext);
             parentContext.overlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize; // FIXME: why?
@@ -5015,7 +5013,7 @@ void RenderLayer::parentClipRects(const ClipRectsContext& clipRectsContext, Clip
     }
 
     parent()->updateClipRects(clipRectsContext);
-    clipRects = *parent()->clipRects(clipRectsContext.clipRectsType);
+    clipRects = *parent()->clipRects(clipRectsContext);
 }
 
 static inline ClipRect backgroundClipRectForPosition(const ClipRects& parentRects, EPosition position)
@@ -5448,7 +5446,9 @@ void RenderLayer::clearClipRects(ClipRectsType typeToClear)
         m_clipRectsCache = nullptr;
     else {
         ASSERT(typeToClear < NumCachedClipRectsTypes);
-        m_clipRectsCache->m_clipRects[typeToClear] = nullptr;
+        RefPtr<ClipRects> dummy;
+        m_clipRectsCache->setClipRects(typeToClear, RespectOverflowClip, dummy);
+        m_clipRectsCache->setClipRects(typeToClear, IgnoreOverflowClip, dummy);
     }
 }
 

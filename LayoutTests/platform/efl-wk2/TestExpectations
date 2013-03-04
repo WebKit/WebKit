@@ -224,9 +224,8 @@ webkit.org/b/103883 css3/selectors3/xml/css3-modsel-1.xml [ Failure Pass ]
 webkit.org/b/103883 css3/selectors3/xhtml/css3-modsel-1.xml [ Failure Pass ]
 
 # Assertion failure and incorrect results on our port after r140999 (webkit.org/b/106142)
-webkit.org/b/108257 compositing/overflow/automatically-opt-into-composited-scrolling.html [ Crash Failure ]
-webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Crash Failure ]
-webkit.org/b/108257 compositing/overflow/clip-content-under-overflow-controls.html [ Crash Pass ]
+webkit.org/b/108257 compositing/overflow/automatically-opt-into-composited-scrolling.html [ Failure ]
+webkit.org/b/108257 compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Failure ]
 
 # Asserts when destroying WebCore::Database (possibly because r141207)
 webkit.org/b/108355 fast/js/caller-property.html [ Crash Pass ]

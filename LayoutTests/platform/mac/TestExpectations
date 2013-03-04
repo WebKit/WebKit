@@ -1424,9 +1424,6 @@ webkit.org/b/108370 editing/spelling/spelling-with-underscore-selection.html [ S
 webkit.org/b/108370 editing/spelling/spelling-with-whitespace-selection.html [ Skip ]
 webkit.org/b/108370 editing/spelling/spelling-changed-text.html [ Skip ]
 
-webkit.org/b/108257 [ Debug ] compositing/overflow/composited-scrolling-creates-a-stacking-container.html [ Crash ]
-webkit.org/b/108257 [ Debug ] compositing/overflow/automatically-opt-into-composited-scrolling.html [ Crash ]
-
 # Rebaseline required after https://webkit.org/b/95772
 webkit.org/b/109209 fast/text/international/bidi-ignored-for-first-child-inline.html [ Failure ]
 

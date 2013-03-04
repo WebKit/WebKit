@@ -231,6 +231,11 @@ enum ClipRectsType {
     TemporaryClipRects
 };
 
+enum ShouldRespectOverflowClip {
+    IgnoreOverflowClip,
+    RespectOverflowClip
+};
+
 struct ClipRectsCache {
     WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -239,18 +244,29 @@ public:
 #ifndef NDEBUG
         for (int i = 0; i < NumCachedClipRectsTypes; ++i) {
             m_clipRectsRoot[i] = 0;
-            m_respectingOverflowClip[i] = false;
             m_scrollbarRelevancy[i] = IgnoreOverlayScrollbarSize;
         }
 #endif
     }
 
-    RefPtr<ClipRects> m_clipRects[NumCachedClipRectsTypes];
+    PassRefPtr<ClipRects> getClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow) { return m_clipRects[getIndex(clipRectsType, respectOverflow)]; }
+    void setClipRects(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow, PassRefPtr<ClipRects> clipRects) { m_clipRects[getIndex(clipRectsType, respectOverflow)] = clipRects; }
+
 #ifndef NDEBUG
     const RenderLayer* m_clipRectsRoot[NumCachedClipRectsTypes];
-    bool m_respectingOverflowClip[NumCachedClipRectsTypes];
     OverlayScrollbarSizeRelevancy m_scrollbarRelevancy[NumCachedClipRectsTypes];
 #endif
+
+private:
+    int getIndex(ClipRectsType clipRectsType, ShouldRespectOverflowClip respectOverflow)
+    {
+        int index = static_cast<int>(clipRectsType);
+        if (respectOverflow == RespectOverflowClip)
+            index += static_cast<int>(NumCachedClipRectsTypes);
+        return index;
+    }
+
+    RefPtr<ClipRects> m_clipRects[NumCachedClipRectsTypes * 2];
 };
 
 struct LayerFragment {
@@ -621,8 +637,6 @@ public:
     bool hitTest(const HitTestRequest&, const HitTestLocation&, HitTestResult&);
     void paintOverlayScrollbars(GraphicsContext*, const LayoutRect& damageRect, PaintBehavior, RenderObject* paintingRoot = 0);
 
-    enum ShouldRespectOverflowClip { IgnoreOverflowClip, RespectOverflowClip };
-
     struct ClipRectsContext {
         ClipRectsContext(const RenderLayer* inRootLayer, RenderRegion* inRegion, ClipRectsType inClipRectsType, OverlayScrollbarSizeRelevancy inOverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize, ShouldRespectOverflowClip inRespectOverflowClip = RespectOverflowClip)
             : rootLayer(inRootLayer)
@@ -651,10 +665,10 @@ public:
     // (rather than computing them all from scratch up the parent chain).
     void calculateClipRects(const ClipRectsContext&, ClipRects&) const;
 
-    ClipRects* clipRects(ClipRectsType type) const
+    ClipRects* clipRects(const ClipRectsContext& context) const
     {
-        ASSERT(type < NumCachedClipRectsTypes);
-        return m_clipRectsCache ? m_clipRectsCache->m_clipRects[type].get() : 0;
+        ASSERT(context.clipRectsType < NumCachedClipRectsTypes);
+        return m_clipRectsCache ? m_clipRectsCache->getClipRects(context.clipRectsType, context.respectOverflowClip).get() : 0;
     }
 
     LayoutRect childrenClipRect() const; // Returns the foreground clip rect of the layer in the document's coordinate space.
