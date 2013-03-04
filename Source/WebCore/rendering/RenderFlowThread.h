@@ -234,6 +234,7 @@ public:
     ~CurrentRenderFlowThreadMaintainer();
 private:
     RenderFlowThread* m_renderFlowThread;
+    RenderFlowThread* m_previousRenderFlowThread;
 };
 
 } // namespace WebCore

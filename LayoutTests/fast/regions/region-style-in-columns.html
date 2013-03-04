@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+    <!--
+    Test for https://bugs.webkit.org/show_bug.cgi?id=85633 ([CSSRegions]Add region styling support for color property) combined with the fact that
+        the content is inside columns.
+    You should not see any red text below.
+    -->
+    <head>
+        <script>
+        internals.settings.setRegionBasedColumnsEnabled(true)
+        </script>
+
+        <style>
+            .regionBox { width: 350px; height: 25px; }
+            .regionBox2 { width: 350px; height: 50px; }
+
+            #article1 { -webkit-flow-into: flow1; width:600px;}
+            #region1 { -webkit-flow-from: flow1; position: absolute; top: 10px; }
+            #p1 {  color: #ff0000; -webkit-column-count:2;column-count:2; height:30px}
+            @-webkit-region #region1 {
+                #p1 { color: #008000; }
+            }
+        </style>
+    </head>
+    <body>
+        <div id="article1">
+            <p id="p1">P color styled in region: #008000.</p>
+        </div>
+        <div id="region1" class="regionBox"></div>
+    </body>
+</html>
