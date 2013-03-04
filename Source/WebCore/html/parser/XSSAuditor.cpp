@@ -197,8 +197,9 @@ static bool isSemicolonSeparatedAttribute(const HTMLToken::Attribute& attribute)
 {
 #if ENABLE(SVG)
     return threadSafeMatch(attribute.name, SVGNames::valuesAttr);
-#endif
+#else
     return false;
+#endif
 }
 
 static bool semicolonSeparatedValueContainsJavaScriptURL(const String& value)
