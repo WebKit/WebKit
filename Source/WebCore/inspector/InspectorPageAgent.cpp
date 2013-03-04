@@ -933,15 +933,9 @@ String InspectorPageAgent::loaderId(DocumentLoader* loader)
 
 Frame* InspectorPageAgent::findFrameWithSecurityOrigin(const String& originRawString)
 {
-    RefPtr<SecurityOrigin> securityOriginPtr = SecurityOrigin::createFromString(originRawString);
-    SecurityOrigin* securityOrigin = securityOriginPtr.get();
-    bool isLocal = securityOrigin->isLocal();
     for (Frame* frame = m_page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
         RefPtr<SecurityOrigin> documentOrigin = frame->document()->securityOrigin();
-        // Emulate the !enforceFilePathSeparation for security origins.
-        if (isLocal && documentOrigin->isLocal())
-            return frame;
-        if (documentOrigin->equal(securityOrigin))
+        if (documentOrigin->toRawString() == originRawString)
             return frame;
     }
     return 0;
