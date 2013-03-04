@@ -184,17 +184,6 @@ public:
     virtual bool isLinkVisited(unsigned long long linkHash) { return false; }
 
 
-    // Hyphenation ---------------------------------------------------------
-
-    // FIXME: Remove deprecated API.
-
-    // Returns whether we can support hyphenation for the given locale.
-    virtual bool canHyphenate(const WebString& locale) { return false; }
-
-    // Returns the last position where we can add a hyphen before the given position.
-    virtual size_t computeLastHyphenLocation(const WebUChar* characters, size_t length, size_t beforeIndex, const WebString& locale) { return 0; }
-
-
     // Keygen --------------------------------------------------------------
 
     // Handle the <keygen> tag for generating client certificates

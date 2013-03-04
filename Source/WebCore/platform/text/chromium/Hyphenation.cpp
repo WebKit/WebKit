@@ -27,17 +27,18 @@
 #include "Hyphenation.h"
 
 #include <public/Platform.h>
+#include <public/WebHyphenator.h>
 
 namespace WebCore {
 
 bool canHyphenate(const AtomicString& localeIdentifier)
 {
-    return WebKit::Platform::current()->canHyphenate(localeIdentifier);
+    return WebKit::Platform::current()->hyphenator()->canHyphenate(localeIdentifier);
 }
 
 size_t lastHyphenLocation(const UChar* characters, size_t length, size_t beforeIndex, const AtomicString& localeIdentifier)
 {
-    return WebKit::Platform::current()->computeLastHyphenLocation(characters, length, beforeIndex, localeIdentifier);
+    return WebKit::Platform::current()->hyphenator()->computeLastHyphenLocation(characters, length, beforeIndex, localeIdentifier);
 }
 
 } // namespace WebCore

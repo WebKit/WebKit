@@ -1,3 +1,13 @@
+2013-03-04  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] remove deprecated hyphenation methods from Platform
+        https://bugs.webkit.org/show_bug.cgi?id=111101
+
+        Reviewed by Adam Barth.
+
+        * chromium/public/Platform.h:
+        (Platform):
+
 2013-03-04  Sami Kyostila  <skyostil@chromium.org>
 
         [chromium] Add ability to wait on async upload completion
