@@ -4,6 +4,7 @@
 <script type='text/javascript'>
 var myDiv = document.getElementById('mydiv');
 myDiv.addEventListener('touchstart', function() { parent.handleTouchstart(); }, false);
+myDiv.addEventListener('touchmove', function() { parent.handleTouchmove(); }, false);
 myDiv.addEventListener('touchend', function() { parent.testComplete(); }, false);
 </script>
 </body>

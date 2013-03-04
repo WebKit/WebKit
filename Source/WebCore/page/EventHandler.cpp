@@ -1588,14 +1588,6 @@ bool EventHandler::mouseMoved(const PlatformMouseEvent& event)
     RefPtr<FrameView> protector(m_frame->view());
     MaximumDurationTracker maxDurationTracker(&m_maxMouseMovedDuration);
 
-
-#if ENABLE(TOUCH_EVENTS)
-    // FIXME: this should be moved elsewhere to also be able to dispatch touchcancel events.
-    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(event);
-    if (defaultPrevented)
-        return true;
-#endif
-
     HitTestResult hoveredNode = HitTestResult(LayoutPoint());
     bool result = handleMouseMoveEvent(event, &hoveredNode);
 
@@ -1634,6 +1626,12 @@ bool EventHandler::handleMouseMoveEvent(const PlatformMouseEvent& mouseEvent, Hi
     ASSERT(m_frame);
     if (!m_frame)
         return false;
+
+#if ENABLE(TOUCH_EVENTS)
+    bool defaultPrevented = dispatchSyntheticTouchEventIfEnabled(mouseEvent);
+    if (defaultPrevented)
+        return true;
+#endif
 
     RefPtr<FrameView> protector(m_frame->view());
     
@@ -4005,14 +4003,14 @@ bool EventHandler::dispatchSyntheticTouchEventIfEnabled(const PlatformMouseEvent
     if (eventType != PlatformEvent::MouseMoved && eventType != PlatformEvent::MousePressed && eventType != PlatformEvent::MouseReleased)
         return false;
 
-    if (eventType == PlatformEvent::MouseMoved && !m_touchPressed)
-        return true;
-
     HitTestRequest request(HitTestRequest::Active);
     MouseEventWithHitTestResults mev = prepareMouseEvent(request, event);
-
     if (mev.scrollbar() || subframeForHitTestResult(mev))
         return false;
+
+    // The order is important. This check should follow the subframe test: http://webkit.org/b/111292.
+    if (eventType == PlatformEvent::MouseMoved && !m_touchPressed)
+        return true;
 
     SyntheticSingleTouchEvent touchEvent(event);
     return handleTouchEvent(touchEvent);

@@ -7,7 +7,9 @@
 <script type="text/javascript">
 
 var touchstartCount = 0;
+var touchmoveCount = 0;
 var EXPECTED_TOUCHSTART_COUNT = 1;
+var EXPECTED_TOUCHMOVE_COUNT = 1;
 var shouldBail;
 
 function testComplete()
@@ -20,9 +22,19 @@ function testComplete()
         shouldBail = true;
     }
 
+    if (!touchmoveCount)
+        debug("touchmove not fired for the iframe!");
+    else if (touchmoveCount > EXPECTED_TOUCHMOVE_COUNT)
+        debug("touchmove fired too many times!");
+
     debug("touchend (test will time out if broken)");
     window.internals.settings.setTouchEventEmulationEnabled(false);
     window.testRunner.notifyDone();
+}
+
+function handleTouchmove()
+{
+    ++touchmoveCount;
 }
 
 function handleTouchstart()
