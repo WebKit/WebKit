@@ -39,6 +39,8 @@ namespace WebCore {
 bool PluginPackage::fetchInfo()
 {
     if (!m_module) {
+        if (isPluginBlacklisted())
+            return false;
         m_module = new QLibrary((QString)m_path);
         m_module->setLoadHints(QLibrary::ResolveAllSymbolsHint);
         if (!m_module->load()) {
