@@ -41,8 +41,6 @@ public:
     uint64_t storageNamespaceID() const { return m_storageNamespaceID; }
     unsigned quotaInBytes() const { return m_quotaInBytes; }
 
-    WebCore::StorageType storageType() const;
-
 private:
     explicit StorageNamespaceProxy(uint64_t storageNamespaceID, unsigned quotaInBytes);
 

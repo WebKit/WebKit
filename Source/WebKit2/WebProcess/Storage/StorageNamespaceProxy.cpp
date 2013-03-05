@@ -50,15 +50,6 @@ StorageNamespaceProxy::~StorageNamespaceProxy()
 {
 }
 
-StorageType StorageNamespaceProxy::storageType() const
-{
-    // A zero storage namespace ID is used for local storage.
-    if (!m_storageNamespaceID)
-        return LocalStorage;
-
-    return SessionStorage;
-}
-
 PassRefPtr<StorageArea> StorageNamespaceProxy::storageArea(PassRefPtr<SecurityOrigin> securityOrigin)
 {
     return StorageAreaProxy::create(this, securityOrigin);

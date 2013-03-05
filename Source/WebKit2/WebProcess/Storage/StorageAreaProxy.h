@@ -66,11 +66,12 @@ private:
     void didSetItem(const String& key, bool quotaError);
     void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString);
 
+    WebCore::StorageType storageType() const;
     bool disabledByPrivateBrowsingInFrame(const WebCore::Frame* sourceFrame) const;
 
     void loadValuesIfNeeded();
 
-    WebCore::StorageType m_storageType;
+    uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;
     uint64_t m_storageAreaID;
     RefPtr<WebCore::StorageMap> m_storageMap;

@@ -54,7 +54,7 @@ PassRefPtr<StorageAreaProxy> StorageAreaProxy::create(StorageNamespaceProxy* sto
 }
 
 StorageAreaProxy::StorageAreaProxy(StorageNamespaceProxy* storageNamespaceProxy, PassRefPtr<SecurityOrigin> securityOrigin)
-    : m_storageType(storageNamespaceProxy->storageType())
+    : m_storageNamespaceID(storageNamespaceProxy->storageNamespaceID())
     , m_quotaInBytes(storageNamespaceProxy->quotaInBytes())
     , m_storageAreaID(generateStorageAreaID())
 {
@@ -209,12 +209,21 @@ void StorageAreaProxy::dispatchStorageEvent(const String& key, const String& old
     // FIXME: Implement this.
 }
 
+StorageType StorageAreaProxy::storageType() const
+{
+    // A zero storage namespace ID is used for local storage.
+    if (!m_storageNamespaceID)
+        return LocalStorage;
+
+    return SessionStorage;
+}
+
 bool StorageAreaProxy::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const
 {
     if (!sourceFrame->page()->settings()->privateBrowsingEnabled())
         return false;
 
-    if (m_storageType != LocalStorage)
+    if (storageType() != LocalStorage)
         return true;
 
     return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(sourceFrame->document()->securityOrigin()->protocol());
