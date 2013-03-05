@@ -1218,6 +1218,7 @@ crbug.com/33099 media/video-reverse-play-duration.html [ Skip ]
 crbug.com/33099 media/video-timeupdate-reverse-play.html [ Skip ]
 
 crbug.com/100798 [ Mac Debug ] fullscreen/full-screen-iframe-allowed.html [ Failure Pass ]
+crbug.com/100798 [ Win7 Mac Debug ] fullscreen/full-screen-iframe-allowed-prefixed.html [ Failure Pass ]
 crbug.com/100798 [ SnowLeopard ] fullscreen/full-screen-remove-ancestor-during-transition.html [ Pass Timeout ]
 
 # Does not display courier for the letters, as the test requests.
