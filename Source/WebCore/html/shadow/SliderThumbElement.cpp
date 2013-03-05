@@ -177,21 +177,18 @@ void RenderSliderContainer::layout()
         style()->setDirection(LTR);
     }
 
-    RenderBox* thumb = 0;
-    RenderBox* track = 0;
-    if (input->sliderThumbElement() && input->sliderThumbElement()->renderer()) {
-        thumb = toRenderBox(input->sliderThumbElement()->renderer());
-        track = toRenderBox(thumb->parent());
-        // Force a layout to reset the position of the thumb so the code below doesn't move the thumb to the wrong place.
-        // FIXME: Make a custom Render class for the track and move the thumb positioning code there.
+    RenderBox* thumb = input->sliderThumbElement() ? input->sliderThumbElement()->renderBox() : 0;
+    RenderBox* track = input->sliderTrackElement() ? input->sliderTrackElement()->renderBox() : 0;
+    // Force a layout to reset the position of the thumb so the code below doesn't move the thumb to the wrong place.
+    // FIXME: Make a custom Render class for the track and move the thumb positioning code there.
+    if (track)
         track->setChildNeedsLayout(true, MarkOnlyThis);
-    }
 
     RenderFlexibleBox::layout();
 
     style()->setDirection(oldTextDirection);
     // These should always exist, unless someone mutates the shadow DOM (e.g., in the inspector).
-    if (!thumb)
+    if (!thumb || !track)
         return;
 
     double percentageOffset = sliderPosition(input).toDouble();
@@ -255,7 +252,7 @@ void SliderThumbElement::setPositionFromPoint(const LayoutPoint& point)
     HTMLInputElement* input = hostInput();
     HTMLElement* trackElement = sliderTrackElementOf(input);
 
-    if (!input->renderer() || !renderer() || !trackElement->renderer())
+    if (!input->renderer() || !renderBox() || !trackElement->renderBox())
         return;
 
     input->setTextAsOfLastFormControlChangeEvent(input->value());
