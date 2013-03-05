@@ -272,6 +272,7 @@ void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView* frameView)
     updateShouldUpdateScrollLayerPositionOnMainThread();
 }
 
+#if USE(ACCELERATED_COMPOSITING)
 GraphicsLayer* ScrollingCoordinator::scrollLayerForScrollableArea(ScrollableArea* scrollableArea)
 {
 #if USE(ACCELERATED_COMPOSITING)
@@ -291,6 +292,7 @@ GraphicsLayer* ScrollingCoordinator::horizontalScrollbarLayerForScrollableArea(S
     return 0;
 #endif
 }
+#endif
 
 GraphicsLayer* ScrollingCoordinator::verticalScrollbarLayerForScrollableArea(ScrollableArea* scrollableArea)
 {

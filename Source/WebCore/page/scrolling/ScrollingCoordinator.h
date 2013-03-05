@@ -168,9 +168,11 @@ public:
 protected:
     explicit ScrollingCoordinator(Page*);
 
+#if USE(ACCELERATED_COMPOSITING)
     static GraphicsLayer* scrollLayerForScrollableArea(ScrollableArea*);
     static GraphicsLayer* horizontalScrollbarLayerForScrollableArea(ScrollableArea*);
     static GraphicsLayer* verticalScrollbarLayerForScrollableArea(ScrollableArea*);
+#endif
 
     unsigned computeCurrentWheelEventHandlerCount();
     GraphicsLayer* scrollLayerForFrameView(FrameView*);
