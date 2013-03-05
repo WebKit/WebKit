@@ -35,14 +35,15 @@
 
 namespace WebCore {
 
-    class StorageEventDispatcher {
-    public:
-        static void dispatch(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Frame* sourceFrame);
+class StorageEventDispatcher {
+public:
+    static void dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, SecurityOrigin*, Frame* sourceFrame);
+    static void dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, SecurityOrigin*, Frame* sourceFrame);
 
-    private:
-        // Do not instantiate.
-        StorageEventDispatcher();
-    };
+private:
+    // Do not instantiate.
+    StorageEventDispatcher();
+};
 
 } // namespace WebCore
 
