@@ -512,9 +512,9 @@ void CookieManager::getBackingStoreCookies()
     if (m_privateMode)
         return;
 
-    // This method should be called just after having created the cookieManager
-    // NEVER afterwards!
-    ASSERT(!m_count);
+    // If there exists cookies in memory, flush them out and we'll load everything from the database again
+    if (m_count)
+        removeAllCookies(DoNotRemoveFromBackingStore);
 
     Vector<ParsedCookie*> cookies;
     m_cookieBackingStore->getCookiesFromDatabase(cookies);
