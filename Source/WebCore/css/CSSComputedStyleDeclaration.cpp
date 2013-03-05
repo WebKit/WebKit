@@ -285,7 +285,9 @@ static const CSSPropertyID computedProperties[] = {
     CSSPropertyWebkitGridColumns,
     CSSPropertyWebkitGridRows,
     CSSPropertyWebkitGridStart,
+    CSSPropertyWebkitGridEnd,
     CSSPropertyWebkitGridBefore,
+    CSSPropertyWebkitGridAfter,
     CSSPropertyWebkitGridColumn,
     CSSPropertyWebkitGridRow,
     CSSPropertyWebkitHighlight,
@@ -1933,9 +1935,13 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(CSSPropert
         case CSSPropertyWebkitGridStart:
         case CSSPropertyWebkitGridColumn:
             return valueForGridPosition(style->gridItemStart());
+        case CSSPropertyWebkitGridEnd:
+            return valueForGridPosition(style->gridItemEnd());
         case CSSPropertyWebkitGridBefore:
         case CSSPropertyWebkitGridRow:
             return valueForGridPosition(style->gridItemBefore());
+        case CSSPropertyWebkitGridAfter:
+            return valueForGridPosition(style->gridItemAfter());
 
         case CSSPropertyHeight:
             if (renderer) {

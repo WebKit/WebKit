@@ -3567,6 +3567,7 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
     }
 
     case CSSPropertyWebkitGridStart:
+    // FIXME: This is wrong as the property should be a shorthand.
     case CSSPropertyWebkitGridColumn: {
         GridPosition startPosition;
         if (!createGridPosition(value, startPosition))
@@ -3574,7 +3575,16 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setGridItemStart(startPosition);
         return;
     }
+    case CSSPropertyWebkitGridEnd: {
+        GridPosition endPosition;
+        if (!createGridPosition(value, endPosition))
+            return;
+        state.style()->setGridItemEnd(endPosition);
+        return;
+    }
+
     case CSSPropertyWebkitGridBefore:
+    // FIXME: This is wrong as the property should be a shorthand.
     case CSSPropertyWebkitGridRow: {
         GridPosition beforePosition;
         if (!createGridPosition(value, beforePosition))
@@ -3582,6 +3592,14 @@ void StyleResolver::applyProperty(CSSPropertyID id, CSSValue* value)
         state.style()->setGridItemBefore(beforePosition);
         return;
     }
+    case CSSPropertyWebkitGridAfter: {
+        GridPosition afterPosition;
+        if (!createGridPosition(value, afterPosition))
+            return;
+        state.style()->setGridItemAfter(afterPosition);
+        return;
+    }
+
     // These properties are aliased and StyleBuilder already applied the property on the prefixed version.
     case CSSPropertyTransitionDelay:
     case CSSPropertyTransitionDuration:

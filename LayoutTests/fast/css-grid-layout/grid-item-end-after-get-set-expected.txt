@@ -1,0 +1,56 @@
+Test that setting and getting grid-end and grid-after works as expected
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Test getting -webkit-grid-end and -webkit-grid-after set through CSS
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(gridElement, '').getPropertyValue('-webkit-grid-row') is 'auto'
+PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-end') is '10'
+FAIL getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-column') should be 10. Was auto.
+PASS getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-after') is '15'
+FAIL getComputedStyle(gridItemWithPositiveInteger, '').getPropertyValue('-webkit-grid-row') should be 15. Was auto.
+PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-end') is '-10'
+FAIL getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-column') should be -10. Was auto.
+PASS getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-after') is '-15'
+FAIL getComputedStyle(gridItemWithNegativeInteger, '').getPropertyValue('-webkit-grid-row') should be -15. Was auto.
+PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(gridItemWithAutoElement, '').getPropertyValue('-webkit-grid-row') is 'auto'
+
+Test the initial value
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto'
+
+Test getting and setting grid-end and grid-after through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is '18'
+FAIL getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') should be 18. Was auto.
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is '66'
+FAIL getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') should be 66. Was auto.
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is '-55'
+FAIL getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') should be -55. Was auto.
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is '-40'
+FAIL getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') should be -40. Was auto.
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto'
+
+Test setting grid-end and grid-after back to 'auto' through JS
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is '18'
+FAIL getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') should be 18. Was auto.
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is '66'
+FAIL getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') should be 66. Was auto.
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-end') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-column') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-after') is 'auto'
+PASS getComputedStyle(element, '').getPropertyValue('-webkit-grid-row') is 'auto'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

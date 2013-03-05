@@ -293,7 +293,9 @@ z-index
 -webkit-grid-columns
 -webkit-grid-rows
 -webkit-grid-start
+-webkit-grid-end
 -webkit-grid-before
+-webkit-grid-after
 -webkit-grid-column
 -webkit-grid-row
 -webkit-grid-auto-flow
