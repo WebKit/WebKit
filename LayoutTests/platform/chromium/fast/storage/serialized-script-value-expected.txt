@@ -89,6 +89,30 @@ PASS areValuesIdentical(newObj, obj) is true
 Serialize 1.23:
 PASS bufferView.length is expectedBufferValues.length
 
+Deserialize to 2147483647:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+PASS areValuesIdentical(newObj, obj) is true
+Serialize 2147483647:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to -2147483648:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+PASS areValuesIdentical(newObj, obj) is true
+Serialize -2147483648:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to 2147483648:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+PASS areValuesIdentical(newObj, obj) is true
+Serialize 2147483648:
+PASS bufferView.length is expectedBufferValues.length
+
+Deserialize to 4294967295:
+PASS JSON.stringify(newObj) is JSON.stringify(obj)
+PASS areValuesIdentical(newObj, obj) is true
+Serialize 4294967295:
+PASS bufferView.length is expectedBufferValues.length
+
 Deserialize to "":
 PASS JSON.stringify(newObj) is JSON.stringify(obj)
 PASS areValuesIdentical(newObj, obj) is true

@@ -70,6 +70,34 @@ store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
 
+Testing: -0xffffffff
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: -0x80000000
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: -0x7fffffff
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: -1
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
 Testing: -Number.MIN_VALUE
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
@@ -91,7 +119,35 @@ store.put(value, 'key')
 store.get('key')
 PASS is(test_data, result) is true
 
+Testing: 1
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
 Testing: Number.MIN_VALUE
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: 0x7fffffff
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: 0x80000000
+transaction = db.transaction('storeName', 'readwrite')
+store = transaction.objectStore('storeName')
+store.put(value, 'key')
+store.get('key')
+PASS is(test_data, result) is true
+
+Testing: 0xffffffff
 transaction = db.transaction('storeName', 'readwrite')
 store = transaction.objectStore('storeName')
 store.put(value, 'key')

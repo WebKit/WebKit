@@ -205,10 +205,18 @@ function testNumber(callback)
         "NaN",
         "-Infinity",
         "-Number.MAX_VALUE",
+        "-0xffffffff",
+        "-0x80000000",
+        "-0x7fffffff",
+        "-1",
         "-Number.MIN_VALUE",
         "-0",
         "0",
+        "1",
         "Number.MIN_VALUE",
+        "0x7fffffff",
+        "0x80000000",
+        "0xffffffff",
         "Number.MAX_VALUE",
         "Infinity"
     ], callback);
