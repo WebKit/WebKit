@@ -497,6 +497,8 @@ enum {
 
 typedef NSUInteger WKProcessAssertionTypes;
 id WKNSProcessInfoProcessAssertionWithTypes(WKProcessAssertionTypes);
+
+extern const NSSystemBehaviors WKProcessSuppressionSystemBehaviors;
 #endif
 
 bool WKIsJavaPlugInActive(void);

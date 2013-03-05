@@ -65,9 +65,9 @@ void ChildProcess::setProcessSuppressionEnabled(bool processSuppressionEnabled)
         return;
 
     if (processSuppressionEnabled)
-        m_processVisibleAssertion.clear();
+        m_processSuppressionAssertion.clear();
     else
-        m_processVisibleAssertion = WKNSProcessInfoProcessAssertionWithTypes(WKProcessAssertionTypeVisible);
+        m_processSuppressionAssertion = [[NSProcessInfo processInfo] beginSuspensionOfSystemBehaviors:WKProcessSuppressionSystemBehaviors reason:@"Process Suppression Disabled"];
 #else
     UNUSED_PARAM(processSuppressionEnabled);
 #endif
