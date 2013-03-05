@@ -27,6 +27,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import <JavaScriptCore/JSBase.h>
 #import <JavaScriptCore/WebKitAvailability.h>
 
 @class NSError;

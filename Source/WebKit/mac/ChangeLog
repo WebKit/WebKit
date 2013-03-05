@@ -1,3 +1,22 @@
+2013-03-04  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r144662): Import JSBase.h in WebFrameLoadDelegate.h
+        <http://webkit.org/b/111269>
+
+        Fixes the following build failure:
+
+            In file included from Source/WebKit/ios/DefaultDelegates/WebDefaultFrameLoadDelegate.m:11:
+            In file included from Source/WebKit/mac/WebView/WebFrameLoadDelegatePrivate.h:29:
+            Source/WebKit/mac/WebView/WebFrameLoadDelegate.h:41:5: error: 'JSC_OBJC_API_ENABLED' is not defined, evaluates to 0 [-Werror,-Wundef]
+            #if JSC_OBJC_API_ENABLED
+                ^
+            Source/WebKit/mac/WebView/WebFrameLoadDelegate.h:207:5: error: 'JSC_OBJC_API_ENABLED' is not defined, evaluates to 0 [-Werror,-Wundef]
+            #if JSC_OBJC_API_ENABLED
+                ^
+            2 errors generated.
+
+        * WebView/WebFrameLoadDelegate.h: Include JSBase.h.
+
 2013-03-04  Chris Fleizach  <cfleizach@apple.com>
 
         Support WebSpeech - Speech Synthesis
