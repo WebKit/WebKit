@@ -51,7 +51,7 @@ class WebPageProxy;
 class WebSecurityOrigin;
 class WebOpenPanelResultListenerProxy;
 
-class WebUIClient : public APIClient<WKPageUIClient> {
+class WebUIClient : public APIClient<WKPageUIClient, kWKPageUIClientCurrentVersion> {
 public:
     PassRefPtr<WebPageProxy> createNewPage(WebPageProxy*, const WebCore::WindowFeatures&, WebEvent::Modifiers, WebMouseEvent::Button);
     void showPage(WebPageProxy*);

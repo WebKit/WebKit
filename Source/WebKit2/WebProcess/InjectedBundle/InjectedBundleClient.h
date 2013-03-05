@@ -37,7 +37,7 @@ class InjectedBundle;
 class WebPage;
 class WebPageGroupProxy;
 
-class InjectedBundleClient : public APIClient<WKBundleClient> {
+class InjectedBundleClient : public APIClient<WKBundleClient, 0> {
 public:
     void didCreatePage(InjectedBundle*, WebPage*);
     void willDestroyPage(InjectedBundle*, WebPage*);

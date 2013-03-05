@@ -34,7 +34,7 @@ namespace WebKit {
 
 class WebCookieManagerProxy;
 
-class WebCookieManagerProxyClient : public APIClient<WKCookieManagerClient> {
+class WebCookieManagerProxyClient : public APIClient<WKCookieManagerClient, 0> {
 public:
     void cookiesDidChange(WebCookieManagerProxy*);
 };

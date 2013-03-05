@@ -1,3 +1,56 @@
+2013-03-05  Brady Eidson  <beidson@apple.com>
+
+        534.59 branch needs to handle API clients with a non-zero version number
+        <rdar://problem/13348902> and https://bugs.webkit.org/show_bug.cgi?id=111475
+
+        Reviewed by Anders Carlsson.
+
+        This patch:
+        1 - Adds the APIClient and APIClientTraits versioning mechanism from ToT to the branch.
+        2 - Updates most APIClients to have a current version of 0.
+        3 - Updates the WKPageLoaderClient and WKPageUIClient to have non-zero current versions.
+        4 - Allows non-zero versioned clients through the calls to WKPageSetPageLoaderClient and WKPageSetPageUIClient.
+
+        * UIProcess/API/C/WKPage.cpp:
+        (WKPageSetPageLoaderClient): Allow non-zero clients through.
+        (WKPageSetPageUIClient): Ditto.
+
+        Add the client traits mechanism and implement traits for the two clients that have a non-zero current version:
+        * Shared/APIClientTraits.cpp: Added.
+        * Shared/APIClientTraits.h: Added.
+
+        Allow for setting versioned clients using those client traits:
+        * Shared/APIClient.h:
+        (WebKit::APIClient::initialize):
+        (WebKit::APIClient::client):
+
+        Update the APIClient templatization for all APIClients to pass their current version:
+        * UIProcess/WebContextInjectedBundleClient.h:
+        * UIProcess/WebCookieManagerProxyClient.h:
+        * UIProcess/WebDatabaseManagerProxyClient.h:
+        * UIProcess/WebDownloadClient.h:
+        * UIProcess/WebFindClient.h:
+        * UIProcess/WebFormClient.h:
+        * UIProcess/WebGeolocationProvider.h:
+        * UIProcess/WebHistoryClient.h:
+        * UIProcess/WebIconDatabaseClient.h:
+        * UIProcess/WebLoaderClient.h:
+        * UIProcess/WebPageContextMenuClient.h:
+        * UIProcess/WebPolicyClient.h:
+        * UIProcess/WebResourceLoadClient.h:
+        * UIProcess/WebUIClient.h:
+        * WebProcess/InjectedBundle/InjectedBundleClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageContextMenuClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageEditorClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFormClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePagePolicyClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageResourceLoadClient.h:
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.h:
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2013-03-04  Brady Eidson  <beidson@apple.com>
 
         Merge r144114

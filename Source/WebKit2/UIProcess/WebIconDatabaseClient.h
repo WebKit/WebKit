@@ -35,7 +35,7 @@ class APIObject;
 class WebIconDatabase;
 class WebURL;
 
-class WebIconDatabaseClient : public APIClient<WKIconDatabaseClient> {
+class WebIconDatabaseClient : public APIClient<WKIconDatabaseClient, 0> {
 public:
     void didChangeIconForPageURL(WebIconDatabase*, WebURL*);
     void didRemoveAllIcons(WebIconDatabase*);

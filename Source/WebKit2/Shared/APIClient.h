@@ -26,25 +26,36 @@
 #ifndef APIClient_h
 #define APIClient_h
 
+#include "APIClientTraits.h"
+
 namespace WebKit {
 
-template<typename T> class APIClient {
+template<typename ClientInterface, int currentVersion> class APIClient {
 public:
     APIClient()
     {
         initialize(0);
     }
-
-    void initialize(const T* client)
+    
+    void initialize(const ClientInterface* client)
     {
-        if (client && !client->version)
+        COMPILE_ASSERT(sizeof(APIClientTraits<ClientInterface>::interfaceSizesByVersion) / sizeof(size_t) == currentVersion + 1, size_of_some_interfaces_are_unknown);
+
+        if (client && client->version == currentVersion) {
             m_client = *client;
-        else
-            memset(&m_client, 0, sizeof(m_client));
+            return;
+        }
+
+        memset(&m_client, 0, sizeof(m_client));
+
+        if (client && client->version < currentVersion)
+            memcpy(&m_client, client, APIClientTraits<ClientInterface>::interfaceSizesByVersion[client->version]);
     }
 
+    const ClientInterface& client() const { return m_client; }
+
 protected:
-    T m_client;
+    ClientInterface m_client;
 };
 
 } // namespace WebKit

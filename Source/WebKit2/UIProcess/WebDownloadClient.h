@@ -41,7 +41,7 @@ class AuthenticationChallengeProxy;
 class DownloadProxy;
 class WebContext;
 
-class WebDownloadClient : public APIClient<WKContextDownloadClient> {
+class WebDownloadClient : public APIClient<WKContextDownloadClient, 0> {
 public:
     void didStart(WebContext*, DownloadProxy*);
     void didReceiveAuthenticationChallenge(WebContext*, DownloadProxy*, AuthenticationChallengeProxy*);

@@ -402,8 +402,6 @@ void WKPageSetPageFormClient(WKPageRef pageRef, const WKPageFormClient* wkClient
 
 void WKPageSetPageLoaderClient(WKPageRef pageRef, const WKPageLoaderClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeLoaderClient(wkClient);
 }
 
@@ -423,8 +421,6 @@ void WKPageSetPageResourceLoadClient(WKPageRef pageRef, const WKPageResourceLoad
 
 void WKPageSetPageUIClient(WKPageRef pageRef, const WKPageUIClient* wkClient)
 {
-    if (wkClient && wkClient->version)
-        return;
     toImpl(pageRef)->initializeUIClient(wkClient);
 }
 

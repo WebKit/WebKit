@@ -41,7 +41,7 @@ class APIObject;
 class WebFrameProxy;
 class WebPageProxy;
 
-class WebResourceLoadClient : public APIClient<WKPageResourceLoadClient> {
+class WebResourceLoadClient : public APIClient<WKPageResourceLoadClient, 0> {
 public:
     void didInitiateLoadForResource(WebPageProxy*, WebFrameProxy*, uint64_t resourceIdentifier, const WebCore::ResourceRequest&, bool pageIsProvisionallyLoading);
     void didSendRequestForResource(WebPageProxy*, WebFrameProxy*, uint64_t resourceIdentifier, const WebCore::ResourceRequest&, const WebCore::ResourceResponse&);

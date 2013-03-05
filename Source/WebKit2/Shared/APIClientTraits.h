@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,26 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebHistoryClient_h
-#define WebHistoryClient_h
+#ifndef APIClientTraits_h
+#define APIClientTraits_h
 
-#include "APIClient.h"
-#include "WKContext.h"
-#include <wtf/Forward.h>
+#include "WKPage.h"
 
 namespace WebKit {
 
-class WebContext;
-class WebFrameProxy;
-class WebPageProxy;
-struct WebNavigationDataStore;
+template <typename ClientInterface> struct APIClientTraits {
+    static const size_t interfaceSizesByVersion[1];
+};
+template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
 
-class WebHistoryClient : public APIClient<WKContextHistoryClient, 0> {
-public:
-    void didNavigateWithNavigationData(WebContext*, WebPageProxy*, const WebNavigationDataStore&, WebFrameProxy*);
-    void didPerformClientRedirect(WebContext*, WebPageProxy*, const String& sourceURL, const String& destinationURL, WebFrameProxy*);
-    void didPerformServerRedirect(WebContext*, WebPageProxy*, const String& sourceURL, const String& destinationURL, WebFrameProxy*);
-    void didUpdateHistoryTitle(WebContext*, WebPageProxy*, const String& title, const String& url, WebFrameProxy*);
-    void populateVisitedLinks(WebContext*);
+template<> struct APIClientTraits<WKPageLoaderClient> {
+    static const size_t interfaceSizesByVersion[3];
+};
 
-    bool shouldTrackVisitedLinks() const { return m_client.populateVisitedLinks; }
+template<> struct APIClientTraits<WKPageUIClient> {
+    static const size_t interfaceSizesByVersion[3];
 };
 
 } // namespace WebKit
 
-#endif // WebHistoryClient_h
+#endif // APIClientTraits_h
