@@ -1,3 +1,24 @@
+2013-03-05  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13269245> Crashes creating WebKit processes in WKSandboxExtensionConsume
+        https://bugs.webkit.org/show_bug.cgi?id=111456
+
+        Reviewed by Anders Carlsson.
+
+        It's too late to be draconian about this condition here, crashing doesn't help
+        diagnose what went wrong when creating a sandbox extension.
+
+        Other SandboxExtension functions already have null checks for WKSandboxExtensionRef,
+        and so should consumePermanently().
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::createHandle): For now, added logging when extension
+        creation fails. If that proves insufficiently helpful in practice, we can change
+        to a CRASH() later.
+        (WebKit::SandboxExtension::createHandleForTemporaryFile): Ditto.
+        (WebKit::SandboxExtension::consumePermanently): Gracefully fail if there is no extension
+        to consume.
+
 2013-03-05  Gwang Yoon Hwang  <ryumiel@company100.net>
 
         Coordinated Graphics: CoordinatedGraphicsLayer makes CoordinatedGraphicsScene perform via CoordinatedGraphicsState.

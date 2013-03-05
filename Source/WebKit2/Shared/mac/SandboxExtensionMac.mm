@@ -216,6 +216,8 @@ void SandboxExtension::createHandle(const String& path, Type type, Handle& handl
 
     CString standardizedPath = resolveSymlinksInPath([[(NSString *)path stringByStandardizingPath] fileSystemRepresentation]);
     handle.m_sandboxExtension = WKSandboxExtensionCreate(standardizedPath.data(), wkSandboxExtensionType(type));
+    if (!handle.m_sandboxExtension)
+        WTFLogAlways("Could not create a sandbox extension for '%s'", path.utf8().data());
 }
 
 void SandboxExtension::createHandleForReadWriteDirectory(const String& path, SandboxExtension::Handle& handle)
@@ -250,6 +252,7 @@ String SandboxExtension::createHandleForTemporaryFile(const String& prefix, Type
     handle.m_sandboxExtension = WKSandboxExtensionCreate(fileSystemRepresentation(path.data()).data(), wkSandboxExtensionType(type));
 
     if (!handle.m_sandboxExtension) {
+        WTFLogAlways("Could not create a sandbox extension for temporary file '%s'", path.data());
         return String();
     }
     return String(path.data());
@@ -303,7 +306,8 @@ bool SandboxExtension::consumePermanently()
 
 bool SandboxExtension::consumePermanently(const Handle& handle)
 {
-    ASSERT(handle.m_sandboxExtension);
+    if (!handle.m_sandboxExtension)
+        return false;
 
     bool result = WKSandboxExtensionConsume(handle.m_sandboxExtension);
     
