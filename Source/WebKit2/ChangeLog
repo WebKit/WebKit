@@ -1,3 +1,16 @@
+2013-03-03  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL] Add requestCheckingOfString implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=108172
+
+        Reviewed by Hajime Morrita.
+
+        Provide implementation of 'requestCheckingOfString' for WK2-EFL.
+        It uses the unified text checker feature.
+
+        * UIProcess/efl/TextCheckerEfl.cpp:
+        (WebKit::TextChecker::requestCheckingOfString):
+
 2013-03-04  Chris Fleizach  <cfleizach@apple.com>
 
         Support WebSpeech - Speech Synthesis

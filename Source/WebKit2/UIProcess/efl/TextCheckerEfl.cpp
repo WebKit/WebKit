@@ -28,7 +28,6 @@
 #include "config.h"
 #include "TextChecker.h"
 
-#include "NotImplemented.h"
 #include "TextCheckerState.h"
 
 #if ENABLE(SPELLCHECK)
@@ -291,9 +290,23 @@ void TextChecker::ignoreWord(int64_t spellDocumentTag, const String& word)
 #endif
 }
 
-void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion>)
+void TextChecker::requestCheckingOfString(PassRefPtr<TextCheckerCompletion> completion)
 {
-    notImplemented();
+#if ENABLE(SPELLCHECK)
+    if (!completion)
+        return;
+
+    TextCheckingRequestData request = completion->textCheckingRequestData();
+    ASSERT(request.sequence() != unrequestedTextCheckingSequence);
+    ASSERT(request.mask() != TextCheckingTypeNone);
+
+    String text = request.text();
+    Vector<TextCheckingResult> result = checkTextOfParagraph(completion->spellDocumentTag(), text.characters(), text.length(), request.mask());
+
+    completion->didFinishCheckingText(result);
+#else
+    UNUSED_PARAM(completion);
+#endif
 }
 
 } // namespace WebKit
