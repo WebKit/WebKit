@@ -19,10 +19,12 @@ Layer tree when the fixed elements are in-view (both fixed elements should have 
         (GraphicsLayer
           (position 100.00 50.00)
           (bounds 10.00 10.00)
+          (contentsOpaque 1)
         )
         (GraphicsLayer
           (position 100.00 100.00)
           (bounds 10.00 10.00)
+          (contentsOpaque 1)
         )
       )
     )
