@@ -35,25 +35,6 @@
 #include "RenderBlock.h"
 
 namespace WebCore {
-bool ExclusionShapeInsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
-{
-    ASSERT(lineHeight >= 0);
-    m_shapeLineTop = lineTop - logicalTopOffset();
-    m_lineHeight = lineHeight;
-    m_segments.clear();
-    m_segmentRanges.clear();
-
-    if (lineOverlapsShapeBounds())
-        computedShape()->getIncludedIntervals(m_shapeLineTop, std::min(m_lineHeight, shapeLogicalBottom() - lineTop), m_segments);
-
-    LayoutUnit logicalLeftOffset = this->logicalLeftOffset();
-    for (size_t i = 0; i < m_segments.size(); i++) {
-        m_segments[i].logicalLeft += logicalLeftOffset;
-        m_segments[i].logicalRight += logicalLeftOffset;
-    }
-    return m_segments.size();
-}
-
 bool ExclusionShapeInsideInfo::adjustLogicalLineTop(float minSegmentWidth)
 {
     const ExclusionShape* shape = computedShape();

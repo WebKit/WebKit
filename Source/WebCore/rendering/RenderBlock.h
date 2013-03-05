@@ -1133,6 +1133,9 @@ protected:
             , m_highValue(highValue)
             , m_offset(offset)
             , m_heightRemaining(heightRemaining)
+#if ENABLE(CSS_EXCLUSIONS)
+            , m_last(0)
+#endif
         {
         }
         
@@ -1140,12 +1143,30 @@ protected:
         inline int highValue() const { return m_highValue; }
         void collectIfNeeded(const IntervalType&) const;
 
+#if ENABLE(CSS_EXCLUSIONS)
+        // When computing the offset caused by the floats on a given line, if
+        // the outermost float on that line has a shape-outside, the inline
+        // content that butts up against that float must be positioned using
+        // the contours of the shape, not the shape's bounding box. We save the
+        // last float encountered so that the offset can be computed correctly
+        // by the code using this adapter.
+        const FloatingObject* lastFloat() const { return m_last; }
+#endif
+
     private:
         const RenderBlock* m_renderer;
         int m_lowValue;
         int m_highValue;
         LayoutUnit& m_offset;
         LayoutUnit* m_heightRemaining;
+#if ENABLE(CSS_EXCLUSIONS)
+        // This member variable is mutable because the collectIfNeeded method
+        // is declared as const, even though it doesn't actually respect that
+        // contract. It modifies other member variables via loopholes in the
+        // const behavior. Instead of using loopholes, I decided it was better
+        // to make the fact that this is modified in a const method explicit.
+        mutable const FloatingObject* m_last;
+#endif
     };
 
     void createFloatingObjects();

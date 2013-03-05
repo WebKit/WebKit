@@ -39,17 +39,23 @@ namespace WebCore {
 
 class RenderBox;
 
-class ExclusionShapeOutsideInfo : public ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside>, public MappedInfo<RenderBox, ExclusionShapeOutsideInfo> {
+class ExclusionShapeOutsideInfo : public ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside, &ExclusionShape::getExcludedIntervals>, public MappedInfo<RenderBox, ExclusionShapeOutsideInfo> {
 public:
-    LayoutSize shapeLogicalOffset() const
-    {
-        return LayoutSize(shapeLogicalLeft(), shapeLogicalTop());
-    }
+    LayoutSize shapeLogicalOffset() const { return LayoutSize(shapeLogicalLeft(), shapeLogicalTop()); }
+
+    LayoutUnit leftSegmentShapeBoundingBoxDelta() const { return m_leftSegmentShapeBoundingBoxDelta; }
+    LayoutUnit rightSegmentShapeBoundingBoxDelta() const { return m_rightSegmentShapeBoundingBoxDelta; }
+
+    virtual bool computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight) OVERRIDE;
 
     static PassOwnPtr<ExclusionShapeOutsideInfo> createInfo(const RenderBox* renderer) { return adoptPtr(new ExclusionShapeOutsideInfo(renderer)); }
     static bool isEnabledFor(const RenderBox*);
 private:
-    ExclusionShapeOutsideInfo(const RenderBox* renderer) : ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside>(renderer) { }
+    ExclusionShapeOutsideInfo(const RenderBox* renderer) : ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside, &ExclusionShape::getExcludedIntervals>(renderer) { }
+
+    LayoutUnit m_leftSegmentShapeBoundingBoxDelta;
+    LayoutUnit m_rightSegmentShapeBoundingBoxDelta;
+    LayoutUnit m_lineTop;
 };
 
 }

@@ -40,7 +40,27 @@ bool ExclusionShapeOutsideInfo::isEnabledFor(const RenderBox* box)
 {
     // FIXME: Enable shape outside for non-rectangular shapes! (bug 98664)
     ExclusionShapeValue* value = box->style()->shapeOutside();
-    return value && (value->type() == ExclusionShapeValue::SHAPE) && (value->shape()->type() == BasicShape::BASIC_SHAPE_RECTANGLE);
+    return value && (value->type() == ExclusionShapeValue::SHAPE)
+        && (
+            (value->shape()->type() == BasicShape::BASIC_SHAPE_RECTANGLE)
+            || (value->shape()->type() == BasicShape::BASIC_SHAPE_POLYGON)
+        );
+}
+
+bool ExclusionShapeOutsideInfo::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
+{
+    if (shapeSizeDirty() || m_lineTop != lineTop || m_lineHeight != lineHeight) {
+        if (ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside, &ExclusionShape::getExcludedIntervals>::computeSegmentsForLine(lineTop, lineHeight)) {
+            m_leftSegmentShapeBoundingBoxDelta = m_segments[0].logicalLeft - shapeLogicalLeft();
+            m_rightSegmentShapeBoundingBoxDelta = m_segments[m_segments.size()-1].logicalRight - shapeLogicalRight();
+        } else {
+            m_leftSegmentShapeBoundingBoxDelta = 0;
+            m_rightSegmentShapeBoundingBoxDelta = 0;
+        }
+        m_lineTop = lineTop;
+    }
+
+    return m_segments.size();
 }
 
 }

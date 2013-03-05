@@ -4279,6 +4279,10 @@ inline void RenderBlock::FloatIntervalSearchAdapter<FloatTypeValue>::collectIfNe
         if (m_heightRemaining)
             *m_heightRemaining = m_renderer->logicalBottomForFloat(r) - m_lowValue;
     }
+
+#if ENABLE(CSS_EXCLUSIONS)
+    m_last = r;
+#endif
 }
 
 LayoutUnit RenderBlock::textIndentOffset() const
@@ -4320,6 +4324,15 @@ LayoutUnit RenderBlock::logicalLeftOffsetForLine(LayoutUnit logicalTop, LayoutUn
 
         FloatIntervalSearchAdapter<FloatingObject::FloatLeft> adapter(this, roundToInt(logicalTop), roundToInt(logicalTop + logicalHeight), left, heightRemaining);
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
+
+#if ENABLE(CSS_EXCLUSIONS)
+        if (const FloatingObject* lastFloat = adapter.lastFloat()) {
+            if (ExclusionShapeOutsideInfo* shapeOutside = lastFloat->renderer()->exclusionShapeOutsideInfo()) {
+                shapeOutside->computeSegmentsForLine(logicalTop - logicalTopForFloat(lastFloat), logicalHeight);
+                left += shapeOutside->rightSegmentShapeBoundingBoxDelta();
+            }
+        }
+#endif
     }
 
     if (applyTextIndent && style()->isLeftToRightDirection())
@@ -4368,6 +4381,16 @@ LayoutUnit RenderBlock::logicalRightOffsetForLine(LayoutUnit logicalTop, LayoutU
         LayoutUnit rightFloatOffset = fixedOffset;
         FloatIntervalSearchAdapter<FloatingObject::FloatRight> adapter(this, roundToInt(logicalTop), roundToInt(logicalTop + logicalHeight), rightFloatOffset, heightRemaining);
         m_floatingObjects->placedFloatsTree().allOverlapsWithAdapter(adapter);
+
+#if ENABLE(CSS_EXCLUSIONS)
+        if (const FloatingObject* lastFloat = adapter.lastFloat()) {
+            if (ExclusionShapeOutsideInfo* shapeOutside = lastFloat->renderer()->exclusionShapeOutsideInfo()) {
+                shapeOutside->computeSegmentsForLine(logicalTop - logicalTopForFloat(lastFloat), logicalHeight);
+                rightFloatOffset += shapeOutside->leftSegmentShapeBoundingBoxDelta();
+            }
+        }
+#endif
+
         right = min(right, rightFloatOffset);
     }
     

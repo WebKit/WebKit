@@ -39,8 +39,8 @@
 #include "RenderStyle.h"
 
 namespace WebCore {
-template <class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const>
-const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter>::computedShape() const
+template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(float, float, SegmentList&) const>
+const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter>::computedShape() const
 {
     if (ExclusionShape* exclusionShape = m_shape.get())
         return exclusionShape;
@@ -55,8 +55,8 @@ const ExclusionShape* ExclusionShapeInfo<RenderType, shapeGetter>::computedShape
     return m_shape.get();
 }
 
-template <class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const>
-LayoutUnit ExclusionShapeInfo<RenderType, shapeGetter>::logicalTopOffset() const
+template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(float, float, SegmentList&) const>
+LayoutUnit ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter>::logicalTopOffset() const
 {
     LayoutUnit logicalTopOffset = m_renderer->style()->boxSizing() == CONTENT_BOX ? m_renderer->borderBefore() + m_renderer->paddingBefore() : LayoutUnit();
     // Content in a flow thread is relative to the beginning of the thread, but the shape calculation should be relative to the current region.
@@ -65,7 +65,27 @@ LayoutUnit ExclusionShapeInfo<RenderType, shapeGetter>::logicalTopOffset() const
     return logicalTopOffset;
 }
 
-template class ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside>;
-template class ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside>;
+template<class RenderType, ExclusionShapeValue* (RenderStyle::*shapeGetter)() const, void (ExclusionShape::*intervalGetter)(float, float, SegmentList&) const>
+bool ExclusionShapeInfo<RenderType, shapeGetter, intervalGetter>::computeSegmentsForLine(LayoutUnit lineTop, LayoutUnit lineHeight)
+{
+    ASSERT(lineHeight >= 0);
+    m_shapeLineTop = lineTop - logicalTopOffset();
+    m_lineHeight = lineHeight;
+    m_segments.clear();
+
+    if (lineOverlapsShapeBounds())
+        (computedShape()->*intervalGetter)(m_shapeLineTop, std::min(m_lineHeight, shapeLogicalBottom() - lineTop), m_segments);
+
+    LayoutUnit logicalLeftOffset = this->logicalLeftOffset();
+    for (size_t i = 0; i < m_segments.size(); i++) {
+        m_segments[i].logicalLeft += logicalLeftOffset;
+        m_segments[i].logicalRight += logicalLeftOffset;
+    }
+
+    return m_segments.size();
+}
+
+template class ExclusionShapeInfo<RenderBlock, &RenderStyle::resolvedShapeInside, &ExclusionShape::getIncludedIntervals>;
+template class ExclusionShapeInfo<RenderBox, &RenderStyle::shapeOutside, &ExclusionShape::getExcludedIntervals>;
 }
 #endif

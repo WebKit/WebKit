@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.container {
+    font: 10px/1 Ahem, sans-serif;
+    width: 200px;
+    height: 200px;
+    background: blue;
+}
+.float-left {
+    height: 10px;
+    float: left;
+}
+.float-right {
+    height: 10px;
+    float: right;
+}
+.float-left-vertical {
+    width: 10px;
+    float: left;
+}
+.float-right-vertical {
+    width: 10px;
+    float: right;
+}
+</style>
+</head>
+<body>
+  <h1><a href="https://bugs.webkit.org/show_bug.cgi?id=98676">Bug 98676</a> - [CSS Exclusions] shape-outside on floats for polygon shapes</h1>
+  <h2>The following tests should display a square with blue triangles in opposite corners.</h2>
+  <div class="container">
+    <div style="width: 100px" class="float-left"></div>
+    XXXXXXXXXX
+    <div style="width: 90px" class="float-left"></div>
+    XXXXXXXXXXX
+    <div style="width: 80px" class="float-left"></div>
+    XXXXXXXXXXXX
+    <div style="width: 70px" class="float-left"></div>
+    XXXXXXXXXXXXX
+    <div style="width: 60px" class="float-left"></div>
+    XXXXXXXXXXXXXX
+    <div style="width: 50px" class="float-left"></div>
+    XXXXXXXXXXXXXXX
+    <div style="width: 40px" class="float-left"></div>
+    XXXXXXXXXXXXXXXX
+    <div style="width: 30px" class="float-left"></div>
+    XXXXXXXXXXXXXXXXX
+    <div style="width: 20px" class="float-left"></div>
+    XXXXXXXXXXXXXXXXXX
+    <div style="width: 10px" class="float-left"></div>
+    XXXXXXXXXXXXXXXXXXX
+    <div style="width: 10px" class="float-right"></div>
+    XXXXXXXXXXXXXXXXXXX
+    <div style="width: 20px" class="float-right"></div>
+    XXXXXXXXXXXXXXXXXX
+    <div style="width: 30px" class="float-right"></div>
+    XXXXXXXXXXXXXXXXX
+    <div style="width: 40px" class="float-right"></div>
+    XXXXXXXXXXXXXXXX
+    <div style="width: 50px" class="float-right"></div>
+    XXXXXXXXXXXXXXX
+    <div style="width: 60px" class="float-right"></div>
+    XXXXXXXXXXXXXX
+    <div style="width: 70px" class="float-right"></div>
+    XXXXXXXXXXXXX
+    <div style="width: 80px" class="float-right"></div>
+    XXXXXXXXXXXX
+    <div style="width: 90px" class="float-right"></div>
+    XXXXXXXXXXX
+    <div style="width: 100px" class="float-right"></div>
+    XXXXXXXXXX
+  </div>
+  <h3>vertical lr</h3>
+  <div style="-webkit-writing-mode: vertical-lr" class="container">
+    <div style="height: 100px" class="float-left-vertical"></div>
+    XXXXXXXXXX
+    <div style="height: 90px" class="float-left-vertical"></div>
+    XXXXXXXXXXX
+    <div style="height: 80px" class="float-left-vertical"></div>
+    XXXXXXXXXXXX
+    <div style="height: 70px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXX
+    <div style="height: 60px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXX
+    <div style="height: 50px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXX
+    <div style="height: 40px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXXX
+    <div style="height: 30px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXXXX
+    <div style="height: 20px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXXXXX
+    <div style="height: 10px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXXXXXX
+    <div style="height: 10px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXXXXXX
+    <div style="height: 20px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXXXXX
+    <div style="height: 30px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXXXX
+    <div style="height: 40px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXXX
+    <div style="height: 50px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXX
+    <div style="height: 60px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXX
+    <div style="height: 70px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXX
+    <div style="height: 80px" class="float-right-vertical"></div>
+    XXXXXXXXXXXX
+    <div style="height: 90px" class="float-right-vertical"></div>
+    XXXXXXXXXXX
+    <div style="height: 100px" class="float-right-vertical"></div>
+    XXXXXXXXXX
+  </div>
+  <h3>vertical rl</h3>
+  <div style="-webkit-writing-mode: vertical-rl" class="container">
+    <div style="height: 100px" class="float-left-vertical"></div>
+    XXXXXXXXXX
+    <div style="height: 90px" class="float-left-vertical"></div>
+    XXXXXXXXXXX
+    <div style="height: 80px" class="float-left-vertical"></div>
+    XXXXXXXXXXXX
+    <div style="height: 70px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXX
+    <div style="height: 60px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXX
+    <div style="height: 50px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXX
+    <div style="height: 40px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXXX
+    <div style="height: 30px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXXXX
+    <div style="height: 20px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXXXXX
+    <div style="height: 10px" class="float-left-vertical"></div>
+    XXXXXXXXXXXXXXXXXXX
+    <div style="height: 10px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXXXXXX
+    <div style="height: 20px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXXXXX
+    <div style="height: 30px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXXXX
+    <div style="height: 40px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXXX
+    <div style="height: 50px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXXX
+    <div style="height: 60px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXXX
+    <div style="height: 70px" class="float-right-vertical"></div>
+    XXXXXXXXXXXXX
+    <div style="height: 80px" class="float-right-vertical"></div>
+    XXXXXXXXXXXX
+    <div style="height: 90px" class="float-right-vertical"></div>
+    XXXXXXXXXXX
+    <div style="height: 100px" class="float-right-vertical"></div>
+    XXXXXXXXXX
+  </div>
+</body>
+</html>

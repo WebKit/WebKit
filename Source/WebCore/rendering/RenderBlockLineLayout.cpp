@@ -175,13 +175,29 @@ inline void LineWidth::shrinkAvailableWidthForNewFloatIfNeeded(RenderBlock::Floa
     if (height < m_block->logicalTopForFloat(newFloat) || height >= m_block->logicalBottomForFloat(newFloat))
         return;
 
+#if ENABLE(CSS_EXCLUSIONS)
+    ExclusionShapeOutsideInfo* shapeOutsideInfo = newFloat->renderer()->exclusionShapeOutsideInfo();
+    if (shapeOutsideInfo)
+        shapeOutsideInfo->computeSegmentsForLine(m_block->logicalHeight() - m_block->logicalTopForFloat(newFloat), logicalHeightForLine(m_block, m_isFirstLine));
+#endif
+
     if (newFloat->type() == RenderBlock::FloatingObject::FloatLeft) {
         float newLeft = m_block->logicalRightForFloat(newFloat);
+#if ENABLE(CSS_EXCLUSIONS)
+        if (shapeOutsideInfo)
+            newLeft += shapeOutsideInfo->rightSegmentShapeBoundingBoxDelta();
+#endif
+
         if (m_isFirstLine && m_block->style()->isLeftToRightDirection())
             newLeft += floorToInt(m_block->textIndentOffset());
         m_left = max<float>(m_left, newLeft);
     } else {
         float newRight = m_block->logicalLeftForFloat(newFloat);
+#if ENABLE(CSS_EXCLUSIONS)
+        if (shapeOutsideInfo)
+            newRight += shapeOutsideInfo->leftSegmentShapeBoundingBoxDelta();
+#endif
+
         if (m_isFirstLine && !m_block->style()->isLeftToRightDirection())
             newRight -= floorToInt(m_block->textIndentOffset());
         m_right = min<float>(m_right, newRight);
@@ -2711,6 +2727,7 @@ InlineIterator RenderBlock::LineBreaker::nextSegmentBreak(InlineBidiResolver& re
             // check if it fits in the current line.
             // If it does, position it now, otherwise, position
             // it after moving to next line (in newLine() func)
+            // FIXME: Bug 110372: Properly position multiple stacked floats with non-rectangular shape outside.
             if (floatsFitOnLine && width.fitsOnLine(m_block->logicalWidthForFloat(f))) {
                 m_block->positionNewFloatOnLine(f, lastFloatFromPreviousLine, lineInfo, width);
                 if (lBreak.m_obj == current.m_obj) {
