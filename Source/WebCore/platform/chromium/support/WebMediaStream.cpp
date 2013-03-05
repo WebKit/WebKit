@@ -31,6 +31,7 @@
 #include "MediaStreamComponent.h"
 #include "MediaStreamDescriptor.h"
 #include "MediaStreamSource.h"
+#include "UUID.h"
 #include <public/WebMediaStreamSource.h>
 #include <public/WebMediaStreamTrack.h>
 #include <public/WebString.h>
@@ -140,6 +141,11 @@ void WebMediaStream::initialize(const WebString& label, const WebVector<WebMedia
         video.append(MediaStreamComponent::create(source->id(), source));
     }
     m_private = MediaStreamDescriptor::create(label, audio, video);
+}
+
+void WebMediaStream::initialize(const WebVector<WebMediaStreamTrack>& audioTracks, const WebVector<WebMediaStreamTrack>& videoTracks)
+{
+    initialize(createCanonicalUUIDString(), audioTracks, videoTracks);
 }
 
 void WebMediaStream::initialize(const WebString& label, const WebVector<WebMediaStreamTrack>& audioTracks, const WebVector<WebMediaStreamTrack>& videoTracks)

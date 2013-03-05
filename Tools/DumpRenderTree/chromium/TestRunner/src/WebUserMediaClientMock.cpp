@@ -121,7 +121,7 @@ void WebUserMediaClientMock::requestUserMedia(const WebUserMediaRequest& streamR
     }
 
     WebMediaStream stream;
-    stream.initialize("foobar", audioTracks, videoTracks);
+    stream.initialize(audioTracks, videoTracks);
 
     stream.setExtraData(new MockExtraData());
 

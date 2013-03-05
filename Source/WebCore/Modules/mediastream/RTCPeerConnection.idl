@@ -68,6 +68,7 @@
 
     sequence<MediaStream> getLocalStreams();
     sequence<MediaStream> getRemoteStreams();
+    MediaStream getStreamById(DOMString streamId);
 
     [StrictTypeChecking] void addStream(in MediaStream stream, in [Optional] Dictionary mediaConstraints)
         raises(DOMException);

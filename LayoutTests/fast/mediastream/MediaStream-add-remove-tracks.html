@@ -83,7 +83,7 @@ function gotStream2(s) {
 
     // (re-)add tracks
     tryAddTrack(stream1, audioTrack);
-    tryAddTrack(stream1, videoTrack);    
+    tryAddTrack(stream1, videoTrack);
 
     // verify added tracks
     shouldBe('stream1.getAudioTracks().length', '1');

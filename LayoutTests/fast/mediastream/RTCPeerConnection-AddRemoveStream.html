@@ -25,8 +25,8 @@ function getUserMedia(dictionary, callback) {
     }
 }
 
-function onErroneousRemoveStream() {
-    testFailed('onErroneousRemoveStream was called.');
+function onErroneousNegotiationNeeded() {
+    testFailed('onErroneousNegotiationNeeded was called.');
     finishJSTest();
 }
 
@@ -38,23 +38,19 @@ function onRemoveStream(event) {
     finishJSTest();
 }
 
-function onErroneousAddStream() {
-    testFailed('onErroneousAddStream was called.');
-    finishJSTest();
-}
-
 function onAddStream(event) {
     testPassed('onAddStream was called.');
 
-    pc.onaddstream = onErroneousAddStream;
+    shouldBe('pc.getStreamById(stream.id)', 'stream');
+    shouldBe('pc.getStreamById(stream2.id)', 'null');
+
+    pc.onnegotiationneeded = onErroneousNegotiationNeeded;
     pc.addStream(stream);
     shouldBe('pc.getLocalStreams().length', '1');
-
-    pc.onremovestream = onErroneousRemoveStream;
     pc.removeStream(stream2);
     shouldBe('pc.getLocalStreams().length', '1');
 
-    pc.onremovestream = onRemoveStream;
+    pc.onnegotiationneeded = onRemoveStream;
     pc.removeStream(stream);
 }
 
@@ -62,9 +58,10 @@ function gotStream2(s) {
     testPassed('Got another stream.');
     stream2 = s;
 
-    pc = new webkitRTCPeerConnection(null, null);
+    shouldBeFalse("stream.id === stream2.id");
 
-    pc.onaddstream = onAddStream;
+    pc = new webkitRTCPeerConnection(null, null);
+    pc.onnegotiationneeded = onAddStream;
     pc.addStream(stream);
 }
 

@@ -4412,7 +4412,4 @@ crbug.com/179503 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-texture-hal
 
 # These test are failing since r144519
 webkit.org/b/109769 [ Mac ] fast/events/touch/gesture/touch-gesture-noscroll-body-yhidden.html [ Failure ]
-webkit.org/b/109769 [ Mac ] fast/events/touch/gesture/touch-gesture-noscroll-body-propagated.html [ Failure ] 
-
-# New crashing test since r144610
-webkit.org/b/111410 [ Debug ] fast/mediastream/MediaStream-add-remove-tracks.html [ Crash ]
+webkit.org/b/109769 [ Mac ] fast/events/touch/gesture/touch-gesture-noscroll-body-propagated.html [ Failure ]

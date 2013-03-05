@@ -5,7 +5,10 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 PASS Got a stream.
 PASS Got another stream.
+PASS stream.id === stream2.id is false
 PASS onAddStream was called.
+PASS pc.getStreamById(stream.id) is stream
+PASS pc.getStreamById(stream2.id) is null
 PASS pc.getLocalStreams().length is 1
 PASS pc.getLocalStreams().length is 1
 PASS onRemoveStream was called.

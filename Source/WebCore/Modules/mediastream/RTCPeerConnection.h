@@ -89,6 +89,8 @@ public:
 
     MediaStreamVector getRemoteStreams() const;
 
+    MediaStream* getStreamById(const String& streamId);
+
     void addStream(PassRefPtr<MediaStream>, const Dictionary& mediaConstraints, ExceptionCode&);
 
     void removeStream(PassRefPtr<MediaStream>, ExceptionCode&);
