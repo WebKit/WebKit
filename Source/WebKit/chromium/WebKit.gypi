@@ -75,6 +75,7 @@
             'tests/GIFImageDecoderTest.cpp',
             'tests/GraphicsLayerChromiumTest.cpp',
             'tests/IDBAbortOnCorruptTest.cpp',
+            'tests/IDBBackingStoreTest.cpp',
             'tests/IDBBindingUtilitiesTest.cpp',
             'tests/IDBCleanupOnIOErrorTest.cpp',
             'tests/IDBDatabaseBackendTest.cpp',

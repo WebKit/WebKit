@@ -1,3 +1,16 @@
+2013-03-05  Alec Flett  <alecflett@chromium.org>
+
+        IndexedDB: Add IDBBackingStoreTest
+        https://bugs.webkit.org/show_bug.cgi?id=111233
+
+        Reviewed by Adam Barth.
+
+        Add some really simple IDBBackingStore tests
+        as a seed for additional tests later.
+
+        * WebKit.gypi:
+        * tests/IDBBackingStoreTest.cpp: Added.
+
 2013-03-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move check for threaded compositing from WebCompositorSupport to Platform

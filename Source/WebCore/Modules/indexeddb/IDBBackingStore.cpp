@@ -44,6 +44,9 @@
 #include "LevelDBTransaction.h"
 #include "SecurityOrigin.h"
 #include "SharedBuffer.h"
+#if PLATFORM(CHROMIUM)
+#include <public/Platform.h>
+#endif
 #include <wtf/Assertions.h>
 
 namespace WebCore {
@@ -341,7 +344,11 @@ IDBBackingStore::IDBBackingStore(const String& identifier, IDBFactoryBackendImpl
     , m_factory(factory)
     , m_db(db)
 {
-    m_factory->addIDBBackingStore(identifier, this);
+#if PLATFORM(CHROMIUM)
+    ASSERT(m_factory || WebKit::Platform::current()->unitTestSupport());
+#endif
+    if (m_factory)
+        m_factory->addIDBBackingStore(identifier, this);
 }
 
 IDBBackingStore::IDBBackingStore()
