@@ -1,3 +1,24 @@
+2013-03-05  Charlie Reis  <creis@chromium.org>
+
+        Add FrameLoaderClient::didAccessInitialDocument
+        https://bugs.webkit.org/show_bug.cgi?id=107963
+
+        Notifies WebFrameClient if another page accesses the initial
+        empty document of a main frame.  In this case, it is no longer
+        safe to display the provisional URL.
+
+        Reviewed by Adam Barth.
+
+        * public/WebFrameClient.h:
+        (WebFrameClient):
+        (WebKit::WebFrameClient::didAccessInitialDocument):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::didAccessInitialDocument):
+        (WebKit):
+        * src/FrameLoaderClientImpl.h:
+        (FrameLoaderClientImpl):
+        * tests/WebFrameTest.cpp:
+
 2013-03-05  Alec Flett  <alecflett@chromium.org>
 
         IndexedDB: Properly refactor frontend/backend code by #includes

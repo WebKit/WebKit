@@ -1219,6 +1219,12 @@ bool FrameLoaderClientImpl::shouldStopLoadingForHistoryItem(HistoryItem* targetI
     return !url.protocolIs(backForwardNavigationScheme);
 }
 
+void FrameLoaderClientImpl::didAccessInitialDocument()
+{
+    if (m_webFrame->client())
+        m_webFrame->client()->didAccessInitialDocument(m_webFrame);
+}
+
 void FrameLoaderClientImpl::didDisownOpener()
 {
     if (m_webFrame->client())

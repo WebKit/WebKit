@@ -2428,4 +2428,73 @@ TEST_F(WebFrameTest, MAYBE_ReplaceMisspelledRange)
     m_webView = 0;
 }
 
+class TestAccessInitialDocumentWebFrameClient : public WebFrameClient {
+public:
+    TestAccessInitialDocumentWebFrameClient() : m_didAccessInitialDocument(false)
+    {
+    }
+
+    virtual void didAccessInitialDocument(WebFrame* frame)
+    {
+        EXPECT_TRUE(!m_didAccessInitialDocument);
+        m_didAccessInitialDocument = true;
+    }
+    
+    bool m_didAccessInitialDocument;
+};
+
+TEST_F(WebFrameTest, DidAccessInitialDocumentBody)
+{
+    TestAccessInitialDocumentWebFrameClient webFrameClient;
+    m_webView = FrameTestHelpers::createWebView(true, &webFrameClient);
+    runPendingTasks();
+    EXPECT_FALSE(webFrameClient.m_didAccessInitialDocument);
+
+    // Create another window that will try to access it.
+    WebView* newView = FrameTestHelpers::createWebView(true);
+    newView->mainFrame()->setOpener(m_webView->mainFrame());
+    runPendingTasks();
+    EXPECT_FALSE(webFrameClient.m_didAccessInitialDocument);
+
+    // Access the initial document by modifying the body.
+    newView->mainFrame()->executeScript(
+        WebScriptSource("window.opener.document.body.innerHTML += 'Modified';"));
+    runPendingTasks();
+    EXPECT_TRUE(webFrameClient.m_didAccessInitialDocument);
+
+    // Access the initial document again, to ensure we don't notify twice.
+    newView->mainFrame()->executeScript(
+        WebScriptSource("window.opener.document.body.innerHTML += 'Modified';"));
+    runPendingTasks();
+    EXPECT_TRUE(webFrameClient.m_didAccessInitialDocument);
+
+    newView->close();
+    m_webView->close();
+    m_webView = 0;
+}
+
+TEST_F(WebFrameTest, DidAccessInitialDocumentNavigator)
+{
+    TestAccessInitialDocumentWebFrameClient webFrameClient;
+    m_webView = FrameTestHelpers::createWebView(true, &webFrameClient);
+    runPendingTasks();
+    EXPECT_FALSE(webFrameClient.m_didAccessInitialDocument);
+
+    // Create another window that will try to access it.
+    WebView* newView = FrameTestHelpers::createWebView(true);
+    newView->mainFrame()->setOpener(m_webView->mainFrame());
+    runPendingTasks();
+    EXPECT_FALSE(webFrameClient.m_didAccessInitialDocument);
+
+    // Access the initial document to get to the navigator object.
+    newView->mainFrame()->executeScript(
+        WebScriptSource("console.log(window.opener.navigator);"));
+    runPendingTasks();
+    EXPECT_TRUE(webFrameClient.m_didAccessInitialDocument);
+
+    newView->close();
+    m_webView->close();
+    m_webView = 0;
+}
+
 } // namespace

@@ -523,6 +523,10 @@ bool V8DOMWindow::namedSecurityCheckCustom(v8::Local<v8::Object> host, v8::Local
     if (!target)
         return false;
 
+    // Notify the loader's client if the initial document has been accessed.
+    if (target->loader()->stateMachine()->isDisplayingInitialEmptyDocument())
+        target->loader()->didAccessInitialDocument();
+
     if (key->IsString()) {
         DEFINE_STATIC_LOCAL(AtomicString, nameOfProtoProperty, ("__proto__", AtomicString::ConstructFromLiteral));
 
@@ -557,6 +561,10 @@ bool V8DOMWindow::indexedSecurityCheckCustom(v8::Local<v8::Object> host, uint32_
     if (!target)
         return false;
     Frame* childFrame =  target->tree()->scopedChild(index);
+
+    // Notify the loader's client if the initial document has been accessed.
+    if (target->loader()->stateMachine()->isDisplayingInitialEmptyDocument())
+        target->loader()->didAccessInitialDocument();
 
     // Notice that we can't call HasRealNamedProperty for ACCESS_HAS
     // because that would generate infinite recursion.

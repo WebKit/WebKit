@@ -402,7 +402,11 @@ void V8DOMWindowShell::setSecurityToken()
     // Note: we can't use the HTTPOrigin if it was set from the DOM.
     SecurityOrigin* origin = document->securityOrigin();
     String token;
-    if (!origin->domainWasSetInDOM())
+    // We stick with an empty token if document.domain was modified or if we
+    // are in the initial empty document, so that we can do a full canAccess
+    // check in those cases.
+    if (!origin->domainWasSetInDOM()
+        && !m_frame->loader()->stateMachine()->isDisplayingInitialEmptyDocument())
         token = document->securityOrigin()->toString();
 
     // An empty or "null" token means we always have to call

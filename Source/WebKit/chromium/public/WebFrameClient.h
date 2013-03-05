@@ -102,6 +102,11 @@ public:
 
     // General notifications -----------------------------------------------
 
+    // Indicates that another page has accessed the DOM of the initial empty
+    // document of a main frame. After this, it is no longer safe to show a
+    // pending navigation's URL, because a URL spoof is possible.
+    virtual void didAccessInitialDocument(WebFrame*) { }
+
     // A child frame was created in this frame. This is called when the frame
     // is created and initialized.
     virtual void didCreateFrame(WebFrame* parent, WebFrame* child) { }
