@@ -1,0 +1,1 @@
+Changing a documents stylesheet's innerHTML should not crash.

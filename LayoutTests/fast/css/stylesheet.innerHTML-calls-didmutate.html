@@ -1,0 +1,23 @@
+<style>
+ h6 { 
+   text-shadow: 0.85714in -110pc -0.216688mm;
+ }
+ p + h6 {
+   left: 180cm;
+ }
+</style>
+<script>
+function main() {
+  var styletag = document.getElementsByTagName("style")[0];
+  styletag.type = "p";
+  styletag.innerHTML = "t";
+  var second_h6 = document.getElementsByTagName("h6")[1];
+  second_h6.align = 'a';
+  document.styleSheets[0].removeRule(0);
+
+  if (window.testRunner)
+    testRunner.dumpAsText();
+}
+</script>
+<body onload=main()><h6><h6>
+Changing a documents stylesheet's innerHTML should not crash.
