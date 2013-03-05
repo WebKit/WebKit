@@ -1745,7 +1745,6 @@ inline InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTML(Do
         return willWriteHTMLImpl(instrumentingAgents, startLine, document->frame());
 #else
     UNUSED_PARAM(document);
-    UNUSED_PARAM(length);
     UNUSED_PARAM(startLine);
 #endif
     return InspectorInstrumentationCookie();
