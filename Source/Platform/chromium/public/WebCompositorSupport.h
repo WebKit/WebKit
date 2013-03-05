@@ -61,9 +61,6 @@ public:
     // prior to calling initialize.
     virtual void initialize(WebThread*) { }
 
-    // Returns whether the compositor was initialized with threading enabled.
-    virtual bool isThreadingEnabled() { return false; }
-
     // Shuts down the compositor. This must be called when all compositor data
     // types have been deleted. No compositor classes or methods should be used
     // after shutdown.

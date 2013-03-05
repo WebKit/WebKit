@@ -1,3 +1,13 @@
+2013-03-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move check for threaded compositing from WebCompositorSupport to Platform
+        https://bugs.webkit.org/show_bug.cgi?id=111386
+
+        Reviewed by Adrienne Walker.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+
 2013-03-05  Min Qin  <qinmin@chromium.org>
 
         Copy dictionary to the external storage before running layout test on android

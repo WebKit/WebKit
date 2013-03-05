@@ -45,9 +45,14 @@ namespace WebCore {
 class Canvas2DLayerBridge : public WebKit::WebExternalTextureLayerClient, public SkDeferredCanvas::NotificationClient, public DoublyLinkedListNode<Canvas2DLayerBridge> {
     WTF_MAKE_NONCOPYABLE(Canvas2DLayerBridge);
 public:
-    static PassOwnPtr<Canvas2DLayerBridge> create(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, unsigned textureId)
+    enum ThreadMode {
+        SingleThread,
+        Threaded
+    };
+
+    static PassOwnPtr<Canvas2DLayerBridge> create(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, ThreadMode threading, unsigned textureId)
     {
-        return adoptPtr(new Canvas2DLayerBridge(context, size, deferralMode, textureId));
+        return adoptPtr(new Canvas2DLayerBridge(context, size, deferralMode, threading, textureId));
     }
 
     virtual ~Canvas2DLayerBridge();
@@ -76,7 +81,7 @@ public:
     unsigned backBufferTexture();
 
 protected:
-    Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D>, const IntSize&, DeferralMode, unsigned textureId);
+    Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D>, const IntSize&, DeferralMode, ThreadMode, unsigned textureId);
     SkDeferredCanvas* deferredCanvas();
 
     DeferralMode m_deferralMode;

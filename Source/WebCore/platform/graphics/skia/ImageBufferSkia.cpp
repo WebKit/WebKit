@@ -50,6 +50,7 @@
 #include "SkGpuDevice.h"
 #include "SkiaUtils.h"
 #include "WEBPImageEncoder.h"
+#include <public/Platform.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 #include "Canvas2DLayerBridge.h"
@@ -92,7 +93,8 @@ static SkCanvas* createAcceleratedCanvas(const IntSize& size, ImageBufferData* d
     SkCanvas* canvas;
     SkAutoTUnref<SkDevice> device(new SkGpuDevice(gr, texture.get()));
 #if USE(ACCELERATED_COMPOSITING)
-    data->m_layerBridge = Canvas2DLayerBridge::create(context3D.release(), size, deferralMode, texture.get()->getTextureHandle());
+    Canvas2DLayerBridge::ThreadMode threadMode = WebKit::Platform::current()->isThreadedCompositingEnabled() ? Canvas2DLayerBridge::Threaded : Canvas2DLayerBridge::SingleThread;
+    data->m_layerBridge = Canvas2DLayerBridge::create(context3D.release(), size, deferralMode, threadMode, texture.get()->getTextureHandle());
     canvas = data->m_layerBridge->skCanvas(device.get());
 #else
     canvas = new SkCanvas(device.get());

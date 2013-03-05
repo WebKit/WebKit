@@ -96,7 +96,7 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
 
     // We need a separate front and back textures if ...
     m_separateFrontTexture = m_preserveDrawingBuffer == Preserve // ... we have to preserve contents after compositing, which is done with a copy or ...
-                             || WebKit::Platform::current()->compositorSupport()->isThreadingEnabled(); // ... if we're in threaded mode and need to double buffer.
+                             || WebKit::Platform::current()->isThreadedCompositingEnabled(); // ... if we're in threaded mode and need to double buffer.
     initialize(size);
 }
 

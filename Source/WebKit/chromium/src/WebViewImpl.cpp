@@ -4067,7 +4067,7 @@ WebCore::GraphicsLayer* WebViewImpl::rootGraphicsLayer()
 void WebViewImpl::scheduleAnimation()
 {
     if (isAcceleratedCompositingActive()) {
-        if (Platform::current()->compositorSupport()->isThreadingEnabled()) {
+        if (Platform::current()->isThreadedCompositingEnabled()) {
             ASSERT(m_layerTreeView);
             m_layerTreeView->setNeedsAnimate();
         } else
@@ -4110,7 +4110,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_layerTreeView->finishAllRendering();
         m_client->didDeactivateCompositor();
         if (!m_layerTreeViewCommitsDeferred
-            && WebKit::Platform::current()->compositorSupport()->isThreadingEnabled()) {
+            && WebKit::Platform::current()->isThreadedCompositingEnabled()) {
             ASSERT(m_layerTreeView);
             // In threaded compositing mode, force compositing mode is always on so setIsAcceleratedCompositingActive(false)
             // means that we're transitioning to a new page. Suppress commits until WebKit generates invalidations so

@@ -43,7 +43,7 @@ using WebKit::WebTextureUpdater;
 
 namespace WebCore {
 
-Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, unsigned textureId)
+Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, const IntSize& size, DeferralMode deferralMode, ThreadMode threadMode, unsigned textureId)
     : m_deferralMode(deferralMode)
     , m_frontBufferTexture(0)
     , m_backBufferTexture(textureId)
@@ -59,12 +59,11 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
     // Used by browser tests to detect the use of a Canvas2DLayerBridge.
     TRACE_EVENT_INSTANT0("test_gpu", "Canvas2DLayerBridgeCreation");
 
-    bool compositorThreadingEnabled = WebKit::Platform::current()->compositorSupport()->isThreadingEnabled();
     // FIXME: We currently turn off double buffering when canvas rendering is
     // deferred. What we should be doing is to use a smarter heuristic based
     // on GPU resource monitoring and other factors to chose between single
     // and double buffering.
-    m_useDoubleBuffering = compositorThreadingEnabled && deferralMode == NonDeferred;
+    m_useDoubleBuffering = threadMode == Threaded && deferralMode == NonDeferred;
 
     if (m_useDoubleBuffering) {
         m_context->makeContextCurrent();
@@ -83,7 +82,7 @@ Canvas2DLayerBridge::Canvas2DLayerBridge(PassRefPtr<GraphicsContext3D> context, 
 
     m_layer = adoptPtr(WebKit::Platform::current()->compositorSupport()->createExternalTextureLayer(this));
     m_layer->setTextureId(textureId);
-    m_layer->setRateLimitContext(!compositorThreadingEnabled || m_useDoubleBuffering);
+    m_layer->setRateLimitContext(threadMode == SingleThread || m_useDoubleBuffering);
     GraphicsLayerChromium::registerContentsLayer(m_layer->layer());
 }
 

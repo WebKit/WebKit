@@ -1,3 +1,19 @@
+2013-03-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Move check for threaded compositing from WebCompositorSupport to Platform
+        https://bugs.webkit.org/show_bug.cgi?id=111386
+
+        Reviewed by Adrienne Walker.
+
+        This moves the query for if threaded compositing is enabled from WebCompositorSupport
+        to Platform. This is part of an effort to remove statefulness on WebCompositorSupport
+        and because it's much easier to override Platform functions for different tests.
+
+        * chromium/public/Platform.h:
+        (WebKit::Platform::isThreadedCompositingEnabled):
+        (Platform):
+        * chromium/public/WebCompositorSupport.h:
+
 2013-03-05  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up WebWidget / WebLayerTreeView interactions

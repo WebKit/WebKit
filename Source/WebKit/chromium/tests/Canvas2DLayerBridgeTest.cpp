@@ -61,13 +61,9 @@ public:
 
 } // namespace
 
-enum ThreadMode {
-    SingleThreaded, Threaded
-};
-
 class Canvas2DLayerBridgeTest : public Test {
 protected:
-    void fullLifecycleTest(ThreadMode threadMode, DeferralMode deferralMode)
+    void fullLifecycleTest(Canvas2DLayerBridge::ThreadMode threadMode, DeferralMode deferralMode)
     {
         RefPtr<GraphicsContext3D> mainContext = GraphicsContext3DPrivate::createGraphicsContextFromWebContext(adoptPtr(new MockCanvasContext));
 
@@ -77,33 +73,28 @@ protected:
 
         const IntSize size(300, 150);
 
-        OwnPtr<WebThread> thread;
-        if (threadMode == Threaded)
-            thread = adoptPtr(WebKit::Platform::current()->createThread("Canvas2DLayerBridgeTest"));
-        WebKitTests::WebCompositorInitializer initializer(thread.get());
-
         WebGLId backTextureId = 1;
         WebGLId frontTextureId = 1;
 
         // Threaded and non deferred canvases are double buffered.
-        if (threadMode == Threaded && deferralMode == NonDeferred) {
+        if (threadMode == Canvas2DLayerBridge::Threaded && deferralMode == NonDeferred) {
             frontTextureId = 2;
             // Create texture (on the main thread) and do the copy (on the impl thread).
             EXPECT_CALL(mainMock, createTexture()).WillOnce(Return(frontTextureId));
         }
 
-        OwnPtr<Canvas2DLayerBridge> bridge = Canvas2DLayerBridge::create(mainContext.get(), size, deferralMode, backTextureId);
+        OwnPtr<Canvas2DLayerBridge> bridge = Canvas2DLayerBridge::create(mainContext.get(), size, deferralMode, threadMode, backTextureId);
 
         ::testing::Mock::VerifyAndClearExpectations(&mainMock);
 
         EXPECT_CALL(mainMock, flush());
-        if (threadMode == Threaded && deferralMode == NonDeferred)
+        if (threadMode == Canvas2DLayerBridge::Threaded && deferralMode == NonDeferred)
             EXPECT_CALL(updater, appendCopy(backTextureId, frontTextureId, WebSize(300, 150)));
         EXPECT_EQ(frontTextureId, bridge->prepareTexture(updater));
         ::testing::Mock::VerifyAndClearExpectations(&mainMock);
         ::testing::Mock::VerifyAndClearExpectations(&updater);
 
-        if (threadMode == Threaded && deferralMode == NonDeferred) {
+        if (threadMode == Canvas2DLayerBridge::Threaded && deferralMode == NonDeferred) {
             EXPECT_CALL(mainMock, deleteTexture(frontTextureId));
             EXPECT_CALL(mainMock, flush());
         }
@@ -115,22 +106,22 @@ namespace {
 
 TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleSingleThreadedDeferred)
 {
-    fullLifecycleTest(SingleThreaded, NonDeferred);
+    fullLifecycleTest(Canvas2DLayerBridge::SingleThread, NonDeferred);
 }
 
 TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleSingleThreadedNonDeferred)
 {
-    fullLifecycleTest(SingleThreaded, Deferred);
+    fullLifecycleTest(Canvas2DLayerBridge::SingleThread, Deferred);
 }
 
 TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleThreadedNonDeferred)
 {
-    fullLifecycleTest(Threaded, NonDeferred);
+    fullLifecycleTest(Canvas2DLayerBridge::Threaded, NonDeferred);
 }
 
 TEST_F(Canvas2DLayerBridgeTest, testFullLifecycleThreadedDeferred)
 {
-    fullLifecycleTest(Threaded, Deferred);
+    fullLifecycleTest(Canvas2DLayerBridge::Threaded, Deferred);
 }
 
 } // namespace
