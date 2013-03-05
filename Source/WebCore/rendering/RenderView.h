@@ -446,6 +446,20 @@ private:
     RenderView* m_view;
 };
 
+class FragmentationDisabler {
+    WTF_MAKE_NONCOPYABLE(FragmentationDisabler);
+public:
+    FragmentationDisabler(RenderObject* root);
+    ~FragmentationDisabler();
+private:
+    RenderObject* m_root;
+    RenderObject::FlowThreadState m_flowThreadState;
+    bool m_fragmenting;
+#ifndef NDEBUG
+    LayoutState* m_layoutState;
+#endif
+};
+
 } // namespace WebCore
 
 #endif // RenderView_h

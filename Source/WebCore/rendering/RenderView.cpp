@@ -1147,4 +1147,42 @@ void RenderView::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
     info.addMember(m_legacyPrinting, "legacyPrinting");
 }
 
+FragmentationDisabler::FragmentationDisabler(RenderObject* root)
+{
+    RenderView* renderView = root->view();
+    ASSERT(renderView);
+
+    LayoutState* layoutState = renderView->layoutState();
+
+    m_root = root;
+    m_fragmenting = layoutState && layoutState->isPaginated();
+    m_flowThreadState = m_root->flowThreadState();
+#ifndef NDEBUG
+    m_layoutState = layoutState;
+#endif
+
+    if (layoutState)
+        layoutState->m_isPaginated = false;
+        
+    if (m_flowThreadState != RenderObject::NotInsideFlowThread)
+        m_root->setFlowThreadStateIncludingDescendants(RenderObject::NotInsideFlowThread);
+}
+
+FragmentationDisabler::~FragmentationDisabler()
+{
+    RenderView* renderView = m_root->view();
+    ASSERT(renderView);
+
+    LayoutState* layoutState = renderView->layoutState();
+#ifndef NDEBUG
+    ASSERT(m_layoutState == layoutState);
+#endif
+
+    if (layoutState)
+        layoutState->m_isPaginated = m_fragmenting;
+        
+    if (m_flowThreadState != RenderObject::NotInsideFlowThread)
+        m_root->setFlowThreadStateIncludingDescendants(m_flowThreadState);
+}
+
 } // namespace WebCore

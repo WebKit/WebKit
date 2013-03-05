@@ -281,6 +281,9 @@ void RenderObject::setFlowThreadStateIncludingDescendants(FlowThreadState state)
     setFlowThreadState(state);
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+        // If the child is a fragmentation context it already updated the descendants flag accordingly.
+        if (child->isRenderFlowThread())
+            continue;
         ASSERT(state != child->flowThreadState());
         child->setFlowThreadStateIncludingDescendants(state);
     }

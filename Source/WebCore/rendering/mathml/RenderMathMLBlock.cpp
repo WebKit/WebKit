@@ -76,10 +76,13 @@ static const int cLargeLogicalWidth = 15000;
 void RenderMathMLBlock::computeChildrenPreferredLogicalHeights()
 {
     ASSERT(needsLayout());
-    
+
+    // This is ugly, but disable fragmentation when computing the preferred heights.
+    FragmentationDisabler fragmentationDisabler(this);
+
     // Ensure a full repaint will happen after layout finishes.
     setNeedsLayout(true, MarkOnlyThis);
-    
+
     RenderView* renderView = view();
     bool hadLayoutState = renderView->layoutState();
     if (!hadLayoutState)

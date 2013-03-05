@@ -1,0 +1,45 @@
+<html>
+<head>
+    <title>Test for MathML crash</title>
+    <script src="../../fast/js/resources/js-test-pre.js"></script>
+    <style>
+    #example-text {
+       -webkit-flow-into: example-text-flow;
+       padding: 0;
+       margin: 0;
+    }
+    .regions {
+       -webkit-flow-from: example-text-flow;
+       border: 1px solid black;
+       width: 200px;
+       height: 50px;
+    }
+    </style>
+</head>
+<body>
+<div>
+    <p>Bug <a href="https://bugs.webkit.org/show_bug.cgi?id=110686">110686</a>: [CSS Regions] Crash when MathML used in CSS Regions</p>
+    <p>This test PASSES if it does not CRASH or ASSERT.</p>
+    <div id="example-text">
+        <div>
+            <math>
+                <mrow>
+                    <mn>2</mn>
+                    <mo>+</mo>
+                    <mn>4</mn>
+                </mrow>
+            </math>
+        </div>
+    </div>
+    <div class="regions"></div>
+</div>
+<script type="text/javascript">
+if (window.testRunner)
+    testRunner.dumpAsText();
+document.body.offsetTop;
+if (window.testRunner)
+    document.getElementById("example-text").style.display = "none";
+</script>
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
