@@ -41,7 +41,6 @@ struct SameSizeAsCompactHTMLToken  {
     String name;
     Vector<Attribute> vector;
     TextPosition textPosition;
-    OwnPtr<XSSInfo> xssInfo;
 };
 
 COMPILE_ASSERT(sizeof(CompactHTMLToken) == sizeof(SameSizeAsCompactHTMLToken), CompactHTMLToken_should_stay_small);
@@ -89,19 +88,6 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
     }
 }
 
-CompactHTMLToken::CompactHTMLToken(const CompactHTMLToken& other)
-    : m_type(other.m_type)
-    , m_selfClosing(other.m_selfClosing)
-    , m_isAll8BitData(other.m_isAll8BitData)
-    , m_doctypeForcesQuirks(other.m_doctypeForcesQuirks)
-    , m_data(other.m_data)
-    , m_attributes(other.m_attributes)
-    , m_textPosition(other.m_textPosition)
-{
-    if (other.m_xssInfo)
-        m_xssInfo = adoptPtr(new XSSInfo(*other.m_xssInfo));
-}
-
 const CompactHTMLToken::Attribute* CompactHTMLToken::getAttributeItem(const QualifiedName& name) const
 {
     for (unsigned i = 0; i < m_attributes.size(); ++i) {
@@ -119,19 +105,7 @@ bool CompactHTMLToken::isSafeToSendToAnotherThread() const
         if (!it->value.isSafeToSendToAnotherThread())
             return false;
     }
-    if (m_xssInfo && !m_xssInfo->isSafeToSendToAnotherThread())
-        return false;
     return m_data.isSafeToSendToAnotherThread();
-}
-
-XSSInfo* CompactHTMLToken::xssInfo() const
-{
-    return m_xssInfo.get();
-}
-
-void CompactHTMLToken::setXSSInfo(PassOwnPtr<XSSInfo> xssInfo)
-{
-    m_xssInfo = xssInfo;
 }
 
 }

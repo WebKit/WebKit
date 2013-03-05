@@ -393,13 +393,17 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
     m_currentChunk = chunk;
     OwnPtr<CompactHTMLTokenStream> tokens = m_currentChunk->tokens.release();
 
+    for (XSSInfoStream::const_iterator it = m_currentChunk->xssInfos.begin(); it != m_currentChunk->xssInfos.end(); ++it) {
+        m_textPosition = (*it)->m_textPosition;
+        m_xssAuditorDelegate.didBlockScript(**it); 
+        if (isStopped())
+            break;
+    }
+
     for (Vector<CompactHTMLToken>::const_iterator it = tokens->begin(); it != tokens->end(); ++it) {
         ASSERT(!isWaitingForScripts());
 
         m_textPosition = it->textPosition();
-
-        if (XSSInfo* xssInfo = it->xssInfo())
-            m_xssAuditorDelegate.didBlockScript(*xssInfo);
 
         constructTreeFromCompactHTMLToken(*it);
 

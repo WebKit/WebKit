@@ -59,6 +59,12 @@ static void checkThatPreloadsAreSafeToSendToAnotherThread(const PreloadRequestSt
         ASSERT(preloads[i]->isSafeToSendToAnotherThread());
 }
 
+static void checkThatXSSInfosAreSafeToSendToAnotherThread(const XSSInfoStream& xssInfos)
+{
+    for (size_t i = 0; i < xssInfos.size(); ++i)
+        ASSERT(xssInfos[i]->isSafeToSendToAnotherThread());
+}
+
 #endif
 
 static bool tokenExitsForeignContent(const CompactHTMLToken& token)
@@ -247,11 +253,14 @@ void BackgroundHTMLParser::pumpTokenizer()
         m_sourceTracker.end(m_input.current(), m_tokenizer.get(), *m_token);
 
         {
-            OwnPtr<XSSInfo> xssInfo = m_xssAuditor->filterToken(FilterTokenRequest(*m_token, m_sourceTracker, m_tokenizer->shouldAllowCDATA()));
-            CompactHTMLToken token(m_token.get(), TextPosition(m_input.current().currentLine(), m_input.current().currentColumn()));
+            TextPosition position = TextPosition(m_input.current().currentLine(), m_input.current().currentColumn());
 
-            if (xssInfo)
-                token.setXSSInfo(xssInfo.release());
+            if (OwnPtr<XSSInfo> xssInfo = m_xssAuditor->filterToken(FilterTokenRequest(*m_token, m_sourceTracker, m_tokenizer->shouldAllowCDATA()))) {
+                xssInfo->m_textPosition = position;
+                m_pendingXSSInfos.append(xssInfo.release());
+            }
+
+            CompactHTMLToken token(m_token.get(), TextPosition(m_input.current().currentLine(), m_input.current().currentColumn()));
 
             m_preloadScanner->scan(token, m_pendingPreloads);
 
@@ -275,11 +284,13 @@ void BackgroundHTMLParser::sendTokensToMainThread()
 #ifndef NDEBUG
     checkThatTokensAreSafeToSendToAnotherThread(m_pendingTokens.get());
     checkThatPreloadsAreSafeToSendToAnotherThread(m_pendingPreloads);
+    checkThatXSSInfosAreSafeToSendToAnotherThread(m_pendingXSSInfos);
 #endif
 
     OwnPtr<HTMLDocumentParser::ParsedChunk> chunk = adoptPtr(new HTMLDocumentParser::ParsedChunk);
     chunk->tokens = m_pendingTokens.release();
     chunk->preloads.swap(m_pendingPreloads);
+    chunk->xssInfos.swap(m_pendingXSSInfos);
     chunk->tokenizerState = m_tokenizer->state();
     chunk->inputCheckpoint = m_input.createCheckpoint();
     chunk->preloadScannerCheckpoint = m_preloadScanner->createCheckpoint();

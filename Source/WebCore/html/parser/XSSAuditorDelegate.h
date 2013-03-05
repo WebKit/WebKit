@@ -27,7 +27,10 @@
 #define XSSAuditorDelegate_h
 
 #include "KURL.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
+#include <wtf/Vector.h>
+#include <wtf/text/TextPosition.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
@@ -47,6 +50,7 @@ public:
     String m_originalURL;
     String m_originalHTTPBody;
     bool m_didBlockEntirePage;
+    TextPosition m_textPosition;
 
 private:
     XSSInfo(const KURL& reportURL, const String& originalURL, const String& originalHTTPBody, bool didBlockEntirePage)
@@ -68,6 +72,8 @@ private:
     Document* m_document;
     bool m_didNotifyClient;
 };
+
+typedef Vector<OwnPtr<XSSInfo> > XSSInfoStream;
 
 }
 

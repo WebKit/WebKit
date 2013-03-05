@@ -35,6 +35,7 @@
 #include "HTMLSourceTracker.h"
 #include "HTMLToken.h"
 #include "HTMLTokenizer.h"
+#include "XSSAuditorDelegate.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
@@ -105,6 +106,7 @@ private:
 
     OwnPtr<CompactHTMLTokenStream> m_pendingTokens;
     PreloadRequestStream m_pendingPreloads;
+    XSSInfoStream m_pendingXSSInfos;
 
     OwnPtr<XSSAuditor> m_xssAuditor;
     OwnPtr<TokenPreloadScanner> m_preloadScanner;

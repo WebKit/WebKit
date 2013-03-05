@@ -40,7 +40,6 @@
 namespace WebCore {
 
 class QualifiedName;
-class XSSInfo;
 
 class CompactHTMLToken {
 public:
@@ -56,7 +55,6 @@ public:
     };
 
     CompactHTMLToken(const HTMLToken*, const TextPosition&);
-    CompactHTMLToken(const CompactHTMLToken&);
 
     bool isSafeToSendToAnotherThread() const;
 
@@ -73,8 +71,6 @@ public:
     const String& publicIdentifier() const { return m_attributes[0].name; }
     const String& systemIdentifier() const { return m_attributes[0].value; }
     bool doctypeForcesQuirks() const { return m_doctypeForcesQuirks; }
-    XSSInfo* xssInfo() const;
-    void setXSSInfo(PassOwnPtr<XSSInfo>);
 
 private:
     unsigned m_type : 4;
@@ -85,17 +81,10 @@ private:
     String m_data; // "name", "characters", or "data" depending on m_type
     Vector<Attribute> m_attributes;
     TextPosition m_textPosition;
-    OwnPtr<XSSInfo> m_xssInfo;
 };
 
 typedef Vector<CompactHTMLToken> CompactHTMLTokenStream;
 
-}
-
-namespace WTF {
-// This is required for a struct with OwnPtr. We know CompactHTMLToken is simple enough that
-// initializing to 0 and moving with memcpy (and then not destructing the original) will work.
-template<> struct VectorTraits<WebCore::CompactHTMLToken> : SimpleClassVectorTraits { };
 }
 
 #endif // ENABLE(THREADED_HTML_PARSER)
