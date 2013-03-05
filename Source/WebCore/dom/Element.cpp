@@ -1708,9 +1708,7 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
         return 0;
     }
 
-    const QualifiedName& attrName = attrNode->qualifiedName();
-
-    RefPtr<Attr> oldAttrNode = attrIfExists(attrName);
+    RefPtr<Attr> oldAttrNode = attrIfExists(attrNode->qualifiedName());
     if (oldAttrNode.get() == attrNode)
         return attrNode; // This Attr is already attached to the element.
 
@@ -1724,16 +1722,15 @@ PassRefPtr<Attr> Element::setAttributeNode(Attr* attrNode, ExceptionCode& ec)
     synchronizeAllAttributes();
     UniqueElementData* elementData = ensureUniqueElementData();
 
-    const QualifiedName& caseAdjustedName = shouldIgnoreAttributeCase(this) ? QualifiedName(attrName.prefix(), attrName.localName().lower(), attrName.namespaceURI()) : attrName;
-    size_t index = elementData->getAttributeItemIndex(caseAdjustedName);
+    size_t index = elementData->getAttributeItemIndex(attrNode->qualifiedName());
     if (index != notFound) {
         if (oldAttrNode)
             detachAttrNodeFromElementWithValue(oldAttrNode.get(), elementData->attributeItem(index)->value());
         else
-            oldAttrNode = Attr::create(document(), attrName, elementData->attributeItem(index)->value());
+            oldAttrNode = Attr::create(document(), attrNode->qualifiedName(), elementData->attributeItem(index)->value());
     }
 
-    setAttributeInternal(index, index != notFound ? caseAdjustedName : attrName, attrNode->value(), NotInSynchronizationOfLazyAttribute);
+    setAttributeInternal(index, attrNode->qualifiedName(), attrNode->value(), NotInSynchronizationOfLazyAttribute);
 
     attrNode->attachToElement(this);
     ensureAttrNodeListForElement(this)->append(attrNode);
