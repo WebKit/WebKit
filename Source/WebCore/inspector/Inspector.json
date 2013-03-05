@@ -3662,11 +3662,12 @@
                 "description": "Information about a compositing layer.",
                 "properties": [
                     { "name": "layerId", "$ref": "LayerId", "description": "The unique id for this layer." },
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The id for the node associated with this layer." },
                     { "name": "bounds", "$ref": "IntRect", "description": "Bounds of the layer." },
-                    { "name": "isComposited", "type": "boolean", "optional": true, "description": "Indicates whether this layer is composited." },
-                    { "name": "paintCount", "type": "integer", "optional": true, "description": "Indicates how many time this layer has painted." },
-                    { "name": "memory", "type": "integer", "optional": true, "description": "Estimated memory used by this layer." },
-                    { "name": "compositedBounds", "$ref": "IntRect", "optional": true, "description": "The bounds of the composited layer." }
+                    { "name": "paintCount", "type": "integer", "description": "Indicates how many time this layer has painted." },
+                    { "name": "memory", "type": "integer", "description": "Estimated memory used by this layer." },
+                    { "name": "compositedBounds", "$ref": "IntRect", "description": "The bounds of the composited layer." },
+                    { "name": "isInShadowTree", "type": "boolean", "optional": true, "description": "Indicates whether this layer is associated with an element hosted in a shadow tree." }
                 ]
             }
         ],
@@ -3678,6 +3679,15 @@
             {
                 "name": "disable",
                 "description": "Disables compositing tree inspection."
+            },
+            {
+                "name": "layersForNode",
+                "parameters": [
+                    { "name": "nodeId", "$ref": "DOM.NodeId", "description": "Root of the subtree for which we want to gather layers." }                ],
+                "description": "Returns the layer tree structure of the current page.",
+                "returns": [
+                    { "name": "layers", "type": "array", "items": { "$ref": "Layer" }, "description": "Child layers." }
+                ]
             }
         ],
         "events": [

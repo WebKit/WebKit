@@ -66,6 +66,7 @@ public:
     // Called from the front-end.
     virtual void enable(ErrorString*);
     virtual void disable(ErrorString*);
+    virtual void layersForNode(ErrorString*, int nodeId, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer> >&);
 
 private:
     InspectorLayerTreeAgent(InstrumentingAgents*, InspectorCompositeState*);
@@ -74,8 +75,13 @@ private:
     String bind(const RenderLayer*);
     void unbind(const RenderLayer*);
 
-    PassRefPtr<TypeBuilder::LayerTree::Layer> buildObjectForLayer(RenderLayer*);
+    void gatherLayersUsingRenderObjectHierarchy(ErrorString*, RenderObject*, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer> >&);
+    void gatherLayersUsingRenderLayerHierarchy(ErrorString*, RenderLayer*, RefPtr<TypeBuilder::Array<TypeBuilder::LayerTree::Layer> >&);
+
+    PassRefPtr<TypeBuilder::LayerTree::Layer> buildObjectForLayer(ErrorString*, RenderLayer*);
     PassRefPtr<TypeBuilder::LayerTree::IntRect> buildObjectForIntRect(const IntRect&);
+
+    int idForNode(ErrorString*, Node*);
         
     InspectorFrontend::LayerTree* m_frontend;
 

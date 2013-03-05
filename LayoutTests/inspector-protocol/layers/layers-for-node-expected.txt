@@ -1,0 +1,267 @@
+
+=== Enable the LayerTree agent ===
+
+PASS
+
+=== Get the Document ===
+
+PASS
+
+=== Get the initial layer tree ===
+
+PASS
+
+[
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": "number",
+            "height": "number"
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": "number",
+            "height": "number"
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 100,
+            "height": 100
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 100,
+            "height": 100
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": "number",
+            "height": "number"
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": "number",
+            "height": "number"
+        },
+        "paintCount": "number"
+    }
+]
+
+=== Message the page to add a new composited layer ===
+
+PASS
+
+=== Get the modified layer tree ===
+
+PASS
+
+[
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": "number",
+            "height": "number"
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": "number",
+            "height": "number"
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 100,
+            "height": 100
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 100,
+            "height": 100
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": "number",
+            "height": "number"
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": "number",
+            "height": "number"
+        },
+        "paintCount": "number"
+    },
+    {
+        "layerId": "string",
+        "nodeId": "number",
+        "bounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "memory": "number",
+        "compositedBounds": {
+            "x": 0,
+            "y": 0,
+            "width": 50,
+            "height": 50
+        },
+        "paintCount": "number"
+    }
+]
+
+=== Get attributes for the newly inserted node ===
+
+PASS
+
+=== Test complete, all expected conditions met ===
+
