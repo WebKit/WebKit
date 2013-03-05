@@ -35,64 +35,66 @@
 
 namespace WebCore {
 
-    class SecurityOrigin;
-    class StorageMap;
-    class StorageAreaSync;
+class SecurityOrigin;
+class StorageMap;
+class StorageAreaSync;
 
-    class StorageAreaImpl : public StorageArea {
-    public:
-        static PassRefPtr<StorageAreaImpl> create(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
-        virtual ~StorageAreaImpl();
+class StorageAreaImpl : public StorageArea {
+public:
+    static PassRefPtr<StorageAreaImpl> create(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
+    virtual ~StorageAreaImpl();
 
-        // The HTML5 DOM Storage API (and contains)
-        virtual unsigned length(ExceptionCode&, Frame* sourceFrame) OVERRIDE;
-        virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
-        virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
-        virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
-        virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
-        virtual void clear(ExceptionCode&, Frame* sourceFrame) OVERRIDE;
-        virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    // The HTML5 DOM Storage API (and contains)
+    virtual unsigned length(ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual String key(unsigned index, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual String getItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual void setItem(const String& key, const String& value, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual void removeItem(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual void clear(ExceptionCode&, Frame* sourceFrame) OVERRIDE;
+    virtual bool contains(const String& key, ExceptionCode&, Frame* sourceFrame) OVERRIDE;
 
-        virtual bool canAccessStorage(Frame* sourceFrame) OVERRIDE;
+    virtual bool canAccessStorage(Frame* sourceFrame) OVERRIDE;
 
-        virtual size_t memoryBytesUsedByCache() OVERRIDE;
+    virtual size_t memoryBytesUsedByCache() OVERRIDE;
 
-        virtual void incrementAccessCount();
-        virtual void decrementAccessCount();
-        virtual void closeDatabaseIfIdle();
+    virtual void incrementAccessCount();
+    virtual void decrementAccessCount();
+    virtual void closeDatabaseIfIdle();
 
-        PassRefPtr<StorageAreaImpl> copy();
-        void close();
+    PassRefPtr<StorageAreaImpl> copy();
+    void close();
 
-        // Only called from a background thread.
-        void importItems(const HashMap<String, String>& items);
+    // Only called from a background thread.
+    void importItems(const HashMap<String, String>& items);
 
-        // Used to clear a StorageArea and close db before backing db file is deleted.
-        void clearForOriginDeletion();
+    // Used to clear a StorageArea and close db before backing db file is deleted.
+    void clearForOriginDeletion();
 
-        void sync();
+    void sync();
 
-    private:
-        StorageAreaImpl(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
-        explicit StorageAreaImpl(StorageAreaImpl*);
+private:
+    StorageAreaImpl(StorageType, PassRefPtr<SecurityOrigin>, PassRefPtr<StorageSyncManager>, unsigned quota);
+    explicit StorageAreaImpl(StorageAreaImpl*);
 
-        void blockUntilImportComplete() const;
-        void closeDatabaseTimerFired(Timer<StorageAreaImpl>*);
-        bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const;
+    void blockUntilImportComplete() const;
+    void closeDatabaseTimerFired(Timer<StorageAreaImpl>*);
+    bool disabledByPrivateBrowsingInFrame(const Frame* sourceFrame) const;
 
-        StorageType m_storageType;
-        RefPtr<SecurityOrigin> m_securityOrigin;
-        RefPtr<StorageMap> m_storageMap;
+    void dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame);
 
-        RefPtr<StorageAreaSync> m_storageAreaSync;
-        RefPtr<StorageSyncManager> m_storageSyncManager;
+    StorageType m_storageType;
+    RefPtr<SecurityOrigin> m_securityOrigin;
+    RefPtr<StorageMap> m_storageMap;
+
+    RefPtr<StorageAreaSync> m_storageAreaSync;
+    RefPtr<StorageSyncManager> m_storageSyncManager;
 
 #ifndef NDEBUG
-        bool m_isShutdown;
+    bool m_isShutdown;
 #endif
-        unsigned m_accessCount;
-        Timer<StorageAreaImpl> m_closeDatabaseTimer;
-    };
+    unsigned m_accessCount;
+    Timer<StorageAreaImpl> m_closeDatabaseTimer;
+};
 
 } // namespace WebCore
 

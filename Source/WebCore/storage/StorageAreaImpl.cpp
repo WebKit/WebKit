@@ -199,7 +199,8 @@ void StorageAreaImpl::setItem(const String& key, const String& value, ExceptionC
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleItemForSync(key, value);
-    StorageEventDispatcher::dispatch(key, oldValue, value, m_storageType, m_securityOrigin.get(), frame);
+
+    dispatchStorageEvent(key, oldValue, value, frame);
 }
 
 void StorageAreaImpl::removeItem(const String& key, ExceptionCode& ec, Frame* frame)
@@ -226,7 +227,7 @@ void StorageAreaImpl::removeItem(const String& key, ExceptionCode& ec, Frame* fr
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleItemForSync(key, String());
-    StorageEventDispatcher::dispatch(key, oldValue, String(), m_storageType, m_securityOrigin.get(), frame);
+    dispatchStorageEvent(key, oldValue, String(), frame);
 }
 
 void StorageAreaImpl::clear(ExceptionCode& ec, Frame* frame)
@@ -251,7 +252,7 @@ void StorageAreaImpl::clear(ExceptionCode& ec, Frame* frame)
 
     if (m_storageAreaSync)
         m_storageAreaSync->scheduleClear();
-    StorageEventDispatcher::dispatch(String(), String(), String(), m_storageType, m_securityOrigin.get(), frame);
+    dispatchStorageEvent(String(), String(), String(), frame);
 }
 
 bool StorageAreaImpl::contains(const String& key, ExceptionCode& ec, Frame* frame)
@@ -360,4 +361,9 @@ void StorageAreaImpl::closeDatabaseIfIdle()
     }
 }
 
+void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
+{
+    StorageEventDispatcher::dispatch(key, oldValue, newValue, m_storageType, m_securityOrigin.get(), sourceFrame);
 }
+
+} // namespace WebCore
