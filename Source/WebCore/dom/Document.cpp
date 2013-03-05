@@ -5869,18 +5869,11 @@ void Document::updateHoverActiveState(const HitTestRequest& request, HitTestResu
     bool mustBeInActiveChain = request.active() && request.move();
 
     RefPtr<Node> oldHoverNode = hoverNode();
-    // Clear the :hover chain when the touch gesture is over.
-    if (request.touchRelease()) {
-        if (oldHoverNode) {
-            for (RenderObject* curr = oldHoverNode->renderer(); curr; curr = curr->hoverAncestor()) {
-                if (curr->node() && !curr->isText())
-                    curr->node()->setHovered(false);
-            }
-            setHoverNode(0);
-        }
-        // A touch release can not set new hover or active target.
-        return;
-    }
+
+    // A touch release does not set a new hover target; setting the element we're working with to 0
+    // will clear the chain of hovered elements all the way to the top of the tree.
+    if (request.touchRelease())
+        innerElementInDocument = 0;
 
     // Check to see if the hovered node has changed.
     // If it hasn't, we do not need to do anything.
