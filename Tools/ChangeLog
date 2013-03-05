@@ -1,3 +1,9 @@
+2013-03-04  Roger Fong  <roger_fong@apple.com>
+
+        Unreviewed. Get rid of some AppleWin VS2010 build warnings.
+
+        * DumpRenderTree/DumpRenderTree.vcxproj/TestNetscapePlugin/TestNetscapePluginCommon.props:
+
 2013-03-04  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r144657): Fix DumpRenderTree build failure on iOS
