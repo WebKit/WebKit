@@ -39,6 +39,8 @@ public:
 private:
     virtual const char* renderName() const OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
+    virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) OVERRIDE;
+    virtual LayoutUnit initialLogicalWidth() const OVERRIDE;
 };
 
 } // namespace WebCore

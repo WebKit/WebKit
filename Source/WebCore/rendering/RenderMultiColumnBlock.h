@@ -52,8 +52,10 @@ private:
     
     virtual const char* renderName() const;
 
-    virtual void layoutBlock(bool relayoutChildren, LayoutUnit pageLogicalHeight = 0) OVERRIDE;
+    virtual RenderObject* layoutSpecialExcludedChild(bool relayoutChildren) OVERRIDE;
 
+    virtual void styleDidChange(StyleDifference, const RenderStyle*) OVERRIDE;
+    
     virtual bool updateLogicalWidthAndColumnWidth() OVERRIDE;
     virtual void checkForPaginationLogicalHeightChange(LayoutUnit& pageLogicalHeight, bool& pageLogicalHeightChanged, bool& hasSpecifiedPageLogicalHeight) OVERRIDE;
     virtual bool relayoutForPagination(bool hasSpecifiedPageLogicalHeight, LayoutUnit pageLogicalHeight, LayoutStateMaintainer&) OVERRIDE;

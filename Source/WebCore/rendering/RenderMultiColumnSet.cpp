@@ -65,15 +65,27 @@ LayoutUnit RenderMultiColumnSet::pageLogicalTopForOffset(LayoutUnit offset) cons
 
 void RenderMultiColumnSet::updateLogicalWidth()
 {
-    // Our logical width starts off matching the column block itself.
-    // This width will be fixed up after the flow thread lays out once it is determined exactly how many
-    // columns we ended up holding.
+    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    setComputedColumnWidthAndCount(parentBlock->columnWidth(), parentBlock->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
+    
     // FIXME: When we add regions support, we'll start it off at the width of the multi-column
     // block in that particular region.
     setLogicalWidth(parentBox()->contentLogicalWidth());
+
+    // If we overflow, increase our logical width.
+    unsigned colCount = columnCount();
+    if (!colCount)
+        return;
     
-    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
-    setComputedColumnWidthAndCount(parentBlock->columnWidth(), parentBlock->columnCount()); // FIXME: This will eventually vary if we are contained inside regions.
+    LayoutUnit colGap = columnGap();
+    LayoutUnit minimumContentLogicalWidth = colCount * computedColumnWidth() + (colCount - 1) * colGap;
+    LayoutUnit currentContentLogicalWidth = contentLogicalWidth();
+    LayoutUnit delta = max(LayoutUnit(), minimumContentLogicalWidth - currentContentLogicalWidth);
+    if (!delta)
+        return;
+
+    // Increase our logical width by the delta.
+    setLogicalWidth(logicalWidth() + delta);
 }
 
 void RenderMultiColumnSet::updateLogicalHeight()
@@ -207,31 +219,6 @@ LayoutRect RenderMultiColumnSet::flowThreadPortionOverflowRect(const LayoutRect&
         }
     }
     return overflowRectForFlowThreadPortion(overflowRect, isFirstRegion() && isFirstColumn, isLastRegion() && isLastColumn);
-}
-
-void RenderMultiColumnSet::setFlowThreadPortionRect(const LayoutRect& rect)
-{
-    RenderRegion::setFlowThreadPortionRect(rect);
-    
-    // Mutate the dimensions of the column set once our flow portion is set if the flow portion has more columns
-    // than can fit inside our current dimensions.
-    unsigned colCount = columnCount();
-    if (!colCount)
-        return;
-    
-    LayoutUnit colGap = columnGap();
-    LayoutUnit minimumContentLogicalWidth = colCount * computedColumnWidth() + (colCount - 1) * colGap;
-    LayoutUnit currentContentLogicalWidth = contentLogicalWidth();
-    LayoutUnit delta = max(LayoutUnit(), minimumContentLogicalWidth - currentContentLogicalWidth);
-    if (!delta)
-        return;
-
-    // Increase our logical width by the delta.
-    setLogicalWidth(logicalWidth() + delta);
-    
-    // Shift our position left by the delta if we are RTL.
-    if (!style()->isLeftToRightDirection())
-        setLogicalLeft(logicalLeft() - delta);
 }
 
 void RenderMultiColumnSet::paintObject(PaintInfo& paintInfo, const LayoutPoint& paintOffset)

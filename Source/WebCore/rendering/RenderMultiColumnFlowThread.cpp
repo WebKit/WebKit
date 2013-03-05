@@ -27,6 +27,7 @@
 #include "RenderMultiColumnFlowThread.h"
 
 #include "RenderMultiColumnBlock.h"
+#include "RenderMultiColumnSet.h"
 
 namespace WebCore {
 
@@ -50,6 +51,52 @@ void RenderMultiColumnFlowThread::computeLogicalHeight(LayoutUnit logicalHeight,
     // We simply remain at our intrinsic height.
     computedValues.m_extent = logicalHeight;
     computedValues.m_position = logicalTop;
+}
+
+LayoutUnit RenderMultiColumnFlowThread::initialLogicalWidth() const
+{
+    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    return parentBlock->columnWidth();
+}
+
+void RenderMultiColumnFlowThread::autoGenerateRegionsToBlockOffset(LayoutUnit /*offset*/)
+{
+    // This function ensures we have the correct column set information at all times.
+    // For a simple multi-column layout in continuous media, only one column set child is required.
+    // Once a column is nested inside an enclosing pagination context, the number of column sets
+    // required becomes 2n-1, where n is the total number of nested pagination contexts. For example:
+    //
+    // Column layout with no enclosing pagination model = 2 * 1 - 1 = 1 column set.
+    // Columns inside pages = 2 * 2 - 1 = 3 column sets (bottom of first page, all the subsequent pages, then the last page).
+    // Columns inside columns inside pages = 2 * 3 - 1 = 5 column sets.
+    //
+    // In addition, column spans will force a column set to "split" into before/after sets around the spanning element.
+    //
+    // Finally, we will need to deal with columns inside regions. If regions have variable widths, then there will need
+    // to be unique column sets created inside any region whose width is different from its surrounding regions. This is
+    // actually pretty similar to the spanning case, in that we break up the column sets whenever the width varies.
+    //
+    // FIXME: For now just make one column set. This matches the old multi-column code.
+    // Right now our goal is just feature parity with the old multi-column code so that we can switch over to the
+    // new code as soon as possible.
+    RenderMultiColumnSet* firstSet = toRenderMultiColumnSet(firstRegion());
+    if (firstSet)
+        return;
+    
+    invalidateRegions();
+
+    RenderMultiColumnBlock* parentBlock = toRenderMultiColumnBlock(parent());
+    firstSet = RenderMultiColumnSet::createAnonymous(this);
+    firstSet->setStyle(RenderStyle::createAnonymousStyleWithDisplay(parentBlock->style(), BLOCK));
+    parentBlock->RenderBlock::addChild(firstSet);
+    
+    // Even though we aren't placed yet, we can go ahead and set up our size.
+    firstSet->updateLogicalWidth();
+    firstSet->updateLogicalHeight();
+
+    firstSet->setRequiresBalancing(parentBlock->requiresBalancing());
+    
+    validateRegions();
 }
 
 }

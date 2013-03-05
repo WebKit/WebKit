@@ -268,7 +268,7 @@ void RenderRegion::layoutBlock(bool relayoutChildren, LayoutUnit)
         if (view()->checkTwoPassLayoutForAutoHeightRegions() && hasAutoLogicalHeight())
             view()->flowThreadController()->setNeedsTwoPassLayoutForAutoHeightRegions(true);
 
-        if (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight()) {
+        if (!isRenderRegionSet() && (oldRegionRect.width() != pageLogicalWidth() || oldRegionRect.height() != pageLogicalHeight())) {
             m_flowThread->invalidateRegions();
             if (view()->checkTwoPassLayoutForAutoHeightRegions())
                 view()->flowThreadController()->setNeedsTwoPassLayoutForAutoHeightRegions(true);

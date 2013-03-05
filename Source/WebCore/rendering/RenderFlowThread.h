@@ -86,6 +86,7 @@ public:
     bool hasRegionsWithStyling() const { return m_hasRegionsWithStyling; }
     void checkRegionsWithStyling();
 
+    void validateRegions();
     void invalidateRegions();
     bool hasValidRegionInfo() const { return !m_regionsInvalidated && !m_regionList.isEmpty(); }
 
@@ -95,11 +96,16 @@ public:
 
     void repaintRectangleInRegions(const LayoutRect&, bool immediate) const;
 
-    LayoutUnit pageLogicalTopForOffset(LayoutUnit) const;
-    LayoutUnit pageLogicalWidthForOffset(LayoutUnit) const;
-    LayoutUnit pageLogicalHeightForOffset(LayoutUnit) const;
-    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit, PageBoundaryRule = IncludePageBoundary) const;
-    RenderRegion* regionAtBlockOffset(LayoutUnit, bool extendLastRegion = false) const;
+    LayoutUnit pageLogicalTopForOffset(LayoutUnit);
+    LayoutUnit pageLogicalWidthForOffset(LayoutUnit);
+    LayoutUnit pageLogicalHeightForOffset(LayoutUnit);
+    LayoutUnit pageRemainingLogicalHeightForOffset(LayoutUnit, PageBoundaryRule = IncludePageBoundary);
+    
+    enum RegionAutoGenerationPolicy {
+        AllowRegionAutoGeneration,
+        DisallowRegionAutoGeneration,
+    };
+    RenderRegion* regionAtBlockOffset(LayoutUnit, bool extendLastRegion = false, RegionAutoGenerationPolicy = AllowRegionAutoGeneration);
 
     bool regionsHaveUniformLogicalWidth() const { return m_regionsHaveUniformLogicalWidth; }
     bool regionsHaveUniformLogicalHeight() const { return m_regionsHaveUniformLogicalHeight; }
@@ -151,6 +157,10 @@ public:
 protected:
     virtual const char* renderName() const = 0;
 
+    // Overridden by columns/pages to set up an initial logical width of the page width even when
+    // no regions have been generated yet.
+    virtual LayoutUnit initialLogicalWidth() const { return 0; };
+
     void updateRegionsFlowThreadPortionRect();
     bool shouldRepaint(const LayoutRect&) const;
     bool regionInRange(const RenderRegion* targetRegion, const RenderRegion* startRegion, const RenderRegion* endRegion) const;
@@ -164,6 +174,8 @@ protected:
     virtual void dispatchRegionLayoutUpdateEvent() { m_dispatchRegionLayoutUpdateEvent = false; }
 
     void initializeRegionsOverrideLogicalContentHeight(RenderRegion* = 0);
+
+    virtual void autoGenerateRegionsToBlockOffset(LayoutUnit) { };
 
     RenderRegionList m_regionList;
 

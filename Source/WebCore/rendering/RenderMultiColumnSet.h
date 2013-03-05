@@ -87,11 +87,12 @@ public:
     bool requiresBalancing() const { return m_requiresBalancing; }
     void setRequiresBalancing(bool balancing) { m_requiresBalancing = balancing; }
 
+    virtual void updateLogicalWidth() OVERRIDE;
+    virtual void updateLogicalHeight() OVERRIDE;
+    
 private:
     RenderMultiColumnSet(RenderFlowThread*);
 
-    virtual void updateLogicalWidth() OVERRIDE;
-    virtual void updateLogicalHeight() OVERRIDE;
     virtual void computeLogicalHeight(LayoutUnit logicalHeight, LayoutUnit logicalTop, LogicalExtentComputedValues&) const OVERRIDE;
 
     virtual void paintObject(PaintInfo&, const LayoutPoint& paintOffset) OVERRIDE;
@@ -122,7 +123,6 @@ private:
 
     LayoutRect flowThreadPortionRectAt(unsigned index) const;
     LayoutRect flowThreadPortionOverflowRect(const LayoutRect& flowThreadPortion, unsigned index, unsigned colCount, LayoutUnit colGap) const;
-    virtual void setFlowThreadPortionRect(const LayoutRect&) OVERRIDE;
     
     unsigned columnIndexAtOffset(LayoutUnit) const;
     
