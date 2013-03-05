@@ -144,8 +144,8 @@ public:
 
     void restoreHistoryViewState(const WebCore::IntPoint& scrollPosition, double scale, bool shouldReflowBlock);
 
-    // Perform actual zoom for block zoom.
-    void zoomBlock();
+    // Perform actual zoom for after zoom animation.
+    void zoomAnimationFinished(double finalScale, const WebCore::FloatPoint& finalDocumentScrollPosition, bool shouldConstrainScrollingToContentEdge);
 
     // Called by the backing store as well as the method below.
     void requestLayoutIfNeeded() const;
@@ -545,15 +545,12 @@ public:
     bool m_forceRespectViewportArguments;
 
     // Block zoom & zoom/scroll animation data.
-    WebCore::FloatPoint m_finalAnimationDocumentScrollPosition;
     WebCore::FloatPoint m_finalAnimationDocumentScrollPositionReflowOffset;
-    double m_finalAnimationScale;
     RefPtr<WebCore::Node> m_currentPinchZoomNode;
     WebCore::FloatPoint m_anchorInNodeRectRatio;
     RefPtr<WebCore::Node> m_currentBlockZoomNode;
     RefPtr<WebCore::Node> m_currentBlockZoomAdjustedNode;
     bool m_shouldReflowBlock;
-    bool m_shouldConstrainScrollingToContentEdge;
 
     double m_lastUserEventTimestamp; // Used to detect user scrolling.
 

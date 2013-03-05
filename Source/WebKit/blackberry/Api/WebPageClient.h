@@ -203,7 +203,7 @@ public:
 
     virtual BlackBerry::Platform::ViewportAccessor* userInterfaceViewportAccessor() const = 0;
 
-    virtual void animateBlockZoom(double finalScale, const Platform::FloatPoint& finalDocumentScrollPosition) = 0;
+    virtual void animateToScaleAndDocumentScrollPosition(double finalScale, const Platform::FloatPoint& finalDocumentScrollPosition, bool shouldConstrainScrollingToContentEdge) = 0;
 
     virtual void setPreventsScreenIdleDimming(bool noDimming) = 0;
     virtual bool authenticationChallenge(const unsigned short* realm, unsigned realmLength, BlackBerry::Platform::String& username, BlackBerry::Platform::String& password) = 0;

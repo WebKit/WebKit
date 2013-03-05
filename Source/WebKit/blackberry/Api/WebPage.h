@@ -192,7 +192,7 @@ public:
     InRegionScroller* inRegionScroller() const;
 
     bool blockZoom(const Platform::IntPoint& documentTargetPoint);
-    void blockZoomAnimationFinished();
+    void zoomAnimationFinished(double finalScale, const Platform::FloatPoint& finalDocumentScrollPosition, bool shouldConstrainScrollingToContentEdge);
     void resetBlockZoom();
     bool isAtInitialZoom() const;
     bool isMaxZoomed() const;

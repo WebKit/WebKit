@@ -1,3 +1,32 @@
+2013-03-05  Andrew Lo  <anlo@rim.com>
+
+        [BlackBerry] Clean up animated scroll/zoom code in WebPagePrivate
+        https://bugs.webkit.org/show_bug.cgi?id=111373
+
+        Reviewed by Rob Buis.
+
+        Internally reviewed by Jakob Petsovits.
+        Internal PR 285468.
+
+        Have WebPageClient pass the final scale and position to WebPage when a zoom/scroll
+        animation finishes, rather than keeping those values as instance variables in
+        WebPagePrivate.
+
+        Rename some functions & variables to reflect that they are used for both block zoom
+        and generic zoom/scroll animations.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::WebPagePrivate):
+        (BlackBerry::WebKit::WebPagePrivate::zoomAnimationFinished):
+        (BlackBerry::WebKit::WebPage::zoomAnimationFinished):
+        (BlackBerry::WebKit::WebPagePrivate::resetBlockZoom):
+        (BlackBerry::WebKit::WebPage::blockZoom):
+        (BlackBerry::WebKit::WebPagePrivate::animateToScaleAndDocumentScrollPosition):
+        * Api/WebPage.h:
+        * Api/WebPageClient.h:
+        * Api/WebPage_p.h:
+        (WebPagePrivate):
+
 2013-03-04  Iris Wu  <shuwu@rim.com>
 
         [BlackBerry] Upstream selection start animation.

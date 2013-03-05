@@ -405,12 +405,10 @@ WebPagePrivate::WebPagePrivate(WebPage* webPage, WebPageClient* client, const In
     , m_minimumScale(-1.0)
     , m_maximumScale(-1.0)
     , m_forceRespectViewportArguments(false)
-    , m_finalAnimationScale(1.0)
     , m_anchorInNodeRectRatio(-1, -1)
     , m_currentBlockZoomNode(0)
     , m_currentBlockZoomAdjustedNode(0)
     , m_shouldReflowBlock(false)
-    , m_shouldConstrainScrollingToContentEdge(true)
     , m_lastUserEventTimestamp(0.0)
     , m_pluginMouseButtonPressed(false)
     , m_pluginMayOpenNewTab(false)
@@ -2977,12 +2975,12 @@ IntRect WebPagePrivate::blockZoomRectForNode(Node* node)
 
 // This function should not be called directly.
 // It is called after the animation ends (see above).
-void WebPagePrivate::zoomBlock()
+void WebPagePrivate::zoomAnimationFinished(double finalAnimationScale, const WebCore::FloatPoint& finalAnimationDocumentScrollPosition, bool shouldConstrainScrollingToContentEdge)
 {
     if (!m_mainFrame)
         return;
 
-    IntPoint anchor(roundUntransformedPoint(m_finalAnimationDocumentScrollPosition));
+    IntPoint anchor(roundUntransformedPoint(finalAnimationDocumentScrollPosition));
     bool willUseTextReflow = false;
 
 #if ENABLE(VIEWPORT_REFLOW)
@@ -2992,7 +2990,7 @@ void WebPagePrivate::zoomBlock()
 #endif
 
     TransformationMatrix zoom;
-    zoom.scale(m_finalAnimationScale);
+    zoom.scale(finalAnimationScale);
     *m_transformationMatrix = zoom;
     // FIXME: Do we really need to suspend/resume both backingstore and screen here?
     m_backingStore->d->suspendBackingStoreUpdates();
@@ -3003,7 +3001,7 @@ void WebPagePrivate::zoomBlock()
     bool constrainsScrollingToContentEdge = true;
     if (mainFrameView) {
         constrainsScrollingToContentEdge = mainFrameView->constrainsScrollingToContentEdge();
-        mainFrameView->setConstrainsScrollingToContentEdge(m_shouldConstrainScrollingToContentEdge);
+        mainFrameView->setConstrainsScrollingToContentEdge(shouldConstrainScrollingToContentEdge);
     }
 
 #if ENABLE(VIEWPORT_REFLOW)
@@ -3069,9 +3067,9 @@ void WebPagePrivate::zoomBlock()
     m_backingStore->d->resumeScreenUpdates(BackingStore::RenderAndBlit);
 }
 
-void WebPage::blockZoomAnimationFinished()
+void WebPage::zoomAnimationFinished(double finalScale, const Platform::FloatPoint& finalDocumentScrollPosition, bool shouldConstrainScrollingToContentEdge)
 {
-    d->zoomBlock();
+    d->zoomAnimationFinished(finalScale, finalDocumentScrollPosition, shouldConstrainScrollingToContentEdge);
 }
 
 void WebPage::resetBlockZoom()
@@ -3084,7 +3082,6 @@ void WebPagePrivate::resetBlockZoom()
     m_currentBlockZoomNode = 0;
     m_currentBlockZoomAdjustedNode = 0;
     m_shouldReflowBlock = false;
-    m_shouldConstrainScrollingToContentEdge = true;
 }
 
 void WebPage::destroyWebPageCompositor()
@@ -4714,18 +4711,20 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
     } else
         anchor = renderer->style()->isLeftToRightDirection() ? topLeftPoint : FloatPoint(nodeRect.x() + nodeRect.width() - scaledViewportWidth, topLeftPoint.y());
 
+    WebCore::FloatPoint finalAnimationDocumentScrollPosition;
+
     if (newBlockHeight <= scaledViewportHeight) {
         // The block fits in the viewport so center it.
-        d->m_finalAnimationDocumentScrollPosition = FloatPoint(anchor.x() - dx, anchor.y() - dy);
+        finalAnimationDocumentScrollPosition = FloatPoint(anchor.x() - dx, anchor.y() - dy);
     } else {
         // The block is longer than the viewport so top align it and add 3 pixel margin.
-        d->m_finalAnimationDocumentScrollPosition = FloatPoint(anchor.x() - dx, anchor.y() - 3);
+        finalAnimationDocumentScrollPosition = FloatPoint(anchor.x() - dx, anchor.y() - 3);
     }
 
 #if ENABLE(VIEWPORT_REFLOW)
     // We don't know how long the reflowed block will be so we position it at the top of the screen with a small margin.
     if (settings()->textReflowMode() != WebSettings::TextReflowDisabled) {
-        d->m_finalAnimationDocumentScrollPosition = FloatPoint(anchor.x() - dx, anchor.y() - 3);
+        finalAnimationDocumentScrollPosition = FloatPoint(anchor.x() - dx, anchor.y() - 3);
         d->m_finalAnimationDocumentScrollPositionReflowOffset = FloatPoint(-dx, -3);
     }
 #endif
@@ -4734,24 +4733,24 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
     // not be the same as the original node rect, and it could force the original node rect off the screen.
     FloatRect br(anchor, FloatSize(scaledViewportWidth, scaledViewportHeight));
     if (!br.contains(IntPoint(documentTargetPoint))) {
-        d->m_finalAnimationDocumentScrollPositionReflowOffset.move(0, (documentTargetPoint.y() - scaledViewportHeight / 2) - d->m_finalAnimationDocumentScrollPosition.y());
-        d->m_finalAnimationDocumentScrollPosition = FloatPoint(d->m_finalAnimationDocumentScrollPosition.x(), documentTargetPoint.y() - scaledViewportHeight / 2);
+        d->m_finalAnimationDocumentScrollPositionReflowOffset.move(0, (documentTargetPoint.y() - scaledViewportHeight / 2) - finalAnimationDocumentScrollPosition.y());
+        finalAnimationDocumentScrollPosition = FloatPoint(finalAnimationDocumentScrollPosition.x(), documentTargetPoint.y() - scaledViewportHeight / 2);
     }
 
     // Clamp the finalBlockPoint to not cause any overflow scrolling.
-    if (d->m_finalAnimationDocumentScrollPosition.x() < 0) {
-        d->m_finalAnimationDocumentScrollPosition.setX(0);
+    if (finalAnimationDocumentScrollPosition.x() < 0) {
+        finalAnimationDocumentScrollPosition.setX(0);
         d->m_finalAnimationDocumentScrollPositionReflowOffset.setX(0);
-    } else if (d->m_finalAnimationDocumentScrollPosition.x() + scaledViewportWidth > d->contentsSize().width()) {
-        d->m_finalAnimationDocumentScrollPosition.setX(d->contentsSize().width() - scaledViewportWidth);
+    } else if (finalAnimationDocumentScrollPosition.x() + scaledViewportWidth > d->contentsSize().width()) {
+        finalAnimationDocumentScrollPosition.setX(d->contentsSize().width() - scaledViewportWidth);
         d->m_finalAnimationDocumentScrollPositionReflowOffset.setX(0);
     }
 
-    if (d->m_finalAnimationDocumentScrollPosition.y() < 0) {
-        d->m_finalAnimationDocumentScrollPosition.setY(0);
+    if (finalAnimationDocumentScrollPosition.y() < 0) {
+        finalAnimationDocumentScrollPosition.setY(0);
         d->m_finalAnimationDocumentScrollPositionReflowOffset.setY(0);
-    } else if (d->m_finalAnimationDocumentScrollPosition.y() + scaledViewportHeight > d->contentsSize().height()) {
-        d->m_finalAnimationDocumentScrollPosition.setY(d->contentsSize().height() - scaledViewportHeight);
+    } else if (finalAnimationDocumentScrollPosition.y() + scaledViewportHeight > d->contentsSize().height()) {
+        finalAnimationDocumentScrollPosition.setY(d->contentsSize().height() - scaledViewportHeight);
         d->m_finalAnimationDocumentScrollPositionReflowOffset.setY(0);
     }
 
@@ -4760,7 +4759,7 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
     // that the zoom level is the minimumScale.
     if (!endOfBlockZoomMode && abs(newScale - oldScale) / oldScale < minimumExpandingRatio) {
         const double minimumDisplacement = minimumExpandingRatio * webkitThreadViewportAccessor()->documentViewportSize().width();
-        if (oldScale == d->minimumScale() || (distanceBetweenPoints(d->scrollPosition(), roundUntransformedPoint(d->m_finalAnimationDocumentScrollPosition)) < minimumDisplacement && abs(newScale - oldScale) / oldScale < 0.10)) {
+        if (oldScale == d->minimumScale() || (distanceBetweenPoints(d->scrollPosition(), roundUntransformedPoint(finalAnimationDocumentScrollPosition)) < minimumDisplacement && abs(newScale - oldScale) / oldScale < 0.10)) {
             if (isFirstZoom) {
                 d->resetBlockZoom();
                 return false;
@@ -4771,12 +4770,10 @@ bool WebPage::blockZoom(const Platform::IntPoint& documentTargetPoint)
         }
     }
 
-    d->m_finalAnimationScale = newScale;
-
     // We set this here to make sure we don't try to re-render the page at a different zoom level during loading.
     d->m_userPerformedManualZoom = true;
     d->m_userPerformedManualScroll = true;
-    d->m_client->animateBlockZoom(d->m_finalAnimationScale, d->m_finalAnimationDocumentScrollPosition);
+    d->m_client->animateToScaleAndDocumentScrollPosition(newScale, finalAnimationDocumentScrollPosition, true);
 
     return true;
 }
@@ -6357,13 +6354,10 @@ void WebPagePrivate::animateToScaleAndDocumentScrollPosition(double destinationZ
     if (destinationScrollPosition == scrollPosition() && destinationZoomScale == currentScale())
         return;
 
-    m_finalAnimationDocumentScrollPosition = destinationScrollPosition;
-    m_finalAnimationScale = destinationZoomScale;
     m_shouldReflowBlock = false;
     m_userPerformedManualZoom = true;
     m_userPerformedManualScroll = true;
-    m_shouldConstrainScrollingToContentEdge = shouldConstrainScrollingToContentEdge;
-    client()->animateBlockZoom(destinationZoomScale, destinationScrollPosition);
+    client()->animateToScaleAndDocumentScrollPosition(destinationZoomScale, destinationScrollPosition, shouldConstrainScrollingToContentEdge);
 }
 
 void WebPage::animateToScaleAndDocumentScrollPosition(double destinationZoomScale, const BlackBerry::Platform::FloatPoint& destinationScrollPosition, bool shouldConstrainScrollingToContentEdge)
