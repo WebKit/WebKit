@@ -117,6 +117,9 @@ class DeprecatedPort(object):
     def run_perl_unittests_command(self):
         return self.script_shell_command("test-webkitperl")
 
+    def run_bindings_tests_command(self):
+        return self.script_shell_command("run-bindings-tests")
+
 
 class MacPort(DeprecatedPort):
     port_flag_name = "mac"

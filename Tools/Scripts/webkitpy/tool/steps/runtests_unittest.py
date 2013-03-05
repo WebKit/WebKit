@@ -38,7 +38,9 @@ class RunTestsTest(unittest.TestCase):
         tool._deprecated_port.run_python_unittests_command = lambda: None
         tool._deprecated_port.run_perl_unittests_command = lambda: None
         step = RunTests(tool, MockOptions(test=True, non_interactive=True, quiet=False))
-        expected_logs = """Running WebKit unit tests
+        expected_logs = """Running bindings generation tests
+MOCK run_and_throw_if_fail: ['mock-run-bindings-tests'], cwd=/mock-checkout
+Running WebKit unit tests
 MOCK run_and_throw_if_fail: ['mock-run-webkit-unit-tests'], cwd=/mock-checkout
 Running run-webkit-tests
 MOCK run_and_throw_if_fail: ['mock-run-webkit-tests', '--no-new-test-results', '--no-show-results', '--exit-after-n-failures=30', '--quiet', '--skip-failing-tests'], cwd=/mock-checkout

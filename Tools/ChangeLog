@@ -1,3 +1,25 @@
+2013-03-04  Jochen Eisinger  <jochen@chromium.org>
+
+        Run the bindings generation tests on EWS and CQ bots
+        https://bugs.webkit.org/show_bug.cgi?id=111358
+
+        Reviewed by Adam Barth.
+
+        The tests are super fast and not flaky.
+
+        * Scripts/webkitpy/common/config/ports.py:
+        (DeprecatedPort.run_bindings_tests_command):
+        * Scripts/webkitpy/common/config/ports_mock.py:
+        (MockPort.run_webkit_tests_command):
+        (MockPort):
+        (MockPort.run_bindings_tests_command):
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        (RunTests.run):
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        (RunTestsTest.test_webkit_run_unit_tests):
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2013-03-04  Eric Seidel  <eric@webkit.org>
 
         run-webkit-tests should support --profile and --profiler= just like run-perf-tests does

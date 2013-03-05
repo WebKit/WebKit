@@ -99,6 +99,7 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
+Running bindings generation tests
 Running WebKit unit tests
 Running run-webkit-tests
 """
@@ -140,6 +141,7 @@ Message2."
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
+Running bindings generation tests
 Running WebKit unit tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
@@ -167,6 +169,8 @@ Running Perl unit tests
 MOCK run_and_throw_if_fail: ['mock-test-webkitperl'], cwd=/mock-checkout
 Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['mock-run-javacriptcore-tests'], cwd=/mock-checkout
+Running bindings generation tests
+MOCK run_and_throw_if_fail: ['mock-run-bindings-tests'], cwd=/mock-checkout
 Running WebKit unit tests
 MOCK run_and_throw_if_fail: ['mock-run-webkit-unit-tests'], cwd=/mock-checkout
 Running run-webkit-tests
@@ -183,6 +187,7 @@ No bug id provided.
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
+Running bindings generation tests
 Running WebKit unit tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
@@ -214,6 +219,7 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
+Running bindings generation tests
 Running WebKit unit tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
@@ -231,6 +237,7 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
+Running bindings generation tests
 Running WebKit unit tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
@@ -241,6 +248,7 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
+Running bindings generation tests
 Running WebKit unit tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
@@ -258,6 +266,7 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
+Running bindings generation tests
 Running WebKit unit tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
@@ -268,6 +277,7 @@ Building WebKit
 Running Python unit tests
 Running Perl unit tests
 Running JavaScriptCore tests
+Running bindings generation tests
 Running WebKit unit tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
