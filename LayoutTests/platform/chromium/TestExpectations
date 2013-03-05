@@ -4403,8 +4403,8 @@ webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecomposit
 webkit.org/b/111199 [ Debug Mac ] compositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 webkit.org/b/111199 [ Debug Win Mac ] platform/chromium/virtual/softwarecompositing/rtl/rtl-iframe-fixed-overflow.html [ Pass Failure ]
 
-# These tests are timing out and crashing since r144032
-webkit.org/b/110876 html5lib/generated/ [ Pass Slow Crash ]
+# The html5lib tests are all too slow to run in Debug, largely due to v8 per-document boot-up.
+webkit.org/b/110876 [ Debug ] html5lib/generated/ [ Skip ]
 
 # HALF_FLOAT_OES is not yet working in chromium.
 crbug.com/179503 fast/canvas/webgl/oes-texture-half-float.html [ Failure ]
