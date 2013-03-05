@@ -1,3 +1,69 @@
+2013-03-05  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r144708.
+        http://trac.webkit.org/changeset/144708
+        https://bugs.webkit.org/show_bug.cgi?id=111447
+
+        random assertion crashes in inspector tests on qt+mac bots
+        (Requested by kling on #webkit).
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        * runtime/JSGlobalData.h:
+        (JSGlobalData):
+        * runtime/PropertyMapHashTable.h:
+        (PropertyTable):
+        (JSC::PropertyTable::PropertyTable):
+        (JSC):
+        (JSC::PropertyTable::~PropertyTable):
+        (JSC::PropertyTable::copy):
+        * runtime/PropertyTable.cpp: Removed.
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::sealTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::isSealed):
+        (JSC::Structure::isFrozen):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::pin):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::copyPropertyTableForPinning):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        (JSC::Structure::despecifyAllFunctions):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::remove):
+        (JSC::Structure::createPropertyMap):
+        (JSC::Structure::getPropertyNamesFromStructure):
+        (JSC::Structure::visitChildren):
+        (JSC::Structure::checkConsistency):
+        * runtime/Structure.h:
+        (JSC):
+        (JSC::Structure::putWillGrowOutOfLineStorage):
+        (JSC::Structure::materializePropertyMapIfNecessary):
+        (JSC::Structure::materializePropertyMapIfNecessaryForPinning):
+        (JSC::Structure::checkOffsetConsistency):
+        (Structure):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::get):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::get):
+
 2013-03-05  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r144698): Only enable SPEECH_SYNTHESIS for Mac

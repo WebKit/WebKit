@@ -99,11 +99,9 @@ public:
     
     T* get() const
     {
-        // Copy m_cell to a local to avoid multiple-read issues. (See <http://webkit.org/b/110854>)
-        JSCell* cell = m_cell;
-        if (cell)
-            validateCell(cell);
-        return reinterpret_cast<T*>(static_cast<void*>(cell));
+        if (m_cell)
+            validateCell(m_cell);
+        return reinterpret_cast<T*>(static_cast<void*>(m_cell));
     }
 
     T* operator*() const

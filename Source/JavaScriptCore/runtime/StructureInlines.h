@@ -26,7 +26,6 @@
 #ifndef StructureInlines_h
 #define StructureInlines_h
 
-#include "PropertyMapHashTable.h"
 #include "Structure.h"
 
 namespace JSC {
@@ -62,10 +61,10 @@ inline PropertyOffset Structure::get(JSGlobalData& globalData, PropertyName prop
 {
     ASSERT(structure()->classInfo() == &s_info);
     materializePropertyMapIfNecessary(globalData);
-    if (!propertyTable())
+    if (!m_propertyTable)
         return invalidOffset;
 
-    PropertyMapEntry* entry = propertyTable()->find(propertyName.uid()).first;
+    PropertyMapEntry* entry = m_propertyTable->find(propertyName.uid()).first;
     return entry ? entry->offset : invalidOffset;
 }
 
@@ -73,10 +72,10 @@ inline PropertyOffset Structure::get(JSGlobalData& globalData, const WTF::String
 {
     ASSERT(structure()->classInfo() == &s_info);
     materializePropertyMapIfNecessary(globalData);
-    if (!propertyTable())
+    if (!m_propertyTable)
         return invalidOffset;
 
-    PropertyMapEntry* entry = propertyTable()->findWithString(name.impl()).first;
+    PropertyMapEntry* entry = m_propertyTable->findWithString(name.impl()).first;
     return entry ? entry->offset : invalidOffset;
 }
     
@@ -178,48 +177,6 @@ inline bool Structure::isValid(JSGlobalObject* globalObject, StructureChain* cac
 inline bool Structure::isValid(ExecState* exec, StructureChain* cachedPrototypeChain) const
 {
     return isValid(exec->lexicalGlobalObject(), cachedPrototypeChain);
-}
-
-inline bool Structure::putWillGrowOutOfLineStorage()
-{
-    checkOffsetConsistency();
-
-    ASSERT(outOfLineCapacity() >= outOfLineSize());
-
-    if (!propertyTable()) {
-        unsigned currentSize = numberOfOutOfLineSlotsForLastOffset(m_offset);
-        ASSERT(outOfLineCapacity() >= currentSize);
-        return currentSize == outOfLineCapacity();
-    }
-
-    ASSERT(totalStorageCapacity() >= propertyTable()->propertyStorageSize());
-    if (propertyTable()->hasDeletedOffset())
-        return false;
-
-    ASSERT(totalStorageCapacity() >= propertyTable()->size());
-    return propertyTable()->size() == totalStorageCapacity();
-}
-
-ALWAYS_INLINE WriteBarrier<PropertyTable>& Structure::propertyTable()
-{
-    ASSERT(!globalObject() || !globalObject()->globalData().heap.isBusy());
-    return m_propertyTableUnsafe;
-}
-
-ALWAYS_INLINE bool Structure::checkOffsetConsistency() const
-{
-    PropertyTable* propertyTable = m_propertyTableUnsafe.get();
-
-    if (!propertyTable) {
-        ASSERT(!m_isPinnedPropertyTable);
-        return true;
-    }
-
-    RELEASE_ASSERT(numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) == propertyTable->propertyStorageSize());
-    unsigned totalSize = propertyTable->propertyStorageSize();
-    RELEASE_ASSERT((totalSize < inlineCapacity() ? 0 : totalSize - inlineCapacity()) == numberOfOutOfLineSlotsForLastOffset(m_offset));
-
-    return true;
 }
 
 } // namespace JSC

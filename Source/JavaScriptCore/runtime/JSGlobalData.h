@@ -256,7 +256,6 @@ namespace JSC {
         Strong<Structure> unlinkedProgramCodeBlockStructure;
         Strong<Structure> unlinkedEvalCodeBlockStructure;
         Strong<Structure> unlinkedFunctionCodeBlockStructure;
-        Strong<Structure> propertyTableStructure;
 
         IdentifierTable* identifierTable;
         CommonIdentifiers* propertyNames;

@@ -758,7 +758,6 @@
             'runtime/PropertyOffset.h',
             'runtime/PropertySlot.cpp',
             'runtime/PropertySlot.h',
-            'runtime/PropertyTable.cpp',
             'runtime/PropertyStorage.h',
             'runtime/Protect.h',
             'runtime/PrototypeMap.cpp',

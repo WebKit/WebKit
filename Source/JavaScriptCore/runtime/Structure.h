@@ -31,15 +31,16 @@
 #include "JSCJSValue.h"
 #include "JSCell.h"
 #include "JSType.h"
+#include "PropertyMapHashTable.h"
 #include "PropertyName.h"
 #include "PropertyNameArray.h"
-#include "PropertyOffset.h"
 #include "Protect.h"
 #include "StructureRareData.h"
 #include "StructureTransitionTable.h"
 #include "JSTypeInfo.h"
 #include "Watchpoint.h"
 #include "Weak.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/text/StringImpl.h>
@@ -50,7 +51,6 @@ namespace JSC {
 class LLIntOffsetsExtractor;
 class PropertyNameArray;
 class PropertyNameArrayData;
-class PropertyTable;
 class StructureChain;
 class SlotVisitor;
 class JSString;
@@ -108,7 +108,25 @@ public:
     bool isFrozen(JSGlobalData&);
     bool isExtensible() const { return !m_preventExtensions; }
     bool didTransition() const { return m_didTransition; }
-    bool putWillGrowOutOfLineStorage();
+    bool putWillGrowOutOfLineStorage()
+    {
+        checkOffsetConsistency();
+            
+        ASSERT(outOfLineCapacity() >= outOfLineSize());
+            
+        if (!m_propertyTable) {
+            unsigned currentSize = numberOfOutOfLineSlotsForLastOffset(m_offset);
+            ASSERT(outOfLineCapacity() >= currentSize);
+            return currentSize == outOfLineCapacity();
+        }
+            
+        ASSERT(totalStorageCapacity() >= m_propertyTable->propertyStorageSize());
+        if (m_propertyTable->hasDeletedOffset())
+            return false;
+            
+        ASSERT(totalStorageCapacity() >= m_propertyTable->size());
+        return m_propertyTable->size() == totalStorageCapacity();
+    }
     JS_EXPORT_PRIVATE size_t suggestedNewOutOfLineStorageCapacity(); 
 
     Structure* flattenDictionaryStructure(JSGlobalData&, JSObject*);
@@ -364,29 +382,27 @@ private:
     PropertyOffset putSpecificValue(JSGlobalData&, PropertyName, unsigned attributes, JSCell* specificValue);
     PropertyOffset remove(PropertyName);
 
-    void createPropertyMap(JSGlobalData&, unsigned keyCount = 0);
+    void createPropertyMap(unsigned keyCount = 0);
     void checkConsistency();
 
     bool despecifyFunction(JSGlobalData&, PropertyName);
     void despecifyAllFunctions(JSGlobalData&);
 
-    WriteBarrier<PropertyTable>& propertyTable();
-
-    PropertyTable* copyPropertyTable(JSGlobalData&, Structure* owner);
-    PropertyTable* copyPropertyTableForPinning(JSGlobalData&, Structure* owner);
+    PassOwnPtr<PropertyTable> copyPropertyTable(JSGlobalData&, Structure* owner);
+    PassOwnPtr<PropertyTable> copyPropertyTableForPinning(JSGlobalData&, Structure* owner);
     JS_EXPORT_PRIVATE void materializePropertyMap(JSGlobalData&);
     void materializePropertyMapIfNecessary(JSGlobalData& globalData)
     {
         ASSERT(structure()->classInfo() == &s_info);
         ASSERT(checkOffsetConsistency());
-        if (!propertyTable() && previousID())
+        if (!m_propertyTable && previousID())
             materializePropertyMap(globalData);
     }
     void materializePropertyMapIfNecessaryForPinning(JSGlobalData& globalData)
     {
         ASSERT(structure()->classInfo() == &s_info);
         checkOffsetConsistency();
-        if (!propertyTable())
+        if (!m_propertyTable)
             materializePropertyMap(globalData);
     }
 
@@ -429,7 +445,19 @@ private:
         return static_cast<StructureRareData*>(m_previousOrRareData.get());
     }
         
-    bool checkOffsetConsistency() const;
+    ALWAYS_INLINE bool checkOffsetConsistency() const
+    {
+        if (!m_propertyTable) {
+            ASSERT(!m_isPinnedPropertyTable);
+            return true;
+        }
+            
+        RELEASE_ASSERT(numberOfSlotsForLastOffset(m_offset, m_inlineCapacity) == m_propertyTable->propertyStorageSize());
+        unsigned totalSize = m_propertyTable->propertyStorageSize();
+        RELEASE_ASSERT((totalSize < inlineCapacity() ? 0 : totalSize - inlineCapacity()) == numberOfOutOfLineSlotsForLastOffset(m_offset));
+            
+        return true;
+    }
 
     void allocateRareData(JSGlobalData&);
     void cloneRareDataFrom(JSGlobalData&, const Structure*);
@@ -454,8 +482,7 @@ private:
 
     StructureTransitionTable m_transitionTable;
 
-    // Should be accessed through propertyTable(). During GC, it may be set to 0 by another thread.
-    WriteBarrier<PropertyTable> m_propertyTableUnsafe;
+    OwnPtr<PropertyTable> m_propertyTable;
 
     mutable InlineWatchpointSet m_transitionWatchpointSet;
 
