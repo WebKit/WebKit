@@ -1,3 +1,14 @@
+2013-03-05  Alexey Proskuryakov  <ap@apple.com>
+
+        <rdar://problem/13345116> REGRESSION: Child processes get access to user cache
+        and temporary directories instead of private ones
+
+        Reviewed by Sam Weinig.
+
+        * Shared/mac/ChildProcessMac.mm: (WebKit::ChildProcess::initializeSandbox):
+        Restore the correct order of calls, so sandbox parameters respect WebKit pseudo
+        containers.
+
 2013-03-05  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r144698): Only enable SPEECH_SYNTHESIS for Mac
