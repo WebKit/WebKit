@@ -82,6 +82,9 @@ void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
 
 void WebPageProxy::setThemePath(const String& themePath)
 {
+    if (!isValid())
+        return;
+
     process()->send(Messages::WebPage::SetThemePath(themePath), m_pageID, 0);
 }
 
