@@ -47,3 +47,8 @@ Cue 5: 私は立派な人
 6
 00:00:00.500 --> 00:00:01.000 vertical:lr
 Cue 6: 私は立派な人
+
+7
+00:00:01.000 --> 00:00:01.250
+Multi-line cue to test that should appear
+correct when in the full-screen mode

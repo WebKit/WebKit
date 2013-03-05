@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <style type="text/css">
+        body {
+            line-height: 108px;
+        }
+        </style>
+        <script src=../media-file.js></script>
+        <script src=../media-controls.js></script>
+
+        <script>
+        var multiLineCueDisplayElement;
+
+        function testCueHeight()
+        {
+            if (!window.internals) {
+              failTest();
+              return;
+            }
+
+            var cueContainerElement = textTrackDisplayElement(video);
+            multiLineCueDisplayElement = textTrackDisplayElement(video, 'display', 0);
+
+            consoleWrite("<br>** Line height of the cue element should be 'normal' **");
+            testExpected("getComputedStyle(multiLineCueDisplayElement).lineHeight", "normal");
+
+            endTest();
+        }
+
+        function loaded()
+        {
+            consoleWrite("Line height isn't overriden by other CSS values in the file.");
+            findMediaElement();
+
+            testTrack = document.querySelector('track');
+            video.src = findMediaFile('video', '../content/test');
+
+            waitForEvent('seeked', testCueHeight);
+            waitForEvent('canplaythrough', function() {
+                video.currentTime = 1.25;
+            });
+        }
+
+        </script>
+
+        <script src=../video-test.js></script>
+    </head>
+    <body onload="loaded()">
+        <video controls>
+            <track src="captions-webvtt/captions-snap-to-lines-set.vtt" kind="captions" default>
+        </video>
+    </body>
+</html>

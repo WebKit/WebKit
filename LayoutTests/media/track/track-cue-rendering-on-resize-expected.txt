@@ -1,0 +1,8 @@
+Line height isn't overriden by other CSS values in the file.
+EVENT(canplaythrough)
+EVENT(seeked)
+
+** Line height of the cue element should be 'normal' **
+EXPECTED (getComputedStyle(multiLineCueDisplayElement).lineHeight == 'normal') OK
+END OF TEST
+

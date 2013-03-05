@@ -221,8 +221,7 @@ video::-webkit-media-text-track-container {
     overflow: hidden;
     padding-bottom: 5px;
 
-    font-size: 22px;
-    font-family: sans-serif;
+    font: 22px sans-serif;
     text-align: center;
     color: rgba(255, 255, 255, 1);
 
