@@ -31,13 +31,14 @@
 #include "IDBBackingStore.h"
 #include "IDBCursorBackendImpl.h"
 #include "IDBDatabaseBackendImpl.h"
+#include "IDBDatabaseCallbacks.h"
 #include "IDBDatabaseException.h"
 #include "IDBTracing.h"
 #include "IDBTransactionCoordinator.h"
 
 namespace WebCore {
 
-PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IDBTransaction::Mode mode, IDBDatabaseBackendImpl* database)
+PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const Vector<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendImpl* database)
 {
     HashSet<int64_t> objectStoreHashSet;
     for (size_t i = 0; i < objectStoreIds.size(); ++i)
@@ -46,7 +47,7 @@ PassRefPtr<IDBTransactionBackendImpl> IDBTransactionBackendImpl::create(int64_t 
     return adoptRef(new IDBTransactionBackendImpl(id, callbacks, objectStoreHashSet, mode, database));
 }
 
-IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IDBTransaction::Mode mode, IDBDatabaseBackendImpl* database)
+IDBTransactionBackendImpl::IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBDatabaseCallbacks> callbacks, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode mode, IDBDatabaseBackendImpl* database)
     : m_id(id)
     , m_objectStoreIds(objectStoreIds)
     , m_mode(mode)

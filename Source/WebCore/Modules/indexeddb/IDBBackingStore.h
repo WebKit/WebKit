@@ -28,8 +28,9 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCursor.h"
+#include "IDBKey.h"
 #include "IDBMetadata.h"
+#include "IndexedDB.h"
 #include "LevelDBTransaction.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
@@ -145,10 +146,10 @@ public:
         IDBBackingStore::RecordIdentifier m_recordIdentifier;
     };
 
-    virtual PassRefPtr<Cursor> openObjectStoreKeyCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction);
-    virtual PassRefPtr<Cursor> openObjectStoreCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IDBCursor::Direction);
-    virtual PassRefPtr<Cursor> openIndexKeyCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
-    virtual PassRefPtr<Cursor> openIndexCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
+    virtual PassRefPtr<Cursor> openObjectStoreKeyCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IndexedDB::CursorDirection);
+    virtual PassRefPtr<Cursor> openObjectStoreCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange*, IndexedDB::CursorDirection);
+    virtual PassRefPtr<Cursor> openIndexKeyCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IndexedDB::CursorDirection);
+    virtual PassRefPtr<Cursor> openIndexCursor(IDBBackingStore::Transaction*, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IndexedDB::CursorDirection);
 
     class Transaction {
     public:

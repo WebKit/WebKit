@@ -3111,8 +3111,8 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBDatabaseException.h \
         Modules/indexeddb/IDBEventDispatcher.h \
         Modules/indexeddb/IDBFactory.h \
-        Modules/indexeddb/IDBFactoryBackendInterface.h \
         Modules/indexeddb/IDBFactoryBackendImpl.h \
+        Modules/indexeddb/IDBFactoryBackendInterface.h \
         Modules/indexeddb/IDBHistograms.h \
         Modules/indexeddb/IDBIndex.h \
         Modules/indexeddb/IDBKey.h \
@@ -3120,7 +3120,8 @@ enable?(INDEXED_DATABASE) {
         Modules/indexeddb/IDBObjectStore.h \
         Modules/indexeddb/IDBObjectStoreBackendImpl.h \
         Modules/indexeddb/IDBRequest.h \
-        Modules/indexeddb/IDBTransaction.h
+        Modules/indexeddb/IDBTransaction.h \
+        Modules/indexeddb/IndexedDB.h
 
     SOURCES += \
         bindings/js/IDBBindingUtilities.cpp \

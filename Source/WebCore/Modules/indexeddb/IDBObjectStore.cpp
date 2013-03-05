@@ -31,7 +31,6 @@
 #include "DOMStringList.h"
 #include "IDBAny.h"
 #include "IDBBindingUtilities.h"
-#include "IDBCursorBackendInterface.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBDatabaseException.h"
@@ -48,7 +47,7 @@
 
 namespace WebCore {
 
-static const unsigned short defaultDirection = IDBCursor::NEXT;
+static const unsigned short defaultDirection = IndexedDB::CursorNext;
 
 IDBObjectStore::IDBObjectStore(const IDBObjectStoreMetadata& metadata, IDBTransaction* transaction)
     : m_metadata(metadata)
@@ -505,12 +504,12 @@ PassRefPtr<IDBRequest> IDBObjectStore::openCursor(ScriptExecutionContext* contex
         ec = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
-    IDBCursor::Direction direction = IDBCursor::stringToDirection(directionString, context, ec);
+    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, context, ec);
     if (ec)
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    request->setCursorDetails(IDBCursorBackendInterface::KeyAndValue, direction);
+    request->setCursorDetails(IndexedDB::CursorKeyAndValue, direction);
 
     backendDB()->openCursor(m_transaction->id(), id(), IDBIndexMetadata::InvalidId, range, direction, false, static_cast<IDBDatabaseBackendInterface::TaskType>(taskType), request);
     return request.release();

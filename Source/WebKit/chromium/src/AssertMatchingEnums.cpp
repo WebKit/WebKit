@@ -504,10 +504,10 @@ COMPILE_ASSERT_MATCHING_ENUM(WebIDBKeyPath::ArrayType, IDBKeyPath::ArrayType);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBMetadata::NoIntVersion, IDBDatabaseMetadata::NoIntVersion);
 
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::Next, IDBCursor::NEXT);
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::NextNoDuplicate, IDBCursor::NEXT_NO_DUPLICATE);
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::Prev, IDBCursor::PREV);
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::PrevNoDuplicate, IDBCursor::PREV_NO_DUPLICATE);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::Next, IndexedDB::CursorNext);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::NextNoDuplicate, IndexedDB::CursorNextNoDuplicate);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::Prev, IndexedDB::CursorPrev);
+COMPILE_ASSERT_MATCHING_ENUM(WebIDBCursor::PrevNoDuplicate, IndexedDB::CursorPrevNoDuplicate);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBDatabase::PreemptiveTask, IDBDatabaseBackendInterface::PreemptiveTask);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBDatabase::NormalTask, IDBDatabaseBackendInterface::NormalTask);

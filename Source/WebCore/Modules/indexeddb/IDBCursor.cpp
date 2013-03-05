@@ -43,7 +43,7 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBCursor> IDBCursor::create(PassRefPtr<IDBCursorBackendInterface> backend, Direction direction, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
+PassRefPtr<IDBCursor> IDBCursor::create(PassRefPtr<IDBCursorBackendInterface> backend, IndexedDB::CursorDirection direction, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
 {
     return adoptRef(new IDBCursor(backend, direction, request, source, transaction));
 }
@@ -73,7 +73,7 @@ const AtomicString& IDBCursor::directionPrevUnique()
 }
 
 
-IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, Direction direction, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
+IDBCursor::IDBCursor(PassRefPtr<IDBCursorBackendInterface> backend, IndexedDB::CursorDirection direction, IDBRequest* request, IDBAny* source, IDBTransaction* transaction)
     : m_backend(backend)
     , m_request(request)
     , m_direction(direction)
@@ -206,7 +206,7 @@ void IDBCursor::continueFunction(PassRefPtr<IDBKey> key, ExceptionCode& ec)
 
     if (key) {
         ASSERT(m_currentKey);
-        if (m_direction == IDBCursor::NEXT || m_direction == IDBCursor::NEXT_NO_DUPLICATE) {
+        if (m_direction == IndexedDB::CursorNext || m_direction == IndexedDB::CursorNextNoDuplicate) {
             if (!m_currentKey->isLessThan(key.get())) {
                 ec = IDBDatabaseException::DataError;
                 return;
@@ -298,34 +298,34 @@ PassRefPtr<IDBObjectStore> IDBCursor::effectiveObjectStore()
     return index->objectStore();
 }
 
-IDBCursor::Direction IDBCursor::stringToDirection(const String& directionString, ScriptExecutionContext* context, ExceptionCode& ec)
+IndexedDB::CursorDirection IDBCursor::stringToDirection(const String& directionString, ScriptExecutionContext* context, ExceptionCode& ec)
 {
     if (directionString == IDBCursor::directionNext())
-        return IDBCursor::NEXT;
+        return IndexedDB::CursorNext;
     if (directionString == IDBCursor::directionNextUnique())
-        return IDBCursor::NEXT_NO_DUPLICATE;
+        return IndexedDB::CursorNextNoDuplicate;
     if (directionString == IDBCursor::directionPrev())
-        return IDBCursor::PREV;
+        return IndexedDB::CursorPrev;
     if (directionString == IDBCursor::directionPrevUnique())
-        return IDBCursor::PREV_NO_DUPLICATE;
+        return IndexedDB::CursorPrevNoDuplicate;
 
     ec = TypeError;
-    return IDBCursor::NEXT;
+    return IndexedDB::CursorNext;
 }
 
 const AtomicString& IDBCursor::directionToString(unsigned short direction)
 {
     switch (direction) {
-    case IDBCursor::NEXT:
+    case IndexedDB::CursorNext:
         return IDBCursor::directionNext();
 
-    case IDBCursor::NEXT_NO_DUPLICATE:
+    case IndexedDB::CursorNextNoDuplicate:
         return IDBCursor::directionNextUnique();
 
-    case IDBCursor::PREV:
+    case IndexedDB::CursorPrev:
         return IDBCursor::directionPrev();
 
-    case IDBCursor::PREV_NO_DUPLICATE:
+    case IndexedDB::CursorPrevNoDuplicate:
         return IDBCursor::directionPrevUnique();
 
     default:

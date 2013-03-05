@@ -34,7 +34,6 @@
 #include "IDBDatabaseError.h"
 #include "IDBDatabaseException.h"
 #include "IDBKeyRange.h"
-#include "IDBRequest.h"
 #include "IDBTracing.h"
 #include "IDBTransactionBackendImpl.h"
 #include "SharedBuffer.h"
@@ -101,7 +100,7 @@ private:
     RefPtr<IDBCallbacks> m_callbacks;
 };
 
-IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
+IDBCursorBackendImpl::IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
     : m_taskType(taskType)
     , m_cursorType(cursorType)
     , m_database(transaction->database())
@@ -160,7 +159,7 @@ void IDBCursorBackendImpl::CursorIterationOperation::perform(IDBTransactionBacke
 void IDBCursorBackendImpl::deleteFunction(PassRefPtr<IDBCallbacks> prpCallbacks, ExceptionCode&)
 {
     IDB_TRACE("IDBCursorBackendImpl::delete");
-    ASSERT(m_transaction->mode() != IDBTransaction::READ_ONLY);
+    ASSERT(m_transaction->mode() != IndexedDB::TransactionReadOnly);
     RefPtr<IDBKeyRange> keyRange = IDBKeyRange::create(m_cursor->primaryKey());
     m_database->deleteRange(m_transaction->id(), m_objectStoreId, keyRange.release(), prpCallbacks);
 }
@@ -196,10 +195,10 @@ void IDBCursorBackendImpl::CursorPrefetchIterationOperation::perform(IDBTransact
         foundPrimaryKeys.append(m_cursor->m_cursor->primaryKey());
 
         switch (m_cursor->m_cursorType) {
-        case KeyOnly:
+        case IndexedDB::CursorKeyOnly:
             foundValues.append(SharedBuffer::create());
             break;
-        case KeyAndValue:
+        case IndexedDB::CursorKeyAndValue:
             sizeEstimate += m_cursor->m_cursor->value()->size();
             foundValues.append(m_cursor->m_cursor->value());
             break;
