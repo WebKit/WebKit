@@ -214,9 +214,7 @@ public:
 private:
     void checkActiveURI(const char* uri)
     {
-        // g_assert_cmpstr is a macro, so we need to cache the temporary string.
-        CString serverURI = kServer->getURIForPath(uri);
-        g_assert_cmpstr(m_activeURI.data(), ==, serverURI.data());
+        ASSERT_CMP_CSTRING(m_activeURI, ==, kServer->getURIForPath(uri));
     }
 };
 

@@ -274,7 +274,7 @@ static void assertThatUserAgentIsSentInHeaders(WebViewTest* test, const CString&
 {
     test->loadURI(gServer->getURIForPath("/").data());
     test->waitUntilLoadFinished();
-    g_assert_cmpstr(convertWebViewMainResourceDataToCString(test).data(), ==, userAgent.data());
+    ASSERT_CMP_CSTRING(convertWebViewMainResourceDataToCString(test), ==, userAgent);
 }
 
 static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
@@ -300,12 +300,12 @@ static void testWebKitSettingsUserAgent(WebViewTest* test, gconstpointer)
     assertThatUserAgentIsSentInHeaders(test, funkyUserAgent);
 
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK+", 0);
-    CString userAgentWithNullVersion = webkit_settings_get_user_agent(settings.get());
-    g_assert_cmpstr(g_strstr_len(userAgentWithNullVersion.data(), -1, defaultUserAgent.data()), ==, userAgentWithNullVersion.data());
-    g_assert(g_strstr_len(userAgentWithNullVersion.data(), -1, "WebKitGTK+"));
+    const char* userAgentWithNullVersion = webkit_settings_get_user_agent(settings.get());
+    g_assert_cmpstr(g_strstr_len(userAgentWithNullVersion, -1, defaultUserAgent.data()), ==, userAgentWithNullVersion);
+    g_assert(g_strstr_len(userAgentWithNullVersion, -1, "WebKitGTK+"));
 
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebKitGTK+", "");
-    g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, userAgentWithNullVersion.data());
+    g_assert_cmpstr(webkit_settings_get_user_agent(settings.get()), ==, userAgentWithNullVersion);
 
     webkit_settings_set_user_agent_with_application_details(settings.get(), "WebCatGTK+", "3.4.5");
     const char* newUserAgent = webkit_settings_get_user_agent(settings.get());
