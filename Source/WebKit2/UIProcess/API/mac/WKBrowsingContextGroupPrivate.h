@@ -23,16 +23,10 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextController.h>
+#import <WebKit2/WKBrowsingContextGroup.h>
 
-@interface WKBrowsingContextController (Internal)
+@interface WKBrowsingContextGroup (Private)
 
-/* This should only be called from associate view. */
-- (id)_initWithPageRef:(WKPageRef)pageRef;
-
-/* Returns a WKBrowsingContextController associated with the WKPageRef. */
-+ (WKBrowsingContextController *)_browsingContextControllerForPageRef:(WKPageRef)pageRef;
-
-+ (NSMutableSet *)customSchemes;
+@property(readonly) WKPageGroupRef _pageGroupRef;
 
 @end

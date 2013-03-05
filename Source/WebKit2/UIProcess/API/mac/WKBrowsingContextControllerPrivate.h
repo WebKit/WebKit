@@ -36,6 +36,8 @@ typedef NSUInteger WKBrowsingContextPaginationMode;
 
 @interface WKBrowsingContextController (Private)
 
+@property(readonly) WKPageRef _pageRef;
+
 @property WKBrowsingContextPaginationMode paginationMode;
 // Whether the column-break-{before,after} properties are respected instead of the
 // page-break-{before,after} properties.

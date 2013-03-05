@@ -91,8 +91,8 @@
 
 /* API internals. */
 #import "WKBrowsingContextControllerInternal.h"
-#import "WKBrowsingContextGroupInternal.h"
-#import "WKProcessGroupInternal.h"
+#import "WKBrowsingContextGroupPrivate.h"
+#import "WKProcessGroupPrivate.h"
 
 #if __MAC_OS_X_VERSION_MIN_REQUIRED >= 1090
 static BOOL windowOcclusionNotificationsAreRegistered = NO;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2013 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,10 +23,14 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <WebKit2/WKBrowsingContextGroup.h>
+#if defined(__LP64__) && defined(__clang__)
 
-@interface WKBrowsingContextGroup (Internal)
+#import <WebKit2/WKWebProcessPlugIn.h>
 
-@property(readonly) WKPageGroupRef _pageGroupRef;
+@interface WKWebProcessPlugInController (Private)
+
+@property(readonly) WKBundleRef _bundleRef;
 
 @end
+
+#endif // defined(__LP64__) && defined(__clang__)

@@ -1,3 +1,25 @@
+2013-03-05  Sam Weinig  <sam@webkit.org>
+
+        Elevate accessors of C-SPI API variants to Objective-C SPI
+        https://bugs.webkit.org/show_bug.cgi?id=111453
+        <rdar://problem/13340357>
+
+        Reviewed by Alexey Proskuryakov.
+
+        * Shared/mac/ObjCObjectGraphCoders.mm:
+        * UIProcess/API/mac/WKBrowsingContextControllerInternal.h:
+        * UIProcess/API/mac/WKBrowsingContextControllerPrivate.h:
+        * UIProcess/API/mac/WKBrowsingContextGroup.mm:
+        * UIProcess/API/mac/WKBrowsingContextGroupPrivate.h: Renamed from Source/WebKit2/UIProcess/API/mac/WKBrowsingContextGroupInternal.h.
+        * UIProcess/API/mac/WKProcessGroup.mm:
+        * UIProcess/API/mac/WKProcessGroupPrivate.h: Copied from Source/WebKit2/UIProcess/API/mac/WKProcessGroupInternal.h.
+        * UIProcess/API/mac/WKView.mm:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugIn.mm:
+        (-[WKWebProcessPlugInController _bundleRef]):
+        * WebProcess/InjectedBundle/API/mac/WKWebProcessPlugInPrivate.h: Renamed from Source/WebKit2/UIProcess/API/mac/WKProcessGroupInternal.h.
+        Add access to C-SPI WebKit types as Objective-C SPI.
+
 2013-03-04  Alexey Proskuryakov  <ap@apple.com>
 
         Make AsyncFileReader work without ScriptExecutionContext

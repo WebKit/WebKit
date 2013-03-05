@@ -25,7 +25,7 @@
 
 #import "config.h"
 #import "WKBrowsingContextGroup.h"
-#import "WKBrowsingContextGroupInternal.h"
+#import "WKBrowsingContextGroupPrivate.h"
 
 #import "WKArray.h"
 #import "WKPageGroup.h"
@@ -143,7 +143,7 @@ static WKArrayRef createWKArray(NSArray *array)
 
 @end
 
-@implementation WKBrowsingContextGroup (Internal)
+@implementation WKBrowsingContextGroup (Private)
 
 - (WKPageGroupRef)_pageGroupRef
 {

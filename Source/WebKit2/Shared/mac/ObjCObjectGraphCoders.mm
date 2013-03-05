@@ -31,6 +31,7 @@
 // For UIProcess side encoding/decoding
 #import "WKAPICast.h"
 #import "WKBrowsingContextControllerInternal.h"
+#import "WKBrowsingContextControllerPrivate.h"
 #import "WebPageProxy.h"
 #import "WebProcessProxy.h"
 

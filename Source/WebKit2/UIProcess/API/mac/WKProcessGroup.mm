@@ -25,7 +25,7 @@
 
 #import "config.h"
 #import "WKProcessGroup.h"
-#import "WKProcessGroupInternal.h"
+#import "WKProcessGroupPrivate.h"
 
 #import "WKConnectionInternal.h"
 #import "WKContext.h"
@@ -112,7 +112,7 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
 
 @end
 
-@implementation WKProcessGroup (Internal)
+@implementation WKProcessGroup (Private)
 
 - (WKContextRef)_contextRef
 {
@@ -120,5 +120,3 @@ static void setUpConnectionClient(WKProcessGroup *processGroup, WKContextRef con
 }
 
 @end
-
-

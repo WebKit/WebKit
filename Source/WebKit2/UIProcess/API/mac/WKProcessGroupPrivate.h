@@ -25,7 +25,7 @@
 
 #import <WebKit2/WKProcessGroup.h>
 
-@interface WKProcessGroup (Internal)
+@interface WKProcessGroup (Private)
 
 @property(readonly) WKContextRef _contextRef;
 
