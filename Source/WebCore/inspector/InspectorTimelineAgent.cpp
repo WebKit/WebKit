@@ -133,7 +133,7 @@ void InspectorTimelineAgent::pushGCEventRecords()
         RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestampFromMicroseconds(i->startTime), m_maxCallStackDepth);
         record->setObject("data", TimelineRecordFactory::createGCEventData(i->collectedBytes));
         record->setNumber("endTime", timestampFromMicroseconds(i->endTime));
-        addRecordToTimeline(record.release(), TimelineRecordType::GCEvent, String());
+        addRecordToTimeline(record.release(), TimelineRecordType::GCEvent);
     }
 }
 
@@ -532,18 +532,16 @@ void InspectorTimelineAgent::didDestroyWebSocket(unsigned long identifier, Frame
 }
 #endif // ENABLE(WEB_SOCKETS)
 
-void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, const String& type, const String& frameId)
+void InspectorTimelineAgent::addRecordToTimeline(PassRefPtr<InspectorObject> record, const String& type)
 {
     commitFrameRecord();
-    innerAddRecordToTimeline(record, type, frameId);
+    innerAddRecordToTimeline(record, type);
 }
 
-void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type, const String& frameId)
+void InspectorTimelineAgent::innerAddRecordToTimeline(PassRefPtr<InspectorObject> prpRecord, const String& type)
 {
     RefPtr<InspectorObject> record(prpRecord);
     record->setString("type", type);
-    if (!frameId.isEmpty())
-        record->setString("frameId", frameId);
     if (type == TimelineRecordType::Program)
         setNativeHeapStatistics(record.get());
     else
@@ -597,6 +595,16 @@ void InspectorTimelineAgent::setNativeHeapStatistics(InspectorObject* record)
     record->setObject("nativeHeapStatistics", stats.release());
 }
 
+void InspectorTimelineAgent::setFrameIdentifier(InspectorObject* record, Frame* frame)
+{
+    if (!frame || !m_pageAgent)
+        return;
+    String frameId;
+    if (frame && m_pageAgent)
+        frameId = m_pageAgent->frameId(frame);
+    record->setString("frameId", frameId);
+}
+
 void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
 {
     // An empty stack could merely mean that the timeline agent was turned on in the middle of
@@ -617,7 +625,7 @@ void InspectorTimelineAgent::didCompleteCurrentRecord(const String& type)
         size_t usedHeapSizeDelta = getUsedHeapSize() - entry.usedHeapSizeAtStart;
         if (usedHeapSizeDelta)
             entry.record->setNumber("usedHeapSizeDelta", usedHeapSizeDelta);
-        addRecordToTimeline(entry.record, type, entry.frameId);
+        addRecordToTimeline(entry.record, type);
     }
 }
 
@@ -642,10 +650,8 @@ void InspectorTimelineAgent::appendRecord(PassRefPtr<InspectorObject> data, cons
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
     record->setObject("data", data);
     record->setString("type", type);
-    String frameId;
-    if (frame && m_pageAgent)
-        frameId = m_pageAgent->frameId(frame);
-    addRecordToTimeline(record.release(), type, frameId);
+    setFrameIdentifier(record.get(), frame);
+    addRecordToTimeline(record.release(), type);
 }
 
 void InspectorTimelineAgent::appendBackgroundThreadRecord(PassRefPtr<InspectorObject> data, const String& type, double startTime, double endTime, const String& threadName)
@@ -664,10 +670,8 @@ void InspectorTimelineAgent::pushCurrentRecord(PassRefPtr<InspectorObject> data,
     pushGCEventRecords();
     commitFrameRecord();
     RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(timestamp(), captureCallStack ? m_maxCallStackDepth : 0);
-    String frameId;
-    if (frame && m_pageAgent)
-        frameId = m_pageAgent->frameId(frame);
-    m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, frameId, getUsedHeapSize()));
+    setFrameIdentifier(record.get(), frame);
+    m_recordStack.append(TimelineRecordEntry(record.release(), data, InspectorArray::create(), type, getUsedHeapSize()));
     if (hasLowLevelDetails && !m_platformInstrumentationClientInstalledAtStackDepth && !PlatformInstrumentation::hasClient()) {
         m_platformInstrumentationClientInstalledAtStackDepth = m_recordStack.size();
         PlatformInstrumentation::setClient(this);
@@ -680,7 +684,7 @@ void InspectorTimelineAgent::commitFrameRecord()
         return;
     
     m_pendingFrameRecord->setObject("data", InspectorObject::create());
-    innerAddRecordToTimeline(m_pendingFrameRecord.release(), TimelineRecordType::BeginFrame, "");
+    innerAddRecordToTimeline(m_pendingFrameRecord.release(), TimelineRecordType::BeginFrame);
 }
 
 void InspectorTimelineAgent::clearRecordStack()
