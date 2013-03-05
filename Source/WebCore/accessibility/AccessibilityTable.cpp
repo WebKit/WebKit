@@ -344,53 +344,43 @@ void AccessibilityTable::addChildren()
     RenderTable* table = toRenderTable(m_renderer);
     AXObjectCache* axCache = m_renderer->document()->axObjectCache();
 
-    // go through all the available sections to pull out the rows
-    // and add them as children
-    // FIXME: This will skip a table with just a tfoot. Should fix by using RenderTable::topSection.
-    RenderTableSection* tableSection = table->header();
-    if (!tableSection)
-        tableSection = table->firstBody();
-    
+    // Go through all the available sections to pull out the rows and add them as children.
+    RenderTableSection* tableSection = table->topSection();
     if (!tableSection)
         return;
     
     RenderTableSection* initialTableSection = tableSection;
-    
     while (tableSection) {
         
         HashSet<AccessibilityObject*> appendedRows;
-
         unsigned numRows = tableSection->numRows();
-        unsigned numCols = tableSection->numColumns();
         for (unsigned rowIndex = 0; rowIndex < numRows; ++rowIndex) {
-            for (unsigned colIndex = 0; colIndex < numCols; ++colIndex) {
-                
-                RenderTableCell* cell = tableSection->primaryCellAt(rowIndex, colIndex);
-                if (!cell)
-                    continue;
-                
-                AccessibilityObject* rowObject = axCache->getOrCreate(cell->parent());
-                if (!rowObject->isTableRow())
-                    continue;
-                
-                AccessibilityTableRow* row = static_cast<AccessibilityTableRow*>(rowObject);
-                // we need to check every cell for a new row, because cell spans
-                // can cause us to mess rows if we just check the first column
-                if (appendedRows.contains(row))
-                    continue;
-                
-                row->setRowIndex((int)m_rows.size());        
-                m_rows.append(row);
-                if (!row->accessibilityIsIgnored())
-                    m_children.append(row);
+            
+            RenderTableRow* renderRow = tableSection->rowRendererAt(rowIndex);
+            if (!renderRow)
+                continue;
+            
+            AccessibilityObject* rowObject = axCache->getOrCreate(renderRow);
+            if (!rowObject->isTableRow())
+                continue;
+            
+            AccessibilityTableRow* row = static_cast<AccessibilityTableRow*>(rowObject);
+            // We need to check every cell for a new row, because cell spans
+            // can cause us to miss rows if we just check the first column.
+            if (appendedRows.contains(row))
+                continue;
+            
+            row->setRowIndex(static_cast<int>(m_rows.size()));
+            m_rows.append(row);
+            if (!row->accessibilityIsIgnored())
+                m_children.append(row);
 #if PLATFORM(GTK)
-                else
-                    m_children.append(row->children());
+            else
+                m_children.append(row->children());
 #endif
-                appendedRows.add(row);
-            }
+            appendedRows.add(row);
         }
-        
+    
         tableSection = table->sectionBelow(tableSection, SkipEmptySections);
     }
     
@@ -509,76 +499,36 @@ int AccessibilityTable::tableLevel() const
 
 AccessibilityTableCell* AccessibilityTable::cellForColumnAndRow(unsigned column, unsigned row)
 {
-    if (!m_renderer || !m_renderer->isTable())
+    updateChildrenIfNecessary();
+    if (column >= columnCount() || row >= rowCount())
         return 0;
     
-    updateChildrenIfNecessary();
-    
-    RenderTable* table = toRenderTable(m_renderer);
-    // FIXME: This will skip a table with just a tfoot. Should fix by using RenderTable::topSection.
-    RenderTableSection* tableSection = table->header();
-    if (!tableSection)
-        tableSection = table->firstBody();
-    
-    RenderTableCell* cell = 0;
-    unsigned rowCount = 0;
-    unsigned rowOffset = 0;
-    while (tableSection) {
-        
-        unsigned numRows = tableSection->numRows();
-        unsigned numCols = tableSection->numColumns();
-        
-        rowCount += numRows;
-        
-        unsigned sectionSpecificRow = row - rowOffset;            
-        if (row < rowCount && column < numCols && sectionSpecificRow < numRows) {
-            cell = tableSection->primaryCellAt(sectionSpecificRow, column);
+    // Iterate backwards through the rows in case the desired cell has a rowspan and exists in a previous row.
+    for (unsigned rowIndexCounter = row + 1; rowIndexCounter > 0; --rowIndexCounter) {
+        unsigned rowIndex = rowIndexCounter - 1;
+        AccessibilityChildrenVector children = m_rows[rowIndex]->children();
+        // Since some cells may have colspans, we have to check the actual range of each
+        // cell to determine which is the right one.
+        for (unsigned colIndexCounter = std::min(static_cast<unsigned>(children.size()), column + 1); colIndexCounter > 0; --colIndexCounter) {
+            unsigned colIndex = colIndexCounter - 1;
+            AccessibilityObject* child = children[colIndex].get();
+            ASSERT(child->isTableCell());
+            if (!child->isTableCell())
+                continue;
             
-            // we didn't find the cell, which means there's spanning happening
-            // search backwards to find the spanning cell
-            if (!cell) {
-                
-                // first try rows
-                for (int testRow = sectionSpecificRow - 1; testRow >= 0; --testRow) {
-                    cell = tableSection->primaryCellAt(testRow, column);
-                    // cell overlapped. use this one
-                    ASSERT(!cell || cell->rowSpan() >= 1);
-                    if (cell && ((cell->rowIndex() + (cell->rowSpan() - 1)) >= sectionSpecificRow))
-                        break;
-                    cell = 0;
-                }
-                
-                if (!cell) {
-                    // try cols
-                    for (int testCol = column - 1; testCol >= 0; --testCol) {
-                        cell = tableSection->primaryCellAt(sectionSpecificRow, testCol);
-                        // cell overlapped. use this one
-                        ASSERT(!cell || cell->rowSpan() >= 1);
-                        if (cell && ((cell->col() + (cell->colSpan() - 1)) >= column))
-                            break;
-                        cell = 0;
-                    }
-                }
-            }
+            pair<unsigned, unsigned> columnRange;
+            pair<unsigned, unsigned> rowRange;
+            AccessibilityTableCell* tableCellChild = static_cast<AccessibilityTableCell*>(child);
+            tableCellChild->columnIndexRange(columnRange);
+            tableCellChild->rowIndexRange(rowRange);
+            
+            if ((column >= columnRange.first && column < (columnRange.first + columnRange.second))
+                && (row >= rowRange.first && row < (rowRange.first + rowRange.second)))
+                return tableCellChild;
         }
-        
-        if (cell)
-            break;
-        
-        rowOffset += numRows;
-        // we didn't find anything between the rows we should have
-        if (row < rowCount)
-            break;
-        tableSection = table->sectionBelow(tableSection, SkipEmptySections);
     }
     
-    if (!cell)
-        return 0;
-    
-    AccessibilityObject* cellObject = axObjectCache()->getOrCreate(cell);
-    ASSERT_WITH_SECURITY_IMPLICATION(cellObject->isTableCell());
-    
-    return static_cast<AccessibilityTableCell*>(cellObject);
+    return 0;
 }
 
 AccessibilityRole AccessibilityTable::roleValue() const

@@ -2381,12 +2381,12 @@ static NSString* roleValueToNSString(AccessibilityRole value)
     
     if (m_object->isTableCell()) {
         if ([attributeName isEqualToString:NSAccessibilityRowIndexRangeAttribute]) {
-            pair<int, int> rowRange;
+            pair<unsigned, unsigned> rowRange;
             static_cast<AccessibilityTableCell*>(m_object)->rowIndexRange(rowRange);
             return [NSValue valueWithRange:NSMakeRange(rowRange.first, rowRange.second)];
         }
         if ([attributeName isEqualToString:NSAccessibilityColumnIndexRangeAttribute]) {
-            pair<int, int> columnRange;
+            pair<unsigned, unsigned> columnRange;
             static_cast<AccessibilityTableCell*>(m_object)->columnIndexRange(columnRange);
             return [NSValue valueWithRange:NSMakeRange(columnRange.first, columnRange.second)];
         }

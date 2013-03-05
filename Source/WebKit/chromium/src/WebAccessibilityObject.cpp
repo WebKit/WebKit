@@ -899,7 +899,7 @@ unsigned WebAccessibilityObject::cellColumnIndex() const
     if (!m_private->isTableCell())
        return 0;
 
-    pair<int, int> columnRange;
+    pair<unsigned, unsigned> columnRange;
     static_cast<WebCore::AccessibilityTableCell*>(m_private.get())->columnIndexRange(columnRange);
     return columnRange.first;
 }
@@ -912,7 +912,7 @@ unsigned WebAccessibilityObject::cellColumnSpan() const
     if (!m_private->isTableCell())
        return 0;
 
-    pair<int, int> columnRange;
+    pair<unsigned, unsigned> columnRange;
     static_cast<WebCore::AccessibilityTableCell*>(m_private.get())->columnIndexRange(columnRange);
     return columnRange.second;
 }
@@ -925,7 +925,7 @@ unsigned WebAccessibilityObject::cellRowIndex() const
     if (!m_private->isTableCell())
        return 0;
 
-    pair<int, int> rowRange;
+    pair<unsigned, unsigned> rowRange;
     static_cast<WebCore::AccessibilityTableCell*>(m_private.get())->rowIndexRange(rowRange);
     return rowRange.first;
 }
@@ -938,7 +938,7 @@ unsigned WebAccessibilityObject::cellRowSpan() const
     if (!m_private->isTableCell())
        return 0;
 
-    pair<int, int> rowRange;
+    pair<unsigned, unsigned> rowRange;
     static_cast<WebCore::AccessibilityTableCell*>(m_private.get())->rowIndexRange(rowRange);
     return rowRange.second;
 }

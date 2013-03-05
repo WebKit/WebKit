@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class AccessibilityTableCell;
+class RenderTableSection;
     
 class AccessibilityTable : public AccessibilityRenderObject {
 
@@ -67,7 +68,7 @@ public:
     
     // all the cells in the table
     void cells(AccessibilityChildrenVector&);
-    virtual AccessibilityTableCell* cellForColumnAndRow(unsigned column, unsigned row);
+    AccessibilityTableCell* cellForColumnAndRow(unsigned column, unsigned row);
     
     void columnHeaders(AccessibilityChildrenVector&);
     void rowHeaders(AccessibilityChildrenVector&);

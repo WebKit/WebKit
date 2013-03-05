@@ -153,6 +153,8 @@ public:
         return c.primaryCell();
     }
 
+    RenderTableRow* rowRendererAt(unsigned row) const { return m_grid[row].rowRenderer; }
+
     void appendColumn(unsigned pos);
     void splitColumn(unsigned pos, unsigned first);
 
