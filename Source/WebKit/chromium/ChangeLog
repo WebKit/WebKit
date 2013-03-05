@@ -1,3 +1,18 @@
+2013-03-05  Alexei Filippov  <alph@chromium.org>
+
+        Web Inspector: Add a renderer process memory size test.
+        https://bugs.webkit.org/show_bug.cgi?id=111337
+
+        Reviewed by Yury Semikhatsky.
+
+        The test checks that the renderer process memory size
+        is obtained from the browser and reported to the inspector
+        frontend correctly.
+
+        * src/js/Tests.js:
+        (.TestSuite.prototype.testRendererProcessNativeMemorySize.checkFuzzyValue):
+        (.TestSuite.prototype.testRendererProcessNativeMemorySize.step2):
+
 2013-03-04  Chris Fleizach  <cfleizach@apple.com>
 
         AX: cellForColumnAndRow fails for tables with hidden table cells
