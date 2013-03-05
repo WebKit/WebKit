@@ -1,3 +1,21 @@
+2013-03-05  Tiancheng Jiang  <tijiang@rim.com>
+
+        [BlackBerry] FatFinger pairs the wrong element with fatfinger rect part.
+        https://bugs.webkit.org/show_bug.cgi?id=111444
+
+        Reviewed by Rob Buis.
+
+        Internal PR 266214
+        Internally reviewed by Genevieve Mak.
+
+        Instead of subtracting with the element region, we should get the remaining
+        rect by find the intersect region of element region and fatfinger detection
+        region.
+
+
+        * WebKitSupport/FatFingers.cpp:
+        (BlackBerry::WebKit::FatFingers::checkForClickableElement):
+
 2013-03-05  Andrew Lo  <anlo@rim.com>
 
         [BlackBerry] Clean up animated scroll/zoom code in WebPagePrivate
