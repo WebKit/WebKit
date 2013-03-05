@@ -2567,6 +2567,8 @@ webkit.org/b/52061 [ Debug ] transitions/suspend-transform-transition.html [ Ima
 webkit.org/b/52061 [ Debug ] transitions/change-values-during-transition.html [ Failure Pass ]
 webkit.org/b/52061 [ Debug ] transitions/interrupted-accelerated-transition.html [ Failure Pass ]
 webkit.org/b/52061 [ Debug ] transitions/transition-timing-function.html [ Failure Pass ]
+webkit.org/b/111471 [ Debug ] transitions/transitions-parsing.html [ Crash Pass ]
+webkit.org/b/111471 [ Release ] transitions/transitions-parsing.html [ Failure Pass ]
 
 # New test added in r75720
 crbug.com/69571 plugins/destroy-on-setwindow.html [ Crash Failure ]
