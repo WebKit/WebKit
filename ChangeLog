@@ -1,3 +1,9 @@
+2013-03-05  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed build fix.
+
+        * GNUmakefile.am: remove bad path for generate-feature-defines-files from EXTRA_DIST.
+
 2013-03-04  Ruslan Abdikeev  <aruslan@chromium.org>
 
         <link rel="apple-touch-icon"> tag is not honored on CNN.com, workflowy.com etc
