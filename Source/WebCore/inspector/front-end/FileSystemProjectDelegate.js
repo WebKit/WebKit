@@ -188,20 +188,18 @@ WebInspector.FileSystemProjectDelegate.prototype = {
 
     populate: function()
     {
-        this._fileSystem.requestFilesRecursive("", filesLoaded.bind(this));
+        this._fileSystem.requestFilesRecursive("", fileLoaded.bind(this));
 
-        function filesLoaded(files)
+        function fileLoaded(filePath)
         {
-            for (var i = 0; i < files.length; ++i) {
-                var path = files[i].split("/");
-                path.shift();
-                console.assert(path.length);
-                var fullPath = this._fileSystem.path() + files[i];
-                var url = this._workspace.urlForPath(fullPath);
-                var contentType = this._contentTypeForPath(path);
-                var fileDescriptor = new WebInspector.FileDescriptor(path, "file://" + fullPath, url, contentType, true);
-                this._addFile(fileDescriptor);
-            } 
+            var path = filePath.split("/");
+            path.shift();
+            console.assert(path.length);
+            var fullPath = this._fileSystem.path() + filePath;
+            var url = this._workspace.urlForPath(fullPath);
+            var contentType = this._contentTypeForPath(path);
+            var fileDescriptor = new WebInspector.FileDescriptor(path, "file://" + fullPath, url, contentType, true);
+            this._addFile(fileDescriptor);
         }
     },
 

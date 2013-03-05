@@ -36,7 +36,9 @@ function test()
 
         requestFilesRecursive: function(path, callback)
         {
-            callback(Object.keys(this._files));
+            var files = Object.keys(this._files);
+            for (var i = 0; i < files.length; ++i)
+                callback(files[i]);
         },
     }
 
