@@ -1,3 +1,26 @@
+2013-03-05  Otto Derek Cheung  <otcheung@rim.com>
+
+        [BlackBerry] Authentication credentials lost when opening a new tab
+        https://bugs.webkit.org/show_bug.cgi?id=111445
+
+        PR 286627
+
+        Reviewed by Rob Buis.
+        Internally Reviewed by Lianghui Chen.
+
+        Prevent changing the private mode boolean value in didChangeSettings if the value
+        hasn't changed.
+
+        Setting the private mode value of credentialstorage every time didChangeSettings gets
+        called causes the session credential mapping to be cleared on every tab change in
+        non-private mode.
+
+        Tested changing tabs after logging into a site using the HTTP Basic Auth protocol to see
+        if the credentials are cleared. Also ensured the functionality of private mode is not changed.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::didChangeSettings):
+
 2013-03-05  Tiancheng Jiang  <tijiang@rim.com>
 
         [BlackBerry] FatFinger pairs the wrong element with fatfinger rect part.

@@ -5929,7 +5929,6 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setLoadsImagesAutomatically(webSettings->loadsImagesAutomatically());
     coreSettings->setShouldDrawBorderWhileLoadingImages(webSettings->shouldDrawBorderWhileLoadingImages());
     coreSettings->setScriptEnabled(webSettings->isJavaScriptEnabled());
-    coreSettings->setPrivateBrowsingEnabled(webSettings->isPrivateBrowsingEnabled());
     coreSettings->setDeviceSupportsMouse(webSettings->deviceSupportsMouse());
     coreSettings->setDefaultFixedFontSize(webSettings->defaultFixedFontSize());
     coreSettings->setDefaultFontSize(webSettings->defaultFontSize());
@@ -5957,6 +5956,12 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setFirstScheduledLayoutDelay(webSettings->firstScheduledLayoutDelay());
     coreSettings->setUseCache(webSettings->useWebKitCache());
     coreSettings->setCookieEnabled(webSettings->areCookiesEnabled());
+
+    if (coreSettings->privateBrowsingEnabled() != webSettings->isPrivateBrowsingEnabled()) {
+        coreSettings->setPrivateBrowsingEnabled(webSettings->isPrivateBrowsingEnabled());
+        cookieManager().setPrivateMode(webSettings->isPrivateBrowsingEnabled());
+        CredentialStorage::setPrivateMode(webSettings->isPrivateBrowsingEnabled());
+    }
 
 #if ENABLE(SQL_DATABASE)
     // DatabaseManager can only be initialized for once, so it doesn't
@@ -6013,10 +6018,6 @@ void WebPagePrivate::didChangeSettings(WebSettings* webSettings)
     coreSettings->setShouldUseCrossOriginProtocolCheck(!webSettings->allowCrossSiteRequests());
     coreSettings->setWebSecurityEnabled(!webSettings->allowCrossSiteRequests());
     coreSettings->setApplyPageScaleFactorInCompositor(webSettings->applyDeviceScaleFactorInCompositor());
-
-    cookieManager().setPrivateMode(webSettings->isPrivateBrowsingEnabled());
-
-    CredentialStorage::setPrivateMode(webSettings->isPrivateBrowsingEnabled());
 
     if (m_mainFrame && m_mainFrame->view()) {
         Color backgroundColor(webSettings->backgroundColor());
