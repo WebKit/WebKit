@@ -87,8 +87,8 @@ bool SQLStatement::performCallback(SQLTransaction* transaction)
     // Call the appropriate statement callback and track if it resulted in an error,
     // because then we need to jump to the transaction error callback.
     if (error) {
-        ASSERT(errorCallback);
-        callbackError = errorCallback->handleEvent(transaction, error.get());
+        if (errorCallback)
+            callbackError = errorCallback->handleEvent(transaction, error.get());
     } else if (callback) {
         RefPtr<SQLResultSet> resultSet = m_backend->sqlResultSet();
         callbackError = !callback->handleEvent(transaction, resultSet.get());

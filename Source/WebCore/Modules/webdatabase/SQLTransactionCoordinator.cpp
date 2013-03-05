@@ -36,6 +36,7 @@
 
 #include "DatabaseBackend.h"
 #include "SQLTransactionBackend.h"
+#include "SecurityOrigin.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -47,7 +48,7 @@ static String getDatabaseIdentifier(SQLTransactionBackend* transaction)
 {
     DatabaseBackend* database = transaction->database();
     ASSERT(database);
-    return database->stringIdentifier();
+    return database->securityOrigin()->databaseIdentifier();
 }
 
 SQLTransactionCoordinator::SQLTransactionCoordinator()

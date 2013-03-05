@@ -25530,6 +25530,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Modules\webdatabase\OriginLock.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Modules\webdatabase\OriginLock.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Modules\webdatabase\SQLCallbackWrapper.h"
 					>
 				</File>

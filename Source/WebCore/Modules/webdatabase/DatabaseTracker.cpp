@@ -40,6 +40,7 @@
 #include "DatabaseThread.h"
 #include "FileSystem.h"
 #include "Logging.h"
+#include "OriginLock.h"
 #include "Page.h"
 #include "SecurityOrigin.h"
 #include "SecurityOriginHash.h"
@@ -281,6 +282,9 @@ unsigned long long DatabaseTracker::getMaxSizeForDatabase(const DatabaseBackendB
     unsigned long long diskUsage = usageForOrigin(origin);
     unsigned long long databaseFileSize = SQLiteFileSystem::getDatabaseFileSize(database->fileName());
     ASSERT(databaseFileSize <= diskUsage);
+
+    if (diskUsage > quota)
+        return databaseFileSize;
 
     // A previous error may have allowed the origin to exceed its quota, or may
     // have allowed this database to exceed our cached estimate of the origin
@@ -648,6 +652,53 @@ void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& nam
         databases->add(*it);
 }
 
+PassRefPtr<OriginLock> DatabaseTracker::originLockFor(SecurityOrigin* origin)
+{
+    MutexLocker lockDatabase(m_databaseGuard);
+    String databaseIdentifier = origin->databaseIdentifier();
+
+    // The originLockMap is accessed from multiple DatabaseThreads since
+    // different script contexts can be writing to different databases from
+    // the same origin. Hence, the databaseIdentifier key needs to be an
+    // isolated copy. An isolated copy gives us a value whose refCounting is
+    // thread-safe, since our copy is guarded by the m_databaseGuard mutex.
+    databaseIdentifier = databaseIdentifier.isolatedCopy();
+
+    OriginLockMap::AddResult addResult =
+        m_originLockMap.add(databaseIdentifier, RefPtr<OriginLock>());
+    if (!addResult.isNewEntry)
+        return addResult.iterator->value;
+
+    String path = originPath(origin);
+    RefPtr<OriginLock> lock = adoptRef(new OriginLock(path));
+    ASSERT(lock);
+    addResult.iterator->value = lock;
+
+    return lock.release();
+}
+
+void DatabaseTracker::deleteOriginLockFor(SecurityOrigin* origin)
+{
+    ASSERT(!m_databaseGuard.tryLock());
+
+    // There is not always an instance of an OriginLock associated with an origin.
+    // For example, if the OriginLock lock file was created by a previous run of
+    // the browser which has now terminated, and the current browser process
+    // has not executed any database transactions from this origin that would
+    // have created the OriginLock instance in memory. In this case, we will have
+    // a lock file but not an OriginLock instance in memory.
+
+    // This function is only called if we are already deleting all the database
+    // files in this origin. We'll give the OriginLock one chance to do an
+    // orderly clean up first when we remove its ref from the m_originLockMap.
+    // This may or may not be possible depending on whether other threads are
+    // also using the OriginLock at the same time. After that, we will go ahead
+    // and delete the lock file.
+
+    m_originLockMap.remove(origin->databaseIdentifier());
+    OriginLock::deleteLockFile(originPath(origin));
+}
+
 unsigned long long DatabaseTracker::usageForOrigin(SecurityOrigin* origin)
 {
     String originPath = this->originPath(origin);
@@ -798,6 +849,7 @@ bool DatabaseTracker::deleteOrigin(SecurityOrigin* origin)
 
     {
         MutexLocker lockDatabase(m_databaseGuard);
+        deleteOriginLockFor(origin);
         doneDeletingOrigin(origin);
 
         SQLiteStatement statement(m_database, "DELETE FROM Databases WHERE origin=?");

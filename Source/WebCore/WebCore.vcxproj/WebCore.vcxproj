@@ -2768,6 +2768,7 @@
     <ClCompile Include="..\Modules\webdatabase\DatabaseThread.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DatabaseTracker.cpp" />
     <ClCompile Include="..\Modules\webdatabase\DOMWindowWebDatabase.cpp" />
+    <ClCompile Include="..\Modules\webdatabase\OriginLock.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLException.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLResultSet.cpp" />
     <ClCompile Include="..\Modules\webdatabase\SQLResultSetRowList.cpp" />
@@ -8824,6 +8825,7 @@
     <ClInclude Include="..\Modules\webdatabase\DatabaseThread.h" />
     <ClInclude Include="..\Modules\webdatabase\DatabaseTracker.h" />
     <ClInclude Include="..\Modules\webdatabase\DOMWindowWebDatabase.h" />
+    <ClInclude Include="..\Modules\webdatabase\OriginLock.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLCallbackWrapper.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLError.h" />
     <ClInclude Include="..\Modules\webdatabase\SQLException.h" />

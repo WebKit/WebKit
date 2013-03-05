@@ -48,6 +48,7 @@ namespace WebCore {
 
 class DatabaseBackendBase;
 class DatabaseBackendContext;
+class OriginLock;
 class SecurityOrigin;
 
 #if !PLATFORM(CHROMIUM)
@@ -102,6 +103,7 @@ public:
     unsigned long long usageForOrigin(SecurityOrigin*);
     unsigned long long quotaForOrigin(SecurityOrigin*);
     void setQuota(SecurityOrigin*, unsigned long long);
+    PassRefPtr<OriginLock> originLockFor(SecurityOrigin*);
 
     void deleteAllDatabases();
     bool deleteOrigin(SecurityOrigin*);
@@ -139,6 +141,8 @@ private:
 
     bool deleteDatabaseFile(SecurityOrigin*, const String& name);
 
+    void deleteOriginLockFor(SecurityOrigin*);
+
     typedef HashSet<DatabaseBackendBase*> DatabaseSet;
     typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
     typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*> DatabaseOriginMap;
@@ -152,6 +156,9 @@ private:
 
     typedef HashMap<RefPtr<SecurityOrigin>, unsigned long long> QuotaMap;
     mutable OwnPtr<QuotaMap> m_quotaMap;
+
+    typedef HashMap<String, RefPtr<OriginLock> > OriginLockMap;
+    OriginLockMap m_originLockMap;
 
     String m_databaseDirectoryPath;
 

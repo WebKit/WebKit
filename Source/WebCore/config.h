@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006 Apple Inc.
+ * Copyright (C) 2004, 2005, 2006, 2013 Apple Inc.
  * Copyright (C) 2009 Google Inc. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
@@ -28,6 +28,10 @@
 #endif
 
 #include <wtf/Platform.h>
+
+#if PLATFORM(MAC) || PLATFORM(IOS)
+#define WTF_USE_FILE_LOCK 1
+#endif
 
 #if PLATFORM(WIN) && !OS(WINCE)
 #include <WebCore/WebCoreHeaderDetection.h>

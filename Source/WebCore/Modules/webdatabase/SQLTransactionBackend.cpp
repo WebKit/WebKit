@@ -37,8 +37,10 @@
 #include "DatabaseBackend.h"
 #include "DatabaseBackendContext.h"
 #include "DatabaseThread.h"
+#include "DatabaseTracker.h"
 #include "ExceptionCode.h"
 #include "Logging.h"
+#include "OriginLock.h"
 #include "SQLError.h"
 #include "SQLStatementBackend.h"
 #include "SQLTransactionClient.h"
@@ -386,6 +388,8 @@ void SQLTransactionBackend::doCleanup()
 
     ASSERT(currentThread() == database()->databaseContext()->databaseThread()->getThreadID());
 
+    releaseOriginLockIfNeeded();
+
     MutexLocker locker(m_statementMutex);
     m_statementQueue.clear();
 
@@ -491,6 +495,7 @@ void SQLTransactionBackend::computeNextStateAndCleanupIfNeeded()
         return;
     }
 
+    // If we get here, then we should be shutting down. Do clean up if needed:
     if (m_nextState == SQLTransactionState::End)
         return;
     m_nextState = SQLTransactionState::End;
@@ -570,8 +575,10 @@ SQLTransactionState SQLTransactionBackend::openTransactionAndPreflight()
     }
 
     // Set the maximum usage for this transaction if this transactions is not read-only
-    if (!m_readOnly)
+    if (!m_readOnly) {
+        acquireOriginLock();
         m_database->sqliteDatabase().setMaximumSize(m_database->maximumSize());
+    }
 
     ASSERT(!m_sqliteTransaction);
     m_sqliteTransaction = adoptPtr(new SQLiteTransaction(m_database->sqliteDatabase(), m_readOnly));
@@ -740,6 +747,8 @@ SQLTransactionState SQLTransactionBackend::postflightAndCommit()
     m_sqliteTransaction->commit();
     m_database->enableAuthorizer();
 
+    releaseOriginLockIfNeeded();
+
     // If the commit failed, the transaction will still be marked as "in progress"
     if (m_sqliteTransaction->inProgress()) {
         if (m_wrapper)
@@ -804,6 +813,8 @@ SQLTransactionState SQLTransactionBackend::cleanupAfterTransactionErrorCallback(
     }
     m_database->enableAuthorizer();
 
+    releaseOriginLockIfNeeded();
+
     ASSERT(!m_database->sqliteDatabase().transactionInProgress());
 
     return SQLTransactionState::CleanupAndTerminate;
@@ -834,6 +845,25 @@ SQLTransactionState SQLTransactionBackend::sendToFrontendState()
     ASSERT(m_nextState != SQLTransactionState::Idle);
     m_frontend->requestTransitToState(m_nextState);
     return SQLTransactionState::Idle;
+}
+
+void SQLTransactionBackend::acquireOriginLock()
+{
+#if !PLATFORM(CHROMIUM)
+    ASSERT(!m_originLock);
+    m_originLock = DatabaseTracker::tracker().originLockFor(m_database->securityOrigin());
+    m_originLock->lock();
+#endif
+}
+
+void SQLTransactionBackend::releaseOriginLockIfNeeded()
+{
+#if !PLATFORM(CHROMIUM)
+    if (m_originLock) {
+        m_originLock->unlock();
+        m_originLock.clear();
+    }
+#endif
 }
 
 } // namespace WebCore
