@@ -1,0 +1,149 @@
+<html>
+<head>
+<script type="text/javascript" src="../../http/tests/inspector-protocol/resources/protocol-test.js"></script>
+<script type="text/javascript">
+
+function test()
+{
+
+    var nodes;
+ 
+    InspectorTest.eventHandler["DOM.setChildNodes"] = setChildNodes;
+
+    enableLayerTreeAgent();
+    
+    function enableLayerTreeAgent(result)
+    {
+        step({
+            name: "Enable the LayerTree agent",
+            command: "LayerTree.enable",
+            parameters: {},
+            callback: getDocument
+        });
+    };
+
+    function getDocument()
+    {
+        // We must first get the document so that later on we may get sensible nodeIds.
+        step({
+            name: "Get the Document",
+            command: "DOM.getDocument",
+            parameters: {},
+            callback: getLayerTree
+        });
+    };
+
+    function getLayerTree(result)
+    {
+        step({
+            name: "Get the layer tree",
+            command: "LayerTree.layersForNode",
+            parameters: {"nodeId": result.root.nodeId},
+            callback: gotLayerTree
+        });
+    };
+
+    function gotLayerTree(result)
+    {
+        var reflectedLayers = result.layers.filter(function(layer) {
+            return layer.isReflection;
+        });
+
+        logTestName("Check layers");
+
+        assert("Expected number of reflected layers", reflectedLayers.length, 1);
+        assert("First reflected layer has a node", reflectedLayers[0].nodeId > 0, true);
+
+
+        logTestName("Check reflected node");
+
+        var node;
+        var nodeId = reflectedLayers[0].nodeId;
+        for (var i = 0, count = nodes.length; i < count; ++i) {
+            if (nodes[i].nodeId === nodeId) {
+                node = nodes[i];
+                break;
+            }
+        }
+
+        assert("Node for layer was found", !!node, true);
+        assert("Node has expected localName", node.localName, "div");
+        assert("Node has expected number of attributes", node.attributes.length, 2);
+        assert("Node has CSS class", node.attributes[0], "class");
+        assert("Node has expected CSS class", node.attributes[1], "reflected composited");
+        
+        InspectorTest.completeTest();
+    };
+
+    function setChildNodes (messageObject) {
+        nodes = messageObject.params.nodes;
+    };
+
+    function step(test)
+    {
+        if (test.callback)
+            logTestName(test.name);
+        runCommand(test);
+    };
+
+    function logTestName(name)
+    {
+        InspectorTest.log("\n=== " + name + " ===\n");
+    };
+
+    function runCommand(command)
+    {
+        InspectorTest.sendCommand(command.command, command.parameters, function(messageObject) {
+            if (messageObject.hasOwnProperty("error")) {
+                InspectorTest.log("FAIL: " + messageObject.error.message + " (" + messageObject.error.code + ")");
+                InspectorTest.completeTest();
+                return;
+            }
+
+            if (command.name)
+                InspectorTest.log("PASS");
+
+            if (command.callback)
+                command.callback(messageObject.result);
+        });
+    };
+
+    function assert(name, actual, expected)
+    {
+        if (expected === actual)
+            InspectorTest.log("PASS: " + name + ".");
+        else
+            InspectorTest.log("FAIL: " + name + ". Expected " + expected + " but got " + actual);
+    };
+
+};
+
+window.addEventListener("DOMContentLoaded", function()
+{
+    runTest();
+}, false);
+
+</script>
+<style type="text/css">
+
+    .reflected {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background-color: black;
+        -webkit-box-reflect: below;
+    }
+
+    .composited {
+        -webkit-transform: translateZ(0);
+    }
+
+</style>
+</head>
+<body>
+
+    <div class="reflected"></div>
+    <div class="reflected composited"></div>
+
+</body>
+</html>

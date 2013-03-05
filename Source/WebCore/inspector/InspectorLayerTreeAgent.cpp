@@ -150,20 +150,26 @@ void InspectorLayerTreeAgent::gatherLayersUsingRenderLayerHierarchy(ErrorString*
 
 PassRefPtr<TypeBuilder::LayerTree::Layer> InspectorLayerTreeAgent::buildObjectForLayer(ErrorString* errorString, RenderLayer* renderLayer)
 {
-    Node* node = renderLayer->renderer()->node();
+    bool isReflection = renderLayer->isReflection();
+
+    RenderObject* renderer = renderLayer->renderer();
     RenderLayerBacking* backing = renderLayer->backing();
+    Node* node = isReflection ? renderer->parent()->node() : renderer->node();
 
     // Basic set of properties.
     RefPtr<TypeBuilder::LayerTree::Layer> layerObject = TypeBuilder::LayerTree::Layer::create()
         .setLayerId(bind(renderLayer))
         .setNodeId(idForNode(errorString, node))
-        .setBounds(buildObjectForIntRect(enclosingIntRect(renderLayer->localBoundingBox())))
+        .setBounds(buildObjectForIntRect(enclosingIntRect(renderer->absoluteBoundingBoxRect())))
         .setMemory(backing->backingStoreMemoryEstimate())
         .setCompositedBounds(buildObjectForIntRect(backing->compositedBounds()))
         .setPaintCount(backing->graphicsLayer()->repaintCount());
 
     if (node && node->shadowHost())
         layerObject->setIsInShadowTree(true);
+
+    if (isReflection)
+        layerObject->setIsReflection(true);
 
     return layerObject;
 }

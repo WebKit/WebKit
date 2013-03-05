@@ -3663,11 +3663,12 @@
                 "properties": [
                     { "name": "layerId", "$ref": "LayerId", "description": "The unique id for this layer." },
                     { "name": "nodeId", "$ref": "DOM.NodeId", "description": "The id for the node associated with this layer." },
-                    { "name": "bounds", "$ref": "IntRect", "description": "Bounds of the layer." },
+                    { "name": "bounds", "$ref": "IntRect", "description": "Bounds of the layer in absolute page coordinates." },
                     { "name": "paintCount", "type": "integer", "description": "Indicates how many time this layer has painted." },
                     { "name": "memory", "type": "integer", "description": "Estimated memory used by this layer." },
                     { "name": "compositedBounds", "$ref": "IntRect", "description": "The bounds of the composited layer." },
-                    { "name": "isInShadowTree", "type": "boolean", "optional": true, "description": "Indicates whether this layer is associated with an element hosted in a shadow tree." }
+                    { "name": "isInShadowTree", "type": "boolean", "optional": true, "description": "Indicates whether this layer is associated with an element hosted in a shadow tree." },
+                    { "name": "isReflection", "type": "boolean", "optional": true, "description": "Indicates whether this layer was used to provide a reflection for the element." }
                 ]
             }
         ],

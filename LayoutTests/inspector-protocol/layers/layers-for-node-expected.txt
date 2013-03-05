@@ -34,8 +34,8 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
-            "y": 0,
+            "x": 25,
+            "y": 25,
             "width": 50,
             "height": 50
         },
@@ -52,8 +52,8 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
-            "y": 0,
+            "x": 50,
+            "y": 50,
             "width": 50,
             "height": 50
         },
@@ -70,7 +70,7 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
+            "x": 200,
             "y": 0,
             "width": 100,
             "height": 100
@@ -88,8 +88,8 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
-            "y": 0,
+            "x": 225,
+            "y": 25,
             "width": 50,
             "height": 50
         },
@@ -153,8 +153,8 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
-            "y": 0,
+            "x": 25,
+            "y": 25,
             "width": 50,
             "height": 50
         },
@@ -171,8 +171,8 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
-            "y": 0,
+            "x": 50,
+            "y": 50,
             "width": 50,
             "height": 50
         },
@@ -189,7 +189,7 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
+            "x": 200,
             "y": 0,
             "width": 100,
             "height": 100
@@ -207,8 +207,8 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
-            "y": 0,
+            "x": 225,
+            "y": 25,
             "width": 50,
             "height": 50
         },
@@ -243,8 +243,8 @@ PASS
         "layerId": "string",
         "nodeId": "number",
         "bounds": {
-            "x": 0,
-            "y": 0,
+            "x": 25,
+            "y": 25,
             "width": 50,
             "height": 50
         },
