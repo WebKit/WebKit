@@ -736,8 +736,8 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return nil;
     
     // Get the row and column range, so we can use them to find the headers.
-    pair<int, int> rowRange;
-    pair<int, int> columnRange;
+    pair<unsigned, unsigned> rowRange;
+    pair<unsigned, unsigned> columnRange;
     tableCell->rowIndexRange(rowRange);
     tableCell->columnIndexRange(columnRange);
     
@@ -800,7 +800,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (!tableCell)
         return NSMakeRange(NSNotFound, 0);
     
-    pair<int, int> rowRange;
+    pair<unsigned, unsigned> rowRange;
     tableCell->rowIndexRange(rowRange);
     return NSMakeRange(rowRange.first, rowRange.second);
 }
@@ -814,7 +814,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (!tableCell)
         return NSMakeRange(NSNotFound, 0);
     
-    pair<int, int> columnRange;
+    pair<unsigned, unsigned> columnRange;
     tableCell->columnIndexRange(columnRange);
     return NSMakeRange(columnRange.first, columnRange.second);
 }
