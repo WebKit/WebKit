@@ -100,6 +100,7 @@ private:
     ShadowRoot(Document*, ShadowRootType);
     virtual ~ShadowRoot();
 
+    virtual void dispose() OVERRIDE;
     virtual bool childTypeAllowed(NodeType) const OVERRIDE;
     virtual void childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta) OVERRIDE;
 
