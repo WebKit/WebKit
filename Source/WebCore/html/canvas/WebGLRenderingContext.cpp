@@ -5345,13 +5345,13 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
         break;
     case Extensions3D::COMPRESSED_ATC_RGB_AMD:
         {
-            bytesRequired = floor((width + 3) / 4) * floor((height + 3) / 4) * 8;
+            bytesRequired = floor(static_cast<double>((width + 3) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 8;
         }
         break;
     case Extensions3D::COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD:
     case Extensions3D::COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD:
         {
-            bytesRequired = floor((width + 3) / 4) * floor((height + 3) / 4) * 16;
+            bytesRequired = floor(static_cast<double>((width + 3) / 4)) * floor(static_cast<double>((height + 3) / 4)) * 16;
         }
         break;
     default:
