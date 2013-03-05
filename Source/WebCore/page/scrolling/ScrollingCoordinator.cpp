@@ -274,17 +274,32 @@ void ScrollingCoordinator::frameViewFixedObjectsDidChange(FrameView* frameView)
 
 GraphicsLayer* ScrollingCoordinator::scrollLayerForScrollableArea(ScrollableArea* scrollableArea)
 {
+#if USE(ACCELERATED_COMPOSITING)
     return scrollableArea->layerForScrolling();
+#else
+    UNUSED_PARAM(scrollableArea);
+    return 0;
+#endif
 }
 
 GraphicsLayer* ScrollingCoordinator::horizontalScrollbarLayerForScrollableArea(ScrollableArea* scrollableArea)
 {
+#if USE(ACCELERATED_COMPOSITING)
     return scrollableArea->layerForHorizontalScrollbar();
+#else
+    UNUSED_PARAM(scrollableArea);
+    return 0;
+#endif
 }
 
 GraphicsLayer* ScrollingCoordinator::verticalScrollbarLayerForScrollableArea(ScrollableArea* scrollableArea)
 {
+#if USE(ACCELERATED_COMPOSITING)
     return scrollableArea->layerForVerticalScrollbar();
+#else
+    UNUSED_PARAM(scrollableArea);
+    return 0;
+#endif
 }
 
 GraphicsLayer* ScrollingCoordinator::scrollLayerForFrameView(FrameView* frameView)
