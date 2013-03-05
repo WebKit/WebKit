@@ -55,6 +55,7 @@ gcutil --project=$PROJECT ssh $BOT_ID "
     bash build-repo.sh feeder-queue $BUGZILLA_USERNAME $BUGZILLA_PASSWORD &&
     cp -r /mnt/git/webkit-feeder-queue /mnt/git/webkit-style-queue &&
     cp -r /mnt/git/webkit-feeder-queue /mnt/git/webkit-sheriff-bot &&
+    bash configure-svn-config.sh &&
     bash configure-git-svn.sh sheriff-bot &&
     bash configure-git-user.sh sheriff-bot \"Sheriff Bot\" $BUGZILLA_USERNAME &&
     bash build-boot-cmd.sh \"\\

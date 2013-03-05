@@ -1,3 +1,18 @@
+2013-03-04  Alan Cutter  <alancutter@chromium.org>
+
+        check-webkit-style says "Have to enable auto props in the subversion config file"
+        https://bugs.webkit.org/show_bug.cgi?id=107724
+
+        Reviewed by Tony Chang.
+
+        Added a standard svn config file for WebKit developers to use.
+        Updated the style and commit queue bot build scripts to load this file.
+
+        * EWSTools/GoogleComputeEngine/build-commit-queue.sh:
+        * EWSTools/GoogleComputeEngine/build-feeder-style-sheriffbot.sh:
+        * EWSTools/configure-svn-config.sh: Copied from Tools/EWSTools/GoogleComputeEngine/build-commit-queue.sh.
+        * svn-config: Added.
+
 2013-03-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Switch to new webkit_support::CreateLayerTreeView interface
