@@ -1,0 +1,21 @@
+1
+1
+text1
+link1
+This tests that if an element has aria-label, it will override the visible text as necessary.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Button 1 should expose alternative text only.
+PASS button1.iphoneLabel is 'AXLabel: PLAY'
+Button 2 should expose internal text only.
+PASS button2.iphoneLabel is 'AXLabel: 1'
+Text 1 should rely on the stringValue() in the label field.
+PASS text1.iphoneLabel is 'AXLabel: text1'
+Link1 should combine the title field and the aria-label field.
+PASS link1.iphoneLabel is 'AXLabel: link1, link1-title'
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

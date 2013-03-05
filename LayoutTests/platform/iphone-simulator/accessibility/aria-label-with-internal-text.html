@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../fast/js/resources/js-test-style.css">
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var successfullyParsed = false;
+</script>
+</head>
+<body id="body">
+
+<div id="button1" role="button" aria-label="PLAY"><span>1</span></div>
+<div id="button2" role="button"><span>1</span></div>
+<div id="text1" role="text"><span>text1</span></div>
+<div id="link1" title="link1-title" role="link"><span>link1</span></div>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests that if an element has aria-label, it will override the visible text as necessary.");
+
+    if (window.accessibilityController) {
+
+        var button1 = accessibilityController.accessibleElementById("button1");
+        debug("Button 1 should expose alternative text only.");
+        shouldBe("button1.iphoneLabel", "'AXLabel: PLAY'");
+
+        var button2 = accessibilityController.accessibleElementById("button2");
+        debug("Button 2 should expose internal text only.");
+        shouldBe("button2.iphoneLabel", "'AXLabel: 1'");
+
+        var text1 = accessibilityController.accessibleElementById("text1");
+        debug("Text 1 should rely on the stringValue() in the label field.");
+        shouldBe("text1.iphoneLabel", "'AXLabel: text1'");
+
+        var link1 = accessibilityController.accessibleElementById("link1");
+        debug("Link1 should combine the title field and the aria-label field.");
+        shouldBe("link1.iphoneLabel", "'AXLabel: link1, link1-title'");
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+
+</body>
+</html>
+

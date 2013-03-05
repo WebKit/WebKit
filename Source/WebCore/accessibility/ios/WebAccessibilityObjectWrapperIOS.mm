@@ -658,7 +658,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
         return NO;
     if (m_object->roleValue() == PopUpButtonRole)
         return NO;
-    
+
     return YES;
 }
 
@@ -672,15 +672,23 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (label)
         return label;
 
-    NSString* title = m_object->title();
-    if (![title length])
-        title = m_object->accessibilityDescription();
-
-    // Everything except a text control needs to return their string value in the axLabel (per iPhone AX API).
-    if (![title length] && [self stringValueShouldBeUsedInLabel])
-        title = m_object->stringValue();
+    // iOS doesn't distinguish between a title and description field,
+    // so concatentation will yield the best result.
+    NSString *axTitle = [self accessibilityTitle];
+    NSString *axDescription = [self accessibilityDescription];
+    NSUInteger axTitleLength = [axTitle length];
+    NSUInteger axDescriptionLength = [axDescription length];
     
-    return title;
+    if (axTitleLength && axDescriptionLength)
+        return [axTitle stringByAppendingFormat:@", %@", axDescription];
+    else if (axTitleLength)
+        return axTitle;
+    else if (axDescriptionLength)
+        return axDescription;
+    else if ([self stringValueShouldBeUsedInLabel])
+        return m_object->stringValue();
+    
+    return nil;
 }
 
 - (AccessibilityTableCell*)tableCellParent
@@ -894,7 +902,7 @@ static AccessibilityObjectWrapper* AccessibilityUnignoredAncestor(AccessibilityO
     if (![self _prepareAccessibilityCall])
         return nil;
 
-    return m_object->helpText();
+    return [self accessibilityHelpText];
 }
 
 - (NSURL *)accessibilityURL
