@@ -1,3 +1,19 @@
+2013-03-04  Eric Seidel  <eric@webkit.org>
+
+        Add PerformanceTest for document startup via iframe append/remove
+        https://bugs.webkit.org/show_bug.cgi?id=111389
+
+        Reviewed by Kentaro Hara.
+
+        We'd like pages with lots of iframes to be fast.
+        This test shows that at least for V8/Chromium we spend
+        all our time booting v8.
+
+        On my 32-core linux machine I see about 70 runs/sec in
+        Release and 5 runs/sec in Debug.
+
+        * DOM/iframe-append-remove.html: Added.
+
 2013-03-03  Ryosuke Niwa  <rniwa@webkit.org>
 
         Some perf. tests have variances that differ greatly between runs
