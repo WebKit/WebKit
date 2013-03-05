@@ -627,7 +627,7 @@
 		BC032DBB10F4380F0058C15A /* WebEventConversion.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DB110F4380F0058C15A /* WebEventConversion.h */; };
 		BC032DD110F4389F0058C15A /* WebPageProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCB10F4389F0058C15A /* WebPageProxy.h */; };
 		BC032DD510F4389F0058C15A /* WebProcessProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC032DCF10F4389F0058C15A /* WebProcessProxy.h */; };
-		BC04EFFC16E65AFB00E336F0 /* WKWebProcessPlugInPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC04EFFB16E65AFB00E336F0 /* WKWebProcessPlugInPrivate.h */; };
+		BC04EFFC16E65AFB00E336F0 /* WKWebProcessPlugInPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BC04EFFB16E65AFB00E336F0 /* WKWebProcessPlugInPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BC06F42F12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F42D12DBB9B6002D78DE /* GeolocationPermissionRequestManager.h */; };
 		BC06F43012DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC06F42E12DBB9B6002D78DE /* GeolocationPermissionRequestManager.cpp */; };
 		BC06F43A12DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC06F43812DBCCFB002D78DE /* GeolocationPermissionRequestProxy.h */; };
@@ -944,10 +944,10 @@
 		BCBAAC74144E61A50053F82F /* WKBrowsingContextControllerInternal.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAAC6E144E61920053F82F /* WKBrowsingContextControllerInternal.h */; settings = {ATTRIBUTES = (); }; };
 		BCBAACEB145225E30053F82F /* WKProcessGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACE5145225C90053F82F /* WKProcessGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCBAACEC145225E30053F82F /* WKProcessGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBAACE6145225CA0053F82F /* WKProcessGroup.mm */; };
-		BCBAACED145225E30053F82F /* WKProcessGroupPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACE7145225CB0053F82F /* WKProcessGroupPrivate.h */; };
+		BCBAACED145225E30053F82F /* WKProcessGroupPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACE7145225CB0053F82F /* WKProcessGroupPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCBAACF41452324F0053F82F /* WKBrowsingContextGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACEE145232430053F82F /* WKBrowsingContextGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCBAACF51452324F0053F82F /* WKBrowsingContextGroup.mm in Sources */ = {isa = PBXBuildFile; fileRef = BCBAACEF145232440053F82F /* WKBrowsingContextGroup.mm */; };
-		BCBAACF61452324F0053F82F /* WKBrowsingContextGroupPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACF0145232480053F82F /* WKBrowsingContextGroupPrivate.h */; };
+		BCBAACF61452324F0053F82F /* WKBrowsingContextGroupPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAACF0145232480053F82F /* WKBrowsingContextGroupPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		BCBAAD0B14560A430053F82F /* WKBrowsingContextLoadDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBAAD0A14560A430053F82F /* WKBrowsingContextLoadDelegate.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BCBCB0CB1215E32100DE59CA /* ImmutableDictionary.h in Headers */ = {isa = PBXBuildFile; fileRef = BCBCB0CA1215E32100DE59CA /* ImmutableDictionary.h */; };
 		BCBCB0CD1215E33A00DE59CA /* ImmutableDictionary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCBCB0CC1215E33A00DE59CA /* ImmutableDictionary.cpp */; };

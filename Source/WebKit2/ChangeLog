@@ -1,5 +1,11 @@
 2013-03-05  Sam Weinig  <sam@webkit.org>
 
+        Follow up to https://bugs.webkit.org/show_bug.cgi?id=111453, forgot to mark the files as Private.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2013-03-05  Sam Weinig  <sam@webkit.org>
+
         Elevate accessors of C-SPI API variants to Objective-C SPI
         https://bugs.webkit.org/show_bug.cgi?id=111453
         <rdar://problem/13340357>
