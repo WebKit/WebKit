@@ -8,6 +8,9 @@ PASS requestSucceeded was called.
 PASS pc.setLocalDescription(sessionDescription, requestSucceeded2, requestFailed2); did not throw exception.
 PASS requestFailed was called.
 PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
+PASS pc.localDescription.type is "offer"
+PASS pc.localDescription.sdp is "local"
 PASS successfullyParsed is true
 
 TEST COMPLETE

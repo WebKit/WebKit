@@ -13,7 +13,12 @@ function requestFailed2()
 {
     testPassed('requestFailed was called.');
 
-    shouldBe('pc.localDescription.type', '"offer"');
+    shouldBeEqualToString('pc.localDescription.type', "offer");
+    shouldBeEqualToString('pc.localDescription.sdp', "local");
+    pc.close();
+    shouldBeEqualToString('pc.localDescription.type', "offer");
+    shouldBeEqualToString('pc.localDescription.sdp', "local");
+
     finishJSTest();
 }
 

@@ -225,11 +225,6 @@ void RTCPeerConnection::setLocalDescription(PassRefPtr<RTCSessionDescription> pr
 
 PassRefPtr<RTCSessionDescription> RTCPeerConnection::localDescription(ExceptionCode& ec)
 {
-    if (m_signalingState == SignalingStateClosed) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
     RefPtr<RTCSessionDescriptionDescriptor> descriptor = m_peerHandler->localDescription();
     if (!descriptor)
         return 0;
@@ -257,11 +252,6 @@ void RTCPeerConnection::setRemoteDescription(PassRefPtr<RTCSessionDescription> p
 
 PassRefPtr<RTCSessionDescription> RTCPeerConnection::remoteDescription(ExceptionCode& ec)
 {
-    if (m_signalingState == SignalingStateClosed) {
-        ec = INVALID_STATE_ERR;
-        return 0;
-    }
-
     RefPtr<RTCSessionDescriptionDescriptor> descriptor = m_peerHandler->remoteDescription();
     if (!descriptor)
         return 0;
@@ -631,21 +621,26 @@ EventTargetData* RTCPeerConnection::ensureEventTargetData()
 
 void RTCPeerConnection::changeSignalingState(SignalingState signalingState)
 {
-    ASSERT(m_signalingState != SignalingStateClosed);
-    m_signalingState = signalingState;
-    scheduleDispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+    if (m_signalingState != SignalingStateClosed && m_signalingState != signalingState) {
+        m_signalingState = signalingState;
+        scheduleDispatchEvent(Event::create(eventNames().statechangeEvent, false, false));
+    }
 }
 
 void RTCPeerConnection::changeIceGatheringState(IceGatheringState iceGatheringState)
 {
-    m_iceGatheringState = iceGatheringState;
-    scheduleDispatchEvent(Event::create(eventNames().gatheringchangeEvent, false, false));
+    if (m_iceGatheringState != iceGatheringState) {
+        m_iceGatheringState = iceGatheringState;
+        scheduleDispatchEvent(Event::create(eventNames().gatheringchangeEvent, false, false));
+    }
 }
 
 void RTCPeerConnection::changeIceConnectionState(IceConnectionState iceConnectionState)
 {
-    m_iceConnectionState = iceConnectionState;
-    scheduleDispatchEvent(Event::create(eventNames().icechangeEvent, false, false));
+    if (m_iceConnectionState != IceConnectionStateClosed && m_iceConnectionState != iceConnectionState) {
+        m_iceConnectionState = iceConnectionState;
+        scheduleDispatchEvent(Event::create(eventNames().icechangeEvent, false, false));
+    }
 }
 
 void RTCPeerConnection::scheduleDispatchEvent(PassRefPtr<Event> event)
