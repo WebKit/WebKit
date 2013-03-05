@@ -154,6 +154,9 @@ void RenderTable::addChild(RenderObject* child, RenderObject* beforeChild)
     else
         wrapInAnonymousSection = true;
 
+    if (child->isTableSection())
+        setNeedsSectionRecalc();
+
     if (!wrapInAnonymousSection) {
         if (beforeChild && beforeChild->parent() != this)
             beforeChild = splitAnonymousBoxesAroundChild(beforeChild);

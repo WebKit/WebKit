@@ -1,0 +1,5 @@
+PASS document.webkitFullscreenElement.id is 'test'
+Tests that a table-section element can be used in full screen mode.
+
+Test Element
+Hit Enter to run if not in test runner.
