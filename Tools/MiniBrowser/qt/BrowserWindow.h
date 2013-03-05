@@ -68,6 +68,7 @@ private:
     virtual void wheelEvent(QWheelEvent*);
 
     WindowOptions* m_windowOptions;
+    QHash<int, QQuickItem*> m_activeMockComponents;
     QVector<qreal> m_zoomLevels;
     unsigned m_currentZoomLevel;
 };

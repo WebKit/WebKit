@@ -1,3 +1,25 @@
+2013-03-05  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][MiniBrowser] Improve the update of touch indicators
+        https://bugs.webkit.org/show_bug.cgi?id=111429
+
+        Reviewed by Jocelyn Turcotte.
+
+        MiniBrowserApplication::sendTouchEvent sends an empty list
+        to BrowserWindow::updateVisualMockTouchPoints if the control
+        button is released, in which case the touch indicators should
+        be hidden so that we never end up with a leftover indicator
+        sticking on the screen.
+        This patch also simplifies the lookup of the indicator items by
+        replacing the findChild search in the item tree with a QHash
+        that stores the touch ID's and the pointers to the corresponding
+        indicator items.
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::updateVisualMockTouchPoints):
+        * MiniBrowser/qt/BrowserWindow.h:
+        (BrowserWindow):
+
 2013-03-05  Tim Horton  <timothy_horton@apple.com>, Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2] WTR needs an implementation of setAsynchronousSpellCheckingEnabled
