@@ -386,38 +386,6 @@
     margin-left: 0px;
 }
 
-.timeline-details {
-    -webkit-user-select: text;
-    vertical-align: top;
-}
-
-.timeline-function-name {
-    text-align: right;
-}
-
-.timeline-stacktrace-title {
-    padding-top: 4px;
-}
-
-.timeline-details-row-title {
-    font-weight: bold;
-    text-align: right;
-    white-space: nowrap;
-}
-
-.timeline-details-row-data {
-    white-space: nowrap;
-}
-
-.timeline-details-title {
-    border-bottom: 1px solid #B8B8B8;
-    font-size: 11px;
-    font-weight: bold;
-    padding-bottom: 5px;
-    padding-top: 0px;
-    white-space: nowrap;
-}
-
 .garbage-collect-status-bar-item .glyph {
     -webkit-mask-position: -128px -24px;
 }
