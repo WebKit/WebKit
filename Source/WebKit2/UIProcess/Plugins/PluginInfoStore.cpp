@@ -40,6 +40,7 @@ namespace WebKit {
 
 PluginInfoStore::PluginInfoStore()
     : m_pluginListIsUpToDate(false)
+    , m_client(0)
 {
 }
 
@@ -107,6 +108,9 @@ void PluginInfoStore::loadPluginsIfNecessary()
     m_plugins = deepIsolatedCopyPluginInfoVector(plugins);
 
     m_pluginListIsUpToDate = true;
+
+    if (m_client)
+        m_client->pluginInfoStoreDidLoadPlugins(this, m_plugins);
 }
 
 void PluginInfoStore::loadPlugin(Vector<PluginModuleInfo>& plugins, const String& pluginPath)

@@ -71,6 +71,11 @@ WKContextRef WKContextGetSharedThreadContext()
     return toAPI(WebContext::sharedThreadContext());
 }
 
+void WKContextSetClient(WKContextRef contextRef, const WKContextClient* wkClient)
+{
+    toImpl(contextRef)->initializeClient(wkClient);
+}
+
 void WKContextSetInjectedBundleClient(WKContextRef contextRef, const WKContextInjectedBundleClient* wkClient)
 {
     toImpl(contextRef)->initializeInjectedBundleClient(wkClient);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2012 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,52 +23,22 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef APIClientTraits_h
-#define APIClientTraits_h
+#ifndef WebContextClient_h
+#define WebContextClient_h
 
-#include "WKBundlePage.h"
+#include "APIClient.h"
 #include "WKContext.h"
-#include "WKPage.h"
 
 namespace WebKit {
 
-template <typename ClientInterface> struct APIClientTraits {
-    static const size_t interfaceSizesByVersion[1];
-};
-template <typename ClientInterface> const size_t APIClientTraits<ClientInterface>::interfaceSizesByVersion[] = { sizeof(ClientInterface) };
+class ImmutableArray;
+class WebContext;
 
-template<> struct APIClientTraits<WKBundlePageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKBundlePageResourceLoadClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKBundlePageFullScreenClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKPageContextMenuClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKPageLoaderClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKPageUIClient> {
-    static const size_t interfaceSizesByVersion[3];
-};
-
-template<> struct APIClientTraits<WKBundlePageFormClient> {
-    static const size_t interfaceSizesByVersion[2];
-};
-
-template<> struct APIClientTraits<WKContextClient> {
-    static const size_t interfaceSizesByVersion[2];
+class WebContextClient : public APIClient<WKContextClient, kWKContextClientCurrentVersion> {
+public:
+    void plugInInformationBecameAvailable(WebContext*, ImmutableArray*);
 };
 
 } // namespace WebKit
 
-#endif // APIClientTraits_h
+#endif // WebContextClient_h

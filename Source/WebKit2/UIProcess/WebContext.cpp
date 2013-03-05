@@ -159,6 +159,8 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 
     WebCore::initializeLoggingChannelsIfNecessary();
 
+    m_pluginInfoStore.setClient(this);
+
 #ifndef NDEBUG
     webContextCounter.increment();
 #endif
@@ -214,10 +216,17 @@ WebContext::~WebContext()
     invalidateCallbackMap(m_dictionaryCallbacks);
 
     platformInvalidateContext();
-    
+
+    m_pluginInfoStore.setClient(0);
+
 #ifndef NDEBUG
     webContextCounter.decrement();
 #endif
+}
+
+void WebContext::initializeClient(const WKContextClient* client)
+{
+    m_client.initialize(client);
 }
 
 void WebContext::initializeInjectedBundleClient(const WKContextInjectedBundleClient* client)
@@ -965,6 +974,34 @@ void WebContext::didReceiveMessageOnConnectionWorkQueue(CoreIPC::Connection* con
         didReceiveWebContextMessageOnConnectionWorkQueue(connection, messageID, arguments, didHandleMessage);
         return;
     }
+}
+
+void WebContext::pluginInfoStoreDidLoadPlugins(PluginInfoStore* store, const Vector<PluginModuleInfo>& plugins)
+{
+    ASSERT(store == &m_pluginInfoStore);
+
+    Vector<RefPtr<APIObject> > pluginArray;
+
+    for (size_t i = 0; i < plugins.size(); ++i) {
+        const PluginModuleInfo& plugin = plugins[i];
+        ImmutableDictionary::MapType map;
+        map.set("path", WebString::create(plugin.path));
+        map.set("name", WebString::create(plugin.info.name));
+        map.set("file", WebString::create(plugin.info.file));
+        map.set("desc", WebString::create(plugin.info.desc));
+        Vector<RefPtr<APIObject> > mimeArray;
+        for (size_t j = 0; j <  plugin.info.mimes.size(); ++j)
+            mimeArray.append(WebString::create(plugin.info.mimes[j].type));
+        map.set("mimes", ImmutableArray::adopt(mimeArray));
+#if PLATFORM(MAC)
+        map.set("bundleId", WebString::create(plugin.bundleIdentifier));
+        map.set("version", WebString::create(plugin.versionString));
+#endif
+
+        pluginArray.append(ImmutableDictionary::adopt(map));
+    }
+
+    m_client.plugInInformationBecameAvailable(this, ImmutableArray::adopt(pluginArray).leakRef());
 }
 
 } // namespace WebKit

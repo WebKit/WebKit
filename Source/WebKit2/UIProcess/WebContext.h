@@ -32,6 +32,7 @@
 #include "ProcessModel.h"
 #include "VisitedLinkProvider.h"
 #include "WebContextInjectedBundleClient.h"
+#include "WebContextClient.h"
 #include "WebContextConnectionClient.h"
 #include "WebDownloadClient.h"
 #include "WebHistoryClient.h"
@@ -66,7 +67,7 @@ struct WebProcessCreationParameters;
     
 typedef GenericCallback<WKDictionaryRef> DictionaryCallback;
 
-class WebContext : public APIObject, private CoreIPC::Connection::QueueClient {
+class WebContext : public APIObject, private PluginInfoStoreClient, private CoreIPC::Connection::QueueClient {
 public:
     static const Type APIType = TypeContext;
 
@@ -78,6 +79,7 @@ public:
 
     static const Vector<WebContext*>& allContexts();
 
+    void initializeClient(const WKContextClient*);
     void initializeInjectedBundleClient(const WKContextInjectedBundleClient*);
     void initializeConnectionClient(const WKContextConnectionClient*);
     void initializeHistoryClient(const WKContextHistoryClient*);
@@ -263,6 +265,9 @@ private:
     void handleGetPlugins(uint64_t requestID, bool refresh);
     void sendDidGetPlugins(uint64_t requestID, PassOwnPtr<Vector<WebCore::PluginInfo> >);
 
+    // PluginInfoStoreClient:
+    virtual void pluginInfoStoreDidLoadPlugins(PluginInfoStore*, const Vector<PluginModuleInfo>&) OVERRIDE;
+
     ProcessModel m_processModel;
     
     // FIXME: In the future, this should be one or more WebProcessProxies.
@@ -274,6 +279,8 @@ private:
     String m_injectedBundlePath;
     WebContextInjectedBundleClient m_injectedBundleClient;
 
+
+    WebContextClient m_client;
     WebContextConnectionClient m_connectionClient;
     
     WebHistoryClient m_historyClient;

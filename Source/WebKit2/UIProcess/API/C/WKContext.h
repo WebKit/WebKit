@@ -39,6 +39,26 @@ enum {
 };
 typedef uint32_t WKCacheModel;
 
+// Context Client
+typedef void (*WKContextPlugInAutoStartOriginHashesChangedCallback)(WKContextRef context, const void *clientInfo);
+typedef void (*WKContextNetworkProcessDidCrashCallback)(WKContextRef context, const void *clientInfo);
+typedef void (*WKContextPlugInInformationBecameAvailableCallback)(WKContextRef context, WKArrayRef plugIn, const void *clientInfo);
+
+struct WKContextClient {
+    int                                                                 version;
+    const void *                                                        clientInfo;
+
+    // Version 0.
+    WKContextPlugInAutoStartOriginHashesChangedCallback                 plugInAutoStartOriginHashesChanged;
+    WKContextNetworkProcessDidCrashCallback                             networkProcessDidCrash;
+
+    // Version 1.
+    WKContextPlugInInformationBecameAvailableCallback                         plugInInformationBecameAvailable;
+};
+typedef struct WKContextClient WKContextClient;
+
+enum { kWKContextClientCurrentVersion = 1 };
+
 // Injected Bundle Client
 typedef void (*WKContextDidReceiveMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, const void *clientInfo);
 typedef void (*WKContextDidReceiveSynchronousMessageFromInjectedBundleCallback)(WKContextRef page, WKStringRef messageName, WKTypeRef messageBody, WKTypeRef* returnData, const void *clientInfo);
@@ -123,6 +143,7 @@ WK_EXPORT WKContextRef WKContextCreate();
 WK_EXPORT WKContextRef WKContextCreateWithInjectedBundlePath(WKStringRef path);
 WK_EXPORT WKContextRef WKContextGetSharedProcessContext();
 
+WK_EXPORT void WKContextSetClient(WKContextRef context, const WKContextClient* client);
 WK_EXPORT void WKContextSetInjectedBundleClient(WKContextRef context, const WKContextInjectedBundleClient* client);
 WK_EXPORT void WKContextSetHistoryClient(WKContextRef context, const WKContextHistoryClient* client);
 WK_EXPORT void WKContextSetDownloadClient(WKContextRef context, const WKContextDownloadClient* client);
