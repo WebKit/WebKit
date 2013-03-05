@@ -2220,7 +2220,6 @@ WebInspector.StylePropertyTreeElement.prototype = {
         if (!isEditingName) {
             if (selectElement !== this.valueElement) {
                 // Click in the LI - start editing value.
-                isEditingName = false;
                 selectElement = this.valueElement;
             }
 
@@ -2647,9 +2646,11 @@ WebInspector.StylePropertyTreeElement.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.TextPrompt}
- * @param {function(*)=} acceptCallback
+ * @param {!WebInspector.CSSMetadata} cssCompletions
+ * @param {!WebInspector.StylePropertyTreeElement} sidebarPane
+ * @param {boolean} isEditingName
  */
-WebInspector.StylesSidebarPane.CSSPropertyPrompt = function(cssCompletions, sidebarPane, isEditingName, acceptCallback)
+WebInspector.StylesSidebarPane.CSSPropertyPrompt = function(cssCompletions, sidebarPane, isEditingName)
 {
     // Use the same callback both for applyItemCallback and acceptItemCallback.
     WebInspector.TextPrompt.call(this, this._buildPropertyCompletions.bind(this), WebInspector.StyleValueDelimiters);
@@ -2721,7 +2722,7 @@ WebInspector.StylesSidebarPane.CSSPropertyPrompt.prototype = {
      * @param {Element} proxyElement
      * @param {Range} wordRange
      * @param {boolean} force
-     * @param {function(Array.<string>, number=)} completionsReadyCallback
+     * @param {function(!Array.<string>, number=)} completionsReadyCallback
      */
     _buildPropertyCompletions: function(proxyElement, wordRange, force, completionsReadyCallback)
     {
