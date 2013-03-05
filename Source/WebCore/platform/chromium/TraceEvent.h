@@ -427,6 +427,16 @@
         category, name, id, TRACE_EVENT_FLAG_COPY, \
         arg1_name, arg1_val, arg2_name, arg2_val)
 
+// Updates a global state with 'name'. The sampling thread will read
+// the value periodically. STATE0 is for the main thread.
+// STATE1 and STATE2 will be preserved for other threads.
+#define TRACE_EVENT_SAMPLING_STATE0(name) \
+    INTERNAL_TRACE_EVENT_SAMPLING_STATE(name, 0)
+#define TRACE_EVENT_SAMPLING_STATE1(name) \
+    INTERNAL_TRACE_EVENT_SAMPLING_STATE(name, 1)
+#define TRACE_EVENT_SAMPLING_STATE2(name) \
+    INTERNAL_TRACE_EVENT_SAMPLING_STATE(name, 2)
+
 ////////////////////////////////////////////////////////////////////////////////
 // Implementation specific tracing API definitions.
 
@@ -537,6 +547,19 @@
     } while (0)
 #endif
 
+// Implementation detail: internal macro to update a global state for
+// the sampling profiler.
+// FIXME: The current implementation uses only one global variable,
+// and thus cannot trace states of multiple threads.
+#if COMPILER(MSVC7_OR_LOWER)
+#define INTERNAL_TRACE_EVENT_SAMPLING_STATE(ignore) ((void)0)
+#else
+#define INTERNAL_TRACE_EVENT_SAMPLING_STATE(name, threadBucket) \
+    do { \
+        *WebCore::traceSamplingState##threadBucket = reinterpret_cast<TraceEventAPIAtomicWord>("WebKit\0" name); \
+    } while (0);
+#endif
+
 // Notes regarding the following definitions:
 // New values can be added and propagated to third party libraries, but existing
 // definitions must never be changed, because third party libraries may use old
@@ -551,6 +574,7 @@
 #define TRACE_EVENT_PHASE_ASYNC_END   ('F')
 #define TRACE_EVENT_PHASE_METADATA ('M')
 #define TRACE_EVENT_PHASE_COUNTER  ('C')
+#define TRACE_EVENT_PHASE_SAMPLE  ('P')
 
 // Flags for changing the behavior of TRACE_EVENT_API_ADD_TRACE_EVENT.
 #define TRACE_EVENT_FLAG_NONE        (static_cast<unsigned char>(0))

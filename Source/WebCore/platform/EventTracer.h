@@ -33,8 +33,15 @@
 
 namespace WebCore {
 
+typedef long int TraceEventAPIAtomicWord;
+
+extern TraceEventAPIAtomicWord* traceSamplingState0;
+extern TraceEventAPIAtomicWord* traceSamplingState1;
+extern TraceEventAPIAtomicWord* traceSamplingState2;
+
 class EventTracer {
 public:
+    static void initialize();
     static const unsigned char* getTraceCategoryEnabledFlag(const char*);
     static void addTraceEvent(char phase,
                              const unsigned char* categoryEnabledFlag,

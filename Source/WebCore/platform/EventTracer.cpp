@@ -33,11 +33,18 @@
 
 namespace WebCore {
 
+void EventTracer::initialize()
+{
+    // On x86 and ARM, "*p = v" with 32 bit sizes is done atomically.
+    ASSERT(sizeof(TraceEventAPIAtomicWord) == 4);
+    return;
+}
+    
 const unsigned char* EventTracer::getTraceCategoryEnabledFlag(const char*)
 {
     return 0;
 }
-    
+
 void EventTracer::addTraceEvent(char,
                                      const unsigned char*,
                                      const char*,

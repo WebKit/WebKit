@@ -31,6 +31,7 @@
 #include "config.h"
 #include "WebKit.h"
 
+#include "EventTracer.h"
 #include "ImageDecodingStore.h"
 #include "LayoutTestSupport.h"
 #include "Logging.h"
@@ -155,6 +156,8 @@ void initializeWithoutV8(Platform* webKitPlatformSupport)
     // the initialization thread-safe, but given that so many code paths use
     // this, initializing this lazily probably doesn't buy us much.
     WebCore::UTF8Encoding();
+
+    WebCore::EventTracer::initialize();
 
 #if ENABLE(INDEXED_DATABASE)
     WebCore::setIDBFactoryBackendInterfaceCreateFunction(WebKit::IDBFactoryBackendProxy::create);
