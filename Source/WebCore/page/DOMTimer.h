@@ -68,7 +68,7 @@ namespace WebCore {
         int m_nestingLevel;
         OwnPtr<ScheduledAction> m_action;
         int m_originalInterval;
-        RefPtr<UserGestureIndicator::Token> m_userGestureToken;
+        RefPtr<UserGestureToken> m_userGestureToken;
     };
 
 } // namespace WebCore

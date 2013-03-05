@@ -30,9 +30,9 @@ namespace WebCore {
 
 namespace {
 
-class GestureToken : public UserGestureIndicator::Token {
+class GestureToken : public UserGestureToken {
 public:
-    static PassRefPtr<UserGestureIndicator::Token> create() { return adoptRef(new GestureToken); }
+    static PassRefPtr<UserGestureToken> create() { return adoptRef(new GestureToken); }
 
     virtual ~GestureToken() { }
 
@@ -83,7 +83,7 @@ UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state)
     ASSERT(isDefinite(s_state));
 }
 
-UserGestureIndicator::UserGestureIndicator(PassRefPtr<UserGestureIndicator::Token> token)
+UserGestureIndicator::UserGestureIndicator(PassRefPtr<UserGestureToken> token)
     : m_previousState(s_state)
 {
     if (token && static_cast<GestureToken*>(token.get())->hasGestures()) {
@@ -121,7 +121,7 @@ bool UserGestureIndicator::consumeUserGesture()
     return static_cast<GestureToken*>(s_topmostIndicator->currentToken())->consumeGesture();
 }
 
-UserGestureIndicator::Token* UserGestureIndicator::currentToken()
+UserGestureToken* UserGestureIndicator::currentToken()
 {
     if (!s_topmostIndicator)
         return 0;

@@ -452,7 +452,7 @@ private:
     IntPoint m_mouseDownPos; // In our view's coords.
     double m_mouseDownTimestamp;
     PlatformMouseEvent m_mouseDown;
-    RefPtr<UserGestureIndicator::Token> m_lastMouseDownUserGestureToken;
+    RefPtr<UserGestureToken> m_lastMouseDownUserGestureToken;
 
     RefPtr<Node> m_latchedWheelEventNode;
     bool m_widgetIsLatched;
