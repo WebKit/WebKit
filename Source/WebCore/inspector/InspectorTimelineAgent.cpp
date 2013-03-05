@@ -513,39 +513,22 @@ void InspectorTimelineAgent::didProcessTask()
 #if ENABLE(WEB_SOCKETS)
 void InspectorTimelineAgent::didCreateWebSocket(unsigned long identifier, const KURL& url, const String& protocol, Frame* frame)
 {
-    pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    record->setObject("data", TimelineRecordFactory::createWebSocketCreateData(identifier, url, protocol));
-    String frameId;
-    if (frame && m_pageAgent)
-        frameId = m_pageAgent->frameId(frame);
-    addRecordToTimeline(record.release(), TimelineRecordType::WebSocketCreate, frameId);
-}
-
-void InspectorTimelineAgent::addWebSocketRecord(unsigned long identifier, Frame* frame, const String& type)
-{
-    pushGCEventRecords();
-    RefPtr<InspectorObject> record = TimelineRecordFactory::createGenericRecord(WTF::currentTimeMS(), m_maxCallStackDepth);
-    record->setObject("data", TimelineRecordFactory::createGenericWebSocketData(identifier));
-    String frameId;
-    if (frame && m_pageAgent)
-        frameId = m_pageAgent->frameId(frame);
-    addRecordToTimeline(record.release(), type, frameId);
+    appendRecord(TimelineRecordFactory::createWebSocketCreateData(identifier, url, protocol), TimelineRecordType::WebSocketCreate, true, frame);
 }
 
 void InspectorTimelineAgent::willSendWebSocketHandshakeRequest(unsigned long identifier, Frame* frame)
 {
-    addWebSocketRecord(identifier, frame, TimelineRecordType::WebSocketSendHandshakeRequest);
+    appendRecord(TimelineRecordFactory::createGenericWebSocketData(identifier), TimelineRecordType::WebSocketSendHandshakeRequest, true, frame);
 }
 
 void InspectorTimelineAgent::didReceiveWebSocketHandshakeResponse(unsigned long identifier, Frame* frame)
 {
-    addWebSocketRecord(identifier, frame, TimelineRecordType::WebSocketReceiveHandshakeResponse);
+    appendRecord(TimelineRecordFactory::createGenericWebSocketData(identifier), TimelineRecordType::WebSocketReceiveHandshakeResponse, false, frame);
 }
 
 void InspectorTimelineAgent::didDestroyWebSocket(unsigned long identifier, Frame* frame)
 {
-    addWebSocketRecord(identifier, frame, TimelineRecordType::WebSocketDestroy);
+    appendRecord(TimelineRecordFactory::createGenericWebSocketData(identifier), TimelineRecordType::WebSocketDestroy, true, frame);
 }
 #endif // ENABLE(WEB_SOCKETS)
 

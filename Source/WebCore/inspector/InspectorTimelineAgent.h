@@ -216,10 +216,6 @@ private:
     void innerAddRecordToTimeline(PassRefPtr<InspectorObject>, const String& type, const String& frameId);
     void clearRecordStack();
 
-#if ENABLE(WEB_SOCKETS)
-    void addWebSocketRecord(unsigned long, Frame*, const String&);
-#endif
-
     double timestamp();
     double timestampFromMicroseconds(double microseconds);
     Page* page();
