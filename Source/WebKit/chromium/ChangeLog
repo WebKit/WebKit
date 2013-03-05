@@ -1,3 +1,10 @@
+2013-03-04  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed.  Rolled Chromium DEPS to r185990.  Requested by
+        jamesr_ via sheriffbot.
+
+        * DEPS:
+
 2013-02-26  Kentaro Hara  <haraken@chromium.org>
 
         [chromium] Implement TRACE_EVENT macros for sampling profiling
