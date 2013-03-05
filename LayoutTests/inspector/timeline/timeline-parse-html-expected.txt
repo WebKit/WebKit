@@ -7,7 +7,6 @@ ParseHTML Properties:
     counters : <object>
     data : {
         endLine : 0
-        length : 9
         startLine : 0
     }
     endTime : <number>
@@ -23,7 +22,6 @@ ParseHTML Properties:
     counters : <object>
     data : {
         endLine : 0
-        length : 1
         startLine : 0
     }
     endTime : <number>

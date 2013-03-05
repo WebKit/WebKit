@@ -191,10 +191,9 @@ PassRefPtr<InspectorObject> TimelineRecordFactory::createMarkData(bool isMainFra
     return data.release();
 }
 
-PassRefPtr<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned int length, unsigned int startLine)
+PassRefPtr<InspectorObject> TimelineRecordFactory::createParseHTMLData(unsigned startLine)
 {
     RefPtr<InspectorObject> data = InspectorObject::create();
-    data->setNumber("length", length);
     data->setNumber("startLine", startLine);
     return data.release();
 }
