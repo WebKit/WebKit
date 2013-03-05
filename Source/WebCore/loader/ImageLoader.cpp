@@ -92,6 +92,7 @@ static inline bool pageIsBeingDismissed(Document* document)
 ImageLoader::ImageLoader(Element* element)
     : m_element(element)
     , m_image(0)
+    , m_derefElementTimer(this, &ImageLoader::timerFired)
     , m_hasPendingBeforeLoadEvent(false)
     , m_hasPendingLoadEvent(false)
     , m_hasPendingErrorEvent(false)
@@ -366,10 +367,20 @@ void ImageLoader::updatedHasPendingEvent()
     if (wasProtected == m_elementIsProtected)
         return;
 
-    if (m_elementIsProtected)
-        m_element->ref();
-    else
-        m_element->deref();
+    if (m_elementIsProtected) {
+        if (m_derefElementTimer.isActive())
+            m_derefElementTimer.stop();
+        else
+            m_element->ref();
+    } else {
+        ASSERT(!m_derefElementTimer.isActive());
+        m_derefElementTimer.startOneShot(0);
+    }   
+}
+
+void ImageLoader::timerFired(Timer<ImageLoader>*)
+{
+    m_element->deref();
 }
 
 void ImageLoader::dispatchPendingEvent(ImageEventSender* eventSender)
