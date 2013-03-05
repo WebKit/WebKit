@@ -97,7 +97,7 @@ config.kPlatforms = {
             return builderName.indexOf('GPU') == -1 &&
                    builderName.indexOf('deps') == -1 &&
                    builderName.indexOf('ASAN') == -1 &&
-                   builderName.indexOf('Content Shell') == -1 &&
+                   builderName.indexOf('WebKit (Content Shell) Android') == -1 &&
                    builderName.indexOf('Mac10.8 Tests') == -1 &&
                    builderName.indexOf('WebKit Android') == -1;
         },
