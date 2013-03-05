@@ -1220,9 +1220,10 @@ void RenderLayerCompositor::frameViewDidScroll()
     if (ScrollingCoordinator* scrollingCoordinator = this->scrollingCoordinator()) {
         if (scrollingCoordinator->coordinatesScrollingForFrameView(frameView))
             return;
-        if (Settings* settings = m_renderView->document()->settings())
+        if (Settings* settings = m_renderView->document()->settings()) {
             if (settings->compositedScrollingForFramesEnabled())
                 scrollingCoordinator->scrollableAreaScrollLayerDidChange(frameView);
+        }
     }
 
     m_scrollLayer->setPosition(FloatPoint(-scrollPosition.x(), -scrollPosition.y()));
@@ -2148,9 +2149,10 @@ bool RenderLayerCompositor::requiresCompositingForPosition(RenderObject* rendere
         return false;
 
     // FIXME: acceleratedCompositingForFixedPositionEnabled should probably be renamed acceleratedCompositingForViewportConstrainedPositionEnabled().
-    if (Settings* settings = m_renderView->document()->settings())
+    if (Settings* settings = m_renderView->document()->settings()) {
         if (!settings->acceleratedCompositingForFixedPositionEnabled())
             return false;
+    }
 
     if (isSticky)
         return true;
