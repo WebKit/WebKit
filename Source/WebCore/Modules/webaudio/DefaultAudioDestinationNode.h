@@ -45,16 +45,19 @@ public:
     // AudioNode   
     virtual void initialize() OVERRIDE;
     virtual void uninitialize() OVERRIDE;
+    virtual void setChannelCount(unsigned long, ExceptionCode&) OVERRIDE;
 
     // AudioDestinationNode
     virtual void enableInput(const String& inputDeviceId) OVERRIDE;
     virtual void startRendering() OVERRIDE;
+    virtual unsigned long maxChannelCount() const OVERRIDE;
     
 private:
     explicit DefaultAudioDestinationNode(AudioContext*);
-    void createDestination(const String& inputDeviceId);
+    void createDestination();
 
     OwnPtr<AudioDestination> m_destination;
+    String m_inputDeviceId;
     unsigned m_numberOfInputChannels;
 };
 

@@ -56,6 +56,14 @@ public:
     // Sample-rate conversion may happen in AudioDestination to the hardware sample-rate
     virtual float sampleRate() const = 0;
     static float hardwareSampleRate();
+
+    // maxChannelCount() returns the total number of output channels of the audio hardware.
+    // A value of 0 indicates that the number of channels cannot be configured and
+    // that only stereo (2-channel) destinations can be created.
+    // The numberOfOutputChannels parameter of AudioDestination::create() is allowed to
+    // be a value: 1 <= numberOfOutputChannels <= maxChannelCount(),
+    // or if maxChannelCount() equals 0, then numberOfOutputChannels must be 2.
+    static unsigned long maxChannelCount();
 };
 
 } // namespace WebCore

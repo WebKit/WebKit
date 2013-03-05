@@ -114,6 +114,11 @@ float AudioDestination::hardwareSampleRate()
     return static_cast<float>(WebKit::Platform::current()->audioHardwareSampleRate());
 }
 
+unsigned long AudioDestination::maxChannelCount()
+{
+    return static_cast<float>(WebKit::Platform::current()->audioHardwareOutputChannels());
+}
+
 void AudioDestinationChromium::render(const WebKit::WebVector<float*>& sourceData, const WebKit::WebVector<float*>& audioData, size_t numberOfFrames)
 {
     bool isNumberOfChannelsGood = audioData.size() == m_numberOfOutputChannels;
@@ -137,8 +142,8 @@ void AudioDestinationChromium::render(const WebKit::WebVector<float*>& sourceDat
         m_inputFifo->push(&wrapperBus);
     }
 
-    m_renderBus.setChannelMemory(0, audioData[0], numberOfFrames);
-    m_renderBus.setChannelMemory(1, audioData[1], numberOfFrames);
+    for (unsigned i = 0; i < m_numberOfOutputChannels; ++i)
+        m_renderBus.setChannelMemory(i, audioData[i], numberOfFrames);
 
     m_fifo->consume(&m_renderBus, numberOfFrames);
 }

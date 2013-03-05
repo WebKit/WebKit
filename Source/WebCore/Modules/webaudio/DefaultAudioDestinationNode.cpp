@@ -28,6 +28,7 @@
 
 #include "DefaultAudioDestinationNode.h"
 
+#include "ExceptionCode.h"
 #include "Logging.h"
 #include <wtf/MainThread.h>
 
@@ -56,7 +57,7 @@ void DefaultAudioDestinationNode::initialize()
     if (isInitialized())
         return;
 
-    createDestination(String());
+    createDestination();
     AudioNode::initialize();
 }
 
@@ -72,12 +73,12 @@ void DefaultAudioDestinationNode::uninitialize()
     AudioNode::uninitialize();
 }
 
-void DefaultAudioDestinationNode::createDestination(const String& inputDeviceId)
+void DefaultAudioDestinationNode::createDestination()
 {
     float hardwareSampleRate = AudioDestination::hardwareSampleRate();
     LOG(WebAudio, ">>>> hardwareSampleRate = %f\n", hardwareSampleRate);
     
-    m_destination = AudioDestination::create(*this, inputDeviceId, m_numberOfInputChannels, numberOfChannels(), hardwareSampleRate);
+    m_destination = AudioDestination::create(*this, m_inputDeviceId, m_numberOfInputChannels, channelCount(), hardwareSampleRate);
 }
 
 void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)
@@ -85,11 +86,12 @@ void DefaultAudioDestinationNode::enableInput(const String& inputDeviceId)
     ASSERT(isMainThread());
     if (m_numberOfInputChannels != EnabledInputChannels) {
         m_numberOfInputChannels = EnabledInputChannels;
+        m_inputDeviceId = inputDeviceId;
 
         if (isInitialized()) {
             // Re-create destination.
             m_destination->stop();
-            createDestination(inputDeviceId);
+            createDestination();
             m_destination->start();
         }
     }
@@ -100,6 +102,35 @@ void DefaultAudioDestinationNode::startRendering()
     ASSERT(isInitialized());
     if (isInitialized())
         m_destination->start();
+}
+
+unsigned long DefaultAudioDestinationNode::maxChannelCount() const
+{
+    return AudioDestination::maxChannelCount();
+}
+
+void DefaultAudioDestinationNode::setChannelCount(unsigned long channelCount, ExceptionCode& ec)
+{
+    // The channelCount for the input to this node controls the actual number of channels we
+    // send to the audio hardware. It can only be set depending on the maximum number of
+    // channels supported by the hardware.
+
+    ASSERT(isMainThread());
+
+    if (!maxChannelCount() || channelCount > maxChannelCount()) {
+        ec = INVALID_STATE_ERR;
+        return;
+    }
+
+    unsigned long oldChannelCount = this->channelCount();
+    AudioNode::setChannelCount(channelCount, ec);
+
+    if (!ec && this->channelCount() != oldChannelCount && isInitialized()) {
+        // Re-create destination.
+        m_destination->stop();
+        createDestination();
+        m_destination->start();
+    }
 }
 
 } // namespace WebCore

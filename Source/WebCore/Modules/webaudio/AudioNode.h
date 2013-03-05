@@ -169,7 +169,7 @@ public:
     void reportMemoryUsage(MemoryObjectInfo*) const;
 
     unsigned long channelCount();
-    void setChannelCount(unsigned long, ExceptionCode&);
+    virtual void setChannelCount(unsigned long, ExceptionCode&);
 
     String channelCountMode();
     void setChannelCountMode(const String&, ExceptionCode&);

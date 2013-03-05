@@ -63,6 +63,13 @@ float AudioDestination::hardwareSampleRate()
     return 44100;
 }
 
+unsigned long AudioDestination::maxChannelCount()
+{
+    // FIXME: query the default audio hardware device to return the actual number
+    // of channels of the device. Also see corresponding FIXME in create().
+    return 0;
+}
+
 #ifndef GST_API_VERSION_1
 static void onGStreamerWavparsePadAddedCallback(GstElement*, GstPad* pad, AudioDestinationGStreamer* destination)
 {

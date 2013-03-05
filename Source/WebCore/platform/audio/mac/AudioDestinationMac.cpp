@@ -82,6 +82,15 @@ float AudioDestination::hardwareSampleRate()
     return narrowPrecisionToFloat(nominalSampleRate);
 }
 
+unsigned long AudioDestination::maxChannelCount()
+{
+    // FIXME: query the default audio hardware device to return the actual number
+    // of channels of the device. Also see corresponding FIXME in create().
+    // There is a small amount of code which assumes stereo in AudioDestinationMac which
+    // can be upgraded.
+    return 0;
+}
+
 AudioDestinationMac::AudioDestinationMac(AudioIOCallback& callback, float sampleRate)
     : m_outputUnit(0)
     , m_callback(callback)

@@ -27,5 +27,5 @@
     JSGenerateToJSObject,
     V8SkipVTableValidation
 ] interface AudioDestinationNode : AudioNode {
-    readonly attribute long numberOfChannels;
+    readonly attribute unsigned long maxChannelCount;
 };
