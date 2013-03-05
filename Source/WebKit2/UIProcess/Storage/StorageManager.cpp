@@ -32,6 +32,7 @@
 #include "WebProcessProxy.h"
 #include "WorkQueue.h"
 #include <WebCore/SecurityOriginHash.h>
+#include <WebCore/StorageMap.h>
 
 using namespace WebCore;
 
@@ -39,7 +40,7 @@ namespace WebKit {
 
 class StorageManager::StorageArea : public ThreadSafeRefCounted<StorageManager::StorageArea> {
 public:
-    static PassRefPtr<StorageArea> create();
+    static PassRefPtr<StorageArea> create(unsigned quotaInBytes);
     ~StorageArea();
 
     void addListener(CoreIPC::Connection*, uint64_t storageAreaID);
@@ -48,19 +49,21 @@ public:
     bool setItem(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& value, const String& urlString);
 
 private:
-    StorageArea();
+    explicit StorageArea(unsigned quotaInBytes);
 
     void dispatchEvents(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const;
 
+    RefPtr<StorageMap> m_storageMap;
     HashSet<std::pair<RefPtr<CoreIPC::Connection>, uint64_t> > m_eventListeners;
 };
 
-PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create()
+PassRefPtr<StorageManager::StorageArea> StorageManager::StorageArea::create(unsigned quotaInBytes)
 {
-    return adoptRef(new StorageArea());
+    return adoptRef(new StorageArea(quotaInBytes));
 }
 
-StorageManager::StorageArea::StorageArea()
+StorageManager::StorageArea::StorageArea(unsigned quotaInBytes)
+    : m_storageMap(StorageMap::create(quotaInBytes))
 {
 }
 
@@ -105,7 +108,7 @@ void StorageManager::StorageArea::dispatchEvents(CoreIPC::Connection* connection
 
 class StorageManager::SessionStorageNamespace : public ThreadSafeRefCounted<SessionStorageNamespace> {
 public:
-    static PassRefPtr<SessionStorageNamespace> create(CoreIPC::Connection* allowedConnection);
+    static PassRefPtr<SessionStorageNamespace> create(CoreIPC::Connection* allowedConnection, unsigned quotaInBytes);
     ~SessionStorageNamespace();
 
     bool isEmpty() const { return m_storageAreaMap.isEmpty(); }
@@ -118,19 +121,22 @@ public:
     void cloneTo(SessionStorageNamespace& newSessionStorageNamespace);
 
 private:
-    explicit SessionStorageNamespace(CoreIPC::Connection* allowedConnection);
+    SessionStorageNamespace(CoreIPC::Connection* allowedConnection, unsigned quotaInBytes);
 
     RefPtr<CoreIPC::Connection> m_allowedConnection;
+    unsigned m_quotaInBytes;
+
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea> > m_storageAreaMap;
 };
 
-PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(CoreIPC::Connection* allowedConnection)
+PassRefPtr<StorageManager::SessionStorageNamespace> StorageManager::SessionStorageNamespace::create(CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
-    return adoptRef(new SessionStorageNamespace(allowedConnection));
+    return adoptRef(new SessionStorageNamespace(allowedConnection, quotaInBytes));
 }
 
-StorageManager::SessionStorageNamespace::SessionStorageNamespace(CoreIPC::Connection* allowedConnection)
+StorageManager::SessionStorageNamespace::SessionStorageNamespace(CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
     : m_allowedConnection(allowedConnection)
+    , m_quotaInBytes(quotaInBytes)
 {
 }
 
@@ -149,7 +155,7 @@ PassRefPtr<StorageManager::StorageArea> StorageManager::SessionStorageNamespace:
 {
     HashMap<RefPtr<SecurityOrigin>, RefPtr<StorageArea> >::AddResult result = m_storageAreaMap.add(securityOrigin, 0);
     if (result.isNewEntry)
-        result.iterator->value = StorageArea::create();
+        result.iterator->value = StorageArea::create(m_quotaInBytes);
 
     return result.iterator->value;
 }
@@ -175,9 +181,9 @@ StorageManager::~StorageManager()
 {
 }
 
-void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection)
+void StorageManager::createSessionStorageNamespace(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
-    m_queue->dispatch(bind(&StorageManager::createSessionStorageNamespaceInternal, this, storageNamespaceID, RefPtr<CoreIPC::Connection>(allowedConnection)));
+    m_queue->dispatch(bind(&StorageManager::createSessionStorageNamespaceInternal, this, storageNamespaceID, RefPtr<CoreIPC::Connection>(allowedConnection), quotaInBytes));
 }
 
 void StorageManager::destroySessionStorageNamespace(uint64_t storageNamespaceID)
@@ -269,11 +275,11 @@ void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageAr
     connection->send(Messages::StorageAreaProxy::DidSetItem(key, quotaError), storageAreaID);
 }
 
-void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection)
+void StorageManager::createSessionStorageNamespaceInternal(uint64_t storageNamespaceID, CoreIPC::Connection* allowedConnection, unsigned quotaInBytes)
 {
     ASSERT(!m_sessionStorageNamespaces.contains(storageNamespaceID));
 
-    m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(allowedConnection));
+    m_sessionStorageNamespaces.set(storageNamespaceID, SessionStorageNamespace::create(allowedConnection, quotaInBytes));
 }
 
 void StorageManager::destroySessionStorageNamespaceInternal(uint64_t storageNamespaceID)

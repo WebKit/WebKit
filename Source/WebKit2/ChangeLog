@@ -1,3 +1,28 @@
+2013-03-04  Anders Carlsson  <andersca@apple.com>
+
+        UI process storage areas should hold on to storage maps
+        https://bugs.webkit.org/show_bug.cgi?id=111374
+
+        Reviewed by Beth Dakin.
+
+        Pass the session storage quota size through to the storage area constructor and
+        create a StorageMap with the given quota size.
+
+        * UIProcess/Storage/StorageManager.cpp:
+        (StorageManager::StorageArea):
+        (WebKit::StorageManager::StorageArea::create):
+        (WebKit::StorageManager::StorageArea::StorageArea):
+        (StorageManager::SessionStorageNamespace):
+        (WebKit::StorageManager::SessionStorageNamespace::create):
+        (WebKit::StorageManager::SessionStorageNamespace::SessionStorageNamespace):
+        (WebKit::StorageManager::SessionStorageNamespace::getOrCreateStorageArea):
+        (WebKit::StorageManager::createSessionStorageNamespace):
+        (WebKit::StorageManager::createSessionStorageNamespaceInternal):
+        * UIProcess/Storage/StorageManager.h:
+        (StorageManager):
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::WebPageProxy):
+
 2013-03-04  Raphael Kubo da Costa  <raphael.kubo.da.costa@intel.com>
 
         Unreviewed build fix after r144675.
