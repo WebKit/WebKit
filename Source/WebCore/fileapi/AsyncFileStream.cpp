@@ -36,32 +36,47 @@
 #include "AsyncFileStream.h"
 
 #include "Blob.h"
-#include "CrossThreadTask.h"
 #include "FileStream.h"
 #include "FileStreamClient.h"
 #include "FileThread.h"
 #include "FileThreadTask.h"
-#include "ScriptExecutionContext.h"
+#include "MainThreadTask.h"
+#include <wtf/MainThread.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-inline AsyncFileStream::AsyncFileStream(ScriptExecutionContext* context, FileStreamClient* client)
-    : m_context(context)
-    , m_stream(FileStream::create())
-    , m_client(client)
+static PassRefPtr<FileThread> createFileThread()
 {
+    RefPtr<FileThread> thread = FileThread::create();
+    if (!thread->start())
+        return 0;
+    return thread.release();
 }
 
-PassRefPtr<AsyncFileStream> AsyncFileStream::create(ScriptExecutionContext* context, FileStreamClient* client)
+static FileThread* fileThread()
 {
-    RefPtr<AsyncFileStream> proxy = adoptRef(new AsyncFileStream(context, client));
+    ASSERT(isMainThread());
+    static FileThread* thread = createFileThread().leakRef();
+    return thread;
+}
+
+inline AsyncFileStream::AsyncFileStream(FileStreamClient* client)
+    : m_stream(FileStream::create())
+    , m_client(client)
+{
+    ASSERT(isMainThread());
+}
+
+PassRefPtr<AsyncFileStream> AsyncFileStream::create(FileStreamClient* client)
+{
+    RefPtr<AsyncFileStream> proxy = adoptRef(new AsyncFileStream(client));
 
     // Hold a reference so that the instance will not get deleted while there are tasks on the file thread.
     // This is balanced by the deref in derefProxyOnContext below.
     proxy->ref();
 
-    proxy->fileThread()->postTask(createFileThreadTask(proxy.get(), &AsyncFileStream::startOnFileThread));
+    fileThread()->postTask(createFileThreadTask(proxy.get(), &AsyncFileStream::startOnFileThread));
 
     return proxy.release();
 }
@@ -70,14 +85,7 @@ AsyncFileStream::~AsyncFileStream()
 {
 }
 
-FileThread* AsyncFileStream::fileThread()
-{
-    ASSERT(m_context->isContextThread());
-    ASSERT(m_context->fileThread());
-    return m_context->fileThread();
-}
-
-static void didStart(ScriptExecutionContext*, AsyncFileStream* proxy)
+static void didStart(AsyncFileStream* proxy)
 {
     if (proxy->client())
         proxy->client()->didStart();
@@ -85,22 +93,23 @@ static void didStart(ScriptExecutionContext*, AsyncFileStream* proxy)
 
 void AsyncFileStream::startOnFileThread()
 {
-    if (!client())
+    // FIXME: It is not correct to check m_client from a secondary thread - stop() could be racing with this check.
+    if (!m_client)
         return;
     m_stream->start();
-    m_context->postTask(createCallbackTask(&didStart, AllowCrossThreadAccess(this)));
+    callOnMainThread(didStart, AllowCrossThreadAccess(this));
 }
 
 void AsyncFileStream::stop()
 {
-    // Clear the client so that we won't be calling callbacks on the client.
+    // Clear the client so that we won't be invoking callbacks on the client.
     setClient(0);
 
     fileThread()->unscheduleTasks(m_stream.get());
     fileThread()->postTask(createFileThreadTask(this, &AsyncFileStream::stopOnFileThread));
 }
 
-static void derefProxyOnContext(ScriptExecutionContext*, AsyncFileStream* proxy)
+static void derefProxyOnMainThread(AsyncFileStream* proxy)
 {
     ASSERT(proxy->hasOneRef());
     proxy->deref();
@@ -109,10 +118,10 @@ static void derefProxyOnContext(ScriptExecutionContext*, AsyncFileStream* proxy)
 void AsyncFileStream::stopOnFileThread()
 {
     m_stream->stop();
-    m_context->postTask(createCallbackTask(&derefProxyOnContext, AllowCrossThreadAccess(this)));
+    callOnMainThread(derefProxyOnMainThread, AllowCrossThreadAccess(this));
 }
 
-static void didGetSize(ScriptExecutionContext*, AsyncFileStream* proxy, long long size)
+static void didGetSize(AsyncFileStream* proxy, long long size)
 {
     if (proxy->client())
         proxy->client()->didGetSize(size);
@@ -126,10 +135,10 @@ void AsyncFileStream::getSize(const String& path, double expectedModificationTim
 void AsyncFileStream::getSizeOnFileThread(const String& path, double expectedModificationTime)
 {
     long long size = m_stream->getSize(path, expectedModificationTime);
-    m_context->postTask(createCallbackTask(&didGetSize, AllowCrossThreadAccess(this), size));
+    callOnMainThread(didGetSize, AllowCrossThreadAccess(this), size);
 }
 
-static void didOpen(ScriptExecutionContext*, AsyncFileStream* proxy, bool success)
+static void didOpen(AsyncFileStream* proxy, bool success)
 {
     if (proxy->client())
         proxy->client()->didOpen(success);
@@ -143,7 +152,7 @@ void AsyncFileStream::openForRead(const String& path, long long offset, long lon
 void AsyncFileStream::openForReadOnFileThread(const String& path, long long offset, long long length)
 {
     bool success = m_stream->openForRead(path, offset, length);
-    m_context->postTask(createCallbackTask(&didOpen, AllowCrossThreadAccess(this), success));
+    callOnMainThread(didOpen, AllowCrossThreadAccess(this), success);
 }
 
 void AsyncFileStream::openForWrite(const String& path)
@@ -156,7 +165,7 @@ void AsyncFileStream::openForWrite(const String& path)
 void AsyncFileStream::openForWriteOnFileThread(const String& path)
 {
     bool success = m_stream->openForWrite(path);
-    m_context->postTask(createCallbackTask(&didOpen, AllowCrossThreadAccess(this), success));
+    callOnMainThread(didOpen, AllowCrossThreadAccess(this), success);
 }
 
 void AsyncFileStream::close()
@@ -169,7 +178,7 @@ void AsyncFileStream::closeOnFileThread()
     m_stream->close();
 }
 
-static void didRead(ScriptExecutionContext*, AsyncFileStream* proxy, int bytesRead)
+static void didRead(AsyncFileStream* proxy, int bytesRead)
 {
     if (proxy->client())
         proxy->client()->didRead(bytesRead);
@@ -185,10 +194,10 @@ void AsyncFileStream::read(char* buffer, int length)
 void AsyncFileStream::readOnFileThread(char* buffer, int length)
 {
     int bytesRead = m_stream->read(buffer, length);
-    m_context->postTask(createCallbackTask(&didRead, AllowCrossThreadAccess(this), bytesRead));
+    callOnMainThread(didRead, AllowCrossThreadAccess(this), bytesRead);
 }
 
-static void didWrite(ScriptExecutionContext*, AsyncFileStream* proxy, int bytesWritten)
+static void didWrite(AsyncFileStream* proxy, int bytesWritten)
 {
     if (proxy->client())
         proxy->client()->didWrite(bytesWritten);
@@ -202,10 +211,10 @@ void AsyncFileStream::write(const KURL& blobURL, long long position, int length)
 void AsyncFileStream::writeOnFileThread(const KURL& blobURL, long long position, int length)
 {
     int bytesWritten = m_stream->write(blobURL, position, length);
-    m_context->postTask(createCallbackTask(&didWrite, AllowCrossThreadAccess(this), bytesWritten));
+    callOnMainThread(didWrite, AllowCrossThreadAccess(this), bytesWritten);
 }
 
-static void didTruncate(ScriptExecutionContext*, AsyncFileStream* proxy, bool success)
+static void didTruncate(AsyncFileStream* proxy, bool success)
 {
     if (proxy->client())
         proxy->client()->didTruncate(success);
@@ -219,7 +228,7 @@ void AsyncFileStream::truncate(long long position)
 void AsyncFileStream::truncateOnFileThread(long long position)
 {
     bool success = m_stream->truncate(position);
-    m_context->postTask(createCallbackTask(&didTruncate, AllowCrossThreadAccess(this), success));
+    callOnMainThread(didTruncate, AllowCrossThreadAccess(this), success);
 }
 
 } // namespace WebCore

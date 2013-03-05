@@ -291,14 +291,6 @@ void NetworkResourceLoader::willStopBufferingData(WebCore::ResourceHandle*, cons
 }
 #endif // PLATFORM(MAC)
 
-#if ENABLE(BLOB)
-WebCore::AsyncFileStream* NetworkResourceLoader::createAsyncFileStream(WebCore::FileStreamClient*)
-{
-    notImplemented();
-    return 0;
-}
-#endif
-
 } // namespace WebKit
 
 #endif // ENABLE(NETWORK_PROCESS)

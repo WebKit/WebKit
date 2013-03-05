@@ -42,13 +42,11 @@ namespace WebCore {
 
 class FileStreamClient;
 class FileStream;
-class FileThread;
 class KURL;
-class ScriptExecutionContext;
 
 class AsyncFileStream : public RefCounted<AsyncFileStream> {
 public:
-    static PassRefPtr<AsyncFileStream> create(ScriptExecutionContext*, FileStreamClient*);
+    static PassRefPtr<AsyncFileStream> create(FileStreamClient*);
     ~AsyncFileStream();
 
     void getSize(const String& path, double expectedModificationTime);
@@ -67,9 +65,7 @@ public:
     void setClient(FileStreamClient* client) { m_client = client; }
 
 private:
-    AsyncFileStream(ScriptExecutionContext*, FileStreamClient*);
-
-    FileThread* fileThread();
+    AsyncFileStream(FileStreamClient*);
 
     // Called on File thread.
     void startOnFileThread();
@@ -82,7 +78,6 @@ private:
     void writeOnFileThread(const KURL& blobURL, long long position, int length);
     void truncateOnFileThread(long long position);
 
-    RefPtr<ScriptExecutionContext> m_context;
     RefPtr<FileStream> m_stream;
 
     FileStreamClient* m_client;

@@ -62,10 +62,6 @@ class MessagePort;
 class PublicURLManager;
 #endif
 
-#if ENABLE(BLOB)
-class FileThread;
-#endif
-
 class ScriptExecutionContext : public SecurityContext, public Supplementable<ScriptExecutionContext> {
 public:
     ScriptExecutionContext();
@@ -156,11 +152,6 @@ public:
     JSC::JSGlobalData* globalData();
 #endif
 
-#if ENABLE(BLOB)
-    FileThread* fileThread();
-    void stopFileThread();
-#endif
-
     // Interval is in seconds.
     void adjustMinimumTimerInterval(double oldMinimumTimerInterval);
     virtual double minimumTimerInterval() const;
@@ -230,7 +221,6 @@ private:
 
 #if ENABLE(BLOB)
     OwnPtr<PublicURLManager> m_publicURLManager;
-    RefPtr<FileThread> m_fileThread;
 #endif
 
 #if ENABLE(SQL_DATABASE)

@@ -28927,6 +28927,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\MainThreadTask.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\MIMETypeRegistry.cpp"
 				>
 			</File>

@@ -9336,6 +9336,9 @@
     <ClInclude Include="..\platform\MemoryUsageSupport.h">
       <Filter>platform</Filter>
     </ClInclude>
+    <ClInclude Include="..\platform\MainThreadTask.h">
+      <Filter>platform</Filter>
+    </ClInclude>
     <ClInclude Include="..\platform\MIMETypeRegistry.h">
       <Filter>platform</Filter>
     </ClInclude>

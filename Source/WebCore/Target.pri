@@ -2331,6 +2331,7 @@ HEADERS += \
     platform/Language.h \
     platform/MemoryPressureHandler.h \
     platform/MemoryUsageSupport.h \
+    platform/MainThreadTask.h \
     platform/MIMETypeRegistry.h \
     platform/network/AuthenticationChallengeBase.h \
     platform/network/AuthenticationClient.h \

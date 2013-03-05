@@ -168,9 +168,9 @@ BlobResourceHandle::BlobResourceHandle(PassRefPtr<BlobStorageData> blobData, con
     , m_sizeItemCount(0)
     , m_readItemCount(0)
     , m_fileOpened(false)
-{    
+{
     if (m_async)
-        m_asyncStream = client->createAsyncFileStream(this);
+        m_asyncStream = AsyncFileStream::create(this);
     else
         m_stream = FileStream::create();
 }

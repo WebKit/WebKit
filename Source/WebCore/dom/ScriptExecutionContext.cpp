@@ -34,7 +34,6 @@
 #include "ErrorEvent.h"
 #include "EventListener.h"
 #include "EventTarget.h"
-#include "FileThread.h"
 #include "MessagePort.h"
 #include "PublicURLManager.h"
 #include "Settings.h"
@@ -127,10 +126,6 @@ ScriptExecutionContext::~ScriptExecutionContext()
         (*iter)->contextDestroyed();
     }
 #if ENABLE(BLOB)
-    if (m_fileThread) {
-        m_fileThread->stop();
-        m_fileThread = 0;
-    }
     if (m_publicURLManager)
         m_publicURLManager->contextDestroyed();
 #endif
@@ -358,16 +353,6 @@ int ScriptExecutionContext::circularSequentialID()
 }
 
 #if ENABLE(BLOB)
-FileThread* ScriptExecutionContext::fileThread()
-{
-    if (!m_fileThread) {
-        m_fileThread = FileThread::create();
-        if (!m_fileThread->start())
-            m_fileThread = 0;
-    }
-    return m_fileThread.get();
-}
-
 PublicURLManager& ScriptExecutionContext::publicURLManager()
 {
     if (!m_publicURLManager)
@@ -420,7 +405,6 @@ void ScriptExecutionContext::reportMemoryUsage(MemoryObjectInfo* memoryObjectInf
     info.addMember(m_pendingExceptions, "pendingExceptions");
 #if ENABLE(BLOB)
     info.addMember(m_publicURLManager, "publicURLManager");
-    info.addMember(m_fileThread, "fileThread");
 #endif
 }
 

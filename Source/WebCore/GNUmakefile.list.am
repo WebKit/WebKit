@@ -5786,6 +5786,7 @@ webcore_platform_sources += \
 	Source/WebCore/platform/LocalizedStrings.h \
 	Source/WebCore/platform/Logging.cpp \
 	Source/WebCore/platform/Logging.h \
+	Source/WebCore/platform/MainThreadTask.h \
 	Source/WebCore/platform/MIMETypeRegistry.cpp \
 	Source/WebCore/platform/MIMETypeRegistry.h \
 	Source/WebCore/platform/MemoryPressureHandler.cpp \

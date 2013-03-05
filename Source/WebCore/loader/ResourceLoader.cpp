@@ -545,14 +545,6 @@ void ResourceLoader::receivedCancellation(const AuthenticationChallenge&)
     cancel();
 }
 
-#if ENABLE(BLOB)
-AsyncFileStream* ResourceLoader::createAsyncFileStream(FileStreamClient* client)
-{
-    // It is OK to simply return a pointer since AsyncFileStream::create adds an extra ref.
-    return AsyncFileStream::create(m_frame->document()->scriptExecutionContext(), client).get();
-}
-#endif
-
 void ResourceLoader::reportMemoryUsage(MemoryObjectInfo* memoryObjectInfo) const
 {
     MemoryClassInfo info(memoryObjectInfo, this, WebCoreMemoryTypes::Loader);

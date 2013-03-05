@@ -134,9 +134,6 @@ public:
     virtual void didDownloadData(ResourceHandle*, int);
     virtual void didDownloadData(int);
 #endif
-#if ENABLE(BLOB)
-    virtual AsyncFileStream* createAsyncFileStream(FileStreamClient*);
-#endif
 
     const KURL& url() const { return m_request.url(); } 
     ResourceHandle* handle() const { return m_handle.get(); }
