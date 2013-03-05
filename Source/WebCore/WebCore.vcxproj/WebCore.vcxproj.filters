@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="DerivedSources">
@@ -6822,6 +6822,9 @@
     </ClCompile>
     <ClCompile Include="..\inspector\TimelineTraceEventProcessor.cpp">
       <Filter>inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\rendering\HitTestLocation.cpp">
+      <Filter>rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -14335,6 +14338,9 @@
     </ClInclude>
     <ClInclude Include="..\inspector\TimelineTraceEventProcessor.h">
       <Filter>inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\rendering\HitTestLocation.h">
+      <Filter>rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
