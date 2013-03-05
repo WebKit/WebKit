@@ -69,33 +69,31 @@ KURL IconController::url()
 IconURL IconController::iconURL(IconType iconType) const
 {
     IconURL result;
-    const Vector<IconURL>& iconURLs = m_frame->document()->iconURLs();
+    const Vector<IconURL>& iconURLs = m_frame->document()->iconURLs(iconType);
     Vector<IconURL>::const_iterator iter(iconURLs.begin());
     for (; iter != iconURLs.end(); ++iter) {
-        if (iter->m_iconType == iconType) {
-            if (result.m_iconURL.isEmpty() || !iter->m_mimeType.isEmpty())
-                result = *iter;
-        }
+        if (result.m_iconURL.isEmpty() || !iter->m_mimeType.isEmpty())
+            result = *iter;
     }
 
     return result;
 }
 
-IconURLs IconController::urlsForTypes(int iconTypes)
+IconURLs IconController::urlsForTypes(int iconTypesMask)
 {
     IconURLs iconURLs;
     if (m_frame->tree() && m_frame->tree()->parent())
         return iconURLs;
         
-    if (iconTypes & Favicon && !appendToIconURLs(Favicon, &iconURLs))
+    if (iconTypesMask & Favicon && !appendToIconURLs(Favicon, &iconURLs))
         iconURLs.append(defaultURL(Favicon));
 
 #if ENABLE(TOUCH_ICON_LOADING)
     int missedIcons = 0;
-    if (iconTypes & TouchPrecomposedIcon)
+    if (iconTypesMask & TouchPrecomposedIcon)
         missedIcons += appendToIconURLs(TouchPrecomposedIcon, &iconURLs) ? 0:1;
 
-    if (iconTypes & TouchIcon)
+    if (iconTypesMask & TouchIcon)
       missedIcons += appendToIconURLs(TouchIcon, &iconURLs) ? 0:1;
 
     // Only return the default touch icons when the both were required and neither was gotten.
@@ -106,11 +104,8 @@ IconURLs IconController::urlsForTypes(int iconTypes)
 #endif
 
     // Finally, append all remaining icons of this type.
-    const Vector<IconURL>& allIconURLs = m_frame->document()->iconURLs();
+    const Vector<IconURL>& allIconURLs = m_frame->document()->iconURLs(iconTypesMask);
     for (Vector<IconURL>::const_iterator iter = allIconURLs.begin(); iter != allIconURLs.end(); ++iter) {
-        if (!(iter->m_iconType & iconTypes))
-            continue;
-
         int i;
         int iconCount = iconURLs.size();
         for (i = 0; i < iconCount; ++i) {

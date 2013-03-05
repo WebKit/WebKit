@@ -1,0 +1,28 @@
+<html>
+<head>
+<title>Original Title</title>
+<link rel="shortcut icon" type="image/x-icon" href="http://test.com/oldfavicon.ico"/>
+<link rel="apple-touch-icon" type="image/png" href="http://test.com/i/touch.png"/>
+<link rel="apple-touch-icon-precomposed" type="image/png" href="http://test.com/i/touch-precomposed.png"/>
+<script src="../js/resources/js-test-pre.js"></script>
+<script>
+function runTests() {
+    if (window.testRunner)
+        testRunner.dumpAsText();
+
+    debug('Tests that all favicons and touch icons (if ENABLE(TOUCH_ICON_LOADING)) are in document.iconURLs()');
+
+    // Fetch the actual list of icon URLs.
+    var actualURLs = window.internals.allIconURLs(document);
+
+    // Print out the URL list in the document to match it against the expected list.
+    // Note that the expected order is reverse to ensure that icons seen later
+    // take precedence as required by the spec.
+    for (var i = 0; i < actualURLs.length; i++)
+        debug(actualURLs[i]);
+}
+</script>
+</head>
+<body onload='runTests();'>
+</body>
+</html>
