@@ -71,7 +71,7 @@ ShadowDOM
 
 Canvas/drawimage.html
 
-# Works fine, but is mostly useful to the threaded-parsing folks, as
-# it's very similar to parser/html-parser.html just using
-# srcdoc to load instead of document.write.
-Parser/html-parser-srcdoc.html
+# Has a time-dependency (monotonically increasing), and is much slower than
+# necessary due to https://bugs.webkit.org/show_bug.cgi?id=107236
+# but is still useful for testing the threaded parser.
+Parser/html-parser-threaded.html

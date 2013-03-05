@@ -6,7 +6,7 @@
 if (window.internals && window.internals.settings.setThreadedHTMLParser)
     window.internals.settings.setThreadedHTMLParser(true);
 
-var spec = PerfTestRunner.loadFile("resources/html5.html");
+var specURL = "resources/html5.html";
 
 var iframe = document.createElement("iframe");
 iframe.style.display = "none";  // Prevent creation of the rendering tree, so we only test HTML parsing.
@@ -19,10 +19,10 @@ iframe.onload = function() {
     var now = PerfTestRunner.now();
     PerfTestRunner.measureValueAsync(now - then);
     then = now;
-    iframe.srcdoc = spec;
+    iframe.src = specURL;
 }
 var then = PerfTestRunner.now();
-iframe.srcdoc = spec;
+iframe.src = specURL;
 
 function onCompletedRun() {
     iframe.onload = null;

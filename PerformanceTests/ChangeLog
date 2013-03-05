@@ -1,3 +1,15 @@
+2013-03-05  Eric Seidel  <eric@webkit.org>
+
+        Add html-parser-threaded perf test now that the threaded parser is enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=111200
+
+        Reviewed by Ryosuke Niwa.
+
+        The old srcdoc test no longer triggers the threaded parser due to compatibility fixes.
+
+        * Parser/html-parser-threaded.html: Renamed from PerformanceTests/Parser/html-parser-srcdoc.html.
+        * Skipped: Unfortunately this new test is still skipped too.
+
 2013-03-04  Eric Seidel  <eric@webkit.org>
 
         Add PerformanceTest for document startup via iframe append/remove

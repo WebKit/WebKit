@@ -1,3 +1,15 @@
+2013-03-05  Eric Seidel  <eric@webkit.org>
+
+        Add html-parser-threaded perf test now that the threaded parser is enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=111200
+
+        Reviewed by Ryosuke Niwa.
+
+        Had to teach run-perf-tests to ignore one more warning.
+
+        * Scripts/webkitpy/performance_tests/perftest.py:
+        (PerfTest):
+
 2013-03-05  Jochen Eisinger  <jochen@chromium.org>
 
         Update list of builders for test results server

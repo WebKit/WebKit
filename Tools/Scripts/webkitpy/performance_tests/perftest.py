@@ -246,6 +246,7 @@ class PerfTest(object):
         # Following is for html5.html
         re.compile(re.escape("""Blocked access to external URL http://www.whatwg.org/specs/web-apps/current-work/""")),
         re.compile(r"CONSOLE MESSAGE: (line \d+: )?Blocked script execution in '[A-Za-z0-9\-\.:]+' because the document's frame is sandboxed and the 'allow-scripts' permission is not set."),
+        re.compile(r"CONSOLE MESSAGE: (line \d+: )?Not allowed to load local resource"),
         # Dromaeo reports values for subtests. Ignore them for now.
         re.compile(r'(?P<name>.+): \[(?P<values>(\d+(.\d+)?,\s+)*\d+(.\d+)?)\]'),
     ]
