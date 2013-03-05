@@ -1307,7 +1307,7 @@ bool IDBBackingStore::Cursor::continueFunction(const IDBKey* key, IteratorState 
 {
     RefPtr<IDBKey> previousKey = m_currentKey;
 
-    // When iterating with PrevNoDuplicate, spec requires that the
+    // When iterating with PREV_NO_DUPLICATE, spec requires that the
     // value we yield for each key is the first duplicate in forwards
     // order.
     RefPtr<IDBKey> lastDuplicateKey;
@@ -1717,12 +1717,12 @@ bool IndexCursorImpl::loadCurrentRow()
     return true;
 }
 
-bool objectStoreCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
+bool objectStoreCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IDBCursor::Direction direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
 {
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
-    cursorOptions.forward = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorNext);
-    cursorOptions.unique = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorPrevNoDuplicate);
+    cursorOptions.forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
+    cursorOptions.unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     if (!lowerBound) {
         cursorOptions.lowKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
@@ -1764,13 +1764,13 @@ bool objectStoreCursorOptions(LevelDBTransaction* transaction, int64_t databaseI
     return true;
 }
 
-bool indexCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
+bool indexCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction, IDBBackingStore::Cursor::CursorOptions& cursorOptions)
 {
     ASSERT(transaction);
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
-    cursorOptions.forward = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorNext);
-    cursorOptions.unique = (direction == IndexedDB::CursorNextNoDuplicate || direction == IndexedDB::CursorPrevNoDuplicate);
+    cursorOptions.forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
+    cursorOptions.unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     if (!lowerBound) {
         cursorOptions.lowKey = IndexDataKey::encodeMinKey(databaseId, objectStoreId, indexId);
@@ -1807,7 +1807,7 @@ bool indexCursorOptions(LevelDBTransaction* transaction, int64_t databaseId, int
     return true;
 }
 
-PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openObjectStoreCursor(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openObjectStoreCursor(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     IDB_TRACE("IDBBackingStore::openObjectStoreCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
@@ -1821,7 +1821,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openObjectStoreCursor(IDBBa
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openObjectStoreKeyCursor(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openObjectStoreKeyCursor(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     IDB_TRACE("IDBBackingStore::openObjectStoreKeyCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
@@ -1835,7 +1835,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openObjectStoreKeyCursor(ID
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexKeyCursor(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexKeyCursor(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     IDB_TRACE("IDBBackingStore::openIndexKeyCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);
@@ -1849,7 +1849,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexKeyCursor(IDBBacki
     return cursor.release();
 }
 
-PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexCursor(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IndexedDB::CursorDirection direction)
+PassRefPtr<IDBBackingStore::Cursor> IDBBackingStore::openIndexCursor(IDBBackingStore::Transaction* transaction, int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     IDB_TRACE("IDBBackingStore::openIndexCursor");
     LevelDBTransaction* levelDBTransaction = IDBBackingStore::Transaction::levelDBTransactionFrom(transaction);

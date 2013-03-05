@@ -28,6 +28,7 @@
 
 #if ENABLE(INDEXED_DATABASE)
 
+#include "IDBCursorBackendInterface.h"
 #include "IDBDatabaseException.h"
 #include "IDBKey.h"
 #include "IDBKeyRange.h"
@@ -39,7 +40,7 @@
 
 namespace WebCore {
 
-static const unsigned short defaultDirection = IndexedDB::CursorNext;
+static const unsigned short defaultDirection = IDBCursor::NEXT;
 
 IDBIndex::IDBIndex(const IDBIndexMetadata& metadata, IDBObjectStore* objectStore, IDBTransaction* transaction)
     : m_metadata(metadata)
@@ -67,12 +68,12 @@ PassRefPtr<IDBRequest> IDBIndex::openCursor(ScriptExecutionContext* context, Pas
         ec = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
-    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, context, ec);
+    IDBCursor::Direction direction = IDBCursor::stringToDirection(directionString, context, ec);
     if (ec)
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    request->setCursorDetails(IndexedDB::CursorKeyAndValue, direction);
+    request->setCursorDetails(IDBCursorBackendInterface::KeyAndValue, direction);
     backendDB()->openCursor(m_transaction->id(), m_objectStore->id(), m_metadata.id, keyRange, direction, false, IDBDatabaseBackendInterface::NormalTask, request);
     return request;
 }
@@ -122,12 +123,12 @@ PassRefPtr<IDBRequest> IDBIndex::openKeyCursor(ScriptExecutionContext* context, 
         ec = IDBDatabaseException::TransactionInactiveError;
         return 0;
     }
-    IndexedDB::CursorDirection direction = IDBCursor::stringToDirection(directionString, context, ec);
+    IDBCursor::Direction direction = IDBCursor::stringToDirection(directionString, context, ec);
     if (ec)
         return 0;
 
     RefPtr<IDBRequest> request = IDBRequest::create(context, IDBAny::create(this), m_transaction.get());
-    request->setCursorDetails(IndexedDB::CursorKeyOnly, direction);
+    request->setCursorDetails(IDBCursorBackendInterface::KeyOnly, direction);
     backendDB()->openCursor(m_transaction->id(), m_objectStore->id(), m_metadata.id, keyRange, direction, true, IDBDatabaseBackendInterface::NormalTask, request);
     return request;
 }

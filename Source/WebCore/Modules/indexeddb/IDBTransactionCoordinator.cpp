@@ -29,6 +29,7 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBDatabaseBackendImpl.h"
+#include "IDBTransaction.h"
 #include "IDBTransactionBackendImpl.h"
 
 namespace WebCore {
@@ -96,7 +97,7 @@ void IDBTransactionCoordinator::processStartedTransactions()
     if (m_queuedTransactions.isEmpty())
         return;
 
-    ASSERT(m_startedTransactions.isEmpty() || (*m_startedTransactions.begin())->mode() != IndexedDB::TransactionVersionChange);
+    ASSERT(m_startedTransactions.isEmpty() || (*m_startedTransactions.begin())->mode() != IDBTransaction::VERSION_CHANGE);
 
     ListHashSet<IDBTransactionBackendImpl*>::const_iterator it = m_queuedTransactions.begin();
     while (it != m_queuedTransactions.end()) {
@@ -123,22 +124,22 @@ bool IDBTransactionCoordinator::canRunTransaction(IDBTransactionBackendImpl* tra
 {
     ASSERT(m_queuedTransactions.contains(transaction));
     switch (transaction->mode()) {
-    case IndexedDB::TransactionVersionChange:
+    case IDBTransaction::VERSION_CHANGE:
         ASSERT(m_queuedTransactions.size() == 1);
         ASSERT(m_startedTransactions.isEmpty());
         return true;
 
-    case IndexedDB::TransactionReadOnly:
+    case IDBTransaction::READ_ONLY:
         return true;
 
-    case IndexedDB::TransactionReadWrite:
+    case IDBTransaction::READ_WRITE:
         for (HashSet<IDBTransactionBackendImpl*>::const_iterator it = m_startedTransactions.begin(); it != m_startedTransactions.end(); ++it) {
-            if ((*it)->mode() == IndexedDB::TransactionReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
+            if ((*it)->mode() == IDBTransaction::READ_WRITE && doScopesOverlap(transaction->scope(), (*it)->scope()))
                 return false;
         }
         for (ListHashSet<IDBTransactionBackendImpl*>::const_iterator it = m_queuedTransactions.begin(); *it != transaction; ++it) {
             ASSERT(it != m_queuedTransactions.end());
-            if ((*it)->mode() == IndexedDB::TransactionReadWrite && doScopesOverlap(transaction->scope(), (*it)->scope()))
+            if ((*it)->mode() == IDBTransaction::READ_WRITE && doScopesOverlap(transaction->scope(), (*it)->scope()))
                 return false;
         }
         return true;

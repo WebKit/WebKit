@@ -42,6 +42,7 @@
 #include "IDBAny.h"
 #include "IDBCallbacks.h"
 #include "IDBCursor.h"
+#include "IDBCursorBackendInterface.h"
 #include "ScriptWrappable.h"
 
 namespace WebCore {
@@ -77,7 +78,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(error);
 
     void markEarlyDeath();
-    void setCursorDetails(IndexedDB::CursorType, IndexedDB::CursorDirection);
+    void setCursorDetails(IDBCursorBackendInterface::CursorType, IDBCursor::Direction);
     void setPendingCursor(PassRefPtr<IDBCursor>);
     void finishCursor();
     void abort();
@@ -148,8 +149,8 @@ private:
     Vector<RefPtr<Event> > m_enqueuedEvents;
 
     // Only used if the result type will be a cursor.
-    IndexedDB::CursorType m_cursorType;
-    IndexedDB::CursorDirection m_cursorDirection;
+    IDBCursorBackendInterface::CursorType m_cursorType;
+    IDBCursor::Direction m_cursorDirection;
     bool m_cursorFinished;
     RefPtr<IDBCursor> m_pendingCursor;
     RefPtr<IDBKey> m_cursorKey;

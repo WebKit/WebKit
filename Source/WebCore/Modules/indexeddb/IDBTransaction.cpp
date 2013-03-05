@@ -44,7 +44,7 @@
 
 namespace WebCore {
 
-PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IndexedDB::TransactionMode mode, IDBDatabase* db)
+PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IDBTransaction::Mode mode, IDBDatabase* db)
 {
     IDBOpenDBRequest* openDBRequest = 0;
     RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, objectStoreNames, mode, db, openDBRequest, IDBDatabaseMetadata())));
@@ -54,7 +54,7 @@ PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* contex
 
 PassRefPtr<IDBTransaction> IDBTransaction::create(ScriptExecutionContext* context, int64_t id, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
 {
-    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, Vector<String>(), IndexedDB::TransactionVersionChange, db, openDBRequest, previousMetadata)));
+    RefPtr<IDBTransaction> transaction(adoptRef(new IDBTransaction(context, id, Vector<String>(), VERSION_CHANGE, db, openDBRequest, previousMetadata)));
     transaction->suspendIfNeeded();
     return transaction.release();
 }
@@ -90,7 +90,7 @@ const AtomicString& IDBTransaction::modeReadWriteLegacy()
 }
 
 
-IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IndexedDB::TransactionMode mode, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
+IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, const Vector<String>& objectStoreNames, IDBTransaction::Mode mode, IDBDatabase* db, IDBOpenDBRequest* openDBRequest, const IDBDatabaseMetadata& previousMetadata)
     : ActiveDOMObject(context, this)
     , m_id(id)
     , m_database(db)
@@ -102,7 +102,7 @@ IDBTransaction::IDBTransaction(ScriptExecutionContext* context, int64_t id, cons
     , m_contextStopped(false)
     , m_previousMetadata(previousMetadata)
 {
-    if (mode == IndexedDB::TransactionVersionChange) {
+    if (mode == VERSION_CHANGE) {
         // Not active until the callback.
         m_state = Inactive;
     }
@@ -336,30 +336,30 @@ bool IDBTransaction::hasPendingActivity() const
     return m_hasPendingActivity;
 }
 
-IndexedDB::TransactionMode IDBTransaction::stringToMode(const String& modeString, ScriptExecutionContext* context, ExceptionCode& ec)
+IDBTransaction::Mode IDBTransaction::stringToMode(const String& modeString, ScriptExecutionContext* context, ExceptionCode& ec)
 {
     if (modeString.isNull()
         || modeString == IDBTransaction::modeReadOnly())
-        return IndexedDB::TransactionReadOnly;
+        return IDBTransaction::READ_ONLY;
     if (modeString == IDBTransaction::modeReadWrite())
-        return IndexedDB::TransactionReadWrite;
+        return IDBTransaction::READ_WRITE;
 
     ec = TypeError;
-    return IndexedDB::TransactionReadOnly;
+    return IDBTransaction::READ_ONLY;
 }
 
-const AtomicString& IDBTransaction::modeToString(IndexedDB::TransactionMode mode)
+const AtomicString& IDBTransaction::modeToString(IDBTransaction::Mode mode)
 {
     switch (mode) {
-    case IndexedDB::TransactionReadOnly:
+    case IDBTransaction::READ_ONLY:
         return IDBTransaction::modeReadOnly();
         break;
 
-    case IndexedDB::TransactionReadWrite:
+    case IDBTransaction::READ_WRITE:
         return IDBTransaction::modeReadWrite();
         break;
 
-    case IndexedDB::TransactionVersionChange:
+    case IDBTransaction::VERSION_CHANGE:
         return IDBTransaction::modeVersionChange();
         break;
 

@@ -34,7 +34,7 @@ namespace WebCore {
 
 class IDBCursorWithValue : public IDBCursor {
 public:
-    static PassRefPtr<IDBCursorWithValue> create(PassRefPtr<IDBCursorBackendInterface>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
+    static PassRefPtr<IDBCursorWithValue> create(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
     static PassRefPtr<IDBCursorWithValue> fromCursor(PassRefPtr<IDBCursor>);
     virtual ~IDBCursorWithValue();
 
@@ -45,7 +45,7 @@ protected:
     virtual bool isKeyCursor() const OVERRIDE { return false; }
 
 private:
-    IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
+    IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
 };
 
 } // namespace WebCore

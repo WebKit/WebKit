@@ -28,6 +28,7 @@
 #ifndef IDBFactory_h
 #define IDBFactory_h
 
+#include "IDBFactoryBackendInterface.h"
 #include "IDBOpenDBRequest.h"
 #include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>

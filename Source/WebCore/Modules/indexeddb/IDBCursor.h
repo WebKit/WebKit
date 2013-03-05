@@ -30,7 +30,6 @@
 
 #include "IDBKey.h"
 #include "IDBTransaction.h"
-#include "IndexedDB.h"
 #include "ScriptValue.h"
 #include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
@@ -50,15 +49,22 @@ typedef int ExceptionCode;
 
 class IDBCursor : public ScriptWrappable, public RefCounted<IDBCursor> {
 public:
+    enum Direction {
+        NEXT = 0,
+        NEXT_NO_DUPLICATE = 1,
+        PREV = 2,
+        PREV_NO_DUPLICATE = 3,
+    };
+
     static const AtomicString& directionNext();
     static const AtomicString& directionNextUnique();
     static const AtomicString& directionPrev();
     static const AtomicString& directionPrevUnique();
 
-    static IndexedDB::CursorDirection stringToDirection(const String& modeString, ScriptExecutionContext*, ExceptionCode&);
+    static IDBCursor::Direction stringToDirection(const String& modeString, ScriptExecutionContext*, ExceptionCode&);
     static const AtomicString& directionToString(unsigned short mode);
 
-    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
+    static PassRefPtr<IDBCursor> create(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual ~IDBCursor();
 
     // Implement the IDL
@@ -83,7 +89,7 @@ public:
     PassRefPtr<IDBKey> idbPrimaryKey() { return m_currentPrimaryKey; }
 
 protected:
-    IDBCursor(PassRefPtr<IDBCursorBackendInterface>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
+    IDBCursor(PassRefPtr<IDBCursorBackendInterface>, Direction, IDBRequest*, IDBAny* source, IDBTransaction*);
     virtual bool isKeyCursor() const { return true; }
 
 private:
@@ -91,7 +97,7 @@ private:
 
     RefPtr<IDBCursorBackendInterface> m_backend;
     RefPtr<IDBRequest> m_request;
-    const IndexedDB::CursorDirection m_direction;
+    const Direction m_direction;
     RefPtr<IDBAny> m_source;
     RefPtr<IDBTransaction> m_transaction;
     IDBTransaction::OpenCursorNotifier m_transactionNotifier;
