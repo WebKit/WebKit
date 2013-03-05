@@ -651,6 +651,11 @@ void TestRunner::setCacheModel(int model)
     WKBundleSetCacheModel(InjectedBundle::shared().bundle(), model);
 }
 
+void TestRunner::setAsynchronousSpellCheckingEnabled(bool enabled)
+{
+    WKBundleSetAsynchronousSpellCheckingEnabled(InjectedBundle::shared().bundle(), InjectedBundle::shared().pageGroup(), enabled);
+}
+
 void TestRunner::grantWebNotificationPermission(JSStringRef origin)
 {
     WKRetainPtr<WKStringRef> originWK = toWK(origin);

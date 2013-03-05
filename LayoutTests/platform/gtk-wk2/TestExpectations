@@ -185,6 +185,17 @@ webkit.org/b/42194 fast/dom/vertical-scrollbar-in-rtl.html [ Failure ]
 webkit.org/b/42194 fast/events/5056619.html [ Failure ]
 webkit.org/b/42194 http/tests/security/drag-drop-same-unique-origin.html [ Failure ]
 
+# Missing TextChecker::requestCheckingOfString() implementation for Gtk.
+Bug(GTK) editing/spelling/grammar-markers.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-paste.html [ Skip ]
+Bug(GTK) editing/spelling/grammar-markers-hidpi.html [ Skip ]
+Bug(GTK) editing/spelling/spellcheck-async-mutation.html [ Skip ]
+Bug(GTK) editing/spelling/spellcheck-async-remove-frame.html [ Skip ]
+Bug(GTK) editing/spelling/spellcheck-async.html [ Skip ]
+Bug(GTK) editing/spelling/spellcheck-queue.html [ Skip ]
+Bug(GTK) editing/spelling/spellcheck-sequencenum.html [ Skip ]
+Bug(GTK) editing/spelling/spelling-marker-description.html [ Skip ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Expected failures
 #////////////////////////////////////////////////////////////////////////////////////////

@@ -658,6 +658,16 @@ bool WKPreferencesGetFullScreenEnabled(WKPreferencesRef preferencesRef)
     return toImpl(preferencesRef)->fullScreenEnabled();
 }
 
+void WKPreferencesSetAsynchronousSpellCheckingEnabled(WKPreferencesRef preferencesRef, bool enabled)
+{
+    toImpl(preferencesRef)->setAsynchronousSpellCheckingEnabled(enabled);
+}
+
+bool WKPreferencesGetAsynchronousSpellCheckingEnabled(WKPreferencesRef preferencesRef)
+{
+    return toImpl(preferencesRef)->asynchronousSpellCheckingEnabled();
+}
+
 void WKPreferencesSetAVFoundationEnabled(WKPreferencesRef preferencesRef, bool enabled)
 {
     toImpl(preferencesRef)->setAVFoundationEnabled(enabled);

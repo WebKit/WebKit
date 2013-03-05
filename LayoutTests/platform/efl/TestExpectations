@@ -1021,6 +1021,10 @@ webkit.org/b/84338 editing/pasteboard/smart-paste-006.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/smart-paste-in-text-control.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/style-from-rules.html [ Failure ]
 webkit.org/b/84338 editing/pasteboard/testcase-9507.html [ Failure ]
+webkit.org/b/84338 editing/spelling/spellcheck-async-mutation.html [ Failure ]
+webkit.org/b/84338 editing/spelling/spellcheck-queue.html [ Failure ]
+webkit.org/b/84338 editing/spelling/spellcheck-paste-disabled.html [ Failure ]
+webkit.org/b/84338 editing/spelling/spellcheck-paste.html [ Failure ]
 webkit.org/b/84338 editing/style/apply-through-end-of-document.html [ Failure ]
 webkit.org/b/84338 editing/style/non-inheritable-styles.html [ Failure ]
 webkit.org/b/84338 editing/style/smoosh-styles-003.html [ Failure ]
@@ -1412,15 +1416,6 @@ webkit.org/b/88138 http/tests/media/video-buffered.html [ Failure ]
 # EFL port does not support hyphenation
 webkit.org/b/89830 fast/text/hyphen-min-preferred-width.html [ ImageOnlyFailure ]
 webkit.org/b/89830 fast/text/hyphenate-locale.html [ Skip ]
-
-# EFL's LayoutTestController does not implement setAsynchronousSpellCheckingEnabled
-webkit.org/b/86637 editing/spelling/spellcheck-async.html [ Failure ]
-webkit.org/b/86637 editing/spelling/spellcheck-async-mutation.html [ Failure ]
-webkit.org/b/86637 editing/spelling/spellcheck-paste.html [ Failure ]
-webkit.org/b/86637 editing/spelling/spellcheck-paste-disabled.html [ Failure ]
-webkit.org/b/86637 editing/spelling/spellcheck-queue.html [ Failure ]
-webkit.org/b/86637 editing/spelling/spellcheck-sequencenum.html [ Failure ]
-webkit.org/b/86637 editing/spelling/spelling-marker-description.html [ Failure ]
 
 # Missing test infrastructure, no gamepads available.
 Bug(EFL) gamepad/gamepad-polling-access.html [ Failure ]

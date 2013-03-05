@@ -1,3 +1,30 @@
+2013-03-05  Tim Horton  <timothy_horton@apple.com>, Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2] WTR needs an implementation of setAsynchronousSpellCheckingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=81042
+
+        Reviewed by Enrica Casucci.
+
+        Expose WK2 setting to enable/disabled asynchronous spell checking.
+        It's used by WebKitTestRunner to reset the setting at the beginning
+        of the test.
+        WebKit2 ports might be interested in this setting if they are going
+        to enable this feature.
+
+        * Shared/WebPreferencesStore.h:
+        * UIProcess/API/C/WKPreferences.cpp:
+        (WKPreferencesSetAsynchronousSpellCheckingEnabled):
+        (WKPreferencesGetAsynchronousSpellCheckingEnabled):
+        * UIProcess/API/C/WKPreferences.h:
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetAsynchronousSpellCheckingEnabled):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::setAsynchronousSpellCheckingEnabled):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
 2013-03-03  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2][EFL] Add requestCheckingOfString implementation.

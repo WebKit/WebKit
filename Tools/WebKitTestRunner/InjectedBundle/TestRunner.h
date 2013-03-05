@@ -115,6 +115,7 @@ public:
     void setSerializeHTTPLoads();
     void dispatchPendingLoadRequests();
     void setCacheModel(int);
+    void setAsynchronousSpellCheckingEnabled(bool);
 
     // Special DOM functions.
     void clearBackForwardList();

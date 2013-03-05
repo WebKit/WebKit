@@ -71,6 +71,7 @@ interface TestRunner {
     void setSerializeHTTPLoads();
     void dispatchPendingLoadRequests();
     void setCacheModel(in int model);
+    void setAsynchronousSpellCheckingEnabled(in boolean value);
 
     // Special DOM functions.
     void clearBackForwardList();

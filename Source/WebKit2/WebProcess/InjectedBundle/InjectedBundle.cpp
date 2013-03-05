@@ -347,6 +347,13 @@ void InjectedBundle::resetOriginAccessWhitelists()
     SecurityPolicy::resetOriginAccessWhitelists();
 }
 
+void InjectedBundle::setAsynchronousSpellCheckingEnabled(WebPageGroupProxy* pageGroup, bool enabled)
+{
+    const HashSet<Page*>& pages = PageGroup::pageGroup(pageGroup->identifier())->pages();
+    for (HashSet<Page*>::iterator iter = pages.begin(); iter != pages.end(); ++iter)
+        (*iter)->settings()->setAsynchronousSpellCheckingEnabled(enabled);
+}
+
 void InjectedBundle::clearAllDatabases()
 {
 #if ENABLE(SQL_DATABASE)

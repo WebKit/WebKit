@@ -320,6 +320,17 @@ webkit.org/b/109890 [ Debug ] platform/mac-wk2/plugins/destroy-during-async-npp-
 ########################################
 ### START OF (2) Classified failures without bug reports (yet)
 
+# Missing TextChecker::requestCheckingOfString() implementation for Mac.
+editing/spelling/grammar-markers.html
+editing/spelling/grammar-paste.html
+editing/spelling/grammar-markers-hidpi.html
+editing/spelling/spellcheck-async-mutation.html
+editing/spelling/spellcheck-async-remove-frame.html
+editing/spelling/spellcheck-async.html
+editing/spelling/spellcheck-queue.html
+editing/spelling/spellcheck-sequencenum.html
+editing/spelling/spelling-marker-description.html
+
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################
 

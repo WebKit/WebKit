@@ -325,7 +325,13 @@ Bug(EFL) fast/events/touch/basic-single-touch-events.html [ Failure ]
 
 # Needs grammar checking
 Bug(EFL) editing/spelling/grammar-edit-word.html [ Failure ]
+Bug(EFL) editing/spelling/grammar-markers.html [ Failure ]
+Bug(EFL) editing/spelling/grammar-markers-hidpi.html [ Failure ]
+Bug(EFL) editing/spelling/grammar-paste.html [ Failure ]
 Bug(EFL) editing/spelling/markers.html [ Failure ]
+
+# EFL's text checker doesn't support the text replacement feature.
+Bug(EFL) editing/spelling/spelling-marker-description.html [ Failure ]
 
 # Fails because MutationObservers are not notified at end-of-task.
 webkit.org/b/78290 fast/dom/MutationObserver/end-of-task-delivery.html [ Failure ]

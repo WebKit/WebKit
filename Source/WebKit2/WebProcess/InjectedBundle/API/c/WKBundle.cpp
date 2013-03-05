@@ -213,6 +213,11 @@ void WKBundleResetOriginAccessWhitelists(WKBundleRef bundleRef)
     toImpl(bundleRef)->resetOriginAccessWhitelists();
 }
 
+void WKBundleSetAsynchronousSpellCheckingEnabled(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
+{
+    toImpl(bundleRef)->setAsynchronousSpellCheckingEnabled(toImpl(pageGroupRef), enabled);
+}
+
 void WKBundleReportException(JSContextRef context, JSValueRef exception)
 {
     InjectedBundle::reportException(context, exception);

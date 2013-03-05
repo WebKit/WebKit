@@ -1,3 +1,21 @@
+2013-03-05  Tim Horton  <timothy_horton@apple.com>, Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2] WTR needs an implementation of setAsynchronousSpellCheckingEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=81042
+
+        Reviewed by Enrica Casucci.
+
+        Add setAsynchronousSpellCheckingEnabled implementation for
+        WebKitTestRunner to have the possibility to test asynchronous
+        spell checking implementation from bug 109577.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/TestRunner.idl:
+        * WebKitTestRunner/InjectedBundle/TestRunner.cpp:
+        (WTR::TestRunner::setAsynchronousSpellCheckingEnabled):
+        * WebKitTestRunner/InjectedBundle/TestRunner.h:
+        * WebKitTestRunner/TestController.cpp:
+        (WTR::TestController::resetStateToConsistentValues):
+
 2013-03-05  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the getStreamById method on RTCPeerConnection

@@ -738,3 +738,14 @@ webkit.org/b/105182 compositing/repaint/resize-repaint.html
 svg/text/select-textLength-spacing-stretch-1.svg
 svg/text/select-x-list-with-tspans-1.svg
 svg/text/select-x-list-1.svg
+
+# Missing TextChecker::requestCheckingOfString() implementation for Qt.
+editing/spelling/grammar-markers.html
+editing/spelling/grammar-paste.html
+editing/spelling/grammar-markers-hidpi.html
+editing/spelling/spellcheck-async-mutation.html
+editing/spelling/spellcheck-async-remove-frame.html
+editing/spelling/spellcheck-async.html
+editing/spelling/spellcheck-queue.html
+editing/spelling/spellcheck-sequencenum.html
+editing/spelling/spelling-marker-description.html
