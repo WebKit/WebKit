@@ -392,13 +392,7 @@ public:
         ScrollOffsetClamped
     };
 
-    enum ScrollPropagation {
-        ShouldPropagateScroll,
-        DontPropagateScroll
-    };
-
     // Scrolling methods for layers that can scroll their overflow.
-    bool scrollBy(const IntSize&, ScrollOffsetClamping = ScrollOffsetUnclamped, ScrollPropagation = DontPropagateScroll);
     void scrollByRecursively(const IntSize&, ScrollOffsetClamping = ScrollOffsetUnclamped);
     void scrollToOffset(const IntSize&, ScrollOffsetClamping = ScrollOffsetUnclamped);
     void scrollToXOffset(int x, ScrollOffsetClamping clamp = ScrollOffsetUnclamped) { scrollToOffset(IntSize(x, scrollYOffset()), clamp); }

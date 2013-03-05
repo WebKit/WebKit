@@ -2076,13 +2076,8 @@ void RenderLayer::panScrollFromPoint(const IntPoint& sourcePoint)
 
 void RenderLayer::scrollByRecursively(const IntSize& delta, ScrollOffsetClamping clamp)
 {
-    scrollBy(delta, clamp, ShouldPropagateScroll);
-}
-
-bool RenderLayer::scrollBy(const IntSize& delta, ScrollOffsetClamping clamp, ScrollPropagation shouldPropagate)
-{
     if (delta.isZero())
-        return false;
+        return;
 
     bool restrictedByLineClamp = false;
     if (renderer()->parent())
@@ -2092,36 +2087,24 @@ bool RenderLayer::scrollBy(const IntSize& delta, ScrollOffsetClamping clamp, Scr
         IntSize newScrollOffset = scrollOffset() + delta;
         scrollToOffset(newScrollOffset, clamp);
 
-        if (shouldPropagate == DontPropagateScroll)
-            return true;
-
         // If this layer can't do the scroll we ask the next layer up that can scroll to try
         IntSize remainingScrollOffset = newScrollOffset - scrollOffset();
-        bool didScroll = true;
         if (!remainingScrollOffset.isZero() && renderer()->parent()) {
             if (RenderLayer* scrollableLayer = enclosingScrollableLayer())
-                didScroll = scrollableLayer->scrollBy(remainingScrollOffset, clamp, shouldPropagate);
+                scrollableLayer->scrollByRecursively(remainingScrollOffset);
 
             Frame* frame = renderer()->frame();
             if (frame)
                 frame->eventHandler()->updateAutoscrollRenderer();
         }
-        return didScroll;
     } else if (renderer()->view()->frameView()) {
         // If we are here, we were called on a renderer that can be programmatically scrolled, but doesn't
         // have an overflow clip. Which means that it is a document node that can be scrolled.
-        FrameView* view = renderer()->view()->frameView();
-        IntPoint scrollPositionBefore = view->scrollPosition();
-        if (view->isScrollable())
-            view->scrollBy(delta);
-        IntPoint scrollPositionAfter = view->scrollPosition();
-        return scrollPositionBefore != scrollPositionAfter;
+        renderer()->view()->frameView()->scrollBy(delta);
 
         // FIXME: If we didn't scroll the whole way, do we want to try looking at the frames ownerElement? 
         // https://bugs.webkit.org/show_bug.cgi?id=28237
     }
-
-    return false;
 }
 
 IntSize RenderLayer::clampScrollOffset(const IntSize& scrollOffset) const
