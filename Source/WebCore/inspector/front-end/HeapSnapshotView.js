@@ -31,8 +31,8 @@
 /**
  * @constructor
  * @extends {WebInspector.View}
- * @param {WebInspector.ProfilesPanel} parent
- * @param {WebInspector.HeapProfileHeader} profile
+ * @param {!WebInspector.ProfilesPanel} parent
+ * @param {!WebInspector.HeapProfileHeader} profile
  */
 WebInspector.HeapSnapshotView = function(parent, profile)
 {
@@ -188,12 +188,12 @@ WebInspector.HeapSnapshotView.prototype = {
 
     get profile()
     {
-        return this.parent.getProfile(WebInspector.HeapSnapshotProfileType.TypeId, this._profileUid);
+        return this.parent.getProfile(this._profileTypeId, this._profileUid);
     },
 
     get baseProfile()
     {
-        return this.parent.getProfile(WebInspector.HeapSnapshotProfileType.TypeId, this._baseProfileUid);
+        return this.parent.getProfile(this._profileTypeId, this._baseProfileUid);
     },
 
     wasShown: function()
@@ -427,7 +427,7 @@ WebInspector.HeapSnapshotView.prototype = {
      */
     _profiles: function()
     {
-        return this.parent.getProfileType(WebInspector.HeapSnapshotProfileType.TypeId).getProfiles();
+        return this.parent.getProfileType(this._profileTypeId).getProfiles();
     },
 
     /**
@@ -928,7 +928,7 @@ WebInspector.HeapProfileHeader.prototype = {
 
     /**
      * @override
-     * @param {WebInspector.ProfilesPanel} profilesPanel
+     * @param {!WebInspector.ProfilesPanel} profilesPanel
      */
     createView: function(profilesPanel)
     {

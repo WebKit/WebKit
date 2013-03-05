@@ -333,8 +333,9 @@ WebInspector.ProfileHeader.prototype = {
  * @extends {WebInspector.Panel}
  * @implements {WebInspector.ContextMenu.Provider}
  * @param {string=} name
+ * @param {WebInspector.ProfileType=} type
  */
-WebInspector.ProfilesPanel = function(name)
+WebInspector.ProfilesPanel = function(name, type)
 {
     // If the name is not specified the ProfilesPanel works in multi-profile mode.
     var singleProfileMode = typeof name !== "undefined";
@@ -391,23 +392,29 @@ WebInspector.ProfilesPanel = function(name)
 
     this._profilerEnabled = !Capabilities.profilerCausesRecompilation;
 
-    this._launcherView = new WebInspector.ProfileLauncherView(this, singleProfileMode);
-    this._launcherView.addEventListener(WebInspector.ProfileLauncherView.EventTypes.ProfileTypeSelected, this._onProfileTypeSelected, this);
-    this._reset();
+    if (singleProfileMode) {
+        this._launcherView = this._createLauncherView();
+        this._registerProfileType(/** @type {!WebInspector.ProfileType} */ (type));
+        this._selectedProfileType = type;
+        this._updateProfileTypeSpecificUI();
+    } else {
+        this._launcherView = new WebInspector.MultiProfileLauncherView(this);
+        this._launcherView.addEventListener(WebInspector.MultiProfileLauncherView.EventTypes.ProfileTypeSelected, this._onProfileTypeSelected, this);
 
-    if (!singleProfileMode) {
         this._registerProfileType(new WebInspector.CPUProfileType());
         if (!WebInspector.WorkerManager.isWorkerFrontend())
             this._registerProfileType(new WebInspector.CSSSelectorProfileType());
         if (Capabilities.heapProfilerPresent)
             this._registerProfileType(new WebInspector.HeapSnapshotProfileType());
-        if (WebInspector.experimentsSettings.nativeMemorySnapshots.isEnabled()) {
+        if (!WebInspector.WorkerManager.isWorkerFrontend() && WebInspector.experimentsSettings.nativeMemorySnapshots.isEnabled()) {
             this._registerProfileType(new WebInspector.NativeSnapshotProfileType());
             this._registerProfileType(new WebInspector.NativeMemoryProfileType());
         }
-        if (WebInspector.experimentsSettings.canvasInspection.isEnabled())
+        if (!WebInspector.WorkerManager.isWorkerFrontend() && WebInspector.experimentsSettings.canvasInspection.isEnabled())
             this._registerProfileType(new WebInspector.CanvasProfileType());
     }
+
+    this._reset();
 
     this._createFileSelectorElement();
     this.element.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
@@ -422,6 +429,14 @@ WebInspector.ProfilesPanel.prototype = {
             this.element.removeChild(this._fileSelectorElement);
         this._fileSelectorElement = WebInspector.createFileSelectorElement(this._loadFromFile.bind(this));
         this.element.appendChild(this._fileSelectorElement);
+    },
+
+    /**
+     * @return {!WebInspector.ProfileLauncherView}
+     */
+    _createLauncherView: function()
+    {
+        return new WebInspector.ProfileLauncherView(this);
     },
 
     /**
@@ -1353,8 +1368,7 @@ WebInspector.ProfilesSidebarTreeElement.prototype = {
  */
 WebInspector.CPUProfilerPanel = function()
 {
-    WebInspector.ProfilesPanel.call(this, "cpu-profiler");
-    this._registerProfileType(new WebInspector.CPUProfileType());
+    WebInspector.ProfilesPanel.call(this, "cpu-profiler", new WebInspector.CPUProfileType());
 }
 
 WebInspector.CPUProfilerPanel.prototype = {
@@ -1368,8 +1382,7 @@ WebInspector.CPUProfilerPanel.prototype = {
  */
 WebInspector.CSSSelectorProfilerPanel = function()
 {
-    WebInspector.ProfilesPanel.call(this, "css-profiler");
-    this._registerProfileType(new WebInspector.CSSSelectorProfileType());
+    WebInspector.ProfilesPanel.call(this, "css-profiler", new WebInspector.CSSSelectorProfileType());
 }
 
 WebInspector.CSSSelectorProfilerPanel.prototype = {
@@ -1383,8 +1396,7 @@ WebInspector.CSSSelectorProfilerPanel.prototype = {
  */
 WebInspector.HeapProfilerPanel = function()
 {
-    WebInspector.ProfilesPanel.call(this, "heap-profiler");
-    this._registerProfileType(new WebInspector.HeapSnapshotProfileType());
+    WebInspector.ProfilesPanel.call(this, "heap-profiler", new WebInspector.HeapSnapshotProfileType());
 }
 
 WebInspector.HeapProfilerPanel.prototype = {
@@ -1398,8 +1410,7 @@ WebInspector.HeapProfilerPanel.prototype = {
  */
 WebInspector.CanvasProfilerPanel = function()
 {
-    WebInspector.ProfilesPanel.call(this, "canvas-profiler");
-    this._registerProfileType(new WebInspector.CanvasProfileType());
+    WebInspector.ProfilesPanel.call(this, "canvas-profiler", new WebInspector.CanvasProfileType());
 }
 
 WebInspector.CanvasProfilerPanel.prototype = {
@@ -1413,11 +1424,19 @@ WebInspector.CanvasProfilerPanel.prototype = {
  */
 WebInspector.MemoryChartProfilerPanel = function()
 {
-    WebInspector.ProfilesPanel.call(this, "memory-chart-profiler");
-    this._registerProfileType(new WebInspector.NativeMemoryProfileType());
+    WebInspector.ProfilesPanel.call(this, "memory-chart-profiler", new WebInspector.NativeMemoryProfileType());
 }
 
 WebInspector.MemoryChartProfilerPanel.prototype = {
+    /**
+     * @override
+     * @return {!WebInspector.ProfileLauncherView}
+     */
+    _createLauncherView: function()
+    {
+        return new WebInspector.NativeProfileLauncherView(this);
+    },
+
     __proto__: WebInspector.ProfilesPanel.prototype
 }
 
@@ -1428,8 +1447,7 @@ WebInspector.MemoryChartProfilerPanel.prototype = {
  */
 WebInspector.NativeMemoryProfilerPanel = function()
 {
-    WebInspector.ProfilesPanel.call(this, "memory-snapshot-profiler");
-    this._registerProfileType(new WebInspector.NativeSnapshotProfileType());
+    WebInspector.ProfilesPanel.call(this, "memory-snapshot-profiler", new WebInspector.NativeSnapshotProfileType());
 }
 
 WebInspector.NativeMemoryProfilerPanel.prototype = {

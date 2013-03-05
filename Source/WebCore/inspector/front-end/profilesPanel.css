@@ -180,7 +180,7 @@
 
 .panel-enabler-view.profile-launcher-view button:not(.status-bar-item) {
     color: rgb(6, 6, 6);
-    margin: 16px 0;
+    margin: 0 0 16px;
 }
 
 .profile-launcher-view-content button.running:not(.status-bar-item) {

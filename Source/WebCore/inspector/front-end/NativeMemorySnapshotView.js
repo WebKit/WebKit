@@ -382,7 +382,7 @@ WebInspector.NativeSnapshotProfileHeader = function(type, title, uid)
 WebInspector.NativeSnapshotProfileHeader.prototype = {
     /**
      * @override
-     * @param {WebInspector.ProfilesPanel} profilesPanel
+     * @param {!WebInspector.ProfilesPanel} profilesPanel
      */
     createView: function(profilesPanel)
     {
@@ -413,8 +413,8 @@ WebInspector.NativeSnapshotProfileHeader.prototype = {
 /**
  * @constructor
  * @extends {WebInspector.HeapSnapshotView}
- * @param {WebInspector.ProfilesPanel} parent
- * @param {WebInspector.NativeSnapshotProfileHeader} profile
+ * @param {!WebInspector.ProfilesPanel} parent
+ * @param {!WebInspector.NativeSnapshotProfileHeader} profile
  */
 WebInspector.NativeHeapSnapshotView = function(parent, profile)
 {
