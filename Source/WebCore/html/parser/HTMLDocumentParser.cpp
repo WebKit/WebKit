@@ -328,24 +328,38 @@ void HTMLDocumentParser::didReceiveParsedChunkFromBackgroundParser(PassOwnPtr<Pa
     InspectorInstrumentation::didWriteHTML(cookie, lineNumber().zeroBasedInt());
 }
 
-void HTMLDocumentParser::checkForSpeculationFailure()
+void HTMLDocumentParser::validateSpeculations()
 {
-    if (!m_tokenizer)
+    OwnPtr<HTMLTokenizer> tokenizer = m_tokenizer.release();
+    OwnPtr<HTMLToken> token = m_token.release();
+
+    if (!tokenizer) {
+        // There must not have been any changes to the HTMLTokenizer state on
+        // the main thread, which means the speculation buffer is correct.
         return;
-    if (!m_currentChunk)
+    }
+
+    if (!m_currentChunk) {
+        // If there is no m_currentChunk, we must have already called didFailSpeculation
+        // for this chunk.
+        // FIXME: In this case, we're losing whatever state has been changed since
+        // we called didFailSpeculation. See https://bugs.webkit.org/show_bug.cgi?id=110546
         return;
+    }
+
     // Currently we're only smart enough to reuse the speculation buffer if the tokenizer
     // both starts and ends in the DataState. That state is simplest because the HTMLToken
     // is always in the Uninitialized state. We should consider whether we can reuse the
     // speculation buffer in other states, but we'd likely need to do something more
     // sophisticated with the HTMLToken.
-    if (m_currentChunk->tokenizerState == HTMLTokenizer::DataState && m_tokenizer->state() == HTMLTokenizer::DataState && m_input.current().isEmpty()) {
-        ASSERT(m_token->isUninitialized());
-        m_tokenizer.clear();
-        m_token.clear();
+    if (m_currentChunk->tokenizerState == HTMLTokenizer::DataState
+        && tokenizer->state() == HTMLTokenizer::DataState
+        && m_input.current().isEmpty()) {
+        ASSERT(token->isUninitialized());
         return;
     }
-    didFailSpeculation(m_token.release(), m_tokenizer.release());
+
+    didFailSpeculation(token.release(), tokenizer.release());
 }
 
 void HTMLDocumentParser::didFailSpeculation(PassOwnPtr<HTMLToken> token, PassOwnPtr<HTMLTokenizer> tokenizer)
@@ -372,6 +386,8 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
     // ASSERT that this object is both attached to the Document and protected.
     ASSERT(refCount() >= 2);
     ASSERT(shouldUseThreading());
+    ASSERT(!m_tokenizer);
+    ASSERT(!m_token);
 
     ActiveParserSession session(contextForParsingSession());
 
@@ -385,6 +401,7 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
 
         if (XSSInfo* xssInfo = it->xssInfo())
             m_xssAuditorDelegate.didBlockScript(*xssInfo);
+
         constructTreeFromCompactHTMLToken(*it);
 
         if (isStopped())
@@ -395,25 +412,30 @@ void HTMLDocumentParser::processParsedChunkFromBackgroundParser(PassOwnPtr<Parse
 
             // To match main-thread parser behavior (which never checks locationChangePending on the EOF path)
             // we peek to see if this chunk has an EOF and process it anyway.
-            if (tokens->last().type() == HTMLToken::EndOfFile)
+            if (tokens->last().type() == HTMLToken::EndOfFile) {
+                ASSERT(m_speculations.isEmpty());
                 prepareToStopParsing();
+            }
             break;
         }
 
         if (isWaitingForScripts()) {
             ASSERT(it + 1 == tokens->end()); // The </script> is assumed to be the last token of this bunch.
             runScriptsForPausedTreeBuilder();
+            validateSpeculations();
             break;
         }
 
         if (it->type() == HTMLToken::EndOfFile) {
             ASSERT(it + 1 == tokens->end()); // The EOF is assumed to be the last token of this bunch.
+            ASSERT(m_speculations.isEmpty());
             prepareToStopParsing();
             break;
         }
-    }
 
-    checkForSpeculationFailure();
+        ASSERT(!m_tokenizer);
+        ASSERT(!m_token);
+    }
 }
 
 void HTMLDocumentParser::pumpPendingSpeculations()
@@ -423,6 +445,10 @@ void HTMLDocumentParser::pumpPendingSpeculations()
 
     // ASSERT that this object is both attached to the Document and protected.
     ASSERT(refCount() >= 2);
+    // If this assert fails, you need to call validateSpeculations to make sure
+    // m_tokenizer and m_token don't have state that invalidates m_speculations.
+    ASSERT(!m_tokenizer);
+    ASSERT(!m_token);
 
     // FIXME: Pass in current input length.
     InspectorInstrumentationCookie cookie = InspectorInstrumentation::willWriteHTML(document(), 0, lineNumber().zeroBasedInt());
@@ -846,8 +872,7 @@ void HTMLDocumentParser::resumeParsingAfterScriptExecution()
 
 #if ENABLE(THREADED_HTML_PARSER)
     if (m_haveBackgroundParser) {
-        checkForSpeculationFailure();
-
+        validateSpeculations();
         // processParsedChunkFromBackgroundParser can cause this parser to be detached from the Document,
         // but we need to ensure it isn't deleted yet.
         RefPtr<HTMLDocumentParser> protect(this);

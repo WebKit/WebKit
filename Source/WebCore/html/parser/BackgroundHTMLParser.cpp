@@ -146,6 +146,7 @@ BackgroundHTMLParser::BackgroundHTMLParser(PassRefPtr<WeakReference<BackgroundHT
 
 void BackgroundHTMLParser::append(const String& input)
 {
+    ASSERT(!m_input.current().isClosed());
     m_input.append(input);
     pumpTokenizer();
 }

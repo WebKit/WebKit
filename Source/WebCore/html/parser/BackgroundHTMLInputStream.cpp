@@ -71,6 +71,8 @@ void BackgroundHTMLInputStream::rewindTo(HTMLInputCheckpoint checkpointIndex, co
     if (isClosed && !m_current.isClosed())
         m_current.close();
 
+    ASSERT(m_current.isClosed() == isClosed);
+
     m_segments.clear();
     m_checkpoints.clear();
 }
