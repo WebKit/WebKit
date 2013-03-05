@@ -57,6 +57,7 @@
 #include "V8Uint32Array.h"
 #include "V8Uint8Array.h"
 #include "V8WebGLBuffer.h"
+#include "V8WebGLCompressedTextureATC.h"
 #include "V8WebGLCompressedTextureS3TC.h"
 #include "V8WebGLDebugRendererInfo.h"
 #include "V8WebGLDebugShaders.h"
@@ -213,6 +214,10 @@ static v8::Handle<v8::Value> toV8Object(WebGLExtension* extension, v8::Handle<v8
     case WebGLExtension::WebGLDebugShadersName:
         extensionObject = toV8(static_cast<WebGLDebugShaders*>(extension), contextObject, isolate);
         referenceName = "webGLDebugShadersName";
+        break;
+    case WebGLExtension::WebGLCompressedTextureATCName:
+        extensionObject = toV8(static_cast<WebGLCompressedTextureATC*>(extension), contextObject, isolate);
+        referenceName = "webGLCompressedTextureATCName";
         break;
     case WebGLExtension::WebGLCompressedTextureS3TCName:
         extensionObject = toV8(static_cast<WebGLCompressedTextureS3TC*>(extension), contextObject, isolate);

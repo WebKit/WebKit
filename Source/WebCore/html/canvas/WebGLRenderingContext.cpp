@@ -57,6 +57,7 @@
 #include "Settings.h"
 #include "WebGLActiveInfo.h"
 #include "WebGLBuffer.h"
+#include "WebGLCompressedTextureATC.h"
 #include "WebGLCompressedTextureS3TC.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLContextEvent.h"
@@ -758,10 +759,10 @@ void WebGLRenderingContext::paintRenderingResultsToCanvas()
         if (m_drawingBuffer)
             m_drawingBuffer->paintCompositedResultsToCanvas(canvas()->buffer());
 #endif
-
         canvas()->makePresentationCopy();
     } else
         canvas()->clearPresentationCopy();
+
     clearIfComposited();
 
     if (!m_markedCanvasDirty && !m_layerCleared)
@@ -2417,6 +2418,12 @@ WebGLExtension* WebGLRenderingContext::getExtension(const String& name)
             m_webglLoseContext = WebGLLoseContext::create(this);
         return m_webglLoseContext.get();
     }
+    if ((equalIgnoringCase(name, "WEBKIT_WEBGL_compressed_texture_atc"))
+        && WebGLCompressedTextureATC::supported(this)) {
+        if (!m_webglCompressedTextureATC)
+            m_webglCompressedTextureATC = WebGLCompressedTextureATC::create(this);
+        return m_webglCompressedTextureATC.get();
+    }
     if ((equalIgnoringCase(name, "WEBGL_compressed_texture_s3tc")
          // FIXME: remove this after a certain grace period.
          || equalIgnoringCase(name, "WEBKIT_WEBGL_compressed_texture_s3tc"))
@@ -2969,6 +2976,8 @@ Vector<String> WebGLRenderingContext::getSupportedExtensions()
     if (m_context->getExtensions()->supports("GL_OES_element_index_uint"))
         result.append("OES_element_index_uint");
     result.append("WEBGL_lose_context");
+    if (WebGLCompressedTextureATC::supported(this))
+        result.append("WEBKIT_WEBGL_compressed_texture_atc");
     if (WebGLCompressedTextureS3TC::supported(this))
         result.append("WEBKIT_WEBGL_compressed_texture_s3tc");
     if (WebGLDepthTexture::supported(graphicsContext3D()))
@@ -5332,6 +5341,17 @@ bool WebGLRenderingContext::validateCompressedTexFuncData(const char* functionNa
             int numBlocksDown = (height + kBlockHeight - 1) / kBlockHeight;
             int numBlocks = numBlocksAcross * numBlocksDown;
             bytesRequired = numBlocks * kBlockSize;
+        }
+        break;
+    case Extensions3D::COMPRESSED_ATC_RGB_AMD:
+        {
+            bytesRequired = floor((width + 3) / 4) * floor((height + 3) / 4) * 8;
+        }
+        break;
+    case Extensions3D::COMPRESSED_ATC_RGBA_EXPLICIT_ALPHA_AMD:
+    case Extensions3D::COMPRESSED_ATC_RGBA_INTERPOLATED_ALPHA_AMD:
+        {
+            bytesRequired = floor((width + 3) / 4) * floor((height + 3) / 4) * 16;
         }
         break;
     default:

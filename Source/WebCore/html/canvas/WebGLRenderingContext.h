@@ -58,6 +58,7 @@ class WebGLActiveInfo;
 class WebGLBuffer;
 class WebGLContextGroup;
 class WebGLContextObject;
+class WebGLCompressedTextureATC;
 class WebGLCompressedTextureS3TC;
 class WebGLContextAttributes;
 class WebGLDebugRendererInfo;
@@ -330,6 +331,7 @@ public:
     friend class WebGLObject;
     friend class OESVertexArrayObject;
     friend class WebGLDebugShaders;
+    friend class WebGLCompressedTextureATC;
     friend class WebGLCompressedTextureS3TC;
     friend class WebGLRenderingContextErrorMessageCallback;
     friend class WebGLVertexArrayObjectOES;
@@ -525,6 +527,7 @@ public:
     OwnPtr<WebGLLoseContext> m_webglLoseContext;
     OwnPtr<WebGLDebugRendererInfo> m_webglDebugRendererInfo;
     OwnPtr<WebGLDebugShaders> m_webglDebugShaders;
+    OwnPtr<WebGLCompressedTextureATC> m_webglCompressedTextureATC;
     OwnPtr<WebGLCompressedTextureS3TC> m_webglCompressedTextureS3TC;
     OwnPtr<WebGLDepthTexture> m_webglDepthTexture;
 
