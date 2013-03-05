@@ -39,8 +39,6 @@ class IDBKey;
 class IDBKeyPath;
 class SharedBuffer;
 
-PassRefPtr<IDBKey> createIDBKeyFromValue(JSC::ExecState*, JSC::JSValue);
-
 IDBKeyPath idbKeyPathFromValue(JSC::ExecState*, JSC::JSValue);
 
 bool injectIDBKeyIntoScriptValue(DOMRequestState*, PassRefPtr<IDBKey>, ScriptValue&, const IDBKeyPath&);
