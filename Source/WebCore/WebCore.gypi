@@ -2403,6 +2403,8 @@
             'rendering/TextAutosizer.h',
             'rendering/HitTestingTransformState.cpp',
             'rendering/HitTestingTransformState.h',
+            'rendering/HitTestLocation.cpp',
+            'rendering/HitTestLocation.h',
             'rendering/HitTestResult.cpp',
             'rendering/InlineBox.cpp',
             'rendering/InlineFlowBox.cpp',

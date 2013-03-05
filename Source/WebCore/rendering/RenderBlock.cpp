@@ -35,6 +35,7 @@
 #include "GraphicsContext.h"
 #include "HTMLFormElement.h"
 #include "HTMLNames.h"
+#include "HitTestLocation.h"
 #include "HitTestResult.h"
 #include "InlineIterator.h"
 #include "InlineTextBox.h"
