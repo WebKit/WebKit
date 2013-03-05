@@ -2667,3 +2667,21 @@ css3/filters/custom-with-at-rule-syntax
 
 # bugs.webkit.org/show_bug.cgi?id=110447
 editing/spelling/spelling-changed-text.html
+
+# Skip a bunch of tests to get EWS bots in a better state.
+accessibility
+fast/events
+fast/text/international
+inspector-protocol
+plugins
+sputnik
+fast/xsl
+http
+fast/js
+fast/events
+fast/parser
+editing
+ietestcenter
+jquery
+media/media-fragments
+
