@@ -31,11 +31,11 @@
 #include "Dictionary.h"
 #include "Event.h"
 #include "EventTarget.h"
-#include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseCallbacks.h"
 #include "IDBMetadata.h"
 #include "IDBObjectStore.h"
 #include "IDBTransaction.h"
+#include "IndexedDB.h"
 #include "ScriptWrappable.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>

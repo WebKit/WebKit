@@ -227,7 +227,7 @@ PassRefPtr<IDBTransaction> IDBDatabase::transaction(ScriptExecutionContext* cont
         return 0;
     }
 
-    IDBTransaction::Mode mode = IDBTransaction::stringToMode(modeString, context, ec);
+    IndexedDB::TransactionMode mode = IDBTransaction::stringToMode(modeString, context, ec);
     if (ec)
         return 0;
 

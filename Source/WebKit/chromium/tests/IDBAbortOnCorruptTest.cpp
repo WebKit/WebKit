@@ -31,6 +31,8 @@
 #include "IDBDatabaseCallbacks.h"
 #include "IDBFactoryBackendImpl.h"
 #include "IDBFakeBackingStore.h"
+#include "IDBKey.h"
+#include "IndexedDB.h"
 #include "SecurityOrigin.h"
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>

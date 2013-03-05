@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011 Google Inc. All rights reserved.
+ * Copyright (C) 2013 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,33 +23,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef IDBCursorWithValue_h
-#define IDBCursorWithValue_h
+#ifndef IndexedDB_h
+#define IndexedDB_h
 
 #if ENABLE(INDEXED_DATABASE)
 
-#include "IDBCursor.h"
-
 namespace WebCore {
 
-class IDBCursorWithValue : public IDBCursor {
-public:
-    static PassRefPtr<IDBCursorWithValue> create(PassRefPtr<IDBCursorBackendInterface>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
-    static PassRefPtr<IDBCursorWithValue> fromCursor(PassRefPtr<IDBCursor>);
-    virtual ~IDBCursorWithValue();
+namespace IndexedDB {
 
-    // The value attribute defined in the IDL is simply implemented in IDBCursor (but not exposed via
-    // its IDL). This is to make the implementation more simple while matching what the spec says.
-
-protected:
-    virtual bool isKeyCursor() const OVERRIDE { return false; }
-
-private:
-    IDBCursorWithValue(PassRefPtr<IDBCursorBackendInterface>, IndexedDB::CursorDirection, IDBRequest*, IDBAny* source, IDBTransaction*);
+enum TransactionMode {
+    TransactionReadOnly = 0,
+    TransactionReadWrite = 1,
+    TransactionVersionChange = 2
 };
+
+enum CursorDirection {
+    CursorNext = 0,
+    CursorNextNoDuplicate = 1,
+    CursorPrev = 2,
+    CursorPrevNoDuplicate = 3,
+};
+
+enum CursorType {
+    CursorKeyAndValue = 0,
+    CursorKeyOnly
+};
+
+} // namespace IndexedDB
 
 } // namespace WebCore
 
-#endif
+#endif // ENABLED(INDEXED_DATABASE)
 
-#endif // IDBCursorWithValue_h
+#endif // IndexedDB_h

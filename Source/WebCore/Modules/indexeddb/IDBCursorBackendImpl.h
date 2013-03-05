@@ -30,7 +30,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBBackingStore.h"
-#include "IDBCursor.h"
 #include "IDBCursorBackendInterface.h"
 #include "IDBTransactionBackendImpl.h"
 #include "SharedBuffer.h"
@@ -45,11 +44,11 @@ class IDBKeyRange;
 
 class IDBCursorBackendImpl : public IDBCursorBackendInterface {
 public:
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, IndexedDB::CursorType cursorType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, IDBDatabaseBackendInterface::NormalTask, transaction, objectStoreId));
     }
-    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
+    static PassRefPtr<IDBCursorBackendImpl> create(PassRefPtr<IDBBackingStore::Cursor> cursor, IndexedDB::CursorType cursorType, IDBDatabaseBackendInterface::TaskType taskType, IDBTransactionBackendImpl* transaction, int64_t objectStoreId)
     {
         return adoptRef(new IDBCursorBackendImpl(cursor, cursorType, taskType, transaction, objectStoreId));
     }
@@ -65,18 +64,18 @@ public:
 
     PassRefPtr<IDBKey> key() const { return m_cursor->key(); }
     PassRefPtr<IDBKey> primaryKey() const { return m_cursor->primaryKey(); }
-    PassRefPtr<SharedBuffer> value() const { return (m_cursorType == KeyOnly) ? 0 : m_cursor->value(); }
+    PassRefPtr<SharedBuffer> value() const { return (m_cursorType == IndexedDB::CursorKeyOnly) ? 0 : m_cursor->value(); }
     void close();
 
 private:
-    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendImpl*, int64_t objectStoreId);
+    IDBCursorBackendImpl(PassRefPtr<IDBBackingStore::Cursor>, IndexedDB::CursorType, IDBDatabaseBackendInterface::TaskType, IDBTransactionBackendImpl*, int64_t objectStoreId);
 
     class CursorIterationOperation;
     class CursorAdvanceOperation;
     class CursorPrefetchIterationOperation;
 
     IDBDatabaseBackendInterface::TaskType m_taskType;
-    CursorType m_cursorType;
+    IndexedDB::CursorType m_cursorType;
     const RefPtr<IDBDatabaseBackendImpl> m_database;
     const RefPtr<IDBTransactionBackendImpl> m_transaction;
     const int64_t m_objectStoreId;

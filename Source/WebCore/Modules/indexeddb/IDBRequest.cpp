@@ -37,6 +37,7 @@
 #include "EventQueue.h"
 #include "ExceptionCodePlaceholder.h"
 #include "IDBBindingUtilities.h"
+#include "IDBCursorBackendInterface.h"
 #include "IDBCursorWithValue.h"
 #include "IDBDatabase.h"
 #include "IDBEventDispatcher.h"
@@ -77,8 +78,8 @@ IDBRequest::IDBRequest(ScriptExecutionContext* context, PassRefPtr<IDBAny> sourc
     , m_source(source)
     , m_taskType(taskType)
     , m_hasPendingActivity(true)
-    , m_cursorType(IDBCursorBackendInterface::KeyAndValue)
-    , m_cursorDirection(IDBCursor::NEXT)
+    , m_cursorType(IndexedDB::CursorKeyAndValue)
+    , m_cursorDirection(IndexedDB::CursorNext)
     , m_cursorFinished(false)
     , m_pendingCursor(0)
     , m_didFireUpgradeNeededEvent(false)
@@ -185,7 +186,7 @@ void IDBRequest::abort()
     m_requestAborted = true;
 }
 
-void IDBRequest::setCursorDetails(IDBCursorBackendInterface::CursorType cursorType, IDBCursor::Direction direction)
+void IDBRequest::setCursorDetails(IndexedDB::CursorType cursorType, IndexedDB::CursorDirection direction)
 {
     ASSERT(m_readyState == PENDING);
     ASSERT(!m_pendingCursor);
@@ -228,7 +229,7 @@ void IDBRequest::setResultCursor(PassRefPtr<IDBCursor> cursor, PassRefPtr<IDBKey
     m_cursorPrimaryKey = primaryKey;
     m_cursorValue = value;
 
-    if (m_cursorType == IDBCursorBackendInterface::KeyOnly) {
+    if (m_cursorType == IndexedDB::CursorKeyOnly) {
         m_result = IDBAny::create(cursor);
         return;
     }
@@ -294,10 +295,10 @@ void IDBRequest::onSuccess(PassRefPtr<IDBCursorBackendInterface> backend, PassRe
     ASSERT(!m_pendingCursor);
     RefPtr<IDBCursor> cursor;
     switch (m_cursorType) {
-    case IDBCursorBackendInterface::KeyOnly:
+    case IndexedDB::CursorKeyOnly:
         cursor = IDBCursor::create(backend, m_cursorDirection, this, m_source.get(), m_transaction.get());
         break;
-    case IDBCursorBackendInterface::KeyAndValue:
+    case IndexedDB::CursorKeyAndValue:
         cursor = IDBCursorWithValue::create(backend, m_cursorDirection, this, m_source.get(), m_transaction.get());
         break;
     default:

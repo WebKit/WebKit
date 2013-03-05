@@ -31,7 +31,6 @@
 #include "IDBBackingStore.h"
 #include "IDBDatabaseBackendInterface.h"
 #include "IDBDatabaseError.h"
-#include "IDBTransaction.h"
 #include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashSet.h>
@@ -45,7 +44,7 @@ class IDBDatabaseCallbacks;
 
 class IDBTransactionBackendImpl : public RefCounted<IDBTransactionBackendImpl> {
 public:
-    static PassRefPtr<IDBTransactionBackendImpl> create(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IDBTransaction::Mode, IDBDatabaseBackendImpl*);
+    static PassRefPtr<IDBTransactionBackendImpl> create(int64_t transactionId, PassRefPtr<IDBDatabaseCallbacks>, const Vector<int64_t>&, IndexedDB::TransactionMode, IDBDatabaseBackendImpl*);
     virtual ~IDBTransactionBackendImpl();
 
     virtual void abort();
@@ -59,7 +58,7 @@ public:
 
     void abort(PassRefPtr<IDBDatabaseError>);
     void run();
-    IDBTransaction::Mode mode() const { return m_mode; }
+    IndexedDB::TransactionMode mode() const { return m_mode; }
     const HashSet<int64_t>& scope() const { return m_objectStoreIds; }
     void scheduleTask(PassOwnPtr<Operation> task, PassOwnPtr<Operation> abortTask = nullptr) { scheduleTask(IDBDatabaseBackendInterface::NormalTask, task, abortTask); }
     void scheduleTask(IDBDatabaseBackendInterface::TaskType, PassOwnPtr<Operation>, PassOwnPtr<Operation> abortTask = nullptr);
@@ -73,7 +72,7 @@ public:
     IDBDatabaseBackendImpl* database() const { return m_database.get(); }
 
 private:
-    IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IDBTransaction::Mode, IDBDatabaseBackendImpl*);
+    IDBTransactionBackendImpl(int64_t id, PassRefPtr<IDBDatabaseCallbacks>, const HashSet<int64_t>& objectStoreIds, IndexedDB::TransactionMode, IDBDatabaseBackendImpl*);
 
     enum State {
         Unused, // Created, but no tasks yet.
@@ -92,7 +91,7 @@ private:
 
     const int64_t m_id;
     const HashSet<int64_t> m_objectStoreIds;
-    const IDBTransaction::Mode m_mode;
+    const IndexedDB::TransactionMode m_mode;
 
     State m_state;
     bool m_commitPending;

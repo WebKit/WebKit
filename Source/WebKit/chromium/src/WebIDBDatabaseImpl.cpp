@@ -118,7 +118,7 @@ void WebIDBDatabaseImpl::commit(long long transactionId)
 void WebIDBDatabaseImpl::openCursor(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange& keyRange, unsigned short direction, bool keyOnly, TaskType taskType, WebIDBCallbacks* callbacks)
 {
     if (m_databaseBackend)
-        m_databaseBackend->openCursor(transactionId, objectStoreId, indexId, keyRange, static_cast<IDBCursor::Direction>(direction), keyOnly, static_cast<IDBDatabaseBackendInterface::TaskType>(taskType), IDBCallbacksProxy::create(adoptPtr(callbacks)));
+        m_databaseBackend->openCursor(transactionId, objectStoreId, indexId, keyRange, static_cast<IndexedDB::CursorDirection>(direction), keyOnly, static_cast<IDBDatabaseBackendInterface::TaskType>(taskType), IDBCallbacksProxy::create(adoptPtr(callbacks)));
 }
 
 void WebIDBDatabaseImpl::count(long long transactionId, long long objectStoreId, long long indexId, const WebIDBKeyRange& keyRange, WebIDBCallbacks* callbacks)
