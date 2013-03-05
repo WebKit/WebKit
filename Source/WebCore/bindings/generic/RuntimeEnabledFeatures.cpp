@@ -242,4 +242,8 @@ bool RuntimeEnabledFeatures::areExperimentalContentSecurityPolicyFeaturesEnabled
 bool RuntimeEnabledFeatures::areSeamlessIFramesEnabled = false;
 #endif
 
+#if ENABLE(FONT_LOAD_EVENTS)
+bool RuntimeEnabledFeatures::isFontLoadEventsEnabled = false;
+#endif
+
 } // namespace WebCore

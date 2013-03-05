@@ -87,6 +87,14 @@ public:
     static bool cssRegionsEnabled() { return false; }
 #endif
 
+#if ENABLE(FONT_LOAD_EVENTS)
+    static void setFontLoadEventsEnabled(bool isEnabled) { isFontLoadEventsEnabled = isEnabled; }
+    static bool fontLoadEventsEnabled() { return isFontLoadEventsEnabled; }
+#else
+    static void setFontLoadEventsEnabled(bool) { }
+    static bool fontLoadEventsEnabled() { return false; }
+#endif
+
 #if ENABLE(FULLSCREEN_API)
     // Mozilla version
     static bool webkitFullScreenAPIEnabled() { return isFullScreenAPIEnabled; }
@@ -394,6 +402,10 @@ private:
 
 #if ENABLE(IFRAME_SEAMLESS)
     static bool areSeamlessIFramesEnabled;
+#endif
+
+#if ENABLE(FONT_LOAD_EVENTS)
+    static bool isFontLoadEventsEnabled;
 #endif
 
 };
