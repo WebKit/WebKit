@@ -50,42 +50,6 @@
     margin: 10px;
 }
 
-.memory-bar-chart-name {
-    text-align: right;
-    white-space: nowrap;
-}
-
-.memory-bar-chart-bar {
-    border: 0px;
-    border-radius: 2px;
-    float: left;
-    height: 18px;
-    overflow: hidden;
-    position: relative;
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255, 255, 255, 0.5)), to(rgba(192, 192, 192, 0)));
-}
-
-.memory-bar-chart-unused {
-    background-color: rgba(255, 255, 255, 0.5);
-    float: right;
-    height: 100%;
-}
-
-.memory-bar-chart-percent {
-    position: absolute;
-    text-align: center;
-    width: 100%;
-}
-
-.memory-bar-chart-size {
-    text-indent: 6px;
-    white-space: nowrap;
-}
-
-.memory-bar-chart-total {
-    font-weight: bold;
-}
-
 .native-snapshot-view {
     display: none;
     overflow: hidden;

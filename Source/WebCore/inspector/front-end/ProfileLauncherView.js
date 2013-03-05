@@ -109,12 +109,6 @@ WebInspector.MultiProfileLauncherView = function(profilesPanel)
 
     this._profileTypeSelectorForm = this._innerContentElement.createChild("form");
 
-    if (WebInspector.experimentsSettings.liveNativeMemoryChart.isEnabled()) {
-        this._nativeMemoryElement = this._innerContentElement.createChild("div");
-        this._nativeMemoryLiveChart = new WebInspector.NativeMemoryBarChart();
-        this._nativeMemoryLiveChart.show(this._nativeMemoryElement);
-    }
-
     this._innerContentElement.createChild("div", "flexible-space");
 }
 

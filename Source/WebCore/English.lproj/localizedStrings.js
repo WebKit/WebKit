@@ -819,7 +819,6 @@ localizedStrings["-"] = "-";
 localizedStrings["Memory cache resources"] = "Memory cache resources";
 localizedStrings["JavaScript heap"] = "JavaScript heap";
 localizedStrings["DOM storage cache"] = "DOM storage cache";
-localizedStrings["Live native memory chart"] = "Live native memory chart";
 localizedStrings["Support for Sass"] = "Support for Sass";
 localizedStrings["Render tree used"] = "Render tree used";
 localizedStrings["Snippets support"] = "Snippets support";

@@ -378,12 +378,6 @@ WebInspector.ProfilesPanel = function(name, type)
     this.clearResultsButton.addEventListener("click", this._clearProfiles, this);
     this._statusBarButtons.push(this.clearResultsButton);
 
-    if (WebInspector.experimentsSettings.liveNativeMemoryChart.isEnabled()) {
-        this.garbageCollectButton = new WebInspector.StatusBarButton(WebInspector.UIString("Collect Garbage"), "garbage-collect-status-bar-item");
-        this.garbageCollectButton.addEventListener("click", this._garbageCollectButtonClicked, this);
-        this._statusBarButtons.push(this.garbageCollectButton);
-    }
-
     this._profileTypeStatusBarItemsContainer = document.createElement("div");
     this._profileTypeStatusBarItemsContainer.className = "status-bar-items";
 
