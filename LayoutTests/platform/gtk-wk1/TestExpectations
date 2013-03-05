@@ -86,8 +86,6 @@ Bug(GTK) http/tests/misc/will-send-request-returns-null-on-redirect.html [ Failu
 
 Bug(GTK) inspector/debugger/linkifier.html [ Failure ]
 
-webkit.org/b/71849 inspector-protocol/layer-tree.html [ Failure ]
-
 webkit.org/b/108747 inspector-protocol/page/javascriptDialogEvents.html [ Failure ]
 
 # This test is for clients that choose to make the missing plugin indicator a button

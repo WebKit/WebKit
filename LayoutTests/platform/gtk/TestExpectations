@@ -486,6 +486,8 @@ webkit.org/b/110695 http/tests/security/cross-origin-local-storage-allowed.html 
 webkit.org/b/110695 http/tests/security/cross-origin-plugin-allowed.html [ Crash Pass ]
 webkit.org/b/110695 http/tests/security/cross-origin-plugin-private-browsing-toggled-allowed.html [ Crash Pass ]
 
+webkit.org/b/111449 [ Debug ] fast/parser/document-write-fighting-eof.html [ Crash ]
+
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Crashing tests
 #////////////////////////////////////////////////////////////////////////////////////////
@@ -1401,6 +1403,8 @@ webkit.org/b/110694 html5lib/generated/run-plain-text-unsafe-data.html [ Failure
 webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failure ]
 
 webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
+
+webkit.org/b/111477 inspector-protocol/layers/layers-for-node.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing
