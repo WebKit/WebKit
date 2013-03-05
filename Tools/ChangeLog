@@ -1,3 +1,20 @@
+2013-03-04  Eric Seidel  <eric@webkit.org>
+
+        run-webkit-tests should support --profile and --profiler= just like run-perf-tests does
+        https://bugs.webkit.org/show_bug.cgi?id=111384
+
+        Reviewed by Ryosuke Niwa.
+
+        Sometimes I want to know why various LayoutTests are slow
+        without having to convert them into PerformanceTests in order
+        to use our fancy profiling.  The Driver already knows how to
+        do the right thing, we just need to expose the options to the user.
+
+        Handling of these options is already unittested in the perftests_unittest.
+
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+        (parse_args):
+
 2013-03-04  Alan Cutter  <alancutter@chromium.org>
 
         check-webkit-style says "Have to enable auto props in the subversion config file"
