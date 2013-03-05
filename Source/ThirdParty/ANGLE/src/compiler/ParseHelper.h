@@ -58,6 +58,7 @@ struct TParseContext {
     const TType* currentFunctionType;  // the return type of the function that's currently being parsed
     bool functionReturnsValue;   // true if a non-void function has a return
     bool checksPrecisionErrors;  // true if an error will be generated when a variable is declared without precision, explicit or implicit.
+    bool fragmentPrecisionHigh;  // true if highp precision is supported in the fragment language.
     TString HashErrMsg;
     bool AfterEOF;
     TDiagnostics diagnostics;

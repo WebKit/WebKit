@@ -114,6 +114,11 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
 
     // Always set to 1 for OpenGL ES.
     ANGLEResources.MaxDrawBuffers = 1;
+
+    GC3Dint range[2], precision;
+    getShaderPrecisionFormat(GraphicsContext3D::FRAGMENT_SHADER, GraphicsContext3D::HIGH_FLOAT, range, &precision);
+    ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
+
     m_compiler.setResources(ANGLEResources);
 
 #if !USE(OPENGL_ES_2)

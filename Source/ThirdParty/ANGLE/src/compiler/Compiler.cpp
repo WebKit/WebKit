@@ -38,6 +38,7 @@ bool InitializeSymbolTable(
     // The builtins deliberately don't specify precisions for the function
     // arguments and return types. For that reason we don't try to check them.
     TParseContext parseContext(symbolTable, extBehavior, intermediate, type, spec, 0, false, NULL, infoSink);
+    parseContext.fragmentPrecisionHigh = resources.FragmentPrecisionHigh == 1;
 
     GlobalParseContext = &parseContext;
 
@@ -102,6 +103,7 @@ TShHandleBase::~TShHandleBase() {
 TCompiler::TCompiler(ShShaderType type, ShShaderSpec spec)
     : shaderType(type),
       shaderSpec(spec),
+      fragmentPrecisionHigh(false),
       clampingStrategy(SH_CLAMP_WITH_CLAMP_INTRINSIC),
       builtInFunctionEmulator(type)
 {
@@ -125,6 +127,7 @@ bool TCompiler::Init(const ShBuiltInResources& resources)
     if (!InitBuiltInSymbolTable(resources))
         return false;
     InitExtensionBehavior(resources, extensionBehavior);
+    fragmentPrecisionHigh = resources.FragmentPrecisionHigh == 1;
 
     arrayBoundsClamper.SetClampingStrategy(resources.ArrayIndexClampingStrategy);
     clampingStrategy = resources.ArrayIndexClampingStrategy;
@@ -161,6 +164,7 @@ bool TCompiler::compile(const char* const shaderStrings[],
     TParseContext parseContext(symbolTable, extensionBehavior, intermediate,
                                shaderType, shaderSpec, compileOptions, true,
                                sourcePath, infoSink);
+    parseContext.fragmentPrecisionHigh = fragmentPrecisionHigh;
     GlobalParseContext = &parseContext;
 
     // We preserve symbols at the built-in level from compile-to-compile.

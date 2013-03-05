@@ -37,7 +37,7 @@ extern "C" {
 
 // Version number for shader translation API.
 // It is incremented everytime the API changes.
-#define ANGLE_SH_VERSION 108
+#define ANGLE_SH_VERSION 110
 
 //
 // The names of the following enums have been derived by replacing GL prefix
@@ -209,6 +209,10 @@ typedef struct
     int OES_EGL_image_external;
     int ARB_texture_rectangle;
     int EXT_draw_buffers;
+
+    // Set to 1 if highp precision is supported in the fragment language.
+    // Default is 0.
+    int FragmentPrecisionHigh;
 
     // Name Hashing.
     // Set a 64 bit hash function to enable user-defined name hashing.

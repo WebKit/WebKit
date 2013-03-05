@@ -194,6 +194,10 @@ void GraphicsContext3DPrivate::initializeANGLE()
     if (extensions->supports("GL_ARB_texture_rectangle"))
         ANGLEResources.ARB_texture_rectangle = 1;
 
+    GC3Dint range[2], precision;
+    m_context->getShaderPrecisionFormat(GraphicsContext3D::FRAGMENT_SHADER, GraphicsContext3D::HIGH_FLOAT, range, &precision);
+    ANGLEResources.FragmentPrecisionHigh = (range[0] || range[1] || precision);
+
     m_context->m_compiler.setResources(ANGLEResources);
 }
 

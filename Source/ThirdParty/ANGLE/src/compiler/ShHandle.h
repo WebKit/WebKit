@@ -122,6 +122,7 @@ private:
     TSymbolTable symbolTable;
     // Built-in extensions with default behavior.
     TExtensionBehavior extensionBehavior;
+    bool fragmentPrecisionHigh;
 
     ArrayBoundsClamper arrayBoundsClamper;
     ShArrayIndexClampingStrategy clampingStrategy;

@@ -991,6 +991,10 @@ declaration
         $$ = $1.intermAggregate;
     }
     | PRECISION precision_qualifier type_specifier_no_prec SEMICOLON {
+        if (($2 == EbpHigh) && (context->shaderType == SH_FRAGMENT_SHADER) && !context->fragmentPrecisionHigh) {
+            context->error($1.line, "precision is not supported in fragment shader", "highp");
+            context->recover();
+        }
         if (!context->symbolTable.setDefaultPrecision( $3, $2 )) {
             context->error($1.line, "illegal type argument for default precision qualifier", getBasicString($3.type));
             context->recover();
@@ -2145,4 +2149,3 @@ function_definition
 int glslang_parse(TParseContext* context) {
     return yyparse(context);
 }
-

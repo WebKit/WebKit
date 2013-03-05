@@ -1,3 +1,31 @@
+2013-03-05  Kenneth Russell  <kbr@google.com>
+
+        Upgrade ANGLE to r1987
+        https://bugs.webkit.org/show_bug.cgi?id=111381
+
+        Reviewed by Dean Jackson.
+
+        * include/GLSLANG/ShaderLang.h:
+        * src/common/version.h:
+        * src/compiler/Compiler.cpp:
+        (TCompiler::TCompiler):
+        (TCompiler::Init):
+        (TCompiler::compile):
+        * src/compiler/ParseHelper.h:
+        (TParseContext):
+        * src/compiler/ShHandle.h:
+        (TCompiler):
+        * src/compiler/ShaderLang.cpp:
+        (ShInitBuiltInResources):
+        * src/compiler/UnfoldShortCircuit.cpp:
+        (sh::UnfoldShortCircuit::visitSelection):
+        * src/compiler/glslang.l:
+        * src/compiler/glslang.y:
+        * src/compiler/glslang_lex.cpp:
+        (glslang_scan):
+        * src/compiler/glslang_tab.cpp:
+             Updated ANGLE to r1987.
+
 2013-03-01  Martin Robinson  <mrobinson@igalia.com>
 
         [GTK] Add ANGLE to the GTK+ gyp build

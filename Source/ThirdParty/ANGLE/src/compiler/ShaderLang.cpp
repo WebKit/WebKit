@@ -127,6 +127,9 @@ void ShInitBuiltInResources(ShBuiltInResources* resources)
     resources->ARB_texture_rectangle = 0;
     resources->EXT_draw_buffers = 0;
 
+    // Disable highp precision in fragment shader by default.
+    resources->FragmentPrecisionHigh = 0;
+
     // Disable name hashing by default.
     resources->HashFunction = NULL;
 
