@@ -38,7 +38,7 @@
 
 namespace WebCore {
 
-void StorageEventDispatcher::dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, SecurityOrigin* securityOrigin, Frame* sourceFrame)
+void StorageEventDispatcher::dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, SecurityOrigin* securityOrigin, Frame* sourceFrame)
 {
     Page* page = sourceFrame->page();
     if (!page)
@@ -52,17 +52,10 @@ void StorageEventDispatcher::dispatchSessionStorageEvent(const String& key, cons
             frames.append(frame);
     }
 
-    InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, SessionStorage, securityOrigin, page);
-
-    for (unsigned i = 0; i < frames.size(); ++i) {
-        ExceptionCode ec = 0;
-        Storage* storage = frames[i]->document()->domWindow()->sessionStorage(ec);
-        if (!ec)
-            frames[i]->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), storage));
-    }
+    dispatchSessionStorageEventsToFrames(*page, frames, key, oldValue, newValue, sourceFrame->document()->url(), securityOrigin);
 }
 
-void StorageEventDispatcher::dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, SecurityOrigin* securityOrigin, Frame* sourceFrame)
+void StorageEventDispatcher::dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, SecurityOrigin* securityOrigin, Frame* sourceFrame)
 {
     Page* page = sourceFrame->page();
     if (!page)
@@ -72,20 +65,39 @@ void StorageEventDispatcher::dispatchLocalStorageEvent(const String& key, const 
 
     // Send events to every page.
     const HashSet<Page*>& pages = page->group().pages();
-    HashSet<Page*>::const_iterator end = pages.end();
-    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
+    for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it) {
         for (Frame* frame = (*it)->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
             if (sourceFrame != frame && frame->document()->securityOrigin()->equal(securityOrigin))
                 frames.append(frame);
         }
-        InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, LocalStorage, securityOrigin, *it);
     }
+
+    dispatchLocalStorageEventsToFrames(page->group(), frames, key, oldValue, newValue, sourceFrame->document()->url(), securityOrigin);
+}
+
+void StorageEventDispatcher::dispatchSessionStorageEventsToFrames(Page& page, const Vector<RefPtr<Frame> >& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
+{
+    InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, SessionStorage, securityOrigin, &page);
+
+    for (unsigned i = 0; i < frames.size(); ++i) {
+        ExceptionCode ec = 0;
+        Storage* storage = frames[i]->document()->domWindow()->sessionStorage(ec);
+        if (!ec)
+            frames[i]->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, storage));
+    }
+}
+
+void StorageEventDispatcher::dispatchLocalStorageEventsToFrames(PageGroup& pageGroup, const Vector<RefPtr<Frame> >& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin* securityOrigin)
+{
+    const HashSet<Page*>& pages = pageGroup.pages();
+    for (HashSet<Page*>::const_iterator it = pages.begin(), end = pages.end(); it != end; ++it)
+        InspectorInstrumentation::didDispatchDOMStorageEvent(key, oldValue, newValue, LocalStorage, securityOrigin, *it);
 
     for (unsigned i = 0; i < frames.size(); ++i) {
         ExceptionCode ec = 0;
         Storage* storage = frames[i]->document()->domWindow()->localStorage(ec);
         if (!ec)
-            frames[i]->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, sourceFrame->document()->url(), storage));
+            frames[i]->document()->enqueueWindowEvent(StorageEvent::create(eventNames().storageEvent, key, oldValue, newValue, url, storage));
     }
 }
 

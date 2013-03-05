@@ -364,9 +364,9 @@ void StorageAreaImpl::closeDatabaseIfIdle()
 void StorageAreaImpl::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, Frame* sourceFrame)
 {
     if (m_storageType == LocalStorage)
-        StorageEventDispatcher::dispatchLocalStorageEvent(key, oldValue, newValue, m_securityOrigin.get(), sourceFrame);
+        StorageEventDispatcher::dispatchLocalStorageEvents(key, oldValue, newValue, m_securityOrigin.get(), sourceFrame);
     else
-        StorageEventDispatcher::dispatchSessionStorageEvent(key, oldValue, newValue, m_securityOrigin.get(), sourceFrame);
+        StorageEventDispatcher::dispatchSessionStorageEvents(key, oldValue, newValue, m_securityOrigin.get(), sourceFrame);
 }
 
 } // namespace WebCore

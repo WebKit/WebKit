@@ -30,16 +30,23 @@
 #ifndef StorageEventDispatcher_h
 #define StorageEventDispatcher_h
 
-#include "StorageArea.h"
 #include <wtf/Forward.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
+class Frame;
+class Page;
+class PageGroup;
+class SecurityOrigin;
+
 class StorageEventDispatcher {
 public:
-    static void dispatchSessionStorageEvent(const String& key, const String& oldValue, const String& newValue, SecurityOrigin*, Frame* sourceFrame);
-    static void dispatchLocalStorageEvent(const String& key, const String& oldValue, const String& newValue, SecurityOrigin*, Frame* sourceFrame);
+    static void dispatchSessionStorageEvents(const String& key, const String& oldValue, const String& newValue, SecurityOrigin*, Frame* sourceFrame);
+    static void dispatchLocalStorageEvents(const String& key, const String& oldValue, const String& newValue, SecurityOrigin*, Frame* sourceFrame);
 
+    static void dispatchSessionStorageEventsToFrames(Page&, const Vector<RefPtr<Frame> >& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin*);
+    static void dispatchLocalStorageEventsToFrames(PageGroup&, const Vector<RefPtr<Frame> >& frames, const String& key, const String& oldValue, const String& newValue, const String& url, SecurityOrigin*);
 private:
     // Do not instantiate.
     StorageEventDispatcher();
