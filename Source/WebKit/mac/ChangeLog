@@ -1,3 +1,14 @@
+2013-03-04  Chris Fleizach  <cfleizach@apple.com>
+
+        Support WebSpeech - Speech Synthesis
+        https://bugs.webkit.org/show_bug.cgi?id=106742
+
+        Reviewed by Simon Fraser.
+
+        Enable speech synthesis for the Mac.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2013-03-04  Mark Hahnenberg  <mhahnenberg@apple.com>
 
         Remove contextInternalContext from JSContextInternal.h

@@ -40,7 +40,8 @@ function constructorPropertiesOnWindow(globalObject)
             type =="Uint32ArrayConstructor" ||
             type == "FileErrorConstructor" ||
             type == "FileReaderConstructor" ||
-            type == "AudioContextConstructor")
+            type == "AudioContextConstructor" ||
+            type == "SpeechSynthesisUtteranceConstructor")
             continue;
         if (!type.match('Constructor$'))
             continue;
