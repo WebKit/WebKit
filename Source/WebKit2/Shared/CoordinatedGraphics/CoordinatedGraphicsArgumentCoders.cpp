@@ -29,10 +29,11 @@
 #include "CoordinatedGraphicsArgumentCoders.h"
 
 #if USE(COORDINATED_GRAPHICS)
+#include "WebCoordinatedSurface.h"
 #include "WebCoreArgumentCoders.h"
 #include <WebCore/Animation.h>
 #include <WebCore/Color.h>
-#include <WebCore/CoordinatedLayerInfo.h>
+#include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/FloatPoint3D.h>
 #include <WebCore/GraphicsLayerAnimation.h>
 #include <WebCore/IdentityTransformOperation.h>
@@ -73,9 +74,7 @@
 #endif
 
 using namespace WebCore;
-#if ENABLE(CSS_SHADERS)
 using namespace WebKit;
-#endif
 
 namespace CoreIPC {
 
@@ -815,16 +814,6 @@ bool ArgumentCoder<WebCore::GraphicsSurfaceToken>::decode(ArgumentDecoder& decod
 }
 #endif
 
-void ArgumentCoder<CoordinatedLayerInfo>::encode(ArgumentEncoder& encoder, const CoordinatedLayerInfo& coordinatedLayerInfo)
-{
-    SimpleArgumentCoder<CoordinatedLayerInfo>::encode(encoder, coordinatedLayerInfo);
-}
-
-bool ArgumentCoder<CoordinatedLayerInfo>::decode(ArgumentDecoder& decoder, CoordinatedLayerInfo& coordinatedLayerInfo)
-{
-    return SimpleArgumentCoder<CoordinatedLayerInfo>::decode(decoder, coordinatedLayerInfo);
-}
-
 void ArgumentCoder<SurfaceUpdateInfo>::encode(ArgumentEncoder& encoder, const SurfaceUpdateInfo& surfaceUpdateInfo)
 {
     SimpleArgumentCoder<SurfaceUpdateInfo>::encode(encoder, surfaceUpdateInfo);
@@ -833,6 +822,253 @@ void ArgumentCoder<SurfaceUpdateInfo>::encode(ArgumentEncoder& encoder, const Su
 bool ArgumentCoder<SurfaceUpdateInfo>::decode(ArgumentDecoder& decoder, SurfaceUpdateInfo& surfaceUpdateInfo)
 {
     return SimpleArgumentCoder<SurfaceUpdateInfo>::decode(decoder, surfaceUpdateInfo);
+}
+
+void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(ArgumentEncoder& encoder, const CoordinatedGraphicsLayerState& state)
+{
+    encoder << state.changeMask;
+
+    if (state.flagsChanged)
+        encoder << state.flags;
+
+    if (state.positionChanged)
+        encoder << state.pos;
+
+    if (state.anchorPointChanged)
+        encoder << state.anchorPoint;
+
+    if (state.sizeChanged)
+        encoder << state.size;
+
+    if (state.transformChanged)
+        encoder << state.transform;
+
+    if (state.childrenTransformChanged)
+        encoder << state.childrenTransform;
+
+    if (state.contentsRectChanged)
+        encoder << state.contentsRect;
+
+    if (state.opacityChanged)
+        encoder << state.opacity;
+
+    if (state.solidColorChanged)
+        encoder << state.solidColor;
+
+    if (state.debugBorderColorChanged)
+        encoder << state.debugBorderColor;
+
+    if (state.debugBorderWidthChanged)
+        encoder << state.debugBorderWidth;
+
+#if ENABLE(CSS_FILTERS)
+    if (state.filtersChanged)
+        encoder << state.filters;
+#endif
+
+    if (state.animationsChanged)
+        encoder << state.animations;
+
+    if (state.childrenChanged)
+        encoder << state.children;
+
+    encoder << state.tilesToCreate;
+    encoder << state.tilesToRemove;
+
+    if (state.replicaChanged)
+        encoder << state.replica;
+
+    if (state.maskChanged)
+        encoder << state.mask;
+
+    if (state.imageChanged)
+        encoder << state.imageID;
+
+    if (state.repaintCountChanged)
+        encoder << state.repaintCount;
+
+    encoder << state.tilesToUpdate;
+
+#if USE(GRAPHICS_SURFACE)
+    if (state.canvasChanged) {
+        encoder << state.canvasSize;
+        encoder << state.canvasToken;
+        encoder << state.canvasFrontBuffer;
+    }
+#endif
+}
+
+bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decoder, CoordinatedGraphicsLayerState& state)
+{
+    if (!decoder.decode(state.changeMask))
+        return false;
+
+    if (state.flagsChanged && !decoder.decode(state.flags))
+        return false;
+
+    if (state.positionChanged && !decoder.decode(state.pos))
+        return false;
+
+    if (state.anchorPointChanged && !decoder.decode(state.anchorPoint))
+        return false;
+
+    if (state.sizeChanged && !decoder.decode(state.size))
+        return false;
+
+    if (state.transformChanged && !decoder.decode(state.transform))
+        return false;
+
+    if (state.childrenTransformChanged && !decoder.decode(state.childrenTransform))
+        return false;
+
+    if (state.contentsRectChanged && !decoder.decode(state.contentsRect))
+        return false;
+
+    if (state.opacityChanged && !decoder.decode(state.opacity))
+        return false;
+
+    if (state.solidColorChanged && !decoder.decode(state.solidColor))
+        return false;
+
+    if (state.debugBorderColorChanged && !decoder.decode(state.debugBorderColor))
+        return false;
+
+    if (state.debugBorderWidthChanged && !decoder.decode(state.debugBorderWidth))
+        return false;
+
+#if ENABLE(CSS_FILTERS)
+    if (state.filtersChanged && !decoder.decode(state.filters))
+        return false;
+#endif
+
+    if (state.animationsChanged && !decoder.decode(state.animations))
+        return false;
+
+    if (state.childrenChanged && !decoder.decode(state.children))
+        return false;
+
+    if (!decoder.decode(state.tilesToCreate))
+        return false;
+
+    if (!decoder.decode(state.tilesToRemove))
+        return false;
+
+    if (state.replicaChanged && !decoder.decode(state.replica))
+        return false;
+
+    if (state.maskChanged && !decoder.decode(state.mask))
+        return false;
+
+    if (state.imageChanged && !decoder.decode(state.imageID))
+        return false;
+
+    if (state.repaintCountChanged && !decoder.decode(state.repaintCount))
+        return false;
+
+    if (!decoder.decode(state.tilesToUpdate))
+        return false;
+
+#if USE(GRAPHICS_SURFACE)
+    if (state.canvasChanged) {
+        if (!decoder.decode(state.canvasSize))
+            return false;
+
+        if (!decoder.decode(state.canvasToken))
+            return false;
+
+        if (!decoder.decode(state.canvasFrontBuffer))
+            return false;
+    }
+#endif
+
+    return true;
+}
+
+void ArgumentCoder<TileUpdateInfo>::encode(ArgumentEncoder& encoder, const TileUpdateInfo& updateInfo)
+{
+    SimpleArgumentCoder<TileUpdateInfo>::encode(encoder, updateInfo);
+}
+
+bool ArgumentCoder<TileUpdateInfo>::decode(ArgumentDecoder& decoder, TileUpdateInfo& updateInfo)
+{
+    return SimpleArgumentCoder<TileUpdateInfo>::decode(decoder, updateInfo);
+}
+
+void ArgumentCoder<TileCreationInfo>::encode(ArgumentEncoder& encoder, const TileCreationInfo& updateInfo)
+{
+    SimpleArgumentCoder<TileCreationInfo>::encode(encoder, updateInfo);
+}
+
+bool ArgumentCoder<TileCreationInfo>::decode(ArgumentDecoder& decoder, TileCreationInfo& updateInfo)
+{
+    return SimpleArgumentCoder<TileCreationInfo>::decode(decoder, updateInfo);
+}
+
+void ArgumentCoder<CoordinatedGraphicsState>::encode(ArgumentEncoder& encoder, const CoordinatedGraphicsState& state)
+{
+    encoder << state.rootCompositingLayer;
+    encoder << state.backgroundColor;
+    encoder << state.scrollPosition;
+    encoder << state.contentsSize;
+    encoder << state.coveredRect;
+    encoder << state.layersToUpdate;
+
+    // We need to encode WebCoordinatedSurface::Handle right after it's creation.
+    // That's why we cannot use simple std::pair encoder.
+    encoder << state.imagesToUpdate.size();
+
+    typedef Vector<std::pair<CoordinatedImageBackingID, RefPtr<CoordinatedSurface> > > SurfaceUpdatePairVector;
+    SurfaceUpdatePairVector::const_iterator end = state.imagesToUpdate.end();
+    for (SurfaceUpdatePairVector::const_iterator it = state.imagesToUpdate.begin(); it != end; ++it) {
+
+        WebCoordinatedSurface* webCoordinatedSurface = static_cast<WebCoordinatedSurface*>(it->second.get());
+        WebCoordinatedSurface::Handle handle;
+        if (!webCoordinatedSurface->createHandle(handle))
+            return;
+
+        encoder << it->first;
+        encoder << handle;
+    }
+}
+
+bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, CoordinatedGraphicsState& state)
+{
+    if (!decoder.decode(state.rootCompositingLayer))
+        return false;
+
+    if (!decoder.decode(state.backgroundColor))
+        return false;
+
+    if (!decoder.decode(state.scrollPosition))
+        return false;
+
+    if (!decoder.decode(state.contentsSize))
+        return false;
+
+    if (!decoder.decode(state.coveredRect))
+        return false;
+
+    if (!decoder.decode(state.layersToUpdate))
+        return false;
+
+    size_t sizeOfImagesToUpdate;
+    if (!decoder.decode(sizeOfImagesToUpdate))
+        return false;
+
+    for (size_t i = 0; i < sizeOfImagesToUpdate; i++) {
+        CoordinatedImageBackingID imageID;
+        if (!decoder.decode(imageID))
+            return false;
+
+        WebCoordinatedSurface::Handle handle;
+        if (!decoder.decode(handle))
+            return false;
+
+        RefPtr<CoordinatedSurface> surface = WebCoordinatedSurface::create(handle);
+        state.imagesToUpdate.append(std::make_pair(imageID, surface.release()));
+    }
+
+    return true;
 }
 
 } // namespace CoreIPC

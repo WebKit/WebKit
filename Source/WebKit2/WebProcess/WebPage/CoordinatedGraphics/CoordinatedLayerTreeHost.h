@@ -26,6 +26,7 @@
 #include "LayerTreeHost.h"
 #include "Timer.h"
 #include <WebCore/CoordinatedGraphicsLayer.h>
+#include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/CoordinatedImageBacking.h>
 #include <WebCore/GraphicsLayerClient.h>
 #include <WebCore/GraphicsLayerFactory.h>
@@ -80,38 +81,12 @@ public:
     virtual void pauseRendering() { m_isSuspended = true; }
     virtual void resumeRendering() { m_isSuspended = false; scheduleLayerFlush(); }
     virtual void deviceOrPageScaleFactorChanged() OVERRIDE;
-    virtual PassRefPtr<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) OVERRIDE;
 
-    virtual bool isFlushingLayerChanges() const OVERRIDE { return m_isFlushingLayerChanges; }
-    virtual void createTile(WebCore::CoordinatedLayerID, uint32_t tileID, const WebCore::SurfaceUpdateInfo&, const WebCore::IntRect&);
-    virtual void updateTile(WebCore::CoordinatedLayerID, uint32_t tileID, const WebCore::SurfaceUpdateInfo&, const WebCore::IntRect&);
-    virtual void removeTile(WebCore::CoordinatedLayerID, uint32_t tileID);
-    virtual WebCore::FloatRect visibleContentsRect() const;
     virtual void renderNextFrame();
     virtual void purgeBackingStores();
     virtual void setVisibleContentsRect(const WebCore::FloatRect&, const WebCore::FloatPoint&);
     virtual void didReceiveCoordinatedLayerTreeHostMessage(CoreIPC::Connection*, CoreIPC::MessageDecoder&);
     virtual WebCore::GraphicsLayerFactory* graphicsLayerFactory() OVERRIDE;
-
-    virtual void syncLayerState(WebCore::CoordinatedLayerID, const WebCore::CoordinatedLayerInfo&);
-    virtual void syncLayerChildren(WebCore::CoordinatedLayerID, const Vector<WebCore::CoordinatedLayerID>&);
-    virtual void setLayerAnimations(WebCore::CoordinatedLayerID, const WebCore::GraphicsLayerAnimations&);
-#if ENABLE(CSS_FILTERS)
-    virtual void syncLayerFilters(WebCore::CoordinatedLayerID, const WebCore::FilterOperations&);
-#endif
-#if USE(GRAPHICS_SURFACE)
-    virtual void createCanvas(WebCore::CoordinatedLayerID, WebCore::PlatformLayer*) OVERRIDE;
-    virtual void syncCanvas(WebCore::CoordinatedLayerID, WebCore::PlatformLayer*) OVERRIDE;
-    virtual void destroyCanvas(WebCore::CoordinatedLayerID) OVERRIDE;
-#endif
-    virtual void setLayerRepaintCount(WebCore::CoordinatedLayerID, int) OVERRIDE;
-    virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
-
-    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& atlasID, WebCore::IntPoint&);
-
-    // UpdateAtlasClient
-    virtual bool createUpdateAtlas(uint32_t atlasID, PassRefPtr<WebCore::CoordinatedSurface>) OVERRIDE;
-    virtual void removeUpdateAtlas(uint32_t atlasID);
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     virtual void scheduleAnimation() OVERRIDE;
@@ -138,6 +113,18 @@ private:
     virtual void removeImageBacking(WebCore::CoordinatedImageBackingID) OVERRIDE;
 
     void flushPendingImageBackingChanges();
+
+    // CoordinatedGraphicsLayerClient
+    virtual bool isFlushingLayerChanges() const OVERRIDE { return m_isFlushingLayerChanges; }
+    virtual WebCore::FloatRect visibleContentsRect() const;
+    virtual PassRefPtr<WebCore::CoordinatedImageBacking> createImageBackingIfNeeded(WebCore::Image*) OVERRIDE;
+    virtual void detachLayer(WebCore::CoordinatedGraphicsLayer*);
+    virtual PassOwnPtr<WebCore::GraphicsContext> beginContentUpdate(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags, uint32_t& atlasID, WebCore::IntPoint&);
+    virtual void syncLayerState(WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayerState&);
+
+    // UpdateAtlasClient
+    virtual bool createUpdateAtlas(uint32_t atlasID, PassRefPtr<WebCore::CoordinatedSurface>) OVERRIDE;
+    virtual void removeUpdateAtlas(uint32_t atlasID);
 
     // GraphicsLayerFactory
     virtual PassOwnPtr<WebCore::GraphicsLayer> createGraphicsLayer(WebCore::GraphicsLayerClient*) OVERRIDE;
@@ -166,6 +153,8 @@ private:
     void releaseInactiveAtlasesTimerFired(WebCore::Timer<CoordinatedLayerTreeHost>*);
 
 #if ENABLE(CSS_SHADERS)
+    void prepareCustomFilterProxiesIfNeeded(WebCore::CoordinatedGraphicsLayerState&);
+
     // WebCustomFilterProgramProxyClient
     void removeCustomFilterProgramProxy(WebCustomFilterProgramProxy*);
 
@@ -180,6 +169,8 @@ private:
 
     // The page overlay layer. Will be null if there's no page overlay.
     OwnPtr<WebCore::GraphicsLayer> m_pageOverlayLayer;
+
+    WebCore::CoordinatedGraphicsState m_state;
 
     HashSet<WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
     Vector<WebCore::CoordinatedLayerID> m_layersToCreate;

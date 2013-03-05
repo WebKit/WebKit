@@ -19,42 +19,28 @@
 
 #if USE(COORDINATED_GRAPHICS)
 messages -> CoordinatedLayerTreeHostProxy {
-    SetCompositingLayerState(uint32_t id, WebCore::CoordinatedLayerInfo layerInfo)
-    SetCompositingLayerChildren(uint32_t id, Vector<uint32_t> children)
-#if ENABLE(CSS_FILTERS)
-    SetCompositingLayerFilters(uint32_t id, WebCore::FilterOperations filters)
-#endif
+
+    CommitCoordinatedGraphicsState(WebCore::CoordinatedGraphicsState state)
+
+    CreateCompositingLayers(Vector<uint32_t> ids)
+    DeleteCompositingLayers(Vector<uint32_t> ids)
+
 #if ENABLE(CSS_SHADERS)
     CreateCustomFilterProgram(int id, WebCore::CustomFilterProgramInfo programInfo)
     RemoveCustomFilterProgram(int id)
 #endif
-    SetRootCompositingLayer(uint32_t id)
-    CreateCompositingLayers(Vector<uint32_t> ids)
-    DeleteCompositingLayers(Vector<uint32_t> ids)
-    CreateTileForLayer(uint32_t layerID, uint32_t tileID, WebCore::IntRect tileRect, WebCore::SurfaceUpdateInfo updateInfo)
-    UpdateTileForLayer(uint32_t layerID, uint32_t tileID, WebCore::IntRect tileRect, WebCore::SurfaceUpdateInfo updateInfo)
-    RemoveTileForLayer(uint32_t layerID, uint32_t tileID)
     CreateUpdateAtlas(uint32_t atlasID, WebKit::WebCoordinatedSurface::Handle handle)
     RemoveUpdateAtlas(uint32_t atlasID)
     CreateImageBacking(uint64_t imageID)
     UpdateImageBacking(uint64_t imageID, WebKit::WebCoordinatedSurface::Handle handle)
     ClearImageBackingContents(uint64_t imageID)
     RemoveImageBacking(uint64_t imageID)
-    DidRenderFrame(WebCore::FloatPoint scrollPosition, WebCore::IntSize contentsSize, WebCore::IntRect coveredRect)
-    SetLayerAnimations(uint32_t id, WebCore::GraphicsLayerAnimations animations)
+
     SetAnimationsLocked(bool locked)
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     RequestAnimationFrame()
 #endif
-
-#if USE(GRAPHICS_SURFACE)
-    CreateCanvas(uint32_t id, WebCore::IntSize canvasSize, WebCore::GraphicsSurfaceToken token)
-    SyncCanvas(uint32_t id, uint32_t frontBuffer)
-    DestroyCanvas(uint32_t id)
-#endif
-
-    SetLayerRepaintCount(uint32_t layerID, int value)
 
     SetBackgroundColor(WebCore::Color color)
 }

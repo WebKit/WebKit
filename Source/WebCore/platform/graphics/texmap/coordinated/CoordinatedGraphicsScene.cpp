@@ -196,54 +196,63 @@ void CoordinatedGraphicsScene::adjustPositionForFixedLayers()
 }
 
 #if USE(GRAPHICS_SURFACE)
-void CoordinatedGraphicsScene::createCanvas(CoordinatedLayerID id, const IntSize&, PassRefPtr<GraphicsSurface> surface)
+void CoordinatedGraphicsScene::createCanvasIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
-    ASSERT(m_textureMapper);
-    GraphicsLayer* layer = layerByID(id);
-    ASSERT(!m_surfaceBackingStores.contains(id));
+    if (!state.canvasToken.isValid())
+        return;
 
     RefPtr<TextureMapperSurfaceBackingStore> canvasBackingStore(TextureMapperSurfaceBackingStore::create());
-    m_surfaceBackingStores.set(id, canvasBackingStore);
+    m_surfaceBackingStores.set(layer, canvasBackingStore);
 
-    canvasBackingStore->setGraphicsSurface(surface);
+    GraphicsSurface::Flags surfaceFlags = GraphicsSurface::SupportsTextureTarget | GraphicsSurface::SupportsSharing;
+    canvasBackingStore->setGraphicsSurface(GraphicsSurface::create(state.canvasSize, surfaceFlags, state.canvasToken));
     layer->setContentsToMedia(canvasBackingStore.get());
 }
 
-void CoordinatedGraphicsScene::syncCanvas(CoordinatedLayerID id, uint32_t frontBuffer)
+void CoordinatedGraphicsScene::syncCanvasIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
     ASSERT(m_textureMapper);
-    ASSERT(m_surfaceBackingStores.contains(id));
 
-    SurfaceBackingStoreMap::iterator it = m_surfaceBackingStores.find(id);
-    RefPtr<TextureMapperSurfaceBackingStore> canvasBackingStore = it->value;
+    if (state.canvasChanged) {
+        destroyCanvasIfNeeded(layer, state);
+        createCanvasIfNeeded(layer, state);
+    }
 
-    canvasBackingStore->swapBuffersIfNeeded(frontBuffer);
+    if (state.canvasShouldSwapBuffers) {
+        ASSERT(m_surfaceBackingStores.contains(layer));
+        SurfaceBackingStoreMap::iterator it = m_surfaceBackingStores.find(layer);
+        RefPtr<TextureMapperSurfaceBackingStore> canvasBackingStore = it->value;
+        canvasBackingStore->swapBuffersIfNeeded(state.canvasFrontBuffer);
+    }
 }
 
-void CoordinatedGraphicsScene::destroyCanvas(CoordinatedLayerID id)
+void CoordinatedGraphicsScene::destroyCanvasIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
-    ASSERT(m_textureMapper);
-    GraphicsLayer* layer = layerByID(id);
-    ASSERT(m_surfaceBackingStores.contains(id));
+    if (state.canvasToken.isValid())
+        return;
 
-    m_surfaceBackingStores.remove(id);
+    m_surfaceBackingStores.remove(layer);
     layer->setContentsToMedia(0);
 }
 #endif
 
-void CoordinatedGraphicsScene::setLayerRepaintCount(CoordinatedLayerID id, int value)
+void CoordinatedGraphicsScene::setLayerRepaintCountIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
-    GraphicsLayer* layer = layerByID(id);
-    toGraphicsLayerTextureMapper(layer)->setRepaintCount(value);
+    if (!layer->isShowingRepaintCounter() || !state.repaintCountChanged)
+        return;
+
+    toGraphicsLayerTextureMapper(layer)->setRepaintCount(state.repaintCount);
 }
 
-void CoordinatedGraphicsScene::setLayerChildren(CoordinatedLayerID id, const Vector<CoordinatedLayerID>& childIDs)
+void CoordinatedGraphicsScene::setLayerChildrenIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
-    GraphicsLayer* layer = layerByID(id);
+    if (!state.childrenChanged)
+        return;
+
     Vector<GraphicsLayer*> children;
 
-    for (size_t i = 0; i < childIDs.size(); ++i) {
-        CoordinatedLayerID childID = childIDs[i];
+    for (size_t i = 0; i < state.children.size(); ++i) {
+        CoordinatedLayerID childID = state.children[i];
         GraphicsLayer* child = layerByID(childID);
         children.append(child);
     }
@@ -251,14 +260,15 @@ void CoordinatedGraphicsScene::setLayerChildren(CoordinatedLayerID id, const Vec
 }
 
 #if ENABLE(CSS_FILTERS)
-void CoordinatedGraphicsScene::setLayerFilters(CoordinatedLayerID id, const FilterOperations& filters)
+void CoordinatedGraphicsScene::setLayerFiltersIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
-    GraphicsLayer* layer = layerByID(id);
+    if (!state.filtersChanged)
+        return;
 
 #if ENABLE(CSS_SHADERS)
-    injectCachedCustomFilterPrograms(filters);
+    injectCachedCustomFilterPrograms(state.filters);
 #endif
-    layer->setFilters(filters);
+    layer->setFilters(state.filters);
 }
 #endif
 
@@ -294,43 +304,80 @@ void CoordinatedGraphicsScene::removeCustomFilterProgram(int id)
 }
 #endif // ENABLE(CSS_SHADERS)
 
-void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const CoordinatedLayerInfo& layerInfo)
+void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const CoordinatedGraphicsLayerState& layerState)
 {
     ASSERT(m_rootLayerID != InvalidCoordinatedLayerID);
     GraphicsLayer* layer = layerByID(id);
 
-    layer->setReplicatedByLayer(getLayerByIDIfExists(layerInfo.replica));
-    layer->setMaskLayer(getLayerByIDIfExists(layerInfo.mask));
+    if (layerState.positionChanged)
+        layer->setPosition(layerState.pos);
 
-    layer->setAnchorPoint(layerInfo.anchorPoint);
-    layer->setPosition(layerInfo.pos);
-    layer->setSize(layerInfo.size);
+    if (layerState.anchorPointChanged)
+        layer->setAnchorPoint(layerState.anchorPoint);
 
-    layer->setTransform(layerInfo.transform);
-    layer->setChildrenTransform(layerInfo.childrenTransform);
-    layer->setBackfaceVisibility(layerInfo.backfaceVisible);
-    layer->setContentsOpaque(layerInfo.contentsOpaque);
-    layer->setContentsRect(layerInfo.contentsRect);
-    layer->setContentsToSolidColor(layerInfo.solidColor);
-    layer->setDrawsContent(layerInfo.drawsContent);
-    layer->setContentsVisible(layerInfo.contentsVisible);
-    toGraphicsLayerTextureMapper(layer)->setFixedToViewport(layerInfo.fixedToViewport);
-    layer->setShowDebugBorder(layerInfo.showDebugBorders);
-    layer->setDebugBorder(layerInfo.debugBorderColor, layerInfo.debugBorderWidth);
-    layer->setShowRepaintCounter(layerInfo.showRepaintCounter);
+    if (layerState.sizeChanged)
+        layer->setSize(layerState.size);
 
-    if (layerInfo.fixedToViewport)
+    if (layerState.transformChanged)
+        layer->setTransform(layerState.transform);
+
+    if (layerState.childrenTransformChanged)
+        layer->setChildrenTransform(layerState.childrenTransform);
+
+    if (layerState.contentsRectChanged)
+        layer->setContentsRect(layerState.contentsRect);
+
+    if (layerState.opacityChanged)
+        layer->setOpacity(layerState.opacity);
+
+    if (layerState.solidColorChanged)
+        layer->setContentsToSolidColor(layerState.solidColor);
+
+    if (layerState.debugBorderColorChanged || layerState.debugBorderWidthChanged)
+        layer->setDebugBorder(layerState.debugBorderColor, layerState.debugBorderWidth);
+
+    if (layerState.replicaChanged)
+        layer->setReplicatedByLayer(getLayerByIDIfExists(layerState.replica));
+
+    if (layerState.maskChanged)
+        layer->setMaskLayer(getLayerByIDIfExists(layerState.mask));
+
+    if (layerState.imageChanged)
+        assignImageBackingToLayer(layer, layerState.imageID);
+
+    if (layerState.flagsChanged) {
+        layer->setContentsOpaque(layerState.contentsOpaque);
+        layer->setDrawsContent(layerState.drawsContent);
+        layer->setContentsVisible(layerState.contentsVisible);
+        layer->setBackfaceVisibility(layerState.backfaceVisible);
+
+        // Never clip the root layer.
+        layer->setMasksToBounds(layerState.isRootLayer ? false : layerState.masksToBounds);
+        layer->setPreserves3D(layerState.preserves3D);
+
+        toGraphicsLayerTextureMapper(layer)->setFixedToViewport(layerState.fixedToViewport);
+        layer->setShowDebugBorder(layerState.showDebugBorders);
+        layer->setShowRepaintCounter(layerState.showRepaintCounter);
+    }
+
+    if (layerState.fixedToViewport)
         m_fixedLayers.add(id, layer);
     else
         m_fixedLayers.remove(id);
 
-    assignImageBackingToLayer(id, layer, layerInfo.imageID);
     prepareContentBackingStore(layer);
 
-    // Never make the root layer clip.
-    layer->setMasksToBounds(layerInfo.isRootLayer ? false : layerInfo.masksToBounds);
-    layer->setOpacity(layerInfo.opacity);
-    layer->setPreserves3D(layerInfo.preserves3D);
+    // Apply Operations.
+    setLayerChildrenIfNeeded(layer, layerState);
+    createTilesIfNeeded(layer, layerState);
+    removeTilesIfNeeded(layer, layerState);
+    updateTilesIfNeeded(layer, layerState);
+#if ENABLE(CSS_FILTERS)
+    setLayerFiltersIfNeeded(layer, layerState);
+#endif
+    setLayerAnimationsIfNeeded(layer, layerState);
+    syncCanvasIfNeeded(layer, layerState);
+    setLayerRepaintCountIfNeeded(layer, layerState);
 }
 
 GraphicsLayer* CoordinatedGraphicsScene::getLayerByIDIfExists(CoordinatedLayerID id)
@@ -365,7 +412,7 @@ void CoordinatedGraphicsScene::deleteLayer(CoordinatedLayerID layerID)
     m_backingStores.remove(layer.get());
     m_fixedLayers.remove(layerID);
 #if USE(GRAPHICS_SURFACE)
-    m_surfaceBackingStores.remove(layerID);
+    m_surfaceBackingStores.remove(layer.get());
 #endif
 }
 
@@ -419,36 +466,51 @@ void CoordinatedGraphicsScene::resetBackingStoreSizeToLayerSize(GraphicsLayer* g
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
-void CoordinatedGraphicsScene::createTile(CoordinatedLayerID layerID, uint32_t tileID, float scale)
+void CoordinatedGraphicsScene::createTilesIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
-    GraphicsLayer* layer = layerByID(layerID);
+    if (state.tilesToCreate.isEmpty())
+        return;
+
     RefPtr<CoordinatedBackingStore> backingStore = m_backingStores.get(layer);
     ASSERT(backingStore);
-    backingStore->createTile(tileID, scale);
+
+    for (size_t i = 0; i < state.tilesToCreate.size(); ++i)
+        backingStore->createTile(state.tilesToCreate[i].tileID, state.tilesToCreate[i].scale);
 }
 
-void CoordinatedGraphicsScene::removeTile(CoordinatedLayerID layerID, uint32_t tileID)
+void CoordinatedGraphicsScene::removeTilesIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
-    GraphicsLayer* layer = layerByID(layerID);
+    if (state.tilesToRemove.isEmpty())
+        return;
+
     RefPtr<CoordinatedBackingStore> backingStore = m_backingStores.get(layer);
     if (!backingStore)
         return;
 
-    backingStore->removeTile(tileID);
+    for (size_t i = 0; i < state.tilesToRemove.size(); ++i)
+        backingStore->removeTile(state.tilesToRemove[i]);
+
     m_backingStoresWithPendingBuffers.add(backingStore);
 }
 
-void CoordinatedGraphicsScene::updateTile(CoordinatedLayerID layerID, uint32_t tileID, const TileUpdate& update)
+void CoordinatedGraphicsScene::updateTilesIfNeeded(GraphicsLayer* layer, const CoordinatedGraphicsLayerState& state)
 {
-    GraphicsLayer* layer = layerByID(layerID);
+    if (state.tilesToUpdate.isEmpty())
+        return;
+
     RefPtr<CoordinatedBackingStore> backingStore = m_backingStores.get(layer);
     ASSERT(backingStore);
 
-    SurfaceMap::iterator it = m_surfaces.find(update.atlasID);
-    ASSERT(it != m_surfaces.end());
+    for (size_t i = 0; i < state.tilesToUpdate.size(); ++i) {
+        const TileUpdateInfo& tileInfo = state.tilesToUpdate[i];
+        const SurfaceUpdateInfo& surfaceUpdateInfo = tileInfo.updateInfo;
 
-    backingStore->updateTile(tileID, update.sourceRect, update.tileRect, it->value, update.offset);
-    m_backingStoresWithPendingBuffers.add(backingStore);
+        SurfaceMap::iterator surfaceIt = m_surfaces.find(surfaceUpdateInfo.atlasID);
+        ASSERT(surfaceIt != m_surfaces.end());
+
+        backingStore->updateTile(tileInfo.tileID, surfaceUpdateInfo.updateRect, tileInfo.tileRect, surfaceIt->value, surfaceUpdateInfo.surfaceOffset);
+        m_backingStoresWithPendingBuffers.add(backingStore);
+    }
 }
 
 void CoordinatedGraphicsScene::createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface> surface)
@@ -504,10 +566,10 @@ void CoordinatedGraphicsScene::removeImageBacking(CoordinatedImageBackingID imag
     m_releasedImageBackings.append(m_imageBackings.take(imageID));
 }
 
-void CoordinatedGraphicsScene::assignImageBackingToLayer(CoordinatedLayerID id, GraphicsLayer* layer, CoordinatedImageBackingID imageID)
+void CoordinatedGraphicsScene::assignImageBackingToLayer(GraphicsLayer* layer, CoordinatedImageBackingID imageID)
 {
 #if USE(GRAPHICS_SURFACE)
-    if (m_surfaceBackingStores.contains(id))
+    if (m_surfaceBackingStores.contains(layer))
         return;
 #endif
 
@@ -534,12 +596,24 @@ void CoordinatedGraphicsScene::commitPendingBackingStoreOperations()
     m_backingStoresWithPendingBuffers.clear();
 }
 
-void CoordinatedGraphicsScene::flushLayerChanges(const FloatPoint& scrollPosition)
+void CoordinatedGraphicsScene::commitSceneState(const CoordinatedGraphicsState& state)
 {
-    m_renderedContentsScrollPosition = scrollPosition;
+    m_renderedContentsScrollPosition = state.scrollPosition;
 
     // Since the frame has now been rendered, we can safely unlock the animations until the next layout.
     setAnimationsLocked(false);
+
+    if (state.rootCompositingLayer != m_rootLayerID)
+        setRootLayerID(state.rootCompositingLayer);
+
+    if (state.backgroundColor != m_backgroundColor)
+        setBackgroundColor(state.backgroundColor);
+
+    for (size_t i = 0; i < state.imagesToUpdate.size(); ++i)
+        updateImageBacking(state.imagesToUpdate[i].first, state.imagesToUpdate[i].second);
+
+    for (size_t i = 0; i < state.layersToUpdate.size(); ++i)
+        setLayerState(state.layersToUpdate[i].first, state.layersToUpdate[i].second);
 
     m_rootLayer->flushCompositingState(FloatRect());
     commitPendingBackingStoreOperations();
@@ -616,12 +690,16 @@ void CoordinatedGraphicsScene::purgeBackingStores()
         m_client->purgeBackingStores();
 }
 
-void CoordinatedGraphicsScene::setLayerAnimations(CoordinatedLayerID id, const GraphicsLayerAnimations& animations)
+void CoordinatedGraphicsScene::setLayerAnimationsIfNeeded(GraphicsLayer* graphicsLayer, const CoordinatedGraphicsLayerState& state)
 {
-    GraphicsLayerTextureMapper* layer = toGraphicsLayerTextureMapper(layerByID(id));
+    if (!state.animationsChanged)
+        return;
+
+    GraphicsLayerTextureMapper* layer = toGraphicsLayerTextureMapper(graphicsLayer);
+
 #if ENABLE(CSS_SHADERS)
-    for (size_t i = 0; i < animations.animations().size(); ++i) {
-        const KeyframeValueList& keyframes = animations.animations().at(i).keyframes();
+    for (size_t i = 0; i < state.animations.animations().size(); ++i) {
+        const KeyframeValueList& keyframes = state.animations.animations().at(i).keyframes();
         if (keyframes.property() != AnimatedPropertyWebkitFilter)
             continue;
         for (size_t j = 0; j < keyframes.size(); ++j) {
@@ -630,7 +708,7 @@ void CoordinatedGraphicsScene::setLayerAnimations(CoordinatedLayerID id, const G
         }
     }
 #endif
-    layer->setAnimations(animations);
+    layer->setAnimations(state.animations);
 }
 
 void CoordinatedGraphicsScene::setAnimationsLocked(bool locked)

@@ -23,12 +23,10 @@
 #if USE(COORDINATED_GRAPHICS)
 
 #include "IntRect.h"
-#include <wtf/Noncopyable.h>
 
 namespace WebCore {
 
 class SurfaceUpdateInfo {
-    WTF_MAKE_NONCOPYABLE(SurfaceUpdateInfo);
 
 public:
     SurfaceUpdateInfo() { }

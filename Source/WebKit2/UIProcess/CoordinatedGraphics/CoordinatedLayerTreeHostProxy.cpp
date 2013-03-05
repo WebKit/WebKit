@@ -27,7 +27,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include <WebCore/CoordinatedLayerInfo.h>
+#include <WebCore/CoordinatedGraphicsState.h>
 #include <WebCore/GraphicsSurface.h>
 #include <WebCore/SurfaceUpdateInfo.h>
 
@@ -62,22 +62,6 @@ void CoordinatedLayerTreeHostProxy::dispatchUpdate(const Function<void()>& funct
     m_scene->appendUpdate(function);
 }
 
-void CoordinatedLayerTreeHostProxy::createTileForLayer(CoordinatedLayerID layerID, uint32_t tileID, const IntRect& tileRect, const SurfaceUpdateInfo& updateInfo)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::createTile, m_scene.get(), layerID, tileID, updateInfo.scaleFactor));
-    updateTileForLayer(layerID, tileID, tileRect, updateInfo);
-}
-
-void CoordinatedLayerTreeHostProxy::updateTileForLayer(CoordinatedLayerID layerID, uint32_t tileID, const IntRect& tileRect, const SurfaceUpdateInfo& updateInfo)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::updateTile, m_scene.get(), layerID, tileID, CoordinatedGraphicsScene::TileUpdate(updateInfo.updateRect, tileRect, updateInfo.atlasID, updateInfo.surfaceOffset)));
-}
-
-void CoordinatedLayerTreeHostProxy::removeTileForLayer(CoordinatedLayerID layerID, uint32_t tileID)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::removeTile, m_scene.get(), layerID, tileID));
-}
-
 void CoordinatedLayerTreeHostProxy::createUpdateAtlas(uint32_t atlasID, const WebCoordinatedSurface::Handle& handle)
 {
     dispatchUpdate(bind(&CoordinatedGraphicsScene::createUpdateAtlas, m_scene.get(), atlasID, WebCoordinatedSurface::create(handle)));
@@ -98,28 +82,6 @@ void CoordinatedLayerTreeHostProxy::deleteCompositingLayers(const Vector<Coordin
     dispatchUpdate(bind(&CoordinatedGraphicsScene::deleteLayers, m_scene.get(), ids));
 }
 
-void CoordinatedLayerTreeHostProxy::setRootCompositingLayer(CoordinatedLayerID id)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setRootLayerID, m_scene.get(), id));
-}
-
-void CoordinatedLayerTreeHostProxy::setCompositingLayerState(CoordinatedLayerID id, const CoordinatedLayerInfo& info)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setLayerState, m_scene.get(), id, info));
-}
-
-void CoordinatedLayerTreeHostProxy::setCompositingLayerChildren(CoordinatedLayerID id, const Vector<CoordinatedLayerID>& children)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setLayerChildren, m_scene.get(), id, children));
-}
-
-#if ENABLE(CSS_FILTERS)
-void CoordinatedLayerTreeHostProxy::setCompositingLayerFilters(CoordinatedLayerID id, const FilterOperations& filters)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setLayerFilters, m_scene.get(), id, filters));
-}
-#endif
-
 #if ENABLE(CSS_SHADERS)
 void CoordinatedLayerTreeHostProxy::removeCustomFilterProgram(int id)
 {
@@ -131,15 +93,12 @@ void CoordinatedLayerTreeHostProxy::createCustomFilterProgram(int id, const Cust
 }
 #endif
 
-void CoordinatedLayerTreeHostProxy::didRenderFrame(const FloatPoint& scrollPosition, const IntSize& contentsSize, const IntRect& coveredRect)
+void CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState(const CoordinatedGraphicsState& graphicsState)
 {
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::flushLayerChanges, m_scene.get(), scrollPosition));
+    dispatchUpdate(bind(&CoordinatedGraphicsScene::commitSceneState, m_scene.get(), graphicsState));
     updateViewport();
 #if USE(TILED_BACKING_STORE)
-    m_drawingAreaProxy->page()->didRenderFrame(contentsSize, coveredRect);
-#else
-    UNUSED_PARAM(contentsSize);
-    UNUSED_PARAM(coveredRect);
+    m_drawingAreaProxy->page()->didRenderFrame(graphicsState.contentsSize, graphicsState.coveredRect);
 #endif
 }
 
@@ -161,11 +120,6 @@ void CoordinatedLayerTreeHostProxy::clearImageBackingContents(CoordinatedImageBa
 void CoordinatedLayerTreeHostProxy::removeImageBacking(CoordinatedImageBackingID imageID)
 {
     dispatchUpdate(bind(&CoordinatedGraphicsScene::removeImageBacking, m_scene.get(), imageID));
-}
-
-void CoordinatedLayerTreeHostProxy::setLayerAnimations(CoordinatedLayerID id, const GraphicsLayerAnimations& animations)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setLayerAnimations, m_scene.get(), id, animations));
 }
 
 void CoordinatedLayerTreeHostProxy::setAnimationsLocked(bool locked)
@@ -203,29 +157,6 @@ void CoordinatedLayerTreeHostProxy::animationFrameReady()
     m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::AnimationFrameReady(), m_drawingAreaProxy->page()->pageID());
 }
 #endif
-
-#if USE(GRAPHICS_SURFACE)
-void CoordinatedLayerTreeHostProxy::createCanvas(CoordinatedLayerID id, const IntSize& canvasSize, const GraphicsSurfaceToken& token)
-{
-    GraphicsSurface::Flags surfaceFlags = GraphicsSurface::SupportsTextureTarget | GraphicsSurface::SupportsSharing;
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::createCanvas, m_scene.get(), id, canvasSize, GraphicsSurface::create(canvasSize, surfaceFlags, token)));
-}
-
-void CoordinatedLayerTreeHostProxy::syncCanvas(CoordinatedLayerID id, uint32_t frontBuffer)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::syncCanvas, m_scene.get(), id, frontBuffer));
-}
-
-void CoordinatedLayerTreeHostProxy::destroyCanvas(CoordinatedLayerID id)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::destroyCanvas, m_scene.get(), id));
-}
-#endif
-
-void CoordinatedLayerTreeHostProxy::setLayerRepaintCount(CoordinatedLayerID id, int value)
-{
-    dispatchUpdate(bind(&CoordinatedGraphicsScene::setLayerRepaintCount, m_scene.get(), id, value));
-}
 
 void CoordinatedLayerTreeHostProxy::purgeBackingStores()
 {

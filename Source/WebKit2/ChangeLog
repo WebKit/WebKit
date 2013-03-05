@@ -1,3 +1,49 @@
+2013-03-05  Gwang Yoon Hwang  <ryumiel@company100.net>
+
+        Coordinated Graphics: CoordinatedGraphicsLayer makes CoordinatedGraphicsScene perform via CoordinatedGraphicsState.
+        https://bugs.webkit.org/show_bug.cgi?id=108294
+
+        Reviewed by Anders Carlsson.
+
+        There are two changes in WK2.
+        1. Change CoordinatedLayerTreeHostProxy to use CoordinatedGraphicsState.
+        2. Add encode/decode of CoordinatedGraphicsState in CoordinatedGraphicsArgumentCoders.
+
+        This patch is based on Dongsung Huang, and Noam's work in
+        https://bugs.webkit.org/show_bug.cgi?id=108294
+
+        No new tests, covered by existing tests.
+
+        * Scripts/webkit2/messages.py:
+        (headers_for_type):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+            Encoding UpdateImageBacking and CreateUpdateAtlas can fail when
+            encoding WebCoordinatedSurface::Handle fails, but we don't
+            recover in the case.
+        (CoreIPC::::decode):
+        (CoreIPC):
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.h:
+        (WebCore):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::commitCoordinatedGraphicsState):
+        (WebKit):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (WebCore):
+        (CoordinatedLayerTreeHostProxy):
+        (WebKit::CoordinatedLayerTreeHostProxy::coordinatedGraphicsScene):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.messages.in:
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::flushPendingLayerChanges):
+        (WebKit::CoordinatedLayerTreeHost::initializeRootCompositingLayerIfNeeded):
+        (WebKit::CoordinatedLayerTreeHost::syncLayerState):
+        (WebKit::CoordinatedLayerTreeHost::prepareCustomFilterProxiesIfNeeded):
+        (WebKit):
+        (WebKit::CoordinatedLayerTreeHost::updateImageBacking):
+        (WebKit::CoordinatedLayerTreeHost::setBackgroundColor):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (CoordinatedLayerTreeHost):
+
 2013-03-05  Sam Weinig  <sam@webkit.org>
 
         Follow up to https://bugs.webkit.org/show_bug.cgi?id=111453, forgot to mark the files as Private.

@@ -192,6 +192,7 @@ void CoordinatedGraphicsLayer::setPosition(const FloatPoint& p)
         return;
 
     GraphicsLayer::setPosition(p);
+    m_layerState.positionChanged = true;
     didChangeGeometry();
 }
 
@@ -201,6 +202,7 @@ void CoordinatedGraphicsLayer::setAnchorPoint(const FloatPoint3D& p)
         return;
 
     GraphicsLayer::setAnchorPoint(p);
+    m_layerState.anchorPointChanged = true;
     didChangeGeometry();
 }
 
@@ -210,6 +212,7 @@ void CoordinatedGraphicsLayer::setSize(const FloatSize& size)
         return;
 
     GraphicsLayer::setSize(size);
+    m_layerState.sizeChanged = true;
 
     if (maskLayer())
         maskLayer()->setSize(size);
@@ -222,6 +225,8 @@ void CoordinatedGraphicsLayer::setTransform(const TransformationMatrix& t)
         return;
 
     GraphicsLayer::setTransform(t);
+    m_layerState.transformChanged = true;
+
     didChangeGeometry();
 }
 
@@ -231,6 +236,8 @@ void CoordinatedGraphicsLayer::setChildrenTransform(const TransformationMatrix& 
         return;
 
     GraphicsLayer::setChildrenTransform(t);
+    m_layerState.childrenTransformChanged = true;
+
     didChangeGeometry();
 }
 
@@ -240,6 +247,9 @@ void CoordinatedGraphicsLayer::setPreserves3D(bool b)
         return;
 
     GraphicsLayer::setPreserves3D(b);
+    m_layerState.preserves3D = b;
+    m_layerState.flagsChanged = true;
+
     didChangeGeometry();
 }
 
@@ -248,6 +258,9 @@ void CoordinatedGraphicsLayer::setMasksToBounds(bool b)
     if (masksToBounds() == b)
         return;
     GraphicsLayer::setMasksToBounds(b);
+    m_layerState.masksToBounds = b;
+    m_layerState.flagsChanged = true;
+
     didChangeGeometry();
 }
 
@@ -256,6 +269,8 @@ void CoordinatedGraphicsLayer::setDrawsContent(bool b)
     if (drawsContent() == b)
         return;
     GraphicsLayer::setDrawsContent(b);
+    m_layerState.drawsContent = b;
+    m_layerState.flagsChanged = true;
 
     didChangeLayerState();
 }
@@ -265,6 +280,9 @@ void CoordinatedGraphicsLayer::setContentsVisible(bool b)
     if (contentsAreVisible() == b)
         return;
     GraphicsLayer::setContentsVisible(b);
+    m_layerState.contentsVisible = b;
+    m_layerState.flagsChanged = true;
+
     if (maskLayer())
         maskLayer()->setContentsVisible(b);
 
@@ -278,6 +296,9 @@ void CoordinatedGraphicsLayer::setContentsOpaque(bool b)
     if (m_mainBackingStore)
         m_mainBackingStore->setSupportsAlpha(!b);
     GraphicsLayer::setContentsOpaque(b);
+    m_layerState.contentsOpaque = b;
+    m_layerState.flagsChanged = true;
+
     didChangeLayerState();
 }
 
@@ -287,6 +308,9 @@ void CoordinatedGraphicsLayer::setBackfaceVisibility(bool b)
         return;
 
     GraphicsLayer::setBackfaceVisibility(b);
+    m_layerState.backfaceVisible = b;
+    m_layerState.flagsChanged = true;
+
     didChangeLayerState();
 }
 
@@ -296,6 +320,9 @@ void CoordinatedGraphicsLayer::setOpacity(float opacity)
         return;
 
     GraphicsLayer::setOpacity(opacity);
+    m_layerState.opacity = opacity;
+    m_layerState.opacityChanged = true;
+
     didChangeLayerState();
 }
 
@@ -305,6 +332,9 @@ void CoordinatedGraphicsLayer::setContentsRect(const IntRect& r)
         return;
 
     GraphicsLayer::setContentsRect(r);
+    m_layerState.contentsRect = r;
+    m_layerState.contentsRectChanged = true;
+
     didChangeLayerState();
 }
 
@@ -356,16 +386,23 @@ bool CoordinatedGraphicsLayer::setFilters(const FilterOperations& newFilters)
 {
     if (filters() == newFilters)
         return true;
+
+    if (!GraphicsLayer::setFilters(newFilters))
+        return false;
+
     didChangeFilters();
-    return GraphicsLayer::setFilters(newFilters);
+    return true;
 }
 #endif
 
 void CoordinatedGraphicsLayer::setContentsToSolidColor(const Color& color)
 {
-    if (m_layerInfo.solidColor == color)
+    if (m_layerState.solidColor == color)
         return;
-    m_layerInfo.solidColor = color;
+
+    m_layerState.solidColor = color;
+    m_layerState.solidColorChanged = true;
+
     didChangeLayerState();
 }
 
@@ -375,6 +412,9 @@ void CoordinatedGraphicsLayer::setShowDebugBorder(bool show)
         return;
 
     GraphicsLayer::setShowDebugBorder(show);
+    m_layerState.showDebugBorders = true;
+    m_layerState.flagsChanged = true;
+
     didChangeLayerState();
 }
 
@@ -384,6 +424,9 @@ void CoordinatedGraphicsLayer::setShowRepaintCounter(bool show)
         return;
 
     GraphicsLayer::setShowRepaintCounter(show);
+    m_layerState.showRepaintCounter = true;
+    m_layerState.flagsChanged = true;
+
     didChangeLayerState();
 }
 
@@ -421,6 +464,10 @@ void CoordinatedGraphicsLayer::setMaskLayer(GraphicsLayer* layer)
     layer->setContentsVisible(contentsAreVisible());
     CoordinatedGraphicsLayer* coordinatedLayer = toCoordinatedGraphicsLayer(layer);
     coordinatedLayer->didChangeLayerState();
+
+    m_layerState.mask = coordinatedLayer->id();
+    m_layerState.maskChanged = true;
+
     didChangeLayerState();
 }
 
@@ -442,6 +489,8 @@ void CoordinatedGraphicsLayer::setReplicatedByLayer(GraphicsLayer* layer)
         return;
 
     GraphicsLayer::setReplicatedByLayer(layer);
+    m_layerState.replica = toCoordinatedLayerID(layer);
+    m_layerState.replicaChanged = true;
     didChangeLayerState();
 }
 
@@ -471,6 +520,9 @@ void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
         return;
 
     m_fixedToViewport = isFixed;
+    m_layerState.fixedToViewport = isFixed;
+    m_layerState.flagsChanged = true;
+
     didChangeLayerState();
 }
 
@@ -504,11 +556,10 @@ void CoordinatedGraphicsLayer::syncChildren()
     if (!m_shouldSyncChildren)
         return;
     m_shouldSyncChildren = false;
-    Vector<CoordinatedLayerID> childIDs;
+    m_layerState.childrenChanged = true;
+    m_layerState.children.clear();
     for (size_t i = 0; i < children().size(); ++i)
-        childIDs.append(toCoordinatedLayerID(children()[i]));
-
-    m_coordinator->syncLayerChildren(m_id, childIDs);
+        m_layerState.children.append(toCoordinatedLayerID(children()[i]));
 }
 
 #if ENABLE(CSS_FILTERS)
@@ -517,7 +568,9 @@ void CoordinatedGraphicsLayer::syncFilters()
     if (!m_shouldSyncFilters)
         return;
     m_shouldSyncFilters = false;
-    m_coordinator->syncLayerFilters(m_id, filters());
+
+    m_layerState.filters = GraphicsLayer::filters();
+    m_layerState.filtersChanged = true;
 }
 #endif
 
@@ -538,14 +591,15 @@ void CoordinatedGraphicsLayer::syncImageBacking()
         if (!m_coordinatedImageBacking) {
             m_coordinatedImageBacking = m_coordinator->createImageBackingIfNeeded(m_compositedImage.get());
             m_coordinatedImageBacking->addHost(this);
-            m_layerInfo.imageID = m_coordinatedImageBacking->id();
+            m_layerState.imageID = m_coordinatedImageBacking->id();
         }
 
         m_coordinatedImageBacking->markDirty();
+        m_layerState.imageChanged = true;
     } else
         releaseImageBackingIfNeeded();
 
-    // syncImageBacking() changed m_layerInfo.imageID.
+    // syncImageBacking() changed m_layerState.imageID.
     didChangeLayerState();
 }
 
@@ -554,38 +608,34 @@ void CoordinatedGraphicsLayer::syncLayerState()
     if (!m_shouldSyncLayerState)
         return;
     m_shouldSyncLayerState = false;
-    m_layerInfo.fixedToViewport = fixedToViewport();
 
-    m_layerInfo.backfaceVisible = backfaceVisibility();
-    m_layerInfo.childrenTransform = childrenTransform();
-    m_layerInfo.contentsOpaque = contentsOpaque();
-    m_layerInfo.contentsRect = contentsRect();
-    m_layerInfo.drawsContent = drawsContent();
-    m_layerInfo.contentsVisible = contentsAreVisible();
-    m_layerInfo.mask = toCoordinatedLayerID(maskLayer());
-    m_layerInfo.masksToBounds = masksToBounds();
-    m_layerInfo.opacity = opacity();
-    m_layerInfo.preserves3D = preserves3D();
-    m_layerInfo.replica = toCoordinatedLayerID(replicaLayer());
-    m_layerInfo.transform = transform();
+    m_layerState.childrenTransform = childrenTransform();
+    m_layerState.contentsRect = contentsRect();
+    m_layerState.mask = toCoordinatedLayerID(maskLayer());
+    m_layerState.opacity = opacity();
+    m_layerState.replica = toCoordinatedLayerID(replicaLayer());
+    m_layerState.transform = transform();
 
-    m_layerInfo.anchorPoint = m_adjustedAnchorPoint;
-    m_layerInfo.pos = m_adjustedPosition;
-    m_layerInfo.size = m_adjustedSize;
+    m_layerState.anchorPoint = m_adjustedAnchorPoint;
+    m_layerState.pos = m_adjustedPosition;
+    m_layerState.size = m_adjustedSize;
 
-    m_layerInfo.showDebugBorders = isShowingDebugBorder();
-    if (m_layerInfo.showDebugBorders)
+    if (m_layerState.showDebugBorders)
         updateDebugIndicators();
-    m_layerInfo.showRepaintCounter = isShowingRepaintCounter();
-
-    m_coordinator->syncLayerState(m_id, m_layerInfo);
 }
 
 void CoordinatedGraphicsLayer::setDebugBorder(const Color& color, float width)
 {
-    ASSERT(m_layerInfo.showDebugBorders);
-    m_layerInfo.debugBorderColor = color;
-    m_layerInfo.debugBorderWidth = width;
+    ASSERT(m_layerState.showDebugBorders);
+    if (m_layerState.debugBorderColor != color) {
+        m_layerState.debugBorderColor = color;
+        m_layerState.debugBorderColorChanged = true;
+    }
+
+    if (m_layerState.debugBorderWidth != width) {
+        m_layerState.debugBorderWidth = width;
+        m_layerState.debugBorderWidthChanged = true;
+    }
 }
 
 void CoordinatedGraphicsLayer::syncAnimations()
@@ -594,8 +644,8 @@ void CoordinatedGraphicsLayer::syncAnimations()
         return;
 
     m_shouldSyncAnimations = false;
-
-    m_coordinator->setLayerAnimations(m_id, m_animations);
+    m_layerState.animations = m_animations.getActiveAnimations();
+    m_layerState.animationsChanged = true;
 }
 
 #if USE(GRAPHICS_SURFACE)
@@ -612,7 +662,9 @@ void CoordinatedGraphicsLayer::syncCanvas()
     if (!m_isValidCanvas)
         return;
 
-    m_coordinator->syncCanvas(m_id, m_canvasPlatformLayer);
+    ASSERT(m_canvasPlatformLayer);
+    m_layerState.canvasFrontBuffer = m_canvasPlatformLayer->copyToGraphicsSurface();
+    m_layerState.canvasShouldSwapBuffers = true;
 }
 
 void CoordinatedGraphicsLayer::destroyCanvasIfNeeded()
@@ -621,8 +673,9 @@ void CoordinatedGraphicsLayer::destroyCanvasIfNeeded()
         return;
 
     if (m_isValidCanvas) {
-        m_coordinator->destroyCanvas(m_id);
         m_isValidCanvas = false;
+        m_layerState.canvasToken = GraphicsSurfaceToken();
+        m_layerState.canvasChanged = true;
     }
 
     m_pendingCanvasOperation &= ~DestroyCanvas;
@@ -635,7 +688,9 @@ void CoordinatedGraphicsLayer::createCanvasIfNeeded()
 
     ASSERT(m_canvasPlatformLayer);
     if (!m_isValidCanvas) {
-        m_coordinator->createCanvas(m_id, m_canvasPlatformLayer);
+        m_layerState.canvasSize = m_canvasPlatformLayer->platformLayerSize();
+        m_layerState.canvasToken = m_canvasPlatformLayer->graphicsSurfaceToken();
+        m_layerState.canvasChanged = true;
         m_isValidCanvas = true;
     }
 
@@ -667,9 +722,21 @@ void CoordinatedGraphicsLayer::flushCompositingStateForThisLayerOnly()
 #if USE(GRAPHICS_SURFACE)
     syncCanvas();
 #endif
+
+    m_coordinator->syncLayerState(m_id, m_layerState);
+    resetLayerState();
+
     // Only unset m_movingVisibleRect after we have updated the visible rect after the animation stopped.
     if (!hasActiveTransformAnimation)
         m_movingVisibleRect = false;
+}
+
+void CoordinatedGraphicsLayer::resetLayerState()
+{
+    m_layerState.changeMask = 0;
+    m_layerState.tilesToCreate.clear();
+    m_layerState.tilesToRemove.clear();
+    m_layerState.tilesToUpdate.clear();
 }
 
 bool CoordinatedGraphicsLayer::imageBackingVisible()
@@ -686,7 +753,8 @@ void CoordinatedGraphicsLayer::releaseImageBackingIfNeeded()
     ASSERT(m_coordinator);
     m_coordinatedImageBacking->removeHost(this);
     m_coordinatedImageBacking.clear();
-    m_layerInfo.imageID = InvalidCoordinatedImageBackingID;
+    m_layerState.imageID = InvalidCoordinatedImageBackingID;
+    m_layerState.imageChanged = true;
 }
 
 void CoordinatedGraphicsLayer::tiledBackingStorePaintBegin()
@@ -695,7 +763,8 @@ void CoordinatedGraphicsLayer::tiledBackingStorePaintBegin()
 
 void CoordinatedGraphicsLayer::setRootLayer(bool isRoot)
 {
-    m_layerInfo.isRootLayer = isRoot;
+    m_layerState.isRootLayer = isRoot;
+    m_layerState.flagsChanged = true;
     didChangeLayerState();
 }
 
@@ -751,8 +820,11 @@ void CoordinatedGraphicsLayer::tiledBackingStorePaint(GraphicsContext* context, 
 
 void CoordinatedGraphicsLayer::tiledBackingStorePaintEnd(const Vector<IntRect>& updatedRects)
 {
-    if (isShowingRepaintCounter() && !updatedRects.isEmpty())
-        m_coordinator->setLayerRepaintCount(id(), incrementRepaintCount());
+    if (!isShowingRepaintCounter() || updatedRects.isEmpty())
+        return;
+
+    m_layerState.repaintCount = incrementRepaintCount();
+    m_layerState.repaintCountChanged = true;
 }
 
 void CoordinatedGraphicsLayer::tiledBackingStoreHasPendingTileCreation()
@@ -811,21 +883,32 @@ void CoordinatedGraphicsLayer::createTile(uint32_t tileID, const SurfaceUpdateIn
 {
     ASSERT(m_coordinator);
     ASSERT(m_coordinator->isFlushingLayerChanges());
-    m_coordinator->createTile(id(), tileID, updateInfo, tileRect);
+
+    TileCreationInfo creationInfo;
+    creationInfo.tileID = tileID;
+    creationInfo.scale = updateInfo.scaleFactor;
+
+    m_layerState.tilesToCreate.append(creationInfo);
+    updateTile(tileID, updateInfo, tileRect);
 }
 
 void CoordinatedGraphicsLayer::updateTile(uint32_t tileID, const SurfaceUpdateInfo& updateInfo, const IntRect& tileRect)
 {
     ASSERT(m_coordinator);
     ASSERT(m_coordinator->isFlushingLayerChanges());
-    m_coordinator->updateTile(id(), tileID, updateInfo, tileRect);
+
+    TileUpdateInfo tileUpdateInfo;
+    tileUpdateInfo.tileID = tileID;
+    tileUpdateInfo.tileRect = tileRect;
+    tileUpdateInfo.updateInfo = updateInfo;
+    m_layerState.tilesToUpdate.append(tileUpdateInfo);
 }
 
 void CoordinatedGraphicsLayer::removeTile(uint32_t tileID)
 {
     ASSERT(m_coordinator);
     ASSERT(m_coordinator->isFlushingLayerChanges() || m_isPurging);
-    m_coordinator->removeTile(id(), tileID);
+    m_layerState.tilesToRemove.append(tileID);
 }
 
 void CoordinatedGraphicsLayer::updateContentBuffers()

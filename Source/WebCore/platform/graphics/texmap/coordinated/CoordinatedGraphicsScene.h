@@ -21,7 +21,7 @@
 #define CoordinatedGraphicsScene_h
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedLayerInfo.h"
+#include "CoordinatedGraphicsState.h"
 #include "CoordinatedSurface.h"
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
@@ -46,7 +46,6 @@
 namespace WebCore {
 
 class CoordinatedBackingStore;
-class CoordinatedLayerInfo;
 class CustomFilterProgram;
 class CustomFilterProgramInfo;
 class TextureMapperLayer;
@@ -64,31 +63,11 @@ public:
 
 class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public GraphicsLayerClient {
 public:
-    struct TileUpdate {
-        IntRect sourceRect;
-        IntRect tileRect;
-        uint32_t atlasID;
-        IntPoint offset;
-        TileUpdate(const IntRect& source, const IntRect& tile, uint32_t atlas, const IntPoint& newOffset)
-            : sourceRect(source)
-            , tileRect(tile)
-            , atlasID(atlas)
-            , offset(newOffset)
-        {
-        }
-    };
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();
     void paintToCurrentGLContext(const TransformationMatrix&, float, const FloatRect&, TextureMapper::PaintFlags = 0);
     void paintToGraphicsContext(PlatformGraphicsContext*);
     void setScrollPosition(const FloatPoint&);
-#if USE(GRAPHICS_SURFACE)
-    void createCanvas(CoordinatedLayerID, const IntSize&, PassRefPtr<GraphicsSurface>);
-    void syncCanvas(CoordinatedLayerID, uint32_t frontBuffer);
-    void destroyCanvas(CoordinatedLayerID);
-#endif
-    void setLayerRepaintCount(CoordinatedLayerID, int value);
-
     void detach();
     void appendUpdate(const Function<void()>&);
 
@@ -97,31 +76,23 @@ public:
     void purgeGLResources();
     void setActive(bool);
 
+    void commitSceneState(const CoordinatedGraphicsState&);
+
     void createLayers(const Vector<CoordinatedLayerID>&);
     void deleteLayers(const Vector<CoordinatedLayerID>&);
-    void setRootLayerID(CoordinatedLayerID);
-    void setLayerChildren(CoordinatedLayerID, const Vector<CoordinatedLayerID>&);
-    void setLayerState(CoordinatedLayerID, const CoordinatedLayerInfo&);
-#if ENABLE(CSS_FILTERS)
-    void setLayerFilters(CoordinatedLayerID, const FilterOperations&);
-#endif
+
 #if ENABLE(CSS_SHADERS)
     void injectCachedCustomFilterPrograms(const FilterOperations& filters) const;
     void createCustomFilterProgram(int id, const CustomFilterProgramInfo&);
     void removeCustomFilterProgram(int id);
 #endif
 
-    void createTile(CoordinatedLayerID, uint32_t tileID, float scale);
-    void removeTile(CoordinatedLayerID, uint32_t tileID);
-    void updateTile(CoordinatedLayerID, uint32_t tileID, const TileUpdate&);
     void createUpdateAtlas(uint32_t atlasID, PassRefPtr<CoordinatedSurface>);
     void removeUpdateAtlas(uint32_t atlasID);
-    void flushLayerChanges(const FloatPoint& scrollPosition);
     void createImageBacking(CoordinatedImageBackingID);
     void updateImageBacking(CoordinatedImageBackingID, PassRefPtr<CoordinatedSurface>);
     void clearImageBackingContents(CoordinatedImageBackingID);
     void removeImageBacking(CoordinatedImageBackingID);
-    void setLayerAnimations(CoordinatedLayerID, const GraphicsLayerAnimations&);
     void setAnimationsLocked(bool);
     void setBackgroundColor(const Color&);
     void setDrawsBackground(bool enable) { m_setDrawsBackground = enable; }
@@ -131,6 +102,23 @@ public:
 #endif
 
 private:
+    void setRootLayerID(CoordinatedLayerID);
+    void setLayerState(CoordinatedLayerID, const CoordinatedGraphicsLayerState&);
+    void setLayerChildrenIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+    void updateTilesIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+    void createTilesIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+    void removeTilesIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+#if ENABLE(CSS_FILTERS)
+    void setLayerFiltersIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+#endif
+    void setLayerAnimationsIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+#if USE(GRAPHICS_SURFACE)
+    void createCanvasIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+    void syncCanvasIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+    void destroyCanvasIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+#endif
+    void setLayerRepaintCountIfNeeded(GraphicsLayer*, const CoordinatedGraphicsLayerState&);
+
     GraphicsLayer* layerByID(CoordinatedLayerID id)
     {
         ASSERT(m_layers.contains(id));
@@ -159,7 +147,7 @@ private:
     void createLayer(CoordinatedLayerID);
     void deleteLayer(CoordinatedLayerID);
 
-    void assignImageBackingToLayer(CoordinatedLayerID, GraphicsLayer*, CoordinatedImageBackingID);
+    void assignImageBackingToLayer(GraphicsLayer*, CoordinatedImageBackingID);
     void removeReleasedImageBackingsIfNeeded();
     void ensureRootLayer();
     void commitPendingBackingStoreOperations();
@@ -185,7 +173,7 @@ private:
     HashSet<RefPtr<CoordinatedBackingStore> > m_backingStoresWithPendingBuffers;
 
 #if USE(GRAPHICS_SURFACE)
-    typedef HashMap<CoordinatedLayerID, RefPtr<TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
+    typedef HashMap<GraphicsLayer*, RefPtr<TextureMapperSurfaceBackingStore> > SurfaceBackingStoreMap;
     SurfaceBackingStoreMap m_surfaceBackingStores;
 #endif
 

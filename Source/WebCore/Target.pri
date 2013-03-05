@@ -4117,8 +4117,8 @@ use?(3D_GRAPHICS) {
         platform/graphics/texmap/coordinated/CoordinatedCustomFilterProgram.h \
         platform/graphics/texmap/coordinated/CoordinatedGraphicsLayer.h \
         platform/graphics/texmap/coordinated/CoordinatedGraphicsScene.h \
+        platform/graphics/texmap/coordinated/CoordinatedGraphicsState.h \
         platform/graphics/texmap/coordinated/CoordinatedImageBacking.h \
-        platform/graphics/texmap/coordinated/CoordinatedLayerInfo.h \
         platform/graphics/texmap/coordinated/CoordinatedSurface.h \
         platform/graphics/texmap/coordinated/CoordinatedTile.h \
         platform/graphics/texmap/coordinated/SurfaceUpdateInfo.h \

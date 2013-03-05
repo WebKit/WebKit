@@ -28,7 +28,7 @@
 #define CoordinatedImageBacking_h
 
 #if USE(COORDINATED_GRAPHICS)
-#include "CoordinatedLayerInfo.h"
+#include "CoordinatedGraphicsState.h"
 #include "CoordinatedSurface.h"
 #include "Image.h"
 #include "Timer.h"
