@@ -498,6 +498,11 @@ IntRect WebChromeClient::windowResizerRect() const
     return enclosingIntRect([[m_webView window] _growBoxRect]);
 }
 
+bool WebChromeClient::supportsImmediateInvalidation()
+{
+    return true;
+}
+
 void WebChromeClient::invalidateRootView(const IntRect&, bool immediate)
 {
     if (immediate) {

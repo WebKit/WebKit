@@ -154,9 +154,10 @@ public:
     virtual IntRect windowResizerRect() const = 0;
 
     // Methods used by HostWindow.
-    virtual void invalidateRootView(const IntRect&, bool) = 0;
-    virtual void invalidateContentsAndRootView(const IntRect&, bool) = 0;
-    virtual void invalidateContentsForSlowScroll(const IntRect&, bool) = 0;
+    virtual bool supportsImmediateInvalidation() { return false; }
+    virtual void invalidateRootView(const IntRect&, bool immediate) = 0;
+    virtual void invalidateContentsAndRootView(const IntRect&, bool immediate) = 0;
+    virtual void invalidateContentsForSlowScroll(const IntRect&, bool immediate) = 0;
     virtual void scroll(const IntSize&, const IntRect&, const IntRect&) = 0;
 #if USE(TILED_BACKING_STORE)
     virtual void delegatedScrollRequested(const IntPoint&) = 0;

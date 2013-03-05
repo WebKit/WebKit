@@ -1,3 +1,17 @@
+2013-03-05  James Robinson  <jamesr@chromium.org>
+
+        ContainerNode::setActive should not sleep for 100ms on platforms that do not implement synchronous repaint(true) semantics
+        https://bugs.webkit.org/show_bug.cgi?id=87054
+
+        Reviewed by Darin Adler.
+
+        The Mac WebKit1 port supports immediate invalidations.
+
+        * WebCoreSupport/WebChromeClient.h:
+        (WebChromeClient):
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::supportsImmediateInvalidation):
+
 2013-03-05  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX (r144698): Only enable SPEECH_SYNTHESIS for Mac

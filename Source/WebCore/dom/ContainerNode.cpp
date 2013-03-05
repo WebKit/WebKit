@@ -25,6 +25,8 @@
 
 #include "AXObjectCache.h"
 #include "ChildListMutationScope.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "ContainerNodeAlgorithms.h"
 #if ENABLE(DELETION_UI)
 #include "DeleteButtonController.h"
@@ -1012,6 +1014,13 @@ void ContainerNode::setActive(bool down, bool pause)
             if (renderer()->theme()->stateChanged(renderer(), PressedState))
                 reactsToPress = true;
         }
+
+        // The rest of this function implements a feature that only works if the
+        // platform supports immediate invalidations on the ChromeClient, so bail if
+        // that isn't supported.
+        if (!document()->page()->chrome()->client()->supportsImmediateInvalidation())
+            return;
+
         if (reactsToPress && pause) {
             // The delay here is subtle.  It relies on an assumption, namely that the amount of time it takes
             // to repaint the "down" state of the control is about the same time as it would take to repaint the
