@@ -111,9 +111,7 @@ public:
     virtual void setDeviceScaleFactor(float) = 0;
 
     // Controls which WebView should be focused.
-    virtual void setFocus(WebTestProxyBase*, bool enable) { setFocus(enable); }
-    // FIXME: remove deprecated method.
-    virtual void setFocus(bool) { }
+    virtual void setFocus(WebTestProxyBase*, bool) = 0;
 
     // Controls whether all cookies should be accepted or writing cookies in a
     // third-party context is blocked.
