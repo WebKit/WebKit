@@ -1,3 +1,29 @@
+2013-03-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up WebWidget / WebLayerTreeView interactions
+        https://bugs.webkit.org/show_bug.cgi?id=109125
+
+        Reviewed by Adrienne Walker.
+
+        This deprecates most of the calls on WebLayerTreeViewClient since these interactions are handled
+        entirely on the embedder side of the interface now.
+
+        * chromium/public/WebLayerTreeView.h:
+        (WebLayerTreeView):
+        * chromium/public/WebLayerTreeViewClient.h:
+        (WebLayerTreeViewClient):
+        (WebKit::WebLayerTreeViewClient::willBeginFrame):
+        (WebKit::WebLayerTreeViewClient::didBeginFrame):
+        (WebKit::WebLayerTreeViewClient::applyScrollAndScale):
+        (WebKit::WebLayerTreeViewClient::layout):
+        (WebKit::WebLayerTreeViewClient::didRecreateOutputSurface):
+        (WebKit::WebLayerTreeViewClient::createInputHandler):
+        (WebKit::WebLayerTreeViewClient::createOutputSurface):
+        (WebKit::WebLayerTreeViewClient::willCommit):
+        (WebKit::WebLayerTreeViewClient::didCommit):
+        (WebKit::WebLayerTreeViewClient::didCommitAndDrawFrame):
+        (WebKit::WebLayerTreeViewClient::didCompleteSwapBuffers):
+
 2013-03-05  Tommy Widenflycht  <tommyw@google.com>
 
         MediaStream API: Add the getStreamById method on RTCPeerConnection

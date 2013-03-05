@@ -42,6 +42,7 @@
 namespace WebKit {
 
 class WebInputEvent;
+class WebInputHandler;
 class WebLayerTreeView;
 class WebMouseEvent;
 class WebString;
@@ -80,7 +81,7 @@ public:
 
     // Called to update imperative animation state. This should be called before
     // paint, although the client can rate-limit these calls.
-    virtual void animate(double ignored) { }
+    virtual void animate(double monotonicFrameBeginTime) { }
 
     // Called to layout the WebWidget. This MUST be called before Paint,
     // and it may result in calls to WebWidgetClient::didInvalidateRect.
@@ -89,6 +90,10 @@ public:
     // Called to toggle the WebWidget in or out of force compositing mode. This
     // should be called before paint.
     virtual void enterForceCompositingMode(bool enter) { }
+
+    // Called to notify the WebWidget that the widget has exited compositing
+    // mode and cannot reenter.
+    virtual void didExitCompositingMode() { }
 
     enum PaintOptions {
         // Attempt to fulfill the painting request by reading back from the
@@ -114,16 +119,6 @@ public:
     // warranted before painting again).
     virtual void paint(WebCanvas*, const WebRect& viewPort, PaintOptions = ReadbackFromCompositorIfAvailable) { }
 
-    // In non-threaded compositing mode, triggers compositing of the current
-    // layers onto the screen. You MUST call Layout before calling this method,
-    // for the same reasons described in the paint method above
-    //
-    // In threaded compositing mode, indicates that the widget should update
-    // itself, for example due to window damage. The redraw will begin
-    // asynchronously and perform layout and animation internally. Do not call
-    // animate or layout in this case.
-    virtual void composite(bool finish) = 0;
-
     // Returns true if we've started tracking repaint rectangles.
     virtual bool isTrackingRepaints() const { return false; }
 
@@ -147,6 +142,16 @@ public:
 
     // Check whether the given point hits any registered touch event handlers.
     virtual bool hasTouchEventHandlersAt(const WebPoint&) { return true; }
+
+    // Request that the WebWidget create an input handler for processing input
+    // events intended for this widget off of the main thread.
+    virtual WebInputHandler* createInputHandler() { return 0; }
+
+    // Applies a scroll delta to the root layer, which is bundled with a page
+    // scale factor that may apply a CSS transform on the whole document (used
+    // for mobile-device pinch zooming). This is triggered by events sent to the
+    // compositor thread through the WebInputHandler interface.
+    virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) { }
 
     // Called to inform the WebWidget that mouse capture was lost.
     virtual void mouseCaptureLost() { }

@@ -37,43 +37,11 @@ struct WebSize;
 
 class WebLayerTreeViewClient {
 public:
-    // Indicates to the embedder that the compositor is about to begin a
-    // frame. This is is a signal to flow control mechanisms that a frame is
-    // beginning. This call will be followed by updateAnimations and then
-    // layout, which should be used for actual animation or tree manipulation
-    // tasks.  FIXME: make pure virtual once upstream deps are satisfied.
-    virtual void willBeginFrame() { }
-
-    // Indicates that main thread tasks associated with frame rendering have completed.
-    // Issued unconditionally, even if the context was lost in the process.
-    virtual void didBeginFrame() { }
-
-    // Updates animation and layout. These are called before the compositing
-    // pass so that layers can be updated at the given frame time.
-    virtual void updateAnimations(double monotonicFrameBeginTime) = 0;
-    virtual void layout() = 0;
-
-    // Applies a scroll delta to the root layer, which is bundled with a page
-    // scale factor that may apply a CSS transform on the whole document (used
-    // for mobile-device pinch zooming). This is triggered by events sent to the
-    // compositor thread through the WebCompositor interface.
-    virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) = 0;
-
-    // Creates the output surface. This may be called more than once
-    // if the context gets lost.
-    virtual WebCompositorOutputSurface* createOutputSurface() { return 0; }
-
-    // Signals a successful recreation of the output surface (e.g. after a lost
-    // 3D context event).
+    // DEPRECATED - WILL BE REMOVED SOON
+    virtual void applyScrollAndScale(const WebSize& scrollDelta, float scaleFactor) { }
+    virtual void updateAnimations(double frameBeginTime) { }
     virtual void didRecreateOutputSurface(bool success) { }
-
     virtual WebInputHandler* createInputHandler() { return 0; }
-
-    // Schedules a compositing pass, meaning the client should call
-    // WebLayerTreeView::composite at a later time. This is only called if the
-    // compositor thread is disabled; when enabled, the compositor will
-    // internally schedule a compositing pass when needed.
-    virtual void scheduleComposite() = 0;
 
 protected:
     virtual ~WebLayerTreeViewClient() { }

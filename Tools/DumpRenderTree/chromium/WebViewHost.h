@@ -202,6 +202,9 @@ class WebViewHost : public WebKit::WebViewClient, public WebKit::WebFrameClient,
     // Pending task list, Note taht the method is referred from WebMethodTask class.
     WebTestRunner::WebTaskList* taskList() { return &m_taskList; }
 
+    // Exposed for WebTestProxy.
+    void scheduleComposite() { }
+
 private:
 
     class HostMethodTask : public WebTestRunner::WebMethodTask<WebViewHost> {

@@ -1,3 +1,47 @@
+2013-03-05  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up WebWidget / WebLayerTreeView interactions
+        https://bugs.webkit.org/show_bug.cgi?id=109125
+
+        Reviewed by Adrienne Walker.
+
+        This removes most of the compositing control flow logic from WebViewImpl since
+        it is now handled in the embedding layer (by the implementation of WebViewClient/WebWidgetClient).
+
+        * public/WebViewClient.h:
+        * public/WebWidget.h:
+        (WebKit):
+        (WebKit::WebWidget::animate):
+        (WebWidget):
+        (WebKit::WebWidget::didExitCompositingMode):
+        (WebKit::WebWidget::createInputHandler):
+        (WebKit::WebWidget::applyScrollAndScale):
+        (WebKit::WebWidget::instrumentBeginFrame):
+        (WebKit::WebWidget::instrumentWillBeginFrame):
+        (WebKit::WebWidget::instrumentDidCancelFrame):
+        (WebKit::WebWidget::instrumentDidBeginFrame):
+        (WebKit::WebWidget::instrumentWillComposite):
+        * src/WebHelperPluginImpl.cpp:
+        * src/WebHelperPluginImpl.h:
+        (WebHelperPluginImpl):
+        * src/WebPagePopupImpl.cpp:
+        * src/WebPagePopupImpl.h:
+        (WebPagePopupImpl):
+        * src/WebPopupMenuImpl.cpp:
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::instrumentWillBeginFrame):
+        (WebKit::WebViewImpl::instrumentDidBeginFrame):
+        (WebKit::WebViewImpl::instrumentDidCancelFrame):
+        (WebKit::WebViewImpl::instrumentWillComposite):
+        (WebKit):
+        (WebKit::WebViewImpl::updateBatteryStatus):
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::didExitCompositingMode):
+        * src/WebViewImpl.h:
+        * tests/WebLayerTreeViewTestCommon.h:
+        (MockWebLayerTreeViewClient):
+
 2013-03-05  Alexei Filippov  <alph@chromium.org>
 
         Web Inspector: Add a renderer process memory size test.

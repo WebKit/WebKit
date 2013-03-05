@@ -144,15 +144,16 @@ public:
     virtual void willExitFullScreen();
     virtual void didExitFullScreen();
     virtual void animate(double);
-    virtual void layout(); // Also implements WebLayerTreeViewClient::layout()
+    virtual void layout();
     virtual void enterForceCompositingMode(bool enable) OVERRIDE;
     virtual void paint(WebCanvas*, const WebRect&, PaintOptions = ReadbackFromCompositorIfAvailable);
     virtual bool isTrackingRepaints() const OVERRIDE;
     virtual void themeChanged();
-    virtual void composite(bool finish);
     virtual void setNeedsRedraw();
     virtual bool handleInputEvent(const WebInputEvent&);
     virtual bool hasTouchEventHandlersAt(const WebPoint&);
+    virtual WebInputHandler* createInputHandler() OVERRIDE;
+    virtual void applyScrollAndScale(const WebSize&, float);
     virtual void mouseCaptureLost();
     virtual void setFocus(bool enable);
     virtual bool setComposition(
@@ -181,6 +182,7 @@ public:
     virtual void didNotAcquirePointerLock();
     virtual void didLosePointerLock();
     virtual void didChangeWindowResizerRect();
+    virtual void didExitCompositingMode();
 
     // WebView methods:
     virtual void initializeMainFrame(WebFrameClient*);
@@ -316,14 +318,8 @@ public:
     virtual void setContinuousPaintingEnabled(bool);
 
     // WebLayerTreeViewClient
-    virtual void willBeginFrame();
-    virtual void didBeginFrame();
     virtual void updateAnimations(double monotonicFrameBeginTime);
-    virtual void applyScrollAndScale(const WebSize&, float);
-    virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE;
-    virtual void didRecreateOutputSurface(bool success) OVERRIDE;
-    virtual WebInputHandler* createInputHandler() OVERRIDE;
-    virtual void scheduleComposite();
+    virtual void didRecreateOutputSurface(bool success);
 
     // WebViewImpl
 

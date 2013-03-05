@@ -26,7 +26,6 @@
 
 #include "ScrollingCoordinator.h"
 
-#include "CompositorFakeWebGraphicsContext3D.h"
 #include "FrameTestHelpers.h"
 #include "GraphicsLayerChromium.h"
 #include "RenderLayerBacking.h"
@@ -41,8 +40,8 @@
 #include "WebViewImpl.h"
 #include <gtest/gtest.h>
 #include <public/Platform.h>
-#include <public/WebCompositorSupport.h>
 #include <public/WebLayer.h>
+#include <public/WebLayerTreeView.h>
 #include <public/WebUnitTestSupport.h>
 
 using namespace WebCore;
@@ -52,11 +51,6 @@ namespace {
 
 class FakeWebViewClient : public WebViewClient {
 public:
-    virtual WebCompositorOutputSurface* createOutputSurface() OVERRIDE
-    {
-        return Platform::current()->compositorSupport()->createOutputSurfaceFor3D(CompositorFakeWebGraphicsContext3D::create(WebGraphicsContext3D::Attributes()).leakPtr());
-    }
-
     virtual void initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
     {
         m_layerTreeView = adoptPtr(Platform::current()->unitTestSupport()->createLayerTreeViewForTesting(WebUnitTestSupport::TestViewTypeUnitTest));
@@ -80,9 +74,8 @@ class ScrollingCoordinatorChromiumTest : public testing::Test {
 public:
     ScrollingCoordinatorChromiumTest()
         : m_baseURL("http://www.test.com/")
+        , m_compositorInitializer(0)
     {
-        Platform::current()->compositorSupport()->initialize(0);
-
         // We cannot reuse FrameTestHelpers::createWebViewAndLoad here because the compositing
         // settings need to be set before the page is loaded.
         m_webViewImpl = static_cast<WebViewImpl*>(WebView::create(&m_mockWebViewClient));
@@ -102,8 +95,6 @@ public:
     {
         Platform::current()->unitTestSupport()->unregisterAllMockedURLs();
         m_webViewImpl->close();
-
-        Platform::current()->compositorSupport()->shutdown();
     }
 
     void navigateTo(const std::string& url)
@@ -132,6 +123,7 @@ protected:
     MockWebFrameClient m_mockWebFrameClient;
     FakeWebViewClient m_mockWebViewClient;
     WebViewImpl* m_webViewImpl;
+    WebKitTests::WebCompositorInitializer m_compositorInitializer;
 };
 
 TEST_F(ScrollingCoordinatorChromiumTest, fastScrollingByDefault)

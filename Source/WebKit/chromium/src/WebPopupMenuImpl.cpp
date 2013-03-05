@@ -211,16 +211,6 @@ void WebPopupMenuImpl::themeChanged()
     notImplemented();
 }
 
-void WebPopupMenuImpl::setCompositorSurfaceReady()
-{
-    notImplemented();
-}
-
-void WebPopupMenuImpl::composite(bool)
-{
-    notImplemented();
-}
-
 bool WebPopupMenuImpl::handleInputEvent(const WebInputEvent& inputEvent)
 {
     if (!m_widget)

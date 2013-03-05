@@ -131,7 +131,7 @@ public:
 
     // Flow control and scheduling ---------------------------------------
 
-    // Requests an updateAnimations() call.
+    // Indicates that an animation needs to be updated.
     virtual void setNeedsAnimate() = 0;
 
     // Indicates that the view needs to be redrawn. This is typically used when the frontbuffer is damaged.
@@ -139,20 +139,6 @@ public:
 
     // Indicates whether a commit is pending.
     virtual bool commitRequested() const = 0;
-
-    // Triggers a compositing pass. If the compositor thread was not
-    // enabled via WebCompositorSupport::initialize, the compositing pass happens
-    // immediately. If it is enabled, the compositing pass will happen at a
-    // later time. Before the compositing pass happens (i.e. before composite()
-    // returns when the compositor thread is disabled), WebContentLayers will be
-    // asked to paint their dirty region, through
-    // WebContentLayerClient::paintContents.
-    virtual void composite() = 0;
-
-    // Immediately update animations. This should only be used when frame scheduling is handled by
-    // the WebLayerTreeView user and not internally by the compositor, meaning only in single-threaded
-    // mode.
-    virtual void updateAnimations(double frameBeginTime) = 0;
 
     // Relays the end of a fling animation.
     virtual void didStopFlinging() { }

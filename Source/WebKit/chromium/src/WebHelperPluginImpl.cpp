@@ -215,14 +215,6 @@ void WebHelperPluginImpl::destoryPage()
     m_page.clear();
 }
 
-void WebHelperPluginImpl::setCompositorSurfaceReady()
-{
-}
-
-void WebHelperPluginImpl::composite(bool)
-{
-}
-
 void WebHelperPluginImpl::layout()
 {
     PageWidgetDelegate::layout(m_page.get());

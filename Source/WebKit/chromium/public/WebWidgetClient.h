@@ -101,9 +101,6 @@ public:
     // process.
     virtual void didCompleteSwapBuffers() { }
 
-    // Called when a call to WebWidget::composite is required
-    virtual void scheduleComposite() { }
-
     // Called when a call to WebWidget::animate is required
     virtual void scheduleAnimation() { }
 

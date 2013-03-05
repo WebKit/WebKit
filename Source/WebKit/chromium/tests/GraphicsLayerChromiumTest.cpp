@@ -32,9 +32,9 @@
 #include "RotateTransformOperation.h"
 #include "ScrollableArea.h"
 #include "TranslateTransformOperation.h"
-#include "WebLayerTreeViewTestCommon.h"
 #include <gtest/gtest.h>
 #include <public/Platform.h>
+#include <public/WebCompositorSupport.h>
 #include <public/WebFloatAnimationCurve.h>
 #include <public/WebGraphicsContext3D.h>
 #include <public/WebLayerTreeView.h>
@@ -85,7 +85,6 @@ protected:
     OwnPtr<GraphicsLayerChromium> m_graphicsLayer;
 
 private:
-    MockWebLayerTreeViewClient m_layerTreeViewClient;
     OwnPtr<WebLayerTreeView> m_layerTreeView;
     MockGraphicsLayerClient m_client;
 };

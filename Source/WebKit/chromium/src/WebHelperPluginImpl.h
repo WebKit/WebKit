@@ -67,8 +67,6 @@ private:
     void destoryPage();
 
     // WebWidget methods:
-    virtual void setCompositorSurfaceReady() OVERRIDE;
-    virtual void composite(bool) OVERRIDE;
     virtual void layout() OVERRIDE;
     virtual void setFocus(bool) OVERRIDE;
     virtual void close() OVERRIDE;

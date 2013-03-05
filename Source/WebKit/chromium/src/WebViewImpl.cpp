@@ -1816,27 +1816,10 @@ void WebViewImpl::updateBatteryStatus(const WebBatteryStatus& status)
 
 void WebViewImpl::animate(double monotonicFrameBeginTime)
 {
-    updateAnimations(monotonicFrameBeginTime);
-}
+    TRACE_EVENT0("webkit", "WebViewImpl::animate");
 
-void WebViewImpl::willBeginFrame()
-{
-    m_client->willBeginCompositorFrame();
-}
-
-void WebViewImpl::didBeginFrame()
-{
-    if (m_devToolsAgent)
-        m_devToolsAgent->didComposite();
-}
-
-void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
-{
     if (!monotonicFrameBeginTime)
         monotonicFrameBeginTime = monotonicallyIncreasingTime();
-
-#if ENABLE(REQUEST_ANIMATION_FRAME)
-    TRACE_EVENT0("webkit", "WebViewImpl::updateAnimations");
 
     // Create synthetic wheel events as necessary for fling.
     if (m_gestureAnimation) {
@@ -1854,13 +1837,17 @@ void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
     if (!m_page)
         return;
 
+    PageWidgetDelegate::animate(m_page.get(), monotonicFrameBeginTime);
+
     if (m_continuousPaintingEnabled) {
         ContinuousPainter::setNeedsDisplayRecursive(m_rootGraphicsLayer, m_pageOverlays.get());
         m_client->scheduleAnimation();
     }
+}
 
-    PageWidgetDelegate::animate(m_page.get(), monotonicFrameBeginTime);
-#endif
+void WebViewImpl::updateAnimations(double monotonicFrameBeginTime)
+{
+    animate(monotonicFrameBeginTime);
 }
 
 void WebViewImpl::layout()
@@ -1964,21 +1951,6 @@ void WebViewImpl::themeChanged()
 
     WebRect damagedRect(0, 0, m_size.width, m_size.height);
     view->invalidateRect(damagedRect);
-}
-
-void WebViewImpl::composite(bool)
-{
-#if USE(ACCELERATED_COMPOSITING)
-    if (Platform::current()->compositorSupport()->isThreadingEnabled())
-        m_layerTreeView->setNeedsRedraw();
-    else {
-        ASSERT(isAcceleratedCompositingActive());
-        if (!page())
-            return;
-
-        m_layerTreeView->composite();
-    }
-#endif
 }
 
 void WebViewImpl::setNeedsRedraw()
@@ -4207,11 +4179,6 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
 #endif
 
-WebCompositorOutputSurface* WebViewImpl::createOutputSurface()
-{
-    return m_client->createOutputSurface();
-}
-
 WebInputHandler* WebViewImpl::createInputHandler()
 {
     WebCompositorInputHandlerImpl* handler = new WebCompositorInputHandlerImpl();
@@ -4250,26 +4217,22 @@ void WebViewImpl::applyScrollAndScale(const WebSize& scrollDelta, float pageScal
 
 void WebViewImpl::didRecreateOutputSurface(bool success)
 {
-    // Switch back to software rendering mode, if necessary
-    if (!success) {
-        ASSERT(m_isAcceleratedCompositingActive);
-        setIsAcceleratedCompositingActive(false);
-        m_compositorCreationFailed = true;
-        m_client->didInvalidateRect(IntRect(0, 0, m_size.width, m_size.height));
+    if (!success)
+        didExitCompositingMode();
+}
 
-        // Force a style recalc to remove all the composited layers.
-        m_page->mainFrame()->document()->scheduleForcedStyleRecalc();
-        return;
-    }
+void WebViewImpl::didExitCompositingMode()
+{
+    ASSERT(m_isAcceleratedCompositingActive);
+    setIsAcceleratedCompositingActive(false);
+    m_compositorCreationFailed = true;
+    m_client->didInvalidateRect(IntRect(0, 0, m_size.width, m_size.height));
+
+    // Force a style recalc to remove all the composited layers.
+    m_page->mainFrame()->document()->scheduleForcedStyleRecalc();
 
     if (m_pageOverlays)
         m_pageOverlays->update();
-}
-
-void WebViewImpl::scheduleComposite()
-{
-    ASSERT(!Platform::current()->compositorSupport()->isThreadingEnabled());
-    m_client->scheduleComposite();
 }
 
 void WebViewImpl::updateLayerTreeViewport()
