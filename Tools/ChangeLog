@@ -1,3 +1,20 @@
+2013-03-05  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] DRT crashes in an Aura/Win build
+        https://bugs.webkit.org/show_bug.cgi?id=111394
+
+        Reviewed by Tony Chang.
+
+        When building (and running) with use_aura=1, we assume that
+        we're using the default theme engine, but DRT creates the
+        DRTWin theme engine and overwrites the default, leading to crashes
+        in basically every test from the mismatch.
+
+        This fix gets us down to at least "lots of crashes" :).
+
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (platformInit):
+
 2013-03-05  Eric Seidel  <eric@webkit.org>
 
         Add html-parser-threaded perf test now that the threaded parser is enabled by default

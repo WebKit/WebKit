@@ -48,8 +48,10 @@
 #define NONCLIENTMETRICS_SIZE_PRE_VISTA \
     SIZEOF_STRUCT_WITH_SPECIFIED_LAST_MEMBER(NONCLIENTMETRICS, lfMessageFont)
 
+#ifndef USE_DEFAULT_RENDER_THEME
 // Theme engine
 static WebThemeEngineDRTWin themeEngine;
+#endif
 
 // Thread main to run for the thread which just tests for timeout.
 unsigned int __stdcall watchDogThread(void* arg)
@@ -118,8 +120,10 @@ void platformInit(int*, char***)
     _setmode(_fileno(stdout), _O_BINARY);
     _setmode(_fileno(stderr), _O_BINARY);
 
+#ifndef USE_DEFAULT_RENDER_THEME
     // Set theme engine.
     webkit_support::SetThemeEngine(&themeEngine);
+#endif
 
     // Load Ahem font.
     // AHEM____.TTF is copied to the directory of DumpRenderTree.exe by WebKit.gyp.
