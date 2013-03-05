@@ -1194,6 +1194,10 @@ void FrameLoader::loadURL(const KURL& newURL, const String& referrer, const Stri
         RefPtr<SecurityOrigin> referrerOrigin = SecurityOrigin::createFromString(referrer);
         addHTTPOriginIfNeeded(request, referrerOrigin->toString());
     }
+#if ENABLE(CACHE_PARTITIONING)
+    if (m_frame->tree()->top() != m_frame)
+        request.setCachePartition(m_frame->tree()->top()->document()->securityOrigin()->cachePartition());
+#endif
     addExtraFieldsToRequest(request, newLoadType, true);
     if (newLoadType == FrameLoadTypeReload || newLoadType == FrameLoadTypeReloadFromOrigin)
         request.setCachePolicy(ReloadIgnoringCacheData);
