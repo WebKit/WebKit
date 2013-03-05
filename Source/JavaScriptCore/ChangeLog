@@ -1,3 +1,101 @@
+2013-03-04  Andreas Kling  <akling@apple.com>
+
+        Unused Structure property tables waste 14MB on Membuster.
+        <http://webkit.org/b/110854>
+        <rdar://problem/13292104>
+
+        Reviewed by Geoffrey Garen.
+
+        Turn PropertyTable into a GC object and have Structure drop unpinned tables when marking.
+        14 MB progression on Membuster3.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcxproj/JavaScriptCore.vcxproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * Target.pri:
+
+            Added PropertyTable.cpp.
+
+        * runtime/PropertyTable.cpp: Added.
+        (JSC::PropertyTable::create):
+        (JSC::PropertyTable::clone):
+        (JSC::PropertyTable::PropertyTable):
+        (JSC::PropertyTable::destroy):
+        (JSC::PropertyTable::~PropertyTable):
+        (JSC::PropertyTable::visitChildren):
+
+            Moved marking of property table values here from Structure::visitChildren().
+
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::get):
+
+            Move m_cell to a local before using it multiple times. This avoids a multiple-access race when
+            Structure::checkOffsetConsistency() is used in assertions on the main thread while a marking thread
+            zaps the property table.
+
+        * runtime/Structure.h:
+        (JSC::Structure::materializePropertyMapIfNecessary):
+        (JSC::Structure::materializePropertyMapIfNecessaryForPinning):
+        * runtime/StructureInlines.h:
+        (JSC::Structure::propertyTable):
+
+            Added a getter for the Structure's PropertyTable that ASSERTs GC currently isn't active.
+            Because GC can zap an unpinned property table at any time, it's not entirely safe to access it.
+            Renamed the variable itself to m_propertyTableUnsafe to force call sites into explaining themselves.
+
+        (JSC::Structure::putWillGrowOutOfLineStorage):
+        (JSC::Structure::checkOffsetConsistency):
+
+            Moved these out of Structure.h to break header dependency cycle between Structure/PropertyTable.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::visitChildren):
+
+            Null out m_propertyTable if the table is unpinned. This'll cause the table to get GC'd.
+
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+
+            Add a global propertyTableStructure.
+
+        * runtime/PropertyMapHashTable.h:
+        (PropertyTable):
+        (JSC::PropertyTable::createStructure):
+        (JSC::PropertyTable::copy):
+
+            Make PropertyTable a GC object.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::dumpStatistics):
+        (JSC::Structure::materializePropertyMap):
+        (JSC::Structure::despecifyDictionaryFunction):
+        (JSC::Structure::addPropertyTransition):
+        (JSC::Structure::changePrototypeTransition):
+        (JSC::Structure::despecifyFunctionTransition):
+        (JSC::Structure::attributeChangeTransition):
+        (JSC::Structure::toDictionaryTransition):
+        (JSC::Structure::sealTransition):
+        (JSC::Structure::freezeTransition):
+        (JSC::Structure::preventExtensionsTransition):
+        (JSC::Structure::nonPropertyTransition):
+        (JSC::Structure::isSealed):
+        (JSC::Structure::isFrozen):
+        (JSC::Structure::flattenDictionaryStructure):
+        (JSC::Structure::pin):
+        (JSC::Structure::copyPropertyTable):
+        (JSC::Structure::copyPropertyTableForPinning):
+        (JSC::Structure::get):
+        (JSC::Structure::despecifyFunction):
+        (JSC::Structure::despecifyAllFunctions):
+        (JSC::Structure::putSpecificValue):
+        (JSC::Structure::remove):
+        (JSC::Structure::createPropertyMap):
+        (JSC::Structure::getPropertyNamesFromStructure):
+        (JSC::Structure::checkConsistency):
+
 2013-03-04  Chris Fleizach  <cfleizach@apple.com>
 
         Support WebSpeech - Speech Synthesis
