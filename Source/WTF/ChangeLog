@@ -1,3 +1,13 @@
+2013-03-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix cast-align warning in ASCIIFastPath.h on ARM
+        https://bugs.webkit.org/show_bug.cgi?id=111436
+
+        Reviewed by Benjamin Poulain.
+
+        * wtf/text/ASCIIFastPath.h:
+        (WTF::charactersAreAllASCII):
+
 2013-03-04  Laszlo Gombos  <l.gombos@samsung.com>
 
         JSC_OBJC_API_ENABLED should be removed from FeatureDefines.h

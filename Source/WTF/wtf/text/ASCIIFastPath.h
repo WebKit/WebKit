@@ -27,6 +27,7 @@
 #endif
 #include <stdint.h>
 #include <wtf/Alignment.h>
+#include <wtf/StdLibExtras.h>
 #include <wtf/unicode/Unicode.h>
 
 namespace WTF {
@@ -85,7 +86,7 @@ inline bool charactersAreAllASCII(const CharacterType* characters, size_t length
     const CharacterType* wordEnd = alignToMachineWord(end);
     const size_t loopIncrement = sizeof(MachineWord) / sizeof(CharacterType);
     while (characters < wordEnd) {
-        allCharBits |= *(reinterpret_cast<const MachineWord*>(characters));
+        allCharBits |= *(reinterpret_cast_ptr<const MachineWord*>(characters));
         characters += loopIncrement;
     }
 
