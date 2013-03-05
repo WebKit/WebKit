@@ -506,9 +506,11 @@ void WKCFNetworkSetOverrideSystemProxySettings(CFDictionaryRef);
 
 #if MAC_OS_X_VERSION_MIN_REQUIRED >= 1080
 bool WKIsPublicSuffix(NSString *domain);
-#endif
 
+CFArrayRef WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(CFStringRef partition);
+void WKCFURLCacheDeleteHostNamesInPersistentStoreForPartition(CFArrayRef hostArray, CFStringRef partition);
 CFStringRef WKCachePartitionKey(void);
+#endif
 
 #ifdef __cplusplus
 }

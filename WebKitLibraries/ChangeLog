@@ -1,3 +1,14 @@
+2013-03-05  Jeffrey Pfau  <jpfau@apple.com>
+
+        Clear associated cache partitions when deleting origins' cache
+        https://bugs.webkit.org/show_bug.cgi?id=111383
+
+        Reviewed by Maciej Stachowiak.
+
+        * WebKitSystemInterface.h:
+        * libWebKitSystemInterfaceLion.a:
+        * libWebKitSystemInterfaceMountainLion.a:
+
 2013-03-04  Kunihiko Sakamoto  <ksakamoto@chromium.org>
 
         Add build flag for FontLoader

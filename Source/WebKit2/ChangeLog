@@ -1,3 +1,17 @@
+2013-03-05  Jeffrey Pfau  <jpfau@apple.com>
+
+        Clear associated cache partitions when deleting origins' cache
+        https://bugs.webkit.org/show_bug.cgi?id=111383
+
+        Reviewed by Maciej Stachowiak.
+
+        Clear the cache partitions associated with the origin being cleared.
+
+        * WebProcess/ResourceCache/cf/WebResourceCacheManagerCFNet.cpp:
+        (WebKit):
+        (WebKit::partitionName):
+        (WebKit::WebResourceCacheManager::clearCFURLCacheForHostNames):
+
 2013-03-05  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] WebPageProxy::setThemePath() should check that the page is valid

@@ -28,12 +28,30 @@
 
 #if USE(CFURLCACHE)
 
+#if ENABLE(CACHE_PARTITIONING)
+#include <WebCore/PublicSuffix.h>
+#endif
+
 #if PLATFORM(MAC)
 #include "WebKitSystemInterface.h"
 #endif
 
 
 namespace WebKit {
+
+#if ENABLE(CACHE_PARTITIONING)
+static RetainPtr<CFStringRef> partitionName(CFStringRef domain)
+{
+#if ENABLE(PUBLIC_SUFFIX_LIST)
+    String highLevel = WebCore::topPrivatelyControlledDomain(domain);
+    if (highLevel.isNull())
+        return 0;
+    return highLevel.createCFString();
+#else
+    return domain;
+#endif
+}
+#endif
 
 RetainPtr<CFArrayRef> WebResourceCacheManager::cfURLCacheHostNames()
 {
@@ -43,6 +61,15 @@ RetainPtr<CFArrayRef> WebResourceCacheManager::cfURLCacheHostNames()
 void WebResourceCacheManager::clearCFURLCacheForHostNames(CFArrayRef hostNames)
 {
     WKCFURLCacheDeleteHostNamesInPersistentStore(hostNames);
+
+#if ENABLE(CACHE_PARTITIONING)
+    CFIndex size = CFArrayGetCount(hostNames);
+    for (CFIndex i = 0; i < size; ++i) {
+        RetainPtr<CFStringRef> partition = partitionName(static_cast<CFStringRef>(CFArrayGetValueAtIndex(hostNames, i)));
+        RetainPtr<CFArrayRef> partitionHostNames(AdoptCF, WKCFURLCacheCopyAllHostNamesInPersistentStoreForPartition(partition.get()));
+        WKCFURLCacheDeleteHostNamesInPersistentStoreForPartition(partitionHostNames.get(), partition.get());
+    }
+#endif
 }
 
 } // namespace WebKit

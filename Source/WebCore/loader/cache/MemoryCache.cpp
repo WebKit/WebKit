@@ -584,10 +584,19 @@ void MemoryCache::removeResourcesWithOrigin(SecurityOrigin* origin)
     Vector<CachedResource*> resourcesWithOrigin;
 
     CachedResourceMap::iterator e = m_resources.end();
+#if ENABLE(CACHE_PARTITIONING)
+    String originPartition = partitionName(origin->host());
+#endif
+
     for (CachedResourceMap::iterator it = m_resources.begin(); it != e; ++it) {
 #if ENABLE(CACHE_PARTITIONING)
         for (CachedResourceItem::iterator itemIterator = it->value->begin(); itemIterator != it->value->end(); ++itemIterator) {
             CachedResource* resource = itemIterator->value;
+            String partition = itemIterator->key;
+            if (partition == originPartition) {
+                resourcesWithOrigin.append(resource);
+                continue;
+            }
 #else
             CachedResource* resource = it->value;
 #endif
