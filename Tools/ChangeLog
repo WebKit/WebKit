@@ -1,3 +1,15 @@
+2013-03-04  David Kilzer  <ddkilzer@apple.com>
+
+        BUILD FIX (r144657): Fix DumpRenderTree build failure on iOS
+
+            Tools/DumpRenderTree/ios/AccessibilityControllerIOS.mm:95:29: error: class method '+stringWithJSStringRef:' not found (return type defaults to 'id') [-Werror,-Wobjc-method-access]
+                NSString *idAttribute = [NSString stringWithJSStringRef:idAttributeRef];
+                                        ^         ~~~~~~~~~~~~~~~~~~~~~
+            1 error generated.
+
+        * DumpRenderTree/ios/AccessibilityControllerIOS.mm: Import
+        AccessibilityCommonMac.h.
+
 2013-03-04  Mikhail Pozdnyakov  <mikhail.pozdnyakov@intel.com>
 
         [WK2][EFL] Add callbacks to the WKViewClient to handle Web Process crash and relaunch

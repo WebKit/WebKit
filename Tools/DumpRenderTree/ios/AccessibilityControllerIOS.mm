@@ -29,6 +29,7 @@
 
 #if PLATFORM(IOS)
 
+#import "AccessibilityCommonMac.h"
 #import "AccessibilityUIElement.h"
 #import <Foundation/Foundation.h>
 #import <WebKit/WebFramePrivate.h>
