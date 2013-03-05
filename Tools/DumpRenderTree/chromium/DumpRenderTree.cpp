@@ -292,8 +292,5 @@ int main(int argc, char* argv[])
         shell.resetTestController();
     }
 
-    // Shutdown WebCompositor after TestShell is destructed properly.
-    WebKit::Platform::current()->compositorSupport()->shutdown();
-
     return EXIT_SUCCESS;
 }
