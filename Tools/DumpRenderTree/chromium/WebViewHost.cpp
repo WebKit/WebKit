@@ -278,10 +278,17 @@ private:
 void WebViewHost::initializeLayerTreeView(WebLayerTreeViewClient* client, const WebLayer& rootLayer, const WebLayerTreeView::Settings& settings)
 {
     m_layerTreeViewClient = adoptPtr(new WebViewHostDRTLayerTreeViewClient(this));
-    if (m_shell->softwareCompositingEnabled())
-        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeViewSoftware(m_layerTreeViewClient.get()));
-    else
-        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeView3d(m_layerTreeViewClient.get()));
+    if (m_shell->softwareCompositingEnabled()) {
+        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeView(
+            webkit_support::SOFTWARE_CONTEXT,
+            m_layerTreeViewClient.get(),
+            m_shell->webCompositorThread()));
+    } else {
+        m_layerTreeView = adoptPtr(webkit_support::CreateLayerTreeView(
+            webkit_support::MESA_CONTEXT,
+            m_layerTreeViewClient.get(),
+            m_shell->webCompositorThread()));
+    }
 
     ASSERT(m_layerTreeView);
     updateViewportSize();

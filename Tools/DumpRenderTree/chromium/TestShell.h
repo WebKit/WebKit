@@ -175,6 +175,8 @@ public:
     typedef Vector<WebViewHost*> WindowList;
     WindowList windowList() const { return m_windowList; }
 
+    WebKit::WebThread* webCompositorThread() const { return m_webCompositorThread.get(); }
+
 private:
     WebViewHost* createNewWindow(const WebKit::WebURL&, DRTDevToolsAgent*, WebTestRunner::WebTestInterfaces*);
     void createMainWindow();

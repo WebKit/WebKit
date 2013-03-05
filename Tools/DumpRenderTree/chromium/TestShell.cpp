@@ -145,7 +145,6 @@ void TestShell::initialize(MockPlatform* platformSupport)
 
     if (m_threadedCompositingEnabled)
         m_webCompositorThread = adoptPtr(WebKit::Platform::current()->createThread("Compositor"));
-    WebKit::Platform::current()->compositorSupport()->initialize(m_webCompositorThread.get());
 
     createMainWindow();
 }

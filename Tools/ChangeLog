@@ -1,3 +1,21 @@
+2013-03-04  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Switch to new webkit_support::CreateLayerTreeView interface
+        https://bugs.webkit.org/show_bug.cgi?id=111285
+
+        Reviewed by Adrienne Walker.
+
+        This removes the need for WebCompositorSupport::initialize and exposes
+        slightly fewer entry points across the repository boundary.
+
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::initialize):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestShell::webCompositorThread):
+        (TestShell):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::initializeLayerTreeView):
+
 2013-03-04  Roger Fong  <roger_fong@apple.com>
 
         Unreviewed. Get rid of some AppleWin VS2010 build warnings.
