@@ -1205,7 +1205,7 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
         }
     }
 
-    if (!frame->selection()->selection().isBaseFirst() || isRTL ) {
+    if (!frame->selection()->selection().isBaseFirst()) {
         // End handle comes before start, invert the caret reference points.
         WebCore::IntRect tmpCaret(startCaret);
         startCaret = endCaret;
@@ -1220,10 +1220,9 @@ void SelectionHandler::selectionPositionChanged(bool forceUpdateWithoutChange)
     if (m_webPage->m_selectionOverlay)
         m_webPage->m_selectionOverlay->draw(visibleSelectionRegion);
 
-
     VisibleSelection currentSelection = frame->selection()->selection();
     SelectionDetails details(startCaret, endCaret, visibleSelectionRegion, inputNodeOverridesTouch(),
-        m_lastSelection != currentSelection, requestedSelectionHandlePosition(frame->selection()->selection()));
+        m_lastSelection != currentSelection, requestedSelectionHandlePosition(frame->selection()->selection()), isRTL);
 
     m_webPage->m_client->notifySelectionDetailsChanged(details);
     m_lastSelection = currentSelection;

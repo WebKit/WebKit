@@ -1,3 +1,23 @@
+2013-03-06  Nima Ghanavatian  <nghanavatian@rim.com>
+
+        [BlackBerry] Selection handles don't drag to expand correctly for RTL languages
+        https://bugs.webkit.org/show_bug.cgi?id=111618
+
+        Reviewed by Rob Buis.
+
+        PR 303712
+        If we are using a RTL language, we should ensure that the selection handles are angled the right way.
+        Further, when expanding the selection, the start and end handles should be appropriately set so that
+        expansion in the natural direction is possible.
+
+        Internally reviewed by Mike Fenton.
+
+        * WebKitSupport/SelectionHandler.cpp:
+        (BlackBerry::WebKit::SelectionHandler::SelectionHandler):
+        (BlackBerry::WebKit::SelectionHandler::selectionPositionChanged):
+        * WebKitSupport/SelectionHandler.h:
+        (SelectionHandler):
+
 2013-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [BlackBerry] Use the new authenticationChallenge API in WebPage
