@@ -1,3 +1,12 @@
+2013-03-06  Brady Eidson  <beidson@apple.com>
+
+        <rdar://problem/13360535> - Bogus MESSAGE_CHECK in WebPageProxy::getPluginPath
+
+        Rubberstamped by Anders Carlsson.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::getPluginPath): Nuke a bogus MESSAGE_CHECK.
+
 2013-03-05  Brady Eidson  <beidson@apple.com>
 
         534.59 branch needs to handle API clients with a non-zero version number

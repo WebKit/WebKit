@@ -923,8 +923,6 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 #if ENABLE(NETSCAPE_PLUGIN_API)
 void WebPageProxy::getPluginPath(const String& mimeType, const String& urlString, const String& frameURLString, const String& pageURLString, String& pluginPath, uint32_t& pluginLoadPolicy)
 {
-    MESSAGE_CHECK(urlString);
-
     String newMimeType = mimeType.lower();
 
     pluginLoadPolicy = PluginModuleLoadNormally;
