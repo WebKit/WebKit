@@ -1,0 +1,3 @@
+This test passes if middle mouse clicking in the rectangle below does not crash.
+
+
