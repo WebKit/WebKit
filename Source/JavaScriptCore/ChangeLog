@@ -1,5 +1,20 @@
 2013-03-06  Andreas Kling  <akling@apple.com>
 
+        Pack Structure members better.
+        <http://webkit.org/b/111593>
+        <rdar://problem/13359200>
+
+        Reviewed by Mark Hahnenberg.
+
+        Shrink Structure by 8 bytes (now at 104 bytes) on 64-bit by packing the members better.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::Structure):
+        * runtime/Structure.h:
+        (Structure):
+
+2013-03-06  Andreas Kling  <akling@apple.com>
+
         Unreviewed, fix Windows build after r144910.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:

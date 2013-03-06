@@ -437,9 +437,6 @@ private:
     static const int s_maxTransitionLength = 64;
 
     static const unsigned maxSpecificFunctionThrashCount = 3;
-
-    TypeInfo m_typeInfo;
-    IndexingType m_indexingType;
         
     WriteBarrier<JSGlobalObject> m_globalObject;
     WriteBarrier<Unknown> m_prototype;
@@ -459,18 +456,21 @@ private:
 
     mutable InlineWatchpointSet m_transitionWatchpointSet;
 
-    uint8_t m_inlineCapacity;
     COMPILE_ASSERT(firstOutOfLineOffset < 256, firstOutOfLineOffset_fits);
 
     // m_offset does not account for anonymous slots
     PropertyOffset m_offset;
 
+    TypeInfo m_typeInfo;
+    IndexingType m_indexingType;
+
+    uint8_t m_inlineCapacity;
     unsigned m_dictionaryKind : 2;
     bool m_isPinnedPropertyTable : 1;
     bool m_hasGetterSetterProperties : 1;
     bool m_hasReadOnlyOrGetterSetterPropertiesExcludingProto : 1;
     bool m_hasNonEnumerableProperties : 1;
-    unsigned m_attributesInPrevious : 22;
+    unsigned m_attributesInPrevious : 14;
     unsigned m_specificFunctionThrashCount : 2;
     unsigned m_preventExtensions : 1;
     unsigned m_didTransition : 1;
