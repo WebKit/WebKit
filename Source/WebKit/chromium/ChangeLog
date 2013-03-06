@@ -1,3 +1,15 @@
+2013-03-06  Andrey Lushnikov  <lushnikov@chromium.org>
+
+        Web Inspector: test that "importScript" is used only in module heads.
+        https://bugs.webkit.org/show_bug.cgi?id=111548
+
+        Reviewed by Pavel Feldman.
+
+        Test that output file after all inlines does not have any 'importScript(s)' statements.
+
+        * scripts/inline_js_imports.py:
+        (main):
+
 2013-03-05  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Scroll deltas should be floats
