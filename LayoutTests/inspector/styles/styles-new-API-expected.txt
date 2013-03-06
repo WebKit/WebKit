@@ -227,7 +227,11 @@ h1: [regular, 30:0-30:2] {
     ['border-right-color':'initial'] @[undefined-undefined] style
     ['border-bottom-color':'initial'] @[undefined-undefined] style
     ['border-left-color':'initial'] @[undefined-undefined] style
-    ['border-image':'initial'] @[undefined-undefined] style
+    ['border-image-source':'initial'] @[undefined-undefined] style
+    ['border-image-slice':'initial'] @[undefined-undefined] style
+    ['border-image-width':'initial'] @[undefined-undefined] style
+    ['border-image-outset':'initial'] @[undefined-undefined] style
+    ['border-image-repeat':'initial'] @[undefined-undefined] style
     ['border-top-width':'0px'] @[undefined-undefined] style
     ['border-right-width':'0px'] @[undefined-undefined] style
     ['border-bottom-width':'0px'] @[undefined-undefined] style
@@ -457,7 +461,11 @@ body.main2: [regular, 23:0-23:10] {
 ['border-right-color':'initial'] @[undefined-undefined] style
 ['border-bottom-color':'initial'] @[undefined-undefined] style
 ['border-left-color':'initial'] @[undefined-undefined] style
-['border-image':'initial'] @[undefined-undefined] style
+['border-image-source':'initial'] @[undefined-undefined] style
+['border-image-slice':'initial'] @[undefined-undefined] style
+['border-image-width':'initial'] @[undefined-undefined] style
+['border-image-outset':'initial'] @[undefined-undefined] style
+['border-image-repeat':'initial'] @[undefined-undefined] style
 
 === After property enabled ===
 [text='height : 100% ;'] disabled
@@ -481,5 +489,9 @@ body.main2: [regular, 23:0-23:10] {
 ['border-right-color':'initial'] @[undefined-undefined] style
 ['border-bottom-color':'initial'] @[undefined-undefined] style
 ['border-left-color':'initial'] @[undefined-undefined] style
-['border-image':'initial'] @[undefined-undefined] style
+['border-image-source':'initial'] @[undefined-undefined] style
+['border-image-slice':'initial'] @[undefined-undefined] style
+['border-image-width':'initial'] @[undefined-undefined] style
+['border-image-outset':'initial'] @[undefined-undefined] style
+['border-image-repeat':'initial'] @[undefined-undefined] style
 
