@@ -4410,3 +4410,6 @@ crbug.com/179503 platform/chromium/virtual/gpu/fast/canvas/webgl/oes-texture-hal
 # These test are failing since r144519
 webkit.org/b/111462 [ Mac ] fast/events/touch/gesture/touch-gesture-noscroll-body-yhidden.html [ Failure ]
 webkit.org/b/111462 [ Mac ] fast/events/touch/gesture/touch-gesture-noscroll-body-propagated.html [ Failure ]
+
+# Failing since r144633
+webkit.org/b/111510 [ MountainLion ] fast/regions/region-style-in-columns.html [ ImageOnlyFailure ]
