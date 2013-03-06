@@ -31,7 +31,8 @@
 #ifndef V8DOMActivityLogger_h
 #define V8DOMActivityLogger_h
 
-#include "v8.h"
+#include <v8.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ class V8DOMActivityLogger {
 public:
     virtual ~V8DOMActivityLogger() { }
 
-    virtual void log(const char* apiName, int argc, const v8::Handle<v8::Value>* argv, const char* extraInfo) { }
+    virtual void log(const String& apiName, int argc, const v8::Handle<v8::Value>* argv, const String& extraInfo) { }
 };
 
 } // namespace WebCore

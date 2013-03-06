@@ -1,3 +1,20 @@
+2013-03-06  Ankur Taly  <ataly@google.com>
+
+        Modify log method in WebDOMActivityLogger so that the apiName and
+        extraInfo arguments are of type const WebString& instead of const char*.
+        This change gets rid of some of the memory ownership issues that arise
+        with char* pointers.
+        https://bugs.webkit.org/show_bug.cgi?id=111483
+
+        Reviewed by Adam Barth.
+
+        There are no new tests as there is no change in behavior.
+
+        * public/WebDOMActivityLogger.h: Added property svn:eol-style.
+        (WebKit::WebDOMActivityLogger::log):
+        * src/WebDOMActivityLogger.cpp: Added property svn:eol-style.
+        (WebKit::DOMActivityLoggerContainer::log):
+
 2013-03-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r186511.  Requested by

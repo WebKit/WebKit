@@ -32,6 +32,7 @@
 #define WebDOMActivityLogger_h
 
 #include "../../../Platform/chromium/public/WebCommon.h"
+#include "../../../Platform/chromium/public/WebString.h"
 #include <v8.h>
 
 namespace WebKit {
@@ -39,7 +40,7 @@ namespace WebKit {
 class WebDOMActivityLogger {
 public:
     virtual ~WebDOMActivityLogger() { }
-    virtual void log(const char* apiName, int argc, const v8::Handle<v8::Value>* argv, const char* extraInfo) { }
+    virtual void log(const WebString& apiName, int argc, const v8::Handle<v8::Value>* argv, const WebString& extraInfo) { }
 };
 
 // Checks if a logger already exists for the world identified

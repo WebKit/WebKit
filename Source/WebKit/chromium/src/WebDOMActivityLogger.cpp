@@ -34,6 +34,7 @@
 #include "DOMWrapperWorld.h"
 #include "V8DOMActivityLogger.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/text/WTFString.h>
 
 using namespace WebCore;
 
@@ -46,9 +47,9 @@ public:
     {
     }
 
-    virtual void log(const char* apiName, int argc, const v8::Handle<v8::Value>* argv, const char* extraInfo)
+    virtual void log(const String& apiName, int argc, const v8::Handle<v8::Value>* argv, const String& extraInfo)
     {   
-        m_domActivityLogger->log(apiName, argc, argv, extraInfo); 
+        m_domActivityLogger->log(WebString(apiName), argc, argv, WebString(extraInfo)); 
     }
 
 private:
