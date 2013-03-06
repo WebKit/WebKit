@@ -37,12 +37,9 @@
 #include "config.h"
 #include "CredentialTransformData.h"
 
-#include "HTMLFormElement.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "KURL.h"
 #include <wtf/Vector.h>
-#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 

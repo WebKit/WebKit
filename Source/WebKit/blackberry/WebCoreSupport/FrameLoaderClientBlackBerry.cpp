@@ -29,7 +29,6 @@
 #include "ChromeClientBlackBerry.h"
 #include "ClientExtension.h"
 #include "CookieManager.h"
-#include "CredentialBackingStore.h"
 #include "CredentialManager.h"
 #include "CredentialTransformData.h"
 #include "DumpRenderTreeClient.h"
@@ -58,7 +57,6 @@
 #include "PluginDatabase.h"
 #include "PluginView.h"
 #include "ProgressTracker.h"
-#include "ProtectionSpace.h"
 #include "ScopePointer.h"
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
 #include "Settings.h"
