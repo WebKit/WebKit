@@ -1,3 +1,16 @@
+2013-03-04  Oliver Hunt  <oliver@apple.com>
+
+        Make fastmalloc use guardpages
+        https://bugs.webkit.org/show_bug.cgi?id=111353
+
+        Reviewed by Anders Carlsson.
+
+        Add PROT_NONE pages at the beginning and end of every
+        mmap call made by fastmalloc.
+
+        * wtf/TCSystemAlloc.cpp:
+        (TryMmap):
+
 2013-03-06  Paweł Forysiuk  <tuxator@o2.pl>
 
         Typo in inline function in ByteOrder.h

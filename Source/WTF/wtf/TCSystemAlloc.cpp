@@ -35,6 +35,7 @@
 #include "TCSystemAlloc.h"
 
 #include "Assertions.h"
+#include "CheckedArithmetic.h"
 #include "TCSpinLock.h"
 #include "UnusedParam.h"
 #include "VMTags.h"
@@ -166,7 +167,8 @@ static void* TryMmap(size_t size, size_t *actual_size, size_t alignment) {
   if (alignment > pagesize) {
     extra = alignment - pagesize;
   }
-  void* result = mmap(NULL, size + extra,
+  Checked<size_t> mapSize = Checked<size_t>(size) + extra + 2 * pagesize;
+  void* result = mmap(NULL, mapSize.unsafeGet(),
                       PROT_READ | PROT_WRITE,
                       MAP_PRIVATE|MAP_ANONYMOUS,
                       VM_TAG_FOR_TCMALLOC_MEMORY, 0);
@@ -174,7 +176,9 @@ static void* TryMmap(size_t size, size_t *actual_size, size_t alignment) {
     mmap_failure = true;
     return NULL;
   }
-
+  mmap(result, pagesize, PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_TCMALLOC_MEMORY, 0);
+  mmap(static_cast<char*>(result) + (mapSize - pagesize).unsafeGet(), pagesize, PROT_NONE, MAP_FIXED | MAP_PRIVATE | MAP_ANON, VM_TAG_FOR_TCMALLOC_MEMORY, 0);
+  result = static_cast<char*>(result) + pagesize;
   // Adjust the return memory so it is aligned
   uintptr_t ptr = reinterpret_cast<uintptr_t>(result);
   size_t adjust = 0;
