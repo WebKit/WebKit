@@ -1,3 +1,15 @@
+2013-03-05  Mark Hahnenberg  <mhahnenberg@apple.com>
+
+        Objective-C API: JSValue should implement init and return nil in exceptional cases
+        https://bugs.webkit.org/show_bug.cgi?id=111487
+
+        Reviewed by Darin Adler.
+
+        * API/JSValue.mm:
+        (-[JSValue init]): We return nil here because there is no way to get the instance into a coherent state
+        without a JSContext.
+        (-[JSValue initWithValue:inContext:]): Similarly, we should also return nil here if either of the arguments is 0.
+
 2013-03-05  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r144708.

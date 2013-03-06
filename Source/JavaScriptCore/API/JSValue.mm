@@ -948,13 +948,20 @@ JSValueRef valueInternalValue(JSValue * value)
     return [context wrapperForJSObject:value];
 }
 
+- (JSValue *)init
+{
+    return nil;
+}
+
 - (JSValue *)initWithValue:(JSValueRef)value inContext:(JSContext *)context
 {
+    if (!value || !context)
+        return nil;
+
     self = [super init];
     if (!self)
         return nil;
 
-    ASSERT(value);
     _context = [context retain];
     m_value = value;
     JSValueProtect([_context globalContextRef], m_value);
