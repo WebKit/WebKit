@@ -390,11 +390,16 @@
                     '<(PRODUCT_DIR)/DumpRenderTree.pak',
                 ],
                 'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
-                # FIXME: does this need to be enabled? If it is, xcode
-                # seems to break since DumpRenderTree_resources isn't actually
-                # a bundle.
-                # 'process_outputs_as_mac_bundle_resources': 1,
             }],
+            'conditions': [
+                ['OS=="mac"', {
+                    'all_dependent_settings': {
+                        'mac_bundle_resources': [
+                            '<(PRODUCT_DIR)/DumpRenderTree.pak',
+                        ],
+                    },
+                }],
+            ]
         },
         {
             'target_name': 'TestNetscapePlugIn',

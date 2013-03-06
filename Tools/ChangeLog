@@ -1,3 +1,14 @@
+2013-03-06  Tony Chang  <tony@chromium.org>
+
+        [chromium] making DumpRenderTree_resources a separate bundle breaks xcode
+        https://bugs.webkit.org/show_bug.cgi?id=111509
+
+        Reviewed by Dirk Pranke.
+
+        Add DumpRenderTree.pak to DumpRenderTree.app again.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-03-06  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] introduce WebUserGestureIndicator
