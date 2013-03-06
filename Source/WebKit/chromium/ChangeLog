@@ -1,3 +1,21 @@
+2013-03-06  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Express webkit_unit_tests' dependency on DumpRenderTree.pak in gyp
+        https://bugs.webkit.org/show_bug.cgi?id=111508
+
+        Reviewed by Dirk Pranke.
+
+        Some tests in webkit_unit_tests, for example WebPageSerializerTest.HTMLNodes, depend on localizable resources
+        from a pak file. Since unit tests initialize for testing with the same webkit_support functions as layout tests
+        they end up using DumpRenderTree.pak, but this dependency isn't listed explicitly in the gyp so if you manage to
+        run webkit_unit_tests without building DumpRenderTree first these tests just crash.
+
+        This adds a dependency from webkit_unit_tests to DumpRenderTree_resources so the pak is always built. It's a bit
+        weird for a gyp file in Source/WebKit/chromium/ to reach into Tools/DumpRenderTree, but I can't think of
+        anything better.
+
+        * WebKitUnitTests.gyp:
+
 2013-03-06  Jochen Eisinger  <jochen@chromium.org>
 
         [chromium] introduce WebUserGestureIndicator
