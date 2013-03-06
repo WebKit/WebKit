@@ -1,3 +1,16 @@
+2013-03-06  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Build fix. Fixes problems building code that uses deprecated functions from GTK+ 2,
+        such as RenderThemeGtk2.cpp, in debug mode. RenderThemeGtk2.cpp tries to allow usage
+        of deprecated functions by undefining GTK_DISABLE_DEPRECATED, but it ended up being
+        redefined because autotoolsconfig.h was included again by headers that came after
+        config.h.
+
+        Reviewed by Martin Robinson.
+
+        * Source/autotools/SetupWebKitFeatures.m4: add checks to ensure the
+        autotoolsconfig.h header is only included once.
+
 2013-03-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with latest EFL libraries
