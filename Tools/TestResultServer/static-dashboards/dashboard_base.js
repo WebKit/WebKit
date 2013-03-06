@@ -32,7 +32,6 @@
 //
 // The calling page is expected to implement the following "abstract"
 // functions/objects:
-var g_pageLoadStartTime = Date.now();
 var g_resourceLoader;
 
 // Generates the contents of the dashboard. The page should override this with
@@ -549,11 +548,6 @@ function joinParameters(stateObject)
     return state.join('&');
 }
 
-function logTime(msg, startTime)
-{
-    console.log(msg + ': ' + (Date.now() - startTime));
-}
-
 function hidePopup()
 {
     var popup = $('popup');
@@ -845,9 +839,6 @@ document.addEventListener('mousedown', function(e) {
 }, false);
 
 window.addEventListener('load', function() {
-    // This doesn't seem totally accurate as there is a race between
-    // onload firing and the last script tag being executed.
-    logTime('Time to load JS', g_pageLoadStartTime);
     g_resourceLoader = new loader.Loader();
     g_resourceLoader.load();
 }, false);

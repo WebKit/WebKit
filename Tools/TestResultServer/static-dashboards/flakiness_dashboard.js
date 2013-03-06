@@ -942,8 +942,7 @@ function processTestRunsForBuilder(builderName)
     }
 
     processExpectations();
-    var start = Date.now();
-
+   
     var buildInfo = platformAndBuildType(builderName);
     var platform = buildInfo.platform;
     var buildType = buildInfo.buildType;
@@ -996,7 +995,6 @@ function processTestRunsForBuilder(builderName)
     }
 
     g_perBuilderFailures[builderName] = failures;
-    logTime('processTestRunsForBuilder: ' + builderName, start);
 }
 
 function processMissingAndExtraExpectations(resultsForTest)
@@ -1469,13 +1467,11 @@ function htmlForTestTable(rowsHTML, opt_excludeHeaders)
 
 function appendHTML(html)
 {
-    var startTime = Date.now();
     // InnerHTML to a div that's not in the document. This is
     // ~300ms faster in Safari 4 and Chrome 4 on mac.
     var div = document.createElement('div');
     div.innerHTML = html;
     document.body.appendChild(div);
-    logTime('Time to innerHTML', startTime);
     postHeightChangedMessage();
 }
 
