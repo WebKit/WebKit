@@ -2292,6 +2292,8 @@ media/video-set-rate-from-pause.html
 media/video-src-change.html
 media/video-timeupdate-reverse-play.html
 media/W3C/video/src/src_removal_does_not_trigger_loadstart.html
+media/single-valid-source.html
+media/video-source-error-no-candidate.html
 media/video-src-remove.html
 media/video-size-intrinsic-scale.html
 media/video-source-media.html
