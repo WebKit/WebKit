@@ -20,6 +20,7 @@ TEST_PROGS += \
 	Programs/WebKit2APITests/TestWebKitSettings \
 	Programs/WebKit2APITests/TestWebKitWebContext \
 	Programs/WebKit2APITests/TestWebKitWebView \
+	Programs/WebKit2APITests/TestWebKitWebViewGroup \
 	Programs/WebKit2APITests/TestWebViewEditor
 
 noinst_PROGRAMS += $(TEST_PROGS)
@@ -250,5 +251,11 @@ Programs_WebKit2APITests_TestWebExtensions_SOURCES = \
 Programs_WebKit2APITests_TestWebExtensions_CPPFLAGS = $(webkit2_tests_cppflags)
 Programs_WebKit2APITests_TestWebExtensions_LDADD = $(webkit2_tests_ldadd)
 Programs_WebKit2APITests_TestWebExtensions_LDFLAGS = $(webkit2_tests_ldflags)
+
+Programs_WebKit2APITests_TestWebKitWebViewGroup_SOURCES = \
+        Source/WebKit2/UIProcess/API/gtk/tests/TestWebKitWebViewGroup.cpp
+Programs_WebKit2APITests_TestWebKitWebViewGroup_CPPFLAGS = $(webkit2_tests_cppflags)
+Programs_WebKit2APITests_TestWebKitWebViewGroup_LDADD = $(webkit2_tests_ldadd)
+Programs_WebKit2APITests_TestWebKitWebViewGroup_LDFLAGS = $(webkit2_tests_ldflags)
 
 endif # ENABLE_WEBKIT2

@@ -36,6 +36,7 @@
 #include "WebKitURISchemeRequestPrivate.h"
 #include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebKitWebViewGroupPrivate.h"
 #include "WebResourceCacheManagerProxy.h"
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
@@ -143,6 +144,7 @@ struct _WebKitWebContextPrivate {
     WebKitTLSErrorsPolicy tlsErrorsPolicy;
 
     HashMap<uint64_t, WebKitWebView*> webViews;
+    GRefPtr<WebKitWebViewGroup> defaultWebViewGroup;
 };
 
 static guint signals[LAST_SIGNAL] = { 0, };
@@ -855,12 +857,17 @@ void webkitWebContextDidFinishURIRequest(WebKitWebContext* context, uint64_t req
     context->priv->uriSchemeRequests.remove(requestID);
 }
 
-void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView)
+void webkitWebContextCreatePageForWebView(WebKitWebContext* context, WebKitWebView* webView, WebKitWebViewGroup* webViewGroup)
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(webView);
-    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), 0);
+    WebPageGroup* pageGroup = webViewGroup ? webkitWebViewGroupGetPageGroup(webViewGroup) : 0;
+    webkitWebViewBaseCreateWebPage(webViewBase, context->priv->context.get(), pageGroup);
+
     WebPageProxy* page = webkitWebViewBaseGetPage(webViewBase);
     context->priv->webViews.set(page->pageID(), webView);
+
+    if (!pageGroup && !context->priv->defaultWebViewGroup)
+        context->priv->defaultWebViewGroup = adoptGRef(webkitWebViewGroupCreate(page->pageGroup()));
 }
 
 void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* webView)
@@ -872,4 +879,9 @@ void webkitWebContextWebViewDestroyed(WebKitWebContext* context, WebKitWebView* 
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext* context, WebPageProxy* page)
 {
     return page ? context->priv->webViews.get(page->pageID()) : 0;
+}
+
+WebKitWebViewGroup* webkitWebContextGetDefaultWebViewGroup(WebKitWebContext* context)
+{
+    return context->priv->defaultWebViewGroup.get();
 }

@@ -33,9 +33,6 @@
 
 #include "WebKitPrivate.h"
 #include "WebKitSettingsPrivate.h"
-#include "WebPageGroup.h"
-#include "WebPageProxy.h"
-#include "WebPreferences.h"
 #include <WebCore/UserAgentGtk.h>
 #include <glib/gi18n-lib.h>
 #include <wtf/text/CString.h>
@@ -72,18 +69,19 @@ struct _WebKitSettingsPrivate {
 
 /**
  * SECTION:WebKitSettings
- * @short_description: Control the behaviour of a #WebKitWebView
+ * @short_description: Control the behaviour of #WebKitWebView<!-- -->s
+ * @see_also: #WebKitWebViewGroup, #WebKitWebView
  *
- * #WebKitSettings can be applied to a #WebKitWebView to control text charset,
- * color, font sizes, printing mode, script support, loading of images and various other things.
+ * #WebKitSettings can be applied to a #WebKitWebViewGroup to control text charset,
+ * color, font sizes, printing mode, script support, loading of images and various
+ * other things on the #WebKitWebView<!-- -->s of the group.
  * After creation, a #WebKitSettings object contains default settings.
  *
  * <informalexample><programlisting>
- * /<!-- -->* Create a new #WebKitSettings and disable JavaScript. *<!-- -->/
- * WebKitSettings *settings = webkit_settings_new ();
- * g_object_set (G_OBJECT (settings), "enable-javascript", FALSE, NULL);
+ * /<!-- -->* Disable JavaScript. *<!-- -->/
+ * WebKitSettings *settings = webkit_web_view_group_get_settings (my_view_group);
+ * webkit_settings_set_enable_javascript (settings, FALSE);
  *
- * webkit_web_view_set_settings (WEBKIT_WEB_VIEW (my_webview), settings);
  * </programlisting></informalexample>
  */
 
@@ -1075,18 +1073,16 @@ static void webkit_settings_class_init(WebKitSettingsClass* klass)
                                                          readWriteConstructParamFlags));
 }
 
-void webkitSettingsAttachSettingsToPage(WebKitSettings* settings, WebPageProxy* page)
+WebPreferences* webkitSettingsGetPreferences(WebKitSettings* settings)
 {
-    page->pageGroup()->setPreferences(settings->priv->preferences.get());
-    page->setCanRunModal(settings->priv->allowModalDialogs);
-    page->setCustomUserAgent(String::fromUTF8(settings->priv->userAgent.data()));
+    return settings->priv->preferences.get();
 }
 
 /**
  * webkit_settings_new:
  *
  * Creates a new #WebKitSettings instance with default values. It must
- * be manually attached to a #WebKitWebView.
+ * be manually attached to a #WebKitWebViewGroup.
  * See also webkit_settings_new_with_settings().
  *
  * Returns: a new #WebKitSettings instance.
@@ -1103,7 +1099,7 @@ WebKitSettings* webkit_settings_new()
  *    %NULL-terminated
  *
  * Creates a new #WebKitSettings instance with the given settings. It must
- * be manually attached to a #WebKitWebView.
+ * be manually attached to a #WebKitWebViewGroup.
  *
  * Returns: a new #WebKitSettings instance.
  */

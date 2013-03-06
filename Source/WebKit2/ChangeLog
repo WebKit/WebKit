@@ -1,3 +1,105 @@
+2013-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [GTK] Add WebKitWebViewGroup to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=111265
+
+        Reviewed by Martin Robinson.
+
+        In the current API the settings are always shared by all web
+        views, because they are always created on the default page
+        group. This makes impossible to have different settings on
+        different web views. Expose the page group in the API,
+        so that users can create web views on a group different than the
+        default one to have their own settings.
+
+        * GNUmakefile.list.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitSettings.cpp:
+        (webkitSettingsGetPreferences): Helper private method to get the
+        WebPreferences wrapped by a WebKitSettings object.
+        * UIProcess/API/gtk/WebKitSettingsPrivate.h:
+        * UIProcess/API/gtk/WebKitWebContext.cpp:
+        (_WebKitWebContextPrivate): Add a default WebKitWebViewGroup.
+        (webkitWebContextCreatePageForWebView): Create the WebPageProxy
+        with the WebPageGroup of the given WebKitWebViewGroup.
+        (webkitWebContextGetDefaultWebViewGroup): Helper private method to
+        get the default WebKitWebViewGroup.
+        * UIProcess/API/gtk/WebKitWebContextPrivate.h:
+        * UIProcess/API/gtk/WebKitWebView.cpp:
+        (_WebKitWebViewPrivate): Add a WebKitWebViewGroup in case the view
+        is created with a group.
+        (webkitWebViewUpdateSettings): Keep a reference of the group
+        settings to be able to disconnect the signals when the settings
+        object is replaced in the view group and connect to the signals
+        for the custom settings.
+        (webkitWebViewSettingsChanged): Disconnect the signals for the
+        previous settings and set the new settings.
+        (webkitWebViewDisconnectSettingsChangedSignalHandler): Disconnect
+        notify::settings signal of WebKitWebViewGroup.
+        (webkitWebViewConstructed): Pass the current WebKitWebViewGroup to
+        webkitWebContextCreatePageForWebView().
+        (webkitWebViewSetProperty): Add setter for group property.
+        (webkitWebViewGetProperty): Add getter for group property.
+        (webkitWebViewDispose): Call
+        webkitWebViewDisconnectSettingsChangedSignalHandler().
+        (webkit_web_view_class_init): Add WebKitWebView:group property.
+        (webkitWebViewHandleAuthenticationChallenge): Use
+        webkit_web_view_get_settings().
+        (webkit_web_view_new_with_group): Create a new web view with the
+        given WebKitWebViewGroup.
+        (webkit_web_view_get_group): Return the current WebKitWebViewGroup
+        or the default one if the view was not created with
+        webkit_web_view_new_with_group().
+        (webkit_web_view_set_settings): Set the settings of the current
+        WebKitWebViewGroup.
+        (webkit_web_view_get_settings): Get the settings of the current
+        WebKitWebViewGroup.
+        (webkit_web_view_set_zoom_level): Use
+        webkit_web_view_get_settings().
+        (webkit_web_view_get_zoom_level): Ditto.
+        * UIProcess/API/gtk/WebKitWebView.h:
+        * UIProcess/API/gtk/WebKitWebViewGroup.cpp: Added.
+        (_WebKitWebViewGroupPrivate):
+        (webkitWebViewGroupSetProperty):
+        (webkitWebViewGroupGetProperty):
+        (webkitWebViewGroupConstructed):
+        (webkit_web_view_group_class_init):
+        (webkitWebViewGroupAttachSettingsToPageGroup): Set the
+        WebPreferences of the current WebKitSettings to the WebPageGroup.
+        (webkitWebViewGroupCreate): Create a new WebKitWebViewGroup for
+        the given WebPageGroup.
+        (webkitWebViewGroupGetPageGroup): Helper private method to get the
+        WebPageGroup wrapped by the WebKitWebViewGroup.
+        (webkit_web_view_group_new): Create a new WebKitWebViewGroup.
+        (webkit_web_view_group_get_name): Return the name of a
+        WebKitWebViewGroup.
+        (webkit_web_view_group_get_settings): Get the settins of a
+        WebKitWebViewGroup.
+        (webkit_web_view_group_set_settings): Set new settings of a
+        WebKitWebViewGroup.
+        * UIProcess/API/gtk/WebKitWebViewGroup.h: Added.
+        (_WebKitWebViewGroup):
+        (_WebKitWebViewGroupClass):
+        * UIProcess/API/gtk/WebKitWebViewGroupPrivate.h: Added.
+        * UIProcess/API/gtk/docs/webkit2gtk-docs.sgml: Add
+        WebKitWebViewGroup section.
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Add new symbols.
+        * UIProcess/API/gtk/docs/webkit2gtk.types: Add
+        webkit_web_view_group_get_type.
+        * UIProcess/API/gtk/tests/GNUmakefile.am: Add new files to
+        compilation.
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewSettings): We can't watch settings in the default view
+        group anymore, because they are not released with the web view but
+        with the web context that is freed after the Test destructor.
+        * UIProcess/API/gtk/tests/TestWebKitWebViewGroup.cpp: Added.
+        (testWebViewGroupDefault):
+        (testWebViewGroupNewGroup):
+        (testWebViewNewWithGroup):
+        (testWebViewGroupSettings):
+        (beforeAll):
+        (afterAll):
+        * UIProcess/API/gtk/webkit2.h: Include WebKitWebViewGroup.h.
+
 2013-03-05  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Add WebKitWebPage::send-request signal to WebKit2 GTK+ API

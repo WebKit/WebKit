@@ -31,6 +31,7 @@
 #include "WebKitPrivate.h"
 #include "WebKitURISchemeRequest.h"
 #include "WebKitWebContext.h"
+#include "WebKitWebViewGroup.h"
 #include "WebSoupRequestManagerProxy.h"
 
 WebKit::WebContext* webkitWebContextGetContext(WebKitWebContext*);
@@ -42,8 +43,9 @@ WebKit::WebSoupRequestManagerProxy* webkitWebContextGetRequestManager(WebKitWebC
 void webkitWebContextReceivedURIRequest(WebKitWebContext*, WebKitURISchemeRequest*);
 void webkitWebContextDidFailToLoadURIRequest(WebKitWebContext*, uint64_t requestID);
 void webkitWebContextDidFinishURIRequest(WebKitWebContext*, uint64_t requestID);
-void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*);
+void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, WebKitWebViewGroup*);
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
+WebKitWebViewGroup* webkitWebContextGetDefaultWebViewGroup(WebKitWebContext*);
 
 #endif // WebKitWebContextPrivate_h

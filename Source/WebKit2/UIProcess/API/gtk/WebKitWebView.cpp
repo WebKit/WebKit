@@ -45,7 +45,6 @@
 #include "WebKitPrivate.h"
 #include "WebKitResponsePolicyDecision.h"
 #include "WebKitScriptDialogPrivate.h"
-#include "WebKitSettingsPrivate.h"
 #include "WebKitUIClient.h"
 #include "WebKitURIRequestPrivate.h"
 #include "WebKitURIResponsePrivate.h"
@@ -53,6 +52,7 @@
 #include "WebKitWebInspectorPrivate.h"
 #include "WebKitWebResourcePrivate.h"
 #include "WebKitWebViewBasePrivate.h"
+#include "WebKitWebViewGroupPrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include "WebKitWindowPropertiesPrivate.h"
 #include <JavaScriptCore/APICast.h>
@@ -122,6 +122,7 @@ enum {
     PROP_0,
 
     PROP_WEB_CONTEXT,
+    PROP_GROUP,
     PROP_TITLE,
     PROP_ESTIMATED_LOAD_PROGRESS,
     PROP_FAVICON,
@@ -158,6 +159,8 @@ struct _WebKitWebViewPrivate {
 
     GRefPtr<WebKitBackForwardList> backForwardList;
     GRefPtr<WebKitSettings> settings;
+    unsigned long settingsChangedHandlerID;
+    GRefPtr<WebKitWebViewGroup> group;
     GRefPtr<WebKitWindowProperties> windowProperties;
 
     GRefPtr<GMainLoop> modalLoop;
@@ -356,10 +359,16 @@ static void faviconChangedCallback(WebKitFaviconDatabase* database, const char* 
     webkitWebViewUpdateFaviconURI(webView, faviconURI);
 }
 
-static void webkitWebViewSetSettings(WebKitWebView* webView, WebKitSettings* settings)
+static void webkitWebViewUpdateSettings(WebKitWebView* webView)
 {
-    webView->priv->settings = settings;
-    webkitSettingsAttachSettingsToPage(webView->priv->settings.get(), getPage(webView));
+    // We keep a ref of the current settings to disconnect the signals when settings change in the group.
+    webView->priv->settings = webkit_web_view_get_settings(webView);
+
+    WebKitSettings* settings = webView->priv->settings.get();
+    WebPageProxy* page = getPage(webView);
+    page->setCanRunModal(webkit_settings_get_allow_modal_dialogs(settings));
+    page->setCustomUserAgent(String::fromUTF8(webkit_settings_get_user_agent(settings)));
+
     g_signal_connect(settings, "notify::allow-modal-dialogs", G_CALLBACK(allowModalDialogsChanged), webView);
     g_signal_connect(settings, "notify::zoom-text-only", G_CALLBACK(zoomTextOnlyChanged), webView);
     g_signal_connect(settings, "notify::user-agent", G_CALLBACK(userAgentChanged), webView);
@@ -371,6 +380,20 @@ static void webkitWebViewDisconnectSettingsSignalHandlers(WebKitWebView* webView
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(allowModalDialogsChanged), webView);
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(zoomTextOnlyChanged), webView);
     g_signal_handlers_disconnect_by_func(settings, reinterpret_cast<gpointer>(userAgentChanged), webView);
+}
+
+static void webkitWebViewSettingsChanged(WebKitWebViewGroup* group, GParamSpec*, WebKitWebView* webView)
+{
+    webkitWebViewDisconnectSettingsSignalHandlers(webView);
+    webkitWebViewUpdateSettings(webView);
+}
+
+static void webkitWebViewDisconnectSettingsChangedSignalHandler(WebKitWebView* webView)
+{
+    WebKitWebViewPrivate* priv = webView->priv;
+    if (priv->settingsChangedHandlerID)
+        g_signal_handler_disconnect(webkit_web_view_get_group(webView), priv->settingsChangedHandlerID);
+    priv->settingsChangedHandlerID = 0;
 }
 
 static void webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(WebKitWebView* webView)
@@ -455,7 +478,7 @@ static void webkitWebViewConstructed(GObject* object)
 
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     WebKitWebViewPrivate* priv = webView->priv;
-    webkitWebContextCreatePageForWebView(priv->context, webView);
+    webkitWebContextCreatePageForWebView(priv->context, webView, priv->group.get());
 
     webkitWebViewBaseSetDownloadRequestHandler(WEBKIT_WEB_VIEW_BASE(webView), webkitWebViewHandleDownloadRequest);
 
@@ -469,8 +492,9 @@ static void webkitWebViewConstructed(GObject* object)
     priv->backForwardList = adoptGRef(webkitBackForwardListCreate(getPage(webView)->backForwardList()));
     priv->windowProperties = adoptGRef(webkitWindowPropertiesCreate());
 
-    GRefPtr<WebKitSettings> settings = adoptGRef(webkit_settings_new());
-    webkitWebViewSetSettings(webView, settings.get());
+    webkitWebViewUpdateSettings(webView);
+    priv->settingsChangedHandlerID =
+        g_signal_connect(webkit_web_view_get_group(webView), "notify::settings", G_CALLBACK(webkitWebViewSettingsChanged), webView);
 }
 
 static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue* value, GParamSpec* paramSpec)
@@ -481,6 +505,11 @@ static void webkitWebViewSetProperty(GObject* object, guint propId, const GValue
     case PROP_WEB_CONTEXT: {
         gpointer webContext = g_value_get_object(value);
         webView->priv->context = webContext ? WEBKIT_WEB_CONTEXT(webContext) : webkit_web_context_get_default();
+        break;
+    }
+    case PROP_GROUP: {
+        gpointer group = g_value_get_object(value);
+        webView->priv->group = group ? WEBKIT_WEB_VIEW_GROUP(group) : 0;
         break;
     }
     case PROP_ZOOM_LEVEL:
@@ -501,6 +530,9 @@ static void webkitWebViewGetProperty(GObject* object, guint propId, GValue* valu
     switch (propId) {
     case PROP_WEB_CONTEXT:
         g_value_take_object(value, webView->priv->context);
+        break;
+    case PROP_GROUP:
+        g_value_set_object(value, webkit_web_view_get_group(webView));
         break;
     case PROP_TITLE:
         g_value_set_string(value, webView->priv->title.data());
@@ -533,6 +565,7 @@ static void webkitWebViewDispose(GObject* object)
     WebKitWebView* webView = WEBKIT_WEB_VIEW(object);
     webkitWebViewCancelFaviconRequest(webView);
     webkitWebViewDisconnectMainResourceResponseChangedSignalHandler(webView);
+    webkitWebViewDisconnectSettingsChangedSignalHandler(webView);
     webkitWebViewDisconnectSettingsSignalHandlers(webView);
     webkitWebViewDisconnectFaviconDatabaseSignalHandlers(webView);
 
@@ -578,6 +611,20 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
                                                         _("The web context for the view"),
                                                         WEBKIT_TYPE_WEB_CONTEXT,
                                                         static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
+    /**
+     * WebKitWebView:group:
+     *
+     * The #WebKitWebViewGroup of the view.
+     */
+    g_object_class_install_property(
+        gObjectClass,
+        PROP_GROUP,
+        g_param_spec_object(
+            "group",
+            _("WebView Group"),
+            _("The WebKitWebViewGroup of the view"),
+            WEBKIT_TYPE_WEB_VIEW_GROUP,
+            static_cast<GParamFlags>(WEBKIT_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY)));
 
     /**
      * WebKitWebView:title:
@@ -1669,7 +1716,7 @@ void webkitWebViewHandleAuthenticationChallenge(WebKitWebView* webView, Authenti
     WebKit2GtkAuthenticationDialog* dialog;
     GtkAuthenticationDialog::CredentialStorageMode credentialStorageMode;
 
-    if (webkit_settings_get_enable_private_browsing(webView->priv->settings.get()))
+    if (webkit_settings_get_enable_private_browsing(webkit_web_view_get_settings(webView)))
         credentialStorageMode = GtkAuthenticationDialog::DisallowPersistentStorage;
     else
         credentialStorageMode = GtkAuthenticationDialog::AllowPersistentStorage;
@@ -1687,8 +1734,9 @@ void webkitWebViewInsecureContentDetected(WebKitWebView* webView, WebKitInsecure
 /**
  * webkit_web_view_new:
  *
- * Creates a new #WebKitWebView with the default #WebKitWebContext.
- * See also webkit_web_view_new_with_context().
+ * Creates a new #WebKitWebView with the default #WebKitWebContext and the
+ * default #WebKitWebViewGroup.
+ * See also webkit_web_view_new_with_context() and webkit_web_view_new_with_group().
  *
  * Returns: The newly created #WebKitWebView widget
  */
@@ -1701,7 +1749,9 @@ GtkWidget* webkit_web_view_new()
  * webkit_web_view_new_with_context:
  * @context: the #WebKitWebContext to be used by the #WebKitWebView
  *
- * Creates a new #WebKitWebView with the given #WebKitWebContext.
+ * Creates a new #WebKitWebView with the given #WebKitWebContext and the
+ * default #WebKitWebViewGroup.
+ * See also webkit_web_view_new_with_group().
  *
  * Returns: The newly created #WebKitWebView widget
  */
@@ -1710,6 +1760,23 @@ GtkWidget* webkit_web_view_new_with_context(WebKitWebContext* context)
     g_return_val_if_fail(WEBKIT_IS_WEB_CONTEXT(context), 0);
 
     return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "web-context", context, NULL));
+}
+
+/**
+ * webkit_web_view_new_with_group:
+ * @group: a #WebKitWebViewGroup
+ *
+ * Creates a new #WebKitWebView with the given #WebKitWebViewGroup.
+ * The view will be part of @group and it will be affected by the
+ * group properties like the settings.
+ *
+ * Returns: The newly created #WebKitWebView widget
+ */
+GtkWidget* webkit_web_view_new_with_group(WebKitWebViewGroup* group)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW_GROUP(group), 0);
+
+    return GTK_WIDGET(g_object_new(WEBKIT_TYPE_WEB_VIEW, "group", group, NULL));
 }
 
 /**
@@ -1725,6 +1792,24 @@ WebKitWebContext* webkit_web_view_get_context(WebKitWebView *webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
 
     return webView->priv->context;
+}
+
+/**
+ * webkit_web_view_get_group:
+ * @web_view: a #WebKitWebView
+ *
+ * Gets the group @web_view belongs to.
+ *
+ * Returns: (transfer none): the #WebKitWebViewGroup to which the view belongs
+ */
+WebKitWebViewGroup* webkit_web_view_get_group(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
+
+    if (webView->priv->group)
+        return webView->priv->group.get();
+
+    return webkitWebContextGetDefaultWebViewGroup(webView->priv->context);
 }
 
 /**
@@ -2161,22 +2246,16 @@ void webkit_web_view_go_to_back_forward_list_item(WebKitWebView* webView, WebKit
  * @web_view: a #WebKitWebView
  * @settings: a #WebKitSettings
  *
- * Sets the #WebKitSettings to be applied to @web_view. The
- * existing #WebKitSettings of @web_view will be replaced by
- * @settings. New settings are applied immediately on @web_view.
- * The same #WebKitSettings object can be shared
- * by multiple #WebKitWebView<!-- -->s.
+ * Sets the #WebKitSettings to be applied to @web_view.
+ * This is a convenient method to set new settings to the
+ * #WebKitWebViewGroup @web_view belongs to.
+ * New settings are applied immediately on all #WebKitWebView<!-- -->s
+ * in the @web_view group.
+ * See also webkit_web_view_group_set_settings().
  */
 void webkit_web_view_set_settings(WebKitWebView* webView, WebKitSettings* settings)
 {
-    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-    g_return_if_fail(WEBKIT_IS_SETTINGS(settings));
-
-    if (webView->priv->settings == settings)
-        return;
-
-    webkitWebViewDisconnectSettingsSignalHandlers(webView);
-    webkitWebViewSetSettings(webView, settings);
+    webkit_web_view_group_set_settings(webkit_web_view_get_group(webView), settings);
 }
 
 /**
@@ -2184,26 +2263,19 @@ void webkit_web_view_set_settings(WebKitWebView* webView, WebKitSettings* settin
  * @web_view: a #WebKitWebView
  *
  * Gets the #WebKitSettings currently applied to @web_view.
- * If no other #WebKitSettings have been explicitly applied to
- * @web_view with webkit_web_view_set_settings(), the default
- * #WebKitSettings will be returned. This method always returns
- * a valid #WebKitSettings object.
- * To modify any of the @web_view settings, you can either create
- * a new #WebKitSettings object with webkit_settings_new(), setting
- * the desired preferences, and then replace the existing @web_view
- * settings with webkit_web_view_set_settings() or get the existing
- * @web_view settings and update it directly. #WebKitSettings objects
- * can be shared by multiple #WebKitWebView<!-- -->s, so modifying
+ * This is a convenient method to get the settings of the
+ * #WebKitWebViewGroup @web_view belongs to.
+ * #WebKitSettings objects are shared by all the #WebKitWebView<!-- -->s
+ * in the same #WebKitWebViewGroup, so modifying
  * the settings of a #WebKitWebView would affect other
- * #WebKitWebView<!-- -->s using the same #WebKitSettings.
+ * #WebKitWebView<!-- -->s of the same group.
+ * See also webkit_web_view_group_get_settings().
  *
  * Returns: (transfer none): the #WebKitSettings attached to @web_view
  */
 WebKitSettings* webkit_web_view_get_settings(WebKitWebView* webView)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-
-    return webView->priv->settings.get();
+    return webkit_web_view_group_get_settings(webkit_web_view_get_group(webView));
 }
 
 /**
@@ -2238,7 +2310,7 @@ void webkit_web_view_set_zoom_level(WebKitWebView* webView, gdouble zoomLevel)
         return;
 
     WebPageProxy* page = getPage(webView);
-    if (webkit_settings_get_zoom_text_only(webView->priv->settings.get()))
+    if (webkit_settings_get_zoom_text_only(webkit_web_view_get_settings(webView)))
         page->setTextZoomFactor(zoomLevel);
     else
         page->setPageZoomFactor(zoomLevel);
@@ -2259,7 +2331,7 @@ gdouble webkit_web_view_get_zoom_level(WebKitWebView* webView)
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 1);
 
     WebPageProxy* page = getPage(webView);
-    gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(webView->priv->settings.get());
+    gboolean zoomTextOnly = webkit_settings_get_zoom_text_only(webkit_web_view_get_settings(webView));
     return zoomTextOnly ? page->textZoomFactor() : page->pageZoomFactor();
 }
 

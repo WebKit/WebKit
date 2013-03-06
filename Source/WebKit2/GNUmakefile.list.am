@@ -128,6 +128,7 @@ webkit2gtk_h_api += \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebResource.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebView.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewBase.h \
+	$(WebKit2)/UIProcess/API/gtk/WebKitWebViewGroup.h \
 	$(WebKit2)/UIProcess/API/gtk/WebKitWindowProperties.h \
 	$(WebKit2)/UIProcess/API/gtk/webkit2.h
 
@@ -770,6 +771,9 @@ webkit2_sources += \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBaseAccessible.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBaseAccessible.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBasePrivate.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewGroup.h \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewGroup.cpp \
+	Source/WebKit2/UIProcess/API/gtk/WebKitWebViewGroupPrivate.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWindowProperties.cpp \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWindowProperties.h \
 	Source/WebKit2/UIProcess/API/gtk/WebKitWindowPropertiesPrivate.h \
