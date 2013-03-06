@@ -2179,6 +2179,7 @@ static v8::Handle<v8::Value> ${v8InterfaceName}ConstructorCallback(const v8::Arg
     ${maybeObserveFeature}
 END
     push(@implContent, GenerateConstructorHeader());
+    AddToImplIncludes("V8Document.h");
     push(@implContent, <<END);
     Document* document = currentDocument(BindingState::instance());
 
