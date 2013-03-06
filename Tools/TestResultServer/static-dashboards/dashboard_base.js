@@ -219,40 +219,6 @@ function $(id)
     return document.getElementById(id);
 }
 
-function stringContains(a, b)
-{
-    return a.indexOf(b) != -1;
-}
-
-function caseInsensitiveContains(a, b)
-{
-    return a.match(new RegExp(b, 'i'));
-}
-
-function startsWith(a, b)
-{
-    return a.indexOf(b) == 0;
-}
-
-function endsWith(a, b)
-{
-    return a.lastIndexOf(b) == a.length - b.length;
-}
-
-function isValidName(str)
-{
-    return str.match(/[A-Za-z0-9\-\_,]/);
-}
-
-function trimString(str)
-{
-    return str.replace(/^\s+|\s+$/g, '');
-}
-
-function collapseWhitespace(str)
-{
-    return str.replace(/\s+/g, ' ');
-}
 
 function validateParameter(state, key, value, validateFn)
 {
@@ -467,12 +433,12 @@ function flattenTrie(trie, prefix)
 
 function isTreeMap()
 {
-    return endsWith(window.location.pathname, 'treemap.html');
+    return string.endsWith(window.location.pathname, 'treemap.html');
 }
 
 function isFlakinessDashboard()
 {
-    return endsWith(window.location.pathname, 'flakiness_dashboard.html');
+    return string.endsWith(window.location.pathname, 'flakiness_dashboard.html');
 }
 
 // String of error messages to display to the user.

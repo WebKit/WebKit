@@ -166,7 +166,7 @@ function handleValidHashParameter(key, value)
     case 'tests':
         validateParameter(g_currentState, key, value,
             function() {
-                return isValidName(value);
+                return string.isValidName(value);
             });
         return true;
 
@@ -332,56 +332,56 @@ function createResultsObjectForTest(test, builder)
 function matchingElement(stringToMatch, elementsMap)
 {
     for (var element in elementsMap) {
-        if (stringContains(stringToMatch, elementsMap[element]))
+        if (string.contains(stringToMatch, elementsMap[element]))
             return element;
     }
 }
 
 function determineWKPlatform(builderName, basePlatform)
 {
-    var isWK2Builder = stringContains(builderName, 'WK2') || stringContains(builderName, 'WEBKIT2');
+    var isWK2Builder = string.contains(builderName, 'WK2') || string.contains(builderName, 'WEBKIT2');
     return basePlatform + (isWK2Builder ? '_WK2' : '_WK1');
 }
 
 function nonChromiumPlatform(builderNameUpperCase)
 {
-    if (stringContains(builderNameUpperCase, 'WINDOWS 7'))
+    if (string.contains(builderNameUpperCase, 'WINDOWS 7'))
         return 'APPLE_WIN_WIN7';
-    if (stringContains(builderNameUpperCase, 'WINDOWS XP'))
+    if (string.contains(builderNameUpperCase, 'WINDOWS XP'))
         return 'APPLE_WIN_XP';
-    if (stringContains(builderNameUpperCase, 'QT LINUX'))
+    if (string.contains(builderNameUpperCase, 'QT LINUX'))
         return 'QT_LINUX';
 
-    if (stringContains(builderNameUpperCase, 'LION'))
+    if (string.contains(builderNameUpperCase, 'LION'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_LION');
-    if (stringContains(builderNameUpperCase, 'SNOWLEOPARD'))
+    if (string.contains(builderNameUpperCase, 'SNOWLEOPARD'))
         return determineWKPlatform(builderNameUpperCase, 'APPLE_MAC_SNOWLEOPARD');
-    if (stringContains(builderNameUpperCase, 'GTK LINUX'))
+    if (string.contains(builderNameUpperCase, 'GTK LINUX'))
         return determineWKPlatform(builderNameUpperCase, 'GTK_LINUX');
-    if (stringContains(builderNameUpperCase, 'EFL'))
+    if (string.contains(builderNameUpperCase, 'EFL'))
         return determineWKPlatform(builderNameUpperCase, 'EFL_LINUX');
 }
 
 function chromiumPlatform(builderNameUpperCase)
 {
-    if (stringContains(builderNameUpperCase, 'MAC')) {
-        if (stringContains(builderNameUpperCase, '10.7'))
+    if (string.contains(builderNameUpperCase, 'MAC')) {
+        if (string.contains(builderNameUpperCase, '10.7'))
             return 'CHROMIUM_LION';
         // The webkit.org 'Chromium Mac Release (Tests)' bot runs SnowLeopard.
         return 'CHROMIUM_SNOWLEOPARD';
     }
-    if (stringContains(builderNameUpperCase, 'WIN7'))
+    if (string.contains(builderNameUpperCase, 'WIN7'))
         return 'CHROMIUM_WIN7';
-    if (stringContains(builderNameUpperCase, 'VISTA'))
+    if (string.contains(builderNameUpperCase, 'VISTA'))
         return 'CHROMIUM_VISTA';
-    if (stringContains(builderNameUpperCase, 'WIN') || stringContains(builderNameUpperCase, 'XP'))
+    if (string.contains(builderNameUpperCase, 'WIN') || string.contains(builderNameUpperCase, 'XP'))
         return 'CHROMIUM_XP';
-    if (stringContains(builderNameUpperCase, 'LINUX'))
+    if (string.contains(builderNameUpperCase, 'LINUX'))
         return 'CHROMIUM_LUCID';
-    if (stringContains(builderNameUpperCase, 'ANDROID'))
+    if (string.contains(builderNameUpperCase, 'ANDROID'))
         return 'CHROMIUM_ANDROID';
     // The interactive bot is XP, but doesn't have an OS in it's name.
-    if (stringContains(builderNameUpperCase, 'INTERACTIVE'))
+    if (string.contains(builderNameUpperCase, 'INTERACTIVE'))
         return 'CHROMIUM_XP';
 }
 
@@ -392,7 +392,7 @@ function platformAndBuildType(builderName)
         var builderNameUpperCase = builderName.toUpperCase();
         
         var platform = '';
-        if (isLayoutTestResults() && currentBuilderGroupName() == '@ToT - webkit.org' && !stringContains(builderNameUpperCase, 'CHROMIUM'))
+        if (isLayoutTestResults() && currentBuilderGroupName() == '@ToT - webkit.org' && !string.contains(builderNameUpperCase, 'CHROMIUM'))
             platform = nonChromiumPlatform(builderNameUpperCase);
         else
             platform = chromiumPlatform(builderNameUpperCase);
@@ -400,7 +400,7 @@ function platformAndBuildType(builderName)
         if (!platform)
             console.error('Could not resolve platform for builder: ' + builderName);
 
-        var buildType = stringContains(builderNameUpperCase, 'DBG') || stringContains(builderNameUpperCase, 'DEBUG') ? 'DEBUG' : 'RELEASE';
+        var buildType = string.contains(builderNameUpperCase, 'DBG') || string.contains(builderNameUpperCase, 'DEBUG') ? 'DEBUG' : 'RELEASE';
         g_perBuilderPlatformAndBuildType[builderName] = {platform: platform, buildType: buildType};
     }
     return g_perBuilderPlatformAndBuildType[builderName];
@@ -509,7 +509,7 @@ function substringList()
 {
     // Convert windows slashes to unix slashes.
     var tests = g_currentState.tests.replace(/\\/g, '/');
-    var separator = stringContains(tests, ' ') ? ' ' : ',';
+    var separator = string.contains(tests, ' ') ? ' ' : ',';
     var testList = tests.split(separator);
 
     if (isLayoutTestResults())
@@ -541,7 +541,7 @@ function individualTestsForSubstringList()
 
         var hasAnyMatches = false;
         getAllTestsTrie().forEach(function(triePath) {
-            if (caseInsensitiveContains(triePath, path)) {
+            if (string.caseInsensitiveContains(triePath, path)) {
                 testsMap[triePath] = 1;
                 hasAnyMatches = true;
             }
@@ -649,7 +649,7 @@ function filterBugs(modifiers)
         return {bugs: '', modifiers: modifiers};
     for (var j = 0; j < bugs.length; j++)
         modifiers = modifiers.replace(bugs[j], '');
-    return {bugs: bugs.join(' '), modifiers: collapseWhitespace(trimString(modifiers))};
+    return {bugs: bugs.join(' '), modifiers: string.collapseWhitespace(string.trimString(modifiers))};
 }
 
 function populateExpectationsData(resultsObject)
@@ -663,7 +663,7 @@ function populateExpectationsData(resultsObject)
     var filteredModifiers = filterBugs(expectations.modifiers);
     resultsObject.modifiers = filteredModifiers.modifiers;
     resultsObject.bugs = filteredModifiers.bugs;
-    resultsObject.isWontFixSkip = stringContains(expectations.modifiers, 'WONTFIX') || stringContains(expectations.modifiers, 'SKIP'); 
+    resultsObject.isWontFixSkip = string.contains(expectations.modifiers, 'WONTFIX') || string.contains(expectations.modifiers, 'SKIP'); 
 }
 
 function platformObjectForName(platformName)
@@ -692,8 +692,8 @@ function getParsedExpectations(data)
     var expectations = [];
     var lines = data.split('\n');
     lines.forEach(function(line) {
-        line = trimString(line);
-        if (!line || startsWith(line, '#'))
+        line = string.trimString(line);
+        if (!line || string.startsWith(line, '#'))
             return;
 
         // This code mimics _tokenize_line_using_new_format() in
@@ -902,8 +902,8 @@ function processMissingTestsWithExpectations(builder, platform, buildType)
 
         // Test has expectations, but no result in the builders results.
         // This means it's either SKIP or passes on all builds.
-        if (!allTestsForPlatformAndBuildType[test] && !stringContains(expectations.modifiers, 'WONTFIX')) {
-            if (stringContains(expectations.modifiers, 'SKIP'))
+        if (!allTestsForPlatformAndBuildType[test] && !string.contains(expectations.modifiers, 'WONTFIX')) {
+            if (string.contains(expectations.modifiers, 'SKIP'))
                 skipped.push(test);
             else if (!expectations.expectations.match(/^\s*PASS\s*$/)) {
                 // Don't show tests expected to always pass. This is used in ways like
@@ -1072,7 +1072,7 @@ function processMissingAndExtraExpectations(resultsForTest)
                     }
                 }
 
-                return element && !resultsMap[element] && !stringContains(element, 'BUG');
+                return element && !resultsMap[element] && !string.contains(element, 'BUG');
             });
 
         for (var result in resultsMap) {
@@ -1112,9 +1112,9 @@ function processMissingAndExtraExpectations(resultsForTest)
         // hundred runs. It's not worth the manual maintenance effort.
         // Also, if a test times out, then it should not be marked as slow.
         var minTimeForNeedsSlow = isDebug(resultsForTest.builder) ? 2 : 1;
-        if (isSlowTest(resultsForTest) && !resultsMap['TIMEOUT'] && (!resultsForTest.modifiers || !stringContains(resultsForTest.modifiers, 'SLOW')))
+        if (isSlowTest(resultsForTest) && !resultsMap['TIMEOUT'] && (!resultsForTest.modifiers || !string.contains(resultsForTest.modifiers, 'SLOW')))
             missingExpectations.push('SLOW');
-        else if (isFastTest(resultsForTest) && resultsForTest.modifiers && stringContains(resultsForTest.modifiers, 'SLOW'))
+        else if (isFastTest(resultsForTest) && resultsForTest.modifiers && string.contains(resultsForTest.modifiers, 'SLOW'))
             extraExpectations.push('SLOW');
 
         // If there are no missing results or modifiers besides build
@@ -1412,7 +1412,7 @@ function htmlForSingleTestRow(test)
     var html = '';
     for (var i = 0; i < headers.length; i++) {
         var header = headers[i];
-        if (startsWith(header, 'test') || startsWith(header, 'builder')) {
+        if (string.startsWith(header, 'test') || string.startsWith(header, 'builder')) {
             // If isCrossBuilderView() is true, we're just viewing a single test
             // with results for many builders, so the first column is builder names
             // instead of test paths.
@@ -1420,15 +1420,15 @@ function htmlForSingleTestRow(test)
             var testCellHTML = isCrossBuilderView() ? test.builder : '<span class="link" onclick="setQueryParameter(\'tests\',\'' + test.test +'\');">' + test.test + '</span>';
 
             html += '<tr><td class="' + testCellClassName + '">' + testCellHTML;
-        } else if (startsWith(header, 'bugs'))
+        } else if (string.startsWith(header, 'bugs'))
             html += '<td class=options-container>' + (test.bugs ? htmlForBugs(test.bugs) : createBugHTML(test));
-        else if (startsWith(header, 'modifiers'))
+        else if (string.startsWith(header, 'modifiers'))
             html += '<td class=options-container>' + test.modifiers;
-        else if (startsWith(header, 'expectations'))
+        else if (string.startsWith(header, 'expectations'))
             html += '<td class=options-container>' + test.expectations;
-        else if (startsWith(header, 'slowest'))
+        else if (string.startsWith(header, 'slowest'))
             html += '<td>' + (test.slowestTime ? test.slowestTime + 's' : '');
-        else if (startsWith(header, 'flakiness'))
+        else if (string.startsWith(header, 'flakiness'))
             html += htmlForTestResults(test);
     }
     return html;
@@ -1582,7 +1582,7 @@ function realModifiers(modifierString)
 {
     var modifiers = modifierString.split(' ');;
     return modifiers.filter(function(modifier) {
-        if (modifier in BUILD_TYPES || startsWith(modifier, 'BUG'))
+        if (modifier in BUILD_TYPES || string.startsWith(modifier, 'BUG'))
             return false;
 
         var matchesPlatformOrUnion = false;
@@ -1936,14 +1936,14 @@ function addExpectationItem(expectationsContainers, parentContainer, platform, p
     };
 
     var url = base + platformPart + path;
-    if (isImage || !startsWith(base, 'http://svn.webkit.org')) {
+    if (isImage || !string.startsWith(base, 'http://svn.webkit.org')) {
         var dummyNode = document.createElement(isImage ? 'img' : 'script');
         dummyNode.src = url;
         dummyNode.onload = function() {
             var item;
             if (isImage) {
                 item = dummyNode;
-                if (startsWith(base, 'http://svn.webkit.org'))
+                if (string.startsWith(base, 'http://svn.webkit.org'))
                     maybeAddPngChecksum(item, url);
             } else {
                 item = document.createElement('iframe');
@@ -2037,11 +2037,11 @@ function consolidateUsedPlatforms(container)
         platforms['WIN'] = {};
         platforms['LINUX'] = {};
         allPlatforms.forEach(function(platform) {
-            if (startsWith(platform, 'MAC'))
+            if (string.startsWith(platform, 'MAC'))
                 platforms['MAC'][platform] = 1;
-            else if (startsWith(platform, 'WIN'))
+            else if (string.startsWith(platform, 'WIN'))
                 platforms['WIN'][platform] = 1;
-            else if (startsWith(platform, 'LINUX'))
+            else if (string.startsWith(platform, 'LINUX'))
                 platforms['LINUX'][platform] = 1;
         });
 
@@ -2055,7 +2055,7 @@ function consolidateUsedPlatforms(container)
                 var nodesToRemove = [];
                 for (var j = 0, usedPlatformsLength = usedPlatforms.length; j < usedPlatformsLength; j++) {
                     var usedPlatform = usedPlatforms[j];
-                    if (startsWith(usedPlatform.textContent, platform))
+                    if (string.startsWith(usedPlatform.textContent, platform))
                         nodesToRemove.push(usedPlatform);
                 }
 
@@ -2084,11 +2084,11 @@ function expectationsTitle(platform, path, builder)
     var innerHTML;
     if (builder) {
         var resultsType;
-        if (endsWith(path, '-crash-log.txt'))
+        if (string.endsWith(path, '-crash-log.txt'))
             resultsType = 'STACKTRACE';
-        else if (endsWith(path, '-actual.txt') || endsWith(path, '-actual.png'))
+        else if (string.endsWith(path, '-actual.txt') || string.endsWith(path, '-actual.png'))
             resultsType = 'ACTUAL RESULTS';
-        else if (endsWith(path, '-wdiff.html'))
+        else if (string.endsWith(path, '-wdiff.html'))
             resultsType = 'WDIFF';
         else
             resultsType = 'DIFF';

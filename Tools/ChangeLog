@@ -1,3 +1,38 @@
+2013-03-05  Julie Parent  <jparent@chromium.org>
+        Dashboard cleanup: move string utilities into their own namespace.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=111485
+
+        Reviewed by Ojan Vafai.
+        
+        One of many pieces to clean up dashboard_base.
+        
+        Moves string utility functions into separate file (string.js) and into their own namespace rather than cluttering up the global scope.
+
+        * TestResultServer/static-dashboards/aggregate_results.html:
+        * TestResultServer/static-dashboards/dashboard_base.js:
+        (isTreeMap):
+        (isFlakinessDashboard):
+        * TestResultServer/static-dashboards/flakiness_dashboard.html:
+        * TestResultServer/static-dashboards/flakiness_dashboard.js:
+        (determineWKPlatform):
+        (chromiumPlatform):
+        (platformAndBuildType):
+        (substringList):
+        (individualTestsForSubstringList):
+        (filterBugs):
+        (populateExpectationsData):
+        (processMissingTestsWithExpectations):
+        (processMissingAndExtraExpectations):
+        (htmlForSingleTestRow):
+        (.dummyNode.onload):
+        (expectationsTitle):
+        * TestResultServer/static-dashboards/run-embedded-unittests.html:
+        * TestResultServer/static-dashboards/run-unittests.html:
+        * TestResultServer/static-dashboards/string.js: Added.
+        * TestResultServer/static-dashboards/timeline_explorer.html:
+        * TestResultServer/static-dashboards/treemap.html:
+
 2013-03-05  Ryuan Choi  <ryuan.choi@samsung.com>
 
         [EFL] Build break with latest EFL libraries
