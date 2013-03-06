@@ -58,7 +58,6 @@ public:
         // Now find the roots:
         // - Nodes that are must-generate.
         // - Nodes that are reachable from type checks.
-        // - Nodes that are reachable from SetLocals.
         // Set their ref counts to 1 and put them on the worklist.
         for (BlockIndex blockIndex = 0; blockIndex < m_graph.m_blocks.size(); ++blockIndex) {
             BasicBlock* block = m_graph.m_blocks[blockIndex].get();

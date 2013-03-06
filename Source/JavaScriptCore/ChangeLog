@@ -1,3 +1,10 @@
+2013-03-05  Filip Pizlo  <fpizlo@apple.com>
+
+        Unreviewed, fix an incorrect comment. The comment was a holdover from a work-in-progress version of this code.
+
+        * dfg/DFGDCEPhase.cpp:
+        (JSC::DFG::DCEPhase::run):
+
 2013-03-04  Filip Pizlo  <fpizlo@apple.com>
 
         DFG DCE might eliminate checks unsoundly
