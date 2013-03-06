@@ -204,6 +204,10 @@ function clearAllCookies()
         var cookieName = cookieString.substr(0, cookieString.indexOf("=") || cookieString.length());
         cookies.push(cookieName);
         clearCookies();
+
+        // In case clearCookies.cgi failed, for example,
+        // the domain/path do not match exactly:
+        document.cookie = cookieName + "=;Max-Age=0";
     }
 }
 

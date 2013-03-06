@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-static HashMap<String, String> cookieJar;
-
 static void readCurlCookieToken(const char*& cookie, String& token)
 {
     // Read the next token from a cookie with the Netscape cookie format.
@@ -69,6 +67,10 @@ static void addMatchingCurlCookie(const char* cookie, const String& domain, cons
     readCurlCookieToken(cookie, cookieDomain);
 
     bool subDomain = false;
+
+    // HttpOnly cookie entries begin with "#HttpOnly_".
+    if (cookieDomain.startsWith("#HttpOnly_"))
+        return;
 
     if (cookieDomain[0] == '.') {
         // Check if domain is a subdomain of the domain in the cookie.
@@ -119,10 +121,92 @@ static void addMatchingCurlCookie(const char* cookie, const String& domain, cons
     cookies = cookies + strName + "=" + strValue + "; ";
 }
 
+static String getNetscapeCookieFormat(const KURL& url, const String& value)
+{
+    // Constructs a cookie string in Netscape Cookie file format.
+
+    if (value.isEmpty())
+        return "";
+
+    String valueStr;
+    if (value.is8Bit())
+        valueStr = value;
+    else
+        valueStr = String::make8BitFrom16BitSource(value.characters16(), value.length());
+
+    Vector<String> attributes;
+    valueStr.split(';', false, attributes);
+
+    if (!attributes.size())
+        return "";
+
+    // First attribute should be <cookiename>=<cookievalue>
+    String cookieName, cookieValue;
+    Vector<String>::iterator attribute = attributes.begin();
+    if (attribute->contains('=')) {
+        Vector<String> nameValuePair;
+        attribute->split('=', true, nameValuePair);
+        cookieName = nameValuePair[0];
+        cookieValue = nameValuePair[1];
+    } else {
+        // According to RFC6265 we should ignore the entire
+        // set-cookie string now, but other browsers appear
+        // to treat this as <cookiename>=<empty>
+        cookieName = *attribute;
+    }
+    
+    int expires = 0;
+    String secure = "FALSE";
+    String path = url.baseAsString().substring(url.pathStart());
+    if (path.length() > 1 && path.endsWith('/'))
+        path.remove(path.length() - 1);
+    String domain = url.host();
+
+    // Iterate through remaining attributes
+    for (++attribute; attribute != attributes.end(); ++attribute) {
+        if (attribute->contains('=')) {
+            Vector<String> keyValuePair;
+            attribute->split('=', true, keyValuePair);
+            String key = keyValuePair[0].stripWhiteSpace().lower();
+            String val = keyValuePair[1].stripWhiteSpace();
+            if (key == "expires") {
+                CString dateStr(reinterpret_cast<const char*>(val.characters8()), val.length());
+                expires = WTF::parseDateFromNullTerminatedCharacters(dateStr.data()) / WTF::msPerSecond;
+            } else if (key == "max-age")
+                expires = time(0) + val.toInt();
+            else if (key == "domain") 
+                domain = val;
+            else if (key == "path") 
+                path = val;
+        } else {
+            String key = attribute->stripWhiteSpace().lower();
+            if (key == "secure")
+                secure = "TRUE";
+        }
+    }
+    
+    String allowSubdomains = domain.startsWith('.') ? "TRUE" : "FALSE";
+    String expiresStr = String::number(expires);
+
+    int finalStringLength = domain.length() + path.length() + expiresStr.length() + cookieName.length();
+    finalStringLength += cookieValue.length() + secure.length() + allowSubdomains.length();
+    finalStringLength += 6; // Account for \t separators.
+    
+    StringBuilder cookieStr;
+    cookieStr.reserveCapacity(finalStringLength);
+    cookieStr.append(domain + "\t");
+    cookieStr.append(allowSubdomains + "\t");
+    cookieStr.append(path + "\t");
+    cookieStr.append(secure + "\t");
+    cookieStr.append(expiresStr + "\t");
+    cookieStr.append(cookieName + "\t");
+    cookieStr.append(cookieValue);
+
+    return cookieStr.toString();
+}
+
 void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& url, const String& value)
 {
-    cookieJar.set(url.string(), value);
-
     CURL* curl = curl_easy_init();
 
     if (!curl)
@@ -135,17 +219,11 @@ void setCookiesFromDOM(const NetworkStorageSession&, const KURL&, const KURL& ur
     curl_easy_setopt(curl, CURLOPT_COOKIEFILE, cookieJarFileName);
     curl_easy_setopt(curl, CURLOPT_SHARE, curlsh);
 
-    String cookie("Set-Cookie: ");
-    if (value.is8Bit())
-        cookie.append(value);
-    else
-        cookie.append(String::make8BitFrom16BitSource(value.characters16(), value.length()));
-
-    if (cookie.find(String("domain")) == notFound) {
-        // If no domain is set, set domain and path from url.
-        cookie.append(String("; domain=") + url.host());
-        cookie.append(String("; path=") + url.path());
-    }
+    // CURL accepts cookies in either Set-Cookie or Netscape file format.
+    // However with Set-Cookie format, there is no way to specify that we
+    // should not allow cookies to be read from subdomains, which is the
+    // required behavior if the domain field is not explicity specified.
+    String cookie = getNetscapeCookieFormat(url, value);
 
     CString strCookie(reinterpret_cast<const char*>(cookie.characters8()), cookie.length());
 
@@ -192,7 +270,7 @@ String cookiesForDOM(const NetworkStorageSession&, const KURL&, const KURL& url)
 String cookieRequestHeaderFieldValue(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& url)
 {
     // FIXME: include HttpOnly cookie.
-    return cookieJar.get(url.string());
+    return "";
 }
 
 bool cookiesEnabled(const NetworkStorageSession&, const KURL& /*firstParty*/, const KURL& /*url*/)

@@ -528,7 +528,6 @@ transitions/svg-text-shadow-transition.html
 
 http/tests/cache
 http/tests/canvas/philip/tests
-http/tests/cookies
 http/tests/css
 http/tests/history
 http/tests/incremental
@@ -1031,10 +1030,6 @@ fast/loader/create-frame-in-DOMContentLoaded.html
 
 # Times out <rdar://problem/9304941>
 http/tests/multipart/invalid-image-data-standalone.html
-
-# Sometimes fail <rdar://problem/9349921>
-http/tests/cookies/simple-cookies-expired.html
-http/tests/cookies/simple-cookies-max-age.html
 
 ################################################################################
 ####################### No bugs filed about the below yet#######################
@@ -2781,11 +2776,6 @@ http/tests/security/xss-DENIED-synchronous-frame-load-in-javascript-url.html
 http/tests/security/xss-DENIED-window-open-javascript-url-with-spaces.html
 http/tests/security/xss-DENIED-window-open-parent.html
 http/tests/security/xss-DENIED-xsl-document-securityOrigin.xml
-
-# Flaky http/tests/cookie tests
-# https://bugs.webkit.org/show_bug.cgi?id=95805
-http/tests/cookies/multiple-cookies.html
-http/tests/cookies/single-quoted-value.html
 
 # Flaky media/video tests
 # https://bugs.webkit.org/show_bug.cgi?id=95806
