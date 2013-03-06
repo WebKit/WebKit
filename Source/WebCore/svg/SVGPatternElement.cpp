@@ -222,7 +222,7 @@ void SVGPatternElement::collectPatternAttributes(PatternAttributes& attributes) 
             attributes.setPatternTransform(transform);
         }
 
-        if (!attributes.hasPatternContentElement() && current->hasChildNodes())
+        if (!attributes.hasPatternContentElement() && current->childElementCount())
             attributes.setPatternContentElement(current);
 
         processedPatterns.add(current);
