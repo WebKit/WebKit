@@ -1,5 +1,21 @@
 2013-03-06  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
 
+        [GTK][WK2] Implement WebInspector::localizedStringsURL() to return the file URL of localizedStrings.js
+        https://bugs.webkit.org/show_bug.cgi?id=111448
+
+        Reviewed by Alexey Proskuryakov.
+
+        Implement WebInspector::localizedStringsURL() method to return the
+        file URL of the localizedStrings.js.
+
+        This prevents printing warnings about "Localized string not found" in
+        the console.
+
+        * WebProcess/WebPage/gtk/WebInspectorGtk.cpp:
+        (WebKit::WebInspector::localizedStringsURL):
+
+2013-03-06  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
         [EFL][WK2] REGRESSION(r143582): API test EWK2UnitTestBase.ewk_view_contents_size_changed failing
         https://bugs.webkit.org/show_bug.cgi?id=110608
 

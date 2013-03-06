@@ -29,15 +29,24 @@
 
 #if ENABLE(INSPECTOR)
 
-#include <WebCore/NotImplemented.h>
+#include <WebCore/FileSystem.h>
+#include <glib.h>
+#include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebKit {
 
 String WebInspector::localizedStringsURL() const
 {
-    notImplemented();
-    return String();
+    GOwnPtr<gchar> filePath;
+    const gchar* environmentPath = g_getenv("WEBKIT_INSPECTOR_PATH");
+    if (environmentPath && g_file_test(environmentPath, G_FILE_TEST_IS_DIR))
+        filePath.set(g_build_filename(environmentPath, "localizedStrings.js", NULL));
+    else
+        filePath.set(g_build_filename(WebCore::sharedResourcesPath().data(), "webinspector", "localizedStrings.js", NULL));
+
+    GOwnPtr<gchar> fileURI(g_filename_to_uri(filePath.get(), 0, 0));
+    return WebCore::filenameToString(fileURI.get());
 }
 
 } // namespace WebKit
