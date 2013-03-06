@@ -4415,3 +4415,5 @@ webkit.org/b/111462 [ Mac ] fast/events/touch/gesture/touch-gesture-noscroll-bod
 webkit.org/b/111510 [ MountainLion ] fast/regions/region-style-in-columns.html [ ImageOnlyFailure ]
 
 webkit.org/b/111514 [ Mac ] plugins/plugin-clip-subframe.html [ Failure ]
+
+webkit.org/b/111518 [ Linux Win Mac ] http/tests/misc/delete-frame-during-readystatechange-with-gc-after-video-removal.html [ Crash ]
