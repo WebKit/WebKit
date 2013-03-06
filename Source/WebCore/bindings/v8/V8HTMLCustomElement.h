@@ -45,7 +45,6 @@ class HTMLElement;
 
 class V8HTMLCustomElement {
 public:
-    static WrapperTypeInfo info;
     static v8::Handle<v8::Value> toV8(HTMLElement*, v8::Handle<v8::Object> creationContext = v8::Handle<v8::Object>(), v8::Isolate* = 0);
     static v8::Handle<v8::Object> wrap(HTMLElement*, v8::Handle<v8::Object> creationContext, v8::Isolate*);
 

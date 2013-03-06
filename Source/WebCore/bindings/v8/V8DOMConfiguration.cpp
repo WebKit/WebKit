@@ -33,8 +33,6 @@
 
 namespace WebCore {
 
-const int prototypeInternalFieldcount = 1;
-
 void V8DOMConfiguration::batchConfigureAttributes(v8::Handle<v8::ObjectTemplate> instance, v8::Handle<v8::ObjectTemplate> prototype, const BatchedAttribute* attributes, size_t attributeCount, v8::Isolate* isolate)
 {
     for (size_t i = 0; i < attributeCount; ++i)
@@ -68,7 +66,7 @@ v8::Local<v8::Signature> V8DOMConfiguration::configureTemplate(v8::Persistent<v8
         // This is needed since bug 110436 asks WebKit to tell native-initiated prototypes from pure-JS ones.
         // This doesn't mark kinds "root" classes like Node, where setting this changes prototype chain structure.
         v8::Local<v8::ObjectTemplate> prototype = functionDescriptor->PrototypeTemplate();
-        prototype->SetInternalFieldCount(prototypeInternalFieldcount);
+        prototype->SetInternalFieldCount(v8PrototypeInternalFieldcount);
     }
 
     if (attributeCount)

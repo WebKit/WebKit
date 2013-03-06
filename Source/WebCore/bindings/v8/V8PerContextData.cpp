@@ -126,6 +126,9 @@ v8::Local<v8::Function> V8PerContextData::constructorForTypeSlowCase(WrapperType
     v8::Local<v8::Value> prototypeValue = function->Get(v8::String::NewSymbol("prototype"));
     if (!prototypeValue.IsEmpty() && prototypeValue->IsObject()) {
         v8::Local<v8::Object> prototypeObject = v8::Local<v8::Object>::Cast(prototypeValue);
+        if (prototypeObject->InternalFieldCount() == v8PrototypeInternalFieldcount
+            && type->wrapperTypePrototype == WrapperTypeObjectPrototype)
+            prototypeObject->SetAlignedPointerInInternalField(v8PrototypeTypeIndex, type);
         type->installPerContextPrototypeProperties(prototypeObject, m_context->GetIsolate());
         if (type->wrapperTypePrototype == WrapperTypeErrorPrototype)
             prototypeObject->SetPrototype(m_errorPrototype.get());

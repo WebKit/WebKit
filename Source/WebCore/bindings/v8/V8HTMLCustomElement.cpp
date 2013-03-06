@@ -38,12 +38,21 @@
 #include "CustomElementRegistry.h"
 #include "HTMLElement.h"
 #include "V8CustomElementConstructor.h"
-#include "V8HTMLSpanElement.h"
+#include "V8HTMLUnknownElement.h"
 
 namespace WebCore {
 
-// FIXME: Each custom elements should have its own GetTemplate method so that it can be derived from different super element.
-WrapperTypeInfo V8HTMLCustomElement::info = { &V8HTMLElement::GetTemplate, V8HTMLElement::derefObject, 0, V8HTMLElement::toEventTarget, 0, 0, &V8HTMLElement::info, WrapperTypeObjectPrototype };
+static WrapperTypeInfo* findWrapperTypeOf(v8::Handle<v8::Value> chain)
+{
+    while (!chain.IsEmpty() && chain->IsObject()) {
+        v8::Handle<v8::Object> chainObject = v8::Handle<v8::Object>::Cast(chain);
+        if (v8PrototypeInternalFieldcount == chainObject->InternalFieldCount())
+            return reinterpret_cast<WrapperTypeInfo*>(chainObject->GetAlignedPointerFromInternalField(v8PrototypeTypeIndex));
+        chain = chainObject->GetPrototype();
+    }
+
+    return 0;
+}
 
 v8::Handle<v8::Object> V8HTMLCustomElement::createWrapper(PassRefPtr<HTMLElement> impl, v8::Handle<v8::Object> creationContext, v8::Isolate* isolate)
 {
@@ -57,22 +66,31 @@ v8::Handle<v8::Object> V8HTMLCustomElement::createWrapper(PassRefPtr<HTMLElement
         return v8::Handle<v8::Object>();
     }
 
-    v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &info, impl.get(), isolate);
-    if (wrapper.IsEmpty())
-        return wrapper;
-
     // The constructor and registered lifecycle callbacks should be visible only from main world.
     // FIXME: This shouldn't be needed once each custom element has its own FunctionTemplate
     // https://bugs.webkit.org/show_bug.cgi?id=108138
-    if (CustomElementHelpers::isFeatureAllowed(creationContext->CreationContext())) {
-        v8::Handle<v8::Value> wrapperValue = WebCore::toV8(constructor.get(), creationContext, isolate);
-        if (wrapperValue.IsEmpty() || !wrapperValue->IsObject())
-            return v8::Handle<v8::Object>();
-        v8::Handle<v8::Object> constructorWapper = v8::Handle<v8::Object>::Cast(wrapperValue);
-        wrapper->SetPrototype(constructorWapper->Get(v8String("prototype", isolate)));
+    if (!CustomElementHelpers::isFeatureAllowed(creationContext->CreationContext())) {
+        v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, &V8HTMLElement::info, impl.get(), isolate);
+        if (!wrapper.IsEmpty())
+            V8DOMWrapper::associateObjectWithWrapper(impl, &V8HTMLElement::info, wrapper, isolate, WrapperConfiguration::Dependent);
+        return wrapper;
     }
 
-    V8DOMWrapper::associateObjectWithWrapper(impl, &info, wrapper, isolate, WrapperConfiguration::Dependent);
+    v8::Handle<v8::Value> constructorValue = WebCore::toV8(constructor.get(), creationContext, isolate);
+    if (constructorValue.IsEmpty() || !constructorValue->IsObject())
+        return v8::Handle<v8::Object>();
+    v8::Handle<v8::Object> constructorWapper = v8::Handle<v8::Object>::Cast(constructorValue);
+    v8::Handle<v8::Object> prototype = v8::Handle<v8::Object>::Cast(constructorWapper->Get(v8::String::NewSymbol("prototype")));
+    WrapperTypeInfo* typeInfo = findWrapperTypeOf(prototype);
+    if (!typeInfo)
+        return v8::Handle<v8::Object>();
+
+    v8::Handle<v8::Object> wrapper = V8DOMWrapper::createWrapper(creationContext, typeInfo, impl.get(), isolate);
+    if (wrapper.IsEmpty())
+        return v8::Handle<v8::Object>();
+
+    wrapper->SetPrototype(prototype);
+    V8DOMWrapper::associateObjectWithWrapper(impl, typeInfo, wrapper, isolate, WrapperConfiguration::Dependent);
     return wrapper;
 }
 
