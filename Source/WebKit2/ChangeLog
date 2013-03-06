@@ -1,3 +1,12 @@
+2013-03-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break with latest EFL libraries
+        https://bugs.webkit.org/show_bug.cgi?id=111028
+
+        Reviewed by Dirk Pranke.
+
+        * PlatformEfl.cmake: Added ECORE_XXX_INCLUDE_DIRS.
+
 2013-03-05  Anders Carlsson  <andersca@apple.com>
 
         Use a named parameter for whether a quota error ocurred or not

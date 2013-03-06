@@ -1,3 +1,18 @@
+2013-03-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break with latest EFL libraries
+        https://bugs.webkit.org/show_bug.cgi?id=111028
+
+        Reviewed by Dirk Pranke.
+
+        In latest EFL trunk, include path of ecore sub modules are changed from
+        ecore-1 to ecore-XXX-1.
+        So, this patch adds missing ECORE_XXX_INCLUDE_DIRS.
+
+        * Source/cmake/FindEcore.cmake: Added additional path suffixes to find include directories of ecore-XXX
+        * Source/cmake/FindElementary.cmake: Checked Ecore_Con dependency which Elementary requires.
+        * Source/cmake/OptionsEfl.cmake: Made Imf and Imf_Evas mandatory.
+
 2013-03-05  Shawn Singh  <shawnsingh@chromium.org>
 
         Fix default background of a dragged image.

@@ -47,34 +47,36 @@ FIND_EFL_LIBRARY(ECORE
 )
 
 # Components.
+# Since EFL version 1.8, include path of Ecore sub modules have been changed
+# from ecore-1 to ecore-XXX-1
 FIND_EFL_LIBRARY(ECORE_EVAS
     HEADERS Ecore_Evas.h
-    HEADER_PREFIXES ecore-1
+    HEADER_PREFIXES ecore-1 ecore-evas-1
     LIBRARY ecore_evas
 )
 FIND_EFL_LIBRARY(ECORE_FILE
     HEADERS Ecore_File.h
-    HEADER_PREFIXES ecore-1
+    HEADER_PREFIXES ecore-1 ecore-file-1
     LIBRARY ecore_file
 )
 FIND_EFL_LIBRARY(ECORE_INPUT
     HEADERS Ecore_Input.h
-    HEADER_PREFIXES ecore-1
+    HEADER_PREFIXES ecore-1 ecore-input-1
     LIBRARY ecore_input
 )
 FIND_EFL_LIBRARY(ECORE_X
     HEADERS Ecore_X.h
-    HEADER_PREFIXES ecore-1
+    HEADER_PREFIXES ecore-1 ecore-x-1
     LIBRARY ecore_x
 )
 FIND_EFL_LIBRARY(ECORE_IMF
     HEADERS Ecore_IMF.h
-    HEADER_PREFIXES ecore-1
+    HEADER_PREFIXES ecore-1 ecore-imf-1
     LIBRARY ecore_imf
 )
 FIND_EFL_LIBRARY(ECORE_IMF_EVAS
     HEADERS Ecore_IMF_Evas.h
-    HEADER_PREFIXES ecore-1
+    HEADER_PREFIXES ecore-1 ecore-imf-evas-1
     LIBRARY ecore_imf_evas
 )
 

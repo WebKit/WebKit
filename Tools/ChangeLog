@@ -1,3 +1,14 @@
+2013-03-05  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        [EFL] Build break with latest EFL libraries
+        https://bugs.webkit.org/show_bug.cgi?id=111028
+
+        Reviewed by Dirk Pranke.
+
+        * MiniBrowser/efl/CMakeLists.txt: Added ECORE_XXX_INCLUDE_DIRS.
+        * TestWebKitAPI/PlatformEfl.cmake: Ditto.
+        * WebKitTestRunner/PlatformEfl.cmake: Ditto.
+
 2013-03-05  Roger Fong  <roger_fong@apple.com>
 
         Increase number of WinEWS iterations to 20.
