@@ -1,3 +1,35 @@
+2013-03-06  Alan Cutter  <alancutter@chromium.org>
+
+        sheriffbot roll-chromium-deps shouldn't create a bug with None as the new revision.
+        https://bugs.webkit.org/show_bug.cgi?id=73482
+
+        Reviewed by Ryosuke Niwa.
+
+        Added input checking to the UpdateChromiumDEPS step.
+        Removed the default use of LKGR when the revision input is invalid. "LKGR" must be explicitly given instead.
+
+        * Scripts/webkitpy/tool/bot/irc_command.py: Updated input validation and error message handling.
+        (RollChromiumDEPS):
+        (RollChromiumDEPS._parse_args):
+        (RollChromiumDEPS.execute):
+        * Scripts/webkitpy/tool/bot/irc_command_unittest.py: Updated unit tests.
+        (IRCCommandTest.test_roll_chromium_deps):
+        * Scripts/webkitpy/tool/bot/ircbot_unittest.py: Updated unit tests.
+        (IRCBotTest.test_roll_chromium_deps_to_lkgr):
+        * Scripts/webkitpy/tool/commands/roll_unittest.py: Updated unit tests.
+        * Scripts/webkitpy/tool/steps/updatechromiumdeps.py: Added input validation and added new error handling cases. Changed the logic of deciding to use LKGR to be only when the input is "LKGR".
+        (UpdateChromiumDEPS._fetch_last_known_good_revision):
+        (UpdateChromiumDEPS):
+        (UpdateChromiumDEPS._parse_revision_number):
+        (UpdateChromiumDEPS._validate_revisions):
+        (UpdateChromiumDEPS.run):
+        * Scripts/webkitpy/tool/steps/updatechromiumdeps_unittest.py: Added unit tests.
+        (UpdateChromiumDEPSTest):
+        (UpdateChromiumDEPSTest.test_parse_revision_number):
+        * Scripts/webkitpy/tool/commands/roll.py: Updated help text.
+        (RollChromiumDEPS):
+        (PostChromiumDEPSRoll):
+
 2013-03-06  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][MiniBrowser] Touch mocking broken for chained getures

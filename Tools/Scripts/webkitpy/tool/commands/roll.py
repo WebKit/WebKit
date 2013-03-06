@@ -35,8 +35,8 @@ default_changelog_message = "Unreviewed.  Rolled DEPS.\n\n"
 
 class RollChromiumDEPS(AbstractSequencedCommand):
     name = "roll-chromium-deps"
-    help_text = "Updates Chromium DEPS (defaults to the last-known good revision of Chromium)"
-    argument_names = "[CHROMIUM_REVISION]"
+    help_text = "Updates Chromium DEPS (LKGR as the revision will use the last-known good revision of Chromium)"
+    argument_names = "CHROMIUM_REVISION"
     steps = [
         steps.UpdateChromiumDEPS,
         steps.PrepareChangeLogForDEPSRoll,
@@ -53,7 +53,7 @@ class RollChromiumDEPS(AbstractSequencedCommand):
 
 class PostChromiumDEPSRoll(AbstractSequencedCommand):
     name = "post-chromium-deps-roll"
-    help_text = "Posts a patch to update Chromium DEPS (revision defaults to the last-known good revision of Chromium)"
+    help_text = "Posts a patch to update Chromium DEPS (LKGR as the revision will use the last-known good revision of Chromium)"
     argument_names = "CHROMIUM_REVISION CHROMIUM_REVISION_NAME [CHANGELOG_MESSAGE]"
     steps = [
         steps.CleanWorkingDirectory,
