@@ -79,6 +79,7 @@ using namespace WebKit;
 
 enum {
     DOWNLOAD_STARTED,
+    WEB_PROCESS_CRASHED,
 
     LAST_SIGNAL
 };
@@ -170,6 +171,19 @@ static void webkit_web_context_class_init(WebKitWebContextClass* webContextClass
                      g_cclosure_marshal_VOID__OBJECT,
                      G_TYPE_NONE, 1,
                      WEBKIT_TYPE_DOWNLOAD);
+
+    /**
+     * WebKitWebContext::web-process-crashed:
+     * @context: the #WebKitWebContext
+     *
+     * This signal is emitted when the web process crashes.
+     */
+    signals[WEB_PROCESS_CRASHED] = g_signal_new("web-process-crashed",
+        G_TYPE_FROM_CLASS(gObjectClass),
+        G_SIGNAL_RUN_LAST,
+        0, 0, 0,
+        g_cclosure_marshal_VOID__VOID,
+        G_TYPE_NONE, 0);
 }
 
 static CString injectedBundleDirectory()
@@ -818,6 +832,11 @@ void webkitWebContextRemoveDownload(DownloadProxy* downloadProxy)
 void webkitWebContextDownloadStarted(WebKitWebContext* context, WebKitDownload* download)
 {
     g_signal_emit(context, signals[DOWNLOAD_STARTED], 0, download);
+}
+
+void webkitWebContextWebProcessCrashed(WebKitWebContext* context)
+{
+    g_signal_emit(context, signals[WEB_PROCESS_CRASHED], 0);
 }
 
 WebContext* webkitWebContextGetContext(WebKitWebContext* context)

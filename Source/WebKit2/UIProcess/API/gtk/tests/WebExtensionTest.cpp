@@ -20,6 +20,7 @@
 #include "config.h"
 
 #include <gio/gio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/gobject/GOwnPtr.h>
@@ -35,6 +36,8 @@ static const char introspectionXML[] =
     "  <signal name='URIChanged'>"
     "   <arg type='s' name='uri' direction='out'/>"
     "  </signal>"
+    "  <method name='AbortProcess'>"
+    "  </method>"
     " </interface>"
     "</node>";
 
@@ -106,6 +109,8 @@ static void methodCallCallback(GDBusConnection* connection, const char* sender, 
         WebKitDOMDocument* document = webkit_web_page_get_dom_document(page);
         GOwnPtr<char> title(webkit_dom_document_get_title(document));
         g_dbus_method_invocation_return_value(invocation, g_variant_new("(s)", title.get()));
+    } else if (!g_strcmp0(methodName, "AbortProcess")) {
+        abort();
     }
 }
 

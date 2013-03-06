@@ -47,5 +47,6 @@ void webkitWebContextCreatePageForWebView(WebKitWebContext*, WebKitWebView*, Web
 void webkitWebContextWebViewDestroyed(WebKitWebContext*, WebKitWebView*);
 WebKitWebView* webkitWebContextGetWebViewForPage(WebKitWebContext*, WebKit::WebPageProxy*);
 WebKitWebViewGroup* webkitWebContextGetDefaultWebViewGroup(WebKitWebContext*);
+void webkitWebContextWebProcessCrashed(WebKitWebContext*);
 
 #endif // WebKitWebContextPrivate_h

@@ -24,6 +24,7 @@
 #include "WebKit2GtkAuthenticationDialog.h"
 #include "WebKitBackForwardListPrivate.h"
 #include "WebKitURIResponsePrivate.h"
+#include "WebKitWebContextPrivate.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebKitWebViewPrivate.h"
 #include <wtf/gobject/GOwnPtr.h>
@@ -134,6 +135,11 @@ static void didReceiveAuthenticationChallengeInFrame(WKPageRef page, WKFrameRef 
     webkitWebViewHandleAuthenticationChallenge(WEBKIT_WEB_VIEW(clientInfo), toImpl(authenticationChallenge));
 }
 
+static void processDidCrash(WKPageRef page, const void* clientInfo)
+{
+    webkitWebContextWebProcessCrashed(webkit_web_view_get_context(WEBKIT_WEB_VIEW(clientInfo)));
+}
+
 void attachLoaderClientToView(WebKitWebView* webView)
 {
     WKPageLoaderClient wkLoaderClient = {
@@ -160,7 +166,7 @@ void attachLoaderClientToView(WebKitWebView* webView)
         didChangeProgress, // didFinishProgress
         0, // didBecomeUnresponsive
         0, // didBecomeResponsive
-        0, // processDidCrash
+        processDidCrash,
         didChangeBackForwardList,
         0, // shouldGoToBackForwardListItem
         0, // didFailToInitializePlugin
