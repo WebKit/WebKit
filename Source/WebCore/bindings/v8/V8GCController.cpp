@@ -49,13 +49,13 @@ namespace WebCore {
 
 class ImplicitConnection {
 public:
-    ImplicitConnection(void* root, v8::Persistent<v8::Value> wrapper)
+    ImplicitConnection(void* root, v8::Persistent<v8::Object> wrapper)
         : m_root(root)
         , m_wrapper(wrapper)
         , m_rootNode(0)
     {
     }
-    ImplicitConnection(Node* root, v8::Persistent<v8::Value> wrapper)
+    ImplicitConnection(Node* root, v8::Persistent<v8::Object> wrapper)
         : m_root(root)
         , m_wrapper(wrapper)
         , m_rootNode(root)
@@ -63,7 +63,7 @@ public:
     }
 
     void* root() const { return m_root; }
-    v8::Persistent<v8::Value> wrapper() const { return m_wrapper; }
+    v8::Persistent<v8::Object> wrapper() const { return m_wrapper; }
 
     PassOwnPtr<RetainedObjectInfo> retainedObjectInfo()
     {
@@ -74,13 +74,29 @@ public:
 
 private:
     void* m_root;
-    v8::Persistent<v8::Value> m_wrapper;
+    v8::Persistent<v8::Object> m_wrapper;
     Node* m_rootNode;
 };
 
 bool operator<(const ImplicitConnection& left, const ImplicitConnection& right)
 {
     return left.root() < right.root();
+}
+
+struct ImplicitReference {
+    ImplicitReference(void* parent, v8::Persistent<v8::Object> child)
+        : parent(parent)
+        , child(child)
+    {
+    }
+
+    void* parent;
+    v8::Persistent<v8::Object> child;
+};
+
+bool operator<(const ImplicitReference& left, const ImplicitReference& right)
+{
+    return left.parent < right.parent;
 }
 
 class WrapperGrouper {
@@ -90,14 +106,20 @@ public:
         m_liveObjects.append(V8PerIsolateData::current()->ensureLiveRoot());
     }
 
-    void addObjectWrapperToGroup(void* root, v8::Persistent<v8::Value> wrapper)
+    void addObjectWrapperToGroup(void* root, v8::Persistent<v8::Object> wrapper)
     {
         m_connections.append(ImplicitConnection(root, wrapper));
     }
 
-    void addNodeWrapperToGroup(Node* root, v8::Persistent<v8::Value> wrapper)
+    void addNodeWrapperToGroup(Node* root, v8::Persistent<v8::Object> wrapper)
     {
         m_connections.append(ImplicitConnection(root, wrapper));
+    }
+
+    void addImplicitReference(void* parent, v8::Persistent<v8::Object> child)
+    {
+        m_references.append(ImplicitReference(parent, child));
+        m_rootGroupMap.add(parent, v8::Persistent<v8::Object>());
     }
 
     void keepAlive(v8::Persistent<v8::Value> wrapper)
@@ -115,6 +137,7 @@ public:
         size_t i = 0;
         while (i < m_connections.size()) {
             void* root = m_connections[i].root();
+            v8::Persistent<v8::Object> groupRepresentativeWrapper = m_connections[i].wrapper();
             OwnPtr<RetainedObjectInfo> retainedObjectInfo = m_connections[i].retainedObjectInfo();
 
             do {
@@ -124,13 +147,37 @@ public:
             if (group.size() > 1)
                 v8::V8::AddObjectGroup(group.data(), group.size(), retainedObjectInfo.leakPtr());
 
+            HashMap<void*, v8::Persistent<v8::Object> >::iterator iter = m_rootGroupMap.find(root);
+            if (iter != m_rootGroupMap.end())
+                iter->value = groupRepresentativeWrapper;
+
             group.shrink(0);
+        }
+
+        std::sort(m_references.begin(), m_references.end());
+        i = 0;
+        while (i < m_references.size()) {
+            void* parent = m_references[i].parent;
+            v8::Persistent<v8::Object> parentWrapper = m_rootGroupMap.get(parent);
+            if (parentWrapper.IsEmpty()) {
+                ++i;
+                continue;
+            }
+
+            Vector<v8::Persistent<v8::Value> > children;
+            do {
+                children.append(m_references[i++].child);
+            } while (i < m_references.size() && parent == m_references[i].parent);
+
+            v8::V8::AddImplicitReferences(parentWrapper, children.data(), children.size());
         }
     }
 
 private:
     Vector<v8::Persistent<v8::Value> > m_liveObjects;
     Vector<ImplicitConnection> m_connections;
+    Vector<ImplicitReference> m_references;
+    HashMap<void*, v8::Persistent<v8::Object> > m_rootGroupMap;
 };
 
 // FIXME: This should use opaque GC roots.
@@ -316,7 +363,7 @@ public:
             MutationObserver* observer = static_cast<MutationObserver*>(object);
             HashSet<Node*> observedNodes = observer->getObservedNodes();
             for (HashSet<Node*>::iterator it = observedNodes.begin(); it != observedNodes.end(); ++it)
-                m_grouper.addObjectWrapperToGroup(V8GCController::opaqueRootForGC(*it, m_isolate), wrapper);
+                m_grouper.addImplicitReference(V8GCController::opaqueRootForGC(*it, m_isolate), wrapper);
         } else {
             ActiveDOMObject* activeDOMObject = type->toActiveDOMObject(wrapper);
             if (activeDOMObject && activeDOMObject->hasPendingActivity())

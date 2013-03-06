@@ -1,3 +1,12 @@
+2013-03-06  Adam Klein  <adamk@chromium.org>
+
+        [V8] Use implicit references instead of object groups to keep registered MutationObservers alive
+        https://bugs.webkit.org/show_bug.cgi?id=111382
+
+        Reviewed by Adam Barth.
+
+        * ManualTests/mutation-observer-leaks-nodes.html: Added.
+
 2013-03-06  Gustavo Noronha Silva  <gns@gnome.org>
 
         Build fix. Fixes problems building code that uses deprecated functions from GTK+ 2,
