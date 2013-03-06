@@ -1,5 +1,18 @@
 2013-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        [BlackBerry] Use CachedResource::resourceBuffer() instead of CachedResource::data()
+        https://bugs.webkit.org/show_bug.cgi?id=111555
+
+        Reviewed by Rob Buis.
+
+        CachedResource::data() was renamed to
+        CachedResource::resourceBuffer() in r130947.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::webContext):
+
+2013-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         [BlackBerry] Remove some unneeded header includes
         https://bugs.webkit.org/show_bug.cgi?id=111545
 
