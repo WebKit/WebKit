@@ -1,3 +1,24 @@
+2013-03-06  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][MiniBrowser] Touch mocking broken for chained getures
+        https://bugs.webkit.org/show_bug.cgi?id=111430
+
+        Reviewed by Jocelyn Turcotte.
+
+        Make it possible again to use touch mocking to test gesture chains
+        like pan->pinch->pan->pinch without lifting the primary "finger".
+        For this to work we need to track the pressed mouse buttons and
+        only synthesize touch release events when the ctrl key is released
+        if no mouse button is pressed. Else the pressed mouse button(s)
+        should result in a stationary touch point in a touch update event.
+        Since it has been fixed in Qt 5.0.1 use QGuiApplication::keyboardModifiers()
+        to check for the state of the ctrl key modifier instead of getting
+        it from the mouse events.
+
+        * MiniBrowser/qt/MiniBrowserApplication.cpp:
+        (MiniBrowserApplication::MiniBrowserApplication):
+        (MiniBrowserApplication::notify):
+
 2013-03-05  Dirk Pranke  <dpranke@chromium.org>
 
         [chromium] don't use custom freetype on linux asan for now
