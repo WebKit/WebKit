@@ -4346,8 +4346,6 @@ webkit.org/b/97037 media/encrypted-media/encrypted-media-v2-syntax.html [ Timeou
 webkit.org/b/109416 [ Mac ] inspector/editor/text-editor-home-button.html [ Failure ]
 webkit.org/b/109963 [ Debug ] inspector/profiler/heap-snapshot-get-profile-crash.html [ Pass Crash ]
 
-webkit.org/b/109581 [ Win ] inspector/debugger/debugger-script-preprocessor.html [ Pass Slow ]
-
 webkit.org/b/110247 [ Debug ] fast/workers/storage/interrupt-database.html [ Pass Crash Slow ]
 
 webkit.org/b/110568 [ MountainLion ] fast/multicol/newmulticol/positioned-split.html [ ImageOnlyFailure ]
