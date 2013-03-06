@@ -82,9 +82,6 @@ private:
     
     void fixupNode(Node* node)
     {
-        if (!node->shouldGenerate())
-            return;
-        
         NodeType op = node->op();
 
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
@@ -501,8 +498,6 @@ private:
                 bool ok = true;
                 for (unsigned i = m_indexInBlock; i--;) {
                     Node* candidate = m_block->at(i);
-                    if (!candidate->shouldGenerate())
-                        continue;
                     if (candidate == logicalNot) {
                         found = true;
                         break;
@@ -811,8 +806,6 @@ private:
         for (m_indexInBlock = 0; m_indexInBlock < block->size(); ++m_indexInBlock) {
             Node* node = m_currentNode = block->at(m_indexInBlock);
             if (node->op() != SetLocal)
-                continue;
-            if (!node->shouldGenerate())
                 continue;
             
             VariableAccessData* variable = node->variableAccessData();

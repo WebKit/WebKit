@@ -94,9 +94,6 @@ private:
             if (otherNode == child1 || otherNode == child2 || otherNode == child3)
                 break;
 
-            if (!otherNode->shouldGenerate())
-                continue;
-            
             if (node->op() != otherNode->op())
                 continue;
             
@@ -132,8 +129,6 @@ private:
             Node* otherNode = m_currentBlock->at(i);
             if (otherNode == node->child1())
                 return 0;
-            if (!otherNode->shouldGenerate())
-                continue;
             switch (otherNode->op()) {
             case Int32ToDouble:
             case ForwardInt32ToDouble:
@@ -154,9 +149,6 @@ private:
             if (otherNode->op() != JSConstant)
                 continue;
             
-            if (!otherNode->shouldGenerate())
-                continue;
-            
             if (otherNode->constantNumber() != node->constantNumber())
                 continue;
             
@@ -172,9 +164,6 @@ private:
             if (otherNode->op() != WeakJSConstant)
                 continue;
             
-            if (!otherNode->shouldGenerate())
-                continue;
-            
             if (otherNode->weakConstant() != node->weakConstant())
                 continue;
             
@@ -187,8 +176,6 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             if (node->codeOrigin.inlineCallFrame != inlineCallFrame)
                 continue;
             switch (node->op()) {
@@ -207,8 +194,6 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetArrayLength:
                 if (node->child1() == array)
@@ -234,8 +219,6 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetGlobalVar:
                 if (node->registerPointer() == registerPointer)
@@ -258,8 +241,6 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetScopedVar: {
                 if (node->child1() == registers && node->varNumber() == varNumber)
@@ -291,8 +272,6 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GlobalVarWatchpoint:
                 if (node->registerPointer() == registerPointer)
@@ -315,8 +294,6 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case PutGlobalVar:
             case PutGlobalVarCheck:
@@ -342,8 +319,6 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case PutScopedVar: {
                 if (node->child1() == scope && node->child2() == registers && node->varNumber() == varNumber)
@@ -382,8 +357,6 @@ private:
             if (node == child1 || node == canonicalize(child2)) 
                 break;
 
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetByVal:
                 if (!m_graph.byValIsPure(node))
@@ -451,8 +424,6 @@ private:
             if (node == child1) 
                 break;
 
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case CheckStructure:
             case ForwardCheckStructure:
@@ -512,8 +483,6 @@ private:
             if (node == child1) 
                 break;
 
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case CheckStructure:
             case ForwardCheckStructure:
@@ -567,8 +536,6 @@ private:
             Node* node = m_currentBlock->at(i);
             if (node == child1)
                 break;
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case CheckStructure:
             case ForwardCheckStructure:
@@ -626,8 +593,6 @@ private:
             if (node == child1)
                 break;
 
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetByOffset:
                 if (node->child1() == child1
@@ -673,8 +638,6 @@ private:
             if (node == child1)
                 break;
 
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetByOffset:
                 if (m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber == identifierNumber)
@@ -718,8 +681,6 @@ private:
             if (node == child1) 
                 break;
 
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetButterfly:
                 if (node->child1() == child1)
@@ -775,8 +736,6 @@ private:
             if (node == child1) 
                 break;
 
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case PutByOffset:
             case PutStructure:
@@ -811,8 +770,6 @@ private:
             if (node == child1) 
                 break;
 
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetIndexedPropertyStorage: {
                 if (node->child1() == child1 && node->arrayMode() == arrayMode)
@@ -839,8 +796,6 @@ private:
     {
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             if (node->codeOrigin.inlineCallFrame != inlineCallFrame)
                 continue;
             switch (node->op()) {
@@ -864,8 +819,6 @@ private:
         
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetLocal:
                 if (node->local() == local) {
@@ -920,8 +873,6 @@ private:
         SetLocalStoreEliminationResult result;
         for (unsigned i = m_indexInBlock; i--;) {
             Node* node = m_currentBlock->at(i);
-            if (!node->shouldGenerate())
-                continue;
             switch (node->op()) {
             case GetLocal:
             case Flush:
@@ -1065,9 +1016,6 @@ private:
         if (node->op() == SetLocal)
             node->child1()->mergeFlags(NodeRelevantToOSR);
         
-        if (!node->shouldGenerate())
-            return;
-        
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
         dataLogF("   %s @%u: ", Graph::opName(node->op()), node->index());
 #endif
@@ -1199,7 +1147,6 @@ private:
             if (result.mayBeAccessed || result.mayClobberWorld)
                 break;
             ASSERT(replacement->op() == SetLocal);
-            ASSERT(replacement->shouldGenerate());
             // FIXME: Investigate using mayExit as a further optimization.
             node->convertToPhantom();
             Node* dataNode = replacement->child1().node();

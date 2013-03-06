@@ -92,10 +92,8 @@ private:
         dataLogF("\n");
 #endif
         for (unsigned i = 0; i < block->size(); ++i) {
-            Node* node = block->at(i);
-            if (!node->shouldGenerate())
-                continue;
 #if DFG_ENABLE(DEBUG_PROPAGATION_VERBOSE)
+            Node* node = block->at(i);
             dataLogF("      %s @%u: ", Graph::opName(node->op()), node->index());
             m_state.dump(WTF::dataFile());
             dataLogF("\n");

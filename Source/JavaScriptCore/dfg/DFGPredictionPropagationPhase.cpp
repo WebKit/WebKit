@@ -181,9 +181,6 @@ private:
 
     void propagate(Node* node)
     {
-        if (!node->shouldGenerate())
-            return;
-        
         NodeType op = node->op();
         NodeFlags flags = node->flags() & NodeBackPropMask;
 

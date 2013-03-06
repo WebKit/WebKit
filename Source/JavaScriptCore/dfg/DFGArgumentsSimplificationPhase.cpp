@@ -170,8 +170,6 @@ public:
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 Node* node = block->at(indexInBlock);
-                if (!node->shouldGenerate())
-                    continue;
                 switch (node->op()) {
                 case CreateArguments: {
                     // Ignore this op. If we see a lone CreateArguments then we want to
@@ -359,8 +357,6 @@ public:
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 Node* node = block->at(indexInBlock);
-                if (!node->shouldGenerate())
-                    continue;
                 if (node->op() != SetLocal)
                     continue;
                 Node* source = node->child1().node();
@@ -437,9 +433,6 @@ public:
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); indexInBlock++) {
                 Node* node = block->at(indexInBlock);
-                if (!node->shouldGenerate())
-                    continue;
-                
                 switch (node->op()) {
                 case SetLocal: {
                     Node* source = node->child1().node();
@@ -681,10 +674,8 @@ public:
                 // exit.
                 if (m_createsArguments.contains(node->codeOrigin.inlineCallFrame))
                     continue;
-                if (node->shouldGenerate()) {
-                    insertionSet.insertNode(
-                        indexInBlock, SpecNone, Phantom, node->codeOrigin, node->children);
-                }
+                insertionSet.insertNode(
+                    indexInBlock, SpecNone, Phantom, node->codeOrigin, node->children);
                 node->setOpAndDefaultFlags(PhantomArguments);
                 node->children.reset();
                 changed = true;

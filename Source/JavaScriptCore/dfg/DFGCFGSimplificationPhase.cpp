@@ -269,8 +269,6 @@ private:
             return;
         if (livenessNode->variableAccessData()->isCaptured())
             return;
-        if (!livenessNode->shouldGenerate())
-            return;
         block->appendNode(
             m_graph, SpecNone, PhantomLocal, codeOrigin, 
             OpInfo(livenessNode->variableAccessData()));

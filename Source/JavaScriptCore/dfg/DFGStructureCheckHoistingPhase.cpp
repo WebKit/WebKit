@@ -67,8 +67,6 @@ public:
                 continue;
             for (unsigned indexInBlock = 0; indexInBlock < block->size(); ++indexInBlock) {
                 Node* node = block->at(indexInBlock);
-                if (!node->shouldGenerate())
-                    continue;
                 switch (node->op()) {
                 case CheckStructure:
                 case StructureTransitionWatchpoint: {
@@ -133,8 +131,6 @@ public:
                     Node* source = node->child1().node();
                     for (unsigned subIndexInBlock = 0; subIndexInBlock < block->size(); ++subIndexInBlock) {
                         Node* subNode = block->at(subIndexInBlock);
-                        if (!subNode->shouldGenerate())
-                            continue;
                         switch (subNode->op()) {
                         case CheckStructure: {
                             if (subNode->child1() != source)
@@ -263,8 +259,6 @@ public:
                 // Be careful not to use 'node' after appending to the graph. In those switch
                 // cases where we need to append, we first carefully extract everything we need
                 // from the node, before doing any appending.
-                if (!node->shouldGenerate())
-                    continue;
                 switch (node->op()) {
                 case SetArgument: {
                     ASSERT(!blockIndex);
