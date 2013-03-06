@@ -2193,6 +2193,7 @@ void WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSp
     AuthenticationChallengeManager* authmgr = AuthenticationChallengeManager::instance();
     BlackBerry::Platform::String username;
     BlackBerry::Platform::String password;
+    BlackBerry::Platform::String requestURL(url.string());
 
 #if !defined(PUBLIC_BUILD) || !PUBLIC_BUILD
     if (m_dumpRenderTree) {
@@ -2210,7 +2211,7 @@ void WebPagePrivate::authenticationChallenge(const KURL& url, const ProtectionSp
         credentialManager().autofillAuthenticationChallenge(protectionSpace, username, password);
 #endif
 
-    bool isConfirmed = m_client->authenticationChallenge(protectionSpace.realm().characters(), protectionSpace.realm().length(), username, password);
+    bool isConfirmed = m_client->authenticationChallenge(protectionSpace.realm().characters(), protectionSpace.realm().length(), username, password, requestURL, protectionSpace.isProxy());
 
 #if ENABLE(BLACKBERRY_CREDENTIAL_PERSIST)
     Credential credential(username, password, CredentialPersistencePermanent);

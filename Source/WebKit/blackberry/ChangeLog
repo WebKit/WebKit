@@ -1,3 +1,16 @@
+2013-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Use the new authenticationChallenge API in WebPage
+        https://bugs.webkit.org/show_bug.cgi?id=111542
+
+        Reviewed by Rob Buis.
+
+        Use the new API that expects requestURL and isProxy parameters.
+
+        * Api/WebPage.cpp:
+        (BlackBerry::WebKit::WebPagePrivate::authenticationChallenge):
+        * Api/WebPageClient.h:
+
 2013-03-05  Geoffrey Garen  <ggaren@apple.com>
 
         Removed some dead code in the page cache

@@ -206,7 +206,7 @@ public:
     virtual void animateToScaleAndDocumentScrollPosition(double finalScale, const Platform::FloatPoint& finalDocumentScrollPosition, bool shouldConstrainScrollingToContentEdge) = 0;
 
     virtual void setPreventsScreenIdleDimming(bool noDimming) = 0;
-    virtual bool authenticationChallenge(const unsigned short* realm, unsigned realmLength, BlackBerry::Platform::String& username, BlackBerry::Platform::String& password) = 0;
+    virtual bool authenticationChallenge(const unsigned short* realm, unsigned realmLength, BlackBerry::Platform::String& username, BlackBerry::Platform::String& password, BlackBerry::Platform::String& requestURL, bool isProxy) = 0;
     virtual SaveCredentialType notifyShouldSaveCredential(bool isNew) = 0;
     virtual void syncProxyCredential(const BlackBerry::Platform::String& username, const BlackBerry::Platform::String& password) = 0;
     virtual void notifyPopupAutofillDialog(const std::vector<BlackBerry::Platform::String>&) = 0;
