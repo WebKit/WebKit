@@ -35,6 +35,9 @@
 namespace WebCore {
 
 class Event;
+#if ENABLE(TOUCH_EVENTS)
+class TouchList;
+#endif
 
 class EventContext {
 public:
@@ -47,11 +50,12 @@ public:
     bool currentTargetSameAsTarget() const { return m_currentTarget.get() == m_target.get(); }
     virtual void handleLocalEvents(Event*) const;
     virtual bool isMouseOrFocusEventContext() const;
+    virtual bool isTouchEventContext() const;
 
 protected:
 #ifndef NDEBUG
     bool isUnreachableNode(EventTarget*);
-    bool isReachable(Node*);
+    bool isReachable(Node*) const;
 #endif
     RefPtr<Node> m_node;
     RefPtr<EventTarget> m_currentTarget;
@@ -73,6 +77,36 @@ private:
     RefPtr<EventTarget> m_relatedTarget;
 };
 
+
+#if ENABLE(TOUCH_EVENTS)
+class TouchEventContext : public EventContext {
+public:
+    TouchEventContext(PassRefPtr<Node>, PassRefPtr<EventTarget> currentTarget, PassRefPtr<EventTarget> target);
+    virtual ~TouchEventContext();
+
+    virtual void handleLocalEvents(Event*) const OVERRIDE;
+    virtual bool isTouchEventContext() const OVERRIDE;
+
+    TouchList* touches() { return m_touches.get(); }
+    TouchList* targetTouches() { return m_targetTouches.get(); }
+    TouchList* changedTouches() { return m_changedTouches.get(); }
+
+private:
+    RefPtr<TouchList> m_touches;
+    RefPtr<TouchList> m_targetTouches;
+    RefPtr<TouchList> m_changedTouches;
+#ifndef NDEBUG
+    void checkReachability(TouchList*) const;
+#endif
+};
+
+inline TouchEventContext* toTouchEventContext(EventContext* eventContext)
+{
+    ASSERT(!eventContext || eventContext->isTouchEventContext());
+    return static_cast<TouchEventContext*>(eventContext);
+}
+#endif // ENABLE(TOUCH_EVENTS)
+
 #ifndef NDEBUG
 inline bool EventContext::isUnreachableNode(EventTarget* target)
 {
@@ -80,7 +114,7 @@ inline bool EventContext::isUnreachableNode(EventTarget* target)
     return target && target->toNode() && !target->toNode()->isSVGElement() && !isReachable(target->toNode());
 }
 
-inline bool EventContext::isReachable(Node* target)
+inline bool EventContext::isReachable(Node* target) const
 {
     ASSERT(target);
     TreeScope* targetScope = target->treeScope();

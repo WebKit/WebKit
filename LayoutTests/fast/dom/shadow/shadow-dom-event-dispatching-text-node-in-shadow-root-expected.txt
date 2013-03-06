@@ -22,9 +22,9 @@ Moving mouse from a direct child text node of the shadow root to top
      @top (target: top) (related: shadow-host)
 
   touchstart
-     @shadow-root (target: shadow-root)
-     @shadow-host (target: shadow-host)
-     @top (target: shadow-host)
+     @shadow-root (target: shadow-root) (touches: shadow-root) (targetTouches: shadow-root) (changedTouches: shadow-root)
+     @shadow-host (target: shadow-host) (touches: shadow-host) (targetTouches: shadow-host) (changedTouches: shadow-host)
+     @top (target: shadow-host) (touches: shadow-host) (targetTouches: shadow-host) (changedTouches: shadow-host)
 
   mousewheel
      @shadow-root (target: shadow-root)

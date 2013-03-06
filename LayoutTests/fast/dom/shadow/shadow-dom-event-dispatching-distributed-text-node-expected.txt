@@ -21,17 +21,17 @@ Moving mouse from a distributed text node to top
   mouseover
      @top (target: top) (related: shadow-host)
 
-  touchstart
-     @content (target: content)
-     @shadow-root (target: content)
-     @shadow-host (target: shadow-host)
-     @top (target: shadow-host)
-
   mousewheel
      @content (target: content)
      @shadow-root (target: content)
      @shadow-host (target: shadow-host)
      @top (target: shadow-host)
+
+  touchstart
+     @content (target: content) (touches: content) (targetTouches: content) (changedTouches: content)
+     @shadow-root (target: content) (touches: content) (targetTouches: content) (changedTouches: content)
+     @shadow-host (target: shadow-host) (touches: shadow-host) (targetTouches: shadow-host) (changedTouches: shadow-host)
+     @top (target: shadow-host) (touches: shadow-host) (targetTouches: shadow-host) (changedTouches: shadow-host)
 PASS successfullyParsed is true
 
 TEST COMPLETE

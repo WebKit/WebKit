@@ -44,6 +44,7 @@ public:
     unsigned length() const { return m_values.size(); }
 
     Touch* item(unsigned);
+    const Touch* item(unsigned) const;
 
     void append(const PassRefPtr<Touch> touch) { m_values.append(touch); }
 

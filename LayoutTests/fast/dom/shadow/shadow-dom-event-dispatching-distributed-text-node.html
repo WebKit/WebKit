@@ -35,13 +35,14 @@
         debugDispatchedEvent('mouseout');
         debugDispatchedEvent('mouseover');
 
-        touchLocation(host);
-        debugDispatchedEvent('touchstart');
-
+        clearEventRecords();
         scrollMouseWheel(host);
         debugDispatchedEvent('mousewheel');
+
+        clearEventRecords();
+        touchLocation(host);
+        debugDispatchedEvent('touchstart');
     </script>
     <script src="../../js/resources/js-test-post.js"></script>
 </body>
 </html>
-

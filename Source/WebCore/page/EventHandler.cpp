@@ -3775,7 +3775,6 @@ HitTestResult EventHandler::hitTestResultInFrame(Frame* frame, const LayoutPoint
             return result;
     }
     frame->contentRenderer()->hitTest(HitTestRequest(hitType), result);
-    result.setToNonShadowAncestor();
     return result;
 }
 
@@ -3926,10 +3925,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
         int adjustedPageX = lroundf(pagePoint.x() / scaleFactor);
         int adjustedPageY = lroundf(pagePoint.y() / scaleFactor);
 
-        // FIXME: Instead of taking shadow ancestor, event retargetting algorithm should run.
-        // https://bugs.webkit.org/show_bug.cgi?id=107800
-        EventTarget* adjustedTouchTarget = doc->ancestorInThisScope(touchTarget.get()->toNode());
-        RefPtr<Touch> touch = Touch::create(targetFrame, adjustedTouchTarget, point.id(),
+        RefPtr<Touch> touch = Touch::create(targetFrame, touchTarget.get(), point.id(),
                                             point.screenPos().x(), point.screenPos().y(),
                                             adjustedPageX, adjustedPageY,
                                             point.radiusX(), point.radiusY(), point.rotationAngle(), point.force());
@@ -3986,7 +3982,7 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
                 TouchEvent::create(effectiveTouches.get(), targetTouches.get(), changedTouches[state].m_touches.get(),
                                    stateName, touchEventTarget->toNode()->document()->defaultView(),
                                    0, 0, 0, 0, event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey());
-            touchEventTarget->dispatchEvent(touchEvent.get(), IGNORE_EXCEPTION);
+            touchEventTarget->toNode()->dispatchTouchEvent(touchEvent.get());
             swallowedEvent = swallowedEvent || touchEvent->defaultPrevented() || touchEvent->defaultHandled();
         }
     }

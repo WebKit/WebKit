@@ -38,6 +38,11 @@ Touch* TouchList::item(unsigned index)
     return m_values[index].get();
 }
 
+const Touch* TouchList::item(unsigned index) const
+{
+    return const_cast<TouchList*>(this)->item(index);
+}
+
 } // namespace WebCore
 
 #endif

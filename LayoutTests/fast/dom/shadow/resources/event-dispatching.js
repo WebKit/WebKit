@@ -68,9 +68,9 @@ function dispatchedEvent(eventType)
 
 function recordEvent(event)
 {
-    var eventType = event.type
+    var eventType = event.type;
     if (!eventRecords[eventType]) {
-        eventRecords[eventType] = []
+        eventRecords[eventType] = [];
     }
     var eventString = '';
     if (event.currentTarget)
@@ -79,6 +79,12 @@ function recordEvent(event)
         eventString += ' (target: ' + event.target.id + ')';
     if (event.relatedTarget)
         eventString += ' (related: ' + event.relatedTarget.id + ')';
+    if (event.touches)
+        eventString += ' (touches: ' + dumpTouchList(event.touches) + ')';
+    if (event.targetTouches)
+        eventString += ' (targetTouches: ' + dumpTouchList(event.targetTouches) + ')';
+    if (event.changedTouches)
+        eventString += ' (changedTouches: ' + dumpTouchList(event.changedTouches) + ')';
     if (event.eventPhase == 1)
         eventString += '(capturing phase)';
     if (event.target && event.currentTarget && event.target.id == event.currentTarget.id)
@@ -94,6 +100,22 @@ function dumpNode(node)
     if (node.className)
         output += ' class=' + node.className;
     return output;
+}
+
+function dumpTouchList(touches) {
+    var ids = [];
+    for (var i = 0; i < touches.length; ++i) {
+        if (touches.item(i).target && touches.item(i).target.id)
+            ids.push(touches.item(i).target.id);
+    }
+    ids.sort();
+    var result = '';
+    for (i = 0; i < ids.length; ++i) {
+         result += ids[i];
+         if (i != ids.length - 1)
+             result += ', ';
+    }
+    return result;
 }
 
 function dumpComposedShadowTree(node, indent)
@@ -130,6 +152,11 @@ function debugDispatchedEvent(eventType)
         debug('    ' + events[i])
 }
 
+function sortDispatchedEvent(eventType)
+{
+    dispatchedEvent(eventType).sort();
+}
+
 function moveMouse(oldElementId, newElementId)
 {
     clearEventRecords();
@@ -149,4 +176,3 @@ function showSandboxTree()
     sandbox.offsetLeft;
     debug('\n\nComposed Shadow Tree will be:\n' + dumpComposedShadowTree(sandbox));
 }
-

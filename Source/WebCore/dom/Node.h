@@ -92,6 +92,10 @@ class TagNodeList;
 class PlatformGestureEvent;
 #endif
 
+#if ENABLE(TOUCH_EVENTS)
+class TouchEvent;
+#endif
+
 #if ENABLE(MICRODATA)
 class HTMLPropertiesCollection;
 class PropertyNodeList;
@@ -637,6 +641,10 @@ public:
 #if ENABLE(GESTURE_EVENTS)
     bool dispatchGestureEvent(const PlatformGestureEvent&);
 #endif
+#if ENABLE(TOUCH_EVENTS)
+    bool dispatchTouchEvent(PassRefPtr<TouchEvent>);
+#endif
+
     void dispatchSimulatedClick(Event* underlyingEvent, SimulatedClickMouseEventOptions = SendNoEvents, SimulatedClickVisualOptions = ShowPressedLook);
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
