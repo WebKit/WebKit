@@ -94,8 +94,8 @@ TEST_F(IDBBackingStoreTest, PutGetConsistency)
 // Make sure that using very high ( more than 32 bit ) values for databaseId and objectStoreId still work.
 TEST_F(IDBBackingStoreTest, HighIds)
 {
-    const int64_t highDatabaseId = 1UL << 35;
-    const int64_t highObjectStoreId = 1UL << 39;
+    const int64_t highDatabaseId = 1ULL << 35;
+    const int64_t highObjectStoreId = 1ULL << 39;
     {
         IDBBackingStore::Transaction transaction1(m_backingStore.get());
         transaction1.begin();
