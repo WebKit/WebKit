@@ -48,8 +48,8 @@
 #include "StyleResolver.h"
 #include "StyleRule.h"
 #include "StyledElement.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
-#include "visible_units.h"
 #include <wtf/HashSet.h>
 
 namespace WebCore {

@@ -46,7 +46,7 @@
 #include "TextBoundaries.h"
 #include "TextBreakIterator.h"
 #include "VisiblePosition.h"
-#include "visible_units.h"
+#include "VisibleUnits.h"
 #include <wtf/text/CString.h>
 #include <wtf/unicode/CharacterNames.h>
 

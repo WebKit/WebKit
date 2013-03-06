@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef visible_units_h
-#define visible_units_h
+#ifndef VisibleUnits_h
+#define VisibleUnits_h
 
 #include "EditingBehaviorTypes.h"
 #include "EditingBoundary.h"
@@ -99,4 +99,4 @@ bool isEndOfEditableOrNonEditableContent(const VisiblePosition&);
 
 } // namespace WebCore
 
-#endif // VisiblePosition_h
+#endif // VisibleUnits_h

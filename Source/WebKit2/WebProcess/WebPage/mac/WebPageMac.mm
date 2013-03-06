@@ -61,7 +61,7 @@
 #import <WebCore/StyleInheritedData.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/WindowsKeyboardCodes.h>
-#import <WebCore/visible_units.h>
+#import <WebCore/VisibleUnits.h>
 #import <WebKitSystemInterface.h>
 
 using namespace WebCore;

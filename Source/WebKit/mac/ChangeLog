@@ -1,3 +1,12 @@
+2013-03-05  Kent Tamura  <tkent@chromium.org>
+
+        Rename WebCore/editing/visible_units.* to VisibleUnits.*
+        https://bugs.webkit.org/show_bug.cgi?id=111426
+
+        Reviewed by Alexey Proskuryakov.
+
+        * WebView/WebFrame.mm:
+
 2013-03-05  James Robinson  <jamesr@chromium.org>
 
         ContainerNode::setActive should not sleep for 100ms on platforms that do not implement synchronous repaint(true) semantics

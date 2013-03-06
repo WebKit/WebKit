@@ -32,7 +32,7 @@
 #include "HTMLElement.h"
 #include "HTMLNames.h"
 #include "Range.h"
-#include "visible_units.h"
+#include "VisibleUnits.h"
 
 namespace WebCore {
 

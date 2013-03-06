@@ -5136,13 +5136,13 @@
     <ClCompile Include="..\editing\UnlinkCommand.cpp">
       <Filter>editing</Filter>
     </ClCompile>
-    <ClCompile Include="..\editing\visible_units.cpp">
-      <Filter>editing</Filter>
-    </ClCompile>
     <ClCompile Include="..\editing\VisiblePosition.cpp">
       <Filter>editing</Filter>
     </ClCompile>
     <ClCompile Include="..\editing\VisibleSelection.cpp">
+      <Filter>editing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editing\VisibleUnits.cpp">
       <Filter>editing</Filter>
     </ClCompile>
     <ClCompile Include="..\editing\WrapContentsInDummySpanCommand.cpp">

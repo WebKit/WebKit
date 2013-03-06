@@ -34,8 +34,8 @@
 #include "RenderObject.h"
 #include "Text.h"
 #include "VisiblePosition.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
-#include "visible_units.h"
 
 namespace WebCore {
 

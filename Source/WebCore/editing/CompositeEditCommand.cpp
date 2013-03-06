@@ -64,10 +64,10 @@
 #include "SplitTextNodeContainingElementCommand.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "VisibleUnits.h"
 #include "WrapContentsInDummySpanCommand.h"
 #include "htmlediting.h"
 #include "markup.h"
-#include "visible_units.h"
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;

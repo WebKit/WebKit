@@ -82,7 +82,7 @@
 #include <UnlinkCommand.cpp>
 #include <VisiblePosition.cpp>
 #include <VisibleSelection.cpp>
+#include <VisibleUnits.cpp>
 #include <WrapContentsInDummySpanCommand.cpp>
 #include <htmlediting.cpp>
 #include <markup.cpp>
-#include <visible_units.cpp>

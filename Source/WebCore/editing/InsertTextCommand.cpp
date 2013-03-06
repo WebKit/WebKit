@@ -32,8 +32,8 @@
 #include "Frame.h"
 #include "HTMLInterchange.h"
 #include "Text.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
-#include "visible_units.h"
 #include <wtf/unicode/CharacterNames.h>
 
 namespace WebCore {

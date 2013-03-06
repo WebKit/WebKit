@@ -63,8 +63,8 @@
 #include "StylePropertySet.h"
 #include "TextIterator.h"
 #include "TypingCommand.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
-#include "visible_units.h"
 #include <limits.h>
 #include <stdio.h>
 #include <wtf/text/CString.h>

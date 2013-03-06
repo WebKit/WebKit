@@ -67,11 +67,11 @@
 #import "TextCheckerClient.h"
 #import "TextCheckingHelper.h"
 #import "TextIterator.h"
+#import "VisibleUnits.h"
 #import "WebCoreFrameView.h"
 #import "WebCoreObjCExtras.h"
 #import "WebCoreSystemInterface.h"
 #import "htmlediting.h"
-#import "visible_units.h"
 
 using namespace WebCore;
 using namespace HTMLNames;

@@ -44,6 +44,7 @@
 #include "RenderObject.h"
 #include "Settings.h"
 #include "TextIterator.h"
+#include "VisibleUnits.h"
 #include "WebKitAccessibleHyperlink.h"
 #include "WebKitAccessibleInterfaceAction.h"
 #include "WebKitAccessibleInterfaceComponent.h"
@@ -58,7 +59,6 @@
 #include "WebKitAccessibleInterfaceValue.h"
 #include "WebKitAccessibleUtil.h"
 #include "htmlediting.h"
-#include "visible_units.h"
 #include <glib/gprintf.h>
 
 #if PLATFORM(GTK)

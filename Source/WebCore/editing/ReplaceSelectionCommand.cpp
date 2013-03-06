@@ -55,9 +55,9 @@
 #include "StylePropertySet.h"
 #include "Text.h"
 #include "TextIterator.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
 #include "markup.h"
-#include "visible_units.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/Vector.h>
 

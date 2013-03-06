@@ -33,7 +33,7 @@
 #include "Frame.h"
 #include "htmlediting.h"
 #include "TextIterator.h"
-#include "visible_units.h"
+#include "VisibleUnits.h"
 
 #include <windows.h>
 

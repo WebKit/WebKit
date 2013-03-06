@@ -3293,8 +3293,8 @@
 		93309E1A099E64920056E581 /* TypingCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DCB099E64910056E581 /* TypingCommand.h */; };
 		93309E1B099E64920056E581 /* TextIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DCC099E64910056E581 /* TextIterator.cpp */; };
 		93309E1C099E64920056E581 /* TextIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DCD099E64910056E581 /* TextIterator.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		93309E1D099E64920056E581 /* visible_units.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DCE099E64910056E581 /* visible_units.cpp */; };
-		93309E1E099E64920056E581 /* visible_units.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DCF099E64910056E581 /* visible_units.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		93309E1D099E64920056E581 /* VisibleUnits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DCE099E64910056E581 /* VisibleUnits.cpp */; };
+		93309E1E099E64920056E581 /* VisibleUnits.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DCF099E64910056E581 /* VisibleUnits.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DD0099E64910056E581 /* VisiblePosition.cpp */; };
 		93309E20099E64920056E581 /* VisiblePosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DD1099E64910056E581 /* VisiblePosition.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309E23099E64920056E581 /* WrapContentsInDummySpanCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */; };
@@ -10760,8 +10760,8 @@
 		93309DCB099E64910056E581 /* TypingCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TypingCommand.h; sourceTree = "<group>"; };
 		93309DCC099E64910056E581 /* TextIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextIterator.cpp; sourceTree = "<group>"; };
 		93309DCD099E64910056E581 /* TextIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextIterator.h; sourceTree = "<group>"; };
-		93309DCE099E64910056E581 /* visible_units.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = visible_units.cpp; sourceTree = "<group>"; };
-		93309DCF099E64910056E581 /* visible_units.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = visible_units.h; sourceTree = "<group>"; };
+		93309DCE099E64910056E581 /* VisibleUnits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisibleUnits.cpp; sourceTree = "<group>"; };
+		93309DCF099E64910056E581 /* VisibleUnits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisibleUnits.h; sourceTree = "<group>"; };
 		93309DD0099E64910056E581 /* VisiblePosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = VisiblePosition.cpp; sourceTree = "<group>"; };
 		93309DD1099E64910056E581 /* VisiblePosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VisiblePosition.h; sourceTree = "<group>"; };
 		93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WrapContentsInDummySpanCommand.cpp; sourceTree = "<group>"; };
@@ -17933,12 +17933,12 @@
 				9B2D8A7814997CCF00ECEF3E /* UndoStep.h */,
 				D086FE9709D53AAB005BC74D /* UnlinkCommand.cpp */,
 				D086FE9609D53AAB005BC74D /* UnlinkCommand.h */,
-				93309DCE099E64910056E581 /* visible_units.cpp */,
-				93309DCF099E64910056E581 /* visible_units.h */,
 				93309DD0099E64910056E581 /* VisiblePosition.cpp */,
 				93309DD1099E64910056E581 /* VisiblePosition.h */,
 				A883DF250F3D045D00F19BF6 /* VisibleSelection.cpp */,
 				A883DF260F3D045D00F19BF6 /* VisibleSelection.h */,
+				93309DCE099E64910056E581 /* VisibleUnits.cpp */,
+				93309DCF099E64910056E581 /* VisibleUnits.h */,
 				93309DD4099E64910056E581 /* WrapContentsInDummySpanCommand.cpp */,
 				93309DD5099E64910056E581 /* WrapContentsInDummySpanCommand.h */,
 				9BAF3B2312C1A39800014BF1 /* WritingDirection.h */,
@@ -26504,9 +26504,9 @@
 				BCA257151293C010007A263D /* VerticalPositionCache.h in Headers */,
 				CEF418CF1179678C009D112C /* ViewportArguments.h in Headers */,
 				3FFFF9AE159D9B060020BBD5 /* ViewportStyleResolver.h in Headers */,
-				93309E1E099E64920056E581 /* visible_units.h in Headers */,
 				93309E20099E64920056E581 /* VisiblePosition.h in Headers */,
 				A883DF280F3D045D00F19BF6 /* VisibleSelection.h in Headers */,
+				93309E1E099E64920056E581 /* VisibleUnits.h in Headers */,
 				29A309B11561CAC400BBD8E5 /* VisitedLinks.h in Headers */,
 				419BC2DF1685329900D64D6D /* VisitedLinkState.h in Headers */,
 				515788C11207852C00A37C4A /* VisitedLinkStrategy.h in Headers */,
@@ -29723,9 +29723,9 @@
 				FD3160AE12B026F700C1A359 /* VectorMath.cpp in Sources */,
 				CEF418CE1179678C009D112C /* ViewportArguments.cpp in Sources */,
 				3FFFF9AD159D9B060020BBD5 /* ViewportStyleResolver.cpp in Sources */,
-				93309E1D099E64920056E581 /* visible_units.cpp in Sources */,
 				93309E1F099E64920056E581 /* VisiblePosition.cpp in Sources */,
 				A883DF270F3D045D00F19BF6 /* VisibleSelection.cpp in Sources */,
+				93309E1D099E64920056E581 /* VisibleUnits.cpp in Sources */,
 				29A309B01561CAC400BBD8E5 /* VisitedLinks.cpp in Sources */,
 				419BC2DE1685329900D64D6D /* VisitedLinkState.cpp in Sources */,
 				FD7F299113D4C0CB00AD9535 /* WaveShaperDSPKernel.cpp in Sources */,

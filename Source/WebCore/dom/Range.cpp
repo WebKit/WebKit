@@ -45,9 +45,9 @@
 #include "Text.h"
 #include "TextIterator.h"
 #include "VisiblePosition.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
 #include "markup.h"
-#include "visible_units.h"
 #include <stdio.h>
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Vector.h>

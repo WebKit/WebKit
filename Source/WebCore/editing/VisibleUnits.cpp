@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "visible_units.h"
+#include "VisibleUnits.h"
 
 #include "Document.h"
 #include "Element.h"

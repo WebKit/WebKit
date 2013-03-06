@@ -51,7 +51,7 @@
 #import "RenderView.h"
 #import "Scrollbar.h"
 #import "SimpleFontData.h"
-#import "visible_units.h"
+#import "VisibleUnits.h"
 #import <wtf/StdLibExtras.h>
 
 @interface NSView (WebCoreHTMLDocumentView)

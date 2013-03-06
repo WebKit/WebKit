@@ -40,7 +40,7 @@
 #include "NodeTraversal.h"
 #include "RenderTableCell.h"
 #include "Text.h"
-#include "visible_units.h"
+#include "VisibleUnits.h"
 
 namespace WebCore {
 

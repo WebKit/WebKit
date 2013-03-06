@@ -35,8 +35,8 @@
 #include "NodeTraversal.h"
 #include "RenderObject.h"
 #include "Text.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
-#include "visible_units.h"
 
 namespace WebCore {
 

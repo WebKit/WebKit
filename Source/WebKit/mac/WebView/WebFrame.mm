@@ -93,9 +93,9 @@
 #import <WebCore/StylePropertySet.h>
 #import <WebCore/TextIterator.h>
 #import <WebCore/ThreadCheck.h>
+#import <WebCore/VisibleUnits.h>
 #import <WebCore/htmlediting.h>
 #import <WebCore/markup.h>
-#import <WebCore/visible_units.h>
 #import <WebKitSystemInterface.h>
 #import <runtime/JSLock.h>
 #import <runtime/JSObject.h>

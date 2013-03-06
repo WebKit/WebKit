@@ -37,8 +37,8 @@
 #include "RenderBlock.h"
 #include "RootInlineBox.h"
 #include "Text.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
-#include "visible_units.h"
 #include <stdio.h>
 #include <wtf/text/CString.h>
 

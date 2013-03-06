@@ -44,9 +44,9 @@
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
+#include "VisibleUnits.h"
 #include "htmlediting.h"
 #include "markup.h"
-#include "visible_units.h"
 
 namespace WebCore {
 
