@@ -1406,6 +1406,7 @@ webkit.org/b/111016 http/tests/loading/promote-img-preload-priority.html [ Failu
 webkit.org/b/111058 plugins/plugin-clip-subframe.html [ Failure ]
 
 webkit.org/b/111477 inspector-protocol/layers/layers-for-node.html [ Timeout ]
+webkit.org/b/111477 inspector-protocol/layers/layers-reflected-content.html [ Timeout ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # End of Tests failing

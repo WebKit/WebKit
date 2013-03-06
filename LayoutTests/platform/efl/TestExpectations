@@ -817,7 +817,7 @@ webkit.org/b/107024 compositing/self-painting-layers2.html [ Pass Failure ]
 webkit.org/b/107024 compositing/video-page-visibility.html [ Pass Failure ]
 
 # Fails, test times out in testLoadErrorGC()
-webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Timeout Pass ]
+webkit.org/b/78819 fast/workers/shared-worker-load-error.html [ Failure Pass ]
 
 #////////////////////////////////////////////////////////////////////////////////////////
 # PASSING TESTS WITH INCORRECT EXPECTATIONS
