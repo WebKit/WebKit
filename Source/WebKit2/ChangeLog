@@ -1,3 +1,18 @@
+2013-03-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
+
+        [EFL][WK2] Use Vector::reserveInitialCapacity() in WebEventFactory::createWebTouchEvent()
+        https://bugs.webkit.org/show_bug.cgi?id=111530
+
+        Reviewed by Benjamin Poulain.
+
+        In WebEventFactory::createWebTouchEvent(), when constructing the vector of touch points,
+        we already know in advance the total number of touch points. Therefore, we should
+        leverage WTF::Vector::reserveInitialCapacity() and WTF::Vector::uncheckedAppend() to save
+        some capacity checks.
+
+        * Shared/efl/WebEventFactory.cpp:
+        (WebKit::WebEventFactory::createWebTouchEvent):
+
 2013-03-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         [WK2][EFL] Enable asynchronous spell checking by default

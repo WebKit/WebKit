@@ -222,12 +222,14 @@ static inline WebEvent::Type typeForTouchEvent(Ewk_Touch_Event_Type type)
 WebTouchEvent WebEventFactory::createWebTouchEvent(Ewk_Touch_Event_Type type, const Eina_List* points, const Evas_Modifier* modifiers, const AffineTransform& toWebContent, const AffineTransform& toDeviceScreen, double timestamp)
 {
     Vector<WebPlatformTouchPoint> touchPoints;
-    WebPlatformTouchPoint::TouchPointState state;
+    touchPoints.reserveInitialCapacity(eina_list_count(points));
+
     const Eina_List* list;
     void* item;
     EINA_LIST_FOREACH(points, list, item) {
         Ewk_Touch_Point* point = static_cast<Ewk_Touch_Point*>(item);
 
+        WebPlatformTouchPoint::TouchPointState state;
         switch (point->state) {
         case EVAS_TOUCH_POINT_UP:
             state = WebPlatformTouchPoint::TouchReleased;
@@ -250,7 +252,7 @@ WebTouchEvent WebEventFactory::createWebTouchEvent(Ewk_Touch_Event_Type type, co
         }
 
         IntPoint pos(point->x, point->y);
-        touchPoints.append(WebPlatformTouchPoint(point->id, state, toDeviceScreen.mapPoint(pos), toWebContent.mapPoint(pos)));
+        touchPoints.uncheckedAppend(WebPlatformTouchPoint(point->id, state, toDeviceScreen.mapPoint(pos), toWebContent.mapPoint(pos)));
     }
 
     return WebTouchEvent(typeForTouchEvent(type), touchPoints, modifiersForEvent(modifiers), timestamp);
