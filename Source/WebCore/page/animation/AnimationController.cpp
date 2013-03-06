@@ -58,7 +58,6 @@ AnimationControllerPrivate::AnimationControllerPrivate(Frame* frame)
     , m_animationsWaitingForStyle()
     , m_animationsWaitingForStartTimeResponse()
     , m_waitingForAsyncStartNotification(false)
-    , m_previousTimeToNextService(0)
 {
 }
 
@@ -126,14 +125,9 @@ void AnimationControllerPrivate::updateAnimationTimerForRenderer(RenderObject* r
     if (!compAnim->suspended() && compAnim->hasAnimations())
         timeToNextService = compAnim->timeToNextService();
 
-    if (m_animationTimer.isActive()) {
-        if (m_previousTimeToNextService < timeToNextService)
-            return;
+    if (m_animationTimer.isActive() && (m_animationTimer.repeatInterval() || m_animationTimer.nextFireInterval() <= timeToNextService))
+        return;
 
-        m_animationTimer.stop();
-    }
-
-    m_previousTimeToNextService = timeToNextService;
     m_animationTimer.startOneShot(timeToNextService);
 }
 
@@ -145,8 +139,6 @@ void AnimationControllerPrivate::updateAnimationTimer(SetChanged callSetChanged/
     if (!timeToNextService) {
         if (!m_animationTimer.isActive() || m_animationTimer.repeatInterval() == 0)
             m_animationTimer.startRepeating(cAnimationTimerDelay);
-
-        m_previousTimeToNextService = timeToNextService;
         return;
     }
 
@@ -158,9 +150,6 @@ void AnimationControllerPrivate::updateAnimationTimer(SetChanged callSetChanged/
     }
 
     // Otherwise, we want to start a one-shot timer so we get here again
-    if (m_animationTimer.isActive())
-        m_animationTimer.stop();
-    m_previousTimeToNextService = timeToNextService;
     m_animationTimer.startOneShot(timeToNextService);
 }
 
