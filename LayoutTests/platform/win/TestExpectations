@@ -2297,6 +2297,7 @@ media/video-source-error-no-candidate.html
 media/video-src-remove.html
 media/video-size-intrinsic-scale.html
 media/video-source-media.html
+media/video-source-load.html
 
 # Interactive form validation not enabled on Windows
 fast/forms/number/number-interactive-validation-required.html
@@ -2687,4 +2688,4 @@ fast/parser
 ietestcenter
 jquery
 media/media-fragments
-
+media/W3C
