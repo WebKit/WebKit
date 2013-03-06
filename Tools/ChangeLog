@@ -1,3 +1,13 @@
+2013-03-05  Roger Fong  <roger_fong@apple.com>
+
+        Increase number of WinEWS iterations to 20.
+        Don't reboot after each iteration set.
+        Make EWS bots just build temporarily so that the queue catches up again.
+
+        * EWSTools/start-queue-win.sh:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        (WinEWS):
+
 2013-03-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move check for threaded compositing from WebCompositorSupport to Platform

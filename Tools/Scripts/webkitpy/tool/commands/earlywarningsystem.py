@@ -177,7 +177,6 @@ class WinEWS(AbstractEarlyWarningSystem):
     # Use debug, the Apple Win port fails to link Release on 32-bit Windows.
     # https://bugs.webkit.org/show_bug.cgi?id=39197
     _build_style = "debug"
-    _default_run_tests = True
 
 
 class AbstractChromiumEWS(AbstractEarlyWarningSystem):
