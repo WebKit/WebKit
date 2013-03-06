@@ -5,3 +5,23 @@
 .ace-editor-container {
     height: 100%;
 }
+
+.webkit-execution-line {
+    background-color: rgb(171, 191, 254);
+    outline: 1px solid rgb(64, 115, 244);
+    position: absolute;
+}
+
+.webkit-gutter-execution-line {
+    color: transparent;
+    border-width: 0 10px 0px 2px;
+    -webkit-border-image: url(Images/programCounterBorder.png) 0 10 0 2;
+}
+
+.webkit-gutter-execution-line.webkit-breakpoint {
+    -webkit-border-image: url(Images/breakpointCounterBorder.png) 0 10 0 2;
+}
+
+.webkit-gutter-execution-line.webkit-breakpoint-conditional {
+    -webkit-border-image: url(Images/breakpointConditionalCounterBorder.png) 0 10 0 2;
+}

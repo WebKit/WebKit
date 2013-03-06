@@ -179,7 +179,10 @@ WebInspector.AceTextEditor.prototype = {
      */
     setExecutionLine: function(lineNumber)
     {
-        console.log("aceEditor.setExecutionLine not implemented");
+        this._executionLine = lineNumber;
+        const Range = ace.require('ace/range').Range;
+        this._executionLineMarker = this._aceEditor.session.addMarker(new Range(lineNumber, 0, lineNumber, Infinity), "webkit-execution-line", "fullLine");
+        this._aceEditor.session.addGutterDecoration(lineNumber, "webkit-gutter-execution-line");
     },
 
     /**
@@ -194,7 +197,8 @@ WebInspector.AceTextEditor.prototype = {
 
     clearExecutionLine: function()
     {
-        console.log("aceEditor.clearExecutionLine not implemented");
+        this._aceEditor.session.removeMarker(this._executionLineMarker);
+        this._aceEditor.session.removeGutterDecoration(this._executionLine, "webkit-gutter-execution-line");
     },
 
     /**
@@ -296,7 +300,7 @@ WebInspector.AceTextEditor.prototype = {
      */
     setSelection: function(textRange)
     {
-        console.log("aceEditor.setSelection not implemented");
+        this._aceEditor.scrollToLine(textRange.startLine, true);
     },
 
     /**
