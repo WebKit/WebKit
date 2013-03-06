@@ -15,8 +15,8 @@ layer at (0,0) size 800x600
           RenderInline {A} at (0,0) size 169x22
             RenderText {#text} at (0,0) size 169x22
               text run at (0,0) width 169: "Table of Contents"
-        RenderTable {TABLE} at (0,39) size 0x5
-          RenderTableSection {TBODY} at (0,0) size 0x4
-            RenderTableRow {TR} at (0,2) size 0x0
+        RenderTable {TABLE} at (0,39) size 4x5
+          RenderTableSection {TBODY} at (0,0) size 4x4
+            RenderTableRow {TR} at (0,2) size 4x0
       RenderBlock (anonymous) at (0,74) size 784x1
         RenderInline {FONT} at (0,0) size 0x0
