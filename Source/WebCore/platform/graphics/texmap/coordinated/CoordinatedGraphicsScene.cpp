@@ -360,6 +360,12 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
         layer->setShowRepaintCounter(layerState.showRepaintCounter);
     }
 
+    if (layerState.isScrollableChanged)
+        toGraphicsLayerTextureMapper(layer)->setIsScrollable(layerState.isScrollable);
+
+    if (layerState.committedScrollOffsetChanged)
+        toGraphicsLayerTextureMapper(layer)->didCommitScrollOffset(layerState.committedScrollOffset);
+
     if (layerState.fixedToViewport)
         m_fixedLayers.add(id, layer);
     else
@@ -397,6 +403,8 @@ void CoordinatedGraphicsScene::createLayer(CoordinatedLayerID id)
 {
     OwnPtr<GraphicsLayer> newLayer = GraphicsLayer::create(0 /* factory */, this);
     toGraphicsLayerTextureMapper(newLayer.get())->setHasOwnBackingStore(false);
+    toGraphicsLayerTextureMapper(newLayer.get())->setID(id);
+    toGraphicsLayerTextureMapper(newLayer.get())->setScrollClient(this);
     m_layers.add(id, newLayer.release());
 }
 
@@ -686,6 +694,16 @@ void CoordinatedGraphicsScene::purgeGLResources()
     dispatchOnMainThread(bind(&CoordinatedGraphicsScene::purgeBackingStores, this));
 }
 
+void CoordinatedGraphicsScene::dispatchCommitScrollOffset(uint32_t layerID, const IntSize& offset)
+{
+    m_client->commitScrollOffset(layerID, offset);
+}
+
+void CoordinatedGraphicsScene::commitScrollOffset(uint32_t layerID, const IntSize& offset)
+{
+    dispatchOnMainThread(bind(&CoordinatedGraphicsScene::dispatchCommitScrollOffset, this, layerID, offset));
+}
+
 void CoordinatedGraphicsScene::purgeBackingStores()
 {
     if (m_client)
@@ -751,6 +769,11 @@ void CoordinatedGraphicsScene::setActive(bool active)
 void CoordinatedGraphicsScene::setBackgroundColor(const Color& color)
 {
     m_backgroundColor = color;
+}
+
+TextureMapperLayer* CoordinatedGraphicsScene::findScrollableContentsLayerAt(const FloatPoint& point)
+{
+    return rootLayer() ? toTextureMapperLayer(rootLayer())->findScrollableContentsLayerAt(point) : 0;
 }
 
 } // namespace WebCore

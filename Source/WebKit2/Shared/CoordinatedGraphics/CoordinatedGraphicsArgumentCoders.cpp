@@ -896,6 +896,9 @@ void ArgumentCoder<CoordinatedGraphicsLayerState>::encode(ArgumentEncoder& encod
         encoder << state.canvasFrontBuffer;
     }
 #endif
+
+    if (state.committedScrollOffsetChanged)
+        encoder << state.committedScrollOffset;
 }
 
 bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decoder, CoordinatedGraphicsLayerState& state)
@@ -980,6 +983,9 @@ bool ArgumentCoder<CoordinatedGraphicsLayerState>::decode(ArgumentDecoder& decod
             return false;
     }
 #endif
+
+    if (state.committedScrollOffsetChanged && !decoder.decode(state.committedScrollOffset))
+        return false;
 
     return true;
 }

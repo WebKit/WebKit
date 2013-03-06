@@ -1,3 +1,54 @@
+2013-03-06  Luiz Agostini  <luiz.agostini@nokia.com>
+
+        Accelerated overflow scrolling for Coordinated Graphics.
+        https://bugs.webkit.org/show_bug.cgi?id=110323
+
+        Reviewed by Noam Rosenthal.
+        Signed off for WebKit2 by Simon Fraser.
+
+        A scroll offset is applied to individual layers on UI process and the
+        web process is notified assynchronously.
+        The new API WKCoordinatedScene may be used to scroll layers in the UI process.
+
+        * CMakeLists.txt:
+
+        Encoding and decoding the new members of CoordinatedGraphicsLayerState.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
+        Adding acceleratedCompositingForOverflowScrollEnabled to WebPreferencesStore.
+
+        * Shared/WebPreferencesStore.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::updatePreferences):
+
+        New API WKCoordinatedScene is used to scroll layers on UI side.
+
+        * UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.cpp:
+        * UIProcess/API/CoordinatedGraphics/WKCoordinatedScene.h:
+        * UIProcess/CoordinatedGraphics/WKCoordinatedSceneAPICast.h:
+
+        A new message is used to send scroll commit messages to web process.
+
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.cpp:
+        (WebKit::CoordinatedLayerTreeHostProxy::commitScrollOffset):
+        (WebKit):
+        * UIProcess/CoordinatedGraphics/CoordinatedLayerTreeHostProxy.h:
+        (CoordinatedLayerTreeHostProxy):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.cpp:
+        (WebKit::CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost):
+        (WebKit::CoordinatedLayerTreeHost::detachLayer):
+        (WebKit::CoordinatedLayerTreeHost::createGraphicsLayer):
+        (WebKit::CoordinatedLayerTreeHost::setVisibleContentsRect):
+        (WebKit::CoordinatedLayerTreeHost::purgeBackingStores):
+        (WebKit::CoordinatedLayerTreeHost::commitScrollOffset):
+        (WebKit):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.h:
+        (CoordinatedLayerTreeHost):
+        * WebProcess/WebPage/CoordinatedGraphics/CoordinatedLayerTreeHost.messages.in:
+
 2013-03-06  Huang Dongsung  <luxtella@company100.net>
 
         [EFL][WK2] Convert from device view size to UI view size only in EwkView.

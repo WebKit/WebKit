@@ -33,6 +33,7 @@
 #include "TextureMapper.h"
 #include "TextureMapperBackingStore.h"
 #include "TextureMapperFPSCounter.h"
+#include "TextureMapperLayer.h"
 #include "Timer.h"
 #include <wtf/Functional.h>
 #include <wtf/HashSet.h>
@@ -48,7 +49,6 @@ namespace WebCore {
 class CoordinatedBackingStore;
 class CustomFilterProgram;
 class CustomFilterProgramInfo;
-class TextureMapperLayer;
 
 class CoordinatedGraphicsSceneClient {
 public:
@@ -59,9 +59,10 @@ public:
     virtual void purgeBackingStores() = 0;
     virtual void renderNextFrame() = 0;
     virtual void updateViewport() = 0;
+    virtual void commitScrollOffset(uint32_t layerID, const IntSize& offset) = 0;
 };
 
-class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public GraphicsLayerClient {
+class CoordinatedGraphicsScene : public ThreadSafeRefCounted<CoordinatedGraphicsScene>, public GraphicsLayerClient, public TextureMapperLayer::ScrollingClient {
 public:
     explicit CoordinatedGraphicsScene(CoordinatedGraphicsSceneClient*);
     virtual ~CoordinatedGraphicsScene();
@@ -70,6 +71,10 @@ public:
     void setScrollPosition(const FloatPoint&);
     void detach();
     void appendUpdate(const Function<void()>&);
+
+    WebCore::TextureMapperLayer* findScrollableContentsLayerAt(const WebCore::FloatPoint&);
+
+    virtual void commitScrollOffset(uint32_t layerID, const IntSize& offset);
 
     // The painting thread must lock the main thread to use below two methods, because two methods access members that the main thread manages. See m_client.
     // Currently, QQuickWebPage::updatePaintNode() locks the main thread before calling both methods.
@@ -156,6 +161,8 @@ private:
     void createBackingStoreIfNeeded(GraphicsLayer*);
     void removeBackingStoreIfNeeded(GraphicsLayer*);
     void resetBackingStoreSizeToLayerSize(GraphicsLayer*);
+
+    void dispatchCommitScrollOffset(uint32_t layerID, const IntSize& offset);
 
     // Render queue can be accessed ony from main thread or updatePaintNode call stack!
     Vector<Function<void()> > m_renderQueue;

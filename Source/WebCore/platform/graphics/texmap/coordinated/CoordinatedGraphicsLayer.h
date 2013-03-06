@@ -44,6 +44,7 @@
 namespace WebCore {
 class CoordinatedGraphicsLayer;
 class GraphicsLayerAnimations;
+class ScrollableArea;
 
 class CoordinatedGraphicsLayerClient {
 public:
@@ -114,6 +115,10 @@ public:
     void setVisibleContentRectTrajectoryVector(const FloatPoint&);
 
     void setRootLayer(bool);
+
+    void setScrollableArea(ScrollableArea*);
+    bool isScrollable() const { return !!m_scrollableArea; }
+    void commitScrollOffset(const IntSize&);
 
     CoordinatedLayerID id() const;
 
@@ -240,6 +245,8 @@ private:
     Timer<CoordinatedGraphicsLayer> m_animationStartedTimer;
     GraphicsLayerAnimations m_animations;
     double m_lastAnimationStartTime;
+
+    ScrollableArea* m_scrollableArea;
 };
 
 CoordinatedGraphicsLayer* toCoordinatedGraphicsLayer(GraphicsLayer*);

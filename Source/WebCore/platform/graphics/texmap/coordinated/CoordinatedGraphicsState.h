@@ -90,6 +90,8 @@ struct CoordinatedGraphicsLayerState {
             bool repaintCountChanged : 1;
             bool canvasChanged: 1;
             bool canvasShouldSwapBuffers: 1;
+            bool isScrollableChanged: 1;
+            bool committedScrollOffsetChanged: 1;
         };
         unsigned changeMask;
     };
@@ -105,6 +107,7 @@ struct CoordinatedGraphicsLayerState {
             bool fixedToViewport : 1;
             bool showDebugBorders : 1;
             bool showRepaintCounter : 1;
+            bool isScrollable: 1;
         };
         unsigned flags;
     };
@@ -161,6 +164,8 @@ struct CoordinatedGraphicsLayerState {
     GraphicsSurfaceToken canvasToken;
     uint32_t canvasFrontBuffer;
 #endif
+
+    IntSize committedScrollOffset;
 };
 
 struct CoordinatedGraphicsState {

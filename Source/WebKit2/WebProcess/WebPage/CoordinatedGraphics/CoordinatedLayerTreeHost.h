@@ -95,6 +95,8 @@ public:
 
     static PassRefPtr<WebCore::CoordinatedSurface> createCoordinatedSurface(const WebCore::IntSize&, WebCore::CoordinatedSurface::Flags);
 
+    void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
+
 protected:
     explicit CoordinatedLayerTreeHost(WebPage*);
 
@@ -172,7 +174,8 @@ private:
 
     WebCore::CoordinatedGraphicsState m_state;
 
-    HashSet<WebCore::CoordinatedGraphicsLayer*> m_registeredLayers;
+    typedef HashMap<WebCore::CoordinatedLayerID, WebCore::CoordinatedGraphicsLayer*> LayerMap;
+    LayerMap m_registeredLayers;
     Vector<WebCore::CoordinatedLayerID> m_layersToCreate;
     Vector<WebCore::CoordinatedLayerID> m_layersToDelete;
     typedef HashMap<WebCore::CoordinatedImageBackingID, RefPtr<WebCore::CoordinatedImageBacking> > ImageBackingMap;

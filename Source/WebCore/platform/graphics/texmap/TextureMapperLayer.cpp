@@ -20,7 +20,9 @@
 #include "config.h"
 #include "TextureMapperLayer.h"
 
+#include "FloatQuad.h"
 #include "Region.h"
+#include <wtf/MathExtras.h>
 
 #if USE(ACCELERATED_COMPOSITING)
 
@@ -670,6 +672,85 @@ void TextureMapperLayer::setScrollPositionDeltaIfNeeded(const FloatSize& delta)
         m_scrollPositionDelta = FloatSize();
     else
         m_scrollPositionDelta = delta;
+    m_currentTransform.setPosition(adjustedPosition());
+}
+
+template<class HitTestCondition> TextureMapperLayer* TextureMapperLayer::hitTest(const FloatPoint& point, HitTestCondition condition)
+{
+    if (!m_state.visible || !m_state.contentsVisible)
+        return 0;
+
+    TextureMapperLayer* result = 0;
+    for (int i = m_children.size() - 1; !result && i >= 0; --i)
+        result = m_children[i]->hitTest(point, condition);
+
+    if (result)
+        return result;
+
+    return condition(this, point) ? this : 0;
+}
+
+bool TextureMapperLayer::scrollableLayerHitTestCondition(TextureMapperLayer* layer, const FloatPoint& point)
+{
+    // scrolling layer's m_parent->m_parent, the parent of the scrolling layes, is the one that defines the
+    // rectangle to be used for hit testing.
+    if (!layer->isScrollable() || !layer->m_parent || !layer->m_parent->m_parent)
+        return false;
+
+    TextureMapperLayer* parentLayer = layer->m_parent->m_parent;
+
+    FloatRect rect;
+    if (parentLayer->m_backingStore)
+        rect = parentLayer->layerRect();
+    else if (parentLayer->m_contentsLayer)
+        rect = parentLayer->m_state.contentsRect;
+
+    return parentLayer->m_currentTransform.combined().mapQuad(rect).containsPoint(point);
+}
+
+TextureMapperLayer* TextureMapperLayer::findScrollableContentsLayerAt(const FloatPoint& point)
+{
+    return hitTest(point, &TextureMapperLayer::scrollableLayerHitTestCondition);
+}
+
+FloatSize TextureMapperLayer::mapScrollOffset(const FloatSize& offset)
+{
+    double zeroX, zeroY, offsetX, offsetY;
+    TransformationMatrix transform = m_currentTransform.combined().inverse();
+    transform.map(0, 0, zeroX, zeroY);
+    transform.map(offset.width(), offset.height(), offsetX, offsetY);
+    return FloatSize(offsetX - zeroX, offsetY - zeroY);
+}
+
+void TextureMapperLayer::commitScrollOffset(const FloatSize& offset)
+{
+    FloatSize fullOffset = m_accumulatedScrollOffsetFractionalPart + offset;
+
+    int intWidth = round(fullOffset.width());
+    int intHeight = round(fullOffset.height());
+
+    // m_accumulatedScrollOffsetFractionalPart holds the fractional part of the user scroll offset that
+    // has not yet been synced with the web process because the web process expects an IntSize.
+    m_accumulatedScrollOffsetFractionalPart = FloatSize(fullOffset.width() - intWidth, fullOffset.height() - intHeight);
+
+    m_scrollClient->commitScrollOffset(m_id, IntSize(intWidth, intHeight));
+}
+
+void TextureMapperLayer::scrollBy(const FloatSize& offset)
+{
+    if (!isScrollable() || !m_scrollClient || offset.isZero())
+        return;
+
+    FloatSize scrollOffset = mapScrollOffset(offset);
+    m_userScrollOffset += scrollOffset;
+
+    m_currentTransform.setPosition(adjustedPosition());
+    commitScrollOffset(scrollOffset);
+}
+
+void TextureMapperLayer::didCommitScrollOffset(const IntSize& offset)
+{
+    m_userScrollOffset = FloatSize(m_userScrollOffset.width() - offset.width(), m_userScrollOffset.height() - offset.height());
     m_currentTransform.setPosition(adjustedPosition());
 }
 

@@ -34,6 +34,9 @@ public:
     explicit GraphicsLayerTextureMapper(GraphicsLayerClient*);
     virtual ~GraphicsLayerTextureMapper();
 
+    void setScrollClient(TextureMapperLayer::ScrollingClient* client) { m_layer->setScrollClient(client); }
+    void setID(uint32_t id) { m_layer->setID(id); }
+
     // reimps from GraphicsLayer.h
     virtual void setNeedsDisplay();
     virtual void setContentsNeedsDisplay();
@@ -80,6 +83,10 @@ public:
     void setAnimations(const GraphicsLayerAnimations&);
 
     TextureMapperLayer* layer() const { return m_layer.get(); }
+
+    void didCommitScrollOffset(const IntSize&);
+    void setIsScrollable(bool);
+    bool isScrollable() const { return m_isScrollable; }
 
 #if ENABLE(CSS_FILTERS)
     virtual bool setFilters(const FilterOperations&);
@@ -143,7 +150,10 @@ private:
         RepaintCountChange =        (1L << 25),
 
         FixedToViewporChange =      (1L << 26),
-        AnimationStarted =          (1L << 27)
+        AnimationStarted =          (1L << 27),
+
+        CommittedScrollOffsetChange =     (1L << 28),
+        IsScrollableChange =              (1L << 29)
     };
     void notifyChange(ChangeMask);
 
@@ -165,6 +175,9 @@ private:
     FloatRect m_needsDisplayRect;
     GraphicsLayerAnimations m_animations;
     double m_animationStartTime;
+
+    IntSize m_committedScrollOffset;
+    bool m_isScrollable;
 };
 
 inline static GraphicsLayerTextureMapper* toGraphicsLayerTextureMapper(GraphicsLayer* layer)

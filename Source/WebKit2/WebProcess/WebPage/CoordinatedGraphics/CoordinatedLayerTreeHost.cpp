@@ -72,9 +72,9 @@ CoordinatedLayerTreeHost::~CoordinatedLayerTreeHost()
 #endif
     purgeBackingStores();
 
-    HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = m_registeredLayers.end();
-    for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
-        (*it)->setCoordinator(0);
+    LayerMap::iterator end = m_registeredLayers.end();
+    for (LayerMap::iterator it = m_registeredLayers.begin(); it != end; ++it)
+        it->value->setCoordinator(0);
 }
 
 CoordinatedLayerTreeHost::CoordinatedLayerTreeHost(WebPage* webPage)
@@ -452,7 +452,7 @@ void CoordinatedLayerTreeHost::disconnectCustomFilterPrograms()
 
 void CoordinatedLayerTreeHost::detachLayer(CoordinatedGraphicsLayer* layer)
 {
-    m_registeredLayers.remove(layer);
+    m_registeredLayers.remove(layer->id());
     m_layersToDelete.append(layer->id());
     scheduleLayerFlush();
 }
@@ -624,7 +624,7 @@ PassOwnPtr<GraphicsLayer> CoordinatedLayerTreeHost::createGraphicsLayer(Graphics
 {
     CoordinatedGraphicsLayer* layer = new CoordinatedGraphicsLayer(client);
     layer->setCoordinator(this);
-    m_registeredLayers.add(layer);
+    m_registeredLayers.add(layer->id(), layer);
     m_layersToCreate.append(layer->id());
     layer->setNeedsVisibleRectAdjustment();
     scheduleLayerFlush();
@@ -682,9 +682,9 @@ void CoordinatedLayerTreeHost::setVisibleContentsRect(const FloatRect& rect, con
     if (contentsRectDidChange) {
         m_visibleContentsRect = rect;
 
-        HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = m_registeredLayers.end();
-        for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it) {
-            (*it)->setNeedsVisibleRectAdjustment();
+        LayerMap::iterator end = m_registeredLayers.end();
+        for (LayerMap::iterator it = m_registeredLayers.begin(); it != end; ++it) {
+            it->value->setNeedsVisibleRectAdjustment();
         }
     }
 
@@ -733,9 +733,9 @@ void CoordinatedLayerTreeHost::purgeBackingStores()
 {
     TemporaryChange<bool> purgingToggle(m_isPurging, true);
 
-    HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator end = m_registeredLayers.end();
-    for (HashSet<WebCore::CoordinatedGraphicsLayer*>::iterator it = m_registeredLayers.begin(); it != end; ++it)
-        (*it)->purgeBackingStores();
+    LayerMap::iterator end = m_registeredLayers.end();
+    for (LayerMap::iterator it = m_registeredLayers.begin(); it != end; ++it)
+        it->value->purgeBackingStores();
 
     m_imageBackings.clear();
     m_updateAtlases.clear();
@@ -797,6 +797,15 @@ void CoordinatedLayerTreeHost::setBackgroundColor(const WebCore::Color& color)
 {
     m_shouldSyncFrame = true;
     m_state.backgroundColor = color;
+}
+
+void CoordinatedLayerTreeHost::commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset)
+{
+    LayerMap::iterator i = m_registeredLayers.find(layerID);
+    if (i == m_registeredLayers.end())
+        return;
+
+    i->value->commitScrollOffset(offset);
 }
 
 } // namespace WebKit

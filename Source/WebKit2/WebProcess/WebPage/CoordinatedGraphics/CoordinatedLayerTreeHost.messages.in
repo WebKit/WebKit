@@ -27,5 +27,6 @@ messages -> CoordinatedLayerTreeHost LegacyReceiver {
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     AnimationFrameReady()
 #endif
+    CommitScrollOffset(uint32_t layerID, WebCore::IntSize offset)
 }
 #endif

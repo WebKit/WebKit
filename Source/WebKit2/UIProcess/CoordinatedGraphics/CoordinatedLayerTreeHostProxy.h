@@ -87,6 +87,8 @@ public:
     virtual void renderNextFrame() OVERRIDE;
     virtual void purgeBackingStores() OVERRIDE;
 
+    virtual void commitScrollOffset(uint32_t layerID, const WebCore::IntSize& offset);
+
 protected:
     void dispatchUpdate(const Function<void()>&);
 

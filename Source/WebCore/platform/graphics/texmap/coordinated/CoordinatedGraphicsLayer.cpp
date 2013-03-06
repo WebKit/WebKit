@@ -32,6 +32,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsLayer.h"
 #include "Page.h"
+#include "ScrollableArea.h"
 #include "TextureMapperPlatformLayer.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/HashMap.h>
@@ -122,6 +123,7 @@ CoordinatedGraphicsLayer::CoordinatedGraphicsLayer(GraphicsLayerClient* client)
     , m_compositedNativeImagePtr(0)
     , m_canvasPlatformLayer(0)
     , m_animationStartedTimer(this, &CoordinatedGraphicsLayer::animationStartedTimerFired)
+    , m_scrollableArea(0)
 {
     static CoordinatedLayerID nextLayerID = 1;
     m_id = nextLayerID++;
@@ -514,6 +516,29 @@ CoordinatedLayerID CoordinatedGraphicsLayer::id() const
     return m_id;
 }
 
+void CoordinatedGraphicsLayer::setScrollableArea(ScrollableArea* scrollableArea)
+{
+    bool oldScrollable = isScrollable();
+    m_scrollableArea = scrollableArea;
+    if (oldScrollable == isScrollable())
+        return;
+
+    m_layerState.isScrollable = isScrollable();
+    m_layerState.isScrollableChanged = true;
+    didChangeLayerState();
+}
+
+void CoordinatedGraphicsLayer::commitScrollOffset(const IntSize& offset)
+{
+    if (!isScrollable() || offset.isZero())
+        return;
+
+    m_scrollableArea->notifyScrollPositionChanged(m_scrollableArea->scrollPosition() + offset);
+    m_layerState.committedScrollOffset += offset;
+    m_layerState.committedScrollOffsetChanged = true;
+    didChangeLayerState();
+}
+
 void CoordinatedGraphicsLayer::setFixedToViewport(bool isFixed)
 {
     if (m_fixedToViewport == isFixed)
@@ -737,6 +762,7 @@ void CoordinatedGraphicsLayer::resetLayerState()
     m_layerState.tilesToCreate.clear();
     m_layerState.tilesToRemove.clear();
     m_layerState.tilesToUpdate.clear();
+    m_layerState.committedScrollOffset = IntSize();
 }
 
 bool CoordinatedGraphicsLayer::imageBackingVisible()

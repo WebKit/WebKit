@@ -47,6 +47,24 @@ void ScrollingCoordinatorCoordinatedGraphics::setLayerIsFixedToContainerLayer(Gr
     toCoordinatedGraphicsLayer(layer)->setFixedToViewport(enable);
 }
 
+void ScrollingCoordinatorCoordinatedGraphics::scrollableAreaScrollLayerDidChange(ScrollableArea* scrollableArea)
+{
+    CoordinatedGraphicsLayer* layer = toCoordinatedGraphicsLayer(scrollLayerForScrollableArea(scrollableArea));
+    if (!layer)
+        return;
+
+    layer->setScrollableArea(scrollableArea);
+}
+
+void ScrollingCoordinatorCoordinatedGraphics::willDestroyScrollableArea(ScrollableArea* scrollableArea)
+{
+    CoordinatedGraphicsLayer* layer = toCoordinatedGraphicsLayer(scrollLayerForScrollableArea(scrollableArea));
+    if (!layer)
+        return;
+
+    layer->setScrollableArea(0);
+}
+
 } // namespace WebCore
 
 #endif // USE(COORDINATED_GRAPHICS)

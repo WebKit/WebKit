@@ -168,5 +168,10 @@ void CoordinatedLayerTreeHostProxy::setBackgroundColor(const Color& color)
     dispatchUpdate(bind(&CoordinatedGraphicsScene::setBackgroundColor, m_scene.get(), color));
 }
 
+void CoordinatedLayerTreeHostProxy::commitScrollOffset(uint32_t layerID, const IntSize& offset)
+{
+    m_drawingAreaProxy->page()->process()->send(Messages::CoordinatedLayerTreeHost::CommitScrollOffset(layerID, offset), m_drawingAreaProxy->page()->pageID());
+}
+
 }
 #endif // USE(COORDINATED_GRAPHICS)

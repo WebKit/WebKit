@@ -39,6 +39,12 @@ class TextureMapperLayer : public GraphicsLayerAnimation::Client {
     WTF_MAKE_NONCOPYABLE(TextureMapperLayer);
     WTF_MAKE_FAST_ALLOCATED;
 public:
+
+    class ScrollingClient {
+    public:
+        virtual void commitScrollOffset(uint32_t layerID, const IntSize& offset) = 0;
+    };
+
     TextureMapperLayer()
         : m_parent(0)
         , m_effectTarget(0)
@@ -47,9 +53,24 @@ public:
         , m_centerZ(0)
         , m_textureMapper(0)
         , m_fixedToViewport(false)
+        , m_id(0)
+        , m_scrollClient(0)
+        , m_isScrollable(false)
     { }
 
     virtual ~TextureMapperLayer();
+
+    void setID(uint32_t id) { m_id = id; }
+    uint32_t id() { return m_id; }
+
+    TextureMapperLayer* findScrollableContentsLayerAt(const FloatPoint& pos);
+
+    void setScrollClient(ScrollingClient* scrollClient) { m_scrollClient = scrollClient; }
+    void scrollBy(const WebCore::FloatSize&);
+
+    void didCommitScrollOffset(const IntSize&);
+    void setIsScrollable(bool isScrollable) { m_isScrollable = isScrollable; }
+    bool isScrollable() const { return m_isScrollable; }
 
     TextureMapper* textureMapper() const;
     void setTextureMapper(TextureMapper* texmap) { m_textureMapper = texmap; }
@@ -108,7 +129,7 @@ private:
     static void sortByZOrder(Vector<TextureMapperLayer* >& array, int first, int last);
 
     PassRefPtr<BitmapTexture> texture() { return m_backingStore ? m_backingStore->texture() : 0; }
-    FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta; }
+    FloatPoint adjustedPosition() const { return m_state.pos + m_scrollPositionDelta - m_userScrollOffset; }
     bool isAncestorFixedToViewport() const;
     TransformationMatrix replicaTransform();
     void addChild(TextureMapperLayer*);
@@ -158,6 +179,12 @@ private:
     FilterOperations m_currentFilters;
 #endif
     float m_centerZ;
+
+    template<class HitTestCondition> TextureMapperLayer* hitTest(const FloatPoint&, HitTestCondition);
+    static bool scrollableLayerHitTestCondition(TextureMapperLayer*, const FloatPoint&);
+
+    FloatSize mapScrollOffset(const FloatSize&);
+    void commitScrollOffset(const FloatSize&);
 
     struct State {
         FloatPoint pos;
@@ -211,6 +238,11 @@ private:
     GraphicsLayerAnimations m_animations;
     FloatSize m_scrollPositionDelta;
     bool m_fixedToViewport;
+    uint32_t m_id;
+    ScrollingClient* m_scrollClient;
+    bool m_isScrollable;
+    FloatSize m_userScrollOffset;
+    FloatSize m_accumulatedScrollOffsetFractionalPart;
 };
 
 }
