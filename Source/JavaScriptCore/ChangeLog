@@ -1,3 +1,9 @@
+2013-03-06  Andreas Kling  <akling@apple.com>
+
+        Unreviewed, fix Windows build after r144910.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+
 2013-03-05  Filip Pizlo  <fpizlo@apple.com>
 
         DFG should not check if nodes are shouldGenerate prior to DCE
