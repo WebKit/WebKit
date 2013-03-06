@@ -72,6 +72,7 @@ private:
 
     bool shouldApplyChangesForKey(const String& key) const;
     void loadValuesIfNeeded();
+    void resetValues();
 
     uint64_t m_storageNamespaceID;
     unsigned m_quotaInBytes;

@@ -207,7 +207,8 @@ void StorageAreaProxy::didSetItem(const String& key, bool quotaError)
 
     m_pendingValueChanges.remove(key);
 
-    // FIXME: Implement this.
+    if (quotaError)
+        resetValues();
 }
 
 void StorageAreaProxy::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
@@ -265,6 +266,12 @@ void StorageAreaProxy::loadValuesIfNeeded()
 
     m_storageMap = StorageMap::create(m_quotaInBytes);
     m_storageMap->importItems(values);
+}
+
+void StorageAreaProxy::resetValues()
+{
+    m_storageMap = nullptr;
+    m_pendingValueChanges.clear();
 }
 
 } // namespace WebKit
