@@ -420,7 +420,7 @@ WebInspector.SelectionDialogContentProvider.prototype = {
     itemsCount: function() { },
 
     /**
-     * @param {function(number, number, number, number)} callback
+     * @param {function(number, number)} callback
      */
     requestItems: function(callback) { },
 
@@ -514,7 +514,7 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
     },
 
     /**
-     * @param {function(number, number, number, number)} callback
+     * @param {function(number, number)} callback
      */
     requestItems: function(callback)
     {
@@ -570,7 +570,9 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
         return query;
     },
 
-    __proto__: WebInspector.SelectionDialogContentProvider.prototype
+    dispose: function()
+    {
+    }
 }
 
 /**
@@ -642,7 +644,7 @@ WebInspector.OpenResourceDialog.prototype = {
     },
 
     /**
-     * @param {function(number, number, number, number)} callback
+     * @param {function(number, number)} callback
      */
     requestItems: function(callback)
     {
@@ -698,9 +700,7 @@ WebInspector.OpenResourceDialog.prototype = {
     dispose: function()
     {
         WebInspector.workspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this);
-    },
-
-    __proto__: WebInspector.SelectionDialogContentProvider.prototype
+    }
 }
 
 /**

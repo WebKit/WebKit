@@ -100,7 +100,7 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
     },
 
     /**
-     * @param {function(number, number, number, number)} callback
+     * @param {function(number, number)} callback
      */
     requestItems: function(callback)
     {
@@ -159,5 +159,7 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
         return query;
     },
 
-    __proto__: WebInspector.SelectionDialogContentProvider.prototype
+    dispose: function()
+    {
+    }
 }
