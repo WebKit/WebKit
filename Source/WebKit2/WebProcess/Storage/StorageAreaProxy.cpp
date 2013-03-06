@@ -142,6 +142,8 @@ void StorageAreaProxy::setItem(const String& key, const String& value, Exception
     if (oldValue == value)
         return;
 
+    m_pendingValueChanges.add(key);
+
     WebProcess::shared().connection()->send(Messages::StorageManager::SetItem(m_storageAreaID, key, value, sourceFrame->document()->url()), 0);
 }
 
@@ -201,11 +203,18 @@ void StorageAreaProxy::closeDatabaseIfIdle()
 
 void StorageAreaProxy::didSetItem(const String& key, bool quotaError)
 {
+    ASSERT(m_pendingValueChanges.contains(key));
+
+    m_pendingValueChanges.remove(key);
+
     // FIXME: Implement this.
 }
 
 void StorageAreaProxy::dispatchStorageEvent(const String& key, const String& oldValue, const String& newValue, const String& urlString)
 {
+    if (!shouldApplyChangesForKey(key))
+        return;
+
     // FIXME: Implement this.
 }
 
@@ -227,6 +236,21 @@ bool StorageAreaProxy::disabledByPrivateBrowsingInFrame(const Frame* sourceFrame
         return true;
 
     return !SchemeRegistry::allowsLocalStorageAccessInPrivateBrowsing(sourceFrame->document()->securityOrigin()->protocol());
+}
+
+bool StorageAreaProxy::shouldApplyChangesForKey(const String& key) const
+{
+    // We have not yet loaded anything from this storage map.
+    if (!m_storageMap)
+        return false;
+
+    // Check if this storage area is currently waiting for the storage manager to update the given key.
+    // If that is the case, we don't want to apply any changes made by other storage areas, since
+    // our change was made last.
+    if (m_pendingValueChanges.contains(key))
+        return false;
+
+    return true;
 }
 
 void StorageAreaProxy::loadValuesIfNeeded()
