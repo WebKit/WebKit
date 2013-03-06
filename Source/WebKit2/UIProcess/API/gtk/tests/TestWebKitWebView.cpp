@@ -479,9 +479,9 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
         " <a style='position:absolute; left:1; top:1' href='http://www.webkitgtk.org' title='WebKitGTK+ Title'>WebKitGTK+ Website</a>"
         " <img style='position:absolute; left:1; top:10' src='0xdeadbeef' width=5 height=5></img>"
         " <a style='position:absolute; left:1; top:20' href='http://www.webkitgtk.org/logo' title='WebKitGTK+ Logo'><img src='0xdeadbeef' width=5 height=5></img></a>"
-        " <video style='position:absolute; left:1; top:30' width=10 height=10 controls='controls'><source src='movie.ogg' type='video/ogg' /></video>"
-        " <input style='position:absolute; left:1; top:50' size='10'></input>"
-        " <div style='position:absolute; left:1; top:70; width:30; height:30; overflow:scroll'>&nbsp;</div>"
+        " <input style='position:absolute; left:1; top:30' size='10'></input>"
+        " <div style='position:absolute; left:1; top:50; width:30; height:30; overflow:scroll'>&nbsp;</div>"
+        " <video style='position:absolute; left:1; top:100' width='300' height='300' controls='controls'><source src='movie.ogg' type='video/ogg' /></video>"
         "</body></html>";
 
     test->loadHtml(linksHoveredHTML, "file:///");
@@ -530,7 +530,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!test->m_mouseTargetModifiers);
 
     // Move over media.
-    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(1, 30);
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(1, 100);
     g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(webkit_hit_test_result_context_is_media(hitTestResult));
@@ -540,7 +540,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!test->m_mouseTargetModifiers);
 
     // Mover over input.
-    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(5, 55);
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(5, 35);
     g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));
@@ -549,7 +549,7 @@ static void testWebViewMouseTarget(UIClientTest* test, gconstpointer)
     g_assert(!test->m_mouseTargetModifiers);
 
     // Move over scrollbar.
-    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(5, 95);
+    hitTestResult = test->moveMouseAndWaitUntilMouseTargetChanged(5, 75);
     g_assert(!webkit_hit_test_result_context_is_link(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_image(hitTestResult));
     g_assert(!webkit_hit_test_result_context_is_media(hitTestResult));

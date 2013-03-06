@@ -1,3 +1,14 @@
+2013-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WK2][GTK] Fix unit test WebKit2APITests/WebKitWebView/mouse-target
+        https://bugs.webkit.org/show_bug.cgi?id=82866
+
+        Reviewed by Martin Robinson.
+
+        * Scripts/run-gtk-tests:
+        (TestRunner): Unflag WebKit2APITests/WebKitWebView/mouse-target test as
+        it is passing now.
+
 2013-03-06  Julie Parent  <jparent@chromium.org>
 
         Dashboard cleanup: remove dashboard time logging.

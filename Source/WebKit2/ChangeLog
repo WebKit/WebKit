@@ -1,3 +1,16 @@
+2013-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [WK2][GTK] Fix unit test WebKit2APITests/WebKitWebView/mouse-target
+        https://bugs.webkit.org/show_bug.cgi?id=82866
+
+        Reviewed by Martin Robinson.
+
+        Test was failing because of new media controls needs more space to be
+        painted than just 10x10 pixels. This is similar to r144070.
+
+        * UIProcess/API/gtk/tests/TestWebKitWebView.cpp:
+        (testWebViewMouseTarget): Modified HTML in order to give more space to the media controls.
+
 2013-03-06  Tim Horton  <timothy_horton@apple.com>
 
         [wk2] Page Overlays: Hook up the layer border/repaint counter setting to the overlay layer
