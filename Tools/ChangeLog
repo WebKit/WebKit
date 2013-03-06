@@ -1,3 +1,13 @@
+2013-03-06  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] introduce WebUserGestureIndicator
+        https://bugs.webkit.org/show_bug.cgi?id=111531
+
+        Reviewed by Adam Barth.
+
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::createView):
+
 2013-03-06  Alan Cutter  <alancutter@chromium.org>
 
         sheriffbot roll-chromium-deps shouldn't create a bug with None as the new revision.

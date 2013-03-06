@@ -54,6 +54,7 @@
 #include "WebScreenInfo.h"
 #include "WebSerializedScriptValue.h"
 #include "WebStorageNamespace.h"
+#include "WebUserGestureIndicator.h"
 #include "WebView.h"
 #include "WebWindowFeatures.h"
 #include "webkit/support/test_media_stream_client.h"
@@ -90,7 +91,7 @@ static int nextPageID = 1;
 
 WebView* WebViewHost::createView(WebFrame* creator, const WebURLRequest&, const WebWindowFeatures&, const WebString&, WebNavigationPolicy)
 {
-    creator->consumeUserGesture();
+    WebUserGestureIndicator::consumeUserGesture();
     return m_shell->createNewWindow(WebURL())->webView();
 }
 

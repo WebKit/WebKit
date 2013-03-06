@@ -173,6 +173,7 @@
 #include "WebScriptSource.h"
 #include "WebSecurityOrigin.h"
 #include "WebSerializedScriptValue.h"
+#include "WebUserGestureIndicator.h"
 #include "WebViewImpl.h"
 #include "XPathResult.h"
 #include "htmlediting.h"
@@ -1109,12 +1110,12 @@ unsigned WebFrameImpl::unloadListenerCount() const
 
 bool WebFrameImpl::isProcessingUserGesture() const
 {
-    return ScriptController::processingUserGesture();
+    return WebUserGestureIndicator::isProcessingUserGesture();
 }
 
 bool WebFrameImpl::consumeUserGesture() const
 {
-    return UserGestureIndicator::consumeUserGesture();
+    return WebUserGestureIndicator::consumeUserGesture();
 }
 
 bool WebFrameImpl::willSuppressOpenerInNewFrame() const

@@ -1,3 +1,28 @@
+2013-03-06  Jochen Eisinger  <jochen@chromium.org>
+
+        [chromium] introduce WebUserGestureIndicator
+        https://bugs.webkit.org/show_bug.cgi?id=111531
+
+        Reviewed by Adam Barth.
+
+        Currently, an embedder needs to have a WebFrame to check whether a
+        user gesture is being processed and to consume a user gesture. However,
+        the user gesture state is independed of a frame.
+
+        * WebKit.gyp:
+        * public/WebFrame.h:
+        (WebFrame):
+        * public/WebUserGestureIndicator.h: Added.
+        (WebKit):
+        (WebUserGestureIndicator):
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::isProcessingUserGesture):
+        (WebKit::WebFrameImpl::consumeUserGesture):
+        * src/WebUserGestureIndicator.cpp: Added.
+        (WebKit):
+        (WebKit::WebUserGestureIndicator::isProcessingUserGesture):
+        (WebKit::WebUserGestureIndicator::consumeUserGesture):
+
 2013-03-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed.  Rolled Chromium DEPS to r186371.  Requested by
