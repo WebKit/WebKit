@@ -107,7 +107,7 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
         function didGetAllStyleSheets(error, infos)
         {
             if (error) {
-                callback(0, 0, 0, 0);
+                callback(0, 0);
                 return;
             }
   
@@ -118,7 +118,7 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
                     return;
                 }
             }
-            callback(0, 0, 0, 0);
+            callback(0, 0);
         }
 
         CSSAgent.getAllStyleSheets(didGetAllStyleSheets.bind(this));
@@ -129,12 +129,12 @@ WebInspector.StyleSheetOutlineDialog.prototype = {
         function didGetStyleSheet(styleSheet)
         {
             if (!styleSheet) {
-                callback(0, 0, 0, 0);
+                callback(0, 0);
                 return;
             }
 
             this._rules = styleSheet.rules;
-            callback(0, this._rules.length, 0, 1);
+            callback(0, 1);
         }
     },
 

@@ -64,7 +64,6 @@ WebInspector.FilteredItemSelectionDialog = function(delegate)
     this.element.appendChild(this._itemElementsContainer);
 
     this._delegate = delegate;
-
     this._delegate.requestItems(this._itemsLoaded.bind(this));
 }
 
@@ -101,6 +100,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
         if (this._isHiding)
             return;
         this._isHiding = true;
+        this._delegate.dispose();
         if (this._filterTimer)
             clearTimeout(this._filterTimer);
     },
@@ -116,20 +116,28 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
     },
 
     /**
-     * @param {number} index
-     * @param {number} chunkLength
-     * @param {number} chunkIndex
-     * @param {number} chunkCount
+     * @param {number} loadedCount
+     * @param {number} totalCount
      */
-    _itemsLoaded: function(index, chunkLength, chunkIndex, chunkCount)
+    _itemsLoaded: function(loadedCount, totalCount)
     {
-        this._filterItems();
+        this._loadedCount = loadedCount;
+        this._totalCount = totalCount;
 
-        if (chunkIndex === chunkCount)
+        if (this._loadTimeout)
+            return;
+        this._loadTimeout = setTimeout(this._updateAfterItemsLoaded.bind(this), 100);
+    },
+
+    _updateAfterItemsLoaded: function()
+    {
+        delete this._loadTimeout;
+        this._filterItems();
+        if (this._loadedCount === this._totalCount)
             this._progressElement.style.backgroundImage = "";
         else {
             const color = "rgb(66, 129, 235)";
-            const percent = ((chunkIndex / chunkCount) * 100) + "%";
+            const percent = ((this._loadedCount / this._totalCount) * 100) + "%";
             this._progressElement.style.backgroundImage = "-webkit-linear-gradient(left, " + color + ", " + color + " " + percent + ",  transparent " + percent + ")";
         }
     },
@@ -267,7 +275,7 @@ WebInspector.FilteredItemSelectionDialog.prototype = {
             }
             var key1 = cachedKeys[index1];
             var key2 = cachedKeys[index2];
-            return key1.compareTo(key2);
+            return key1.compareTo(key2) || (index2 - index1);
         }
 
         const numberOfItemsToSort = 100;
@@ -427,6 +435,8 @@ WebInspector.SelectionDialogContentProvider.prototype = {
      * @return {string}
      */
     rewriteQuery: function(query) { },
+
+    dispose: function() { }
 }
 
 /**
@@ -528,12 +538,10 @@ WebInspector.JavaScriptOutlineDialog.prototype = {
     _didBuildOutlineChunk: function(callback, event)
     {
         var data = event.data;
-
-        var index = this._functionItems.length;
         var chunk = data["chunk"];
         for (var i = 0; i < chunk.length; ++i)
             this._functionItems.push(chunk[i]);
-        callback(index, chunk.length, data.index, data.total);
+        callback(data.index, data.total);
 
         if (data.total === data.index && this._outlineWorker) {
             this._outlineWorker.terminate();
@@ -577,17 +585,10 @@ WebInspector.OpenResourceDialog = function(panel)
 
     var projects = WebInspector.workspace.projects();
     this._uiSourceCodes = [];
-    for (var i = 0; i < projects.length; ++i) {
-        if (projects[i].isServiceProject())
-            continue;
-        this._uiSourceCodes = this._uiSourceCodes.concat(projects[i].uiSourceCodes());
-    }
+    for (var i = 0; i < projects.length; ++i)
+        this._uiSourceCodes = this._uiSourceCodes.concat(projects[i].uiSourceCodes().filter(this._filterUISourceCode.bind(this)));
 
-    function filterOutEmptyURLs(uiSourceCode)
-    {
-        return !!uiSourceCode.name();
-    }
-    this._uiSourceCodes = this._uiSourceCodes.filter(filterOutEmptyURLs);
+    WebInspector.workspace.addEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this);
 }
 
 WebInspector.OpenResourceDialog.prototype = {
@@ -645,7 +646,8 @@ WebInspector.OpenResourceDialog.prototype = {
      */
     requestItems: function(callback)
     {
-        callback(0, this._uiSourceCodes.length, 1, 1);
+        this._itemsLoaded = callback;
+        this._itemsLoaded(1, 1);
     },
 
     /**
@@ -671,6 +673,31 @@ WebInspector.OpenResourceDialog.prototype = {
         var lineNumberMatch = query.match(/([^:]+)(\:[\d]*)$/);
         this._queryLineNumber = lineNumberMatch ? lineNumberMatch[2] : "";
         return lineNumberMatch ? lineNumberMatch[1] : query;
+    },
+
+    /**
+     * @param {WebInspector.UISourceCode} uiSourceCode
+     */
+    _filterUISourceCode: function(uiSourceCode)
+    {
+        return !uiSourceCode.project().isServiceProject() && uiSourceCode.name();
+    },
+
+    /**
+     * @param {WebInspector.Event} event
+     */
+    _uiSourceCodeAdded: function(event)
+    {
+        var uiSourceCode = /** @type {WebInspector.UISourceCode} */ (event.data);
+        if (!this._filterUISourceCode(uiSourceCode))
+            return;
+        this._uiSourceCodes.push(uiSourceCode)
+        this._itemsLoaded(1, 1);
+    },
+
+    dispose: function()
+    {
+        WebInspector.workspace.removeEventListener(WebInspector.UISourceCodeProvider.Events.UISourceCodeAdded, this._uiSourceCodeAdded, this);
     },
 
     __proto__: WebInspector.SelectionDialogContentProvider.prototype

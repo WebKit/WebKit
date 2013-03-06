@@ -30,6 +30,7 @@ function test()
         InspectorTest.addResult("Input:" + JSON.stringify(input));
 
         var filteredSelectionDialog = new WebInspector.FilteredItemSelectionDialog(delegate);
+        filteredSelectionDialog._updateAfterItemsLoaded();
         var items = filteredSelectionDialog._filteredItems;
         var output = [];
         for (var i = 0; i < items.length; ++i)
