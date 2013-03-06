@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html> 
 <head>
 
@@ -16,31 +17,35 @@
 .scenario:first-line { font-weight: bold; margin-bottom: 16px;}
 .expected-results:first-line { font-weight: bold }
 </style>
+<script src="../../resources/dump-as-markup.js"></script>
 <script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
 
 <script>
+Markup.noAutoDump();
+Markup.waitUntilDone();
+
 function editingTest() {
     var t1 = document.getElementById("test1");
     var t2 = document.getElementById("test2");
     setSelectionCommand(t1, 0, t2, 3);
     copyCommand();
-    
+    Markup.dump('root', 'After copy');
+
     var e = document.getElementById("target");
     setSelectionCommand(e, 0, e, 1);
+    Markup.dump('root', 'Before paste');
     pasteCommand();
+    Markup.dump('root', 'After paste');
+
+    Markup.notifyDone();
 }
 
 </script>
 
 <title>Editing Test</title> 
 </head> 
-<body id="root" contenteditable>
+<body onload="runEditingTest();" id="root" contenteditable>
 <table><tr><td id="test1">hello</td><td id="test2">world</td></tr></table>
 <div id="target">replaceme</div>
-
-<script>
-runEditingTest();
-</script>
-
 </body>
 </html>
