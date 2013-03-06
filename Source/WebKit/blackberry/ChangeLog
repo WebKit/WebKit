@@ -1,3 +1,17 @@
+2013-03-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        [BlackBerry] Use hasTagName instead of hasLocalName in CredentialTransformData
+        https://bugs.webkit.org/show_bug.cgi?id=111544
+
+        Reviewed by Rob Buis.
+
+        hasLocalName() expects an AtomicString, but we are passing a
+        HTMLName which is a QualifiedName.
+
+        * WebCoreSupport/CredentialTransformData.cpp:
+        (WebCore::CredentialTransformData::findPasswordFormFields): Use
+        hasTagName() instead of hasLocalName().
+
 2013-03-05  Otto Derek Cheung  <otcheung@rim.com>
 
         [BlackBerry] Authentication credentials lost when opening a new tab
