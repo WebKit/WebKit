@@ -1,3 +1,25 @@
+2013-03-06  Terry Anderson  <tdanderson@chromium.org>
+
+        [chromium] |m_gestureScrollOnImplThread| is not reset to false following the end of a fling on the fast path
+        https://bugs.webkit.org/show_bug.cgi?id=111390
+
+        Reviewed by James Robinson.
+
+        If there is a fast path gesture scroll which turns into a fling, the member
+        |m_gestureScrollOnImplThread| is not reset to false once the fling ends. As a
+        result, GestureScrollUpdate events belonging to a subsequent scroll are always
+        handled on the fast path, even if they should have been handled on the slow
+        path instead.
+
+        * src/WebCompositorInputHandlerImpl.cpp:
+        (WebKit::WebCompositorInputHandlerImpl::cancelCurrentFling):
+        * src/WebCompositorInputHandlerImpl.h:
+        (WebCompositorInputHandlerImpl):
+        (WebKit::WebCompositorInputHandlerImpl::isGestureScrollOnImplThread):
+        * tests/WebCompositorInputHandlerImplTest.cpp:
+        (WebKit::TEST_F):
+        (WebKit):
+
 2013-03-06  James Robinson  <jamesr@chromium.org>
 
         [chromium] Express webkit_unit_tests' dependency on DumpRenderTree.pak in gyp

@@ -290,6 +290,7 @@ bool WebCompositorInputHandlerImpl::cancelCurrentFling()
 
     TRACE_EVENT_INSTANT1("webkit", "WebCompositorInputHandlerImpl::cancelCurrentFling", "hadFlingAnimation", hadFlingAnimation);
     m_flingCurve.clear();
+    m_gestureScrollOnImplThread = false;
     m_flingParameters = WebActiveWheelFlingParameters();
     return hadFlingAnimation;
 }

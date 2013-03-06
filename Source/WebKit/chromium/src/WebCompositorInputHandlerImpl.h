@@ -70,6 +70,9 @@ public:
 
     int identifier() const { return m_identifier; }
 
+    // Included for testing purposes. 
+    bool isGestureScrollOnImplThread() const { return m_gestureScrollOnImplThread; }
+
 private:
 
     enum EventDisposition { DidHandle, DidNotHandle, DropEvent };
