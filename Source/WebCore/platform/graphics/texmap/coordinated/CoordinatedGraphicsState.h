@@ -126,7 +126,9 @@ struct CoordinatedGraphicsLayerState {
         , replica(InvalidCoordinatedLayerID)
         , mask(InvalidCoordinatedLayerID)
         , imageID(InvalidCoordinatedImageBackingID)
+#if USE(GRAPHICS_SURFACE)
         , canvasFrontBuffer(0)
+#endif
     {
     }
 

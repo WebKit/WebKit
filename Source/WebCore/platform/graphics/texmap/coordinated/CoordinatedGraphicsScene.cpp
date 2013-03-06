@@ -376,7 +376,9 @@ void CoordinatedGraphicsScene::setLayerState(CoordinatedLayerID id, const Coordi
     setLayerFiltersIfNeeded(layer, layerState);
 #endif
     setLayerAnimationsIfNeeded(layer, layerState);
+#if USE(GRAPHICS_SURFACE)
     syncCanvasIfNeeded(layer, layerState);
+#endif
     setLayerRepaintCountIfNeeded(layer, layerState);
 }
 
