@@ -94,6 +94,8 @@ fast/js/dfg-bool-to-int32-reuse
 fast/js/dfg-branch-logical-not-peephole-around-osr-exit
 fast/js/dfg-branch-not-fail
 fast/js/dfg-cfa-merge-with-dead-use-at-tail
+fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null
+fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-branch-not-null-and-decrement
 fast/js/dfg-cfg-simplify-eliminate-set-local-type-check-then-typeof
 fast/js/dfg-cfg-simplify-phantom-get-local-on-same-block-set-local
 fast/js/dfg-cfg-simplify-redundant-dead-get-local
