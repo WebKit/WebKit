@@ -164,6 +164,14 @@ using namespace std;
 #define NSAccessibilityARIABusyAttribute @"AXARIABusy"
 #endif
 
+#ifndef NSAccessibilityARIAPosInSetAttribute
+#define NSAccessibilityARIAPosInSetAttribute @"AXARIAPosInSet"
+#endif
+
+#ifndef NSAccessibilityARIASetSizeAttribute
+#define NSAccessibilityARIASetSizeAttribute @"AXARIASetSize"
+#endif
+
 #ifndef NSAccessibilityLoadingProgressAttribute
 #define NSAccessibilityLoadingProgressAttribute @"AXLoadingProgress"
 #endif
@@ -970,6 +978,11 @@ static id textMarkerRangeFromVisiblePositions(AXObjectCache *cache, VisiblePosit
         [additional addObject:NSAccessibilityARIALiveAttribute];
         [additional addObject:NSAccessibilityARIARelevantAttribute];
     }
+    
+    if (m_object->supportsARIASetSize())
+        [additional addObject:NSAccessibilityARIASetSizeAttribute];
+    if (m_object->supportsARIAPosInSet())
+        [additional addObject:NSAccessibilityARIAPosInSetAttribute];
     
     if (m_object->sortDirection() != SortDirectionNone)
         [additional addObject:NSAccessibilitySortDirectionAttribute];
@@ -2576,6 +2589,11 @@ static NSString* roleValueToNSString(AccessibilityRole value)
         m_object->ariaOwnsElements(ariaOwns);
         return convertToNSArray(ariaOwns);
     }
+    
+    if ([attributeName isEqualToString:NSAccessibilityARIAPosInSetAttribute])
+        return [NSNumber numberWithInt:m_object->ariaPosInSet()];
+    if ([attributeName isEqualToString:NSAccessibilityARIASetSizeAttribute])
+        return [NSNumber numberWithInt:m_object->ariaSetSize()];
     
     if ([attributeName isEqualToString:NSAccessibilityGrabbedAttribute])
         return [NSNumber numberWithBool:m_object->isARIAGrabbed()];

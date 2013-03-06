@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<ul id="list">
+<li aria-setsize="100" aria-posinset="3">3</li>
+<li>4</li>
+</ul>
+
+<p id="description"></p>
+<div id="console"></div>
+
+<script>
+
+    description("This tests verifies that aria-posinset and aria-setsize are exposed to accessibility correctly.");
+
+    if (window.accessibilityController) {
+
+          var list = accessibilityController.accessibleElementById("list");
+
+          debug("Verify that the first item in the list exposes setsize and posinset attributes.");
+          shouldBeTrue("list.childAtIndex(0).isAttributeSupported('AXARIASetSize')");
+          shouldBeTrue("list.childAtIndex(0).isAttributeSupported('AXARIAPosInSet')");
+
+          debug("Verify that the first item in the list returns the correct value for setsize and posinset.");
+          shouldBe("list.childAtIndex(0).numberAttributeValue('AXARIASetSize')", "100");
+          shouldBe("list.childAtIndex(0).numberAttributeValue('AXARIAPosInSet')", "3");
+
+          debug("Verify that the second item in the list does not support setsize and posinset.");
+          shouldBeFalse("list.childAtIndex(1).isAttributeSupported('AXARIASetSize')");
+          shouldBeFalse("list.childAtIndex(1).isAttributeSupported('AXARIAPosInSet')");
+
+          document.getElementById("list").style.visibility = 'hidden';
+    }
+
+</script>
+
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

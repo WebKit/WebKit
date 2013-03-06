@@ -37,11 +37,13 @@ aria-multiline
 aria-multiselectable
 aria-orientation
 aria-owns
+aria-posinset
 aria-pressed
 aria-readonly
 aria-relevant
 aria-required
 aria-selected
+aria-setsize
 aria-sort
 aria-valuemax
 aria-valuemin

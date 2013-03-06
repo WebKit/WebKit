@@ -1586,6 +1586,26 @@ bool AccessibilityObject::supportsRangeValue() const
         || isSpinButton();
 }
     
+bool AccessibilityObject::supportsARIASetSize() const
+{
+    return hasAttribute(aria_setsizeAttr);
+}
+
+bool AccessibilityObject::supportsARIAPosInSet() const
+{
+    return hasAttribute(aria_posinsetAttr);
+}
+    
+int AccessibilityObject::ariaSetSize() const
+{
+    return getAttribute(aria_setsizeAttr).toInt();
+}
+
+int AccessibilityObject::ariaPosInSet() const
+{
+    return getAttribute(aria_posinsetAttr).toInt();
+}
+    
 bool AccessibilityObject::supportsARIAExpanded() const
 {
     return !getAttribute(aria_expandedAttr).isEmpty();

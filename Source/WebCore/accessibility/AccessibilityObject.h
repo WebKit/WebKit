@@ -514,6 +514,11 @@ public:
     AccessibilitySortDirection sortDirection() const;
     virtual bool canvasHasFallbackContent() const { return false; }
     bool supportsRangeValue() const;
+
+    bool supportsARIASetSize() const;
+    bool supportsARIAPosInSet() const;
+    int ariaSetSize() const;
+    int ariaPosInSet() const;
     
     // ARIA drag and drop
     virtual bool supportsARIADropping() const { return false; }
