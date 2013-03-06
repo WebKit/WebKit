@@ -55,9 +55,6 @@ fast/history/back-forward-reset-after-error-handling.html
 # BUG: Captions support needed in the media engine (via GTK+)
 media/media-captions.html
 
-# BUG: No authentication challenge handling
-http/tests/cache/subresource-fragment-identifier.html
-
 # The EFL port has no support for detecting slow unload handlers
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html
