@@ -21,7 +21,14 @@
 <script type="text/javascript">
 function finish()
 {
-    shouldBeEqualToString("window.getComputedStyle(document.getElementById('b'), null).backgroundColor", "rgb(0, 128, 0)");
+    var expectedBackgroundColor = "rgb(0, 128, 0)";
+    // This test was failing on slower machines, so we give it more time to try to apply the hover state.
+    var timeSinceStartedCheckingMs = Date.now() - window.startCheckingForHoverMs;
+    if (timeSinceStartedCheckingMs < 200 && getComputedStyle(document.getElementById('b')).backgroundColor != expectedBackgroundColor) {
+        setTimeout(finish, 10);
+        return;
+    }
+    shouldBeEqualToString("window.getComputedStyle(document.getElementById('b'), null).backgroundColor", expectedBackgroundColor);
 
     if (window.testRunner)
         testRunner.notifyDone();
@@ -30,6 +37,8 @@ function finish()
 function hideC()
 {
     c.style.display = 'none';
+    document.body.offsetLeft;
+    window.startCheckingForHoverMs = Date.now();
     window.setTimeout(finish, 0);
 }
 
@@ -43,7 +52,7 @@ function runtest()
     if (!window.testRunner)
         return;
 
-    debug('Hover color before test: ' + window.getComputedStyle(document.getElementById("b"), null).backgroundColor);
+    debug('Hover color before test: ' + getComputedStyle(document.getElementById("b")).backgroundColor);
 
     testRunner.waitUntilDone();
     var target = document.getElementById('target');
