@@ -35,15 +35,21 @@
 
 namespace JSC { namespace DFG {
 
+enum CSEMode { NormalCSE, StoreElimination };
+
+template<CSEMode cseMode>
 class CSEPhase : public Phase {
 public:
     CSEPhase(Graph& graph)
-        : Phase(graph, "common subexpression elimination")
+        : Phase(graph, cseMode == NormalCSE ? "common subexpression elimination" : "store elimination")
     {
     }
     
     bool run()
     {
+        ASSERT((cseMode == NormalCSE) == (m_graph.m_fixpointState == FixpointNotConverged));
+        ASSERT(m_graph.m_fixpointState != BeforeFixpoint);
+        
         m_changed = false;
         
         for (unsigned block = 0; block < m_graph.m_blocks.size(); ++block)
@@ -1011,7 +1017,8 @@ private:
     
     void performNodeCSE(Node* node)
     {
-        m_graph.performSubstitution(node);
+        if (cseMode == NormalCSE)
+            m_graph.performSubstitution(node);
         
         if (node->op() == SetLocal)
             node->child1()->mergeFlags(NodeRelevantToOSR);
@@ -1032,6 +1039,8 @@ private:
         switch (node->op()) {
         
         case Identity:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(node->child1().node());
             break;
             
@@ -1069,19 +1078,27 @@ private:
         case TypeOf:
         case CompareEqConstant:
         case ValueToInt32:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(pureCSE(node));
             break;
             
         case Int32ToDouble:
         case ForwardInt32ToDouble:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(int32ToDoubleCSE(node));
             break;
             
         case GetCallee:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(getCalleeLoadElimination(node->codeOrigin.inlineCallFrame));
             break;
 
         case GetLocal: {
+            if (cseMode == StoreElimination)
+                break;
             VariableAccessData* variableAccessData = node->variableAccessData();
             if (!variableAccessData->isCaptured())
                 break;
@@ -1108,6 +1125,8 @@ private:
         }
             
         case GetLocalUnlinked: {
+            if (cseMode == StoreElimination)
+                break;
             Node* relevantLocalOpIgnored;
             setReplacement(getLocalLoadElimination(node->unlinkedLocal(), relevantLocalOpIgnored, true));
             break;
@@ -1122,7 +1141,7 @@ private:
             ASSERT(replacement->variableAccessData() == variableAccessData);
             // FIXME: We should be able to remove SetLocals that can exit; we just need
             // to replace them with appropriate type checks.
-            if (m_graph.m_fixpointState == FixpointNotConverged) {
+            if (cseMode == NormalCSE) {
                 // Need to be conservative at this time; if the SetLocal has any chance of performing
                 // any speculations then we cannot do anything.
                 if (variableAccessData->isCaptured()) {
@@ -1159,21 +1178,29 @@ private:
         }
             
         case JSConstant:
+            if (cseMode == StoreElimination)
+                break;
             // This is strange, but necessary. Some phases will convert nodes to constants,
             // which may result in duplicated constants. We use CSE to clean this up.
             setReplacement(constantCSE(node));
             break;
             
         case WeakJSConstant:
+            if (cseMode == StoreElimination)
+                break;
             // FIXME: have CSE for weak constants against strong constants and vice-versa.
             setReplacement(weakConstantCSE(node));
             break;
             
         case GetArrayLength:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(getArrayLengthElimination(node->child1().node()));
             break;
 
         case GetMyScope:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(getMyScopeLoadElimination(node->codeOrigin.inlineCallFrame));
             break;
             
@@ -1185,6 +1212,8 @@ private:
         case CompareGreater:
         case CompareGreaterEq:
         case CompareEq: {
+            if (cseMode == StoreElimination)
+                break;
             if (m_graph.isPredictedNumerical(node)) {
                 Node* replacement = pureCSE(node);
                 if (replacement && m_graph.isPredictedNumerical(replacement))
@@ -1196,39 +1225,49 @@ private:
         // Finally handle heap accesses. These are not quite pure, but we can still
         // optimize them provided that some subtle conditions are met.
         case GetGlobalVar:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(globalVarLoadElimination(node->registerPointer()));
             break;
 
         case GetScopedVar: {
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(scopedVarLoadElimination(node->child1().node(), node->varNumber()));
             break;
         }
 
         case GlobalVarWatchpoint:
+            if (cseMode == StoreElimination)
+                break;
             if (globalVarWatchpointElimination(node->registerPointer()))
                 eliminate();
             break;
             
         case PutGlobalVar:
         case PutGlobalVarCheck:
-            if (m_graph.m_fixpointState == FixpointNotConverged)
+            if (cseMode == NormalCSE)
                 break;
             eliminate(globalVarStoreElimination(node->registerPointer()));
             break;
             
         case PutScopedVar: {
-            if (m_graph.m_fixpointState == FixpointNotConverged)
+            if (cseMode == NormalCSE)
                 break;
             eliminate(scopedVarStoreElimination(node->child1().node(), node->child2().node(), node->varNumber()));
             break;
         }
 
         case GetByVal:
+            if (cseMode == StoreElimination)
+                break;
             if (m_graph.byValIsPure(node))
                 setReplacement(getByValLoadElimination(node->child1().node(), node->child2().node()));
             break;
             
         case PutByVal: {
+            if (cseMode == StoreElimination)
+                break;
             Edge child1 = m_graph.varArgChild(node, 0);
             Edge child2 = m_graph.varArgChild(node, 1);
             if (node->arrayMode().canCSEStorage()) {
@@ -1242,52 +1281,68 @@ private:
             
         case CheckStructure:
         case ForwardCheckStructure:
+            if (cseMode == StoreElimination)
+                break;
             if (checkStructureElimination(node->structureSet(), node->child1().node()))
                 eliminate();
             break;
             
         case StructureTransitionWatchpoint:
         case ForwardStructureTransitionWatchpoint:
+            if (cseMode == StoreElimination)
+                break;
             if (structureTransitionWatchpointElimination(node->structure(), node->child1().node()))
                 eliminate();
             break;
             
         case PutStructure:
-            if (m_graph.m_fixpointState == FixpointNotConverged)
+            if (cseMode == NormalCSE)
                 break;
             eliminate(putStructureStoreElimination(node->child1().node()), PhantomPutStructure);
             break;
 
         case CheckFunction:
+            if (cseMode == StoreElimination)
+                break;
             if (checkFunctionElimination(node->function(), node->child1().node()))
                 eliminate();
             break;
                 
         case CheckExecutable:
+            if (cseMode == StoreElimination)
+                break;
             if (checkExecutableElimination(node->executable(), node->child1().node()))
                 eliminate();
             break;
                 
         case CheckArray:
+            if (cseMode == StoreElimination)
+                break;
             if (checkArrayElimination(node->child1().node(), node->arrayMode()))
                 eliminate();
             break;
             
         case GetIndexedPropertyStorage: {
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(getIndexedPropertyStorageLoadElimination(node->child1().node(), node->arrayMode()));
             break;
         }
 
         case GetButterfly:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(getPropertyStorageLoadElimination(node->child1().node()));
             break;
 
         case GetByOffset:
+            if (cseMode == StoreElimination)
+                break;
             setReplacement(getByOffsetLoadElimination(m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber, node->child1().node()));
             break;
             
         case PutByOffset:
-            if (m_graph.m_fixpointState == FixpointNotConverged)
+            if (cseMode == NormalCSE)
                 break;
             eliminate(putByOffsetStoreElimination(m_graph.m_storageAccessData[node->storageAccessDataIndex()].identifierNumber, node->child1().node()));
             break;
@@ -1350,6 +1405,12 @@ private:
             m_currentNode = block->at(m_indexInBlock);
             performNodeCSE(m_currentNode);
         }
+        
+        if (!ASSERT_DISABLED && cseMode == StoreElimination) {
+            // Nobody should have replacements set.
+            for (unsigned i = 0; i < block->size(); ++i)
+                ASSERT(!block->at(i)->replacement);
+        }
     }
     
     BasicBlock* m_currentBlock;
@@ -1362,7 +1423,13 @@ private:
 bool performCSE(Graph& graph)
 {
     SamplingRegion samplingRegion("DFG CSE Phase");
-    return runPhase<CSEPhase>(graph);
+    return runPhase<CSEPhase<NormalCSE> >(graph);
+}
+
+bool performStoreElimination(Graph& graph)
+{
+    SamplingRegion samplingRegion("DFG Store Elimination Phase");
+    return runPhase<CSEPhase<StoreElimination> >(graph);
 }
 
 } } // namespace JSC::DFG

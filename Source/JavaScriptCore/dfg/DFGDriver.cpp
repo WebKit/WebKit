@@ -152,8 +152,8 @@ inline bool compile(CompileMode compileMode, ExecState* exec, CodeBlock* codeBlo
         dataLogF("DFG optimization fixpoint converged in %u iterations.\n", cnt);
 
     dfg.m_fixpointState = FixpointConverged;
-    performCSE(dfg);
-    performCPSRethreading(dfg); // This should usually be a no-op since CSE rarely dethreads the graph.
+    performStoreElimination(dfg);
+    performCPSRethreading(dfg); // This should usually be a no-op since store elimination rarely dethreads the graph.
     performDCE(dfg);
     performVirtualRegisterAllocation(dfg);
 

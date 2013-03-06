@@ -1,3 +1,30 @@
+2013-03-06  Filip Pizlo  <fpizlo@apple.com>
+
+        DFG should not run full CSE after the optimization fixpoint, since it really just wants store elimination
+        https://bugs.webkit.org/show_bug.cgi?id=111536
+
+        Reviewed by Oliver Hunt and Mark Hahnenberg.
+        
+        The fixpoint will do aggressive load elimination and pure CSE. There's no need to do it after the fixpoint.
+        On the other hand, the fixpoint does not profit from doing store elimination (except for SetLocal/Flush).
+        Previously we had CSE do both, and had it avoid doing some store elimination during the fixpoint by querying
+        the fixpoint state. This changes CSE to be templated on mode - either NormalCSE or StoreElimination - so
+        that we explicitly put it into one of those modes depending on where we call it from. The goal is to reduce
+        time spent doing load elimination after the fixpoint, since that is just wasted cycles.
+
+        * dfg/DFGCSEPhase.cpp:
+        (JSC::DFG::CSEPhase::CSEPhase):
+        (JSC::DFG::CSEPhase::run):
+        (JSC::DFG::CSEPhase::performNodeCSE):
+        (JSC::DFG::CSEPhase::performBlockCSE):
+        (JSC::DFG::performCSE):
+        (DFG):
+        (JSC::DFG::performStoreElimination):
+        * dfg/DFGCSEPhase.h:
+        (DFG):
+        * dfg/DFGDriver.cpp:
+        (JSC::DFG::compile):
+
 2013-03-06  Andreas Kling  <akling@apple.com>
 
         Pack Structure members better.

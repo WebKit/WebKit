@@ -40,8 +40,10 @@ class Graph;
 // it is rather profitable. It has fairly accurate heap modeling and will match
 // a wide range of subexpression similarities. It's known to produce big wins
 // on a few benchmarks, and is relatively cheap to run.
-
 bool performCSE(Graph&);
+
+// Perform just block-local store elimination.
+bool performStoreElimination(Graph&);
 
 } } // namespace JSC::DFG
 
