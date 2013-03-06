@@ -193,20 +193,20 @@ void GIFImageDecoder::clearFrameBufferCache(size_t clearBeforeFrame)
     }
 }
 
-bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuffer, unsigned char* rowEnd, unsigned rowNumber, unsigned repeatCount, bool writeTransparentPixels)
+bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, const Vector<unsigned char>& rowBuffer, size_t width, size_t rowNumber, unsigned repeatCount, bool writeTransparentPixels)
 {
     const GIFFrameContext* frameContext = m_reader->frameContext();
     // The pixel data and coordinates supplied to us are relative to the frame's
     // origin within the entire image size, i.e.
     // (frameContext->xOffset, frameContext->yOffset). There is no guarantee
-    // that (rowEnd - rowBuffer) == (size().width() - frameContext->xOffset), so
+    // that width == (size().width() - frameContext->xOffset), so
     // we must ensure we don't run off the end of either the source data or the
     // row's X-coordinates.
     int xBegin = upperBoundScaledX(frameContext->xOffset);
     int yBegin = upperBoundScaledY(frameContext->yOffset + rowNumber);
-    int xEnd = lowerBoundScaledX(std::min(static_cast<int>(frameContext->xOffset + (rowEnd - rowBuffer)), size().width()) - 1, xBegin + 1) + 1;
+    int xEnd = lowerBoundScaledX(std::min(static_cast<int>(frameContext->xOffset + width), size().width()) - 1, xBegin + 1) + 1;
     int yEnd = lowerBoundScaledY(std::min(static_cast<int>(frameContext->yOffset + rowNumber + repeatCount), size().height()) - 1, yBegin + 1) + 1;
-    if (!rowBuffer || (xBegin < 0) || (yBegin < 0) || (xEnd <= xBegin) || (yEnd <= yBegin))
+    if (rowBuffer.isEmpty() || (xBegin < 0) || (yBegin < 0) || (xEnd <= xBegin) || (yEnd <= yBegin))
         return true;
 
     // Get the colormap.
@@ -230,7 +230,7 @@ bool GIFImageDecoder::haveDecodedRow(unsigned frameIndex, unsigned char* rowBuff
     ImageFrame::PixelData* currentAddress = buffer.getAddr(xBegin, yBegin);
     // Write one row's worth of data into the frame.  
     for (int x = xBegin; x < xEnd; ++x) {
-        const unsigned char sourceValue = *(rowBuffer + (m_scaled ? m_scaledColumns[x] : x) - frameContext->xOffset);
+        const unsigned char sourceValue = rowBuffer[(m_scaled ? m_scaledColumns[x] : x) - frameContext->xOffset];
         if ((!frameContext->isTransparent || (sourceValue != frameContext->tpixel)) && (sourceValue < colorMapSize)) {
             const size_t colorIndex = static_cast<size_t>(sourceValue) * 3;
             buffer.setRGBA(currentAddress, colorMap[colorIndex], colorMap[colorIndex + 1], colorMap[colorIndex + 2], 255);

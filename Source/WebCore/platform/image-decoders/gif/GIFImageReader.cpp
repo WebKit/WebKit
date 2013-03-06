@@ -149,11 +149,9 @@ bool GIFImageReader::outputRow()
 
     // CALLBACK: Let the client know we have decoded a row.
     if (m_client && m_frameContext
-        && !m_client->haveDecodedRow(m_imagesCount - 1, m_frameContext->rowbuf, m_frameContext->rowend,
+        && !m_client->haveDecodedRow(m_imagesCount - 1, m_lzwContext.rowBuffer, m_frameContext->width,
             drowStart, drowEnd - drowStart + 1, m_frameContext->progressiveDisplay && m_frameContext->interlaced && m_frameContext->ipass > 1))
         return false;
-
-    m_frameContext->rowp = m_frameContext->rowbuf;
 
     if (!m_frameContext->interlaced)
         m_frameContext->irow++;
@@ -213,30 +211,25 @@ bool GIFImageReader::doLZW(const unsigned char* block, size_t bytesInBlock)
     // Copy all the decoder state variables into locals so the compiler
     // won't worry about them being aliased. The locals will be homed
     // back into the GIF decoder structure when we exit.
-    int avail = m_frameContext->avail;
-    int bits = m_frameContext->bits;
+    int avail = m_lzwContext.avail;
+    int bits = m_lzwContext.bits;
     size_t cnt = bytesInBlock;
-    int codesize = m_frameContext->codesize;
-    int codemask = m_frameContext->codemask;
-    int oldcode = m_frameContext->oldcode;
-    int clearCode = m_frameContext->clearCode;
-    unsigned char firstchar = m_frameContext->firstchar;
-    int datum = m_frameContext->datum;
+    int codesize = m_lzwContext.codesize;
+    int codemask = m_lzwContext.codemask;
+    int oldcode = m_lzwContext.oldcode;
+    int clearCode = m_lzwContext.clearCode;
+    unsigned char firstchar = m_lzwContext.firstchar;
+    int datum = m_lzwContext.datum;
 
-    if (!m_frameContext->prefix) {
-        m_frameContext->prefix = new unsigned short[MAX_BITS];
-        memset(m_frameContext->prefix, 0, MAX_BITS * sizeof(short));
-    }
+    Vector<unsigned short>& prefix = m_lzwContext.prefix;
+    Vector<unsigned char>& suffix = m_lzwContext.suffix;
+    Vector<unsigned char>& stack = m_lzwContext.stack;
+    size_t stackp = m_lzwContext.stackp;
+    size_t rowp = m_lzwContext.rowPosition;
+    size_t width = m_frameContext->width;
+    size_t rowsRemaining = m_frameContext->rowsRemaining;
 
-    unsigned short *prefix = m_frameContext->prefix;
-    unsigned char *stackp = m_frameContext->stackp;
-    unsigned char *suffix = m_frameContext->suffix;
-    unsigned char *stack = m_frameContext->stack;
-    unsigned char *rowp = m_frameContext->rowp;
-    unsigned char *rowend = m_frameContext->rowend;
-    unsigned rowsRemaining = m_frameContext->rowsRemaining;
-
-    if (rowp == rowend)
+    if (rowp == width)
         return true;
 
 #define OUTPUT_ROW \
@@ -244,7 +237,8 @@ bool GIFImageReader::doLZW(const unsigned char* block, size_t bytesInBlock)
         if (!outputRow()) \
             return false; \
         rowsRemaining--; \
-        rowp = m_frameContext->rowp; \
+        rowp = 0; \
+        m_lzwContext.rowPosition = 0; \
         if (!rowsRemaining) \
             goto END; \
     } while (0)
@@ -279,8 +273,8 @@ bool GIFImageReader::doLZW(const unsigned char* block, size_t bytesInBlock)
             }
 
             if (oldcode == -1) {
-                *rowp++ = suffix[code];
-                if (rowp == rowend)
+                m_lzwContext.rowBuffer[rowp++] = suffix[code];
+                if (rowp == width)
                     OUTPUT_ROW;
 
                 firstchar = oldcode = code;
@@ -289,29 +283,29 @@ bool GIFImageReader::doLZW(const unsigned char* block, size_t bytesInBlock)
 
             incode = code;
             if (code >= avail) {
-                *stackp++ = firstchar;
+                stack[stackp++] = firstchar;
                 code = oldcode;
 
-                if (stackp == stack + MAX_BITS)
+                if (stackp == MAX_BYTES)
                     return m_client ? m_client->setFailed() : false;
             }
 
             while (code >= clearCode) {
-                if (code >= MAX_BITS || code == prefix[code])
+                if (code >= MAX_BYTES || code == prefix[code])
                     return m_client ? m_client->setFailed() : false;
 
                 // Even though suffix[] only holds characters through suffix[avail - 1],
                 // allowing code >= avail here lets us be more tolerant of malformed
-                // data. As long as code < MAX_BITS, the only risk is a garbled image,
+                // data. As long as code < MAX_BYTES, the only risk is a garbled image,
                 // which is no worse than refusing to display it.
-                *stackp++ = suffix[code];
+                stack[stackp++] = suffix[code];
                 code = prefix[code];
 
-                if (stackp == stack + MAX_BITS)
+                if (stackp == MAX_BYTES)
                     return m_client ? m_client->setFailed() : false;
             }
 
-            *stackp++ = firstchar = suffix[code];
+            stack[stackp++] = firstchar = suffix[code];
 
             // Define a new codeword in the dictionary.
             if (avail < 4096) {
@@ -331,24 +325,24 @@ bool GIFImageReader::doLZW(const unsigned char* block, size_t bytesInBlock)
 
             // Copy the decoded data out to the scanline buffer.
             do {
-                *rowp++ = *--stackp;
-                if (rowp == rowend)
+                m_lzwContext.rowBuffer[rowp++] = stack[--stackp];
+                if (rowp == width)
                     OUTPUT_ROW;
-            } while (stackp > stack);
+            } while (stackp > 0);
         }
     }
 
 END:
     // Home the local copies of the GIF decoder state variables.
-    m_frameContext->avail = avail;
-    m_frameContext->bits = bits;
-    m_frameContext->codesize = codesize;
-    m_frameContext->codemask = codemask;
-    m_frameContext->oldcode = oldcode;
-    m_frameContext->firstchar = firstchar;
-    m_frameContext->datum = datum;
-    m_frameContext->stackp = stackp;
-    m_frameContext->rowp = rowp;
+    m_lzwContext.avail = avail;
+    m_lzwContext.bits = bits;
+    m_lzwContext.codesize = codesize;
+    m_lzwContext.codemask = codemask;
+    m_lzwContext.oldcode = oldcode;
+    m_lzwContext.firstchar = firstchar;
+    m_lzwContext.datum = datum;
+    m_lzwContext.stackp = stackp;
+    m_lzwContext.rowPosition = rowp;
     m_frameContext->rowsRemaining = rowsRemaining;
     return true;
 }
@@ -390,41 +384,13 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
             break;
 
         case GIFLZWStart: {
-            // Initialize LZW parser/decoder.
-            int datasize = *currentComponent;
-
-            // Since we use a codesize of 1 more than the datasize, we need to ensure
-            // that our datasize is strictly less than the MAX_LZW_BITS value (12).
-            // This sets the largest possible codemask correctly at 4095.
-            if (datasize >= MAX_LZW_BITS)
-                return m_client ? m_client->setFailed() : false;
-            int clearCode = 1 << datasize;
-            if (clearCode >= MAX_BITS)
-                return m_client ? m_client->setFailed() : false;
-
-            if (m_frameContext) {
+            if (query == GIFImageDecoder::GIFFullQuery) {
+                int datasize = *currentComponent;
                 m_frameContext->datasize = datasize;
-                m_frameContext->clearCode = clearCode;
-                m_frameContext->avail = m_frameContext->clearCode + 2;
-                m_frameContext->oldcode = -1;
-                m_frameContext->codesize = m_frameContext->datasize + 1;
-                m_frameContext->codemask = (1 << m_frameContext->codesize) - 1;
-                m_frameContext->datum = m_frameContext->bits = 0;
-
-                // Init the tables.
-                if (!m_frameContext->suffix)
-                    m_frameContext->suffix = new unsigned char[MAX_BITS];
-
-                // Clearing the whole suffix table lets us be more tolerant of bad data.
-                memset(m_frameContext->suffix, 0, MAX_BITS);
-                for (int i = 0; i < m_frameContext->clearCode; i++)
-                    m_frameContext->suffix[i] = i;
-
-                if (!m_frameContext->stack)
-                    m_frameContext->stack = new unsigned char[MAX_BITS];
-                m_frameContext->stackp = m_frameContext->stack;
+                // Initialize LZW parser/decoder.
+                if (!m_lzwContext.prepareToDecode(m_screenWidth, datasize))
+                    return m_client ? m_client->setFailed() : false;
             }
-
             GETN(1, GIFSubBlock);
             break;
         }
@@ -712,16 +678,8 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
                 /* This case will never be taken if this is the first image */
                 /* being decoded. If any of the later images are larger     */
                 /* than the screen size, we need to reallocate buffers.     */
-                if (m_screenWidth < width) {
-                    /* XXX Deviant! */
-                    delete []m_frameContext->rowbuf;
-                    m_screenWidth = width;
-                    m_frameContext->rowbuf = new unsigned char[m_screenWidth];
-                } else if (!m_frameContext->rowbuf)
-                    m_frameContext->rowbuf = new unsigned char[m_screenWidth];
+                m_screenWidth = std::max(m_screenWidth, width);
 
-                if (!m_frameContext->rowbuf)
-                    return m_client ? m_client->setFailed() : false;
                 if (m_screenHeight < height)
                     m_screenHeight = height;
 
@@ -748,8 +706,6 @@ bool GIFImageReader::decodeInternal(size_t dataPosition, size_t len, GIFImageDec
                 // Clear state from last image.
                 m_frameContext->irow = 0;
                 m_frameContext->rowsRemaining = m_frameContext->height;
-                m_frameContext->rowend = m_frameContext->rowbuf + m_frameContext->width;
-                m_frameContext->rowp = m_frameContext->rowbuf;
 
                 // bits per pixel is currentComponent[8]&0x07
             }
@@ -841,4 +797,38 @@ void GIFImageReader::setRemainingBytes(size_t remainingBytes)
 {
     ASSERT(remainingBytes <= m_data->size());
     m_bytesRead = m_data->size() - remainingBytes;
+}
+
+bool GIFLZWContext::prepareToDecode(unsigned rowWidth, int datasize)
+{
+    // Since we use a codesize of 1 more than the datasize, we need to ensure
+    // that our datasize is strictly less than the MAX_LZW_BITS value (12).
+    // This sets the largest possible codemask correctly at 4095.
+    if (datasize >= MAX_LZW_BITS)
+        return false;
+    clearCode = 1 << datasize;
+    if (clearCode >= MAX_BYTES)
+        return false;
+
+    avail = clearCode + 2;
+    oldcode = -1;
+    codesize = datasize + 1;
+    codemask = (1 << codesize) - 1;
+    datum = bits = 0;
+
+    // Initialize the tables lazily, this allows frame count query to use less memory.
+    suffix.resize(MAX_BYTES);
+    stack.resize(MAX_BYTES);
+    prefix.resize(MAX_BYTES);
+
+    // Initialize output row buffer.
+    rowBuffer.resize(rowWidth);
+    rowPosition = 0;
+
+    // Clearing the whole suffix table lets us be more tolerant of bad data.
+    suffix.fill(0);
+    for (int i = 0; i < clearCode; i++)
+        suffix[i] = i;
+    stackp = 0;
+    return true;
 }

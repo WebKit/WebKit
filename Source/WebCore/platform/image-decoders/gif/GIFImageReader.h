@@ -42,9 +42,10 @@
 // so we will too.
 #include "GIFImageDecoder.h"
 #include "SharedBuffer.h"
+#include <wtf/Vector.h>
 
 #define MAX_LZW_BITS          12
-#define MAX_BITS            4097 /* 2^MAX_LZW_BITS+1 */
+#define MAX_BYTES           4097 /* 2^MAX_LZW_BITS+1 */
 #define MAX_COLORS           256
 #define GIF_COLORS             3
 
@@ -74,28 +75,14 @@ enum GIFState {
     GIFConsumeComment
 };
 
+// Frame output state machine.
 struct GIFFrameContext {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    // LZW decoder state machine.
-    unsigned char *stackp; // Current stack pointer.
     int datasize;
-    int codesize;
-    int codemask;
-    int clearCode; // Codeword used to trigger dictionary reset.
-    int avail; // Index of next available slot in dictionary.
-    int oldcode;
-    unsigned char firstchar;
-    int bits; // Number of unread bits in "datum".
-    int datum; // 32-bit input buffer.
-
-    // Output state machine.
     int ipass; // Interlace pass; Ranges 1-4 if interlaced.
-    unsigned rowsRemaining; // Rows remaining to be output.
-    unsigned irow; // Current output row, starting at zero.
-    unsigned char *rowbuf; // Single scanline temporary buffer.
-    unsigned char *rowend; // Pointer to end of rowbuf.
-    unsigned char *rowp; // Current output pointer.
+    size_t rowsRemaining; // Rows remaining to be output.
+    size_t irow; // Current output row, starting at zero.
 
     // Parameters for image frame currently being decoded.
     unsigned xOffset;
@@ -114,27 +101,11 @@ public:
 
     unsigned delayTime; // Display time, in milliseconds, for this image in a multi-image GIF.
 
-    unsigned short* prefix; // LZW decoding tables.
-    unsigned char* suffix; // LZW decoding tables.
-    unsigned char* stack; // Base of LZW decoder stack.
-
     GIFFrameContext()
-        : stackp(0)
-        , datasize(0)
-        , codesize(0)
-        , codemask(0)
-        , clearCode(0)
-        , avail(0)
-        , oldcode(0)
-        , firstchar(0)
-        , bits(0)
-        , datum(0)
+        : datasize(0)
         , ipass(0)
         , rowsRemaining(0)
         , irow(0)
-        , rowbuf(0)
-        , rowend(0)
-        , rowp(0)
         , xOffset(0)
         , yOffset(0)
         , width(0)
@@ -148,19 +119,49 @@ public:
         , interlaced(false)
         , isTransparent(false)
         , delayTime(0)
-        , prefix(0)
-        , suffix(0)
-        , stack(0)
     {
     }
     
     ~GIFFrameContext()
     {
-        delete [] rowbuf;
-        delete [] prefix;
-        delete [] suffix;
-        delete [] stack;
     }
+};
+
+// LZW decoder state machine.
+// FIXME: Make this a class and hide private members.
+struct GIFLZWContext {
+    WTF_MAKE_FAST_ALLOCATED;
+public:
+    GIFLZWContext()
+        : stackp(0)
+        , codesize(0)
+        , codemask(0)
+        , clearCode(0)
+        , avail(0)
+        , oldcode(0)
+        , firstchar(0)
+        , bits(0)
+        , datum(0)
+        , rowPosition(0)
+    { }
+
+    bool prepareToDecode(unsigned rowWidth, int datasize);
+
+    size_t stackp; // Current stack pointer.
+    int codesize;
+    int codemask;
+    int clearCode; // Codeword used to trigger dictionary reset.
+    int avail; // Index of next available slot in dictionary.
+    int oldcode;
+    unsigned char firstchar;
+    int bits; // Number of unread bits in "datum".
+    int datum; // 32-bit input buffer.
+    size_t rowPosition;
+
+    Vector<unsigned short> prefix;
+    Vector<unsigned char> suffix;
+    Vector<unsigned char> stack;
+    Vector<unsigned char> rowBuffer; // Single scanline temporary buffer.
 };
 
 class GIFImageReader {
@@ -248,6 +249,8 @@ private:
     int m_loopCount; // Netscape specific extension block to control the number of animation loops a GIF renders.
     
     GIFFrameContext* m_frameContext;
+
+    GIFLZWContext m_lzwContext;
 
     RefPtr<WebCore::SharedBuffer> m_data;
 };
