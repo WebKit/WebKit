@@ -44,7 +44,7 @@
                 # WebKit is checked out in src/chromium/third_party/WebKit
                 'chromium_src_dir': '<(tools_dir)/../../..',
             }],
-            ['OS=="linux"', {
+            ['OS=="linux" and asan==0', {
                 'use_custom_freetype%': 1,
             }, {
                 'use_custom_freetype%': 0,
