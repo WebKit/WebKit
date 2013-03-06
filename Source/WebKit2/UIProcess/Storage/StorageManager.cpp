@@ -46,7 +46,7 @@ public:
     void addListener(CoreIPC::Connection*, uint64_t storageAreaID);
     void removeListener(CoreIPC::Connection*, uint64_t storageAreaID);
 
-    bool setItem(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& value, const String& urlString);
+    void setItem(CoreIPC::Connection*, uint64_t storageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException);
 
 private:
     explicit StorageArea(unsigned quotaInBytes);
@@ -84,14 +84,15 @@ void StorageManager::StorageArea::removeListener(CoreIPC::Connection* connection
     m_eventListeners.remove(std::make_pair(connection, storageAreaID));
 }
 
-bool StorageManager::StorageArea::setItem(CoreIPC::Connection* connection, uint64_t storageAreaID, const String& key, const String& value, const String& urlString)
+void StorageManager::StorageArea::setItem(CoreIPC::Connection* connection, uint64_t storageAreaID, const String& key, const String& value, const String& urlString, bool& quotaException)
 {
-    // FIXME: Actually set the item.
+    ASSERT(m_storageMap->hasOneRef());
 
     String oldValue;
-    dispatchEvents(connection, storageAreaID, key, oldValue, value, urlString);
-    
-    return true;
+    m_storageMap->setItem(key, value, oldValue, quotaException);
+
+    if (!quotaException)
+        dispatchEvents(connection, storageAreaID, key, oldValue, value, urlString);
 }
 
 void StorageManager::StorageArea::dispatchEvents(CoreIPC::Connection* connection, uint64_t storageAreaID, const String& key, const String& oldValue, const String& newValue, const String& urlString) const
@@ -270,8 +271,8 @@ void StorageManager::setItem(CoreIPC::Connection* connection, uint64_t storageAr
     // FIXME: This should be a message check.
     ASSERT(storageArea);
 
-    bool quotaError = storageArea->setItem(connection, storageAreaID, key, value, urlString);
-
+    bool quotaError;
+    storageArea->setItem(connection, storageAreaID, key, value, urlString, quotaError);
     connection->send(Messages::StorageAreaProxy::DidSetItem(key, quotaError), storageAreaID);
 }
 
