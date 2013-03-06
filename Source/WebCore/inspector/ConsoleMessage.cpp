@@ -137,11 +137,15 @@ void ConsoleMessage::autogenerateMetadata(bool canGenerateCallStack, ScriptState
 static TypeBuilder::Console::ConsoleMessage::Source::Enum messageSourceValue(MessageSource source)
 {
     switch (source) {
-    case HTMLMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Html;
     case XMLMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Xml;
     case JSMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Javascript;
     case NetworkMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Network;
     case ConsoleAPIMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Console_api;
+    case StorageMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Storage;
+    case AppCacheMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Appcache;
+    case RenderingMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Rendering;
+    case CSSMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Css;
+    case SecurityMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Security;
     case OtherMessageSource: return TypeBuilder::Console::ConsoleMessage::Source::Other;
     }
     return TypeBuilder::Console::ConsoleMessage::Source::Other;

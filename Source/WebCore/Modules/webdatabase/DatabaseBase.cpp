@@ -46,7 +46,7 @@ ScriptExecutionContext* DatabaseBase::scriptExecutionContext() const
 
 void DatabaseBase::logErrorMessage(const String& message)
 {
-    m_scriptExecutionContext->addConsoleMessage(OtherMessageSource, ErrorMessageLevel, message);
+    m_scriptExecutionContext->addConsoleMessage(StorageMessageSource, ErrorMessageLevel, message);
 }
 
 } // namespace WebCore

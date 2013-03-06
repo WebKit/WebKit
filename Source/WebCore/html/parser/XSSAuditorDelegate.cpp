@@ -61,7 +61,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
 
     // FIXME: Consider using a more helpful console message.
     DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Refused to execute a JavaScript script. Source code of script found within request.\n")));
-    m_document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, consoleMessage);
+    m_document->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
 
     if (xssInfo.m_didBlockEntirePage)
         m_document->frame()->loader()->stopAllLoaders();
@@ -84,7 +84,7 @@ void XSSAuditorDelegate::didBlockScript(const XSSInfo& xssInfo)
     }
 
     if (xssInfo.m_didBlockEntirePage) {
-        m_document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, String("Entire page will be blocked."));
+        m_document->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, String("Entire page will be blocked."));
         m_document->frame()->navigationScheduler()->scheduleLocationChange(m_document->securityOrigin(), String("data:text/html,<p></p>"), blankURL());
     }
 }

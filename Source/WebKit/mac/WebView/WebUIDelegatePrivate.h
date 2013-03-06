@@ -104,11 +104,15 @@ enum {
 };
 
 // Message Sources.
-extern NSString *WebConsoleMessageHTMLMessageSource;
 extern NSString *WebConsoleMessageXMLMessageSource;
 extern NSString *WebConsoleMessageJSMessageSource;
 extern NSString *WebConsoleMessageNetworkMessageSource;
 extern NSString *WebConsoleMessageConsoleAPIMessageSource;
+extern NSString *WebConsoleMessageStorageMessageSource;
+extern NSString *WebConsoleMessageAppCacheMessageSource;
+extern NSString *WebConsoleMessageRenderingMessageSource;
+extern NSString *WebConsoleMessageCSSMessageSource;
+extern NSString *WebConsoleMessageSecurityMessageSource;
 extern NSString *WebConsoleMessageOtherMessageSource;
 
 // Message Levels.
@@ -143,7 +147,7 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
     @method webView:addMessageToConsole:withSource:
     @param webView The WebView sending the delegate method.
     @param message A dictionary representation of the console message.
-    @param source Where the message came from. See WebConsoleMessageHTMLMessageSource and other source types.
+    @param source Where the message came from. See WebConsoleMessageXMLMessageSource and other source types.
     @discussion The dictionary contains the following keys:
 
     <dl>
@@ -155,8 +159,8 @@ extern NSString *WebConsoleMessageErrorMessageLevel;
         <dd>If this came from a file, this is the URL to the file this message originates from.</dd>
         <dt>MessageSource</dt>
         <dd>
-            Where the message came from. HTML, XML, JavaScript, CSS, etc.
-            See WebConsoleMessageHTMLMessageSource and similar constants.
+            Where the message came from. XML, JavaScript, CSS, etc.
+            See WebConsoleMessageXMLMessageSource and similar constants.
         </dd>
         <dt>MessageLevel</dt>
         <dd>

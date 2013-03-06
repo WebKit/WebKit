@@ -29,11 +29,15 @@
 namespace WebCore {
 
 enum MessageSource {
-    HTMLMessageSource,
     XMLMessageSource,
     JSMessageSource,
     NetworkMessageSource,
     ConsoleAPIMessageSource,
+    StorageMessageSource,
+    AppCacheMessageSource,
+    RenderingMessageSource,
+    CSSMessageSource,
+    SecurityMessageSource,
     OtherMessageSource,
 };
 

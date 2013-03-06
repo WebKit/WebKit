@@ -2874,7 +2874,7 @@ void Document::processHttpEquiv(const String& equiv, const String& content)
                 String message = "Refused to display '" + url().elidedString() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
                 frameLoader->stopAllLoaders();
                 frame->navigationScheduler()->scheduleLocationChange(securityOrigin(), blankURL(), String());
-                addConsoleMessage(JSMessageSource, ErrorMessageLevel, message, requestIdentifier);
+                addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, message, requestIdentifier);
             }
         }
     } else if (equalIgnoringCase(equiv, "content-security-policy"))

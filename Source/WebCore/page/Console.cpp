@@ -88,9 +88,6 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
 {
     const char* sourceString;
     switch (source) {
-    case HTMLMessageSource:
-        sourceString = "HTML";
-        break;
     case XMLMessageSource:
         sourceString = "XML";
         break;
@@ -102,6 +99,21 @@ static void printMessageSourceAndLevelPrefix(MessageSource source, MessageLevel 
         break;
     case ConsoleAPIMessageSource:
         sourceString = "CONSOLEAPI";
+        break;
+    case StorageMessageSource:
+        sourceString = "STORAGE";
+        break;
+    case AppCacheMessageSource:
+        sourceString = "APPCACHE";
+        break;
+    case RenderingMessageSource:
+        sourceString = "RENDERING";
+        break;
+    case CSSMessageSource:
+        sourceString = "CSS";
+        break;
+    case SecurityMessageSource:
+        sourceString = "SECURITY";
         break;
     case OtherMessageSource:
         sourceString = "OTHER";

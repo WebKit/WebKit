@@ -90,11 +90,15 @@
 #import "NetscapePluginHostManager.h"
 #endif
 
-NSString *WebConsoleMessageHTMLMessageSource = @"HTMLMessageSource";
 NSString *WebConsoleMessageXMLMessageSource = @"XMLMessageSource";
 NSString *WebConsoleMessageJSMessageSource = @"JSMessageSource";
 NSString *WebConsoleMessageNetworkMessageSource = @"NetworkMessageSource";
 NSString *WebConsoleMessageConsoleAPIMessageSource = @"ConsoleAPIMessageSource";
+NSString *WebConsoleMessageStorageMessageSource = @"StorageMessageSource";
+NSString *WebConsoleMessageAppCacheMessageSource = @"AppCacheMessageSource";
+NSString *WebConsoleMessageRenderingMessageSource = @"RenderingMessageSource";
+NSString *WebConsoleMessageCSSMessageSource = @"CSSMessageSource";
+NSString *WebConsoleMessageSecurityMessageSource = @"SecurityMessageSource";
 NSString *WebConsoleMessageOtherMessageSource = @"OtherMessageSource";
 
 NSString *WebConsoleMessageDebugMessageLevel = @"DebugMessageLevel";
@@ -329,8 +333,6 @@ void WebChromeClient::setResizable(bool b)
 inline static NSString *stringForMessageSource(MessageSource source)
 {
     switch (source) {
-    case HTMLMessageSource:
-        return WebConsoleMessageHTMLMessageSource;
     case XMLMessageSource:
         return WebConsoleMessageXMLMessageSource;
     case JSMessageSource:
@@ -339,6 +341,16 @@ inline static NSString *stringForMessageSource(MessageSource source)
         return WebConsoleMessageNetworkMessageSource;
     case ConsoleAPIMessageSource:
         return WebConsoleMessageConsoleAPIMessageSource;
+    case StorageMessageSource:
+        return WebConsoleMessageStorageMessageSource;
+    case AppCacheMessageSource:
+        return WebConsoleMessageAppCacheMessageSource;
+    case RenderingMessageSource:
+        return WebConsoleMessageRenderingMessageSource;
+    case CSSMessageSource:
+        return WebConsoleMessageCSSMessageSource;
+    case SecurityMessageSource:
+        return WebConsoleMessageSecurityMessageSource;
     case OtherMessageSource:
         return WebConsoleMessageOtherMessageSource;
     }

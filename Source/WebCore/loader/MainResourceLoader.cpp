@@ -411,7 +411,7 @@ void MainResourceLoader::responseReceived(CachedResource* resource, const Resour
         if (frameLoader()->shouldInterruptLoadForXFrameOptions(content, r.url(), identifier())) {
             InspectorInstrumentation::continueAfterXFrameOptionsDenied(m_documentLoader->frame(), documentLoader(), identifier(), r);
             String message = "Refused to display '" + r.url().elidedString() + "' in a frame because it set 'X-Frame-Options' to '" + content + "'.";
-            m_documentLoader->frame()->document()->addConsoleMessage(JSMessageSource, ErrorMessageLevel, message, identifier());
+            m_documentLoader->frame()->document()->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, message, identifier());
 
             cancel();
             return;

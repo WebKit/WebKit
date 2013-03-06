@@ -289,7 +289,7 @@ void XSSAuditor::init(Document* document)
             }
         }
         if (xssProtectionHeader == ContentSecurityPolicy::ReflectedXSSInvalid)
-            document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
+            document->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, "Error parsing header X-XSS-Protection: " + headerValue + ": "  + errorDetails + " at character position " + String::format("%u", errorPosition) + ". The default protections will be applied.");
 
         m_xssProtection = combineXSSProtectionHeaderAndCSP(xssProtectionHeader, document->contentSecurityPolicy()->reflectedXSSDisposition());
         m_reportURL = xssProtectionReportURL; // FIXME: Combine the two report URLs in some reasonable way.

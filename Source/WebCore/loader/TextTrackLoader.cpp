@@ -118,7 +118,7 @@ void TextTrackLoader::corsPolicyPreventedLoad()
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, (ASCIILiteral("Cross-origin text track load denied by Cross-Origin Resource Sharing policy.")));
     Document* document = static_cast<Document*>(m_scriptExecutionContext);
-    document->addConsoleMessage(JSMessageSource, ErrorMessageLevel, consoleMessage);
+    document->addConsoleMessage(SecurityMessageSource, ErrorMessageLevel, consoleMessage);
     m_state = Failed;
 }
 
