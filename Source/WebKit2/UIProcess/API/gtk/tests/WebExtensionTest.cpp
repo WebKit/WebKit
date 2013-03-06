@@ -20,6 +20,7 @@
 #include "config.h"
 
 #include <gio/gio.h>
+#include <string.h>
 #include <webkit2/webkit-web-extension.h>
 #include <wtf/gobject/GOwnPtr.h>
 
@@ -62,10 +63,26 @@ static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, gpoint
     g_assert(ok);
 }
 
+static gboolean sendRequestCallback(WebKitWebPage*, WebKitURIRequest* request, WebKitURIResponse*, gpointer)
+{
+    const char* requestURI = webkit_uri_request_get_uri(request);
+    g_assert(requestURI);
+
+    if (const char* suffix = g_strrstr(requestURI, "/remove-this/javascript.js")) {
+        GOwnPtr<char> prefix(g_strndup(requestURI, strlen(requestURI) - strlen(suffix)));
+        GOwnPtr<char> newURI(g_strdup_printf("%s/javascript.js", prefix.get()));
+        webkit_uri_request_set_uri(request, newURI.get());
+    } else if (g_str_has_suffix(requestURI, "/cancel-this.js"))
+        return TRUE;
+
+    return FALSE;
+}
+
 static void pageCreatedCallback(WebKitWebExtension*, WebKitWebPage* webPage, gpointer userData)
 {
     g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), userData);
     g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), userData);
+    g_signal_connect(webPage, "send-request", G_CALLBACK(sendRequestCallback), 0);
 }
 
 static void methodCallCallback(GDBusConnection* connection, const char* sender, const char* objectPath, const char* interfaceName, const char* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData)

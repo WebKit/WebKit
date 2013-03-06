@@ -22,6 +22,8 @@
 
 #define __WEBKIT_WEB_EXTENSION_H_INSIDE__
 
+#include <webkit2/WebKitURIRequest.h>
+#include <webkit2/WebKitURIResponse.h>
 #include <webkit2/WebKitWebExtension.h>
 #include <webkit2/WebKitWebPage.h>
 

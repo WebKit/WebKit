@@ -26,7 +26,10 @@
 #include "WKBundleFrame.h"
 #include "WebFrame.h"
 #include "WebKitDOMDocumentPrivate.h"
+#include "WebKitMarshal.h"
 #include "WebKitPrivate.h"
+#include "WebKitURIRequestPrivate.h"
+#include "WebKitURIResponsePrivate.h"
 #include "WebKitWebPagePrivate.h"
 #include "WebProcess.h"
 #include <WebCore/Document.h>
@@ -40,6 +43,7 @@ using namespace WebCore;
 
 enum {
     DOCUMENT_LOADED,
+    SEND_REQUEST,
 
     LAST_SIGNAL
 };
@@ -117,18 +121,27 @@ static void didInitiateLoadForResource(WKBundlePageRef page, WKBundleFrameRef fr
     WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidInitiateLoadForResource"), ImmutableDictionary::adopt(message).get());
 }
 
-static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef request, WKURLResponseRef redirectResponse, const void*)
+static WKURLRequestRef willSendRequestForFrame(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLRequestRef wkRequest, WKURLResponseRef wkRedirectResponse, const void* clientInfo)
 {
+    GRefPtr<WebKitURIRequest> request = adoptGRef(webkitURIRequestCreateForResourceRequest(toImpl(wkRequest)->resourceRequest()));
+    GRefPtr<WebKitURIResponse> redirectResponse = wkRedirectResponse ? adoptGRef(webkitURIResponseCreateForResourceResponse(toImpl(wkRedirectResponse)->resourceResponse())) : 0;
+
+    gboolean returnValue;
+    g_signal_emit(WEBKIT_WEB_PAGE(clientInfo), signals[SEND_REQUEST], 0, request.get(), redirectResponse.get(), &returnValue);
+    if (returnValue)
+        return 0;
+
+    WebURLRequest* newRequest = WebURLRequest::create(webkitURIRequestGetResourceRequest(request.get())).leakRef();
+
     ImmutableDictionary::MapType message;
     message.set(String::fromUTF8("Page"), toImpl(page));
     message.set(String::fromUTF8("Identifier"), WebUInt64::create(identifier));
-    message.set(String::fromUTF8("Request"), toImpl(request));
-    if (!toImpl(redirectResponse)->resourceResponse().isNull())
-        message.set(String::fromUTF8("RedirectResponse"), toImpl(redirectResponse));
+    message.set(String::fromUTF8("Request"), newRequest);
+    if (!toImpl(wkRedirectResponse)->resourceResponse().isNull())
+        message.set(String::fromUTF8("RedirectResponse"), toImpl(wkRedirectResponse));
     WebProcess::shared().injectedBundle()->postMessage(String::fromUTF8("WebPage.DidSendRequestForResource"), ImmutableDictionary::adopt(message).get());
 
-    WKRetain(request);
-    return request;
+    return toAPI(newRequest);
 }
 
 static void didReceiveResponseForResource(WKBundlePageRef page, WKBundleFrameRef, uint64_t identifier, WKURLResponseRef response, const void*)
@@ -217,6 +230,37 @@ static void webkit_web_page_class_init(WebKitWebPageClass* klass)
         0, 0, 0,
         g_cclosure_marshal_VOID__OBJECT,
         G_TYPE_NONE, 0);
+
+    /**
+     * WebKitWebPage::send-request:
+     * @web_page: the #WebKitWebPage on which the signal is emitted
+     * @request: a #WebKitURIRequest
+     * @redirected_response: a #WebKitURIResponse, or %NULL
+     *
+     * This signal is emitted when @request is about to be sent to
+     * the server. This signal can be used to modify the #WebKitURIRequest
+     * that will be sent to the server. You can also cancel the resource load
+     * operation by connecting to this signal and returning %TRUE.
+     *
+     * In case of a server redirection this signal is
+     * emitted again with the @request argument containing the new
+     * request to be sent to the server due to the redirection and the
+     * @redirected_response parameter containing the response
+     * received by the server for the initial request.
+     *
+     * Returns: %TRUE to stop other handlers from being invoked for the event.
+     *    %FALSE to continue emission of the event.
+     */
+    signals[SEND_REQUEST] = g_signal_new(
+        "send-request",
+        G_TYPE_FROM_CLASS(klass),
+        G_SIGNAL_RUN_LAST,
+        0,
+        g_signal_accumulator_true_handled, 0,
+        webkit_marshal_BOOLEAN__OBJECT_OBJECT,
+        G_TYPE_BOOLEAN, 2,
+        WEBKIT_TYPE_URI_REQUEST,
+        WEBKIT_TYPE_URI_RESPONSE);
 }
 
 WebKitWebPage* webkitWebPageCreate(WebPage* webPage)

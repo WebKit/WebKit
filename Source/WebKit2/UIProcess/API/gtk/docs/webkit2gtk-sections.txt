@@ -330,6 +330,7 @@ webkit_settings_get_type
 WebKitURIRequest
 webkit_uri_request_new
 webkit_uri_request_get_uri
+webkit_uri_request_set_uri
 
 <SUBSECTION Standard>
 WebKitURIRequestClass
