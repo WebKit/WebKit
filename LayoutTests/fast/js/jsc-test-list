@@ -109,6 +109,7 @@ fast/js/dfg-dead-min-two-args
 fast/js/dfg-dead-redundant-get-array-length
 fast/js/dfg-dead-speculation
 fast/js/dfg-dead-variable-on-exit
+fast/js/dfg-double-addition-simplify-to-int.html
 fast/js/dfg-double-use-of-post-simplification-double-prediction
 fast/js/dfg-double-vote-fuzz
 fast/js/dfg-ensure-array-storage-on-string
