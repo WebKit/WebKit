@@ -205,10 +205,6 @@ void WebView::updateViewportSize()
 
 void WebView::didChangeContentsSize(const WebCore::IntSize& size)
 {
-    if (m_page->useFixedLayout()) {
-        m_ewkView->pageViewportController()->didChangeContentsSize(size);
-        return;
-    }
     m_client.didChangeContentsSize(this, size);
 }
 

@@ -27,6 +27,7 @@
 #include "ViewClientEfl.h"
 
 #include "EwkView.h"
+#include "PageViewportController.h" 
 #include <WebKit2/WKString.h>
 #include <WebKit2/WKView.h>
 
@@ -47,7 +48,11 @@ void ViewClientEfl::viewNeedsDisplay(WKViewRef, WKRect, const void* clientInfo)
 void ViewClientEfl::didChangeContentsSize(WKViewRef, WKSize size, const void* clientInfo)
 {
     EwkView* ewkView = toEwkView(clientInfo);
-    ewkView->scheduleUpdateDisplay();
+    if (WKPageUseFixedLayout(ewkView->wkPage()))
+        ewkView->pageViewportController()->didChangeContentsSize(toIntSize(size));
+    else
+        ewkView->scheduleUpdateDisplay();
+
     ewkView->smartCallback<ContentsSizeChanged>().call(size);
 }
 

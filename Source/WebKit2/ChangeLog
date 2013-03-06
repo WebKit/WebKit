@@ -1,3 +1,21 @@
+2013-03-06  Sudarsana Nagineni  <sudarsana.nagineni@intel.com>
+
+        [EFL][WK2] REGRESSION(r143582): API test EWK2UnitTestBase.ewk_view_contents_size_changed failing
+        https://bugs.webkit.org/show_bug.cgi?id=110608
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Test was expecting ContentsSizeChanged signal from ViewClientEfl, but
+        WebView was not calling client callback if useFixedLayout() is true.
+
+        This patch prevent early return if useFixedLayout() is true and call
+        client callback didChangeContentsSize(), which will emit the signal.
+
+        * UIProcess/efl/ViewClientEfl.cpp:
+        (WebKit::ViewClientEfl::didChangeContentsSize):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::didChangeContentsSize):
+
 2013-03-06  Manuel Rego Casasnovas  <rego@igalia.com>
 
         [WK2][GTK] Fix unit test WebKit2APITests/WebKitWebView/mouse-target
