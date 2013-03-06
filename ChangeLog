@@ -1,3 +1,12 @@
+2013-03-05  Shawn Singh  <shawnsingh@chromium.org>
+
+        Fix default background of a dragged image.
+        https://bugs.webkit.org/show_bug.cgi?id=110512
+
+        Reviewed by Tony Chang.
+
+        * ManualTests/drag-background-with-padding.html: Added.
+
 2013-03-05  Gustavo Noronha Silva  <gns@gnome.org>
 
         Unreviewed build fix.
