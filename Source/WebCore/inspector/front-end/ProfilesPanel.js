@@ -1453,6 +1453,7 @@ importScript("ProfileDataGridTree.js");
 importScript("BottomUpProfileDataGridTree.js");
 importScript("CPUProfileView.js");
 importScript("CSSSelectorProfileView.js");
+importScript("FlameChart.js");
 importScript("HeapSnapshot.js");
 importScript("HeapSnapshotDataGrids.js");
 importScript("HeapSnapshotGridNodes.js");

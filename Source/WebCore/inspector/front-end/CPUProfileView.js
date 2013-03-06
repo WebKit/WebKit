@@ -774,5 +774,3 @@ WebInspector.CPUProfileHeader.prototype = {
 
     __proto__: WebInspector.ProfileHeader.prototype
 }
-
-importScript("FlameChart.js");
