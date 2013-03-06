@@ -106,11 +106,10 @@ void NetworkProcess::platformInitializeNetworkProcess(const NetworkProcessCreati
 
     if (!m_diskCacheDirectory.isNull()) {
         SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
-        NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
-        NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
-
-        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
-        [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
+        [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
+            initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
+            diskCapacity:parameters.nsURLCacheDiskCapacity
+            diskPath:parameters.diskCacheDirectory]).get()];
     }
 
 #if USE(SECURITY_FRAMEWORK)

@@ -161,11 +161,10 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     if (!m_usesNetworkProcess) {
 #endif
         if (!parameters.diskCacheDirectory.isNull()) {
-            RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc]
+            [NSURLCache setSharedURLCache:adoptNS([[NSURLCache alloc]
                 initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
                 diskCapacity:parameters.nsURLCacheDiskCapacity
-                diskPath:parameters.diskCacheDirectory]);
-            [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
+                diskPath:parameters.diskCacheDirectory]).get()];
         }
 #if ENABLE(NETWORK_PROCESS)
     }

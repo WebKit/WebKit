@@ -1,3 +1,18 @@
+2013-03-06  Geoffrey Garen  <ggaren@apple.com>
+
+        Joing the adoptNS/adoptCF/adoptRef club.
+        https://bugs.webkit.org/show_bug.cgi?id=111467
+
+        Reviewed by Darin Adler.
+
+        Responding to review comments by Darin Adler.
+
+        * NetworkProcess/mac/NetworkProcessMac.mm:
+        (WebKit::NetworkProcess::platformInitializeNetworkProcess):
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::platformInitializeWebProcess): Tighten up this code
+        by reducing extraneous local variables.
+
 2013-03-05  Alexey Proskuryakov  <ap@apple.com>
 
         Track sandbox extensions for blobs in NetworkProcess
