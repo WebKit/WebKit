@@ -1,3 +1,16 @@
+2013-03-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Fix unused parameter warnings in ARM assembler
+        https://bugs.webkit.org/show_bug.cgi?id=111433
+
+        Reviewed by Kentaro Hara.
+
+        * assembler/ARMAssembler.h: Remove unreachable revertJump() after r143346.
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::moveIntsToDouble): Remove unused scratch parameter instead of UNUSED_PARAM.
+        (JSC::MacroAssemblerARM::branchConvertDoubleToInt32): Remove unused fpTemp parameter.
+        (JSC::MacroAssemblerARM::revertJumpReplacementToPatchableBranchPtrWithPatch): Remove unused parameters.
+
 2013-03-06  Andreas Kling  <akling@apple.com>
 
         Unused Structure property tables waste 14MB on Membuster.

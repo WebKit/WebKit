@@ -402,13 +402,6 @@ namespace JSC {
             emitInstruction(toARMWord(cc) | MOV | SetConditionalCodes, rd, ARMRegisters::r0, op2);
         }
 
-        static void revertJump(void* instructionStart, RegisterID rd, ARMWord imm)
-        {
-            ARMWord* insn = reinterpret_cast<ARMWord*>(instructionStart);
-            ARMWord* address = getLdrImmAddress(insn);
-            *address = imm;
-        }
-
         void bic(int rd, int rn, ARMWord op2, Condition cc = AL)
         {
             emitInstruction(toARMWord(cc) | BIC, rd, rn, op2);
