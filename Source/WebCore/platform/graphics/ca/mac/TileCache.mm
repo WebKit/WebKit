@@ -843,7 +843,7 @@ void TileCache::updateTileCoverageMap()
 
     Color backgroundColor;
     switch (m_indicatorMode) {
-    case MainThreadScrollingBecauseOfStyleIndictaion:
+    case MainThreadScrollingBecauseOfStyleIndication:
         backgroundColor = Color(255, 0, 0);
         break;
     case MainThreadScrollingBecauseOfEventHandlersIndication:

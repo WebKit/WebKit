@@ -417,7 +417,7 @@ void ScrollingCoordinatorMac::commitTreeState()
 
     ScrollingModeIndication indicatorMode;
     if (shouldUpdateScrollLayerPositionOnMainThread())
-        indicatorMode = MainThreadScrollingBecauseOfStyleIndictaion;
+        indicatorMode = MainThreadScrollingBecauseOfStyleIndication;
     else if (scrollingTree() && scrollingTree()->hasWheelEventHandlers())
         indicatorMode =  MainThreadScrollingBecauseOfEventHandlersIndication;
     else

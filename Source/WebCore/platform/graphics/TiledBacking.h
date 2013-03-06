@@ -35,7 +35,7 @@ namespace WebCore {
 class IntRect;
 
 enum ScrollingModeIndication {
-    MainThreadScrollingBecauseOfStyleIndictaion,
+    MainThreadScrollingBecauseOfStyleIndication,
     MainThreadScrollingBecauseOfEventHandlersIndication,
     ThreadedScrollingIndication
 };
