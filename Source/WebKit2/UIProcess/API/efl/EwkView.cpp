@@ -458,7 +458,7 @@ void EwkView::setDeviceScaleFactor(float scale)
     page()->setIntrinsicDeviceScaleFactor(scale);
 
     // Update internal viewport size after device-scale change.
-    setSize(m_size);
+    setDeviceSize(deviceSize());
 }
 
 float EwkView::deviceScaleFactor() const
@@ -466,19 +466,29 @@ float EwkView::deviceScaleFactor() const
     return WKPageGetBackingScaleFactor(wkPage());
 }
 
-void EwkView::setSize(const IntSize& size)
+void EwkView::setDeviceSize(const IntSize& deviceSize)
 {
-    m_size = size;
+    m_deviceSize = deviceSize;
 
     DrawingAreaProxy* drawingArea = page()->drawingArea();
     if (!drawingArea)
         return;
 
-    FloatSize dipSize(m_size);
-    // Web Process expects sizes in UI units, and not raw device units.
-    dipSize.scale(1 / deviceScaleFactor());
-    drawingArea->setSize(roundedIntSize(dipSize), IntSize());
+    drawingArea->setSize(size(), IntSize());
     webView()->updateViewportSize();
+}
+
+IntSize EwkView::size() const
+{
+    // WebPage expects a size in UI units, and not raw device units.
+    FloatSize uiSize = m_deviceSize;
+    uiSize.scale(1 / deviceScaleFactor());
+    return roundedIntSize(uiSize);
+}
+
+IntSize EwkView::deviceSize() const
+{
+    return m_deviceSize;
 }
 
 AffineTransform EwkView::transformToScreen() const
@@ -551,7 +561,7 @@ void EwkView::displayTimerFired(Timer<EwkView>*)
 
 void EwkView::scheduleUpdateDisplay()
 {
-    if (size().isEmpty())
+    if (m_deviceSize.isEmpty())
         return;
 
     if (!m_displayTimer.isActive())
@@ -749,7 +759,7 @@ bool EwkView::createGLSurface()
     };
 
     // Recreate to current size: Replaces if non-null, and frees existing surface after (OwnPtr).
-    m_evasGLSurface = EvasGLSurface::create(m_evasGL.get(), &evasGLConfig, size());
+    m_evasGLSurface = EvasGLSurface::create(m_evasGL.get(), &evasGLConfig, deviceSize());
     if (!m_evasGLSurface)
         return false;
 
@@ -761,7 +771,7 @@ bool EwkView::createGLSurface()
 
     Evas_GL_API* gl = evas_gl_api_get(m_evasGL.get());
 
-    const WKPoint& boundsEnd = WKViewUserViewportToContents(wkView(), WKPointMake(size().width(), size().height()));
+    const WKPoint& boundsEnd = WKViewUserViewportToContents(wkView(), WKPointMake(deviceSize().width(), deviceSize().height()));
     gl->glViewport(0, 0, boundsEnd.x, boundsEnd.y);
     gl->glClearColor(1.0, 1.0, 1.0, 0);
     gl->glClear(GL_COLOR_BUFFER_BIT);
@@ -1111,7 +1121,7 @@ void EwkView::handleEvasObjectCalculate(Evas_Object* evasObject)
         smartData->view.w = width;
         smartData->view.h = height;
 
-        self->setSize(IntSize(width, height));
+        self->setDeviceSize(IntSize(width, height));
         self->setNeedsSurfaceResize();
     }
 }

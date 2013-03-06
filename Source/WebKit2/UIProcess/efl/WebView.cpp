@@ -102,7 +102,7 @@ void WebView::paintToCurrentGLContext()
     // FIXME: We need to clean up this code as it is split over CoordGfx and Page.
     scene->setDrawsBackground(m_page->drawsBackground());
 
-    FloatRect viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_ewkView->size()));
+    FloatRect viewport = m_userViewportTransform.mapRect(IntRect(IntPoint(), m_ewkView->deviceSize()));
     scene->paintToCurrentGLContext(transformToScene().toTransformationMatrix(), /* opacity */ 1, viewport);
 }
 
@@ -196,14 +196,11 @@ void WebView::didCommitLoad()
 
 void WebView::updateViewportSize()
 {
-    FloatSize size = m_ewkView->size();
-    // The viewport controller expects sizes in UI units, and not raw device units.
-    size.scale(1 / m_page->deviceScaleFactor());
     if (m_page->useFixedLayout()) {
-        m_ewkView->pageViewportController()->didChangeViewportSize(size);
+        m_ewkView->pageViewportController()->didChangeViewportSize(m_ewkView->size());
         return;
     }
-    m_page->drawingArea()->setVisibleContentsRect(FloatRect(m_ewkView->pagePosition(), size), FloatPoint());
+    m_page->drawingArea()->setVisibleContentsRect(FloatRect(m_ewkView->pagePosition(), m_ewkView->size()), FloatPoint());
 }
 
 void WebView::didChangeContentsSize(const WebCore::IntSize& size)

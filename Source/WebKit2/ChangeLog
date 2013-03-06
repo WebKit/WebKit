@@ -1,3 +1,32 @@
+2013-03-06  Huang Dongsung  <luxtella@company100.net>
+
+        [EFL][WK2] Convert from device view size to UI view size only in EwkView.
+        https://bugs.webkit.org/show_bug.cgi?id=110197
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Signed off for WebKit2 by Benjamin Poulain.
+
+        Device scale factor is a property of the physical display, so only EwkView
+        should deal with converting device view size to UI (a.k.a Density Independent Pixel)
+        view size. It increases readability because we can regard a view size in
+        other classes (e.g. WebView, PageViewportController, WebPage) except for
+        EwkView as UI size.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::setDeviceScaleFactor):
+        (EwkView::setDeviceSize):
+        (EwkView::size):
+        (EwkView::deviceSize):
+        (EwkView::scheduleUpdateDisplay):
+        (EwkView::createGLSurface):
+        (EwkView::handleEvasObjectCalculate):
+        * UIProcess/API/efl/EwkView.h:
+        (EwkView):
+        * UIProcess/efl/WebView.cpp:
+        (WebKit::WebView::paintToCurrentGLContext):
+        (WebKit::WebView::updateViewportSize):
+
 2013-03-06  Christophe Dumez  <ch.dumez@sisa.samsung.com>
 
         [EFL][WK2] Use Vector::reserveInitialCapacity() in WebEventFactory::createWebTouchEvent()
