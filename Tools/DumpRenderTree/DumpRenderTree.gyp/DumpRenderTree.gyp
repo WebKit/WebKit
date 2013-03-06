@@ -232,6 +232,7 @@
             'mac_bundle': 1,
             'dependencies': [
                 'TestRunner',
+                'DumpRenderTree_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:inspector_resources',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit',
                 '<(source_dir)/WebKit/chromium/WebKit.gyp:webkit_wtf_support',
@@ -272,6 +273,7 @@
                     ],
                     'resource_include_dirs': ['<(SHARED_INTERMEDIATE_DIR)/webkit'],
                     'sources': [
+                        # FIXME: We should just use the resources in the .pak file.
                         '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.rc',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.rc',
                         '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources.rc',
@@ -294,29 +296,6 @@
                     'sources/': [
                         ['exclude', 'Win\\.cpp$'],
                     ],
-                    'actions': [
-                        {
-                            'action_name': 'repack_locale',
-                            'variables': {
-                                'repack_path': '<(chromium_src_dir)/tools/grit/grit/format/repack.py',
-                                'pak_inputs': [
-                                    '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/ui/gfx/gfx_resources.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
-                                    '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources_100_percent.pak',
-                            ]},
-                            'inputs': [
-                                '<(repack_path)',
-                                '<@(pak_inputs)',
-                            ],
-                            'outputs': [
-                                '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
-                            ],
-                            'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
-                            'process_outputs_as_mac_bundle_resources': 1,
-                        },
-                    ], # actions
                 }],
                 ['OS=="mac"', {
                     'dependencies': [
@@ -337,12 +316,6 @@
                     'dependencies': [
                         '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
                     ],
-                    'copies': [{
-                        'destination': '<(PRODUCT_DIR)',
-                        'files': [
-                            '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
-                        ]
-                    }],
                     'variables': {
                         # FIXME: Enable warnings on other platforms.
                         'chromium_code': 1,
@@ -378,12 +351,6 @@
                         '<(chromium_src_dir)/tools/android/forwarder/forwarder.gyp:forwarder',
                         '<(chromium_src_dir)/tools/android/md5sum/md5sum.gyp:md5sum',
                     ],
-                    'copies': [{
-                        'destination': '<(PRODUCT_DIR)',
-                        'files': [
-                            '<(INTERMEDIATE_DIR)/repack/DumpRenderTree.pak',
-                        ]
-                    }],
                 }, { # OS!="android"
                     'sources/': [
                         ['exclude', 'Android\\.cpp$'],
@@ -400,6 +367,31 @@
                     ]
                 }],
             ],
+        },
+        {
+            'target_name': 'DumpRenderTree_resources',
+            'type': 'none',
+            'actions': [{
+                'action_name': 'repack_local',
+                'variables': {
+                    'repack_path': '<(chromium_src_dir)/tools/grit/grit/format/repack.py',
+                    'pak_inputs': [
+                        '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
+                        '<(SHARED_INTERMEDIATE_DIR)/ui/gfx/gfx_resources.pak',
+                        '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_chromium_resources.pak',
+                        '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_strings_en-US.pak',
+                        '<(SHARED_INTERMEDIATE_DIR)/webkit/webkit_resources_100_percent.pak',
+                ]},
+                'inputs': [
+                    '<(repack_path)',
+                    '<@(pak_inputs)',
+                ],
+                'outputs': [
+                    '<(PRODUCT_DIR)/DumpRenderTree.pak',
+                ],
+                'action': ['python', '<(repack_path)', '<@(_outputs)', '<@(pak_inputs)'],
+                'process_outputs_as_mac_bundle_resources': 1,
+            }],
         },
         {
             'target_name': 'TestNetscapePlugIn',

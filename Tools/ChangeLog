@@ -1,3 +1,22 @@
+2013-03-05  Dirk Pranke  <dpranke@chromium.org>
+
+        [chromium] build a DumpRenderTree.pak even on windows
+        https://bugs.webkit.org/show_bug.cgi?id=111504
+
+        Reviewed by Tony Chang.
+
+        The Chromium Aura build uses the default theme to draw
+        controls, and that theme requires the ui ResourceBundle
+        to be initialized. On every other platform, we build
+        a DumpRenderTree.pak that works for this, but on Windows we
+        still compile the resources directly into DRT. As a first step,
+        let's build the pak file. I will then need to land a patch
+        in Chromium to actually load it. Then I can go back and move
+        the resources over to just use the .pak file and no longer need
+        the .rc's.
+
+        * DumpRenderTree/DumpRenderTree.gyp/DumpRenderTree.gyp:
+
 2013-03-05  Julie Parent  <jparent@chromium.org>
         Dashboard cleanup: move string utilities into their own namespace.
         
