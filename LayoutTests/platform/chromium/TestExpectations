@@ -4415,3 +4415,5 @@ webkit.org/b/111510 [ MountainLion ] fast/regions/region-style-in-columns.html [
 webkit.org/b/111514 [ Mac ] plugins/plugin-clip-subframe.html [ Failure ]
 
 webkit.org/b/111518 [ Linux Win Mac ] http/tests/misc/delete-frame-during-readystatechange-with-gc-after-video-removal.html [ Crash ]
+
+webkit.org/b/111524 [ Debug Win Mac ] fast/dom/HTMLDocument/document-special-properties.html [ Pass Timeout ]
