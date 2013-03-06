@@ -40,6 +40,7 @@ namespace WebCore {
 
 class Database;
 class InjectedScript;
+class InjectedScriptManager;
 class InspectorAgent;
 class InspectorConsoleAgent;
 class InspectorDOMAgent;
@@ -59,7 +60,7 @@ struct EventListenerInfo;
 
 class InjectedScriptHost : public RefCounted<InjectedScriptHost> {
 public:
-    static PassRefPtr<InjectedScriptHost> create();
+    static PassRefPtr<InjectedScriptHost> create(InjectedScriptManager*);
     ~InjectedScriptHost();
 
     void init(InspectorAgent* inspectorAgent
@@ -106,6 +107,8 @@ public:
 
     void clearConsoleMessages();
     void copyText(const String& text);
+    unsigned objectId(const ScriptObject&);
+    unsigned releaseObjectId(const ScriptObject&);
 #if ENABLE(SQL_DATABASE)
     String databaseIdImpl(Database*);
 #endif
@@ -116,8 +119,9 @@ public:
 #endif
 
 private:
-    InjectedScriptHost();
+    explicit InjectedScriptHost(InjectedScriptManager*);
 
+    InjectedScriptManager* m_manager;
     InspectorAgent* m_inspectorAgent;
     InspectorConsoleAgent* m_consoleAgent;
 #if ENABLE(SQL_DATABASE)

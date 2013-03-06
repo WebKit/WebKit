@@ -62,6 +62,9 @@ public:
     void discardInjectedScriptsFor(DOMWindow*);
     void releaseObjectGroup(const String& objectGroup);
 
+    unsigned objectId(const ScriptObject&);
+    unsigned releaseObjectId(const ScriptObject&);
+
     typedef bool (*InspectedStateAccessCheck)(ScriptState*);
     InspectedStateAccessCheck inspectedStateAccessCheck() const { return m_inspectedStateAccessCheck; }
 
@@ -81,6 +84,9 @@ private:
     InspectedStateAccessCheck m_inspectedStateAccessCheck;
     typedef HashMap<ScriptState*, int> ScriptStateToId;
     ScriptStateToId m_scriptStateToId;
+    class ObjectIdMap;
+    typedef HashMap<ScriptState*, OwnPtr<ObjectIdMap> > ScriptStateToObjectIdMap;
+    ScriptStateToObjectIdMap m_scriptStateToObjectIdMap;
 };
 
 } // namespace WebCore

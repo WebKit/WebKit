@@ -43,6 +43,31 @@
 
 namespace WebCore {
 
+class InjectedScriptManager::ObjectIdMap {
+    WTF_MAKE_NONCOPYABLE(ObjectIdMap);
+public:
+    ObjectIdMap() : m_nextId(1) { }
+
+    unsigned objectId(const ScriptObject& object)
+    {
+        Map::AddResult result = m_objectToId.add(object, m_nextId);
+        if (result.isNewEntry)
+            ++m_nextId;
+        return result.iterator->value;
+    }
+
+    unsigned releaseObjectId(const ScriptObject& object)
+    {
+        return m_objectToId.take(object);
+    }
+
+private:
+
+    typedef HashMap<ScriptObject, unsigned> Map;
+    Map m_objectToId;
+    unsigned m_nextId;
+};
+
 PassOwnPtr<InjectedScriptManager> InjectedScriptManager::createForPage()
 {
     return adoptPtr(new InjectedScriptManager(&InjectedScriptManager::canAccessInspectedWindow));
@@ -55,7 +80,7 @@ PassOwnPtr<InjectedScriptManager> InjectedScriptManager::createForWorker()
 
 InjectedScriptManager::InjectedScriptManager(InspectedStateAccessCheck accessCheck)
     : m_nextInjectedScriptId(1)
-    , m_injectedScriptHost(InjectedScriptHost::create())
+    , m_injectedScriptHost(InjectedScriptHost::create(this))
     , m_inspectedStateAccessCheck(accessCheck)
 {
 }
@@ -113,12 +138,23 @@ void InjectedScriptManager::discardInjectedScripts()
 {
     m_idToInjectedScript.clear();
     m_scriptStateToId.clear();
+    m_scriptStateToObjectIdMap.clear();
 }
 
 void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
 {
     if (m_scriptStateToId.isEmpty())
         return;
+
+    // Destroy object id maps.
+    Vector<ScriptState*> scriptStatesToRemove;
+    for (ScriptStateToObjectIdMap::iterator it = m_scriptStateToObjectIdMap.begin(); it != m_scriptStateToObjectIdMap.end(); ++it) {
+        ScriptState* scriptState = it->key;
+        if (window == domWindowFromScriptState(scriptState))
+            scriptStatesToRemove.append(scriptState);
+    }
+    for (size_t i = 0; i < scriptStatesToRemove.size(); i++)
+        m_scriptStateToObjectIdMap.remove(scriptStatesToRemove[i]);
 
     Vector<long> idsToRemove;
     IdToInjectedScriptMap::iterator end = m_idToInjectedScript.end();
@@ -134,7 +170,7 @@ void InjectedScriptManager::discardInjectedScriptsFor(DOMWindow* window)
         m_idToInjectedScript.remove(idsToRemove[i]);
 
     // Now remove script states that have id but no injected script.
-    Vector<ScriptState*> scriptStatesToRemove;
+    scriptStatesToRemove.clear();
     for (ScriptStateToId::iterator it = m_scriptStateToId.begin(); it != m_scriptStateToId.end(); ++it) {
         ScriptState* scriptState = it->key;
         if (window == domWindowFromScriptState(scriptState))
@@ -153,6 +189,30 @@ void InjectedScriptManager::releaseObjectGroup(const String& objectGroup)
 {
     for (IdToInjectedScriptMap::iterator it = m_idToInjectedScript.begin(); it != m_idToInjectedScript.end(); ++it)
         it->value.releaseObjectGroup(objectGroup);
+}
+
+unsigned InjectedScriptManager::objectId(const ScriptObject& object)
+{
+    if (object.hasNoValue())
+        return 0;
+    ScriptState* state = object.scriptState();
+    ObjectIdMap* map = m_scriptStateToObjectIdMap.get(state);
+    if (!map) {
+        ScriptStateToObjectIdMap::AddResult result = m_scriptStateToObjectIdMap.set(state, adoptPtr(new ObjectIdMap()));
+        map = result.iterator->value.get();
+    }
+    return map->objectId(object);
+}
+
+unsigned InjectedScriptManager::releaseObjectId(const ScriptObject& object)
+{
+    if (object.hasNoValue())
+        return 0;
+    ScriptState* state = object.scriptState();
+    ObjectIdMap* map = m_scriptStateToObjectIdMap.get(state);
+    if (!map)
+        return 0;
+    return map->releaseObjectId(object);
 }
 
 String InjectedScriptManager::injectedScriptSource()

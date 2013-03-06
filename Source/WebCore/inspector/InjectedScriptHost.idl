@@ -46,6 +46,8 @@
     [Custom] Array getInternalProperties(in any object);
     [Custom] Array getEventListeners(in Node node);
 
+    [Custom] unsigned int objectId(in any object);
+    [Custom] void releaseObjectId(in any object);
     [Custom] DOMString databaseId(in any database);
     [Custom] DOMString storageId(in any storage);
     [Custom] any evaluate(in DOMString text);

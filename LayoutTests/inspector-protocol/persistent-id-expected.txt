@@ -1,0 +1,5 @@
+Test that evaluating same object will result in same remote object id.Bug 109908.
+
+ SUCCESS: evaluated to an object with same id
+SUCCESS: evaluated to an object with id different from released one
+
