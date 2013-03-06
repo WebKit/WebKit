@@ -516,3 +516,36 @@
     -webkit-user-select: text;
     -webkit-user-drag: auto;
 }
+
+
+.sidebar-pane.composite {
+    overflow: hidden;
+    position: absolute;
+}
+
+.sidebar-pane.composite > .body {
+    height: 100%;
+}
+
+.sidebar-pane.composite .metrics {
+    border-bottom: 1px solid rgb(64%, 64%, 64%);
+    height: 206px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-box-align: center;
+    -webkit-box-pack: center;
+}
+
+.sidebar-pane.composite .sidebar-pane-toolbar {
+    margin-top: 4px;
+    margin-bottom: -4px;
+    position: relative;
+}
+
+.sidebar-pane.composite .sidebar-pane-toolbar > .sidebar-pane-subtitle {
+    left: 8px;
+}
+
+.sidebar-pane.composite .styles-section.read-only {
+    background-color: inherit;
+}

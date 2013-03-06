@@ -1119,21 +1119,24 @@ WebInspector.ElementsPanel.prototype = {
             for (var pane in this.sidebarPanes)
                 this.sidebarPaneView.addPane(this.sidebarPanes[pane]);
         } else {
-            this.sidebarPaneView = new WebInspector.SplitView(true, this.name + "PanelSplitSidebarRatio", 0.5);
+            this.sidebarPaneView = new WebInspector.SidebarTabbedPane();
 
-            var group1 = new WebInspector.SidebarTabbedPane();
-            group1.show(this.sidebarPaneView.firstElement());
-            group1.addPane(this.sidebarPanes.computedStyle);
-            group1.addPane(this.sidebarPanes.styles);
-            group1.addPane(this.sidebarPanes.metrics);
+            var compositePane = new WebInspector.SidebarPane(this.sidebarPanes.styles.title());
+            compositePane.element.addStyleClass("composite");
+            compositePane.element.addStyleClass("fill");
 
-            var group2 = new WebInspector.SidebarTabbedPane();
-            group2.show(this.sidebarPaneView.secondElement());
-            group2.addPane(this.sidebarPanes.properties);
-            group2.addPane(this.sidebarPanes.domBreakpoints);
-            group2.addPane(this.sidebarPanes.eventListeners);
+            var splitView = new WebInspector.SplitView(true, "StylesPaneSplitRatio", 0.5);
+            splitView.show(compositePane.bodyElement);
+            this.sidebarPanes.styles.show(splitView.firstElement());
 
-            this.sidebarPaneView.extensionPaneContainer = group2;
+            this.sidebarPanes.metrics.show(splitView.secondElement());
+            splitView.secondElement().appendChild(this.sidebarPanes.computedStyle.titleElement);
+            this.sidebarPanes.computedStyle.show(splitView.secondElement());
+
+            this.sidebarPaneView.addPane(compositePane);
+            this.sidebarPaneView.addPane(this.sidebarPanes.properties);
+            this.sidebarPaneView.addPane(this.sidebarPanes.domBreakpoints);
+            this.sidebarPaneView.addPane(this.sidebarPanes.eventListeners);
         }
         this.sidebarPaneView.show(this.splitView.sidebarElement);
         this.sidebarPanes.styles.expand();
@@ -1146,8 +1149,7 @@ WebInspector.ElementsPanel.prototype = {
     addExtensionSidebarPane: function(id, pane)
     {
         this.sidebarPanes[id] = pane;
-        var container = this.sidebarPaneView.extensionPaneContainer || this.sidebarPaneView;
-        container.addPane(pane);
+        this.sidebarPaneView.addPane(pane);
     },
 
     __proto__: WebInspector.Panel.prototype
