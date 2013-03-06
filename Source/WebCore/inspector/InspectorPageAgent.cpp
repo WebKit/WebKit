@@ -852,11 +852,11 @@ void InspectorPageAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWor
         for (InspectorObject::const_iterator it = scripts->begin(); it != end; ++it) {
             String scriptText;
             if (it->value->asString(&scriptText))
-                m_injectedScriptManager->injectScript(scriptText, mainWorldScriptState(frame));
+                frame->script()->executeScript(scriptText);
         }
     }
     if (!m_scriptToEvaluateOnLoadOnce.isEmpty())
-        m_injectedScriptManager->injectScript(m_scriptToEvaluateOnLoadOnce, mainWorldScriptState(frame));
+        frame->script()->executeScript(m_scriptToEvaluateOnLoadOnce);
 }
 
 void InspectorPageAgent::domContentEventFired()

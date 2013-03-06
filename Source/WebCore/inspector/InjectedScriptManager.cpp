@@ -40,9 +40,6 @@
 #include "InspectorValues.h"
 #include "ScriptObject.h"
 #include <wtf/PassOwnPtr.h>
-#include <wtf/StdLibExtras.h>
-
-using namespace std;
 
 namespace WebCore {
 
@@ -163,12 +160,6 @@ String InjectedScriptManager::injectedScriptSource()
     return String(reinterpret_cast<const char*>(InjectedScriptSource_js), sizeof(InjectedScriptSource_js));
 }
 
-pair<int, ScriptObject> InjectedScriptManager::injectScript(const String& source, ScriptState* scriptState)
-{
-    int id = injectedScriptIdFor(scriptState);
-    return std::make_pair(id, createInjectedScript(source, scriptState, id));
-}
-
 InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedScriptState)
 {
     ScriptStateToId::iterator it = m_scriptStateToId.find(inspectedScriptState);
@@ -181,9 +172,10 @@ InjectedScript InjectedScriptManager::injectedScriptFor(ScriptState* inspectedSc
     if (!m_inspectedStateAccessCheck(inspectedScriptState))
         return InjectedScript();
 
-    pair<int, ScriptObject> injectedScript = injectScript(injectedScriptSource(), inspectedScriptState);
-    InjectedScript result(injectedScript.second, m_inspectedStateAccessCheck);
-    m_idToInjectedScript.set(injectedScript.first, result);
+    int id = injectedScriptIdFor(inspectedScriptState);
+    ScriptObject injectedScriptObject = createInjectedScript(injectedScriptSource(), inspectedScriptState, id);
+    InjectedScript result(injectedScriptObject, m_inspectedStateAccessCheck);
+    m_idToInjectedScript.set(id, result);
     return result;
 }
 

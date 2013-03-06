@@ -54,7 +54,6 @@ public:
 
     InjectedScriptHost* injectedScriptHost();
 
-    pair<int, ScriptObject> injectScript(const String& source, ScriptState*);
     InjectedScript injectedScriptFor(ScriptState*);
     InjectedScript injectedScriptForId(int);
     int injectedScriptIdFor(ScriptState*);

@@ -310,11 +310,8 @@ WebInspector.ExtensionServer.prototype = {
         var options = /** @type ExtensionReloadOptions */ (message.options || {});
         NetworkAgent.setUserAgentOverride(typeof options.userAgent === "string" ? options.userAgent : "");
         var injectedScript;
-        if (options.injectedScript) {
-            // Wrap client script into anonymous function, return another anonymous function that
-            // returns empty object for compatibility with InjectedScriptManager on the backend.
-            injectedScript = "((function(){" + options.injectedScript + "})(),function(){return {}})";
-        }
+        if (options.injectedScript)
+            injectedScript = "(function(){" + options.injectedScript + "})()";
         PageAgent.reload(!!options.ignoreCache, injectedScript);
         return this._status.OK();
     },

@@ -88,8 +88,15 @@ void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* 
 
     String origin = frame->document()->securityOrigin()->toRawString();
     String script = m_injectedScriptForOrigin.get(origin);
-    if (!script.isEmpty())
-        m_injectedScriptManager->injectScript(script, mainWorldScriptState(frame));
+    if (script.isEmpty())
+        return;
+    int injectedScriptId = m_injectedScriptManager->injectedScriptIdFor(mainWorldScriptState(frame));
+    StringBuilder scriptSource;
+    scriptSource.append(script);
+    scriptSource.append("(");
+    scriptSource.appendNumber(injectedScriptId);
+    scriptSource.append(")");
+    frame->script()->executeScript(scriptSource.toString());
 }
 
 void InspectorAgent::setFrontend(InspectorFrontend* inspectorFrontend)
