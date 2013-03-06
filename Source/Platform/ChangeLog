@@ -1,3 +1,16 @@
+2013-03-06  Dana Jansens  <danakj@chromium.org>
+
+        [chromium] Remove the contents of WebVideoFrame class
+        https://bugs.webkit.org/show_bug.cgi?id=106037
+
+        Reviewed by James Robinson.
+
+        This class becomes an empty base class now, used only for the API
+        boundary.
+
+        * chromium/public/WebVideoFrame.h:
+        (WebKit):
+
 2013-03-05  Alexandre Elias  <aelias@chromium.org>
 
         [chromium] Scroll deltas should be floats
