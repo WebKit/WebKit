@@ -3053,6 +3053,8 @@ webkit.org/b/66953 [ Debug ] animations/play-state-suspend.html [ Failure Pass ]
 webkit.org/b/66953 [ Debug ] animations/suspend-resume-animation.html [ Failure Pass ]
 webkit.org/b/66953 [ Mac Win Debug ] animations/animation-direction-reverse.html [ Failure Pass ]
 
+webkit.org/b/111612 [ Mac Win Linux ] animations/animation-delay-changed.html [ Failure Pass ]
+
 webkit.org/b/72761 accessibility/anonymous-render-block-in-continuation-causes-crash.html [ Pass Timeout ]
 
 webkit.org/b/73766 css3/unicode-bidi-isolate-aharon-failing.html [ ImageOnlyFailure ]
