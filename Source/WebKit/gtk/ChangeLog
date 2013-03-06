@@ -1,3 +1,21 @@
+2013-03-06  Dominique Leuenberger  <dimstar@opensuse.org>
+
+        Link the webkit_tests to XRENDER_LIBS.
+        This solves the linking failure when building against gtk2 like:
+        usr/lib/gcc/i586-suse-linux/4.7/../../../../i586-suse-linux/bin/ld:
+        Source/WebCore/platform/gtk/Programs_unittests_testcopyandpaste-GtkVersioning.o:
+        undefined reference to symbol 'XFree'
+        /usr/lib/gcc/i586-suse-linux/4.7/../../../../i586-suse-linux/bin/ld:
+        note: 'XFree' is defined in DSO /usr/lib/libX11.so.6 so try adding it
+        to the linker command line
+        /usr/lib/libX11.so.6: could not read symbols: Invalid operation
+
+        https://bugs.webkit.org/show_bug.cgi?id=111572
+
+        Reviewed by Gustavo Noronha Silva.
+
+        * GNUmakefile.am:
+
 2013-03-03  Adam Barth  <abarth@webkit.org>
 
         Unreviewed rollout of http://trac.webkit.org/r144530
