@@ -1021,7 +1021,7 @@ void ArgumentCoder<CoordinatedGraphicsState>::encode(ArgumentEncoder& encoder, c
 
     // We need to encode WebCoordinatedSurface::Handle right after it's creation.
     // That's why we cannot use simple std::pair encoder.
-    encoder << state.imagesToUpdate.size();
+    encoder << static_cast<uint64_t>(state.imagesToUpdate.size());
 
     typedef Vector<std::pair<CoordinatedImageBackingID, RefPtr<CoordinatedSurface> > > SurfaceUpdatePairVector;
     SurfaceUpdatePairVector::const_iterator end = state.imagesToUpdate.end();
@@ -1057,11 +1057,11 @@ bool ArgumentCoder<CoordinatedGraphicsState>::decode(ArgumentDecoder& decoder, C
     if (!decoder.decode(state.layersToUpdate))
         return false;
 
-    size_t sizeOfImagesToUpdate;
+    uint64_t sizeOfImagesToUpdate;
     if (!decoder.decode(sizeOfImagesToUpdate))
         return false;
 
-    for (size_t i = 0; i < sizeOfImagesToUpdate; i++) {
+    for (uint64_t i = 0; i < sizeOfImagesToUpdate; i++) {
         CoordinatedImageBackingID imageID;
         if (!decoder.decode(imageID))
             return false;

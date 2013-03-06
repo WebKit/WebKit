@@ -1,3 +1,16 @@
+2013-03-06  Andras Becsi  <andras.becsi@digia.com>
+
+        [Qt][WK2] Fix the Mac build after r144787
+        https://bugs.webkit.org/show_bug.cgi?id=111569
+
+        Reviewed by Csaba Osztrogonác.
+
+        Use uint_64 explicitly instead of size_t.
+
+        * Shared/CoordinatedGraphics/CoordinatedGraphicsArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+
 2013-03-05  Kent Tamura  <tkent@chromium.org>
 
         Rename WebCore/editing/visible_units.* to VisibleUnits.*
