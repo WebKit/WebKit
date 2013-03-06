@@ -485,7 +485,7 @@ void PageCache::remove(HistoryItem* item)
     if (!item || !item->m_cachedPage)
         return;
 
-    autorelease(item->m_cachedPage.release());
+    item->m_cachedPage.clear();
     removeFromLRUList(item);
     --m_size;
 
