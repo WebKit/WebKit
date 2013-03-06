@@ -491,13 +491,6 @@ bool WKRegisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclu
 bool WKUnregisterOcclusionNotificationHandler(WKOcclusionNotificationType, WKOcclusionNotificationHandler);
 bool WKEnableWindowOcclusionNotifications(NSInteger windowID, bool *outCurrentOcclusionState);
 
-enum {
-    WKProcessAssertionTypeVisible = (1UL << 10)
-};
-
-typedef NSUInteger WKProcessAssertionTypes;
-id WKNSProcessInfoProcessAssertionWithTypes(WKProcessAssertionTypes);
-
 extern const NSSystemBehaviors WKProcessSuppressionSystemBehaviors;
 #endif
 
