@@ -1349,6 +1349,7 @@ webkit.org/b/105574 fast/spatial-navigation/snav-div-overflow-scrol-hidden.html 
 webkit.org/b/106563 fast/css/image-orientation/image-orientation.html [ Failure ]
 
 webkit.org/b/108169 fast/dom/shadow/touch-event.html [ Failure ]
+webkit.org/b/108169 fast/dom/shadow/touch-event-retargeting.html [ Failure ]
 
 webkit.org/b/108363 fullscreen/full-screen-iframe-legacy.html [ Failure ]
 
