@@ -1,3 +1,17 @@
+2013-03-05  Kondapally Kalyan  <kalyan.kondapally@intel.com>
+
+        [EFL] Ensure right format is used in SnapshotImageGL.
+        https://bugs.webkit.org/show_bug.cgi?id=111333
+
+        Reviewed by Benjamin Poulain.
+
+        GL_BGRA format is not standard for glReadPixels with GLES.
+        This patch ensures that GL_RGBA is used in SnapshotImageGL
+        while using GLES.
+
+        * UIProcess/API/efl/SnapshotImageGL.cpp:
+        (getImageSurfaceFromFrameBuffer):
+
 2013-03-05  Geoffrey Garen  <ggaren@apple.com>
 
         Each web process truncates the disk cache to zero on launch

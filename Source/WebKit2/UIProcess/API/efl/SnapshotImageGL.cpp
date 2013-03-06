@@ -40,7 +40,21 @@ PassRefPtr<cairo_surface_t> getImageSurfaceFromFrameBuffer(int x, int y, int wid
     RefPtr<cairo_surface_t> newSurface = adoptRef(cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height));
     unsigned char* data = cairo_image_surface_get_data(newSurface.get());
 
-    glReadPixels(x, y, width, height, GL_BGRA, GL_UNSIGNED_BYTE, data);
+#if USE(OPENGL_ES_2)
+    GLenum format = GL_RGBA;
+#else
+    GLenum format = GL_BGRA;
+#endif
+
+    glReadPixels(x, y, width, height, format, GL_UNSIGNED_BYTE, data);
+
+#if USE(OPENGL_ES_2)
+    // Convert to BGRA.
+    int totalBytes = width * height * 4;
+
+    for (int i = 0; i < totalBytes; i += 4)
+        std::swap(data[i], data[i + 2]);
+#endif
 
     // Textures are flipped on the Y axis, so we need to flip the image back.
     unsigned* buf = reinterpret_cast<unsigned*>(data);
