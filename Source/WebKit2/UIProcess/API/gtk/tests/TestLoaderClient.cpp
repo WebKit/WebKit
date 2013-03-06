@@ -22,11 +22,14 @@
 #include "config.h"
 
 #include "LoadTrackingTest.h"
+#include "WebKitTestBus.h"
 #include "WebKitTestServer.h"
+#include "WebViewTest.h"
 #include <gtk/gtk.h>
 #include <libsoup/soup.h>
 #include <wtf/text/CString.h>
 
+static WebKitTestBus* bus;
 static WebKitTestServer* kServer;
 
 static void testLoadingStatus(LoadTrackingTest* test, gconstpointer data)
@@ -280,6 +283,62 @@ static void testWebViewIsLoading(ViewIsLoadingTest* test, gconstpointer)
     test->waitUntilLoadFinished();
 }
 
+class WebPageURITest: public WebViewTest {
+public:
+    MAKE_GLIB_TEST_FIXTURE(WebPageURITest);
+
+    static void webPageURIChangedCallback(GDBusConnection*, const char*, const char*, const char*, const char*, GVariant* result, WebPageURITest* test)
+    {
+        const char* uri;
+        g_variant_get(result, "(&s)", &uri);
+        test->m_webPageURIs.append(uri);
+    }
+
+    static void webViewURIChanged(GObject*, GParamSpec*, WebPageURITest* test)
+    {
+        test->m_webViewURIs.append(webkit_web_view_get_uri(test->m_webView));
+    }
+
+    WebPageURITest()
+    {
+        GRefPtr<GDBusProxy> proxy = adoptGRef(bus->createProxy("org.webkit.gtk.WebExtensionTest",
+            "/org/webkit/gtk/WebExtensionTest", "org.webkit.gtk.WebExtensionTest", m_mainLoop));
+        guint id = g_dbus_connection_signal_subscribe(
+            g_dbus_proxy_get_connection(proxy.get()),
+            0,
+            "org.webkit.gtk.WebExtensionTest",
+            "URIChanged",
+            "/org/webkit/gtk/WebExtensionTest",
+            0,
+            G_DBUS_SIGNAL_FLAGS_NONE,
+            reinterpret_cast<GDBusSignalCallback>(webPageURIChangedCallback),
+            this,
+            0);
+        g_assert(id);
+
+        g_signal_connect(m_webView, "notify::uri", G_CALLBACK(webViewURIChanged), this);
+    }
+
+    Vector<CString> m_webPageURIs;
+    Vector<CString> m_webViewURIs;
+
+};
+
+static void testWebPageURI(WebPageURITest* test, gconstpointer)
+{
+    test->loadURI(kServer->getURIForPath("/redirect").data());
+    test->waitUntilLoadFinished();
+
+    g_assert_cmpint(test->m_webPageURIs.size(), ==, test->m_webViewURIs.size());
+    for (size_t i = 0; i < test->m_webPageURIs.size(); ++i)
+        ASSERT_CMP_CSTRING(test->m_webPageURIs[i], ==, test->m_webViewURIs[i]);
+
+    g_assert_cmpint(test->m_webPageURIs.size(), ==, 2);
+    ASSERT_CMP_CSTRING(test->m_webPageURIs[0], ==, kServer->getURIForPath("/redirect"));
+    ASSERT_CMP_CSTRING(test->m_webPageURIs[1], ==, kServer->getURIForPath("/normal"));
+
+}
+
 static void serverCallback(SoupServer* server, SoupMessage* message, const char* path, GHashTable*, SoupClientContext*, gpointer)
 {
     static const char* responseString = "<html><body>Testing!Testing!Testing!Testing!Testing!Testing!Testing!"
@@ -318,6 +377,11 @@ static void serverCallback(SoupServer* server, SoupMessage* message, const char*
 
 void beforeAll()
 {
+    webkit_web_context_set_web_extensions_directory(webkit_web_context_get_default(), WEBKIT_TEST_WEB_EXTENSIONS_DIR);
+    bus = new WebKitTestBus();
+    if (!bus->run())
+        return;
+
     kServer = new WebKitTestServer();
     kServer->run(serverCallback);
 
@@ -338,9 +402,11 @@ void beforeAll()
     ViewURITrackingTest::add("WebKitWebView", "active-uri", testWebViewActiveURI);
 
     ViewIsLoadingTest::add("WebKitWebView", "is-loading", testWebViewIsLoading);
+    WebPageURITest::add("WebKitWebPage", "get-uri", testWebPageURI);
 }
 
 void afterAll()
 {
+    delete bus;
     delete kServer;
 }

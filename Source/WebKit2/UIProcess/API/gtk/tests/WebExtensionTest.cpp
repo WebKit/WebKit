@@ -31,6 +31,9 @@ static const char introspectionXML[] =
     "   <arg type='s' name='title' direction='out'/>"
     "  </method>"
     "  <signal name='DocumentLoaded'/>"
+    "  <signal name='URIChanged'>"
+    "   <arg type='s' name='uri' direction='out'/>"
+    "  </signal>"
     " </interface>"
     "</node>";
 
@@ -46,9 +49,23 @@ static void documentLoadedCallback(WebKitWebPage*, gpointer userData)
     g_assert(ok);
 }
 
+static void uriChangedCallback(WebKitWebPage* webPage, GParamSpec* pspec, gpointer userData)
+{
+    bool ok = g_dbus_connection_emit_signal(
+        G_DBUS_CONNECTION(userData),
+        0,
+        "/org/webkit/gtk/WebExtensionTest",
+        "org.webkit.gtk.WebExtensionTest",
+        "URIChanged",
+        g_variant_new("(s)", webkit_web_page_get_uri(webPage)),
+        0);
+    g_assert(ok);
+}
+
 static void pageCreatedCallback(WebKitWebExtension*, WebKitWebPage* webPage, gpointer userData)
 {
     g_signal_connect(webPage, "document-loaded", G_CALLBACK(documentLoadedCallback), userData);
+    g_signal_connect(webPage, "notify::uri", G_CALLBACK(uriChangedCallback), userData);
 }
 
 static void methodCallCallback(GDBusConnection* connection, const char* sender, const char* objectPath, const char* interfaceName, const char* methodName, GVariant* parameters, GDBusMethodInvocation* invocation, gpointer userData)

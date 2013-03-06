@@ -57,6 +57,9 @@ webkit_web_page_get_type         (void);
 WEBKIT_API WebKitDOMDocument *
 webkit_web_page_get_dom_document (WebKitWebPage *web_page);
 
+WEBKIT_API const gchar *
+webkit_web_page_get_uri (WebKitWebPage *web_page);
+
 G_END_DECLS
 
 #endif

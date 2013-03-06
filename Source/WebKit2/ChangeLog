@@ -1,3 +1,46 @@
+2013-03-05  Manuel Rego Casasnovas  <rego@igalia.com>
+
+        [GTK][WK2] Add WebKitWebPage::webkit_web_page_get_uri to WebKit2 GTK+ API
+        https://bugs.webkit.org/show_bug.cgi?id=111288
+
+        Reviewed by Carlos Garcia Campos.
+
+        Add new property URI to WebKitWebPage providing a method
+        webkit_web_page_get_uri to get it and the signal "notify::uri" to
+        monitor changes in the URI.
+
+        * UIProcess/API/gtk/docs/webkit2gtk-sections.txt: Include new method in
+        GTK+ doc.
+        * UIProcess/API/gtk/tests/TestLoaderClient.cpp:
+        (testWebPageURI):
+        (beforeAll):
+        (afterAll): Add test to check that WebKitWebPage URI matches with
+        WebKitWebView value. The tests is listening for changes in WebKitWebPage
+        URI via D-Bus and checks that value is the same than WebKitWebView URI.
+        It also checks that the order of the URIs in a redirection is right.
+        * UIProcess/API/gtk/tests/WebExtensionTest.cpp:
+        (uriChangedCallback):
+        (pageCreatedCallback): Add new D-Bus signal "URIChanged" connected to
+        "notify::uri" signal of WebKitWebPage.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.cpp:
+        (_WebKitWebPagePrivate): Add new URI attribute.
+        (webkitWebPageSetURI): Method to set the URI and emit the "notify:uri"
+        signal if it has changed.
+        (didStartProvisionalLoadForFrame): At this point it use the unreachable
+        URL from provisional document loader if any. Otherwise, it uses the URL
+        from provisional document loader.
+        (didReceiveServerRedirectForProvisionalLoadForFrame): In the case of
+        redirections it works like for didStartProvisionalLoadForFrame getting
+        the unreachable URL if any.
+        (didSameDocumentNavigationForFrame): In this case it gets the URL from
+        the document loader.
+        (webkitWebPageGetProperty): Add code related to URI property.
+        (webkit_web_page_class_init): Add bits related to URI property.
+        (webkitWebPageCreate): Implement callbacks to monitor URI changes.
+        (webkit_web_page_get_uri): Return URI attribute.
+        * WebProcess/InjectedBundle/API/gtk/WebKitWebPage.h: Add new method
+        header.
+
 2013-03-04  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         [GTK] Some WebKit2 GTK+ unit tests are failing in 32 bits bot
