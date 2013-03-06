@@ -41,17 +41,16 @@
 
 namespace WebCore {
 
-PassRefPtr<CustomElementConstructor> CustomElementConstructor::create(ScriptState* state, Document* document, const QualifiedName& tagName, const String& name, const ScriptValue& prototype)
+PassRefPtr<CustomElementConstructor> CustomElementConstructor::create(ScriptState* state, Document* document, const QualifiedName& name, const ScriptValue& prototype)
 {
-    RefPtr<CustomElementConstructor> created = adoptRef(new CustomElementConstructor(document, tagName, name));
+    RefPtr<CustomElementConstructor> created = adoptRef(new CustomElementConstructor(document, name));
     if (!CustomElementHelpers::initializeConstructorWrapper(created.get(), prototype, state))
         return 0;
     return created.release();
 }
 
-CustomElementConstructor::CustomElementConstructor(Document* document, const QualifiedName& tagName, const String& name)
+CustomElementConstructor::CustomElementConstructor(Document* document, const QualifiedName& name)
     : ContextDestructionObserver(document)
-    , m_tagName(tagName)
     , m_name(name)
 {
 }
@@ -64,7 +63,7 @@ PassRefPtr<HTMLElement> CustomElementConstructor::createElement() const
 {
     if (!document())
         return 0;
-    return HTMLElement::create(m_tagName, document());
+    return HTMLElement::create(m_name, document());
 }
 
 }

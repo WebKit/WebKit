@@ -139,13 +139,13 @@ PassRefPtr<CustomElementConstructor> CustomElementRegistry::registerElement(Scri
         return 0;
     }
 
-    RefPtr<CustomElementConstructor> constructor = CustomElementConstructor::create(state, document(), newName, "HTMLCustomElement", prototypeValue);
+    RefPtr<CustomElementConstructor> constructor = CustomElementConstructor::create(state, document(), newName, prototypeValue);
     if (!constructor) {
         ec = INVALID_STATE_ERR;
         return 0;
     }
         
-    m_constructors.add(constructor->tagName().impl(), constructor);
+    m_constructors.add(constructor->name().impl(), constructor);
     return constructor;
 }
 

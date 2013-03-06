@@ -537,7 +537,7 @@ END
         my $createWrapperCall = $customWrap ? "${v8InterfaceName}::wrap" : "${v8InterfaceName}::createWrapper";
         my $returningWrapper = $interface->extendedAttributes->{"V8WrapAsFunction"} ? "V8DOMWrapper::toFunction(wrapper)" : "wrapper";
         my $returningCreatedWrapperOpening = $interface->extendedAttributes->{"V8WrapAsFunction"} ? "V8DOMWrapper::toFunction(" : "";
-        my $returningCreatedWrapperClosing = $interface->extendedAttributes->{"V8WrapAsFunction"} ? ", impl->name(), isolate)" : "";
+        my $returningCreatedWrapperClosing = $interface->extendedAttributes->{"V8WrapAsFunction"} ? ", \"${interfaceName}\", isolate)" : "";
 
         if ($customWrap) {
             push(@headerContent, <<END);
