@@ -155,14 +155,21 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     SandboxExtension::consumePermanently(parameters.applicationCacheDirectoryExtensionHandle);
     SandboxExtension::consumePermanently(parameters.diskCacheDirectoryExtensionHandle);
 
-    // FIXME (NetworkProcess): This should not be necessary once all loading is in NetworkProcess.
-    if (!parameters.diskCacheDirectory.isNull()) {
-        NSUInteger cacheMemoryCapacity = parameters.nsURLCacheMemoryCapacity;
-        NSUInteger cacheDiskCapacity = parameters.nsURLCacheDiskCapacity;
-
-        RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc] initWithMemoryCapacity:cacheMemoryCapacity diskCapacity:cacheDiskCapacity diskPath:parameters.diskCacheDirectory]);
-        [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
+    // When the network process is enabled, each web process wants a stand-alone
+    // NSURLCache, which it can disable to save memory.
+#if ENABLE(NETWORK_PROCESS)
+    if (!m_usesNetworkProcess) {
+#endif
+        if (!parameters.diskCacheDirectory.isNull()) {
+            RetainPtr<NSURLCache> parentProcessURLCache(AdoptNS, [[NSURLCache alloc]
+                initWithMemoryCapacity:parameters.nsURLCacheMemoryCapacity
+                diskCapacity:parameters.nsURLCacheDiskCapacity
+                diskPath:parameters.diskCacheDirectory]);
+            [NSURLCache setSharedURLCache:parentProcessURLCache.get()];
+        }
+#if ENABLE(NETWORK_PROCESS)
     }
+#endif
 
     m_shouldForceScreenFontSubstitution = parameters.shouldForceScreenFontSubstitution;
     Font::setDefaultTypesettingFeatures(parameters.shouldEnableKerningAndLigaturesByDefault ? Kerning | Ligatures : 0);
