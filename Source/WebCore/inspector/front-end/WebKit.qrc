@@ -239,6 +239,7 @@
     <file>UglifyJS/parse-js.js</file>
     <file>auditsPanel.css</file>
     <file>breadcrumbList.css</file>
+    <file>breakpointsList.css</file>
     <file>canvasProfiler.css</file>
     <file>cssNamedFlows.css</file>
     <file>dataGrid.css</file>
@@ -263,6 +264,7 @@
     <file>resourcesPanel.css</file>
     <file>revisionHistory.css</file>
     <file>scriptsPanel.css</file>
+    <file>sidebarPane.css</file>
     <file>spectrum.css</file>
     <file>splitView.css</file>
     <file>tabbedPane.css</file>

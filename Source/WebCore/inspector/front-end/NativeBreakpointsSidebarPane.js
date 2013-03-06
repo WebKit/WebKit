@@ -35,6 +35,7 @@
 WebInspector.NativeBreakpointsSidebarPane = function(title)
 {
     WebInspector.SidebarPane.call(this, title);
+    this.registerRequiredCSS("breakpointsList.css");
 
     this.listElement = document.createElement("ol");
     this.listElement.className = "breakpoint-list";

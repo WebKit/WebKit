@@ -107,7 +107,7 @@ WebInspector.SidebarPaneTitle = function(container, pane)
 {
     this._pane = pane;
 
-    this.element = container.createChild("div", "pane-title");
+    this.element = container.createChild("div", "sidebar-pane-title");
     this.element.textContent = pane.title();
     this.element.tabIndex = 0;
     this.element.addEventListener("click", this._toggleExpanded.bind(this), false);
@@ -158,6 +158,7 @@ WebInspector.SidebarPaneStack = function()
 {
     WebInspector.View.call(this);
     this.element.className = "sidebar-pane-stack fill";
+    this.registerRequiredCSS("sidebarPane.css");
 }
 
 WebInspector.SidebarPaneStack.prototype = {
@@ -180,6 +181,7 @@ WebInspector.SidebarTabbedPane = function()
 {
     WebInspector.TabbedPane.call(this);
     this.element.addStyleClass("sidebar-tabbed-pane");
+    this.registerRequiredCSS("sidebarPane.css");
 }
 
 WebInspector.SidebarTabbedPane.prototype = {

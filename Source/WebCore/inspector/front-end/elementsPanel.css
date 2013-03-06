@@ -549,3 +549,37 @@
 .sidebar-pane.composite .styles-section.read-only {
     background-color: inherit;
 }
+
+.panel.elements .sidebar-pane-toolbar > select {
+    float: right;
+    width: 23px;
+    height: 17px;
+    color: transparent;
+    background-color: transparent;
+    border: none;
+    background-repeat: no-repeat;
+    margin: 1px 0 0 0;
+    padding: 0;
+    -webkit-border-radius: 0;
+    -webkit-appearance: none;
+}
+
+.panel.elements .sidebar-pane-toolbar > select:hover {
+    background-position: -23px 0px;
+}
+
+.panel.elements .sidebar-pane-toolbar > select:active {
+    background-position: -46px 0px;
+}
+
+.panel.elements .sidebar-pane-toolbar > select.select-settings {
+    background-image: url(Images/paneSettingsButtons.png);
+}
+
+.panel.elements .sidebar-pane-toolbar > select.select-filter {
+    background-image: url(Images/paneFilterButtons.png);
+}
+
+.panel.elements .sidebar-pane-toolbar > select > option, .panel.elements .sidebar-pane-toolbar > select > hr {
+    color: black;
+}
