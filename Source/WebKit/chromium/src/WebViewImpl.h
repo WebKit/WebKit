@@ -400,7 +400,7 @@ public:
     void hasTouchEventHandlers(bool);
 
     // WebGestureCurveTarget implementation for fling.
-    virtual void scrollBy(const WebPoint&);
+    virtual void scrollBy(const WebFloatSize&);
 
     // Handles context menu events orignated via the the keyboard. These
     // include the VK_APPS virtual key and the Shift+F10 combine. Code is

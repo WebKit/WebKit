@@ -658,16 +658,16 @@ bool WebViewImpl::handleMouseWheel(Frame& mainFrame, const WebMouseWheelEvent& e
     return PageWidgetEventHandler::handleMouseWheel(mainFrame, event);
 }
 
-void WebViewImpl::scrollBy(const WebPoint& delta)
+void WebViewImpl::scrollBy(const WebFloatSize& delta)
 {
     if (m_flingSourceDevice == WebGestureEvent::Touchpad) {
         WebMouseWheelEvent syntheticWheel;
         const float tickDivisor = WebCore::WheelEvent::TickMultiplier;
 
-        syntheticWheel.deltaX = delta.x;
-        syntheticWheel.deltaY = delta.y;
-        syntheticWheel.wheelTicksX = delta.x / tickDivisor;
-        syntheticWheel.wheelTicksY = delta.y / tickDivisor;
+        syntheticWheel.deltaX = delta.width;
+        syntheticWheel.deltaY = delta.height;
+        syntheticWheel.wheelTicksX = delta.width / tickDivisor;
+        syntheticWheel.wheelTicksY = delta.height / tickDivisor;
         syntheticWheel.hasPreciseScrollingDeltas = true;
         syntheticWheel.x = m_positionOnFlingStart.x;
         syntheticWheel.y = m_positionOnFlingStart.y;
@@ -681,8 +681,8 @@ void WebViewImpl::scrollBy(const WebPoint& delta)
         WebGestureEvent syntheticGestureEvent;
 
         syntheticGestureEvent.type = WebInputEvent::GestureScrollUpdateWithoutPropagation;
-        syntheticGestureEvent.data.scrollUpdate.deltaX = delta.x;
-        syntheticGestureEvent.data.scrollUpdate.deltaY = delta.y;
+        syntheticGestureEvent.data.scrollUpdate.deltaX = delta.width;
+        syntheticGestureEvent.data.scrollUpdate.deltaY = delta.height;
         syntheticGestureEvent.x = m_positionOnFlingStart.x;
         syntheticGestureEvent.y = m_positionOnFlingStart.y;
         syntheticGestureEvent.globalX = m_globalPositionOnFlingStart.x;

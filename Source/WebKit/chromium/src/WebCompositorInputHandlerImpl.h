@@ -66,7 +66,7 @@ public:
     virtual void mainThreadHasStoppedFlinging();
 
     // WebGestureCurveTarget implementation.
-    virtual void scrollBy(const WebPoint&);
+    virtual void scrollBy(const WebFloatSize&);
 
     int identifier() const { return m_identifier; }
 
@@ -80,7 +80,7 @@ private:
     EventDisposition handleGestureFling(const WebGestureEvent&);
 
     // Returns true if we scrolled by the increment.
-    bool touchpadFlingScroll(const WebPoint& increment);
+    bool touchpadFlingScroll(const WebFloatSize& increment);
 
     // Returns true if we actually had an active fling to cancel.
     bool cancelCurrentFling();

@@ -65,6 +65,7 @@
             'chromium/public/WebFloatKeyframe.h',
             'chromium/public/WebFloatPoint.h',
             'chromium/public/WebFloatQuad.h',
+            'chromium/public/WebFloatSize.h',
             'chromium/public/WebFloatRect.h',
             'chromium/public/WebGamepad.h',
             'chromium/public/WebGamepads.h',

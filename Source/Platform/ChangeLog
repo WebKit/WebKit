@@ -1,3 +1,34 @@
+2013-03-05  Alexandre Elias  <aelias@chromium.org>
+
+        [chromium] Scroll deltas should be floats
+        https://bugs.webkit.org/show_bug.cgi?id=111465
+
+        Reviewed by James Robinson.
+
+        This converts the remaining scroll delta fields to floats so that
+        we no longer lose precision due to DIP conversion. The natural
+        type for deltas is WebFloatSize, which was missing, so I also created
+        that type based on the existing WebSize header.
+
+        * Platform.gypi:
+        * chromium/public/WebFloatSize.h: Added.
+        (WebKit):
+        (WebFloatSize):
+        (WebKit::WebFloatSize::isEmpty):
+        (WebKit::WebFloatSize::WebFloatSize):
+        (WebKit::WebFloatSize::operator=):
+        (WebKit::WebFloatSize::operator WebCore::FloatSize):
+        (WebKit::WebFloatSize::operator gfx::SizeF):
+        (WebKit::WebFloatSize::operator gfx::Vector2dF):
+        (WebKit::operator==):
+        (WebKit::operator!=):
+        * chromium/public/WebGestureCurveTarget.h:
+        (WebKit::WebGestureCurveTarget::scrollBy):
+        (WebGestureCurveTarget):
+        * chromium/public/WebInputHandlerClient.h:
+        (WebKit::WebInputHandlerClient::scrollByIfPossible):
+        (WebInputHandlerClient):
+
 2013-03-04  James Robinson  <jamesr@chromium.org>
 
         [chromium] Move check for threaded compositing from WebCompositorSupport to Platform

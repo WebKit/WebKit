@@ -33,6 +33,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <public/WebFloatPoint.h>
+#include <public/WebFloatSize.h>
 #include <public/WebInputHandler.h>
 #include <public/WebInputHandlerClient.h>
 #include <public/WebPoint.h>
@@ -61,7 +62,7 @@ public:
     MOCK_METHOD1(haveTouchEventHandlersAt, bool(WebPoint));
 
     MOCK_METHOD2(scrollBegin, ScrollStatus(WebPoint, WebInputHandlerClient::ScrollInputType));
-    MOCK_METHOD2(scrollByIfPossible, bool(WebPoint, WebSize));
+    MOCK_METHOD2(scrollByIfPossible, bool(WebPoint, WebFloatSize));
     MOCK_METHOD0(scrollEnd, void());
 
     MOCK_METHOD0(didReceiveLastInputEventForVSync, void());
@@ -165,7 +166,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureScrollStarted)
 
     gesture.type = WebInputEvent::GestureScrollUpdate;
     gesture.data.scrollUpdate.deltaY = -40; // -Y means scroll down - i.e. in the +Y direction.
-    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::height, testing::Gt(0))))
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebFloatSize::height, testing::Gt(0))))
         .WillOnce(testing::Return(false));
     m_inputHandler->handleInputEvent(gesture);
 
@@ -175,7 +176,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureScrollStarted)
 
     gesture.type = WebInputEvent::GestureScrollUpdate;
     gesture.data.scrollUpdate.deltaY = -40; // -Y means scroll down - i.e. in the +Y direction.
-    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::height, testing::Gt(0))))
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebFloatSize::height, testing::Gt(0))))
         .WillOnce(testing::Return(true));
     m_inputHandler->handleInputEvent(gesture);
 
@@ -303,7 +304,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gesturePinchAfterScrollOnMainThread)
 
     gesture.type = WebInputEvent::GestureScrollUpdate;
     gesture.data.scrollUpdate.deltaY = -40; // -Y means scroll down - i.e. in the +Y direction.
-    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::height, testing::Gt(0))))
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebFloatSize::height, testing::Gt(0))))
         .WillOnce(testing::Return(true));
     m_inputHandler->handleInputEvent(gesture);
 
@@ -440,7 +441,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimatesTouchpad)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::width, testing::Lt(0))))
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebFloatSize::width, testing::Lt(0))))
         .WillOnce(testing::Return(true));
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->animate(10.1);
@@ -524,7 +525,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResetsTouchpad)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::width, testing::Lt(0))))
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebFloatSize::width, testing::Lt(0))))
         .WillOnce(testing::Return(true));
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->animate(10.1);
@@ -607,7 +608,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingTransferResetsTouchpad)
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
     EXPECT_CALL(m_mockInputHandlerClient, scrollBegin(testing::_, testing::_))
         .WillOnce(testing::Return(WebInputHandlerClient::ScrollStatusStarted));
-    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::height, testing::Gt(0))))
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebFloatSize::height, testing::Gt(0))))
         .WillOnce(testing::Return(true));
     EXPECT_CALL(m_mockInputHandlerClient, scrollEnd());
     m_inputHandler->animate(30.1);
@@ -737,7 +738,7 @@ TEST_F(WebCompositorInputHandlerImplTest, gestureFlingAnimatesTouchscreen)
 
     // The second call should start scrolling in the -X direction.
     EXPECT_CALL(m_mockInputHandlerClient, scheduleAnimation());
-    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebSize::width, testing::Lt(0))))
+    EXPECT_CALL(m_mockInputHandlerClient, scrollByIfPossible(testing::_, testing::Field(&WebFloatSize::width, testing::Lt(0))))
         .WillOnce(testing::Return(true));
     m_inputHandler->animate(10.1);
 
