@@ -2293,6 +2293,8 @@ media/video-src-change.html
 media/video-timeupdate-reverse-play.html
 media/W3C/video/src/src_removal_does_not_trigger_loadstart.html
 media/video-src-remove.html
+media/video-size-intrinsic-scale.html
+media/video-source-media.html
 
 # Interactive form validation not enabled on Windows
 fast/forms/number/number-interactive-validation-required.html
