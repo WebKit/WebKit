@@ -221,12 +221,12 @@ DOMWindow* toDOMWindow(v8::Handle<v8::Context> context)
 {
     v8::Handle<v8::Object> global = context->Global();
     ASSERT(!global.IsEmpty());
-    global = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), MainWorld));
-    if (!global.IsEmpty())
-        return V8DOMWindow::toNative(global);
-    global = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), IsolatedWorld));
-    ASSERT(!global.IsEmpty());
-    return V8DOMWindow::toNative(global);
+    v8::Handle<v8::Object> window = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), MainWorld));
+    if (!window.IsEmpty())
+        return V8DOMWindow::toNative(window);
+    window = global->FindInstanceInPrototypeChain(V8DOMWindow::GetTemplate(context->GetIsolate(), IsolatedWorld));
+    ASSERT(!window.IsEmpty());
+    return V8DOMWindow::toNative(window);
 }
 
 ScriptExecutionContext* toScriptExecutionContext(v8::Handle<v8::Context> context)
