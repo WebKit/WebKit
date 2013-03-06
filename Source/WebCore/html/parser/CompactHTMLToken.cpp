@@ -67,9 +67,8 @@ CompactHTMLToken::CompactHTMLToken(const HTMLToken* token, const TextPosition& t
         break;
     case HTMLToken::StartTag:
         m_attributes.reserveInitialCapacity(token->attributes().size());
-        // FIXME: Attribute names and values should be 8bit when possible.
         for (Vector<HTMLToken::Attribute>::const_iterator it = token->attributes().begin(); it != token->attributes().end(); ++it)
-            m_attributes.append(Attribute(String(it->name), String(it->value)));
+            m_attributes.append(Attribute(StringImpl::create8BitIfPossible(it->name), StringImpl::create8BitIfPossible(it->value)));
         // Fall through!
     case HTMLToken::EndTag:
         m_selfClosing = token->selfClosing();
