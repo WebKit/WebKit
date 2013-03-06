@@ -77,6 +77,7 @@ function bind(func, thisObject, var_args)
  */
 var InjectedScript = function()
 {
+    this._lastBoundObjectId = 1;
     this._idToWrappedObject = {};
     this._idToObjectGroupName = {};
     this._objectGroups = {};
@@ -222,7 +223,7 @@ InjectedScript.prototype = {
      */
     _bind: function(object, objectGroupName)
     {
-        var id = InjectedScriptHost.objectId(object);
+        var id = this._lastBoundObjectId++;
         this._idToWrappedObject[id] = object;
         var objectId = "{\"injectedScriptId\":" + injectedScriptId + ",\"id\":" + id + "}";
         if (objectGroupName) {
@@ -370,9 +371,6 @@ InjectedScript.prototype = {
      */
     _releaseObject: function(id)
     {
-        var object = this._idToWrappedObject[id];
-        if (object)
-            InjectedScriptHost.releaseObjectId(object);
         delete this._idToWrappedObject[id];
         delete this._idToObjectGroupName[id];
     },

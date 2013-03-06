@@ -66,31 +66,4 @@ namespace WebCore {
 
 }
 
-namespace WTF {
-
-struct ScriptObjectHash {
-    static unsigned hash(const WebCore::ScriptObject& key)
-    {
-        return key.v8Object()->GetIdentityHash();
-    }
-    static bool equal(const WebCore::ScriptObject& a, const WebCore::ScriptObject& b)
-    {
-        return a == b;
-    }
-    static const bool safeToCompareToEmptyOrDeleted = true;
-};
-template<> struct DefaultHash<WebCore::ScriptObject> {
-    typedef ScriptObjectHash Hash;
-};
-
-template<> struct HashTraits<WebCore::ScriptObject> : GenericHashTraits<WebCore::ScriptObject> {
-    static const bool emptyValueIsZero = true;
-    static const bool needsDestruction = true;
-    static void constructDeletedValue(WebCore::ScriptObject& slot) { new (NotNull, &slot) WebCore::ScriptObject(); }
-    static bool isDeletedValue(WebCore::ScriptObject value) { return value.hasNoValue(); }
-};
-
-}
-
-
 #endif // ScriptObject_h

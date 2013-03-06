@@ -64,14 +64,13 @@ using namespace std;
 
 namespace WebCore {
 
-PassRefPtr<InjectedScriptHost> InjectedScriptHost::create(InjectedScriptManager* manager)
+PassRefPtr<InjectedScriptHost> InjectedScriptHost::create()
 {
-    return adoptRef(new InjectedScriptHost(manager));
+    return adoptRef(new InjectedScriptHost());
 }
 
-InjectedScriptHost::InjectedScriptHost(InjectedScriptManager* manager)
-    : m_manager(manager)
-    , m_inspectorAgent(0)
+InjectedScriptHost::InjectedScriptHost()
+    : m_inspectorAgent(0)
     , m_consoleAgent(0)
 #if ENABLE(SQL_DATABASE)
     , m_databaseAgent(0)
@@ -88,7 +87,6 @@ InjectedScriptHost::~InjectedScriptHost()
 
 void InjectedScriptHost::disconnect()
 {
-    m_manager = 0;
     m_inspectorAgent = 0;
     m_consoleAgent = 0;
 #if ENABLE(SQL_DATABASE)
@@ -123,20 +121,6 @@ void InjectedScriptHost::clearConsoleMessages()
 void InjectedScriptHost::copyText(const String& text)
 {
     Pasteboard::generalPasteboard()->writePlainText(text, Pasteboard::CannotSmartReplace);
-}
-
-unsigned InjectedScriptHost::objectId(const ScriptObject& object)
-{
-    if (!m_manager)
-        return 0;
-    return m_manager->objectId(object);
-}
-
-unsigned InjectedScriptHost::releaseObjectId(const ScriptObject& object)
-{
-    if (!m_manager)
-        return 0;
-    return m_manager->releaseObjectId(object);
 }
 
 ScriptValue InjectedScriptHost::InspectableObject::get(ScriptState*)

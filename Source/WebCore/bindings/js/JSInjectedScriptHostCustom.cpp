@@ -263,31 +263,6 @@ JSValue JSInjectedScriptHost::inspect(ExecState* exec)
     return jsUndefined();
 }
 
-JSValue JSInjectedScriptHost::objectId(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return jsUndefined();
-    JSObject* jsObject = exec->argument(0).getObject();
-    if (!jsObject)
-        return jsUndefined();
-    ExecState* globalExec = exec->lexicalGlobalObject()->globalExec();
-    ScriptObject object(globalExec, jsObject);
-    return jsNumber(impl()->objectId(object));
-}
-
-JSValue JSInjectedScriptHost::releaseObjectId(ExecState* exec)
-{
-    if (exec->argumentCount() < 1)
-        return jsUndefined();
-    JSObject* jsObject = exec->argument(0).getObject();
-    if (!jsObject)
-        return jsUndefined();
-    ExecState* globalExec = exec->lexicalGlobalObject()->globalExec();
-    ScriptObject object(globalExec, jsObject);
-    impl()->releaseObjectId(object);
-    return jsUndefined();
-}
-
 JSValue JSInjectedScriptHost::databaseId(ExecState* exec)
 {
     if (exec->argumentCount() < 1)

@@ -282,30 +282,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::inspectMethodCustom(const v8::Argume
     return v8::Undefined();
 }
 
-v8::Handle<v8::Value> V8InjectedScriptHost::objectIdMethodCustom(const v8::Arguments& args)
-{
-    if (args.Length() < 1)
-        return v8::Undefined();
-    v8::Handle<v8::Object> object = args[0]->ToObject();
-    if (object.IsEmpty())
-        return v8::Undefined();
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    unsigned id = host->objectId(ScriptObject(ScriptState::current(), object));
-    return v8::Number::New(id);
-}
-
-v8::Handle<v8::Value> V8InjectedScriptHost::releaseObjectIdMethodCustom(const v8::Arguments& args)
-{
-    if (args.Length() < 1)
-        return v8::Undefined();
-    v8::Handle<v8::Object> object = args[0]->ToObject();
-    if (object.IsEmpty())
-        return v8::Undefined();
-    InjectedScriptHost* host = V8InjectedScriptHost::toNative(args.Holder());
-    unsigned id = host->releaseObjectId(ScriptObject(ScriptState::current(), object));
-    return v8::Number::New(id);
-}
-
 v8::Handle<v8::Value> V8InjectedScriptHost::databaseIdMethodCustom(const v8::Arguments& args)
 {
     if (args.Length() < 1)
