@@ -1,3 +1,16 @@
+2013-03-06  Tim Horton  <timothy_horton@apple.com>
+
+        [wk2] Page Overlays: Hook up the layer border/repaint counter setting to the overlay layer
+        https://bugs.webkit.org/show_bug.cgi?id=111547
+        <rdar://problem/13355801>
+
+        Reviewed by Simon Fraser.
+
+        * WebProcess/WebPage/mac/TiledCoreAnimationDrawingArea.mm:
+        (WebKit::TiledCoreAnimationDrawingArea::updatePreferences):
+        (WebKit::TiledCoreAnimationDrawingArea::createPageOverlayLayer):
+        Keep the page overlay layer's debug border and repaint counter settings updated.
+
 2013-03-06  Geoffrey Garen  <ggaren@apple.com>
 
         Joing the adoptNS/adoptCF/adoptRef club.
