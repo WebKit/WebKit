@@ -280,6 +280,9 @@ EwkView::EwkView(Evas_Object* evasObject, PassRefPtr<EwkContext> context, WKPage
     WKPreferencesSetFullScreenEnabled(wkPreferences, true);
     WKPreferencesSetWebAudioEnabled(wkPreferences, true);
     WKPreferencesSetOfflineWebApplicationCacheEnabled(wkPreferences, true);
+#if ENABLE(SPELLCHECK)
+    WKPreferencesSetAsynchronousSpellCheckingEnabled(wkPreferences, true);
+#endif
 
     // Enable mouse events by default
     setMouseEventsEnabled(true);

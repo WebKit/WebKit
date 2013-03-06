@@ -1,3 +1,19 @@
+2013-03-05  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        [WK2][EFL] Enable asynchronous spell checking by default
+        https://bugs.webkit.org/show_bug.cgi?id=111295
+
+        Reviewed by Benjamin Poulain.
+
+        Asynchronous spell checking feature is disabled by default for wk2 platforms.
+        It means all requests of spell checking are sent synchronously.
+
+        WebKit-EFL implements requestCheckingOfString method which allows
+        to check spelling asynchronously.
+
+        * UIProcess/API/efl/EwkView.cpp:
+        (EwkView::EwkView):
+
 2013-03-05  Kondapally Kalyan  <kalyan.kondapally@intel.com>
 
         [EFL] Ensure right format is used in SnapshotImageGL.
