@@ -1,3 +1,13 @@
+2013-03-06  Zeno Albisser  <zeno@webkit.org>
+
+        DataReference::vector() should be const.
+        https://bugs.webkit.org/show_bug.cgi?id=109928
+
+        Reviewed by Anders Carlsson.
+
+        * Platform/CoreIPC/DataReference.h:
+        (CoreIPC::DataReference::vector):
+
 2013-03-06  Luiz Agostini  <luiz.agostini@nokia.com>
 
         Accelerated overflow scrolling for Coordinated Graphics.

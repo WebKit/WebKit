@@ -64,7 +64,7 @@ public:
         return m_data; 
     }
 
-    Vector<uint8_t> vector()
+    Vector<uint8_t> vector() const
     {
         Vector<uint8_t> result;
         result.append(m_data, m_size);
