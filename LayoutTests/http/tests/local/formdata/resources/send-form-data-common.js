@@ -28,10 +28,10 @@ function sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers)
 {
     var formData = new FormData();
     for (var i = 0; i < formDataList.length; i++) {
-        if (formDataList[i]['filename'] != undefined)
-            formData.append(formDataList[i]['name'], formDataList[i]['value'], formDataList[i]['filename']);
+        if (formDataList[i].filename !== undefined)
+            formData.append(formDataList[i].name, formDataList[i].value, formDataList[i].filename);
         else
-            formData.append(formDataList[i]['name'], formDataList[i]['value']);
+            formData.append(formDataList[i].name, formDataList[i].value);
     }
 
     var xhr = new XMLHttpRequest();
@@ -49,11 +49,11 @@ function testSendingFormData(dataList, sendAsAsync, addEventHandlers)
 {
     var filesToDrag = [];
     for (var i = 0; i < dataList.length; i++) {
-        if (dataList[i]['type'] == 'file')
-            filesToDrag.push(dataList[i]['value']);
+        if (dataList[i].type === 'file')
+            filesToDrag.push(dataList[i].value);
     }
 
-    if (filesToDrag) {
+    if (filesToDrag.length !== 0) {
         eventSender.beginDragWithFiles(filesToDrag);
         moveMouseToCenterOfElement(fileInput);
         eventSender.mouseUp();
@@ -63,22 +63,27 @@ function testSendingFormData(dataList, sendAsAsync, addEventHandlers)
     var formDataList = [];
     var fileSliced = false;
     for (var i = 0; i < dataList.length; i++) {
-        if (dataList[i]['type'] == 'file') {
-            var fileName = getFileName(dataList[i]['value']);
+        var field = {name: dataList[i].name};
+        if (dataList[i].type === 'file') {
+            var fileName = getFileName(dataList[i].value);
             for (var j = 0; j < files.length; j++) {
                 if (fileName == files[j].name) {
                     var file = files[j];
-                    if (dataList[i]['start'] && dataList[i]['length']) {
+                    if ('start' in dataList[i] && 'length' in dataList[i]) {
                         fileSliced = true;
-                        file = file.slice(dataList[i]['start'], dataList[i]['start'] + dataList[i]['length']);
+                        file = file.slice(dataList[i].start, dataList[i].start + dataList[i].length);
                     }
-                    formDataList.push({'name': dataList[i]['name'], 'value': file, 'filename': dataList[i]['filename']});
+                    field.value = file;
                     break;
                 }
             }
-        } else {
-            formDataList.push({'name': dataList[i]['name'], 'value': dataList[i]['value']});
         }
+        else
+            field.value = dataList[i].value;
+        if (dataList[i]['filename'])
+            field.filename = dataList[i].filename;
+
+        formDataList.push(field);
     }
 
     sendFormData(formDataList, fileSliced, sendAsAsync, addEventHandlers);

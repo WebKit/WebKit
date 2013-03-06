@@ -1,4 +1,4 @@
-Test for sending FormData via XMLHttpRequest.
+Test that filename passed to FormData.append() takes precedence over filename in File.
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 

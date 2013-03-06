@@ -59,9 +59,9 @@ static void appendQuotedString(Vector<char>& buffer, const CString& string)
     // Append a string as a quoted value, escaping quotes and line breaks.
     // FIXME: Is it correct to use percent escaping here? Other browsers do not encode these characters yet,
     // so we should test popular servers to find out if there is an encoding form they can handle.
-    unsigned length = string.length();
-    for (unsigned i = 0; i < length; ++i) {
-        unsigned char c = string.data()[i];
+    size_t length = string.length();
+    for (size_t i = 0; i < length; ++i) {
+        char c = string.data()[i];
 
         switch (c) {
         case  0x0a:
