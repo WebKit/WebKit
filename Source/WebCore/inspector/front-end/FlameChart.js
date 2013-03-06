@@ -199,7 +199,7 @@ WebInspector.FlameChart.prototype = {
     _forEachNode: function(callback)
     {
         var nodes = this._rootNodes();
-        var levelOffsets = /** @type {Array.<!number>} */ [0];
+        var levelOffsets = /** @type {Array.<!number>} */ ([0]);
         var levelExitIndexes = [0];
 
         while (nodes.length) {

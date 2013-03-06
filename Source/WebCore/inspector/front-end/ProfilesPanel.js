@@ -1422,15 +1422,6 @@ WebInspector.MemoryChartProfilerPanel = function()
 }
 
 WebInspector.MemoryChartProfilerPanel.prototype = {
-    /**
-     * @override
-     * @return {!WebInspector.ProfileLauncherView}
-     */
-    _createLauncherView: function()
-    {
-        return new WebInspector.NativeProfileLauncherView(this);
-    },
-
     __proto__: WebInspector.ProfilesPanel.prototype
 }
 

@@ -62,6 +62,15 @@ InjectedScriptHost.prototype.clearConsoleMessages = function() { }
 InjectedScriptHost.prototype.inspectedObject = function(index) { }
 /**
  * @param {*} object
+ * @return {number}
+ */
+InjectedScriptHost.prototype.objectId = function(object) { }
+/**
+ * @param {*} object
+ */
+InjectedScriptHost.prototype.releaseObjectId = function(object) { }
+/**
+ * @param {*} object
  */
 InjectedScriptHost.prototype.databaseId = function(object) { }
 /**

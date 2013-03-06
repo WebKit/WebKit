@@ -187,24 +187,3 @@ WebInspector.MultiProfileLauncherView.prototype = {
     __proto__: WebInspector.ProfileLauncherView.prototype
 }
 
-
-/**
- * @constructor
- * @extends {WebInspector.ProfileLauncherView}
- * @param {!WebInspector.ProfilesPanel} profilesPanel
- */
-WebInspector.NativeProfileLauncherView = function(profilesPanel)
-{
-    WebInspector.ProfileLauncherView.call(this, profilesPanel);
-
-    if (WebInspector.experimentsSettings.liveNativeMemoryChart.isEnabled()) {
-        this._nativeMemoryElement = document.createElement("div");
-        this._contentElement.insertBefore(this._nativeMemoryElement, this._controlButton);
-        this._nativeMemoryLiveChart = new WebInspector.NativeMemoryBarChart();
-        this._nativeMemoryLiveChart.show(this._nativeMemoryElement);
-    }
-}
-
-WebInspector.NativeProfileLauncherView.prototype = {
-    __proto__: WebInspector.ProfileLauncherView.prototype
-}
