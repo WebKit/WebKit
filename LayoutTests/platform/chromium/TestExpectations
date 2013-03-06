@@ -1387,6 +1387,8 @@ webkit.org/b/101396 svg/custom/simple-text-double-shadow.svg
 webkit.org/b/101396 svg/css/clippath-with-shadow.svg
 webkit.org/b/101396 svg/css/arrow-with-shadow.svg
 
+webkit.org/b/111626 [ Mac Debug ] svg/css/font-face-crash.html [ Pass Crash ]
+
 # -----------------------------------------------------------------
 # End SVG TESTS
 # -----------------------------------------------------------------
