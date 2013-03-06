@@ -234,7 +234,7 @@ private:
     
     bool mergeStateAtTail(AbstractValue& destination, AbstractValue& inVariable, Node*);
     
-    static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode);
+    static bool mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode);
     
     enum BooleanResult {
         UnknownBooleanResult,

@@ -1,5 +1,22 @@
 2013-03-06  Filip Pizlo  <fpizlo@apple.com>
 
+        DFG::AbstractState::merge() is still more complicated than it needs to be
+        https://bugs.webkit.org/show_bug.cgi?id=111619
+
+        Reviewed by Mark Hahnenberg.
+        
+        This method is the one place where we still do some minimal amount of liveness pruning, but the style with
+        which it is written is awkward, and it makes an assertion about variablesAtTail that will be invalidated
+        by https://bugs.webkit.org/show_bug.cgi?id=111539.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::merge):
+        (JSC::DFG::AbstractState::mergeVariableBetweenBlocks):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+
+2013-03-06  Filip Pizlo  <fpizlo@apple.com>
+
         DFG should not run full CSE after the optimization fixpoint, since it really just wants store elimination
         https://bugs.webkit.org/show_bug.cgi?id=111536
 
