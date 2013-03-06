@@ -1,3 +1,35 @@
+2013-03-05  Alexey Proskuryakov  <ap@apple.com>
+
+        Track sandbox extensions for blobs in NetworkProcess
+        https://bugs.webkit.org/show_bug.cgi?id=111484
+
+        Reviewed by Sam Weinig.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * NetworkProcess/FileAPI: Added.
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.cpp: Added.
+        * NetworkProcess/FileAPI/NetworkBlobRegistry.h: Added.
+        Added a registry that wraps normal in-process "BlobRegistryImpl", and also tracks
+        sandbox extensions for blobs. It will also track process connections, so that
+        blobs could be removed when a process crashes.
+
+        * NetworkProcess/NetworkConnectionToWebProcess.cpp:
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURL):
+        (WebKit::NetworkConnectionToWebProcess::registerBlobURLFromURL):
+        (WebKit::NetworkConnectionToWebProcess::unregisterBlobURL):
+        Use NetworkBlobRegistry.
+
+        * NetworkProcess/SchedulableLoader.h:
+        * NetworkProcess/SchedulableLoader.cpp:
+        (WebKit::SchedulableLoader::SchedulableLoader): Add extensions for blobs, both in
+        request URL and in request data.
+        (WebKit::SchedulableLoader::consumeSandboxExtensions): Request may now have multiple
+        extensions.
+        (WebKit::SchedulableLoader::invalidateSandboxExtensions): Ditto.
+
+        * Shared/FileAPI/BlobRegistrationData.cpp: Fixed extension creation - actually
+        store the result.
+
 2013-03-06  Andras Becsi  <andras.becsi@digia.com>
 
         [Qt][WK2] Fix the Mac build after r144787

@@ -28,13 +28,13 @@
 
 #include "BlobRegistrationData.h"
 #include "ConnectionStack.h"
+#include "NetworkBlobRegistry.h"
 #include "NetworkConnectionToWebProcessMessages.h"
 #include "NetworkProcess.h"
 #include "NetworkResourceLoader.h"
 #include "RemoteNetworkingContext.h"
 #include "SyncNetworkResourceLoader.h"
 #include <WebCore/BlobData.h>
-#include <WebCore/BlobRegistry.h>
 #include <WebCore/PlatformCookieJar.h>
 #include <WebCore/ResourceLoaderOptions.h>
 #include <WebCore/ResourceRequest.h>
@@ -182,19 +182,25 @@ void NetworkConnectionToWebProcess::deleteCookie(bool privateBrowsingEnabled, co
 
 void NetworkConnectionToWebProcess::registerBlobURL(const KURL& url, const BlobRegistrationData& data)
 {
-    // FIXME: Track sandbox extensions.
     // FIXME: unregister all URLs when process connection closes.
-    blobRegistry().registerBlobURL(url, data.releaseData());
+
+    Vector<RefPtr<SandboxExtension> > extensions;
+    for (size_t i = 0, count = data.sandboxExtensions().size(); i < count; ++i) {
+        if (RefPtr<SandboxExtension> extension = SandboxExtension::create(data.sandboxExtensions()[i]))
+            extensions.append(extension);
+    }
+
+    NetworkBlobRegistry::shared().registerBlobURL(url, data.releaseData(), extensions);
 }
 
 void NetworkConnectionToWebProcess::registerBlobURLFromURL(const KURL& url, const KURL& srcURL)
 {
-    blobRegistry().registerBlobURL(url, srcURL);
+    NetworkBlobRegistry::shared().registerBlobURL(url, srcURL);
 }
 
 void NetworkConnectionToWebProcess::unregisterBlobURL(const KURL& url)
 {
-    blobRegistry().unregisterBlobURL(url);
+    NetworkBlobRegistry::shared().unregisterBlobURL(url);
 }
 
 } // namespace WebKit

@@ -1106,6 +1106,8 @@
 		E1790890169BAA7F006904C7 /* SecItemShimMessageReceiver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E18E6911169B667B009B6670 /* SecItemShimMessageReceiver.cpp */; };
 		E1790891169BAA82006904C7 /* SecItemShimMessages.h in Headers */ = {isa = PBXBuildFile; fileRef = E18E6912169B667B009B6670 /* SecItemShimMessages.h */; };
 		E1790901169BB4F9006904C7 /* SecItemShim.dylib in Copy Sec Item Shim */ = {isa = PBXBuildFile; fileRef = 510031F61379CACB00C8DFE4 /* SecItemShim.dylib */; };
+		E1798C7916E6818800240139 /* NetworkBlobRegistry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E1798C7716E6818800240139 /* NetworkBlobRegistry.cpp */; };
+		E1798C7A16E6818800240139 /* NetworkBlobRegistry.h in Headers */ = {isa = PBXBuildFile; fileRef = E1798C7816E6818800240139 /* NetworkBlobRegistry.h */; };
 		E179FD9C134D38060015B883 /* ArgumentCodersMac.h in Headers */ = {isa = PBXBuildFile; fileRef = E179FD9B134D38060015B883 /* ArgumentCodersMac.h */; };
 		E179FD9F134D38250015B883 /* ArgumentCodersMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */; };
 		E17AE2C316B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb in Resources */ = {isa = PBXBuildFile; fileRef = E17AE2C216B9C63A001C42F1 /* com.apple.WebKit.NetworkProcess.sb */; };
@@ -2550,6 +2552,8 @@
 		E170876A16D6CA6900F99226 /* BlobRegistryProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobRegistryProxy.h; path = WebProcess/FileAPI/BlobRegistryProxy.h; sourceTree = "<group>"; };
 		E170876E16D6CFE400F99226 /* BlobRegistrationData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlobRegistrationData.cpp; path = FileAPI/BlobRegistrationData.cpp; sourceTree = "<group>"; };
 		E170876F16D6CFE500F99226 /* BlobRegistrationData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlobRegistrationData.h; path = FileAPI/BlobRegistrationData.h; sourceTree = "<group>"; };
+		E1798C7716E6818800240139 /* NetworkBlobRegistry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = NetworkBlobRegistry.cpp; path = NetworkProcess/FileAPI/NetworkBlobRegistry.cpp; sourceTree = "<group>"; };
+		E1798C7816E6818800240139 /* NetworkBlobRegistry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NetworkBlobRegistry.h; path = NetworkProcess/FileAPI/NetworkBlobRegistry.h; sourceTree = "<group>"; };
 		E179FD9B134D38060015B883 /* ArgumentCodersMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ArgumentCodersMac.h; sourceTree = "<group>"; };
 		E179FD9E134D38250015B883 /* ArgumentCodersMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ArgumentCodersMac.mm; sourceTree = "<group>"; };
 		E17AE2C116B9C139001C42F1 /* com.apple.WebKit.NetworkProcess.sb.in */ = {isa = PBXFileReference; lastKnownFileType = text; path = com.apple.WebKit.NetworkProcess.sb.in; sourceTree = "<group>"; };
@@ -3478,6 +3482,7 @@
 			isa = PBXGroup;
 			children = (
 				BC82837C16B45DA500A278FE /* EntryPoint */,
+				E1798C7616E6815500240139 /* FileAPI */,
 				510CC7DC16138E2900D03ED3 /* mac */,
 				512C06861638F67E00ABB911 /* HostRecord.cpp */,
 				512C06871638F67E00ABB911 /* HostRecord.h */,
@@ -5011,6 +5016,15 @@
 			name = FileAPI;
 			sourceTree = "<group>";
 		};
+		E1798C7616E6815500240139 /* FileAPI */ = {
+			isa = PBXGroup;
+			children = (
+				E1798C7716E6818800240139 /* NetworkBlobRegistry.cpp */,
+				E1798C7816E6818800240139 /* NetworkBlobRegistry.h */,
+			);
+			name = FileAPI;
+			sourceTree = "<group>";
+		};
 		E199875B142BF9CF00BB2DE7 /* PDF */ = {
 			isa = PBXGroup;
 			children = (
@@ -5611,6 +5625,7 @@
 				E170876C16D6CA6900F99226 /* BlobRegistryProxy.h in Headers */,
 				E170877116D6CFE500F99226 /* BlobRegistrationData.h in Headers */,
 				E14A954A16E016A40068DE82 /* NetworkProcessPlatformStrategies.h in Headers */,
+				E1798C7A16E6818800240139 /* NetworkBlobRegistry.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6816,6 +6831,7 @@
 				E170876B16D6CA6900F99226 /* BlobRegistryProxy.cpp in Sources */,
 				E170877016D6CFE500F99226 /* BlobRegistrationData.cpp in Sources */,
 				E14A954916E016A40068DE82 /* NetworkProcessPlatformStrategies.cpp in Sources */,
+				E1798C7916E6818800240139 /* NetworkBlobRegistry.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

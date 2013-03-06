@@ -51,13 +51,12 @@ BlobRegistrationData::BlobRegistrationData(PassOwnPtr<BlobData> data)
             ++fileCount;
     }
 
-    SandboxExtension::HandleArray sandboxExtensions;
-    sandboxExtensions.allocate(fileCount);
+    m_sandboxExtensions.allocate(fileCount);
     size_t extensionIndex = 0;
     for (size_t i = 0, count = items.size(); i < count; ++i) {
         const BlobDataItem& item = items[i];
         if (item.type == BlobDataItem::File)
-            SandboxExtension::createHandle(item.path, SandboxExtension::ReadOnly, sandboxExtensions[extensionIndex++]);
+            SandboxExtension::createHandle(item.path, SandboxExtension::ReadOnly, m_sandboxExtensions[extensionIndex++]);
     }
 }
 

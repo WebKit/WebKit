@@ -78,7 +78,7 @@ private:
     bool m_inPrivateBrowsingMode;
 
     Vector<RefPtr<SandboxExtension> > m_requestBodySandboxExtensions;
-    RefPtr<SandboxExtension> m_resourceSandboxExtension;
+    Vector<RefPtr<SandboxExtension> > m_resourceSandboxExtensions;
 
     RefPtr<NetworkConnectionToWebProcess> m_connection;
     
