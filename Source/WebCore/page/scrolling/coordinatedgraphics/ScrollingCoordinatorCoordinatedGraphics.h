@@ -36,6 +36,8 @@ class ScrollingCoordinatorCoordinatedGraphics : public ScrollingCoordinator {
 public:
     explicit ScrollingCoordinatorCoordinatedGraphics(Page*);
 
+    virtual bool supportsFixedPositionLayers() const { return true; }
+
     virtual void setLayerIsFixedToContainerLayer(GraphicsLayer*, bool);
 };
 
