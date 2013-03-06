@@ -46,6 +46,10 @@ WebInspector.FlameChart = function(cpuProfileView)
     this._minWidth = 3;
     this.element.onmousemove = this._onMouseMove.bind(this);
     this.element.onclick = this._onClick.bind(this);
+    this._popoverHelper = new WebInspector.PopoverHelper(this.element, this._getPopoverAnchor.bind(this), this._showPopover.bind(this));
+    this._anchorElement = this.element.createChild("span");
+    this._anchorElement.className = "item-anchor";
+    this._linkifier = new WebInspector.Linkifier();
 }
 
 WebInspector.FlameChart.Events = {
@@ -53,6 +57,29 @@ WebInspector.FlameChart.Events = {
 }
 
 WebInspector.FlameChart.prototype = {
+    _getPopoverAnchor: function()
+    {
+        if (!this._highlightedNode)
+            return null;
+        return this._anchorElement;
+    },
+
+    _showPopover: function(anchor, popover)
+    {
+        var node = this._highlightedNode;
+        var contentHelper = new WebInspector.PopoverContentHelper(node.functionName);
+        contentHelper.appendTextRow(WebInspector.UIString("Total time"), Number.secondsToString(node.totalTime / 1000, true));
+        contentHelper.appendTextRow(WebInspector.UIString("Self time"), Number.secondsToString(node.selfTime / 1000, true));
+        if (node.numberOfCalls)
+            contentHelper.appendTextRow(WebInspector.UIString("Number of calls"), node.numberOfCalls);
+        if (node.url) {
+            var link = this._linkifier.linkifyLocation(node.url, node.lineNumber);
+            contentHelper.appendElementRow("Location", link);
+        }
+
+        popover.show(contentHelper._contentTable, anchor);
+    },
+
     _onClick: function(e)
     {
         if (!this._highlightedNode)
@@ -63,10 +90,14 @@ WebInspector.FlameChart.prototype = {
     _onMouseMove: function(e)
     {
         var node = this._coordinatesToNode(e.offsetX, e.offsetY);
-        if (node !== this._highlightedNode) {
-            this._highlightedNode = node;
-            this.update();
-        }
+        if (typeof node === 'undefined' && !this._highlightedNode)
+            return;
+        if (node === this._highlightedNode)
+            return;
+        if (this._highlightedNode)
+            this._popoverHelper.hidePopover();
+        this._highlightedNode = node;
+        this.update();
     },
 
     /**
@@ -82,8 +113,14 @@ WebInspector.FlameChart.prototype = {
 
         function findNodeCallback(offset, level, node)
         {
-            if (cursorLevel > level && cursorLevel < level + 1 && cursorOffset > offset && cursorOffset < offset + node.totalTime)
+            if (cursorLevel > level && cursorLevel < level + 1 && cursorOffset > offset && cursorOffset < offset + node.totalTime) {
                 cursorNode = node;
+                var style = this._anchorElement.style;
+                style.width = Math.floor(node.totalTime * this._xScaleFactor) + "px";
+                style.height = this._yScaleFactor + "px";
+                style.left = Math.floor(offset * this._xScaleFactor) + "px";
+                style.top = Math.floor(this._canvas.height - (level + 1) * this._yScaleFactor) + "px";
+            }
         }
         this._forEachNode(findNodeCallback.bind(this));
         return cursorNode;
@@ -92,6 +129,7 @@ WebInspector.FlameChart.prototype = {
     onResize: function()
     {
         this.draw(this.element.clientWidth, this.element.clientHeight);
+        this._popoverHelper.hidePopover();
     },
 
     /**
