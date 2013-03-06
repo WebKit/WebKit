@@ -1,5 +1,20 @@
 2013-03-05  Filip Pizlo  <fpizlo@apple.com>
 
+        Get rid of the invert argument to SpeculativeJIT::jumpSlowForUnwantedArrayMode
+        https://bugs.webkit.org/show_bug.cgi?id=105624
+
+        Reviewed by Oliver Hunt.
+        
+        All callers pass invert = false, which is the default value of the argument. So, get
+        rid of the argument and fold away all code that checks it.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::jumpSlowForUnwantedArrayMode):
+        * dfg/DFGSpeculativeJIT.h:
+        (SpeculativeJIT):
+
+2013-03-05  Filip Pizlo  <fpizlo@apple.com>
+
         Unreviewed, fix an incorrect comment. The comment was a holdover from a work-in-progress version of this code.
 
         * dfg/DFGDCEPhase.cpp:
