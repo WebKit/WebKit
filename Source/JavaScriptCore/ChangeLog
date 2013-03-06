@@ -1,5 +1,17 @@
 2013-03-06  Filip Pizlo  <fpizlo@apple.com>
 
+        Unreviewed, roll out http://trac.webkit.org/changeset/144989
+        
+        I think we want the assertion that I removed.
+
+        * dfg/DFGAbstractState.cpp:
+        (JSC::DFG::AbstractState::merge):
+        (JSC::DFG::AbstractState::mergeVariableBetweenBlocks):
+        * dfg/DFGAbstractState.h:
+        (AbstractState):
+
+2013-03-06  Filip Pizlo  <fpizlo@apple.com>
+
         DFG::AbstractState::merge() is still more complicated than it needs to be
         https://bugs.webkit.org/show_bug.cgi?id=111619
 

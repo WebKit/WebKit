@@ -1697,17 +1697,13 @@ inline bool AbstractState::merge(BasicBlock* from, BasicBlock* to)
     bool changed = false;
     
     for (size_t argument = 0; argument < from->variablesAtTail.numberOfArguments(); ++argument) {
-        changed |= mergeVariableBetweenBlocks(
-            to->valuesAtHead.argument(argument),
-            from->valuesAtTail.argument(argument),
-            to->variablesAtHead.argument(argument));
+        AbstractValue& destination = to->valuesAtHead.argument(argument);
+        changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.argument(argument), to->variablesAtHead.argument(argument), from->variablesAtTail.argument(argument));
     }
     
     for (size_t local = 0; local < from->variablesAtTail.numberOfLocals(); ++local) {
-        changed |= mergeVariableBetweenBlocks(
-            to->valuesAtHead.local(local),
-            from->valuesAtTail.local(local),
-            to->variablesAtHead.local(local));
+        AbstractValue& destination = to->valuesAtHead.local(local);
+        changed |= mergeVariableBetweenBlocks(destination, from->valuesAtTail.local(local), to->variablesAtHead.local(local), from->variablesAtTail.local(local));
     }
 
     if (!to->cfaHasVisited)
@@ -1761,11 +1757,14 @@ inline bool AbstractState::mergeToSuccessors(Graph& graph, BasicBlock* basicBloc
     }
 }
 
-inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode)
+inline bool AbstractState::mergeVariableBetweenBlocks(AbstractValue& destination, AbstractValue& source, Node* destinationNode, Node* sourceNode)
 {
-    // This is the only liveness pruning that we do. We can always rely on the liveness at head to be preserved.
     if (!destinationNode)
         return false;
+    
+    ASSERT_UNUSED(sourceNode, sourceNode);
+    
+    // FIXME: We could do some sparse conditional propagation here!
     
     return destination.merge(source);
 }
